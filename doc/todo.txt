@@ -1,0 +1,40 @@
+Graphing 
+
+NEED TO TEST
+* AxisSpec, ColSpec, GraphSpec notifications on changes 
+
+BUGS
+* when doing UAE's, need to redraw the graphs (only rebuilding, not redrawing)
+* 3D color bar placement
+
+HI PRI
+* raster mode
+* multiple graphlets
+
+LO PRI
+* click captions (click to get box with text of values at nearest line)
+* permit simple setting of the axis for the column
+* border between GB's
+* GB check box paint area spills over onto axis area (when no button)
+
+
+taDataView/T3DataView
+
+* concept of "clear" is wrong -- shouldn't delete the node_so in data views
+* poor factoring between ta and T3, leads to need to test for par class type
+  in many T3 contexts (ex. see GraphViews::Clear_impl)
+  
+  
+GENERAL
+
+* need a user-friendly Color Gui picker for edit dialogs (instead/in addition to
+  the manual r/g/b) -- edit gui should show color, not just the rgb values
+  
+WIZARD
+
+* need a general framework for wizards
+  * outer dialog
+  * pages
+  * page navigation, including navigability constraints
+  *
+  

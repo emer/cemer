@@ -1,0 +1,301 @@
+// ta_Dump File v1.0
+TypeDefault_MGroup .projects[0].defaults { 
+TypeDefault_MGroup .projects[0].defaults {
+TypeDefault @[0] { };
+TypeDefault @[1] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[2] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
+TypeDefault @[3] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[4] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[5] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[6] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[7] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[8] { };
+};
+};
+TypeDefault_MGroup .projects[0].defaults {
+el_typ=TypeDefault;
+el_def=0;
+name="";
+TypeDefault @[0] {
+name="RBpConSpec";
+default_type=RBpConSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_12";
+};
+};
+TypeDefault @[1] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_6";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="BpCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="BpCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=RBpConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[2] {
+name="Layer";
+default_type=Layer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_1";
+NameValue @[0] {
+name="units";
+value="Size: 0 (RBpUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=RBpUnitSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[3] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_2";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault @[4] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault @[5] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault @[6] {
+name="TrainProcess";
+default_type=TrainProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SequenceEpoch";
+};
+};
+};
+TypeDefault @[7] {
+name="SequenceEpoch";
+default_type=SequenceEpoch;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpSequence";
+};
+};
+};
+TypeDefault @[8] {
+name="RBpSequence";
+default_type=RBpSequence;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+};
+};
+};
+TypeDefault .projects[0].defaults[0] {
+name="RBpConSpec";
+default_type=RBpConSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_12";
+};
+};
+TypeDefault .projects[0].defaults[1] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_6";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="BpCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="BpCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=RBpConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault .projects[0].defaults[2] {
+name="Layer";
+default_type=Layer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_1";
+NameValue @[0] {
+name="units";
+value="Size: 0 (RBpUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=RBpUnitSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault .projects[0].defaults[3] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_2";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[4] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[5] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[6] {
+name="TrainProcess";
+default_type=TrainProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SequenceEpoch";
+};
+};
+};
+TypeDefault .projects[0].defaults[7] {
+name="SequenceEpoch";
+default_type=SequenceEpoch;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="RBpSequence";
+};
+};
+};
+TypeDefault .projects[0].defaults[8] {
+name="RBpSequence";
+default_type=RBpSequence;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+};
+};

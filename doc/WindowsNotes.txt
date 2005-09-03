@@ -1,0 +1,39 @@
+Windows Compilation notes
+
+VS Project Notes
+
+Project Options
+* change configurations to .Gui, .GuiDebug, etc. in the configurations tab
+General
+* change output directory to config directory
+
+ZLIB
+* install zlib1.dll, include files and lib from zlib.org
+
+C++
+  Preprocessor
+  *  add necessary defines, ex. TA_NO_GUI, DEBUG, etc.
+  Precompiled Headers
+  * disable (TODO: seems to cause choking because we use .cc file ext,
+    which vc++ seems to interpret as being or implying precompiled headers.)
+  
+  
+MAKETA
+
+* can't use the links to the ta files; must navigate to them and include in project
+* Microsoft c compiler assumes C++ files have .cpp or .cxx extension 
+
+COIN
+
+* for cygwin/g++, had to make some #defines in 
+  C:\Coin3D-2\include\Inventor\system\inttypes.h
+
+CSS
+
+* Posix functions not included in css_builtin.cc
+* following functions not available in Windows:
+  acosh, asinh, atanh, erf, erf_c
+
+TAMISC
+
+* TimeUsed -- all time assigned to usr (sys always 0)

@@ -1,0 +1,38 @@
+// startup and run a project in the background, use like this:
+// nice +10 pdp++ -nogui -f startup.css <myproj> [ctr_max...] &
+// - nice +10 is optional but is nice to other users/processes.
+// - replace pdp++ with name of the specific pdp++ executable, e.g., bp++.
+// - <myproj> is the name of your project (with or without the .proj.gz).
+// - [ctr_max...] are other optional arguments as defined in the script
+//   below, which typically set counter maxima (like epoch.max, etc)
+//   for controlling how many epochs to train.
+// - & at the end puts the job in the background.
+
+// include standard functions (usually in /usr/local/pdp++/css/include)
+#include "startup_fctns.css"
+
+void Startup() {
+  if(!Start_ArgCheck(3, "[epoch] [batch]"))
+    return;
+
+  String stub_nm = Start_GetStub();
+  Start_LoadProj(stub_nm);
+
+  // change log file object name if not a graph log, etc
+  Start_LogFile("Epoch_0_GraphLog", stub_nm, ".epc.log");
+  Start_LogFile("Trial_0_TextLog", stub_nm, ".trl.log");
+  //  Start_LogFile("Train_0_TextLog", stub_nm, ".bat.log");
+
+  // group where processes are (could be sub group in .processes.gp)
+  Process_MGroup* gp = .processes;
+
+  // set counter maxima, only if you have these processes..
+  Start_CtrMax(gp, "TrainProcess.epoch", 3);	// argv[3]
+  // comment out or remove if no batch process
+  //  Start_CtrMax(gp, "BatchProcess.batch", 4);	// argv[4]
+
+  gp[0].ReInit();
+  gp[0].Run();
+}
+
+Startup();

@@ -1,0 +1,225 @@
+Data Environment Design
+
+ISSUES
+
+* do data connection points need to be of a specific data type, or could they
+  have multiple types? 
+  A: may need data typing; ex. text output
+* do sources/sinks need to use commensurable data types? or, maybe the connection
+  could mediate? or, maybe there must be an explicit converter?
+  A: should prob require commensurability -- provide data converter filter
+    if necessary
+* how do we enable a relatively complex set of data sources to be connected to
+  a new network
+  A: bind by name/path
+* will we need to have data items operating on different frequencies (ex every
+  t, every 2nd t, etc.)
+  A: Yes -- but under control of sequencer
+* note: ConnectionPoint functionality can largely be provided in the UI by
+  providing a multi-select/union-like properties tab
+  
+CRITICISMS
+
+* do we *really* need a ConnectionPoint as distinct from a DataChannel???
+  PROS: 
+    * encapsulates things probably common to all
+  CONS:
+    * how generally applicable is the concept really?
+    * another entity for users to comprehend
+    * only commonifies when subchannels are commensurate (ex rgb,
+      but not audio/video)
+      
+  
+Data Environments are an integrated, extensible system for presenting data to and extracting data from the network.
+
+Currently, there are pattern sources, and script sources. We wish to add handling for the following:
+  * images
+  * sound
+  * video
+  * simulation input
+
+We want the following capabilities:
+  * ability to add filters and other pre/post-processors
+  * ability to visualize
+
+
+We will need the following:
+
+* spec in terms of the network
+* extensible design
+* implementations of basic types (images, etc.)
+* flexibility in linking inputs and targets (ex. image input
+  may be linked to a simple pattern target output)
+* be able to use one data system with several networks
+  (perhaps not simultaneously)
+
+Let us work with the following concepts:
+* DataSource -- provides data
+* DataSink -- consumes data
+* DataConnection (DataCon) -- connects a Source and Sink
+* DataTransformer (DataTrans) -- performs a transformation (ex filter)
+
+Push vs. Pull
+
+* one issue to be resolved is whether data works on the "push" or "pull"
+  model (or maybe either)
+* a "push" model, the source controls the data flow, and forces it to the sink
+* a "pull" model, the sink controls the data flow, and requests it from the source
+* both are applicable:
+  * ex., the network layer will want to request the next pattern -- "pull"
+  * the network output will want to send the data on when available -- "push"
+  
+We will then create specific objects, that have the following:
+  * data input(s)
+  * data output(s)
+
+The user can create the system by adding data objects to the workspace, and connecting them with data links.
+
+
+USE CASES
+
+Let's look at some typical use cases.
+
+1. Single Layer Input
+  * data can be a pattern of same dimensions as input layer
+  
+2. Multi-layer (N) Input
+  * there are N pattern channels -- each event will require
+    passing the data of a single pattern
+    
+3. Vision
+  * there are 3 channels, R,G,B
+  
+4. Multi-sensory
+  * there is vision, soma, etc.
+  
+Conformance Use Case
+
+1. Layer has several input layers -- data source should 
+   conform.
+
+DATA ATTRIBUTES
+
+* shape -- dimensions, and num elements per dimension
+  (note: maybe assume 2d, and just let degenerate case be 1 or 0 d)
+* channels -- can have multiple channels (ex RGB)
+* txfer mode -- push or pull -- in pull mode, the next item downstream
+  controls the txfer of data; ex. a layer input may be in pull mode, in
+  which case it controls the fetching of data from the input pattern
+  source
+
+DATA OPERATIONS
+
+* there must be one data item in a network that is the controlling item --
+  it is the one that initiates all the pushes or pulls that then propagate
+  to the other data items -- ex., in pdp sims, the layer is the controller;
+  it initiates the "pulls" from its data sources, and the "pushes" to the
+  data outputs.
+
+Question
+  
+  
+REQUIREMENTS AND GOALS
+
+* some data is inherently composite
+  * we want to be able to connect (or not) to each component individually
+  * would be nice to be able to treat composite as a single thing, when
+    that would be the typical use
+  * consider always treating comp data as inseparable, BUT provide a 
+    demultiplexing transformer that will allow access to each channel
+    
+* the geometry of some sources/sinks should be able to inform other
+  components created to mesh with them
+  * static conformance: geometry set on creation or attachment
+  * dynamic conformance: geometry automatically conforms to connectee
+* push/pull operation may or may not be intrinsic
+  * filtering component could work on push or pull model
+
+
+INTERFACES/ENTITIES (OUTLINE)
+
+Here is an outline of the main interfaces and/or entities, along with their
+major subtypes and major contained interfaces.
+
+DataConnectionPoint (note 1)
+  InputConnectionPoint
+    DataInputConnectionPoint
+    CtrlInputConnectionPoint
+  OutputConnectionPoint
+    DataOutputConnectionPoint
+    MonitorOutputConnectionPoint
+    
+DataChannel
+  InputChannel
+    - provider interface (i.e., source)
+    - consumer interface (i.e., DataConnector)
+  OutputChannel
+    - provider interface (i.e., DataConnector)
+    - consumer interface (i.e., sink)
+  
+DataMovementInterface
+  ProviderInterface
+    - push interface
+    - pull interface
+  ConsumerInterface
+    - push interface
+    - pull interface
+    
+DataItem
+  
+Notes:
+1. May be no operational difference between Data vs. Ctrl/Mon -- may be primarily
+   semantic and/or ui. 
+
+INTERFACES/ENTITIES (DETAIL)
+
+DataItem is the actual piece of data. It is conceptually a 2d array of a specific
+data type (ex. float, int). We want to avoid copying and unnecessary buffering, so
+it may make sense for data to be treated as a ref-counted value type, similar to
+strings, whereby the actual data is contained in a point in a ref-counted value
+struct, that can be passed around -- OR that we use smart pointers to a ref-counted
+struct, which auto-destroys on reaching zero.
+
+DataItem
+  attributes:
+    geometry -- row and col size
+    count -- number of elements (= rows x cols)
+    data_type
+    items[,] -- data items
+
+DataConnectionPoint describes a source or sink of data on a data production, consumption,
+or filtering entity. Note that the txfer mode is defined at the CP-level, not the
+DataChannel level.
+
+DataConnectionPoint
+  attributes:
+    num_channels -- number of channels
+    txfer_mode_supported -- bit flags of supported txfer modes (push, pull)
+    txfer_mode -- current txfer mode (may be read only)
+    connectors -- list of connectors attached to the DCP
+  methods:
+
+
+DataChannel describes one distinct source/sink of data. All DataChannel's are defined
+to be 2-dimensional, although degenerate dimensions are supported (ex. 1x1 is 0-d.)
+
+DataChannel
+  attributes:
+    name -- the name of the channel; may be read only (ex. "red")
+    index -- the index of this channel in the ConnectionPoint
+    geometry -- x and y size (note: if not fixed, then an event must be triggered
+      on change) 
+    data_type -- type of data: float, int, short int, etc. (??? maybe not)
+  methods:
+
+DataConnector describes a connection between a data source and a data sink. A DC
+has two ends, the input end is connected to a data source, and the output end
+is connected to a data sink. A DC can mediate between disparate geometries.
+
+DataConnector
+  attributes:
+    source: OutputDataChannel -- the source of the data items being connected
+    sink: InputDataChannel -- the sink of the data items being connected
+  methods:
+
+    

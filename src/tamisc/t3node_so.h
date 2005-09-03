@@ -1,0 +1,426 @@
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the PDP++ software package.			      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, and modify this software and its documentation    //
+// for any purpose other than distribution-for-profit is hereby granted	      //
+// without fee, provided that the above copyright notice and this permission  //
+// notice appear in all copies of the software and related documentation.     //
+//									      //
+// Permission to distribute the software or modified or extended versions     //
+// thereof on a not-for-profit basis is explicitly granted, under the above   //
+// conditions. 	HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE OR MODIFIED OR  //
+// EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED EXCEPT BY PRIOR      //
+// ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS.                  //
+// 									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
+
+#ifndef T3NODE_SO_H
+#define T3NODE_SO_H
+#include "tamisc_stdef.h"
+
+#include "icolor.h"
+#include "igeometry.h"
+
+#ifdef __MAKETA__
+//dummy defines
+#define SoSFEnum int
+#define SoSFVec2f int
+#define uint32_t uint
+
+//dummy class for maketa
+class SoGroup {
+public:
+  int dummy;
+};
+
+class SoSeparator: public SoGroup {
+public:
+  int dummy;
+};
+
+class SoTriangleStripSet {
+public:
+  int dummy;
+};
+
+#else
+#include <Inventor/SbColor.h>
+#include <Inventor/fields/SoSFEnum.h>
+#include <Inventor/fields/SoSFVec2f.h>
+#include <Inventor/fields/SoMFVec3f.h>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTriangleStripSet.h>
+#endif
+
+// forwards
+class T3Node;
+
+// externals -- note: some are here for use by other files, not this one
+class SbColor; // #IGNORE
+class SoCoordinate3; // #IGNORE
+class SbRotation; // #IGNORE
+class SbVec3f; // #IGNORE
+class SoAsciiText; // #IGNORE
+class SoDrawStyle; // #IGNORE
+class SoFont; // #IGNORE
+class SoLightModel; // #IGNORE
+class SoLineSet; // #IGNORE
+class SoMarkerSet; // #IGNORE
+class SoMaterial; // #IGNORE
+class SoMFVec3f; // #IGNORE
+class SoNode; // #IGNORE
+class SoPackedColor; // #IGNORE
+class SoPerspectiveCamera; // #IGNORE
+class SoPickStyle; // #IGNORE
+class SoRotation; // #IGNORE
+class SoSeparator; // #IGNORE
+class SoTexture2; // #IGNORE
+class SoTexture2Transform; // #IGNORE
+class SoTranslation; // #IGNORE
+class SoTransform; // #IGNORE
+class SoTriangleStripSet; // #IGNORE
+class SoUnits; // #IGNORE
+
+//////////////////////////
+//   T3Color		//
+//////////////////////////
+
+// yet **another** color class!! but SbColor is not very convenient or intuitive, so
+// we use this to facilitate api simplification
+
+class T3Color { // ##NO_INSTANCE ##NO_TOKENS
+public:
+#ifdef __MAKETA__
+  float 	r;
+  float 	g;
+  float 	b;
+#else
+  union {
+    struct {
+      float 	r;
+      float 	g;
+      float 	b;
+    };
+    float	rgb[3];
+  };
+#endif
+  static uint32_t makePackedRGBA(float r_, float g_, float b_, float a_ = 1.0f); // #IGNORE
+  static uint32_t makePackedRGBA(int r_, int g_, int b_, int a_ = 255); // #IGNORE
+
+  void		setValue(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
+  T3Color() {r = 0.0f; g = 0.0f; b = 0.0f;}
+  T3Color(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
+  T3Color(float x_) {r = x_; g = x_; b = x_;}
+  T3Color(const iColor& cp) {cp.getRgb(r, g, b);}
+  T3Color(const SbColor& cp) {cp.getValue(r, g, b);}
+
+  T3Color& operator =(const SbColor& cp) {cp.getValue(r, g, b); return *this;}
+  T3Color& operator =(const iColor& cp) {cp.getRgb(r, g, b); return *this;}
+  T3Color& operator =(float x_) {r = x_; g = x_; b = x_; return *this;}
+  operator SbColor() const {return SbColor(rgb);}
+};
+
+
+
+/*
+  All Nodes are implemented using an approach that is similar to, but simpler than,
+  Inventor Node Kits. We expose the contents as properties (ex. drawStyle()) -- properties
+  may be always created (ex in constructor) or only created on demand. The properties
+  themselves are stored in fields, so they automatically participate in copying, streaming,
+  etc.
+
+  Coordinate Space
+
+  The coordinate space for "pos" and "geom" calls follows the PDP conventions. The values
+  are in integral units in some abstract 3-d space; the frame of reference is as follows:
+
+  Dimension	PDP	Inventor
+  left-->right	+x	+x
+  bott->top	+z	+y
+  back->front	-y	+z
+
+  Because of how layers are stacked, the PDP-z space is scaled with respect to the other
+  spaces. However, this is not done with transforms (it would distort shapes), but merely
+  by scaling the PDP z factor.
+
+  The letter 'p' in front of coordinate items (px, py, etc.) means PDP coordinates.
+
+  TODO:
+
+  Loading will be an issue, since the member object fields will need to be set to the
+  child instances loaded. Perhaps readInstance() can be overloaded as follows:
+      clear children
+      set member objects to NULL (release)
+      inherited::readInstance()
+      set member object references by looking for them in the children() collection
+*/
+
+
+//////////////////////////
+//   T3Node		//
+//////////////////////////
+
+/*
+  There are two levels of complexity for T3Nodes, one for terminals, and one for non-terminals.
+
+  [] indicates optional node
+
+
+T3NodeLeaf: for terminal items (no children)
+
+  this: SoSeparator (aka "topSeparator", also aliased as "shapeSeparator")
+      transform: SoTransform
+      [captionSeparator]: SoSeparator (node and subnodes only created if non-blank caption set)
+        [captionFont]: SoFont - only created if accessed (otherwise will inherit from parent)
+        captionTransform: SoTransform
+        captionNode: SoAsciiText
+      txfm_shape: SoTransform
+      material: SoMaterial (if any)
+      shape: (type-specific shape)
+
+
+T3NodeParent:
+
+  this: SoSeparator (aka "topSeparator")
+      transform: SoTransform
+      shapeSeparator: SoSeparator
+        txfm_shape: SoTransform
+        material: SoMaterial
+        shape: (type-specific shape, if any)
+      [captionFont]: SoFont - only created if accessed -- NOTE: inherited by childNodes
+      [captionSeparator]: SoSeparator (node and subnodes only created if non-blank caption set)
+        captionTransform: SoTransform
+        captionNode: SoAsciiText
+      [class-dependent child node modifiers, inserted here, before childNodes]
+      childNodes: SoSeparator -- the T3Node children, if any -- AUTOCREATED
+
+NOTES:
+  * the 'font' node controls the caption font, hierarchically -- therefore, if you
+    need to use text for some other purpose, you must put that in your shape
+    separator, and put its own font node in
+  * the caption-related nodes are not directly accessible -- use the property api's
+  * note the slightly different placement for the 'font' node in Parent vs. Leaf
+  * a caption can have a default rotation and translation; you can explicitly set or override this
+  * caption modifications are limited to:
+      - rotation around the origin
+      - translation of resulting rotated caption
+  * clear() does not operate on children, because the T3DataView hierarchy already
+      does this
+
+NOTE: T3Node may be changed to look like this -- this change will be transparent
+  if all access to the sub-items goes through topSeparator()
+
+  this: SoGroup
+    callbackList: SoSeparator
+    topSeparator: SoSeparator
+      transform: SoTransform
+
+
+
+*/
+class T3Node: public SoSeparator {
+// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+
+  SO_NODE_ABSTRACT_HEADER(T3Node);
+#endif // def __MAKETA__
+public:
+
+  static void		initClass();
+
+  static void		insertChildBefore(SoGroup* group, SoNode* child, SoNode* before);
+   // insert before node; before=NULL for end;
+  static void		insertChildAfter(SoGroup* group, SoNode* child, SoNode* after);
+   // insert before node; after=NULL for start
+  static SoNode*	getNodeByName(SoGroup* group, const char* name); // find node by name, if any
+
+  void*			dataView; // #IGNORE the T3DataView that owns/created this node
+
+  virtual SoFont*	captionFont(bool auto_create = false) = 0;
+  SoAsciiText*		captionNode(bool auto_create = false);
+  virtual SoSeparator*	topSeparator() {return this;}
+  SoTransform*		transform() {return transform_;} // the master transform, for the whole entity
+  virtual SoSeparator*	shapeSeparator() = 0;
+  SoTransform*		txfm_shape() {return txfm_shape_;} // the transform for the shape
+  SoMaterial*		material() {return material_;}
+  virtual SoSeparator*	childNodes() {return NULL;} // use this to set/get T3Node children
+
+  virtual const char*	caption();
+  virtual void		setCaption(const char* value); //NOTE: if you want to transform, you MUST call transformCaption every time after calling setCaption
+
+  virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
+  void			transformCaption(const iVec3f& translate); // #IGNORE
+  void			transformCaption(const SbRotation& rotate, const iVec3f& translate); // #IGNORE
+  virtual bool		expanded() {return true;} // many nodes have an expanded and compact rep
+  virtual void		setExpanded(bool value) {}
+
+  virtual void		addRemoveChildNode(SoNode* node, bool adding); // called by pdpDataView (default prints console error)
+
+  T3Node(void* dataView_ = NULL);
+
+protected:
+  SoAsciiText*		captionNode_;
+  const char*  		getFileFormatName() const {return SoSeparator::getFileFormatName();} // override
+  virtual SoSeparator*	captionSeparator(bool auto_create = false) = 0;
+  SoTransform*		captionTransform(bool auto_create = false);
+  virtual void		setDefaultCaptionTransform(); // call transformCaption to set the default transform; this is called after creating Node first time
+  void			transformCaption(const SbRotation* rotate, const iVec3f* translate); // #IGNORE
+  void 			initCommon(); // shared code, can only be called in a subclass constructor
+
+  ~T3Node();
+
+private:
+  SoTransform*		transform_; // #IGNORE
+  SoTransform*		txfm_shape_; // #IGNORE NOTE: must be created in subclass init
+  SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
+};
+
+class T3NodeLeaf: public T3Node {
+// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+#ifndef __MAKETA__
+typedef T3Node inherited;
+
+  SO_NODE_HEADER(T3NodeLeaf);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+
+  SoFont*		captionFont(bool auto_create = false); // override
+  SoSeparator*		shapeSeparator() {return this;}
+
+
+  T3NodeLeaf(void* dataView_ = NULL);
+
+protected:
+  SoSeparator*		captionSeparator(bool auto_create = false); // override
+
+  ~T3NodeLeaf();
+};
+
+
+class T3NodeParent: public T3Node {
+// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+#ifndef __MAKETA__
+typedef T3Node inherited;
+
+  SO_NODE_HEADER(T3NodeParent);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+
+  SoFont*		captionFont(bool auto_create = false); // override
+  SoSeparator*		shapeSeparator() {return shapeSeparator_;}
+  SoSeparator*		childNodes(); // use this to set/get T3Node children
+
+  void			addRemoveChildNode(SoNode* node, bool adding); // override
+
+  T3NodeParent(void* dataView_ = NULL);
+
+protected:
+  SoSeparator*		captionSeparator(bool auto_create = false); // override
+
+  ~T3NodeParent();
+private:
+  SoSeparator*		shapeSeparator_; // #IGNORE
+  SoSeparator*		childNodes_; // #IGNORE
+};
+
+class SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+#ifndef __MAKETA__
+typedef SoTriangleStripSet inherited;
+
+  SO_NODE_HEADER(SoFrame);
+#endif // def __MAKETA__
+public:
+  enum Orientation {
+    Hor,	// lies flat in x-z plane
+    Ver		// lies flat in x-y plan
+  };
+
+  static void		initClass();
+
+  float		base; //note: these could be fields
+  float		height;
+  float		depth;
+  float		inset; // #DEF_0.05
+  Orientation	orientation; // #DEF_Hor
+
+  SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
+  SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+
+  void		setDimensions(float bs, float ht, float dp, float in);
+  void		setOrientation(Orientation ori);
+  SoFrame(Orientation ori = Hor);
+
+protected:
+  const char*  	getFileFormatName() const {return SoTriangleStripSet::getFileFormatName();} // override
+  void 		render(); // #IGNORE
+  void 		renderH(); // #IGNORE
+  void 		renderV(); // #IGNORE
+};
+/*obs
+class SoFrame: public SoSeparator { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+
+  SO_NODE_HEADER(SoFrame);
+#endif // def __MAKETA__
+public:
+  enum Orientation {
+    Hor,	// lies flat in x-z plane
+    Ver		// lies flat in x-y plan
+  };
+
+  static void		initClass();
+
+  float		base; //note: these could be fields
+  float		height;
+  float		depth;
+  float		inset; // #DEF_0.05
+  Orientation	orientation; // #DEF_Hor
+
+  void		setDimensions(float bs, float ht, float dp, float in);
+  void		setOrientation(Orientation ori);
+  SoFrame(Orientation ori = Hor);
+
+protected:
+  static int	numVertices[4]; // #IGNORE
+
+  const char*  	getFileFormatName() const {return SoSeparator::getFileFormatName();} // override
+  void 		render(); // #IGNORE
+  void 		renderH(); // #IGNORE
+  void 		renderV(); // #IGNORE
+private:
+  SoCoordinate3*	coords_; // #IGNORE
+  SoTriangleStripSet*	tss_; // #IGNORE
+  SoRotation*		rot_; // #IGNORE -- temp solution for ver/hor
+};
+*/
+
+
+#endif

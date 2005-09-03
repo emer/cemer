@@ -1,0 +1,120 @@
+BUGS
+----
+
+Serious/Fatal:
+
+* new bug: external dest of a cut/paste has segment fault when it tries to do the remdatataken (but the source
+  call of this functionality works fine)
+* need to do GetImage on other panels when the data changed or reverted
+* when deleting an open tree item, prompts "Apply Changes" -- cancel then crashes
+* ex. in Networks, delete the network -- moves up to .networks node, but still shows the deleted network in the group portion of the Networks edit panel (if you make a new browser, the .networks edit panel correctly shows no child networks in its group)
+* (??? maybe fixed) "wrong sizing behavior on group items in group edits" (bug text transcribed from written sheet -- may not be applicable any more)
+* UI often hangs -- one incident could be tracked to a line iTabBar::paint, where it calls inherited
+  just after setting pallete -- MAYBE CAN'T DO THIS RELIABLY
+* when pasting a new item into a list view, the text shows up as the previous item,
+  not the new item (but it is correct if you open a new browser and view it there)
+* browser: clip handling not working in tree view
+* t3viewer: clip handling not working
+* in Chapter2/units.prj -- the Settle/LoopProc does not indicate the name of the script
+  (but did in v3.2); also, this project is not working, and probably has to do with this script;
+  note: doesn't even indicate script is loaded even when the script folder is current folder
+* MAKETA: under win32-msvc build (maybe others), typedef's must have a trailing comment, otherwise
+  the parser gets out of sync and the force_ta will fail
+
+Medium Important:
+
+* in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
+* secondary view windows, "File/Close Browser" doesn't work
+* when loading a project, the list view says "Project_0" even if it has a different name, ex. "Proj"
+* can't seem to drag 3 items from listview -- only first 2 items seem to get dragged
+* don't repeatedly create new tabs for changed items if one such tab already exists
+* SelEdit: when you change the Mbr labels from the menu item, the Accept/Cancel gets lit up on the seledit dialog
+* SelEdit: dialog should rebuild after changing labels
+* In DataTable in browser, table indicates (ex) 10 rows, but each float_RArray only
+  indicates 1 in its 'size' member.
+* in maketa/win32-msvc it is adding spurious ta_Init_() call to ta files --
+  worked around by adding that as a dummy function in ta_type.h, but it is a bug that 
+  needs to be fixed (see mta_constr.cc line 1080)
+
+Cosmetic/Usability/etc. (lower priority):
+
+* font for iAction-created taiMenuEl items is not being inherited from the parent taiMenu item
+* stripes continue in body but not names in iEditGrid
+* boxes in edit panels don't shrink as much as they could
+* should be bigger gap from labels to data in editpanels
+* right or middle click to create a new tab in browser
+* may want to add auto-line splitting to object descriptions
+
+TODO
+----
+* menu changes to main menu, + context menu
+
+* finish the "over max" handlers in several menu types
+* finish the item/group checking code for rebuilds in gpiList datahost types
+* in group view on edits, :
+  1-scroll by item
+  2-option to even show all the group items; off by default
+* Color Bar controls
+* browser view state (cf Project View State, member of .project)
+* overall application: Expert Mode vs. Novice (to control complexity/visibility)
+
+* reordery dialog (ex for SelectEdit order)
+iEditGrid:
+* vertical separators in iEditGrid
+* fixed vert cell sizes in iEditGrid (ex. 2 or 3 for the window)
+* maybe need to use manual by-cell scrolling for iEditGrid, instead of automatic visual-scrolling
+* accommodate more than one edit panel viewed side-by-side (ex in a splitter)
+* save/load configuration of browser (with proj)
+* AND/OR (maybe for new) create a default view of tabs used for projects, ex. specs, networks, etc. (project view stuff)
+
+CLIP/DRAGDROP
+
+* prob have to own item before loading OR PREFERABLY maybe call load on parent instead
+* default support for #LINKGROUP
+
+DONE (shown in reverse order, top=most recent)
+----
+
+* project, t3views not reopening properly, in OnWindowOpen_impl of NetView, attempt to open
+  panel fails because NetView's datalink returns NULL (probably not being properly linked
+  during load, vs. new in program)
+* in proj.viewers -- have open viewer, then close that viewer; causes exception in
+  iDataBrowser::GetEditAction at point of accessing cur_item -- maybe cur_item has not been properly
+  changed or NULL'ed.
+  Also happens if you are only in browser window; ex. have 2 projects loaded; sel 2nd project in tree,
+  then select Close from the item menu.
+* main menus no longer working (ex File/Quit); but corresponding accel keys do invoke the command (ex Ctrl-Q for File/Quit)
+* main edit menus no longer enabling properly; but context menu has correct items shown
+--2005-02-05--
+* root::SaveSettings causes crash (NOTE: doesn't seem to be happening anymore)
+* if a ListViewPanel has been made, then program crashes on shutdown
+* multi-DD/clip
+* make sure that buttons and button menu methods can be accessed on context menu, and
+  main menu when no edit dialog
+* add directive to enable context menus to have methods in the root menu, not in a submenu
+* need to raise a DATA CHANGED when a list is sorted
+* CUT and UNLINK s/b mutually exclusive
+* .processes etc. have comment directives to hide things like subprocesses; should be shown in browser
+* "no" version of "BROWSE" directive
+--2004-11-19--
+* data handling for clipboard and D/D
+* finish cut/paste for groups
+** directive-based way to show ex. subgroup members in tree, but ex. remain Detail in Edit
+* use Transfer for Cut/Paste in process; Copy/Paste/Delete source  for Cut/Paste across apps
+--2004-11-12--
+* alpha completion of clipboard/dragdrop
+--2004-11-01--
+* need to do a GetImage before reshowing a tab panel
+* default for enums (iComboBox)
+* right-select New should open item in a dialog ( otherwise should be set in tree ???)
+* in the SelEdit context menus, always include all seledits, and just enable/disable them (so user gets nice positional stability)
+* can't size EditPanel section smaller than a full panel (no scroll bars)
+* TrainEpoch class has too-long desc, not broken by \n
+* BrowserWin doesn't seem to be constrained in size
+* can't shrink the browser when its panel area has been widened very wide
+--10/22/04--
+* in editpanels, full version of help text (ex. enums, subtypes)
+* SelectEdit add func causes crash
+* iCoord edit
+* Seledit extra labels not being shown for data or for functions
+* in SelEdit, only puts menubutton items on correct button when their button name is in the directive (because normal edits depend on the most recent cur_item being valid)

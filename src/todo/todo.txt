@@ -1,0 +1,8 @@
+Remaining TODO items (as of 10/07/04)
+
+ta_filer.cc -- implement console versions of some functions
+ta_qt.cc -- graphical window dumping (translate to qt)
+ta_qtdata.cc:
+  IconGlyph -- figure out if needed 
+  some misc minor items (ex. font control in taiMenu)
+  

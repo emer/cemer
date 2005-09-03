@@ -1,0 +1,44 @@
+OBJECT DIRECTIVES
+-----------------
+
+#LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
+#UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
+
+ENUM DIRECTIVES (note: this is new)
+---------------
+
+#BITS -- indicates that the enum values are or'able bit fields -- gui will show series of check boxes, not a drop-down
+
+MEMBER DIRECTIVES
+-----------------
+
+#BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
+#NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
+
+
+METHOD DIRECTIVES
+-----------------
+
+#ACTION_xxx -- marks the object as corresponding the indicated "well known" action, ex "editDelete" -- actions can have things like icons and accelerator keys.
+
+#MENU_1N -- menu method that can be applied to 1 or more selected items; (note: method can have parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+
+#MENU_1_2N -- method that can be applied on 1st selected item, with items 2:N as a parameter; 1st parameter is the type of the object taken as a parameter (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+
+#MENU_2N_1 -- method that can be applied on selected items 2:N with 1st item as a parameter; 1st parameter must be a pointer or reference to type of object 1 (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+
+
+
+#MENU_CONTEXT -- puts the menu item directly on the context menu (instead of a submenu) -- ignored in edit dialogs and main menus.
+
+#NO_MENU_CONTEXT -- does not put the item anywhere in a context menu.
+
+#VMENU -- similar to MENU, but specifies a view item (for DataView classes) -- only VMENU items get put in View window menus. (Note: View items should generally not be edited as data items -- they are usually hidden in the browser hierarchy.)
+
+
+DEPRECATED DIRECTIVES
+---------------------
+
+DISPLAY DIRECTIVES
+
+NARROW -- 

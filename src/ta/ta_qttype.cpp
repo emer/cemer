@@ -1,0 +1,2863 @@
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictite copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derited from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The it_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
+
+// ta_qttype.cc
+
+#include "ta_qt.h"
+#include "ta_qtdata.h"
+#include "ta_qtdialog.h"
+#include "ta_qtviewer.h"
+#include "ta_qttype.h"
+#include "ta_qtgroup.h"
+#include "ta_defaults.h"
+#include "css_qt.h"
+#include "css_basic_types.h"
+#include "ta_css.h"
+#include "ta_TA_type.h"
+//TODO: determine why classes from igeometry.h end up in ta_misc TA file, not ta file --
+// igeometry.h is included in ta_qt.h
+//#  include "ta_misc_TA_type.h"
+
+
+
+/* NUKE
+#include <ta/enter_iv.h>
+#include <InterViews/font.h>
+#include <IV-look/kit.h>
+#include <IV-look/dialogs.h>
+#include <InterViews/layout.h>
+#include <InterViews/style.h>
+#include <InterViews/window.h>
+#include <ta/leave_iv.h>
+*/
+
+
+//////////////////////////
+//    taiTypeBase	//
+//////////////////////////
+
+taiTypeBase::taiTypeBase() {
+  typ = NULL;
+  init();
+}
+
+taiTypeBase::taiTypeBase(TypeDef* typ_) {
+  typ = typ_;
+  init();
+}
+
+void taiTypeBase::init() {
+  bid = 0;
+  m_sub_types = NULL;
+  no_setpointer = false;
+}
+
+taiTypeBase::~taiTypeBase() {
+  if (m_sub_types != NULL) {
+    delete m_sub_types;
+    m_sub_types = NULL;
+  }
+}
+
+
+//////////////////////////
+// 	taiType	//
+//////////////////////////
+
+void taiType::Initialize() {
+  bg_color = NULL;
+}
+
+void taiType::Destroy() {
+}
+
+// add "this" type to the td->it slot, or link in lower slot as per the bid
+
+void taiType::AddToType(TypeDef* td) {
+  taiType* cur_it = td->it;		// the current it
+  taiType** ptr_to_it = &(td->it);	// were to put one
+  while(cur_it != NULL) {
+    if(bid < cur_it->bid) {		// we are lower than current
+      ptr_to_it = cur_it->addr_sub_types();	// put us on its sub_types
+      cur_it = cur_it->sub_types();	// and compare to current sub_type
+    }
+    else {
+      m_sub_types = cur_it;		// we are higher, current is our sub
+      cur_it = NULL;			// and we are done
+    }
+  }
+  *ptr_to_it = this;			// put us here
+}
+
+taiData* taiType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent_,
+	taiType* parent_type_)
+{
+  int flags = 0;
+  bool ro = isReadOnly(par, host_);
+  // must also take account of whether parent_type is read only
+  if (parent_type_ != NULL)
+    ro = ro || parent_type_->isReadOnly(par);
+  if (ro)
+    flags |= taiData::flgReadOnly;
+  if (ro && !handlesReadOnly()) {
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags);
+  } else {
+    return GetDataRep_impl(host_, par, gui_parent_, flags);
+  }
+}
+
+taiData* taiType::GetDataRepEx(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int or_flags_,
+	taiType* parent_type_)
+{
+  bool ro = isReadOnly(par, host_);
+  // must also take account of whether parent_type is read only
+  if (parent_type_ != NULL)
+    ro = ro || parent_type_->isReadOnly(par);
+  if (ro)
+    or_flags_ |= taiData::flgReadOnly;
+  if ((or_flags_ & taiData::flgReadOnly) && !handlesReadOnly()) {
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, or_flags_);
+  } else {
+    return GetDataRep_impl(host_, par, gui_parent_, or_flags_);
+  }
+}
+
+void taiType::GetImage(taiData* dat, void* base) {
+  bool ro = isReadOnly(dat);
+  if (ro && !handlesReadOnly()) {
+    taiType::GetImage_impl(dat, base);
+  } else {
+    GetImage_impl(dat, base);
+  }
+}
+
+void taiType::GetValue(taiData* dat, void* base) {
+  bool ro = isReadOnly(dat);
+  if (ro && !handlesReadOnly()) {
+    taiType::GetValue_impl(dat, base);
+  } else {
+    GetValue_impl(dat, base);
+  }
+}
+
+taiData* taiType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiType::GetImage_impl(taiData* dat, void* base) {
+  //TODO: shouldn't this strval follow same logic as the one in GetDataRep
+  String strval = typ->GetValStr(base);
+  taiField* rval = (taiField*)dat;
+  rval->GetImage((char*)strval);
+}
+
+void taiType::GetValue_impl(taiData* dat, void* base) {
+  taiField* rval = (taiField*)dat;
+  String strval = String(rval->GetValue());
+  typ->SetValStr(strval, base);
+}
+
+bool taiType::isReadOnly(taiData* dat, taiDataHost* host_) { // used in GetImage and GetValue
+  // ReadOnly if host_ is RO, OR par is RO, OR directives state RO
+  bool rval = false;
+  if (dat != NULL) {
+    rval = rval || dat->readOnly();
+    if (host_ == NULL)
+      host_ = dat->host;
+  }
+  if (host_ != NULL) {
+    rval = rval || host_->read_only;
+  }
+  rval = rval || typ->HasOption("READ_ONLY");
+  return rval;
+}
+
+
+
+////////////////////////
+//  taiIntType      //
+////////////////////////
+
+int taiIntType::BidForType(TypeDef* td){
+  if(td->InheritsFrom("Int") || td->InheritsFrom("int"))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiIntType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if (typ->HasOption("POS_ONLY"))
+    flags_ |= taiData::flgPosOnly;
+  taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiIntType::GetImage_impl(taiData* dat, void* base) {
+  int val = *((int*)base);
+  taiIncrField* rval = (taiIncrField*)dat;
+  rval->GetImage(val);
+}
+
+void taiIntType::GetValue_impl(taiData* dat, void* base) {
+  taiIncrField* rval = (taiIncrField*)dat;
+  *((int*)base) = rval->GetValue();
+}
+
+
+////////////////////////
+//  taiEnumType     //
+////////////////////////
+
+void taiEnumType::Initialize() {
+//  isBit = (typ && typ->HasOption("BITS"));
+//  if (typ && typ->HasOption("BITS")) {
+  if (typ && (typ->name == "Attributes")) {
+    isBit = true;
+  } else
+    isBit = false;
+}
+
+int taiEnumType::BidForType(TypeDef* td){
+  if (td->InheritsFormal(TA_enum))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiEnumType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if (isBit) {
+    return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
+  } else if (flags_ & taiData::flgReadOnly) {
+    return new taiField(typ, host_, par, gui_parent_, flags_);
+  } else {
+    taiComboBox* rval = new taiComboBox(true, typ,host_, par, gui_parent_);
+    return rval;
+  }
+}
+
+void taiEnumType::GetImage_impl(taiData* dat, void* base) {
+  if (isBit) {
+    taiBitBox* rval = (taiBitBox*)dat;
+    rval->GetImage(*((int*)base));
+  } else if (isReadOnly(dat)) {
+    taiField* rval = (taiField*)(dat);
+    String str;
+    EnumDef* ed = typ->enum_vals.FindNo(*((int*)base));
+    if (ed != NULL) {
+      str = ed->GetLabel();
+    } else {
+      str = String(*((int*)base));
+    }
+    rval->GetImage(str);
+  } else {
+    taiComboBox* rval = (taiComboBox*)dat;
+    EnumDef* td = typ->enum_vals.FindNo(*((int*)base));
+    if (td != NULL)
+      rval->GetImage(td->idx);
+  }
+}
+
+void taiEnumType::GetValue_impl(taiData* dat, void* base) {
+  if (isBit) {
+    taiBitBox* rval = (taiBitBox*)dat;
+    rval->GetValue(*((int*)base));
+  } else if (!isReadOnly(dat)) {
+    taiComboBox* rval = (taiComboBox*)dat;
+    int itm_no = -1;
+    rval->GetValue(itm_no);
+    EnumDef* td = NULL;
+    if ((itm_no >= 0) && (itm_no < typ->enum_vals.size))
+      td = typ->enum_vals.FastEl(itm_no);
+    if (td != NULL)
+      *((int*)base) = td->enum_no;
+  }
+}
+
+
+////////////////////////
+//  taiBoolType     //
+////////////////////////
+
+int taiBoolType::BidForType(TypeDef* td){
+  if(td->InheritsFrom(TA_bool))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiBoolType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_){
+  taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiBoolType::GetImage_impl(taiData* dat, void* base) {
+  bool val = *((bool*)base);
+  taiToggle* rval = (taiToggle*)dat;
+  rval->GetImage(val);
+}
+
+void taiBoolType::GetValue_impl(taiData* dat, void* base) {
+  taiToggle* rval = (taiToggle*)dat;
+  *((bool*)base) = rval->GetValue();
+}
+
+
+////////////////////////
+//  taiClassType    //
+////////////////////////
+
+int taiClassType::BidForType(TypeDef* td) {
+  if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiClassType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if(typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE")) {
+    taiPolyData* rval = new taiPolyData(typ, host_, par, gui_parent_, flags_);
+//NN    rval->GetDataRep_impl(host_);
+    return rval;
+  }
+  else {
+    taiEditButton* rval = new taiEditButton(NULL, NULL, typ, host_, par, gui_parent_, flags_);
+    return rval;
+  }
+}
+
+void taiClassType::GetImage_impl(taiData* dat, void* base) {
+  if(typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE")) {
+    taiPolyData* rval = (taiPolyData*)dat;
+    rval->GetImage(base);
+  }
+  else {
+    taiEditButton *rval = (taiEditButton*)dat;
+    rval->GetImage(base);
+  }
+}
+
+void taiClassType::GetValue_impl(taiData* dat, void* base) {
+  if(typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE")) {
+    taiPolyData* rval = (taiPolyData*)dat;
+    rval->GetValue(base);
+  }
+}
+
+bool taiClassType::CanBrowse() {
+  //TODO: add additionally supported base types
+  return (typ->InheritsFrom(TA_taBase)  && !typ->HasOption("HIDDEN"));
+}
+
+
+////////////////////////
+//  taiStringType   //
+////////////////////////
+
+int taiStringType::BidForType(TypeDef* td){
+  if(td->InheritsFrom(TA_taString))
+    return(taiClassType::BidForType(td) + 1);
+  return 0;
+}
+taiData* taiStringType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_);
+}
+
+void taiStringType::GetImage_impl(taiData* dat, void* base) {
+  taiType::GetImage_impl(dat, base);
+}
+
+void taiStringType::GetValue_impl(taiData* dat, void* base) {
+  taiType::GetValue_impl(dat, base);
+}
+
+
+//////////////////////////////////
+// 	gpiListType		//
+//////////////////////////////////
+
+int gpiListType::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl))
+    return (taiClassType::BidForType(td) +1);
+  return 0;
+}
+taiData* gpiListType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiListType::GetImage_impl(taiData* dat, void* base) {
+  gpiListEditButton *rval = (gpiListEditButton*)dat;
+  rval->GetImage(base);
+}
+
+void gpiListType::GetValue_impl(taiData*, void*) {
+}
+
+
+//////////////////////////////////
+// 	gpiGroupType		//
+//////////////////////////////////
+
+int gpiGroupType::BidForType(TypeDef* td) {
+  if(td->InheritsFrom(TA_taGroup_impl))
+    return (gpiListType::BidForType(td) +1);
+  return 0;
+}
+taiData* gpiGroupType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiGroupType::GetImage_impl(taiData* dat, void* base) {
+  gpiGroupEditButton *rval = (gpiGroupEditButton*)dat;
+  rval->GetImage(base);
+}
+void gpiGroupType::GetValue_impl(taiData*, void*) {
+}
+
+
+//////////////////////////////////
+// 	gpiArray_Type		//
+//////////////////////////////////
+
+int gpiArray_Type::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_taArray)) { // bid higher than the class  type
+    return (taiClassType::BidForType(td) +1);
+  }
+  else {
+    return 0;
+  }
+}
+
+taiData* gpiArray_Type::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiArrayEditButton *rval =
+    new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiArray_Type::GetImage_impl(taiData* dat, void* base) {
+  gpiArrayEditButton *rval = (gpiArrayEditButton*)dat;
+  rval->GetImage(base);
+}
+
+void gpiArray_Type::GetValue_impl(taiData*, void*) {
+}
+
+
+//////////////////////////////////
+//  	taiTokenPtrType  	//
+//////////////////////////////////
+
+int taiTokenPtrType::BidForType(TypeDef* td) {
+  if((td->ptr == 1) && td->DerivesFrom(TA_taBase))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiTokenPtrType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  TypeDef* npt = typ->GetNonPtrType();
+  bool ro = isReadOnly(par, host_) || (flags_ & taiData::flgReadOnly);
+  if (ro || !npt->tokens.keep) {
+    if (ro) flags_ |= taiData::flgEditOnly; // we just want the plain edit button
+    taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
+    return ebrval;
+  }
+  else {
+    flags_ |= (taiData::flgNullOk | taiData::flgEditOk);
+    taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_, flags_);
+    rval->GetMenu();
+    return rval;
+  }
+}
+
+void taiTokenPtrType::GetImage_impl(taiData* dat, void* base) {
+  TypeDef* npt = typ->GetNonPtrType();
+  bool ro = isReadOnly(dat);
+  if (ro || !npt->tokens.keep) {
+    taiEditButton *ebrval = (taiEditButton*) dat;
+    ebrval->GetImage(*((void**) base));
+  }
+  else {
+    taiToken* rval = (taiToken*)dat;
+    rval->UpdateMenu();
+    rval->GetImage(*((TAPtr*)base), NULL);
+  }
+}
+
+void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
+  TypeDef* npt = typ->GetNonPtrType();
+  bool ro = isReadOnly(dat);
+  if (ro || !npt->tokens.keep) {
+    // do nothing?
+    //   taiEditButton *ebrval = (taiEditButton*) dat;
+  }
+  else {
+    taiToken* rval = (taiToken*)dat;
+    if(!no_setpointer)
+      taBase::SetPointer((TAPtr*)base, (TAPtr)rval->GetValue());
+    else
+      *((void**)base) = rval->GetValue();
+/*type must derive from taBase, otherwise we wouldn't have bid!!!
+        if(!no_setpointer && typ->DerivesFrom(TA_taBase))
+      taBase::SetPointer((TAPtr*)base, (TAPtr)rval->GetValue());
+    else
+      *((void**)base) = rval->GetValue(); */
+  }
+}
+
+//////////////////////////
+//    taiTypePtr	//
+//////////////////////////
+
+void taiTypePtr::Initialize() {
+  orig_typ = NULL;
+}
+
+int taiTypePtr::BidForType(TypeDef* td) {
+  if(td->DerivesFrom(TA_TypeDef) && (td->ptr == 1))
+    return taiType::BidForType(td) + 1;
+  return 0;
+}
+
+// todo: the problem is that it doesn't know at this point what the base is
+// and can't therefore figure out what kind of datarep to use..
+// need to have a datarep that is a "string or type menu" kind of thing..
+
+taiData* taiTypePtr::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if (orig_typ == NULL)
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_);
+
+  taiTypeHier* rval =
+    new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiTypePtr::GetImage_impl(taiData* dat, void* base) {
+  if (orig_typ == NULL) {
+    taiType::GetImage_impl(dat, base);
+    return;
+  }
+
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  rval->typ = (TypeDef*)*((void**)base);
+  rval->UpdateMenu();
+  rval->GetImage((TypeDef*)*((void**)base));
+}
+
+void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
+  if (orig_typ == NULL) {
+    taiType::GetValue(dat, base);
+    return;
+  }
+
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  *((void**)base) = rval->GetValue();
+}
+
+////////////////////////
+//  taiFilePtrType  //
+////////////////////////
+
+int taiFilePtrType::BidForType(TypeDef* td) {
+  if(td->DerivesFrom("taFiler") && (td->ptr == 1))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiFilePtrType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  return new taiFileButton(NULL, typ,  host_, par, gui_parent_, flags_);
+}
+
+void taiFilePtrType::GetImage_impl(taiData* dat, void* base){
+  taiFileButton* fbut = (taiFileButton*) dat;
+  fbut->GetImage(base);
+}
+
+void taiFilePtrType::GetValue_impl(taiData* dat, void* base) {
+  taiFileButton* rval = (taiFileButton*)dat;
+  *((void**)base) = rval->GetValue();
+}
+
+
+
+//////////////////////////
+// 	taiEdit	//
+//////////////////////////
+
+void taiEdit::AddEdit(TypeDef* td) {
+  taiEdit* cur_ie = td->ie;
+  taiEdit** ptr_to_ie = (taiEdit **) &(td->ie);
+  while(cur_ie != NULL) {
+    if(bid < cur_ie->bid) {
+      ptr_to_ie = cur_ie->addr_sub_types();
+      cur_ie = cur_ie->sub_types();
+    }
+    else {
+      m_sub_types = cur_ie;
+      cur_ie = NULL;
+    }
+  }
+  *ptr_to_ie = this;
+}
+
+int taiEdit::Edit(void* base, bool readonly, const iColor* bgclr) {
+  taiEditDataHost* host_ = NULL;
+  // get currently active win -- we will only look in any other window
+  iDataViewer* cur_win = taiMisc::viewer_wins.Peek();
+  host_ = taiMisc::FindEdit(base, typ, cur_win);
+  if (host_ == NULL) {
+    host_ = CreateDataHost(base, readonly);
+
+    if (typ->HasOption("NO_OK"))
+      host_->no_ok_but = true;
+    if (typ->HasOption("NO_CANCEL"))
+      host_->read_only = true;
+    host_->Constr("", "", bgclr);
+//TODO: no longer supported:    host_->cancel_only = readonly;
+    return host_->Edit(false);
+  } else if (!host_->modal) {
+    host_->Raise();
+  }
+  return 2;
+}
+
+EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base, bool readonly, const iColor* bgclr) {
+  taiEditDataHost* host_ = NULL;
+//TODO: should we try to find????  host_ = taiMisc::FindEdit(base, typ);
+  if (host_ == NULL) {
+    host_ = CreateDataHost(base, readonly);
+    host_->Constr("", "", bgclr, true);
+    return host_->EditPanel(link); //TODO: verify this conversion is always valid!!!
+  } else { //TODO: this logic needs to be verified and probably revised
+    host_->Raise();
+    return host_->dataPanel(); // TODO: verify conversion is always valid!!!
+  }
+}
+
+taiEditDataHost* taiEdit::CreateDataHost(void* base, bool readonly) {
+  return new taiEditDataHost(base, typ, readonly);
+}
+
+
+//////////////////////////
+// 	taiMember	//
+//////////////////////////
+
+/*int taiMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY"))
+    return (handlesReadOnly()) ? 1 : 0;
+  else return 1;
+} */
+
+bool taiMember::isReadOnly(taiData* dat, taiDataHost* host_) {
+  // ReadOnly if parent type is RO, or par is RO, OR directives state RO
+  bool rval = taiType::isReadOnly(dat, host_);
+  rval = rval || mbr->HasOption("READ_ONLY") || mbr->HasOption("IV_READ_ONLY");
+  return rval;
+}
+
+
+taiData* taiMember::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent_,
+	taiType* parent_type_)
+{
+  bool ro = isReadOnly(par, host_);
+  // we must communicate read_only when getting item
+  //TODO: probably should also use parent_type in determining ro, as base class does
+  int new_flags = 0;
+  if (ro)
+    new_flags |= taiData::flgReadOnly;
+  taiData* dat = GetDataRep_impl(host_, par, gui_parent_, new_flags);
+  return dat;
+}
+
+//NOTE: we always delegate to _impl because those do the readonly delegation by
+// calling the non-impl version of their functions
+void taiMember::GetImage(taiData* dat, void* base) {
+  GetImage_impl(dat, base);
+}
+
+void taiMember::GetValue(taiData* dat, void* base) {
+  GetValue_impl(dat, base);
+}
+
+taiData* taiMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiData* dat = mbr->type->it->GetDataRepEx(host_, par, gui_parent_, flags_, this);
+  // if not readonly, and has a default value, then set data to use hilighting for non-default values
+  if (!(flags_ & taiData::flgReadOnly) && (!(mbr->OptionAfter("DEF_")).empty()))
+    dat->setUseHiBG(true);
+  return dat;
+}
+
+void taiMember::GetImage_impl(taiData* dat, void* base) {
+  mbr->type->it->GetImage(dat, mbr->GetOff(base));
+  GetOrigVal(dat, base);
+}
+
+void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  mbr->type->it->GetValue(dat, mbr->GetOff(base));
+  CmpOrigVal(dat, base, first_diff);
+}
+
+void taiMember::GetOrigVal(taiData* dat, void* base) {
+  dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
+  if (dat->useHiBG()) {
+    String defval = mbr->OptionAfter("DEF_");
+    if (dat->orig_val != defval)
+      dat->setHiBG(true);
+    else
+      dat->setHiBG(false);
+  }
+}
+
+void taiMember::StartScript(void* base) {
+  if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
+    return;
+
+  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+    return;	// no record for unowned objs (except root)!
+  TAPtr tab = (TAPtr)base;
+  *taMisc::record_script << "{ " << typ->name << "* ths = "
+			   << tab->GetPath() << ";" << endl;
+}
+
+void taiMember::EndScript(void* base) {
+  if(taMisc::record_script == NULL)
+    return;
+  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+    return;	// no record for unowned objs (except root)!
+  *taMisc::record_script << "}" << endl;
+}
+
+void taiMember::CmpOrigVal(taiData* dat, void* base, bool& first_diff) {
+  if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
+    return;
+  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+    return;	// no record for unowned objs (except root)!
+  String new_val = mbr->type->GetValStr(mbr->GetOff(base));
+  if(dat->orig_val == new_val)
+    return;
+  if(first_diff)
+    StartScript(base);
+  first_diff = false;
+  new_val.gsub("\"", "\\\"");	// escape the quotes..
+  *taMisc::record_script << "  ths->" << mbr->name << " = \""
+			   << new_val << "\";" << endl;
+}
+
+void taiMember::AddMember(MemberDef* md) {
+  taiMember* cur_im = md->im;
+  taiMember** ptr_to_im = (taiMember **) &(md->im);
+  while(cur_im != NULL) {
+    if(bid < cur_im->bid) {
+      ptr_to_im = cur_im->addr_sub_types();
+      cur_im = cur_im->sub_types();
+    }
+    else {
+      m_sub_types = cur_im;
+      cur_im = NULL;
+    }
+  }
+  *ptr_to_im = this;
+}
+
+////////////////////////
+//  taiMembers      //
+////////////////////////
+
+////////////////////////
+//  taiROMember     //
+////////////////////////
+/*
+TA_QTTYPE_IMPL(taiROMember)
+
+int taiROMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY"))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiROMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiData* rval;
+  taiType* it = mbr->type->it;
+  if (it->handlesReadOnly()) {
+    rval = it->GetDataRep_impl(host_, par, gui_parent_, flags_);
+    rval->setReadOnly(true);
+  } else {
+    rval = new taiField(typ, host_, par, gui_parent_, true);
+  }
+  return rval;
+}
+
+static String taiROMember_get_str(MemberDef* mbr, void* new_base, void* base) {
+  String strval;
+  if (mbr->type->InheritsFrom(TA_taString)) {
+    strval = mbr->type->GetValStr(new_base, base, mbr);
+  } else if (mbr->type->InheritsFormal(TA_class)) {
+    for (int i = 0; i < mbr->type->members.size; ++i) {
+      MemberDef* md = mbr->type->members.FastEl(i);
+      if (md->HasOption("HIDDEN_INLINE") || !md->ShowMember(taMisc::show_gui))
+	continue;
+      strval += md->name + "=" + taiROMember_get_str(md, md->GetOff(new_base), new_base) + ": ";
+    }
+  } else if (mbr->type->InheritsFormal(TA_enum)) {
+    EnumDef* ed = mbr->type->enum_vals.FindNo(*((int*)new_base));
+    if (ed != NULL) {
+      strval = ed->GetLabel();
+    }
+    else
+      strval = String(*((int*)new_base));
+  } else {
+    strval = mbr->type->GetValStr(new_base, base, mbr);
+  }
+  return strval;
+}
+
+void taiROMember::GetImage_impl(taiData* dat, void* base){
+  if (mbr->type->it->handlesReadOnly()) {
+    taiMember::GetImage_impl(dat, base);
+  } else {
+    void* new_base = mbr->GetOff(base);
+    taiField* rval = (taiField*)dat;
+    String strval = taiROMember_get_str(mbr, new_base, base);
+    rval->GetImage_impl(strval);
+  }
+}
+
+void taiROMember::GetMbrValue(taiData*, void*, bool&) {
+}
+
+*/
+
+//////////////////////////////////
+//  	taiTokenPtrMember  	//
+//////////////////////////////////
+
+int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if(td->InheritsFrom(TA_taBase) &&
+     (md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase))
+    return taiMember::BidForMember(md,td)+1;
+  return 0;
+}
+
+taiData* taiTokenPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  TypeDef* npt = mbr->type->GetNonPtrType();
+  if (!npt->tokens.keep) {
+    taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
+    return ebrval;
+  }
+  int token_flags = 0;
+  if (!mbr->HasOption("NO_NULL"))
+    token_flags |= taiData::flgNullOk;
+  if (!mbr->HasOption("NO_EDIT"))
+    token_flags |= taiData::flgEditOk;
+
+  taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
+	token_flags);
+  if(mbr->HasOption("NO_SCOPE"))
+    rval->scope_ref = NULL;
+  else if((host_ != NULL) && (host_->typ->InheritsFrom(TA_taBase)))
+    rval->scope_ref = (TAPtr)(((taiEditDataHost*)host_)->cur_base);
+  rval->GetMenu();
+  return rval;
+}
+
+void taiTokenPtrMember::GetImage_impl(taiData* dat, void* base) {
+  TypeDef* npt = mbr->type->GetNonPtrType();
+  if(!npt->tokens.keep) {
+    taiEditButton *ebrval = (taiEditButton*) dat;
+    ebrval->GetImage(*((void**) mbr->GetOff(base)));
+    return;
+  }
+
+  String mb_nm = mbr->OptionAfter("TYPE_ON_");
+  if(mb_nm != "") {
+    MemberDef* md = typ->members.FindName(mb_nm);
+    if(md != NULL)
+      npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  }
+
+  taiToken* rval = (taiToken*)dat;
+  if(mbr->HasOption("NO_SCOPE"))
+    rval->scope_ref = NULL;
+  else if((rval->host != NULL) && (rval->host)->typ->InheritsFrom(TA_taBase))
+      rval->scope_ref = (TAPtr)(rval->host)->cur_base;
+  else
+    rval->scope_ref = (TAPtr)base;
+  rval->UpdateMenu();
+  rval->GetImage(*((TAPtr*)mbr->GetOff(base)), rval->scope_ref);
+  GetOrigVal(dat, base);
+}
+
+void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  TypeDef* npt = mbr->type->GetNonPtrType();
+  if(!npt->tokens.keep) {
+    // do nothing
+    return;
+  }
+  String mb_nm = mbr->OptionAfter("TYPE_ON_");
+  if(mb_nm != "") {
+    MemberDef* md = typ->members.FindName(mb_nm);
+    if(md != NULL)
+      npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  }
+  taiToken* rval = (taiToken*)dat;
+  if(!no_setpointer && npt->DerivesFrom(TA_taBase))
+    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+  else
+    *((void**)mbr->GetOff(base)) = rval->GetValue();
+  CmpOrigVal(dat, base, first_diff);
+}
+
+
+/////////////////////////////
+//    taiDefaultToken    //
+/////////////////////////////
+
+int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
+  TypeDef* mtd = md->type;
+  if (((mtd->ptr == 1) && mtd->DerivesFrom(TA_taBase)) &&
+     md->HasOption("DEFAULT_EDIT"))
+    return taiTokenPtrMember::BidForMember(md,td)+10;
+  return 0;
+}
+
+taiData* taiDefaultToken::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiDefaultEdit* tde = new taiDefaultEdit(mbr->type->GetNonPtrType());
+  taiEditButton *rval =	new taiEditButton(NULL,	tde, mbr->type->GetNonPtrType(),
+     host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiDefaultToken::GetImage_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+
+  taiEditButton* rval = (taiEditButton*)dat;
+  rval->GetImage(*((void**)new_base));
+
+  taBase* new_token = *((taBase**)new_base);
+  if (new_token != NULL) {
+    rval->typ = new_token->GetTypeDef();
+  }
+}
+
+void taiDefaultToken::GetMbrValue(taiData*, void*, bool&) {
+  return;
+}
+
+//////////////////////////////////
+//	taiSubTokenPtrMember	//
+//////////////////////////////////
+
+int taiSubTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if((md->type->ptr == 1) && (md->OptionAfter("SUBTYPE_") != ""))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiSubTokenPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  TypeDef* td = NULL;
+  String typ_nm = mbr->OptionAfter("SUBTYPE_");
+  if (!typ_nm.empty())
+    td = taMisc::types.FindName((char*)typ_nm);
+  if (td == NULL)
+    td = mbr->type;
+  if (mbr->HasOption("NULL_OK"))
+    flags_ |= taiData::flgNullOk;
+  if (!mbr->HasOption("NO_EDIT"))
+    flags_ |= taiData::flgEditOk;
+  taiSubToken* rval =
+    new taiSubToken( taiMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+
+void taiSubTokenPtrMember::GetImage_impl(taiData* dat, void* base){
+  void* new_base = mbr->GetOff(base);
+  taiSubToken* rval = (taiSubToken*)dat;
+//nn, done in GetImage  rval->UpdateMenu();
+  rval->GetImage(base,*((void **)new_base));
+  GetOrigVal(dat, base);
+}
+
+void taiSubTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  void* new_base = mbr->GetOff(base);
+  taiSubToken* rval = (taiSubToken*)dat;
+  if (!no_setpointer && mbr->type->DerivesFrom(TA_taBase))
+    taBase::SetPointer((TAPtr*)new_base, (TAPtr)rval->GetValue());
+  else
+    *((void**)new_base) = rval->GetValue();
+  CmpOrigVal(dat, base, first_diff);
+}
+
+
+
+//////////////////////////////////
+//	taiTypePtrMember	//
+//////////////////////////////////
+
+int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->ptr == 1) &&
+     ((md->OptionAfter("TYPE_") != "") || (md->OptionAfter("TYPE_ON_") != "")
+      || (md->HasOption("NULL_OK")))
+     && md->type->DerivesFrom(TA_TypeDef))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiTypePtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if (mbr->HasOption("NULL_OK"))
+    flags_ |= taiData::flgNullOk;
+  taiTypeHier* rval =
+    new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall, mbr->type, host_, par, gui_parent_, flags_);
+  rval->GetMenu();
+  return rval;
+}
+
+void taiTypePtrMember::GetImage_impl(taiData* dat, void* base){
+  void* new_base = mbr->GetOff(base);
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  TypeDef* td = NULL;
+  String mb_nm = mbr->OptionAfter("TYPE_ON_");
+  if (mb_nm != "") {
+    MemberDef* md = typ->members.FindName(mb_nm);
+    if (md != NULL)
+      //TODO: should check that member is a TypeDef!!!
+      td = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  } else {
+    mb_nm = mbr->OptionAfter("TYPE_");
+    if(mb_nm == "this")
+      td = typ;
+    else if(mb_nm != "")
+      td = taMisc::types.FindName((char*)mb_nm);
+  }
+  if (td != NULL)
+    rval->typ = td;
+  else
+    rval->typ = mbr->type;
+  rval->UpdateMenu();
+  rval->GetImage((TypeDef*)*((void**)new_base));
+  GetOrigVal(dat, base);
+}
+
+void taiTypePtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  void* new_base = mbr->GetOff(base);
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  TypeDef* nw_typ = (TypeDef*)rval->GetValue();
+  if (mbr->HasOption("NULL_OK"))
+    *((void**)new_base) = nw_typ;
+  else {
+    if(nw_typ != NULL)
+      *((void**)new_base) = nw_typ;
+  }
+  CmpOrigVal(dat, base, first_diff);
+}
+
+
+//////////////////////////////////////////
+//	taiMemberDefPtrMember		//
+//////////////////////////////////////////
+
+int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MemberDef)))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiMemberDefPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+
+  taiMemberDefMenu* rval =
+//was:    new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall, mbr, NULL, host_, par, gui_parent_, flags_);
+    new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall, mbr, NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiMemberDefPtrMember::GetImage_impl(taiData* dat, void* base){
+  void* new_base = mbr->GetOff(base);
+  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
+  MemberDef* cur_sel = *((MemberDef**)(new_base));
+  rval->GetImage(base, true, cur_sel);
+//  rval->GetImage_impl(*((MemberDef**)new_base));
+//  rval->GetImage_impl(base,*((void **)new_base));
+/*
+  taiEditDialog* host_ = taiM->FindEdit(base, typ);
+  if (host_ != NULL) {
+    rval->ta_menu->ResetMenu();
+    MemberSpace* mbs = &(typ->members);
+    for (int i = 0; i < mbs->size; ++i){
+      MemberDef* mbd = mbs->FastEl(i);
+      if (!mbd->ShowMember(host_->show)) continue;
+      rval->ta_menu->AddItem(mbd->name, mbd);
+    }
+  } */
+  GetOrigVal(dat, base);
+}
+
+void taiMemberDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  void* new_base = mbr->GetOff(base);
+  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
+  *((void**)new_base) = rval->GetValue();
+  CmpOrigVal(dat, base, first_diff);
+}
+
+//////////////////////////////
+//	taiFunPtrMember   //
+//////////////////////////////
+
+int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->fun_ptr)
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiFunPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMenu* rval = new taiMenu(taiMenu::buttonmenu, taiMenu::radio_update, taiMisc::fonSmall,
+      typ, host_, par, gui_parent_, flags_);
+  rval->AddItem("NULL", NULL);
+  rval->AddSep();
+  MethodDef* fun;
+  for (int i = 0; i < TA_taRegFun.methods.size; ++i) {
+    fun = TA_taRegFun.methods.FastEl(i);
+    if (mbr->CheckList(fun->lists))
+      rval->AddItem((char*)fun->name, (void*)fun->addr);
+  }
+  return rval;
+}
+
+void taiFunPtrMember::GetImage_impl(taiData* dat, void* base){
+  void* new_base = mbr->GetOff(base);
+  taiMenu* rval = (taiMenu*)dat;
+  if(*((void**)new_base) == NULL) {
+    rval->GetImage(0);
+    return;
+  }
+  int cnt;
+  MethodDef* fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)new_base),
+							mbr->lists, cnt);
+  if (fun)
+    rval->GetImageByIndex(cnt + 1); //1 for NULL item
+  GetOrigVal(dat, base);
+}
+
+void taiFunPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  void* new_base = mbr->GetOff(base);
+  taiMenu* rval = (taiMenu*)dat;
+  taiMenuEl* cur = rval->GetValue();
+  if (cur != NULL)
+    *((void**)new_base) = cur->usr_data;
+  CmpOrigVal(dat, base, first_diff);
+}
+
+//////////////////////////////
+//	taiCondEditMember  //
+//////////////////////////////
+
+void taiCondEditMember::Initialize() {
+  ro_im = NULL;
+  use_ro = false;
+}
+
+taiCondEditMember::taiCondEditMember(MemberDef* md, TypeDef* td)
+: taiMember(md, td)
+{
+//  ro_im = new taiROMember(md, td);
+//  ro_im = new taiMember(md, td); // we will request the read-only version of the rep
+}
+
+taiCondEditMember::~taiCondEditMember() {
+//  if (ro_im != NULL)
+//    delete ro_im;
+//  ro_im = NULL;
+}
+
+int taiCondEditMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (!td->InheritsFrom(TA_taBase))
+    return 0;
+  String optedit = md->OptionAfter("CONDEDIT_");
+  if (!optedit.empty()) {
+    return (taiMember::BidForMember(md,td) + 100); // 100 = definitely do this over other!
+  }
+  return 0;
+}
+
+taiData* taiCondEditMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiDataDeck* rval = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
+  use_ro = (!host_->modal); // only get read-only for modal dialogs (otherwise, no chance to update!)
+
+  rval->InitLayout();
+  rval->cur_deck = 0;
+  taiData* child;
+  if (m_sub_types)
+    child = sub_types()->GetDataRep(host_, rval, gui_parent_);
+  else
+    child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, flags_);
+  rval->AddChildWidget(child->GetRep());
+  if (use_ro) {		// only get read-only for waiting dialogs (otherwise, no chance to update!)
+    rval->cur_deck = 1;
+//    child = ro_im->GetDataRepEx(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
+    child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
+    rval->AddChildWidget(child->GetRep());
+  }
+  rval->EndLayout();
+  return rval;
+}
+
+void taiCondEditMember::GetImage_impl(taiData* dat, void* base){
+  taiDataDeck* rval = (taiDataDeck*)dat;
+  if(m_sub_types) {
+    sub_types()->GetImage(rval->data_el.FastEl(0), base);
+  }
+  else {
+    taiMember::GetImage_impl(rval->data_el.FastEl(0), base);
+  }
+  if (use_ro) {	// only if two options (i.e., !host_->waiting)
+//    ro_im->GetImage(rval->data_el.FastEl(1), base);
+    taiMember::GetImage_impl(rval->data_el.FastEl(1), base);
+
+    // format: CONDEDIT_ON_member:value
+    String optedit = mbr->OptionAfter("CONDEDIT_");
+    if (optedit.empty()) return;
+    String onoff = optedit.before('_');
+    optedit = optedit.after('_');
+    String mbr = optedit.before(':');
+    String val = optedit.after(':');
+
+    TAPtr tab = (TAPtr)base;
+    MemberDef* md = NULL;
+    void* mbr_base = NULL;	// base for member itself
+    void* mbr_par_base = base;	// base for parent of member
+    if (mbr.contains('.')) {
+      String par_path = mbr.before('.', -1);
+      MemberDef* par_md = NULL;
+      TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
+      if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
+	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
+	return;
+      }
+      String subpth = mbr.after('.', -1);
+      md = par_par->FindMembeR(subpth, mbr_base);
+      mbr_par_base = (void*)par_par;
+    }
+    else {
+      md = tab->FindMembeR(mbr, mbr_base);
+    }
+    if ((md == NULL) || (mbr_base == NULL)) {
+      taMisc::Error("*** CONDEDIT: conditionalizing member",mbr,"not found!");
+      return;
+    }
+    String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
+    bool val_is_eq = false;
+    while (true) {
+      String nxtval;
+      if (val.contains(',')) {
+	nxtval = val.after(',');
+	val = val.before(',');
+      }
+      if (val == mbr_val) {
+	val_is_eq = true;
+	break;
+      }
+      if (!nxtval.empty())
+	val = nxtval;
+      else
+	break;
+    }
+    if (onoff == "ON") {
+      if (val_is_eq)
+	rval->GetImage(0);	// editable
+      else
+	rval->GetImage(1);	// not editable
+    } else {
+      if(val_is_eq)
+	rval->GetImage(1);	// not editable
+      else
+	rval->GetImage(0);	// editable
+    }
+  }
+  else {
+    rval->GetImage(0);		// always editable
+  }
+  GetOrigVal(dat, base);
+}
+
+void taiCondEditMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  taiDataDeck* rval = (taiDataDeck*)dat;
+  if (m_sub_types) {
+    sub_types()->GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
+  } else {
+    taiMember::GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
+  }
+/*  if (use_ro) {	// only if two options (i.e., !host_->waiting)
+    ro_im->GetMbrValue(rval->data_el.FastEl(1), base, first_diff);
+  }*/
+}
+
+
+/////////////////////////////
+//    taiTDefaultMember  //
+/////////////////////////////
+
+int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
+// TD_Default member does not bid, it is only applied in special cases.
+  return (0);
+}
+
+taiData* taiTDefaultMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
+  rval->InitLayout();
+  taiData* rdat;
+  if (m_sub_types)
+    rdat = sub_types()->GetDataRepEx(host_, rval, rval->GetRep(), flags_);
+  else
+    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_);
+  rval->data = rdat;
+  rval->AddChildWidget(rdat->GetRep());
+  rval->EndLayout();
+  return rval;
+}
+
+void taiTDefaultMember::GetImage_impl(taiData* dat, void* base) {
+  taiPlusToggle* rval = (taiPlusToggle*)dat;
+  if (m_sub_types) {
+    sub_types()->GetImage(rval->data, base);
+  } else {
+    taiMember::GetImage_impl(rval->data, base);
+  }
+  taBase_List* gp = typ->defaults;
+  tpdflt = NULL;
+  if (gp != NULL) {
+    for (int i = 0; i < gp->size; ++i) {
+      TypeDefault* td = (TypeDefault*)gp->FastEl(i);
+      if (td->token == (TAPtr)base) {
+	tpdflt = td;
+	break;
+      }
+    }
+  }
+  if (tpdflt != NULL)
+    rval->GetImage(tpdflt->GetActive(mbr->idx));
+  GetOrigVal(dat, base);
+}
+
+void taiTDefaultMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  taiPlusToggle* rval = (taiPlusToggle*)dat;
+  if (m_sub_types) {
+    sub_types()->GetMbrValue(rval->data, base, first_diff);
+  } else {
+    taiMember::GetMbrValue(rval->data, base,first_diff);
+  }
+
+  if (tpdflt != NULL)		// gotten by prev GetImage
+    tpdflt->SetActive(mbr->idx, rval->GetValue());
+  CmpOrigVal(dat, base, first_diff);
+}
+
+
+
+//////////////////////////
+// 	taiMethod	//
+//////////////////////////
+
+void taiMethod::AddMethod(MethodDef* md) {
+  taiMethod* cur_im = md->im;
+  taiMethod** ptr_to_im = (taiMethod **) &(md->im);
+  while(cur_im != NULL) {
+    if(bid < cur_im->bid) {
+      ptr_to_im = cur_im->addr_sub_types();
+      cur_im = cur_im->sub_types();
+    }
+    else {
+      m_sub_types = cur_im;
+      cur_im = NULL;
+    }
+  }
+  *ptr_to_im = this;
+}
+
+taiMethodData* taiMethod::GetMethodRep(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_) {
+  return GetMethodRep_impl(base, host_, par, gui_parent_, 0); //TODO: may need to do more with the flags
+}
+
+/////////////////////////////
+//       taiMethods      //
+/////////////////////////////
+
+
+/////////////////////////////
+//   taiButtonMethod     //
+/////////////////////////////
+
+int taiButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if(md->HasOption("BUTTON"))
+    return (taiMethod::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiButtonMethod::GetMethodRep_impl(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+
+/////////////////////////////
+//     taiMenuMethod     //
+/////////////////////////////
+
+int taiMenuMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if ((md->HasOption("MENU")) || (md->HasOption("MENU_BUTTON")))
+    return (taiMethod::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiMenuMethod::GetMethodRep_impl(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+/*NN
+////////////////////////////////
+//   taiMenuButtonMethod     //
+////////////////////////////////
+
+int taiMenuButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if(md->HasOption("MENU_BUTTON"))
+    return (taiMethod::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiMenuButtonMethod::GetMethodRep_impl(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+} */
+
+//////////////////////////
+// 	taiArgType	//
+//////////////////////////
+
+taiArgType::taiArgType(TypeDef* argt, MethodDef* mb, TypeDef* td)
+: taiType(td) {
+  meth = mb;
+  arg_typ = argt;
+  err_flag = false;
+
+  arg_base = NULL;
+  arg_val = NULL;
+  use_it = NULL;
+  obj_inst = NULL;
+}
+
+taiArgType::taiArgType() {
+  meth = NULL;
+  arg_typ = NULL;
+  err_flag = false;
+
+  arg_base = NULL;
+  arg_val = NULL;
+  use_it = NULL;
+  obj_inst = NULL;
+}
+
+taiArgType::~taiArgType() {
+  if (use_it != NULL) {
+    delete use_it;
+    use_it = NULL;
+  }
+  if (obj_inst != NULL) {
+    delete obj_inst;
+    obj_inst = NULL;
+  }
+}
+
+void taiArgType::GetImage_impl(taiData* dat, void*) {
+  if (arg_base == NULL)  return;
+
+  if(use_it != NULL)
+    use_it->GetImage(dat, arg_base);
+  else
+    arg_typ->it->GetImage(dat, arg_base);
+}
+
+void taiArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL) return;
+
+  if (use_it != NULL)
+    use_it->GetValue(dat, arg_base);
+  else
+    arg_typ->it->GetValue(dat, arg_base);
+}
+
+taiData* taiArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  if (arg_base == NULL) return NULL;
+
+  if (use_it != NULL)
+    return use_it->GetDataRepEx(host_, par, gui_parent_, flags_);
+
+  return arg_typ->it->GetDataRepEx(host_, par, gui_parent_, flags_);
+}
+
+cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
+  if(arg_typ->ptr == 0) {
+    if(arg_typ->DerivesFrom(TA_int) || arg_typ->DerivesFrom(TA_short) ||
+       arg_typ->DerivesFrom(TA_long) || arg_typ->DerivesFrom(TA_char) ||
+       arg_typ->DerivesFrom(TA_unsigned) || arg_typ->DerivesFrom(TA_signed) ||
+       arg_typ->DerivesFrom(TA_bool))
+    {
+      arg_typ = &TA_int;
+      arg_val = new cssInt(0, nm);
+      arg_base = (void*)&(((cssInt*)arg_val)->val);
+      return arg_val;
+    }
+    else if(arg_typ->DerivesFrom(TA_float) || arg_typ->DerivesFrom(TA_double)) {
+      arg_typ = &TA_double;
+      arg_val = new cssReal(0, nm);
+      arg_base = (void*)&(((cssReal*)arg_val)->val);
+      return arg_val;
+    }
+    else if(arg_typ->DerivesFrom(TA_taString)) {
+      arg_typ = &TA_taString;
+      arg_val = new cssString("", nm);
+      arg_base = (void*)&(((cssString*)arg_val)->val);
+      return arg_val;
+    }
+    else if(arg_typ->DerivesFrom(TA_taBase)) {
+      arg_typ = arg_typ->GetNonRefType()->GetNonConstType();
+      if(arg_typ->GetInstance() == NULL) return NULL;
+      obj_inst = ((TAPtr)arg_typ->GetInstance())->MakeToken();
+      arg_val = new cssTA_Base(obj_inst, 1, arg_typ, nm);
+      arg_base = obj_inst;
+      return arg_val;
+    }
+    else if(arg_typ->DerivesFormal(TA_enum)) {
+      arg_val = new cssEnum(0, nm);
+      arg_base = (void*)&(((cssEnum*)arg_val)->val);
+      return arg_val;
+    }
+    return NULL;
+  }
+  // ptr > 0 (probably 1)
+
+  if(arg_typ->DerivesFrom(TA_char)) {
+    arg_typ = &TA_taString;
+    arg_val = new cssString("", nm);
+    arg_base = (void*)&(((cssString*)arg_val)->val);
+    return arg_val;
+  }
+  else if(arg_typ->DerivesFrom(TA_taBase)) {
+    TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+    arg_val = new cssTA_Base(NULL, 1, npt, nm);
+    arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+    return arg_val;
+  }
+
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  arg_val = new cssTA(NULL, 1, npt, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+
+/////////////////////////////
+//       taiArgTypes     //
+/////////////////////////////
+
+//////////////////////////////////
+//       taiStreamArgType     //
+//////////////////////////////////
+
+void taiStreamArgType::Initialize() {
+  gf = NULL;
+  filter = "";
+  old_filter = "";
+  old_compress = false;
+}
+
+void taiStreamArgType::Destroy() {
+  if(gf != NULL) {
+    gf->Close();
+    gf->filter = old_filter;
+    gf->compress = old_compress;
+    taRefN::unRefDone(gf);
+  }
+  gf = NULL;
+}
+
+int taiStreamArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if(argt->InheritsFrom(TA_ios))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* taiStreamArgType::GetElFromArg(const char* nm, void*) {
+  // arg_val is for the function
+  arg_val = new cssTA(NULL, 1, arg_typ, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* taiStreamArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  String varext = meth->OptionAfter("EXT_");
+  if (varext != "") {
+    String myname = meth->arg_names[meth->arg_types.Find(arg_typ)];
+    if (varext.before("_",-1) == myname) {
+      if (meth->HasOption("COMPRESS"))
+	filter = "*." + varext.after("_",-1) + taMisc::compress_sfx;
+      else
+	filter = "*." + varext.after("_",-1) + "*";
+    }
+  }
+  if (arg_typ->InheritsFrom(TA_istream))
+    return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, true);
+  else if(arg_typ->InheritsFrom(TA_ostream))
+    return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, false, true);
+  return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, flags_);
+}
+
+void taiStreamArgType::GetImage_impl(taiData* dat, void* base){
+  if (arg_base == NULL)
+    return;
+  taiFileButton* fbut = (taiFileButton*) dat;
+  if (typ->InheritsFrom(TA_taBase)) {
+    TAPtr it = (TAPtr)base;
+    if (gf != NULL)
+      taRefN::unRefDone(gf);
+    gf = it->GetFileDlg();
+    if (gf != NULL)
+      taRefN::Ref(gf);
+    old_filter = gf->filter;
+    old_compress = gf->compress;
+    if (filter != "") {
+      if (filter.contains(taMisc::compress_sfx)) {
+	gf->filter = filter.before(taMisc::compress_sfx) + "*";
+	gf->compress = true;
+      }
+      else {
+	gf->filter = filter;
+	gf->compress = false;	// don't compress if we got a new filter..
+      }
+    }
+  }
+  fbut->GetImage((void*)&gf);
+}
+
+void taiStreamArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiFileButton* rval = (taiFileButton*)dat;
+  if (gf == NULL) {
+    gf = (taFiler*)rval->GetValue();
+    taRefN::Ref(gf);
+  }
+  if (gf == NULL) {
+    *((void**)arg_base) = NULL;
+    err_flag = true;		// error-value not set..
+    return;
+  }
+  GetValueFromGF();
+}
+
+void taiStreamArgType::GetValueFromGF() {
+  if (arg_typ->InheritsFrom(TA_fstream)) {
+    if (gf->fstrm == NULL) {
+      *((void**)arg_base) = NULL;
+      err_flag = true;		// error-value not set..
+      return;
+    }
+    *((fstream**)arg_base) = gf->fstrm;
+    return;
+  }
+  if (arg_typ->InheritsFrom(TA_istream)) {
+    if(gf->istrm == NULL) {
+      *((void**)arg_base) = NULL;
+      err_flag = true;		// error-value not set..
+      return;
+    }
+    *((istream**)arg_base) = gf->istrm;
+    return;
+  }
+  if(arg_typ->InheritsFrom(TA_ostream)) {
+    if (gf->ostrm == NULL) {
+      *((void**)arg_base) = NULL;
+      err_flag = true;		// error-value not set..
+      return;
+    }
+    *((ostream**)arg_base) = gf->ostrm;
+    return;
+  }
+}
+
+//////////////////////////////////////////
+//       taiBoolArgType		//
+//////////////////////////////////////////
+
+int taiBoolArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if(argt->InheritsFrom(TA_bool))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* taiBoolArgType::GetElFromArg(const char* nm, void*) {
+  arg_val = new cssBool(false, nm);
+  arg_base = (void*)&(((cssBool*)arg_val)->val);
+  use_it = new taiBoolType(arg_typ); // make an it for it...
+  return arg_val;
+}
+
+//////////////////////////////////////////
+//       taiTokenPtrArgType		//
+//////////////////////////////////////////
+
+int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if (td->InheritsFrom(TA_taBase) &&
+     (argt->ptr == 1) && argt->DerivesFrom(TA_taBase))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* taiTokenPtrArgType::GetElFromArg(const char* nm, void*) {
+  // arg_val is for the function
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  arg_val = new cssTA_Base(NULL, 1, npt, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* taiTokenPtrArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  int token_flags = 0;
+  if (meth->HasOption("NULL_OK"))
+    token_flags |= taiData::flgNullOk;
+  if (meth->HasOption("EDIT_OK"))
+    token_flags |= taiData::flgEditOk;
+  taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
+	token_flags);
+  rval->GetMenu();
+  return rval;
+}
+
+void taiTokenPtrArgType::GetImage_impl(taiData* dat, void* base){
+  if(arg_base == NULL)
+    return;
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  String mb_nm = meth->OptionAfter("TYPE_ON_");
+  if(mb_nm != "") {
+    if(mb_nm == "this") {
+      npt = ((TAPtr)base)->GetTypeDef(); // use object type
+    }
+    else {
+      MemberDef* md = typ->members.FindName(mb_nm);
+      if(md != NULL) {
+	TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+	if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
+	  npt = mbr_typ;		// make sure this applies to this argument..
+      }
+    }
+  }
+  taiToken* rval = (taiToken*)dat;
+  rval->typ = npt;
+  if(meth->HasOption("NO_SCOPE"))
+    rval->scope_ref = NULL;
+  else if((rval->host != NULL) && (rval->host->typ != NULL) &&
+	  (rval->host->typ->InheritsFrom(TA_taBase)))
+    rval->scope_ref = (TAPtr)(rval->host)->cur_base;
+  else
+    rval->scope_ref = (TAPtr)base;
+  rval->UpdateMenu();
+  rval->GetImage(*((TAPtr*)arg_base), rval->scope_ref);
+}
+
+void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {
+  if(arg_base == NULL)
+    return;
+  taiToken* rval = (taiToken*)dat;
+// since it is an arg type, its a ptr to a css ptr, don't set it..
+//   if(npt->DerivesFrom(TA_taBase))
+//     taBase::SetPointer((TAPtr*)arg_base, (TAPtr)rval->GetValue());
+//   else
+  *((void**)arg_base) = rval->GetValue();
+}
+
+///////////////////////////////////
+//       taiTypePtrArgType     //
+///////////////////////////////////
+
+int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if (argt->DerivesFrom(TA_TypeDef) && (argt->ptr == 1))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+
+cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
+  String mb_nm = meth->OptionAfter("TYPE_ON_");
+  if (mb_nm != "") {
+    MemberDef* md = typ->members.FindName(mb_nm);
+    if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
+      TypeDef* tpdf = *(TypeDef**)(md->GetOff(base));
+      arg_val = new cssTA(tpdf, 1, &TA_TypeDef, nm);
+      arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+      return arg_val;
+    }
+  } else {
+    mb_nm = meth->OptionAfter("TYPE_");
+    if(mb_nm != "") {
+      TypeDef* tpdf;
+      if (mb_nm == "this") {
+	tpdf = typ;
+	if (typ->InheritsFrom(&TA_taBase) && (base != NULL))
+	  tpdf = ((TAPtr)base)->GetTypeDef();
+      } else {
+	tpdf = taMisc::types.FindName(mb_nm);
+      }
+      if (tpdf == NULL)
+	tpdf = &TA_taBase;
+      arg_val = new cssTA(tpdf, 1, &TA_TypeDef, nm);
+      arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+      return arg_val;
+    }
+  }
+  arg_val = new cssTA(&TA_taBase, 1, &TA_TypeDef, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* taiTypePtrArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  bool nul_ok = false;
+  nul_ok = (meth->HasOption("NULL_OK"));
+  TypeDef* init_typ = &TA_taBase;
+  if (*((TypeDef**)arg_base) != NULL)
+    init_typ = *((TypeDef**)arg_base);
+  taiTypeHier* rval = new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall,
+	init_typ, host_, par, gui_parent_, nul_ok);
+  rval->GetMenu();
+  return rval;
+}
+
+void taiTypePtrArgType::GetImage_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  rval->typ = (TypeDef*)*((void**)arg_base);
+  rval->UpdateMenu();
+  rval->GetImage((TypeDef*)*((void**)arg_base));
+}
+
+void taiTypePtrArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiTypeHier* rval = (taiTypeHier*)dat;
+  *((void**)arg_base) = rval->GetValue();
+}
+
+
+///////////////////////////////////
+//       taiMemberPtrArgType     //
+///////////////////////////////////
+
+int taiMemberPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if (argt->DerivesFrom(TA_MemberDef) && (argt->ptr == 1))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+
+cssEl* taiMemberPtrArgType::GetElFromArg(const char* nm, void*) {
+  arg_val = new cssTA(NULL, 1, &TA_MemberDef, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* taiMemberPtrArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+//  MemberDef* init_md;
+/*  if (*((MemberDef**)arg_base) != NULL)
+    init_md = *((MemberDef**)arg_base);
+  else
+    init_md = typ->members.SafeEl(0);*/
+  taiMemberDefMenu* rval = new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
+	NULL, typ, typ, host_, par, gui_parent_, flags_);
+//  rval->GetMenu();
+  return rval;
+}
+
+void taiMemberPtrArgType::GetImage_impl(taiData* dat, void* base) {
+  if(arg_base == NULL)
+    return;
+  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
+  rval->md = (MemberDef*)*((void**)arg_base);
+  rval->GetMenu(base);
+/* obs???
+  taiEditDialog* host_ = taiM->FindEdit(base, typ);
+  if (host_ != NULL) {
+    rval->menubase = typ;
+    rval->ta_menu->ResetMenu();
+    MemberSpace* mbs = &(typ->members);
+    for (int i = 0; i < mbs->size; ++i){
+      MemberDef* mbd = mbs->FastEl(i);
+      if (!mbd->ShowMember(host_->show)) continue;
+      rval->ta_menu->AddItem(mbd->GetLabel(), mbd);
+    }
+  } */
+  MemberDef* initmd = (MemberDef*)*((void**)arg_base);
+  if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
+    //rval->ta_menu->GetImage_impl(initmd);
+    rval->GetImage(initmd, false); //don't reget menu
+  else
+    rval->ta_menu->GetImageByIndex(0);	// just get first on list
+}
+
+void taiMemberPtrArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
+  *((void**)arg_base) = rval->GetValue();
+}
+
+
+///////////////////////////////////
+//       taiMethodPtrArgType     //
+///////////////////////////////////
+
+int taiMethodPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if(argt->DerivesFrom(TA_MethodDef) && (argt->ptr == 1))
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+
+cssEl* taiMethodPtrArgType::GetElFromArg(const char* nm, void*) {
+  arg_val = new cssTA(NULL, 1, &TA_MethodDef, nm);
+  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* taiMethodPtrArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  MethodDef* init_md = typ->methods.FindName("Load");
+  if (*((MethodDef**)arg_base) != NULL)
+    init_md = *((MethodDef**)arg_base);
+  taiMethodDefMenu* rval = new taiMethodDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
+	init_md, typ, host_, par, gui_parent_, flags_);
+  rval->GetMenu();
+  return rval;
+}
+
+void taiMethodPtrArgType::GetImage_impl(taiData* dat, void*) {
+  if(arg_base == NULL)
+    return;
+  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  rval->md = (MethodDef*)*((void**)arg_base);
+  rval->menubase = typ;
+  rval->ta_menu->ResetMenu();
+  MethodSpace* mbs = &(typ->methods);
+  for (int i = 0; i < mbs->size; ++i){
+    MethodDef* mbd = mbs->FastEl(i);
+    if (mbd->im == NULL) continue;
+    if ((mbd->name == "Close") || (mbd->name == "DuplicateMe") || (mbd->name == "ChangeMyType")
+       || (mbd->name == "SelectForEdit") || (mbd->name == "SelectFunForEdit")
+       || (mbd->name == "Help"))
+      continue;
+    rval->ta_menu->AddItem(mbd->GetLabel(), mbd);
+  }
+  MethodDef* initmd = (MethodDef*)*((void**)arg_base);
+  if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
+    rval->ta_menu->GetImage(initmd);
+  else
+    rval->ta_menu->GetImageByIndex(0);	// just get first on list
+}
+
+void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {
+  if(arg_base == NULL)
+    return;
+  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  *((void**)arg_base) = rval->GetValue();
+}
+
+
+
+
+//////////////////////////////
+//    taiDefaultEditDataHost  //
+//////////////////////////////
+
+// this special edit is for defualt instances
+class taiDefaultEditDataHost : public taiEditDataHost {
+public:
+  override void	GetImage();
+  override void	GetValue();
+
+  MemberSpace   mspace;		// special copy of the mspace (added toggles)
+
+//obs:  taiDefaultEditDataHost(TypeDef* tp, void * base);
+  taiDefaultEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
+  	bool modal_ = false, QObject* parent = 0);
+  ~taiDefaultEditDataHost();
+protected:
+  override void	Constr_Labels();
+  override void	Constr_Data();
+private:
+  explicit taiDefaultEditDataHost(taiDefaultEditDataHost&)	{ }; // avoid copy constr bug
+};
+
+taiDefaultEditDataHost::taiDefaultEditDataHost(void* base, TypeDef* typ_, bool read_only_,
+  	bool modal_, QObject* parent)
+: taiEditDataHost(base, typ_, read_only_, modal_, parent)
+{
+  for (int i = 0; i < typ->members.size; ++i){
+    MemberDef* md = new MemberDef(*(typ->members.FastEl(i)));
+    mspace.Add(md);
+    md->im = typ->members.FastEl(i)->im;	// set this here
+    if (md->im != NULL) {
+      taiTDefaultMember* tdm = new taiTDefaultMember(md, typ);
+      tdm->bid = md->im->bid + 1;
+      tdm->AddMember(md);
+    }
+  }
+}
+
+taiDefaultEditDataHost::~taiDefaultEditDataHost(){
+  data_el.Reset();
+  for (int i = mspace.size - 1; i >= 0; --i) {
+    MemberDef* md = mspace.FastEl(i);
+    if (md->im != NULL)
+      delete md->im;
+    md->im = NULL;
+  }
+  mspace.Reset();
+}
+
+void taiDefaultEditDataHost::Constr_Labels() {
+  Constr_Labels_impl(mspace, &data_el);
+}
+
+void taiDefaultEditDataHost::Constr_Data() {
+  Constr_Data_impl(mspace, &data_el);
+//  FocusOnFirst();
+//  GetImage_impl();
+}
+
+void taiDefaultEditDataHost::GetValue() {
+  GetValue_impl(mspace, data_el, cur_base);
+  if (typ->InheritsFrom(TA_taBase)) {
+    TAPtr rbase = (TAPtr)cur_base;
+    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
+    taiMisc::Update(rbase);
+
+    taBase_List* gp = typ->defaults;
+    TypeDefault* tpdflt = NULL;
+    if (gp != NULL) {
+      for (int i = 0; i < gp->size; ++i) {
+	TypeDefault* td = (TypeDefault*)gp->FastEl(i);
+	if (td->token == rbase) {
+	  tpdflt = td;
+	  break;
+	}
+      }
+    }
+    if (tpdflt != NULL)
+      tpdflt->UpdateToNameValue();
+  }
+  Unchanged();
+}
+
+void taiDefaultEditDataHost::GetImage() {
+  GetImage_impl(mspace, data_el,cur_base);
+  Unchanged();
+}
+
+////////////////////////////////
+//  taiDefaultEdit    //
+////////////////////////////////
+
+taiEditDataHost* taiDefaultEdit::CreateDataHost(void* base, bool readonly) {
+  return new taiDefaultEditDataHost(base, typ, readonly);
+}
+
+
+/*OBS
+//////////////////////
+// taiROListMember //
+/////////////////////
+
+int taiROListMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
+     (td->InheritsFrom(TA_taList_impl)))
+    return (taiROMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiROListMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  rval->read_only = true;
+  return rval;
+}
+
+void taiROListMember::GetImage_impl(taiData* dat, void* base){
+  gpiListEditButton *rval = (gpiListEditButton*)dat;
+  rval->GetImage_impl(base);
+}
+
+void taiROListMember::GetMbrValue(taiData*, void*, bool&) {
+}
+
+
+//////////////////////
+// taiROGroupMember //
+/////////////////////
+
+int taiROGroupMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
+     (td->InheritsFrom(TA_taGroup_impl)))
+    return (taiROMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiROGroupMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  rval->read_only = true;
+  return rval;
+}
+
+void taiROGroupMember::GetImage_impl(taiData* dat, void* base){
+  gpiGroupEditButton *rval = (gpiGroupEditButton*)dat;
+  rval->GetImage_impl(base);
+}
+
+void taiROGroupMember::GetMbrValue(taiData*, void*, bool&) {
+}
+
+
+
+//////////////////////
+// taiROArrayMember //
+/////////////////////
+
+int taiROArrayMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
+     (td->InheritsFrom(TA_taArray)))
+    return (taiROMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiROArrayMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiArrayEditButton *rval = new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  rval->read_only = true;
+  return rval;
+}
+
+void taiROArrayMember::GetImage_impl(taiData* dat, void* base){
+  gpiArrayEditButton *rval = (gpiArrayEditButton*)dat;
+  rval->GetImage_impl(base);
+}
+
+void taiROArrayMember::GetMbrValue(taiData*, void*, bool&) {
+}
+
+*/
+//////////////////////////////////
+// 	gpiDefaultEl		//
+//////////////////////////////////
+
+int gpiDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->name == "el_def") && (td->InheritsFrom(TA_taList_impl)))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* gpiDefaultEl::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
+	NULL, typ, host_, par, gui_parent_, (taiData::flgNullOk | taiData::flgNoList));
+  return rval;
+}
+
+void gpiDefaultEl::GetImage_impl(taiData* dat, void* base) {
+  taList_impl* tl = (taList_impl*)base;
+  TAPtr tmp_ptr = tl->DefaultEl_();
+  gpiListEls* rval = (gpiListEls*)dat;
+  rval->GetImage((TAGPtr)base, tmp_ptr);
+  GetOrigVal(dat, base);
+}
+
+void gpiDefaultEl::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  taList_impl* tl = (taList_impl*)base;
+  gpiListEls* rval = (gpiListEls*)dat;
+  TAPtr tmp_ptr = rval->GetValue();
+  tl->SetDefaultEl(tmp_ptr);
+  CmpOrigVal(dat, base, first_diff);
+}
+
+
+//////////////////////////////////
+// 	gpiLinkGP		//
+//////////////////////////////////
+
+int gpiLinkGP::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->InheritsFrom(TA_taGroup_impl)) &&
+     (md->HasOption("LINK_GROUP")))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* gpiLinkGP::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiLinkEditButton* rval = new gpiLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiLinkGP::GetImage_impl(taiData* dat, void* base) {
+  gpiLinkEditButton* rval = (gpiLinkEditButton*)dat;
+  rval->GetImage(mbr->GetOff(base));
+}
+
+void gpiLinkGP::GetMbrValue(taiData*, void*, bool&) {
+}
+
+//////////////////////////////////
+// 	gpiLinkList		//
+//////////////////////////////////
+
+int gpiLinkList::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->InheritsFrom(TA_taList_impl)) &&
+     (md->HasOption("LINK_GROUP")))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* gpiLinkList::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  gpiListLinkEditButton* rval = new gpiListLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiLinkList::GetImage_impl(taiData* dat, void* base) {
+  gpiListLinkEditButton* rval = (gpiListLinkEditButton*)dat;
+  rval->GetImage(mbr->GetOff(base));
+}
+
+void gpiLinkList::GetMbrValue(taiData*, void*, bool&) {
+}
+
+
+//////////////////////////////////
+// 	gpiFromGpTokenPtrMember	//
+//////////////////////////////////
+
+int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (td->InheritsFrom(TA_taBase) && (md->type->ptr == 1)
+     && md->type->DerivesFrom(TA_taBase) && (md->OptionAfter("FROM_GROUP_") != ""))
+    return taiTokenPtrMember::BidForMember(md,td)+1;
+  return 0;
+}
+
+taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return NULL;
+  int new_flags = 0;
+  if(!mbr->HasOption("NO_NULL"))
+    new_flags |= taiData::flgNullOk;
+  if(!mbr->HasOption("NO_EDIT"))
+    new_flags |= taiData::flgEditOk;
+  if(!mbr->HasOption("GROUP_OPT_OK"))
+    new_flags |= taiData::flgNoList;
+
+  if (mbr->type->DerivesFrom(&TA_taGroup_impl))
+    return new gpiSubGroups(taiMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
+  else if (from_md->type->DerivesFrom(TA_taGroup_impl))
+    return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+  else
+    return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, new_flags);
+}
+
+void gpiFromGpTokenPtrMember::GetImage_impl(taiData* dat, void* base) {
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return;
+  if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
+    gpiSubGroups* rval = (gpiSubGroups*)dat;
+    TAGPtr lst = (TAGPtr)GetList(from_md, base);
+    rval->GetImage(lst, *((TAGPtr*)mbr->GetOff(base)));
+  } else {
+    gpiListEls* rval = (gpiListEls*)dat;
+    TABLPtr lst = GetList(from_md, base);
+    rval->GetImage(lst, *((TAPtr*)mbr->GetOff(base)));
+  }
+  GetOrigVal(dat, base);
+}
+
+void gpiFromGpTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
+    gpiSubGroups* rval = (gpiSubGroups*)dat;
+    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+  } else {
+    gpiListEls* rval = (gpiListEls*)dat;
+    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+  }
+  CmpOrigVal(dat, base, first_diff);
+}
+
+MemberDef* gpiFromGpTokenPtrMember::GetFromMd() {
+  String mb_nm = mbr->OptionAfter("FROM_GROUP_");
+  MemberDef* from_md = NULL;
+  if(mb_nm != "")
+    from_md = typ->members.FindName(mb_nm);
+  return from_md;
+}
+
+TABLPtr	gpiFromGpTokenPtrMember::GetList(MemberDef* from_md, void* base) {
+  if (from_md == NULL)
+    return NULL;
+  if(from_md->type->ptr == 1)
+    return *((TABLPtr*)from_md->GetOff(base));
+  else
+    return (TABLPtr)from_md->GetOff(base);
+}
+
+
+//////////////////////////////////
+//        gpiTAPtrArgType     //
+//////////////////////////////////
+
+int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl) &&
+     (argt->ptr == 1) && argt->DerivesFrom(TA_taBase))
+    return taiTokenPtrArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* gpiTAPtrArgType::GetElFromArg(const char* nm, void* base) {
+  TABLPtr lst = (TABLPtr)base;
+  if ((lst != NULL) &&
+     (arg_typ->DerivesFrom(lst->el_base) || lst->el_base->DerivesFrom(arg_typ->GetNonPtrType()))) {
+    String ptrnm = lst->el_base->name + "_ptr";
+    TypeDef* ntd = taMisc::types.FindName(ptrnm);
+    if (ntd != NULL)
+      arg_typ = ntd;	// search in el_base (if args are compatible)
+  }
+  return taiTokenPtrArgType::GetElFromArg(nm,base);
+}
+
+
+//////////////////////////////////
+//        gpiInObjArgType     //
+//////////////////////////////////
+
+int gpiInObjArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl) &&
+     (argt->ptr == 1) && argt->DerivesFrom(TA_taBase) && (md->HasOption("ARG_ON_OBJ")))
+    return gpiTAPtrArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* gpiInObjArgType::GetElFromArg(const char* nm, void* base) {
+  TABLPtr lst = (TABLPtr)base;
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  if (lst != NULL)
+    arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
+  else
+    arg_val = new cssTA_Base(NULL, 1, npt, nm);
+
+  arg_base = (void*)&(((cssTA_Base*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* gpiInObjArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  int new_flags = 0; //note: exclude flgNoList
+  if (meth->HasOption("NULL_OK"))
+    new_flags |= taiData::flgNullOk;
+  if (meth->HasOption("EDIT_OK"))
+    new_flags |= taiData::flgEditOk;
+  if (typ->InheritsFrom(TA_taGroup_impl))
+    return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+  else
+    return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, new_flags);
+}
+
+void gpiInObjArgType::GetImage_impl(taiData* dat, void* base) {
+  if (arg_base == NULL)
+    return;
+  gpiListEls* els;
+  if (typ->InheritsFrom(TA_taGroup_impl))
+    els = (gpiGroupEls*)dat;
+  else
+    els = (gpiListEls*)dat;
+  els->GetImage((TABLPtr)base, *((TAPtr*)arg_base));
+}
+
+void gpiInObjArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  gpiListEls* els;
+  if (typ->InheritsFrom(TA_taGroup_impl))
+    els = (gpiGroupEls*)dat;
+  else
+    els = (gpiListEls*)dat;
+
+  *((TAPtr*)arg_base) = els->GetValue();
+}
+
+//////////////////////////////////
+//        gpiFromGpArgType    //
+//////////////////////////////////
+
+int gpiFromGpArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_taBase))
+    return 0;
+  String fmgp = md->OptionAfter("FROM_GROUP_");
+  if (fmgp.empty()) return 0;
+  if (isdigit(fmgp.firstchar()) && (fmgp.at(1,1) == "_")) {
+    int idx = (int)(String)fmgp.before('_');
+    if(aidx > idx) return 0;	// index means anything at this index or less
+  }
+  return taiTokenPtrArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* gpiFromGpArgType::GetElFromArg(const char* nm, void* base) {
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return NULL;
+  TABLPtr lst = GetList(from_md, base);
+  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  if (lst != NULL)
+    arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
+  else
+    arg_val = new cssTA_Base(NULL, 1, npt, nm);
+
+  arg_base = (void*)&(((cssTA_Base*)arg_val)->ptr);
+  return arg_val;
+}
+
+taiData* gpiFromGpArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return NULL;
+  int new_flags = 0;
+  if (meth->HasOption("NULL_OK"))
+    new_flags |= taiData::flgNullOk;
+  if (meth->HasOption("EDIT_OK"))
+    new_flags |= taiData::flgEditOk;
+
+  if (meth->HasOption("NO_GROUP_OPT"))
+    new_flags |= taiData::flgNoGroup; //aka flagNoList
+
+  if (from_md->type->DerivesFrom(TA_taGroup_impl))
+    return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+  else
+    return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+		typ, host_, par, gui_parent_, new_flags);
+}
+
+void gpiFromGpArgType::GetImage_impl(taiData* dat, void* base) {
+  if (arg_base == NULL)  return;
+  MemberDef* from_md = GetFromMd();
+  if (from_md == NULL)	return;
+  gpiListEls* els = (gpiListEls*)dat;
+  TABLPtr lst = GetList(from_md, base);
+  els->GetImage(lst, *((TAPtr*)arg_base));
+}
+
+void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  gpiListEls* els = (gpiListEls*)dat;
+  *((TAPtr*)arg_base) = els->GetValue();
+}
+
+MemberDef* gpiFromGpArgType::GetFromMd() {
+  MemberDef* from_md = NULL;
+  String mb_nm = meth->OptionAfter("FROM_GROUP_");
+  if (!mb_nm.empty()) {
+    if (isdigit(mb_nm.firstchar()) && (mb_nm.at(1,1) == "_"))
+      mb_nm = mb_nm.after('_');
+    from_md = typ->members.FindName(mb_nm);
+  }
+  return from_md;
+}
+
+TABLPtr	gpiFromGpArgType::GetList(MemberDef* from_md, void* base) {
+  if (from_md == NULL)
+    return NULL;
+  if(from_md->type->ptr == 1)
+    return *((TABLPtr*)from_md->GetOff(base));
+  else
+    return (TABLPtr)from_md->GetOff(base);
+}
+
+
+//////////////////////////////////
+// 	gpiListEdit		//
+//////////////////////////////////
+
+int gpiListEdit::BidForEdit(TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl))
+    return taiEdit::BidForEdit(td)+1;
+  return 0;
+}
+
+taiEditDataHost* gpiListEdit::CreateDataHost(void* base, bool readonly) {
+  return new gpiListDataHost(base, typ, readonly);
+}
+
+//////////////////////////////////
+// 	gpiGroupEdit		//
+//////////////////////////////////
+
+int gpiGroupEdit::BidForEdit(TypeDef* td) {
+  if (td->InheritsFrom(TA_taGroup_impl))
+    return gpiListEdit::BidForEdit(td)+1;
+  return 0;
+}
+
+taiEditDataHost* gpiGroupEdit::CreateDataHost(void* base, bool readonly) {
+  return new gpiGroupDataHost(base, typ, readonly);
+}
+
+//////////////////////////////////
+// 	gpiArrayEdit		//
+//////////////////////////////////
+
+int gpiArrayEdit::BidForEdit(TypeDef* td){
+  if (td->InheritsFrom(TA_taArray))
+    return (taiEdit::BidForType(td) +1);
+  return 0;
+}
+
+taiEditDataHost* gpiArrayEdit::CreateDataHost(void* base, bool readonly) {
+  return new gpiArrayEditDataHost(base, typ, readonly);
+}
+
+//////////////////////////
+// 	SArgEdit	//
+//////////////////////////
+
+int SArgEdit::BidForEdit(TypeDef* td){
+  if(td->InheritsFrom(TA_SArg_Array))
+    return (gpiArrayEdit::BidForType(td) +1);
+  return 0;
+}
+
+taiEditDataHost* SArgEdit::CreateDataHost(void* base, bool readonly) {
+  return new SArgEditDataHost(base, typ, readonly);
+}
+
+//////////////////////////////////
+//	gpiSelectEdit		//
+//////////////////////////////////
+
+int gpiSelectEdit::BidForEdit(TypeDef* td) {
+  if (td->InheritsFrom(TA_SelectEdit))
+    return taiEdit::BidForEdit(td)+1;
+  return 0;
+}
+
+taiEditDataHost* gpiSelectEdit::CreateDataHost(void* base, bool readonly) {
+  return new gpiSelectEditDataHost(base, typ, readonly);
+}
+
+
+//////////////////////////
+//   taiViewType	//
+//////////////////////////
+
+void taiViewType::Initialize() {
+}
+
+void taiViewType::AddView(TypeDef* td) {
+  taiViewType* cur_iv = td->iv;		// the current it
+  taiViewType** ptr_to_iv = &(td->iv);	// were to put one
+  while (cur_iv != NULL) {
+    if (bid < cur_iv->bid) {		// we are lower than current
+      ptr_to_iv = cur_iv->addr_sub_types();	// put us on its sub_types
+      cur_iv = cur_iv->sub_types();	// and compare to current sub_type
+    } else {
+      m_sub_types = cur_iv;		// we are higher, current is our sub
+      cur_iv = NULL;			// and we are done
+    }
+  }
+  *ptr_to_iv = this;			// put us here
+}
+
+iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
+  m_dp = NULL;
+  m_dps = NULL;
+  CreateDataPanel_impl(dl_);
+  if (m_dps) {
+      m_dps->AllSubPanelsAdded();
+      m_dps->set_cur_panel_id(0);
+      return m_dps;
+  } else return m_dp;
+}
+
+void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
+  if (!m_dp) {
+    m_dp = dp;
+    return;
+  }
+
+  // already one panel created, so may need to create a set
+  if (!m_dps) {
+    m_dps = new iDataPanelSet(dp->link());
+    m_dps->AddSubPanel(m_dp);
+  }
+  m_dps->AddSubPanel(dp);
+}
+
+
+
+//////////////////////////
+//   tabViewType 	//
+//////////////////////////
+
+int tabViewType::BidForView(TypeDef* td) {
+  return 0; //no taBase implementation for now
+}
+
+taiDataLink* tabViewType::CreateDataLink_impl(taBase* data_) {
+  return NULL; //no taBase implementation for now
+}
+
+void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
+{
+  //NOTE: tabListViewType calls this directly to get the property panel --
+  // if this method is changed substantially, make sure to check tabListViewType, and change
+  // if necessary
+  TypeDef* td = dl->GetDataTypeDef();
+  taiEdit* taie = td->ie;
+  //TODO: need to determine read_only
+  iDataPanelFrame* dp = taie->EditPanel(dl, dl->data(), false, GetEditColorInherit(dl));
+  DataPanelCreated(dp);
+}
+
+taiDataLink* tabViewType::GetDataLink(void* data_) {
+  //NOTE: replaced in tabOViewType with an optimized version
+  taBase* data = (taBase*)data_;
+  taDataLink* dl = data->data_link();
+  if (dl) return (taiDataLink*)dl;
+  else return CreateDataLink_impl(data);
+}
+
+const iColor* tabViewType::GetEditColorInherit(taiDataLink* dl) const {
+  return ((taBase*)dl->data())->GetEditColorInherit();
+}
+
+
+//////////////////////////
+//   tabOViewType 	//
+//////////////////////////
+
+int tabOViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taOBase))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+taiDataLink* tabOViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabODataLink((taOBase*)data_);
+}
+
+taiDataLink* tabOViewType::GetDataLink(void* data_) {
+  taOBase* data = (taOBase*)data_;
+  taDataLink* dl = *(data->addr_data_link());
+  if (dl) return (taiDataLink*)dl;
+  else return CreateDataLink_impl(data);
+}
+
+
+//////////////////////////
+//   tabListViewType 	//
+//////////////////////////
+
+int tabListViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taList_impl))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+taiDataLink* tabListViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabListDataLink((taList_impl*)data_);
+}
+
+void tabListViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // we create ours first, because it should be the default
+  iListDataPanel* bldp = new iListDataPanel(dl_);
+  DataPanelCreated(bldp);
+  inherited::CreateDataPanel_impl(dl_);
+}
+
+
+//////////////////////////
+//   tabGroupViewType 	//
+//////////////////////////
+
+int tabGroupViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taGroup_impl))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+taiDataLink* tabGroupViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabGroupDataLink((taGroup_impl*)data_);
+}
+
+
+
+void taiTypeBase::InitializeTypes() {
+  int i,j,k;
+  TypeDef* td;
+
+  TypeSpace i_type_space;
+  TypeSpace v_type_space;
+  TypeSpace i_memb_space;
+  TypeSpace i_meth_space;
+  TypeSpace i_edit_space;
+
+  for (i=0; i < taMisc::types.size; ++i) {
+    td = taMisc::types.FastEl(i);
+
+    // generate a list of all the qt types
+    if (td->InheritsFrom(TA_taiType) && (td->instance != NULL)
+       && !(td->InheritsFrom(TA_taiMember) || td->InheritsFrom(TA_taiMethod) ||
+	    td->InheritsFrom(TA_taiArgType) || td->InheritsFrom(TA_taiEdit)))
+      i_type_space.Link(td);
+
+
+    // generate a list of all the view types
+    if (td->InheritsFrom(TA_taiViewType) && (td->instance != NULL))
+      v_type_space.Link(td);
+
+    // generate a list of all the member_i types
+    if (td->InheritsFrom(TA_taiMember) && (td->instance != NULL))
+      i_memb_space.Link(td);
+
+    // generate a list of all the method_i types
+    if (td->InheritsFrom(TA_taiMethod) && (td->instance != NULL))
+      i_meth_space.Link(td);
+
+    // generate a list of all the method arg types to be used later
+    if (td->InheritsFrom(TA_taiArgType) && (td->instance != NULL))
+      taiMisc::arg_types.Link(td);
+
+    // generate a list of all the ie types (edit dialogs)
+    if (td->InheritsFrom(TA_taiEdit) && (td->instance != NULL))
+      i_edit_space.Link(td);
+  }
+
+  if (i_type_space.size == 0)
+    taMisc::Error("taiInit: warning: no taiType's found with instance != NULL");
+  if (i_memb_space.size == 0)
+    taMisc::Error("taiInit: warning: no taiMembers's found with instance != NULL");
+  if (i_edit_space.size == 0)
+    taMisc::Error("taiInit: warning: no taiEdit's found with instance != NULL");
+
+  // go through all the types and assign the highest bid for
+  //   the it, iv, and ie
+  int bid;
+
+  for (i=0; i < taMisc::types.size; ++i){
+    td = taMisc::types.FastEl(i);
+    for (j=0; j <i_type_space.size; ++j) {
+      taiType* tit_i = (taiType*) i_type_space.FastEl(j)->GetInstance();
+      if ((bid = tit_i->BidForType(td)) > 0) {
+	taiType* tit = (taiType*)tit_i->TypInst(td); // make one
+	tit->bid = bid;
+	tit->AddToType(td);		// add it
+      }
+    }
+
+    for (j=0; j < v_type_space.size; ++j) {
+      taiViewType* tit_v = (taiViewType*) v_type_space.FastEl(j)->GetInstance();
+      if ((bid = tit_v->BidForView(td)) > 0) {
+	taiViewType* tit = (taiViewType*)tit_v->TypInst(td); // make one
+	tit->bid = bid;
+	tit->AddView(td);		// add it
+      }
+    }
+
+    for (j=0; j < i_edit_space.size; ++j) {
+      taiEdit* tie_i = (taiEdit*) i_edit_space.FastEl(j)->GetInstance();
+      if ((bid = tie_i->BidForEdit(td)) > 0) {
+	taiEdit* tie = (taiEdit*)tie_i->TypInst(td);
+	tie->bid = bid;
+	tie->AddEdit(td);
+      }
+    }
+
+    // go though all the types and find the ones that are classes
+    // for each class type go through the members and assign
+    // the highest bid for the member's it (may be based on opts field)
+    // and do the enum types since they are not global and only on members
+
+    if (td->InheritsFormal(TA_class)) {
+      for (j=0; j < td->members.size; ++j) {
+	MemberDef* md = td->members.FastEl(j);
+	if (md->owner->owner != td) continue; // if we do not own this mdef, skip
+	for (k=0; k < i_memb_space.size; ++k){
+	  taiMember* tim_i = (taiMember*) i_memb_space.FastEl(k)->GetInstance();
+	  if ((bid = tim_i->BidForMember(md,td)) > 0 ) {
+	    taiMember* tim = tim_i->MembInst(md,td);
+	    tim->bid = bid;
+	    tim->AddMember(md);
+	  }
+	}
+      }
+
+      for(j=0; j < td->sub_types.size; ++j){
+	TypeDef* subt = td->sub_types.FastEl(j);
+	for(k=0; k < i_type_space.size; ++k) {
+	  taiType* tit_i = (taiType*) i_type_space.FastEl(k)->GetInstance();
+	  if ((bid = tit_i->BidForType(subt)) > 0) {
+	    taiType* tit = (taiType*)tit_i->TypInst(subt); // make one
+	    tit->bid = bid;
+	    tit->AddToType(subt);		// add it
+	  }
+	}
+      }
+
+      // only assign method im's to those methods that do better than the default
+      // (which has a value of 0).  Thus, most methods don't generate a new object here
+
+      for (j=0; j < td->methods.size; ++j) {
+	MethodDef* md = td->methods.FastEl(j);
+	if (md->owner->owner != td) continue; // if we do not own this mdef, skip
+	for (k=0; k < i_meth_space.size; ++k){
+	  taiMethod* tim_i = (taiMethod*) i_meth_space.FastEl(k)->GetInstance();
+	  if ((bid = tim_i->BidForMethod(md,td)) > 0 ) {
+	    taiMethod* tim = (taiMethod*)tim_i->MethInst(md,td);
+	    tim->bid = bid;
+	    tim->AddMethod(md);
+	  }
+	}
+      }
+
+    } // td->InheritsFormal(TA_class)
+
+  } // for each Type
+}
+

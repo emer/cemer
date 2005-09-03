@@ -1,0 +1,277 @@
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the PDP++ software package.			      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, and modify this software and its documentation    //
+// for any purpose other than distribution-for-profit is hereby granted	      //
+// without fee, provided that the above copyright notice and this permission  //
+// notice appear in all copies of the software and related documentation.     //
+//									      //
+// Permission to distribute the software or modified or extended versions     //
+// thereof on a not-for-profit basis is explicitly granted, under the above   //
+// conditions. 	HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE OR MODIFIED OR  //
+// EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED EXCEPT BY PRIOR      //
+// ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS.                  //
+// 									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
+
+#include "taiqtso_def.h"
+
+#include "ieditgrid.h"
+
+#include <qlayout.h>
+#include <qobject.h>
+#include <qobjectlist.h>
+#include <qpainter.h>
+#include <qpoint.h>
+#include <qrect.h>
+#include <qscrollview.h>
+#include <qwidget.h>
+
+//////////////////////////////////
+// 	iStripeWidget		//
+//////////////////////////////////
+
+iStripeWidget::iStripeWidget(QWidget* parent, const char* name)
+:QWidget(parent, name), mhiLightColor(0x80, 0x80, 0x80)
+{
+  mstripeHeight = 25;
+  mtopMargin = 0;
+}
+
+iStripeWidget::~iStripeWidget()
+{
+}
+
+QSize iStripeWidget::minimumSizeHint() const {
+  // get superclass's hint, and override the height
+  QSize rval = QWidget::minimumSizeHint();
+  return rval.expandedTo(QSize(rval.width(), mtopMargin + 2 * mstripeHeight));
+}
+
+void iStripeWidget::setHiLightColor(const QColor& val) {
+  mhiLightColor = val;
+  update();
+
+}
+
+void iStripeWidget::setStripeHeight(int val) {
+  if (val == mstripeHeight) return;
+  if (val < 1) return; // must be +ve
+  mstripeHeight = val;
+  update();
+}
+
+void iStripeWidget::setTopMargin(int val) {
+  if (val == mtopMargin) return;
+  if (val < 0) return; // must be +ve
+  mtopMargin = val;
+  update();
+}
+
+void iStripeWidget::paintEvent(QPaintEvent* pev)
+{
+  QWidget::paintEvent(pev);
+  if (height() <= mtopMargin) return;
+  QPainter p(this);
+  int num_stripes = (height() - mtopMargin) / mstripeHeight;
+  if ((mstripeHeight * num_stripes) > (height() - mtopMargin)) num_stripes++; // one fraction of a stripe -- should be clipped by painting
+
+  p.setPen(mhiLightColor);
+  p.setBrush(mhiLightColor);
+
+  // hilight every second stripe
+  for (int i = 1; i < num_stripes; i+= 2 ) {
+    p.drawRect(0, (i * mstripeHeight) + mtopMargin, width(), mstripeHeight); // draw hilighted rect
+  }
+}
+
+
+//////////////////////////////////
+// 	iEditGrid		//
+//////////////////////////////////
+
+
+/*NOTE: to insure proper visual appearance when an hscrollbar appears in the data area, we always
+  have one extra empty dummy name slot at the end -- this pushes the entire structure down, and
+  therefore the last actual data line doesn't get clipped */
+
+iEditGrid::iEditGrid (QWidget* parent, const char* name)
+: QWidget(parent, name)
+{
+  init(3, 2, 2, 1, 1);
+}
+
+iEditGrid::iEditGrid (int margin_, int hspace_, int vspace_, QWidget* parent, const char* name)
+: QWidget(parent, name)
+{
+  init(margin_, hspace_, vspace_, 1, 1);
+}
+
+iEditGrid::iEditGrid (int margin_, int hspace_, int vspace_, int rows_, int cols_, QWidget* parent, const char* name)
+: QWidget(parent, name)
+{
+  init(margin_, hspace_, vspace_, rows_, cols_);
+}
+
+void iEditGrid::init(int margin_, int hspace_, int vspace_, int rows_, int cols_) {
+  mmargin = margin_;
+  mhspace = hspace_;
+  mvspace = vspace_;
+  if (rows_ < 1) rows_ = 1;
+  if (cols_ < 1) cols_ = 1;
+  mrows = rows_;
+  mcols = cols_;
+  mrow_height = 1; //must set later
+  layOuter = new QHBoxLayout(this);
+  layNamesOuter = new QVBoxLayout();
+  layOuter->addLayout(layNamesOuter);
+  bodyNames = new iStripeWidget(this);
+  QVBoxLayout* vbl = new QVBoxLayout(bodyNames);
+  layNames = new QGridLayout(mrows + 2, 1, mvspace); //extra dummy row
+  layNames->setMargin(mmargin);
+  vbl->addLayout(layNames);
+  vbl->addStretch();
+  layNamesOuter->addWidget(bodyNames);
+  layNamesOuter->addStretch();
+//nn  layNames->setRowSpacing(0, mrow_height); //TEMP
+  layNamesOuter->addStretch();
+  layOuter->addSpacing(mhspace);
+  scrBody = new QScrollView(this);
+  scrBody->setVScrollBarMode(QScrollView::AlwaysOff); // use outer container for scrolling, to keep names in sync
+  scrBody->setResizePolicy(QScrollView::AutoOneFit);
+  body = new iStripeWidget();		// parent for the data items
+  body->resize(1, 1); // let it expand
+  scrBody->addChild(body);
+
+  vbl = new QVBoxLayout(body);
+  layBody = new QGridLayout(mrows + 1, mcols, mvspace); //note: vspace passed for "spacing", applies to both dims
+  layBody->setMargin(mmargin);
+  vbl->addLayout(layBody);
+  vbl->addStretch();
+  layOuter->addWidget(scrBody, 2); // anonymous outer layout in scroll view, so we can add stretch at bottom
+  resizeRows_impl();
+}
+
+void iEditGrid::checkSetParent(QWidget* widget, QWidget* parent) {
+  if (widget->parent() != parent) {
+    widget->reparent(parent, QPoint(0,0)); //get's moved anyway, based on layout
+  }
+}
+
+void iEditGrid::clearLater() { // clears all contained items, but does it via deleteLater, not delete
+  QObjectList* ol = (QObjectList*)(bodyNames->children()); //unconstify it
+  for (int i = ol->count() - 1; i > 0; --i) { //Note: we presume item 0 is layNames
+    QObject* chobj = ol->at(i);
+    chobj->deleteLater(); // deleted in event loop
+  }
+  ol = (QObjectList*)(body->children()); //unconstify it
+  for (int i = ol->count() - 1; i > 0; --i) { //Note: we presume item 0 is layN
+    QObject* chobj = ol->at(i);
+    chobj->deleteLater(); // deleted in event loop
+  }
+}
+
+void iEditGrid::resizeRows_impl() {
+  for (int i = 0; i < (mrows + 1); ++i) {
+    layNames->setRowSpacing(i, mrow_height + (2 * mmargin));
+    layBody->setRowSpacing(i,  mrow_height + (2 * mmargin));
+  }
+  layNames->setRowSpacing(mrows + 1, mrow_height + (2 * mmargin)); //dummy row
+}
+
+void iEditGrid::setDimensions(int rows_, int cols_) {
+  if ((rows_ == mrows) && (cols_ == mcols)) return;
+  //note: layouts won't shrink, only expand
+  layNames->expand(rows_ + 2, 1);
+  layBody->expand(rows_ + 1, cols_);
+  mrows = MAX(mrows, rows_);
+  mcols = MAX(mcols, cols_);
+  resizeRows_impl();
+}
+
+void iEditGrid::setColNameWidget(int col, QWidget* name) {
+  checkSetParent(name, (QWidget*)body);
+  layBody->addWidget(name, 0, col, (Qt::AlignCenter | Qt::AlignVCenter));
+}
+
+void iEditGrid::setDataWidget(int row, int col, QWidget* data) {
+  checkSetParent(data, (QWidget*)body);
+  layBody->setRowSpacing(row + 1,  mrow_height + (2 * mmargin));
+  layBody->addWidget(data, row + 1, col, (Qt::AlignLeft | Qt::AlignVCenter));
+//  resizeRows_impl();
+}
+
+void iEditGrid::setDataLayout(int row, int col, QLayout* data) {
+  layBody->setRowSpacing(row + 1,  mrow_height + (2 * mmargin));
+  layBody->addLayout(data, row + 1, col);
+//  resizeRows_impl();
+}
+
+void iEditGrid::setHiLightColor(const QColor& val) {
+  bodyNames->setHiLightColor(val);
+  body->setHiLightColor(val);
+}
+
+void iEditGrid::setRowHeight(int value, bool force) {
+  if ((mrow_height == value) && (!force)) return;
+  mrow_height = value;
+  bodyNames->setStripeHeight(value + (2 * mmargin) + mvspace);
+  bodyNames->setTopMargin(value + (2 * mmargin) + mvspace + 1); //+1 for frame border of group items
+  body->setStripeHeight(value + (2 * mmargin) + mvspace);
+  body->setTopMargin(value + (2 * mmargin) + mvspace);
+  resizeRows_impl();
+}
+
+void iEditGrid::setPaletteBackgroundColor (const QColor& color) {
+  QWidget::setPaletteBackgroundColor(color);
+  body->setPaletteBackgroundColor(color); //note: may not be necessary
+  scrBody->viewport()->setPaletteBackgroundColor(color);
+}
+
+void iEditGrid::setRowNameWidget(int row, QWidget* name) {
+  checkSetParent(name, (QWidget*)bodyNames);
+  layNames->setRowSpacing(row + 1,  mrow_height + (2 * mmargin));
+  layNames->addWidget(name, row + 1, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+//  resizeRows_impl();
+}
+
+void iEditGrid::setSpacing(int hor, int ver) {
+  if ((mhspace == hor) && (mvspace == ver)) return;
+  mhspace = hor;
+  mvspace = ver;
+  setRowHeight(mrow_height, true);
+}
+
+void iEditGrid::setVisibleCols(int num) {
+  if (mvisibleCols == num) return;
+  setVisibleCols_impl(num);
+}
+
+void iEditGrid::setVisibleCols_impl(int num) {
+  // TODO: sets widths of columns
+  mvisibleCols = num;
+}
+

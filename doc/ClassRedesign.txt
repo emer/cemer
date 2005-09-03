@@ -1,0 +1,23 @@
+Class Redesign
+
+taBase
+
+Current responsibilities:
+
+* streaming
+* base for most other objects
+* concept of parent/child
+* change notification
+* gui (and non-gui) clients
+* type awareness
+* gui actions
+* named
+* data updating semantics
+* edit invocation
+
+
+Data Notification
+
+* currently, is highly modal and switched -- new types require mods to base code
+
+* change to use event-like objects that can be subclassed

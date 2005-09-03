@@ -1,0 +1,128 @@
+This file documents all the compiler switches, makefile variables, and environment variables that are used by the ta and pdp systems. Variable scope codes are indicated below, along with defaults:
+  e -- environment (default is not applicable in environment)
+  m -- makefile (default is applicable in a makefile)
+  c -- compiler (default is applicable in source files)
+
+Directory locations
+
+Targets:
+
+Target Subfolders:
+.[Nogui/Gui][Mpi][Debug]
+
+Module (lib/bin) suffix qualifiers:
+[_nogui][_mpi][_debug]
+  * suffix qualifiers for target-specific files/versions
+  
+Debugging
+
+* the debug version of a module has "-dbg" appended to it
+
+DEBUG 
+  * forces generation and linking of a debuggable version
+  * code won't be optimized
+  * adds additional tests, and diagnostic messages
+  
+TA_PROFILE
+  * adds internal statistics to a variety of classes
+  * NOTE: always set when DEBUG is set
+  
+ 
+Gui
+
+* the nogui version of a module has "-nog" appended to it;
+  the "-nog" append precedes the "-dbg" append
+
+TA_GUI
+TA_NO_GUI
+  * complementary switches, set when compiling for gui/no gui
+  * controls all non-QtCore related dependencies
+  * for nogui, there can be no Coin or non-QtCore dependencies
+
+TA_USE_QT
+  * this switch is set when linking with Qt
+  * NOTE: THIS FLAG DOES NOT INDICATE GUI -- ex. ta is compiled with 
+    the QtCore library, even for the non-gui version of the program
+  
+TA_USE_INVENTOR
+  * this switch is set when compiling for gui and linking with Coin
+  * this switch is really only used in the lowest level files
+  * NOTE: Coin/Inventor is never used when building nogui
+ 
+    
+Mpi
+
+* the MPI version of a module has "-mpi" appended to it;
+  the "-mpi" append follows the "-nog" append
+
+DMEM_COMPILE
+  * set when compiling for MPI
+
+ 
+Module Target
+
+MOD_QUAL (m)
+  * module qualifiers, appended to base name of library or executable
+  * is empty for default, which is no debug, gui, no mpi
+  
+   
+Maketa
+
+__MAKETA__
+  * defined when maketa is scanning the source code (headers)
+  
+   
+Platform
+
+These are the main platform switches:
+
+WINDOWS -- Win32 or Win64
+  * all Windows platforms use a Windows-based gui
+DARWIN -- MacOS X
+LINUX -- Linux
+SOLARIS -- Sun Solaris
+
+[MORE TBD]
+
+These are also defined under the given conditions:
+UNIX -- for any Unix platform, including MacOS X
+  * all Unix platforms use X Windows-based gui
+WIN32 -- for 32 bit Windows
+WIN64 -- for 64 bit Windows
+
+
+Architecture
+
+These are the architecture switches:
+
+I386 -- Intel i386
+X86_64 -- AMD/Intel 64 bit
+IA64 -- Intel Itanium (64 bit)
+PPC -- Power PC (any version)
+PPC32 -- Power PC, 32 bit
+PPC64 -- Power PC, 64 bit
+
+Word Size
+
+TA_32BIT -- defined for all 32 bit targets
+TA_64BIT -- defined for all 64 bit targets
+  
+
+Makefile Variables
+
+TARG_DEFINES
+  * modal -Dxx defines, depending on target
+  
+TARG_LIBS
+  * modal -lxxx defines, based on target (ex mpi, lqt, etc.)
+
+Deprecated Switches
+
+The following switches appeared in 3.2, and are deprecated:
+
+CYGWIN -- the Windows version no longer requires Cygwin
+  * some code fragments may remain with this switch -- it is
+    ok to leave those for the time being
+    
+    
+

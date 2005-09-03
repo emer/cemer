@@ -1,0 +1,68 @@
+TODO list for CSS:
+
+- has a problem with: var-num types of exprs -- gobbles the - into the
+num, sees var num (need to fix parser somehow)
+
+- have one command ("info") that gives info on lots of
+different things instead of the current lots of commands.
+	info "literals"  info "functions"  info "globals", etc.
+
+- document issues about progspaces and class objects refering
+to extern objects, etc.
+
+- script errors in auto-run code cause mutiple-loads of a project!
+
+- extern class objects -- when to call constructor?
+
+- fix gui for: inline's
+
+- tab-completion for cssClass things like members, methods, etc.
+
+- compile scoped refs -- enums, etc, with GetScopedNo, etc.
+
+- use new const things to do multi-dim arrays as const objects?
+
+- use ConstExprTop for static variable initializers -- tricky part is
+	using it for '=' case, but not for simple decl.
+
+- build in parse code for reading array initializers instead of using
+	the existing method, which does not parse variables at all,
+	and has trouble with comments, etc.
+
+- multi_space has some bugs on exit (dtor).
+
+- register the endl, flush, bin, hex, etc widgets from the stream library
+	in css.  what type are they?  what do they do?
+- also register the taLeafItr too.
+
+- initializers for css arrays do not convert variable names into corresponding
+	 values, its a pain in the ass..
+
+- bug when you press C-c after having done a cont several times..
+
+- static member elements (functions and members) 
+	add static_methods and static_members to class type object
+	put in the appropriate searching, etc. functionality
+
+- warnings on enum assignment to non-enum values..
+
+- copy constructors for css classes?
+
+- #define for arbitrary macros (currently only defined or not defined)
+	- need to read everything until newline as text, pass it
+	to the define constr.  this parses it.
+	when its called, it needs to register macro invocation, 
+	which reads until ')' as text, performs substitution, 
+	replaces text buffer with substituted text, which is then
+	parsed..
+
+- do loop does not allow break, continue (write from scratch a do loop
+	instead of using the while)
+
+- initializer values for classes: just "read" in data
+	and not assumed order like C inits
+
+- a "rigorous" mode that turns off the flexibility and laxitude
+	esp. with respect to the C_ptr types
+
+

@@ -1,0 +1,15 @@
+Debugging Maketa issue
+
+* happens under several runtimes, debug and release
+
+
+* happens on the same file in each enviro
+
+* (for msvc/ta) happens on same file, even if that file is put earlier
+  in the list
+
+* happens different files between enviros
+  msvc,ta: ta_qtdata.h
+  msvc,tamisc: t3viewer.h (file 15)
+  MSVC, pdp: netstru.h (6)
+

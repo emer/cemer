@@ -1,0 +1,9 @@
+xcopy /D /Y ..\ta\ta_string.h ta_string.h
+xcopy /D /Y ..\ta\ta_string.cc ta_string.cc
+xcopy /D /Y ..\ta\ta_platform.h ta_platform.h
+xcopy /D /Y ..\ta\ta_platform.cc ta_platform.cc
+xcopy /D /Y ..\ta\ta_platform_win.cc ta_platform_win.cc
+xcopy /D /Y ..\ta\ta_type.h ta_type.h
+xcopy /D /Y ..\ta\ta_type.cc ta_type.cc
+xcopy /D /Y ..\ta\ta_list.h ta_list.h
+xcopy /D /Y ..\ta\ta_list.cc ta_list.cc
