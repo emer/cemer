@@ -68,7 +68,6 @@ TypeDef TA_const_SAvgCorSpec_ref("const_SAvgCorSpec_ref", 1, 0, 1, 0,1);
 TypeDef TA_LeabraUnit_ptr("LeabraUnit_ptr", 1, 1, 0, 0,1);
 TypeDef TA_LeabraUnitSpec_ptr("LeabraUnitSpec_ptr", 1, 1, 0, 0,1);
 TypeDef TA_LeabraTrial_ptr("LeabraTrial_ptr", 1, 1, 0, 0,1);
-TypeDef TA_GraphLog_ptr("GraphLog_ptr", 1, 1, 0, 0,1);
 TypeDef TA_const_LeabraConSpec("const_LeabraConSpec", 1, 0, 0, 0,1);
 TypeDef TA_const_LeabraConSpec_ref("const_LeabraConSpec_ref", 1, 0, 1, 0,1);
 TypeDef TA_const_LeabraBiasSpec("const_LeabraBiasSpec", 1, 0, 0, 0,1);
@@ -1126,6 +1125,26 @@ LeabraUnit_Group*		 TAI_LeabraUnit_Group=NULL;
     if(na == 2) {
       rval=new cssString(((LeabraUnit_Group*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
     return rval;}
+  static cssEl* cssElCFun_LeabraUnit_Group_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
+    ((LeabraUnit_Group*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
+    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
+    return rval;}
+  static cssEl* cssElCFun_LeabraUnit_Group_ChildEditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((LeabraUnit_Group*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
+    return rval;}
+  static cssEl* cssElCFun_LeabraUnit_Group_QueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
+    ((LeabraUnit_Group*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
+    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
+    return rval;}
+  static cssEl* cssElCFun_LeabraUnit_Group_EditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((LeabraUnit_Group*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
+    return rval;}
   static cssEl* cssElCFun_LeabraUnit_Group_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((LeabraUnit_Group*)ths)->GetDataLink(), 1, &TA_taDataLink);
@@ -1313,6 +1332,10 @@ LeabraUnit_Group*		 TAI_LeabraUnit_Group=NULL;
   static cssEl* cssElCFun_LeabraUnit_Group_CallFun_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((LeabraUnit_Group*)ths)->CallFun((const char*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_LeabraUnit_Group_SetAdapter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((LeabraUnit_Group*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_LeabraUnit_Group_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -1898,6 +1921,26 @@ LeabraLayer*		 TAI_LeabraLayer=NULL;
     if(na == 2) {
       rval=new cssString(((LeabraLayer*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
     return rval;}
+  static cssEl* cssElCFun_LeabraLayer_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
+    ((LeabraLayer*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
+    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
+    return rval;}
+  static cssEl* cssElCFun_LeabraLayer_ChildEditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((LeabraLayer*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
+    return rval;}
+  static cssEl* cssElCFun_LeabraLayer_QueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
+    ((LeabraLayer*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
+    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
+    return rval;}
+  static cssEl* cssElCFun_LeabraLayer_EditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((LeabraLayer*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
+    return rval;}
   static cssEl* cssElCFun_LeabraLayer_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((LeabraLayer*)ths)->GetDataLink(), 1, &TA_taDataLink);
@@ -2085,6 +2128,10 @@ LeabraLayer*		 TAI_LeabraLayer=NULL;
   static cssEl* cssElCFun_LeabraLayer_CallFun_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((LeabraLayer*)ths)->CallFun((const char*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_LeabraLayer_SetAdapter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((LeabraLayer*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_LeabraLayer_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -4799,6 +4846,28 @@ static MethodArgs_data TA_LeabraUnit_Group_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
   NULL};
+static MethodArgs_data TA_LeabraUnit_Group_ChildQueryEditActions_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_const_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_LeabraUnit_Group_ChildEditAction_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
+static MethodArgs_data TA_LeabraUnit_Group_QueryEditActions_MethArgs[]={
+  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_LeabraUnit_Group_EditAction_MethArgs[]={
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
 static MethodArgs_data TA_LeabraUnit_Group_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
   NULL};
@@ -4809,8 +4878,8 @@ static MethodArgs_data TA_LeabraUnit_Group_GetOwner_MethArgs[]={
   {&TA_TypeDef_ptr,NULL,"tp",""},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_GetPath_MethArgs[]={
-  {&TA_TAPtr,NULL,"ta","0"},
-  {&TA_TAPtr,NULL,"par_stop","0"},
+  {&TA_TAPtr,NULL,"ta","((void *)0)"},
+  {&TA_TAPtr,NULL,"par_stop","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_FindFromPath_MethArgs[]={
   {&TA_taString_ref,NULL,"path",""},
@@ -4819,7 +4888,7 @@ static MethodArgs_data TA_LeabraUnit_Group_FindFromPath_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_New_MethArgs[]={
   {&TA_int,NULL,"n_objs","0"},
-  {&TA_TypeDef_ptr,NULL,"typ","0"},
+  {&TA_TypeDef_ptr,NULL,"typ","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_StructUpdate_MethArgs[]={
   {&TA_bool,NULL,"begin",""},
@@ -4846,16 +4915,16 @@ static MethodArgs_data TA_LeabraUnit_Group_GetEnumVal_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_Load_MethArgs[]={
   {&TA_istream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_Save_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   {&TA_int,NULL,"indent","0"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_SaveAs_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   {&TA_int,NULL,"indent","0"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_ReShowEdit_MethArgs[]={
@@ -4887,14 +4956,17 @@ static MethodArgs_data TA_LeabraUnit_Group_SelectFunForEdit_MethArgs[]={
 static MethodArgs_data TA_LeabraUnit_Group_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
   NULL};
+static MethodArgs_data TA_LeabraUnit_Group_SetAdapter_MethArgs[]={
+  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
+  NULL};
 static MethodArgs_data TA_LeabraUnit_Group_GetTA_Element__MethArgs[]={
   {&TA_int,NULL,"i",""},
   {&TA_TypeDef_ptr_ref,NULL,"eltd",""},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_DataChanged_MethArgs[]={
   {&TA_int,NULL,"dcr",""},
-  {&TA_void_ptr,NULL,"op1"," 0"},
-  {&TA_void_ptr,NULL,"op2"," 0"},
+  {&TA_void_ptr,NULL,"op1"," ((void *)0)"},
+  {&TA_void_ptr,NULL,"op2"," ((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_Alloc_MethArgs[]={
   {&TA_int,NULL,"sz",""},
@@ -5058,7 +5130,7 @@ static MethodArgs_data TA_LeabraUnit_Group_MoveAfter_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_Dump_Save_PathR_impl_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   {&TA_int,NULL,"indent","0"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_SetDefaultEl_MethArgs[]={
@@ -5137,11 +5209,11 @@ static MethodArgs_data TA_LeabraUnit_Group_NextGp_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_NewEl_MethArgs[]={
   {&TA_int,NULL,"n_els","0"},
-  {&TA_TypeDef_ptr,NULL,"typ","0"},
+  {&TA_TypeDef_ptr,NULL,"typ","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_NewGp_MethArgs[]={
   {&TA_int,NULL,"n_gps","0"},
-  {&TA_TypeDef_ptr,NULL,"typ","0"},
+  {&TA_TypeDef_ptr,NULL,"typ","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_FindName_MethArgs[]={
   {&TA_const_char_ptr,NULL,"item_nm",""},
@@ -5177,7 +5249,7 @@ static MethodArgs_data TA_LeabraUnit_Group_ReadWeights_MethArgs[]={
   {NULL,"Con_Group::WtSaveFormat","fmt"," Con_Group::TEXT"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_LayoutUnits_MethArgs[]={
-  {&TA_Unit_ptr,NULL,"u"," 0"},
+  {&TA_Unit_ptr,NULL,"u"," ((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraUnit_Group_SetUnitSpec_MethArgs[]={
   {&TA_UnitSpec_ptr,NULL,"unitspec",""},
@@ -5227,6 +5299,14 @@ static MethodArgs_data TA_LeabraUnit_Group_Inhib_Copy__MethArgs[]={
 static MethodDef_data TA_LeabraUnit_Group_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_LeabraUnit_Group_GetColText_stub,TA_LeabraUnit_Group_GetColText_MethArgs},
+  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
+    0,5,-1,0,NULL,cssElCFun_LeabraUnit_Group_ChildQueryEditActions_stub,TA_LeabraUnit_Group_ChildQueryEditActions_MethArgs},
+  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
+    0,4,-1,0,NULL,cssElCFun_LeabraUnit_Group_ChildEditAction_stub,TA_LeabraUnit_Group_ChildEditAction_MethArgs},
+  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
+    0,3,-1,0,NULL,cssElCFun_LeabraUnit_Group_QueryEditActions_stub,TA_LeabraUnit_Group_QueryEditActions_MethArgs},
+  {&TA_int,NULL,"EditAction","","","",
+    0,2,-1,0,NULL,cssElCFun_LeabraUnit_Group_EditAction_stub,TA_LeabraUnit_Group_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_LeabraUnit_Group_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -5295,6 +5375,8 @@ static MethodDef_data TA_LeabraUnit_Group_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_LeabraUnit_Group_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_CallFun_stub,TA_LeabraUnit_Group_CallFun_MethArgs},
+  {&TA_void,NULL,"SetAdapter","","","",
+    0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_SetAdapter_stub,TA_LeabraUnit_Group_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_LeabraUnit_Group_addr_data_link_stub,NULL},
   {&TA_void_ptr,NULL,"GetTA_Element_","","","",
@@ -5371,7 +5453,7 @@ static MethodDef_data TA_LeabraUnit_Group_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_FindEl_stub,TA_LeabraUnit_Group_FindEl_MethArgs},
   {&TA_void,NULL,"AddEl"," append a new pointer to end of list","","",
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_AddEl_stub,TA_LeabraUnit_Group_AddEl_MethArgs},
-  {&TA_void,NULL,"Add"," add element to the list and 'ownÍ item","","",
+  {&TA_void,NULL,"Add"," add element to the list and 'own' item","","",
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_Add_stub,TA_LeabraUnit_Group_Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add so that object is unique, true if unique","","",
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_AddUnique_stub,TA_LeabraUnit_Group_AddUnique_MethArgs},
@@ -5403,7 +5485,7 @@ static MethodDef_data TA_LeabraUnit_Group_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_LeabraUnit_Group_ReplaceLinkEl_stub,TA_LeabraUnit_Group_ReplaceLinkEl_MethArgs},
   {&TA_bool,NULL,"ReplaceLinkName"," replace given named element (if on list) with the new one","","",
     0,2,-1,0,NULL,cssElCFun_LeabraUnit_Group_ReplaceLinkName_stub,TA_LeabraUnit_Group_ReplaceLinkName_MethArgs},
-  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'ownedÍ)","","",
+  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_LeabraUnit_Group_Push_stub,TA_LeabraUnit_Group_Push_MethArgs},
   {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
     0,2,-1,0,NULL,cssElCFun_LeabraUnit_Group_MoveEl_stub,TA_LeabraUnit_Group_MoveEl_MethArgs},
@@ -5561,6 +5643,28 @@ static MethodArgs_data TA_LeabraLayer_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
   NULL};
+static MethodArgs_data TA_LeabraLayer_ChildQueryEditActions_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_const_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_LeabraLayer_ChildEditAction_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
+static MethodArgs_data TA_LeabraLayer_QueryEditActions_MethArgs[]={
+  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_LeabraLayer_EditAction_MethArgs[]={
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
 static MethodArgs_data TA_LeabraLayer_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
   NULL};
@@ -5571,8 +5675,8 @@ static MethodArgs_data TA_LeabraLayer_GetOwner_MethArgs[]={
   {&TA_TypeDef_ptr,NULL,"tp",""},
   NULL};
 static MethodArgs_data TA_LeabraLayer_GetPath_MethArgs[]={
-  {&TA_TAPtr,NULL,"ta","0"},
-  {&TA_TAPtr,NULL,"par_stop","0"},
+  {&TA_TAPtr,NULL,"ta","((void *)0)"},
+  {&TA_TAPtr,NULL,"par_stop","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_FindFromPath_MethArgs[]={
   {&TA_taString_ref,NULL,"path",""},
@@ -5581,7 +5685,7 @@ static MethodArgs_data TA_LeabraLayer_FindFromPath_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraLayer_New_MethArgs[]={
   {&TA_int,NULL,"n_objs","0"},
-  {&TA_TypeDef_ptr,NULL,"type","0"},
+  {&TA_TypeDef_ptr,NULL,"type","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_StructUpdate_MethArgs[]={
   {&TA_bool,NULL,"begin",""},
@@ -5608,16 +5712,16 @@ static MethodArgs_data TA_LeabraLayer_GetEnumVal_MethArgs[]={
   NULL};
 static MethodArgs_data TA_LeabraLayer_Load_MethArgs[]={
   {&TA_istream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_Save_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   {&TA_int,NULL,"indent","0"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_SaveAs_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
   {&TA_int,NULL,"indent","0"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_ReShowEdit_MethArgs[]={
@@ -5649,6 +5753,9 @@ static MethodArgs_data TA_LeabraLayer_SelectFunForEdit_MethArgs[]={
 static MethodArgs_data TA_LeabraLayer_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
   NULL};
+static MethodArgs_data TA_LeabraLayer_SetAdapter_MethArgs[]={
+  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
+  NULL};
 static MethodArgs_data TA_LeabraLayer_Copy_Weights_MethArgs[]={
   {&TA_const_Layer_ptr,NULL,"src",""},
   NULL};
@@ -5661,7 +5768,7 @@ static MethodArgs_data TA_LeabraLayer_ReadWeights_MethArgs[]={
   {NULL,"Con_Group::WtSaveFormat","fmt"," Con_Group::TEXT"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_LayoutUnits_MethArgs[]={
-  {&TA_Unit_ptr,NULL,"u","0"},
+  {&TA_Unit_ptr,NULL,"u","((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraLayer_ConnectFrom_MethArgs[]={
   {&TA_Layer_ptr,NULL,"lay",""},
@@ -5814,6 +5921,14 @@ static MethodArgs_data TA_LeabraLayer_Compute_WtFmLin_MethArgs[]={
 static MethodDef_data TA_LeabraLayer_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_LeabraLayer_GetColText_stub,TA_LeabraLayer_GetColText_MethArgs},
+  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
+    0,5,-1,0,NULL,cssElCFun_LeabraLayer_ChildQueryEditActions_stub,TA_LeabraLayer_ChildQueryEditActions_MethArgs},
+  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
+    0,4,-1,0,NULL,cssElCFun_LeabraLayer_ChildEditAction_stub,TA_LeabraLayer_ChildEditAction_MethArgs},
+  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
+    0,3,-1,0,NULL,cssElCFun_LeabraLayer_QueryEditActions_stub,TA_LeabraLayer_QueryEditActions_MethArgs},
+  {&TA_int,NULL,"EditAction","","","",
+    0,2,-1,0,NULL,cssElCFun_LeabraLayer_EditAction_stub,TA_LeabraLayer_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_LeabraLayer_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -5882,6 +5997,8 @@ static MethodDef_data TA_LeabraLayer_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_LeabraLayer_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_LeabraLayer_CallFun_stub,TA_LeabraLayer_CallFun_MethArgs},
+  {&TA_void,NULL,"SetAdapter","","","",
+    0,1,-1,0,NULL,cssElCFun_LeabraLayer_SetAdapter_stub,TA_LeabraLayer_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_LeabraLayer_addr_data_link_stub,NULL},
   {&TA_void,NULL,"Copy_Weights"," copies weights from other layer (incl wts assoc with unit bias member)","MENU MENU_ON_Object MENU_SEP_BEFORE ","",
@@ -6535,7 +6652,7 @@ static MethodDef_data TA_taPtrList_LeabraUnit__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__FindEl_stub,TA_taPtrList_LeabraUnit__FindEl_MethArgs},
   {&TA_void,NULL,"AddEl"," append a new pointer to end of list","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__AddEl_stub,TA_taPtrList_LeabraUnit__AddEl_MethArgs},
-  {&TA_void,NULL,"Add"," add element to the list and 'ownÍ item","","",
+  {&TA_void,NULL,"Add"," add element to the list and 'own' item","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__Add_stub,TA_taPtrList_LeabraUnit__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add so that object is unique, true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__AddUnique_stub,TA_taPtrList_LeabraUnit__AddUnique_MethArgs},
@@ -6567,7 +6684,7 @@ static MethodDef_data TA_taPtrList_LeabraUnit__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__ReplaceLinkEl_stub,TA_taPtrList_LeabraUnit__ReplaceLinkEl_MethArgs},
   {&TA_bool,NULL,"ReplaceLinkName"," replace given named element (if on list) with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__ReplaceLinkName_stub,TA_taPtrList_LeabraUnit__ReplaceLinkName_MethArgs},
-  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'ownedÍ)","","",
+  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__Push_stub,TA_taPtrList_LeabraUnit__Push_MethArgs},
   {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_LeabraUnit__MoveEl_stub,TA_taPtrList_LeabraUnit__MoveEl_MethArgs},
@@ -8246,7 +8363,7 @@ static MethodDef_data TA_PFCLayerSpec_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_PFCLayerSpec_Compute_GatingGOGO_stub,TA_PFCLayerSpec_Compute_GatingGOGO_MethArgs},
   NULL};
 static MethodArgs_data TA_LeabraWiz_StdNetwork_MethArgs[]={
-  {&TA_Network_ptr,NULL,"net"," 0"},
+  {&TA_Network_ptr,NULL,"net"," ((void *)0)"},
   NULL};
 static MethodArgs_data TA_LeabraWiz_StdLayerSpecs_MethArgs[]={
   {&TA_Network_ptr,NULL,"net",""},
@@ -8304,7 +8421,7 @@ static MethodDef_data TA_LeabraWiz_MethodDef[]={
     0,6,1,0,NULL,cssElCFun_LeabraWiz_PVLV_stub,TA_LeabraWiz_PVLV_MethArgs},
   {&TA_void,NULL,"BgPFC"," configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); patch per-stripe learning system optional; nolrn_pfc = pfc does not learn -- just copies input acts directly; da_mod_all = have da value modulate all the regular units in the network; lr_sched = make a learning rate schedule on BG learn cons","MENU_BUTTON MENU_SEP_BEFORE ","",
     0,11,1,0,NULL,cssElCFun_LeabraWiz_BgPFC_stub,TA_LeabraWiz_BgPFC_MethArgs},
-  {&TA_void,NULL,"SetPFCStripes"," set number of 'stripesÍ (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current of units)","MENU_BUTTON  ","",
+  {&TA_void,NULL,"SetPFCStripes"," set number of 'stripes' (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current of units)","MENU_BUTTON  ","",
     0,3,2,0,NULL,cssElCFun_LeabraWiz_SetPFCStripes_stub,TA_LeabraWiz_SetPFCStripes_MethArgs},
   NULL};
 
@@ -8485,7 +8602,6 @@ void ta_Init_leabra() {
     TA_LeabraUnitSpec_ptr.AddParents(&TA_LeabraUnitSpec);
   taMisc::types.Add(&TA_LeabraTrial_ptr);
     TA_LeabraTrial_ptr.AddParents(&TA_LeabraTrial);
-  taMisc::types.Add(&TA_GraphLog_ptr);
   taMisc::types.Add(&TA_const_LeabraConSpec);
     TA_const_LeabraConSpec.AddParents(&TA_const, &TA_LeabraConSpec);
   taMisc::types.Add(&TA_const_LeabraConSpec_ref);

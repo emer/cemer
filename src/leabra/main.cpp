@@ -215,7 +215,7 @@ TypeDefault .projects[0].defaults[6] {\n\
 };\n\
 ";
 
-int main(int argc, const char* argv[]) {
+int main(int argc, char* argv[]) {
   pdpMisc::Init_Hook = ta_Init_leabra;
   pdpMisc::defaults_str = my_defaults;
   pdpMisc::def_wizard = &TA_LeabraWiz;

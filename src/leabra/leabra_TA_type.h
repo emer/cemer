@@ -41,7 +41,6 @@ extern TypeDef TA_const_SAvgCorSpec_ref;
 extern TypeDef TA_LeabraUnit_ptr;
 extern TypeDef TA_LeabraUnitSpec_ptr;
 extern TypeDef TA_LeabraTrial_ptr;
-extern TypeDef TA_GraphLog_ptr;
 extern TypeDef TA_const_LeabraConSpec;
 extern TypeDef TA_const_LeabraConSpec_ref;
 extern TypeDef TA_const_LeabraBiasSpec;
