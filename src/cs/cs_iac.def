@@ -1,0 +1,500 @@
+// ta_Dump File v1.0
+TypeDefault_MGroup .projects[0].defaults { 
+TypeDefault_MGroup .projects[0].defaults {
+TypeDefault @[0] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[1] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
+TypeDefault @[2] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[3] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[4] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[5] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+};
+};
+TypeDefault @[6] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[7] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[8] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+NameValue @[4] { };
+NameValue @[5] { };
+NameValue @[6] { };
+NameValue @[7] { };
+NameValue @[8] { };
+NameValue @[9] { };
+};
+};
+TypeDefault @[9] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+};
+};
+};
+};
+TypeDefault_MGroup .projects[0].defaults {
+el_typ=TypeDefault;
+el_def=0;
+name="";
+TypeDefault @[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_6";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="CsCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="CsCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=CsConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[1] {
+name="Layer";
+default_type=Layer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_1";
+NameValue @[0] {
+name="units";
+value=" Size: 0 (CsUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=CsUnitSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[2] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_2";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="wt_update";
+value="ON_LINE";
+};
+NameValue @[3] {
+name="between_events";
+value="INIT_STATE";
+};
+};
+};
+TypeDefault @[3] {
+name="Environment";
+default_type=Environment;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="event_specs";
+value="Size: 0 (ProbEventSpec)";
+};
+};
+};
+TypeDefault @[4] {
+name="PatternSpec";
+default_type=PatternSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="pattern_type";
+value="ProbPattern";
+};
+};
+};
+TypeDefault @[5] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="second_proc_type";
+value="CsTrial";
+};
+};
+};
+TypeDefault @[6] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+};
+};
+TypeDefault @[7] {
+name="CsCycle";
+default_type=CsCycle;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="update_mode";
+value="SYNC_SENDER_BASED";
+};
+};
+};
+TypeDefault @[8] {
+name="IACUnitSpec";
+default_type=IACUnitSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="act_range";
+value="{min=-0.2: max=1: range=1.2: scale=0.833333: }";
+};
+NameValue @[1] {
+name="real_range";
+value="{min=-0.2: max=1: range=1.2: scale=0.833333: }";
+};
+NameValue @[2] {
+name="step";
+value="1";
+};
+NameValue @[3] {
+name="gain";
+value="10";
+};
+NameValue @[4] {
+name="clamp_type";
+value="SOFT_CLAMP";
+};
+NameValue @[5] {
+name="initial_act";
+value="{type=UNIFORM: mean=-0.1: var=0: par=1: }";
+};
+NameValue @[6] {
+name="rest";
+value="-0.1";
+};
+NameValue @[7] {
+name="decay";
+value="0.1";
+};
+NameValue @[8] {
+name="use_send_thresh";
+value="true";
+};
+NameValue @[9] {
+name="send_thresh";
+value="0";
+};
+};
+};
+TypeDefault @[9] {
+name="CsConSpec";
+default_type=CsConSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="rnd";
+value="{type=UNIFORM: mean=0: var=0: par=1: }";
+};
+NameValue @[1] {
+name="lrate";
+value="0";
+};
+NameValue @[2] {
+name="decay_fun";
+value="NULL";
+};
+};
+};
+};
+TypeDefault .projects[0].defaults[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_6";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="CsCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="CsCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=CsConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault .projects[0].defaults[1] {
+name="Layer";
+default_type=Layer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_1";
+NameValue @[0] {
+name="units";
+value=" Size: 0 (CsUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=CsUnitSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault .projects[0].defaults[2] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="taBase_Group_2";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="wt_update";
+value="ON_LINE";
+};
+NameValue @[3] {
+name="between_events";
+value="INIT_STATE";
+};
+};
+};
+TypeDefault .projects[0].defaults[3] {
+name="Environment";
+default_type=Environment;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="event_specs";
+value="Size: 0 (ProbEventSpec)";
+};
+};
+};
+TypeDefault .projects[0].defaults[4] {
+name="PatternSpec";
+default_type=PatternSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="pattern_type";
+value="ProbPattern";
+};
+};
+};
+TypeDefault .projects[0].defaults[5] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="second_proc_type";
+value="CsTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[6] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="CsTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[7] {
+name="CsCycle";
+default_type=CsCycle;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="update_mode";
+value="SYNC_SENDER_BASED";
+};
+};
+};
+TypeDefault .projects[0].defaults[8] {
+name="IACUnitSpec";
+default_type=IACUnitSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="act_range";
+value="{min=-0.2: max=1: range=1.2: scale=0.833333: }";
+};
+NameValue @[1] {
+name="real_range";
+value="{min=-0.2: max=1: range=1.2: scale=0.833333: }";
+};
+NameValue @[2] {
+name="step";
+value="1";
+};
+NameValue @[3] {
+name="gain";
+value="10";
+};
+NameValue @[4] {
+name="clamp_type";
+value="SOFT_CLAMP";
+};
+NameValue @[5] {
+name="initial_act";
+value="{type=UNIFORM: mean=-0.1: var=0: par=1: }";
+};
+NameValue @[6] {
+name="rest";
+value="-0.1";
+};
+NameValue @[7] {
+name="decay";
+value="0.1";
+};
+NameValue @[8] {
+name="use_send_thresh";
+value="true";
+};
+NameValue @[9] {
+name="send_thresh";
+value="0";
+};
+};
+};
+TypeDefault .projects[0].defaults[9] {
+name="CsConSpec";
+default_type=CsConSpec;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="rnd";
+value="{type=UNIFORM: mean=0: var=0: par=1: }";
+};
+NameValue @[1] {
+name="lrate";
+value="0";
+};
+NameValue @[2] {
+name="decay_fun";
+value="NULL";
+};
+};
+};

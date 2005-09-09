@@ -1,0 +1,241 @@
+// ta_Dump File v1.0
+TypeDefault_MGroup .projects[0].defaults { 
+TypeDefault_MGroup .projects[0].defaults {
+TypeDefault @[0] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[1] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[2] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[3] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
+TypeDefault @[4] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+};
+};
+TypeDefault @[5] { 
+taBase_Group @.active_membs {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
+};
+};
+TypeDefault_MGroup .projects[0].defaults {
+el_typ=TypeDefault;
+el_def=0;
+name="";
+TypeDefault @[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="SoCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="SoCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=SoftClConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[1] {
+name="Network";
+default_type=Network;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="layers";
+value=" Size: 0 (SoLayer)";
+};
+};
+};
+TypeDefault @[2] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault @[3] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+NameValue @[1] {
+name="second_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault @[4] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault @[5] {
+name="SoLayer";
+default_type=SoLayer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="unit_spec";
+value="{type=SoftClUnitSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="spec";
+value="{type=SoftClLayerSpec: spec=NULL: }";
+};
+};
+};
+};
+TypeDefault .projects[0].defaults[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="SoCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="SoCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=SoftClConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault .projects[0].defaults[1] {
+name="Network";
+default_type=Network;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="layers";
+value=" Size: 0 (SoLayer)";
+};
+};
+};
+TypeDefault .projects[0].defaults[2] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[3] {
+name="SyncEpochProc";
+default_type=SyncEpochProc;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+NameValue @[1] {
+name="second_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[4] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="sub_proc_type";
+value="SoTrial";
+};
+};
+};
+TypeDefault .projects[0].defaults[5] {
+name="SoLayer";
+default_type=SoLayer;
+active_membs {
+el_typ=NameValue;
+el_def=0;
+name="";
+NameValue @[0] {
+name="unit_spec";
+value="{type=SoftClUnitSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="spec";
+value="{type=SoftClLayerSpec: spec=NULL: }";
+};
+};
+};
