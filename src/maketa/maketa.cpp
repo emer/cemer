@@ -531,6 +531,9 @@ int main(int argc, char* argv[])
   for(i=0; i<mta->headv.size; i++) {
     String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) + 
       taPlatform::getFileName(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
+    mta->fname = mta->headv.FastEl(i);
+    comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_file + " " + mta->fname;
+/* hopefully the above works on all platforms, and with "gcc -E" invocation
 #if (defined(WINDOWS) && (!defined(CYGWIN)))
     mta->fname = mta->headv.FastEl(i);
 //    mta->fname.makeUnique();
@@ -541,6 +544,7 @@ int main(int argc, char* argv[])
     mta->fname = mta->headv.FastEl(i);
     comnd = comnd_base + " -C -D__MAKETA__ " + mta->fname + " > " + tmp_file;
 #endif
+*/
     if(mta->verbose > 0)
       cerr << comnd << "\n";
     cout.flush();
