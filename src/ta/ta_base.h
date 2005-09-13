@@ -1144,6 +1144,16 @@ public:
 // use these as templates instead
 
 // make these ones no_update_after..
+class byte_Array : public taArray<byte> {
+  // #NO_UPDATE_AFTER array of byte (unsigned char)
+public:
+  override void*	GetTA_Element(int i, TypeDef*& eltd) const
+  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  void Initialize()	{err = 0; };
+  void Destroy()	{ };
+  TA_BASEFUNS(byte_Array);
+};
+
 class int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER
 public:

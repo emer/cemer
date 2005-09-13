@@ -933,7 +933,9 @@ public:
   bool		internal;	// true if an internal type (auto generated)
   bool		formal;		// true if a formal type (e.g. class, const, enum..)
   bool		pre_parsed;	// true if previously parsed by maketa
-
+#ifdef NO_TA_BASE
+  String	size_of_str;	// maketa hack -- a place to put sizeof(xx) for internals
+#endif
   String_PArray	inh_opts;	// inherited options (##xxx)
 
   TypeSpace	parents;	// type(s) this inherits from
@@ -967,7 +969,13 @@ public:
 	  uint siz, void** inst, bool toks=false, int ptrs=0, bool refnc=false,
 	  bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
   TypeDef(const char* nm, bool intrnl, int ptrs=0, bool refnc=false, bool forml=false,
-	  bool global_obj=false); // global_obj=ture for global (non new'ed) typedef objs
+	  bool global_obj=false,
+#ifdef NO_TA_BASE 
+	  String size_str = ""
+#else
+	  uint siz = 0
+#endif	  
+	  ); // global_obj=ture for global (non new'ed) typedef objs
   TypeDef(const TypeDef& td);
   virtual ~TypeDef();
   TypeDef*		Clone()		{ return new TypeDef(*this); }

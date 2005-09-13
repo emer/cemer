@@ -39,36 +39,38 @@
 
 // Types
 
-TypeDef TA_void("void", 1, 0, 0, 0,1);
-TypeDef TA_int("int", 1, 0, 0, 0,1);
-TypeDef TA_short("short", 1, 0, 0, 0,1);
-TypeDef TA_long("long", 1, 0, 0, 0,1);
-TypeDef TA_char("char", 1, 0, 0, 0,1);
-TypeDef TA_unsigned("unsigned", 1, 0, 0, 0,1);
-TypeDef TA_signed("signed", 1, 0, 0, 0,1);
-TypeDef TA_float("float", 1, 0, 0, 0,1);
-TypeDef TA_double("double", 1, 0, 0, 0,1);
-TypeDef TA_bool("bool", 1, 0, 0, 0,1);
-TypeDef TA_const("const", 1, 0, 0, 0,1);
-TypeDef TA_enum("enum", 1, 0, 0, 1,1);
-TypeDef TA_struct("struct", 1, 0, 0, 1,1);
-TypeDef TA_union("union", 1, 0, 0, 1,1);
-TypeDef TA_class("class", 1, 0, 0, 1,1);
-TypeDef TA_template("template", 1, 0, 0, 1,1);
-TypeDef TA_templ_inst("templ_inst", 1, 0, 0, 1,1);
-TypeDef TA_ta_array("ta_array", 1, 0, 0, 1,1);
+TypeDef TA_void("void", 1, 0, 0, 0, 1, 0);
+TypeDef TA_int("int", 1, 0, 0, 0, 1, sizeof(int));
+TypeDef TA_short("short", 1, 0, 0, 0, 1, sizeof(short));
+TypeDef TA_long("long", 1, 0, 0, 0, 1, sizeof(long));
+TypeDef TA_char("char", 1, 0, 0, 0, 1, sizeof(char));
+TypeDef TA_signed_char("signed_char", 1, 0, 0, 0, 1, sizeof(signed char));
+TypeDef TA_unsigned_char("unsigned_char", 1, 0, 0, 0, 1, sizeof(unsigned char));
+TypeDef TA_unsigned("unsigned", 1, 0, 0, 0, 1, sizeof(unsigned));
+TypeDef TA_signed("signed", 1, 0, 0, 0, 1, sizeof(signed));
+TypeDef TA_float("float", 1, 0, 0, 0, 1, sizeof(float));
+TypeDef TA_double("double", 1, 0, 0, 0, 1, sizeof(double));
+TypeDef TA_bool("bool", 1, 0, 0, 0, 1, sizeof(bool));
+TypeDef TA_const("const", 1, 0, 0, 0, 1, 0);
+TypeDef TA_enum("enum", 1, 0, 0, 1, 1, 0);
+TypeDef TA_struct("struct", 1, 0, 0, 1, 1, 0);
+TypeDef TA_union("union", 1, 0, 0, 1, 1, 0);
+TypeDef TA_class("class", 1, 0, 0, 1, 1, 0);
+TypeDef TA_template("template", 1, 0, 0, 1, 1, 0);
+TypeDef TA_templ_inst("templ_inst", 1, 0, 0, 1, 1, 0);
+TypeDef TA_ta_array("ta_array", 1, 0, 0, 1, 1, 0);
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes Base type for all type-aware classes ", 
 	"", "", "", sizeof(taBase), (void**)&TAI_taBase, 0, 0, 0,1);
-TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0,1);
-TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0,1);
+TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0, 1, 0);
+TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taString("taString", " StrRep - internal String representation Note: this structure is allocated via malloc(), so there must be no constructor/destructor.  reference counted string", 
 	"", "", "", sizeof(taString), (void**)0, 1, 0, 0,1);
-TypeDef TA_void_ptr("void_ptr", 1, 1, 0, 1,1);
+TypeDef TA_void_ptr("void_ptr", 1, 1, 0, 1, 1, 0);
 TypeDef TA_streambuf("streambuf", " In case some header files defines these as macros.", 
 	"", "", "", sizeof(streambuf), (void**)0, 0, 0, 0,1);
-TypeDef TA_signed_long("signed_long", 1, 0, 0, 0,1);
-TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0,1);
-TypeDef TA_signed_long_long_int("signed_long_long_int", 1, 0, 0, 0,1);
+TypeDef TA_signed_long("signed_long", 1, 0, 0, 0, 1, 0);
+TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, 0);
+TypeDef TA_signed_long_long_int("signed_long_long_int", 1, 0, 0, 0, 1, 0);
 TypeDef TA_streampos("streampos", "", 
 	"", "", "", sizeof(streampos), (void**)0, 0, 0, 0,1);
 TypeDef TA_streamoff("streamoff", "", 
@@ -83,20 +85,20 @@ TypeDef TA__Ios_Iostate("_Ios_Iostate", "",
 	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
 TypeDef TA__Ios_Seekdir("_Ios_Seekdir", "", 
 	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
-TypeDef TA_void_ptr_ref("void_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_long_ref("long_ref", 1, 0, 1, 0,1);
+TypeDef TA_void_ptr_ref("void_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_long_ref("long_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ios("ios", "", 
 	"", "", "", sizeof(ios), (void**)0, 1, 0, 0,1);
 TypeDef TA_ostream("ostream", "", 
 	"", "", "", sizeof(ostream), (void**)0, 1, 0, 0,1);
 TypeDef TA_istream("istream", "", 
 	"", "", "", sizeof(istream), (void**)0, 1, 0, 0,1);
-TypeDef TA_ostream_ref("ostream_ref", 1, 0, 1, 0,1);
-TypeDef TA_ostream_ptr("ostream_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_char("const_char", 1, 0, 0, 0,1);
-TypeDef TA_const_char_ptr("const_char_ptr", 1, 1, 0, 0,1);
-TypeDef TA_istream_ref("istream_ref", 1, 0, 1, 0,1);
-TypeDef TA_char_ptr("char_ptr", 1, 1, 0, 0,1);
+TypeDef TA_ostream_ref("ostream_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ostream_ptr("ostream_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_char("const_char", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_char_ptr("const_char_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_istream_ref("istream_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_char_ptr("char_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_iostream("iostream", "", 
 	"", "", "", sizeof(iostream), (void**)0, 1, 0, 0,1);
 TypeDef TA_ifstream("ifstream", "", 
@@ -113,26 +115,26 @@ TypeDef TA_stringstream("stringstream", "",
 	"", "", "", sizeof(stringstream), (void**)0, 1, 0, 0,1);
 TypeDef TA_taStrRep("taStrRep", "", 
 	"", "", "", sizeof(taStrRep), (void**)0, 1, 0, 0,1);
-TypeDef TA_char_ary("char_ary", 1, 1, 0, 0,1);
-TypeDef TA_const_taString("const_taString", 1, 0, 0, 0,1);
-TypeDef TA_const_taString_ref("const_taString_ref", 1, 0, 1, 0,1);
-TypeDef TA_taStrRep_ptr("taStrRep_ptr", 1, 1, 0, 0,1);
-TypeDef TA_unsigned_long("unsigned_long", 1, 0, 0, 0,1);
-TypeDef TA_const_QString_ref("const_QString_ref", 1, 0, 1, 0,1);
-TypeDef TA_taString_ref("taString_ref", 1, 0, 1, 0,1);
-TypeDef TA_unsigned_int("unsigned_int", 1, 0, 0, 0,1);
-TypeDef TA_char_ref("char_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_QFont_ref("const_QFont_ref", 1, 0, 1, 0,1);
+TypeDef TA_char_ary("char_ary", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taString("const_taString", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taString_ref("const_taString_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taStrRep_ptr("taStrRep_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_unsigned_long("unsigned_long", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_QString_ref("const_QString_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taString_ref("taString_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_unsigned_int("unsigned_int", 1, 0, 0, 0, 1, 0);
+TypeDef TA_char_ref("char_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_QFont_ref("const_QFont_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iFont("iFont", "  ", 
 	"", "", "", sizeof(iFont), (void**)0, 0, 0, 0,1);
 TypeDef TA_taDataLink("taDataLink", "  interface for taiDataLink and descendants", 
 	"", "", "", sizeof(taDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_iFont_ref("iFont_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iFont("const_iFont", 1, 0, 0, 0,1);
+TypeDef TA_iFont_ref("iFont_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iFont("const_iFont", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList_impl("taPtrList_impl", " implementation of the pointer list class", 
 	"", "", "", sizeof(taPtrList_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_iFont_ref("const_iFont_ref", 1, 0, 1, 0,1);
-TypeDef TA_taPtrList_impl_ptr("taPtrList_impl_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_iFont_ref("const_iFont_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taPtrList_impl_ptr("taPtrList_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TALPtr("TALPtr", "", 
 	"", "", "", sizeof(taPtrList_impl*), (void**)0, 0, 1, 0,1);
 TypeDef TA_DataChangedReason("DataChangedReason", " reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) -- some data change operations will emit multiple DataChanged calls ", 
@@ -141,61 +143,60 @@ TypeDef TA_taListItr("taListItr", " pseudo class, compatible with the FOR_ITR_EL
 	"", "", "", sizeof(taListItr), (void**)0, 0, 0, 0,1);
 TypeDef TA_taHashVal("taHashVal", "", 
 	"", "", "", sizeof(taHashVal), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_void("const_void", 1, 0, 0, 0,1);
-TypeDef TA_const_void_ptr("const_void_ptr", 1, 1, 0, 0,1);
-TypeDef TA_void_ptr_ptr("void_ptr_ptr", 1, 2, 0, 0,1);
-TypeDef TA_const_taPtrList_impl("const_taPtrList_impl", 1, 0, 0, 0,1);
-TypeDef TA_const_taPtrList_impl_ref("const_taPtrList_impl_ref", 1, 0, 1, 0,1);
-TypeDef TA_TypeDef_ptr_ref("TypeDef_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_int_ref("int_ref", 1, 0, 1, 0,1);
-TypeDef TA_taDataLink_ptr_ptr("taDataLink_ptr_ptr", 1, 2, 0, 0,1);
-TypeDef TA_taListItr_ref("taListItr_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_void("const_void", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_void_ptr("const_void_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_void_ptr_ptr("void_ptr_ptr", 1, 2, 0, 0, 1, 0);
+TypeDef TA_const_taPtrList_impl("const_taPtrList_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taPtrList_impl_ref("const_taPtrList_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TypeDef_ptr_ref("TypeDef_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_int_ref("int_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taDataLink_ptr_ptr("taDataLink_ptr_ptr", 1, 2, 0, 0, 1, 0);
+TypeDef TA_taListItr_ref("taListItr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray_impl("taArray_impl", " Base Type for Arrays, no tokens of which are ever kept", 
 	"", "", "", sizeof(taArray_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray_impl("const_taArray_impl", 1, 0, 0, 0,1);
-TypeDef TA_taPtrList("taPtrList", 1, 0, 0, 0,1);
-TypeDef TA_const_taArray_impl_ref("const_taArray_impl_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taArray_impl("const_taArray_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taPtrList("taPtrList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_impl_ref("const_taArray_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taHashEl("taHashEl", " holds information for one entry of the hash table", 
 	"", "", "", sizeof(taHashEl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taPtrList("const_taPtrList", 1, 0, 0, 0,1);
+TypeDef TA_const_taPtrList("const_taPtrList", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList_taHashEl_("taPtrList_taHashEl_", " ", 
 	"", "", "", sizeof(taPtrList<taHashEl>), (void**)&TAI_taPtrList_taHashEl_, 0, 0, 0,1);
-TypeDef TA_const_taPtrList_ref("const_taPtrList_ref", 1, 0, 1, 0,1);
-TypeDef TA_taHashEl_ptr("taHashEl_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_taPtrList_ref("const_taPtrList_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taHashEl_ptr("taHashEl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taHashBucket("taHashBucket", " holds a set of hash table entries that all have the same hash_code modulo value", 
 	"", "", "", sizeof(taHashBucket), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_taHashBucket_("taPtrList_taHashBucket_", " ", 
 	"", "", "", sizeof(taPtrList<taHashBucket>), (void**)&TAI_taPtrList_taHashBucket_, 0, 0, 0,1);
-TypeDef TA_int_ary("int_ary", 1, 1, 0, 0,1);
+TypeDef TA_int_ary("int_ary", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taHashTable("taHashTable", "  table has a number of buckets, each with some hash values", 
 	"", "", "", sizeof(taHashTable), (void**)0, 0, 0, 0,1);
-TypeDef TA_taHashBucket_ptr("taHashBucket_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taHashTable_ptr("taHashTable_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taHashTable("const_taHashTable", 1, 0, 0, 0,1);
-TypeDef TA_const_taHashTable_ref("const_taHashTable_ref", 1, 0, 1, 0,1);
-TypeDef TA_taPtrList_base("taPtrList_base", 1, 0, 0, 0,1);
-TypeDef TA_const_taPtrList_base("const_taPtrList_base", 1, 0, 0, 0,1);
-TypeDef TA_taPlainArray("taPlainArray", 1, 0, 0, 0,1);
-TypeDef TA_const_taPtrList_base_ref("const_taPtrList_base_ref", 1, 0, 1, 0,1);
+TypeDef TA_taHashBucket_ptr("taHashBucket_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taHashTable_ptr("taHashTable_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taHashTable("const_taHashTable", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taHashTable_ref("const_taHashTable_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taPtrList_base("taPtrList_base", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taPtrList_base("const_taPtrList_base", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taPlainArray("taPlainArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taPtrList_base_ref("const_taPtrList_base_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taFiler("taFiler", " //////////////////////////////// associate this with each file that is managed", 
 	"", "", "", sizeof(taFiler), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taPlainArray("const_taPlainArray", 1, 0, 0, 0,1);
+TypeDef TA_const_taPlainArray("const_taPlainArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FilerOperation("FilerOperation", "", 
 	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taPlainArray_ref("const_taPlainArray_ref", 1, 0, 1, 0,1);
-TypeDef TA_ifstream_ptr("ifstream_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ofstream_ptr("ofstream_ptr", 1, 1, 0, 0,1);
-TypeDef TA_fstream_ptr("fstream_ptr", 1, 1, 0, 0,1);
-TypeDef TA_istream_ptr("istream_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taFiler_ref("taFiler_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_taFiler("const_taFiler", 1, 0, 0, 0,1);
-TypeDef TA_const_taFiler_ref("const_taFiler_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iColor_ptr("const_iColor_ptr", 1, 1, 0, 0,1);
-TypeDef TA_float_ref("float_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iColor_ref("const_iColor_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_QColor_ref("const_QColor_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_QColor_ptr("const_QColor_ptr", 1, 1, 0, 0,1);
-TypeDef TA_unsigned_char("unsigned_char", 1, 0, 0, 0,1);
+TypeDef TA_const_taPlainArray_ref("const_taPlainArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ifstream_ptr("ifstream_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ofstream_ptr("ofstream_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_fstream_ptr("fstream_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_istream_ptr("istream_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taFiler_ref("taFiler_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taFiler("const_taFiler", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taFiler_ref("const_taFiler_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iColor_ptr("const_iColor_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_float_ref("float_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iColor_ref("const_iColor_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_QColor_ref("const_QColor_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_QColor_ptr("const_QColor_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taDataLinkItr("taDataLinkItr", " iterator for datalink clients -- use as a value type", 
 	"", "", "", sizeof(taDataLinkItr), (void**)&TAI_taDataLinkItr, 0, 0, 0,1);
 TypeDef TA_taiDataLink("taiDataLink", "   interface for viewing system", 
@@ -206,10 +207,10 @@ TypeDef TA_ta_void_fun("ta_void_fun", "",
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
 TypeDef TA_ta_memb_ptr_class("ta_memb_ptr_class", "", 
 	"", "", "", sizeof(ta_memb_ptr_class), (void**)0, 1, 0, 0,1);
-TypeDef TA_int_ta_memb_ptr_class("int_ta_memb_ptr_class", 1, 0, 0, 0,1);
+TypeDef TA_int_ta_memb_ptr_class("int_ta_memb_ptr_class", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ta_memb_ptr("ta_memb_ptr", "", 
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
-TypeDef TA_taBase_ptr("taBase_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taBase_ptr("taBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TAPtr("TAPtr", " pointer to a taBase type", 
 	"", "", "", sizeof(taBase*), (void**)&TAI_TAPtr, 0, 1, 0,1);
 TypeDef TA_taPlainArray_taString_("taPlainArray_taString_", " ", 
@@ -218,86 +219,86 @@ TypeDef TA_String_PArray("String_PArray", "",
 	"", "", "", sizeof(String_PArray), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPlainArray_int_("taPlainArray_int_", " ", 
 	"", "", "", sizeof(taPlainArray<int>), (void**)&TAI_taPlainArray_int_, 0, 0, 0,1);
-TypeDef TA_const_String_PArray("const_String_PArray", 1, 0, 0, 0,1);
+TypeDef TA_const_String_PArray("const_String_PArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_int_PArray("int_PArray", "", 
 	"", "", "", sizeof(int_PArray), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_String_PArray_ref("const_String_PArray_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_String_PArray_ref("const_String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_IApp("IApp", " basic methods that the root/app object must support", 
 	"", "", "", sizeof(IApp), (void**)0, 1, 0, 0,1);
-TypeDef TA_IApp_ptr("IApp_ptr", 1, 1, 0, 0,1);
-TypeDef TA_String_PArray_ref("String_PArray_ref", 1, 0, 1, 0,1);
+TypeDef TA_IApp_ptr("IApp_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_String_PArray_ref("String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taMisc("taMisc", " miscellanous global parameters and functions for type access system", 
 	"", "", "", sizeof(taMisc), (void**)&TAI_taMisc, 0, 0, 0,1);
 TypeDef TA_taRefN("taRefN", " reference counting base class", 
 	"", "", "", sizeof(taRefN), (void**)0, 0, 0, 0,1);
 TypeDef TA_ITypedObject("ITypedObject", " ", 
 	"", "", "", sizeof(ITypedObject), (void**)0, 0, 0, 0,1);
-TypeDef TA_taRefN_ref("taRefN_ref", 1, 0, 1, 0,1);
-TypeDef TA_taRefN_ptr("taRefN_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiDataLink_ptr("taiDataLink_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taRefN_ref("taRefN_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taRefN_ptr("taRefN_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiDataLink_ptr("taiDataLink_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_IDataLinkClient("IDataLinkClient", " ", 
 	"", "", "", sizeof(IDataLinkClient), (void**)0, 0, 0, 0,1);
-TypeDef TA_taDataLink_ptr("taDataLink_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taDataLink_ptr("taDataLink_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_IDataLinkClient_("taPtrList_IDataLinkClient_", " ", 
 	"", "", "", sizeof(taPtrList<IDataLinkClient>), (void**)0, 0, 0, 0,1);
 TypeDef TA_IDataLinkClient_PtrList("IDataLinkClient_PtrList", " ", 
 	"", "", "", sizeof(IDataLinkClient_PtrList), (void**)0, 0, 0, 0,1);
-TypeDef TA_IDataLinkClient_ptr("IDataLinkClient_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taDataLink_ptr_ref("taDataLink_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_const_TypeDef_ptr("const_TypeDef_ptr", 1, 1, 0, 0,1);
+TypeDef TA_IDataLinkClient_ptr("IDataLinkClient_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taDataLink_ptr_ref("taDataLink_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_const_TypeDef_ptr("const_TypeDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_EnumDef_("taPtrList_EnumDef_", " ", 
 	"", "", "", sizeof(taPtrList<EnumDef>), (void**)&TAI_taPtrList_EnumDef_, 0, 0, 0,1);
 TypeDef TA_EnumSpace("EnumSpace", " space of enums", 
 	"", "", "", sizeof(EnumSpace), (void**)&TAI_EnumSpace, 0, 0, 0,1);
-TypeDef TA_const_EnumSpace("const_EnumSpace", 1, 0, 0, 0,1);
-TypeDef TA_const_EnumSpace_ref("const_EnumSpace_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_EnumSpace("const_EnumSpace", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EnumSpace_ref("const_EnumSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_void_("taPtrList_void_", " ", 
 	"", "", "", sizeof(taPtrList<void>), (void**)&TAI_taPtrList_void_, 0, 0, 0,1);
 TypeDef TA_TokenSpace("TokenSpace", " ", 
 	"", "", "", sizeof(TokenSpace), (void**)&TAI_TokenSpace, 0, 0, 0,1);
 TypeDef TA_taPtrList_MemberDef_("taPtrList_MemberDef_", " ", 
 	"", "", "", sizeof(taPtrList<MemberDef>), (void**)&TAI_taPtrList_MemberDef_, 0, 0, 0,1);
-TypeDef TA_const_TokenSpace("const_TokenSpace", 1, 0, 0, 0,1);
+TypeDef TA_const_TokenSpace("const_TokenSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MemberSpace("MemberSpace", " space of members", 
 	"", "", "", sizeof(MemberSpace), (void**)&TAI_MemberSpace, 0, 0, 0,1);
-TypeDef TA_const_TokenSpace_ref("const_TokenSpace_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_MemberSpace("const_MemberSpace", 1, 0, 0, 0,1);
-TypeDef TA_const_MemberSpace_ref("const_MemberSpace_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TokenSpace_ref("const_TokenSpace_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_MemberSpace("const_MemberSpace", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MemberSpace_ref("const_MemberSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_MethodDef_("taPtrList_MethodDef_", " ", 
 	"", "", "", sizeof(taPtrList<MethodDef>), (void**)&TAI_taPtrList_MethodDef_, 0, 0, 0,1);
 TypeDef TA_MethodSpace("MethodSpace", " space of methods", 
 	"", "", "", sizeof(MethodSpace), (void**)&TAI_MethodSpace, 0, 0, 0,1);
-TypeDef TA_const_MethodSpace("const_MethodSpace", 1, 0, 0, 0,1);
-TypeDef TA_const_MethodSpace_ref("const_MethodSpace_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_MethodSpace("const_MethodSpace", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MethodSpace_ref("const_MethodSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_TypeDef_("taPtrList_TypeDef_", " ", 
 	"", "", "", sizeof(taPtrList<TypeDef>), (void**)&TAI_taPtrList_TypeDef_, 0, 0, 0,1);
 TypeDef TA_TypeSpace("TypeSpace", " space of types; uses default string-based hashing", 
 	"", "", "", sizeof(TypeSpace), (void**)&TAI_TypeSpace, 0, 0, 0,1);
-TypeDef TA_const_TypeSpace("const_TypeSpace", 1, 0, 0, 0,1);
+TypeDef TA_const_TypeSpace("const_TypeSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TypeItem("TypeItem", " base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef", 
 	"", "", "", sizeof(TypeItem), (void**)&TAI_TypeItem, 0, 0, 0,1);
-TypeDef TA_const_TypeSpace_ref("const_TypeSpace_ref", 1, 0, 1, 0,1);
-TypeDef TA_EnumSpace_ptr("EnumSpace_ptr", 1, 1, 0, 0,1);
-TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0,1);
-TypeDef TA_const_TypeItem("const_TypeItem", 1, 0, 0, 0,1);
-TypeDef TA_MethodDef_ptr("MethodDef_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TypeItem_ref("const_TypeItem_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TypeSpace_ref("const_TypeSpace_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_EnumSpace_ptr("EnumSpace_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TypeItem("const_TypeItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_MethodDef_ptr("MethodDef_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TypeItem_ref("const_TypeItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_EnumDef("EnumDef", " defines an enum member", 
 	"", "", "", sizeof(EnumDef), (void**)&TAI_EnumDef, 0, 0, 0,1);
-TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0,1);
-TypeDef TA_EnumDef_ptr("EnumDef_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_EnumDef("const_EnumDef", 1, 0, 0, 0,1);
-TypeDef TA_MemberDef_ptr("MemberDef_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_EnumDef_ref("const_EnumDef_ref", 1, 0, 1, 0,1);
-TypeDef TA_MemberSpace_ptr("MemberSpace_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_MemberDef("const_MemberDef", 1, 0, 0, 0,1);
-TypeDef TA_const_MemberDef_ref("const_MemberDef_ref", 1, 0, 1, 0,1);
-TypeDef TA_MethodSpace_ptr("MethodSpace_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_MethodDef("const_MethodDef", 1, 0, 0, 0,1);
-TypeDef TA_const_MethodDef_ref("const_MethodDef_ref", 1, 0, 1, 0,1);
-TypeDef TA_TypeSpace_ptr("TypeSpace_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TypeDef_ref("const_TypeDef_ref", 1, 0, 1, 0,1);
-TypeDef TA_MemberDef_ptr_ptr("MemberDef_ptr_ptr", 1, 2, 0, 0,1);
+TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_EnumDef_ptr("EnumDef_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_EnumDef("const_EnumDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_MemberDef_ptr("MemberDef_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_EnumDef_ref("const_EnumDef_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MemberSpace_ptr("MemberSpace_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_MemberDef("const_MemberDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MemberDef_ref("const_MemberDef_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MethodSpace_ptr("MethodSpace_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_MethodDef("const_MethodDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MethodDef_ref("const_MethodDef_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TypeSpace_ptr("TypeSpace_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TypeDef_ref("const_TypeDef_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MemberDef_ptr_ptr("MemberDef_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taiMimeSource("taiMimeSource", "  a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)", 
 	"", "", "", sizeof(taiMimeSource), (void**)0, 1, 0, 0,1);
 TypeDef TA_taOBase("taOBase", " owned base class of taBase", 
@@ -310,114 +311,120 @@ TypeDef TA_SelectEdit("SelectEdit", " Selectively edit members from different ob
 	"", "", "", sizeof(SelectEdit), (void**)&TAI_SelectEdit, 1, 0, 0,1);
 TypeDef TA_tabMisc("tabMisc", " miscellaneous useful stuff for taBase", 
 	"", "", "", sizeof(tabMisc), (void**)&TAI_tabMisc, 0, 0, 0,1);
-TypeDef TA_taBase_ref("taBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_TAPtr_ptr("TAPtr_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_MemberDef_ptr("const_MemberDef_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taBase("const_taBase", 1, 0, 0, 0,1);
-TypeDef TA_const_taBase_ptr("const_taBase_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiMimeSource_ptr("taiMimeSource_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taiMimeSource("const_taiMimeSource", 1, 0, 0, 0,1);
-TypeDef TA_const_taiMimeSource_ptr("const_taiMimeSource_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taBase_ref("const_taBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_MemberDef_ptr_ref("MemberDef_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_taDataView_ptr("taDataView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taFiler_ptr("taFiler_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_QPixmap_ptr("const_QPixmap_ptr", 1, 1, 0, 0,1);
-TypeDef TA_bool_ref("bool_ref", 1, 0, 1, 0,1);
-TypeDef TA_SelectEdit_ptr("SelectEdit_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taBase_ref("taBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TAPtr_ptr("TAPtr_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_MemberDef_ptr("const_MemberDef_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taBase("const_taBase", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taBase_ptr("const_taBase_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiMimeSource_ptr("taiMimeSource_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taiMimeSource("const_taiMimeSource", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taiMimeSource_ptr("const_taiMimeSource_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taBase_ref("const_taBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MemberDef_ptr_ref("MemberDef_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_taDataView_ptr("taDataView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taFiler_ptr("taFiler_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_QPixmap_ptr("const_QPixmap_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_bool_ref("bool_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SelectEdit_ptr("SelectEdit_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtr_impl("taPtr_impl", " 'safe' ptr for taBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(taPtr_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_taOBase_ptr("taOBase_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taOBase("const_taOBase", 1, 0, 0, 0,1);
-TypeDef TA_const_taOBase_ref("const_taOBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_taDataView("const_taDataView", 1, 0, 0, 0,1);
-TypeDef TA_const_taDataView_ref("const_taDataView_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_taNBase("const_taNBase", 1, 0, 0, 0,1);
-TypeDef TA_const_taNBase_ref("const_taNBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_taNBase_ptr("taNBase_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taOBase_ptr("taOBase_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taOBase("const_taOBase", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taOBase_ref("const_taOBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taDataView("const_taDataView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taDataView_ref("const_taDataView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taNBase("const_taNBase", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taNBase_ref("const_taNBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taNBase_ptr("taNBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TANPtr("TANPtr", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taNBase*), (void**)&TAI_TANPtr, 0, 1, 0,1);
 TypeDef TA_taFBase("taFBase", " named/owned base class of taBase, with filename", 
 	"", "", "", sizeof(taFBase), (void**)&TAI_taFBase, 0, 0, 0,1);
 TypeDef TA_taPtrList_taBase_("taPtrList_taBase_", " ", 
 	"", "", "", sizeof(taPtrList<taBase>), (void**)&TAI_taPtrList_taBase_, 0, 0, 0,1);
-TypeDef TA_const_taFBase("const_taFBase", 1, 0, 0, 0,1);
+TypeDef TA_const_taFBase("const_taFBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList_base_taBase_("taPtrList_base_taBase_", " ", 
 	"", "", "", sizeof(taPtrList_base<taBase>), (void**)&TAI_taPtrList_base_taBase_, 0, 0, 0,1);
-TypeDef TA_const_taFBase_ref("const_taFBase_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taFBase_ref("const_taFBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_PtrList("taBase_PtrList", " a primitive taBase list type, used for global lists that manage taBase objects, ex. in win_base.h", 
 	"", "", "", sizeof(taBase_PtrList), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_ta_base("taPtrList_ta_base", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taPtrList_ta_base), (void**)0, 0, 0, 0,1);
 TypeDef TA_taList_impl("taList_impl", " implementation for a taBase list class", 
 	"", "", "", sizeof(taList_impl), (void**)&TAI_taList_impl, 0, 0, 0,1);
-TypeDef TA_taList_impl_ptr("taList_impl_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taList_impl_ptr("taList_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TABLPtr("TABLPtr", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taList_impl*), (void**)0, 0, 1, 0,1);
-TypeDef TA_const_taList_impl("const_taList_impl", 1, 0, 0, 0,1);
-TypeDef TA_const_taList_impl_ref("const_taList_impl_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taList_impl("const_taList_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taList_impl_ref("const_taList_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray_base("taArray_base", " base for arrays (from taBase)", 
 	"", "", "", sizeof(taArray_base), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray_base("const_taArray_base", 1, 0, 0, 0,1);
-TypeDef TA_taList("taList", 1, 0, 0, 0,1);
-TypeDef TA_const_taArray_base_ref("const_taArray_base_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taArray_base("const_taArray_base", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taList("taList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_base_ref("const_taArray_base_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_taBase_("taList_taBase_", " ", 
 	"", "", "", sizeof(taList<taBase>), (void**)&TAI_taList_taBase_, 0, 0, 0,1);
-TypeDef TA_const_taList("const_taList", 1, 0, 0, 0,1);
-TypeDef TA_const_taList_ref("const_taList_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taList("const_taList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taList_ref("const_taList_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_List("taBase_List", " list of objects", 
 	"", "", "", sizeof(taBase_List), (void**)&TAI_taBase_List, 0, 0, 0,1);
-TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0,1);
-TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taBase_List_ref("const_taBase_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_taArray("taArray", 1, 0, 0, 0,1);
+TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taBase_List_ref("const_taBase_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taArray("taArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taArray_byte_("taArray_byte_", " ", 
+	"", "", "", sizeof(taArray<byte>), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taArray("const_taArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_ref("const_taArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_byte_Array("byte_Array", " array of byte (unsigned char)", 
+	"", "", "", sizeof(byte_Array), (void**)&TAI_byte_Array, 0, 0, 0,1);
 TypeDef TA_taArray_int_("taArray_int_", " ", 
 	"", "", "", sizeof(taArray<int>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray("const_taArray", 1, 0, 0, 0,1);
-TypeDef TA_const_taArray_ref("const_taArray_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_byte_Array("const_byte_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_byte_Array_ref("const_byte_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_Array("int_Array", " ", 
 	"", "", "", sizeof(int_Array), (void**)&TAI_int_Array, 0, 0, 0,1);
 TypeDef TA_taArray_float_("taArray_float_", " ", 
 	"", "", "", sizeof(taArray<float>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_int_Array("const_int_Array", 1, 0, 0, 0,1);
-TypeDef TA_const_int_Array_ref("const_int_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_int_Array("const_int_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_int_Array_ref("const_int_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_Array("float_Array", " ", 
 	"", "", "", sizeof(float_Array), (void**)&TAI_float_Array, 0, 0, 0,1);
 TypeDef TA_taArray_double_("taArray_double_", " ", 
 	"", "", "", sizeof(taArray<double>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_float_Array("const_float_Array", 1, 0, 0, 0,1);
-TypeDef TA_const_float_Array_ref("const_float_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_float_Array("const_float_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_float_Array_ref("const_float_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_double_Array("double_Array", " ", 
 	"", "", "", sizeof(double_Array), (void**)&TAI_double_Array, 0, 0, 0,1);
 TypeDef TA_taArray_taString_("taArray_taString_", " ", 
 	"", "", "", sizeof(taArray<taString>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_double_Array("const_double_Array", 1, 0, 0, 0,1);
-TypeDef TA_const_double_Array_ref("const_double_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_double_Array("const_double_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_double_Array_ref("const_double_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_String_Array("String_Array", " ", 
 	"", "", "", sizeof(String_Array), (void**)&TAI_String_Array, 0, 0, 0,1);
-TypeDef TA_const_String_Array("const_String_Array", 1, 0, 0, 0,1);
-TypeDef TA_const_String_Array_ref("const_String_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_String_Array("const_String_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_String_Array_ref("const_String_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SArg_Array("SArg_Array", " string argument array: has labels for each argument to make it easier in the interface", 
 	"", "", "", sizeof(SArg_Array), (void**)&TAI_SArg_Array, 0, 0, 0,1);
 TypeDef TA_taArray_long_("taArray_long_", " ", 
 	"", "", "", sizeof(taArray<long>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_SArg_Array("const_SArg_Array", 1, 0, 0, 0,1);
-TypeDef TA_const_SArg_Array_ref("const_SArg_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SArg_Array("const_SArg_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SArg_Array_ref("const_SArg_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_long_Array("long_Array", " ", 
 	"", "", "", sizeof(long_Array), (void**)&TAI_long_Array, 0, 0, 0,1);
 TypeDef TA_voidptr("voidptr", " for maketa, which chokes on void* in a template", 
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
-TypeDef TA_const_long_Array("const_long_Array", 1, 0, 0, 0,1);
+TypeDef TA_const_long_Array("const_long_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_voidptr_("taArray_voidptr_", " ", 
 	"", "", "", sizeof(taArray<void*>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_long_Array_ref("const_long_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_long_Array_ref("const_long_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_voidptr_Array("voidptr_Array", " ", 
 	"", "", "", sizeof(voidptr_Array), (void**)&TAI_voidptr_Array, 0, 0, 0,1);
 TypeDef TA_taGroup_impl("taGroup_impl", " pre-declare implementation of a group forwards this file:", 
 	"", "", "", sizeof(taGroup_impl), (void**)&TAI_taGroup_impl, 0, 0, 0,1);
-TypeDef TA_const_voidptr_Array("const_voidptr_Array", 1, 0, 0, 0,1);
-TypeDef TA_taGroup_impl_ptr("taGroup_impl_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_voidptr_Array_ref("const_voidptr_Array_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_voidptr_Array("const_voidptr_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taGroup_impl_ptr("taGroup_impl_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_voidptr_Array_ref("const_voidptr_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TAGPtr("TAGPtr", "", 
 	"", "", "", sizeof(taGroup_impl*), (void**)0, 0, 1, 0,1);
 TypeDef TA_taList_taGroup_impl_("taList_taGroup_impl_", " ", 
@@ -428,94 +435,94 @@ TypeDef TA_taSubGroup("taSubGroup", " has the sub-groups for a group",
 	"", "", "", sizeof(taSubGroup), (void**)&TAI_taSubGroup, 0, 0, 0,1);
 TypeDef TA_taGroupItr("taGroupItr", "", 
 	"", "", "", sizeof(taGroupItr), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taSubGroup("const_taSubGroup", 1, 0, 0, 0,1);
+TypeDef TA_const_taSubGroup("const_taSubGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taLeafItr("taLeafItr", " contains the indicies for iterating over leafs", 
 	"", "", "", sizeof(taLeafItr), (void**)0, 1, 0, 0,1);
-TypeDef TA_const_taSubGroup_ref("const_taSubGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_TALOG_ptr("TALOG_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taLeafItr_ref("taLeafItr_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_taGroup_impl("const_taGroup_impl", 1, 0, 0, 0,1);
-TypeDef TA_const_taGroup_impl_ref("const_taGroup_impl_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taSubGroup_ref("const_taSubGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TALOG_ptr("TALOG_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taLeafItr_ref("taLeafItr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taGroup_impl("const_taGroup_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taGroup_impl_ref("const_taGroup_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DMemShareVar("DMemShareVar", " definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs", 
 	"", "", "", sizeof(DMemShareVar), (void**)&TAI_DMemShareVar, 0, 0, 0,1);
-TypeDef TA_taPtrList_impl_ref("taPtrList_impl_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_DMemShareVar("const_DMemShareVar", 1, 0, 0, 0,1);
-TypeDef TA_const_DMemShareVar_ref("const_DMemShareVar_ref", 1, 0, 1, 0,1);
+TypeDef TA_taPtrList_impl_ref("taPtrList_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_DMemShareVar("const_DMemShareVar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DMemShareVar_ref("const_DMemShareVar_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DMemShare("DMemShare", " collection of objects that are shared across distributed processes: link the objects into this list to share them", 
 	"", "", "", sizeof(DMemShare), (void**)&TAI_DMemShare, 0, 0, 0,1);
-TypeDef TA_const_DMemShare("const_DMemShare", 1, 0, 0, 0,1);
-TypeDef TA_const_DMemShare_ref("const_DMemShare_ref", 1, 0, 1, 0,1);
-TypeDef TA_taGroup("taGroup", 1, 0, 0, 0,1);
+TypeDef TA_const_DMemShare("const_DMemShare", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DMemShare_ref("const_DMemShare_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taGroup("taGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taGroup_taBase_("taGroup_taBase_", " ", 
 	"", "", "", sizeof(taGroup<taBase>), (void**)&TAI_taGroup_taBase_, 0, 0, 0,1);
-TypeDef TA_const_taGroup("const_taGroup", 1, 0, 0, 0,1);
-TypeDef TA_taGroup_ptr("taGroup_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taGroup_ref("const_taGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taGroup("const_taGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taGroup_ptr("taGroup_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taGroup_ref("const_taGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_Group("taBase_Group", " group of objects", 
 	"", "", "", sizeof(taBase_Group), (void**)&TAI_taBase_Group, 0, 0, 0,1);
-TypeDef TA_const_taBase_Group("const_taBase_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_taBase_Group_ref("const_taBase_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_taBase_Group("const_taBase_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taBase_Group_ref("const_taBase_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_dumpMisc("dumpMisc", " miscellaneous stuff for dump files", 
 	"", "", "", sizeof(dumpMisc), (void**)0, 0, 0, 0,1);
 TypeDef TA_VPUnref("VPUnref", " ", 
 	"", "", "", sizeof(VPUnref), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_VPUnref_("taPtrList_VPUnref_", " ", 
 	"", "", "", sizeof(taPtrList<VPUnref>), (void**)&TAI_taPtrList_VPUnref_, 0, 0, 0,1);
-TypeDef TA_VPUnref_ptr("VPUnref_ptr", 1, 1, 0, 0,1);
+TypeDef TA_VPUnref_ptr("VPUnref_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_VPUList("VPUList", " ", 
 	"", "", "", sizeof(VPUList), (void**)0, 0, 0, 0,1);
 TypeDef TA_DumpPathSub("DumpPathSub", " Path element substitution", 
 	"", "", "", sizeof(DumpPathSub), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_DumpPathSub_("taPtrList_DumpPathSub_", " ", 
 	"", "", "", sizeof(taPtrList<DumpPathSub>), (void**)&TAI_taPtrList_DumpPathSub_, 0, 0, 0,1);
-TypeDef TA_DumpPathSub_ptr("DumpPathSub_ptr", 1, 1, 0, 0,1);
+TypeDef TA_DumpPathSub_ptr("DumpPathSub_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DumpPathSubList("DumpPathSubList", " ", 
 	"", "", "", sizeof(DumpPathSubList), (void**)0, 0, 0, 0,1);
 TypeDef TA_DumpPathToken("DumpPathToken", " Path tokens for quicker loading", 
 	"", "", "", sizeof(DumpPathToken), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_DumpPathToken_("taPtrList_DumpPathToken_", " ", 
 	"", "", "", sizeof(taPtrList<DumpPathToken>), (void**)&TAI_taPtrList_DumpPathToken_, 0, 0, 0,1);
-TypeDef TA_DumpPathToken_ptr("DumpPathToken_ptr", 1, 1, 0, 0,1);
+TypeDef TA_DumpPathToken_ptr("DumpPathToken_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DumpPathTokenList("DumpPathTokenList", " ", 
 	"", "", "", sizeof(DumpPathTokenList), (void**)0, 0, 0, 0,1);
 TypeDef TA_NameValue("NameValue", " name/value pair", 
 	"", "", "", sizeof(NameValue), (void**)&TAI_NameValue, 0, 0, 0,1);
-TypeDef TA_unsigned_long_ary("unsigned_long_ary", 1, 1, 0, 0,1);
-TypeDef TA_const_NameValue("const_NameValue", 1, 0, 0, 0,1);
-TypeDef TA_const_NameValue_ref("const_NameValue_ref", 1, 0, 1, 0,1);
+TypeDef TA_unsigned_long_ary("unsigned_long_ary", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_NameValue("const_NameValue", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NameValue_ref("const_NameValue_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TypeDefault("TypeDefault", " Contains a default object of a type", 
 	"", "", "", sizeof(TypeDefault), (void**)&TAI_TypeDefault, 0, 0, 0,1);
 TypeDef TA_taiMenuEl("taiMenuEl", " holds menu data -- can be the root item of a submenu", 
 	"", "", "", sizeof(taiMenuEl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault("const_TypeDefault", 1, 0, 0, 0,1);
+TypeDef TA_const_TypeDefault("const_TypeDefault", 1, 0, 0, 0, 1, 0);
 TypeDef TA_cssProgSpace("cssProgSpace", " ", 
 	"", "", "", sizeof(cssProgSpace), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault_ref("const_TypeDefault_ref", 1, 0, 1, 0,1);
-TypeDef TA_cssProgSpace_ptr("cssProgSpace_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_TypeDefault_ref("const_TypeDefault_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_cssProgSpace_ptr("cssProgSpace_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_ScriptBase("ScriptBase", " class for adding a script to other objects", 
 	"", "", "", sizeof(ScriptBase), (void**)0, 1, 0, 0,1);
 TypeDef TA_taPtrList_ScriptBase_("taPtrList_ScriptBase_", " ", 
 	"", "", "", sizeof(taPtrList<ScriptBase>), (void**)&TAI_taPtrList_ScriptBase_, 0, 0, 0,1);
-TypeDef TA_ScriptBase_ref("ScriptBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ScriptBase("const_ScriptBase", 1, 0, 0, 0,1);
+TypeDef TA_ScriptBase_ref("ScriptBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ScriptBase("const_ScriptBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ScriptBase_List("ScriptBase_List", " list of script base objects (doesn't own anything)", 
 	"", "", "", sizeof(ScriptBase_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_ScriptBase_ref("const_ScriptBase_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScriptBase_ref("const_ScriptBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Script("Script", " an object for maintaining and running arbitrary scripts", 
 	"", "", "", sizeof(Script), (void**)&TAI_Script, 1, 0, 0,1);
 TypeDef TA_taGroup_Script_("taGroup_Script_", " ", 
 	"", "", "", sizeof(taGroup<Script>), (void**)&TAI_taGroup_Script_, 0, 0, 0,1);
-TypeDef TA_const_Script("const_Script", 1, 0, 0, 0,1);
-TypeDef TA_const_Script_ref("const_Script_ref", 1, 0, 1, 0,1);
-TypeDef TA_taiMenuEl_ptr("taiMenuEl_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_Script("const_Script", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Script_ref("const_Script_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taiMenuEl_ptr("taiMenuEl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_Script_MGroup("Script_MGroup", "", 
 	"", "", "", sizeof(Script_MGroup), (void**)&TAI_Script_MGroup, 0, 0, 0,1);
 TypeDef TA_taiData("taiData", " base class for data elements", 
 	"", "", "", sizeof(taiData), (void**)&TAI_taiData, 0, 0, 0,1);
-TypeDef TA_const_Script_MGroup("const_Script_MGroup", 1, 0, 0, 0,1);
+TypeDef TA_const_Script_MGroup("const_Script_MGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_Dialog("Dialog", " ", 
 	"", "", "", sizeof(Dialog), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_Script_MGroup_ref("const_Script_MGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Script_MGroup_ref("const_Script_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taiMisc("taiMisc", " miscellaneous stuff for tai", 
 	"", "", "", sizeof(taiMisc), (void**)&TAI_taiMisc, 0, 0, 0,1);
 TypeDef TA_taiDataHost("taiDataHost", " ", 
@@ -526,26 +533,26 @@ TypeDef TA_taiEditDataHost("taiEditDataHost", "  // edit host for classes -- def
 	"", "", "", sizeof(taiEditDataHost), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiMenuAction("taiMenuAction", " taiMenuAction takes a MenuEl as a parameter", 
 	"", "", "", sizeof(taiMenuAction), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiEditDataHost_ptr("taiEditDataHost_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiEditDataHost_ptr("taiEditDataHost_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiMenu("taiMenu", " (possibly) hierarchical menu for selecting a single item ", 
 	"", "", "", sizeof(taiMenu), (void**)0, 0, 0, 0,1);
 TypeDef TA_iAction_List("iAction_List", " corresponds to a menu item and/or toolbar button -- items are stickily created as needed (browsewin creates the common set)", 
 	"", "", "", sizeof(iAction_List), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiMethodData("taiMethodData", " all representations of member functions must inherit from this one", 
 	"", "", "", sizeof(taiMethodData), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taiAction("const_taiAction", 1, 0, 0, 0,1);
-TypeDef TA_const_taiAction_ref("const_taiAction_ref", 1, 0, 1, 0,1);
-TypeDef TA_taiAction_ref("taiAction_ref", 1, 0, 1, 0,1);
-TypeDef TA_taiMenuAction_ref("taiMenuAction_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_taiMenuAction("const_taiMenuAction", 1, 0, 0, 0,1);
-TypeDef TA_const_taiMenuAction_ref("const_taiMenuAction_ref", 1, 0, 1, 0,1);
-TypeDef TA_taiDataHost_ptr("taiDataHost_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiData_ptr("taiData_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_taiAction("const_taiAction", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taiAction_ref("const_taiAction_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taiAction_ref("taiAction_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taiMenuAction_ref("taiMenuAction_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taiMenuAction("const_taiMenuAction", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taiMenuAction_ref("const_taiMenuAction_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taiDataHost_ptr("taiDataHost_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiData_ptr("taiData_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_taiData_("taPtrList_taiData_", " ", 
 	"", "", "", sizeof(taPtrList<taiData>), (void**)&TAI_taPtrList_taiData_, 0, 0, 0,1);
 TypeDef TA_taiDataList("taiDataList", " taiData list, OBJECTS ARE DELETED ON REMOVAL", 
 	"", "", "", sizeof(taiDataList), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMenu_ptr("taiMenu_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiMenu_ptr("taiMenu_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiEditButton("taiEditButton", " actually an edit menu... -- flgReadOnly creates menu which only allows for members", 
 	"", "", "", sizeof(taiEditButton), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiToggle("taiToggle", " class taiLabel;", 
@@ -568,29 +575,29 @@ TypeDef TA_taiPolyData("taiPolyData", "",
 	"", "", "", sizeof(taiPolyData), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiDataDeck("taiDataDeck", "", 
 	"", "", "", sizeof(taiDataDeck), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QObject_ptr("const_QObject_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taiAction_ptr("const_taiAction_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taiMenuAction_ptr("const_taiMenuAction_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_QObject_ptr("const_QObject_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taiAction_ptr("const_taiAction_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taiMenuAction_ptr("const_taiMenuAction_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiSubMenuEl("taiSubMenuEl", "", 
 	"", "", "", sizeof(taiSubMenuEl), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_taiMenuEl_("taPtrList_taiMenuEl_", " ", 
 	"", "", "", sizeof(taPtrList<taiMenuEl>), (void**)&TAI_taPtrList_taiMenuEl_, 0, 0, 0,1);
 TypeDef TA_taiMenuEl_List("taiMenuEl_List", " ", 
 	"", "", "", sizeof(taiMenuEl_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QKeySequence_ptr("const_QKeySequence_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiSubMenuEl_ptr("taiSubMenuEl_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_QKeySequence_ptr("const_QKeySequence_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiSubMenuEl_ptr("taiSubMenuEl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_taiMenu_("taPtrList_taiMenu_", " ", 
 	"", "", "", sizeof(taPtrList<taiMenu>), (void**)&TAI_taPtrList_taiMenu_, 0, 0, 0,1);
 TypeDef TA_taiMenu_List("taiMenu_List", " ", 
 	"", "", "", sizeof(taiMenu_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QIconSet_ref("const_QIconSet_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TAPtr("const_TAPtr", 1, 0, 0, 0,1);
+TypeDef TA_const_QIconSet_ref("const_QIconSet_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TAPtr("const_TAPtr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taiObjChooser("taiObjChooser", " ", 
 	"", "", "", sizeof(taiObjChooser), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiFileButton("taiFileButton", "", 
 	"", "", "", sizeof(taiFileButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiObjChooser_ptr("taiObjChooser_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiMenuAction_ptr("taiMenuAction_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiObjChooser_ptr("taiObjChooser_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiMenuAction_ptr("taiMenuAction_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiElBase("taiElBase", "", 
 	"", "", "", sizeof(taiElBase), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiSubToken("taiSubToken", " Menu for sub tokens of a giventype", 
@@ -607,7 +614,7 @@ TypeDef TA_taiMethButton("taiMethButton", " button representation of a method --
 	"", "", "", sizeof(taiMethButton), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiMethToggle("taiMethToggle", " toggle representation of a method (does not call directly, but checks flag)", 
 	"", "", "", sizeof(taiMethToggle), (void**)0, 0, 0, 0,1);
-TypeDef TA_iDataPanel("iDataPanel", 1, 0, 0, 0,1);
+TypeDef TA_iDataPanel("iDataPanel", 1, 0, 0, 0, 1, 0);
 TypeDef TA_HiLightButton("HiLightButton", " combines v3.2 Script Button and HiLightButton -- set script_ to script name, to enable ScriptButton functionality", 
 	"", "", "", sizeof(HiLightButton), (void**)0, 1, 0, 0,1);
 TypeDef TA_iContextLabel("iContextLabel", "", 
@@ -616,45 +623,45 @@ TypeDef TA_taiChoiceDialog("taiChoiceDialog", "",
 	"", "", "", sizeof(taiChoiceDialog), (void**)0, 1, 0, 0,1);
 TypeDef TA_EditDataPanel("EditDataPanel", " ", 
 	"", "", "", sizeof(EditDataPanel), (void**)0, 0, 0, 0,1);
-TypeDef TA_HiLightButton_ptr("HiLightButton_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Dialog_ptr("Dialog_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iContextLabel_ptr("iContextLabel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Dialog_ptr_ref("Dialog_ptr_ref", 1, 1, 1, 0,1);
+TypeDef TA_HiLightButton_ptr("HiLightButton_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Dialog_ptr("Dialog_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iContextLabel_ptr("iContextLabel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Dialog_ptr_ref("Dialog_ptr_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_Member_List("Member_List", " list of members -- simpler than MemberSpace, no ownership", 
 	"", "", "", sizeof(Member_List), (void**)&TAI_Member_List, 0, 0, 0,1);
-TypeDef TA_EditDataPanel_ptr("EditDataPanel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiDataList_ptr("taiDataList_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_taiDataList("const_taiDataList", 1, 0, 0, 0,1);
-TypeDef TA_const_taiDataList_ref("const_taiDataList_ref", 1, 0, 1, 0,1);
-TypeDef TA_taiMethodData_ptr("taiMethodData_ptr", 1, 1, 0, 0,1);
+TypeDef TA_EditDataPanel_ptr("EditDataPanel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiDataList_ptr("taiDataList_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taiDataList("const_taiDataList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taiDataList_ref("const_taiDataList_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taiMethodData_ptr("taiMethodData_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_iDataPanelFrame("iDataPanelFrame", " interface for panel frames", 
 	"", "", "", sizeof(iDataPanelFrame), (void**)0, 0, 0, 0,1);
 TypeDef TA_iDataPanelSet("iDataPanelSet", "  contains 0 or more sub-data-panels, and a small control bar for selecting panels", 
 	"", "", "", sizeof(iDataPanelSet), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiTypeBase("taiTypeBase", " graphically represents a type", 
 	"", "", "", sizeof(taiTypeBase), (void**)&TAI_taiTypeBase, 0, 0, 0,1);
-TypeDef TA_taiTypeBase_ptr("taiTypeBase_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiTypeBase_ptr("taiTypeBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiViewType("taiViewType", "  viewer services for the type", 
 	"", "", "", sizeof(taiViewType), (void**)&TAI_taiViewType, 0, 0, 0,1);
 TypeDef TA_taiType("taiType", "  graphically represents a type", 
 	"", "", "", sizeof(taiType), (void**)&TAI_taiType, 0, 0, 0,1);
-TypeDef TA_taiViewType_ptr("taiViewType_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiViewType_ptr("taiViewType_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiMember("taiMember", " ", 
 	"", "", "", sizeof(taiMember), (void**)&TAI_taiMember, 0, 0, 0,1);
 TypeDef TA_taiEdit("taiEdit", " ", 
 	"", "", "", sizeof(taiEdit), (void**)&TAI_taiEdit, 0, 0, 0,1);
-TypeDef TA_taiMember_ptr("taiMember_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiType_ptr_ptr("taiType_ptr_ptr", 1, 2, 0, 0,1);
-TypeDef TA_taiEdit_ptr("taiEdit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiViewType_ptr_ptr("taiViewType_ptr_ptr", 1, 2, 0, 0,1);
-TypeDef TA_taiType_ptr("taiType_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiMember_ptr("taiMember_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiType_ptr_ptr("taiType_ptr_ptr", 1, 2, 0, 0, 1, 0);
+TypeDef TA_taiEdit_ptr("taiEdit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiViewType_ptr_ptr("taiViewType_ptr_ptr", 1, 2, 0, 0, 1, 0);
+TypeDef TA_taiType_ptr("taiType_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiMethod("taiMethod", " ", 
 	"", "", "", sizeof(taiMethod), (void**)&TAI_taiMethod, 0, 0, 0,1);
-TypeDef TA_iDataPanel_ptr("iDataPanel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiMethod_ptr("taiMethod_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iDataPanelFrame_ptr("iDataPanelFrame_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iDataPanelSet_ptr("iDataPanelSet_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiEdit_ptr_ptr("taiEdit_ptr_ptr", 1, 2, 0, 0,1);
+TypeDef TA_iDataPanel_ptr("iDataPanel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiMethod_ptr("taiMethod_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iDataPanelFrame_ptr("iDataPanelFrame_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iDataPanelSet_ptr("iDataPanelSet_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiEdit_ptr_ptr("taiEdit_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taiArgType("taiArgType", " unlike taiTypes, these are created and destroyed each time", 
 	"", "", "", sizeof(taiArgType), (void**)&TAI_taiArgType, 0, 0, 0,1);
 TypeDef TA_taPtrList_taiType_("taPtrList_taiType_", " ", 
@@ -685,10 +692,10 @@ TypeDef TA_taiFilePtrType("taiFilePtrType", " ptr to tai_getFiles",
 	"", "", "", sizeof(taiFilePtrType), (void**)&TAI_taiFilePtrType, 0, 0, 0,1);
 TypeDef TA_taiDefaultEdit("taiDefaultEdit", "", 
 	"", "", "", sizeof(taiDefaultEdit), (void**)&TAI_taiDefaultEdit, 0, 0, 0,1);
-TypeDef TA_taiMember_ptr_ptr("taiMember_ptr_ptr", 1, 2, 0, 0,1);
+TypeDef TA_taiMember_ptr_ptr("taiMember_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taiTokenPtrMember("taiTokenPtrMember", " for taBase pointer members (allows scoping by owner obj)", 
 	"", "", "", sizeof(taiTokenPtrMember), (void**)&TAI_taiTokenPtrMember, 0, 0, 0,1);
-TypeDef TA_TypeDefault_ptr("TypeDefault_ptr", 1, 1, 0, 0,1);
+TypeDef TA_TypeDefault_ptr("TypeDefault_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiDefaultToken("taiDefaultToken", "", 
 	"", "", "", sizeof(taiDefaultToken), (void**)&TAI_taiDefaultToken, 0, 0, 0,1);
 TypeDef TA_taiSubTokenPtrMember("taiSubTokenPtrMember", " a token ptr that points to sub-objects of current object", 
@@ -703,12 +710,12 @@ TypeDef TA_taiCondEditMember("taiCondEditMember", " conditional editing member",
 	"", "", "", sizeof(taiCondEditMember), (void**)&TAI_taiCondEditMember, 0, 0, 0,1);
 TypeDef TA_taiTDefaultMember("taiTDefaultMember", " special for the TypeDefault member (add the 'active' box)", 
 	"", "", "", sizeof(taiTDefaultMember), (void**)&TAI_taiTDefaultMember, 0, 0, 0,1);
-TypeDef TA_taiMethod_ptr_ptr("taiMethod_ptr_ptr", 1, 2, 0, 0,1);
+TypeDef TA_taiMethod_ptr_ptr("taiMethod_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taiButtonMethod("taiButtonMethod", "", 
 	"", "", "", sizeof(taiButtonMethod), (void**)&TAI_taiButtonMethod, 0, 0, 0,1);
 TypeDef TA_taiMenuMethod("taiMenuMethod", " covers MENU and MENU_BUTTON types", 
 	"", "", "", sizeof(taiMenuMethod), (void**)&TAI_taiMenuMethod, 0, 0, 0,1);
-TypeDef TA_taiArgType_ptr("taiArgType_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiArgType_ptr("taiArgType_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiStreamArgType("taiStreamArgType", " for ios derived args (uses a file-requestor)", 
 	"", "", "", sizeof(taiStreamArgType), (void**)&TAI_taiStreamArgType, 0, 0, 0,1);
 TypeDef TA_taiBoolArgType("taiBoolArgType", " for bool int types", 
@@ -755,7 +762,7 @@ TypeDef TA_tabGroupViewType("tabGroupViewType", " for taGroup",
 	"", "", "", sizeof(tabGroupViewType), (void**)&TAI_tabGroupViewType, 0, 0, 0,1);
 TypeDef TA_taiMimeItem("taiMimeItem", " we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)", 
 	"", "", "", sizeof(taiMimeItem), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeItem_ptr("taiMimeItem_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiMimeItem_ptr("taiMimeItem_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiClipData("taiClipData", "", 
 	"", "", "", sizeof(taiClipData), (void**)0, 1, 0, 0,1);
 TypeDef TA_taiSingleClipData("taiSingleClipData", " ClipData for a single object -- simplest, most common case", 
@@ -770,10 +777,10 @@ TypeDef TA_taiMimeItem_List("taiMimeItem_List", " //////////////////////////////
 	"", "", "", sizeof(taiMimeItem_List), (void**)0, 0, 0, 0,1);
 TypeDef TA_taiRcvMimeItem("taiRcvMimeItem", " specialized for tacss receiving", 
 	"", "", "", sizeof(taiRcvMimeItem), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeItem_List_ptr("taiMimeItem_List_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_QMimeSource_ptr("const_QMimeSource_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiClipData_ptr("taiClipData_ptr", 1, 1, 0, 0,1);
-TypeDef TA_istringstream_ref("istringstream_ref", 1, 0, 1, 0,1);
+TypeDef TA_taiMimeItem_List_ptr("taiMimeItem_List_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_QMimeSource_ptr("const_QMimeSource_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiClipData_ptr("taiClipData_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_istringstream_ref("istringstream_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taiIntMimeSource("taiIntMimeSource", " a taiMimeSource that wraps our own in-process taiClipData", 
 	"", "", "", sizeof(taiIntMimeSource), (void**)0, 1, 0, 0,1);
 TypeDef TA_taiExtMimeSource("taiExtMimeSource", " a taiMime that wraps data from the clipboard etc.", 
@@ -806,56 +813,56 @@ TypeDef TA_iListDataPanel("iListDataPanel", " ",
 	"", "", "", sizeof(iListDataPanel), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataLink_QObj("DataLink_QObj", "", 
 	"", "", "", sizeof(DataLink_QObj), (void**)0, 1, 0, 0,1);
-TypeDef TA_DataLink_QObj_ptr("DataLink_QObj_ptr", 1, 1, 0, 0,1);
+TypeDef TA_DataLink_QObj_ptr("DataLink_QObj_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_tabODataLink("tabODataLink", " DataLink for taOBase objects", 
 	"", "", "", sizeof(tabODataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_ToolBar_ptr("ToolBar_ptr", 1, 1, 0, 0,1);
+TypeDef TA_ToolBar_ptr("ToolBar_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_tabListDataLink("tabListDataLink", " DataLink for taList objects -- note that it also manages the ListView nodes", 
 	"", "", "", sizeof(tabListDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToolBar_ptr("taiToolBar_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiToolBar_ptr("taiToolBar_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_tabGroupDataLink("tabGroupDataLink", " DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups", 
 	"", "", "", sizeof(tabGroupDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_IDataViewHost_ptr("IDataViewHost_ptr", 1, 1, 0, 0,1);
+TypeDef TA_IDataViewHost_ptr("IDataViewHost_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_ISelectable_("taPtrList_ISelectable_", " ", 
 	"", "", "", sizeof(taPtrList<ISelectable>), (void**)&TAI_taPtrList_ISelectable_, 0, 0, 0,1);
-TypeDef TA_ISelectable_ptr("ISelectable_ptr", 1, 1, 0, 0,1);
+TypeDef TA_ISelectable_ptr("ISelectable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_ISelectable_PtrList("ISelectable_PtrList", " for selection lists", 
 	"", "", "", sizeof(ISelectable_PtrList), (void**)0, 0, 0, 0,1);
-TypeDef TA_DataViewer_ptr("DataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_ISelectable_PtrList("const_ISelectable_PtrList", 1, 0, 0, 0,1);
-TypeDef TA_ISelectable_PtrList_ref("ISelectable_PtrList_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ISelectable_PtrList_ref("const_ISelectable_PtrList_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ToolBar("const_ToolBar", 1, 0, 0, 0,1);
-TypeDef TA_const_ToolBar_ref("const_ToolBar_ref", 1, 0, 1, 0,1);
+TypeDef TA_DataViewer_ptr("DataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_ISelectable_PtrList("const_ISelectable_PtrList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_ISelectable_PtrList_ref("ISelectable_PtrList_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ISelectable_PtrList_ref("const_ISelectable_PtrList_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ToolBar("const_ToolBar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ToolBar_ref("const_ToolBar_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_ToolBar_("taList_ToolBar_", " ", 
 	"", "", "", sizeof(taList<ToolBar>), (void**)0, 0, 0, 0,1);
 TypeDef TA_ToolBar_List("ToolBar_List", " each BrowseWin maintains its existent toolbars in this list", 
 	"", "", "", sizeof(ToolBar_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_ToolBar_List("const_ToolBar_List", 1, 0, 0, 0,1);
-TypeDef TA_const_WinGeometry("const_WinGeometry", 1, 0, 0, 0,1);
-TypeDef TA_const_ToolBar_List_ref("const_ToolBar_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_WinGeometry_ref("const_WinGeometry_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_DataViewer("const_DataViewer", 1, 0, 0, 0,1);
-TypeDef TA_const_DataViewer_ref("const_DataViewer_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ToolBar_List("const_ToolBar_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_WinGeometry("const_WinGeometry", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ToolBar_List_ref("const_ToolBar_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_WinGeometry_ref("const_WinGeometry_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_DataViewer("const_DataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataViewer_ref("const_DataViewer_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_DataViewer_("taList_DataViewer_", " ", 
 	"", "", "", sizeof(taList<DataViewer>), (void**)&TAI_taList_DataViewer_, 0, 0, 0,1);
 TypeDef TA_DataViewer_List("DataViewer_List", " ", 
 	"", "", "", sizeof(DataViewer_List), (void**)&TAI_DataViewer_List, 0, 0, 0,1);
 TypeDef TA_iTabDataViewer("iTabDataViewer", " viewer window used for class browsing", 
 	"", "", "", sizeof(iTabDataViewer), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_DataViewer_List("const_DataViewer_List", 1, 0, 0, 0,1);
+TypeDef TA_const_DataViewer_List("const_DataViewer_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList_iDataPanel_("taPtrList_iDataPanel_", " ", 
 	"", "", "", sizeof(taPtrList<iDataPanel>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_DataViewer_List_ref("const_DataViewer_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_iTabDataViewer_ptr("iTabDataViewer_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_DataViewer_List_ref("const_DataViewer_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iTabDataViewer_ptr("iTabDataViewer_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_iDataPanel_PtrList("iDataPanel_PtrList", " ", 
 	"", "", "", sizeof(iDataPanel_PtrList), (void**)0, 0, 0, 0,1);
 TypeDef TA_iViewPanelFrame("iViewPanelFrame", " frame for gui interface to a view element -- usually posted by the view, and locked", 
 	"", "", "", sizeof(iViewPanelFrame), (void**)0, 0, 0, 0,1);
-TypeDef TA_iListViewItem_ptr("iListViewItem_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iListDataPanel_ptr("iListDataPanel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiListDataNode_ptr("taiListDataNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_QPoint_ref("const_QPoint_ref", 1, 0, 1, 0,1);
+TypeDef TA_iListViewItem_ptr("iListViewItem_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iListDataPanel_ptr("iListDataPanel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiListDataNode_ptr("taiListDataNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_QPoint_ref("const_QPoint_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taiTreeDataNode("taiTreeDataNode", "", 
 	"", "", "", sizeof(taiTreeDataNode), (void**)0, 0, 0, 0,1);
 TypeDef TA_tabTreeDataNode("tabTreeDataNode", "", 
@@ -868,14 +875,14 @@ TypeDef TA_iDataBrowser("iDataBrowser", " viewer window used for class browsing"
 	"", "", "", sizeof(iDataBrowser), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataBrowser("DataBrowser", "  the base type for objects with a top-level window or panel and a menu", 
 	"", "", "", sizeof(DataBrowser), (void**)&TAI_DataBrowser, 0, 0, 0,1);
-TypeDef TA_taiTreeDataNode_ptr("taiTreeDataNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_DataBrowser_ptr("DataBrowser_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iDataBrowser_ptr("iDataBrowser_ptr", 1, 1, 0, 0,1);
-TypeDef TA_tabDataLink_ptr("tabDataLink_ptr", 1, 1, 0, 0,1);
-TypeDef TA_tabListDataLink_ptr("tabListDataLink_ptr", 1, 1, 0, 0,1);
-TypeDef TA_tabGroupDataLink_ptr("tabGroupDataLink_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_DataBrowser("const_DataBrowser", 1, 0, 0, 0,1);
-TypeDef TA_const_DataBrowser_ref("const_DataBrowser_ref", 1, 0, 1, 0,1);
+TypeDef TA_taiTreeDataNode_ptr("taiTreeDataNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_DataBrowser_ptr("DataBrowser_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iDataBrowser_ptr("iDataBrowser_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_tabDataLink_ptr("tabDataLink_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_tabListDataLink_ptr("tabListDataLink_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_tabGroupDataLink_ptr("tabGroupDataLink_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_DataBrowser("const_DataBrowser", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataBrowser_ref("const_DataBrowser_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_gpiListEditButton("gpiListEditButton", "", 
 	"", "", "", sizeof(gpiListEditButton), (void**)0, 0, 0, 0,1);
 TypeDef TA_gpiGroupEditButton("gpiGroupEditButton", "", 
@@ -898,12 +905,12 @@ TypeDef TA_gpiElTypes("gpiElTypes", "",
 	"", "", "", sizeof(gpiElTypes), (void**)0, 0, 0, 0,1);
 TypeDef TA_gpiNewFuns("gpiNewFuns", " functions to call during New", 
 	"", "", "", sizeof(gpiNewFuns), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiIncrField_ptr("taiIncrField_ptr", 1, 1, 0, 0,1);
-TypeDef TA_gpiNewFuns_ptr("gpiNewFuns_ptr", 1, 1, 0, 0,1);
-TypeDef TA_gpiElTypes_ptr("gpiElTypes_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiIncrField_ptr("taiIncrField_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_gpiNewFuns_ptr("gpiNewFuns_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_gpiElTypes_ptr("gpiElTypes_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_gpiListNew("gpiListNew", "", 
 	"", "", "", sizeof(gpiListNew), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiSubGroups_ptr("gpiSubGroups_ptr", 1, 1, 0, 0,1);
+TypeDef TA_gpiSubGroups_ptr("gpiSubGroups_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_gpiGroupNew("gpiGroupNew", "", 
 	"", "", "", sizeof(gpiGroupNew), (void**)0, 0, 0, 0,1);
 TypeDef TA_gpiList_ElData("gpiList_ElData", " contains data_els for one member of List", 
@@ -926,137 +933,138 @@ TypeDef TA_gpiSelectEditDataHost("gpiSelectEditDataHost", " edit only selected i
 	"", "", "", sizeof(gpiSelectEditDataHost), (void**)0, 0, 0, 0,1);
 TypeDef TA_SelectEditConfig("SelectEditConfig", " special parameters for controlling the select edit display", 
 	"", "", "", sizeof(SelectEditConfig), (void**)&TAI_SelectEditConfig, 0, 0, 0,1);
-TypeDef TA_const_SelectEdit("const_SelectEdit", 1, 0, 0, 0,1);
-TypeDef TA_const_SelectEditConfig("const_SelectEditConfig", 1, 0, 0, 0,1);
-TypeDef TA_const_SelectEdit_ref("const_SelectEdit_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SelectEditConfig_ref("const_SelectEditConfig_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SbVec2s_ref("const_SbVec2s_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SelectEdit("const_SelectEdit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SelectEditConfig("const_SelectEditConfig", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SelectEdit_ref("const_SelectEdit_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SelectEditConfig_ref("const_SelectEditConfig_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SbVec2s_ref("const_SbVec2s_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iPoint("iPoint", "  ", 
 	"", "", "", sizeof(iPoint), (void**)&TAI_iPoint, 0, 0, 0,1);
 TypeDef TA_iVec2i("iVec2i", " synonym", 
 	"", "", "", sizeof(iVec2i), (void**)0, 0, 0, 0,1);
-TypeDef TA_iPoint_ref("iPoint_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iPoint("const_iPoint", 1, 0, 0, 0,1);
-TypeDef TA_const_iPoint_ref("const_iPoint_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SbVec3s_ref("const_SbVec3s_ref", 1, 0, 1, 0,1);
+TypeDef TA_iPoint_ref("iPoint_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iPoint("const_iPoint", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_iPoint_ref("const_iPoint_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SbVec3s_ref("const_SbVec3s_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iVec3i("iVec3i", " ", 
 	"", "", "", sizeof(iVec3i), (void**)&TAI_iVec3i, 0, 0, 0,1);
-TypeDef TA_const_QSize_ref("const_QSize_ref", 1, 0, 1, 0,1);
-TypeDef TA_iVec3i_ref("iVec3i_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iVec3i("const_iVec3i", 1, 0, 0, 0,1);
+TypeDef TA_const_QSize_ref("const_QSize_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iVec3i_ref("iVec3i_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iVec3i("const_iVec3i", 1, 0, 0, 0, 1, 0);
 TypeDef TA_iSize("iSize", "  ", 
 	"", "", "", sizeof(iSize), (void**)&TAI_iSize, 0, 0, 0,1);
-TypeDef TA_const_iVec3i_ref("const_iVec3i_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iSize("const_iSize", 1, 0, 0, 0,1);
-TypeDef TA_iSize_ref("iSize_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iSize_ref("const_iSize_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_QRect_ref("const_QRect_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_iVec3i_ref("const_iVec3i_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iSize("const_iSize", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iSize_ref("iSize_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iSize_ref("const_iSize_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_QRect_ref("const_QRect_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iRect("iRect", "  ", 
 	"", "", "", sizeof(iRect), (void**)&TAI_iRect, 0, 0, 0,1);
-TypeDef TA_iRect_ref("iRect_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iRect("const_iRect", 1, 0, 0, 0,1);
-TypeDef TA_const_iRect_ref("const_iRect_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SbVec3f_ref("const_SbVec3f_ref", 1, 0, 1, 0,1);
+TypeDef TA_iRect_ref("iRect_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iRect("const_iRect", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_iRect_ref("const_iRect_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SbVec3f_ref("const_SbVec3f_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iVec3f("iVec3f", " 3d vector, for things like points and sizes", 
 	"", "", "", sizeof(iVec3f), (void**)&TAI_iVec3f, 0, 0, 0,1);
-TypeDef TA_const_iVec3f("const_iVec3f", 1, 0, 0, 0,1);
-TypeDef TA_iVec3f_ref("iVec3f_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iVec3f_ref("const_iVec3f_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_iVec3f("const_iVec3f", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iVec3f_ref("iVec3f_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iVec3f_ref("const_iVec3f_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iBox3f("iBox3f", " 3d box, typically used for a bounding box in a normalized coordinate system", 
 	"", "", "", sizeof(iBox3f), (void**)&TAI_iBox3f, 0, 0, 0,1);
-TypeDef TA_TypeDef_ptr("TypeDef_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iBox3f_ref("iBox3f_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iBox3f("const_iBox3f", 1, 0, 0, 0,1);
-TypeDef TA_uint("uint", 1, 0, 0, 0,1);
-TypeDef TA_const_iBox3f_ref("const_iBox3f_ref", 1, 0, 1, 0,1);
-TypeDef TA_QWidget_ptr("QWidget_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QWidget("QWidget", 1, 0, 0, 0,1);
-TypeDef TA_taBaseAdapter_ptr("taBaseAdapter_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taBaseAdapter("taBaseAdapter", 1, 0, 0, 0,1);
-TypeDef TA_QMimeSource("QMimeSource", 1, 0, 0, 0,1);
-TypeDef TA_QObject("QObject", 1, 0, 0, 0,1);
-TypeDef TA_QMenuItem_ptr("QMenuItem_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QMenuItem("QMenuItem", 1, 0, 0, 0,1);
-TypeDef TA_QPopupMenu_ptr("QPopupMenu_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QPopupMenu("QPopupMenu", 1, 0, 0, 0,1);
-TypeDef TA_QObject_ptr("QObject_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QEvent_ptr("QEvent_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QEvent("QEvent", 1, 0, 0, 0,1);
-TypeDef TA_QScrollView_ptr("QScrollView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QScrollView("QScrollView", 1, 0, 0, 0,1);
-TypeDef TA_QVBoxLayout_ptr("QVBoxLayout_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QVBoxLayout("QVBoxLayout", 1, 0, 0, 0,1);
-TypeDef TA_QLabel_ptr("QLabel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QLabel("QLabel", 1, 0, 0, 0,1);
-TypeDef TA_QSplitter_ptr("QSplitter_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QSplitter("QSplitter", 1, 0, 0, 0,1);
-TypeDef TA_QGridLayout_ptr("QGridLayout_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QGridLayout("QGridLayout", 1, 0, 0, 0,1);
-TypeDef TA_QFrame_ptr("QFrame_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QFrame("QFrame", 1, 0, 0, 0,1);
-TypeDef TA_iFlowLayout_ptr("iFlowLayout_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iFlowLayout("iFlowLayout", 1, 0, 0, 0,1);
-TypeDef TA_QHBoxLayout_ptr("QHBoxLayout_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QHBoxLayout("QHBoxLayout", 1, 0, 0, 0,1);
-TypeDef TA_iColor_ptr("iColor_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iColor("iColor", 1, 0, 0, 0,1);
-TypeDef TA_QDialog("QDialog", 1, 0, 0, 0,1);
-TypeDef TA_iDataViewer_ptr("iDataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iDataViewer("iDataViewer", 1, 0, 0, 0,1);
-TypeDef TA_QMenuData_ptr("QMenuData_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QMenuData("QMenuData", 1, 0, 0, 0,1);
-TypeDef TA_QMenuBar_ptr("QMenuBar_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QMenuBar("QMenuBar", 1, 0, 0, 0,1);
-TypeDef TA_QPtrList_iAction_("QPtrList_iAction_", 1, 0, 0, 0,1);
-TypeDef TA_cssClass_ptr("cssClass_ptr", 1, 1, 0, 0,1);
-TypeDef TA_cssClass("cssClass", 1, 0, 0, 0,1);
-TypeDef TA_cssiArgDialog_ptr("cssiArgDialog_ptr", 1, 1, 0, 0,1);
-TypeDef TA_cssiArgDialog("cssiArgDialog", 1, 0, 0, 0,1);
-TypeDef TA_QPushButton_ptr("QPushButton_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QPushButton("QPushButton", 1, 0, 0, 0,1);
-TypeDef TA_cssEl_ptr("cssEl_ptr", 1, 1, 0, 0,1);
-TypeDef TA_cssEl("cssEl", 1, 0, 0, 0,1);
-TypeDef TA_iCheckBox_ptr("iCheckBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iCheckBox("iCheckBox", 1, 0, 0, 0,1);
-TypeDef TA_QLayout_ptr("QLayout_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QLayout("QLayout", 1, 0, 0, 0,1);
-TypeDef TA_iLineEdit_ptr("iLineEdit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iLineEdit("iLineEdit", 1, 0, 0, 0,1);
-TypeDef TA_iSpinBox_ptr("iSpinBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iSpinBox("iSpinBox", 1, 0, 0, 0,1);
-TypeDef TA_QCheckBox_ptr("QCheckBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QCheckBox("QCheckBox", 1, 0, 0, 0,1);
-TypeDef TA_iComboBox_ptr("iComboBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iComboBox("iComboBox", 1, 0, 0, 0,1);
-TypeDef TA_QWidgetStack_ptr("QWidgetStack_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QWidgetStack("QWidgetStack", 1, 0, 0, 0,1);
-TypeDef TA_QListBox_ptr("QListBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QListBox("QListBox", 1, 0, 0, 0,1);
-TypeDef TA_QLineEdit_ptr("QLineEdit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QLineEdit("QLineEdit", 1, 0, 0, 0,1);
-TypeDef TA_iTabView_ptr("iTabView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iTabView("iTabView", 1, 0, 0, 0,1);
-TypeDef TA_QFocusEvent_ptr("QFocusEvent_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QFocusEvent("QFocusEvent", 1, 0, 0, 0,1);
-TypeDef TA_QButtonGroup_ptr("QButtonGroup_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QButtonGroup("QButtonGroup", 1, 0, 0, 0,1);
-TypeDef TA_QDragObject("QDragObject", 1, 0, 0, 0,1);
-TypeDef TA_QToolBar("QToolBar", 1, 0, 0, 0,1);
-TypeDef TA_QPtrList_taiToolBar_("QPtrList_taiToolBar_", 1, 0, 0, 0,1);
-TypeDef TA_QListViewItem("QListViewItem", 1, 0, 0, 0,1);
-TypeDef TA_QListViewItem_ptr("QListViewItem_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QString("QString", 1, 0, 0, 0,1);
-TypeDef TA_QListView_ptr("QListView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QListView("QListView", 1, 0, 0, 0,1);
-TypeDef TA_DynMethod_PtrList("DynMethod_PtrList", 1, 0, 0, 0,1);
-TypeDef TA_iAction_ptr("iAction_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iAction("iAction", 1, 0, 0, 0,1);
-TypeDef TA_iTabView_PtrList_ptr("iTabView_PtrList_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iTabView_PtrList("iTabView_PtrList", 1, 0, 0, 0,1);
-TypeDef TA_QVBox_ptr("QVBox_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QVBox("QVBox", 1, 0, 0, 0,1);
-TypeDef TA_iEditGrid_ptr("iEditGrid_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iEditGrid("iEditGrid", 1, 0, 0, 0,1);
+TypeDef TA_TypeDef_ptr("TypeDef_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iBox3f_ref("iBox3f_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iBox3f("const_iBox3f", 1, 0, 0, 0, 1, 0);
+TypeDef TA_uint("uint", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_iBox3f_ref("const_iBox3f_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_QWidget_ptr("QWidget_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QWidget("QWidget", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taBaseAdapter_ptr("taBaseAdapter_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taBaseAdapter("taBaseAdapter", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QMimeSource("QMimeSource", 1, 0, 0, 0, 1, 0);
+TypeDef TA_byte("byte", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QObject("QObject", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QMenuItem_ptr("QMenuItem_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QMenuItem("QMenuItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPopupMenu_ptr("QPopupMenu_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QPopupMenu("QPopupMenu", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QObject_ptr("QObject_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QEvent_ptr("QEvent_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QEvent("QEvent", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QScrollView_ptr("QScrollView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QScrollView("QScrollView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QVBoxLayout_ptr("QVBoxLayout_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QVBoxLayout("QVBoxLayout", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QLabel_ptr("QLabel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QLabel("QLabel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QSplitter_ptr("QSplitter_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QSplitter("QSplitter", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QGridLayout_ptr("QGridLayout_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QGridLayout("QGridLayout", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QFrame_ptr("QFrame_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QFrame("QFrame", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iFlowLayout_ptr("iFlowLayout_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iFlowLayout("iFlowLayout", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QHBoxLayout_ptr("QHBoxLayout_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QHBoxLayout("QHBoxLayout", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iColor_ptr("iColor_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iColor("iColor", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QDialog("QDialog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iDataViewer_ptr("iDataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iDataViewer("iDataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QMenuData_ptr("QMenuData_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QMenuData("QMenuData", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QMenuBar_ptr("QMenuBar_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QMenuBar("QMenuBar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPtrList_iAction_("QPtrList_iAction_", 1, 0, 0, 0, 1, 0);
+TypeDef TA_cssClass_ptr("cssClass_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_cssClass("cssClass", 1, 0, 0, 0, 1, 0);
+TypeDef TA_cssiArgDialog_ptr("cssiArgDialog_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_cssiArgDialog("cssiArgDialog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPushButton_ptr("QPushButton_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QPushButton("QPushButton", 1, 0, 0, 0, 1, 0);
+TypeDef TA_cssEl_ptr("cssEl_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_cssEl("cssEl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iCheckBox_ptr("iCheckBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iCheckBox("iCheckBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QLayout_ptr("QLayout_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QLayout("QLayout", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iLineEdit_ptr("iLineEdit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iLineEdit("iLineEdit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iSpinBox_ptr("iSpinBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iSpinBox("iSpinBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QCheckBox_ptr("QCheckBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QCheckBox("QCheckBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iComboBox_ptr("iComboBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iComboBox("iComboBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QWidgetStack_ptr("QWidgetStack_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QWidgetStack("QWidgetStack", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QListBox_ptr("QListBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QListBox("QListBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QLineEdit_ptr("QLineEdit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QLineEdit("QLineEdit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iTabView_ptr("iTabView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iTabView("iTabView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QFocusEvent_ptr("QFocusEvent_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QFocusEvent("QFocusEvent", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QButtonGroup_ptr("QButtonGroup_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QButtonGroup("QButtonGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QDragObject("QDragObject", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QToolBar("QToolBar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPtrList_taiToolBar_("QPtrList_taiToolBar_", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QListViewItem("QListViewItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QListViewItem_ptr("QListViewItem_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QString("QString", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QListView_ptr("QListView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QListView("QListView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_DynMethod_PtrList("DynMethod_PtrList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iAction_ptr("iAction_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iAction("iAction", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iTabView_PtrList_ptr("iTabView_PtrList_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iTabView_PtrList("iTabView_PtrList", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QVBox_ptr("QVBox_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QVBox("QVBox", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iEditGrid_ptr("iEditGrid_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iEditGrid("iEditGrid", 1, 0, 0, 0, 1, 0);
 
 // Instances
 
@@ -4628,6 +4636,77 @@ taList<taBase>*		 TAI_taList_taBase_=NULL;
     rval=new cssTA_Base((void*)((taList<taBase>*)ths)->LinkUniqNameOld((taBase*)(void*)*arg[1]), 1, &TA_taBase);
     return rval;}
 taBase_List*		 TAI_taBase_List=NULL;
+  static cssEl* cssElCFun_taArray_byte__Remove_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssInt((int)((taArray<byte>*)ths)->Remove((uint)*arg[1]));}
+    if(na == 2) {
+      rval=new cssInt((int)((taArray<byte>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->SafeEl((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->FastEl((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__RevEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->RevEl((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Pop_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->Pop();
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Peek_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->Peek();
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Set_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->Set((int)*arg[1], (byte)*arg[2]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Add_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->Add((byte)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__AddUnique_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray<byte>*)ths)->AddUnique((byte)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Push_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray<byte>*)ths)->Push((byte)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Insert_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 2) {
+      ((taArray<byte>*)ths)->Insert((byte)*arg[1], (int)*arg[2]);}
+    if(na == 3) {
+      ((taArray<byte>*)ths)->Insert((byte)*arg[1], (int)*arg[2], (int)*arg[3]);}
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__Find_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssInt((int)((taArray<byte>*)ths)->Find((byte)*arg[1]));}
+    if(na == 2) {
+      rval=new cssInt((int)((taArray<byte>*)ths)->Find((byte)*arg[1], (int)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__RemoveEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray<byte>*)ths)->RemoveEl((byte)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taArray_byte__InitVals_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      ((taArray<byte>*)ths)->InitVals((byte)*arg[1]);}
+    if(na == 2) {
+      ((taArray<byte>*)ths)->InitVals((byte)*arg[1], (int)*arg[2]);}
+    if(na == 3) {
+      ((taArray<byte>*)ths)->InitVals((byte)*arg[1], (int)*arg[2], (int)*arg[3]);}
+    return rval;}
+byte_Array*		 TAI_byte_Array=NULL;
   static cssEl* cssElCFun_taArray_int__Remove_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 1) {
@@ -10791,6 +10870,90 @@ static MethodDef_data TA_taList_taBase__MethodDef[]={
   {NULL,"::taBase_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
     0,1,-1,0,NULL,cssElCFun_taList_taBase__LinkUniqNameOld_stub,TA_taList_taBase__LinkUniqNameOld_MethArgs},
   NULL};
+static EnumDef_data TA_taArray_byte__Orientation[]={
+  {"Horizontal","","",0},
+  {"Vertical","","",1},
+  NULL};
+static int taArray<byte>::* TA_taArray_byte__MbrOff;
+static MemberDef_data TA_taArray_byte__MemberDef[]={
+  {NULL,"::byte_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+    *((ta_memb_ptr*)&(TA_taArray_byte__MbrOff=(int taArray<byte>::*)(&taArray<byte>::el))),0,NULL,0},
+  {&TA_byte,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_taArray_byte__MbrOff=(int taArray<byte>::*)(&taArray<byte>::err))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Remove_MethArgs[]={
+  {&TA_uint,NULL,"indx",""},
+  {&TA_int,NULL,"n_els","1"},
+  NULL};
+static MethodArgs_data TA_taArray_byte__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__RevEl_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Set_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  {NULL,"::const_byte_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Add_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__AddUnique_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Push_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Insert_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  {&TA_int,NULL,"indx",""},
+  {&TA_int,NULL,"n_els","1"},
+  NULL};
+static MethodArgs_data TA_taArray_byte__Find_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  {&TA_int,NULL,"indx","0"},
+  NULL};
+static MethodArgs_data TA_taArray_byte__RemoveEl_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taArray_byte__InitVals_MethArgs[]={
+  {NULL,"::const_byte_ref","item",""},
+  {&TA_int,NULL,"start","0"},
+  {&TA_int,NULL,"end","-1"},
+  NULL};
+static MethodDef_data TA_taArray_byte__MethodDef[]={
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
+    2,2,1,0,NULL,cssElCFun_taArray_byte__Remove_stub,TA_taArray_byte__Remove_MethArgs},
+  {NULL,"::byte_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__SafeEl_stub,TA_taArray_byte__SafeEl_MethArgs},
+  {NULL,"::byte_ref","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__FastEl_stub,TA_taArray_byte__FastEl_MethArgs},
+  {NULL,"::byte_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__RevEl_stub,TA_taArray_byte__RevEl_MethArgs},
+  {&TA_byte,NULL,"Pop"," pop the last item in the array off","","",
+    0,0,-1,0,NULL,cssElCFun_taArray_byte__Pop_stub,NULL},
+  {NULL,"::byte_ref","Peek"," peek at the last item on the array","","",
+    0,0,-1,0,NULL,cssElCFun_taArray_byte__Peek_stub,NULL},
+  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+    0,2,-1,0,NULL,cssElCFun_taArray_byte__Set_stub,TA_taArray_byte__Set_MethArgs},
+  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__Add_stub,TA_taArray_byte__Add_MethArgs},
+  {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__AddUnique_stub,TA_taArray_byte__AddUnique_MethArgs},
+  {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__Push_stub,TA_taArray_byte__Push_MethArgs},
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+    0,3,2,0,NULL,cssElCFun_taArray_byte__Insert_stub,TA_taArray_byte__Insert_MethArgs},
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+    0,2,1,0,NULL,cssElCFun_taArray_byte__Find_stub,TA_taArray_byte__Find_MethArgs},
+  {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_byte__RemoveEl_stub,TA_taArray_byte__RemoveEl_MethArgs},
+  {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
+    0,3,1,0,NULL,cssElCFun_taArray_byte__InitVals_stub,TA_taArray_byte__InitVals_MethArgs},
+  NULL};
 static EnumDef_data TA_taArray_int__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -13362,6 +13525,8 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_short);
   taMisc::types.Add(&TA_long);
   taMisc::types.Add(&TA_char);
+  taMisc::types.Add(&TA_signed_char);
+  taMisc::types.Add(&TA_unsigned_char);
   taMisc::types.Add(&TA_unsigned);
   taMisc::types.Add(&TA_signed);
   taMisc::types.Add(&TA_float);
@@ -13649,8 +13814,6 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_const_iColor_ref);
   taMisc::types.Add(&TA_const_QColor_ref);
   taMisc::types.Add(&TA_const_QColor_ptr);
-  taMisc::types.Add(&TA_unsigned_char);
-    TA_unsigned_char.AddParents(&TA_unsigned, &TA_char);
   taMisc::types.Add(&TA_taDataLinkItr);
     TAI_taDataLinkItr = new taDataLinkItr;
     TA_taDataLinkItr.AddParFormal(&TA_class);
@@ -14063,6 +14226,34 @@ void ta_Init_ta() {
     TA_taArray.AddParFormal(&TA_class, &TA_template);
     TA_taArray.AddParCache(&TA_taBase);
     TA_taArray.AddParents(&TA_taArray_base);
+  taMisc::types.Add(&TA_taArray_byte_);
+    TA_taArray_byte_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taArray_byte_.AddParCache(&TA_taBase);
+    TA_taArray_byte_.AddClassPar(&TA_taArray,0);
+    sbt = new TypeDef("byte_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_byte);
+    TA_taArray_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("byte_ref", 1, 0, 1);
+    sbt->AddParents(&TA_byte);
+    TA_taArray_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_byte", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_byte);
+    TA_taArray_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_byte_ref", 1, 0, 1);
+    sbt->AddParents(TA_taArray_byte_.sub_types.FindName("const_byte"));
+    TA_taArray_byte_.sub_types.Add(sbt);
+    tac_AddEnum(TA_taArray_byte_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_byte__Orientation);
+    tac_AddMembers(TA_taArray_byte_,TA_taArray_byte__MemberDef);
+    tac_AddMethods(TA_taArray_byte_,TA_taArray_byte__MethodDef);
+  taMisc::types.Add(&TA_const_taArray);
+    TA_const_taArray.AddParents(&TA_const, &TA_taArray);
+  taMisc::types.Add(&TA_const_taArray_ref);
+    TA_const_taArray_ref.AddParents(&TA_const_taArray);
+  taMisc::types.Add(&TA_byte_Array);
+    TAI_byte_Array = new byte_Array;
+    TA_byte_Array.AddParFormal(&TA_class);
+    TA_byte_Array.AddParCache(&TA_taBase);
+    TA_byte_Array.AddClassPar(&TA_taArray_byte_,0);
   taMisc::types.Add(&TA_taArray_int_);
     TA_taArray_int_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taArray_int_.AddParCache(&TA_taBase);
@@ -14082,10 +14273,10 @@ void ta_Init_ta() {
     tac_AddEnum(TA_taArray_int_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_int__Orientation);
     tac_AddMembers(TA_taArray_int_,TA_taArray_int__MemberDef);
     tac_AddMethods(TA_taArray_int_,TA_taArray_int__MethodDef);
-  taMisc::types.Add(&TA_const_taArray);
-    TA_const_taArray.AddParents(&TA_const, &TA_taArray);
-  taMisc::types.Add(&TA_const_taArray_ref);
-    TA_const_taArray_ref.AddParents(&TA_const_taArray);
+  taMisc::types.Add(&TA_const_byte_Array);
+    TA_const_byte_Array.AddParents(&TA_const, &TA_byte_Array);
+  taMisc::types.Add(&TA_const_byte_Array_ref);
+    TA_const_byte_Array_ref.AddParents(&TA_const_byte_Array);
   taMisc::types.Add(&TA_int_Array);
     TAI_int_Array = new int_Array;
     TA_int_Array.AddParFormal(&TA_class);
@@ -15385,6 +15576,8 @@ void ta_Init_ta() {
     TA_taBaseAdapter.AddParents(&TA_QObject);
   taMisc::types.Add(&TA_QMimeSource);
     TA_QMimeSource.AddParFormal(&TA_class);
+  taMisc::types.Add(&TA_byte);
+    TA_byte.AddParents(&TA_unsigned_char);
   taMisc::types.Add(&TA_QObject);
     TA_QObject.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_QMenuItem_ptr);

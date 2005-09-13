@@ -2057,11 +2057,22 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 }
 
 TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
-		 bool global_obj)
+		 bool global_obj,
+#ifdef NO_TA_BASE 
+	  String size_str
+#else
+	  uint siz
+#endif	  
+)
 :inherited()
 {
   Initialize();
-  name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml;
+  name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml; 
+#ifdef NO_TA_BASE 
+  size_of_str = size_str;
+#else
+  size = siz;
+#endif	  
   if(ptr > 0) size = sizeof(void*);
   if(global_obj)
     taRefN::Ref(this);		// reference if static (non-new'ed) global object

@@ -67,6 +67,7 @@ extern	taPtrList_base<taBase>*	TAI_taPtrList_base_taBase_;
 extern	taList_impl*	TAI_taList_impl;
 extern	taList<taBase>*	TAI_taList_taBase_;
 extern	taBase_List*	TAI_taBase_List;
+extern	byte_Array*	TAI_byte_Array;
 extern	int_Array*	TAI_int_Array;
 extern	float_Array*	TAI_float_Array;
 extern	double_Array*	TAI_double_Array;

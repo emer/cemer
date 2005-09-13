@@ -178,6 +178,8 @@ public:
   void			pack(); // if there is any extra space (above a small threshold), release it
 
 // these are strangely missing in the original
+  operator unsigned char() const { return (unsigned char)strtol(chars(), NULL, 0); } 
+    // note: this is for 'byte' conversion -- we hope that char per-se is 'signed char'
   operator int() const	{ return strtol(chars(), NULL, 0); }
   operator long() const	{ return strtol(chars(), NULL, 0); }
   operator float() const { return (float)atof(chars()); }
