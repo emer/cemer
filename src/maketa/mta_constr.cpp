@@ -319,7 +319,11 @@ void TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     else		strm << ", 0";
     if(ths->formal)	strm << ", 1";
     else		strm << ", 0";
-    strm << ",1);\n";		// last true makes it global object
+    strm << ", 1";		// this true makes it global object
+    // if it is a built-in type, we get its size
+    if (ths->size_of_str.empty())	strm << ", 0";
+    else		strm << ", sizeof(" << ths->size_of_str << ")";
+    strm << ");\n";
   }
   else {
     String_PArray act_opts = ths->opts;

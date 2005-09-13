@@ -47,15 +47,17 @@
 #endif
 
 TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
-TypeDef TA_int			("int", 	1, 0, 0, 0, 1);
-TypeDef TA_short		("short", 	1, 0, 0, 0, 1);
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1);
-TypeDef TA_char			("char", 	1, 0, 0, 0, 1);
-TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1);
-TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1);
-TypeDef TA_float		("float", 	1, 0, 0, 0, 1);
-TypeDef TA_double		("double", 	1, 0, 0, 0, 1);
-TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1);
+TypeDef TA_int			("int", 	1, 0, 0, 0, 1, "int");
+TypeDef TA_short		("short", 	1, 0, 0, 0, 1, "short");
+TypeDef TA_long			("long", 	1, 0, 0, 0, 1, "long");
+TypeDef TA_char			("char", 	1, 0, 0, 0, 1, "char");
+TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, "signed char");
+TypeDef TA_unsigned_char	("unsigned_char", 1, 0, 0, 0, 1, "unsigned char");
+TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, "unsigned");
+TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, "signed");
+TypeDef TA_float		("float", 	1, 0, 0, 0, 1, "float");
+TypeDef TA_double		("double", 	1, 0, 0, 0, 1, "double");
+TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, "bool");
 TypeDef TA_const		("const", 	1, 0, 0, 0, 1);
 TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); 	// formal
 TypeDef TA_struct		("struct", 	1, 0, 0, 1, 1);	// formal
@@ -136,6 +138,8 @@ MTA::MTA() {
   ts.Add(&TA_short);
   ts.Add(&TA_long);
   ts.Add(&TA_char);
+  ts.Add(&TA_signed_char);
+  ts.Add(&TA_unsigned_char);
   ts.Add(&TA_unsigned);
   ts.Add(&TA_signed);
   ts.Add(&TA_float);
@@ -192,6 +196,8 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   ts.Add(&TA_short);
   ts.Add(&TA_long);
   ts.Add(&TA_char);
+  ts.Add(&TA_signed_char);
+  ts.Add(&TA_unsigned_char);
   ts.Add(&TA_unsigned);
   ts.Add(&TA_signed);
   ts.Add(&TA_float);
