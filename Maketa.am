@@ -1,0 +1,40 @@
+# Pass compiler flags to maketa.
+# In general, if the compiler needs
+# to know where to find an include,
+# so does the maketa.
+
+
+#MAKETA = @abs_top_builddir@/bin/maketa
+MAKETA = @abs_top_builddir@/src/maketa/./maketa
+
+$(PROJNAME)_TA_type.h:  $(PROJNAME)_TA_type.hx
+	if [ ! -f $(PROJNAME)_TA_type.hx ];\
+	then $(MAKE) $(PROJNAME)_TA_type.hx;\
+	else (cmp -s $< $@) || (cp $< $@);fi
+
+$(PROJNAME)_TA_inst.h:  $(PROJNAME)_TA_inst.hx
+	if [ ! -f $(PROJNAME)_TA_inst.hx ];\
+	then $(MAKE) $(PROJNAME)_TA_inst.hx;\
+	else (cmp -s $< $@) || (cp $< $@);fi
+
+$(PROJNAME)_TA.cpp:  $(PROJNAME)_TA.ccx
+	if [ ! -f $(PROJNAME)_TA.ccx ];\
+	then $(MAKE) $(PROJNAME)_TA.ccx;\
+	else (cmp -s $< $@) || (cp $< $@);fi
+
+$(PROJNAME)_TA_type.hx: $(TAHEADS)
+	$(MAKE) force_ta
+
+$(PROJNAME)_TA_inst.hx: $(TAHEADS)
+	$(MAKE) force_ta
+
+$(PROJNAME)_TA.ccx: $(TAHEADS)
+	$(MAKE) force_ta
+
+$(TAHEADS):
+	$(MAKE) force_ta
+
+force_ta:
+	if [ ! -f $(PROJNAME)_TA_type.h ];\
+	then touch -t 196912311700.00 $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h;fi
+	$(MAKETA) $(MAKETA_FLAGS) $(PROJNAME) $(TAHEADS)

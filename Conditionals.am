@@ -1,0 +1,147 @@
+#                                   Conditionals.am
+#**************************************************
+#
+#  * Always in this order
+#  * If you need to modify this file for your
+#    platform, add the necessary flags, and then
+#    run 'autoreconf' in the pdp++dev directory.
+#    Then run ./configure && make
+#
+#**************************************************
+
+MAKETA_FLAGS =
+PREPROCESSOR_FLAGS =
+LINKER_FLAGS =
+COMPILER_FLAGS =
+
+#**************************************************
+#
+#                     LINUX
+#
+#**************************************************
+if LINUX
+
+cppC = "/lib/cpp -D__i386__"
+
+MAKETA_FLAGS +=\
+	-I@abs_top_builddir@/src/ta/ios-g++-3.1 \
+	-I/usr/include/linux
+
+PREPROCESSOR_FLAGS += -DLINUX -D__linux__
+
+endif
+#**************************************************
+#
+#                    DARWIN
+#
+#**************************************************
+if DARWIN
+
+cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
+LIBG_INCLUDE_DIR = -L/usr/include/gcc/darwin/3.3-fast
+
+PREPROCESSOR_FLAGS += -DLINUX -DDARWIN
+
+endif
+#**************************************************
+#
+#                      GUI
+#
+#**************************************************	
+if TA_GUI
+
+GUI_PREPROCESSOR_FLAGS =\
+	-I@abs_top_builddir@/src/taiqtso \
+	-I@abs_top_builddir@/src/tamisc \
+	-I/usr/include/freetype2 \
+	-DTA_GUI \
+	-DTA_USE_QT \
+	-DTA_USE_INVENTOR \
+	-D_REENTRANT \
+	-DQT_SHARED \
+	$(QT_CXXFLAGS) \
+	-I/usr/X11R6/include
+
+GUI_LINKER_FLAGS =\
+	$(GENERIC_LIB) \
+	$(TARG_LIBS) \
+	$(X_LIBS) \
+	$(X_EXTRA_LIBS) \
+	$(X_EXTRA_LIBS) \
+	$(X_PRE_LIBS) \
+	$(QT_LDADD) \
+	$(QT_GUILINK)
+
+GUI_COMPILER_FLAGS =\
+	$(X_CFLAGS)
+
+else
+
+PREPROCESSOR_FLAGS += -DTA_NO_GUI
+
+endif
+#**************************************************
+#
+#                     DEBUG
+#
+#**************************************************
+if DEBUG
+
+PREPROCESSOR_FLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+COMPILER_FLAGS += -Wno-non-virtual-dtor
+
+endif
+#*************************************************
+#
+#                      MPI
+#
+#**************************************************
+if MPI
+
+LINKER_FLAGS += -lmpi
+
+COMPILER_FLAGS += -DDMEM_COMPILE
+
+endif
+#**************************************************
+#
+#                    DEFAULTS
+#
+#**************************************************
+
+PREPROCESSOR_FLAGS +=\
+	-I@abs_top_builddir@/src/ta/ios-g++-3.1 \
+	-I@abs_top_builddir@/src/css \
+	-I@abs_top_builddir@/src/ta \
+	-I@abs_top_builddir@/src \
+	-I@abs_top_builddir@/include
+
+
+MAKETA_FLAGS +=\
+	-hx \
+	-css \
+	-cpp=$(cppC) \
+	$(PREPROCESSOR_FLAGS) \
+	$(GUI_PREPROCESSOR_FLAGS)
+	
+
+LINKER_FLAGS +=\
+	$(LIBS) \
+	$(LIBG_INCLUDE_DIR) \
+	-L/usr/lib
+
+COMPILER_FLAGS +=\
+	-fPIC \
+	-fno-implicit-templates \
+	-fno-exceptions \
+	-Wno-non-virtual-dtor
+
+clean-local:
+	-rm *TA*
+	-rm *.moc*
