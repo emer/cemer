@@ -1046,24 +1046,22 @@ public:
 template<class T>
 class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
-protected:
-//  void		InitArray_()	{ Clear_Tmp_(); alloc_size = 2; el = new T[alloc_size]; }
-//  void		FreeArray_()	{ if(el != NULL) delete [] el; el = NULL; }
-  override void*	MakeArray_(int n) const	{ return new T[n]; }
-  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
-
 public:
+  const static T blank; // #IGNORE -- note, must also declare this in _ti.cpp file
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range; MUST INIT IN CONSTRUCTOR
-
-  void*		SafeEl_(int i) const		{ return &(SafeEl(i)); } // #IGNORE
-  void*		FastEl_(int i)	const		{ return &(FastEl(i)); }// #IGNORE
+  T		tmp; // #IGNORE temporary item
+  
+  void*		FastEl_(int i)	const		{ return &(el[i]); }// #IGNORE
   int		El_Compare_(void* a, void* b) const
   { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
   // #IGNORE
   void		El_Copy_(void* to, void* fm)	{ *((T*)to) = *((T*)fm); } // #IGNORE
   uint		El_SizeOf_() const		{ return sizeof(T); }	 // #IGNORE
-  void*		El_GetTmp_() const		{ return (void*)&err; }	 // #IGNORE
+  void*		El_GetErr_() const		{ return (void*)&err; }	 // #IGNORE
+  void*		El_GetTmp_() const		{ return (void*)&tmp; }	 // #IGNORE
+  void*		El_GetBlank_() const		{ return (void*)&blank; }
+    // #IGNORE
   String	El_GetStr_(void* it) const	{ return String(*((T*)it)); } // #IGNORE
   void		El_SetFmStr_(void* it, const String& val)
   { T tmp = (T)val; *((T*)it) = tmp; } // #IGNORE
@@ -1072,8 +1070,7 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&		SafeEl(int i) const
-  { T* rval=(T*)&err; if((i >= 0) && (i < size)) rval=&(el[i]); return *rval; }
+  T&		SafeEl(int i) const {return *(T*)SafeEl_(i);}
   // #MENU #MENU_ON_Edit #USE_RVAL the element at the given index
   T&		FastEl(int i) const		{ return el[i]; }
   // fast element (no range checking)
@@ -1126,6 +1123,9 @@ public:
 //  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new taArray<T>[no]); }
   void operator=(const taArray<T>& cp)	{ Copy(cp); }
   TA_TMPLT_TYPEFUNS(taArray,T);
+protected:
+  override void*	MakeArray_(int n) const	{ return new T[n]; }
+  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
 };
 
 // do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
@@ -1142,17 +1142,6 @@ public:
 // }
 
 // use these as templates instead
-
-// make these ones no_update_after..
-class byte_Array : public taArray<byte> {
-  // #NO_UPDATE_AFTER array of byte (unsigned char)
-public:
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
-  void Initialize()	{err = 0; };
-  void Destroy()	{ };
-  TA_BASEFUNS(byte_Array);
-};
 
 class int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER
