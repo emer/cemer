@@ -25,11 +25,11 @@ SRCS_GUI =\
 	pdpview_qt.cpp \
 	netstru_so.cpp \
 	pdp_qtso.cpp \
-	moc_pdp_qtso.moc.cpp \
+	moc_pdp_qtso.cpp \
 	netstru_qtso.cpp \
-	moc_netstru_qtso.moc.cpp \
+	moc_netstru_qtso.cpp \
 	pdplog_qtso.cpp \
-	moc_pdplog_qtso.moc.cpp \
+	moc_pdplog_qtso.cpp \
 	enviro_qtso.cpp
 
 endif
