@@ -1,5 +1,2 @@
-# If you are not using GNU Make, uncomment this
-SUFFIXES = .moc.cpp
-
-.h.moc.cpp:
+moc_%.cpp: %.h
 	$(MOC) -o $@ $<
