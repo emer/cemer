@@ -39,22 +39,22 @@ HEADS_GUI =\
 
 SRCS_GUI =\
 	ta_qt.cpp \
-	ta_qt.moc.cpp \
+	moc_ta_qt.cpp \
 	ta_type_qt.cpp \
 	ta_qtdata.cpp \
-	ta_qtdata_def.moc.cpp \
-	ta_qtdata.moc.cpp \
+	moc_ta_qtdata_def.cpp \
+	moc_ta_qtdata.cpp \
 	ta_qtdialog.cpp \
-	ta_qtdialog.moc.cpp \
+	moc_ta_qtdialog.cpp \
 	ta_qtgroup.cpp \
-	ta_qtgroup.moc.cpp \
+	moc_ta_qtgroup.cpp \
 	ta_qtviewer.cpp \
-	ta_qtviewer.moc.cpp \
+	moc_ta_qtviewer.cpp \
 	ta_qtbrowse.cpp \
-	ta_qtbrowse.moc.cpp \
+	moc_ta_qtbrowse.cpp \
 	ta_qttype.cpp \
 	ta_qtclipdata.cpp \
-	ta_qtclipdata.moc.cpp \
+	moc_ta_qtclipdata.cpp \
 	ta_seledit.cpp
 
 endif
@@ -128,4 +128,4 @@ libta_la_SOURCES = $(HEADS) $(SRCS)
 libta_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
 libta_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS) -DTA_USE_QT
 libta_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
-BUILT_SOURCES = $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h
+BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
