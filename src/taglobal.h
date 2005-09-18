@@ -88,6 +88,8 @@ typedef uchar*		puchar;
 
 #endif // TA_GUI
 
+typedef unsigned char   byte;
+
 // define Qt's macros, for Maketa
 // for signals, we must put #ifdef's around the signals (note: moc does not accept preprocessor directives)
 #ifdef __MAKETA__
