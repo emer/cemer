@@ -28,26 +28,26 @@ HEADS =\
 SRCS =\
 	iflowlayout.cpp \
 	ispinbox.cpp \
-	moc_ispinbox.cpp \
+	ispinbox.moc.cpp \
 	iwidgetlist.cpp \
 	iflowbox.cpp \
-	moc_iflowbox.cpp \
+	iflowbox.moc.cpp \
 	itreeview.cpp \
-	moc_itreeview.cpp \
+	itreeview.moc.cpp \
 	ilineedit.cpp \
-	moc_ilineedit.cpp \
+	ilineedit.moc.cpp \
 	icheckbox.cpp \
-	moc_icheckbox.cpp \
+	icheckbox.moc.cpp \
 	icombobox.cpp \
-	moc_icombobox.cpp \
+	icombobox.moc.cpp \
 	igeometry.cpp \
 	itransformer.cpp \
 	ieditgrid.cpp \
-	moc_ieditgrid.cpp \
+	ieditgrid.moc.cpp \
 	safeptr_so.cpp \
 	imisc_so.cpp \
 	irenderarea.cpp \
-	moc_irenderarea.cpp \
+	irenderarea.moc.cpp \
 	taiqtso_ti.cpp
 
 include $(top_srcdir)/Conditionals.am
