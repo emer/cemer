@@ -39,22 +39,22 @@ HEADS_GUI =\
 
 SRCS_GUI =\
 	ta_qt.cpp \
-	moc_ta_qt.cpp \
+	ta_qt.moc.cpp \
 	ta_type_qt.cpp \
 	ta_qtdata.cpp \
-	moc_ta_qtdata_def.cpp \
-	moc_ta_qtdata.cpp \
+	ta_qtdata_def.moc.cpp \
+	ta_qtdata.moc.cpp \
 	ta_qtdialog.cpp \
-	moc_ta_qtdialog.cpp \
+	ta_qtdialog.moc.cpp \
 	ta_qtgroup.cpp \
-	moc_ta_qtgroup.cpp \
+	ta_qtgroup.moc.cpp \
 	ta_qtviewer.cpp \
-	moc_ta_qtviewer.cpp \
+	ta_qtviewer.moc.cpp \
 	ta_qtbrowse.cpp \
-	moc_ta_qtbrowse.cpp \
+	ta_qtbrowse.moc.cpp \
 	ta_qttype.cpp \
 	ta_qtclipdata.cpp \
-	moc_ta_qtclipdata.cpp \
+	ta_qtclipdata.moc.cpp \
 	ta_seledit.cpp
 
 endif

@@ -372,16 +372,10 @@ TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taBase_List_ref("const_taBase_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray("taArray", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taArray_byte_("taArray_byte_", " ", 
-	"", "", "", sizeof(taArray<byte>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray("const_taArray", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taArray_ref("const_taArray_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_byte_Array("byte_Array", " array of byte (unsigned char)", 
-	"", "", "", sizeof(byte_Array), (void**)&TAI_byte_Array, 0, 0, 0,1);
 TypeDef TA_taArray_int_("taArray_int_", " ", 
 	"", "", "", sizeof(taArray<int>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_byte_Array("const_byte_Array", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_byte_Array_ref("const_byte_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taArray("const_taArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_ref("const_taArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_Array("int_Array", " ", 
 	"", "", "", sizeof(int_Array), (void**)&TAI_int_Array, 0, 0, 0,1);
 TypeDef TA_taArray_float_("taArray_float_", " ", 
@@ -981,7 +975,6 @@ TypeDef TA_QWidget("QWidget", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taBaseAdapter_ptr("taBaseAdapter_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taBaseAdapter("taBaseAdapter", 1, 0, 0, 0, 1, 0);
 TypeDef TA_QMimeSource("QMimeSource", 1, 0, 0, 0, 1, 0);
-TypeDef TA_byte("byte", 1, 0, 0, 0, 1, 0);
 TypeDef TA_QObject("QObject", 1, 0, 0, 0, 1, 0);
 TypeDef TA_QMenuItem_ptr("QMenuItem_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_QMenuItem("QMenuItem", 1, 0, 0, 0, 1, 0);
@@ -4636,77 +4629,6 @@ taList<taBase>*		 TAI_taList_taBase_=NULL;
     rval=new cssTA_Base((void*)((taList<taBase>*)ths)->LinkUniqNameOld((taBase*)(void*)*arg[1]), 1, &TA_taBase);
     return rval;}
 taBase_List*		 TAI_taBase_List=NULL;
-  static cssEl* cssElCFun_taArray_byte__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<byte>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<byte>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__SafeEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->SafeEl((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__FastEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->FastEl((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__RevEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->RevEl((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Pop_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->Pop();
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Peek_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->Peek();
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Set_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->Set((int)*arg[1], (byte)*arg[2]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Add_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->Add((byte)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__AddUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray<byte>*)ths)->AddUnique((byte)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Push_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray<byte>*)ths)->Push((byte)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Insert_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 2) {
-      ((taArray<byte>*)ths)->Insert((byte)*arg[1], (int)*arg[2]);}
-    if(na == 3) {
-      ((taArray<byte>*)ths)->Insert((byte)*arg[1], (int)*arg[2], (int)*arg[3]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__Find_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<byte>*)ths)->Find((byte)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<byte>*)ths)->Find((byte)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__RemoveEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray<byte>*)ths)->RemoveEl((byte)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_byte__InitVals_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ((taArray<byte>*)ths)->InitVals((byte)*arg[1]);}
-    if(na == 2) {
-      ((taArray<byte>*)ths)->InitVals((byte)*arg[1], (int)*arg[2]);}
-    if(na == 3) {
-      ((taArray<byte>*)ths)->InitVals((byte)*arg[1], (int)*arg[2], (int)*arg[3]);}
-    return rval;}
-byte_Array*		 TAI_byte_Array=NULL;
   static cssEl* cssElCFun_taArray_int__Remove_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 1) {
@@ -10870,90 +10792,6 @@ static MethodDef_data TA_taList_taBase__MethodDef[]={
   {NULL,"::taBase_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
     0,1,-1,0,NULL,cssElCFun_taList_taBase__LinkUniqNameOld_stub,TA_taList_taBase__LinkUniqNameOld_MethArgs},
   NULL};
-static EnumDef_data TA_taArray_byte__Orientation[]={
-  {"Horizontal","","",0},
-  {"Vertical","","",1},
-  NULL};
-static int taArray<byte>::* TA_taArray_byte__MbrOff;
-static MemberDef_data TA_taArray_byte__MemberDef[]={
-  {NULL,"::byte_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_taArray_byte__MbrOff=(int taArray<byte>::*)(&taArray<byte>::el))),0,NULL,0},
-  {&TA_byte,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_taArray_byte__MbrOff=(int taArray<byte>::*)(&taArray<byte>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
-  NULL};
-static MethodArgs_data TA_taArray_byte__SafeEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__FastEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__RevEl_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Set_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  {NULL,"::const_byte_ref","item",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Add_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__AddUnique_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Push_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Insert_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  {&TA_int,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
-  NULL};
-static MethodArgs_data TA_taArray_byte__Find_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  {&TA_int,NULL,"indx","0"},
-  NULL};
-static MethodArgs_data TA_taArray_byte__RemoveEl_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  NULL};
-static MethodArgs_data TA_taArray_byte__InitVals_MethArgs[]={
-  {NULL,"::const_byte_ref","item",""},
-  {&TA_int,NULL,"start","0"},
-  {&TA_int,NULL,"end","-1"},
-  NULL};
-static MethodDef_data TA_taArray_byte__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_byte__Remove_stub,TA_taArray_byte__Remove_MethArgs},
-  {NULL,"::byte_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__SafeEl_stub,TA_taArray_byte__SafeEl_MethArgs},
-  {NULL,"::byte_ref","FastEl"," fast element (no range checking)","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__FastEl_stub,TA_taArray_byte__FastEl_MethArgs},
-  {NULL,"::byte_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__RevEl_stub,TA_taArray_byte__RevEl_MethArgs},
-  {&TA_byte,NULL,"Pop"," pop the last item in the array off","","",
-    0,0,-1,0,NULL,cssElCFun_taArray_byte__Pop_stub,NULL},
-  {NULL,"::byte_ref","Peek"," peek at the last item on the array","","",
-    0,0,-1,0,NULL,cssElCFun_taArray_byte__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
-    0,2,-1,0,NULL,cssElCFun_taArray_byte__Set_stub,TA_taArray_byte__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__Add_stub,TA_taArray_byte__Add_MethArgs},
-  {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__AddUnique_stub,TA_taArray_byte__AddUnique_MethArgs},
-  {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__Push_stub,TA_taArray_byte__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
-    0,3,2,0,NULL,cssElCFun_taArray_byte__Insert_stub,TA_taArray_byte__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
-    0,2,1,0,NULL,cssElCFun_taArray_byte__Find_stub,TA_taArray_byte__Find_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_byte__RemoveEl_stub,TA_taArray_byte__RemoveEl_MethArgs},
-  {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
-    0,3,1,0,NULL,cssElCFun_taArray_byte__InitVals_stub,TA_taArray_byte__InitVals_MethArgs},
-  NULL};
 static EnumDef_data TA_taArray_int__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -14226,34 +14064,6 @@ void ta_Init_ta() {
     TA_taArray.AddParFormal(&TA_class, &TA_template);
     TA_taArray.AddParCache(&TA_taBase);
     TA_taArray.AddParents(&TA_taArray_base);
-  taMisc::types.Add(&TA_taArray_byte_);
-    TA_taArray_byte_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taArray_byte_.AddParCache(&TA_taBase);
-    TA_taArray_byte_.AddClassPar(&TA_taArray,0);
-    sbt = new TypeDef("byte_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_byte);
-    TA_taArray_byte_.sub_types.Add(sbt);
-    sbt = new TypeDef("byte_ref", 1, 0, 1);
-    sbt->AddParents(&TA_byte);
-    TA_taArray_byte_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_byte", 1, 0, 0);
-    sbt->AddParents(&TA_const, &TA_byte);
-    TA_taArray_byte_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_byte_ref", 1, 0, 1);
-    sbt->AddParents(TA_taArray_byte_.sub_types.FindName("const_byte"));
-    TA_taArray_byte_.sub_types.Add(sbt);
-    tac_AddEnum(TA_taArray_byte_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_byte__Orientation);
-    tac_AddMembers(TA_taArray_byte_,TA_taArray_byte__MemberDef);
-    tac_AddMethods(TA_taArray_byte_,TA_taArray_byte__MethodDef);
-  taMisc::types.Add(&TA_const_taArray);
-    TA_const_taArray.AddParents(&TA_const, &TA_taArray);
-  taMisc::types.Add(&TA_const_taArray_ref);
-    TA_const_taArray_ref.AddParents(&TA_const_taArray);
-  taMisc::types.Add(&TA_byte_Array);
-    TAI_byte_Array = new byte_Array;
-    TA_byte_Array.AddParFormal(&TA_class);
-    TA_byte_Array.AddParCache(&TA_taBase);
-    TA_byte_Array.AddClassPar(&TA_taArray_byte_,0);
   taMisc::types.Add(&TA_taArray_int_);
     TA_taArray_int_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taArray_int_.AddParCache(&TA_taBase);
@@ -14273,10 +14083,10 @@ void ta_Init_ta() {
     tac_AddEnum(TA_taArray_int_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_int__Orientation);
     tac_AddMembers(TA_taArray_int_,TA_taArray_int__MemberDef);
     tac_AddMethods(TA_taArray_int_,TA_taArray_int__MethodDef);
-  taMisc::types.Add(&TA_const_byte_Array);
-    TA_const_byte_Array.AddParents(&TA_const, &TA_byte_Array);
-  taMisc::types.Add(&TA_const_byte_Array_ref);
-    TA_const_byte_Array_ref.AddParents(&TA_const_byte_Array);
+  taMisc::types.Add(&TA_const_taArray);
+    TA_const_taArray.AddParents(&TA_const, &TA_taArray);
+  taMisc::types.Add(&TA_const_taArray_ref);
+    TA_const_taArray_ref.AddParents(&TA_const_taArray);
   taMisc::types.Add(&TA_int_Array);
     TAI_int_Array = new int_Array;
     TA_int_Array.AddParFormal(&TA_class);
@@ -15576,8 +15386,6 @@ void ta_Init_ta() {
     TA_taBaseAdapter.AddParents(&TA_QObject);
   taMisc::types.Add(&TA_QMimeSource);
     TA_QMimeSource.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_byte);
-    TA_byte.AddParents(&TA_unsigned_char);
   taMisc::types.Add(&TA_QObject);
     TA_QObject.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_QMenuItem_ptr);

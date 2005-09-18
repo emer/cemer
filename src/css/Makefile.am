@@ -7,11 +7,11 @@ if TA_GUI
 
 SRCS_GUI =\
 	css_qttype.cpp \
-	moc_css_qttype.cpp \
+	css_qttype.moc.cpp \
 	css_qt.cpp \
-	moc_css_qttype.cpp \
+	css_qttype.moc.cpp \
 	css_qtdata.cpp \
-	moc_css_qtdata.cpp \
+	css_qtdata.moc.cpp \
 	css_qtdialog.cpp
 
 HEADS_GUI =\
@@ -63,7 +63,12 @@ libcss_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 
 bin_PROGRAMS = css
 css_SOURCES = main.cpp
-css_LDADD = $(abs_top_builddir)/src/ta/libta.la libcss.la $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+css_LDADD = $(abs_top_builddir)/src/ta/libta.la libcss.la
+
+if TA_GUI
+css_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+endif
+
 css_LDFLAGS = $(libcss_la_LDFLAGS)
 css_CPPFLAGS = $(libcss_la_CPPFLAGS)
 css_CFLAGS = $(libcss_la_CFLAGS)

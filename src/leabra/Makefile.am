@@ -22,7 +22,7 @@ SRCS =\
 include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
 
-bin_PROGRAMS = leabra++
+bin_PROGRAMS = bp
 leabra_SOURCES = $(HEADS) $(SRCS)
 leabra_LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp.la \
@@ -33,7 +33,7 @@ leabra_LDADD =\
 
 if TA_GUI
 leabra_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
-fi
+endif
 
 leabra_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
 leabra_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)

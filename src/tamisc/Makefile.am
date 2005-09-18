@@ -35,15 +35,15 @@ SRCS_GUI =\
 	xform.cpp \
 	t3node_so.cpp \
 	t3viewer.cpp \
-	moc_t3viewer.cpp \
+	t3viewer.moc.cpp \
 	colorbar_qt.cpp \
-	moc_colorbar_qt.cpp \
+	colorbar_qt.moc.cpp \
 	colorbar_so.cpp \
 	datatable_qtso.cpp \
-	moc_datatable_qtso.cpp \
+	datatable_qtso.moc.cpp \
 	datagraph_so.cpp \
 	datagraph_qtso.cpp \
-	moc_datagraph_qtso.cpp
+	datagraph_qtso.moc.cpp
 
 endif
 

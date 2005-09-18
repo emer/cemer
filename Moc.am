@@ -1,2 +1,4 @@
-moc_%.cpp: %.h
+SUFFIXES = .moc.cpp
+
+.h.moc.cpp:
 	$(MOC) -o $@ $<

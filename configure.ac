@@ -6,7 +6,6 @@
 
 AC_PREREQ(2.59)
 AC_INIT([PDP-plus-plus],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
-#AC_CONFIG_AUX_DIR([aux])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
@@ -59,7 +58,8 @@ if test $GCC != yes; then
 fi
 AC_MSG_RESULT([$GCC])
 
-# GNU Make is mandatory
+# GNU Make is mandatory. CHECK_GNU_MAKE is a custom macro that
+# warns if it is not available
 AC_PROG_MAKE_SET
 CHECK_GNU_MAKE
 
@@ -108,9 +108,6 @@ AC_CHECK_LIB([dl], [main])
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([readline], [main],[],[VL_LIB_READLINE])
 AC_CHECK_LIB([z], [main])
-#AC_CHECK_LIB([termcap], [main])
-#AC_CHECK_LIB([fontconfig], [main])
-#AC_CHECK_LIB([freetype], [main])
 
 #                                            library functions
 #*************************************************************

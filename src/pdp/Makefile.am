@@ -25,11 +25,11 @@ SRCS_GUI =\
 	pdpview_qt.cpp \
 	netstru_so.cpp \
 	pdp_qtso.cpp \
-	moc_pdp_qtso.cpp \
+	pdp_qtso.moc.cpp \
 	netstru_qtso.cpp \
-	moc_netstru_qtso.cpp \
+	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
-	moc_pdplog_qtso.cpp \
+	pdplog_qtso.moc.cpp \
 	enviro_qtso.cpp
 
 endif
@@ -102,11 +102,15 @@ libpdp_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 bin_PROGRAMS = pdp
 pdp_SOURCES = main.cpp
 pdp_LDADD =\
-	$(abs_top_builddir)/src/taiqtso/libtaiqtso.la \
 	$(abs_top_builddir)/src/ta/libta.la \
 	$(abs_top_builddir)/src/css/libcss.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc.la \
 	libpdp.la
+
+if TA_GUI
+pdp_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+endif
+
 pdp_LDFLAGS = $(libpdp_la_LDFLAGS)
 pdp_CPPFLAGS =$(libpdp_la_CPPFLAGS)
 pdp_CFLAGS = $(libpdp_la_CFLAGS)

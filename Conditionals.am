@@ -126,10 +126,7 @@ PREPROCESSOR_FLAGS +=\
 MAKETA_FLAGS +=\
 	-hx \
 	-css \
-	-cpp=$(cppC) \
-	$(PREPROCESSOR_FLAGS) \
-	$(GUI_PREPROCESSOR_FLAGS)
-	
+	-cpp=$(cppC)	
 
 LINKER_FLAGS +=\
 	$(LIBS) \
@@ -144,4 +141,4 @@ COMPILER_FLAGS +=\
 
 clean-local:
 	-rm *TA*
-	-rm *.moc*
+	-rm *moc*
