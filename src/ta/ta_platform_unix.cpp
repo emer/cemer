@@ -35,7 +35,7 @@
 // SOFTWARE. 								      //
 ==============================================================================*/
 
-#include "ta/ta_platform.h"
+#include "ta_platform.h"
 
 //#include <process.h>
 #include <unistd.h>
