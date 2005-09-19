@@ -40,7 +40,7 @@
 #ifndef TA_PLATFORM_H
 #define TA_PLATFORM_H
 
-#include "ta/ta_def.h"
+#include "ta_def.h"
 #include "ta_string.h"
 
 class TA_API taPlatform { // class to hold static members for platform specific functions
