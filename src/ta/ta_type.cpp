@@ -57,7 +57,7 @@
 # endif // TA_GUI */
 
 #else // ndef NO_TA_BASE
-# include "maketa/maketa.h"
+# include "maketa.h"
 #endif // NO_TA_BASE
 
 
