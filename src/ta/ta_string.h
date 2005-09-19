@@ -79,7 +79,7 @@ Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // **NOTE** prior to performing any in-place modification to the string, you must call makeUnique()
 
-#include "ta/ta_def.h"
+#include "ta_def.h"
 #ifdef __MAKETA__
 # include <iostream.h>
 #else
