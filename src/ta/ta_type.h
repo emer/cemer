@@ -40,7 +40,7 @@
 #ifndef TA_TYPE_H
 #define TA_TYPE_H
 
-#include "ta/ta_def.h"
+#include "ta_def.h"
 #include "ta_list.h"
 
 // comment directives which are parsed 'internally' (add a # sign before each)
