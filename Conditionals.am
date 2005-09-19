@@ -51,8 +51,8 @@ endif
 if TA_GUI
 
 GUI_PREPROCESSOR_FLAGS =\
-	-I@abs_top_builddir@/src/taiqtso \
-	-I@abs_top_builddir@/src/tamisc \
+	-I../../src/taiqtso \
+	-I../../src/tamisc \
 	-I/usr/include/freetype2 \
 	-DTA_GUI \
 	-DTA_USE_QT \
@@ -116,17 +116,17 @@ endif
 #**************************************************
 
 PREPROCESSOR_FLAGS +=\
-	-I@abs_top_builddir@/src/ta/ios-g++-3.1 \
-	-I@abs_top_builddir@/src/css \
-	-I@abs_top_builddir@/src/ta \
-	-I@abs_top_builddir@/src \
-	-I@abs_top_builddir@/include
+	-I../../src/ta \
+	-I../../src/ \
+	-I../../src/ta/ios-g++-3.1 \
+	-I../../src/css \
+	-I../../include
 
 
 MAKETA_FLAGS +=\
 	-hx \
 	-css \
-	-cpp=$(cppC)	
+	-cpp=$(cppC)
 
 LINKER_FLAGS +=\
 	$(LIBS) \
