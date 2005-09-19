@@ -70,7 +70,7 @@ extern TypeDef TA_taString;
 extern TypeDef TA_taSubString;
 extern TypeDef TA_void_ptr;
 
-#include "ta/ta_type.h"
+#include "ta_type.h"
 
 #ifndef TYPE
 #include "mta_parse.h"
