@@ -41,9 +41,9 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 
-#include "ta/ta_qttype.h"
-#include "ta/ta_type.h"
-#include "ta/ta_qt.h"
+#include "ta_qttype.h"
+#include "ta_type.h"
+#include "ta_qt.h"
 
 #include "ta_css.h"
 #include "css_qt.h"
@@ -52,7 +52,7 @@
 
 
 
-#include "ta/ta_TA_type.h"
+#include "ta_TA_type.h"
 
 //#include <stdlib.h>
 
