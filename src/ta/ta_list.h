@@ -38,7 +38,7 @@
 #ifndef ta_list_h
 #define ta_list_h 1
 
-#include "ta/ta_def.h"
+#include "ta_def.h"
 #include "ta_string.h"
 
 // this is the amount of overhead (in 4 byte units) allowed by the alloc
