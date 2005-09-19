@@ -38,7 +38,7 @@
 #ifndef TA_DEF_H
 #define TA_DEF_H
 
-#include "ta/ta_stdef.h"
+#include "ta_stdef.h"
 
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
