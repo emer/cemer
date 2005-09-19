@@ -196,7 +196,7 @@ void css_cleanup(int err) {
   kill(getpid(), err);		// activate signal
 }
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char *argv[]) {
 /* following creates QApplication and event loop -- these
    must get created first, and are needed even if we don't open a gui
    Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
