@@ -8,19 +8,19 @@ if TA_GUI
 ta_type_qt.cpp: ta_type.h
 
 TAHEADS_GUI =\
-	ta_qt.h \
-	ta_qtdata_def.h \
-	ta_qtdata.h \
-	ta_qtdialog.h \
-	ta_qttype_def.h \
-	ta_qttype.h \
-	ta_qtclipdata.h \
-	ta_qtbrowse_def.h \
-	ta_qtviewer.h \
-	ta_qtbrowse.h \
-	ta_qtgroup.h \
-	ta_seledit.h \
-	$(top_srcdir)/src/taiqtso/igeometry.h
+	@abs_srcdir@/ta_qt.h \
+	@abs_srcdir@/ta_qtdata_def.h \
+	@abs_srcdir@/ta_qtdata.h \
+	@abs_srcdir@/ta_qtdialog.h \
+	@abs_srcdir@/ta_qttype_def.h \
+	@abs_srcdir@/ta_qttype.h \
+	@abs_srcdir@/ta_qtclipdata.h \
+	@abs_srcdir@/ta_qtbrowse_def.h \
+	@abs_srcdir@/ta_qtviewer.h \
+	@abs_srcdir@/ta_qtbrowse.h \
+	@abs_srcdir@/ta_qtgroup.h \
+	@abs_srcdir@/ta_seledit.h \
+	@abs_srcdir@/../taiqtso/igeometry.h
 
 HEADS_GUI =\
 	ta_qt.h \
@@ -60,23 +60,23 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
-	@abs_top_builddir@/src/ta/ios-g++-3.1/streambuf.h \
-	@abs_top_builddir@/src/ta/ios-g++-3.1/iostream.h \
-	@abs_top_builddir@/src/ta/ios-g++-3.1/fstream.h \
-	@abs_top_builddir@/src/ta/ios-g++-3.1/sstream.h \
-	ta_def.h \
-	ta_string.h \
-	ta_stdef.h \
-	ifont.h \
-	ta_list.h \
-	ta_filer.h \
-	icolor.h \
-	ta_type.h \
-	ta_base.h \
-	ta_group.h \
-	ta_dump.h \
-	ta_defaults.h \
-	ta_script.h \
+	@abs_srcdir@/ios-g++-3.1/streambuf.h \
+	@abs_srcdir@/ios-g++-3.1/iostream.h \
+	@abs_srcdir@/ios-g++-3.1/fstream.h \
+	@abs_srcdir@/ios-g++-3.1/sstream.h \
+	@abs_srcdir@/ta_def.h \
+	@abs_srcdir@/ta_string.h \
+	@abs_srcdir@/ta_stdef.h \
+	@abs_srcdir@/ifont.h \
+	@abs_srcdir@/ta_list.h \
+	@abs_srcdir@/ta_filer.h \
+	@abs_srcdir@/icolor.h \
+	@abs_srcdir@/ta_type.h \
+	@abs_srcdir@/ta_base.h \
+	@abs_srcdir@/ta_group.h \
+	@abs_srcdir@/ta_dump.h \
+	@abs_srcdir@/ta_defaults.h \
+	@abs_srcdir@/ta_script.h \
 	$(TAHEADS_GUI)
 
 HEADS =\
