@@ -4,10 +4,10 @@ PROJNAME = leabra
 #*********************************************************
 
 TAHEADS =\
-	$(abs_top_builddir)/src/ta/ta_TA_type.h \
-	$(abs_top_builddir)/src/tamisc/tamisc_TA_type.h \
-	$(abs_top_builddir)/src/pdp/pdp_TA_type.h \
-	$(abs_top_builddir)/src/leabra/leabra.h
+	@abs_srcdir@/../ta/ta_TA_type.h \
+	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
+	@abs_srcdir@/../pdp/pdp_TA_type.h \
+	@abs_srcdir@/leabra.h
 
 HEADS =\
 	leabra_TA_type.h \
