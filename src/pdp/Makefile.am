@@ -35,8 +35,8 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
-	@abs_top_builddir@/src/ta/ta_TA_type.h \
-	@abs_top_builddir@/src/tamisc/tamisc_TA_type.h \
+	@abs_srcdir@/../ta/ta_TA_type.h \
+	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/pdpdeclare.h \
 	@abs_srcdir@/pdpbase.h \
 	@abs_srcdir@/spec.h \
