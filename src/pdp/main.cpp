@@ -43,7 +43,7 @@
 #include "pdpshell.h"
 #include "pdp_TA_type.h"
 
-int main(int argc, const char* argv[]) {
+int main(int argc, char* argv[]) {
   pdpMisc::Init_Hook = ta_Init_pdp; // use the pdp program to startup..
   pdpMisc::def_wizard = &TA_Wizard;
   return pdpMisc::Main(argc, argv);
