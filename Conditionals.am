@@ -14,6 +14,9 @@ PREPROCESSOR_FLAGS =
 LINKER_FLAGS =
 COMPILER_FLAGS =
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 #**************************************************
 #
 #                     LINUX
@@ -21,7 +24,7 @@ COMPILER_FLAGS =
 #**************************************************
 if LINUX
 
-cppC = "/lib/cpp -D__i386__"
+cppC = "/lib/cpp -D__i386__ -I@abs_srcdir@/ios-g++3.1/"
 
 MAKETA_FLAGS +=\
 	-I@abs_top_builddir@/src/ta/ios-g++-3.1 \
@@ -37,8 +40,8 @@ endif
 #**************************************************
 if DARWIN
 
-cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
-LIBG_INCLUDE_DIR = -L/usr/include/gcc/darwin/3.3-fast
+cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__ I@abs_srcdir@/ios-g++3.1/"
+LIBG_INCLUDE_DIR = -L/usr/include/gcc/darwin/3.3
 
 PREPROCESSOR_FLAGS += -DLINUX -DDARWIN
 
@@ -106,7 +109,7 @@ if MPI
 
 LINKER_FLAGS += -lmpi
 
-COMPILER_FLAGS += -DDMEM_COMPILE
+PREPROCESSOR_FLAGS += -DDMEM_COMPILE
 
 endif
 #**************************************************
@@ -116,12 +119,13 @@ endif
 #**************************************************
 
 PREPROCESSOR_FLAGS +=\
-	-I../../src/ta \
-	-I../../src/ \
-	-I../../src/ta/ios-g++-3.1 \
-	-I../../src/css \
-	-I../../include
-
+	-I$(srcdir)/../maketa \
+	-I$(srcdir)/../ta \
+	-I$(srcdir)/../ta/ios-g++-3.1 \
+	-I$(srcdir)/../css \
+	-I$(srcdir)/../tamisc \
+	-I$(srcdir)/../taiqtso \
+	-I$(srcdir)/../../include
 
 MAKETA_FLAGS +=\
 	-hx \
@@ -137,7 +141,8 @@ COMPILER_FLAGS +=\
 	-fPIC \
 	-fno-implicit-templates \
 	-fno-exceptions \
-	-Wno-non-virtual-dtor
+	-Wno-non-virtual-dtor \
+	$(PREPROCESSOR_FLAGS)
 
 clean-local:
 	-rm *TA*

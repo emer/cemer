@@ -5,13 +5,13 @@
 #
 
 AC_PREREQ(2.59)
-AC_INIT([PDP-plus-plus],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_INIT([PDP4],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
 PDP_DETERMINE_OSTYPE
-AC_CONFIG_SRCDIR([src/taglobal.h])
-AC_CONFIG_HEADER([config.h])
+#AC_CONFIG_SRCDIR([src/taglobal.h])
 
 #                                             debug, mpi, gui
 #*************************************************************

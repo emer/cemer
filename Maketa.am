@@ -3,9 +3,7 @@
 # to know where to find an include,
 # so does the maketa.
 
-
-#MAKETA = @abs_top_builddir@/bin/maketa
-MAKETA = @abs_top_builddir@/src/maketa/./maketa
+MAKETA = ../maketa/./maketa
 
 $(PROJNAME)_TA_type.h:  $(PROJNAME)_TA_type.hx
 	if [ ! -f $(PROJNAME)_TA_type.hx ];\
