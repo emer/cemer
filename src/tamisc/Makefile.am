@@ -6,18 +6,18 @@ PROJNAME = tamisc
 if TA_GUI
 
 TAHEADS_GUI_PRE =\
-	fontspec.h \
-	xform.h
+	@abs_srcdir@/fontspec.h \
+	@abs_srcdir@/xform.h
 
 TAHEADS_GUI =\
-	colorbar_qt.h \
-	@abs_top_builddir@/src/taiqtso/safeptr_so.h \
-	t3node_so.h \
-	t3viewer.h \
-	colorbar_so.h \
-	datatable_qtso.h \
-	datagraph_so.h \
-	datagraph_qtso.h
+	@abs_srcdir@/colorbar_qt.h \
+	@abs_srcdir@/../taiqtso/safeptr_so.h \
+	@abs_srcdir@/t3node_so.h \
+	@abs_srcdir@/t3viewer.h \
+	@abs_srcdir@/colorbar_so.h \
+	@abs_srcdir@/datatable_qtso.h \
+	@abs_srcdir@/datagraph_so.h \
+	@abs_srcdir@/datagraph_qtso.h
 
 HEADS_GUI =\
 	fontspec.h \
@@ -48,19 +48,19 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
-	@abs_top_builddir@/src/ta/ta_TA_type.h \
+	@abs_srcdir@/../ta/ta_TA_type.h \
 	$(TAHEADS_GUI_PRE) \
-	tarandom.h \
-	tdgeometry.h \
-	aggregate.h \
-	minmax.h \
-	colorscale.h \
-	datatable.h \
-	datagraph.h \
-	fun_lookup.h \
+	@abs_srcdir@/tarandom.h \
+	@abs_srcdir@/tdgeometry.h \
+	@abs_srcdir@/aggregate.h \
+	@abs_srcdir@/minmax.h \
+	@abs_srcdir@/colorscale.h \
+	@abs_srcdir@/datatable.h \
+	@abs_srcdir@/datagraph.h \
+	@abs_srcdir@/fun_lookup.h \
 	$(TAHEADS_GUI) \
-	tamisc_maketa_defs.h \
-	tamisc_stdef.h
+	@abs_srcdir@/tamisc_maketa_defs.h \
+	@abs_srcdir@/tamisc_stdef.h
 
 HEADS =\
 	tamisc_TA_type.h \
