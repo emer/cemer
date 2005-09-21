@@ -55,7 +55,7 @@
 #endif
 
 
-#include <malloc.h>
+//#include <malloc.h>
 
 extern int yydebug;
 
