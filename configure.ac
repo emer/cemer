@@ -5,7 +5,7 @@
 #
 
 AC_PREREQ(2.59)
-AC_INIT([PDP4],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_DISABLE_SHARED
@@ -146,5 +146,8 @@ AC_CONFIG_FILES([Makefile
 		src/taiqtso/Makefile
 		src/ta/Makefile
 		src/css/Makefile
-		src/tamisc/Makefile])
+		src/tamisc/Makefile
+		src/pdp/Makefile
+		src/leabra/Makefile
+		src/bp/Makefile])
 AC_OUTPUT

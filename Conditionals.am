@@ -14,9 +14,6 @@ PREPROCESSOR_FLAGS =
 LINKER_FLAGS =
 COMPILER_FLAGS =
 
-srcdir = @srcdir@
-VPATH = @srcdir@
-
 #**************************************************
 #
 #                     LINUX
@@ -24,11 +21,20 @@ VPATH = @srcdir@
 #**************************************************
 if LINUX
 
-cppC = "/lib/cpp -D__i386__ -I@abs_srcdir@/ios-g++3.1/"
+cppC = "/lib/cpp"
 
 MAKETA_FLAGS +=\
-	-I@abs_top_builddir@/src/ta/ios-g++-3.1 \
-	-I/usr/include/linux
+	-I/usr/include/linux \
+	-D__i386__ \
+	-I@abs_srcdir@/../ta/ios-g++-3.1 \
+	-I@abs_srcdir@/../pdp \
+	-I@abs_srcdir@/../ta \
+	-I@abs_srcdir@/../css \
+	-I@abs_srcdir@/../leabra \
+	-I@abs_srcdir@/../tamisc \
+	-I@abs_srcdir@/../taiqtso \
+	-I@abs_srcdir@/../bp \
+	-I@abs_srcdir@/../tamisc
 
 PREPROCESSOR_FLAGS += -DLINUX -D__linux__
 
@@ -40,7 +46,7 @@ endif
 #**************************************************
 if DARWIN
 
-cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__ I@abs_srcdir@/ios-g++3.1/"
+cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
 LIBG_INCLUDE_DIR = -L/usr/include/gcc/darwin/3.3
 
 PREPROCESSOR_FLAGS += -DLINUX -DDARWIN
@@ -125,6 +131,9 @@ PREPROCESSOR_FLAGS +=\
 	-I$(srcdir)/../css \
 	-I$(srcdir)/../tamisc \
 	-I$(srcdir)/../taiqtso \
+	-I$(srcdir)/../pdp \
+	-I$(srcdir)/../leabra \
+	-I$(srcdir)/../bp \
 	-I$(srcdir)/../../include
 
 MAKETA_FLAGS +=\
