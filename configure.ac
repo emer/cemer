@@ -7,7 +7,7 @@
 AC_PREREQ(2.59)
 AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
 PDP_DETERMINE_OSTYPE
