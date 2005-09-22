@@ -3,6 +3,9 @@ PROJNAME = tamisc
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 if TA_GUI
 
 TAHEADS_GUI_PRE =\

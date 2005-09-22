@@ -3,12 +3,15 @@ PROJNAME = bp
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 TAHEADS =\
-	$(abs_top_builddir)/src/ta/ta_TA_type.h \
-	$(abs_top_builddir)/src/tamisc/tamisc_TA_type.h \
-	$(abs_top_builddir)/src/pdp/pdp_TA_type.h \
-	$(abs_top_builddir)/src/bp/bp.h \
-	$(abs_top_builddir)/src/bp/rbp.h
+	@abs_srcdir@/../ta/ta_TA_type.h \
+	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
+	@abs_srcdir@/../pdp/pdp_TA_type.h \
+	@abs_srcdir@/../bp/bp.h \
+	@abs_srcdir@/../bp/rbp.h
 
 HEADS =\
 	bp_TA_type.h \
@@ -18,7 +21,7 @@ HEADS =\
 
 SRCS =\
 	bp.cpp \
-	rbp.cc \
+	rbp.cpp \
 	bp_TA.cpp \
 	main.cpp
 
@@ -36,7 +39,7 @@ bp_LDADD =\
 
 if TA_GUI
 bp_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
-fi
+endif
 
 bp_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
 bp_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)

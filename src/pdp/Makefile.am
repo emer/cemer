@@ -3,6 +3,9 @@ PROJNAME = pdp
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 if TA_GUI
 
 TAHEADS_GUI =\
@@ -102,13 +105,13 @@ libpdp_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 bin_PROGRAMS = pdp
 pdp_SOURCES = main.cpp
 pdp_LDADD =\
-	$(abs_top_builddir)/src/ta/libta.la \
-	$(abs_top_builddir)/src/css/libcss.la \
-	$(abs_top_builddir)/src/tamisc/libtamisc.la \
-	libpdp.la
+	libpdp.la \
+	@abs_top_builddir@/src/ta/libta.la \
+	@abs_top_builddir@/src/css/libcss.la \
+	@abs_top_builddir@/src/tamisc/libtamisc.la
 
 if TA_GUI
-pdp_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+pdp_LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
 endif
 
 pdp_LDFLAGS = $(libpdp_la_LDFLAGS)

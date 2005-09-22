@@ -3,6 +3,9 @@ PROJNAME = css
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 if TA_GUI
 
 SRCS_GUI =\
@@ -63,10 +66,11 @@ libcss_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 
 bin_PROGRAMS = css
 css_SOURCES = main.cpp
-css_LDADD = $(abs_top_builddir)/src/ta/libta.la libcss.la
+
+css_LDADD = libcss.la @abs_top_builddir@/src/ta/libta.la
 
 if TA_GUI
-css_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+css_LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
 endif
 
 css_LDFLAGS = $(libcss_la_LDFLAGS)

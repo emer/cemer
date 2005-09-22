@@ -3,6 +3,9 @@ PROJNAME = ta
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 if TA_GUI
 
 ta_type_qt.cpp: ta_type.h
@@ -124,7 +127,7 @@ MAKETA_FLAGS += $(libta_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libta.la
-libta_la_SOURCES = $(HEADS) $(SRCS)
+libta_la_SOURCES = $(SRCS) $(HEADS)
 libta_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
 libta_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS) -DTA_USE_QT
 libta_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)

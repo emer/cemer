@@ -3,6 +3,9 @@ PROJNAME = taiqtso
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 HEADS =\
 	taiqtso_def.h \
 	iflowlayout.h \

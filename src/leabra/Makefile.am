@@ -3,6 +3,9 @@ PROJNAME = leabra
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
@@ -22,7 +25,7 @@ SRCS =\
 include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
 
-bin_PROGRAMS = bp
+bin_PROGRAMS = leabra
 leabra_SOURCES = $(HEADS) $(SRCS)
 leabra_LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp.la \
