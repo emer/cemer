@@ -25,9 +25,9 @@ SRCS =\
 include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
 
-bin_PROGRAMS = leabra
-leabra_SOURCES = $(HEADS) $(SRCS)
-leabra_LDADD =\
+bin_PROGRAMS = leabra++
+leabra___SOURCES = $(HEADS) $(SRCS)
+leabra___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc.la \
 	$(abs_top_builddir)/src/ta/libta.la \
@@ -35,10 +35,10 @@ leabra_LDADD =\
 
 
 if TA_GUI
-leabra_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+leabra___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
 endif
 
-leabra_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-leabra_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
-leabra_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
+leabra___LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
+leabra___CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
+leabra___CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 BUILT_SOURCES = leabra_TA_type.h leabra_TA_inst.h leabra_TA.cpp

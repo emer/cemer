@@ -28,9 +28,9 @@ SRCS =\
 include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
 
-bin_PROGRAMS = bp
-bp_SOURCES = $(HEADS) $(SRCS)
-bp_LDADD =\
+bin_PROGRAMS = bp++
+bp___SOURCES = $(HEADS) $(SRCS)
+bp___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc.la \
 	$(abs_top_builddir)/src/ta/libta.la \
@@ -38,10 +38,10 @@ bp_LDADD =\
 
 
 if TA_GUI
-bp_LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
+bp___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso.la
 endif
 
-bp_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-bp_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
-bp_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
+bp___LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
+bp___CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
+bp___CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp

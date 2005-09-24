@@ -102,19 +102,19 @@ libpdp_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
 libpdp_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
 libpdp_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
 
-bin_PROGRAMS = pdp
-pdp_SOURCES = main.cpp
-pdp_LDADD =\
+bin_PROGRAMS = pdp++
+pdp___SOURCES = main.cpp
+pdp___LDADD =\
 	libpdp.la \
 	@abs_top_builddir@/src/ta/libta.la \
 	@abs_top_builddir@/src/css/libcss.la \
 	@abs_top_builddir@/src/tamisc/libtamisc.la
 
 if TA_GUI
-pdp_LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
+pdp___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
 endif
 
-pdp_LDFLAGS = $(libpdp_la_LDFLAGS)
-pdp_CPPFLAGS =$(libpdp_la_CPPFLAGS)
-pdp_CFLAGS = $(libpdp_la_CFLAGS)
+pdp___LDFLAGS = $(libpdp_la_LDFLAGS)
+pdp___CPPFLAGS =$(libpdp_la_CPPFLAGS)
+pdp___CFLAGS = $(libpdp_la_CFLAGS)
 BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
