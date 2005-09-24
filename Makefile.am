@@ -1,4 +1,4 @@
-# SUBDIRS instruction the autotools
+# SUBDIRS tells the autotools
 # which directories have Makefile.am's in them.
 # If you remove/add one of SUBDIRS, be sure to
 # do the same at the bottom of configure.ac
