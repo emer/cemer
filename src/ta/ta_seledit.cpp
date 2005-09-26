@@ -207,7 +207,7 @@ bool SelectEdit::SelectMember(TAPtr base, MemberDef* md, const char* lbl) {
   bool rval = false;
   int bidx = FindMbrBase(base, md);
   if (bidx >= 0) {
-    config.mbr_labels.SafeEl(bidx) = lbl;
+    config.mbr_labels[bidx] = lbl;
   } else {
     mbr_bases.Link(base);
     members.Link(md);
@@ -239,7 +239,7 @@ bool SelectEdit::SelectMethod(TAPtr base, MethodDef* md, const char* lbl) {
   bool rval = false;
   int bidx = FindMethBase(base, md);
   if (bidx >= 0) {
-    config.meth_labels.SafeEl(bidx) = lbl;
+    config.meth_labels[bidx] = lbl;
   } else {
     meth_bases.Link(base);
     methods.Link(md);

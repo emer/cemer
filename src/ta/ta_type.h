@@ -109,15 +109,17 @@ public:
 
   bool	AddUnique(const String& it)	{ return taPlainArray<String>::AddUnique(it); }
   bool	AddUnique(const char* it)
-  { String fad=it; return taPlainArray<String>::AddUnique(fad); }
+  { String fad=it; return taPlainArray<String>::AddUnique(fad); } //
 
-  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
-  String_PArray()				{ };
-  String_PArray(const String_PArray& cp)	{ }
+//obs  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   // returns first item which contains given string (-1 if none)
+  TA_PLAIN_ARRAY_FUNS(String_PArray, String)
 };
 
-typedef taPlainArray<int> int_PArray;
+class int_PArray: public taPlainArray<int> {
+  TA_PLAIN_ARRAY_FUNS(int_PArray, int)
+};
+
 
 class TA_API IApp {
   // basic methods that the root/app object must support
@@ -351,8 +353,6 @@ public:
 
 class TA_API taRefN {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS reference counting base class
-protected:
-  uint 		refn;
 public:
   static uint		RefN(taRefN* it)	{ return it->refn; }
   static void  		Ref(taRefN* it)	{ it->refn++; }
@@ -363,6 +363,7 @@ public:
 
   taRefN()		{ refn = 0; }
 protected:
+  mutable uint 		refn;
   virtual ~taRefN()	{ }; // all instances should consistently use ref counting for lifetime management
 };
 

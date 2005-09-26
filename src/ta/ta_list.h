@@ -213,8 +213,8 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  void*   	GetTA_Element_(int i, TypeDef*& eltd) const
-  { eltd = GetElType(); return (void*)SafeEl_(i); }
+  void*   	GetTA_Element_(int i, TypeDef*& eltd)
+  { eltd = GetElType(); return FastEl_(i); }
   void*		SafeEl_(int i) const
   { void* rval=NULL; if((i >= 0) && (i < size)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
@@ -353,99 +353,6 @@ public:
   // output
   virtual void 	List(ostream& strm=cout) const; 	// List the group items
 };
-
-
-class  taArray_impl {
-  // ##NO_TOKENS Base Type for Arrays, no tokens of which are ever kept
-public:
-  int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
-  int		alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size
-
-  taArray_impl()			{ alloc_size = 0; size = 0; }
-  virtual ~taArray_impl()		{ alloc_size = 0; size = 0; }
-
-  inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
-  virtual void		Alloc(int n); // allocate storage for at least the given size
-  virtual void		Reset()			{ size = 0; };
-  // reset the list to zero size (does not free memory)
-  ////////////////////////////////////////////////
-  // 	internal functions that depend on type	//
-  ////////////////////////////////////////////////
-
-  virtual void*		SafeEl_(int) const		{ return NULL; }
-  // #IGNORE element at posn
-  virtual void*		FastEl_(int) const		{ return NULL; }
-  // #IGNORE element at posn
-  virtual int		El_Compare_(void*, void*) const	{ return 0; }
-  // #IGNORE for sorting
-  virtual void		El_Copy_(void*, void*)		{ };
-  // #IGNORE
-  virtual uint		El_SizeOf_() const		{ return 1; }
-  // #IGNORE size of element
-  virtual void*		El_GetTmp_() const		{ return NULL; }
-  // #IGNORE return ptr to Tmp of type
-  virtual String	El_GetStr_(void*) const		{ return _nilString; } // #IGNORE
-  virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
-  virtual void*		BlankEl_() const		{ return NULL; }
-  // address of a blank element, for initializing empty items
-  virtual void		Clear_Tmp_();				       // #IGNORE
-
-  virtual void		Add_(void* it);			// #IGNORE
-  virtual bool		AddUnique_(void* it);		// #IGNORE
-  virtual void		Insert_(void* it, int where, int n=1); // #IGNORE
-  virtual int		Find_(void* it, int where=0) const; 	// #IGNORE
-  virtual bool		Remove_(void* it);		// #IGNORE
-  virtual void		InitVals_(void* it, int start=0, int end=-1);// #IGNORE
-
-  ////////////////////////////////////////////////
-  // functions that don't depend on the type	//
-  ////////////////////////////////////////////////
-
-  virtual String	SafeElAsStr(int idx) const
-    {return InRange(idx) ? El_GetStr_(FastEl_(idx)) : _nilString;}
-  // #IGNORE element at idx, as a string
-  virtual String	FastElAsStr(int idx) const {return El_GetStr_(FastEl_(idx));}
-  // #IGNORE element at idx, as a string
-  virtual void	EnforceSize(int sz);
-  // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
-
-  virtual void	AddBlank(int n_els = 1);
-  // #MENU #MENU_ON_Edit Add n_els empty elements to the end of the array
-  virtual bool	Remove(uint idx, int n_els=1);
-  // #MENU #MENU_ON_Edit Remove (n_els) item(s) at idx, returns success
-  virtual bool	Move(int from, int to);
-  // #MENU move item from index to index
-  virtual void	Permute();
-  // #MENU permute the items in the list into a random order
-  virtual void	Sort(bool descending=false);
-  // #MENU sort the list in ascending order (or descending if switched)
-  virtual void	ShiftLeft(int nshift);
-  // shift all the elements in the array to the left by given number of items
-  virtual void	ShiftLeftPct(float pct);
-  // shift the array to the left by given percentage of current size
-  virtual int	V_Flip(int width);
-  // vertically flip the array as if it was arrange in a matrix of width
-
-  virtual void	Duplicate(const taArray_impl& cp);
-  // duplicate the items in the list
-  virtual void	DupeUnique(const taArray_impl& cp);
-  // duplicate so result is unique list
-  virtual void	Copy_Common(const taArray_impl& cp);
-  // copy elements in common
-  virtual void	Copy_Duplicate(const taArray_impl& cp);
-  // copy elements in common, duplicating (if necc) any extra on cp
-  virtual void 	CopyVals(const taArray_impl& from, int start=0, int end=-1, int at=0);
-  // copy values from other array at given start and end points, and putting at given point in this
-  virtual void	List(ostream& strm = cout) const;
-  // print out all of the elements in the array
-  virtual void	InitFromString(const char* val);
-  // initialize an array from given string (does reset first)
-protected:
-
-  virtual void*		MakeArray_(int i) const	{ return NULL; } // #IGNORE make a new array of item type
-  virtual void		SetArray_(void* nw) {}
-};
-
 
 template<class T> class taPtrList : public taPtrList_impl { // #INSTANCE
 public:
@@ -723,74 +630,422 @@ public:
 };
 
 
-// the plainarray is not a taBase..
+/* Array Notes
+  Here is the class hierarchy for arrays:
+  
+  taFixedArray_impl -- basic data handling, semi-fixed size arrays
+      - primarily for known-size use; doesn't have separate alloc from size
+      - no removal-style ops
+      - no ops that require a tmp item (ex. Move_)
+      - no string conversions
+      - no ordinal comparisons (ex. Sort not supported)
+      
+      FixedArray<T> -- concrete implementations of fixed arrays
+      
+    taBasicArray_impl -- basic data handling api
+      - adds alloc for efficient dynamic data adding/removing
+      
+      taArray_impl -- advanced data handling
+      - can overallocate
+      - supports moving, sorting, etc.
+      - supports string operations 
+      - supports ordinal operations
+      
+      taMatrix_impl -- multi-dimensional data handling
+      
+      
+        Matrix<T> -- ref-counted impl of Matrix_impl
 
-template<class T> class taPlainArray : public taArray_impl { // #INSTANCE
+  C++ rules for making a static template member are arcane, and seem not
+  to work properly in our context. Therefore, arrays need to be created as
+  subclasses of the template, and the additional routines/members are
+  supplied by a macro of the same uppercase name as the template
+*/
+
+
+class  taFixedArray_impl {
+  // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS basic shared subtype for Arrays and Matrixes, no tokens of which are ever kept
+public:
+  int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
+  virtual int		alloc() {return size;}
+
+  taFixedArray_impl()			{size = 0;}
+  virtual ~taFixedArray_impl()		{size = 0;} 
+
+  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  virtual void		Reset()		{EnforceSize(0);}
+ 
+  ////////////////////////////////////////////////
+  // functions that don't depend on the type	//
+  ////////////////////////////////////////////////
+
+  virtual void	EnforceSize(int sz);
+  // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
+
+  virtual void	AddBlank(int n_els = 1);
+  // #MENU #MENU_ON_Edit Add n_els empty elements to the end of the array
+
+public: // accessible but generally not used implementation overrides
+  virtual const void*	SafeEl_(int i) const;
+  // #IGNORE element at posn; i is allowed to be out of bounds
+  virtual void*		FastEl_(int) = 0;
+  // #IGNORE element at posn; i must be in bounds 
+
+protected: 
+  virtual bool 		AdjustAndSetAlloc_(uint& new_alloc) 
+    {return (new_alloc > static_cast<uint>(size));} 
+    // return 'true' if more storage needed; also tweaks size of storage based on a grow algorithm (none here in fixed base)
+  virtual void		Alloc_(uint n); // set capacity to n
+  virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type
+  virtual void		SetArray_(void* nw) = 0;
+
+// compulsory element accessor and manip functions 
+  virtual const void*	FastEl_(int i) const 
+    {return const_cast<taFixedArray_impl*>(this)->FastEl_(i);}
+  // #IGNORE element at posn; i must be in bounds 
+  
+  virtual bool		El_Equal_(const void*, const void*) const = 0;
+  // #IGNORE for finding
+  virtual const void*	El_GetBlank_() const = 0;
+  // #IGNORE address of a blank element, for initializing empty items -- can be STATIC_CONST
+  // NOTE: this can be implemented by clearing the tmp item, then returning that addr
+  virtual const void*	El_GetErr_() const	{ return El_GetBlank_();}
+  // #IGNORE address of an element to return when out of range -- defaults to blank el
+  virtual void		El_Copy_(void*, const void*) = 0;
+  // #IGNORE
+  virtual uint		El_SizeOf_() const = 0;
+  // #IGNORE size of element
+  
+  virtual void		Add_(const void* it); // #IGNORE
+  virtual bool		AddUnique_(const void* it);		// #IGNORE
+  virtual void		Copy_(const taFixedArray_impl& cp);
+  // replace our array with the source items
+  virtual void		Duplicate_(const taFixedArray_impl& cp);
+  // append the source items to our array
+
+  virtual void		Insert_(const void* it, int where, int n=1); // #IGNORE
+  virtual bool		Equal_(const taFixedArray_impl& src) const; 
+    // 'true' if not null, and same size and els
+  virtual int		Find_(const void* it, int where=0) const; 	// #IGNORE -- based on El_Equal_; default is linear
+  virtual void		InitVals_(const void* it, int start=0, int end=-1);// #IGNORE
+  
+  // Aggregate-maintenance helper routines
+  virtual void		ItemAdded_(const void*, int n = 1) {} // #IGNORE called after any single item insert or add, including multiple inserts/adds of the same-valued item
+  virtual void		ItemRemoved_(const void*, int n = 1) {} // #IGNORE called after any single item removal, including multiple removals of the same-valued item
+  virtual void		ItemsChanged_() {} // #IGNORE called on changes that can't call one of the other two routines 
+};
+
+#define TA_FIXED_ARRAY_FUNS(y,T) \
+public: \
+  STATIC_CONST T blank; \
+  explicit y(int init_size) {EnforceSize(init_size); } \
+  y(int init_size, const T& i0) {EnforceSize(init_size); el[0] = i0;} \
+  y(int init_size, const T& i0, const T& i1) \
+    {EnforceSize(init_size); el[0] = i0; el[1] = i1;} \
+  y(int init_size, const T& i0, const T& i1, const T& i2) \
+    {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2;} \
+  y(int init_size, const T& i0, const T& i1, const T& i2, const T& i3) \
+    {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;} \
+  y(int init_size, T init[]) {EnforceSize(init_size); \
+    for (int j = 0; j < init_size; ++j) el[j] = init[j];} \
+  y() {} \
+  y(const y& cp) {Copy(cp); } \
+  T&		operator[](int i) { return el[i]; } \
+  const T&	operator[](int i) const	{ return el[i]; } \
+  y& operator=(const y& cp) {Copy(cp); return *this;} \
+  bool 		operator==(const y& src) const {return Equal_(src);} \
+protected: \
+  override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
+
+template<class T> 
+class taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
-  T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
 
-  void*		SafeEl_(int i) const		{ return &(SafeEl(i)); } // #IGNORE
-  void*		FastEl_(int i)	const		{ return &(FastEl(i)); } // #IGNORE
-  int		El_Compare_(void* a, void* b) const
-  { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
-  // #IGNORE
-  void		El_Copy_(void* to, void* fm)	{ *((T*)to) = *((T*)fm); } // #IGNORE
-  uint		El_SizeOf_() const		{ return sizeof(T); }	 // #IGNORE
-  void*		El_GetTmp_() const		{ return (void*)&err; }	 // #IGNORE
-  String	El_GetStr_(void* it) const	{ return String(*((T*)it)); } // #IGNORE
-  void		El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)val; } // #IGNORE
-
-  taPlainArray(int init_alloc)			{el = NULL; Alloc(init_alloc); }
-  taPlainArray()				{el = NULL;}
-  taPlainArray(const taPlainArray<T>& cp)	{el = NULL; Alloc(cp.size); Duplicate(cp); }
-  virtual ~taPlainArray()			{ SetArray_(NULL); } //
+  taFixedArray()	{el = NULL;}
+  virtual ~taFixedArray()	{ SetArray_(NULL); } //
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&		SafeEl(int i) const
-  { T* rval=(T*)&err; if((i >= 0) && (i < size)) rval=&(el[i]); return *rval; }
+  const T& SafeEl(int i) const { return *(static_cast<const T*>(SafeEl_(i))); }
   // the element at the given index
-  T&		FastEl(int i) const		{ return el[i]; }
+  const T&	FastEl(int i) const	{ return el[i]; }
   // fast element (no range checking)
-  T&		RevEl(int idx) const		{ return SafeEl(size - idx - 1); }
-  // reverse (index) element (ie. get from the back of the list first)
-  T&		operator[](int i) const		{ return el[i]; }
-  void		operator=(const taPlainArray<T>& cp)	{ Reset(); Duplicate(cp); }
+  T&		FastEl(int i) 		{ return el[i]; }
+  // fast element (no range checking)
+  void		Copy(const taFixedArray<T>& cp)	{Copy_(cp);} // #IGNORE buggy maketa
 
-  virtual T	Pop()
-  { T* rval=(T*)&err; if(size>0) rval=&(el[--size]); return *rval; }
+  ////////////////////////////////////////////////
+  // 	functions that are passed el of type	//
+  ////////////////////////////////////////////////
+
+  virtual void	Set(int i, const T& item) 	{ FastEl(i) = item; }
+  // use this for assigning values to items in the array (Set should update if needed)
+  virtual void	Add(const T& item)		{ Add_((const void*)&item); }
+  // #MENU add the item to the array
+  virtual bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
+  // add the item to the array if it isn't already on it, returns true if unique
+  virtual void	Insert(const T& item, int idx, int n_els=1) 
+    { Insert_((void*)&item, idx, n_els); }
+    // #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
+  virtual int	Find(const T& item, int i=0) const { return Find_((void*)&item, i); }
+    // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
+public:
+  override void*	FastEl_(int i)		{ return &(el[i]); } 
+protected:
+  override void*	MakeArray_(int n) const	{ return new T[n]; }
+  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  override bool		El_Equal_(const void* a, const void* b) const
+    { return (*((T*)a) == *((T*)b)); }
+  override void		El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); } 
+  override uint		El_SizeOf_() const	{ return sizeof(T); }
+};
+
+
+class int_FixedArray: public taFixedArray<int> {
+  TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
+};
+
+
+class  taBasicArray_impl: public taFixedArray_impl {
+  // #VIRT_BASE Basic shared subtype for Arrays and Matrixes, no tokens of which are ever kept
+public:
+  taBasicArray_impl()			{ alloc_size = 0;}
+  virtual ~taBasicArray_impl()		{ alloc_size = 0;}
+
+  virtual void		Alloc(uint n)    {Alloc_(n);} // allocate storage for at least the given size
+ 
+  ////////////////////////////////////////////////
+  // functions that don't depend on the type	//
+  ////////////////////////////////////////////////
+
+  virtual bool		Remove(int idx, int n_els=1);
+  // #MENU #MENU_ON_Edit Remove (n_els) item(s) at idx, returns success
+
+protected: 
+  uint			alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size
+
+  override bool 	AdjustAndSetAlloc_(uint& new_alloc); // we manage extra storage, and impl grow algorithm
+  
+// compulsory element accessor and manip functions 
+  virtual bool		Remove_(void* it);		// #IGNORE
+};
+
+
+#define TA_BASIC_ARRAY_FUNS(y,T) \
+public: \
+  STATIC_CONST T blank; \
+  explicit y(int init_alloc) {Alloc(init_alloc); } \
+  y() {} \
+  y(const y& cp) {Copy(cp); } \
+  T&		operator[](int i) { return el[i]; } \
+  const T&	operator[](int i) const	{ return el[i]; } \
+  y& operator=(const y& cp) {Copy(cp); return *this;} \
+  bool 		operator==(const y& src) const {return Equal_(src);} \
+protected: \
+  override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
+
+template<class T> 
+class taBasicArray : public taBasicArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
+public:
+  T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
+
+  taBasicArray()				{el = NULL;}
+  virtual ~taBasicArray()			{ SetArray_(NULL); } //
+
+  ////////////////////////////////////////////////
+  // 	functions that return the type		//
+  ////////////////////////////////////////////////
+
+  const T& SafeEl(int i) const { return *(static_cast<const T*>(SafeEl_(i))); }
+  // the element at the given index
+  const T&	FastEl(int i) const		{ return el[i]; }
+  // fast element (no range checking)
+  T&		FastEl(int i) 		{ return el[i]; }
+  // fast element (no range checking)
+  const T&	RevEl(int idx) const		{ return SafeEl(size - idx - 1); }
+  // reverse (index) element (ie. get from the back of the list first)
+  void		Copy(const taBasicArray<T>& cp)	{Copy_(cp);} // #IGNORE buggy maketa
+
+  const T	Pop() {if (size == 0) return *(static_cast<const T*>(El_GetErr_()));
+   else return el[--size]; }
   // pop the last item in the array off
-  virtual T&	Peek() const
-  { T* rval=(T*)&err; if(size>0) rval=&(el[size-1]); return *rval; }
+  const T& 	Peek() const {return SafeEl(size - 1);}
   // peek at the last item on the array
 
   ////////////////////////////////////////////////
   // 	functions that are passed el of type	//
   ////////////////////////////////////////////////
 
-  virtual void	Set(int i, const T& item) 	{ SafeEl(i) = item; }
+  void	Set(int i, const T& item) 	{ FastEl(i) = item; }
   // use this for assigning values to items in the array (Set should update if needed)
-  virtual void	Add(const T& item)		{ Add_((void*)&item); }
+  void	Add(const T& item)		{ Add_((const void*)&item); }
   // #MENU add the item to the array
-  virtual bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
+  bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
   // add the item to the array if it isn't already on it, returns true if unique
-  virtual void	Push(const T& item)		{ Add(item); }
+  void	Push(const T& item)		{ Add(item); }
   // push the item on the end of the array (same as add)
-  virtual void	Insert(const T& item, int idx, int n_els=1) { Insert_((void*)&item, idx, n_els); }
-  // #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
-  virtual int	Find(const T& item, int i=0) const { return Find_((void*)&item, i); }
-  // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
-  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); }
-  virtual bool	Remove(uint idx, int n_els=1)	{ return taArray_impl::Remove(idx,n_els); }
-  // Remove (n_els) item(s) at idx, returns success
-  virtual bool	RemoveEl(const T& item)		{ return Remove(item); }
+  void	Insert(const T& item, int idx, int n_els=1) 
+    { Insert_((void*)&item, idx, n_els); }
+    // #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
+  int	Find(const T& item, int i=0) const { return Find_((void*)&item, i); }
+    // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
+//  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); } //
+  //using taBasicArray_impl::Remove;
+  USING(taBasicArray_impl::Remove)
+  bool	RemoveEl(const T& item)		{ return Remove_((void*)&item); }
   // remove given item, returns success
+public:
+  override void*	FastEl_(int i)		{ return &(el[i]); } 
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
-  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  override void		SetArray_(void* nw)  {if (el) delete [] el; el = (T*)nw;}
+  override bool		El_Equal_(const void* a, const void* b) const
+    { return (*((T*)a) == *((T*)b)); }
+  override void		El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); } 
+  override uint		El_SizeOf_() const	{ return sizeof(T); }
 };
+
+
+class  taArray_impl: public taBasicArray_impl {
+  // #VIRT_BASE Base Type for Arrays, no tokens of which are ever kept
+public:
+  ////////////////////////////////////////////////
+  // functions that don't depend on the type	//
+  ////////////////////////////////////////////////
+
+  virtual String	SafeElAsStr(int idx) const
+    {return InRange(idx) ? El_GetStr_(FastEl_(idx)) : _nilString;}
+  // #IGNORE element at idx, as a string
+  virtual String	FastElAsStr(int idx) const {return El_GetStr_(FastEl_(idx));}
+  // #IGNORE element at idx, as a string
+  
+  // Advanced sorting and permuting
+  virtual void	Permute();
+  // #MENU permute the items in the list into a random order
+  virtual void	Sort(bool descending=false);
+  // #MENU sort the list in ascending order (or descending if switched)
+  virtual void	ShiftLeft(int nshift);
+  // shift all the elements in the array to the left by given number of items
+  virtual void	ShiftLeftPct(float pct);
+  // shift the array to the left by given percentage of current size
+  virtual int	V_Flip(int width);
+  // vertically flip the array as if it was arrange in a matrix of width
+
+  // Advanced duplication and copying
+  
+  virtual void	DupeUnique(const taArray_impl& cp);
+  // duplicate so result is unique list
+  virtual void	Copy_Common(const taArray_impl& cp);
+  // copy elements in common
+  virtual void	Copy_Duplicate(const taArray_impl& cp);
+  // copy elements in common, duplicating (if necc) any extra on cp
+  virtual void 	CopyVals(const taArray_impl& from, int start=0, int end=-1, int at=0);
+  // copy values from other array at given start and end points, and putting at given point in this
+  virtual bool	Move(int from, int to);
+  // #MENU move item from index to index
+  
+  // Listing
+  virtual void	List(ostream& strm = cout) const;
+  // print out all of the elements in the array
+  virtual void	InitFromString(const char* val);
+  // initialize an array from given string (does reset first)
+protected:
+  virtual void*		El_GetTmp_() const = 0;
+  virtual int		El_Compare_(const void* a, const void* b) const = 0;
+  virtual String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
+  virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
+};
+
+
+// the plainarray is not a taBase..
+
+#define TA_PLAIN_ARRAY_FUNS(y,T) \
+public: \
+  STATIC_CONST T blank; \
+  explicit y(int init_alloc) {Alloc(init_alloc); } \
+  y() {} \
+  y(const y& cp) {Copy(cp); } \
+  T&		operator[](int i) { return el[i]; } \
+  const T&	operator[](int i) const	{ return el[i]; } \
+  y& operator=(const y& cp) {Copy(cp); return *this;} \
+  bool 		operator==(const y& src) const {return Equal_(src);} \
+protected: \
+  override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
+
+template<class T> 
+class taPlainArray : public taArray_impl { // #INSTANCE
+public:
+  T*	el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
+
+  taPlainArray()		{el = NULL;}
+  ~taPlainArray()		{ SetArray_(NULL); } //
+
+  ////////////////////////////////////////////////
+  // 	functions that return the type		//
+  ////////////////////////////////////////////////
+
+  const T&	SafeEl(int i) const {return *(static_cast<const T*>(SafeEl_(i)));}
+  // the element at the given index
+  const T&	FastEl(int i) const		{ return el[i]; }
+  // fast element (no range checking)
+  T&		FastEl(int i) 	{ return el[i]; }
+  // fast element (no range checking)
+  const T&	RevEl(int idx) const		{ return SafeEl(size - idx - 1); }
+  // reverse (index) element (ie. get from the back of the list first)
+  
+  void 		Copy(const taPlainArray<T>& cp)	{Copy_(cp);} // #IGNORE buggy maketa
+  void 		Duplicate(const taPlainArray<T>& cp)	{Duplicate_(cp);} // #IGNORE buggy maketa
+
+  const T	Pop() 
+    {if (size == 0) return *(static_cast<const T*>(El_GetErr_()));
+     else return el[--size]; }
+  // pop the last item in the array off
+  const T&	Peek() const {return SafeEl(size - 1); }
+  // peek at the last item on the array
+
+  ////////////////////////////////////////////////
+  // 	functions that are passed el of type	//
+  ////////////////////////////////////////////////
+
+  void	Set(int i, const T& item) 	{ FastEl(i) = item; }
+  // use this for assigning values to items in the array (Set should update if needed)
+  void	Add(const T& item)		{ Add_((const void*)&item); }
+  // #MENU add the item to the array
+  bool	AddUnique(const T& item)	{ return AddUnique_((const void*)&item); }
+  // add the item to the array if it isn't already on it, returns true if unique
+  void	Push(const T& item)		{ Add(item); }
+  // push the item on the end of the array (same as add)
+  void	Insert(const T& item, int idx, int n_els=1) { Insert_((void*)&item, idx, n_els); }
+  // #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
+  int	Find(const T& item, int i=0) const { return Find_((void*)&item, i); }
+  // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
+//  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); }
+//  USING(taArray_impl::Remove)
+  // Remove (n_els) item(s) at idx, returns success
+  bool	RemoveEl(const T& item)		{ return Remove_((void*)&item); }
+  // remove given item, returns success
+public:
+  override void*	FastEl_(int i)	{ return &(el[i]); } // #IGNORE
+protected:
+  mutable T		tmp;		// #HIDDEN
+  
+  override void*	MakeArray_(int n) const	{ return new T[n]; }
+  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  override int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
+  override bool		El_Equal_(const void* a, const void* b) const
+    {return (*((T*)a) == *((T*)b));} 
+  override void		El_Copy_(void* to, const void* fm)	{ *((T*)to) = *((T*)fm); } 
+  override uint		El_SizeOf_() const	{ return sizeof(T); }
+  override void*	El_GetTmp_() const	{ return (void*)&tmp; }	
+  override String	El_GetStr_(void* it) const {return String(*((T*)it)); } 
+  override void		El_SetFmStr_(void* it, const String& val)
+     { *((T*)it) = (T)val; } 
+};
+
+
 
 #endif // ta_list_h

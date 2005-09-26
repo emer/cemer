@@ -1857,7 +1857,7 @@ void taiObjChooser::AddTokens(TypeDef* td) {
 	continue;
       if(!btmp->GetName().empty()) {
 	AddItem(btmp->GetName(), tmp);
-	items.Peek() = adrnm;	// always store the actual address in the string!
+	items[items.size - 1] = adrnm;	// always store the actual address in the string!
       }
       else {
 	AddItem(adrnm, tmp);

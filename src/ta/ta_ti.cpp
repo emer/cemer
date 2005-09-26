@@ -39,8 +39,10 @@
 
 // ta_ti.cc: template instantiation file for ta library
 
+#include "ta_list.h"
 #include "ta_type.h"
 #ifndef NO_TA_BASE
+  #include "ta_matrix.h"
   #include "ta_group.h"
   #include "ta_dump.h"
   #include "ta_script.h"
@@ -54,8 +56,12 @@
 
 template class taPtrList<taHashEl>;
 template class taPtrList<taHashBucket>;
+template class taFixedArray<int>;
+  const int int_FixedArray::blank = 0;
 template class taPlainArray<String>;
+  const String String_PArray::blank = "";
 template class taPlainArray<int>;
+  const int int_PArray::blank = 0;
 template class taPtrList<EnumDef>;
 template class taPtrList<void>;
 template class taPtrList<MemberDef>;
@@ -68,15 +74,27 @@ template class taPtrList<taBase>;
 template class taPtrList_base<taBase>;
 template class taList<taBase>;
 template class taArray<int>;
+  const int int_Array::blank = 0;
 template class taArray<float>;
+  const float float_Array::blank = 0.0f;
 template class taArray<double>;
+  const double double_Array::blank = 0.0;
 template class taArray<String>;
+  const String String_Array::blank = "";
 template class taArray<long>;
+  const long long_Array::blank = 0L;
 template class taArray<void*>;
+  const voidptr voidptr_Array::blank = NULL;
 template class taPtrList<VPUnref>;
 template class taPtrList<DumpPathSub>;
 template class taPtrList<DumpPathToken>;
 
+
+// ta_matrix.h
+template class taMatrix<unsigned char>;
+  const unsigned char byte_Matrix::blank = 0;
+template class taMatrix<float>;
+  const float float_Matrix::blank = 0.0f;
 
 template class taList<taGroup_impl>;
 template class taGroup<taBase>;

@@ -16,6 +16,7 @@
 #include "icolor.h"
 #include "ta_type.h"
 #include "ta_base.h"
+#include "ta_matrix.h"
 #include "ta_group.h"
 #include "ta_dump.h"
 #include "ta_defaults.h"
@@ -152,11 +153,7 @@ TypeDef TA_TypeDef_ptr_ref("TypeDef_ptr_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_int_ref("int_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taDataLink_ptr_ptr("taDataLink_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taListItr_ref("taListItr_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taArray_impl("taArray_impl", " Base Type for Arrays, no tokens of which are ever kept", 
-	"", "", "", sizeof(taArray_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray_impl("const_taArray_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList("taPtrList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taArray_impl_ref("const_taArray_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taHashEl("taHashEl", " holds information for one entry of the hash table", 
 	"", "", "", sizeof(taHashEl), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taPtrList("const_taPtrList", 1, 0, 0, 0, 1, 0);
@@ -176,9 +173,35 @@ TypeDef TA_taHashTable_ptr("taHashTable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taHashTable("const_taHashTable", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taHashTable_ref("const_taHashTable_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_base("taPtrList_base", 1, 0, 0, 0, 1, 0);
+TypeDef TA_uint_ref("uint_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_taPtrList_base("const_taPtrList_base", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taPlainArray("taPlainArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taPtrList_base_ref("const_taPtrList_base_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taFixedArray_impl("taFixedArray_impl", " basic shared subtype for Arrays and Matrixes, no tokens of which are ever kept", 
+	"", "", "", sizeof(taFixedArray_impl), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taFixedArray_impl("const_taFixedArray_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taFixedArray("taFixedArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taFixedArray_impl_ref("const_taFixedArray_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taFixedArray_int_("taFixedArray_int_", " rudimentary array, primarily intended as an OO replacement for C arrays", 
+	"", "", "", sizeof(taFixedArray<int>), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taFixedArray("const_taFixedArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_int("const_int", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taFixedArray_ref("const_taFixedArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_int_ref("const_int_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_int_FixedArray("int_FixedArray", "", 
+	"", "", "", sizeof(int_FixedArray), (void**)0, 0, 0, 0,1);
+TypeDef TA_taBasicArray_impl("taBasicArray_impl", " Basic shared subtype for Arrays and Matrixes, no tokens of which are ever kept", 
+	"", "", "", sizeof(taBasicArray_impl), (void**)0, 0, 0, 0,1);
+TypeDef TA_int_FixedArray_ref("int_FixedArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_int_FixedArray("const_int_FixedArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_int_FixedArray_ref("const_int_FixedArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taBasicArray("taBasicArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taBasicArray("const_taBasicArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taArray_impl("taArray_impl", " Base Type for Arrays, no tokens of which are ever kept", 
+	"", "", "", sizeof(taArray_impl), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taBasicArray_ref("const_taBasicArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_taArray_impl("const_taArray_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_impl_ref("const_taArray_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taPlainArray("taPlainArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taFiler("taFiler", " //////////////////////////////// associate this with each file that is managed", 
 	"", "", "", sizeof(taFiler), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taPlainArray("const_taPlainArray", 1, 0, 0, 0, 1, 0);
@@ -214,19 +237,22 @@ TypeDef TA_taBase_ptr("taBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TAPtr("TAPtr", " pointer to a taBase type", 
 	"", "", "", sizeof(taBase*), (void**)&TAI_TAPtr, 0, 1, 0,1);
 TypeDef TA_taPlainArray_taString_("taPlainArray_taString_", " ", 
-	"", "", "", sizeof(taPlainArray<taString>), (void**)&TAI_taPlainArray_taString_, 0, 0, 0,1);
+	"", "", "", sizeof(taPlainArray<taString>), (void**)0, 0, 0, 0,1);
 TypeDef TA_String_PArray("String_PArray", "", 
 	"", "", "", sizeof(String_PArray), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPlainArray_int_("taPlainArray_int_", " ", 
-	"", "", "", sizeof(taPlainArray<int>), (void**)&TAI_taPlainArray_int_, 0, 0, 0,1);
+	"", "", "", sizeof(taPlainArray<int>), (void**)0, 0, 0, 0,1);
+TypeDef TA_String_PArray_ref("String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_String_PArray("const_String_PArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_String_PArray_ref("const_String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_PArray("int_PArray", "", 
 	"", "", "", sizeof(int_PArray), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_String_PArray_ref("const_String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_IApp("IApp", " basic methods that the root/app object must support", 
 	"", "", "", sizeof(IApp), (void**)0, 1, 0, 0,1);
+TypeDef TA_int_PArray_ref("int_PArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_int_PArray("const_int_PArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_IApp_ptr("IApp_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_String_PArray_ref("String_PArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_int_PArray_ref("const_int_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taMisc("taMisc", " miscellanous global parameters and functions for type access system", 
 	"", "", "", sizeof(taMisc), (void**)&TAI_taMisc, 0, 0, 0,1);
 TypeDef TA_taRefN("taRefN", " reference counting base class", 
@@ -357,68 +383,113 @@ TypeDef TA_TABLPtr("TABLPtr", " this comment needed for maketa parser",
 	"", "", "", sizeof(taList_impl*), (void**)0, 0, 1, 0,1);
 TypeDef TA_const_taList_impl("const_taList_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taList_impl_ref("const_taList_impl_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taArray_base("taArray_base", " base for arrays (from taBase)", 
-	"", "", "", sizeof(taArray_base), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taArray_base("const_taArray_base", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taList("taList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taArray_base_ref("const_taArray_base_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_taBase_("taList_taBase_", " ", 
 	"", "", "", sizeof(taList<taBase>), (void**)&TAI_taList_taBase_, 0, 0, 0,1);
 TypeDef TA_const_taList("const_taList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taList_ref("const_taList_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_List("taBase_List", " list of objects", 
 	"", "", "", sizeof(taBase_List), (void**)&TAI_taBase_List, 0, 0, 0,1);
-TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taList_ref("const_taList_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taBase_List_ref("const_taBase_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taArray_base("taArray_base", " base for arrays (from taBase)", 
+	"", "", "", sizeof(taArray_base), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taArray_base("const_taArray_base", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taArray_base_ref("const_taArray_base_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray("taArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_int_("taArray_int_", " ", 
 	"", "", "", sizeof(taArray<int>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taArray("const_taArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taArray_ref("const_taArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_Array("int_Array", " ", 
-	"", "", "", sizeof(int_Array), (void**)&TAI_int_Array, 0, 0, 0,1);
+	"", "", "", sizeof(int_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray_float_("taArray_float_", " ", 
 	"", "", "", sizeof(taArray<float>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_int_Array("const_int_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_int_Array_ref("const_int_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_float("const_float", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_float_ref("const_float_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_Array("float_Array", " ", 
-	"", "", "", sizeof(float_Array), (void**)&TAI_float_Array, 0, 0, 0,1);
+	"", "", "", sizeof(float_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray_double_("taArray_double_", " ", 
 	"", "", "", sizeof(taArray<double>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_float_Array("const_float_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_float_Array_ref("const_float_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_double_ref("double_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_double("const_double", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_double_ref("const_double_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_double_Array("double_Array", " ", 
-	"", "", "", sizeof(double_Array), (void**)&TAI_double_Array, 0, 0, 0,1);
+	"", "", "", sizeof(double_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray_taString_("taArray_taString_", " ", 
 	"", "", "", sizeof(taArray<taString>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_double_Array("const_double_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_double_Array_ref("const_double_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_String_Array("String_Array", " ", 
-	"", "", "", sizeof(String_Array), (void**)&TAI_String_Array, 0, 0, 0,1);
+	"", "", "", sizeof(String_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_String_Array("const_String_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_String_Array_ref("const_String_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SArg_Array("SArg_Array", " string argument array: has labels for each argument to make it easier in the interface", 
-	"", "", "", sizeof(SArg_Array), (void**)&TAI_SArg_Array, 0, 0, 0,1);
+	"", "", "", sizeof(SArg_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray_long_("taArray_long_", " ", 
 	"", "", "", sizeof(taArray<long>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_SArg_Array("const_SArg_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SArg_Array_ref("const_SArg_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_long("const_long", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_long_ref("const_long_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_long_Array("long_Array", " ", 
-	"", "", "", sizeof(long_Array), (void**)&TAI_long_Array, 0, 0, 0,1);
+	"", "", "", sizeof(long_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_voidptr("voidptr", " for maketa, which chokes on void* in a template", 
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
 TypeDef TA_const_long_Array("const_long_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_voidptr_("taArray_voidptr_", " ", 
 	"", "", "", sizeof(taArray<void*>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_long_Array_ref("const_long_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_voidptr_ref("voidptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_const_voidptr("const_voidptr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_voidptr_ref("const_voidptr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_voidptr_Array("voidptr_Array", " ", 
-	"", "", "", sizeof(voidptr_Array), (void**)&TAI_voidptr_Array, 0, 0, 0,1);
+	"", "", "", sizeof(voidptr_Array), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_voidptr_Array("const_voidptr_Array", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_voidptr_Array_ref("const_voidptr_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taMatrix_impl("taMatrix_impl", " ref counted multi-dimensional data array", 
+	"", "", "", sizeof(taMatrix_impl), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taMatrix_impl("const_taMatrix_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taMatrix("taMatrix", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_taMatrix_impl_ref("const_taMatrix_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taMatrix_impl_ptr("taMatrix_impl_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_taMatrix("const_taMatrix", 1, 0, 0, 0, 1, 0);
+TypeDef TA_MatrixPtr_impl("MatrixPtr_impl", " 'safe' ptr for Matrix objects -- automatically does ref counts", 
+	"", "", "", sizeof(MatrixPtr_impl), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_taMatrix_ref("const_taMatrix_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MatrixPtr_impl_ref("MatrixPtr_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MatrixPtr("MatrixPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taMatrix_byte_("taMatrix_byte_", " ", 
+	"", "", "", sizeof(taMatrix<byte>), (void**)0, 0, 0, 0,1);
+TypeDef TA_MatrixPtr_ref("MatrixPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_byte_Matrix("byte_Matrix", "", 
+	"", "", "", sizeof(byte_Matrix), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_byte_Matrix("const_byte_Matrix", 1, 0, 0, 0, 1, 0);
+TypeDef TA_byte_Matrix_ref("byte_Matrix_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_byte_Matrix_ref("const_byte_Matrix_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MatrixPtr_byte_Matrix_("MatrixPtr_byte_Matrix_", "", 
+	"", "", "", sizeof(MatrixPtr<byte_Matrix>), (void**)0, 0, 0, 0,1);
+TypeDef TA_ByteMatrixPtr("ByteMatrixPtr", "", 
+	"", "", "", sizeof(ByteMatrixPtr), (void**)0, 0, 0, 0,1);
+TypeDef TA_taMatrix_float_("taMatrix_float_", " ", 
+	"", "", "", sizeof(taMatrix<float>), (void**)0, 0, 0, 0,1);
+TypeDef TA_float_Matrix("float_Matrix", " Matrix -- a specialized, richer implementation of Array Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS. Each concrete class holds one specific type of data, ex. byte or float. The number of dimensions is set at create time, and is lifetime-invariant. The number of elements in each dimension is usually fixed. Data is stored such that the highest dimension items are adjacent, ex: [2][3]: 00, 01, 02, 10, 11, 12 The value for the first dimension (geom[0]) is special: if geom[0]=0 then no allocation is made, and the data will resize if geom[0]=N, then data is allocated at creation -- note that the allocated data is uninitialized The object supports partially filled arrays, but not ragged arrays. Storage in Matrix is based on an instance of the taArray<> template. NOTE: Matrix in its current form is not streamable. Matrix vs. Array 'Array' classes are typically 1-d vectors or interpreted as 2-d arrays. Array supports dynamic operations, like inserting, sorting, etc. Matrix is ref-counted, and intended for sharing/moving raw data around. Matrix explicitly supports dimensionality and dimensional access. ", 
+	"", "", "", sizeof(float_Matrix), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_float_Matrix("const_float_Matrix", 1, 0, 0, 0, 1, 0);
+TypeDef TA_float_Matrix_ref("float_Matrix_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_float_Matrix_ref("const_float_Matrix_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MatrixPtr_float_Matrix_("MatrixPtr_float_Matrix_", "", 
+	"", "", "", sizeof(MatrixPtr<float_Matrix>), (void**)0, 0, 0, 0,1);
+TypeDef TA_FloatMatrixPtr("FloatMatrixPtr", "", 
+	"", "", "", sizeof(FloatMatrixPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_taGroup_impl("taGroup_impl", " pre-declare implementation of a group forwards this file:", 
 	"", "", "", sizeof(taGroup_impl), (void**)&TAI_taGroup_impl, 0, 0, 0,1);
-TypeDef TA_const_voidptr_Array("const_voidptr_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taGroup_impl_ptr("taGroup_impl_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_voidptr_Array_ref("const_voidptr_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TAGPtr("TAGPtr", "", 
 	"", "", "", sizeof(taGroup_impl*), (void**)0, 0, 1, 0,1);
 TypeDef TA_taList_taGroup_impl_("taList_taGroup_impl_", " ", 
@@ -1946,106 +2017,6 @@ taBase*		 TAI_taBase=NULL;
       ostream& refarg_0=*(ostream*)*arg[1];
     ((taPtrList_impl*)ths)->List(refarg_0);}
     return rval;}
-  static cssEl* cssElCFun_taArray_impl_InRange_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_impl*)ths)->InRange((int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Alloc_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Alloc((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Reset_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Reset();
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_BlankEl__stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taArray_impl*)ths)->BlankEl_(), 1, &TA_void);
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_EnforceSize_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->EnforceSize((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_AddBlank_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((taArray_impl*)ths)->AddBlank();}
-    if(na == 1) {
-      ((taArray_impl*)ths)->AddBlank((int)*arg[1]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray_impl*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray_impl*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Move_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_impl*)ths)->Move((int)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Permute_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Permute();
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Sort_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((taArray_impl*)ths)->Sort();}
-    if(na == 1) {
-      ((taArray_impl*)ths)->Sort((bool)*arg[1]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_ShiftLeft_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->ShiftLeft((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_ShiftLeftPct_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->ShiftLeftPct((float)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_V_Flip_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_impl*)ths)->V_Flip((int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Duplicate_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Duplicate(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_DupeUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->DupeUnique(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Copy_Common_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Copy_Common(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_Copy_Duplicate_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->Copy_Duplicate(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_CopyVals_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));}
-    if(na == 2) {
-      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2]);}
-    if(na == 3) {
-      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3]);}
-    if(na == 4) {
-      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3], (int)*arg[4]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_List_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((taArray_impl*)ths)->List();}
-    if(na == 1) {
-      ostream& refarg_0=*(ostream*)*arg[1];
-    ((taArray_impl*)ths)->List(refarg_0);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_impl_InitFromString_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_impl*)ths)->InitFromString((const char*)*arg[1]);
-    return rval;}
   static cssEl* cssElCFun_taHashEl_Initialize_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     ((taHashEl*)ths)->Initialize();
@@ -2360,6 +2331,136 @@ taPtrList<taHashBucket>*		 TAI_taPtrList_taHashBucket_=NULL;
     cssEl* rval=&cssMisc::Void;
     ((taHashTable*)ths)->InitList_();
     return rval;}
+  static cssEl* cssElCFun_taFixedArray_impl_alloc_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taFixedArray_impl*)ths)->alloc());
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_impl_InRange_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taFixedArray_impl*)ths)->InRange((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_impl_Reset_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taFixedArray_impl*)ths)->Reset();
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_impl_EnforceSize_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taFixedArray_impl*)ths)->EnforceSize((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_impl_AddBlank_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      ((taFixedArray_impl*)ths)->AddBlank();}
+    if(na == 1) {
+      ((taFixedArray_impl*)ths)->AddBlank((int)*arg[1]);}
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taFixedArray<int>*)ths)->SafeEl((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taFixedArray<int>*)ths)->FastEl((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__Set_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taFixedArray<int>*)ths)->Set((int)*arg[1], (int)*arg[2]);
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__Add_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taFixedArray<int>*)ths)->Add((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__AddUnique_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taFixedArray<int>*)ths)->AddUnique((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__Insert_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 2) {
+      ((taFixedArray<int>*)ths)->Insert((int)*arg[1], (int)*arg[2]);}
+    if(na == 3) {
+      ((taFixedArray<int>*)ths)->Insert((int)*arg[1], (int)*arg[2], (int)*arg[3]);}
+    return rval;}
+  static cssEl* cssElCFun_taFixedArray_int__Find_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssInt((int)((taFixedArray<int>*)ths)->Find((int)*arg[1]));}
+    if(na == 2) {
+      rval=new cssInt((int)((taFixedArray<int>*)ths)->Find((int)*arg[1], (int)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_taBasicArray_impl_Alloc_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taBasicArray_impl*)ths)->Alloc((uint)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taBasicArray_impl_Remove_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssInt((int)((taBasicArray_impl*)ths)->Remove((int)*arg[1]));}
+    if(na == 2) {
+      rval=new cssInt((int)((taBasicArray_impl*)ths)->Remove((int)*arg[1], (int)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_Permute_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->Permute();
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_Sort_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      ((taArray_impl*)ths)->Sort();}
+    if(na == 1) {
+      ((taArray_impl*)ths)->Sort((bool)*arg[1]);}
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_ShiftLeft_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->ShiftLeft((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_ShiftLeftPct_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->ShiftLeftPct((float)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_V_Flip_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray_impl*)ths)->V_Flip((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_DupeUnique_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->DupeUnique(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_Copy_Common_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->Copy_Common(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_Copy_Duplicate_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->Copy_Duplicate(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_CopyVals_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));}
+    if(na == 2) {
+      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2]);}
+    if(na == 3) {
+      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3]);}
+    if(na == 4) {
+      ((taArray_impl*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3], (int)*arg[4]);}
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_Move_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray_impl*)ths)->Move((int)*arg[1], (int)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_List_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      ((taArray_impl*)ths)->List();}
+    if(na == 1) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    ((taArray_impl*)ths)->List(refarg_0);}
+    return rval;}
+  static cssEl* cssElCFun_taArray_impl_InitFromString_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_impl*)ths)->InitFromString((const char*)*arg[1]);
+    return rval;}
   static cssEl* cssElCFun_taFiler_open_read_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taFiler*)ths)->open_read(), 1, &TA_istream);
@@ -2451,14 +2552,6 @@ taPtrList<taHashBucket>*		 TAI_taPtrList_taHashBucket_=NULL;
     return rval;}
 taDataLinkItr*		 TAI_taDataLinkItr=NULL;
 taBase**		 TAI_TAPtr=NULL;
-taPlainArray<taString>*		 TAI_taPlainArray_taString_=NULL;
-  static cssEl* cssElCFun_taPlainArray_taString__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taPlainArray<taString>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taPlainArray<taString>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
   static cssEl* cssElCFun_taPlainArray_taString__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssString(((taPlainArray<taString>*)ths)->SafeEl((int)*arg[1]));
@@ -2527,14 +2620,6 @@ taPlainArray<taString>*		 TAI_taPlainArray_taString_=NULL;
       rval=new cssInt((int)((String_PArray*)ths)->FindContains((const char*)*arg[1]));}
     if(na == 2) {
       rval=new cssInt((int)((String_PArray*)ths)->FindContains((const char*)*arg[1], (int)*arg[2]));}
-    return rval;}
-taPlainArray<int>*		 TAI_taPlainArray_int_=NULL;
-  static cssEl* cssElCFun_taPlainArray_int__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taPlainArray<int>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taPlainArray<int>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
     return rval;}
   static cssEl* cssElCFun_taPlainArray_int__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -4246,6 +4331,66 @@ taList_impl*		 TAI_taList_impl=NULL;
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taList_impl*)ths)->ReturnFindMd(), 1, &TA_MemberDef);
     return rval;}
+taList<taBase>*		 TAI_taList_taBase_=NULL;
+  static cssEl* cssElCFun_taList_taBase__MoveBefore_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<taBase>*)ths)->MoveBefore((taBase*)(void*)*arg[1], (taBase*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__MoveAfter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<taBase>*)ths)->MoveAfter((taBase*)(void*)*arg[1], (taBase*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->SafeEl((int)*arg[1]), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->FastEl((int)*arg[1]), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__DefaultEl_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->DefaultEl(), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__Edit_El_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->Edit_El((taBase*)(void*)*arg[1]), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__FindName_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<taBase>*)ths)->FindName((const char*)*arg[1]), 1, &TA_taBase);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_taBase);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__FindType_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<taBase>*)ths)->FindType((TypeDef*)*arg[1]), 1, &TA_taBase);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->FindType((TypeDef*)*arg[1], refarg_1), 1, &TA_taBase);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__Pop_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->Pop(), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__Peek_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->Peek(), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->AddUniqNameOld((taBase*)(void*)*arg[1]), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_taList_taBase__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<taBase>*)ths)->LinkUniqNameOld((taBase*)(void*)*arg[1]), 1, &TA_taBase);
+    return rval;}
+taBase_List*		 TAI_taBase_List=NULL;
   static cssEl* cssElCFun_taArray_base_GetColText_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 1) {
@@ -4469,21 +4614,17 @@ taList_impl*		 TAI_taList_impl=NULL;
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taArray_base*)ths)->addr_data_link(), 2, &TA_taDataLink);
     return rval;}
+  static cssEl* cssElCFun_taArray_base_alloc_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray_base*)ths)->alloc());
+    return rval;}
   static cssEl* cssElCFun_taArray_base_InRange_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((taArray_base*)ths)->InRange((int)*arg[1]));
     return rval;}
-  static cssEl* cssElCFun_taArray_base_Alloc_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_base*)ths)->Alloc((int)*arg[1]);
-    return rval;}
   static cssEl* cssElCFun_taArray_base_Reset_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     ((taArray_base*)ths)->Reset();
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_BlankEl__stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taArray_base*)ths)->BlankEl_(), 1, &TA_void);
     return rval;}
   static cssEl* cssElCFun_taArray_base_EnforceSize_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -4496,16 +4637,16 @@ taList_impl*		 TAI_taList_impl=NULL;
     if(na == 1) {
       ((taArray_base*)ths)->AddBlank((int)*arg[1]);}
     return rval;}
+  static cssEl* cssElCFun_taArray_base_Alloc_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taArray_base*)ths)->Alloc((uint)*arg[1]);
+    return rval;}
   static cssEl* cssElCFun_taArray_base_Remove_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 1) {
-      rval=new cssInt((int)((taArray_base*)ths)->Remove((uint)*arg[1]));}
+      rval=new cssInt((int)((taArray_base*)ths)->Remove((int)*arg[1]));}
     if(na == 2) {
-      rval=new cssInt((int)((taArray_base*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_Move_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_base*)ths)->Move((int)*arg[1], (int)*arg[2]));
+      rval=new cssInt((int)((taArray_base*)ths)->Remove((int)*arg[1], (int)*arg[2]));}
     return rval;}
   static cssEl* cssElCFun_taArray_base_Permute_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -4530,10 +4671,6 @@ taList_impl*		 TAI_taList_impl=NULL;
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((taArray_base*)ths)->V_Flip((int)*arg[1]));
     return rval;}
-  static cssEl* cssElCFun_taArray_base_Duplicate_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_base*)ths)->Duplicate(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
-    return rval;}
   static cssEl* cssElCFun_taArray_base_DupeUnique_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taArray_base*)ths)->DupeUnique(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));
@@ -4557,6 +4694,10 @@ taList_impl*		 TAI_taList_impl=NULL;
     if(na == 4) {
       ((taArray_base*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3], (int)*arg[4]);}
     return rval;}
+  static cssEl* cssElCFun_taArray_base_Move_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taArray_base*)ths)->Move((int)*arg[1], (int)*arg[2]));
+    return rval;}
   static cssEl* cssElCFun_taArray_base_List_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 0) {
@@ -4569,6 +4710,8 @@ taList_impl*		 TAI_taList_impl=NULL;
     cssEl* rval=&cssMisc::Void;
     ((taArray_base*)ths)->InitFromString((const char*)*arg[1]);
     return rval;}
+<<<<<<< .mine
+=======
 taList<taBase>*		 TAI_taList_taBase_=NULL;
   static cssEl* cssElCFun_taList_taBase__MoveBefore_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -4636,6 +4779,7 @@ taBase_List*		 TAI_taBase_List=NULL;
     if(na == 2) {
       rval=new cssInt((int)((taArray<int>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
     return rval;}
+>>>>>>> .r63
   static cssEl* cssElCFun_taArray_int__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((taArray<int>*)ths)->SafeEl((int)*arg[1]));
@@ -4699,7 +4843,6 @@ taBase_List*		 TAI_taBase_List=NULL;
     if(na == 3) {
       ((taArray<int>*)ths)->InitVals((int)*arg[1], (int)*arg[2], (int)*arg[3]);}
     return rval;}
-int_Array*		 TAI_int_Array=NULL;
   static cssEl* cssElCFun_int_Array_FillSeq_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 0) {
@@ -4708,13 +4851,6 @@ int_Array*		 TAI_int_Array=NULL;
       ((int_Array*)ths)->FillSeq((int)*arg[1]);}
     if(na == 2) {
       ((int_Array*)ths)->FillSeq((int)*arg[1], (int)*arg[2]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_float__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<float>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<float>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
     return rval;}
   static cssEl* cssElCFun_taArray_float__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -4779,14 +4915,6 @@ int_Array*		 TAI_int_Array=NULL;
     if(na == 3) {
       ((taArray<float>*)ths)->InitVals((float)*arg[1], (int)*arg[2], (int)*arg[3]);}
     return rval;}
-float_Array*		 TAI_float_Array=NULL;
-  static cssEl* cssElCFun_taArray_double__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<double>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<double>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
   static cssEl* cssElCFun_taArray_double__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssReal((double)((taArray<double>*)ths)->SafeEl((int)*arg[1]));
@@ -4849,14 +4977,6 @@ float_Array*		 TAI_float_Array=NULL;
       ((taArray<double>*)ths)->InitVals((double)*arg[1], (int)*arg[2]);}
     if(na == 3) {
       ((taArray<double>*)ths)->InitVals((double)*arg[1], (int)*arg[2], (int)*arg[3]);}
-    return rval;}
-double_Array*		 TAI_double_Array=NULL;
-  static cssEl* cssElCFun_taArray_taString__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<taString>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<taString>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
     return rval;}
   static cssEl* cssElCFun_taArray_taString__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -4921,15 +5041,6 @@ double_Array*		 TAI_double_Array=NULL;
     if(na == 3) {
       ((taArray<taString>*)ths)->InitVals(arg[1]->GetStr(), (int)*arg[2], (int)*arg[3]);}
     return rval;}
-String_Array*		 TAI_String_Array=NULL;
-SArg_Array*		 TAI_SArg_Array=NULL;
-  static cssEl* cssElCFun_taArray_long__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<long>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<long>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
   static cssEl* cssElCFun_taArray_long__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((taArray<long>*)ths)->SafeEl((int)*arg[1]));
@@ -4993,7 +5104,6 @@ SArg_Array*		 TAI_SArg_Array=NULL;
     if(na == 3) {
       ((taArray<long>*)ths)->InitVals((long)*arg[1], (int)*arg[2], (int)*arg[3]);}
     return rval;}
-long_Array*		 TAI_long_Array=NULL;
   static cssEl* cssElCFun_long_Array_FillSeq_stub(void* ths,int na, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     if(na == 0) {
@@ -5002,13 +5112,6 @@ long_Array*		 TAI_long_Array=NULL;
       ((long_Array*)ths)->FillSeq((long)*arg[1]);}
     if(na == 2) {
       ((long_Array*)ths)->FillSeq((long)*arg[1], (long)*arg[2]);}
-    return rval;}
-  static cssEl* cssElCFun_taArray_voidptr__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<void*>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<void*>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
     return rval;}
   static cssEl* cssElCFun_taArray_voidptr__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -5024,7 +5127,7 @@ long_Array*		 TAI_long_Array=NULL;
     return rval;}
   static cssEl* cssElCFun_taArray_voidptr__Pop_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taArray<void*>*)ths)->Pop(), 1, &TA_void);
+    ((taArray<void*>*)ths)->Pop();
     return rval;}
   static cssEl* cssElCFun_taArray_voidptr__Peek_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -5073,7 +5176,62 @@ long_Array*		 TAI_long_Array=NULL;
     if(na == 3) {
       ((taArray<void*>*)ths)->InitVals((void*)(void*)*arg[1], (int)*arg[2], (int)*arg[3]);}
     return rval;}
-voidptr_Array*		 TAI_voidptr_Array=NULL;
+  static cssEl* cssElCFun_taMatrix_impl_dims_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taMatrix_impl*)ths)->dims());
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_impl_geom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taMatrix_impl*)ths)->geom((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_impl_setGeom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taMatrix_impl*)ths)->setGeom((int)*arg[1], (int)*arg[2], (int)*arg[3], (int)*arg[4]);
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_impl_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((taMatrix_impl*)ths)->GetTypeDef(), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_impl_Ref_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taMatrix_impl*)ths)->Ref();
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_impl_Unref_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((taMatrix_impl*)ths)->Unref();
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_byte__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taMatrix<byte>*)ths)->SafeEl((int)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_byte__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((taMatrix<byte>*)ths)->FastEl((int)*arg[1], (int)*arg[2], (int)*arg[3], (int)*arg[4]);
+    return rval;}
+  static cssEl* cssElCFun_byte_Matrix_data_type_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((byte_Matrix*)ths)->data_type(), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_byte_Matrix_StatTypeDef_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((byte_Matrix*)ths)->StatTypeDef((int)*arg[1]), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_float__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssReal((double)((taMatrix<float>*)ths)->SafeEl((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_taMatrix_float__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssReal((double)((taMatrix<float>*)ths)->FastEl((int)*arg[1], (int)*arg[2], (int)*arg[3], (int)*arg[4]));
+    return rval;}
+  static cssEl* cssElCFun_float_Matrix_data_type_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((float_Matrix*)ths)->data_type(), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_float_Matrix_StatTypeDef_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((float_Matrix*)ths)->StatTypeDef((int)*arg[1]), 1, &TA_TypeDef);
+    return rval;}
 taGroup_impl*		 TAI_taGroup_impl=NULL;
   static cssEl* cssElCFun_taGroup_impl_Remove_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -7861,111 +8019,6 @@ static EnumDef_data TA_DataChangedReason_EnumDef[]={
   {"DCR_DATA_UPDATE_BEGIN"," for some data changes, like various log updates, better for gui to just do one","",19},
   {"DCR_DATA_UPDATE_END"," update operation at the end of everything","",20},
   NULL};
-static int taArray_impl::* TA_taArray_impl_MbrOff;
-static MemberDef_data TA_taArray_impl_MemberDef[]={
-  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVE READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taArray_impl_MbrOff=(int taArray_impl::*)(&taArray_impl::size))),0,NULL,0},
-  {&TA_int,NULL,"alloc_size"," allocated (physical) size","READ_ONLY NO_SAVE DETAIL ","",
-    *((ta_memb_ptr*)&(TA_taArray_impl_MbrOff=(int taArray_impl::*)(&taArray_impl::alloc_size))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_impl_InRange_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Alloc_MethArgs[]={
-  {&TA_int,NULL,"n",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_EnforceSize_MethArgs[]={
-  {&TA_int,NULL,"sz",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_AddBlank_MethArgs[]={
-  {&TA_int,NULL,"n_els"," 1"},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Remove_MethArgs[]={
-  {&TA_uint,NULL,"idx",""},
-  {&TA_int,NULL,"n_els","1"},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Move_MethArgs[]={
-  {&TA_int,NULL,"from",""},
-  {&TA_int,NULL,"to",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Sort_MethArgs[]={
-  {&TA_bool,NULL,"descending","false"},
-  NULL};
-static MethodArgs_data TA_taArray_impl_ShiftLeft_MethArgs[]={
-  {&TA_int,NULL,"nshift",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_ShiftLeftPct_MethArgs[]={
-  {&TA_float,NULL,"pct",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_V_Flip_MethArgs[]={
-  {&TA_int,NULL,"width",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Duplicate_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"cp",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_DupeUnique_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"cp",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Copy_Common_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"cp",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_Copy_Duplicate_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"cp",""},
-  NULL};
-static MethodArgs_data TA_taArray_impl_CopyVals_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"from",""},
-  {&TA_int,NULL,"start","0"},
-  {&TA_int,NULL,"end","-1"},
-  {&TA_int,NULL,"at","0"},
-  NULL};
-static MethodArgs_data TA_taArray_impl_List_MethArgs[]={
-  {&TA_ostream_ref,NULL,"strm"," cout"},
-  NULL};
-static MethodArgs_data TA_taArray_impl_InitFromString_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"val",""},
-  NULL};
-static MethodDef_data TA_taArray_impl_MethodDef[]={
-  {&TA_bool,NULL,"InRange","","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_InRange_stub,TA_taArray_impl_InRange_MethArgs},
-  {&TA_void,NULL,"Alloc"," allocate storage for at least the given size","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_Alloc_stub,TA_taArray_impl_Alloc_MethArgs},
-  {&TA_void,NULL,"Reset"," reset the list to zero size (does not free memory)","","",
-    0,0,-1,0,NULL,cssElCFun_taArray_impl_Reset_stub,NULL},
-  {&TA_void_ptr,NULL,"BlankEl_"," address of a blank element, for initializing empty items","","",
-    0,0,-1,0,NULL,cssElCFun_taArray_impl_BlankEl__stub,NULL},
-  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_EnforceSize_stub,TA_taArray_impl_EnforceSize_MethArgs},
-  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENU MENU_ON_Edit ","",
-    0,1,0,0,NULL,cssElCFun_taArray_impl_AddBlank_stub,TA_taArray_impl_AddBlank_MethArgs},
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
-    0,2,1,0,NULL,cssElCFun_taArray_impl_Remove_stub,TA_taArray_impl_Remove_MethArgs},
-  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
-    0,2,-1,0,NULL,cssElCFun_taArray_impl_Move_stub,TA_taArray_impl_Move_MethArgs},
-  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU ","",
-    0,0,-1,0,NULL,cssElCFun_taArray_impl_Permute_stub,NULL},
-  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU ","",
-    0,1,0,0,NULL,cssElCFun_taArray_impl_Sort_stub,TA_taArray_impl_Sort_MethArgs},
-  {&TA_void,NULL,"ShiftLeft"," shift all the elements in the array to the left by given number of items","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_ShiftLeft_stub,TA_taArray_impl_ShiftLeft_MethArgs},
-  {&TA_void,NULL,"ShiftLeftPct"," shift the array to the left by given percentage of current size","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_ShiftLeftPct_stub,TA_taArray_impl_ShiftLeftPct_MethArgs},
-  {&TA_int,NULL,"V_Flip"," vertically flip the array as if it was arrange in a matrix of width","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_V_Flip_stub,TA_taArray_impl_V_Flip_MethArgs},
-  {&TA_void,NULL,"Duplicate"," duplicate the items in the list","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_Duplicate_stub,TA_taArray_impl_Duplicate_MethArgs},
-  {&TA_void,NULL,"DupeUnique"," duplicate so result is unique list","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_DupeUnique_stub,TA_taArray_impl_DupeUnique_MethArgs},
-  {&TA_void,NULL,"Copy_Common"," copy elements in common","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_Copy_Common_stub,TA_taArray_impl_Copy_Common_MethArgs},
-  {&TA_void,NULL,"Copy_Duplicate"," copy elements in common, duplicating (if necc) any extra on cp","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_Copy_Duplicate_stub,TA_taArray_impl_Copy_Duplicate_MethArgs},
-  {&TA_void,NULL,"CopyVals"," copy values from other array at given start and end points, and putting at given point in this","","",
-    0,4,1,0,NULL,cssElCFun_taArray_impl_CopyVals_stub,TA_taArray_impl_CopyVals_MethArgs},
-  {&TA_void,NULL,"List"," print out all of the elements in the array","","",
-    0,1,0,0,NULL,cssElCFun_taArray_impl_List_stub,TA_taArray_impl_List_MethArgs},
-  {&TA_void,NULL,"InitFromString"," initialize an array from given string (does reset first)","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_impl_InitFromString_stub,TA_taArray_impl_InitFromString_MethArgs},
-  NULL};
 static int taHashEl::* TA_taHashEl_MbrOff;
 static MemberDef_data TA_taHashEl_MemberDef[]={
   {&TA_taHashVal,NULL,"hash_code"," hash-coded value of name","","",
@@ -8376,6 +8429,158 @@ static MethodDef_data TA_taHashTable_MethodDef[]={
   {&TA_void,NULL,"InitList_","","","",
     0,0,-1,0,NULL,cssElCFun_taHashTable_InitList__stub,NULL},
   NULL};
+static int taFixedArray_impl::* TA_taFixedArray_impl_MbrOff;
+static MemberDef_data TA_taFixedArray_impl_MemberDef[]={
+  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVE READ_ONLY ","",
+    *((ta_memb_ptr*)&(TA_taFixedArray_impl_MbrOff=(int taFixedArray_impl::*)(&taFixedArray_impl::size))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_taFixedArray_impl_InRange_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_impl_EnforceSize_MethArgs[]={
+  {&TA_int,NULL,"sz",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_impl_AddBlank_MethArgs[]={
+  {&TA_int,NULL,"n_els"," 1"},
+  NULL};
+static MethodDef_data TA_taFixedArray_impl_MethodDef[]={
+  {&TA_int,NULL,"alloc","","","",
+    0,0,-1,0,NULL,cssElCFun_taFixedArray_impl_alloc_stub,NULL},
+  {&TA_bool,NULL,"InRange","","","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_impl_InRange_stub,TA_taFixedArray_impl_InRange_MethArgs},
+  {&TA_void,NULL,"Reset"," //////////////////////////////////////////////","","",
+    0,0,-1,0,NULL,cssElCFun_taFixedArray_impl_Reset_stub,NULL},
+  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_impl_EnforceSize_stub,TA_taFixedArray_impl_EnforceSize_MethArgs},
+  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENU MENU_ON_Edit ","",
+    0,1,0,0,NULL,cssElCFun_taFixedArray_impl_AddBlank_stub,TA_taFixedArray_impl_AddBlank_MethArgs},
+  NULL};
+static int taFixedArray<int>::* TA_taFixedArray_int__MbrOff;
+static MemberDef_data TA_taFixedArray_int__MemberDef[]={
+  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+    *((ta_memb_ptr*)&(TA_taFixedArray_int__MbrOff=(int taFixedArray<int>::*)(&taFixedArray<int>::el))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__Set_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  {NULL,"::const_int_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__Add_MethArgs[]={
+  {NULL,"::const_int_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__AddUnique_MethArgs[]={
+  {NULL,"::const_int_ref","item",""},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__Insert_MethArgs[]={
+  {NULL,"::const_int_ref","item",""},
+  {&TA_int,NULL,"idx",""},
+  {&TA_int,NULL,"n_els","1"},
+  NULL};
+static MethodArgs_data TA_taFixedArray_int__Find_MethArgs[]={
+  {NULL,"::const_int_ref","item",""},
+  {&TA_int,NULL,"i","0"},
+  NULL};
+static MethodDef_data TA_taFixedArray_int__MethodDef[]={
+  {NULL,"::const_int_ref","SafeEl"," the element at the given index","","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_int__SafeEl_stub,TA_taFixedArray_int__SafeEl_MethArgs},
+  {NULL,"::const_int_ref","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_int__FastEl_stub,TA_taFixedArray_int__FastEl_MethArgs},
+  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+    0,2,-1,0,NULL,cssElCFun_taFixedArray_int__Set_stub,TA_taFixedArray_int__Set_MethArgs},
+  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_int__Add_stub,TA_taFixedArray_int__Add_MethArgs},
+  {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
+    0,1,-1,0,NULL,cssElCFun_taFixedArray_int__AddUnique_stub,TA_taFixedArray_int__AddUnique_MethArgs},
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU ","",
+    0,3,2,0,NULL,cssElCFun_taFixedArray_int__Insert_stub,TA_taFixedArray_int__Insert_MethArgs},
+  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENU USE_RVAL ","",
+    0,2,1,0,NULL,cssElCFun_taFixedArray_int__Find_stub,TA_taFixedArray_int__Find_MethArgs},
+  NULL};
+static MemberDef_data TA_int_FixedArray_MemberDef[]={
+  {&TA_int,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&int_FixedArray::blank),0},
+  NULL};
+static MethodArgs_data TA_taBasicArray_impl_Alloc_MethArgs[]={
+  {&TA_uint,NULL,"n",""},
+  NULL};
+static MethodArgs_data TA_taBasicArray_impl_Remove_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  {&TA_int,NULL,"n_els","1"},
+  NULL};
+static MethodDef_data TA_taBasicArray_impl_MethodDef[]={
+  {&TA_void,NULL,"Alloc"," allocate storage for at least the given size","","",
+    0,1,-1,0,NULL,cssElCFun_taBasicArray_impl_Alloc_stub,TA_taBasicArray_impl_Alloc_MethArgs},
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
+    0,2,1,0,NULL,cssElCFun_taBasicArray_impl_Remove_stub,TA_taBasicArray_impl_Remove_MethArgs},
+  NULL};
+static MethodArgs_data TA_taArray_impl_Sort_MethArgs[]={
+  {&TA_bool,NULL,"descending","false"},
+  NULL};
+static MethodArgs_data TA_taArray_impl_ShiftLeft_MethArgs[]={
+  {&TA_int,NULL,"nshift",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_ShiftLeftPct_MethArgs[]={
+  {&TA_float,NULL,"pct",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_V_Flip_MethArgs[]={
+  {&TA_int,NULL,"width",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_DupeUnique_MethArgs[]={
+  {&TA_const_taArray_impl_ref,NULL,"cp",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_Copy_Common_MethArgs[]={
+  {&TA_const_taArray_impl_ref,NULL,"cp",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_Copy_Duplicate_MethArgs[]={
+  {&TA_const_taArray_impl_ref,NULL,"cp",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_CopyVals_MethArgs[]={
+  {&TA_const_taArray_impl_ref,NULL,"from",""},
+  {&TA_int,NULL,"start","0"},
+  {&TA_int,NULL,"end","-1"},
+  {&TA_int,NULL,"at","0"},
+  NULL};
+static MethodArgs_data TA_taArray_impl_Move_MethArgs[]={
+  {&TA_int,NULL,"from",""},
+  {&TA_int,NULL,"to",""},
+  NULL};
+static MethodArgs_data TA_taArray_impl_List_MethArgs[]={
+  {&TA_ostream_ref,NULL,"strm"," cout"},
+  NULL};
+static MethodArgs_data TA_taArray_impl_InitFromString_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"val",""},
+  NULL};
+static MethodDef_data TA_taArray_impl_MethodDef[]={
+  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU ","",
+    0,0,-1,0,NULL,cssElCFun_taArray_impl_Permute_stub,NULL},
+  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU ","",
+    0,1,0,0,NULL,cssElCFun_taArray_impl_Sort_stub,TA_taArray_impl_Sort_MethArgs},
+  {&TA_void,NULL,"ShiftLeft"," shift all the elements in the array to the left by given number of items","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_ShiftLeft_stub,TA_taArray_impl_ShiftLeft_MethArgs},
+  {&TA_void,NULL,"ShiftLeftPct"," shift the array to the left by given percentage of current size","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_ShiftLeftPct_stub,TA_taArray_impl_ShiftLeftPct_MethArgs},
+  {&TA_int,NULL,"V_Flip"," vertically flip the array as if it was arrange in a matrix of width","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_V_Flip_stub,TA_taArray_impl_V_Flip_MethArgs},
+  {&TA_void,NULL,"DupeUnique"," duplicate so result is unique list","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_DupeUnique_stub,TA_taArray_impl_DupeUnique_MethArgs},
+  {&TA_void,NULL,"Copy_Common"," copy elements in common","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_Copy_Common_stub,TA_taArray_impl_Copy_Common_MethArgs},
+  {&TA_void,NULL,"Copy_Duplicate"," copy elements in common, duplicating (if necc) any extra on cp","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_Copy_Duplicate_stub,TA_taArray_impl_Copy_Duplicate_MethArgs},
+  {&TA_void,NULL,"CopyVals"," copy values from other array at given start and end points, and putting at given point in this","","",
+    0,4,1,0,NULL,cssElCFun_taArray_impl_CopyVals_stub,TA_taArray_impl_CopyVals_MethArgs},
+  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
+    0,2,-1,0,NULL,cssElCFun_taArray_impl_Move_stub,TA_taArray_impl_Move_MethArgs},
+  {&TA_void,NULL,"List"," print out all of the elements in the array","","",
+    0,1,0,0,NULL,cssElCFun_taArray_impl_List_stub,TA_taArray_impl_List_MethArgs},
+  {&TA_void,NULL,"InitFromString"," initialize an array from given string (does reset first)","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_impl_InitFromString_stub,TA_taArray_impl_InitFromString_MethArgs},
+  NULL};
 static EnumDef_data TA_taFiler_OpenMode[]={
   {"NO_AUTO"," don't automatically open","",0},
   {"READ"," auto open in READ mode..","",1},
@@ -8484,12 +8689,6 @@ static int taPlainArray<taString>::* TA_taPlainArray_taString__MbrOff;
 static MemberDef_data TA_taPlainArray_taString__MemberDef[]={
   {NULL,"::taString_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
     *((ta_memb_ptr*)&(TA_taPlainArray_taString__MbrOff=(int taPlainArray<taString>::*)(&taPlainArray<taString>::el))),0,NULL,0},
-  {&TA_taString,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_taPlainArray_taString__MbrOff=(int taPlainArray<taString>::*)(&taPlainArray<taString>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taPlainArray_taString__Remove_MethArgs[]={
-  {&TA_uint,NULL,"idx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taPlainArray_taString__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -8526,17 +8725,15 @@ static MethodArgs_data TA_taPlainArray_taString__RemoveEl_MethArgs[]={
   {NULL,"::const_taString_ref","item",""},
   NULL};
 static MethodDef_data TA_taPlainArray_taString__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taPlainArray_taString__Remove_stub,TA_taPlainArray_taString__Remove_MethArgs},
-  {NULL,"::taString_ref","SafeEl"," the element at the given index","","",
+  {NULL,"::const_taString_ref","SafeEl"," the element at the given index","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__SafeEl_stub,TA_taPlainArray_taString__SafeEl_MethArgs},
-  {NULL,"::taString_ref","FastEl"," fast element (no range checking)","","",
+  {NULL,"::const_taString_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__FastEl_stub,TA_taPlainArray_taString__FastEl_MethArgs},
-  {NULL,"::taString_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_taString_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__RevEl_stub,TA_taPlainArray_taString__RevEl_MethArgs},
-  {&TA_taString,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_taString","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taPlainArray_taString__Pop_stub,NULL},
-  {NULL,"::taString_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_taString_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taPlainArray_taString__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taPlainArray_taString__Set_stub,TA_taPlainArray_taString__Set_MethArgs},
@@ -8553,6 +8750,10 @@ static MethodDef_data TA_taPlainArray_taString__MethodDef[]={
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__RemoveEl_stub,TA_taPlainArray_taString__RemoveEl_MethArgs},
   NULL};
+static MemberDef_data TA_String_PArray_MemberDef[]={
+  {&TA_taString,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&String_PArray::blank),0},
+  NULL};
 static MethodArgs_data TA_String_PArray_Add_MethArgs[]={
   {&TA_const_char_ptr,NULL,"it",""},
   NULL};
@@ -8566,7 +8767,7 @@ static MethodArgs_data TA_String_PArray_FindContains_MethArgs[]={
 static MethodDef_data TA_String_PArray_MethodDef[]={
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     2,1,-1,0,NULL,cssElCFun_String_PArray_Add_stub,TA_String_PArray_Add_MethArgs},
-  {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
+  {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique ","","",
     2,1,-1,0,NULL,cssElCFun_String_PArray_AddUnique_stub,TA_String_PArray_AddUnique_MethArgs},
   {&TA_int,NULL,"FindContains","","","",
     0,2,1,0,NULL,cssElCFun_String_PArray_FindContains_stub,TA_String_PArray_FindContains_MethArgs},
@@ -8575,12 +8776,6 @@ static int taPlainArray<int>::* TA_taPlainArray_int__MbrOff;
 static MemberDef_data TA_taPlainArray_int__MemberDef[]={
   {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
     *((ta_memb_ptr*)&(TA_taPlainArray_int__MbrOff=(int taPlainArray<int>::*)(&taPlainArray<int>::el))),0,NULL,0},
-  {&TA_int,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_taPlainArray_int__MbrOff=(int taPlainArray<int>::*)(&taPlainArray<int>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taPlainArray_int__Remove_MethArgs[]={
-  {&TA_uint,NULL,"idx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taPlainArray_int__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -8617,17 +8812,15 @@ static MethodArgs_data TA_taPlainArray_int__RemoveEl_MethArgs[]={
   {NULL,"::const_int_ref","item",""},
   NULL};
 static MethodDef_data TA_taPlainArray_int__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taPlainArray_int__Remove_stub,TA_taPlainArray_int__Remove_MethArgs},
-  {NULL,"::int_ref","SafeEl"," the element at the given index","","",
+  {NULL,"::const_int_ref","SafeEl"," the element at the given index","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__SafeEl_stub,TA_taPlainArray_int__SafeEl_MethArgs},
-  {NULL,"::int_ref","FastEl"," fast element (no range checking)","","",
+  {NULL,"::const_int_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__FastEl_stub,TA_taPlainArray_int__FastEl_MethArgs},
-  {NULL,"::int_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_int_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__RevEl_stub,TA_taPlainArray_int__RevEl_MethArgs},
-  {&TA_int,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_int","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taPlainArray_int__Pop_stub,NULL},
-  {NULL,"::int_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_int_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taPlainArray_int__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taPlainArray_int__Set_stub,TA_taPlainArray_int__Set_MethArgs},
@@ -8643,6 +8836,10 @@ static MethodDef_data TA_taPlainArray_int__MethodDef[]={
     0,2,1,0,NULL,cssElCFun_taPlainArray_int__Find_stub,TA_taPlainArray_int__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__RemoveEl_stub,TA_taPlainArray_int__RemoveEl_MethArgs},
+  NULL};
+static MemberDef_data TA_int_PArray_MemberDef[]={
+  {&TA_int,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&int_PArray::blank),0},
   NULL};
 static MethodDef_data TA_IApp_MethodDef[]={
   {&TA_void,NULL,"Settings"," edit global settings/parameters (taMisc)","MENU MENU_ON_Object ","",
@@ -10434,6 +10631,67 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
   {&TA_MemberDef_ptr,NULL,"ReturnFindMd"," return the find_md variable, initialized if necessary","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_ReturnFindMd_stub,NULL},
   NULL};
+static EnumDef_data TA_taList_taBase__Orientation[]={
+  {"Horizontal","","",0},
+  {"Vertical","","",1},
+  NULL};
+static MethodArgs_data TA_taList_taBase__MoveBefore_MethArgs[]={
+  {NULL,"::taBase_ptr","trg",""},
+  {NULL,"::taBase_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__MoveAfter_MethArgs[]={
+  {NULL,"::taBase_ptr","trg",""},
+  {NULL,"::taBase_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__Edit_El_MethArgs[]={
+  {NULL,"::taBase_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__FindName_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"item_nm",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_taBase__FindType_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"item_tp",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_taBase__AddUniqNameOld_MethArgs[]={
+  {NULL,"::taBase_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_taBase__LinkUniqNameOld_MethArgs[]={
+  {NULL,"::taBase_ptr","item",""},
+  NULL};
+static MethodDef_data TA_taList_taBase__MethodDef[]={
+  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list move item so that it appears just before the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_taBase__MoveBefore_stub,TA_taList_taBase__MoveBefore_MethArgs},
+  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list move item so that it appears just after the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_taBase__MoveAfter_stub,TA_taList_taBase__MoveAfter_MethArgs},
+  {NULL,"::taBase_ptr","SafeEl"," get element at index","","",
+    0,1,-1,0,NULL,cssElCFun_taList_taBase__SafeEl_stub,TA_taList_taBase__SafeEl_MethArgs},
+  {NULL,"::taBase_ptr","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taList_taBase__FastEl_stub,TA_taList_taBase__FastEl_MethArgs},
+  {NULL,"::taBase_ptr","DefaultEl"," returns the element specified as the default for this list","","",
+    0,0,-1,0,NULL,cssElCFun_taList_taBase__DefaultEl_stub,NULL},
+  {NULL,"::taBase_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+    0,1,-1,0,NULL,cssElCFun_taList_taBase__Edit_El_stub,TA_taList_taBase__Edit_El_MethArgs},
+  {NULL,"::taBase_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+    0,2,1,0,NULL,cssElCFun_taList_taBase__FindName_stub,TA_taList_taBase__FindName_MethArgs},
+  {NULL,"::taBase_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
+    0,2,1,0,NULL,cssElCFun_taList_taBase__FindType_stub,TA_taList_taBase__FindType_MethArgs},
+  {NULL,"::taBase_ptr","Pop"," pop the last element off the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_taBase__Pop_stub,NULL},
+  {NULL,"::taBase_ptr","Peek"," peek at the last element on the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_taBase__Peek_stub,NULL},
+  {NULL,"::taBase_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_taBase__AddUniqNameOld_stub,TA_taList_taBase__AddUniqNameOld_MethArgs},
+  {NULL,"::taBase_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_taBase__LinkUniqNameOld_stub,TA_taList_taBase__LinkUniqNameOld_MethArgs},
+  NULL};
 static MethodArgs_data TA_taArray_base_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
@@ -10554,22 +10812,18 @@ static MethodArgs_data TA_taArray_base_SetAdapter_MethArgs[]={
 static MethodArgs_data TA_taArray_base_InRange_MethArgs[]={
   {&TA_int,NULL,"idx",""},
   NULL};
-static MethodArgs_data TA_taArray_base_Alloc_MethArgs[]={
-  {&TA_int,NULL,"n",""},
-  NULL};
 static MethodArgs_data TA_taArray_base_EnforceSize_MethArgs[]={
   {&TA_int,NULL,"sz",""},
   NULL};
 static MethodArgs_data TA_taArray_base_AddBlank_MethArgs[]={
   {&TA_int,NULL,"n_els"," 1"},
   NULL};
-static MethodArgs_data TA_taArray_base_Remove_MethArgs[]={
-  {&TA_uint,NULL,"idx",""},
-  {&TA_int,NULL,"n_els","1"},
+static MethodArgs_data TA_taArray_base_Alloc_MethArgs[]={
+  {&TA_uint,NULL,"n",""},
   NULL};
-static MethodArgs_data TA_taArray_base_Move_MethArgs[]={
-  {&TA_int,NULL,"from",""},
-  {&TA_int,NULL,"to",""},
+static MethodArgs_data TA_taArray_base_Remove_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_base_Sort_MethArgs[]={
   {&TA_bool,NULL,"descending","false"},
@@ -10582,9 +10836,6 @@ static MethodArgs_data TA_taArray_base_ShiftLeftPct_MethArgs[]={
   NULL};
 static MethodArgs_data TA_taArray_base_V_Flip_MethArgs[]={
   {&TA_int,NULL,"width",""},
-  NULL};
-static MethodArgs_data TA_taArray_base_Duplicate_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"cp",""},
   NULL};
 static MethodArgs_data TA_taArray_base_DupeUnique_MethArgs[]={
   {&TA_const_taArray_impl_ref,NULL,"cp",""},
@@ -10600,6 +10851,10 @@ static MethodArgs_data TA_taArray_base_CopyVals_MethArgs[]={
   {&TA_int,NULL,"start","0"},
   {&TA_int,NULL,"end","-1"},
   {&TA_int,NULL,"at","0"},
+  NULL};
+static MethodArgs_data TA_taArray_base_Move_MethArgs[]={
+  {&TA_int,NULL,"from",""},
+  {&TA_int,NULL,"to",""},
   NULL};
 static MethodArgs_data TA_taArray_base_List_MethArgs[]={
   {&TA_ostream_ref,NULL,"strm"," cout"},
@@ -10690,22 +10945,20 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_base_SetAdapter_stub,TA_taArray_base_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_addr_data_link_stub,NULL},
+  {&TA_int,NULL,"alloc","","","",
+    0,0,-1,0,NULL,cssElCFun_taArray_base_alloc_stub,NULL},
   {&TA_bool,NULL,"InRange","","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_InRange_stub,TA_taArray_base_InRange_MethArgs},
-  {&TA_void,NULL,"Alloc"," allocate storage for at least the given size","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_base_Alloc_stub,TA_taArray_base_Alloc_MethArgs},
-  {&TA_void,NULL,"Reset"," reset the list to zero size (does not free memory)","","",
+  {&TA_void,NULL,"Reset"," //////////////////////////////////////////////","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Reset_stub,NULL},
-  {&TA_void_ptr,NULL,"BlankEl_"," address of a blank element, for initializing empty items","","",
-    0,0,-1,0,NULL,cssElCFun_taArray_base_BlankEl__stub,NULL},
   {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_EnforceSize_stub,TA_taArray_base_EnforceSize_MethArgs},
   {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENU MENU_ON_Edit ","",
     0,1,0,0,NULL,cssElCFun_taArray_base_AddBlank_stub,TA_taArray_base_AddBlank_MethArgs},
+  {&TA_void,NULL,"Alloc"," allocate storage for at least the given size","","",
+    0,1,-1,0,NULL,cssElCFun_taArray_base_Alloc_stub,TA_taArray_base_Alloc_MethArgs},
   {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
     0,2,1,0,NULL,cssElCFun_taArray_base_Remove_stub,TA_taArray_base_Remove_MethArgs},
-  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
-    0,2,-1,0,NULL,cssElCFun_taArray_base_Move_stub,TA_taArray_base_Move_MethArgs},
   {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU ","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Permute_stub,NULL},
   {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU ","",
@@ -10716,8 +10969,6 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_base_ShiftLeftPct_stub,TA_taArray_base_ShiftLeftPct_MethArgs},
   {&TA_int,NULL,"V_Flip"," vertically flip the array as if it was arrange in a matrix of width","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_V_Flip_stub,TA_taArray_base_V_Flip_MethArgs},
-  {&TA_void,NULL,"Duplicate"," duplicate the items in the list","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_base_Duplicate_stub,TA_taArray_base_Duplicate_MethArgs},
   {&TA_void,NULL,"DupeUnique"," duplicate so result is unique list","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_DupeUnique_stub,TA_taArray_base_DupeUnique_MethArgs},
   {&TA_void,NULL,"Copy_Common"," copy elements in common","","",
@@ -10726,11 +10977,15 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_base_Copy_Duplicate_stub,TA_taArray_base_Copy_Duplicate_MethArgs},
   {&TA_void,NULL,"CopyVals"," copy values from other array at given start and end points, and putting at given point in this","","",
     0,4,1,0,NULL,cssElCFun_taArray_base_CopyVals_stub,TA_taArray_base_CopyVals_MethArgs},
+  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
+    0,2,-1,0,NULL,cssElCFun_taArray_base_Move_stub,TA_taArray_base_Move_MethArgs},
   {&TA_void,NULL,"List"," print out all of the elements in the array","","",
     0,1,0,0,NULL,cssElCFun_taArray_base_List_stub,TA_taArray_base_List_MethArgs},
   {&TA_void,NULL,"InitFromString"," initialize an array from given string (does reset first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_InitFromString_stub,TA_taArray_base_InitFromString_MethArgs},
   NULL};
+<<<<<<< .mine
+=======
 static EnumDef_data TA_taList_taBase__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -10792,6 +11047,7 @@ static MethodDef_data TA_taList_taBase__MethodDef[]={
   {NULL,"::taBase_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
     0,1,-1,0,NULL,cssElCFun_taList_taBase__LinkUniqNameOld_stub,TA_taList_taBase__LinkUniqNameOld_MethArgs},
   NULL};
+>>>>>>> .r63
 static EnumDef_data TA_taArray_int__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -10802,10 +11058,6 @@ static MemberDef_data TA_taArray_int__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_int__MbrOff=(int taArray<int>::*)(&taArray<int>::el))),0,NULL,0},
   {&TA_int,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_int__MbrOff=(int taArray<int>::*)(&taArray<int>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_int__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_int__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -10847,19 +11099,17 @@ static MethodArgs_data TA_taArray_int__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_int__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_int__Remove_stub,TA_taArray_int__Remove_MethArgs},
-  {NULL,"::int_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_int_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__SafeEl_stub,TA_taArray_int__SafeEl_MethArgs},
   {NULL,"::int_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__FastEl_stub,TA_taArray_int__FastEl_MethArgs},
-  {NULL,"::int_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_int_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__RevEl_stub,TA_taArray_int__RevEl_MethArgs},
-  {&TA_int,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_int","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_int__Pop_stub,NULL},
-  {NULL,"::int_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_int_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_int__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_int__Set_stub,TA_taArray_int__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__Add_stub,TA_taArray_int__Add_MethArgs},
@@ -10875,6 +11125,10 @@ static MethodDef_data TA_taArray_int__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_int__RemoveEl_stub,TA_taArray_int__RemoveEl_MethArgs},
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_int__InitVals_stub,TA_taArray_int__InitVals_MethArgs},
+  NULL};
+static MemberDef_data TA_int_Array_MemberDef[]={
+  {&TA_int,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&int_Array::blank),0},
   NULL};
 static MethodArgs_data TA_int_Array_FillSeq_MethArgs[]={
   {&TA_int,NULL,"start","0"},
@@ -10894,10 +11148,6 @@ static MemberDef_data TA_taArray_float__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_float__MbrOff=(int taArray<float>::*)(&taArray<float>::el))),0,NULL,0},
   {&TA_float,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_float__MbrOff=(int taArray<float>::*)(&taArray<float>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_float__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_float__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -10939,19 +11189,17 @@ static MethodArgs_data TA_taArray_float__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_float__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_float__Remove_stub,TA_taArray_float__Remove_MethArgs},
-  {NULL,"::float_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_float_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__SafeEl_stub,TA_taArray_float__SafeEl_MethArgs},
   {NULL,"::float_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__FastEl_stub,TA_taArray_float__FastEl_MethArgs},
-  {NULL,"::float_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_float_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__RevEl_stub,TA_taArray_float__RevEl_MethArgs},
-  {&TA_float,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_float","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_float__Pop_stub,NULL},
-  {NULL,"::float_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_float_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_float__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_float__Set_stub,TA_taArray_float__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__Add_stub,TA_taArray_float__Add_MethArgs},
@@ -10968,6 +11216,10 @@ static MethodDef_data TA_taArray_float__MethodDef[]={
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_float__InitVals_stub,TA_taArray_float__InitVals_MethArgs},
   NULL};
+static MemberDef_data TA_float_Array_MemberDef[]={
+  {&TA_float,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&float_Array::blank),0},
+  NULL};
 static EnumDef_data TA_taArray_double__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -10978,10 +11230,6 @@ static MemberDef_data TA_taArray_double__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_double__MbrOff=(int taArray<double>::*)(&taArray<double>::el))),0,NULL,0},
   {&TA_double,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_double__MbrOff=(int taArray<double>::*)(&taArray<double>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_double__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_double__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -11023,19 +11271,17 @@ static MethodArgs_data TA_taArray_double__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_double__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_double__Remove_stub,TA_taArray_double__Remove_MethArgs},
-  {NULL,"::double_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_double_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__SafeEl_stub,TA_taArray_double__SafeEl_MethArgs},
   {NULL,"::double_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__FastEl_stub,TA_taArray_double__FastEl_MethArgs},
-  {NULL,"::double_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_double_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__RevEl_stub,TA_taArray_double__RevEl_MethArgs},
-  {&TA_double,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_double","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_double__Pop_stub,NULL},
-  {NULL,"::double_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_double_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_double__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_double__Set_stub,TA_taArray_double__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__Add_stub,TA_taArray_double__Add_MethArgs},
@@ -11052,6 +11298,10 @@ static MethodDef_data TA_taArray_double__MethodDef[]={
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_double__InitVals_stub,TA_taArray_double__InitVals_MethArgs},
   NULL};
+static MemberDef_data TA_double_Array_MemberDef[]={
+  {&TA_double,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&double_Array::blank),0},
+  NULL};
 static EnumDef_data TA_taArray_taString__Orientation[]={
   {"Horizontal","","",0},
   {"Vertical","","",1},
@@ -11062,10 +11312,6 @@ static MemberDef_data TA_taArray_taString__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_taString__MbrOff=(int taArray<taString>::*)(&taArray<taString>::el))),0,NULL,0},
   {&TA_taString,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_taString__MbrOff=(int taArray<taString>::*)(&taArray<taString>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_taString__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_taString__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -11107,19 +11353,17 @@ static MethodArgs_data TA_taArray_taString__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_taString__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_taString__Remove_stub,TA_taArray_taString__Remove_MethArgs},
-  {NULL,"::taString_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_taString_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__SafeEl_stub,TA_taArray_taString__SafeEl_MethArgs},
   {NULL,"::taString_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__FastEl_stub,TA_taArray_taString__FastEl_MethArgs},
-  {NULL,"::taString_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_taString_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__RevEl_stub,TA_taArray_taString__RevEl_MethArgs},
-  {&TA_taString,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_taString","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_taString__Pop_stub,NULL},
-  {NULL,"::taString_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_taString_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_taString__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_taString__Set_stub,TA_taArray_taString__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__Add_stub,TA_taArray_taString__Add_MethArgs},
@@ -11136,6 +11380,10 @@ static MethodDef_data TA_taArray_taString__MethodDef[]={
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_taString__InitVals_stub,TA_taArray_taString__InitVals_MethArgs},
   NULL};
+static MemberDef_data TA_String_Array_MemberDef[]={
+  {&TA_taString,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&String_Array::blank),0},
+  NULL};
 static int SArg_Array::* TA_SArg_Array_MbrOff;
 static MemberDef_data TA_SArg_Array_MemberDef[]={
   {&TA_String_Array,NULL,"labels"," labels for each argument","","",
@@ -11151,10 +11399,6 @@ static MemberDef_data TA_taArray_long__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_long__MbrOff=(int taArray<long>::*)(&taArray<long>::el))),0,NULL,0},
   {&TA_long,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_long__MbrOff=(int taArray<long>::*)(&taArray<long>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_long__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_long__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -11196,19 +11440,17 @@ static MethodArgs_data TA_taArray_long__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_long__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_long__Remove_stub,TA_taArray_long__Remove_MethArgs},
-  {NULL,"::long_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_long_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__SafeEl_stub,TA_taArray_long__SafeEl_MethArgs},
   {NULL,"::long_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__FastEl_stub,TA_taArray_long__FastEl_MethArgs},
-  {NULL,"::long_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_long_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__RevEl_stub,TA_taArray_long__RevEl_MethArgs},
-  {&TA_long,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_long","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_long__Pop_stub,NULL},
-  {NULL,"::long_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_long_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_long__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_long__Set_stub,TA_taArray_long__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__Add_stub,TA_taArray_long__Add_MethArgs},
@@ -11224,6 +11466,10 @@ static MethodDef_data TA_taArray_long__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_long__RemoveEl_stub,TA_taArray_long__RemoveEl_MethArgs},
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_long__InitVals_stub,TA_taArray_long__InitVals_MethArgs},
+  NULL};
+static MemberDef_data TA_long_Array_MemberDef[]={
+  {&TA_long,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&long_Array::blank),0},
   NULL};
 static MethodArgs_data TA_long_Array_FillSeq_MethArgs[]={
   {&TA_long,NULL,"start","0"},
@@ -11243,10 +11489,6 @@ static MemberDef_data TA_taArray_voidptr__MemberDef[]={
     *((ta_memb_ptr*)&(TA_taArray_voidptr__MbrOff=(int taArray<void*>::*)(&taArray<void*>::el))),0,NULL,0},
   {&TA_voidptr,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_voidptr__MbrOff=(int taArray<void*>::*)(&taArray<void*>::err))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taArray_voidptr__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
   NULL};
 static MethodArgs_data TA_taArray_voidptr__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -11288,19 +11530,17 @@ static MethodArgs_data TA_taArray_voidptr__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_voidptr__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_voidptr__Remove_stub,TA_taArray_voidptr__Remove_MethArgs},
-  {NULL,"::voidptr_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_voidptr_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__SafeEl_stub,TA_taArray_voidptr__SafeEl_MethArgs},
   {NULL,"::voidptr_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__FastEl_stub,TA_taArray_voidptr__FastEl_MethArgs},
-  {NULL,"::voidptr_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_voidptr_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__RevEl_stub,TA_taArray_voidptr__RevEl_MethArgs},
-  {&TA_voidptr,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_voidptr","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_voidptr__Pop_stub,NULL},
-  {NULL,"::voidptr_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_voidptr_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_voidptr__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_voidptr__Set_stub,TA_taArray_voidptr__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__Add_stub,TA_taArray_voidptr__Add_MethArgs},
@@ -11316,6 +11556,99 @@ static MethodDef_data TA_taArray_voidptr__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__RemoveEl_stub,TA_taArray_voidptr__RemoveEl_MethArgs},
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_voidptr__InitVals_stub,TA_taArray_voidptr__InitVals_MethArgs},
+  NULL};
+static MemberDef_data TA_voidptr_Array_MemberDef[]={
+  {&TA_voidptr,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&voidptr_Array::blank),0},
+  NULL};
+static MethodArgs_data TA_taMatrix_impl_geom_MethArgs[]={
+  {&TA_int,NULL,"dim",""},
+  NULL};
+static MethodArgs_data TA_taMatrix_impl_setGeom_MethArgs[]={
+  {&TA_int,NULL,"d0",""},
+  {&TA_int,NULL,"d1",""},
+  {&TA_int,NULL,"d2",""},
+  {&TA_int,NULL,"d3",""},
+  NULL};
+static MethodDef_data TA_taMatrix_impl_MethodDef[]={
+  {&TA_int,NULL,"dims","","","",
+    0,0,-1,0,NULL,cssElCFun_taMatrix_impl_dims_stub,NULL},
+  {&TA_int,NULL,"geom"," note: dim must be in range","","",
+    0,1,-1,0,NULL,cssElCFun_taMatrix_impl_geom_stub,TA_taMatrix_impl_geom_MethArgs},
+  {&TA_void,NULL,"setGeom"," sets geom, doing sanity checks and allocating storage if geom[0]!=0","","",
+    4,4,-1,0,NULL,cssElCFun_taMatrix_impl_setGeom_stub,TA_taMatrix_impl_setGeom_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taMatrix_impl_GetTypeDef_stub,NULL},
+  {&TA_void,NULL,"Ref","","","",
+    0,0,-1,0,NULL,cssElCFun_taMatrix_impl_Ref_stub,NULL},
+  {&TA_void,NULL,"Unref"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taMatrix_impl_Unref_stub,NULL},
+  NULL};
+static int taMatrix<byte>::* TA_taMatrix_byte__MbrOff;
+static MemberDef_data TA_taMatrix_byte__MemberDef[]={
+  {NULL,"::byte_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+    *((ta_memb_ptr*)&(TA_taMatrix_byte__MbrOff=(int taMatrix<byte>::*)(&taMatrix<byte>::el))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_taMatrix_byte__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taMatrix_byte__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  {&TA_int,NULL,"j",""},
+  {&TA_int,NULL,"k",""},
+  {&TA_int,NULL,"l",""},
+  NULL};
+static MethodDef_data TA_taMatrix_byte__MethodDef[]={
+  {NULL,"::const_byte_ref","SafeEl"," the element at the given index","","",
+    0,1,-1,0,NULL,cssElCFun_taMatrix_byte__SafeEl_stub,TA_taMatrix_byte__SafeEl_MethArgs},
+  {NULL,"::byte_ref","FastEl","","","",
+    3,4,-1,0,NULL,cssElCFun_taMatrix_byte__FastEl_stub,TA_taMatrix_byte__FastEl_MethArgs},
+  NULL};
+static MemberDef_data TA_byte_Matrix_MemberDef[]={
+  {&TA_byte,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&byte_Matrix::blank),0},
+  NULL};
+static MethodArgs_data TA_byte_Matrix_StatTypeDef_MethArgs[]={
+  {&TA_int,NULL,"na",""},
+  NULL};
+static MethodDef_data TA_byte_Matrix_MethodDef[]={
+  {&TA_TypeDef_ptr,NULL,"data_type","","","",
+    0,0,-1,0,NULL,cssElCFun_byte_Matrix_data_type_stub,NULL},
+  {&TA_TypeDef_ptr,NULL,"StatTypeDef","","","",
+    0,1,-1,1,(ta_void_fun)(byte_Matrix::StatTypeDef),cssElCFun_byte_Matrix_StatTypeDef_stub,TA_byte_Matrix_StatTypeDef_MethArgs},
+  NULL};
+static int taMatrix<float>::* TA_taMatrix_float__MbrOff;
+static MemberDef_data TA_taMatrix_float__MemberDef[]={
+  {NULL,"::float_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+    *((ta_memb_ptr*)&(TA_taMatrix_float__MbrOff=(int taMatrix<float>::*)(&taMatrix<float>::el))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_taMatrix_float__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taMatrix_float__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  {&TA_int,NULL,"j",""},
+  {&TA_int,NULL,"k",""},
+  {&TA_int,NULL,"l",""},
+  NULL};
+static MethodDef_data TA_taMatrix_float__MethodDef[]={
+  {NULL,"::const_float_ref","SafeEl"," the element at the given index","","",
+    0,1,-1,0,NULL,cssElCFun_taMatrix_float__SafeEl_stub,TA_taMatrix_float__SafeEl_MethArgs},
+  {NULL,"::float_ref","FastEl","","","",
+    3,4,-1,0,NULL,cssElCFun_taMatrix_float__FastEl_stub,TA_taMatrix_float__FastEl_MethArgs},
+  NULL};
+static MemberDef_data TA_float_Matrix_MemberDef[]={
+  {&TA_float,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&float_Matrix::blank),0},
+  NULL};
+static MethodArgs_data TA_float_Matrix_StatTypeDef_MethArgs[]={
+  {&TA_int,NULL,"na",""},
+  NULL};
+static MethodDef_data TA_float_Matrix_MethodDef[]={
+  {&TA_TypeDef_ptr,NULL,"data_type","","","",
+    0,0,-1,0,NULL,cssElCFun_float_Matrix_data_type_stub,NULL},
+  {&TA_TypeDef_ptr,NULL,"StatTypeDef","","","",
+    0,1,-1,1,(ta_void_fun)(float_Matrix::StatTypeDef),cssElCFun_float_Matrix_StatTypeDef_stub,TA_float_Matrix_StatTypeDef_MethArgs},
   NULL};
 static int taGroup_impl::* TA_taGroup_impl_MbrOff;
 static MemberDef_data TA_taGroup_impl_MemberDef[]={
@@ -13539,17 +13872,9 @@ void ta_Init_ta() {
     TA_taDataLink_ptr_ptr.AddParents(&TA_taDataLink);
   taMisc::types.Add(&TA_taListItr_ref);
     TA_taListItr_ref.AddParents(&TA_taListItr);
-  taMisc::types.Add(&TA_taArray_impl);
-    TA_taArray_impl.AddParFormal(&TA_class);
-    tac_AddMembers(TA_taArray_impl,TA_taArray_impl_MemberDef);
-    tac_AddMethods(TA_taArray_impl,TA_taArray_impl_MethodDef);
-  taMisc::types.Add(&TA_const_taArray_impl);
-    TA_const_taArray_impl.AddParents(&TA_const, &TA_taArray_impl);
   taMisc::types.Add(&TA_taPtrList);
     TA_taPtrList.AddParFormal(&TA_class, &TA_template);
     TA_taPtrList.AddParents(&TA_taPtrList_impl);
-  taMisc::types.Add(&TA_const_taArray_impl_ref);
-    TA_const_taArray_impl_ref.AddParents(&TA_const_taArray_impl);
   taMisc::types.Add(&TA_taHashEl);
     TA_taHashEl.AddParFormal(&TA_class);
     tac_AddMembers(TA_taHashEl,TA_taHashEl_MemberDef);
@@ -13612,13 +13937,79 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_taPtrList_base);
     TA_taPtrList_base.AddParFormal(&TA_class, &TA_template);
     TA_taPtrList_base.AddParents(&TA_taPtrList_impl);
+  taMisc::types.Add(&TA_uint_ref);
   taMisc::types.Add(&TA_const_taPtrList_base);
     TA_const_taPtrList_base.AddParents(&TA_const, &TA_taPtrList_base);
+  taMisc::types.Add(&TA_const_taPtrList_base_ref);
+    TA_const_taPtrList_base_ref.AddParents(&TA_const_taPtrList_base);
+  taMisc::types.Add(&TA_taFixedArray_impl);
+    TA_taFixedArray_impl.AddParFormal(&TA_class);
+    tac_AddMembers(TA_taFixedArray_impl,TA_taFixedArray_impl_MemberDef);
+    tac_AddMethods(TA_taFixedArray_impl,TA_taFixedArray_impl_MethodDef);
+  taMisc::types.Add(&TA_const_taFixedArray_impl);
+    TA_const_taFixedArray_impl.AddParents(&TA_const, &TA_taFixedArray_impl);
+  taMisc::types.Add(&TA_taFixedArray);
+    TA_taFixedArray.AddParFormal(&TA_class, &TA_template);
+    TA_taFixedArray.AddParents(&TA_taFixedArray_impl);
+  taMisc::types.Add(&TA_const_taFixedArray_impl_ref);
+    TA_const_taFixedArray_impl_ref.AddParents(&TA_const_taFixedArray_impl);
+  taMisc::types.Add(&TA_taFixedArray_int_);
+    TA_taFixedArray_int_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taFixedArray_int_.AddClassPar(&TA_taFixedArray,0);
+    sbt = new TypeDef("int_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_int);
+    TA_taFixedArray_int_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_int", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_int);
+    TA_taFixedArray_int_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_int_ref", 1, 0, 1);
+    sbt->AddParents(TA_taFixedArray_int_.sub_types.FindName("const_int"));
+    TA_taFixedArray_int_.sub_types.Add(sbt);
+    sbt = new TypeDef("int_ref", 1, 0, 1);
+    sbt->AddParents(&TA_int);
+    TA_taFixedArray_int_.sub_types.Add(sbt);
+    tac_AddMembers(TA_taFixedArray_int_,TA_taFixedArray_int__MemberDef);
+    tac_AddMethods(TA_taFixedArray_int_,TA_taFixedArray_int__MethodDef);
+  taMisc::types.Add(&TA_const_taFixedArray);
+    TA_const_taFixedArray.AddParents(&TA_const, &TA_taFixedArray);
+  taMisc::types.Add(&TA_const_int);
+    TA_const_int.AddParents(&TA_const, &TA_int);
+  taMisc::types.Add(&TA_const_taFixedArray_ref);
+    TA_const_taFixedArray_ref.AddParents(&TA_const_taFixedArray);
+  taMisc::types.Add(&TA_const_int_ref);
+    TA_const_int_ref.AddParents(&TA_const_int);
+  taMisc::types.Add(&TA_int_FixedArray);
+    TA_int_FixedArray.AddParFormal(&TA_class);
+    TA_int_FixedArray.AddClassPar(&TA_taFixedArray_int_,0);
+    tac_AddMembers(TA_int_FixedArray,TA_int_FixedArray_MemberDef);
+  taMisc::types.Add(&TA_taBasicArray_impl);
+    TA_taBasicArray_impl.AddParFormal(&TA_class);
+    TA_taBasicArray_impl.AddClassPar(&TA_taFixedArray_impl,0);
+    tac_AddMethods(TA_taBasicArray_impl,TA_taBasicArray_impl_MethodDef);
+  taMisc::types.Add(&TA_int_FixedArray_ref);
+    TA_int_FixedArray_ref.AddParents(&TA_int_FixedArray);
+  taMisc::types.Add(&TA_const_int_FixedArray);
+    TA_const_int_FixedArray.AddParents(&TA_const, &TA_int_FixedArray);
+  taMisc::types.Add(&TA_const_int_FixedArray_ref);
+    TA_const_int_FixedArray_ref.AddParents(&TA_const_int_FixedArray);
+  taMisc::types.Add(&TA_taBasicArray);
+    TA_taBasicArray.AddParFormal(&TA_class, &TA_template);
+    TA_taBasicArray.AddParents(&TA_taBasicArray_impl);
+  taMisc::types.Add(&TA_const_taBasicArray);
+    TA_const_taBasicArray.AddParents(&TA_const, &TA_taBasicArray);
+  taMisc::types.Add(&TA_taArray_impl);
+    TA_taArray_impl.AddParFormal(&TA_class);
+    TA_taArray_impl.AddClassPar(&TA_taBasicArray_impl,0);
+    tac_AddMethods(TA_taArray_impl,TA_taArray_impl_MethodDef);
+  taMisc::types.Add(&TA_const_taBasicArray_ref);
+    TA_const_taBasicArray_ref.AddParents(&TA_const_taBasicArray);
+  taMisc::types.Add(&TA_const_taArray_impl);
+    TA_const_taArray_impl.AddParents(&TA_const, &TA_taArray_impl);
+  taMisc::types.Add(&TA_const_taArray_impl_ref);
+    TA_const_taArray_impl_ref.AddParents(&TA_const_taArray_impl);
   taMisc::types.Add(&TA_taPlainArray);
     TA_taPlainArray.AddParFormal(&TA_class, &TA_template);
     TA_taPlainArray.AddParents(&TA_taArray_impl);
-  taMisc::types.Add(&TA_const_taPtrList_base_ref);
-    TA_const_taPtrList_base_ref.AddParents(&TA_const_taPtrList_base);
   taMisc::types.Add(&TA_taFiler);
     TA_taFiler.AddParFormal(&TA_class);
     TA_taFiler.AddClassPar(&TA_class,0);
@@ -13674,13 +14065,9 @@ void ta_Init_ta() {
     TAI_TAPtr = new taBase*;
     TA_TAPtr.AddParents(&TA_taBase_ptr);
   taMisc::types.Add(&TA_taPlainArray_taString_);
-    TAI_taPlainArray_taString_ = new taPlainArray<taString>;
     TA_taPlainArray_taString_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taPlainArray_taString_.AddClassPar(&TA_taPlainArray,0);
     sbt = new TypeDef("taString_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_taString);
-    TA_taPlainArray_taString_.sub_types.Add(sbt);
-    sbt = new TypeDef("taString_ref", 1, 0, 1);
     sbt->AddParents(&TA_taString);
     TA_taPlainArray_taString_.sub_types.Add(sbt);
     sbt = new TypeDef("const_taString", 1, 0, 0);
@@ -13689,20 +14076,20 @@ void ta_Init_ta() {
     sbt = new TypeDef("const_taString_ref", 1, 0, 1);
     sbt->AddParents(TA_taPlainArray_taString_.sub_types.FindName("const_taString"));
     TA_taPlainArray_taString_.sub_types.Add(sbt);
+    sbt = new TypeDef("taString_ref", 1, 0, 1);
+    sbt->AddParents(&TA_taString);
+    TA_taPlainArray_taString_.sub_types.Add(sbt);
     tac_AddMembers(TA_taPlainArray_taString_,TA_taPlainArray_taString__MemberDef);
     tac_AddMethods(TA_taPlainArray_taString_,TA_taPlainArray_taString__MethodDef);
   taMisc::types.Add(&TA_String_PArray);
     TA_String_PArray.AddParFormal(&TA_class);
     TA_String_PArray.AddClassPar(&TA_taPlainArray_taString_,0);
+    tac_AddMembers(TA_String_PArray,TA_String_PArray_MemberDef);
     tac_AddMethods(TA_String_PArray,TA_String_PArray_MethodDef);
   taMisc::types.Add(&TA_taPlainArray_int_);
-    TAI_taPlainArray_int_ = new taPlainArray<int>;
     TA_taPlainArray_int_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taPlainArray_int_.AddClassPar(&TA_taPlainArray,0);
     sbt = new TypeDef("int_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_int);
-    TA_taPlainArray_int_.sub_types.Add(sbt);
-    sbt = new TypeDef("int_ref", 1, 0, 1);
     sbt->AddParents(&TA_int);
     TA_taPlainArray_int_.sub_types.Add(sbt);
     sbt = new TypeDef("const_int", 1, 0, 0);
@@ -13711,22 +14098,32 @@ void ta_Init_ta() {
     sbt = new TypeDef("const_int_ref", 1, 0, 1);
     sbt->AddParents(TA_taPlainArray_int_.sub_types.FindName("const_int"));
     TA_taPlainArray_int_.sub_types.Add(sbt);
+    sbt = new TypeDef("int_ref", 1, 0, 1);
+    sbt->AddParents(&TA_int);
+    TA_taPlainArray_int_.sub_types.Add(sbt);
     tac_AddMembers(TA_taPlainArray_int_,TA_taPlainArray_int__MemberDef);
     tac_AddMethods(TA_taPlainArray_int_,TA_taPlainArray_int__MethodDef);
+  taMisc::types.Add(&TA_String_PArray_ref);
+    TA_String_PArray_ref.AddParents(&TA_String_PArray);
   taMisc::types.Add(&TA_const_String_PArray);
     TA_const_String_PArray.AddParents(&TA_const, &TA_String_PArray);
-  taMisc::types.Add(&TA_int_PArray);
-    TA_int_PArray.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_int_PArray.AddClassPar(&TA_taPlainArray_int_,0);
   taMisc::types.Add(&TA_const_String_PArray_ref);
     TA_const_String_PArray_ref.AddParents(&TA_const_String_PArray);
+  taMisc::types.Add(&TA_int_PArray);
+    TA_int_PArray.AddParFormal(&TA_class);
+    TA_int_PArray.AddClassPar(&TA_taPlainArray_int_,0);
+    tac_AddMembers(TA_int_PArray,TA_int_PArray_MemberDef);
   taMisc::types.Add(&TA_IApp);
     TA_IApp.AddParFormal(&TA_class);
     tac_AddMethods(TA_IApp,TA_IApp_MethodDef);
+  taMisc::types.Add(&TA_int_PArray_ref);
+    TA_int_PArray_ref.AddParents(&TA_int_PArray);
+  taMisc::types.Add(&TA_const_int_PArray);
+    TA_const_int_PArray.AddParents(&TA_const, &TA_int_PArray);
   taMisc::types.Add(&TA_IApp_ptr);
     TA_IApp_ptr.AddParents(&TA_IApp);
-  taMisc::types.Add(&TA_String_PArray_ref);
-    TA_String_PArray_ref.AddParents(&TA_String_PArray);
+  taMisc::types.Add(&TA_const_int_PArray_ref);
+    TA_const_int_PArray_ref.AddParents(&TA_const_int_PArray);
   taMisc::types.Add(&TA_taMisc);
     TAI_taMisc = new taMisc;
     TA_taMisc.AddParFormal(&TA_class);
@@ -14013,19 +14410,10 @@ void ta_Init_ta() {
     TA_const_taList_impl.AddParents(&TA_const, &TA_taList_impl);
   taMisc::types.Add(&TA_const_taList_impl_ref);
     TA_const_taList_impl_ref.AddParents(&TA_const_taList_impl);
-  taMisc::types.Add(&TA_taArray_base);
-    TA_taArray_base.AddParFormal(&TA_class);
-    TA_taArray_base.AddParCache(&TA_taBase);
-    TA_taArray_base.AddClassPar(&TA_taOBase,0, &TA_taArray_impl,0);
-    tac_AddMethods(TA_taArray_base,TA_taArray_base_MethodDef);
-  taMisc::types.Add(&TA_const_taArray_base);
-    TA_const_taArray_base.AddParents(&TA_const, &TA_taArray_base);
   taMisc::types.Add(&TA_taList);
     TA_taList.AddParFormal(&TA_class, &TA_template);
     TA_taList.AddParCache(&TA_taBase);
     TA_taList.AddParents(&TA_taList_impl);
-  taMisc::types.Add(&TA_const_taArray_base_ref);
-    TA_const_taArray_base_ref.AddParents(&TA_const_taArray_base);
   taMisc::types.Add(&TA_taList_taBase_);
     TAI_taList_taBase_ = new taList<taBase>;
     TA_taList_taBase_.AddParFormal(&TA_class, &TA_templ_inst);
@@ -14047,19 +14435,28 @@ void ta_Init_ta() {
     tac_AddMethods(TA_taList_taBase_,TA_taList_taBase__MethodDef);
   taMisc::types.Add(&TA_const_taList);
     TA_const_taList.AddParents(&TA_const, &TA_taList);
-  taMisc::types.Add(&TA_const_taList_ref);
-    TA_const_taList_ref.AddParents(&TA_const_taList);
   taMisc::types.Add(&TA_taBase_List);
     TAI_taBase_List = new taBase_List;
     TA_taBase_List.AddParFormal(&TA_class);
     TA_taBase_List.AddParCache(&TA_taBase);
     TA_taBase_List.AddClassPar(&TA_taList_taBase_,0);
-  taMisc::types.Add(&TA_const_taBase_List);
-    TA_const_taBase_List.AddParents(&TA_const, &TA_taBase_List);
+  taMisc::types.Add(&TA_const_taList_ref);
+    TA_const_taList_ref.AddParents(&TA_const_taList);
   taMisc::types.Add(&TA_taBase_List_ptr);
     TA_taBase_List_ptr.AddParents(&TA_taBase_List);
+  taMisc::types.Add(&TA_const_taBase_List);
+    TA_const_taBase_List.AddParents(&TA_const, &TA_taBase_List);
   taMisc::types.Add(&TA_const_taBase_List_ref);
     TA_const_taBase_List_ref.AddParents(&TA_const_taBase_List);
+  taMisc::types.Add(&TA_taArray_base);
+    TA_taArray_base.AddParFormal(&TA_class);
+    TA_taArray_base.AddParCache(&TA_taBase);
+    TA_taArray_base.AddClassPar(&TA_taOBase,0, &TA_taArray_impl,0);
+    tac_AddMethods(TA_taArray_base,TA_taArray_base_MethodDef);
+  taMisc::types.Add(&TA_const_taArray_base);
+    TA_const_taArray_base.AddParents(&TA_const, &TA_taArray_base);
+  taMisc::types.Add(&TA_const_taArray_base_ref);
+    TA_const_taArray_base_ref.AddParents(&TA_const_taArray_base);
   taMisc::types.Add(&TA_taArray);
     TA_taArray.AddParFormal(&TA_class, &TA_template);
     TA_taArray.AddParCache(&TA_taBase);
@@ -14071,14 +14468,14 @@ void ta_Init_ta() {
     sbt = new TypeDef("int_ptr", 1, 1, 0);
     sbt->AddParents(&TA_int);
     TA_taArray_int_.sub_types.Add(sbt);
-    sbt = new TypeDef("int_ref", 1, 0, 1);
-    sbt->AddParents(&TA_int);
-    TA_taArray_int_.sub_types.Add(sbt);
     sbt = new TypeDef("const_int", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_int);
     TA_taArray_int_.sub_types.Add(sbt);
     sbt = new TypeDef("const_int_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_int_.sub_types.FindName("const_int"));
+    TA_taArray_int_.sub_types.Add(sbt);
+    sbt = new TypeDef("int_ref", 1, 0, 1);
+    sbt->AddParents(&TA_int);
     TA_taArray_int_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_int_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_int__Orientation);
     tac_AddMembers(TA_taArray_int_,TA_taArray_int__MemberDef);
@@ -14088,10 +14485,10 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_const_taArray_ref);
     TA_const_taArray_ref.AddParents(&TA_const_taArray);
   taMisc::types.Add(&TA_int_Array);
-    TAI_int_Array = new int_Array;
     TA_int_Array.AddParFormal(&TA_class);
     TA_int_Array.AddParCache(&TA_taBase);
     TA_int_Array.AddClassPar(&TA_taArray_int_,0);
+    tac_AddMembers(TA_int_Array,TA_int_Array_MemberDef);
     tac_AddMethods(TA_int_Array,TA_int_Array_MethodDef);
   taMisc::types.Add(&TA_taArray_float_);
     TA_taArray_float_.AddParFormal(&TA_class, &TA_templ_inst);
@@ -14100,14 +14497,14 @@ void ta_Init_ta() {
     sbt = new TypeDef("float_ptr", 1, 1, 0);
     sbt->AddParents(&TA_float);
     TA_taArray_float_.sub_types.Add(sbt);
-    sbt = new TypeDef("float_ref", 1, 0, 1);
-    sbt->AddParents(&TA_float);
-    TA_taArray_float_.sub_types.Add(sbt);
     sbt = new TypeDef("const_float", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_float);
     TA_taArray_float_.sub_types.Add(sbt);
     sbt = new TypeDef("const_float_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_float_.sub_types.FindName("const_float"));
+    TA_taArray_float_.sub_types.Add(sbt);
+    sbt = new TypeDef("float_ref", 1, 0, 1);
+    sbt->AddParents(&TA_float);
     TA_taArray_float_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_float_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_float__Orientation);
     tac_AddMembers(TA_taArray_float_,TA_taArray_float__MemberDef);
@@ -14116,19 +14513,20 @@ void ta_Init_ta() {
     TA_const_int_Array.AddParents(&TA_const, &TA_int_Array);
   taMisc::types.Add(&TA_const_int_Array_ref);
     TA_const_int_Array_ref.AddParents(&TA_const_int_Array);
+  taMisc::types.Add(&TA_const_float);
+    TA_const_float.AddParents(&TA_const, &TA_float);
+  taMisc::types.Add(&TA_const_float_ref);
+    TA_const_float_ref.AddParents(&TA_const_float);
   taMisc::types.Add(&TA_float_Array);
-    TAI_float_Array = new float_Array;
     TA_float_Array.AddParFormal(&TA_class);
     TA_float_Array.AddParCache(&TA_taBase);
     TA_float_Array.AddClassPar(&TA_taArray_float_,0);
+    tac_AddMembers(TA_float_Array,TA_float_Array_MemberDef);
   taMisc::types.Add(&TA_taArray_double_);
     TA_taArray_double_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taArray_double_.AddParCache(&TA_taBase);
     TA_taArray_double_.AddClassPar(&TA_taArray,0);
     sbt = new TypeDef("double_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_double);
-    TA_taArray_double_.sub_types.Add(sbt);
-    sbt = new TypeDef("double_ref", 1, 0, 1);
     sbt->AddParents(&TA_double);
     TA_taArray_double_.sub_types.Add(sbt);
     sbt = new TypeDef("const_double", 1, 0, 0);
@@ -14137,6 +14535,9 @@ void ta_Init_ta() {
     sbt = new TypeDef("const_double_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_double_.sub_types.FindName("const_double"));
     TA_taArray_double_.sub_types.Add(sbt);
+    sbt = new TypeDef("double_ref", 1, 0, 1);
+    sbt->AddParents(&TA_double);
+    TA_taArray_double_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_double_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_double__Orientation);
     tac_AddMembers(TA_taArray_double_,TA_taArray_double__MemberDef);
     tac_AddMethods(TA_taArray_double_,TA_taArray_double__MethodDef);
@@ -14144,11 +14545,17 @@ void ta_Init_ta() {
     TA_const_float_Array.AddParents(&TA_const, &TA_float_Array);
   taMisc::types.Add(&TA_const_float_Array_ref);
     TA_const_float_Array_ref.AddParents(&TA_const_float_Array);
+  taMisc::types.Add(&TA_double_ref);
+    TA_double_ref.AddParents(&TA_double);
+  taMisc::types.Add(&TA_const_double);
+    TA_const_double.AddParents(&TA_const, &TA_double);
+  taMisc::types.Add(&TA_const_double_ref);
+    TA_const_double_ref.AddParents(&TA_const_double);
   taMisc::types.Add(&TA_double_Array);
-    TAI_double_Array = new double_Array;
     TA_double_Array.AddParFormal(&TA_class);
     TA_double_Array.AddParCache(&TA_taBase);
     TA_double_Array.AddClassPar(&TA_taArray_double_,0);
+    tac_AddMembers(TA_double_Array,TA_double_Array_MemberDef);
   taMisc::types.Add(&TA_taArray_taString_);
     TA_taArray_taString_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taArray_taString_.AddParCache(&TA_taBase);
@@ -14156,14 +14563,14 @@ void ta_Init_ta() {
     sbt = new TypeDef("taString_ptr", 1, 1, 0);
     sbt->AddParents(&TA_taString);
     TA_taArray_taString_.sub_types.Add(sbt);
-    sbt = new TypeDef("taString_ref", 1, 0, 1);
-    sbt->AddParents(&TA_taString);
-    TA_taArray_taString_.sub_types.Add(sbt);
     sbt = new TypeDef("const_taString", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_taString);
     TA_taArray_taString_.sub_types.Add(sbt);
     sbt = new TypeDef("const_taString_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_taString_.sub_types.FindName("const_taString"));
+    TA_taArray_taString_.sub_types.Add(sbt);
+    sbt = new TypeDef("taString_ref", 1, 0, 1);
+    sbt->AddParents(&TA_taString);
     TA_taArray_taString_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_taString_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_taString__Orientation);
     tac_AddMembers(TA_taArray_taString_,TA_taArray_taString__MemberDef);
@@ -14173,16 +14580,15 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_const_double_Array_ref);
     TA_const_double_Array_ref.AddParents(&TA_const_double_Array);
   taMisc::types.Add(&TA_String_Array);
-    TAI_String_Array = new String_Array;
     TA_String_Array.AddParFormal(&TA_class);
     TA_String_Array.AddParCache(&TA_taBase);
     TA_String_Array.AddClassPar(&TA_taArray_taString_,0);
+    tac_AddMembers(TA_String_Array,TA_String_Array_MemberDef);
   taMisc::types.Add(&TA_const_String_Array);
     TA_const_String_Array.AddParents(&TA_const, &TA_String_Array);
   taMisc::types.Add(&TA_const_String_Array_ref);
     TA_const_String_Array_ref.AddParents(&TA_const_String_Array);
   taMisc::types.Add(&TA_SArg_Array);
-    TAI_SArg_Array = new SArg_Array;
     TA_SArg_Array.AddParFormal(&TA_class);
     TA_SArg_Array.AddParCache(&TA_taBase);
     TA_SArg_Array.AddClassPar(&TA_String_Array,0);
@@ -14194,14 +14600,14 @@ void ta_Init_ta() {
     sbt = new TypeDef("long_ptr", 1, 1, 0);
     sbt->AddParents(&TA_long);
     TA_taArray_long_.sub_types.Add(sbt);
-    sbt = new TypeDef("long_ref", 1, 0, 1);
-    sbt->AddParents(&TA_long);
-    TA_taArray_long_.sub_types.Add(sbt);
     sbt = new TypeDef("const_long", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_long);
     TA_taArray_long_.sub_types.Add(sbt);
     sbt = new TypeDef("const_long_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_long_.sub_types.FindName("const_long"));
+    TA_taArray_long_.sub_types.Add(sbt);
+    sbt = new TypeDef("long_ref", 1, 0, 1);
+    sbt->AddParents(&TA_long);
     TA_taArray_long_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_long_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_long__Orientation);
     tac_AddMembers(TA_taArray_long_,TA_taArray_long__MemberDef);
@@ -14210,11 +14616,15 @@ void ta_Init_ta() {
     TA_const_SArg_Array.AddParents(&TA_const, &TA_SArg_Array);
   taMisc::types.Add(&TA_const_SArg_Array_ref);
     TA_const_SArg_Array_ref.AddParents(&TA_const_SArg_Array);
+  taMisc::types.Add(&TA_const_long);
+    TA_const_long.AddParents(&TA_const, &TA_long);
+  taMisc::types.Add(&TA_const_long_ref);
+    TA_const_long_ref.AddParents(&TA_const_long);
   taMisc::types.Add(&TA_long_Array);
-    TAI_long_Array = new long_Array;
     TA_long_Array.AddParFormal(&TA_class);
     TA_long_Array.AddParCache(&TA_taBase);
     TA_long_Array.AddClassPar(&TA_taArray_long_,0);
+    tac_AddMembers(TA_long_Array,TA_long_Array_MemberDef);
     tac_AddMethods(TA_long_Array,TA_long_Array_MethodDef);
   taMisc::types.Add(&TA_voidptr);
     TA_voidptr.AddParents(&TA_void_ptr);
@@ -14227,25 +14637,129 @@ void ta_Init_ta() {
     sbt = new TypeDef("voidptr_ptr", 1, 1, 0);
     sbt->AddParents(&TA_voidptr);
     TA_taArray_voidptr_.sub_types.Add(sbt);
-    sbt = new TypeDef("voidptr_ref", 1, 0, 1);
-    sbt->AddParents(&TA_voidptr);
-    TA_taArray_voidptr_.sub_types.Add(sbt);
     sbt = new TypeDef("const_voidptr", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_voidptr);
     TA_taArray_voidptr_.sub_types.Add(sbt);
     sbt = new TypeDef("const_voidptr_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_voidptr_.sub_types.FindName("const_voidptr"));
     TA_taArray_voidptr_.sub_types.Add(sbt);
+    sbt = new TypeDef("voidptr_ref", 1, 0, 1);
+    sbt->AddParents(&TA_voidptr);
+    TA_taArray_voidptr_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_voidptr_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_voidptr__Orientation);
     tac_AddMembers(TA_taArray_voidptr_,TA_taArray_voidptr__MemberDef);
     tac_AddMethods(TA_taArray_voidptr_,TA_taArray_voidptr__MethodDef);
   taMisc::types.Add(&TA_const_long_Array_ref);
     TA_const_long_Array_ref.AddParents(&TA_const_long_Array);
+  taMisc::types.Add(&TA_voidptr_ref);
+    TA_voidptr_ref.AddParents(&TA_voidptr);
+  taMisc::types.Add(&TA_const_voidptr);
+    TA_const_voidptr.AddParents(&TA_const, &TA_voidptr);
+  taMisc::types.Add(&TA_const_voidptr_ref);
+    TA_const_voidptr_ref.AddParents(&TA_const_voidptr);
   taMisc::types.Add(&TA_voidptr_Array);
-    TAI_voidptr_Array = new voidptr_Array;
     TA_voidptr_Array.AddParFormal(&TA_class);
     TA_voidptr_Array.AddParCache(&TA_taBase);
     TA_voidptr_Array.AddClassPar(&TA_taArray_voidptr_,0);
+    tac_AddMembers(TA_voidptr_Array,TA_voidptr_Array_MemberDef);
+  taMisc::types.Add(&TA_const_voidptr_Array);
+    TA_const_voidptr_Array.AddParents(&TA_const, &TA_voidptr_Array);
+  taMisc::types.Add(&TA_const_voidptr_Array_ref);
+    TA_const_voidptr_Array_ref.AddParents(&TA_const_voidptr_Array);
+  taMisc::types.Add(&TA_taMatrix_impl);
+    TA_taMatrix_impl.AddParFormal(&TA_class);
+    TA_taMatrix_impl.AddClassPar(&TA_taBasicArray_impl,0);
+    tac_AddMethods(TA_taMatrix_impl,TA_taMatrix_impl_MethodDef);
+  taMisc::types.Add(&TA_const_taMatrix_impl);
+    TA_const_taMatrix_impl.AddParents(&TA_const, &TA_taMatrix_impl);
+  taMisc::types.Add(&TA_taMatrix);
+    TA_taMatrix.AddParFormal(&TA_class, &TA_template);
+    TA_taMatrix.AddParents(&TA_taMatrix_impl);
+  taMisc::types.Add(&TA_const_taMatrix_impl_ref);
+    TA_const_taMatrix_impl_ref.AddParents(&TA_const_taMatrix_impl);
+  taMisc::types.Add(&TA_taMatrix_impl_ptr);
+    TA_taMatrix_impl_ptr.AddParents(&TA_taMatrix_impl);
+  taMisc::types.Add(&TA_const_taMatrix);
+    TA_const_taMatrix.AddParents(&TA_const, &TA_taMatrix);
+  taMisc::types.Add(&TA_MatrixPtr_impl);
+    TA_MatrixPtr_impl.AddParFormal(&TA_class);
+  taMisc::types.Add(&TA_const_taMatrix_ref);
+    TA_const_taMatrix_ref.AddParents(&TA_const_taMatrix);
+  taMisc::types.Add(&TA_MatrixPtr_impl_ref);
+    TA_MatrixPtr_impl_ref.AddParents(&TA_MatrixPtr_impl);
+  taMisc::types.Add(&TA_MatrixPtr);
+    TA_MatrixPtr.AddParFormal(&TA_class, &TA_template);
+    TA_MatrixPtr.AddParents(&TA_MatrixPtr_impl);
+  taMisc::types.Add(&TA_taMatrix_byte_);
+    TA_taMatrix_byte_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taMatrix_byte_.AddClassPar(&TA_taMatrix,0);
+    sbt = new TypeDef("byte_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_byte);
+    TA_taMatrix_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_byte", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_byte);
+    TA_taMatrix_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_byte_ref", 1, 0, 1);
+    sbt->AddParents(TA_taMatrix_byte_.sub_types.FindName("const_byte"));
+    TA_taMatrix_byte_.sub_types.Add(sbt);
+    sbt = new TypeDef("byte_ref", 1, 0, 1);
+    sbt->AddParents(&TA_byte);
+    TA_taMatrix_byte_.sub_types.Add(sbt);
+    tac_AddMembers(TA_taMatrix_byte_,TA_taMatrix_byte__MemberDef);
+    tac_AddMethods(TA_taMatrix_byte_,TA_taMatrix_byte__MethodDef);
+  taMisc::types.Add(&TA_MatrixPtr_ref);
+    TA_MatrixPtr_ref.AddParents(&TA_MatrixPtr);
+  taMisc::types.Add(&TA_byte_Matrix);
+    TA_byte_Matrix.AddParFormal(&TA_class);
+    TA_byte_Matrix.AddClassPar(&TA_taMatrix_byte_,0);
+    tac_AddMembers(TA_byte_Matrix,TA_byte_Matrix_MemberDef);
+    tac_AddMethods(TA_byte_Matrix,TA_byte_Matrix_MethodDef);
+  taMisc::types.Add(&TA_const_byte_Matrix);
+    TA_const_byte_Matrix.AddParents(&TA_const, &TA_byte_Matrix);
+  taMisc::types.Add(&TA_byte_Matrix_ref);
+    TA_byte_Matrix_ref.AddParents(&TA_byte_Matrix);
+  taMisc::types.Add(&TA_const_byte_Matrix_ref);
+    TA_const_byte_Matrix_ref.AddParents(&TA_const_byte_Matrix);
+  taMisc::types.Add(&TA_MatrixPtr_byte_Matrix_);
+    TA_MatrixPtr_byte_Matrix_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_MatrixPtr_byte_Matrix_.AddClassPar(&TA_MatrixPtr,0);
+  taMisc::types.Add(&TA_ByteMatrixPtr);
+    TA_ByteMatrixPtr.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_ByteMatrixPtr.AddClassPar(&TA_MatrixPtr_byte_Matrix_,0);
+  taMisc::types.Add(&TA_taMatrix_float_);
+    TA_taMatrix_float_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taMatrix_float_.AddClassPar(&TA_taMatrix,0);
+    sbt = new TypeDef("float_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_float);
+    TA_taMatrix_float_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_float", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_float);
+    TA_taMatrix_float_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_float_ref", 1, 0, 1);
+    sbt->AddParents(TA_taMatrix_float_.sub_types.FindName("const_float"));
+    TA_taMatrix_float_.sub_types.Add(sbt);
+    sbt = new TypeDef("float_ref", 1, 0, 1);
+    sbt->AddParents(&TA_float);
+    TA_taMatrix_float_.sub_types.Add(sbt);
+    tac_AddMembers(TA_taMatrix_float_,TA_taMatrix_float__MemberDef);
+    tac_AddMethods(TA_taMatrix_float_,TA_taMatrix_float__MethodDef);
+  taMisc::types.Add(&TA_float_Matrix);
+    TA_float_Matrix.AddParFormal(&TA_class);
+    TA_float_Matrix.AddClassPar(&TA_taMatrix_float_,0);
+    tac_AddMembers(TA_float_Matrix,TA_float_Matrix_MemberDef);
+    tac_AddMethods(TA_float_Matrix,TA_float_Matrix_MethodDef);
+  taMisc::types.Add(&TA_const_float_Matrix);
+    TA_const_float_Matrix.AddParents(&TA_const, &TA_float_Matrix);
+  taMisc::types.Add(&TA_float_Matrix_ref);
+    TA_float_Matrix_ref.AddParents(&TA_float_Matrix);
+  taMisc::types.Add(&TA_const_float_Matrix_ref);
+    TA_const_float_Matrix_ref.AddParents(&TA_const_float_Matrix);
+  taMisc::types.Add(&TA_MatrixPtr_float_Matrix_);
+    TA_MatrixPtr_float_Matrix_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_MatrixPtr_float_Matrix_.AddClassPar(&TA_MatrixPtr,0);
+  taMisc::types.Add(&TA_FloatMatrixPtr);
+    TA_FloatMatrixPtr.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_FloatMatrixPtr.AddClassPar(&TA_MatrixPtr_float_Matrix_,0);
   taMisc::types.Add(&TA_taGroup_impl);
     TAI_taGroup_impl = new taGroup_impl;
     TA_taGroup_impl.AddParFormal(&TA_class);
@@ -14253,12 +14767,8 @@ void ta_Init_ta() {
     TA_taGroup_impl.AddClassPar(&TA_taList_impl,0);
     tac_AddMembers(TA_taGroup_impl,TA_taGroup_impl_MemberDef);
     tac_AddMethods(TA_taGroup_impl,TA_taGroup_impl_MethodDef);
-  taMisc::types.Add(&TA_const_voidptr_Array);
-    TA_const_voidptr_Array.AddParents(&TA_const, &TA_voidptr_Array);
   taMisc::types.Add(&TA_taGroup_impl_ptr);
     TA_taGroup_impl_ptr.AddParents(&TA_taGroup_impl);
-  taMisc::types.Add(&TA_const_voidptr_Array_ref);
-    TA_const_voidptr_Array_ref.AddParents(&TA_const_voidptr_Array);
   taMisc::types.Add(&TA_TAGPtr);
     TA_TAGPtr.AddParents(&TA_taGroup_impl_ptr);
   taMisc::types.Add(&TA_taList_taGroup_impl_);

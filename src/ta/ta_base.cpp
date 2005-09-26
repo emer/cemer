@@ -1970,10 +1970,11 @@ int taArray_base::Dump_Load_Value(istream& strm, TAPtr) {
   while((c == ';') && (c != EOF)) {
     if(cnt > size-1)
       Add_(El_GetTmp_());
-    El_SetFmStr_(SafeEl_(cnt++), taMisc::LexBuf);
+    El_SetFmStr_(FastEl_(cnt++), taMisc::LexBuf);
     c = taMisc::read_till_rb_or_semi(strm);
   }
-  if(c==EOF)	return EOF;
+  ItemsChanged_();
+  if (c==EOF)	return EOF;
   return true;
 }
 

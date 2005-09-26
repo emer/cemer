@@ -358,7 +358,7 @@ public:
   virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
   virtual void		SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope); // #IGNORE
 
-  virtual void* 	GetTA_Element(int, TypeDef*& eltd) const
+  virtual void* 	GetTA_Element(int, TypeDef*& eltd) 
     { eltd = NULL; return NULL; } // #IGNORE a bracket opr
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); }
@@ -826,7 +826,7 @@ public:
   String	GetName() const		{ return name; }
 
   override TypeDef* 	GetElType() const {return el_typ;}		// #IGNORE Default type for objects in group
-  override void* 	GetTA_Element(int i, TypeDef*& eltd) const
+  override void* 	GetTA_Element(int i, TypeDef*& eltd)
     {return taPtrList_ta_base::GetTA_Element_(i, eltd); } // #IGNORE a bracket opr
 
   TAPtr		New(int n_objs=0, TypeDef* typ=NULL);
@@ -950,24 +950,8 @@ protected:
   override String ChildGetColText_impl(taBase* child, int col, int itm_idx = -1);
 };
 
-class taArray_base : public taOBase, public taArray_impl {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
-public:
-  ostream& 	Output(ostream& strm, int indent = 0) const;
-  ostream& 	OutputR(ostream& strm, int indent = 0) const
-  { return Output(strm, indent); }
-
-  int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-
-  void 	Initialize()	{ }
-  void 	Destroy()	{ CutLinks(); }
-  void	CutLinks();
-  void	Copy(const taArray_base& cp) {taOBase::Copy(cp); taArray_impl::Copy_Duplicate(cp);}
-  TA_ABSTRACT_BASEFUNS(taArray_base);
-};
-
-template<class T> class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
+template<class T> 
+class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // get element at index
@@ -1042,90 +1026,116 @@ public:
 };
 
 
+class taArray_base : public taOBase, public taArray_impl {
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
+public:
+  ostream& 	Output(ostream& strm, int indent = 0) const;
+  ostream& 	OutputR(ostream& strm, int indent = 0) const
+  { return Output(strm, indent); }
+
+  int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
+
+  void 	Initialize()	{ }
+  void 	Destroy()	{ CutLinks(); }
+  void	CutLinks();
+  void	Copy(const taArray_base& cp) {taOBase::Copy(cp); taArray_impl::Copy_Duplicate(cp);}
+  TA_ABSTRACT_BASEFUNS(taArray_base);
+};
+
+
+#define TA_ARRAY_FUNS(y,T) \
+public: \
+  STATIC_CONST T blank; \
+  explicit y(int init_alloc) {Alloc(init_alloc); } \
+  T&		operator[](int i) { return el[i]; } \
+  const T&	operator[](int i) const	{ return el[i]; } \
+  bool 		operator==(const y& src) const {return Equal_(src);} \
+protected: \
+  override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
 template<class T>
 class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
 public:
-  const static T blank; // #IGNORE -- note, must also declare this in _ti.cpp file
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range; MUST INIT IN CONSTRUCTOR
-  T		tmp; // #IGNORE temporary item
   
-  void*		FastEl_(int i)	const		{ return &(el[i]); }// #IGNORE
-  int		El_Compare_(void* a, void* b) const
-  { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
-  // #IGNORE
-  void		El_Copy_(void* to, void* fm)	{ *((T*)to) = *((T*)fm); } // #IGNORE
-  uint		El_SizeOf_() const		{ return sizeof(T); }	 // #IGNORE
-  void*		El_GetErr_() const		{ return (void*)&err; }	 // #IGNORE
-  void*		El_GetTmp_() const		{ return (void*)&tmp; }	 // #IGNORE
-  void*		El_GetBlank_() const		{ return (void*)&blank; }
-    // #IGNORE
-  String	El_GetStr_(void* it) const	{ return String(*((T*)it)); } // #IGNORE
-  void		El_SetFmStr_(void* it, const String& val)
-  { T tmp = (T)val; *((T*)it) = tmp; } // #IGNORE
-
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&		SafeEl(int i) const {return *(T*)SafeEl_(i);}
+  const T&	SafeEl(int i) const {return *(T*)SafeEl_(i);}
   // #MENU #MENU_ON_Edit #USE_RVAL the element at the given index
-  T&		FastEl(int i) const		{ return el[i]; }
+  T&		FastEl(int i)  {return el[i]; }
   // fast element (no range checking)
-  T&		RevEl(int idx) const	{ return SafeEl(size - idx - 1); }
+  const T&	FastEl(int i) const	{return el[i]; }
+  // fast element (no range checking)
+  const T&	RevEl(int idx) const	{ return SafeEl(size - idx - 1); }
   // reverse (index) element (ie. get from the back of the list first)
-  T&		operator[](int i) const		{ return el[i]; }
 
-  virtual T	Pop()
-  { T* rval=(T*)&err; if(size>0) rval=&(el[--size]); return *rval; }
+  const T	Pop() 
+    {if (size == 0) return *(static_cast<const T*>(El_GetErr_()));
+     else return el[--size]; }
   // pop the last item in the array off
-  virtual T&	Peek() const
-  { T* rval=(T*)&err; if(size>0) rval=&(el[size-1]); return *rval; }
+  const T& Peek() const {return SafeEl(size - 1);}
   // peek at the last item on the array
 
   ////////////////////////////////////////////////
   // 	functions that are passed el of type	//
   ////////////////////////////////////////////////
 
-  virtual void	Set(int i, const T& item) 	{ SafeEl(i) = item; }
-  // use this for assigning values to items in the array (Set should update if needed)
-  virtual void	Add(const T& item)		{ Add_((void*)&item); }
+  void	Set(int i, const T& item) 	
+    { if (InRange(i)) el[i] = item; }
+  // use this for safely assigning values to items in the array (Set should update if needed)
+  void	Add(const T& item)		{ Add_((void*)&item); }
   // #MENU add the item to the array
-  virtual bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
+  bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
   // add the item to the array if it isn't already on it, returns true if unique
-  virtual void	Push(const T& item)		{ Add(item); }
+  void	Push(const T& item)		{ Add(item); }
   // push the item on the end of the array (same as add)
-  virtual void	Insert(const T& item, int indx, int n_els=1)	{ Insert_((void*)&item, indx, n_els); }
+  void	Insert(const T& item, int indx, int n_els=1)	{ Insert_((void*)&item, indx, n_els); }
   // #MENU Insert (n_els) item(s) at indx (-1 for end) in the array
-  virtual int	Find(const T& item, int indx=0) const { return Find_((void*)&item, indx); }
+  int	Find(const T& item, int indx=0) const { return Find_((void*)&item, indx); }
   // #MENU #USE_RVAL Find item starting from indx in the array (-1 if not there)
-  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); }
-  virtual bool	Remove(uint indx, int n_els=1)	{ return taArray_impl::Remove(indx,n_els); }
+//  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); }
+//  virtual bool	Remove(uint indx, int n_els=1)	{ return taArray_impl::Remove(indx,n_els); }
   // Remove (n_els) item(s) at indx, returns success
-  virtual bool	RemoveEl(const T& item)		{ return Remove(item); }
+  virtual bool	RemoveEl(const T& item)		{ return Remove_((void*)&item); }
   // remove given item, returns success
   virtual void	InitVals(const T& item, int start=0, int end=-1) { InitVals_((void*)&item, start, end); }
   // set array elements to specified value starting at start through end (-1 = size)
 
-//  void	Initialize()			{ InitArray_(); }
-//  void	Destroy()			{ SetArray_(NULL); }
-
   taArray()				{ el = NULL; } // no_tokens is assumed
-  taArray(const taArray<T>& cp)		{ el = NULL; Alloc(cp.size); Copy(cp); }
   ~taArray()				{ SetArray_(NULL); }
-//  TAPtr Clone() 			{ return new taArray<T>(*this); }
-  void  UnSafeCopy(TAPtr cp) 		{ if(cp->InheritsFrom(taArray::StatTypeDef(0))) Copy(*((taArray<T>*)cp));
-                                          else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
+  
+  void Duplicate(const taArray<T>& src) {Duplicate_(src);} // #IGNORE maketa bug
+  void  UnSafeCopy(TAPtr cp) { 
+    if(cp->InheritsFrom(taArray::StatTypeDef(0))) Copy(*((taArray<T>*)cp));
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
   void  CastCopyTo(TAPtr cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //
 //  TAPtr MakeToken()			{ return (TAPtr)(new taArray<T>); }
 //  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new taArray<T>[no]); }
-  void operator=(const taArray<T>& cp)	{ Copy(cp); }
-  TA_TMPLT_TYPEFUNS(taArray,T);
+  TA_TMPLT_TYPEFUNS(taArray,T); //
+public:
+  void*		FastEl_(int i)			{ return &(el[i]); }// #IGNORE
 protected:
+  mutable T		tmp; // #IGNORE temporary item
+  
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((T*)a) == *((T*)b)); }
+  void		El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
+  uint		El_SizeOf_() const		{ return sizeof(T); }
+  const void*	El_GetErr_() const		{ return (void*)&err; }
+  void*		El_GetTmp_() const		{ return (void*)&tmp; }
+  String	El_GetStr_(const void* it) const { return String(*((T*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { T tmp = (T)val; *((T*)it) = tmp; }
+
 };
 
 // do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
@@ -1149,41 +1159,45 @@ public:
   virtual void	FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(int_Array);
+  TA_ARRAY_FUNS(int_Array, int)
 };
 
 class float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER
 public:
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0.0f; };
   void Destroy()	{ };
   TA_BASEFUNS(float_Array);
+  TA_ARRAY_FUNS(float_Array, float)
 };
 
 class double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER
 public:
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
   TA_BASEFUNS(double_Array);
+  TA_ARRAY_FUNS(double_Array, double)
 };
 
 class String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER
 public:
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{ };
   void Destroy()	{ };
   TA_BASEFUNS(String_Array);
+  TA_ARRAY_FUNS(String_Array, String)
 };
 
 class SArg_Array : public String_Array {
@@ -1209,11 +1223,12 @@ public:
   virtual void	FillSeq(long start=0, long inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(long_Array);
+  TA_ARRAY_FUNS(long_Array, long)
 };
 
 typedef void* voidptr; // for maketa, which chokes on void* in a template
@@ -1221,11 +1236,12 @@ class voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER
 public:
 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = StatTypeDef(0); return SafeEl_(i); }
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(voidptr_Array);
+  TA_ARRAY_FUNS(voidptr_Array, voidptr)
 };
 
 // define selectedit if no gui

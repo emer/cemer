@@ -15,6 +15,7 @@
 #include "icolor.h"
 #include "ta_type.h"
 #include "ta_base.h"
+#include "ta_matrix.h"
 #include "ta_group.h"
 #include "ta_dump.h"
 #include "ta_defaults.h"
@@ -40,8 +41,6 @@ extern	taPtrList<taHashEl>*	TAI_taPtrList_taHashEl_;
 extern	taPtrList<taHashBucket>*	TAI_taPtrList_taHashBucket_;
 extern	taDataLinkItr*	TAI_taDataLinkItr;
 extern	taBase**	TAI_TAPtr;
-extern	taPlainArray<taString>*	TAI_taPlainArray_taString_;
-extern	taPlainArray<int>*	TAI_taPlainArray_int_;
 extern	taMisc*	TAI_taMisc;
 extern	taPtrList<EnumDef>*	TAI_taPtrList_EnumDef_;
 extern	EnumSpace*	TAI_EnumSpace;
@@ -67,6 +66,8 @@ extern	taPtrList_base<taBase>*	TAI_taPtrList_base_taBase_;
 extern	taList_impl*	TAI_taList_impl;
 extern	taList<taBase>*	TAI_taList_taBase_;
 extern	taBase_List*	TAI_taBase_List;
+<<<<<<< .mine
+=======
 extern	int_Array*	TAI_int_Array;
 extern	float_Array*	TAI_float_Array;
 extern	double_Array*	TAI_double_Array;
@@ -74,6 +75,7 @@ extern	String_Array*	TAI_String_Array;
 extern	SArg_Array*	TAI_SArg_Array;
 extern	long_Array*	TAI_long_Array;
 extern	voidptr_Array*	TAI_voidptr_Array;
+>>>>>>> .r63
 extern	taGroup_impl*	TAI_taGroup_impl;
 extern	taList<taGroup_impl>*	TAI_taList_taGroup_impl_;
 extern	TALOG*	TAI_TALOG;
