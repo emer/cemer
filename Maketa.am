@@ -36,3 +36,30 @@ force_ta:
 	if [ ! -f $(PROJNAME)_TA_type.h ];\
 	then touch -t 196912311700.00 $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h;fi
 	$(MAKETA) $(MAKETA_FLAGS) $(PROJNAME) $(TAHEADS)
+
+MAKETA_FLAGS =\
+	-hx \
+	-css \
+	-cpp=$(cppC) \
+	-I@abs_srcdir@/../ta/ios-g++-3.1 \
+	-I@abs_srcdir@/../pdp \
+	-I@abs_srcdir@/../ta \
+	-I@abs_srcdir@/../css \
+	-I@abs_srcdir@/../leabra \
+	-I@abs_srcdir@/../tamisc \
+	-I@abs_srcdir@/../taiqtso \
+	-I@abs_srcdir@/../bp \
+	-I@abs_srcdir@/../tamisc
+
+if LINUX
+cppC = "/lib/cpp"
+MAKETA_FLAGS +=\
+	"-I/usr/include/linux \
+	-D__i386__"
+endif
+
+if DARWIN
+cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
+MAKETA_FLAGS +=\
+	"-I/usr/include/gcc/darwin/3.3"
+endif
