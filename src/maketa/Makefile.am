@@ -25,8 +25,6 @@ SRCS =\
 	mta_constr.cpp \
 	maketa.cpp
 
-include $(top_srcdir)/Conditionals.am
-
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
 	then touch -t 196912311700.00 \
@@ -35,7 +33,44 @@ ta_TA_type.h ta_TA_inst.h:
 
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
-maketa_LDFLAGS = $(LINKER_FLAGS)
-maketa_CFLAGS =  $(COMPILER_FLAGS)
-maketa_CPPFLAGS = $(PREPROCESSOR_FLAGS) -DTA_NO_GUI -DNO_TA_BASE
+maketa_CPPFLAGS =\
+	-DTA_NO_GUI \
+	-DNO_TA_BASE \
+	-I@srcdir@/../ta
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
+
+#**************************************************
+#
+#                     LINUX
+#
+#**************************************************
+if LINUX
+
+maketa_CPPFLAGS += -DLINUX
+
+endif
+#**************************************************
+#
+#                     DARWIN
+#
+#**************************************************
+if DARWIN
+
+maketa_CPPFLAGS += -DLINUX -DDARWIN
+
+endif
+#**************************************************
+#
+#                     DEBUG
+#
+#**************************************************
+if DEBUG
+
+maketa_CPPFLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+endif
