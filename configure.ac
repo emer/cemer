@@ -9,8 +9,15 @@ AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_DISABLE_SHARED
+
+# Hack to stop fortran checks in configure
+# See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
+m4_undefine([AC_PROG_F77])
+m4_defun([AC_PROG_F77],[])
 AC_PROG_LIBTOOL
+
 PDP_DETERMINE_OSTYPE
+
 #AC_CONFIG_SRCDIR([src/taglobal.h])
 
 #                                             debug, mpi, gui
@@ -19,7 +26,7 @@ PDP_DETERMINE_OSTYPE
 #*************************************************************
 #
 
-AC_ARG_ENABLE(debug,
+AC_ARG_ENABLE([debug],
               AC_HELP_STRING([--enable-debug],
                              [Enable debugging. Default is disabled.]),
                              [debug=true],
@@ -29,15 +36,22 @@ AC_ARG_ENABLE([mpi],
                              [Enable the Message Passing Interface. Default is disabled.]),
                              [mpi=true],
                              [mpi=false])
-AC_ARG_ENABLE(gui,
+AC_ARG_ENABLE([gui],
               AC_HELP_STRING([--disable-gui],
                              [Disable compiling with a GUI. Default is enabled]),
                              [gui=false],
                              [gui=true])
+
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 AM_CONDITIONAL([MPI],[test $mpi = true])
 AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
+
+PDP_DETERMINE_SUFFIX
+
+if test $gui = true; then
+	AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
+fi
 
 #                                                     programs
 #*************************************************************
@@ -96,6 +110,9 @@ AC_C_VOLATILE
 #                     Checks for libraries
 #*************************************************************
 #
+
+# Always check for Qt, since tamisc always uses it.
+
 if test $gui = true; then
 	gw_CHECK_QT
 	AC_CHECK_LIB([Coin], [main])
@@ -104,6 +121,11 @@ if test $gui = true; then
 	AC_CHECK_LIB([jpeg], [main])
 	AC_CHECK_LIB([SoQt], [main])
 fi
+
+if test $mpi = true; then
+	ACX_MPI([],[])
+fi
+
 AC_CHECK_LIB([dl], [main])
 AC_CHECK_LIB([pthread], [main])
 AC_CHECK_LIB([readline], [main],[],[VL_LIB_READLINE])
@@ -127,13 +149,30 @@ AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir 
 
 #                                                  @variables@
 #*************************************************************
-#        Substitutes @style@ variables in makefiles
+#            Substitutes @variables@ in Makefile.am's
+# Descending order, so a recent substitution can contain a 
+# @reference@ to a substitution that comes after.
 #*************************************************************
 #
+
+AC_SUBST([QT_CXXFLAGS])
+AC_SUBST([X_LIBS])
+AC_SUBST([X_EXTRA_LIBS])
+AC_SUBST([X_PRE_LIBS])
+AC_SUBST([QT_LDADD])
+AC_SUBST([QT_GUILINK])
+AC_SUBST([X_CFLAGS])
+
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([includedir])
 AC_SUBST([abs_srcdir])
+AC_SUBST([srcdir])
+AC_SUBST([top_srcdir])
+
+AC_SUBST(QT_CXXFLAGS)
+AC_SUBST(QT_LDADD)
+AC_SUBST(QT_GUILINK)
 
 #                                                       output
 #*************************************************************
@@ -150,4 +189,14 @@ AC_CONFIG_FILES([Makefile
 		src/pdp/Makefile
 		src/leabra/Makefile
 		src/bp/Makefile])
+
+#AC_CONFIG_FILES([Makefile
+#		src/maketa/Makefile
+#		src/taiqtso/Makefile
+#		src/ta/Makefile
+#		src/css/Makefile
+#		src/tamisc/Makefile
+#		src/pdp/Makefile
+#		src/leabra/Makefile
+#		src/bp/Makefile])
 AC_OUTPUT
