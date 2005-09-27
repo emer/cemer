@@ -53,11 +53,88 @@ SRCS =\
 	irenderarea.moc.cpp \
 	taiqtso_ti.cpp
 
-include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Moc.am
 
-lib_LTLIBRARIES = libtaiqtso.la
-libtaiqtso_la_SOURCES = $(HEADS) $(SRCS)
-libtaiqtso_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-libtaiqtso_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
-libtaiqtso_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
+lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
+libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+
+libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ta \
+	@X_CFLAGS@ \
+	-I/usr/include/freetype2 \
+	@QT_CXXFLAGS@ \
+	-DTA_GUI \
+	-DTA_USE_QT \
+	-DTA_USE_INVENTOR \
+	-DQT_SHARED
+
+libtaiqtso@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
+
+#**************************************************
+#
+#                      GUI
+#
+#**************************************************
+if TA_GUI
+
+libtaiqtso@PDP_SUFFIX@_la_LIBADD =\
+	@X_EXTRA_LIBS@ \
+	@X_PRE_LIBS@ \
+	@QT_LDADD@
+
+endif
+#**************************************************
+#
+#                      DEBUG
+#
+#**************************************************
+if DEBUG
+
+libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+endif
+#**************************************************
+#
+#                      MPI
+#
+#**************************************************
+if MPI
+
+libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
+libtaiqtso@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
+
+endif
+#**************************************************
+#
+#                      LINUX
+#
+#**************************************************
+if LINUX
+
+libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
+
+endif
+#**************************************************
+#
+#                      DARWIN
+#
+#**************************************************
+if DARWIN
+
+libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
+
+endif
+#**************************************************
+#
+#                      DEBUG
+#
+#**************************************************
+clean-local:
+	-rm *TA*
+	-rm *moc*
+	-RM *~

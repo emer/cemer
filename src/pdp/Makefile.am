@@ -91,30 +91,123 @@ SRCS =\
 	pdp_TA.cpp \
 	pdp_ti.cpp
 
-include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
-MAKETA_FLAGS += $(libpdp_la_CPPFLAGS)
+MAKETA_FLAGS += $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
-lib_LTLIBRARIES = libpdp.la
-libpdp_la_SOURCES = $(HEADS) $(SRCS)
-libpdp_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-libpdp_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
-libpdp_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
+lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
+libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
-bin_PROGRAMS = pdp++
-pdp___SOURCES = main.cpp
-pdp___LDADD =\
-	libpdp.la \
-	@abs_top_builddir@/src/ta/libta.la \
-	@abs_top_builddir@/src/css/libcss.la \
-	@abs_top_builddir@/src/tamisc/libtamisc.la
+libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ta \
+	-I@srcdir@/../css \
+	-I@srcdir@/../tamisc
 
+libpdp@PDP_SUFFIX@_la_CXXFLAGS =
+libpdp@PDP_SUFFIX@_la_LDFLAGS =
+
+bin_PROGRAMS = pdp@PDP_SUFFIX@++
+pdp@PDP_SUFFIX@___SOURCES = main.cpp
+pdp@PDP_SUFFIX@___LDADD =\
+	libpdp@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
+
+pdp@PDP_SUFFIX@___LDFLAGS = $(libpdp@PDP_SUFFIX@_la_LDFLAGS)
+pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
+pdp@PDP_SUFFIX@___CFLAGS = $(libpdp@PDP_SUFFIX@_la_CFLAGS)
+
+BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
+
+#**************************************************
+#
+#                      GUI
+#
+#**************************************************
 if TA_GUI
-pdp___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
+
+pdp@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
+
+libpdp@PDP_SUFFIX@_la_LIBADD =\
+	@X_EXTRA_LIBS@ \
+	@X_PRE_LIBS@ \
+	@QT_LDADD@
+	
+libpdp@PDP_SUFFIX@_la_LDFLAGS += @X_LIBS@
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-I../src/taiqtso \
+	-I@srcdir@/../taiqtso \
+	@X_CFLAGS@ \
+	-I/usr/include/freetype2 \
+	@QT_CXXFLAGS@ \
+	-DTA_GUI \
+	-DTA_USE_QT \
+	-DTA_USE_INVENTOR \
+	-DQT_SHARED
+
+endif
+#**************************************************
+#
+#                      NOGUI
+#
+#**************************************************
+if NO_TA_GUI
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
+
+endif
+#**************************************************
+#
+#                      DEBUG
+#
+#**************************************************
+if DEBUG
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+libpdp@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
+
+endif
+#**************************************************
+#
+#                      MPI
+#
+#**************************************************
+if MPI
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
+libpdp@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
+
+endif
+#**************************************************
+#
+#                      LINUX
+#
+#**************************************************
+if LINUX
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
+
+endif
+#**************************************************
+#
+#                      DARWIN
+#
+#**************************************************
+if DARWIN
+
+libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
+
 endif
 
-pdp___LDFLAGS = $(libpdp_la_LDFLAGS)
-pdp___CPPFLAGS =$(libpdp_la_CPPFLAGS)
-pdp___CFLAGS = $(libpdp_la_CFLAGS)
-BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
+clean-local:
+	-rm *TA*
+	-rm *moc*
+	-rm *~

@@ -92,14 +92,109 @@ SRCS =\
 	tamisc_TA.cpp \
 	tamisc_ti.cpp
 
-include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
-MAKETA_FLAGS += $(libtamisc_la_CPPFLAGS)
+MAKETA_FLAGS += $(libtamisc@PDP_SUFFIX@_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
-lib_LTLIBRARIES = libtamisc.la
-libtamisc_la_SOURCES = $(HEADS) $(SRCS)
-libtamisc_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-libtamisc_la_CPPFLAGS = $(PREPROCESSOR_FLAGS) $(GUI_PREPROCESSOR_FLAGS)
-libtamisc_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
-BUILT_SOURCES = tamisc_TA_type.h tamisc_TA_inst.h
+lib_LTLIBRARIES = libtamisc@PDP_SUFFIX@.la
+libtamisc@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+
+libtamisc@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ta \
+	-I@srcdir@/../css
+
+libtamisc@PDP_SUFFIX@_la_CXXFLAGS =
+
+BUILT_SOURCES = tamisc_TA_type.h tamisc_TA_inst.h tamisc_TA.cpp
+
+#**************************************************
+#
+#                      GUI
+#
+#**************************************************
+if TA_GUI
+
+libtamisc@PDP_SUFFIX@_la_LIBADD +=\
+	@X_EXTRA_LIBS@ \
+	@X_PRE_LIBS@ \
+	@QT_LDADD@
+
+libtamisc@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-I@srcdir@/../taiqtso \
+	@X_CFLAGS@ \
+	-I/usr/include/freetype2 \
+	@QT_CXXFLAGS@ \
+	-DTA_GUI \
+	-DTA_USE_QT \
+	-DTA_USE_INVENTOR \
+	-DQT_SHARED
+
+libtamisc@PDP_SUFFIX@_la_LDFLAGS += @X_LIBS@
+
+endif
+#**************************************************
+#
+#                      NOGUI
+#
+#**************************************************
+if NO_TA_GUI
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
+
+endif
+#**************************************************
+#
+#                      DEBUG
+#
+#**************************************************
+if DEBUG
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+libtamisc@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
+
+endif
+#**************************************************
+#
+#                      MPI
+#
+#**************************************************
+if MPI
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
+
+endif
+#**************************************************
+#
+#                      LINUX
+#
+#**************************************************
+if LINUX
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
+
+endif
+#**************************************************
+#
+#                      DARWIN
+#
+#**************************************************
+if DARWIN
+
+libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
+
+endif
+
+clean-local:
+	-rm *TA*
+	-rm *moc*
+	-rm *~

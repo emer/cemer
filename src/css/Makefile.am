@@ -51,28 +51,110 @@ HEADS =\
 	css_misc_funs.h \
 	$(HEADS_GUI)
 
-include $(top_srcdir)/Conditionals.am
-include $(top_srcdir)/Moc.am
+SUFFIXES = .moc.cpp
 
-lib_LTLIBRARIES = libcss.la
-libcss_la_SOURCES = $(HEADS) $(SRCS)
-libcss_la_LDFLAGS = $(LINKER_FLAGS) $(GUI_LINKER_FLAGS)
-libcss_la_CPPFLAGS =\
-	$(PREPROCESSOR_FLAGS) \
-	$(GUI_PREPROCESSOR_FLAGS) \
-	-DYYDEBUG \
-	-I$(abs_top_builddir)/src/taiqtso
-libcss_la_CFLAGS = $(COMPILER_FLAGS) $(GUI_COMPILER_FLAGS)
+.h.moc.cpp:
+	$(MOC) -o $@ $<
 
-bin_PROGRAMS = css++
-css___SOURCES = main.cpp
+lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
+libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+libcss@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I$(srcdir)/../ta
 
-css___LDADD = libcss.la @abs_top_builddir@/src/ta/libta.la
+bin_PROGRAMS = css@PDP_SUFFIX@++
+css@PDP_SUFFIX@___SOURCES = main.cpp
+css@PDP_SUFFIX@___LDADD =\
+	libcss@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la
 
+libcss@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
+
+css@PDP_SUFFIX@___LDFLAGS = $(libcss@PDP_SUFFIX@_la_LDFLAGS)
+css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
+css@PDP_SUFFIX@___CXXFLAGS = $(libcss@PDP_SUFFIX@_la_CXXFLAGS)
+
+#**************************************************
+#
+#                      GUI
+#
+#**************************************************
 if TA_GUI
-css___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso.la
+
+css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
+
+libcss@PDP_SUFFIX@_la_LIBADD += @X_EXTRA_LIBS@ @X_PRE_LIBS@ @QT_LDADD@
+	
+libcss@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-I../src/taiqtso \
+	-I@srcdir@/../taiqtso \
+	@X_CFLAGS@ \
+	-I/usr/include/freetype2 \
+	@QT_CXXFLAGS@ \
+	-DTA_GUI \
+	-DTA_USE_QT \
+	-DTA_USE_INVENTOR \
+	-DQT_SHARED
+
+endif
+#**************************************************
+#
+#                      NOGUI
+#
+#**************************************************
+if NO_TA_GUI
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
+
+endif
+#**************************************************
+#
+#                      DEBUG
+#
+#**************************************************
+if DEBUG
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-DYYDEBUG \
+	-DDEBUG \
+	-DTA_PROFILE \
+	-DHAVE_POSIX_SIGNALS=1 \
+	-DRETSIGTYPE=void
+
+endif
+#**************************************************
+#
+#                      MPI
+#
+#**************************************************
+if MPI
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
+
+endif
+#**************************************************
+#
+#                      LINUX
+#
+#**************************************************
+if LINUX
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
+
+endif
+#**************************************************
+#
+#                      DARWIN
+#
+#**************************************************
+if DARWIN
+
+libcss@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
+
 endif
 
-css___LDFLAGS = $(libcss_la_LDFLAGS)
-css___CPPFLAGS = $(libcss_la_CPPFLAGS)
-css___CFLAGS = $(libcss_la_CFLAGS)
+clean-local:
+	-rm *TA*
+	-rm *moc*
+	-rm *~
