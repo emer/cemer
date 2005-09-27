@@ -700,6 +700,7 @@ extern TypeDef TA_QWidget;
 extern TypeDef TA_taBaseAdapter_ptr;
 extern TypeDef TA_taBaseAdapter;
 extern TypeDef TA_QMimeSource;
+extern TypeDef TA_byte;
 extern TypeDef TA_QObject;
 extern TypeDef TA_QMenuItem_ptr;
 extern TypeDef TA_QMenuItem;

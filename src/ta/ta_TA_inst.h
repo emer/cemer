@@ -66,16 +66,6 @@ extern	taPtrList_base<taBase>*	TAI_taPtrList_base_taBase_;
 extern	taList_impl*	TAI_taList_impl;
 extern	taList<taBase>*	TAI_taList_taBase_;
 extern	taBase_List*	TAI_taBase_List;
-<<<<<<< .mine
-=======
-extern	int_Array*	TAI_int_Array;
-extern	float_Array*	TAI_float_Array;
-extern	double_Array*	TAI_double_Array;
-extern	String_Array*	TAI_String_Array;
-extern	SArg_Array*	TAI_SArg_Array;
-extern	long_Array*	TAI_long_Array;
-extern	voidptr_Array*	TAI_voidptr_Array;
->>>>>>> .r63
 extern	taGroup_impl*	TAI_taGroup_impl;
 extern	taList<taGroup_impl>*	TAI_taList_taGroup_impl_;
 extern	TALOG*	TAI_TALOG;

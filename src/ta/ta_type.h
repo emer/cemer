@@ -111,9 +111,15 @@ public:
   bool	AddUnique(const char* it)
   { String fad=it; return taPlainArray<String>::AddUnique(fad); } //
 
+  bool Remove(const char* str) {return taPlainArray<String>::Remove(String(str));}
+  USING(taPlainArray<String>::Remove);
 //obs  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   // returns first item which contains given string (-1 if none)
-  TA_PLAIN_ARRAY_FUNS(String_PArray, String)
+  TA_PLAIN_ARRAY_FUNS(String_PArray, String) //
+protected:
+//TEMP
+  override void	 Copy_(const taFixedArray_impl& cp) {
+    Copy_Duplicate(static_cast<const taArray_impl&>(cp));}
 };
 
 class int_PArray: public taPlainArray<int> {
