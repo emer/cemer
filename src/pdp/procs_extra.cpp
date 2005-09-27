@@ -345,13 +345,13 @@ void GridSearchBatch::SetParamVal() {
     sidx = sidx.before(']');
     int idx = (int)sidx;
     if(md->type->InheritsFrom(TA_String_Array)) {
-      ((String_Array*)ary)->SafeEl(idx) = String(cur_val);
+      ((String_Array*)ary)->Set(idx, String(cur_val));
     }
     else if(md->type->InheritsFrom(TA_int_Array)) {
-      ((int_Array*)ary)->SafeEl(idx) = (int)cur_val;
+      ((int_Array*)ary)->Set(idx, (int)cur_val);
     }
     else if(md->type->InheritsFrom(TA_float_Array)) {
-      ((float_Array*)ary)->SafeEl(idx) = cur_val;
+      ((float_Array*)ary)->Set(idx, cur_val);
     }
     else {
       taMisc::Error("GridSearchBatch parameter path does not point to float, int or String array:", param_path);

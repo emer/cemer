@@ -936,11 +936,11 @@ int GroupPatternSpec::CoordToFlatIdx(const TwoDCoord& gpc, const TwoDCoord& sbc)
   return (y * gp_geom.x * sub_geom.x) + x;
 }
 
-float& GroupPatternSpec::Value(Pattern* pat, int index) {
+float GroupPatternSpec::Value(Pattern* pat, int index) {
   return pat->value.FastEl(FlatToValueIdx(index));
 }
 
-int& GroupPatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
+int GroupPatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
   int idx = FlatToValueIdx(index);
   return PatternSpec::Flag(flag_type, pat, idx);
 }

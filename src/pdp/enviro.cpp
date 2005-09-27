@@ -306,11 +306,11 @@ void PatternSpec::FlagLayer() {
   layer->SetExtFlag(layer_flags); // the bits are the same..
 }
 
-float& PatternSpec::Value(Pattern* pat, int index) {
+float PatternSpec::Value(Pattern* pat, int index) {
   return pat->value.SafeEl(index);
 }
 
-int& PatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
+int PatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
   static int noflags = NO_FLAGS;
   switch(flag_type) {
   case USE_NO_FLAGS:
@@ -320,7 +320,7 @@ int& PatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
   case USE_GLOBAL_FLAGS:
     return global_flags.SafeEl(index);
   case USE_PAT_THEN_GLOBAL_FLAGS: {
-    int& flags = pat->flag.SafeEl(index);
+    int flags = pat->flag.SafeEl(index);
     if(flags == NO_FLAGS)
       return global_flags.SafeEl(index);
     return flags;

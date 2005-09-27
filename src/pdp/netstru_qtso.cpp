@@ -313,7 +313,7 @@ void UnitViewData::Initialize() {
 //   UnitViewData_PArray//
 //////////////////////////
 
-void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
+void UnitViewData_BArray_impl::SetGeom(TwoDCoord& c) {
   m_x = c.x;
   EnforceSize(c.x * c.y); //note: may not shrink alloc
 }

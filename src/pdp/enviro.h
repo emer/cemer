@@ -140,9 +140,9 @@ public:
   // when done, don't keep pointing to it.
   virtual void	FlagLayer();
   // set layer flag to reflect the kind of input received
-  virtual float& Value(Pattern* pat, int index);
+  virtual float Value(Pattern* pat, int index);
   // return value at given index from pattern (order can be changed, eg GroupPatternSpec)
-  virtual int&	Flag(PatUseFlags flag_type, Pattern* pat, int index);
+  virtual int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
   // return flag at given index from pattern (order can be changed, eg GroupPatternSpec)
   virtual void 	ApplyValue(Pattern* pat, Unit* uni, int index);
   // assign unit value and ext_flag based on pattern at given index

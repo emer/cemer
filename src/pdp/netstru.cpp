@@ -2584,7 +2584,7 @@ void Projection::WeightsToEnv(Environment* env) {
     Pattern* pat = (Pattern*)ev->patterns[0];
     int wi;
     for(wi=0;wi<cg->size;wi++) {
-      pat->value.SafeEl(wi) = cg->Cn(wi)->wt;
+      pat->value.Set(wi, cg->Cn(wi)->wt);
     }
     idx++;
   }
@@ -3262,6 +3262,16 @@ void Layer::Initialize() {
   geom.y =1;  geom.z =1;  geom.x =0;
   act_geom = geom;
   dmem_dist = DMEM_DIST_DEFAULT;
+  
+  // create the output channels
+  source_channels.Add(SourceChannel::New(
+    static_cast<IDataSource*>(this), 
+    "act", 
+    //dims are: grpX, grpY, unX, unY
+    int_FixedArray(4, 1, 1, 0, 0), 
+    DTM_BOTH, 
+    DTM_PUSH
+  ));
 }
 
 void Layer::InitLinks() {
@@ -3282,12 +3292,14 @@ void Layer::InitLinks() {
   own_net = GET_MY_OWNER(Network);
   SetDefaultPos();
   units.pos.z = 0;
+  taBase::Own(source_channels, this);
 }
 
 void Layer::CutLinks() {
   static bool in_repl = false;
-  if(in_repl || (owner == NULL)) return; // already replacing or already dead
+  if (in_repl || (owner == NULL)) return; // already replacing or already dead
   DisConnect();
+  source_channels.CutLinks();
   // remove layer transforms and layer_name transforms
   if(own_net != NULL) {
 /*TODO     int index = own_net->layers.FindLeaf(this);
@@ -3363,8 +3375,15 @@ void Layer::UpdateAfterEdit() {
   RecomputeGeometry();
 
   if(taMisc::is_loading) return;
-  if(own_net == NULL) return;
+  if (own_net == NULL) return;
   own_net->UpdtAfterNetMod();
+  // update channels
+  SourceChannel* ch = source_channels.FindName("act");
+  if (ch != NULL) {
+    //TODO: Unit Groups
+    ch->setGeom(int_FixedArray(4, 1, 1, geom.x, geom.y));
+  }
+
   if(!taMisc::gui_active) return;
 /*TODO  NetView* view;
   taLeafItr i;
@@ -3379,6 +3398,33 @@ void Layer::ConnectFrom(Layer* from_lay) {
   if (!net) return;
   //Projection* prjn =
   net->FindMakePrjn(this, from_lay);
+}
+
+void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
+  IDataSource::GetData_(ch, data, handled);
+  if (handled) return;
+  if (ch->name == "act") {
+    //TODO: prob create a generic helper routine for grabbing a member of Units
+    //TODO: need to deal with groups!
+    // allocate a float matrix
+    //TODO: Multi UnitGroups
+    float_Matrix* fm = new float_Matrix(1, 1, geom.x, geom.y);
+    
+    // fill it with our act data
+    Unit* un;
+    TwoDCoord c;
+    while (c.x < geom.x) {
+      while (c.y < geom.y) {
+        un = units.FindUnitFmCoord(c);
+        if (un != NULL) 
+          fm->FastEl(1, 1, c.x, c.y) = un->act;
+        ++(c.y);
+      }
+      c.y = 0;
+      ++(c.x);
+    }
+    handled = true;
+  }
 }
 
 void Layer::ReplacePointersHook(TAPtr old) {

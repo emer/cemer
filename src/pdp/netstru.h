@@ -42,10 +42,12 @@
 #ifndef netstru_h
 #define netstru_h
 
-#include "spec.h"
 #include "tarandom.h"
 #include "ta_script.h"
+#include "ta_data.h"
 #include "datatable.h"
+
+#include "spec.h"
 #include "aggregate.h"
 
 #include "pdpbase.h"
@@ -947,10 +949,16 @@ public:
   void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(LayerSpec);
+  TA_BASEFUNS(LayerSpec); //
 };
 
-class Layer : public taNBase {
+/* 
+
+  Layer SourceData
+  act -- NxM float array, of the activation values
+  
+*/
+class Layer : public taNBase, public IDataSource {
   // ##EXT_lay ##COMPRESS layer containing units
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -1115,9 +1123,18 @@ public:
   void	CutLinks();
   void	Copy_(const Layer& cp);
   COPY_FUNS(Layer, taNBase);
-  TA_BASEFUNS(Layer);
+  TA_BASEFUNS(Layer); //
+  
+public: // IDataSource i/f and impl
+  SourceChannel_List  source_channels;
+  // override bool	can_sequence_() const {return false;} // true if has a ISequencable interface
+  // override ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
+  override SourceChannel_List& source_channels_() {return source_channels;}
+protected: // SourceChannel delegates -- designed for multi-class inheritance chain
+  override void GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled);
+
 #ifdef TA_GUI
-protected:
+//protected:
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
 #endif
 };

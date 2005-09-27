@@ -530,7 +530,7 @@ void PDPLog::DataToLogFile(LogData&) {
     String el;
     taArray_base* ar = da->AR();
     if((ar != NULL) && (ar->size > 0))
-      el = ar->El_GetStr_(ar->FastEl_(ar->size-1));
+      el = ar->FastElAsStr(ar->size-1);
     else
       el = "n/a";
 
@@ -848,7 +848,7 @@ void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
       String el;
       taArray_base* ar = da->AR();
       if((ar != NULL) && (ar->size > from_end) && (from_end >= 0))
-	el = ar->El_GetStr_(ar->FastEl_(ar->size-1-from_end));
+	el = ar->FastElAsStr(ar->size-1-from_end);
       else
 	el = "n/a";
 

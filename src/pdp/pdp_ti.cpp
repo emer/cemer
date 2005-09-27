@@ -81,7 +81,8 @@ template class SpecPtr<EventSpec>;
 
 #ifdef TA_GUI
 template class taGroup<SelectEdit>; // pdpshell.h
-template class taPlainArray<UnitViewData>; // netstru_qtso.h
+template class taBasicArray<UnitViewData>; // netstru_qtso.h
+  const UnitViewData UnitViewData_BArray::blank;
 template class taPtrList<LogView>; // pdplog.h
 
 

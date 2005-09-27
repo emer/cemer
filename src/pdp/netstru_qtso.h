@@ -150,27 +150,29 @@ public:
   UnitViewData() {Initialize();}
   UnitViewData(const String&) {Initialize();} // dummy, for array template
   //NOTE: just use default bitwise copy constructor and copy operator
-  operator String() {return _nilString;}
 private:
   void		Initialize();
 };
 
-// following make no sense, but needed for the taPlainArray template
-inline bool operator >(const UnitViewData& a, const UnitViewData& b) {return false;}
-inline bool operator <(const UnitViewData& a, const UnitViewData& b) {return false;}
+// following needed for the taPlainArray template
 inline bool operator ==(const UnitViewData& a, const UnitViewData& b)
   {return ((a.disp_base == b.disp_base));}
 
-class UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
+class UnitViewData_BArray_impl: public taBasicArray<UnitViewData> { // #IGNORE
 #ifndef __MAKETA__
-  typedef taPlainArray<UnitViewData> inherited;
+  typedef taBasicArray<UnitViewData> inherited;
 #endif
 public:
   UnitViewData&		FastEl(const TwoDCoord& c) {return el[(c.y * m_x) + c.x];}
   void			SetGeom(TwoDCoord& c); // sets geom, and allocs values
-  UnitViewData_PArray() {m_x = 0;}
+  UnitViewData_BArray_impl() {m_x = 0;}
 protected:
   int		m_x; // retained for array lookups
+};
+
+class UnitViewData_BArray: public UnitViewData_BArray_impl { // #IGNORE
+  INHERITED(UnitViewData_BArray_impl)
+  TA_BASIC_ARRAY_FUNS(UnitViewData_BArray, UnitViewData)
 };
 
 //////////////////////////
@@ -190,7 +192,7 @@ class UnitGroupView: public nvDataView {
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  UnitViewData_PArray	uvd_arr; // #IGNORE
+  UnitViewData_BArray	uvd_arr; // #IGNORE
 
   Unit_Group*		ugrp() const {return (Unit_Group*)m_data;}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE

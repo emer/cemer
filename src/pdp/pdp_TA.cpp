@@ -138,646 +138,646 @@ TypeDef TA_GraphLogView("GraphLogView", "  View log data as a graph of lines",
 	"", "", "", sizeof(GraphLogView), (void**)&TAI_GraphLogView, 0, 0, 0,1);
 TypeDef TA_ProcessDialog("ProcessDialog", " net_qt.h and netstru_so.h  ", 
 	"", "", "", sizeof(ProcessDialog), (void**)&TAI_ProcessDialog, 0, 0, 0,1);
-TypeDef TA_PDPRoot_ptr("PDPRoot_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Project_ptr("Project_ptr", 1, 1, 0, 0,1);
-TypeDef TA_PDPLog_ptr("PDPLog_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Environment_ptr("Environment_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Network_ptr("Network_ptr", 1, 1, 0, 0,1);
-TypeDef TA_BaseSpec_MGroup_ptr("BaseSpec_MGroup_ptr", 1, 1, 0, 0,1);
-TypeDef TA_BaseSpec_ptr("BaseSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Process_ptr("Process_ptr", 1, 1, 0, 0,1);
+TypeDef TA_PDPRoot_ptr("PDPRoot_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Project_ptr("Project_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_PDPLog_ptr("PDPLog_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Environment_ptr("Environment_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Network_ptr("Network_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_BaseSpec_MGroup_ptr("BaseSpec_MGroup_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_BaseSpec_ptr("BaseSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Process_ptr("Process_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_pdpMisc("pdpMisc", " miscellaneous things for pdp", 
 	"", "", "", sizeof(pdpMisc), (void**)&TAI_pdpMisc, 0, 0, 0,1);
 TypeDef TA_PosGroup("PosGroup", " ", 
 	"", "", "", sizeof(PosGroup), (void**)&TAI_PosGroup, 0, 0, 0,1);
-TypeDef TA_const_BaseSpec_MGroup("const_BaseSpec_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_PosGroup("const_PosGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_BaseSpec_MGroup_ref("const_BaseSpec_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PosGroup_ref("const_PosGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_BaseSpec("const_BaseSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_BaseSpec_ref("const_BaseSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BaseSpec_MGroup("const_BaseSpec_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PosGroup("const_PosGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BaseSpec_MGroup_ref("const_BaseSpec_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PosGroup_ref("const_PosGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_BaseSpec("const_BaseSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BaseSpec_ref("const_BaseSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_BaseSubSpec("BaseSubSpec", " specification class for sub-objects of specs", 
 	"", "", "", sizeof(BaseSubSpec), (void**)&TAI_BaseSubSpec, 1, 0, 0,1);
-TypeDef TA_BaseSubSpec_ptr("BaseSubSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_BaseSubSpec("const_BaseSubSpec", 1, 0, 0, 0,1);
+TypeDef TA_BaseSubSpec_ptr("BaseSubSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_BaseSubSpec("const_BaseSubSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_PatternSpec("PatternSpec", " sub-spec for patterns within an eventspec", 
 	"", "", "", sizeof(PatternSpec), (void**)&TAI_PatternSpec, 1, 0, 0,1);
-TypeDef TA_const_BaseSubSpec_ref("const_BaseSubSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BaseSubSpec_ref("const_BaseSubSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_impl("SpecPtr_impl", " magic pointer to a spec", 
 	"", "", "", sizeof(SpecPtr_impl), (void**)&TAI_SpecPtr_impl, 0, 0, 0,1);
-TypeDef TA_const_SpecPtr_impl("const_SpecPtr_impl", 1, 0, 0, 0,1);
-TypeDef TA_const_SpecPtr_impl_ref("const_SpecPtr_impl_ref", 1, 0, 1, 0,1);
-TypeDef TA_SpecPtr("SpecPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_SpecPtr("const_SpecPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_SigmoidSpec("const_SigmoidSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_SpecPtr_ref("const_SpecPtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SigmoidSpec_ref("const_SigmoidSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SpecPtr_impl("const_SpecPtr_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SpecPtr_impl_ref("const_SpecPtr_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SpecPtr("SpecPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SpecPtr("const_SpecPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SigmoidSpec("const_SigmoidSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SpecPtr_ref("const_SpecPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SigmoidSpec_ref("const_SigmoidSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SchedItem("SchedItem", " one element of a schedule", 
 	"", "", "", sizeof(SchedItem), (void**)&TAI_SchedItem, 0, 0, 0,1);
 TypeDef TA_taList_SchedItem_("taList_SchedItem_", " ", 
 	"", "", "", sizeof(taList<SchedItem>), (void**)&TAI_taList_SchedItem_, 0, 0, 0,1);
-TypeDef TA_const_SchedItem("const_SchedItem", 1, 0, 0, 0,1);
-TypeDef TA_const_SchedItem_ref("const_SchedItem_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SchedItem("const_SchedItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SchedItem_ref("const_SchedItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Schedule("Schedule", " A schedule for parameters that vary over time", 
 	"", "", "", sizeof(Schedule), (void**)&TAI_Schedule, 0, 0, 0,1);
-TypeDef TA_const_Connection("const_Connection", 1, 0, 0, 0,1);
-TypeDef TA_const_Schedule("const_Schedule", 1, 0, 0, 0,1);
-TypeDef TA_const_Connection_ref("const_Connection_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Schedule_ref("const_Schedule_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Connection("const_Connection", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Schedule("const_Schedule", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Connection_ref("const_Connection_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Schedule_ref("const_Schedule_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_WeightLimits("WeightLimits", " specifies weight limits for connections", 
 	"", "", "", sizeof(WeightLimits), (void**)&TAI_WeightLimits, 0, 0, 0,1);
-TypeDef TA_Connection_ptr("Connection_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_WeightLimits("const_WeightLimits", 1, 0, 0, 0,1);
-TypeDef TA_Unit_ptr("Unit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_WeightLimits_ref("const_WeightLimits_ref", 1, 0, 1, 0,1);
-TypeDef TA_Con_Group_ptr("Con_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Layer_ptr("Layer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_TrialProcess_ptr("TrialProcess_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_ConSpec("const_ConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ConSpec_ref("const_ConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_Connection_ptr("Connection_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_WeightLimits("const_WeightLimits", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Unit_ptr("Unit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_WeightLimits_ref("const_WeightLimits_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Con_Group_ptr("Con_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Layer_ptr("Layer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_TrialProcess_ptr("TrialProcess_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_ConSpec("const_ConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ConSpec_ref("const_ConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_ConSpec_("SpecPtr_ConSpec_", "", 
 	"", "", "", sizeof(SpecPtr<ConSpec>), (void**)&TAI_SpecPtr_ConSpec_, 0, 0, 0,1);
 TypeDef TA_ConSpec_SPtr("ConSpec_SPtr", "", 
 	"", "", "", sizeof(ConSpec_SPtr), (void**)&TAI_ConSpec_SPtr, 0, 0, 0,1);
 TypeDef TA_taList_Unit_("taList_Unit_", " ", 
 	"", "", "", sizeof(taList<Unit>), (void**)&TAI_taList_Unit_, 0, 0, 0,1);
-TypeDef TA_const_ConSpec_SPtr("const_ConSpec_SPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_ConSpec_SPtr_ref("const_ConSpec_SPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ConSpec_SPtr("const_ConSpec_SPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ConSpec_SPtr_ref("const_ConSpec_SPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Unit_List("Unit_List", " ", 
 	"", "", "", sizeof(Unit_List), (void**)&TAI_Unit_List, 0, 0, 0,1);
-TypeDef TA_Projection_ptr("Projection_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Unit_List("const_Unit_List", 1, 0, 0, 0,1);
-TypeDef TA_const_Con_Group("const_Con_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_Unit_List_ref("const_Unit_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Con_Group_ptr("const_Con_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ConSpec_ptr("ConSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Con_Group_ref("const_Con_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_UnitSpec("const_UnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitSpec_ref("const_UnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_Projection_ptr("Projection_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Unit_List("const_Unit_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Con_Group("const_Con_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Unit_List_ref("const_Unit_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Con_Group_ptr("const_Con_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ConSpec_ptr("ConSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Con_Group_ref("const_Con_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_UnitSpec("const_UnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitSpec_ref("const_UnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_UnitSpec_("SpecPtr_UnitSpec_", "", 
 	"", "", "", sizeof(SpecPtr<UnitSpec>), (void**)&TAI_SpecPtr_UnitSpec_, 0, 0, 0,1);
 TypeDef TA_UnitSpec_SPtr("UnitSpec_SPtr", "", 
 	"", "", "", sizeof(UnitSpec_SPtr), (void**)&TAI_UnitSpec_SPtr, 0, 0, 0,1);
-TypeDef TA_const_UnitSpec_SPtr("const_UnitSpec_SPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_Unit("const_Unit", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitSpec_SPtr_ref("const_UnitSpec_SPtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Unit_ptr("const_Unit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Con_Group_ptr_ref("Con_Group_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_UnitSpec_ptr("UnitSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Unit_ref("const_Unit_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ProjectionSpec("const_ProjectionSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ProjectionSpec_ref("const_ProjectionSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_UnitSpec_SPtr("const_UnitSpec_SPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Unit("const_Unit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitSpec_SPtr_ref("const_UnitSpec_SPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Unit_ptr("const_Unit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Con_Group_ptr_ref("Con_Group_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_UnitSpec_ptr("UnitSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Unit_ref("const_Unit_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ProjectionSpec("const_ProjectionSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProjectionSpec_ref("const_ProjectionSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_ProjectionSpec_("SpecPtr_ProjectionSpec_", "", 
 	"", "", "", sizeof(SpecPtr<ProjectionSpec>), (void**)&TAI_SpecPtr_ProjectionSpec_, 0, 0, 0,1);
 TypeDef TA_ProjectionSpec_SPtr("ProjectionSpec_SPtr", "", 
 	"", "", "", sizeof(ProjectionSpec_SPtr), (void**)&TAI_ProjectionSpec_SPtr, 0, 0, 0,1);
-TypeDef TA_const_Projection("const_Projection", 1, 0, 0, 0,1);
-TypeDef TA_const_ProjectionSpec_SPtr("const_ProjectionSpec_SPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_Projection_ptr("const_Projection_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_ProjectionSpec_SPtr_ref("const_ProjectionSpec_SPtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_ProjectionSpec_ptr("ProjectionSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_GridLog_ptr("GridLog_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Projection_ref("const_Projection_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Projection("const_Projection", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProjectionSpec_SPtr("const_ProjectionSpec_SPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Projection_ptr("const_Projection_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_ProjectionSpec_SPtr_ref("const_ProjectionSpec_SPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ProjectionSpec_ptr("ProjectionSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_GridLog_ptr("GridLog_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Projection_ref("const_Projection_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Projection_Group("Projection_Group", "", 
 	"", "", "", sizeof(Projection_Group), (void**)&TAI_Projection_Group, 0, 0, 0,1);
 TypeDef TA_taGroup_Unit_("taGroup_Unit_", " ", 
 	"", "", "", sizeof(taGroup<Unit>), (void**)&TAI_taGroup_Unit_, 0, 0, 0,1);
-TypeDef TA_const_Projection_Group("const_Projection_Group", 1, 0, 0, 0,1);
+TypeDef TA_const_Projection_Group("const_Projection_Group", 1, 0, 0, 0, 1, 0);
 TypeDef TA_Unit_Group("Unit_Group", "  a group of units", 
 	"", "", "", sizeof(Unit_Group), (void**)&TAI_Unit_Group, 0, 0, 0,1);
-TypeDef TA_const_Projection_Group_ref("const_Projection_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Unit_Group("const_Unit_Group", 1, 0, 0, 0,1);
-TypeDef TA_Unit_Group_ptr("Unit_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Unit_Group_ptr("const_Unit_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Unit_Group_ref("const_Unit_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_LayerSpec("const_LayerSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_LayerSpec_ref("const_LayerSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_DMemShare_ref("DMemShare_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Layer("const_Layer", 1, 0, 0, 0,1);
-TypeDef TA_const_Layer_ptr("const_Layer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_LayerSpec_ptr("LayerSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Layer_ref("const_Layer_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Projection_Group_ref("const_Projection_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Unit_Group("const_Unit_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Unit_Group_ptr("Unit_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Unit_Group_ptr("const_Unit_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Unit_Group_ref("const_Unit_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_LayerSpec("const_LayerSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LayerSpec_ref("const_LayerSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_DMemShare_ref("DMemShare_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Layer("const_Layer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Layer_ptr("const_Layer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_LayerSpec_ptr("LayerSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Layer_ref("const_Layer_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_Layer_("taGroup_Layer_", " ", 
 	"", "", "", sizeof(taGroup<Layer>), (void**)&TAI_taGroup_Layer_, 0, 0, 0,1);
 TypeDef TA_Layer_MGroup("Layer_MGroup", "", 
 	"", "", "", sizeof(Layer_MGroup), (void**)&TAI_Layer_MGroup, 0, 0, 0,1);
-TypeDef TA_const_Network("const_Network", 1, 0, 0, 0,1);
-TypeDef TA_const_Layer_MGroup("const_Layer_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_Network_ptr("const_Network_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Layer_MGroup_ref("const_Layer_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Network_ref("const_Network_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Network("const_Network", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Layer_MGroup("const_Layer_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Network_ptr("const_Network_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Layer_MGroup_ref("const_Layer_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Network_ref("const_Network_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_Network_("taGroup_Network_", " ", 
 	"", "", "", sizeof(taGroup<Network>), (void**)&TAI_taGroup_Network_, 0, 0, 0,1);
 TypeDef TA_Network_MGroup("Network_MGroup", "", 
 	"", "", "", sizeof(Network_MGroup), (void**)&TAI_Network_MGroup, 0, 0, 0,1);
-TypeDef TA_const_Network_MGroup("const_Network_MGroup", 1, 0, 0, 0,1);
+TypeDef TA_const_Network_MGroup("const_Network_MGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FullPrjnSpec("FullPrjnSpec", " Full connectivity between layers", 
 	"", "", "", sizeof(FullPrjnSpec), (void**)&TAI_FullPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_Network_MGroup_ref("const_Network_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FullPrjnSpec("const_FullPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_FullPrjnSpec_ref("const_FullPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Network_MGroup_ref("const_Network_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FullPrjnSpec("const_FullPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FullPrjnSpec_ref("const_FullPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TessEl("TessEl", " one element of a tesselation specification", 
 	"", "", "", sizeof(TessEl), (void**)&TAI_TessEl, 0, 0, 0,1);
 TypeDef TA_taList_TessEl_("taList_TessEl_", " ", 
 	"", "", "", sizeof(taList<TessEl>), (void**)&TAI_taList_TessEl_, 0, 0, 0,1);
-TypeDef TA_const_TessEl("const_TessEl", 1, 0, 0, 0,1);
-TypeDef TA_const_TessEl_ref("const_TessEl_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TessEl("const_TessEl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TessEl_ref("const_TessEl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TessEl_List("TessEl_List", " list of TessEl objects", 
 	"", "", "", sizeof(TessEl_List), (void**)&TAI_TessEl_List, 0, 0, 0,1);
-TypeDef TA_const_TessEl_List("const_TessEl_List", 1, 0, 0, 0,1);
-TypeDef TA_const_TessEl_List_ref("const_TessEl_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TessEl_List("const_TessEl_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TessEl_List_ref("const_TessEl_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TesselPrjnSpec("TesselPrjnSpec", " arbitrary tesselations (repeating patterns) of connectivity", 
 	"", "", "", sizeof(TesselPrjnSpec), (void**)&TAI_TesselPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_TesselPrjnSpec("const_TesselPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_TesselPrjnSpec_ref("const_TesselPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TesselPrjnSpec("const_TesselPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TesselPrjnSpec_ref("const_TesselPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_OneToOnePrjnSpec("OneToOnePrjnSpec", " one-to-one connectivity (1st unit to 1st unit, etc)", 
 	"", "", "", sizeof(OneToOnePrjnSpec), (void**)&TAI_OneToOnePrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_OneToOnePrjnSpec("const_OneToOnePrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_OneToOnePrjnSpec_ref("const_OneToOnePrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_OneToOnePrjnSpec("const_OneToOnePrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_OneToOnePrjnSpec_ref("const_OneToOnePrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_UniformRndPrjnSpec("UniformRndPrjnSpec", " Uniform random connectivity between layers", 
 	"", "", "", sizeof(UniformRndPrjnSpec), (void**)&TAI_UniformRndPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_UniformRndPrjnSpec("const_UniformRndPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_UniformRndPrjnSpec_ref("const_UniformRndPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_UniformRndPrjnSpec("const_UniformRndPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UniformRndPrjnSpec_ref("const_UniformRndPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PolarRndPrjnSpec("PolarRndPrjnSpec", " random connectivity defined as a function of distance and angle", 
 	"", "", "", sizeof(PolarRndPrjnSpec), (void**)&TAI_PolarRndPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_PolarRndPrjnSpec("const_PolarRndPrjnSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_PolarRndPrjnSpec("const_PolarRndPrjnSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SymmetricPrjnSpec("SymmetricPrjnSpec", " connects units with receiving connection where sending one already exists", 
 	"", "", "", sizeof(SymmetricPrjnSpec), (void**)&TAI_SymmetricPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_PolarRndPrjnSpec_ref("const_PolarRndPrjnSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_Unit_ptr_ref("Unit_ptr_ref", 1, 1, 1, 0,1);
-TypeDef TA_const_SymmetricPrjnSpec("const_SymmetricPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_SymmetricPrjnSpec_ref("const_SymmetricPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_PolarRndPrjnSpec_ref("const_PolarRndPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Unit_ptr_ref("Unit_ptr_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_const_SymmetricPrjnSpec("const_SymmetricPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SymmetricPrjnSpec_ref("const_SymmetricPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LinkPrjnConPtr("LinkPrjnConPtr", " specifies a connection to link", 
 	"", "", "", sizeof(LinkPrjnConPtr), (void**)&TAI_LinkPrjnConPtr, 0, 0, 0,1);
 TypeDef TA_taList_LinkPrjnConPtr_("taList_LinkPrjnConPtr_", " ", 
 	"", "", "", sizeof(taList<LinkPrjnConPtr>), (void**)&TAI_taList_LinkPrjnConPtr_, 0, 0, 0,1);
-TypeDef TA_const_LinkPrjnConPtr("const_LinkPrjnConPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_LinkPrjnConPtr_ref("const_LinkPrjnConPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_LinkPrjnConPtr("const_LinkPrjnConPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LinkPrjnConPtr_ref("const_LinkPrjnConPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LinkPrjnConPtr_List("LinkPrjnConPtr_List", " list of LinkPrjnConPtr objects", 
 	"", "", "", sizeof(LinkPrjnConPtr_List), (void**)&TAI_LinkPrjnConPtr_List, 0, 0, 0,1);
-TypeDef TA_const_LinkPrjnConPtr_List("const_LinkPrjnConPtr_List", 1, 0, 0, 0,1);
-TypeDef TA_const_LinkPrjnConPtr_List_ref("const_LinkPrjnConPtr_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_LinkPrjnConPtr_List("const_LinkPrjnConPtr_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LinkPrjnConPtr_List_ref("const_LinkPrjnConPtr_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LinkPrjnSpec("LinkPrjnSpec", " links an arbitrary set of wts, which must already be created!", 
 	"", "", "", sizeof(LinkPrjnSpec), (void**)&TAI_LinkPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_LinkPrjnSpec("const_LinkPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_LinkPrjnSpec_ref("const_LinkPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_LinkPrjnSpec("const_LinkPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LinkPrjnSpec_ref("const_LinkPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScriptPrjnSpec("ScriptPrjnSpec", " Script-controlled connectivity", 
 	"", "", "", sizeof(ScriptPrjnSpec), (void**)&TAI_ScriptPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_ScriptPrjnSpec("const_ScriptPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ScriptPrjnSpec_ref("const_ScriptPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScriptPrjnSpec("const_ScriptPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ScriptPrjnSpec_ref("const_ScriptPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_CustomPrjnSpec("CustomPrjnSpec", " connectivity is defined manually (i.e. unit-by-unit)", 
 	"", "", "", sizeof(CustomPrjnSpec), (void**)&TAI_CustomPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_CustomPrjnSpec("const_CustomPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_CustomPrjnSpec_ref("const_CustomPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_CustomPrjnSpec("const_CustomPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CustomPrjnSpec_ref("const_CustomPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpFullPrjnSpec("GpFullPrjnSpec", " unit_group based full connectivity with distinct con_groups for each unit group", 
 	"", "", "", sizeof(GpFullPrjnSpec), (void**)&TAI_GpFullPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_GpFullPrjnSpec("const_GpFullPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GpFullPrjnSpec_ref("const_GpFullPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpFullPrjnSpec("const_GpFullPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpFullPrjnSpec_ref("const_GpFullPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpOneToOnePrjnSpec("GpOneToOnePrjnSpec", " unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)", 
 	"", "", "", sizeof(GpOneToOnePrjnSpec), (void**)&TAI_GpOneToOnePrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_GpOneToOnePrjnSpec("const_GpOneToOnePrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GpOneToOnePrjnSpec_ref("const_GpOneToOnePrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpOneToOnePrjnSpec("const_GpOneToOnePrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpOneToOnePrjnSpec_ref("const_GpOneToOnePrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RndGpOneToOnePrjnSpec("RndGpOneToOnePrjnSpec", " uniform random connectivity between one-to-one groups", 
 	"", "", "", sizeof(RndGpOneToOnePrjnSpec), (void**)&TAI_RndGpOneToOnePrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_RndGpOneToOnePrjnSpec("const_RndGpOneToOnePrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_RndGpOneToOnePrjnSpec_ref("const_RndGpOneToOnePrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RndGpOneToOnePrjnSpec("const_RndGpOneToOnePrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RndGpOneToOnePrjnSpec_ref("const_RndGpOneToOnePrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpOneToManyPrjnSpec("GpOneToManyPrjnSpec", " unit_group based one-to-many connectivity (one sending gp to all recv units)", 
 	"", "", "", sizeof(GpOneToManyPrjnSpec), (void**)&TAI_GpOneToManyPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_GpOneToManyPrjnSpec("const_GpOneToManyPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GpOneToManyPrjnSpec_ref("const_GpOneToManyPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpOneToManyPrjnSpec("const_GpOneToManyPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpOneToManyPrjnSpec_ref("const_GpOneToManyPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpTessEl("GpTessEl", " one element of a tesselation specification for groups", 
 	"", "", "", sizeof(GpTessEl), (void**)&TAI_GpTessEl, 0, 0, 0,1);
 TypeDef TA_taList_GpTessEl_("taList_GpTessEl_", " ", 
 	"", "", "", sizeof(taList<GpTessEl>), (void**)&TAI_taList_GpTessEl_, 0, 0, 0,1);
-TypeDef TA_const_GpTessEl("const_GpTessEl", 1, 0, 0, 0,1);
-TypeDef TA_const_GpTessEl_ref("const_GpTessEl_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpTessEl("const_GpTessEl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpTessEl_ref("const_GpTessEl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpTessEl_List("GpTessEl_List", " list of GpTessEl objects", 
 	"", "", "", sizeof(GpTessEl_List), (void**)&TAI_GpTessEl_List, 0, 0, 0,1);
-TypeDef TA_const_GpTessEl_List("const_GpTessEl_List", 1, 0, 0, 0,1);
-TypeDef TA_const_GpTessEl_List_ref("const_GpTessEl_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpTessEl_List("const_GpTessEl_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpTessEl_List_ref("const_GpTessEl_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GpRndTesselPrjnSpec("GpRndTesselPrjnSpec", " specifies patterns of groups to connect with, with random connectivity within each group", 
 	"", "", "", sizeof(GpRndTesselPrjnSpec), (void**)&TAI_GpRndTesselPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_GpRndTesselPrjnSpec("const_GpRndTesselPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GpRndTesselPrjnSpec_ref("const_GpRndTesselPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GpRndTesselPrjnSpec("const_GpRndTesselPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GpRndTesselPrjnSpec_ref("const_GpRndTesselPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TiledRFPrjnSpec("TiledRFPrjnSpec", " Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers", 
 	"", "", "", sizeof(TiledRFPrjnSpec), (void**)&TAI_TiledRFPrjnSpec, 1, 0, 0,1);
-TypeDef TA_const_TiledRFPrjnSpec("const_TiledRFPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_TiledRFPrjnSpec_ref("const_TiledRFPrjnSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TiledRFPrjnSpec("const_TiledRFPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TiledRFPrjnSpec_ref("const_TiledRFPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TiledGpRFPrjnSpec("TiledGpRFPrjnSpec", " Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups", 
 	"", "", "", sizeof(TiledGpRFPrjnSpec), (void**)&TAI_TiledGpRFPrjnSpec, 1, 0, 0,1);
 TypeDef TA_Pattern_Group("Pattern_Group", "", 
 	"", "", "", sizeof(Pattern_Group), (void**)&TAI_Pattern_Group, 0, 0, 0,1);
-TypeDef TA_const_TiledGpRFPrjnSpec("const_TiledGpRFPrjnSpec", 1, 0, 0, 0,1);
-TypeDef TA_Pattern_ptr("Pattern_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TiledGpRFPrjnSpec_ref("const_TiledGpRFPrjnSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_Event_ptr("Event_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Pattern_Group_ptr("Pattern_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_PatternSpec("const_PatternSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_PatternSpec_ref("const_PatternSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_taGroup_taBase__ptr("taGroup_taBase__ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_TiledGpRFPrjnSpec("const_TiledGpRFPrjnSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Pattern_ptr("Pattern_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TiledGpRFPrjnSpec_ref("const_TiledGpRFPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Event_ptr("Event_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Pattern_Group_ptr("Pattern_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_PatternSpec("const_PatternSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PatternSpec_ref("const_PatternSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taGroup_taBase__ptr("taGroup_taBase__ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_PatternSpec_Group("PatternSpec_Group", " group of pattern specs (acts like a template for pattern groups)", 
 	"", "", "", sizeof(PatternSpec_Group), (void**)&TAI_PatternSpec_Group, 0, 0, 0,1);
-TypeDef TA_const_EventSpec("const_EventSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_PatternSpec_Group("const_PatternSpec_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_EventSpec_ref("const_EventSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PatternSpec_Group_ref("const_PatternSpec_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_EventSpec("const_EventSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PatternSpec_Group("const_PatternSpec_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EventSpec_ref("const_EventSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PatternSpec_Group_ref("const_PatternSpec_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_EventSpec_("SpecPtr_EventSpec_", "", 
 	"", "", "", sizeof(SpecPtr<EventSpec>), (void**)&TAI_SpecPtr_EventSpec_, 0, 0, 0,1);
 TypeDef TA_EventSpec_SPtr("EventSpec_SPtr", "", 
 	"", "", "", sizeof(EventSpec_SPtr), (void**)&TAI_EventSpec_SPtr, 0, 0, 0,1);
-TypeDef TA_const_Pattern("const_Pattern", 1, 0, 0, 0,1);
-TypeDef TA_const_EventSpec_SPtr("const_EventSpec_SPtr", 1, 0, 0, 0,1);
-TypeDef TA_const_Pattern_ref("const_Pattern_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_EventSpec_SPtr_ref("const_EventSpec_SPtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Pattern_Group("const_Pattern_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_Pattern_Group_ref("const_Pattern_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_EventSpec_ptr("EventSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Event("const_Event", 1, 0, 0, 0,1);
-TypeDef TA_const_Event_ref("const_Event_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Pattern("const_Pattern", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EventSpec_SPtr("const_EventSpec_SPtr", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Pattern_ref("const_Pattern_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_EventSpec_SPtr_ref("const_EventSpec_SPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Pattern_Group("const_Pattern_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Pattern_Group_ref("const_Pattern_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_EventSpec_ptr("EventSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Event("const_Event", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Event_ref("const_Event_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_Event_("taGroup_Event_", " ", 
 	"", "", "", sizeof(taGroup<Event>), (void**)&TAI_taGroup_Event_, 0, 0, 0,1);
 TypeDef TA_Event_MGroup("Event_MGroup", " Group of events", 
 	"", "", "", sizeof(Event_MGroup), (void**)&TAI_Event_MGroup, 0, 0, 0,1);
-TypeDef TA_const_Event_MGroup("const_Event_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_Event_MGroup_ptr("Event_MGroup_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Event_MGroup_ref("const_Event_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_GraphLog_ptr("GraphLog_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Environment("const_Environment", 1, 0, 0, 0,1);
-TypeDef TA_const_Environment_ref("const_Environment_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Event_MGroup("const_Event_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Event_MGroup_ptr("Event_MGroup_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Event_MGroup_ref("const_Event_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GraphLog_ptr("GraphLog_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Environment("const_Environment", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Environment_ref("const_Environment_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_Environment_("taGroup_Environment_", " ", 
 	"", "", "", sizeof(taGroup<Environment>), (void**)&TAI_taGroup_Environment_, 0, 0, 0,1);
 TypeDef TA_Environment_MGroup("Environment_MGroup", " group of environments", 
 	"", "", "", sizeof(Environment_MGroup), (void**)&TAI_Environment_MGroup, 0, 0, 0,1);
 TypeDef TA_taList_Environment_("taList_Environment_", " ", 
 	"", "", "", sizeof(taList<Environment>), (void**)&TAI_taList_Environment_, 0, 0, 0,1);
-TypeDef TA_const_Environment_MGroup("const_Environment_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_Environment_MGroup_ref("const_Environment_MGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Environment_MGroup("const_Environment_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Environment_MGroup_ref("const_Environment_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Environment_List("Environment_List", " a simple list of environments", 
 	"", "", "", sizeof(Environment_List), (void**)&TAI_Environment_List, 0, 0, 0,1);
-TypeDef TA_const_ScriptEnv("const_ScriptEnv", 1, 0, 0, 0,1);
-TypeDef TA_const_Environment_List("const_Environment_List", 1, 0, 0, 0,1);
-TypeDef TA_const_ScriptEnv_ref("const_ScriptEnv_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Environment_List_ref("const_Environment_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScriptEnv("const_ScriptEnv", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Environment_List("const_Environment_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ScriptEnv_ref("const_ScriptEnv_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Environment_List_ref("const_Environment_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_InteractiveScriptEnv("InteractiveScriptEnv", " For interactively-generated environments: Script is called for each event in GetNextEvent function (use with InteractiveEpoch)", 
 	"", "", "", sizeof(InteractiveScriptEnv), (void**)&TAI_InteractiveScriptEnv, 1, 0, 0,1);
-TypeDef TA_const_InteractiveScriptEnv("const_InteractiveScriptEnv", 1, 0, 0, 0,1);
+TypeDef TA_const_InteractiveScriptEnv("const_InteractiveScriptEnv", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FreqEvent("FreqEvent", " an event that has a frequency associated with it", 
 	"", "", "", sizeof(FreqEvent), (void**)&TAI_FreqEvent, 0, 0, 0,1);
-TypeDef TA_const_InteractiveScriptEnv_ref("const_InteractiveScriptEnv_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_InteractiveScriptEnv_ref("const_InteractiveScriptEnv_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FreqEnv("FreqEnv", " environment which has a frequency for each event", 
 	"", "", "", sizeof(FreqEnv), (void**)&TAI_FreqEnv, 1, 0, 0,1);
-TypeDef TA_const_FreqEvent("const_FreqEvent", 1, 0, 0, 0,1);
-TypeDef TA_FreqEnv_ptr("FreqEnv_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_FreqEvent_ref("const_FreqEvent_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FreqEvent("const_FreqEvent", 1, 0, 0, 0, 1, 0);
+TypeDef TA_FreqEnv_ptr("FreqEnv_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_FreqEvent_ref("const_FreqEvent_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FreqEvent_Group("FreqEvent_Group", " an event group that has a frequency associated with it", 
 	"", "", "", sizeof(FreqEvent_Group), (void**)&TAI_FreqEvent_Group, 0, 0, 0,1);
-TypeDef TA_const_FreqEnv("const_FreqEnv", 1, 0, 0, 0,1);
-TypeDef TA_const_FreqEvent_Group("const_FreqEvent_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_FreqEnv_ref("const_FreqEnv_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FreqEvent_Group_ref("const_FreqEvent_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FreqEnv("const_FreqEnv", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FreqEvent_Group("const_FreqEvent_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FreqEnv_ref("const_FreqEnv_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FreqEvent_Group_ref("const_FreqEvent_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeEvent("TimeEvent", " an event which occurs at a specific time", 
 	"", "", "", sizeof(TimeEvent), (void**)&TAI_TimeEvent, 0, 0, 0,1);
-TypeDef TA_TimeEvent_ptr("TimeEvent_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TimeEvent("const_TimeEvent", 1, 0, 0, 0,1);
-TypeDef TA_const_TimeEvent_ref("const_TimeEvent_ref", 1, 0, 1, 0,1);
+TypeDef TA_TimeEvent_ptr("TimeEvent_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TimeEvent("const_TimeEvent", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TimeEvent_ref("const_TimeEvent_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeEvent_MGroup("TimeEvent_MGroup", " a group of time-based events", 
 	"", "", "", sizeof(TimeEvent_MGroup), (void**)&TAI_TimeEvent_MGroup, 0, 0, 0,1);
-TypeDef TA_const_TimeEnvironment("const_TimeEnvironment", 1, 0, 0, 0,1);
-TypeDef TA_const_TimeEvent_MGroup("const_TimeEvent_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_TimeEnvironment_ref("const_TimeEnvironment_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TimeEvent_MGroup_ref("const_TimeEvent_MGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TimeEnvironment("const_TimeEnvironment", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TimeEvent_MGroup("const_TimeEvent_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TimeEnvironment_ref("const_TimeEnvironment_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TimeEvent_MGroup_ref("const_TimeEvent_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FreqTimeEvent("FreqTimeEvent", " a time event that has a frequency associated with it", 
 	"", "", "", sizeof(FreqTimeEvent), (void**)&TAI_FreqTimeEvent, 0, 0, 0,1);
-TypeDef TA_const_FreqTimeEvent("const_FreqTimeEvent", 1, 0, 0, 0,1);
+TypeDef TA_const_FreqTimeEvent("const_FreqTimeEvent", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FreqTimeEvent_Group("FreqTimeEvent_Group", " a time event group that has a frequency associated with it", 
 	"", "", "", sizeof(FreqTimeEvent_Group), (void**)&TAI_FreqTimeEvent_Group, 0, 0, 0,1);
-TypeDef TA_const_FreqTimeEvent_ref("const_FreqTimeEvent_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FreqTimeEvent_Group("const_FreqTimeEvent_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_FreqTimeEvent_Group_ref("const_FreqTimeEvent_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FreqTimeEvent_ref("const_FreqTimeEvent_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FreqTimeEvent_Group("const_FreqTimeEvent_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FreqTimeEvent_Group_ref("const_FreqTimeEvent_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FreqTimeEnv("FreqTimeEnv", " a time environment which has a frequency for each event", 
 	"", "", "", sizeof(FreqTimeEnv), (void**)&TAI_FreqTimeEnv, 1, 0, 0,1);
-TypeDef TA_const_FreqTimeEnv("const_FreqTimeEnv", 1, 0, 0, 0,1);
-TypeDef TA_const_FreqTimeEnv_ref("const_FreqTimeEnv_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FreqTimeEnv("const_FreqTimeEnv", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FreqTimeEnv_ref("const_FreqTimeEnv_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ProbPattern("ProbPattern", " pattern is chosen from group of patterns with given probability", 
 	"", "", "", sizeof(ProbPattern), (void**)&TAI_ProbPattern, 0, 0, 0,1);
-TypeDef TA_const_ProbPattern("const_ProbPattern", 1, 0, 0, 0,1);
-TypeDef TA_const_ProbPattern_ref("const_ProbPattern_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ProbPattern("const_ProbPattern", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProbPattern_ref("const_ProbPattern_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ProbPatternSpec_Group("ProbPatternSpec_Group", " defines a group of patterns that are chosen according to their probabilities", 
 	"", "", "", sizeof(ProbPatternSpec_Group), (void**)&TAI_ProbPatternSpec_Group, 0, 0, 0,1);
-TypeDef TA_const_ProbPatternSpec_Group("const_ProbPatternSpec_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_ProbPatternSpec_Group_ref("const_ProbPatternSpec_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ProbPatternSpec_Group("const_ProbPatternSpec_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProbPatternSpec_Group_ref("const_ProbPatternSpec_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ProbEventSpec("ProbEventSpec", " events have probabalistically-chosen patterns contained in ProbPatternSpec_Groups", 
 	"", "", "", sizeof(ProbEventSpec), (void**)&TAI_ProbEventSpec, 1, 0, 0,1);
-TypeDef TA_const_ProbEventSpec("const_ProbEventSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ProbEventSpec_ref("const_ProbEventSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ProbEventSpec("const_ProbEventSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProbEventSpec_ref("const_ProbEventSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XYPatternSpec("XYPatternSpec", " for patterns that are positioned at a particular x,y offset location", 
 	"", "", "", sizeof(XYPatternSpec), (void**)&TAI_XYPatternSpec, 1, 0, 0,1);
-TypeDef TA_const_XYPatternSpec("const_XYPatternSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_XYPatternSpec_ref("const_XYPatternSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_XYPatternSpec("const_XYPatternSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_XYPatternSpec_ref("const_XYPatternSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XYPattern("XYPattern", " specifies the x,y offset location of the pattern in the layer", 
 	"", "", "", sizeof(XYPattern), (void**)&TAI_XYPattern, 0, 0, 0,1);
-TypeDef TA_const_XYPattern("const_XYPattern", 1, 0, 0, 0,1);
-TypeDef TA_const_XYPattern_ref("const_XYPattern_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_XYPattern("const_XYPattern", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_XYPattern_ref("const_XYPattern_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XYSubPatternSpec("XYSubPatternSpec", " presents rectagular subsets (size of layer) of large patterns at x,y offset", 
 	"", "", "", sizeof(XYSubPatternSpec), (void**)&TAI_XYSubPatternSpec, 1, 0, 0,1);
-TypeDef TA_const_XYSubPatternSpec("const_XYSubPatternSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_XYSubPatternSpec_ref("const_XYSubPatternSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_XYSubPatternSpec("const_XYSubPatternSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_XYSubPatternSpec_ref("const_XYSubPatternSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XYSubPattern("XYSubPattern", " specifies the x,y offset location of the layer within the pattern", 
 	"", "", "", sizeof(XYSubPattern), (void**)&TAI_XYSubPattern, 0, 0, 0,1);
-TypeDef TA_const_XYSubPattern("const_XYSubPattern", 1, 0, 0, 0,1);
-TypeDef TA_const_XYSubPattern_ref("const_XYSubPattern_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_XYSubPattern("const_XYSubPattern", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_XYSubPattern_ref("const_XYSubPattern_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GroupPatternSpec("GroupPatternSpec", " organizes pattern values into sub-groups for viewing and/or sending to network", 
 	"", "", "", sizeof(GroupPatternSpec), (void**)&TAI_GroupPatternSpec, 1, 0, 0,1);
-TypeDef TA_const_GroupPatternSpec("const_GroupPatternSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GroupPatternSpec_ref("const_GroupPatternSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GroupPatternSpec("const_GroupPatternSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GroupPatternSpec_ref("const_GroupPatternSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DurEvent("DurEvent", " an event which lasts for a particular amount of time", 
 	"", "", "", sizeof(DurEvent), (void**)&TAI_DurEvent, 0, 0, 0,1);
-TypeDef TA_const_DurEvent("const_DurEvent", 1, 0, 0, 0,1);
-TypeDef TA_const_DurEvent_ref("const_DurEvent_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DurEvent("const_DurEvent", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DurEvent_ref("const_DurEvent_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FromFileEnv("FromFileEnv", " Environment that reads events incrementally from a file into events.", 
 	"", "", "", sizeof(FromFileEnv), (void**)&TAI_FromFileEnv, 1, 0, 0,1);
-TypeDef TA_const_FromFileEnv("const_FromFileEnv", 1, 0, 0, 0,1);
-TypeDef TA_const_FromFileEnv_ref("const_FromFileEnv_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FromFileEnv("const_FromFileEnv", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FromFileEnv_ref("const_FromFileEnv_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_CtrlPanelData("CtrlPanelData", " data for the control panel", 
 	"", "", "", sizeof(CtrlPanelData), (void**)&TAI_CtrlPanelData, 0, 0, 0,1);
-TypeDef TA_const_CtrlPanelData("const_CtrlPanelData", 1, 0, 0, 0,1);
-TypeDef TA_LogData_ptr("LogData_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_CtrlPanelData_ref("const_CtrlPanelData_ref", 1, 0, 1, 0,1);
-TypeDef TA_SchedProcess_ptr("SchedProcess_ptr", 1, 1, 0, 0,1);
-TypeDef TA_EpochProcess_ptr("EpochProcess_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Process("const_Process", 1, 0, 0, 0,1);
-TypeDef TA_const_Process_ref("const_Process_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_CtrlPanelData("const_CtrlPanelData", 1, 0, 0, 0, 1, 0);
+TypeDef TA_LogData_ptr("LogData_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_CtrlPanelData_ref("const_CtrlPanelData_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SchedProcess_ptr("SchedProcess_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_EpochProcess_ptr("EpochProcess_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Process("const_Process", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Process_ref("const_Process_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Process_Group("Process_Group", " a regular group of processes", 
 	"", "", "", sizeof(Process_Group), (void**)&TAI_Process_Group, 0, 0, 0,1);
 TypeDef TA_taGroup_Process_("taGroup_Process_", " ", 
 	"", "", "", sizeof(taGroup<Process>), (void**)&TAI_taGroup_Process_, 0, 0, 0,1);
-TypeDef TA_const_Process_Group("const_Process_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_Process_Group_ref("const_Process_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Process_Group("const_Process_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Process_Group_ref("const_Process_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Process_MGroup("Process_MGroup", " a menu group for processes", 
 	"", "", "", sizeof(Process_MGroup), (void**)&TAI_Process_MGroup, 0, 0, 0,1);
-TypeDef TA_const_Process_MGroup("const_Process_MGroup", 1, 0, 0, 0,1);
+TypeDef TA_const_Process_MGroup("const_Process_MGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_CritParam("CritParam", " stopping criteria params", 
 	"", "", "", sizeof(CritParam), (void**)&TAI_CritParam, 0, 0, 0,1);
-TypeDef TA_const_Process_MGroup_ref("const_Process_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_CritParam("const_CritParam", 1, 0, 0, 0,1);
-TypeDef TA_const_CritParam_ref("const_CritParam_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Process_MGroup_ref("const_Process_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_CritParam("const_CritParam", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CritParam_ref("const_CritParam_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_StatVal("StatVal", " Statistic value", 
 	"", "", "", sizeof(StatVal), (void**)&TAI_StatVal, 0, 0, 0,1);
-TypeDef TA_const_StatVal("const_StatVal", 1, 0, 0, 0,1);
-TypeDef TA_const_StatVal_ref("const_StatVal_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_StatVal("const_StatVal", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_StatVal_ref("const_StatVal_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_StatVal_List("StatVal_List", " group of stat values", 
 	"", "", "", sizeof(StatVal_List), (void**)&TAI_StatVal_List, 0, 0, 0,1);
-TypeDef TA_StatVal_ptr("StatVal_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_StatVal_List("const_StatVal_List", 1, 0, 0, 0,1);
-TypeDef TA_StatVal_List_ptr("StatVal_List_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_StatVal_List_ref("const_StatVal_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_StatVal_ptr("StatVal_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_StatVal_List("const_StatVal_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_StatVal_List_ptr("StatVal_List_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_StatVal_List_ref("const_StatVal_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_StatValAgg("StatValAgg", " Aggregation for StatVal-based values", 
 	"", "", "", sizeof(StatValAgg), (void**)&TAI_StatValAgg, 0, 0, 0,1);
-TypeDef TA_Stat_ptr("Stat_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_StatValAgg("const_StatValAgg", 1, 0, 0, 0,1);
-TypeDef TA_const_StatValAgg_ref("const_StatValAgg_ref", 1, 0, 1, 0,1);
+TypeDef TA_Stat_ptr("Stat_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_StatValAgg("const_StatValAgg", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_StatValAgg_ref("const_StatValAgg_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_AggStat("AggStat", " Aggregate statistics over time (processing levels)", 
 	"", "", "", sizeof(AggStat), (void**)&TAI_AggStat, 0, 0, 0,1);
-TypeDef TA_const_Stat("const_Stat", 1, 0, 0, 0,1);
-TypeDef TA_const_AggStat("const_AggStat", 1, 0, 0, 0,1);
-TypeDef TA_const_Stat_ref("const_Stat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_AggStat_ref("const_AggStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_MonitorStat_ptr("MonitorStat_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_Stat("const_Stat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_AggStat("const_AggStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Stat_ref("const_Stat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_AggStat_ref("const_AggStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_MonitorStat_ptr("MonitorStat_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_Stat_Group("Stat_Group", " a group of statistics", 
 	"", "", "", sizeof(Stat_Group), (void**)&TAI_Stat_Group, 0, 0, 0,1);
-TypeDef TA_const_SE_Stat("const_SE_Stat", 1, 0, 0, 0,1);
-TypeDef TA_const_Stat_Group("const_Stat_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_SE_Stat_ref("const_SE_Stat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Stat_Group_ref("const_Stat_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_MonitorStat("const_MonitorStat", 1, 0, 0, 0,1);
-TypeDef TA_const_MonitorStat_ref("const_MonitorStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SE_Stat("const_SE_Stat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Stat_Group("const_Stat_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SE_Stat_ref("const_SE_Stat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Stat_Group_ref("const_Stat_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_MonitorStat("const_MonitorStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MonitorStat_ref("const_MonitorStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_LogView_("taPtrList_LogView_", " ", 
 	"", "", "", sizeof(taPtrList<LogView>), (void**)&TAI_taPtrList_LogView_, 0, 0, 0,1);
 TypeDef TA_LogView_PtrList("LogView_PtrList", " link list of associated logviews", 
 	"", "", "", sizeof(LogView_PtrList), (void**)&TAI_LogView_PtrList, 0, 0, 0,1);
-TypeDef TA_LogView_ptr("LogView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_PDPLog("const_PDPLog", 1, 0, 0, 0,1);
-TypeDef TA_const_PDPLog_ref("const_PDPLog_ref", 1, 0, 1, 0,1);
+TypeDef TA_LogView_ptr("LogView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_PDPLog("const_PDPLog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PDPLog_ref("const_PDPLog_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PDPLog_Group("PDPLog_Group", "", 
 	"", "", "", sizeof(PDPLog_Group), (void**)&TAI_PDPLog_Group, 0, 0, 0,1);
 TypeDef TA_taGroup_PDPLog_("taGroup_PDPLog_", " ", 
 	"", "", "", sizeof(taGroup<PDPLog>), (void**)&TAI_taGroup_PDPLog_, 0, 0, 0,1);
-TypeDef TA_const_PDPLog_Group("const_PDPLog_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_PDPLog_Group_ref("const_PDPLog_Group_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_PDPLog_Group("const_PDPLog_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PDPLog_Group_ref("const_PDPLog_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PDPLog_MGroup("PDPLog_MGroup", "", 
 	"", "", "", sizeof(PDPLog_MGroup), (void**)&TAI_PDPLog_MGroup, 0, 0, 0,1);
-TypeDef TA_const_TextLog("const_TextLog", 1, 0, 0, 0,1);
-TypeDef TA_const_PDPLog_MGroup("const_PDPLog_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_TextLog_ref("const_TextLog_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PDPLog_MGroup_ref("const_PDPLog_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_GridLog("const_GridLog", 1, 0, 0, 0,1);
-TypeDef TA_const_GridLog_ref("const_GridLog_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TextLog("const_TextLog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PDPLog_MGroup("const_PDPLog_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TextLog_ref("const_TextLog_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PDPLog_MGroup_ref("const_PDPLog_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_GridLog("const_GridLog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GridLog_ref("const_GridLog_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_NetLog("NetLog", " log with netlog as a default display", 
 	"", "", "", sizeof(NetLog), (void**)&TAI_NetLog, 1, 0, 0,1);
-TypeDef TA_const_GraphLog("const_GraphLog", 1, 0, 0, 0,1);
-TypeDef TA_const_NetLog("const_NetLog", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphLog_ref("const_GraphLog_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_NetLog_ref("const_NetLog_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GraphLog("const_GraphLog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NetLog("const_NetLog", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphLog_ref("const_GraphLog_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_NetLog_ref("const_NetLog_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Counter("Counter", " Holds the value of a loop counter", 
 	"", "", "", sizeof(Counter), (void**)&TAI_Counter, 0, 0, 0,1);
-TypeDef TA_const_Counter("const_Counter", 1, 0, 0, 0,1);
+TypeDef TA_const_Counter("const_Counter", 1, 0, 0, 0, 1, 0);
 TypeDef TA_StepParams("StepParams", " Holds steping process parameters", 
 	"", "", "", sizeof(StepParams), (void**)&TAI_StepParams, 0, 0, 0,1);
-TypeDef TA_const_Counter_ref("const_Counter_ref", 1, 0, 1, 0,1);
-TypeDef TA_Counter_ptr("Counter_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_StepParams("const_StepParams", 1, 0, 0, 0,1);
-TypeDef TA_Process_MGroup_ptr("Process_MGroup_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_StepParams_ref("const_StepParams_ref", 1, 0, 1, 0,1);
-TypeDef TA_Stat_Group_ptr("Stat_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Process_Group_ptr("Process_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_SchedProcess("const_SchedProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_SchedProcess_ref("const_SchedProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_CycleProcess("const_CycleProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_CycleProcess_ref("const_CycleProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SettleProcess("const_SettleProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_SettleProcess_ref("const_SettleProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TrialProcess("const_TrialProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_TrialProcess_ref("const_TrialProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_EpochProcess("const_EpochProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_EpochProcess_ref("const_EpochProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_SequenceEpoch_ptr("SequenceEpoch_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_SequenceProcess("const_SequenceProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_SequenceProcess_ref("const_SequenceProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SequenceEpoch("const_SequenceEpoch", 1, 0, 0, 0,1);
-TypeDef TA_const_SequenceEpoch_ref("const_SequenceEpoch_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Counter_ref("const_Counter_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Counter_ptr("Counter_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_StepParams("const_StepParams", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Process_MGroup_ptr("Process_MGroup_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_StepParams_ref("const_StepParams_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Stat_Group_ptr("Stat_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Process_Group_ptr("Process_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_SchedProcess("const_SchedProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SchedProcess_ref("const_SchedProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_CycleProcess("const_CycleProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CycleProcess_ref("const_CycleProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SettleProcess("const_SettleProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SettleProcess_ref("const_SettleProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TrialProcess("const_TrialProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TrialProcess_ref("const_TrialProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_EpochProcess("const_EpochProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EpochProcess_ref("const_EpochProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SequenceEpoch_ptr("SequenceEpoch_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_SequenceProcess("const_SequenceProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SequenceProcess_ref("const_SequenceProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SequenceEpoch("const_SequenceEpoch", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SequenceEpoch_ref("const_SequenceEpoch_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_InteractiveEpoch("InteractiveEpoch", " Loops over events in an environment using the interactive interface of GetNextEvent(), which can generate new events based on current state", 
 	"", "", "", sizeof(InteractiveEpoch), (void**)&TAI_InteractiveEpoch, 1, 0, 0,1);
-TypeDef TA_const_NEpochProcess("const_NEpochProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_InteractiveEpoch("const_InteractiveEpoch", 1, 0, 0, 0,1);
-TypeDef TA_const_NEpochProcess_ref("const_NEpochProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_InteractiveEpoch_ref("const_InteractiveEpoch_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TrainProcess("const_TrainProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_TrainProcess_ref("const_TrainProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_BatchProcess("const_BatchProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_BatchProcess_ref("const_BatchProcess_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_NEpochProcess("const_NEpochProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_InteractiveEpoch("const_InteractiveEpoch", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NEpochProcess_ref("const_NEpochProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_InteractiveEpoch_ref("const_InteractiveEpoch_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TrainProcess("const_TrainProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TrainProcess_ref("const_TrainProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_BatchProcess("const_BatchProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BatchProcess_ref("const_BatchProcess_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScriptProcess("ScriptProcess", " a process for use with scripts (has s_args)", 
 	"", "", "", sizeof(ScriptProcess), (void**)&TAI_ScriptProcess, 1, 0, 0,1);
-TypeDef TA_const_ScriptProcess("const_ScriptProcess", 1, 0, 0, 0,1);
+TypeDef TA_const_ScriptProcess("const_ScriptProcess", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SaveNetsProc("SaveNetsProc", " saves networks with network.name + counters (batch, epoch)", 
 	"", "", "", sizeof(SaveNetsProc), (void**)&TAI_SaveNetsProc, 1, 0, 0,1);
-TypeDef TA_const_ScriptProcess_ref("const_ScriptProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SaveNetsProc("const_SaveNetsProc", 1, 0, 0, 0,1);
-TypeDef TA_const_SaveNetsProc_ref("const_SaveNetsProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScriptProcess_ref("const_ScriptProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SaveNetsProc("const_SaveNetsProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SaveNetsProc_ref("const_SaveNetsProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SaveWtsProc("SaveWtsProc", " saves weights with network.name + counters (batch, epoch)", 
 	"", "", "", sizeof(SaveWtsProc), (void**)&TAI_SaveWtsProc, 1, 0, 0,1);
-TypeDef TA_const_SaveWtsProc("const_SaveWtsProc", 1, 0, 0, 0,1);
-TypeDef TA_const_SaveWtsProc_ref("const_SaveWtsProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SaveWtsProc("const_SaveWtsProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SaveWtsProc_ref("const_SaveWtsProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LoadWtsProc("LoadWtsProc", " reads in a set of weights from specified file, as a way to initialize weights", 
 	"", "", "", sizeof(LoadWtsProc), (void**)&TAI_LoadWtsProc, 1, 0, 0,1);
-TypeDef TA_const_LoadWtsProc("const_LoadWtsProc", 1, 0, 0, 0,1);
-TypeDef TA_const_LoadWtsProc_ref("const_LoadWtsProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_LoadWtsProc("const_LoadWtsProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LoadWtsProc_ref("const_LoadWtsProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_InitWtsProc("InitWtsProc", " initialize the network's weights (InitWtState)", 
 	"", "", "", sizeof(InitWtsProc), (void**)&TAI_InitWtsProc, 1, 0, 0,1);
-TypeDef TA_const_InitWtsProc("const_InitWtsProc", 1, 0, 0, 0,1);
-TypeDef TA_const_InitWtsProc_ref("const_InitWtsProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_InitWtsProc("const_InitWtsProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_InitWtsProc_ref("const_InitWtsProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SyncEpochProc("SyncEpochProc", " Epoch that runs two different sub-processes", 
 	"", "", "", sizeof(SyncEpochProc), (void**)&TAI_SyncEpochProc, 1, 0, 0,1);
-TypeDef TA_const_SyncEpochProc("const_SyncEpochProc", 1, 0, 0, 0,1);
-TypeDef TA_const_SyncEpochProc_ref("const_SyncEpochProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SyncEpochProc("const_SyncEpochProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SyncEpochProc_ref("const_SyncEpochProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_GridSearchBatch("GridSearchBatch", " Increments param_path parameter over batches to search parameter space in equal increments", 
 	"", "", "", sizeof(GridSearchBatch), (void**)&TAI_GridSearchBatch, 1, 0, 0,1);
-TypeDef TA_const_GridSearchBatch("const_GridSearchBatch", 1, 0, 0, 0,1);
-TypeDef TA_const_GridSearchBatch_ref("const_GridSearchBatch_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GridSearchBatch("const_GridSearchBatch", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GridSearchBatch_ref("const_GridSearchBatch_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SameSeedBatch("SameSeedBatch", " Stores a list of random seeds that are used at start of each batch run -- ensures each batch run starts with the same seed", 
 	"", "", "", sizeof(SameSeedBatch), (void**)&TAI_SameSeedBatch, 1, 0, 0,1);
-TypeDef TA_const_SameSeedBatch("const_SameSeedBatch", 1, 0, 0, 0,1);
-TypeDef TA_const_SameSeedBatch_ref("const_SameSeedBatch_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SameSeedBatch("const_SameSeedBatch", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SameSeedBatch_ref("const_SameSeedBatch_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ForkProcess("ForkProcess", " Runs two different sub-processes", 
 	"", "", "", sizeof(ForkProcess), (void**)&TAI_ForkProcess, 1, 0, 0,1);
-TypeDef TA_const_ForkProcess("const_ForkProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_ForkProcess_ref("const_ForkProcess_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ForkProcess("const_ForkProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ForkProcess_ref("const_ForkProcess_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_BridgeProcess("BridgeProcess", " a bridge that connects two different networks together by copying values", 
 	"", "", "", sizeof(BridgeProcess), (void**)&TAI_BridgeProcess, 1, 0, 0,1);
-TypeDef TA_const_BridgeProcess("const_BridgeProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_BridgeProcess_ref("const_BridgeProcess_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BridgeProcess("const_BridgeProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BridgeProcess_ref("const_BridgeProcess_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MultiEnvProcess("MultiEnvProcess", " run subprocess over multiple environments, indexed by counter", 
 	"", "", "", sizeof(MultiEnvProcess), (void**)&TAI_MultiEnvProcess, 1, 0, 0,1);
-TypeDef TA_const_MultiEnvProcess("const_MultiEnvProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_MultiEnvProcess_ref("const_MultiEnvProcess_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_MultiEnvProcess("const_MultiEnvProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MultiEnvProcess_ref("const_MultiEnvProcess_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PatternFlagProcess("PatternFlagProcess", " iteratively sets/resets pattern flag at index = counter for all patterns, e.g. to determine sensitivity to given input", 
 	"", "", "", sizeof(PatternFlagProcess), (void**)&TAI_PatternFlagProcess, 1, 0, 0,1);
-TypeDef TA_const_ClosestEventStat("const_ClosestEventStat", 1, 0, 0, 0,1);
-TypeDef TA_const_PatternFlagProcess("const_PatternFlagProcess", 1, 0, 0, 0,1);
-TypeDef TA_const_ClosestEventStat_ref("const_ClosestEventStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PatternFlagProcess_ref("const_PatternFlagProcess_ref", 1, 0, 1, 0,1);
-TypeDef TA_SettleProcess_ptr("SettleProcess_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_CyclesToSettle("const_CyclesToSettle", 1, 0, 0, 0,1);
-TypeDef TA_const_CyclesToSettle_ref("const_CyclesToSettle_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ClosestEventStat("const_ClosestEventStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PatternFlagProcess("const_PatternFlagProcess", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ClosestEventStat_ref("const_ClosestEventStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PatternFlagProcess_ref("const_PatternFlagProcess_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SettleProcess_ptr("SettleProcess_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_CyclesToSettle("const_CyclesToSettle", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CyclesToSettle_ref("const_CyclesToSettle_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ActThreshRTStat("ActThreshRTStat", " records reaction-time in terms of number of cycles it took for max act in layer to exceed a threshold (doesn't necc stop settling though, unless stopcrit is set!)", 
 	"", "", "", sizeof(ActThreshRTStat), (void**)&TAI_ActThreshRTStat, 1, 0, 0,1);
-TypeDef TA_const_ScriptStat("const_ScriptStat", 1, 0, 0, 0,1);
-TypeDef TA_const_ActThreshRTStat("const_ActThreshRTStat", 1, 0, 0, 0,1);
-TypeDef TA_const_ScriptStat_ref("const_ScriptStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ActThreshRTStat_ref("const_ActThreshRTStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_CompareStat("const_CompareStat", 1, 0, 0, 0,1);
-TypeDef TA_const_CompareStat_ref("const_CompareStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScriptStat("const_ScriptStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ActThreshRTStat("const_ActThreshRTStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ScriptStat_ref("const_ScriptStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ActThreshRTStat_ref("const_ActThreshRTStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_CompareStat("const_CompareStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CompareStat_ref("const_CompareStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ProjectionStat("ProjectionStat", " projects values from another stat along a given vector according to given distance metric", 
 	"", "", "", sizeof(ProjectionStat), (void**)&TAI_ProjectionStat, 1, 0, 0,1);
-TypeDef TA_const_ProjectionStat("const_ProjectionStat", 1, 0, 0, 0,1);
+TypeDef TA_const_ProjectionStat("const_ProjectionStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ComputeStat("ComputeStat", " performs simple math computations on one or two stats, aggs the results according to net_agg", 
 	"", "", "", sizeof(ComputeStat), (void**)&TAI_ComputeStat, 1, 0, 0,1);
-TypeDef TA_const_ProjectionStat_ref("const_ProjectionStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ComputeStat("const_ComputeStat", 1, 0, 0, 0,1);
-TypeDef TA_const_ComputeStat_ref("const_ComputeStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ProjectionStat_ref("const_ProjectionStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ComputeStat("const_ComputeStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ComputeStat_ref("const_ComputeStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_CopyToEnvStat("CopyToEnvStat", " an aggregator-like stat that copies stat values from source stat to data environment", 
 	"", "", "", sizeof(CopyToEnvStat), (void**)&TAI_CopyToEnvStat, 1, 0, 0,1);
-TypeDef TA_const_EpochCounterStat("const_EpochCounterStat", 1, 0, 0, 0,1);
-TypeDef TA_const_CopyToEnvStat("const_CopyToEnvStat", 1, 0, 0, 0,1);
-TypeDef TA_const_EpochCounterStat_ref("const_EpochCounterStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_CopyToEnvStat_ref("const_CopyToEnvStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ProcCounterStat("const_ProcCounterStat", 1, 0, 0, 0,1);
-TypeDef TA_const_ProcCounterStat_ref("const_ProcCounterStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_EpochCounterStat("const_EpochCounterStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CopyToEnvStat("const_CopyToEnvStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EpochCounterStat_ref("const_EpochCounterStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_CopyToEnvStat_ref("const_CopyToEnvStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ProcCounterStat("const_ProcCounterStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ProcCounterStat_ref("const_ProcCounterStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MaxActTrgStat("MaxActTrgStat", " 0-1 error statistic, 1 if unit with max act has trg = 1", 
 	"", "", "", sizeof(MaxActTrgStat), (void**)&TAI_MaxActTrgStat, 1, 0, 0,1);
-TypeDef TA_const_MaxActTrgStat("const_MaxActTrgStat", 1, 0, 0, 0,1);
+TypeDef TA_const_MaxActTrgStat("const_MaxActTrgStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_UnitActRFStat("UnitActRFStat", " unit activity receptive-field stat: gets RF of units in layer from rf_layers by weighting rf_layer acts by unit acts of layer units", 
 	"", "", "", sizeof(UnitActRFStat), (void**)&TAI_UnitActRFStat, 1, 0, 0,1);
-TypeDef TA_const_MaxActTrgStat_ref("const_MaxActTrgStat_ref", 1, 0, 1, 0,1);
-TypeDef TA_UnitActRFStat_ptr("UnitActRFStat_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_UnitActRFStat("const_UnitActRFStat", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitActRFStat_ref("const_UnitActRFStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_MaxActTrgStat_ref("const_MaxActTrgStat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_UnitActRFStat_ptr("UnitActRFStat_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_UnitActRFStat("const_UnitActRFStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitActRFStat_ref("const_UnitActRFStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_UnitActRFStatResetProc("UnitActRFStatResetProc", " resets the accumulated activation-based receptive field information on a UnitActRFStat -- put this at the point in a process heirarchy where RF's should be reset (e.g., Epoch INIT)", 
 	"", "", "", sizeof(UnitActRFStatResetProc), (void**)&TAI_UnitActRFStatResetProc, 1, 0, 0,1);
-TypeDef TA_const_UnitActRFStatResetProc("const_UnitActRFStatResetProc", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitActRFStatResetProc_ref("const_UnitActRFStatResetProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_UnitActRFStatResetProc("const_UnitActRFStatResetProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitActRFStatResetProc_ref("const_UnitActRFStatResetProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_UnitEventRFStat("UnitEventRFStat", " stores one event per unit, with each pattern element representing firing for each trial", 
 	"", "", "", sizeof(UnitEventRFStat), (void**)&TAI_UnitEventRFStat, 1, 0, 0,1);
-TypeDef TA_const_UnitEventRFStat("const_UnitEventRFStat", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitEventRFStat_ref("const_UnitEventRFStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_UnitEventRFStat("const_UnitEventRFStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitEventRFStat_ref("const_UnitEventRFStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_UniquePatStat("UniquePatStat", " An aggregator-like stat that counts the number of unique patterns in given stat", 
 	"", "", "", sizeof(UniquePatStat), (void**)&TAI_UniquePatStat, 1, 0, 0,1);
-TypeDef TA_const_UniquePatStat("const_UniquePatStat", 1, 0, 0, 0,1);
-TypeDef TA_const_UniquePatStat_ref("const_UniquePatStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_UniquePatStat("const_UniquePatStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UniquePatStat_ref("const_UniquePatStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeCounterStat("TimeCounterStat", " continuously incrementing time counter -- useful for an X axis for graphing events across normal counter boundaries", 
 	"", "", "", sizeof(TimeCounterStat), (void**)&TAI_TimeCounterStat, 1, 0, 0,1);
-TypeDef TA_TimeCounterStat_ptr("TimeCounterStat_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TimeCounterStat("const_TimeCounterStat", 1, 0, 0, 0,1);
-TypeDef TA_const_TimeCounterStat_ref("const_TimeCounterStat_ref", 1, 0, 1, 0,1);
+TypeDef TA_TimeCounterStat_ptr("TimeCounterStat_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TimeCounterStat("const_TimeCounterStat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TimeCounterStat_ref("const_TimeCounterStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeCounterStatResetProc("TimeCounterStatResetProc", " resets the time on a TimeCounterStat -- put this at the point in a process heirarchy where time should be reset", 
 	"", "", "", sizeof(TimeCounterStatResetProc), (void**)&TAI_TimeCounterStatResetProc, 1, 0, 0,1);
-TypeDef TA_const_TimeCounterStatResetProc("const_TimeCounterStatResetProc", 1, 0, 0, 0,1);
-TypeDef TA_const_TimeCounterStatResetProc_ref("const_TimeCounterStatResetProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TimeCounterStatResetProc("const_TimeCounterStatResetProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TimeCounterStatResetProc_ref("const_TimeCounterStatResetProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DispDataEnvProc("DispDataEnvProc", " displays information contained in a data environment that is being updated by another statistic", 
 	"", "", "", sizeof(DispDataEnvProc), (void**)&TAI_DispDataEnvProc, 1, 0, 0,1);
-TypeDef TA_const_DispDataEnvProc("const_DispDataEnvProc", 1, 0, 0, 0,1);
-TypeDef TA_const_DispDataEnvProc_ref("const_DispDataEnvProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DispDataEnvProc("const_DispDataEnvProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DispDataEnvProc_ref("const_DispDataEnvProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DispNetWeightsProc("DispNetWeightsProc", " displays network weight values in a GridLog using GridViewWeights function", 
 	"", "", "", sizeof(DispNetWeightsProc), (void**)&TAI_DispNetWeightsProc, 1, 0, 0,1);
-TypeDef TA_const_DispNetWeightsProc("const_DispNetWeightsProc", 1, 0, 0, 0,1);
-TypeDef TA_const_DispNetWeightsProc_ref("const_DispNetWeightsProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DispNetWeightsProc("const_DispNetWeightsProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DispNetWeightsProc_ref("const_DispNetWeightsProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ClearLogProc("ClearLogProc", " clear a log display", 
 	"", "", "", sizeof(ClearLogProc), (void**)&TAI_ClearLogProc, 1, 0, 0,1);
 TypeDef TA_taGroup_TypeDefault_("taGroup_TypeDefault_", " ", 
 	"", "", "", sizeof(taGroup<TypeDefault>), (void**)&TAI_taGroup_TypeDefault_, 0, 0, 0,1);
-TypeDef TA_const_ClearLogProc("const_ClearLogProc", 1, 0, 0, 0,1);
-TypeDef TA_const_ClearLogProc_ref("const_ClearLogProc_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ClearLogProc("const_ClearLogProc", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ClearLogProc_ref("const_ClearLogProc_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TypeDefault_MGroup("TypeDefault_MGroup", " group of type default objects", 
 	"", "", "", sizeof(TypeDefault_MGroup), (void**)&TAI_TypeDefault_MGroup, 0, 0, 0,1);
 TypeDef TA_taGroup_SelectEdit_("taGroup_SelectEdit_", " ", 
 	"", "", "", sizeof(taGroup<SelectEdit>), (void**)&TAI_taGroup_SelectEdit_, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault_MGroup("const_TypeDefault_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault_MGroup_ref("const_TypeDefault_MGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TypeDefault_MGroup("const_TypeDefault_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TypeDefault_MGroup_ref("const_TypeDefault_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SelectEdit_MGroup("SelectEdit_MGroup", " group of select edit dialog objects", 
 	"", "", "", sizeof(SelectEdit_MGroup), (void**)&TAI_SelectEdit_MGroup, 0, 0, 0,1);
-TypeDef TA_const_SelectEdit_MGroup("const_SelectEdit_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_SelectEdit_MGroup_ref("const_SelectEdit_MGroup_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SelectEdit_MGroup("const_SelectEdit_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SelectEdit_MGroup_ref("const_SelectEdit_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LayerWizEl("LayerWizEl", " specifies basic parameters for a layer", 
 	"", "", "", sizeof(LayerWizEl), (void**)&TAI_LayerWizEl, 0, 0, 0,1);
-TypeDef TA_TimeEnvironment_ptr("TimeEnvironment_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_LayerWizEl("const_LayerWizEl", 1, 0, 0, 0,1);
-TypeDef TA_CopyToEnvStat_ptr("CopyToEnvStat_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_LayerWizEl_ref("const_LayerWizEl_ref", 1, 0, 1, 0,1);
-TypeDef TA_DispDataEnvProc_ptr("DispDataEnvProc_ptr", 1, 1, 0, 0,1);
-TypeDef TA_DispNetWeightsProc_ptr("DispNetWeightsProc_ptr", 1, 1, 0, 0,1);
+TypeDef TA_TimeEnvironment_ptr("TimeEnvironment_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_LayerWizEl("const_LayerWizEl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_CopyToEnvStat_ptr("CopyToEnvStat_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_LayerWizEl_ref("const_LayerWizEl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_DispDataEnvProc_ptr("DispDataEnvProc_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_DispNetWeightsProc_ptr("DispNetWeightsProc_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_Wizard("Wizard", " wizard for automating construction of simulation objects", 
 	"", "", "", sizeof(Wizard), (void**)&TAI_Wizard, 1, 0, 0,1);
 TypeDef TA_taGroup_Wizard_("taGroup_Wizard_", " ", 
 	"", "", "", sizeof(taGroup<Wizard>), (void**)&TAI_taGroup_Wizard_, 0, 0, 0,1);
-TypeDef TA_const_Wizard("const_Wizard", 1, 0, 0, 0,1);
-TypeDef TA_const_Wizard_ref("const_Wizard_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Wizard("const_Wizard", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Wizard_ref("const_Wizard_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Wizard_MGroup("Wizard_MGroup", " group of wizard objects", 
 	"", "", "", sizeof(Wizard_MGroup), (void**)&TAI_Wizard_MGroup, 0, 0, 0,1);
-TypeDef TA_const_Wizard_MGroup("const_Wizard_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_Wizard_MGroup_ref("const_Wizard_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_pdpDataViewer_ptr("pdpDataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_Project("const_Project", 1, 0, 0, 0,1);
-TypeDef TA_const_Project_ref("const_Project_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Wizard_MGroup("const_Wizard_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Wizard_MGroup_ref("const_Wizard_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_pdpDataViewer_ptr("pdpDataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_Project("const_Project", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Project_ref("const_Project_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_Project_("taGroup_Project_", " ", 
 	"", "", "", sizeof(taGroup<Project>), (void**)&TAI_taGroup_Project_, 0, 0, 0,1);
-TypeDef TA_ColorScaleSpec_MGroup_ptr("ColorScaleSpec_MGroup_ptr", 1, 1, 0, 0,1);
+TypeDef TA_ColorScaleSpec_MGroup_ptr("ColorScaleSpec_MGroup_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_Project_MGroup("Project_MGroup", "", 
 	"", "", "", sizeof(Project_MGroup), (void**)&TAI_Project_MGroup, 0, 0, 0,1);
-TypeDef TA_const_PDPRoot("const_PDPRoot", 1, 0, 0, 0,1);
-TypeDef TA_const_Project_MGroup("const_Project_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_PDPRoot_ref("const_PDPRoot_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_Project_MGroup_ref("const_Project_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PDPView("const_PDPView", 1, 0, 0, 0,1);
-TypeDef TA_const_PDPView_ref("const_PDPView_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_PDPRoot("const_PDPRoot", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Project_MGroup("const_Project_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PDPRoot_ref("const_PDPRoot_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_Project_MGroup_ref("const_Project_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PDPView("const_PDPView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PDPView_ref("const_PDPView_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3UnitNode("T3UnitNode", " ", 
 	"", "", "", sizeof(T3UnitNode), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3UnitGroupNode("T3UnitGroupNode", "", 
@@ -800,56 +800,58 @@ TypeDef TA_T3UnitNode_Block("T3UnitNode_Block", " 2d color",
 	"", "", "", sizeof(T3UnitNode_Block), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3UnitNode_Rect("T3UnitNode_Rect", " 2d color", 
 	"", "", "", sizeof(T3UnitNode_Rect), (void**)0, 0, 0, 0,1);
-TypeDef TA_T3UnitGroupNode_ptr("T3UnitGroupNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoFrame_ptr("SoFrame_ptr", 1, 1, 0, 0,1);
+TypeDef TA_T3UnitGroupNode_ptr("T3UnitGroupNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoFrame_ptr("SoFrame_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3GraphLogViewNode("T3GraphLogViewNode", "", 
 	"", "", "", sizeof(T3GraphLogViewNode), (void**)0, 0, 0, 0,1);
 TypeDef TA_NetView("NetView", " ", 
 	"", "", "", sizeof(NetView), (void**)&TAI_NetView, 0, 0, 0,1);
 TypeDef TA_NetViewPanel("NetViewPanel", "  frame for gui interface to a NetView -- usually posted by the netview", 
 	"", "", "", sizeof(NetViewPanel), (void**)0, 0, 0, 0,1);
-TypeDef TA_NetView_ptr("NetView_ptr", 1, 1, 0, 0,1);
+TypeDef TA_NetView_ptr("NetView_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_nvDataView("nvDataView", " most children of NetView", 
 	"", "", "", sizeof(nvDataView), (void**)&TAI_nvDataView, 0, 0, 0,1);
-TypeDef TA_const_nvDataView("const_nvDataView", 1, 0, 0, 0,1);
+TypeDef TA_const_nvDataView("const_nvDataView", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LayerView("LayerView", " ", 
 	"", "", "", sizeof(LayerView), (void**)&TAI_LayerView, 0, 0, 0,1);
-TypeDef TA_const_nvDataView_ref("const_nvDataView_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_nvDataView_ref("const_nvDataView_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PrjnView("PrjnView", " ", 
 	"", "", "", sizeof(PrjnView), (void**)&TAI_PrjnView, 0, 0, 0,1);
 TypeDef TA_UnitGroupView("UnitGroupView", " ", 
 	"", "", "", sizeof(UnitGroupView), (void**)&TAI_UnitGroupView, 0, 0, 0,1);
-TypeDef TA_T3UnitNode_ptr("T3UnitNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_UnitGroupView_ptr("UnitGroupView_ptr", 1, 1, 0, 0,1);
+TypeDef TA_T3UnitNode_ptr("T3UnitNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_UnitGroupView_ptr("UnitGroupView_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_UnitView("UnitView", "", 
 	"", "", "", sizeof(UnitView), (void**)&TAI_UnitView, 0, 0, 0,1);
-TypeDef TA_const_UnitGroupView("const_UnitGroupView", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitView("const_UnitView", 1, 0, 0, 0,1);
-TypeDef TA_const_UnitGroupView_ref("const_UnitGroupView_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_UnitView_ref("const_UnitView_ref", 1, 0, 1, 0,1);
-TypeDef TA_T3LayerNode_ptr("T3LayerNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_LayerView("const_LayerView", 1, 0, 0, 0,1);
-TypeDef TA_const_LayerView_ref("const_LayerView_ref", 1, 0, 1, 0,1);
-TypeDef TA_T3PrjnNode_ptr("T3PrjnNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_PrjnView("const_PrjnView", 1, 0, 0, 0,1);
-TypeDef TA_const_PrjnView_ref("const_PrjnView_ref", 1, 0, 1, 0,1);
-TypeDef TA_T3NetNode_ptr("T3NetNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_UnitView_ptr("UnitView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ScaleRange_ref("ScaleRange_ref", 1, 0, 1, 0,1);
-TypeDef TA_LayerView_ptr("LayerView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_NetView("const_NetView", 1, 0, 0, 0,1);
-TypeDef TA_const_NetView_ref("const_NetView_ref", 1, 0, 1, 0,1);
-TypeDef TA_NetViewPanel_ptr("NetViewPanel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_taiComboBox_ptr("taiComboBox_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_UnitViewData_BArray_ref("const_UnitViewData_BArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_UnitView("const_UnitView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitViewData_ref("const_UnitViewData_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_UnitView_ref("const_UnitView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_UnitGroupView("const_UnitGroupView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_UnitGroupView_ref("const_UnitGroupView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_T3LayerNode_ptr("T3LayerNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_LayerView("const_LayerView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LayerView_ref("const_LayerView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_T3PrjnNode_ptr("T3PrjnNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_PrjnView("const_PrjnView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PrjnView_ref("const_PrjnView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_T3NetNode_ptr("T3NetNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_UnitView_ptr("UnitView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ScaleRange_ref("ScaleRange_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_LayerView_ptr("LayerView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_NetView("const_NetView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NetView_ref("const_NetView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_NetViewPanel_ptr("NetViewPanel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_taiComboBox_ptr("taiComboBox_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiProcess("taiProcess", " adds control buttons to the edit window", 
 	"", "", "", sizeof(taiProcess), (void**)&TAI_taiProcess, 0, 0, 0,1);
 TypeDef TA_taiProcessRunBox("taiProcessRunBox", " just has the control buttons", 
 	"", "", "", sizeof(taiProcessRunBox), (void**)&TAI_taiProcessRunBox, 0, 0, 0,1);
-TypeDef TA_taiProcess_ptr("taiProcess_ptr", 1, 1, 0, 0,1);
+TypeDef TA_taiProcess_ptr("taiProcess_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taiSpecMember("taiSpecMember", " special for the spec type member (adds the unique box)", 
 	"", "", "", sizeof(taiSpecMember), (void**)&TAI_taiSpecMember, 0, 0, 0,1);
-TypeDef TA_const_pdpDataViewer("const_pdpDataViewer", 1, 0, 0, 0,1);
-TypeDef TA_const_pdpDataViewer_ref("const_pdpDataViewer_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_pdpDataViewer("const_pdpDataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_pdpDataViewer_ref("const_pdpDataViewer_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iLogView_Panel("iLogView_Panel", " abstract base for logview panels", 
 	"", "", "", sizeof(iLogView_Panel), (void**)0, 0, 0, 0,1);
 TypeDef TA_iGridLogViewBase_Panel("iGridLogViewBase_Panel", "", 
@@ -862,57 +864,57 @@ TypeDef TA_iGridLogView_Panel("iGridLogView_Panel", "",
 	"", "", "", sizeof(iGridLogView_Panel), (void**)0, 0, 0, 0,1);
 TypeDef TA_iGraphLogView_Panel("iGraphLogView_Panel", " ////////////////////////", 
 	"", "", "", sizeof(iGraphLogView_Panel), (void**)0, 0, 0, 0,1);
-TypeDef TA_DT_ViewSpec_ptr("DT_ViewSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3LogViewNode_ptr("T3LogViewNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_LogView("const_LogView", 1, 0, 0, 0,1);
-TypeDef TA_const_LogView_ref("const_LogView_ref", 1, 0, 1, 0,1);
-TypeDef TA_iLogView_Panel_ptr("iLogView_Panel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3GridLogViewBaseNode_ptr("T3GridLogViewBaseNode_ptr", 1, 1, 0, 0,1);
+TypeDef TA_DT_ViewSpec_ptr("DT_ViewSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3LogViewNode_ptr("T3LogViewNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_LogView("const_LogView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LogView_ref("const_LogView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iLogView_Panel_ptr("iLogView_Panel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3GridLogViewBaseNode_ptr("T3GridLogViewBaseNode_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_GridLogViewBase("GridLogViewBase", " common subclass of TextLogView and GridLogView", 
 	"", "", "", sizeof(GridLogViewBase), (void**)0, 0, 0, 0,1);
-TypeDef TA_iTextLogView_Panel_ptr("iTextLogView_Panel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GridLogViewBase("const_GridLogViewBase", 1, 0, 0, 0,1);
+TypeDef TA_iTextLogView_Panel_ptr("iTextLogView_Panel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GridLogViewBase("const_GridLogViewBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TextLogView("TextLogView", "  a textual view of the log data", 
 	"", "", "", sizeof(TextLogView), (void**)&TAI_TextLogView, 0, 0, 0,1);
-TypeDef TA_const_GridLogViewBase_ref("const_GridLogViewBase_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TextLogView("const_TextLogView", 1, 0, 0, 0,1);
-TypeDef TA_const_TextLogView_ref("const_TextLogView_ref", 1, 0, 1, 0,1);
-TypeDef TA_iNetLogView_Panel_ptr("iNetLogView_Panel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_NetLogView("const_NetLogView", 1, 0, 0, 0,1);
-TypeDef TA_const_NetLogView_ref("const_NetLogView_ref", 1, 0, 1, 0,1);
-TypeDef TA_iGridLogView_Panel_ptr("iGridLogView_Panel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GridLogView("const_GridLogView", 1, 0, 0, 0,1);
-TypeDef TA_const_GridLogView_ref("const_GridLogView_ref", 1, 0, 1, 0,1);
-TypeDef TA_GridLogView_ptr("GridLogView_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_GridLogViewBase_ref("const_GridLogViewBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TextLogView("const_TextLogView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TextLogView_ref("const_TextLogView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iNetLogView_Panel_ptr("iNetLogView_Panel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_NetLogView("const_NetLogView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NetLogView_ref("const_NetLogView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iGridLogView_Panel_ptr("iGridLogView_Panel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GridLogView("const_GridLogView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GridLogView_ref("const_GridLogView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GridLogView_ptr("GridLogView_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_GraphLogViewLabel("GraphLogViewLabel", " view labels for graph logs", 
 	"", "", "", sizeof(GraphLogViewLabel), (void**)&TAI_GraphLogViewLabel, 1, 0, 0,1);
-TypeDef TA_const_GraphLogViewLabel("const_GraphLogViewLabel", 1, 0, 0, 0,1);
-TypeDef TA_iGraphLogView_Panel_ptr("iGraphLogView_Panel_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphLogViewLabel_ref("const_GraphLogViewLabel_ref", 1, 0, 1, 0,1);
-TypeDef TA_T3GraphLogViewNode_ptr("T3GraphLogViewNode_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphLogView("const_GraphLogView", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphLogView_ref("const_GraphLogView_ref", 1, 0, 1, 0,1);
-TypeDef TA_GridLogViewBase_ptr("GridLogViewBase_ptr", 1, 1, 0, 0,1);
-TypeDef TA_TextLogView_ptr("TextLogView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_NetLogView_ptr("NetLogView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_GraphLogView_ptr("GraphLogView_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_GraphLogViewLabel("const_GraphLogViewLabel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iGraphLogView_Panel_ptr("iGraphLogView_Panel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphLogViewLabel_ref("const_GraphLogViewLabel_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_T3GraphLogViewNode_ptr("T3GraphLogViewNode_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphLogView("const_GraphLogView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphLogView_ref("const_GraphLogView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GridLogViewBase_ptr("GridLogViewBase_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_TextLogView_ptr("TextLogView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_NetLogView_ptr("NetLogView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_GraphLogView_ptr("GraphLogView_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_EnviroView("EnviroView", " Graphical view of an Environment", 
 	"", "", "", sizeof(EnviroView), (void**)&TAI_EnviroView, 1, 0, 0,1);
-TypeDef TA_const_EnviroView("const_EnviroView", 1, 0, 0, 0,1);
-TypeDef TA_const_EnviroView_ref("const_EnviroView_ref", 1, 0, 1, 0,1);
-TypeDef TA_ipdpDataViewer_ptr("ipdpDataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ipdpDataViewer("ipdpDataViewer", 1, 0, 0, 0,1);
-TypeDef TA_SoAction_ptr("SoAction_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoAction("SoAction", 1, 0, 0, 0,1);
-TypeDef TA_SoCube_ptr("SoCube_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoCube("SoCube", 1, 0, 0, 0,1);
-TypeDef TA_SoCylinder_ptr("SoCylinder_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoCylinder("SoCylinder", 1, 0, 0, 0,1);
-TypeDef TA_iColor_ref("iColor_ref", 1, 0, 1, 0,1);
-TypeDef TA_ScaleBar_ptr("ScaleBar_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ScaleBar("ScaleBar", 1, 0, 0, 0,1);
-TypeDef TA_iGraphButtons_ptr("iGraphButtons_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iGraphButtons("iGraphButtons", 1, 0, 0, 0,1);
+TypeDef TA_const_EnviroView("const_EnviroView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_EnviroView_ref("const_EnviroView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ipdpDataViewer_ptr("ipdpDataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ipdpDataViewer("ipdpDataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoAction_ptr("SoAction_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoAction("SoAction", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoCube_ptr("SoCube_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoCube("SoCube", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoCylinder_ptr("SoCylinder_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoCylinder("SoCylinder", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iColor_ref("iColor_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ScaleBar_ptr("ScaleBar_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ScaleBar("ScaleBar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iGraphButtons_ptr("iGraphButtons_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iGraphButtons("iGraphButtons", 1, 0, 0, 0, 1, 0);
 
 // Instances
 
@@ -2166,6 +2168,245 @@ LayerSpec*		 TAI_LayerSpec=NULL;
     rval=new cssInt((int)((LayerSpec*)ths)->UseCount());
     return rval;}
 Layer*		 TAI_Layer=NULL;
+  static cssEl* cssElCFun_Layer_GetColText_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssString(((Layer*)ths)->GetColText((int)*arg[1]));}
+    if(na == 2) {
+      rval=new cssString(((Layer*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
+    ((Layer*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
+    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
+    return rval;}
+  static cssEl* cssElCFun_Layer_ChildEditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_QueryEditActions_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
+    ((Layer*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
+    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
+    return rval;}
+  static cssEl* cssElCFun_Layer_EditAction_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetDataLink_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((Layer*)ths)->GetDataLink(), 1, &TA_taDataLink);
+    return rval;}
+  static cssEl* cssElCFun_Layer_UnRef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->UnRef();
+    return rval;}
+  static cssEl* cssElCFun_Layer_UnRefNoDelete_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->UnRefNoDelete();
+    return rval;}
+  static cssEl* cssElCFun_Layer_UnSafeCopy_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->UnSafeCopy((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_CastCopyTo_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetOwner_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((Layer*)ths)->GetOwner((TypeDef*)*arg[1]), 1, &TA_taBase);
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetPath_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      rval=new cssString(((Layer*)ths)->GetPath());}
+    if(na == 1) {
+      rval=new cssString(((Layer*)ths)->GetPath((taBase*)(void*)*arg[1]));}
+    if(na == 2) {
+      rval=new cssString(((Layer*)ths)->GetPath((taBase*)(void*)*arg[1], (taBase*)(void*)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_FindFromPath_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      taString refarg_0=arg[1]->GetStr();
+    rval=new cssTA_Base((void*)((Layer*)ths)->FindFromPath(refarg_0), 1, &TA_taBase);    *arg[1]=(String)refarg_0;
+}
+    if(na == 2) {
+      taString refarg_0=arg[1]->GetStr();    MemberDef* refarg_1=(MemberDef*)*arg[2];
+    rval=new cssTA_Base((void*)((Layer*)ths)->FindFromPath(refarg_0, refarg_1), 1, &TA_taBase);    *arg[1]=(String)refarg_0;    *arg[2]=(void*)refarg_1;
+}
+    if(na == 3) {
+      taString refarg_0=arg[1]->GetStr();    MemberDef* refarg_1=(MemberDef*)*arg[2];
+    rval=new cssTA_Base((void*)((Layer*)ths)->FindFromPath(refarg_0, refarg_1, (int)*arg[3]), 1, &TA_taBase);    *arg[1]=(String)refarg_0;    *arg[2]=(void*)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_Layer_New_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      rval=new cssTA_Base((void*)((Layer*)ths)->New(), 1, &TA_taBase);}
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((Layer*)ths)->New((int)*arg[1]), 1, &TA_taBase);}
+    if(na == 2) {
+      rval=new cssTA_Base((void*)((Layer*)ths)->New((int)*arg[1], (TypeDef*)*arg[2]), 1, &TA_taBase);}
+    return rval;}
+  static cssEl* cssElCFun_Layer_UpdateAfterEdit_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->UpdateAfterEdit();
+    return rval;}
+  static cssEl* cssElCFun_Layer_UpdateAllViews_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->UpdateAllViews();
+    return rval;}
+  static cssEl* cssElCFun_Layer_StructUpdate_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->StructUpdate((bool)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_DataUpdate_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->DataUpdate((bool)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_AddDataView_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->AddDataView((taDataView*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_RemoveDataView_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->RemoveDataView((taDataView*)(void*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_InheritsFrom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->InheritsFrom((const char*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetEnumString_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssString(((Layer*)ths)->GetEnumString((const char*)*arg[1], (int)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetEnumVal_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssInt((int)((Layer*)ths)->GetEnumVal((const char*)*arg[1]));}
+    if(na == 2) {
+      taString refarg_1=arg[2]->GetStr();
+    rval=new cssInt((int)((Layer*)ths)->GetEnumVal((const char*)*arg[1], refarg_1));    *arg[2]=(String)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_Layer_Load_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      istream& refarg_0=*(istream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->Load(refarg_0));}
+    if(na == 2) {
+      istream& refarg_0=*(istream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->Load(refarg_0, (taBase*)(void*)*arg[2]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_Save_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->Save(refarg_0));}
+    if(na == 2) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->Save(refarg_0, (taBase*)(void*)*arg[2]));}
+    if(na == 3) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->Save(refarg_0, (taBase*)(void*)*arg[2], (int)*arg[3]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_SaveAs_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->SaveAs(refarg_0));}
+    if(na == 2) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->SaveAs(refarg_0, (taBase*)(void*)*arg[2]));}
+    if(na == 3) {
+      ostream& refarg_0=*(ostream*)*arg[1];
+    rval=new cssInt((int)((Layer*)ths)->SaveAs(refarg_0, (taBase*)(void*)*arg[2], (int)*arg[3]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_Edit_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->Edit());
+    return rval;}
+  static cssEl* cssElCFun_Layer_CloseEdit_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->CloseEdit());
+    return rval;}
+  static cssEl* cssElCFun_Layer_ReShowEdit_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      rval=new cssInt((int)((Layer*)ths)->ReShowEdit());}
+    if(na == 1) {
+      rval=new cssInt((int)((Layer*)ths)->ReShowEdit((bool)*arg[1]));}
+    return rval;}
+  static cssEl* cssElCFun_Layer_Close_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->Close();
+    return rval;}
+  static cssEl* cssElCFun_Layer_CopyFrom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->CopyFrom((taBase*)(void*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_CopyTo_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->CopyTo((taBase*)(void*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_ChildUpdateAfterEdit_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    bool refarg_1=(bool)*arg[2];
+    ((Layer*)ths)->ChildUpdateAfterEdit((taBase*)(void*)*arg[1], refarg_1);
+    *arg[2]=(Int)refarg_1;
+    return rval;}
+  static cssEl* cssElCFun_Layer_DuplicateMe_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->DuplicateMe());
+    return rval;}
+  static cssEl* cssElCFun_Layer_ChangeMyType_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->ChangeMyType((TypeDef*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_SelectForEdit_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->SelectForEdit((MemberDef*)*arg[1], (SelectEdit*)(void*)*arg[2], (const char*)*arg[3]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_SelectFunForEdit_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->SelectFunForEdit((MethodDef*)*arg[1], (SelectEdit*)(void*)*arg[2], (const char*)*arg[3]));
+    return rval;}
+  static cssEl* cssElCFun_Layer_Help_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->Help();
+    return rval;}
+  static cssEl* cssElCFun_Layer_CallFun_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->CallFun((const char*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_SetAdapter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Layer_addr_data_link_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((Layer*)ths)->addr_data_link(), 2, &TA_taDataLink);
+    return rval;}
+  static cssEl* cssElCFun_Layer_can_sequence__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((Layer*)ths)->can_sequence_());
+    return rval;}
+  static cssEl* cssElCFun_Layer_sequencer__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((Layer*)ths)->sequencer_(), 1, &TA_ISequencable);
+    return rval;}
+  static cssEl* cssElCFun_Layer_source_channels__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((Layer*)ths)->source_channels_();
+    return rval;}
+  static cssEl* cssElCFun_Layer_GetData_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((Layer*)ths)->GetData((SourceChannel*)(void*)*arg[1]), 1, &TA_taMatrix_impl);
+    return rval;}
   static cssEl* cssElCFun_Layer_Copy_Weights_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((Layer*)ths)->Copy_Weights((const Layer*)(void*)*arg[1]);
@@ -10930,6 +11171,128 @@ static MemberDef_data TA_Layer_MemberDef[]={
     *((ta_memb_ptr*)&(TA_Layer_MbrOff=(int Layer::*)(&Layer::sent_already))),0,NULL,0},
   {NULL,"::DMemDist","dmem_dist"," how to distribute units across multiple distributed memory processors","","",
     *((ta_memb_ptr*)&(TA_Layer_MbrOff=(int Layer::*)(&Layer::dmem_dist))),0,NULL,0},
+  {&TA_SourceChannel_List,NULL,"source_channels"," override bool	can_sequence_() const {return false;} // true if has a ISequencable interface","","",
+    *((ta_memb_ptr*)&(TA_Layer_MbrOff=(int Layer::*)(&Layer::source_channels))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_Layer_GetColText_MethArgs[]={
+  {&TA_int,NULL,"col",""},
+  {&TA_int,NULL,"itm_idx"," -1"},
+  NULL};
+static MethodArgs_data TA_Layer_ChildQueryEditActions_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_const_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_Layer_ChildEditAction_MethArgs[]={
+  {&TA_const_MemberDef_ptr,NULL,"md",""},
+  {&TA_taBase_ptr,NULL,"child",""},
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
+static MethodArgs_data TA_Layer_QueryEditActions_MethArgs[]={
+  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int_ref,NULL,"allowed",""},
+  {&TA_int_ref,NULL,"forbidden",""},
+  NULL};
+static MethodArgs_data TA_Layer_EditAction_MethArgs[]={
+  {&TA_taiMimeSource_ptr,NULL,"ms",""},
+  {&TA_int,NULL,"ea",""},
+  NULL};
+static MethodArgs_data TA_Layer_UnSafeCopy_MethArgs[]={
+  {&TA_TAPtr,NULL,"na",""},
+  NULL};
+static MethodArgs_data TA_Layer_CastCopyTo_MethArgs[]={
+  {&TA_TAPtr,NULL,"na",""},
+  NULL};
+static MethodArgs_data TA_Layer_GetOwner_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"tp",""},
+  NULL};
+static MethodArgs_data TA_Layer_GetPath_MethArgs[]={
+  {&TA_TAPtr,NULL,"ta","((void *)0)"},
+  {&TA_TAPtr,NULL,"par_stop","((void *)0)"},
+  NULL};
+static MethodArgs_data TA_Layer_FindFromPath_MethArgs[]={
+  {&TA_taString_ref,NULL,"path",""},
+  {&TA_MemberDef_ptr_ref,NULL,"ret_md","no_mdef"},
+  {&TA_int,NULL,"start","0"},
+  NULL};
+static MethodArgs_data TA_Layer_New_MethArgs[]={
+  {&TA_int,NULL,"n_objs","0"},
+  {&TA_TypeDef_ptr,NULL,"type","((void *)0)"},
+  NULL};
+static MethodArgs_data TA_Layer_StructUpdate_MethArgs[]={
+  {&TA_bool,NULL,"begin",""},
+  NULL};
+static MethodArgs_data TA_Layer_DataUpdate_MethArgs[]={
+  {&TA_bool,NULL,"begin",""},
+  NULL};
+static MethodArgs_data TA_Layer_AddDataView_MethArgs[]={
+  {&TA_taDataView_ptr,NULL,"dv",""},
+  NULL};
+static MethodArgs_data TA_Layer_RemoveDataView_MethArgs[]={
+  {&TA_taDataView_ptr,NULL,"dv",""},
+  NULL};
+static MethodArgs_data TA_Layer_InheritsFrom_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"nm",""},
+  NULL};
+static MethodArgs_data TA_Layer_GetEnumString_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"enum_tp_nm",""},
+  {&TA_int,NULL,"enum_val",""},
+  NULL};
+static MethodArgs_data TA_Layer_GetEnumVal_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"enum_nm",""},
+  {&TA_taString_ref,NULL,"enum_tp_nm"," no_name"},
+  NULL};
+static MethodArgs_data TA_Layer_Load_MethArgs[]={
+  {&TA_istream_ref,NULL,"strm",""},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
+  NULL};
+static MethodArgs_data TA_Layer_Save_MethArgs[]={
+  {&TA_ostream_ref,NULL,"strm",""},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
+  {&TA_int,NULL,"indent","0"},
+  NULL};
+static MethodArgs_data TA_Layer_SaveAs_MethArgs[]={
+  {&TA_ostream_ref,NULL,"strm",""},
+  {&TA_TAPtr,NULL,"par","((void *)0)"},
+  {&TA_int,NULL,"indent","0"},
+  NULL};
+static MethodArgs_data TA_Layer_ReShowEdit_MethArgs[]={
+  {&TA_bool,NULL,"force"," false"},
+  NULL};
+static MethodArgs_data TA_Layer_CopyFrom_MethArgs[]={
+  {&TA_TAPtr,NULL,"cpy_from",""},
+  NULL};
+static MethodArgs_data TA_Layer_CopyTo_MethArgs[]={
+  {&TA_TAPtr,NULL,"cpy_to",""},
+  NULL};
+static MethodArgs_data TA_Layer_ChildUpdateAfterEdit_MethArgs[]={
+  {&TA_TAPtr,NULL,"child",""},
+  {&TA_bool_ref,NULL,"handled",""},
+  NULL};
+static MethodArgs_data TA_Layer_ChangeMyType_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"new_type",""},
+  NULL};
+static MethodArgs_data TA_Layer_SelectForEdit_MethArgs[]={
+  {&TA_MemberDef_ptr,NULL,"member",""},
+  {&TA_SelectEdit_ptr,NULL,"editor",""},
+  {&TA_const_char_ptr,NULL,"extra_label",""},
+  NULL};
+static MethodArgs_data TA_Layer_SelectFunForEdit_MethArgs[]={
+  {&TA_MethodDef_ptr,NULL,"function",""},
+  {&TA_SelectEdit_ptr,NULL,"editor",""},
+  {&TA_const_char_ptr,NULL,"extra_label",""},
+  NULL};
+static MethodArgs_data TA_Layer_CallFun_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"fun_name",""},
+  NULL};
+static MethodArgs_data TA_Layer_SetAdapter_MethArgs[]={
+  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
+  NULL};
+static MethodArgs_data TA_Layer_GetData_MethArgs[]={
+  {&TA_SourceChannel_ptr,NULL,"ch",""},
   NULL};
 static MethodArgs_data TA_Layer_Copy_Weights_MethArgs[]={
   {&TA_const_Layer_ptr,NULL,"src",""},
@@ -11035,6 +11398,96 @@ static MethodArgs_data TA_Layer_GetActGeomNoSpc_MethArgs[]={
   {&TA_PosTDCoord_ref,NULL,"nospc_geom",""},
   NULL};
 static MethodDef_data TA_Layer_MethodDef[]={
+  {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
+    0,2,1,0,NULL,cssElCFun_Layer_GetColText_stub,TA_Layer_GetColText_MethArgs},
+  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
+    0,5,-1,0,NULL,cssElCFun_Layer_ChildQueryEditActions_stub,TA_Layer_ChildQueryEditActions_MethArgs},
+  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
+    0,4,-1,0,NULL,cssElCFun_Layer_ChildEditAction_stub,TA_Layer_ChildEditAction_MethArgs},
+  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
+    0,3,-1,0,NULL,cssElCFun_Layer_QueryEditActions_stub,TA_Layer_QueryEditActions_MethArgs},
+  {&TA_int,NULL,"EditAction","","","",
+    0,2,-1,0,NULL,cssElCFun_Layer_EditAction_stub,TA_Layer_EditAction_MethArgs},
+  {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_GetDataLink_stub,NULL},
+  {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_UnRef_stub,NULL},
+  {&TA_void,NULL,"UnRefNoDelete","","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_UnRefNoDelete_stub,NULL},
+  {&TA_void,NULL,"UnSafeCopy","","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_UnSafeCopy_stub,TA_Layer_UnSafeCopy_MethArgs},
+  {&TA_void,NULL,"CastCopyTo","","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_CastCopyTo_stub,TA_Layer_CastCopyTo_MethArgs},
+  {&TA_TAPtr,NULL,"GetOwner","","","",
+    3,1,-1,0,NULL,cssElCFun_Layer_GetOwner_stub,TA_Layer_GetOwner_MethArgs},
+  {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
+    0,2,0,0,NULL,cssElCFun_Layer_GetPath_stub,TA_Layer_GetPath_MethArgs},
+  {&TA_TAPtr,NULL,"FindFromPath"," find object from path (starting from this, and position start of the path)","","",
+    0,3,1,0,NULL,cssElCFun_Layer_FindFromPath_stub,TA_Layer_FindFromPath_MethArgs},
+  {&TA_TAPtr,NULL,"New"," Create n_objs objects of given type (type is optional)","","",
+    0,2,0,0,NULL,cssElCFun_Layer_New_stub,TA_Layer_New_MethArgs},
+  {&TA_void,NULL,"UpdateAfterEdit"," called after editing, or any user change to members (eg. in the interface, script)","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_UpdateAfterEdit_stub,NULL},
+  {&TA_void,NULL,"UpdateAllViews"," called after data changes, to update views","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_UpdateAllViews_stub,NULL},
+  {&TA_void,NULL,"StructUpdate"," bracket structural changes with (nestable) true/false calls;","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_StructUpdate_stub,TA_Layer_StructUpdate_MethArgs},
+  {&TA_void,NULL,"DataUpdate"," bracket data value changes with (nestable) true/false calls;","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_DataUpdate_stub,TA_Layer_DataUpdate_MethArgs},
+  {&TA_void,NULL,"AddDataView"," add a dataview (not usually overridden)","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_AddDataView_stub,TA_Layer_AddDataView_MethArgs},
+  {&TA_bool,NULL,"RemoveDataView"," removes a dataview (not usually overridden)","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_RemoveDataView_stub,TA_Layer_RemoveDataView_MethArgs},
+  {&TA_bool,NULL,"InheritsFrom"," does this inherit from given type?","","",
+    2,1,-1,0,NULL,cssElCFun_Layer_InheritsFrom_stub,TA_Layer_InheritsFrom_MethArgs},
+  {&TA_taString,NULL,"GetEnumString"," get the name corresponding to given enum value in enum type enum_tp_nm","","",
+    0,2,-1,0,NULL,cssElCFun_Layer_GetEnumString_stub,TA_Layer_GetEnumString_MethArgs},
+  {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
+    0,2,1,0,NULL,cssElCFun_Layer_GetEnumVal_stub,TA_Layer_GetEnumVal_MethArgs},
+  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+    0,2,1,0,NULL,cssElCFun_Layer_Load_stub,TA_Layer_Load_MethArgs},
+  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+    0,3,1,0,NULL,cssElCFun_Layer_Save_stub,TA_Layer_Save_MethArgs},
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+    0,3,1,0,NULL,cssElCFun_Layer_SaveAs_stub,TA_Layer_SaveAs_MethArgs},
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+    0,0,-1,0,NULL,cssElCFun_Layer_Edit_stub,NULL},
+  {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_CloseEdit_stub,NULL},
+  {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
+    0,1,0,0,NULL,cssElCFun_Layer_ReShowEdit_stub,TA_Layer_ReShowEdit_MethArgs},
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+    0,0,-1,0,NULL,cssElCFun_Layer_Close_stub,NULL},
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+    0,1,-1,0,NULL,cssElCFun_Layer_CopyFrom_stub,TA_Layer_CopyFrom_MethArgs},
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+    0,1,-1,0,NULL,cssElCFun_Layer_CopyTo_stub,TA_Layer_CopyTo_MethArgs},
+  {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
+    0,2,-1,0,NULL,cssElCFun_Layer_ChildUpdateAfterEdit_stub,TA_Layer_ChildUpdateAfterEdit_MethArgs},
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+    0,0,-1,0,NULL,cssElCFun_Layer_DuplicateMe_stub,NULL},
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+    0,1,-1,0,NULL,cssElCFun_Layer_ChangeMyType_stub,TA_Layer_ChangeMyType_MethArgs},
+  {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
+    0,3,-1,0,NULL,cssElCFun_Layer_SelectForEdit_stub,TA_Layer_SelectForEdit_MethArgs},
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+    0,3,-1,0,NULL,cssElCFun_Layer_SelectFunForEdit_stub,TA_Layer_SelectFunForEdit_MethArgs},
+  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+    0,0,-1,0,NULL,cssElCFun_Layer_Help_stub,NULL},
+  {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_CallFun_stub,TA_Layer_CallFun_MethArgs},
+  {&TA_void,NULL,"SetAdapter","","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_SetAdapter_stub,TA_Layer_SetAdapter_MethArgs},
+  {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_addr_data_link_stub,NULL},
+  {&TA_bool,NULL,"can_sequence_"," true if has a ISequencable interface","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_can_sequence__stub,NULL},
+  {&TA_ISequencable_ptr,NULL,"sequencer_"," sequencing interface, if sequencable","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_sequencer__stub,NULL},
+  {&TA_SourceChannel_List_ref,NULL,"source_channels_","","","",
+    0,0,-1,0,NULL,cssElCFun_Layer_source_channels__stub,NULL},
+  {&TA_taMatrix_impl_ptr,NULL,"GetData","","","",
+    0,1,-1,0,NULL,cssElCFun_Layer_GetData_stub,TA_Layer_GetData_MethArgs},
   {&TA_void,NULL,"Copy_Weights"," copies weights from other layer (incl wts assoc with unit bias member)","MENU MENU_ON_Object MENU_SEP_BEFORE ","",
     0,1,-1,0,NULL,cssElCFun_Layer_Copy_Weights_stub,TA_Layer_Copy_Weights_MethArgs},
   {&TA_void,NULL,"WriteWeights"," write weight values out in a simple ordered list of weights (optionally in binary fmt)","MENU EXT_strm_wts COMPRESS ","",
@@ -14464,9 +14917,9 @@ static MethodDef_data TA_PatternSpec_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_PatternSpec_UnSetLayer_stub,NULL},
   {&TA_void,NULL,"FlagLayer"," set layer flag to reflect the kind of input received","","",
     0,0,-1,0,NULL,cssElCFun_PatternSpec_FlagLayer_stub,NULL},
-  {&TA_float_ref,NULL,"Value"," return value at given index from pattern (order can be changed, eg GroupPatternSpec)","","",
+  {&TA_float,NULL,"Value"," return value at given index from pattern (order can be changed, eg GroupPatternSpec)","","",
     0,2,-1,0,NULL,cssElCFun_PatternSpec_Value_stub,TA_PatternSpec_Value_MethArgs},
-  {&TA_int_ref,NULL,"Flag"," return flag at given index from pattern (order can be changed, eg GroupPatternSpec)","","",
+  {&TA_int,NULL,"Flag"," return flag at given index from pattern (order can be changed, eg GroupPatternSpec)","","",
     0,3,-1,0,NULL,cssElCFun_PatternSpec_Flag_stub,TA_PatternSpec_Flag_MethArgs},
   {&TA_void,NULL,"ApplyValue"," assign unit value and ext_flag based on pattern at given index","","",
     0,3,-1,0,NULL,cssElCFun_PatternSpec_ApplyValue_stub,TA_PatternSpec_ApplyValue_MethArgs},
@@ -19250,7 +19703,7 @@ void ta_Init_pdp() {
     TAI_Layer = new Layer;
     TA_Layer.AddParFormal(&TA_class);
     TA_Layer.AddParCache(&TA_taBase);
-    TA_Layer.AddClassPar(&TA_taNBase,0);
+    TA_Layer.AddClassPar(&TA_taNBase,(int)((unsigned long)((taNBase*)TAI_Layer)-(unsigned long)TAI_Layer), &TA_IDataSource,(int)((unsigned long)((IDataSource*)TAI_Layer)-(unsigned long)TAI_Layer));
     tac_AddEnum(TA_Layer, "DMemDist", "", "", "", "", TA_Layer_DMemDist);
     tac_AddMembers(TA_Layer,TA_Layer_MemberDef);
     tac_AddMethods(TA_Layer,TA_Layer_MethodDef);
@@ -21469,14 +21922,16 @@ void ta_Init_pdp() {
     TA_UnitView.AddParCache(&TA_taBase);
     TA_UnitView.AddClassPar(&TA_T3DataView,0);
     tac_AddMethods(TA_UnitView,TA_UnitView_MethodDef);
-  taMisc::types.Add(&TA_const_UnitGroupView);
-    TA_const_UnitGroupView.AddParents(&TA_const, &TA_UnitGroupView);
+  taMisc::types.Add(&TA_const_UnitViewData_BArray_ref);
   taMisc::types.Add(&TA_const_UnitView);
     TA_const_UnitView.AddParents(&TA_const, &TA_UnitView);
-  taMisc::types.Add(&TA_const_UnitGroupView_ref);
-    TA_const_UnitGroupView_ref.AddParents(&TA_const_UnitGroupView);
+  taMisc::types.Add(&TA_const_UnitViewData_ref);
   taMisc::types.Add(&TA_const_UnitView_ref);
     TA_const_UnitView_ref.AddParents(&TA_const_UnitView);
+  taMisc::types.Add(&TA_const_UnitGroupView);
+    TA_const_UnitGroupView.AddParents(&TA_const, &TA_UnitGroupView);
+  taMisc::types.Add(&TA_const_UnitGroupView_ref);
+    TA_const_UnitGroupView_ref.AddParents(&TA_const_UnitGroupView);
   taMisc::types.Add(&TA_T3LayerNode_ptr);
     TA_T3LayerNode_ptr.AddParents(&TA_T3LayerNode);
   taMisc::types.Add(&TA_const_LayerView);

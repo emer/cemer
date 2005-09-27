@@ -442,8 +442,8 @@ public:
   int	CoordToFlatIdx(const TwoDCoord& gp_coord, const TwoDCoord& sub_coord);
   // get index into flat structure from given coordinates of group and sub-group
 
-  float& Value(Pattern* pat, int index);
-  int&	Flag(PatUseFlags flag_type, Pattern* pat, int index);
+  float Value(Pattern* pat, int index);
+  int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
   void 	ApplyValue(Pattern* pat, Unit* uni, int index);
 
   void	UpdateAfterEdit();
