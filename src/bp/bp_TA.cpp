@@ -30,96 +30,96 @@ TypeDef TA_BpUnitSpec("BpUnitSpec", " specifications for Bp units",
 	"", "", "", sizeof(BpUnitSpec), (void**)&TAI_BpUnitSpec, 1, 0, 0,1);
 TypeDef TA_BpTrial("BpTrial", " standard Bp feed-forward trial", 
 	"", "", "", sizeof(BpTrial), (void**)&TAI_BpTrial, 1, 0, 0,1);
-TypeDef TA_const_BpCon("const_BpCon", 1, 0, 0, 0,1);
-TypeDef TA_const_BpCon_ref("const_BpCon_ref", 1, 0, 1, 0,1);
-TypeDef TA_BpConSpec_ptr("BpConSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_BpCon_ptr("BpCon_ptr", 1, 1, 0, 0,1);
-TypeDef TA_BpUnit_ptr("BpUnit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_BpCon_Group_ptr("BpCon_Group_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_BpConSpec("const_BpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_BpConSpec_ref("const_BpConSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_BpCon_Group("const_BpCon_Group", 1, 0, 0, 0,1);
-TypeDef TA_const_BpCon_Group_ref("const_BpCon_Group_ref", 1, 0, 1, 0,1);
-TypeDef TA_BpUnitSpec_ptr("BpUnitSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_BpUnitSpec("const_BpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_BpUnitSpec_ref("const_BpUnitSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_BpUnit("const_BpUnit", 1, 0, 0, 0,1);
-TypeDef TA_const_BpUnit_ref("const_BpUnit_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_BpTrial("const_BpTrial", 1, 0, 0, 0,1);
-TypeDef TA_const_BpTrial_ref("const_BpTrial_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BpCon("const_BpCon", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpCon_ref("const_BpCon_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_BpConSpec_ptr("BpConSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_BpCon_ptr("BpCon_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_BpUnit_ptr("BpUnit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_BpCon_Group_ptr("BpCon_Group_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_BpConSpec("const_BpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpConSpec_ref("const_BpConSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_BpCon_Group("const_BpCon_Group", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpCon_Group_ref("const_BpCon_Group_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_BpUnitSpec_ptr("BpUnitSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_BpUnitSpec("const_BpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpUnitSpec_ref("const_BpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_BpUnit("const_BpUnit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpUnit_ref("const_BpUnit_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_BpTrial("const_BpTrial", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpTrial_ref("const_BpTrial_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_CE_Stat("CE_Stat", " Cross-entropy error statistic (asymmetric divergence)", 
 	"", "", "", sizeof(CE_Stat), (void**)&TAI_CE_Stat, 1, 0, 0,1);
-TypeDef TA_const_CE_Stat("const_CE_Stat", 1, 0, 0, 0,1);
+TypeDef TA_const_CE_Stat("const_CE_Stat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_NormDotProd_Stat("NormDotProd_Stat", " Normalized Dot Product of act and target values", 
 	"", "", "", sizeof(NormDotProd_Stat), (void**)&TAI_NormDotProd_Stat, 1, 0, 0,1);
-TypeDef TA_const_CE_Stat_ref("const_CE_Stat_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_NormDotProd_Stat("const_NormDotProd_Stat", 1, 0, 0, 0,1);
-TypeDef TA_const_NormDotProd_Stat_ref("const_NormDotProd_Stat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_CE_Stat_ref("const_CE_Stat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_NormDotProd_Stat("const_NormDotProd_Stat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NormDotProd_Stat_ref("const_NormDotProd_Stat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_VecCor_Stat("VecCor_Stat", " Vector Correlation of act and target values", 
 	"", "", "", sizeof(VecCor_Stat), (void**)&TAI_VecCor_Stat, 1, 0, 0,1);
-TypeDef TA_const_VecCor_Stat("const_VecCor_Stat", 1, 0, 0, 0,1);
-TypeDef TA_const_VecCor_Stat_ref("const_VecCor_Stat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_VecCor_Stat("const_VecCor_Stat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_VecCor_Stat_ref("const_VecCor_Stat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_NormVecLen_Stat("NormVecLen_Stat", " Normalized Vector Length of act and target values", 
 	"", "", "", sizeof(NormVecLen_Stat), (void**)&TAI_NormVecLen_Stat, 1, 0, 0,1);
-TypeDef TA_const_NormVecLen_Stat("const_NormVecLen_Stat", 1, 0, 0, 0,1);
-TypeDef TA_const_NormVecLen_Stat_ref("const_NormVecLen_Stat_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_NormVecLen_Stat("const_NormVecLen_Stat", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NormVecLen_Stat_ref("const_NormVecLen_Stat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_HebbBpConSpec("HebbBpConSpec", " Simple Hebbian wt update (send act * recv act)", 
 	"", "", "", sizeof(HebbBpConSpec), (void**)&TAI_HebbBpConSpec, 1, 0, 0,1);
-TypeDef TA_const_HebbBpConSpec("const_HebbBpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_HebbBpConSpec_ref("const_HebbBpConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_HebbBpConSpec("const_HebbBpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_HebbBpConSpec_ref("const_HebbBpConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ErrScaleBpConSpec("ErrScaleBpConSpec", " con spec that scales the error by given parameter", 
 	"", "", "", sizeof(ErrScaleBpConSpec), (void**)&TAI_ErrScaleBpConSpec, 1, 0, 0,1);
-TypeDef TA_const_ErrScaleBpConSpec("const_ErrScaleBpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ErrScaleBpConSpec_ref("const_ErrScaleBpConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ErrScaleBpConSpec("const_ErrScaleBpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ErrScaleBpConSpec_ref("const_ErrScaleBpConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DeltaBarDeltaBpCon("DeltaBarDeltaBpCon", " delta-bar-delta connection object with local learning rate", 
 	"", "", "", sizeof(DeltaBarDeltaBpCon), (void**)&TAI_DeltaBarDeltaBpCon, 0, 0, 0,1);
-TypeDef TA_DeltaBarDeltaBpCon_ptr("DeltaBarDeltaBpCon_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_DeltaBarDeltaBpCon("const_DeltaBarDeltaBpCon", 1, 0, 0, 0,1);
-TypeDef TA_const_DeltaBarDeltaBpCon_ref("const_DeltaBarDeltaBpCon_ref", 1, 0, 1, 0,1);
+TypeDef TA_DeltaBarDeltaBpCon_ptr("DeltaBarDeltaBpCon_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_DeltaBarDeltaBpCon("const_DeltaBarDeltaBpCon", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DeltaBarDeltaBpCon_ref("const_DeltaBarDeltaBpCon_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DeltaBarDeltaBpConSpec("DeltaBarDeltaBpConSpec", " delta-bar-delta has local learning rates for each connection", 
 	"", "", "", sizeof(DeltaBarDeltaBpConSpec), (void**)&TAI_DeltaBarDeltaBpConSpec, 1, 0, 0,1);
-TypeDef TA_const_DeltaBarDeltaBpConSpec("const_DeltaBarDeltaBpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_DeltaBarDeltaBpConSpec_ref("const_DeltaBarDeltaBpConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DeltaBarDeltaBpConSpec("const_DeltaBarDeltaBpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DeltaBarDeltaBpConSpec_ref("const_DeltaBarDeltaBpConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_BpContextSpec("BpContextSpec", " for context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, must be AFTER that layer in .layers", 
 	"", "", "", sizeof(BpContextSpec), (void**)&TAI_BpContextSpec, 1, 0, 0,1);
-TypeDef TA_const_BpContextSpec("const_BpContextSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_BpContextSpec("const_BpContextSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LinearBpUnitSpec("LinearBpUnitSpec", " linear unit in Bp", 
 	"", "", "", sizeof(LinearBpUnitSpec), (void**)&TAI_LinearBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_BpContextSpec_ref("const_BpContextSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_LinearBpUnitSpec("const_LinearBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_LinearBpUnitSpec_ref("const_LinearBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BpContextSpec_ref("const_BpContextSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_LinearBpUnitSpec("const_LinearBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LinearBpUnitSpec_ref("const_LinearBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ThreshLinBpUnitSpec("ThreshLinBpUnitSpec", " thresholded linear unit in Bp", 
 	"", "", "", sizeof(ThreshLinBpUnitSpec), (void**)&TAI_ThreshLinBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_ThreshLinBpUnitSpec("const_ThreshLinBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ThreshLinBpUnitSpec_ref("const_ThreshLinBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ThreshLinBpUnitSpec("const_ThreshLinBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ThreshLinBpUnitSpec_ref("const_ThreshLinBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_NoisyBpUnitSpec("NoisyBpUnitSpec", " Bp with noisy output signal (act plus noise)", 
 	"", "", "", sizeof(NoisyBpUnitSpec), (void**)&TAI_NoisyBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_NoisyBpUnitSpec("const_NoisyBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_NoisyBpUnitSpec_ref("const_NoisyBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_NoisyBpUnitSpec("const_NoisyBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NoisyBpUnitSpec_ref("const_NoisyBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_StochasticBpUnitSpec("StochasticBpUnitSpec", " Bp with a binary stochastic activation function", 
 	"", "", "", sizeof(StochasticBpUnitSpec), (void**)&TAI_StochasticBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_StochasticBpUnitSpec("const_StochasticBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_StochasticBpUnitSpec_ref("const_StochasticBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_StochasticBpUnitSpec("const_StochasticBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_StochasticBpUnitSpec_ref("const_StochasticBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RBFBpUnitSpec("RBFBpUnitSpec", " Radial basis function (Gaussian) function units in Bp", 
 	"", "", "", sizeof(RBFBpUnitSpec), (void**)&TAI_RBFBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_RBFBpUnitSpec("const_RBFBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_RBFBpUnitSpec_ref("const_RBFBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RBFBpUnitSpec("const_RBFBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBFBpUnitSpec_ref("const_RBFBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_BumpBpUnitSpec("BumpBpUnitSpec", " bump function in Bp: Gaussian of std net input", 
 	"", "", "", sizeof(BumpBpUnitSpec), (void**)&TAI_BumpBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_BumpBpUnitSpec("const_BumpBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_BumpBpUnitSpec_ref("const_BumpBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BumpBpUnitSpec("const_BumpBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BumpBpUnitSpec_ref("const_BumpBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ExpBpUnitSpec("ExpBpUnitSpec", " exponential units in Bp: simple exponent of net input", 
 	"", "", "", sizeof(ExpBpUnitSpec), (void**)&TAI_ExpBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_ExpBpUnitSpec("const_ExpBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ExpBpUnitSpec_ref("const_ExpBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ExpBpUnitSpec("const_ExpBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ExpBpUnitSpec_ref("const_ExpBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoftMaxBpUnitSpec("SoftMaxBpUnitSpec", " SoftMax Units: first one-to-one prjn is from corresp exponential unit, second prjn is from single summing linear unit, this then divides two ", 
 	"", "", "", sizeof(SoftMaxBpUnitSpec), (void**)&TAI_SoftMaxBpUnitSpec, 1, 0, 0,1);
 TypeDef TA_RBpConSpec("RBpConSpec", " Recurrent Backprop Con Spec", 
 	"", "", "", sizeof(RBpConSpec), (void**)&TAI_RBpConSpec, 1, 0, 0,1);
-TypeDef TA_const_SoftMaxBpUnitSpec("const_SoftMaxBpUnitSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_SoftMaxBpUnitSpec("const_SoftMaxBpUnitSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_RBpUnit("RBpUnit", " recurrent BP unit", 
 	"", "", "", sizeof(RBpUnit), (void**)&TAI_RBpUnit, 0, 0, 0,1);
-TypeDef TA_const_SoftMaxBpUnitSpec_ref("const_SoftMaxBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SoftMaxBpUnitSpec_ref("const_SoftMaxBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RBpUnitSpec("RBpUnitSpec", " Recurrent Backprop Unit Specification", 
 	"", "", "", sizeof(RBpUnitSpec), (void**)&TAI_RBpUnitSpec, 1, 0, 0,1);
 TypeDef TA_RBpTrial("RBpTrial", " one presentation of an event to RBp", 
@@ -134,51 +134,51 @@ TypeDef TA_APBpTrial("APBpTrial", " one Almeida-Pineda BP Trial",
 	"", "", "", sizeof(APBpTrial), (void**)&TAI_APBpTrial, 1, 0, 0,1);
 TypeDef TA_APBpMaxDa_De("APBpMaxDa_De", " _ computes max of da and ddE to determine when to stop settling in almeida-pineda algorithm ", 
 	"", "", "", sizeof(APBpMaxDa_De), (void**)&TAI_APBpMaxDa_De, 1, 0, 0,1);
-TypeDef TA_RBpUnit_ptr("RBpUnit_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_RBpConSpec("const_RBpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_RBpConSpec_ref("const_RBpConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_RBpUnit_ptr("RBpUnit_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_RBpConSpec("const_RBpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBpConSpec_ref("const_RBpConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SymRBpConSpec("SymRBpConSpec", " Recurrent Backprop Con Spec: option to maintain weight symmetry through simple averaging of two weight changes", 
 	"", "", "", sizeof(SymRBpConSpec), (void**)&TAI_SymRBpConSpec, 1, 0, 0,1);
-TypeDef TA_const_RBpUnitSpec("const_RBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_SymRBpConSpec("const_SymRBpConSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_RBpUnitSpec_ref("const_RBpUnitSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SymRBpConSpec_ref("const_SymRBpConSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RBpUnitSpec("const_RBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SymRBpConSpec("const_SymRBpConSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBpUnitSpec_ref("const_RBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SymRBpConSpec_ref("const_SymRBpConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_CircBuffer("float_CircBuffer", " Circular buffer for holding state information", 
-	"", "", "", sizeof(float_CircBuffer), (void**)&TAI_float_CircBuffer, 0, 0, 0,1);
-TypeDef TA_const_RBpUnit("const_RBpUnit", 1, 0, 0, 0,1);
-TypeDef TA_const_float_CircBuffer("const_float_CircBuffer", 1, 0, 0, 0,1);
-TypeDef TA_const_RBpUnit_ref("const_RBpUnit_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_float_CircBuffer_ref("const_float_CircBuffer_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_RBpTrial("const_RBpTrial", 1, 0, 0, 0,1);
-TypeDef TA_const_RBpTrial_ref("const_RBpTrial_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_RBpSequence("const_RBpSequence", 1, 0, 0, 0,1);
-TypeDef TA_const_RBpSequence_ref("const_RBpSequence_ref", 1, 0, 1, 0,1);
+	"", "", "", sizeof(float_CircBuffer), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_RBpUnit("const_RBpUnit", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_float_CircBuffer("const_float_CircBuffer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBpUnit_ref("const_RBpUnit_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_float_CircBuffer_ref("const_float_CircBuffer_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_RBpTrial("const_RBpTrial", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBpTrial_ref("const_RBpTrial_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_RBpSequence("const_RBpSequence", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RBpSequence_ref("const_RBpSequence_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RBpSE_Stat("RBpSE_Stat", " Squared error for recurrent backprop, mulitplies by dt", 
 	"", "", "", sizeof(RBpSE_Stat), (void**)&TAI_RBpSE_Stat, 1, 0, 0,1);
-TypeDef TA_const_RBpSE_Stat("const_RBpSE_Stat", 1, 0, 0, 0,1);
+TypeDef TA_const_RBpSE_Stat("const_RBpSE_Stat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_RBpContextSpec("RBpContextSpec", " RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!", 
 	"", "", "", sizeof(RBpContextSpec), (void**)&TAI_RBpContextSpec, 1, 0, 0,1);
-TypeDef TA_const_RBpSE_Stat_ref("const_RBpSE_Stat_ref", 1, 0, 1, 0,1);
-TypeDef TA_APBpSettle_ptr("APBpSettle_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_RBpContextSpec("const_RBpContextSpec", 1, 0, 0, 0,1);
-TypeDef TA_APBpTrial_ptr("APBpTrial_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_RBpContextSpec_ref("const_RBpContextSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_APBpCycle("const_APBpCycle", 1, 0, 0, 0,1);
-TypeDef TA_const_APBpCycle_ref("const_APBpCycle_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_APBpSettle("const_APBpSettle", 1, 0, 0, 0,1);
-TypeDef TA_const_APBpSettle_ref("const_APBpSettle_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_APBpTrial("const_APBpTrial", 1, 0, 0, 0,1);
-TypeDef TA_const_APBpTrial_ref("const_APBpTrial_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_APBpMaxDa_De("const_APBpMaxDa_De", 1, 0, 0, 0,1);
-TypeDef TA_const_APBpMaxDa_De_ref("const_APBpMaxDa_De_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RBpSE_Stat_ref("const_RBpSE_Stat_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_APBpSettle_ptr("APBpSettle_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_RBpContextSpec("const_RBpContextSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_APBpTrial_ptr("APBpTrial_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_RBpContextSpec_ref("const_RBpContextSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_APBpCycle("const_APBpCycle", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_APBpCycle_ref("const_APBpCycle_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_APBpSettle("const_APBpSettle", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_APBpSettle_ref("const_APBpSettle_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_APBpTrial("const_APBpTrial", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_APBpTrial_ref("const_APBpTrial_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_APBpMaxDa_De("const_APBpMaxDa_De", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_APBpMaxDa_De_ref("const_APBpMaxDa_De_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_NoisyRBpUnitSpec("NoisyRBpUnitSpec", " RBp with noisy output signal (act plus noise)", 
 	"", "", "", sizeof(NoisyRBpUnitSpec), (void**)&TAI_NoisyRBpUnitSpec, 1, 0, 0,1);
-TypeDef TA_const_NoisyRBpUnitSpec("const_NoisyRBpUnitSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_NoisyRBpUnitSpec_ref("const_NoisyRBpUnitSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_NoisyRBpUnitSpec("const_NoisyRBpUnitSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_NoisyRBpUnitSpec_ref("const_NoisyRBpUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_BpWizard("BpWizard", " backprop-specific wizard for automating construction of simulation objects", 
 	"", "", "", sizeof(BpWizard), (void**)&TAI_BpWizard, 1, 0, 0,1);
-TypeDef TA_const_BpWizard("const_BpWizard", 1, 0, 0, 0,1);
-TypeDef TA_const_BpWizard_ref("const_BpWizard_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_BpWizard("const_BpWizard", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_BpWizard_ref("const_BpWizard_ref", 1, 0, 1, 0, 1, 0);
 
 // Instances
 
@@ -717,7 +717,6 @@ SymRBpConSpec*		 TAI_SymRBpConSpec=NULL;
     cssEl* rval=&cssMisc::Void;
     ((SymRBpConSpec*)ths)->C_Compute_dWt_Sym((BpCon*)(void*)*arg[1], (RBpUnit*)(void*)*arg[2], (RBpUnit*)(void*)*arg[3]);
     return rval;}
-float_CircBuffer*		 TAI_float_CircBuffer=NULL;
   static cssEl* cssElCFun_float_CircBuffer_Add_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((float_CircBuffer*)ths)->Add((float)*arg[1]);
@@ -2143,7 +2142,6 @@ void ta_Init_bp() {
   taMisc::types.Add(&TA_const_SymRBpConSpec_ref);
     TA_const_SymRBpConSpec_ref.AddParents(&TA_const_SymRBpConSpec);
   taMisc::types.Add(&TA_float_CircBuffer);
-    TAI_float_CircBuffer = new float_CircBuffer;
     TA_float_CircBuffer.AddParFormal(&TA_class);
     TA_float_CircBuffer.AddParCache(&TA_taBase);
     TA_float_CircBuffer.AddClassPar(&TA_float_Array,0);

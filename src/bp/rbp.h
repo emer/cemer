@@ -162,9 +162,7 @@ public:
   void		Add(const float& item);
   // adds in the framework of a circular buffer
 
-  float&	Peek() const
-  { float* rval = (float*)&err; if(length > 0) rval = &(SafeEl(CircIdx(length-1)));
-    return *rval; }
+  const float&	Peek() const {return SafeEl(CircIdx(length-1));}
 
   void		Reset();
 

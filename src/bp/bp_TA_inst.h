@@ -47,7 +47,6 @@ extern	APBpSettle*	TAI_APBpSettle;
 extern	APBpTrial*	TAI_APBpTrial;
 extern	APBpMaxDa_De*	TAI_APBpMaxDa_De;
 extern	SymRBpConSpec*	TAI_SymRBpConSpec;
-extern	float_CircBuffer*	TAI_float_CircBuffer;
 extern	RBpSE_Stat*	TAI_RBpSE_Stat;
 extern	RBpContextSpec*	TAI_RBpContextSpec;
 extern	NoisyRBpUnitSpec*	TAI_NoisyRBpUnitSpec;

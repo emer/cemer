@@ -63,7 +63,7 @@ void float_CircBuffer::Add(const float& item) {
     length++;
     return;
   }
-  SafeEl(CircIdx(length++)) = item;	// set it to the element at the end
+  Set(CircIdx(length++), item);	// set it to the element at the end
 }
 
 void float_CircBuffer::Reset() {
