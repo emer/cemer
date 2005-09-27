@@ -1277,6 +1277,12 @@ cssEl* cssClassType::Load_stub(void*, int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
+void cssClassType::MbrSetDesc(int mbr, const char* des) {
+  if (member_desc.InRange(mbr) && member_opts.InRange(mbr)) {
+    SetDesc_impl(member_desc.FastEl(mbr), member_opts.FastEl(mbr), des); 
+  }
+}
+
 cssEl* cssClassType::Save_stub(void*, int, cssEl* arg[]) {
   // 'this' must be a class or class object to even get here
   cssClassInst* ths;

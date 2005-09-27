@@ -990,8 +990,7 @@ public:
   String	OptionAfter(const char* opt) const { return OptionAfter_impl(opts, opt); }
   bool		HasOption(const char* opt) const   { return opts.contains(opt); }
 
-  void		MbrSetDesc(int mbr, const char* des)
-  { SetDesc_impl(member_desc.SafeEl(mbr), member_opts.SafeEl(mbr), des); }
+  void		MbrSetDesc(int mbr, const char* des);
   String	MbrOptionAfter(int mbr, const char* opt) const
   { return OptionAfter_impl(member_opts.SafeEl(mbr), opt); }
   bool		MbrHasOption(int mbr, const char* opt) const

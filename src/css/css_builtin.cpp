@@ -1860,7 +1860,8 @@ static cssEl* cssElCFun_chown_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_ctermid_stub(int, cssEl**) {
   cssString* rval = new cssString();
-  rval->val = ctermid(NULL);
+  char buf[L_ctermid];
+  rval->val = ctermid(buf);
   return rval;
 }
 #ifndef DARWIN
