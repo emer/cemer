@@ -74,6 +74,7 @@ TAHEADS =\
 	@abs_srcdir@/icolor.h \
 	@abs_srcdir@/ta_type.h \
 	@abs_srcdir@/ta_base.h \
+	@abs_srcdir@/ta_matrix.h \
 	@abs_srcdir@/ta_group.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
@@ -94,6 +95,7 @@ HEADS =\
 	ta_type.h \
 	ta_type_constr.h \
 	ta_base.h \
+	ta_matrix.h \
 	ta_group.h \
 	ta_dump.h \
 	ta_defaults.h \
@@ -111,6 +113,7 @@ SRCS =\
 	ta_type.cpp \
 	ta_type_constr.cpp \
 	ta_base.cpp \
+	ta_matrix.cpp \
 	ta_group.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
