@@ -808,14 +808,15 @@ inline ValIdx operator / (float td, const ValIdx& v) {
 class ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER
 public:
-  String	El_GetStr_(void* it) const { return String(((ValIdx*)it)->val); } // #IGNORE
+  String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE
   void		El_SetFmStr_(void* it, String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
-  virtual void*		GetTA_Element(int i, TypeDef*& eltd) const
-  { eltd = &TA_ValIdx; return SafeEl_(i); }
+  virtual void*		GetTA_Element(int i, TypeDef*& eltd)
+  { eltd = &TA_ValIdx; return FastEl_(i); }
   void Initialize()	{ };
   void Destroy()	{ };
   TA_BASEFUNS(ValIdx_Array);
+  TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 };
 
 #endif // tdgeometry_h

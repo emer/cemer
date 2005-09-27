@@ -40,6 +40,7 @@
 // tamisc_ti.cc: template instantiation file for ta_misc library
 
 #include "tdgeometry.h"
+#include "ta_data.h"
 #include "datatable.h"
 #include "datagraph.h"
 #include "colorscale.h"
@@ -52,6 +53,12 @@
 
 // tdgeometry
 template class taArray<ValIdx>;
+  const ValIdx ValIdx_Array::blank;
+
+// ta_data.h
+template class taList<DataConnector>;
+template class taList<SourceChannel>;
+template class taList<SinkChannel>;
 
 // datatable.h:
 template class taList<DataItem>;

@@ -194,12 +194,62 @@ void float_RArray::Copy_(const float_RArray& cp) {
   range = cp.range;
 }
 
+float float_RArray::AbsMaxVal(int& idx, int start, int end) const {
+  if(end == -1)	end = size;  else end = MIN(size, end);
+  idx = start;
+  float rval = fabsf(FastEl(start));
+  int i;
+  for(i=start+1;i<end;i++) {
+    if(fabsf(FastEl(i)) > rval) {
+      idx = i;
+      rval = fabsf(FastEl(i));
+    }
+  }
+  return rval;
+}
+
 void float_RArray::Add(const float& it) {
   if(size == 0)
     range.Init(it);		// first one is an 'init'
-  else
-    UpdateRange(it);
   float_Array::Add(it);
+}
+
+float float_RArray::Correl(const float_RArray& oth, int start, int end) const {
+  if(end == -1)	end = size;  else end = MIN(size, end);
+  end = MIN(end, oth.size);
+  if(end <= start)	return 0.0f;
+  float my_mean = Mean(start,end);
+  float oth_mean = oth.Mean(start,end);
+  float my_var = 0.0f;
+  float oth_var = 0.0f;
+  float rval = 0.0f;
+  int i;
+  for(i=start;i<end;i++) {
+    float my_val = FastEl(i) - my_mean;
+    float oth_val = oth.FastEl(i) - oth_mean;
+    rval += my_val * oth_val;
+    my_var += my_val * my_val;
+    oth_var += oth_val * oth_val;
+  }
+  float var_prod = sqrtf(my_var * oth_var);
+  if(var_prod != 0.0f)
+    return rval / var_prod;
+  else
+    return 0.0f;
+}
+
+float float_RArray::Covar(const float_RArray& oth, int start, int end) const {
+  if(end == -1)	end = size;  else end = MIN(size, end);
+  end = MIN(end, oth.size);
+  if(end <= start)	return 0.0f;
+  float my_mean = Mean(start,end);
+  float oth_mean = oth.Mean(start,end);
+  float rval = 0.0f;
+  int i;
+  for(i=start;i<end;i++)
+    rval += (FastEl(i) - my_mean) * (oth.FastEl(i) - oth_mean);
+  int sz = end - start;
+  return rval / (float)sz;
 }
 
 void float_RArray::Insert(const float& item, int idx, int n_els) {
@@ -207,33 +257,17 @@ void float_RArray::Insert(const float& item, int idx, int n_els) {
   float_Array::Insert(item, idx, n_els);
 }
 
-void float_RArray::UpdateAllRange() {
-  if(size == 0) {
-    range.Init(0.0f);
-    return;
-  }
-  range.Init(FastEl(0));
-  int i;
-  for(i=1; i<size; i++)
-    UpdateRange(FastEl(i));
+void float_RArray::ItemAdded_(const void* it_, int) {
+  const float& it = *(static_cast<const float*>(it_));
+  UpdateRange(it);
 }
 
-float float_RArray::Pop(){
-  float result = float_Array::Pop();
+void float_RArray::ItemRemoved_(const void*, int) {
   UpdateAllRange();
-  return result;
 }
 
-bool float_RArray::Remove(uint i, int n){
-  bool result = float_Array::Remove(i,n);
-  if(result) UpdateAllRange();
-  return result;
-}
-
-bool float_RArray::Remove(const float& item){
-  bool result = float_Array::Remove(item);
-//  if(result) UpdateAllRange(); // done in Remove(i,n)
-  return result;
+void float_RArray::ItemsChanged_() {
+  UpdateAllRange();
 }
 
 float float_RArray::MaxVal(int& idx, int start, int end) const {
@@ -250,18 +284,22 @@ float float_RArray::MaxVal(int& idx, int start, int end) const {
   return rval;
 }
 
-float float_RArray::AbsMaxVal(int& idx, int start, int end) const {
+float float_RArray::Mean(int start, int end) const {
   if(end == -1)	end = size;  else end = MIN(size, end);
-  idx = start;
-  float rval = fabsf(FastEl(start));
-  int i;
-  for(i=start+1;i<end;i++) {
-    if(fabsf(FastEl(i)) > rval) {
-      idx = i;
-      rval = fabsf(FastEl(i));
-    }
+  if(end <= start)	return 0.0f;
+  int sz = end - start;
+  return Sum(start,end) / (float)sz;
+}
+
+void float_RArray::UpdateAllRange() {
+  if(size == 0) {
+    range.Init(0.0f);
+    return;
   }
-  return rval;
+  range.Init(FastEl(0));
+  int i;
+  for(i=1; i<size; i++)
+    UpdateRange(FastEl(i));
 }
 
 float float_RArray::MinVal(int& idx, int start, int end) const {
@@ -287,13 +325,6 @@ float float_RArray::Sum(int start, int end) const {
   return rval;
 }
 
-float float_RArray::Mean(int start, int end) const {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  if(end <= start)	return 0.0f;
-  int sz = end - start;
-  return Sum(start,end) / (float)sz;
-}
-
 float float_RArray::Var(float mean, bool use_mean, int start, int end) const {
   if(end == -1)	end = size;  else end = MIN(size, end);
   if(end <= start)	return 0.0f;
@@ -315,44 +346,6 @@ float float_RArray::SEM(float mean, bool use_mean, int start, int end) const {
   if(end == -1)	end = size;  else end = MIN(size, end);
   if(end <= start)	return 0.0f;
   return StdDev(mean, use_mean, start, end) / sqrtf(float(end - start));
-}
-
-float float_RArray::Covar(const float_RArray& oth, int start, int end) const {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  end = MIN(end, oth.size);
-  if(end <= start)	return 0.0f;
-  float my_mean = Mean(start,end);
-  float oth_mean = oth.Mean(start,end);
-  float rval = 0.0f;
-  int i;
-  for(i=start;i<end;i++)
-    rval += (FastEl(i) - my_mean) * (oth.FastEl(i) - oth_mean);
-  int sz = end - start;
-  return rval / (float)sz;
-}
-
-float float_RArray::Correl(const float_RArray& oth, int start, int end) const {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  end = MIN(end, oth.size);
-  if(end <= start)	return 0.0f;
-  float my_mean = Mean(start,end);
-  float oth_mean = oth.Mean(start,end);
-  float my_var = 0.0f;
-  float oth_var = 0.0f;
-  float rval = 0.0f;
-  int i;
-  for(i=start;i<end;i++) {
-    float my_val = FastEl(i) - my_mean;
-    float oth_val = oth.FastEl(i) - oth_mean;
-    rval += my_val * oth_val;
-    my_var += my_val * my_val;
-    oth_var += oth_val * oth_val;
-  }
-  float var_prod = sqrtf(my_var * oth_var);
-  if(var_prod != 0.0f)
-    return rval / var_prod;
-  else
-    return 0.0f;
 }
 
 float float_RArray::SSLength(int start, int end) const {
@@ -525,7 +518,7 @@ void float_RArray::AggToArray(const float_RArray& oth, Aggregate& agg,
   int i;
   for(i=start;i<end;i++)
     agg.ComputeAggNoUpdt(FastEl(i), oth.FastEl(i));
-  UpdateAllRange();
+  ItemsChanged_();
 }
 
 float float_RArray::AggToVal(Aggregate& agg, int start, int end) const {
@@ -538,11 +531,6 @@ float float_RArray::AggToVal(Aggregate& agg, int start, int end) const {
   return rval;
 }
 
-void float_RArray::CopyVals(const taArray_impl& from, int start, int end, int at) {
-  float_Array::CopyVals(from, start, end, at);
-  UpdateAllRange();
-}
-
 float float_RArray::NormLen(float len, int start, int end) {
   if(end == -1)	end = size;  else end = MIN(size, end);
   if(end == 0) 	return 0.0f;
@@ -552,7 +540,7 @@ float float_RArray::NormLen(float len, int start, int end) {
     float mag = (FastEl(i) * FastEl(i)) * scale;
     FastEl(i) = (FastEl(i) >= 0.0f) ? mag : -mag;
   }
-  UpdateAllRange();
+  ItemsChanged_();
   return scale;
 }
 
@@ -566,7 +554,7 @@ float float_RArray::NormSum(float sum, float min_val, int start, int end) {
   float scale = (sum / act_sum);
   for(i=start;i<end;i++)
     FastEl(i) = ((FastEl(i) - range.min) * scale) + min_val;
-  UpdateAllRange();
+  ItemsChanged_();
   return scale;
 }
 
@@ -579,7 +567,7 @@ float float_RArray::NormMax(float max, int start, int end) {
   int i;
   for(i=start;i<end;i++)
     FastEl(i) *= scale;
-  UpdateAllRange();
+  ItemsChanged_();
   return scale;
 }
 
@@ -592,7 +580,7 @@ float float_RArray::NormAbsMax(float max, int start, int end) {
   int i;
   for(i=start;i<end;i++)
     FastEl(i) *= scale;
-  UpdateAllRange();
+  ItemsChanged_();
   return scale;
 }
 
@@ -602,7 +590,7 @@ void float_RArray::SimpleMath(const SimpleMathSpec& math_spec, int start, int en
   int i;
   for(i=start;i<end;i++)
     FastEl(i) = math_spec.Evaluate(FastEl(i));
-  UpdateAllRange();
+  ItemsChanged_();
 }
 
 void float_RArray::SimpleMathArg(const float_RArray& arg_ary, const SimpleMathSpec& math_spec,
@@ -617,7 +605,7 @@ void float_RArray::SimpleMathArg(const float_RArray& arg_ary, const SimpleMathSp
       myms.arg = arg_ary.FastEl(i);
     FastEl(i) = myms.Evaluate(FastEl(i));
   }
-  UpdateAllRange();
+  ItemsChanged_();
 }
 
 int float_RArray::Threshold(float thresh, float low, float high, int start, int end) {
@@ -638,23 +626,16 @@ int float_RArray::Threshold(float thresh, float low, float high, int start, int 
   return rval;
 }
 
-void float_RArray::ShiftLeft(int nshift) {
-  float_Array::ShiftLeft(nshift);
-  UpdateAllRange();
-}
-
-int float_RArray::Dump_Load_Value(istream& strm, TAPtr par) {
-  int rval = float_Array::Dump_Load_Value(strm, par);
-  UpdateAllRange();
-  return rval;
-}
-
 void float_RArray::WritePoint(const TwoDCoord& geom, int x, int y, float color, bool wrap) {
   bool clipped = (TwoDCoord::WrapClipOne(wrap, x, geom.x) ||
 		  TwoDCoord::WrapClipOne(wrap, y, geom.y));
   if(!wrap && clipped)
     return;
-  SafeEl((y * geom.x) + x) = color;
+  int idx = (y * geom.x) + x;
+  if (InRange(idx)) {
+    FastEl(idx) = color;
+    ItemsChanged_();
+  }
 }
 
 void float_RArray::RenderLine(const TwoDCoord& geom, int xs, int ys, int xe, int ye,
@@ -1344,8 +1325,11 @@ void DataTable::AggArrayToRow(const float_RArray& tar, int row_num, Aggregate& a
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     if(ar->InheritsFrom(TA_float_Data)) {
-      float& val = ((float_RArray*)ar->AR())->SafeEl(row_num);
-      agg.ComputeAggNoUpdt(val, tar.FastEl(cnt));
+      float_Array* far = static_cast<float_Array*>(ar->AR());
+      if (far->InRange(row_num)) {
+        float& val = ((float_Array*)ar->AR())->FastEl(row_num);
+        agg.ComputeAggNoUpdt(val, tar.FastEl(cnt));
+      }
     }
     cnt++;
     if(cnt >= tar.size)	break;
@@ -1550,7 +1534,7 @@ void DataTable::PutArrayToRow(const float_RArray& tar, int row_num) {
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     if(ar->InheritsFrom(TA_float_Data)) {
-      ((float_RArray*)ar->AR())->SafeEl(row_num) = tar.FastEl(cnt);
+      static_cast<float_RArray*>(ar->AR())->Set(row_num, tar.FastEl(cnt));
     }
     cnt++;
     if(cnt >= tar.size)	break;
@@ -1673,17 +1657,20 @@ void DataTable::SetCols(LogData& ld) {
 
 void DataTable::SetFloatVal(float val, int col, int row, int subgp) {
   float_RArray* dt = GetColFloatArray(col, subgp);
-  if(dt != NULL) dt->SafeEl(row) = val;
+  if ((dt != NULL) && (dt->InRange(row)))
+    dt->FastEl(row) = val;
 }
 
 void DataTable::SetLastFloatVal(float val, int col, int subgp) {
   float_RArray* dt = GetColFloatArray(col, subgp);
-  if(dt != NULL) dt->Peek() = val;
+  if ((dt != NULL) && (dt->size > 0))
+    dt->FastEl(dt->size - 1) = val;
 }
 
 void DataTable::SetLastStringVal(const char* val, int col, int subgp) {
   String_Array* dt = GetColStringArray(col, subgp);
-  if(dt != NULL) dt->Peek() = val;
+  if ((dt != NULL) && (dt->size > 0))
+    dt->FastEl(dt->size - 1) = val;
 }
 
 void DataTable::SetSaveToFile(bool save_to_file) {
@@ -1696,7 +1683,8 @@ void DataTable::SetSaveToFile(bool save_to_file) {
 
 void DataTable::SetStringVal(const char* val, int col, int row, int subgp) {
   String_Array* dt = GetColStringArray(col, subgp);
-  if(dt != NULL) dt->SafeEl(row) = val;
+  if ((dt != NULL) && (dt->InRange(row)))
+    dt->FastEl(row) = val;
 }
 
 void DataTable::UpdateAllRanges() {

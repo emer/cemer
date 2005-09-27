@@ -13,6 +13,8 @@
 #include "tdgeometry.h"
 #include "aggregate.h"
 #include "minmax.h"
+#include "ta_data_defs.h"
+#include "ta_data.h"
 #include "colorscale.h"
 #include "datatable.h"
 #include "datagraph.h"
@@ -48,7 +50,6 @@ extern	FloatTDCoord*	TAI_FloatTDCoord;
 extern	FloatRotation*	TAI_FloatRotation;
 extern	FloatTransform*	TAI_FloatTransform;
 extern	ValIdx*	TAI_ValIdx;
-extern	ValIdx_Array*	TAI_ValIdx_Array;
 extern	CountParam*	TAI_CountParam;
 extern	Aggregate*	TAI_Aggregate;
 extern	SimpleMathSpec*	TAI_SimpleMathSpec;
@@ -57,6 +58,17 @@ extern	MinMaxRange*	TAI_MinMaxRange;
 extern	FixedMinMax*	TAI_FixedMinMax;
 extern	Modulo*	TAI_Modulo;
 extern	MinMaxInt*	TAI_MinMaxInt;
+extern	DataTransferMode*	TAI_DataTransferMode;
+extern	taMatrix_impl**	TAI_ptaMatrix_impl;
+extern	DataConnector*	TAI_DataConnector;
+extern	SinkChannel*	TAI_SinkChannel;
+extern	SourceChannel*	TAI_SourceChannel;
+extern	taList<DataConnector>*	TAI_taList_DataConnector_;
+extern	DataConnector_List*	TAI_DataConnector_List;
+extern	taList<SourceChannel>*	TAI_taList_SourceChannel_;
+extern	SourceChannel_List*	TAI_SourceChannel_List;
+extern	taList<SinkChannel>*	TAI_taList_SinkChannel_;
+extern	SinkChannel_List*	TAI_SinkChannel_List;
 extern	RGBA*	TAI_RGBA;
 extern	TAColor*	TAI_TAColor;
 extern	ColorScaleSpec*	TAI_ColorScaleSpec;
@@ -75,13 +87,11 @@ extern	DataItem*	TAI_DataItem;
 extern	taList<DataItem>*	TAI_taList_DataItem_;
 extern	DataItem_List*	TAI_DataItem_List;
 extern	LogData*	TAI_LogData;
-extern	float_RArray*	TAI_float_RArray;
 extern	DataArray_impl*	TAI_DataArray_impl;
 extern	taGroup<DataArray_impl>*	TAI_taGroup_DataArray_impl_;
 extern	DataTable*	TAI_DataTable;
 extern	DataArray<float_RArray>*	TAI_DataArray_float_RArray_;
 extern	float_Data*	TAI_float_Data;
-extern	DString_Array*	TAI_DString_Array;
 extern	DataArray<DString_Array>*	TAI_DataArray_DString_Array_;
 extern	String_Data*	TAI_String_Data;
 extern	ClustLink*	TAI_ClustLink;
@@ -102,7 +112,6 @@ extern	YAxisSpec_List*	TAI_YAxisSpec_List;
 extern	GraphletSpec*	TAI_GraphletSpec;
 extern	taList<GraphletSpec>*	TAI_taList_GraphletSpec_;
 extern	GraphletSpec_List*	TAI_GraphletSpec_List;
-extern	FunLookup*	TAI_FunLookup;
 extern	FunLookupND*	TAI_FunLookupND;
 extern	T3DataView*	TAI_T3DataView;
 extern	T3DataViewPar*	TAI_T3DataViewPar;

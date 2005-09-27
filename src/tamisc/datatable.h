@@ -169,11 +169,6 @@ public:
   void		Add(const float& item);
   void		Insert(const float& item, int idx, int n_els=1);
 
-  float		Pop();
-  bool		Remove(const float& item);
-  bool		Remove(uint indx, int n_els=1);
-  void 		CopyVals(const taArray_impl& from, int start=0, int end=-1, int at=0);
-
   virtual float	MaxVal(int& idx, int start=0, int end = -1) const;
   // #MENU #MENU_ON_Actions #USE_RVAL value and index of the (first) element that has the maximum value
   virtual float	AbsMaxVal(int& idx, int start=0, int end = -1) const;
@@ -259,13 +254,16 @@ public:
 			       const float_RArray& color, int wdth=1, bool wrap=true);
   // #MENU render a wide line from given x,y starting, ending coords in 2d space of geometry geom
 
-  inline float& SafeMatEl(int col_dim, int row, int col) const { return SafeEl((row * col_dim) + col); }
+  inline const float& SafeMatEl(int col_dim, int row, int col) const { return SafeEl((row * col_dim) + col); }
   // safe get element assuming a matrix layout of values with column (inner) dimension size = col_dim
-  inline float& FastMatEl(int col_dim, int row, int col) const { return FastEl((row * col_dim) + col); }
+  inline const float& FastMatEl(int col_dim, int row, int col) const { return FastEl((row * col_dim) + col); }
+  inline float& FastMatEl(int col_dim, int row, int col) { return FastEl((row * col_dim) + col); }
   // fast get element assuming a matrix layout of values with column (inner) dimension size = col_dim
-  inline float& FastMatEl1(int col_dim, int row, int col) const { return FastEl(((row-1) * col_dim) + (col-1)); }
+  inline const float& FastMatEl1(int col_dim, int row, int col) const { return FastEl(((row-1) * col_dim) + (col-1)); }
   // fast get element assuming a matrix layout of values with column (inner) dimension size = col_dim, indicies use 1-n range instead of 0-n-1!
-  inline float& FastEl1(int idx) const { return FastEl(idx-1); }
+  inline float& FastMatEl1(int col_dim, int row, int col) { return FastEl(((row-1) * col_dim) + (col-1)); }
+  inline const float& FastEl1(int idx) const { return FastEl(idx-1); }
+  inline float& FastEl1(int idx) { return FastEl(idx-1); }
   // fast get element with index in 1-n range instead of 0-n-1
   virtual void 	GetMatCol(int col_dim, float_RArray& col_vec, int col_no);
   // extract given column from this matrix-formatted object
@@ -277,12 +275,16 @@ public:
   // 1    3 4 5 + dim = 4
   // 2      6 7 + dim + (dim - 1) = 4 + 3
   // 3        8 (y-x) + (x * dim - sum(1..x-1)); sum(1..x) = (x*(x+1)) / 2
-  inline float& SafeTriMatEl(int dim, int x, int y) const {
+  inline const float& SafeTriMatEl(int dim, int x, int y) const {
     if(x < y)  	return SafeEl((y-x) + (x * dim) - (((x-1) * x) / 2));
     else	return SafeEl((x-y) + (y * dim) - (((y-1) * y) / 2));
   }
   // get element assuming an upper-triangular symmetric matrix (e.g., distance matrix) of dimension dim for two items, x, y
-  inline float& FastTriMatEl(int dim, int x, int y) const {
+  inline const float& FastTriMatEl(int dim, int x, int y) const {
+    if(x < y)  return FastEl((y-x) + (x * dim) - (((x-1) * x) / 2));
+    else       return FastEl((x-y) + (y * dim) - (((y-1) * y) / 2));
+  }
+  inline float& FastTriMatEl(int dim, int x, int y) {
     if(x < y)  return FastEl((y-x) + (x * dim) - (((x-1) * x) / 2));
     else       return FastEl((x-y) + (y * dim) - (((y-1) * y) / 2));
   }
@@ -304,10 +306,6 @@ public:
   virtual bool	MDS(int dim, float_RArray& xcoords, float_RArray& ycoords, int x_axis_component = 0, int y_axis_component = 1, bool print_eigen_vals = false);
   // perform multidiminesional scaling of this distace matrix (must be full square matrix), returning two-dimensional coordinates that best capture the distance relationships among the items in x,y coords using specified components
 
-  // updtate range after
-  void		ShiftLeft(int nshft);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-
   void		Reset(){float_Array::Reset();range.Init(0.0f);}
 
   void	Initialize()		{ };
@@ -316,8 +314,11 @@ public:
   void 	Copy_(const float_RArray& cp);
   COPY_FUNS(float_RArray, float_Array);
   TA_BASEFUNS(float_RArray);
+protected:
+  override void	ItemAdded_(const void*, int n = 1);
+  override void	ItemRemoved_(const void*, int n = 1);
+  override void	ItemsChanged_();
 };
-
 
 // specific ones are in the template classes: String_Data, float_Data
 

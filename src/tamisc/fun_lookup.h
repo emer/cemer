@@ -48,8 +48,9 @@ public:
   float		res;		// resolution of the function
   float		res_inv;	// #READ_ONLY #NO_SAVE 1/res: speeds computation because multiplies are faster than divides
 
-  inline float&	Yval(float x)	// get y value at given x value (no interpolation)
-  { return SafeEl( (int) ((x - x_range.min) * res_inv)); }
+  inline float	Yval(float x) const	
+    // get y value at given x value (no interpolation)
+    { return SafeEl( (int) ((x - x_range.min) * res_inv)); }
 
   inline float	Xval(int idx)	// get x value for given index position within list
   { return x_range.min + ((float)idx * res); }

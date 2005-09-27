@@ -14,6 +14,8 @@
 #include "tdgeometry.h"
 #include "aggregate.h"
 #include "minmax.h"
+#include "ta_data_defs.h"
+#include "ta_data.h"
 #include "colorscale.h"
 #include "datatable.h"
 #include "datagraph.h"
@@ -36,41 +38,41 @@
 
 TypeDef TA_FontSpec("FontSpec", " a specification of a font (for Unix - X logical font description)", 
 	"", "", "", sizeof(FontSpec), (void**)&TAI_FontSpec, 1, 0, 0,1);
-TypeDef TA_const_FontSpec("const_FontSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_FontSpec("const_FontSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ViewLabel("ViewLabel", " contains a label in a view display", 
 	"", "", "", sizeof(ViewLabel), (void**)&TAI_ViewLabel, 1, 0, 0,1);
-TypeDef TA_const_FontSpec_ref("const_FontSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FontSpec_ref("const_FontSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_ViewLabel_("taList_ViewLabel_", " ", 
 	"", "", "", sizeof(taList<ViewLabel>), (void**)&TAI_taList_ViewLabel_, 0, 0, 0,1);
-TypeDef TA_const_ViewLabel("const_ViewLabel", 1, 0, 0, 0,1);
-TypeDef TA_const_ViewLabel_ref("const_ViewLabel_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ViewLabel("const_ViewLabel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ViewLabel_ref("const_ViewLabel_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ViewLabel_List("ViewLabel_List", " list of ViewLabel objects", 
 	"", "", "", sizeof(ViewLabel_List), (void**)&TAI_ViewLabel_List, 0, 0, 0,1);
-TypeDef TA_const_Xform_ref("const_Xform_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ViewLabel_List("const_ViewLabel_List", 1, 0, 0, 0,1);
+TypeDef TA_const_Xform_ref("const_Xform_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ViewLabel_List("const_ViewLabel_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taList_Xform_("taList_Xform_", " ", 
 	"", "", "", sizeof(taList<Xform>), (void**)&TAI_taList_Xform_, 0, 0, 0,1);
-TypeDef TA_const_ViewLabel_List_ref("const_ViewLabel_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ViewLabel_List_ref("const_ViewLabel_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Xform_List("Xform_List", "", 
 	"", "", "", sizeof(Xform_List), (void**)&TAI_Xform_List, 0, 0, 0,1);
-TypeDef TA_const_Xform_List("const_Xform_List", 1, 0, 0, 0,1);
+TypeDef TA_const_Xform_List("const_Xform_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_RndSeed("RndSeed", " random seed support", 
 	"", "", "", sizeof(RndSeed), (void**)&TAI_RndSeed, 0, 0, 0,1);
-TypeDef TA_const_Xform_List_ref("const_Xform_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_RndSeed("const_RndSeed", 1, 0, 0, 0,1);
-TypeDef TA_const_RndSeed_ref("const_RndSeed_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Xform_List_ref("const_Xform_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_RndSeed("const_RndSeed", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RndSeed_ref("const_RndSeed_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Random("Random", " Random Number Generation", 
 	"", "", "", sizeof(Random), (void**)&TAI_Random, 0, 0, 0,1);
-TypeDef TA_const_Random("const_Random", 1, 0, 0, 0,1);
-TypeDef TA_const_Random_ref("const_Random_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_Random("const_Random", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Random_ref("const_Random_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeUsed("TimeUsed", " stores and computes time used for processing information", 
 	"", "", "", sizeof(TimeUsed), (void**)&TAI_TimeUsed, 0, 0, 0,1);
 TypeDef TA_TwoDCoord("TwoDCoord", " a value in 2D coordinate space", 
 	"", "", "", sizeof(TwoDCoord), (void**)&TAI_TwoDCoord, 0, 0, 0,1);
-TypeDef TA_const_TimeUsed("const_TimeUsed", 1, 0, 0, 0,1);
+TypeDef TA_const_TimeUsed("const_TimeUsed", 1, 0, 0, 0, 1, 0);
 TypeDef TA_PosTwoDCoord("PosTwoDCoord", " positive-only value in 2D coordinate space", 
 	"", "", "", sizeof(PosTwoDCoord), (void**)&TAI_PosTwoDCoord, 0, 0, 0,1);
-TypeDef TA_const_TimeUsed_ref("const_TimeUsed_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TimeUsed_ref("const_TimeUsed_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDCoord("TDCoord", " a value in 3D coordinate space", 
 	"", "", "", sizeof(TDCoord), (void**)&TAI_TDCoord, 0, 0, 0,1);
 TypeDef TA_PosTDCoord("PosTDCoord", " positive-only value in 3D coordinate space", 
@@ -79,80 +81,139 @@ TypeDef TA_FloatTwoDCoord("FloatTwoDCoord", " a value in 2D coordinate space",
 	"", "", "", sizeof(FloatTwoDCoord), (void**)&TAI_FloatTwoDCoord, 0, 0, 0,1);
 TypeDef TA_FloatTDCoord("FloatTDCoord", " a real value in 3D coordinate space", 
 	"", "", "", sizeof(FloatTDCoord), (void**)&TAI_FloatTDCoord, 0, 0, 0,1);
-TypeDef TA_const_TwoDCoord("const_TwoDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_TwoDCoord_ref("const_TwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FloatTwoDCoord("const_FloatTwoDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_FloatTwoDCoord_ref("const_FloatTwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_TwoDCoord_ref("TwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PosTwoDCoord("const_PosTwoDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_PosTwoDCoord_ref("const_PosTwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_PosTwoDCoord_ref("PosTwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TDCoord("const_TDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_TDCoord_ref("const_TDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FloatTDCoord("const_FloatTDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_FloatTDCoord_ref("const_FloatTDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_TDCoord_ref("TDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_PosTDCoord("const_PosTDCoord", 1, 0, 0, 0,1);
-TypeDef TA_const_PosTDCoord_ref("const_PosTDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_PosTDCoord_ref("PosTDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_FloatTwoDCoord_ref("FloatTwoDCoord_ref", 1, 0, 1, 0,1);
-TypeDef TA_FloatTDCoord_ref("FloatTDCoord_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TwoDCoord("const_TwoDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TwoDCoord_ref("const_TwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FloatTwoDCoord("const_FloatTwoDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FloatTwoDCoord_ref("const_FloatTwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TwoDCoord_ref("TwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PosTwoDCoord("const_PosTwoDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PosTwoDCoord_ref("const_PosTwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_PosTwoDCoord_ref("PosTwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TDCoord("const_TDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TDCoord_ref("const_TDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FloatTDCoord("const_FloatTDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FloatTDCoord_ref("const_FloatTDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_TDCoord_ref("TDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PosTDCoord("const_PosTDCoord", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PosTDCoord_ref("const_PosTDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_PosTDCoord_ref("PosTDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_FloatTwoDCoord_ref("FloatTwoDCoord_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_FloatTDCoord_ref("FloatTDCoord_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FloatRotation("FloatRotation", " 3-d rotation data, xyz specify the rotation axis", 
 	"", "", "", sizeof(FloatRotation), (void**)&TAI_FloatRotation, 0, 0, 0,1);
-TypeDef TA_const_FloatRotation("const_FloatRotation", 1, 0, 0, 0,1);
+TypeDef TA_const_FloatRotation("const_FloatRotation", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FloatTransform("FloatTransform", " // 3-d transformation data; applied in order: s, r, t", 
 	"", "", "", sizeof(FloatTransform), (void**)&TAI_FloatTransform, 0, 0, 0,1);
-TypeDef TA_const_FloatRotation_ref("const_FloatRotation_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_FloatTransform("const_FloatTransform", 1, 0, 0, 0,1);
-TypeDef TA_const_FloatTransform_ref("const_FloatTransform_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FloatRotation_ref("const_FloatRotation_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_FloatTransform("const_FloatTransform", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FloatTransform_ref("const_FloatTransform_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ValIdx("ValIdx", " a float value and an index: very useful for sorting!", 
 	"", "", "", sizeof(ValIdx), (void**)&TAI_ValIdx, 0, 0, 0,1);
 TypeDef TA_taArray_ValIdx_("taArray_ValIdx_", " ", 
 	"", "", "", sizeof(taArray<ValIdx>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_ValIdx("const_ValIdx", 1, 0, 0, 0,1);
-TypeDef TA_const_ValIdx_ref("const_ValIdx_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ValIdx("const_ValIdx", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ValIdx_ref("const_ValIdx_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ValIdx_ref("ValIdx_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ValIdx_Array("ValIdx_Array", " ", 
-	"", "", "", sizeof(ValIdx_Array), (void**)&TAI_ValIdx_Array, 0, 0, 0,1);
-TypeDef TA_const_ValIdx_Array("const_ValIdx_Array", 1, 0, 0, 0,1);
+	"", "", "", sizeof(ValIdx_Array), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_ValIdx_Array("const_ValIdx_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_CountParam("CountParam", " counting criteria params", 
 	"", "", "", sizeof(CountParam), (void**)&TAI_CountParam, 0, 0, 0,1);
-TypeDef TA_const_ValIdx_Array_ref("const_ValIdx_Array_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_CountParam("const_CountParam", 1, 0, 0, 0,1);
-TypeDef TA_const_CountParam_ref("const_CountParam_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ValIdx_Array_ref("const_ValIdx_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_CountParam("const_CountParam", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_CountParam_ref("const_CountParam_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Aggregate("Aggregate", " Basic aggregation operations", 
 	"", "", "", sizeof(Aggregate), (void**)&TAI_Aggregate, 0, 0, 0,1);
-TypeDef TA_const_Aggregate("const_Aggregate", 1, 0, 0, 0,1);
+TypeDef TA_const_Aggregate("const_Aggregate", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SimpleMathSpec("SimpleMathSpec", " params for std kinds of simple math operators", 
 	"", "", "", sizeof(SimpleMathSpec), (void**)&TAI_SimpleMathSpec, 0, 0, 0,1);
-TypeDef TA_const_Aggregate_ref("const_Aggregate_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SimpleMathSpec("const_SimpleMathSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_SimpleMathSpec_ref("const_SimpleMathSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_float("const_float", 1, 0, 0, 0,1);
+TypeDef TA_const_Aggregate_ref("const_Aggregate_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SimpleMathSpec("const_SimpleMathSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SimpleMathSpec_ref("const_SimpleMathSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMax("MinMax", " minimum-maximum values", 
 	"", "", "", sizeof(MinMax), (void**)&TAI_MinMax, 0, 0, 0,1);
-TypeDef TA_MinMax_ref("MinMax_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_MinMax("const_MinMax", 1, 0, 0, 0,1);
-TypeDef TA_const_MinMax_ref("const_MinMax_ref", 1, 0, 1, 0,1);
+TypeDef TA_MinMax_ref("MinMax_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_MinMax("const_MinMax", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MinMax_ref("const_MinMax_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMaxRange("MinMaxRange", " min-max values plus scale and range ", 
 	"", "", "", sizeof(MinMaxRange), (void**)&TAI_MinMaxRange, 0, 0, 0,1);
-TypeDef TA_const_MinMaxRange("const_MinMaxRange", 1, 0, 0, 0,1);
-TypeDef TA_const_MinMaxRange_ref("const_MinMaxRange_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_MinMaxRange("const_MinMaxRange", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MinMaxRange_ref("const_MinMaxRange_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FixedMinMax("FixedMinMax", " minimum-maximum values with toggles for usage", 
 	"", "", "", sizeof(FixedMinMax), (void**)&TAI_FixedMinMax, 0, 0, 0,1);
-TypeDef TA_const_FixedMinMax("const_FixedMinMax", 1, 0, 0, 0,1);
-TypeDef TA_const_FixedMinMax_ref("const_FixedMinMax_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FixedMinMax("const_FixedMinMax", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FixedMinMax_ref("const_FixedMinMax_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Modulo("Modulo", " modulo for things that happen periodically", 
 	"", "", "", sizeof(Modulo), (void**)&TAI_Modulo, 0, 0, 0,1);
-TypeDef TA_const_Modulo("const_Modulo", 1, 0, 0, 0,1);
-TypeDef TA_const_Modulo_ref("const_Modulo_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_int("const_int", 1, 0, 0, 0,1);
+TypeDef TA_const_Modulo("const_Modulo", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Modulo_ref("const_Modulo_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMaxInt("MinMaxInt", " minimum-maximum values", 
 	"", "", "", sizeof(MinMaxInt), (void**)&TAI_MinMaxInt, 0, 0, 0,1);
+TypeDef TA_MinMaxInt_ref("MinMaxInt_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_MinMaxInt("const_MinMaxInt", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_MinMaxInt_ref("const_MinMaxInt_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_IDataSource("IDataSource", " represents a source of data", 
+	"", "", "", sizeof(IDataSource), (void**)0, 0, 0, 0,1);
+TypeDef TA_ISequencable("ISequencable", " interface exposed by entities that can be sequenced, particularly DataSources", 
+	"", "", "", sizeof(ISequencable), (void**)0, 0, 0, 0,1);
+TypeDef TA_IDataSink("IDataSink", " represents a consumer of data", 
+	"", "", "", sizeof(IDataSink), (void**)0, 0, 0, 0,1);
+TypeDef TA_DataTransferMode("DataTransferMode", "", 
+	"", "", "", sizeof(int), (void**)&TAI_DataTransferMode, 0, 0, 0,1);
+TypeDef TA_ptaMatrix_impl("ptaMatrix_impl", "", 
+	"", "", "", sizeof(taMatrix_impl*), (void**)&TAI_ptaMatrix_impl, 0, 1, 0,1);
+TypeDef TA_ISequencable_ptr("ISequencable_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ptaMatrix_impl_ref("ptaMatrix_impl_ref", 1, 1, 1, 0, 1, 0);
+TypeDef TA_DataChannel("DataChannel", " a connection between a source and sink -- owned by the source list", 
+	"", "", "", sizeof(DataChannel), (void**)0, 0, 0, 0,1);
+TypeDef TA_DataConnector("DataConnector", " represents a connection between a single source channel and sink channel", 
+	"", "", "", sizeof(DataConnector), (void**)&TAI_DataConnector, 0, 0, 0,1);
+TypeDef TA_SinkChannel("SinkChannel", " forwards this file ", 
+	"", "", "", sizeof(SinkChannel), (void**)&TAI_SinkChannel, 0, 0, 0,1);
+TypeDef TA_SourceChannel("SourceChannel", " ", 
+	"", "", "", sizeof(SourceChannel), (void**)&TAI_SourceChannel, 0, 0, 0,1);
+TypeDef TA_SinkChannel_ptr("SinkChannel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SequenceMaster("SequenceMaster", " singleton class", 
+	"", "", "", sizeof(SequenceMaster), (void**)0, 1, 0, 0,1);
+TypeDef TA_SourceChannel_ptr("SourceChannel_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_DataConnector_ptr("DataConnector_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_DataConnector("const_DataConnector", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataConnector_ref("const_DataConnector_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taList_DataConnector_("taList_DataConnector_", " ", 
+	"", "", "", sizeof(taList<DataConnector>), (void**)&TAI_taList_DataConnector_, 0, 0, 0,1);
+TypeDef TA_DataConnector_List("DataConnector_List", "  list of connectors, owned by the SourceChannel", 
+	"", "", "", sizeof(DataConnector_List), (void**)&TAI_DataConnector_List, 0, 0, 0,1);
+TypeDef TA_const_DataConnector_List("const_DataConnector_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataConnector_List_ref("const_DataConnector_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_DataChannel("const_DataChannel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataChannel_ref("const_DataChannel_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_IDataSource_ptr("IDataSource_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_SourceChannel("const_SourceChannel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SourceChannel_ref("const_SourceChannel_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taList_SourceChannel_("taList_SourceChannel_", " ", 
+	"", "", "", sizeof(taList<SourceChannel>), (void**)&TAI_taList_SourceChannel_, 0, 0, 0,1);
+TypeDef TA_SourceChannel_List("SourceChannel_List", " ", 
+	"", "", "", sizeof(SourceChannel_List), (void**)&TAI_SourceChannel_List, 0, 0, 0,1);
+TypeDef TA_const_SourceChannel_List("const_SourceChannel_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SourceChannel_List_ref("SourceChannel_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SourceChannel_List_ref("const_SourceChannel_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_IDataSink_ptr("IDataSink_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_SinkChannel("const_SinkChannel", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SinkChannel_ref("const_SinkChannel_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_taList_SinkChannel_("taList_SinkChannel_", " ", 
+	"", "", "", sizeof(taList<SinkChannel>), (void**)&TAI_taList_SinkChannel_, 0, 0, 0,1);
+TypeDef TA_SinkChannel_List("SinkChannel_List", " ", 
+	"", "", "", sizeof(SinkChannel_List), (void**)&TAI_SinkChannel_List, 0, 0, 0,1);
+TypeDef TA_const_SinkChannel_List("const_SinkChannel_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SinkChannel_List_ref("SinkChannel_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SinkChannel_List_ref("const_SinkChannel_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SequenceMaster_ref("SequenceMaster_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_int64_t_ref("int64_t_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_int64_t_ptr("int64_t_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_SequenceMaster("const_SequenceMaster", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_SequenceMaster_ref("const_SequenceMaster_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RGBA("RGBA", " Red Green Blue Alpha color specification", 
 	"", "", "", sizeof(RGBA), (void**)&TAI_RGBA, 0, 0, 0,1);
-TypeDef TA_MinMaxInt_ref("MinMaxInt_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_MinMaxInt("const_MinMaxInt", 1, 0, 0, 0,1);
-TypeDef TA_const_MinMaxInt_ref("const_MinMaxInt_ref", 1, 0, 1, 0,1);
 TypeDef TA_TAColor("TAColor", " Color", 
 	"", "", "", sizeof(TAColor), (void**)&TAI_TAColor, 0, 0, 0,1);
 TypeDef TA_ColorScaleSpec("ColorScaleSpec", " Color Spectrum Data", 
@@ -161,144 +222,143 @@ TypeDef TA_ScaleRange("ScaleRange", " saves scale ranges for different variables
 	"", "", "", sizeof(ScaleRange), (void**)&TAI_ScaleRange, 0, 0, 0,1);
 TypeDef TA_ColorScale("ColorScale", " defines a range of colors to code data values with", 
 	"", "", "", sizeof(ColorScale), (void**)&TAI_ColorScale, 0, 0, 0,1);
-TypeDef TA_const_RGBA("const_RGBA", 1, 0, 0, 0,1);
-TypeDef TA_const_RGBA_ref("const_RGBA_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RGBA("const_RGBA", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_RGBA_ref("const_RGBA_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_RGBA_("taList_RGBA_", " ", 
 	"", "", "", sizeof(taList<RGBA>), (void**)&TAI_taList_RGBA_, 0, 0, 0,1);
 TypeDef TA_RGBA_List("RGBA_List", " list of RGBA objects", 
 	"", "", "", sizeof(RGBA_List), (void**)&TAI_RGBA_List, 0, 0, 0,1);
-TypeDef TA_const_RGBA_List("const_RGBA_List", 1, 0, 0, 0,1);
-TypeDef TA_RGBA_ptr("RGBA_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_RGBA_List_ref("const_RGBA_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_TAColor("const_TAColor", 1, 0, 0, 0,1);
-TypeDef TA_const_TAColor_ref("const_TAColor_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_RGBA_List("const_RGBA_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_RGBA_ptr("RGBA_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_RGBA_List_ref("const_RGBA_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_TAColor("const_TAColor", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_TAColor_ref("const_TAColor_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_TAColor_("taList_TAColor_", " ", 
 	"", "", "", sizeof(taList<TAColor>), (void**)&TAI_taList_TAColor_, 0, 0, 0,1);
 TypeDef TA_TAColor_List("TAColor_List", " list of TAColor objects", 
 	"", "", "", sizeof(TAColor_List), (void**)&TAI_TAColor_List, 0, 0, 0,1);
-TypeDef TA_const_TAColor_List("const_TAColor_List", 1, 0, 0, 0,1);
-TypeDef TA_TAColor_List_ptr("TAColor_List_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_TAColor_List_ref("const_TAColor_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ColorScaleSpec("const_ColorScaleSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ColorScaleSpec_ref("const_ColorScaleSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_TAColor_List("const_TAColor_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_TAColor_List_ptr("TAColor_List_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TAColor_List_ref("const_TAColor_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ColorScaleSpec("const_ColorScaleSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ColorScaleSpec_ref("const_ColorScaleSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_ColorScaleSpec_("taGroup_ColorScaleSpec_", " ", 
 	"", "", "", sizeof(taGroup<ColorScaleSpec>), (void**)&TAI_taGroup_ColorScaleSpec_, 0, 0, 0,1);
 TypeDef TA_ColorScaleSpec_MGroup("ColorScaleSpec_MGroup", "", 
 	"", "", "", sizeof(ColorScaleSpec_MGroup), (void**)&TAI_ColorScaleSpec_MGroup, 0, 0, 0,1);
-TypeDef TA_const_ColorScaleSpec_MGroup("const_ColorScaleSpec_MGroup", 1, 0, 0, 0,1);
-TypeDef TA_const_ColorScaleSpec_MGroup_ref("const_ColorScaleSpec_MGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_ColorScale_ref("ColorScale_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ScaleRange("const_ScaleRange", 1, 0, 0, 0,1);
-TypeDef TA_const_ScaleRange_ref("const_ScaleRange_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ColorScaleSpec_MGroup("const_ColorScaleSpec_MGroup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ColorScaleSpec_MGroup_ref("const_ColorScaleSpec_MGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ColorScale_ref("ColorScale_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ScaleRange("const_ScaleRange", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ScaleRange_ref("const_ScaleRange_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_ScaleRange_("taList_ScaleRange_", " ", 
 	"", "", "", sizeof(taList<ScaleRange>), (void**)&TAI_taList_ScaleRange_, 0, 0, 0,1);
 TypeDef TA_ScaleRange_List("ScaleRange_List", " list of ScaleRange objects", 
 	"", "", "", sizeof(ScaleRange_List), (void**)&TAI_ScaleRange_List, 0, 0, 0,1);
-TypeDef TA_const_ScaleRange_List("const_ScaleRange_List", 1, 0, 0, 0,1);
-TypeDef TA_ColorScaleSpec_ptr("ColorScaleSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_ScaleRange_List_ref("const_ScaleRange_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_iColor_ptr_ptr("const_iColor_ptr_ptr", 1, 2, 0, 0,1);
-TypeDef TA_ScaleRange_ptr("ScaleRange_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_ColorScale("const_ColorScale", 1, 0, 0, 0,1);
-TypeDef TA_const_ColorScale_ref("const_ColorScale_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ScaleRange_List("const_ScaleRange_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_ColorScaleSpec_ptr("ColorScaleSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_ScaleRange_List_ref("const_ScaleRange_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_iColor_ptr_ptr("const_iColor_ptr_ptr", 1, 2, 0, 0, 1, 0);
+TypeDef TA_ScaleRange_ptr("ScaleRange_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_ColorScale("const_ColorScale", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ColorScale_ref("const_ColorScale_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ClustNode("ClustNode", " node in clustering algorithm use one with leaves as children as a root node for cluster ", 
 	"", "", "", sizeof(ClustNode), (void**)&TAI_ClustNode, 0, 0, 0,1);
 TypeDef TA_DataItem("DataItem", " source of a piece of data", 
 	"", "", "", sizeof(DataItem), (void**)&TAI_DataItem, 0, 0, 0,1);
 TypeDef TA_taList_DataItem_("taList_DataItem_", " ", 
 	"", "", "", sizeof(taList<DataItem>), (void**)&TAI_taList_DataItem_, 0, 0, 0,1);
-TypeDef TA_const_DataItem("const_DataItem", 1, 0, 0, 0,1);
-TypeDef TA_const_DataItem_ref("const_DataItem_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DataItem("const_DataItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataItem_ref("const_DataItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DataItem_List("DataItem_List", " list of DataItem objects", 
 	"", "", "", sizeof(DataItem_List), (void**)&TAI_DataItem_List, 0, 0, 0,1);
-TypeDef TA_DataItem_ptr("DataItem_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_DataItem_List("const_DataItem_List", 1, 0, 0, 0,1);
-TypeDef TA_const_DataItem_List_ref("const_DataItem_List_ref", 1, 0, 1, 0,1);
+TypeDef TA_DataItem_ptr("DataItem_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_DataItem_List("const_DataItem_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataItem_List_ref("const_DataItem_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LogData("LogData", " log data is communicated with these objects", 
 	"", "", "", sizeof(LogData), (void**)&TAI_LogData, 0, 0, 0,1);
-TypeDef TA_const_float_ref("const_float_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_LogData("const_LogData", 1, 0, 0, 0,1);
-TypeDef TA_const_LogData_ref("const_LogData_ref", 1, 0, 1, 0,1);
-TypeDef TA_Aggregate_ref("Aggregate_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_LogData("const_LogData", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_LogData_ref("const_LogData_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_Aggregate_ref("Aggregate_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_RArray("float_RArray", " float array with range, plus a lot of other mathematical functions", 
-	"", "", "", sizeof(float_RArray), (void**)&TAI_float_RArray, 0, 0, 0,1);
-TypeDef TA_taArray_base_ptr("taArray_base_ptr", 1, 1, 0, 0,1);
-TypeDef TA_float_RArray_ref("float_RArray_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_float_RArray("const_float_RArray", 1, 0, 0, 0,1);
-TypeDef TA_const_float_RArray_ref("const_float_RArray_ref", 1, 0, 1, 0,1);
+	"", "", "", sizeof(float_RArray), (void**)0, 0, 0, 0,1);
+TypeDef TA_taArray_base_ptr("taArray_base_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_float_RArray_ref("float_RArray_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_float_RArray("const_float_RArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_float_RArray_ref("const_float_RArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DataArray_impl("DataArray_impl", " holds array data", 
 	"", "", "", sizeof(DataArray_impl), (void**)&TAI_DataArray_impl, 0, 0, 0,1);
 TypeDef TA_taGroup_DataArray_impl_("taGroup_DataArray_impl_", " ", 
 	"", "", "", sizeof(taGroup<DataArray_impl>), (void**)&TAI_taGroup_DataArray_impl_, 0, 0, 0,1);
-TypeDef TA_const_DataArray_impl("const_DataArray_impl", 1, 0, 0, 0,1);
-TypeDef TA_LogData_ref("LogData_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_DataArray_impl_ref("const_DataArray_impl_ref", 1, 0, 1, 0,1);
-TypeDef TA_DataArray_impl_ptr("DataArray_impl_ptr", 1, 1, 0, 0,1);
-TypeDef TA_float_RArray_ptr("float_RArray_ptr", 1, 1, 0, 0,1);
-TypeDef TA_String_Array_ptr("String_Array_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_DataArray_impl("const_DataArray_impl", 1, 0, 0, 0, 1, 0);
+TypeDef TA_LogData_ref("LogData_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_DataArray_impl_ref("const_DataArray_impl_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_DataArray_impl_ptr("DataArray_impl_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_float_RArray_ptr("float_RArray_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_String_Array_ptr("String_Array_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DataTable("DataTable", " table of data", 
 	"", "", "", sizeof(DataTable), (void**)&TAI_DataTable, 0, 0, 0,1);
-TypeDef TA_const_DataTable("const_DataTable", 1, 0, 0, 0,1);
-TypeDef TA_DataTable_ptr("DataTable_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_DataTable_ref("const_DataTable_ref", 1, 0, 1, 0,1);
-TypeDef TA_DataArray("DataArray", 1, 0, 0, 0,1);
+TypeDef TA_const_DataTable("const_DataTable", 1, 0, 0, 0, 1, 0);
+TypeDef TA_DataTable_ptr("DataTable_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_DataTable_ref("const_DataTable_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_DataArray("DataArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_DataArray_float_RArray_("DataArray_float_RArray_", "", 
 	"", "", "", sizeof(DataArray<float_RArray>), (void**)&TAI_DataArray_float_RArray_, 0, 0, 0,1);
-TypeDef TA_const_DataArray("const_DataArray", 1, 0, 0, 0,1);
-TypeDef TA_const_DataArray_ref("const_DataArray_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DataArray("const_DataArray", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DataArray_ref("const_DataArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_Data("float_Data", " floating point data", 
 	"", "", "", sizeof(float_Data), (void**)&TAI_float_Data, 0, 0, 0,1);
-TypeDef TA_const_float_Data("const_float_Data", 1, 0, 0, 0,1);
-TypeDef TA_float_Data_ptr("float_Data_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_float_Data_ref("const_float_Data_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_float_Data("const_float_Data", 1, 0, 0, 0, 1, 0);
+TypeDef TA_float_Data_ptr("float_Data_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_float_Data_ref("const_float_Data_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DString_Array("DString_Array", "", 
-	"", "", "", sizeof(DString_Array), (void**)&TAI_DString_Array, 0, 0, 0,1);
+	"", "", "", sizeof(DString_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataArray_DString_Array_("DataArray_DString_Array_", "", 
 	"", "", "", sizeof(DataArray<DString_Array>), (void**)&TAI_DataArray_DString_Array_, 0, 0, 0,1);
-TypeDef TA_const_DString_Array("const_DString_Array", 1, 0, 0, 0,1);
+TypeDef TA_const_DString_Array("const_DString_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_String_Data("String_Data", "  string data", 
 	"", "", "", sizeof(String_Data), (void**)&TAI_String_Data, 0, 0, 0,1);
-TypeDef TA_const_DString_Array_ref("const_DString_Array_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_String_Data("const_String_Data", 1, 0, 0, 0,1);
-TypeDef TA_String_Data_ptr("String_Data_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_String_Data_ref("const_String_Data_ref", 1, 0, 1, 0,1);
-TypeDef TA_ClustNode_ptr("ClustNode_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_DString_Array_ref("const_DString_Array_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_String_Data("const_String_Data", 1, 0, 0, 0, 1, 0);
+TypeDef TA_String_Data_ptr("String_Data_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_String_Data_ref("const_String_Data_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_ClustNode_ptr("ClustNode_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_ClustLink("ClustLink", " a link in the cluster tree with distance", 
 	"", "", "", sizeof(ClustLink), (void**)&TAI_ClustLink, 0, 0, 0,1);
-TypeDef TA_const_ClustLink("const_ClustLink", 1, 0, 0, 0,1);
-TypeDef TA_const_ClustNode("const_ClustNode", 1, 0, 0, 0,1);
-TypeDef TA_const_ClustLink_ref("const_ClustLink_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ClustNode_ref("const_ClustNode_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_ClustLink("const_ClustLink", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ClustNode("const_ClustNode", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ClustLink_ref("const_ClustLink_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ClustNode_ref("const_ClustNode_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DA_ViewSpec("DA_ViewSpec", " base specification for the display of log data_array (DA)", 
 	"", "", "", sizeof(DA_ViewSpec), (void**)&TAI_DA_ViewSpec, 1, 0, 0,1);
 TypeDef TA_taGroup_DA_ViewSpec_("taGroup_DA_ViewSpec_", " ", 
 	"", "", "", sizeof(taGroup<DA_ViewSpec>), (void**)&TAI_taGroup_DA_ViewSpec_, 0, 0, 0,1);
-TypeDef TA_const_DA_ViewSpec("const_DA_ViewSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_DA_ViewSpec_ref("const_DA_ViewSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DA_ViewSpec("const_DA_ViewSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DA_ViewSpec_ref("const_DA_ViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DT_ViewSpec("DT_ViewSpec", " base specification for the display of log data_table (DT)", 
 	"", "", "", sizeof(DT_ViewSpec), (void**)&TAI_DT_ViewSpec, 0, 0, 0,1);
-TypeDef TA_const_DT_ViewSpec("const_DT_ViewSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_DT_ViewSpec("const_DT_ViewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_DA_TextViewSpec("DA_TextViewSpec", " data-array view spec for text-based display", 
 	"", "", "", sizeof(DA_TextViewSpec), (void**)&TAI_DA_TextViewSpec, 1, 0, 0,1);
-TypeDef TA_const_DT_ViewSpec_ref("const_DT_ViewSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_DA_TextViewSpec("const_DA_TextViewSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_DA_TextViewSpec_ref("const_DA_TextViewSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DT_ViewSpec_ref("const_DT_ViewSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_DA_TextViewSpec("const_DA_TextViewSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DA_TextViewSpec_ref("const_DA_TextViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DA_NetViewSpec("DA_NetViewSpec", " data-array view spec for netview based display", 
 	"", "", "", sizeof(DA_NetViewSpec), (void**)&TAI_DA_NetViewSpec, 1, 0, 0,1);
-TypeDef TA_const_DA_NetViewSpec("const_DA_NetViewSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_DA_NetViewSpec_ref("const_DA_NetViewSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DA_NetViewSpec("const_DA_NetViewSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DA_NetViewSpec_ref("const_DA_NetViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DA_GridViewSpec("DA_GridViewSpec", " information for display of a data array in a grid display", 
 	"", "", "", sizeof(DA_GridViewSpec), (void**)&TAI_DA_GridViewSpec, 1, 0, 0,1);
-TypeDef TA_const_DA_GridViewSpec("const_DA_GridViewSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_DA_GridViewSpec_ref("const_DA_GridViewSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DA_GridViewSpec("const_DA_GridViewSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_DA_GridViewSpec_ref("const_DA_GridViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DT_GridViewSpec("DT_GridViewSpec", " information for display of a datatable in a grid display", 
 	"", "", "", sizeof(DT_GridViewSpec), (void**)&TAI_DT_GridViewSpec, 0, 0, 0,1);
 TypeDef TA_GraphColSpec("GraphColSpec", " data-array view spec for graph-based display", 
 	"", "", "", sizeof(GraphColSpec), (void**)&TAI_GraphColSpec, 1, 0, 0,1);
-TypeDef TA_const_DT_GridViewSpec("const_DT_GridViewSpec", 1, 0, 0, 0,1);
+TypeDef TA_const_DT_GridViewSpec("const_DT_GridViewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_AxisSpec("AxisSpec", " specs of the axis on a graph, name is cloned from primary col", 
 	"", "", "", sizeof(AxisSpec), (void**)0, 1, 0, 0,1);
-TypeDef TA_const_DT_GridViewSpec_ref("const_DT_GridViewSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_DT_GridViewSpec_ref("const_DT_GridViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XAxisSpec("XAxisSpec", " specs of the X axis on a graph, name is cloned from primary col", 
 	"", "", "", sizeof(XAxisSpec), (void**)&TAI_XAxisSpec, 1, 0, 0,1);
 TypeDef TA_YAxisSpec("YAxisSpec", " specs of the Y axis on a graph, name is cloned from primary col", 
@@ -307,104 +367,104 @@ TypeDef TA_ZAxisSpec("ZAxisSpec", " specs of the Z axis on a graph, name is clon
 	"", "", "", sizeof(ZAxisSpec), (void**)&TAI_ZAxisSpec, 1, 0, 0,1);
 TypeDef TA_GraphSpec("GraphSpec", " class Graph; controls display of datatable in a graph format", 
 	"", "", "", sizeof(GraphSpec), (void**)&TAI_GraphSpec, 0, 0, 0,1);
-TypeDef TA_GraphSpec_ptr("GraphSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_AxisSpec_ptr("AxisSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_GraphColSpec_ptr("GraphColSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphColSpec("const_GraphColSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphColSpec_ref("const_GraphColSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_AxisSpec("const_AxisSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_AxisSpec_ref("const_AxisSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_XAxisSpec("const_XAxisSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_XAxisSpec_ref("const_XAxisSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_YAxisSpec("const_YAxisSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_YAxisSpec_ref("const_YAxisSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_ZAxisSpec("const_ZAxisSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_ZAxisSpec_ref("const_ZAxisSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_GraphSpec_ptr("GraphSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_AxisSpec_ptr("AxisSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_GraphColSpec_ptr("GraphColSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphColSpec("const_GraphColSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphColSpec_ref("const_GraphColSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_AxisSpec("const_AxisSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_AxisSpec_ref("const_AxisSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_XAxisSpec("const_XAxisSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_XAxisSpec_ref("const_XAxisSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_YAxisSpec("const_YAxisSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_YAxisSpec_ref("const_YAxisSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_ZAxisSpec("const_ZAxisSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_ZAxisSpec_ref("const_ZAxisSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_YAxisSpec_("taList_YAxisSpec_", " ", 
 	"", "", "", sizeof(taList<YAxisSpec>), (void**)&TAI_taList_YAxisSpec_, 0, 0, 0,1);
-TypeDef TA_YAxisSpec_ptr("YAxisSpec_ptr", 1, 1, 0, 0,1);
+TypeDef TA_YAxisSpec_ptr("YAxisSpec_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_YAxisSpec_List("YAxisSpec_List", " ", 
 	"", "", "", sizeof(YAxisSpec_List), (void**)&TAI_YAxisSpec_List, 0, 0, 0,1);
-TypeDef TA_const_GraphColSpec_ptr("const_GraphColSpec_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_GraphColSpec_ptr("const_GraphColSpec_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_GraphletSpec("GraphletSpec", " link list of axes, plus additional per-graphlet info", 
 	"", "", "", sizeof(GraphletSpec), (void**)&TAI_GraphletSpec, 0, 0, 0,1);
-TypeDef TA_int_ptr("int_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_YAxisSpec_List("const_YAxisSpec_List", 1, 0, 0, 0,1);
-TypeDef TA_const_YAxisSpec_List_ref("const_YAxisSpec_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_GraphletSpec("const_GraphletSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphletSpec_ref("const_GraphletSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_int_ptr("int_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_YAxisSpec_List("const_YAxisSpec_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_YAxisSpec_List_ref("const_YAxisSpec_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_GraphletSpec("const_GraphletSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphletSpec_ref("const_GraphletSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_GraphletSpec_("taList_GraphletSpec_", " ", 
 	"", "", "", sizeof(taList<GraphletSpec>), (void**)&TAI_taList_GraphletSpec_, 0, 0, 0,1);
 TypeDef TA_GraphletSpec_List("GraphletSpec_List", "", 
 	"", "", "", sizeof(GraphletSpec_List), (void**)&TAI_GraphletSpec_List, 0, 0, 0,1);
-TypeDef TA_const_GraphletSpec_List("const_GraphletSpec_List", 1, 0, 0, 0,1);
-TypeDef TA_ColorScale_ptr("ColorScale_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphletSpec_List_ref("const_GraphletSpec_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_GraphSpec("const_GraphSpec", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphSpec_ref("const_GraphSpec_ref", 1, 0, 1, 0,1);
-TypeDef TA_AxisSpec_ref("AxisSpec_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_GraphletSpec_List("const_GraphletSpec_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_ColorScale_ptr("ColorScale_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphletSpec_List_ref("const_GraphletSpec_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_GraphSpec("const_GraphSpec", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphSpec_ref("const_GraphSpec_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_AxisSpec_ref("AxisSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FunLookup("FunLookup", " function lookup for non-computable functions and optimization", 
-	"", "", "", sizeof(FunLookup), (void**)&TAI_FunLookup, 0, 0, 0,1);
-TypeDef TA_const_FunLookup("const_FunLookup", 1, 0, 0, 0,1);
-TypeDef TA_float_ptr("float_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_FunLookup_ref("const_FunLookup_ref", 1, 0, 1, 0,1);
+	"", "", "", sizeof(FunLookup), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_FunLookup("const_FunLookup", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FunLookup_ref("const_FunLookup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_float_ptr("float_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_FunLookupND("FunLookupND", " n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output", 
 	"", "", "", sizeof(FunLookupND), (void**)&TAI_FunLookupND, 1, 0, 0,1);
 TypeDef TA_SoBase("SoBase", "  ", 
 	"", "", "", sizeof(SoBase), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_FunLookupND("const_FunLookupND", 1, 0, 0, 0,1);
-TypeDef TA_SoNode("SoNode", 1, 0, 0, 0,1);
-TypeDef TA_const_FunLookupND_ref("const_FunLookupND_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_FunLookupND("const_FunLookupND", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoNode("SoNode", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_FunLookupND_ref("const_FunLookupND_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoGroup("SoGroup", "  ", 
 	"", "", "", sizeof(SoGroup), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoSeparator("SoSeparator", 1, 0, 0, 0,1);
-TypeDef TA_SoBase_ptr("SoBase_ptr", 1, 1, 0, 0,1);
+TypeDef TA_SoSeparator("SoSeparator", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoBase_ptr("SoBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoPtr_impl("SoPtr_impl", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoPtr("SoPtr", 1, 0, 0, 0,1);
+TypeDef TA_SoPtr("SoPtr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SoPtr_SoNode_("SoPtr_SoNode_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoNode>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoNode_ptr("SoNode_ptr", 1, 1, 0, 0,1);
+TypeDef TA_SoNode_ptr("SoNode_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoNodePtr("SoNodePtr", "", 
 	"", "", "", sizeof(SoNodePtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoGroup_("SoPtr_SoGroup_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoGroup>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoNodePtr_ref("SoNodePtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_SoGroup_ptr("SoGroup_ptr", 1, 1, 0, 0,1);
+TypeDef TA_SoNodePtr_ref("SoNodePtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SoGroup_ptr("SoGroup_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoGroupPtr("SoGroupPtr", "", 
 	"", "", "", sizeof(SoGroupPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSeparator_("SoPtr_SoSeparator_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoSeparator>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoGroupPtr_ref("SoGroupPtr_ref", 1, 0, 1, 0,1);
-TypeDef TA_SoSeparator_ptr("SoSeparator_ptr", 1, 1, 0, 0,1);
+TypeDef TA_SoGroupPtr_ref("SoGroupPtr_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_SoSeparator_ptr("SoSeparator_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoSeparatorPtr("SoSeparatorPtr", "", 
 	"", "", "", sizeof(SoSeparatorPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSeparatorKit_("SoPtr_SoSeparatorKit_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoSeparatorKit>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoSeparatorPtr_ref("SoSeparatorPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_SoSeparatorPtr_ref("SoSeparatorPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoSeparatorKitPtr("SoSeparatorKitPtr", "", 
 	"", "", "", sizeof(SoSeparatorKitPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSelection_("SoPtr_SoSelection_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoSelection>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoSeparatorKitPtr_ref("SoSeparatorKitPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_SoSeparatorKitPtr_ref("SoSeparatorKitPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoSelectionPtr("SoSelectionPtr", "", 
 	"", "", "", sizeof(SoSelectionPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoTransform_("SoPtr_SoTransform_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<SoTransform>), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoSelectionPtr_ref("SoSelectionPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_SoSelectionPtr_ref("SoSelectionPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoTransformPtr("SoTransformPtr", "", 
 	"", "", "", sizeof(SoTransformPtr), (void**)0, 0, 0, 0,1);
-TypeDef TA_SoTriangleStripSet("SoTriangleStripSet", 1, 0, 0, 0,1);
-TypeDef TA_SoTransformPtr_ref("SoTransformPtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_SoTriangleStripSet("SoTriangleStripSet", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoTransformPtr_ref("SoTransformPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3Node("T3Node", " externals -- note: some are here for use by other files, not this one an base class for PDP project items, like networks, etc.", 
 	"", "", "", sizeof(T3Node), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_SbColor_ref("const_SbColor_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_SbColor_ref("const_SbColor_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3Color("T3Color", " ", 
 	"", "", "", sizeof(T3Color), (void**)0, 0, 0, 0,1);
-TypeDef TA_T3Color_ref("T3Color_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SbRotation_ref("const_SbRotation_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SbRotation_ptr("const_SbRotation_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_iVec3f_ptr("const_iVec3f_ptr", 1, 1, 0, 0,1);
+TypeDef TA_T3Color_ref("T3Color_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SbRotation_ref("const_SbRotation_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SbRotation_ptr("const_SbRotation_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_iVec3f_ptr("const_iVec3f_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3NodeLeaf("T3NodeLeaf", " an base class for PDP project items, like networks, etc.", 
 	"", "", "", sizeof(T3NodeLeaf), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3NodeParent("T3NodeParent", " an base class for PDP project items, like networks, etc.", 
@@ -423,34 +483,34 @@ TypeDef TA_T3DataViewer("T3DataViewer", " top-level DataViewer object that conta
 	"", "", "", sizeof(T3DataViewer), (void**)&TAI_T3DataViewer, 1, 0, 0,1);
 TypeDef TA_SoPtr_T3Node_("SoPtr_T3Node_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
 	"", "", "", sizeof(SoPtr<T3Node>), (void**)0, 0, 0, 0,1);
-TypeDef TA_T3Node_ptr("T3Node_ptr", 1, 1, 0, 0,1);
+TypeDef TA_T3Node_ptr("T3Node_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3NodePtr("T3NodePtr", "", 
 	"", "", "", sizeof(T3NodePtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_taList_T3DataView_("taList_T3DataView_", " ", 
 	"", "", "", sizeof(taList<T3DataView>), (void**)&TAI_taList_T3DataView_, 0, 0, 0,1);
-TypeDef TA_T3NodePtr_ref("T3NodePtr_ref", 1, 0, 1, 0,1);
+TypeDef TA_T3NodePtr_ref("T3NodePtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3DataView_List("T3DataView_List", " ", 
 	"", "", "", sizeof(T3DataView_List), (void**)&TAI_T3DataView_List, 0, 0, 0,1);
-TypeDef TA_const_T3DataView_List("const_T3DataView_List", 1, 0, 0, 0,1);
-TypeDef TA_T3DataView_ptr("T3DataView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_T3DataView_List_ref("const_T3DataView_List_ref", 1, 0, 1, 0,1);
-TypeDef TA_FloatTransform_ptr("FloatTransform_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3DataViewRoot_ptr("T3DataViewRoot_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_T3DataView("const_T3DataView", 1, 0, 0, 0,1);
-TypeDef TA_const_T3DataView_ref("const_T3DataView_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_T3DataView_List("const_T3DataView_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_T3DataView_ptr("T3DataView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_T3DataView_List_ref("const_T3DataView_List_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_FloatTransform_ptr("FloatTransform_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3DataViewRoot_ptr("T3DataViewRoot_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_T3DataView("const_T3DataView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_T3DataView_ref("const_T3DataView_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_T3DataView_("taPtrList_T3DataView_", " ", 
 	"", "", "", sizeof(taPtrList<T3DataView>), (void**)&TAI_taPtrList_T3DataView_, 0, 0, 0,1);
 TypeDef TA_T3DataView_PtrList("T3DataView_PtrList", " for selection lists, aux lists, etc.", 
 	"", "", "", sizeof(T3DataView_PtrList), (void**)&TAI_T3DataView_PtrList, 0, 0, 0,1);
-TypeDef TA_const_T3DataViewPar("const_T3DataViewPar", 1, 0, 0, 0,1);
-TypeDef TA_const_T3DataViewPar_ref("const_T3DataViewPar_ref", 1, 0, 1, 0,1);
-TypeDef TA_const_SoPath_ptr("const_SoPath_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_T3DataViewRoot("const_T3DataViewRoot", 1, 0, 0, 0,1);
-TypeDef TA_const_T3DataViewRoot_ref("const_T3DataViewRoot_ref", 1, 0, 1, 0,1);
-TypeDef TA_iT3ViewspaceWidget_ptr("iT3ViewspaceWidget_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3DataViewer_ptr("T3DataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_T3DataViewer("const_T3DataViewer", 1, 0, 0, 0,1);
-TypeDef TA_const_T3DataViewer_ref("const_T3DataViewer_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_T3DataViewPar("const_T3DataViewPar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_T3DataViewPar_ref("const_T3DataViewPar_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_SoPath_ptr("const_SoPath_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_T3DataViewRoot("const_T3DataViewRoot", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_T3DataViewRoot_ref("const_T3DataViewRoot_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iT3ViewspaceWidget_ptr("iT3ViewspaceWidget_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3DataViewer_ptr("T3DataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_T3DataViewer("const_T3DataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_T3DataViewer_ref("const_T3DataViewer_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3CBar("T3CBar", "", 
 	"", "", "", sizeof(T3CBar), (void**)0, 0, 0, 0,1);
 TypeDef TA_tabDataTableViewType("tabDataTableViewType", "", 
@@ -459,12 +519,12 @@ TypeDef TA_iDataTable("iDataTable", " ",
 	"", "", "", sizeof(iDataTable), (void**)0, 0, 0, 0,1);
 TypeDef TA_iDataTablePanel("iDataTablePanel", " ////////////////////////", 
 	"", "", "", sizeof(iDataTablePanel), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QColorGroup_ref("const_QColorGroup_ref", 1, 0, 1, 0,1);
-TypeDef TA_iDataTable_ptr("iDataTable_ptr", 1, 1, 0, 0,1);
+TypeDef TA_const_QColorGroup_ref("const_QColorGroup_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_iDataTable_ptr("iDataTable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3Axis("T3Axis", " ", 
 	"", "", "", sizeof(T3Axis), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_T3Color("const_T3Color", 1, 0, 0, 0,1);
-TypeDef TA_const_T3Color_ref("const_T3Color_ref", 1, 0, 1, 0,1);
+TypeDef TA_const_T3Color("const_T3Color", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_T3Color_ref("const_T3Color_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3GraphLine("T3GraphLine", " ", 
 	"", "", "", sizeof(T3GraphLine), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3Graph("T3Graph", "", 
@@ -477,57 +537,59 @@ TypeDef TA_GraphView("GraphView", " represents one entire graph object, includin
 	"", "", "", sizeof(GraphView), (void**)&TAI_GraphView, 0, 0, 0,1);
 TypeDef TA_GraphViews("GraphViews", "  container to hold one (single view) or more (multi view) graphs (.children contains GraphView objs)", 
 	"", "", "", sizeof(GraphViews), (void**)&TAI_GraphViews, 0, 0, 0,1);
-TypeDef TA_AxisView_ptr("AxisView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3Axis_ptr("T3Axis_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_AxisView("const_AxisView", 1, 0, 0, 0,1);
-TypeDef TA_const_AxisView_ref("const_AxisView_ref", 1, 0, 1, 0,1);
-TypeDef TA_GraphLine_ptr("GraphLine_ptr", 1, 1, 0, 0,1);
-TypeDef TA_XAxisSpec_ptr("XAxisSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_ZAxisSpec_ptr("ZAxisSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3GraphLine_ptr("T3GraphLine_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphLine("const_GraphLine", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphLine_ref("const_GraphLine_ref", 1, 0, 1, 0,1);
-TypeDef TA_GraphView_ptr("GraphView_ptr", 1, 1, 0, 0,1);
-TypeDef TA_GraphletSpec_ptr("GraphletSpec_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3Graph_ptr("T3Graph_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphView("const_GraphView", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphView_ref("const_GraphView_ref", 1, 0, 1, 0,1);
-TypeDef TA_GraphViews_ptr("GraphViews_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3NodeParent_ptr("T3NodeParent_ptr", 1, 1, 0, 0,1);
-TypeDef TA_T3CBar_ptr("T3CBar_ptr", 1, 1, 0, 0,1);
-TypeDef TA_const_GraphViews("const_GraphViews", 1, 0, 0, 0,1);
-TypeDef TA_const_GraphViews_ref("const_GraphViews_ref", 1, 0, 1, 0,1);
+TypeDef TA_AxisView_ptr("AxisView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3Axis_ptr("T3Axis_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_AxisView("const_AxisView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_AxisView_ref("const_AxisView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GraphLine_ptr("GraphLine_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_XAxisSpec_ptr("XAxisSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_ZAxisSpec_ptr("ZAxisSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3GraphLine_ptr("T3GraphLine_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphLine("const_GraphLine", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphLine_ref("const_GraphLine_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GraphView_ptr("GraphView_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_GraphletSpec_ptr("GraphletSpec_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3Graph_ptr("T3Graph_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphView("const_GraphView", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphView_ref("const_GraphView_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_GraphViews_ptr("GraphViews_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3NodeParent_ptr("T3NodeParent_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_T3CBar_ptr("T3CBar_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_GraphViews("const_GraphViews", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_GraphViews_ref("const_GraphViews_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoFieldContainer("SoFieldContainer", "", 
 	"", "", "", sizeof(SoFieldContainer), (void**)0, 0, 0, 0,1);
-TypeDef TA_NoScale_Text_G_ptr("NoScale_Text_G_ptr", 1, 1, 0, 0,1);
-TypeDef TA_NoScale_Text_G("NoScale_Text_G", 1, 0, 0, 0,1);
-TypeDef TA_Xform_ptr("Xform_ptr", 1, 1, 0, 0,1);
-TypeDef TA_Xform("Xform", 1, 0, 0, 0,1);
-TypeDef TA_const_QPixmap("const_QPixmap", 1, 0, 0, 0,1);
-TypeDef TA_QPixmap("QPixmap", 1, 0, 0, 0,1);
-TypeDef TA_ulong("ulong", 1, 0, 0, 0,1);
-TypeDef TA_unsigned_long_int("unsigned_long_int", 1, 0, 0, 0,1);
-TypeDef TA_SoFont_ptr("SoFont_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoFont("SoFont", 1, 0, 0, 0,1);
-TypeDef TA_SoAsciiText_ptr("SoAsciiText_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoAsciiText("SoAsciiText", 1, 0, 0, 0,1);
-TypeDef TA_SoTransform_ptr("SoTransform_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoTransform("SoTransform", 1, 0, 0, 0,1);
-TypeDef TA_SoMaterial_ptr("SoMaterial_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoMaterial("SoMaterial", 1, 0, 0, 0,1);
-TypeDef TA_const_QMimeSource("const_QMimeSource", 1, 0, 0, 0,1);
-TypeDef TA_iT3DataViewer_ptr("iT3DataViewer_ptr", 1, 1, 0, 0,1);
-TypeDef TA_iT3DataViewer("iT3DataViewer", 1, 0, 0, 0,1);
-TypeDef TA_QScrollBar_ptr("QScrollBar_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QScrollBar("QScrollBar", 1, 0, 0, 0,1);
-TypeDef TA_SoQtRenderArea_ptr("SoQtRenderArea_ptr", 1, 1, 0, 0,1);
-TypeDef TA_SoQtRenderArea("SoQtRenderArea", 1, 0, 0, 0,1);
-TypeDef TA_QTable("QTable", 1, 0, 0, 0,1);
-TypeDef TA_QTableItem_ptr("QTableItem_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QTableItem("QTableItem", 1, 0, 0, 0,1);
-TypeDef TA_QPainter_ptr("QPainter_ptr", 1, 1, 0, 0,1);
-TypeDef TA_QPainter("QPainter", 1, 0, 0, 0,1);
-TypeDef TA_const_iColor("const_iColor", 1, 0, 0, 0,1);
+TypeDef TA_NoScale_Text_G_ptr("NoScale_Text_G_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_NoScale_Text_G("NoScale_Text_G", 1, 0, 0, 0, 1, 0);
+TypeDef TA_Xform_ptr("Xform_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_Xform("Xform", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_QPixmap("const_QPixmap", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPixmap("QPixmap", 1, 0, 0, 0, 1, 0);
+TypeDef TA_ulong("ulong", 1, 0, 0, 0, 1, 0);
+TypeDef TA_unsigned_long_int("unsigned_long_int", 1, 0, 0, 0, 1, 0);
+TypeDef TA_int64_t("int64_t", 1, 0, 0, 0, 1, 0);
+TypeDef TA_long_long("long_long", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoFont_ptr("SoFont_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoFont("SoFont", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoAsciiText_ptr("SoAsciiText_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoAsciiText("SoAsciiText", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoTransform_ptr("SoTransform_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoTransform("SoTransform", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoMaterial_ptr("SoMaterial_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoMaterial("SoMaterial", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_QMimeSource("const_QMimeSource", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iT3DataViewer_ptr("iT3DataViewer_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iT3DataViewer("iT3DataViewer", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QScrollBar_ptr("QScrollBar_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QScrollBar("QScrollBar", 1, 0, 0, 0, 1, 0);
+TypeDef TA_SoQtRenderArea_ptr("SoQtRenderArea_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_SoQtRenderArea("SoQtRenderArea", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QTable("QTable", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QTableItem_ptr("QTableItem_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QTableItem("QTableItem", 1, 0, 0, 0, 1, 0);
+TypeDef TA_QPainter_ptr("QPainter_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_QPainter("QPainter", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_iColor("const_iColor", 1, 0, 0, 0, 1, 0);
 
 // Instances
 
@@ -1329,13 +1391,6 @@ ValIdx*		 TAI_ValIdx=NULL;
     cssEl* rval=&cssMisc::Void;
     rval=new cssString(((ValIdx*)ths)->GetStr());
     return rval;}
-  static cssEl* cssElCFun_taArray_ValIdx__Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taArray<ValIdx>*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taArray<ValIdx>*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
   static cssEl* cssElCFun_taArray_ValIdx__SafeEl_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taArray<ValIdx>*)ths)->SafeEl((int)*arg[1]);
@@ -1399,7 +1454,6 @@ ValIdx*		 TAI_ValIdx=NULL;
     if(na == 3) {
       ((taArray<ValIdx>*)ths)->InitVals(*(ValIdx*)arg[1]->GetVoidPtrOfType(&TA_ValIdx), (int)*arg[2], (int)*arg[3]);}
     return rval;}
-ValIdx_Array*		 TAI_ValIdx_Array=NULL;
 CountParam*		 TAI_CountParam=NULL;
   static cssEl* cssElCFun_CountParam_Evaluate_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -1642,6 +1696,338 @@ MinMaxInt*		 TAI_MinMaxInt=NULL;
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((MinMaxInt*)ths)->Clip((int)*arg[1]));
     return rval;}
+  static cssEl* cssElCFun_IDataSource_can_sequence__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((IDataSource*)ths)->can_sequence_());
+    return rval;}
+  static cssEl* cssElCFun_IDataSource_sequencer__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((IDataSource*)ths)->sequencer_(), 1, &TA_ISequencable);
+    return rval;}
+  static cssEl* cssElCFun_IDataSource_source_channels__stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((IDataSource*)ths)->source_channels_();
+    return rval;}
+  static cssEl* cssElCFun_IDataSource_GetData_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((IDataSource*)ths)->GetData((SourceChannel*)(void*)*arg[1]), 1, &TA_taMatrix_impl);
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_num_items_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((ISequencable*)ths)->num_items());
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_is_permutable_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((ISequencable*)ths)->is_permutable());
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_has_next_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((ISequencable*)ths)->has_next());
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_Reset_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((ISequencable*)ths)->Reset();
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_Next_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((ISequencable*)ths)->Next();
+    return rval;}
+  static cssEl* cssElCFun_ISequencable_GoTo_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((ISequencable*)ths)->GoTo((uint)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_IDataSink_sink_channels_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((IDataSink*)ths)->sink_channels();
+    return rval;}
+DataTransferMode*		 TAI_DataTransferMode=NULL;
+taMatrix_impl**		 TAI_ptaMatrix_impl=NULL;
+  static cssEl* cssElCFun_DataChannel_index_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataChannel*)ths)->index());
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_data_type_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((DataChannel*)ths)->data_type(), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_dims_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataChannel*)ths)->dims());
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_geom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataChannel*)ths)->geom((int)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_setGeom_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((DataChannel*)ths)->setGeom(*(int_FixedArray*)arg[1]->GetVoidPtrOfType(&TA_int_FixedArray));
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_txfer_modes_allowed_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataChannel*)ths)->txfer_modes_allowed());
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_txfer_mode_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataChannel*)ths)->txfer_mode());
+    return rval;}
+  static cssEl* cssElCFun_DataChannel_setTxfer_mode_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((DataChannel*)ths)->setTxfer_mode((int)*arg[1]);
+    return rval;}
+DataConnector*		 TAI_DataConnector=NULL;
+  static cssEl* cssElCFun_DataConnector_CanConnect_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((DataConnector*)ths)->CanConnect((SourceChannel*)(void*)*arg[1], (SinkChannel*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_DataConnector_StatConnect_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((DataConnector*)ths)->StatConnect((SourceChannel*)(void*)*arg[1], (SinkChannel*)(void*)*arg[2]), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_DataConnector_source_channel_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((DataConnector*)ths)->source_channel(), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_DataConnector_sink_channel_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((DataConnector*)ths)->sink_channel(), 1, &TA_SinkChannel);
+    return rval;}
+SinkChannel*		 TAI_SinkChannel=NULL;
+  static cssEl* cssElCFun_SinkChannel_New_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((SinkChannel*)ths)->New((IDataSink*)(void*)*arg[1], arg[2]->GetStr(), *(int_FixedArray*)arg[3]->GetVoidPtrOfType(&TA_int_FixedArray), (int)*arg[4], (int)*arg[5]), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_SinkChannel_data_sink_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((SinkChannel*)ths)->data_sink(), 1, &TA_IDataSink);
+    return rval;}
+  static cssEl* cssElCFun_SinkChannel_connector_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((SinkChannel*)ths)->connector(), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_SinkChannel_ConsumeData_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((SinkChannel*)ths)->ConsumeData());
+    return rval;}
+  static cssEl* cssElCFun_SinkChannel_AcceptData_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((SinkChannel*)ths)->AcceptData((taMatrix_impl*)(void*)*arg[1]);
+    return rval;}
+SourceChannel*		 TAI_SourceChannel=NULL;
+  static cssEl* cssElCFun_SourceChannel_New_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((SourceChannel*)ths)->New((IDataSource*)(void*)*arg[1], arg[2]->GetStr(), *(int_FixedArray*)arg[3]->GetVoidPtrOfType(&TA_int_FixedArray), (int)*arg[4], (int)*arg[5]), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_SourceChannel_data_source_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((SourceChannel*)ths)->data_source(), 1, &TA_IDataSource);
+    return rval;}
+  static cssEl* cssElCFun_SourceChannel_GetData_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((SourceChannel*)ths)->GetData(), 1, &TA_taMatrix_impl);
+    return rval;}
+  static cssEl* cssElCFun_SequenceMaster_instance_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((SequenceMaster*)ths)->instance();
+    return rval;}
+  static cssEl* cssElCFun_SequenceMaster_cycle_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((SequenceMaster*)ths)->cycle());
+    return rval;}
+  static cssEl* cssElCFun_SequenceMaster_Next_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((SequenceMaster*)ths)->Next();
+    return rval;}
+  static cssEl* cssElCFun_SequenceMaster_UpdateClient_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      int64_t refarg_0=(int64_t)*arg[1];
+    rval=new cssInt((int)((SequenceMaster*)ths)->UpdateClient(refarg_0));    *arg[1]=(Int)refarg_0;
+}
+    if(na == 2) {
+      int64_t refarg_0=(int64_t)*arg[1];
+    rval=new cssInt((int)((SequenceMaster*)ths)->UpdateClient(refarg_0, (int64_t*)(void*)*arg[2]));    *arg[1]=(Int)refarg_0;
+}
+    return rval;}
+taList<DataConnector>*		 TAI_taList_DataConnector_=NULL;
+  static cssEl* cssElCFun_taList_DataConnector__MoveBefore_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<DataConnector>*)ths)->MoveBefore((DataConnector*)(void*)*arg[1], (DataConnector*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__MoveAfter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<DataConnector>*)ths)->MoveAfter((DataConnector*)(void*)*arg[1], (DataConnector*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->SafeEl((int)*arg[1]), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->FastEl((int)*arg[1]), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__DefaultEl_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->DefaultEl(), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__Edit_El_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->Edit_El((DataConnector*)(void*)*arg[1]), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__FindName_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->FindName((const char*)*arg[1]), 1, &TA_DataConnector);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_DataConnector);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__FindType_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->FindType((TypeDef*)*arg[1]), 1, &TA_DataConnector);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->FindType((TypeDef*)*arg[1], refarg_1), 1, &TA_DataConnector);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__Pop_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->Pop(), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__Peek_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->Peek(), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->AddUniqNameOld((DataConnector*)(void*)*arg[1]), 1, &TA_DataConnector);
+    return rval;}
+  static cssEl* cssElCFun_taList_DataConnector__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<DataConnector>*)ths)->LinkUniqNameOld((DataConnector*)(void*)*arg[1]), 1, &TA_DataConnector);
+    return rval;}
+DataConnector_List*		 TAI_DataConnector_List=NULL;
+taList<SourceChannel>*		 TAI_taList_SourceChannel_=NULL;
+  static cssEl* cssElCFun_taList_SourceChannel__MoveBefore_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<SourceChannel>*)ths)->MoveBefore((SourceChannel*)(void*)*arg[1], (SourceChannel*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__MoveAfter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<SourceChannel>*)ths)->MoveAfter((SourceChannel*)(void*)*arg[1], (SourceChannel*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->SafeEl((int)*arg[1]), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->FastEl((int)*arg[1]), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__DefaultEl_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->DefaultEl(), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__Edit_El_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->Edit_El((SourceChannel*)(void*)*arg[1]), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__FindName_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->FindName((const char*)*arg[1]), 1, &TA_SourceChannel);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_SourceChannel);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__FindType_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->FindType((TypeDef*)*arg[1]), 1, &TA_SourceChannel);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->FindType((TypeDef*)*arg[1], refarg_1), 1, &TA_SourceChannel);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__Pop_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->Pop(), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__Peek_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->Peek(), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->AddUniqNameOld((SourceChannel*)(void*)*arg[1]), 1, &TA_SourceChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SourceChannel__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SourceChannel>*)ths)->LinkUniqNameOld((SourceChannel*)(void*)*arg[1]), 1, &TA_SourceChannel);
+    return rval;}
+SourceChannel_List*		 TAI_SourceChannel_List=NULL;
+taList<SinkChannel>*		 TAI_taList_SinkChannel_=NULL;
+  static cssEl* cssElCFun_taList_SinkChannel__MoveBefore_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<SinkChannel>*)ths)->MoveBefore((SinkChannel*)(void*)*arg[1], (SinkChannel*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__MoveAfter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((taList<SinkChannel>*)ths)->MoveAfter((SinkChannel*)(void*)*arg[1], (SinkChannel*)(void*)*arg[2]));
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__SafeEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->SafeEl((int)*arg[1]), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__FastEl_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->FastEl((int)*arg[1]), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__DefaultEl_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->DefaultEl(), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__Edit_El_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->Edit_El((SinkChannel*)(void*)*arg[1]), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__FindName_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->FindName((const char*)*arg[1]), 1, &TA_SinkChannel);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_SinkChannel);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__FindType_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 1) {
+      rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->FindType((TypeDef*)*arg[1]), 1, &TA_SinkChannel);}
+    if(na == 2) {
+      int refarg_1=(int)*arg[2];
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->FindType((TypeDef*)*arg[1], refarg_1), 1, &TA_SinkChannel);    *arg[2]=(Int)refarg_1;
+}
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__Pop_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->Pop(), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__Peek_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->Peek(), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->AddUniqNameOld((SinkChannel*)(void*)*arg[1]), 1, &TA_SinkChannel);
+    return rval;}
+  static cssEl* cssElCFun_taList_SinkChannel__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA_Base((void*)((taList<SinkChannel>*)ths)->LinkUniqNameOld((SinkChannel*)(void*)*arg[1]), 1, &TA_SinkChannel);
+    return rval;}
+SinkChannel_List*		 TAI_SinkChannel_List=NULL;
 RGBA*		 TAI_RGBA=NULL;
   static cssEl* cssElCFun_RGBA_color_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -2257,25 +2643,6 @@ LogData*		 TAI_LogData=NULL;
   static cssEl* cssElCFun_LogData_CompareItems_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssInt((int)((LogData*)ths)->CompareItems(*(LogData*)arg[1]->GetVoidPtrOfType(&TA_LogData)));
-    return rval;}
-float_RArray*		 TAI_float_RArray=NULL;
-  static cssEl* cssElCFun_float_RArray_Remove_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((float_RArray*)ths)->Remove((uint)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((float_RArray*)ths)->Remove((uint)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_float_RArray_CopyVals_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ((float_RArray*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl));}
-    if(na == 2) {
-      ((float_RArray*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2]);}
-    if(na == 3) {
-      ((float_RArray*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3]);}
-    if(na == 4) {
-      ((float_RArray*)ths)->CopyVals(*(taArray_impl*)arg[1]->GetVoidPtrOfType(&TA_taArray_impl), (int)*arg[2], (int)*arg[3], (int)*arg[4]);}
     return rval;}
   static cssEl* cssElCFun_float_RArray_Set_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -3155,7 +3522,6 @@ DataTable*		 TAI_DataTable=NULL;
     return rval;}
 DataArray<float_RArray>*		 TAI_DataArray_float_RArray_=NULL;
 float_Data*		 TAI_float_Data=NULL;
-DString_Array*		 TAI_DString_Array=NULL;
 DataArray<DString_Array>*		 TAI_DataArray_DString_Array_=NULL;
 String_Data*		 TAI_String_Data=NULL;
 ClustLink*		 TAI_ClustLink=NULL;
@@ -3673,7 +4039,6 @@ taList<GraphletSpec>*		 TAI_taList_GraphletSpec_=NULL;
     rval=new cssTA_Base((void*)((taList<GraphletSpec>*)ths)->LinkUniqNameOld((GraphletSpec*)(void*)*arg[1]), 1, &TA_GraphletSpec);
     return rval;}
 GraphletSpec_List*		 TAI_GraphletSpec_List=NULL;
-FunLookup*		 TAI_FunLookup=NULL;
   static cssEl* cssElCFun_FunLookup_Yval_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssReal((double)((FunLookup*)ths)->Yval((float)*arg[1]));
@@ -5641,10 +6006,6 @@ static MemberDef_data TA_taArray_ValIdx__MemberDef[]={
   {&TA_ValIdx,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
     *((ta_memb_ptr*)&(TA_taArray_ValIdx__MbrOff=(int taArray<ValIdx>::*)(&taArray<ValIdx>::err))),0,NULL,0},
   NULL};
-static MethodArgs_data TA_taArray_ValIdx__Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
-  NULL};
 static MethodArgs_data TA_taArray_ValIdx__SafeEl_MethArgs[]={
   {&TA_int,NULL,"i",""},
   NULL};
@@ -5685,19 +6046,17 @@ static MethodArgs_data TA_taArray_ValIdx__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_ValIdx__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    2,2,1,0,NULL,cssElCFun_taArray_ValIdx__Remove_stub,TA_taArray_ValIdx__Remove_MethArgs},
-  {NULL,"::ValIdx_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_ValIdx_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
     0,1,-1,0,NULL,cssElCFun_taArray_ValIdx__SafeEl_stub,TA_taArray_ValIdx__SafeEl_MethArgs},
   {NULL,"::ValIdx_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_ValIdx__FastEl_stub,TA_taArray_ValIdx__FastEl_MethArgs},
-  {NULL,"::ValIdx_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
+  {NULL,"::const_ValIdx_ref","RevEl"," reverse (index) element (ie. get from the back of the list first)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_ValIdx__RevEl_stub,TA_taArray_ValIdx__RevEl_MethArgs},
-  {&TA_ValIdx,NULL,"Pop"," pop the last item in the array off","","",
+  {NULL,"::const_ValIdx","Pop"," pop the last item in the array off","","",
     0,0,-1,0,NULL,cssElCFun_taArray_ValIdx__Pop_stub,NULL},
-  {NULL,"::ValIdx_ref","Peek"," peek at the last item on the array","","",
+  {NULL,"::const_ValIdx_ref","Peek"," peek at the last item on the array","","",
     0,0,-1,0,NULL,cssElCFun_taArray_ValIdx__Peek_stub,NULL},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_ValIdx__Set_stub,TA_taArray_ValIdx__Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     0,1,-1,0,NULL,cssElCFun_taArray_ValIdx__Add_stub,TA_taArray_ValIdx__Add_MethArgs},
@@ -5713,6 +6072,10 @@ static MethodDef_data TA_taArray_ValIdx__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_ValIdx__RemoveEl_stub,TA_taArray_ValIdx__RemoveEl_MethArgs},
   {&TA_void,NULL,"InitVals"," set array elements to specified value starting at start through end (-1 = size)","","",
     0,3,1,0,NULL,cssElCFun_taArray_ValIdx__InitVals_stub,TA_taArray_ValIdx__InitVals_MethArgs},
+  NULL};
+static MemberDef_data TA_ValIdx_Array_MemberDef[]={
+  {&TA_ValIdx,NULL,"blank","","","",
+    (ta_memb_ptr)NULL,1,(void*)(&ValIdx_Array::blank),0},
   NULL};
 static EnumDef_data TA_CountParam_Relation[]={
   {"EQUAL"," ","LABEL_= ",0},
@@ -6071,6 +6434,362 @@ static MethodDef_data TA_MinMaxInt_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_MinMaxInt_Project_stub,TA_MinMaxInt_Project_MethArgs},
   {&TA_int,NULL,"Clip"," clip given value within current range","","",
     0,1,-1,0,NULL,cssElCFun_MinMaxInt_Clip_stub,TA_MinMaxInt_Clip_MethArgs},
+  NULL};
+static MethodArgs_data TA_IDataSource_GetData_MethArgs[]={
+  {&TA_SourceChannel_ptr,NULL,"ch",""},
+  NULL};
+static MethodDef_data TA_IDataSource_MethodDef[]={
+  {&TA_bool,NULL,"can_sequence_"," true if has a ISequencable interface","","",
+    0,0,-1,0,NULL,cssElCFun_IDataSource_can_sequence__stub,NULL},
+  {&TA_ISequencable_ptr,NULL,"sequencer_"," sequencing interface, if sequencable","","",
+    0,0,-1,0,NULL,cssElCFun_IDataSource_sequencer__stub,NULL},
+  {&TA_SourceChannel_List_ref,NULL,"source_channels_","","","",
+    0,0,-1,0,NULL,cssElCFun_IDataSource_source_channels__stub,NULL},
+  {&TA_taMatrix_impl_ptr,NULL,"GetData","","","",
+    0,1,-1,0,NULL,cssElCFun_IDataSource_GetData_stub,TA_IDataSource_GetData_MethArgs},
+  NULL};
+static MethodArgs_data TA_ISequencable_GoTo_MethArgs[]={
+  {&TA_uint,NULL,"index",""},
+  NULL};
+static MethodDef_data TA_ISequencable_MethodDef[]={
+  {&TA_int,NULL,"num_items"," N<0 if items unknown, or cannot be accessed randomly","","",
+    0,0,-1,0,NULL,cssElCFun_ISequencable_num_items_stub,NULL},
+  {&TA_bool,NULL,"is_permutable"," 'true' if can be accessed randomly","","",
+    0,0,-1,0,NULL,cssElCFun_ISequencable_is_permutable_stub,NULL},
+  {&TA_bool,NULL,"has_next"," for sequential access, 'true' if can call Next()","","",
+    0,0,-1,0,NULL,cssElCFun_ISequencable_has_next_stub,NULL},
+  {&TA_void,NULL,"Reset"," restores state, but is not a sequence command per se","","",
+    0,0,-1,0,NULL,cssElCFun_ISequencable_Reset_stub,NULL},
+  {&TA_void,NULL,"Next"," for sequential access, goes to the next item","","",
+    0,0,-1,0,NULL,cssElCFun_ISequencable_Next_stub,NULL},
+  {&TA_void,NULL,"GoTo"," for random access, goes to the item ","","",
+    0,1,-1,0,NULL,cssElCFun_ISequencable_GoTo_stub,TA_ISequencable_GoTo_MethArgs},
+  NULL};
+static MethodDef_data TA_IDataSink_MethodDef[]={
+  {&TA_SinkChannel_List_ref,NULL,"sink_channels","","","",
+    0,0,-1,0,NULL,cssElCFun_IDataSink_sink_channels_stub,NULL},
+  NULL};
+static EnumDef_data TA_DataTransferMode_EnumDef[]={
+  {"DTM_NONE"," initialization value only","",0},
+  {"DTM_PUSH","","",1},
+  {"DTM_PULL","","",2},
+  NULL};
+static int DataChannel::* TA_DataChannel_MbrOff;
+static MemberDef_data TA_DataChannel_MemberDef[]={
+  {&TA_int_FixedArray,NULL,"m_geom"," ","SAVE HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_DataChannel_MbrOff=(int DataChannel::*)(&DataChannel::m_geom))),0,NULL,0},
+  {&TA_int,NULL,"m_index"," ","NO_SAVE HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_DataChannel_MbrOff=(int DataChannel::*)(&DataChannel::m_index))),0,NULL,0},
+  {&TA_int,NULL,"m_txfer_modes_allowed"," ","SAVE HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_DataChannel_MbrOff=(int DataChannel::*)(&DataChannel::m_txfer_modes_allowed))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_DataChannel_geom_MethArgs[]={
+  {&TA_int,NULL,"dim",""},
+  NULL};
+static MethodArgs_data TA_DataChannel_setGeom_MethArgs[]={
+  {&TA_const_int_FixedArray_ref,NULL,"value",""},
+  NULL};
+static MethodArgs_data TA_DataChannel_setTxfer_mode_MethArgs[]={
+  {&TA_int,NULL,"val",""},
+  NULL};
+static MethodDef_data TA_DataChannel_MethodDef[]={
+  {&TA_int,NULL,"index"," this channel's index, typically invariant","","",
+    0,0,-1,0,NULL,cssElCFun_DataChannel_index_stub,NULL},
+  {&TA_TypeDef_ptr,NULL,"data_type"," type of data, ex TA_int, TA_float, etc.","","",
+    0,0,-1,0,NULL,cssElCFun_DataChannel_data_type_stub,NULL},
+  {&TA_int,NULL,"dims"," number of dimensions of data; N=0 for sink is 'any'","","",
+    0,0,-1,0,NULL,cssElCFun_DataChannel_dims_stub,NULL},
+  {&TA_int,NULL,"geom"," geom for dimension; N=0 is 'don't care'","","",
+    0,1,-1,0,NULL,cssElCFun_DataChannel_geom_stub,TA_DataChannel_geom_MethArgs},
+  {&TA_void,NULL,"setGeom"," convenience api that calls virt version","","",
+    1,1,-1,0,NULL,cssElCFun_DataChannel_setGeom_stub,TA_DataChannel_setGeom_MethArgs},
+  {&TA_int,NULL,"txfer_modes_allowed"," specialized impls can provide pull","","",
+    0,0,-1,0,NULL,cssElCFun_DataChannel_txfer_modes_allowed_stub,NULL},
+  {&TA_int,NULL,"txfer_mode"," current txfer mode","","",
+    0,0,-1,0,NULL,cssElCFun_DataChannel_txfer_mode_stub,NULL},
+  {&TA_void,NULL,"setTxfer_mode"," set new txfer mode (validates before calling _)","","",
+    0,1,-1,0,NULL,cssElCFun_DataChannel_setTxfer_mode_stub,TA_DataChannel_setTxfer_mode_MethArgs},
+  NULL};
+static int DataConnector::* TA_DataConnector_MbrOff;
+static MemberDef_data TA_DataConnector_MemberDef[]={
+  {&TA_SinkChannel_ptr,NULL,"m_sink_channel","","","",
+    *((ta_memb_ptr*)&(TA_DataConnector_MbrOff=(int DataConnector::*)(&DataConnector::m_sink_channel))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_DataConnector_CanConnect_MethArgs[]={
+  {&TA_SourceChannel_ptr,NULL,"src_ch",""},
+  {&TA_SinkChannel_ptr,NULL,"snk_ch",""},
+  NULL};
+static MethodArgs_data TA_DataConnector_StatConnect_MethArgs[]={
+  {&TA_SourceChannel_ptr,NULL,"src_ch",""},
+  {&TA_SinkChannel_ptr,NULL,"snk_ch",""},
+  NULL};
+static MethodDef_data TA_DataConnector_MethodDef[]={
+  {&TA_bool,NULL,"CanConnect","","","",
+    0,2,-1,1,(ta_void_fun)(DataConnector::CanConnect),cssElCFun_DataConnector_CanConnect_stub,TA_DataConnector_CanConnect_MethArgs},
+  {&TA_DataConnector_ptr,NULL,"StatConnect","","","",
+    0,2,-1,1,(ta_void_fun)(DataConnector::StatConnect),cssElCFun_DataConnector_StatConnect_stub,TA_DataConnector_StatConnect_MethArgs},
+  {&TA_SourceChannel_ptr,NULL,"source_channel","","","",
+    0,0,-1,0,NULL,cssElCFun_DataConnector_source_channel_stub,NULL},
+  {&TA_SinkChannel_ptr,NULL,"sink_channel","","","",
+    0,0,-1,0,NULL,cssElCFun_DataConnector_sink_channel_stub,NULL},
+  NULL};
+static int SinkChannel::* TA_SinkChannel_MbrOff;
+static MemberDef_data TA_SinkChannel_MemberDef[]={
+  {&TA_IDataSink_ptr,NULL,"m_data_sink"," the DataSink that owns this channel","HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_SinkChannel_MbrOff=(int SinkChannel::*)(&SinkChannel::m_data_sink))),0,NULL,0},
+  {&TA_DataConnector_ptr,NULL,"m_connector"," the connector, if attached","HIDDEN SAVE ","",
+    *((ta_memb_ptr*)&(TA_SinkChannel_MbrOff=(int SinkChannel::*)(&SinkChannel::m_connector))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_SinkChannel_New_MethArgs[]={
+  {&TA_IDataSink_ptr,NULL,"data_sink",""},
+  {&TA_const_taString_ref,NULL,"name",""},
+  {&TA_const_int_FixedArray_ref,NULL,"geom",""},
+  {&TA_int,NULL,"txfer_modes_allowed",""},
+  {&TA_int,NULL,"txfer_mode",""},
+  NULL};
+static MethodArgs_data TA_SinkChannel_AcceptData_MethArgs[]={
+  {&TA_taMatrix_impl_ptr,NULL,"item",""},
+  NULL};
+static MethodDef_data TA_SinkChannel_MethodDef[]={
+  {&TA_SinkChannel_ptr,NULL,"New"," Create n_objs objects of given type (type is optional) this is the normal way to create a Channel","","",
+    1,5,-1,1,(ta_void_fun)(SinkChannel::New),cssElCFun_SinkChannel_New_stub,TA_SinkChannel_New_MethArgs},
+  {&TA_IDataSink_ptr,NULL,"data_sink"," the DataSink that owns this channel","","",
+    0,0,-1,0,NULL,cssElCFun_SinkChannel_data_sink_stub,NULL},
+  {&TA_DataConnector_ptr,NULL,"connector"," the connector, if attached","","",
+    0,0,-1,0,NULL,cssElCFun_SinkChannel_connector_stub,NULL},
+  {&TA_bool,NULL,"ConsumeData"," consumes the current data item INTERNAL; 'true' if data actually consumed","","",
+    0,0,-1,0,NULL,cssElCFun_SinkChannel_ConsumeData_stub,NULL},
+  {&TA_void,NULL,"AcceptData"," sets current item; only used in Push mode","","",
+    0,1,-1,0,NULL,cssElCFun_SinkChannel_AcceptData_stub,TA_SinkChannel_AcceptData_MethArgs},
+  NULL};
+static int SourceChannel::* TA_SourceChannel_MbrOff;
+static MemberDef_data TA_SourceChannel_MemberDef[]={
+  {&TA_DataConnector_List,NULL,"connectors","","","",
+    *((ta_memb_ptr*)&(TA_SourceChannel_MbrOff=(int SourceChannel::*)(&SourceChannel::connectors))),0,NULL,0},
+  {&TA_IDataSource_ptr,NULL,"m_data_source"," must be set by owner","HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_SourceChannel_MbrOff=(int SourceChannel::*)(&SourceChannel::m_data_source))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_SourceChannel_New_MethArgs[]={
+  {&TA_IDataSource_ptr,NULL,"data_source",""},
+  {&TA_const_taString_ref,NULL,"name",""},
+  {&TA_const_int_FixedArray_ref,NULL,"geom",""},
+  {&TA_int,NULL,"txfer_modes_allowed",""},
+  {&TA_int,NULL,"txfer_mode",""},
+  NULL};
+static MethodDef_data TA_SourceChannel_MethodDef[]={
+  {&TA_SourceChannel_ptr,NULL,"New"," Create n_objs objects of given type (type is optional) this is the normal way to create a Channel","","",
+    1,5,-1,1,(ta_void_fun)(SourceChannel::New),cssElCFun_SourceChannel_New_stub,TA_SourceChannel_New_MethArgs},
+  {&TA_IDataSource_ptr,NULL,"data_source"," must be set by owner","","",
+    0,0,-1,0,NULL,cssElCFun_SourceChannel_data_source_stub,NULL},
+  {&TA_taMatrix_impl_ptr,NULL,"GetData"," gets current item","","",
+    0,0,-1,0,NULL,cssElCFun_SourceChannel_GetData_stub,NULL},
+  NULL};
+static MethodArgs_data TA_SequenceMaster_UpdateClient_MethArgs[]={
+  {&TA_int64_t_ref,NULL,"client_cycle",""},
+  {&TA_int64_t_ptr,NULL,"diff"," ((void *)0)"},
+  NULL};
+static MethodDef_data TA_SequenceMaster_MethodDef[]={
+  {&TA_SequenceMaster_ref,NULL,"instance","","","",
+    0,0,-1,1,(ta_void_fun)(SequenceMaster::instance),cssElCFun_SequenceMaster_instance_stub,NULL},
+  {&TA_int64_t,NULL,"cycle"," global cycle counter; note: init=1 so all data is stale","","",
+    0,0,-1,0,NULL,cssElCFun_SequenceMaster_cycle_stub,NULL},
+  {&TA_void,NULL,"Next"," advance the cycle counter","","",
+    0,0,-1,0,NULL,cssElCFun_SequenceMaster_Next_stub,NULL},
+  {&TA_bool,NULL,"UpdateClient"," updates a client's own cycle count, returning 'true' if it was out of date, and optionally the (+ve) number of cycles by which it was stale","","",
+    0,2,1,0,NULL,cssElCFun_SequenceMaster_UpdateClient_stub,TA_SequenceMaster_UpdateClient_MethArgs},
+  NULL};
+static EnumDef_data TA_taList_DataConnector__Orientation[]={
+  {"Horizontal","","",0},
+  {"Vertical","","",1},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__MoveBefore_MethArgs[]={
+  {NULL,"::DataConnector_ptr","trg",""},
+  {NULL,"::DataConnector_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__MoveAfter_MethArgs[]={
+  {NULL,"::DataConnector_ptr","trg",""},
+  {NULL,"::DataConnector_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__Edit_El_MethArgs[]={
+  {NULL,"::DataConnector_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__FindName_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"item_nm",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__FindType_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"item_tp",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__AddUniqNameOld_MethArgs[]={
+  {NULL,"::DataConnector_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_DataConnector__LinkUniqNameOld_MethArgs[]={
+  {NULL,"::DataConnector_ptr","item",""},
+  NULL};
+static MethodDef_data TA_taList_DataConnector__MethodDef[]={
+  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list move item so that it appears just before the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_DataConnector__MoveBefore_stub,TA_taList_DataConnector__MoveBefore_MethArgs},
+  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list move item so that it appears just after the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_DataConnector__MoveAfter_stub,TA_taList_DataConnector__MoveAfter_MethArgs},
+  {NULL,"::DataConnector_ptr","SafeEl"," get element at index","","",
+    0,1,-1,0,NULL,cssElCFun_taList_DataConnector__SafeEl_stub,TA_taList_DataConnector__SafeEl_MethArgs},
+  {NULL,"::DataConnector_ptr","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taList_DataConnector__FastEl_stub,TA_taList_DataConnector__FastEl_MethArgs},
+  {NULL,"::DataConnector_ptr","DefaultEl"," returns the element specified as the default for this list","","",
+    0,0,-1,0,NULL,cssElCFun_taList_DataConnector__DefaultEl_stub,NULL},
+  {NULL,"::DataConnector_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+    0,1,-1,0,NULL,cssElCFun_taList_DataConnector__Edit_El_stub,TA_taList_DataConnector__Edit_El_MethArgs},
+  {NULL,"::DataConnector_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+    0,2,1,0,NULL,cssElCFun_taList_DataConnector__FindName_stub,TA_taList_DataConnector__FindName_MethArgs},
+  {NULL,"::DataConnector_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
+    0,2,1,0,NULL,cssElCFun_taList_DataConnector__FindType_stub,TA_taList_DataConnector__FindType_MethArgs},
+  {NULL,"::DataConnector_ptr","Pop"," pop the last element off the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_DataConnector__Pop_stub,NULL},
+  {NULL,"::DataConnector_ptr","Peek"," peek at the last element on the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_DataConnector__Peek_stub,NULL},
+  {NULL,"::DataConnector_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_DataConnector__AddUniqNameOld_stub,TA_taList_DataConnector__AddUniqNameOld_MethArgs},
+  {NULL,"::DataConnector_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_DataConnector__LinkUniqNameOld_stub,TA_taList_DataConnector__LinkUniqNameOld_MethArgs},
+  NULL};
+static EnumDef_data TA_taList_SourceChannel__Orientation[]={
+  {"Horizontal","","",0},
+  {"Vertical","","",1},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__MoveBefore_MethArgs[]={
+  {NULL,"::SourceChannel_ptr","trg",""},
+  {NULL,"::SourceChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__MoveAfter_MethArgs[]={
+  {NULL,"::SourceChannel_ptr","trg",""},
+  {NULL,"::SourceChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__Edit_El_MethArgs[]={
+  {NULL,"::SourceChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__FindName_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"item_nm",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__FindType_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"item_tp",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__AddUniqNameOld_MethArgs[]={
+  {NULL,"::SourceChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SourceChannel__LinkUniqNameOld_MethArgs[]={
+  {NULL,"::SourceChannel_ptr","item",""},
+  NULL};
+static MethodDef_data TA_taList_SourceChannel__MethodDef[]={
+  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list move item so that it appears just before the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_SourceChannel__MoveBefore_stub,TA_taList_SourceChannel__MoveBefore_MethArgs},
+  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list move item so that it appears just after the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_SourceChannel__MoveAfter_stub,TA_taList_SourceChannel__MoveAfter_MethArgs},
+  {NULL,"::SourceChannel_ptr","SafeEl"," get element at index","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SourceChannel__SafeEl_stub,TA_taList_SourceChannel__SafeEl_MethArgs},
+  {NULL,"::SourceChannel_ptr","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SourceChannel__FastEl_stub,TA_taList_SourceChannel__FastEl_MethArgs},
+  {NULL,"::SourceChannel_ptr","DefaultEl"," returns the element specified as the default for this list","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SourceChannel__DefaultEl_stub,NULL},
+  {NULL,"::SourceChannel_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+    0,1,-1,0,NULL,cssElCFun_taList_SourceChannel__Edit_El_stub,TA_taList_SourceChannel__Edit_El_MethArgs},
+  {NULL,"::SourceChannel_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+    0,2,1,0,NULL,cssElCFun_taList_SourceChannel__FindName_stub,TA_taList_SourceChannel__FindName_MethArgs},
+  {NULL,"::SourceChannel_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
+    0,2,1,0,NULL,cssElCFun_taList_SourceChannel__FindType_stub,TA_taList_SourceChannel__FindType_MethArgs},
+  {NULL,"::SourceChannel_ptr","Pop"," pop the last element off the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SourceChannel__Pop_stub,NULL},
+  {NULL,"::SourceChannel_ptr","Peek"," peek at the last element on the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SourceChannel__Peek_stub,NULL},
+  {NULL,"::SourceChannel_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SourceChannel__AddUniqNameOld_stub,TA_taList_SourceChannel__AddUniqNameOld_MethArgs},
+  {NULL,"::SourceChannel_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SourceChannel__LinkUniqNameOld_stub,TA_taList_SourceChannel__LinkUniqNameOld_MethArgs},
+  NULL};
+static int SourceChannel_List::* TA_SourceChannel_List_MbrOff;
+static MemberDef_data TA_SourceChannel_List_MemberDef[]={
+  {&TA_IDataSource_ptr,NULL,"data_source"," must be set by owning IDataSource","HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_SourceChannel_List_MbrOff=(int SourceChannel_List::*)(&SourceChannel_List::data_source))),0,NULL,0},
+  NULL};
+static EnumDef_data TA_taList_SinkChannel__Orientation[]={
+  {"Horizontal","","",0},
+  {"Vertical","","",1},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__MoveBefore_MethArgs[]={
+  {NULL,"::SinkChannel_ptr","trg",""},
+  {NULL,"::SinkChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__MoveAfter_MethArgs[]={
+  {NULL,"::SinkChannel_ptr","trg",""},
+  {NULL,"::SinkChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__SafeEl_MethArgs[]={
+  {&TA_int,NULL,"idx",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__FastEl_MethArgs[]={
+  {&TA_int,NULL,"i",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__Edit_El_MethArgs[]={
+  {NULL,"::SinkChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__FindName_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"item_nm",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__FindType_MethArgs[]={
+  {&TA_TypeDef_ptr,NULL,"item_tp",""},
+  {&TA_int_ref,NULL,"idx","Idx"},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__AddUniqNameOld_MethArgs[]={
+  {NULL,"::SinkChannel_ptr","item",""},
+  NULL};
+static MethodArgs_data TA_taList_SinkChannel__LinkUniqNameOld_MethArgs[]={
+  {NULL,"::SinkChannel_ptr","item",""},
+  NULL};
+static MethodDef_data TA_taList_SinkChannel__MethodDef[]={
+  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list move item so that it appears just before the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_SinkChannel__MoveBefore_stub,TA_taList_SinkChannel__MoveBefore_MethArgs},
+  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list move item so that it appears just after the target item trg in the list","","",
+    1,2,-1,0,NULL,cssElCFun_taList_SinkChannel__MoveAfter_stub,TA_taList_SinkChannel__MoveAfter_MethArgs},
+  {NULL,"::SinkChannel_ptr","SafeEl"," get element at index","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SinkChannel__SafeEl_stub,TA_taList_SinkChannel__SafeEl_MethArgs},
+  {NULL,"::SinkChannel_ptr","FastEl"," fast element (no range checking)","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SinkChannel__FastEl_stub,TA_taList_SinkChannel__FastEl_MethArgs},
+  {NULL,"::SinkChannel_ptr","DefaultEl"," returns the element specified as the default for this list","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SinkChannel__DefaultEl_stub,NULL},
+  {NULL,"::SinkChannel_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+    0,1,-1,0,NULL,cssElCFun_taList_SinkChannel__Edit_El_stub,TA_taList_SinkChannel__Edit_El_MethArgs},
+  {NULL,"::SinkChannel_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+    0,2,1,0,NULL,cssElCFun_taList_SinkChannel__FindName_stub,TA_taList_SinkChannel__FindName_MethArgs},
+  {NULL,"::SinkChannel_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
+    0,2,1,0,NULL,cssElCFun_taList_SinkChannel__FindType_stub,TA_taList_SinkChannel__FindType_MethArgs},
+  {NULL,"::SinkChannel_ptr","Pop"," pop the last element off the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SinkChannel__Pop_stub,NULL},
+  {NULL,"::SinkChannel_ptr","Peek"," peek at the last element on the stack","","",
+    0,0,-1,0,NULL,cssElCFun_taList_SinkChannel__Peek_stub,NULL},
+  {NULL,"::SinkChannel_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SinkChannel__AddUniqNameOld_stub,TA_taList_SinkChannel__AddUniqNameOld_MethArgs},
+  {NULL,"::SinkChannel_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
+    0,1,-1,0,NULL,cssElCFun_taList_SinkChannel__LinkUniqNameOld_stub,TA_taList_SinkChannel__LinkUniqNameOld_MethArgs},
+  NULL};
+static int SinkChannel_List::* TA_SinkChannel_List_MbrOff;
+static MemberDef_data TA_SinkChannel_List_MemberDef[]={
+  {&TA_IDataSink_ptr,NULL,"data_sink"," must be set by owning IDataSource","HIDDEN ","",
+    *((ta_memb_ptr*)&(TA_SinkChannel_List_MbrOff=(int SinkChannel_List::*)(&SinkChannel_List::data_sink))),0,NULL,0},
   NULL};
 static int RGBA::* TA_RGBA_MbrOff;
 static MemberDef_data TA_RGBA_MemberDef[]={
@@ -6798,16 +7517,6 @@ static MemberDef_data TA_float_RArray_MemberDef[]={
   {&TA_MinMax,NULL,"range"," min-max range of the data","NO_SAVE ","",
     *((ta_memb_ptr*)&(TA_float_RArray_MbrOff=(int float_RArray::*)(&float_RArray::range))),0,NULL,0},
   NULL};
-static MethodArgs_data TA_float_RArray_Remove_MethArgs[]={
-  {&TA_uint,NULL,"indx",""},
-  {&TA_int,NULL,"n_els","1"},
-  NULL};
-static MethodArgs_data TA_float_RArray_CopyVals_MethArgs[]={
-  {&TA_const_taArray_impl_ref,NULL,"from",""},
-  {&TA_int,NULL,"start","0"},
-  {&TA_int,NULL,"end","-1"},
-  {&TA_int,NULL,"at","0"},
-  NULL};
 static MethodArgs_data TA_float_RArray_Set_MethArgs[]={
   {&TA_int,NULL,"i",""},
   {&TA_const_float_ref,NULL,"item",""},
@@ -7088,11 +7797,7 @@ static MethodArgs_data TA_float_RArray_MDS_MethArgs[]={
   {&TA_bool,NULL,"print_eigen_vals"," false"},
   NULL};
 static MethodDef_data TA_float_RArray_MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at indx, returns success","MENU MENU_ON_Edit ","",
-    4,2,1,0,NULL,cssElCFun_float_RArray_Remove_stub,TA_float_RArray_Remove_MethArgs},
-  {&TA_void,NULL,"CopyVals"," copy values from other array at given start and end points, and putting at given point in this","","",
-    1,4,1,0,NULL,cssElCFun_float_RArray_CopyVals_stub,TA_float_RArray_CopyVals_MethArgs},
-  {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
+  {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     1,2,-1,0,NULL,cssElCFun_float_RArray_Set_stub,TA_float_RArray_Set_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     1,1,-1,0,NULL,cssElCFun_float_RArray_Add_stub,TA_float_RArray_Add_MethArgs},
@@ -7168,21 +7873,21 @@ static MethodDef_data TA_float_RArray_MethodDef[]={
     0,6,4,0,NULL,cssElCFun_float_RArray_WriteYPoints_stub,TA_float_RArray_WriteYPoints_MethArgs},
   {&TA_void,NULL,"RenderWideLine"," render a wide line from given x,y starting, ending coords in 2d space of geometry geom","MENU ","",
     0,8,6,0,NULL,cssElCFun_float_RArray_RenderWideLine_stub,TA_float_RArray_RenderWideLine_MethArgs},
-  {&TA_float_ref,NULL,"SafeMatEl"," safe get element assuming a matrix layout of values with column (inner) dimension size = col_dim","","",
+  {&TA_const_float_ref,NULL,"SafeMatEl"," safe get element assuming a matrix layout of values with column (inner) dimension size = col_dim","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_SafeMatEl_stub,TA_float_RArray_SafeMatEl_MethArgs},
-  {&TA_float_ref,NULL,"FastMatEl"," fast get element assuming a matrix layout of values with column (inner) dimension size = col_dim","","",
+  {&TA_const_float_ref,NULL,"FastMatEl","","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_FastMatEl_stub,TA_float_RArray_FastMatEl_MethArgs},
-  {&TA_float_ref,NULL,"FastMatEl1"," fast get element assuming a matrix layout of values with column (inner) dimension size = col_dim, indicies use 1-n range instead of 0-n-1!","","",
+  {&TA_const_float_ref,NULL,"FastMatEl1"," fast get element assuming a matrix layout of values with column (inner) dimension size = col_dim, indicies use 1-n range instead of 0-n-1!","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_FastMatEl1_stub,TA_float_RArray_FastMatEl1_MethArgs},
-  {&TA_float_ref,NULL,"FastEl1"," fast get element with index in 1-n range instead of 0-n-1","","",
+  {&TA_const_float_ref,NULL,"FastEl1","","","",
     0,1,-1,0,NULL,cssElCFun_float_RArray_FastEl1_stub,TA_float_RArray_FastEl1_MethArgs},
   {&TA_void,NULL,"GetMatCol"," extract given column from this matrix-formatted object","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_GetMatCol_stub,TA_float_RArray_GetMatCol_MethArgs},
   {&TA_void,NULL,"GetMatRow"," extract given row from this matrix-formatted object","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_GetMatRow_stub,TA_float_RArray_GetMatRow_MethArgs},
-  {&TA_float_ref,NULL,"SafeTriMatEl"," get element assuming an upper-triangular symmetric matrix (e.g., distance matrix) of dimension dim for two items, x, y","","",
+  {&TA_const_float_ref,NULL,"SafeTriMatEl"," get element assuming an upper-triangular symmetric matrix (e.g., distance matrix) of dimension dim for two items, x, y","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_SafeTriMatEl_stub,TA_float_RArray_SafeTriMatEl_MethArgs},
-  {&TA_float_ref,NULL,"FastTriMatEl"," get element assuming an upper-triangular symmetric matrix (e.g., distance matrix) of dimension dim for two items, x, y","","",
+  {&TA_const_float_ref,NULL,"FastTriMatEl","","","",
     0,3,-1,0,NULL,cssElCFun_float_RArray_FastTriMatEl_stub,TA_float_RArray_FastTriMatEl_MethArgs},
   {&TA_void,NULL,"AllocSqMatSize"," allocate space (enforcesize) for a square matrix of size dim","","",
     0,1,-1,0,NULL,cssElCFun_float_RArray_AllocSqMatSize_stub,TA_float_RArray_AllocSqMatSize_MethArgs},
@@ -8415,7 +9120,7 @@ static MethodArgs_data TA_FunLookup_Convolve_MethArgs[]={
   {&TA_const_FunLookup_ref,NULL,"con",""},
   NULL};
 static MethodDef_data TA_FunLookup_MethodDef[]={
-  {&TA_float_ref,NULL,"Yval"," get y value at given x value (no interpolation)","","",
+  {&TA_float,NULL,"Yval"," get y value at given x value (no interpolation)","","",
     0,1,-1,0,NULL,cssElCFun_FunLookup_Yval_stub,TA_FunLookup_Yval_MethArgs},
   {&TA_float,NULL,"Xval"," get x value for given index position within list","","",
     0,1,-1,0,NULL,cssElCFun_FunLookup_Xval_stub,TA_FunLookup_Xval_MethArgs},
@@ -9896,14 +10601,14 @@ void ta_Init_tamisc() {
     sbt = new TypeDef("ValIdx_ptr", 1, 1, 0);
     sbt->AddParents(&TA_ValIdx);
     TA_taArray_ValIdx_.sub_types.Add(sbt);
-    sbt = new TypeDef("ValIdx_ref", 1, 0, 1);
-    sbt->AddParents(&TA_ValIdx);
-    TA_taArray_ValIdx_.sub_types.Add(sbt);
     sbt = new TypeDef("const_ValIdx", 1, 0, 0);
     sbt->AddParents(&TA_const, &TA_ValIdx);
     TA_taArray_ValIdx_.sub_types.Add(sbt);
     sbt = new TypeDef("const_ValIdx_ref", 1, 0, 1);
     sbt->AddParents(TA_taArray_ValIdx_.sub_types.FindName("const_ValIdx"));
+    TA_taArray_ValIdx_.sub_types.Add(sbt);
+    sbt = new TypeDef("ValIdx_ref", 1, 0, 1);
+    sbt->AddParents(&TA_ValIdx);
     TA_taArray_ValIdx_.sub_types.Add(sbt);
     tac_AddEnum(TA_taArray_ValIdx_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taArray_ValIdx__Orientation);
     tac_AddMembers(TA_taArray_ValIdx_,TA_taArray_ValIdx__MemberDef);
@@ -9912,11 +10617,13 @@ void ta_Init_tamisc() {
     TA_const_ValIdx.AddParents(&TA_const, &TA_ValIdx);
   taMisc::types.Add(&TA_const_ValIdx_ref);
     TA_const_ValIdx_ref.AddParents(&TA_const_ValIdx);
+  taMisc::types.Add(&TA_ValIdx_ref);
+    TA_ValIdx_ref.AddParents(&TA_ValIdx);
   taMisc::types.Add(&TA_ValIdx_Array);
-    TAI_ValIdx_Array = new ValIdx_Array;
     TA_ValIdx_Array.AddParFormal(&TA_class);
     TA_ValIdx_Array.AddParCache(&TA_taBase);
     TA_ValIdx_Array.AddClassPar(&TA_taArray_ValIdx_,0);
+    tac_AddMembers(TA_ValIdx_Array,TA_ValIdx_Array_MemberDef);
   taMisc::types.Add(&TA_const_ValIdx_Array);
     TA_const_ValIdx_Array.AddParents(&TA_const, &TA_ValIdx_Array);
   taMisc::types.Add(&TA_CountParam);
@@ -9957,8 +10664,6 @@ void ta_Init_tamisc() {
     TA_const_SimpleMathSpec.AddParents(&TA_const, &TA_SimpleMathSpec);
   taMisc::types.Add(&TA_const_SimpleMathSpec_ref);
     TA_const_SimpleMathSpec_ref.AddParents(&TA_const_SimpleMathSpec);
-  taMisc::types.Add(&TA_const_float);
-    TA_const_float.AddParents(&TA_const, &TA_float);
   taMisc::types.Add(&TA_MinMax);
     TAI_MinMax = new MinMax;
     TA_MinMax.AddParFormal(&TA_class);
@@ -10003,8 +10708,6 @@ void ta_Init_tamisc() {
     TA_const_Modulo.AddParents(&TA_const, &TA_Modulo);
   taMisc::types.Add(&TA_const_Modulo_ref);
     TA_const_Modulo_ref.AddParents(&TA_const_Modulo);
-  taMisc::types.Add(&TA_const_int);
-    TA_const_int.AddParents(&TA_const, &TA_int);
   taMisc::types.Add(&TA_MinMaxInt);
     TAI_MinMaxInt = new MinMaxInt;
     TA_MinMaxInt.AddParFormal(&TA_class);
@@ -10012,6 +10715,186 @@ void ta_Init_tamisc() {
     TA_MinMaxInt.AddClassPar(&TA_taBase,0);
     tac_AddMembers(TA_MinMaxInt,TA_MinMaxInt_MemberDef);
     tac_AddMethods(TA_MinMaxInt,TA_MinMaxInt_MethodDef);
+  taMisc::types.Add(&TA_MinMaxInt_ref);
+    TA_MinMaxInt_ref.AddParents(&TA_MinMaxInt);
+  taMisc::types.Add(&TA_const_MinMaxInt);
+    TA_const_MinMaxInt.AddParents(&TA_const, &TA_MinMaxInt);
+  taMisc::types.Add(&TA_const_MinMaxInt_ref);
+    TA_const_MinMaxInt_ref.AddParents(&TA_const_MinMaxInt);
+  taMisc::types.Add(&TA_IDataSource);
+    TA_IDataSource.AddParFormal(&TA_class);
+    tac_AddMethods(TA_IDataSource,TA_IDataSource_MethodDef);
+  taMisc::types.Add(&TA_ISequencable);
+    TA_ISequencable.AddParFormal(&TA_class);
+    tac_AddMethods(TA_ISequencable,TA_ISequencable_MethodDef);
+  taMisc::types.Add(&TA_IDataSink);
+    TA_IDataSink.AddParFormal(&TA_class);
+    tac_AddMethods(TA_IDataSink,TA_IDataSink_MethodDef);
+  taMisc::types.Add(&TA_DataTransferMode);
+    TAI_DataTransferMode = new DataTransferMode;
+    TA_DataTransferMode.AddParFormal(&TA_enum);
+    tac_ThisEnum(TA_DataTransferMode, TA_DataTransferMode_EnumDef);
+  taMisc::types.Add(&TA_ptaMatrix_impl);
+    TAI_ptaMatrix_impl = new taMatrix_impl*;
+    TA_ptaMatrix_impl.AddParents(&TA_taMatrix_impl_ptr);
+  taMisc::types.Add(&TA_ISequencable_ptr);
+    TA_ISequencable_ptr.AddParents(&TA_ISequencable);
+  taMisc::types.Add(&TA_ptaMatrix_impl_ref);
+    TA_ptaMatrix_impl_ref.AddParents(&TA_ptaMatrix_impl);
+  taMisc::types.Add(&TA_DataChannel);
+    TA_DataChannel.AddParFormal(&TA_class);
+    TA_DataChannel.AddParCache(&TA_taBase);
+    TA_DataChannel.AddClassPar(&TA_taNBase,0);
+    tac_AddMembers(TA_DataChannel,TA_DataChannel_MemberDef);
+    tac_AddMethods(TA_DataChannel,TA_DataChannel_MethodDef);
+  taMisc::types.Add(&TA_DataConnector);
+    TAI_DataConnector = new DataConnector;
+    TA_DataConnector.AddParFormal(&TA_class);
+    TA_DataConnector.AddParCache(&TA_taBase);
+    TA_DataConnector.AddClassPar(&TA_taNBase,0);
+    tac_AddMembers(TA_DataConnector,TA_DataConnector_MemberDef);
+    tac_AddMethods(TA_DataConnector,TA_DataConnector_MethodDef);
+  taMisc::types.Add(&TA_SinkChannel);
+    TAI_SinkChannel = new SinkChannel;
+    TA_SinkChannel.AddParFormal(&TA_class);
+    TA_SinkChannel.AddParCache(&TA_taBase);
+    TA_SinkChannel.AddClassPar(&TA_DataChannel,0);
+    tac_AddMembers(TA_SinkChannel,TA_SinkChannel_MemberDef);
+    tac_AddMethods(TA_SinkChannel,TA_SinkChannel_MethodDef);
+  taMisc::types.Add(&TA_SourceChannel);
+    TAI_SourceChannel = new SourceChannel;
+    TA_SourceChannel.AddParFormal(&TA_class);
+    TA_SourceChannel.AddParCache(&TA_taBase);
+    TA_SourceChannel.AddClassPar(&TA_DataChannel,0);
+    tac_AddMembers(TA_SourceChannel,TA_SourceChannel_MemberDef);
+    tac_AddMethods(TA_SourceChannel,TA_SourceChannel_MethodDef);
+  taMisc::types.Add(&TA_SinkChannel_ptr);
+    TA_SinkChannel_ptr.AddParents(&TA_SinkChannel);
+  taMisc::types.Add(&TA_SequenceMaster);
+    TA_SequenceMaster.AddParFormal(&TA_class);
+    tac_AddMethods(TA_SequenceMaster,TA_SequenceMaster_MethodDef);
+  taMisc::types.Add(&TA_SourceChannel_ptr);
+    TA_SourceChannel_ptr.AddParents(&TA_SourceChannel);
+  taMisc::types.Add(&TA_DataConnector_ptr);
+    TA_DataConnector_ptr.AddParents(&TA_DataConnector);
+  taMisc::types.Add(&TA_const_DataConnector);
+    TA_const_DataConnector.AddParents(&TA_const, &TA_DataConnector);
+  taMisc::types.Add(&TA_const_DataConnector_ref);
+    TA_const_DataConnector_ref.AddParents(&TA_const_DataConnector);
+  taMisc::types.Add(&TA_taList_DataConnector_);
+    TAI_taList_DataConnector_ = new taList<DataConnector>;
+    TA_taList_DataConnector_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taList_DataConnector_.AddParCache(&TA_taBase);
+    TA_taList_DataConnector_.AddClassPar(&TA_taList,0);
+    sbt = new TypeDef("const_taBase", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_taBase);
+    TA_taList_DataConnector_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_taBase_ptr", 1, 1, 0);
+    sbt->AddParents(TA_taList_DataConnector_.sub_types.FindName("const_taBase"));
+    TA_taList_DataConnector_.sub_types.Add(sbt);
+    sbt = new TypeDef("taBase_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_taBase);
+    TA_taList_DataConnector_.sub_types.Add(sbt);
+    sbt = new TypeDef("DataConnector_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_DataConnector);
+    TA_taList_DataConnector_.sub_types.Add(sbt);
+    tac_AddEnum(TA_taList_DataConnector_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taList_DataConnector__Orientation);
+    tac_AddMethods(TA_taList_DataConnector_,TA_taList_DataConnector__MethodDef);
+  taMisc::types.Add(&TA_DataConnector_List);
+    TAI_DataConnector_List = new DataConnector_List;
+    TA_DataConnector_List.AddParFormal(&TA_class);
+    TA_DataConnector_List.AddParCache(&TA_taBase);
+    TA_DataConnector_List.AddClassPar(&TA_taList_DataConnector_,0);
+  taMisc::types.Add(&TA_const_DataConnector_List);
+    TA_const_DataConnector_List.AddParents(&TA_const, &TA_DataConnector_List);
+  taMisc::types.Add(&TA_const_DataConnector_List_ref);
+    TA_const_DataConnector_List_ref.AddParents(&TA_const_DataConnector_List);
+  taMisc::types.Add(&TA_const_DataChannel);
+    TA_const_DataChannel.AddParents(&TA_const, &TA_DataChannel);
+  taMisc::types.Add(&TA_const_DataChannel_ref);
+    TA_const_DataChannel_ref.AddParents(&TA_const_DataChannel);
+  taMisc::types.Add(&TA_IDataSource_ptr);
+    TA_IDataSource_ptr.AddParents(&TA_IDataSource);
+  taMisc::types.Add(&TA_const_SourceChannel);
+    TA_const_SourceChannel.AddParents(&TA_const, &TA_SourceChannel);
+  taMisc::types.Add(&TA_const_SourceChannel_ref);
+    TA_const_SourceChannel_ref.AddParents(&TA_const_SourceChannel);
+  taMisc::types.Add(&TA_taList_SourceChannel_);
+    TAI_taList_SourceChannel_ = new taList<SourceChannel>;
+    TA_taList_SourceChannel_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taList_SourceChannel_.AddParCache(&TA_taBase);
+    TA_taList_SourceChannel_.AddClassPar(&TA_taList,0);
+    sbt = new TypeDef("const_taBase", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_taBase);
+    TA_taList_SourceChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_taBase_ptr", 1, 1, 0);
+    sbt->AddParents(TA_taList_SourceChannel_.sub_types.FindName("const_taBase"));
+    TA_taList_SourceChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("taBase_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_taBase);
+    TA_taList_SourceChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("SourceChannel_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_SourceChannel);
+    TA_taList_SourceChannel_.sub_types.Add(sbt);
+    tac_AddEnum(TA_taList_SourceChannel_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taList_SourceChannel__Orientation);
+    tac_AddMethods(TA_taList_SourceChannel_,TA_taList_SourceChannel__MethodDef);
+  taMisc::types.Add(&TA_SourceChannel_List);
+    TAI_SourceChannel_List = new SourceChannel_List;
+    TA_SourceChannel_List.AddParFormal(&TA_class);
+    TA_SourceChannel_List.AddParCache(&TA_taBase);
+    TA_SourceChannel_List.AddClassPar(&TA_taList_SourceChannel_,0);
+    tac_AddMembers(TA_SourceChannel_List,TA_SourceChannel_List_MemberDef);
+  taMisc::types.Add(&TA_const_SourceChannel_List);
+    TA_const_SourceChannel_List.AddParents(&TA_const, &TA_SourceChannel_List);
+  taMisc::types.Add(&TA_SourceChannel_List_ref);
+    TA_SourceChannel_List_ref.AddParents(&TA_SourceChannel_List);
+  taMisc::types.Add(&TA_const_SourceChannel_List_ref);
+    TA_const_SourceChannel_List_ref.AddParents(&TA_const_SourceChannel_List);
+  taMisc::types.Add(&TA_IDataSink_ptr);
+    TA_IDataSink_ptr.AddParents(&TA_IDataSink);
+  taMisc::types.Add(&TA_const_SinkChannel);
+    TA_const_SinkChannel.AddParents(&TA_const, &TA_SinkChannel);
+  taMisc::types.Add(&TA_const_SinkChannel_ref);
+    TA_const_SinkChannel_ref.AddParents(&TA_const_SinkChannel);
+  taMisc::types.Add(&TA_taList_SinkChannel_);
+    TAI_taList_SinkChannel_ = new taList<SinkChannel>;
+    TA_taList_SinkChannel_.AddParFormal(&TA_class, &TA_templ_inst);
+    TA_taList_SinkChannel_.AddParCache(&TA_taBase);
+    TA_taList_SinkChannel_.AddClassPar(&TA_taList,0);
+    sbt = new TypeDef("const_taBase", 1, 0, 0);
+    sbt->AddParents(&TA_const, &TA_taBase);
+    TA_taList_SinkChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("const_taBase_ptr", 1, 1, 0);
+    sbt->AddParents(TA_taList_SinkChannel_.sub_types.FindName("const_taBase"));
+    TA_taList_SinkChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("taBase_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_taBase);
+    TA_taList_SinkChannel_.sub_types.Add(sbt);
+    sbt = new TypeDef("SinkChannel_ptr", 1, 1, 0);
+    sbt->AddParents(&TA_SinkChannel);
+    TA_taList_SinkChannel_.sub_types.Add(sbt);
+    tac_AddEnum(TA_taList_SinkChannel_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taList_SinkChannel__Orientation);
+    tac_AddMethods(TA_taList_SinkChannel_,TA_taList_SinkChannel__MethodDef);
+  taMisc::types.Add(&TA_SinkChannel_List);
+    TAI_SinkChannel_List = new SinkChannel_List;
+    TA_SinkChannel_List.AddParFormal(&TA_class);
+    TA_SinkChannel_List.AddParCache(&TA_taBase);
+    TA_SinkChannel_List.AddClassPar(&TA_taList_SinkChannel_,0);
+    tac_AddMembers(TA_SinkChannel_List,TA_SinkChannel_List_MemberDef);
+  taMisc::types.Add(&TA_const_SinkChannel_List);
+    TA_const_SinkChannel_List.AddParents(&TA_const, &TA_SinkChannel_List);
+  taMisc::types.Add(&TA_SinkChannel_List_ref);
+    TA_SinkChannel_List_ref.AddParents(&TA_SinkChannel_List);
+  taMisc::types.Add(&TA_const_SinkChannel_List_ref);
+    TA_const_SinkChannel_List_ref.AddParents(&TA_const_SinkChannel_List);
+  taMisc::types.Add(&TA_SequenceMaster_ref);
+    TA_SequenceMaster_ref.AddParents(&TA_SequenceMaster);
+  taMisc::types.Add(&TA_int64_t_ref);
+  taMisc::types.Add(&TA_int64_t_ptr);
+  taMisc::types.Add(&TA_const_SequenceMaster);
+    TA_const_SequenceMaster.AddParents(&TA_const, &TA_SequenceMaster);
+  taMisc::types.Add(&TA_const_SequenceMaster_ref);
+    TA_const_SequenceMaster_ref.AddParents(&TA_const_SequenceMaster);
   taMisc::types.Add(&TA_RGBA);
     TAI_RGBA = new RGBA;
     TA_RGBA.AddParFormal(&TA_class);
@@ -10019,12 +10902,6 @@ void ta_Init_tamisc() {
     TA_RGBA.AddClassPar(&TA_taNBase,0);
     tac_AddMembers(TA_RGBA,TA_RGBA_MemberDef);
     tac_AddMethods(TA_RGBA,TA_RGBA_MethodDef);
-  taMisc::types.Add(&TA_MinMaxInt_ref);
-    TA_MinMaxInt_ref.AddParents(&TA_MinMaxInt);
-  taMisc::types.Add(&TA_const_MinMaxInt);
-    TA_const_MinMaxInt.AddParents(&TA_const, &TA_MinMaxInt);
-  taMisc::types.Add(&TA_const_MinMaxInt_ref);
-    TA_const_MinMaxInt_ref.AddParents(&TA_const_MinMaxInt);
   taMisc::types.Add(&TA_TAColor);
     TAI_TAColor = new TAColor;
     TA_TAColor.AddParFormal(&TA_class);
@@ -10251,8 +11128,6 @@ void ta_Init_tamisc() {
     TA_LogData.AddClassPar(&TA_taBase,0);
     tac_AddMembers(TA_LogData,TA_LogData_MemberDef);
     tac_AddMethods(TA_LogData,TA_LogData_MethodDef);
-  taMisc::types.Add(&TA_const_float_ref);
-    TA_const_float_ref.AddParents(&TA_const_float);
   taMisc::types.Add(&TA_const_LogData);
     TA_const_LogData.AddParents(&TA_const, &TA_LogData);
   taMisc::types.Add(&TA_const_LogData_ref);
@@ -10260,7 +11135,6 @@ void ta_Init_tamisc() {
   taMisc::types.Add(&TA_Aggregate_ref);
     TA_Aggregate_ref.AddParents(&TA_Aggregate);
   taMisc::types.Add(&TA_float_RArray);
-    TAI_float_RArray = new float_RArray;
     TA_float_RArray.AddParFormal(&TA_class);
     TA_float_RArray.AddParCache(&TA_taBase);
     TA_float_RArray.AddClassPar(&TA_float_Array,0);
@@ -10361,7 +11235,6 @@ void ta_Init_tamisc() {
   taMisc::types.Add(&TA_const_float_Data_ref);
     TA_const_float_Data_ref.AddParents(&TA_const_float_Data);
   taMisc::types.Add(&TA_DString_Array);
-    TAI_DString_Array = new DString_Array;
     TA_DString_Array.AddParFormal(&TA_class);
     TA_DString_Array.AddParCache(&TA_taBase);
     TA_DString_Array.AddClassPar(&TA_String_Array,0);
@@ -10647,7 +11520,6 @@ void ta_Init_tamisc() {
   taMisc::types.Add(&TA_AxisSpec_ref);
     TA_AxisSpec_ref.AddParents(&TA_AxisSpec);
   taMisc::types.Add(&TA_FunLookup);
-    TAI_FunLookup = new FunLookup;
     TA_FunLookup.AddParFormal(&TA_class);
     TA_FunLookup.AddParCache(&TA_taBase);
     TA_FunLookup.AddClassPar(&TA_float_RArray,0);
@@ -10655,10 +11527,10 @@ void ta_Init_tamisc() {
     tac_AddMethods(TA_FunLookup,TA_FunLookup_MethodDef);
   taMisc::types.Add(&TA_const_FunLookup);
     TA_const_FunLookup.AddParents(&TA_const, &TA_FunLookup);
-  taMisc::types.Add(&TA_float_ptr);
-    TA_float_ptr.AddParents(&TA_float);
   taMisc::types.Add(&TA_const_FunLookup_ref);
     TA_const_FunLookup_ref.AddParents(&TA_const_FunLookup);
+  taMisc::types.Add(&TA_float_ptr);
+    TA_float_ptr.AddParents(&TA_float);
   taMisc::types.Add(&TA_FunLookupND);
     TAI_FunLookupND = new FunLookupND;
     TA_FunLookupND.AddParFormal(&TA_class);
@@ -11015,6 +11887,10 @@ void ta_Init_tamisc() {
     TA_ulong.AddParents(&TA_unsigned_long_int);
   taMisc::types.Add(&TA_unsigned_long_int);
     TA_unsigned_long_int.AddParents(&TA_unsigned_long, &TA_int);
+  taMisc::types.Add(&TA_int64_t);
+    TA_int64_t.AddParents(&TA_long_long);
+  taMisc::types.Add(&TA_long_long);
+    TA_long_long.AddParents(&TA_long);
   taMisc::types.Add(&TA_SoFont_ptr);
     TA_SoFont_ptr.AddParents(&TA_SoFont);
   taMisc::types.Add(&TA_SoFont);
