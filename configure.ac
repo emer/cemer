@@ -190,13 +190,4 @@ AC_CONFIG_FILES([Makefile
 		src/leabra/Makefile
 		src/bp/Makefile])
 
-#AC_CONFIG_FILES([Makefile
-#		src/maketa/Makefile
-#		src/taiqtso/Makefile
-#		src/ta/Makefile
-#		src/css/Makefile
-#		src/tamisc/Makefile
-#		src/pdp/Makefile
-#		src/leabra/Makefile
-#		src/bp/Makefile])
 AC_OUTPUT
