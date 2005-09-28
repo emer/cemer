@@ -25,7 +25,6 @@ SRCS =\
 	bp_TA.cpp \
 	main.cpp
 
-include $(top_srcdir)/Conditionals.am
 include $(top_srcdir)/Maketa.am
 
 bin_PROGRAMS = bp@PDP_SUFFIX@++
@@ -62,7 +61,7 @@ bp@PDP_SUFFIX@___LDADD +=\
 	@X_EXTRA_LIBS@ \
 	@X_PRE_LIBS@ \
 	@QT_LDADD@
-	
+
 bp@PDP_SUFFIX@___LDFLAGS += @X_LIBS@
 
 bp@PDP_SUFFIX@___CPPFLAGS +=\

@@ -85,7 +85,7 @@ if TA_GUI
 css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 
 libcss@PDP_SUFFIX@_la_LIBADD += @X_EXTRA_LIBS@ @X_PRE_LIBS@ @QT_LDADD@
-	
+
 libcss@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
 
 libcss@PDP_SUFFIX@_la_CPPFLAGS +=\

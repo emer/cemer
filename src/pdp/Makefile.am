@@ -135,7 +135,7 @@ libpdp@PDP_SUFFIX@_la_LIBADD =\
 	@X_EXTRA_LIBS@ \
 	@X_PRE_LIBS@ \
 	@QT_LDADD@
-	
+
 libpdp@PDP_SUFFIX@_la_LDFLAGS += @X_LIBS@
 
 libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\

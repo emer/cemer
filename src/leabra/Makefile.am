@@ -57,7 +57,7 @@ leabra@PDP_SUFFIX@___LDADD +=\
 	@X_EXTRA_LIBS@ \
 	@X_PRE_LIBS@ \
 	@QT_LDADD@
-	
+
 leabra@PDP_SUFFIX@___LDFLAGS = @X_LIBS@
 
 leabra@PDP_SUFFIX@___CPPFLAGS +=\

@@ -148,7 +148,7 @@ libta@PDP_SUFFIX@_la_LIBADD =\
 	@X_EXTRA_LIBS@ \
 	@X_PRE_LIBS@ \
 	@QT_LDADD@
-	
+
 libta@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
 
 libta@PDP_SUFFIX@_la_CPPFLAGS +=\
