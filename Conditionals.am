@@ -1,3 +1,0 @@
-clean-local:
-	-rm *TA*
-	-rm *moc*
