@@ -73,6 +73,8 @@ css@PDP_SUFFIX@___LDFLAGS = $(libcss@PDP_SUFFIX@_la_LDFLAGS)
 css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
 css@PDP_SUFFIX@___CXXFLAGS = $(libcss@PDP_SUFFIX@_la_CXXFLAGS)
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 #**************************************************
 #
 #                      GUI

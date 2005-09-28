@@ -112,6 +112,8 @@ libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libtamisc@PDP_SUFFIX@_la_CXXFLAGS =
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = tamisc_TA_type.h tamisc_TA_inst.h tamisc_TA.cpp
 
 #**************************************************

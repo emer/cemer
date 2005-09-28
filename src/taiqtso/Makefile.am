@@ -70,6 +70,8 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libtaiqtso@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 #**************************************************
 #
 #                      GUI

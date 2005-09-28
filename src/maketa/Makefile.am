@@ -14,7 +14,7 @@ HEADS =\
 	maketa.h
 
 SRCS =\
-	maketa_ti.cpp \
+	../ta/ta_ti.cpp \
 	../ta/ta_platform.cpp \
 	../ta/ta_platform_unix.cpp \
 	../ta/ta_string.cpp \
@@ -37,6 +37,9 @@ maketa_CPPFLAGS =\
 	-DTA_NO_GUI \
 	-DNO_TA_BASE \
 	-I@srcdir@/../ta
+
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
 
 #**************************************************

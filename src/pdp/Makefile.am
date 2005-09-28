@@ -118,6 +118,8 @@ pdp@PDP_SUFFIX@___LDFLAGS = $(libpdp@PDP_SUFFIX@_la_LDFLAGS)
 pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
 pdp@PDP_SUFFIX@___CFLAGS = $(libpdp@PDP_SUFFIX@_la_CFLAGS)
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
 
 #**************************************************

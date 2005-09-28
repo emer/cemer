@@ -133,6 +133,8 @@ libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css
 
 libta@PDP_SUFFIX@_la_CXXFLAGS =
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
 
 #**************************************************

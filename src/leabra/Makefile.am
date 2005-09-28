@@ -41,6 +41,8 @@ leabra@PDP_SUFFIX@___CPPFLAGS =\
 
 leabra@PDP_SUFFIX@___CXXFLAGS =
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = leabra_TA_type.h leabra_TA_inst.h leabra_TA.cpp
 
 #**************************************************

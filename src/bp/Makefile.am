@@ -45,6 +45,8 @@ bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css
 
+AM_CXXFLAGS = -fno-implicit-templates
+
 BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 
 #**************************************************
