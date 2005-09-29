@@ -625,7 +625,6 @@ public:
       - adds alloc for efficient dynamic data adding/removing
       
       taArray_impl -- advanced data handling
-      - can overallocate
       - supports moving, sorting, etc.
       - supports string operations 
       - supports ordinal operations
@@ -707,6 +706,7 @@ protected:
     // 'true' if not null, and same size and els
   virtual int		Find_(const void* it, int where=0) const; 	// #IGNORE -- based on El_Equal_; default is linear
   virtual void		InitVals_(const void* it, int start=0, int end=-1);// #IGNORE
+  virtual void		ReclaimOrphans_(int start, int end) {}// #IGNORE called when array is shortened, leaving orphaned values; note 'size' may already be trimmed: NOT called when el[] is replaced
   
   // Aggregate-maintenance helper routines
   virtual void		ItemAdded_(const void*, int n = 1) {} // #IGNORE called after any single item insert or add, including multiple inserts/adds of the same-valued item
@@ -807,7 +807,6 @@ protected:
   uint			alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size
 
   override bool 	AdjustAndSetAlloc_(uint& new_alloc); // we manage extra storage, and impl grow algorithm
-  
 // compulsory element accessor and manip functions 
   virtual bool		Remove_(void* it);		// #IGNORE
 };

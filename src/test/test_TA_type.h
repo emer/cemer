@@ -13,6 +13,8 @@ extern TypeDef TA_int;
 extern TypeDef TA_short;
 extern TypeDef TA_long;
 extern TypeDef TA_char;
+extern TypeDef TA_signed_char;
+extern TypeDef TA_unsigned_char;
 extern TypeDef TA_unsigned;
 extern TypeDef TA_signed;
 extern TypeDef TA_float;

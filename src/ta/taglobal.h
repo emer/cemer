@@ -122,7 +122,7 @@ typedef int pid_t;
 // Linux uses Doug Lea's malloc, which has a 1-pointer overhead, and 16-byte granularity
 // strategy: round up to the amount that we will get allocated regardless
 inline size_t tweak_alloc(size_t n) {
-  return  (((n + 4) + 15) & ~((size_t)0xF)) - 4;
+  return  (((n + sizeof(void*)) + 15) & ~((size_t)0xF)) - sizeof(void*);
 }
 
 #elif (defined(WINDOWS) && (!defined(CYGWIN)))

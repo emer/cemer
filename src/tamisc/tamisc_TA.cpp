@@ -65,50 +65,50 @@
 // Types
 
 TypeDef TA_FontSpec("FontSpec", " a specification of a font (for Unix - X logical font description)", 
-	"", "", "", sizeof(FontSpec), (void**)&TAI_FontSpec, 1, 0, 0,1);
+	"", "INLINE ", "", sizeof(FontSpec), (void**)&TAI_FontSpec, 1, 0, 0,1);
 TypeDef TA_const_FontSpec("const_FontSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ViewLabel("ViewLabel", " contains a label in a view display", 
 	"", "", "", sizeof(ViewLabel), (void**)&TAI_ViewLabel, 1, 0, 0,1);
 TypeDef TA_const_FontSpec_ref("const_FontSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_ViewLabel_("taList_ViewLabel_", " ", 
-	"", "", "", sizeof(taList<ViewLabel>), (void**)&TAI_taList_ViewLabel_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<ViewLabel>), (void**)&TAI_taList_ViewLabel_, 0, 0, 0,1);
 TypeDef TA_const_ViewLabel("const_ViewLabel", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ViewLabel_ref("const_ViewLabel_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ViewLabel_List("ViewLabel_List", " list of ViewLabel objects", 
-	"", "", "", sizeof(ViewLabel_List), (void**)&TAI_ViewLabel_List, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(ViewLabel_List), (void**)&TAI_ViewLabel_List, 0, 0, 0,1);
 TypeDef TA_const_Xform_ref("const_Xform_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_ViewLabel_List("const_ViewLabel_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taList_Xform_("taList_Xform_", " ", 
-	"", "", "", sizeof(taList<Xform>), (void**)&TAI_taList_Xform_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<Xform>), (void**)&TAI_taList_Xform_, 0, 0, 0,1);
 TypeDef TA_const_ViewLabel_List_ref("const_ViewLabel_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Xform_List("Xform_List", "", 
 	"", "", "", sizeof(Xform_List), (void**)&TAI_Xform_List, 0, 0, 0,1);
 TypeDef TA_const_Xform_List("const_Xform_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_RndSeed("RndSeed", " random seed support", 
-	"", "", "", sizeof(RndSeed), (void**)&TAI_RndSeed, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(RndSeed), (void**)&TAI_RndSeed, 0, 0, 0,1);
 TypeDef TA_const_Xform_List_ref("const_Xform_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_RndSeed("const_RndSeed", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_RndSeed_ref("const_RndSeed_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Random("Random", " Random Number Generation", 
-	"", "", "", sizeof(Random), (void**)&TAI_Random, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(Random), (void**)&TAI_Random, 0, 0, 0,1);
 TypeDef TA_const_Random("const_Random", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_Random_ref("const_Random_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TimeUsed("TimeUsed", " stores and computes time used for processing information", 
-	"", "", "", sizeof(TimeUsed), (void**)&TAI_TimeUsed, 0, 0, 0,1);
+	"", "INLINE NO_UPDATE_AFTER ", "", sizeof(TimeUsed), (void**)&TAI_TimeUsed, 0, 0, 0,1);
 TypeDef TA_TwoDCoord("TwoDCoord", " a value in 2D coordinate space", 
-	"", "", "", sizeof(TwoDCoord), (void**)&TAI_TwoDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(TwoDCoord), (void**)&TAI_TwoDCoord, 0, 0, 0,1);
 TypeDef TA_const_TimeUsed("const_TimeUsed", 1, 0, 0, 0, 1, 0);
 TypeDef TA_PosTwoDCoord("PosTwoDCoord", " positive-only value in 2D coordinate space", 
-	"", "", "", sizeof(PosTwoDCoord), (void**)&TAI_PosTwoDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(PosTwoDCoord), (void**)&TAI_PosTwoDCoord, 0, 0, 0,1);
 TypeDef TA_const_TimeUsed_ref("const_TimeUsed_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDCoord("TDCoord", " a value in 3D coordinate space", 
-	"", "", "", sizeof(TDCoord), (void**)&TAI_TDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(TDCoord), (void**)&TAI_TDCoord, 0, 0, 0,1);
 TypeDef TA_PosTDCoord("PosTDCoord", " positive-only value in 3D coordinate space", 
-	"", "", "", sizeof(PosTDCoord), (void**)&TAI_PosTDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(PosTDCoord), (void**)&TAI_PosTDCoord, 0, 0, 0,1);
 TypeDef TA_FloatTwoDCoord("FloatTwoDCoord", " a value in 2D coordinate space", 
-	"", "", "", sizeof(FloatTwoDCoord), (void**)&TAI_FloatTwoDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(FloatTwoDCoord), (void**)&TAI_FloatTwoDCoord, 0, 0, 0,1);
 TypeDef TA_FloatTDCoord("FloatTDCoord", " a real value in 3D coordinate space", 
-	"", "", "", sizeof(FloatTDCoord), (void**)&TAI_FloatTDCoord, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(FloatTDCoord), (void**)&TAI_FloatTDCoord, 0, 0, 0,1);
 TypeDef TA_const_TwoDCoord("const_TwoDCoord", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TwoDCoord_ref("const_TwoDCoord_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_FloatTwoDCoord("const_FloatTwoDCoord", 1, 0, 0, 0, 1, 0);
@@ -128,64 +128,64 @@ TypeDef TA_PosTDCoord_ref("PosTDCoord_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FloatTwoDCoord_ref("FloatTwoDCoord_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FloatTDCoord_ref("FloatTDCoord_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FloatRotation("FloatRotation", " 3-d rotation data, xyz specify the rotation axis", 
-	"", "", "", sizeof(FloatRotation), (void**)&TAI_FloatRotation, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(FloatRotation), (void**)&TAI_FloatRotation, 0, 0, 0,1);
 TypeDef TA_const_FloatRotation("const_FloatRotation", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FloatTransform("FloatTransform", " // 3-d transformation data; applied in order: s, r, t", 
-	"", "", "", sizeof(FloatTransform), (void**)&TAI_FloatTransform, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(FloatTransform), (void**)&TAI_FloatTransform, 0, 0, 0,1);
 TypeDef TA_const_FloatRotation_ref("const_FloatRotation_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_FloatTransform("const_FloatTransform", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FloatTransform_ref("const_FloatTransform_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ValIdx("ValIdx", " a float value and an index: very useful for sorting!", 
-	"", "", "", sizeof(ValIdx), (void**)&TAI_ValIdx, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(ValIdx), (void**)&TAI_ValIdx, 0, 0, 0,1);
 TypeDef TA_taArray_ValIdx_("taArray_ValIdx_", " ", 
-	"", "", "", sizeof(taArray<ValIdx>), (void**)0, 0, 0, 0,1);
+	"", "INSTANCE VIRT_BASE NO_UPDATE_AFTER ", "", sizeof(taArray<ValIdx>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_ValIdx("const_ValIdx", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ValIdx_ref("const_ValIdx_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ValIdx_ref("ValIdx_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ValIdx_Array("ValIdx_Array", " ", 
-	"", "", "", sizeof(ValIdx_Array), (void**)0, 0, 0, 0,1);
+	"", "INSTANCE NO_UPDATE_AFTER ", "", sizeof(ValIdx_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_ValIdx_Array("const_ValIdx_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_CountParam("CountParam", " counting criteria params", 
-	"", "", "", sizeof(CountParam), (void**)&TAI_CountParam, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(CountParam), (void**)&TAI_CountParam, 0, 0, 0,1);
 TypeDef TA_const_ValIdx_Array_ref("const_ValIdx_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_CountParam("const_CountParam", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_CountParam_ref("const_CountParam_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Aggregate("Aggregate", " Basic aggregation operations", 
-	"", "", "", sizeof(Aggregate), (void**)&TAI_Aggregate, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(Aggregate), (void**)&TAI_Aggregate, 0, 0, 0,1);
 TypeDef TA_const_Aggregate("const_Aggregate", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SimpleMathSpec("SimpleMathSpec", " params for std kinds of simple math operators", 
-	"", "", "", sizeof(SimpleMathSpec), (void**)&TAI_SimpleMathSpec, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER NO_TOKENS ", "", sizeof(SimpleMathSpec), (void**)&TAI_SimpleMathSpec, 0, 0, 0,1);
 TypeDef TA_const_Aggregate_ref("const_Aggregate_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_SimpleMathSpec("const_SimpleMathSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SimpleMathSpec_ref("const_SimpleMathSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMax("MinMax", " minimum-maximum values", 
-	"", "", "", sizeof(MinMax), (void**)&TAI_MinMax, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(MinMax), (void**)&TAI_MinMax, 0, 0, 0,1);
 TypeDef TA_MinMax_ref("MinMax_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_MinMax("const_MinMax", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MinMax_ref("const_MinMax_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMaxRange("MinMaxRange", " min-max values plus scale and range ", 
-	"", "", "", sizeof(MinMaxRange), (void**)&TAI_MinMaxRange, 0, 0, 0,1);
+	"", "INLINE ", "", sizeof(MinMaxRange), (void**)&TAI_MinMaxRange, 0, 0, 0,1);
 TypeDef TA_const_MinMaxRange("const_MinMaxRange", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MinMaxRange_ref("const_MinMaxRange_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FixedMinMax("FixedMinMax", " minimum-maximum values with toggles for usage", 
-	"", "", "", sizeof(FixedMinMax), (void**)&TAI_FixedMinMax, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(FixedMinMax), (void**)&TAI_FixedMinMax, 0, 0, 0,1);
 TypeDef TA_const_FixedMinMax("const_FixedMinMax", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FixedMinMax_ref("const_FixedMinMax_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Modulo("Modulo", " modulo for things that happen periodically", 
-	"", "", "", sizeof(Modulo), (void**)&TAI_Modulo, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(Modulo), (void**)&TAI_Modulo, 0, 0, 0,1);
 TypeDef TA_const_Modulo("const_Modulo", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_Modulo_ref("const_Modulo_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MinMaxInt("MinMaxInt", " minimum-maximum values", 
-	"", "", "", sizeof(MinMaxInt), (void**)&TAI_MinMaxInt, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(MinMaxInt), (void**)&TAI_MinMaxInt, 0, 0, 0,1);
 TypeDef TA_MinMaxInt_ref("MinMaxInt_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_MinMaxInt("const_MinMaxInt", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MinMaxInt_ref("const_MinMaxInt_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_IDataSource("IDataSource", " represents a source of data", 
-	"", "", "", sizeof(IDataSource), (void**)0, 0, 0, 0,1);
+	"", "NO_TOKENS ", "", sizeof(IDataSource), (void**)0, 0, 0, 0,1);
 TypeDef TA_ISequencable("ISequencable", " interface exposed by entities that can be sequenced, particularly DataSources", 
-	"", "", "", sizeof(ISequencable), (void**)0, 0, 0, 0,1);
+	"", "NO_TOKENS ", "", sizeof(ISequencable), (void**)0, 0, 0, 0,1);
 TypeDef TA_IDataSink("IDataSink", " represents a consumer of data", 
-	"", "", "", sizeof(IDataSink), (void**)0, 0, 0, 0,1);
+	"", "NO_TOKENS ", "", sizeof(IDataSink), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataTransferMode("DataTransferMode", "", 
 	"", "", "", sizeof(int), (void**)&TAI_DataTransferMode, 0, 0, 0,1);
 TypeDef TA_ptaMatrix_impl("ptaMatrix_impl", "", 
@@ -193,7 +193,7 @@ TypeDef TA_ptaMatrix_impl("ptaMatrix_impl", "",
 TypeDef TA_ISequencable_ptr("ISequencable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_ptaMatrix_impl_ref("ptaMatrix_impl_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_DataChannel("DataChannel", " a connection between a source and sink -- owned by the source list", 
-	"", "", "", sizeof(DataChannel), (void**)0, 0, 0, 0,1);
+	"", "NO_INSTANCE NO_TOKENS ", "", sizeof(DataChannel), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataConnector("DataConnector", " represents a connection between a single source channel and sink channel", 
 	"", "", "", sizeof(DataConnector), (void**)&TAI_DataConnector, 0, 0, 0,1);
 TypeDef TA_SinkChannel("SinkChannel", " forwards this file ", 
@@ -208,7 +208,7 @@ TypeDef TA_DataConnector_ptr("DataConnector_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_DataConnector("const_DataConnector", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DataConnector_ref("const_DataConnector_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_DataConnector_("taList_DataConnector_", " ", 
-	"", "", "", sizeof(taList<DataConnector>), (void**)&TAI_taList_DataConnector_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<DataConnector>), (void**)&TAI_taList_DataConnector_, 0, 0, 0,1);
 TypeDef TA_DataConnector_List("DataConnector_List", "  list of connectors, owned by the SourceChannel", 
 	"", "", "", sizeof(DataConnector_List), (void**)&TAI_DataConnector_List, 0, 0, 0,1);
 TypeDef TA_const_DataConnector_List("const_DataConnector_List", 1, 0, 0, 0, 1, 0);
@@ -219,7 +219,7 @@ TypeDef TA_IDataSource_ptr("IDataSource_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_SourceChannel("const_SourceChannel", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SourceChannel_ref("const_SourceChannel_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_SourceChannel_("taList_SourceChannel_", " ", 
-	"", "", "", sizeof(taList<SourceChannel>), (void**)&TAI_taList_SourceChannel_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<SourceChannel>), (void**)&TAI_taList_SourceChannel_, 0, 0, 0,1);
 TypeDef TA_SourceChannel_List("SourceChannel_List", " ", 
 	"", "", "", sizeof(SourceChannel_List), (void**)&TAI_SourceChannel_List, 0, 0, 0,1);
 TypeDef TA_const_SourceChannel_List("const_SourceChannel_List", 1, 0, 0, 0, 1, 0);
@@ -229,7 +229,7 @@ TypeDef TA_IDataSink_ptr("IDataSink_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_SinkChannel("const_SinkChannel", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SinkChannel_ref("const_SinkChannel_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_SinkChannel_("taList_SinkChannel_", " ", 
-	"", "", "", sizeof(taList<SinkChannel>), (void**)&TAI_taList_SinkChannel_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<SinkChannel>), (void**)&TAI_taList_SinkChannel_, 0, 0, 0,1);
 TypeDef TA_SinkChannel_List("SinkChannel_List", " ", 
 	"", "", "", sizeof(SinkChannel_List), (void**)&TAI_SinkChannel_List, 0, 0, 0,1);
 TypeDef TA_const_SinkChannel_List("const_SinkChannel_List", 1, 0, 0, 0, 1, 0);
@@ -241,37 +241,37 @@ TypeDef TA_int64_t_ptr("int64_t_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_SequenceMaster("const_SequenceMaster", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SequenceMaster_ref("const_SequenceMaster_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_RGBA("RGBA", " Red Green Blue Alpha color specification", 
-	"", "", "", sizeof(RGBA), (void**)&TAI_RGBA, 0, 0, 0,1);
+	"", "NO_TOKENS ", "", sizeof(RGBA), (void**)&TAI_RGBA, 0, 0, 0,1);
 TypeDef TA_TAColor("TAColor", " Color", 
 	"", "", "", sizeof(TAColor), (void**)&TAI_TAColor, 0, 0, 0,1);
 TypeDef TA_ColorScaleSpec("ColorScaleSpec", " Color Spectrum Data", 
 	"", "", "", sizeof(ColorScaleSpec), (void**)&TAI_ColorScaleSpec, 1, 0, 0,1);
 TypeDef TA_ScaleRange("ScaleRange", " saves scale ranges for different variables viewed in netview", 
-	"", "", "", sizeof(ScaleRange), (void**)&TAI_ScaleRange, 0, 0, 0,1);
+	"", "UAE_OWNER ", "", sizeof(ScaleRange), (void**)&TAI_ScaleRange, 0, 0, 0,1);
 TypeDef TA_ColorScale("ColorScale", " defines a range of colors to code data values with", 
-	"", "", "", sizeof(ColorScale), (void**)&TAI_ColorScale, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(ColorScale), (void**)&TAI_ColorScale, 0, 0, 0,1);
 TypeDef TA_const_RGBA("const_RGBA", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_RGBA_ref("const_RGBA_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_RGBA_("taList_RGBA_", " ", 
-	"", "", "", sizeof(taList<RGBA>), (void**)&TAI_taList_RGBA_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<RGBA>), (void**)&TAI_taList_RGBA_, 0, 0, 0,1);
 TypeDef TA_RGBA_List("RGBA_List", " list of RGBA objects", 
-	"", "", "", sizeof(RGBA_List), (void**)&TAI_RGBA_List, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(RGBA_List), (void**)&TAI_RGBA_List, 0, 0, 0,1);
 TypeDef TA_const_RGBA_List("const_RGBA_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_RGBA_ptr("RGBA_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_RGBA_List_ref("const_RGBA_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_TAColor("const_TAColor", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TAColor_ref("const_TAColor_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_TAColor_("taList_TAColor_", " ", 
-	"", "", "", sizeof(taList<TAColor>), (void**)&TAI_taList_TAColor_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<TAColor>), (void**)&TAI_taList_TAColor_, 0, 0, 0,1);
 TypeDef TA_TAColor_List("TAColor_List", " list of TAColor objects", 
-	"", "", "", sizeof(TAColor_List), (void**)&TAI_TAColor_List, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(TAColor_List), (void**)&TAI_TAColor_List, 0, 0, 0,1);
 TypeDef TA_const_TAColor_List("const_TAColor_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TAColor_List_ptr("TAColor_List_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_TAColor_List_ref("const_TAColor_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_ColorScaleSpec("const_ColorScaleSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ColorScaleSpec_ref("const_ColorScaleSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup_ColorScaleSpec_("taGroup_ColorScaleSpec_", " ", 
-	"", "", "", sizeof(taGroup<ColorScaleSpec>), (void**)&TAI_taGroup_ColorScaleSpec_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taGroup<ColorScaleSpec>), (void**)&TAI_taGroup_ColorScaleSpec_, 0, 0, 0,1);
 TypeDef TA_ColorScaleSpec_MGroup("ColorScaleSpec_MGroup", "", 
 	"", "", "", sizeof(ColorScaleSpec_MGroup), (void**)&TAI_ColorScaleSpec_MGroup, 0, 0, 0,1);
 TypeDef TA_const_ColorScaleSpec_MGroup("const_ColorScaleSpec_MGroup", 1, 0, 0, 0, 1, 0);
@@ -280,9 +280,9 @@ TypeDef TA_ColorScale_ref("ColorScale_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_ScaleRange("const_ScaleRange", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ScaleRange_ref("const_ScaleRange_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_ScaleRange_("taList_ScaleRange_", " ", 
-	"", "", "", sizeof(taList<ScaleRange>), (void**)&TAI_taList_ScaleRange_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<ScaleRange>), (void**)&TAI_taList_ScaleRange_, 0, 0, 0,1);
 TypeDef TA_ScaleRange_List("ScaleRange_List", " list of ScaleRange objects", 
-	"", "", "", sizeof(ScaleRange_List), (void**)&TAI_ScaleRange_List, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(ScaleRange_List), (void**)&TAI_ScaleRange_List, 0, 0, 0,1);
 TypeDef TA_const_ScaleRange_List("const_ScaleRange_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ColorScaleSpec_ptr("ColorScaleSpec_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_ScaleRange_List_ref("const_ScaleRange_List_ref", 1, 0, 1, 0, 1, 0);
@@ -291,33 +291,33 @@ TypeDef TA_ScaleRange_ptr("ScaleRange_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_ColorScale("const_ColorScale", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ColorScale_ref("const_ColorScale_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ClustNode("ClustNode", " node in clustering algorithm use one with leaves as children as a root node for cluster ", 
-	"", "", "", sizeof(ClustNode), (void**)&TAI_ClustNode, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ClustNode), (void**)&TAI_ClustNode, 0, 0, 0,1);
 TypeDef TA_DataItem("DataItem", " source of a piece of data", 
-	"", "", "", sizeof(DataItem), (void**)&TAI_DataItem, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER INLINE ", "", sizeof(DataItem), (void**)&TAI_DataItem, 0, 0, 0,1);
 TypeDef TA_taList_DataItem_("taList_DataItem_", " ", 
-	"", "", "", sizeof(taList<DataItem>), (void**)&TAI_taList_DataItem_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<DataItem>), (void**)&TAI_taList_DataItem_, 0, 0, 0,1);
 TypeDef TA_const_DataItem("const_DataItem", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DataItem_ref("const_DataItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DataItem_List("DataItem_List", " list of DataItem objects", 
-	"", "", "", sizeof(DataItem_List), (void**)&TAI_DataItem_List, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(DataItem_List), (void**)&TAI_DataItem_List, 0, 0, 0,1);
 TypeDef TA_DataItem_ptr("DataItem_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_DataItem_List("const_DataItem_List", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DataItem_List_ref("const_DataItem_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LogData("LogData", " log data is communicated with these objects", 
-	"", "", "", sizeof(LogData), (void**)&TAI_LogData, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(LogData), (void**)&TAI_LogData, 0, 0, 0,1);
 TypeDef TA_const_LogData("const_LogData", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LogData_ref("const_LogData_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Aggregate_ref("Aggregate_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_RArray("float_RArray", " float array with range, plus a lot of other mathematical functions", 
-	"", "", "", sizeof(float_RArray), (void**)0, 0, 0, 0,1);
+	"", "INSTANCE NO_UPDATE_AFTER ", "", sizeof(float_RArray), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray_base_ptr("taArray_base_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_float_RArray_ref("float_RArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_float_RArray("const_float_RArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_float_RArray_ref("const_float_RArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DataArray_impl("DataArray_impl", " holds array data", 
-	"", "", "", sizeof(DataArray_impl), (void**)&TAI_DataArray_impl, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(DataArray_impl), (void**)&TAI_DataArray_impl, 0, 0, 0,1);
 TypeDef TA_taGroup_DataArray_impl_("taGroup_DataArray_impl_", " ", 
-	"", "", "", sizeof(taGroup<DataArray_impl>), (void**)&TAI_taGroup_DataArray_impl_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taGroup<DataArray_impl>), (void**)&TAI_taGroup_DataArray_impl_, 0, 0, 0,1);
 TypeDef TA_const_DataArray_impl("const_DataArray_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LogData_ref("LogData_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_DataArray_impl_ref("const_DataArray_impl_ref", 1, 0, 1, 0, 1, 0);
@@ -325,34 +325,34 @@ TypeDef TA_DataArray_impl_ptr("DataArray_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_float_RArray_ptr("float_RArray_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_String_Array_ptr("String_Array_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DataTable("DataTable", " table of data", 
-	"", "", "", sizeof(DataTable), (void**)&TAI_DataTable, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(DataTable), (void**)&TAI_DataTable, 0, 0, 0,1);
 TypeDef TA_const_DataTable("const_DataTable", 1, 0, 0, 0, 1, 0);
 TypeDef TA_DataTable_ptr("DataTable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_DataTable_ref("const_DataTable_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DataArray("DataArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_DataArray_float_RArray_("DataArray_float_RArray_", "", 
-	"", "", "", sizeof(DataArray<float_RArray>), (void**)&TAI_DataArray_float_RArray_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(DataArray<float_RArray>), (void**)&TAI_DataArray_float_RArray_, 0, 0, 0,1);
 TypeDef TA_const_DataArray("const_DataArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DataArray_ref("const_DataArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_Data("float_Data", " floating point data", 
-	"", "", "", sizeof(float_Data), (void**)&TAI_float_Data, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(float_Data), (void**)&TAI_float_Data, 0, 0, 0,1);
 TypeDef TA_const_float_Data("const_float_Data", 1, 0, 0, 0, 1, 0);
 TypeDef TA_float_Data_ptr("float_Data_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_float_Data_ref("const_float_Data_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DString_Array("DString_Array", "", 
-	"", "", "", sizeof(DString_Array), (void**)0, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(DString_Array), (void**)0, 0, 0, 0,1);
 TypeDef TA_DataArray_DString_Array_("DataArray_DString_Array_", "", 
-	"", "", "", sizeof(DataArray<DString_Array>), (void**)&TAI_DataArray_DString_Array_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(DataArray<DString_Array>), (void**)&TAI_DataArray_DString_Array_, 0, 0, 0,1);
 TypeDef TA_const_DString_Array("const_DString_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_String_Data("String_Data", "  string data", 
-	"", "", "", sizeof(String_Data), (void**)&TAI_String_Data, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(String_Data), (void**)&TAI_String_Data, 0, 0, 0,1);
 TypeDef TA_const_DString_Array_ref("const_DString_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_String_Data("const_String_Data", 1, 0, 0, 0, 1, 0);
 TypeDef TA_String_Data_ptr("String_Data_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_String_Data_ref("const_String_Data_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ClustNode_ptr("ClustNode_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_ClustLink("ClustLink", " a link in the cluster tree with distance", 
-	"", "", "", sizeof(ClustLink), (void**)&TAI_ClustLink, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ClustLink), (void**)&TAI_ClustLink, 0, 0, 0,1);
 TypeDef TA_const_ClustLink("const_ClustLink", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ClustNode("const_ClustNode", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ClustLink_ref("const_ClustLink_ref", 1, 0, 1, 0, 1, 0);
@@ -360,7 +360,7 @@ TypeDef TA_const_ClustNode_ref("const_ClustNode_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DA_ViewSpec("DA_ViewSpec", " base specification for the display of log data_array (DA)", 
 	"", "", "", sizeof(DA_ViewSpec), (void**)&TAI_DA_ViewSpec, 1, 0, 0,1);
 TypeDef TA_taGroup_DA_ViewSpec_("taGroup_DA_ViewSpec_", " ", 
-	"", "", "", sizeof(taGroup<DA_ViewSpec>), (void**)&TAI_taGroup_DA_ViewSpec_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taGroup<DA_ViewSpec>), (void**)&TAI_taGroup_DA_ViewSpec_, 0, 0, 0,1);
 TypeDef TA_const_DA_ViewSpec("const_DA_ViewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DA_ViewSpec_ref("const_DA_ViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DT_ViewSpec("DT_ViewSpec", " base specification for the display of log data_table (DT)", 
@@ -382,10 +382,10 @@ TypeDef TA_const_DA_GridViewSpec_ref("const_DA_GridViewSpec_ref", 1, 0, 1, 0, 1,
 TypeDef TA_DT_GridViewSpec("DT_GridViewSpec", " information for display of a datatable in a grid display", 
 	"", "", "", sizeof(DT_GridViewSpec), (void**)&TAI_DT_GridViewSpec, 0, 0, 0,1);
 TypeDef TA_GraphColSpec("GraphColSpec", " data-array view spec for graph-based display", 
-	"", "", "", sizeof(GraphColSpec), (void**)&TAI_GraphColSpec, 1, 0, 0,1);
+	"", "BUTROWS_1 ", "", sizeof(GraphColSpec), (void**)&TAI_GraphColSpec, 1, 0, 0,1);
 TypeDef TA_const_DT_GridViewSpec("const_DT_GridViewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_AxisSpec("AxisSpec", " specs of the axis on a graph, name is cloned from primary col", 
-	"", "", "", sizeof(AxisSpec), (void**)0, 1, 0, 0,1);
+	"", "NO_INSTANCE ", "", sizeof(AxisSpec), (void**)0, 1, 0, 0,1);
 TypeDef TA_const_DT_GridViewSpec_ref("const_DT_GridViewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_XAxisSpec("XAxisSpec", " specs of the X axis on a graph, name is cloned from primary col", 
 	"", "", "", sizeof(XAxisSpec), (void**)&TAI_XAxisSpec, 1, 0, 0,1);
@@ -409,7 +409,7 @@ TypeDef TA_const_YAxisSpec_ref("const_YAxisSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_ZAxisSpec("const_ZAxisSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ZAxisSpec_ref("const_ZAxisSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_YAxisSpec_("taList_YAxisSpec_", " ", 
-	"", "", "", sizeof(taList<YAxisSpec>), (void**)&TAI_taList_YAxisSpec_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<YAxisSpec>), (void**)&TAI_taList_YAxisSpec_, 0, 0, 0,1);
 TypeDef TA_YAxisSpec_ptr("YAxisSpec_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_YAxisSpec_List("YAxisSpec_List", " ", 
 	"", "", "", sizeof(YAxisSpec_List), (void**)&TAI_YAxisSpec_List, 0, 0, 0,1);
@@ -422,7 +422,7 @@ TypeDef TA_const_YAxisSpec_List_ref("const_YAxisSpec_List_ref", 1, 0, 1, 0, 1, 0
 TypeDef TA_const_GraphletSpec("const_GraphletSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_GraphletSpec_ref("const_GraphletSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList_GraphletSpec_("taList_GraphletSpec_", " ", 
-	"", "", "", sizeof(taList<GraphletSpec>), (void**)&TAI_taList_GraphletSpec_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<GraphletSpec>), (void**)&TAI_taList_GraphletSpec_, 0, 0, 0,1);
 TypeDef TA_GraphletSpec_List("GraphletSpec_List", "", 
 	"", "", "", sizeof(GraphletSpec_List), (void**)&TAI_GraphletSpec_List, 0, 0, 0,1);
 TypeDef TA_const_GraphletSpec_List("const_GraphletSpec_List", 1, 0, 0, 0, 1, 0);
@@ -432,7 +432,7 @@ TypeDef TA_const_GraphSpec("const_GraphSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_GraphSpec_ref("const_GraphSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_AxisSpec_ref("AxisSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FunLookup("FunLookup", " function lookup for non-computable functions and optimization", 
-	"", "", "", sizeof(FunLookup), (void**)0, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(FunLookup), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_FunLookup("const_FunLookup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FunLookup_ref("const_FunLookup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_ptr("float_ptr", 1, 1, 0, 0, 1, 0);
@@ -448,40 +448,40 @@ TypeDef TA_SoGroup("SoGroup", "  ",
 TypeDef TA_SoSeparator("SoSeparator", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SoBase_ptr("SoBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoPtr_impl("SoPtr_impl", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr_impl), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr_impl), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr("SoPtr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SoPtr_SoNode_("SoPtr_SoNode_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoNode>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoNode>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoNode_ptr("SoNode_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoNodePtr("SoNodePtr", "", 
-	"", "", "", sizeof(SoNodePtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoNodePtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoGroup_("SoPtr_SoGroup_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoGroup>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoGroup>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoNodePtr_ref("SoNodePtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoGroup_ptr("SoGroup_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoGroupPtr("SoGroupPtr", "", 
-	"", "", "", sizeof(SoGroupPtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoGroupPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSeparator_("SoPtr_SoSeparator_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoSeparator>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoSeparator>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoGroupPtr_ref("SoGroupPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoSeparator_ptr("SoSeparator_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_SoSeparatorPtr("SoSeparatorPtr", "", 
-	"", "", "", sizeof(SoSeparatorPtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoSeparatorPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSeparatorKit_("SoPtr_SoSeparatorKit_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoSeparatorKit>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoSeparatorKit>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoSeparatorPtr_ref("SoSeparatorPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoSeparatorKitPtr("SoSeparatorKitPtr", "", 
-	"", "", "", sizeof(SoSeparatorKitPtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoSeparatorKitPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoSelection_("SoPtr_SoSelection_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoSelection>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoSelection>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoSeparatorKitPtr_ref("SoSeparatorKitPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoSelectionPtr("SoSelectionPtr", "", 
-	"", "", "", sizeof(SoSelectionPtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoSelectionPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoPtr_SoTransform_("SoPtr_SoTransform_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<SoTransform>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<SoTransform>), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoSelectionPtr_ref("SoSelectionPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SoTransformPtr("SoTransformPtr", "", 
-	"", "", "", sizeof(SoTransformPtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoTransformPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_SoTriangleStripSet("SoTriangleStripSet", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SoTransformPtr_ref("SoTransformPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3Node("T3Node", " externals -- note: some are here for use by other files, not this one an base class for PDP project items, like networks, etc.", 
@@ -500,7 +500,7 @@ TypeDef TA_T3NodeParent("T3NodeParent", " an base class for PDP project items, l
 TypeDef TA_SoFrame("SoFrame", " quadraloidal frame", 
 	"", "", "", sizeof(SoFrame), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3DataView("T3DataView", " base class for 3d-based DataView objects", 
-	"", "", "", sizeof(T3DataView), (void**)&TAI_T3DataView, 0, 0, 0,1);
+	"", "NO_TOKENS ", "", sizeof(T3DataView), (void**)&TAI_T3DataView, 0, 0, 0,1);
 TypeDef TA_T3DataViewPar("T3DataViewPar", " T3DataView that has child T3DataView's", 
 	"", "", "", sizeof(T3DataViewPar), (void**)&TAI_T3DataViewPar, 0, 0, 0,1);
 TypeDef TA_T3DataViewRoot("T3DataViewRoot", " Root item for a viewwidget type", 
@@ -510,12 +510,12 @@ TypeDef TA_iT3ViewspaceWidget("iT3ViewspaceWidget", " widget that encapsulates a
 TypeDef TA_T3DataViewer("T3DataViewer", " top-level DataViewer object that contains 3D data views", 
 	"", "", "", sizeof(T3DataViewer), (void**)&TAI_T3DataViewer, 1, 0, 0,1);
 TypeDef TA_SoPtr_T3Node_("SoPtr_T3Node_", " 'safe' ptr for SoBase objects -- automatically does ref counts", 
-	"", "", "", sizeof(SoPtr<T3Node>), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SoPtr<T3Node>), (void**)0, 0, 0, 0,1);
 TypeDef TA_T3Node_ptr("T3Node_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3NodePtr("T3NodePtr", "", 
-	"", "", "", sizeof(T3NodePtr), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(T3NodePtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_taList_T3DataView_("taList_T3DataView_", " ", 
-	"", "", "", sizeof(taList<T3DataView>), (void**)&TAI_taList_T3DataView_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taList<T3DataView>), (void**)&TAI_taList_T3DataView_, 0, 0, 0,1);
 TypeDef TA_T3NodePtr_ref("T3NodePtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3DataView_List("T3DataView_List", " ", 
 	"", "", "", sizeof(T3DataView_List), (void**)&TAI_T3DataView_List, 0, 0, 0,1);
@@ -542,11 +542,11 @@ TypeDef TA_const_T3DataViewer_ref("const_T3DataViewer_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_T3CBar("T3CBar", "", 
 	"", "", "", sizeof(T3CBar), (void**)0, 0, 0, 0,1);
 TypeDef TA_tabDataTableViewType("tabDataTableViewType", "", 
-	"", "", "", sizeof(tabDataTableViewType), (void**)&TAI_tabDataTableViewType, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(tabDataTableViewType), (void**)&TAI_tabDataTableViewType, 0, 0, 0,1);
 TypeDef TA_iDataTable("iDataTable", " ", 
-	"", "", "", sizeof(iDataTable), (void**)0, 0, 0, 0,1);
+	"NO_CSS ", "NO_CSS ", "", sizeof(iDataTable), (void**)0, 0, 0, 0,1);
 TypeDef TA_iDataTablePanel("iDataTablePanel", " ////////////////////////", 
-	"", "", "", sizeof(iDataTablePanel), (void**)0, 0, 0, 0,1);
+	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(iDataTablePanel), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_QColorGroup_ref("const_QColorGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_iDataTable_ptr("iDataTable_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_T3Axis("T3Axis", " ", 

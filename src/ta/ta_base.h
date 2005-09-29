@@ -1177,6 +1177,9 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
+protected:
+  override void	ReclaimOrphans_(int start, int end) 
+    {for (int i = start; i <= end; ++i) el[i] = ""; }
 };
 
 class SArg_Array : public String_Array {

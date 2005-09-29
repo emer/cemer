@@ -329,7 +329,7 @@ TypeDef TA_TypeSpace("TypeSpace", " space of types; uses default string-based ha
 	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(TypeSpace), (void**)&TAI_TypeSpace, 0, 0, 0,1);
 TypeDef TA_const_TypeSpace("const_TypeSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TypeItem("TypeItem", " base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(TypeItem), (void**)&TAI_TypeItem, 0, 0, 0,1);
+	"MEMBERS CSS ", "MEMBERS CSS ", "", sizeof(TypeItem), (void**)&TAI_TypeItem, 0, 0, 0,1);
 TypeDef TA_const_TypeSpace_ref("const_TypeSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_EnumSpace_ptr("EnumSpace_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, 0);
@@ -337,7 +337,7 @@ TypeDef TA_const_TypeItem("const_TypeItem", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MethodDef_ptr("MethodDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_TypeItem_ref("const_TypeItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_EnumDef("EnumDef", " defines an enum member", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(EnumDef), (void**)&TAI_EnumDef, 0, 0, 0,1);
+	"MEMBERS CSS ", "MEMBERS CSS ", "", sizeof(EnumDef), (void**)&TAI_EnumDef, 0, 0, 0,1);
 TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, 0);
 TypeDef TA_EnumDef_ptr("EnumDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_EnumDef("const_EnumDef", 1, 0, 0, 0, 1, 0);
@@ -1207,6 +1207,10 @@ taBase*		 TAI_taBase=NULL;
   static cssEl* cssElCFun_taBase_CastCopyTo_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taBase*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taBase_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((taBase*)ths)->GetTypeDef(), 1, &TA_TypeDef);
     return rval;}
   static cssEl* cssElCFun_taBase_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -3070,7 +3074,47 @@ MethodSpace*		 TAI_MethodSpace=NULL;
 taPtrList<TypeDef>*		 TAI_taPtrList_TypeDef_=NULL;
 TypeSpace*		 TAI_TypeSpace=NULL;
 TypeItem*		 TAI_TypeItem=NULL;
+  static cssEl* cssElCFun_TypeItem_Copy_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((TypeItem*)ths)->Copy(*(TypeItem*)arg[1]->GetVoidPtrOfType(&TA_TypeItem));
+    return rval;}
+  static cssEl* cssElCFun_TypeItem_HasOption_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((TypeItem*)ths)->HasOption((const char*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_TypeItem_OptionAfter_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssString(((TypeItem*)ths)->OptionAfter((const char*)*arg[1]));
+    return rval;}
+  static cssEl* cssElCFun_TypeItem_GetLabel_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssString(((TypeItem*)ths)->GetLabel());
+    return rval;}
 EnumDef*		 TAI_EnumDef=NULL;
+  static cssEl* cssElCFun_EnumDef_Copy_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    ((EnumDef*)ths)->Copy(*(EnumDef*)arg[1]->GetVoidPtrOfType(&TA_EnumDef));
+    return rval;}
+  static cssEl* cssElCFun_EnumDef_Initialize_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((EnumDef*)ths)->Initialize();
+    return rval;}
+  static cssEl* cssElCFun_EnumDef_Clone_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((EnumDef*)ths)->Clone(), 1, &TA_EnumDef);
+    return rval;}
+  static cssEl* cssElCFun_EnumDef_MakeToken_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((EnumDef*)ths)->MakeToken(), 1, &TA_EnumDef);
+    return rval;}
+  static cssEl* cssElCFun_EnumDef_GetOwnerType_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((EnumDef*)ths)->GetOwnerType(), 1, &TA_TypeDef);
+    return rval;}
+  static cssEl* cssElCFun_EnumDef_CheckList_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((EnumDef*)ths)->CheckList(*(String_PArray*)arg[1]->GetVoidPtrOfType(&TA_String_PArray)));
+    return rval;}
   static cssEl* cssElCFun_taiMimeSource_New_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taiMimeSource*)ths)->New((const QMimeSource*)(void*)*arg[1]), 1, &TA_taiMimeSource);
@@ -3210,6 +3254,10 @@ taDataView*		 TAI_taDataView=NULL;
   static cssEl* cssElCFun_taDataView_CastCopyTo_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taDataView*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taDataView_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((taDataView*)ths)->GetTypeDef(), 1, &TA_TypeDef);
     return rval;}
   static cssEl* cssElCFun_taDataView_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -3876,6 +3924,10 @@ taList_impl*		 TAI_taList_impl=NULL;
     cssEl* rval=&cssMisc::Void;
     ((taList_impl*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
     return rval;}
+  static cssEl* cssElCFun_taList_impl_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((taList_impl*)ths)->GetTypeDef(), 1, &TA_TypeDef);
+    return rval;}
   static cssEl* cssElCFun_taList_impl_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA_Base((void*)((taList_impl*)ths)->GetOwner((TypeDef*)*arg[1]), 1, &TA_taBase);
@@ -4469,6 +4521,10 @@ taBase_List*		 TAI_taBase_List=NULL;
   static cssEl* cssElCFun_taArray_base_CastCopyTo_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taArray_base*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_taArray_base_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((taArray_base*)ths)->GetTypeDef(), 1, &TA_TypeDef);
     return rval;}
   static cssEl* cssElCFun_taArray_base_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -5723,6 +5779,10 @@ Script*		 TAI_Script=NULL;
   static cssEl* cssElCFun_Script_CastCopyTo_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((Script*)ths)->CastCopyTo((taBase*)(void*)*arg[1]);
+    return rval;}
+  static cssEl* cssElCFun_Script_GetTypeDef_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssTA((void*)((Script*)ths)->GetTypeDef(), 1, &TA_TypeDef);
     return rval;}
   static cssEl* cssElCFun_Script_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -7141,6 +7201,8 @@ static MethodDef_data TA_taBase_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taBase_UnSafeCopy_stub,TA_taBase_UnSafeCopy_MethArgs},
   {&TA_void,NULL,"CastCopyTo","","","",
     0,1,-1,0,NULL,cssElCFun_taBase_CastCopyTo_stub,TA_taBase_CastCopyTo_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taBase_GetTypeDef_stub,NULL},
   {&TA_TAPtr,NULL,"GetOwner","","","",
     1,1,-1,0,NULL,cssElCFun_taBase_GetOwner_stub,TA_taBase_GetOwner_MethArgs},
   {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
@@ -8717,7 +8779,7 @@ static MemberDef_data TA_String_PArray_MemberDef[]={
     (ta_memb_ptr)NULL,1,(void*)(&String_PArray::blank),0},
   NULL};
 static MethodArgs_data TA_String_PArray_Remove_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"str",""},
+  {&TA_const_char_ptr,NULL,"it",""},
   NULL};
 static MethodArgs_data TA_String_PArray_Add_MethArgs[]={
   {&TA_const_char_ptr,NULL,"it",""},
@@ -8731,7 +8793,7 @@ static MethodArgs_data TA_String_PArray_FindContains_MethArgs[]={
   NULL};
 static MethodDef_data TA_String_PArray_MethodDef[]={
   {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success obs void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }","MENU MENU_ON_Edit ","",
-    1,1,-1,0,NULL,cssElCFun_String_PArray_Remove_stub,TA_String_PArray_Remove_MethArgs},
+    2,1,-1,0,NULL,cssElCFun_String_PArray_Remove_stub,TA_String_PArray_Remove_MethArgs},
   {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
     2,1,-1,0,NULL,cssElCFun_String_PArray_Add_stub,TA_String_PArray_Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique ","","",
@@ -9226,6 +9288,65 @@ static MethodDef_data TA_taMisc_MethodDef[]={
   {&TA_ostream_ref,NULL,"fancy_list","","","",
     0,5,-1,1,(ta_void_fun)(taMisc::fancy_list),cssElCFun_taMisc_fancy_list_stub,TA_taMisc_fancy_list_MethArgs},
   NULL};
+static int TypeItem::* TA_TypeItem_MbrOff;
+static MemberDef_data TA_TypeItem_MemberDef[]={
+  {&TA_int,NULL,"idx"," the index number for this type","","",
+    *((ta_memb_ptr*)&(TA_TypeItem_MbrOff=(int TypeItem::*)(&TypeItem::idx))),0,NULL,0},
+  {&TA_taString,NULL,"name","","","",
+    *((ta_memb_ptr*)&(TA_TypeItem_MbrOff=(int TypeItem::*)(&TypeItem::name))),0,NULL,0},
+  {&TA_taString,NULL,"desc"," a description","","",
+    *((ta_memb_ptr*)&(TA_TypeItem_MbrOff=(int TypeItem::*)(&TypeItem::desc))),0,NULL,0},
+  {&TA_String_PArray,NULL,"opts"," user-spec'd options (","xxx) ","",
+    *((ta_memb_ptr*)&(TA_TypeItem_MbrOff=(int TypeItem::*)(&TypeItem::opts))),0,NULL,0},
+  {&TA_String_PArray,NULL,"lists"," user-spec'd lists (","","xxx) ",
+    *((ta_memb_ptr*)&(TA_TypeItem_MbrOff=(int TypeItem::*)(&TypeItem::lists))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_TypeItem_Copy_MethArgs[]={
+  {&TA_const_TypeItem_ref,NULL,"cp",""},
+  NULL};
+static MethodArgs_data TA_TypeItem_HasOption_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"op",""},
+  NULL};
+static MethodArgs_data TA_TypeItem_OptionAfter_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"op",""},
+  NULL};
+static MethodDef_data TA_TypeItem_MethodDef[]={
+  {&TA_void,NULL,"Copy","","","",
+    0,1,-1,0,NULL,cssElCFun_TypeItem_Copy_stub,TA_TypeItem_Copy_MethArgs},
+  {&TA_bool,NULL,"HasOption"," check if option is set","","",
+    0,1,-1,0,NULL,cssElCFun_TypeItem_HasOption_stub,TA_TypeItem_HasOption_MethArgs},
+  {&TA_taString,NULL,"OptionAfter"," return portion of option after given option header","","",
+    0,1,-1,0,NULL,cssElCFun_TypeItem_OptionAfter_stub,TA_TypeItem_OptionAfter_MethArgs},
+  {&TA_taString,NULL,"GetLabel"," checks for option of LABEL_xxx and returns it or name","","",
+    0,0,-1,0,NULL,cssElCFun_TypeItem_GetLabel_stub,NULL},
+  NULL};
+static int EnumDef::* TA_EnumDef_MbrOff;
+static MemberDef_data TA_EnumDef_MemberDef[]={
+  {&TA_EnumSpace_ptr,NULL,"owner"," the owner of this one","","",
+    *((ta_memb_ptr*)&(TA_EnumDef_MbrOff=(int EnumDef::*)(&EnumDef::owner))),0,NULL,0},
+  {&TA_int,NULL,"enum_no"," number (value) of the enum","","",
+    *((ta_memb_ptr*)&(TA_EnumDef_MbrOff=(int EnumDef::*)(&EnumDef::enum_no))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_EnumDef_Copy_MethArgs[]={
+  {&TA_const_EnumDef_ref,NULL,"cp",""},
+  NULL};
+static MethodArgs_data TA_EnumDef_CheckList_MethArgs[]={
+  {&TA_const_String_PArray_ref,NULL,"lst",""},
+  NULL};
+static MethodDef_data TA_EnumDef_MethodDef[]={
+  {&TA_void,NULL,"Copy","","","",
+    1,1,-1,0,NULL,cssElCFun_EnumDef_Copy_stub,TA_EnumDef_Copy_MethArgs},
+  {&TA_void,NULL,"Initialize","","","",
+    0,0,-1,0,NULL,cssElCFun_EnumDef_Initialize_stub,NULL},
+  {&TA_EnumDef_ptr,NULL,"Clone","","","",
+    0,0,-1,0,NULL,cssElCFun_EnumDef_Clone_stub,NULL},
+  {&TA_EnumDef_ptr,NULL,"MakeToken","","","",
+    0,0,-1,0,NULL,cssElCFun_EnumDef_MakeToken_stub,NULL},
+  {&TA_TypeDef_ptr,NULL,"GetOwnerType","","","",
+    0,0,-1,0,NULL,cssElCFun_EnumDef_GetOwnerType_stub,NULL},
+  {&TA_bool,NULL,"CheckList"," check if enum has a list in common with given one","","",
+    0,1,-1,0,NULL,cssElCFun_EnumDef_CheckList_stub,TA_EnumDef_CheckList_MethArgs},
+  NULL};
 static MethodArgs_data TA_taiMimeSource_New_MethArgs[]={
   {&TA_const_QMimeSource_ptr,NULL,"ms",""},
   NULL};
@@ -9472,6 +9593,8 @@ static MethodDef_data TA_taDataView_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taDataView_UnSafeCopy_stub,TA_taDataView_UnSafeCopy_MethArgs},
   {&TA_void,NULL,"CastCopyTo","","","",
     0,1,-1,0,NULL,cssElCFun_taDataView_CastCopyTo_stub,TA_taDataView_CastCopyTo_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taDataView_GetTypeDef_stub,NULL},
   {&TA_TAPtr,NULL,"GetOwner","","","",
     3,1,-1,0,NULL,cssElCFun_taDataView_GetOwner_stub,TA_taDataView_GetOwner_MethArgs},
   {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
@@ -10397,6 +10520,8 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taList_impl_UnSafeCopy_stub,TA_taList_impl_UnSafeCopy_MethArgs},
   {&TA_void,NULL,"CastCopyTo","","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_CastCopyTo_stub,TA_taList_impl_CastCopyTo_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taList_impl_GetTypeDef_stub,NULL},
   {&TA_TAPtr,NULL,"GetOwner","","","",
     3,1,-1,0,NULL,cssElCFun_taList_impl_GetOwner_stub,TA_taList_impl_GetOwner_MethArgs},
   {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
@@ -10850,6 +10975,8 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taArray_base_UnSafeCopy_stub,TA_taArray_base_UnSafeCopy_MethArgs},
   {&TA_void,NULL,"CastCopyTo","","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_CastCopyTo_stub,TA_taArray_base_CastCopyTo_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_taArray_base_GetTypeDef_stub,NULL},
   {&TA_TAPtr,NULL,"GetOwner","","","",
     3,1,-1,0,NULL,cssElCFun_taArray_base_GetOwner_stub,TA_taArray_base_GetOwner_MethArgs},
   {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
@@ -12272,6 +12399,8 @@ static MethodDef_data TA_Script_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_Script_UnSafeCopy_stub,TA_Script_UnSafeCopy_MethArgs},
   {&TA_void,NULL,"CastCopyTo","","","",
     0,1,-1,0,NULL,cssElCFun_Script_CastCopyTo_stub,TA_Script_CastCopyTo_MethArgs},
+  {&TA_TypeDef_ptr,NULL,"GetTypeDef"," ","","",
+    0,0,-1,0,NULL,cssElCFun_Script_GetTypeDef_stub,NULL},
   {&TA_TAPtr,NULL,"GetOwner","","","",
     3,1,-1,0,NULL,cssElCFun_Script_GetOwner_stub,TA_Script_GetOwner_MethArgs},
   {&TA_taString,NULL,"GetPath"," get path without name informtation, stop at par_stop if non-null","","",
@@ -14126,6 +14255,8 @@ void ta_Init_ta() {
     TAI_TypeItem = new TypeItem;
     TA_TypeItem.AddParFormal(&TA_class);
     TA_TypeItem.AddClassPar(&TA_taRefN,0);
+    tac_AddMembers(TA_TypeItem,TA_TypeItem_MemberDef);
+    tac_AddMethods(TA_TypeItem,TA_TypeItem_MethodDef);
   taMisc::types.Add(&TA_const_TypeSpace_ref);
     TA_const_TypeSpace_ref.AddParents(&TA_const_TypeSpace);
   taMisc::types.Add(&TA_EnumSpace_ptr);
@@ -14142,6 +14273,8 @@ void ta_Init_ta() {
     TAI_EnumDef = new EnumDef;
     TA_EnumDef.AddParFormal(&TA_class);
     TA_EnumDef.AddClassPar(&TA_TypeItem,0);
+    tac_AddMembers(TA_EnumDef,TA_EnumDef_MemberDef);
+    tac_AddMethods(TA_EnumDef,TA_EnumDef_MethodDef);
   taMisc::types.Add(&TA_MemberDef);
     TA_MemberDef.AddParents(&TA_TypeItem);
   taMisc::types.Add(&TA_EnumDef_ptr);

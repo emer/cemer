@@ -14,38 +14,40 @@
 
 // Types
 
-TypeDef TA_void("void", 1, 0, 0, 0,1);
-TypeDef TA_int("int", 1, 0, 0, 0,1);
-TypeDef TA_short("short", 1, 0, 0, 0,1);
-TypeDef TA_long("long", 1, 0, 0, 0,1);
-TypeDef TA_char("char", 1, 0, 0, 0,1);
-TypeDef TA_unsigned("unsigned", 1, 0, 0, 0,1);
-TypeDef TA_signed("signed", 1, 0, 0, 0,1);
-TypeDef TA_float("float", 1, 0, 0, 0,1);
-TypeDef TA_double("double", 1, 0, 0, 0,1);
-TypeDef TA_bool("bool", 1, 0, 0, 0,1);
-TypeDef TA_const("const", 1, 0, 0, 0,1);
-TypeDef TA_enum("enum", 1, 0, 0, 1,1);
-TypeDef TA_struct("struct", 1, 0, 0, 1,1);
-TypeDef TA_union("union", 1, 0, 0, 1,1);
-TypeDef TA_class("class", 1, 0, 0, 1,1);
-TypeDef TA_template("template", 1, 0, 0, 1,1);
-TypeDef TA_templ_inst("templ_inst", 1, 0, 0, 1,1);
-TypeDef TA_ta_array("ta_array", 1, 0, 0, 1,1);
+TypeDef TA_void("void", 1, 0, 0, 0, 1, 0);
+TypeDef TA_int("int", 1, 0, 0, 0, 1, sizeof(int));
+TypeDef TA_short("short", 1, 0, 0, 0, 1, sizeof(short));
+TypeDef TA_long("long", 1, 0, 0, 0, 1, sizeof(long));
+TypeDef TA_char("char", 1, 0, 0, 0, 1, sizeof(char));
+TypeDef TA_signed_char("signed_char", 1, 0, 0, 0, 1, sizeof(signed char));
+TypeDef TA_unsigned_char("unsigned_char", 1, 0, 0, 0, 1, sizeof(unsigned char));
+TypeDef TA_unsigned("unsigned", 1, 0, 0, 0, 1, sizeof(unsigned));
+TypeDef TA_signed("signed", 1, 0, 0, 0, 1, sizeof(signed));
+TypeDef TA_float("float", 1, 0, 0, 0, 1, sizeof(float));
+TypeDef TA_double("double", 1, 0, 0, 0, 1, sizeof(double));
+TypeDef TA_bool("bool", 1, 0, 0, 0, 1, sizeof(bool));
+TypeDef TA_const("const", 1, 0, 0, 0, 1, 0);
+TypeDef TA_enum("enum", 1, 0, 0, 1, 1, 0);
+TypeDef TA_struct("struct", 1, 0, 0, 1, 1, 0);
+TypeDef TA_union("union", 1, 0, 0, 1, 1, 0);
+TypeDef TA_class("class", 1, 0, 0, 1, 1, 0);
+TypeDef TA_template("template", 1, 0, 0, 1, 1, 0);
+TypeDef TA_templ_inst("templ_inst", 1, 0, 0, 1, 1, 0);
+TypeDef TA_ta_array("ta_array", 1, 0, 0, 1, 1, 0);
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes", 
 	"", "", "", sizeof(taBase), (void**)0, 0, 0, 0,1);
-TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0,1);
-TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0,1);
-TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0,1);
-TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0,1);
+TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0, 1, 0);
+TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taString("taString", "", 
 	"", "", "", sizeof(taString), (void**)0, 0, 0, 0,1);
-TypeDef TA_void_ptr("void_ptr", 1, 1, 0, 1,1);
+TypeDef TA_void_ptr("void_ptr", 1, 1, 0, 1, 1, 0);
 TypeDef TA_MyClass("MyClass", "", 
 	"", "", "", sizeof(MyClass), (void**)0, 1, 0, 0,1);
 TypeDef TA_MySubClass("MySubClass", "", 
 	"", "", "", sizeof(MySubClass), (void**)0, 1, 0, 0,1);
-TypeDef TA_MyTemplate("MyTemplate", 1, 0, 0, 0,1);
+TypeDef TA_MyTemplate("MyTemplate", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MyTemplate_MyClass_("MyTemplate_MyClass_", "", 
 	"", "", "", sizeof(MyTemplate<MyClass>), (void**)0, 0, 0, 0,1);
 TypeDef TA_MyTemplate_MyClass("MyTemplate_MyClass", "", 
@@ -102,6 +104,8 @@ void ta_Init_test() {
   taMisc::types.Add(&TA_short);
   taMisc::types.Add(&TA_long);
   taMisc::types.Add(&TA_char);
+  taMisc::types.Add(&TA_signed_char);
+  taMisc::types.Add(&TA_unsigned_char);
   taMisc::types.Add(&TA_unsigned);
   taMisc::types.Add(&TA_signed);
   taMisc::types.Add(&TA_float);

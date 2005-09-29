@@ -34,49 +34,49 @@
 // Types
 
 TypeDef TA_LeabraCon("LeabraCon", " Leabra connection", 
-	"", "", "", sizeof(LeabraCon), (void**)&TAI_LeabraCon, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraCon), (void**)&TAI_LeabraCon, 0, 0, 0,1);
 TypeDef TA_LeabraConSpec("LeabraConSpec", " Leabra connection specs", 
-	"", "", "", sizeof(LeabraConSpec), (void**)&TAI_LeabraConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraConSpec), (void**)&TAI_LeabraConSpec, 1, 0, 0,1);
 TypeDef TA_LeabraBiasSpec("LeabraBiasSpec", " Leabra bias-weight connection specs (bias wts are a little bit special)", 
-	"", "", "", sizeof(LeabraBiasSpec), (void**)&TAI_LeabraBiasSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraBiasSpec), (void**)&TAI_LeabraBiasSpec, 1, 0, 0,1);
 TypeDef TA_LeabraCon_Group("LeabraCon_Group", " Leabra connection group", 
-	"", "", "", sizeof(LeabraCon_Group), (void**)&TAI_LeabraCon_Group, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraCon_Group), (void**)&TAI_LeabraCon_Group, 0, 0, 0,1);
 TypeDef TA_LeabraUnitSpec("LeabraUnitSpec", " Leabra unit specifications, point-neuron approximation", 
-	"", "", "", sizeof(LeabraUnitSpec), (void**)&TAI_LeabraUnitSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraUnitSpec), (void**)&TAI_LeabraUnitSpec, 1, 0, 0,1);
 TypeDef TA_LeabraUnit("LeabraUnit", " Leabra unit, point-neuron approximation", 
-	"", "", "", sizeof(LeabraUnit), (void**)&TAI_LeabraUnit, 0, 0, 0,1);
+	"DMEM_SHARE_SETS_3 DMEM_SHARE_SETS_5 ", "DMEM_SHARE_SETS_3 INSTANCE DMEM_SHARE_SETS_5 ", "", sizeof(LeabraUnit), (void**)&TAI_LeabraUnit, 0, 0, 0,1);
 TypeDef TA_LeabraInhib("LeabraInhib", " holds threshold-computation values, used as a parent class for layers, etc", 
 	"", "", "", sizeof(LeabraInhib), (void**)&TAI_LeabraInhib, 1, 0, 0,1);
 TypeDef TA_LeabraLayerSpec("LeabraLayerSpec", " Leabra layer specs, computes inhibitory input for all units in layer", 
-	"", "", "", sizeof(LeabraLayerSpec), (void**)&TAI_LeabraLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraLayerSpec), (void**)&TAI_LeabraLayerSpec, 1, 0, 0,1);
 TypeDef TA_LeabraUnit_Group("LeabraUnit_Group", " for independent subgroups of competing units within a single layer", 
-	"", "", "", sizeof(LeabraUnit_Group), (void**)&TAI_LeabraUnit_Group, 0, 0, 0,1);
+	"", "MULT_INHERIT ", "", sizeof(LeabraUnit_Group), (void**)&TAI_LeabraUnit_Group, 0, 0, 0,1);
 TypeDef TA_LeabraLayer("LeabraLayer", " Leabra Layer: implicit inhibition for soft kWTA behavior", 
-	"", "", "", sizeof(LeabraLayer), (void**)&TAI_LeabraLayer, 1, 0, 0,1);
+	"", "INSTANCE MULT_INHERIT ", "", sizeof(LeabraLayer), (void**)&TAI_LeabraLayer, 1, 0, 0,1);
 TypeDef TA_LeabraCycle("LeabraCycle", " one Leabra cycle of activation updating", 
-	"", "", "", sizeof(LeabraCycle), (void**)&TAI_LeabraCycle, 1, 0, 0,1);
+	"AGGOP_SUM ", "AGGOP_SUM INSTANCE ", "", sizeof(LeabraCycle), (void**)&TAI_LeabraCycle, 1, 0, 0,1);
 TypeDef TA_LeabraSettle("LeabraSettle", " Leabra settling phase of activation updating", 
-	"", "", "", sizeof(LeabraSettle), (void**)&TAI_LeabraSettle, 1, 0, 0,1);
+	"AGGOP_SUM ", "AGGOP_SUM INSTANCE ", "", sizeof(LeabraSettle), (void**)&TAI_LeabraSettle, 1, 0, 0,1);
 TypeDef TA_LeabraTrial("LeabraTrial", " Leabra trial process, iterates over phases", 
-	"", "", "", sizeof(LeabraTrial), (void**)&TAI_LeabraTrial, 1, 0, 0,1);
+	"AGGOP_SUM ", "AGGOP_SUM INSTANCE ", "", sizeof(LeabraTrial), (void**)&TAI_LeabraTrial, 1, 0, 0,1);
 TypeDef TA_LeabraMaxDa("LeabraMaxDa", " _ stat that computes when equilibrium is", 
-	"", "", "", sizeof(LeabraMaxDa), (void**)&TAI_LeabraMaxDa, 1, 0, 0,1);
+	"LOOP_STAT ", "COMPUTE_IN_SettleProcess LOOP_STAT ", "", sizeof(LeabraMaxDa), (void**)&TAI_LeabraMaxDa, 1, 0, 0,1);
 TypeDef TA_const_LeabraCon("const_LeabraCon", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraCon_ref("const_LeabraCon_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_WtScaleSpec("WtScaleSpec", " weight scaling specification", 
-	"", "", "", sizeof(WtScaleSpec), (void**)&TAI_WtScaleSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(WtScaleSpec), (void**)&TAI_WtScaleSpec, 0, 0, 0,1);
 TypeDef TA_const_WtScaleSpec("const_WtScaleSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_WtSigSpec("WtSigSpec", " sigmoidal weight function specification", 
-	"", "", "", sizeof(WtSigSpec), (void**)&TAI_WtSigSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(WtSigSpec), (void**)&TAI_WtSigSpec, 0, 0, 0,1);
 TypeDef TA_const_WtScaleSpec_ref("const_WtScaleSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_WtSigSpec("const_WtSigSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_WtSigSpec_ref("const_WtSigSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LearnMixSpec("LearnMixSpec", " mixture of learning factors (hebbian vs. error-driven) specification", 
-	"", "", "", sizeof(LearnMixSpec), (void**)&TAI_LearnMixSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(LearnMixSpec), (void**)&TAI_LearnMixSpec, 0, 0, 0,1);
 TypeDef TA_const_LearnMixSpec("const_LearnMixSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LearnMixSpec_ref("const_LearnMixSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SAvgCorSpec("SAvgCorSpec", " sending average activation correction specifications: affects hebbian learning and netinput computation", 
-	"", "", "", sizeof(SAvgCorSpec), (void**)&TAI_SAvgCorSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(SAvgCorSpec), (void**)&TAI_SAvgCorSpec, 0, 0, 0,1);
 TypeDef TA_LeabraCon_Group_ptr("LeabraCon_Group_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_SAvgCorSpec("const_SAvgCorSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LeabraCon_ptr("LeabraCon_ptr", 1, 1, 0, 0, 1, 0);
@@ -91,34 +91,34 @@ TypeDef TA_const_LeabraBiasSpec_ref("const_LeabraBiasSpec_ref", 1, 0, 1, 0, 1, 0
 TypeDef TA_const_LeabraCon_Group("const_LeabraCon_Group", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraCon_Group_ref("const_LeabraCon_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ActFunSpec("ActFunSpec", " activation function specifications", 
-	"", "", "", sizeof(ActFunSpec), (void**)&TAI_ActFunSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ActFunSpec), (void**)&TAI_ActFunSpec, 0, 0, 0,1);
 TypeDef TA_const_ActFunSpec("const_ActFunSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SpikeFunSpec("SpikeFunSpec", " spiking activation function specs", 
-	"", "", "", sizeof(SpikeFunSpec), (void**)&TAI_SpikeFunSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(SpikeFunSpec), (void**)&TAI_SpikeFunSpec, 0, 0, 0,1);
 TypeDef TA_const_ActFunSpec_ref("const_ActFunSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_SpikeFunSpec("const_SpikeFunSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SpikeFunSpec_ref("const_SpikeFunSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DepressSpec("DepressSpec", " depressing synapses activation function specs", 
-	"", "", "", sizeof(DepressSpec), (void**)&TAI_DepressSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(DepressSpec), (void**)&TAI_DepressSpec, 0, 0, 0,1);
 TypeDef TA_const_DepressSpec("const_DepressSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DepressSpec_ref("const_DepressSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_OptThreshSpec("OptThreshSpec", " optimization thresholds for faster processing", 
-	"", "", "", sizeof(OptThreshSpec), (void**)&TAI_OptThreshSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(OptThreshSpec), (void**)&TAI_OptThreshSpec, 0, 0, 0,1);
 TypeDef TA_const_OptThreshSpec("const_OptThreshSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_OptThreshSpec_ref("const_OptThreshSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DtSpec("DtSpec", " time constants", 
-	"", "", "", sizeof(DtSpec), (void**)&TAI_DtSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(DtSpec), (void**)&TAI_DtSpec, 0, 0, 0,1);
 TypeDef TA_const_DtSpec("const_DtSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DtSpec_ref("const_DtSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraChannels("LeabraChannels", " channels used in Leabra", 
-	"", "", "", sizeof(LeabraChannels), (void**)&TAI_LeabraChannels, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(LeabraChannels), (void**)&TAI_LeabraChannels, 0, 0, 0,1);
 TypeDef TA_const_LeabraChannels("const_LeabraChannels", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraChannels_ref("const_LeabraChannels_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_VChanSpec("VChanSpec", " voltage gated channel specs", 
-	"", "", "", sizeof(VChanSpec), (void**)&TAI_VChanSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(VChanSpec), (void**)&TAI_VChanSpec, 0, 0, 0,1);
 TypeDef TA_const_VChanSpec("const_VChanSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ActRegSpec("ActRegSpec", " activity regulation via weight adjustment", 
-	"", "", "", sizeof(ActRegSpec), (void**)&TAI_ActRegSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ActRegSpec), (void**)&TAI_ActRegSpec, 0, 0, 0,1);
 TypeDef TA_const_VChanSpec_ref("const_VChanSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraLayer_ptr("LeabraLayer_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_ActRegSpec("const_ActRegSpec", 1, 0, 0, 0, 1, 0);
@@ -127,58 +127,58 @@ TypeDef TA_const_ActRegSpec_ref("const_ActRegSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraUnitSpec("const_LeabraUnitSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraUnitSpec_ref("const_LeabraUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_VChanBasis("VChanBasis", " basis variables for vchannels", 
-	"", "", "", sizeof(VChanBasis), (void**)&TAI_VChanBasis, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(VChanBasis), (void**)&TAI_VChanBasis, 0, 0, 0,1);
 TypeDef TA_const_VChanBasis("const_VChanBasis", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LeabraUnitChans("LeabraUnitChans", " channels used in Leabra units", 
-	"", "", "", sizeof(LeabraUnitChans), (void**)&TAI_LeabraUnitChans, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(LeabraUnitChans), (void**)&TAI_LeabraUnitChans, 0, 0, 0,1);
 TypeDef TA_const_VChanBasis_ref("const_VChanBasis_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraUnit("const_LeabraUnit", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraUnitChans("const_LeabraUnitChans", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraUnit_ref("const_LeabraUnit_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraUnitChans_ref("const_LeabraUnitChans_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_LeabraUnit_("taPtrList_LeabraUnit_", " ", 
-	"", "", "", sizeof(taPtrList<LeabraUnit>), (void**)&TAI_taPtrList_LeabraUnit_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER ", "", sizeof(taPtrList<LeabraUnit>), (void**)&TAI_taPtrList_LeabraUnit_, 0, 0, 0,1);
 TypeDef TA_LeabraSort("LeabraSort", " used for sorting units in kwta computation", 
 	"", "", "", sizeof(LeabraSort), (void**)&TAI_LeabraSort, 0, 0, 0,1);
 TypeDef TA_KWTASpec("KWTASpec", " specifies k-winner-take-all parameters", 
-	"", "", "", sizeof(KWTASpec), (void**)&TAI_KWTASpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(KWTASpec), (void**)&TAI_KWTASpec, 0, 0, 0,1);
 TypeDef TA_const_KWTASpec("const_KWTASpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_AdaptISpec("AdaptISpec", " specifies adaptive kwta specs (esp for avg-based)", 
-	"", "", "", sizeof(AdaptISpec), (void**)&TAI_AdaptISpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(AdaptISpec), (void**)&TAI_AdaptISpec, 0, 0, 0,1);
 TypeDef TA_const_KWTASpec_ref("const_KWTASpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_AdaptISpec("const_AdaptISpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_AdaptISpec_ref("const_AdaptISpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ClampSpec("ClampSpec", " specs for clamping ", 
-	"", "", "", sizeof(ClampSpec), (void**)&TAI_ClampSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ClampSpec), (void**)&TAI_ClampSpec, 0, 0, 0,1);
 TypeDef TA_const_ClampSpec("const_ClampSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ClampSpec_ref("const_ClampSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DecaySpec("DecaySpec", " holds decay values", 
-	"", "", "", sizeof(DecaySpec), (void**)&TAI_DecaySpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(DecaySpec), (void**)&TAI_DecaySpec, 0, 0, 0,1);
 TypeDef TA_const_DecaySpec("const_DecaySpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_KWTASpec_ref("KWTASpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_DecaySpec_ref("const_DecaySpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraLayerSpec("const_LeabraLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraLayerSpec_ref("const_LeabraLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SpecPtr_LeabraLayerSpec_("SpecPtr_LeabraLayerSpec_", "", 
-	"", "", "", sizeof(SpecPtr<LeabraLayerSpec>), (void**)&TAI_SpecPtr_LeabraLayerSpec_, 0, 0, 0,1);
+	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER INSTANCE ", "", sizeof(SpecPtr<LeabraLayerSpec>), (void**)&TAI_SpecPtr_LeabraLayerSpec_, 0, 0, 0,1);
 TypeDef TA_LeabraLayerSpec_SPtr("LeabraLayerSpec_SPtr", "", 
-	"", "", "", sizeof(LeabraLayerSpec_SPtr), (void**)&TAI_LeabraLayerSpec_SPtr, 0, 0, 0,1);
+	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER INSTANCE ", "", sizeof(LeabraLayerSpec_SPtr), (void**)&TAI_LeabraLayerSpec_SPtr, 0, 0, 0,1);
 TypeDef TA_const_LeabraLayerSpec_SPtr("const_LeabraLayerSpec_SPtr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_AvgMaxVals("AvgMaxVals", " holds average and max statistics", 
-	"", "", "", sizeof(AvgMaxVals), (void**)&TAI_AvgMaxVals, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(AvgMaxVals), (void**)&TAI_AvgMaxVals, 0, 0, 0,1);
 TypeDef TA_const_LeabraLayerSpec_SPtr_ref("const_LeabraLayerSpec_SPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_AvgMaxVals("const_AvgMaxVals", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_AvgMaxVals_ref("const_AvgMaxVals_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_KWTAVals("KWTAVals", " holds values for kwta stuff", 
-	"", "", "", sizeof(KWTAVals), (void**)&TAI_KWTAVals, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(KWTAVals), (void**)&TAI_KWTAVals, 0, 0, 0,1);
 TypeDef TA_const_KWTAVals("const_KWTAVals", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_KWTAVals_ref("const_KWTAVals_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_AdaptIVals("AdaptIVals", " holds values for adapting kwta stuff", 
-	"", "", "", sizeof(AdaptIVals), (void**)&TAI_AdaptIVals, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(AdaptIVals), (void**)&TAI_AdaptIVals, 0, 0, 0,1);
 TypeDef TA_const_AdaptIVals("const_AdaptIVals", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_AdaptIVals_ref("const_AdaptIVals_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_InhibVals("InhibVals", " holds values for inhibition", 
-	"", "", "", sizeof(InhibVals), (void**)&TAI_InhibVals, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(InhibVals), (void**)&TAI_InhibVals, 0, 0, 0,1);
 TypeDef TA_LeabraLayerSpec_ptr("LeabraLayerSpec_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_InhibVals("const_InhibVals", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraInhib("const_LeabraInhib", 1, 0, 0, 0, 1, 0);
@@ -198,251 +198,251 @@ TypeDef TA_const_LeabraTrial_ref("const_LeabraTrial_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraMaxDa("const_LeabraMaxDa", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraMaxDa_ref("const_LeabraMaxDa_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraSE_Stat("LeabraSE_Stat", " squared error for leabra, controls when to compute SE ", 
-	"", "", "", sizeof(LeabraSE_Stat), (void**)&TAI_LeabraSE_Stat, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraSE_Stat), (void**)&TAI_LeabraSE_Stat, 1, 0, 0,1);
 TypeDef TA_const_LeabraSE_Stat("const_LeabraSE_Stat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_LeabraGoodStat("LeabraGoodStat", " constraint satisfaction goodness statistic", 
-	"", "", "", sizeof(LeabraGoodStat), (void**)&TAI_LeabraGoodStat, 1, 0, 0,1);
+	"", "COMPUTE_IN_TrialProcess ", "", sizeof(LeabraGoodStat), (void**)&TAI_LeabraGoodStat, 1, 0, 0,1);
 TypeDef TA_const_LeabraSE_Stat_ref("const_LeabraSE_Stat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_LeabraGoodStat("const_LeabraGoodStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraGoodStat_ref("const_LeabraGoodStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraSharpStat("LeabraSharpStat", " layer sharpness statistic: just max / avg", 
-	"", "", "", sizeof(LeabraSharpStat), (void**)&TAI_LeabraSharpStat, 1, 0, 0,1);
+	"", "COMPUTE_IN_TrialProcess ", "", sizeof(LeabraSharpStat), (void**)&TAI_LeabraSharpStat, 1, 0, 0,1);
 TypeDef TA_const_LeabraSharpStat("const_LeabraSharpStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraSharpStat_ref("const_LeabraSharpStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_WrongOnStat("WrongOnStat", " Reports an error if a unit is on when it shouldn't have been (for multiple output cases)", 
-	"", "", "", sizeof(WrongOnStat), (void**)&TAI_WrongOnStat, 1, 0, 0,1);
+	"", "COMPUTE_IN_TrialProcess ", "", sizeof(WrongOnStat), (void**)&TAI_WrongOnStat, 1, 0, 0,1);
 TypeDef TA_const_WrongOnStat("const_WrongOnStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_WrongOnStat_ref("const_WrongOnStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraPrjnRelNetinStat("LeabraPrjnRelNetinStat", " computes overall relative netinput contributions for the different projections into a layer. Useful for setting wt_scale parameters to achieve desired relative contributions of different inputs. you MUST set the layer parameter to the layer in question", 
-	"", "", "", sizeof(LeabraPrjnRelNetinStat), (void**)&TAI_LeabraPrjnRelNetinStat, 1, 0, 0,1);
+	"", "COMPUTE_IN_TrialProcess ", "", sizeof(LeabraPrjnRelNetinStat), (void**)&TAI_LeabraPrjnRelNetinStat, 1, 0, 0,1);
 TypeDef TA_const_LeabraPrjnRelNetinStat("const_LeabraPrjnRelNetinStat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_CtxtUpdateSpec("CtxtUpdateSpec", " context updating specifications", 
-	"", "", "", sizeof(CtxtUpdateSpec), (void**)&TAI_CtxtUpdateSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(CtxtUpdateSpec), (void**)&TAI_CtxtUpdateSpec, 0, 0, 0,1);
 TypeDef TA_const_LeabraPrjnRelNetinStat_ref("const_LeabraPrjnRelNetinStat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_CtxtUpdateSpec("const_CtxtUpdateSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_CtxtUpdateSpec_ref("const_CtxtUpdateSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraContextLayerSpec("LeabraContextLayerSpec", " context layer that copies from its recv projection (like an input layer)", 
-	"", "", "", sizeof(LeabraContextLayerSpec), (void**)&TAI_LeabraContextLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraContextLayerSpec), (void**)&TAI_LeabraContextLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_LeabraContextLayerSpec("const_LeabraContextLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraContextLayerSpec_ref("const_LeabraContextLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PhaseOrderEventSpec("PhaseOrderEventSpec", " event specification including order of phases", 
-	"", "", "", sizeof(PhaseOrderEventSpec), (void**)&TAI_PhaseOrderEventSpec, 1, 0, 0,1);
+	"SCOPE_Environment IMMEDIATE_UPDATE ", "SCOPE_Environment IMMEDIATE_UPDATE INSTANCE ", "", sizeof(PhaseOrderEventSpec), (void**)&TAI_PhaseOrderEventSpec, 1, 0, 0,1);
 TypeDef TA_const_PhaseOrderEventSpec("const_PhaseOrderEventSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PhaseOrderEventSpec_ref("const_PhaseOrderEventSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraLinUnitSpec("LeabraLinUnitSpec", " a pure linear unit (suitable for an AC unit spec unit)", 
-	"", "", "", sizeof(LeabraLinUnitSpec), (void**)&TAI_LeabraLinUnitSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraLinUnitSpec), (void**)&TAI_LeabraLinUnitSpec, 1, 0, 0,1);
 TypeDef TA_const_LeabraLinUnitSpec("const_LeabraLinUnitSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraLinUnitSpec_ref("const_LeabraLinUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraNegBiasSpec("LeabraNegBiasSpec", " only learns negative bias changes, not positive ones (decay restores back to zero)", 
-	"", "", "", sizeof(LeabraNegBiasSpec), (void**)&TAI_LeabraNegBiasSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraNegBiasSpec), (void**)&TAI_LeabraNegBiasSpec, 1, 0, 0,1);
 TypeDef TA_const_LeabraNegBiasSpec("const_LeabraNegBiasSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraNegBiasSpec_ref("const_LeabraNegBiasSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TrialSynDepCon("TrialSynDepCon", " synaptic depression connection at the trial level (as opposed to cycle level)", 
-	"", "", "", sizeof(TrialSynDepCon), (void**)&TAI_TrialSynDepCon, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TrialSynDepCon), (void**)&TAI_TrialSynDepCon, 0, 0, 0,1);
 TypeDef TA_const_TrialSynDepCon("const_TrialSynDepCon", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TrialSynDepCon_ref("const_TrialSynDepCon_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SynDepSpec("SynDepSpec", " specs for synaptic depression", 
-	"", "", "", sizeof(SynDepSpec), (void**)&TAI_SynDepSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(SynDepSpec), (void**)&TAI_SynDepSpec, 0, 0, 0,1);
 TypeDef TA_TrialSynDepCon_ptr("TrialSynDepCon_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_SynDepSpec("const_SynDepSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SynDepSpec_ref("const_SynDepSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TrialSynDepConSpec("TrialSynDepConSpec", " synaptic depression connection at the trial level (as opposed to cycle level)", 
-	"", "", "", sizeof(TrialSynDepConSpec), (void**)&TAI_TrialSynDepConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TrialSynDepConSpec), (void**)&TAI_TrialSynDepConSpec, 1, 0, 0,1);
 TypeDef TA_const_TrialSynDepConSpec("const_TrialSynDepConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TrialSynDepConSpec_ref("const_TrialSynDepConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FastWtCon("FastWtCon", " fast weight connection: standard wt learns fast, but decays toward slow weight value", 
-	"", "", "", sizeof(FastWtCon), (void**)&TAI_FastWtCon, 0, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(FastWtCon), (void**)&TAI_FastWtCon, 0, 0, 0,1);
 TypeDef TA_const_FastWtCon("const_FastWtCon", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FastWtCon_ref("const_FastWtCon_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FastWtSpec("FastWtSpec", " specificiations for fast weights", 
-	"", "", "", sizeof(FastWtSpec), (void**)&TAI_FastWtSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(FastWtSpec), (void**)&TAI_FastWtSpec, 0, 0, 0,1);
 TypeDef TA_FastWtCon_ptr("FastWtCon_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_FastWtSpec("const_FastWtSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FastWtSpec_ref("const_FastWtSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_FastWtConSpec("FastWtConSpec", " fast weight connection: standard wt learns fast, but decays toward slow weight value", 
-	"", "", "", sizeof(FastWtConSpec), (void**)&TAI_FastWtConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(FastWtConSpec), (void**)&TAI_FastWtConSpec, 1, 0, 0,1);
 TypeDef TA_const_FastWtConSpec("const_FastWtConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_FastWtConSpec_ref("const_FastWtConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScalarValSpec("ScalarValSpec", " specs for scalar values", 
-	"", "", "", sizeof(ScalarValSpec), (void**)&TAI_ScalarValSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ScalarValSpec), (void**)&TAI_ScalarValSpec, 0, 0, 0,1);
 TypeDef TA_const_ScalarValSpec("const_ScalarValSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ScalarValSpec_ref("const_ScalarValSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScalarValBias("ScalarValBias", " initial bias for given activation value for scalar value units", 
-	"", "", "", sizeof(ScalarValBias), (void**)&TAI_ScalarValBias, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ScalarValBias), (void**)&TAI_ScalarValBias, 0, 0, 0,1);
 TypeDef TA_const_ScalarValBias("const_ScalarValBias", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ScalarValBias_ref("const_ScalarValBias_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScalarValLayerSpec("ScalarValLayerSpec", " represents a scalar value using a coarse-coded distributed code over units. first unit represents scalar value.", 
-	"", "", "", sizeof(ScalarValLayerSpec), (void**)&TAI_ScalarValLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(ScalarValLayerSpec), (void**)&TAI_ScalarValLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_ScalarValLayerSpec("const_ScalarValLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ScalarValLayerSpec_ref("const_ScalarValLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScalarValSelfPrjnSpec("ScalarValSelfPrjnSpec", " special projection for making self-connection that establishes neighbor similarity in scalar val", 
-	"", "", "", sizeof(ScalarValSelfPrjnSpec), (void**)&TAI_ScalarValSelfPrjnSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(ScalarValSelfPrjnSpec), (void**)&TAI_ScalarValSelfPrjnSpec, 1, 0, 0,1);
 TypeDef TA_const_ScalarValSelfPrjnSpec("const_ScalarValSelfPrjnSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ScalarValSelfPrjnSpec_ref("const_ScalarValSelfPrjnSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TwoDValSpec("TwoDValSpec", " specs for two-dimensional values", 
-	"", "", "", sizeof(TwoDValSpec), (void**)&TAI_TwoDValSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(TwoDValSpec), (void**)&TAI_TwoDValSpec, 0, 0, 0,1);
 TypeDef TA_const_TwoDValSpec("const_TwoDValSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TwoDValSpec_ref("const_TwoDValSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TwoDValBias("TwoDValBias", " initial bias for given activation value for scalar value units", 
-	"", "", "", sizeof(TwoDValBias), (void**)&TAI_TwoDValBias, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(TwoDValBias), (void**)&TAI_TwoDValBias, 0, 0, 0,1);
 TypeDef TA_const_TwoDValBias("const_TwoDValBias", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TwoDValBias_ref("const_TwoDValBias_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TwoDValLayerSpec("TwoDValLayerSpec", " represents one or more two-d value(s) using a coarse-coded distributed code over units. first row represents scalar value(s). one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid", 
-	"", "", "", sizeof(TwoDValLayerSpec), (void**)&TAI_TwoDValLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TwoDValLayerSpec), (void**)&TAI_TwoDValLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_TwoDValLayerSpec("const_TwoDValLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TwoDValLayerSpec_ref("const_TwoDValLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MarkerConSpec("MarkerConSpec", " connection spec that marks special projections: doesn't send netin or adapt weights", 
-	"", "", "", sizeof(MarkerConSpec), (void**)&TAI_MarkerConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(MarkerConSpec), (void**)&TAI_MarkerConSpec, 1, 0, 0,1);
 TypeDef TA_const_MarkerConSpec("const_MarkerConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MarkerConSpec_ref("const_MarkerConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DaModUnit("DaModUnit", " Leabra unit with dopamine-like modulation of minus phase activation for learning", 
-	"", "", "", sizeof(DaModUnit), (void**)&TAI_DaModUnit, 0, 0, 0,1);
+	"DMEM_SHARE_SETS_3 DMEM_SHARE_SETS_5 ", "DMEM_SHARE_SETS_3 DMEM_SHARE_SETS_5 INSTANCE ", "", sizeof(DaModUnit), (void**)&TAI_DaModUnit, 0, 0, 0,1);
 TypeDef TA_const_DaModUnit("const_DaModUnit", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DaModUnit_ref("const_DaModUnit_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DaModSpec("DaModSpec", " specs for effects of da-based modulation: plus-phase = learning effects", 
-	"", "", "", sizeof(DaModSpec), (void**)&TAI_DaModSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(DaModSpec), (void**)&TAI_DaModSpec, 0, 0, 0,1);
 TypeDef TA_const_DaModSpec("const_DaModSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DaModSpec_ref("const_DaModSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DaModUnitSpec("DaModUnitSpec", " Leabra unit with temporal-differences error modulation of minus phase activation for learning", 
-	"", "", "", sizeof(DaModUnitSpec), (void**)&TAI_DaModUnitSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(DaModUnitSpec), (void**)&TAI_DaModUnitSpec, 1, 0, 0,1);
 TypeDef TA_const_DaModUnitSpec("const_DaModUnitSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DaModUnitSpec_ref("const_DaModUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_AvgExtRewSpec("AvgExtRewSpec", " specs for computing average external rewards", 
-	"", "", "", sizeof(AvgExtRewSpec), (void**)&TAI_AvgExtRewSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(AvgExtRewSpec), (void**)&TAI_AvgExtRewSpec, 0, 0, 0,1);
 TypeDef TA_const_AvgExtRewSpec("const_AvgExtRewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_AvgExtRewSpec_ref("const_AvgExtRewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_OutErrSpec("OutErrSpec", " specs for computing external rewards based on output performance of network", 
-	"", "", "", sizeof(OutErrSpec), (void**)&TAI_OutErrSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(OutErrSpec), (void**)&TAI_OutErrSpec, 0, 0, 0,1);
 TypeDef TA_const_OutErrSpec("const_OutErrSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_OutErrSpec_ref("const_OutErrSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ExtRewSpec("ExtRewSpec", " specs for computing external rewards", 
-	"", "", "", sizeof(ExtRewSpec), (void**)&TAI_ExtRewSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ExtRewSpec), (void**)&TAI_ExtRewSpec, 0, 0, 0,1);
 TypeDef TA_DaModUnit_ptr("DaModUnit_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_ExtRewSpec("const_ExtRewSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ExtRewSpec_ref("const_ExtRewSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ExtRewLayerSpec("ExtRewLayerSpec", " computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)", 
-	"", "", "", sizeof(ExtRewLayerSpec), (void**)&TAI_ExtRewLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(ExtRewLayerSpec), (void**)&TAI_ExtRewLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_ExtRewLayerSpec("const_ExtRewLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ExtRewLayerSpec_ref("const_ExtRewLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ExtRew_Stat("ExtRew_Stat", " external reward statistic", 
-	"", "", "", sizeof(ExtRew_Stat), (void**)&TAI_ExtRew_Stat, 1, 0, 0,1);
+	"FINAL_STAT ", "COMPUTE_IN_TrialProcess FINAL_STAT ", "", sizeof(ExtRew_Stat), (void**)&TAI_ExtRew_Stat, 1, 0, 0,1);
 TypeDef TA_const_ExtRew_Stat("const_ExtRew_Stat", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ExtRew_Stat_ref("const_ExtRew_Stat_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDRewPredConSpec("TDRewPredConSpec", " Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards", 
-	"", "", "", sizeof(TDRewPredConSpec), (void**)&TAI_TDRewPredConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TDRewPredConSpec), (void**)&TAI_TDRewPredConSpec, 1, 0, 0,1);
 TypeDef TA_const_TDRewPredConSpec("const_TDRewPredConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TDRewPredConSpec_ref("const_TDRewPredConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDRewPredLayerSpec("TDRewPredLayerSpec", " predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)", 
-	"", "", "", sizeof(TDRewPredLayerSpec), (void**)&TAI_TDRewPredLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TDRewPredLayerSpec), (void**)&TAI_TDRewPredLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_TDRewPredLayerSpec("const_TDRewPredLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TDRewPredLayerSpec_ref("const_TDRewPredLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDRewIntegSpec("TDRewIntegSpec", " misc specs for TDRewIntegLayerSpec", 
-	"", "", "", sizeof(TDRewIntegSpec), (void**)&TAI_TDRewIntegSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(TDRewIntegSpec), (void**)&TAI_TDRewIntegSpec, 0, 0, 0,1);
 TypeDef TA_const_TDRewIntegSpec("const_TDRewIntegSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TDRewIntegSpec_ref("const_TDRewIntegSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TDRewIntegLayerSpec("TDRewIntegLayerSpec", " integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)", 
-	"", "", "", sizeof(TDRewIntegLayerSpec), (void**)&TAI_TDRewIntegLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TDRewIntegLayerSpec), (void**)&TAI_TDRewIntegLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_TDRewIntegLayerSpec("const_TDRewIntegLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TDRewIntegLayerSpec_ref("const_TDRewIntegLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TdLayerSpec("TdLayerSpec", " computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!", 
-	"", "", "", sizeof(TdLayerSpec), (void**)&TAI_TdLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(TdLayerSpec), (void**)&TAI_TdLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_TdLayerSpec("const_TdLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_TdLayerSpec_ref("const_TdLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PVConSpec("PVConSpec", " primary value connection spec: learns using delta rule from PVe - PVi values", 
-	"", "", "", sizeof(PVConSpec), (void**)&TAI_PVConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(PVConSpec), (void**)&TAI_PVConSpec, 1, 0, 0,1);
 TypeDef TA_const_PVConSpec("const_PVConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PVConSpec_ref("const_PVConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PVDetectSpec("PVDetectSpec", " specs for detecting if a primary value is present or expected", 
-	"", "", "", sizeof(PVDetectSpec), (void**)&TAI_PVDetectSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(PVDetectSpec), (void**)&TAI_PVDetectSpec, 0, 0, 0,1);
 TypeDef TA_const_PVDetectSpec("const_PVDetectSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PVDetectSpec_ref("const_PVDetectSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PViLayerSpec("PViLayerSpec", " primary value inhibitory (PVi) layer: continously learns to expect primary reward values", 
-	"", "", "", sizeof(PViLayerSpec), (void**)&TAI_PViLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(PViLayerSpec), (void**)&TAI_PViLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_PViLayerSpec("const_PViLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PViLayerSpec_ref("const_PViLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LVConSpec("LVConSpec", " learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering", 
-	"", "", "", sizeof(LVConSpec), (void**)&TAI_LVConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LVConSpec), (void**)&TAI_LVConSpec, 1, 0, 0,1);
 TypeDef TA_const_LVConSpec("const_LVConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LVConSpec_ref("const_LVConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LVSpec("LVSpec", " specs for learned value layers", 
-	"", "", "", sizeof(LVSpec), (void**)&TAI_LVSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(LVSpec), (void**)&TAI_LVSpec, 0, 0, 0,1);
 TypeDef TA_const_LVSpec("const_LVSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LVSpec_ref("const_LVSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LVeLayerSpec("LVeLayerSpec", " learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version", 
-	"", "", "", sizeof(LVeLayerSpec), (void**)&TAI_LVeLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LVeLayerSpec), (void**)&TAI_LVeLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_LVeLayerSpec("const_LVeLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LVeLayerSpec_ref("const_LVeLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LViLayerSpec("LViLayerSpec", " inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)", 
-	"", "", "", sizeof(LViLayerSpec), (void**)&TAI_LViLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LViLayerSpec), (void**)&TAI_LViLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_LViLayerSpec("const_LViLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LViLayerSpec_ref("const_LViLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PVLVDaSpec("PVLVDaSpec", " specs for PVLV da parameters", 
-	"", "", "", sizeof(PVLVDaSpec), (void**)&TAI_PVLVDaSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(PVLVDaSpec), (void**)&TAI_PVLVDaSpec, 0, 0, 0,1);
 TypeDef TA_const_PVLVDaSpec("const_PVLVDaSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PVLVDaSpec_ref("const_PVLVDaSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PVLVDaLayerSpec("PVLVDaLayerSpec", " computes PVLV 'Da' signal: typically if(ER), da = ER-PV, else LVe - LVs", 
-	"", "", "", sizeof(PVLVDaLayerSpec), (void**)&TAI_PVLVDaLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(PVLVDaLayerSpec), (void**)&TAI_PVLVDaLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_PVLVDaLayerSpec("const_PVLVDaLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PVLVDaLayerSpec_ref("const_PVLVDaLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PatchLayerSpec("PatchLayerSpec", " simulates Patch as a LV layer: currently no doing anything different than regular LV", 
-	"", "", "", sizeof(PatchLayerSpec), (void**)&TAI_PatchLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(PatchLayerSpec), (void**)&TAI_PatchLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_PatchLayerSpec("const_PatchLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PatchLayerSpec_ref("const_PatchLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SNcMiscSpec("SNcMiscSpec", " misc parameters for SNc layer", 
-	"", "", "", sizeof(SNcMiscSpec), (void**)&TAI_SNcMiscSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(SNcMiscSpec), (void**)&TAI_SNcMiscSpec, 0, 0, 0,1);
 TypeDef TA_const_SNcMiscSpec("const_SNcMiscSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SNcMiscSpec_ref("const_SNcMiscSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SNcLayerSpec("SNcLayerSpec", " computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported); Does not do SNrThal modulation, which is computed directly in Matrix units", 
-	"", "", "", sizeof(SNcLayerSpec), (void**)&TAI_SNcLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(SNcLayerSpec), (void**)&TAI_SNcLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_SNcLayerSpec("const_SNcLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SNcLayerSpec_ref("const_SNcLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixConSpec("MatrixConSpec", " Learning of matrix input connections based on dopamine modulation of activation", 
-	"", "", "", sizeof(MatrixConSpec), (void**)&TAI_MatrixConSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(MatrixConSpec), (void**)&TAI_MatrixConSpec, 1, 0, 0,1);
 TypeDef TA_const_MatrixConSpec("const_MatrixConSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixConSpec_ref("const_MatrixConSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixBiasSpec("MatrixBiasSpec", " noise bias connection -- holds noise value separate from orig value", 
-	"", "", "", sizeof(MatrixBiasSpec), (void**)&TAI_MatrixBiasSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(MatrixBiasSpec), (void**)&TAI_MatrixBiasSpec, 1, 0, 0,1);
 TypeDef TA_const_MatrixBiasSpec("const_MatrixBiasSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixBiasSpec_ref("const_MatrixBiasSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixUnitSpec("MatrixUnitSpec", " basal ganglia matrix units: fire actions or WM updates. modulated by da signals", 
-	"", "", "", sizeof(MatrixUnitSpec), (void**)&TAI_MatrixUnitSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(MatrixUnitSpec), (void**)&TAI_MatrixUnitSpec, 1, 0, 0,1);
 TypeDef TA_const_MatrixUnitSpec("const_MatrixUnitSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixUnitSpec_ref("const_MatrixUnitSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ContrastSpec("ContrastSpec", " contrast enhancement of the GO units", 
-	"", "", "", sizeof(ContrastSpec), (void**)&TAI_ContrastSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(ContrastSpec), (void**)&TAI_ContrastSpec, 0, 0, 0,1);
 TypeDef TA_const_ContrastSpec("const_ContrastSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_ContrastSpec_ref("const_ContrastSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixRndGoSpec("MatrixRndGoSpec", " matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)", 
-	"", "", "", sizeof(MatrixRndGoSpec), (void**)&TAI_MatrixRndGoSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(MatrixRndGoSpec), (void**)&TAI_MatrixRndGoSpec, 0, 0, 0,1);
 TypeDef TA_const_MatrixRndGoSpec("const_MatrixRndGoSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixRndGoSpec_ref("const_MatrixRndGoSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixRndGoThrSpec("MatrixRndGoThrSpec", " thresholds for matrix random Go firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)", 
-	"", "", "", sizeof(MatrixRndGoThrSpec), (void**)&TAI_MatrixRndGoThrSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(MatrixRndGoThrSpec), (void**)&TAI_MatrixRndGoThrSpec, 0, 0, 0,1);
 TypeDef TA_const_MatrixRndGoThrSpec("const_MatrixRndGoThrSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixRndGoThrSpec_ref("const_MatrixRndGoThrSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixMiscSpec("MatrixMiscSpec", " misc specs for the matrix layer", 
-	"", "", "", sizeof(MatrixMiscSpec), (void**)&TAI_MatrixMiscSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(MatrixMiscSpec), (void**)&TAI_MatrixMiscSpec, 0, 0, 0,1);
 TypeDef TA_LeabraUnit_Group_ptr("LeabraUnit_Group_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_MatrixMiscSpec("const_MatrixMiscSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixMiscSpec_ref("const_MatrixMiscSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixLayerSpec("MatrixLayerSpec", " basal ganglia matrix layer: fire actions/WM updates, or nogo; PFC = gate in 1+ and 2+, MOTOR = gate in -", 
-	"", "", "", sizeof(MatrixLayerSpec), (void**)&TAI_MatrixLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(MatrixLayerSpec), (void**)&TAI_MatrixLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_MatrixLayerSpec("const_MatrixLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MatrixLayerSpec_ref("const_MatrixLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SNrThalLayerSpec("SNrThalLayerSpec", " computes activation = GO - NOGO from MatrixLayerSpec", 
-	"", "", "", sizeof(SNrThalLayerSpec), (void**)&TAI_SNrThalLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(SNrThalLayerSpec), (void**)&TAI_SNrThalLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_SNrThalLayerSpec("const_SNrThalLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SNrThalLayerSpec_ref("const_SNrThalLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PFCGateSpec("PFCGateSpec", " basal ganglia gating specifications", 
-	"", "", "", sizeof(PFCGateSpec), (void**)&TAI_PFCGateSpec, 0, 0, 0,1);
+	"", "NO_TOKENS NO_UPDATE_AFTER ", "", sizeof(PFCGateSpec), (void**)&TAI_PFCGateSpec, 0, 0, 0,1);
 TypeDef TA_const_PFCGateSpec("const_PFCGateSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PFCGateSpec_ref("const_PFCGateSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_PFCLayerSpec("PFCLayerSpec", " Prefrontal cortex layer: gets gating signal from matrix, gate updates before each plus phase (toggle off, toggle on)", 
-	"", "", "", sizeof(PFCLayerSpec), (void**)&TAI_PFCLayerSpec, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(PFCLayerSpec), (void**)&TAI_PFCLayerSpec, 1, 0, 0,1);
 TypeDef TA_const_PFCLayerSpec("const_PFCLayerSpec", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PFCLayerSpec_ref("const_PFCLayerSpec_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_LeabraWiz("LeabraWiz", " Leabra-specific wizard for automating construction of simulation objects", 
-	"", "", "", sizeof(LeabraWiz), (void**)&TAI_LeabraWiz, 1, 0, 0,1);
+	"", "INSTANCE ", "", sizeof(LeabraWiz), (void**)&TAI_LeabraWiz, 1, 0, 0,1);
 TypeDef TA_const_LeabraWiz("const_LeabraWiz", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_LeabraWiz_ref("const_LeabraWiz_ref", 1, 0, 1, 0, 1, 0);
 

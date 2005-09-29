@@ -18,7 +18,6 @@
 
 #include "ta_list.h"
 
-// needed just for the taMisc::display_width variable..
 #include "ta_type.h"
 
 int taPtrList_impl::Idx = 0;
@@ -894,7 +893,7 @@ bool taFixedArray_impl::AddUnique_(const void* it) {
 }
 
 void taFixedArray_impl::Alloc_(uint alloc) {
-  if (alloc > static_cast<uint>(size))	{
+  if (AdjustAndSetAlloc_(alloc)) {
     char* nw = (char*)MakeArray_(alloc);
     for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
@@ -904,11 +903,20 @@ void taFixedArray_impl::Alloc_(uint alloc) {
 }
 
 void taFixedArray_impl::AddBlank(int n_els) {
-  EnforceSize(size + n_els);
+  if (n_els < 1) return;
+  Alloc_(size + n_els);
+  const void* blank = El_GetBlank_();
+  for (int i = 0; i < n_els; ++i) {
+    El_Copy_(FastEl_(size), blank);
+    ++size;
+  }
+  ItemsChanged_();
 }
 
 void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
-  Alloc_(cp.size);
+  if (cp.size < size) ReclaimOrphans_(cp.size, size - 1);
+  else Alloc_(cp.size);
+  
   for (int i=0; i < cp.size; ++i) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
   }
@@ -926,12 +934,12 @@ void taFixedArray_impl::Duplicate_(const taFixedArray_impl& cp) {
   ItemsChanged_();
 }
 
-void taFixedArray_impl::EnforceSize(int sz) {
-  if (size < sz) {
-    Alloc_(sz);
-    Insert_(El_GetBlank_(), size, sz - size);
-  } else if (size > sz) {
-    size = sz;			// that's easy!
+void taFixedArray_impl::EnforceSize(int new_size) {
+  if (new_size > size) {
+    AddBlank(new_size - size);
+  } else if (new_size < size) {
+    ReclaimOrphans_(new_size, size - 1);
+    size = new_size;	
     ItemsChanged_();
   }
 }
@@ -955,9 +963,9 @@ int taFixedArray_impl::Find_(const void* it, int where) const {
 }
 
 void taFixedArray_impl::InitVals_(const void* it, int start, int end) {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  int i;
-  for(i=start;i<end;i++) {
+  if (end == -1) end = size;  
+  else end = MIN(size, end);
+  for (int i = start; i < end; ++i) {
     El_Copy_(FastEl_(i), it);
   }
   ItemsChanged_();
@@ -994,7 +1002,7 @@ const void* taFixedArray_impl::SafeEl_(int i) const {
 /////////////////////////
 
 bool taBasicArray_impl::AdjustAndSetAlloc_(uint& new_alloc) {
-  bool rval = false;
+  if (new_alloc <= alloc_size) return false;
   // start w/ 4, double up to 64, then 1.5x thereafter
   if (alloc_size == 0) 
     new_alloc = MAX(4, new_alloc);
@@ -1002,11 +1010,9 @@ bool taBasicArray_impl::AdjustAndSetAlloc_(uint& new_alloc) {
     new_alloc = MAX((alloc_size * 2), new_alloc);
   else // >= 64
     new_alloc =  MAX(((alloc_size * 3) / 2) , new_alloc);
-  if (new_alloc > alloc_size) {
-    alloc_size = new_alloc;
-    rval = true;
-  }
-  return rval;
+//  new_alloc = tweak_alloc(new_alloc); // tweak it, to avoid waste on platform
+  alloc_size = new_alloc;
+  return true;
 }
 
 bool taBasicArray_impl::Remove_(void* it) {
@@ -1021,6 +1027,7 @@ bool taBasicArray_impl::Remove(int i, int n) {
   n = MIN(n, size-(int)i);
   for (int j=i; j < size-n; j++)
     El_Copy_(FastEl_(j), FastEl_(j+n));
+  ReclaimOrphans_(size-n, size - 1);
   size -= n;
   ItemsChanged_();
   return true;
@@ -1141,6 +1148,7 @@ void taArray_impl::ShiftLeft(int nshift) {
   for(i=0; i < size - nshift; i++) {
     El_Copy_(FastEl_(i), FastEl_(i+nshift)); // move left..
   }
+  ReclaimOrphans_(size - nshift, size - 1);
   size = size - nshift;		// update the size now..
   ItemsChanged_();
 }

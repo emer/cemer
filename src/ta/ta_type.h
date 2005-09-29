@@ -82,7 +82,7 @@ typedef taBase* TAPtr;		// pointer to a taBase type
 class TA_API String_PArray : public taPlainArray<String> {
 public:
   int	FindContains(const char* op, int start=0) const;
-  void	Add(const String& it)			{ taPlainArray<String>::Add(it); }
+  void	Add(const String& it)		{ taPlainArray<String>::Add(it); }
   void	Add(const char* it)
   { String fad=it; taPlainArray<String>::Add(fad); }
 
@@ -90,15 +90,14 @@ public:
   bool	AddUnique(const char* it)
   { String fad=it; return taPlainArray<String>::AddUnique(fad); } //
 
-  bool Remove(const char* str) {return taPlainArray<String>::Remove(String(str));}
-  USING(taPlainArray<String>::Remove);
+  bool Remove(const String& it) {return taPlainArray<String>::Remove(it);}
+  bool Remove(const char* it) {return taPlainArray<String>::Remove(String(it));}
 //obs  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   // returns first item which contains given string (-1 if none)
   TA_PLAIN_ARRAY_FUNS(String_PArray, String) //
 protected:
-//TEMP
-  override void	 Copy_(const taFixedArray_impl& cp) {
-    Copy_Duplicate(static_cast<const taArray_impl&>(cp));}
+  override void	ReclaimOrphans_(int start, int end) 
+    {for (int i = start; i <= end; ++i) el[i] = ""; }
 };
 
 class int_PArray: public taPlainArray<int> {
@@ -740,7 +739,7 @@ public:
 //////////////////////////
 
 class TA_API TypeItem: public taRefN {
-  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
+  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
 #ifndef __MAKETA__
 typedef taRefN inherited;
 #endif
