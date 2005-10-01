@@ -33,18 +33,15 @@ bp@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
-	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
-
-bp@PDP_SUFFIX@___LDFLAGS =
-bp@PDP_SUFFIX@___CXXFLAGS =
-
+	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la \
+	@PTHREAD_LIBS@
+bp@PDP_SUFFIX@___LDFLAGS = @X_LIBS@
+bp@PDP_SUFFIX@___CXXFLAGS = @PTHREAD_CFLAGS@ @X_CFLAGS@ @QT_CXXFLAGS@
 bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css
-
-AM_CXXFLAGS = -fno-implicit-templates
 
 BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 
@@ -54,27 +51,16 @@ BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 #
 #**************************************************
 if TA_GUI
+
 bp@PDP_SUFFIX@___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-
-bp@PDP_SUFFIX@___LDADD +=\
-	$(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la \
-	@X_EXTRA_LIBS@ \
-	@X_PRE_LIBS@ \
-	@QT_LDADD@
-
-bp@PDP_SUFFIX@___LDFLAGS += @X_LIBS@
 
 bp@PDP_SUFFIX@___CPPFLAGS +=\
 	-I@srcdir@/../taiqtso \
-	@X_CFLAGS@ \
 	-I/usr/include/freetype2 \
-	@QT_CXXFLAGS@ \
 	-DTA_GUI \
 	-DTA_USE_QT \
 	-DTA_USE_INVENTOR \
 	-DQT_SHARED
-
-bp@PDP_SUFFIX@___LDFLAGS += @X_LIBS@
 
 endif
 #**************************************************
@@ -98,8 +84,7 @@ bp@PDP_SUFFIX@___CPPFLAGS +=\
 	-DYYDEBUG \
 	-DDEBUG \
 	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1 \
-	-DRETSIGTYPE=void
+	-DHAVE_POSIX_SIGNALS=1
 
 bp@PDP_SUFFIX@___CXXFLAGS += -Wno-non-virtual-dtor
 

@@ -128,12 +128,10 @@ include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
-
 libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css
-
-libta@PDP_SUFFIX@_la_CXXFLAGS =
-
-AM_CXXFLAGS = -fno-implicit-templates
+libta@PDP_SUFFIX@_la_CXXFLAGS = @PTHREAD_CFLAGS@ @QT_CXXFLAGS@ @X_CFLAGS@
+libta@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@
+libta@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
 
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
 
@@ -144,24 +142,12 @@ BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
 #**************************************************
 if TA_GUI
 
-libta@PDP_SUFFIX@_la_LIBADD =\
-	@X_EXTRA_LIBS@ \
-	@X_PRE_LIBS@ \
-	@QT_LDADD@
-
-libta@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
-
 libta@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-I@srcdir@/../taiqtso \
-	@X_CFLAGS@ \
 	-I/usr/include/freetype2 \
-	@QT_CXXFLAGS@ \
 	-DTA_GUI \
 	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
-
-libta@PDP_SUFFIX@_la_LDFLAGS += @X_LIBS@
+	-DTA_USE_INVENTOR
 
 endif
 #**************************************************

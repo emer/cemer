@@ -38,8 +38,6 @@ maketa_CPPFLAGS =\
 	-DNO_TA_BASE \
 	-I@srcdir@/../ta
 
-AM_CXXFLAGS = -fno-implicit-templates
-
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
 
 #**************************************************
@@ -73,7 +71,6 @@ maketa_CPPFLAGS +=\
 	-DYYDEBUG \
 	-DDEBUG \
 	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1 \
-	-DRETSIGTYPE=void
+	-DHAVE_POSIX_SIGNALS=1
 
 endif

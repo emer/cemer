@@ -57,7 +57,6 @@ include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
-
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	@X_CFLAGS@ \
@@ -67,24 +66,10 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 	-DTA_USE_QT \
 	-DTA_USE_INVENTOR \
 	-DQT_SHARED
-
+libtaiqtso@PDP_SUFFIX@_la_CXXFLAGS = @PTHREAD_CFLAGS@
+libtaiqtso@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@ @MPILIBS@
 libtaiqtso@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
 
-AM_CXXFLAGS = -fno-implicit-templates
-
-#**************************************************
-#
-#                      GUI
-#
-#**************************************************
-if TA_GUI
-
-libtaiqtso@PDP_SUFFIX@_la_LIBADD =\
-	@X_EXTRA_LIBS@ \
-	@X_PRE_LIBS@ \
-	@QT_LDADD@
-
-endif
 #**************************************************
 #
 #                      DEBUG
@@ -96,8 +81,7 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-DYYDEBUG \
 	-DDEBUG \
 	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1 \
-	-DRETSIGTYPE=void
+	-DHAVE_POSIX_SIGNALS=1
 
 endif
 #**************************************************
@@ -108,7 +92,6 @@ endif
 if MPI
 
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-libtaiqtso@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
 
 endif
 #**************************************************
