@@ -5,10 +5,13 @@
 #
 AC_PREREQ(2.59)
 AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_CONFIG_AUX_DIR([aux])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 PDP_DETERMINE_OSTYPE
 AC_DISABLE_SHARED
+AC_LANG([C++])
+
 
 # Hack to stop fortran checks in configure
 # See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
@@ -74,14 +77,8 @@ if test $mpi = true; then
   ACX_MPI([],[AC_MSG_ERROR([unable to locate the Message Passing Interface])])
   ACX_PTHREAD([],[AC_MSG_ERROR([unable to locate pthread])])
   AC_DEFINE([DMEM_COMPILE],[1],[Causes mpi.h to be included])
-  # This is hacky, but will always work
-  if test $MPICXX=x; then
-    if test $MPICC != x; then
-      if test $MPICC="mpicc"; then
-        AC_CHECK_PROGS([MPICXX], [mpic++ mpiCC mpicxx mpCC hcp mpxlC mpxlC_r cmpic++], [$CXX])
-        CXX="$MPICXX"
-      fi
-    fi
+  if test $MPICXX != x; then
+    CXX="$MPICXX"
   fi
 fi
 
@@ -112,6 +109,8 @@ fi
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
+AC_PROG_CXXCPP
+AC_REQUIRE_CPP
 
 # GNU C++ compiler is mandatory
 AC_PROG_CXX
