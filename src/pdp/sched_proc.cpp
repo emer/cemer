@@ -649,8 +649,8 @@ bool SchedProcess::HandleEvents() {
       bool cont = false;
       do {
 	if(taMisc::gui_active) {
-	  winbMisc::OpenWindows();
-	  cont = winbMisc::WaitProc();
+	  taiMisc::OpenWindows();
+	  cont = taiMisc::WaitProc();
 	}
 	else {
 	  cont = tabMisc::WaitProc();

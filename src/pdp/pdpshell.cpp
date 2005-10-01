@@ -1117,7 +1117,7 @@ void PDPRoot::Destroy() {
     tabMisc::root = NULL; //TODO: maybe for cleanness we should do a SetPointer thingy, since we set it that way...
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_nprocs > 1) {
-      taiMisc::RecordScript(".Quit();\n");
+      taMisc::RecordScript(".Quit();\n");
     } else
 #endif
     {
