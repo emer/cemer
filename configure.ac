@@ -74,12 +74,17 @@ if test $mpi = true; then
   ACX_MPI([],[AC_MSG_ERROR([unable to locate the Message Passing Interface])])
   ACX_PTHREAD([],[AC_MSG_ERROR([unable to locate pthread])])
   AC_DEFINE([DMEM_COMPILE],[1],[Causes mpi.h to be included])
+  # This is hacky, but will always work
+  if test $MPICXX=x; then
+    if test $MPICC != x; then
+      if test $MPICC="mpicc"; then
+        AC_CHECK_PROGS([MPICXX], [mpic++ mpiCC mpicxx mpCC hcp mpxlC mpxlC_r cmpic++], [$CXX])
+        CXX="$MPICXX"
+      fi
+    fi
+  fi
 fi
 
-# use the mpi compiler, if defined
-if test $MPICC != x; then
-	CXX="$MPICXX"
-fi
 #                                                debug enabled
 #*************************************************************
 #             Things to do if --enable-debug is set

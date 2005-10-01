@@ -97,14 +97,13 @@ include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
-
+libpdp@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc
-
-libpdp@PDP_SUFFIX@_la_CXXFLAGS =
-libpdp@PDP_SUFFIX@_la_LDFLAGS =
+libpdp@PDP_SUFFIX@_la_CXXFLAGS = @X_CFLAGS@ @QT_CXXFLAGS@ @PTHREAD_CFLAGS@ 
+libpdp@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@ @MPILIBS@
 
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
 pdp@PDP_SUFFIX@___SOURCES = main.cpp
@@ -112,13 +111,12 @@ pdp@PDP_SUFFIX@___LDADD =\
 	libpdp@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
-	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
-
+	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la \
+	@PTHREAD_LIBS@
 pdp@PDP_SUFFIX@___LDFLAGS = $(libpdp@PDP_SUFFIX@_la_LDFLAGS)
 pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
 pdp@PDP_SUFFIX@___CFLAGS = $(libpdp@PDP_SUFFIX@_la_CFLAGS)
-
-AM_CXXFLAGS = -fno-implicit-templates
+pdp@PDP_SUFFIX@___CXXFLAGS = $(libpdp@PDP_SUFFIX@_la_CXXFLAGS)
 
 BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
 
@@ -131,19 +129,10 @@ if TA_GUI
 
 pdp@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 
-libpdp@PDP_SUFFIX@_la_LIBADD =\
-	@X_EXTRA_LIBS@ \
-	@X_PRE_LIBS@ \
-	@QT_LDADD@
-
-libpdp@PDP_SUFFIX@_la_LDFLAGS += @X_LIBS@
-
 libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-I../src/taiqtso \
 	-I@srcdir@/../taiqtso \
-	@X_CFLAGS@ \
 	-I/usr/include/freetype2 \
-	@QT_CXXFLAGS@ \
 	-DTA_GUI \
 	-DTA_USE_QT \
 	-DTA_USE_INVENTOR \
@@ -171,8 +160,7 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-DYYDEBUG \
 	-DDEBUG \
 	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1 \
-	-DRETSIGTYPE=void
+	-DHAVE_POSIX_SIGNALS=1
 
 libpdp@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
 
@@ -185,8 +173,6 @@ endif
 if MPI
 
 libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-libpdp@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
-
 endif
 #**************************************************
 #
