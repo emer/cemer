@@ -1,24 +1,112 @@
-#                                            -*- Autoconf -*-
+#                                             -*- Autoconf -*-
 #*************************************************************
 # Process this file with autoconf to produce a configure script.
 #*************************************************************
 #
+
+# Autoconf 2.59 required
 AC_PREREQ(2.59)
-AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_INIT([PDP++],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+
+# Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
+# in /aux/ so they don't clutter up the root
 AC_CONFIG_AUX_DIR([aux])
+
+# Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
-PDP_DETERMINE_OSTYPE
-AC_DISABLE_SHARED
-AC_LANG([C++])
 
+
+# Custom: check results of config.status for OS type
+PDP_DETERMINE_OSTYPE
+
+# Disable shared libraries
+AC_DISABLE_SHARED
+
+# Set default language  C++
+AC_LANG_CPLUSPLUS
+
+AC_PROG_LIBTOOL
 
 # Hack to stop fortran checks in configure
 # See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
 m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
 
-AC_PROG_LIBTOOL
+#                                                     programs
+#*************************************************************
+#              Checks for specific programs
+#*************************************************************
+#
+AC_PROG_AWK
+AC_PROG_YACC
+AC_PROG_LEX
+AC_PROG_CXXCPP
+AC_REQUIRE_CPP
+
+# GNU C++ compiler is mandatory
+AC_PROG_CXX
+AC_MSG_CHECKING([for GNU C++ compiler])
+if test $GXX != yes; then
+  AC_MSG_ERROR([GNU C++ compiler not detected])
+fi
+AC_MSG_RESULT([$GXX])
+#                                                      headers
+#*************************************************************
+#              Checks for specific headers
+#*************************************************************
+#
+AC_FUNC_ALLOCA
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([fcntl.h float.h limits.h locale.h malloc.h memory.h stddef.h stdlib.h string.h sys/time.h unistd.h])
+#                                              typedef, struct
+#*************************************************************
+#  Checks for typedefs, structures, compiler characteristics
+#*************************************************************
+#
+AC_HEADER_STDBOOL
+AC_HEADER_TIME
+AC_C_CONST
+AC_C_INLINE
+AC_C_RESTRICT
+AC_C_VOLATILE
+AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
+AC_TYPE_PID_T
+#                                                    libraries
+#*************************************************************
+#                     Checks for libraries
+#*************************************************************
+#
+AC_HAVE_LIBRARY([dl],
+                [LIBS="$LIBS -ldl"],
+                [AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
+
+# Souped up readline check
+AC_HAVE_LIBRARY([readline],
+                [LIBS="$LIBS -ldl"],
+                [VL_LIB_READLINE])
+
+AC_HAVE_LIBRARY([z],
+                [LIBS="$LIBS -lz"],
+                [AC_MSG_WARN([unable to find libz compression library. Build may fail.])])
+#                                            library functions
+#*************************************************************
+#                Checks for library functions
+#*************************************************************
+#
+AC_FUNC_CHOWN
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_GETPGRP
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_FUNC_SELECT_ARGTYPES
+AC_TYPE_SIGNAL
+AC_FUNC_STAT
+AC_FUNC_STRTOD
+AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found.])])
 #                                                  gui enabled
 #*************************************************************
 #             Things to do if --enable-gui is set
@@ -101,71 +189,7 @@ if $debug = true; then
   AC_DEFINE([TA_PROFILE],[1],[debugging])
   AC_DEFINE([RETSIGTYPE],[void],[debugging])
 fi
-#                                                     programs
-#*************************************************************
-#              Checks for specific programs
-#*************************************************************
-#
-AC_PROG_AWK
-AC_PROG_YACC
-AC_PROG_LEX
-AC_PROG_CXXCPP
-AC_REQUIRE_CPP
 
-# GNU C++ compiler is mandatory
-AC_PROG_CXX
-AC_MSG_CHECKING([for GNU C++ compiler])
-if test $GXX != yes; then
-  AC_MSG_ERROR([GNU C++ compiler not detected])
-fi
-AC_MSG_RESULT([$GXX])
-#                                                      headers
-#*************************************************************
-#              Checks for specific headers
-#*************************************************************
-#
-AC_FUNC_ALLOCA
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h float.h limits.h locale.h malloc.h memory.h stddef.h stdlib.h string.h sys/time.h unistd.h])
-#                                              typedef, struct
-#*************************************************************
-#  Checks for typedefs, structures, compiler characteristics
-#*************************************************************
-#
-AC_HEADER_STDBOOL
-AC_HEADER_TIME
-AC_C_CONST
-AC_C_INLINE
-AC_C_RESTRICT
-AC_C_VOLATILE
-AC_TYPE_SIGNAL
-AC_TYPE_SIZE_T
-AC_TYPE_PID_T
-#                                                    libraries
-#*************************************************************
-#                     Checks for libraries
-#*************************************************************
-#
-AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
-AC_HAVE_LIBRARY([readline], [LIBS="$LIBS -ldl"],[VL_LIB_READLINE]) # VL_LIB_READLINE is a souped up readline check
-AC_HAVE_LIBRARY([z],[LIBS="$LIBS -lz"],[AC_MSG_WARN([unable to find libz compression library. Build may fail.])])
-#                                            library functions
-#*************************************************************
-#                Checks for library functions
-#*************************************************************
-#
-AC_FUNC_CHOWN
-AC_FUNC_ERROR_AT_LINE
-AC_FUNC_GETPGRP
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
-AC_FUNC_SELECT_ARGTYPES
-AC_TYPE_SIGNAL
-AC_FUNC_STAT
-AC_FUNC_STRTOD
-AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol])
 #                                                  @variables@
 #*************************************************************
 #            Substitutes @variables@ in Makefile.am's
@@ -193,3 +217,6 @@ AC_CONFIG_FILES([Makefile
                 src/leabra/Makefile
                 src/bp/Makefile])
 AC_OUTPUT
+
+# This will be used to create our custom end-of-configure message
+# AC_CONFIG_COMMANDS
