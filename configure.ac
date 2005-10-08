@@ -6,7 +6,7 @@
 
 # Autoconf 2.59 required
 AC_PREREQ(2.59)
-AC_INIT([PDP++],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
 
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
 # in /aux/ so they don't clutter up the root
@@ -28,11 +28,6 @@ AC_LANG_CPLUSPLUS
 
 AC_PROG_LIBTOOL
 
-# Hack to stop fortran checks in configure
-# See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
-m4_undefine([AC_PROG_F77])
-m4_defun([AC_PROG_F77],[])
-
 #                                                     programs
 #*************************************************************
 #              Checks for specific programs
@@ -45,6 +40,12 @@ AC_PROG_CXXCPP
 AC_REQUIRE_CPP
 
 # GNU C++ compiler is mandatory
+
+# Hack to stop fortran checks in configure
+# See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
+m4_undefine([AC_PROG_F77])
+m4_defun([AC_PROG_F77],[])
+
 AC_PROG_CXX
 AC_MSG_CHECKING([for GNU C++ compiler])
 if test $GXX != yes; then
