@@ -16,7 +16,7 @@
 
 // Windows implementations
 
-#include "ta/ta_platform.h"
+#include "ta_platform.h"
 #include "windows.h"
 
 #define BUFSIZE 1024
