@@ -1,9 +1,14 @@
-xcopy /D /Y ..\ta\ta_string.h ta_string.h
-xcopy /D /Y ..\ta\ta_string.cc ta_string.cc
-xcopy /D /Y ..\ta\ta_platform.h ta_platform.h
-xcopy /D /Y ..\ta\ta_platform.cc ta_platform.cc
-xcopy /D /Y ..\ta\ta_platform_win.cc ta_platform_win.cc
-xcopy /D /Y ..\ta\ta_type.h ta_type.h
-xcopy /D /Y ..\ta\ta_type.cc ta_type.cc
-xcopy /D /Y ..\ta\ta_list.h ta_list.h
-xcopy /D /Y ..\ta\ta_list.cc ta_list.cc
+echo "Copying src/ta files into src/maketa..."
+@echo off
+xcopy "%CD%"\..\ta\ta_stdef.h "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\platform.h "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_string.h "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_list.h "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_type.h "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_ti.cpp "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_platform.cpp "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_platform_win.cpp "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_string.cpp "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_list.cpp "%CD%" /D /Y /i /q
+xcopy "%CD%"\..\ta\ta_type.cpp "%CD%" /D /Y /i /q
+@echo on
