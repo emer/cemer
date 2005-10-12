@@ -1,18 +1,39 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/CSS
-//
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Lesser General Public
-//   License as published by the Free Software Foundation; either
-//   version 2.1 of the License, or (at your option) any later version.
-//   
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Lesser General Public License for more details.
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 // Type Access: Automatic Access to C Types
 
@@ -93,6 +114,7 @@ public:
   bool Remove(const String& it) {return taPlainArray<String>::Remove(it);}
   bool Remove(const char* it) {return taPlainArray<String>::Remove(String(it));}
 //obs  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  String_PArray& Copy(const String_PArray& cp)	{ Copy_Duplicate(cp); return *this;}
   // returns first item which contains given string (-1 if none)
   TA_PLAIN_ARRAY_FUNS(String_PArray, String) //
 protected:
@@ -489,7 +511,6 @@ protected:
 for(itr.Reset(), el = (T*) itr.NextEl(dl, &TA_ ## T); el; el = (T*) itr.NextEl(dl, &TA_ ## T))
 
 
-
 //////////////////////////
 //   EnumSpace		//
 //////////////////////////
@@ -512,11 +533,12 @@ protected:
 public:
   String 	name;		// of the space
   TypeDef*	owner;		// owner is a typedef
-
-  void		Initialize()	{ owner = NULL; }
+  taDataLink*	data_link;
+  
+  void		Initialize()	{ owner = NULL; data_link = NULL;}
   EnumSpace()			{ Initialize(); }
   EnumSpace(const EnumSpace& cp) { Initialize(); Borrow(cp); }
-  ~EnumSpace()                  { Reset(); }
+  ~EnumSpace();
 
   void operator=(const EnumSpace& cp)	{ Borrow(cp); }
 
@@ -546,13 +568,15 @@ public:
   static String tmp_el_name;	// for element names that need to be created
 
   String 	name;		// of the space
-  TypeDef*	owner;
+  TypeDef*	owner;		// owner is a typedef
   bool		keep;		// true if tokens are kept
   int		sub_tokens;	// number of tokens in sub-types
+  taDataLink*	data_link;
 
   virtual void 	Initialize();
   TokenSpace()				{ Initialize(); }
   TokenSpace(const TokenSpace& cp)	{ Initialize(); Borrow(cp); }
+  ~TokenSpace();
   void operator=(const TokenSpace& cp)	{ Borrow(cp); }
 
   void 		List(ostream& strm=cout) const;
@@ -563,7 +587,7 @@ public:
 //   MemberSpace	//
 //////////////////////////
 
-class TA_API MemberSpace : public taPtrList<MemberDef> {
+class TA_API MemberSpace: public taPtrList<MemberDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of members
 protected:
   String	GetListName_() const		{ return name; }
@@ -580,12 +604,13 @@ protected:
 
 public:
   String 	name;		// of the space
-  TypeDef*	owner;		// if a list in a typedef
+  TypeDef*	owner;		// owner is a typedef
+  taDataLink*	data_link;
 
-  void		Initialize()		{ owner = NULL; }
+  void		Initialize()		{ owner = NULL; data_link = NULL;}
   MemberSpace()				{ Initialize(); }
   MemberSpace(const MemberSpace& cp)	{ Initialize(); Borrow(cp); }
-  ~MemberSpace()                        { Reset(); }
+  ~MemberSpace();
 
   void operator=(const MemberSpace& cp)	{ Borrow(cp); }
 
@@ -650,7 +675,7 @@ public:
 //   MethodSpace	//
 //////////////////////////
 
-class TA_API MethodSpace : public taPtrList<MethodDef> {
+class TA_API MethodSpace: public taPtrList<MethodDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of methods
 protected:
   String	GetListName_() const		{ return name; }
@@ -667,12 +692,13 @@ protected:
 
 public:
   String 	name;		// of the space
-  TypeDef*	owner;		// if a list in a typedef
+  TypeDef*	owner;		// owner is a typedef
+  taDataLink*	data_link;
 
-  void		Initialize()		{ owner = NULL; }
+  void		Initialize()		{ owner = NULL; data_link = NULL;}
   MethodSpace()				{ Initialize(); }
   MethodSpace(const MethodSpace& cp)	{ Initialize(); Borrow(cp); }
-  ~MethodSpace()                        { Reset(); }
+  ~MethodSpace();
 
   void operator=(const MethodSpace& cp)	{ Borrow(cp); }
 
@@ -694,7 +720,7 @@ public:
 //   TypeSpace		//
 //////////////////////////
 
-class TA_API TypeSpace : public taPtrList<TypeDef> {
+class TA_API TypeSpace: public taPtrList<TypeDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of types; uses default string-based hashing
 protected:
   String	GetListName_() const 		{ return name; }
@@ -711,15 +737,16 @@ protected:
 
 public:
   String 	name;		// of the space
-  TypeDef*	owner;		// if a list in a typedef
+  TypeDef*	owner;		// owner is a typedef
+  taDataLink*	data_link;
 
-  void		Initialize()		{ owner = NULL; }
+  void		Initialize()		{ owner = NULL; data_link = NULL;}
 
   TypeSpace()				{ Initialize(); }
   TypeSpace(const char* nm)		{ Initialize(); name = nm; }
   TypeSpace(const char* nm, int hash_sz) { Initialize(); name = nm; BuildHashTable(hash_sz); }
   TypeSpace(const TypeSpace& cp)	{ Initialize(); Borrow(cp); }
-  ~TypeSpace()                          { Reset(); }
+  ~TypeSpace();
 
   void operator=(const TypeSpace& cp)	{ Borrow(cp); }
 
@@ -749,6 +776,7 @@ public:
   String	desc;		// a description
   String_PArray	opts;		// user-spec'd options (#xxx)
   String_PArray	lists;		// user-spec'd lists   (#LIST_xxx)
+  taDataLink*	data_link;
 
   void		Copy(const TypeItem& cp);
   bool		HasOption(const char* op) const { return (opts.Find(op) >= 0); }
@@ -760,6 +788,7 @@ public:
 
   TypeItem();
   TypeItem(const TypeItem& cp); // copy constructor
+  ~TypeItem();
 
 private:
   void		init(); // #IGNORE

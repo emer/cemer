@@ -318,7 +318,7 @@ protected:
   int		AddName(int row, const String& name, const String& desc, QWidget* buddy = NULL);
     // add a label item in first column; row<0 means "next row"; returns row
 //  void		AddLabel(int index, QWidget* label); // add a label item in first column
-  int		AddData(int row, QWidget* data);
+  int		AddData(int row, QWidget* data, bool fill_hor = false);
     // add a data item in second column; row<0 means "next row"; returns row
   void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item

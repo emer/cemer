@@ -612,7 +612,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc, QWidge
   label->show(); // needed for rebuilds, to make the widget show
   return row;
 }
-int taiDataHost::AddData(int row, QWidget* data) {
+int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
    // add a data item in second column
     if (row < 0)
       row = layBody->numRows();
@@ -623,7 +623,7 @@ int taiDataHost::AddData(int row, QWidget* data) {
     QHBoxLayout* hbl = new QHBoxLayout();
     layBody->addLayout(hbl, row, 1);
     hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
-    hbl->addStretch();
+    if (!fill_hor) hbl->addStretch();
     data->show(); // needed for rebuilds, to make the widget show
     return row;
 }
@@ -1274,32 +1274,34 @@ void taiEditDataHost::Constr_Data_impl(const MemberSpace& ms, taiDataList* dl) {
     dl->Add(mb_dat);
     rep = mb_dat->GetRep();
 
-    AddData(cnt, rep);
+    AddData(cnt, rep, true);
     ++cnt;
     ++cur_row;
   }
 }
 
 void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
-  prompt_str = typ->name;
   win_str = String(taiM->classname()) + ": " + win_title;
-  if(typ->InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)cur_base;
-    if(rbase->GetOwner() != NULL)
-      win_str += String(" ") + rbase->GetPath();
-    if(rbase->GetName() != "") {
-      win_str += String(" (") + rbase->GetName() + ")";
-      prompt_str = rbase->GetName() + " (" + typ->name + ")";
+  if (typ != NULL) {
+    prompt_str = typ->name;
+    if (typ->InheritsFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)cur_base;
+      if(rbase->GetOwner() != NULL)
+        win_str += String(" ") + rbase->GetPath();
+      if(rbase->GetName() != "") {
+        win_str += String(" (") + rbase->GetName() + ")";
+        prompt_str = rbase->GetName() + " (" + typ->name + ")";
+      }
+      else
+        win_str += String(" (") + typ->name + ")";
     }
-    else
-      win_str += String(" (") + typ->name + ")";
   }
   String sapr;
-  if(aprompt != NULL) sapr = aprompt;
-  if(!sapr.empty())
+  if (aprompt != NULL) sapr = aprompt;
+  if (!sapr.empty())
     prompt_str += ": " + sapr;
   else
-    prompt_str +=  ": " + typ->desc;
+    if (typ != NULL) prompt_str +=  ": " + typ->desc;
 }
 
 void taiEditDataHost::Constr_Methods() {
@@ -1414,7 +1416,7 @@ void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QPopupMenu* me
 }
 
 void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopupMenu* menu, int& last_id) {
-  if ((cur_base == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
+  if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
   MemberDef* md = memb_el.SafeEl(sel_item_index);
   if (md == NULL) return;
   // save the index of the data item, for the handler routines
@@ -1453,8 +1455,8 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopup
 }
 
 void taiEditDataHost::GetButtonImage() {
-  if(typ == NULL)
-    return;
+  if (typ == NULL)  return;
+  
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethMenu* mth_rep = (taiMethMenu*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep()) //note: construction forced creation of all buttons
@@ -1482,6 +1484,7 @@ void taiEditDataHost::GetButtonImage() {
 }
 
 void taiEditDataHost::GetImage() {
+  if ((typ == NULL) || (cur_base == NULL)) return;
   GetImage_impl(typ->members, data_el, cur_base);
   GetButtonImage();
   Unchanged();
@@ -1543,6 +1546,7 @@ void taiEditDataHost::GetName(MemberDef* md, String& name, String& desc) {
 }
 
 void taiEditDataHost::GetValue() {
+  if ((typ == NULL) || (cur_base == NULL)) return;
   GetValue_impl(typ->members, data_el, cur_base);
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;

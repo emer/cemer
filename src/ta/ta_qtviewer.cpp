@@ -1097,6 +1097,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
   if (sel_items.size == 0) return;
 
   TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
+  if (t1n == NULL) return; // typically for non-taBase types, ex Class browsing
   MethodDef* md;
   // Type_N methods (common to all)
   for (int i = 0; i < t1n->methods.size; ++i) {
@@ -1363,6 +1364,8 @@ void iDataViewer::Constr_Menu_impl() {
 
   actionsMenu = menu->AddSubMenu("&Actions");
 
+  toolsMenu = menu->AddSubMenu("&Tools");
+  
   helpMenu = menu->AddSubMenu("&Help");;
   helpHelpAction->AddTo(helpMenu );
   helpMenu->insertSeparator();
@@ -2154,8 +2157,8 @@ int DataViewer::Edit(bool) { //TODO: remove wait param
   return ta_file;
 }*/
 
-taDataLink* DataViewer::GetDataLink_(void* el, TypeDef* el_typ) {
-  if (!el || !el_typ) return NULL;
+taDataLink* DataViewer::GetDataLink_(void* el, TypeDef* el_typ, int param) {
+  if (!el || !el_typ) return NULL; // subclass will have to grok
 
 //<ADDED> 06/09/05 to handle pointers to base types
   // handle ptrs by derefing the type and the el
@@ -2175,6 +2178,10 @@ taDataLink* DataViewer::GetDataLink_(void* el, TypeDef* el_typ) {
   taiViewType* tiv = el_typ->iv;
   rval = tiv->GetDataLink(el);
   return rval; //NULL if not taBase
+}
+
+taiDataLink* DataViewer::GetDataLink(void* el, TypeDef* el_type, int param) {
+  return (taiDataLink*)GetDataLink_(el, el_type, param);
 }
 
 // called once upon initialization of the wineve
@@ -2654,6 +2661,16 @@ void iTabDataViewer::Constr_Menu_impl() {
 
 }
 
+iDataPanel* iTabDataViewer::MakeNewDataPanel_(taiDataLink* link) {
+  iDataPanel* rval = NULL;
+  TypeDef* typ = link->GetDataTypeDef();
+  //typ can be null for non-taBase classes
+  if ((typ == NULL) || (typ->iv == NULL)) return NULL;
+  taiViewType* tiv = typ->iv;
+  rval = tiv->CreateDataPanel(link);
+  return rval;
+}
+
 void iTabDataViewer::selectionChangedEvent(QCustomEvent* ev) {
   //TODO: should actually check if old panel=new panel, since theoretically, two different
   // gui items can have the same datalink (i.e., underlying data)
@@ -3078,16 +3095,14 @@ int iTabView::panel_count() {
 }
 
 iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
-  iDataPanel* rval = NULL;
+  iDataPanel* rval;
   for (int i = 0; i < panels.size; ++i) {
     rval = panels.FastEl(i);
     if (rval->m_link == link) return rval;
   }
-  TypeDef* typ = link->GetDataTypeDef();
-  taiViewType* tiv = typ->iv;
-  if (!tiv) return NULL; // shouldn't happen
-  rval = tiv->CreateDataPanel(link);
-  if (rval) {
+
+  rval = viewer_win()->MakeNewDataPanel_(link);
+  if (rval != NULL) {
     AddPanel(rval);
     rval->show(); // may be required in some contexts
   }

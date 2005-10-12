@@ -1,18 +1,39 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/CSS
-//
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Lesser General Public
-//   License as published by the Free Software Foundation; either
-//   version 2.1 of the License, or (at your option) any later version.
-//   
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Lesser General Public License for more details.
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 #ifndef TA_QTVIEWER_H
 #define TA_QTVIEWER_H
@@ -476,6 +497,7 @@ public:
   taiMenu* 		editMenu;
   taiMenu* 		viewMenu;
   taiMenu* 		toolBarMenu;
+  taiMenu* 		toolsMenu;
   taiMenu* 		actionsMenu; // statically added items first; bottom section is for dynamic
   taiMenu* 		helpMenu;
   iAction* 		fileNewAction;
@@ -770,6 +792,7 @@ public:
   bool 			SetName(const String& nm) {name = nm; return true;}
   String		GetName() const {return name; }
   virtual bool	HasChanges() {return m_has_changes;} // 'true' when something needs to be saved
+  taiDataLink*  GetDataLink(void* el, TypeDef* el_typ, int param = 0);
   virtual void	Changed(bool value = true); // default sets changes; call with 'false' to clear changes
   virtual bool	Save(); // call to save the object to current file, or new file if new; 'true' if saved
   int		Save(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -843,7 +866,7 @@ protected:
   virtual void		Constr_Window_impl() {} // #IGNORE implement this to set the m_window instance
 //  virtual void		Constr_Menu_impl(); // #IGNORE constructs the view menu
   virtual void		Constr_Toolbars_impl(); // #IGNORE constructs the toolbars
-  taDataLink*		GetDataLink_(void* el, TypeDef* typ); // gets the data link, gets existing or makes new
+  taDataLink*		GetDataLink_(void* el, TypeDef* typ, int param = 0); // gets the data link, gets existing or makes new; param can be used where el's have no typedefs (ex. class browsing)
   virtual void		OpenNewWindow_impl(); // #IGNORE
   virtual void 		WindowClosing(bool& cancel);
 private:
@@ -872,9 +895,8 @@ private:
 //Note: used by Browser and 3D Viewers
 class iTabDataViewer : public iDataViewer { // viewer window used for class browsing
     Q_OBJECT
-#ifndef __MAKETA__
-typedef iDataViewer inherited;
-#endif
+INHERITED(iDataViewer)
+friend class iTabView;
 public:
   virtual taiDataLink*	sel_link() const {return (curItem()) ? curItem()->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*	sel_md() const {return (curItem()) ? curItem()->md() : NULL;}; // as for sel_link
@@ -908,6 +930,7 @@ protected:
   iTabView_PtrList*	m_tabViews; // all created tab views
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   void			Constr_Menu_impl(); // override
+  virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
   override void 	selectionChangedEvent(QCustomEvent* ev);
   void 			viewSplit(int o);
 

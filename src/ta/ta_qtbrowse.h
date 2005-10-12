@@ -1,18 +1,39 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/CSS
-//
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Lesser General Public
-//   License as published by the Free Software Foundation; either
-//   version 2.1 of the License, or (at your option) any later version.
-//   
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Lesser General Public License for more details.
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 #ifndef TA_QTBROWSE_H
 #define TA_QTBROWSE_H
@@ -43,6 +64,7 @@ class taiTreeDataNode;
 class tabTreeDataNode;
 class tabListTreeDataNode;
 class tabGroupTreeDataNode;
+class iDataBrowserBase;
 class iDataBrowser;
 class DataBrowser; //
 
@@ -74,8 +96,8 @@ public:
 
   taiTreeDataNode*	parent() const {return (taiTreeDataNode*) QListViewItem::parent();} //note: NULL for root item
 //obs  iDataBrowser*		browser_win() const {return (iDataBrowser*)viewer_win();}
-  DataBrowser*		browser() const;
-  iDataBrowser* 	browser_win() const;
+  DataViewer*		browser() const;
+  iDataBrowserBase* 	browser_win() const;
 
   virtual void 		CreateChildren(); // called by the Node when it needs to create its children
   taiTreeDataNode*	FindChildForData(void* data); // find the Child Node (if any) that has data as the data of its link
@@ -210,24 +232,22 @@ private:
            DataPanel destructs -- if still connected to a link, it severs the link connection
 */
 
-class iDataBrowser : public iTabDataViewer { // viewer window used for class browsing
+class iDataBrowserBase : public iTabDataViewer { // base of viewer window used for class browsing
     Q_OBJECT
-#ifndef __MAKETA__
-typedef iTabDataViewer inherited;
-#endif
+INHERITED(iTabDataViewer)
 friend class DataBrowser;
 public:
 
   QSplitter*		splMain; // main splitter
   QListView*		lvwDataTree; // actually an iListView
 
-  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
+//  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
   void*			root() { return m_root;}
 
   iTabView*		AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL);// override
-  taiTreeDataNode* 	CreateTreeDataNode(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
-     taiTreeDataNode* last_child_, const String& tree_name, int flags_); // pass parent=null if this is a root item
   void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
+  virtual taiTreeDataNode* 	CreateTreeDataNode(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
+     taiTreeDataNode* last_child_, const String& tree_name, int flags_);
   void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
 //nn  void		RemovePanel(iDataPanel* panel); // removes and deletes the indicated panel
   taiClipData*		GetClipData(int src_edit_action, bool for_drag = false); // gets clipboard data (called on Cut/Copy or Drag)
@@ -235,10 +255,10 @@ public:
   void			lvwDataTree_focusInEvent(QFocusEvent* ev);
   void			Reset();
   override void 	SelectionChanged(bool forced = false); // invoked when selection changes; builtin clipboard
-  ~iDataBrowser();
+  ~iDataBrowserBase();
 
 public slots:
-  virtual void		mnuNewBrowser(taiMenuEl* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void		mnuNewBrowser(taiMenuEl* mel){} // called from context 'New Browse from here'; cast obj to taiNode*
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
 
 protected slots:
@@ -248,8 +268,9 @@ protected slots:
 
 
 protected:
-  iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrowser* browser_,
-    QWidget* parent = 0);
+  iDataBrowserBase(void* root_, DataViewer* browser_,  QWidget* parent = 0);
+  virtual taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
+     taiTreeDataNode* last_child_, const String& tree_name, int flags_) {return NULL;}
 
 public: // overridden slots
   void 		fileNew();
@@ -270,15 +291,42 @@ public: // overridden slots
 
 protected:
   void*			m_root;
-  MemberDef*		m_md;
-  TypeDef*		m_typ;
   int			mnuBrowseNodeDrop_param; // param from the mnuBrowseDrop slot -- called by a node, only valid for its call
 
-  void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
   void 			Constr_Menu_impl(); // override
   void			Constr_Body_impl(); // replace to construct body
 };
 
+class iDataBrowser : public iDataBrowserBase { // viewer window used for class browsing of taBase objects
+    Q_OBJECT
+INHERITED(iDataBrowserBase)
+friend class DataBrowser;
+public:
+  iAction*	        toolsClassBrowseAction;
+  
+  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
+
+  ~iDataBrowser();
+
+public slots:
+  virtual void		mnuNewBrowser(taiMenuEl* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void		toolsClassBrowser();
+  
+protected:
+  iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrowser* browser_,
+    QWidget* parent = 0);
+  void 			Constr_Menu_impl(); // override
+
+protected:
+  MemberDef*		m_md;
+  TypeDef*		m_typ;
+
+  void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
+  override taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
+     taiTreeDataNode* last_child_, const String& tree_name, int flags_); // pass parent=null if this is a root item
+};
+
+//////////////////////////////////
 //////////////////////////////////
 //	DataBrowser		//
 //////////////////////////////////
@@ -295,8 +343,7 @@ public:
 
   iDataBrowser*		browser_win() {return (iDataBrowser*)m_window;}
 
-  taiDataLink*		GetDataLink(void* el, TypeDef* el_type); //NOTE: currently only taBase supported
-  void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
+//nn  void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
 
   TA_BASEFUNS(DataBrowser)
 protected:

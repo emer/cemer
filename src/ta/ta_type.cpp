@@ -1226,6 +1226,13 @@ void*	EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->MakeTo
 void*	EnumSpace::El_Copy_(void* trg, void* src)
 { ((EnumDef*)trg)->Copy(*((EnumDef*)src)); return trg; }
 
+EnumSpace::~EnumSpace() { 
+  Reset(); 
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
 // default enum no is last + 1
 void  EnumSpace::Add(EnumDef* it) {
   taPtrList<EnumDef>::Add(it);
@@ -1264,6 +1271,14 @@ void TokenSpace::Initialize() {
   owner = NULL;
   keep = false;
   sub_tokens = 0;
+  data_link = NULL;
+}
+
+TokenSpace::~TokenSpace() { 
+//  Reset(); //note: TokenSpace never had a Reset, but maybe it should...
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
 }
 
 String TokenSpace::El_GetName_(void* it) const {
@@ -1312,6 +1327,13 @@ void	MemberSpace::El_Done_(void* it)	  { taRefN::Done((MemberDef*)it); }
 void*	MemberSpace::El_MakeToken_(void* it)  { return (void*)((MemberDef*)it)->MakeToken(); }
 void*	MemberSpace::El_Copy_(void* trg, void* src)
 { ((MemberDef*)trg)->Copy(*((MemberDef*)src)); return trg; }
+
+MemberSpace::~MemberSpace() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
 
 MemberDef* MemberSpace::FindCheck(const char* nm, void* base, void*& ptr) const {
 #ifndef NO_TA_BASE
@@ -1556,6 +1578,13 @@ void*	MethodSpace::El_MakeToken_(void* it)  { return (void*)((MethodDef*)it)->Ma
 void*	MethodSpace::El_Copy_(void* trg, void* src)
 { ((MethodDef*)trg)->Copy(*((MethodDef*)src)); return trg; }
 
+MethodSpace::~MethodSpace() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
 bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   MethodDef* rval = NULL;
   int idx;
@@ -1624,6 +1653,17 @@ MethodDef* MethodSpace::FindOnListIdx(int lidx, const String_PArray& lst) const 
 
 
 //////////////////////////
+//   TypeSpace		//
+//////////////////////////
+
+TypeSpace::~TypeSpace() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+//////////////////////////
 //   TypeItem		//
 //////////////////////////
 
@@ -1644,6 +1684,13 @@ TypeItem::TypeItem(const TypeItem& cp) {
 void TypeItem::init()
 {
   idx = 0;
+  data_link = NULL;
+}
+
+TypeItem::~TypeItem() {
+  if (data_link != NULL) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
 }
 
 void TypeItem::Copy(const TypeItem& cp) {

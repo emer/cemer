@@ -1,18 +1,39 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/CSS
-//
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Lesser General Public
-//   License as published by the Free Software Foundation; either
-//   version 2.1 of the License, or (at your option) any later version.
-//   
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Lesser General Public License for more details.
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 // ta_qtbrowse.cc
 
@@ -24,6 +45,7 @@
 #include "ta_qtdata.h"
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
+#include "ta_classbrowse.h"
 #include "ta_qt.h"
 #include "css_qt.h"
 //TEMP:
@@ -59,8 +81,8 @@
 
 class iListView: public QListView {
 public:
-  iDataBrowser* browser_win;
-  iListView(iDataBrowser* browser_win_, QWidget*  parent = NULL, const char* name = NULL);
+  iDataBrowserBase* browser_win;
+  iListView(iDataBrowserBase* browser_win_, QWidget*  parent = NULL);
 
 protected:
 
@@ -78,8 +100,8 @@ protected:
 };
 
 
-iListView::iListView(iDataBrowser* browser_win_, QWidget* parent, const char* name)
-: QListView(parent, name)
+iListView::iListView(iDataBrowserBase* browser_win_, QWidget* parent)
+: QListView(parent)
 {
   browser_win = browser_win_;
 //  focus_item = NULL;
@@ -158,18 +180,18 @@ void taiTreeDataNode::init(taiDataLink* link_, int flags_) {
 
 
 taiTreeDataNode::~taiTreeDataNode() {
-  DataBrowser* db = browser();
+  iDataBrowserBase* db = browser_win();
   if (db)
     db->TreeNodeDestroying(this);
 }
 
-DataBrowser* taiTreeDataNode::browser() const {
+DataViewer* taiTreeDataNode::browser() const {
   iListView* lv = (iListView*)listView();
-  iDataBrowser* bw = (lv) ? lv->browser_win : NULL;
-  return (bw) ? bw->browser() : NULL;
+  iDataBrowserBase* bw = (lv) ? lv->browser_win : NULL;
+  return (bw) ? bw->viewer() : NULL;
 }
 
-iDataBrowser* taiTreeDataNode::browser_win() const {
+iDataBrowserBase* taiTreeDataNode::browser_win() const {
   iListView* lv = (iListView*)listView();
   return (lv) ? lv->browser_win : NULL;
 }
@@ -621,18 +643,16 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
 
 
 //////////////////////////
-//   iDataBrowser 	//
+//   iDataBrowserBase 	//
 //////////////////////////
 
-iDataBrowser::iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrowser* browser_,
+iDataBrowserBase::iDataBrowserBase(void* root_, DataViewer* browser_,
   QWidget* parent)
-: iTabDataViewer((DataViewer*)browser_, parent)
+: iTabDataViewer(browser_, parent)
 {
   splMain = NULL;
   lvwDataTree = NULL;
   m_root = root_;
-  m_md = md_;
-  m_typ = typ_;
   mnuBrowseNodeDrop_param = -1;
 
 /*TEMP  setCentralWidget( new QWidget( this, "qt_central_widget" ) );
@@ -647,7 +667,7 @@ iDataBrowser::iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrows
   taiMisc::viewer_wins.Add(this);
 }
 
-iDataBrowser::~iDataBrowser()
+iDataBrowserBase::~iDataBrowserBase()
 {
   taiMisc::viewer_wins.Remove(this);
     // no need to delete child widgets, Qt does it all for us
@@ -655,8 +675,8 @@ iDataBrowser::~iDataBrowser()
   actions.clear(); // ditto
 }
 
-iTabView* iDataBrowser::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
-  iTabView* rval = iTabDataViewer::AddTabView(parCtrl, splitBuddy);
+iTabView* iDataBrowserBase::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
+  iTabView* rval = inherited::AddTabView(parCtrl, splitBuddy);
   // create a tab in the new tabview, based on cur item
   iDataPanel* pn;
   ISelectable* ci = curItem();
@@ -669,31 +689,15 @@ exit:
   return rval;
 }
 
-void iDataBrowser::ApplyRoot() {
-  if (!m_root) return;
-  taiDataLink* dl = browser()->GetDataLink(m_root, m_typ);
-  if (dl == NULL) return; // shouldn't happen...
-
-  // we treat root slightly different if it is true root, or is just a subsidiary named item
-  taiTreeDataNode* node;
-  //TODO: should add memberdef to constructor
-  if (m_root == tabMisc::root)
-    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, "root", iListViewItem::DNF_IS_MEMBER);
-  else //TODO: should really have a better scheme for root name -- what if it is unnamed???
-    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, dl->GetName(), iListViewItem::DNF_UPDATE_NAME);
-  // always show the first items under the root
-  node->CreateChildren();
-  setCurItem(node);
-  lvwDataTree->setOpen(node, true); // always open root node
+void iDataBrowserBase::Constr_Menu_impl() {
+  inherited::Constr_Menu_impl();
 }
 
-void iDataBrowser::Constr_Menu_impl() {
-  iTabDataViewer::Constr_Menu_impl();
-}
-
-void iDataBrowser::Constr_Body_impl() {
-  splMain = new QSplitter(this, "splMain");
-  lvwDataTree = new iListView(this, splMain, "lvwDataTree");
+void iDataBrowserBase::Constr_Body_impl() {
+  splMain = new QSplitter(this);
+  splMain->setName("splMain");
+  lvwDataTree = new iListView(this, splMain);
+  lvwDataTree->setName("lvwDataTree");
   lvwDataTree->setSorting(-1); // preserve enumeration order of items
   lvwDataTree->header()->setClickEnabled( FALSE );
   lvwDataTree->addColumn("Item");
@@ -716,10 +720,187 @@ void iDataBrowser::Constr_Body_impl() {
   setCentralWidget(splMain);
 }
 
-taiTreeDataNode* iDataBrowser::CreateTreeDataNode(taiDataLink* link, MemberDef* md_,
+taiTreeDataNode* iDataBrowserBase::CreateTreeDataNode(taiDataLink* link, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 {
-  taiTreeDataNode* rval;
+  taiTreeDataNode* rval = CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
+      tree_name, flags_);
+  if (rval != NULL) {
+    rval->setExpandable(link->HasChildItems() || (rval->flags & iListViewItem::DNF_IS_FOLDER));
+    rval->DecorateDataNode();
+  }
+
+  return rval;
+}
+
+void iDataBrowserBase::DataPanelDestroying(iDataPanel* panel) {
+  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
+  //note: not called by the blank panel, since it has no link
+  tabView()->DataPanelDestroying(panel);
+/*note: there is no need to change the tree item in response to panel changes
+   // may also need to change the current item
+  taiTreeDataNode* next_cur = m_curItem; // do nothing by default
+  if ((m_curItem != NULL) && (m_curItem->link()->panel() == panel)) {
+    next_cur = m_curItem->parent(); // shouldn't be null, but would be for root...
+  }
+  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
+  //note: not called by the blank panel, since it has no link
+  tabView()->DataPanelDestroying(panel);
+  if (next_cur != m_curItem) {
+    m_curItem = NULL; // don't let setCurItem try to unset the panel, since it is deleted
+    setCurItem(next_cur, true); // force, in case null
+  }
+*/
+}
+
+void iDataBrowserBase::fileNew() {
+  ISelectable* ci = curItem();
+  if (ci) ci->link()->fileNew();
+}
+
+void iDataBrowserBase::fileOpen() {
+  ISelectable* ci = curItem();
+  if (ci) ci->link()->fileOpen();
+}
+
+void iDataBrowserBase::fileSave() {
+  ISelectable* ci = curItem();
+  if (ci) ci->link()->fileSave();
+}
+
+void iDataBrowserBase::fileSaveAs() {
+  ISelectable* ci = curItem();
+  if (ci) ci->link()->fileSaveAs();
+}
+
+void iDataBrowserBase::fileClose() {
+  ISelectable* ci = curItem();
+  if (ci) ci->link()->fileClose();
+}
+
+taiClipData* iDataBrowserBase::GetClipData(int src_edit_action, bool for_drag) {
+  ISelectable* ci = curItem();
+  if (ci) return ci->GetClipData(sel_items(), src_edit_action, for_drag);
+  else    return NULL; //note: should happen, because we should have checked for data first
+}
+/*in qtviewer
+int iDataBrowserBase::GetEditActions() { // after a change in selection, update the available edit actions (cut, copy, etc.)
+  // we query the item(s) for both what they will allow, as well as what they cannot allow
+  // for single items, the available actions are simply what the item will allow
+  // for multi select, the available actions are the AND of what every item will allow and what no item will not allow
+  // so we start with Allowed=1 and Forbidden=0; each item AND's its own Allowed, and OR's its own Forbidden
+  int allowed = 0;
+  int forbidden = 0;
+  ISelectable* ci = curItem();
+  if (ci) {
+    taiMimeSource* ms = taiMimeSource::New(QApplication::clipboard()->data(QClipboard::Clipboard));
+    ci->GetEditActions(ms, allowed, forbidden);
+    delete ms;
+  }
+  return allowed & (~forbidden);
+} */
+
+void iDataBrowserBase::helpAbout() {
+  if (taMisc::app) taMisc::app->Info();
+}
+
+void iDataBrowserBase::lvwDataTree_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
+  iListViewItem* nd = (iListViewItem*)item;
+  if (nd == NULL) return; //TODO: could possibly be multi select
+
+  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
+  //TODO: any for us first (ex. delete)
+
+  nd->FillContextMenu(sel_items(), menu); // also calls link menu filler
+
+  FillContextMenu(menu);
+
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
+}
+
+void iDataBrowserBase::lvwDataTree_focusInEvent(QFocusEvent* ev) {
+  SetThisAsHandler();
+}
+
+void iDataBrowserBase::lvwDataTree_selectionChanged(QListViewItem* item) {
+  setCurItem((taiTreeDataNode*)item);
+}
+
+void iDataBrowserBase::Reset() {
+  lvwDataTree->clear();
+}
+
+void iDataBrowserBase::SelectionChanged(bool forced) {
+  // if setCurItem was invoked in code, need to set gui selection;
+  // won't cause infinite recursion, because m_curItem is now set
+  if (forced) {
+    ISelectable* ci = curItem();
+    if (ci)
+      lvwDataTree->setCurrentItem((taiTreeDataNode*)ci->This());
+  }
+  inherited::SelectionChanged(forced);
+}
+
+void iDataBrowserBase::TreeNodeDestroying(taiTreeDataNode* item) {
+  RemoveSelectedItem(item); // noop if not selected
+}
+
+//////////////////////////
+//   iDataBrowser 	//
+//////////////////////////
+
+iDataBrowser::iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrowser* browser_,
+  QWidget* parent)
+: iDataBrowserBase(root_, (DataViewer*)browser_, parent)
+{
+  m_md = md_;
+  m_typ = typ_;
+}
+
+iDataBrowser::~iDataBrowser()
+{
+}
+
+void iDataBrowser::ApplyRoot() {
+  if (!m_root) return;
+  taiDataLink* dl = browser()->GetDataLink(m_root, m_typ);
+  if (dl == NULL) return; // shouldn't happen...
+
+  // we treat root slightly different if it is true root, or is just a subsidiary named item
+  taiTreeDataNode* node;
+  //TODO: should add memberdef to constructor
+  if (m_root == tabMisc::root)
+    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, "root", iListViewItem::DNF_IS_MEMBER);
+  else //TODO: should really have a better scheme for root name -- what if it is unnamed???
+    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, dl->GetName(), iListViewItem::DNF_UPDATE_NAME);
+  // always show the first items under the root
+  node->CreateChildren();
+  setCurItem(node);
+  lvwDataTree->setOpen(node, true); // always open root node
+}
+
+void iDataBrowser::Constr_Menu_impl() {
+  inherited::Constr_Menu_impl();
+  toolsClassBrowseAction = AddAction(new iAction(0, "Class Browser", QKeySequence(), this,"toolsClassBrowseAction"));
+  toolsClassBrowseAction->AddTo(toolsMenu );
+  connect( toolsClassBrowseAction, SIGNAL( activated() ), 
+    this, SLOT( toolsClassBrowser() ) );
+}
+
+void iDataBrowser::toolsClassBrowser() {
+  ClassBrowser* brows = ClassBrowser::New(&taMisc::types, TIK_TYPESPACE);
+  if (brows == NULL) return;
+  brows->ViewWindow();
+}
+
+
+taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name, int flags_)
+{
+  taiTreeDataNode* rval = NULL;
   TypeDef* typ = link->GetTypeDef();
   // slightly different constructor depending on if root item or not
   if (parent_ == NULL) {
@@ -746,106 +927,11 @@ taiTreeDataNode* iDataBrowser::CreateTreeDataNode(taiDataLink* link, MemberDef* 
       rval = new taiTreeDataNode(link, md_, parent_, last_child_, tree_name, flags_);
    // else not supported yet
   }
-  rval->setExpandable(link->HasChildItems() || (rval->flags & iListViewItem::DNF_IS_FOLDER));
-  rval->DecorateDataNode();
-
+  if (rval == NULL) {
+    rval = inherited::CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
+      tree_name, flags_);
+  }
   return rval;
-}
-
-void iDataBrowser::DataPanelDestroying(iDataPanel* panel) {
-  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
-  //note: not called by the blank panel, since it has no link
-  tabView()->DataPanelDestroying(panel);
-/*note: there is no need to change the tree item in response to panel changes
-   // may also need to change the current item
-  taiTreeDataNode* next_cur = m_curItem; // do nothing by default
-  if ((m_curItem != NULL) && (m_curItem->link()->panel() == panel)) {
-    next_cur = m_curItem->parent(); // shouldn't be null, but would be for root...
-  }
-  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
-  //note: not called by the blank panel, since it has no link
-  tabView()->DataPanelDestroying(panel);
-  if (next_cur != m_curItem) {
-    m_curItem = NULL; // don't let setCurItem try to unset the panel, since it is deleted
-    setCurItem(next_cur, true); // force, in case null
-  }
-*/
-}
-
-void iDataBrowser::fileNew() {
-  ISelectable* ci = curItem();
-  if (ci) ci->link()->fileNew();
-}
-
-void iDataBrowser::fileOpen() {
-  ISelectable* ci = curItem();
-  if (ci) ci->link()->fileOpen();
-}
-
-void iDataBrowser::fileSave() {
-  ISelectable* ci = curItem();
-  if (ci) ci->link()->fileSave();
-}
-
-void iDataBrowser::fileSaveAs() {
-  ISelectable* ci = curItem();
-  if (ci) ci->link()->fileSaveAs();
-}
-
-void iDataBrowser::fileClose() {
-  ISelectable* ci = curItem();
-  if (ci) ci->link()->fileClose();
-}
-
-taiClipData* iDataBrowser::GetClipData(int src_edit_action, bool for_drag) {
-  ISelectable* ci = curItem();
-  if (ci) return ci->GetClipData(sel_items(), src_edit_action, for_drag);
-  else    return NULL; //note: should happen, because we should have checked for data first
-}
-/*in qtviewer
-int iDataBrowser::GetEditActions() { // after a change in selection, update the available edit actions (cut, copy, etc.)
-  // we query the item(s) for both what they will allow, as well as what they cannot allow
-  // for single items, the available actions are simply what the item will allow
-  // for multi select, the available actions are the AND of what every item will allow and what no item will not allow
-  // so we start with Allowed=1 and Forbidden=0; each item AND's its own Allowed, and OR's its own Forbidden
-  int allowed = 0;
-  int forbidden = 0;
-  ISelectable* ci = curItem();
-  if (ci) {
-    taiMimeSource* ms = taiMimeSource::New(QApplication::clipboard()->data(QClipboard::Clipboard));
-    ci->GetEditActions(ms, allowed, forbidden);
-    delete ms;
-  }
-  return allowed & (~forbidden);
-} */
-
-void iDataBrowser::helpAbout() {
-  if (taMisc::app) taMisc::app->Info();
-}
-
-void iDataBrowser::lvwDataTree_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
-  iListViewItem* nd = (iListViewItem*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  nd->FillContextMenu(sel_items(), menu); // also calls link menu filler
-
-  FillContextMenu(menu);
-
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
-}
-
-void iDataBrowser::lvwDataTree_focusInEvent(QFocusEvent* ev) {
-  SetThisAsHandler();
-}
-
-void iDataBrowser::lvwDataTree_selectionChanged(QListViewItem* item) {
-  setCurItem((taiTreeDataNode*)item);
 }
 
 void iDataBrowser::mnuNewBrowser(taiMenuEl* mel) {
@@ -858,36 +944,6 @@ void iDataBrowser::mnuNewBrowser(taiMenuEl* mel) {
   setCurItem(node->parent(), true);
 
   //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
-}
-
-void iDataBrowser::Reset() {
-  lvwDataTree->clear();
-}
-
-void iDataBrowser::SelectionChanged(bool forced) {
-  // if setCurItem was invoked in code, need to set gui selection;
-  // won't cause infinite recursion, because m_curItem is now set
-  if (forced) {
-    ISelectable* ci = curItem();
-    if (ci)
-      lvwDataTree->setCurrentItem((taiTreeDataNode*)ci->This());
-  }
-  inherited::SelectionChanged(forced);
-}
-
-/*note: not implemented/supported
-void iDataBrowser::setRoot(void* value, TypeDef* typ_) {
-  if ((m_root == value) return;
-  if (m_root != NULL) {
-    Reset();
-  }
-  m_root = value;
-  m_typ = typ_;
-  if (m_root) ApplyRoot();
-} */
-
-void iDataBrowser::TreeNodeDestroying(taiTreeDataNode* item) {
-  RemoveSelectedItem(item); // noop if not selected
 }
 
 
@@ -923,18 +979,14 @@ void DataBrowser::Clear_impl() {
   browser_win()->Reset();
 }
 
-taiDataLink* DataBrowser::GetDataLink(void* el, TypeDef* el_type) {
-  return (taiDataLink*)GetDataLink_(el, el_type);
-}
-
 void DataBrowser::Render_impl() {
   if (!m_window) return;
   browser_win()->ApplyRoot();
 }
 
-void DataBrowser::TreeNodeDestroying(taiTreeDataNode* item) {
+/* nn void DataBrowser::TreeNodeDestroying(taiTreeDataNode* item) {
   if (!m_window) return;
   browser_win()->TreeNodeDestroying(item);
-}
+} */
 
 

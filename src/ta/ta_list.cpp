@@ -1,18 +1,39 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/CSS
-//
-//   This library is free software; you can redistribute it and/or
-//   modify it under the terms of the GNU Lesser General Public
-//   License as published by the Free Software Foundation; either
-//   version 2.1 of the License, or (at your option) any later version.
-//   
-//   This library is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//   Lesser General Public License for more details.
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 // implimentation header for the ta list classes
 
@@ -1005,7 +1026,7 @@ bool taBasicArray_impl::AdjustAndSetAlloc_(uint& new_alloc) {
   if (new_alloc <= alloc_size) return false;
   // start w/ 4, double up to 64, then 1.5x thereafter
   if (alloc_size == 0) 
-    new_alloc = MAX(4, new_alloc);
+    new_alloc = MAX(8, new_alloc);
   else if (alloc_size < 64) 
     new_alloc = MAX((alloc_size * 2), new_alloc);
   else // >= 64
@@ -1037,6 +1058,21 @@ bool taBasicArray_impl::Remove(int i, int n) {
 /////////////////////////
 //  taArray_impl       //
 /////////////////////////
+
+String taArray_impl::AsString(const char* sep_) const {
+  if (size == 0) return _nilString;
+  String sep = sep_;
+  uint xlen = (size - 1) * sep.length(); // for seps
+  int i;
+  for (i=0; i < size; ++i) xlen += El_GetStr_(FastEl_(i)).length();
+  String tmp(0, xlen, '\0');
+  for (i = 0; i < size; i++) {
+    if (i > 0) tmp += sep;
+    tmp += El_GetStr_(FastEl_(i));
+  }
+  return tmp;
+  
+}
 
 void taArray_impl::Copy_Common(const taArray_impl& cp) {
   int i;
