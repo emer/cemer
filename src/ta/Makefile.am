@@ -19,6 +19,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtbrowse_def.h \
 	@abs_srcdir@/ta_qtviewer.h \
 	@abs_srcdir@/ta_qtbrowse.h \
+	@abs_srcdir@/ta_classbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
 	@abs_srcdir@/../taiqtso/igeometry.h
@@ -34,6 +35,7 @@ HEADS_GUI =\
 	ta_qtgroup.h \
 	ta_qtviewer.h \
 	ta_qtbrowse.h \
+	ta_classbrowse.h \
 	ta_qtcursors.h \
 	ta_qtclipdata.h \
 	ta_seledit.h
@@ -53,6 +55,8 @@ SRCS_GUI =\
 	ta_qtviewer.moc.cpp \
 	ta_qtbrowse.cpp \
 	ta_qtbrowse.moc.cpp \
+	ta_classbrowse.cpp \
+	ta_classbrowse.moc.cpp \
 	ta_qttype.cpp \
 	ta_qtclipdata.cpp \
 	ta_qtclipdata.moc.cpp \
