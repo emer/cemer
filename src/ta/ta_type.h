@@ -103,28 +103,26 @@ typedef taBase* TAPtr;		// pointer to a taBase type
 class TA_API String_PArray : public taPlainArray<String> {
 public:
   int	FindContains(const char* op, int start=0) const;
-  void	Add(const String& it)		{ taPlainArray<String>::Add(it); }
+  void	Add(const String& it)			{ taPlainArray<String>::Add(it); }
   void	Add(const char* it)
   { String fad=it; taPlainArray<String>::Add(fad); }
 
   bool	AddUnique(const String& it)	{ return taPlainArray<String>::AddUnique(it); }
   bool	AddUnique(const char* it)
-  { String fad=it; return taPlainArray<String>::AddUnique(fad); } //
+  { String fad=it; return taPlainArray<String>::AddUnique(fad); }
 
-  bool Remove(const String& it) {return taPlainArray<String>::Remove(it);}
-  bool Remove(const char* it) {return taPlainArray<String>::Remove(String(it));}
-//obs  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
-  String_PArray& Copy(const String_PArray& cp)	{ Copy_Duplicate(cp); return *this;}
+#ifdef __MAKETA__
+  String 	AsString(const char* sep) const;
+#else
+  String 	AsString(const char* sep = ", ") const;
+#endif
+  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  String_PArray()				{ };
+  String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   // returns first item which contains given string (-1 if none)
-  TA_PLAIN_ARRAY_FUNS(String_PArray, String) //
-protected:
-  override void	ReclaimOrphans_(int start, int end) 
-    {for (int i = start; i <= end; ++i) el[i] = ""; }
 };
 
-class int_PArray: public taPlainArray<int> {
-  TA_PLAIN_ARRAY_FUNS(int_PArray, int)
-};
+typedef taPlainArray<int> int_PArray;
 
 
 class TA_API IApp {

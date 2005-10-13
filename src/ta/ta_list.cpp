@@ -39,6 +39,7 @@
 
 #include "ta_list.h"
 
+// needed just for the taMisc::display_width variable..
 #include "ta_type.h"
 
 int taPtrList_impl::Idx = 0;
@@ -895,7 +896,6 @@ void taHashTable::RemoveAll() {
   bucket_max = 0;
 }
 
-
 /////////////////////////
 //  taFixedArray_impl  //
 /////////////////////////
@@ -903,7 +903,6 @@ void taHashTable::RemoveAll() {
 void taFixedArray_impl::Add_(const void* it) {
   Alloc_(size + 1);
   El_Copy_(FastEl_(size++), it);
-  ItemAdded_(it);
 }
 
 bool taFixedArray_impl::AddUnique_(const void* it) {
@@ -914,24 +913,11 @@ bool taFixedArray_impl::AddUnique_(const void* it) {
 }
 
 void taFixedArray_impl::Alloc_(uint alloc) {
-  if (AdjustAndSetAlloc_(alloc)) {
-    char* nw = (char*)MakeArray_(alloc);
-    for (int i = 0; i < size; ++i) {
-      El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
-    }
-    SetArray_(nw);
+  char* nw = (char*)MakeArray_(alloc);
+  for (int i = 0; i < size; ++i) {
+    El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
   }
-}
-
-void taFixedArray_impl::AddBlank(int n_els) {
-  if (n_els < 1) return;
-  Alloc_(size + n_els);
-  const void* blank = El_GetBlank_();
-  for (int i = 0; i < n_els; ++i) {
-    El_Copy_(FastEl_(size), blank);
-    ++size;
-  }
-  ItemsChanged_();
+  SetArray_(nw);
 }
 
 void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
@@ -942,27 +928,19 @@ void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
   }
   size = cp.size;
-  ItemsChanged_();
-}
-
-void taFixedArray_impl::Duplicate_(const taFixedArray_impl& cp) {
-  if (cp.size == 0) return;
-  Alloc_(size + cp.size);
-  for (int i=0; i < cp.size; ++i) {
-    El_Copy_(FastEl_(size), cp.FastEl_(i));
-    ++size;
-  }
-  ItemsChanged_();
 }
 
 void taFixedArray_impl::EnforceSize(int new_size) {
   if (new_size > size) {
-    AddBlank(new_size - size);
+    Alloc_(new_size);
+    const void* blank = El_GetBlank_();
+    for (int i = size; i < new_size; ++i) {
+      El_Copy_(FastEl_(i), blank);
+    }
   } else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
-    size = new_size;	
-    ItemsChanged_();
   }
+  size = new_size;	
 }
 
 bool taFixedArray_impl::Equal_(const taFixedArray_impl& src) const {
@@ -989,7 +967,6 @@ void taFixedArray_impl::InitVals_(const void* it, int start, int end) {
   for (int i = start; i < end; ++i) {
     El_Copy_(FastEl_(i), it);
   }
-  ItemsChanged_();
 }
 
 void taFixedArray_impl::Insert_(const void* it, int where, int n) {
@@ -1009,7 +986,6 @@ void taFixedArray_impl::Insert_(const void* it, int where, int n) {
   for (i=where; i < where + n; ++i)
     El_Copy_(FastEl_(i), it);
   size += n;
-  ItemAdded_(it, n);
 }
 
 const void* taFixedArray_impl::SafeEl_(int i) const {
@@ -1018,93 +994,92 @@ const void* taFixedArray_impl::SafeEl_(int i) const {
 }
 
 
-/////////////////////////
-//  taBasicArray_impl  //
-/////////////////////////
 
-bool taBasicArray_impl::AdjustAndSetAlloc_(uint& new_alloc) {
-  if (new_alloc <= alloc_size) return false;
-  // start w/ 4, double up to 64, then 1.5x thereafter
-  if (alloc_size == 0) 
-    new_alloc = MAX(8, new_alloc);
-  else if (alloc_size < 64) 
-    new_alloc = MAX((alloc_size * 2), new_alloc);
-  else // >= 64
-    new_alloc =  MAX(((alloc_size * 3) / 2) , new_alloc);
-//  new_alloc = tweak_alloc(new_alloc); // tweak it, to avoid waste on platform
-  alloc_size = new_alloc;
-  return true;
+//////////////////////////
+//  taArray_impl	//
+//////////////////////////
+
+
+void taArray_impl::Clear_Tmp_() {
+  String val;
+  El_SetFmStr_(El_GetTmp_(), val);
 }
 
-bool taBasicArray_impl::Remove_(void* it) {
-  int i;
-  if ((i = Find_(it)) < 0)
+void taArray_impl::Add_(void* it) {
+  if (size >= alloc_size)
+    Alloc(size+1);
+  El_Copy_(FastEl_(size++), it);
+}
+
+bool taArray_impl::AddUnique_(void* it) {
+  if(Find_(it) >= 0)
     return false;
-  return Remove(i);
-}
-
-bool taBasicArray_impl::Remove(int i, int n) {
-  if (!InRange(i) || (n < 1)) return false;
-  n = MIN(n, size-(int)i);
-  for (int j=i; j < size-n; j++)
-    El_Copy_(FastEl_(j), FastEl_(j+n));
-  ReclaimOrphans_(size-n, size - 1);
-  size -= n;
-  ItemsChanged_();
+  Add_(it);
   return true;
 }
 
-
-/////////////////////////
-//  taArray_impl       //
-/////////////////////////
-
-String taArray_impl::AsString(const char* sep_) const {
-  if (size == 0) return _nilString;
-  String sep = sep_;
-  uint xlen = (size - 1) * sep.length(); // for seps
-  int i;
-  for (i=0; i < size; ++i) xlen += El_GetStr_(FastEl_(i)).length();
-  String tmp(0, xlen, '\0');
-  for (i = 0; i < size; i++) {
-    if (i > 0) tmp += sep;
-    tmp += El_GetStr_(FastEl_(i));
+void taArray_impl::Alloc(int sz) {
+  if (alloc_size < sz)	{
+    // start w/ 4, double up to 64, then 1.5x thereafter
+    if (alloc_size == 0) alloc_size = MAX(4, sz);
+    else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
+    else alloc_size =  MAX(((alloc_size * 3) / 2) , sz);
+    char* nw = (char*)MakeArray_(alloc_size);
+    for (int i = 0; i < size; ++i) {
+      El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
+    }
+    SetArray_(nw);
   }
-  return tmp;
-  
 }
 
-void taArray_impl::Copy_Common(const taArray_impl& cp) {
+void taArray_impl::AddBlank(int n_els) {
+  EnforceSize(size + n_els);
+}
+
+void taArray_impl::EnforceSize(int sz) {
+  if (size < sz) {
+    Alloc(sz);
+    Clear_Tmp_();
+    Insert_(El_GetTmp_(), size, sz - size);
+  } else if (size > sz)
+    size = sz;			// that's easy!
+}
+
+int taArray_impl::Find_(void* it, int where) const {
   int i;
-  int mx_idx = MIN(size, cp.size);
-  for(i=0; i<mx_idx; i++)
-    El_Copy_(FastEl_(i), cp.FastEl_(i));
-  ItemsChanged_();
+  for(i=where; i<size; i++) {
+    if(El_Compare_(it, FastEl_(i)) == 0)
+      return i;
+  }
+  return -1;
 }
 
-void taArray_impl::Copy_Duplicate(const taArray_impl& cp) {
-  Copy_Common(cp);
+void taArray_impl::InitVals_(void* it, int start, int end) {
+  if(end == -1)	end = size;  else end = MIN(size, end);
   int i;
-  for(i=size; i<cp.size; i++)
-    Add_(cp.FastEl_(i));
+  for(i=start;i<end;i++) {
+    El_Copy_(FastEl_(i), it);
+  }
 }
 
-void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at) {
-  if(end == -1)	end = from.size;  else end = MIN(from.size, end);
-  int len = end - start;
-  if(size < at + len)
-    EnforceSize(at + len);
-  int i, trg;
-  for(i=start, trg=at;i<end;i++, trg++)
-    El_Copy_(FastEl_(trg), from.FastEl_(i));
-  ItemsChanged_();
-}
-
-void taArray_impl::DupeUnique(const taArray_impl& cp) {
+void taArray_impl::Insert_(void* it, int where, int n) {
+  if((where > size) || (n == 0)) return;
+  if ((size + n) > alloc_size)
+    Alloc(size + n);	// pre-add stuff
+  if((where==size) || (where < 0)) {
+    int i;
+    for(i=0; i<n; i++) Add_(it);
+    return;
+  }
   int i;
-  for(i=0; i<cp.size; i++)
-    AddUnique_(cp.FastEl_(i));
-  ItemsChanged_();
+  int n_mv = size - where;	// number that must be moved
+  size += n;
+  int trg_o = size-1;
+  int src_o = size-1-n;
+  for(i=0; i<n_mv; i++)		// shift everyone over
+    El_Copy_(FastEl_(trg_o - i), FastEl_(src_o - i));
+  for(i=where; i<where+n; i++)
+    El_Copy_(FastEl_(i), it);
 }
 
 bool taArray_impl::Move(int fm, int to) {
@@ -1120,7 +1095,6 @@ bool taArray_impl::Move(int fm, int to) {
     El_Copy_(FastEl_(j), FastEl_(j-1));
   }
   El_Copy_(FastEl_(to), tmp);
-  ItemsChanged_();
   return true;
 }
 
@@ -1133,7 +1107,23 @@ void taArray_impl::Permute() {
     El_Copy_(FastEl_(i), FastEl_(nv));	// swap with yourself
     El_Copy_(FastEl_(nv), tmp);
   }
-  ItemsChanged_();
+}
+
+bool taArray_impl::Remove_(void* it) {
+  int i;
+  if((i = Find_(it)) < 0)
+    return false;
+  return Remove(i);
+}
+
+bool taArray_impl::Remove(uint i, int n) {
+  if((int)i >= size) return false;
+  n = MIN(n, size-(int)i);
+  int j;
+  for(j=i; j < size-n; j++)
+    El_Copy_(FastEl_(j), FastEl_(j+n));
+  size-=n;
+  return true;
 }
 
 void taArray_impl::Sort(bool descending) {
@@ -1184,9 +1174,7 @@ void taArray_impl::ShiftLeft(int nshift) {
   for(i=0; i < size - nshift; i++) {
     El_Copy_(FastEl_(i), FastEl_(i+nshift)); // move left..
   }
-  ReclaimOrphans_(size - nshift, size - 1);
   size = size - nshift;		// update the size now..
-  ItemsChanged_();
 }
 
 void taArray_impl::ShiftLeftPct(float pct) {
@@ -1212,6 +1200,42 @@ int taArray_impl::V_Flip(int width){
   return true;
 }
 
+void taArray_impl::Duplicate(const taArray_impl& cp) {
+  int i;
+  for(i=0; i<cp.size; i++)
+    Add_(cp.FastEl_(i));
+}
+
+void taArray_impl::DupeUnique(const taArray_impl& cp) {
+  int i;
+  for(i=0; i<cp.size; i++)
+    AddUnique_(cp.FastEl_(i));
+}
+
+void taArray_impl::Copy_Common(const taArray_impl& cp) {
+  int i;
+  int mx_idx = MIN(size, cp.size);
+  for(i=0; i<mx_idx; i++)
+    El_Copy_(FastEl_(i), cp.FastEl_(i));
+}
+
+void taArray_impl::Copy_Duplicate(const taArray_impl& cp) {
+  Copy_Common(cp);
+  int i;
+  for(i=size; i<cp.size; i++)
+    Add_(cp.FastEl_(i));
+}
+
+void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at) {
+  if(end == -1)	end = from.size;  else end = MIN(from.size, end);
+  int len = end - start;
+  if(size < at + len)
+    EnforceSize(at + len);
+  int i, trg;
+  for(i=start, trg=at;i<end;i++, trg++)
+    El_Copy_(FastEl_(trg), from.FastEl_(i));
+}
+
 void taArray_impl::List(ostream& strm) const {
   strm << "[" << size << "] {";
   int i;
@@ -1235,10 +1259,8 @@ void taArray_impl::InitFromString(const char* val) {
     tmp = tmp.after(',');
     if (el_val.contains(' '))
       el_val = el_val.after(' ');
-    Add_(El_GetBlank_());
-    El_SetFmStr_(FastEl_(size-1), String(el_val));
+    Add_(El_GetTmp_());		// add a blank
+    El_SetFmStr_(SafeEl_(size-1), String(el_val));
   }
 }
-
-
 

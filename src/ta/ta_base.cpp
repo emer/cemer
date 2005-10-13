@@ -1952,7 +1952,6 @@ int taArray_base::Dump_Load_Value(istream& strm, TAPtr) {
     El_SetFmStr_(FastEl_(cnt++), taMisc::LexBuf);
     c = taMisc::read_till_rb_or_semi(strm);
   }
-  ItemsChanged_();
   if (c==EOF)	return EOF;
   return true;
 }

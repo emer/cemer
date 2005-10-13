@@ -59,9 +59,10 @@ class float_Matrix;
    
 */
 
-class taMatrix_impl: public taBasicArray_impl { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS ref counted multi-dimensional data array
-INHERITED(taBasicArray_impl)
+class taMatrix_impl { // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 public:
+  int 			size;	// #NO_SAVE #READ_ONLY number of elements in the 
+  
   int			dims() {return m_geom.size;}
   int			geom(int dim) {return m_geom.FastEl(dim);} // note: dim must be in range
   
@@ -77,24 +78,45 @@ public:
   void			setGeom(int d0, int d1, int d2, int d3)  
     {setGeom(int_FixedArray(4, d0, d1, d2, d3));} 
   
+  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
   virtual TypeDef*	GetTypeDef() const = 0; // 
   
   void			Ref() {++m_ref;}
   void			Unref() {if (--m_ref == 0) delete this;} //
+  
+public:
+  virtual const void*	SafeEl_(int i) const;
+  virtual void*	FastEl_(int i) = 0; 
  
 protected:
+  int			alloc_size;
+  uint			m_ref;
+  int_FixedArray	m_geom; // dimensions array
+  
   int			ElIndex(const int indices[]) const; 
   int			ElIndex(int i, int j) const; 
   int			ElIndex(int i, int j, int k) const; 
   int			ElIndex(int i, int j, int k, int l) const; 
   
-  uint			m_ref;
-  int_FixedArray	m_geom; // dimensions array
+  virtual void		Alloc_(int n); // set capacity to n
+  virtual void 		EnforceSize(int new_size);
+  virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type
+  virtual void		SetArray_(void* nw) = 0;
   
-  virtual void		Copy_(const taMatrix_impl& cp); // NOTE: taMatrix cannot be accurately copied through taBasicArray_impl pointers because of geom
-  override bool		Equal_(const taFixedArray_impl& src) const; 
-    // 'true' if same size and els, and src is our type
-  virtual bool		Equal_(const taMatrix_impl& src) const; 
+  virtual bool		El_Equal_(const void*, const void*) const = 0;
+  // #IGNORE for finding
+  virtual const void*	El_GetBlank_() const = 0;
+  // #IGNORE address of a blank element, for initializing empty items -- can be STATIC_CONST
+  // NOTE: this can be implemented by clearing the tmp item, then returning that addr
+  virtual const void*	El_GetErr_() const	{ return El_GetBlank_();}
+  // #IGNORE address of an element to return when out of range -- defaults to blank el
+  virtual void		El_Copy_(void*, const void*) = 0;
+  // #IGNORE
+  virtual uint		El_SizeOf_() const = 0;
+  // #IGNORE size of element
+  
+  virtual void		Copy_(const taMatrix_impl& cp);
+//  virtual bool		Equal_(const taMatrix_impl& src) const; 
     // 'true' if same size and els
   virtual void		setGeom_(int dims_, const int geom_[]); 
   
@@ -106,7 +128,7 @@ private:
 
 
 template<class T> 
-class taMatrix : public taMatrix_impl { // #INSTANCE
+class taMatrix : public taMatrix_impl { 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -204,7 +226,6 @@ public: \
   y() 		{setGeom(0);} \
   y(const y& cp)	{Copy(cp); }  \
   y& operator=(const y& cp) {Copy(cp); return *this;} \
-  bool 		operator==(const y& src) const {return Equal_(src);} \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 

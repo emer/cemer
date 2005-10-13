@@ -35,12 +35,10 @@
 
 template class taPtrList<taHashEl>;
 template class taPtrList<taHashBucket>;
-template class taFixedArray<int>;
-  const int int_FixedArray::blank = 0;
 template class taPlainArray<String>;
-  const String String_PArray::blank = "";
+//  const String String_PArray::blank = "";
 template class taPlainArray<int>;
-  const int int_PArray::blank = 0;
+//  const int int_PArray::blank = 0;
 template class taPtrList<EnumDef>;
 template class taPtrList<void>;
 template class taPtrList<MemberDef>;
@@ -49,6 +47,8 @@ template class taPtrList<TypeDef>;
 template class taPtrList<IDataLinkClient>;
 
 #ifndef NO_TA_BASE
+template class taFixedArray<int>;
+  const int int_FixedArray::blank = 0;
 template class taPtrList<taBase>;
 template class taPtrList_base<taBase>;
 template class taList<taBase>;

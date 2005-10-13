@@ -53,6 +53,19 @@
 #endif
 
 
+String String_PArray::AsString(const char* sep_) const {
+  // more efficient to know the length, so we don't resize...
+  String sep(sep_);
+  int xlen = MAX(0, (size - 1) * sep.length()); // for seps
+  int i;
+  for (i=0; i < size; ++i) xlen += FastEl(i).length();
+  String rval(0, xlen, '\0');
+  for (i = 0; i < size; ++i) {
+    rval.cat(FastEl(i));
+    rval.cat(sep);
+  }
+  return rval;
+}
 
 int String_PArray::FindContains(const char* op, int start) const {
   int i;
@@ -537,16 +550,7 @@ void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
 }
 
 String taMisc::StrArrayToChar(const String_PArray& sa) {
-  // more efficient to know the length, so we don't resize...
-  uint xlen = sa.size; // for seps
-  int i;
-  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();
-  String tmp(0, xlen, '\0');
-  for (i = 0; i < sa.size; i++) {
-    tmp += sa.FastEl(i);
-    tmp += " ";
-  }
-  return tmp;
+  return sa.AsString(" ");
 }
 
 int taMisc::skip_white(istream& strm, bool peek) {

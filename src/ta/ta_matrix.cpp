@@ -21,17 +21,33 @@
 /////////////////////////
 
 taMatrix_impl::taMatrix_impl()
-:m_ref(0)
 {
+  size = 0;
+  alloc_size = 0;
+  m_ref = 0;
 }
  
 taMatrix_impl::~taMatrix_impl() {
 //TODO: should print warning in debug mode if ref!=0
 }
   
+void taMatrix_impl::Alloc_(int sz) {
+//TODO: should probably just alloc exact size, or a multiple of frame size
+  if (alloc_size < sz)	{
+    // start w/ 4, double up to 64, then 1.5x thereafter
+    if (alloc_size == 0) alloc_size = MAX(4, sz);
+    else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
+    else alloc_size =  MAX(((alloc_size * 3) / 2) , sz);
+    char* nw = (char*)MakeArray_(alloc_size);
+    for (int i = 0; i < size; ++i) {
+      El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
+    }
+    SetArray_(nw);
+  }
+}
+
 void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
   setGeom(cp.m_geom);
-  inherited::Copy_(cp);
 }
 
 int taMatrix_impl::ElIndex(const int indices[]) const {
@@ -62,14 +78,22 @@ int taMatrix_impl::ElIndex(int i, int j, int k, int l) const {
   return rval;
 }
  
-bool taMatrix_impl::Equal_(const taFixedArray_impl& src) const {
-  const taMatrix_impl* msrc = dynamic_cast<const taMatrix_impl*>(&src);
-  if (msrc == NULL) return false;
-  else return Equal_(*msrc);
+void taMatrix_impl::EnforceSize(int new_size) {
+  if (new_size > size) {
+    Alloc_(new_size);
+    const void* blank = El_GetBlank_();
+    for (int i = size; i < new_size; ++i) {
+      El_Copy_(FastEl_(i), blank);
+    }
+  } else if (new_size < size) {
+//    ReclaimOrphans_(new_size, size - 1);
+  }
+  size = new_size;	
 }
 
-bool taMatrix_impl::Equal_(const taMatrix_impl& src) const {
-  return ((m_geom == src.m_geom) && inherited::Equal_(src));
+const void* taMatrix_impl::SafeEl_(int i) const {
+  if (InRange(i)) return ((taMatrix_impl*)this)->FastEl_(i); 
+  else            return El_GetErr_();
 }
 
 void taMatrix_impl::setGeom_(int dims_, const int geom_[]) {
