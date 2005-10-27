@@ -34,9 +34,8 @@ ta_TA_type.h ta_TA_inst.h:
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
 maketa_CPPFLAGS =\
-	-DTA_NO_GUI \
-	-DNO_TA_BASE \
-	-I@srcdir@/../ta
+	-I@srcdir@/../ta \
+	-DMAKING_MAKETA
 
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
 
