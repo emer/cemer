@@ -550,7 +550,17 @@ void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
 }
 
 String taMisc::StrArrayToChar(const String_PArray& sa) {
-  return sa.AsString(" ");
+// more efficient to know the length, so we don't resize...  
+//uint xlen = sa.size; // for seps  
+//int i;  
+//for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
+//String tmp(0, xlen, '\0');  
+//for (i = 0; i < sa.size; i++) {  
+//tmp += sa.FastEl(i);  
+//tmp += " ";  
+//}  
+//return tmp; 
+return sa.AsString("");
 }
 
 int taMisc::skip_white(istream& strm, bool peek) {
