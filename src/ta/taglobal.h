@@ -18,6 +18,8 @@
 
 // NOTE: This file is *not* in the make dependency list for other files.
 
+#include <config.h>
+
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H
 
