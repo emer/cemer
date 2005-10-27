@@ -19,6 +19,7 @@
 #ifndef TA_MATRIX_H
 #define TA_MATRIX_H
 
+#include <assert.h>
 #include "ta_stdef.h"
 
 #include "ta_list.h"
