@@ -17,6 +17,10 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
 
+AH_BOTTOM([/* Make sure maketa doesn't get gui stuff */
+#include <custom.h>
+])
+
 # Custom: check results of config.status for OS type
 PDP_DETERMINE_OSTYPE
 
@@ -24,6 +28,7 @@ PDP_DETERMINE_OSTYPE
 AC_DISABLE_SHARED
 
 # Set default language  C++
+
 AC_LANG_CPLUSPLUS
 
 AC_PROG_LIBTOOL
@@ -221,3 +226,5 @@ AC_OUTPUT
 
 # This will be used to create our custom end-of-configure message
 # AC_CONFIG_COMMANDS
+
+AC_CONFIG_COMMANDS_POST([echo Configure finished successfully. If you encounter problems during make, run `./configure --help' and try to solve the problem that way. For further assistance send mail to pdp-discuss@psych-srv3.Colorado.EDU])
