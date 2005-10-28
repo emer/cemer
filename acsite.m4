@@ -10,12 +10,17 @@ AC_MSG_CHECKING([results of config.guess])
 case "${build_os}" in
 	*linux*)
 		AC_SUBST([PDP_PLATFORM],[LINUX])
+		AC_DEFINE([LINUX],[1],[When on linux])
 	;;
 	*darwin*)
 		AC_SUBST([PDP_PLATFORM],[DARWIN])
+		AC_DEFINE([DARWIN],[1],[When on darwin])
+		AC_DEFINE([LINUX],[1],[When on darwin])
 	;;
 	*cygwin*)
 		AC_SUBST([PDP_PLATFORM],[CYGWIN])
+		AC_DEFINE([CYGWIN],[1],[When on cygwin])
+		AC_DEFINE([LINUX],[1],[When on cygwin])
 	;;
 	*)
 		AC_MSG_ERROR([PDP++ supports Linux, Darwin, and Windows],[1])
@@ -230,13 +235,14 @@ case "${host}" in
 esac
 
 if test x"$QT_IS_MT" = "xyes" ; then
-        QT_CXXFLAGS="$QT_CXXFLAGS -D_REENTRANT -DQT_THREAD_SUPPORT"
+	AC_DEFINE([_REENTRANT],[1],[Set when qt is multi-threaded])
+	AC_DEFINE([QT_THREAD_SUPPORT],[1],[Build with Qt thread support])
 fi
 
 QT_LDADD="-L$QTDIR/lib $QT_LIBS"
 
 if test x$QT_IS_STATIC = xyes ; then
-    AC_CHECK_LIB(Xft, XftFontOpen, QT_LDADD="$QT_LDADD -lXft")
+    AC_CHECK_LIB([Xft],[XftFontOpen],[LIBS="$LIBS -lXft"])
 fi
 
 AC_MSG_CHECKING([QT_CXXFLAGS])
@@ -432,7 +438,7 @@ AC_LANG_CASE([C], [CC="$acx_mpi_save_CC"],
         [C++], [CXX="$acx_mpi_save_CXX"],
         [Fortran 77], [F77="$acx_mpi_save_F77"])
 
-AC_SUBST(MPILIBS)
+LIBS="$LIBS $MPILIBS"
 
 # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 if test x = x"$MPILIBS"; then
@@ -645,14 +651,10 @@ if test "x$acx_pthread_ok" = xyes; then
         AC_MSG_CHECKING([if more special flags are required for pthreads])
         flag=no
         case "${host_cpu}-${host_os}" in
-            *-aix* | *-freebsd* | *-darwin*) flag="-D_THREAD_SAFE";;
-            *solaris* | *-osf* | *-hpux*) flag="-D_REENTRANT";;
+            *-aix* | *-freebsd* | *-darwin*) flag="-D_THREAD_SAFE";AC_DEFINE([_THREAD_SAFE],[1],[Special flags for pthreads on aix, freebsd, darwin]);;
+            *solaris* | *-osf* | *-hpux*) flag="-D_REENTRANT"; AC_DEFINE([_REENTRANT],[1],[Special flags for pthreads on solaris, osf, hpux]);;
         esac
         AC_MSG_RESULT(${flag})
-        if test "x$flag" != xno; then
-            PTHREAD_CFLAGS="$flag $PTHREAD_CFLAGS"
-        fi
-
         LIBS="$save_LIBS"
         CFLAGS="$save_CFLAGS"
 
