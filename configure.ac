@@ -31,6 +31,9 @@ AC_DISABLE_SHARED
 
 AC_LANG_CPLUSPLUS
 
+# Next two lines are a hack to get rid of those stupid fortran checks
+m4_undefine([AC_PROG_F77])
+m4_defun([AC_PROG_F77],[])
 AC_PROG_LIBTOOL
 
 #                                                     programs
@@ -113,6 +116,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found.])])
+ 
 #                                                  gui enabled
 #*************************************************************
 #             Things to do if --enable-gui is set
@@ -148,11 +152,13 @@ if test $gui = true; then
             [Note from Brian: This switch is here, i'm not quite sure why. Used in qglobal.h.])
   # Tells top-level makefile.am to recurse through src/taiqtso
   AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
-  # These libraries are substitued in the makefiles.
+  # These libraries are substituted in the makefiles.
   LIBS="$LIBS $X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS $QT_LDADD"
   AC_SUBST([QT_CXXFLAGS])
   AC_SUBST([QT_GUILINK])
   AC_SUBST([X_CFLAGS])
+else
+  AC_DEFINE([TA_NO_GUI],[1],[Set when building nogui])
 fi
 #                                                  mpi enabled
 #*************************************************************
@@ -190,10 +196,10 @@ AC_ARG_ENABLE([debug],
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 
 if $debug = true; then
-  AC_DEFINE([YYDEBUG],[1],[debugging])
-  AC_DEFINE([DEBUG],[1],[debugging])
-  AC_DEFINE([TA_PROFILE],[1],[debugging])
-  AC_DEFINE([RETSIGTYPE],[void],[debugging])
+  AC_DEFINE([YYDEBUG],[1],[Used when debugging])
+  AC_DEFINE([DEBUG],[1],[Used when debugging])
+  AC_DEFINE([TA_PROFILE],[1],[Used when debugging])
+  AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
 fi
 
 #                                                  @variables@
@@ -207,6 +213,7 @@ AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
+
 #                                                       output
 #*************************************************************
 #                 Creation of the build system
@@ -224,7 +231,6 @@ AC_CONFIG_FILES([Makefile
                 src/bp/Makefile])
 AC_OUTPUT
 
-# This will be used to create our custom end-of-configure message
-# AC_CONFIG_COMMANDS
-
+# This is a hack to get rid of -DHAVE_CONFIG_H
+AC_CONFIG_COMMANDS_PRE([DEFS=])
 AC_CONFIG_COMMANDS_POST([echo Configure finished successfully. If you encounter problems during make, run `./configure --help' and try to solve the problem that way. For further assistance send mail to pdp-discuss@psych-srv3.Colorado.EDU])
