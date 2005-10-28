@@ -640,8 +640,10 @@ bool SchedProcess::StopCheck() {
   return false;
 }
 
+
 bool SchedProcess::HandleEvents() {
-#ifdef DMEM_COMPILE
+#ifdef TA_GUI
+  #ifdef DMEM_COMPILE
   if (taMisc::dmem_nprocs > 1) {
     if (taMisc::dmem_proc == 0) { // process the gui stuff
       // following is pdpMisc::WaitProc minus the DMem_WaitProc call!
@@ -663,10 +665,10 @@ bool SchedProcess::HandleEvents() {
       pdpMisc::DMem_SubEventLoop(); // I'm a sub-proc: get commands until stop!
     }
     return 0;
-  }
-#endif
+ }
+  #endif
 
-#ifdef TA_GUI
+
   if(!taMisc::gui_active)
     return false;
 
