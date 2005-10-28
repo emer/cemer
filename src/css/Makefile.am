@@ -79,7 +79,8 @@ css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@
 libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-I../src/taiqtso \
 	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2
+	-I/usr/include/freetype2 \
+	-I${QTDIR}/include
 endif
 
 clean-local:
