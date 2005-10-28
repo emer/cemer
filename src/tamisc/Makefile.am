@@ -1,8 +1,8 @@
-PROJNAME = tamisc
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = tamisc
+DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -80,6 +80,8 @@ HEADS =\
 	colorscale.h \
 	datatable.h \
 	datagraph.h \
+	-I@srcdir@/../taiqtso \
+	-I/usr/include/freetype2 \
 	fun_lookup.h \
 	$(HEADS_GUI)
 
@@ -98,93 +100,21 @@ SRCS =\
 	tamisc_ti.cpp
 
 include $(top_srcdir)/Maketa.am
-MAKETA_FLAGS += $(libtamisc@PDP_SUFFIX@_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libtamisc@PDP_SUFFIX@.la
 libtamisc@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
-libtamisc@PDP_SUFFIX@_la_LIBADD = @MPILIBS@ @PTHREAD_LIBS@
 libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
-	-I@srcdir@/../css
-libtamisc@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
-libtamisc@PDP_SUFFIX@_la_CXXFLAGS = @PTHREAD_CFLAGS@ @X_CFLAGS@ @QT_CXXFLAGS@
-
-BUILT_SOURCES = tamisc_TA_type.h tamisc_TA_inst.h tamisc_TA.cpp
-
-#**************************************************
-#
-#                      GUI
-#
-#**************************************************
-if TA_GUI
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS +=\
+	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
+	-I${QTDIR}/include
 
-endif
-#**************************************************
-#
-#                      NOGUI
-#
-#**************************************************
-if NO_TA_GUI
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE
-
-libtamisc@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-libtamisc@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
-
-endif
+BUILT_SOURCES = tamisc_TA_type.h tamisc_TA_inst.h tamisc_TA.cpp
 
 clean-local:
 	-rm *TA*
 	-rm *moc*
-	-rm *~
+	-rm *~*
+	-rm *\#*

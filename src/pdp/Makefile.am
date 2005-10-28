@@ -1,8 +1,8 @@
-PROJNAME = pdp
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = pdp
+DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -92,32 +92,24 @@ SRCS =\
 	pdp_ti.cpp
 
 include $(top_srcdir)/Maketa.am
-MAKETA_FLAGS += $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
-libpdp@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc
-libpdp@PDP_SUFFIX@_la_CXXFLAGS = @X_CFLAGS@ @QT_CXXFLAGS@ @PTHREAD_CFLAGS@ 
-libpdp@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@ @MPILIBS@
-
+	-I../src/taiqtso \
+	-I/usr/include/freetype2
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
 pdp@PDP_SUFFIX@___SOURCES = main.cpp
 pdp@PDP_SUFFIX@___LDADD =\
 	libpdp@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
-	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la \
-	@PTHREAD_LIBS@
-pdp@PDP_SUFFIX@___LDFLAGS = $(libpdp@PDP_SUFFIX@_la_LDFLAGS)
+	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
 pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
-pdp@PDP_SUFFIX@___CFLAGS = $(libpdp@PDP_SUFFIX@_la_CFLAGS)
-pdp@PDP_SUFFIX@___CXXFLAGS = $(libpdp@PDP_SUFFIX@_la_CXXFLAGS)
-
 BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
 
 #**************************************************
@@ -126,76 +118,11 @@ BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
 #
 #**************************************************
 if TA_GUI
-
 pdp@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-I../src/taiqtso \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
-
-endif
-#**************************************************
-#
-#                      NOGUI
-#
-#**************************************************
-if NO_TA_GUI
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1
-
-libpdp@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-libpdp@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
-
 endif
 
 clean-local:
-	-rm *TA*
+	-rm *TA_*
 	-rm *moc*
 	-rm *~
+	-rm *\#*

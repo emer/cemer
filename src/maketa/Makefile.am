@@ -1,4 +1,5 @@
 PROJNAME = maketa
+DEFS=
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
@@ -33,43 +34,6 @@ ta_TA_type.h ta_TA_inst.h:
 
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
-maketa_CPPFLAGS =\
-	-I@srcdir@/../ta \
-	-DMAKING_MAKETA
+maketa_CPPFLAGS = -I@srcdir@/../ta -DMAKING_MAKETA
 
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
-
-#**************************************************
-#
-#                     LINUX
-#
-#**************************************************
-if LINUX
-
-maketa_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                     DARWIN
-#
-#**************************************************
-if DARWIN
-
-maketa_CPPFLAGS += -DLINUX -DDARWIN
-
-endif
-#**************************************************
-#
-#                     DEBUG
-#
-#**************************************************
-if DEBUG
-
-maketa_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1
-
-endif

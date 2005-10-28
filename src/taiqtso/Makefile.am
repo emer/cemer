@@ -1,8 +1,8 @@
-PROJNAME = taiqtso
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = taiqtso
+DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -58,68 +58,14 @@ include $(top_srcdir)/Moc.am
 lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
-	-I@srcdir@/../ta \
-	@X_CFLAGS@ \
-	-I/usr/include/freetype2 \
-	@QT_CXXFLAGS@ \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
-libtaiqtso@PDP_SUFFIX@_la_CXXFLAGS = @PTHREAD_CFLAGS@
-libtaiqtso@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@ @MPILIBS@
-libtaiqtso@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
+        -I@srcdir@/../ta \
+        @X_CFLAGS@ \
+        -I/usr/include/freetype2 \
+	 @QT_CXXFLAGS@ \
+	-I${QTDIR}/include
 
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
 clean-local:
 	-rm *TA*
 	-rm *moc*
-	-RM *~
+	-rm *~*
+	-rm *\#*

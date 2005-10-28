@@ -1,10 +1,10 @@
-PROJNAME = css
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = css
 srcdir = @srcdir@
 VPATH = @srcdir@
+DEFS=
 
 if TA_GUI
 
@@ -59,18 +59,13 @@ SUFFIXES = .moc.cpp
 lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 libcss@PDP_SUFFIX@_la_CPPFLAGS = -I$(srcdir)/../ta
-libcss@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
-libcss@PDP_SUFFIX@_la_CXXFLAGS = @X_CFLAGS@ @QT_CXXFLAGS@
-libcss@PDP_SUFFIX@_la_LIBADD = @MPILIBS@
 
 bin_PROGRAMS = css@PDP_SUFFIX@++
 css@PDP_SUFFIX@___SOURCES = main.cpp
 css@PDP_SUFFIX@___LDADD =\
 	libcss@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la
-css@PDP_SUFFIX@___LDFLAGS = $(libcss@PDP_SUFFIX@_la_LDFLAGS)
 css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
-css@PDP_SUFFIX@___CXXFLAGS = $(libcss@PDP_SUFFIX@_la_CXXFLAGS)
 
 #**************************************************
 #
@@ -84,69 +79,11 @@ css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@
 libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
 	-I../src/taiqtso \
 	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
-
-endif
-#**************************************************
-#
-#                      NOGUI
-#
-#**************************************************
-if NO_TA_GUI
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
-
+	-I/usr/include/freetype2
 endif
 
 clean-local:
-	-rm *TA*
+	-rm *TA_*
 	-rm *moc*
 	-rm *~
+	-rm *\#*

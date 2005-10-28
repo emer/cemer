@@ -1,8 +1,8 @@
-PROJNAME = ta
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = ta
+DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -127,93 +127,18 @@ SRCS =\
 	ta_ti.cpp
 
 include $(top_srcdir)/Maketa.am
-MAKETA_FLAGS += $(libta@PDP_SUFFIX@_la_CPPFLAGS)
 include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
-libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css
-libta@PDP_SUFFIX@_la_CXXFLAGS = @PTHREAD_CFLAGS@ @QT_CXXFLAGS@ @X_CFLAGS@
-libta@PDP_SUFFIX@_la_LIBADD = @PTHREAD_LIBS@
-libta@PDP_SUFFIX@_la_LDFLAGS = @X_LIBS@
-
-BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
-
-#**************************************************
-#
-#                      GUI
-#
-#**************************************************
-if TA_GUI
-
-libta@PDP_SUFFIX@_la_CPPFLAGS +=\
+libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR
-
-endif
-#**************************************************
-#
-#                      NOGUI
-#
-#**************************************************
-if NO_TA_GUI
-
-libta@PDP_SUFFIX@_la_CPPFLAGS += -DTA_NO_GUI
-
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-libta@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1 \
-	-DRETSIGTYPE=void
-
-libta@PDP_SUFFIX@_la_CXXFLAGS += -Wno-non-virtual-dtor
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-libta@PDP_SUFFIX@_la_CPPFLAGS += -DDMEM_COMPILE
-
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-libta@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-libta@PDP_SUFFIX@_la_CPPFLAGS += -DLINUX -DDARWIN
-
-endif
+	-I${QTDIR}/include
+BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
 
 clean-local:
 	-rm *TA*
 	-rm *moc*
-	-rm *~
+	-rm *~*
+	-rm *\#*

@@ -1,8 +1,8 @@
-PROJNAME = bp
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
+PROJNAME = bp
+DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -33,16 +33,12 @@ bp@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
-	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la \
-	@PTHREAD_LIBS@
-bp@PDP_SUFFIX@___LDFLAGS = @X_LIBS@
-bp@PDP_SUFFIX@___CXXFLAGS = @PTHREAD_CFLAGS@ @X_CFLAGS@ @QT_CXXFLAGS@
+	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
 bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css
-
 BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 
 #**************************************************
@@ -51,76 +47,11 @@ BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 #
 #**************************************************
 if TA_GUI
-
 bp@PDP_SUFFIX@___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-
-bp@PDP_SUFFIX@___CPPFLAGS +=\
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-DTA_GUI \
-	-DTA_USE_QT \
-	-DTA_USE_INVENTOR \
-	-DQT_SHARED
-
-endif
-#**************************************************
-#
-#                      NOGUI
-#
-#**************************************************
-if NO_TA_GUI
-
-bp@PDP_SUFFIX@___CPPFLAGS += -DTA_NO_GUI
-
-endif
-#**************************************************
-#
-#                      DEBUG
-#
-#**************************************************
-if DEBUG
-
-bp@PDP_SUFFIX@___CPPFLAGS +=\
-	-DYYDEBUG \
-	-DDEBUG \
-	-DTA_PROFILE \
-	-DHAVE_POSIX_SIGNALS=1
-
-bp@PDP_SUFFIX@___CXXFLAGS += -Wno-non-virtual-dtor
-
-endif
-#**************************************************
-#
-#                      MPI
-#
-#**************************************************
-if MPI
-
-bp@PDP_SUFFIX@___CPPFLAGS += -DDMEM_COMPILE
-
-endif
-#**************************************************
-#
-#                      LINUX
-#
-#**************************************************
-if LINUX
-
-bp@PDP_SUFFIX@___CPPFLAGS += -DLINUX
-
-endif
-#**************************************************
-#
-#                      DARWIN
-#
-#**************************************************
-if DARWIN
-
-bp@PDP_SUFFIX@___CPPFLAGS += -DLINUX -DDARWIN
-
 endif
 
 clean-local:
-	-rm *TA*
+	-rm *TA_*
 	-rm *moc*
 	-rm *~
+	-rm *\#*
