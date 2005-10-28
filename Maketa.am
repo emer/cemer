@@ -6,17 +6,17 @@
 MAKETA = ../maketa/./maketa
 
 $(PROJNAME)_TA_type.h:  $(PROJNAME)_TA_type.hx
-	if [ ! -f $(PROJNAME)_TA_type.hx ];\
+	if [ ! -e $(PROJNAME)_TA_type.hx ];\
 	then $(MAKE) $(PROJNAME)_TA_type.hx;\
 	else (cmp -s $< $@) || (cp $< $@);fi
 
 $(PROJNAME)_TA_inst.h:  $(PROJNAME)_TA_inst.hx
-	if [ ! -f $(PROJNAME)_TA_inst.hx ];\
+	if [ ! -e $(PROJNAME)_TA_inst.hx ];\
 	then $(MAKE) $(PROJNAME)_TA_inst.hx;\
 	else (cmp -s $< $@) || (cp $< $@);fi
 
 $(PROJNAME)_TA.cpp:  $(PROJNAME)_TA.ccx
-	if [ ! -f $(PROJNAME)_TA.ccx ];\
+	if [ ! -e $(PROJNAME)_TA.ccx ];\
 	then $(MAKE) $(PROJNAME)_TA.ccx;\
 	else (cmp -s $< $@) || (cp $< $@);fi
 
@@ -33,14 +33,15 @@ $(TAHEADS):
 	$(MAKE) force_ta
 
 force_ta:
-	if [ ! -f $(PROJNAME)_TA_type.h ];\
-	then touch -t 196912311700.00 $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h;fi
+	if [ ! -e $(PROJNAME)_TA_type.h ];\
+	then touch -t 200012311700.00 $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h;fi
 	$(MAKETA) $(MAKETA_FLAGS) $(PROJNAME) $(TAHEADS)
 
 MAKETA_FLAGS =\
 	-hx \
 	-css \
 	-cpp=$(cppC) \
+	-I@abs_srcdir@ \
 	-I@abs_srcdir@/../ta/ios-g++-3.1 \
 	-I@abs_srcdir@/../pdp \
 	-I@abs_srcdir@/../ta \
@@ -62,4 +63,12 @@ if DARWIN
 cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
 MAKETA_FLAGS +=\
 	"-I/usr/include/gcc/darwin/3.3"
+endif
+
+if TA_GUI
+MAKETA_FLAGS += -DTA_GUI -DTA_USE_INVENTOR
+endif
+
+if NO_TA_GUI
+MAKETA_FLAGS += -DTA_NO_GUI
 endif
