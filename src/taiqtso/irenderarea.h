@@ -15,6 +15,8 @@
 
 // irenderarea.h -- Qt and SoRenderArea compatability classes
 
+#include "config.h"
+
 #ifndef IRENDERAREA_H
 #define IRENDERAREA_H
 #ifdef TA_USE_INVENTOR
