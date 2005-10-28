@@ -28,3 +28,24 @@ dist-hook:
 
 linecount:
 	@ wc --lines `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` | grep total
+
+clean-local:
+	-rm *TA_*
+	-rm *moc*
+	-rm *~*
+	-rm *\#*
+
+
+# Use this when building using distcc to avoid race conditions to run all maketa's and then build.
+# They are dangerous because quite often two instances of maketa will run and one will get cut off,
+# leaving a partially completed *TA* file.
+# ./configure && make cluster
+cluster:
+	make clean
+	cd src/maketa && make
+	cd src/ta && make force_ta
+	cd src/tamisc && make force_ta
+	cd src/pdp && make force_ta
+	cd src/leabra && make force_ta
+	cd src/bp && make force_ta
+	make -j54
