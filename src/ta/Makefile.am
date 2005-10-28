@@ -135,10 +135,7 @@ libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
-BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h ta_TA.cpp
+BUILT_SOURCES = ta_TA_type.h
 
 clean-local:
-	-rm *TA*
 	-rm *moc*
-	-rm *~*
-	-rm *\#*

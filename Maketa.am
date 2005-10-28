@@ -5,37 +5,31 @@
 
 MAKETA = ../maketa/./maketa
 
-$(PROJNAME)_TA_type.h:  $(PROJNAME)_TA_type.hx
-	if [ ! -e $(PROJNAME)_TA_type.hx ];\
-	then $(MAKE) $(PROJNAME)_TA_type.hx;\
-	else (cmp -s $< $@) || (cp $< $@);fi
+${PROJNAME}_TA_type.h:	${PROJNAME}_TA_type.hx
+	if  [ -e ${PROJNAME}_TA_type.h -a -e ${PROJNAME}_TA_inst.h -a -e ${PROJNAME}_TA.cpp ];\
+	then (cmp -s ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h) || (cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h);\
+		(cmp -s ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h) || (cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h);\
+		(cmp -s ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp) || (cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp);\
+	else ${MAKE} ${PROJNAME}_TA.ccx;fi
 
-$(PROJNAME)_TA_inst.h:  $(PROJNAME)_TA_inst.hx
-	if [ ! -e $(PROJNAME)_TA_inst.hx ];\
-	then $(MAKE) $(PROJNAME)_TA_inst.hx;\
-	else (cmp -s $< $@) || (cp $< $@);fi
+${PROJNAME}_TA_type.hx:	${TAHEADS}
+	if [ ! -z ../maketa/./maketa ];\
+	then cd ../maketa;${MAKE};fi
+	if  [ ! -e ${PROJNAME}_TA_type.h -o ! -e ${PROJNAME}_TA_inst.h -o ! -e ${PROJNAME}_TA.cpp ];\
+	then touch -t 199912311700.00 ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h ${PROJNAME}_TA.cpp;fi
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
-$(PROJNAME)_TA.cpp:  $(PROJNAME)_TA.ccx
-	if [ ! -e $(PROJNAME)_TA.ccx ];\
-	then $(MAKE) $(PROJNAME)_TA.ccx;\
-	else (cmp -s $< $@) || (cp $< $@);fi
+${TAHEADS}:	
 
-$(PROJNAME)_TA_type.hx: $(TAHEADS)
-	$(MAKE) force_ta
+force_ta:	${PROJNAME}_TA_type.hx
 
-$(PROJNAME)_TA_inst.hx: $(TAHEADS)
-	$(MAKE) force_ta
-
-$(PROJNAME)_TA.ccx: $(TAHEADS)
-	$(MAKE) force_ta
-
-$(TAHEADS):
-	$(MAKE) force_ta
-
-force_ta:
-	if [ ! -e $(PROJNAME)_TA_type.h ];\
-	then touch -t 200012311700.00 $(PROJNAME)_TA_type.h $(PROJNAME)_TA_inst.h;fi
-	$(MAKETA) $(MAKETA_FLAGS) $(PROJNAME) $(TAHEADS)
+CLEANFILES =\
+	${PROJNAME}_TA_type.h \
+	${PROJNAME}_TA_inst.h \
+	${PROJNAME}_TA.cpp \
+	${PROJNAME}_TA_type.hx \
+	${PROJNAME}_TA_inst.hx \
+	${PROJNAME}_TA.cxx
 
 MAKETA_FLAGS =\
 	-hx \
@@ -54,15 +48,12 @@ MAKETA_FLAGS =\
 
 if LINUX
 cppC = "/lib/cpp"
-MAKETA_FLAGS +=\
-	"-I/usr/include/linux \
-	-D__i386__"
+MAKETA_FLAGS += "-I/usr/include/linux -D__i386__"
 endif
 
 if DARWIN
 cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
-MAKETA_FLAGS +=\
-	"-I/usr/include/gcc/darwin/3.3"
+MAKETA_FLAGS += "-I/usr/include/gcc/darwin/3.3"
 endif
 
 if TA_GUI

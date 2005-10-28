@@ -37,6 +37,7 @@ SRCS_GUI =\
 
 endif
 
+ta_TA_type.h tamisc_TA_type.h:
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
@@ -110,8 +111,7 @@ pdp@PDP_SUFFIX@___LDADD =\
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
 pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
-BUILT_SOURCES = pdp_TA_type.h pdp_TA_inst.h pdp_TA.cpp
-
+BUILT_SOURCES = pdp_TA_type.h
 #**************************************************
 #
 #                      GUI
@@ -122,7 +122,4 @@ pdp@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@
 endif
 
 clean-local:
-	-rm *TA_*
 	-rm *moc*
-	-rm *~
-	-rm *\#*

@@ -51,15 +51,15 @@ HEADS =\
 	css_misc_funs.h \
 	$(HEADS_GUI)
 
-SUFFIXES = .moc.cpp
-
-.h.moc.cpp:
-	$(MOC) -o $@ $<
+include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
-libcss@PDP_SUFFIX@_la_CPPFLAGS = -I$(srcdir)/../ta
-
+libcss@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I$(srcdir)/../ta
+	-I../src/taiqtso \
+	-I/usr/include/freetype2 \
+	-I${QTDIR}/include
 bin_PROGRAMS = css@PDP_SUFFIX@++
 css@PDP_SUFFIX@___SOURCES = main.cpp
 css@PDP_SUFFIX@___LDADD =\
@@ -73,18 +73,8 @@ css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
 #
 #**************************************************
 if TA_GUI
-
 css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-
-libcss@PDP_SUFFIX@_la_CPPFLAGS +=\
-	-I../src/taiqtso \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
 endif
 
 clean-local:
-	-rm *TA_*
 	-rm *moc*
-	-rm *~
-	-rm *\#*

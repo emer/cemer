@@ -11,12 +11,10 @@ TAHEADS =\
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
 	@abs_srcdir@/leabra.h
-
 HEADS =\
 	leabra_TA_type.h \
 	leabra_TA_inst.h \
 	leabra.h
-
 SRCS =\
 	leabra.cpp \
 	leabra_TA.cpp \
@@ -38,22 +36,12 @@ leabra@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2
-
-BUILT_SOURCES = leabra_TA_type.h leabra_TA_inst.h leabra_TA.cpp
-
+BUILT_SOURCES = leabra_TA_type.h
 #**************************************************
 #
 #                      GUI
 #
 #**************************************************
 if TA_GUI
-
-leabra@PDP_SUFFIX@___LDADD +=\
-	$(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
+leabra@PDP_SUFFIX@___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 endif
-
-clean-local:
-	-rm *TA_*
-	-rm *moc*
-	-rm *~
-	-rm *\#*

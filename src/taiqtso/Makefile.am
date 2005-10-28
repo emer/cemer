@@ -65,7 +65,4 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I${QTDIR}/include
 
 clean-local:
-	-rm *TA*
 	-rm *moc*
-	-rm *~*
-	-rm *\#*

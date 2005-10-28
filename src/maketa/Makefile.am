@@ -37,3 +37,5 @@ maketa_SOURCES = $(HEADS) $(SRCS)
 maketa_CPPFLAGS = -I@srcdir@/../ta -DMAKING_MAKETA
 
 BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
+
+

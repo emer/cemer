@@ -39,8 +39,7 @@ bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css
-BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
-
+BUILT_SOURCES = bp_TA_type.h
 #**************************************************
 #
 #                      GUI
@@ -49,9 +48,3 @@ BUILT_SOURCES = bp_TA_type.h bp_TA_inst.h bp_TA.cpp
 if TA_GUI
 bp@PDP_SUFFIX@___LDADD += $(abs_top_builddir)/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 endif
-
-clean-local:
-	-rm *TA_*
-	-rm *moc*
-	-rm *~
-	-rm *\#*
