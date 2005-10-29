@@ -25,7 +25,7 @@ AH_BOTTOM([/* Make sure maketa doesn't get gui stuff */
 PDP_DETERMINE_OSTYPE
 
 # Disable shared libraries
-AC_DISABLE_SHARED
+#AC_DISABLE_SHARED
 
 # Set default language  C++
 

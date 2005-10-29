@@ -21,20 +21,6 @@
 #include "ta_dump.h"
 #include "ta_defaults.h"
 #include "ta_script.h"
-#include "ta_qt.h"
-#include "ta_qtdata_def.h"
-#include "ta_qtdata.h"
-#include "ta_qtdialog.h"
-#include "ta_qttype_def.h"
-#include "ta_qttype.h"
-#include "ta_qtclipdata.h"
-#include "ta_qtbrowse_def.h"
-#include "ta_qtviewer.h"
-#include "ta_qtbrowse.h"
-#include "ta_classbrowse.h"
-#include "ta_qtgroup.h"
-#include "ta_seledit.h"
-#include "igeometry.h"
 #include "ta_TA_type.h"
 #include "ta_TA_inst.h"
 
@@ -61,8 +47,8 @@ TypeDef TA_class("class", 1, 0, 0, 1, 1, 0);
 TypeDef TA_template("template", 1, 0, 0, 1, 1, 0);
 TypeDef TA_templ_inst("templ_inst", 1, 0, 0, 1, 1, 0);
 TypeDef TA_ta_array("ta_array", 1, 0, 0, 1, 1, 0);
-TypeDef TA_taBase("taBase", " Base type for all type-aware classes Base type for all type-aware classes ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taBase), (void**)&TAI_taBase, 0, 0, 0,1);
+TypeDef TA_taBase("taBase", " Base type for all type-aware classes Base type for all type-aware classes", 
+	"", "NO_UPDATE_AFTER", "", sizeof(taBase), (void**)&TAI_taBase, 0, 0, 0,1);
 TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taString("taString", " StrRep - internal String representation Note: this structure is allocated via malloc(), so there must be no constructor/destructor.  reference counted string", 
@@ -102,7 +88,7 @@ TypeDef TA_const_char_ptr("const_char_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_istream_ref("istream_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_char_ptr("char_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_iostream("iostream", "", 
-	"", "MULT_INHERIT ", "", sizeof(iostream), (void**)0, 1, 0, 0,1);
+	"", "MULT_INHERIT", "", sizeof(iostream), (void**)0, 1, 0, 0,1);
 TypeDef TA_ifstream("ifstream", "", 
 	"", "", "", sizeof(ifstream), (void**)0, 1, 0, 0,1);
 TypeDef TA_ofstream("ofstream", "", 
@@ -122,15 +108,13 @@ TypeDef TA_const_taString("const_taString", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taString_ref("const_taString_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taStrRep_ptr("taStrRep_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_unsigned_long("unsigned_long", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_QString_ref("const_QString_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taString_ref("taString_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_unsigned_int("unsigned_int", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taString_ref("taString_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_char_ref("char_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_QFont_ref("const_QFont_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iFont("iFont", "   ", 
+TypeDef TA_iFont("iFont", " ", 
 	"", "", "", sizeof(iFont), (void**)0, 0, 0, 0,1);
 TypeDef TA_taDataLink("taDataLink", "  interface for taiDataLink and descendants", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS VIRT_BASE ", "", sizeof(taDataLink), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERSVIRT_BASE", "", sizeof(taDataLink), (void**)0, 0, 0, 0,1);
 TypeDef TA_iFont_ref("iFont_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_iFont("const_iFont", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPtrList_impl("taPtrList_impl", " implementation of the pointer list class", 
@@ -155,18 +139,18 @@ TypeDef TA_int_ref("int_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taDataLink_ptr_ptr("taDataLink_ptr_ptr", 1, 2, 0, 0, 1, 0);
 TypeDef TA_taListItr_ref("taListItr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taFixedArray_impl("taFixedArray_impl", " basic subtype for FixedArray, no tokens of which are ever kept", 
-	"NO_INSTANCE ", "VIRT_BASE NO_INSTANCE ", "", sizeof(taFixedArray_impl), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "VIRT_BASENO_INSTANCE", "", sizeof(taFixedArray_impl), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taFixedArray_impl("const_taFixedArray_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taFixedArray("taFixedArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taFixedArray_impl_ref("const_taFixedArray_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taFixedArray_int_("taFixedArray_int_", " rudimentary array, primarily intended as an OO replacement for C arrays", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(taFixedArray<int>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(taFixedArray<int>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taFixedArray("const_taFixedArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_int("const_int", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taFixedArray_ref("const_taFixedArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_int_ref("const_int_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_FixedArray("int_FixedArray", "", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(int_FixedArray), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(int_FixedArray), (void**)0, 0, 0, 0,1);
 TypeDef TA_int_FixedArray_ref("int_FixedArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_int_FixedArray("const_int_FixedArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_impl("taArray_impl", " Base Type for Arrays, no tokens of which are ever kept", 
@@ -197,8 +181,7 @@ TypeDef TA_taPtrList_base("taPtrList_base", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taPtrList_base("const_taPtrList_base", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taPlainArray("taPlainArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taPtrList_base_ref("const_taPtrList_base_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taFiler("taFiler", " //////////////////////////////// associate this with each file that is managed", 
-	"", "", "", sizeof(taFiler), (void**)0, 0, 0, 0,1);
+TypeDef TA_taFiler("taFiler", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taPlainArray("const_taPlainArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_FilerOperation("FilerOperation", "", 
 	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
@@ -210,15 +193,15 @@ TypeDef TA_istream_ptr("istream_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taFiler_ref("taFiler_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_taFiler("const_taFiler", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taFiler_ref("const_taFiler_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iColor_ptr("const_iColor_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_float_ref("float_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iColor_ref("const_iColor_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_QColor_ref("const_QColor_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_QColor_ptr("const_QColor_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_iColor("iColor", "", 
+	"", "", "", sizeof(iColor), (void**)0, 1, 0, 0,1);
+TypeDef TA_const_iColor("const_iColor", 1, 0, 0, 0, 1, 0);
+TypeDef TA_iColor_ref("iColor_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taDataLinkItr("taDataLinkItr", " iterator for datalink clients -- use as a value type", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taDataLinkItr), (void**)&TAI_taDataLinkItr, 0, 0, 0,1);
-TypeDef TA_taiDataLink("taiDataLink", "   interface for viewing system", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taiDataLink), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taDataLinkItr), (void**)&TAI_taDataLinkItr, 0, 0, 0,1);
+TypeDef TA_const_iColor_ptr("const_iColor_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_iColor_ref("const_iColor_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_css_fun_stub_ptr("css_fun_stub_ptr", "", 
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
 TypeDef TA_ta_void_fun("ta_void_fun", "", 
@@ -248,53 +231,52 @@ TypeDef TA_String_PArray_ref("String_PArray_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taMisc("taMisc", " miscellanous global parameters and functions for type access system", 
 	"", "", "", sizeof(taMisc), (void**)&TAI_taMisc, 0, 0, 0,1);
 TypeDef TA_taRefN("taRefN", " reference counting base class", 
-	"", "NO_MEMBERS NO_CSS ", "", sizeof(taRefN), (void**)0, 0, 0, 0,1);
+	"", "NO_MEMBERSNO_CSS", "", sizeof(taRefN), (void**)0, 0, 0, 0,1);
 TypeDef TA_ITypedObject("ITypedObject", " ", 
-	"", "NO_INSTANCE NO_CSS NO_MEMBERS VIRT_BASE ", "", sizeof(ITypedObject), (void**)0, 0, 0, 0,1);
+	"", "NO_INSTANCENO_CSSNO_MEMBERSVIRT_BASE", "", sizeof(ITypedObject), (void**)0, 0, 0, 0,1);
 TypeDef TA_taRefN_ref("taRefN_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taRefN_ptr("taRefN_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiDataLink_ptr("taiDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_IDataLinkClient("IDataLinkClient", " ", 
-	"", "NO_INSTANCE NO_CSS NO_MEMBERS VIRT_BASE ", "", sizeof(IDataLinkClient), (void**)0, 0, 0, 0,1);
 TypeDef TA_taDataLink_ptr("taDataLink_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_IDataLinkClient("IDataLinkClient", " ", 
+	"", "NO_INSTANCENO_CSSNO_MEMBERSVIRT_BASE", "", sizeof(IDataLinkClient), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_IDataLinkClient_("taPtrList_IDataLinkClient_", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<IDataLinkClient>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(taPtrList<IDataLinkClient>), (void**)0, 0, 0, 0,1);
 TypeDef TA_IDataLinkClient_PtrList("IDataLinkClient_PtrList", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(IDataLinkClient_PtrList), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(IDataLinkClient_PtrList), (void**)0, 0, 0, 0,1);
 TypeDef TA_IDataLinkClient_ptr("IDataLinkClient_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taDataLink_ptr_ref("taDataLink_ptr_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_const_TypeDef_ptr("const_TypeDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtrList_EnumDef_("taPtrList_EnumDef_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<EnumDef>), (void**)&TAI_taPtrList_EnumDef_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<EnumDef>), (void**)&TAI_taPtrList_EnumDef_, 0, 0, 0,1);
 TypeDef TA_EnumSpace("EnumSpace", " space of enums", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(EnumSpace), (void**)&TAI_EnumSpace, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(EnumSpace), (void**)&TAI_EnumSpace, 0, 0, 0,1);
 TypeDef TA_const_EnumSpace("const_EnumSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_EnumSpace_ref("const_EnumSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_void_("taPtrList_void_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<void>), (void**)&TAI_taPtrList_void_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<void>), (void**)&TAI_taPtrList_void_, 0, 0, 0,1);
 TypeDef TA_TokenSpace("TokenSpace", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(TokenSpace), (void**)&TAI_TokenSpace, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(TokenSpace), (void**)&TAI_TokenSpace, 0, 0, 0,1);
 TypeDef TA_taPtrList_MemberDef_("taPtrList_MemberDef_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<MemberDef>), (void**)&TAI_taPtrList_MemberDef_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<MemberDef>), (void**)&TAI_taPtrList_MemberDef_, 0, 0, 0,1);
 TypeDef TA_const_TokenSpace("const_TokenSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MemberSpace("MemberSpace", " space of members", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(MemberSpace), (void**)&TAI_MemberSpace, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(MemberSpace), (void**)&TAI_MemberSpace, 0, 0, 0,1);
 TypeDef TA_const_TokenSpace_ref("const_TokenSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_MemberSpace("const_MemberSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MemberSpace_ref("const_MemberSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_MethodDef_("taPtrList_MethodDef_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<MethodDef>), (void**)&TAI_taPtrList_MethodDef_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<MethodDef>), (void**)&TAI_taPtrList_MethodDef_, 0, 0, 0,1);
 TypeDef TA_MethodSpace("MethodSpace", " space of methods", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(MethodSpace), (void**)&TAI_MethodSpace, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(MethodSpace), (void**)&TAI_MethodSpace, 0, 0, 0,1);
 TypeDef TA_const_MethodSpace("const_MethodSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_MethodSpace_ref("const_MethodSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taPtrList_TypeDef_("taPtrList_TypeDef_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<TypeDef>), (void**)&TAI_taPtrList_TypeDef_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<TypeDef>), (void**)&TAI_taPtrList_TypeDef_, 0, 0, 0,1);
 TypeDef TA_TypeSpace("TypeSpace", " space of types; uses default string-based hashing", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(TypeSpace), (void**)&TAI_TypeSpace, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(TypeSpace), (void**)&TAI_TypeSpace, 0, 0, 0,1);
 TypeDef TA_const_TypeSpace("const_TypeSpace", 1, 0, 0, 0, 1, 0);
 TypeDef TA_TypeItem("TypeItem", " base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef", 
-	"NO_MEMBERS NO_CSS ", "NO_MEMBERS NO_CSS ", "", sizeof(TypeItem), (void**)&TAI_TypeItem, 0, 0, 0,1);
+	"NO_MEMBERSNO_CSS", "NO_MEMBERSNO_CSS", "", sizeof(TypeItem), (void**)&TAI_TypeItem, 0, 0, 0,1);
 TypeDef TA_const_TypeSpace_ref("const_TypeSpace_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_EnumSpace_ptr("EnumSpace_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, 0);
@@ -302,7 +284,7 @@ TypeDef TA_const_TypeItem("const_TypeItem", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MethodDef_ptr("MethodDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_TypeItem_ref("const_TypeItem_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_EnumDef("EnumDef", " defines an enum member", 
-	"NO_MEMBERS NO_CSS ", "NO_MEMBERS NO_CSS ", "", sizeof(EnumDef), (void**)&TAI_EnumDef, 0, 0, 0,1);
+	"NO_MEMBERSNO_CSS", "NO_MEMBERSNO_CSS", "", sizeof(EnumDef), (void**)&TAI_EnumDef, 0, 0, 0,1);
 TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, 0);
 TypeDef TA_EnumDef_ptr("EnumDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_EnumDef("const_EnumDef", 1, 0, 0, 0, 1, 0);
@@ -317,36 +299,26 @@ TypeDef TA_const_MethodDef_ref("const_MethodDef_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TypeSpace_ptr("TypeSpace_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_TypeDef_ref("const_TypeDef_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MemberDef_ptr_ptr("MemberDef_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiMimeSource("taiMimeSource", "  a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)", 
-	"", "", "", sizeof(taiMimeSource), (void**)0, 1, 0, 0,1);
+TypeDef TA_SelectEdit("SelectEdit", "", 
+	"", "", "", sizeof(SelectEdit), (void**)0, 1, 0, 0,1);
 TypeDef TA_taOBase("taOBase", " owned base class of taBase", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taOBase), (void**)&TAI_taOBase, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(taOBase), (void**)&TAI_taOBase, 0, 0, 0,1);
 TypeDef TA_taDataView("taDataView", " base class for views of an object", 
-	"", "MULT_INHERIT ", "", sizeof(taDataView), (void**)&TAI_taDataView, 0, 0, 0,1);
+	"", "MULT_INHERIT", "", sizeof(taDataView), (void**)&TAI_taDataView, 0, 0, 0,1);
 TypeDef TA_taNBase("taNBase", " Named, owned base class of taBase", 
 	"", "", "", sizeof(taNBase), (void**)&TAI_taNBase, 0, 0, 0,1);
-TypeDef TA_SelectEdit("SelectEdit", " Selectively edit members from different objects", 
-	"EXT_edit ", "EXT_edit ", "", sizeof(SelectEdit), (void**)&TAI_SelectEdit, 1, 0, 0,1);
 TypeDef TA_tabMisc("tabMisc", " miscellaneous useful stuff for taBase", 
 	"", "", "", sizeof(tabMisc), (void**)&TAI_tabMisc, 0, 0, 0,1);
 TypeDef TA_taBase_ref("taBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TAPtr_ptr("TAPtr_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_MemberDef_ptr("const_MemberDef_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taBase("const_taBase", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taBase_ptr("const_taBase_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMimeSource_ptr("taiMimeSource_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_taiMimeSource("const_taiMimeSource", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taiMimeSource_ptr("const_taiMimeSource_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taBase_ref("const_taBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MemberDef_ptr_ref("MemberDef_ptr_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_taDataView_ptr("taDataView_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taFiler_ptr("taFiler_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_QPixmap_ptr("const_QPixmap_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_bool_ref("bool_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_SelectEdit_ptr("SelectEdit_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_taPtr_impl("taPtr_impl", " 'safe' ptr for taBase objects -- automatically does ref counts", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taPtr_impl), (void**)0, 0, 0, 0,1);
-TypeDef TA_taOBase_ptr("taOBase_ptr", 1, 1, 0, 0, 1, 0);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(taPtr_impl), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taOBase("const_taOBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taOBase_ref("const_taOBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_taDataView("const_taDataView", 1, 0, 0, 0, 1, 0);
@@ -357,7 +329,7 @@ TypeDef TA_taNBase_ptr("taNBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TANPtr("TANPtr", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taNBase*), (void**)&TAI_TANPtr, 0, 1, 0,1);
 TypeDef TA_taFBase("taFBase", " named/owned base class of taBase, with filename", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taFBase), (void**)&TAI_taFBase, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(taFBase), (void**)&TAI_taFBase, 0, 0, 0,1);
 TypeDef TA_taPtrList_taBase_("taPtrList_taBase_", " ", 
 	"", "", "", sizeof(taPtrList<taBase>), (void**)&TAI_taPtrList_taBase_, 0, 0, 0,1);
 TypeDef TA_const_taFBase("const_taFBase", 1, 0, 0, 0, 1, 0);
@@ -369,125 +341,126 @@ TypeDef TA_taBase_PtrList("taBase_PtrList", " a primitive taBase list type, used
 TypeDef TA_taPtrList_ta_base("taPtrList_ta_base", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taPtrList_ta_base), (void**)0, 0, 0, 0,1);
 TypeDef TA_taList_impl("taList_impl", " implementation for a taBase list class", 
-	"", "MULT_INHERIT NO_UPDATE_AFTER ", "", sizeof(taList_impl), (void**)&TAI_taList_impl, 0, 0, 0,1);
+	"", "MULT_INHERITNO_UPDATE_AFTER", "", sizeof(taList_impl), (void**)&TAI_taList_impl, 0, 0, 0,1);
 TypeDef TA_taList_impl_ptr("taList_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TABLPtr("TABLPtr", " this comment needed for maketa parser", 
 	"", "", "", sizeof(taList_impl*), (void**)0, 0, 1, 0,1);
+TypeDef TA_const_taBase_ptr("const_taBase_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taList_impl("const_taList_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taList_impl_ref("const_taList_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taList("taList", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taList_taBase_("taList_taBase_", " ", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taList<taBase>), (void**)&TAI_taList_taBase_, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taList<taBase>), (void**)&TAI_taList_taBase_, 0, 0, 0,1);
 TypeDef TA_const_taList("const_taList", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taBase_List("taBase_List", " list of objects", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taBase_List), (void**)&TAI_taBase_List, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taBase_List), (void**)&TAI_taBase_List, 0, 0, 0,1);
 TypeDef TA_const_taList_ref("const_taList_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taBase_List("const_taBase_List", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taBase_List_ptr("taBase_List_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taBase_List_ref("const_taBase_List_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray_base("taArray_base", " base for arrays (from taBase)", 
-	"", "MULT_INHERIT VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray_base), (void**)0, 0, 0, 0,1);
+	"", "MULT_INHERITVIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray_base), (void**)0, 0, 0, 0,1);
 TypeDef TA_taArray("taArray", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taArray_base("const_taArray_base", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_int_("taArray_int_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<int>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<int>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taArray_base_ref("const_taArray_base_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_int_Array("int_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(int_Array), (void**)&TAI_int_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(int_Array), (void**)&TAI_int_Array, 0, 0, 0,1);
 TypeDef TA_taArray_float_("taArray_float_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<float>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<float>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_int_Array("const_int_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_int_Array_ref("const_int_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_float("const_float", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_float_ref("const_float_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_float_Array("float_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(float_Array), (void**)&TAI_float_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(float_Array), (void**)&TAI_float_Array, 0, 0, 0,1);
 TypeDef TA_taArray_double_("taArray_double_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<double>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<double>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_float_Array("const_float_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_float_Array_ref("const_float_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_double_ref("double_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_double("const_double", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_double_ref("const_double_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_double_Array("double_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(double_Array), (void**)&TAI_double_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(double_Array), (void**)&TAI_double_Array, 0, 0, 0,1);
 TypeDef TA_taArray_taString_("taArray_taString_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<taString>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<taString>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_double_Array("const_double_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_double_Array_ref("const_double_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_String_Array("String_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(String_Array), (void**)&TAI_String_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(String_Array), (void**)&TAI_String_Array, 0, 0, 0,1);
 TypeDef TA_const_String_Array("const_String_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_SArg_Array("SArg_Array", " string argument array: has labels for each argument to make it easier in the interface", 
 	"", "", "", sizeof(SArg_Array), (void**)&TAI_SArg_Array, 0, 0, 0,1);
 TypeDef TA_const_String_Array_ref("const_String_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taArray_long_("taArray_long_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<long>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<long>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_SArg_Array("const_SArg_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_SArg_Array_ref("const_SArg_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_long("const_long", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_long_ref("const_long_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_long_Array("long_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(long_Array), (void**)&TAI_long_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(long_Array), (void**)&TAI_long_Array, 0, 0, 0,1);
 TypeDef TA_voidptr("voidptr", " for maketa, which chokes on void* in a template", 
 	"", "", "", sizeof(void*), (void**)0, 0, 1, 0,1);
 TypeDef TA_const_long_Array("const_long_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taArray_voidptr_("taArray_voidptr_", " ", 
-	"", "VIRT_BASE NO_INSTANCE NO_UPDATE_AFTER ", "", sizeof(taArray<void*>), (void**)0, 0, 0, 0,1);
+	"", "VIRT_BASENO_INSTANCENO_UPDATE_AFTER", "", sizeof(taArray<void*>), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_long_Array_ref("const_long_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_voidptr_ref("voidptr_ref", 1, 1, 1, 0, 1, 0);
 TypeDef TA_const_voidptr("const_voidptr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_voidptr_ref("const_voidptr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_voidptr_Array("voidptr_Array", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(voidptr_Array), (void**)&TAI_voidptr_Array, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(voidptr_Array), (void**)&TAI_voidptr_Array, 0, 0, 0,1);
 TypeDef TA_const_voidptr_Array("const_voidptr_Array", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_voidptr_Array_ref("const_voidptr_Array_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taMatrix_impl("taMatrix_impl", " ref counted multi-dimensional data array", 
-	"NO_INSTANCE ", "VIRT_BASE NO_INSTANCE ", "", sizeof(taMatrix_impl), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "VIRT_BASENO_INSTANCE", "", sizeof(taMatrix_impl), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taMatrix_impl("const_taMatrix_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taMatrix("taMatrix", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taMatrix_impl_ref("const_taMatrix_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taMatrix_impl_ptr("taMatrix_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taMatrix("const_taMatrix", 1, 0, 0, 0, 1, 0);
 TypeDef TA_MatrixPtr_impl("MatrixPtr_impl", " 'safe' ptr for Matrix objects -- automatically does ref counts", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(MatrixPtr_impl), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(MatrixPtr_impl), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taMatrix_ref("const_taMatrix_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixPtr_impl_ref("MatrixPtr_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixPtr("MatrixPtr", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taMatrix_byte_("taMatrix_byte_", "", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(taMatrix<byte>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(taMatrix<byte>), (void**)0, 0, 0, 0,1);
 TypeDef TA_MatrixPtr_ref("MatrixPtr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_byte_Matrix("byte_Matrix", "", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(byte_Matrix), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(byte_Matrix), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_byte_Matrix("const_byte_Matrix", 1, 0, 0, 0, 1, 0);
 TypeDef TA_byte_Matrix_ref("byte_Matrix_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_byte_Matrix_ref("const_byte_Matrix_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixPtr_byte_Matrix_("MatrixPtr_byte_Matrix_", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(MatrixPtr<byte_Matrix>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(MatrixPtr<byte_Matrix>), (void**)0, 0, 0, 0,1);
 TypeDef TA_ByteMatrixPtr("ByteMatrixPtr", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(ByteMatrixPtr), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(ByteMatrixPtr), (void**)0, 0, 0, 0,1);
 TypeDef TA_taMatrix_float_("taMatrix_float_", "", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(taMatrix<float>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(taMatrix<float>), (void**)0, 0, 0, 0,1);
 TypeDef TA_float_Matrix("float_Matrix", " Matrix -- a specialized, richer implementation of Array Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS. Each concrete class holds one specific type of data, ex. byte or float. The number of dimensions is set at create time, and is lifetime-invariant. The number of elements in each dimension is usually fixed. Data is stored such that the highest dimension items are adjacent, ex: [2][3]: 00, 01, 02, 10, 11, 12 The value for the first dimension (geom[0]) is special: if geom[0]=0 then no allocation is made, and the data will resize if geom[0]=N, then data is allocated at creation -- note that the allocated data is uninitialized The object supports partially filled arrays, but not ragged arrays. Storage in Matrix is based on an instance of the taArray<> template. NOTE: Matrix in its current form is not streamable. Matrix vs. Array 'Array' classes are typically 1-d vectors or interpreted as 2-d arrays. Array supports dynamic operations, like inserting, sorting, etc. Matrix is ref-counted, and intended for sharing/moving raw data around. Matrix explicitly supports dimensionality and dimensional access. ", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(float_Matrix), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCE", "NO_INSTANCE", "", sizeof(float_Matrix), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_float_Matrix("const_float_Matrix", 1, 0, 0, 0, 1, 0);
 TypeDef TA_float_Matrix_ref("float_Matrix_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_float_Matrix_ref("const_float_Matrix_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_MatrixPtr_float_Matrix_("MatrixPtr_float_Matrix_", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(MatrixPtr<float_Matrix>), (void**)0, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(MatrixPtr<float_Matrix>), (void**)0, 0, 0, 0,1);
 TypeDef TA_FloatMatrixPtr("FloatMatrixPtr", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(FloatMatrixPtr), (void**)0, 0, 0, 0,1);
-TypeDef TA_taGroup_impl("taGroup_impl", " pre-declare implementation of a group forwards this file:", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taGroup_impl), (void**)&TAI_taGroup_impl, 0, 0, 0,1);
+	"NO_INSTANCENO_CSSNO_MEMBERS", "NO_INSTANCENO_CSSNO_MEMBERS", "", sizeof(FloatMatrixPtr), (void**)0, 0, 0, 0,1);
+TypeDef TA_taGroup_impl("taGroup_impl", " pre-declare implementation of a group", 
+	"", "NO_UPDATE_AFTER", "", sizeof(taGroup_impl), (void**)&TAI_taGroup_impl, 0, 0, 0,1);
 TypeDef TA_taGroup_impl_ptr("taGroup_impl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_TAGPtr("TAGPtr", "", 
 	"", "", "", sizeof(taGroup_impl*), (void**)0, 0, 1, 0,1);
 TypeDef TA_taList_taGroup_impl_("taList_taGroup_impl_", " ", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taList<taGroup_impl>), (void**)&TAI_taList_taGroup_impl_, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taList<taGroup_impl>), (void**)&TAI_taList_taGroup_impl_, 0, 0, 0,1);
 TypeDef TA_TALOG("TALOG", " list of groups (LOG)", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(TALOG), (void**)&TAI_TALOG, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(TALOG), (void**)&TAI_TALOG, 0, 0, 0,1);
 TypeDef TA_taSubGroup("taSubGroup", " has the sub-groups for a group", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taSubGroup), (void**)&TAI_taSubGroup, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taSubGroup), (void**)&TAI_taSubGroup, 0, 0, 0,1);
 TypeDef TA_taGroupItr("taGroupItr", "", 
 	"", "", "", sizeof(taGroupItr), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_taSubGroup("const_taSubGroup", 1, 0, 0, 0, 1, 0);
@@ -499,662 +472,82 @@ TypeDef TA_taLeafItr_ref("taLeafItr_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_taGroup_impl("const_taGroup_impl", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taGroup_impl_ref("const_taGroup_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DMemShareVar("DMemShareVar", " definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(DMemShareVar), (void**)&TAI_DMemShareVar, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(DMemShareVar), (void**)&TAI_DMemShareVar, 0, 0, 0,1);
 TypeDef TA_taPtrList_impl_ref("taPtrList_impl_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_DMemShareVar("const_DMemShareVar", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DMemShareVar_ref("const_DMemShareVar_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_DMemShare("DMemShare", " collection of objects that are shared across distributed processes: link the objects into this list to share them", 
-	"NO_UPDATE_AFTER NO_CSS NO_MEMBERS ", "NO_UPDATE_AFTER NO_CSS NO_MEMBERS ", "", sizeof(DMemShare), (void**)&TAI_DMemShare, 0, 0, 0,1);
+	"NO_UPDATE_AFTERNO_CSSNO_MEMBERS", "NO_UPDATE_AFTERNO_CSSNO_MEMBERS", "", sizeof(DMemShare), (void**)&TAI_DMemShare, 0, 0, 0,1);
 TypeDef TA_const_DMemShare("const_DMemShare", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_DMemShare_ref("const_DMemShare_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taGroup("taGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taGroup_taBase_("taGroup_taBase_", " ", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taGroup<taBase>), (void**)&TAI_taGroup_taBase_, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taGroup<taBase>), (void**)&TAI_taGroup_taBase_, 0, 0, 0,1);
 TypeDef TA_const_taGroup("const_taGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_taGroup_ptr("taGroup_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_taGroup_ref("const_taGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_taBase_Group("taBase_Group", " group of objects", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taBase_Group), (void**)&TAI_taBase_Group, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taBase_Group), (void**)&TAI_taBase_Group, 0, 0, 0,1);
 TypeDef TA_const_taBase_Group("const_taBase_Group", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_taBase_Group_ref("const_taBase_Group_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_dumpMisc("dumpMisc", " miscellaneous stuff for dump files", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(dumpMisc), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(dumpMisc), (void**)0, 0, 0, 0,1);
 TypeDef TA_VPUnref("VPUnref", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(VPUnref), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(VPUnref), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_VPUnref_("taPtrList_VPUnref_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<VPUnref>), (void**)&TAI_taPtrList_VPUnref_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<VPUnref>), (void**)&TAI_taPtrList_VPUnref_, 0, 0, 0,1);
 TypeDef TA_VPUnref_ptr("VPUnref_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_VPUList("VPUList", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(VPUList), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(VPUList), (void**)0, 0, 0, 0,1);
 TypeDef TA_DumpPathSub("DumpPathSub", " Path element substitution", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(DumpPathSub), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(DumpPathSub), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_DumpPathSub_("taPtrList_DumpPathSub_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<DumpPathSub>), (void**)&TAI_taPtrList_DumpPathSub_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<DumpPathSub>), (void**)&TAI_taPtrList_DumpPathSub_, 0, 0, 0,1);
 TypeDef TA_DumpPathSub_ptr("DumpPathSub_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DumpPathSubList("DumpPathSubList", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(DumpPathSubList), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(DumpPathSubList), (void**)0, 0, 0, 0,1);
 TypeDef TA_DumpPathToken("DumpPathToken", " Path tokens for quicker loading", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(DumpPathToken), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(DumpPathToken), (void**)0, 0, 0, 0,1);
 TypeDef TA_taPtrList_DumpPathToken_("taPtrList_DumpPathToken_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<DumpPathToken>), (void**)&TAI_taPtrList_DumpPathToken_, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(taPtrList<DumpPathToken>), (void**)&TAI_taPtrList_DumpPathToken_, 0, 0, 0,1);
 TypeDef TA_DumpPathToken_ptr("DumpPathToken_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_DumpPathTokenList("DumpPathTokenList", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(DumpPathTokenList), (void**)0, 0, 0, 0,1);
+	"NO_CSSNO_MEMBERS", "NO_CSSNO_MEMBERS", "", sizeof(DumpPathTokenList), (void**)0, 0, 0, 0,1);
 TypeDef TA_NameValue("NameValue", " name/value pair", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(NameValue), (void**)&TAI_NameValue, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(NameValue), (void**)&TAI_NameValue, 0, 0, 0,1);
 TypeDef TA_unsigned_long_ary("unsigned_long_ary", 1, 1, 0, 0, 1, 0);
 TypeDef TA_const_NameValue("const_NameValue", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_NameValue_ref("const_NameValue_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_TypeDefault("TypeDefault", " Contains a default object of a type", 
-	"EXT_def ", "EXT_def NO_UPDATE_AFTER ", "", sizeof(TypeDefault), (void**)&TAI_TypeDefault, 0, 0, 0,1);
-TypeDef TA_taiMenuEl("taiMenuEl", " holds menu data -- can be the root item of a submenu", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMenuEl), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault("const_TypeDefault", 1, 0, 0, 0, 1, 0);
+	"EXT_def", "EXT_defNO_UPDATE_AFTER", "", sizeof(TypeDefault), (void**)&TAI_TypeDefault, 0, 0, 0,1);
 TypeDef TA_cssProgSpace("cssProgSpace", " ", 
-	"", "NO_INSTANCE ", "", sizeof(cssProgSpace), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_TypeDefault_ref("const_TypeDefault_ref", 1, 0, 1, 0, 1, 0);
+	"", "NO_INSTANCE", "", sizeof(cssProgSpace), (void**)0, 0, 0, 0,1);
+TypeDef TA_const_TypeDefault("const_TypeDefault", 1, 0, 0, 0, 1, 0);
 TypeDef TA_cssProgSpace_ptr("cssProgSpace_ptr", 1, 1, 0, 0, 1, 0);
+TypeDef TA_const_TypeDefault_ref("const_TypeDefault_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_ScriptBase("ScriptBase", " class for adding a script to other objects", 
 	"", "", "", sizeof(ScriptBase), (void**)0, 1, 0, 0,1);
 TypeDef TA_taPtrList_ScriptBase_("taPtrList_ScriptBase_", " ", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(taPtrList<ScriptBase>), (void**)&TAI_taPtrList_ScriptBase_, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(taPtrList<ScriptBase>), (void**)&TAI_taPtrList_ScriptBase_, 0, 0, 0,1);
 TypeDef TA_ScriptBase_ref("ScriptBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_ScriptBase("const_ScriptBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_ScriptBase_List("ScriptBase_List", " list of script base objects (doesn't own anything)", 
-	"NO_UPDATE_AFTER ", "NO_UPDATE_AFTER ", "", sizeof(ScriptBase_List), (void**)0, 0, 0, 0,1);
+	"NO_UPDATE_AFTER", "NO_UPDATE_AFTER", "", sizeof(ScriptBase_List), (void**)0, 0, 0, 0,1);
 TypeDef TA_const_ScriptBase_ref("const_ScriptBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_Script("Script", " an object for maintaining and running arbitrary scripts", 
-	"EXT_scr ", "MULT_INHERIT EXT_scr ", "", sizeof(Script), (void**)&TAI_Script, 1, 0, 0,1);
+	"EXT_scr", "MULT_INHERITEXT_scr", "", sizeof(Script), (void**)&TAI_Script, 1, 0, 0,1);
 TypeDef TA_taGroup_Script_("taGroup_Script_", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taGroup<Script>), (void**)&TAI_taGroup_Script_, 0, 0, 0,1);
+	"", "NO_UPDATE_AFTER", "", sizeof(taGroup<Script>), (void**)&TAI_taGroup_Script_, 0, 0, 0,1);
 TypeDef TA_const_Script("const_Script", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_Script_ref("const_Script_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiMenuEl_ptr("taiMenuEl_ptr", 1, 1, 0, 0, 1, 0);
 TypeDef TA_Script_MGroup("Script_MGroup", "", 
 	"", "", "", sizeof(Script_MGroup), (void**)&TAI_Script_MGroup, 0, 0, 0,1);
-TypeDef TA_taiData("taiData", " base class for data elements", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiData), (void**)&TAI_taiData, 0, 0, 0,1);
-TypeDef TA_const_Script_MGroup("const_Script_MGroup", 1, 0, 0, 0, 1, 0);
-TypeDef TA_Dialog("Dialog", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(Dialog), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_Script_MGroup_ref("const_Script_MGroup_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiMisc("taiMisc", " miscellaneous stuff for tai", 
-	"", "", "", sizeof(taiMisc), (void**)&TAI_taiMisc, 0, 0, 0,1);
-TypeDef TA_taiDataHost("taiDataHost", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiAction("taiAction", " taiAction is for generic parameterless callbacks", 
-	"", "", "", sizeof(taiAction), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiEditDataHost("taiEditDataHost", "  // edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiEditDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMenuAction("taiMenuAction", " taiMenuAction takes a MenuEl as a parameter", 
-	"", "", "", sizeof(taiMenuAction), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiEditDataHost_ptr("taiEditDataHost_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMenu("taiMenu", " (possibly) hierarchical menu for selecting a single item ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMenu), (void**)0, 0, 0, 0,1);
-TypeDef TA_iAction_List("iAction_List", " corresponds to a menu item and/or toolbar button -- items are stickily created as needed (browsewin creates the common set)", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iAction_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMethodData("taiMethodData", " all representations of member functions must inherit from this one", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethodData), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_taiAction("const_taiAction", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taiAction_ref("const_taiAction_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiAction_ref("taiAction_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiMenuAction_ref("taiMenuAction_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_taiMenuAction("const_taiMenuAction", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taiMenuAction_ref("const_taiMenuAction_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiDataHost_ptr("taiDataHost_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiData_ptr("taiData_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taPtrList_taiData_("taPtrList_taiData_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<taiData>), (void**)&TAI_taPtrList_taiData_, 0, 0, 0,1);
-TypeDef TA_taiDataList("taiDataList", " taiData list, OBJECTS ARE DELETED ON REMOVAL", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiDataList), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMenu_ptr("taiMenu_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiEditButton("taiEditButton", " actually an edit menu... -- flgReadOnly creates menu which only allows for members", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS EDIT_READ_ONLY ", "", sizeof(taiEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToggle("taiToggle", " class taiLabel;", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiToggle), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiTypeHier("taiTypeHier", " for menus of type hierarchy for menus of type hierarchy //////////////////////////////// ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTypeHier), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiCompData("taiCompData", " base class for composite data elements", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS NO_INSTANCE ", "", sizeof(taiCompData), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiField("taiField", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiField), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiIncrField("taiIncrField", " increment/decrement field", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiIncrField), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiPlusToggle("taiPlusToggle", " a regular field plus a toggle..", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiPlusToggle), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiComboBox("taiComboBox", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiComboBox), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiBitBox("taiBitBox", " supports enums that are bit fields (TODO: maybe support int fields too)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiBitBox), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiPolyData("taiPolyData", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiPolyData), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiDataDeck("taiDataDeck", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiDataDeck), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QObject_ptr("const_QObject_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_taiAction_ptr("const_taiAction_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_taiMenuAction_ptr("const_taiMenuAction_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiSubMenuEl("taiSubMenuEl", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiSubMenuEl), (void**)0, 0, 0, 0,1);
-TypeDef TA_taPtrList_taiMenuEl_("taPtrList_taiMenuEl_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<taiMenuEl>), (void**)&TAI_taPtrList_taiMenuEl_, 0, 0, 0,1);
-TypeDef TA_taiMenuEl_List("taiMenuEl_List", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMenuEl_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QKeySequence_ptr("const_QKeySequence_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiSubMenuEl_ptr("taiSubMenuEl_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taPtrList_taiMenu_("taPtrList_taiMenu_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<taiMenu>), (void**)&TAI_taPtrList_taiMenu_, 0, 0, 0,1);
-TypeDef TA_taiMenu_List("taiMenu_List", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMenu_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_QIconSet_ref("const_QIconSet_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_TAPtr("const_TAPtr", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taiObjChooser("taiObjChooser", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiObjChooser), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiFileButton("taiFileButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiFileButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiObjChooser_ptr("taiObjChooser_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMenuAction_ptr("taiMenuAction_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiElBase("taiElBase", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiElBase), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiSubToken("taiSubToken", " Menu for sub tokens of a giventype", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiSubToken), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToken("taiToken", " for making menus of tokens for making menus of tokens", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiToken), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMemberDefMenu("taiMemberDefMenu", " Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMemberDefMenu), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMethodDefMenu("taiMethodDefMenu", " Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethodDefMenu), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMethMenu("taiMethMenu", " all representations of member functions must inherit from this one", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethMenu), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMethButton("taiMethButton", " button representation of a method -- uses the QPushButton, and sets it as the Rep as well", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiMethToggle("taiMethToggle", " toggle representation of a method (does not call directly, but checks flag)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethToggle), (void**)0, 0, 0, 0,1);
-TypeDef TA_iDataPanel("iDataPanel", 1, 0, 0, 0, 1, 0);
-TypeDef TA_HiLightButton("HiLightButton", " combines v3.2 Script Button and HiLightButton -- set script_ to script name, to enable ScriptButton functionality", 
-	"", "", "", sizeof(HiLightButton), (void**)0, 1, 0, 0,1);
-TypeDef TA_iContextLabel("iContextLabel", "", 
-	"", "", "", sizeof(iContextLabel), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiChoiceDialog("taiChoiceDialog", "", 
-	"", "", "", sizeof(taiChoiceDialog), (void**)0, 1, 0, 0,1);
-TypeDef TA_EditDataPanel("EditDataPanel", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(EditDataPanel), (void**)0, 0, 0, 0,1);
-TypeDef TA_HiLightButton_ptr("HiLightButton_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_Dialog_ptr("Dialog_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iContextLabel_ptr("iContextLabel_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_Dialog_ptr_ref("Dialog_ptr_ref", 1, 1, 1, 0, 1, 0);
-TypeDef TA_Member_List("Member_List", " list of members -- simpler than MemberSpace, no ownership", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(Member_List), (void**)&TAI_Member_List, 0, 0, 0,1);
-TypeDef TA_EditDataPanel_ptr("EditDataPanel_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiDataList_ptr("taiDataList_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_taiDataList("const_taiDataList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_taiDataList_ref("const_taiDataList_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiMethodData_ptr("taiMethodData_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataPanelFrame("iDataPanelFrame", " interface for panel frames", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iDataPanelFrame), (void**)0, 0, 0, 0,1);
-TypeDef TA_iDataPanelSet("iDataPanelSet", "  contains 0 or more sub-data-panels, and a small control bar for selecting panels", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "IGNORE NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iDataPanelSet), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiTypeBase("taiTypeBase", " graphically represents a type", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTypeBase), (void**)&TAI_taiTypeBase, 0, 0, 0,1);
-TypeDef TA_taiTypeBase_ptr("taiTypeBase_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiViewType("taiViewType", "  viewer services for the type", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiViewType), (void**)&TAI_taiViewType, 0, 0, 0,1);
-TypeDef TA_taiType("taiType", "  graphically represents a type", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiType), (void**)&TAI_taiType, 0, 0, 0,1);
-TypeDef TA_taiViewType_ptr("taiViewType_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMember("taiMember", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMember), (void**)&TAI_taiMember, 0, 0, 0,1);
-TypeDef TA_taiEdit("taiEdit", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiEdit), (void**)&TAI_taiEdit, 0, 0, 0,1);
-TypeDef TA_taiMember_ptr("taiMember_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiType_ptr_ptr("taiType_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiEdit_ptr("taiEdit_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiViewType_ptr_ptr("taiViewType_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiType_ptr("taiType_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMethod("taiMethod", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethod), (void**)&TAI_taiMethod, 0, 0, 0,1);
-TypeDef TA_iDataPanel_ptr("iDataPanel_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiMethod_ptr("taiMethod_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataPanelFrame_ptr("iDataPanelFrame_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataPanelSet_ptr("iDataPanelSet_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiEdit_ptr_ptr("taiEdit_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiArgType("taiArgType", " unlike taiTypes, these are created and destroyed each time", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiArgType), (void**)&TAI_taiArgType, 0, 0, 0,1);
-TypeDef TA_taPtrList_taiType_("taPtrList_taiType_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<taiType>), (void**)&TAI_taPtrList_taiType_, 0, 0, 0,1);
-TypeDef TA_taiType_List("taiType_List", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiType_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiIntType("taiIntType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiIntType), (void**)&TAI_taiIntType, 0, 0, 0,1);
-TypeDef TA_taiEnumType("taiEnumType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiEnumType), (void**)&TAI_taiEnumType, 0, 0, 0,1);
-TypeDef TA_taiBoolType("taiBoolType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiBoolType), (void**)&TAI_taiBoolType, 0, 0, 0,1);
-TypeDef TA_taiClassType("taiClassType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiClassType), (void**)&TAI_taiClassType, 0, 0, 0,1);
-TypeDef TA_taiStringType("taiStringType", " note: inherits handlesReadOnly==true", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiStringType), (void**)&TAI_taiStringType, 0, 0, 0,1);
-TypeDef TA_gpiListType("gpiListType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListType), (void**)&TAI_gpiListType, 0, 0, 0,1);
-TypeDef TA_gpiGroupType("gpiGroupType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupType), (void**)&TAI_gpiGroupType, 0, 0, 0,1);
-TypeDef TA_gpiArray_Type("gpiArray_Type", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiArray_Type), (void**)&TAI_gpiArray_Type, 0, 0, 0,1);
-TypeDef TA_taiTokenPtrType("taiTokenPtrType", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTokenPtrType), (void**)&TAI_taiTokenPtrType, 0, 0, 0,1);
-TypeDef TA_taiTypePtr("taiTypePtr", " typedef pointer", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTypePtr), (void**)&TAI_taiTypePtr, 0, 0, 0,1);
-TypeDef TA_taiFilePtrType("taiFilePtrType", " ptr to tai_getFiles", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiFilePtrType), (void**)&TAI_taiFilePtrType, 0, 0, 0,1);
-TypeDef TA_taiDefaultEdit("taiDefaultEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiDefaultEdit), (void**)&TAI_taiDefaultEdit, 0, 0, 0,1);
-TypeDef TA_taiMember_ptr_ptr("taiMember_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiTokenPtrMember("taiTokenPtrMember", " for taBase pointer members (allows scoping by owner obj)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTokenPtrMember), (void**)&TAI_taiTokenPtrMember, 0, 0, 0,1);
-TypeDef TA_TypeDefault_ptr("TypeDefault_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiDefaultToken("taiDefaultToken", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiDefaultToken), (void**)&TAI_taiDefaultToken, 0, 0, 0,1);
-TypeDef TA_taiSubTokenPtrMember("taiSubTokenPtrMember", " a token ptr that points to sub-objects of current object", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiSubTokenPtrMember), (void**)&TAI_taiSubTokenPtrMember, 0, 0, 0,1);
-TypeDef TA_taiTypePtrMember("taiTypePtrMember", " typedef ptrs that have member-comment directives", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTypePtrMember), (void**)&TAI_taiTypePtrMember, 0, 0, 0,1);
-TypeDef TA_taiMemberDefPtrMember("taiMemberDefPtrMember", " pointer to a member-def", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMemberDefPtrMember), (void**)&TAI_taiMemberDefPtrMember, 0, 0, 0,1);
-TypeDef TA_taiFunPtrMember("taiFunPtrMember", " pointer to a function", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiFunPtrMember), (void**)&TAI_taiFunPtrMember, 0, 0, 0,1);
-TypeDef TA_taiCondEditMember("taiCondEditMember", " conditional editing member", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiCondEditMember), (void**)&TAI_taiCondEditMember, 0, 0, 0,1);
-TypeDef TA_taiTDefaultMember("taiTDefaultMember", " special for the TypeDefault member (add the 'active' box)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTDefaultMember), (void**)&TAI_taiTDefaultMember, 0, 0, 0,1);
-TypeDef TA_taiMethod_ptr_ptr("taiMethod_ptr_ptr", 1, 2, 0, 0, 1, 0);
-TypeDef TA_taiButtonMethod("taiButtonMethod", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiButtonMethod), (void**)&TAI_taiButtonMethod, 0, 0, 0,1);
-TypeDef TA_taiMenuMethod("taiMenuMethod", " covers MENU and MENU_BUTTON types", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMenuMethod), (void**)&TAI_taiMenuMethod, 0, 0, 0,1);
-TypeDef TA_taiArgType_ptr("taiArgType_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiStreamArgType("taiStreamArgType", " for ios derived args (uses a file-requestor)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiStreamArgType), (void**)&TAI_taiStreamArgType, 0, 0, 0,1);
-TypeDef TA_taiBoolArgType("taiBoolArgType", " for bool int types", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiBoolArgType), (void**)&TAI_taiBoolArgType, 0, 0, 0,1);
-TypeDef TA_taiTokenPtrArgType("taiTokenPtrArgType", " for pointers to tokens (uses appropriate scoping)", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTokenPtrArgType), (void**)&TAI_taiTokenPtrArgType, 0, 0, 0,1);
-TypeDef TA_taiTypePtrArgType("taiTypePtrArgType", " for typedef ptr types", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiTypePtrArgType), (void**)&TAI_taiTypePtrArgType, 0, 0, 0,1);
-TypeDef TA_taiMemberPtrArgType("taiMemberPtrArgType", " for memberdef ptr types", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMemberPtrArgType), (void**)&TAI_taiMemberPtrArgType, 0, 0, 0,1);
-TypeDef TA_taiMethodPtrArgType("taiMethodPtrArgType", " for methoddef ptr types", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taiMethodPtrArgType), (void**)&TAI_taiMethodPtrArgType, 0, 0, 0,1);
-TypeDef TA_gpiDefaultEl("gpiDefaultEl", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiDefaultEl), (void**)&TAI_gpiDefaultEl, 0, 0, 0,1);
-TypeDef TA_gpiLinkGP("gpiLinkGP", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiLinkGP), (void**)&TAI_gpiLinkGP, 0, 0, 0,1);
-TypeDef TA_gpiLinkList("gpiLinkList", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiLinkList), (void**)&TAI_gpiLinkList, 0, 0, 0,1);
-TypeDef TA_gpiFromGpTokenPtrMember("gpiFromGpTokenPtrMember", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiFromGpTokenPtrMember), (void**)&TAI_gpiFromGpTokenPtrMember, 0, 0, 0,1);
-TypeDef TA_gpiTAPtrArgType("gpiTAPtrArgType", " for taBase pointers in groups, sets the typedef to be the right one..", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiTAPtrArgType), (void**)&TAI_gpiTAPtrArgType, 0, 0, 0,1);
-TypeDef TA_gpiInObjArgType("gpiInObjArgType", " for taBase pointers in groups with ARG_IN_OBJ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiInObjArgType), (void**)&TAI_gpiInObjArgType, 0, 0, 0,1);
-TypeDef TA_gpiFromGpArgType("gpiFromGpArgType", " for taBase pointers with FROM_GROUP_xxx", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiFromGpArgType), (void**)&TAI_gpiFromGpArgType, 0, 0, 0,1);
-TypeDef TA_gpiListEdit("gpiListEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListEdit), (void**)&TAI_gpiListEdit, 0, 0, 0,1);
-TypeDef TA_gpiGroupEdit("gpiGroupEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupEdit), (void**)&TAI_gpiGroupEdit, 0, 0, 0,1);
-TypeDef TA_gpiArrayEdit("gpiArrayEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiArrayEdit), (void**)&TAI_gpiArrayEdit, 0, 0, 0,1);
-TypeDef TA_SArgEdit("SArgEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(SArgEdit), (void**)&TAI_SArgEdit, 0, 0, 0,1);
-TypeDef TA_gpiSelectEdit("gpiSelectEdit", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiSelectEdit), (void**)&TAI_gpiSelectEdit, 0, 0, 0,1);
-TypeDef TA_tabViewType("tabViewType", " for taBase and descendants", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(tabViewType), (void**)&TAI_tabViewType, 0, 0, 0,1);
-TypeDef TA_tabOViewType("tabOViewType", " for taOBase and descendants", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(tabOViewType), (void**)&TAI_tabOViewType, 0, 0, 0,1);
-TypeDef TA_tabListViewType("tabListViewType", " for taList", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(tabListViewType), (void**)&TAI_tabListViewType, 0, 0, 0,1);
-TypeDef TA_tabGroupViewType("tabGroupViewType", " for taGroup", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(tabGroupViewType), (void**)&TAI_tabGroupViewType, 0, 0, 0,1);
-TypeDef TA_taiMimeItem("taiMimeItem", " we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)", 
-	"", "", "", sizeof(taiMimeItem), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeItem_ptr("taiMimeItem_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiClipData("taiClipData", "", 
-	"", "", "", sizeof(taiClipData), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiSingleClipData("taiSingleClipData", " ClipData for a single object -- simplest, most common case", 
-	"", "", "", sizeof(taiSingleClipData), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMultiClipData("taiMultiClipData", " ClipData for multi selection of objects", 
-	"", "", "", sizeof(taiMultiClipData), (void**)0, 1, 0, 0,1);
-TypeDef TA_taPtrList_taiMimeItem_("taPtrList_taiMimeItem_", " ", 
-	"", "", "", sizeof(taPtrList<taiMimeItem>), (void**)&TAI_taPtrList_taiMimeItem_, 0, 0, 0,1);
-TypeDef TA_tabSndMimeItem("tabSndMimeItem", " specialized for taBase sending", 
-	"", "", "", sizeof(tabSndMimeItem), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeItem_List("taiMimeItem_List", " ////////////////////////////////", 
-	"", "", "", sizeof(taiMimeItem_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiRcvMimeItem("taiRcvMimeItem", " specialized for tacss receiving", 
-	"", "", "", sizeof(taiRcvMimeItem), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeItem_List_ptr("taiMimeItem_List_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_QMimeSource_ptr("const_QMimeSource_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiClipData_ptr("taiClipData_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_istringstream_ref("istringstream_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiIntMimeSource("taiIntMimeSource", " a taiMimeSource that wraps our own in-process taiClipData", 
-	"", "", "", sizeof(taiIntMimeSource), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiExtMimeSource("taiExtMimeSource", " a taiMime that wraps data from the clipboard etc.", 
-	"", "", "", sizeof(taiExtMimeSource), (void**)0, 1, 0, 0,1);
-TypeDef TA_taiMimeSourcePtr("taiMimeSourcePtr", "", 
-	"", "", "", sizeof(taiMimeSource*), (void**)0, 0, 1, 0,1);
-TypeDef TA_NodeBitmapFlags("NodeBitmapFlags", "", 
-	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
-TypeDef TA_tabDataLink("tabDataLink", " DataLink for taBase objects", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToolBar("taiToolBar", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taiToolBar), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToolBar_List("taiToolBar_List", " each BrowseWin maintains its existent toolbars in this list", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taiToolBar_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_WinGeometry("WinGeometry", " Window geometry (position, size) saved in 1.0f-relative coordinates", 
-	"", "INLINE ", "", sizeof(WinGeometry), (void**)&TAI_WinGeometry, 0, 0, 0,1);
-TypeDef TA_ToolBar("ToolBar", " proxy for Toolbars", 
-	"NO_INSTANCE ", "NO_INSTANCE ", "", sizeof(ToolBar), (void**)0, 0, 0, 0,1);
-TypeDef TA_DataViewer("DataViewer", " the base type for objects with a top-level window or panel and a menu", 
-	"", "VIRT_BASE ", "", sizeof(DataViewer), (void**)&TAI_DataViewer, 0, 0, 0,1);
-TypeDef TA_ISelectable("ISelectable", " ", 
-	"", "", "", sizeof(ISelectable), (void**)0, 1, 0, 0,1);
-TypeDef TA_IDataViewHost("IDataViewHost", "", 
-	"", "", "", sizeof(IDataViewHost), (void**)0, 1, 0, 0,1);
-TypeDef TA_iListViewItem("iListViewItem", "  base class for Tree and List nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "MULT_INHERIT NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iListViewItem), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiListDataNode("taiListDataNode", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taiListDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_iListDataPanel("iListDataPanel", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iListDataPanel), (void**)0, 0, 0, 0,1);
-TypeDef TA_DataLink_QObj("DataLink_QObj", "", 
-	"", "", "", sizeof(DataLink_QObj), (void**)0, 1, 0, 0,1);
-TypeDef TA_DataLink_QObj_ptr("DataLink_QObj_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabODataLink("tabODataLink", " DataLink for taOBase objects", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabODataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_ToolBar_ptr("ToolBar_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabListDataLink("tabListDataLink", " DataLink for taList objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabListDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiToolBar_ptr("taiToolBar_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabGroupDataLink("tabGroupDataLink", " DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabGroupDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_IDataViewHost_ptr("IDataViewHost_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taPtrList_ISelectable_("taPtrList_ISelectable_", " ", 
-	"", "", "", sizeof(taPtrList<ISelectable>), (void**)&TAI_taPtrList_ISelectable_, 0, 0, 0,1);
-TypeDef TA_ISelectable_ptr("ISelectable_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_ISelectable_PtrList("ISelectable_PtrList", " for selection lists", 
-	"", "", "", sizeof(ISelectable_PtrList), (void**)0, 0, 0, 0,1);
-TypeDef TA_DataViewer_ptr("DataViewer_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_ISelectable_PtrList("const_ISelectable_PtrList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_ISelectable_PtrList_ref("ISelectable_PtrList_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_ISelectable_PtrList_ref("const_ISelectable_PtrList_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_ToolBar("const_ToolBar", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_ToolBar_ref("const_ToolBar_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taList_ToolBar_("taList_ToolBar_", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_UPDATE_AFTER NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taList<ToolBar>), (void**)0, 0, 0, 0,1);
-TypeDef TA_ToolBar_List("ToolBar_List", " each BrowseWin maintains its existent toolbars in this list", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(ToolBar_List), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_ToolBar_List("const_ToolBar_List", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_WinGeometry("const_WinGeometry", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_ToolBar_List_ref("const_ToolBar_List_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_WinGeometry_ref("const_WinGeometry_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_DataViewer("const_DataViewer", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_DataViewer_ref("const_DataViewer_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taList_DataViewer_("taList_DataViewer_", " ", 
-	"", "NO_UPDATE_AFTER ", "", sizeof(taList<DataViewer>), (void**)&TAI_taList_DataViewer_, 0, 0, 0,1);
-TypeDef TA_DataViewer_List("DataViewer_List", " ", 
-	"", "", "", sizeof(DataViewer_List), (void**)&TAI_DataViewer_List, 0, 0, 0,1);
-TypeDef TA_iTabDataViewer("iTabDataViewer", " viewer window used for class browsing", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iTabDataViewer), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_DataViewer_List("const_DataViewer_List", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taPtrList_iDataPanel_("taPtrList_iDataPanel_", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<iDataPanel>), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_DataViewer_List_ref("const_DataViewer_List_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iTabDataViewer_ptr("iTabDataViewer_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataPanel_PtrList("iDataPanel_PtrList", " ", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iDataPanel_PtrList), (void**)0, 0, 0, 0,1);
-TypeDef TA_iViewPanelFrame("iViewPanelFrame", " frame for gui interface to a view element -- usually posted by the view, and locked", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iViewPanelFrame), (void**)0, 0, 0, 0,1);
-TypeDef TA_iListViewItem_ptr("iListViewItem_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iListDataPanel_ptr("iListDataPanel_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taiListDataNode_ptr("taiListDataNode_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_QPoint_ref("const_QPoint_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taiTreeDataNode("taiTreeDataNode", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taiTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_tabTreeDataNode("tabTreeDataNode", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_tabListTreeDataNode("tabListTreeDataNode", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabListTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_tabGroupTreeDataNode("tabGroupTreeDataNode", "", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(tabGroupTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_iDataBrowserBase("iDataBrowserBase", " base of viewer window used for class browsing", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iDataBrowserBase), (void**)0, 0, 0, 0,1);
-TypeDef TA_iDataBrowser("iDataBrowser", " viewer window used for class browsing of taBase objects", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iDataBrowser), (void**)0, 0, 0, 0,1);
-TypeDef TA_DataBrowser("DataBrowser", "  the base type for objects with a top-level window or panel and a menu", 
-	"", "", "", sizeof(DataBrowser), (void**)&TAI_DataBrowser, 0, 0, 0,1);
-TypeDef TA_taiTreeDataNode_ptr("taiTreeDataNode_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataBrowserBase_ptr("iDataBrowserBase_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabDataLink_ptr("tabDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabListDataLink_ptr("tabListDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_tabGroupDataLink_ptr("tabGroupDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_DataBrowser_ptr("DataBrowser_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataBrowser_ptr("iDataBrowser_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_DataBrowser("const_DataBrowser", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_DataBrowser_ref("const_DataBrowser_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_taTypeInfoTreeDataNode("taTypeInfoTreeDataNode", " node for type info, like type, enum, method, etc.", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taTypeInfoTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_taTypeSpaceTreeDataNode("taTypeSpaceTreeDataNode", " node for spaces, ex. enumspace, typespace, etc.", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taTypeSpaceTreeDataNode), (void**)0, 0, 0, 0,1);
-TypeDef TA_iClassBrowser("iClassBrowser", " viewer window used for class browsing", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(iClassBrowser), (void**)0, 0, 0, 0,1);
-TypeDef TA_ClassBrowser("ClassBrowser", " the base type for objects with a top-level window or panel and a menu", 
-	"", "", "", sizeof(ClassBrowser), (void**)&TAI_ClassBrowser, 0, 0, 0,1);
-TypeDef TA_TypeInfoKind("TypeInfoKind", " used in switch statements to particularize instances", 
-	"", "", "", sizeof(int), (void**)0, 0, 0, 0,1);
-TypeDef TA_const_TypeInfoKind("const_TypeInfoKind", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taClassDataLink("taClassDataLink", " DataLink for TypeInfo objects", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taClassDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_TypeItem_ptr("TypeItem_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taTypeInfoDataLink("taTypeInfoDataLink", " DataLink for TypeInfo objects", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taTypeInfoDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taTypeSpaceDataLink_Base("taTypeSpaceDataLink_Base", " DataLink for XxxSpace objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taTypeSpaceDataLink_Base), (void**)0, 0, 0, 0,1);
-TypeDef TA_taEnumSpaceDataLink("taEnumSpaceDataLink", " DataLink for EnumSpace objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taEnumSpaceDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taTypeSpaceDataLink("taTypeSpaceDataLink", " DataLink for TypeSpace objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taTypeSpaceDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taMethodSpaceDataLink("taMethodSpaceDataLink", " DataLink for MethodSpace objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taMethodSpaceDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taMemberSpaceDataLink("taMemberSpaceDataLink", " DataLink for MemberSpace objects -- note that it also manages the ListView nodes", 
-	"NO_INSTANCE NO_CSS NO_MEMBERS ", "NO_INSTANCE NO_CSS NO_MEMBERS ", "", sizeof(taMemberSpaceDataLink), (void**)0, 0, 0, 0,1);
-TypeDef TA_taTypeInfoDataLink_ptr("taTypeInfoDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taTypeSpaceDataLink_ptr("taTypeSpaceDataLink_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_ClassBrowser_ptr("ClassBrowser_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iClassBrowser_ptr("iClassBrowser_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_const_ClassBrowser("const_ClassBrowser", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_ClassBrowser_ref("const_ClassBrowser_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_gpiListEditButton("gpiListEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiGroupEditButton("gpiGroupEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiSubEditButton("gpiSubEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiSubEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiLinkEditButton("gpiLinkEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiLinkEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiListLinkEditButton("gpiListLinkEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListLinkEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiArrayEditButton("gpiArrayEditButton", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiArrayEditButton), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiListEls("gpiListEls", " menu of elements in the list", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListEls), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiGroupEls("gpiGroupEls", " menu of elements in the group", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupEls), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiSubGroups("gpiSubGroups", " menu of sub-groups within a group", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiSubGroups), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiElTypes("gpiElTypes", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiElTypes), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiNewFuns("gpiNewFuns", " functions to call during New", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiNewFuns), (void**)0, 0, 0, 0,1);
-TypeDef TA_taiIncrField_ptr("taiIncrField_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_gpiNewFuns_ptr("gpiNewFuns_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_gpiElTypes_ptr("gpiElTypes_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_gpiListNew("gpiListNew", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListNew), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiSubGroups_ptr("gpiSubGroups_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_gpiGroupNew("gpiGroupNew", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupNew), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiList_ElData("gpiList_ElData", " contains data_els for one member of List", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiList_ElData), (void**)0, 0, 0, 0,1);
-TypeDef TA_taPtrList_gpiList_ElData_("taPtrList_gpiList_ElData_", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(taPtrList<gpiList_ElData>), (void**)&TAI_taPtrList_gpiList_ElData_, 0, 0, 0,1);
-TypeDef TA_gpiList_ElDataList("gpiList_ElDataList", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiList_ElDataList), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiMultiEditDataHost("gpiMultiEditDataHost", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiMultiEditDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiListDataHost("gpiListDataHost", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiListDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiGroupDataHost("gpiGroupDataHost", "", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiGroupDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiArrayEditDataHost("gpiArrayEditDataHost", " ", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiArrayEditDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_SArgEditDataHost("SArgEditDataHost", " ", 
-	"NO_CSS NO_MEMBERS NO_INSTANCE ", "NO_CSS NO_MEMBERS NO_INSTANCE ", "", sizeof(SArgEditDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_gpiSelectEditDataHost("gpiSelectEditDataHost", " edit only selected items from a range of ta-base objects", 
-	"NO_CSS NO_MEMBERS ", "NO_CSS NO_MEMBERS ", "", sizeof(gpiSelectEditDataHost), (void**)0, 0, 0, 0,1);
-TypeDef TA_SelectEditConfig("SelectEditConfig", " special parameters for controlling the select edit display", 
-	"", "EDIT_INLINE ", "", sizeof(SelectEditConfig), (void**)&TAI_SelectEditConfig, 0, 0, 0,1);
-TypeDef TA_const_SelectEdit("const_SelectEdit", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_SelectEditConfig("const_SelectEditConfig", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_SelectEdit_ref("const_SelectEdit_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_SelectEditConfig_ref("const_SelectEditConfig_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_SbVec2s_ref("const_SbVec2s_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iPoint("iPoint", "   ", 
-	"", "", "", sizeof(iPoint), (void**)&TAI_iPoint, 0, 0, 0,1);
-TypeDef TA_iVec2i("iVec2i", " synonym", 
-	"", "", "", sizeof(iVec2i), (void**)0, 0, 0, 0,1);
-TypeDef TA_iPoint_ref("iPoint_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iPoint("const_iPoint", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_iPoint_ref("const_iPoint_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_SbVec3s_ref("const_SbVec3s_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iVec3i("iVec3i", " ", 
-	"", "", "", sizeof(iVec3i), (void**)&TAI_iVec3i, 0, 0, 0,1);
-TypeDef TA_const_QSize_ref("const_QSize_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iVec3i_ref("iVec3i_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iVec3i("const_iVec3i", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iSize("iSize", "   ", 
-	"", "", "", sizeof(iSize), (void**)&TAI_iSize, 0, 0, 0,1);
-TypeDef TA_const_iVec3i_ref("const_iVec3i_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iSize("const_iSize", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iSize_ref("iSize_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iSize_ref("const_iSize_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_QRect_ref("const_QRect_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iRect("iRect", "   ", 
-	"", "", "", sizeof(iRect), (void**)&TAI_iRect, 0, 0, 0,1);
-TypeDef TA_iRect_ref("iRect_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iRect("const_iRect", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_iRect_ref("const_iRect_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_SbVec3f_ref("const_SbVec3f_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iVec3f("iVec3f", " 3d vector, for things like points and sizes", 
-	"", "", "", sizeof(iVec3f), (void**)&TAI_iVec3f, 0, 0, 0,1);
-TypeDef TA_const_iVec3f("const_iVec3f", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iVec3f_ref("iVec3f_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iVec3f_ref("const_iVec3f_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_iBox3f("iBox3f", " 3d box, typically used for a bounding box in a normalized coordinate system", 
-	"", "", "", sizeof(iBox3f), (void**)&TAI_iBox3f, 0, 0, 0,1);
 TypeDef TA_TypeDef_ptr("TypeDef_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iBox3f_ref("iBox3f_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_const_iBox3f("const_iBox3f", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Script_MGroup("const_Script_MGroup", 1, 0, 0, 0, 1, 0);
 TypeDef TA_uint("uint", 1, 0, 0, 0, 1, 0);
-TypeDef TA_const_iBox3f_ref("const_iBox3f_ref", 1, 0, 1, 0, 1, 0);
-TypeDef TA_QWidget_ptr("QWidget_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QWidget("QWidget", 1, 0, 0, 0, 1, 0);
-TypeDef TA_taBaseAdapter_ptr("taBaseAdapter_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_taBaseAdapter("taBaseAdapter", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QMimeSource("QMimeSource", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_Script_MGroup_ref("const_Script_MGroup_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_byte("byte", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QObject("QObject", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QMenuItem_ptr("QMenuItem_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QMenuItem("QMenuItem", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QPopupMenu_ptr("QPopupMenu_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QPopupMenu("QPopupMenu", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QObject_ptr("QObject_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QEvent_ptr("QEvent_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QEvent("QEvent", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QScrollView_ptr("QScrollView_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QScrollView("QScrollView", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QVBoxLayout_ptr("QVBoxLayout_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QVBoxLayout("QVBoxLayout", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QLabel_ptr("QLabel_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QLabel("QLabel", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QSplitter_ptr("QSplitter_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QSplitter("QSplitter", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QGridLayout_ptr("QGridLayout_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QGridLayout("QGridLayout", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QFrame_ptr("QFrame_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QFrame("QFrame", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iFlowLayout_ptr("iFlowLayout_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iFlowLayout("iFlowLayout", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QHBoxLayout_ptr("QHBoxLayout_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QHBoxLayout("QHBoxLayout", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iColor_ptr("iColor_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iColor("iColor", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QDialog("QDialog", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iDataViewer_ptr("iDataViewer_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iDataViewer("iDataViewer", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QMenuData_ptr("QMenuData_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QMenuData("QMenuData", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QMenuBar_ptr("QMenuBar_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QMenuBar("QMenuBar", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QPtrList_iAction_("QPtrList_iAction_", 1, 0, 0, 0, 1, 0);
-TypeDef TA_cssClass_ptr("cssClass_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_cssClass("cssClass", 1, 0, 0, 0, 1, 0);
-TypeDef TA_cssiArgDialog_ptr("cssiArgDialog_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_cssiArgDialog("cssiArgDialog", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QPushButton_ptr("QPushButton_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QPushButton("QPushButton", 1, 0, 0, 0, 1, 0);
-TypeDef TA_cssEl_ptr("cssEl_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_cssEl("cssEl", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iCheckBox_ptr("iCheckBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iCheckBox("iCheckBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QLayout_ptr("QLayout_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QLayout("QLayout", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iLineEdit_ptr("iLineEdit_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iLineEdit("iLineEdit", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iSpinBox_ptr("iSpinBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iSpinBox("iSpinBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QCheckBox_ptr("QCheckBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QCheckBox("QCheckBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iComboBox_ptr("iComboBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iComboBox("iComboBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QWidgetStack_ptr("QWidgetStack_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QWidgetStack("QWidgetStack", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QListBox_ptr("QListBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QListBox("QListBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QLineEdit_ptr("QLineEdit_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QLineEdit("QLineEdit", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iTabView_ptr("iTabView_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iTabView("iTabView", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QFocusEvent_ptr("QFocusEvent_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QFocusEvent("QFocusEvent", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QButtonGroup_ptr("QButtonGroup_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QButtonGroup("QButtonGroup", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QDragObject("QDragObject", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QToolBar("QToolBar", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QPtrList_taiToolBar_("QPtrList_taiToolBar_", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QListViewItem("QListViewItem", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QListViewItem_ptr("QListViewItem_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QString("QString", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QListView_ptr("QListView_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QListView("QListView", 1, 0, 0, 0, 1, 0);
-TypeDef TA_DynMethod_PtrList("DynMethod_PtrList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iAction_ptr("iAction_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iAction("iAction", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iTabView_PtrList_ptr("iTabView_PtrList_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iTabView_PtrList("iTabView_PtrList", 1, 0, 0, 0, 1, 0);
-TypeDef TA_QVBox_ptr("QVBox_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_QVBox("QVBox", 1, 0, 0, 0, 1, 0);
-TypeDef TA_iEditGrid_ptr("iEditGrid_ptr", 1, 1, 0, 0, 1, 0);
-TypeDef TA_iEditGrid("iEditGrid", 1, 0, 0, 0, 1, 0);
+TypeDef TA_taFiler_ptr("taFiler_ptr", 1, 1, 0, 0, 1, 0);
 
 // Instances
 
@@ -1165,26 +558,6 @@ taBase*		 TAI_taBase=NULL;
       rval=new cssString(((taBase*)ths)->GetColText((int)*arg[1]));}
     if(na == 2) {
       rval=new cssString(((taBase*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taBase_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
-    ((taBase*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
-    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
-    return rval;}
-  static cssEl* cssElCFun_taBase_ChildEditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taBase*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
-    return rval;}
-  static cssEl* cssElCFun_taBase_QueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((taBase*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
-    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_taBase_EditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taBase*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
     return rval;}
   static cssEl* cssElCFun_taBase_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -1870,10 +1243,6 @@ taBase*		 TAI_taBase=NULL;
     cssEl* rval=&cssMisc::Void;
     ((iFont*)ths)->copy(*(iFont*)arg[1]->GetVoidPtrOfType(&TA_iFont));
     return rval;}
-  static cssEl* cssElCFun_iFont_setRawName_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iFont*)ths)->setRawName((const char*)*arg[1]);
-    return rval;}
   static cssEl* cssElCFun_taPtrList_impl_Indenter_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ostream& refarg_0=*(ostream*)*arg[1];
@@ -2503,94 +1872,71 @@ taPtrList<taHashBucket>*		 TAI_taPtrList_taHashBucket_=NULL;
     cssEl* rval=&cssMisc::Void;
     ((taHashTable*)ths)->InitList_();
     return rval;}
-  static cssEl* cssElCFun_taFiler_open_read_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_black_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taFiler*)ths)->open_read(), 1, &TA_istream);
+    rval=new cssTA((void*)((iColor*)ths)->black(), 1, &TA_const_iColor);
     return rval;}
-  static cssEl* cssElCFun_taFiler_open_write_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_find_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taFiler*)ths)->open_write(), 1, &TA_ostream);
+    float refarg_1=(float)*arg[2];    float refarg_2=(float)*arg[3];    float refarg_3=(float)*arg[4];
+    rval=new cssInt((int)((iColor*)ths)->find((const char*)*arg[1], refarg_1, refarg_2, refarg_3));
+    *arg[2]=(Real)refarg_1;    *arg[3]=(Real)refarg_2;    *arg[4]=(Real)refarg_3;
     return rval;}
-  static cssEl* cssElCFun_taFiler_open_append_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_getRgb_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taFiler*)ths)->open_append(), 1, &TA_ostream);
+    float refarg_0=(float)*arg[1];    float refarg_1=(float)*arg[2];    float refarg_2=(float)*arg[3];
+    ((iColor*)ths)->getRgb(refarg_0, refarg_1, refarg_2);
+    *arg[1]=(Real)refarg_0;    *arg[2]=(Real)refarg_1;    *arg[3]=(Real)refarg_2;
     return rval;}
-  static cssEl* cssElCFun_taFiler_open_write_exist_check_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_setRgb_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taFiler*)ths)->open_write_exist_check());
+    ((iColor*)ths)->setRgb((int)*arg[1]);
     return rval;}
-  static cssEl* cssElCFun_taFiler_Init_stub(void* ths,int na, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_set_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((taFiler*)ths)->Init();}
-    if(na == 1) {
-      ((taFiler*)ths)->Init(arg[1]->GetStr());}
-    if(na == 2) {
-      ((taFiler*)ths)->Init(arg[1]->GetStr(), arg[2]->GetStr());}
-    if(na == 3) {
-      ((taFiler*)ths)->Init(arg[1]->GetStr(), arg[2]->GetStr(), (bool)*arg[3]);}
+    ((iColor*)ths)->set((const iColor*)(void*)*arg[1]);
     return rval;}
-  static cssEl* cssElCFun_taFiler_Open_stub(void* ths,int na, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_red_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssTA((void*)((taFiler*)ths)->Open(), 1, &TA_istream);}
-    if(na == 1) {
-      rval=new cssTA((void*)((taFiler*)ths)->Open((const char*)*arg[1]), 1, &TA_istream);}
-    if(na == 2) {
-      rval=new cssTA((void*)((taFiler*)ths)->Open((const char*)*arg[1], (bool)*arg[2]), 1, &TA_istream);}
+    rval=new cssInt((int)((iColor*)ths)->red());
     return rval;}
-  static cssEl* cssElCFun_taFiler_Save_stub(void* ths,int na, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_green_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssTA((void*)((taFiler*)ths)->Save(), 1, &TA_ostream);}
-    if(na == 1) {
-      rval=new cssTA((void*)((taFiler*)ths)->Save((const char*)*arg[1]), 1, &TA_ostream);}
-    if(na == 2) {
-      rval=new cssTA((void*)((taFiler*)ths)->Save((const char*)*arg[1], (bool)*arg[2]), 1, &TA_ostream);}
+    rval=new cssInt((int)((iColor*)ths)->green());
     return rval;}
-  static cssEl* cssElCFun_taFiler_SaveAs_stub(void* ths,int na, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_blue_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssTA((void*)((taFiler*)ths)->SaveAs(), 1, &TA_ostream);}
-    if(na == 1) {
-      rval=new cssTA((void*)((taFiler*)ths)->SaveAs((const char*)*arg[1]), 1, &TA_ostream);}
-    if(na == 2) {
-      rval=new cssTA((void*)((taFiler*)ths)->SaveAs((const char*)*arg[1], (bool)*arg[2]), 1, &TA_ostream);}
+    rval=new cssInt((int)((iColor*)ths)->blue());
     return rval;}
-  static cssEl* cssElCFun_taFiler_Append_stub(void* ths,int na, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_redf_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssTA((void*)((taFiler*)ths)->Append(), 1, &TA_ostream);}
-    if(na == 1) {
-      rval=new cssTA((void*)((taFiler*)ths)->Append((const char*)*arg[1]), 1, &TA_ostream);}
-    if(na == 2) {
-      rval=new cssTA((void*)((taFiler*)ths)->Append((const char*)*arg[1], (bool)*arg[2]), 1, &TA_ostream);}
+    rval=new cssReal((double)((iColor*)ths)->redf());
     return rval;}
-  static cssEl* cssElCFun_taFiler_Close_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_greenf_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    ((taFiler*)ths)->Close();
+    rval=new cssReal((double)((iColor*)ths)->greenf());
     return rval;}
-  static cssEl* cssElCFun_taFiler_AutoOpen_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_bluef_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    ((taFiler*)ths)->AutoOpen();
+    rval=new cssReal((double)((iColor*)ths)->bluef());
     return rval;}
-  static cssEl* cssElCFun_taFiler_IsOpen_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_alpha_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taFiler*)ths)->IsOpen());
+    rval=new cssReal((double)((iColor*)ths)->alpha());
     return rval;}
-  static cssEl* cssElCFun_taFiler_GetFileName_stub(void* ths,int, cssEl** arg) {
+  static cssEl* cssElCFun_iColor_rgb_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    taString refarg_0=arg[1]->GetStr();
-    rval=new cssInt((int)((taFiler*)ths)->GetFileName(refarg_0, (FilerOperation)(int)*arg[2]));
-    *arg[1]=(String)refarg_0;
+    rval=new cssInt((int)((iColor*)ths)->rgb());
     return rval;}
-  static cssEl* cssElCFun_taFiler_FixFileName_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_clear_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    ((taFiler*)ths)->FixFileName();
+    ((iColor*)ths)->clear();
     return rval;}
-  static cssEl* cssElCFun_taFiler_GetDir_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_iColor_intensities_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
-    ((taFiler*)ths)->GetDir();
+    float refarg_0=(float)*arg[1];    float refarg_1=(float)*arg[2];    float refarg_2=(float)*arg[3];
+    ((iColor*)ths)->intensities(refarg_0, refarg_1, refarg_2);
+    *arg[1]=(Real)refarg_0;    *arg[2]=(Real)refarg_1;    *arg[3]=(Real)refarg_2;
     return rval;}
 taDataLinkItr*		 TAI_taDataLinkItr=NULL;
 taBase**		 TAI_TAPtr=NULL;
@@ -3101,93 +2447,10 @@ taPtrList<TypeDef>*		 TAI_taPtrList_TypeDef_=NULL;
 TypeSpace*		 TAI_TypeSpace=NULL;
 TypeItem*		 TAI_TypeItem=NULL;
 EnumDef*		 TAI_EnumDef=NULL;
-  static cssEl* cssElCFun_taiMimeSource_New_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeSource*)ths)->New((const QMimeSource*)(void*)*arg[1]), 1, &TA_taiMimeSource);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_New2_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeSource*)ths)->New2((taiClipData*)(void*)*arg[1]), 1, &TA_taiMimeSource);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_src_action_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->src_action());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_is_multi_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->is_multi());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_is_tacss_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->is_tacss());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_count_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->count());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_index_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->index());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_setIndex_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMimeSource*)ths)->setIndex((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_type_name_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((taiMimeSource*)ths)->type_name());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_td_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeSource*)ths)->td(), 1, &TA_TypeDef);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_object_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeSource*)ths)->object(), 1, &TA_void);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_tab_object_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taiMimeSource*)ths)->tab_object(), 1, &TA_taBase);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_path_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((taiMimeSource*)ths)->path());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_is_tab_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->is_tab());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_loc_data_taken_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMimeSource*)ths)->loc_data_taken();
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_rem_data_taken_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMimeSource*)ths)->rem_data_taken();
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_format_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssCPtr_char((void*)((taiMimeSource*)ths)->format(), 1);}
-    if(na == 1) {
-      rval=new cssCPtr_char((void*)((taiMimeSource*)ths)->format((int)*arg[1]), 1);}
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_provides_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->provides((const char*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taiMimeSource_IsThisProcess_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeSource*)ths)->IsThisProcess());
-    return rval;}
 taOBase*		 TAI_taOBase=NULL;
   static cssEl* cssElCFun_taOBase_GetOwner_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA_Base((void*)((taOBase*)ths)->GetOwner((TypeDef*)*arg[1]), 1, &TA_taBase);
-    return rval;}
-  static cssEl* cssElCFun_taOBase_SetAdapter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taOBase*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_taOBase_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -3200,26 +2463,6 @@ taDataView*		 TAI_taDataView=NULL;
       rval=new cssString(((taDataView*)ths)->GetColText((int)*arg[1]));}
     if(na == 2) {
       rval=new cssString(((taDataView*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taDataView_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
-    ((taDataView*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
-    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
-    return rval;}
-  static cssEl* cssElCFun_taDataView_ChildEditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taDataView*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
-    return rval;}
-  static cssEl* cssElCFun_taDataView_QueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((taDataView*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
-    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_taDataView_EditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taDataView*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
     return rval;}
   static cssEl* cssElCFun_taDataView_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -3409,10 +2652,6 @@ taDataView*		 TAI_taDataView=NULL;
     cssEl* rval=&cssMisc::Void;
     ((taDataView*)ths)->CallFun((const char*)*arg[1]);
     return rval;}
-  static cssEl* cssElCFun_taDataView_SetAdapter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taDataView*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
-    return rval;}
   static cssEl* cssElCFun_taDataView_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taDataView*)ths)->addr_data_link(), 2, &TA_taDataLink);
@@ -3423,7 +2662,7 @@ taDataView*		 TAI_taDataView=NULL;
     return rval;}
   static cssEl* cssElCFun_taDataView_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taDataView*)ths)->link(), 1, &TA_taiDataLink);
+    rval=new cssTA((void*)((taDataView*)ths)->link(), 1, &TA_taDataLink);
     return rval;}
   static cssEl* cssElCFun_taDataView_DataLinkDestroying_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -3509,91 +2748,6 @@ taDataView*		 TAI_taDataView=NULL;
     ((taDataView*)ths)->ItemRemoving((taDataView*)(void*)*arg[1]);
     return rval;}
 taNBase*		 TAI_taNBase=NULL;
-SelectEdit*		 TAI_SelectEdit=NULL;
-  static cssEl* cssElCFun_SelectEdit_FindMbrBase_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->FindMbrBase((taBase*)(void*)*arg[1], (MemberDef*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_SelectMember_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->SelectMember((taBase*)(void*)*arg[1], (MemberDef*)*arg[2], (const char*)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_SelectMemberNm_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->SelectMemberNm((taBase*)(void*)*arg[1], (const char*)*arg[2], (const char*)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_FindMethBase_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->FindMethBase((taBase*)(void*)*arg[1], (MethodDef*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_SelectMethod_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->SelectMethod((taBase*)(void*)*arg[1], (MethodDef*)*arg[2], (const char*)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_SelectMethodNm_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->SelectMethodNm((taBase*)(void*)*arg[1], (const char*)*arg[2], (const char*)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_UpdateAllBases_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->UpdateAllBases();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_RemoveField_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->RemoveField((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_MoveField_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->MoveField((int)*arg[1], (int)*arg[2]);
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_RemoveFun_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->RemoveFun((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_MoveFun_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->MoveFun((int)*arg[1], (int)*arg[2]);
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_NewEdit_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->NewEdit();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_GetMembsFmStrs_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->GetMembsFmStrs();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_GetMethsFmStrs_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->GetMethsFmStrs();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_GetAllPaths_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->GetAllPaths();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_BaseClosing_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->BaseClosing((taBase*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_BaseClosingAll_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((SelectEdit*)ths)->BaseClosingAll((taBase*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_BaseChangeSave_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->BaseChangeSave();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_BaseChangeReShow_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((SelectEdit*)ths)->BaseChangeReShow();
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_GetMbrLabel_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((SelectEdit*)ths)->GetMbrLabel((int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_SelectEdit_GetMethLabel_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((SelectEdit*)ths)->GetMethLabel((int)*arg[1]));
-    return rval;}
 tabMisc*		 TAI_tabMisc=NULL;
   static cssEl* cssElCFun_tabMisc_Close_Obj_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
@@ -3866,26 +3020,6 @@ taList_impl*		 TAI_taList_impl=NULL;
     if(na == 2) {
       rval=new cssString(((taList_impl*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
     return rval;}
-  static cssEl* cssElCFun_taList_impl_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
-    ((taList_impl*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
-    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
-    return rval;}
-  static cssEl* cssElCFun_taList_impl_ChildEditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taList_impl*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
-    return rval;}
-  static cssEl* cssElCFun_taList_impl_QueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((taList_impl*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
-    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_taList_impl_EditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taList_impl*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
   static cssEl* cssElCFun_taList_impl_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taList_impl*)ths)->GetDataLink(), 1, &TA_taDataLink);
@@ -4073,10 +3207,6 @@ taList_impl*		 TAI_taList_impl=NULL;
   static cssEl* cssElCFun_taList_impl_CallFun_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taList_impl*)ths)->CallFun((const char*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taList_impl_SetAdapter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taList_impl*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_taList_impl_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -4460,26 +3590,6 @@ taBase_List*		 TAI_taBase_List=NULL;
     if(na == 2) {
       rval=new cssString(((taArray_base*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
     return rval;}
-  static cssEl* cssElCFun_taArray_base_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
-    ((taArray_base*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
-    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_ChildEditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_base*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_QueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((taArray_base*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
-    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_EditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taArray_base*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
   static cssEl* cssElCFun_taArray_base_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((taArray_base*)ths)->GetDataLink(), 1, &TA_taDataLink);
@@ -4667,10 +3777,6 @@ taBase_List*		 TAI_taBase_List=NULL;
   static cssEl* cssElCFun_taArray_base_CallFun_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((taArray_base*)ths)->CallFun((const char*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taArray_base_SetAdapter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taArray_base*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_taArray_base_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -5737,26 +4843,6 @@ Script*		 TAI_Script=NULL;
     if(na == 2) {
       rval=new cssString(((Script*)ths)->GetColText((int)*arg[1], (int)*arg[2]));}
     return rval;}
-  static cssEl* cssElCFun_Script_ChildQueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_3=(int)*arg[4];    int refarg_4=(int)*arg[5];
-    ((Script*)ths)->ChildQueryEditActions((MemberDef*)*arg[1], (const taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], refarg_3, refarg_4);
-    *arg[4]=(Int)refarg_3;    *arg[5]=(Int)refarg_4;
-    return rval;}
-  static cssEl* cssElCFun_Script_ChildEditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((Script*)ths)->ChildEditAction((MemberDef*)*arg[1], (taBase*)(void*)*arg[2], (taiMimeSource*)(void*)*arg[3], (int)*arg[4]));
-    return rval;}
-  static cssEl* cssElCFun_Script_QueryEditActions_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((Script*)ths)->QueryEditActions((const taiMimeSource*)(void*)*arg[1], refarg_1, refarg_2);
-    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_Script_EditAction_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((Script*)ths)->EditAction((taiMimeSource*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
   static cssEl* cssElCFun_Script_GetDataLink_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     rval=new cssTA((void*)((Script*)ths)->GetDataLink(), 1, &TA_taDataLink);
@@ -5944,10 +5030,6 @@ Script*		 TAI_Script=NULL;
   static cssEl* cssElCFun_Script_CallFun_stub(void* ths,int, cssEl** arg) {
     cssEl* rval=&cssMisc::Void;
     ((Script*)ths)->CallFun((const char*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_Script_SetAdapter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((Script*)ths)->SetAdapter((taBaseAdapter*)(void*)*arg[1]);
     return rval;}
   static cssEl* cssElCFun_Script_addr_data_link_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
@@ -6164,906 +5246,6 @@ Script_MGroup*		 TAI_Script_MGroup=NULL;
     cssEl* rval=&cssMisc::Void;
     ((Script_MGroup*)ths)->AutoRun();
     return rval;}
-  static cssEl* cssElCFun_Script_MGroup_Run_mc_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((Script_MGroup*)ths)->Run_mc((taiMenuEl*)(void*)*arg[1]);
-    return rval;}
-taiData*		 TAI_taiData=NULL;
-taiMisc*		 TAI_taiMisc=NULL;
-  static cssEl* cssElCFun_taiMisc_OpenWindows_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMisc*)ths)->OpenWindows();
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_WaitProc_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->WaitProc());
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_ScriptIconify_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMisc*)ths)->ScriptIconify((void*)(void*)*arg[1], (int)*arg[2]);
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_SetIconify_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->SetIconify((void*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_RunPending_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->RunPending());
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_PurgeDialogs_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMisc*)ths)->PurgeDialogs();
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_RevertEdits_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->RevertEdits((void*)(void*)*arg[1], (TypeDef*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_CloseEdits_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->CloseEdits((void*)(void*)*arg[1], (TypeDef*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_NotifyEdits_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMisc*)ths)->NotifyEdits((void*)(void*)*arg[1], (TypeDef*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_ReShowEdits_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 2) {
-      rval=new cssInt((int)((taiMisc*)ths)->ReShowEdits((void*)(void*)*arg[1], (TypeDef*)*arg[2]));}
-    if(na == 3) {
-      rval=new cssInt((int)((taiMisc*)ths)->ReShowEdits((void*)(void*)*arg[1], (TypeDef*)*arg[2], (bool)*arg[3]));}
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_FindEdit_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 2) {
-      rval=new cssTA((void*)((taiMisc*)ths)->FindEdit((void*)(void*)*arg[1], (TypeDef*)*arg[2]), 1, &TA_taiEditDataHost);}
-    if(na == 3) {
-      rval=new cssTA((void*)((taiMisc*)ths)->FindEdit((void*)(void*)*arg[1], (TypeDef*)*arg[2], (iDataViewer*)(void*)*arg[3]), 1, &TA_taiEditDataHost);}
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_InitMetrics_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMisc*)ths)->InitMetrics();
-    return rval;}
-  static cssEl* cssElCFun_taiMisc_AdjustFont_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    iFont& refarg_1=*(iFont*)arg[2]->GetVoidPtrOfType(&TA_iFont);
-    ((taiMisc*)ths)->AdjustFont((int)*arg[1], refarg_1);
-    return rval;}
-  static cssEl* cssElCFun_taiAction_connect_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiAction*)ths)->connect((QObject*)(void*)*arg[1], (const char*)*arg[2]);
-    return rval;}
-taPtrList<taiData>*		 TAI_taPtrList_taiData_=NULL;
-taPtrList<taiMenuEl>*		 TAI_taPtrList_taiMenuEl_=NULL;
-taPtrList<taiMenu>*		 TAI_taPtrList_taiMenu_=NULL;
-  static cssEl* cssElCFun_HiLightButton_hiLight_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((HiLightButton*)ths)->hiLight());
-    return rval;}
-  static cssEl* cssElCFun_HiLightButton_setHiLight_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((HiLightButton*)ths)->setHiLight((bool)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_iContextLabel_index_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iContextLabel*)ths)->index());
-    return rval;}
-  static cssEl* cssElCFun_taiChoiceDialog_ChoiceDialog_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taiChoiceDialog*)ths)->ChoiceDialog((QWidget*)(void*)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taiChoiceDialog*)ths)->ChoiceDialog((QWidget*)(void*)*arg[1], (const char*)*arg[2]));}
-    if(na == 3) {
-      rval=new cssInt((int)((taiChoiceDialog*)ths)->ChoiceDialog((QWidget*)(void*)*arg[1], (const char*)*arg[2], (const char*)*arg[3]));}
-    if(na == 4) {
-      rval=new cssInt((int)((taiChoiceDialog*)ths)->ChoiceDialog((QWidget*)(void*)*arg[1], (const char*)*arg[2], (const char*)*arg[3], (bool)*arg[4]));}
-    return rval;}
-  static cssEl* cssElCFun_taiChoiceDialog_ErrorDialog_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 2) {
-      ((taiChoiceDialog*)ths)->ErrorDialog((QWidget*)(void*)*arg[1], (const char*)*arg[2]);}
-    if(na == 3) {
-      ((taiChoiceDialog*)ths)->ErrorDialog((QWidget*)(void*)*arg[1], (const char*)*arg[2], (const char*)*arg[3]);}
-    return rval;}
-Member_List*		 TAI_Member_List=NULL;
-taiTypeBase*		 TAI_taiTypeBase=NULL;
-taiViewType*		 TAI_taiViewType=NULL;
-taiType*		 TAI_taiType=NULL;
-taiMember*		 TAI_taiMember=NULL;
-taiEdit*		 TAI_taiEdit=NULL;
-taiMethod*		 TAI_taiMethod=NULL;
-taiArgType*		 TAI_taiArgType=NULL;
-taPtrList<taiType>*		 TAI_taPtrList_taiType_=NULL;
-taiIntType*		 TAI_taiIntType=NULL;
-taiEnumType*		 TAI_taiEnumType=NULL;
-taiBoolType*		 TAI_taiBoolType=NULL;
-taiClassType*		 TAI_taiClassType=NULL;
-taiStringType*		 TAI_taiStringType=NULL;
-gpiListType*		 TAI_gpiListType=NULL;
-gpiGroupType*		 TAI_gpiGroupType=NULL;
-gpiArray_Type*		 TAI_gpiArray_Type=NULL;
-taiTokenPtrType*		 TAI_taiTokenPtrType=NULL;
-taiTypePtr*		 TAI_taiTypePtr=NULL;
-taiFilePtrType*		 TAI_taiFilePtrType=NULL;
-taiDefaultEdit*		 TAI_taiDefaultEdit=NULL;
-taiTokenPtrMember*		 TAI_taiTokenPtrMember=NULL;
-taiDefaultToken*		 TAI_taiDefaultToken=NULL;
-taiSubTokenPtrMember*		 TAI_taiSubTokenPtrMember=NULL;
-taiTypePtrMember*		 TAI_taiTypePtrMember=NULL;
-taiMemberDefPtrMember*		 TAI_taiMemberDefPtrMember=NULL;
-taiFunPtrMember*		 TAI_taiFunPtrMember=NULL;
-taiCondEditMember*		 TAI_taiCondEditMember=NULL;
-taiTDefaultMember*		 TAI_taiTDefaultMember=NULL;
-taiButtonMethod*		 TAI_taiButtonMethod=NULL;
-taiMenuMethod*		 TAI_taiMenuMethod=NULL;
-taiStreamArgType*		 TAI_taiStreamArgType=NULL;
-taiBoolArgType*		 TAI_taiBoolArgType=NULL;
-taiTokenPtrArgType*		 TAI_taiTokenPtrArgType=NULL;
-taiTypePtrArgType*		 TAI_taiTypePtrArgType=NULL;
-taiMemberPtrArgType*		 TAI_taiMemberPtrArgType=NULL;
-taiMethodPtrArgType*		 TAI_taiMethodPtrArgType=NULL;
-gpiDefaultEl*		 TAI_gpiDefaultEl=NULL;
-gpiLinkGP*		 TAI_gpiLinkGP=NULL;
-gpiLinkList*		 TAI_gpiLinkList=NULL;
-gpiFromGpTokenPtrMember*		 TAI_gpiFromGpTokenPtrMember=NULL;
-gpiTAPtrArgType*		 TAI_gpiTAPtrArgType=NULL;
-gpiInObjArgType*		 TAI_gpiInObjArgType=NULL;
-gpiFromGpArgType*		 TAI_gpiFromGpArgType=NULL;
-gpiListEdit*		 TAI_gpiListEdit=NULL;
-gpiGroupEdit*		 TAI_gpiGroupEdit=NULL;
-gpiArrayEdit*		 TAI_gpiArrayEdit=NULL;
-SArgEdit*		 TAI_SArgEdit=NULL;
-gpiSelectEdit*		 TAI_gpiSelectEdit=NULL;
-tabViewType*		 TAI_tabViewType=NULL;
-tabOViewType*		 TAI_tabOViewType=NULL;
-tabListViewType*		 TAI_tabListViewType=NULL;
-tabGroupViewType*		 TAI_tabGroupViewType=NULL;
-  static cssEl* cssElCFun_taiMimeItem_New_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeItem*)ths)->New((taBase*)(void*)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_obj_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeItem*)ths)->obj(), 1, &TA_void);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_td_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiMimeItem*)ths)->td(), 1, &TA_TypeDef);
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_type_name_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((taiMimeItem*)ths)->type_name());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_is_tab_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiMimeItem*)ths)->is_tab());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_path_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((taiMimeItem*)ths)->path());
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_obj_destroyed_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMimeItem*)ths)->obj_destroyed();
-    return rval;}
-  static cssEl* cssElCFun_taiClipData_count_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiClipData*)ths)->count());
-    return rval;}
-  static cssEl* cssElCFun_taiClipData_is_multi_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taiClipData*)ths)->is_multi());
-    return rval;}
-  static cssEl* cssElCFun_taiClipData_items_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taiClipData*)ths)->items((int)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taiClipData_ClipOpToSrcCode_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiClipData*)ths)->ClipOpToSrcCode((int)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taiClipData_format_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssCPtr_char((void*)((taiClipData*)ths)->format(), 1);}
-    if(na == 1) {
-      rval=new cssCPtr_char((void*)((taiClipData*)ths)->format((int)*arg[1]), 1);}
-    return rval;}
-taPtrList<taiMimeItem>*		 TAI_taPtrList_taiMimeItem_=NULL;
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Find_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->Find((const char*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Remove_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->Remove((int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__SafeEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->SafeEl((int)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__FastEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->FastEl((int)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Edit_El_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->Edit_El((taiMimeItem*)(void*)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__FindName_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->FindName((const char*)*arg[1]), 1, &TA_taiMimeItem);}
-    if(na == 2) {
-      int refarg_1=(int)*arg[2];
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_taiMimeItem);    *arg[2]=(Int)refarg_1;
-}
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Pop_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->Pop(), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Peek_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->Peek(), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->AddUniqNameOld((taiMimeItem*)(void*)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<taiMimeItem>*)ths)->LinkUniqNameOld((taiMimeItem*)(void*)*arg[1]), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__FindEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->FindEl((const taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__AddEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<taiMimeItem>*)ths)->AddEl((taiMimeItem*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Add_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<taiMimeItem>*)ths)->Add((taiMimeItem*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__AddUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->AddUnique((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__AddUniqNameNew_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->AddUniqNameNew((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Insert_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->Insert((taiMimeItem*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Replace_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->Replace((int)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__ReplaceEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->ReplaceEl((taiMimeItem*)(void*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__ReplaceName_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->ReplaceName((const char*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__RemoveEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->RemoveEl((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__DuplicateEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->DuplicateEl((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Link_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<taiMimeItem>*)ths)->Link((taiMimeItem*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__LinkUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->LinkUnique((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__LinkUniqNameNew_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->LinkUniqNameNew((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__InsertLink_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->InsertLink((taiMimeItem*)(void*)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->InsertLink((taiMimeItem*)(void*)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__ReplaceLink_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->ReplaceLink((int)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__ReplaceLinkEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->ReplaceLinkEl((taiMimeItem*)(void*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__ReplaceLinkName_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->ReplaceLinkName((const char*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Push_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<taiMimeItem>*)ths)->Push((taiMimeItem*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__MoveEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->MoveEl((taiMimeItem*)(void*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__Transfer_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->Transfer((taiMimeItem*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__MoveBefore_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->MoveBefore((taiMimeItem*)(void*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_taiMimeItem__MoveAfter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<taiMimeItem>*)ths)->MoveAfter((taiMimeItem*)(void*)*arg[1], (taiMimeItem*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taiMimeItem_List_El_Done__stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taiMimeItem_List*)ths)->El_Done_((void*)(void*)*arg[1]);
-    return rval;}
-WinGeometry*		 TAI_WinGeometry=NULL;
-  static cssEl* cssElCFun_WinGeometry_GetOwner_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((WinGeometry*)ths)->GetOwner(), 1, &TA_taBase);
-    return rval;}
-  static cssEl* cssElCFun_WinGeometry_Offs_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssReal((double)((WinGeometry*)ths)->Offs((float)*arg[1], (float)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_WinGeometry_GetWinPos_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((WinGeometry*)ths)->GetWinPos();
-    return rval;}
-  static cssEl* cssElCFun_WinGeometry_SetWinPos_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((WinGeometry*)ths)->SetWinPos();
-    return rval;}
-  static cssEl* cssElCFun_WinGeometry_ScriptWinPos_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((WinGeometry*)ths)->ScriptWinPos();}
-    if(na == 1) {
-      ostream& refarg_0=*(ostream*)*arg[1];
-    ((WinGeometry*)ths)->ScriptWinPos(refarg_0);}
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_viewer_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((ToolBar*)ths)->viewer(), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_viewer_win_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ToolBar*)ths)->viewer_win(), 1, &TA_iDataViewer);
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_GetWinPos_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->GetWinPos();
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_SetWinPos_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->SetWinPos();
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_Dock_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->Dock();
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_Undock_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->Undock();
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_Show_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->Show();
-    return rval;}
-  static cssEl* cssElCFun_ToolBar_Hide_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((ToolBar*)ths)->Hide();
-    return rval;}
-DataViewer*		 TAI_DataViewer=NULL;
-  static cssEl* cssElCFun_DataViewer_GetDataLink_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 2) {
-      rval=new cssTA((void*)((DataViewer*)ths)->GetDataLink((void*)(void*)*arg[1], (TypeDef*)*arg[2]), 1, &TA_taiDataLink);}
-    if(na == 3) {
-      rval=new cssTA((void*)((DataViewer*)ths)->GetDataLink((void*)(void*)*arg[1], (TypeDef*)*arg[2], (int)*arg[3]), 1, &TA_taiDataLink);}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Save_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ostream& refarg_0=*(ostream*)*arg[1];
-    rval=new cssInt((int)((DataViewer*)ths)->Save(refarg_0));}
-    if(na == 2) {
-      ostream& refarg_0=*(ostream*)*arg[1];
-    rval=new cssInt((int)((DataViewer*)ths)->Save(refarg_0, (taBase*)(void*)*arg[2]));}
-    if(na == 3) {
-      ostream& refarg_0=*(ostream*)*arg[1];
-    rval=new cssInt((int)((DataViewer*)ths)->Save(refarg_0, (taBase*)(void*)*arg[2], (int)*arg[3]));}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Edit_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      rval=new cssInt((int)((DataViewer*)ths)->Edit());}
-    if(na == 1) {
-      rval=new cssInt((int)((DataViewer*)ths)->Edit((bool)*arg[1]));}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Clear_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->Clear();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_HasChanges_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((DataViewer*)ths)->HasChanges());
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Changed_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 0) {
-      ((DataViewer*)ths)->Changed();}
-    if(na == 1) {
-      ((DataViewer*)ths)->Changed((bool)*arg[1]);}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Print_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ((DataViewer*)ths)->Print((DataViewer::PrintFmt)(int)*arg[1]);}
-    if(na == 2) {
-      ((DataViewer*)ths)->Print((DataViewer::PrintFmt)(int)*arg[1], (const char*)*arg[2]);}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Print_Data_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      ((DataViewer*)ths)->Print_Data((DataViewer::PrintFmt)(int)*arg[1]);}
-    if(na == 2) {
-      ((DataViewer*)ths)->Print_Data((DataViewer::PrintFmt)(int)*arg[1], (const char*)*arg[2]);}
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_ScriptWinPos_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->ScriptWinPos();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Iconify_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->Iconify();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_DeIconify_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->DeIconify();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_IsMapped_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((DataViewer*)ths)->IsMapped());
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_ViewWindow_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->ViewWindow();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_GetPrintFileExt_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((DataViewer*)ths)->GetPrintFileExt((DataViewer::PrintFmt)(int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Raise_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->Raise();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_Lower_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->Lower();
-    return rval;}
-  static cssEl* cssElCFun_DataViewer_WinInit_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((DataViewer*)ths)->WinInit();
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_md_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->md(), 1, &TA_MemberDef);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_par_link_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->par_link(), 1, &TA_taiDataLink);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_par_md_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->par_md(), 1, &TA_MemberDef);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_host_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->host(), 1, &TA_IDataViewHost);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_view_name_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssString(((ISelectable*)ths)->view_name());
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_widget_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->widget(), 1, &TA_QWidget);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_EditAction__stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ISelectable_PtrList& refarg_0=*(ISelectable_PtrList*)arg[1]->GetVoidPtrOfType(&TA_ISelectable_PtrList);
-    rval=new cssInt((int)((ISelectable*)ths)->EditAction_(refarg_0, (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_FillContextMenu_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ISelectable_PtrList& refarg_0=*(ISelectable_PtrList*)arg[1]->GetVoidPtrOfType(&TA_ISelectable_PtrList);
-    ((ISelectable*)ths)->FillContextMenu(refarg_0, (taiMenu*)(void*)*arg[2]);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_GetClipData_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->GetClipData(*(ISelectable_PtrList*)arg[1]->GetVoidPtrOfType(&TA_ISelectable_PtrList), (int)*arg[2], (bool)*arg[3]), 1, &TA_taiClipData);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_GetEditActions__stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((ISelectable*)ths)->GetEditActions_(*(ISelectable_PtrList*)arg[1]->GetVoidPtrOfType(&TA_ISelectable_PtrList)));
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_GetMimeItem_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable*)ths)->GetMimeItem(), 1, &TA_taiMimeItem);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_RefUnref_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((ISelectable*)ths)->RefUnref((bool)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_IDataViewHost_This_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((IDataViewHost*)ths)->This(), 1, &TA_QWidget);
-    return rval;}
-  static cssEl* cssElCFun_IDataViewHost_ObjectRemoving_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((IDataViewHost*)ths)->ObjectRemoving((ISelectable*)(void*)*arg[1]));
-    return rval;}
-taPtrList<ISelectable>*		 TAI_taPtrList_ISelectable_=NULL;
-  static cssEl* cssElCFun_taPtrList_ISelectable__Find_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->Find((const char*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Remove_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->Remove((int)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__SafeEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->SafeEl((int)*arg[1]), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__FastEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->FastEl((int)*arg[1]), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Edit_El_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->Edit_El((ISelectable*)(void*)*arg[1]), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__FindName_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->FindName((const char*)*arg[1]), 1, &TA_ISelectable);}
-    if(na == 2) {
-      int refarg_1=(int)*arg[2];
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_ISelectable);    *arg[2]=(Int)refarg_1;
-}
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Pop_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->Pop(), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Peek_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->Peek(), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->AddUniqNameOld((ISelectable*)(void*)*arg[1]), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((taPtrList<ISelectable>*)ths)->LinkUniqNameOld((ISelectable*)(void*)*arg[1]), 1, &TA_ISelectable);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__FindEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->FindEl((const ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__AddEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<ISelectable>*)ths)->AddEl((ISelectable*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Add_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<ISelectable>*)ths)->Add((ISelectable*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__AddUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->AddUnique((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__AddUniqNameNew_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->AddUniqNameNew((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Insert_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->Insert((ISelectable*)(void*)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Replace_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->Replace((int)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__ReplaceEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->ReplaceEl((ISelectable*)(void*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__ReplaceName_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->ReplaceName((const char*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__RemoveEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->RemoveEl((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__DuplicateEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->DuplicateEl((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Link_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<ISelectable>*)ths)->Link((ISelectable*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__LinkUnique_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->LinkUnique((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__LinkUniqNameNew_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->LinkUniqNameNew((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__InsertLink_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->InsertLink((ISelectable*)(void*)*arg[1]));}
-    if(na == 2) {
-      rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->InsertLink((ISelectable*)(void*)*arg[1], (int)*arg[2]));}
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__ReplaceLink_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->ReplaceLink((int)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__ReplaceLinkEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->ReplaceLinkEl((ISelectable*)(void*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__ReplaceLinkName_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->ReplaceLinkName((const char*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Push_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((taPtrList<ISelectable>*)ths)->Push((ISelectable*)(void*)*arg[1]);
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__MoveEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->MoveEl((ISelectable*)(void*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__Transfer_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->Transfer((ISelectable*)(void*)*arg[1]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__MoveBefore_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->MoveBefore((ISelectable*)(void*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taPtrList_ISelectable__MoveAfter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taPtrList<ISelectable>*)ths)->MoveAfter((ISelectable*)(void*)*arg[1], (ISelectable*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_PtrList_Type1_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable_PtrList*)ths)->Type1(), 1, &TA_TypeDef);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_PtrList_CommonSubtype1N_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable_PtrList*)ths)->CommonSubtype1N(), 1, &TA_TypeDef);
-    return rval;}
-  static cssEl* cssElCFun_ISelectable_PtrList_CommonSubtype2N_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ISelectable_PtrList*)ths)->CommonSubtype2N(), 1, &TA_TypeDef);
-    return rval;}
-taList<DataViewer>*		 TAI_taList_DataViewer_=NULL;
-  static cssEl* cssElCFun_taList_DataViewer__MoveBefore_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taList<DataViewer>*)ths)->MoveBefore((DataViewer*)(void*)*arg[1], (DataViewer*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__MoveAfter_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((taList<DataViewer>*)ths)->MoveAfter((DataViewer*)(void*)*arg[1], (DataViewer*)(void*)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__SafeEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->SafeEl((int)*arg[1]), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__FastEl_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->FastEl((int)*arg[1]), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__DefaultEl_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->DefaultEl(), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__Edit_El_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->Edit_El((DataViewer*)(void*)*arg[1]), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__FindName_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->FindName((const char*)*arg[1]), 1, &TA_DataViewer);}
-    if(na == 2) {
-      int refarg_1=(int)*arg[2];
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->FindName((const char*)*arg[1], refarg_1), 1, &TA_DataViewer);    *arg[2]=(Int)refarg_1;
-}
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__FindType_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 1) {
-      rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->FindType((TypeDef*)*arg[1]), 1, &TA_DataViewer);}
-    if(na == 2) {
-      int refarg_1=(int)*arg[2];
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->FindType((TypeDef*)*arg[1], refarg_1), 1, &TA_DataViewer);    *arg[2]=(Int)refarg_1;
-}
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__Pop_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->Pop(), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__Peek_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->Peek(), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__AddUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->AddUniqNameOld((DataViewer*)(void*)*arg[1]), 1, &TA_DataViewer);
-    return rval;}
-  static cssEl* cssElCFun_taList_DataViewer__LinkUniqNameOld_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((taList<DataViewer>*)ths)->LinkUniqNameOld((DataViewer*)(void*)*arg[1]), 1, &TA_DataViewer);
-    return rval;}
-DataViewer_List*		 TAI_DataViewer_List=NULL;
-DataBrowser*		 TAI_DataBrowser=NULL;
-  static cssEl* cssElCFun_DataBrowser_New_stub(void* ths,int na, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    if(na == 3) {
-      rval=new cssTA_Base((void*)((DataBrowser*)ths)->New((void*)(void*)*arg[1], (MemberDef*)*arg[2], (TypeDef*)*arg[3]), 1, &TA_DataBrowser);}
-    if(na == 4) {
-      rval=new cssTA_Base((void*)((DataBrowser*)ths)->New((void*)(void*)*arg[1], (MemberDef*)*arg[2], (TypeDef*)*arg[3], (bool)*arg[4]), 1, &TA_DataBrowser);}
-    return rval;}
-ClassBrowser*		 TAI_ClassBrowser=NULL;
-  static cssEl* cssElCFun_ClassBrowser_New_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA_Base((void*)((ClassBrowser*)ths)->New((void*)(void*)*arg[1], (TypeInfoKind)(int)*arg[2]), 1, &TA_ClassBrowser);
-    return rval;}
-  static cssEl* cssElCFun_ClassBrowser_StatGetDataLink_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ClassBrowser*)ths)->StatGetDataLink((void*)(void*)*arg[1], (TypeInfoKind)(int)*arg[2]), 1, &TA_taiDataLink);
-    return rval;}
-  static cssEl* cssElCFun_ClassBrowser_browser_win_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssTA((void*)((ClassBrowser*)ths)->browser_win(), 1, &TA_iClassBrowser);
-    return rval;}
-taPtrList<gpiList_ElData>*		 TAI_taPtrList_gpiList_ElData_=NULL;
-SelectEditConfig*		 TAI_SelectEditConfig=NULL;
-iPoint*		 TAI_iPoint=NULL;
-  static cssEl* cssElCFun_iPoint_getArrayIndex_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iPoint*)ths)->getArrayIndex((int)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_iPoint_isEqual_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iPoint*)ths)->isEqual((int)*arg[1], (int)*arg[2]));
-    return rval;}
-  static cssEl* cssElCFun_iPoint_getValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_0=(int)*arg[1];    int refarg_1=(int)*arg[2];
-    ((iPoint*)ths)->getValue(refarg_0, refarg_1);
-    *arg[1]=(Int)refarg_0;    *arg[2]=(Int)refarg_1;
-    return rval;}
-  static cssEl* cssElCFun_iPoint_setValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iPoint*)ths)->setValue((int)*arg[1], (int)*arg[2]);
-    return rval;}
-iVec3i*		 TAI_iVec3i=NULL;
-  static cssEl* cssElCFun_iVec3i_isEqual_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iVec3i*)ths)->isEqual((int)*arg[1], (int)*arg[2], (int)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_iVec3i_getValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    int refarg_0=(int)*arg[1];    int refarg_1=(int)*arg[2];    int refarg_2=(int)*arg[3];
-    ((iVec3i*)ths)->getValue(refarg_0, refarg_1, refarg_2);
-    *arg[1]=(Int)refarg_0;    *arg[2]=(Int)refarg_1;    *arg[3]=(Int)refarg_2;
-    return rval;}
-  static cssEl* cssElCFun_iVec3i_setValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iVec3i*)ths)->setValue((int)*arg[1], (int)*arg[2], (int)*arg[3]);
-    return rval;}
-iSize*		 TAI_iSize=NULL;
-  static cssEl* cssElCFun_iSize_height_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iSize*)ths)->height());
-    return rval;}
-  static cssEl* cssElCFun_iSize_width_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iSize*)ths)->width());
-    return rval;}
-iRect*		 TAI_iRect=NULL;
-  static cssEl* cssElCFun_iRect_topLeft_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((iRect*)ths)->topLeft();
-    return rval;}
-  static cssEl* cssElCFun_iRect_size_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((iRect*)ths)->size();
-    return rval;}
-  static cssEl* cssElCFun_iRect_left_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iRect*)ths)->left());
-    return rval;}
-  static cssEl* cssElCFun_iRect_top_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iRect*)ths)->top());
-    return rval;}
-  static cssEl* cssElCFun_iRect_width_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iRect*)ths)->width());
-    return rval;}
-  static cssEl* cssElCFun_iRect_height_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iRect*)ths)->height());
-    return rval;}
-iVec3f*		 TAI_iVec3f=NULL;
-  static cssEl* cssElCFun_iVec3f_isEqual_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iVec3f*)ths)->isEqual((float)*arg[1], (float)*arg[2], (float)*arg[3]));
-    return rval;}
-  static cssEl* cssElCFun_iVec3f_isUnity_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iVec3f*)ths)->isUnity());
-    return rval;}
-  static cssEl* cssElCFun_iVec3f_isZero_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iVec3f*)ths)->isZero());
-    return rval;}
-  static cssEl* cssElCFun_iVec3f_setValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iVec3f*)ths)->setValue((float)*arg[1], (float)*arg[2], (float)*arg[3]);
-    return rval;}
-iBox3f*		 TAI_iBox3f=NULL;
-  static cssEl* cssElCFun_iBox3f_center_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((iBox3f*)ths)->center();
-    return rval;}
-  static cssEl* cssElCFun_iBox3f_size_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    ((iBox3f*)ths)->size();
-    return rval;}
-  static cssEl* cssElCFun_iBox3f_isZero_stub(void* ths,int, cssEl**) {
-    cssEl* rval=&cssMisc::Void;
-    rval=new cssInt((int)((iBox3f*)ths)->isZero());
-    return rval;}
-  static cssEl* cssElCFun_iBox3f_setValue_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iBox3f*)ths)->setValue(*(iVec3f*)arg[1]->GetVoidPtrOfType(&TA_iVec3f), *(iVec3f*)arg[2]->GetVoidPtrOfType(&TA_iVec3f));
-    return rval;}
-  static cssEl* cssElCFun_iBox3f_setValueCS_stub(void* ths,int, cssEl** arg) {
-    cssEl* rval=&cssMisc::Void;
-    ((iBox3f*)ths)->setValueCS(*(iVec3f*)arg[1]->GetVoidPtrOfType(&TA_iVec3f), *(iVec3f*)arg[2]->GetVoidPtrOfType(&TA_iVec3f));
-    return rval;}
 
 // Type Data
 
@@ -7074,28 +5256,6 @@ static EnumDef_data TA_taBase_Orientation[]={
 static MethodArgs_data TA_taBase_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taBase_ChildQueryEditActions_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taBase_ChildEditAction_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_taBase_QueryEditActions_MethArgs[]={
-  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taBase_EditAction_MethArgs[]={
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
   NULL};
 static MethodArgs_data TA_taBase_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
@@ -7188,14 +5348,6 @@ static MethodArgs_data TA_taBase_CallFun_MethArgs[]={
 static MethodDef_data TA_taBase_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_taBase_GetColText_stub,TA_taBase_GetColText_MethArgs},
-  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
-    0,5,-1,0,NULL,cssElCFun_taBase_ChildQueryEditActions_stub,TA_taBase_ChildQueryEditActions_MethArgs},
-  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
-    0,4,-1,0,NULL,cssElCFun_taBase_ChildEditAction_stub,TA_taBase_ChildEditAction_MethArgs},
-  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
-    0,3,-1,0,NULL,cssElCFun_taBase_QueryEditActions_stub,TA_taBase_QueryEditActions_MethArgs},
-  {&TA_int,NULL,"EditAction","","","",
-    0,2,-1,0,NULL,cssElCFun_taBase_EditAction_stub,TA_taBase_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_taBase_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -7232,35 +5384,35 @@ static MethodDef_data TA_taBase_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taBase_GetEnumString_stub,TA_taBase_GetEnumString_MethArgs},
   {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
     0,2,1,0,NULL,cssElCFun_taBase_GetEnumVal_stub,TA_taBase_GetEnumVal_MethArgs},
-  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+  {&TA_int,NULL,"Load"," Load object data from a file","MENUMENU_ON_ObjectARGC_1UPDATE_MENUSMENU_CONTEXT","",
     0,2,1,0,NULL,cssElCFun_taBase_Load_stub,TA_taBase_Load_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+  {&TA_int,NULL,"Save"," Save object data to a file","MENUMENU_ON_ObjectARGC_1QUICK_SAVE","",
     0,3,1,0,NULL,cssElCFun_taBase_Save_stub,TA_taBase_Save_MethArgs},
-  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENUARGC_1","",
     0,3,1,0,NULL,cssElCFun_taBase_SaveAs_stub,TA_taBase_SaveAs_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENUARGC_0MENU_ON_ObjectLABEL_PropertiesMENU_CONTEXTNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_taBase_Edit_stub,NULL},
   {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
     0,0,-1,0,NULL,cssElCFun_taBase_CloseEdit_stub,NULL},
   {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
     0,1,0,0,NULL,cssElCFun_taBase_ReShowEdit_stub,TA_taBase_ReShowEdit_MethArgs},
-  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENUCONFIRMNO_REVERT_AFTERLABEL_Close_(Destroy)NO_MENU_CONTEXT","",
     0,0,-1,0,NULL,cssElCFun_taBase_Close_stub,NULL},
-  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENUMENU_ON_ObjectMENU_SEP_BEFORETYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taBase_CopyFrom_stub,TA_taBase_CopyFrom_MethArgs},
-  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENUTYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taBase_CopyTo_stub,TA_taBase_CopyTo_MethArgs},
   {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
     0,2,-1,0,NULL,cssElCFun_taBase_ChildUpdateAfterEdit_stub,TA_taBase_ChildUpdateAfterEdit_MethArgs},
-  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taBase_DuplicateMe_stub,NULL},
-  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENUTYPE_thisUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taBase_ChangeMyType_stub,TA_taBase_ChangeMyType_MethArgs},
   {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
     0,3,-1,0,NULL,cssElCFun_taBase_SelectForEdit_stub,TA_taBase_SelectForEdit_MethArgs},
-  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU","",
     0,3,-1,0,NULL,cssElCFun_taBase_SelectFunForEdit_stub,TA_taBase_SelectFunForEdit_MethArgs},
-  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+  {&TA_void,NULL,"Help"," get help on using this object","MENU","",
     0,0,-1,0,NULL,cssElCFun_taBase_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_taBase_CallFun_stub,TA_taBase_CallFun_MethArgs},
@@ -7790,11 +5942,11 @@ static int iFont::* TA_iFont_MbrOff;
 static MemberDef_data TA_iFont_MemberDef[]={
   {&TA_taString,NULL,"fontName"," family name of the font, such as 'Helvetica' or 'Arial'","","",
     *((ta_memb_ptr*)&(TA_iFont_MbrOff=(int iFont::*)(&iFont::fontName))),0,NULL,0},
-  {NULL,"::Attributes","attribs"," font modifiers","BITS ","",
+  {NULL,"::Attributes","attribs"," font modifiers","BITS","",
     *((ta_memb_ptr*)&(TA_iFont_MbrOff=(int iFont::*)(&iFont::attribs))),0,NULL,0},
   {&TA_float,NULL,"pointSize"," point size of the font -- will be aproximated in 3D","","",
     *((ta_memb_ptr*)&(TA_iFont_MbrOff=(int iFont::*)(&iFont::pointSize))),0,NULL,0},
-  {&TA_int,NULL,"stretch"," the degree of stretch, less is narrower","DETAIL DEF_100 ","",
+  {&TA_int,NULL,"stretch"," the degree of stretch, less is narrower","DETAILDEF_100","",
     *((ta_memb_ptr*)&(TA_iFont_MbrOff=(int iFont::*)(&iFont::stretch))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_iFont_setBold_MethArgs[]={
@@ -7815,9 +5967,6 @@ static MethodArgs_data TA_iFont_setUnderline_MethArgs[]={
 static MethodArgs_data TA_iFont_copy_MethArgs[]={
   {&TA_const_iFont_ref,NULL,"src",""},
   NULL};
-static MethodArgs_data TA_iFont_setRawName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"raw_name",""},
-  NULL};
 static MethodDef_data TA_iFont_MethodDef[]={
   {&TA_bool,NULL,"bold","","","",
     0,0,-1,0,NULL,cssElCFun_iFont_bold_stub,NULL},
@@ -7837,20 +5986,18 @@ static MethodDef_data TA_iFont_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_iFont_setUnderline_stub,TA_iFont_setUnderline_MethArgs},
   {&TA_void,NULL,"copy","","","",
     0,1,-1,0,NULL,cssElCFun_iFont_copy_stub,TA_iFont_copy_MethArgs},
-  {&TA_void,NULL,"setRawName","","","",
-    0,1,-1,0,NULL,cssElCFun_iFont_setRawName_stub,TA_iFont_setRawName_MethArgs},
   NULL};
 static int taPtrList_impl::* TA_taPtrList_impl_MbrOff;
 static MemberDef_data TA_taPtrList_impl_MemberDef[]={
-  {&TA_void_ptr_ptr,NULL,"el"," the elements themselves","READ_ONLY NO_SAVE HIDDEN ","",
+  {&TA_void_ptr_ptr,NULL,"el"," the elements themselves","READ_ONLYNO_SAVEHIDDEN","",
     *((ta_memb_ptr*)&(TA_taPtrList_impl_MbrOff=(int taPtrList_impl::*)(&taPtrList_impl::el))),0,NULL,0},
-  {&TA_int,NULL,"alloc_size"," allocation size","READ_ONLY NO_SAVE ","",
+  {&TA_int,NULL,"alloc_size"," allocation size","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taPtrList_impl_MbrOff=(int taPtrList_impl::*)(&taPtrList_impl::alloc_size))),0,NULL,0},
-  {&TA_taHashTable_ptr,NULL,"hash_table"," a hash table (NULL if not used)","READ_ONLY NO_SAVE HIDDEN ","",
+  {&TA_taHashTable_ptr,NULL,"hash_table"," a hash table (NULL if not used)","READ_ONLYNO_SAVEHIDDEN","",
     *((ta_memb_ptr*)&(TA_taPtrList_impl_MbrOff=(int taPtrList_impl::*)(&taPtrList_impl::hash_table))),0,NULL,0},
-  {&TA_int,NULL,"size"," number of elements in the list","READ_ONLY NO_SAVE SHOW ","",
+  {&TA_int,NULL,"size"," number of elements in the list","READ_ONLYNO_SAVESHOW","",
     *((ta_memb_ptr*)&(TA_taPtrList_impl_MbrOff=(int taPtrList_impl::*)(&taPtrList_impl::size))),0,NULL,0},
-  {&TA_int,NULL,"Idx"," pass to find if you don't want one","HIDDEN ","",
+  {&TA_int,NULL,"Idx"," pass to find if you don't want one","HIDDEN","",
     (ta_memb_ptr)NULL,1,(void*)(&taPtrList_impl::Idx),0},
   NULL};
 static MethodArgs_data TA_taPtrList_impl_Indenter_MethArgs[]={
@@ -7972,7 +6119,7 @@ static MethodDef_data TA_taPtrList_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_impl_RemoveName_stub,TA_taPtrList_impl_RemoveName_MethArgs},
   {&TA_bool,NULL,"RemoveLast"," remove the last element on the list","","",
     0,0,-1,0,NULL,cssElCFun_taPtrList_impl_RemoveLast_stub,NULL},
-  {&TA_void,NULL,"RemoveAll"," Remove all elements on the list","MENU MENU_ON_Edit CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"RemoveAll"," Remove all elements on the list","MENUMENU_ON_EditCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taPtrList_impl_RemoveAll_stub,NULL},
   {&TA_bool,NULL,"Move"," Move element from (from) to position (to) in list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_impl_Move_stub,TA_taPtrList_impl_Move_MethArgs},
@@ -7980,9 +6127,9 @@ static MethodDef_data TA_taPtrList_impl_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_impl_Swap_stub,TA_taPtrList_impl_Swap_MethArgs},
   {&TA_void,NULL,"PopAll"," pop all elements off the stack","","",
     0,0,-1,0,NULL,cssElCFun_taPtrList_impl_PopAll_stub,NULL},
-  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taPtrList_impl_Permute_stub,NULL},
-  {&TA_void,NULL,"Sort"," sort the items in the list in alpha order according to name (or El_Compare_)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"Sort"," sort the items in the list in alpha order according to name (or El_Compare_)","MENUCONFIRMUPDATE_MENUS","",
     0,1,0,0,NULL,cssElCFun_taPtrList_impl_Sort_stub,TA_taPtrList_impl_Sort_MethArgs},
   {&TA_void,NULL,"Sort_"," implementation of sorting function","","",
     0,1,0,0,NULL,cssElCFun_taPtrList_impl_Sort__stub,TA_taPtrList_impl_Sort__MethArgs},
@@ -8048,7 +6195,7 @@ static EnumDef_data TA_DataChangedReason_EnumDef[]={
   NULL};
 static int taFixedArray_impl::* TA_taFixedArray_impl_MbrOff;
 static MemberDef_data TA_taFixedArray_impl_MemberDef[]={
-  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVE READ_ONLY ","",
+  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVEREAD_ONLY","",
     *((ta_memb_ptr*)&(TA_taFixedArray_impl_MbrOff=(int taFixedArray_impl::*)(&taFixedArray_impl::size))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taFixedArray_impl_InRange_MethArgs[]={
@@ -8062,12 +6209,12 @@ static MethodDef_data TA_taFixedArray_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taFixedArray_impl_InRange_stub,TA_taFixedArray_impl_InRange_MethArgs},
   {&TA_void,NULL,"Reset"," //////////////////////////////////////////////","","",
     0,0,-1,0,NULL,cssElCFun_taFixedArray_impl_Reset_stub,NULL},
-  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
+  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENUMENU_ON_Edit","",
     0,1,-1,0,NULL,cssElCFun_taFixedArray_impl_EnforceSize_stub,TA_taFixedArray_impl_EnforceSize_MethArgs},
   NULL};
 static int taFixedArray<int>::* TA_taFixedArray_int__MbrOff;
 static MemberDef_data TA_taFixedArray_int__MemberDef[]={
-  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taFixedArray_int__MbrOff=(int taFixedArray<int>::*)(&taFixedArray<int>::el))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taFixedArray_int__SafeEl_MethArgs[]={
@@ -8102,13 +6249,13 @@ static MethodDef_data TA_taFixedArray_int__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taFixedArray_int__FastEl_stub,TA_taFixedArray_int__FastEl_MethArgs},
   {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taFixedArray_int__Set_stub,TA_taFixedArray_int__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taFixedArray_int__Add_stub,TA_taFixedArray_int__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taFixedArray_int__AddUnique_stub,TA_taFixedArray_int__AddUnique_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taFixedArray_int__Insert_stub,TA_taFixedArray_int__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taFixedArray_int__Find_stub,TA_taFixedArray_int__Find_MethArgs},
   NULL};
 static MemberDef_data TA_int_FixedArray_MemberDef[]={
@@ -8117,9 +6264,9 @@ static MemberDef_data TA_int_FixedArray_MemberDef[]={
   NULL};
 static int taArray_impl::* TA_taArray_impl_MbrOff;
 static MemberDef_data TA_taArray_impl_MemberDef[]={
-  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVE READ_ONLY ","",
+  {&TA_int,NULL,"size"," number of elements in the array","NO_SAVEREAD_ONLY","",
     *((ta_memb_ptr*)&(TA_taArray_impl_MbrOff=(int taArray_impl::*)(&taArray_impl::size))),0,NULL,0},
-  {&TA_int,NULL,"alloc_size"," allocated (physical) size","READ_ONLY NO_SAVE DETAIL ","",
+  {&TA_int,NULL,"alloc_size"," allocated (physical) size","READ_ONLYNO_SAVEDETAIL","",
     *((ta_memb_ptr*)&(TA_taArray_impl_MbrOff=(int taArray_impl::*)(&taArray_impl::alloc_size))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_impl_InRange_MethArgs[]={
@@ -8187,17 +6334,17 @@ static MethodDef_data TA_taArray_impl_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_impl_Reset_stub,NULL},
   {&TA_void_ptr,NULL,"BlankEl_"," address of a blank element, for initializing empty items","","",
     0,0,-1,0,NULL,cssElCFun_taArray_impl_BlankEl__stub,NULL},
-  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
+  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENUMENU_ON_Edit","",
     0,1,-1,0,NULL,cssElCFun_taArray_impl_EnforceSize_stub,TA_taArray_impl_EnforceSize_MethArgs},
-  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENU MENU_ON_Edit ","",
+  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENUMENU_ON_Edit","",
     0,1,0,0,NULL,cssElCFun_taArray_impl_AddBlank_stub,TA_taArray_impl_AddBlank_MethArgs},
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENUMENU_ON_Edit","",
     0,2,1,0,NULL,cssElCFun_taArray_impl_Remove_stub,TA_taArray_impl_Remove_MethArgs},
-  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
+  {&TA_bool,NULL,"Move"," move item from index to index","MENU","",
     0,2,-1,0,NULL,cssElCFun_taArray_impl_Move_stub,TA_taArray_impl_Move_MethArgs},
-  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU ","",
+  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU","",
     0,0,-1,0,NULL,cssElCFun_taArray_impl_Permute_stub,NULL},
-  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU ","",
+  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU","",
     0,1,0,0,NULL,cssElCFun_taArray_impl_Sort_stub,TA_taArray_impl_Sort_MethArgs},
   {&TA_void,NULL,"ShiftLeft"," shift all the elements in the array to the left by given number of items","","",
     0,1,-1,0,NULL,cssElCFun_taArray_impl_ShiftLeft_stub,TA_taArray_impl_ShiftLeft_MethArgs},
@@ -8345,7 +6492,7 @@ static MethodDef_data TA_taPtrList_taHashEl__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__SafeEl_stub,TA_taPtrList_taHashEl__SafeEl_MethArgs},
   {NULL,"::taHashEl_ptr","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__FastEl_stub,TA_taPtrList_taHashEl__FastEl_MethArgs},
-  {NULL,"::taHashEl_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taHashEl_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__Edit_El_stub,TA_taPtrList_taHashEl__Edit_El_MethArgs},
   {NULL,"::taHashEl_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taHashEl__FindName_stub,TA_taPtrList_taHashEl__FindName_MethArgs},
@@ -8375,9 +6522,9 @@ static MethodDef_data TA_taPtrList_taHashEl__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__ReplaceEl_stub,TA_taPtrList_taHashEl__ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__ReplaceName_stub,TA_taPtrList_taHashEl__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__RemoveEl_stub,TA_taPtrList_taHashEl__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__DuplicateEl_stub,TA_taPtrList_taHashEl__DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__Link_stub,TA_taPtrList_taHashEl__Link_MethArgs},
@@ -8385,7 +6532,7 @@ static MethodDef_data TA_taPtrList_taHashEl__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__LinkUnique_stub,TA_taPtrList_taHashEl__LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__LinkUniqNameNew_stub,TA_taPtrList_taHashEl__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taHashEl__InsertLink_stub,TA_taPtrList_taHashEl__InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__ReplaceLink_stub,TA_taPtrList_taHashEl__ReplaceLink_MethArgs},
@@ -8395,9 +6542,9 @@ static MethodDef_data TA_taPtrList_taHashEl__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__ReplaceLinkName_stub,TA_taPtrList_taHashEl__ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__Push_stub,TA_taPtrList_taHashEl__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__MoveEl_stub,TA_taPtrList_taHashEl__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashEl__Transfer_stub,TA_taPtrList_taHashEl__Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashEl__MoveBefore_stub,TA_taPtrList_taHashEl__MoveBefore_MethArgs},
@@ -8530,7 +6677,7 @@ static MethodDef_data TA_taPtrList_taHashBucket__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__SafeEl_stub,TA_taPtrList_taHashBucket__SafeEl_MethArgs},
   {NULL,"::taHashBucket_ptr","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__FastEl_stub,TA_taPtrList_taHashBucket__FastEl_MethArgs},
-  {NULL,"::taHashBucket_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taHashBucket_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__Edit_El_stub,TA_taPtrList_taHashBucket__Edit_El_MethArgs},
   {NULL,"::taHashBucket_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taHashBucket__FindName_stub,TA_taPtrList_taHashBucket__FindName_MethArgs},
@@ -8560,9 +6707,9 @@ static MethodDef_data TA_taPtrList_taHashBucket__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__ReplaceEl_stub,TA_taPtrList_taHashBucket__ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__ReplaceName_stub,TA_taPtrList_taHashBucket__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__RemoveEl_stub,TA_taPtrList_taHashBucket__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__DuplicateEl_stub,TA_taPtrList_taHashBucket__DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__Link_stub,TA_taPtrList_taHashBucket__Link_MethArgs},
@@ -8570,7 +6717,7 @@ static MethodDef_data TA_taPtrList_taHashBucket__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__LinkUnique_stub,TA_taPtrList_taHashBucket__LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__LinkUniqNameNew_stub,TA_taPtrList_taHashBucket__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taHashBucket__InsertLink_stub,TA_taPtrList_taHashBucket__InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__ReplaceLink_stub,TA_taPtrList_taHashBucket__ReplaceLink_MethArgs},
@@ -8580,9 +6727,9 @@ static MethodDef_data TA_taPtrList_taHashBucket__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__ReplaceLinkName_stub,TA_taPtrList_taHashBucket__ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__Push_stub,TA_taPtrList_taHashBucket__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__MoveEl_stub,TA_taPtrList_taHashBucket__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__Transfer_stub,TA_taPtrList_taHashBucket__Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taHashBucket__MoveBefore_stub,TA_taPtrList_taHashBucket__MoveBefore_MethArgs},
@@ -8630,115 +6777,71 @@ static MethodDef_data TA_taHashTable_MethodDef[]={
   {&TA_void,NULL,"InitList_","","","",
     0,0,-1,0,NULL,cssElCFun_taHashTable_InitList__stub,NULL},
   NULL};
-static EnumDef_data TA_taFiler_OpenMode[]={
-  {"NO_AUTO"," don't automatically open","",0},
-  {"READ"," auto open in READ mode..","",1},
-  {"WRITE","","",2},
-  {"APPEND","","",3},
-  NULL};
-static int taFiler::* TA_taFiler_MbrOff;
-static MemberDef_data TA_taFiler_MemberDef[]={
-  {&TA_int,NULL,"buf_size"," size of the buffer for input operations","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taFiler::buf_size),0},
-  {&TA_taString,NULL,"last_fname"," last file name processed","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taFiler::last_fname),0},
-  {&TA_taString,NULL,"last_dir"," last directory name processed","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taFiler::last_dir),0},
-  {&TA_taString,NULL,"filter","","","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::filter))),0,NULL,0},
-  {&TA_taString,NULL,"dir","","","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::dir))),0,NULL,0},
-  {&TA_taString,NULL,"fname","","","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::fname))),0,NULL,0},
-  {&TA_bool,NULL,"compress"," true if file should be auto-compressed","","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::compress))),0,NULL,0},
-  {&TA_bool,NULL,"select_only"," file is to be selected only (not opened)","","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::select_only))),0,NULL,0},
-  {&TA_ifstream_ptr,NULL,"ifstrm"," ","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::ifstrm))),0,NULL,0},
-  {&TA_ofstream_ptr,NULL,"ofstrm"," ","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::ofstrm))),0,NULL,0},
-  {&TA_fstream_ptr,NULL,"fstrm"," ","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::fstrm))),0,NULL,0},
-  {&TA_istream_ptr,NULL,"istrm"," ","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::istrm))),0,NULL,0},
-  {&TA_ostream_ptr,NULL,"ostrm"," ","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::ostrm))),0,NULL,0},
-  {&TA_bool,NULL,"open_file"," true if there is an open file somewhere","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::open_file))),0,NULL,0},
-  {&TA_bool,NULL,"file_selected"," true if a file was selected last time..","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::file_selected))),0,NULL,0},
-  {NULL,"::OpenMode","mode"," auto-open file in this mode (for auto)","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_taFiler_MbrOff=(int taFiler::*)(&taFiler::mode))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taFiler_Init_MethArgs[]={
-  {&TA_const_taString_ref,NULL,"dir_"," ."},
-  {&TA_const_taString_ref,NULL,"filter_"," "},
-  {&TA_bool,NULL,"compress_"," false"},
-  NULL};
-static MethodArgs_data TA_taFiler_Open_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"nm"," ((void *)0)"},
-  {&TA_bool,NULL,"no_dlg"," false"},
-  NULL};
-static MethodArgs_data TA_taFiler_Save_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"nm"," ((void *)0)"},
-  {&TA_bool,NULL,"no_dlg"," false"},
-  NULL};
-static MethodArgs_data TA_taFiler_SaveAs_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"nm"," ((void *)0)"},
-  {&TA_bool,NULL,"no_dlg"," false"},
-  NULL};
-static MethodArgs_data TA_taFiler_Append_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"nm"," ((void *)0)"},
-  {&TA_bool,NULL,"no_dlg"," false"},
-  NULL};
-static MethodArgs_data TA_taFiler_GetFileName_MethArgs[]={
-  {&TA_taString_ref,NULL,"fname",""},
-  {&TA_FilerOperation,NULL,"filerOperation",""},
-  NULL};
-static MethodDef_data TA_taFiler_MethodDef[]={
-  {&TA_istream_ptr,NULL,"open_read","","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_open_read_stub,NULL},
-  {&TA_ostream_ptr,NULL,"open_write","","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_open_write_stub,NULL},
-  {&TA_ostream_ptr,NULL,"open_append","","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_open_append_stub,NULL},
-  {&TA_bool,NULL,"open_write_exist_check"," returns true if file already exists for writing","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_open_write_exist_check_stub,NULL},
-  {&TA_void,NULL,"Init"," same as constructor","","",
-    0,3,0,0,NULL,cssElCFun_taFiler_Init_stub,TA_taFiler_Init_MethArgs},
-  {&TA_istream_ptr,NULL,"Open"," to get a file for reading (already exists)","","",
-    0,2,0,0,NULL,cssElCFun_taFiler_Open_stub,TA_taFiler_Open_MethArgs},
-  {&TA_ostream_ptr,NULL,"Save"," to save to an existing file","","",
-    0,2,0,0,NULL,cssElCFun_taFiler_Save_stub,TA_taFiler_Save_MethArgs},
-  {&TA_ostream_ptr,NULL,"SaveAs"," to save with a new file","","",
-    0,2,0,0,NULL,cssElCFun_taFiler_SaveAs_stub,TA_taFiler_SaveAs_MethArgs},
-  {&TA_ostream_ptr,NULL,"Append"," to save a file for appending (already exists)","","",
-    0,2,0,0,NULL,cssElCFun_taFiler_Append_stub,TA_taFiler_Append_MethArgs},
-  {&TA_void,NULL,"Close"," close the stream","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_Close_stub,NULL},
-  {&TA_void,NULL,"AutoOpen"," auto-open a file based on mode","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_AutoOpen_stub,NULL},
-  {&TA_bool,NULL,"IsOpen"," check if file is open","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_IsOpen_stub,NULL},
-  {&TA_bool,NULL,"GetFileName"," gui-dependent routine to get filename from user","","",
-    0,2,-1,0,NULL,cssElCFun_taFiler_GetFileName_stub,TA_taFiler_GetFileName_MethArgs},
-  {&TA_void,NULL,"FixFileName"," make sure suffix is right","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_FixFileName_stub,NULL},
-  {&TA_void,NULL,"GetDir"," get directory from file name","","",
-    0,0,-1,0,NULL,cssElCFun_taFiler_GetDir_stub,NULL},
-  NULL};
 static EnumDef_data TA_FilerOperation_EnumDef[]={
   {"foOpen","","",0},
   {"foSave","","",1},
   {"foSaveAs","","",2},
   {"foAppend","","",3},
   NULL};
+static MethodArgs_data TA_iColor_find_MethArgs[]={
+  {&TA_const_char_ptr,NULL,"name",""},
+  {&TA_float_ref,NULL,"r",""},
+  {&TA_float_ref,NULL,"g",""},
+  {&TA_float_ref,NULL,"b",""},
+  NULL};
+static MethodArgs_data TA_iColor_getRgb_MethArgs[]={
+  {&TA_float_ref,NULL,"r_",""},
+  {&TA_float_ref,NULL,"g_",""},
+  {&TA_float_ref,NULL,"b_",""},
+  NULL};
+static MethodArgs_data TA_iColor_setRgb_MethArgs[]={
+  {&TA_int,NULL,"rgb_",""},
+  NULL};
+static MethodArgs_data TA_iColor_set_MethArgs[]={
+  {&TA_const_iColor_ptr,NULL,"src",""},
+  NULL};
+static MethodArgs_data TA_iColor_intensities_MethArgs[]={
+  {&TA_float_ref,NULL,"r",""},
+  {&TA_float_ref,NULL,"g",""},
+  {&TA_float_ref,NULL,"b",""},
+  NULL};
+static MethodDef_data TA_iColor_MethodDef[]={
+  {&TA_const_iColor_ptr,NULL,"black"," convenience -- can pass an iColor* for black","","",
+    0,0,-1,1,(ta_void_fun)(iColor::black),cssElCFun_iColor_black_stub,NULL},
+  {&TA_bool,NULL,"find"," for Iv compat","","",
+    0,4,-1,1,(ta_void_fun)(iColor::find),cssElCFun_iColor_find_stub,TA_iColor_find_MethArgs},
+  {&TA_void,NULL,"getRgb","","","",
+    0,3,-1,0,NULL,cssElCFun_iColor_getRgb_stub,TA_iColor_getRgb_MethArgs},
+  {&TA_void,NULL,"setRgb","","","",
+    2,1,-1,0,NULL,cssElCFun_iColor_setRgb_stub,TA_iColor_setRgb_MethArgs},
+  {&TA_void,NULL,"set","","","",
+    0,1,-1,0,NULL,cssElCFun_iColor_set_stub,TA_iColor_set_MethArgs},
+  {&TA_int,NULL,"red","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_red_stub,NULL},
+  {&TA_int,NULL,"green","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_green_stub,NULL},
+  {&TA_int,NULL,"blue","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_blue_stub,NULL},
+  {&TA_float,NULL,"redf","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_redf_stub,NULL},
+  {&TA_float,NULL,"greenf","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_greenf_stub,NULL},
+  {&TA_float,NULL,"bluef","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_bluef_stub,NULL},
+  {&TA_float,NULL,"alpha","","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_alpha_stub,NULL},
+  {&TA_int,NULL,"rgb"," can't assume byte order","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_rgb_stub,NULL},
+  {&TA_void,NULL,"clear"," black","","",
+    0,0,-1,0,NULL,cssElCFun_iColor_clear_stub,NULL},
+  {&TA_void,NULL,"intensities"," Iv->Qt compat","","",
+    0,3,-1,0,NULL,cssElCFun_iColor_intensities_stub,TA_iColor_intensities_MethArgs},
+  NULL};
 static int taPlainArray<taString>::* TA_taPlainArray_taString__MbrOff;
 static MemberDef_data TA_taPlainArray_taString__MemberDef[]={
-  {NULL,"::taString_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::taString_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taPlainArray_taString__MbrOff=(int taPlainArray<taString>::*)(&taPlainArray<taString>::el))),0,NULL,0},
-  {&TA_taString,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_taString,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taPlainArray_taString__MbrOff=(int taPlainArray<taString>::*)(&taPlainArray<taString>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taPlainArray_taString__Remove_MethArgs[]={
@@ -8780,7 +6883,7 @@ static MethodArgs_data TA_taPlainArray_taString__RemoveEl_MethArgs[]={
   {NULL,"::const_taString_ref","item",""},
   NULL};
 static MethodDef_data TA_taPlainArray_taString__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENUMENU_ON_Edit","",
     2,2,1,0,NULL,cssElCFun_taPlainArray_taString__Remove_stub,TA_taPlainArray_taString__Remove_MethArgs},
   {NULL,"::taString_ref","SafeEl"," the element at the given index","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__SafeEl_stub,TA_taPlainArray_taString__SafeEl_MethArgs},
@@ -8794,15 +6897,15 @@ static MethodDef_data TA_taPlainArray_taString__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taPlainArray_taString__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taPlainArray_taString__Set_stub,TA_taPlainArray_taString__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__Add_stub,TA_taPlainArray_taString__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__AddUnique_stub,TA_taPlainArray_taString__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__Push_stub,TA_taPlainArray_taString__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taPlainArray_taString__Insert_stub,TA_taPlainArray_taString__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taPlainArray_taString__Find_stub,TA_taPlainArray_taString__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_taString__RemoveEl_stub,TA_taPlainArray_taString__RemoveEl_MethArgs},
@@ -8821,7 +6924,7 @@ static MethodArgs_data TA_String_PArray_AsString_MethArgs[]={
   {&TA_const_char_ptr,NULL,"sep",""},
   NULL};
 static MethodDef_data TA_String_PArray_MethodDef[]={
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     2,1,-1,0,NULL,cssElCFun_String_PArray_Add_stub,TA_String_PArray_Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     2,1,-1,0,NULL,cssElCFun_String_PArray_AddUnique_stub,TA_String_PArray_AddUnique_MethArgs},
@@ -8832,9 +6935,9 @@ static MethodDef_data TA_String_PArray_MethodDef[]={
   NULL};
 static int taPlainArray<int>::* TA_taPlainArray_int__MbrOff;
 static MemberDef_data TA_taPlainArray_int__MemberDef[]={
-  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taPlainArray_int__MbrOff=(int taPlainArray<int>::*)(&taPlainArray<int>::el))),0,NULL,0},
-  {&TA_int,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_int,NULL,"err"," what is returned when out of range -- MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taPlainArray_int__MbrOff=(int taPlainArray<int>::*)(&taPlainArray<int>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taPlainArray_int__Remove_MethArgs[]={
@@ -8876,7 +6979,7 @@ static MethodArgs_data TA_taPlainArray_int__RemoveEl_MethArgs[]={
   {NULL,"::const_int_ref","item",""},
   NULL};
 static MethodDef_data TA_taPlainArray_int__MethodDef[]={
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success Remove (n_els) item(s) at idx, returns success","MENUMENU_ON_Edit","",
     2,2,1,0,NULL,cssElCFun_taPlainArray_int__Remove_stub,TA_taPlainArray_int__Remove_MethArgs},
   {NULL,"::int_ref","SafeEl"," the element at the given index","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__SafeEl_stub,TA_taPlainArray_int__SafeEl_MethArgs},
@@ -8890,29 +6993,29 @@ static MethodDef_data TA_taPlainArray_int__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taPlainArray_int__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taPlainArray_int__Set_stub,TA_taPlainArray_int__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__Add_stub,TA_taPlainArray_int__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__AddUnique_stub,TA_taPlainArray_int__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__Push_stub,TA_taPlainArray_int__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at idx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taPlainArray_int__Insert_stub,TA_taPlainArray_int__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from idx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taPlainArray_int__Find_stub,TA_taPlainArray_int__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taPlainArray_int__RemoveEl_stub,TA_taPlainArray_int__RemoveEl_MethArgs},
   NULL};
 static MethodDef_data TA_IApp_MethodDef[]={
-  {&TA_void,NULL,"Settings"," edit global settings/parameters (taMisc)","MENU MENU_ON_Object ","",
+  {&TA_void,NULL,"Settings"," edit global settings/parameters (taMisc)","MENUMENU_ON_Object","",
     0,0,-1,0,NULL,cssElCFun_IApp_Settings_stub,NULL},
-  {&TA_void,NULL,"SaveConfig"," save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!","MENU CONFIRM ","",
+  {&TA_void,NULL,"SaveConfig"," save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!","MENUCONFIRM","",
     0,0,-1,0,NULL,cssElCFun_IApp_SaveConfig_stub,NULL},
-  {&TA_void,NULL,"LoadConfig"," load current configuration from file ~/.pdpconfig that is automatically loaded at startup","MENU CONFIRM ","",
+  {&TA_void,NULL,"LoadConfig"," load current configuration from file ~/.pdpconfig that is automatically loaded at startup","MENUCONFIRM","",
     0,0,-1,0,NULL,cssElCFun_IApp_LoadConfig_stub,NULL},
-  {&TA_void,NULL,"Info"," get information/copyright notice","MENU ","",
+  {&TA_void,NULL,"Info"," get information/copyright notice","MENU","",
     0,0,-1,0,NULL,cssElCFun_IApp_Info_stub,NULL},
-  {&TA_void,NULL,"Quit"," quit from software..","MENU CONFIRM MENU_SEP_BEFORE NO_REVERT_AFTER ","",
+  {&TA_void,NULL,"Quit"," quit from software..","MENUCONFIRMMENU_SEP_BEFORENO_REVERT_AFTER","",
     0,0,-1,0,NULL,cssElCFun_IApp_Quit_stub,NULL},
   {&TA_void,NULL,"SaveAll"," saves all the contents of the app object","","",
     0,0,-1,0,NULL,cssElCFun_IApp_SaveAll_stub,NULL},
@@ -8958,83 +7061,83 @@ static EnumDef_data TA_taMisc_AutoRevert[]={
   {"CONFIRM_REVERT"," put up a confirmatory message before reverting","",2},
   NULL};
 static MemberDef_data TA_taMisc_MemberDef[]={
-  {&TA_taString,NULL,"version_no"," version number of ta/css","READ_ONLY NO_SAVE SHOW ","",
+  {&TA_taString,NULL,"version_no"," version number of ta/css","READ_ONLYNO_SAVESHOW","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::version_no),0},
-  {&TA_TypeSpace,NULL,"types"," list of all the active types","READ_ONLY NO_SAVE ","",
+  {&TA_TypeSpace,NULL,"types"," list of all the active types","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::types),0},
-  {&TA_bool,NULL,"in_init"," true if in ta initialization function","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"in_init"," true if in ta initialization function","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::in_init),0},
-  {&TA_bool,NULL,"not_constr"," true if ta types are not yet constructed (or are destructed)","READ_ONLY ","",
+  {&TA_bool,NULL,"not_constr"," true if ta types are not yet constructed (or are destructed)","READ_ONLY","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::not_constr),0},
-  {&TA_bool,NULL,"gui_active"," if gui has been started up or not","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"gui_active"," if gui has been started up or not","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::gui_active),0},
-  {&TA_bool,NULL,"is_loading"," true if currently loading an object","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"is_loading"," true if currently loading an object","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::is_loading),0},
-  {&TA_bool,NULL,"is_saving"," true if currently saving an object","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"is_saving"," true if currently saving an object","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::is_saving),0},
-  {&TA_bool,NULL,"is_duplicating"," true if currently duplicating an object","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"is_duplicating"," true if currently duplicating an object","READ_ONLYNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::is_duplicating),0},
-  {&TA_int,NULL,"dmem_proc"," distributed memory process number (rank in MPI, always 0 for no dmem)","READ_ONLY NO_SAVE SHOW ","",
+  {&TA_int,NULL,"dmem_proc"," distributed memory process number (rank in MPI, always 0 for no dmem)","READ_ONLYNO_SAVESHOW","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::dmem_proc),0},
-  {&TA_int,NULL,"dmem_nprocs"," distributed memory number of processes (comm_size in MPI, 1 for no dmem)","READ_ONLY NO_SAVE SHOW ","",
+  {&TA_int,NULL,"dmem_nprocs"," distributed memory number of processes (comm_size in MPI, 1 for no dmem)","READ_ONLYNO_SAVESHOW","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::dmem_nprocs),0},
-  {&TA_int,NULL,"display_width"," width of shell display (in chars)","SAVE ","",
+  {&TA_int,NULL,"display_width"," width of shell display (in chars)","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::display_width),0},
-  {&TA_int,NULL,"sep_tabs"," number of tabs to separate items by","SAVE ","",
+  {&TA_int,NULL,"sep_tabs"," number of tabs to separate items by","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::sep_tabs),0},
-  {&TA_int,NULL,"max_menu"," maximum number of items in a menu","SAVE ","",
+  {&TA_int,NULL,"max_menu"," maximum number of items in a menu","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::max_menu),0},
-  {&TA_int,NULL,"search_depth"," depth recursive find will search for a path object","SAVE ","",
+  {&TA_int,NULL,"search_depth"," depth recursive find will search for a path object","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::search_depth),0},
-  {&TA_int,NULL,"color_scale_size"," number of colors to put in a color scale","SAVE ","",
+  {&TA_int,NULL,"color_scale_size"," number of colors to put in a color scale","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::color_scale_size),0},
-  {&TA_int,NULL,"mono_scale_size"," number of monochrome bit-patterns to put in a color scale","SAVE ","",
+  {&TA_int,NULL,"mono_scale_size"," number of monochrome bit-patterns to put in a color scale","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::mono_scale_size),0},
-  {&TA_float,NULL,"window_decor_offset_x"," some window managers (e.g., KDE) add an offset to location of windows -- add this amount to x position to compensate","SAVE ","",
+  {&TA_float,NULL,"window_decor_offset_x"," some window managers (e.g., KDE) add an offset to location of windows -- add this amount to x position to compensate","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::window_decor_offset_x),0},
-  {&TA_float,NULL,"window_decor_offset_y"," some window managers (e.g., KDE) add an offset to location of windows -- add this amount to y position to compensate","SAVE ","",
+  {&TA_float,NULL,"window_decor_offset_y"," some window managers (e.g., KDE) add an offset to location of windows -- add this amount to y position to compensate","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::window_decor_offset_y),0},
-  {&TA_float,NULL,"mswin_scale"," window size scaling parameter for MS Windows","SAVE ","",
+  {&TA_float,NULL,"mswin_scale"," window size scaling parameter for MS Windows","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::mswin_scale),0},
-  {&TA_int,NULL,"jpeg_quality"," jpeg quality for dumping jpeg files (1-100; 85 default)","SAVE ","",
+  {&TA_int,NULL,"jpeg_quality"," jpeg quality for dumping jpeg files (1-100; 85 default)","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::jpeg_quality),0},
-  {NULL,"::ShowMembs","show"," what to show in general (eg. css)","SAVE ","",
+  {NULL,"::ShowMembs","show"," what to show in general (eg. css)","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::show),0},
-  {NULL,"::ShowMembs","show_gui"," what to show in the gui","SAVE ","",
+  {NULL,"::ShowMembs","show_gui"," what to show in the gui","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::show_gui),0},
-  {NULL,"::TypeInfo","type_info"," what to show when displaying type information","SAVE ","",
+  {NULL,"::TypeInfo","type_info"," what to show when displaying type information","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::type_info),0},
-  {NULL,"::KeepTokens","keep_tokens"," default for keeping tokens","SAVE ","",
+  {NULL,"::KeepTokens","keep_tokens"," default for keeping tokens","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::keep_tokens),0},
-  {NULL,"::SaveFormat","save_format"," format to use when saving things (dump files)","SAVE ","",
+  {NULL,"::SaveFormat","save_format"," format to use when saving things (dump files)","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::save_format),0},
-  {NULL,"::LoadVerbosity","verbose_load"," report the names of things during loading","SAVE ","",
+  {NULL,"::LoadVerbosity","verbose_load"," report the names of things during loading","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::verbose_load),0},
-  {NULL,"::LoadVerbosity","gui_verbose_load"," what to report in the load dialog","SAVE ","",
+  {NULL,"::LoadVerbosity","gui_verbose_load"," what to report in the load dialog","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::gui_verbose_load),0},
-  {&TA_bool,NULL,"dmem_debug"," turn on debug messages for distributed memory processing","SAVE ","",
+  {&TA_bool,NULL,"dmem_debug"," turn on debug messages for distributed memory processing","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::dmem_debug),0},
   {&TA_TypeDef_ptr,NULL,"default_scope"," type of object to use to determine if two objects are in the same scope","","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::default_scope),0},
-  {&TA_bool,NULL,"auto_edit"," automatic edit dialog after creation?","SAVE ","",
+  {&TA_bool,NULL,"auto_edit"," automatic edit dialog after creation?","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::auto_edit),0},
-  {NULL,"::AutoRevert","auto_revert"," when dialogs are automatically updated (reverted), what to do about changes?","SAVE ","",
+  {NULL,"::AutoRevert","auto_revert"," when dialogs are automatically updated (reverted), what to do about changes?","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::auto_revert),0},
-  {&TA_String_PArray,NULL,"include_paths"," paths to be used for finding files","SAVE ","",
+  {&TA_String_PArray,NULL,"include_paths"," paths to be used for finding files","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::include_paths),0},
   {&TA_taString,NULL,"pdp_dir"," normal install path ('/usr/local/pdp++' on unix)","","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::pdp_dir),0},
-  {&TA_taString,NULL,"tmp_dir"," location of temporary files","SAVE ","",
+  {&TA_taString,NULL,"tmp_dir"," location of temporary files","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::tmp_dir),0},
-  {&TA_taString,NULL,"compress_cmd"," command to use for compressing files","SAVE ","",
+  {&TA_taString,NULL,"compress_cmd"," command to use for compressing files","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::compress_cmd),0},
-  {&TA_taString,NULL,"uncompress_cmd"," for uncompressing files","SAVE ","",
+  {&TA_taString,NULL,"uncompress_cmd"," for uncompressing files","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::uncompress_cmd),0},
-  {&TA_taString,NULL,"compress_sfx"," suffix to use for compressing files","SAVE ","",
+  {&TA_taString,NULL,"compress_sfx"," suffix to use for compressing files","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::compress_sfx),0},
-  {&TA_taString,NULL,"help_file_tmplt"," template for converting type name into a help file (%t = type name)","SAVE ","",
+  {&TA_taString,NULL,"help_file_tmplt"," template for converting type name into a help file (%t = type name)","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::help_file_tmplt),0},
-  {&TA_taString,NULL,"help_cmd"," how to run html browser to get help, %s is entire path to help file","SAVE ","",
+  {&TA_taString,NULL,"help_cmd"," how to run html browser to get help, %s is entire path to help file","SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::help_cmd),0},
   {&TA_ostream_ptr,NULL,"record_script"," stream to use for recording a script of interface activity (NULL if no record)","","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::record_script),0},
@@ -9044,7 +7147,7 @@ static MemberDef_data TA_taMisc_MemberDef[]={
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::ScriptRecordingGui_Hook),1},
   {&TA_void,NULL,"DelayedMenuUpdate_Hook"," gui callback -- avoids zillions of gui ifdefs everywhere","","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::DelayedMenuUpdate_Hook),1},
-  {&TA_taString,NULL,"LexBuf"," a buffer, contains last thing read by read_ funs","HIDDEN ","",
+  {&TA_taString,NULL,"LexBuf"," a buffer, contains last thing read by read_ funs","HIDDEN","",
     (ta_memb_ptr)NULL,1,(void*)(&taMisc::LexBuf),0},
   NULL};
 static MethodArgs_data TA_taMisc_Error_MethArgs[]={
@@ -9226,9 +7329,9 @@ static MethodArgs_data TA_taMisc_fancy_list_MethArgs[]={
   {&TA_int,NULL,"tabs",""},
   NULL};
 static MethodDef_data TA_taMisc_MethodDef[]={
-  {&TA_void,NULL,"SaveConfig"," save configuration defaults to ~/.taconfig file that is loaded automatically at startup","BUTTON CONFIRM ","",
+  {&TA_void,NULL,"SaveConfig"," save configuration defaults to ~/.taconfig file that is loaded automatically at startup","BUTTONCONFIRM","",
     0,0,-1,0,NULL,cssElCFun_taMisc_SaveConfig_stub,NULL},
-  {&TA_void,NULL,"LoadConfig"," load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)","BUTTON CONFIRM ","",
+  {&TA_void,NULL,"LoadConfig"," load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)","BUTTONCONFIRM","",
     0,0,-1,0,NULL,cssElCFun_taMisc_LoadConfig_stub,NULL},
   {&TA_void,NULL,"Error"," displays error either in a window if iv_active or to stdout","","",
     0,12,1,1,(ta_void_fun)(taMisc::Error),cssElCFun_taMisc_Error_stub,TA_taMisc_Error_MethArgs},
@@ -9321,112 +7424,30 @@ static MethodDef_data TA_taMisc_MethodDef[]={
   {&TA_ostream_ref,NULL,"fancy_list","","","",
     0,5,-1,1,(ta_void_fun)(taMisc::fancy_list),cssElCFun_taMisc_fancy_list_stub,TA_taMisc_fancy_list_MethArgs},
   NULL};
-static MethodArgs_data TA_taiMimeSource_New_MethArgs[]={
-  {&TA_const_QMimeSource_ptr,NULL,"ms",""},
-  NULL};
-static MethodArgs_data TA_taiMimeSource_New2_MethArgs[]={
-  {&TA_taiClipData_ptr,NULL,"cd",""},
-  NULL};
-static MethodArgs_data TA_taiMimeSource_setIndex_MethArgs[]={
-  {&TA_int,NULL,"val",""},
-  NULL};
-static MethodArgs_data TA_taiMimeSource_format_MethArgs[]={
-  {&TA_int,NULL,"i"," 0"},
-  NULL};
-static MethodArgs_data TA_taiMimeSource_provides_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"mimeType",""},
-  NULL};
-static MethodDef_data TA_taiMimeSource_MethodDef[]={
-  {&TA_taiMimeSource_ptr,NULL,"New"," we use a static method for extensibility -- creates correct subtype","","",
-    0,1,-1,1,(ta_void_fun)(taiMimeSource::New),cssElCFun_taiMimeSource_New_stub,TA_taiMimeSource_New_MethArgs},
-  {&TA_taiMimeSource_ptr,NULL,"New2"," we use a static method for extensibility -- creates correct subtype","","",
-    0,1,-1,1,(ta_void_fun)(taiMimeSource::New2),cssElCFun_taiMimeSource_New2_stub,TA_taiMimeSource_New2_MethArgs},
-  {&TA_int,NULL,"src_action"," any (or none) of the EA_SRC_xxx flags","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_src_action_stub,NULL},
-  {&TA_bool,NULL,"is_multi"," true if the source is multiple individual objects (multi-select)","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_is_multi_stub,NULL},
-  {&TA_bool,NULL,"is_tacss"," true if the mime source is a taiClipData source, otherwise false (generic QMimeSource)","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_is_tacss_stub,NULL},
-  {&TA_int,NULL,"count"," number of items","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_count_stub,NULL},
-  {&TA_int,NULL,"index"," current index value; -1 if none","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_index_stub,NULL},
-  {&TA_void,NULL,"setIndex"," sets index; must be -1 or in range, else sets to -1","","",
-    0,1,-1,0,NULL,cssElCFun_taiMimeSource_setIndex_stub,TA_taiMimeSource_setIndex_MethArgs},
-  {&TA_taString,NULL,"type_name"," ITER empty if not a tacss mime type","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_type_name_stub,NULL},
-  {&TA_TypeDef_ptr,NULL,"td"," ITER the TypeDef associated with type_name, or NULL if not in our type list or not tacss","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_td_stub,NULL},
-  {&TA_void_ptr,NULL,"object"," gets the object, if possible -- only valid for IsThisProcess true","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_object_stub,NULL},
-  {&TA_taBase_ptr,NULL,"tab_object"," gets a taBase object, if possible, otherwise NULL","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_tab_object_stub,NULL},
-  {&TA_taString,NULL,"path"," ITER if a taBase object, its full path; if not taBase, or not tacss, then NULL;","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_path_stub,NULL},
-  {&TA_bool,NULL,"is_tab"," ITER true if the object is derived from taBase","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_is_tab_stub,NULL},
-  {&TA_void,NULL,"loc_data_taken"," sends a loc_data_taken for the current index","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_loc_data_taken_stub,NULL},
-  {&TA_void,NULL,"rem_data_taken"," sends a rem_data_taken for the current index","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_rem_data_taken_stub,NULL},
-  {&TA_const_char_ptr,NULL,"format"," override","","",
-    0,1,0,0,NULL,cssElCFun_taiMimeSource_format_stub,TA_taiMimeSource_format_MethArgs},
-  {&TA_bool,NULL,"provides"," override delegates","","",
-    0,1,-1,0,NULL,cssElCFun_taiMimeSource_provides_stub,TA_taiMimeSource_provides_MethArgs},
-  {&TA_bool,NULL,"IsThisProcess"," true if object originates in this process (ie, we can do low-level object-based ops)","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeSource_IsThisProcess_stub,NULL},
-  NULL};
 static int taOBase::* TA_taOBase_MbrOff;
 static MemberDef_data TA_taOBase_MemberDef[]={
-  {&TA_TAPtr,NULL,"owner"," pointer to owner","READ_ONLY NO_SAVE ","",
+  {&TA_TAPtr,NULL,"owner"," pointer to owner","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taOBase_MbrOff=(int taOBase::*)(&taOBase::owner))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taOBase_GetOwner_MethArgs[]={
   {&TA_TypeDef_ptr,NULL,"tp",""},
   NULL};
-static MethodArgs_data TA_taOBase_SetAdapter_MethArgs[]={
-  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
-  NULL};
 static MethodDef_data TA_taOBase_MethodDef[]={
   {&TA_TAPtr,NULL,"GetOwner","","","",
     3,1,-1,0,NULL,cssElCFun_taOBase_GetOwner_stub,TA_taOBase_GetOwner_MethArgs},
-  {&TA_void,NULL,"SetAdapter","","","",
-    0,1,-1,0,NULL,cssElCFun_taOBase_SetAdapter_stub,TA_taOBase_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_taOBase_addr_data_link_stub,NULL},
   NULL};
 static int taDataView::* TA_taDataView_MbrOff;
 static MemberDef_data TA_taDataView_MemberDef[]={
-  {&TA_taBase_ptr,NULL,"m_data"," data -- referent of the item -- the data","READ_ONLY ","",
+  {&TA_taBase_ptr,NULL,"m_data"," data -- referent of the item -- the data","READ_ONLY","",
     *((ta_memb_ptr*)&(TA_taDataView_MbrOff=(int taDataView::*)(&taDataView::m_data))),0,NULL,0},
-  {&TA_TypeDef_ptr,NULL,"data_base"," Minimum type for data object","READ_ONLY NO_SAVE ","",
+  {&TA_TypeDef_ptr,NULL,"data_base"," Minimum type for data object","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taDataView_MbrOff=(int taDataView::*)(&taDataView::data_base))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taDataView_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taDataView_ChildQueryEditActions_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taDataView_ChildEditAction_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_taDataView_QueryEditActions_MethArgs[]={
-  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taDataView_EditAction_MethArgs[]={
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
   NULL};
 static MethodArgs_data TA_taDataView_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
@@ -9516,9 +7537,6 @@ static MethodArgs_data TA_taDataView_SelectFunForEdit_MethArgs[]={
 static MethodArgs_data TA_taDataView_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
   NULL};
-static MethodArgs_data TA_taDataView_SetAdapter_MethArgs[]={
-  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
-  NULL};
 static MethodArgs_data TA_taDataView_DataLinkDestroying_MethArgs[]={
   {&TA_taDataLink_ptr,NULL,"dl",""},
   NULL};
@@ -9549,14 +7567,6 @@ static MethodArgs_data TA_taDataView_ItemRemoving_MethArgs[]={
 static MethodDef_data TA_taDataView_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_taDataView_GetColText_stub,TA_taDataView_GetColText_MethArgs},
-  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
-    0,5,-1,0,NULL,cssElCFun_taDataView_ChildQueryEditActions_stub,TA_taDataView_ChildQueryEditActions_MethArgs},
-  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
-    0,4,-1,0,NULL,cssElCFun_taDataView_ChildEditAction_stub,TA_taDataView_ChildEditAction_MethArgs},
-  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
-    0,3,-1,0,NULL,cssElCFun_taDataView_QueryEditActions_stub,TA_taDataView_QueryEditActions_MethArgs},
-  {&TA_int,NULL,"EditAction","","","",
-    0,2,-1,0,NULL,cssElCFun_taDataView_EditAction_stub,TA_taDataView_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_taDataView_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -9593,45 +7603,43 @@ static MethodDef_data TA_taDataView_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taDataView_GetEnumString_stub,TA_taDataView_GetEnumString_MethArgs},
   {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
     0,2,1,0,NULL,cssElCFun_taDataView_GetEnumVal_stub,TA_taDataView_GetEnumVal_MethArgs},
-  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+  {&TA_int,NULL,"Load"," Load object data from a file","MENUMENU_ON_ObjectARGC_1UPDATE_MENUSMENU_CONTEXT","",
     0,2,1,0,NULL,cssElCFun_taDataView_Load_stub,TA_taDataView_Load_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+  {&TA_int,NULL,"Save"," Save object data to a file","MENUMENU_ON_ObjectARGC_1QUICK_SAVE","",
     0,3,1,0,NULL,cssElCFun_taDataView_Save_stub,TA_taDataView_Save_MethArgs},
-  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENUARGC_1","",
     0,3,1,0,NULL,cssElCFun_taDataView_SaveAs_stub,TA_taDataView_SaveAs_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENUARGC_0MENU_ON_ObjectLABEL_PropertiesMENU_CONTEXTNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_taDataView_Edit_stub,NULL},
   {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
     0,0,-1,0,NULL,cssElCFun_taDataView_CloseEdit_stub,NULL},
   {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
     0,1,0,0,NULL,cssElCFun_taDataView_ReShowEdit_stub,TA_taDataView_ReShowEdit_MethArgs},
-  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENUCONFIRMNO_REVERT_AFTERLABEL_Close_(Destroy)NO_MENU_CONTEXT","",
     0,0,-1,0,NULL,cssElCFun_taDataView_Close_stub,NULL},
-  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENUMENU_ON_ObjectMENU_SEP_BEFORETYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taDataView_CopyFrom_stub,TA_taDataView_CopyFrom_MethArgs},
-  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENUTYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taDataView_CopyTo_stub,TA_taDataView_CopyTo_MethArgs},
   {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
     0,2,-1,0,NULL,cssElCFun_taDataView_ChildUpdateAfterEdit_stub,TA_taDataView_ChildUpdateAfterEdit_MethArgs},
-  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taDataView_DuplicateMe_stub,NULL},
-  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENUTYPE_thisUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taDataView_ChangeMyType_stub,TA_taDataView_ChangeMyType_MethArgs},
   {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
     0,3,-1,0,NULL,cssElCFun_taDataView_SelectForEdit_stub,TA_taDataView_SelectForEdit_MethArgs},
-  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU","",
     0,3,-1,0,NULL,cssElCFun_taDataView_SelectFunForEdit_stub,TA_taDataView_SelectFunForEdit_MethArgs},
-  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+  {&TA_void,NULL,"Help"," get help on using this object","MENU","",
     0,0,-1,0,NULL,cssElCFun_taDataView_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_taDataView_CallFun_stub,TA_taDataView_CallFun_MethArgs},
-  {&TA_void,NULL,"SetAdapter","","","",
-    0,1,-1,0,NULL,cssElCFun_taDataView_SetAdapter_stub,TA_taDataView_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_taDataView_addr_data_link_stub,NULL},
   {&TA_void_ptr,NULL,"This"," reference to the 'this' pointer of the client object","","",
     0,0,-1,0,NULL,cssElCFun_taDataView_This_stub,NULL},
-  {&TA_taiDataLink_ptr,NULL,"link","","","",
+  {&TA_taDataLink_ptr,NULL,"link","","","",
     0,0,-1,0,NULL,cssElCFun_taDataView_link_stub,NULL},
   {&TA_void,NULL,"DataLinkDestroying"," called by DataLink when destroying; it will remove datalink ref in dlc upon return","","",
     0,1,-1,0,NULL,cssElCFun_taDataView_DataLinkDestroying_stub,TA_taDataView_DataLinkDestroying_MethArgs},
@@ -9678,125 +7686,6 @@ static int taNBase::* TA_taNBase_MbrOff;
 static MemberDef_data TA_taNBase_MemberDef[]={
   {&TA_taString,NULL,"name"," name of the object","","",
     *((ta_memb_ptr*)&(TA_taNBase_MbrOff=(int taNBase::*)(&taNBase::name))),0,NULL,0},
-  NULL};
-static int SelectEdit::* TA_SelectEdit_MbrOff;
-static MemberDef_data TA_SelectEdit_MemberDef[]={
-  {&TA_SelectEditConfig,NULL,"config"," special parameters for controlling the display","","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::config))),0,NULL,0},
-  {&TA_taBase_List,NULL,"mbr_bases"," the bases for each element in the list","LINK_GROUP READ_ONLY AKA_bases ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::mbr_bases))),0,NULL,0},
-  {&TA_String_Array,NULL,"mbr_strs"," string names of mbrs on bases -- used for saving","READ_ONLY AKA_member_strs ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::mbr_strs))),0,NULL,0},
-  {&TA_MemberSpace,NULL,"members"," member defs","READ_ONLY NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::members))),0,NULL,0},
-  {&TA_String_Array,NULL,"mbr_base_paths"," paths to base objects for BaseChangeSave","READ_ONLY NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::mbr_base_paths))),0,NULL,0},
-  {&TA_taBase_List,NULL,"meth_bases"," the bases for each element in the list","LINK_GROUP READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::meth_bases))),0,NULL,0},
-  {&TA_String_Array,NULL,"meth_strs"," string names of meths on bases -- used for saving","READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::meth_strs))),0,NULL,0},
-  {&TA_MethodSpace,NULL,"methods"," method defs","READ_ONLY NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::methods))),0,NULL,0},
-  {&TA_String_Array,NULL,"meth_base_paths"," paths to base objects for BaseChangeSave","READ_ONLY NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_SelectEdit_MbrOff=(int SelectEdit::*)(&SelectEdit::meth_base_paths))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_SelectEdit_FindMbrBase_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_MemberDef_ptr,NULL,"md",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_SelectMember_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_char_ptr,NULL,"lbl",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_SelectMemberNm_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_const_char_ptr,NULL,"md",""},
-  {&TA_const_char_ptr,NULL,"lbl",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_FindMethBase_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_MethodDef_ptr,NULL,"md",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_SelectMethod_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_MethodDef_ptr,NULL,"md",""},
-  {&TA_const_char_ptr,NULL,"lbl",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_SelectMethodNm_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  {&TA_const_char_ptr,NULL,"md",""},
-  {&TA_const_char_ptr,NULL,"lbl",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_RemoveField_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_MoveField_MethArgs[]={
-  {&TA_int,NULL,"from",""},
-  {&TA_int,NULL,"to",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_RemoveFun_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_MoveFun_MethArgs[]={
-  {&TA_int,NULL,"from",""},
-  {&TA_int,NULL,"to",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_BaseClosing_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_BaseClosingAll_MethArgs[]={
-  {&TA_TAPtr,NULL,"base",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_GetMbrLabel_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_SelectEdit_GetMethLabel_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodDef_data TA_SelectEdit_MethodDef[]={
-  {&TA_int,NULL,"FindMbrBase"," find a given base and member, returns index","","",
-    0,2,-1,0,NULL,cssElCFun_SelectEdit_FindMbrBase_stub,TA_SelectEdit_FindMbrBase_MethArgs},
-  {&TA_bool,NULL,"SelectMember"," add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)","","",
-    0,3,-1,0,NULL,cssElCFun_SelectEdit_SelectMember_stub,TA_SelectEdit_SelectMember_MethArgs},
-  {&TA_bool,NULL,"SelectMemberNm"," add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)","","",
-    0,3,-1,0,NULL,cssElCFun_SelectEdit_SelectMemberNm_stub,TA_SelectEdit_SelectMemberNm_MethArgs},
-  {&TA_int,NULL,"FindMethBase"," find a given base and method, returns index","","",
-    0,2,-1,0,NULL,cssElCFun_SelectEdit_FindMethBase_stub,TA_SelectEdit_FindMethBase_MethArgs},
-  {&TA_bool,NULL,"SelectMethod"," add new method to edit if it isn't already here (returns true), otherwise remove (returns false)","","",
-    0,3,-1,0,NULL,cssElCFun_SelectEdit_SelectMethod_stub,TA_SelectEdit_SelectMethod_MethArgs},
-  {&TA_bool,NULL,"SelectMethodNm"," add new method to edit if it isn't already here (returns true), otherwise remove (returns false)","","",
-    0,3,-1,0,NULL,cssElCFun_SelectEdit_SelectMethodNm_stub,TA_SelectEdit_SelectMethodNm_MethArgs},
-  {&TA_void,NULL,"UpdateAllBases"," perform update-after-edit on all base objects","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_UpdateAllBases_stub,NULL},
-  {&TA_void,NULL,"RemoveField"," remove edit data item at given index","","",
-    0,1,-1,0,NULL,cssElCFun_SelectEdit_RemoveField_stub,TA_SelectEdit_RemoveField_MethArgs},
-  {&TA_void,NULL,"MoveField"," move member to edit from index to index","MENU MENU_ON_SelectEdit ","",
-    0,2,-1,0,NULL,cssElCFun_SelectEdit_MoveField_stub,TA_SelectEdit_MoveField_MethArgs},
-  {&TA_void,NULL,"RemoveFun"," remove function at given index","","",
-    0,1,-1,0,NULL,cssElCFun_SelectEdit_RemoveFun_stub,TA_SelectEdit_RemoveFun_MethArgs},
-  {&TA_void,NULL,"MoveFun"," move function to edit from index to index","MENU ","",
-    0,2,-1,0,NULL,cssElCFun_SelectEdit_MoveFun_stub,TA_SelectEdit_MoveFun_MethArgs},
-  {&TA_void,NULL,"NewEdit"," closes current edit dialog and makes a new one (with any changes)","MENU MENU_SEP_BEFORE ","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_NewEdit_stub,NULL},
-  {&TA_void,NULL,"GetMembsFmStrs"," get members from strings (upon loading)","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_GetMembsFmStrs_stub,NULL},
-  {&TA_void,NULL,"GetMethsFmStrs"," get methods from strings (upon loading)","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_GetMethsFmStrs_stub,NULL},
-  {&TA_void,NULL,"GetAllPaths"," get paths for all current objects","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_GetAllPaths_stub,NULL},
-  {&TA_bool,NULL,"BaseClosing"," this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)","","",
-    0,1,-1,0,NULL,cssElCFun_SelectEdit_BaseClosing_stub,TA_SelectEdit_BaseClosing_MethArgs},
-  {&TA_bool,NULL,"BaseClosingAll"," calls base closing on all SelectEdit tokens..","","",
-    0,1,-1,1,(ta_void_fun)(SelectEdit::BaseClosingAll),cssElCFun_SelectEdit_BaseClosingAll_stub,TA_SelectEdit_BaseClosingAll_MethArgs},
-  {&TA_void,NULL,"BaseChangeSave"," close edit dialog and save paths to current bases","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_BaseChangeSave_stub,NULL},
-  {&TA_void,NULL,"BaseChangeReShow"," re-show the edit dialog loading bases from saved paths","","",
-    0,0,-1,0,NULL,cssElCFun_SelectEdit_BaseChangeReShow_stub,NULL},
-  {&TA_taString,NULL,"GetMbrLabel"," get full label for member","","",
-    0,1,-1,0,NULL,cssElCFun_SelectEdit_GetMbrLabel_stub,TA_SelectEdit_GetMbrLabel_MethArgs},
-  {&TA_taString,NULL,"GetMethLabel"," get full label for method","","",
-    0,1,-1,0,NULL,cssElCFun_SelectEdit_GetMethLabel_stub,TA_SelectEdit_GetMethLabel_MethArgs},
   NULL};
 static MemberDef_data TA_tabMisc_MemberDef[]={
   {&TA_TAPtr,NULL,"root"," root of the structural object hierarchy","","",
@@ -9944,7 +7833,7 @@ static MethodDef_data TA_taPtrList_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__SafeEl_stub,TA_taPtrList_taBase__SafeEl_MethArgs},
   {NULL,"::taBase_ptr","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__FastEl_stub,TA_taPtrList_taBase__FastEl_MethArgs},
-  {NULL,"::taBase_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taBase_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__Edit_El_stub,TA_taPtrList_taBase__Edit_El_MethArgs},
   {NULL,"::taBase_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taBase__FindName_stub,TA_taPtrList_taBase__FindName_MethArgs},
@@ -9974,9 +7863,9 @@ static MethodDef_data TA_taPtrList_taBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taBase__ReplaceEl_stub,TA_taPtrList_taBase__ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taBase__ReplaceName_stub,TA_taPtrList_taBase__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__RemoveEl_stub,TA_taPtrList_taBase__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__DuplicateEl_stub,TA_taPtrList_taBase__DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__Link_stub,TA_taPtrList_taBase__Link_MethArgs},
@@ -9984,7 +7873,7 @@ static MethodDef_data TA_taPtrList_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__LinkUnique_stub,TA_taPtrList_taBase__LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__LinkUniqNameNew_stub,TA_taPtrList_taBase__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taPtrList_taBase__InsertLink_stub,TA_taPtrList_taBase__InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taPtrList_taBase__ReplaceLink_stub,TA_taPtrList_taBase__ReplaceLink_MethArgs},
@@ -9994,9 +7883,9 @@ static MethodDef_data TA_taPtrList_taBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_taBase__ReplaceLinkName_stub,TA_taPtrList_taBase__ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__Push_stub,TA_taPtrList_taBase__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taBase__MoveEl_stub,TA_taPtrList_taBase__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_taBase__Transfer_stub,TA_taPtrList_taBase__Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_taBase__MoveBefore_stub,TA_taPtrList_taBase__MoveBefore_MethArgs},
@@ -10112,9 +8001,9 @@ static MethodDef_data TA_taPtrList_base_taBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__ReplaceEl_stub,TA_taPtrList_base_taBase__ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__ReplaceName_stub,TA_taPtrList_base_taBase__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__RemoveEl_stub,TA_taPtrList_base_taBase__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__DuplicateEl_stub,TA_taPtrList_base_taBase__DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__Link_stub,TA_taPtrList_base_taBase__Link_MethArgs},
@@ -10122,7 +8011,7 @@ static MethodDef_data TA_taPtrList_base_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__LinkUnique_stub,TA_taPtrList_base_taBase__LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__LinkUniqNameNew_stub,TA_taPtrList_base_taBase__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taPtrList_base_taBase__InsertLink_stub,TA_taPtrList_base_taBase__InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__ReplaceLink_stub,TA_taPtrList_base_taBase__ReplaceLink_MethArgs},
@@ -10132,9 +8021,9 @@ static MethodDef_data TA_taPtrList_base_taBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__ReplaceLinkName_stub,TA_taPtrList_base_taBase__ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__Push_stub,TA_taPtrList_base_taBase__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__MoveEl_stub,TA_taPtrList_base_taBase__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_base_taBase__Transfer_stub,TA_taPtrList_base_taBase__Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_base_taBase__MoveBefore_stub,TA_taPtrList_base_taBase__MoveBefore_MethArgs},
@@ -10143,13 +8032,13 @@ static MethodDef_data TA_taPtrList_base_taBase__MethodDef[]={
   NULL};
 static int taList_impl::* TA_taList_impl_MbrOff;
 static MemberDef_data TA_taList_impl_MemberDef[]={
-  {&TA_MemberDef_ptr,NULL,"find_md"," return value for findmember of data","HIDDEN NO_SAVE ","",
+  {&TA_MemberDef_ptr,NULL,"find_md"," return value for findmember of data","HIDDENNO_SAVE","",
     (ta_memb_ptr)NULL,1,(void*)(&taList_impl::find_md),0},
   {&TA_taString,NULL,"name"," name of the object","","",
     *((ta_memb_ptr*)&(TA_taList_impl_MbrOff=(int taList_impl::*)(&taList_impl::name))),0,NULL,0},
-  {&TA_TypeDef_ptr,NULL,"el_base"," Base type for objects in group","HIDDEN NO_SAVE ","",
+  {&TA_TypeDef_ptr,NULL,"el_base"," Base type for objects in group","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taList_impl_MbrOff=(int taList_impl::*)(&taList_impl::el_base))),0,NULL,0},
-  {&TA_TypeDef_ptr,NULL,"el_typ"," Default type for objects in group","TYPE_ON_el_base ","",
+  {&TA_TypeDef_ptr,NULL,"el_typ"," Default type for objects in group","TYPE_ON_el_base","",
     *((ta_memb_ptr*)&(TA_taList_impl_MbrOff=(int taList_impl::*)(&taList_impl::el_typ))),0,NULL,0},
   {&TA_int,NULL,"el_def"," Index of default element in group","","",
     *((ta_memb_ptr*)&(TA_taList_impl_MbrOff=(int taList_impl::*)(&taList_impl::el_def))),0,NULL,0},
@@ -10157,28 +8046,6 @@ static MemberDef_data TA_taList_impl_MemberDef[]={
 static MethodArgs_data TA_taList_impl_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taList_impl_ChildQueryEditActions_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taList_impl_ChildEditAction_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_taList_impl_QueryEditActions_MethArgs[]={
-  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taList_impl_EditAction_MethArgs[]={
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
   NULL};
 static MethodArgs_data TA_taList_impl_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
@@ -10267,9 +8134,6 @@ static MethodArgs_data TA_taList_impl_SelectFunForEdit_MethArgs[]={
   NULL};
 static MethodArgs_data TA_taList_impl_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
-  NULL};
-static MethodArgs_data TA_taList_impl_SetAdapter_MethArgs[]={
-  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
   NULL};
 static MethodArgs_data TA_taList_impl_GetTA_Element__MethArgs[]={
   {&TA_int,NULL,"i",""},
@@ -10474,14 +8338,6 @@ static MethodArgs_data TA_taList_impl_SetBaseType_MethArgs[]={
 static MethodDef_data TA_taList_impl_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_taList_impl_GetColText_stub,TA_taList_impl_GetColText_MethArgs},
-  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
-    0,5,-1,0,NULL,cssElCFun_taList_impl_ChildQueryEditActions_stub,TA_taList_impl_ChildQueryEditActions_MethArgs},
-  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
-    0,4,-1,0,NULL,cssElCFun_taList_impl_ChildEditAction_stub,TA_taList_impl_ChildEditAction_MethArgs},
-  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
-    0,3,-1,0,NULL,cssElCFun_taList_impl_QueryEditActions_stub,TA_taList_impl_QueryEditActions_MethArgs},
-  {&TA_int,NULL,"EditAction","","","",
-    0,2,-1,0,NULL,cssElCFun_taList_impl_EditAction_stub,TA_taList_impl_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -10498,7 +8354,7 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,2,0,0,NULL,cssElCFun_taList_impl_GetPath_stub,TA_taList_impl_GetPath_MethArgs},
   {&TA_TAPtr,NULL,"FindFromPath"," find object from path (starting from this, and position start of the path)","","",
     0,3,1,0,NULL,cssElCFun_taList_impl_FindFromPath_stub,TA_taList_impl_FindFromPath_MethArgs},
-  {&TA_TAPtr,NULL,"New"," create n_objs new objects of given type","MENU MENU_ON_Object ARGC_0 UPDATE_MENUS NO_SCRIPT MENU_CONTEXT ","",
+  {&TA_TAPtr,NULL,"New"," create n_objs new objects of given type","MENUMENU_ON_ObjectARGC_0UPDATE_MENUSNO_SCRIPTMENU_CONTEXT","",
     0,2,0,0,NULL,cssElCFun_taList_impl_New_stub,TA_taList_impl_New_MethArgs},
   {&TA_void,NULL,"UpdateAfterEdit"," called after editing, or any user change to members (eg. in the interface, script)","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_UpdateAfterEdit_stub,NULL},
@@ -10518,40 +8374,38 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taList_impl_GetEnumString_stub,TA_taList_impl_GetEnumString_MethArgs},
   {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
     0,2,1,0,NULL,cssElCFun_taList_impl_GetEnumVal_stub,TA_taList_impl_GetEnumVal_MethArgs},
-  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+  {&TA_int,NULL,"Load"," Load object data from a file","MENUMENU_ON_ObjectARGC_1UPDATE_MENUSMENU_CONTEXT","",
     0,2,1,0,NULL,cssElCFun_taList_impl_Load_stub,TA_taList_impl_Load_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+  {&TA_int,NULL,"Save"," Save object data to a file","MENUMENU_ON_ObjectARGC_1QUICK_SAVE","",
     0,3,1,0,NULL,cssElCFun_taList_impl_Save_stub,TA_taList_impl_Save_MethArgs},
-  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENUARGC_1","",
     0,3,1,0,NULL,cssElCFun_taList_impl_SaveAs_stub,TA_taList_impl_SaveAs_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENUARGC_0MENU_ON_ObjectLABEL_PropertiesMENU_CONTEXTNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_Edit_stub,NULL},
   {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_CloseEdit_stub,NULL},
   {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
     0,1,0,0,NULL,cssElCFun_taList_impl_ReShowEdit_stub,TA_taList_impl_ReShowEdit_MethArgs},
-  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENUCONFIRMNO_REVERT_AFTERLABEL_Close_(Destroy)NO_MENU_CONTEXT","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_Close_stub,NULL},
-  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENUMENU_ON_ObjectMENU_SEP_BEFORETYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_CopyFrom_stub,TA_taList_impl_CopyFrom_MethArgs},
-  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENUTYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_CopyTo_stub,TA_taList_impl_CopyTo_MethArgs},
   {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_ChildUpdateAfterEdit_stub,TA_taList_impl_ChildUpdateAfterEdit_MethArgs},
-  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_DuplicateMe_stub,NULL},
-  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENUTYPE_thisUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_ChangeMyType_stub,TA_taList_impl_ChangeMyType_MethArgs},
   {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
     0,3,-1,0,NULL,cssElCFun_taList_impl_SelectForEdit_stub,TA_taList_impl_SelectForEdit_MethArgs},
-  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU","",
     0,3,-1,0,NULL,cssElCFun_taList_impl_SelectFunForEdit_stub,TA_taList_impl_SelectFunForEdit_MethArgs},
-  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+  {&TA_void,NULL,"Help"," get help on using this object","MENU","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_CallFun_stub,TA_taList_impl_CallFun_MethArgs},
-  {&TA_void,NULL,"SetAdapter","","","",
-    0,1,-1,0,NULL,cssElCFun_taList_impl_SetAdapter_stub,TA_taList_impl_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_addr_data_link_stub,NULL},
   {&TA_void_ptr,NULL,"GetTA_Element_","","","",
@@ -10574,7 +8428,7 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taList_impl_RemoveName_stub,TA_taList_impl_RemoveName_MethArgs},
   {&TA_bool,NULL,"RemoveLast"," remove the last element on the list","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_RemoveLast_stub,NULL},
-  {&TA_void,NULL,"RemoveAll"," Remove all elements on the list","MENU MENU_ON_Edit CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"RemoveAll"," Remove all elements on the list","MENUMENU_ON_EditCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_RemoveAll_stub,NULL},
   {&TA_bool,NULL,"Move"," Move element from (from) to position (to) in list","","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_Move_stub,TA_taList_impl_Move_MethArgs},
@@ -10582,9 +8436,9 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taList_impl_Swap_stub,TA_taList_impl_Swap_MethArgs},
   {&TA_void,NULL,"PopAll"," pop all elements off the stack","","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_PopAll_stub,NULL},
-  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taList_impl_Permute_stub,NULL},
-  {&TA_void,NULL,"Sort"," sort the items in the list in alpha order according to name (or El_Compare_)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_void,NULL,"Sort"," sort the items in the list in alpha order according to name (or El_Compare_)","MENUCONFIRMUPDATE_MENUS","",
     0,1,0,0,NULL,cssElCFun_taList_impl_Sort_stub,TA_taList_impl_Sort_MethArgs},
   {&TA_void,NULL,"Sort_"," implementation of sorting function","","",
     0,1,0,0,NULL,cssElCFun_taList_impl_Sort__stub,TA_taList_impl_Sort__MethArgs},
@@ -10642,9 +8496,9 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taList_impl_ReplaceEl_stub,TA_taList_impl_ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_ReplaceName_stub,TA_taList_impl_ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list Remove given item from the list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list Remove given item from the list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     1,1,-1,0,NULL,cssElCFun_taList_impl_RemoveEl_stub,TA_taList_impl_RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_DuplicateEl_stub,TA_taList_impl_DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_Link_stub,TA_taList_impl_Link_MethArgs},
@@ -10652,7 +8506,7 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taList_impl_LinkUnique_stub,TA_taList_impl_LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_LinkUniqNameNew_stub,TA_taList_impl_LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taList_impl_InsertLink_stub,TA_taList_impl_InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taList_impl_ReplaceLink_stub,TA_taList_impl_ReplaceLink_MethArgs},
@@ -10662,9 +8516,9 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taList_impl_ReplaceLinkName_stub,TA_taList_impl_ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_Push_stub,TA_taList_impl_Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_MoveEl_stub,TA_taList_impl_MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_Transfer_stub,TA_taList_impl_Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_MoveBefore_stub,TA_taList_impl_MoveBefore_MethArgs},
@@ -10684,9 +8538,9 @@ static MethodDef_data TA_taList_impl_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taList_impl_EnforceType_stub,NULL},
   {&TA_void,NULL,"EnforceSameStru"," make the two lists identical in terms of size and types of objects","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_EnforceSameStru_stub,TA_taList_impl_EnforceSameStru_MethArgs},
-  {&TA_bool,NULL,"ChangeType"," change type of item at index change type of item to new type, copying current info","MENU MENU_ON_Object UPDATE_MENUS ARG_ON_OBJ TYPE_ON_el_base ","",
+  {&TA_bool,NULL,"ChangeType"," change type of item at index change type of item to new type, copying current info","MENUMENU_ON_ObjectUPDATE_MENUSARG_ON_OBJTYPE_ON_el_base","",
     1,2,-1,0,NULL,cssElCFun_taList_impl_ChangeType_stub,TA_taList_impl_ChangeType_MethArgs},
-  {&TA_int,NULL,"ReplaceType"," replace all items of old type with new type (returns number changed)","MENU MENU_ON_Object USE_RVAL UPDATE_MENUS TYPE_ON_el_base ","",
+  {&TA_int,NULL,"ReplaceType"," replace all items of old type with new type (returns number changed)","MENUMENU_ON_ObjectUSE_RVALUPDATE_MENUSTYPE_ON_el_base","",
     0,2,-1,0,NULL,cssElCFun_taList_impl_ReplaceType_stub,TA_taList_impl_ReplaceType_MethArgs},
   {&TA_void,NULL,"SetBaseType"," set base (and default) type to given td","","",
     0,1,-1,0,NULL,cssElCFun_taList_impl_SetBaseType_stub,TA_taList_impl_SetBaseType_MethArgs},
@@ -10739,9 +8593,9 @@ static MethodDef_data TA_taList_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taList_taBase__FastEl_stub,TA_taList_taBase__FastEl_MethArgs},
   {NULL,"::taBase_ptr","DefaultEl"," returns the element specified as the default for this list","","",
     0,0,-1,0,NULL,cssElCFun_taList_taBase__DefaultEl_stub,NULL},
-  {NULL,"::taBase_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taBase_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taList_taBase__Edit_El_stub,TA_taList_taBase__Edit_El_MethArgs},
-  {NULL,"::taBase_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+  {NULL,"::taBase_ptr","FindName"," Find element with given name (item_nm)","MENUUSE_RVALARGC_1LABEL_Find","",
     0,2,1,0,NULL,cssElCFun_taList_taBase__FindName_stub,TA_taList_taBase__FindName_MethArgs},
   {NULL,"::taBase_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taList_taBase__FindType_stub,TA_taList_taBase__FindType_MethArgs},
@@ -10757,28 +8611,6 @@ static MethodDef_data TA_taList_taBase__MethodDef[]={
 static MethodArgs_data TA_taArray_base_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taArray_base_ChildQueryEditActions_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taArray_base_ChildEditAction_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_taArray_base_QueryEditActions_MethArgs[]={
-  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_taArray_base_EditAction_MethArgs[]={
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
   NULL};
 static MethodArgs_data TA_taArray_base_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
@@ -10868,9 +8700,6 @@ static MethodArgs_data TA_taArray_base_SelectFunForEdit_MethArgs[]={
 static MethodArgs_data TA_taArray_base_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
   NULL};
-static MethodArgs_data TA_taArray_base_SetAdapter_MethArgs[]={
-  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
-  NULL};
 static MethodArgs_data TA_taArray_base_InRange_MethArgs[]={
   {&TA_int,NULL,"idx",""},
   NULL};
@@ -10930,14 +8759,6 @@ static MethodArgs_data TA_taArray_base_InitFromString_MethArgs[]={
 static MethodDef_data TA_taArray_base_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_taArray_base_GetColText_stub,TA_taArray_base_GetColText_MethArgs},
-  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
-    0,5,-1,0,NULL,cssElCFun_taArray_base_ChildQueryEditActions_stub,TA_taArray_base_ChildQueryEditActions_MethArgs},
-  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
-    0,4,-1,0,NULL,cssElCFun_taArray_base_ChildEditAction_stub,TA_taArray_base_ChildEditAction_MethArgs},
-  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
-    0,3,-1,0,NULL,cssElCFun_taArray_base_QueryEditActions_stub,TA_taArray_base_QueryEditActions_MethArgs},
-  {&TA_int,NULL,"EditAction","","","",
-    0,2,-1,0,NULL,cssElCFun_taArray_base_EditAction_stub,TA_taArray_base_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -10974,40 +8795,38 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taArray_base_GetEnumString_stub,TA_taArray_base_GetEnumString_MethArgs},
   {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
     0,2,1,0,NULL,cssElCFun_taArray_base_GetEnumVal_stub,TA_taArray_base_GetEnumVal_MethArgs},
-  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+  {&TA_int,NULL,"Load"," Load object data from a file","MENUMENU_ON_ObjectARGC_1UPDATE_MENUSMENU_CONTEXT","",
     0,2,1,0,NULL,cssElCFun_taArray_base_Load_stub,TA_taArray_base_Load_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+  {&TA_int,NULL,"Save"," Save object data to a file","MENUMENU_ON_ObjectARGC_1QUICK_SAVE","",
     0,3,1,0,NULL,cssElCFun_taArray_base_Save_stub,TA_taArray_base_Save_MethArgs},
-  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENUARGC_1","",
     0,3,1,0,NULL,cssElCFun_taArray_base_SaveAs_stub,TA_taArray_base_SaveAs_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENUARGC_0MENU_ON_ObjectLABEL_PropertiesMENU_CONTEXTNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Edit_stub,NULL},
   {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_CloseEdit_stub,NULL},
   {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
     0,1,0,0,NULL,cssElCFun_taArray_base_ReShowEdit_stub,TA_taArray_base_ReShowEdit_MethArgs},
-  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENUCONFIRMNO_REVERT_AFTERLABEL_Close_(Destroy)NO_MENU_CONTEXT","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Close_stub,NULL},
-  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENUMENU_ON_ObjectMENU_SEP_BEFORETYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_CopyFrom_stub,TA_taArray_base_CopyFrom_MethArgs},
-  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENUTYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_CopyTo_stub,TA_taArray_base_CopyTo_MethArgs},
   {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
     0,2,-1,0,NULL,cssElCFun_taArray_base_ChildUpdateAfterEdit_stub,TA_taArray_base_ChildUpdateAfterEdit_MethArgs},
-  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_DuplicateMe_stub,NULL},
-  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENUTYPE_thisUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_ChangeMyType_stub,TA_taArray_base_ChangeMyType_MethArgs},
   {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
     0,3,-1,0,NULL,cssElCFun_taArray_base_SelectForEdit_stub,TA_taArray_base_SelectForEdit_MethArgs},
-  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU","",
     0,3,-1,0,NULL,cssElCFun_taArray_base_SelectFunForEdit_stub,TA_taArray_base_SelectFunForEdit_MethArgs},
-  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+  {&TA_void,NULL,"Help"," get help on using this object","MENU","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_CallFun_stub,TA_taArray_base_CallFun_MethArgs},
-  {&TA_void,NULL,"SetAdapter","","","",
-    0,1,-1,0,NULL,cssElCFun_taArray_base_SetAdapter_stub,TA_taArray_base_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_addr_data_link_stub,NULL},
   {&TA_bool,NULL,"InRange","","","",
@@ -11018,17 +8837,17 @@ static MethodDef_data TA_taArray_base_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_base_Reset_stub,NULL},
   {&TA_void_ptr,NULL,"BlankEl_"," address of a blank element, for initializing empty items","","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_BlankEl__stub,NULL},
-  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENU MENU_ON_Edit ","",
+  {&TA_void,NULL,"EnforceSize"," force array to be of given size by inserting blanks or removing","MENUMENU_ON_Edit","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_EnforceSize_stub,TA_taArray_base_EnforceSize_MethArgs},
-  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENU MENU_ON_Edit ","",
+  {&TA_void,NULL,"AddBlank"," Add n_els empty elements to the end of the array","MENUMENU_ON_Edit","",
     0,1,0,0,NULL,cssElCFun_taArray_base_AddBlank_stub,TA_taArray_base_AddBlank_MethArgs},
-  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENU MENU_ON_Edit ","",
+  {&TA_bool,NULL,"Remove"," Remove (n_els) item(s) at idx, returns success","MENUMENU_ON_Edit","",
     0,2,1,0,NULL,cssElCFun_taArray_base_Remove_stub,TA_taArray_base_Remove_MethArgs},
-  {&TA_bool,NULL,"Move"," move item from index to index","MENU ","",
+  {&TA_bool,NULL,"Move"," move item from index to index","MENU","",
     0,2,-1,0,NULL,cssElCFun_taArray_base_Move_stub,TA_taArray_base_Move_MethArgs},
-  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU ","",
+  {&TA_void,NULL,"Permute"," permute the items in the list into a random order","MENU","",
     0,0,-1,0,NULL,cssElCFun_taArray_base_Permute_stub,NULL},
-  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU ","",
+  {&TA_void,NULL,"Sort"," sort the list in ascending order (or descending if switched)","MENU","",
     0,1,0,0,NULL,cssElCFun_taArray_base_Sort_stub,TA_taArray_base_Sort_MethArgs},
   {&TA_void,NULL,"ShiftLeft"," shift all the elements in the array to the left by given number of items","","",
     0,1,-1,0,NULL,cssElCFun_taArray_base_ShiftLeft_stub,TA_taArray_base_ShiftLeft_MethArgs},
@@ -11057,9 +8876,9 @@ static EnumDef_data TA_taArray_int__Orientation[]={
   NULL};
 static int taArray<int>::* TA_taArray_int__MbrOff;
 static MemberDef_data TA_taArray_int__MemberDef[]={
-  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::int_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_int__MbrOff=(int taArray<int>::*)(&taArray<int>::el))),0,NULL,0},
-  {&TA_int,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_int,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_int__MbrOff=(int taArray<int>::*)(&taArray<int>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_int__SafeEl_MethArgs[]={
@@ -11102,7 +8921,7 @@ static MethodArgs_data TA_taArray_int__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_int__MethodDef[]={
-  {NULL,"::const_int_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_int_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__SafeEl_stub,TA_taArray_int__SafeEl_MethArgs},
   {NULL,"::int_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__FastEl_stub,TA_taArray_int__FastEl_MethArgs},
@@ -11114,15 +8933,15 @@ static MethodDef_data TA_taArray_int__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_int__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_int__Set_stub,TA_taArray_int__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__Add_stub,TA_taArray_int__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__AddUnique_stub,TA_taArray_int__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__Push_stub,TA_taArray_int__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_int__Insert_stub,TA_taArray_int__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_int__Find_stub,TA_taArray_int__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_int__RemoveEl_stub,TA_taArray_int__RemoveEl_MethArgs},
@@ -11147,9 +8966,9 @@ static EnumDef_data TA_taArray_float__Orientation[]={
   NULL};
 static int taArray<float>::* TA_taArray_float__MbrOff;
 static MemberDef_data TA_taArray_float__MemberDef[]={
-  {NULL,"::float_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::float_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_float__MbrOff=(int taArray<float>::*)(&taArray<float>::el))),0,NULL,0},
-  {&TA_float,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_float,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_float__MbrOff=(int taArray<float>::*)(&taArray<float>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_float__SafeEl_MethArgs[]={
@@ -11192,7 +9011,7 @@ static MethodArgs_data TA_taArray_float__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_float__MethodDef[]={
-  {NULL,"::const_float_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_float_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__SafeEl_stub,TA_taArray_float__SafeEl_MethArgs},
   {NULL,"::float_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__FastEl_stub,TA_taArray_float__FastEl_MethArgs},
@@ -11204,15 +9023,15 @@ static MethodDef_data TA_taArray_float__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_float__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_float__Set_stub,TA_taArray_float__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__Add_stub,TA_taArray_float__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__AddUnique_stub,TA_taArray_float__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__Push_stub,TA_taArray_float__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_float__Insert_stub,TA_taArray_float__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_float__Find_stub,TA_taArray_float__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_float__RemoveEl_stub,TA_taArray_float__RemoveEl_MethArgs},
@@ -11229,9 +9048,9 @@ static EnumDef_data TA_taArray_double__Orientation[]={
   NULL};
 static int taArray<double>::* TA_taArray_double__MbrOff;
 static MemberDef_data TA_taArray_double__MemberDef[]={
-  {NULL,"::double_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::double_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_double__MbrOff=(int taArray<double>::*)(&taArray<double>::el))),0,NULL,0},
-  {&TA_double,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_double,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_double__MbrOff=(int taArray<double>::*)(&taArray<double>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_double__SafeEl_MethArgs[]={
@@ -11274,7 +9093,7 @@ static MethodArgs_data TA_taArray_double__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_double__MethodDef[]={
-  {NULL,"::const_double_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_double_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__SafeEl_stub,TA_taArray_double__SafeEl_MethArgs},
   {NULL,"::double_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__FastEl_stub,TA_taArray_double__FastEl_MethArgs},
@@ -11286,15 +9105,15 @@ static MethodDef_data TA_taArray_double__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_double__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_double__Set_stub,TA_taArray_double__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__Add_stub,TA_taArray_double__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__AddUnique_stub,TA_taArray_double__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__Push_stub,TA_taArray_double__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_double__Insert_stub,TA_taArray_double__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_double__Find_stub,TA_taArray_double__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_double__RemoveEl_stub,TA_taArray_double__RemoveEl_MethArgs},
@@ -11311,9 +9130,9 @@ static EnumDef_data TA_taArray_taString__Orientation[]={
   NULL};
 static int taArray<taString>::* TA_taArray_taString__MbrOff;
 static MemberDef_data TA_taArray_taString__MemberDef[]={
-  {NULL,"::taString_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::taString_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_taString__MbrOff=(int taArray<taString>::*)(&taArray<taString>::el))),0,NULL,0},
-  {&TA_taString,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_taString,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_taString__MbrOff=(int taArray<taString>::*)(&taArray<taString>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_taString__SafeEl_MethArgs[]={
@@ -11356,7 +9175,7 @@ static MethodArgs_data TA_taArray_taString__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_taString__MethodDef[]={
-  {NULL,"::const_taString_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_taString_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__SafeEl_stub,TA_taArray_taString__SafeEl_MethArgs},
   {NULL,"::taString_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__FastEl_stub,TA_taArray_taString__FastEl_MethArgs},
@@ -11368,15 +9187,15 @@ static MethodDef_data TA_taArray_taString__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_taString__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_taString__Set_stub,TA_taArray_taString__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__Add_stub,TA_taArray_taString__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__AddUnique_stub,TA_taArray_taString__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__Push_stub,TA_taArray_taString__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_taString__Insert_stub,TA_taArray_taString__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_taString__Find_stub,TA_taArray_taString__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_taString__RemoveEl_stub,TA_taArray_taString__RemoveEl_MethArgs},
@@ -11398,9 +9217,9 @@ static EnumDef_data TA_taArray_long__Orientation[]={
   NULL};
 static int taArray<long>::* TA_taArray_long__MbrOff;
 static MemberDef_data TA_taArray_long__MemberDef[]={
-  {NULL,"::long_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::long_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_long__MbrOff=(int taArray<long>::*)(&taArray<long>::el))),0,NULL,0},
-  {&TA_long,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_long,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_long__MbrOff=(int taArray<long>::*)(&taArray<long>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_long__SafeEl_MethArgs[]={
@@ -11443,7 +9262,7 @@ static MethodArgs_data TA_taArray_long__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_long__MethodDef[]={
-  {NULL,"::const_long_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_long_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__SafeEl_stub,TA_taArray_long__SafeEl_MethArgs},
   {NULL,"::long_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__FastEl_stub,TA_taArray_long__FastEl_MethArgs},
@@ -11455,15 +9274,15 @@ static MethodDef_data TA_taArray_long__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_long__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_long__Set_stub,TA_taArray_long__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__Add_stub,TA_taArray_long__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__AddUnique_stub,TA_taArray_long__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__Push_stub,TA_taArray_long__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_long__Insert_stub,TA_taArray_long__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_long__Find_stub,TA_taArray_long__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_long__RemoveEl_stub,TA_taArray_long__RemoveEl_MethArgs},
@@ -11488,9 +9307,9 @@ static EnumDef_data TA_taArray_voidptr__Orientation[]={
   NULL};
 static int taArray<void*>::* TA_taArray_voidptr__MbrOff;
 static MemberDef_data TA_taArray_voidptr__MemberDef[]={
-  {NULL,"::voidptr_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::voidptr_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taArray_voidptr__MbrOff=(int taArray<void*>::*)(&taArray<void*>::el))),0,NULL,0},
-  {&TA_voidptr,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN ","",
+  {&TA_voidptr,NULL,"err"," what is returned when out of range; MUST INIT IN CONSTRUCTOR","HIDDEN","",
     *((ta_memb_ptr*)&(TA_taArray_voidptr__MbrOff=(int taArray<void*>::*)(&taArray<void*>::err))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taArray_voidptr__SafeEl_MethArgs[]={
@@ -11533,7 +9352,7 @@ static MethodArgs_data TA_taArray_voidptr__InitVals_MethArgs[]={
   {&TA_int,NULL,"end","-1"},
   NULL};
 static MethodDef_data TA_taArray_voidptr__MethodDef[]={
-  {NULL,"::const_voidptr_ref","SafeEl"," the element at the given index","MENU MENU_ON_Edit USE_RVAL ","",
+  {NULL,"::const_voidptr_ref","SafeEl"," the element at the given index","MENUMENU_ON_EditUSE_RVAL","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__SafeEl_stub,TA_taArray_voidptr__SafeEl_MethArgs},
   {NULL,"::voidptr_ref","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__FastEl_stub,TA_taArray_voidptr__FastEl_MethArgs},
@@ -11545,15 +9364,15 @@ static MethodDef_data TA_taArray_voidptr__MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_taArray_voidptr__Peek_stub,NULL},
   {&TA_void,NULL,"Set"," use this for safely assigning values to items in the array (Set should update if needed)","","",
     0,2,-1,0,NULL,cssElCFun_taArray_voidptr__Set_stub,TA_taArray_voidptr__Set_MethArgs},
-  {&TA_void,NULL,"Add"," add the item to the array","MENU ","",
+  {&TA_void,NULL,"Add"," add the item to the array","MENU","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__Add_stub,TA_taArray_voidptr__Add_MethArgs},
   {&TA_bool,NULL,"AddUnique"," add the item to the array if it isn't already on it, returns true if unique","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__AddUnique_stub,TA_taArray_voidptr__AddUnique_MethArgs},
   {&TA_void,NULL,"Push"," push the item on the end of the array (same as add)","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__Push_stub,TA_taArray_voidptr__Push_MethArgs},
-  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU ","",
+  {&TA_void,NULL,"Insert"," Insert (n_els) item(s) at indx (-1 for end) in the array","MENU","",
     0,3,2,0,NULL,cssElCFun_taArray_voidptr__Insert_stub,TA_taArray_voidptr__Insert_MethArgs},
-  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENU USE_RVAL ","",
+  {&TA_int,NULL,"Find"," Find item starting from indx in the array (-1 if not there)","MENUUSE_RVAL","",
     0,2,1,0,NULL,cssElCFun_taArray_voidptr__Find_stub,TA_taArray_voidptr__Find_MethArgs},
   {&TA_bool,NULL,"RemoveEl"," remove given item, returns success","","",
     0,1,-1,0,NULL,cssElCFun_taArray_voidptr__RemoveEl_stub,TA_taArray_voidptr__RemoveEl_MethArgs},
@@ -11566,7 +9385,7 @@ static MemberDef_data TA_voidptr_Array_MemberDef[]={
   NULL};
 static int taMatrix_impl::* TA_taMatrix_impl_MbrOff;
 static MemberDef_data TA_taMatrix_impl_MemberDef[]={
-  {&TA_int,NULL,"size"," number of elements in the ","NO_SAVE READ_ONLY ","",
+  {&TA_int,NULL,"size"," number of elements in the ","NO_SAVEREAD_ONLY","",
     *((ta_memb_ptr*)&(TA_taMatrix_impl_MbrOff=(int taMatrix_impl::*)(&taMatrix_impl::size))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taMatrix_impl_geom_MethArgs[]={
@@ -11609,7 +9428,7 @@ static MethodDef_data TA_taMatrix_impl_MethodDef[]={
   NULL};
 static int taMatrix<byte>::* TA_taMatrix_byte__MbrOff;
 static MemberDef_data TA_taMatrix_byte__MemberDef[]={
-  {NULL,"::byte_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::byte_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taMatrix_byte__MbrOff=(int taMatrix<byte>::*)(&taMatrix<byte>::el))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taMatrix_byte__SafeEl_MethArgs[]={
@@ -11642,7 +9461,7 @@ static MethodDef_data TA_byte_Matrix_MethodDef[]={
   NULL};
 static int taMatrix<float>::* TA_taMatrix_float__MbrOff;
 static MemberDef_data TA_taMatrix_float__MemberDef[]={
-  {NULL,"::float_ptr","el"," Pointer to actual array memory","HIDDEN NO_SAVE ","",
+  {NULL,"::float_ptr","el"," Pointer to actual array memory","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taMatrix_float__MbrOff=(int taMatrix<float>::*)(&taMatrix<float>::el))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taMatrix_float__SafeEl_MethArgs[]={
@@ -11675,15 +9494,15 @@ static MethodDef_data TA_float_Matrix_MethodDef[]={
   NULL};
 static int taGroup_impl::* TA_taGroup_impl_MbrOff;
 static MemberDef_data TA_taGroup_impl_MemberDef[]={
-  {&TA_int,NULL,"leaves"," total number of leaves","READ_ONLY NO_SAVE ","",
+  {&TA_int,NULL,"leaves"," total number of leaves","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taGroup_impl_MbrOff=(int taGroup_impl::*)(&taGroup_impl::leaves))),0,NULL,0},
-  {&TA_taSubGroup,NULL,"gp"," sub-groups within this one","HIDDEN NO_FIND NO_SAVE ","",
+  {&TA_taSubGroup,NULL,"gp"," sub-groups within this one","HIDDENNO_FINDNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taGroup_impl_MbrOff=(int taGroup_impl::*)(&taGroup_impl::gp))),0,NULL,0},
-  {&TA_TAGPtr,NULL,"super_gp"," super-group above this","READ_ONLY NO_SAVE ","",
+  {&TA_TAGPtr,NULL,"super_gp"," super-group above this","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taGroup_impl_MbrOff=(int taGroup_impl::*)(&taGroup_impl::super_gp))),0,NULL,0},
-  {&TA_TALOG_ptr,NULL,"leaf_gp"," 'flat' list of leaf-containing-gps","READ_ONLY NO_SAVE ","",
+  {&TA_TALOG_ptr,NULL,"leaf_gp"," 'flat' list of leaf-containing-gps","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taGroup_impl_MbrOff=(int taGroup_impl::*)(&taGroup_impl::leaf_gp))),0,NULL,0},
-  {&TA_TAGPtr,NULL,"root_gp"," the root group, 'this' for root group itself; never NULL","READ_ONLY NO_SAVE ","",
+  {&TA_TAGPtr,NULL,"root_gp"," the root group, 'this' for root group itself; never NULL","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_taGroup_impl_MbrOff=(int taGroup_impl::*)(&taGroup_impl::root_gp))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_taGroup_impl_Remove_MethArgs[]={
@@ -11776,9 +9595,9 @@ static MethodDef_data TA_taGroup_impl_MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taGroup_impl_RemoveLeafName_stub,TA_taGroup_impl_RemoveLeafName_MethArgs},
   {&TA_bool,NULL,"RemoveLeafEl"," Remove given leaf element","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_impl_RemoveLeafEl_stub,TA_taGroup_impl_RemoveLeafEl_MethArgs},
-  {&TA_bool,NULL,"RemoveGp"," remove group at given index remove given group","MENU FROM_GROUP_gp MENU_ON_Edit UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveGp"," remove group at given index remove given group","MENUFROM_GROUP_gpMENU_ON_EditUPDATE_MENUS","",
     1,1,-1,0,NULL,cssElCFun_taGroup_impl_RemoveGp_stub,TA_taGroup_impl_RemoveGp_MethArgs},
-  {&TA_TALOG_ptr,NULL,"EditSubGps"," edit the list of sub-groups (e.g., so you can move around subgroups)","MENU USE_RVAL ","",
+  {&TA_TALOG_ptr,NULL,"EditSubGps"," edit the list of sub-groups (e.g., so you can move around subgroups)","MENUUSE_RVAL","",
     0,0,-1,0,NULL,cssElCFun_taGroup_impl_EditSubGps_stub,NULL},
   {&TA_void,NULL,"EnforceLeaves"," ensure that sz leaves exits by adding new ones to top group and removing old ones from end","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_impl_EnforceLeaves_stub,TA_taGroup_impl_EnforceLeaves_MethArgs},
@@ -11833,9 +9652,9 @@ static MethodDef_data TA_taList_taGroup_impl__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taList_taGroup_impl__FastEl_stub,TA_taList_taGroup_impl__FastEl_MethArgs},
   {NULL,"::taGroup_impl_ptr","DefaultEl"," returns the element specified as the default for this list","","",
     0,0,-1,0,NULL,cssElCFun_taList_taGroup_impl__DefaultEl_stub,NULL},
-  {NULL,"::taGroup_impl_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taGroup_impl_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taList_taGroup_impl__Edit_El_stub,TA_taList_taGroup_impl__Edit_El_MethArgs},
-  {NULL,"::taGroup_impl_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
+  {NULL,"::taGroup_impl_ptr","FindName"," Find element with given name (item_nm)","MENUUSE_RVALARGC_1LABEL_Find","",
     0,2,1,0,NULL,cssElCFun_taList_taGroup_impl__FindName_stub,TA_taList_taGroup_impl__FindName_MethArgs},
   {NULL,"::taGroup_impl_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taList_taGroup_impl__FindType_stub,TA_taList_taGroup_impl__FindType_MethArgs},
@@ -11852,7 +9671,7 @@ static MethodArgs_data TA_taSubGroup_Transfer_MethArgs[]={
   {&TA_taBase_ptr,NULL,"item",""},
   NULL};
 static MethodDef_data TA_taSubGroup_MethodDef[]={
-  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer element to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     1,1,-1,0,NULL,cssElCFun_taSubGroup_Transfer_stub,TA_taSubGroup_Transfer_MethArgs},
   NULL};
 static int taLeafItr::* TA_taLeafItr_MbrOff;
@@ -11954,7 +9773,7 @@ static MethodDef_data TA_taGroup_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taGroup_taBase__FastEl_stub,TA_taGroup_taBase__FastEl_MethArgs},
   {NULL,"::taBase_ptr","DefaultEl"," returns the element specified as the default for this group","","",
     0,0,-1,0,NULL,cssElCFun_taGroup_taBase__DefaultEl_stub,NULL},
-  {NULL,"::taBase_ptr","Edit_El"," Edit given group item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::taBase_ptr","Edit_El"," Edit given group item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taGroup_taBase__Edit_El_stub,TA_taGroup_taBase__Edit_El_MethArgs},
   {&TA_taGroup_ptr,NULL,"SafeGp"," get group at index","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_taBase__SafeGp_stub,TA_taGroup_taBase__SafeGp_MethArgs},
@@ -11986,7 +9805,7 @@ static MethodDef_data TA_taGroup_taBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taGroup_taBase__AddUniqNameOld_stub,TA_taGroup_taBase__AddUniqNameOld_MethArgs},
   {NULL,"::taBase_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_taBase__LinkUniqNameOld_stub,TA_taGroup_taBase__LinkUniqNameOld_MethArgs},
-  {NULL,"::taBase_ptr","FindLeafName"," Find element with given name (el_nm)","MENU MENU_ON_Edit USE_RVAL ARGC_1 LABEL_Find ","",
+  {NULL,"::taBase_ptr","FindLeafName"," Find element with given name (el_nm)","MENUMENU_ON_EditUSE_RVALARGC_1LABEL_Find","",
     0,2,1,0,NULL,cssElCFun_taGroup_taBase__FindLeafName_stub,TA_taGroup_taBase__FindLeafName_MethArgs},
   {NULL,"::taBase_ptr","FindLeafType"," find given type leaf element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taGroup_taBase__FindLeafType_stub,TA_taGroup_taBase__FindLeafType_MethArgs},
@@ -11998,15 +9817,15 @@ static MemberDef_data TA_NameValue_MemberDef[]={
   NULL};
 static int TypeDefault::* TA_TypeDefault_MbrOff;
 static MemberDef_data TA_TypeDefault_MemberDef[]={
-  {&TA_TypeDef_ptr,NULL,"old_type"," has previous type (if default_type changes)","HIDDEN NO_SAVE ","",
+  {&TA_TypeDef_ptr,NULL,"old_type"," has previous type (if default_type changes)","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_TypeDefault_MbrOff=(int TypeDefault::*)(&TypeDefault::old_type))),0,NULL,0},
-  {&TA_TypeDef_ptr,NULL,"default_type"," type of the default","TYPE_taBase ","",
+  {&TA_TypeDef_ptr,NULL,"default_type"," type of the default","TYPE_taBase","",
     *((ta_memb_ptr*)&(TA_TypeDefault_MbrOff=(int TypeDefault::*)(&TypeDefault::default_type))),0,NULL,0},
-  {&TA_TAPtr,NULL,"token"," token which has default values","DEFAULT_EDIT NO_SAVE ","",
+  {&TA_TAPtr,NULL,"token"," token which has default values","DEFAULT_EDITNO_SAVE","",
     *((ta_memb_ptr*)&(TA_TypeDefault_MbrOff=(int TypeDefault::*)(&TypeDefault::token))),0,NULL,0},
   {&TA_taBase_List,NULL,"active_membs"," MemberName / MemberValue pairs","","",
     *((ta_memb_ptr*)&(TA_TypeDefault_MbrOff=(int TypeDefault::*)(&TypeDefault::active_membs))),0,NULL,0},
-  {&TA_unsigned_long_ary,NULL,"active"," bits representing a memberdefs activity in a default","HIDDEN NO_SAVE ","",
+  {&TA_unsigned_long_ary,NULL,"active"," bits representing a memberdefs activity in a default","HIDDENNO_SAVE","",
     *((ta_memb_ptr*)&(TA_TypeDefault_MbrOff=(int TypeDefault::*)(&TypeDefault::active))),0,NULL,0},
   NULL};
 static MethodArgs_data TA_TypeDefault_SetActive_MethArgs[]={
@@ -12028,7 +9847,7 @@ static MethodDef_data TA_TypeDefault_MethodDef[]={
   NULL};
 static int ScriptBase::* TA_ScriptBase_MbrOff;
 static MemberDef_data TA_ScriptBase_MemberDef[]={
-  {&TA_cssProgSpace_ptr,NULL,"script"," the script, if defined","HIDDEN ","",
+  {&TA_cssProgSpace_ptr,NULL,"script"," the script, if defined","HIDDEN","",
     *((ta_memb_ptr*)&(TA_ScriptBase_MbrOff=(int ScriptBase::*)(&ScriptBase::script))),0,NULL,0},
   {&TA_taFiler_ptr,NULL,"script_file"," file to use for the script","","",
     *((ta_memb_ptr*)&(TA_ScriptBase_MbrOff=(int ScriptBase::*)(&ScriptBase::script_file))),0,NULL,0},
@@ -12051,11 +9870,11 @@ static MethodDef_data TA_ScriptBase_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_ScriptBase_RunScript_stub,NULL},
   {&TA_void,NULL,"SetScript"," set the script file (e.g. from the script)","","",
     0,1,-1,0,NULL,cssElCFun_ScriptBase_SetScript_stub,TA_ScriptBase_SetScript_MethArgs},
-  {&TA_void,NULL,"LoadScript"," compile script from script file into internal runnable format","MENU LABEL_Compile MENU_ON_Actions ARGC_0 ","",
+  {&TA_void,NULL,"LoadScript"," compile script from script file into internal runnable format","MENULABEL_CompileMENU_ON_ActionsARGC_0","",
     0,1,0,0,NULL,cssElCFun_ScriptBase_LoadScript_stub,TA_ScriptBase_LoadScript_MethArgs},
   {&TA_void,NULL,"LoadScriptString"," load and recompile the script string","","",
     0,1,0,0,NULL,cssElCFun_ScriptBase_LoadScriptString_stub,TA_ScriptBase_LoadScriptString_MethArgs},
-  {&TA_void,NULL,"InteractScript"," change to this shell in script (terminal) window to interact, debug etc script","MENU LABEL_Interact ","",
+  {&TA_void,NULL,"InteractScript"," change to this shell in script (terminal) window to interact, debug etc script","MENULABEL_Interact","",
     0,0,-1,0,NULL,cssElCFun_ScriptBase_InteractScript_stub,NULL},
   NULL};
 static MethodArgs_data TA_taPtrList_ScriptBase__Find_MethArgs[]={
@@ -12172,7 +9991,7 @@ static MethodDef_data TA_taPtrList_ScriptBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__SafeEl_stub,TA_taPtrList_ScriptBase__SafeEl_MethArgs},
   {NULL,"::ScriptBase_ptr","FastEl"," fast element (no range checking)","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__FastEl_stub,TA_taPtrList_ScriptBase__FastEl_MethArgs},
-  {NULL,"::ScriptBase_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::ScriptBase_ptr","Edit_El"," Edit given list item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__Edit_El_stub,TA_taPtrList_ScriptBase__Edit_El_MethArgs},
   {NULL,"::ScriptBase_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taPtrList_ScriptBase__FindName_stub,TA_taPtrList_ScriptBase__FindName_MethArgs},
@@ -12202,9 +10021,9 @@ static MethodDef_data TA_taPtrList_ScriptBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__ReplaceEl_stub,TA_taPtrList_ScriptBase__ReplaceEl_MethArgs},
   {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__ReplaceName_stub,TA_taPtrList_ScriptBase__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENULABEL_RemoveARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__RemoveEl_stub,TA_taPtrList_ScriptBase__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENUARG_ON_OBJUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__DuplicateEl_stub,TA_taPtrList_ScriptBase__DuplicateEl_MethArgs},
   {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__Link_stub,TA_taPtrList_ScriptBase__Link_MethArgs},
@@ -12212,7 +10031,7 @@ static MethodDef_data TA_taPtrList_ScriptBase__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__LinkUnique_stub,TA_taPtrList_ScriptBase__LinkUnique_MethArgs},
   {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__LinkUniqNameNew_stub,TA_taPtrList_ScriptBase__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
+  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENULABEL_LinkUPDATE_MENUS","",
     0,2,1,0,NULL,cssElCFun_taPtrList_ScriptBase__InsertLink_stub,TA_taPtrList_ScriptBase__InsertLink_MethArgs},
   {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
     2,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__ReplaceLink_stub,TA_taPtrList_ScriptBase__ReplaceLink_MethArgs},
@@ -12222,9 +10041,9 @@ static MethodDef_data TA_taPtrList_ScriptBase__MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__ReplaceLinkName_stub,TA_taPtrList_ScriptBase__ReplaceLinkName_MethArgs},
   {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__Push_stub,TA_taPtrList_ScriptBase__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
+  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENULABEL_MoveARG_ON_OBJUPDATE_MENUS","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__MoveEl_stub,TA_taPtrList_ScriptBase__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENUMENU_ON_EditNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__Transfer_stub,TA_taPtrList_ScriptBase__Transfer_MethArgs},
   {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
     0,2,-1,0,NULL,cssElCFun_taPtrList_ScriptBase__MoveBefore_stub,TA_taPtrList_ScriptBase__MoveBefore_MethArgs},
@@ -12233,9 +10052,9 @@ static MethodDef_data TA_taPtrList_ScriptBase__MethodDef[]={
   NULL};
 static int Script::* TA_Script_MbrOff;
 static MemberDef_data TA_Script_MemberDef[]={
-  {&TA_ScriptBase_List,NULL,"recompile_scripts"," list of scripts to be recompiled in wait proc","HIDDEN ","",
+  {&TA_ScriptBase_List,NULL,"recompile_scripts"," list of scripts to be recompiled in wait proc","HIDDEN","",
     (ta_memb_ptr)NULL,1,(void*)(&Script::recompile_scripts),0},
-  {&TA_bool,NULL,"recording"," currently recording?","READ_ONLY NO_SAVE ","",
+  {&TA_bool,NULL,"recording"," currently recording?","READ_ONLYNO_SAVE","",
     *((ta_memb_ptr*)&(TA_Script_MbrOff=(int Script::*)(&Script::recording))),0,NULL,0},
   {&TA_bool,NULL,"auto_run"," run automatically at startup?","","",
     *((ta_memb_ptr*)&(TA_Script_MbrOff=(int Script::*)(&Script::auto_run))),0,NULL,0},
@@ -12245,28 +10064,6 @@ static MemberDef_data TA_Script_MemberDef[]={
 static MethodArgs_data TA_Script_GetColText_MethArgs[]={
   {&TA_int,NULL,"col",""},
   {&TA_int,NULL,"itm_idx"," -1"},
-  NULL};
-static MethodArgs_data TA_Script_ChildQueryEditActions_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_const_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_Script_ChildEditAction_MethArgs[]={
-  {&TA_const_MemberDef_ptr,NULL,"md",""},
-  {&TA_taBase_ptr,NULL,"child",""},
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_Script_QueryEditActions_MethArgs[]={
-  {&TA_const_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int_ref,NULL,"allowed",""},
-  {&TA_int_ref,NULL,"forbidden",""},
-  NULL};
-static MethodArgs_data TA_Script_EditAction_MethArgs[]={
-  {&TA_taiMimeSource_ptr,NULL,"ms",""},
-  {&TA_int,NULL,"ea",""},
   NULL};
 static MethodArgs_data TA_Script_UnSafeCopy_MethArgs[]={
   {&TA_TAPtr,NULL,"na",""},
@@ -12356,9 +10153,6 @@ static MethodArgs_data TA_Script_SelectFunForEdit_MethArgs[]={
 static MethodArgs_data TA_Script_CallFun_MethArgs[]={
   {&TA_const_char_ptr,NULL,"fun_name",""},
   NULL};
-static MethodArgs_data TA_Script_SetAdapter_MethArgs[]={
-  {&TA_taBaseAdapter_ptr,NULL,"adapter_",""},
-  NULL};
 static MethodArgs_data TA_Script_SetScript_MethArgs[]={
   {&TA_const_char_ptr,NULL,"file_nm",""},
   NULL};
@@ -12374,14 +10168,6 @@ static MethodArgs_data TA_Script_Record_MethArgs[]={
 static MethodDef_data TA_Script_MethodDef[]={
   {&TA_taString,NULL,"GetColText"," text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items","","",
     0,2,1,0,NULL,cssElCFun_Script_GetColText_stub,TA_Script_GetColText_MethArgs},
-  {&TA_void,NULL,"ChildQueryEditActions"," gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL","","",
-    0,5,-1,0,NULL,cssElCFun_Script_ChildQueryEditActions_stub,TA_Script_ChildQueryEditActions_MethArgs},
-  {&TA_int,NULL,"ChildEditAction"," note: multi source ops will have child=NULL","","",
-    0,4,-1,0,NULL,cssElCFun_Script_ChildEditAction_stub,TA_Script_ChildEditAction_MethArgs},
-  {&TA_void,NULL,"QueryEditActions"," ms is null for Src-op query","","",
-    0,3,-1,0,NULL,cssElCFun_Script_QueryEditActions_stub,TA_Script_QueryEditActions_MethArgs},
-  {&TA_int,NULL,"EditAction","","","",
-    0,2,-1,0,NULL,cssElCFun_Script_EditAction_stub,TA_Script_EditAction_MethArgs},
   {&TA_taDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
     0,0,-1,0,NULL,cssElCFun_Script_GetDataLink_stub,NULL},
   {&TA_void,NULL,"UnRef"," note: overridden by ref-semantic classes to delete","","",
@@ -12418,40 +10204,38 @@ static MethodDef_data TA_Script_MethodDef[]={
     0,2,-1,0,NULL,cssElCFun_Script_GetEnumString_stub,TA_Script_GetEnumString_MethArgs},
   {&TA_int,NULL,"GetEnumVal"," get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)","","",
     0,2,1,0,NULL,cssElCFun_Script_GetEnumVal_stub,TA_Script_GetEnumVal_MethArgs},
-  {&TA_int,NULL,"Load"," Load object data from a file","MENU MENU_ON_Object ARGC_1 UPDATE_MENUS MENU_CONTEXT ","",
+  {&TA_int,NULL,"Load"," Load object data from a file","MENUMENU_ON_ObjectARGC_1UPDATE_MENUSMENU_CONTEXT","",
     0,2,1,0,NULL,cssElCFun_Script_Load_stub,TA_Script_Load_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
+  {&TA_int,NULL,"Save"," Save object data to a file","MENUMENU_ON_ObjectARGC_1QUICK_SAVE","",
     0,3,1,0,NULL,cssElCFun_Script_Save_stub,TA_Script_Save_MethArgs},
-  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENU ARGC_1 ","",
+  {&TA_int,NULL,"SaveAs"," Save object data to a new file","MENUARGC_1","",
     0,3,1,0,NULL,cssElCFun_Script_SaveAs_stub,TA_Script_SaveAs_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
+  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENUARGC_0MENU_ON_ObjectLABEL_PropertiesMENU_CONTEXTNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_Script_Edit_stub,NULL},
   {&TA_bool,NULL,"CloseEdit"," close any open edit dialogs for this object","","",
     0,0,-1,0,NULL,cssElCFun_Script_CloseEdit_stub,NULL},
   {&TA_bool,NULL,"ReShowEdit"," reshows any open edit dialogs for this object","","",
     0,1,0,0,NULL,cssElCFun_Script_ReShowEdit_stub,TA_Script_ReShowEdit_MethArgs},
-  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENU CONFIRM NO_REVERT_AFTER LABEL_Close_(Destroy) NO_MENU_CONTEXT ","",
+  {&TA_void,NULL,"Close"," PERMANENTLY Destroy this object! This is not Iconify.","MENUCONFIRMNO_REVERT_AFTERLABEL_Close_(Destroy)NO_MENU_CONTEXT","",
     0,0,-1,0,NULL,cssElCFun_Script_Close_stub,NULL},
-  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENU MENU_ON_Object MENU_SEP_BEFORE TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyFrom"," Copy from given object into this object","MENUMENU_ON_ObjectMENU_SEP_BEFORETYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_Script_CopyFrom_stub,TA_Script_CopyFrom_MethArgs},
-  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENU TYPE_ON_this NO_SCOPE UPDATE_MENUS ","",
+  {&TA_bool,NULL,"CopyTo"," Copy to given object from this object","MENUTYPE_ON_thisNO_SCOPEUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_Script_CopyTo_stub,TA_Script_CopyTo_MethArgs},
   {&TA_void,NULL,"ChildUpdateAfterEdit"," if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner","","",
     0,2,-1,0,NULL,cssElCFun_Script_ChildUpdateAfterEdit_stub,TA_Script_ChildUpdateAfterEdit_MethArgs},
-  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENU CONFIRM UPDATE_MENUS ","",
+  {&TA_bool,NULL,"DuplicateMe"," Make another copy of myself (done through owner)","MENUCONFIRMUPDATE_MENUS","",
     0,0,-1,0,NULL,cssElCFun_Script_DuplicateMe_stub,NULL},
-  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENU TYPE_this UPDATE_MENUS ","",
+  {&TA_bool,NULL,"ChangeMyType"," Change me into a different type of object, copying current info (done through owner)","MENUTYPE_thisUPDATE_MENUS","",
     0,1,-1,0,NULL,cssElCFun_Script_ChangeMyType_stub,TA_Script_ChangeMyType_MethArgs},
   {&TA_bool,NULL,"SelectForEdit"," select a given member for editing --<br>if already on dialog, removes it & returns false (else true)","","",
     0,3,-1,0,NULL,cssElCFun_Script_SelectForEdit_stub,TA_Script_SelectForEdit_MethArgs},
-  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU ","",
+  {&TA_bool,NULL,"SelectFunForEdit"," select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)","MENU","",
     0,3,-1,0,NULL,cssElCFun_Script_SelectFunForEdit_stub,TA_Script_SelectFunForEdit_MethArgs},
-  {&TA_void,NULL,"Help"," get help on using this object","MENU ","",
+  {&TA_void,NULL,"Help"," get help on using this object","MENU","",
     0,0,-1,0,NULL,cssElCFun_Script_Help_stub,NULL},
   {&TA_void,NULL,"CallFun"," call function of given name on this object, prompting for args using gui interface","","",
     0,1,-1,0,NULL,cssElCFun_Script_CallFun_stub,TA_Script_CallFun_MethArgs},
-  {&TA_void,NULL,"SetAdapter","","","",
-    0,1,-1,0,NULL,cssElCFun_Script_SetAdapter_stub,TA_Script_SetAdapter_MethArgs},
   {&TA_taDataLink_ptr_ptr,NULL,"addr_data_link","","","",
     0,0,-1,0,NULL,cssElCFun_Script_addr_data_link_stub,NULL},
   {&TA_bool,NULL,"HasScript"," returns true if we have some kind of script file or string to run","","",
@@ -12460,25 +10244,25 @@ static MethodDef_data TA_Script_MethodDef[]={
     0,0,-1,0,NULL,cssElCFun_Script_RunScript_stub,NULL},
   {&TA_void,NULL,"SetScript"," set the script file (e.g. from the script)","","",
     0,1,-1,0,NULL,cssElCFun_Script_SetScript_stub,TA_Script_SetScript_MethArgs},
-  {&TA_void,NULL,"LoadScript"," compile script from script file into internal runnable format","MENU LABEL_Compile MENU_ON_Actions ARGC_0 ","",
+  {&TA_void,NULL,"LoadScript"," compile script from script file into internal runnable format","MENULABEL_CompileMENU_ON_ActionsARGC_0","",
     0,1,0,0,NULL,cssElCFun_Script_LoadScript_stub,TA_Script_LoadScript_MethArgs},
   {&TA_void,NULL,"LoadScriptString"," load and recompile the script string","","",
     0,1,0,0,NULL,cssElCFun_Script_LoadScriptString_stub,TA_Script_LoadScriptString_MethArgs},
-  {&TA_void,NULL,"InteractScript"," change to this shell in script (terminal) window to interact, debug etc script","MENU LABEL_Interact ","",
+  {&TA_void,NULL,"InteractScript"," change to this shell in script (terminal) window to interact, debug etc script","MENULABEL_Interact","",
     0,0,-1,0,NULL,cssElCFun_Script_InteractScript_stub,NULL},
-  {&TA_bool,NULL,"Run"," run the script (returns false for no scr)","BUTTON GHOST_OFF_recording ","",
+  {&TA_bool,NULL,"Run"," run the script (returns false for no scr)","BUTTONGHOST_OFF_recording","",
     0,0,-1,0,NULL,cssElCFun_Script_Run_stub,NULL},
-  {&TA_void,NULL,"Record"," record script code for interface actions","BUTTON GHOST_OFF_recording ARGC_0 NO_SCRIPT ","",
+  {&TA_void,NULL,"Record"," record script code for interface actions","BUTTONGHOST_OFF_recordingARGC_0NO_SCRIPT","",
     0,1,0,0,NULL,cssElCFun_Script_Record_stub,TA_Script_Record_MethArgs},
-  {&TA_void,NULL,"StopRecording"," stop recording script code","BUTTON LABEL_StopRec GHOST_ON_recording ","",
+  {&TA_void,NULL,"StopRecording"," stop recording script code","BUTTONLABEL_StopRecGHOST_ON_recording","",
     0,0,-1,0,NULL,cssElCFun_Script_StopRecording_stub,NULL},
-  {&TA_void,NULL,"Interact"," change to this shell in script (terminal) window to interact, debug etc script","BUTTON GHOST_OFF_recording ","",
+  {&TA_void,NULL,"Interact"," change to this shell in script (terminal) window to interact, debug etc script","BUTTONGHOST_OFF_recording","",
     0,0,-1,0,NULL,cssElCFun_Script_Interact_stub,NULL},
-  {&TA_void,NULL,"Clear"," clear script file","BUTTON CONFIRM ","",
+  {&TA_void,NULL,"Clear"," clear script file","BUTTONCONFIRM","",
     0,0,-1,0,NULL,cssElCFun_Script_Clear_stub,NULL},
-  {&TA_void,NULL,"Compile"," compile script from script file into internal runnable format","BUTTON GHOST_OFF_recording ","",
+  {&TA_void,NULL,"Compile"," compile script from script file into internal runnable format","BUTTONGHOST_OFF_recording","",
     0,0,-1,0,NULL,cssElCFun_Script_Compile_stub,NULL},
-  {&TA_void,NULL,"ScriptAllWinPos"," record script code to set window positions, iconified","MENU MENU_ON_Actions NO_SCRIPT ","",
+  {&TA_void,NULL,"ScriptAllWinPos"," record script code to set window positions, iconified","MENUMENU_ON_ActionsNO_SCRIPT","",
     0,0,-1,0,NULL,cssElCFun_Script_ScriptAllWinPos_stub,NULL},
   {&TA_void,NULL,"AutoRun"," run this script if auto_run is set","","",
     0,0,-1,0,NULL,cssElCFun_Script_AutoRun_stub,NULL},
@@ -12573,7 +10357,7 @@ static MethodDef_data TA_taGroup_Script__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taGroup_Script__FastEl_stub,TA_taGroup_Script__FastEl_MethArgs},
   {NULL,"::Script_ptr","DefaultEl"," returns the element specified as the default for this group","","",
     0,0,-1,0,NULL,cssElCFun_taGroup_Script__DefaultEl_stub,NULL},
-  {NULL,"::Script_ptr","Edit_El"," Edit given group item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
+  {NULL,"::Script_ptr","Edit_El"," Edit given group item","MENUMENU_ON_EditUSE_RVALARG_ON_OBJ","",
     0,1,-1,0,NULL,cssElCFun_taGroup_Script__Edit_El_stub,TA_taGroup_Script__Edit_El_MethArgs},
   {&TA_taGroup_ptr,NULL,"SafeGp"," get group at index","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_Script__SafeGp_stub,TA_taGroup_Script__SafeGp_MethArgs},
@@ -12605,1132 +10389,16 @@ static MethodDef_data TA_taGroup_Script__MethodDef[]={
     0,1,-1,0,NULL,cssElCFun_taGroup_Script__AddUniqNameOld_stub,TA_taGroup_Script__AddUniqNameOld_MethArgs},
   {NULL,"::Script_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
     0,1,-1,0,NULL,cssElCFun_taGroup_Script__LinkUniqNameOld_stub,TA_taGroup_Script__LinkUniqNameOld_MethArgs},
-  {NULL,"::Script_ptr","FindLeafName"," Find element with given name (el_nm)","MENU MENU_ON_Edit USE_RVAL ARGC_1 LABEL_Find ","",
+  {NULL,"::Script_ptr","FindLeafName"," Find element with given name (el_nm)","MENUMENU_ON_EditUSE_RVALARGC_1LABEL_Find","",
     0,2,1,0,NULL,cssElCFun_taGroup_Script__FindLeafName_stub,TA_taGroup_Script__FindLeafName_MethArgs},
   {NULL,"::Script_ptr","FindLeafType"," find given type leaf element (NULL = not here), sets idx","","",
     0,2,1,0,NULL,cssElCFun_taGroup_Script__FindLeafType_stub,TA_taGroup_Script__FindLeafType_MethArgs},
-  NULL};
-static MethodArgs_data TA_Script_MGroup_Run_mc_MethArgs[]={
-  {&TA_taiMenuEl_ptr,NULL,"sel",""},
   NULL};
 static MethodDef_data TA_Script_MGroup_MethodDef[]={
   {&TA_void,NULL,"StopRecording","","","",
     0,0,-1,0,NULL,cssElCFun_Script_MGroup_StopRecording_stub,NULL},
   {&TA_void,NULL,"AutoRun","","","",
     0,0,-1,0,NULL,cssElCFun_Script_MGroup_AutoRun_stub,NULL},
-  {&TA_void,NULL,"Run_mc"," protected:","","",
-    0,1,-1,0,NULL,cssElCFun_Script_MGroup_Run_mc_stub,TA_Script_MGroup_Run_mc_MethArgs},
-  NULL};
-static EnumDef_data TA_taiMisc_SizeSpec[]={
-  {"defSize"," medium","",0},
-  {"sizSmall","","",1},
-  {"sizMedium","","",2},
-  {"sizBig"," mask","",3},
-  {"siz_mask","","",0},
-  {"F","","",1},
-  NULL};
-static EnumDef_data TA_taiMisc_FontSpec[]={
-  {"defFontSize"," medium, or inherit from parent (as applicable)","",0},
-  {"fonSmall","","",1},
-  {"fonMedium","","",2},
-  {"fonBig"," choose up to 1:","",3},
-  {"def_stretch"," default (not stretched)","",0},
-  {"fonSkinny","","",16},
-  {"fonWide"," choose any:","",48},
-  {"fonItalic","","",256},
-  {"fonBold","","",512},
-  {"fonUnderline"," pre-baked combinations (some for legacy compatibility)","",768},
-  {"fonBig_italic","","",259},
-  {"fonSkinny_small"," masks","",17},
-  {"fonSize_mask","","",0},
-  {"F","","",1},
-  {"fonStretch_mask","","",0},
-  {"F0","","",1},
-  NULL};
-static EnumDef_data TA_taiMisc_DialogSpec[]={
-  {"defDialogSize"," default is medium","",0},
-  {"dlgSmall","","",1},
-  {"dlgMedium","","",2},
-  {"dlgBig"," choose 1:","",3},
-  {"dlgHor"," the default -- Hor == ~Ver","",0},
-  {"dlgVer"," prebaked:","",16},
-  {"hdlg"," default h dialog","",0},
-  {"vdlg"," default v dialog","",16},
-  {"hdlg_s","","",1},
-  {"vdlg_s","","",17},
-  {"hdlg_m","","",2},
-  {"vdlg_m","","",18},
-  {"hdlg_b","","",3},
-  {"vdlg_b"," masks","",19},
-  {"dlgSize_mask","","",0},
-  {"F","","",1},
-  {"dlgOrient_mask","","",16},
-  NULL};
-static MemberDef_data TA_taiMisc_MemberDef[]={
-  {&TA_bool,NULL,"gui_active"," 'true' when we have a gui (mainwindow), false if not (ex. after main win closes)","READ_ONLY ","",
-    (ta_memb_ptr)NULL,1,(void*)(&taiMisc::gui_active),0},
-  {&TA_int,NULL,"busy_count"," levels of busy","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taiMisc::busy_count),0},
-  {&TA_TypeSpace,NULL,"arg_types"," list of all taiArgTypes","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taiMisc::arg_types),0},
-  {&TA_QWidget_ptr,NULL,"main_window"," the main window","","",
-    (ta_memb_ptr)NULL,1,(void*)(&taiMisc::main_window),0},
-  {&TA_taBase_PtrList,NULL,"unopened_windows"," unopened windows waiting to be opened","HIDDEN ","",
-    (ta_memb_ptr)NULL,1,(void*)(&taiMisc::unopened_windows),0},
-  NULL};
-static MethodArgs_data TA_taiMisc_ScriptIconify_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_int,NULL,"onoff",""},
-  NULL};
-static MethodArgs_data TA_taiMisc_SetIconify_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_int,NULL,"onoff",""},
-  NULL};
-static MethodArgs_data TA_taiMisc_RevertEdits_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_TypeDef_ptr,NULL,"td",""},
-  NULL};
-static MethodArgs_data TA_taiMisc_CloseEdits_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_TypeDef_ptr,NULL,"td",""},
-  NULL};
-static MethodArgs_data TA_taiMisc_NotifyEdits_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_TypeDef_ptr,NULL,"td",""},
-  NULL};
-static MethodArgs_data TA_taiMisc_ReShowEdits_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_TypeDef_ptr,NULL,"td",""},
-  {&TA_bool,NULL,"force"," true"},
-  NULL};
-static MethodArgs_data TA_taiMisc_FindEdit_MethArgs[]={
-  {&TA_void_ptr,NULL,"obj",""},
-  {&TA_TypeDef_ptr,NULL,"td",""},
-  {&TA_iDataViewer_ptr,NULL,"not_in_win"," ((void *)0)"},
-  NULL};
-static MethodArgs_data TA_taiMisc_AdjustFont_MethArgs[]={
-  {&TA_int,NULL,"fontSpec",""},
-  {&TA_iFont_ref,NULL,"font",""},
-  NULL};
-static MethodDef_data TA_taiMisc_MethodDef[]={
-  {&TA_void,NULL,"OpenWindows"," open all unopened windows","","",
-    0,0,-1,1,(ta_void_fun)(taiMisc::OpenWindows),cssElCFun_taiMisc_OpenWindows_stub,NULL},
-  {&TA_int,NULL,"WaitProc"," waiting process function","","",
-    0,0,-1,1,(ta_void_fun)(taiMisc::WaitProc),cssElCFun_taiMisc_WaitProc_stub,NULL},
-  {&TA_void,NULL,"ScriptIconify"," record iconify command for obj to script","","",
-    0,2,-1,1,(ta_void_fun)(taiMisc::ScriptIconify),cssElCFun_taiMisc_ScriptIconify_stub,TA_taiMisc_ScriptIconify_MethArgs},
-  {&TA_int,NULL,"SetIconify"," set iconified field of winbase obj to onoff","","",
-    0,2,-1,1,(ta_void_fun)(taiMisc::SetIconify),cssElCFun_taiMisc_SetIconify_stub,TA_taiMisc_SetIconify_MethArgs},
-  {&TA_int,NULL,"RunPending"," run any pending qt events that might need processed","","",
-    0,0,-1,1,(ta_void_fun)(taiMisc::RunPending),cssElCFun_taiMisc_RunPending_stub,NULL},
-  {&TA_void,NULL,"PurgeDialogs"," remove any 'NoBlock' dialogs from active list (& delete them)","","",
-    0,0,-1,1,(ta_void_fun)(taiMisc::PurgeDialogs),cssElCFun_taiMisc_PurgeDialogs_stub,NULL},
-  {&TA_bool,NULL,"RevertEdits"," revert any open edit dialogs for given object","","",
-    0,2,-1,1,(ta_void_fun)(taiMisc::RevertEdits),cssElCFun_taiMisc_RevertEdits_stub,TA_taiMisc_RevertEdits_MethArgs},
-  {&TA_bool,NULL,"CloseEdits"," close any open edit dialogs for object or sub-objs","","",
-    0,2,-1,1,(ta_void_fun)(taiMisc::CloseEdits),cssElCFun_taiMisc_CloseEdits_stub,TA_taiMisc_CloseEdits_MethArgs},
-  {&TA_bool,NULL,"NotifyEdits"," notifies any open edit dialogs for given object that a change in its data has occured","","",
-    0,2,-1,1,(ta_void_fun)(taiMisc::NotifyEdits),cssElCFun_taiMisc_NotifyEdits_stub,TA_taiMisc_NotifyEdits_MethArgs},
-  {&TA_bool,NULL,"ReShowEdits"," rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it","","",
-    0,3,2,1,(ta_void_fun)(taiMisc::ReShowEdits),cssElCFun_taiMisc_ReShowEdits_stub,TA_taiMisc_ReShowEdits_MethArgs},
-  {&TA_taiEditDataHost_ptr,NULL,"FindEdit"," find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified","","",
-    0,3,2,1,(ta_void_fun)(taiMisc::FindEdit),cssElCFun_taiMisc_FindEdit_stub,TA_taiMisc_FindEdit_MethArgs},
-  {&TA_void,NULL,"InitMetrics"," initializes all the sizes/fonts/etc. -- QApplication object must be created","","",
-    0,0,-1,0,NULL,cssElCFun_taiMisc_InitMetrics_stub,NULL},
-  {&TA_void,NULL,"AdjustFont"," sets the font according to the spec parameter","","",
-    0,2,-1,0,NULL,cssElCFun_taiMisc_AdjustFont_stub,TA_taiMisc_AdjustFont_MethArgs},
-  NULL};
-static int taiAction::* TA_taiAction_MbrOff;
-static MemberDef_data TA_taiAction_MemberDef[]={
-  {&TA_QObject_ptr,NULL,"receiver","","","",
-    *((ta_memb_ptr*)&(TA_taiAction_MbrOff=(int taiAction::*)(&taiAction::receiver))),0,NULL,0},
-  {&TA_taString,NULL,"member","","","",
-    *((ta_memb_ptr*)&(TA_taiAction_MbrOff=(int taiAction::*)(&taiAction::member))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taiAction_connect_MethArgs[]={
-  {&TA_QObject_ptr,NULL,"sender",""},
-  {&TA_const_char_ptr,NULL,"signal",""},
-  NULL};
-static MethodDef_data TA_taiAction_MethodDef[]={
-  {&TA_void,NULL,"connect","","","",
-    0,2,-1,0,NULL,cssElCFun_taiAction_connect_stub,TA_taiAction_connect_MethArgs},
-  NULL};
-static int HiLightButton::* TA_HiLightButton_MbrOff;
-static MemberDef_data TA_HiLightButton_MemberDef[]={
-  {&TA_int,NULL,"mouse_button"," (Qt::Button) the mouse button that pressed the button (defaults to NoButton, when actuated by keyboard)","","",
-    *((ta_memb_ptr*)&(TA_HiLightButton_MbrOff=(int HiLightButton::*)(&HiLightButton::mouse_button))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_HiLightButton_setHiLight_MethArgs[]={
-  {&TA_bool,NULL,"value",""},
-  NULL};
-static MethodDef_data TA_HiLightButton_MethodDef[]={
-  {&TA_bool,NULL,"hiLight"," ","GET_HiLight ","",
-    0,0,-1,0,NULL,cssElCFun_HiLightButton_hiLight_stub,NULL},
-  {&TA_void,NULL,"setHiLight"," ","SET_HiLight ","",
-    0,1,-1,0,NULL,cssElCFun_HiLightButton_setHiLight_stub,TA_HiLightButton_setHiLight_MethArgs},
-  NULL};
-static MethodDef_data TA_iContextLabel_MethodDef[]={
-  {&TA_int,NULL,"index","","","",
-    0,0,-1,0,NULL,cssElCFun_iContextLabel_index_stub,NULL},
-  NULL};
-static int taiChoiceDialog::* TA_taiChoiceDialog_MbrOff;
-static MemberDef_data TA_taiChoiceDialog_MemberDef[]={
-  {&TA_bool,NULL,"no_cancel","","","",
-    *((ta_memb_ptr*)&(TA_taiChoiceDialog_MbrOff=(int taiChoiceDialog::*)(&taiChoiceDialog::no_cancel))),0,NULL,0},
-  {&TA_QVBoxLayout_ptr,NULL,"vblMain","","","",
-    *((ta_memb_ptr*)&(TA_taiChoiceDialog_MbrOff=(int taiChoiceDialog::*)(&taiChoiceDialog::vblMain))),0,NULL,0},
-  {&TA_QHBoxLayout_ptr,NULL,"hblButtons","","","",
-    *((ta_memb_ptr*)&(TA_taiChoiceDialog_MbrOff=(int taiChoiceDialog::*)(&taiChoiceDialog::hblButtons))),0,NULL,0},
-  {&TA_QLabel_ptr,NULL,"txtMessage"," maybe should be a ro edit, so user can copy???","","",
-    *((ta_memb_ptr*)&(TA_taiChoiceDialog_MbrOff=(int taiChoiceDialog::*)(&taiChoiceDialog::txtMessage))),0,NULL,0},
-  {&TA_QButtonGroup_ptr,NULL,"bgChoiceButtons","","","",
-    *((ta_memb_ptr*)&(TA_taiChoiceDialog_MbrOff=(int taiChoiceDialog::*)(&taiChoiceDialog::bgChoiceButtons))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taiChoiceDialog_ChoiceDialog_MethArgs[]={
-  {&TA_QWidget_ptr,NULL,"win",""},
-  {&TA_const_char_ptr,NULL,"prompt",""},
-  {&TA_const_char_ptr,NULL,"win_title",""},
-  {&TA_bool,NULL,"no_cancel_"," false"},
-  NULL};
-static MethodArgs_data TA_taiChoiceDialog_ErrorDialog_MethArgs[]={
-  {&TA_QWidget_ptr,NULL,"parent_",""},
-  {&TA_const_char_ptr,NULL,"msg",""},
-  {&TA_const_char_ptr,NULL,"win_title"," Error"},
-  NULL};
-static MethodDef_data TA_taiChoiceDialog_MethodDef[]={
-  {&TA_int,NULL,"ChoiceDialog","","","",
-    0,4,1,1,(ta_void_fun)(taiChoiceDialog::ChoiceDialog),cssElCFun_taiChoiceDialog_ChoiceDialog_stub,TA_taiChoiceDialog_ChoiceDialog_MethArgs},
-  {&TA_void,NULL,"ErrorDialog","","","",
-    0,3,2,1,(ta_void_fun)(taiChoiceDialog::ErrorDialog),cssElCFun_taiChoiceDialog_ErrorDialog_stub,TA_taiChoiceDialog_ErrorDialog_MethArgs},
-  NULL};
-static MethodArgs_data TA_taiMimeItem_New_MethArgs[]={
-  {&TA_taBase_ptr,NULL,"obj",""},
-  NULL};
-static MethodDef_data TA_taiMimeItem_MethodDef[]={
-  {&TA_taiMimeItem_ptr,NULL,"New"," used for creating descs of taBase objects","","",
-    0,1,-1,1,(ta_void_fun)(taiMimeItem::New),cssElCFun_taiMimeItem_New_stub,TA_taiMimeItem_New_MethArgs},
-  {&TA_void_ptr,NULL,"obj"," object associated with desc -- only set if InProcess","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_obj_stub,NULL},
-  {&TA_TypeDef_ptr,NULL,"td"," the TypeDef associated with type_name, or NULL if not in our type list or not tacss","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_td_stub,NULL},
-  {&TA_taString,NULL,"type_name"," empty if not a tacss mime type","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_type_name_stub,NULL},
-  {&TA_bool,NULL,"is_tab"," true if the object is derived from taBase","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_is_tab_stub,NULL},
-  {&TA_taString,NULL,"path"," if a taBase object, its full path; if not taBase, or not tacss, then NULL;","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_path_stub,NULL},
-  {&TA_void,NULL,"obj_destroyed"," datalinks will connect to this so our obj doesn't become invalid","","",
-    0,0,-1,0,NULL,cssElCFun_taiMimeItem_obj_destroyed_stub,NULL},
-  NULL};
-static EnumDef_data TA_taiClipData_EditAction[]={
-  {"EA_SRC_CUT"," flag indicating the source was a Clip/Cut operation","",1},
-  {"EA_SRC_COPY"," flag indicating the source was a Clip/Copy operation","",2},
-  {"EA_SRC_DRAG"," flag indicating the source was a Drag operation","",4},
-  {"EA_SRC_MASK","","",0},
-  {"F"," note: SRC_ flags could be clear if src op unknown (ex. external mime format)","",1},
-  {"EA_CUT","","",16},
-  {"EA_COPY","","",32},
-  {"EA_PASTE","","",64},
-  {"EA_DELETE","","",128},
-  {"EA_UNLINK","","",256},
-  {"EA_LINK","","",512},
-  {"EA_SET_AS_SUBGROUP"," NOTE: not needed, will be nuked","",1024},
-  {"EA_SET_AS_SUBITEM","","",2048},
-  {"EA_CLIP_OP_MASK","","",0},
-  {"FFF0"," masks the clipboard op codes","",1},
-  {"EA_DRAG"," initiation of a drag -- note that src can't distinguish move/copy/link ops","",65536},
-  {"EA_DROP_COPY","","",131072},
-  {"EA_DROP_LINK","","",262144},
-  {"EA_DROP_MOVE","","",524288},
-  {"EA_DRAG_OP_MASK","","",0},
-  {"F0000"," masks the drag/drop op codes","",1},
-  {"EA_OP_MASK","","",0},
-  {"FFFF0"," masks all operation codes","",1},
-  NULL};
-static int taiClipData::* TA_taiClipData_MbrOff;
-static MemberDef_data TA_taiClipData_MemberDef[]={
-  {&TA_int,NULL,"src_edit_action","","","",
-    *((ta_memb_ptr*)&(TA_taiClipData_MbrOff=(int taiClipData::*)(&taiClipData::src_edit_action))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taiClipData_items_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taiClipData_ClipOpToSrcCode_MethArgs[]={
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_taiClipData_format_MethArgs[]={
-  {&TA_int,NULL,"i"," 0"},
-  NULL};
-static MethodDef_data TA_taiClipData_MethodDef[]={
-  {&TA_int,NULL,"count"," number of items","","",
-    0,0,-1,0,NULL,cssElCFun_taiClipData_count_stub,NULL},
-  {&TA_bool,NULL,"is_multi","","","",
-    0,0,-1,0,NULL,cssElCFun_taiClipData_is_multi_stub,NULL},
-  {&TA_taiMimeItem_ptr,NULL,"items"," static bool decode ( const QMimeSource * e, QPixmap & pm )","","",
-    0,1,-1,0,NULL,cssElCFun_taiClipData_items_stub,TA_taiClipData_items_MethArgs},
-  {NULL,"::EditAction","ClipOpToSrcCode"," converts an op like EA_CUT into a source field like EA_SRC_CUT","","",
-    0,1,-1,1,(ta_void_fun)(taiClipData::ClipOpToSrcCode),cssElCFun_taiClipData_ClipOpToSrcCode_stub,TA_taiClipData_ClipOpToSrcCode_MethArgs},
-  {&TA_const_char_ptr,NULL,"format"," override","","",
-    0,1,0,0,NULL,cssElCFun_taiClipData_format_stub,TA_taiClipData_format_MethArgs},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Find_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"item_nm",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Remove_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__SafeEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__FastEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Edit_El_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__FindName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"item_nm",""},
-  {&TA_int_ref,NULL,"idx","Idx"},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__AddUniqNameOld_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__LinkUniqNameOld_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__FindEl_MethArgs[]={
-  {NULL,"::const_taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__AddEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Add_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__AddUnique_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__AddUniqNameNew_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Insert_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Replace_MethArgs[]={
-  {&TA_int,NULL,"old_idx",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__ReplaceEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","old_it",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__ReplaceName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"old_nm",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__RemoveEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__DuplicateEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Link_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__LinkUnique_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__LinkUniqNameNew_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__InsertLink_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  {&TA_int,NULL,"idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__ReplaceLink_MethArgs[]={
-  {&TA_int,NULL,"old_idx",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__ReplaceLinkEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","old_it",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__ReplaceLinkName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"old_nm",""},
-  {NULL,"::taiMimeItem_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Push_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__MoveEl_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","from",""},
-  {NULL,"::taiMimeItem_ptr","to",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__Transfer_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__MoveBefore_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","trg",""},
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_taiMimeItem__MoveAfter_MethArgs[]={
-  {NULL,"::taiMimeItem_ptr","trg",""},
-  {NULL,"::taiMimeItem_ptr","item",""},
-  NULL};
-static MethodDef_data TA_taPtrList_taiMimeItem__MethodDef[]={
-  {&TA_int,NULL,"Find"," find named element in list find element in list (-1 if not there)","","",
-    2,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Find_stub,TA_taPtrList_taiMimeItem__Find_MethArgs},
-  {&TA_bool,NULL,"Remove"," remove (and delete) element from list at index Remove element at given index","","",
-    4,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Remove_stub,TA_taPtrList_taiMimeItem__Remove_MethArgs},
-  {NULL,"::taiMimeItem_ptr","SafeEl"," element at index","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__SafeEl_stub,TA_taPtrList_taiMimeItem__SafeEl_MethArgs},
-  {NULL,"::taiMimeItem_ptr","FastEl"," fast element (no range checking)","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__FastEl_stub,TA_taPtrList_taiMimeItem__FastEl_MethArgs},
-  {NULL,"::taiMimeItem_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Edit_El_stub,TA_taPtrList_taiMimeItem__Edit_El_MethArgs},
-  {NULL,"::taiMimeItem_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
-    0,2,1,0,NULL,cssElCFun_taPtrList_taiMimeItem__FindName_stub,TA_taPtrList_taiMimeItem__FindName_MethArgs},
-  {NULL,"::taiMimeItem_ptr","Pop"," pop the last element off the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Pop_stub,NULL},
-  {NULL,"::taiMimeItem_ptr","Peek"," peek at the last element on the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Peek_stub,NULL},
-  {NULL,"::taiMimeItem_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__AddUniqNameOld_stub,TA_taPtrList_taiMimeItem__AddUniqNameOld_MethArgs},
-  {NULL,"::taiMimeItem_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__LinkUniqNameOld_stub,TA_taPtrList_taiMimeItem__LinkUniqNameOld_MethArgs},
-  {&TA_int,NULL,"FindEl"," find given element in list (-1 if not there)","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__FindEl_stub,TA_taPtrList_taiMimeItem__FindEl_MethArgs},
-  {&TA_void,NULL,"AddEl"," append a new pointer to end of list","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__AddEl_stub,TA_taPtrList_taiMimeItem__AddEl_MethArgs},
-  {&TA_void,NULL,"Add"," add element to the list and 'own' item","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Add_stub,TA_taPtrList_taiMimeItem__Add_MethArgs},
-  {&TA_bool,NULL,"AddUnique"," add so that object is unique, true if unique","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__AddUnique_stub,TA_taPtrList_taiMimeItem__AddUnique_MethArgs},
-  {&TA_bool,NULL,"AddUniqNameNew"," add so that name is unique, true if unique, new replaces existing","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__AddUniqNameNew_stub,TA_taPtrList_taiMimeItem__AddUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"Insert"," Add or insert element at idx (-1 for end)","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Insert_stub,TA_taPtrList_taiMimeItem__Insert_MethArgs},
-  {&TA_bool,NULL,"Replace"," replace element at index with the new one","","",
-    2,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Replace_stub,TA_taPtrList_taiMimeItem__Replace_MethArgs},
-  {&TA_bool,NULL,"ReplaceEl"," replace given element with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__ReplaceEl_stub,TA_taPtrList_taiMimeItem__ReplaceEl_MethArgs},
-  {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__ReplaceName_stub,TA_taPtrList_taiMimeItem__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__RemoveEl_stub,TA_taPtrList_taiMimeItem__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__DuplicateEl_stub,TA_taPtrList_taiMimeItem__DuplicateEl_MethArgs},
-  {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Link_stub,TA_taPtrList_taiMimeItem__Link_MethArgs},
-  {&TA_bool,NULL,"LinkUnique"," link so that object is unique, true if unique","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__LinkUnique_stub,TA_taPtrList_taiMimeItem__LinkUnique_MethArgs},
-  {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__LinkUniqNameNew_stub,TA_taPtrList_taiMimeItem__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
-    0,2,1,0,NULL,cssElCFun_taPtrList_taiMimeItem__InsertLink_stub,TA_taPtrList_taiMimeItem__InsertLink_MethArgs},
-  {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
-    2,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__ReplaceLink_stub,TA_taPtrList_taiMimeItem__ReplaceLink_MethArgs},
-  {&TA_bool,NULL,"ReplaceLinkEl"," replace given element (if on list) with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__ReplaceLinkEl_stub,TA_taPtrList_taiMimeItem__ReplaceLinkEl_MethArgs},
-  {&TA_bool,NULL,"ReplaceLinkName"," replace given named element (if on list) with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__ReplaceLinkName_stub,TA_taPtrList_taiMimeItem__ReplaceLinkName_MethArgs},
-  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Push_stub,TA_taPtrList_taiMimeItem__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__MoveEl_stub,TA_taPtrList_taiMimeItem__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__Transfer_stub,TA_taPtrList_taiMimeItem__Transfer_MethArgs},
-  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__MoveBefore_stub,TA_taPtrList_taiMimeItem__MoveBefore_MethArgs},
-  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_taiMimeItem__MoveAfter_stub,TA_taPtrList_taiMimeItem__MoveAfter_MethArgs},
-  NULL};
-static MethodArgs_data TA_taiMimeItem_List_El_Done__MethArgs[]={
-  {&TA_void_ptr,NULL,"na",""},
-  NULL};
-static MethodDef_data TA_taiMimeItem_List_MethodDef[]={
-  {&TA_void,NULL,"El_Done_"," override, when 'done' (delete)","","",
-    0,1,-1,0,NULL,cssElCFun_taiMimeItem_List_El_Done__stub,TA_taiMimeItem_List_El_Done__MethArgs},
-  NULL};
-static EnumDef_data TA_NodeBitmapFlags_EnumDef[]={
-  {"NBF_FOLDER_OPEN","","",1},
-  {"NBF_LINK_ITEM","","",2},
-  NULL};
-static int WinGeometry::* TA_WinGeometry_MbrOff;
-static MemberDef_data TA_WinGeometry_MemberDef[]={
-  {&TA_DataViewer_ptr,NULL,"owner"," pointer to owner","READ_ONLY NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_WinGeometry_MbrOff=(int WinGeometry::*)(&WinGeometry::owner))),0,NULL,0},
-  {&TA_float,NULL,"lft"," left (horizontal)","","",
-    *((ta_memb_ptr*)&(TA_WinGeometry_MbrOff=(int WinGeometry::*)(&WinGeometry::lft))),0,NULL,0},
-  {&TA_float,NULL,"top"," top (vertical) NOTE: was 'bottom' in Iv version","","",
-    *((ta_memb_ptr*)&(TA_WinGeometry_MbrOff=(int WinGeometry::*)(&WinGeometry::top))),0,NULL,0},
-  {&TA_float,NULL,"wd"," width","","",
-    *((ta_memb_ptr*)&(TA_WinGeometry_MbrOff=(int WinGeometry::*)(&WinGeometry::wd))),0,NULL,0},
-  {&TA_float,NULL,"ht"," height","","",
-    *((ta_memb_ptr*)&(TA_WinGeometry_MbrOff=(int WinGeometry::*)(&WinGeometry::ht))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_WinGeometry_Offs_MethArgs[]={
-  {&TA_float,NULL,"cur",""},
-  {&TA_float,NULL,"by",""},
-  NULL};
-static MethodArgs_data TA_WinGeometry_ScriptWinPos_MethArgs[]={
-  {&TA_ostream_ref,NULL,"strm"," cout"},
-  NULL};
-static MethodDef_data TA_WinGeometry_MethodDef[]={
-  {&TA_TAPtr,NULL,"GetOwner","","","",
-    2,0,-1,0,NULL,cssElCFun_WinGeometry_GetOwner_stub,NULL},
-  {&TA_float,NULL,"Offs"," offset cur by 'by' amount (0 > by >= 1.0); wraps if >1","","",
-    0,2,-1,1,(ta_void_fun)(WinGeometry::Offs),cssElCFun_WinGeometry_Offs_stub,TA_WinGeometry_Offs_MethArgs},
-  {&TA_void,NULL,"GetWinPos"," get the window position from parent winbase","","",
-    0,0,-1,0,NULL,cssElCFun_WinGeometry_GetWinPos_stub,NULL},
-  {&TA_void,NULL,"SetWinPos"," set the window position from parent winbase","","",
-    0,0,-1,0,NULL,cssElCFun_WinGeometry_SetWinPos_stub,NULL},
-  {&TA_void,NULL,"ScriptWinPos","","","",
-    0,1,0,0,NULL,cssElCFun_WinGeometry_ScriptWinPos_stub,TA_WinGeometry_ScriptWinPos_MethArgs},
-  NULL};
-static int ToolBar::* TA_ToolBar_MbrOff;
-static MemberDef_data TA_ToolBar_MemberDef[]={
-  {&TA_int,NULL,"index"," ","SHOW NO_SAVE READ_ONLY ","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::index))),0,NULL,0},
-  {&TA_float,NULL,"lft"," when undocked, position on screen","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::lft))),0,NULL,0},
-  {&TA_float,NULL,"top"," when undocked, position on screen","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::top))),0,NULL,0},
-  {NULL,"taBase::Orientation","o"," whether hor or vert","","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::o))),0,NULL,0},
-  {&TA_bool,NULL,"docked"," whether toolbar is docked or not","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::docked))),0,NULL,0},
-  {&TA_bool,NULL,"mapped"," whether toolbar window has been created","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_ToolBar_MbrOff=(int ToolBar::*)(&ToolBar::mapped))),0,NULL,0},
-  NULL};
-static MethodDef_data TA_ToolBar_MethodDef[]={
-  {&TA_DataViewer_ptr,NULL,"viewer","","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_viewer_stub,NULL},
-  {&TA_iDataViewer_ptr,NULL,"viewer_win","","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_viewer_win_stub,NULL},
-  {&TA_void,NULL,"GetWinPos"," copy state of toolbar to us","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_GetWinPos_stub,NULL},
-  {&TA_void,NULL,"SetWinPos","","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_SetWinPos_stub,NULL},
-  {&TA_void,NULL,"Dock"," dock the toolbar (saves iconified state)","MENU ","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_Dock_stub,NULL},
-  {&TA_void,NULL,"Undock"," deiconify the window (saves deiconified state)","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_Undock_stub,NULL},
-  {&TA_void,NULL,"Show"," called when user selects from menu","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_Show_stub,NULL},
-  {&TA_void,NULL,"Hide"," called when user unselects from menu","","",
-    0,0,-1,0,NULL,cssElCFun_ToolBar_Hide_stub,NULL},
-  NULL};
-static EnumDef_data TA_DataViewer_PrintFmt[]={
-  {"POSTSCRIPT","","",0},
-  {"JPEG","","",1},
-  {"TIFF","","",2},
-  {"PDF"," NOTE: new for Qt version","",3},
-  NULL};
-static int DataViewer::* TA_DataViewer_MbrOff;
-static MemberDef_data TA_DataViewer_MemberDef[]={
-  {&TA_taString,NULL,"name"," name of the object","","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::name))),0,NULL,0},
-  {&TA_taiMenu_List,NULL,"ta_menus"," menu representations (from methods, non-menubuttons only)","","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::ta_menus))),0,NULL,0},
-  {&TA_taiMenu_ptr,NULL,"menu"," menu bar -- note: partially managed by the window","","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::menu))),0,NULL,0},
-  {&TA_taString,NULL,"win_name"," name field for the window","HIDDEN NO_SAVE ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::win_name))),0,NULL,0},
-  {&TA_taString,NULL,"file_name"," file name used in loading/saving","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::file_name))),0,NULL,0},
-  {&TA_WinGeometry,NULL,"win_pos"," position/size of the window on the screen","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::win_pos))),0,NULL,0},
-  {&TA_taFiler_ptr,NULL,"ta_file"," file manager for this -- always use refcount semantics","NO_SAVE HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::ta_file))),0,NULL,0},
-  {&TA_taFiler_ptr,NULL,"print_file"," print file for this","NO_SAVE HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::print_file))),0,NULL,0},
-  {&TA_bool,NULL,"iconified"," whether window is iconified or not","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::iconified))),0,NULL,0},
-  {&TA_bool,NULL,"display_toggle"," 'true' if display should be updated","DEF_true ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::display_toggle))),0,NULL,0},
-  {&TA_ToolBar_List,NULL,"toolbars"," ","HIDDEN ","",
-    *((ta_memb_ptr*)&(TA_DataViewer_MbrOff=(int DataViewer::*)(&DataViewer::toolbars))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_DataViewer_GetDataLink_MethArgs[]={
-  {&TA_void_ptr,NULL,"el",""},
-  {&TA_TypeDef_ptr,NULL,"el_typ",""},
-  {&TA_int,NULL,"param"," 0"},
-  NULL};
-static MethodArgs_data TA_DataViewer_Save_MethArgs[]={
-  {&TA_ostream_ref,NULL,"strm",""},
-  {&TA_TAPtr,NULL,"par","0"},
-  {&TA_int,NULL,"indent","0"},
-  NULL};
-static MethodArgs_data TA_DataViewer_Edit_MethArgs[]={
-  {&TA_bool,NULL,"wait","false"},
-  NULL};
-static MethodArgs_data TA_DataViewer_Changed_MethArgs[]={
-  {&TA_bool,NULL,"value"," true"},
-  NULL};
-static MethodArgs_data TA_DataViewer_Print_MethArgs[]={
-  {NULL,"::PrintFmt","format",""},
-  {&TA_const_char_ptr,NULL,"fname"," 0"},
-  NULL};
-static MethodArgs_data TA_DataViewer_Print_Data_MethArgs[]={
-  {NULL,"::PrintFmt","format",""},
-  {&TA_const_char_ptr,NULL,"fname"," 0"},
-  NULL};
-static MethodArgs_data TA_DataViewer_GetPrintFileExt_MethArgs[]={
-  {NULL,"::PrintFmt","fmt",""},
-  NULL};
-static MethodDef_data TA_DataViewer_MethodDef[]={
-  {&TA_taiDataLink_ptr,NULL,"GetDataLink"," forces creation; can still be NULL if the type doesn't support datalinks","","",
-    1,3,2,0,NULL,cssElCFun_DataViewer_GetDataLink_stub,TA_DataViewer_GetDataLink_MethArgs},
-  {&TA_int,NULL,"Save"," Save object data to a file call to save the object to current file, or new file if new; 'true' if saved Save object to a file","MENU MENU_ON_Object ARGC_1 QUICK_SAVE ","",
-    2,3,1,0,NULL,cssElCFun_DataViewer_Save_stub,TA_DataViewer_Save_MethArgs},
-  {&TA_int,NULL,"Edit"," Edit this object using the gui","MENU ARGC_0 MENU_ON_Object LABEL_Properties MENU_CONTEXT NO_SCRIPT ","",
-    1,1,0,0,NULL,cssElCFun_DataViewer_Edit_stub,TA_DataViewer_Edit_MethArgs},
-  {&TA_void,NULL,"Clear"," clears the view (but doesn't delete any components) (usually override _impl) checks to make sure we are mapped first","","",
-    1,0,-1,0,NULL,cssElCFun_DataViewer_Clear_stub,NULL},
-  {&TA_bool,NULL,"HasChanges"," 'true' when something needs to be saved","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_HasChanges_stub,NULL},
-  {&TA_void,NULL,"Changed"," default sets changes; call with 'false' to clear changes","","",
-    0,1,0,0,NULL,cssElCFun_DataViewer_Changed_stub,TA_DataViewer_Changed_MethArgs},
-  {&TA_void,NULL,"Print"," Print this object's entire window (including buttons, etc) to file (prompted next) in given format","MENU ARGC_1 MENU_SEP_BEFORE LABEL_Print_(Window) ","",
-    0,2,1,0,NULL,cssElCFun_DataViewer_Print_stub,TA_DataViewer_Print_MethArgs},
-  {&TA_void,NULL,"Print_Data"," Print only specific data associated with this window (not control buttons, etc) to file (prompted next) in given format","MENU ARGC_1 LABEL_Print_Data_(Only) ","",
-    0,2,1,0,NULL,cssElCFun_DataViewer_Print_Data_stub,TA_DataViewer_Print_Data_MethArgs},
-  {&TA_void,NULL,"ScriptWinPos"," generate script code to position the window","NO_SCRIPT ","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_ScriptWinPos_stub,NULL},
-  {&TA_void,NULL,"Iconify"," iconify the window (saves iconified state)","MENU ","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_Iconify_stub,NULL},
-  {&TA_void,NULL,"DeIconify"," deiconify the window (saves deiconified state)","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_DeIconify_stub,NULL},
-  {&TA_bool,NULL,"IsMapped"," return the 'mapped' status of the window","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_IsMapped_stub,NULL},
-  {&TA_void,NULL,"ViewWindow"," either de-iconfiy or create a new view to view this object","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_ViewWindow_stub,NULL},
-  {&TA_taString,NULL,"GetPrintFileExt"," get string of file extension for given fmt","","",
-    0,1,-1,0,NULL,cssElCFun_DataViewer_GetPrintFileExt_stub,TA_DataViewer_GetPrintFileExt_MethArgs},
-  {&TA_void,NULL,"Raise"," raise window to front","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_Raise_stub,NULL},
-  {&TA_void,NULL,"Lower"," lower window to back","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_Lower_stub,NULL},
-  {&TA_void,NULL,"WinInit"," called inside InitLinks, after our core InitLinks, but before window opened","","",
-    0,0,-1,0,NULL,cssElCFun_DataViewer_WinInit_stub,NULL},
-  NULL};
-static MethodArgs_data TA_ISelectable_EditAction__MethArgs[]={
-  {&TA_ISelectable_PtrList_ref,NULL,"sel_items",""},
-  {&TA_int,NULL,"ea",""},
-  NULL};
-static MethodArgs_data TA_ISelectable_FillContextMenu_MethArgs[]={
-  {&TA_ISelectable_PtrList_ref,NULL,"sel_items",""},
-  {&TA_taiMenu_ptr,NULL,"menu",""},
-  NULL};
-static MethodArgs_data TA_ISelectable_GetClipData_MethArgs[]={
-  {&TA_const_ISelectable_PtrList_ref,NULL,"sel_items",""},
-  {&TA_int,NULL,"src_edit_action",""},
-  {&TA_bool,NULL,"for_drag",""},
-  NULL};
-static MethodArgs_data TA_ISelectable_GetEditActions__MethArgs[]={
-  {&TA_const_ISelectable_PtrList_ref,NULL,"sel_items",""},
-  NULL};
-static MethodArgs_data TA_ISelectable_RefUnref_MethArgs[]={
-  {&TA_bool,NULL,"ref",""},
-  NULL};
-static MethodDef_data TA_ISelectable_MethodDef[]={
-  {&TA_MemberDef_ptr,NULL,"md"," memberdef in parent, if any, of the selected item","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_md_stub,NULL},
-  {&TA_taiDataLink_ptr,NULL,"par_link"," parent item's (if any) link","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_par_link_stub,NULL},
-  {&TA_MemberDef_ptr,NULL,"par_md"," parent item's (if any) md","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_par_md_stub,NULL},
-  {&TA_IDataViewHost_ptr,NULL,"host"," ","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_host_stub,NULL},
-  {&TA_taString,NULL,"view_name"," for members, the member name; for list items, the name if any, otherwise a created name using the index","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_view_name_stub,NULL},
-  {&TA_QWidget_ptr,NULL,"widget","","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_widget_stub,NULL},
-  {&TA_int,NULL,"EditAction_"," do the indicated edit action (called from browser or list view); normally implement the _impl","","",
-    0,2,-1,0,NULL,cssElCFun_ISelectable_EditAction__stub,TA_ISelectable_EditAction__MethArgs},
-  {&TA_void,NULL,"FillContextMenu"," normally implement the _impl","","",
-    0,2,-1,0,NULL,cssElCFun_ISelectable_FillContextMenu_stub,TA_ISelectable_FillContextMenu_MethArgs},
-  {&TA_taiClipData_ptr,NULL,"GetClipData"," delegates to the link; normally not overridden","","",
-    0,3,-1,0,NULL,cssElCFun_ISelectable_GetClipData_stub,TA_ISelectable_GetClipData_MethArgs},
-  {&TA_int,NULL,"GetEditActions_"," typically called on single item for acceptDrop called to get edit items available on clipboard for the sel_items","","",
-    1,1,-1,0,NULL,cssElCFun_ISelectable_GetEditActions__stub,TA_ISelectable_GetEditActions__MethArgs},
-  {&TA_taiMimeItem_ptr,NULL,"GetMimeItem"," delegates to the link","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_GetMimeItem_stub,NULL},
-  {&TA_int,NULL,"RefUnref"," ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation","","",
-    0,1,-1,0,NULL,cssElCFun_ISelectable_RefUnref_stub,TA_ISelectable_RefUnref_MethArgs},
-  NULL};
-static MethodArgs_data TA_IDataViewHost_ObjectRemoving_MethArgs[]={
-  {&TA_ISelectable_ptr,NULL,"item",""},
-  NULL};
-static MethodDef_data TA_IDataViewHost_MethodDef[]={
-  {&TA_QWidget_ptr,NULL,"This","","","",
-    0,0,-1,0,NULL,cssElCFun_IDataViewHost_This_stub,NULL},
-  {&TA_bool,NULL,"ObjectRemoving"," call from item when deleting or removing -- makes sure it is removed from sel lists, etc.","","",
-    0,1,-1,0,NULL,cssElCFun_IDataViewHost_ObjectRemoving_stub,TA_IDataViewHost_ObjectRemoving_MethArgs},
-  NULL};
-static int DataLink_QObj::* TA_DataLink_QObj_MbrOff;
-static MemberDef_data TA_DataLink_QObj_MemberDef[]={
-  {&TA_taiDataLink_ptr,NULL,"dl","","","",
-    *((ta_memb_ptr*)&(TA_DataLink_QObj_MbrOff=(int DataLink_QObj::*)(&DataLink_QObj::dl))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Find_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"item_nm",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Remove_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__SafeEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__FastEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Edit_El_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__FindName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"item_nm",""},
-  {&TA_int_ref,NULL,"idx","Idx"},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__AddUniqNameOld_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__LinkUniqNameOld_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__FindEl_MethArgs[]={
-  {NULL,"::const_ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__AddEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Add_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__AddUnique_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__AddUniqNameNew_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Insert_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Replace_MethArgs[]={
-  {&TA_int,NULL,"old_idx",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__ReplaceEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","old_it",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__ReplaceName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"old_nm",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__RemoveEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__DuplicateEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Link_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__LinkUnique_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__LinkUniqNameNew_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__InsertLink_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  {&TA_int,NULL,"idx"," -1"},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__ReplaceLink_MethArgs[]={
-  {&TA_int,NULL,"old_idx",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__ReplaceLinkEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","old_it",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__ReplaceLinkName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"old_nm",""},
-  {NULL,"::ISelectable_ptr","new_it",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Push_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__MoveEl_MethArgs[]={
-  {NULL,"::ISelectable_ptr","from",""},
-  {NULL,"::ISelectable_ptr","to",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__Transfer_MethArgs[]={
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__MoveBefore_MethArgs[]={
-  {NULL,"::ISelectable_ptr","trg",""},
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taPtrList_ISelectable__MoveAfter_MethArgs[]={
-  {NULL,"::ISelectable_ptr","trg",""},
-  {NULL,"::ISelectable_ptr","item",""},
-  NULL};
-static MethodDef_data TA_taPtrList_ISelectable__MethodDef[]={
-  {&TA_int,NULL,"Find"," find named element in list find element in list (-1 if not there)","","",
-    2,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Find_stub,TA_taPtrList_ISelectable__Find_MethArgs},
-  {&TA_bool,NULL,"Remove"," remove (and delete) element from list at index Remove element at given index","","",
-    4,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Remove_stub,TA_taPtrList_ISelectable__Remove_MethArgs},
-  {NULL,"::ISelectable_ptr","SafeEl"," element at index","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__SafeEl_stub,TA_taPtrList_ISelectable__SafeEl_MethArgs},
-  {NULL,"::ISelectable_ptr","FastEl"," fast element (no range checking)","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__FastEl_stub,TA_taPtrList_ISelectable__FastEl_MethArgs},
-  {NULL,"::ISelectable_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Edit_El_stub,TA_taPtrList_ISelectable__Edit_El_MethArgs},
-  {NULL,"::ISelectable_ptr","FindName"," find given named element (NULL = not here), sets idx","","",
-    0,2,1,0,NULL,cssElCFun_taPtrList_ISelectable__FindName_stub,TA_taPtrList_ISelectable__FindName_MethArgs},
-  {NULL,"::ISelectable_ptr","Pop"," pop the last element off the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Pop_stub,NULL},
-  {NULL,"::ISelectable_ptr","Peek"," peek at the last element on the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Peek_stub,NULL},
-  {NULL,"::ISelectable_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__AddUniqNameOld_stub,TA_taPtrList_ISelectable__AddUniqNameOld_MethArgs},
-  {NULL,"::ISelectable_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__LinkUniqNameOld_stub,TA_taPtrList_ISelectable__LinkUniqNameOld_MethArgs},
-  {&TA_int,NULL,"FindEl"," find given element in list (-1 if not there)","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__FindEl_stub,TA_taPtrList_ISelectable__FindEl_MethArgs},
-  {&TA_void,NULL,"AddEl"," append a new pointer to end of list","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__AddEl_stub,TA_taPtrList_ISelectable__AddEl_MethArgs},
-  {&TA_void,NULL,"Add"," add element to the list and 'own' item","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Add_stub,TA_taPtrList_ISelectable__Add_MethArgs},
-  {&TA_bool,NULL,"AddUnique"," add so that object is unique, true if unique","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__AddUnique_stub,TA_taPtrList_ISelectable__AddUnique_MethArgs},
-  {&TA_bool,NULL,"AddUniqNameNew"," add so that name is unique, true if unique, new replaces existing","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__AddUniqNameNew_stub,TA_taPtrList_ISelectable__AddUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"Insert"," Add or insert element at idx (-1 for end)","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Insert_stub,TA_taPtrList_ISelectable__Insert_MethArgs},
-  {&TA_bool,NULL,"Replace"," replace element at index with the new one","","",
-    2,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Replace_stub,TA_taPtrList_ISelectable__Replace_MethArgs},
-  {&TA_bool,NULL,"ReplaceEl"," replace given element with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__ReplaceEl_stub,TA_taPtrList_ISelectable__ReplaceEl_MethArgs},
-  {&TA_bool,NULL,"ReplaceName"," replace named element with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__ReplaceName_stub,TA_taPtrList_ISelectable__ReplaceName_MethArgs},
-  {&TA_bool,NULL,"RemoveEl"," Remove given item from list","MENU LABEL_Remove ARG_ON_OBJ UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__RemoveEl_stub,TA_taPtrList_ISelectable__RemoveEl_MethArgs},
-  {&TA_bool,NULL,"DuplicateEl"," Duplicate given list item and Add to list","MENU ARG_ON_OBJ UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__DuplicateEl_stub,TA_taPtrList_ISelectable__DuplicateEl_MethArgs},
-  {&TA_void,NULL,"Link"," Link an item to list without owning it","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Link_stub,TA_taPtrList_ISelectable__Link_MethArgs},
-  {&TA_bool,NULL,"LinkUnique"," link so that object is unique, true if unique","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__LinkUnique_stub,TA_taPtrList_ISelectable__LinkUnique_MethArgs},
-  {&TA_bool,NULL,"LinkUniqNameNew"," link so that name is unique, true if unique, new replaces existing","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__LinkUniqNameNew_stub,TA_taPtrList_ISelectable__LinkUniqNameNew_MethArgs},
-  {&TA_bool,NULL,"InsertLink"," Insert a link at index (-1 for end)","MENU LABEL_Link UPDATE_MENUS ","",
-    0,2,1,0,NULL,cssElCFun_taPtrList_ISelectable__InsertLink_stub,TA_taPtrList_ISelectable__InsertLink_MethArgs},
-  {&TA_bool,NULL,"ReplaceLink"," replace element with a link to the new one","","",
-    2,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__ReplaceLink_stub,TA_taPtrList_ISelectable__ReplaceLink_MethArgs},
-  {&TA_bool,NULL,"ReplaceLinkEl"," replace given element (if on list) with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__ReplaceLinkEl_stub,TA_taPtrList_ISelectable__ReplaceLinkEl_MethArgs},
-  {&TA_bool,NULL,"ReplaceLinkName"," replace given named element (if on list) with the new one","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__ReplaceLinkName_stub,TA_taPtrList_ISelectable__ReplaceLinkName_MethArgs},
-  {&TA_void,NULL,"Push"," push item on stack (for temporary use, not 'owned')","","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Push_stub,TA_taPtrList_ISelectable__Push_MethArgs},
-  {&TA_bool,NULL,"MoveEl"," Move item (from) to position of (to)","MENU LABEL_Move ARG_ON_OBJ UPDATE_MENUS ","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__MoveEl_stub,TA_taPtrList_ISelectable__MoveEl_MethArgs},
-  {&TA_bool,NULL,"Transfer"," Transfer item to this list","MENU MENU_ON_Edit NO_SCOPE UPDATE_MENUS ","",
-    0,1,-1,0,NULL,cssElCFun_taPtrList_ISelectable__Transfer_stub,TA_taPtrList_ISelectable__Transfer_MethArgs},
-  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__MoveBefore_stub,TA_taPtrList_ISelectable__MoveBefore_MethArgs},
-  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list","","",
-    0,2,-1,0,NULL,cssElCFun_taPtrList_ISelectable__MoveAfter_stub,TA_taPtrList_ISelectable__MoveAfter_MethArgs},
-  NULL};
-static MethodDef_data TA_ISelectable_PtrList_MethodDef[]={
-  {&TA_TypeDef_ptr,NULL,"Type1"," data type of item","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_PtrList_Type1_stub,NULL},
-  {&TA_TypeDef_ptr,NULL,"CommonSubtype1N"," greatest common data subtype of items 1-N","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_PtrList_CommonSubtype1N_stub,NULL},
-  {&TA_TypeDef_ptr,NULL,"CommonSubtype2N"," greatest common data subtype of items 2-N","","",
-    0,0,-1,0,NULL,cssElCFun_ISelectable_PtrList_CommonSubtype2N_stub,NULL},
-  NULL};
-static EnumDef_data TA_taList_DataViewer__Orientation[]={
-  {"Horizontal","","",0},
-  {"Vertical","","",1},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__MoveBefore_MethArgs[]={
-  {NULL,"::DataViewer_ptr","trg",""},
-  {NULL,"::DataViewer_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__MoveAfter_MethArgs[]={
-  {NULL,"::DataViewer_ptr","trg",""},
-  {NULL,"::DataViewer_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__SafeEl_MethArgs[]={
-  {&TA_int,NULL,"idx",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__FastEl_MethArgs[]={
-  {&TA_int,NULL,"i",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__Edit_El_MethArgs[]={
-  {NULL,"::DataViewer_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__FindName_MethArgs[]={
-  {&TA_const_char_ptr,NULL,"item_nm",""},
-  {&TA_int_ref,NULL,"idx","Idx"},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__FindType_MethArgs[]={
-  {&TA_TypeDef_ptr,NULL,"item_tp",""},
-  {&TA_int_ref,NULL,"idx","Idx"},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__AddUniqNameOld_MethArgs[]={
-  {NULL,"::DataViewer_ptr","item",""},
-  NULL};
-static MethodArgs_data TA_taList_DataViewer__LinkUniqNameOld_MethArgs[]={
-  {NULL,"::DataViewer_ptr","item",""},
-  NULL};
-static MethodDef_data TA_taList_DataViewer__MethodDef[]={
-  {&TA_bool,NULL,"MoveBefore"," move item so that it appears just before the target item trg in the list move item so that it appears just before the target item trg in the list","","",
-    1,2,-1,0,NULL,cssElCFun_taList_DataViewer__MoveBefore_stub,TA_taList_DataViewer__MoveBefore_MethArgs},
-  {&TA_bool,NULL,"MoveAfter"," move item so that it appears just after the target item trg in the list move item so that it appears just after the target item trg in the list","","",
-    1,2,-1,0,NULL,cssElCFun_taList_DataViewer__MoveAfter_stub,TA_taList_DataViewer__MoveAfter_MethArgs},
-  {NULL,"::DataViewer_ptr","SafeEl"," get element at index","","",
-    0,1,-1,0,NULL,cssElCFun_taList_DataViewer__SafeEl_stub,TA_taList_DataViewer__SafeEl_MethArgs},
-  {NULL,"::DataViewer_ptr","FastEl"," fast element (no range checking)","","",
-    0,1,-1,0,NULL,cssElCFun_taList_DataViewer__FastEl_stub,TA_taList_DataViewer__FastEl_MethArgs},
-  {NULL,"::DataViewer_ptr","DefaultEl"," returns the element specified as the default for this list","","",
-    0,0,-1,0,NULL,cssElCFun_taList_DataViewer__DefaultEl_stub,NULL},
-  {NULL,"::DataViewer_ptr","Edit_El"," Edit given list item","MENU MENU_ON_Edit USE_RVAL ARG_ON_OBJ ","",
-    0,1,-1,0,NULL,cssElCFun_taList_DataViewer__Edit_El_stub,TA_taList_DataViewer__Edit_El_MethArgs},
-  {NULL,"::DataViewer_ptr","FindName"," Find element with given name (item_nm)","MENU USE_RVAL ARGC_1 LABEL_Find ","",
-    0,2,1,0,NULL,cssElCFun_taList_DataViewer__FindName_stub,TA_taList_DataViewer__FindName_MethArgs},
-  {NULL,"::DataViewer_ptr","FindType"," find given type element (NULL = not here), sets idx","","",
-    0,2,1,0,NULL,cssElCFun_taList_DataViewer__FindType_stub,TA_taList_DataViewer__FindType_MethArgs},
-  {NULL,"::DataViewer_ptr","Pop"," pop the last element off the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taList_DataViewer__Pop_stub,NULL},
-  {NULL,"::DataViewer_ptr","Peek"," peek at the last element on the stack","","",
-    0,0,-1,0,NULL,cssElCFun_taList_DataViewer__Peek_stub,NULL},
-  {NULL,"::DataViewer_ptr","AddUniqNameOld"," add so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taList_DataViewer__AddUniqNameOld_stub,TA_taList_DataViewer__AddUniqNameOld_MethArgs},
-  {NULL,"::DataViewer_ptr","LinkUniqNameOld"," link so that name is unique, old used if dupl, returns one used","","",
-    0,1,-1,0,NULL,cssElCFun_taList_DataViewer__LinkUniqNameOld_stub,TA_taList_DataViewer__LinkUniqNameOld_MethArgs},
-  NULL};
-static int DataBrowser::* TA_DataBrowser_MbrOff;
-static MemberDef_data TA_DataBrowser_MemberDef[]={
-  {&TA_taBase_ptr,NULL,"root","","","",
-    *((ta_memb_ptr*)&(TA_DataBrowser_MbrOff=(int DataBrowser::*)(&DataBrowser::root))),0,NULL,0},
-  {&TA_MemberDef_ptr,NULL,"md","","","",
-    *((ta_memb_ptr*)&(TA_DataBrowser_MbrOff=(int DataBrowser::*)(&DataBrowser::md))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_DataBrowser_New_MethArgs[]={
-  {&TA_void_ptr,NULL,"root_",""},
-  {&TA_MemberDef_ptr,NULL,"md_",""},
-  {&TA_TypeDef_ptr,NULL,"typ_",""},
-  {&TA_bool,NULL,"is_root"," false"},
-  NULL};
-static MethodDef_data TA_DataBrowser_MethodDef[]={
-  {&TA_DataBrowser_ptr,NULL,"New"," Create n_objs objects of given type (type is optional)","","",
-    1,4,3,1,(ta_void_fun)(DataBrowser::New),cssElCFun_DataBrowser_New_stub,TA_DataBrowser_New_MethArgs},
-  NULL};
-static int ClassBrowser::* TA_ClassBrowser_MbrOff;
-static MemberDef_data TA_ClassBrowser_MemberDef[]={
-  {&TA_void_ptr,NULL,"root","","","",
-    *((ta_memb_ptr*)&(TA_ClassBrowser_MbrOff=(int ClassBrowser::*)(&ClassBrowser::root))),0,NULL,0},
-  {&TA_TypeInfoKind,NULL,"tik","","","",
-    *((ta_memb_ptr*)&(TA_ClassBrowser_MbrOff=(int ClassBrowser::*)(&ClassBrowser::tik))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_ClassBrowser_New_MethArgs[]={
-  {&TA_void_ptr,NULL,"root_",""},
-  {&TA_TypeInfoKind,NULL,"tik",""},
-  NULL};
-static MethodArgs_data TA_ClassBrowser_StatGetDataLink_MethArgs[]={
-  {&TA_void_ptr,NULL,"el",""},
-  {&TA_TypeInfoKind,NULL,"tik",""},
-  NULL};
-static MethodDef_data TA_ClassBrowser_MethodDef[]={
-  {&TA_ClassBrowser_ptr,NULL,"New"," Create n_objs objects of given type (type is optional)","","",
-    1,2,-1,1,(ta_void_fun)(ClassBrowser::New),cssElCFun_ClassBrowser_New_stub,TA_ClassBrowser_New_MethArgs},
-  {&TA_taiDataLink_ptr,NULL,"StatGetDataLink"," anyone can call this to get an object's datalink -- fetches existing or makes new","","",
-    0,2,-1,1,(ta_void_fun)(ClassBrowser::StatGetDataLink),cssElCFun_ClassBrowser_StatGetDataLink_stub,TA_ClassBrowser_StatGetDataLink_MethArgs},
-  {&TA_iClassBrowser_ptr,NULL,"browser_win","","","",
-    0,0,-1,0,NULL,cssElCFun_ClassBrowser_browser_win_stub,NULL},
-  NULL};
-static EnumDef_data TA_TypeInfoKind_EnumDef[]={
-  {"TIK_ENUM","","",0},
-  {"TIK_MEMBER","","",1},
-  {"TIK_METHOD","","",2},
-  {"TIK_TYPE","","",3},
-  {"TIK_ENUMSPACE","","",4},
-  {"TIK_MEMBERSPACE","","",5},
-  {"TIK_METHODSPACE","","",6},
-  {"TIK_TYPESPACE","","",7},
-  {"TIK_TOKENSPACE","","",8},
-  NULL};
-static int SelectEditConfig::* TA_SelectEditConfig_MbrOff;
-static MemberDef_data TA_SelectEditConfig_MemberDef[]={
-  {&TA_bool,NULL,"auto_edit"," automatically bring up edit dialog upon loading","","",
-    *((ta_memb_ptr*)&(TA_SelectEditConfig_MbrOff=(int SelectEditConfig::*)(&SelectEditConfig::auto_edit))),0,NULL,0},
-  {&TA_String_Array,NULL,"mbr_labels"," extra labels at the start of each member label for the selected fields","","",
-    *((ta_memb_ptr*)&(TA_SelectEditConfig_MbrOff=(int SelectEditConfig::*)(&SelectEditConfig::mbr_labels))),0,NULL,0},
-  {&TA_String_Array,NULL,"meth_labels"," extra labels at the start of each method label for the selected functions","","",
-    *((ta_memb_ptr*)&(TA_SelectEditConfig_MbrOff=(int SelectEditConfig::*)(&SelectEditConfig::meth_labels))),0,NULL,0},
-  NULL};
-static int iPoint::* TA_iPoint_MbrOff;
-static MemberDef_data TA_iPoint_MemberDef[]={
-  {&TA_int,NULL,"x","","","",
-    *((ta_memb_ptr*)&(TA_iPoint_MbrOff=(int iPoint::*)(&iPoint::x))),0,NULL,0},
-  {&TA_int,NULL,"y","","","",
-    *((ta_memb_ptr*)&(TA_iPoint_MbrOff=(int iPoint::*)(&iPoint::y))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_iPoint_getArrayIndex_MethArgs[]={
-  {&TA_int,NULL,"x_",""},
-  {&TA_int,NULL,"y_",""},
-  NULL};
-static MethodArgs_data TA_iPoint_isEqual_MethArgs[]={
-  {&TA_int,NULL,"x_",""},
-  {&TA_int,NULL,"y_",""},
-  NULL};
-static MethodArgs_data TA_iPoint_getValue_MethArgs[]={
-  {&TA_int_ref,NULL,"x_",""},
-  {&TA_int_ref,NULL,"y_",""},
-  NULL};
-static MethodArgs_data TA_iPoint_setValue_MethArgs[]={
-  {&TA_int,NULL,"x_",""},
-  {&TA_int,NULL,"y_",""},
-  NULL};
-static MethodDef_data TA_iPoint_MethodDef[]={
-  {&TA_int,NULL,"getArrayIndex"," assumes x and y are array sizes -- gets the row-major array index, or -1 if out of bounds","","",
-    0,2,-1,0,NULL,cssElCFun_iPoint_getArrayIndex_stub,TA_iPoint_getArrayIndex_MethArgs},
-  {&TA_bool,NULL,"isEqual","","","",
-    0,2,-1,0,NULL,cssElCFun_iPoint_isEqual_stub,TA_iPoint_isEqual_MethArgs},
-  {&TA_void,NULL,"getValue","","","",
-    0,2,-1,0,NULL,cssElCFun_iPoint_getValue_stub,TA_iPoint_getValue_MethArgs},
-  {&TA_void,NULL,"setValue","","","",
-    0,2,-1,0,NULL,cssElCFun_iPoint_setValue_stub,TA_iPoint_setValue_MethArgs},
-  NULL};
-static int iVec3i::* TA_iVec3i_MbrOff;
-static MemberDef_data TA_iVec3i_MemberDef[]={
-  {&TA_int,NULL,"z","","","",
-    *((ta_memb_ptr*)&(TA_iVec3i_MbrOff=(int iVec3i::*)(&iVec3i::z))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_iVec3i_isEqual_MethArgs[]={
-  {&TA_int,NULL,"x_",""},
-  {&TA_int,NULL,"y_",""},
-  {&TA_int,NULL,"z_",""},
-  NULL};
-static MethodArgs_data TA_iVec3i_getValue_MethArgs[]={
-  {&TA_int_ref,NULL,"x_",""},
-  {&TA_int_ref,NULL,"y_",""},
-  {&TA_int_ref,NULL,"z_",""},
-  NULL};
-static MethodArgs_data TA_iVec3i_setValue_MethArgs[]={
-  {&TA_int,NULL,"x_",""},
-  {&TA_int,NULL,"y_",""},
-  {&TA_int,NULL,"z_",""},
-  NULL};
-static MethodDef_data TA_iVec3i_MethodDef[]={
-  {&TA_bool,NULL,"isEqual","","","",
-    1,3,-1,0,NULL,cssElCFun_iVec3i_isEqual_stub,TA_iVec3i_isEqual_MethArgs},
-  {&TA_void,NULL,"getValue","","","",
-    1,3,-1,0,NULL,cssElCFun_iVec3i_getValue_stub,TA_iVec3i_getValue_MethArgs},
-  {&TA_void,NULL,"setValue","","","",
-    1,3,-1,0,NULL,cssElCFun_iVec3i_setValue_stub,TA_iVec3i_setValue_MethArgs},
-  NULL};
-static int iSize::* TA_iSize_MbrOff;
-static MemberDef_data TA_iSize_MemberDef[]={
-  {&TA_int,NULL,"w","","","",
-    *((ta_memb_ptr*)&(TA_iSize_MbrOff=(int iSize::*)(&iSize::w))),0,NULL,0},
-  {&TA_int,NULL,"h","","","",
-    *((ta_memb_ptr*)&(TA_iSize_MbrOff=(int iSize::*)(&iSize::h))),0,NULL,0},
-  NULL};
-static MethodDef_data TA_iSize_MethodDef[]={
-  {&TA_int,NULL,"height","","","",
-    0,0,-1,0,NULL,cssElCFun_iSize_height_stub,NULL},
-  {&TA_int,NULL,"width","","","",
-    0,0,-1,0,NULL,cssElCFun_iSize_width_stub,NULL},
-  NULL};
-static int iRect::* TA_iRect_MbrOff;
-static MemberDef_data TA_iRect_MemberDef[]={
-  {&TA_int,NULL,"x","","","",
-    *((ta_memb_ptr*)&(TA_iRect_MbrOff=(int iRect::*)(&iRect::x))),0,NULL,0},
-  {&TA_int,NULL,"y","","","",
-    *((ta_memb_ptr*)&(TA_iRect_MbrOff=(int iRect::*)(&iRect::y))),0,NULL,0},
-  {&TA_int,NULL,"w","","","",
-    *((ta_memb_ptr*)&(TA_iRect_MbrOff=(int iRect::*)(&iRect::w))),0,NULL,0},
-  {&TA_int,NULL,"h","","","",
-    *((ta_memb_ptr*)&(TA_iRect_MbrOff=(int iRect::*)(&iRect::h))),0,NULL,0},
-  NULL};
-static MethodDef_data TA_iRect_MethodDef[]={
-  {&TA_iPoint,NULL,"topLeft","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_topLeft_stub,NULL},
-  {&TA_iSize,NULL,"size","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_size_stub,NULL},
-  {&TA_int,NULL,"left","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_left_stub,NULL},
-  {&TA_int,NULL,"top","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_top_stub,NULL},
-  {&TA_int,NULL,"width","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_width_stub,NULL},
-  {&TA_int,NULL,"height","","","",
-    0,0,-1,0,NULL,cssElCFun_iRect_height_stub,NULL},
-  NULL};
-static int iVec3f::* TA_iVec3f_MbrOff;
-static MemberDef_data TA_iVec3f_MemberDef[]={
-  {&TA_float,NULL,"x","","","",
-    *((ta_memb_ptr*)&(TA_iVec3f_MbrOff=(int iVec3f::*)(&iVec3f::x))),0,NULL,0},
-  {&TA_float,NULL,"y","","","",
-    *((ta_memb_ptr*)&(TA_iVec3f_MbrOff=(int iVec3f::*)(&iVec3f::y))),0,NULL,0},
-  {&TA_float,NULL,"z","","","",
-    *((ta_memb_ptr*)&(TA_iVec3f_MbrOff=(int iVec3f::*)(&iVec3f::z))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_iVec3f_isEqual_MethArgs[]={
-  {&TA_float,NULL,"x_",""},
-  {&TA_float,NULL,"y_",""},
-  {&TA_float,NULL,"z_",""},
-  NULL};
-static MethodArgs_data TA_iVec3f_setValue_MethArgs[]={
-  {&TA_float,NULL,"x_",""},
-  {&TA_float,NULL,"y_",""},
-  {&TA_float,NULL,"z_",""},
-  NULL};
-static MethodDef_data TA_iVec3f_MethodDef[]={
-  {&TA_bool,NULL,"isEqual","","","",
-    0,3,-1,0,NULL,cssElCFun_iVec3f_isEqual_stub,TA_iVec3f_isEqual_MethArgs},
-  {&TA_bool,NULL,"isUnity","","","",
-    0,0,-1,0,NULL,cssElCFun_iVec3f_isUnity_stub,NULL},
-  {&TA_bool,NULL,"isZero","","","",
-    0,0,-1,0,NULL,cssElCFun_iVec3f_isZero_stub,NULL},
-  {&TA_void,NULL,"setValue","","","",
-    0,3,-1,0,NULL,cssElCFun_iVec3f_setValue_stub,TA_iVec3f_setValue_MethArgs},
-  NULL};
-static int iBox3f::* TA_iBox3f_MbrOff;
-static MemberDef_data TA_iBox3f_MemberDef[]={
-  {&TA_iVec3f,NULL,"min"," minimum point","","",
-    *((ta_memb_ptr*)&(TA_iBox3f_MbrOff=(int iBox3f::*)(&iBox3f::min))),0,NULL,0},
-  {&TA_iVec3f,NULL,"max"," maximum point","","",
-    *((ta_memb_ptr*)&(TA_iBox3f_MbrOff=(int iBox3f::*)(&iBox3f::max))),0,NULL,0},
-  NULL};
-static MethodArgs_data TA_iBox3f_setValue_MethArgs[]={
-  {&TA_const_iVec3f_ref,NULL,"min_",""},
-  {&TA_const_iVec3f_ref,NULL,"max_",""},
-  NULL};
-static MethodArgs_data TA_iBox3f_setValueCS_MethArgs[]={
-  {&TA_const_iVec3f_ref,NULL,"center_",""},
-  {&TA_const_iVec3f_ref,NULL,"size_",""},
-  NULL};
-static MethodDef_data TA_iBox3f_MethodDef[]={
-  {&TA_iVec3f,NULL,"center"," center point of the box","","",
-    0,0,-1,0,NULL,cssElCFun_iBox3f_center_stub,NULL},
-  {&TA_iVec3f,NULL,"size"," size of the box in each dimension","","",
-    0,0,-1,0,NULL,cssElCFun_iBox3f_size_stub,NULL},
-  {&TA_bool,NULL,"isZero","","","",
-    0,0,-1,0,NULL,cssElCFun_iBox3f_isZero_stub,NULL},
-  {&TA_void,NULL,"setValue","","","",
-    1,2,-1,0,NULL,cssElCFun_iBox3f_setValue_stub,TA_iBox3f_setValue_MethArgs},
-  {&TA_void,NULL,"setValueCS"," set the value by specifying the center and the size -- can only specify boxes with planes parallel to the coord axes set the value by specifying the center and the size -- can only specify boxes with planes parallel to the coord axes","","",
-    1,2,-1,0,NULL,cssElCFun_iBox3f_setValueCS_stub,TA_iBox3f_setValueCS_MethArgs},
   NULL};
 
 // Init Function
@@ -13875,17 +10543,15 @@ void ta_Init_ta() {
     TA_taStrRep_ptr.AddParents(&TA_taStrRep);
   taMisc::types.Add(&TA_unsigned_long);
     TA_unsigned_long.AddParents(&TA_unsigned, &TA_long);
-  taMisc::types.Add(&TA_const_QString_ref);
-  taMisc::types.Add(&TA_taString_ref);
-    TA_taString_ref.AddParents(&TA_taString);
   taMisc::types.Add(&TA_unsigned_int);
     TA_unsigned_int.AddParents(&TA_unsigned, &TA_int);
+  taMisc::types.Add(&TA_taString_ref);
+    TA_taString_ref.AddParents(&TA_taString);
   taMisc::types.Add(&TA_char_ref);
     TA_char_ref.AddParents(&TA_char);
-  taMisc::types.Add(&TA_const_QFont_ref);
   taMisc::types.Add(&TA_iFont);
     TA_iFont.AddParFormal(&TA_class);
-    tac_AddEnum(TA_iFont, "Attributes", " ", "", "BITS ", "", TA_iFont_Attributes);
+    tac_AddEnum(TA_iFont, "Attributes", " ", "", "BITS", "", TA_iFont_Attributes);
     tac_AddMembers(TA_iFont,TA_iFont_MemberDef);
     tac_AddMethods(TA_iFont,TA_iFont_MethodDef);
   taMisc::types.Add(&TA_taDataLink);
@@ -14056,10 +10722,6 @@ void ta_Init_ta() {
     TA_const_taPtrList_base_ref.AddParents(&TA_const_taPtrList_base);
   taMisc::types.Add(&TA_taFiler);
     TA_taFiler.AddParFormal(&TA_class);
-    TA_taFiler.AddClassPar(&TA_class,0);
-    tac_AddEnum(TA_taFiler, "OpenMode", "", "", "", "", TA_taFiler_OpenMode);
-    tac_AddMembers(TA_taFiler,TA_taFiler_MemberDef);
-    tac_AddMethods(TA_taFiler,TA_taFiler_MethodDef);
   taMisc::types.Add(&TA_const_taPlainArray);
     TA_const_taPlainArray.AddParents(&TA_const, &TA_taPlainArray);
   taMisc::types.Add(&TA_FilerOperation);
@@ -14076,23 +10738,26 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_istream_ptr);
     TA_istream_ptr.AddParents(&TA_istream);
   taMisc::types.Add(&TA_taFiler_ref);
-    TA_taFiler_ref.AddParents(&TA_taFiler);
   taMisc::types.Add(&TA_const_taFiler);
-    TA_const_taFiler.AddParents(&TA_const, &TA_taFiler);
+    TA_const_taFiler.AddParents(&TA_const);
   taMisc::types.Add(&TA_const_taFiler_ref);
     TA_const_taFiler_ref.AddParents(&TA_const_taFiler);
-  taMisc::types.Add(&TA_const_iColor_ptr);
   taMisc::types.Add(&TA_float_ref);
     TA_float_ref.AddParents(&TA_float);
-  taMisc::types.Add(&TA_const_iColor_ref);
-  taMisc::types.Add(&TA_const_QColor_ref);
-  taMisc::types.Add(&TA_const_QColor_ptr);
+  taMisc::types.Add(&TA_iColor);
+    TA_iColor.AddParFormal(&TA_class);
+    tac_AddMethods(TA_iColor,TA_iColor_MethodDef);
+  taMisc::types.Add(&TA_const_iColor);
+    TA_const_iColor.AddParents(&TA_const, &TA_iColor);
+  taMisc::types.Add(&TA_iColor_ref);
+    TA_iColor_ref.AddParents(&TA_iColor);
   taMisc::types.Add(&TA_taDataLinkItr);
     TAI_taDataLinkItr = new taDataLinkItr;
     TA_taDataLinkItr.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiDataLink);
-    TA_taiDataLink.AddParFormal(&TA_class);
-    TA_taiDataLink.AddClassPar(&TA_taDataLink,0);
+  taMisc::types.Add(&TA_const_iColor_ptr);
+    TA_const_iColor_ptr.AddParents(&TA_const_iColor);
+  taMisc::types.Add(&TA_const_iColor_ref);
+    TA_const_iColor_ref.AddParents(&TA_const_iColor);
   taMisc::types.Add(&TA_css_fun_stub_ptr);
     TA_css_fun_stub_ptr.AddParents(&TA_void_ptr);
   taMisc::types.Add(&TA_ta_void_fun);
@@ -14181,13 +10846,11 @@ void ta_Init_ta() {
     TA_taRefN_ref.AddParents(&TA_taRefN);
   taMisc::types.Add(&TA_taRefN_ptr);
     TA_taRefN_ptr.AddParents(&TA_taRefN);
-  taMisc::types.Add(&TA_taiDataLink_ptr);
-    TA_taiDataLink_ptr.AddParents(&TA_taiDataLink);
+  taMisc::types.Add(&TA_taDataLink_ptr);
+    TA_taDataLink_ptr.AddParents(&TA_taDataLink);
   taMisc::types.Add(&TA_IDataLinkClient);
     TA_IDataLinkClient.AddParFormal(&TA_class);
     TA_IDataLinkClient.AddClassPar(&TA_ITypedObject,0);
-  taMisc::types.Add(&TA_taDataLink_ptr);
-    TA_taDataLink_ptr.AddParents(&TA_taDataLink);
   taMisc::types.Add(&TA_taPtrList_IDataLinkClient_);
     TA_taPtrList_IDataLinkClient_.AddParFormal(&TA_class, &TA_templ_inst);
     TA_taPtrList_IDataLinkClient_.AddClassPar(&TA_taPtrList,0);
@@ -14304,9 +10967,8 @@ void ta_Init_ta() {
   taMisc::types.Add(&TA_const_TypeDef_ref);
   taMisc::types.Add(&TA_MemberDef_ptr_ptr);
     TA_MemberDef_ptr_ptr.AddParents(&TA_MemberDef);
-  taMisc::types.Add(&TA_taiMimeSource);
-    TA_taiMimeSource.AddParFormal(&TA_class);
-    tac_AddMethods(TA_taiMimeSource,TA_taiMimeSource_MethodDef);
+  taMisc::types.Add(&TA_SelectEdit);
+    TA_SelectEdit.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_taOBase);
     TAI_taOBase = new taOBase;
     TA_taOBase.AddParFormal(&TA_class);
@@ -14327,13 +10989,6 @@ void ta_Init_ta() {
     TA_taNBase.AddParCache(&TA_taBase);
     TA_taNBase.AddClassPar(&TA_taOBase,0);
     tac_AddMembers(TA_taNBase,TA_taNBase_MemberDef);
-  taMisc::types.Add(&TA_SelectEdit);
-    TAI_SelectEdit = new SelectEdit;
-    TA_SelectEdit.AddParFormal(&TA_class);
-    TA_SelectEdit.AddParCache(&TA_taBase);
-    TA_SelectEdit.AddClassPar(&TA_taNBase,0);
-    tac_AddMembers(TA_SelectEdit,TA_SelectEdit_MemberDef);
-    tac_AddMethods(TA_SelectEdit,TA_SelectEdit_MethodDef);
   taMisc::types.Add(&TA_tabMisc);
     TAI_tabMisc = new tabMisc;
     TA_tabMisc.AddParFormal(&TA_class);
@@ -14343,35 +10998,20 @@ void ta_Init_ta() {
     TA_taBase_ref.AddParents(&TA_taBase);
   taMisc::types.Add(&TA_TAPtr_ptr);
     TA_TAPtr_ptr.AddParents(&TA_TAPtr);
-  taMisc::types.Add(&TA_const_MemberDef_ptr);
-    TA_const_MemberDef_ptr.AddParents(&TA_const_MemberDef);
   taMisc::types.Add(&TA_const_taBase);
     TA_const_taBase.AddParents(&TA_const, &TA_taBase);
-  taMisc::types.Add(&TA_const_taBase_ptr);
-    TA_const_taBase_ptr.AddParents(&TA_const_taBase);
-  taMisc::types.Add(&TA_taiMimeSource_ptr);
-    TA_taiMimeSource_ptr.AddParents(&TA_taiMimeSource);
-  taMisc::types.Add(&TA_const_taiMimeSource);
-    TA_const_taiMimeSource.AddParents(&TA_const, &TA_taiMimeSource);
-  taMisc::types.Add(&TA_const_taiMimeSource_ptr);
-    TA_const_taiMimeSource_ptr.AddParents(&TA_const_taiMimeSource);
   taMisc::types.Add(&TA_const_taBase_ref);
     TA_const_taBase_ref.AddParents(&TA_const_taBase);
   taMisc::types.Add(&TA_MemberDef_ptr_ref);
     TA_MemberDef_ptr_ref.AddParents(&TA_MemberDef_ptr);
   taMisc::types.Add(&TA_taDataView_ptr);
     TA_taDataView_ptr.AddParents(&TA_taDataView);
-  taMisc::types.Add(&TA_taFiler_ptr);
-    TA_taFiler_ptr.AddParents(&TA_taFiler);
-  taMisc::types.Add(&TA_const_QPixmap_ptr);
   taMisc::types.Add(&TA_bool_ref);
     TA_bool_ref.AddParents(&TA_bool);
   taMisc::types.Add(&TA_SelectEdit_ptr);
     TA_SelectEdit_ptr.AddParents(&TA_SelectEdit);
   taMisc::types.Add(&TA_taPtr_impl);
     TA_taPtr_impl.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taOBase_ptr);
-    TA_taOBase_ptr.AddParents(&TA_taOBase);
   taMisc::types.Add(&TA_const_taOBase);
     TA_const_taOBase.AddParents(&TA_const, &TA_taOBase);
   taMisc::types.Add(&TA_const_taOBase_ref);
@@ -14444,6 +11084,8 @@ void ta_Init_ta() {
     TA_taList_impl_ptr.AddParents(&TA_taList_impl);
   taMisc::types.Add(&TA_TABLPtr);
     TA_TABLPtr.AddParents(&TA_taList_impl_ptr);
+  taMisc::types.Add(&TA_const_taBase_ptr);
+    TA_const_taBase_ptr.AddParents(&TA_const_taBase);
   taMisc::types.Add(&TA_const_taList_impl);
     TA_const_taList_impl.AddParents(&TA_const, &TA_taList_impl);
   taMisc::types.Add(&TA_const_taList_impl_ref);
@@ -14480,10 +11122,10 @@ void ta_Init_ta() {
     TA_taBase_List.AddClassPar(&TA_taList_taBase_,0);
   taMisc::types.Add(&TA_const_taList_ref);
     TA_const_taList_ref.AddParents(&TA_const_taList);
-  taMisc::types.Add(&TA_taBase_List_ptr);
-    TA_taBase_List_ptr.AddParents(&TA_taBase_List);
   taMisc::types.Add(&TA_const_taBase_List);
     TA_const_taBase_List.AddParents(&TA_const, &TA_taBase_List);
+  taMisc::types.Add(&TA_taBase_List_ptr);
+    TA_taBase_List_ptr.AddParents(&TA_taBase_List);
   taMisc::types.Add(&TA_const_taBase_List_ref);
     TA_const_taBase_List_ref.AddParents(&TA_const_taBase_List);
   taMisc::types.Add(&TA_taArray_base);
@@ -14972,16 +11614,14 @@ void ta_Init_ta() {
     TA_TypeDefault.AddClassPar(&TA_taNBase,0);
     tac_AddMembers(TA_TypeDefault,TA_TypeDefault_MemberDef);
     tac_AddMethods(TA_TypeDefault,TA_TypeDefault_MethodDef);
-  taMisc::types.Add(&TA_taiMenuEl);
-    TA_taiMenuEl.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_const_TypeDefault);
-    TA_const_TypeDefault.AddParents(&TA_const, &TA_TypeDefault);
   taMisc::types.Add(&TA_cssProgSpace);
     TA_cssProgSpace.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_const_TypeDefault_ref);
-    TA_const_TypeDefault_ref.AddParents(&TA_const_TypeDefault);
+  taMisc::types.Add(&TA_const_TypeDefault);
+    TA_const_TypeDefault.AddParents(&TA_const, &TA_TypeDefault);
   taMisc::types.Add(&TA_cssProgSpace_ptr);
     TA_cssProgSpace_ptr.AddParents(&TA_cssProgSpace);
+  taMisc::types.Add(&TA_const_TypeDefault_ref);
+    TA_const_TypeDefault_ref.AddParents(&TA_const_TypeDefault);
   taMisc::types.Add(&TA_ScriptBase);
     TA_ScriptBase.AddParFormal(&TA_class);
     tac_AddMembers(TA_ScriptBase,TA_ScriptBase_MemberDef);
@@ -15039,1136 +11679,24 @@ void ta_Init_ta() {
     TA_const_Script.AddParents(&TA_const, &TA_Script);
   taMisc::types.Add(&TA_const_Script_ref);
     TA_const_Script_ref.AddParents(&TA_const_Script);
-  taMisc::types.Add(&TA_taiMenuEl_ptr);
-    TA_taiMenuEl_ptr.AddParents(&TA_taiMenuEl);
   taMisc::types.Add(&TA_Script_MGroup);
     TAI_Script_MGroup = new Script_MGroup;
     TA_Script_MGroup.AddParFormal(&TA_class);
     TA_Script_MGroup.AddParCache(&TA_taBase);
     TA_Script_MGroup.AddClassPar(&TA_taGroup_Script_,0);
     tac_AddMethods(TA_Script_MGroup,TA_Script_MGroup_MethodDef);
-  taMisc::types.Add(&TA_taiData);
-    TAI_taiData = new taiData;
-    TA_taiData.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_const_Script_MGroup);
-    TA_const_Script_MGroup.AddParents(&TA_const, &TA_Script_MGroup);
-  taMisc::types.Add(&TA_Dialog);
-    TA_Dialog.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_const_Script_MGroup_ref);
-    TA_const_Script_MGroup_ref.AddParents(&TA_const_Script_MGroup);
-  taMisc::types.Add(&TA_taiMisc);
-    TAI_taiMisc = new taiMisc;
-    TA_taiMisc.AddParFormal(&TA_class);
-    tac_AddEnum(TA_taiMisc, "SizeSpec", "", "", "", "", TA_taiMisc_SizeSpec);
-    tac_AddEnum(TA_taiMisc, "FontSpec", " choose 1:", "", "", "", TA_taiMisc_FontSpec);
-    tac_AddEnum(TA_taiMisc, "DialogSpec", " choose 1:", "", "", "", TA_taiMisc_DialogSpec);
-    tac_AddMembers(TA_taiMisc,TA_taiMisc_MemberDef);
-    tac_AddMethods(TA_taiMisc,TA_taiMisc_MethodDef);
-  taMisc::types.Add(&TA_taiDataHost);
-    TA_taiDataHost.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiAction);
-    TA_taiAction.AddParFormal(&TA_class);
-    tac_AddMembers(TA_taiAction,TA_taiAction_MemberDef);
-    tac_AddMethods(TA_taiAction,TA_taiAction_MethodDef);
-  taMisc::types.Add(&TA_taiEditDataHost);
-    TA_taiEditDataHost.AddParFormal(&TA_class);
-    TA_taiEditDataHost.AddClassPar(&TA_taiDataHost,0);
-  taMisc::types.Add(&TA_taiMenuAction);
-    TA_taiMenuAction.AddParFormal(&TA_class);
-    TA_taiMenuAction.AddClassPar(&TA_taiAction,0);
-  taMisc::types.Add(&TA_taiEditDataHost_ptr);
-    TA_taiEditDataHost_ptr.AddParents(&TA_taiEditDataHost);
-  taMisc::types.Add(&TA_taiMenu);
-    TA_taiMenu.AddParFormal(&TA_class);
-    TA_taiMenu.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_iAction_List);
-    TA_iAction_List.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiMethodData);
-    TA_taiMethodData.AddParFormal(&TA_class);
-    TA_taiMethodData.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_const_taiAction);
-    TA_const_taiAction.AddParents(&TA_const, &TA_taiAction);
-  taMisc::types.Add(&TA_const_taiAction_ref);
-    TA_const_taiAction_ref.AddParents(&TA_const_taiAction);
-  taMisc::types.Add(&TA_taiAction_ref);
-    TA_taiAction_ref.AddParents(&TA_taiAction);
-  taMisc::types.Add(&TA_taiMenuAction_ref);
-    TA_taiMenuAction_ref.AddParents(&TA_taiMenuAction);
-  taMisc::types.Add(&TA_const_taiMenuAction);
-    TA_const_taiMenuAction.AddParents(&TA_const, &TA_taiMenuAction);
-  taMisc::types.Add(&TA_const_taiMenuAction_ref);
-    TA_const_taiMenuAction_ref.AddParents(&TA_const_taiMenuAction);
-  taMisc::types.Add(&TA_taiDataHost_ptr);
-    TA_taiDataHost_ptr.AddParents(&TA_taiDataHost);
-  taMisc::types.Add(&TA_taiData_ptr);
-    TA_taiData_ptr.AddParents(&TA_taiData);
-  taMisc::types.Add(&TA_taPtrList_taiData_);
-    TAI_taPtrList_taiData_ = new taPtrList<taiData>;
-    TA_taPtrList_taiData_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_taiData_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_taiDataList);
-    TA_taiDataList.AddParFormal(&TA_class);
-    TA_taiDataList.AddClassPar(&TA_taPtrList_taiData_,0);
-  taMisc::types.Add(&TA_taiMenu_ptr);
-    TA_taiMenu_ptr.AddParents(&TA_taiMenu);
-  taMisc::types.Add(&TA_taiEditButton);
-    TA_taiEditButton.AddParFormal(&TA_class);
-    TA_taiEditButton.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiToggle);
-    TA_taiToggle.AddParFormal(&TA_class);
-    TA_taiToggle.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiTypeHier);
-    TA_taiTypeHier.AddParFormal(&TA_class);
-    TA_taiTypeHier.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiCompData);
-    TA_taiCompData.AddParFormal(&TA_class);
-    TA_taiCompData.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiField);
-    TA_taiField.AddParFormal(&TA_class);
-    TA_taiField.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiIncrField);
-    TA_taiIncrField.AddParFormal(&TA_class);
-    TA_taiIncrField.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiPlusToggle);
-    TA_taiPlusToggle.AddParFormal(&TA_class);
-    TA_taiPlusToggle.AddClassPar(&TA_taiCompData,0);
-  taMisc::types.Add(&TA_taiComboBox);
-    TA_taiComboBox.AddParFormal(&TA_class);
-    TA_taiComboBox.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiBitBox);
-    TA_taiBitBox.AddParFormal(&TA_class);
-    TA_taiBitBox.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiPolyData);
-    TA_taiPolyData.AddParFormal(&TA_class);
-    TA_taiPolyData.AddClassPar(&TA_taiCompData,0);
-  taMisc::types.Add(&TA_taiDataDeck);
-    TA_taiDataDeck.AddParFormal(&TA_class);
-    TA_taiDataDeck.AddClassPar(&TA_taiCompData,0);
-  taMisc::types.Add(&TA_const_QObject_ptr);
-  taMisc::types.Add(&TA_const_taiAction_ptr);
-    TA_const_taiAction_ptr.AddParents(&TA_const_taiAction);
-  taMisc::types.Add(&TA_const_taiMenuAction_ptr);
-    TA_const_taiMenuAction_ptr.AddParents(&TA_const_taiMenuAction);
-  taMisc::types.Add(&TA_taiSubMenuEl);
-    TA_taiSubMenuEl.AddParFormal(&TA_class);
-    TA_taiSubMenuEl.AddClassPar(&TA_taiMenuEl,0);
-  taMisc::types.Add(&TA_taPtrList_taiMenuEl_);
-    TAI_taPtrList_taiMenuEl_ = new taPtrList<taiMenuEl>;
-    TA_taPtrList_taiMenuEl_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_taiMenuEl_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_taiMenuEl_List);
-    TA_taiMenuEl_List.AddParFormal(&TA_class);
-    TA_taiMenuEl_List.AddClassPar(&TA_taPtrList_taiMenuEl_,0);
-  taMisc::types.Add(&TA_const_QKeySequence_ptr);
-  taMisc::types.Add(&TA_taiSubMenuEl_ptr);
-    TA_taiSubMenuEl_ptr.AddParents(&TA_taiSubMenuEl);
-  taMisc::types.Add(&TA_taPtrList_taiMenu_);
-    TAI_taPtrList_taiMenu_ = new taPtrList<taiMenu>;
-    TA_taPtrList_taiMenu_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_taiMenu_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_taiMenu_List);
-    TA_taiMenu_List.AddParFormal(&TA_class);
-    TA_taiMenu_List.AddClassPar(&TA_taPtrList_taiMenu_,0);
-  taMisc::types.Add(&TA_const_QIconSet_ref);
-  taMisc::types.Add(&TA_const_TAPtr);
-    TA_const_TAPtr.AddParents(&TA_const, &TA_TAPtr);
-  taMisc::types.Add(&TA_taiObjChooser);
-    TA_taiObjChooser.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiFileButton);
-    TA_taiFileButton.AddParFormal(&TA_class);
-    TA_taiFileButton.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiObjChooser_ptr);
-    TA_taiObjChooser_ptr.AddParents(&TA_taiObjChooser);
-  taMisc::types.Add(&TA_taiMenuAction_ptr);
-    TA_taiMenuAction_ptr.AddParents(&TA_taiMenuAction);
-  taMisc::types.Add(&TA_taiElBase);
-    TA_taiElBase.AddParFormal(&TA_class);
-    TA_taiElBase.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiSubToken);
-    TA_taiSubToken.AddParFormal(&TA_class);
-    TA_taiSubToken.AddClassPar(&TA_taiElBase,0);
-  taMisc::types.Add(&TA_taiToken);
-    TA_taiToken.AddParFormal(&TA_class);
-    TA_taiToken.AddClassPar(&TA_taiElBase,0);
-  taMisc::types.Add(&TA_taiMemberDefMenu);
-    TA_taiMemberDefMenu.AddParFormal(&TA_class);
-    TA_taiMemberDefMenu.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiMethodDefMenu);
-    TA_taiMethodDefMenu.AddParFormal(&TA_class);
-    TA_taiMethodDefMenu.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiMethMenu);
-    TA_taiMethMenu.AddParFormal(&TA_class);
-    TA_taiMethMenu.AddClassPar(&TA_taiMethodData,0);
-  taMisc::types.Add(&TA_taiMethButton);
-    TA_taiMethButton.AddParFormal(&TA_class);
-    TA_taiMethButton.AddClassPar(&TA_taiMethodData,0);
-  taMisc::types.Add(&TA_taiMethToggle);
-    TA_taiMethToggle.AddParFormal(&TA_class);
-    TA_taiMethToggle.AddClassPar(&TA_taiMethodData,0);
-  taMisc::types.Add(&TA_iDataPanel);
-    TA_iDataPanel.AddParFormal(&TA_class);
-    TA_iDataPanel.AddParents(&TA_QFrame);
-  taMisc::types.Add(&TA_HiLightButton);
-    TA_HiLightButton.AddParFormal(&TA_class);
-    tac_AddMembers(TA_HiLightButton,TA_HiLightButton_MemberDef);
-    tac_AddMethods(TA_HiLightButton,TA_HiLightButton_MethodDef);
-  taMisc::types.Add(&TA_iContextLabel);
-    TA_iContextLabel.AddParFormal(&TA_class);
-    tac_AddMethods(TA_iContextLabel,TA_iContextLabel_MethodDef);
-  taMisc::types.Add(&TA_taiChoiceDialog);
-    TA_taiChoiceDialog.AddParFormal(&TA_class);
-    tac_AddMembers(TA_taiChoiceDialog,TA_taiChoiceDialog_MemberDef);
-    tac_AddMethods(TA_taiChoiceDialog,TA_taiChoiceDialog_MethodDef);
-  taMisc::types.Add(&TA_EditDataPanel);
-    TA_EditDataPanel.AddParFormal(&TA_class);
-    TA_EditDataPanel.AddClassPar(&TA_class,0);
-  taMisc::types.Add(&TA_HiLightButton_ptr);
-    TA_HiLightButton_ptr.AddParents(&TA_HiLightButton);
-  taMisc::types.Add(&TA_Dialog_ptr);
-    TA_Dialog_ptr.AddParents(&TA_Dialog);
-  taMisc::types.Add(&TA_iContextLabel_ptr);
-    TA_iContextLabel_ptr.AddParents(&TA_iContextLabel);
-  taMisc::types.Add(&TA_Dialog_ptr_ref);
-    TA_Dialog_ptr_ref.AddParents(&TA_Dialog_ptr);
-  taMisc::types.Add(&TA_Member_List);
-    TAI_Member_List = new Member_List;
-    TA_Member_List.AddParFormal(&TA_class);
-    TA_Member_List.AddClassPar(&TA_taPtrList_MemberDef_,0);
-  taMisc::types.Add(&TA_EditDataPanel_ptr);
-    TA_EditDataPanel_ptr.AddParents(&TA_EditDataPanel);
-  taMisc::types.Add(&TA_taiDataList_ptr);
-    TA_taiDataList_ptr.AddParents(&TA_taiDataList);
-  taMisc::types.Add(&TA_const_taiDataList);
-    TA_const_taiDataList.AddParents(&TA_const, &TA_taiDataList);
-  taMisc::types.Add(&TA_const_taiDataList_ref);
-    TA_const_taiDataList_ref.AddParents(&TA_const_taiDataList);
-  taMisc::types.Add(&TA_taiMethodData_ptr);
-    TA_taiMethodData_ptr.AddParents(&TA_taiMethodData);
-  taMisc::types.Add(&TA_iDataPanelFrame);
-    TA_iDataPanelFrame.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iDataPanelSet);
-    TA_iDataPanelSet.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiTypeBase);
-    TAI_taiTypeBase = new taiTypeBase;
-    TA_taiTypeBase.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiTypeBase_ptr);
-    TA_taiTypeBase_ptr.AddParents(&TA_taiTypeBase);
-  taMisc::types.Add(&TA_taiViewType);
-    TAI_taiViewType = new taiViewType;
-    TA_taiViewType.AddParFormal(&TA_class);
-    TA_taiViewType.AddClassPar(&TA_taiTypeBase,0);
-  taMisc::types.Add(&TA_taiType);
-    TAI_taiType = new taiType;
-    TA_taiType.AddParFormal(&TA_class);
-    TA_taiType.AddClassPar(&TA_taiTypeBase,0);
-  taMisc::types.Add(&TA_taiViewType_ptr);
-    TA_taiViewType_ptr.AddParents(&TA_taiViewType);
-  taMisc::types.Add(&TA_taiMember);
-    TAI_taiMember = new taiMember;
-    TA_taiMember.AddParFormal(&TA_class);
-    TA_taiMember.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiEdit);
-    TAI_taiEdit = new taiEdit;
-    TA_taiEdit.AddParFormal(&TA_class);
-    TA_taiEdit.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiMember_ptr);
-    TA_taiMember_ptr.AddParents(&TA_taiMember);
-  taMisc::types.Add(&TA_taiType_ptr_ptr);
-    TA_taiType_ptr_ptr.AddParents(&TA_taiType);
-  taMisc::types.Add(&TA_taiEdit_ptr);
-    TA_taiEdit_ptr.AddParents(&TA_taiEdit);
-  taMisc::types.Add(&TA_taiViewType_ptr_ptr);
-    TA_taiViewType_ptr_ptr.AddParents(&TA_taiViewType);
-  taMisc::types.Add(&TA_taiType_ptr);
-    TA_taiType_ptr.AddParents(&TA_taiType);
-  taMisc::types.Add(&TA_taiMethod);
-    TAI_taiMethod = new taiMethod;
-    TA_taiMethod.AddParFormal(&TA_class);
-    TA_taiMethod.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_iDataPanel_ptr);
-  taMisc::types.Add(&TA_taiMethod_ptr);
-    TA_taiMethod_ptr.AddParents(&TA_taiMethod);
-  taMisc::types.Add(&TA_iDataPanelFrame_ptr);
-    TA_iDataPanelFrame_ptr.AddParents(&TA_iDataPanelFrame);
-  taMisc::types.Add(&TA_iDataPanelSet_ptr);
-  taMisc::types.Add(&TA_taiEdit_ptr_ptr);
-    TA_taiEdit_ptr_ptr.AddParents(&TA_taiEdit);
-  taMisc::types.Add(&TA_taiArgType);
-    TAI_taiArgType = new taiArgType;
-    TA_taiArgType.AddParFormal(&TA_class);
-    TA_taiArgType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taPtrList_taiType_);
-    TAI_taPtrList_taiType_ = new taPtrList<taiType>;
-    TA_taPtrList_taiType_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_taiType_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_taiType_List);
-    TA_taiType_List.AddParFormal(&TA_class);
-    TA_taiType_List.AddClassPar(&TA_taPtrList_taiType_,0);
-  taMisc::types.Add(&TA_taiIntType);
-    TAI_taiIntType = new taiIntType;
-    TA_taiIntType.AddParFormal(&TA_class);
-    TA_taiIntType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiEnumType);
-    TAI_taiEnumType = new taiEnumType;
-    TA_taiEnumType.AddParFormal(&TA_class);
-    TA_taiEnumType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiBoolType);
-    TAI_taiBoolType = new taiBoolType;
-    TA_taiBoolType.AddParFormal(&TA_class);
-    TA_taiBoolType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiClassType);
-    TAI_taiClassType = new taiClassType;
-    TA_taiClassType.AddParFormal(&TA_class);
-    TA_taiClassType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiStringType);
-    TAI_taiStringType = new taiStringType;
-    TA_taiStringType.AddParFormal(&TA_class);
-    TA_taiStringType.AddClassPar(&TA_taiClassType,0);
-  taMisc::types.Add(&TA_gpiListType);
-    TAI_gpiListType = new gpiListType;
-    TA_gpiListType.AddParFormal(&TA_class);
-    TA_gpiListType.AddClassPar(&TA_taiClassType,0);
-  taMisc::types.Add(&TA_gpiGroupType);
-    TAI_gpiGroupType = new gpiGroupType;
-    TA_gpiGroupType.AddParFormal(&TA_class);
-    TA_gpiGroupType.AddClassPar(&TA_gpiListType,0);
-  taMisc::types.Add(&TA_gpiArray_Type);
-    TAI_gpiArray_Type = new gpiArray_Type;
-    TA_gpiArray_Type.AddParFormal(&TA_class);
-    TA_gpiArray_Type.AddClassPar(&TA_taiClassType,0);
-  taMisc::types.Add(&TA_taiTokenPtrType);
-    TAI_taiTokenPtrType = new taiTokenPtrType;
-    TA_taiTokenPtrType.AddParFormal(&TA_class);
-    TA_taiTokenPtrType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiTypePtr);
-    TAI_taiTypePtr = new taiTypePtr;
-    TA_taiTypePtr.AddParFormal(&TA_class);
-    TA_taiTypePtr.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiFilePtrType);
-    TAI_taiFilePtrType = new taiFilePtrType;
-    TA_taiFilePtrType.AddParFormal(&TA_class);
-    TA_taiFilePtrType.AddClassPar(&TA_taiType,0);
-  taMisc::types.Add(&TA_taiDefaultEdit);
-    TAI_taiDefaultEdit = new taiDefaultEdit;
-    TA_taiDefaultEdit.AddParFormal(&TA_class);
-    TA_taiDefaultEdit.AddClassPar(&TA_taiEdit,0);
-  taMisc::types.Add(&TA_taiMember_ptr_ptr);
-    TA_taiMember_ptr_ptr.AddParents(&TA_taiMember);
-  taMisc::types.Add(&TA_taiTokenPtrMember);
-    TAI_taiTokenPtrMember = new taiTokenPtrMember;
-    TA_taiTokenPtrMember.AddParFormal(&TA_class);
-    TA_taiTokenPtrMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_TypeDefault_ptr);
-    TA_TypeDefault_ptr.AddParents(&TA_TypeDefault);
-  taMisc::types.Add(&TA_taiDefaultToken);
-    TAI_taiDefaultToken = new taiDefaultToken;
-    TA_taiDefaultToken.AddParFormal(&TA_class);
-    TA_taiDefaultToken.AddClassPar(&TA_taiTokenPtrMember,0);
-  taMisc::types.Add(&TA_taiSubTokenPtrMember);
-    TAI_taiSubTokenPtrMember = new taiSubTokenPtrMember;
-    TA_taiSubTokenPtrMember.AddParFormal(&TA_class);
-    TA_taiSubTokenPtrMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiTypePtrMember);
-    TAI_taiTypePtrMember = new taiTypePtrMember;
-    TA_taiTypePtrMember.AddParFormal(&TA_class);
-    TA_taiTypePtrMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiMemberDefPtrMember);
-    TAI_taiMemberDefPtrMember = new taiMemberDefPtrMember;
-    TA_taiMemberDefPtrMember.AddParFormal(&TA_class);
-    TA_taiMemberDefPtrMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiFunPtrMember);
-    TAI_taiFunPtrMember = new taiFunPtrMember;
-    TA_taiFunPtrMember.AddParFormal(&TA_class);
-    TA_taiFunPtrMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiCondEditMember);
-    TAI_taiCondEditMember = new taiCondEditMember;
-    TA_taiCondEditMember.AddParFormal(&TA_class);
-    TA_taiCondEditMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiTDefaultMember);
-    TAI_taiTDefaultMember = new taiTDefaultMember;
-    TA_taiTDefaultMember.AddParFormal(&TA_class);
-    TA_taiTDefaultMember.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_taiMethod_ptr_ptr);
-    TA_taiMethod_ptr_ptr.AddParents(&TA_taiMethod);
-  taMisc::types.Add(&TA_taiButtonMethod);
-    TAI_taiButtonMethod = new taiButtonMethod;
-    TA_taiButtonMethod.AddParFormal(&TA_class);
-    TA_taiButtonMethod.AddClassPar(&TA_taiMethod,0);
-  taMisc::types.Add(&TA_taiMenuMethod);
-    TAI_taiMenuMethod = new taiMenuMethod;
-    TA_taiMenuMethod.AddParFormal(&TA_class);
-    TA_taiMenuMethod.AddClassPar(&TA_taiMethod,0);
-  taMisc::types.Add(&TA_taiArgType_ptr);
-    TA_taiArgType_ptr.AddParents(&TA_taiArgType);
-  taMisc::types.Add(&TA_taiStreamArgType);
-    TAI_taiStreamArgType = new taiStreamArgType;
-    TA_taiStreamArgType.AddParFormal(&TA_class);
-    TA_taiStreamArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_taiBoolArgType);
-    TAI_taiBoolArgType = new taiBoolArgType;
-    TA_taiBoolArgType.AddParFormal(&TA_class);
-    TA_taiBoolArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_taiTokenPtrArgType);
-    TAI_taiTokenPtrArgType = new taiTokenPtrArgType;
-    TA_taiTokenPtrArgType.AddParFormal(&TA_class);
-    TA_taiTokenPtrArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_taiTypePtrArgType);
-    TAI_taiTypePtrArgType = new taiTypePtrArgType;
-    TA_taiTypePtrArgType.AddParFormal(&TA_class);
-    TA_taiTypePtrArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_taiMemberPtrArgType);
-    TAI_taiMemberPtrArgType = new taiMemberPtrArgType;
-    TA_taiMemberPtrArgType.AddParFormal(&TA_class);
-    TA_taiMemberPtrArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_taiMethodPtrArgType);
-    TAI_taiMethodPtrArgType = new taiMethodPtrArgType;
-    TA_taiMethodPtrArgType.AddParFormal(&TA_class);
-    TA_taiMethodPtrArgType.AddClassPar(&TA_taiArgType,0);
-  taMisc::types.Add(&TA_gpiDefaultEl);
-    TAI_gpiDefaultEl = new gpiDefaultEl;
-    TA_gpiDefaultEl.AddParFormal(&TA_class);
-    TA_gpiDefaultEl.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_gpiLinkGP);
-    TAI_gpiLinkGP = new gpiLinkGP;
-    TA_gpiLinkGP.AddParFormal(&TA_class);
-    TA_gpiLinkGP.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_gpiLinkList);
-    TAI_gpiLinkList = new gpiLinkList;
-    TA_gpiLinkList.AddParFormal(&TA_class);
-    TA_gpiLinkList.AddClassPar(&TA_taiMember,0);
-  taMisc::types.Add(&TA_gpiFromGpTokenPtrMember);
-    TAI_gpiFromGpTokenPtrMember = new gpiFromGpTokenPtrMember;
-    TA_gpiFromGpTokenPtrMember.AddParFormal(&TA_class);
-    TA_gpiFromGpTokenPtrMember.AddClassPar(&TA_taiTokenPtrMember,0);
-  taMisc::types.Add(&TA_gpiTAPtrArgType);
-    TAI_gpiTAPtrArgType = new gpiTAPtrArgType;
-    TA_gpiTAPtrArgType.AddParFormal(&TA_class);
-    TA_gpiTAPtrArgType.AddClassPar(&TA_taiTokenPtrArgType,0);
-  taMisc::types.Add(&TA_gpiInObjArgType);
-    TAI_gpiInObjArgType = new gpiInObjArgType;
-    TA_gpiInObjArgType.AddParFormal(&TA_class);
-    TA_gpiInObjArgType.AddClassPar(&TA_gpiTAPtrArgType,0);
-  taMisc::types.Add(&TA_gpiFromGpArgType);
-    TAI_gpiFromGpArgType = new gpiFromGpArgType;
-    TA_gpiFromGpArgType.AddParFormal(&TA_class);
-    TA_gpiFromGpArgType.AddClassPar(&TA_taiTokenPtrArgType,0);
-  taMisc::types.Add(&TA_gpiListEdit);
-    TAI_gpiListEdit = new gpiListEdit;
-    TA_gpiListEdit.AddParFormal(&TA_class);
-    TA_gpiListEdit.AddClassPar(&TA_taiEdit,0);
-  taMisc::types.Add(&TA_gpiGroupEdit);
-    TAI_gpiGroupEdit = new gpiGroupEdit;
-    TA_gpiGroupEdit.AddParFormal(&TA_class);
-    TA_gpiGroupEdit.AddClassPar(&TA_gpiListEdit,0);
-  taMisc::types.Add(&TA_gpiArrayEdit);
-    TAI_gpiArrayEdit = new gpiArrayEdit;
-    TA_gpiArrayEdit.AddParFormal(&TA_class);
-    TA_gpiArrayEdit.AddClassPar(&TA_taiEdit,0);
-  taMisc::types.Add(&TA_SArgEdit);
-    TAI_SArgEdit = new SArgEdit;
-    TA_SArgEdit.AddParFormal(&TA_class);
-    TA_SArgEdit.AddClassPar(&TA_gpiArrayEdit,0);
-  taMisc::types.Add(&TA_gpiSelectEdit);
-    TAI_gpiSelectEdit = new gpiSelectEdit;
-    TA_gpiSelectEdit.AddParFormal(&TA_class);
-    TA_gpiSelectEdit.AddClassPar(&TA_taiEdit,0);
-  taMisc::types.Add(&TA_tabViewType);
-    TAI_tabViewType = new tabViewType;
-    TA_tabViewType.AddParFormal(&TA_class);
-    TA_tabViewType.AddClassPar(&TA_taiViewType,0);
-  taMisc::types.Add(&TA_tabOViewType);
-    TAI_tabOViewType = new tabOViewType;
-    TA_tabOViewType.AddParFormal(&TA_class);
-    TA_tabOViewType.AddClassPar(&TA_tabViewType,0);
-  taMisc::types.Add(&TA_tabListViewType);
-    TAI_tabListViewType = new tabListViewType;
-    TA_tabListViewType.AddParFormal(&TA_class);
-    TA_tabListViewType.AddClassPar(&TA_tabOViewType,0);
-  taMisc::types.Add(&TA_tabGroupViewType);
-    TAI_tabGroupViewType = new tabGroupViewType;
-    TA_tabGroupViewType.AddParFormal(&TA_class);
-    TA_tabGroupViewType.AddClassPar(&TA_tabListViewType,0);
-  taMisc::types.Add(&TA_taiMimeItem);
-    TA_taiMimeItem.AddParFormal(&TA_class);
-    tac_AddMethods(TA_taiMimeItem,TA_taiMimeItem_MethodDef);
-  taMisc::types.Add(&TA_taiMimeItem_ptr);
-    TA_taiMimeItem_ptr.AddParents(&TA_taiMimeItem);
-  taMisc::types.Add(&TA_taiClipData);
-    TA_taiClipData.AddParFormal(&TA_class);
-    tac_AddEnum(TA_taiClipData, "EditAction", " extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC", "", "", "", TA_taiClipData_EditAction);
-    tac_AddMembers(TA_taiClipData,TA_taiClipData_MemberDef);
-    tac_AddMethods(TA_taiClipData,TA_taiClipData_MethodDef);
-  taMisc::types.Add(&TA_taiSingleClipData);
-    TA_taiSingleClipData.AddParFormal(&TA_class);
-    TA_taiSingleClipData.AddClassPar(&TA_taiClipData,0);
-  taMisc::types.Add(&TA_taiMultiClipData);
-    TA_taiMultiClipData.AddParFormal(&TA_class);
-    TA_taiMultiClipData.AddClassPar(&TA_taiClipData,0);
-  taMisc::types.Add(&TA_taPtrList_taiMimeItem_);
-    TAI_taPtrList_taiMimeItem_ = new taPtrList<taiMimeItem>;
-    TA_taPtrList_taiMimeItem_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_taiMimeItem_.AddClassPar(&TA_taPtrList,0);
-    sbt = new TypeDef("taiMimeItem_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_taiMimeItem);
-    TA_taPtrList_taiMimeItem_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_taiMimeItem", 1, 0, 0);
-    sbt->AddParents(&TA_const, &TA_taiMimeItem);
-    TA_taPtrList_taiMimeItem_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_taiMimeItem_ptr", 1, 1, 0);
-    sbt->AddParents(TA_taPtrList_taiMimeItem_.sub_types.FindName("const_taiMimeItem"));
-    TA_taPtrList_taiMimeItem_.sub_types.Add(sbt);
-    tac_AddMethods(TA_taPtrList_taiMimeItem_,TA_taPtrList_taiMimeItem__MethodDef);
-  taMisc::types.Add(&TA_tabSndMimeItem);
-    TA_tabSndMimeItem.AddParFormal(&TA_class);
-    TA_tabSndMimeItem.AddClassPar(&TA_taiMimeItem,0);
-  taMisc::types.Add(&TA_taiMimeItem_List);
-    TA_taiMimeItem_List.AddParFormal(&TA_class);
-    TA_taiMimeItem_List.AddClassPar(&TA_taPtrList_taiMimeItem_,0);
-    tac_AddMethods(TA_taiMimeItem_List,TA_taiMimeItem_List_MethodDef);
-  taMisc::types.Add(&TA_taiRcvMimeItem);
-    TA_taiRcvMimeItem.AddParFormal(&TA_class);
-    TA_taiRcvMimeItem.AddClassPar(&TA_taiMimeItem,0);
-  taMisc::types.Add(&TA_taiMimeItem_List_ptr);
-    TA_taiMimeItem_List_ptr.AddParents(&TA_taiMimeItem_List);
-  taMisc::types.Add(&TA_const_QMimeSource_ptr);
-  taMisc::types.Add(&TA_taiClipData_ptr);
-    TA_taiClipData_ptr.AddParents(&TA_taiClipData);
-  taMisc::types.Add(&TA_istringstream_ref);
-    TA_istringstream_ref.AddParents(&TA_istringstream);
-  taMisc::types.Add(&TA_taiIntMimeSource);
-    TA_taiIntMimeSource.AddParFormal(&TA_class);
-    TA_taiIntMimeSource.AddClassPar(&TA_taiMimeSource,0);
-  taMisc::types.Add(&TA_taiExtMimeSource);
-    TA_taiExtMimeSource.AddParFormal(&TA_class);
-    TA_taiExtMimeSource.AddClassPar(&TA_taiMimeSource,0);
-  taMisc::types.Add(&TA_taiMimeSourcePtr);
-    TA_taiMimeSourcePtr.AddParents(&TA_taiMimeSource_ptr);
-  taMisc::types.Add(&TA_NodeBitmapFlags);
-    TA_NodeBitmapFlags.AddParFormal(&TA_enum);
-    tac_ThisEnum(TA_NodeBitmapFlags, TA_NodeBitmapFlags_EnumDef);
-  taMisc::types.Add(&TA_tabDataLink);
-    TA_tabDataLink.AddParFormal(&TA_class);
-    TA_tabDataLink.AddClassPar(&TA_taiDataLink,0);
-  taMisc::types.Add(&TA_taiToolBar);
-    TA_taiToolBar.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taiToolBar_List);
-    TA_taiToolBar_List.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_WinGeometry);
-    TAI_WinGeometry = new WinGeometry;
-    TA_WinGeometry.AddParFormal(&TA_class);
-    TA_WinGeometry.AddParCache(&TA_taBase);
-    TA_WinGeometry.AddClassPar(&TA_taBase,0);
-    sbt = new TypeDef("inherited", "", 
-	"", "INSTANCE ", "", sizeof(int), (void**)0);
-    sbt->AddParFormal(&TA_class);
-    sbt->AddParents(&TA_taBase);
-    TA_WinGeometry.sub_types.Add(sbt);
-    tac_AddMembers(TA_WinGeometry,TA_WinGeometry_MemberDef);
-    tac_AddMethods(TA_WinGeometry,TA_WinGeometry_MethodDef);
-  taMisc::types.Add(&TA_ToolBar);
-    TA_ToolBar.AddParFormal(&TA_class);
-    TA_ToolBar.AddParCache(&TA_taBase);
-    TA_ToolBar.AddClassPar(&TA_taNBase,0);
-    sbt = new TypeDef("inherited", "", 
-	"", "INSTANCE ", "", sizeof(int), (void**)0);
-    sbt->AddParFormal(&TA_class);
-    sbt->AddParCache(&TA_taBase);
-    sbt->AddParents(&TA_taNBase);
-    TA_ToolBar.sub_types.Add(sbt);
-    tac_AddMembers(TA_ToolBar,TA_ToolBar_MemberDef);
-    tac_AddMethods(TA_ToolBar,TA_ToolBar_MethodDef);
-  taMisc::types.Add(&TA_DataViewer);
-    TAI_DataViewer = new DataViewer;
-    TA_DataViewer.AddParFormal(&TA_class);
-    TA_DataViewer.AddParCache(&TA_taBase);
-    TA_DataViewer.AddClassPar(&TA_taDataView,0);
-    tac_AddEnum(TA_DataViewer, "PrintFmt", "", "", "", "", TA_DataViewer_PrintFmt);
-    tac_AddMembers(TA_DataViewer,TA_DataViewer_MemberDef);
-    tac_AddMethods(TA_DataViewer,TA_DataViewer_MethodDef);
-  taMisc::types.Add(&TA_ISelectable);
-    TA_ISelectable.AddParFormal(&TA_class);
-    TA_ISelectable.AddClassPar(&TA_IDataLinkClient,0);
-    tac_AddMethods(TA_ISelectable,TA_ISelectable_MethodDef);
-  taMisc::types.Add(&TA_IDataViewHost);
-    TA_IDataViewHost.AddParFormal(&TA_class);
-    tac_AddMethods(TA_IDataViewHost,TA_IDataViewHost_MethodDef);
-  taMisc::types.Add(&TA_iListViewItem);
-    TA_iListViewItem.AddParFormal(&TA_class);
-    TA_iListViewItem.AddClassPar();
-  taMisc::types.Add(&TA_taiListDataNode);
-    TA_taiListDataNode.AddParFormal(&TA_class);
-    TA_taiListDataNode.AddClassPar(&TA_iListViewItem,0);
-  taMisc::types.Add(&TA_iListDataPanel);
-    TA_iListDataPanel.AddParFormal(&TA_class);
-    TA_iListDataPanel.AddClassPar(&TA_iDataPanelFrame,0);
-  taMisc::types.Add(&TA_DataLink_QObj);
-    TA_DataLink_QObj.AddParFormal(&TA_class);
-    tac_AddMembers(TA_DataLink_QObj,TA_DataLink_QObj_MemberDef);
-  taMisc::types.Add(&TA_DataLink_QObj_ptr);
-    TA_DataLink_QObj_ptr.AddParents(&TA_DataLink_QObj);
-  taMisc::types.Add(&TA_tabODataLink);
-    TA_tabODataLink.AddParFormal(&TA_class);
-    TA_tabODataLink.AddClassPar(&TA_tabDataLink,0);
-  taMisc::types.Add(&TA_ToolBar_ptr);
-    TA_ToolBar_ptr.AddParents(&TA_ToolBar);
-  taMisc::types.Add(&TA_tabListDataLink);
-    TA_tabListDataLink.AddParFormal(&TA_class);
-    TA_tabListDataLink.AddClassPar(&TA_tabODataLink,0);
-  taMisc::types.Add(&TA_taiToolBar_ptr);
-    TA_taiToolBar_ptr.AddParents(&TA_taiToolBar);
-  taMisc::types.Add(&TA_tabGroupDataLink);
-    TA_tabGroupDataLink.AddParFormal(&TA_class);
-    TA_tabGroupDataLink.AddClassPar(&TA_tabListDataLink,0);
-  taMisc::types.Add(&TA_IDataViewHost_ptr);
-    TA_IDataViewHost_ptr.AddParents(&TA_IDataViewHost);
-  taMisc::types.Add(&TA_taPtrList_ISelectable_);
-    TAI_taPtrList_ISelectable_ = new taPtrList<ISelectable>;
-    TA_taPtrList_ISelectable_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_ISelectable_.AddClassPar(&TA_taPtrList,0);
-    sbt = new TypeDef("ISelectable_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_ISelectable);
-    TA_taPtrList_ISelectable_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_ISelectable", 1, 0, 0);
-    sbt->AddParents(&TA_const, &TA_ISelectable);
-    TA_taPtrList_ISelectable_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_ISelectable_ptr", 1, 1, 0);
-    sbt->AddParents(TA_taPtrList_ISelectable_.sub_types.FindName("const_ISelectable"));
-    TA_taPtrList_ISelectable_.sub_types.Add(sbt);
-    tac_AddMethods(TA_taPtrList_ISelectable_,TA_taPtrList_ISelectable__MethodDef);
-  taMisc::types.Add(&TA_ISelectable_ptr);
-    TA_ISelectable_ptr.AddParents(&TA_ISelectable);
-  taMisc::types.Add(&TA_ISelectable_PtrList);
-    TA_ISelectable_PtrList.AddParFormal(&TA_class);
-    TA_ISelectable_PtrList.AddClassPar(&TA_taPtrList_ISelectable_,0);
-    tac_AddMethods(TA_ISelectable_PtrList,TA_ISelectable_PtrList_MethodDef);
-  taMisc::types.Add(&TA_DataViewer_ptr);
-    TA_DataViewer_ptr.AddParents(&TA_DataViewer);
-  taMisc::types.Add(&TA_const_ISelectable_PtrList);
-    TA_const_ISelectable_PtrList.AddParents(&TA_const, &TA_ISelectable_PtrList);
-  taMisc::types.Add(&TA_ISelectable_PtrList_ref);
-    TA_ISelectable_PtrList_ref.AddParents(&TA_ISelectable_PtrList);
-  taMisc::types.Add(&TA_const_ISelectable_PtrList_ref);
-    TA_const_ISelectable_PtrList_ref.AddParents(&TA_const_ISelectable_PtrList);
-  taMisc::types.Add(&TA_const_ToolBar);
-    TA_const_ToolBar.AddParents(&TA_const, &TA_ToolBar);
-  taMisc::types.Add(&TA_const_ToolBar_ref);
-    TA_const_ToolBar_ref.AddParents(&TA_const_ToolBar);
-  taMisc::types.Add(&TA_taList_ToolBar_);
-    TA_taList_ToolBar_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taList_ToolBar_.AddParCache(&TA_taBase);
-    TA_taList_ToolBar_.AddClassPar(&TA_taList,0);
-  taMisc::types.Add(&TA_ToolBar_List);
-    TA_ToolBar_List.AddParFormal(&TA_class);
-    TA_ToolBar_List.AddParCache(&TA_taBase);
-    TA_ToolBar_List.AddClassPar(&TA_taList_ToolBar_,0);
-  taMisc::types.Add(&TA_const_ToolBar_List);
-    TA_const_ToolBar_List.AddParents(&TA_const, &TA_ToolBar_List);
-  taMisc::types.Add(&TA_const_WinGeometry);
-    TA_const_WinGeometry.AddParents(&TA_const, &TA_WinGeometry);
-  taMisc::types.Add(&TA_const_ToolBar_List_ref);
-    TA_const_ToolBar_List_ref.AddParents(&TA_const_ToolBar_List);
-  taMisc::types.Add(&TA_const_WinGeometry_ref);
-    TA_const_WinGeometry_ref.AddParents(&TA_const_WinGeometry);
-  taMisc::types.Add(&TA_const_DataViewer);
-    TA_const_DataViewer.AddParents(&TA_const, &TA_DataViewer);
-  taMisc::types.Add(&TA_const_DataViewer_ref);
-    TA_const_DataViewer_ref.AddParents(&TA_const_DataViewer);
-  taMisc::types.Add(&TA_taList_DataViewer_);
-    TAI_taList_DataViewer_ = new taList<DataViewer>;
-    TA_taList_DataViewer_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taList_DataViewer_.AddParCache(&TA_taBase);
-    TA_taList_DataViewer_.AddClassPar(&TA_taList,0);
-    sbt = new TypeDef("const_taBase", 1, 0, 0);
-    sbt->AddParents(&TA_const, &TA_taBase);
-    TA_taList_DataViewer_.sub_types.Add(sbt);
-    sbt = new TypeDef("const_taBase_ptr", 1, 1, 0);
-    sbt->AddParents(TA_taList_DataViewer_.sub_types.FindName("const_taBase"));
-    TA_taList_DataViewer_.sub_types.Add(sbt);
-    sbt = new TypeDef("taBase_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_taBase);
-    TA_taList_DataViewer_.sub_types.Add(sbt);
-    sbt = new TypeDef("DataViewer_ptr", 1, 1, 0);
-    sbt->AddParents(&TA_DataViewer);
-    TA_taList_DataViewer_.sub_types.Add(sbt);
-    tac_AddEnum(TA_taList_DataViewer_, "Orientation", " must be same values as Qt::Orientation", "", "", "", TA_taList_DataViewer__Orientation);
-    tac_AddMethods(TA_taList_DataViewer_,TA_taList_DataViewer__MethodDef);
-  taMisc::types.Add(&TA_DataViewer_List);
-    TAI_DataViewer_List = new DataViewer_List;
-    TA_DataViewer_List.AddParFormal(&TA_class);
-    TA_DataViewer_List.AddParCache(&TA_taBase);
-    TA_DataViewer_List.AddClassPar(&TA_taList_DataViewer_,0);
-  taMisc::types.Add(&TA_iTabDataViewer);
-    TA_iTabDataViewer.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_const_DataViewer_List);
-    TA_const_DataViewer_List.AddParents(&TA_const, &TA_DataViewer_List);
-  taMisc::types.Add(&TA_taPtrList_iDataPanel_);
-    TA_taPtrList_iDataPanel_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_iDataPanel_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_const_DataViewer_List_ref);
-    TA_const_DataViewer_List_ref.AddParents(&TA_const_DataViewer_List);
-  taMisc::types.Add(&TA_iTabDataViewer_ptr);
-    TA_iTabDataViewer_ptr.AddParents(&TA_iTabDataViewer);
-  taMisc::types.Add(&TA_iDataPanel_PtrList);
-    TA_iDataPanel_PtrList.AddParFormal(&TA_class);
-    TA_iDataPanel_PtrList.AddClassPar(&TA_taPtrList_iDataPanel_,0);
-  taMisc::types.Add(&TA_iViewPanelFrame);
-    TA_iViewPanelFrame.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iListViewItem_ptr);
-    TA_iListViewItem_ptr.AddParents(&TA_iListViewItem);
-  taMisc::types.Add(&TA_iListDataPanel_ptr);
-    TA_iListDataPanel_ptr.AddParents(&TA_iListDataPanel);
-  taMisc::types.Add(&TA_taiListDataNode_ptr);
-    TA_taiListDataNode_ptr.AddParents(&TA_taiListDataNode);
-  taMisc::types.Add(&TA_const_QPoint_ref);
-  taMisc::types.Add(&TA_taiTreeDataNode);
-    TA_taiTreeDataNode.AddParFormal(&TA_class);
-    TA_taiTreeDataNode.AddClassPar(&TA_iListViewItem,0);
-  taMisc::types.Add(&TA_tabTreeDataNode);
-    TA_tabTreeDataNode.AddParFormal(&TA_class);
-    TA_tabTreeDataNode.AddClassPar(&TA_taiTreeDataNode,0);
-  taMisc::types.Add(&TA_tabListTreeDataNode);
-    TA_tabListTreeDataNode.AddParFormal(&TA_class);
-    TA_tabListTreeDataNode.AddClassPar(&TA_tabTreeDataNode,0);
-  taMisc::types.Add(&TA_tabGroupTreeDataNode);
-    TA_tabGroupTreeDataNode.AddParFormal(&TA_class);
-    TA_tabGroupTreeDataNode.AddClassPar(&TA_tabListTreeDataNode,0);
-  taMisc::types.Add(&TA_iDataBrowserBase);
-    TA_iDataBrowserBase.AddParFormal(&TA_class);
-    TA_iDataBrowserBase.AddClassPar(&TA_iTabDataViewer,0);
-  taMisc::types.Add(&TA_iDataBrowser);
-    TA_iDataBrowser.AddParFormal(&TA_class);
-    TA_iDataBrowser.AddClassPar(&TA_iDataBrowserBase,0);
-  taMisc::types.Add(&TA_DataBrowser);
-    TAI_DataBrowser = new DataBrowser;
-    TA_DataBrowser.AddParFormal(&TA_class);
-    TA_DataBrowser.AddParCache(&TA_taBase);
-    TA_DataBrowser.AddClassPar(&TA_DataViewer,0);
-    tac_AddMembers(TA_DataBrowser,TA_DataBrowser_MemberDef);
-    tac_AddMethods(TA_DataBrowser,TA_DataBrowser_MethodDef);
-  taMisc::types.Add(&TA_taiTreeDataNode_ptr);
-    TA_taiTreeDataNode_ptr.AddParents(&TA_taiTreeDataNode);
-  taMisc::types.Add(&TA_iDataBrowserBase_ptr);
-    TA_iDataBrowserBase_ptr.AddParents(&TA_iDataBrowserBase);
-  taMisc::types.Add(&TA_tabDataLink_ptr);
-    TA_tabDataLink_ptr.AddParents(&TA_tabDataLink);
-  taMisc::types.Add(&TA_tabListDataLink_ptr);
-    TA_tabListDataLink_ptr.AddParents(&TA_tabListDataLink);
-  taMisc::types.Add(&TA_tabGroupDataLink_ptr);
-    TA_tabGroupDataLink_ptr.AddParents(&TA_tabGroupDataLink);
-  taMisc::types.Add(&TA_DataBrowser_ptr);
-    TA_DataBrowser_ptr.AddParents(&TA_DataBrowser);
-  taMisc::types.Add(&TA_iDataBrowser_ptr);
-    TA_iDataBrowser_ptr.AddParents(&TA_iDataBrowser);
-  taMisc::types.Add(&TA_const_DataBrowser);
-    TA_const_DataBrowser.AddParents(&TA_const, &TA_DataBrowser);
-  taMisc::types.Add(&TA_const_DataBrowser_ref);
-    TA_const_DataBrowser_ref.AddParents(&TA_const_DataBrowser);
-  taMisc::types.Add(&TA_taTypeInfoTreeDataNode);
-    TA_taTypeInfoTreeDataNode.AddParFormal(&TA_class);
-    TA_taTypeInfoTreeDataNode.AddClassPar(&TA_taiTreeDataNode,0);
-  taMisc::types.Add(&TA_taTypeSpaceTreeDataNode);
-    TA_taTypeSpaceTreeDataNode.AddParFormal(&TA_class);
-    TA_taTypeSpaceTreeDataNode.AddClassPar(&TA_taiTreeDataNode,0);
-  taMisc::types.Add(&TA_iClassBrowser);
-    TA_iClassBrowser.AddParFormal(&TA_class);
-    TA_iClassBrowser.AddClassPar(&TA_iDataBrowserBase,0);
-  taMisc::types.Add(&TA_ClassBrowser);
-    TAI_ClassBrowser = new ClassBrowser;
-    TA_ClassBrowser.AddParFormal(&TA_class);
-    TA_ClassBrowser.AddParCache(&TA_taBase);
-    TA_ClassBrowser.AddClassPar(&TA_DataViewer,0);
-    tac_AddMembers(TA_ClassBrowser,TA_ClassBrowser_MemberDef);
-    tac_AddMethods(TA_ClassBrowser,TA_ClassBrowser_MethodDef);
-  taMisc::types.Add(&TA_TypeInfoKind);
-    TA_TypeInfoKind.AddParFormal(&TA_enum);
-    tac_ThisEnum(TA_TypeInfoKind, TA_TypeInfoKind_EnumDef);
-  taMisc::types.Add(&TA_const_TypeInfoKind);
-    TA_const_TypeInfoKind.AddParents(&TA_const, &TA_TypeInfoKind);
-  taMisc::types.Add(&TA_taClassDataLink);
-    TA_taClassDataLink.AddParFormal(&TA_class);
-    TA_taClassDataLink.AddClassPar(&TA_taiDataLink,0);
-  taMisc::types.Add(&TA_TypeItem_ptr);
-    TA_TypeItem_ptr.AddParents(&TA_TypeItem);
-  taMisc::types.Add(&TA_taTypeInfoDataLink);
-    TA_taTypeInfoDataLink.AddParFormal(&TA_class);
-    TA_taTypeInfoDataLink.AddClassPar(&TA_taClassDataLink,0);
-  taMisc::types.Add(&TA_taTypeSpaceDataLink_Base);
-    TA_taTypeSpaceDataLink_Base.AddParFormal(&TA_class);
-    TA_taTypeSpaceDataLink_Base.AddClassPar(&TA_taClassDataLink,0);
-  taMisc::types.Add(&TA_taEnumSpaceDataLink);
-    TA_taEnumSpaceDataLink.AddParFormal(&TA_class);
-    TA_taEnumSpaceDataLink.AddClassPar(&TA_taTypeSpaceDataLink_Base,0);
-  taMisc::types.Add(&TA_taTypeSpaceDataLink);
-    TA_taTypeSpaceDataLink.AddParFormal(&TA_class);
-    TA_taTypeSpaceDataLink.AddClassPar(&TA_taTypeSpaceDataLink_Base,0);
-  taMisc::types.Add(&TA_taMethodSpaceDataLink);
-    TA_taMethodSpaceDataLink.AddParFormal(&TA_class);
-    TA_taMethodSpaceDataLink.AddClassPar(&TA_taTypeSpaceDataLink_Base,0);
-  taMisc::types.Add(&TA_taMemberSpaceDataLink);
-    TA_taMemberSpaceDataLink.AddParFormal(&TA_class);
-    TA_taMemberSpaceDataLink.AddClassPar(&TA_taTypeSpaceDataLink_Base,0);
-  taMisc::types.Add(&TA_taTypeInfoDataLink_ptr);
-    TA_taTypeInfoDataLink_ptr.AddParents(&TA_taTypeInfoDataLink);
-  taMisc::types.Add(&TA_taTypeSpaceDataLink_ptr);
-    TA_taTypeSpaceDataLink_ptr.AddParents(&TA_taTypeSpaceDataLink);
-  taMisc::types.Add(&TA_ClassBrowser_ptr);
-    TA_ClassBrowser_ptr.AddParents(&TA_ClassBrowser);
-  taMisc::types.Add(&TA_iClassBrowser_ptr);
-    TA_iClassBrowser_ptr.AddParents(&TA_iClassBrowser);
-  taMisc::types.Add(&TA_const_ClassBrowser);
-    TA_const_ClassBrowser.AddParents(&TA_const, &TA_ClassBrowser);
-  taMisc::types.Add(&TA_const_ClassBrowser_ref);
-    TA_const_ClassBrowser_ref.AddParents(&TA_const_ClassBrowser);
-  taMisc::types.Add(&TA_gpiListEditButton);
-    TA_gpiListEditButton.AddParFormal(&TA_class);
-    TA_gpiListEditButton.AddClassPar(&TA_taiEditButton,0);
-  taMisc::types.Add(&TA_gpiGroupEditButton);
-    TA_gpiGroupEditButton.AddParFormal(&TA_class);
-    TA_gpiGroupEditButton.AddClassPar(&TA_taiEditButton,0);
-  taMisc::types.Add(&TA_gpiSubEditButton);
-    TA_gpiSubEditButton.AddParFormal(&TA_class);
-    TA_gpiSubEditButton.AddClassPar(&TA_taiEditButton,0);
-  taMisc::types.Add(&TA_gpiLinkEditButton);
-    TA_gpiLinkEditButton.AddParFormal(&TA_class);
-    TA_gpiLinkEditButton.AddClassPar(&TA_gpiGroupEditButton,0);
-  taMisc::types.Add(&TA_gpiListLinkEditButton);
-    TA_gpiListLinkEditButton.AddParFormal(&TA_class);
-    TA_gpiListLinkEditButton.AddClassPar(&TA_gpiListEditButton,0);
-  taMisc::types.Add(&TA_gpiArrayEditButton);
-    TA_gpiArrayEditButton.AddParFormal(&TA_class);
-    TA_gpiArrayEditButton.AddClassPar(&TA_taiEditButton,0);
-  taMisc::types.Add(&TA_gpiListEls);
-    TA_gpiListEls.AddParFormal(&TA_class);
-    TA_gpiListEls.AddClassPar(&TA_taiElBase,0);
-  taMisc::types.Add(&TA_gpiGroupEls);
-    TA_gpiGroupEls.AddParFormal(&TA_class);
-    TA_gpiGroupEls.AddClassPar(&TA_gpiListEls,0);
-  taMisc::types.Add(&TA_gpiSubGroups);
-    TA_gpiSubGroups.AddParFormal(&TA_class);
-    TA_gpiSubGroups.AddClassPar(&TA_taiElBase,0);
-  taMisc::types.Add(&TA_gpiElTypes);
-    TA_gpiElTypes.AddParFormal(&TA_class);
-    TA_gpiElTypes.AddClassPar(&TA_taiTypeHier,0);
-  taMisc::types.Add(&TA_gpiNewFuns);
-    TA_gpiNewFuns.AddParFormal(&TA_class);
-    TA_gpiNewFuns.AddClassPar(&TA_taiData,0);
-  taMisc::types.Add(&TA_taiIncrField_ptr);
-    TA_taiIncrField_ptr.AddParents(&TA_taiIncrField);
-  taMisc::types.Add(&TA_gpiNewFuns_ptr);
-    TA_gpiNewFuns_ptr.AddParents(&TA_gpiNewFuns);
-  taMisc::types.Add(&TA_gpiElTypes_ptr);
-    TA_gpiElTypes_ptr.AddParents(&TA_gpiElTypes);
-  taMisc::types.Add(&TA_gpiListNew);
-    TA_gpiListNew.AddParFormal(&TA_class);
-    TA_gpiListNew.AddClassPar(&TA_taiDataHost,0);
-  taMisc::types.Add(&TA_gpiSubGroups_ptr);
-    TA_gpiSubGroups_ptr.AddParents(&TA_gpiSubGroups);
-  taMisc::types.Add(&TA_gpiGroupNew);
-    TA_gpiGroupNew.AddParFormal(&TA_class);
-    TA_gpiGroupNew.AddClassPar(&TA_gpiListNew,0);
-  taMisc::types.Add(&TA_gpiList_ElData);
-    TA_gpiList_ElData.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_taPtrList_gpiList_ElData_);
-    TAI_taPtrList_gpiList_ElData_ = new taPtrList<gpiList_ElData>;
-    TA_taPtrList_gpiList_ElData_.AddParFormal(&TA_class, &TA_templ_inst);
-    TA_taPtrList_gpiList_ElData_.AddClassPar(&TA_taPtrList,0);
-  taMisc::types.Add(&TA_gpiList_ElDataList);
-    TA_gpiList_ElDataList.AddParFormal(&TA_class);
-    TA_gpiList_ElDataList.AddClassPar(&TA_taPtrList_gpiList_ElData_,0);
-  taMisc::types.Add(&TA_gpiMultiEditDataHost);
-    TA_gpiMultiEditDataHost.AddParFormal(&TA_class);
-    TA_gpiMultiEditDataHost.AddClassPar(&TA_taiEditDataHost,0);
-  taMisc::types.Add(&TA_gpiListDataHost);
-    TA_gpiListDataHost.AddParFormal(&TA_class);
-    TA_gpiListDataHost.AddClassPar(&TA_gpiMultiEditDataHost,0);
-  taMisc::types.Add(&TA_gpiGroupDataHost);
-    TA_gpiGroupDataHost.AddParFormal(&TA_class);
-    TA_gpiGroupDataHost.AddClassPar(&TA_gpiListDataHost,0);
-  taMisc::types.Add(&TA_gpiArrayEditDataHost);
-    TA_gpiArrayEditDataHost.AddParFormal(&TA_class);
-    TA_gpiArrayEditDataHost.AddClassPar(&TA_taiEditDataHost,0);
-  taMisc::types.Add(&TA_SArgEditDataHost);
-    TA_SArgEditDataHost.AddParFormal(&TA_class);
-    TA_SArgEditDataHost.AddClassPar(&TA_gpiArrayEditDataHost,0);
-  taMisc::types.Add(&TA_gpiSelectEditDataHost);
-    TA_gpiSelectEditDataHost.AddParFormal(&TA_class);
-    TA_gpiSelectEditDataHost.AddClassPar(&TA_taiEditDataHost,0);
-  taMisc::types.Add(&TA_SelectEditConfig);
-    TAI_SelectEditConfig = new SelectEditConfig;
-    TA_SelectEditConfig.AddParFormal(&TA_class);
-    TA_SelectEditConfig.AddParCache(&TA_taBase);
-    TA_SelectEditConfig.AddClassPar(&TA_taBase,0);
-    tac_AddMembers(TA_SelectEditConfig,TA_SelectEditConfig_MemberDef);
-  taMisc::types.Add(&TA_const_SelectEdit);
-    TA_const_SelectEdit.AddParents(&TA_const, &TA_SelectEdit);
-  taMisc::types.Add(&TA_const_SelectEditConfig);
-    TA_const_SelectEditConfig.AddParents(&TA_const, &TA_SelectEditConfig);
-  taMisc::types.Add(&TA_const_SelectEdit_ref);
-    TA_const_SelectEdit_ref.AddParents(&TA_const_SelectEdit);
-  taMisc::types.Add(&TA_const_SelectEditConfig_ref);
-    TA_const_SelectEditConfig_ref.AddParents(&TA_const_SelectEditConfig);
-  taMisc::types.Add(&TA_const_SbVec2s_ref);
-  taMisc::types.Add(&TA_iPoint);
-    TAI_iPoint = new iPoint;
-    TA_iPoint.AddParFormal(&TA_class);
-    tac_AddMembers(TA_iPoint,TA_iPoint_MemberDef);
-    tac_AddMethods(TA_iPoint,TA_iPoint_MethodDef);
-  taMisc::types.Add(&TA_iVec2i);
-    TA_iVec2i.AddParFormal(&TA_class);
-    TA_iVec2i.AddClassPar(&TA_iPoint,0);
-  taMisc::types.Add(&TA_iPoint_ref);
-    TA_iPoint_ref.AddParents(&TA_iPoint);
-  taMisc::types.Add(&TA_const_iPoint);
-    TA_const_iPoint.AddParents(&TA_const, &TA_iPoint);
-  taMisc::types.Add(&TA_const_iPoint_ref);
-    TA_const_iPoint_ref.AddParents(&TA_const_iPoint);
-  taMisc::types.Add(&TA_const_SbVec3s_ref);
-  taMisc::types.Add(&TA_iVec3i);
-    TAI_iVec3i = new iVec3i;
-    TA_iVec3i.AddParFormal(&TA_class);
-    TA_iVec3i.AddClassPar(&TA_iVec2i,0);
-    tac_AddMembers(TA_iVec3i,TA_iVec3i_MemberDef);
-    tac_AddMethods(TA_iVec3i,TA_iVec3i_MethodDef);
-  taMisc::types.Add(&TA_const_QSize_ref);
-  taMisc::types.Add(&TA_iVec3i_ref);
-    TA_iVec3i_ref.AddParents(&TA_iVec3i);
-  taMisc::types.Add(&TA_const_iVec3i);
-    TA_const_iVec3i.AddParents(&TA_const, &TA_iVec3i);
-  taMisc::types.Add(&TA_iSize);
-    TAI_iSize = new iSize;
-    TA_iSize.AddParFormal(&TA_class);
-    tac_AddMembers(TA_iSize,TA_iSize_MemberDef);
-    tac_AddMethods(TA_iSize,TA_iSize_MethodDef);
-  taMisc::types.Add(&TA_const_iVec3i_ref);
-    TA_const_iVec3i_ref.AddParents(&TA_const_iVec3i);
-  taMisc::types.Add(&TA_const_iSize);
-    TA_const_iSize.AddParents(&TA_const, &TA_iSize);
-  taMisc::types.Add(&TA_iSize_ref);
-    TA_iSize_ref.AddParents(&TA_iSize);
-  taMisc::types.Add(&TA_const_iSize_ref);
-    TA_const_iSize_ref.AddParents(&TA_const_iSize);
-  taMisc::types.Add(&TA_const_QRect_ref);
-  taMisc::types.Add(&TA_iRect);
-    TAI_iRect = new iRect;
-    TA_iRect.AddParFormal(&TA_class);
-    tac_AddMembers(TA_iRect,TA_iRect_MemberDef);
-    tac_AddMethods(TA_iRect,TA_iRect_MethodDef);
-  taMisc::types.Add(&TA_iRect_ref);
-    TA_iRect_ref.AddParents(&TA_iRect);
-  taMisc::types.Add(&TA_const_iRect);
-    TA_const_iRect.AddParents(&TA_const, &TA_iRect);
-  taMisc::types.Add(&TA_const_iRect_ref);
-    TA_const_iRect_ref.AddParents(&TA_const_iRect);
-  taMisc::types.Add(&TA_const_SbVec3f_ref);
-  taMisc::types.Add(&TA_iVec3f);
-    TAI_iVec3f = new iVec3f;
-    TA_iVec3f.AddParFormal(&TA_class);
-    tac_AddMembers(TA_iVec3f,TA_iVec3f_MemberDef);
-    tac_AddMethods(TA_iVec3f,TA_iVec3f_MethodDef);
-  taMisc::types.Add(&TA_const_iVec3f);
-    TA_const_iVec3f.AddParents(&TA_const, &TA_iVec3f);
-  taMisc::types.Add(&TA_iVec3f_ref);
-    TA_iVec3f_ref.AddParents(&TA_iVec3f);
-  taMisc::types.Add(&TA_const_iVec3f_ref);
-    TA_const_iVec3f_ref.AddParents(&TA_const_iVec3f);
-  taMisc::types.Add(&TA_iBox3f);
-    TAI_iBox3f = new iBox3f;
-    TA_iBox3f.AddParFormal(&TA_class);
-    tac_AddMembers(TA_iBox3f,TA_iBox3f_MemberDef);
-    tac_AddMethods(TA_iBox3f,TA_iBox3f_MethodDef);
   taMisc::types.Add(&TA_TypeDef_ptr);
     TA_TypeDef_ptr.AddParents(&TA_TypeDef);
-  taMisc::types.Add(&TA_iBox3f_ref);
-    TA_iBox3f_ref.AddParents(&TA_iBox3f);
-  taMisc::types.Add(&TA_const_iBox3f);
-    TA_const_iBox3f.AddParents(&TA_const, &TA_iBox3f);
+  taMisc::types.Add(&TA_const_Script_MGroup);
+    TA_const_Script_MGroup.AddParents(&TA_const, &TA_Script_MGroup);
   taMisc::types.Add(&TA_uint);
     TA_uint.AddParents(&TA_unsigned_int);
-  taMisc::types.Add(&TA_const_iBox3f_ref);
-    TA_const_iBox3f_ref.AddParents(&TA_const_iBox3f);
-  taMisc::types.Add(&TA_QWidget_ptr);
-    TA_QWidget_ptr.AddParents(&TA_QWidget);
-  taMisc::types.Add(&TA_QWidget);
-    TA_QWidget.AddParFormal(&TA_class);
-    TA_QWidget.AddParents(&TA_QObject);
-  taMisc::types.Add(&TA_taBaseAdapter_ptr);
-    TA_taBaseAdapter_ptr.AddParents(&TA_taBaseAdapter);
-  taMisc::types.Add(&TA_taBaseAdapter);
-    TA_taBaseAdapter.AddParFormal(&TA_class);
-    TA_taBaseAdapter.AddParents(&TA_QObject);
-  taMisc::types.Add(&TA_QMimeSource);
-    TA_QMimeSource.AddParFormal(&TA_class);
+  taMisc::types.Add(&TA_const_Script_MGroup_ref);
+    TA_const_Script_MGroup_ref.AddParents(&TA_const_Script_MGroup);
   taMisc::types.Add(&TA_byte);
     TA_byte.AddParents(&TA_unsigned_char);
-  taMisc::types.Add(&TA_QObject);
-    TA_QObject.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QMenuItem_ptr);
-    TA_QMenuItem_ptr.AddParents(&TA_QMenuItem);
-  taMisc::types.Add(&TA_QMenuItem);
-    TA_QMenuItem.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QPopupMenu_ptr);
-    TA_QPopupMenu_ptr.AddParents(&TA_QPopupMenu);
-  taMisc::types.Add(&TA_QPopupMenu);
-    TA_QPopupMenu.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QObject_ptr);
-    TA_QObject_ptr.AddParents(&TA_QObject);
-  taMisc::types.Add(&TA_QEvent_ptr);
-    TA_QEvent_ptr.AddParents(&TA_QEvent);
-  taMisc::types.Add(&TA_QEvent);
-    TA_QEvent.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QScrollView_ptr);
-    TA_QScrollView_ptr.AddParents(&TA_QScrollView);
-  taMisc::types.Add(&TA_QScrollView);
-    TA_QScrollView.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QVBoxLayout_ptr);
-    TA_QVBoxLayout_ptr.AddParents(&TA_QVBoxLayout);
-  taMisc::types.Add(&TA_QVBoxLayout);
-    TA_QVBoxLayout.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QLabel_ptr);
-    TA_QLabel_ptr.AddParents(&TA_QLabel);
-  taMisc::types.Add(&TA_QLabel);
-    TA_QLabel.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QSplitter_ptr);
-    TA_QSplitter_ptr.AddParents(&TA_QSplitter);
-  taMisc::types.Add(&TA_QSplitter);
-    TA_QSplitter.AddParFormal(&TA_class);
-    TA_QSplitter.AddParents(&TA_QWidget);
-  taMisc::types.Add(&TA_QGridLayout_ptr);
-    TA_QGridLayout_ptr.AddParents(&TA_QGridLayout);
-  taMisc::types.Add(&TA_QGridLayout);
-    TA_QGridLayout.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QFrame_ptr);
-    TA_QFrame_ptr.AddParents(&TA_QFrame);
-  taMisc::types.Add(&TA_QFrame);
-    TA_QFrame.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iFlowLayout_ptr);
-    TA_iFlowLayout_ptr.AddParents(&TA_iFlowLayout);
-  taMisc::types.Add(&TA_iFlowLayout);
-    TA_iFlowLayout.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QHBoxLayout_ptr);
-    TA_QHBoxLayout_ptr.AddParents(&TA_QHBoxLayout);
-  taMisc::types.Add(&TA_QHBoxLayout);
-    TA_QHBoxLayout.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iColor_ptr);
-    TA_iColor_ptr.AddParents(&TA_iColor);
-  taMisc::types.Add(&TA_iColor);
-    TA_iColor.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QDialog);
-    TA_QDialog.AddParFormal(&TA_class);
-    TA_QDialog.AddParents(&TA_QWidget);
-  taMisc::types.Add(&TA_iDataViewer_ptr);
-    TA_iDataViewer_ptr.AddParents(&TA_iDataViewer);
-  taMisc::types.Add(&TA_iDataViewer);
-    TA_iDataViewer.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QMenuData_ptr);
-    TA_QMenuData_ptr.AddParents(&TA_QMenuData);
-  taMisc::types.Add(&TA_QMenuData);
-    TA_QMenuData.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QMenuBar_ptr);
-    TA_QMenuBar_ptr.AddParents(&TA_QMenuBar);
-  taMisc::types.Add(&TA_QMenuBar);
-    TA_QMenuBar.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QPtrList_iAction_);
-    TA_QPtrList_iAction_.AddParFormal(&TA_class, &TA_templ_inst);
-  taMisc::types.Add(&TA_cssClass_ptr);
-    TA_cssClass_ptr.AddParents(&TA_cssClass);
-  taMisc::types.Add(&TA_cssClass);
-    TA_cssClass.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_cssiArgDialog_ptr);
-    TA_cssiArgDialog_ptr.AddParents(&TA_cssiArgDialog);
-  taMisc::types.Add(&TA_cssiArgDialog);
-    TA_cssiArgDialog.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QPushButton_ptr);
-    TA_QPushButton_ptr.AddParents(&TA_QPushButton);
-  taMisc::types.Add(&TA_QPushButton);
-    TA_QPushButton.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_cssEl_ptr);
-    TA_cssEl_ptr.AddParents(&TA_cssEl);
-  taMisc::types.Add(&TA_cssEl);
-    TA_cssEl.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iCheckBox_ptr);
-    TA_iCheckBox_ptr.AddParents(&TA_iCheckBox);
-  taMisc::types.Add(&TA_iCheckBox);
-    TA_iCheckBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QLayout_ptr);
-    TA_QLayout_ptr.AddParents(&TA_QLayout);
-  taMisc::types.Add(&TA_QLayout);
-    TA_QLayout.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iLineEdit_ptr);
-    TA_iLineEdit_ptr.AddParents(&TA_iLineEdit);
-  taMisc::types.Add(&TA_iLineEdit);
-    TA_iLineEdit.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iSpinBox_ptr);
-    TA_iSpinBox_ptr.AddParents(&TA_iSpinBox);
-  taMisc::types.Add(&TA_iSpinBox);
-    TA_iSpinBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QCheckBox_ptr);
-    TA_QCheckBox_ptr.AddParents(&TA_QCheckBox);
-  taMisc::types.Add(&TA_QCheckBox);
-    TA_QCheckBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iComboBox_ptr);
-    TA_iComboBox_ptr.AddParents(&TA_iComboBox);
-  taMisc::types.Add(&TA_iComboBox);
-    TA_iComboBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QWidgetStack_ptr);
-    TA_QWidgetStack_ptr.AddParents(&TA_QWidgetStack);
-  taMisc::types.Add(&TA_QWidgetStack);
-    TA_QWidgetStack.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QListBox_ptr);
-    TA_QListBox_ptr.AddParents(&TA_QListBox);
-  taMisc::types.Add(&TA_QListBox);
-    TA_QListBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QLineEdit_ptr);
-    TA_QLineEdit_ptr.AddParents(&TA_QLineEdit);
-  taMisc::types.Add(&TA_QLineEdit);
-    TA_QLineEdit.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iTabView_ptr);
-    TA_iTabView_ptr.AddParents(&TA_iTabView);
-  taMisc::types.Add(&TA_iTabView);
-    TA_iTabView.AddParFormal(&TA_class);
-    TA_iTabView.AddParents(&TA_QWidget);
-  taMisc::types.Add(&TA_QFocusEvent_ptr);
-    TA_QFocusEvent_ptr.AddParents(&TA_QFocusEvent);
-  taMisc::types.Add(&TA_QFocusEvent);
-    TA_QFocusEvent.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QButtonGroup_ptr);
-    TA_QButtonGroup_ptr.AddParents(&TA_QButtonGroup);
-  taMisc::types.Add(&TA_QButtonGroup);
-    TA_QButtonGroup.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QDragObject);
-    TA_QDragObject.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QToolBar);
-    TA_QToolBar.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QPtrList_taiToolBar_);
-    TA_QPtrList_taiToolBar_.AddParFormal(&TA_class, &TA_templ_inst);
-  taMisc::types.Add(&TA_QListViewItem);
-    TA_QListViewItem.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QListViewItem_ptr);
-    TA_QListViewItem_ptr.AddParents(&TA_QListViewItem);
-  taMisc::types.Add(&TA_QString);
-    TA_QString.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QListView_ptr);
-    TA_QListView_ptr.AddParents(&TA_QListView);
-  taMisc::types.Add(&TA_QListView);
-    TA_QListView.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_DynMethod_PtrList);
-    TA_DynMethod_PtrList.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iAction_ptr);
-    TA_iAction_ptr.AddParents(&TA_iAction);
-  taMisc::types.Add(&TA_iAction);
-    TA_iAction.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iTabView_PtrList_ptr);
-    TA_iTabView_PtrList_ptr.AddParents(&TA_iTabView_PtrList);
-  taMisc::types.Add(&TA_iTabView_PtrList);
-    TA_iTabView_PtrList.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_QVBox_ptr);
-    TA_QVBox_ptr.AddParents(&TA_QVBox);
-  taMisc::types.Add(&TA_QVBox);
-    TA_QVBox.AddParFormal(&TA_class);
-  taMisc::types.Add(&TA_iEditGrid_ptr);
-    TA_iEditGrid_ptr.AddParents(&TA_iEditGrid);
-  taMisc::types.Add(&TA_iEditGrid);
-    TA_iEditGrid.AddParFormal(&TA_class);
+  taMisc::types.Add(&TA_taFiler_ptr);
+    TA_taFiler_ptr.AddParents(&TA_taFiler);
 
 
   taMisc::in_init = false;
