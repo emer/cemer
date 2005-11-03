@@ -16,7 +16,7 @@ AC_CONFIG_AUX_DIR([aux])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
-
+AC_DISABLE_SHARED
 AH_BOTTOM([/* Make sure maketa doesn't get gui stuff */
 #include <custom.h>
 ])
