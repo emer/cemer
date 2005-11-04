@@ -52,7 +52,7 @@ extern TypeDef TA_void_ptr;
 #include "ta_type.h"
 
 #ifndef TYPE
-#include "mta_parse.h"
+#include "ta_parse.h"
 #endif
 
 int yyparse(void);

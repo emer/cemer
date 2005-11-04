@@ -17,7 +17,7 @@
 // maketa: Make TypeAccess Data Structures
 
 #include "maketa.h"
-#include "mta_constr.h"
+#include "ta_constr.h"
 #include "ta_platform.h"
 #include <signal.h>
 //nn #include <malloc.h>
