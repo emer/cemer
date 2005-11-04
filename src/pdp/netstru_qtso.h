@@ -1,19 +1,41 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/PDP++
-//
-//   TA/PDP++ is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   TA/PDP++ is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the PDP++ software package.			      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, and modify this software and its documentation    //
+// for any purpose other than distribution-for-profit is hereby granted	      //
+// without fee, provided that the above copyright notice and this permission  //
+// notice appear in all copies of the software and related documentation.     //
+//									      //
+// Permission to distribute the software or modified or extended versions     //
+// thereof on a not-for-profit basis is explicitly granted, under the above   //
+// conditions. 	HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE OR MODIFIED OR  //
+// EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED EXCEPT BY PRIOR      //
+// ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS.                  //
+// 									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
 // netstru_qtso.h -- qt and inventor controls/objects for network structures
 
@@ -127,6 +149,7 @@ public:
   void*		disp_base;	// #IGNORE base pointer used for display
   UnitViewData() {Initialize();}
   UnitViewData(const String&) {Initialize();} // dummy, for array template
+  operator String() {return _nilString;} // dummy convertor for array template
   //NOTE: just use default bitwise copy constructor and copy operator
 private:
   void		Initialize();
@@ -136,22 +159,16 @@ private:
 inline bool operator ==(const UnitViewData& a, const UnitViewData& b)
   {return ((a.disp_base == b.disp_base));}
 
-class UnitViewData_BArray_impl: public taBasicArray<UnitViewData> { // #IGNORE
-#ifndef __MAKETA__
-  typedef taBasicArray<UnitViewData> inherited;
-#endif
+class UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
+INHERITED(taPlainArray<UnitViewData>)
 public:
   UnitViewData&		FastEl(const TwoDCoord& c) {return el[(c.y * m_x) + c.x];}
   void			SetGeom(TwoDCoord& c); // sets geom, and allocs values
-  UnitViewData_BArray_impl() {m_x = 0;}
+  UnitViewData_PArray() {m_x = 0;}
 protected:
   int		m_x; // retained for array lookups
 };
 
-class UnitViewData_BArray: public UnitViewData_BArray_impl { // #IGNORE
-  INHERITED(UnitViewData_BArray_impl)
-  TA_BASIC_ARRAY_FUNS(UnitViewData_BArray, UnitViewData)
-};
 
 //////////////////////////
 //   UnitGroupView	//
@@ -170,7 +187,7 @@ class UnitGroupView: public nvDataView {
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  UnitViewData_BArray	uvd_arr; // #IGNORE
+  UnitViewData_PArray	uvd_arr; // #IGNORE
 
   Unit_Group*		ugrp() const {return (Unit_Group*)m_data;}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE

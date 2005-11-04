@@ -25,7 +25,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-class MyClass {
+class MyClass { // #NO_INSTANCE my class
 public:
   int my_int;
   float my_float;

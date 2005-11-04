@@ -504,30 +504,34 @@ public:
   // 	internal functions that depend on type	//
   ////////////////////////////////////////////////
 
-  virtual void*		SafeEl_(int) const		{ return NULL; }
+  virtual const void*		SafeEl_(int) const;
   // #IGNORE element at posn
-  virtual void*		FastEl_(int) const		{ return NULL; }
+  virtual void*		FastEl_(int) = 0;//		{ return NULL; }
   // #IGNORE element at posn
-  virtual int		El_Compare_(void*, void*) const	{ return 0; }
+// compulsory element accessor and manip functions 
+  virtual const void*	FastEl_(int i) const 
+    {return const_cast<taArray_impl*>(this)->FastEl_(i);}
+  virtual int		El_Compare_(const void*, const void*) const	{ return 0; }
   // #IGNORE for sorting
-  virtual void		El_Copy_(void*, void*)		{ };
+  virtual void		El_Copy_(void*,const void*)		{ };
   // #IGNORE
   virtual uint		El_SizeOf_() const		{ return 1; }
   // #IGNORE size of element
   virtual void*		El_GetTmp_() const		{ return NULL; }
   // #IGNORE return ptr to Tmp of type
-  virtual String	El_GetStr_(void*) const		{ return _nilString; } // #IGNORE
+  virtual const void*	El_GetErr_() const {return NULL;}	 // #IGNORE
+  virtual String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
   virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
   virtual void*		BlankEl_() const		{ return NULL; }
   // address of a blank element, for initializing empty items
   virtual void		Clear_Tmp_();				       // #IGNORE
 
-  virtual void		Add_(void* it);			// #IGNORE
-  virtual bool		AddUnique_(void* it);		// #IGNORE
-  virtual void		Insert_(void* it, int where, int n=1); // #IGNORE
-  virtual int		Find_(void* it, int where=0) const; 	// #IGNORE
-  virtual bool		Remove_(void* it);		// #IGNORE
-  virtual void		InitVals_(void* it, int start=0, int end=-1);// #IGNORE
+  virtual void		Add_(const void* it);			// #IGNORE
+  virtual bool		AddUnique_(const void* it);		// #IGNORE
+  virtual void		Insert_(const void* it, int where, int n=1); // #IGNORE
+  virtual int		Find_(const void* it, int where=0) const; 	// #IGNORE
+  virtual bool		Remove_(const void* it);		// #IGNORE
+  virtual void		InitVals_(const void* it, int start=0, int end=-1);// #IGNORE
 
   ////////////////////////////////////////////////
   // functions that don't depend on the type	//
@@ -862,15 +866,15 @@ public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
 
-  void*		SafeEl_(int i) const		{ return &(SafeEl(i)); } // #IGNORE
-  void*		FastEl_(int i)	const		{ return &(FastEl(i)); } // #IGNORE
-  int		El_Compare_(void* a, void* b) const
+  void*		FastEl_(int i)		{ return &(el[i]); } // #IGNORE
+  int		El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
   // #IGNORE
-  void		El_Copy_(void* to, void* fm)	{ *((T*)to) = *((T*)fm); } // #IGNORE
+  void		El_Copy_(void* to, const void* fm)	{ *((T*)to) = *((T*)fm); } // #IGNORE
   uint		El_SizeOf_() const		{ return sizeof(T); }	 // #IGNORE
-  void*		El_GetTmp_() const		{ return (void*)&err; }	 // #IGNORE
-  String	El_GetStr_(void* it) const	{ return String(*((T*)it)); } // #IGNORE
+  void*		El_GetTmp_() const		{ return (void*)&tmp; }	 // #IGNORE
+  const void*	El_GetErr_() const		{ return (void*)&err; }	 // #IGNORE
+  String	El_GetStr_(const void* it) const	{ return String(*((T*)it)); } // #IGNORE
   void		El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)val; } // #IGNORE
 
   taPlainArray(int init_alloc)			{el = NULL; Alloc(init_alloc); }
@@ -885,7 +889,9 @@ public:
   T&		SafeEl(int i) const
   { T* rval=(T*)&err; if((i >= 0) && (i < size)) rval=&(el[i]); return *rval; }
   // the element at the given index
-  T&		FastEl(int i) const		{ return el[i]; }
+  T&		FastEl(int i)		{ return el[i]; }
+  // fast element (no range checking)
+  const T&	FastEl(int i) const	{ return el[i]; }
   // fast element (no range checking)
   T&		RevEl(int idx) const		{ return SafeEl(size - idx - 1); }
   // reverse (index) element (ie. get from the back of the list first)
@@ -921,6 +927,7 @@ public:
   virtual bool	RemoveEl(const T& item)		{ return Remove(item); }
   // remove given item, returns success
 protected:
+  T		tmp;
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
 };

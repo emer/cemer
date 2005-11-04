@@ -994,7 +994,6 @@ const void* taFixedArray_impl::SafeEl_(int i) const {
 }
 
 
-
 //////////////////////////
 //  taArray_impl	//
 //////////////////////////
@@ -1005,13 +1004,13 @@ void taArray_impl::Clear_Tmp_() {
   El_SetFmStr_(El_GetTmp_(), val);
 }
 
-void taArray_impl::Add_(void* it) {
+void taArray_impl::Add_(const void* it) {
   if (size >= alloc_size)
     Alloc(size+1);
   El_Copy_(FastEl_(size++), it);
 }
 
-bool taArray_impl::AddUnique_(void* it) {
+bool taArray_impl::AddUnique_(const void* it) {
   if(Find_(it) >= 0)
     return false;
   Add_(it);
@@ -1045,7 +1044,7 @@ void taArray_impl::EnforceSize(int sz) {
     size = sz;			// that's easy!
 }
 
-int taArray_impl::Find_(void* it, int where) const {
+int taArray_impl::Find_(const void* it, int where) const {
   int i;
   for(i=where; i<size; i++) {
     if(El_Compare_(it, FastEl_(i)) == 0)
@@ -1054,7 +1053,7 @@ int taArray_impl::Find_(void* it, int where) const {
   return -1;
 }
 
-void taArray_impl::InitVals_(void* it, int start, int end) {
+void taArray_impl::InitVals_(const void* it, int start, int end) {
   if(end == -1)	end = size;  else end = MIN(size, end);
   int i;
   for(i=start;i<end;i++) {
@@ -1062,7 +1061,7 @@ void taArray_impl::InitVals_(void* it, int start, int end) {
   }
 }
 
-void taArray_impl::Insert_(void* it, int where, int n) {
+void taArray_impl::Insert_(const void* it, int where, int n) {
   if((where > size) || (n == 0)) return;
   if ((size + n) > alloc_size)
     Alloc(size + n);	// pre-add stuff
@@ -1109,7 +1108,7 @@ void taArray_impl::Permute() {
   }
 }
 
-bool taArray_impl::Remove_(void* it) {
+bool taArray_impl::Remove_(const void* it) {
   int i;
   if((i = Find_(it)) < 0)
     return false;
@@ -1124,6 +1123,11 @@ bool taArray_impl::Remove(uint i, int n) {
     El_Copy_(FastEl_(j), FastEl_(j+n));
   size-=n;
   return true;
+}
+
+const void* taArray_impl::SafeEl_(int i) const {
+  if (InRange(i)) return ((taArray_impl*)this)->FastEl_(i); //safe const cast
+  else            return El_GetErr_();
 }
 
 void taArray_impl::Sort(bool descending) {
@@ -1260,7 +1264,7 @@ void taArray_impl::InitFromString(const char* val) {
     if (el_val.contains(' '))
       el_val = el_val.after(' ');
     Add_(El_GetTmp_());		// add a blank
-    El_SetFmStr_(SafeEl_(size-1), String(el_val));
+    El_SetFmStr_(FastEl_(size-1), String(el_val));
   }
 }
 
