@@ -57,7 +57,7 @@ lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I$(srcdir)/../ta \
-	-I../src/taiqtso \
+	-I../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
 bin_PROGRAMS = css@PDP_SUFFIX@++
