@@ -3,7 +3,7 @@
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
-DIST_SUBDIRS =src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
+DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
 SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp
 
 EXTRA_DIST = src/ta/ios-g++-3.1

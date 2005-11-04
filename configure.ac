@@ -11,15 +11,10 @@ AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
 # in /aux/ so they don't clutter up the root
 AC_CONFIG_AUX_DIR([aux])
-
+AC_CONFIG_SUBDIRS([src/maketa])
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror])
-
-AC_DISABLE_SHARED
-AH_BOTTOM([/* Make sure maketa doesn't get gui stuff */
-#include <custom.h>
-])
 
 # Custom: check results of config.status for OS type
 PDP_DETERMINE_OSTYPE
@@ -139,16 +134,16 @@ if test $gui = true; then
   AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[AC_MSG_WARN([--enable-gui set but unable to find libjpeg.])])
   AC_HAVE_LIBRARY([SoQt], [LIBS="$LIBS -lSoQt"],[AC_MSG_WARN([--enable-gui set but unable to find libSoQt.])])
   AC_DEFINE([TA_GUI],
-            [1],
+            [],
             [Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],
-            [1],
+            [],
             [This switch is set when linking with Qt. NOTE: THIS FLAG DOES NOT INDICATE GUI -- ex. ta is compiled with the QtCore library, even for the non-gui version of the program])
   AC_DEFINE([TA_USE_INVENTOR],
-            [1],
+            [],
             [This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
   AC_DEFINE([QT_SHARED],
-            [1],
+            [],
             [Note from Brian: This switch is here, i'm not quite sure why. Used in qglobal.h.])
   # Tells top-level makefile.am to recurse through src/taiqtso
   AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
@@ -158,7 +153,7 @@ if test $gui = true; then
   AC_SUBST([QT_GUILINK])
   AC_SUBST([X_CFLAGS])
 else
-  AC_DEFINE([TA_NO_GUI],[1],[Set when building nogui])
+  AC_DEFINE([TA_NO_GUI],[],[Set when building nogui])
 fi
 #                                                  mpi enabled
 #*************************************************************
@@ -176,7 +171,7 @@ AM_CONDITIONAL([MPI],[test $mpi = true])
 if test $mpi = true; then
   ACX_MPI([],[AC_MSG_ERROR([unable to locate the Message Passing Interface])])
   ACX_PTHREAD([],[AC_MSG_ERROR([unable to locate pthread])])
-  AC_DEFINE([DMEM_COMPILE],[1],[Causes mpi.h to be included])
+  AC_DEFINE([DMEM_COMPILE],[],[Causes mpi.h to be included])
   if test $MPICXX != x; then
     CXX="$MPICXX"
   fi
@@ -196,9 +191,9 @@ AC_ARG_ENABLE([debug],
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 
 if $debug = true; then
-  AC_DEFINE([YYDEBUG],[1],[Used when debugging])
-  AC_DEFINE([DEBUG],[1],[Used when debugging])
-  AC_DEFINE([TA_PROFILE],[1],[Used when debugging])
+  AC_DEFINE([YYDEBUG],[],[Used when debugging])
+  AC_DEFINE([DEBUG],[],[Used when debugging])
+  AC_DEFINE([TA_PROFILE],[],[Used when debugging])
   AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
 fi
 
