@@ -128,6 +128,7 @@ SRCS =\
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
+include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)

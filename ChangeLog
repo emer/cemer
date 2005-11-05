@@ -1,3 +1,1039 @@
+2005-11-04 23:39  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/configure.ac: isolating
+	  maketa
+
+2005-11-04 23:33  mingus
+
+	* pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/maketa/configure.ac,
+	  pdp4.0/trunk/src/maketa/maketa.cpp,
+	  pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/maketa/mta_constr.cpp,
+	  pdp4.0/trunk/src/maketa/ta_base.h,
+	  pdp4.0/trunk/src/maketa/ta_constr.h,
+	  pdp4.0/trunk/src/maketa/ta_def.h,
+	  pdp4.0/trunk/src/maketa/ta_dump.h,
+	  pdp4.0/trunk/src/maketa/ta_filer.h,
+	  pdp4.0/trunk/src/maketa/ta_group.h,
+	  pdp4.0/trunk/src/maketa/ta_list.cpp,
+	  pdp4.0/trunk/src/maketa/ta_list.h,
+	  pdp4.0/trunk/src/maketa/ta_matrix.h,
+	  pdp4.0/trunk/src/maketa/ta_parse.h,
+	  pdp4.0/trunk/src/maketa/ta_platform.cpp,
+	  pdp4.0/trunk/src/maketa/ta_platform.h,
+	  pdp4.0/trunk/src/maketa/ta_platform_unix.cpp,
+	  pdp4.0/trunk/src/maketa/ta_script.h,
+	  pdp4.0/trunk/src/maketa/ta_stdef.h,
+	  pdp4.0/trunk/src/maketa/ta_string.cpp,
+	  pdp4.0/trunk/src/maketa/ta_string.h,
+	  pdp4.0/trunk/src/maketa/ta_ti.cpp,
+	  pdp4.0/trunk/src/maketa/ta_type.cpp,
+	  pdp4.0/trunk/src/maketa/ta_type.h,
+	  pdp4.0/trunk/src/maketa/taglobal.h: isolating maketa
+
+2005-11-04 22:52  baisa
+
+	* pdp4.0/trunk/src/maketa/maketa_ti.cpp,
+	  pdp4.0/trunk/src/maketa/test_maketa.h,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/pdp/pdp_ti.cpp,
+	  pdp4.0/trunk/src/ta/ta_list.cpp, pdp4.0/trunk/src/ta/ta_list.h:
+	  array changes
+
+2005-11-03 23:08  mingus
+
+	* pdp4.0/trunk/configure.ac: 
+
+2005-10-29 00:15  mingus
+
+	* pdp4.0/trunk/src/ta/ta_TA.cpp: 
+
+2005-10-29 00:14  mingus
+
+	* pdp4.0/trunk/configure.ac, pdp4.0/trunk/pdp-4.0.spec,
+	  pdp4.0/trunk/src/ta/ta_TA.cpp: spec for an rpm file. can't
+	  finish this until gui building is fixed
+
+2005-10-28 23:26  mingus
+
+	* pdp4.0/trunk/src/pdp/sched_proc.cpp: In --disable-gui
+	  --enable-mpi mode, src/pdp/sched_proc.cpp:644 had an #ifdef
+	  DMEM_COMPILE that relied on cssiSession which is declared in
+	  css_qt.h which itself is only included #ifdef TA_GUI. This fix
+	  wraps it in an #ifdef TA_GUI conditional.
+
+2005-10-28 22:59  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/Maketa.am,
+	  pdp4.0/trunk/Moc.am, pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am: New rules for maketa do not
+	  result in a race condition when doing a parallel build.
+
+2005-10-28 02:22  mingus
+
+	* pdp4.0/trunk/src/taiqtso/irenderarea.h,
+	  pdp4.0/trunk/src/taiqtso/safeptr_so.h: had to also #include
+	  config.h in these files because they check for the definition of
+	  TA_USE_INVENTOR /before/ they include taiqtso_def.h, which was
+	  their only access to taglobal.h, which includes config.h and
+	  holds the definition of TA_USE_INVENTOR
+
+2005-10-28 02:19  mingus
+
+	* pdp4.0/trunk/src/ta/taglobal.h: was even able to remove
+	  -DHAVE_CONFIG_H from command line
+
+2005-10-28 02:14  mingus
+
+	* pdp4.0/trunk/src/css/Makefile.am: 
+
+2005-10-28 02:07  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am:
+
+2005-10-28 02:06  mingus
+
+	* pdp4.0/trunk/Maketa.am: 
+
+2005-10-28 02:05  mingus
+
+	* pdp4.0/trunk/Makefile.am: 
+	* pdp4.0/trunk/custom.h: 
+	* pdp4.0/trunk/configure.ac: 
+	* pdp4.0/trunk/acsite.m4: more define elimination coming
+
+2005-10-27 16:23  mingus
+
+	* pdp4.0/trunk/src/ta/taglobal.h: README: config.h is generated
+	  dynamically, so to use this version of taglobal with the old
+	  makefiles you need to run autoreconf and configure. configure
+	  will run config.status which will generate config.h. then the
+	  old makefiles will work. make sure you configure for e.g.,
+	  mpi/debug/nogui etc..
+
+2005-10-27 16:20  mingus
+
+	* pdp4.0/trunk/src/ta/ta_matrix.h: including <assert.h> lets us
+	  build on gcc 3.x
+
+2005-10-27 16:18  mingus
+
+	* pdp4.0/trunk/src/maketa/Makefile.am: 
+
+2005-10-27 16:17  mingus
+
+	* pdp4.0/trunk/acsite.m4: 
+
+2005-10-27 16:16  mingus
+
+	* pdp4.0/trunk/custom.h: 
+	* pdp4.0/trunk/configure.ac: next few commits related to removing
+	  command-line defines
+
+2005-10-27 15:53  mingus
+
+	* pdp4.0/trunk/src/ta/ta_type.cpp: erronous space
+
+2005-10-13 21:10  baisa
+
+	* pdp4.0/trunk/src/ta/ta_TA.cpp, pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.h, pdp4.0/trunk/src/ta/ta_list.cpp,
+	  pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h, pdp4.0/trunk/src/ta/ta_ti.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h:
+	  working array changes working maketa
+
+2005-10-12 17:11  baisa
+
+	* pdp4.0/trunk/src/ta/Makefile.am: changes for class browsing
+
+2005-10-12 17:08  baisa
+
+	* pdp4.0/trunk/src/ta/ta_TA.cpp,
+	  pdp4.0/trunk/src/ta/ta_classbrowse.cpp,
+	  pdp4.0/trunk/src/ta/ta_classbrowse.h,
+	  pdp4.0/trunk/src/ta/ta_list.cpp, pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.h,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h:
+	  changes for class browsing
+
+2005-10-08 22:14  mingus
+
+	* pdp4.0/trunk/configure.ac: minor
+
+2005-10-08 22:07  mingus
+
+	* pdp4.0/trunk/src/maketa/updatesrcs.cmd: this one actually
+	  works..=)
+
+2005-10-08 20:14  mingus
+
+	* pdp4.0/trunk/src/ta/ta_platform_win.cpp: changing include
+	  directive to relative
+
+2005-10-05 23:22  mingus
+
+	* pdp4.0/trunk/src/bp/bp.vcproj, pdp4.0/trunk/src/css/css.vcproj,
+	  pdp4.0/trunk/src/maketa/maketa.vcproj,
+	  pdp4.0/trunk/src/pdp++.sln, pdp4.0/trunk/src/pdp++.suo,
+	  pdp4.0/trunk/src/ta/ta.vcproj,
+	  pdp4.0/trunk/src/taiqtso/taiqtso.vcproj: removing old visual c++
+	  project files
+
+2005-10-03 19:17  mingus
+
+	* pdp4.0/trunk/configure.ac: misc changes
+
+2005-10-03 19:15  mingus
+
+	* pdp4.0/trunk/src/bp/bp_TA.cpp, pdp4.0/trunk/src/bp/bp_TA_inst.h,
+	  pdp4.0/trunk/src/bp/bp_TA_type.h,
+	  pdp4.0/trunk/src/leabra/leabra_TA.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_TA_inst.h,
+	  pdp4.0/trunk/src/leabra/leabra_TA_type.h,
+	  pdp4.0/trunk/src/maketa/maketa_TA_inst.h,
+	  pdp4.0/trunk/src/maketa/maketa_TA_type.h,
+	  pdp4.0/trunk/src/maketa/test_TA.cpp,
+	  pdp4.0/trunk/src/maketa/test_TA_inst.h,
+	  pdp4.0/trunk/src/maketa/test_TA_type.h,
+	  pdp4.0/trunk/src/pdp/pdp_TA.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_TA_inst.h,
+	  pdp4.0/trunk/src/pdp/pdp_TA_type.h,
+	  pdp4.0/trunk/src/ta/ta_TA_inst.h,
+	  pdp4.0/trunk/src/ta/ta_TA_type.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_inst.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_type.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h: removing TA files
+
+2005-10-01 04:21  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/configure.ac: 
+
+2005-10-01 04:20  mingus
+
+	* pdp4.0/trunk/aux, pdp4.0/trunk/aux/config.guess,
+	  pdp4.0/trunk/aux/config.sub, pdp4.0/trunk/aux/depcomp,
+	  pdp4.0/trunk/aux/install-sh, pdp4.0/trunk/aux/ltmain.sh,
+	  pdp4.0/trunk/aux/missing: finished move
+
+2005-10-01 04:19  mingus
+
+	* pdp4.0/trunk/config.guess, pdp4.0/trunk/config.sub,
+	  pdp4.0/trunk/depcomp, pdp4.0/trunk/install-sh,
+	  pdp4.0/trunk/ltmain.sh, pdp4.0/trunk/missing: moving these into
+	  /aux/
+
+2005-10-01 03:54  mingus
+
+	* pdp4.0/trunk/src/pdp/pdpshell.cpp,
+	  pdp4.0/trunk/src/pdp/sched_proc.cpp: minor changes. looks like
+	  these were overlooked
+
+2005-10-01 03:48  mingus
+
+	* pdp4.0/trunk/acsite.m4, pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/src/pdp/Makefile.am:
+
+2005-10-01 02:22  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am:
+	* pdp4.0/trunk/acsite.m4, pdp4.0/trunk/configure.ac: 
+
+2005-09-29 22:08  mingus
+
+	* pdp4.0/trunk/acsite.m4: ACX_PTHREAD
+
+2005-09-29 19:28  baisa
+
+	* pdp4.0/trunk/src/bp/bp_TA.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_TA.cpp,
+	  pdp4.0/trunk/src/maketa/maketa_ti.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_TA.cpp, pdp4.0/trunk/src/ta/ta_TA.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.h, pdp4.0/trunk/src/ta/ta_list.cpp,
+	  pdp4.0/trunk/src/ta/ta_list.h, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/taglobal.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
+	  pdp4.0/trunk/src/test/test_TA.cpp,
+	  pdp4.0/trunk/src/test/test_TA_type.h: misc changes
+
+2005-09-28 23:01  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am: cleanup
+
+2005-09-28 22:46  mingus
+
+	* pdp4.0/trunk/src/css/css_parse.y,
+	  pdp4.0/trunk/src/maketa/mta_parse.y,
+	  pdp4.0/trunk/src/pdp/enviro_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp: misc copyright
+
+2005-09-28 22:34  mingus
+
+	* pdp4.0/trunk/src/tamisc/aggregate.cpp,
+	  pdp4.0/trunk/src/tamisc/aggregate.h,
+	  pdp4.0/trunk/src/tamisc/axis.cpp,
+	  pdp4.0/trunk/src/tamisc/axis.h,
+	  pdp4.0/trunk/src/tamisc/colorbar_qt.cpp,
+	  pdp4.0/trunk/src/tamisc/colorbar_qt.h,
+	  pdp4.0/trunk/src/tamisc/colorbar_so.cpp,
+	  pdp4.0/trunk/src/tamisc/colorbar_so.h,
+	  pdp4.0/trunk/src/tamisc/colorscale.cpp,
+	  pdp4.0/trunk/src/tamisc/colorscale.h,
+	  pdp4.0/trunk/src/tamisc/datagraph.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph.h,
+	  pdp4.0/trunk/src/tamisc/datagraph_qtso.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph_qtso.h,
+	  pdp4.0/trunk/src/tamisc/datagraph_so.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph_so.h,
+	  pdp4.0/trunk/src/tamisc/datatable.cpp,
+	  pdp4.0/trunk/src/tamisc/datatable.h,
+	  pdp4.0/trunk/src/tamisc/datatable_qtso.cpp,
+	  pdp4.0/trunk/src/tamisc/datatable_qtso.h,
+	  pdp4.0/trunk/src/tamisc/fontspec.cpp,
+	  pdp4.0/trunk/src/tamisc/fontspec.h,
+	  pdp4.0/trunk/src/tamisc/fun_lookup.cpp,
+	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
+	  pdp4.0/trunk/src/tamisc/graphic.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic.h,
+	  pdp4.0/trunk/src/tamisc/graphic_objs.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_objs.h,
+	  pdp4.0/trunk/src/tamisc/graphic_text.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_text.h,
+	  pdp4.0/trunk/src/tamisc/graphic_viewer.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_viewer.h,
+	  pdp4.0/trunk/src/tamisc/minmax.cpp,
+	  pdp4.0/trunk/src/tamisc/minmax.h,
+	  pdp4.0/trunk/src/tamisc/t3node_so.cpp,
+	  pdp4.0/trunk/src/tamisc/t3node_so.h,
+	  pdp4.0/trunk/src/tamisc/t3viewer.cpp,
+	  pdp4.0/trunk/src/tamisc/t3viewer.h,
+	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
+	  pdp4.0/trunk/src/tamisc/ta_data.h,
+	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_maketa_defs.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_stdef.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_test.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
+	  pdp4.0/trunk/src/tamisc/tarandom.cpp,
+	  pdp4.0/trunk/src/tamisc/tarandom.h,
+	  pdp4.0/trunk/src/tamisc/tdgeometry.cpp,
+	  pdp4.0/trunk/src/tamisc/tdgeometry.h,
+	  pdp4.0/trunk/src/tamisc/xform.cpp,
+	  pdp4.0/trunk/src/tamisc/xform.h: LGPL - not sure why some files
+	  end up with the copyright change and others don't.
+
+2005-09-28 22:25  mingus
+
+	* pdp4.0/trunk/src/taiqtso/icheckbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/icheckbox.h,
+	  pdp4.0/trunk/src/taiqtso/ichooserdialog.cpp,
+	  pdp4.0/trunk/src/taiqtso/ichooserdialog.h,
+	  pdp4.0/trunk/src/taiqtso/icombobox.cpp,
+	  pdp4.0/trunk/src/taiqtso/icombobox.h,
+	  pdp4.0/trunk/src/taiqtso/ieditgrid.cpp,
+	  pdp4.0/trunk/src/taiqtso/ieditgrid.h,
+	  pdp4.0/trunk/src/taiqtso/iflowbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/iflowbox.h,
+	  pdp4.0/trunk/src/taiqtso/iflowlayout.cpp,
+	  pdp4.0/trunk/src/taiqtso/iflowlayout.h,
+	  pdp4.0/trunk/src/taiqtso/igeometry.cpp,
+	  pdp4.0/trunk/src/taiqtso/igeometry.h,
+	  pdp4.0/trunk/src/taiqtso/igroup_so.h,
+	  pdp4.0/trunk/src/taiqtso/ihilightbutton.cpp,
+	  pdp4.0/trunk/src/taiqtso/ihilightbutton.h,
+	  pdp4.0/trunk/src/taiqtso/ilineedit.cpp,
+	  pdp4.0/trunk/src/taiqtso/ilineedit.h,
+	  pdp4.0/trunk/src/taiqtso/imisc_so.cpp,
+	  pdp4.0/trunk/src/taiqtso/imisc_so.h,
+	  pdp4.0/trunk/src/taiqtso/irenderarea.cpp,
+	  pdp4.0/trunk/src/taiqtso/irenderarea.h,
+	  pdp4.0/trunk/src/taiqtso/ispinbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/ispinbox.h,
+	  pdp4.0/trunk/src/taiqtso/itransformer.cpp,
+	  pdp4.0/trunk/src/taiqtso/itransformer.h,
+	  pdp4.0/trunk/src/taiqtso/itreeview.cpp,
+	  pdp4.0/trunk/src/taiqtso/itreeview.h,
+	  pdp4.0/trunk/src/taiqtso/ivcrbuttons.cpp,
+	  pdp4.0/trunk/src/taiqtso/ivcrbuttons.h,
+	  pdp4.0/trunk/src/taiqtso/iwidgetlist.cpp,
+	  pdp4.0/trunk/src/taiqtso/iwidgetlist.h,
+	  pdp4.0/trunk/src/taiqtso/safeptr_so.cpp,
+	  pdp4.0/trunk/src/taiqtso/safeptr_so.h,
+	  pdp4.0/trunk/src/taiqtso/stdafx.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtdefs.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso.cpp,
+	  pdp4.0/trunk/src/taiqtso/taiqtso.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA.cpp,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_inst.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_type.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_def.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_ti.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowbox.h,
+	  pdp4.0/trunk/src/taiqtso/test_iflowlayout.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowlayout.h,
+	  pdp4.0/trunk/src/taiqtso/test_ispinbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_ispinbox.h,
+	  pdp4.0/trunk/src/taiqtso/test_itreeview.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_itreeview.h,
+	  pdp4.0/trunk/src/taiqtso/test_main.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_mainwindow.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_mainwindow.h,
+	  pdp4.0/trunk/src/taiqtso/test_simplewidgets.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_simplewidgets.h,
+	  pdp4.0/trunk/src/taiqtso/vcrbitmaps.h: LGPL
+
+2005-09-28 22:12  mingus
+
+	* pdp4.0/trunk/src/ta/icolor.cpp, pdp4.0/trunk/src/ta/icolor.h,
+	  pdp4.0/trunk/src/ta/ifont.cpp, pdp4.0/trunk/src/ta/ifont.h,
+	  pdp4.0/trunk/src/ta/platform.h, pdp4.0/trunk/src/ta/qtdefs.h,
+	  pdp4.0/trunk/src/ta/stdafx.h, pdp4.0/trunk/src/ta/ta.cpp,
+	  pdp4.0/trunk/src/ta/ta.h, pdp4.0/trunk/src/ta/ta_TA.cpp,
+	  pdp4.0/trunk/src/ta/ta_TA.msvc.cpp,
+	  pdp4.0/trunk/src/ta/ta_TA_inst.h,
+	  pdp4.0/trunk/src/ta/ta_TA_type.h,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_def.h,
+	  pdp4.0/trunk/src/ta/ta_defaults.cpp,
+	  pdp4.0/trunk/src/ta/ta_defaults.h,
+	  pdp4.0/trunk/src/ta/ta_dump.cpp, pdp4.0/trunk/src/ta/ta_dump.h,
+	  pdp4.0/trunk/src/ta/ta_filer.cpp,
+	  pdp4.0/trunk/src/ta/ta_filer.h,
+	  pdp4.0/trunk/src/ta/ta_group.cpp,
+	  pdp4.0/trunk/src/ta/ta_group.h, pdp4.0/trunk/src/ta/ta_list.cpp,
+	  pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_maketa_defs.h,
+	  pdp4.0/trunk/src/ta/ta_math.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h,
+	  pdp4.0/trunk/src/ta/ta_platform.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform.h,
+	  pdp4.0/trunk/src/ta/ta_platform_cygwin.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform_unix.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform_win.cpp,
+	  pdp4.0/trunk/src/ta/ta_qt.cpp, pdp4.0/trunk/src/ta/ta_qt.h,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.h,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtcursors.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.h,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.h,
+	  pdp4.0/trunk/src/ta/ta_qttype_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_script.cpp,
+	  pdp4.0/trunk/src/ta/ta_script.h,
+	  pdp4.0/trunk/src/ta/ta_seledit.cpp,
+	  pdp4.0/trunk/src/ta/ta_seledit.h,
+	  pdp4.0/trunk/src/ta/ta_stdef.h,
+	  pdp4.0/trunk/src/ta/ta_string.cpp,
+	  pdp4.0/trunk/src/ta/ta_string.h, pdp4.0/trunk/src/ta/ta_ti.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/ta_type_constr.cpp,
+	  pdp4.0/trunk/src/ta/ta_type_constr.h,
+	  pdp4.0/trunk/src/ta/ta_type_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_uifiler_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_uifiler_qt.h,
+	  pdp4.0/trunk/src/ta/taglobal.h: LGPL
+
+2005-09-28 22:10  mingus
+
+	* pdp4.0/trunk/src/maketa/maketa.cpp,
+	  pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/maketa/maketa_TA.cpp,
+	  pdp4.0/trunk/src/maketa/maketa_TA_inst.h,
+	  pdp4.0/trunk/src/maketa/maketa_TA_type.h,
+	  pdp4.0/trunk/src/maketa/maketa_ti.cpp,
+	  pdp4.0/trunk/src/maketa/mta_constr.cpp,
+	  pdp4.0/trunk/src/maketa/mta_constr.h,
+	  pdp4.0/trunk/src/maketa/mta_lex.cpp,
+	  pdp4.0/trunk/src/maketa/mta_parse.cpp,
+	  pdp4.0/trunk/src/maketa/mta_parse.h,
+	  pdp4.0/trunk/src/maketa/mta_parse.y,
+	  pdp4.0/trunk/src/maketa/stdafx.h,
+	  pdp4.0/trunk/src/maketa/test_TA.cpp,
+	  pdp4.0/trunk/src/maketa/test_TA_inst.h,
+	  pdp4.0/trunk/src/maketa/test_TA_type.h,
+	  pdp4.0/trunk/src/maketa/test_maketa.h: LGPL
+
+2005-09-28 22:08  mingus
+
+	* pdp4.0/trunk/src/css/css_basic_types.cpp,
+	  pdp4.0/trunk/src/css/css_basic_types.h,
+	  pdp4.0/trunk/src/css/css_builtin.cpp,
+	  pdp4.0/trunk/src/css/css_builtin.h,
+	  pdp4.0/trunk/src/css/css_c_ptr_types.cpp,
+	  pdp4.0/trunk/src/css/css_c_ptr_types.h,
+	  pdp4.0/trunk/src/css/css_extern_support.h,
+	  pdp4.0/trunk/src/css/css_lex.cpp,
+	  pdp4.0/trunk/src/css/css_machine.cpp,
+	  pdp4.0/trunk/src/css/css_machine.h,
+	  pdp4.0/trunk/src/css/css_misc_funs.cpp,
+	  pdp4.0/trunk/src/css/css_misc_funs.h,
+	  pdp4.0/trunk/src/css/css_parse.cpp,
+	  pdp4.0/trunk/src/css/css_parse.h,
+	  pdp4.0/trunk/src/css/css_parse.y,
+	  pdp4.0/trunk/src/css/css_qt.cpp, pdp4.0/trunk/src/css/css_qt.h,
+	  pdp4.0/trunk/src/css/css_qtdata.cpp,
+	  pdp4.0/trunk/src/css/css_qtdata.h,
+	  pdp4.0/trunk/src/css/css_qtdialog.cpp,
+	  pdp4.0/trunk/src/css/css_qtdialog.h,
+	  pdp4.0/trunk/src/css/css_qttype.cpp,
+	  pdp4.0/trunk/src/css/css_qttype.h,
+	  pdp4.0/trunk/src/css/css_special_math.cpp,
+	  pdp4.0/trunk/src/css/css_special_math.h,
+	  pdp4.0/trunk/src/css/css_ti.cpp,
+	  pdp4.0/trunk/src/css/hard_of_css.h,
+	  pdp4.0/trunk/src/css/main.cpp,
+	  pdp4.0/trunk/src/css/readline_win.cpp,
+	  pdp4.0/trunk/src/css/special_math.old.c,
+	  pdp4.0/trunk/src/css/ta_css.cpp, pdp4.0/trunk/src/css/ta_css.h,
+	  pdp4.0/trunk/src/css/xmemory.cpp: LGPL
+
+2005-09-28 21:57  mingus
+
+	* pdp4.0/trunk/COPYING.LIB: lgpl
+
+2005-09-28 21:52  mingus
+
+	* pdp4.0/trunk/COPYING: COPYING contains the GPL, while
+	  COPYING.LIB contains the LGPL. This followes the GNU coding
+	  standards. See: http://www.gnu.org/prep/standards/standards.html
+
+2005-09-28 21:42  mingus
+
+	* pdp4.0/trunk/src/tamisc/aggregate.cpp,
+	  pdp4.0/trunk/src/tamisc/aggregate.h,
+	  pdp4.0/trunk/src/tamisc/axis.cpp,
+	  pdp4.0/trunk/src/tamisc/axis.h,
+	  pdp4.0/trunk/src/tamisc/colorbar_qt.cpp,
+	  pdp4.0/trunk/src/tamisc/colorbar_qt.h,
+	  pdp4.0/trunk/src/tamisc/colorbar_so.cpp,
+	  pdp4.0/trunk/src/tamisc/colorbar_so.h,
+	  pdp4.0/trunk/src/tamisc/colorscale.cpp,
+	  pdp4.0/trunk/src/tamisc/colorscale.h,
+	  pdp4.0/trunk/src/tamisc/datagraph.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph.h,
+	  pdp4.0/trunk/src/tamisc/datagraph_qtso.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph_qtso.h,
+	  pdp4.0/trunk/src/tamisc/datagraph_so.cpp,
+	  pdp4.0/trunk/src/tamisc/datagraph_so.h,
+	  pdp4.0/trunk/src/tamisc/datatable.cpp,
+	  pdp4.0/trunk/src/tamisc/datatable.h,
+	  pdp4.0/trunk/src/tamisc/datatable_qtso.cpp,
+	  pdp4.0/trunk/src/tamisc/datatable_qtso.h,
+	  pdp4.0/trunk/src/tamisc/fontspec.cpp,
+	  pdp4.0/trunk/src/tamisc/fontspec.h,
+	  pdp4.0/trunk/src/tamisc/fun_lookup.cpp,
+	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
+	  pdp4.0/trunk/src/tamisc/graphic.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic.h,
+	  pdp4.0/trunk/src/tamisc/graphic_objs.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_objs.h,
+	  pdp4.0/trunk/src/tamisc/graphic_text.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_text.h,
+	  pdp4.0/trunk/src/tamisc/graphic_viewer.cpp,
+	  pdp4.0/trunk/src/tamisc/graphic_viewer.h,
+	  pdp4.0/trunk/src/tamisc/minmax.cpp,
+	  pdp4.0/trunk/src/tamisc/minmax.h,
+	  pdp4.0/trunk/src/tamisc/t3node_so.cpp,
+	  pdp4.0/trunk/src/tamisc/t3node_so.h,
+	  pdp4.0/trunk/src/tamisc/t3viewer.cpp,
+	  pdp4.0/trunk/src/tamisc/t3viewer.h,
+	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
+	  pdp4.0/trunk/src/tamisc/ta_data.h,
+	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_maketa_defs.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_stdef.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_test.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
+	  pdp4.0/trunk/src/tamisc/tarandom.cpp,
+	  pdp4.0/trunk/src/tamisc/tarandom.h,
+	  pdp4.0/trunk/src/tamisc/tdgeometry.cpp,
+	  pdp4.0/trunk/src/tamisc/tdgeometry.h,
+	  pdp4.0/trunk/src/tamisc/xform.cpp,
+	  pdp4.0/trunk/src/tamisc/xform.h: tamisc copyright update LGPL
+
+2005-09-28 21:41  mingus
+
+	* pdp4.0/trunk/src/taiqtso/icheckbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/icheckbox.h,
+	  pdp4.0/trunk/src/taiqtso/ichooserdialog.cpp,
+	  pdp4.0/trunk/src/taiqtso/ichooserdialog.h,
+	  pdp4.0/trunk/src/taiqtso/icombobox.cpp,
+	  pdp4.0/trunk/src/taiqtso/icombobox.h,
+	  pdp4.0/trunk/src/taiqtso/ieditgrid.cpp,
+	  pdp4.0/trunk/src/taiqtso/ieditgrid.h,
+	  pdp4.0/trunk/src/taiqtso/iflowbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/iflowbox.h,
+	  pdp4.0/trunk/src/taiqtso/iflowlayout.cpp,
+	  pdp4.0/trunk/src/taiqtso/iflowlayout.h,
+	  pdp4.0/trunk/src/taiqtso/igeometry.cpp,
+	  pdp4.0/trunk/src/taiqtso/igeometry.h,
+	  pdp4.0/trunk/src/taiqtso/igroup_so.h,
+	  pdp4.0/trunk/src/taiqtso/ihilightbutton.cpp,
+	  pdp4.0/trunk/src/taiqtso/ihilightbutton.h,
+	  pdp4.0/trunk/src/taiqtso/ilineedit.cpp,
+	  pdp4.0/trunk/src/taiqtso/ilineedit.h,
+	  pdp4.0/trunk/src/taiqtso/imisc_so.cpp,
+	  pdp4.0/trunk/src/taiqtso/imisc_so.h,
+	  pdp4.0/trunk/src/taiqtso/irenderarea.cpp,
+	  pdp4.0/trunk/src/taiqtso/irenderarea.h,
+	  pdp4.0/trunk/src/taiqtso/ispinbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/ispinbox.h,
+	  pdp4.0/trunk/src/taiqtso/itransformer.cpp,
+	  pdp4.0/trunk/src/taiqtso/itransformer.h,
+	  pdp4.0/trunk/src/taiqtso/itreeview.cpp,
+	  pdp4.0/trunk/src/taiqtso/itreeview.h,
+	  pdp4.0/trunk/src/taiqtso/ivcrbuttons.cpp,
+	  pdp4.0/trunk/src/taiqtso/ivcrbuttons.h,
+	  pdp4.0/trunk/src/taiqtso/iwidgetlist.cpp,
+	  pdp4.0/trunk/src/taiqtso/iwidgetlist.h,
+	  pdp4.0/trunk/src/taiqtso/safeptr_so.cpp,
+	  pdp4.0/trunk/src/taiqtso/safeptr_so.h,
+	  pdp4.0/trunk/src/taiqtso/stdafx.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtdefs.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso.cpp,
+	  pdp4.0/trunk/src/taiqtso/taiqtso.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA.cpp,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_inst.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_type.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_def.h,
+	  pdp4.0/trunk/src/taiqtso/taiqtso_ti.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowbox.h,
+	  pdp4.0/trunk/src/taiqtso/test_iflowlayout.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_iflowlayout.h,
+	  pdp4.0/trunk/src/taiqtso/test_ispinbox.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_ispinbox.h,
+	  pdp4.0/trunk/src/taiqtso/test_itreeview.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_itreeview.h,
+	  pdp4.0/trunk/src/taiqtso/test_main.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_mainwindow.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_mainwindow.h,
+	  pdp4.0/trunk/src/taiqtso/test_simplewidgets.cpp,
+	  pdp4.0/trunk/src/taiqtso/test_simplewidgets.h,
+	  pdp4.0/trunk/src/taiqtso/vcrbitmaps.h: taiqtso copyright update
+	  LGPL
+
+2005-09-28 21:40  mingus
+
+	* pdp4.0/trunk/src/ta/icolor.cpp, pdp4.0/trunk/src/ta/icolor.h,
+	  pdp4.0/trunk/src/ta/ifont.cpp, pdp4.0/trunk/src/ta/ifont.h,
+	  pdp4.0/trunk/src/ta/platform.h, pdp4.0/trunk/src/ta/qtdefs.h,
+	  pdp4.0/trunk/src/ta/stdafx.h, pdp4.0/trunk/src/ta/ta.cpp,
+	  pdp4.0/trunk/src/ta/ta.h, pdp4.0/trunk/src/ta/ta_TA.cpp,
+	  pdp4.0/trunk/src/ta/ta_TA.msvc.cpp,
+	  pdp4.0/trunk/src/ta/ta_TA_inst.h,
+	  pdp4.0/trunk/src/ta/ta_TA_type.h,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_def.h,
+	  pdp4.0/trunk/src/ta/ta_defaults.cpp,
+	  pdp4.0/trunk/src/ta/ta_defaults.h,
+	  pdp4.0/trunk/src/ta/ta_dump.cpp, pdp4.0/trunk/src/ta/ta_dump.h,
+	  pdp4.0/trunk/src/ta/ta_filer.cpp,
+	  pdp4.0/trunk/src/ta/ta_filer.h,
+	  pdp4.0/trunk/src/ta/ta_group.cpp,
+	  pdp4.0/trunk/src/ta/ta_group.h, pdp4.0/trunk/src/ta/ta_list.cpp,
+	  pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_maketa_defs.h,
+	  pdp4.0/trunk/src/ta/ta_math.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h,
+	  pdp4.0/trunk/src/ta/ta_platform.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform.h,
+	  pdp4.0/trunk/src/ta/ta_platform_cygwin.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform_unix.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform_win.cpp,
+	  pdp4.0/trunk/src/ta/ta_qt.cpp, pdp4.0/trunk/src/ta/ta_qt.h,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse.h,
+	  pdp4.0/trunk/src/ta/ta_qtbrowse_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtcursors.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.h,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.h,
+	  pdp4.0/trunk/src/ta/ta_qttype_def.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_script.cpp,
+	  pdp4.0/trunk/src/ta/ta_script.h,
+	  pdp4.0/trunk/src/ta/ta_seledit.cpp,
+	  pdp4.0/trunk/src/ta/ta_seledit.h,
+	  pdp4.0/trunk/src/ta/ta_stdef.h,
+	  pdp4.0/trunk/src/ta/ta_string.cpp,
+	  pdp4.0/trunk/src/ta/ta_string.h, pdp4.0/trunk/src/ta/ta_ti.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/ta_type_constr.cpp,
+	  pdp4.0/trunk/src/ta/ta_type_constr.h,
+	  pdp4.0/trunk/src/ta/ta_type_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_uifiler_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_uifiler_qt.h,
+	  pdp4.0/trunk/src/ta/taglobal.h: ta copyright update LGPL
+
+2005-09-28 21:38  mingus
+
+	* pdp4.0/trunk/src/maketa/maketa.cpp,
+	  pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/maketa/maketa_ti.cpp,
+	  pdp4.0/trunk/src/maketa/mta_constr.cpp,
+	  pdp4.0/trunk/src/maketa/mta_constr.h,
+	  pdp4.0/trunk/src/maketa/mta_lex.cpp,
+	  pdp4.0/trunk/src/maketa/mta_parse.cpp,
+	  pdp4.0/trunk/src/maketa/mta_parse.h,
+	  pdp4.0/trunk/src/maketa/mta_parse.y,
+	  pdp4.0/trunk/src/maketa/stdafx.h,
+	  pdp4.0/trunk/src/maketa/test_maketa.h: maketa copyright update
+	  LGPL (until told otherwise)
+
+2005-09-28 21:36  mingus
+
+	* pdp4.0/trunk/src/css/css_basic_types.cpp,
+	  pdp4.0/trunk/src/css/css_basic_types.h,
+	  pdp4.0/trunk/src/css/css_builtin.cpp,
+	  pdp4.0/trunk/src/css/css_builtin.h,
+	  pdp4.0/trunk/src/css/css_c_ptr_types.cpp,
+	  pdp4.0/trunk/src/css/css_c_ptr_types.h,
+	  pdp4.0/trunk/src/css/css_extern_support.h,
+	  pdp4.0/trunk/src/css/css_lex.cpp,
+	  pdp4.0/trunk/src/css/css_machine.cpp,
+	  pdp4.0/trunk/src/css/css_machine.h,
+	  pdp4.0/trunk/src/css/css_misc_funs.cpp,
+	  pdp4.0/trunk/src/css/css_misc_funs.h,
+	  pdp4.0/trunk/src/css/css_parse.cpp,
+	  pdp4.0/trunk/src/css/css_parse.h,
+	  pdp4.0/trunk/src/css/css_parse.y,
+	  pdp4.0/trunk/src/css/css_qt.cpp, pdp4.0/trunk/src/css/css_qt.h,
+	  pdp4.0/trunk/src/css/css_qtdata.cpp,
+	  pdp4.0/trunk/src/css/css_qtdata.h,
+	  pdp4.0/trunk/src/css/css_qtdialog.cpp,
+	  pdp4.0/trunk/src/css/css_qtdialog.h,
+	  pdp4.0/trunk/src/css/css_qttype.cpp,
+	  pdp4.0/trunk/src/css/css_qttype.h,
+	  pdp4.0/trunk/src/css/css_special_math.cpp,
+	  pdp4.0/trunk/src/css/css_special_math.h,
+	  pdp4.0/trunk/src/css/css_ti.cpp,
+	  pdp4.0/trunk/src/css/hard_of_css.h,
+	  pdp4.0/trunk/src/css/main.cpp,
+	  pdp4.0/trunk/src/css/readline_win.cpp,
+	  pdp4.0/trunk/src/css/special_math.old.c,
+	  pdp4.0/trunk/src/css/ta_css.cpp, pdp4.0/trunk/src/css/ta_css.h,
+	  pdp4.0/trunk/src/css/xmemory.cpp: css copyright update LGPL
+
+2005-09-28 21:33  mingus
+
+	* pdp4.0/trunk/src/so/cl.cpp, pdp4.0/trunk/src/so/cl.h,
+	  pdp4.0/trunk/src/so/main.cpp, pdp4.0/trunk/src/so/so.cpp,
+	  pdp4.0/trunk/src/so/so.h, pdp4.0/trunk/src/so/so_ti.cpp,
+	  pdp4.0/trunk/src/so/som.cpp, pdp4.0/trunk/src/so/som.h,
+	  pdp4.0/trunk/src/so/zsh.cpp, pdp4.0/trunk/src/so/zsh.h: so
+	  copyright update GPL
+
+2005-09-28 21:32  mingus
+
+	* pdp4.0/trunk/src/so/main.cc, pdp4.0/trunk/src/so/main.cpp:
+	  updating main.cc to main.cpp
+
+2005-09-28 21:31  mingus
+
+	* pdp4.0/trunk/src/pdp/enviro.cpp, pdp4.0/trunk/src/pdp/enviro.h,
+	  pdp4.0/trunk/src/pdp/enviro_extra.cpp,
+	  pdp4.0/trunk/src/pdp/enviro_extra.h,
+	  pdp4.0/trunk/src/pdp/enviro_qt.cpp,
+	  pdp4.0/trunk/src/pdp/enviro_qt.h,
+	  pdp4.0/trunk/src/pdp/enviro_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/enviro_qtso.h,
+	  pdp4.0/trunk/src/pdp/main.cpp, pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/netstru_extra.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_extra.h,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/pdp/netstru_so.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_so.h,
+	  pdp4.0/trunk/src/pdp/pdp_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_qtso.h,
+	  pdp4.0/trunk/src/pdp/pdp_ti.cpp,
+	  pdp4.0/trunk/src/pdp/pdpbase.cpp,
+	  pdp4.0/trunk/src/pdp/pdpbase.h,
+	  pdp4.0/trunk/src/pdp/pdpbase_unix.cpp,
+	  pdp4.0/trunk/src/pdp/pdpbase_win.cpp,
+	  pdp4.0/trunk/src/pdp/pdpbitmaps.h,
+	  pdp4.0/trunk/src/pdp/pdpdeclare.h,
+	  pdp4.0/trunk/src/pdp/pdplog.cpp, pdp4.0/trunk/src/pdp/pdplog.h,
+	  pdp4.0/trunk/src/pdp/pdplog_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/pdplog_qtso.h,
+	  pdp4.0/trunk/src/pdp/pdpshell.cpp,
+	  pdp4.0/trunk/src/pdp/pdpshell.h,
+	  pdp4.0/trunk/src/pdp/pdpview_qt.cpp,
+	  pdp4.0/trunk/src/pdp/pdpview_qt.h,
+	  pdp4.0/trunk/src/pdp/process.cpp,
+	  pdp4.0/trunk/src/pdp/process.h,
+	  pdp4.0/trunk/src/pdp/procs_extra.cpp,
+	  pdp4.0/trunk/src/pdp/procs_extra.h,
+	  pdp4.0/trunk/src/pdp/sched_proc.cpp,
+	  pdp4.0/trunk/src/pdp/sched_proc.h,
+	  pdp4.0/trunk/src/pdp/script_base.h,
+	  pdp4.0/trunk/src/pdp/spec.cpp, pdp4.0/trunk/src/pdp/spec.h,
+	  pdp4.0/trunk/src/pdp/stats.cpp, pdp4.0/trunk/src/pdp/stats.h:
+	  update pdp copyright GPL
+
+2005-09-28 21:29  mingus
+
+	* pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/leabra/leabra_TA.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_TA_inst.h,
+	  pdp4.0/trunk/src/leabra/leabra_TA_type.h,
+	  pdp4.0/trunk/src/leabra/leabra_ti.cpp,
+	  pdp4.0/trunk/src/leabra/main.cpp: leabra copyright update GPL
+
+2005-09-28 21:20  mingus
+
+	* pdp4.0/trunk/src/cs/cs.cpp, pdp4.0/trunk/src/cs/cs.h,
+	  pdp4.0/trunk/src/cs/cs_ti.cpp, pdp4.0/trunk/src/cs/cs_vt.cpp,
+	  pdp4.0/trunk/src/cs/main.cpp: cs copyright data updated
+
+2005-09-28 21:17  mingus
+
+	* pdp4.0/trunk/src/bp/Resource.h, pdp4.0/trunk/src/bp/bp.cpp,
+	  pdp4.0/trunk/src/bp/bp.h, pdp4.0/trunk/src/bp/bp_TA.cpp,
+	  pdp4.0/trunk/src/bp/bp_TA_inst.h,
+	  pdp4.0/trunk/src/bp/bp_TA_type.h, pdp4.0/trunk/src/bp/bp_ti.cpp,
+	  pdp4.0/trunk/src/bp/bp_vt.cpp, pdp4.0/trunk/src/bp/main.cpp,
+	  pdp4.0/trunk/src/bp/main_debug.cpp, pdp4.0/trunk/src/bp/rbp.cpp,
+	  pdp4.0/trunk/src/bp/rbp.h: bp copyright update
+
+2005-09-28 20:46  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am:
+
+2005-09-28 20:45  mingus
+
+	* pdp4.0/trunk/Conditionals.am: 
+	* pdp4.0/trunk/configure.ac: 
+
+2005-09-27 22:14  baisa
+
+	* pdp4.0/trunk/src/ta/ta_TA.cpp, pdp4.0/trunk/src/ta/ta_TA_inst.h,
+	  pdp4.0/trunk/src/ta/ta_TA_type.h, pdp4.0/trunk/src/ta/ta_type.h:
+	  fixed String_PArray for maketa
+
+2005-09-27 18:26  baisa
+
+	* pdp4.0/trunk/src/css/css_basic_types.cpp,
+	  pdp4.0/trunk/src/css/css_basic_types.h,
+	  pdp4.0/trunk/src/css/css_builtin.cpp,
+	  pdp4.0/trunk/src/css/css_misc_funs.cpp: data-related changes
+	* pdp4.0/trunk/src/leabra/leabra_TA.cpp: data-related changes
+	* pdp4.0/trunk/src/bp/bp_TA.cpp, pdp4.0/trunk/src/bp/bp_TA_inst.h,
+	  pdp4.0/trunk/src/bp/rbp.cpp, pdp4.0/trunk/src/bp/rbp.h:
+	  data-related changes
+	* pdp4.0/trunk/src/pdp/enviro.cpp, pdp4.0/trunk/src/pdp/enviro.h,
+	  pdp4.0/trunk/src/pdp/enviro_extra.cpp,
+	  pdp4.0/trunk/src/pdp/enviro_extra.h,
+	  pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/pdp/pdp_TA.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_TA_type.h,
+	  pdp4.0/trunk/src/pdp/pdp_ti.cpp,
+	  pdp4.0/trunk/src/pdp/pdplog.cpp,
+	  pdp4.0/trunk/src/pdp/procs_extra.cpp: data-related changes
+
+2005-09-27 18:24  baisa
+
+	* pdp4.0/trunk/src/tamisc/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/datatable.cpp,
+	  pdp4.0/trunk/src/tamisc/datatable.h,
+	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
+	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
+	  pdp4.0/trunk/src/tamisc/ta_data.h,
+	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
+	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
+	  pdp4.0/trunk/src/tamisc/tdgeometry.h: added ta_data
+
+2005-09-27 18:21  baisa
+
+	* pdp4.0/trunk/src/ta/Makefile.am: added ta_matrix
+
+2005-09-27 02:00  mingus
+
+	* pdp4.0/trunk/src/maketa/Makefile.am: 
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am:
+
+2005-09-27 01:59  mingus
+
+	* pdp4.0/trunk/configure.ac: 
+	* pdp4.0/trunk/Conditionals.am, pdp4.0/trunk/Makefile.am,
+	  pdp4.0/trunk/Maketa.am, pdp4.0/trunk/acsite.m4: flag cleanup,
+	  suffixes etc..
+
+2005-09-26 21:25  baisa
+
+	* pdp4.0/trunk/src/ta/taglobal.h: misc changes
+
+2005-09-26 21:22  baisa
+
+	* pdp4.0/trunk/src/ta/ta_TA.cpp, pdp4.0/trunk/src/ta/ta_TA_inst.h,
+	  pdp4.0/trunk/src/ta/ta_TA_type.h,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_list.cpp, pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_seledit.cpp,
+	  pdp4.0/trunk/src/ta/ta_ti.cpp, pdp4.0/trunk/src/ta/ta_type.h:
+	  massive changes for arrays and data
+
+2005-09-26 16:48  mingus
+
+	* pdp4.0/trunk/acsite.m4: Contains PDP_DETERMINE_SUFFIX and also
+	  ACX_MPI for probing MPI
+
+2005-09-24 19:16  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am: Made the program names e.g.,
+	  bp++ pdp++. See
+	  http://grey.colorado.edu/cgi-bin/trac.cgi/ticket/8 for details.
+
+2005-09-24 01:53  mingus
+
+	* pdp4.0/trunk/Makefile.am: 
+
+2005-09-24 01:52  mingus
+
+	* pdp4.0/trunk/Makefile.am: unneeded
+
+2005-09-24 01:47  mingus
+
+	* pdp4.0/trunk/Makefile.am: make linecount
+
+2005-09-22 19:55  mingus
+
+	* pdp4.0/trunk/src/platform.h, pdp4.0/trunk/src/qtdefs.h,
+	  pdp4.0/trunk/src/ta/platform.h, pdp4.0/trunk/src/ta/qtdefs.h,
+	  pdp4.0/trunk/src/ta/taglobal.h, pdp4.0/trunk/src/taglobal.h:
+	  Moving homeless files in /src/ into /ta
+
+2005-09-22 19:54  mingus
+
+	* pdp4.0/trunk/src/maketa/ta_platform_cygwin.cpp,
+	  pdp4.0/trunk/src/maketa/ta_platform_unix.cpp:
+	* pdp4.0/trunk/src/maketa/ta_list.cpp,
+	  pdp4.0/trunk/src/maketa/ta_list.h,
+	  pdp4.0/trunk/src/maketa/ta_platform.cpp,
+	  pdp4.0/trunk/src/maketa/ta_platform.h,
+	  pdp4.0/trunk/src/maketa/ta_platform_win.cpp,
+	  pdp4.0/trunk/src/maketa/ta_string.cpp,
+	  pdp4.0/trunk/src/maketa/ta_string.h,
+	  pdp4.0/trunk/src/maketa/ta_type.cpp,
+	  pdp4.0/trunk/src/maketa/ta_type.h:
+
+2005-09-22 19:45  mingus
+
+	* pdp4.0/trunk/INSTALL, pdp4.0/trunk/README,
+	  pdp4.0/trunk/configure.ac:
+
+2005-09-22 19:36  mingus
+
+	* pdp4.0/trunk/AUTHORS: Populated AUTHORS with
+	  http://www.cnbc.cmu.edu/Resources/PDP++//contributors.html and
+	  some of http://www.cnbc.cmu.edu/Resources/PDP++//PDP++.html
+
+2005-09-22 19:34  mingus
+
+	* pdp4.0/trunk/COPYING: Populated COPYING with
+	  http://www.cnbc.cmu.edu/Resources/PDP++//copyright.html
+
+2005-09-22 19:32  mingus
+
+	* pdp4.0/trunk/NEWS: Updated NEWS file with data from
+	  http://www.cnbc.cmu.edu/Resources/PDP++//new_features.html
+
+2005-09-22 19:22  mingus
+
+	* pdp4.0/trunk/ChangeLog: Created GNU compliant ChangeLog from
+	  Subversion commits. See wiki for instructions on how to do this
+
 2005-09-22 00:13  mingus
 
 	* pdp4.0/trunk/src/bp/Makefile.am,

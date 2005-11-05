@@ -26,6 +26,7 @@ SRCS =\
 	main.cpp
 
 include $(top_srcdir)/Maketa.am
+include $(top_srcdir)/mfstamp.am
 
 bin_PROGRAMS = bp@PDP_SUFFIX@++
 

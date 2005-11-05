@@ -1,6 +1,7 @@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
+
 PROJNAME = taiqtso
 DEFS=
 srcdir = @srcdir@
@@ -54,12 +55,13 @@ SRCS =\
 	taiqtso_ti.cpp
 
 include $(top_srcdir)/Moc.am
+include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
-        -I@srcdir@/../ta \
-        -I/usr/include/freetype2 \
+	-I@srcdir@/../ta \
+	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
 
 clean-local:

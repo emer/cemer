@@ -1,4 +1,4 @@
-#                                             -*- Autoconf -*-
+#					     -*- Autoconf -*-
 #*************************************************************
 # Process this file with autoconf to produce a configure script.
 #*************************************************************
@@ -23,7 +23,6 @@ PDP_DETERMINE_OSTYPE
 AC_DISABLE_SHARED
 
 # Set default language  C++
-
 AC_LANG_CPLUSPLUS
 
 # Next two lines are a hack to get rid of those stupid fortran checks
@@ -31,9 +30,12 @@ m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
 AC_PROG_LIBTOOL
 
-#                                                     programs
+# Enable make rpm
+AX_DIST_RPM([spec.tmpl])
+
+#						     programs
 #*************************************************************
-#              Checks for specific programs
+#	      Checks for specific programs
 #*************************************************************
 #
 AC_PROG_AWK
@@ -55,9 +57,9 @@ if test $GXX != yes; then
   AC_MSG_ERROR([GNU C++ compiler not detected])
 fi
 AC_MSG_RESULT([$GXX])
-#                                                      headers
+#						      headers
 #*************************************************************
-#              Checks for specific headers
+#	      Checks for specific headers
 #*************************************************************
 #
 AC_FUNC_ALLOCA
@@ -65,7 +67,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h float.h limits.h locale.h malloc.h memory.h stddef.h stdlib.h string.h sys/time.h unistd.h])
-#                                              typedef, struct
+#					      typedef, struct
 #*************************************************************
 #  Checks for typedefs, structures, compiler characteristics
 #*************************************************************
@@ -79,26 +81,26 @@ AC_C_VOLATILE
 AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
 AC_TYPE_PID_T
-#                                                    libraries
+#						    libraries
 #*************************************************************
-#                     Checks for libraries
+#		     Checks for libraries
 #*************************************************************
 #
 AC_HAVE_LIBRARY([dl],
-                [LIBS="$LIBS -ldl"],
-                [AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
+		[LIBS="$LIBS -ldl"],
+		[AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
 
 # Souped up readline check
 AC_HAVE_LIBRARY([readline],
-                [LIBS="$LIBS -ldl"],
-                [VL_LIB_READLINE])
+		[LIBS="$LIBS -ldl"],
+		[VL_LIB_READLINE])
 
 AC_HAVE_LIBRARY([z],
-                [LIBS="$LIBS -lz"],
-                [AC_MSG_WARN([unable to find libz compression library. Build may fail.])])
-#                                            library functions
+		[LIBS="$LIBS -lz"],
+		[AC_MSG_WARN([unable to find libz compression library. Build may fail.])])
+#					    library functions
 #*************************************************************
-#                Checks for library functions
+#		Checks for library functions
 #*************************************************************
 #
 AC_FUNC_CHOWN
@@ -112,16 +114,16 @@ AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found.])])
  
-#                                                  gui enabled
+#						  gui enabled
 #*************************************************************
-#             Things to do if --enable-gui is set
+#	     Things to do if --enable-gui is set
 #*************************************************************
 #
 AC_ARG_ENABLE([gui],
-              AC_HELP_STRING([--disable-gui],
-                             [Disable compiling with a GUI. Default is enabled]),
-                             [gui=false],
-                             [gui=true])
+	      AC_HELP_STRING([--disable-gui],
+			     [Disable compiling with a GUI. Default is enabled]),
+			     [gui=false],
+			     [gui=true])
 
 AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
@@ -134,17 +136,17 @@ if test $gui = true; then
   AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[AC_MSG_WARN([--enable-gui set but unable to find libjpeg.])])
   AC_HAVE_LIBRARY([SoQt], [LIBS="$LIBS -lSoQt"],[AC_MSG_WARN([--enable-gui set but unable to find libSoQt.])])
   AC_DEFINE([TA_GUI],
-            [],
-            [Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
+	    [],
+	    [Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],
-            [],
-            [This switch is set when linking with Qt. NOTE: THIS FLAG DOES NOT INDICATE GUI -- ex. ta is compiled with the QtCore library, even for the non-gui version of the program])
+	    [],
+	    [This switch is set when linking with Qt. NOTE: THIS FLAG DOES NOT INDICATE GUI -- ex. ta is compiled with the QtCore library, even for the non-gui version of the program])
   AC_DEFINE([TA_USE_INVENTOR],
-            [],
-            [This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
+	    [],
+	    [This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
   AC_DEFINE([QT_SHARED],
-            [],
-            [Note from Brian: This switch is here, i'm not quite sure why. Used in qglobal.h.])
+	    [],
+	    [Note from Brian: This switch is here, i'm not quite sure why. Used in qglobal.h.])
   # Tells top-level makefile.am to recurse through src/taiqtso
   AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
   # These libraries are substituted in the makefiles.
@@ -155,16 +157,16 @@ if test $gui = true; then
 else
   AC_DEFINE([TA_NO_GUI],[],[Set when building nogui])
 fi
-#                                                  mpi enabled
+#						  mpi enabled
 #*************************************************************
-#             Things to do if --enable-mpi is set
+#	     Things to do if --enable-mpi is set
 #*************************************************************
 #
 AC_ARG_ENABLE([mpi],
-              AC_HELP_STRING([--enable-mpi],
-                             [Enable the Message Passing Interface. Default is disabled.]),
-                             [mpi=true],
-                             [mpi=false])
+	      AC_HELP_STRING([--enable-mpi],
+			     [Enable the Message Passing Interface. Default is disabled.]),
+			     [mpi=true],
+			     [mpi=false])
 
 AM_CONDITIONAL([MPI],[test $mpi = true])
 
@@ -177,16 +179,16 @@ if test $mpi = true; then
   fi
 fi
 
-#                                                debug enabled
+#						debug enabled
 #*************************************************************
-#             Things to do if --enable-debug is set
+#	     Things to do if --enable-debug is set
 #*************************************************************
 #
 AC_ARG_ENABLE([debug],
-              AC_HELP_STRING([--enable-debug],
-                             [Enable debugging. Default is disabled.]),
-                             [debug=true],
-                             [debug=false])
+	      AC_HELP_STRING([--enable-debug],
+			     [Enable debugging. Default is disabled.]),
+			     [debug=true],
+			     [debug=false])
 
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 
@@ -197,32 +199,33 @@ if $debug = true; then
   AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
 fi
 
-#                                                  @variables@
+#						  @variables@
 #*************************************************************
-#            Substitutes @variables@ in Makefile.am's
+#	    Substitutes @variables@ in Makefile.am's
 # Descending order, so a recent substitution can contain a 
 # @reference@ to a substitution that comes after.
 #*************************************************************
 #
+
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 
-#                                                       output
+#						       output
 #*************************************************************
-#                 Creation of the build system
+#		 Creation of the build system
 #*************************************************************
 #
 PDP_DETERMINE_SUFFIX
 AC_CONFIG_FILES([Makefile
-                src/taiqtso/Makefile
-                src/ta/Makefile
-                src/css/Makefile
-                src/tamisc/Makefile
-                src/pdp/Makefile
-                src/leabra/Makefile
-                src/bp/Makefile])
+		src/taiqtso/Makefile
+		src/ta/Makefile
+		src/css/Makefile
+		src/tamisc/Makefile
+		src/pdp/Makefile
+		src/leabra/Makefile
+		src/bp/Makefile])
 AC_OUTPUT
 
 # This is a hack to get rid of -DHAVE_CONFIG_H

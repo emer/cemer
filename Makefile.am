@@ -1,12 +1,20 @@
-# SUBDIRS tells the autotools which directories have Makefile.am's in them.
-# If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
+CLEANFILES =
+CLEAN_FILES =
+EXTRA_DIST =
+
+#For make rpm
+include aminclude.am
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
+
+
+# SUBDIRS tells the autotools which directories have Makefile.am's in them.
+# If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
 
 DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
 SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp
 
-EXTRA_DIST = src/ta/ios-g++-3.1
+EXTRA_DIST += src/ta/ios-g++-3.1
 
 # These actions occur immediately before a distribution tarball is created.
 
@@ -26,3 +34,9 @@ dist-hook:
 
 linecount:
 	@ wc --lines `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` | grep total
+
+# Update our changelog from the subversion repository
+# This has prerequisites. See:
+# http://grey.colorado.edu/cgi-bin/trac.cgi/wiki/CreatingaGNUcompliantChangeLogfromSubversioncommits
+changelog:
+	svn log --xml --verbose | xsltproc /home/mingus/opt/svn2cl-0.3/svn2cl.xsl - > ChangeLog

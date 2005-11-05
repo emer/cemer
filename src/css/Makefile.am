@@ -52,6 +52,7 @@ HEADS =\
 	$(HEADS_GUI)
 
 include $(top_srcdir)/Moc.am
+include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)

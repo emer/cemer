@@ -1,5 +1,10 @@
 PROJNAME = maketa
 DEFS=
+
+do-mfstamp-am do-mfstamp: Makefile.in
+	@echo "timestamp for all Makefile.in files" > $(top_builddir)/mfstamp
+	@touch $@
+
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
@@ -46,3 +51,4 @@ EXTRA_DIST =\
 	ta_parse.h \
 	ta_script.h \
 	taglobal.h
+
