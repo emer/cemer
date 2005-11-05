@@ -100,7 +100,7 @@ libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
-	-I@srcdir@/../tamisc
+	-I@srcdir@/../tamisc \
 	-I../src/taiqtso \
 	-I/usr/include/freetype2
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
