@@ -102,7 +102,8 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc \
 	-I../src/taiqtso \
-	-I/usr/include/freetype2
+	-I/usr/include/freetype2 \
+	-I${QTDIR}/include
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
 pdp@PDP_SUFFIX@___SOURCES = main.cpp
 pdp@PDP_SUFFIX@___LDADD =\
