@@ -28,9 +28,7 @@ SRCS =\
 
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
-	then touch -t 196912311700.00 \
-	@abs_top_srcdir@/src/maketa/ta_TA_type.h \
-	@abs_top_srcdir@/src/maketa/ta_TA_inst.h;fi
+	then touch -t 199912311700.00 ta_TA_type.h ta_TA_inst.h;fi
 
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
