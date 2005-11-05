@@ -59,9 +59,7 @@ lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
         -I@srcdir@/../ta \
-        @X_CFLAGS@ \
         -I/usr/include/freetype2 \
-	 @QT_CXXFLAGS@ \
 	-I${QTDIR}/include
 
 clean-local:

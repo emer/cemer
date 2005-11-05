@@ -35,7 +35,8 @@ leabra@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2
+	-I/usr/include/freetype2 \
+	-I${QTDIR}/include
 BUILT_SOURCES = leabra_TA_type.h
 #**************************************************
 #

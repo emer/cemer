@@ -101,7 +101,7 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc \
-	-I../src/taiqtso \
+	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
 bin_PROGRAMS = pdp@PDP_SUFFIX@++

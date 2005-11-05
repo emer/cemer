@@ -56,8 +56,8 @@ include $(top_srcdir)/Moc.am
 lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 libcss@PDP_SUFFIX@_la_CPPFLAGS =\
-	-I$(srcdir)/../ta \
-	-I../taiqtso \
+	-I@srcdir@/../ta \
+	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
 bin_PROGRAMS = css@PDP_SUFFIX@++

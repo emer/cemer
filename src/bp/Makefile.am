@@ -38,7 +38,9 @@ bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
-	-I@srcdir@/../css
+	-I@srcdir@/../css \
+	-I@srcdir@/../taiqtso \
+	-I${QTDIR}/include
 BUILT_SOURCES = bp_TA_type.h
 #**************************************************
 #
