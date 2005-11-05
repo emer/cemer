@@ -10,7 +10,6 @@ m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
 AC_PROG_LIBTOOL
 
-AC_CONFIG_SRCDIR([mta_parse.y])
 AC_CONFIG_HEADER([maketa_config.h])
 
 # Checks for programs.

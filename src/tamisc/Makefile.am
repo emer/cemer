@@ -80,8 +80,6 @@ HEADS =\
 	colorscale.h \
 	datatable.h \
 	datagraph.h \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
 	fun_lookup.h \
 	$(HEADS_GUI)
 
@@ -112,6 +110,6 @@ libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I${QTDIR}/include
 
 BUILT_SOURCES = tamisc_TA_type.h
-
+CLEANFILES += tamisc_TA.ccx
 clean-local:
 	-rm *moc*

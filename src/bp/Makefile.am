@@ -28,12 +28,15 @@ SRCS =\
 include $(top_srcdir)/Maketa.am
 
 bin_PROGRAMS = bp@PDP_SUFFIX@++
+
 bp@PDP_SUFFIX@___SOURCES = $(HEADS) $(SRCS)
+
 bp@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
+
 bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
@@ -41,7 +44,9 @@ bp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso \
 	-I${QTDIR}/include
+
 BUILT_SOURCES = bp_TA_type.h
+CLEANFILES += bp_TA.ccx
 #**************************************************
 #
 #                      GUI

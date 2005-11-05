@@ -216,7 +216,6 @@ AC_SUBST([top_srcdir])
 #
 PDP_DETERMINE_SUFFIX
 AC_CONFIG_FILES([Makefile
-                src/maketa/Makefile
                 src/taiqtso/Makefile
                 src/ta/Makefile
                 src/css/Makefile

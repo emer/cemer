@@ -97,6 +97,7 @@ include $(top_srcdir)/Moc.am
 
 lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
@@ -104,15 +105,22 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
+
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
+
 pdp@PDP_SUFFIX@___SOURCES = main.cpp
+
 pdp@PDP_SUFFIX@___LDADD =\
 	libpdp@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
 	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
+
 pdp@PDP_SUFFIX@___CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
+
 BUILT_SOURCES = pdp_TA_type.h
+CLEANFILES += pdp_TA.ccx
+
 #**************************************************
 #
 #                      GUI

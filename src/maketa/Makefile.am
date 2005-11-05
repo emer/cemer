@@ -32,5 +32,17 @@ ta_TA_type.h ta_TA_inst.h:
 
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
-
-BUILT_SOURCES = ta_TA_type.h ta_TA_inst.h
+maketa_CPPFLAGS = -I@abs_srcdir@
+BUILT_SOURCES = ta_TA_type.h
+CLEANFILES = ta_TA_type.h ta_TA_inst.h
+EXTRA_DIST =\
+	ta_base.h \
+	ta_constr.h \
+	ta_def.h \
+	ta_dump.h \
+	ta_filer.h \
+	ta_group.h \
+	ta_matrix.h \
+	ta_parse.h \
+	ta_script.h \
+	taglobal.h

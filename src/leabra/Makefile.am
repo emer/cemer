@@ -23,12 +23,15 @@ SRCS =\
 include $(top_srcdir)/Maketa.am
 
 bin_PROGRAMS = leabra@PDP_SUFFIX@++
+
 leabra@PDP_SUFFIX@___SOURCES = $(HEADS) $(SRCS)
+
 leabra@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/pdp/libpdp@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/tamisc/libtamisc@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
+
 leabra@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
@@ -37,7 +40,10 @@ leabra@PDP_SUFFIX@___CPPFLAGS =\
 	-I@srcdir@/../taiqtso \
 	-I/usr/include/freetype2 \
 	-I${QTDIR}/include
+
 BUILT_SOURCES = leabra_TA_type.h
+CLEANFILES += leabra_TA.ccx
+
 #**************************************************
 #
 #                      GUI
