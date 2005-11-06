@@ -687,12 +687,9 @@ AC_LANG_RESTORE
 AC_DEFUN([AX_INSTALL_FILES],
 [
 AC_MSG_NOTICE([adding install_files support])
-AC_ARG_VAR(GAWK, [gawk executable to use])
-if test "x$GAWK" = "x"; then
-   AC_CHECK_PROGS(GAWK,[gawk])
-fi
+AC_REQUIRE([AC_PROG_AWK])
 
-if test "x$GAWK" != "x"; then
+if test "x$AWK" != "x"; then
    AC_MSG_NOTICE([install_files support enabled])
    AX_HAVE_INSTALL_FILES=true
    AX_ADD_AM_MACRO([[
@@ -704,7 +701,7 @@ CLEANFILES += \\
 	cd \$(top_builddir) && STAGING=\"\$(PWD)/staging\"; \\
 	\$(MAKE) \$(AM_MAKEFLAGS) DESTDIR=\"\$\$STAGING\" install; \\
 	cd \"\$\$STAGING\" && find "." ! -type d -print | \\
-	$GAWK \' \\
+	$AWK \' \\
 	    /^\\.\\/usr\\/local\\/lib/ { \\
 		sub( /\\.\\/usr\\/local\\/lib/, \"%%{_libdir}\" ); } \\
 	    /^\\.\\/usr\\/local\\/bin/ { \\
@@ -733,7 +730,7 @@ do-mfstamp-am do-mfstamp: Makefile.in
 ]])
 else
     AX_HAVE_INSTALL_FILES=false;
-    AC_MSG_WARN([install_files support disable... gawk not found])
+    AC_MSG_WARN([install_files support disable... awk not found])
 fi
 ])# AX_INSTALL_FILES
 
@@ -891,7 +888,7 @@ if test "x$AX_HAVE_INSTALL_FILES" = "xtrue"; then
 CLEAN_FILES += \$(top_builddir)/RPMChangeLog
 
 \$(top_builddir)/RPMChangeLog: \$(top_srcdir)/ChangeLog
-	$GAWK \'/^[^0-9]/ { \\
+	$AWK \'/^[^0-9]/ { \\
 		    if( \$${AX_DOLLAR}1 == \"*\" ) \$${AX_DOLLAR}1 = \"-\"; print; } \\
 		/^\$\$/ { \\
 		    print; } \\
@@ -926,7 +923,7 @@ spec: \$(top_builddir)/$PACKAGE-$VERSION.spec
 
 \$(top_builddir)/$PACKAGE-$VERSION.spec:	\$(top_builddir)/$AX_RPM_SPEC_FILE \$(top_builddir)/install_files \$(top_builddir)/RPMChangeLog
 	@cat \"\$(top_builddir)/$AX_RPM_SPEC_FILE\" \\
-	| $GAWK -v files=\"\$\$files\" \\
+	| $AWK -v files=\"\$\$files\" \\
 	    \'{ print; } \\
 	    /%%defattr/ { while((getline < \"install_files\" ) > 0 ) { print; } }\' \\
 	    > \"\$(top_builddir)/$PACKAGE-$VERSION.spec\"
@@ -1020,11 +1017,11 @@ srpm: $PACKAGE-$VERSION-0.src.rpm
 
 \$(top_builddir)/$PACKAGE-$VERSION-0.i*.$PLATFORM_SUFFIX.rpm:   \$(top_builddir)/rpmmacros \$(top_builddir)/$PACKAGE-$VERSION.tar.gz
 	@$RPM -tb \$(top_builddir)/$PACKAGE-$VERSION.tar.gz
-	@RPMDIR=\`cat \$(top_builddir)/rpmmacros | $GAWK \'/%%_rpmdir/ { print \$${AX_DOLLAR}2; }\'\`; \\
+	@RPMDIR=\`cat \$(top_builddir)/rpmmacros | $AWK \'/%%_rpmdir/ { print \$${AX_DOLLAR}2; }\'\`; \\
 	echo \"\$\$RPMDIR\" | $EGREP \"%%{.*}\" > /dev/null 2>&1; \\
 	EXIT=\$\$?; \\
 	while test \"\$\$EXIT\" == \"0\"; do \\
-		RPMDIR=\`echo \"\$\$RPMDIR\" | $GAWK \'/%%{.*}/ \\
+		RPMDIR=\`echo \"\$\$RPMDIR\" | $AWK \'/%%{.*}/ \\
 		{ match( \$${AX_DOLLAR}0, /%%{.*}/, macro ); \\
 		  suffix = substr( \$${AX_DOLLAR}0, RSTART + RLENGTH ); \\
 		  gsub( /{|}/, \"\", macro[ 0 ] ); \\
@@ -1066,11 +1063,11 @@ srpm: $PACKAGE-$VERSION-0.src.rpm
 
 $PACKAGE-$VERSION-0.src.rpm:    \$(top_builddir)/rpmmacros \$(top_builddir)/$PACKAGE-$VERSION.tar.gz
 	@$RPM -ts \$(top_builddir)/$PACKAGE-$VERSION.tar.gz
-	@SRPMDIR=\`cat rpmmacros | $GAWK \'/%%_srcrpmdir/ { print ${AX_DOLLAR}${AX_DOLLAR}2; }\'\`; \\
+	@SRPMDIR=\`cat rpmmacros | $AWK \'/%%_srcrpmdir/ { print ${AX_DOLLAR}${AX_DOLLAR}2; }\'\`; \\
 	echo \"${AX_DOLLAR}${AX_DOLLAR}SRPMDIR\" | $EGREP \"%%{.*}\" > /dev/null 2>&1; \\
 	EXIT=${AX_DOLLAR}${AX_DOLLAR}?; \\
 	while test \"${AX_DOLLAR}${AX_DOLLAR}EXIT\" == \"0\"; do \\
-	    SRPMDIR=\`echo \"${AX_DOLLAR}${AX_DOLLAR}SRPMDIR\" | $GAWK \'/%%{.*}/ \\
+	    SRPMDIR=\`echo \"${AX_DOLLAR}${AX_DOLLAR}SRPMDIR\" | $AWK \'/%%{.*}/ \\
 		{ match( ${AX_DOLLAR}${AX_DOLLAR}0, /%%{.*}/, macro ); \\
 		  suffix = substr( ${AX_DOLLAR}${AX_DOLLAR}0, RSTART + RLENGTH ); \\
 		  gsub( /{|}/, \"\", macro[ 0 ] ); \\

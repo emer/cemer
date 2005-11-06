@@ -92,7 +92,7 @@ AC_HAVE_LIBRARY([dl],
 
 # Souped up readline check
 AC_HAVE_LIBRARY([readline],
-		[LIBS="$LIBS -ldl"],
+		[LIBS="$LIBS -lreadline"],
 		[VL_LIB_READLINE])
 
 AC_HAVE_LIBRARY([z],

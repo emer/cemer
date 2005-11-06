@@ -35,6 +35,7 @@ MAKETA_FLAGS =\
 	-hx \
 	-css \
 	-cpp=$(cppC) \
+	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
 	-I@abs_srcdir@/../ta/ios-g++-3.1 \
 	-I@abs_srcdir@/../pdp \

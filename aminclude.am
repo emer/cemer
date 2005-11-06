@@ -1,6 +1,6 @@
 
 # generated automatically by configure from AX_AUTOMAKE_MACROS
-# on Sat Nov  5 00:39:13 MST 2005
+# on Sat Nov  5 11:03:33 MST 2005
 
 
 CLEANFILES += \
@@ -61,7 +61,7 @@ do-mfstamp-am do-mfstamp: Makefile.in
 CLEAN_FILES += $(top_builddir)/RPMChangeLog
 
 $(top_builddir)/RPMChangeLog: $(top_srcdir)/ChangeLog
-	gawk '/^[^0-9]/ { \
+	 $AWK '/^[^0-9]/ { \
 		    if( $$1 == "*" ) $$1 = "-"; print; } \
 		/^$$/ { \
 		    print; } \
