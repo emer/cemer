@@ -1,6 +1,6 @@
 
 # generated automatically by configure from AX_AUTOMAKE_MACROS
-# on Sat Nov  5 11:03:33 MST 2005
+# on Thu Nov 17 16:19:20 MST 2005
 
 
 CLEANFILES += \
@@ -61,7 +61,7 @@ do-mfstamp-am do-mfstamp: Makefile.in
 CLEAN_FILES += $(top_builddir)/RPMChangeLog
 
 $(top_builddir)/RPMChangeLog: $(top_srcdir)/ChangeLog
-	 $AWK '/^[^0-9]/ { \
+	gawk '/^[^0-9]/ { \
 		    if( $$1 == "*" ) $$1 = "-"; print; } \
 		/^$$/ { \
 		    print; } \
@@ -94,160 +94,4 @@ $(top_builddir)/pdp-4.0.spec:	$(top_builddir)/spec.tmpl $(top_builddir)/install_
 	    /%defattr/ { while((getline < "install_files" ) > 0 ) { print; } }' \
 	    > "$(top_builddir)/pdp-4.0.spec"
 	@cat "$(top_builddir)/RPMChangeLog" >> "$(top_builddir)/pdp-4.0.spec"
-
-
-CLEANFILES += \
-$(top_builddir)/*.rpm \
-$(top_builddir)/rpmmacros
-
-~/.rpmmacros:
-	@echo "~/.rpmmacros not found.  Creating one like the following:"; \
-	echo ""; \
-	echo "%packager       <YOUR NAME>"; \
-	echo ""; \
-	echo "%distribution   <YOUR_DISTRIBUTION>"; \
-	echo "%vendor	 <YOUR_ORGANISATION>"; \
-	echo ""; \
-	echo "%_topdir	$$HOME/"; \
-	echo "%_tmppath       /tmp/"; \
-	echo ""; \
-	echo "%_rpmtopdir     %{_topdir}rpm/"; \
-	echo "%_builddir      %{_tmppath}"; \
-	echo "%_rpmdir	%{_rpmtopdir}RPMS/"; \
-	echo "%_sourcedir     %{_rpmtopdir}SOURCES/"; \
-	echo "%_specdir       %{_rpmtopdir}SPECS/"; \
-	echo "%_srcrpmdir     %{_rpmtopdir}SRPMS/"; \
-	echo ""; \
-	echo "Where <YOUR_NAME> is your name and <YOUR_DISTRIBUTION> is the"; \
-	echo "distribution you are building on (e.g. SuSE Linux 8.2 or"; \
-	echo "RedHat Linux 7.1). and <YOUR_ORGANISATION> is the organisation"; \
-	echo "you are associated with."; \
-	echo ""; \
-	echo "Running 'make create-rpmmacros' will create a ~/.rpmmacros file"; \
-	echo "for you and try to open it in an editor"; \
-	exit -1
-
-create-rpmmacros:
-	@if test -e ~/.rpmmacros; then \
-	    echo "Error: ~/.rpmmacros already exists"; \
-	    echo "Please remove it if you want to use"; \
-	    echo "this command to replace it"; \
-	    exit -1; \
-	else \
-	    echo "%packager       <YOUR NAME>" > ~/.rpmmacros; \
-	    echo "" >> ~/.rpmmacros; \
-	    echo "%distribution   <YOUR_DISTRIBUTION>" >> ~/.rpmmacros; \
-	    echo "%vendor	 <YOUR_ORGANISATION>" >> ~/.rpmmacros; \
-	    echo "" >> ~/.rpmmacros; \
-	    echo "%_topdir	$$HOME/" >> ~/.rpmmacros; \
-	    echo "%_tmppath       /tmp/" >> ~/.rpmmacros; \
-	    echo "" >> ~/.rpmmacros; \
-	    echo "%_rpmtopdir     %{_topdir}rpm/" >> ~/.rpmmacros; \
-	    echo "%_builddir      %{_tmppath}" >> ~/.rpmmacros; \
-	    echo "%_rpmdir	%{_rpmtopdir}RPMS/" >> ~/.rpmmacros; \
-	    echo "%_sourcedir     %{_rpmtopdir}SOURCES/" >> ~/.rpmmacros; \
-	    echo "%_specdir       %{_rpmtopdir}SPECS/" >> ~/.rpmmacros; \
-	    echo "%_srcrpmdir     %{_rpmtopdir}SRPMS/" >> ~/.rpmmacros; \
-	    if test "xpico" = x; then \
-		echo "Error: no editor specified or found."; \
-		echo "Please edit ~/.rpmmacros manually"; \
-	    else \
-		pico ~/.rpmmacros; \
-		exit $$?; \
-	    fi \
-	fi
-
-rpmmacros: ~/.rpmmacros
-	@cp -f ~/.rpmmacros rpmmacros;
-
-dist-rpm: rpm
-dist-srpm: srpm
-
-rpm: pdp-4.0-0.i*.fc4.rpm
-srpm: pdp-4.0-0.src.rpm
-
-$(top_builddir)/pdp-4.0-0.i*.fc4.rpm:   $(top_builddir)/rpmmacros $(top_builddir)/pdp-4.0.tar.gz
-	@rpmbuild -tb $(top_builddir)/pdp-4.0.tar.gz
-	@RPMDIR=`cat $(top_builddir)/rpmmacros | gawk '/%_rpmdir/ { print $$2; }'`; \
-	echo "$$RPMDIR" | grep -E "%{.*}" > /dev/null 2>&1; \
-	EXIT=$$?; \
-	while test "$$EXIT" == "0"; do \
-		RPMDIR=`echo "$$RPMDIR" | gawk '/%{.*}/ \
-		{ match( $$0, /%{.*}/, macro ); \
-		  suffix = substr( $$0, RSTART + RLENGTH ); \
-		  gsub( /{|}/, "", macro[ 0 ] ); \
-		  while( ( getline < "$(top_builddir)/rpmmacros" ) > 0 ) \
-		  { if( $$1 == macro[ 0 ] ) { print $$2 suffix; exit; } } \
-		  exit 1; \
-		}'`; \
-		if test "$$?" == "0"; then \
-			echo "$$RPMDIR" | grep -E "%{.*}" > /dev/null 2>&1; \
-			EXIT="$$?"; \
-		else \
-			EXIT="1"; \
-		fi; \
-	done; \
-	if test -d "$$RPMDIR"; then \
-	    for dir in `ls "$$RPMDIR"`; do \
-		ls "$${RPMDIR}$${dir}/pdp-4.0-0.$${dir}.rpm" > /dev/null 2>&1; \
-		if test "$$?" == "0"; then \
-		    cp "$${RPMDIR}$${dir}/pdp-4.0-0.$${dir}.rpm" "$(top_builddir)/pdp-4.0-0.$${dir}.fc4.rpm"; \
-		    found=true; \
-		fi; \
-	    done; \
-	    if ! $$found; then \
-		echo "RPM built but not found."; \
-		echo "Please copy it to $(top_builddir) manually."; \
-		exit 1; \
-	    fi; \
-	else \
-	    echo "RPM built but I cannot find RPM directory."; \
-	    echo "Please copy it to $(top_builddir) manually."; \
-	    exit 1; \
-	fi;
-
-$(top_builddir)/pdp-4.0.tar.gz: $(top_builddir)/install_files
-	cd "$(top_builddir)" && $(MAKE) $(AM_MAKEFLAGS) dist-gzip
-
-
-
-
-pdp-4.0-0.src.rpm:    $(top_builddir)/rpmmacros $(top_builddir)/pdp-4.0.tar.gz
-	@rpmbuild -ts $(top_builddir)/pdp-4.0.tar.gz
-	@SRPMDIR=`cat rpmmacros | gawk '/%_srcrpmdir/ { print $$2; }'`; \
-	echo "$$SRPMDIR" | grep -E "%{.*}" > /dev/null 2>&1; \
-	EXIT=$$?; \
-	while test "$$EXIT" == "0"; do \
-	    SRPMDIR=`echo "$$SRPMDIR" | gawk '/%{.*}/ \
-		{ match( $$0, /%{.*}/, macro ); \
-		  suffix = substr( $$0, RSTART + RLENGTH ); \
-		  gsub( /{|}/, "", macro[ 0 ] ); \
-		  while( ( getline < "rpmmacros" ) > 0 ) \
-		  { if( $$1 == macro[ 0 ] ) { print $$2 suffix; exit; } } \
-		  exit 1; \
-		}'`; \
-		if test "$$?" == "0"; then \
-			echo "$$SRPMDIR" | grep -E "%{.*}" > /dev/null 2>&1; \
-			EXIT="$$?"; \
-		else \
-			EXIT="1"; \
-		fi; \
-	done; \
-	if test -d "$$SRPMDIR"; then \
-	    ls "$${SRPMDIR}/pdp-4.0-0.src.rpm" > /dev/null 2>&1; \
-	    if test "$$?" == "0"; then \
-		cp "$${SRPMDIR}/pdp-4.0-0.src.rpm" "$(top_builddir)/."; \
-		found=true; \
-	    fi; \
-	    if ! $$found; then \
-		echo "SRPM built but not found."; \
-		echo "Please copy it to $(top_builddir) manually."; \
-		exit 1; \
-	    fi; \
-	else \
-	     echo "SRPM built but I cannot find SRPM directory."; \
-	     echo "Please copy it to $(top_builddir) directory manually."; \
-	     exit 1; \
-	fi;
-
 

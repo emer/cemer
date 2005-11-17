@@ -53,211 +53,6 @@ AC_MSG_RESULT([$PDP_SUFFIX])
 AC_SUBST([PDP_SUFFIX])
 ]) #PDP_DETERMINE_SUFFIX
 
-#						  gw_CHECK_QT
-#*************************************************************
-# qt_CHECK_QT, a.k.a AutoQt, is a macro written by 
-# Geoffrey Wossum. The homepage can be found at 
-# http://autoqt.sourceforge.net/
-#*************************************************************
-# Copyright (c) 2002, Geoffrey Wossum
-# All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
-# modification, are permitted provided that the following conditions are 
-# met:
-# 
-#  - Redistributions of source code must retain the above copyright notice, 
-#    this list of conditions and the following disclaimer.
-# 
-#  - Redistributions in binary form must reproduce the above copyright 
-#    notice, this list of conditions and the following disclaimer in the 
-#    documentation and/or other materials provided with the distribution.
-# 
-#  - Neither the name of Geoffrey Wossum nor the names of its 
-#    contributors may be used to endorse or promote products derived from 
-#    this software without specific prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED 
-# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Check for Qt compiler flags, linker flags, and binary packages
-AC_DEFUN([gw_CHECK_QT],
-[
-AC_REQUIRE([AC_PROG_CXX])
-AC_REQUIRE([AC_PATH_XTRA])
-
-AC_MSG_CHECKING([QTDIR])
-AC_ARG_WITH([qtdir], AC_HELP_STRING([--with-qtdir=DIR], [Specify the installation directory of Qt. The default is $QTDIR.]),[QTDIR=$withval])
-# Check that QTDIR is defined or that --with-qtdir given
-if test x"$QTDIR" = x ; then
-    QT_SEARCH="/usr/lib/qt31 /usr/local/qt31 /usr/lib/qt3 /usr/local/qt3 /usr/lib/qt2 /usr/local/qt2 /usr/lib/qt /usr/local/qt"
-    for i in $QT_SEARCH; do
-	if test -f $i/include/qglobal.h -a x$QTDIR = x; then QTDIR=$i; fi
-    done
-fi
-if test x"$QTDIR" = x ; then
-    AC_MSG_ERROR([*** QTDIR must be defined, or --with-qtdir option given])
-fi
-AC_MSG_RESULT([$QTDIR])
-
-# Change backslashes in QTDIR to forward slashes to prevent escaping
-# problems later on in the build process, mainly for Cygwin build
-# environment using MSVC as the compiler
-# TODO: Use sed instead of perl
-QTDIR=`echo $QTDIR | perl -p -e 's/\\\\/\\//g'`
-
-# Figure out which version of Qt we are using
-AC_MSG_CHECKING([Qt version])
-QT_VER=`grep 'define.*QT_VERSION_STR\W' $QTDIR/include/qglobal.h | perl -p -e 's/\D//g'`
-case "${QT_VER}" in
-    2*)
-	QT_MAJOR="2"
-    ;;
-    3*)
-	QT_MAJOR="3"
-    ;;
-    *)
-	AC_MSG_ERROR([*** Don't know how to handle this Qt major version])
-    ;;
-esac
-AC_MSG_RESULT([$QT_VER ($QT_MAJOR)])
-
-# Check that moc is in path
-AC_CHECK_PROG(MOC, moc, moc)
-if test x$MOC = x ; then
-	AC_MSG_ERROR([*** moc must be in path])
-fi
-
-# uic is the Qt user interface compiler
-AC_CHECK_PROG(UIC, uic, uic)
-if test x$UIC = x ; then
-	AC_MSG_ERROR([*** uic must be in path])
-fi
-
-# qembed is the Qt data embedding utility.
-# It is located in $QTDIR/tools/qembed, and must be compiled and installed
-# manually, we'll let it slide if it isn't present
-AC_CHECK_PROG(QEMBED, qembed, qembed)
-
-
-# Calculate Qt include path
-QT_CXXFLAGS="-I$QTDIR/include"
-
-QT_IS_EMBEDDED="no"
-# On unix, figure out if we're doing a static or dynamic link
-case "${host}" in
-    *-cygwin)
-	AC_DEFINE_UNQUOTED(WIN32, "", Defined if on Win32 platform)
-	if test -f "$QTDIR/lib/qt.lib" ; then
-	    QT_LIB="qt.lib"
-	    QT_IS_STATIC="yes"
-	    QT_IS_MT="no"
-	elif test -f "$QTDIR/lib/qt-mt.lib" ; then
-	    QT_LIB="qt-mt.lib" 
-	    QT_IS_STATIC="yes"
-	    QT_IS_MT="yes"
-	elif test -f "$QTDIR/lib/qt$QT_VER.lib" ; then
-	    QT_LIB="qt$QT_VER.lib"
-	    QT_IS_STATIC="no"
-	    QT_IS_MT="no"
-	elif test -f "$QTDIR/lib/qt-mt$QT_VER.lib" ; then
-	    QT_LIB="qt-mt$QT_VER.lib"
-	    QT_IS_STATIC="no"
-	    QT_IS_MT="yes"
-	fi
-	;;
-
-    *)
-	QT_IS_STATIC=`ls $QTDIR/lib/*.a 2> /dev/null`
-	if test "x$QT_IS_STATIC" = x; then
-	    QT_IS_STATIC="no"
-	else
-	    QT_IS_STATIC="yes"
-	fi
-	if test x$QT_IS_STATIC = xno ; then
-	    QT_IS_DYNAMIC=`ls $QTDIR/lib/*.so 2> /dev/null` 
-	    if test "x$QT_IS_DYNAMIC" = x;  then
-		AC_MSG_ERROR([*** Couldn't find any Qt libraries])
-	    fi
-	fi
-
-	if test "x`ls $QTDIR/lib/libqt.* 2> /dev/null`" != x ; then
-	    QT_LIB="-lqt"
-	    QT_IS_MT="no"
-	elif test "x`ls $QTDIR/lib/libqt-mt.* 2> /dev/null`" != x ; then
-	    QT_LIB="-lqt-mt"
-	    QT_IS_MT="yes"
-	elif test "x`ls $QTDIR/lib/libqte.* 2> /dev/null`" != x ; then
-	    QT_LIB="-lqte"
-	    QT_IS_MT="no"
-	    QT_IS_EMBEDDED="yes"
-	elif test "x`ls $QTDIR/lib/libqte-mt.* 2> /dev/null`" != x ; then
-	    QT_LIB="-lqte-mt"
-	    QT_IS_MT="yes"
-	    QT_IS_EMBEDDED="yes"
-	fi
-	;;
-esac
-AC_MSG_CHECKING([if Qt is static])
-AC_MSG_RESULT([$QT_IS_STATIC])
-AC_MSG_CHECKING([if Qt is multithreaded])
-AC_MSG_RESULT([$QT_IS_MT])
-AC_MSG_CHECKING([if Qt is embedded])
-AC_MSG_RESULT([$QT_IS_EMBEDDED])
-
-QT_GUILINK=""
-QASSISTANTCLIENT_LDADD="-lqassistantclient"
-case "${host}" in
-
-    *linux*)
-	QT_LIBS="$QT_LIB"
-	if test $QT_IS_STATIC = yes && test $QT_IS_EMBEDDED = no; then
-	    QT_LIBS="$QT_LIBS -lm"
-	fi
-	;;
-
-    *darwin*)
-	QT_LIBS="$QT_LIB"
-	if test $QT_IS_STATIC = yes && test $QT_IS_EMBEDDED = no; then
-	    QT_LIBS="$QT_LIBS  -lm"
-	fi
-	;;
-
-esac
-
-if test x"$QT_IS_MT" = "xyes" ; then
-	AC_DEFINE([_REENTRANT],[1],[Set when qt is multi-threaded])
-	AC_DEFINE([QT_THREAD_SUPPORT],[1],[Build with Qt thread support])
-fi
-
-QT_LDADD="-L$QTDIR/lib $QT_LIBS"
-
-if test x$QT_IS_STATIC = xyes ; then
-    AC_CHECK_LIB([Xft],[XftFontOpen],[LIBS="$LIBS -lXft"])
-fi
-
-AC_MSG_CHECKING([QT_CXXFLAGS])
-AC_MSG_RESULT([$QT_CXXFLAGS])
-AC_MSG_CHECKING([QT_LDADD])
-AC_MSG_RESULT([$QT_LDADD])
-])
-
-#TODO:
-# QT 4, will need pkg-config macros from
-# http://cvs.freedesktop.org/*checkout*/pkg-config/pkg-config/pkg.m4
-# as well as from
-# http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/classpath/classpath/configure.ac?rev=HEAD&content-type=text/plain 
-# see also autoconf mailing list
-
 #					      VL_LIB_READLINE
 #*************************************************************
 #
@@ -310,7 +105,7 @@ AC_DEFUN([VL_LIB_READLINE], [
 	      [Define if you have a readline compatible library])
     AC_CHECK_HEADERS(readline.h readline/readline.h)
   else
-    AC_MSG_WARN([Unable to find a readline compatible library.])
+    AC_MSG_ERROR([Unable to find a readline compatible library.])
   fi
 ])
 
@@ -341,7 +136,7 @@ for a in "$MAKE" make gmake gnumake ; do
 		AC_MSG_RESULT([$a])
 		break 2
 	else
-		AC_MSG_WARN([GNU Make not found. % extensions may fail. Considering uncommenting code in Moc.am])
+		AC_MSG_ERROR([GNU Make not found. % extensions may fail. Considering uncommenting code in Moc.am])
 	fi
 done
 ]) #CHECK_GNU_MAKE
@@ -730,7 +525,7 @@ do-mfstamp-am do-mfstamp: Makefile.in
 ]])
 else
     AX_HAVE_INSTALL_FILES=false;
-    AC_MSG_WARN([install_files support disable... awk not found])
+    AC_MSG_ERROR([install_files support disable... awk not found])
 fi
 ])# AX_INSTALL_FILES
 
@@ -1125,7 +920,7 @@ UPLOAD_TARGETS += \\
 		fi
 	    else
 		AC_MSG_RESULT([$PLATFORM_SUFFIX])
-		AC_MSG_WARN([rpm support disabled... PLATFORM_SUFFIX not set])
+		AC_MSG_NOTICE([rpm support disabled... PLATFORM_SUFFIX not set])
 	    fi
 	else
 	    AC_MSG_NOTICE([rpm support disabled... neither rpmbuild or rpm was found])
@@ -1137,4 +932,709 @@ UPLOAD_TARGETS += \\
 else
     AC_MSG_NOTICE([rpm support disabled... install_files not available])
 fi
+])
+
+dnl @synopsis AX_CHECK_GL
+dnl
+dnl Check for an OpenGL implementation. If GL is found, the required
+dnl compiler and linker flags are included in the output variables
+dnl "GL_CFLAGS" and "GL_LIBS", respectively. This macro adds the
+dnl configure option "--with-apple-opengl-framework", which users can
+dnl use to indicate that Apple's OpenGL framework should be used on Mac
+dnl OS X. If Apple's OpenGL framework is used, the symbol
+dnl "HAVE_APPLE_OPENGL_FRAMEWORK" is defined. If no GL implementation
+dnl is found, "no_gl" is set to "yes".
+dnl
+dnl @category InstalledPackages
+dnl @author Braden McDaniel <braden@endoframe.com>
+dnl @version 2004-11-15
+dnl @license AllPermissive
+
+AC_DEFUN([AX_CHECK_GL],
+[AC_REQUIRE([AC_PATH_X])dnl
+AC_REQUIRE([ACX_PTHREAD])dnl
+
+#
+# There isn't a reliable way to know we should use the Apple OpenGL framework
+# without a configure option.  A Mac OS X user may have installed an
+# alternative GL implementation (e.g., Mesa), which may or may not depend on X.
+#
+AC_ARG_WITH([apple-opengl-framework],
+	    [AC_HELP_STRING([--with-apple-opengl-framework],
+			    [use Apple OpenGL framework (Mac OS X only)])])
+if test "X$with_apple_opengl_framework" = "Xyes"; then
+  AC_DEFINE([HAVE_APPLE_OPENGL_FRAMEWORK], [1],
+	    [Use the Apple OpenGL framework.])
+  GL_LIBS="-framework OpenGL"
+else
+  AC_LANG_PUSH(C++)
+
+  AX_LANG_COMPILER_MS
+  if test X$ax_compiler_ms = Xno; then
+    GL_CFLAGS="${PTHREAD_CFLAGS}"
+    GL_LIBS="${PTHREAD_LIBS} -lm"
+  fi
+
+  #
+  # Use x_includes and x_libraries if they have been set (presumably by
+  # AC_PATH_X).
+  #
+  if test "X$no_x" != "Xyes"; then
+    if test -n "$x_includes"; then
+      GL_CFLAGS="-I${x_includes} ${GL_CFLAGS}"
+    fi
+    if test -n "$x_libraries"; then
+      GL_LIBS="-L${x_libraries} -lX11 ${GL_LIBS}"
+    fi
+  fi
+
+  AC_CHECK_HEADERS([windows.h])
+
+  AC_CACHE_CHECK([for OpenGL library], [ax_cv_check_gl_libgl],
+  [ax_cv_check_gl_libgl="no"
+  ax_save_CPPFLAGS="${CPPFLAGS}"
+  CPPFLAGS="${GL_CFLAGS} ${CPPFLAGS}"
+  ax_save_LIBS="${LIBS}"
+  LIBS=""
+  ax_check_libs="-lopengl32 -lGL"
+  for ax_lib in ${ax_check_libs}; do
+    if test X$ax_compiler_ms = Xyes; then
+      ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
+    else
+      ax_try_lib="${ax_lib}"
+    fi
+    LIBS="${ax_try_lib} ${GL_LIBS} ${ax_save_LIBS}"
+    AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[
+# if HAVE_WINDOWS_H && defined(_WIN32)
+#   include <windows.h>
+# endif
+# include <GL/gl.h>]],
+		     [[glBegin(0)]])],
+    [ax_cv_check_gl_libgl="${ax_try_lib}"; break])
+  done
+  LIBS=${ax_save_LIBS}
+  CPPFLAGS=${ax_save_CPPFLAGS}])
+
+  if test "X${ax_cv_check_gl_libgl}" = "Xno"; then
+    no_gl="yes"
+    GL_CFLAGS=""
+    GL_LIBS=""
+  else
+    GL_LIBS="${ax_cv_check_gl_libgl} ${GL_LIBS}"
+  fi
+  AC_LANG_POP([C++])
+fi
+
+LIBS="$LIBS $GL_LIBS"
+CXXFLAGS="$CXXFLAGS $GLCFLAGS"
+AC_SUBST([GL_CFLAGS])
+AC_SUBST([GL_LIBS])
+])dnl
+
+dnl						      CHECK_ZLIB
+dnl *************************************************************
+dnl	http://autoconf-archive.cryp.to/check_zlib.html
+dnl *************************************************************
+dnl @synopsis CHECK_ZLIB()
+dnl
+dnl This macro searches for an installed zlib library. If nothing was
+dnl specified when calling configure, it searches first in /usr/local
+dnl and then in /usr. If the --with-zlib=DIR is specified, it will try
+dnl to find it in DIR/include/zlib.h and DIR/lib/libz.a. If
+dnl --without-zlib is specified, the library is not searched at all.
+dnl
+dnl If either the header file (zlib.h) or the library (libz) is not
+dnl found, the configuration exits on error, asking for a valid zlib
+dnl installation directory or --without-zlib.
+dnl
+dnl The macro defines the symbol HAVE_LIBZ if the library is found. You
+dnl should use autoheader to include a definition for this symbol in a
+dnl config.h file. Sample usage in a C/C++ source is as follows:
+dnl
+dnl   #ifdef HAVE_LIBZ
+dnl   #include <zlib.h>
+dnl   #endif /* HAVE_LIBZ */
+dnl
+dnl @category InstalledPackages
+dnl @author Loic Dachary <loic@senga.org>
+dnl @version 2004-09-20
+dnl @license GPLWithACException
+
+AC_DEFUN([CHECK_ZLIB],
+#
+# Handle user hints
+#
+[AC_MSG_CHECKING(if zlib is wanted)
+AC_ARG_WITH(zlib,
+[  --with-zlib=DIR root directory path of zlib installation [defaults to
+		    /usr/local or /usr if not found in /usr/local]
+  --without-zlib to disable zlib usage completely],
+[if test "$withval" != no ; then
+  AC_MSG_RESULT(yes)
+  if test -d "$withval"
+  then
+    ZLIB_HOME="$withval"
+  else
+    AC_MSG_NOTICE([$withval does not exist, checking usual places])
+  fi
+else
+  AC_MSG_RESULT(no)
+fi])
+
+ZLIB_HOME=/usr/local
+if test ! -f "${ZLIB_HOME}/include/zlib.h"
+then
+	ZLIB_HOME=/usr
+fi
+
+#
+# Locate zlib, if wanted
+#
+if test -n "${ZLIB_HOME}"
+then
+	ZLIB_OLD_LDFLAGS=$LDFLAGS
+	ZLIB_OLD_CPPFLAGS=$LDFLAGS
+	LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib"
+	CPPFLAGS="$CPPFLAGS -I${ZLIB_HOME}/include"
+	AC_LANG_SAVE
+	AC_LANG_C
+	AC_CHECK_LIB(z, inflateEnd, [zlib_cv_libz=yes], [zlib_cv_libz=no])
+	AC_CHECK_HEADER(zlib.h, [zlib_cv_zlib_h=yes], [zlib_cv_zlib_h=no])
+	AC_LANG_RESTORE
+	if test "$zlib_cv_libz" = "yes" -a "$zlib_cv_zlib_h" = "yes"
+	then
+		#
+		# If both library and header were found, use them
+		#
+		AC_CHECK_LIB(z, inflateEnd)
+		AC_MSG_CHECKING(zlib in ${ZLIB_HOME})
+		AC_MSG_RESULT(ok)
+	else
+		#
+		# If either header or library was not found, revert and bomb
+		#
+		AC_MSG_CHECKING(zlib in ${ZLIB_HOME})
+		LDFLAGS="$ZLIB_OLD_LDFLAGS"
+		CPPFLAGS="$ZLIB_OLD_CPPFLAGS"
+		AC_MSG_RESULT(failed)
+		AC_MSG_ERROR([either specify a valid zlib installation with --with-zlib=DIR or disable zlib usage with --without-zlib])
+	fi
+fi
+
+])
+
+dnl @synopsis AX_LANG_COMPILER_MS
+dnl
+dnl Check whether the compiler for the current language is Microsoft.
+dnl
+dnl This macro is modeled after _AC_LANG_COMPILER_GNU in the GNU
+dnl Autoconf implementation.
+dnl
+dnl @category InstalledPackages
+dnl @author Braden McDaniel <braden@endoframe.com>
+dnl @version 2004-11-15
+dnl @license AllPermissive
+
+AC_DEFUN([AX_LANG_COMPILER_MS],
+[AC_CACHE_CHECK([whether we are using the Microsoft _AC_LANG compiler],
+		[ax_cv_[]_AC_LANG_ABBREV[]_compiler_ms],
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[#ifndef _MSC_VER
+       choke me
+#endif
+]])],
+		   [ax_compiler_ms=yes],
+		   [ax_compiler_ms=no])
+ax_cv_[]_AC_LANG_ABBREV[]_compiler_ms=$ax_compiler_ms
+])])
+
+dnl @synopsis BNV_HAVE_QT [--with-Qt-dir=DIR] [--with-Qt-lib=LIB]
+dnl @synopsis BNV_HAVE_QT [--with-Qt-include-dir=DIR] [--with-Qt-bin-dir=DIR] [--with-Qt-lib-dir=DIR] [--with-Qt-lib=LIB]
+dnl
+dnl @summary Search for Trolltech's Qt GUI framework.
+dnl
+dnl Searches common directories for Qt include files, libraries and Qt
+dnl binary utilities. The macro supports several different versions of
+dnl the Qt framework being installed on the same machine. Without
+dnl options, the macro is designed to look for the latest library,
+dnl i.e., the highest definition of QT_VERSION in qglobal.h. By use of
+dnl one or more options a different library may be selected. There are
+dnl two different sets of options. Both sets contain the option
+dnl --with-Qt-lib=LIB which can be used to force the use of a
+dnl particular version of the library file when more than one are
+dnl available. LIB must be in the form as it would appear behind the
+dnl "-l" option to the compiler. Examples for LIB would be "qt-mt" for
+dnl the multi-threaded version and "qt" for the regular version. In
+dnl addition to this, the first set consists of an option
+dnl --with-Qt-dir=DIR which can be used when the installation conforms
+dnl to Trolltech's standard installation, which means that header files
+dnl are in DIR/include, binary utilities are in DIR/bin and the library
+dnl is in DIR/lib. The second set of options can be used to indicate
+dnl individual locations for the header files, the binary utilities and
+dnl the library file, in addition to the specific version of the
+dnl library file.
+dnl
+dnl The following shell variable is set to either "yes" or "no":
+dnl
+dnl   have_qt
+dnl
+dnl Additionally, the following variables are exported:
+dnl
+dnl   QT_CXXFLAGS
+dnl   QT_LIBS
+dnl   QT_MOC
+dnl   QT_UIC
+dnl   QT_DIR
+dnl
+dnl which respectively contain an "-I" flag pointing to the Qt include
+dnl directory (and "-DQT_THREAD_SUPPORT" when LIB is "qt-mt"), link
+dnl flags necessary to link with Qt and X, the name of the meta object
+dnl compiler and the user interface compiler both with full path, and
+dnl finaly the variable QTDIR as Trolltech likes to see it defined (if
+dnl possible).
+dnl
+dnl Example lines for Makefile.in:
+dnl
+dnl   CXXFLAGS = @QT_CXXFLAGS@
+dnl   MOC      = @QT_MOC@
+dnl
+dnl After the variables have been set, a trial compile and link is
+dnl performed to check the correct functioning of the meta object
+dnl compiler. This test may fail when the different detected elements
+dnl stem from different releases of the Qt framework. In that case, an
+dnl error message is emitted and configure stops.
+dnl
+dnl No common variables such as $LIBS or $CFLAGS are polluted.
+dnl
+dnl Options:
+dnl
+dnl --with-Qt-dir=DIR: DIR is equal to $QTDIR if you have followed the
+dnl installation instructions of Trolltech. Header files are in
+dnl DIR/include, binary utilities are in DIR/bin and the library is in
+dnl DIR/lib.
+dnl
+dnl --with-Qt-include-dir=DIR: Qt header files are in DIR.
+dnl
+dnl --with-Qt-bin-dir=DIR: Qt utilities such as moc and uic are in DIR.
+dnl
+dnl --with-Qt-lib-dir=DIR: The Qt library is in DIR.
+dnl
+dnl --with-Qt-lib=LIB: Use -lLIB to link with the Qt library.
+dnl
+dnl If some option "=no" or, equivalently, a --without-Qt-* version is
+dnl given in stead of a --with-Qt-*, "have_qt" is set to "no" and the
+dnl other variables are set to the empty string.
+dnl
+dnl @category InstalledPackages
+dnl @author Bastiaan Veelo <Bastiaan.N.Veelo@ntnu.no>
+dnl @version 2005-01-24
+dnl @license AllPermissive
+
+dnl Copyright (C) 2001, 2002, 2003, 2005, Bastiaan Veelo
+
+dnl Calls BNV_PATH_QT_DIRECT (contained in this file) as a subroutine.
+AC_DEFUN([BNV_HAVE_QT],
+[
+  dnl THANKS! This code includes bug fixes and contributions made by:
+  dnl Tim McClarren,
+  dnl Dennis R. Weilert,
+  dnl Qingning Huo.
+
+  AC_REQUIRE([AC_PROG_CXX])
+  AC_REQUIRE([AC_PATH_X])
+  AC_REQUIRE([AC_PATH_XTRA])
+
+  AC_MSG_CHECKING(for Qt)
+
+  AC_ARG_WITH([Qt-dir],
+    [  --with-Qt-dir=DIR       DIR is equal to \$QTDIR if you have followed the
+                          installation instructions of Trolltech. Header
+                          files are in DIR/include, binary utilities are
+                          in DIR/bin and the library is in DIR/lib])
+  AC_ARG_WITH([Qt-include-dir],
+    [  --with-Qt-include-dir=DIR
+                          Qt header files are in DIR])
+  AC_ARG_WITH([Qt-bin-dir],
+    [  --with-Qt-bin-dir=DIR   Qt utilities such as moc and uic are in DIR])
+  AC_ARG_WITH([Qt-lib-dir],
+    [  --with-Qt-lib-dir=DIR   The Qt library is in DIR])
+  AC_ARG_WITH([Qt-lib],
+    [  --with-Qt-lib=LIB       Use -lLIB to link with the Qt library])
+  if test x"$with_Qt_dir" = x"no" ||
+     test x"$with_Qt_include-dir" = x"no" ||
+     test x"$with_Qt_bin_dir" = x"no" ||
+     test x"$with_Qt_lib_dir" = x"no" ||
+     test x"$with_Qt_lib" = x"no"; then
+    # user disabled Qt. Leave cache alone.
+    have_qt="User disabled Qt."
+  else
+    # "yes" is a bogus option
+    if test x"$with_Qt_dir" = xyes; then
+      with_Qt_dir=
+    fi
+    if test x"$with_Qt_include_dir" = xyes; then
+      with_Qt_include_dir=
+    fi
+    if test x"$with_Qt_bin_dir" = xyes; then
+      with_Qt_bin_dir=
+    fi
+    if test x"$with_Qt_lib_dir" = xyes; then
+      with_Qt_lib_dir=
+    fi
+    if test x"$with_Qt_lib" = xyes; then
+      with_Qt_lib=
+    fi
+    # No Qt unless we discover otherwise
+    have_qt=no
+    # Check whether we are requested to link with a specific version
+    if test x"$with_Qt_lib" != x; then
+      bnv_qt_lib="$with_Qt_lib"
+    fi
+    # Check whether we were supplied with an answer already
+    if test x"$with_Qt_dir" != x; then
+      have_qt=yes
+      bnv_qt_dir="$with_Qt_dir"
+      bnv_qt_include_dir="$with_Qt_dir/include"
+      bnv_qt_bin_dir="$with_Qt_dir/bin"
+      bnv_qt_lib_dir="$with_Qt_dir/lib"
+      # Only search for the lib if the user did not define one already
+      if test x"$bnv_qt_lib" = x; then
+        bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                     sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+      fi
+      bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+    else
+      # Use cached value or do search, starting with suggestions from
+      # the command line
+      AC_CACHE_VAL(bnv_cv_have_qt,
+      [
+        # We are not given a solution and there is no cached value.
+        bnv_qt_dir=NO
+        bnv_qt_include_dir=NO
+        bnv_qt_lib_dir=NO
+        if test x"$bnv_qt_lib" = x; then
+          bnv_qt_lib=NO
+        fi
+        BNV_PATH_QT_DIRECT
+        if test "$bnv_qt_dir" = NO ||
+           test "$bnv_qt_include_dir" = NO ||
+           test "$bnv_qt_lib_dir" = NO ||
+           test "$bnv_qt_lib" = NO; then
+          # Problem with finding complete Qt.  Cache the known absence of Qt.
+          bnv_cv_have_qt="have_qt=no"
+        else
+          # Record where we found Qt for the cache.
+          bnv_cv_have_qt="have_qt=yes                  \
+                       bnv_qt_dir=$bnv_qt_dir          \
+               bnv_qt_include_dir=$bnv_qt_include_dir  \
+                   bnv_qt_bin_dir=$bnv_qt_bin_dir      \
+                      bnv_qt_LIBS=\"$bnv_qt_LIBS\""
+        fi
+      ])dnl
+      eval "$bnv_cv_have_qt"
+    fi # all $bnv_qt_* are set
+  fi   # $have_qt reflects the system status
+  if test x"$have_qt" = xyes; then
+    QT_CXXFLAGS="-I$bnv_qt_include_dir"
+    if test $bnv_qt_lib = "qt-mt"; then
+        QT_CXXFLAGS="$QT_CXXFLAGS -DQT_THREAD_SUPPORT"
+    fi
+    QT_DIR="$bnv_qt_dir"
+    QT_LIBS="$bnv_qt_LIBS"
+    # If bnv_qt_dir is defined, utilities are expected to be in the
+    # bin subdirectory
+    if test x"$bnv_qt_dir" != x; then
+        if test -x "$bnv_qt_dir/bin/uic"; then
+          QT_UIC="$bnv_qt_dir/bin/uic"
+        else
+          # Old versions of Qt don't have uic
+          QT_UIC=
+        fi
+      QT_MOC="$bnv_qt_dir/bin/moc"
+    else
+      # Or maybe we are told where to look for the utilities
+      if test x"$bnv_qt_bin_dir" != x; then
+        if test -x "$bnv_qt_bin_dir/uic"; then
+          QT_UIC="$bnv_qt_bin_dir/uic"
+        else
+          # Old versions of Qt don't have uic
+          QT_UIC=
+        fi
+        QT_MOC="$bnv_qt_bin_dir/moc"
+      else
+      # Last possibility is that they are in $PATH
+        QT_UIC="`which uic`"
+        QT_MOC="`which moc`"
+      fi
+    fi
+    # All variables are defined, report the result
+    AC_MSG_RESULT([$have_qt:
+    QT_CXXFLAGS=$QT_CXXFLAGS
+    QT_DIR=$QT_DIR
+    QT_LIBS=$QT_LIBS
+    QT_UIC=$QT_UIC
+    QT_MOC=$QT_MOC])
+  else
+    # Qt was not found
+    QT_CXXFLAGS=
+    QT_DIR=
+    QT_LIBS=
+    QT_UIC=
+    QT_MOC=
+    AC_MSG_RESULT($have_qt)
+  fi
+  AC_SUBST(QT_CXXFLAGS)
+  AC_SUBST(QT_DIR)
+  AC_SUBST(QT_LIBS)
+  AC_SUBST(QT_UIC)
+  AC_SUBST(QT_MOC)
+
+  #### Being paranoid:
+  if test x"$have_qt" = xyes; then
+    AC_MSG_CHECKING(correct functioning of Qt installation)
+    AC_CACHE_VAL(bnv_cv_qt_test_result,
+    [
+      cat > bnv_qt_test.h << EOF
+#include <qobject.h>
+class Test : public QObject
+{
+Q_OBJECT
+public:
+  Test() {}
+  ~Test() {}
+public slots:
+  void receive() {}
+signals:
+  void send();
+};
+EOF
+
+      cat > bnv_qt_main.$ac_ext << EOF
+#include "bnv_qt_test.h"
+#include <qapplication.h>
+int main( int argc, char **argv )
+{
+  QApplication app( argc, argv );
+  Test t;
+  QObject::connect( &t, SIGNAL(send()), &t, SLOT(receive()) );
+}
+EOF
+
+      bnv_cv_qt_test_result="failure"
+      bnv_try_1="$QT_MOC bnv_qt_test.h -o moc_bnv_qt_test.$ac_ext >/dev/null 2>bnv_qt_test_1.out"
+      AC_TRY_EVAL(bnv_try_1)
+      bnv_err_1=`grep -v '^ *+' bnv_qt_test_1.out | grep -v "^bnv_qt_test.h\$"`
+      if test x"$bnv_err_1" != x; then
+        echo "$bnv_err_1" >&AC_FD_CC
+        echo "configure: could not run $QT_MOC on:" >&AC_FD_CC
+        cat bnv_qt_test.h >&AC_FD_CC
+      else
+        bnv_try_2="$CXX $QT_CXXFLAGS -c $CXXFLAGS -o moc_bnv_qt_test.o moc_bnv_qt_test.$ac_ext >/dev/null 2>bnv_qt_test_2.out"
+        AC_TRY_EVAL(bnv_try_2)
+        bnv_err_2=`grep -v '^ *+' bnv_qt_test_2.out | grep -v "^bnv_qt_test.{$ac_ext}\$"`
+        if test x"$bnv_err_2" != x; then
+          echo "$bnv_err_2" >&AC_FD_CC
+          echo "configure: could not compile:" >&AC_FD_CC
+          cat bnv_qt_test.$ac_ext >&AC_FD_CC
+        else
+          bnv_try_3="$CXX $QT_CXXFLAGS -c $CXXFLAGS -o bnv_qt_main.o bnv_qt_main.$ac_ext >/dev/null 2>bnv_qt_test_3.out"
+          AC_TRY_EVAL(bnv_try_3)
+          bnv_err_3=`grep -v '^ *+' bnv_qt_test_3.out | grep -v "^bnv_qt_main.{$ac_ext}\$"`
+          if test x"$bnv_err_3" != x; then
+            echo "$bnv_err_3" >&AC_FD_CC
+            echo "configure: could not compile:" >&AC_FD_CC
+            cat bnv_qt_main.$ac_ext >&AC_FD_CC
+          else
+            bnv_try_4="$CXX $QT_LIBS $LIBS -o bnv_qt_main bnv_qt_main.o moc_bnv_qt_test.o >/dev/null 2>bnv_qt_test_4.out"
+            AC_TRY_EVAL(bnv_try_4)
+            bnv_err_4=`grep -v '^ *+' bnv_qt_test_4.out`
+            if test x"$bnv_err_4" != x; then
+              echo "$bnv_err_4" >&AC_FD_CC
+            else
+              bnv_cv_qt_test_result="succes"
+            fi
+          fi
+        fi
+      fi
+    ])dnl AC_CACHE_VAL bnv_cv_qt_test_result
+    AC_MSG_RESULT([$bnv_cv_qt_test_result]);
+    if test x"$bnv_cv_qt_test_result" = "xfailure"; then
+      AC_MSG_ERROR([Failed to find matching components of a complete
+                  Qt installation. Try using more options,
+                  see ./configure --help.])
+    fi
+
+    rm -f bnv_qt_test.h moc_bnv_qt_test.$ac_ext moc_bnv_qt_test.o \
+          bnv_qt_main.$ac_ext bnv_qt_main.o bnv_qt_main \
+          bnv_qt_test_1.out bnv_qt_test_2.out bnv_qt_test_3.out bnv_qt_test_4.out
+  fi
+])
+
+dnl Internal subroutine of BNV_HAVE_QT
+dnl Set bnv_qt_dir bnv_qt_include_dir bnv_qt_bin_dir bnv_qt_lib_dir bnv_qt_lib
+AC_DEFUN(BNV_PATH_QT_DIRECT,
+[
+  ## Binary utilities ##
+  if test x"$with_Qt_bin_dir" != x; then
+    bnv_qt_bin_dir=$with_Qt_bin_dir
+  fi
+  ## Look for header files ##
+  if test x"$with_Qt_include_dir" != x; then
+    bnv_qt_include_dir="$with_Qt_include_dir"
+  else
+    # The following header file is expected to define QT_VERSION.
+    qt_direct_test_header=qglobal.h
+    # Look for the header file in a standard set of common directories.
+    bnv_include_path_list="
+      /usr/include
+      `ls -dr /usr/include/qt* 2>/dev/null`
+      `ls -dr /usr/lib/qt*/include 2>/dev/null`
+      `ls -dr /usr/local/qt*/include 2>/dev/null`
+      `ls -dr /opt/qt*/include 2>/dev/null`
+    "
+    for bnv_dir in $bnv_include_path_list; do
+      if test -r "$bnv_dir/$qt_direct_test_header"; then
+        bnv_dirs="$bnv_dirs $bnv_dir"
+      fi
+    done
+    # Now look for the newest in this list
+    bnv_prev_ver=0
+    for bnv_dir in $bnv_dirs; do
+      bnv_this_ver=`egrep -w '#define QT_VERSION' $bnv_dir/$qt_direct_test_header | sed s/'#define QT_VERSION'//`
+      if expr $bnv_this_ver '>' $bnv_prev_ver > /dev/null; then
+        bnv_qt_include_dir=$bnv_dir
+        bnv_prev_ver=$bnv_this_ver
+      fi
+    done
+  fi dnl Found header files.
+
+  # Are these headers located in a traditional Trolltech installation?
+  # That would be $bnv_qt_include_dir stripped from its last element:
+  bnv_possible_qt_dir=`dirname $bnv_qt_include_dir`
+  if test -x $bnv_possible_qt_dir/bin/moc &&
+     ls $bnv_possible_qt_dir/lib/libqt* > /dev/null; then
+    # Then the rest is a piece of cake
+    bnv_qt_dir=$bnv_possible_qt_dir
+    bnv_qt_bin_dir="$bnv_qt_dir/bin"
+    ### Start patch Dennis Weilert
+    #bnv_qt_lib_dir="$bnv_qt_dir/lib"
+    if test x"$with_Qt_lib_dir" != x; then
+      bnv_qt_lib_dir="$with_Qt_lib_dir"
+    else
+      bnv_qt_lib_dir="$bnv_qt_dir/lib"
+    fi
+    ### End patch Dennis Weilert
+    # Only look for lib if the user did not supply it already
+    if test x"$bnv_qt_lib" = xNO; then
+      bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                   sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+    fi
+    bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+  else
+    # There is no valid definition for $QTDIR as Trolltech likes to see it
+    bnv_qt_dir=
+    ## Look for Qt library ##
+    if test x"$with_Qt_lib_dir" != x; then
+      bnv_qt_lib_dir="$with_Qt_lib_dir"
+      # Only look for lib if the user did not supply it already
+      if test x"$bnv_qt_lib" = xNO; then
+        bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                     sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+      fi
+      bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+    else
+      # Normally, when there is no traditional Trolltech installation,
+      # the library is installed in a place where the linker finds it
+      # automatically.
+      # If the user did not define the library name, try with qt
+      if test x"$bnv_qt_lib" = xNO; then
+        bnv_qt_lib=qt
+      fi
+      qt_direct_test_header=qapplication.h
+      qt_direct_test_main="
+        int argc;
+        char ** argv;
+        QApplication app(argc,argv);
+      "
+      # See if we find the library without any special options.
+      # Don't add top $LIBS permanently yet
+      bnv_save_LIBS="$LIBS"
+      LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+      bnv_qt_LIBS="$LIBS"
+      bnv_save_CXXFLAGS="$CXXFLAGS"
+      CXXFLAGS="-I$bnv_qt_include_dir"
+      AC_TRY_LINK([#include <$qt_direct_test_header>],
+        $qt_direct_test_main,
+      [
+        # Succes.
+        # We can link with no special library directory.
+        bnv_qt_lib_dir=
+      ], [
+        # That did not work. Try the multi-threaded version
+        echo "Non-critical error, please neglect the above." >&AC_FD_CC
+        bnv_qt_lib=qt-mt
+        LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+        AC_TRY_LINK([#include <$qt_direct_test_header>],
+          $qt_direct_test_main,
+        [
+          # Succes.
+          # We can link with no special library directory.
+          bnv_qt_lib_dir=
+        ], [
+          # That did not work. Try the OpenGL version
+          echo "Non-critical error, please neglect the above." >&AC_FD_CC
+          bnv_qt_lib=qt-gl
+          LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+          AC_TRY_LINK([#include <$qt_direct_test_header>],
+            $qt_direct_test_main,
+          [
+            # Succes.
+            # We can link with no special library directory.
+            bnv_qt_lib_dir=
+          ], [
+            # That did not work. Maybe a library version I don't know about?
+            echo "Non-critical error, please neglect the above." >&AC_FD_CC
+            # Look for some Qt lib in a standard set of common directories.
+            bnv_dir_list="
+              `echo $bnv_qt_includes | sed ss/includess`
+              /lib
+              /usr/lib
+              /usr/local/lib
+              /opt/lib
+              `ls -dr /usr/lib/qt* 2>/dev/null`
+              `ls -dr /usr/local/qt* 2>/dev/null`
+              `ls -dr /opt/qt* 2>/dev/null`
+            "
+            for bnv_dir in $bnv_dir_list; do
+              if ls $bnv_dir/libqt*; then
+                # Gamble that it's the first one...
+                bnv_qt_lib="`ls $bnv_dir/libqt* | sed -n 1p |
+                            sed s@$bnv_dir/lib@@ | sed s/[.].*//`"
+                bnv_qt_lib_dir="$bnv_dir"
+                break
+              fi
+            done
+            # Try with that one
+            LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+            AC_TRY_LINK([#include <$qt_direct_test_header>],
+              $qt_direct_test_main,
+            [
+              # Succes.
+              # We can link with no special library directory.
+              bnv_qt_lib_dir=
+            ], [
+              # Leave bnv_qt_lib_dir defined
+            ])
+          ])
+        ])
+      ])
+      if test x"$bnv_qt_lib_dir" != x; then
+        bnv_qt_LIBS="-l$bnv_qt_lib_dir $LIBS"
+      else
+        bnv_qt_LIBS="$LIBS"
+      fi
+      LIBS="$bnv_save_LIBS"
+      CXXFLAGS="$bnv_save_CXXFLAGS"
+    fi dnl $with_Qt_lib_dir was not given
+  fi dnl Done setting up for non-traditional Trolltech installation
 ])

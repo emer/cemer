@@ -1,4 +1,4 @@
 SUFFIXES = .moc.cpp
 
 .h.moc.cpp:
-	$(MOC) -o $@ $<
+	$(QT_MOC) -o $@ $<

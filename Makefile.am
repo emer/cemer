@@ -7,7 +7,6 @@ include aminclude.am
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
-
 # SUBDIRS tells the autotools which directories have Makefile.am's in them.
 # If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
 
@@ -40,3 +39,10 @@ linecount:
 # http://grey.colorado.edu/cgi-bin/trac.cgi/wiki/CreatingaGNUcompliantChangeLogfromSubversioncommits
 changelog:
 	svn log --xml --verbose | xsltproc /home/mingus/opt/svn2cl-0.3/svn2cl.xsl - > ChangeLog
+
+force_ta:
+	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
