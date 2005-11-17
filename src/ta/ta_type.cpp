@@ -560,7 +560,7 @@ String taMisc::StrArrayToChar(const String_PArray& sa) {
 //tmp += " ";  
 //}  
 //return tmp; 
-return sa.AsString("");
+return sa.AsString(" ");
 }
 
 int taMisc::skip_white(istream& strm, bool peek) {
