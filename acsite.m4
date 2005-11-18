@@ -1,9 +1,22 @@
-#					 PDP_DETERMINE_OSTYPE
-#*************************************************************
-# Compiler and linker flags, includes and defines are set
-# based on the results of these tests.
-#*************************************************************
-#
+dnl 					     PDP_DETERMINE_OSTYPE
+dnl *************************************************************
+dnl  These tests are used mainly for Maketa.am at this point.
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+
 AC_DEFUN([PDP_DETERMINE_OSTYPE],[
 AC_REQUIRE([AC_CANONICAL_BUILD])
 AC_MSG_CHECKING([results of config.guess])
@@ -32,12 +45,25 @@ AM_CONDITIONAL([DARWIN],[test $PDP_PLATFORM = DARWIN])
 AM_CONDITIONAL([CYGWIN],[test $PDP_PLATFORM = CYGWIN])
 ]) #PDP_DETERMINE_OSTYPE
 
-#					 PDP_DETERMINE_SUFFIX
-#*************************************************************
-# Adds configure flag dependent suffixes. E.g., 
-# bp_nogui_debug_mpi++
-#*************************************************************
-#
+dnl 					     PDP_DETERMINE_SUFFIX
+dnl *************************************************************
+dnl  Adds configure flag dependent suffixes. E.g. bp_nogui_debug_mpi++
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details.
+
 AC_DEFUN([PDP_DETERMINE_SUFFIX],[
 AC_MSG_CHECKING([executeable suffixes])
 if test "$gui" = "false" ; then
@@ -53,27 +79,58 @@ AC_MSG_RESULT([$PDP_SUFFIX])
 AC_SUBST([PDP_SUFFIX])
 ]) #PDP_DETERMINE_SUFFIX
 
-#					      VL_LIB_READLINE
-#*************************************************************
-#
-# Searches for a readline compatible library. If found, defines 
-# `HAVE_LIBREADLINE'. If the found library has the `add_history'
-# function, sets also `HAVE_READLINE_HISTORY'. Also checks for 
-# the locations of the necessary include files and sets 
-# `HAVE_READLINE_H' or `HAVE_READLINE_READLINE_H' and 
-# `HAVE_READLINE_HISTORY_H' or 'HAVE_HISTORY_H' if the 
-# corresponding include files exists.
-#
-# The libraries that may be readline compatible are `libedit', 
-# `libeditline' and `libreadline'. 
-# Sometimes we need to link a termcap library for readline to 
-# work, this macro tests these cases too by trying to link with 
-# `libtermcap', `libcurses' or `libncurses' before giving up. 
-#
-# See: http://autoconf-archive.cryp.to/vl_lib_readline.html
-#
-#*************************************************************
-#
+dnl        			       VL_LIB_READLINE (modified)
+dnl *************************************************************
+dnl @synopsis VL_LIB_READLINE
+dnl
+dnl Searches for a readline compatible library. If found, defines
+dnl `HAVE_LIBREADLINE'. If the found library has the `add_history'
+dnl function, sets also `HAVE_READLINE_HISTORY'. Also checks for the
+dnl locations of the necessary include files and sets `HAVE_READLINE_H'
+dnl or `HAVE_READLINE_READLINE_H' and `HAVE_READLINE_HISTORY_H' or
+dnl 'HAVE_HISTORY_H' if the corresponding include files exists.
+dnl
+dnl The libraries that may be readline compatible are `libedit',
+dnl `libeditline' and `libreadline'. Sometimes we need to link a
+dnl termcap library for readline to work, this macro tests these cases
+dnl too by trying to link with `libtermcap', `libcurses' or
+dnl `libncurses' before giving up.
+dnl
+dnl Here is an example of how to use the information provided by this
+dnl macro to perform the necessary includes or declarations in a C
+dnl file:
+dnl
+dnl   #ifdef HAVE_LIBREADLINE
+dnl   #  if defined(HAVE_READLINE_READLINE_H)
+dnl   #    include <readline/readline.h>
+dnl   #  elif defined(HAVE_READLINE_H)
+dnl   #    include <readline.h>
+dnl   #  else /* !defined(HAVE_READLINE_H) */
+dnl   extern char *readline ();
+dnl   #  endif /* !defined(HAVE_READLINE_H) */
+dnl   char *cmdline = NULL;
+dnl   #else /* !defined(HAVE_READLINE_READLINE_H) */
+dnl     /* no readline */
+dnl   #endif /* HAVE_LIBREADLINE */
+dnl
+dnl   #ifdef HAVE_READLINE_HISTORY
+dnl   #  if defined(HAVE_READLINE_HISTORY_H)
+dnl   #    include <readline/history.h>
+dnl   #  elif defined(HAVE_HISTORY_H)
+dnl   #    include <history.h>
+dnl   #  else /* !defined(HAVE_HISTORY_H) */
+dnl   extern void add_history ();
+dnl   extern int write_history ();
+dnl   extern int read_history ();
+dnl   #  endif /* defined(HAVE_READLINE_HISTORY_H) */
+dnl     /* no history */
+dnl   #endif /* HAVE_READLINE_HISTORY */
+dnl
+dnl @category InstalledPackages
+dnl @author Ville Laurikari <vl@iki.fi>
+dnl @version 2002-04-04
+dnl @license AllPermissive
+
 AC_DEFUN([VL_LIB_READLINE], [
   AC_CACHE_CHECK([for a readline compatible library],
 		 vl_cv_lib_readline, [
@@ -109,71 +166,44 @@ AC_DEFUN([VL_LIB_READLINE], [
   fi
 ])
 
-
-#					       CHECK_GNU_MAKE
-#*************************************************************
-#
-# This macro searches for a GNU version of make. If a match is
-# found, the makefile variable 'GNUmake' is set to 'true'
-# otherwise it is set to 'false. This is useful for 
-# including a special features in a Makefile, which cannot be 
-# handled by other versions of make. The variable 
-# _cv_gnu_make_command is set to the command to invoke 
-# GNU make if it exists, the empty string otherwise.
-#
-# See: http://autoconf-archive.cryp.to/check_gnu_make.html
-#
-#*************************************************************
-#
-
-AC_DEFUN([CHECK_GNU_MAKE],[
-AC_MSG_CHECKING([for GNU Make])
-for a in "$MAKE" make gmake gnumake ; do
-	if test -z "$a"; then
-	    continue
-	fi
-	if  ( sh -c "$a --version" 2> /dev/null | grep GNU  2>&1 > /dev/null ); then
-		AC_MSG_RESULT([$a])
-		break 2
-	else
-		AC_MSG_ERROR([GNU Make not found. % extensions may fail. Considering uncommenting code in Moc.am])
-	fi
-done
-]) #CHECK_GNU_MAKE
-
-
-#	    ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#*************************************************************
-#
-#  This macro tries to find out how to compile programs that
-#  use MPI (Message Passing Interface), a standard API for
-#  parallel process communication (see http://www-unix.mcs.anl.gov/mpi/)
-# 
-#  On success, it sets the MPICC, MPICXX, or MPIF90 output variable to
-#  the name of the MPI compiler, depending upon the current language.
-#  (This may just be $CC/$CXX/$F90, but is more often something like
-#  mpicc/mpiCC/mpif90.)  It also sets MPILIBS to any libraries that are
-#  needed for linking MPI (e.g. -lmpi, if a special MPICC/MPICXX/MPIF90
-#  was not found).
-# 
-#  If you want to compile everything with MPI, you should set:
-# 
-#      CC="$MPICC" #OR# CXX="$MPICXX" #OR# F90="$MPIF90"
-#      LIBS="$MPILIBS $LIBS"
-# 
-#  The user can force a particular library/compiler by setting the
-#  MPICC/MPICXX/MPIF90 and/or MPILIBS environment variables.
-# 
-#  ACTION-IF-FOUND is a list of shell commands to run if an MPI
-#  library is found, and ACTION-IF-NOT-FOUND is a list of commands
-#  to run it if it is not found.  If ACTION-IF-FOUND is not specified,
-#  the default action will define HAVE_MPI.
-# 
-#  @version $Id$
-#  @author Steven G. Johnson <stevenj@alum.mit.edu>
-#
-#*************************************************************
-#
+dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
+dnl *************************************************************
+dnl @synopsis ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl
+dnl @summary figure out how to compile/link code with MPI
+dnl
+dnl This macro tries to find out how to compile programs that use MPI
+dnl (Message Passing Interface), a standard API for parallel process
+dnl communication (see http://www-unix.mcs.anl.gov/mpi/)
+dnl
+dnl On success, it sets the MPICC, MPICXX, or MPIF77 output variable to
+dnl the name of the MPI compiler, depending upon the current language.
+dnl (This may just be $CC/$CXX/$F77, but is more often something like
+dnl mpicc/mpiCC/mpif77.) It also sets MPILIBS to any libraries that are
+dnl needed for linking MPI (e.g. -lmpi, if a special
+dnl MPICC/MPICXX/MPIF77 was not found).
+dnl
+dnl If you want to compile everything with MPI, you should set:
+dnl
+dnl     CC="$MPICC" #OR# CXX="$MPICXX" #OR# F77="$MPIF77"
+dnl     LIBS="$MPILIBS $LIBS"
+dnl
+dnl NOTE: The above assumes that you will use $CC (or whatever) for
+dnl linking as well as for compiling. (This is the default for automake
+dnl and most Makefiles.)
+dnl
+dnl The user can force a particular library/compiler by setting the
+dnl MPICC/MPICXX/MPIF77 and/or MPILIBS environment variables.
+dnl
+dnl ACTION-IF-FOUND is a list of shell commands to run if an MPI
+dnl library is found, and ACTION-IF-NOT-FOUND is a list of commands to
+dnl run it if it is not found. If ACTION-IF-FOUND is not specified, the
+dnl default action will define HAVE_MPI.
+dnl
+dnl @category InstalledPackages
+dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
+dnl @version 2005-09-02
+dnl @license GPLWithACException
 AC_DEFUN([ACX_MPI], [
 AC_PREREQ(2.50) dnl for AC_LANG_CASE
 
@@ -245,6 +275,54 @@ else
 fi
 ])dnl ACX_MPI
 
+dnl ACX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
+dnl *************************************************************
+dnl  http://autoconf-archive.cryp.to/acx_pthread.html
+dnl *************************************************************
+dnl This macro figures out how to build C programs using POSIX threads.
+dnl It sets the PTHREAD_LIBS output variable to the threads library and
+dnl linker flags, and the PTHREAD_CFLAGS output variable to any special
+dnl C compiler flags that are needed. (The user can also force certain
+dnl compiler flags/libs to be tested by setting these environment
+dnl variables.)
+dnl
+dnl Also sets PTHREAD_CC to any special C compiler that is needed for
+dnl multi-threaded programs (defaults to the value of CC otherwise).
+dnl (This is necessary on AIX to use the special cc_r compiler alias.)
+dnl
+dnl NOTE: You are assumed to not only compile your program with these
+dnl flags, but also link it with them as well. e.g. you should link
+dnl with $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS
+dnl $LIBS
+dnl
+dnl If you are only building threads programs, you may wish to use
+dnl these variables in your default LIBS, CFLAGS, and CC:
+dnl
+dnl        LIBS="$PTHREAD_LIBS $LIBS"
+dnl        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+dnl        CC="$PTHREAD_CC"
+dnl
+dnl In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute
+dnl constant has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to
+dnl that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
+dnl
+dnl ACTION-IF-FOUND is a list of shell commands to run if a threads
+dnl library is found, and ACTION-IF-NOT-FOUND is a list of commands to
+dnl run it if it is not found. If ACTION-IF-FOUND is not specified, the
+dnl default action will define HAVE_PTHREAD.
+dnl
+dnl Please let the authors know if this macro fails on any platform, or
+dnl if you have any other suggestions or comments. This macro was based
+dnl on work by SGJ on autoconf scripts for FFTW (www.fftw.org) (with
+dnl help from M. Frigo), as well as ac_pthread and hb_pthread macros
+dnl posted by Alejandro Forero Cuervo to the autoconf macro repository.
+dnl We are also grateful for the helpful feedback of numerous users.
+dnl
+dnl @category InstalledPackages
+dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
+dnl @version 2005-06-15
+dnl @license GPLWithACException
+
 AC_DEFUN([ACX_PTHREAD], [
 AC_REQUIRE([AC_CANONICAL_HOST])
 AC_LANG_SAVE
@@ -273,48 +351,6 @@ if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
 	LIBS="$save_LIBS"
 	CFLAGS="$save_CFLAGS"
 fi
-
-
-#	ACX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#*************************************************************
-# http://autoconf-archive.cryp.to/acx_pthread.html
-#*************************************************************
-# This macro figures out how to build C programs using POSIX threads. 
-# It sets the PTHREAD_LIBS output variable to the threads library 
-# and linker flags, and the PTHREAD_CFLAGS output variable to any 
-# special C compiler flags that are needed. (The user can also force 
-# certain compiler flags/libs to be tested by setting these 
-# environment variables.)
-#
-#  Also sets PTHREAD_CC to any special C compiler that is needed 
-# for multi-threaded programs (defaults to the value of CC otherwise).
-# (This is necessary on AIX to use the special cc_r compiler alias.)
-#
-# NOTE: You are assumed to not only compile your program with these 
-# flags, but also link it with them as well. e.g. you should link 
-# with $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS $LIBS
-#
-# If you are only building threads programs, you may wish to use these 
-# variables in your default LIBS, CFLAGS, and CC:
-#
-#       LIBS="$PTHREAD_LIBS $LIBS"
-#       CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-#       CC="$PTHREAD_CC"
-#
-# In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute constant 
-# has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to that name 
-# (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
-#
-# ACTION-IF-FOUND is a list of shell commands to run if a threads library 
-# is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if 
-# it is not found. If ACTION-IF-FOUND is not specified, the default action 
-# will define HAVE_PTHREAD.
-# Please let the authors know if this macro fails on any platform, 
-# or if you have any other suggestions or comments. This macro was based 
-# on work by SGJ on autoconf scripts for FFTW (www.fftw.org) 
-# (with help from M. Frigo), as well as ac_pthread and hb_pthread 
-# macros posted by Alejandro Forero Cuervo to the autoconf macro 
-# repository. We are also grateful for the helpful feedback of numerous users.
 
 #*************************************************************
 # We must check for the threads library under a number of different
@@ -474,11 +510,18 @@ fi
 AC_LANG_RESTORE
 ])dnl ACX_PTHREAD
 
-#					     AX_INSTALL_FILES
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_dist_rpm.html
-#*************************************************************
-# Adds target for creating a install_files file, which contains the list of files that will be installed.
+dnl 			              AX_INSTALL_FILES (modified)
+dnl *************************************************************
+dnl @synopsis AX_INSTALL_FILES
+dnl
+dnl Adds target for creating a install_files file, which contains the
+dnl list of files that will be installed.
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
+
 AC_DEFUN([AX_INSTALL_FILES],
 [
 AC_MSG_NOTICE([adding install_files support])
@@ -529,32 +572,50 @@ else
 fi
 ])# AX_INSTALL_FILES
 
-#				       AX_ADD_AM_MACRO([RULE])
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_add_recursive_am_macro.html
-#*************************************************************
-#  Adds the specified rule to $AMINCLUDE
+dnl 				       AX_ADD_AM_MACRO([RULE])
+dnl *************************************************************
+dnl @synopsis AX_ADD_AM_MACRO([RULE])
+dnl
+dnl Adds the specified rule to $AMINCLUDE
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_ADD_AM_MACRO],[
   AC_REQUIRE([AX_AM_MACROS])
   AX_APPEND_TO_FILE([$AMINCLUDE],[$1])
 ])
 
-#				 AX_APPEND_TO_FILE([FILE],[DATA])
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_append_to_file.html
-#*************************************************************
-#  Appends the specified data to the specified file.
+dnl 				 AX_APPEND_TO_FILE([FILE],[DATA])
+dnl *************************************************************
+dnl @synopsis AX_APPEND_TO_FILE([FILE],[DATA])
+dnl
+dnl Appends the specified data to the specified file.
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_APPEND_TO_FILE],[
 AC_REQUIRE([AX_FILE_ESCAPES])
 printf "$2" >> "$1"
 ])
 
-#		    AX_ADD_RECURSIVE_AM_MACRO([TARGET],[RULE])
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_add_am_macro.html
-#*************************************************************
+dnl 		    AX_ADD_RECURSIVE_AM_MACRO([TARGET],[RULE])
+dnl *************************************************************
+dnl @synopsis AX_ADD_RECURSIVE_AM_MACRO([TARGET],[RULE])
+dnl
+dnl Adds the specified rule to $AMINCLUDE along with a TARGET-recursive
+dnl rule that will call TARGET for the current directory and TARGET-am
+dnl recursively for each subdirectory
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 #  Adds the specified rule to $AMINCLUDE along with a TARGET-recursive rule that will call TARGET for the current directory and TARGET-am recursively for each subdirectory
 
 AC_DEFUN([AX_ADD_RECURSIVE_AM_MACRO],[
@@ -581,11 +642,21 @@ $2
 ])
 ])
 
-#						 AX_AM_MACROS
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_am_macros.html
-#*************************************************************
-#   Adds support for macros that create automake rules. You must manually add @INC_AMINCLUDE@  to your Makefile.am files.
+dnl 						 AX_AM_MACROS
+dnl *************************************************************
+dnl @synopsis AX_AM_MACROS
+dnl
+dnl Adds support for macros that create automake rules. You must
+dnl manually add the following line
+dnl
+dnl   @INC_AMINCLUDE@
+dnl
+dnl to your Makefile.am files.
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_AM_MACROS],
 [
@@ -615,11 +686,16 @@ AC_REQUIRE([AX_FILE_ESCAPES])
 printf "$2" > "$1"
 ])
 
-#					       AX_FILE_ESCAPES
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_file_escapes.html
-#*************************************************************
-#  Writes the specified data to the specified file.
+dnl 					       AX_FILE_ESCAPES
+dnl *************************************************************
+dnl @synopsis AX_PRINT_TO_FILE([FILE],[DATA])
+dnl
+dnl Writes the specified data to the specified file.
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_FILE_ESCAPES],[
 AX_DOLLAR="\$"
@@ -629,11 +705,37 @@ AX_BS="\\\\"
 AX_DQ="\""
 ])
 
-#						 AX_EXTRA_DIST
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_extra_dist.html
-#*************************************************************
-#  Allow support for custom dist targets.
+dnl 						 AX_EXTRA_DIST
+dnl *************************************************************
+dnl @synopsis AX_EXTRA_DIST
+dnl
+dnl Allow support for custom dist targets.
+dnl
+dnl To add custom dist targets, you must create a dist-<TYPE> target
+dnl within your Makefile.am, where <TYPE> is the name of the dist and
+dnl then add <TYPE> to EXTRA_SRC_DISTS or EXTRA_BIN_DISTS. For example:
+dnl
+dnl    dist-foobar:
+dnl    	<rules for making the foobar dist>
+dnl
+dnl    EXTRA_BIN_DISTS += foobar
+dnl
+dnl You can then build all the src dist targets by running:
+dnl
+dnl    make dist-src
+dnl
+dnl You can build all the binary dist targets by running:
+dnl
+dnl    make dist-bin
+dnl
+dnl and you can build both the src and dist targets by running:
+dnl
+dnl    make all-dist
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_EXTRA_DIST],
 [
@@ -667,11 +769,59 @@ all-dist-check dist2-check dist-all-check: dist-check dist-src-extra dist-bin
 ]])
 ])# AX_EXTRA_DIST
 
-#					   AX_DIST_RPM([SPEC])
-#*************************************************************
-#    http://autoconf-archive.cryp.to/ax_dist_rpm.html
-#*************************************************************
-# Adds support for a rpm dist target.
+dnl 					   AX_DIST_RPM([SPEC])
+dnl *************************************************************
+dnl @synopsis AX_DIST_RPM([SPEC])
+dnl
+dnl Adds support for a rpm dist target.
+dnl
+dnl You will need to create a spec template with everything except the
+dnl files and the Changlog. @NAME@ will be replaced with the value of
+dnl @PACKAGE@ and @VER@ will be replaced with the value of @VERSION@.
+dnl The files and ChangeLog will be filled in automatically. For
+dnl instance:
+dnl
+dnl     Summary: Foobar
+dnl     Name: @NAME@
+dnl     Version: @VER@
+dnl     Release: 0
+dnl     Copyright: GPL
+dnl     Group: Productivity/Networking
+dnl     Source0: http://somewhere/Foobar/%{name}-%{version}.tar.gz
+dnl     URL: http://somewhere
+dnl     BuildRoot: %{_tmppath}/%{name}-root
+dnl     Prefix: %{_prefix}
+dnl
+dnl     %description
+dnl     Foobar does something
+dnl
+dnl     %prep
+dnl     %setup
+dnl
+dnl     %build
+dnl     %configure
+dnl     make
+dnl
+dnl     %install
+dnl     %makeinstall
+dnl
+dnl     %clean
+dnl     rm -rf $RPM_BUILD_ROOT
+dnl
+dnl     %files
+dnl     %defattr(-,root,root)
+dnl
+dnl     %doc AUTHORS BUGS COPYING INSTALL NEWS README
+dnl
+dnl     %changelog
+dnl
+dnl Make sure ax_upload.am is added to aminclude.am and you have
+dnl 'include aminclude.am' in your toplevel Makefile.am
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
 
 AC_DEFUN([AX_DIST_RPM],
 [
@@ -927,7 +1077,7 @@ UPLOAD_TARGETS += \\
 	fi
     else
 	AC_MSG_RESULT([not found])
-	AC_MSG_ERROR([rpm spec template "$1.in" could not be found])
+	AC_MSG_NOTICE([rpm spec template "$1.in" could not be found. `make rpm' likely will not work correctly if you are performing a vpath build.])
     fi
 else
     AC_MSG_NOTICE([rpm support disabled... install_files not available])

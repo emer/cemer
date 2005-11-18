@@ -1,6 +1,21 @@
-CLEANFILES =
+CLEANFILES =\
+	*stamp* \
+	pdp-4.0.spec \
+	RPMChangeLog 
 CLEAN_FILES =
 EXTRA_DIST =
+
+DISTCLEANFILES =\
+	aminclude.am \
+	src/taiqtso/do-mfstamp \
+	src/ta/do-mfstamp \
+	src/css/do-mfstamp \
+	src/tamisc/do-mfstamp \
+	src/pdp/do-mfstamp \
+	src/leabra/do-mfstamp \
+	src/bp/do-mfstamp \
+	src/maketa/mfstamp \
+	src/maketa/do-mfstamp
 
 #For make rpm
 include aminclude.am
@@ -13,7 +28,10 @@ dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
 SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp
 
-EXTRA_DIST += src/ta/ios-g++-3.1
+EXTRA_DIST +=\
+	src/ta/ios-g++-3.1 \
+	spec.tmpl.in \
+	aminclude.am
 
 # These actions occur immediately before a distribution tarball is created.
 
@@ -27,7 +45,6 @@ dist-hook:
 		$(distdir)/src/tamisc/tamisc_maketa_defs.h
 	cp -p $(srcdir)/src/ta/ta_maketa_defs.h \
 		$(distdir)/src/ta/ta_maketa_defs.h
-
 
 # Count the number of lines in *.h and *.cpp files
 
