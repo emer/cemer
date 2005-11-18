@@ -1,4 +1,8 @@
 
+# generated automatically by configure from AX_AUTOMAKE_MACROS
+# on Fri Nov 18 11:13:33 MST 2005
+
+
 CLEANFILES += \
 $(top_builddir)/install_files
 
