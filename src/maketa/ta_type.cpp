@@ -61,8 +61,9 @@ String String_PArray::AsString(const char* sep_) const {
   for (i=0; i < size; ++i) xlen += FastEl(i).length();
   String rval(0, xlen, '\0');
   for (i = 0; i < size; ++i) {
+    if (i > 0) 
+      rval.cat(sep);
     rval.cat(FastEl(i));
-    rval.cat(sep);
   }
   return rval;
 }
@@ -550,17 +551,17 @@ void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
 }
 
 String taMisc::StrArrayToChar(const String_PArray& sa) {
+//NOTE: for historical reasons, this adds an extra sep on the end
 // more efficient to know the length, so we don't resize...  
-//uint xlen = sa.size; // for seps  
-//int i;  
-//for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
-//String tmp(0, xlen, '\0');  
-//for (i = 0; i < sa.size; i++) {  
-//tmp += sa.FastEl(i);  
-//tmp += " ";  
-//}  
-//return tmp; 
-return sa.AsString(" ");
+  uint xlen = sa.size; // for seps  
+  int i;  
+  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
+  String tmp(0, xlen, '\0');  
+  for (i = 0; i < sa.size; i++) {  
+    tmp += sa.FastEl(i);  
+    tmp += " ";  
+  }  
+  return tmp; 
 }
 
 int taMisc::skip_white(istream& strm, bool peek) {
