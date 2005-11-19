@@ -104,12 +104,11 @@ include $(top_srcdir)/mfstamp.am
 lib_LTLIBRARIES = libtamisc@PDP_SUFFIX@.la
 libtamisc@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
-
+	-I@srcdir@/../taiqtso
 BUILT_SOURCES = tamisc_TA_type.h
 CLEANFILES += tamisc_TA.ccx
 clean-local:

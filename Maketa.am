@@ -53,7 +53,16 @@ endif
 
 if DARWIN
 cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
-MAKETA_FLAGS += "-I/usr/include/gcc/darwin/3.3"
+
+# There is a bug where on linux, if maketa is shown the top build directory 
+# then it will scan config.h twice and /lib/cpp will error out on  redefinitions. The opposite
+# is true on the mac - if the top build directory is not shown it will never see config.h
+# and will error out due to there being no definitions. This could be some voodoo on linux
+# where gcc automatically scans the parent directory.
+MAKETA_FLAGS +=\
+	"-I/usr/include/gcc/darwin/3.3" \
+	-I@abs_srcdir@/../..
+
 endif
 
 if TA_GUI

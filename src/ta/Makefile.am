@@ -132,10 +132,11 @@ include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
-libta@PDP_SUFFIX@_la_CPPFLAGS = -I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
+libta@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@srcdir@ \
+	-I@srcdir@/../css \
+	-I@srcdir@/../taiqtso
 BUILT_SOURCES = ta_TA_type.h
 CLEANFILES += ta_TA.ccx
 

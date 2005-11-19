@@ -39,13 +39,13 @@ bp@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
 
 bp@PDP_SUFFIX@___CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@abs_srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I${QTDIR}/include
-
+	-I@srcdir@/../taiqtso
 BUILT_SOURCES = bp_TA_type.h
 CLEANFILES += bp_TA.ccx
 #**************************************************

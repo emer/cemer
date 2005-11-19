@@ -15,7 +15,7 @@ AC_CONFIG_SUBDIRS([src/maketa])
 
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2 dist-shar dist-zip dist-tarZ gnu subdir-objects tar-pax nostdinc])
 
 # Custom: check results of config.status for OS type
 PDP_DETERMINE_OSTYPE
@@ -26,13 +26,13 @@ AC_DISABLE_SHARED
 # Set default language  C++
 AC_LANG_CPLUSPLUS
 
+# Enable make rpm
+AX_DIST_RPM([spec.tmpl])
+
 # Next two lines are a hack to get rid of those stupid fortran checks
 m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
 AC_PROG_LIBTOOL
-
-# Enable make rpm
-AX_DIST_RPM([spec.tmpl])
 
 #						     programs
 #*************************************************************
@@ -40,25 +40,24 @@ AX_DIST_RPM([spec.tmpl])
 #*************************************************************
 #
 
+
+PDP_PROG_CXX
+
+# GNU C++ compiler is mandatory
+AC_MSG_CHECKING([for GNU C++ compiler])
+if test $GXX != yes; then
+  AC_MSG_ERROR([GNU C++ compiler not detected.])
+fi
+AC_MSG_RESULT([$GXX])
+
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
-AC_PROG_CXXCPP
-AC_REQUIRE_CPP
-
-# GNU C++ compiler is mandatory
 
 # Hack to stop fortran checks in configure
 # See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
 m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
-
-AC_PROG_CXX
-AC_MSG_CHECKING([for GNU C++ compiler])
-if test $GXX != yes; then
-  AC_MSG_ERROR([GNU C++ compiler not detected. The custom typescanning tool maketa requires gcc.])
-fi
-AC_MSG_RESULT([$GXX])
 
 #						      headers
 #*************************************************************
@@ -138,8 +137,11 @@ AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 if test $gui = true; then
 	
   BNV_HAVE_QT
+  LIBS="$LIBS $QT_LIBS"
+  CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS"
   # Important macro for OSX, which may use Apple's OpenGL framework. This preference is undetectable.
   AX_CHECK_GL
+  
   AC_HAVE_LIBRARY([Coin],[LIBS="$LIBS -lCoin"],[AC_MSG_ERROR([--enable-gui set but unable to find libCoin.])])
   AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[AC_MSG_ERROR([--enable-gui set but unable to find libjpeg.])])
   AC_HAVE_LIBRARY([SoQt], [LIBS="$LIBS -lSoQt"],[AC_MSG_ERROR([--enable-gui set but unable to find libSoQt.])])
@@ -219,6 +221,7 @@ AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
+AC_SUBST([CXXFLAGS])
 
 #						       output
 #*************************************************************

@@ -1,5 +1,5 @@
 CLEANFILES =\
-	*stamp* \
+	*do-stamp* \
 	pdp-4.0.spec \
 	RPMChangeLog 
 CLEAN_FILES =
@@ -7,6 +7,9 @@ EXTRA_DIST =
 
 DISTCLEANFILES =\
 	aminclude.am \
+	do-mfstamp-am \
+	mfstamp \
+	do-mfstamp \
 	src/taiqtso/do-mfstamp \
 	src/ta/do-mfstamp \
 	src/css/do-mfstamp \

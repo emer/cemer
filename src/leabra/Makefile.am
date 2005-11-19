@@ -34,14 +34,13 @@ leabra@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
 
 leabra@PDP_SUFFIX@___CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
-
+	-I@srcdir@/../taiqtso
 BUILT_SOURCES = leabra_TA_type.h
 CLEANFILES += leabra_TA.ccx
 

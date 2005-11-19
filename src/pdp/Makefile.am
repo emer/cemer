@@ -100,13 +100,12 @@ lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
-
+	-I@srcdir@/../taiqtso
 bin_PROGRAMS = pdp@PDP_SUFFIX@++
 
 pdp@PDP_SUFFIX@___SOURCES = main.cpp

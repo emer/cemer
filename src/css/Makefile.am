@@ -57,10 +57,10 @@ include $(top_srcdir)/mfstamp.am
 lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 libcss@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@abs_top_builddir@ \
+	-I@srcdir@ \
 	-I@srcdir@/../ta \
-	-I@srcdir@/../taiqtso \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
+	-I@srcdir@/../taiqtso
 bin_PROGRAMS = css@PDP_SUFFIX@++
 css@PDP_SUFFIX@___SOURCES = main.cpp
 css@PDP_SUFFIX@___LDADD =\

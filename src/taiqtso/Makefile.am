@@ -60,9 +60,9 @@ include $(top_srcdir)/mfstamp.am
 lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
-	-I@srcdir@/../ta \
-	-I/usr/include/freetype2 \
-	-I${QTDIR}/include
+	-I@srcdir@ \
+	-I@abs_top_builddir@ \
+	-I@srcdir@/../ta
 
 clean-local:
 	-rm *moc*
