@@ -87,8 +87,6 @@ TAHEADS =\
 
 HEADS =\
 	ta_def.h \
-	$(PROJNAME)_TA_type.h \
-	$(PROJNAME)_TA_inst.h \
 	ta_platform.h \
 	ta_string.h \
 	ta_stdef.h \
@@ -123,7 +121,6 @@ SRCS =\
 	ta_defaults.cpp \
 	ta_script.cpp \
 	$(SRCS_GUI) \
-	ta_TA.cpp \
 	ta_ti.cpp
 
 include $(top_srcdir)/Maketa.am
@@ -131,14 +128,22 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
+libta@PDP_SUFFIX@_la_DEPENDENCIES = libtaTypeAccess@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 libta@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
-BUILT_SOURCES = ta_TA_type.h
-CLEANFILES += ta_TA.ccx
+libta@PDP_SUFFIX@_la_CXXFLAGS = -g -O2
+libta@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/ta/libtaTypeAccess@PDP_SUFFIX@.la
+
+noinst_LTLIBRARIES = libtaTypeAccess@PDP_SUFFIX@.la
+libtaTypeAccess@PDP_SUFFIX@_la_SOURCES = ta_TA.cpp ta_TA_type.h ta_TA_inst.h
+libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libta@PDP_SUFFIX@_la_CPPFLAGS)
+libtaTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
+
+BUILT_SOURCES = ta_TA_type.hx
 
 clean-local:
 	-rm *moc*

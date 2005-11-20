@@ -1,47 +1,38 @@
-AC_DEFUN([AC_PROG_CXX],[PDP_PROG_CXX])
+dnl 					             PDP_PROG_CXX
+dnl *************************************************************
+dnl 
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
 
-# PDP_PROG_CXX([LIST-OF-COMPILERS])
-# --------------------------------
-# LIST-OF-COMPILERS is a space separated list of C++ compilers to search
-# for (if not specified, a default list is used).  This just gives the
-# user an opportunity to specify an alternative search list for the C++
-# compiler.
-# aCC	HP-UX C++ compiler much better than `CC', so test before.
-# FCC   Fujitsu C++ compiler
-# KCC	KAI C++ compiler
-# RCC	Rational C++
-# xlC_r	AIX C Set++ (with support for reentrant code)
-# xlC	AIX C Set++
-AN_MAKEVAR([CXX],  [AC_PROG_CXX])
-AN_PROGRAM([CC],   [AC_PROG_CXX])
-AN_PROGRAM([c++],  [AC_PROG_CXX])
-AN_PROGRAM([g++],  [AC_PROG_CXX])
-AC_DEFUN([PDP_PROG_CXX],
-[AC_LANG_PUSH(C++)dnl
-AC_ARG_VAR([CXX],      [C++ compiler command])dnl
-AC_ARG_VAR([CXXFLAGS], [C++ compiler flags])dnl
-_AC_ARG_VAR_LDFLAGS()dnl
-_AC_ARG_VAR_CPPFLAGS()dnl
-AC_CHECK_TOOLS(CXX,
-	       [$CCC m4_default([$1],
-			  [g++ c++ gpp aCC CC cxx cc++ cl FCC KCC RCC xlC_r xlC])],
-	       g++)
+AC_DEFUN([PDP_PROG_CXX],[
+save_user_CXXFLAGS=${CXXFLAGS}
+CXXFLAGS=
 
-# Provide some information about the compiler.
-echo "$as_me:$LINENO:" \
-     "checking for _AC_LANG compiler version" >&AS_MESSAGE_LOG_FD
-ac_compiler=`set X $ac_compile; echo $[2]`
-_AC_EVAL([$ac_compiler --version </dev/null >&AS_MESSAGE_LOG_FD])
-_AC_EVAL([$ac_compiler -v </dev/null >&AS_MESSAGE_LOG_FD])
-_AC_EVAL([$ac_compiler -V </dev/null >&AS_MESSAGE_LOG_FD])
+AC_PROG_CXX
 
-m4_expand_once([_AC_COMPILER_EXEEXT])[]dnl
-m4_expand_once([_AC_COMPILER_OBJEXT])[]dnl
-_AC_LANG_COMPILER_GNU
-GXX=`test $ac_compiler_gnu = yes && echo yes`
-_AC_PROG_CXX_EXIT_DECLARATION
-AC_LANG_POP(C++)dnl
-])# AC_PROG_CXX
+CXXFLAGS=${save_user_CXXFLAGS}
+
+# GNU Compiler Collection is mandatory
+AC_MSG_CHECKING([for GNU C++ compiler])
+if test $GXX != yes; then
+  AC_MSG_ERROR([GNU C++ compiler not detected.])
+fi
+AC_MSG_RESULT([$GXX])
+])
+
 
 dnl 					     PDP_DETERMINE_OSTYPE
 dnl *************************************************************

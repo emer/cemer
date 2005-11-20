@@ -61,11 +61,13 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../taiqtso
+
 bin_PROGRAMS = css@PDP_SUFFIX@++
+css@PDP_SUFFIX@___DEPENDENCIES = libcss@PDP_SUFFIX@.la
 css@PDP_SUFFIX@___SOURCES = main.cpp
 css@PDP_SUFFIX@___LDADD =\
-	libcss@PDP_SUFFIX@.la \
-	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la
+	../ta/libta@PDP_SUFFIX@.la \
+	libcss@PDP_SUFFIX@.la
 css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
 
 #**************************************************

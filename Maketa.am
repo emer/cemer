@@ -1,16 +1,19 @@
-# Pass compiler flags to maketa.
-# In general, if the compiler needs
-# to know where to find an include,
-# so does the maketa.
-
+# This location of maketa is consistent to all subprojects in our heirarchy 
 MAKETA = ../maketa/./maketa
+
+# Rules for running maketa. In order to avoid a race condition, we only
+# check for the updatedness of *TA_type.h, and assume TA_inst.h and TA.cpp
+# based on the results of it. (Without this cluster builds are not possible)
+
+# Notice that if you try to run maketa, if maketa does not exist it will build
+# it for you first.
 
 ${PROJNAME}_TA_type.h:	${PROJNAME}_TA_type.hx
 	if  [ -e ${PROJNAME}_TA_type.h -a -e ${PROJNAME}_TA_inst.h -a -e ${PROJNAME}_TA.cpp ];\
 	then (cmp -s ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h) || (cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h);\
 		(cmp -s ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h) || (cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h);\
 		(cmp -s ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp) || (cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp);\
-	else ${MAKE} ${PROJNAME}_TA.ccx;fi
+	else ${MAKE} ${PROJNAME}_TA_type.hx;fi
 
 ${PROJNAME}_TA_type.hx:	${TAHEADS}
 	if [ ! -z ../maketa/./maketa ];\
@@ -21,8 +24,10 @@ ${PROJNAME}_TA_type.hx:	${TAHEADS}
 
 ${TAHEADS}:	
 
+# force_ta does not currently work if ta is up to date, so run make clean first.
 force_ta:	${PROJNAME}_TA_type.hx
 
+# Instruct automake to clean these files on make clean
 CLEANFILES =\
 	${PROJNAME}_TA_type.h \
 	${PROJNAME}_TA_inst.h \
@@ -30,6 +35,10 @@ CLEANFILES =\
 	${PROJNAME}_TA_type.hx \
 	${PROJNAME}_TA_inst.hx \
 	${PROJNAME}_TA.cxx
+
+# Maketa needs to see everything EXCEPT abs_top_builddir. See below for why.
+# TODO: detect /lib/cpp on the particular os so as to genericize our build to any os
+# with the appropriate tools. (e.g., where you see -cpp below)
 
 MAKETA_FLAGS =\
 	-hx \
@@ -58,12 +67,17 @@ cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
 # then it will scan config.h twice and /lib/cpp will error out on  redefinitions. The opposite
 # is true on the mac - if the top build directory is not shown it will never see config.h
 # and will error out due to there being no definitions. This could be some voodoo on linux
-# where gcc automatically scans the parent directory.
+# where gcc automatically scans the parent directory. The top-level makefile does include nostdinc
+# but it did not fix the problem.
 MAKETA_FLAGS +=\
 	"-I/usr/include/gcc/darwin/3.3" \
 	-I@abs_srcdir@/../..
 
 endif
+
+
+# These are currently the only defines we are setting on the command line. Theoretically
+# We don't need them (they are set in config.h) , but it doesn't work without them.
 
 if TA_GUI
 MAKETA_FLAGS += -DTA_GUI -DTA_USE_INVENTOR

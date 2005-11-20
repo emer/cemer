@@ -25,6 +25,7 @@ AC_DISABLE_SHARED
 
 # Set default language  C++
 AC_LANG_CPLUSPLUS
+PDP_PROG_CXX
 
 # Enable make rpm
 AX_DIST_RPM([spec.tmpl])
@@ -39,16 +40,6 @@ AC_PROG_LIBTOOL
 #	      Checks for specific programs
 #*************************************************************
 #
-
-
-PDP_PROG_CXX
-
-# GNU C++ compiler is mandatory
-AC_MSG_CHECKING([for GNU C++ compiler])
-if test $GXX != yes; then
-  AC_MSG_ERROR([GNU C++ compiler not detected.])
-fi
-AC_MSG_RESULT([$GXX])
 
 AC_PROG_AWK
 AC_PROG_YACC
