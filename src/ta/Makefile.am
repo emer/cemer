@@ -143,7 +143,7 @@ libtaTypeAccess@PDP_SUFFIX@_la_SOURCES = ta_TA.cpp ta_TA_type.h ta_TA_inst.h
 libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libta@PDP_SUFFIX@_la_CPPFLAGS)
 libtaTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
 
-BUILT_SOURCES = ta_TA_type.hx
+BUILT_SOURCES = ta_TA_type.h
 
 clean-local:
 	-rm *moc*
