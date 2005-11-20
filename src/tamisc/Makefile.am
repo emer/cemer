@@ -107,7 +107,9 @@ libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
+libtamisc@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/tamisc/libtamiscTypeAccess@PDP_SUFFIX@.la
 libtamisc@PDP_SUFFIX@_la_CXXFLAGS = -g -O2
+
 
 noinst_LTLIBRARIES = libtamiscTypeAccess@PDP_SUFFIX@.la
 libtamiscTypeAccess@PDP_SUFFIX@_la_SOURCES = tamisc_TA.cpp tamisc_TA_type.h tamisc_TA_inst.h
