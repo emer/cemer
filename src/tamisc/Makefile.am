@@ -68,8 +68,6 @@ TAHEADS =\
 	@abs_srcdir@/tamisc_stdef.h
 
 HEADS =\
-	tamisc_TA_type.h \
-	tamisc_TA_inst.h \
 	tamisc_stdef.h \
 	tarandom.h \
 	tdgeometry.h \
@@ -94,7 +92,6 @@ SRCS =\
 	datagraph.cpp \
 	fun_lookup.cpp \
 	$(SRCS_GUI) \
-	tamisc_TA.cpp \
 	tamisc_ti.cpp
 
 include $(top_srcdir)/Maketa.am
