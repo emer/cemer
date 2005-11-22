@@ -48,7 +48,7 @@ class float_Matrix;
        that the allocated data is uninitialized
    
    The object supports partially filled arrays, but not ragged arrays.
-   Storage in Matrix is based on an instance of the taArray<> template.
+   Strongly-typed instances support external fixed data, via setFixedData() call.
 
    NOTE: Matrix in its current form is not streamable.
    
@@ -64,8 +64,10 @@ class taMatrix_impl { // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS ref counted multi-
 public:
   int 			size;	// #NO_SAVE #READ_ONLY number of elements in the 
   
+  bool			canGrow() const; // true only if not fixed and refs==1
   int			dims() {return m_geom.size;}
   int			geom(int dim) {return m_geom.FastEl(dim);} // note: dim must be in range
+  bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
   
   void			setGeom(const int_FixedArray& geom) 
     {if (m_geom == geom) return; setGeom_(geom.size, geom.el);} 
@@ -87,10 +89,10 @@ public:
   
 public:
   virtual const void*	SafeEl_(int i) const;
-  virtual void*	FastEl_(int i) = 0; 
+  virtual void*		FastEl_(int i) = 0; 
  
 protected:
-  int			alloc_size;
+  int			alloc_size; // -1 means fixed (external data)
   uint			m_ref;
   int_FixedArray	m_geom; // dimensions array
   
@@ -116,7 +118,7 @@ protected:
   virtual uint		El_SizeOf_() const = 0;
   // #IGNORE size of element
   
-  virtual void		Copy_(const taMatrix_impl& cp);
+//TBD  virtual void		Copy_(const taMatrix_impl& cp);
 //  virtual bool		Equal_(const taMatrix_impl& src) const; 
     // 'true' if same size and els
   virtual void		setGeom_(int dims_, const int geom_[]); 
@@ -135,6 +137,10 @@ public:
 
   taMatrix()				{el = NULL;}
 
+  void			setFixedData(const int_FixedArray& geom_, T* data_)
+    {SetArray_(NULL); alloc_size = -1; setGeom(geom_); el = data_;} 
+  // sets external (fixed) data, setting the geom
+  
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
@@ -144,21 +150,24 @@ public:
   T&		FastEl(int i) 	{ return el[i]; }
   T&		FastEl(int i, int j) { return el[ElIndex(i,j)]; }
   T&		FastEl(int i, int j, int k) { return el[ElIndex(i,j,k)]; }
-  T&		FastEl(int i, int j, int k, int l) { return el[ElIndex(i,j,k,l)]; }
+  T&		FastEl(int i, int j, int k, int l) { return el[ElIndex(i,j,k,l)]; } //
   
-  void		Copy(const taMatrix<T>& cp)	{Copy_(cp);} // #IGNORE maketa bug
+//TBD  void		Copy(const taMatrix<T>& cp)	{Copy_(cp);} // #IGNORE maketa bug
 
 public:
   override void*	FastEl_(int i)	{ return &(el[i]); } 
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
-  override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  override void		SetArray_(void* nw) {if ((el != NULL) && (alloc_size > 0)) delete [] el; el = (T*)nw;}
   override bool		El_Equal_(const void* a, const void* b) const
     { return (*((T*)a) == *((T*)b)); }
   override void		El_Copy_(void* to, const void* fm) {*((T*)to) = *((T*)fm); }
   override uint		El_SizeOf_() const	{ return sizeof(T); }
 
   ~taMatrix()			{ SetArray_(NULL); } //
+private: //note: forbid these for now -- if needed, define semantics
+  taMatrix(const taMatrix<T>& cp); // not implemented
+  taMatrix&		operator =(const taMatrix<T>& cp); // not implemented
 };
 
 
@@ -221,14 +230,16 @@ public: \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
   explicit y(const int_FixedArray& geom_) {setGeom(geom_);} \
   explicit y(int d0)		{setGeom(d0);} \
+  y(const int_FixedArray& geom_, T* data_) {setFixedData(geom_, data_);} \
   y(int d0, int d1)		{setGeom(d0, d1);} \
   y(int d0, int d1, int d2)	{setGeom(d0, d1, d2);} \
   y(int d0, int d1, int d2, int d3) {setGeom(d0, d1, d2, d3);} \
   y() 		{setGeom(0);} \
-  y(const y& cp)	{Copy(cp); }  \
-  y& operator=(const y& cp) {Copy(cp); return *this;} \
 protected: \
-  override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
+  override const void*	El_GetBlank_() const	{ return (const void*)&blank; } \
+private: \
+  y(const y& cp);  \
+  y& operator=(const y& cp); \
 
 class byte_Matrix: public taMatrix<byte> {
 public:

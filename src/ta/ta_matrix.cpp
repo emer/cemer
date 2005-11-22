@@ -46,9 +46,14 @@ void taMatrix_impl::Alloc_(int sz) {
   }
 }
 
+bool taMatrix_impl::canGrow() const {
+  return ((alloc_size >= 0) && (m_ref <= 1));
+}
+
+/*TBD
 void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
   setGeom(cp.m_geom);
-}
+} */
 
 int taMatrix_impl::ElIndex(const int indices[]) const {
   int rval = 0;
@@ -103,8 +108,6 @@ void taMatrix_impl::setGeom_(int dims_, const int geom_[]) {
     assert((geom_[i] > 0) && "geoms[>0] must be > 0");
   }
   
-  if (m_geom.size <= 0) return; 
-  
   m_geom.EnforceSize(dims_);
   for (i = 1; i < dims_ ; ++i) {
     m_geom[i] = geom_[i];
@@ -116,8 +119,18 @@ void taMatrix_impl::setGeom_(int dims_, const int geom_[]) {
     m_dmx[i] = m_geom[i + 1] * m_dmx[i + 1];
   }
   
-  // set storage size, which will be 0 if geom[0]==0
-  EnforceSize(m_geom[0] * m_dmx[0]);
+  // set storage size and 
+  if (isFixedData()) {
+    size = m_geom[0];
+    for (i = 1; i < m_geom.size; ++i) {
+      size *= m_geom[i];
+    }
+  } else {
+    size = 0;
+    //allocate, unless geom[0]==0
+    if (m_geom[0] > 0)
+      EnforceSize(m_geom[0] * m_dmx[0]);
+  }
 }
 
 /*
