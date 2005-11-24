@@ -419,11 +419,11 @@ public: \
   STATIC_CONST T blank; \
   explicit y(int init_size) {EnforceSize(init_size); } \
   y(int init_size, const T& i0) {EnforceSize(init_size); el[0] = i0;} \
-  y(int init_size, const T& i0, const T& i1) \
+  y(int init_size, const T& i1, const T& i0) \
     {EnforceSize(init_size); el[0] = i0; el[1] = i1;} \
-  y(int init_size, const T& i0, const T& i1, const T& i2) \
+  y(int init_size, const T& i2, const T& i1, const T& i0) \
     {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2;} \
-  y(int init_size, const T& i0, const T& i1, const T& i2, const T& i3) \
+  y(int init_size, const T& i3, const T& i2, const T& i1, const T& i0) \
     {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;} \
   y(int init_size, T init[]) {EnforceSize(init_size); \
     for (int j = 0; j < init_size; ++j) el[j] = init[j];} \

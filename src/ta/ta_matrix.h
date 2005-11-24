@@ -30,6 +30,7 @@
 class TypeDef;
 
 // forwards this file
+class DataChunk;
 class byte_Matrix;
 class float_Matrix;
 
@@ -39,13 +40,16 @@ class float_Matrix;
    
    Each concrete class holds one specific type of data, ex. byte or float. 
    The number of dimensions is set at create time, and is lifetime-invariant.
-   The number of elements in each dimension is usually fixed.
-   Data is stored such that the highest dimension items are adjacent, ex:
+   The number of elements in each dimension (except the highest) is fixed.
+   Data is stored in row-major order, ex:
      [2][3]: 00, 01, 02, 10, 11, 12
-   The value for the first dimension (geom[0]) is special:
-     if geom[0]=0 then no allocation is made, and the data will resize
-     if geom[0]=N, then data is allocated at creation -- note
+   The value for the highest dimension (geom[n-1]) is special:
+     if geom[N-1]=0 then no allocation is made, and the data will resize
+     if geom[N-1]!=0, then data is allocated at creation -- note
        that the allocated data is uninitialized
+   Space is allocated in full units of the highest dimension, called a *Frame*;
+     for example, for a 2-d matrix, each frame is on row (for 1-d, a frame
+     is the same as a cell.)
    
    The object supports partially filled arrays, but not ragged arrays.
    Strongly-typed instances support external fixed data, via setFixedData() call.
@@ -60,63 +64,75 @@ class float_Matrix;
    
 */
 
+
 class taMatrix_impl { // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 public:
-  int 			size;	// #NO_SAVE #READ_ONLY number of elements in the 
-  
-  bool			canGrow() const; // true only if not fixed and refs==1
+  int 			size() const;	// number of elements in the matrix (= frames*frameSize)
+  bool			canResize() const; // true only if not fixed, initialized, not a view, and refs==1
   int			dims() {return m_geom.size;}
+  int 			frameSize() const;	// number of elements in each frame 
+  int 			frames() const;	// number of frames currently in use 
+  const int_FixedArray&	geom() const {return m_geom;} // dimensions array
   int			geom(int dim) {return m_geom.FastEl(dim);} // note: dim must be in range
   bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
+  bool			isView() const {return (m_data_owner != NULL);} // true if we are a view
   
-  void			setGeom(const int_FixedArray& geom) 
-    {if (m_geom == geom) return; setGeom_(geom.size, geom.el);} 
-  // sets geom, doing sanity checks and allocating storage if geom[0]!=0
+  void			setGeom(const int_FixedArray& geom_) 
+    {setGeom_(geom_.size, geom_.el);} 
+  // sets geom, doing sanity checks and allocating storage if geom[N-1]!=0
   void			setGeom(int d0)  
     {setGeom(int_FixedArray(1, d0));} 
-  void			setGeom(int d0, int d1)  
-    {setGeom(int_FixedArray(2, d0, d1));} 
-  void			setGeom(int d0, int d1, int d2)  
-    {setGeom(int_FixedArray(3, d0, d1, d2));} 
-  void			setGeom(int d0, int d1, int d2, int d3)  
-    {setGeom(int_FixedArray(4, d0, d1, d2, d3));} 
+  void			setGeom(int d1, int d0)  
+    {setGeom(int_FixedArray(2, d1, d0));} 
+  void			setGeom(int d2, int d1, int d0)  
+    {setGeom(int_FixedArray(3, d2, d1, d0));} 
+  void			setGeom(int d3, int d2, int d1, int d0)  
+    {setGeom(int_FixedArray(4, d3, d2, d1, d0));} 
   
-  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < alloc_size));}
+    //NOTE: for efficiency, this only checks if in allocated range, not in actual range
   virtual TypeDef*	GetTypeDef() const = 0; // 
   
-  void			Ref() {++m_ref;}
-  void			Unref() {if (--m_ref == 0) delete this;} //
+  void			Ref()  {++m_ref;}
+  void			Unref()  {if (--m_ref == 0) delete this;} //
   
+  void			AllocFrames(int n); // make sure space exists for n frames
+  void			EnforceFrames(int n); // set size to n frames
 public:
+  virtual void*		data_() = 0;
   virtual const void*	SafeEl_(int i) const;
   virtual void*		FastEl_(int i) = 0; 
  
 protected:
   int			alloc_size; // -1 means fixed (external data)
-  uint			m_ref;
+  uint			m_ref; // number of refs for this object, including 
   int_FixedArray	m_geom; // dimensions array
+  int_FixedArray*	m_slice_geom; // if sliced, holds dimensions of slices, else NULL
+  int_FixedArray*	m_slice_offset; // if sliced, holds offset of slices, else NULL
+  taMatrix_impl*	m_data_owner; // if non-null, then we are a view
   
-  int			ElIndex(const int indices[]) const; 
-  int			ElIndex(int i, int j) const; 
-  int			ElIndex(int i, int j, int k) const; 
-  int			ElIndex(int i, int j, int k, int l) const; 
+  int			ElIndex(const int_FixedArray& indices) const; 
+  int			ElIndex(int d1, int d0) const; 
+  int			ElIndex(int d2, int d1, int d0) const; 
+  int			ElIndex(int d3, int d2, int d1, int d0) const; 
   
-  virtual void		Alloc_(int n); // set capacity to n
-  virtual void 		EnforceSize(int new_size);
-  virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type
+  virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
+  virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type; raise exception on failure
   virtual void		SetArray_(void* nw) = 0;
+  virtual void		ReclaimOrphans_(int from, int to) {} // called when elements can be reclaimed, ex. for strings
   
   virtual bool		El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
   virtual const void*	El_GetBlank_() const = 0;
   // #IGNORE address of a blank element, for initializing empty items -- can be STATIC_CONST
-  // NOTE: this can be implemented by clearing the tmp item, then returning that addr
   virtual const void*	El_GetErr_() const	{ return El_GetBlank_();}
   // #IGNORE address of an element to return when out of range -- defaults to blank el
   virtual void		El_Copy_(void*, const void*) = 0;
   // #IGNORE
   virtual uint		El_SizeOf_() const = 0;
   // #IGNORE size of element
+  
+  void			InitView_(taMatrix_impl& data_owner_);
   
 //TBD  virtual void		Copy_(const taMatrix_impl& cp);
 //  virtual bool		Equal_(const taMatrix_impl& src) const; 
@@ -125,8 +141,6 @@ protected:
   
   taMatrix_impl(); 
   ~taMatrix_impl();
-private:
-  int_FixedArray	m_dmx; // cached pre-calculated dimension multipliers
 };
 
 
@@ -155,6 +169,7 @@ public:
 //TBD  void		Copy(const taMatrix<T>& cp)	{Copy_(cp);} // #IGNORE maketa bug
 
 public:
+  override void*	data_() {return el;}
   override void*	FastEl_(int i)	{ return &(el[i]); } 
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
@@ -231,9 +246,9 @@ public: \
   explicit y(const int_FixedArray& geom_) {setGeom(geom_);} \
   explicit y(int d0)		{setGeom(d0);} \
   y(const int_FixedArray& geom_, T* data_) {setFixedData(geom_, data_);} \
-  y(int d0, int d1)		{setGeom(d0, d1);} \
-  y(int d0, int d1, int d2)	{setGeom(d0, d1, d2);} \
-  y(int d0, int d1, int d2, int d3) {setGeom(d0, d1, d2, d3);} \
+  y(int d1, int d0)		{setGeom(d1, d0);} \
+  y(int d2, int d1, int d0)	{setGeom(d2, d1, d0);} \
+  y(int d3, int d2, int d1, int d0) {setGeom(d3, d2, d1, d0);} \
   y() 		{setGeom(0);} \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; } \
