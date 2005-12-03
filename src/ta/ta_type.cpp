@@ -189,6 +189,17 @@ void taMisc::LoadConfig() {
 #endif
 }
 
+void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+#if defined(DMEM_COMPILE)
+//TODO: should provide a way to log these somehow
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  cerr << "***WARNING: " << a << " " << b << " " << c << " " << d << " " << e << " " << f << 
+    " " << g << " " << h << " " << i  << "\n";
+}
+
 #ifdef TA_NO_GUI
 // we put the no-gui versions here, to avoid dragging in all the gui stuff
 // the gui versions are in ta_type_qt.cc
@@ -196,19 +207,17 @@ void taMisc::LoadConfig() {
 // use error with 1st char in a as a '*' to avoid graphical display!
 
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
-		    const char* e, const char* f, const char* g, const char* h,
-		    const char* i, const char* j, const char* k, const char* l)
+  const char* e, const char* f, const char* g, const char* h, const char* i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cerr << "" << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
-       << g << " " << h << " " << i << " " << j << " " << k << " " << l << "\n";
+  cerr << "" << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
+    " " << g << " " << h << " " << i  << "\n";
 }
 
 int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,
-		    const char* d, const char* e, const char* f,
-		    const char* g, const char* h, const char* i, const char* j)
+  const char* d, const char* e, const char* f, const char* g, const char* h, const char* i)
 {
   int m=-1;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
@@ -224,10 +233,6 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     if(strlen(d)>0) { chstr += String("3: ") + d + "\n"; chn++; }
     if(strlen(e)>0) { chstr += String("4: ") + e + "\n"; chn++; }
     if(strlen(f)>0) { chstr += String("5: ") + f + "\n"; chn++; }
-    if(strlen(g)>0) { chstr += String("6: ") + g + "\n"; chn++; }
-    if(strlen(h)>0) { chstr += String("7: ") + h + "\n"; chn++; }
-    if(strlen(i)>0) { chstr += String("8: ") + i + "\n"; chn++; }
-    if(strlen(j)>0) { chstr += String("9: ") + j + "\n"; chn++; }
 
     int   choiceval = -1;
     while((choiceval < 0) ||  (choiceval > chn) ) {
@@ -242,6 +247,7 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 }
 
 #endif // def TA_NO_GUI
+
 
 void taMisc::Initialize() {
   not_constr = false;
@@ -2166,9 +2172,10 @@ void TypeDef::Copy(const TypeDef& cp) {
 #ifdef TA_NO_GUI // note: Qt version is in ta_type_qt.cc
 TypeDef::~TypeDef() {
 #ifndef NO_TA_BASE
-  if(defaults != NULL)
-    taBase::unRefDone(defaults);
-  defaults = NULL;
+  if(defaults != NULL) {
+    taBase::UnRef(defaults);
+    defaults = NULL;
+  }
 #endif
   if((owner == &taMisc::types) && !taMisc::not_constr) // destroying..
     taMisc::not_constr = true;

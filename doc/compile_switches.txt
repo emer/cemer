@@ -125,4 +125,6 @@ CYGWIN -- the Windows version no longer requires Cygwin
     ok to leave those for the time being
     
     
+Misc
 
+TA_NO_EXCEPTIONS -- defined if system should be built without C++ exceptions

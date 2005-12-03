@@ -16,43 +16,46 @@
 
 #include "ta_matrix.h"
 
+
 /////////////////////////
 //  taMatrix_impl      //
 /////////////////////////
 
-taMatrix_impl::taMatrix_impl()
+void taMatrix_impl::Initialize()
 {
+  size = 0;
   alloc_size = 0;
-  m_ref = 0;
-  m_slice_geom = NULL;
-  m_slice_offset = NULL;
-  m_data_owner = NULL; 
 }
  
-taMatrix_impl::~taMatrix_impl() {
-//TODO: should print warning in debug mode if ref!=0
-  if (m_data_owner != NULL) {
-    m_data_owner->Unref(); // note: creating a view does a ref on dataowner
-    m_data_owner = NULL;
-  }
-  if (m_slice_geom != NULL) {
-    delete m_slice_geom;
-    m_slice_geom = NULL;
-  }
-  if (m_slice_offset != NULL) {
-    delete m_slice_offset;
-    m_slice_offset = NULL;
-  }
+void taMatrix_impl::Destroy() {
+  size = 0;
+  alloc_size = 0;
+  CutLinks();
 }
   
+void taMatrix_impl::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(geom, this);
+}
+
+void taMatrix_impl::CutLinks() {
+  inherited::CutLinks();
+  geom.CutLinks();
+}
+  
+void taMatrix_impl::AddFrames(int n) {
+  Check(canResize(), "resizing not allowed");
+  
+  EnforceFrames(n + frames());
+}
+
 void taMatrix_impl::Alloc_(int new_alloc) {
-  assert((alloc_size >= 0) && "ERROR: attempt to realloc a fixed data matrix");
+  Check((alloc_size >= 0), "cannot alloc a fixed data matrix");
   
 //NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
     char* nw = (char*)MakeArray_(new_alloc);
-    int size_ = size();
-    for (int i = 0; i < size_; ++i) {
+    for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
     }
     SetArray_(nw);
@@ -65,139 +68,145 @@ void taMatrix_impl::AllocFrames(int n) {
 }
 
 bool taMatrix_impl::canResize() const {
-  return ((alloc_size >= 0) && (m_ref <= 1) && (m_data_owner == NULL));
+  return ((alloc_size >= 0));
 }
 
-/*TBD
-void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
-  setGeom(cp.m_geom);
-} */
 
-int taMatrix_impl::ElIndex(const int_FixedArray& indices) const {
-  assert((indices.size == m_geom.size) && "indices do not match");
+void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
+  // note: we must inherit from the copy
+  Check(GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "cannot copy " +
+    String(GetTypeDef()->name) + " from " + String(cp.GetTypeDef()->name));
+    
+  // first, zero out current, if any
+  SetArray_(NULL);
+  if (cp.isFixedData()) {
+    SetFixedData_(cp.data(), cp.geom); //sets size
+  } else {
+    alloc_size = 0;
+    size = 0;
+    geom.Reset();
+    SetGeomN(cp.geom);
+    SetArray_(const_cast<void*>(cp.data()));
+    for (int i = 0; i < size; ++i) {
+      El_Copy_(FastEl_(i), cp.FastEl_(i));
+    }
+  }
+}
+
+int taMatrix_impl::ElIndex2(int d1, int d0) const {
+  int rval = (d1 * geom[0]) + d0;
+  return rval;
+}
+ 
+int taMatrix_impl::ElIndex3(int d2, int d1, int d0) const {
+  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
+  return rval;
+}
+ 
+int taMatrix_impl::ElIndex4(int d3, int d2, int d1, int d0) const {
+  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+  return rval;
+}
+ 
+int taMatrix_impl::ElIndexN(const int_Array& indices) const {
+  Assert((indices.size == geom.size), "indices do not match");
   
   int rval = 0;
   for (int i = indices.size - 1 ; i > 0; --i) {
     rval += indices[i];
-    rval *= m_geom[i-1];
+    rval *= geom[i-1];
   }
   rval += indices[0];
   return rval;
 }
  
-int taMatrix_impl::ElIndex(int d1, int d0) const {
-  int rval = (d1 * m_geom[0]) + d0;
-  return rval;
-}
- 
-int taMatrix_impl::ElIndex(int d2, int d1, int d0) const {
-  int rval = (((d2 * m_geom[1]) + d1) * m_geom[0]) + d0;
-  return rval;
-}
- 
-int taMatrix_impl::ElIndex(int d3, int d2, int d1, int d0) const {
-  int rval = ( ( (((d3 * m_geom[2]) + d2) * m_geom[1]) + d1) * m_geom[0]) + d0;
-  return rval;
-}
- 
 void taMatrix_impl::EnforceFrames(int n) {
-  assert(canResize() && "resizing not allowed");
+  Check(canResize(), "resizing not allowed");
   
-  int frames_ = frames(); // cache
-  if (n == frames_) return;
-  else if (n > frames_) {
-    AllocFrames(n);
+  // note: we enforce the size in terms of underlying cells, for when
+  // dimensions are changed (even though that is frowned on...)
+  int new_size = n * frameSize();
+  Alloc_(new_size); // makes sure we have enough raw space
+  // blank new or reclaim old
+  if (new_size > size) {
     const void* blank = El_GetBlank_();
-    int upto = frameSize() * n;
-    for (int i = frameSize() * frames_; i < upto; ++i) {
+    for (int i = size; i < new_size; ++i) {
       El_Copy_(FastEl_(i), blank);
     }
-  } else if (n < frames_) {
-    ReclaimOrphans_(frameSize() * n, (frameSize() * frames_) - 1);
+  } else if (new_size < size) {
+    ReclaimOrphans_(new_size, size - 1);
   }
-  m_geom[m_geom.size-1] = n;	
+  size = new_size;
+  geom[geom.size-1] = n;	
 }
 
 int taMatrix_impl::frames() const {
-  if (m_geom.size == 0) return 0;
-  return m_geom[m_geom.size-1];
+  if (geom.size == 0) return 0;
+  return geom[geom.size-1];
 }
 
 int taMatrix_impl::frameSize() const {
-  if (m_geom.size == 0) return 0;
-  if (m_geom.size == 1) return 1;
-  int rval = m_geom[0];
-  for (int i = 1; i < (m_geom.size - 1); ++i) 
-    rval *= m_geom[i];
+  if (geom.size == 0) return 0;
+  if (geom.size == 1) return 1;
+  int rval = geom[0];
+  for (int i = 1; i < (geom.size - 1); ++i) 
+    rval *= geom[i];
   return rval;
 }
 
-void taMatrix_impl::InitView_(taMatrix_impl& data_owner_) {
-  data_owner_.Ref();
-  m_data_owner = &data_owner_;
-  SetArray_(data_owner_.data_());
-  alloc_size = data_owner_.alloc_size;
-  m_geom = data_owner_.m_geom;
-  // note: view defaults to no slicing -- may be overridden
+void taMatrix_impl::SetFixedData_(void* el_, const int_Array& geom_) {
+  // first, clear out any old data
+  SetArray_(el_);
+  alloc_size = -1; // flag for fixed data
+  geom.Reset();
+  SetGeomN(geom_);
 }
 
-const void* taMatrix_impl::SafeEl_(int i) const {
-  if (InRange(i)) return ((taMatrix_impl*)this)->FastEl_(i); 
-  else            return El_GetErr_();
-}
-
-void taMatrix_impl::setGeom_(int dims_, const int geom_[]) {
-  assert((m_geom.size == 0) && "geom has already been set");
-  assert((dims_ > 0) && "dims_ must be > 0");
+void taMatrix_impl::SetGeom_(int dims_, const int geom_[]) {
+  Check((dims_ > 0), "dims_ must be > 0");
   
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
-    assert((geom_[i] > 0) && "geoms[0..N-2] must be > 0");
+    Check((geom_[i] > 0), "geoms[0..N-2] must be > 0");
   }
   
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
-  m_geom.EnforceSize(dims_);
+  geom.EnforceSize(dims_);
   for (i = 0; i < (dims_ - 1) ; ++i) {
-    m_geom[i] = geom_[i];
+    geom[i] = geom_[i];
   }
-  m_geom[dims_-1] = 0;
 
-  // assign storage if not fixed and not a view
-  if (!isFixedData() && !isView()) {
+  // assign storage if not fixed
+  if (isFixedData()) {
+    geom[dims_-1] = geom_[dims_-1];
+  }else {
+    geom[dims_-1] = 0;
     EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
   }
 }
 
-int taMatrix_impl::size() const {
-  if (m_geom.size == 0) return 0;
-  int rval = m_geom[0];
-  for (int i = 1; i < m_geom.size; ++i) 
-    rval *= m_geom[i];
-  return rval;
+void taMatrix_impl::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  UpdateGeom();
+}
+
+void taMatrix_impl::UpdateGeom() {
+  // get overall framesize and frames
+  int dims_ = geom.size; // cache
+  // make sure dims are valid (outer dim can be 0, others must be >0)
+  int i;
+  for (i = 0; i < (dims_ - 1) ; ++i) {
+    if (geom[i] <= 0) {
+      taMisc::Warning(this->GetPath(), "geoms[0..N-2] must be > 0; object is now invalid");
+      return;
+    }
+  }
+  // assign storage (if not fixed) and set size
+  if (isFixedData()) {
+    size = frames() * frameSize();
+  } else {
+    EnforceFrames(geom[dims_-1]); // does nothing if outer dim==0
+  }
 }
 
 
-/////////////////////////
-//  MatrixPtr_impl       //
-/////////////////////////
-
-MatrixPtr_impl::MatrixPtr_impl() 
-: m_ptr(0)
-{}
-
-MatrixPtr_impl::~MatrixPtr_impl() {
-  set(NULL);
-}
-
-void MatrixPtr_impl::set(taMatrix_impl* src) {
-  // note: we implicitly handle us===src
-  if (src != NULL) src->Ref();
-  if (m_ptr != NULL) m_ptr->Unref();
-  m_ptr = src;
-}
-
-
-const byte byte_Matrix::blank = 0;
-
-
-const float float_Matrix::blank = 0.0f;

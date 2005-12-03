@@ -1081,7 +1081,7 @@ void cssTA_Base::DelOpr() {
     cssMisc::Error(prog, "delete: NULL pointer");
     return;
   }
-  taBase::unRefDone(ths);
+  taBase::UnRef(ths);
   ptr = NULL;			// no longer point to this..
 }
 

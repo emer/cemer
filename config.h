@@ -34,6 +34,9 @@
    */
 #define HAVE_ALLOCA_H 1
 
+/* Use the Apple OpenGL framework. */
+/* #undef HAVE_APPLE_OPENGL_FRAMEWORK */
+
 /* Define to 1 if your system has a working `chown' function. */
 #define HAVE_CHOWN 1
 
@@ -64,6 +67,9 @@
 
 /* Define if you have a readline compatible library */
 #define HAVE_LIBREADLINE 1
+
+/* Define to 1 if you have the `z' library (-lz). */
+#define HAVE_LIBZ 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -97,7 +103,7 @@
 #define HAVE_POW 1
 
 /* Define if you have POSIX threads libraries and header files. */
-/* #undef HAVE_PTHREAD */
+#define HAVE_PTHREAD 1
 
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
@@ -217,8 +223,8 @@
    qglobal.h. */
 #define QT_SHARED 
 
-/* Build with Qt thread support */
-#define QT_THREAD_SUPPORT 1
+/* Description */
+#define QT_THREAD_SUPPORT 
 
 /* Used when debugging */
 #define RETSIGTYPE void
@@ -270,9 +276,6 @@
 /* Version number of package */
 #define VERSION "4.0"
 
-/* Defined if on Win32 platform */
-/* #undef WIN32 */
-
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */
 
@@ -284,7 +287,7 @@
 /* #undef YYTEXT_POINTER */
 
 /* Special flags for pthreads on solaris, osf, hpux */
-#define _REENTRANT 1
+/* #undef _REENTRANT */
 
 /* Special flags for pthreads on aix, freebsd, darwin */
 /* #undef _THREAD_SAFE */

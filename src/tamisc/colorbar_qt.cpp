@@ -39,7 +39,8 @@ Bar::Bar(ColorScale* c, QWidget* parent)
 }
 
 Bar::~Bar(){
-  taBase::unRefDone(scale);
+  taBase::UnRef(scale);
+  scale = NULL;
 }
 
 int Bar::blocks() {
@@ -49,8 +50,8 @@ int Bar::blocks() {
 }
 
 void Bar::SetColorScale(ColorScale* c){
-  taBase::Ref(c);
-  taBase::unRefDone(scale);
+  if (c != NULL) taBase::Ref(c);
+  taBase::UnRef(scale);
   scale = c;
 }
 

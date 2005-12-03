@@ -2631,10 +2631,10 @@ void Environment::FlipBits_GpMinMax(int pat_no, int n_off, int n_on,
       } while(!ok && (cnt > 0));
 
       if(cnt == 0) {
-	taMisc::Error("*** Event:", ev->name, "within min/max dist of:", String(min_d),
+	taMisc::Error("*** Event: " + ev->name + " within min/max dist of:", String(min_d),
 		      String(max_d), "not within limits:", String(within_min_dist),
 		      String(within_max_dist), "or between:", String(min_w),
-		      "over:",String(between_dist));
+		      "over: " + String(between_dist));
 	bogus_count++;
       }
       if(bogus_count > 5) {

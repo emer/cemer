@@ -129,6 +129,7 @@ public:
 
 // these are strangely missing in the original
   String(int i, const char* format = "%d");
+  String(uint u, const char* format = "%u");
   String(long i, const char* format = "%ld");
   String(unsigned long u, const char* format = "%lu");
   String(float f, const char* format = "%g");

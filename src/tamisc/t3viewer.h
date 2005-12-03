@@ -232,8 +232,10 @@ typedef taPtrList<T3DataView> inherited;
 public:
 
 protected:
-  override void*	El_Ref_(void* it) { taBase::Ref((taBase*)it); return it; }// when pushed
-  override void* 	El_unRef_(void* it) { taBase::unRef((taBase*)it); return NULL; }
+  override void*	El_Ref_(void* it) { taBase::Ref((taBase*)it); return it; } // when pushed
+  override void* 	El_unRef_(void* it) { taBase::UnRef((taBase*)it); return NULL; } 
+   //TODO: changed from unRef 11/28/05 -- this now has delete semantics, will require objects
+   // that are owned elsewhere to have ++ref count before adding here
 };
 
 

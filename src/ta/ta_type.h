@@ -250,14 +250,18 @@ public:
 
   static void 	Error(const char* a, const char* b="", const char* c="",
 		      const char* d="", const char* e="", const char* f="",
-		      const char* g="", const char* h="", const char* i="",
-		      const char* j="", const char* k="", const char* l="");
-  // displays error either in a window if iv_active or to stdout
+		      const char* g="", const char* h="", const char* i="");
+  // displays error either in a window+stderr if gui_active or to stderr only
+
+  static void 	Warning(const char* a, const char* b="", const char* c="",
+		      const char* d="", const char* e="", const char* f="",
+		      const char* g="", const char* h="", const char* i="");
+  // displays warning to stderr and/or other logging mechanism
 
   static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b="",
 		       const char* c="", const char* d="", const char* e="",
 		       const char* f="", const char* g="", const char* h="",
-		       const char* i="", const char* j="");
+		       const char* i="");
   // allows user to choose among different options in window if iv_active or stdin/out
 
   static void	DelayedMenuUpdate(TAPtr obj);

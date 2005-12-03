@@ -109,7 +109,7 @@ public:
 // macro for abstract base classes
 #define TA_ABSTRACT_BASEFUNS(y) y () { Initialize(); } \
 			y (const y& cp) { Initialize(); Copy(cp); } \
-			~y () { Destroy(); } \
+			~y () {Destroy(); } \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
 			void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy(*this); } \
@@ -118,7 +118,7 @@ public:
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
 // macro for creating smart ptrs of taBase classes
-#define taPtr_Of(T)  class T ## Ptr: public taPtr { \
+#define taPtr_Of(T)  class T ## Ptr: public taPtr_impl { \
 public: \
   T* ptr() const {return (T*)m_ptr;} \
   operator T*() const {return (T*)m_ptr;} \
@@ -128,10 +128,10 @@ public: \
   T ## Ptr() {} \
   T ## Ptr(T ## Ptr& src) {set((T*)src.m_ptr);} \
   T ## Ptr(T* src) {set(src);} \
-}
+};
 
 // for creating a ref-counted lifetime class -- note destructor is inaccessible
-#define TA_REF_BASEFUNS(y) y () { Register(); Initialize(); SetDefaultName(); } \
+/*#define TA_REF_BASEFUNS(y) y () { Register(); Initialize(); SetDefaultName(); } \
 	y (const y& cp) { Register(); Initialize(); Copy(cp); } \
 	void UnRef() {if (--refn <= 0) delete this;} \
         TAPtr Clone() { return new y(*this); }  \
@@ -145,7 +145,7 @@ public: \
         static TypeDef* StatTypeDef(int) { return &TA_##y; } \
 protected: \
         ~y () { unRegister(); Destroy(); }
-
+*/
 
 // use this when you have consts in your class and can't use the generic constrs
 #define TA_CONST_BASEFUNS(y) ~y () { unRegister(); Destroy(); } \
@@ -170,6 +170,17 @@ protected: \
 			TAPtr MakeToken(){ return (TAPtr)(new y<T>); }  \
 			TAPtr MakeTokenAry(int no){ return (TAPtr)(new y<T>[no]); }  \
 			void operator=(const y<T>& cp) { Copy(cp); } \
+			TypeDef* GetTypeDef() const { return &TA_##y; } \
+			static TypeDef* StatTypeDef(int) { return &TA_##y; }
+
+//for abstract templates
+#define TA_ABSTRACT_TMPLT_BASEFUNS(y,T) y () { Initialize(); } \
+			y (const y<T>& cp) { Initialize(); Copy(cp); } \
+			~y () {Destroy(); } \
+			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y<T>*)cp)); \
+						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
+			void  CastCopyTo(TAPtr cp) { y<T>& rf = *((y<T>*)cp); rf.Copy(*this); } \
+			void operator=(const y& cp) { Copy(cp); } \
 			TypeDef* GetTypeDef() const { return &TA_##y; } \
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
@@ -242,6 +253,8 @@ class taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes
   // has auto instances for all taBases unless NO_INSTANCE
 friend class taDataView;
+friend class taBase_PtrList;
+friend class taList_impl;
 public:
   enum Orientation { // must be same values as Qt::Orientation
     Horizontal = 0,
@@ -257,13 +270,16 @@ public:
   // Reference counting mechanisms, all static just for consistency..
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
   static void  		Ref(taBase& it)	{ it.refn++; }	     // #IGNORE
-  static void  		Ref(TAPtr it)		{ it->refn++; }	     // #IGNORE
-  static void   	unRef(TAPtr it)		{ it->refn--; }	     // #IGNORE
-  static void   	Done(TAPtr it)		{ if(it->refn == 0) delete it; } // #IGNORE
-  static void		unRefDone(TAPtr it)	{ unRef(it); Done(it); }	 // #IGNORE
-  static void		Own(taBase& it, TAPtr onr);	// #IGNORE
-  static void		Own(TAPtr it, TAPtr onr);	// #IGNORE
+  static void  		Ref(TAPtr it) 	{ it->refn++; }	     // #IGNORE
+  static void		UnRef(TAPtr it) { if (--(it->refn) == 0) delete it;}// #IGNORE
+  static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
+  static void		Own(TAPtr it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
+protected: // legacy ref counting routines, for compatability -- do not use for new code
+  static void   	unRef(TAPtr it) { it->refn--; }	     // #IGNORE
+  static void   	Done(TAPtr it) 	{ if (it->refn == 0) delete it;} // #IGNORE
+  static void		unRefDone(TAPtr it) 	{unRef(it); Done(it);}	 // #IGNORE
 
+public:
   // Pointer management routines (all pointers should be ref'd!!)
   static void 		InitPointer(TAPtr* ptr) { *ptr = NULL; } // #IGNORE
   static void 		SetPointer(TAPtr* ptr, TAPtr new_val);	 // #IGNORE
@@ -312,9 +328,9 @@ public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   virtual taDataLink* 	GetDataLink(); // forces creation; can still be NULL if the type doesn't support datalinks
 
-  int			Ref() {return ++refn;}
-  virtual void		UnRef() {--refn;} //note: overridden by ref-semantic classes to delete
-  void			UnRefNoDelete() {--refn;}
+//temp  int			Ref() {return ++refn;}
+//temp  virtual void		UnRef() {--refn;} //note: overridden by ref-semantic classes to delete
+//temp  void			UnRefNoDelete() {--refn;}
 
   virtual void		InitLinks()		{ };
   // #IGNORE initialize links to other objs, called after construction & SetOwner, call parent
@@ -551,7 +567,7 @@ public:
   { }
 #endif
 protected:
-  int			refn;		// number of references to this object
+  int			refn;		// number of references to this object; note: MAXINT is the max allowed value
   static String		no_name; 	// return this for no names
   static int		no_idx;		// return this for no index
   static MemberDef*	no_mdef;	// return this for no memberdef ptr
@@ -570,17 +586,6 @@ protected:
   taBase*	m_ptr;
   void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
 };
-
-/*nn template<class T>
-class taPtr: public taPtr_impl { // "safe" ptr for SoBase objects -- automatically does ref counts
-public:
-  T*		ptr() const {return (T*)m_ptr;}
-  operator T*() const {return (T*)m_ptr;}
-  T* operator->() const {return (T*)m_ptr;}
-
-protected:
-  void		set(T* src) {taPtr_impl::set(src);}
-}; */
 
 
 #ifdef TA_GUI

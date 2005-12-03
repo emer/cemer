@@ -242,40 +242,80 @@ void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
 	this->DataUpdate(false);
     \endcode
 
+    \section2 Lifetime Management
+    
+    taBase object lifetimes can be either Statically, or Dynamically 
+    managed, and the visibility can either be Internal or External. 
+    Static objects are created and destroyed by the compiler; Dynamic 
+    objects are created/destroyed by the programmer (new/delete).
+    Internal objects are used solely by the managing owner, whereas 
+    External objects can be accessed by an external client.
+    In practice, this gives rise to three lifetime/visibility scenarios:
+    Static External, Dynamic External, and Internal.
+     
+    Internal objects need not be explicitly lifetime managed, and may
+    be created statically or dynamically. Typically, refn remains 0
+    for these objects, and no ref counting occurs for them.
+    
+    External objects can be uniformly treated as if they obeyed ref
+    counting semantics. This enables external references to follow a 
+    single paradigm. Of course the lifetime of static objects must be
+    respected, but the ref counting mechanism will issue a warning if
+    a "live" static object is deleted.
+    
+    Ref Counting Mechanism -- Ref() causes refn++, UnRef() causes refn--;
+    if refn goes from 1 to 0, the object deletes. The transition from
+    1 to 0 also causes refn to be set to a -ve sentinel value. The debug 
+    version of the program can detect double destruction, or ref count
+    operations after destruction, based on this sentinel.
+    
+    Statically Managed -- refn is set to 1 after creation (see below);
+    Ref() causes refn++, UnRef() causes refn--; there
+    should be no unref that causes refn to go from 1 to 0, so refn s/b
+    1 on destruction.
+    
+    The basic rule is that statically managed objects should always
+    be given an Own() operation, or a RefStatic() operation, after 
+    creation, to insure the +1 refn is set. There is no corresponding
+    unrefing operation.
+    
+    Most statically owned objects have an Own() operation performed on
+    them in the InitLinks routine. Own(obj&, owner*) is basically used
+    only when the obj is a static member of owner; therefore, this 
+    version of Own automatically calls RefStatic(). It is ok for RefStatic
+    to get called multiple times during initialization of an object --
+    this enables new objects to get a RefStatic put into their owner's
+    Initialize. Own() can detect a change in owner, for objects that
+    provide the owner -- this lets it skip the RefStatic() operation.
+    The above semantics should cover all normal cases.
+    
+    
+    
 */
 
 String 	taBase::no_name;
 int	taBase::no_idx = -1;
 MemberDef* taBase::no_mdef = NULL;
 
+#define REF_SENT 0x7fffff0
+
 void taBase::DelPointer(TAPtr* ptr) {
   if(*ptr != NULL)
-    unRefDone(*ptr);
+    UnRef(*ptr);
   *ptr = NULL;
 }
 
 void taBase::Own(TAPtr it, TAPtr onr) {
-  if(it != NULL)
-    Own(*it, onr);
-}
-
-void taBase::SetPointer(TAPtr* ptr, TAPtr new_val) {
-  //note: we ref source first, to implicitly handle identity case (which in practice is probably
-  // rare) without needing to do an explicit check
-  if (new_val)
-    Ref(new_val);
-  if (*ptr)
-    unRefDone(*ptr);
-  *ptr = new_val;
+  if (it != NULL) Own(*it, onr);
 }
 
 void taBase::Own(taBase& it, TAPtr onr) {
-  taBase::Ref(it);
-  bool prv_own = false;
-  if(it.GetOwner() != NULL)
-    prv_own = true;
+  if (it.GetOwner() == onr) return; // same owner, redundant
+  
+  Ref(it);
+  bool prv_own = (it.GetOwner() != NULL);
   it.SetOwner(onr);
-  if(!prv_own)
+  if (!prv_own)
     it.SetTypeDefaults();
   it.InitLinks();
   if(prv_own) {
@@ -286,24 +326,33 @@ void taBase::Own(taBase& it, TAPtr onr) {
 }
 
 void taBase::OwnPointer(TAPtr* ptr, TAPtr new_val, TAPtr onr) {
-  if(*ptr == new_val)
-    return;
-  if(*ptr != NULL)
-    unRefDone(*ptr);
+  if (*ptr == new_val) return;
+  if (*ptr != NULL)
+    UnRef(*ptr);
   *ptr = new_val;
   if(*ptr != NULL)
     Own(*ptr, onr);
+}
+
+void taBase::SetPointer(TAPtr* ptr, TAPtr new_val) {
+  //note: we ref source first, to implicitly handle identity case (which in practice is probably
+  // rare) without needing to do an explicit check
+  if (new_val)
+    Ref(new_val);
+  if (*ptr)
+    UnRef(*ptr);
+  *ptr = new_val;
 }
 
 TypeDef* taBase::StatTypeDef(int) {
   return &TA_taBase;
 }
 
-TypeDef* taBase::GetTypeDef() const {
-  return &TA_taBase;
+void taBase::Destroy() {
 }
 
-void taBase::Destroy() {
+TypeDef* taBase::GetTypeDef() const {
+  return &TA_taBase;
 }
 
 void taBase::UpdateAfterEdit() {

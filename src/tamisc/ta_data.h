@@ -122,7 +122,7 @@ protected:
     
   TypeDef*		m_data_type;
   int			m_txfer_mode; // current txfer mode
-  MatrixPtr_impl	m_cached_data; // most recent data
+  taMatrixPtr_impl	m_cached_data; // most recent data
   int64_t		m_cached_cycle; // cycle counter that goes with data
   virtual void		setTxfer_mode_(int val); // set new txfer mode, typically not overridden
 private:

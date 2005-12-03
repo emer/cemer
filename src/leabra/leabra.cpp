@@ -509,8 +509,8 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, TrialProcess* tp, bool qu
       float sc = ((LeabraCon_Group*)ru->recv.FastGp(send_gp->other_idx))->scale_eff;
       if(sc != first_sc) {
 	if(!quiet) taMisc::Error("Leabra CheckConfig Error: the effective weight scales for different sending connections within a group"
-				 "are not all the same!  Sending Layer:", lay->name, ", Rev Layer:", send_gp->prjn->layer->name,
-				 ", first_sc: ", String(first_sc), ", sc: ", String(sc), ", con:", String(j));
+				 "are not all the same!  Sending Layer: " + lay->name, ", Rev Layer:", send_gp->prjn->layer->name,
+				 ", first_sc: " + String(first_sc), ", sc: " + String(sc), ", con: " + String(j));
 	return false;
       }
     }

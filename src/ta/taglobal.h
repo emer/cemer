@@ -149,5 +149,93 @@ inline size_t tweak_alloc(size_t n) {
 
 #endif
 
+// exceptions and assertions
+
+#ifdef TA_NO_EXCEPTIONS
+class ta_exception {
+#else
+#ifdef __MAKETA__
+class ta_exception {
+#else
+#include <exception>
+class ta_exception: public std::exception {
+#endif
+#endif
+
+public:
+  void setWhat(const char* value, int len = -1);
+  
+  ta_exception() throw();
+  ta_exception(const ta_exception& cp) throw();
+  explicit ta_exception(const char* value, int len = -1) throw();
+  ~ta_exception() throw();
+  
+  const char* what() const throw() ; // note: override
+  
+  ta_exception& operator =(const ta_exception& cp) throw();
+protected:
+  char* m_what; // dynamically allocated
+};
+
+inline ta_exception::ta_exception() throw() {
+  m_what = NULL;
+}
+
+inline ta_exception::ta_exception(const ta_exception& cp) throw() 
+#ifndef TA_NO_EXCEPTIONS
+:exception(cp)
+#endif
+{
+  m_what = NULL;
+  setWhat(cp.m_what);
+}
+
+inline ta_exception::ta_exception(const char* value, int len) throw() {
+  m_what = NULL;
+  setWhat(value, len);
+}
+
+inline ta_exception::~ta_exception() throw()  {
+  setWhat(NULL);
+}
+
+inline ta_exception& ta_exception::operator =(const ta_exception& cp) throw() {
+#ifndef TA_NO_EXCEPTIONS
+  exception::operator =(cp);
+#endif
+  setWhat(cp.m_what);
+  return *this;
+}
+
+inline void ta_exception::setWhat(const char* value, int len) {
+  if (m_what != NULL) {
+    delete m_what;
+    m_what = NULL;
+  }
+  if (value != NULL) {
+    if (len < 0) len = strlen(value);
+    m_what = (char*)malloc(len + 1);
+    if (m_what != NULL) strcpy(m_what, value);
+  }
+}
+
+inline const char* ta_exception::what() const throw() {
+  if (m_what != NULL) return m_what;
+  else return "";
+}
+
+// Macros for assertions and exceptions
+// An Assertion is something that may be optimized out for the release version
+// A Check is something that is typically never optimized away (ex. user-supplied parameter check)
+
+//TODO: debug and non-debug version
+inline void Assert(bool cond) {if (!(cond)) throw ta_exception();}
+inline void Assert(bool cond, const char* msg) {if (!(cond)) throw ta_exception(msg);}
+
+inline void Check(bool cond) {if (!(cond)) throw ta_exception();}
+inline void Check(bool cond, const char* msg) {if (!(cond)) throw ta_exception(msg);}
+
+#define THROW(msg) throw ta_exception(msg);
+
 
 #endif // STDEFS_H

@@ -328,6 +328,12 @@ String::String(int i,const char* format) {
   newRep(Salloc(buf, -1));
 }
 
+String::String(uint u, const char* format) {
+  char buf[32];
+  sprintf(buf, format,u);
+  newRep(Salloc(buf, -1));
+}
+
 String::String(long i,const char* format) {
   char buf[32];
   sprintf(buf,format,i);

@@ -83,7 +83,8 @@ T3CBar::T3CBar(ColorScale* c, void* dataView_)
 }
 
 T3CBar::~T3CBar(){
-  taBase::unRefDone(scale);
+  taBase::UnRef(scale);
+  scale = NULL;
 }
 
 int T3CBar::blocks() {
@@ -113,7 +114,7 @@ void T3CBar::SetColorScale(ColorScale* c){
 
   if (scale) {
     clear();
-    taBase::unRefDone(scale);
+    taBase::UnRef(scale);
   }
   scale = c;
   if (scale) {

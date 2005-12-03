@@ -3395,7 +3395,7 @@ void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
       while (c.y < geom.y) {
         un = units.FindUnitFmCoord(c);
         if (un != NULL) 
-          fm->FastEl(1, 1, c.x, c.y) = un->act;
+          fm->FastEl4(1, 1, c.x, c.y) = un->act;
         ++(c.y);
       }
       c.y = 0;

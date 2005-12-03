@@ -483,7 +483,7 @@ protected:
 };
 
 
-class int_FixedArray: public taFixedArray<int> {
+class int_FixedArray: public taFixedArray<int> { // #INLINE
   TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
 };
 
