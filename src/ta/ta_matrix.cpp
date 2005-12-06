@@ -93,33 +93,6 @@ void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
   }
 }
 
-int taMatrix_impl::ElIndex2(int d1, int d0) const {
-  int rval = (d1 * geom[0]) + d0;
-  return rval;
-}
- 
-int taMatrix_impl::ElIndex3(int d2, int d1, int d0) const {
-  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
-  return rval;
-}
- 
-int taMatrix_impl::ElIndex4(int d3, int d2, int d1, int d0) const {
-  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-  return rval;
-}
- 
-int taMatrix_impl::ElIndexN(const int_Array& indices) const {
-  Assert((indices.size == geom.size), "indices do not match");
-  
-  int rval = 0;
-  for (int i = indices.size - 1 ; i > 0; --i) {
-    rval += indices[i];
-    rval *= geom[i-1];
-  }
-  rval += indices[0];
-  return rval;
-}
- 
 void taMatrix_impl::EnforceFrames(int n) {
   Check(canResize(), "resizing not allowed");
   
@@ -140,6 +113,65 @@ void taMatrix_impl::EnforceFrames(int n) {
   geom[geom.size-1] = n;	
 }
 
+int taMatrix_impl::FastElIndex(int d0) const {
+  Assert((geom.size >= 1), "matrix geometry has not been initialized");
+  Assert(((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  Assert((d0 < size), "matrix element is out of bounds");
+  return d0;
+}
+ 
+int taMatrix_impl::FastElIndex2(int d1, int d0) const {
+  Assert((geom.size >= 2), "too many indices for matrix");
+  Assert(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = (d1 * geom[0]) + d0;
+  Assert((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::FastElIndex3(int d2, int d1, int d0) const {
+  Assert((geom.size >= 3), "too many indices for matrix");
+  Assert(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
+    && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
+  Assert((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::FastElIndex4(int d3, int d2, int d1, int d0) const {
+  Assert((geom.size >= 4), "too many indices for matrix");
+  Assert(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
+    && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+  Assert((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::FastElIndexN(const int_Array& indices) const {
+  Assert((geom.size >= 1), "matrix geometry has not been initialized");
+  Assert((indices.size >= 1), "at least 1 index must be specified");
+  Assert((indices.size <= geom.size), "too many indices for matrix");
+  int d0 = indices[0];
+  Assert(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
+  
+  int rval = 0;
+  for (int i = indices.size - 1 ; i > 0; --i) {
+    int di = indices[i];
+    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
+    rval += di;
+    rval *= geom[i-1];
+  }
+  rval += d0;
+  Assert((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
 int taMatrix_impl::frames() const {
   if (geom.size == 0) return 0;
   return geom[geom.size-1];
@@ -154,6 +186,65 @@ int taMatrix_impl::frameSize() const {
   return rval;
 }
 
+int taMatrix_impl::SafeElIndex(int d0) const {
+  Check((geom.size >= 1), "matrix geometry has not been initialized");
+  Check(((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  Check((d0 < size), "matrix element is out of bounds");
+  return d0;
+}
+ 
+int taMatrix_impl::SafeElIndex2(int d1, int d0) const {
+  Check((geom.size >= 2), "too many indices for matrix");
+  Check(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = (d1 * geom[0]) + d0;
+  Check((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::SafeElIndex3(int d2, int d1, int d0) const {
+  Check((geom.size >= 3), "too many indices for matrix");
+  Check(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
+    && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
+  Check((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::SafeElIndex4(int d3, int d2, int d1, int d0) const {
+  Check((geom.size >= 4), "too many indices for matrix");
+  Check(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
+    && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
+    "matrix index out of bounds");
+  
+  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+  Check((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
+int taMatrix_impl::SafeElIndexN(const int_Array& indices) const {
+  Check((geom.size >= 1), "matrix geometry has not been initialized");
+  Check((indices.size >= 1), "at least 1 index must be specified");
+  Check((indices.size <= geom.size), "too many indices for matrix");
+  int d0 = indices[0];
+  Check(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
+  
+  int rval = 0;
+  for (int i = indices.size - 1 ; i > 0; --i) {
+    int di = indices[i];
+    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
+    rval += di;
+    rval *= geom[i-1];
+  }
+  rval += d0;
+  Check((rval < size), "matrix element is out of bounds");
+  return rval;
+}
+ 
 void taMatrix_impl::SetFixedData_(void* el_, const int_Array& geom_) {
   // first, clear out any old data
   SetArray_(el_);

@@ -106,12 +106,21 @@ public: // don't use these, internal use only
 protected:
   int			alloc_size; // -1 means fixed (external data)
   
-  virtual void		SetGeom_(int dims_, const int geom_[]);
+  virtual void		SetGeom_(int dims_, const int geom_[]); //
   
-  int			ElIndex2(int d1, int d0) const; 
-  int			ElIndex3(int d2, int d1, int d0) const; 
-  int			ElIndex4(int d3, int d2, int d1, int d0) const; 
-  int			ElIndexN(const int_Array& indices) const; 
+  // the FastElIndex functions only check the bounds in debug version
+  int			FastElIndex(int d0) const; 
+  int			FastElIndex2(int d1, int d0) const; 
+  int			FastElIndex3(int d2, int d1, int d0) const; 
+  int			FastElIndex4(int d3, int d2, int d1, int d0) const; 
+  int			FastElIndexN(const int_Array& indices) const; 
+  
+  // the SafeElIndex functions always check the bounds
+  int			SafeElIndex(int d0) const; 
+  int			SafeElIndex2(int d1, int d0) const; 
+  int			SafeElIndex3(int d2, int d1, int d0) const; 
+  int			SafeElIndex4(int d3, int d2, int d1, int d0) const; 
+  int			SafeElIndexN(const int_Array& indices) const; 
   
   virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
   virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type; raise exception on failure
@@ -130,7 +139,7 @@ protected:
   // #IGNORE size of element
   
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
-    //NOTE: for efficiency, this only checks if in allocated range, not in actual range
+    // checks if in actual range
   
   virtual void		SetFixedData_(void* el_, const int_Array& geom_); // initialize fixed data
 //  virtual bool		Equal_(const taMatrix_impl& src) const; 
@@ -156,17 +165,54 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&			FastEl(int d0) 	{ return el[d0]; }
-  T&			FastEl2(int d1, int d0) { return el[ElIndex2(d1,d0)]; }
-  T&			FastEl3(int d2, int d1, int d0) { return el[ElIndex3(d2,d1,d0)]; }
-  T&			FastEl4(int d3, int d2, int d1, int d0) { return el[ElIndex4(d3,d2,d1,d0)]; } //
-  T&			FastElN(const int_Array& indices) {return el[ElIndexN(indices)]; }
+  T&			FastEl(int d0) // #IGNORE	
+    { return el[FastElIndex(d0)]; }
+  T&			FastEl2(int d1, int d0) // #IGNORE 
+    { return el[FastElIndex2(d1,d0)]; }
+  T&			FastEl3(int d2, int d1, int d0) // #IGNORE 
+    { return el[FastElIndex3(d2,d1,d0)]; }
+  T&			FastEl4(int d3, int d2, int d1, int d0) // #IGNORE 
+    { return el[FastElIndex4(d3,d2,d1,d0)]; } 
+  T&			FastElN(const int_Array& indices) // #IGNORE 
+    {return el[FastElIndexN(indices)]; }
   
-  const T&		FastEl(int d0) const	{ return el[d0]; }
-  const T&		FastEl2(int d1, int d0) const { return el[ElIndex2(d1,d0)]; }
-  const T&		FastEl3(int d2, int d1, int d0) const { return el[ElIndex3(d2,d1,d0)]; }
-  const T&		FastEl4(int d3, int d2, int d1, int d0) const { return el[ElIndex4(d3,d2,d1,d0)]; } //
-  const T&		FastElN(const int_Array& indices) const {return el[ElIndexN(indices)]; }
+  const T&		FastEl(int d0) const // #IGNORE	
+    { return el[FastElIndex(d0)]; }
+  const T&		FastEl2(int d1, int d0) const // #IGNORE 
+    { return el[FastElIndex2(d1,d0)]; }
+  const T&		FastEl3(int d2, int d1, int d0) const // #IGNORE 
+    { return el[FastElIndex3(d2,d1,d0)]; }
+  const T&		FastEl4(int d3, int d2, int d1, int d0) const // #IGNORE 
+    { return el[FastElIndex4(d3,d2,d1,d0)]; } 
+  const T&		FastElN(const int_Array& indices) const // #IGNORE 
+    { return el[FastElIndexN(indices)]; } 
+  
+  const T&		SafeEl(int d0) const 	
+    { return el[SafeElIndex(d0)]; } // access the element for reading
+  const T&		SafeEl2(int d1, int d0) const  
+    { return el[SafeElIndex2(d1,d0)]; } // access the element for reading
+  const T&		SafeEl3(int d2, int d1, int d0) const  
+    { return el[SafeElIndex3(d2,d1,d0)]; } // access the element for reading
+  const T&		SafeEl4(int d3, int d2, int d1, int d0) const  
+    { return el[SafeElIndex4(d3,d2,d1,d0)]; }  // access the element for reading
+  const T&		SafeElN(const int_Array& indices) const  
+    { return el[SafeElIndexN(indices)]; }  // access the element for reading
+  
+  void			Set(int d0, const T& item) 	
+    { el[SafeElIndex(d0)] = item; }
+  // use this for safely assigning values to items in the matrix, esp. from script code
+  void			Set2(int d1, int d0, const T& item) 	
+    { el[SafeElIndex2(d1,d0)] = item; }
+  // use this for safely assigning values to items in the matrix, esp. from script code
+  void			Set3(int d2, int d1, int d0, const T& item) 	
+    {  el[SafeElIndex3(d2,d1,d0)] = item; }
+  // use this for safely assigning values to items in the matrix, esp. from script code
+  void			Set4(int d3, int d2, int d1, int d0, const T& item) 	
+    {  el[SafeElIndex4(d3,d2,d1,d0)] = item; }
+  // use this for safely assigning values to items in the matrix, esp. from script code
+  void			SetN(const int_Array& indices, const T& item) 	
+    {  el[SafeElIndexN(indices)] = item; }
+  // use this for safely assigning values to items in the matrix, esp. from script code
   
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrix, T)
 public:
