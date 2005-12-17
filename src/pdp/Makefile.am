@@ -48,6 +48,7 @@ TAHEADS =\
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/enviro.h \
 	@abs_srcdir@/enviro_extra.h \
+	@abs_srcdir@/event.h \
 	@abs_srcdir@/process.h \
 	@abs_srcdir@/stats.h \
 	@abs_srcdir@/pdplog.h \
@@ -64,6 +65,7 @@ HEADS =\
 	netstru_extra.h \
 	enviro.h \
 	enviro_extra.h \
+	event.h \
 	process.h \
 	stats.h \
 	sched_proc.h \
@@ -80,6 +82,7 @@ SRCS =\
 	netstru_extra.cpp \
 	enviro.cpp \
 	enviro_extra.cpp \
+	event.cpp \
 	process.cpp \
 	stats.cpp \
 	sched_proc.cpp \

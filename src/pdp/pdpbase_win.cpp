@@ -24,7 +24,6 @@
 
 #include "pdpshell.h"
 
-#include <signal.h>
 #include <memory.h>
 #include <malloc.h>
 #include <sstream>

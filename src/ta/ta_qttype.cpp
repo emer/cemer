@@ -221,12 +221,6 @@ void taiIntType::GetValue_impl(taiData* dat, void* base) {
 ////////////////////////
 
 void taiEnumType::Initialize() {
-//  isBit = (typ && typ->HasOption("BITS"));
-//  if (typ && typ->HasOption("BITS")) {
-  if (typ && (typ->name == "Attributes")) {
-    isBit = true;
-  } else
-    isBit = false;
 }
 
 int taiEnumType::BidForType(TypeDef* td){
@@ -236,6 +230,7 @@ int taiEnumType::BidForType(TypeDef* td){
 }
 
 taiData* taiEnumType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  isBit = ((typ != NULL) && (typ->HasOption("BITS")));
   if (isBit) {
     return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
   } else if (flags_ & taiData::flgReadOnly) {

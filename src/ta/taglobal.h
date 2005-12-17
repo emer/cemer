@@ -229,11 +229,27 @@ inline const char* ta_exception::what() const throw() {
 // A Check is something that is typically never optimized away (ex. user-supplied parameter check)
 
 //TODO: debug and non-debug version
+//TEMP: until exception handling/signal handling sorted out, we 
+// are hacking the behavior of Assert and Check
+
+#ifndef __MAKETA__
+#include <iostream>
+#endif
+inline void Assert(bool cond) {if (!(cond)) {int i=0; int k=1/i;}}
+inline void Assert(bool cond, const char* msg) {if (!(cond)) 
+  {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
+
+inline void Check(bool cond) {if (!(cond)) throw ta_exception();}
+inline void Check(bool cond, const char* msg) {if (!(cond))  
+  {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
+
+/*these are the final versions, once exceptions are used
 inline void Assert(bool cond) {if (!(cond)) throw ta_exception();}
 inline void Assert(bool cond, const char* msg) {if (!(cond)) throw ta_exception(msg);}
 
 inline void Check(bool cond) {if (!(cond)) throw ta_exception();}
 inline void Check(bool cond, const char* msg) {if (!(cond)) throw ta_exception(msg);}
+*/
 
 #define THROW(msg) throw ta_exception(msg);
 

@@ -30,10 +30,8 @@
 
 // forwards this file
 class DataChannel;
-class SourceChannel;
-class SourceChannel_List;
-class SinkChannel;
-class SinkChannel_List;
+class SourceChannel;//
+class SinkChannel;//
 class DataConnector; 
 class DataConnector_List; //
 class SequenceMaster; 
@@ -87,70 +85,61 @@ private:
 
 */
 
-class DataChannel: public taNBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS a connection between a source and sink -- owned by the source list
+class DataChannel: public taNBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS a source or sink of data
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif
 public:
+  int_Array		geom; // #SAVE #HIDDEN
+  DataTransferMode	txfer_modes_allowed; // #READ_ONLY #SHOW
+  DataTransferMode	txfer_mode; // current txfer mode
   
-  virtual int		index() {return m_index;} // this channel's index, typically invariant
-  virtual TypeDef*	data_type() {return m_data_type;} // type of data, ex TA_int, TA_float, etc.
-  virtual int		dims() {return m_geom.size;}
+  virtual TypeDef*	data_type() = 0; // type of data, ex TA_int, TA_float, etc.
+  virtual int		dims() {return geom.size;}
      // number of dimensions of data; N=0 for sink is "any"
-  virtual int		geom(int dim) {return m_geom.SafeEl(dim);}// geom for dimension; N=0 is "don't care"
-  void			setGeom(int dims, int geom0, int geom1 = 0, int geom2 = 0, int geom3 = 0);
-    // convenience api that calls virt version
-  virtual void		setGeom(const int_FixedArray& value);
-  virtual int		txfer_modes_allowed() const {return m_txfer_modes_allowed;}
-    // specialized impls can provide pull
-  virtual int		txfer_mode() const {return m_txfer_mode;} // current txfer mode
-  void			setTxfer_mode(int val); // set new txfer mode (validates before calling _)
+  virtual int		GetGeom(int dim) {return geom.SafeEl(dim);}// geom for dimension
+  void			setGeom(int d0); // set 1-d geom
+  void			setGeom2(int d1, int d0); // set 2-d geom
+  void			setGeom3(int d2, int d1, int d0); // set 3-d geom
+  void			setGeom4(int d3, int d2, int d1, int d0); // set 4-d geom
+  virtual void		setGeomN(const int_Array& value); // set any geom
+
+  virtual void		ClearCachedData(); // clears any cached data from a previous cycle
   
   void			InitLinks();
   void			CutLinks();
   TA_ABSTRACT_BASEFUNS(DataChannel); //
   
-public: // hidden members -- do not access directly
-  int_FixedArray	m_geom; // #SAVE #HIDDEN
-  int			m_index; // #NO_SAVE #HIDDEN
-  int			m_txfer_modes_allowed; // #SAVE #HIDDEN
-
 protected:
-  virtual void		InitInstance(const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode);
-    // code shared by specialized static New's -- DO NOT CALL FROM CONSTRUCTOR
-    
-  TypeDef*		m_data_type;
-  int			m_txfer_mode; // current txfer mode
   taMatrixPtr_impl	m_cached_data; // most recent data
   int64_t		m_cached_cycle; // cycle counter that goes with data
-  virtual void		setTxfer_mode_(int val); // set new txfer mode, typically not overridden
+  
+  virtual bool		SetCachedData(taMatrix_impl* data); // validates, sets
+  virtual bool		ValidateData(taMatrix_impl* data); // validates, based on expected geom and type
 private:
   void			Initialize();
   void			Destroy();
 };
 
 
-class SourceChannel: public DataChannel { // 
+class SourceChannel: public DataChannel { // #VIRT_BASE #NO_INSTANCE a source of data
 INHERITED(DataChannel)
 friend class IDataSource;
 friend class DataConnector;
 friend class SourceChannel_List;
 public:
-  static SourceChannel*	New(IDataSource* data_source, const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode);
-    // this is the normal way to create a Channel
-  
   DataConnector_List	connectors;
   
   IDataSource*		data_source() {return m_data_source;} // must be set by owner
   
-  taMatrix_impl*	GetData() {return GetData_();}
-    // gets current item
+  override TAPtr	SetOwner(TAPtr own); // also sets data source
+  
+  taMatrix_impl*	GetData() {return DoGetData();}
+    // gets latest item, producing it if necessary; only called in Pull mode
     
   void			InitLinks();
   void			CutLinks();
-  TA_BASEFUNS(SourceChannel); //
+  TA_ABSTRACT_BASEFUNS(SourceChannel); //
 
 public: // hidden
   IDataSource*		m_data_source; // #HIDDEN must be set by owner
@@ -158,82 +147,30 @@ public: // hidden
 protected:
 //  override void		setTxfer_mode_(int val); // set new txfer mode
   virtual void		ConnectorDisconnecting(DataConnector* dc);
-  virtual taMatrix_impl* GetData_(); // default returns cached data if fresh, else calls source
+  virtual taMatrix_impl* DoGetData(); // default returns cached data if fresh, else calls produce
+  virtual bool		DoProduceData(); // performs actual job of producing data into cache
   
 private:
   void			Initialize();
   void			Destroy(); //
 };
 
-/* delete
-class SourceChannelD<T>: public SourceChannel { // template for a source channel that contains its data, and caches the global cycle counter to mediate execution of makedata
-INHERITED(SourceChannel)
-friend class IDataSource;
-public:
-protected:
-  T			m_data;
-  int64_t		m_data_cycle; // cycle on which data was generated
-  override bool MakeData_() {
-  bool rval = false;
-  if (m_data_source != NULL) {
-    m_data_source->DoMakeData(this, rval);
-  }
-  return rval;
-}
- 
-  override taMatrix_impl* GetData_() {
-    if (SequenceMaster::instance().UpdateClient(m_data_cycle)) {
-    }
-  taMatrix_impl* rval = NULL;
-  bool handled = false;
-  if (m_data_source != NULL) {
-    rval = m_data_source->DoGetData(this, handled);
-  }
-  return rval;
-} 
 
-}; */
-
-class SourceChannel_List: public taList<SourceChannel> { // #NO_TOKENS
-#ifndef __MAKETA__
-typedef taList<SourceChannel> inherited;
-#endif
-friend class IDataSource;
-friend class SourceChannel;
-public:
-  IDataSource*		data_source; // #HIDDEN must be set by owning IDataSource
-  TA_BASEFUNS(SourceChannel_List); //
-  
-protected: 
-  override void*	El_Own_(void* it);
-  override void		El_disOwn_(void* it);
-  override void		El_SetIndex_(void* item, int idx) 
-    {static_cast<SourceChannel*>(item)->m_index = idx;}
-private:
-  void			Initialize();
-  void			Destroy();
-};
-
-
-class SinkChannel: public DataChannel { // 
+class SinkChannel: public DataChannel { // #VIRT_BASE #NO_INSTANCE a sink for data
 #ifndef __MAKETA__
 typedef DataChannel inherited;
 #endif
 friend class IDataSink;
 friend class DataConnector;
 public:
-  static SinkChannel*	New(IDataSink* data_sink, const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode);
-    // this is the normal way to create a Channel
-    
   IDataSink*		data_sink() {return m_data_sink;} // the DataSink that owns this channel
   DataConnector* 	connector() {return m_connector;} // the connector, if attached
   
-  bool			ConsumeData() {return ConsumeData_();} 
-    // consumes the current data item INTERNAL; 'true' if data actually consumed
-  void			AcceptData(taMatrix_impl* item) {AcceptData_(item);} 
-    // sets current item; only used in Push mode
-  TA_BASEFUNS(SinkChannel); //
+  bool			AcceptData(taMatrix_impl* item) {return DoAcceptData(item);} 
+    // sets current item after verifying; only used in Push mode
+    
+  override TAPtr	SetOwner(TAPtr own); // also sets data sink
+  TA_ABSTRACT_BASEFUNS(SinkChannel); //
   
 public: // hidden
   IDataSink*		m_data_sink; // #HIDDEN the DataSink that owns this channel
@@ -241,51 +178,14 @@ public: // hidden
 
 protected:
   virtual void		ConnectorDisconnecting(DataConnector* dc);
-  virtual bool		ConsumeData_(); // does actual work of making current item
-  virtual void		AcceptData_(taMatrix_impl* item); 
-    // gets current item; only used in Push mode
+  virtual bool		DoConsumeData(); // does work of consuming current item, default delegates to sink
+  virtual bool		DoAcceptData(taMatrix_impl* item); 
+    // accepts current item, calls consume if in push mode
 private:
   void			Initialize();
   void			Destroy();
 };
 
-class SinkChannel_List: public taList<SinkChannel> { //  #NO_TOKENS
-#ifndef __MAKETA__
-typedef taList<SinkChannel> inherited;
-#endif
-friend class IDataSink;
-friend class SinkChannel;
-public:
-  IDataSink*		data_sink; // #HIDDEN must be set by owning IDataSource
-  
-  TA_BASEFUNS(SinkChannel_List);
-protected: 
-  override void*	El_Own_(void* it);
-  override void		El_disOwn_(void* it);
-  override void		El_SetIndex_(void* item, int idx) 
-    {static_cast<SinkChannel*>(item)->m_index = idx;}
-private:
-  void			Initialize();
-  void			Destroy();
-};
-
-
-/* delete
-class DataSource_impl: public taOBase { // #NO_INSTANCE #NO_TOKENS helper object that implements most behavior of IDataSource
-#ifndef __MAKETA__
-typedef taOBase inherited;
-#endif
-public:
-  IDataSource*		data_source; // #HIDDEN 
-  SourceChannel_List	m_source_channels; // #HIDDEN
-  
-  void 			InitLinks(); 
-  void 			CutLinks();
-  TA_BASEFUNS(DataSource_impl);
-private:
-  void			Initialize();
-  void			Destroy(); //
-}; */
 
 class SequenceMaster { // #NO_INSTANCE singleton class
 public:
@@ -306,5 +206,51 @@ private:
   void operator =(const SequenceMaster& src); // not defined
 };
 
+/* DataCatalogs
+   A DataCatalog provides a collection of data items. Examples would be image files
+   in a file system folder, or data patterns stored in a database. 
+   Usage:
+     * set the path to the items (type-dependent, ex. folder)
+     * call OpenData()
+     * access the normal DataSource interface, data items, etc.
+     * when finished, call CloseData() (note: this may do nothing for some types)
+     * to reenumerate, call CloseData() followed by OpenData()
+   
+   A DataCatalogItemSpec 
+   
+   The Catalog provides the location/path, enumeration, and retrieval functions.
+
+*/
+
+class DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
+INHERITED(taNBase)
+public:
+
+  virtual bool		OpenData() = 0; // opens the data source, returns true if successful
+  virtual void		CloseData() = 0; // closes the data source
+  
+  TA_ABSTRACT_BASEFUNS(DataCatalog)
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
+
+class DirectoryCatalog: public DataCatalog {// #INSTANCE a DirectoryCatalog provides a collection of data items, described by a DataCatalogItemSpec
+INHERITED(DataCatalog)
+public:
+  String		directory; // path to the directory where the files are
+  
+  override bool		OpenData(); // opens the data source, returns true if successful
+  override void		CloseData(); // closes the data source
+  
+  TA_BASEFUNS(DirectoryCatalog)
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
+
+//TODO: prob move these to an _extras file
 
 #endif

@@ -43,6 +43,10 @@
 
 // forwards this file
 class Unit_Group; //
+class LayerRWBase;
+class LayerWriter;
+class LayerReader;
+class LayerWriter_Group;
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -936,7 +940,7 @@ public:
   act -- NxM float array, of the activation values
   
 */
-class Layer : public taNBase, public IDataSource {
+class Layer : public taNBase {
   // ##EXT_lay ##COMPRESS layer containing units
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -947,7 +951,23 @@ public:
     DMEM_DIST_UNITGP		// distribute units according to unit groups, which can be less even but allows for shared weights by unit group
   };
 
+  enum LayerType { // #BITS design hint on layer usage (but input/output always allowed)
+    HIDDEN	= 0x00, 	// #NO_BIT layer probably won't be externally connected
+    INPUT 	= 0x01,		// layer will (or may) receive external input
+    OUTPUT 	= 0x02,		// layer will (or may) provide external output
+    TARGET 	= 0x04		// layer will (or may) be supplied with target (training) data
+  }; //
+  
+  //note: GroupRWModel is commensurable with LayerRWBase::GroupRWModel
+  enum GroupRWModel { // default model to use in reading/writing layer that has groups
+    FLAT,	// ingore groups, read/write as if one flat 2-d space of units
+    GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
+    GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
+    CUSTOM  // use this when a non-standard model is used, ex. partial access
+  };
+
   Network*		own_net;	// #READ_ONLY #NO_SAVE Network this layer is in
+  LayerType		layer_type;	// design hint on layer usage (but input/output always allowed)
   int			n_units;
   // no. of units to create with Build command (0=use geometry)
   PosTDCoord		geom;
@@ -955,6 +975,7 @@ public:
   PosTDCoord		pos;		// position of layer
   PosTDCoord		gp_geom;	// #CONDEDIT_OFF_geom.z:1 geometry of sub-groups (if geom.z > 1)
   PosTDCoord		gp_spc;		// #CONDEDIT_OFF_geom.z:1 spacing between sub-groups (if geom.z > 1)
+  GroupRWModel		gp_rw_model;	// #CONDEDIT_OFF_geom.z:1 group read/write model	
   PosTDCoord		act_geom;	// #HIDDEN actual geometry (if geom.z > 1)
   Projection_Group  	projections;	// group of receiving projections
   Projection_Group  	send_prjns;	// #HIDDEN #LINK_GROUP group of sending projections
@@ -1081,6 +1102,8 @@ public:
 
   virtual Unit*	FindUnitFmCoord(const TwoDCoord& coord);
   // get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
+  virtual Unit*	FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord);
+  // get unit from coordinates
   virtual Unit_Group* FindUnitGpFmCoord(const TwoDCoord& coord);
   // get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
   virtual void	GetActGeomNoSpc(PosTDCoord& nospc_geom);
@@ -1103,13 +1126,6 @@ public:
   COPY_FUNS(Layer, taNBase);
   TA_BASEFUNS(Layer); //
   
-public: // IDataSource i/f and impl
-  SourceChannel_List  source_channels;
-  // override bool	can_sequence_() const {return false;} // true if has a ISequencable interface
-  // override ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
-  override SourceChannel_List& source_channels_() {return source_channels;}
-protected: // SourceChannel delegates -- designed for multi-class inheritance chain
-  override void GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled);
 
 #ifdef TA_GUI
 //protected:
@@ -1343,5 +1359,273 @@ public:
   void 	Destroy()		{ };
   TA_BASEFUNS(Network_MGroup);
 };
+
+
+class LayerRWBase: public IDataLinkClient  {
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS mixin class for LayerXxx
+INHERITED(IDataLinkClient)
+public:
+  //note: GroupRWModel is commensurable with Layer::GroupRWModel
+  enum GroupRWModel { // model to use in reading/writing layer that has groups
+    FLAT,	// ingore groups, read/write as if one flat 2-d space of units
+    GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
+    GROUPED_CHANNELS // read/write via N*M channels, each accessing one 2-d group of units
+  };
+
+  
+  TDCoord	pos;		// #DETAIL position in viewer
+  String        layer_name;  	// name of layer that we connect to
+  Layer* 	layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
+  PosTwoDCoord	offset;		// offset in layer or unit group at which to start reading/writing
+  GroupRWModel	gp_rw_model;	// unit group read/write model
+  PosTwoDCoord  gp_offset;	// #CONDEDIT_OFF_gp_rw_model:0 when using GROUPED access, specifies the starting group coords
+  
+  virtual void 	SetToLayer(Layer* lay=NULL);
+  // #BUTTON #NULL_OK set configuration of the pattern spec based on layer, and set to go to that layer 
+    
+  void 		Copy_(const LayerRWBase& cp); // called from the main class
+  LayerRWBase();
+  
+public: // 
+
+public: // ITypedObject/IDataLinkClient
+//  override void*	This() {return this;}  //
+  override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove datalink ref in dlc upon return
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); // monitors for name change of target layer
+  
+protected:
+  virtual void		InitDataChannel(DataChannel* self); // called to init data channel, based on our specs
+};
+
+class LayerWriter: public SinkChannel, public LayerRWBase {
+  // object that writes data from a datasource to a layer
+INHERITED(SinkChannel)
+public:
+  enum PatTypes {
+    INACTIVE,			// not presented to network
+    INPUT,			// input pattern
+    TARGET,			// target (output) pattern
+    COMPARE 			// comparison pattern (for error only)
+  };
+
+  enum LayerFlags {	// #BITS how to flag the layer's external input status
+    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on pattern type
+    TARG_LAYER 		= 0x01,	// as a target layer
+    EXT_LAYER 		= 0x02,	// as an external input layer
+    TARG_EXT_LAYER 	= 0x03,	// #NO_BIT as both external input and target layer
+    COMP_LAYER		= 0x04,	// as a comparison layer
+    COMP_TARG_LAYER	= 0x05,	// #NO_BIT as a comparision and target layer
+    COMP_EXT_LAYER	= 0x06,	// #NO_BIT as a comparison and external input layer
+    COMP_TARG_EXT_LAYER = 0x07,	// #NO_BIT as a comparison, target, and external input layer
+    NO_LAYER_FLAGS	= 0x10 	// don't set any layer flags at all
+  };
+
+  PatTypes	type;    	// Type of pattern
+  LayerFlags	layer_flags;	// how to flag the layer's external input status
+  float		initial_val;	// Initial value for pattern values
+  Random	noise;		// Noise added to values when applied
+  String_Array  value_names;	// display names of the individual pattern values
+  virtual void	ApplyData(const float_Matrix& data);
+  // #IGNORE apply the data to all units (layer must already be set)
+
+/*TODO
+  virtual bool 	SetLayer(Network* net);
+  // set layer pointer to point to the target layer
+  virtual void 	UnSetLayer();
+  // when done, don't keep pointing to it.
+  virtual float Value(Pattern* pat, int index);
+  // return value at given index from pattern (order can be changed, eg GroupLayerWriter)
+  virtual int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
+  // return flag at given index from pattern (order can be changed, eg GroupLayerWriter)
+  virtual void 	ApplyValue(Pattern* pat, Unit* uni, int index);
+  // assign unit value and ext_flag based on pattern at given index
+  virtual void	ApplyValue_impl(Unit* uni, float val, int flags);
+  // implementation of apply value, taking just the value and the flags
+  virtual void	ApplyValueWithFlags(Unit* uni, float val, int flags);
+  // assign unit value and ext_flag with pattern flags
+
+  virtual Pattern* NewPattern(Event* ev, Pattern_Group* par);
+  // creates a new pattern in my image in event in parent group at index
+  virtual void	UpdatePattern(Event* ev, Pattern* pat);
+  // updates existing pattern to current spec settings
+*/
+  override void 	SetToLayer(Layer* lay=NULL);
+  // #BUTTON #NULL_OK set configuration of the pattern spec based on layer, and set to go to that layer (NULL = update to current layer)
+//??  virtual void	UpdateAllEvents();
+  // #BUTTON update all events using pattern spec
+  virtual void 	ApplyNames();
+  // #BUTTON set the names of units in the network according to the current value_names
+
+#ifdef TA_GUI
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+#endif
+  void	UpdateAfterEdit();	// gets information off of the layer, etc
+  void  InitLinks();
+  void	CutLinks();
+  void 	Copy_(const LayerWriter& cp);
+  COPY_FUNS(LayerWriter, SinkChannel);
+  TA_BASEFUNS(LayerWriter); //
+  
+public: // ITypedObject/IDataLinkClient
+  override void*	This() {return this;}  //
+  
+public: // SinkChannel functions
+  override TypeDef*	data_type() {return &TA_float;} 
+
+protected:
+  virtual void	FlagLayer();
+  // set layer flag to reflect the kind of input received
+
+private:
+  void	Initialize();
+  void 	Destroy();
+};
+
+
+class LayerWriter_Group : public taGroup<LayerWriter> {
+  // group of LayerWriters 
+INHERITED(taGroup<LayerWriter>)
+public:
+#ifdef TA_GUI
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+#endif
+  
+  void  Initialize()            { SetBaseType(&TA_LayerWriter); }
+  void  Destroy()               { };
+  TA_BASEFUNS(LayerWriter_Group);
+}; 
+
+
+class LayerReader: public SourceChannel, public LayerRWBase {
+  // object that reads data from a layer
+INHERITED(SourceChannel)
+public:
+  override void 	SetToLayer(Layer* lay=NULL);
+
+#ifdef TA_GUI
+  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT);}
+#endif
+  void	UpdateAfterEdit();	// gets information off of the layer, etc
+  void  InitLinks();
+  void	CutLinks();
+  void 	Copy_(const LayerReader& cp);
+  COPY_FUNS(LayerReader, SourceChannel);
+  TA_BASEFUNS(LayerReader);
+  
+public: // ITypedObject/IDataLinkClient
+  override void*	This() {return this;}  //
+  
+public: // SourceChannel functions
+  override TypeDef*	data_type() {return &TA_float;} 
+
+private:
+  void	Initialize();
+  void 	Destroy();
+};
+
+
+class LayerReader_Group : public taGroup<LayerReader> {
+  // group of LayerReaders 
+INHERITED(taGroup<LayerReader>)
+public:
+#ifdef TA_GUI
+  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT);}
+#endif
+  
+  void  Initialize()            { SetBaseType(&TA_LayerReader); }
+  void  Destroy()               { };
+  TA_BASEFUNS(LayerReader_Group);
+}; 
+
+
+class NetConduit : public taNBase, public IDataSink, public IDataSource {
+  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+INHERITED(taNBase)
+public:
+
+  Network*		last_net;
+  // #READ_ONLY #NO_SAVE last network connected to
+  LayerReader_Group 	readers;
+  // #IN_GPMENU #NO_INHERIT group of pattern templates 
+  LayerWriter_Group 	writers;
+  // #IN_GPMENU #NO_INHERIT group of pattern templates 
+
+/* TODO
+  virtual void 	ApplyPatterns(Event* ev, Network* net);
+  // apply patterns to the network
+
+  virtual void	SetLayers(Network* net); // set layers according to given net
+  virtual void	UnSetLayers(); 		 // clear layer pointers (and last_net)
+
+  int	MaxX();			// maximum X coordinate of patterns
+  int	MaxY();			// maximum Y coordinate of patterns
+
+  virtual void	NewEvent(Event* ev);
+  // defines a new event in my image
+  virtual void	UpdateEvent(Event* ev);
+  // updates existing event to current spec settings
+  virtual void	UpdateAllEvents();
+  // #BUTTON update all events using this event spec
+  virtual void 	UpdateFromLayers();
+  // #BUTTON set configuration of all pattern specs based on their corresponding layer in the network
+  virtual void 	ApplyNames(Network* net);
+  // #BUTTON set the names of units in the network according to the value_names on the pattern specs
+
+  virtual void	LinearLayout(PatternLayout pat_layout = DEFAULT);
+  // #MENU #MENU_ON_Actions Layout LayerWriters in a line going either horizontal or vertical (just for display purposes)
+
+  virtual void	AutoNameEvent(Event* ev, float act_thresh = .5f, int max_pat_nm = 3, int max_val_nm = 3);
+  // automatically name event based on the pattern names and value (unit) names for those units above act_thresh, e.g., Inp:vl1_vl2,Out:vl1_vl2
+  virtual void	AutoNameAllEvents(float act_thresh = .5f, int max_pat_nm = 3, int max_val_nm = 3);
+  // #BUTTON automatically name all events that use this spec based on the pattern names and value (unit) names for those units above act_thresh, e.g., Inp:vl1_vl2,Out:vl1_vl2
+
+  virtual bool	DetectOverlap();
+  // determine if the patterns overlap on top of each other
+
+  virtual void	AddToView();		// add event to view(s)
+  virtual void	RemoveFromView();	// remove event from view(s)
+*/
+#ifdef TA_GUI
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+#endif
+  void  UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void 	Copy(const NetConduit& cp);
+  TA_BASEFUNS(NetConduit);
+  
+public: // IDataSink i/f and impl
+  override int		sink_channel_count(); // number of sink channels
+  override SinkChannel* sink_channel(int idx); // get a sink channel
+protected:
+  override void 	DoGetData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled); // #IGNORE
+
+public: // IDataSource i/f and impl
+  // override bool	can_sequence_() const {return false;} // true if has a ISequencable interface
+  // override ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
+  override int		source_channel_count(); // number of source channels
+  override SourceChannel* source_channel(int idx); // get a source channel
+protected: 
+  override void		DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled); //#IGNORE
+  override void		DoConsumeData(SinkChannel* ch, bool& handled); //#IGNORE
+  
+private:
+  void	Initialize();
+  void 	Destroy() 	{ CutLinks(); }
+};
+
+class NetConduit_MGroup : public taGroup<NetConduit> {
+  // group of event templates
+INHERITED(taGroup<NetConduit>)
+public:
+#ifdef TA_GUI
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+#endif
+
+  void  Initialize()            { SetBaseType(&TA_NetConduit); }
+  void  Destroy()               { };
+  TA_BASEFUNS(NetConduit_MGroup);
+}; //
+
 
 #endif /* netstru_h */

@@ -282,6 +282,13 @@ void taMatrix_impl::UpdateAfterEdit() {
 }
 
 void taMatrix_impl::UpdateGeom() {
+  // handle legacy/graceful case wherein size is non-zero, but no dims -- 
+  // set dims to 1, and dim[0] to the size
+  if ((size != 0) && (geom.size == 0)) {
+    geom.EnforceSize(1);
+    geom.FastEl(0) = size;
+  }
+  
   // get overall framesize and frames
   int dims_ = geom.size; // cache
   // make sure dims are valid (outer dim can be 0, others must be >0)

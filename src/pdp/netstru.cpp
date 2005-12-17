@@ -3232,24 +3232,16 @@ int LayerSpec::UseCount() {
 
 void Layer::Initialize() {
   own_net = NULL;
+  layer_type = HIDDEN;
   projections.SetBaseType(&TA_Projection);
   units.SetBaseType(&TA_Unit);
   n_units = 0;
   lesion = false;
   ext_flag = Unit::NO_EXTERNAL;
   geom.y =1;  geom.z =1;  geom.x =0;
+  gp_rw_model = FLAT;
   act_geom = geom;
   dmem_dist = DMEM_DIST_DEFAULT;
-  
-  // create the output channels
-  source_channels.Add(SourceChannel::New(
-    static_cast<IDataSource*>(this), 
-    "act", 
-    //dims are: grpX, grpY, unX, unY
-    int_FixedArray(4, 1, 1, 0, 0), 
-    DTM_BOTH, 
-    DTM_PUSH
-  ));
 }
 
 void Layer::InitLinks() {
@@ -3270,14 +3262,12 @@ void Layer::InitLinks() {
   own_net = GET_MY_OWNER(Network);
   SetDefaultPos();
   units.pos.z = 0;
-  taBase::Own(source_channels, this);
 }
 
 void Layer::CutLinks() {
   static bool in_repl = false;
   if (in_repl || (owner == NULL)) return; // already replacing or already dead
   DisConnect();
-  source_channels.CutLinks();
   // remove layer transforms and layer_name transforms
   if(own_net != NULL) {
 /*TODO     int index = own_net->layers.FindLeaf(this);
@@ -3328,11 +3318,13 @@ void Layer::CutLinks() {
 
 
 void Layer::Copy_(const Layer& cp) {
+  layer_type = cp.layer_type;
   n_units = cp.n_units;
   geom = cp.geom;
   pos = cp.pos;
   pos.x+=2; // move it over so it can be seen!
   gp_geom = cp.gp_geom;
+  gp_rw_model = cp.gp_rw_model;
   gp_spc = cp.gp_spc;
   projections = cp.projections;
   units = cp.units;
@@ -3355,12 +3347,6 @@ void Layer::UpdateAfterEdit() {
   if(taMisc::is_loading) return;
   if (own_net == NULL) return;
   own_net->UpdtAfterNetMod();
-  // update channels
-  SourceChannel* ch = source_channels.FindName("act");
-  if (ch != NULL) {
-    //TODO: Unit Groups
-    ch->setGeom(int_FixedArray(4, 1, 1, geom.x, geom.y));
-  }
 
   if(!taMisc::gui_active) return;
 /*TODO  NetView* view;
@@ -3376,33 +3362,6 @@ void Layer::ConnectFrom(Layer* from_lay) {
   if (!net) return;
   //Projection* prjn =
   net->FindMakePrjn(this, from_lay);
-}
-
-void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
-  IDataSource::GetData_(ch, data, handled);
-  if (handled) return;
-  if (ch->name == "act") {
-    //TODO: prob create a generic helper routine for grabbing a member of Units
-    //TODO: need to deal with groups!
-    // allocate a float matrix
-    //TODO: Multi UnitGroups
-    float_Matrix* fm = new float_Matrix(1, 1, geom.x, geom.y);
-    
-    // fill it with our act data
-    Unit* un;
-    TwoDCoord c;
-    while (c.x < geom.x) {
-      while (c.y < geom.y) {
-        un = units.FindUnitFmCoord(c);
-        if (un != NULL) 
-          fm->FastEl4(1, 1, c.x, c.y) = un->act;
-        ++(c.y);
-      }
-      c.y = 0;
-      ++(c.x);
-    }
-    handled = true;
-  }
 }
 
 void Layer::ReplacePointersHook(TAPtr old) {
@@ -4175,6 +4134,15 @@ Unit* Layer::FindUnitFmCoord(const TwoDCoord& coord) {
     return ((Unit_Group*)units.gp.FastEl(gpidx))->FindUnitFmCoord(uncoord);
   return NULL;
 }
+
+Unit* Layer::FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord) {
+  Unit* rval = NULL;
+  Unit_Group* ug = FindUnitGpFmCoord(gp_coord);
+  if (ug != NULL) {
+    rval = ug->FindUnitFmCoord(coord);
+  }
+  return rval;
+};
 
 Unit_Group* Layer::FindUnitGpFmCoord(const TwoDCoord& coord) {
   if((coord.x < 0) || (coord.y < 0)) return NULL;
@@ -5971,7 +5939,570 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
   else return inherited::ConstrDataLink(viewer_, link_type);
 }
 */
-
-
 #endif
 
+//////////////////////
+//   LayerRWBase    //
+//////////////////////
+
+LayerRWBase::LayerRWBase() {
+  layer = NULL;
+  gp_rw_model = FLAT;
+}
+
+void LayerRWBase::Copy_(const LayerRWBase& cp) {
+  pos = cp.pos; //TODO: add an offset amount
+  layer_name=cp.layer_name;
+  taBase::SetPointer((TAPtr*)&layer,cp.layer);
+  offset = cp.offset;
+  gp_rw_model = cp.gp_rw_model;
+  gp_offset = cp.gp_offset;
+}
+
+void LayerRWBase::DataLinkDestroying(taDataLink* dl) {
+  taBase::DelPointer((TAPtr*)&layer);
+}
+
+void LayerRWBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  //TODO: check for layer name change
+}
+
+void LayerRWBase::InitDataChannel(DataChannel* self) {
+  if (layer == NULL) return;
+  switch (gp_rw_model) {
+  case FLAT: {
+      PosTDCoord nospc_geom;
+      layer->GetActGeomNoSpc(nospc_geom);
+      self->setGeom2(nospc_geom.y, nospc_geom.x);
+    }
+    break;
+  case GROUPED_DATA: {
+      self->setGeom4(layer->gp_geom.y, layer->gp_geom.x, layer->geom.y, layer->geom.x);
+    }
+    break;
+  case GROUPED_CHANNELS: {
+      self->setGeom2(layer->geom.y, layer->geom.x);
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+void LayerRWBase::SetToLayer(Layer* lay) {
+/*TODO  if(lay == NULL) {
+    Network* net = GetDefaultNetwork();
+    if((net == NULL) || !SetLayer(net))
+      return;
+    lay = layer;
+    UnSetLayer();
+  }
+  layer_name = lay->name;
+  name = layer_name;
+  lay->GetActGeomNoSpc(geom);
+  geom.z = 1;
+  pos.z=0;
+  pos.x = lay->pos.x;
+  pos.y = lay->pos.y;
+  if(lay->pos.z > 0) {
+    Network* net = lay->own_net;
+    if(net != NULL) {
+      int index = net->layers.FindLeaf(lay);
+      pos.y = 0;
+      int n;
+      for(n=0;n<index;n++) {
+	Layer* nlay = (Layer*)net->layers.Leaf(n);
+	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
+	pos.y =  MAX(pos.y, y_val);
+      }
+    }
+  }
+  UpdateAfterEdit();
+  UpdateAllEvents(); */
+}
+
+
+//////////////////////
+//   LayerWriter    //
+//////////////////////
+
+void LayerWriter::Initialize() {
+  type = INACTIVE;
+  layer_flags = DEFAULT;
+  initial_val = 0.0f;
+  noise.type = Random::NONE;
+  noise.mean = 0.0f;
+  noise.var = 0.5f;
+}
+
+void LayerWriter::Destroy() {
+  CutLinks();
+}
+
+void LayerWriter::InitLinks(){
+  inherited::InitLinks();
+  taBase::Own(pos, this);
+  taBase::Own(noise,this);
+  taBase::Own(value_names, this);
+}
+
+void LayerWriter::CutLinks() {
+  taBase::DelPointer((TAPtr*)&layer);
+  value_names.CutLinks();
+  noise.CutLinks();
+  pos.CutLinks();
+  inherited::CutLinks();
+}
+
+void LayerWriter::Copy_(const LayerWriter& cp) {
+  LayerRWBase::Copy_(cp);
+  type=cp.type;
+//obs  pattern_type = cp.pattern_type;
+  layer_flags = cp.layer_flags;
+  initial_val = cp.initial_val;
+  noise = cp.noise;
+  value_names = cp.value_names;
+  //TODO: need to copy sink info
+}
+
+void LayerWriter::SetToLayer(Layer* lay) {
+  LayerRWBase::SetToLayer(lay);
+  UpdateAfterEdit();
+  
+/*TODO  if(lay == NULL) {
+    Network* net = GetDefaultNetwork();
+    if((net == NULL) || !SetLayer(net))
+      return;
+    lay = layer;
+    UnSetLayer();
+  }
+  layer_name = lay->name;
+  name = layer_name;
+  lay->GetActGeomNoSpc(geom);
+  geom.z = 1;
+  pos.z=0;
+  pos.x = lay->pos.x;
+  pos.y = lay->pos.y;
+  if(lay->pos.z > 0) {
+    Network* net = lay->own_net;
+    if(net != NULL) {
+      int index = net->layers.FindLeaf(lay);
+      pos.y = 0;
+      int n;
+      for(n=0;n<index;n++) {
+	Layer* nlay = (Layer*)net->layers.Leaf(n);
+	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
+	pos.y =  MAX(pos.y, y_val);
+      }
+    }
+  }
+  UpdateAfterEdit();
+  UpdateAllEvents(); */
+}
+
+void LayerWriter::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  if (layer != NULL) {
+    InitDataChannel(this);
+  }
+  
+  
+/*TODO  Network* net = GetDefaultNetwork();
+  if((net != NULL) && SetLayer(net)) {
+    if((geom.x * geom.y == 0) || (n_vals == 0))  {
+      layer->GetActGeomNoSpc(geom);
+      geom.z = 1;
+      n_vals = MAX(layer->units.leaves,layer->n_units);
+      if(net->lay_layout == Network::TWO_D){
+	pos = layer->pos;
+      }
+      else{
+	pos.z=0;
+	pos.x = layer->pos.x;
+	pos.y = layer->pos.y;
+	if(layer->pos.z > 0) {
+	  int index = net->layers.FindLeaf(layer);
+	  pos.y = 0;
+	  int n;
+	  for(n=0;n<index;n++) {
+	    Layer* lay = (Layer*)net->layers.Leaf(n);
+	    int y_val = lay->pos.y + lay->act_geom.y + 1;
+	    pos.y =  MAX(pos.y, y_val);
+	  }
+	}
+      }
+    }
+    UnSetLayer();
+  }
+
+  if(n_vals == 0)
+    n_vals = geom.x * geom.y;
+  geom.FitNinXY(n_vals);
+
+  if((name.empty() || name.contains(GetTypeDef()->name)) && !layer_name.empty())
+    name = layer_name;
+
+  value_names.EnforceSize(n_vals);
+
+  if(!taMisc::is_loading) {
+    EventTemplate* es = GET_MY_OWNER(EventTemplate);
+    if(es != NULL) {
+      es->UnSetLayers();
+      es->UpdateChildren();
+    }
+  } */
+}
+
+void LayerWriter::ApplyData(const float_Matrix& data) {
+  if (layer == NULL) return;
+  
+  FlagLayer(); //TODO: only do this if we are only one, or the controller for the group
+  /*TODO
+  int v;     	// current value index;
+  Unit* u; 	// current unit
+  taLeafItr j;
+  Unit_Group* ug = &(layer->units);
+  int val_sz = pat->value.size;
+  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
+      u = (Unit*)ug->NextEl(j), v++)
+  {
+    ApplyValue(pat,u,v);
+  } */
+}
+
+void LayerWriter::FlagLayer() {
+  if (layer_flags == NO_LAYER_FLAGS)
+    return;
+
+  if (layer_flags == DEFAULT) {
+    switch(type) {
+    case INACTIVE:
+      break;
+    case INPUT:
+      layer->SetExtFlag(Unit::EXT);
+      break;
+    case TARGET:
+      layer->SetExtFlag(Unit::TARG);
+      break;
+    case COMPARE:
+      layer->SetExtFlag(Unit::COMP);
+      break;
+    }
+    return;
+  }
+  layer->SetExtFlag(layer_flags); // the bits are the same..
+}
+
+/*TODO
+void LayerWriter::UpdateAllEvents() {
+  EventTemplate* es = GET_MY_OWNER(EventTemplate);
+  if(es == NULL)
+    return;
+  es->UpdateAllEvents();
+}
+
+bool LayerWriter::SetLayer(Network* net) {
+  taBase::SetPointer((TAPtr*)&(layer), net->layers.FindLeafName(layer_name,layer_num));
+  if (layer == NULL) {
+    taMisc::Warning("*** Cannot apply pattern:", GetName(),
+                    "no layer with name:", layer_name, "in network:", net->GetName());
+    return false;
+  }
+  return true;
+}
+
+void LayerWriter::UnSetLayer() {
+  taBase::DelPointer((TAPtr*)&layer);
+}
+
+float LayerWriter::Value(Pattern* pat, int index) {
+  return pat->value.SafeEl(index);
+}
+
+
+void LayerWriter::ApplyValue(Pattern* pat, Unit* uni, int index) {
+  float val = Value(pat, index) + noise.Gen();
+  int flags = Flag(use_flags, pat, index);
+  ApplyValue_impl(uni, val, flags);
+}
+
+void LayerWriter::ApplyValue_impl(Unit* uni, float val) {
+  switch (type) {
+  case INACTIVE:
+    break;
+  case INPUT:
+    uni->ext = val;
+    uni->SetExtFlag(Unit::EXT);
+    break;
+  case TARGET:
+    uni->targ = val;
+    uni->SetExtFlag(Unit::TARG);
+    break;
+  case COMPARE:
+    uni->targ = val;
+    uni->SetExtFlag(Unit::COMP);
+    break;
+  }
+}
+
+
+*/
+void LayerWriter::ApplyNames() {
+/*todo  if(layer == NULL)
+    return;
+  int v;     	// current value index;
+  Unit* u; 	// current unit
+  taLeafItr j;
+  Unit_Group* ug = &(layer->units);
+  int val_sz = value_names.size;
+  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
+      u = (Unit*)ug->NextEl(j), v++)
+  {
+    u->name = value_names[v];
+  } */
+}
+/*
+Pattern* LayerWriter::NewPattern(Event*, Pattern_Group* par) {
+  Pattern* rval = (Pattern*)par->NewEl(1, pattern_type);
+  rval->value.Insert(initial_val, 0, n_vals);
+  if((use_flags == USE_PATTERN_FLAGS) || (use_flags == USE_PAT_THEN_GLOBAL_FLAGS))
+    rval->flag.Insert(0, 0, n_vals);
+  return rval;
+}
+
+void LayerWriter::UpdatePattern(Event*, Pattern* pat) {
+  if(pat->value.size < n_vals)
+    pat->value.Insert(initial_val, pat->value.size, n_vals - pat->value.size);
+  if(pat->value.size > n_vals)
+    pat->value.size = n_vals;
+
+  if((use_flags == USE_PATTERN_FLAGS) || (use_flags == USE_PAT_THEN_GLOBAL_FLAGS)) {
+    if(pat->flag.size < n_vals)
+      pat->flag.Insert(0, pat->flag.size, n_vals - pat->flag.size);
+    if(pat->flag.size > n_vals)
+      pat->flag.size = n_vals;
+  }
+  else
+    pat->flag.size = 0;
+}
+*/
+
+//////////////////////
+//   LayerReader    //
+//////////////////////
+
+void LayerReader::Initialize() {
+}
+
+void LayerReader::Destroy() {
+  CutLinks();
+}
+
+void LayerReader::InitLinks(){
+  inherited::InitLinks();
+  taBase::Own(pos, this);
+}
+
+void LayerReader::CutLinks() {
+  taBase::DelPointer((TAPtr*)&layer);
+  pos.CutLinks();
+  inherited::CutLinks();
+}
+
+void LayerReader::Copy_(const LayerReader& cp) {
+  LayerRWBase::Copy_(cp);
+  //TODO: need to copy source info
+}
+
+void LayerReader::SetToLayer(Layer* lay) {
+  LayerRWBase::SetToLayer(lay);
+/*TODO  if(lay == NULL) {
+    Network* net = GetDefaultNetwork();
+    if((net == NULL) || !SetLayer(net))
+      return;
+    lay = layer;
+    UnSetLayer();
+  }
+  layer_name = lay->name;
+  name = layer_name;
+  lay->GetActGeomNoSpc(geom);
+  geom.z = 1;
+  pos.z=0;
+  pos.x = lay->pos.x;
+  pos.y = lay->pos.y;
+  if(lay->pos.z > 0) {
+    Network* net = lay->own_net;
+    if(net != NULL) {
+      int index = net->layers.FindLeaf(lay);
+      pos.y = 0;
+      int n;
+      for(n=0;n<index;n++) {
+	Layer* nlay = (Layer*)net->layers.Leaf(n);
+	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
+	pos.y =  MAX(pos.y, y_val);
+      }
+    }
+  }
+  UpdateAfterEdit();
+  UpdateAllEvents(); */
+}
+
+void LayerReader::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+/*TODO  Network* net = GetDefaultNetwork();
+  if((net != NULL) && SetLayer(net)) {
+    if((geom.x * geom.y == 0) || (n_vals == 0))  {
+      layer->GetActGeomNoSpc(geom);
+      geom.z = 1;
+      n_vals = MAX(layer->units.leaves,layer->n_units);
+      if(net->lay_layout == Network::TWO_D){
+	pos = layer->pos;
+      }
+      else{
+	pos.z=0;
+	pos.x = layer->pos.x;
+	pos.y = layer->pos.y;
+	if(layer->pos.z > 0) {
+	  int index = net->layers.FindLeaf(layer);
+	  pos.y = 0;
+	  int n;
+	  for(n=0;n<index;n++) {
+	    Layer* lay = (Layer*)net->layers.Leaf(n);
+	    int y_val = lay->pos.y + lay->act_geom.y + 1;
+	    pos.y =  MAX(pos.y, y_val);
+	  }
+	}
+      }
+    }
+    UnSetLayer();
+  }
+
+  if(n_vals == 0)
+    n_vals = geom.x * geom.y;
+  geom.FitNinXY(n_vals);
+
+  if((name.empty() || name.contains(GetTypeDef()->name)) && !layer_name.empty())
+    name = layer_name;
+
+  value_names.EnforceSize(n_vals);
+  global_flags.EnforceSize(n_vals);
+
+  if(!taMisc::is_loading) {
+    EventTemplate* es = GET_MY_OWNER(EventTemplate);
+    if(es != NULL) {
+      es->UnSetLayers();
+      es->UpdateChildren();
+    }
+  } */
+}
+
+/*
+void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
+  IDataSource::GetData_(ch, data, handled);
+  if (handled) return;
+  if (ch->name == "act") {
+    //TODO: prob create a generic helper routine for grabbing a member of Units
+    //TODO: need to deal with groups!
+    // allocate a float matrix
+    //TODO: Multi UnitGroups
+    float_Matrix* fm = new float_Matrix(1, 1, geom.x, geom.y);
+    
+    // fill it with our act data
+    Unit* un;
+    TwoDCoord c;
+    while (c.x < geom.x) {
+      while (c.y < geom.y) {
+        un = units.FindUnitFmCoord(c);
+        if (un != NULL) 
+          fm->FastEl4(1, 1, c.x, c.y) = un->act;
+        ++(c.y);
+      }
+      c.y = 0;
+      ++(c.x);
+    }
+    handled = true;
+  }
+}
+
+*/
+////////////////////////////
+//        NetConduit       //
+////////////////////////////
+
+void NetConduit::Initialize() {
+  last_net = NULL;
+//obs  pattern_layout = HORIZONTAL;
+}
+
+void NetConduit::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(readers, this);
+  taBase::Own(writers, this);
+  if(!taMisc::is_loading)
+    UpdateAfterEdit();
+//TODO  if(taMisc::gui_active)
+//    AddToView();
+}
+
+void NetConduit::CutLinks() {
+//TODO  if(taMisc::gui_active)
+//    RemoveFromView();
+  writers.CutLinks();
+  readers.CutLinks();
+  taBase::DelPointer((TAPtr*)&last_net);
+  inherited::CutLinks();
+}
+
+void NetConduit::Copy(const NetConduit& cp) {
+  inherited::Copy(cp);
+  readers = cp.readers;
+  writers = cp.writers;
+}
+
+void NetConduit::UpdateAfterEdit() {
+/*TODO  UnSetLayers();
+  if(!taMisc::is_loading && !taMisc::is_duplicating) {
+    if((patterns.leaves == 0) && (patterns.gp.size == 0)) { // new eventspec..
+      patterns.NewEl(2);
+      if(taMisc::gui_active)
+	taMisc::DelayedMenuUpdate(this);
+    }
+    if(DetectOverlap()) {
+      int choice = taMisc::Choice("Overlap of LayerWriters",
+				  "Enforce Linear Layout", "Ignore");
+      if(choice == 0) LinearLayout();
+    }
+    LayerWriter* ps;
+    taLeafItr psi;
+    FOR_ITR_EL(LayerWriter, ps, patterns., psi)
+      ps->UpdateAfterEdit();
+  } */
+  inherited::UpdateAfterEdit();	// this calls UpdateSpec which calls UpdateAllEvents..
+}
+
+void NetConduit::DoGetData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
+}
+
+void NetConduit::DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled) {
+}
+
+void NetConduit::DoConsumeData(SinkChannel* ch, bool& handled) {
+}
+
+
+
+int NetConduit::sink_channel_count() {
+  return writers.leaves;
+}
+
+SinkChannel* NetConduit::sink_channel(int idx) {
+  return writers.Leaf(idx);
+}
+
+int NetConduit::source_channel_count() {
+  return readers.leaves;
+}
+
+SourceChannel* NetConduit::source_channel(int idx) {
+  return readers.Leaf(idx);
+}

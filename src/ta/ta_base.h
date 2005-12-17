@@ -1165,7 +1165,14 @@ public:
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0; };
-  void Destroy()	{ };
+  void Destroy()	{ }; //
+  //note: Register() is not necessary for arrays, so we omit in these convenience constructors
+  int_Array(int num, int i0) {Initialize(); EnforceSize(1); el[0] = i0;}
+  int_Array(int num, int i1, int i0) {Initialize(); EnforceSize(2); el[0] = i0; el[1] = i1;}
+  int_Array(int num, int i2, int i1, int i0) 
+    {Initialize(); EnforceSize(3); el[0] = i0; el[1] = i1; el[2] = i2;}
+  int_Array(int num, int i3, int i2, int i1, int i0) 
+    {Initialize(); EnforceSize(4); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;}
   TA_BASEFUNS(int_Array);
   TA_ARRAY_FUNS(int_Array, int)
 };

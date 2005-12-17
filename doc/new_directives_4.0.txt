@@ -9,6 +9,12 @@ ENUM DIRECTIVES (note: this is new)
 
 #BITS -- indicates that the enum values are or'able bit fields -- gui will show series of check boxes, not a drop-down
 
+ENUM ITEM DIRECTIVES (note: this is new)
+---------------
+
+#NO_BIT -- this is not a bit (typically used for OR'ed enums) -- usable in CSS, but doesn't show in gui
+
+
 MEMBER DIRECTIVES
 -----------------
 

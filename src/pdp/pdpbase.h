@@ -38,6 +38,31 @@
 class pdpMisc {
   // #NO_TOKENS miscellaneous things for pdp
 public:
+  //note: this enum must be duplicated in Project
+  enum ViewColors {		// indicies for view_colors
+    TEXT,
+    BACKGROUND,
+    NETWORK,
+    ENVIRONMENT, //note: also used for Events
+    SCHED_PROC,
+    STAT_GROUP,
+    SUBPROC_GROUP,
+    STAT_PROC,
+    OTHER_PROC,
+    PDPLOG,
+    STAT_AGG,
+    GEN_GROUP,
+    INACTIVE,
+    STOP_CRIT,
+    AGG_STAT,
+    CON_SPEC,
+    UNIT_SPEC,
+    PRJN_SPEC,
+    LAYER_SPEC,
+    WIZARD,
+    COLOR_COUNT
+  };
+
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   static PDPRoot*	root;		// root of pdp class hierarchy
@@ -61,8 +86,11 @@ public:
   // error handling function that saves a recover file when system crashes
   static ColorScaleSpec* GetDefaultColor();  // gets the default color scale
 
+  static const iColor* GetObjColor(Project* prj, ViewColors vc);
+  // #IGNORE get default object color (for edit dialogs and project view)
   static const iColor* GetObjColor(Project* prj, TypeDef* typ);
   // get default object color (for edit dialogs and project view)
+
 
   static PDPLog* GetNewLog(Project* prj, TypeDef* typ);
   // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)

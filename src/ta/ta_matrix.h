@@ -70,7 +70,9 @@ public:
   int_Array		geom; // #SHOW #READ_ONLY dimensions array
   
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
+  virtual TypeDef*	data_type() const = 0; // type of data, ex TA_int, TA_float, etc.
   int			dims() const {return geom.size;}
+  int			GetGeom(int dim) const {return geom.FastEl(dim);}
   int 			frames() const;	// number of frames currently in use (value of highest dimension) 
   int 			frameSize() const;	// number of elements in each frame (product of inner dimensions) 
   

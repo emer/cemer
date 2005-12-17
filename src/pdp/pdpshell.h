@@ -22,6 +22,7 @@
 
 #include "netstru.h"
 #include "enviro.h"
+#include "event.h"
 #include "procs_extra.h"
 #include "pdplog.h"
 
@@ -189,11 +190,12 @@ typedef taFBase inherited;
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
+  //note: this enum must be duplicated in pdpMisc
   enum ViewColors {		// indicies for view_colors
     TEXT,
     BACKGROUND,
     NETWORK,
-    ENVIRONMENT,
+    ENVIRONMENT, //note: also used for Events
     SCHED_PROC,
     STAT_GROUP,
     SUBPROC_GROUP,
@@ -218,7 +220,8 @@ public:
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units
-  Environment_MGroup	environments;	// Environments of patterns to present to networks TODO: chg to List
+  NetConduit_MGroup	conduits;	// Network input and output
+  Environment_MGroup	environments;	// Environments of patterns to present to networks //TODO: legacy, make hidden
   Process_MGroup	processes;	// Processes to coordinate training/testing, etc
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
@@ -246,6 +249,7 @@ public:
   // load defaults according to root::default_file or precompiled defaults
 
   virtual const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
+  virtual const iColor* GetObjColor(ViewColors vc); // #IGNORE get default color for object (for edit, project view)
   virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
   virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)
   override bool SetFileName(const String& val);

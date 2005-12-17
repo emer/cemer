@@ -31,9 +31,7 @@ class SinkChannel;
 // forwards this file
 class IDataSource;
 class ISequencable;
-class SourceChannel_List;
 class IDataSink;
-class SinkChannel_List;
 
 
 class ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources
@@ -49,13 +47,10 @@ public:
   virtual ~ISequencable() {};
 };
 
-enum DataTransferMode {
-  DTM_NONE		= 0x00, // initialization value only
-  DTM_PUSH		= 0x01,
-  DTM_PULL		= 0x02
-#ifndef __MAKETA__
-  ,DTM_BOTH		= DTM_PUSH | DTM_PULL
-#endif
+enum DataTransferMode {  
+  DTM_PUSH		= 0x01, // #LABEL_Push
+  DTM_PULL		= 0x02, // #LABEL_Pull
+  DTM_BOTH		= 0x03  // #LABEL_Both
 };
 
 typedef taMatrix_impl* ptaMatrix_impl;
@@ -65,23 +60,24 @@ friend class SourceChannel;
 public:
   virtual bool		can_sequence_() const {return false;} // true if has a ISequencable interface
   virtual ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
-  virtual SourceChannel_List& source_channels_() = 0;
-  taMatrix_impl* 	GetData(SourceChannel* ch) {taMatrix_impl* data = NULL; 
-    bool handled = false; GetData_(ch, data, handled); return data;}
+  virtual int		source_channel_count() = 0; // number of source channels
+  virtual SourceChannel* source_channel(int idx) = 0; // get a source channel
   
   virtual ~IDataSource() {} //
-protected: // SourceChannel delegates -- designed for multi-class inheritance chain
-  virtual void GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {}
+protected: 
+  // SourceChannel delegates -- designed for multi-class inheritance chain
+  virtual void 		DoProduceData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {} // #IGNORE
 };
 
 class IDataSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
 friend class SinkChannel;
 public:
-  virtual SinkChannel_List& sink_channels() = 0;
-  virtual ~IDataSink() {}
-protected: // SinkChannel delegates -- designed for multi-class inheritance chain
-  virtual void		DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled) {}
-  virtual void		DoConsumeData(SinkChannel* ch, bool& handled) {}
+  virtual int		sink_channel_count() = 0; // number of sink channels
+  virtual SinkChannel* 	sink_channel(int idx) = 0; // get a sink channel
+  virtual ~IDataSink() {} //
+protected: 
+  // SinkChannel delegates -- designed for multi-class inheritance chain
+  virtual void		DoConsumeData(SinkChannel* ch, bool& handled) {} // #IGNORE
 };
 
 #endif

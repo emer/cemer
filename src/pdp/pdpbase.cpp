@@ -432,6 +432,11 @@ SelectEdit* pdpMisc::FindMakeSelectEdit(Project* prj) {
 }
 #endif
 
+const iColor* pdpMisc::GetObjColor(Project* proj, ViewColors vc) {
+  if (proj == NULL) return NULL;
+  return proj->GetObjColor((Project::ViewColors)vc);
+}
+
 const iColor* pdpMisc::GetObjColor(Project* proj, TypeDef* td) {
   if((proj == NULL) || (td == NULL)) return NULL;
   return proj->GetObjColor(td);

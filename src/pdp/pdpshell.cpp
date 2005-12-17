@@ -221,6 +221,7 @@ void Wizard::StdNetwork(Network* net) {
     if(lay->name != el->name) {
       lay->name = el->name;
       if(el->io_type == LayerWizEl::INPUT) {
+        lay->layer_type = Layer::INPUT;
 	lay->pos.z = 0;
 	if(i > 0) {
 	  Layer* prv = (Layer*)net->layers[i-1];
@@ -234,6 +235,7 @@ void Wizard::StdNetwork(Network* net) {
 	}
       }
       else {			// OUTPUT
+        lay->layer_type = Layer::OUTPUT;
 	lay->pos.z = n_hid_layers + 1;
 	if(i > 0) {
 	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];
@@ -890,6 +892,21 @@ const iColor* Project::GetObjColor(TypeDef* td) {
     return the_colors.FastEl(Project::GEN_GROUP)->color();
   else if(td->InheritsFrom(TA_Wizard))
     return the_colors.FastEl(Project::WIZARD)->color();
+#endif
+  return NULL;
+}
+
+const iColor* Project::GetObjColor(ViewColors vc) {
+#ifdef TA_GUI
+  if(view_colors.size != COLOR_COUNT) {
+    view_colors.Reset();
+    GetDefaultColors();
+  }
+  if(the_colors.size != COLOR_COUNT)
+    UpdateColors();
+  TAColor* tac = the_colors.SafeEl(vc);
+  if (tac != NULL)
+    return tac->color();
 #endif
   return NULL;
 }

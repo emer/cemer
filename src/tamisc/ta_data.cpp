@@ -88,81 +88,117 @@ void DataConnector_List::Destroy() {
 //  DataChannel        //
 /////////////////////////
 
-//NOTE: following only called from static New's -- DO NOT CALL FROM CONSTRUCTOR
-void DataChannel::InitInstance(const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode)
-{
-  this->name = name;
-  this->setGeom(geom);
-  this->m_txfer_modes_allowed = txfer_modes_allowed;
-  this->m_txfer_mode = txfer_mode;
-}
-
-
 void DataChannel::Initialize() {
-  m_index = -1;
-  m_data_type = NULL;
-  m_txfer_mode = DTM_PUSH;
-  m_txfer_modes_allowed = DTM_PUSH;
+  txfer_modes_allowed = DTM_BOTH;
+  txfer_mode = DTM_PUSH;
   m_cached_cycle = 0;
 }
 
 void DataChannel::Destroy() {
   m_cached_data = NULL; // release if any
+  CutLinks();
 }
 
 void DataChannel::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(geom, this);
 }
 
 void DataChannel::CutLinks() {
+  geom.CutLinks();
   inherited::CutLinks();
 }
 
-void DataChannel::setGeom(int dims, int geom0, int geom1, int geom2, int geom3) {
-  //note: validation done in setGeom
-  int_FixedArray gs(dims);
-  if (dims > 0) gs[0] = geom0;
-  if (dims > 1) gs[1] = geom1;
-  if (dims > 2) gs[2] = geom2;
-  if (dims > 3) gs[3] = geom3;
-  setGeom(gs);
+void DataChannel::ClearCachedData() {
+  m_cached_data = NULL; // derefs
+  m_cached_cycle = -1;
 }
 
-void DataChannel::setGeom(const int_FixedArray& value) {
+bool DataChannel::SetCachedData(taMatrix_impl* data) {
+  bool rval = ValidateData(data);
+  if (rval) {
+    m_cached_data = data;
+    m_cached_cycle = SequenceMaster::instance().cycle();
+  }
+  return rval;
+}
+
+void DataChannel::setGeom(int d0)  {
+  //note: validation done in setGeom
+  int_Array gs(1);
+  gs[0] = d0;
+  setGeomN(gs);
+}
+
+void DataChannel::setGeom2(int d1, int d0) {
+  //note: validation done in setGeom
+  int_Array gs(2);
+  gs[0] = d0;
+  gs[1] = d1;
+  setGeomN(gs);
+}
+
+void DataChannel::setGeom3(int d2, int d1, int d0) {
+  //note: validation done in setGeom
+  int_Array gs(3);
+  gs[0] = d0;
+  gs[1] = d1;
+  gs[2] = d2;
+  setGeomN(gs);
+}
+
+void DataChannel::setGeom4(int d3, int d2, int d1, int d0) {
+  //note: validation done in setGeom
+  int_Array gs(4);
+  gs[0] = d0;
+  gs[1] = d1;
+  gs[2] = d2;
+  gs[3] = d3;
+  setGeomN(gs);
+}
+
+
+void DataChannel::setGeomN(const int_Array& value) {
   if (value.size < 1) {
     taMisc::Error("DataChannel::setGeom", "dims must be >= 1");
     return;
   }
-  m_geom = value;
+  //TODO: validate
+  geom = value;
 }
 
-void DataChannel::setTxfer_mode(int val) {
-  if ((val & txfer_modes_allowed()) != 0) {
-    setTxfer_mode_(val);
-  } // TODO: else raise exception
+bool DataChannel::ValidateData(taMatrix_impl* data) {
+  // check not null
+  if (data == NULL) {
+    taMisc::Warning(this->GetPath(), "data is NULL");
+    return false;
+  }
+  
+  // check has correct type
+  TypeDef* td = data->data_type();
+  if ((td == NULL) || (!td->InheritsFrom(td))) {
+    taMisc::Warning(this->GetPath(), "data is wrong data type");
+    return false;
+  }
+  
+  // check has correct geom
+  if (data->dims() != dims()) {
+    taMisc::Warning(this->GetPath(), "data has wrong number of dimensions");
+    return false;
+  }
+  for (int i = 0; i < dims(); ++i) {
+    if (data->GetGeom(i) != this->GetGeom(i)) {
+      taMisc::Warning(this->GetPath(), "data has wrong geometry");
+      return false;
+    }
+  }
+  
+  return true;
 }
-
-void DataChannel::setTxfer_mode_(int val) {
-  if (val == m_txfer_mode) return;
-  m_txfer_mode = val;
-  //TODO: notify???
-}
-
 
 /////////////////////////
 //  SourceChannel      //
 /////////////////////////
-
-SourceChannel* SourceChannel::New(IDataSource* data_source, const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode)
-{
-  SourceChannel* rval = new SourceChannel();
-  rval->m_data_source = data_source;
-  rval->InitInstance(name, geom, 
-    txfer_modes_allowed, txfer_mode);
-  return rval;
-}
 
 void SourceChannel::Initialize() {
   m_data_source = NULL;
@@ -186,54 +222,46 @@ void SourceChannel::ConnectorDisconnecting(DataConnector* dc) {
   connectors.Remove(dc);
 }
 
-taMatrix_impl* SourceChannel::GetData_() {
+bool SourceChannel::DoProduceData() {
+  bool rval = false;
+  if (m_data_source != NULL) {
+    taMatrix_impl* data = NULL;
+    m_data_source->DoProduceData(this, data, rval);
+    if (rval) {
+      SetCachedData(data);
+    }
+  }
+  return rval;
+}
+ 
+taMatrix_impl* SourceChannel::DoGetData() {
   if (SequenceMaster::instance().UpdateClient(m_cached_cycle)) {
     // data is stale
-    if (m_data_source != NULL) {
-      m_cached_data = m_data_source->GetData(this);
-    }
+    DoProduceData();
   }
   return m_cached_data;
 } 
 
-/////////////////////////
-//  SourceChannel_List //
-/////////////////////////
-
-void SourceChannel_List::Initialize() {
-  SetBaseType(&TA_SourceChannel);
-  data_source = NULL;
+TAPtr SourceChannel::SetOwner(taBase* own) {
+  TAPtr rval = inherited::SetOwner(own);
+  TAPtr ods = own->GetOwner();
+  while (ods != NULL) {
+    if (ods->InheritsFrom(TA_IDataSource)) break;
+    
+    ods = ods->GetOwner();
+  }
+  if (ods == NULL) {
+    m_data_source = NULL;
+  } else {
+    m_data_source = dynamic_cast<IDataSource*>(ods);
+  }
+  return rval;
 }
 
-void SourceChannel_List::Destroy() {
-  data_source = NULL;
-}
-
-void* SourceChannel_List::El_Own_(void* it) {
-  void* rval = inherited::El_Own_(it); 
-  SourceChannel* src_ch = static_cast<SourceChannel*>(it);
-  src_ch->m_data_source = data_source;
-  return rval; 
-}
-void SourceChannel_List::El_disOwn_(void* it) {
-  SourceChannel* src_ch = static_cast<SourceChannel*>(it);
-  src_ch->m_data_source = NULL;
-  return inherited::El_disOwn_(it); 
-}
 
 /////////////////////////
 //  SinkChannel        //
 /////////////////////////
-
-SinkChannel* SinkChannel::New(IDataSink* data_sink, const String& name, 
-    const int_FixedArray& geom, int txfer_modes_allowed, int txfer_mode)
-{
-  SinkChannel* rval = new SinkChannel();
-  rval->m_data_sink = data_sink;
-  rval->InitInstance(name, geom, 
-    txfer_modes_allowed, txfer_mode);
-  return rval;
-}
 
 void SinkChannel::Initialize() {
   m_data_sink = NULL;
@@ -252,7 +280,7 @@ void SinkChannel::ConnectorDisconnecting(DataConnector* dc) {
   m_connector = NULL;
 }
 
-bool SinkChannel::ConsumeData_() {
+bool SinkChannel::DoConsumeData() {
   bool rval = false;
   if (m_data_sink != NULL) {
     m_data_sink->DoConsumeData(this, rval);
@@ -260,60 +288,25 @@ bool SinkChannel::ConsumeData_() {
   return rval;
 }
  
-void SinkChannel::AcceptData_(taMatrix_impl* data) {
-  bool handled = false;
-  if (m_data_sink != NULL) {
-    m_data_sink->DoAcceptData(this, data, handled);
-  }
+bool SinkChannel::DoAcceptData(taMatrix_impl* data) {
+  return SetCachedData(data);
 } 
 
-/////////////////////////
-//  SinkChannel_List   //
-/////////////////////////
-
-void SinkChannel_List::Initialize() {
-  SetBaseType(&TA_SinkChannel);
-  data_sink = NULL;
+TAPtr SinkChannel::SetOwner(taBase* own) {
+  TAPtr rval = inherited::SetOwner(own);
+  TAPtr ods = own->GetOwner();
+  while (ods != NULL) {
+    if (ods->InheritsFrom(TA_IDataSink)) break;
+    
+    ods = ods->GetOwner();
+  }
+  if (ods == NULL) {
+    m_data_sink = NULL;
+  } else {
+    m_data_sink = dynamic_cast<IDataSink*>(ods);
+  }
+  return rval;
 }
-
-void SinkChannel_List::Destroy() {
-  data_sink = NULL;
-}
-
-void* SinkChannel_List::El_Own_(void* it) {
-  void* rval = inherited::El_Own_(it); 
-  SinkChannel* src_ch = static_cast<SinkChannel*>(it);
-  src_ch->m_data_sink = data_sink;
-  return rval; 
-}
-void SinkChannel_List::El_disOwn_(void* it) {
-  SinkChannel* src_ch = static_cast<SinkChannel*>(it);
-  src_ch->m_data_sink = NULL;
-  return inherited::El_disOwn_(it); 
-}
-
-
-/*obs
-/////////////////////////
-//  DataSource_impl    //
-/////////////////////////
-
-void DataSource_impl::Initialize() {
-  data_source = NULL;
-}
-
-void DataSource_impl::Destroy() {
-}
-
-void DataSource_impl::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(m_source_channels, this);
-}
-
-void DataSource_impl::CutLinks() {
-  m_source_channels.CutLinks();
-  inherited::CutLinks();
-} */
 
 
 /////////////////////////
@@ -346,4 +339,17 @@ bool SequenceMaster::UpdateClient(int64_t& client_cycle, int64_t* diff) {
   if (diff != NULL) *diff = m_cycle - client_cycle;
   client_cycle = m_cycle;
   return true;
+}
+
+
+/////////////////////////
+//  DirectoryCatalog   //
+/////////////////////////
+
+bool DirectoryCatalog::OpenData() {
+ //TODO
+}
+
+void DirectoryCatalog::CloseData() {
+  //TODO
 }

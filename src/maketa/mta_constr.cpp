@@ -801,7 +801,7 @@ void TypeDef_Init_EnumData(TypeDef* ths, ostream& strm) {
       String str_lists = taMisc::StrArrayToChar(enm->lists);
 
       strm << "    tac_AddEnum(TA_" << ths->name << ", \"" << enm->name << "\", \""
-	   << enm->desc  << "\", \"" << str_inh_opts << "\", \"" << str_opts
+	   << enm->desc  << "\", \"" << str_opts << "\", \"" << str_inh_opts
 	   << "\", \"" << str_lists << "\", ";
       strm << "TA_" << ths->name << "_" << enm->name << ");\n";
     }
