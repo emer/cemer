@@ -202,6 +202,29 @@ if $debug = true; then
   AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
 fi
 
+#						festival enabled
+#*************************************************************
+#	     Things to do if --enable-festival is set
+#*************************************************************
+#
+
+AC_ARG_WITH([festival],
+	      AC_HELP_STRING([--with-festival],
+			     [Enable linking with the Festival Speech Synthesis System.]),
+			     [festival=true],
+			     [festival=false])
+
+AM_CONDITIONAL([FESTIVAL],[test $festival = true])
+
+if $festival = true; then
+  AC_HAVE_LIBRARY([Festival],[LIBS="$LIBS -lFestival"],[AC_MSG_ERROR([--enable-festival set but unable to find libFestival.])])
+  AC_HAVE_LIBRARY([estools],[LIBS="$LIBS -lestools"],[AC_MSG_ERROR([--enable-festival set but unable to find libestools.])])
+  AC_HAVE_LIBRARY([estbase],[LIBS="$LIBS -lestbase"],[AC_MSG_ERROR([--enable-festival set but unable to find libestbase.])])
+  AC_HAVE_LIBRARY([eststring],[LIBS="$LIBS -leststring"],[AC_MSG_ERROR([--enable-festival set but unable to find libeststring.])])
+  AC_DEFINE([WITH_FESTIVAL],[],[Used when linking with the Festival Speech Synthesis System])
+fi
+
+
 #						  @variables@
 #*************************************************************
 #	    Substitutes @variables@ in Makefile.am's
