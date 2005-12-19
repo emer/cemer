@@ -64,5 +64,7 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@/../ta
 
+libtaiqtso@PDP_SUFFIX@_la_CXXFLAGS = -g -O2
+
 clean-local:
 	-rm *moc*
