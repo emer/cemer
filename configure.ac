@@ -27,8 +27,24 @@ AC_DISABLE_SHARED
 AC_LANG_CPLUSPLUS
 PDP_PROG_CXX
 
-# Enable make rpm
-AX_DIST_RPM([spec.tmpl])
+#						  rpm enabled
+#*************************************************************
+#	     Things to do if --with-rpm is set
+#*************************************************************
+#
+
+AC_ARG_WITH([rpm],
+	      AC_HELP_STRING([--with-rpm],
+			     [Enable the creation of rpms with `make rpm'. Note: You must first create a blank file called aminclude.am in the directory with configure. E.g., `touch aminclude.am'. Don't forget to set PLATFORM_SUFFIX. ]),
+			     [rpm=true],
+			     [rpm=false])
+
+AM_CONDITIONAL([RPM],[test $rpm = true])
+
+if $rpm = true; then
+  AX_DIST_RPM([spec.tmpl])
+  AC_SUBST([INCLUDE_AMINCLUDE_AM],["include aminclude.am"])
+fi
 
 # Next two lines are a hack to get rid of those stupid fortran checks
 m4_undefine([AC_PROG_F77])

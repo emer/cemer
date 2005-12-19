@@ -1,9 +1,29 @@
+CLEAN_FILES =
+EXTRA_DIST =
+
+dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
+
+# SUBDIRS tells the autotools which directories have Makefile.am's in them.
+# If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
+
+DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
+SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp
+
+EXTRA_DIST +=\
+	src/ta/ios-g++-3.1
+
+#For make rpm
+if RPM
+
+@INCLUDE_AMINCLUDE_AM@
+#include aminclude.am
+
+EXTRA_DIST += aminclude.am spec.tmpl.in
+
 CLEANFILES =\
 	*do-stamp* \
 	pdp-4.0.spec \
 	RPMChangeLog 
-CLEAN_FILES =
-EXTRA_DIST =
 
 DISTCLEANFILES =\
 	aminclude.am \
@@ -20,21 +40,8 @@ DISTCLEANFILES =\
 	src/maketa/mfstamp \
 	src/maketa/do-mfstamp
 
-#For make rpm
-include aminclude.am
+endif
 
-dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
-
-# SUBDIRS tells the autotools which directories have Makefile.am's in them.
-# If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
-
-DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp
-SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp
-
-EXTRA_DIST +=\
-	src/ta/ios-g++-3.1 \
-	spec.tmpl.in \
-	aminclude.am
 
 # These actions occur immediately before a distribution tarball is created.
 
@@ -48,7 +55,7 @@ dist-hook:
 		$(distdir)/src/tamisc/tamisc_maketa_defs.h
 	cp -p $(srcdir)/src/ta/ta_maketa_defs.h \
 		$(distdir)/src/ta/ta_maketa_defs.h
-	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
+#	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
 
 # Count the number of lines in *.h and *.cpp files
 linecount:
