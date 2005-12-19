@@ -108,7 +108,7 @@ libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
 libtamisc@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/tamisc/libtamiscTypeAccess@PDP_SUFFIX@.la
-libtamisc@PDP_SUFFIX@_la_CXXFLAGS = -g -O2
+libtamisc@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
 
 noinst_LTLIBRARIES = libtamiscTypeAccess@PDP_SUFFIX@.la

@@ -48,9 +48,9 @@ dist-hook:
 		$(distdir)/src/tamisc/tamisc_maketa_defs.h
 	cp -p $(srcdir)/src/ta/ta_maketa_defs.h \
 		$(distdir)/src/ta/ta_maketa_defs.h
+	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
 
 # Count the number of lines in *.h and *.cpp files
-
 linecount:
 	@ wc --lines `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` | grep total
 

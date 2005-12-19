@@ -106,7 +106,7 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../taiqtso
-libpdp@PDP_SUFFIX@_la_CXXFLAGS = -O2
+libpdp@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 libpdp@PDP_SUFFIX@_la_LIBADD = libpdpTypeAccess@PDP_SUFFIX@.la
 
 noinst_LTLIBRARIES = libpdpTypeAccess@PDP_SUFFIX@.la

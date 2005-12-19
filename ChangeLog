@@ -1,3 +1,242 @@
+2005-12-17 01:33  baisa
+
+	* pdp4.0/trunk/aminclude.am,
+	  pdp4.0/trunk/doc/new_directives_4.0.txt,
+	  pdp4.0/trunk/src/maketa/mta_constr.cpp,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/pdp/event.cpp, pdp4.0/trunk/src/pdp/event.h,
+	  pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/pdpbase.cpp,
+	  pdp4.0/trunk/src/pdp/pdpbase.h,
+	  pdp4.0/trunk/src/pdp/pdpbase_win.cpp,
+	  pdp4.0/trunk/src/pdp/pdpshell.cpp,
+	  pdp4.0/trunk/src/pdp/pdpshell.h, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/taglobal.h,
+	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
+	  pdp4.0/trunk/src/tamisc/ta_data.h,
+	  pdp4.0/trunk/src/tamisc/ta_data_defs.h: added
+	  NetConduit/LayerRW, modded data
+
+2005-12-15 19:12  mingus
+
+	* pdp4.0/trunk/src/maketa/maketa_TA.cpp: 
+
+2005-12-06 00:04  baisa
+
+	* pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h: revise matrix api
+
+2005-12-03 02:49  baisa
+
+	* pdp4.0/trunk/aminclude.am, pdp4.0/trunk/config.h,
+	  pdp4.0/trunk/doc/compile_switches.txt,
+	  pdp4.0/trunk/src/css/ta_css.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/maketa/ta_string.cpp,
+	  pdp4.0/trunk/src/maketa/ta_string.h,
+	  pdp4.0/trunk/src/pdp/enviro.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h,
+	  pdp4.0/trunk/src/ta/ta_string.cpp,
+	  pdp4.0/trunk/src/ta/ta_string.h,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/ta_type_qt.cpp,
+	  pdp4.0/trunk/src/ta/taglobal.h,
+	  pdp4.0/trunk/src/tamisc/colorbar_qt.cpp,
+	  pdp4.0/trunk/src/tamisc/colorbar_so.cpp,
+	  pdp4.0/trunk/src/tamisc/t3viewer.h,
+	  pdp4.0/trunk/src/tamisc/ta_data.h: alpha version of taMatrix
+
+2005-11-24 01:51  baisa
+
+	* pdp4.0/trunk/src/ta/ta_list.h,
+	  pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h: matrix work in progress, not
+	  tested
+
+2005-11-22 01:57  baisa
+
+	* pdp4.0/trunk/src/ta/ta_matrix.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix.h: added support for
+	  external/fixed data to matrix
+
+2005-11-20 00:59  mingus
+
+	* pdp4.0/trunk/src/tamisc/Makefile.am: minor
+
+2005-11-20 00:55  mingus
+
+	* pdp4.0/trunk/src/tamisc/Makefile.am: minor
+
+2005-11-20 00:34  mingus
+
+	* pdp4.0/trunk/src/ta/Makefile.am: minor
+
+2005-11-20 00:17  mingus
+
+	* pdp4.0/trunk/Maketa.am, pdp4.0/trunk/acsite.m4,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/pdp-4.0.tar.gz,
+	  pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am: selective optimization
+
+2005-11-19 03:42  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/Maketa.am,
+	  pdp4.0/trunk/acsite.m4, pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/pdp-4.0.tar.gz, pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am: getting rid of optimization
+
+2005-11-18 21:03  mingus
+
+	* pdp4.0/trunk/aminclude.am: 
+
+2005-11-18 01:52  mingus
+
+	* pdp4.0/trunk/aminclude.am: 
+
+2005-11-18 01:41  baisa
+
+	* pdp4.0/trunk/aminclude.am, pdp4.0/trunk/src/maketa/ta_type.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp: working version
+
+2005-11-18 00:35  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/acsite.m4,
+	  pdp4.0/trunk/pdp-4.0.tar.gz: passes make distcheck again and
+	  copyrightification
+
+2005-11-17 23:39  mingus
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/Moc.am,
+	  pdp4.0/trunk/acsite.m4, pdp4.0/trunk/aminclude.am,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/pdp-4.0.tar.gz: enhanced
+	  code that supports every version of Qt, including having
+	  multiple versions installed. enhanced zlib. now supports using
+	  the apple opengl framework, but you have to specify it at
+	  configure because it's not detectable
+
+2005-11-17 21:29  baisa
+
+	* pdp4.0/trunk/src/maketa/ta_type.cpp: StrArryToChar forward was
+	  not using a space separator
+
+2005-11-17 21:28  baisa
+
+	* pdp4.0/trunk/src/ta/ta_type.cpp: StrArryToChar forward was not
+	  using a space separator
+
+2005-11-17 21:06  mingus
+
+	* pdp4.0/trunk/Maketa.am: revoke maketa's access to abstopbuilddir
+
+2005-11-06 02:25  mingus
+
+	* pdp4.0/trunk/Maketa.am, pdp4.0/trunk/acsite.m4,
+	  pdp4.0/trunk/aminclude.am, pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/pdp-4.0.tar.gz: miscellaneous build changes geared
+	  towards osx
+
+2005-11-05 08:45  mingus
+
+	* pdp4.0/trunk/ChangeLog, pdp4.0/trunk/Makefile.am,
+	  pdp4.0/trunk/acsite.m4, pdp4.0/trunk/aminclude.am,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/mfstamp.am,
+	  pdp4.0/trunk/pdp-4.0.spec, pdp4.0/trunk/pdp-4.0.tar.gz,
+	  pdp4.0/trunk/spec.tmpl.in, pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/maketa/acsite.m4,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am: new make rpm target
+
+2005-11-05 08:40  mingus
+
+	* pdp4.0/trunk/pdp-4.0-0.i386.fc4.rpm: working rpm
+
+2005-11-05 02:27  mingus
+
+	* pdp4.0/trunk/pdp-4.0.tar.gz: this is a distribution tarball that
+	  passes make distcheck. handy to have around. only to be updated
+	  if you verify that your changes pass make distcheck. tarball is
+	  created at the end of it.
+
+2005-11-05 02:26  mingus
+
+	* pdp4.0/trunk/configure.ac, pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/maketa/configure.ac,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/tamisc/Makefile.am: isolating maketa
+
+2005-11-05 00:36  mingus
+
+	* pdp4.0/trunk/src/maketa/Makefile.am: isolating maketa
+
+2005-11-05 00:31  mingus
+
+	* pdp4.0/trunk/src/maketa/aux,
+	  pdp4.0/trunk/src/maketa/aux/config.guess,
+	  pdp4.0/trunk/src/maketa/aux/config.sub,
+	  pdp4.0/trunk/src/maketa/aux/depcomp,
+	  pdp4.0/trunk/src/maketa/aux/install-sh,
+	  pdp4.0/trunk/src/maketa/aux/ltmain.sh,
+	  pdp4.0/trunk/src/maketa/aux/missing: isolating maketa
+
+2005-11-05 00:29  mingus
+
+	* pdp4.0/trunk/src/maketa/icolor.h,
+	  pdp4.0/trunk/src/maketa/maketa_config.h: isolating maketa
+	* pdp4.0/trunk/src/maketa/acsite.m4: isolating maketa
+
+2005-11-05 00:28  mingus
+
+	* pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am: isolating maketa
+
+2005-11-05 00:07  mingus
+
+	* pdp4.0/trunk/src/pdp/Makefile.am: isolating maketa
+	* pdp4.0/trunk/configure.ac, pdp4.0/trunk/src/pdp/Makefile.am:
+	  isolating maketa
+
+2005-11-04 23:56  mingus
+
+	* pdp4.0/trunk/src/css/Makefile.am: isolating maketa
+
+2005-11-04 23:54  mingus
+
+	* pdp4.0/trunk/custom.h, pdp4.0/trunk/src/css/Makefile.am:
+	  isolating maketa
+
+2005-11-04 23:40  mingus
+
+	* pdp4.0/trunk/config.h: isolating maketa
+
 2005-11-04 23:39  mingus
 
 	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/configure.ac: isolating

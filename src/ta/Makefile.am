@@ -135,7 +135,7 @@ libta@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@ \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
-libta@PDP_SUFFIX@_la_CXXFLAGS = -g -O2
+libta@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 libta@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/ta/libtaTypeAccess@PDP_SUFFIX@.la
 
 noinst_LTLIBRARIES = libtaTypeAccess@PDP_SUFFIX@.la

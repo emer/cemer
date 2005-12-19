@@ -200,6 +200,11 @@ if $debug = true; then
   AC_DEFINE([DEBUG],[],[Used when debugging])
   AC_DEFINE([TA_PROFILE],[],[Used when debugging])
   AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
+
+  # No optimization in debug mode
+  AC_SUBST([OPT_LEVEL],["-g -O0"])
+else
+  AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
 #						festival enabled

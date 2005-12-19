@@ -69,6 +69,7 @@ css@PDP_SUFFIX@___LDADD =\
 	../ta/libta@PDP_SUFFIX@.la \
 	libcss@PDP_SUFFIX@.la
 css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
+css@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
 
 #**************************************************
 #

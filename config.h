@@ -16,7 +16,7 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-/* #undef DEBUG */
+#define DEBUG 
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
@@ -258,7 +258,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-/* #undef TA_PROFILE */
+#define TA_PROFILE 
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor
@@ -276,11 +276,14 @@
 /* Version number of package */
 #define VERSION "4.0"
 
+/* Used when linking with the Festival Speech Synthesis System */
+/* #undef WITH_FESTIVAL */
+
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */
 
 /* Used when debugging */
-/* #undef YYDEBUG */
+#define YYDEBUG 
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

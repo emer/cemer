@@ -47,7 +47,7 @@ bp@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
 bp@PDP_SUFFIX@___CPPFLAGS = $(libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS)
-bp@PDP_SUFFIX@___CXXFLAGS = -g -O2
+bp@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
 
 BUILT_SOURCES = bp_TA_type.hx
 CLEANFILES += bp_TA.ccx

@@ -6,7 +6,7 @@ MAKETA = ../maketa/./maketa
 # based on the results of it. (Without this cluster builds are not possible)
 
 # Notice that if you try to run maketa, if maketa does not exist it will build
-# it for you first.
+# it for you first (or die trying).
 
 ${PROJNAME}_TA_type.h:	${PROJNAME}_TA_type.hx
 	if  [ -e ${PROJNAME}_TA_type.h -a -e ${PROJNAME}_TA_inst.h -a -e ${PROJNAME}_TA.cpp ];\

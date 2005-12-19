@@ -45,7 +45,7 @@ leabra@PDP_SUFFIX@___LDADD =\
 	$(abs_top_builddir)/src/ta/libta@PDP_SUFFIX@.la \
 	$(abs_top_builddir)/src/css/libcss@PDP_SUFFIX@.la
 leabra@PDP_SUFFIX@___CPPFLAGS = $(libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS)
-leabra@PDP_SUFFIX@___CXXFLAGS = -g -O2
+leabra@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
 
 BUILT_SOURCES = leabra_TA_type.h
 CLEANFILES += leabra_TA.ccx
