@@ -960,7 +960,7 @@ public:
   
   //note: GroupRWModel is commensurable with LayerRWBase::GroupRWModel
   enum GroupRWModel { // default model to use in reading/writing layer that has groups
-    FLAT,	// ingore groups, read/write as if one flat 2-d space of units
+    FLAT,	// ignore groups, read/write as if one flat 2-d space of units
     GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
     GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
     CUSTOM  // use this when a non-standard model is used, ex. partial access
@@ -986,6 +986,8 @@ public:
   int_Array		sent_already; 	// #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
   DMemDist		dmem_dist; 	// how to distribute units across multiple distributed memory processors
 
+  bool			uses_groups() {return (geom.z > 1);}
+  
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
   virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
@@ -1378,13 +1380,17 @@ public:
   Layer* 	layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
   PosTwoDCoord	offset;		// offset in layer or unit group at which to start reading/writing
   GroupRWModel	gp_rw_model;	// unit group read/write model
-  PosTwoDCoord  gp_offset;	// #CONDEDIT_OFF_gp_rw_model:0 when using GROUPED access, specifies the starting group coords
+  PosTwoDCoord  gp_offset;	// #CONDEDIT_OFF_gp_rw_model:FLAT when using GROUPED access, specifies the starting group coords
   
-  virtual void 	SetToLayer(Layer* lay=NULL);
-  // #BUTTON #NULL_OK set configuration of the pattern spec based on layer, and set to go to that layer 
+  virtual void 		InitFromLayer(Layer* lay); // initializes based on the layer
+  
+  virtual void 		SetLayer(Layer* lay); // sets or clears layer; calls _impl
+    
+  virtual void		UnSetLayer(); 		 // clear layer pointer 
     
   void 		Copy_(const LayerRWBase& cp); // called from the main class
   LayerRWBase();
+  virtual ~LayerRWBase();
   
 public: // 
 
@@ -1395,32 +1401,25 @@ public: // ITypedObject/IDataLinkClient
   
 protected:
   virtual void		InitDataChannel(DataChannel* self); // called to init data channel, based on our specs
+  virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
 };
 
 class LayerWriter: public SinkChannel, public LayerRWBase {
   // object that writes data from a datasource to a layer
 INHERITED(SinkChannel)
 public:
-  enum PatTypes {
-    INACTIVE,			// not presented to network
-    INPUT,			// input pattern
-    TARGET,			// target (output) pattern
-    COMPARE 			// comparison pattern (for error only)
-  };
-
   enum LayerFlags {	// #BITS how to flag the layer's external input status
-    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on pattern type
-    TARG_LAYER 		= 0x01,	// as a target layer
-    EXT_LAYER 		= 0x02,	// as an external input layer
+    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on parameter in pattern
+    TARG_LAYER 		= 0x01,	// #LABEL_Target as a target layer
+    EXT_LAYER 		= 0x02,	// #LABEL_External as an external input layer
     TARG_EXT_LAYER 	= 0x03,	// #NO_BIT as both external input and target layer
-    COMP_LAYER		= 0x04,	// as a comparison layer
+    COMP_LAYER		= 0x04,	// #LABEL_Comparison as a comparison layer
     COMP_TARG_LAYER	= 0x05,	// #NO_BIT as a comparision and target layer
     COMP_EXT_LAYER	= 0x06,	// #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT_LAYER = 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_LAYER_FLAGS	= 0x10 	// don't set any layer flags at all
+    NO_LAYER_FLAGS	= 0x10 	// #LABEL_None don't set any layer flags at all (ignore other flags)
   };
 
-  PatTypes	type;    	// Type of pattern
   LayerFlags	layer_flags;	// how to flag the layer's external input status
   float		initial_val;	// Initial value for pattern values
   Random	noise;		// Noise added to values when applied
@@ -1449,8 +1448,6 @@ public:
   virtual void	UpdatePattern(Event* ev, Pattern* pat);
   // updates existing pattern to current spec settings
 */
-  override void 	SetToLayer(Layer* lay=NULL);
-  // #BUTTON #NULL_OK set configuration of the pattern spec based on layer, and set to go to that layer (NULL = update to current layer)
 //??  virtual void	UpdateAllEvents();
   // #BUTTON update all events using pattern spec
   virtual void 	ApplyNames();
@@ -1459,6 +1456,7 @@ public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
 #endif
+
   void	UpdateAfterEdit();	// gets information off of the layer, etc
   void  InitLinks();
   void	CutLinks();
@@ -1473,7 +1471,7 @@ public: // SinkChannel functions
   override TypeDef*	data_type() {return &TA_float;} 
 
 protected:
-  virtual void	FlagLayer();
+  virtual void		FlagLayer();
   // set layer flag to reflect the kind of input received
 
 private:
@@ -1500,7 +1498,6 @@ class LayerReader: public SourceChannel, public LayerRWBase {
   // object that reads data from a layer
 INHERITED(SourceChannel)
 public:
-  override void 	SetToLayer(Layer* lay=NULL);
 
 #ifdef TA_GUI
   const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT);}
@@ -1550,12 +1547,19 @@ public:
   LayerWriter_Group 	writers;
   // #IN_GPMENU #NO_INHERIT group of pattern templates 
 
+  virtual void 		InitFromNetwork(Network* net = NULL);
+  // #BUTTON #NULL_OK creates readers/writers according to current state of net -- deletes existing readers/writers
+  virtual void 		InitFromLayer(Layer* lay);
+  // #BUTTON creates readers/writers according to current state of lay
+
+  virtual void		SetNetwork(Network* net); // bind to given network
+  
+  virtual void		UnSetLayers(); 		 // clear layer pointers (and last_net)
+
 /* TODO
   virtual void 	ApplyPatterns(Event* ev, Network* net);
   // apply patterns to the network
 
-  virtual void	SetLayers(Network* net); // set layers according to given net
-  virtual void	UnSetLayers(); 		 // clear layer pointers (and last_net)
 
   int	MaxX();			// maximum X coordinate of patterns
   int	MaxY();			// maximum Y coordinate of patterns
@@ -1609,6 +1613,10 @@ protected:
   override void		DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled); //#IGNORE
   override void		DoConsumeData(SinkChannel* ch, bool& handled); //#IGNORE
   
+protected:
+  virtual void 		InitLayerReader(Layer* lay, LayerReader* lrw);
+  virtual void 		InitLayerWriter(Layer* lay, LayerWriter* lrw);
+
 private:
   void	Initialize();
   void 	Destroy() 	{ CutLinks(); }

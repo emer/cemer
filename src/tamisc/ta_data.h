@@ -90,6 +90,7 @@ class DataChannel: public taNBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS a sou
 typedef taNBase inherited;
 #endif
 public:
+  bool			active; // #DEF_true set on (default) to enable data to flow through this channel
   int_Array		geom; // #SAVE #HIDDEN
   DataTransferMode	txfer_modes_allowed; // #READ_ONLY #SHOW
   DataTransferMode	txfer_mode; // current txfer mode
@@ -98,16 +99,18 @@ public:
   virtual int		dims() {return geom.size;}
      // number of dimensions of data; N=0 for sink is "any"
   virtual int		GetGeom(int dim) {return geom.SafeEl(dim);}// geom for dimension
-  void			setGeom(int d0); // set 1-d geom
-  void			setGeom2(int d1, int d0); // set 2-d geom
-  void			setGeom3(int d2, int d1, int d0); // set 3-d geom
-  void			setGeom4(int d3, int d2, int d1, int d0); // set 4-d geom
-  virtual void		setGeomN(const int_Array& value); // set any geom
+  void			SetGeom(int d0); // set 1-d geom
+  void			SetGeom2(int d0, int d1); // set 2-d geom
+  void			SetGeom3(int d0, int d1, int d2); // set 3-d geom
+  void			SetGeom4(int d0, int d1, int d2, int d3); // set 4-d geom
+  virtual void		SetGeomN(const int_Array& value); // set any geom
 
   virtual void		ClearCachedData(); // clears any cached data from a previous cycle
   
   void			InitLinks();
   void			CutLinks();
+  void			Copy_(const DataChannel& cp);
+  COPY_FUNS(DataChannel, taNBase);
   TA_ABSTRACT_BASEFUNS(DataChannel); //
   
 protected:

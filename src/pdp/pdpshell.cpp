@@ -235,7 +235,7 @@ void Wizard::StdNetwork(Network* net) {
 	}
       }
       else {			// OUTPUT
-        lay->layer_type = Layer::OUTPUT;
+        lay->layer_type = (Layer::LayerType)(Layer::OUTPUT | Layer::TARGET);
 	lay->pos.z = n_hid_layers + 1;
 	if(i > 0) {
 	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];
@@ -298,6 +298,19 @@ void Wizard::StdNetwork(Network* net) {
 //////////////////////////////////
 // 	Enviro Wizard		//
 //////////////////////////////////
+
+void Wizard::StdConduit(NetConduit* cond, Network* net) {
+  Project* proj = GET_MY_OWNER(Project);
+  if (cond == NULL) {
+    cond = pdpMisc::GetNewConduit(proj);
+  }
+  if (cond == NULL) return;
+  if (net == NULL) {
+    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
+  }
+  if (net == NULL) return; // TODO, maybe create net
+  cond->InitFromNetwork(net);
+}
 
 void Wizard::StdEnv(Environment* env, int n_events) {
   if(env == NULL) {

@@ -788,6 +788,7 @@ inline ValIdx operator / (float td, const ValIdx& v) {
 class ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 
   String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE
   void		El_SetFmStr_(void* it, String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE

@@ -89,6 +89,7 @@ void DataConnector_List::Destroy() {
 /////////////////////////
 
 void DataChannel::Initialize() {
+  active = true;
   txfer_modes_allowed = DTM_BOTH;
   txfer_mode = DTM_PUSH;
   m_cached_cycle = 0;
@@ -109,6 +110,14 @@ void DataChannel::CutLinks() {
   inherited::CutLinks();
 }
 
+void DataChannel::Copy_(const DataChannel& cp) {
+  active = cp.active;
+  geom = cp.geom;
+  txfer_modes_allowed = cp.txfer_modes_allowed;
+  txfer_mode = cp.txfer_mode;
+  m_cached_cycle = 0;
+}
+
 void DataChannel::ClearCachedData() {
   m_cached_data = NULL; // derefs
   m_cached_cycle = -1;
@@ -123,44 +132,44 @@ bool DataChannel::SetCachedData(taMatrix_impl* data) {
   return rval;
 }
 
-void DataChannel::setGeom(int d0)  {
-  //note: validation done in setGeom
+void DataChannel::SetGeom(int d0)  {
+  //note: validation done in SetGeom
   int_Array gs(1);
   gs[0] = d0;
-  setGeomN(gs);
+  SetGeomN(gs);
 }
 
-void DataChannel::setGeom2(int d1, int d0) {
-  //note: validation done in setGeom
+void DataChannel::SetGeom2(int d0, int d1) {
+  //note: validation done in SetGeom
   int_Array gs(2);
   gs[0] = d0;
   gs[1] = d1;
-  setGeomN(gs);
+  SetGeomN(gs);
 }
 
-void DataChannel::setGeom3(int d2, int d1, int d0) {
-  //note: validation done in setGeom
+void DataChannel::SetGeom3(int d0, int d1, int d2) {
+  //note: validation done in SetGeom
   int_Array gs(3);
   gs[0] = d0;
   gs[1] = d1;
   gs[2] = d2;
-  setGeomN(gs);
+  SetGeomN(gs);
 }
 
-void DataChannel::setGeom4(int d3, int d2, int d1, int d0) {
-  //note: validation done in setGeom
+void DataChannel::SetGeom4(int d0, int d1, int d2, int d3) {
+  //note: validation done in SetGeom
   int_Array gs(4);
   gs[0] = d0;
   gs[1] = d1;
   gs[2] = d2;
   gs[3] = d3;
-  setGeomN(gs);
+  SetGeomN(gs);
 }
 
 
-void DataChannel::setGeomN(const int_Array& value) {
+void DataChannel::SetGeomN(const int_Array& value) {
   if (value.size < 1) {
-    taMisc::Error("DataChannel::setGeom", "dims must be >= 1");
+    taMisc::Error("DataChannel::SetGeom", "dims must be >= 1");
     return;
   }
   //TODO: validate

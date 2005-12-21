@@ -102,8 +102,10 @@ public:
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
+  virtual void	StdConduit(NetConduit* cond=NULL, Network* net = NULL);
+  // #MENU_BUTTON #MENU_ON_Environment #NULL_OK make a standard network conduit according to the current settings (if cond == NULL, new environment is created)
   virtual void	StdEnv(Environment* env=NULL, int n_events = 0);
-  // #MENU_BUTTON #MENU_ON_Environment #NULL_OK make a standard environment according to the current settings (if env == NULL, new environment is created)
+  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK make a standard environment according to the current settings (if env == NULL, new environment is created)
   virtual void	UpdateEnvFmNet(Environment* env);
   // #MENU_BUTTON #MENU_SEP_BEFORE update environment (event specs controlling layout of events) based on current configuration of network (default network if multiple exist)
   virtual void	SequenceEvents(Environment* env, int n_seqs = 10, int events_per_seq = 4);

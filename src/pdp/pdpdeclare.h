@@ -49,6 +49,9 @@ class Projection;
 class LayerSpec;
 class Layer;
 class Network;
+class LayerReader;
+class LayerWriter;
+class NetConduit;
 
 class Project;
 class PDPRoot;

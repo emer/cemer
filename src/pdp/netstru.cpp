@@ -5950,10 +5950,14 @@ LayerRWBase::LayerRWBase() {
   gp_rw_model = FLAT;
 }
 
+LayerRWBase::~LayerRWBase() {
+  SetLayer(NULL);
+}
+
 void LayerRWBase::Copy_(const LayerRWBase& cp) {
   pos = cp.pos; //TODO: add an offset amount
   layer_name=cp.layer_name;
-  taBase::SetPointer((TAPtr*)&layer,cp.layer);
+  SetLayer(cp.layer);
   offset = cp.offset;
   gp_rw_model = cp.gp_rw_model;
   gp_offset = cp.gp_offset;
@@ -5971,17 +5975,15 @@ void LayerRWBase::InitDataChannel(DataChannel* self) {
   if (layer == NULL) return;
   switch (gp_rw_model) {
   case FLAT: {
-      PosTDCoord nospc_geom;
-      layer->GetActGeomNoSpc(nospc_geom);
-      self->setGeom2(nospc_geom.y, nospc_geom.x);
+      self->SetGeom2(layer->geom.x * layer->gp_geom.x, layer->geom.y * layer->gp_geom.y);
     }
     break;
   case GROUPED_DATA: {
-      self->setGeom4(layer->gp_geom.y, layer->gp_geom.x, layer->geom.y, layer->geom.x);
+      self->SetGeom4(layer->geom.x, layer->geom.y, layer->gp_geom.x, layer->gp_geom.y);
     }
     break;
   case GROUPED_CHANNELS: {
-      self->setGeom2(layer->geom.y, layer->geom.x);
+      self->SetGeom2(layer->geom.x, layer->geom.y);
     }
     break;
   default:
@@ -5989,17 +5991,44 @@ void LayerRWBase::InitDataChannel(DataChannel* self) {
   }
 }
 
-void LayerRWBase::SetToLayer(Layer* lay) {
-/*TODO  if(lay == NULL) {
-    Network* net = GetDefaultNetwork();
-    if((net == NULL) || !SetLayer(net))
-      return;
-    lay = layer;
-    UnSetLayer();
-  }
-  layer_name = lay->name;
-  name = layer_name;
-  lay->GetActGeomNoSpc(geom);
+void LayerRWBase::InitFromLayer(Layer* lay) {
+  if (layer == NULL) return;
+  
+  layer_name = layer->name;
+}
+
+void LayerRWBase::SetLayer(Layer* lay) {
+  if (lay == layer) return;
+  SetLayer_impl(lay);
+}
+  
+void LayerRWBase::SetLayer_impl(Layer* lay) {
+  if (layer != NULL) {
+    // disconnect notification
+    layer->RemoveDataClient(this);
+  } 
+  taBase::SetPointer((taBase**)&layer, lay);
+  if (layer != NULL) {
+    // connect notification
+    layer->AddDataClient(this);
+  } 
+}
+
+void LayerRWBase::UnSetLayer() {
+  SetLayer(NULL);
+}
+
+  
+  /*todo void LayerRWBase::LayerChanged() {
+  if (layer == NULL) return;
+  
+  // initialize names, if not set already
+  layer_name = layer->name;
+    
+  // initialize geometry if not already set
+  
+  // set our geometry, based on mode and layer geom
+
   geom.z = 1;
   pos.z=0;
   pos.x = lay->pos.x;
@@ -6018,8 +6047,8 @@ void LayerRWBase::SetToLayer(Layer* lay) {
     }
   }
   UpdateAfterEdit();
-  UpdateAllEvents(); */
-}
+  UpdateAllEvents(); 
+}*/
 
 
 //////////////////////
@@ -6027,7 +6056,6 @@ void LayerRWBase::SetToLayer(Layer* lay) {
 //////////////////////
 
 void LayerWriter::Initialize() {
-  type = INACTIVE;
   layer_flags = DEFAULT;
   initial_val = 0.0f;
   noise.type = Random::NONE;
@@ -6056,48 +6084,12 @@ void LayerWriter::CutLinks() {
 
 void LayerWriter::Copy_(const LayerWriter& cp) {
   LayerRWBase::Copy_(cp);
-  type=cp.type;
 //obs  pattern_type = cp.pattern_type;
   layer_flags = cp.layer_flags;
   initial_val = cp.initial_val;
   noise = cp.noise;
   value_names = cp.value_names;
   //TODO: need to copy sink info
-}
-
-void LayerWriter::SetToLayer(Layer* lay) {
-  LayerRWBase::SetToLayer(lay);
-  UpdateAfterEdit();
-  
-/*TODO  if(lay == NULL) {
-    Network* net = GetDefaultNetwork();
-    if((net == NULL) || !SetLayer(net))
-      return;
-    lay = layer;
-    UnSetLayer();
-  }
-  layer_name = lay->name;
-  name = layer_name;
-  lay->GetActGeomNoSpc(geom);
-  geom.z = 1;
-  pos.z=0;
-  pos.x = lay->pos.x;
-  pos.y = lay->pos.y;
-  if(lay->pos.z > 0) {
-    Network* net = lay->own_net;
-    if(net != NULL) {
-      int index = net->layers.FindLeaf(lay);
-      pos.y = 0;
-      int n;
-      for(n=0;n<index;n++) {
-	Layer* nlay = (Layer*)net->layers.Leaf(n);
-	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
-	pos.y =  MAX(pos.y, y_val);
-      }
-    }
-  }
-  UpdateAfterEdit();
-  UpdateAllEvents(); */
 }
 
 void LayerWriter::UpdateAfterEdit() {
@@ -6170,6 +6162,20 @@ void LayerWriter::ApplyData(const float_Matrix& data) {
   } */
 }
 
+void LayerWriter::ApplyNames() {
+/*todo  if(layer == NULL)
+    return;
+  int v;     	// current value index;
+  Unit* u; 	// current unit
+  taLeafItr j;
+  Unit_Group* ug = &(layer->units);
+  int val_sz = value_names.size;
+  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
+      u = (Unit*)ug->NextEl(j), v++)
+  {
+    u->name = value_names[v];
+  } */
+}
 void LayerWriter::FlagLayer() {
   if (layer_flags == NO_LAYER_FLAGS)
     return;
@@ -6193,22 +6199,48 @@ void LayerWriter::FlagLayer() {
   layer->SetExtFlag(layer_flags); // the bits are the same..
 }
 
+/*TODO void LayerWriter::SetToLayer(Layer* lay) {
+  LayerRWBase::SetToLayer(lay);
+  UpdateAfterEdit();
+  
+  if(lay == NULL) {
+    Network* net = GetDefaultNetwork();
+    if((net == NULL) || !SetLayer(net))
+      return;
+    lay = layer;
+    UnSetLayer();
+  }
+  layer_name = lay->name;
+  name = layer_name;
+  lay->GetActGeomNoSpc(geom);
+  geom.z = 1;
+  pos.z=0;
+  pos.x = lay->pos.x;
+  pos.y = lay->pos.y;
+  if(lay->pos.z > 0) {
+    Network* net = lay->own_net;
+    if(net != NULL) {
+      int index = net->layers.FindLeaf(lay);
+      pos.y = 0;
+      int n;
+      for(n=0;n<index;n++) {
+	Layer* nlay = (Layer*)net->layers.Leaf(n);
+	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
+	pos.y =  MAX(pos.y, y_val);
+      }
+    }
+  }
+  UpdateAfterEdit();
+  UpdateAllEvents(); 
+}*/
+
+
 /*TODO
 void LayerWriter::UpdateAllEvents() {
   EventTemplate* es = GET_MY_OWNER(EventTemplate);
   if(es == NULL)
     return;
   es->UpdateAllEvents();
-}
-
-bool LayerWriter::SetLayer(Network* net) {
-  taBase::SetPointer((TAPtr*)&(layer), net->layers.FindLeafName(layer_name,layer_num));
-  if (layer == NULL) {
-    taMisc::Warning("*** Cannot apply pattern:", GetName(),
-                    "no layer with name:", layer_name, "in network:", net->GetName());
-    return false;
-  }
-  return true;
 }
 
 void LayerWriter::UnSetLayer() {
@@ -6247,20 +6279,6 @@ void LayerWriter::ApplyValue_impl(Unit* uni, float val) {
 
 
 */
-void LayerWriter::ApplyNames() {
-/*todo  if(layer == NULL)
-    return;
-  int v;     	// current value index;
-  Unit* u; 	// current unit
-  taLeafItr j;
-  Unit_Group* ug = &(layer->units);
-  int val_sz = value_names.size;
-  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
-      u = (Unit*)ug->NextEl(j), v++)
-  {
-    u->name = value_names[v];
-  } */
-}
 /*
 Pattern* LayerWriter::NewPattern(Event*, Pattern_Group* par) {
   Pattern* rval = (Pattern*)par->NewEl(1, pattern_type);
@@ -6314,9 +6332,9 @@ void LayerReader::Copy_(const LayerReader& cp) {
   //TODO: need to copy source info
 }
 
-void LayerReader::SetToLayer(Layer* lay) {
+/*TODOvoid LayerReader::SetToLayer(Layer* lay) {
   LayerRWBase::SetToLayer(lay);
-/*TODO  if(lay == NULL) {
+  if(lay == NULL) {
     Network* net = GetDefaultNetwork();
     if((net == NULL) || !SetLayer(net))
       return;
@@ -6344,8 +6362,8 @@ void LayerReader::SetToLayer(Layer* lay) {
     }
   }
   UpdateAfterEdit();
-  UpdateAllEvents(); */
-}
+  UpdateAllEvents(); 
+}*/
 
 void LayerReader::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
@@ -6468,7 +6486,7 @@ void NetConduit::UpdateAfterEdit() {
 	taMisc::DelayedMenuUpdate(this);
     }
     if(DetectOverlap()) {
-      int choice = taMisc::Choice("Overlap of LayerWriters",
+      int choice = taMisc::Choice("Overlap of LayerWriter_Group",
 				  "Enforce Linear Layout", "Ignore");
       if(choice == 0) LinearLayout();
     }
@@ -6490,6 +6508,175 @@ void NetConduit::DoConsumeData(SinkChannel* ch, bool& handled) {
 }
 
 
+void NetConduit::InitFromNetwork(Network* net) {
+  if (net == NULL)
+    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
+  if (net == NULL) return;
+  
+  readers.Reset();
+  writers.Reset();
+  
+  Layer* lay;
+  taLeafItr itr;
+  FOR_ITR_EL(Layer, lay, net->layers., itr) {
+    InitFromLayer(lay);
+  }
+}
+
+void NetConduit::InitLayerReader(Layer* lay, LayerReader* lrw) {
+  // initialize names, if not set already
+  lrw->layer_name = lay->name;
+  lrw->name = lay->name;
+}
+
+void NetConduit::InitLayerWriter(Layer* lay, LayerWriter* lrw) {
+  // initialize names, if not set already
+  lrw->layer_name = lay->name;
+  lrw->name = lay->name;
+  if (lay->layer_type & Layer::INPUT) {
+  }
+}
+
+void NetConduit::InitFromLayer(Layer* lay) {
+  if (lay == NULL) return;
+  LayerReader_Group* lrg;
+  // inputs
+  if (lay->layer_type & (Layer::INPUT | Layer::TARGET)) {
+    LayerWriter* lrw;
+    LayerWriter_Group* lrwg;
+    // if layer is grouped, create a subgroup for clarity
+    if (lay->uses_groups()) {
+      lrwg = (LayerWriter_Group*)writers.NewGp(1);
+      lrwg->name = lay->name + "_Group";
+      switch(lay->gp_rw_model) {
+      case Layer::FLAT: { // 1 writer; geom will be total geom
+        lrw = (LayerWriter*)lrwg->New(1);
+        InitLayerWriter(lay, lrw);
+        lrw->gp_rw_model = LayerRWBase::FLAT;
+        lrw->SetGeom2(lay->geom.x * lay->gp_geom.x, lay->geom.y * lay->gp_geom.y);
+        } break;
+      case Layer::GROUPED_DATA: { // 1 writer; geom will be 4-d
+        lrw = (LayerWriter*)lrwg->New(1);
+        InitLayerWriter(lay, lrw);
+        lrw->gp_rw_model = LayerRWBase::GROUPED_DATA;
+        lrw->SetGeom4(lay->geom.x, lay->geom.y, lay->gp_geom.x, lay->gp_geom.y);
+        } break;
+      case Layer::GROUPED_CHANNELS: {// 1 writer per group; geom will be inner geom
+        PosTwoDCoord offset;
+        while (offset.y < lay->gp_geom.y) {
+          while (offset.x < lay->gp_geom.x) {
+            lrw = (LayerWriter*)lrwg->New(1);
+            InitLayerWriter(lay, lrw);
+            lrw->gp_rw_model = LayerRWBase::GROUPED_CHANNELS;
+            lrw->name = lay->name + "[" + String(offset.x) + "," + String(offset.y) + "]";
+            lrw->SetGeom2(lay->geom.x, lay->geom.y);
+            lrw->gp_offset = offset;
+            offset.x++;
+          }
+          offset.x = 0;
+          offset.y++;
+        }
+        } break;
+      default: {// user will have to set
+        lrw = (LayerWriter*)lrwg->New(1);
+        InitLayerWriter(lay, lrw);
+        } break;
+      }
+    } else { //note: group model is ignored if no groups
+      lrwg = &writers;
+      lrw = (LayerWriter*)lrwg->New(1);
+      InitLayerWriter(lay, lrw);
+      lrw->gp_rw_model = LayerRWBase::FLAT;
+      lrw->SetGeom2(lay->geom.x, lay->geom.y);
+    }
+    
+ 
+  }
+  
+  // outputs
+  if (lay->layer_type & (Layer::OUTPUT)) {
+    LayerReader* lrw;
+    LayerReader_Group* lrwg;
+    // if layer is grouped, create a subgroup for clarity
+    if (lay->uses_groups()) {
+      lrwg = (LayerReader_Group*)readers.NewGp(1);
+      lrwg->name = lay->name + "_Group";
+      switch(lay->gp_rw_model) {
+      case Layer::FLAT: { // 1 writer; geom will be total geom
+        lrw = (LayerReader*)lrwg->New(1);
+        InitLayerReader(lay, lrw);
+        lrw->gp_rw_model = LayerRWBase::FLAT;
+        lrw->SetGeom2(lay->geom.x * lay->gp_geom.x, lay->geom.y * lay->gp_geom.y);
+        } break;
+      case Layer::GROUPED_DATA: { // 1 writer; geom will be 4-d
+        lrw = (LayerReader*)lrwg->New(1);
+        InitLayerReader(lay, lrw);
+        lrw->gp_rw_model = LayerRWBase::GROUPED_DATA;
+        lrw->SetGeom4(lay->geom.x, lay->geom.y, lay->gp_geom.x, lay->gp_geom.y);
+        } break;
+      case Layer::GROUPED_CHANNELS: {// 1 writer per group; geom will be inner geom
+        PosTwoDCoord offset;
+        while (offset.y < lay->gp_geom.y) {
+          while (offset.x < lay->gp_geom.x) {
+            lrw = (LayerReader*)lrwg->New(1);
+            InitLayerReader(lay, lrw);
+            lrw->gp_rw_model = LayerRWBase::GROUPED_CHANNELS;
+            lrw->name = lay->name + "[" + String(offset.x) + "," + String(offset.y) + "]";
+            lrw->SetGeom2(lay->geom.x, lay->geom.y);
+            lrw->gp_offset = offset;
+            offset.x++;
+          }
+          offset.x = 0;
+          offset.y++;
+        }
+        } break;
+      default: {// user will have to set
+        lrw = (LayerReader*)lrwg->New(1);
+        InitLayerReader(lay, lrw);
+        } break;
+      }
+    } else { //note: group model is ignored if no groups
+      lrwg = &readers;
+      lrw = (LayerReader*)lrwg->New(1);
+      InitLayerReader(lay, lrw);
+      lrw->gp_rw_model = LayerRWBase::FLAT;
+      lrw->SetGeom2(lay->geom.x, lay->geom.y);
+    }
+  }
+}
+
+
+void NetConduit::SetNetwork(Network* net) {
+  if (net == last_net) return;
+  UnSetLayers();
+  if (net == NULL) return;
+  
+  taLeafItr itr;
+  Layer* lay;
+  int layer_num; // discarded
+  LayerReader* lr;
+  FOR_ITR_EL(LayerReader, lr, readers., itr) {
+    lay = (Layer*)net->layers.FindLeafName(lr->layer_name, layer_num);
+    if (lay == NULL) {
+      taMisc::Warning("*** Cannot apply bind LayerReader:", lr->GetName(),
+                      "no layer with name:", lr->layer_name, "in network:", net->GetName());
+    } else {
+      lr->SetLayer(lay);
+    }
+  }
+    
+  LayerWriter* lw;
+  FOR_ITR_EL(LayerWriter, lw, writers., itr) {
+    lay = (Layer*)net->layers.FindLeafName(lw->layer_name, layer_num);
+    if (lay == NULL) {
+      taMisc::Warning("*** Cannot apply bind LayerWriter:", lw->GetName(),
+                      "no layer with name:", lw->layer_name, "in network:", net->GetName());
+    } else {
+      lw->SetLayer(lay);
+    }
+  }
+}
+
 
 int NetConduit::sink_channel_count() {
   return writers.leaves;
@@ -6505,4 +6692,15 @@ int NetConduit::source_channel_count() {
 
 SourceChannel* NetConduit::source_channel(int idx) {
   return readers.Leaf(idx);
+}
+
+void NetConduit::UnSetLayers() {
+  taLeafItr itr;
+  LayerReader* lr;
+  FOR_ITR_EL(LayerReader, lr, readers., itr)
+    lr->UnSetLayer();
+  LayerWriter* lw;
+  FOR_ITR_EL(LayerWriter, lw, writers., itr)
+    lw->UnSetLayer();
+  taBase::DelPointer((TAPtr*)&last_net);
 }

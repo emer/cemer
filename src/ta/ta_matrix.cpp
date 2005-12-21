@@ -121,7 +121,7 @@ int taMatrix_impl::FastElIndex(int d0) const {
   return d0;
 }
  
-int taMatrix_impl::FastElIndex2(int d1, int d0) const {
+int taMatrix_impl::FastElIndex2(int d0, int d1) const {
   Assert((geom.size >= 2), "too many indices for matrix");
   Assert(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
     "matrix index out of bounds");
@@ -131,7 +131,7 @@ int taMatrix_impl::FastElIndex2(int d1, int d0) const {
   return rval;
 }
  
-int taMatrix_impl::FastElIndex3(int d2, int d1, int d0) const {
+int taMatrix_impl::FastElIndex3(int d0, int d1, int d2) const {
   Assert((geom.size >= 3), "too many indices for matrix");
   Assert(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
     && ((d0 >= 0) && (d0 < geom[0])), 
@@ -142,7 +142,7 @@ int taMatrix_impl::FastElIndex3(int d2, int d1, int d0) const {
   return rval;
 }
  
-int taMatrix_impl::FastElIndex4(int d3, int d2, int d1, int d0) const {
+int taMatrix_impl::FastElIndex4(int d0, int d1, int d2, int d3) const {
   Assert((geom.size >= 4), "too many indices for matrix");
   Assert(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
     && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
@@ -194,7 +194,7 @@ int taMatrix_impl::SafeElIndex(int d0) const {
   return d0;
 }
  
-int taMatrix_impl::SafeElIndex2(int d1, int d0) const {
+int taMatrix_impl::SafeElIndex2(int d0, int d1) const {
   Check((geom.size >= 2), "too many indices for matrix");
   Check(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
     "matrix index out of bounds");
@@ -204,7 +204,7 @@ int taMatrix_impl::SafeElIndex2(int d1, int d0) const {
   return rval;
 }
  
-int taMatrix_impl::SafeElIndex3(int d2, int d1, int d0) const {
+int taMatrix_impl::SafeElIndex3(int d0, int d1, int d2) const {
   Check((geom.size >= 3), "too many indices for matrix");
   Check(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
     && ((d0 >= 0) && (d0 < geom[0])), 
@@ -215,7 +215,7 @@ int taMatrix_impl::SafeElIndex3(int d2, int d1, int d0) const {
   return rval;
 }
  
-int taMatrix_impl::SafeElIndex4(int d3, int d2, int d1, int d0) const {
+int taMatrix_impl::SafeElIndex4(int d0, int d1, int d2, int d3) const {
   Check((geom.size >= 4), "too many indices for matrix");
   Check(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
     && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 

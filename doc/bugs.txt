@@ -35,6 +35,7 @@ Medium Important:
 * in maketa/win32-msvc it is adding spurious ta_Init_() call to ta files --
   worked around by adding that as a dummy function in ta_type.h, but it is a bug that 
   needs to be fixed (see mta_constr.cc line 1080)
+* when calling up Properties for int_Array, size shows as 1, even though it is greater
 
 Cosmetic/Usability/etc. (lower priority):
 

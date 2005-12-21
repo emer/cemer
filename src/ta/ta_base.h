@@ -327,7 +327,9 @@ protected:
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   virtual taDataLink* 	GetDataLink(); // forces creation; can still be NULL if the type doesn't support datalinks
-
+  void			AddDataClient(IDataLinkClient* dlc); //note: only applicable for classes that implement datalinks
+  bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this 
+  
 //temp  int			Ref() {return ++refn;}
 //temp  virtual void		UnRef() {--refn;} //note: overridden by ref-semantic classes to delete
 //temp  void			UnRefNoDelete() {--refn;}
@@ -1051,8 +1053,7 @@ public:
 
 #define TA_ARRAY_FUNS(y,T) \
 public: \
-  STATIC_CONST T blank; \
-  explicit y(int init_alloc) {Alloc(init_alloc); } \
+  explicit y(int init_size) {Initialize(); EnforceSize(init_size); } \
   T&		operator[](int i) { return el[i]; } \
   const T&	operator[](int i) const	{ return el[i]; } \
 protected: \
@@ -1159,6 +1160,7 @@ protected:
 class int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 
@@ -1168,10 +1170,10 @@ public:
   void Destroy()	{ }; //
   //note: Register() is not necessary for arrays, so we omit in these convenience constructors
   int_Array(int num, int i0) {Initialize(); EnforceSize(1); el[0] = i0;}
-  int_Array(int num, int i1, int i0) {Initialize(); EnforceSize(2); el[0] = i0; el[1] = i1;}
-  int_Array(int num, int i2, int i1, int i0) 
+  int_Array(int num, int i0, int i1) {Initialize(); EnforceSize(2); el[0] = i0; el[1] = i1;}
+  int_Array(int num, int i0, int i1, int i2) 
     {Initialize(); EnforceSize(3); el[0] = i0; el[1] = i1; el[2] = i2;}
-  int_Array(int num, int i3, int i2, int i1, int i0) 
+  int_Array(int num, int i0, int i1, int i2, int i3) 
     {Initialize(); EnforceSize(4); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;}
   TA_BASEFUNS(int_Array);
   TA_ARRAY_FUNS(int_Array, int)
@@ -1180,6 +1182,7 @@ public:
 class float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0.0f; };
@@ -1191,6 +1194,7 @@ public:
 class double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{err = 0.0;};
@@ -1202,6 +1206,7 @@ public:
 class String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = StatTypeDef(0); return FastEl_(i); }
   void Initialize()	{ };
@@ -1230,6 +1235,7 @@ public:
 class long_Array : public taArray<long> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST long blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(long start=0, long inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 
@@ -1245,6 +1251,7 @@ typedef void* voidptr; // for maketa, which chokes on void* in a template
 class voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER
 public:
+  STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = StatTypeDef(0); return FastEl_(i); }

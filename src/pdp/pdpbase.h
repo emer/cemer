@@ -96,6 +96,8 @@ public:
   // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)
   static Environment* GetNewEnv(Project* prj, TypeDef* typ = NULL);
   // get a temporary environment of given type in given project (e.g., for storing data)
+  static NetConduit* GetNewConduit(Project* prj, TypeDef* typ = NULL);
+  // get a temporary conduit of given type in given project
   static Network* GetNewNetwork(Project* prj, TypeDef* typ = NULL);
   // get a new network object
   static Network* GetDefNetwork(Project* prj);

@@ -375,6 +375,13 @@ void taBase::AddDataView(taDataView* dv) {
 #endif
 }
 
+void taBase::AddDataClient(IDataLinkClient* dlc) {
+  taDataLink* dl = GetDataLink(); // autocreates if necessary
+  if (dl != NULL) {
+    dl->AddDataClient(dlc);
+  }
+}
+
 void taBase::BatchUpdate(bool begin, bool struc) {
   taDataLink* dl = data_link();
   if (!dl) return;
@@ -689,6 +696,13 @@ int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
       cnt++;
   }
   return cnt;
+}
+
+bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
+  taDataLink* dl = data_link(); // doesn't autocreate
+  if (dl != NULL) {
+    return dl->RemoveDataClient(dlc);
+  } else return false;
 }
 
 bool taBase::RemoveDataView(taDataView* dv) {

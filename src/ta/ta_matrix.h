@@ -85,11 +85,11 @@ public:
   
   void			SetGeom(int d0)  
     {int d[1]; d[0]=d0; SetGeom_(1, d);} // set geom for 1-d array
-  void			SetGeom2(int d1, int d0)  
+  void			SetGeom2(int d0, int d1)  
     {int d[2]; d[0]=d0; d[1]=d1; SetGeom_(2, d);} // set geom for 12-d array
-  void			SetGeom3(int d2, int d1, int d0)  
+  void			SetGeom3(int d0, int d1, int d2)  
     {int d[3]; d[0]=d0; d[1]=d1; d[2]=d2; SetGeom_(3, d);} // set geom for 3-d array
-  void			SetGeom4(int d3, int d2, int d1, int d0)  
+  void			SetGeom4(int d0, int d1, int d2, int d3)  
     {int d[4]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; SetGeom_(4, d);} // set geom for 4-d array
   void			SetGeomN(const int_Array& geom_) 
     {SetGeom_(geom_.size, geom_.el);} // set geom for any sized array
@@ -112,16 +112,16 @@ protected:
   
   // the FastElIndex functions only check the bounds in debug version
   int			FastElIndex(int d0) const; 
-  int			FastElIndex2(int d1, int d0) const; 
-  int			FastElIndex3(int d2, int d1, int d0) const; 
-  int			FastElIndex4(int d3, int d2, int d1, int d0) const; 
+  int			FastElIndex2(int d0, int d1) const; 
+  int			FastElIndex3(int d0, int d1, int d2) const; 
+  int			FastElIndex4(int d0, int d1, int d2, int d3) const; 
   int			FastElIndexN(const int_Array& indices) const; 
   
   // the SafeElIndex functions always check the bounds
   int			SafeElIndex(int d0) const; 
-  int			SafeElIndex2(int d1, int d0) const; 
-  int			SafeElIndex3(int d2, int d1, int d0) const; 
-  int			SafeElIndex4(int d3, int d2, int d1, int d0) const; 
+  int			SafeElIndex2(int d0, int d1) const; 
+  int			SafeElIndex3(int d0, int d1, int d2) const; 
+  int			SafeElIndex4(int d0, int d1, int d2, int d3) const; 
   int			SafeElIndexN(const int_Array& indices) const; 
   
   virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
@@ -169,48 +169,48 @@ public:
 
   T&			FastEl(int d0) // #IGNORE	
     { return el[FastElIndex(d0)]; }
-  T&			FastEl2(int d1, int d0) // #IGNORE 
-    { return el[FastElIndex2(d1,d0)]; }
-  T&			FastEl3(int d2, int d1, int d0) // #IGNORE 
-    { return el[FastElIndex3(d2,d1,d0)]; }
-  T&			FastEl4(int d3, int d2, int d1, int d0) // #IGNORE 
-    { return el[FastElIndex4(d3,d2,d1,d0)]; } 
+  T&			FastEl2(int d0, int d1) // #IGNORE 
+    { return el[FastElIndex2(d0,d1)]; }
+  T&			FastEl3(int d0, int d1, int d2) // #IGNORE 
+    { return el[FastElIndex3(d0,d1,d2)]; }
+  T&			FastEl4(int d0, int d1, int d2, int d3) // #IGNORE 
+    { return el[FastElIndex4(d0,d1,d2,d3)]; } 
   T&			FastElN(const int_Array& indices) // #IGNORE 
     {return el[FastElIndexN(indices)]; }
   
   const T&		FastEl(int d0) const // #IGNORE	
     { return el[FastElIndex(d0)]; }
-  const T&		FastEl2(int d1, int d0) const // #IGNORE 
-    { return el[FastElIndex2(d1,d0)]; }
-  const T&		FastEl3(int d2, int d1, int d0) const // #IGNORE 
-    { return el[FastElIndex3(d2,d1,d0)]; }
-  const T&		FastEl4(int d3, int d2, int d1, int d0) const // #IGNORE 
-    { return el[FastElIndex4(d3,d2,d1,d0)]; } 
+  const T&		FastEl2(int d0, int d1) const // #IGNORE 
+    { return el[FastElIndex2(d0,d1)]; }
+  const T&		FastEl3(int d0, int d1, int d2) const // #IGNORE 
+    { return el[FastElIndex3(d0,d1,d2)]; }
+  const T&		FastEl4(int d0, int d1, int d2, int d3) const // #IGNORE 
+    { return el[FastElIndex4(d0,d1,d2,d3)]; } 
   const T&		FastElN(const int_Array& indices) const // #IGNORE 
     { return el[FastElIndexN(indices)]; } 
   
   const T&		SafeEl(int d0) const 	
     { return el[SafeElIndex(d0)]; } // access the element for reading
-  const T&		SafeEl2(int d1, int d0) const  
-    { return el[SafeElIndex2(d1,d0)]; } // access the element for reading
-  const T&		SafeEl3(int d2, int d1, int d0) const  
-    { return el[SafeElIndex3(d2,d1,d0)]; } // access the element for reading
-  const T&		SafeEl4(int d3, int d2, int d1, int d0) const  
-    { return el[SafeElIndex4(d3,d2,d1,d0)]; }  // access the element for reading
+  const T&		SafeEl2(int d0, int d1) const  
+    { return el[SafeElIndex2(d0,d1)]; } // access the element for reading
+  const T&		SafeEl3(int d0, int d1, int d2) const  
+    { return el[SafeElIndex3(d0,d1,d2)]; } // access the element for reading
+  const T&		SafeEl4(int d0, int d1, int d2, int d3) const  
+    { return el[SafeElIndex4(d0,d1,d2,d3)]; }  // access the element for reading
   const T&		SafeElN(const int_Array& indices) const  
     { return el[SafeElIndexN(indices)]; }  // access the element for reading
   
   void			Set(int d0, const T& item) 	
     { el[SafeElIndex(d0)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set2(int d1, int d0, const T& item) 	
-    { el[SafeElIndex2(d1,d0)] = item; }
+  void			Set2(int d0, int d1, const T& item) 	
+    { el[SafeElIndex2(d0,d1)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set3(int d2, int d1, int d0, const T& item) 	
-    {  el[SafeElIndex3(d2,d1,d0)] = item; }
+  void			Set3(int d0, int d1, int d2, const T& item) 	
+    {  el[SafeElIndex3(d0,d1,d2)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set4(int d3, int d2, int d1, int d0, const T& item) 	
-    {  el[SafeElIndex4(d3,d2,d1,d0)] = item; }
+  void			Set4(int d0, int d1, int d2, int d3, const T& item) 	
+    {  el[SafeElIndex4(d0,d1,d2,d3)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
   void			SetN(const int_Array& indices, const T& item) 	
     {  el[SafeElIndexN(indices)] = item; }
@@ -281,9 +281,9 @@ public: \
 #define TA_MATRIX_FUNS(y,T) \
   STATIC_CONST T blank; \
   explicit y(int d0)		{SetGeom(d0);} \
-  y(int d1, int d0)		{SetGeom2(d1, d0);} \
-  y(int d2, int d1, int d0)	{SetGeom3(d2, d1, d0);} \
-  y(int d3, int d2, int d1, int d0) {SetGeom4(d3, d2, d1, d0);} \
+  y(int d0, int d1)		{SetGeom2(d0,d1);} \
+  y(int d0, int d1, int d2)	{SetGeom3(d0,d1,d2);} \
+  y(int d0, int d1, int d2, int d3) {SetGeom4(d0,d1,d2,d3);} \
   explicit y(const int_Array& geom_) {SetGeomN(geom_);} \
   y(T* data_, const int_Array& geom_) {SetFixedData(data_, geom_);} \
   TA_BASEFUNS(y) \
