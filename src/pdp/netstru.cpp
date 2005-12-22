@@ -6056,8 +6056,7 @@ void LayerRWBase::UnSetLayer() {
 //////////////////////
 
 void LayerWriter::Initialize() {
-  layer_flags = DEFAULT;
-  initial_val = 0.0f;
+  ext_flags = DEFAULT;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
@@ -6085,8 +6084,7 @@ void LayerWriter::CutLinks() {
 void LayerWriter::Copy_(const LayerWriter& cp) {
   LayerRWBase::Copy_(cp);
 //obs  pattern_type = cp.pattern_type;
-  layer_flags = cp.layer_flags;
-  initial_val = cp.initial_val;
+  ext_flags = cp.ext_flags;
   noise = cp.noise;
   value_names = cp.value_names;
   //TODO: need to copy sink info
@@ -6147,19 +6145,67 @@ void LayerWriter::UpdateAfterEdit() {
 
 void LayerWriter::ApplyData(const float_Matrix& data) {
   if (layer == NULL) return;
-  
-  FlagLayer(); //TODO: only do this if we are only one, or the controller for the group
-  /*TODO
-  int v;     	// current value index;
-  Unit* u; 	// current unit
-  taLeafItr j;
+  int act_ext_flags;
+  GetExtFlags(data, act_ext_flags);
+  // apply flags if we are the controller
+  if ((gp_rw_model != GROUPED_CHANNELS) || ((gp_offset.x == 0) && (gp_offset.y == 0))) {
+    ApplyLayerFlags(act_ext_flags);
+  }
+  // apply data according to the applicable model
+  if (!layer->uses_groups()) {
+    ApplyData_Flat(data, act_ext_flags);
+  } else switch (gp_rw_model) {
+  case FLAT: 
+    ApplyData_GpFlat(data, act_ext_flags);
+    break;
+  case GROUPED_DATA: 
+    ApplyData_GpData(data, act_ext_flags);
+    break;
+  case GROUPED_CHANNELS: 
+    ApplyData_GpChannels(data, act_ext_flags);
+    break;
+  default: // unexpected
+    break;
+  }
+}
+
+void LayerWriter::ApplyData_Flat(const float_Matrix& data, int act_ext_flags) {
+  Unit* un; 	// current unit
+  TwoDCoord ucoord = offset; // current unit coord
+  TwoDCoord dcoord; // current data coord
   Unit_Group* ug = &(layer->units);
-  int val_sz = pat->value.size;
-  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
-      u = (Unit*)ug->NextEl(j), v++)
-  {
-    ApplyValue(pat,u,v);
-  } */
+  //note: a partially filled layer will return a null unit when we reach the end of actual units
+  while (ucoord.y < layer->geom.y) {
+    while (ucoord.x < layer->geom.x) {
+      un = ug->FindUnitFmCoord(ucoord);
+      if (un == NULL) goto break1;
+      ApplyValue(un, data, dcoord, act_ext_flags);
+      dcoord.x++;
+      ucoord.x++;
+    }
+    dcoord.x = 0;
+    ucoord.x = offset.x;
+    dcoord.y++;
+    ucoord.y++;
+  }
+break1:
+  ;
+}
+
+void LayerWriter::ApplyData_GpFlat(const float_Matrix& data, int act_ext_flags) {
+}
+
+void LayerWriter::ApplyData_GpData(const float_Matrix& data, int act_ext_flags) {
+}
+
+void LayerWriter::ApplyData_GpChannels(const float_Matrix& data, int act_ext_flags) {
+}
+
+
+void LayerWriter::ApplyLayerFlags(int act_ext_flags) {
+  if (act_ext_flags & NO_LAYER_FLAGS)
+    return;
+  layer->SetExtFlag(act_ext_flags & EXT_FLAGS_MASK); // the bits are the same..
 }
 
 void LayerWriter::ApplyNames() {
@@ -6176,27 +6222,33 @@ void LayerWriter::ApplyNames() {
     u->name = value_names[v];
   } */
 }
-void LayerWriter::FlagLayer() {
-  if (layer_flags == NO_LAYER_FLAGS)
-    return;
 
-  if (layer_flags == DEFAULT) {
-    switch(type) {
-    case INACTIVE:
-      break;
-    case INPUT:
-      layer->SetExtFlag(Unit::EXT);
-      break;
-    case TARGET:
-      layer->SetExtFlag(Unit::TARG);
-      break;
-    case COMPARE:
-      layer->SetExtFlag(Unit::COMP);
-      break;
-    }
+void LayerWriter::ApplyValue(Unit* un, const float_Matrix& data, const TwoDCoord dcoord, 
+    int act_ext_flags)
+{
+  // if data isn't in range, for some reason, we just bail
+  if ((dcoord.x > data.geom.SafeEl(0)) || (dcoord.y > data.geom.SafeEl(1))) 
     return;
+  float val = data.FastEl2(dcoord.x, dcoord.y);
+  if (noise.type != Random::NONE)
+    val += noise.Gen();
+  // note: not all flag values are valid, so following is a fuzzy cascade
+  // ext is the default place, so we check for 
+  if (act_ext_flags & EXT) {
+    un->ext = val;
+    un->SetExtFlag(Unit::EXT);
+  } else {
+    un->targ = val;
+    if (act_ext_flags & TARG)
+      un->SetExtFlag(Unit::TARG);
+    else if (act_ext_flags & COMP)
+      un->SetExtFlag(Unit::COMP);
   }
-  layer->SetExtFlag(layer_flags); // the bits are the same..
+}
+
+void LayerWriter::GetExtFlags(const float_Matrix& data, int& act_ext_flags) {
+  act_ext_flags = ext_flags;
+  //TODO: look for flag values from environment or data
 }
 
 /*TODO void LayerWriter::SetToLayer(Layer* lay) {
@@ -6252,30 +6304,6 @@ float LayerWriter::Value(Pattern* pat, int index) {
 }
 
 
-void LayerWriter::ApplyValue(Pattern* pat, Unit* uni, int index) {
-  float val = Value(pat, index) + noise.Gen();
-  int flags = Flag(use_flags, pat, index);
-  ApplyValue_impl(uni, val, flags);
-}
-
-void LayerWriter::ApplyValue_impl(Unit* uni, float val) {
-  switch (type) {
-  case INACTIVE:
-    break;
-  case INPUT:
-    uni->ext = val;
-    uni->SetExtFlag(Unit::EXT);
-    break;
-  case TARGET:
-    uni->targ = val;
-    uni->SetExtFlag(Unit::TARG);
-    break;
-  case COMPARE:
-    uni->targ = val;
-    uni->SetExtFlag(Unit::COMP);
-    break;
-  }
-}
 
 
 */
@@ -6533,7 +6561,13 @@ void NetConduit::InitLayerWriter(Layer* lay, LayerWriter* lrw) {
   // initialize names, if not set already
   lrw->layer_name = lay->name;
   lrw->name = lay->name;
+  lrw->ext_flags = LayerWriter::DEFAULT; // aka nothing
+  //note: these flag values are not really orthogonal, generally only input or target is used
   if (lay->layer_type & Layer::INPUT) {
+    lrw->ext_flags = (LayerWriter::ExtType)(lrw->ext_flags | LayerWriter::EXT);
+  }
+  if (lay->layer_type & Layer::TARGET) {
+    lrw->ext_flags = (LayerWriter::ExtType)(lrw->ext_flags | LayerWriter::TARG);
   }
 }
 

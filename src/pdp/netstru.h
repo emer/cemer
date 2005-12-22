@@ -469,7 +469,8 @@ typedef taNBase inherited;
 protected:
   static Con_Group*	rcg_rval; // return value for connecting
   static Con_Group*	scg_rval; // return value for connecting
-public:
+public: //
+  // NOTE: ExtType bits are also the same in LayerWriter::ExtType
   enum ExtType {		// indicates type of external input unit received
     NO_EXTERNAL = 0x00,		// no input
     TARG 	= 0x01,		// target input (value is in targ)
@@ -949,8 +950,10 @@ public:
   enum DMemDist {
     DMEM_DIST_DEFAULT,		// distribute units to different processors for distributed memory processing according to the default sequential scheme
     DMEM_DIST_UNITGP		// distribute units according to unit groups, which can be less even but allows for shared weights by unit group
-  };
-
+  }; //
+  
+  
+  //NOTE: LayerType bits are same as NetWriter LayerFlags bits
   enum LayerType { // #BITS design hint on layer usage (but input/output always allowed)
     HIDDEN	= 0x00, 	// #NO_BIT layer probably won't be externally connected
     INPUT 	= 0x01,		// layer will (or may) receive external input
@@ -1407,22 +1410,24 @@ protected:
 class LayerWriter: public SinkChannel, public LayerRWBase {
   // object that writes data from a datasource to a layer
 INHERITED(SinkChannel)
-public:
-  enum LayerFlags {	// #BITS how to flag the layer's external input status
-    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on parameter in pattern
-    TARG_LAYER 		= 0x01,	// #LABEL_Target as a target layer
-    EXT_LAYER 		= 0x02,	// #LABEL_External as an external input layer
-    TARG_EXT_LAYER 	= 0x03,	// #NO_BIT as both external input and target layer
-    COMP_LAYER		= 0x04,	// #LABEL_Comparison as a comparison layer
-    COMP_TARG_LAYER	= 0x05,	// #NO_BIT as a comparision and target layer
-    COMP_EXT_LAYER	= 0x06,	// #NO_BIT as a comparison and external input layer
-    COMP_TARG_EXT_LAYER = 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_LAYER_FLAGS	= 0x10 	// #LABEL_None don't set any layer flags at all (ignore other flags)
+public: //
+  //NOTE: some bits are same as Unit::ExtType enum
+  enum ExtType {	// #BITS how to flag the layer/unit external input status
+    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on parameter in data
+    TARG 		= 0x01,	// #LABEL_Target as a target value
+    EXT 		= 0x02,	// #LABEL_External as an external input value
+    TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
+    COMP		= 0x04,	// #LABEL_Comparison as a comparison value
+    COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
+    COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
+    COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
+    NO_LAYER_FLAGS	= 0x10, // don't set layer flags at all
+    NO_UNIT_FLAGS	= 0x20, // don't set unit flags at all
+    EXT_FLAGS_MASK	= 0x07 // #NO_BIT mask for setting layer/unit flags
   };
 
-  LayerFlags	layer_flags;	// how to flag the layer's external input status
-  float		initial_val;	// Initial value for pattern values
-  Random	noise;		// Noise added to values when applied
+  ExtType	ext_flags;	// how to flag the unit/layer's external input status
+  Random	noise;		// noise optionally added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
   virtual void	ApplyData(const float_Matrix& data);
   // #IGNORE apply the data to all units (layer must already be set)
@@ -1471,8 +1476,17 @@ public: // SinkChannel functions
   override TypeDef*	data_type() {return &TA_float;} 
 
 protected:
-  virtual void		FlagLayer();
+  virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
+  // gets the effective flag values, from ourself, and possibly data and/or context
+  virtual void		ApplyLayerFlags(int act_ext_flags);
   // set layer flag to reflect the kind of input received
+  virtual void		ApplyData_Flat(const float_Matrix& data, int act_ext_flags);
+  virtual void		ApplyData_GpFlat(const float_Matrix& data, int act_ext_flags);
+  virtual void		ApplyData_GpData(const float_Matrix& data, int act_ext_flags);
+  virtual void		ApplyData_GpChannels(const float_Matrix& data, int act_ext_flags);
+  virtual void 		ApplyValue(Unit* u, const float_Matrix& data, const TwoDCoord dcoord, 
+    int act_ext_flags);
+  // assign unit value and ext_flag based on data at given coord, does nothing if out of range
 
 private:
   void	Initialize();
