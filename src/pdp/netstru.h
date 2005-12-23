@@ -896,7 +896,8 @@ public:
   virtual void	UnitValuesFromArray(float_RArray& ary, const char* variable);
   // sets unit values from values in the given array
 
-  virtual Unit* FindUnitFmCoord(const TwoDCoord& coord);
+  Unit*		FindUnitFmCoord(int x, int y);
+  Unit* 	FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x,coord.y);}
   // returns unit at given coordinates within layer
 
   void		RemoveAll();
@@ -1105,11 +1106,15 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual Unit*	FindUnitFmCoord(const TwoDCoord& coord);
+  Unit*		FindUnitFmCoord(int x, int y);
+  Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
-  virtual Unit*	FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord);
+  Unit*		FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y);
+  Unit*		FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
+    {return FindUnitFmGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y);}
   // get unit from coordinates
-  virtual Unit_Group* FindUnitGpFmCoord(const TwoDCoord& coord);
+  Unit_Group* 	FindUnitGpFmCoord(int gp_x, int gp_y);
+  Unit_Group* 	FindUnitGpFmCoord(const TwoDCoord& coord) {return FindUnitGpFmCoord(coord.x,coord.y);}
   // get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
   virtual void	GetActGeomNoSpc(PosTDCoord& nospc_geom);
   // get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
@@ -1432,29 +1437,6 @@ public: //
   virtual void	ApplyData(const float_Matrix& data);
   // #IGNORE apply the data to all units (layer must already be set)
 
-/*TODO
-  virtual bool 	SetLayer(Network* net);
-  // set layer pointer to point to the target layer
-  virtual void 	UnSetLayer();
-  // when done, don't keep pointing to it.
-  virtual float Value(Pattern* pat, int index);
-  // return value at given index from pattern (order can be changed, eg GroupLayerWriter)
-  virtual int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
-  // return flag at given index from pattern (order can be changed, eg GroupLayerWriter)
-  virtual void 	ApplyValue(Pattern* pat, Unit* uni, int index);
-  // assign unit value and ext_flag based on pattern at given index
-  virtual void	ApplyValue_impl(Unit* uni, float val, int flags);
-  // implementation of apply value, taking just the value and the flags
-  virtual void	ApplyValueWithFlags(Unit* uni, float val, int flags);
-  // assign unit value and ext_flag with pattern flags
-
-  virtual Pattern* NewPattern(Event* ev, Pattern_Group* par);
-  // creates a new pattern in my image in event in parent group at index
-  virtual void	UpdatePattern(Event* ev, Pattern* pat);
-  // updates existing pattern to current spec settings
-*/
-//??  virtual void	UpdateAllEvents();
-  // #BUTTON update all events using pattern spec
   virtual void 	ApplyNames();
   // #BUTTON set the names of units in the network according to the current value_names
 
@@ -1472,8 +1454,8 @@ public: //
 public: // ITypedObject/IDataLinkClient
   override void*	This() {return this;}  //
   
-public: // SinkChannel functions
-  override TypeDef*	data_type() {return &TA_float;} 
+protected: // SinkChannel functions
+  override bool		DoConsumeData(); // we invoke the ApplyData on cached data
 
 protected:
   virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
@@ -1484,8 +1466,7 @@ protected:
   virtual void		ApplyData_GpFlat(const float_Matrix& data, int act_ext_flags);
   virtual void		ApplyData_GpData(const float_Matrix& data, int act_ext_flags);
   virtual void		ApplyData_GpChannels(const float_Matrix& data, int act_ext_flags);
-  virtual void 		ApplyValue(Unit* u, const float_Matrix& data, const TwoDCoord dcoord, 
-    int act_ext_flags);
+  virtual void 		ApplyValue(Unit* u, float val, int act_ext_flags);
   // assign unit value and ext_flag based on data at given coord, does nothing if out of range
 
 private:
@@ -1527,7 +1508,6 @@ public: // ITypedObject/IDataLinkClient
   override void*	This() {return this;}  //
   
 public: // SourceChannel functions
-  override TypeDef*	data_type() {return &TA_float;} 
 
 private:
   void	Initialize();

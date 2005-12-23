@@ -95,7 +95,8 @@ public:
   DataTransferMode	txfer_modes_allowed; // #READ_ONLY #SHOW
   DataTransferMode	txfer_mode; // current txfer mode
   
-  virtual TypeDef*	data_type() = 0; // type of data, ex TA_int, TA_float, etc.
+  TypeDef*		data_type; // #READ_ONLY #NO_SAVE type of data, ex TA_int, TA_float, etc., note: def is float
+  
   virtual int		dims() {return geom.size;}
      // number of dimensions of data; N=0 for sink is "any"
   virtual int		GetGeom(int dim) {return geom.SafeEl(dim);}// geom for dimension

@@ -83,6 +83,7 @@ void PatternSpec::InitLinks(){
     int ypos = evs->MaxY();
     pos.y = ypos + 1;		// by default start higher..
   }
+  taBase::Own(src_channel, this);
 }
 
 void PatternSpec::Destroy() {
@@ -90,6 +91,7 @@ void PatternSpec::Destroy() {
 }
 
 void PatternSpec::CutLinks() {
+  src_channel.CutLinks();
   taBase::DelPointer((TAPtr*)&layer);
   BaseSubSpec::CutLinks();
 }
@@ -110,6 +112,7 @@ void PatternSpec::Copy_(const PatternSpec& cp) {
   noise = cp.noise;
   value_names = cp.value_names;
   global_flags = cp.global_flags;
+  src_channel = cp.src_channel;
 }
 
 void PatternSpec::SetToLayName(const char* lay_nm) {
@@ -157,7 +160,7 @@ void PatternSpec::SetToLayer(Layer* lay) {
 }
 
 void PatternSpec::UpdateAfterEdit() {
-  BaseSubSpec::UpdateAfterEdit();
+  inherited::UpdateAfterEdit();
   Network* net = GetDefaultNetwork();
   if((net != NULL) && SetLayer(net)) {
     if((geom.x * geom.y == 0) || (n_vals == 0))  {
@@ -203,6 +206,13 @@ void PatternSpec::UpdateAfterEdit() {
       es->UpdateChildren();
     }
   }
+  UpdateChannel();
+}
+
+void PatternSpec::UpdateChannel() {
+  src_channel.name = name;
+  // legacy patterns are always 2d
+  src_channel.SetGeom2(geom.x, geom.y);
 }
 
 void PatternSpec::UpdateAllEvents() {
@@ -3296,3 +3306,37 @@ void Environment::EventFreqText(bool prop, ostream& strm) {
   }
 }
 
+// DataSource i/f routines and support
+
+void Environment::GoToItem(int idx) {
+  Event* ev = GetEvent(idx);
+  SetCurrentEvent(ev);
+}
+ 
+void Environment::ResetItem() {
+  InitEvents();
+}
+ 
+bool Environment::NextItem() {
+  Event* ev = GetNextEvent();
+  SetCurrentEvent(ev);
+  return (ev != NULL);
+}
+ 
+int Environment::source_channel_count() {
+  if (event_specs.leaves == 0) return 0;
+  EventSpec* evsp = (EventSpec*)event_specs.Leaf(0);
+  return evsp->patterns.leaves;
+}
+ 
+SourceChannel* Environment::source_channel(int idx) {
+  if ((idx < 0) || (event_specs.leaves == 0)) return NULL;
+  EventSpec* evsp = (EventSpec*)event_specs.Leaf(0);
+  if (idx > evsp->patterns.leaves) return NULL;
+  PatternSpec* psp = (PatternSpec*)evsp->patterns.Leaf(idx);
+  return &(psp->src_channel);
+}
+ 
+void Environment::SetCurrentEvent(Event* ev) {
+  //TODO: 
+}

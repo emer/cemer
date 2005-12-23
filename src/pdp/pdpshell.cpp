@@ -737,6 +737,7 @@ void Project::InitLinks() {
   taBase::Own(wizards, this);
   taBase::Own(specs, this);
   taBase::Own(networks, this);
+  taBase::Own(conduits, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
   taBase::Own(logs, this);
@@ -783,6 +784,7 @@ void Project::CutLinks() {
   logs.CutLinks();
   processes.CutLinks();
   environments.CutLinks();
+  conduits.CutLinks();
   networks.CutLinks();
   specs.CutLinks();
   defaults.CutLinks();

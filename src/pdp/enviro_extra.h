@@ -67,7 +67,8 @@ public:
   void 	Destroy()	{ };
   void	Copy_(const InteractiveScriptEnv& cp);
   COPY_FUNS(InteractiveScriptEnv, ScriptEnv);
-  TA_BASEFUNS(InteractiveScriptEnv);
+  TA_BASEFUNS(InteractiveScriptEnv); //
+  
 };
 
 

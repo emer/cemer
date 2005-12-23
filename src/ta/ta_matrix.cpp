@@ -186,6 +186,45 @@ int taMatrix_impl::frameSize() const {
   return rval;
 }
 
+bool taMatrix_impl::IndexInRange(int d0) const {
+  return (geom.size >= 1)
+    && ((d0 >= 0) && (d0 < geom[0]))
+    ;
+}
+ 
+bool taMatrix_impl::IndexInRange2(int d0, int d1) const {
+  return (geom.size >= 2)
+    && ((d0 >= 0) && (d0 < geom[0]))
+    && ((d1 >= 0) && (d1 < geom[1]))
+    ;
+}
+ 
+bool taMatrix_impl::IndexInRange3(int d0, int d1, int d2) const {
+  return (geom.size >= 3)
+    && ((d0 >= 0) && (d0 < geom[0]))
+    && ((d1 >= 0) && (d1 < geom[1]))
+    && ((d2 >= 0) && (d2 < geom[2]))
+    ;
+}
+ 
+bool taMatrix_impl::IndexInRange4(int d0, int d1, int d2, int d3) const {
+  return (geom.size >= 4)
+    && ((d0 >= 0) && (d0 < geom[0]))
+    && ((d1 >= 0) && (d1 < geom[1]))
+    && ((d2 >= 0) && (d2 < geom[2]))
+    && ((d3 >= 0) && (d3 < geom[3]))
+    ;
+}
+ 
+bool taMatrix_impl::IndexInRangeN(const int_Array& indices) const {
+  if (indices.size < geom.size) return false;
+  for (int i = 0; i < indices.size; ++i) {
+    int di = indices[i];
+    if ((di < 0) || (di >= geom[i])) return false;
+  }
+  return true;
+}
+ 
 int taMatrix_impl::SafeElIndex(int d0) const {
   Check((geom.size >= 1), "matrix geometry has not been initialized");
   Check(((d0 >= 0) && (d0 < geom[0])), 

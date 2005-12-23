@@ -93,6 +93,7 @@ void DataChannel::Initialize() {
   txfer_modes_allowed = DTM_BOTH;
   txfer_mode = DTM_PUSH;
   m_cached_cycle = 0;
+  data_type = &TA_float; // the most common is the default; replace if different
 }
 
 void DataChannel::Destroy() {

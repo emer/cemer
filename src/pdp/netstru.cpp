@@ -3152,11 +3152,10 @@ void Unit_Group::UnitValuesFromArray(float_RArray& ary, const char* variable) {
   }
 }
 
-Unit* Unit_Group::FindUnitFmCoord(const TwoDCoord& coord) {
-  if ((coord.y < 0) || (coord.x < 0)) return NULL;
-  if ((coord.y >= geom.y) || (coord.x >=geom.x)) return NULL;
-  int idx = coord.y * geom.x + coord.x;
-  if(idx < size)
+Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
+  if (( x < 0) || (x >= geom.x) || (y < 0) || (y >= geom.y)) return NULL;
+  int idx = y * geom.x + x;
+  if (idx < size)
     return FastEl(idx);
   return NULL;
 }
@@ -4121,33 +4120,30 @@ void Layer::WeightsToEnv(Environment* env, Layer* send_lay) {
   }
 }
 
-Unit* Layer::FindUnitFmCoord(const TwoDCoord& coord) {
+Unit* Layer::FindUnitFmCoord(int x, int y) {
   if(units.gp.size == 0)	// no group structure, just do it
-    return units.FindUnitFmCoord(coord);
-  TwoDCoord gpcoord, uncoord;
-  gpcoord.x = coord.x / geom.x;
-  gpcoord.y = coord.y / geom.y;
-  uncoord.x = coord.x % geom.x;
-  uncoord.y = coord.y % geom.y;
-  int gpidx = gpcoord.y * gp_geom.x + gpcoord.x;
-  if((gpidx >= 0) && (gpidx < units.gp.size))
-    return ((Unit_Group*)units.gp.FastEl(gpidx))->FindUnitFmCoord(uncoord);
+    return units.FindUnitFmCoord(x,y);
+  int un_x = x % geom.x;
+  int un_y = y % geom.y;
+  int gpidx = (y / geom.y) * gp_geom.x + (x / geom.x);
+  if ((gpidx >= 0) && (gpidx < units.gp.size))
+    return ((Unit_Group*)units.gp.FastEl(gpidx))->FindUnitFmCoord(un_x, un_y);
   return NULL;
 }
 
-Unit* Layer::FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord) {
+Unit* Layer::FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
   Unit* rval = NULL;
-  Unit_Group* ug = FindUnitGpFmCoord(gp_coord);
+  Unit_Group* ug = FindUnitGpFmCoord(gp_x, gp_y);
   if (ug != NULL) {
-    rval = ug->FindUnitFmCoord(coord);
+    rval = ug->FindUnitFmCoord(un_x, un_y);
   }
   return rval;
 };
 
-Unit_Group* Layer::FindUnitGpFmCoord(const TwoDCoord& coord) {
-  if((coord.x < 0) || (coord.y < 0)) return NULL;
-  int gidx = coord.y * gp_geom.x + coord.x;
-  if(gidx >= units.gp.size) return NULL;
+Unit_Group* Layer::FindUnitGpFmCoord(int gp_x, int gp_y) {
+  if ((gp_x < 0) || (gp_x >= gp_geom.x) || (gp_y < 0) || (gp_y >= gp_geom.y) ) return NULL;
+  int gidx = gp_y * gp_geom.x + gp_x;
+  if (gidx >= units.gp.size) return NULL;
   return (Unit_Group*)units.gp.FastEl(gidx);
 }
 
@@ -6056,6 +6052,7 @@ void LayerRWBase::UnSetLayer() {
 //////////////////////
 
 void LayerWriter::Initialize() {
+  data_type = &TA_float;
   ext_flags = DEFAULT;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
@@ -6171,22 +6168,27 @@ void LayerWriter::ApplyData(const float_Matrix& data) {
 
 void LayerWriter::ApplyData_Flat(const float_Matrix& data, int act_ext_flags) {
   Unit* un; 	// current unit
-  TwoDCoord ucoord = offset; // current unit coord
-  TwoDCoord dcoord; // current data coord
+  int u_x = offset.x;  int u_y = offset.y; // current unit coord
+  int d_x = 0;  int d_y = 0; // current data coord
   Unit_Group* ug = &(layer->units);
+  float val;
   //note: a partially filled layer will return a null unit when we reach the end of actual units
-  while (ucoord.y < layer->geom.y) {
-    while (ucoord.x < layer->geom.x) {
-      un = ug->FindUnitFmCoord(ucoord);
+  while (u_y < layer->geom.y) {
+    while (u_x < layer->geom.x) {
+      un = ug->FindUnitFmCoord(u_x, u_y);
       if (un == NULL) goto break1;
-      ApplyValue(un, data, dcoord, act_ext_flags);
-      dcoord.x++;
-      ucoord.x++;
+      // if we've run out of data for this row, no sense continuing, go to next row
+      if (!(data.IndexInRange2(d_x, d_y))) 
+        break; 
+      val = data.FastEl2(d_x, d_y);
+      ApplyValue(un, val, act_ext_flags);
+      d_x++;
+      u_x++;
     }
-    dcoord.x = 0;
-    ucoord.x = offset.x;
-    dcoord.y++;
-    ucoord.y++;
+    d_x = 0;
+    u_x = offset.x;
+    d_y++;
+    u_y++;
   }
 break1:
   ;
@@ -6223,13 +6225,8 @@ void LayerWriter::ApplyNames() {
   } */
 }
 
-void LayerWriter::ApplyValue(Unit* un, const float_Matrix& data, const TwoDCoord dcoord, 
-    int act_ext_flags)
+void LayerWriter::ApplyValue(Unit* un, float val, int act_ext_flags)
 {
-  // if data isn't in range, for some reason, we just bail
-  if ((dcoord.x > data.geom.SafeEl(0)) || (dcoord.y > data.geom.SafeEl(1))) 
-    return;
-  float val = data.FastEl2(dcoord.x, dcoord.y);
   if (noise.type != Random::NONE)
     val += noise.Gen();
   // note: not all flag values are valid, so following is a fuzzy cascade
@@ -6244,6 +6241,15 @@ void LayerWriter::ApplyValue(Unit* un, const float_Matrix& data, const TwoDCoord
     else if (act_ext_flags & COMP)
       un->SetExtFlag(Unit::COMP);
   }
+}
+
+bool LayerWriter::DoConsumeData() {
+// note: data was already validated, but probably a good idea to do it here too
+  if (m_cached_data == 0) return false;
+  if (!m_cached_data->InheritsFrom(TA_float_Matrix)) return false;
+  float_Matrix* data = static_cast<float_Matrix*>(m_cached_data.ptr());
+  ApplyData(*data);
+  return true;
 }
 
 void LayerWriter::GetExtFlags(const float_Matrix& data, int& act_ext_flags) {
@@ -6338,6 +6344,7 @@ void LayerWriter::UpdatePattern(Event*, Pattern* pat) {
 //////////////////////
 
 void LayerReader::Initialize() {
+  data_type = &TA_float;
 }
 
 void LayerReader::Destroy() {

@@ -37,12 +37,13 @@ class IDataSink;
 class ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources
 public:
   virtual int		num_items() = 0; // N<0 if items unknown, or cannot be accessed randomly
-  virtual bool		is_permutable() = 0; // 'true' if can be accessed randomly
-  virtual bool		has_next() = 0; // for sequential access, 'true' if can call Next()
+  virtual bool		is_indexable() = 0; // 'true' if can be accessed by index
+  virtual bool		is_sequential() = 0; // 'true' if can be accessed sequentially
   
-  virtual void		Reset() = 0; // restores state, but is not a sequence command per se
-  virtual void		Next() = 0; // for sequential access, goes to the next item
-  virtual void		GoTo(uint index) = 0; // for random access, goes to the item 
+  virtual void		GoToItem(int index) = 0; // for indexed access, goes to the item 
+  
+  virtual void		ResetItem() = 0; // for seq access, resets iteration state, but is not a sequence command per se
+  virtual bool		NextItem() = 0; // for seq access, goes to the next item, 'true' if there was a next item
   
   virtual ~ISequencable() {};
 };
@@ -58,8 +59,8 @@ typedef taMatrix_impl* ptaMatrix_impl;
 class IDataSource { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
 friend class SourceChannel;
 public:
-  virtual bool		can_sequence_() const {return false;} // true if has a ISequencable interface
-  virtual ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
+  virtual bool		can_sequence() const {return false;} // true if has a ISequencable interface
+  virtual ISequencable* sequencer() {return NULL;} // sequencing interface, if sequencable
   virtual int		source_channel_count() = 0; // number of source channels
   virtual SourceChannel* source_channel(int idx) = 0; // get a source channel
   

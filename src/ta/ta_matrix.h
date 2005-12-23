@@ -83,6 +83,12 @@ public:
   void			AllocFrames(int n); // make sure space exists for n frames
   void			EnforceFrames(int n); // set size to n frames, blanking new elements if added
   
+  bool			IndexInRange(int d0) const; // 'true' if >= 1-d and index in range
+  bool			IndexInRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
+  bool			IndexInRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
+  bool			IndexInRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
+  bool			IndexInRangeN(const int_Array& indices) const;  // 'true' if >= indices-d and indices in range
+  
   void			SetGeom(int d0)  
     {int d[1]; d[0]=d0; SetGeom_(1, d);} // set geom for 1-d array
   void			SetGeom2(int d0, int d1)  
@@ -236,18 +242,49 @@ private: //note: forbid these for now -- if needed, define semantics
 
 class taMatrixPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts
 public:
+  taMatrix_impl*	ptr() {return m_ptr;} //note: strong types define strongly typed version
+  const taMatrix_impl*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
+  
   taMatrixPtr_impl() {m_ptr = NULL;}
   ~taMatrixPtr_impl() {set(NULL);} //
+  
+  taMatrix_impl* operator->() const {return m_ptr;} 
+  operator taMatrix_impl*() const {return m_ptr;}
   
   // WARNING: these permit incorrect assignments to strongly typed pointers, use with caution
   taMatrixPtr_impl(taMatrixPtr_impl& src) {m_ptr = NULL; set(src.m_ptr);} 
   taMatrix_impl* operator=(taMatrixPtr_impl& src) {set(src.m_ptr); return m_ptr;} 
   taMatrix_impl* operator=(taMatrix_impl* src) {set(src); return m_ptr;} 
-  operator taMatrix_impl*() const {return m_ptr;}
 protected:
   taMatrix_impl*	m_ptr;
-  void		set(taMatrix_impl* src) {taBase::SetPointer((taBase**)(&m_ptr), src);}
-};
+  void		set(taMatrix_impl* src) {taBase::SetPointer((taBase**)(&m_ptr), src);} //
+}; //
+
+// operators for doing NULL testing on the smart pointers 
+// note: these operators are only defined when int==0 i.e. NULL
+// note: use '0' instead of 'NULL' in your tests to avoid a compiler warning
+inline bool operator ==(const taMatrixPtr_impl& a, int b)
+  {return ((b== 0) && (a.ptr() == NULL));} 
+inline bool operator ==(int a, const taMatrixPtr_impl& b)
+  {return ((a == 0) && (NULL == b.ptr()));} 
+inline bool operator !=(const taMatrixPtr_impl& a, int b)
+  {return ((b == 0) && (a.ptr() != NULL));}
+inline bool operator !=(int a, const taMatrixPtr_impl& b)
+  {return ((a == 0) && (NULL != b.ptr()));} //
+
+// operators for doing equality testing on the smart pointers 
+inline bool operator ==(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+  {return (a.ptr() == b.ptr());} 
+inline bool operator ==(const taMatrixPtr_impl& a, const taMatrix_impl* b)
+  {return (a.ptr() == b);} 
+inline bool operator ==(const taMatrix_impl* a, const taMatrixPtr_impl& b)
+  {return (a == b.ptr());} 
+inline bool operator !=(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+  {return (a.ptr() != b.ptr());}
+inline bool operator !=(const taMatrixPtr_impl& a, const taMatrix_impl* b)
+  {return (a.ptr() != b);}
+inline bool operator !=(const taMatrix_impl* a, const taMatrixPtr_impl& b)
+  {return (a != b.ptr());}
 
 
 // macro for creating smart ptrs of taMatrix classes
