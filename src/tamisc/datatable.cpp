@@ -1051,11 +1051,13 @@ String DataArray_impl::ValTypeToStr(ValType vt) {
   static String str_String("String");
   static String str_float("float");
   static String str_int("int");
+  static String str_byte("byte");
   switch (vt) {
   case VT_UNKNOWN: return str_unknown;
   case VT_STRING: return str_String;
   case VT_FLOAT: return str_float;
   case VT_INT: return str_int;
+  case VT_BYTE: return str_byte;
   default: return _nilString; // compiler food
   }
 }
@@ -1063,6 +1065,12 @@ String DataArray_impl::ValTypeToStr(ValType vt) {
 void DataArray_impl::Initialize() {
   save_to_file = true;
   //note: col_type initialized in concrete class
+}
+
+void DataArray_impl::InitLinks() {
+  taMatrix_impl* ar = AR();
+  if (ar != NULL)
+    taBase::Own(ar, this);
 }
 
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
@@ -1165,8 +1173,9 @@ void DataTable::SetFieldHead(DataItem* ditem, DataTable* dat, int idx) {
 
 
 void DataTable::Initialize() {
-  rows = 0;
   SetBaseType(&TA_DataArray);	// the impl doesn't inherit properly..
+  rows = 0;
+  save_data = false;
 }
 
 void DataTable::Destroy() {
@@ -1198,15 +1207,15 @@ void DataTable::AddBlankRow() {
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
-    taArray_base* ab = ar->AR();
-    if (!ab) continue;
-    ab->EnforceSize(ab->size + 1);
+    taMatrix_impl* mat = ar->AR();
+    if (!mat) continue;
+    mat->EnforceFrames(mat->frames() + 1);
   }
   RowAdded();
 }
 
 void DataTable::AddFloatVal(float val, int col, int subgp) {
-  float_RArray* dt = GetColFloatArray(col, subgp);
+  float_Matrix* dt = GetColFloatArray(col, subgp);
   if(dt != NULL) dt->Add(val);
 }
 
@@ -1265,7 +1274,7 @@ void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
 }
 
 void DataTable::AddStringVal(const char* val, int col, int subgp) {
-  String_Array* dt = GetColStringArray(col, subgp);
+  String_Matrix* dt = GetColStringArray(col, subgp);
   if(dt != NULL) dt->Add(val);
 }
 
@@ -1305,10 +1314,10 @@ void DataTable::AggArrayToRow(const float_RArray& tar, int row_num, Aggregate& a
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     if(ar->InheritsFrom(TA_float_Data)) {
-      float_Array* far = static_cast<float_Array*>(ar->AR());
+      float_Matrix* far = static_cast<float_Matrix*>(ar->AR());
       if (far->InRange(row_num)) {
-        float& val = ((float_Array*)ar->AR())->FastEl(row_num);
-        agg.ComputeAggNoUpdt(val, tar.FastEl(cnt));
+        float& val = far->FastEl(row_num); //WARN: this is NOT very good practice!!!
+        agg.ComputeAggNoUpdt(val, tar.FastEl(cnt)); //we pass the ref of inside the array to this routine
       }
     }
     cnt++;
@@ -1320,7 +1329,7 @@ void DataTable::AllocRows(int n) {
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
-    ar->AR()->Alloc(n); //noop if already has more alloc'ed
+    ar->AR()->AllocFrames(n); //noop if already has more alloc'ed
   }
 }
 
@@ -1353,21 +1362,21 @@ String_Data* DataTable::GetColStringData(int col, int subgp) {
   return NULL;
 }
 
-float_RArray* DataTable::GetColFloatArray(int col, int subgp) {
+float_Matrix* DataTable::GetColFloatArray(int col, int subgp) {
   float_Data* dt = GetColFloatData(col, subgp);
-  if(dt != NULL) return (float_RArray*)(dt->AR());
+  if(dt != NULL) return (float_Matrix*)(dt->AR());
   return NULL;
 }
 
-String_Array* DataTable::GetColStringArray(int col, int subgp) {
+String_Matrix* DataTable::GetColStringArray(int col, int subgp) {
   String_Data* dt = GetColStringData(col, subgp);
-  if(dt != NULL) return (String_Array*)(dt->AR());
+  if(dt != NULL) return (String_Matrix*)(dt->AR());
   return NULL;
 }
 
 float DataTable::GetFloatVal(int col, int row, int subgp) {
-  float_RArray* dt = GetColFloatArray(col, subgp);
-  if(dt != NULL) return dt->SafeEl(row);
+  float_Matrix* dt = GetColFloatArray(col, subgp);
+  if (dt != NULL) return dt->SafeEl(row);
   return 0.0f;
 }
 
@@ -1377,7 +1386,7 @@ String DataTable::GetValAsString(int col, int row, int subgp) {
 }
 
 String DataTable::GetStringVal(int col, int row, int subgp) {
-  String_Array* dt = GetColStringArray(col, subgp);
+  String_Matrix* dt = GetColStringArray(col, subgp);
   if(dt != NULL) return dt->SafeEl(row);
   return "";
 }
@@ -1503,9 +1512,12 @@ DataTable* DataTable::NewGroupString(const char* col_nm, int n) {
 }
 
 void DataTable::PutArrayToCol(const float_RArray& ar, int col, int subgp) {
-  float_RArray* far = GetColFloatArray(col, subgp);
-  far->CopyFrom((taBase*)&ar);
-}
+/*TODO
+  float_Matrix* far = GetColFloatArray(col, subgp);
+  if (far != NULL) {
+    far->CopyFrom((taBase*)&ar);
+  }*/
+} 
 
 void DataTable::PutArrayToRow(const float_RArray& tar, int row_num) {
   if(tar.size == 0)	return;
@@ -1514,7 +1526,7 @@ void DataTable::PutArrayToRow(const float_RArray& tar, int row_num) {
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     if(ar->InheritsFrom(TA_float_Data)) {
-      static_cast<float_RArray*>(ar->AR())->Set(row_num, tar.FastEl(cnt));
+      static_cast<float_Matrix*>(ar->AR())->Set(row_num, tar.FastEl(cnt));
     }
     cnt++;
     if(cnt >= tar.size)	break;
@@ -1529,13 +1541,14 @@ void DataTable::RemoveRow(int row_num) {
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     int act_row;
     if (idx(row_num, ar->AR()->size, act_row))
-      ar->AR()->Remove(act_row);
+      ar->AR()->RemoveFrame(act_row);
   }
   --rows;
   DataUpdate(false);
 }
 
-void DataTable::ShiftUp(int num_rows) {
+/*TODO void DataTable::ShiftUp(int num_rows) {
+
   if (num_rows >= rows) {
     ResetData();
     return;
@@ -1549,8 +1562,8 @@ void DataTable::ShiftUp(int num_rows) {
       ar->AR()->ShiftLeft(act_num_rows);
   }
   rows -= num_rows;
-  DataUpdate(false);
-}
+  DataUpdate(false); 
+}*/
 
 
 void DataTable::Reset() {
@@ -1636,19 +1649,19 @@ void DataTable::SetCols(LogData& ld) {
 }
 
 void DataTable::SetFloatVal(float val, int col, int row, int subgp) {
-  float_RArray* dt = GetColFloatArray(col, subgp);
+  float_Matrix* dt = GetColFloatArray(col, subgp);
   if ((dt != NULL) && (dt->InRange(row)))
     dt->FastEl(row) = val;
 }
 
 void DataTable::SetLastFloatVal(float val, int col, int subgp) {
-  float_RArray* dt = GetColFloatArray(col, subgp);
+  float_Matrix* dt = GetColFloatArray(col, subgp);
   if ((dt != NULL) && (dt->size > 0))
     dt->FastEl(dt->size - 1) = val;
 }
 
 void DataTable::SetLastStringVal(const char* val, int col, int subgp) {
-  String_Array* dt = GetColStringArray(col, subgp);
+  String_Matrix* dt = GetColStringArray(col, subgp);
   if ((dt != NULL) && (dt->size > 0))
     dt->FastEl(dt->size - 1) = val;
 }
@@ -1662,19 +1675,20 @@ void DataTable::SetSaveToFile(bool save_to_file) {
 }
 
 void DataTable::SetStringVal(const char* val, int col, int row, int subgp) {
-  String_Array* dt = GetColStringArray(col, subgp);
+  String_Matrix* dt = GetColStringArray(col, subgp);
   if ((dt != NULL) && (dt->InRange(row)))
     dt->FastEl(row) = val;
 }
 
 void DataTable::UpdateAllRanges() {
+/*TODO
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     if(ar->InheritsFrom(TA_float_Data)) {
-      ((float_RArray*)ar->AR())->UpdateAllRange();
+      ((float_Matrix*)ar->AR())->UpdateAllRange();
     }
-  }
+  } */
 }
 
 
@@ -1691,7 +1705,9 @@ float float_Data::GetValAsFloat(int row) {
 }
 
 String float_Data::GetValAsString(int row) {
-  return ar.SafeElAsStr(row);
+  const void* el = ar.SafeEl_(row);
+  if (el != NULL) return ar.El_GetStr_(el);
+  else return _nilString;
 }
 
 DataArray_impl::ValType float_Data::valType()  {
@@ -1739,6 +1755,36 @@ int String_Data::maxColWidth() {
 String String_Data::GetValAsString(int row) {
   return ar.SafeEl(row);
 }
+
+
+//////////////////////////
+// 	Matrix_Data	//
+//////////////////////////
+
+void MatrixData_impl::Initialize() {
+  val_geom.EnforceSize(1); // minimum 1 scalar value
+}
+
+void MatrixData_impl::UpdateAfterEdit() {
+  taMatrix_impl* ar = AR(); // cache
+  // note: we just do an update on the 
+  int_Array mat_dims;
+  mat_dims.EnforceSize(val_geom.size + 1);
+  for (int i = 0; i < val_geom.size; ++i) 
+    mat_dims.Set(i, val_geom[i]);
+  //note: we have to get current size from DataTable, otherwise any UAE would wipe out the data
+  int rows = 0;
+  DataTable* dt = GET_MY_OWNER(DataTable);
+  if (dt != NULL) 
+    rows = dt->rows;
+    
+  rows = MIN(rows, ar->frames()); // matrix could have fewer rows than table
+  mat_dims.Set(val_geom.size, rows); //note: if 0, then data remains to be allocated
+  ar->SetGeomN(mat_dims);
+  
+  inherited::UpdateAfterEdit(); 
+}
+
 
 //////////////////////////
 // 	ClustNode	//
@@ -1911,13 +1957,13 @@ void ClustNode::GraphData(DataTable* dt) {
   dt->AddColDispOpt("STRING_COORDS=1", 2); // use y values
   GraphData_impl(dt);
   dt->UpdateAllRanges();
-
-  float_RArray* xar = dt->GetColFloatArray(0);
+/*TODO: ranges
+  float_Matrix* xar = dt->GetColFloatArray(0);
   dt->AddColDispOpt(String("MAX=") + String(xar->range.max * 1.15f), 0); // adds extra room for labels
 
-  float_RArray* yar = dt->GetColFloatArray(1);
+  float_Matrix* yar = dt->GetColFloatArray(1);
   dt->AddColDispOpt(String("MAX=") + String(yar->range.max + .3f), 1); // adds extra room for labels
-  dt->AddColDispOpt("MIN=0.2", 1);
+  dt->AddColDispOpt("MIN=0.2", 1); */
 }
 
 void ClustNode::GraphData_impl(DataTable* dt) {

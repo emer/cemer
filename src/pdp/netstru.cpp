@@ -6052,7 +6052,7 @@ void LayerRWBase::UnSetLayer() {
 //////////////////////
 
 void LayerWriter::Initialize() {
-  data_type = &TA_float;
+  matrix_type = &TA_float_Matrix; //note: default, but set to be safe
   ext_flags = DEFAULT;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
@@ -6178,7 +6178,7 @@ void LayerWriter::ApplyData_Flat(const float_Matrix& data, int act_ext_flags) {
       un = ug->FindUnitFmCoord(u_x, u_y);
       if (un == NULL) goto break1;
       // if we've run out of data for this row, no sense continuing, go to next row
-      if (!(data.IndexInRange2(d_x, d_y))) 
+      if (!(data.InRange2(d_x, d_y))) 
         break; 
       val = data.FastEl2(d_x, d_y);
       ApplyValue(un, val, act_ext_flags);
@@ -6344,7 +6344,7 @@ void LayerWriter::UpdatePattern(Event*, Pattern* pat) {
 //////////////////////
 
 void LayerReader::Initialize() {
-  data_type = &TA_float;
+  matrix_type = &TA_float_Matrix; //note: default, but set to be safe
 }
 
 void LayerReader::Destroy() {
@@ -6542,6 +6542,15 @@ void NetConduit::DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handle
 void NetConduit::DoConsumeData(SinkChannel* ch, bool& handled) {
 }
 
+DataSet* NetConduit::CreateDataSet() {
+  DataSet* rval = NULL;
+  Project* proj = GET_MY_OWNER(Project);
+  if (proj == NULL) return rval;
+  
+  rval = (DataSet*)proj->data.New(1);
+  rval->InitFromConduit(this);
+  return rval;
+}
 
 void NetConduit::InitFromNetwork(Network* net) {
   if (net == NULL)

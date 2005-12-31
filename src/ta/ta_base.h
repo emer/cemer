@@ -1046,7 +1046,8 @@ public:
   void 	Initialize()	{ }
   void 	Destroy()	{ CutLinks(); }
   void	CutLinks();
-  void	Copy(const taArray_base& cp) {taOBase::Copy(cp); taArray_impl::Copy_Duplicate(cp);}
+  virtual void	Copy(const taArray_base& cp) {taOBase::Copy(cp); taArray_impl::Copy_Duplicate(cp);}
+    //WARNING: Copy_Duplicate is not a true copy, but we retain the behavior for compatibility, except Matrix_Array
   TA_ABSTRACT_BASEFUNS(taArray_base);
 };
 
@@ -1136,7 +1137,7 @@ protected:
   uint		El_SizeOf_() const		{ return sizeof(T); }
   const void*	El_GetErr_() const		{ return (void*)&err; }
   void*		El_GetTmp_() const		{ return (void*)&tmp; }
-  String	El_GetStr_(const void* it) const { return String(*((T*)it)); }
+  String	El_GetStr_(const void* it) const { return (*((T*)it)); }
   void		El_SetFmStr_(void* it, const String& val)
   { T tmp = (T)val; *((T*)it) = tmp; }
 
@@ -1165,7 +1166,7 @@ public:
   // fill array with sequential values starting at start, incrementing by inc
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_int; return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ }; //
   //note: Register() is not necessary for arrays, so we omit in these convenience constructors
@@ -1184,7 +1185,7 @@ class float_Array : public taArray<float> {
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_float; return FastEl_(i); }
   void Initialize()	{err = 0.0f; };
   void Destroy()	{ };
   TA_BASEFUNS(float_Array);
@@ -1196,7 +1197,7 @@ class double_Array : public taArray<double> {
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_double; return FastEl_(i); }
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
   TA_BASEFUNS(double_Array);
@@ -1208,7 +1209,7 @@ class String_Array : public taArray<String> {
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_taString; return FastEl_(i); }
   void Initialize()	{ };
   void Destroy()	{ };
   TA_BASEFUNS(String_Array);
@@ -1240,7 +1241,7 @@ public:
   // fill array with sequential values starting at start, incrementing by inc
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_long; return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(long_Array);
@@ -1254,7 +1255,7 @@ public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = StatTypeDef(0); return FastEl_(i); }
+  { eltd = &TA_voidptr; return FastEl_(i); }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(voidptr_Array);

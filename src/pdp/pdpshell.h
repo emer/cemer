@@ -22,7 +22,7 @@
 
 #include "netstru.h"
 #include "enviro.h"
-#include "event.h"
+#include "netdata.h"
 #include "procs_extra.h"
 #include "pdplog.h"
 
@@ -222,7 +222,8 @@ public:
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units
-  NetConduit_MGroup	conduits;	// Network input and output
+  NetConduit_MGroup	conduits;	// NetConduits for network input and output
+  DataSet_MGroup	data;		// Internal data patterns for network input and output
   Environment_MGroup	environments;	// Environments of patterns to present to networks //TODO: legacy, make hidden
   Process_MGroup	processes;	// Processes to coordinate training/testing, etc
   PDPLog_MGroup		logs;		// Logs to display statistics in processes

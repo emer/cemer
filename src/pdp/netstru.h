@@ -1545,6 +1545,7 @@ public:
   // #BUTTON #NULL_OK creates readers/writers according to current state of net -- deletes existing readers/writers
   virtual void 		InitFromLayer(Layer* lay);
   // #BUTTON creates readers/writers according to current state of lay
+  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project
 
   virtual void		SetNetwork(Network* net); // bind to given network
   

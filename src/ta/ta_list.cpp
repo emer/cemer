@@ -1035,13 +1035,26 @@ void taArray_impl::AddBlank(int n_els) {
   EnforceSize(size + n_els);
 }
 
-void taArray_impl::EnforceSize(int sz) {
-  if (size < sz) {
-    Alloc(sz);
+void taArray_impl::Copy_(const taArray_impl& cp) {
+  if (cp.size < size) ReclaimOrphans_(cp.size, size - 1);
+  else if (cp.size > alloc_size) Alloc(cp.size);
+  
+  for (int i=0; i < cp.size; ++i) {
+    El_Copy_(FastEl_(i), cp.FastEl_(i));
+  }
+  size = cp.size;
+}
+
+void taArray_impl::EnforceSize(int new_size) {
+  if (new_size > size) {
+    Alloc(new_size);
     Clear_Tmp_();
-    Insert_(El_GetTmp_(), size, sz - size);
-  } else if (size > sz)
-    size = sz;			// that's easy!
+    Insert_(El_GetTmp_(), size, new_size - size);
+  } else if (new_size < size)  {
+    ReclaimOrphans_(new_size, size - 1);
+  }
+  
+  size = new_size;
 }
 
 int taArray_impl::Find_(const void* it, int where) const {

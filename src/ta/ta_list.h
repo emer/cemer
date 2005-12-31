@@ -498,7 +498,7 @@ public:
 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
   virtual void		Alloc(int n); // allocate storage for at least the given size
-  virtual void		Reset()			{ size = 0; };
+  virtual void		Reset()			{ EnforceSize(0); };
   // reset the list to zero size (does not free memory)
   ////////////////////////////////////////////////
   // 	internal functions that depend on type	//
@@ -580,6 +580,9 @@ protected:
 
   virtual void*		MakeArray_(int i) const	{ return NULL; } // #IGNORE make a new array of item type
   virtual void		SetArray_(void* nw) {}
+  virtual void		ReclaimOrphans_(int start, int end) {}// #IGNORE called when array is shortened, leaving orphaned values; note 'size' may already be trimmed: NOT called when el[] is replaced
+  virtual void		Copy_(const taArray_impl& cp);
+  // replace our array with the source items -- note: added in 4.0 for new uses, ex. in Matrix_Array
 };
 
 

@@ -44,6 +44,14 @@ DataConnector* DataConnector::StatConnect(SourceChannel* src_ch, SinkChannel* sn
   return rval;
 }
 
+void DataConnector::StatDisconnect(SourceChannel* src_ch, SinkChannel* snk_ch) {
+  if ((src_ch == NULL) || (snk_ch == NULL)) return;
+  
+  src_ch->connectors.Remove(snk_ch->m_connector);
+  snk_ch->m_connector = NULL;
+}
+
+
 void DataConnector::Initialize() {
   m_source_channel = NULL;
   m_sink_channel = NULL;
@@ -69,7 +77,10 @@ TAPtr DataConnector::SetOwner(TAPtr own) {
 void DataConnector::SinkChannelDisconnecting(SinkChannel* snk_ch) {
   if (m_sink_channel != snk_ch) return;
   m_sink_channel = NULL;
+  snk_ch->m_connector = NULL;
   //TODO: maybe should delete ourself???
+  delete this;
+  //NOTE: do not put any additional code after this point!
 }
 
 
@@ -93,7 +104,7 @@ void DataChannel::Initialize() {
   txfer_modes_allowed = DTM_BOTH;
   txfer_mode = DTM_PUSH;
   m_cached_cycle = 0;
-  data_type = &TA_float; // the most common is the default; replace if different
+  matrix_type = &TA_float_Matrix; // the most common is the default; replace if different
 }
 
 void DataChannel::Destroy() {
@@ -117,6 +128,7 @@ void DataChannel::Copy_(const DataChannel& cp) {
   txfer_modes_allowed = cp.txfer_modes_allowed;
   txfer_mode = cp.txfer_mode;
   m_cached_cycle = 0;
+  matrix_type = cp.matrix_type;
 }
 
 void DataChannel::ClearCachedData() {
@@ -185,8 +197,8 @@ bool DataChannel::ValidateData(taMatrix_impl* data) {
   }
   
   // check has correct type
-  TypeDef* td = data->data_type();
-  if ((td == NULL) || (!td->InheritsFrom(td))) {
+  TypeDef* td = data->GetTypeDef();
+  if ((td == NULL) || (!td->InheritsFrom(matrix_type))) {
     taMisc::Warning(this->GetPath(), "data is wrong data type");
     return false;
   }
@@ -226,6 +238,11 @@ void SourceChannel::InitLinks() {
 void SourceChannel::CutLinks() {
   connectors.CutLinks();
   inherited::CutLinks();
+}
+
+void SourceChannel::Copy_(const SourceChannel& cp) {
+  //TODO: maybe we should try to copy the connections, but maybe it doesn't make sense...
+  connectors.Reset();
 }
 
 void SourceChannel::ConnectorDisconnecting(DataConnector* dc) {
@@ -269,6 +286,15 @@ TAPtr SourceChannel::SetOwner(taBase* own) {
 }
 
 
+//////////////////////////
+//  SourceChannel_Group	//
+//////////////////////////
+
+void SourceChannel_Group::Initialize() {
+  SetBaseType(&TA_SourceChannel);
+}
+
+
 /////////////////////////
 //  SinkChannel        //
 /////////////////////////
@@ -284,6 +310,22 @@ void SinkChannel::Destroy() {
     m_connector = NULL;
   }
   m_data_sink = NULL;
+}
+
+void SinkChannel::InitLinks() {
+  inherited::InitLinks();
+}
+
+void SinkChannel::CutLinks() {
+  inherited::CutLinks();
+}
+
+void SinkChannel::Copy_(const SinkChannel& cp) {
+  //TODO: maybe we should try to copy the connection, but maybe it doesn't make sense...
+  if (m_connector != NULL) {
+    m_connector->SinkChannelDisconnecting(this);
+    m_connector = NULL;
+  }
 }
 
 void SinkChannel::ConnectorDisconnecting(DataConnector* dc) {
@@ -316,6 +358,15 @@ TAPtr SinkChannel::SetOwner(taBase* own) {
     m_data_sink = dynamic_cast<IDataSink*>(ods);
   }
   return rval;
+}
+
+
+//////////////////////////
+//  SinkChannel_Group	//
+//////////////////////////
+
+void SinkChannel_Group::Initialize() {
+  SetBaseType(&TA_SinkChannel);
 }
 
 

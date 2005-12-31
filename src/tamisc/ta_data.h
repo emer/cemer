@@ -24,6 +24,7 @@
 
 #include "ta_matrix.h"
 #include "ta_base.h"
+#include "ta_group.h"
 
 #include "ta_data_defs.h"
 
@@ -45,6 +46,7 @@ typedef taNBase inherited;
 public:  
   static bool		CanConnect(SourceChannel* src_ch, SinkChannel* snk_ch);
   static DataConnector*	StatConnect(SourceChannel* src_ch, SinkChannel* snk_ch);
+  static void		StatDisconnect(SourceChannel* src_ch, SinkChannel* snk_ch);
   
   SourceChannel* 	source_channel() {return m_source_channel;} 
   SinkChannel* 		sink_channel() {return m_sink_channel;}
@@ -95,7 +97,7 @@ public:
   DataTransferMode	txfer_modes_allowed; // #READ_ONLY #SHOW
   DataTransferMode	txfer_mode; // current txfer mode
   
-  TypeDef*		data_type; // #READ_ONLY #NO_SAVE type of data, ex TA_int, TA_float, etc., note: def is float
+  TypeDef*		matrix_type; // #NO_NULL #TYPE_taMatrix_impl type of matrix, ex float_Matrix, int_Matrix, etc., note: def is float
   
   virtual int		dims() {return geom.size;}
      // number of dimensions of data; N=0 for sink is "any"
@@ -126,7 +128,18 @@ private:
 };
 
 
-class SourceChannel: public DataChannel { // #VIRT_BASE #NO_INSTANCE a source of data
+class DataChannel_Group: public taGroup<DataChannel> { // common base for groups of channels
+INHERITED(taGroup<DataChannel>)
+public:
+  TA_BASEFUNS(DataChannel_Group); //
+  
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
+
+class SourceChannel: public DataChannel { // a source of data
 INHERITED(DataChannel)
 friend class IDataSource;
 friend class DataConnector;
@@ -143,7 +156,9 @@ public:
     
   void			InitLinks();
   void			CutLinks();
-  TA_ABSTRACT_BASEFUNS(SourceChannel); //
+  void			Copy_(const SourceChannel& cp);
+  COPY_FUNS(SourceChannel, DataChannel)
+  TA_BASEFUNS(SourceChannel); //
 
 public: // hidden
   IDataSource*		m_data_source; // #HIDDEN must be set by owner
@@ -160,7 +175,18 @@ private:
 };
 
 
-class SinkChannel: public DataChannel { // #VIRT_BASE #NO_INSTANCE a sink for data
+class SourceChannel_Group: public DataChannel_Group {
+INHERITED(DataChannel_Group)
+public:
+  TA_BASEFUNS(SourceChannel_Group); //
+  
+private:
+  void			Initialize();
+  void			Destroy() {}
+};
+
+
+class SinkChannel: public DataChannel { // a sink for data
 #ifndef __MAKETA__
 typedef DataChannel inherited;
 #endif
@@ -174,7 +200,11 @@ public:
     // sets current item after verifying; only used in Push mode
     
   override TAPtr	SetOwner(TAPtr own); // also sets data sink
-  TA_ABSTRACT_BASEFUNS(SinkChannel); //
+  void			InitLinks();
+  void			CutLinks();
+  void			Copy_(const SinkChannel& cp);
+  COPY_FUNS(SinkChannel, DataChannel)
+  TA_BASEFUNS(SinkChannel); //
   
 public: // hidden
   IDataSink*		m_data_sink; // #HIDDEN the DataSink that owns this channel
@@ -188,6 +218,17 @@ protected:
 private:
   void			Initialize();
   void			Destroy();
+};
+
+
+class SinkChannel_Group: public DataChannel_Group {
+INHERITED(DataChannel_Group)
+public:
+  TA_BASEFUNS(SinkChannel_Group); //
+  
+private:
+  void			Initialize();
+  void			Destroy() {}
 };
 
 

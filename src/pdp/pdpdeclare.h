@@ -52,6 +52,7 @@ class Network;
 class LayerReader;
 class LayerWriter;
 class NetConduit;
+class DataSet;
 
 class Project;
 class PDPRoot;

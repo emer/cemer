@@ -43,7 +43,7 @@ template class taList<SinkChannel>;
 // datatable.h:
 template class taList<DataItem>;
 template class taGroup<DataArray_impl>;
-template class DataArray<float_RArray>;
+template class DataArray<float_Matrix>;
 template class DataArray<DString_Array>;
 template class taGroup<DA_ViewSpec>; //
 

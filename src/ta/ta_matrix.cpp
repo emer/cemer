@@ -43,6 +43,14 @@ void taMatrix_impl::CutLinks() {
   geom.CutLinks();
 }
   
+void taMatrix_impl::Add_(const void* it) {
+  Check(canResize(), "resizing not allowed");
+  Check((dims() == 1), "Add() only allowed when dims=1");
+  int idx = frames();
+  EnforceFrames(idx + 1);
+  El_Copy_(FastEl_(idx), it);
+}
+
 void taMatrix_impl::AddFrames(int n) {
   Check(canResize(), "resizing not allowed");
   
@@ -91,6 +99,63 @@ void taMatrix_impl::Copy_(const taMatrix_impl& cp) {
       El_Copy_(FastEl_(i), cp.FastEl_(i));
     }
   }
+}
+
+void taMatrix_impl::List(ostream& strm) const {
+  strm << "["; 
+  for (int d = 0; d < dims(); ++d) {
+    if (d > 0) strm << ",";
+    strm << GetGeom(d);
+  }
+  strm << "] {";
+  int i;
+  for(i=0;i<size;i++) {
+    strm << " " << El_GetStr_(FastEl_(i)) << ",";
+  }
+  strm << "}";
+}
+
+ostream& taMatrix_impl::Output(ostream& strm, int indent) const {
+  taMisc::indent(strm, indent);
+  List(strm);
+  strm << ";\n";
+  return strm;
+}
+
+int taMatrix_impl::Dump_Save_Value(ostream& strm, TAPtr, int indent) {
+  geom.Dump_Save_Value(strm, this, indent); 
+  strm << "{ ";
+  int i;
+  for (i=0; i < size; ++i) {
+    strm << El_GetStr_(FastEl_(i)) << ";";
+  }
+  return true;
+}
+
+int taMatrix_impl::Dump_Load_Value(istream& strm, TAPtr) {
+  geom.Dump_Load_Value(strm, this); 
+  UpdateGeom(); // also allocates space
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)    return EOF;
+  if(c == ';') // just a path
+    return 2;  // signal that just a path was loaded..
+
+  if(c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  c = taMisc::read_till_rb_or_semi(strm);
+  int cnt = 0;
+  while ((c == ';') && (c != EOF)) {
+    if (cnt > size)  {
+      taMisc::Error("Too many items encountered for Matrix:",GetTypeDef()->name,"\n");
+      return false;
+    }
+    El_SetFmStr_(FastEl_(cnt++), taMisc::LexBuf);
+    c = taMisc::read_till_rb_or_semi(strm);
+  }
+  if (c==EOF)	return EOF;
+  return true;
 }
 
 void taMatrix_impl::EnforceFrames(int n) {
@@ -186,20 +251,20 @@ int taMatrix_impl::frameSize() const {
   return rval;
 }
 
-bool taMatrix_impl::IndexInRange(int d0) const {
+bool taMatrix_impl::InRange(int d0) const {
   return (geom.size >= 1)
     && ((d0 >= 0) && (d0 < geom[0]))
     ;
 }
  
-bool taMatrix_impl::IndexInRange2(int d0, int d1) const {
+bool taMatrix_impl::InRange2(int d0, int d1) const {
   return (geom.size >= 2)
     && ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
     ;
 }
  
-bool taMatrix_impl::IndexInRange3(int d0, int d1, int d2) const {
+bool taMatrix_impl::InRange3(int d0, int d1, int d2) const {
   return (geom.size >= 3)
     && ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
@@ -207,7 +272,7 @@ bool taMatrix_impl::IndexInRange3(int d0, int d1, int d2) const {
     ;
 }
  
-bool taMatrix_impl::IndexInRange4(int d0, int d1, int d2, int d3) const {
+bool taMatrix_impl::InRange4(int d0, int d1, int d2, int d3) const {
   return (geom.size >= 4)
     && ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
@@ -216,7 +281,7 @@ bool taMatrix_impl::IndexInRange4(int d0, int d1, int d2, int d3) const {
     ;
 }
  
-bool taMatrix_impl::IndexInRangeN(const int_Array& indices) const {
+bool taMatrix_impl::InRangeN(const int_Array& indices) const {
   if (indices.size < geom.size) return false;
   for (int i = 0; i < indices.size; ++i) {
     int di = indices[i];
@@ -225,6 +290,22 @@ bool taMatrix_impl::IndexInRangeN(const int_Array& indices) const {
   return true;
 }
  
+void taMatrix_impl::RemoveFrame(int n) {
+  int frames_ = frames(); // cache
+  Check(((n >= 0) && (n < frames_)), "frame number out of bounds");
+  // check if we have to copy data
+  if (n != (frames_ - 1)) {
+    int fm = n * frameSize();
+    int to = fm - frameSize();
+    while (fm < size) {
+      El_Copy_(FastEl_(to), FastEl_(fm));
+      ++fm;
+      ++to;
+    }
+  }
+  EnforceFrames(frames_ - 1); // this properly resizes, and reclaims orphans
+}
+
 int taMatrix_impl::SafeElIndex(int d0) const {
   Check((geom.size >= 1), "matrix geometry has not been initialized");
   Check(((d0 >= 0) && (d0 < geom[0])), 
@@ -345,5 +426,9 @@ void taMatrix_impl::UpdateGeom() {
     EnforceFrames(geom[dims_-1]); // does nothing if outer dim==0
   }
 }
+
+//////////////////////////
+//   taMatrix_Group	//
+//////////////////////////
 
 

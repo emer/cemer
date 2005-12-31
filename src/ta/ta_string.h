@@ -171,6 +171,8 @@ public:
   String&		convert(float f, const char* format = "%g");
   String&		convert(double f, const char* format = "%lg");
 
+  int 			HexToInt() const { return strtol(chars(), NULL, 16); }
+  
   String&		operator=(const String& y) {setRep(y.mrep); return *this;}
   String&		operator=(const char* s) {return set(s, -1);}
   String&		operator=(char c) {if (c == '\0') 

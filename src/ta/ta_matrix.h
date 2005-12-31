@@ -23,14 +23,15 @@
 #include "ta_stdef.h"
 
 #include "ta_base.h"
+#include "ta_group.h"
 #include "ta_TA_type.h"
 
 // externals
 class TypeDef;
 
 // forwards this file
-class byte_Matrix;
-class float_Matrix;
+class byte_Matrix; //
+class float_Matrix; //
 
 /* Matrix -- a specialized, richer implementation of Array
 
@@ -63,8 +64,8 @@ class float_Matrix;
 */
 
 
-class taMatrix_impl: public taBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
-INHERITED(taBase)
+class taMatrix_impl: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
+INHERITED(taOBase)
 public:
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
   int_Array		geom; // #SHOW #READ_ONLY dimensions array
@@ -79,15 +80,17 @@ public:
   bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
   
   
-  void			AddFrames(int n); // add n new blank frames
-  void			AllocFrames(int n); // make sure space exists for n frames
-  void			EnforceFrames(int n); // set size to n frames, blanking new elements if added
+  virtual void		AddFrames(int n); // add n new blank frames
+  virtual void		AllocFrames(int n); // make sure space exists for n frames
+  virtual void		EnforceFrames(int n); // set size to n frames, blanking new elements if added
+  virtual void		RemoveFrame(int n); // remove the given frame, copying data backwards if needed
+  virtual void		Reset() {EnforceFrames(0);}
   
-  bool			IndexInRange(int d0) const; // 'true' if >= 1-d and index in range
-  bool			IndexInRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
-  bool			IndexInRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
-  bool			IndexInRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
-  bool			IndexInRangeN(const int_Array& indices) const;  // 'true' if >= indices-d and indices in range
+  bool			InRange(int d0) const; // 'true' if >= 1-d and index in range
+  bool			InRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
+  bool			InRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
+  bool			InRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
+  bool			InRangeN(const int_Array& indices) const;  // 'true' if >= indices-d and indices in range
   
   void			SetGeom(int d0)  
     {int d[1]; d[0]=d0; SetGeom_(1, d);} // set geom for 1-d array
@@ -100,16 +103,27 @@ public:
   void			SetGeomN(const int_Array& geom_) 
     {SetGeom_(geom_.size, geom_.el);} // set geom for any sized array
   
+  virtual void 		List(ostream& strm=cout) const; 	// List the items
+  
+  ostream& 		Output(ostream& strm, int indent = 0) const;
+  ostream& 		OutputR(ostream& strm, int indent = 0) const
+    { return Output(strm, indent); }
+  int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			InitLinks();
   void			CutLinks();
   void			UpdateAfterEdit(); // esp important to call after changing geom -- note that geom gets fixed if invalid
   void			Copy_(const taMatrix_impl& cp);
-  COPY_FUNS(taMatrix_impl, taBase);
+  COPY_FUNS(taMatrix_impl, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix_impl) //
 public: // don't use these, internal use only
   virtual void*		data() const = 0;  // #IGNORE
-  virtual void*		FastEl_(int i) = 0;   // #IGNORE
+  virtual void*		FastEl_(int i) = 0;   // #IGNORE the raw element in the flat space
   virtual const void*	FastEl_(int i) const = 0;   // #IGNORE
+  virtual const void*	SafeEl_(int i) const 
+    {if ((i > 0) && (i < size)) return FastEl_(i); else return NULL;}   // #IGNORE raw element in flat space, else NULL
+  virtual String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
+  virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
  
 protected:
   int			alloc_size; // -1 means fixed (external data)
@@ -135,6 +149,7 @@ protected:
   virtual void		SetArray_(void* nw) = 0;
   virtual void		ReclaimOrphans_(int from, int to) {} // called when elements can be reclaimed, ex. for strings
   
+  virtual void		Add_(const void* it); // compatibility function -- only valid if dims=1
   virtual bool		El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
   virtual const void*	El_GetBlank_() const = 0;
@@ -146,7 +161,7 @@ protected:
   virtual uint		El_SizeOf_() const = 0;
   // #IGNORE size of element
   
-  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  inline bool		InRange_Flat(int idx) const {return ((idx >= 0) && (idx < size));}
     // checks if in actual range
   
   virtual void		SetFixedData_(void* el_, const int_Array& geom_); // initialize fixed data
@@ -156,6 +171,17 @@ protected:
 private:
   void 			Initialize();
   void			Destroy();
+};
+
+
+class taMatrix_Group: public taGroup<taMatrix_impl> { // group that can hold matrix items -- typically used for dataset elements
+INHERITED(taGroup<taMatrix_impl>)
+public:
+
+  TA_BASEFUNS(taMatrix_Group);
+private:
+  void		Initialize() {SetBaseType(&TA_taMatrix_impl);}
+  void		Destroy() {}
 };
 
 
@@ -222,6 +248,9 @@ public:
     {  el[SafeElIndexN(indices)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
   
+  // compatibility functions, for when dims=1
+  void			Add(const T& item) {Add_(&item);}  // only valid when dims=1
+
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrix, T)
 public:
   override void*	FastEl_(int i)	{ return &(el[i]); } 
@@ -240,7 +269,7 @@ private: //note: forbid these for now -- if needed, define semantics
 };
 
 
-class taMatrixPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts
+class taMatrixPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
 public:
   taMatrix_impl*	ptr() {return m_ptr;} //note: strong types define strongly typed version
   const taMatrix_impl*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
@@ -249,12 +278,17 @@ public:
   ~taMatrixPtr_impl() {set(NULL);} //
   
   taMatrix_impl* operator->() const {return m_ptr;} 
-  operator taMatrix_impl*() const {return m_ptr;}
+  operator taMatrix_impl*() const {return m_ptr;} //
   
   // WARNING: these permit incorrect assignments to strongly typed pointers, use with caution
-  taMatrixPtr_impl(taMatrixPtr_impl& src) {m_ptr = NULL; set(src.m_ptr);} 
+  taMatrixPtr_impl(const taMatrixPtr_impl& src) {m_ptr = NULL; set(src.m_ptr);} 
   taMatrix_impl* operator=(taMatrixPtr_impl& src) {set(src.m_ptr); return m_ptr;} 
-  taMatrix_impl* operator=(taMatrix_impl* src) {set(src); return m_ptr;} 
+  taMatrix_impl* operator=(taMatrix_impl* src) {set(src); return m_ptr;}  //
+  
+  // WARNING: these are bogus operators required to enable creating an array of items (legacy issue)
+  operator taString() const {return _nilString;}
+  explicit taMatrixPtr_impl(const String& ignored) {m_ptr = NULL;}
+  
 protected:
   taMatrix_impl*	m_ptr;
   void		set(taMatrix_impl* src) {taBase::SetPointer((taBase**)(&m_ptr), src);} //
@@ -287,6 +321,12 @@ inline bool operator !=(const taMatrix_impl* a, const taMatrixPtr_impl& b)
   {return (a != b.ptr());}
 
 
+// bogus operators
+inline bool operator <(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+  {return false;} 
+inline bool operator >(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+  {return false;} 
+
 // macro for creating smart ptrs of taMatrix classes
 #define taMatrixPtr_Of(T)  class T ## Ptr: public taMatrixPtr_impl { \
 public: \
@@ -296,7 +336,7 @@ public: \
   T* operator=(T ## Ptr& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
   T* operator=(T* src) {set(src); return (T*)m_ptr;} \
   T ## Ptr() {} \
-  T ## Ptr(T ## Ptr& src) {set((T*)src.m_ptr);} \
+  T ## Ptr(const T ## Ptr& src) {set((T*)src.m_ptr);} \
   T ## Ptr(T* src) {set(src);} \
 };
 
@@ -334,6 +374,11 @@ public:
   void			Copy_(const byte_Matrix& cp) {}
   COPY_FUNS(byte_Matrix, taMatrix<byte>)
   TA_MATRIX_FUNS(byte_Matrix, byte)
+  
+public: //
+  //note: for streaming, we convert to hex, rather than char
+  override String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -349,6 +394,10 @@ public:
   void			Copy_(const float_Matrix& cp) {}
   COPY_FUNS(float_Matrix, taMatrix<float>)
   TA_MATRIX_FUNS(float_Matrix, float)
+  
+public:
+  override String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -356,6 +405,25 @@ private:
 
 taMatrixPtr_Of(float_Matrix)
 
+
+class String_Matrix: public taMatrix<String> { // #INSTANCE
+public:
+  override TypeDef*	data_type() const {return &TA_taString;} 
+  
+  void			Copy_(const String_Matrix& cp) {}
+  COPY_FUNS(String_Matrix, taMatrix<String>)
+  TA_MATRIX_FUNS(String_Matrix, String)
+  
+public:
+  override String	El_GetStr_(const void* it) const { return *((String*)it); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((String*)it) = str;}  // #IGNORE
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+taMatrixPtr_Of(String_Matrix)
+//
 
 
 

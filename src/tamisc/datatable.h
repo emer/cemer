@@ -19,6 +19,7 @@
 #define datatable_h
 
 #include "ta_group.h"
+#include "ta_matrix.h"
 #include "tdgeometry.h"
 #include "minmax.h"
 #include "aggregate.h"
@@ -34,6 +35,7 @@
 
 class float_Data;
 class String_Data; //
+class float_MatrixData; //
 class ClustNode;
 
 
@@ -321,7 +323,8 @@ public:
     VT_UNKNOWN,
     VT_STRING,
     VT_FLOAT,
-    VT_INT
+    VT_INT,
+    VT_BYTE
   };
 
   static void 		DecodeName(String nm, String& base_nm, ValType& vt, int& vec_col, int& col_cnt);
@@ -330,9 +333,10 @@ public:
 
   String		disp_opts;	// viewer default display options
   bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
-
+  
   virtual bool	is_float() {return false;} // these tests are done all the time
   virtual bool	is_string() {return false;}// these tests are done all the time
+  virtual bool	is_matrix() {return false;}// 'true' if the cell is a matrix, not a scalar
 
   int		displayWidth(); // low level display width, in tabs (8 chars/tab), taken from spec
   virtual int	maxColWidth() {return 0;} // aprox max number of columns, in characters
@@ -345,7 +349,7 @@ public:
   virtual float 	GetValAsFloat(int row) {return 0.0f;} // overridden in subclasses
   virtual int	 	GetValAsInt(int row) {return 0;} // overridden in subclasses
 
-  virtual taArray_base* 	AR()	{ return NULL; } // the array pointer
+  virtual taMatrix_impl* 	AR()	{ return NULL; } // the matrix pointer
 /*  virtual void	NewAR() { };
   // #MENU #MENU_ON_Object create an array for yourself
   virtual void	SetAR(taArray_base*) { };	// set AR to existing array
@@ -355,11 +359,13 @@ public:
   String 	DispOptionAfter(const char* opt);
   void		AddDispOption(const char* opt);
 
-  void	Initialize();
-  void	Destroy()	{ };
+  void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void 	Copy_(const DataArray_impl& cp);
   COPY_FUNS(DataArray_impl, taNBase);
   TA_ABSTRACT_BASEFUNS(DataArray_impl);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 /*
@@ -386,7 +392,8 @@ public:
   static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
 
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
-
+  bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
+  
   bool		idx(int row_num, int col_size, int& act_idx)
     {act_idx = col_size - (rows - row_num); return act_idx >= 0;} // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
   override void	Reset();
@@ -394,7 +401,7 @@ public:
   // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
   virtual void	RemoveRow(int row_num);
   // #MENU Remove an entire row of data
-  virtual void	ShiftUp(int num_rows);
+//TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
   virtual void	AddRow(LogData& ld); // add a row from the given log data
   virtual void	AddBlankRow();
@@ -436,9 +443,9 @@ public:
   virtual String_Data* GetColStringData(int col, int subgp=-1);
   // get string data for given column (if subgp >= 0, column is in given subgroup)
 
-  virtual float_RArray* GetColFloatArray(int col, int subgp=-1);
+  virtual float_Matrix* GetColFloatArray(int col, int subgp=-1);
   // get float_RArray for given column (if subgp >= 0, column is in given subgroup)
-  virtual String_Array* GetColStringArray(int col, int subgp=-1);
+  virtual String_Matrix* GetColStringArray(int col, int subgp=-1);
   // get string data for given column (if subgp >= 0, column is in given subgroup)
 
   virtual void	PutArrayToCol(const float_RArray& ar, int col, int subgp=-1);
@@ -490,14 +497,11 @@ private:
 
 };
 
-template<class T> class DataArray : public DataArray_impl {
+template<class T> 
+class DataArray : public DataArray_impl { // compatibility template for scalar data
 public:
-  override taArray_base* 	AR()	{ return &ar; } // the array pointer
+  override taMatrix_impl* 	AR()	{ return &ar; } // the array pointer
 
-  void	Initialize()		{}
-  void	Destroy()		{ CutLinks(); }
-  void	InitLinks()
-    {DataArray_impl::InitLinks(); taBase::Own(ar, this); }
   void	CutLinks()
     {ar.CutLinks(); DataArray_impl::CutLinks();}
   void	Copy_(const DataArray<T>& cp)  {ar = cp.ar;}
@@ -505,11 +509,14 @@ public:
   TA_TMPLT_BASEFUNS(DataArray, T); //
 public: //DO NOT ACCESS DIRECTLY
   T		ar;		// #NO_SAVE #SHOW #BROWSE the array itself
-
+private:
+  void	Initialize()		{ar.SetGeom(0);}
+  void	Destroy()		{ CutLinks(); }
 };
 
-class float_Data : public DataArray<float_RArray> {
+class float_Data : public DataArray<float_Matrix> {
   // #NO_UPDATE_AFTER floating point data
+INHERITED(DataArray<float_Matrix>)
 friend class DataTable;
 public:
   override bool	is_float() {return true;} // these tests are done all the time
@@ -526,18 +533,16 @@ protected:
   ValType		m_valType; //note: set when accessed type
 };
 
-class DString_Array : public String_Array {
-#ifndef __MAKETA__
-typedef String_Array inherited;
-#endif
+class DString_Array : public String_Matrix {
+INHERITED(String_Matrix)
 friend class String_Data;
 public:
   override void		Add_(void* it); // #IGNORE
   override void		Reset();
-  void	Initialize()	{m_maxColWidth = 0;}
+  void	Initialize()	{SetGeom(0); m_maxColWidth = 0;}
   void	Destroy()	{ }
   void	Copy_(const DString_Array& cp) {m_maxColWidth = cp.m_maxColWidth;}
-  COPY_FUNS(DString_Array, String_Array);
+  COPY_FUNS(DString_Array, String_Matrix);
   TA_BASEFUNS(DString_Array);
 protected:
   int		m_maxColWidth; // note: only aprox, and can be too large if lines deleted
@@ -545,9 +550,7 @@ protected:
 
 class String_Data : public DataArray<DString_Array> {
   // #NO_UPDATE_AFTER string data
-#ifndef __MAKETA__
-typedef DataArray<String_Array> inherited;
-#endif
+INHERITED(DataArray<DString_Array>)
 public:
   override bool		is_string() {return true;}// these tests are done all the time
   override int		maxColWidth(); // note: aprox, esp if items get deleted
@@ -556,6 +559,49 @@ public:
   void	Destroy()	{}
   TA_BASEFUNS(String_Data);
 };
+
+
+class MatrixData_impl : public DataArray_impl {
+  // #VIRT_BASE matrix data, all of same type and geometry
+INHERITED(DataArray_impl)
+friend class DataTable;
+public:
+  int_Array		val_geom; // the geom of each cell
+  
+  override bool		is_matrix() {return true;}// 'true' if the cell is a matrix, not a scalar
+  override String 	GetValAsString(int row) {return String("[matrix]");} //TODO: prob redesign text viewer to enable viewing matrix cells
+
+  void	InitLinks() {DataArray_impl::InitLinks(); taBase::Own(val_geom, this);}
+  void	CutLinks()  {val_geom.CutLinks(); DataArray_impl::CutLinks();}
+  void	UpdateAfterEdit();
+  void	Copy_(const MatrixData_impl& cp) {val_geom = cp.val_geom;}
+  COPY_FUNS(MatrixData_impl, DataArray_impl);
+  TA_ABSTRACT_BASEFUNS(MatrixData_impl); //
+private:
+  void	Initialize();
+  void	Destroy()		{ CutLinks(); }
+};
+
+class float_MatrixData : public MatrixData_impl {
+  // #NO_UPDATE_AFTER floating point data
+INHERITED(MatrixData_impl)
+friend class DataTable;
+public:
+
+  override taMatrix_impl* 	AR()	{ return &ar; } // the array pointer
+  override ValType 	valType() {return VT_FLOAT;}
+
+  void CutLinks() {ar.CutLinks(); MatrixData_impl::CutLinks();}
+  TA_BASEFUNS(float_MatrixData);
+public:
+  float_Matrix		ar;  // #NO_SAVE #SHOW #BROWSE the matrix itself
+
+private:
+  void	Initialize();
+  void	Destroy()		{CutLinks();};
+};
+
+
 
 
 class ClustLink : public taBase {

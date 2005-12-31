@@ -738,6 +738,7 @@ void Project::InitLinks() {
   taBase::Own(specs, this);
   taBase::Own(networks, this);
   taBase::Own(conduits, this);
+  taBase::Own(data, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
   taBase::Own(logs, this);
@@ -784,6 +785,7 @@ void Project::CutLinks() {
   logs.CutLinks();
   processes.CutLinks();
   environments.CutLinks();
+  data.CutLinks();
   conduits.CutLinks();
   networks.CutLinks();
   specs.CutLinks();
@@ -797,6 +799,8 @@ void Project::Copy_(const Project& cp) {
   defaults = cp.defaults;
   specs = cp.specs;
   networks = cp.networks;
+  conduits = cp.conduits;
+  data = cp.data;
   environments = cp.environments;
   processes = cp.processes;
   logs = cp.logs;
