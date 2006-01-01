@@ -488,7 +488,7 @@ void LogView::View_FR() {
 // 	Analysis Routines 	//
 //////////////////////////////////
 
-void LogView::CopyToEnv(taBase* data, taBase* labels, Environment* env) {
+void LogView::CopyToEnv(taBase* data, taBase* labels, Environment* env) { /* TODO OBS
   if((data == NULL) || (labels == NULL)) return;
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("CopyToEnv: copying of single column of data not supported -- please select a group of data");
@@ -539,8 +539,8 @@ void LogView::CopyToEnv(taBase* data, taBase* labels, Environment* env) {
     Pattern* pat = (Pattern*)ev->patterns.FastEl(0);
     pat->value.Reset();
     tabl->AddRowToArray(pat->value, i);
-  }
-}
+  }*/
+} 
 
 void LogView::LogUpdateAfterEdit() {
   if (viewspec && (viewspec->leaves != log()->data.leaves))
@@ -995,10 +995,10 @@ void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
       tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
     }
 
-    taArray_base* ar = vs->data_array->AR();
+    taMatrix_impl* mat = vs->data_array->AR();
     int act_idx;
     //calculate the actual row index, for the case of a jagged data tables
-    if ((ar != NULL) && dt.idx(buff_idx, ar->size, act_idx)) {
+    if ((mat != NULL) && dt.idx(buff_idx, mat->frames(), act_idx)) {
       el = vs->ValAsString(act_idx);
     } else {
       el = "n/a";

@@ -428,7 +428,6 @@ void taMatrix_impl::UpdateGeom() {
 }
 
 //////////////////////////
-//   taMatrix_Group	//
+//   float_Matrix	//
 //////////////////////////
-
 

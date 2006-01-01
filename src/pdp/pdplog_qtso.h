@@ -104,7 +104,7 @@ public:
   // and then run the associated function on that environment
 
   virtual void 	CopyToEnv(taBase* data, taBase* labels, Environment* env);
-  // #MENU #MENU_ON_Analyze #FROM_GROUP_1_viewspec #NULL_OK output data (must be group) with labels to environment env (NULL = new env). WARNING: reformats env to fit data!)
+  // TODO:OBS #MENU #MENU_ON_Analyze #FROM_GROUP_1_viewspec #NULL_OK output data (must be group) with labels to environment env (NULL = new env). WARNING: reformats env to fit data!)
   virtual void	DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log, float_RArray::DistMetric metric=float_RArray::HAMMING,
 			   bool norm=false, float tol=0.0f);
   // #MENU #NULL_OK #FROM_GROUP_1_viewspec output to grid log (NULL=make new one) distance matrix for data (must be group) with labels

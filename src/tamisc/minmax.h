@@ -25,6 +25,10 @@
 
 double nicenum(double x, bool round);
 
+// externals
+class float_Matrix;
+
+
 class MinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values
 public:
@@ -65,6 +69,8 @@ public:
   void	UpdateRange(float it)
   { min = MIN(it, min);	max = MAX(it, max); }  // updates the range
 
+  void	SetRange(float_Matrix& mat); // set the range from a matrix
+  
   void	MaxLT(float it)		{ max = MIN(it, max); }
   // max less than (or equal)
 

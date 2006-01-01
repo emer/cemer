@@ -303,6 +303,7 @@ void GraphColSpec::GpSepAxes() {
 //////////////////////////
 
 iColor AxisSpec::m_def_color; // black, for x and z
+MinMax AxisSpec::temp_range;     // #IGNORE scratch pad
 
 void AxisSpec::Initialize() {
   graph_spec = NULL;
@@ -394,12 +395,13 @@ void AxisSpec::InitData() {
   // this routine without determining the effect -- this routine is not a general-purpose
   // initializer
 
-  if (spec && spec->data_array && spec->data_array->is_float()) {
-    float_Data* da = (float_Data*)spec->data_array;
-    InitRange(da->ar.range.min, da->ar.range.max);
-  } else {
-    InitRange(0.0f, 0.0f);
+  float_Data* da = NULL;
+  if ((spec != NULL) && (spec->data_array) && (spec->data_array->InheritsFrom(&TA_float_Data))) {
+    da = (float_Data*)spec->data_array;
   }
+  if (da != NULL)  temp_range.SetRange(da->ar);
+  else temp_range.Init(0.0f);
+  InitRange(temp_range.min, temp_range.max);
 
 
 //  graph = NULL;
@@ -497,8 +499,11 @@ bool XAxisSpec::InitUpdateAxis(bool init) {
   case COL_VALUE:
     if (spec->data_array->InheritsFrom(&TA_float_Data)) {
       float_Data* da = (float_Data*)spec->data_array;
-      first = da->ar.range.min;
-      last = da->ar.range.max;
+      if (da != NULL)  {
+        temp_range.SetRange(da->ar);
+        first = temp_range.min;
+        last = temp_range.max;
+      }
     }
     break;
   case ROW_NUM:
@@ -538,8 +543,11 @@ bool YAxisSpec::InitUpdateAxis(bool init) {
 
   if (!no_vertical && spec->data_array->InheritsFrom(&TA_float_Data)) { //note: should always be true
     float_Data* da = (float_Data*)spec->data_array;
-    first = da->ar.range.min;
-    last = da->ar.range.max;
+    if (da != NULL)  {
+      temp_range.SetRange(da->ar);
+      first = temp_range.min;
+      last = temp_range.max;
+    }
   }
   if (init) {
     InitRange(first, last);
@@ -570,8 +578,11 @@ bool ZAxisSpec::InitUpdateAxis(bool init) {
   case GraphSpec::THREED:
     if (spec->data_array->InheritsFrom(&TA_float_Data)) {
       float_Data* da = (float_Data*)spec->data_array;
-      first = da->ar.range.min;
-      last = da->ar.range.max;
+      if (da != NULL)  {
+        temp_range.SetRange(da->ar);
+        first = temp_range.min;
+        last = temp_range.max;
+      }
     }
     break;
   //NOTE; for TRACES, the n_traces needs to have been determined in spec

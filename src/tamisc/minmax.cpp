@@ -17,7 +17,8 @@
 
 // minmax.cc
 
-#include <minmax.h>
+#include "minmax.h"
+#include "ta_matrix.h"
 
 /* from xmgr, graphutils.c, copyright P. Turner
  * nicenum: find a "nice" number approximately equal to x
@@ -49,6 +50,16 @@ double nicenum(double x, bool round) {
     y = 10.;
   return y * pow(10.0, (double)exp);
 }
+
+void MinMax::SetRange(float_Matrix& mat) {
+  if (mat.size == 0) {
+    Init(0.0f);
+  } else {
+    Init(mat.el[0]);
+    for (int i = 1; i < mat.size; ++i)
+      UpdateRange(mat.el[i]);
+  }
+} 
 
 
 void FixedMinMax::Initialize() {

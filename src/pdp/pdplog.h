@@ -133,7 +133,7 @@ public:
   // #MENU #MENU_ON_Object #FROM_GROUP_log_proc remove given updating process
   virtual void	RemoveAllUpdaters(); 		// remove this from all process logs
   virtual void	SyncLogViewUpdaters(); 		// #IGNORE
-
+/*TODO: obs, replace
   // for processes communicating stuff to the log (and log acting on this)
   virtual void  NewData(LogData& ld, SchedProcess* sproc);
   // This is the primary call to make when sending data to the log
@@ -143,7 +143,7 @@ public:
   virtual void	DataToLogFile(LogData& ld);	// #IGNORE
   virtual void	HeadToBuffer(LogData& ld);	// #IGNORE
   virtual void	DataToBuffer(LogData& ld);	// #IGNORE
-
+*/
   // for reading log files from disk to buffer
   virtual int 	LogLineType(char* lnc);		// #IGNORE determine type of given line
   virtual int  	FileScanTo(istream& strm, int log_ln); // #IGNORE scan to log_ln no

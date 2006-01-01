@@ -322,7 +322,7 @@ void PDPLog::CloseFile() {
 //////////////////////////
 //	Headers 	//
 //////////////////////////
-
+/* obs
 void PDPLog::NewHead(LogData& ld, SchedProcess* sproc) {
   display_labels.EnforceSize(ld.items.size);
 
@@ -346,7 +346,7 @@ void PDPLog::NewHead(LogData& ld, SchedProcess* sproc) {
 #endif
   }
 }
-
+*/
 void PDPLog::UpdateViewHeaders() {
 #ifdef TA_GUI
   LogView* lv;
@@ -357,7 +357,7 @@ void PDPLog::UpdateViewHeaders() {
 #endif
 }
 
-void PDPLog::HeadToBuffer(LogData& ld) {
+/*obsvoid PDPLog::HeadToBuffer(LogData& ld) {
   data.StructUpdate(true);
   data.SetCols(ld);
   data.AllocRows(128); // avoid a lot of unnecessary data copying by starting w/ reasonable size
@@ -386,7 +386,7 @@ void PDPLog::HeadToLogFile(LogData& ld) { // this function is deprecated in favo
   }
   strm << "\n";
   strm.flush();
-}
+}*/
 
 DataItem* PDPLog::DataItemFromDataArray(DataArray_impl* da) {
   DataItem* it = new DataItem();
@@ -428,7 +428,7 @@ void PDPLog::LogDataFromBuffer() {
 //////////////////////////
 
 
-void PDPLog::NewData(LogData& ld, SchedProcess* sproc) {
+/*obs void PDPLog::NewData(LogData& ld, SchedProcess* sproc) {
   NewHead(ld, sproc);		// see if header info is new..
 
   // buffer always reflects latest contents (views can scroll within)
@@ -489,8 +489,8 @@ void PDPLog::DataToBuffer(LogData& ld) {
   }
   data.AddRow(ld);
   data.DataUpdate(false);
-}
-
+} */
+/* obs
 void PDPLog::DataToLogFile(LogData&) {
   if(!log_file->IsOpen() || (log_file->ostrm == NULL))
     return;
@@ -520,7 +520,7 @@ void PDPLog::DataToLogFile(LogData&) {
   strm << "\n";
   strm.flush();
   log_lines++;
-}
+} */
 
 void PDPLog::GetHeaders(bool keep_display_settings) {
   display_labels.Reset();	// these get re-generated from the viewspecs..
@@ -543,7 +543,7 @@ void PDPLog::GetHeaders(bool keep_display_settings) {
   SchedProcess* sproc;
   FOR_ITR_EL(SchedProcess, sproc, log_proc., i) {
     sproc->GenLogData();
-    NewHead(sproc->log_data, NULL); // this is a "fake" head, not from a log directly
+//OBS    NewHead(sproc->log_data, NULL); // this is a "fake" head, not from a log directly
     HeadToFile();
   }
 
@@ -698,7 +698,7 @@ void PDPLog::HeadFromLogFile(String& hdln) { // argument is mutable..
   }
   if(log_data.indexSize() != log_data.items.size)
     log_data.InitBlankData();
-  NewHead(log_data, NULL);
+//OBS  NewHead(log_data, NULL);
 }
 
 
@@ -720,7 +720,7 @@ void PDPLog::DataFromLogFile(String& dtln) {
     }
     dtln=dtln.after('\t');
   }
-  DataToBuffer(log_data);
+//OBS  DataToBuffer(log_data);
 }
 
 
@@ -819,21 +819,40 @@ void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
       strm << cur_proc->name;
     strm << "_D:\t";
     int from_end = max_lns - ln ;
+    String el;
     taLeafItr i;
     DataArray_impl* da;
     FOR_ITR_EL(DataArray_impl, da, data., i) {
       if(!da->save_to_file) continue;
-      String el;
-      taArray_base* ar = da->AR();
-      if((ar != NULL) && (ar->size > from_end) && (from_end >= 0))
-	el = ar->FastElAsStr(ar->size-1-from_end);
-      else
-	el = "n/a";
-
-      if(da->HasDispOption(" NARROW,"))
-	LogColumn(strm, el, 1);
-      else
-	LogColumn(strm, el, 2);
+      taMatrix_impl* ar = da->AR();
+      // if it is a matrix, we output as many cols of data as els, otherwise, just one el
+      // first, determine actual frame number for this col, and make sure in range
+      int act_frame;
+      if ((ar->frames() > from_end) && (from_end >= 0))
+        act_frame = ar->frames() - 1 - from_end;
+      else {
+        act_frame = -1;
+        el = "n/a";
+      }
+      // note: the following algorithm works for singleton columns, as well as matrix columns
+    
+      if (act_frame >= 0) {
+        int i = ar->BaseIndexOfFrame(act_frame);
+        int to_idx = i + ar->frameSize();
+        while (i < to_idx) {
+          el = ar->FastElAsStr_Flat(i);
+        if (da->HasDispOption(" NARROW,"))
+          LogColumn(strm, el, 1);
+        else
+          LogColumn(strm, el, 2);
+          ++i;
+        }
+      } else {
+        for (int i = 0; i < ar->frameSize(); ++i) {
+          LogColumn(strm, el, 2);
+        }
+      }
+      
     }
     strm << "\n";
   }

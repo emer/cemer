@@ -195,7 +195,7 @@ public:
   int			spec_cnt;	// #READ_ONLY number of specs using this axis (>1 means is shared)
 
   MinMax		range;		// display range of the axis data
-  MinMax		true_range;     // actual min and max of data (including fixed range)
+  MinMax		true_range;     // actual min and max of data (including fixed range) 
   MinMax		eff_range;     	// effective range: can be changed if display contains different info than basic graph (e.g., multi-traces)
   FixedMinMax		fixed_range;	// fixed range: optionally constrained range values
   int          		n_ticks;	// #DEF_10 number of ticks desired
@@ -225,6 +225,8 @@ public:
   COPY_FUNS(AxisSpec, taNBase);
   TA_BASEFUNS(AxisSpec)
 protected:
+  static MinMax		temp_range;     // #IGNORE scratch pad
+   
   static iColor      	m_def_color; // black, for x and z
 
 private:

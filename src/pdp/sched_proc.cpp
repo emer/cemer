@@ -585,7 +585,7 @@ void SchedProcess::UpdateLogs() {
   PDPLog* lg;
   taLeafItr i;
   FOR_ITR_EL(PDPLog, lg, logs., i) {
-    lg->NewData(log_data,this);
+//TODO OBS    lg->NewData(log_data,this);
   }
   log_data.Reset();		// reset to prevent dangling pointers
 }
@@ -917,7 +917,7 @@ void SchedProcess::UpdateLogUpdaters() {
 	plog->cur_proc = this;
       else {
 	GenLogData();
-	plog->NewHead(log_data, this);
+//TODO:OBS	plog->NewHead(log_data, this);
       }
     }
   }

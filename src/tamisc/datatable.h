@@ -597,7 +597,7 @@ public:
   float_Matrix		ar;  // #NO_SAVE #SHOW #BROWSE the matrix itself
 
 private:
-  void	Initialize();
+  void	Initialize() {}
   void	Destroy()		{CutLinks();};
 };
 

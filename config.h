@@ -16,7 +16,7 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-#define DEBUG 
+/* #undef DEBUG */
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
@@ -258,7 +258,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-#define TA_PROFILE 
+/* #undef TA_PROFILE */
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor
@@ -283,7 +283,7 @@
 /* #undef X_DISPLAY_MISSING */
 
 /* Used when debugging */
-#define YYDEBUG 
+/* #undef YYDEBUG */
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

@@ -79,7 +79,18 @@ public:
   
   bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
   
+  int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
+    // returns the flat base index of the specified frame
   
+  // universal string access/set, for flat array
+  String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_(idx)); } 
+    // treats the matrix like a flat array, returns the element as a string
+  void			SetFmStr_Flat(int idx, const String& str) 	
+    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
+    // treats the matrix like a flat array, sets the element as a string
+     
+     
+
   virtual void		AddFrames(int n); // add n new blank frames
   virtual void		AllocFrames(int n); // make sure space exists for n frames
   virtual void		EnforceFrames(int n); // set size to n frames, blanking new elements if added
@@ -199,7 +210,9 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&			FastEl(int d0) // #IGNORE	
+  T&			FastEl_Flat(int idx) // #IGNORE	treats matrix like a flat array
+    { return el[idx]; }
+  T&			FastEl(int d0) // #IGNORE 	
     { return el[FastElIndex(d0)]; }
   T&			FastEl2(int d0, int d1) // #IGNORE 
     { return el[FastElIndex2(d0,d1)]; }
@@ -210,17 +223,21 @@ public:
   T&			FastElN(const int_Array& indices) // #IGNORE 
     {return el[FastElIndexN(indices)]; }
   
-  const T&		FastEl(int d0) const // #IGNORE	
+  const T&		FastEl_Flat(int idx) const // #IGNORE	treats matrix like a flat array
+    { return el[idx]; }
+  const T&		FastEl(int d0) const // 	
     { return el[FastElIndex(d0)]; }
-  const T&		FastEl2(int d0, int d1) const // #IGNORE 
+  const T&		FastEl2(int d0, int d1) const //  
     { return el[FastElIndex2(d0,d1)]; }
-  const T&		FastEl3(int d0, int d1, int d2) const // #IGNORE 
+  const T&		FastEl3(int d0, int d1, int d2) const //  
     { return el[FastElIndex3(d0,d1,d2)]; }
-  const T&		FastEl4(int d0, int d1, int d2, int d3) const // #IGNORE 
+  const T&		FastEl4(int d0, int d1, int d2, int d3) const //  
     { return el[FastElIndex4(d0,d1,d2,d3)]; } 
-  const T&		FastElN(const int_Array& indices) const // #IGNORE 
+  const T&		FastElN(const int_Array& indices) const //  
     { return el[FastElIndexN(indices)]; } 
   
+  const T&		SafeEl_Flat(int idx) const 	
+    { return *((T*)(SafeEl_(idx))); } // access the matrix as if it were a flat vector, for reading
   const T&		SafeEl(int d0) const 	
     { return el[SafeElIndex(d0)]; } // access the element for reading
   const T&		SafeEl2(int d0, int d1) const  
@@ -232,6 +249,9 @@ public:
   const T&		SafeElN(const int_Array& indices) const  
     { return el[SafeElIndexN(indices)]; }  // access the element for reading
   
+  void			Set_Flat(int idx, const T& item) 	
+    { if (InRange_Flat(idx)) el[idx] = item; }
+  // use this for safely assigning values to items in the matrix, treated as a flat vector
   void			Set(int d0, const T& item) 	
     { el[SafeElIndex(d0)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
@@ -253,8 +273,8 @@ public:
 
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrix, T)
 public:
-  override void*	FastEl_(int i)	{ return &(el[i]); } 
-  override const void*	FastEl_(int i) const { return &(el[i]); } 
+  override void*	FastEl_(int idx)	{ return &(el[idx]); } 
+  override const void*	FastEl_(int idx) const { return &(el[idx]); } 
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if ((el != NULL) && (alloc_size > 0)) delete [] el; el = (T*)nw;}
