@@ -1,0 +1,790 @@
+@c uncomment the following two lines for 'update every node' command
+@c @node  proj
+@c @chapter Projects (and Defaults, Scripts)
+
+@tindex Project
+@cindex Project
+
+Projects hold all the components of a PDP simulation. Projects are
+essentially just an object with groups for the networks, the
+environments which provide the patterns, the processes to control the
+simulation, and the logs of the statistical data. Typically a user will
+load and save the project as whole, since the project represents the
+conceptual experiment or simulation.  Also, the first action a new user
+must perform is to create a new project to hold the various components
+that will be created thereafter.
+
+This chapter describes operations and features of the project that
+affect the project as a whole.  This includes the following:
+
+@table @b
+@item Basic Project Management
+There are a number of different kinds of things one needs to do with a
+simulation as a whole, like saving and loading it, recording what
+parameters were used, etc.  This section gives some tips on these tasks.
+
+@item The Project Viewer
+The project window contains an interactive project viewer program that
+enables users to conveniently view and manipulate many aspects of the
+project.  This is especially useful for configuring processes, because
+they link together all the different elements of a project to actually
+achieve various processing goals.  In addition, specs can all be viewed
+together in the project viewer, making it easier to manage complex sets
+of specs.
+
+@item Startup Arguments and Controlling PDP++ with Signals
+These sections describe how to affect how PDP++ runs (e.g., turing off
+the graphical user interface and running it in the background).  If a
+process is running in the background, it can be controlled by sending it
+signals.
+
+@item Customization Through Defaults and Settings
+There are several levels of defaults and settings that can be modified
+in the PDP++ environment to get things to work just the way you like
+them.  In addition to XWindow defaults, there are some global
+parameters, and a specialized set of object-specific defaults that are
+actually stored on the project itself (in the @code{defaults} group).
+
+@item Scripts
+These allow the user to add all kinds of different functionality to the
+software by creating objects that hold different CSS scripts.  These
+script objects are saved with the project, and can be run from a simple
+pull-down menu.
+
+@item Select Edits
+These are special edit dialogs that allow the user to edit selected
+fields on any other object, all within one edit dialog.  Thus, you can
+select the key parameters you are playing with an put them all into
+one SelectEdit.
+@end table
+
+@menu
+* proj-basics::                 Basic Project Management
+* proj-viewer::                 The Project Viewer
+* proj-startup::                Startup Arguments to PDP++
+* proj-signals::                Signals to Control a PDP++ Process
+* proj-defaults::               Customization Through Defaults and Settings
+* proj-scripts::                Project Scripts
+* proj-seledit::                Select Edit Dialogs
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-basics, proj-viewer, proj, proj
+@section Basic Project Management
+@cindex Project Management
+
+Every object in PDP++ can be saved to a file, and loaded back in later
+from that file (@pxref{obj-basics-files}).  Typically, a user will
+simply save and load the project object, since it contains all the other
+objects of interest, which will be saved and loaded along with it.
+However, it is often a good idea to save parts of the project,
+particularly environments, since that makes it possible to load these
+parts into other projects.
+
+A saved project file is actually human readable (once it is
+uncompressed), and you can pull it up in your favorite text editor (if
+its not too big for it), and see exactly what parameters were used, etc.
+This is much easier to do if you just save all of your specs, which
+contain most of the interesting parameters in the project.  Thus, saved
+files serve as records of exactly how your simulation was configured.
+
+It is recommended that you save your project frequently, in the
+unlikely event of a program crash.  However, even if you have not saved
+the project and it does crash, a recover file is automatically created.
+
+These recover files are named @code{PDP++Recover.#.proj.gz}, where the
+number # of the saved file will increment to be unique in the directory.
+You can typically load this file back in and resume where you left off.
+Always check the loaded project to ensure that it looks reasonable --
+sometimes the crash will cause the project file to be corrupted, though
+this is relatively rare.  Any reliable crash should be reported to the
+developers, along with a project file and steps to reproduce the crash.
+@xref{intro}.
+
+@cindex Simulation Log
+@tindex SimLog
+There is now an option to record an entry in a @b{SimLog} file every
+time you do @code{Save As} on your project file.  This SimLog file
+records the user, date, current and previous project file names,
+together with comments that the user can enter as they save the
+project (e.g., what parameters were manipulated, etc).  This is
+strongly recommended, as it is often quite difficult to remember what
+was going on with a project when one comes back to it, even after just
+a few weeks away!  If you decide not to use it, you can click the
+@code{use_sim_log} flag off on the little dialog that comes up as you
+are saving.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-viewer, proj-startup, proj-basics, proj
+@section The Project Viewer
+@cindex Project Viewer
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.projview.gif" ALIGN="MIDDLE" ALT="The Project Viewer">
+<P>
+<B> Figure: </B> The Project Viewer
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfxsize=6.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.projview.epsi}}
+\noindent {\bf Figure: \number\texfigno} The Project Viewer
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The Project Viewer> here
+@end ifinfo
+
+In its default mode, the project viewer displays all the networks,
+environments, processes, and logs in your project using colored icons
+for each.  By pressing the @code{View Specs} button, it will switch to
+viewing the specs for this project, and then @code{View Project} will
+switch back.  We begin by describing project mode, and then spec mode.
+
+@subsection Project View Mode
+
+In project mode, the following are the default colors:
+
+@table @b
+@item Pink
+Networks
+@item Green
+Environments
+@item Yellow
+Schedule processes
+@item Light Blue
+Group of statistics within a schedule process
+@item Slate Blue
+The statistics themselves -- the lighter-colored stats are directly
+computing values while the darker ones are aggregators of others.  If
+you click @code{Show Aggs} then the set of linked aggregators is
+displayed in aquamarine.
+@item Red
+Statistics with a stopping criterion set
+@item Wheat
+Group of processes within a schedule process
+@item Gold
+The sub-processes within a schedule process
+@item Brown
+Logs
+@end table
+
+Non-obvious actions you can perform on icons:
+@table @b
+@item Single-click with left-mouse-button (LMB)
+Will select or deselect item, and update the action buttons at the left
+of the display.
+@item Double-click with LMB
+On objects with windows (networks, environments, logs), will iconify or
+view the object.  On processes, will iconify or de-iconify the object
+(an iconified process is collapsed so that you can't see all the
+sub-processes below it).  Iconifying processes is important if you have
+many process hierarchies -- they will not all fit in the display at
+once.  Iconified processes are identifiable as being not colored.
+@item Single-click with right-mouse-button (RMB)
+Will bring up the edit dialog for that object.
+@item Shift-LMB or middle-mouse-button
+Extends the selection to include multiple items.
+@end table
+
+Note that because much of what happens in the project view concerns
+processes, you may need to read @ref{proc} to understand everything that
+goes on in this view.
+
+Effects of action buttons on left side of display are (note that where
+multiple are listed, the same button does different things depending on
+what is selected -- they are described in order from left-right,
+top-bottom).
+
+@table @b
+@item Minimize
+@findex Minimize on Project Viewer
+Shrinks the display to the smallest vertical size.  Note that at this
+size, you can re-expand the display later by hitting the top of the
+maximize button, which will be just visible at the bottom of the window.
+@item Maximize
+@findex Maximize on Project Viewer
+Expands the display vertically to fit all of the items in the display.
+@item View Specs
+@findex View Specs on Project Viewer
+Switches the display to viewing specs (mode described below).
+@item Select
+@findex Select on Project Viewer
+This is the standard mode -- causes mouse clicks to select objects.
+@item Move
+@findex Move on Project Viewer
+When in this mode, the mouse will move objects to different positions
+within their respective groups (does not work for schedule processes).
+For example, you can rearrange the order of statistics within a schedule
+process by moving them.
+@item Edit
+@findex Edit on Project Viewer
+Pulls up an Edit Dialog for selected object(s).
+@item Init
+@findex Init on Project Viewer
+Initializes the display (this is rarely necessary, as the display is
+usually automatically updated when needed).
+@item Iconify, DeIconify, Iconify All
+@findex Iconify, DeIconify, Iconify All on Project Viewer
+Controls the iconification of windows or processes.
+@item Show Links, No Links
+@findex Show Links, No Links on Project Viewer
+Either shows or turns off showing the links between a selected item and
+other objects -- the links show you how everything is connected up in
+the project.  Links are drawn as solid lines for cases where a process
+uses the object for processing (e.g., The network used by the train
+process is shown as a pink solid line).  Dashed lines indicate that the
+process updates the given object (e.g., the Trial process typically has
+a dashed line to the network, indicating that it updates it).
+@item Change Type, Rmv Updater, Add Updater
+@findex Change Type, Rmv Updater, Add Updater on Project Viewer
+If one object is selected, Change Type will allow you to change the type
+of that object.  If an object that can be updated (e.g., a network) and
+a process object are selected, then it will allow you to either add or
+remove an updating link between these objects.
+@item New Stat, Set Agg, Set Agg Link
+@findex New Stat, Set Agg, Set Agg Link on Project Viewer
+If a schedule process is selected, New Stat will allow creating a new
+statistic in this object -- you will be prompted for whether to make it
+in the loop or final stats group.  Note that if you know where you want
+to put the new stat, and that stat group (loop_stats or final_stats)
+already appears in the view (because it has other stats in it), then you
+can just click right on the stat group and hit New Stat from there.
+
+If a statistic is selected, Set Agg will allow you to set the kind of
+aggregation this statistic should use.
+
+If two statistics are selected, Set Agg Link will set one statistic to
+aggregate from the other (order can be selected in a subsequent dialog).
+
+@item Ctrl Panel
+@findex Ctrl Panel on Project Viewer
+If a schedule process is selected, this will bring up its control panel.
+@item New Process, New Agg, Transfer Obj
+@findex New Process, New Agg, Transfer Obj on Project Viewer
+If a schedule process is selected, this will allow you to create a new
+process in a process group (init_procs, loop_procs, final_procs) that
+is not currently shown in the display.  Note that if the group you want
+is already shown in the display, then just click on it and do New
+Process from there.  If a stat is selected, New Agg will create a new
+aggregator of that statistic.  If a stat or non-schedule process
+together with a stat or process subgroup is selected, Transfer Obj will
+transfer the stat/process to the group.  If a stat/process is selected
+together with a schedule process, Transfer Obj will bring up a dialog
+asking for which subgroup of that schedule process to transfer into.
+
+@item New Scd Proc, New Process, New Stat, New Sub/Super, New Link, Transfer Obj
+@findex New Scd Proc, New Process, New Stat, New Sub/Super, New Link,
+Transfer Obj on Project Viewer
+If nothing is selected, New Scd Proc will create a new schedule process.
+
+If a stat group (loop_stats, final_stats) is selected, New Stat will
+create a new statistic in it.
+
+If a process group (init_procs, loop_procs, final_procs) is selected,
+New Process will create a new process in it.
+
+If one schedule process is selected, this New Sub/Super will prompt for
+creating a new schedule process above (super) or below (sub) the
+selected one in the process hierarchy.
+
+If two schedule processes are selected, New Link will prompt for linking
+one process into a process group (init_procs, loop_procs, final_procs)
+of the other (direction is determined by a dialog, but default is that
+to to-be-linked process is first selected).  Also see next case:
+
+If a schedule process and a process group (init_procs, loop_procs,
+final_procs) on another schedule process are selected, then the schedule
+process will be linked into the process group with a New Link.
+
+If a group and a non-schedule process object are selected, then Transfer
+Obj will transfer the object into the group.
+
+@item New Proc Gp, Remove Obj(s), Remove Link
+@findex New Proc Gp, Remove Obj(s), Remove Link on Project Viewer
+If nothing is selected, New Proc Gp will create a new process group for
+organizing schedule processes into groups.
+
+Will remove object(s) that are selected, or if two objects are selected
+and they are linked, the link will be severed.
+@end table
+
+In summary, it should be clear that the project viewer enables you to
+establish linkages between different objects, and to perform detailed
+configuration of the process hierarchy.
+
+@subsection Spec View Mode
+
+Spec view mode shares much in common with project view mode.  Specs are
+arranged in the order they appear in the .specs menu, left-to-right and
+then top-to-bottom.  The default colors are:
+
+@table @b
+@item Violet
+Unit Spec
+@item Green
+Con Spec
+@item Orange
+Projection Spec
+@item Purple
+Layer Spec
+@end table
+
+Many of the the action buttons are similar to those in the project view
+mode, with the following special actions:
+
+@table @b
+@item Edit
+@item Set Spec
+@findex Set Spec on Project Viewer
+Brings up the view of the default network in the .networks group, and
+applies the selected spec to whatever objects are selected in the
+network view.  This is equivalent to performing Selections/Set XX Spec
+in the NetView (see @ref{net-build} for more details) where XX is the
+type of Spec that was selected.  This provides a convenient way of
+applying a given spec to selected parts of the network.
+
+@item Show Spec
+@findex Show Spec on Project Viewer
+This is like the inverse of Set Spec -- it selects whatever objects in
+the network are currently using the selected spec.
+
+@item New Child
+@findex New Child on Project Viewer
+On either a spec or the @code{children} group of a spec, will prompt for
+creating a new child spec of the selected item.
+
+@item New Spec
+@findex New Spec on Project Viewer
+Allows one to create a new spec.
+
+@item New Spec Gp
+@findex New Spec Gp on Project Viewer
+Allows one to create a new spec group for organizing specs into groups.
+
+@end table
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-startup, proj-signals, proj-viewer, proj
+@section Startup Arguments to PDP++
+@cindex Startup Arguments
+@cindex Arguments, Startup
+
+PDP++ interprets a large number of startup arguments.  It looks for any
+of the arguments that can be passed to CSS (@pxref{css-startup}), which
+includes a script file that can be used to automate a set of actions to
+be taken in the simulator.  This is particularly useful for running
+simulations in the background.  The file @file{css/include/startup.css}
+provides an example of a startup file that loads in a saved project,
+sets some log files to record, and then runs the training or batch
+process.  After the process is completed, the program will quit (unless
+the CSS argument -i was given).
+
+The following arguments are PDP++ specific:
+@table @code
+@item -nogui
+This specifies that the graphical user interface (GUI) should not be
+started (only the CSS interface will be present).
+@item -p <project_file>
+This specifies a project file to be loaded upon startup.  Note that any
+argument within the first two args containing ".proj" will be
+interpreted as a startup project to run.  Thus, one can type @code{bp++
+xor.proj.gz}, and it will automatically load the project.
+@item -d <default_file>
+This specifies that the given default file should be used.  If this
+parameter is not given, then a default file based on the name of the
+executable (e.g., bp.def for bp++) will be used.  One can also write a
+@file{.pdpinitrc} file containing CSS code that sets the default file
+with the following kind of statement: @code{root->default_file =
+"default_file"}.  This can be based on the executable name by examining
+@code{argv[0]}, which contains the name of the executable being run.
+@end table
+
+In addition to the CSS arguments, PDP++ interprets all of the arguments
+for controlling the InterViews graphical user interface.  These
+arguments allow one to select a different "look and feel" from the
+default one, which is an enhanced version of the Motif style:
+
+@table @code
+@item -openlook
+The Sun OpenLook look.
+@item -motif
+A standard Motif look.  Note that the default is an enhanced SGI
+version of Motif, not this one.
+@item -monochrome
+A Motif-like monochrome mode.  It is the default if you have a
+monochrome monitor.
+@end table
+
+If you are logging in remotely or are somehow restricted to a non
+XWindows environment, you have to use the @code{-nogui} argument.  This
+turns off the graphical user interface completely, and leaves you with
+the CSS interface.
+
+Note that when you run simulations in the background, you will want to
+use @code{-nogui}.
+
+Finally, there are some other InterViews arguments that might be useful:
+
+@table @code
+@item -nodbuf
+This turns off double-buffering, which is on by default and results in
+smoother, flicker-free window updating, but also consumes much more
+display RAM from your XWindows server.  Users of XTerminals in
+particular might want to use this option.
+@cindex Colormap, Private
+@item -visual <dpy type>
+By using this option and passing your default visual class (use
+@code{xdpyinfo} to obtain the visual class(es) supported by your x
+display) (e.g., PseudoColor for standard 8 bit (256 color) X displays),
+you can obtain a private color map for the PDP++ session.  This can be
+useful if you are running out of colors in your shared colormap (e.g.,
+because Netscape is such a color hog!).
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-signals, proj-defaults, proj-startup, proj
+@section Signals to Control a PDP++ Process
+@cindex Signals
+@cindex Background Processes
+
+When a PDP++ process is running in the background (see previous section
+for instructions on how to do this), it is no longer possible to gain
+control of it through either the script or graphical interface.
+However, the process will respond to a number of signals which allow
+one to save the state of the process to a file.  The saved file can then
+be pulled up in the interface and the state of the simulation examined.
+
+Signals can be sent to a process using the unix @code{kill} command,
+with two arguments: the signal type and the process id.  There are two
+signal types that are "user defined", @code{USR1} and @code{USR2}.  We
+have defined @code{USR1} to save any networks in the process to file(s)
+named @file{PDP++NetSave.#.net.gz}, and @code{USR2} to save any projects
+to file(s) named @file{PDP++Project.#.proj.gz}.  The @code{ALRM} (alarm)
+signal will also save project files.
+
+Any of the "lethal" signals like @code{SEGV} and @code{BUS} which cause
+the process to crash result in an attempt to save the current state of
+any open projects in @code{PDP++Recover.#.proj.gz} files.  Thus, the
+user will not typically lose any work even when (or if) the software
+crashes.  Note that the number # of the saved file will increment to be
+unique in the directory.
+
+To kill a process without getting one of these recover files, use the
+strongest kill signal, @code{KILL} (signal number 9), which will bypass
+the saving of a recover file.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-defaults, proj-scripts, proj-signals, proj
+@section Customization Through Defaults and Settings
+@cindex Customization
+
+The different kinds of defaults and settings that can be used to
+customize the behavior of PDP++ are covered in this section.  In
+addition to these defaults, there are some XWindow resources that can be
+set in the user's @file{.Xdefaults} file, which are covered in
+@ref{gui-settings-xdef}.
+
+@menu
+* proj-settings::               Settings and the .pdpinitrc and .cssinitrc Files
+* proj-objdef::                 Project Object Defaults (TypeDefaults)
+@end menu
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-settings, proj-objdef, proj-defaults, proj-defaults
+@subsection Settings and the .pdpinitrc and .cssinitrc Files
+@cindex Init Files
+@cindex Settings
+@cindex .pdpinitrc
+
+Every time the PDP++ software starts up, it looks for a
+@file{.cssinitrc} and a @file{.pdpinitrc} file in the user's home
+directory.  These files contain CSS script code that can set various
+default settings, set aliases for CSS commands, etc (see also
+@ref{css-startup}).  A list of the different settings that can be put
+into the @file{.pdpinitrc} file is given in @ref{gui-settings}.  These
+settings are actually "static" members located in the @b{taMisc} object,
+and are set in CSS as in the following example:
+
+@example
+taMisc::display_width = 90;
+@end example
+
+Another thing that you might want to put in the @file{.pdpinitrc} is
+your default color specification:
+
+@example
+.colorspecs.SetDefaultElName("C_ColdHot");
+@end example
+
+@cindex Include Paths
+@vindex include_paths of taMisc
+Finally, if you have put a set of PDP++ files (like the defaults files
+described in the next section, for example) in a directory somewhere,
+you can add this directory to the list of those automatically searched
+when loading CSS script files and defaults files.  This is done with the
+@code{include_paths} member of the @b{taMisc} object that holds all of
+the other settings parameters.  It is an array of strings, and you
+simply add a new string to it to add a new path:
+
+@example
+taMisc::include_paths.AddUnique("/home/mach/me/pdp++/defaults");
+@end example
+
+@vindex PDPDIR env variable
+Note that the environmental variable @code{PDPDIR} should be set to the
+directory in which PDP++ was installed in order to have the default
+include paths be correct.  If @code{PDPDIR} is not set, the default is
+@file{/usr/local/pdp++}.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-objdef,  , proj-settings, proj-defaults
+@subsection Project Object Defaults (TypeDefaults)
+@cindex Default File
+@cindex Defaults
+
+The @code{.defaults} group on the Project object contains a number of
+objects called @b{TypeDefault}s.  These objects can represent the
+default values of fields within a whole range of possible objects that
+could be created in the project.  These defaults are used to make sure
+that the appropriate types of objects are created for particular
+algorithms.  This is done through the use of default files, which are
+saved groups of TypeDefault objects.
+
+@cindex defaults directory
+@vindex default_file of PDPRoot
+There are a number of different default files saved in the
+@file{defaults} directory, one of which is automatically loaded into the
+@code{.defaults} group of the project when it is created.  Which one is
+used is based on the name of the PDP++ executable (i.e., bp.def for
+bp++).  When PDP++ starts, it checks the name of the executable, and
+puts the appropriate defaults file name in the @code{default_file}
+field of the PDPRoot object.  Changing this field will change the
+default file that will be used when a new project is created.
+
+The user can create their own defaults files, to have things
+come up just the way they like them.  It is recommended that you start
+with the basic defaults appropriate to a given algorithm that you will
+be using.  Simply edit an existing or create a new @b{TypeDefault}
+object in the @code{.defaults} group of a project that has the right
+initial defaults in it.  There is one @b{TypeDefault} object for each
+different type or class of object whose default values are being set.
+Derived classes (@pxref{obj-basics-obj}) automatically inherit default
+values set on parent classes.
+
+The TypeDefault object has the following members:
+
+@tindex TypeDefault
+@tindex NameValue
+@table @code
+@item TypeDef* default_type
+@vindex default_type of TypeDefault
+This is where you pick the type of object you want to set the default
+values of.  Note that many types are descended from @b{taNBase}, so look
+in its submenu.  Be sure to press @i{Apply} after selecting a type, so
+that the object knows what type of @code{token} to make.
+
+@item TAPtr token
+@vindex token of TypeDefault
+This field contains a token of the type selected in @code{default_type}
+(remember to hit @i{Apply} first before editing this!).  Default values
+are set by simply editing this object and setting the values of the
+fields as you want them to be by default.  Only those fields that have a
+check in the leftmost checkbox next to the field will have default
+values saved.  Thus, make sure that box is checked when you make changes
+to the fields.  Then, @i{Ok} the dialog, and be sure to hit @i{Apply} on
+the @b{TypeDefault} object itself.  This causes the specific changes you
+specified to be registered in the @code{active_membs} group, which only
+records the values of those members that were checked.
+
+@item taBase_Group active_membs
+@vindex active_membs of TypeDefault
+The type default values are actually saved as name-value pairs (using
+the @b{NameValue} object), where the name is the name of the member, and
+the value is a string representation of its value.  This is a group of
+such name-value pairs for the checked fields.  While you can enter
+things directly in here, it is recommended that you use the
+@code{token} to do it instead.
+
+@end table
+
+When you have created a set of defaults, save them using the @i{Save
+As/All} menu item in the @code{.defaults} group.  If you have the
+appropriate permissions, it is easier to put the defaults file in the
+global @file{/usr/local/pdp++/defaults} directory.  However, it is
+cleaner to keep your defaults in your own directory.  Since your home
+directory is searched automatically for default files, you could put the
+default files there.  A better solution is to create a special
+directory to hold your defaults, and add this directory to your
+@code{include_path} in your @file{.pdpinitrc} file
+(@pxref{proj-settings}). 
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-scripts,  proj-seledit, proj-defaults, proj
+@section Project Scripts
+@cindex Script Objects
+@tindex Script
+@cindex Recording, Scripts
+@cindex Script Recording
+@cindex Scripts
+
+Scripts are an important component of a simulation, especially when
+things get a bit more complicated than a simple XOR example.  They allow
+you to perform routine actions automatically, which can save a lot of
+mouse clicks, and makes some things possible that would be prohibitively
+time-consuming to do by hand (e.g., switching one's environment to use
+-1 to +1 values instead of 0 to 1 values).  Since scripts can be created
+just by recording actions taken in the GUI, it is relatively easy to get
+started with them.
+
+A PDP++ @b{Project} contains a special place to put different scripts
+that are associated with a given project.  Thus, there is a @b{Script}
+object, which has a corresponding script file that contains CSS script
+code (@pxref{css}).  These @b{Script} objects provide a way of managing
+and running multiple different CSS script files, whereas the script
+window that is present at startup can only hold one script file at a
+time.
+
+The script objects are found in the @code{.scripts} group on the
+project.  Editing a @b{Script} object results in a little "control
+panel" with several buttons that manipulate the script in different
+ways.  An existing script can also be run directly by selecting that
+script from the @i{Run} menu of @code{.scripts}.
+
+The @b{Script} object has the following member fields:
+
+@table @code
+@item taFile script_file
+@vindex script_file of Script
+@vindex EDITOR env variable
+This contains the name of the script file to associate with this object.
+The name field of the object will automatically reflect the name of the
+script file selected (minus the .css extension).  Note that the script
+file can be edited by using the @i{Edit} menu option, which pulls up the
+editor given by the @code{EDITOR} environmental variable.
+
+@item String script_string
+@vindex script_string of Script
+You can enter an entire script in this string field, and run it instead
+of reading the script from the @code{script_file}.  If
+@code{script_string} is non-empty, it is used instead of the file, even
+if the file is open.
+
+@item bool auto_run
+@vindex auto_run of Script
+Check this option if you want the script to be run automatically when
+the project is loaded.  This is can be used for example to automatically
+build and connect a large network which is saved without units or
+connections to make things faster and the file smaller.  An example
+script which builds the network is @file{css/include/build_network.css}.
+
+If you startup the pdp++ program with the project name on the command
+line, then the project will load over and over again if there is an
+error with a script that is set to run upon loading the project using
+@code{auto_run}.  The solution is to load the project from the Root
+menu, and to immediately move the mouse over the xterminal window, and
+type a Return into that window when the error occurs.  Then, you can
+debug the problem with the script at the point where the error occurred.
+
+@item String_Array s_args
+@vindex s_args of Script
+These are arguments that the script file can access.  The argument
+values can be set in the script object, and used to modify the way the
+script behaves, etc.  Scripts that use these arguments should have the
+meaning of the arguments documented near the top of the script file.
+@end table
+
+The following button actions are available in the edit dialog of the
+@b{Script} object:
+
+@table @code
+@item Run()
+@findex Run on Script
+This runs the script.  A script must already be loaded and compiled.
+@item Record()
+@findex Record on Script
+This causes future GUI actions to be recorded to this script.  Thus, one
+can construct a script record of a series of gui actions, and play them
+back by compiling the resulting script, and running it.  The script file
+can be edited and, for example, a @code{for} loop wrapped around a set
+of actions to perform them multiple times, etc.
+@item StopRecording() (StopRec)
+@findex StopRecording on Script
+This stops the recording of GUI actions to this script.  Only one script
+can record at a time, so if you press @code{Record} on a script, then
+all others will automatically stop recording.
+@item Interact()
+@findex Interact on Script
+This allows you to interact with the script through the CSS shell window
+(the one you started the PDP++ program from).  The prompt will change to
+the name of the script you are working with.  All of the CSS commands
+can then be used to debug and run the script (@pxref{css}).  Note that
+to exit out of this css shell, you do a @code{quit} in CSS, which will
+bring you back to the initial PDP++ executable prompt.
+@item Clear()
+@findex Clear on Script
+This clears (empties out) the script file.  This cannot be undone, so
+make sure you are ok losing all of the stuff in the script file!  It is
+primarily used when recording scripts, when you want to start over from
+the beginning.
+@item Compile()
+@findex Compile on Script
+This will re-compile the script file.  Any time you make changes to the
+.css file associated with the @b{Script} object, these changes need to
+be re-interpreted by CSS into something that can actually be run
+(@pxref{css-tut-run}). 
+@end table
+
+@cindex css/include directory
+There are a number of useful script files in the @file{css/include}
+directory of the PDP++ distribution.  These files contain documentation
+as to what they do.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj-seledit,  , proj-scripts, proj
+@section Select Edit Dialogs
+@cindex Select Edit
+@cindex Editing, Selected fields
+@tindex SelectEdit
+
+The @b{SelectEdit} object consolidates multiple different fields and
+functions from different objects into one edit dialog.  Typically, one
+selects the fields by editing the object in question, and using the
+@b{Object/SelectForEdit} menu option to select the field to be edited,
+or @b{Object/SelectFunForEdit} to select a function to be accessible
+from the select edit dialog.
+
+The select edit dialog always has as its first line a @code{config}
+field, which contains configuration information for the select edit
+dialog itself.  The @code{auto_edit} toggle specifies whether the
+select edit dialog is opened automatically whenever the project is
+opened.  The @code{mbr_labels} contains extra user-specified labels to
+append before the field member names, to specify which object they
+came from.  The @code{meth_labels} contains similar such labels for
+methods (functions).
+
+The @code{SelectEdit} menu on the edit dialog contains functions for
+Removing and Moving fields and functions within the edit dialog.  The
+@code{New Edit} function closes the current edit dialog and re-opens
+it.  Use this if you have edited member or method labels, and want to
+see them reflected in the edit dialog.
