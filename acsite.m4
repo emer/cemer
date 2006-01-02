@@ -25,7 +25,7 @@ AC_PROG_CXX
 
 CXXFLAGS=${save_user_CXXFLAGS}
 
-# GNU Compiler Collection is mandatory
+dnl GNU Compiler Collection is mandatory
 AC_MSG_CHECKING([for GNU C++ compiler])
 if test $GXX != yes; then
   AC_MSG_ERROR([GNU C++ compiler not detected.])
@@ -79,7 +79,7 @@ AC_MSG_RESULT([$PDP_PLATFORM])
 AM_CONDITIONAL([LINUX],[test $PDP_PLATFORM = LINUX])
 AM_CONDITIONAL([DARWIN],[test $PDP_PLATFORM = DARWIN])
 AM_CONDITIONAL([CYGWIN],[test $PDP_PLATFORM = CYGWIN])
-]) #PDP_DETERMINE_OSTYPE
+]) dnl PDP_DETERMINE_OSTYPE
 
 dnl 					     PDP_DETERMINE_SUFFIX
 dnl *************************************************************
@@ -113,94 +113,7 @@ if test "$mpi" = "true"; then
 fi
 AC_MSG_RESULT([$PDP_SUFFIX])
 AC_SUBST([PDP_SUFFIX])
-]) #PDP_DETERMINE_SUFFIX
-
-dnl        			       VL_LIB_READLINE (modified)
-dnl *************************************************************
-dnl @synopsis VL_LIB_READLINE
-dnl
-dnl Searches for a readline compatible library. If found, defines
-dnl `HAVE_LIBREADLINE'. If the found library has the `add_history'
-dnl function, sets also `HAVE_READLINE_HISTORY'. Also checks for the
-dnl locations of the necessary include files and sets `HAVE_READLINE_H'
-dnl or `HAVE_READLINE_READLINE_H' and `HAVE_READLINE_HISTORY_H' or
-dnl 'HAVE_HISTORY_H' if the corresponding include files exists.
-dnl
-dnl The libraries that may be readline compatible are `libedit',
-dnl `libeditline' and `libreadline'. Sometimes we need to link a
-dnl termcap library for readline to work, this macro tests these cases
-dnl too by trying to link with `libtermcap', `libcurses' or
-dnl `libncurses' before giving up.
-dnl
-dnl Here is an example of how to use the information provided by this
-dnl macro to perform the necessary includes or declarations in a C
-dnl file:
-dnl
-dnl   #ifdef HAVE_LIBREADLINE
-dnl   #  if defined(HAVE_READLINE_READLINE_H)
-dnl   #    include <readline/readline.h>
-dnl   #  elif defined(HAVE_READLINE_H)
-dnl   #    include <readline.h>
-dnl   #  else /* !defined(HAVE_READLINE_H) */
-dnl   extern char *readline ();
-dnl   #  endif /* !defined(HAVE_READLINE_H) */
-dnl   char *cmdline = NULL;
-dnl   #else /* !defined(HAVE_READLINE_READLINE_H) */
-dnl     /* no readline */
-dnl   #endif /* HAVE_LIBREADLINE */
-dnl
-dnl   #ifdef HAVE_READLINE_HISTORY
-dnl   #  if defined(HAVE_READLINE_HISTORY_H)
-dnl   #    include <readline/history.h>
-dnl   #  elif defined(HAVE_HISTORY_H)
-dnl   #    include <history.h>
-dnl   #  else /* !defined(HAVE_HISTORY_H) */
-dnl   extern void add_history ();
-dnl   extern int write_history ();
-dnl   extern int read_history ();
-dnl   #  endif /* defined(HAVE_READLINE_HISTORY_H) */
-dnl     /* no history */
-dnl   #endif /* HAVE_READLINE_HISTORY */
-dnl
-dnl @category InstalledPackages
-dnl @author Ville Laurikari <vl@iki.fi>
-dnl @version 2002-04-04
-dnl @license AllPermissive
-
-AC_DEFUN([VL_LIB_READLINE], [
-  AC_CACHE_CHECK([for a readline compatible library],
-		 vl_cv_lib_readline, [
-    ORIG_LIBS="$LIBS"
-    for readline_lib in readline edit editline; do
-      for termcap_lib in "" termcap curses ncurses; do
-	if test -z "$termcap_lib"; then
-	  TRY_LIB="-l$readline_lib"
-	else
-	  TRY_LIB="-l$readline_lib -l$termcap_lib"
-	fi
-	LIBS="$ORIG_LIBS $TRY_LIB"
-	AC_TRY_LINK_FUNC(readline, vl_cv_lib_readline="$TRY_LIB")
-	if test -n "$vl_cv_lib_readline"; then
-	  break
-	fi
-      done
-      if test -n "$vl_cv_lib_readline"; then
-	break
-      fi
-    done
-    if test -z "$vl_cv_lib_readline"; then
-      vl_cv_lib_readline="no"
-      LIBS="$ORIG_LIBS"
-    fi
-  ])
-  if test "$vl_cv_lib_readline" != "no"; then
-    AC_DEFINE(HAVE_LIBREADLINE, 1,
-	      [Define if you have a readline compatible library])
-    AC_CHECK_HEADERS(readline.h readline/readline.h)
-  else
-    AC_MSG_ERROR([Unable to find a readline compatible library.])
-  fi
-])
+]) dnl PDP_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
 dnl *************************************************************
@@ -301,7 +214,7 @@ AC_LANG_CASE([C], [CC="$acx_mpi_save_CC"],
 
 LIBS="$LIBS $MPILIBS"
 
-# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
+dnl Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 if test x = x"$MPILIBS"; then
 	$2
 	:
@@ -365,13 +278,13 @@ AC_LANG_SAVE
 AC_LANG_C
 acx_pthread_ok=no
 
-# We used to check for pthread.h first, but this fails if pthread.h
-# requires special compiler flags (e.g. on True64 or Sequent).
-# It gets checked for in the link test anyway.
+dnl We used to check for pthread.h first, but this fails if pthread.h
+dnl requires special compiler flags (e.g. on True64 or Sequent).
+dnl It gets checked for in the link test anyway.
 
-# First of all, check if the user has set any of the PTHREAD_LIBS,
-# etcetera environment variables, and if threads linking works using
-# them:
+dnl First of all, check if the user has set any of the PTHREAD_LIBS,
+dnl etcetera environment variables, and if threads linking works using
+dnl them:
 if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
 	save_CFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
@@ -388,48 +301,48 @@ if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
 	CFLAGS="$save_CFLAGS"
 fi
 
-#*************************************************************
-# We must check for the threads library under a number of different
-# names; the ordering is very important because some systems
-# (e.g. DEC) have both -lpthread and -lpthreads, where one of the
-# libraries is broken (non-POSIX).
+dnl *************************************************************
+dnl We must check for the threads library under a number of different
+dnl names; the ordering is very important because some systems
+dnl (e.g. DEC) have both -lpthread and -lpthreads, where one of the
+dnl libraries is broken (non-POSIX).
 
-# Create a list of thread flags to try.  Items starting with a "-" are
-# C compiler flags, and other items are library names, except for "none"
-# which indicates that we try without any flags at all, and "pthread-config"
-# which is a program returning the flags for the Pth emulation library.
+dnl Create a list of thread flags to try.  Items starting with a "-" are
+dnl C compiler flags, and other items are library names, except for "none"
+dnl which indicates that we try without any flags at all, and "pthread-config"
+dnl which is a program returning the flags for the Pth emulation library.
 
 acx_pthread_flags="pthreads none -Kthread -kthread lthread -pthread -pthreads -mthreads pthread --thread-safe -mt pthread-config"
 
-# The ordering *is* (sometimes) important.  Some notes on the
-# individual items follow:
+dnl The ordering *is* (sometimes) important.  Some notes on the
+dnl individual items follow:
 
-# pthreads: AIX (must check this before -lpthread)
-# none: in case threads are in libc; should be tried before -Kthread and
-#       other compiler flags to prevent continual compiler warnings
-# -Kthread: Sequent (threads in libc, but -Kthread needed for pthread.h)
-# -kthread: FreeBSD kernel threads (preferred to -pthread since SMP-able)
-# lthread: LinuxThreads port on FreeBSD (also preferred to -pthread)
-# -pthread: Linux/gcc (kernel threads), BSD/gcc (userland threads)
-# -pthreads: Solaris/gcc
-# -mthreads: Mingw32/gcc, Lynx/gcc
-# -mt: Sun Workshop C (may only link SunOS threads [-lthread], but it
-#      doesn't hurt to check since this sometimes defines pthreads too;
-#      also defines -D_REENTRANT)
-# pthread: Linux, etcetera
-# --thread-safe: KAI C++
-# pthread-config: use pthread-config program (for GNU Pth library)
+dnl pthreads: AIX (must check this before -lpthread)
+dnl none: in case threads are in libc; should be tried before -Kthread and
+dnl       other compiler flags to prevent continual compiler warnings
+dnl -Kthread: Sequent (threads in libc, but -Kthread needed for pthread.h)
+dnl -kthread: FreeBSD kernel threads (preferred to -pthread since SMP-able)
+dnl lthread: LinuxThreads port on FreeBSD (also preferred to -pthread)
+dnl -pthread: Linux/gcc (kernel threads), BSD/gcc (userland threads)
+dnl -pthreads: Solaris/gcc
+dnl -mthreads: Mingw32/gcc, Lynx/gcc
+dnl -mt: Sun Workshop C (may only link SunOS threads [-lthread], but it
+dnl      doesn't hurt to check since this sometimes defines pthreads too;
+dnl      also defines -D_REENTRANT)
+dnl pthread: Linux, etcetera
+dnl --thread-safe: KAI C++
+dnl pthread-config: use pthread-config program (for GNU Pth library)
 
 case "${host_cpu}-${host_os}" in
 	*solaris*)
 
-	# On Solaris (at least, for some versions), libc contains stubbed
-	# (non-functional) versions of the pthreads routines, so link-based
-	# tests will erroneously succeed.  (We need to link with -pthread or
-	# -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
-	# a function called by this macro, so we could check for that, but
-	# who knows whether they'll stub that too in a future libc.)  So,
-	# we'll just look for -pthreads and -lpthread first:
+	dnl On Solaris (at least, for some versions), libc contains stubbed
+	dnl (non-functional) versions of the pthreads routines, so link-based
+	dnl tests will erroneously succeed.  (We need to link with -pthread or
+	dnl -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
+	dnl a function called by this macro, so we could check for that, but
+	dnl who knows whether they'll stub that too in a future libc.)  So,
+	dnl we'll just look for -pthreads and -lpthread first:
 
 	acx_pthread_flags="-pthread -pthreads pthread -mt $acx_pthread_flags"
 	;;
@@ -1137,7 +1050,8 @@ dnl @version 2004-11-15
 dnl @license AllPermissive
 
 AC_DEFUN([AX_CHECK_GL],
-[AC_REQUIRE([ACX_PTHREAD])dnl
+[AC_REQUIRE([AC_PATH_X])dnl
+AC_REQUIRE([ACX_PTHREAD])dnl
 
 #
 # There isn't a reliable way to know we should use the Apple OpenGL framework
@@ -1145,16 +1059,35 @@ AC_DEFUN([AX_CHECK_GL],
 # alternative GL implementation (e.g., Mesa), which may or may not depend on X.
 #
 AC_ARG_WITH([apple-opengl-framework],
-	    [AC_HELP_STRING([--with-apple-opengl-framework],
-			    [use Apple OpenGL framework (Mac OS X only)])])
+            [AC_HELP_STRING([--with-apple-opengl-framework],
+                            [use Apple OpenGL framework (Mac OS X only)])])
 if test "X$with_apple_opengl_framework" = "Xyes"; then
   AC_DEFINE([HAVE_APPLE_OPENGL_FRAMEWORK], [1],
-	    [Use the Apple OpenGL framework.])
+            [Use the Apple OpenGL framework.])
   GL_LIBS="-framework OpenGL"
 else
-  AC_LANG_PUSH(C++)
-  GL_CFLAGS="${PTHREAD_CFLAGS}"
-  GL_LIBS="${PTHREAD_LIBS} -lm"
+  AC_LANG_PUSH(C)
+
+  AX_LANG_COMPILER_MS
+  if test X$ax_compiler_ms = Xno; then
+    GL_CFLAGS="${PTHREAD_CFLAGS}"
+    GL_LIBS="${PTHREAD_LIBS} -lm"
+  fi
+
+  #
+  # Use x_includes and x_libraries if they have been set (presumably by
+  # AC_PATH_X).
+  #
+  if test "X$no_x" != "Xyes"; then
+    if test -n "$x_includes"; then
+      GL_CFLAGS="-I${x_includes} ${GL_CFLAGS}"
+    fi
+    if test -n "$x_libraries"; then
+      GL_LIBS="-L${x_libraries} -lX11 ${GL_LIBS}"
+    fi
+  fi
+
+  AC_CHECK_HEADERS([windows.h])
 
   AC_CACHE_CHECK([for OpenGL library], [ax_cv_check_gl_libgl],
   [ax_cv_check_gl_libgl="no"
@@ -1164,8 +1097,20 @@ else
   LIBS=""
   ax_check_libs="-lopengl32 -lGL"
   for ax_lib in ${ax_check_libs}; do
-     ax_try_lib="${ax_lib}"
-     LIBS="${ax_try_lib} ${GL_LIBS} ${ax_save_LIBS}"
+    if test X$ax_compiler_ms = Xyes; then
+      ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
+    else
+      ax_try_lib="${ax_lib}"
+    fi
+    LIBS="${ax_try_lib} ${GL_LIBS} ${ax_save_LIBS}"
+    AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[
+# if HAVE_WINDOWS_H && defined(_WIN32)
+#   include <windows.h>
+# endif
+# include <GL/gl.h>]],
+                     [[glBegin(0)]])],
+    [ax_cv_check_gl_libgl="${ax_try_lib}"; break])
   done
   LIBS=${ax_save_LIBS}
   CPPFLAGS=${ax_save_CPPFLAGS}])
@@ -1177,12 +1122,14 @@ else
   else
     GL_LIBS="${ax_cv_check_gl_libgl} ${GL_LIBS}"
   fi
-  AC_LANG_POP([C++])
+  AC_LANG_POP(C)
 fi
 
 LIBS="$LIBS $GL_LIBS"
 CXXFLAGS="$CXXFLAGS $GLCFLAGS"
+
 ])dnl
+
 
 dnl						      CHECK_ZLIB
 dnl *************************************************************
@@ -1790,3 +1737,87 @@ AC_DEFUN(BNV_PATH_QT_DIRECT,
     fi dnl $with_Qt_lib_dir was not given
   fi dnl Done setting up for non-traditional Trolltech installation
 ])
+
+
+dnl PostgreSQL Data Base Management System
+
+dnl Portions Copyright (c) 1996-2005, 
+dnl PostgreSQL Global Development Group Portions 
+dnl Copyright (c) 1994-1996 Regents of the University of California
+dnl
+dnl Permission to use, copy, modify, and distribute this software and 
+dnl its documentation for any purpose, without fee, and without a written
+dnl agreement is hereby granted, provided that the above copyright notice
+dnl and this paragraph and the following two paragraphs appear in all copies.
+dnl
+dnl IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY 
+dnl FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, 
+dnl INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND
+dnl  ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN 
+dnl ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+dnl
+dnl THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, 
+dnl INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+dnl AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS
+dnl ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS 
+dnl TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+dnl
+dnl Additional note on Postgresql's copyright notice: According to GNU and EFF
+dnl it is compatable with GPL. See:
+dnl http://directory.fsf.org/postgresql.html
+dnl http://www.gnu.org/licenses/info/X11.html
+dnl Macro taken from:
+dnl http://developer.postgresql.org/cvsweb.cgi/~checkout~/pgsql/config/programs.m4?rev=1.19;content-type=text%2Fplain
+
+dnl PGAC_CHECK_READLINE
+dnl -------------------
+dnl Check for the readline library and dependent libraries, either
+dnl termcap or curses.  Also try libedit, since NetBSD's is compatible.
+dnl Add the required flags to LIBS, define HAVE_LIBREADLINE.
+
+AC_DEFUN([PGAC_CHECK_READLINE],
+[AC_REQUIRE([AC_CANONICAL_HOST])
+
+AC_CACHE_VAL([pgac_cv_check_readline],
+[pgac_cv_check_readline=no
+pgac_save_LIBS=$LIBS
+if test x"$with_libedit_preferred" != x"yes"
+then	READLINE_ORDER="-lreadline -ledit"
+else	READLINE_ORDER="-ledit -lreadline"
+fi
+for pgac_rllib in $READLINE_ORDER ; do
+  AC_MSG_CHECKING([for ${pgac_rllib}])
+  for pgac_lib in "" " -ltermcap" " -lncurses" " -lcurses" ; do
+    LIBS="${pgac_rllib}${pgac_lib} $pgac_save_LIBS"
+    AC_TRY_LINK_FUNC([readline], [[
+      # Older NetBSD, OpenBSD, and Irix have a broken linker that does not
+      # reecognize dependent libraries; assume curses is needed if we didn't
+      # find any dependency.
+      case $host_os in
+        netbsd* | openbsd* | irix*)
+          if test x"$pgac_lib" = x"" ; then
+            pgac_lib=" -lcurses"
+          fi ;;
+      esac
+
+      pgac_cv_check_readline="${pgac_rllib}${pgac_lib}"
+      break
+    ]])
+  done
+  if test "$pgac_cv_check_readline" != no ; then
+    AC_MSG_RESULT([yes ($pgac_cv_check_readline)])
+    break
+  else
+    AC_MSG_RESULT(no)
+  fi
+done
+LIBS=$pgac_save_LIBS
+])[]dnl AC_CACHE_VAL
+
+if test "$pgac_cv_check_readline" != no ; then
+  LIBS="$pgac_cv_check_readline $LIBS"
+  AC_DEFINE(HAVE_LIBREADLINE, 1, [Define if you have a function readline library])
+fi
+
+])dnl PGAC_CHECK_READLINE
+

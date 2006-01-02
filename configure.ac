@@ -15,7 +15,7 @@ AC_CONFIG_SUBDIRS([src/maketa])
 
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2 dist-shar dist-zip dist-tarZ gnu subdir-objects tar-pax nostdinc])
+AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2 dist-shar dist-zip dist-tarZ gnu subdir-objects tar-pax])
 
 # Custom: check results of config.status for OS type
 PDP_DETERMINE_OSTYPE
@@ -26,6 +26,7 @@ AC_DISABLE_SHARED
 # Set default language  C++
 AC_LANG_CPLUSPLUS
 PDP_PROG_CXX
+AC_CACHE_SAVE
 
 #						  rpm enabled
 #*************************************************************
@@ -60,6 +61,7 @@ AC_PROG_LIBTOOL
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
+AC_CACHE_SAVE
 
 # Hack to stop fortran checks in configure
 # See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
@@ -77,6 +79,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h float.h limits.h locale.h malloc.h memory.h stddef.h stdlib.h string.h sys/time.h unistd.h])
+AC_CACHE_SAVE
 
 #					      typedef, struct
 #*************************************************************
@@ -93,6 +96,7 @@ AC_C_VOLATILE
 AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
 AC_TYPE_PID_T
+AC_CACHE_SAVE
 
 #						    libraries
 #*************************************************************
@@ -103,11 +107,10 @@ AC_TYPE_PID_T
 AC_HAVE_LIBRARY([dl],
 		[LIBS="$LIBS -ldl"],
 		[AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
-
-VL_LIB_READLINE
-
+ 
+PGAC_CHECK_READLINE
 CHECK_ZLIB
-
+AC_CACHE_SAVE
 
 #					    library functions
 #*************************************************************
@@ -125,7 +128,8 @@ AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_ERROR([not found. Build may fail.])])
- 
+AC_CACHE_SAVE 
+
 #						  gui enabled
 #*************************************************************
 #	     Things to do if --enable-gui is set
@@ -174,6 +178,8 @@ else
   AC_DEFINE([TA_NO_GUI],[],[Set when building nogui])
 
 fi
+AC_CACHE_SAVE
+
 #						  mpi enabled
 #*************************************************************
 #	     Things to do if --enable-mpi is set
@@ -222,29 +228,6 @@ if $debug = true; then
 else
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
-
-#						festival enabled
-#*************************************************************
-#	     Things to do if --enable-festival is set
-#*************************************************************
-#
-
-AC_ARG_WITH([festival],
-	      AC_HELP_STRING([--with-festival],
-			     [Enable linking with the Festival Speech Synthesis System.]),
-			     [festival=true],
-			     [festival=false])
-
-AM_CONDITIONAL([FESTIVAL],[test $festival = true])
-
-if $festival = true; then
-  AC_HAVE_LIBRARY([Festival],[LIBS="$LIBS -lFestival"],[AC_MSG_ERROR([--enable-festival set but unable to find libFestival.])])
-  AC_HAVE_LIBRARY([estools],[LIBS="$LIBS -lestools"],[AC_MSG_ERROR([--enable-festival set but unable to find libestools.])])
-  AC_HAVE_LIBRARY([estbase],[LIBS="$LIBS -lestbase"],[AC_MSG_ERROR([--enable-festival set but unable to find libestbase.])])
-  AC_HAVE_LIBRARY([eststring],[LIBS="$LIBS -leststring"],[AC_MSG_ERROR([--enable-festival set but unable to find libeststring.])])
-  AC_DEFINE([WITH_FESTIVAL],[],[Used when linking with the Festival Speech Synthesis System])
-fi
-
 
 #						  @variables@
 #*************************************************************

@@ -38,7 +38,8 @@ DISTCLEANFILES =\
 	src/leabra/do-mfstamp \
 	src/bp/do-mfstamp \
 	src/maketa/mfstamp \
-	src/maketa/do-mfstamp
+	src/maketa/do-mfstamp \
+	src/ta/ta_TA.ccx
 
 endif
 
