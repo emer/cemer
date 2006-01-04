@@ -28,7 +28,8 @@ CXXFLAGS=${save_user_CXXFLAGS}
 dnl GNU Compiler Collection is mandatory
 AC_MSG_CHECKING([for GNU C++ compiler])
 if test $GXX != yes; then
-  AC_MSG_ERROR([GNU C++ compiler not detected.])
+  AC_MSG_WARN([GNU C++ compiler not detected.])
+  SIM_AC_CONFIGURATION_WARNING([GNU C++ compiler not detected. The maketa type scanning tool built in our project REQUIRES the gcc -E (/lib/cpp) preprocessor that comes with it])
 fi
 AC_MSG_RESULT([$GXX])
 ])
@@ -111,8 +112,13 @@ fi
 if test "$mpi" = "true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
 fi
-AC_MSG_RESULT([$PDP_SUFFIX])
-AC_SUBST([PDP_SUFFIX])
+if test -z ${PDP_SUFFIX}; then 
+	SIM_AC_CONFIGURATION_SETTING([Mangling],[Disabled. Prototype of bins\libs is pdp++\libpdp.a])
+else
+	AC_MSG_RESULT([${PDP_SUFFIX}])
+	AC_SUBST([PDP_SUFFIX])
+	SIM_AC_CONFIGURATION_SETTING([Mangling],[Enabled. Prototype of bins\libs is pdp${PDP_SUFFIX}++\libpdp${PDP_SUFFIX}.a])
+fi
 ]) dnl PDP_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
@@ -1166,9 +1172,7 @@ AC_DEFUN([CHECK_ZLIB],
 #
 [AC_MSG_CHECKING(if zlib is wanted)
 AC_ARG_WITH(zlib,
-[  --with-zlib=DIR root directory path of zlib installation [defaults to
-		    /usr/local or /usr if not found in /usr/local]
-  --without-zlib to disable zlib usage completely],
+AC_HELP_STRING([--with-zlib=DIR],[root directory path of zlib installation]),
 [if test "$withval" != no ; then
   AC_MSG_RESULT(yes)
   if test -d "$withval"
@@ -1216,8 +1220,8 @@ then
 		AC_MSG_CHECKING(zlib in ${ZLIB_HOME})
 		LDFLAGS="$ZLIB_OLD_LDFLAGS"
 		CPPFLAGS="$ZLIB_OLD_CPPFLAGS"
-		AC_MSG_RESULT(failed)
-		AC_MSG_ERROR([either specify a valid zlib installation with --with-zlib=DIR or disable zlib usage with --without-zlib])
+		AC_MSG_RESULT(no)
+		SIM_AC_CONFIGURATION_WARNING([specify a valid zlib installation with --with-zlib=DIR])
 	fi
 fi
 
@@ -1246,6 +1250,7 @@ AC_DEFUN([AX_LANG_COMPILER_MS],
 		   [ax_compiler_ms=no])
 ax_cv_[]_AC_LANG_ABBREV[]_compiler_ms=$ax_compiler_ms
 ])])
+
 
 dnl @synopsis BNV_HAVE_QT [--with-Qt-dir=DIR] [--with-Qt-lib=LIB]
 dnl @synopsis BNV_HAVE_QT [--with-Qt-include-dir=DIR] [--with-Qt-bin-dir=DIR] [--with-Qt-lib-dir=DIR] [--with-Qt-lib=LIB]
@@ -1326,7 +1331,7 @@ dnl other variables are set to the empty string.
 dnl
 dnl @category InstalledPackages
 dnl @author Bastiaan Veelo <Bastiaan.N.Veelo@ntnu.no>
-dnl @version 2005-01-24
+dnl @version 2005-12-18
 dnl @license AllPermissive
 
 dnl Copyright (C) 2001, 2002, 2003, 2005, Bastiaan Veelo
@@ -1436,7 +1441,7 @@ AC_DEFUN([BNV_HAVE_QT],
   if test x"$have_qt" = xyes; then
     QT_CXXFLAGS="-I$bnv_qt_include_dir"
     if test $bnv_qt_lib = "qt-mt"; then
-	AC_DEFINE([QT_THREAD_SUPPORT],[],[Description])
+        QT_CXXFLAGS="$QT_CXXFLAGS -DQT_THREAD_SUPPORT"
     fi
     QT_DIR="$bnv_qt_dir"
     QT_LIBS="$bnv_qt_LIBS"
@@ -1571,7 +1576,7 @@ EOF
 
 dnl Internal subroutine of BNV_HAVE_QT
 dnl Set bnv_qt_dir bnv_qt_include_dir bnv_qt_bin_dir bnv_qt_lib_dir bnv_qt_lib
-AC_DEFUN(BNV_PATH_QT_DIRECT,
+AC_DEFUN([BNV_PATH_QT_DIRECT],
 [
   ## Binary utilities ##
   if test x"$with_Qt_bin_dir" != x; then
@@ -1809,6 +1814,7 @@ for pgac_rllib in $READLINE_ORDER ; do
     break
   else
     AC_MSG_RESULT(no)
+    SIM_AC_CONFIGURATION_WARNING([none of termcap, ncurses, curses, readline, edit found])
   fi
 done
 LIBS=$pgac_save_LIBS
@@ -1821,3 +1827,111 @@ fi
 
 ])dnl PGAC_CHECK_READLINE
 
+
+dnl 					 configuration_summary.m4
+dnl *************************************************************
+dnl 
+dnl *************************************************************
+dnl Copyright, 1998-2005, Systems in Motion AS
+dnl
+dnl This file is part of Coin3d Free Edition.
+dnl
+dnl   Coin3d is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+
+# **************************************************************************
+# configuration_summary.m4
+#
+# This file contains some utility macros for making it easy to have a short
+# summary of the important configuration settings printed at the end of the
+# configure run.
+#
+# Authors:
+#   Lars J. Aas <larsa@sim.no>
+#
+
+# **************************************************************************
+# SIM_AC_CONFIGURATION_SETTING( DESCRIPTION, SETTING )
+#
+# This macro registers a configuration setting to be dumped by the
+# SIM_AC_CONFIGURATION_SUMMARY macro.
+
+AC_DEFUN([SIM_AC_CONFIGURATION_SETTING],
+[ifelse($#, 2, [], [m4_fatal([SIM_AC_CONFIGURATION_SETTING: takes two arguments])])
+if test x"${sim_ac_configuration_settings+set}" = x"set"; then
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|$1:$2"
+else
+  sim_ac_configuration_settings="$1:$2"
+fi
+]) # SIM_AC_CONFIGURATION_SETTING
+
+# **************************************************************************
+# SIM_AC_CONFIGURATION_WARNING( WARNING )
+#
+# This macro registers a configuration warning to be dumped by the
+# SIM_AC_CONFIGURATION_SUMMARY macro.
+
+AC_DEFUN([SIM_AC_CONFIGURATION_WARNING],
+[ifelse($#, 1, [], [m4_fatal([SIM_AC_CONFIGURATION_WARNING: takes one argument])])
+if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
+  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|$1"
+else
+  sim_ac_configuration_warnings="$1"
+fi
+]) # SIM_AC_CONFIGURATION_WARNING
+
+# **************************************************************************
+# SIM_AC_CONFIGURATION_SUMMARY
+#
+# This macro dumps the settings and warnings summary.
+
+AC_DEFUN([SIM_AC_CONFIGURATION_SUMMARY],
+[ifelse($#, 0, [], [m4_fatal([SIM_AC_CONFIGURATION_SUMMARY: takes no arguments])])
+sim_ac_settings="$sim_ac_configuration_settings"
+sim_ac_num_settings=`echo "$sim_ac_settings" | tr -d -c "|" | wc -c`
+sim_ac_maxlength=0
+while test $sim_ac_num_settings -ge 0; do
+  sim_ac_description=`echo "$sim_ac_settings" | cut -d: -f1`
+  sim_ac_length=`echo "$sim_ac_description" | wc -c`
+  if test $sim_ac_length -gt $sim_ac_maxlength; then
+    sim_ac_maxlength=`expr $sim_ac_length + 0`
+  fi
+  sim_ac_settings=`echo $sim_ac_settings | cut -d"|" -f2-`
+  sim_ac_num_settings=`expr $sim_ac_num_settings - 1`
+done
+
+sim_ac_maxlength=`expr $sim_ac_maxlength + 3`
+sim_ac_padding=`echo "                                             " |
+  cut -c1-$sim_ac_maxlength`
+
+sim_ac_num_settings=`echo "$sim_ac_configuration_settings" | tr -d -c "|" | wc -c`
+echo ""
+echo "$PACKAGE configuration settings:"
+while test $sim_ac_num_settings -ge 0; do
+  sim_ac_setting=`echo $sim_ac_configuration_settings | cut -d"|" -f1`
+  sim_ac_description=`echo "$sim_ac_setting" | cut -d: -f1`
+  sim_ac_status=`echo "$sim_ac_setting" | cut -d: -f2-`
+  # hopefully not too many terminals are too dumb for this
+  echo -e "$sim_ac_padding $sim_ac_status\r  $sim_ac_description:"
+  sim_ac_configuration_settings=`echo $sim_ac_configuration_settings | cut -d"|" -f2-`
+  sim_ac_num_settings=`expr $sim_ac_num_settings - 1`
+done
+
+if test x${sim_ac_configuration_warnings+set} = xset; then
+sim_ac_num_warnings=`echo "$sim_ac_configuration_warnings" | tr -d -c "|" | wc -c`
+echo ""
+echo "$PACKAGE configuration warnings:"
+while test $sim_ac_num_warnings -ge 0; do
+  sim_ac_warning=`echo "$sim_ac_configuration_warnings" | cut -d"|" -f1`
+  echo "  * $sim_ac_warning"
+  sim_ac_configuration_warnings=`echo $sim_ac_configuration_warnings | cut -d"|" -f2-`
+  sim_ac_num_warnings=`expr $sim_ac_num_warnings - 1`
+done
+fi
+]) # SIM_AC_CONFIGURATION_SUMMARY

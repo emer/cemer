@@ -1,3 +1,6 @@
+# Set by AC_PROG_MAKE_SET in configure.ac
+@SET_MAKE@
+
 # Rules for running maketa
 # To avoid race conditions on parallel builds we only refer
 # directly to ${PROJNAME}_TA_type.

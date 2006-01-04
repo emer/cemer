@@ -1,6 +1,8 @@
 # For more info on how this works, see
 # http://sources.redhat.com/automake/automake.html#Documentation
 
+# For `make rpm'
+include $(top_srcdir)/mfstamp.am
 
 #These are our two manuals
 info_TEXINFOS = pdp-user.texi

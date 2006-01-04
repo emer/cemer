@@ -24,6 +24,7 @@
 #define TAGLOBAL_H
 
 #include <stdlib.h>
+#include <string.h>
 
 // new Qt Event type codes -- should be globally unique, to avoid problems
 #ifdef __MAKETA__

@@ -18,7 +18,12 @@
 
 // NOTE: This file is *not* in the make dependency list for other files.
 
-#include "maketa_config.h"
+// Just for the maketa version of taglobal.h
+#define NO_TA_BASE 
+#define TA_NO_GUI 
+// This should probably be dynamic, or maybe it will go away when
+// we get rid of them all.
+#define LINUX
 
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H

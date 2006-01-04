@@ -3,24 +3,46 @@
 # Process this file with autoconf to produce a configure script.
 #*************************************************************
 #
+# General note: AC_MSG_ERROR is not used to halt our script
+# in the case that a detection fails. It can make it difficult
+# for a user to troubleshoot problems. Instead, issue an
+# AC_MSG_WARN which will issue a warning immediately, and follow
+# it with SIM_AC_CONFIGURATION_WARNING which shows up at the very
+# end of configure.
 
 # Autoconf 2.59 required
-AC_PREREQ(2.59)
-AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU])
+AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU],[PDP++])
+AC_PREREQ([2.59])
+
+AC_COPYRIGHT([
+Copyright, 1995-2005, Regents of the University of Colorado,
+Carnegie Mellon University, Princeton University.
+
+This file is part of TA/PDP++
+
+  TA/PDP++ is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  TA/PDP++ is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+])
 
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
 # in /aux/ so they don't clutter up the root
 AC_CONFIG_AUX_DIR([aux])
-AC_CONFIG_SUBDIRS([src/maketa])
+AC_CONFIG_SRCDIR([src/ta/taglobal.h])
 
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2 dist-shar dist-zip dist-tarZ gnu subdir-objects tar-pax])
+AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
 
-# Custom: check results of config.status for OS type
+# Custom: check results of config.status for a few OS types
 PDP_DETERMINE_OSTYPE
 
-# Disable shared libraries
 AC_DISABLE_SHARED
 
 # Set default language  C++
@@ -45,12 +67,9 @@ AM_CONDITIONAL([RPM],[test $rpm = true])
 if $rpm = true; then
   AX_DIST_RPM([spec.tmpl])
   AC_SUBST([INCLUDE_AMINCLUDE_AM],["include aminclude.am"])
+  SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
-# Next two lines are a hack to get rid of those stupid fortran checks
-m4_undefine([AC_PROG_F77])
-m4_defun([AC_PROG_F77],[])
-AC_PROG_LIBTOOL
 
 #						     programs
 #*************************************************************
@@ -58,15 +77,16 @@ AC_PROG_LIBTOOL
 #*************************************************************
 #
 
+# Next two lines are a hack to get rid of those stupid fortran checks
+m4_undefine([AC_PROG_F77])
+m4_defun([AC_PROG_F77],[])
+
+AC_PROG_LIBTOOL
+AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
 AC_CACHE_SAVE
-
-# Hack to stop fortran checks in configure
-# See: http://lists.gnu.org/archive/html/libtool/2005-09/msg00097.html
-m4_undefine([AC_PROG_F77])
-m4_defun([AC_PROG_F77],[])
 
 #						      headers
 #*************************************************************
@@ -106,7 +126,8 @@ AC_CACHE_SAVE
 
 AC_HAVE_LIBRARY([dl],
 		[LIBS="$LIBS -ldl"],
-		[AC_MSG_WARN([unable to find libdl for Dynamic Loader Function Interfaces. Build may fail.])])
+		[AC_MSG_RESULT([no])
+		SIM_AC_CONFIGURATION_WARNING([libdl not found])])
  
 PGAC_CHECK_READLINE
 CHECK_ZLIB
@@ -127,7 +148,7 @@ AC_FUNC_SELECT_ARGTYPES
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_ERROR([not found. Build may fail.])])
+AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found. Build may fail.])])
 AC_CACHE_SAVE 
 
 #						  gui enabled
@@ -146,7 +167,7 @@ AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 
 if test $gui = true; then
-	
+  SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
   BNV_HAVE_QT
   LIBS="$LIBS $QT_LIBS"
   CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS"
@@ -175,6 +196,7 @@ if test $gui = true; then
 
 else
 
+  SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
   AC_DEFINE([TA_NO_GUI],[],[Set when building nogui])
 
 fi
@@ -195,12 +217,15 @@ AC_ARG_ENABLE([mpi],
 AM_CONDITIONAL([MPI],[test $mpi = true])
 
 if test $mpi = true; then
+  SIM_AC_CONFIGURATION_SETTING([MPI],[Enabled])	
   ACX_MPI([],[AC_MSG_ERROR([unable to locate the Message Passing Interface])])
   ACX_PTHREAD([],[AC_MSG_ERROR([unable to locate pthread])])
   AC_DEFINE([DMEM_COMPILE],[],[Causes mpi.h to be included])
   if test $MPICXX != x; then
     CXX="$MPICXX"
   fi
+else
+  SIM_AC_CONFIGURATION_SETTING([MPI],[Disabled])	
 fi
 
 #						debug enabled
@@ -218,6 +243,8 @@ AC_ARG_ENABLE([debug],
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 
 if $debug = true; then
+  SIM_AC_CONFIGURATION_SETTING([Debuging],[Enabled])
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
   AC_DEFINE([YYDEBUG],[],[Used when debugging])
   AC_DEFINE([DEBUG],[],[Used when debugging])
   AC_DEFINE([TA_PROFILE],[],[Used when debugging])
@@ -226,6 +253,8 @@ if $debug = true; then
   # No optimization in debug mode
   AC_SUBST([OPT_LEVEL],["-g -O0"])
 else
+  SIM_AC_CONFIGURATION_SETTING([Debuging],[Disabled])
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
@@ -251,11 +280,17 @@ AC_SUBST([CXXFLAGS])
 PDP_DETERMINE_SUFFIX
 
 AC_CONFIG_FILES([Makefile
+		src/maketa/Makefile
 		src/taiqtso/Makefile
 		src/ta/Makefile
 		src/css/Makefile
 		src/tamisc/Makefile
 		src/pdp/Makefile
 		src/leabra/Makefile
-		src/bp/Makefile])
+		src/bp/Makefile
+		manual/Makefile])
 AC_OUTPUT
+
+SIM_AC_CONFIGURATION_SUMMARY
+
+echo ""
