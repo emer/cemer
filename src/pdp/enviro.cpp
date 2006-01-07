@@ -83,7 +83,6 @@ void PatternSpec::InitLinks(){
     int ypos = evs->MaxY();
     pos.y = ypos + 1;		// by default start higher..
   }
-  taBase::Own(src_channel, this);
 }
 
 void PatternSpec::Destroy() {
@@ -91,7 +90,6 @@ void PatternSpec::Destroy() {
 }
 
 void PatternSpec::CutLinks() {
-  src_channel.CutLinks();
   taBase::DelPointer((TAPtr*)&layer);
   BaseSubSpec::CutLinks();
 }
@@ -112,7 +110,6 @@ void PatternSpec::Copy_(const PatternSpec& cp) {
   noise = cp.noise;
   value_names = cp.value_names;
   global_flags = cp.global_flags;
-  src_channel = cp.src_channel;
 }
 
 void PatternSpec::SetToLayName(const char* lay_nm) {
@@ -206,13 +203,6 @@ void PatternSpec::UpdateAfterEdit() {
       es->UpdateChildren();
     }
   }
-  UpdateChannel();
-}
-
-void PatternSpec::UpdateChannel() {
-  src_channel.name = name;
-  // legacy patterns are always 2d
-  src_channel.SetGeom2(geom.x, geom.y);
 }
 
 void PatternSpec::UpdateAllEvents() {
@@ -853,6 +843,7 @@ void EventSpec::UpdateAllEvents() {
       continue;			// only for events that use me!
     UpdateEvent(ev);
   }
+  env->UpdateChannels(*this);
   if(!taMisc::is_loading)
     StructUpdate(false);
 //TODO: need to hook env to specs updating
@@ -1319,39 +1310,25 @@ void Environment::Initialize() {
   event_specs.SetBaseType(&TA_EventSpec);
 //TODO  views.SetBaseType(&TA_EnviroView);
   event_ctr = 0;
-}
-
-void Environment::InitLinks() {
-  taBase::Own(events, this);
-  taBase::Own(event_specs, this);
-  inherited::InitLinks();
+  last_event = NULL;
 }
 
 void Environment::Destroy(){
   CutLinks();
 }
 
-void Environment::Copy(const Environment& cp) {
-  inherited::Copy(cp);
-  event_specs = cp.event_specs;
-  events = cp.events;
-  event_ctr = cp.event_ctr;
-}
-
-void Environment::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  UpdateAllEvents();
-}
-
-EventSpec* Environment::GetAnEventSpec() {
-  if(event_specs.size == 0)
-    return (EventSpec*)event_specs.NewEl(1);
-  return (EventSpec*)event_specs.DefaultEl();
+void Environment::InitLinks() {
+  taBase::Own(events, this);
+  taBase::Own(event_specs, this);
+  taBase::Own(channels, this);
+  inherited::InitLinks();
 }
 
 void Environment::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
+  last_event = NULL;
+  channels.CutLinks();
   Project* prj = (Project *) GET_MY_OWNER(Project);
   if((prj != NULL) && !prj->deleting) {
     Environment* replenv = NULL;
@@ -1373,6 +1350,24 @@ void Environment::CutLinks() {
   inherited::CutLinks();	// winmgrs cut views first..
   event_specs.CutLinks();
   events.CutLinks();
+}
+
+void Environment::Copy(const Environment& cp) {
+  inherited::Copy(cp);
+  event_specs = cp.event_specs;
+  events = cp.events;
+  event_ctr = cp.event_ctr;
+}
+
+void Environment::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  UpdateAllEvents();
+}
+
+EventSpec* Environment::GetAnEventSpec() {
+  if(event_specs.size == 0)
+    return (EventSpec*)event_specs.NewEl(1);
+  return (EventSpec*)event_specs.DefaultEl();
 }
 
 #ifdef TA_GUI
@@ -3313,7 +3308,8 @@ void Environment::GoToItem(int idx) {
   SetCurrentEvent(ev);
 }
  
-void Environment::ResetItem() {
+void Environment::InitData() {
+  SetCurrentEvent(NULL);
   InitEvents();
 }
  
@@ -3322,21 +3318,47 @@ bool Environment::NextItem() {
   SetCurrentEvent(ev);
   return (ev != NULL);
 }
- 
-int Environment::source_channel_count() {
-  if (event_specs.leaves == 0) return 0;
-  EventSpec* evsp = (EventSpec*)event_specs.Leaf(0);
-  return evsp->patterns.leaves;
+
+void Environment::UpdateChannel(DataChannel& chan, PatternSpec& ps) {
+  chan.name = ps.name;
+  // legacy patterns are always 2d
+  chan.SetGeom2(ps.geom.x, ps.geom.y);
 }
- 
-SourceChannel* Environment::source_channel(int idx) {
-  if ((idx < 0) || (event_specs.leaves == 0)) return NULL;
-  EventSpec* evsp = (EventSpec*)event_specs.Leaf(0);
-  if (idx > evsp->patterns.leaves) return NULL;
-  PatternSpec* psp = (PatternSpec*)evsp->patterns.Leaf(idx);
-  return &(psp->src_channel);
+
+void Environment::UpdateChannels(EventSpec& es) {
+  channels.Reset();
+  DataChannel* chan;
+  PatternSpec* ps;
+  taLeafItr itr;
+  FOR_ITR_EL(PatternSpec, ps, es.patterns., itr) {
+    chan = (DataChannel*)channels.New(1);
+    UpdateChannel(*chan, *ps);
+  }
 }
- 
+
+
 void Environment::SetCurrentEvent(Event* ev) {
-  //TODO: 
+  last_event = ev;
+  channels.ClearCachedData();
+  if (ev == NULL) return;
+  // we just blindly set data from patterns to channels -- assumes all EventSpecs have same pattern config
+  int i = 0;
+  DataChannel* chan;
+  float_Matrix* mat;
+  Pattern* pat;
+  taLeafItr itr;
+  FOR_ITR_EL(Pattern, pat, ev->patterns., itr) {
+    chan = source_channel(i);
+    // make sure channel and pattern are still commensurable
+    if (chan->size() != pat->value.size) goto cont1;
+    
+    mat = new float_Matrix(pat->value.el, chan->geom); // creates wrapper over pattern's array
+    if (!chan->SetCachedData(mat)) { // shouldn't happen, but don't leak data
+      delete mat;
+    }
+    
+cont1: 
+    ++i;
+    if (i >= channels.leaves) break;
+  } 
 }

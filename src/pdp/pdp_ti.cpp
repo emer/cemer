@@ -66,6 +66,7 @@ template class taGroup<Event>;
 template class taGroup<TypeDefault>;
 template class taGroup<Layer>; // netstru.h
 template class taGroup<Network>; // netstru.h
+template class taGroup<NetConduit>; // netstru.h
 template class taGroup<Process>; // process.h
 template class taGroup<PDPLog>; // pdplog.h
 template class taGroup<Project>; // pdpshell.h

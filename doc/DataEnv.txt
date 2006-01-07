@@ -59,22 +59,6 @@ Let us work with the following concepts:
 * DataConnection (DataCon) -- connects a Source and Sink
 * DataTransformer (DataTrans) -- performs a transformation (ex filter)
 
-Push vs. Pull
-
-* one issue to be resolved is whether data works on the "push" or "pull"
-  model (or maybe either)
-* a "push" model, the source controls the data flow, and forces it to the sink
-* a "pull" model, the sink controls the data flow, and requests it from the source
-* both are applicable:
-  * ex., the network layer will want to request the next pattern -- "pull"
-  * the network output will want to send the data on when available -- "push"
-  
-We will then create specific objects, that have the following:
-  * data input(s)
-  * data output(s)
-
-The user can create the system by adding data objects to the workspace, and connecting them with data links.
-
 
 USE CASES
 
@@ -141,29 +125,17 @@ INTERFACES/ENTITIES (OUTLINE)
 Here is an outline of the main interfaces and/or entities, along with their
 major subtypes and major contained interfaces.
 
-DataConnectionPoint (note 1)
-  InputConnectionPoint
-    DataInputConnectionPoint
-    CtrlInputConnectionPoint
-  OutputConnectionPoint
-    DataOutputConnectionPoint
-    MonitorOutputConnectionPoint
-    
-DataChannel
-  InputChannel
-    - provider interface (i.e., source)
-    - consumer interface (i.e., DataConnector)
-  OutputChannel
-    - provider interface (i.e., DataConnector)
-    - consumer interface (i.e., sink)
+IDataSequencer
+  this interface should be provided for any block that supports data in or out,
+  including filters -- it provides initialization and sequencing methods -- note
+  that blocks with both src/sink have only a single sequencing i/f, as the 
+  elements are assumed to be linked, ex. a filter, or a log (where reading would
+  correspond to the last element written, etc.)
   
-DataMovementInterface
-  ProviderInterface
-    - push interface
-    - pull interface
-  ConsumerInterface
-    - push interface
-    - pull interface
+IDataSource
+  InputChannels -- provides list of input channels
+    
+  
     
 DataItem
   
@@ -173,53 +145,69 @@ Notes:
 
 INTERFACES/ENTITIES (DETAIL)
 
-DataItem is the actual piece of data. It is conceptually a 2d array of a specific
-data type (ex. float, int). We want to avoid copying and unnecessary buffering, so
-it may make sense for data to be treated as a ref-counted value type, similar to
-strings, whereby the actual data is contained in a point in a ref-counted value
-struct, that can be passed around -- OR that we use smart pointers to a ref-counted
-struct, which auto-destroys on reaching zero.
+DataItem is the actual piece of data. It is conceptually a N-d array of a specific
+data type (ex. float, int). Matrix is a ref-counted value type -- we use smart pointers
+of type taMatrix_impl.
 
-DataItem
+Matrix
   attributes:
-    geometry -- row and col size
-    count -- number of elements (= rows x cols)
+    geom -- dims, and dim size
+    size -- number of elements 
+    frames() -- number of frames (size of last dimension)
+    frameSize() -- num of elements in each frame
     data_type
-    items[,] -- data items
-
-DataConnectionPoint describes a source or sink of data on a data production, consumption,
-or filtering entity. Note that the txfer mode is defined at the CP-level, not the
-DataChannel level.
-
-DataConnectionPoint
-  attributes:
-    num_channels -- number of channels
-    txfer_mode_supported -- bit flags of supported txfer modes (push, pull)
-    txfer_mode -- current txfer mode (may be read only)
-    connectors -- list of connectors attached to the DCP
-  methods:
+    el[] -- data items
 
 
-DataChannel describes one distinct source/sink of data. All DataChannel's are defined
-to be 2-dimensional, although degenerate dimensions are supported (ex. 1x1 is 0-d.)
+DataChannel describes one distinct source/sink of data.
 
 DataChannel
   attributes:
     name -- the name of the channel; may be read only (ex. "red")
-    index -- the index of this channel in the ConnectionPoint
-    geometry -- x and y size (note: if not fixed, then an event must be triggered
-      on change) 
-    data_type -- type of data: float, int, short int, etc. (??? maybe not)
+    index -- the index of this channel in the container
+    geom -- same as for Matrix -- last dim can be 0 
+    matrix_type -- type of data: float, int, short int, etc.
   methods:
 
-DataConnector describes a connection between a data source and a data sink. A DC
-has two ends, the input end is connected to a data source, and the output end
-is connected to a data sink. A DC can mediate between disparate geometries.
-
-DataConnector
+IDataSequencer
+  attributes (must do InitData before they are valid)
+    bool is_indexable -- true if you can access randomly 
+      (note: automatically implies is_sequential, since it has
+      a built-in sequencer)
+    bool is_sequential -- true if you can access sequentially
+    int num_items -- number of items (if indexable)
+    int cur_item -- index of current item, -1 on Init
+  methods:
+    InitData() -- initializes data system (ex. clears cache, sets state to 0, 
+      enumerates count, etc.)
+    ResetData() -- if defined, clears out all data
+    NextItem() -- go to next sequential item
+    GoToItem(int n) -- go to item N, only valid if indexable
+  
+IDataSource
   attributes:
-    source: OutputDataChannel -- the source of the data items being connected
-    sink: InputDataChannel -- the sink of the data items being connected
+    IDataSequencer sequencer -- sequencer i/f
+    int channel_count -- number of channels
+    DataChannel channel(int idx) -- channel spec
   methods:
-
+    bool GetData(MatrixPtr& data, int chan = 0) -- get data for specified channel
+    bool GetDataMulti(MatrixPtr_Array& data) -- get data for all channels
+    
+    
+IDataSink
+  attributes:
+    IDataSequencer sequencer -- sequencer i/f
+    int channel_count -- number of channels
+    DataChannel channel(int idx) -- channel spec
+  methods:
+    void SetData(MatrixPtr& data, int chan = 0) -- set data for specified channel
+    void SetDataMulti(MatrixPtr_Array& data) -- set data for all channels
+     
+     
+IDataFilter (also must have IDataSource and IDataSink)
+  attributes:
+    int op_count -- number of operations supported
+    String op_desc(int idx) -- description of operation
+  methods:
+    bool FilterData(int op) -- perform filter operation
     

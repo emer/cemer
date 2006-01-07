@@ -33,9 +33,11 @@
 
 // forwards this file
 
+class String_Data; 
 class float_Data;
-class String_Data; //
-class float_MatrixData; //
+class int_Data;
+class byte_Data;
+
 class ClustNode;
 
 
@@ -314,58 +316,127 @@ protected:
 */
 
 class DataArray_impl : public taNBase {
-  // #VIRT_BASE ##NO_TOKENS #NO_UPDATE_AFTER holds array data
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+  // #VIRT_BASE ##NO_TOKENS #NO_INSTANCE holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
+INHERITED(taNBase)
+friend class DataTable;
 public:
   enum ValType {
-    VT_UNKNOWN,
     VT_STRING,
     VT_FLOAT,
     VT_INT,
     VT_BYTE
   };
 
-  static void 		DecodeName(String nm, String& base_nm, ValType& vt, int& vec_col, int& col_cnt);
+  static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
+    // note: vt is -1 if unknown
   static String 	ValTypeToStr(ValType vt);
 
 
   String		disp_opts;	// viewer default display options
   bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
+  bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
+  int_Array		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
-  virtual bool	is_float() {return false;} // these tests are done all the time
-  virtual bool	is_string() {return false;}// these tests are done all the time
-  virtual bool	is_matrix() {return false;}// 'true' if the cell is a matrix, not a scalar
+  virtual taMatrix_impl* 	AR() = 0; // the matrix pointer
+  virtual const taMatrix_impl* 	AR() const = 0; // const version of the matrix pointer
+  virtual bool		is_numeric() const {return false;} // true if data is float, int, or byte
+  virtual bool		is_string() const {return false;}// true if data is string
+  virtual int		cell_size() const // for matrix type, number of elements in each cell
+     {return (is_matrix) ? cell_geom.Product() : 1;}
+  virtual int		cell_dims() const // for matrix type, number of dimensions in each cell
+     {return cell_geom.size;}
+  virtual int		GetCellGeom(int dim) const  // for matrix type, size of given dim
+    {return cell_geom.SafeEl(dim);}
+  int			rows() const {return AR()->frames();}
 
-  int		displayWidth(); // low level display width, in tabs (8 chars/tab), taken from spec
-  virtual int	maxColWidth() {return 0;} // aprox max number of columns, in characters
-  // these are overloaded for the specific types
+  int			displayWidth() const; // low level display width, in tabs (8 chars/tab), taken from spec
+  virtual int		maxColWidth() const {return -1;} // aprox max number of columns, in characters, -1 if variable or unknown
+  virtual ValType 	valType() const = 0; // the type of data in each element
 
   override String 	GetColText(int col, int itm_idx = -1);
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
-  virtual ValType 	valType()  {return VT_STRING;} // overridden in numeric subclasses
-  virtual String 	GetValAsString(int row) {return _nilString;} // overridden in subclasses
-  virtual float 	GetValAsFloat(int row) {return 0.0f;} // overridden in subclasses
-  virtual int	 	GetValAsInt(int row) {return 0;} // overridden in subclasses
+  
+  // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
+  // -ve values are from end, and are valid for both low-level col access, and DataTable access
+  String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
+    // valid for all types, -ve row is from end (-1=last)
+  float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
+    // valid if type is numeric, -ve row is from end (-1=last)
+  int	 	GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);} 
+    // valid if type is int or byte, -ve row is from end (-1=last)
+  byte	 	GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);} 
+    // valid only if type is byte, -ve row is from end (-1=last)
+    
+  // Matrix versions
+  String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
+    // valid for all types, -ve row is from end (-1=last)
+  float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
+    // valid if type is numeric, -ve row is from end (-1=last)
+  int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
+    // valid if type is int or byte, -ve row is from end (-1=last)
+  byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
+    // valid only if type is byte, -ve row is from end (-1=last)
 
-  virtual taMatrix_impl* 	AR()	{ return NULL; } // the matrix pointer
-/*  virtual void	NewAR() { };
-  // #MENU #MENU_ON_Object create an array for yourself
-  virtual void	SetAR(taArray_base*) { };	// set AR to existing array
-*/
+  void	 	SetValAsString(const String& val, int row) 
+    {SetValAsString_impl(val, row, 0);} 
+    // valid for all types, -ve row is from end (-1=last)
+  void	 	SetValAsFloat(float val, int row) 
+    // valid only if type is float, -ve row is from end (-1=last)
+    {SetValAsFloat_impl(val, row, 0);} 
+  void	 	SetValAsInt(int val, int row) 
+    // valid if type is int or float, -ve row is from end (-1=last)
+    {SetValAsInt_impl(val, row, 0);} 
+  void	 	SetValAsByte(byte val, int row) 
+    // valid if type is numeric, -ve row is from end (-1=last)
+    {SetValAsByte_impl(val, row, 0);} 
+    
+  // Matrix versions
+  void	 	SetValAsStringM(const String& val, int row, int cell) 
+    {SetValAsString_impl(val, row, cell);} 
+    // valid for all types, -ve row is from end (-1=last)
+  void	 	SetValAsFloatM(float val, int row, int cell) 
+    // valid only if type is float, -ve row is from end (-1=last)
+    {SetValAsFloat_impl(val, row, cell);} 
+  void	 	SetValAsIntM(int val, int row, int cell) 
+    // valid if type is int or float, -ve row is from end (-1=last)
+    {SetValAsInt_impl(val, row, cell);} 
+  void	 	SetValAsByteM(byte val, int row, int cell) 
+    // valid if type is numeric, -ve row is from end (-1=last)
+    {SetValAsByte_impl(val, row, cell);} 
+
   bool		HasDispOption(const char* opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
-  String 	DispOptionAfter(const char* opt);
+  String 	DispOptionAfter(const char* opt) const;
   void		AddDispOption(const char* opt);
 
+  virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  void  UpdateAfterEdit();
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
+  void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   void 	Copy_(const DataArray_impl& cp);
   COPY_FUNS(DataArray_impl, taNBase);
   TA_ABSTRACT_BASEFUNS(DataArray_impl);
+  
+protected:
+  // in all accessor routines, -ve row is from end (-1=last)
+  int			IndexOfEl_Flat(int row, int cell) const; 
+    // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
+  virtual String 	GetValAsString_impl(int row, int cell) const; 
+  virtual float 	GetValAsFloat_impl(int row, int cell) const 
+    {return (float)GetValAsInt_impl(row, cell);}
+  virtual int	 	GetValAsInt_impl(int row, int cell) const 
+    {return (int)GetValAsByte_impl(row, cell);}
+  virtual byte	 	GetValAsByte_impl(int row, int cell) const {return 0;} 
+  virtual void	 	SetValAsString_impl(const String& val, int row, int cell); 
+  virtual void	 	SetValAsFloat_impl(float val, int row, int cell) {} 
+  virtual void	 	SetValAsInt_impl(int val, int row, int cell) 
+    {SetValAsFloat_impl((float)val, row, cell);} 
+  virtual void	 	SetValAsByte_impl(byte val, int row, int cell) 
+    {SetValAsInt_impl((int)val, row, cell);} 
+  
 private:
   void	Initialize();
-  void	Destroy()	{ };
+  void	Destroy()	{CutLinks(); };
 };
 
 /*
@@ -384,9 +455,7 @@ private:
 */
 class DataTable : public taGroup<DataArray_impl> {
   // #NO_UPDATE_AFTER table of data
-#ifndef __MAKETA__
-typedef taGroup<DataArray_impl> inherited;
-#endif
+INHERITED(taGroup<DataArray_impl>)
 public:
   static void 	SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx);
   static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
@@ -427,9 +496,15 @@ public:
   // update all min-max range data for all float_Data elements in log
 
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, const char* col_nm);
-   // create new column of data of indicated type
+   // #MENU #MENU_ON_Table create new scalar column of data of specified type
+  DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const char* col_nm,
+    int dims = 1, int d0 = 0, int d1 = 0, int d2 = 0, int d3 = 0);
+   // #MENU #MENU_ON_Table create new matrix column of data of specified type, with specified cell geom
+  DataArray_impl*	NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
+    const int_Array& cell_geom);
+   // create new matrix column of data of specified type, with specified cell geom
   virtual float_Data*	NewColFloat(const char* col_nm); // create new column of floating point data
-  virtual float_Data*	NewColInt(const char* col_nm); 	 // create new column of integer-level data (= narrow display, actually stored as float)
+  virtual int_Data*	NewColInt(const char* col_nm); 	 // create new column of integer-level data (= narrow display, actually stored as float)
   virtual String_Data*	NewColString(const char* col_nm); // create new column of string data
   virtual DataTable*	NewGroupFloat(const char* base_nm, int n); // create new sub-group of floats of size n, named as base_nm_index
   virtual DataTable*	NewGroupInt(const char* base_nm, int n); // create new sub-group of ints of size n, named as base_nm_index
@@ -456,6 +531,7 @@ public:
   // set column name for given column (if subgp >= 0, column is in given subgroup)
   virtual void	AddColDispOpt(const char* dsp_opt, int col, int subgp=-1);
   // add display option for given column (if subgp >= 0, column is in given subgroup)
+  
   virtual void	SetFloatVal(float val, int col, int row, int subgp=-1);
   // set float/int data for given column, row (if subgp >= 0, column is in given subgroup)
   virtual void	SetStringVal(const char* val, int col, int row, int subgp=-1);
@@ -470,9 +546,18 @@ public:
   // get float data for given column, row (if subgp >= 0, column is in given subgroup)
   virtual String GetStringVal(int col, int row, int subgp=-1);
   // get string data for given column, row (if subgp >= 0, column is in given subgroup)
+  
   String 	GetValAsString(int col, int row, int subgp=-1);
   // get data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); if data is NULL, then "n/a" is returned
+  void 		SetValAsString(const String& val, int col, int row, int subgp=-1);
+  // set data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); does nothing if no cell
 
+  // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
+  virtual void 	SaveHeader(ostream& strm); // saves header information, tab-separated, 
+  virtual void 	SaveData(ostream& strm); // saves data, one line per rec, tab-separated
+  virtual void 	LoadHeader(istream& strm); // loads header information -- preserves current headers if possible
+  virtual void 	LoadData(istream& strm, int max_recs = -1); // loads data, up to max num of recs (-1 for all)
+  
   int  		MinLength();		// #IGNORE
   int  		MaxLength();		// #IGNORE
 
@@ -481,6 +566,8 @@ public:
 
   void	Initialize();
   void	Destroy();
+  void 	Copy_(const DataTable& cp);
+  COPY_FUNS(DataTable, taGroup<DataArray_impl>);
   TA_BASEFUNS(DataTable); //
 
 public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
@@ -489,6 +576,9 @@ public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a 
   void	AddFloatVal_deprecated(float val, int col, int subgp=-1) {AddFloatVal(val, col, subgp);} // #IGNORE
   void	AddStringVal_deprecated(const char* val, int col, int subgp=-1) {AddStringVal(val, col, subgp);} // #IGNORE
 
+protected:
+  virtual DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, const char* col_nm);
+   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
 private:
   virtual void	AddFloatVal(float val, int col, int subgp=-1);
   // add float/int data for given column (if subgp >= 0, column is in given subgroup)
@@ -498,109 +588,104 @@ private:
 };
 
 template<class T> 
-class DataArray : public DataArray_impl { // compatibility template for scalar data
+class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
   override taMatrix_impl* 	AR()	{ return &ar; } // the array pointer
+  override const taMatrix_impl* AR() const { return &ar; } // the array pointer
 
   void	CutLinks()
     {ar.CutLinks(); DataArray_impl::CutLinks();}
   void	Copy_(const DataArray<T>& cp)  {ar = cp.ar;}
   COPY_FUNS(DataArray<T>, DataArray_impl);
-  TA_TMPLT_BASEFUNS(DataArray, T); //
+  TA_ABSTRACT_TMPLT_BASEFUNS(DataArray, T); //
 public: //DO NOT ACCESS DIRECTLY
   T		ar;		// #NO_SAVE #SHOW #BROWSE the array itself
 private:
-  void	Initialize()		{ar.SetGeom(0);}
+  void	Initialize()		{}
   void	Destroy()		{ CutLinks(); }
 };
 
-class float_Data : public DataArray<float_Matrix> {
-  // #NO_UPDATE_AFTER floating point data
-INHERITED(DataArray<float_Matrix>)
+class String_Data : public DataArray<String_Matrix> {
+  // string data
+INHERITED(DataArray<String_Matrix>)
 friend class DataTable;
 public:
-  override bool	is_float() {return true;} // these tests are done all the time
-  override int	maxColWidth() {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
+  override bool		is_string() const {return true;} 
+  override ValType 	valType() const  {return VT_STRING;}
 
-  override float 	GetValAsFloat(int row);
-  override String 	GetValAsString(int row);
-  virtual ValType 	valType();
-
-  void	Initialize();
-  void	Destroy()		{ };
-  TA_BASEFUNS(float_Data);
-protected:
-  ValType		m_valType; //note: set when accessed type
-};
-
-class DString_Array : public String_Matrix {
-INHERITED(String_Matrix)
-friend class String_Data;
-public:
-  override void		Add_(void* it); // #IGNORE
-  override void		Reset();
-  void	Initialize()	{SetGeom(0); m_maxColWidth = 0;}
-  void	Destroy()	{ }
-  void	Copy_(const DString_Array& cp) {m_maxColWidth = cp.m_maxColWidth;}
-  COPY_FUNS(DString_Array, String_Matrix);
-  TA_BASEFUNS(DString_Array);
-protected:
-  int		m_maxColWidth; // note: only aprox, and can be too large if lines deleted
-};
-
-class String_Data : public DataArray<DString_Array> {
-  // #NO_UPDATE_AFTER string data
-INHERITED(DataArray<DString_Array>)
-public:
-  override bool		is_string() {return true;}// these tests are done all the time
-  override int		maxColWidth(); // note: aprox, esp if items get deleted
-  override String 	GetValAsString(int row);
-  void	Initialize();
-  void	Destroy()	{}
   TA_BASEFUNS(String_Data);
-};
-
-
-class MatrixData_impl : public DataArray_impl {
-  // #VIRT_BASE matrix data, all of same type and geometry
-INHERITED(DataArray_impl)
-friend class DataTable;
-public:
-  int_Array		val_geom; // the geom of each cell
-  
-  override bool		is_matrix() {return true;}// 'true' if the cell is a matrix, not a scalar
-  override String 	GetValAsString(int row) {return String("[matrix]");} //TODO: prob redesign text viewer to enable viewing matrix cells
-
-  void	InitLinks() {DataArray_impl::InitLinks(); taBase::Own(val_geom, this);}
-  void	CutLinks()  {val_geom.CutLinks(); DataArray_impl::CutLinks();}
-  void	UpdateAfterEdit();
-  void	Copy_(const MatrixData_impl& cp) {val_geom = cp.val_geom;}
-  COPY_FUNS(MatrixData_impl, DataArray_impl);
-  TA_ABSTRACT_BASEFUNS(MatrixData_impl); //
-private:
-  void	Initialize();
-  void	Destroy()		{ CutLinks(); }
-};
-
-class float_MatrixData : public MatrixData_impl {
-  // #NO_UPDATE_AFTER floating point data
-INHERITED(MatrixData_impl)
-friend class DataTable;
-public:
-
-  override taMatrix_impl* 	AR()	{ return &ar; } // the array pointer
-  override ValType 	valType() {return VT_FLOAT;}
-
-  void CutLinks() {ar.CutLinks(); MatrixData_impl::CutLinks();}
-  TA_BASEFUNS(float_MatrixData);
-public:
-  float_Matrix		ar;  // #NO_SAVE #SHOW #BROWSE the matrix itself
 
 private:
   void	Initialize() {}
-  void	Destroy()		{CutLinks();};
+  void	Destroy() {}
 };
 
+
+class float_Data : public DataArray<float_Matrix> {
+  // floating point data
+INHERITED(DataArray<float_Matrix>)
+friend class DataTable;
+public:
+  override bool		is_numeric() const {return true;} 
+  override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
+  override ValType 	valType() const {return VT_FLOAT;}
+
+  TA_BASEFUNS(float_Data);
+  
+protected:
+  override float 	GetValAsFloat_impl(int row, int cell) const
+    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  override void	 	SetValAsFloat_impl(float val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+class int_Data : public DataArray<int_Matrix> {
+  // int data
+INHERITED(DataArray<int_Matrix>)
+friend class DataTable;
+public:
+  override bool		is_numeric() const {return true;} // 
+  override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
+  override ValType 	valType() const {return VT_INT;}
+
+  TA_BASEFUNS(int_Data);
+  
+protected:
+  override int 		GetValAsInt_impl(int row, int cell) const
+    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  override void	 	SetValAsInt_impl(int val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+class byte_Data : public DataArray<byte_Matrix> {
+  // byte data
+INHERITED(DataArray<byte_Matrix>)
+friend class DataTable;
+public:
+  override bool		is_numeric() const {return true;} // 
+  override int		maxColWidth() const {return 3;} // assumes 3 digs
+  override ValType 	valType() const {return VT_BYTE;}
+
+  TA_BASEFUNS(byte_Data);
+  
+protected:
+  override byte 	GetValAsByte_impl(int row, int cell) const
+    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  override void	 	SetValAsByte_impl(byte val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
 
 
 

@@ -67,6 +67,12 @@ class float_Matrix; //
 class taMatrix_impl: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
 public:
+  static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
+    // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
+  static bool		GeomIsValid(const int_Array& geom_, String* err_msg = NULL)
+    {return GeomIsValid(geom_.size, geom_.el, err_msg);}
+    // validates proposed geom, ex. dims >=1, and valid values for supplied geoms
+  
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
   int_Array		geom; // #SHOW #READ_ONLY dimensions array
   
@@ -85,10 +91,15 @@ public:
   // universal string access/set, for flat array
   String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_(idx)); } 
     // treats the matrix like a flat array, returns the element as a string
+  String		SafeElAsStr_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_(idx)); else return _nilString; } 
+    // treats the matrix like a flat array, returns the element as a string
   void			SetFmStr_Flat(int idx, const String& str) 	
     {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
     // treats the matrix like a flat array, sets the element as a string
-     
+  virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
+    {return true;}
+    // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
      
 
   virtual void		AddFrames(int n); // add n new blank frames
@@ -184,6 +195,7 @@ private:
   void			Destroy();
 };
 
+typedef taMatrix_impl* ptaMatrix_impl;
 
 class taMatrix_Group: public taGroup<taMatrix_impl> { // group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix_impl>)
@@ -341,11 +353,11 @@ inline bool operator !=(const taMatrix_impl* a, const taMatrixPtr_impl& b)
   {return (a != b.ptr());}
 
 
-// bogus operators
+/*nn // bogus operators
 inline bool operator <(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
   {return false;} 
 inline bool operator >(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
-  {return false;} 
+  {return false;}  */
 
 // macro for creating smart ptrs of taMatrix classes
 #define taMatrixPtr_Of(T)  class T ## Ptr: public taMatrixPtr_impl { \
@@ -358,6 +370,20 @@ public: \
   T ## Ptr() {} \
   T ## Ptr(const T ## Ptr& src) {set((T*)src.m_ptr);} \
   T ## Ptr(T* src) {set(src);} \
+};
+
+
+class MatrixPtr_Array : public taArray<taMatrixPtr_impl> {
+  // #NO_UPDATE_AFTER array (list) of matrix pointers -- used typically for multi params in data processing
+public:
+  STATIC_CONST taMatrixPtr_impl blank; // #HIDDEN #READ_ONLY 
+
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = &TA_taMatrixPtr_impl; return FastEl_(i); }
+  void Initialize()	{};
+  void Destroy()	{ };
+  TA_BASEFUNS(MatrixPtr_Array);
+  TA_ARRAY_FUNS(MatrixPtr_Array, taMatrixPtr_impl)
 };
 
 
@@ -387,45 +413,6 @@ public: \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
-class byte_Matrix: public taMatrix<byte> { // #INSTANCE
-public:
-  override TypeDef*	data_type() const {return &TA_unsigned_char;} 
-  
-  void			Copy_(const byte_Matrix& cp) {}
-  COPY_FUNS(byte_Matrix, taMatrix<byte>)
-  TA_MATRIX_FUNS(byte_Matrix, byte)
-  
-public: //
-  //note: for streaming, we convert to hex, rather than char
-  override String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
-  override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
-private:
-  void		Initialize() {}
-  void		Destroy() {}
-};
-
-taMatrixPtr_Of(byte_Matrix)
-
-
-class float_Matrix: public taMatrix<float> { // #INSTANCE
-public:
-  override TypeDef*	data_type() const {return &TA_float;} 
-  
-  void			Copy_(const float_Matrix& cp) {}
-  COPY_FUNS(float_Matrix, taMatrix<float>)
-  TA_MATRIX_FUNS(float_Matrix, float)
-  
-public:
-  override String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
-  override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
-private:
-  void		Initialize() {}
-  void		Destroy() {}
-};
-
-taMatrixPtr_Of(float_Matrix)
-
-
 class String_Matrix: public taMatrix<String> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_taString;} 
@@ -444,6 +431,73 @@ private:
 
 taMatrixPtr_Of(String_Matrix)
 //
+
+
+class float_Matrix: public taMatrix<float> { // #INSTANCE
+public:
+  override TypeDef*	data_type() const {return &TA_float;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+    // accepts valid format for float
+    
+  void			Copy_(const float_Matrix& cp) {}
+  COPY_FUNS(float_Matrix, taMatrix<float>)
+  TA_MATRIX_FUNS(float_Matrix, float)
+  
+public:
+  override String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+taMatrixPtr_Of(float_Matrix)
+
+
+class int_Matrix: public taMatrix<int> { // #INSTANCE
+public:
+  override TypeDef*	data_type() const {return &TA_int;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+    // accepts in-range for 32bit int
+  
+  void			Copy_(const int_Matrix& cp) {}
+  COPY_FUNS(int_Matrix, taMatrix<int>)
+  TA_MATRIX_FUNS(int_Matrix, int)
+  
+public:
+  override String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
+  override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+taMatrixPtr_Of(int_Matrix)
+
+
+class byte_Matrix: public taMatrix<byte> { // #INSTANCE
+public:
+  override TypeDef*	data_type() const {return &TA_unsigned_char;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+    // accepts 0-255 or octal or hex forms
+  
+  void			Copy_(const byte_Matrix& cp) {}
+  COPY_FUNS(byte_Matrix, taMatrix<byte>)
+  TA_MATRIX_FUNS(byte_Matrix, byte)
+  
+public: //
+  //note: for streaming, we convert to hex, rather than char
+  override String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+taMatrixPtr_Of(byte_Matrix)
 
 
 

@@ -714,6 +714,8 @@ void Project::Initialize() {
   wizards.el_typ = pdpMisc::def_wizard;
   specs.SetBaseType(&TA_BaseSpec);
   networks.SetBaseType(&TA_Network);
+  net_writers.SetBaseType(&TA_NetWriter);
+  net_readers.SetBaseType(&TA_NetReader);
   environments.SetBaseType(&TA_Environment);
   processes.SetBaseType(&TA_SchedProcess);
   logs.SetBaseType(&TA_TextLog);
@@ -737,7 +739,8 @@ void Project::InitLinks() {
   taBase::Own(wizards, this);
   taBase::Own(specs, this);
   taBase::Own(networks, this);
-  taBase::Own(conduits, this);
+  taBase::Own(net_writers, this);
+  taBase::Own(net_readers, this);
   taBase::Own(data, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
@@ -786,7 +789,8 @@ void Project::CutLinks() {
   processes.CutLinks();
   environments.CutLinks();
   data.CutLinks();
-  conduits.CutLinks();
+  net_readers.CutLinks();
+  net_writers.CutLinks();
   networks.CutLinks();
   specs.CutLinks();
   defaults.CutLinks();
@@ -799,7 +803,8 @@ void Project::Copy_(const Project& cp) {
   defaults = cp.defaults;
   specs = cp.specs;
   networks = cp.networks;
-  conduits = cp.conduits;
+  net_writers = cp.net_writers;
+  net_readers = cp.net_readers;
   data = cp.data;
   environments = cp.environments;
   processes = cp.processes;

@@ -511,6 +511,9 @@ public:
 // compulsory element accessor and manip functions 
   virtual const void*	FastEl_(int i) const 
     {return const_cast<taArray_impl*>(this)->FastEl_(i);}
+  virtual bool		El_Equal_(const void*, const void*) const { return false; }
+  // #IGNORE for value equality testing
+  virtual bool		Equal_(const taArray_impl& ar) const; // value equality, implements == and != operators, ar must be same type
   virtual int		El_Compare_(const void*, const void*) const	{ return 0; }
   // #IGNORE for sorting
   virtual void		El_Copy_(void*,const void*)		{ };

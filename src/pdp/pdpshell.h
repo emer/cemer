@@ -222,8 +222,9 @@ public:
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units
-  NetConduit_MGroup	conduits;	// NetConduits for network input and output
-  DataSet_MGroup	data;		// Internal data patterns for network input and output
+  NetConduit_MGroup	net_writers;	// NetConduits for network input
+  NetConduit_MGroup	net_readers;	// NetConduits for network output
+  DataTable_MGroup	data;		// Misc data, such as patterns for network input
   Environment_MGroup	environments;	// Environments of patterns to present to networks //TODO: legacy, make hidden
   Process_MGroup	processes;	// Processes to coordinate training/testing, etc
   PDPLog_MGroup		logs;		// Logs to display statistics in processes

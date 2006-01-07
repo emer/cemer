@@ -36,15 +36,14 @@ template class taArray<ValIdx>;
   const ValIdx ValIdx_Array::blank;
 
 // ta_data.h
-template class taList<DataConnector>;
-template class taList<SourceChannel>;
-template class taList<SinkChannel>;
 
 // datatable.h:
 template class taList<DataItem>;
 template class taGroup<DataArray_impl>;
+template class DataArray<String_Matrix>;
 template class DataArray<float_Matrix>;
-template class DataArray<DString_Array>;
+template class DataArray<int_Matrix>;
+template class DataArray<byte_Matrix>;
 template class taGroup<DA_ViewSpec>; //
 
 // datagraph.h:

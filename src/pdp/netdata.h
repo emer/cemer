@@ -20,73 +20,29 @@
 #ifndef NETDATA_H
 #define NETDATA_H
 
-#include "pdpbase.h"
-#include "spec.h"
-//#include "datatable.h"
+
+//#include "pdpbase.h"
+//#include "spec.h"
+#include "datatable.h"
 #include "ta_data.h"
 
+#include "pdp_TA_type.h"
+
 // forwards this file
-class MatrixGroup_List;
-class DataSet;
-class DataSet_MGroup;
-
-class MatrixGroup_List: public taList<taMatrix_Group> { // list of group of matrixes, i.e. table of data
-INHERITED(taList<taMatrix_Group>)
-public:
-  
-  TA_BASEFUNS(MatrixGroup_List); //
-  
-protected:
-  override void*	El_Own_(void* it); // for blank sets, initialize from DataSet
-
-private:
-  void	Initialize();
-  void 	Destroy() {}
-};
-
-class DataSet: public taNBase, public IDataSource {
-INHERITED(taNBase)
-public:
-  SourceChannel_Group	source_channels;
-  MatrixGroup_List	data;
-  
-  void			InitDataItem(taMatrix_Group* item); // initializes a blank item with proper complement of data
-  
-  void			InitFromConduit(NetConduit* cond = NULL); // #MENU_ON_Object initialize this data set to be compatible with the given conduit
-  
-  virtual void		Reset(); // clears all the channels and data
-  virtual void		ResetData(); // clears all the data, leaving the schema
-  
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const DataSet& cp);
-  TA_BASEFUNS(DataSet); //
-
-protected:
-  virtual void		InitDataItem_impl(SourceChannel_Group* ch_gp, taMatrix_Group* data_gp); // initializes a group, then recursively calls for subgroups
-  virtual void		InitMatrix(SourceChannel* chan, taMatrix_impl* mat); 
-private:
-  void	Initialize();
-  void 	Destroy();
-  
-public: // IDataSource i/f
-  override int		source_channel_count() {return source_channels.leaves;}
-  override SourceChannel* source_channel(int idx) {return (SourceChannel*)source_channels.Leaf(idx);}
-protected: 
-  override void 	DoProduceData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled);
-};
+class DataTable_MGroup;
 
 
-class DataSet_MGroup : public taGroup<DataSet> {
+
+class DataTable_MGroup : public taGroup<DataTable> {
   // group of data objects
-INHERITED(taGroup<DataSet>)
+INHERITED(taGroup<DataTable>)
 public:
 //  virtual void	AutoEdit();
 
-  TA_BASEFUNS(DataSet_MGroup);
+  TA_BASEFUNS(DataTable_MGroup);
   
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataSet); }
+  void	Initialize() 		{ SetBaseType(&TA_DataTable); }
   void 	Destroy()		{ };
 };
 

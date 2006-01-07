@@ -431,20 +431,33 @@ TAPtr taGroup_impl::New(int no, TypeDef* typ) {
   if(typ == NULL)
     typ = el_typ;
 
-  if(typ->InheritsFrom(TA_taGroup_impl)) {
-    if(!typ->InheritsFrom(gp.el_typ))
-      typ = GetTypeDef();	// always create one of yourself..
+  // if requested typ inherits from the list el type, then 
+  // we assume it is for a list el, and create the instances
+  if (typ->InheritsFrom(el_base)) {
+    TAPtr rval = taList_impl::New(no, typ);
+    return rval;
+  }
+  
+  // otherwise, if it is for a group type, we check to make sure
+  // it either inherits from the current group type, or the current
+  // groups inherits from it -- in the latter case, we create the derived type
+  // (there is no officially supported member for specifying group type,
+  // so we have to be conservative and assume group must contain subgroups of 
+  // at least its own type)
+  if (typ->InheritsFrom(&TA_taGroup_impl)) {
+    if (GetTypeDef()->InheritsFrom(typ)) {
+      typ = GetTypeDef(); 
+    } else if (!typ->InheritsFrom(GetTypeDef()))
+      goto err;
     TAPtr rval = gp.New(no, typ);
 //    UpdateAfterEdit();
     return rval;
   }
-  if(!typ->InheritsFrom(el_base)) {
-    taMisc::Error("*** Attempt to create type:", typ->name,
-		   "in list with base type:", el_base->name);
-    return NULL;
-  }
-  TAPtr rval = taList_impl::New(no, typ);
-  return rval;
+err: 
+  taMisc::Error("*** Attempt to create type:", typ->name,
+		   "in group of type:", GetTypeDef()->name,
+		   "with base element type:", el_base->name);
+  return NULL;
 }
 
 TAPtr taGroup_impl::NewEl_(int no, TypeDef* typ) {

@@ -24,86 +24,11 @@
 */
 
 /////////////////////////
-//  DataConnector      //
-/////////////////////////
-
-bool DataConnector::CanConnect(SourceChannel* src_ch, SinkChannel* snk_ch) {
-  // sink must be unconnected
-  // must have commensurable geometries
-//TEMP
-return true;
-}
-
-DataConnector* DataConnector::StatConnect(SourceChannel* src_ch, SinkChannel* snk_ch) {
-  //NOTE: assumes validation already done
-  DataConnector* rval = new DataConnector();
-  src_ch->connectors.Add(src_ch);
-  rval->m_source_channel = src_ch;
-  snk_ch->m_connector = rval;
-  rval->m_sink_channel = snk_ch;
-  return rval;
-}
-
-void DataConnector::StatDisconnect(SourceChannel* src_ch, SinkChannel* snk_ch) {
-  if ((src_ch == NULL) || (snk_ch == NULL)) return;
-  
-  src_ch->connectors.Remove(snk_ch->m_connector);
-  snk_ch->m_connector = NULL;
-}
-
-
-void DataConnector::Initialize() {
-  m_source_channel = NULL;
-  m_sink_channel = NULL;
-}
-
-void DataConnector::Destroy() {
-  if (m_source_channel != NULL) {
-    m_source_channel->ConnectorDisconnecting(this);
-    m_source_channel = NULL;
-  }
-  if (m_sink_channel != NULL) {
-    m_sink_channel->ConnectorDisconnecting(this);
-    m_sink_channel = NULL;
-  }
-}
-
-TAPtr DataConnector::SetOwner(TAPtr own) {
-  TAPtr rval = inherited::SetOwner(own);
-  m_source_channel = GET_MY_OWNER(SourceChannel); // NULL if not owned as such
-  return rval;
-}
-
-void DataConnector::SinkChannelDisconnecting(SinkChannel* snk_ch) {
-  if (m_sink_channel != snk_ch) return;
-  m_sink_channel = NULL;
-  snk_ch->m_connector = NULL;
-  //TODO: maybe should delete ourself???
-  delete this;
-  //NOTE: do not put any additional code after this point!
-}
-
-
-/////////////////////////
-//  DataConnector_List //
-/////////////////////////
-
-void DataConnector_List::Initialize() {
-  SetBaseType(&TA_DataConnector);
-}
-
-void DataConnector_List::Destroy() {
-}
-
-/////////////////////////
 //  DataChannel        //
 /////////////////////////
 
 void DataChannel::Initialize() {
   active = true;
-  txfer_modes_allowed = DTM_BOTH;
-  txfer_mode = DTM_PUSH;
-  m_cached_cycle = 0;
   matrix_type = &TA_float_Matrix; // the most common is the default; replace if different
 }
 
@@ -125,22 +50,18 @@ void DataChannel::CutLinks() {
 void DataChannel::Copy_(const DataChannel& cp) {
   active = cp.active;
   geom = cp.geom;
-  txfer_modes_allowed = cp.txfer_modes_allowed;
-  txfer_mode = cp.txfer_mode;
-  m_cached_cycle = 0;
   matrix_type = cp.matrix_type;
+  m_cached_data = NULL; // invalidate cache
 }
 
 void DataChannel::ClearCachedData() {
   m_cached_data = NULL; // derefs
-  m_cached_cycle = -1;
 }
 
 bool DataChannel::SetCachedData(taMatrix_impl* data) {
   bool rval = ValidateData(data);
   if (rval) {
     m_cached_data = data;
-    m_cached_cycle = SequenceMaster::instance().cycle();
   }
   return rval;
 }
@@ -189,6 +110,14 @@ void DataChannel::SetGeomN(const int_Array& value) {
   geom = value;
 }
 
+int DataChannel::size() {
+  if (geom.size == 0) return 0;
+  int rval = geom[0];
+  for (int i = 1; i < geom.size; ++i)
+    rval *= geom[i];
+  return rval;
+}
+
 bool DataChannel::ValidateData(taMatrix_impl* data) {
   // check not null
   if (data == NULL) {
@@ -209,164 +138,31 @@ bool DataChannel::ValidateData(taMatrix_impl* data) {
     return false;
   }
   for (int i = 0; i < dims(); ++i) {
-    if (data->GetGeom(i) != this->GetGeom(i)) {
+    int dim = this->GetGeom(i);
+    if ((dim != 0) && (data->GetGeom(i) != dim)) {
       taMisc::Warning(this->GetPath(), "data has wrong geometry");
       return false;
     }
   }
-  
   return true;
 }
 
+
 /////////////////////////
-//  SourceChannel      //
+//  DataChannel_Group  //
 /////////////////////////
 
-void SourceChannel::Initialize() {
-  m_data_source = NULL;
-}
-
-void SourceChannel::Destroy() {
-  m_data_source = NULL;
-}
-
-void SourceChannel::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(connectors, this);
-}
-
-void SourceChannel::CutLinks() {
-  connectors.CutLinks();
+void DataChannel_Group::CutLinks() {
+  ClearCachedData();
   inherited::CutLinks();
 }
 
-void SourceChannel::Copy_(const SourceChannel& cp) {
-  //TODO: maybe we should try to copy the connections, but maybe it doesn't make sense...
-  connectors.Reset();
-}
-
-void SourceChannel::ConnectorDisconnecting(DataConnector* dc) {
-  connectors.Remove(dc);
-}
-
-bool SourceChannel::DoProduceData() {
-  bool rval = false;
-  if (m_data_source != NULL) {
-    taMatrix_impl* data = NULL;
-    m_data_source->DoProduceData(this, data, rval);
-    if (rval) {
-      SetCachedData(data);
-    }
+void DataChannel_Group::ClearCachedData() {
+  DataChannel* chan;
+  taLeafItr itr;
+  FOR_ITR_EL(DataChannel, chan, this->, itr) {
+    chan->ClearCachedData();
   }
-  return rval;
-}
- 
-taMatrix_impl* SourceChannel::DoGetData() {
-  if (SequenceMaster::instance().UpdateClient(m_cached_cycle)) {
-    // data is stale
-    DoProduceData();
-  }
-  return m_cached_data;
-} 
-
-TAPtr SourceChannel::SetOwner(taBase* own) {
-  TAPtr rval = inherited::SetOwner(own);
-  TAPtr ods = own->GetOwner();
-  while (ods != NULL) {
-    if (ods->InheritsFrom(TA_IDataSource)) break;
-    
-    ods = ods->GetOwner();
-  }
-  if (ods == NULL) {
-    m_data_source = NULL;
-  } else {
-    m_data_source = dynamic_cast<IDataSource*>(ods);
-  }
-  return rval;
-}
-
-
-//////////////////////////
-//  SourceChannel_Group	//
-//////////////////////////
-
-void SourceChannel_Group::Initialize() {
-  SetBaseType(&TA_SourceChannel);
-}
-
-
-/////////////////////////
-//  SinkChannel        //
-/////////////////////////
-
-void SinkChannel::Initialize() {
-  m_data_sink = NULL;
-  m_connector = NULL;
-}
-
-void SinkChannel::Destroy() {
-  if (m_connector != NULL) {
-    m_connector->SinkChannelDisconnecting(this);
-    m_connector = NULL;
-  }
-  m_data_sink = NULL;
-}
-
-void SinkChannel::InitLinks() {
-  inherited::InitLinks();
-}
-
-void SinkChannel::CutLinks() {
-  inherited::CutLinks();
-}
-
-void SinkChannel::Copy_(const SinkChannel& cp) {
-  //TODO: maybe we should try to copy the connection, but maybe it doesn't make sense...
-  if (m_connector != NULL) {
-    m_connector->SinkChannelDisconnecting(this);
-    m_connector = NULL;
-  }
-}
-
-void SinkChannel::ConnectorDisconnecting(DataConnector* dc) {
-  m_connector = NULL;
-}
-
-bool SinkChannel::DoConsumeData() {
-  bool rval = false;
-  if (m_data_sink != NULL) {
-    m_data_sink->DoConsumeData(this, rval);
-  }
-  return rval;
-}
- 
-bool SinkChannel::DoAcceptData(taMatrix_impl* data) {
-  return SetCachedData(data);
-} 
-
-TAPtr SinkChannel::SetOwner(taBase* own) {
-  TAPtr rval = inherited::SetOwner(own);
-  TAPtr ods = own->GetOwner();
-  while (ods != NULL) {
-    if (ods->InheritsFrom(TA_IDataSink)) break;
-    
-    ods = ods->GetOwner();
-  }
-  if (ods == NULL) {
-    m_data_sink = NULL;
-  } else {
-    m_data_sink = dynamic_cast<IDataSink*>(ods);
-  }
-  return rval;
-}
-
-
-//////////////////////////
-//  SinkChannel_Group	//
-//////////////////////////
-
-void SinkChannel_Group::Initialize() {
-  SetBaseType(&TA_SinkChannel);
 }
 
 

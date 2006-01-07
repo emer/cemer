@@ -557,7 +557,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   taMisc::is_saving = true;
   dumpMisc::path_tokens.Reset();
 
-  strm << "// ta_Dump File v1.0\n";   // be sure to check version with Load
+  strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
+  taMisc::strm_ver = 2;
   if(InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)base;
     rbase->Dump_Save_Path(strm, (TAPtr)par, indent);
@@ -1210,7 +1211,11 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
   int c;
   c = taMisc::read_till_eol(strm);
   if(c == EOF) return EOF;
-  if(!(taMisc::LexBuf.contains("// ta_Dump File v1.0"))) {
+  if (taMisc::LexBuf.contains("// ta_Dump File v1.0")) {
+    taMisc::strm_ver = 1;
+  } else if(taMisc::LexBuf.contains("// ta_Dump File v2.0")) {
+    taMisc::strm_ver = 2;
+  } else {
     taMisc::Error("*** Dump file does not have proper format id:", taMisc::LexBuf);
     return false;
   }

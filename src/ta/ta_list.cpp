@@ -1057,6 +1057,13 @@ void taArray_impl::EnforceSize(int new_size) {
   size = new_size;
 }
 
+bool taArray_impl::Equal_(const taArray_impl& ar) const {
+  if (size != ar.size) return false;
+  for (int i = 0; i < size; ++i)
+    if (!El_Equal_(FastEl_(i), ar.FastEl_(i))) return false;
+  return true;
+}
+
 int taArray_impl::Find_(const void* it, int where) const {
   int i;
   for(i=where; i<size; i++) {

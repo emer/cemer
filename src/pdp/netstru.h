@@ -46,7 +46,6 @@ class Unit_Group; //
 class LayerRWBase;
 class LayerWriter;
 class LayerReader;
-class LayerWriter_Group;
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -1412,9 +1411,9 @@ protected:
   virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
 };
 
-class LayerWriter: public SinkChannel, public LayerRWBase {
+class LayerWriter: public DataChannel, public LayerRWBase {
   // object that writes data from a datasource to a layer
-INHERITED(SinkChannel)
+INHERITED(DataChannel)
 public: //
   //NOTE: some bits are same as Unit::ExtType enum
   enum ExtType {	// #BITS how to flag the layer/unit external input status
@@ -1448,13 +1447,13 @@ public: //
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerWriter& cp);
-  COPY_FUNS(LayerWriter, SinkChannel);
+  COPY_FUNS(LayerWriter, DataChannel);
   TA_BASEFUNS(LayerWriter); //
   
 public: // ITypedObject/IDataLinkClient
   override void*	This() {return this;}  //
   
-protected: // SinkChannel functions
+public: // SinkChannel functions
   override bool		DoConsumeData(); // we invoke the ApplyData on cached data
 
 protected:
@@ -1475,23 +1474,10 @@ private:
 };
 
 
-class LayerWriter_Group : public taGroup<LayerWriter> {
-  // group of LayerWriters 
-INHERITED(taGroup<LayerWriter>)
-public:
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
-#endif
-  
-  void  Initialize()            { SetBaseType(&TA_LayerWriter); }
-  void  Destroy()               { };
-  TA_BASEFUNS(LayerWriter_Group);
-}; 
 
-
-class LayerReader: public SourceChannel, public LayerRWBase {
+class LayerReader: public DataChannel, public LayerRWBase {
   // object that reads data from a layer
-INHERITED(SourceChannel)
+INHERITED(DataChannel)
 public:
 
 #ifdef TA_GUI
@@ -1501,13 +1487,14 @@ public:
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerReader& cp);
-  COPY_FUNS(LayerReader, SourceChannel);
+  COPY_FUNS(LayerReader, DataChannel);
   TA_BASEFUNS(LayerReader);
   
 public: // ITypedObject/IDataLinkClient
   override void*	This() {return this;}  //
   
 public: // SourceChannel functions
+  override bool		DoProduceData(); // 
 
 private:
   void	Initialize();
@@ -1515,75 +1502,20 @@ private:
 };
 
 
-class LayerReader_Group : public taGroup<LayerReader> {
-  // group of LayerReaders 
-INHERITED(taGroup<LayerReader>)
-public:
-#ifdef TA_GUI
-  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT);}
-#endif
-  
-  void  Initialize()            { SetBaseType(&TA_LayerReader); }
-  void  Destroy()               { };
-  TA_BASEFUNS(LayerReader_Group);
-}; 
-
-
-class NetConduit : public taNBase, public IDataSink, public IDataSource {
-  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+class NetConduit : public taNBase, public ISequencable {
+  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE #VIRT_BASE #NO_TOKENS #NO_INSTANCE event specification
 INHERITED(taNBase)
 public:
-
   Network*		last_net;
+  DataChannel_Group	channels; // of type LayerReader
   // #READ_ONLY #NO_SAVE last network connected to
-  LayerReader_Group 	readers;
-  // #IN_GPMENU #NO_INHERIT group of pattern templates 
-  LayerWriter_Group 	writers;
-  // #IN_GPMENU #NO_INHERIT group of pattern templates 
-
+  
   virtual void 		InitFromNetwork(Network* net = NULL);
   // #BUTTON #NULL_OK creates readers/writers according to current state of net -- deletes existing readers/writers
-  virtual void 		InitFromLayer(Layer* lay);
-  // #BUTTON creates readers/writers according to current state of lay
-  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project
-
-  virtual void		SetNetwork(Network* net); // bind to given network
+  virtual void		SetNetwork(Network* net){} // bind to given network
   
-  virtual void		UnSetLayers(); 		 // clear layer pointers (and last_net)
-
-/* TODO
-  virtual void 	ApplyPatterns(Event* ev, Network* net);
-  // apply patterns to the network
-
-
-  int	MaxX();			// maximum X coordinate of patterns
-  int	MaxY();			// maximum Y coordinate of patterns
-
-  virtual void	NewEvent(Event* ev);
-  // defines a new event in my image
-  virtual void	UpdateEvent(Event* ev);
-  // updates existing event to current spec settings
-  virtual void	UpdateAllEvents();
-  // #BUTTON update all events using this event spec
-  virtual void 	UpdateFromLayers();
-  // #BUTTON set configuration of all pattern specs based on their corresponding layer in the network
-  virtual void 	ApplyNames(Network* net);
-  // #BUTTON set the names of units in the network according to the value_names on the pattern specs
-
-  virtual void	LinearLayout(PatternLayout pat_layout = DEFAULT);
-  // #MENU #MENU_ON_Actions Layout LayerWriters in a line going either horizontal or vertical (just for display purposes)
-
-  virtual void	AutoNameEvent(Event* ev, float act_thresh = .5f, int max_pat_nm = 3, int max_val_nm = 3);
-  // automatically name event based on the pattern names and value (unit) names for those units above act_thresh, e.g., Inp:vl1_vl2,Out:vl1_vl2
-  virtual void	AutoNameAllEvents(float act_thresh = .5f, int max_pat_nm = 3, int max_val_nm = 3);
-  // #BUTTON automatically name all events that use this spec based on the pattern names and value (unit) names for those units above act_thresh, e.g., Inp:vl1_vl2,Out:vl1_vl2
-
-  virtual bool	DetectOverlap();
-  // determine if the patterns overlap on top of each other
-
-  virtual void	AddToView();		// add event to view(s)
-  virtual void	RemoveFromView();	// remove event from view(s)
-*/
+  virtual void		UnSetLayers() {} 		 // clear layer pointers (and last_net)
+  
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
 #endif
@@ -1591,44 +1523,90 @@ public:
   void	InitLinks();
   void	CutLinks();
   void 	Copy(const NetConduit& cp);
-  TA_BASEFUNS(NetConduit);
+  TA_ABSTRACT_BASEFUNS(NetConduit);
   
-public: // IDataSink i/f and impl
-  override int		sink_channel_count(); // number of sink channels
-  override SinkChannel* sink_channel(int idx); // get a sink channel
-protected:
-  override void 	DoGetData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled); // #IGNORE
+public: // ISequencable i/f
+  virtual bool		is_sequential() {return true;} // 'true' if can be accessed sequentially
+  virtual void		InitData(); // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
+//  virtual bool		NextItem(); // for seq access, goes to the next item, 'true' if there was a next item
 
-public: // IDataSource i/f and impl
-  // override bool	can_sequence_() const {return false;} // true if has a ISequencable interface
-  // override ISequencable* sequencer_() {return NULL;} // sequencing interface, if sequencable
-  override int		source_channel_count(); // number of source channels
-  override SourceChannel* source_channel(int idx); // get a source channel
-protected: 
-  override void		DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled); //#IGNORE
-  override void		DoConsumeData(SinkChannel* ch, bool& handled); //#IGNORE
-  
 protected:
-  virtual void 		InitLayerReader(Layer* lay, LayerReader* lrw);
+  virtual void 		InitFromLayer(Layer* lay) {} // particularized in subclass
+  
+private:
+  void	Initialize();
+  void 	Destroy() 	{ }
+};
+
+
+class NetConduit_MGroup : public taGroup<NetConduit> {
+  // group of data objects
+INHERITED(taGroup<NetConduit>)
+public:
+
+  TA_BASEFUNS(NetConduit_MGroup);
+  
+private:
+  void	Initialize() 		{ } //note: you must set the NetWriter or NetReader base type
+  void 	Destroy()		{ }
+};
+
+
+class NetWriter : public NetConduit, public IDataSink {
+  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+INHERITED(NetConduit)
+public:
+//  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project (for pattern input)
+
+  override void		SetNetwork(Network* net); // bind to given network
+  override void		UnSetLayers(); 
+  
+  TA_BASEFUNS(NetWriter);
+  
+public: // ISequencable i/f
+  override bool		NextItem(); // applies data from channel caches into layers
+
+public: // IDataSink i/f and impl
+  override ISequencable* sequencer() {return this;} // sequencing interface
+  override int		sink_channel_count() {return channels.leaves;} // number of sink channels
+  override DataChannel* sink_channel(int idx) {return (DataChannel*)channels.Leaf(idx);} // get a sink channel
+
+protected:
+  override void 	InitFromLayer(Layer* lay); 
   virtual void 		InitLayerWriter(Layer* lay, LayerWriter* lrw);
 
 private:
   void	Initialize();
-  void 	Destroy() 	{ CutLinks(); }
+  void 	Destroy() 	{ }
 };
 
-class NetConduit_MGroup : public taGroup<NetConduit> {
-  // group of event templates
-INHERITED(taGroup<NetConduit>)
-public:
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
-#endif
 
-  void  Initialize()            { SetBaseType(&TA_NetConduit); }
-  void  Destroy()               { };
-  TA_BASEFUNS(NetConduit_MGroup);
-}; //
+class NetReader : public NetConduit, public IDataSource {
+  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+INHERITED(NetConduit)
+public:
+//  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project
+  override void		SetNetwork(Network* net); // bind to given network
+  override void		UnSetLayers(); 
+
+  TA_BASEFUNS(NetReader);
+  
+public: // ISequencable i/f
+  override bool		NextItem(); // fetches data from layers into channel caches
+
+public: // IDataSource i/f and impl
+  override ISequencable* sequencer() {return this;} // sequencing interface
+  override int		source_channel_count() {return channels.leaves;} // number of source channels
+  override DataChannel* source_channel(int idx) {return channels.Leaf(idx);} // get a source channel
+  
+protected:
+  override void 	InitFromLayer(Layer* lay); 
+  virtual void 		InitLayerReader(Layer* lay, LayerReader* lrw);
+
+private:
+  void	Initialize();
+  void 	Destroy() 	{}
+};
 
 
 #endif /* netstru_h */

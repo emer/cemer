@@ -64,9 +64,7 @@ You will also need to reimplement item(), setItem(), takeItem(), clearCell(), an
 
 class iDataTable: public QTable { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS
   Q_OBJECT
-#ifndef _MAKETA__
-typedef QTable inherited;
-#endif
+INHERITED(QTable)
 public:
   DataTable*		dt() {return m_dt;}
   void			setDataTable(DataTable* value);
@@ -93,10 +91,12 @@ public: // overrides
 
 protected:
   DataTable*		m_dt;
-  QBitArray*		str_cols; // bit is true if column is a string (left justifies)
+  QByteArray*		col_align; // contains QT::Align bits
+  mutable QWidget* 		cell_widge; // #IGNORE actually, a LineEdit
 
+  QWidget* 		createEditor(int row, int col, bool initFromCell) const;  // override
   void 			insertWidget(int row, int col, QWidget* w); // override
-
+  void 			setCellContentFromEditor(int row, int col); // override
 };
 
 

@@ -1060,6 +1060,10 @@ public: \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
+#define TA_ARRAY_OPS(y) \
+  inline bool operator ==(const y& a, const y& b) {return a.Equal_(b);} \
+  inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));}
+
 template<class T>
 class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
@@ -1129,17 +1133,10 @@ protected:
   
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
-  int		El_Compare_(const void* a, const void* b) const
-  { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
-  bool		El_Equal_(const void* a, const void* b) const
-    { return (*((T*)a) == *((T*)b)); }
   void		El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
   uint		El_SizeOf_() const		{ return sizeof(T); }
   const void*	El_GetErr_() const		{ return (void*)&err; }
   void*		El_GetTmp_() const		{ return (void*)&tmp; }
-  String	El_GetStr_(const void* it) const { return (*((T*)it)); }
-  void		El_SetFmStr_(void* it, const String& val)
-  { T tmp = (T)val; *((T*)it) = tmp; }
 
 };
 
@@ -1164,7 +1161,8 @@ public:
   STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
-
+  int 		Product() const; // returns product of all elements
+  
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_int; return FastEl_(i); }
   void Initialize()	{err = 0; };
@@ -1178,7 +1176,16 @@ public:
     {Initialize(); EnforceSize(4); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;}
   TA_BASEFUNS(int_Array);
   TA_ARRAY_FUNS(int_Array, int)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((int*)a) == *((int*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((int*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { int tmp = (int)val; *((int*)it) = tmp; }
 };
+TA_ARRAY_OPS(int_Array)
 
 class float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER
@@ -1190,7 +1197,16 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((float*)a) > *((float*)b)) rval=1; else if(*((float*)a) == *((float*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((float*)a) == *((float*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((float*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { float tmp = (float)val; *((float*)it) = tmp; }
 };
+TA_ARRAY_OPS(float_Array)
 
 class double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER
@@ -1202,7 +1218,16 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(double_Array);
   TA_ARRAY_FUNS(double_Array, double)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((double*)a) > *((double*)b)) rval=1; else if(*((double*)a) == *((double*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((double*)a) == *((double*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((double*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { double tmp = (double)val; *((double*)it) = tmp; }
 };
+TA_ARRAY_OPS(double_Array)
 
 class String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER
@@ -1214,7 +1239,16 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((String*)a) == *((String*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((String*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  {*((String*)it) = val; }
 };
+TA_ARRAY_OPS(String_Array)
 
 class SArg_Array : public String_Array {
   // string argument array: has labels for each argument to make it easier in the interface
@@ -1246,7 +1280,16 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(long_Array);
   TA_ARRAY_FUNS(long_Array, long)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((long*)a) > *((long*)b)) rval=1; else if(*((long*)a) == *((long*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((long*)a) == *((long*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((long*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { long tmp = (long)val; *((long*)it) = tmp; }
 };
+TA_ARRAY_OPS(long_Array)
 
 typedef void* voidptr; // for maketa, which chokes on void* in a template
 class voidptr_Array : public taArray<voidptr> {
@@ -1260,6 +1303,9 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)
+protected:
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((voidptr*)a) == *((voidptr*)b)); }
 };
 
 // define selectedit if no gui

@@ -162,10 +162,6 @@ public:
   void 	Copy_(const PatternSpec& cp);
   COPY_FUNS(PatternSpec, BaseSubSpec);
   TA_BASEFUNS(PatternSpec); //
-  
-public: // added to support 4.0 data channels
-  SourceChannel		src_channel; // #BROWSE source channel, for supplying the patterns as data
-  void			UpdateChannel(); //#IGNORE called in UAE
 };
 
 class PatternSpec_Group : public taBase_Group {
@@ -382,7 +378,7 @@ public:
 ////////////////////////
 
 // note: we just implement ISequenable directly on ourself, a bit sleezy, but works
-class Environment : public taNBase, public IDataSource, protected ISequencable {
+class Environment : public taNBase, public ISequencable, public IDataSource {
   // ##EXT_env ##COMPRESS basic environment: contains events to present to the network, and can be used to hold data for analysis
 INHERITED(taNBase)
 public:
@@ -613,24 +609,27 @@ public:
   void 	Copy(const Environment& cp);
   TA_BASEFUNS(Environment); //
 
-protected: //ISequencable i/f note: we hide this from direct access -- get at it through sequencer() prop
+public: //ISequencable i/f note: we hide this from direct access -- get at it through sequencer() prop
   override int		num_items() {return EventCount();} // #IGNORE 
   override bool		is_indexable() {return true;} // #IGNORE 
   override bool		is_sequential() {return true;} // #IGNORE
   override void		GoToItem(int index); // #IGNORE 
-  override void		ResetItem(); // #IGNORE
+  override void		InitData(); // 
   override bool		NextItem(); // #IGNORE
 
 public: // IDataSource i/f
-  override bool		can_sequence() const {return true;} // true if has a ISequencable interface
   override ISequencable* sequencer() {return this;} // sequencing interface, if sequencable
-  override int		source_channel_count(); // number of source channels
-  override SourceChannel* source_channel(int idx); // get a source channel
+  override int		source_channel_count() {return channels.leaves;} // number of source channels
+  override DataChannel* source_channel(int idx) {return (DataChannel*)channels.Leaf(idx);} // get a source channel
 protected: 
 //  override void 	DoProduceData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled); // #IGNORE
 
-protected: // support routines for added 4.0 interfaces
+public: // support routines for added 4.0 interfaces
+  Event*		last_event; // we need to cache, because we create fixed matrices on top of raw data
+  DataChannel_Group	channels; // #BROWSE #NO_SAVE note: these are built from an EventSpec, whatever is most recent
   virtual void		SetCurrentEvent(Event* ev); // called by GoToItem and NextItem
+  void			UpdateChannel(DataChannel& chan, PatternSpec& ps); //#IGNORE called in UAE
+  void			UpdateChannels(EventSpec& es); //#IGNORE called in UpdateEvents
 };
 
 // note: Environment_MGroup name is for compatiblity with v3.2 files

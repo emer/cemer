@@ -670,6 +670,9 @@ taiData* taiMember::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_pa
   int new_flags = 0;
   if (ro)
     new_flags |= taiData::flgReadOnly;
+  if (mbr->HasOption("INLINE"))
+    new_flags |= taiData::flgInline;
+    
   taiData* dat = GetDataRep_impl(host_, par, gui_parent_, new_flags);
   return dat;
 }

@@ -559,7 +559,11 @@ PDPLog* pdpMisc::GetNewLog(Project* prj, TypeDef* typ) {
 
 NetConduit* pdpMisc::GetNewConduit(Project* prj, TypeDef* typ) {
   if(prj == NULL) return NULL;
-  NetConduit* rval = (NetConduit*)prj->conduits.New(1, typ);
+  NetConduit* rval = NULL;
+  if (typ->InheritsFrom(TA_NetWriter))
+    rval = (NetConduit*)prj->net_writers.New(1, typ);
+  else if (typ->InheritsFrom(TA_NetReader))
+    rval = (NetConduit*)prj->net_readers.New(1, typ);
 #ifdef TA_GUI
   taiMisc::RunPending();
   taMisc::DelayedMenuUpdate(prj);

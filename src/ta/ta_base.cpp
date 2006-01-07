@@ -2026,6 +2026,14 @@ void int_Array::FillSeq(int start, int inc) {
     FastEl(i) = v;
 }
 
+int int_Array::Product() const {
+  if (size == 0) return 0;
+  int rval = el[0];
+  for (int i = 1; i < size; ++i)
+    rval *= el[i];
+  return rval;
+}
+
 void long_Array::FillSeq(long start, long inc) {
   long i, v;
   for(i=0,v=start; i<size; i++, v += inc)

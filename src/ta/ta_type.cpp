@@ -102,6 +102,7 @@ bool 	taMisc::gui_active = false;
 bool	taMisc::is_loading = false;
 bool	taMisc::is_saving = false;
 bool	taMisc::is_duplicating = false;
+int	taMisc::strm_ver = 2;
 
 int	taMisc::dmem_proc = 0;
 int	taMisc::dmem_nprocs = 1;

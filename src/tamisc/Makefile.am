@@ -57,7 +57,6 @@ TAHEADS =\
 	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/aggregate.h \
 	@abs_srcdir@/minmax.h \
-	@abs_srcdir@/ta_data_defs.h \
 	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/datatable.h \
@@ -73,7 +72,6 @@ HEADS =\
 	tdgeometry.h \
 	aggregate.h \
 	minmax.h \
-	ta_data_defs.h \
 	ta_data.h \
 	colorscale.h \
 	datatable.h \

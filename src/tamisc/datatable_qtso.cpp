@@ -24,6 +24,7 @@
 
 #include <qbitarray.h>
 #include <qlayout.h>
+#include <qlineedit.h>
 #include <qpainter.h>
 #include <qpalette.h>
 
@@ -63,28 +64,31 @@ iDataTable::iDataTable(QWidget* parent)
 :QTable(parent)
 {
   m_dt = NULL;
-  str_cols = new QBitArray();
+  col_align = new QByteArray();
+  cell_widge = NULL;
 
 //<TEMP>
-setReadOnly(true);
+//setReadOnly(true);
 setSorting(false);
 //</TEMP>
 }
 
 iDataTable::~iDataTable() {
-  delete str_cols;
-  str_cols = NULL;
+  delete col_align;
+  col_align = NULL;
 
   m_dt = NULL;
 }
 
 QWidget* iDataTable::cellWidget(int row, int col) const {
-  return NULL;
-  //TODO
+  return cell_widge;
 }
 
 void iDataTable::clearCellWidget(int row, int col) {
-  //TODO
+  if (cell_widge != NULL) {
+    cell_widge->deleteLater();
+    cell_widge = NULL; 
+  }
 }
 
 
@@ -92,8 +96,20 @@ void iDataTable::clearCell (int row, int col) {
   //TODO
 }
 
+QWidget* iDataTable::createEditor(int row, int col, bool initFromCell) const {
+//note: inherited will create a proper LineEdit, even when no Item
+  return inherited::createEditor(row, col, initFromCell);
+/*  QWidget* rval = NULL;
+  if (initFromCell) {
+    rval = new QLineEdit("{initFromCell=true}", NULL);
+  } else {
+  }
+  return rval; */
+}
+
 void iDataTable::insertWidget(int row, int col, QWidget* w) {
-  //TODO
+  if (cell_widge != w)
+    cell_widge = w;
 }
 
 void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
@@ -117,18 +133,27 @@ void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
   int idx;
   String str;
   DataArray_impl* da = m_dt->GetColData(col);
-
-  if (da && m_dt->idx(row, da->AR()->size, idx))
-    str = da->GetValAsString(idx);
-  else
-    str = "n/a";
-  //determine alignment, use AlignRight for numerics
-  int align;
-  if (str_cols->at(col))
-    align = Qt::AlignLeft | Qt::AlignVCenter;
-  else
-    align = Qt::AlignRight | Qt::AlignVCenter;
+  if ((da != NULL) && (row < m_dt->rows)) {
+    //TEMP: just show matrix cells in special text, will replace with editor
+    if (da->is_matrix) {
+      str = "[matrix]";
+    } else {
+      if (m_dt->idx(row, da->rows(), idx))
+        str = da->GetValAsString(idx);
+      else
+        str = "n/a";
+    }
+  }
+  int align = col_align->at(col);
   p->drawText(2, 0, cr.width() - 4, cr.height(), align, str );
+}
+
+void iDataTable::setCellContentFromEditor(int row, int col) {
+  if (cell_widge == NULL) return;
+  if (cell_widge->inherits("QLineEdit")) {
+    QLineEdit* le = (QLineEdit*)cell_widge;
+    m_dt->SetValAsString(le->text(), row, col);
+  }
 }
 
 void iDataTable::setDataTable(DataTable* value) {
@@ -144,7 +169,7 @@ void iDataTable::updateConfig() {
     if (n != numRows()) setNumRows(n);
     // truncate if #cols is less, otherwise we add them dynamically in the loop below
     n = m_dt->leaves;
-    str_cols->resize(n);
+    col_align->resize(n);
     int pix_per_tab = 0; // only needed for sizing new cols
     if (n < numCols()) setNumCols(n);
     else if (n >= numCols()) {
@@ -163,9 +188,19 @@ void iDataTable::updateConfig() {
       if (da) {
         if (col >= numCols()) {
           setNumCols(col + 1);
-          int tab_width = da->displayWidth() * pix_per_tab;
+          int disp_wd = da->displayWidth();
+          if (disp_wd < 0) disp_wd = 1; // arbitrary
+          int tab_width = disp_wd * pix_per_tab;
           setColumnWidth(col, tab_width);
-          str_cols->setBit(col, da->is_string());
+          //column alignment, right is for numerics
+          char align;
+          if (da->is_matrix)
+            align = Qt::AlignCenter | Qt::AlignVCenter;
+          else if (da->is_numeric())
+            align = Qt::AlignRight | Qt::AlignVCenter;
+          else
+            align = Qt::AlignLeft | Qt::AlignVCenter;
+          col_align->at(col) = align;
         }
         hd_nm = da->GetDisplayName();
       } else {

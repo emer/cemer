@@ -26,57 +26,16 @@
 #include "ta_base.h"
 #include "ta_group.h"
 
-#include "ta_data_defs.h"
+#include "tamisc_TA_type.h"
 
 
 // forwards this file
 class DataChannel;
-class SourceChannel;//
-class SinkChannel;//
-class DataConnector; 
-class DataConnector_List; //
+class DataChannel_Group;
+class ISequencable;
+class IDataSource;
+class IDataSink;
 class SequenceMaster; 
-
-class DataConnector: public taNBase { // #NO_TOKENS represents a connection between a single source channel and sink channel
-friend class SinkChannel;
-//friend class ISourceChannel;
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
-public:  
-  static bool		CanConnect(SourceChannel* src_ch, SinkChannel* snk_ch);
-  static DataConnector*	StatConnect(SourceChannel* src_ch, SinkChannel* snk_ch);
-  static void		StatDisconnect(SourceChannel* src_ch, SinkChannel* snk_ch);
-  
-  SourceChannel* 	source_channel() {return m_source_channel;} 
-  SinkChannel* 		sink_channel() {return m_sink_channel;}
-
-  
-  override TAPtr 	SetOwner(TAPtr); // #IGNORE
-  TA_BASEFUNS(DataConnector); //
-  
-public: // hidden members
-  SinkChannel* 		m_sink_channel;
-
-private:
-  void			Initialize();
-  void			Destroy();
-protected:
-  SourceChannel* 	m_source_channel; // #HIDDEN #NO_SAVE set on SetOwner
-  virtual void		SinkChannelDisconnecting(SinkChannel* snk_ch);
-};
-
-
-class DataConnector_List: public taList<DataConnector> { // #NO_TOKENS list of connectors, owned by the SourceChannel
-#ifndef __MAKETA__
-typedef taList<DataConnector> inherited;
-#endif
-public:  
-  TA_BASEFUNS(DataConnector_List);
-private:
-  void			Initialize();
-  void			Destroy(); //
-};
 
 
 /* DataChannel
@@ -87,19 +46,15 @@ private:
 
 */
 
-class DataChannel: public taNBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS a source or sink of data
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+class DataChannel: public taNBase { // #INSTANCE ##NO_TOKENS a source or sink of data
+INHERITED(taNBase)
 public:
   bool			active; // #DEF_true set on (default) to enable data to flow through this channel
   int_Array		geom; // #SAVE #HIDDEN
-  DataTransferMode	txfer_modes_allowed; // #READ_ONLY #SHOW
-  DataTransferMode	txfer_mode; // current txfer mode
-  
   TypeDef*		matrix_type; // #NO_NULL #TYPE_taMatrix_impl type of matrix, ex float_Matrix, int_Matrix, etc., note: def is float
-  
+  taMatrix_impl*	cached_data() const {return m_cached_data;}  
   virtual int		dims() {return geom.size;}
+  int			size(); // number of els in all dims, 0 if any are 0
      // number of dimensions of data; N=0 for sink is "any"
   virtual int		GetGeom(int dim) {return geom.SafeEl(dim);}// geom for dimension
   void			SetGeom(int d0); // set 1-d geom
@@ -108,129 +63,116 @@ public:
   void			SetGeom4(int d0, int d1, int d2, int d3); // set 4-d geom
   virtual void		SetGeomN(const int_Array& value); // set any geom
 
-  virtual void		ClearCachedData(); // clears any cached data from a previous cycle
+  virtual void		ClearCachedData(); // clears any cached data
+  virtual bool		SetCachedData(taMatrix_impl* data); // validates, sets if valid, true if set
+  virtual bool		ValidateData(taMatrix_impl* data); // validates, based on expected geom and type
   
   void			InitLinks();
   void			CutLinks();
   void			Copy_(const DataChannel& cp);
   COPY_FUNS(DataChannel, taNBase);
-  TA_ABSTRACT_BASEFUNS(DataChannel); //
+  TA_BASEFUNS(DataChannel); //
   
 protected:
-  taMatrixPtr_impl	m_cached_data; // most recent data
-  int64_t		m_cached_cycle; // cycle counter that goes with data
+  taMatrixPtr_impl	m_cached_data; // #NO_SAVE most recent data set/get for this channel
   
-  virtual bool		SetCachedData(taMatrix_impl* data); // validates, sets
-  virtual bool		ValidateData(taMatrix_impl* data); // validates, based on expected geom and type
 private:
   void			Initialize();
   void			Destroy();
 };
 
 
-class DataChannel_Group: public taGroup<DataChannel> { // common base for groups of channels
+class DataChannel_Group: public taGroup<DataChannel> { // groups of channels
 INHERITED(taGroup<DataChannel>)
 public:
+  virtual void		ClearCachedData(); // clear cached data of all channels
+  
+  override void		CutLinks(); // clear cached data as early as possible, to avoid issues
   TA_BASEFUNS(DataChannel_Group); //
   
 private:
   void			Initialize() {}
-  void			Destroy() {}
+  void			Destroy() {CutLinks();}
 };
 
 
-class SourceChannel: public DataChannel { // a source of data
-INHERITED(DataChannel)
-friend class IDataSource;
-friend class DataConnector;
-friend class SourceChannel_List;
+class ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources;\n only one instance of this interface is allowed per data block
 public:
-  DataConnector_List	connectors;
+  virtual int		num_items() {return -1;} // N<0 if items unknown, or cannot be accessed randomly
+  virtual bool		is_indexable() {return false;} // 'true' if can be accessed by index
+  virtual bool		is_sequential() {return false;} // 'true' if can be accessed sequentially
   
-  IDataSource*		data_source() {return m_data_source;} // must be set by owner
+  virtual void		InitData() {} // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
+  virtual void		ResetData() {InitData();} // if defined, clears existing data (impl should also call InitData)
+  virtual bool		NextItem()  {return false;} // for seq access, goes to the next item, 'true' if there was a next item
+  virtual void		GoToItem(int index) {} // for indexed access, goes to the item 
   
-  override TAPtr	SetOwner(TAPtr own); // also sets data source
-  
-  taMatrix_impl*	GetData() {return DoGetData();}
-    // gets latest item, producing it if necessary; only called in Pull mode
-    
-  void			InitLinks();
-  void			CutLinks();
-  void			Copy_(const SourceChannel& cp);
-  COPY_FUNS(SourceChannel, DataChannel)
-  TA_BASEFUNS(SourceChannel); //
+  virtual ~ISequencable() {};
+};
 
-public: // hidden
-  IDataSource*		m_data_source; // #HIDDEN must be set by owner
+
+
+class IDataSource { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
+friend class SourceChannel;
+public:
+  virtual ISequencable* sequencer() = 0; // sequencing interface
+  virtual int		source_channel_count() = 0; // number of source channels
+  virtual DataChannel* 	source_channel(int idx) = 0; // get a source channel
   
+  virtual bool		GetData(taMatrixPtr_impl& data, int chan = 0) // get a single channel's data
+    {if ((chan >= 0) && (chan < source_channel_count())) {
+       data = source_channel(chan)->cached_data(); return true;
+     } else return false;}
+  virtual bool		GetDataMulti(MatrixPtr_Array& data) 
+    {for (int i = 0; i < data.size; ++i) if (!GetData(data.FastEl(i), i)) return false; return true;}
+    // get all channels of data
+  virtual ~IDataSource() {} //
+};
+
+class IDataSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
+friend class SinkChannel;
+public:
+  virtual ISequencable* sequencer() = 0; // sequencing interface
+  virtual int		sink_channel_count() = 0; // number of sink channels
+  virtual DataChannel* 	sink_channel(int idx) = 0; // get a sink channel
+  virtual bool		SetData(taMatrixPtr_impl& data, int chan = 0) // set a single channel's data
+    {if ((chan >= 0) && (chan < sink_channel_count()))
+       return sink_channel(chan)->SetCachedData(data);
+     else return false;}
+  virtual bool		SetDataMulti(MatrixPtr_Array& data) 
+    {for (int i = 0; i < data.size; ++i) if (!SetData(data.FastEl(i), i)) return false; return true;}
+    // get all channels of data
+  virtual ~IDataSink() {} //
+};
+
+/*nn??
+class DataBlock: public taNBase, public ISequencable {
+ // #VIRT_BASE #NO_INSTANCE #NO_TOKENS generic base for sources, sinks, and filters
+INHERITED(taNBase)
+public:
+  DataChannel_Group	channels;
+
+  virtual void		ClearCachedData(); // clears all cached data in channels
+  
+  TA_ABSTRACT_BASEFUNS(DataChannel); //
+  
+public: // ISequencable i/f DO NOT OVERRIDE THESE AGAIN, use the _impl functions if needed
+  virtual int		num_items() {return -1;} // N<0 if items unknown, or cannot be accessed randomly
+  virtual bool		is_indexable() {return false;} // 'true' if can be accessed by index
+  virtual bool		is_sequential() {return false;} // 'true' if can be accessed sequentially
+  
+  virtual void		InitData() {} // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
+  virtual void		ResetData() {} // if defined, clears existing data (impl should also call InitData)
+  virtual bool		NextItem()  {return false;} // for seq access, goes to the next item, 'true' if there was a next item
+  virtual void		GoToItem(int index) {} // for indexed access, goes to the item 
+
 protected:
-//  override void		setTxfer_mode_(int val); // set new txfer mode
-  virtual void		ConnectorDisconnecting(DataConnector* dc);
-  virtual taMatrix_impl* DoGetData(); // default returns cached data if fresh, else calls produce
-  virtual bool		DoProduceData(); // performs actual job of producing data into cache
-  
+  int			m_cur_item; // for pseudo-sequential access
+
 private:
-  void			Initialize();
-  void			Destroy(); //
-};
-
-
-class SourceChannel_Group: public DataChannel_Group {
-INHERITED(DataChannel_Group)
-public:
-  TA_BASEFUNS(SourceChannel_Group); //
-  
-private:
-  void			Initialize();
-  void			Destroy() {}
-};
-
-
-class SinkChannel: public DataChannel { // a sink for data
-#ifndef __MAKETA__
-typedef DataChannel inherited;
-#endif
-friend class IDataSink;
-friend class DataConnector;
-public:
-  IDataSink*		data_sink() {return m_data_sink;} // the DataSink that owns this channel
-  DataConnector* 	connector() {return m_connector;} // the connector, if attached
-  
-  bool			AcceptData(taMatrix_impl* item) {return DoAcceptData(item);} 
-    // sets current item after verifying; only used in Push mode
-    
-  override TAPtr	SetOwner(TAPtr own); // also sets data sink
-  void			InitLinks();
-  void			CutLinks();
-  void			Copy_(const SinkChannel& cp);
-  COPY_FUNS(SinkChannel, DataChannel)
-  TA_BASEFUNS(SinkChannel); //
-  
-public: // hidden
-  IDataSink*		m_data_sink; // #HIDDEN the DataSink that owns this channel
-  DataConnector* 	m_connector; // #HIDDEN #SAVE the connector, if attached
-
-protected:
-  virtual void		ConnectorDisconnecting(DataConnector* dc);
-  virtual bool		DoConsumeData(); // does work of consuming current item, default delegates to sink
-  virtual bool		DoAcceptData(taMatrix_impl* item); 
-    // accepts current item, calls consume if in push mode
-private:
-  void			Initialize();
-  void			Destroy();
-};
-
-
-class SinkChannel_Group: public DataChannel_Group {
-INHERITED(DataChannel_Group)
-public:
-  TA_BASEFUNS(SinkChannel_Group); //
-  
-private:
-  void			Initialize();
-  void			Destroy() {}
-};
-
+  void 		Initialize();
+  void		Destroy();
+}; */
 
 class SequenceMaster { // #NO_INSTANCE singleton class
 public:

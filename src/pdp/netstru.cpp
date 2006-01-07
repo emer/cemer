@@ -6367,6 +6367,10 @@ void LayerReader::Copy_(const LayerReader& cp) {
   //TODO: need to copy source info
 }
 
+bool LayerReader::DoProduceData() {
+  //TODO
+}
+
 /*TODOvoid LayerReader::SetToLayer(Layer* lay) {
   LayerRWBase::SetToLayer(lay);
   if(lay == NULL) {
@@ -6478,38 +6482,31 @@ void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
 }
 
 */
+
 ////////////////////////////
 //        NetConduit       //
 ////////////////////////////
 
 void NetConduit::Initialize() {
   last_net = NULL;
-//obs  pattern_layout = HORIZONTAL;
 }
 
 void NetConduit::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(readers, this);
-  taBase::Own(writers, this);
+  taBase::Own(channels, this);
   if(!taMisc::is_loading)
     UpdateAfterEdit();
-//TODO  if(taMisc::gui_active)
-//    AddToView();
 }
 
 void NetConduit::CutLinks() {
-//TODO  if(taMisc::gui_active)
-//    RemoveFromView();
-  writers.CutLinks();
-  readers.CutLinks();
+  channels.CutLinks();
   taBase::DelPointer((TAPtr*)&last_net);
   inherited::CutLinks();
 }
 
 void NetConduit::Copy(const NetConduit& cp) {
   inherited::Copy(cp);
-  readers = cp.readers;
-  writers = cp.writers;
+  channels = cp.channels;
 }
 
 void NetConduit::UpdateAfterEdit() {
@@ -6533,23 +6530,8 @@ void NetConduit::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();	// this calls UpdateSpec which calls UpdateAllEvents..
 }
 
-void NetConduit::DoGetData(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
-}
-
-void NetConduit::DoAcceptData(SinkChannel* ch, taMatrix_impl* data, bool& handled) {
-}
-
-void NetConduit::DoConsumeData(SinkChannel* ch, bool& handled) {
-}
-
-DataSet* NetConduit::CreateDataSet() {
-  DataSet* rval = NULL;
-  Project* proj = GET_MY_OWNER(Project);
-  if (proj == NULL) return rval;
-  
-  rval = (DataSet*)proj->data.New(1);
-  rval->InitFromConduit(this);
-  return rval;
+void NetConduit::InitData() {
+  channels.ClearCachedData();
 }
 
 void NetConduit::InitFromNetwork(Network* net) {
@@ -6557,8 +6539,7 @@ void NetConduit::InitFromNetwork(Network* net) {
     net = pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
   if (net == NULL) return;
   
-  readers.Reset();
-  writers.Reset();
+  channels.Reset();
   
   Layer* lay;
   taLeafItr itr;
@@ -6567,13 +6548,26 @@ void NetConduit::InitFromNetwork(Network* net) {
   }
 }
 
-void NetConduit::InitLayerReader(Layer* lay, LayerReader* lrw) {
-  // initialize names, if not set already
-  lrw->layer_name = lay->name;
-  lrw->name = lay->name;
+
+////////////////////////////
+//        NetWriter       //
+////////////////////////////
+
+void NetWriter::Initialize() {
+  channels.SetBaseType(&TA_LayerWriter);
 }
 
-void NetConduit::InitLayerWriter(Layer* lay, LayerWriter* lrw) {
+/*TODO DataSet* NetWriter::CreateDataSet() {
+  DataSet* rval = NULL;
+  Project* proj = GET_MY_OWNER(Project);
+  if (proj == NULL) return rval;
+  
+  rval = (DataSet*)proj->data.New(1);
+  rval->InitFromConduit(this);
+  return rval;
+} */
+
+void NetWriter::InitLayerWriter(Layer* lay, LayerWriter* lrw) {
   // initialize names, if not set already
   lrw->layer_name = lay->name;
   lrw->name = lay->name;
@@ -6587,16 +6581,16 @@ void NetConduit::InitLayerWriter(Layer* lay, LayerWriter* lrw) {
   }
 }
 
-void NetConduit::InitFromLayer(Layer* lay) {
+void NetWriter::InitFromLayer(Layer* lay) {
   if (lay == NULL) return;
-  LayerReader_Group* lrg;
   // inputs
   if (lay->layer_type & (Layer::INPUT | Layer::TARGET)) {
     LayerWriter* lrw;
-    LayerWriter_Group* lrwg;
+    DataChannel_Group* lrwg;
     // if layer is grouped, create a subgroup for clarity
     if (lay->uses_groups()) {
-      lrwg = (LayerWriter_Group*)writers.NewGp(1);
+      lrwg = (DataChannel_Group*)channels.NewGp(1);
+      lrwg->SetBaseType(&TA_LayerWriter);
       lrwg->name = lay->name + "_Group";
       switch(lay->gp_rw_model) {
       case Layer::FLAT: { // 1 writer; geom will be total geom
@@ -6633,7 +6627,7 @@ void NetConduit::InitFromLayer(Layer* lay) {
         } break;
       }
     } else { //note: group model is ignored if no groups
-      lrwg = &writers;
+      lrwg = &channels;
       lrw = (LayerWriter*)lrwg->New(1);
       InitLayerWriter(lay, lrw);
       lrw->gp_rw_model = LayerRWBase::FLAT;
@@ -6643,13 +6637,83 @@ void NetConduit::InitFromLayer(Layer* lay) {
  
   }
   
+}
+
+bool NetWriter::NextItem() {
+  // apply layer data for all items
+  LayerWriter* lwr;
+  taLeafItr itr;
+  FOR_ITR_EL(LayerWriter, lwr, channels., itr) {
+    lwr->DoConsumeData();
+  }
+  return true; // operation is always defined
+}
+
+
+void NetWriter::SetNetwork(Network* net) {
+  if (net == last_net) return;
+  UnSetLayers();
+  if (net == NULL) return;
+  
+  LayerWriter* lw;
+  taLeafItr itr;
+  Layer* lay;
+  int layer_num; //ignored
+  FOR_ITR_EL(LayerWriter, lw, channels., itr) {
+    lay = (Layer*)net->layers.FindLeafName(lw->layer_name, layer_num);
+    if (lay == NULL) {
+      taMisc::Warning("*** Cannot apply bind LayerWriter:", lw->GetName(),
+                      "no layer with name:", lw->layer_name, "in network:", net->GetName());
+    } else {
+      lw->SetLayer(lay);
+    }
+  }
+}
+
+
+void NetWriter::UnSetLayers() {
+  taLeafItr itr;
+  LayerWriter* lw;
+  FOR_ITR_EL(LayerWriter, lw, channels., itr)
+    lw->UnSetLayer();
+  taBase::DelPointer((TAPtr*)&last_net);
+}
+
+
+////////////////////////////
+//        NetReader       //
+////////////////////////////
+
+void NetReader::Initialize() {
+  channels.SetBaseType(&TA_LayerReader);
+}
+
+/* DataSet* NetReader::CreateDataSet() {
+  DataSet* rval = NULL;
+  Project* proj = GET_MY_OWNER(Project);
+  if (proj == NULL) return rval;
+  
+  rval = (DataSet*)proj->data.New(1);
+  rval->InitFromConduit(this);
+  return rval;
+} */
+
+void NetReader::InitLayerReader(Layer* lay, LayerReader* lrw) {
+  // initialize names, if not set already
+  lrw->layer_name = lay->name;
+  lrw->name = lay->name;
+}
+
+void NetReader::InitFromLayer(Layer* lay) {
+  if (lay == NULL) return;
   // outputs
   if (lay->layer_type & (Layer::OUTPUT)) {
     LayerReader* lrw;
-    LayerReader_Group* lrwg;
+    DataChannel_Group* lrwg;
     // if layer is grouped, create a subgroup for clarity
     if (lay->uses_groups()) {
-      lrwg = (LayerReader_Group*)readers.NewGp(1);
+      lrwg = (DataChannel_Group*)channels.NewGp(1);
+      lrwg->SetBaseType(&TA_LayerReader);
       lrwg->name = lay->name + "_Group";
       switch(lay->gp_rw_model) {
       case Layer::FLAT: { // 1 writer; geom will be total geom
@@ -6686,7 +6750,7 @@ void NetConduit::InitFromLayer(Layer* lay) {
         } break;
       }
     } else { //note: group model is ignored if no groups
-      lrwg = &readers;
+      lrwg = &channels;
       lrw = (LayerReader*)lrwg->New(1);
       InitLayerReader(lay, lrw);
       lrw->gp_rw_model = LayerRWBase::FLAT;
@@ -6695,8 +6759,20 @@ void NetConduit::InitFromLayer(Layer* lay) {
   }
 }
 
+bool NetReader::NextItem() {
+  // clear existing data
+  channels.ClearCachedData();
+  // get layer data for all channels
+  LayerReader* lwr;
+  taLeafItr itr;
+  FOR_ITR_EL(LayerReader, lwr, channels., itr) {
+    lwr->DoProduceData();
+  }
+  
+  return true; // operation is always defined
+}
 
-void NetConduit::SetNetwork(Network* net) {
+void NetReader::SetNetwork(Network* net) {
   if (net == last_net) return;
   UnSetLayers();
   if (net == NULL) return;
@@ -6705,7 +6781,7 @@ void NetConduit::SetNetwork(Network* net) {
   Layer* lay;
   int layer_num; // discarded
   LayerReader* lr;
-  FOR_ITR_EL(LayerReader, lr, readers., itr) {
+  FOR_ITR_EL(LayerReader, lr, channels., itr) {
     lay = (Layer*)net->layers.FindLeafName(lr->layer_name, layer_num);
     if (lay == NULL) {
       taMisc::Warning("*** Cannot apply bind LayerReader:", lr->GetName(),
@@ -6714,43 +6790,14 @@ void NetConduit::SetNetwork(Network* net) {
       lr->SetLayer(lay);
     }
   }
-    
-  LayerWriter* lw;
-  FOR_ITR_EL(LayerWriter, lw, writers., itr) {
-    lay = (Layer*)net->layers.FindLeafName(lw->layer_name, layer_num);
-    if (lay == NULL) {
-      taMisc::Warning("*** Cannot apply bind LayerWriter:", lw->GetName(),
-                      "no layer with name:", lw->layer_name, "in network:", net->GetName());
-    } else {
-      lw->SetLayer(lay);
-    }
-  }
 }
 
 
-int NetConduit::sink_channel_count() {
-  return writers.leaves;
-}
-
-SinkChannel* NetConduit::sink_channel(int idx) {
-  return writers.Leaf(idx);
-}
-
-int NetConduit::source_channel_count() {
-  return readers.leaves;
-}
-
-SourceChannel* NetConduit::source_channel(int idx) {
-  return readers.Leaf(idx);
-}
-
-void NetConduit::UnSetLayers() {
+void NetReader::UnSetLayers() {
   taLeafItr itr;
   LayerReader* lr;
-  FOR_ITR_EL(LayerReader, lr, readers., itr)
+  FOR_ITR_EL(LayerReader, lr, channels., itr)
     lr->UnSetLayer();
-  LayerWriter* lw;
-  FOR_ITR_EL(LayerWriter, lw, writers., itr)
-    lw->UnSetLayer();
-  taBase::DelPointer((TAPtr*)&last_net);
 }
+
+

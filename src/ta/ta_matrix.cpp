@@ -373,26 +373,48 @@ void taMatrix_impl::SetFixedData_(void* el_, const int_Array& geom_) {
   SetGeomN(geom_);
 }
 
-void taMatrix_impl::SetGeom_(int dims_, const int geom_[]) {
-  Check((dims_ > 0), "dims_ must be > 0");
+bool taMatrix_impl::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
+  if (dims_ <= 0) { 
+    if (err_msg != NULL)
+      *err_msg = "dims must be > 0";
+    return false;
+  }
   
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
-    Check((geom_[i] > 0), "geoms[0..N-2] must be > 0");
+    if (geom_[i] <= 0) {
+      if (err_msg != NULL)
+        *err_msg = "geoms[0..N-2] must be > 0";
+      return false;
+    }
   }
   
+  return true;
+  
+}
+
+void taMatrix_impl::SetGeom_(int dims_, const int geom_[]) {
+  String err_msg;
+  bool valid = GeomIsValid(dims_, geom_, &err_msg);
+  Check(valid, err_msg);
+  
+  //NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
   geom.EnforceSize(dims_);
-  for (i = 0; i < (dims_ - 1) ; ++i) {
+  for (int i = 0; i < (dims_ - 1) ; ++i) {
     geom[i] = geom_[i];
   }
 
   // assign storage if not fixed
   if (isFixedData()) {
     geom[dims_-1] = geom_[dims_-1];
-  }else {
-    geom[dims_-1] = 0;
-    EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
+  } else {
+    // if flex case, we skip this step -- it will stay zero on new, or retain value if data exists
+    if (geom_[dims_-1] != 0) {
+      // exact value case
+      geom[dims_-1] = 0; // next step actually sets
+      EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
+    }
   }
 }
 
@@ -430,4 +452,47 @@ void taMatrix_impl::UpdateGeom() {
 //////////////////////////
 //   float_Matrix	//
 //////////////////////////
+
+bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+#ifdef TA_USE_QT
+  str.toFloat(&rval); //discard result
+#endif
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid floating point number";
+  return rval;
+}
+
+
+//////////////////////////
+//   int_Matrix	//
+//////////////////////////
+
+bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+#ifdef TA_USE_QT
+  str.toInt(&rval, 0); //auto-base sensing; discard result
+#endif
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid integer number";
+  return rval;
+}
+
+
+//////////////////////////
+//   byte_Matrix	//
+//////////////////////////
+
+bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+  ushort val = 0;
+#ifdef TA_USE_QT
+  val = str.toUShort(&rval, 0); //auto-base sensing
+#endif
+  // check for overflow
+  if (rval && (val > 255)) rval = false;
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid byte value (0-255)";
+  return rval;
+}
 

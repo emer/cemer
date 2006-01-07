@@ -98,7 +98,8 @@ public:
     flgNoList		= 0x010,  // used typically by menus to include lists of item
     flgNoGroup		= 0x010,  // used typically by menus to include groups of items -- note this is the same as NoList
     flgNoInGroup	= 0x020,  // used by gpiGroupEls
-    flgEditOnly		= 0x040  // used by EditButton
+    flgEditOnly		= 0x040,  // used by EditButton
+    flgInline		= 0x080   // used by members that support #INLINE directive, esp. Array
   };
 
   TypeDef* 		typ;		// type for the gui object

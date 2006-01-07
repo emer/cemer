@@ -202,6 +202,7 @@ public:
   static bool		is_loading;	// #READ_ONLY #NO_SAVE true if currently loading an object
   static bool		is_saving;	// #READ_ONLY #NO_SAVE true if currently saving an object
   static bool		is_duplicating;	// #READ_ONLY #NO_SAVE true if currently duplicating an object
+  static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
 
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
   static int		dmem_nprocs; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory number of processes (comm_size in MPI, 1 for no dmem)

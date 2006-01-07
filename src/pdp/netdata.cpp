@@ -19,6 +19,7 @@
 
 
 #include "netdata.h"
+/*nn
 #include "netstru.h"
 //#include "sched_proc.h" // for trialproc check in enview::update_display
 #include "pdpshell.h"
@@ -135,3 +136,4 @@ void DataSet::Reset() {
 void DataSet::ResetData() {
   data.Reset();
 }
+*/

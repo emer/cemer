@@ -164,8 +164,30 @@ public:
   operator long() const	{ return strtol(chars(), NULL, 0); }
   operator float() const { return (float)atof(chars()); }
   operator double() const { return atof(chars()); }
-  operator char*() const { return (char*)chars(); }
-
+  operator char*() const { return (char*)chars(); } //
+#ifdef TA_USE_QT
+  // converter routines, for use when linked with Qt 
+  short 		toShort(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toShort(ok, base);}
+  ushort 		toUShort(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toUShort(ok, base);}
+  int 			toInt(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toInt(ok, base);}
+  uint 			toUInt(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toUInt(ok, base);}
+  long 			toLong(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toLong(ok, base);}
+  ulong 		toULong(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toULong(ok, base);}
+  int64_t 		toLongLong(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toLongLong(ok, base);}
+  uint64_t 		toULongLong(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toULongLong(ok, base);}
+  float 		toFloat(bool* ok = 0) const 
+    {QString tmp(chars()); return tmp.toFloat(ok);}
+  double 		toDouble(bool* ok = 0) const 
+    {QString tmp(chars()); return tmp.toDouble(ok);}
+#endif  
   String&		convert(int i, const char* format = "%d");
   String&		convert(long i, const char* format = "%ld");
   String&		convert(float f, const char* format = "%g");

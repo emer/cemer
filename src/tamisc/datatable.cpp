@@ -1009,9 +1009,9 @@ bool float_RArray::MDS(int dim, float_RArray& xcoords, float_RArray& ycoords, in
 //   DataArray_impl	//
 //////////////////////////
 
-void DataArray_impl::DecodeName(String nm, String& base_nm, ValType& vt, int& vec_col, int& col_cnt) {
+void DataArray_impl::DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt) {
   base_nm = nm;
-  vt = VT_UNKNOWN;
+  vt = -1; // unknown
   vec_col = -1;
   if (nm.empty()) return;
   // check type character, float has none
@@ -1047,13 +1047,11 @@ void DataArray_impl::DecodeName(String nm, String& base_nm, ValType& vt, int& ve
 }
 
 String DataArray_impl::ValTypeToStr(ValType vt) {
-  static String str_unknown("(unknown)");
   static String str_String("String");
   static String str_float("float");
   static String str_int("int");
   static String str_byte("byte");
   switch (vt) {
-  case VT_UNKNOWN: return str_unknown;
   case VT_STRING: return str_String;
   case VT_FLOAT: return str_float;
   case VT_INT: return str_int;
@@ -1064,17 +1062,48 @@ String DataArray_impl::ValTypeToStr(ValType vt) {
 
 void DataArray_impl::Initialize() {
   save_to_file = true;
-  //note: col_type initialized in concrete class
+  is_matrix = false;
+  // default initialize to scalar
+  cell_geom.EnforceSize(1);
+  cell_geom[0] = 1;
 }
 
 void DataArray_impl::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(cell_geom, this);
   taMatrix_impl* ar = AR();
   if (ar != NULL)
     taBase::Own(ar, this);
 }
 
+void DataArray_impl::CutLinks() {
+  cell_geom.CutLinks();
+  inherited::CutLinks();
+}
+
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
   disp_opts = cp.disp_opts;
+  is_matrix = cp.is_matrix;
+  cell_geom = cp.cell_geom;
+}
+
+void DataArray_impl::Init() {
+  taMatrix_impl* ar = AR(); //cache
+  if (is_matrix) {
+    int_Array tdim = cell_geom;
+    tdim.EnforceSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
+    ar->SetGeomN(tdim);
+  } else {
+    ar->SetGeom(0); // sets to 1-d, with flex sizing
+  }
+}
+
+void DataArray_impl::UpdateAfterEdit() {
+  //TODO: is_matrix needs to be true if framesize > 1
+  // TODO: check if frame size has changed (ie, dim change, or matrix change)
+  //TEMP: maybe this is enough???
+  Init();
+  inherited::UpdateAfterEdit();
 }
 
 void DataArray_impl::AddDispOption(const char* opt) {
@@ -1085,7 +1114,7 @@ void DataArray_impl::AddDispOption(const char* opt) {
   disp_opts += nm;
 }
 
-int DataArray_impl::displayWidth() {// low level display width, in tabs (8 chars/tab), taken from spec
+int DataArray_impl::displayWidth() const {// low level display width, in tabs (8 chars/tab), taken from spec
   int rval = 2; // default
   // explicit width has highest priority
   String wd = DispOptionAfter(" WIDTH=");
@@ -1097,7 +1126,7 @@ int DataArray_impl::displayWidth() {// low level display width, in tabs (8 chars
   return rval;
 }
 
-String DataArray_impl::DispOptionAfter(const char* opt) {
+String DataArray_impl::DispOptionAfter(const char* opt) const {
   String rval = disp_opts.after(opt);
   rval = rval.before(',');
   return rval;
@@ -1113,10 +1142,27 @@ String DataArray_impl::GetColText(int col, int itm_idx) {
 }
 
 String DataArray_impl::GetDisplayName() const {
-  String rval; ValType vt; int vec_col; int col_cnt;
+  String rval; int vt; int vec_col; int col_cnt;
   DecodeName(name, rval, vt, vec_col, col_cnt);
   return rval;
 }
+
+String DataArray_impl::GetValAsString_impl(int row, int cell) const {
+  const taMatrix_impl* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
+} 
+
+int DataArray_impl::IndexOfEl_Flat(int row, int cell) const {
+  if ((cell < 0) || (cell >= cell_size())) return -1;
+  if (row < 0) row = rows() + row; // abs row, if request was from end
+  if (row < 0) return -1;
+  return (row * cell_size()) + cell;
+} 
+
+void DataArray_impl::SetValAsString_impl(const String& val, int row, int cell) {
+  AR()->SetFmStr_Flat(IndexOfEl_Flat(row, cell), val); // note: safe operation
+} 
+
 
 //////////////////////////
 //	DataTable	//
@@ -1179,6 +1225,11 @@ void DataTable::Initialize() {
 }
 
 void DataTable::Destroy() {
+}
+
+void DataTable::Copy_(const DataTable& cp) {
+  rows = cp.rows;
+  save_data = cp.save_data;
 }
 
 void DataTable::AddColDispOpt(const char* dsp_opt, int col, int subgp) {
@@ -1384,6 +1435,17 @@ String DataTable::GetValAsString(int col, int row, int subgp) {
   DataArray_impl* da = GetColData(col, subgp);
   return (da) ? da->GetValAsString(row) : _nilString;
 }
+void DataTable::SetValAsString(const String& val, int col, int row, int subgp) {
+  DataArray_impl* da = GetColData(col, subgp);
+  if (da == NULL) return;
+  //TODO: maybe need to ignore for matrix type
+  if (da->is_matrix) return;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsString(val, i);
+  }
+
+}
 
 String DataTable::GetStringVal(int col, int row, int subgp) {
   String_Matrix* dt = GetColStringArray(col, subgp);
@@ -1416,53 +1478,96 @@ int DataTable::MinLength() {
 }
 
 DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const char* col_nm) {
-  switch (val_type) {
-  case DataArray_impl::VT_STRING: return NewColString(col_nm); break;
-  case DataArray_impl::VT_FLOAT: return NewColFloat(col_nm); break;
-  case DataArray_impl::VT_INT: return NewColInt(col_nm); break;
-  default: return NULL; // compiler food
-  }
-}
-
-float_Data* DataTable::NewColFloat(const char* col_nm) {
   StructUpdate(true);
-  float_Data* rval = (float_Data*) NewEl(1, &TA_float_Data);
-  rval->name = col_nm;
+  DataArray_impl* rval = NewCol_impl(val_type, col_nm);
+  rval->Init(); // asserts geom
   StructUpdate(false);
   return rval;
 }
 
-float_Data* DataTable::NewColInt(const char* col_nm) {
+DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const char* col_nm) {
+  TypeDef* td;
+  switch (val_type) {
+  case DataArray_impl::VT_STRING: td = &TA_String_Data; break;
+  case DataArray_impl::VT_FLOAT:  td = &TA_float_Data; break;
+  case DataArray_impl::VT_INT:  td = &TA_int_Data; break;
+  case DataArray_impl::VT_BYTE:  td = &TA_byte_Data; break;
+  default: return NULL; // compiler food
+  }
+  DataArray_impl* rval = (DataArray_impl*) NewEl(1, td);
+  rval->name = col_nm;
+  // additional specialized initialization
+  switch (val_type) {
+  case DataArray_impl::VT_STRING: 
+    break;
+  case DataArray_impl::VT_FLOAT: 
+    break;
+  case DataArray_impl::VT_INT: 
+    rval->AddDispOption("NARROW");
+    break;
+  case DataArray_impl::VT_BYTE:  
+    break;
+  default: break; // compiler food
+  }
+  return rval;
+}
+
+float_Data* DataTable::NewColFloat(const char* col_nm) {
+  return (float_Data*)NewCol(DataArray_impl::VT_FLOAT, col_nm);
+}
+
+int_Data* DataTable::NewColInt(const char* col_nm) {
+  return (int_Data*)NewCol(DataArray_impl::VT_INT, col_nm);
+}
+
+DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
+    const int_Array& cell_geom) 
+{
   StructUpdate(true);
-  float_Data* rval = (float_Data*) NewEl(1, &TA_float_Data);
-  rval->name = String("|") + col_nm;
-  rval->AddDispOption("NARROW");
-  rval->m_valType = DataArray_impl::VT_INT;
+  DataArray_impl* rval = NewCol_impl(val_type, col_nm);
+  rval->is_matrix = true;
+  rval->cell_geom = cell_geom;
+  rval->Init(); // asserts geom
   StructUpdate(false);
+  return rval;
+}
+
+DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const char* col_nm,
+    int dims, int d0, int d1, int d2, int d3)
+{
+  int_Array geom(dims);
+  if (dims > 0) geom[0] = d0; //note: required, but is checked in the validation routine
+  if (dims > 1) geom[1] = d1;
+  if (dims > 2) geom[2] = d2;
+  if (dims > 3) geom[3] = d3;
+  String err_msg;
+  if (!taMatrix_impl::GeomIsValid(geom, &err_msg)) {
+    taMisc::Error("Invalid geom:", err_msg);
+    return NULL;
+  }
+  
+  DataArray_impl* rval = NewColMatrixGeom(val_type, col_nm, geom);
   return rval;
 }
 
 String_Data* DataTable::NewColString(const char* col_nm) {
-  StructUpdate(true);
-  String_Data* rval = (String_Data*) NewEl(1, &TA_String_Data);
-  rval->name = String("$") + col_nm; // $ = string data
-  StructUpdate(false);
-  return rval;
+  return (String_Data*)NewCol(DataArray_impl::VT_STRING, col_nm);
 }
 
 DataTable* DataTable::NewGroupFloat(const char* col_nm, int n) {
+//TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
   rval->el_typ = &TA_float_Data;
   rval->EnforceSize(n);
   rval->name = col_nm;
   if(n > 0) {
-    float_Data* da = (float_Data*)rval->FastEl(0);
+    float_Data* da = rval->NewColFloat(col_nm);
     da->name = String("<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
   }
   int i;
   for(i=1;i<n;i++) {
-    float_Data* da = (float_Data*)rval->FastEl(i);
+    float_Data* da = rval->NewColFloat(col_nm);
     da->name = String(col_nm) + "_" + String(i);
   }
   StructUpdate(false);
@@ -1470,41 +1575,41 @@ DataTable* DataTable::NewGroupFloat(const char* col_nm, int n) {
 }
 
 DataTable* DataTable::NewGroupInt(const char* col_nm, int n) {
+//TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
-  rval->el_typ = &TA_float_Data;
+  rval->el_typ = &TA_int_Data;
   rval->EnforceSize(n);
   rval->name = String("|") + col_nm;
   if(n > 0) {
-    float_Data* da = (float_Data*)rval->FastEl(0);
+    int_Data* da = (int_Data*)rval->NewCol(DataArray_impl::VT_INT, col_nm);
     da->name = String("|<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
     da->AddDispOption("NARROW");
-    da->m_valType = DataArray_impl::VT_INT;
   }
   int i;
   for(i=1;i<n;i++) {
-    float_Data* da = (float_Data*)rval->FastEl(i);
+    int_Data* da = (int_Data*)rval->NewCol(DataArray_impl::VT_INT, col_nm);
     da->name = String("|") + String(col_nm) + "_" + String(i);
     da->AddDispOption("NARROW");
-    da->m_valType = DataArray_impl::VT_INT;
   }
   StructUpdate(false);
   return rval;
 }
 
 DataTable* DataTable::NewGroupString(const char* col_nm, int n) {
+//TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
   rval->el_typ = &TA_String_Data;
   rval->EnforceSize(n);
   rval->name = String("$") + col_nm;
   if(n > 0) {
-    float_Data* da = (float_Data*)rval->FastEl(0);
+    String_Data* da = rval->NewColString(col_nm);
     da->name = String("$<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
   }
   int i;
   for(i=1;i<n;i++) {
-    float_Data* da = (float_Data*)rval->FastEl(i);
+    String_Data* da = rval->NewColString(col_nm);
     da->name = String("$") + String(col_nm) + "_" + String(i);
   }
   StructUpdate(false);
@@ -1592,6 +1697,88 @@ void DataTable::RowAdded() {
   ++rows;
   DataUpdate(false);
 }
+
+/*
+  Header format: 
+    "+" indicates concatenated elements
+    {} indicates optionally repeated elements
+    format is tab-separated, newline-terminated
+    data-type codes are as follows:
+      | - int (aka "Narrow")
+      $ - String
+      (none) - float
+      @ - byte
+    Scalar Header name is as follows:
+      type-code+name
+    Matrix Header master name is as follows:
+      <dimcount{,dimcount}>[0{,0}]+type-code+name
+    Matrix Header slave names are as follows:
+      [dimval{,dimval}]+type-code+name
+      
+    ex:
+    &StrCol	|IntCol	FloatCol	<1,2>[0,0]@ByteMat [0,1]@ByteMat
+*/
+void DataTable::SaveHeader(ostream& strm) {
+/*TODO
+  bool first = true;
+  DataArray_impl* da;
+  taLeafItr itr;
+  String rootnm;
+  FOR_ITR_EL(DataArray_impl, da, this->, itr) {
+    if (!da->save_to_file) goto cont1;
+    // we must precheck for invalid matrix types
+    if (da->cell_size() == 0) goto cont1; // TODO: should probably issue a warning
+    
+    // get root name, which has type info
+    rootnm = "";
+    switch (da->valType()) {
+    case DataArray_impl::VT_STRING:
+      rootnm = "$";
+      break;
+    case DataArray_impl::VT_FLOAT:
+      break;
+    case DataArray_impl::VT_INT:
+      rootnm = "|";
+      break;
+    case DataArray_impl::VT_BYTE:
+      rootnm = "@";
+      break;
+    default: goto cont1; // unknown
+    }
+    rootnm = rootnm + da->name;
+    if (!first) {
+      ostrm << '\t';
+      first = false;
+    }
+    if (da->is_matrix()) { // if matrix, we output master col, then slave cols
+      String hdnm = "<"; // for each col, esp for matrix
+      
+    } else {
+      ostrm << rootnm;
+    }
+    if ((display_labels.size > i) && !display_labels[i].empty())
+      hdnm = display_labels[i];
+    int wdth = 2;
+    if (da->HasDispOption(" NARROW,"))
+      wdth = 1;
+    LogColumn(strm, hdnm, wdth);
+cont1: ;
+  }
+  strm << "\n";
+  strm.flush();
+*/
+}
+
+void DataTable::SaveData(ostream& strm) {
+}
+
+void DataTable::LoadHeader(istream& strm) {
+}
+
+void DataTable::LoadData(istream& strm, int max_recs) {
+  ResetData();
+}
+
 
 void DataTable::SetColName(const char* col_nm, int col, int subgp) {
   DataArray_impl* da = GetColData(col, subgp);
@@ -1692,98 +1879,6 @@ void DataTable::UpdateAllRanges() {
 }
 
 
-//////////////////////////
-// 	Float_Data	//
-//////////////////////////
-
-void float_Data::Initialize() {
-  m_valType = VT_UNKNOWN;
-}
-
-float float_Data::GetValAsFloat(int row) {
-  return ar.SafeEl(row);
-}
-
-String float_Data::GetValAsString(int row) {
-  const void* el = ar.SafeEl_(row);
-  if (el != NULL) return ar.El_GetStr_(el);
-  else return _nilString;
-}
-
-DataArray_impl::ValType float_Data::valType()  {
-  if (m_valType == VT_UNKNOWN) {
-    if (!name.empty() && name[0] == '|')
-      m_valType = VT_INT;
-    else
-      m_valType = VT_FLOAT;
-  }
-  return m_valType;
-}
-
-
-//////////////////////////
-// 	DString_Array	//
-//////////////////////////
-
-void String_Data::Initialize() {
-}
-
-/* NOTE: putting the max test in this routine does not purport
-   to handle all cases, but probably handles all the cases used
-   in the logging code. Additional routines can be overridden if
-   needed to catch other cases (ex. Insert_)
-*/
-void DString_Array::Add_(void* it) {
-  inherited::Add_(it);
-  m_maxColWidth = MAX(m_maxColWidth, (int)((String*)it)->length());
-}
-
-void DString_Array::Reset() {
-  inherited::Reset();
-  m_maxColWidth = 0;
-}
-
-
-//////////////////////////
-// 	String_Data	//
-//////////////////////////
-
-int String_Data::maxColWidth() {
-  return ar.m_maxColWidth;
-}
-
-String String_Data::GetValAsString(int row) {
-  return ar.SafeEl(row);
-}
-
-
-//////////////////////////
-// 	Matrix_Data	//
-//////////////////////////
-
-void MatrixData_impl::Initialize() {
-  val_geom.EnforceSize(1); // minimum 1 scalar value
-}
-
-void MatrixData_impl::UpdateAfterEdit() {
-  taMatrix_impl* ar = AR(); // cache
-  // note: we just do an update on the 
-  int_Array mat_dims;
-  mat_dims.EnforceSize(val_geom.size + 1);
-  for (int i = 0; i < val_geom.size; ++i) 
-    mat_dims.Set(i, val_geom[i]);
-  //note: we have to get current size from DataTable, otherwise any UAE would wipe out the data
-  int rows = 0;
-  DataTable* dt = GET_MY_OWNER(DataTable);
-  if (dt != NULL) 
-    rows = dt->rows;
-    
-  rows = MIN(rows, ar->frames()); // matrix could have fewer rows than table
-  mat_dims.Set(val_geom.size, rows); //note: if 0, then data remains to be allocated
-  ar->SetGeomN(mat_dims);
-  
-  inherited::UpdateAfterEdit(); 
-}
 
 
 //////////////////////////
