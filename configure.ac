@@ -5,9 +5,8 @@
 #
 # General note: AC_MSG_ERROR is not used to halt our script
 # in the case that a detection fails. It can make it difficult
-# for a user to troubleshoot problems. Instead, issue an
-# AC_MSG_WARN which will issue a warning immediately, and follow
-# it with SIM_AC_CONFIGURATION_WARNING which shows up at the very
+# for a user to troubleshoot problems. Instead, issue
+# SIM_AC_CONFIGURATION_WARNING which shows up at the very
 # end of configure.
 
 # Autoconf 2.59 required
@@ -81,7 +80,11 @@ fi
 m4_undefine([AC_PROG_F77])
 m4_defun([AC_PROG_F77],[])
 
+AC_PROG_CXXCPP
+SIM_AC_CONFIGURATION_SETTING([Preprocessor],[$CXXCPP])
+
 AC_PROG_LIBTOOL
+AC_PROG_RANLIB
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
@@ -126,8 +129,7 @@ AC_CACHE_SAVE
 
 AC_HAVE_LIBRARY([dl],
 		[LIBS="$LIBS -ldl"],
-		[AC_MSG_RESULT([no])
-		SIM_AC_CONFIGURATION_WARNING([libdl not found])])
+		[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
  
 PGAC_CHECK_READLINE
 CHECK_ZLIB
@@ -167,28 +169,44 @@ AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 
 if test $gui = true; then
+
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
   BNV_HAVE_QT
   LIBS="$LIBS $QT_LIBS"
   CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS"
-  # Important macro for OSX, which may use Apple's OpenGL framework. This preference is undetectable.
-  AX_CHECK_GL
-  
-  AC_HAVE_LIBRARY([Coin],[LIBS="$LIBS -lCoin"],[AC_MSG_ERROR([--enable-gui set but unable to find libCoin.])])
-  AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[AC_MSG_ERROR([--enable-gui set but unable to find libjpeg.])])
-  AC_HAVE_LIBRARY([SoQt], [LIBS="$LIBS -lSoQt"],[AC_MSG_ERROR([--enable-gui set but unable to find libSoQt.])])
 
-  AC_DEFINE([TA_GUI],
-	    [],
+  # Important macro for OSX, which may use Apple's OpenGL framework. This preference is undetectable.
+  #AX_CHECK_GL
+  MDL_HAVE_OPENGL
+
+  AC_HAVE_LIBRARY([Coin],[LIBS="$LIBS -lCoin"],[
+				      AC_MSG_RESULT([no])
+				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libCoin])])
+
+  AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[
+				      AC_MSG_RESULT([no])
+				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
+
+  AC_HAVE_LIBRARY([SoQt],[LIBS="$LIBS -lSoQt"],[
+				      AC_MSG_RESULT([no])
+				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libSoQt])])
+
+  AC_DEFINE([TA_GUI],,
 	    [Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
-  AC_DEFINE([TA_USE_QT],
-	    [],
-	    [This switch is set when linking with Qt. NOTE: THIS FLAG DOES NOT INDICATE GUI -- ex. ta is compiled with the QtCore library, even for the non-gui version of the program])
-  AC_DEFINE([TA_USE_INVENTOR],
-	    [],
+
+  AC_DEFINE([TA_USE_QT],,
+	    [This switch is set when linking with Qt.])
+
+dnl   AH_VERBATIM([TA_USE_INVENTOR],
+dnl [/*This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.*/
+dnl #ifndef TA_USE_INVENTOR
+dnl # define TA_USE_INVENTOR
+dnl #endif])
+
+  AC_DEFINE([TA_USE_INVENTOR],,
 	    [This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
-  AC_DEFINE([QT_SHARED],
-	    [],
+
+  AC_DEFINE([QT_SHARED],,
 	    [Note from Brian: This switch is here, i'm not quite sure why. Used in qglobal.h.])
 
   # Tells top-level makefile.am to recurse through src/taiqtso in gui mode
@@ -197,7 +215,7 @@ if test $gui = true; then
 else
 
   SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
-  AC_DEFINE([TA_NO_GUI],[],[Set when building nogui])
+  AC_DEFINE([TA_NO_GUI],,[Set when building nogui])
 
 fi
 AC_CACHE_SAVE
@@ -217,15 +235,20 @@ AC_ARG_ENABLE([mpi],
 AM_CONDITIONAL([MPI],[test $mpi = true])
 
 if test $mpi = true; then
-  SIM_AC_CONFIGURATION_SETTING([MPI],[Enabled])	
-  ACX_MPI([],[AC_MSG_ERROR([unable to locate the Message Passing Interface])])
-  ACX_PTHREAD([],[AC_MSG_ERROR([unable to locate pthread])])
-  AC_DEFINE([DMEM_COMPILE],[],[Causes mpi.h to be included])
+
+  ACX_MPI(,SIM_AC_CONFIGURATION_WARNING([Failed to detect the Message Passing Interface. Try CXX=mpiCC]))
+  ACX_PTHREAD(,SIM_AC_CONFIGURATION_WARNING([Failed to locate pthread]))
+  AC_DEFINE([DMEM_COMPILE],,[Causes mpi.h to be included])
+
   if test $MPICXX != x; then
+    SIM_AC_CONFIGURATION_SETTING([MPI],[Enabled. Using $MPICXX as compiler])
     CXX="$MPICXX"
   fi
+
 else
+
   SIM_AC_CONFIGURATION_SETTING([MPI],[Disabled])	
+
 fi
 
 #						debug enabled
@@ -243,19 +266,23 @@ AC_ARG_ENABLE([debug],
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 
 if $debug = true; then
-  SIM_AC_CONFIGURATION_SETTING([Debuging],[Enabled])
+
+  SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
-  AC_DEFINE([YYDEBUG],[],[Used when debugging])
-  AC_DEFINE([DEBUG],[],[Used when debugging])
-  AC_DEFINE([TA_PROFILE],[],[Used when debugging])
+  AC_DEFINE([YYDEBUG],,[Used when debugging])
+  AC_DEFINE([DEBUG],,[Used when debugging])
+  AC_DEFINE([TA_PROFILE],,[Used when debugging])
   AC_DEFINE([RETSIGTYPE],[void],[Used when debugging])
 
   # No optimization in debug mode
   AC_SUBST([OPT_LEVEL],["-g -O0"])
+
 else
-  SIM_AC_CONFIGURATION_SETTING([Debuging],[Disabled])
+
+  SIM_AC_CONFIGURATION_SETTING([Debugging],[Disabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
   AC_SUBST([OPT_LEVEL],["-g -O2"])
+
 fi
 
 #						  @variables@
@@ -269,6 +296,7 @@ AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
+AC_SUBST([CXXCPP])
 
 #						       output
 #*************************************************************
