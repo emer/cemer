@@ -36,6 +36,9 @@ TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, "unsigned");
 TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, "signed");
 TypeDef TA_float		("float", 	1, 0, 0, 0, 1, "float");
 TypeDef TA_double		("double", 	1, 0, 0, 0, 1, "double");
+TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, "int64_t");
+TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, "uint64_t");
+TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, "intptr_t");
 TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, "bool");
 TypeDef TA_const		("const", 	1, 0, 0, 0, 1);
 TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); 	// formal
@@ -123,6 +126,9 @@ MTA::MTA() {
   ts.Add(&TA_signed);
   ts.Add(&TA_float);
   ts.Add(&TA_double);
+  ts.Add(&TA_int64_t);
+  ts.Add(&TA_uint64_t);
+  ts.Add(&TA_intptr_t);
 #ifndef NO_BUILTIN_BOOL
   ts.Add(&TA_bool);
 #endif
@@ -181,6 +187,9 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   ts.Add(&TA_signed);
   ts.Add(&TA_float);
   ts.Add(&TA_double);
+  ts.Add(&TA_int64_t);
+  ts.Add(&TA_uint64_t);
+  ts.Add(&TA_intptr_t);
 #ifndef NO_BUILTIN_BOOL
   ts.Add(&TA_bool);
 #endif
