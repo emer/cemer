@@ -61,6 +61,12 @@ class SoSeparator: public SoGroup {
 public:
 	int dummy; // #IGNORE
 };
+
+class SoTriangleStripSet: public SoBase {
+public:
+  int dummy; // #IGNORE
+};
+
 #endif
 
 #endif // __MAKETA__

@@ -165,7 +165,7 @@ void DataChannel_Group::ClearCachedData() {
   }
 }
 
-
+/* prob nn
 /////////////////////////
 //  SequenceMaster     //
 /////////////////////////
@@ -197,7 +197,7 @@ bool SequenceMaster::UpdateClient(int64_t& client_cycle, int64_t* diff) {
   client_cycle = m_cycle;
   return true;
 }
-
+*/
 
 /////////////////////////
 //  DirectoryCatalog   //

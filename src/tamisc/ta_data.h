@@ -34,8 +34,8 @@ class DataChannel;
 class DataChannel_Group;
 class ISequencable;
 class IDataSource;
-class IDataSink;
-class SequenceMaster; 
+class IDataSink; //
+//class SequenceMaster; 
 
 
 /* DataChannel
@@ -174,6 +174,7 @@ private:
   void		Destroy();
 }; */
 
+/* prob NN
 class SequenceMaster { // #NO_INSTANCE singleton class
 public:
   static SequenceMaster& instance();
@@ -192,7 +193,7 @@ private:
   SequenceMaster(const SequenceMaster& src); // not defined
   void operator =(const SequenceMaster& src); // not defined
 };
-
+*/
 /* DataCatalogs
    A DataCatalog provides a collection of data items. Examples would be image files
    in a file system folder, or data patterns stored in a database. 

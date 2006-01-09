@@ -80,7 +80,6 @@ typedef unsigned char   byte;
 #define INHERITED(c)
 #define STATIC_CONST static
 #define USING(b)
-typedef long long int64_t; //TODO: need to figure out why maketa doesn't grok this
 #else
 #define INHERITED(c) typedef c inherited;
 #define STATIC_CONST static const

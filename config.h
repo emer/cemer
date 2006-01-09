@@ -65,7 +65,7 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
-/* Define if you have a readline compatible library */
+/* Define if you have a function readline library */
 #define HAVE_LIBREADLINE 1
 
 /* Define to 1 if you have the `z' library (-lz). */
@@ -107,12 +107,6 @@
 
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
-
-/* Define to 1 if you have the <readline.h> header file. */
-/* #undef HAVE_READLINE_H */
-
-/* Define to 1 if you have the <readline/readline.h> header file. */
-#define HAVE_READLINE_READLINE_H 1
 
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */
@@ -187,6 +181,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
+/* Define to 1 if you have the <windows.h> header file. */
+/* #undef HAVE_WINDOWS_H */
+
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
@@ -198,7 +195,7 @@
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Name of package */
-#define PACKAGE "pdp"
+#define PACKAGE "PDP++"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "pdp-discuss@psych-srv3.Colorado.EDU"
@@ -210,7 +207,7 @@
 #define PACKAGE_STRING "PDP 4.0"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "pdp"
+#define PACKAGE_TARNAME "PDP++"
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "4.0"
@@ -222,9 +219,6 @@
 /* Note from Brian: This switch is here, i'm not quite sure why. Used in
    qglobal.h. */
 #define QT_SHARED 
-
-/* Description */
-#define QT_THREAD_SUPPORT 
 
 /* Used when debugging */
 #define RETSIGTYPE void
@@ -275,9 +269,6 @@
 
 /* Version number of package */
 #define VERSION "4.0"
-
-/* Used when linking with the Festival Speech Synthesis System */
-/* #undef WITH_FESTIVAL */
 
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */

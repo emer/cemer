@@ -26,22 +26,6 @@
 #define SoSFVec2f int
 #define uint32_t uint
 
-//dummy class for maketa
-class SoGroup {
-public:
-  int dummy;
-};
-
-class SoSeparator: public SoGroup {
-public:
-  int dummy;
-};
-
-class SoTriangleStripSet {
-public:
-  int dummy;
-};
-
 #else
 #include <Inventor/SbColor.h>
 #include <Inventor/fields/SoSFEnum.h>
