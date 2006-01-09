@@ -97,24 +97,30 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libtamisc@PDP_SUFFIX@.la
+
 libtamisc@PDP_SUFFIX@_la_DEPENDENCIES = libtamiscTypeAccess@PDP_SUFFIX@.la
+
 libtamisc@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+
 libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
+
 libtamisc@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/tamisc/libtamiscTypeAccess@PDP_SUFFIX@.la
+
 libtamisc@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
 
 noinst_LTLIBRARIES = libtamiscTypeAccess@PDP_SUFFIX@.la
+
 libtamiscTypeAccess@PDP_SUFFIX@_la_SOURCES = tamisc_TA.cpp tamisc_TA_type.h tamisc_TA_inst.h
+
 libtamiscTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libtamisc@PDP_SUFFIX@_la_CPPFLAGS)
+
 libtamiscTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
 
 BUILT_SOURCES = tamisc_TA_type.h
 CLEANFILES += tamisc_TA.ccx
-clean-local:
-	-rm *moc*

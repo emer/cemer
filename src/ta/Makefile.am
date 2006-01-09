@@ -128,22 +128,27 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
+
 libta@PDP_SUFFIX@_la_DEPENDENCIES = libtaTypeAccess@PDP_SUFFIX@.la
+
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+
 libta@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
+
 libta@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+
 libta@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/ta/libtaTypeAccess@PDP_SUFFIX@.la
 
 noinst_LTLIBRARIES = libtaTypeAccess@PDP_SUFFIX@.la
+
 libtaTypeAccess@PDP_SUFFIX@_la_SOURCES = ta_TA.cpp ta_TA_type.h ta_TA_inst.h
+
 libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libta@PDP_SUFFIX@_la_CPPFLAGS)
+
 libtaTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
 
 BUILT_SOURCES = ta_TA_type.h
-
-clean-local:
-	-rm *moc*

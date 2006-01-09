@@ -1,13 +1,9 @@
-PROJNAME = maketa
-DEFS=
-
-do-mfstamp-am do-mfstamp: Makefile.in
-	@echo "timestamp for all Makefile.in files" > $(top_builddir)/mfstamp
-	@touch $@
-
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
+
+PROJNAME = maketa
+DEFS=
 
 HEADS =\
 	ta_stdef.h \
@@ -36,10 +32,15 @@ ta_TA_type.h ta_TA_inst.h:
 	then touch -t 0412312359 ta_TA_type.h ta_TA_inst.h;fi
 
 bin_PROGRAMS = maketa
+
 maketa_SOURCES = $(HEADS) $(SRCS)
+
 maketa_CPPFLAGS = -I@abs_srcdir@
+
 BUILT_SOURCES = ta_TA_type.h
+
 CLEANFILES = ta_TA_type.h ta_TA_inst.h
+
 EXTRA_DIST =\
 	ta_base.h \
 	ta_constr.h \

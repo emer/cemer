@@ -58,7 +58,9 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
+
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@ \
 	-I@abs_top_builddir@ \
@@ -66,5 +68,3 @@ libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libtaiqtso@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
-clean-local:
-	-rm *moc*

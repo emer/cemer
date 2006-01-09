@@ -15,7 +15,8 @@ ${TAHEADS}:
 # every directory that uses maketa.
 force_ta:
 #	# If maketa doesn't exist make it
-	${MAKE} --directory=../maketa ${AM_MAKEFLAGS}
+	if [ ! -x ../maketa/./maketa ]; then \
+		cd ../maketa && make;fi
 
 #	# If the final TA files don't exist, create empty ones. (solves chicken/egg)
 	if [ ! -e ${PROJNAME}_TA_type.h ]; then \
@@ -39,14 +40,11 @@ CLEANFILES =\
 	${PROJNAME}_TA_inst.hx \
 	${PROJNAME}_TA.ccx
 
-# Maketa needs to see everything EXCEPT abs_top_builddir. See below for why.
-# TODO: detect /lib/cpp on the particular os so as to genericize our build to any os
-# with the appropriate tools. (e.g., where you see -cpp below)
-
 MAKETA_FLAGS =\
 	-hx \
 	-css \
-	-cpp=$(cppC) \
+	-cpp="@CXXCPP@" \
+	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
 	-I@abs_srcdir@/../ta/ios-g++-3.1 \
 	-I@abs_srcdir@/../pdp \
@@ -57,34 +55,3 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../taiqtso \
 	-I@abs_srcdir@/../bp \
 	-I@abs_srcdir@/../tamisc
-
-if LINUX
-cppC = "/lib/cpp"
-MAKETA_FLAGS += "-I/usr/include/linux -D__i386__"
-endif
-
-if DARWIN
-cppC = "/usr/libexec/gcc/darwin/ppc/3.3/cpp -D__ppc__"
-
-# There is a bug where on linux, if maketa is shown the top build directory 
-# then it will scan config.h twice and /lib/cpp will error out on  redefinitions. The opposite
-# is true on the mac - if the top build directory is not shown it will never see config.h
-# and will error out due to there being no definitions. This could be some voodoo on linux
-# where gcc automatically scans the parent directory. The top-level makefile does include nostdinc
-# but it did not fix the problem.
-MAKETA_FLAGS +=\
-	"-I/usr/include/gcc/darwin/3.3" \
-	-I@abs_srcdir@/../..
-
-endif
-
-# These are currently the only defines we are setting on the command line. Theoretically
-# We don't need them (they are set in config.h) , but it doesn't work without them.
-
-if TA_GUI
-MAKETA_FLAGS += -DTA_GUI -DTA_USE_INVENTOR
-endif
-
-if NO_TA_GUI
-MAKETA_FLAGS += -DTA_NO_GUI
-endif

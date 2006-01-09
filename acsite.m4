@@ -1,6 +1,8 @@
 dnl 					             PDP_PROG_CXX
 dnl *************************************************************
-dnl 
+dnl This macro allows us to set our own level of optimization
+dnl on C++ files. We use it to set -O0 on all TA files all the
+dnl time and to not do any optimization in --enable-debug mode
 dnl *************************************************************
 dnl Copyright, 1995-2005, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
@@ -18,19 +20,22 @@ dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 
 AC_DEFUN([PDP_PROG_CXX],[
+
 save_user_CXXFLAGS=${CXXFLAGS}
 CXXFLAGS=
-
 AC_PROG_CXX
-
 CXXFLAGS=${save_user_CXXFLAGS}
 
 dnl GNU Compiler Collection is mandatory
 AC_MSG_CHECKING([for GNU C++ compiler])
+
 if test $GXX != yes; then
+
   AC_MSG_WARN([GNU C++ compiler not detected.])
   SIM_AC_CONFIGURATION_WARNING([GNU C++ compiler not detected. The maketa type scanning tool built in our project REQUIRES the gcc -E (/lib/cpp) preprocessor that comes with it])
+
 fi
+
 AC_MSG_RESULT([$GXX])
 ])
 
@@ -56,7 +61,6 @@ dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_DETERMINE_OSTYPE],[
 AC_REQUIRE([AC_CANONICAL_BUILD])
-AC_MSG_CHECKING([results of config.guess])
 case "${build_os}" in
 	*linux*)
 		AC_SUBST([PDP_PLATFORM],[LINUX])
@@ -73,10 +77,10 @@ case "${build_os}" in
 		AC_DEFINE([LINUX],[1],[When on cygwin])
 	;;
 	*)
-		AC_MSG_ERROR([PDP++ supports Linux, Darwin, and Windows],[1])
+		AC_SUBST([PDP_PLATFORM],[LINUX])
+		SIM_AC_CONFIGURATION_SETTING([OS],[For now, unknown OS's are treated as Linux for memory management.])
 	;;
 esac
-AC_MSG_RESULT([$PDP_PLATFORM])
 AM_CONDITIONAL([LINUX],[test $PDP_PLATFORM = LINUX])
 AM_CONDITIONAL([DARWIN],[test $PDP_PLATFORM = DARWIN])
 AM_CONDITIONAL([CYGWIN],[test $PDP_PLATFORM = CYGWIN])
@@ -102,7 +106,7 @@ dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_DETERMINE_SUFFIX],[
-AC_MSG_CHECKING([executeable suffixes])
+AC_MSG_CHECKING([whether we are name mangling])
 if test "$gui" = "false" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
 fi
@@ -113,9 +117,10 @@ if test "$mpi" = "true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
 fi
 if test -z ${PDP_SUFFIX}; then 
+	AC_MSG_RESULT([none])
 	SIM_AC_CONFIGURATION_SETTING([Mangling],[Disabled. Prototype of bins\libs is pdp++\libpdp.a])
 else
-	AC_MSG_RESULT([${PDP_SUFFIX}])
+	AC_MSG_RESULT([yes])
 	AC_SUBST([PDP_SUFFIX])
 	SIM_AC_CONFIGURATION_SETTING([Mangling],[Enabled. Prototype of bins\libs is pdp${PDP_SUFFIX}++\libpdp${PDP_SUFFIX}.a])
 fi
@@ -1039,6 +1044,59 @@ else
 fi
 ])
 
+dnl @synopsis MDL_HAVE_OPENGL
+dnl
+dnl Search for OpenGL. We search first for Mesa (a GPL'ed version of
+dnl Mesa) before a vendor's version of OpenGL, unless we were
+dnl specifically asked not to with `--with-Mesa=no' or
+dnl `--without-Mesa'.
+dnl
+dnl The four "standard" OpenGL libraries are searched for: "-lGL",
+dnl "-lGLU", "-lGLX" (or "-lMesaGL", "-lMesaGLU" as the case may be)
+dnl and "-lglut".
+dnl
+dnl All of the libraries that are found (since "-lglut" or "-lGLX"
+dnl might be missing) are added to the shell output variable "GL_LIBS",
+dnl along with any other libraries that are necessary to successfully
+dnl link an OpenGL application (e.g. the X11 libraries). Care has been
+dnl taken to make sure that all of the libraries in "GL_LIBS" are
+dnl listed in the proper order.
+dnl
+dnl Additionally, the shell output variable "GL_CFLAGS" is set to any
+dnl flags (e.g. "-I" flags) that are necessary to successfully compile
+dnl an OpenGL application.
+dnl
+dnl The following shell variable (which are not output variables) are
+dnl also set to either "yes" or "no" (depending on which libraries were
+dnl found) to help you determine exactly what was found.
+dnl
+dnl   have_GL
+dnl   have_GLU
+dnl   have_GLX
+dnl   have_glut
+dnl
+dnl A complete little toy "Automake `make distcheck'" package of how to
+dnl use this macro is available at:
+dnl
+dnl   ftp://ftp.slac.stanford.edu/users/langston/autoconf/ac_opengl-0.01.tar.gz
+dnl
+dnl Please note that as the ac_opengl macro and the toy example
+dnl evolves, the version number increases, so you may have to adjust
+dnl the above URL accordingly.
+dnl
+dnl minor bugfix by ahmet inan <auto@ainan.org>
+dnl
+dnl @category InstalledPackages
+dnl @author Matthew D. Langston <langston@SLAC.Stanford.EDU>
+dnl @version 2002-09-25
+dnl @license GPLWithACException
+
+AC_DEFUN([MDL_HAVE_OPENGL],
+[
+  AC_REQUIRE([AC_PROG_CC])
+  AC_REQUIRE([AC_PATH_X])
+  AC_REQUIRE([AC_PATH_XTRA])
+
 dnl @synopsis AX_CHECK_GL
 dnl
 dnl Check for an OpenGL implementation. If GL is found, the required
@@ -1055,10 +1113,6 @@ dnl @author Braden McDaniel <braden@endoframe.com>
 dnl @version 2004-11-15
 dnl @license AllPermissive
 
-AC_DEFUN([AX_CHECK_GL],
-[AC_REQUIRE([AC_PATH_X])dnl
-AC_REQUIRE([ACX_PTHREAD])dnl
-
 #
 # There isn't a reliable way to know we should use the Apple OpenGL framework
 # without a configure option.  A Mac OS X user may have installed an
@@ -1071,70 +1125,97 @@ if test "X$with_apple_opengl_framework" = "Xyes"; then
   AC_DEFINE([HAVE_APPLE_OPENGL_FRAMEWORK], [1],
             [Use the Apple OpenGL framework.])
   GL_LIBS="-framework OpenGL"
+  SIM_AC_CONFIGURATION_SETTING([GL],[-framework OpenGL])
 else
-  AC_LANG_PUSH(C)
+  AC_CACHE_CHECK([for OpenGL], mdl_cv_have_OpenGL,
+  [
+dnl Check for Mesa first, unless we were asked not to.
+    AC_ARG_WITH([--with-Mesa],
+                   [Prefer the Mesa library over a vendors native OpenGL library (default=yes)],
+                   with_Mesa_help_string)
+    AC_ARG_ENABLE(Mesa, $with_Mesa_help_string, use_Mesa=$enableval, use_Mesa=yes)
 
-  AX_LANG_COMPILER_MS
-  if test X$ax_compiler_ms = Xno; then
-    GL_CFLAGS="${PTHREAD_CFLAGS}"
-    GL_LIBS="${PTHREAD_LIBS} -lm"
-  fi
-
-  #
-  # Use x_includes and x_libraries if they have been set (presumably by
-  # AC_PATH_X).
-  #
-  if test "X$no_x" != "Xyes"; then
-    if test -n "$x_includes"; then
-      GL_CFLAGS="-I${x_includes} ${GL_CFLAGS}"
-    fi
-    if test -n "$x_libraries"; then
-      GL_LIBS="-L${x_libraries} -lX11 ${GL_LIBS}"
-    fi
-  fi
-
-  AC_CHECK_HEADERS([windows.h])
-
-  AC_CACHE_CHECK([for OpenGL library], [ax_cv_check_gl_libgl],
-  [ax_cv_check_gl_libgl="no"
-  ax_save_CPPFLAGS="${CPPFLAGS}"
-  CPPFLAGS="${GL_CFLAGS} ${CPPFLAGS}"
-  ax_save_LIBS="${LIBS}"
-  LIBS=""
-  ax_check_libs="-lopengl32 -lGL"
-  for ax_lib in ${ax_check_libs}; do
-    if test X$ax_compiler_ms = Xyes; then
-      ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
+    if test x"$use_Mesa" = xyes; then
+       GL_search_list="MesaGL   GL"
+      GLU_search_list="MesaGLU GLU"
+      GLX_search_list="MesaGLX GLX"
     else
-      ax_try_lib="${ax_lib}"
+       GL_search_list="GL  MesaGL"
+      GLU_search_list="GLU MesaGLU"
+      GLX_search_list="GLX MesaGLX"
     fi
-    LIBS="${ax_try_lib} ${GL_LIBS} ${ax_save_LIBS}"
-    AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([[
-# if HAVE_WINDOWS_H && defined(_WIN32)
-#   include <windows.h>
-# endif
-# include <GL/gl.h>]],
-                     [[glBegin(0)]])],
-    [ax_cv_check_gl_libgl="${ax_try_lib}"; break])
-  done
-  LIBS=${ax_save_LIBS}
-  CPPFLAGS=${ax_save_CPPFLAGS}])
 
-  if test "X${ax_cv_check_gl_libgl}" = "Xno"; then
-    no_gl="yes"
-    GL_CFLAGS=""
-    GL_LIBS=""
-  else
-    GL_LIBS="${ax_cv_check_gl_libgl} ${GL_LIBS}"
-  fi
-  AC_LANG_POP(C)
+    AC_LANG_SAVE
+    AC_LANG_C
+
+dnl If we are running under X11 then add in the appropriate libraries.
+dnl if test x"$no_x" != xyes; then
+dnl Add everything we need to compile and link X programs to GL_X_CFLAGS
+dnl and GL_X_LIBS.
+dnl  GL_CFLAGS="$X_CFLAGS"
+dnl  GL_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+dnl fi
+    GL_save_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$GL_CFLAGS"
+
+    GL_save_LIBS="$LIBS"
+    LIBS="$GL_X_LIBS"
+
+
+    # Save the "AC_MSG_RESULT file descriptor" to FD 8.
+    exec 8>&AC_FD_MSG
+
+    # Temporarily turn off AC_MSG_RESULT so that the user gets pretty
+    # messages.
+    exec AC_FD_MSG>/dev/null
+
+    AC_SEARCH_LIBS(glAccum,          $GL_search_list, have_GL=yes,   have_GL=no)
+    AC_SEARCH_LIBS(gluBeginCurve,   $GLU_search_list, have_GLU=yes,  have_GLU=no)
+    AC_SEARCH_LIBS(glXChooseVisual, $GLX_search_list, have_GLX=yes,  have_GLX=no)
+    AC_SEARCH_LIBS(glutInit,        glut,             have_glut=yes, have_glut=no)
+
+
+
+    # Restore pretty messages.
+    exec AC_FD_MSG>&8
+
+    if test -n "$LIBS"; then
+      mdl_cv_have_OpenGL=yes
+      GL_LIBS="$LIBS"
+      SIM_AC_CONFIGURATION_SETTING([GL],[$GL_LIBS])
+    else
+      mdl_cv_have_OpenGL=no
+      GL_CFLAGS=
+      SIM_AC_CONFIGURATION_WARNING([Failed to detect a complete GL installation. Try LDFLAGS=-L/DIR or --with-apple-opengl-framework])
+    fi
+
+dnl Reset GL_X_LIBS regardless, since it was just a temporary variable
+dnl and we don't want to be global namespace polluters.
+    GL_X_LIBS=
+
+    LIBS="$GL_save_LIBS"
+    CPPFLAGS="$GL_save_CPPFLAGS"
+
+    AC_LANG_RESTORE
+
+dnl bugfix: dont forget to cache this variables, too
+    mdl_cv_GL_CFLAGS="$GL_CFLAGS"
+    mdl_cv_GL_LIBS="$GL_LIBS"
+    mdl_cv_have_GL="$have_GL"
+    mdl_cv_have_GLU="$have_GLU"
+    mdl_cv_have_GLX="$have_GLX"
+    mdl_cv_have_glut="$have_glut"
 fi
+  ])
+  GL_CFLAGS="$mdl_cv_GL_CFLAGS"
+  GL_LIBS="$mdl_cv_GL_LIBS"
+  have_GL="$mdl_cv_have_GL"
+  have_GLU="$mdl_cv_have_GLU"
+  have_GLX="$mdl_cv_have_GLX"
+  have_glut="$mdl_cv_have_GLX"
+])
+dnl endof bugfix -ainan
 
-LIBS="$LIBS $GL_LIBS"
-CXXFLAGS="$CXXFLAGS $GLCFLAGS"
-
-])dnl
 
 
 dnl						      CHECK_ZLIB
@@ -1441,7 +1522,7 @@ AC_DEFUN([BNV_HAVE_QT],
   if test x"$have_qt" = xyes; then
     QT_CXXFLAGS="-I$bnv_qt_include_dir"
     if test $bnv_qt_lib = "qt-mt"; then
-        QT_CXXFLAGS="$QT_CXXFLAGS -DQT_THREAD_SUPPORT"
+        AC_DEFINE([QT_THREAD_SUPPORT],,[none])
     fi
     QT_DIR="$bnv_qt_dir"
     QT_LIBS="$bnv_qt_LIBS"
@@ -1472,12 +1553,8 @@ AC_DEFUN([BNV_HAVE_QT],
       fi
     fi
     # All variables are defined, report the result
-    AC_MSG_RESULT([$have_qt:
-    QT_CXXFLAGS=$QT_CXXFLAGS
-    QT_DIR=$QT_DIR
-    QT_LIBS=$QT_LIBS
-    QT_UIC=$QT_UIC
-    QT_MOC=$QT_MOC])
+    AC_MSG_RESULT([$have_qt])
+    SIM_AC_CONFIGURATION_SETTING([Qt],[$QT_LIBS])
   else
     # Qt was not found
     QT_CXXFLAGS=
@@ -1486,6 +1563,7 @@ AC_DEFUN([BNV_HAVE_QT],
     QT_UIC=
     QT_MOC=
     AC_MSG_RESULT($have_qt)
+    SIM_AC_CONFIGURATION_WARNING([Failed to find matching components of a complete Qt installation. Try --with-Qt-dir=DIR])
   fi
   AC_SUBST(QT_CXXFLAGS)
   AC_SUBST(QT_DIR)
@@ -1555,7 +1633,7 @@ EOF
             if test x"$bnv_err_4" != x; then
               echo "$bnv_err_4" >&AC_FD_CC
             else
-              bnv_cv_qt_test_result="succes"
+              bnv_cv_qt_test_result="success"
             fi
           fi
         fi
@@ -1563,7 +1641,7 @@ EOF
     ])dnl AC_CACHE_VAL bnv_cv_qt_test_result
     AC_MSG_RESULT([$bnv_cv_qt_test_result]);
     if test x"$bnv_cv_qt_test_result" = "xfailure"; then
-      AC_MSG_ERROR([Failed to find matching components of a complete
+      SIM_AC_CONFIGURATION_WARNING([Failed to find matching components of a complete
                   Qt installation. Try using more options,
                   see ./configure --help.])
     fi
@@ -1814,7 +1892,6 @@ for pgac_rllib in $READLINE_ORDER ; do
     break
   else
     AC_MSG_RESULT(no)
-    SIM_AC_CONFIGURATION_WARNING([none of termcap, ncurses, curses, readline, edit found])
   fi
 done
 LIBS=$pgac_save_LIBS
@@ -1823,6 +1900,8 @@ LIBS=$pgac_save_LIBS
 if test "$pgac_cv_check_readline" != no ; then
   LIBS="$pgac_cv_check_readline $LIBS"
   AC_DEFINE(HAVE_LIBREADLINE, 1, [Define if you have a function readline library])
+else
+    SIM_AC_CONFIGURATION_WARNING([none of termcap, ncurses, curses, readline, edit found])
 fi
 
 ])dnl PGAC_CHECK_READLINE
