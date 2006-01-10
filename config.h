@@ -103,7 +103,7 @@
 #define HAVE_POW 1
 
 /* Define if you have POSIX threads libraries and header files. */
-#define HAVE_PTHREAD 1
+/* #undef HAVE_PTHREAD */
 
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
@@ -181,9 +181,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define to 1 if you have the <windows.h> header file. */
-/* #undef HAVE_WINDOWS_H */
-
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
@@ -219,6 +216,9 @@
 /* Note from Brian: This switch is here, i'm not quite sure why. Used in
    qglobal.h. */
 #define QT_SHARED 
+
+/* none */
+#define QT_THREAD_SUPPORT 
 
 /* Used when debugging */
 #define RETSIGTYPE void
@@ -259,9 +259,7 @@
    is never used when building nogui. */
 #define TA_USE_INVENTOR 
 
-/* This switch is set when linking with Qt. NOTE: THIS FLAG DOES NOT INDICATE
-   GUI -- ex. ta is compiled with the QtCore library, even for the non-gui
-   version of the program */
+/* This switch is set when linking with Qt. */
 #define TA_USE_QT 
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
