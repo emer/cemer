@@ -32,7 +32,7 @@ This file is part of TA/PDP++
 
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
 # in /aux/ so they don't clutter up the root
-AC_CONFIG_AUX_DIR([aux])
+AC_CONFIG_AUX_DIR([misc])
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])
 
 # Scan the source with autoheader and create config.h
