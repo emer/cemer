@@ -134,11 +134,11 @@ public:
   String(unsigned long u, const char* format = "%lu");
   String(float f, const char* format = "%g");
   String(double f, const char* format = "%lg");
-  String(void* f, const char* format = "%lg");
+  String(void* f, const char* format = "%lg"); //
 #ifdef TA_USE_QT
   String(const QString& val);
   String&           operator = (const QString& y);
-  operator QString() const;
+  operator QString() const; //
 #endif
 
   ~String() {mrep->unRef();}
@@ -391,6 +391,11 @@ private:
 //extern String _nilString; // an empty string, for convenience
 //note: can't use global static, because ctor not guarenteed to run before use
 #define _nilString taString()
+
+// this is provided for placed instances, where memory is already supplied
+// the owner of a placed versions MUST call s->~String() manually, to ensure proper destruction
+  
+inline void* operator new(size_t, String* str) { return str; }
 
 // other externs
 

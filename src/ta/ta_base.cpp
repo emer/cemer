@@ -2034,11 +2034,6 @@ int int_Array::Product() const {
   return rval;
 }
 
-void long_Array::FillSeq(long start, long inc) {
-  long i, v;
-  for(i=0,v=start; i<size; i++, v += inc)
-    FastEl(i) = v;
-}
 
 #ifdef TA_GUI
 

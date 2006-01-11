@@ -60,8 +60,6 @@ template class taArray<double>;
   const double double_Array::blank = 0.0;
 template class taArray<String>;
   const String String_Array::blank = "";
-template class taArray<long>;
-  const long long_Array::blank = 0L;
 template class taArray<void*>;
   const voidptr voidptr_Array::blank = NULL;
 template class taPtrList<VPUnref>;

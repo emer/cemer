@@ -21,6 +21,36 @@
 //  taMatrix_impl      //
 /////////////////////////
 
+bool taMatrix_impl::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
+  if (dims_ <= 0) { 
+    if (err_msg != NULL)
+      *err_msg = "dims must be > 0";
+    return false;
+  }
+  
+  int i;
+  for (i = 0; i < (dims_ - 1) ; ++i) {
+    if (geom_[i] <= 0) {
+      if (err_msg != NULL)
+        *err_msg = "geoms[0..N-2] must be > 0";
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+String taMatrix_impl::GeomToString(const int_Array& geom) {
+  String rval("[");
+  for (int i = 0; i < geom.size; ++i) {
+    if (i > 0) rval += ',';
+    rval += i;
+  }
+  rval += "]";
+  return rval;
+}
+
+
 void taMatrix_impl::Initialize()
 {
   size = 0;
@@ -371,26 +401,6 @@ void taMatrix_impl::SetFixedData_(void* el_, const int_Array& geom_) {
   alloc_size = -1; // flag for fixed data
   geom.Reset();
   SetGeomN(geom_);
-}
-
-bool taMatrix_impl::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
-  if (dims_ <= 0) { 
-    if (err_msg != NULL)
-      *err_msg = "dims must be > 0";
-    return false;
-  }
-  
-  int i;
-  for (i = 0; i < (dims_ - 1) ; ++i) {
-    if (geom_[i] <= 0) {
-      if (err_msg != NULL)
-        *err_msg = "geoms[0..N-2] must be > 0";
-      return false;
-    }
-  }
-  
-  return true;
-  
 }
 
 void taMatrix_impl::SetGeom_(int dims_, const int geom_[]) {

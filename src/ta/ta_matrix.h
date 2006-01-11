@@ -72,6 +72,7 @@ public:
   static bool		GeomIsValid(const int_Array& geom_, String* err_msg = NULL)
     {return GeomIsValid(geom_.size, geom_.el, err_msg);}
     // validates proposed geom, ex. dims >=1, and valid values for supplied geoms
+  static String		GeomToString(const int_Array& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
   
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
   int_Array		geom; // #SHOW #READ_ONLY dimensions array

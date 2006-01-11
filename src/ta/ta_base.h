@@ -1267,30 +1267,6 @@ public:
   TA_BASEFUNS(SArg_Array);
 };
 
-class long_Array : public taArray<long> {
-  // #NO_UPDATE_AFTER
-public:
-  STATIC_CONST long blank; // #HIDDEN #READ_ONLY 
-  virtual void	FillSeq(long start=0, long inc=1);
-  // fill array with sequential values starting at start, incrementing by inc
-
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_long; return FastEl_(i); }
-  void Initialize()	{err = 0; };
-  void Destroy()	{ };
-  TA_BASEFUNS(long_Array);
-  TA_ARRAY_FUNS(long_Array, long)
-protected:
-  int		El_Compare_(const void* a, const void* b) const
-  { int rval=-1; if(*((long*)a) > *((long*)b)) rval=1; else if(*((long*)a) == *((long*)b)) rval=0; return rval; }
-  bool		El_Equal_(const void* a, const void* b) const
-    { return (*((long*)a) == *((long*)b)); }
-  String	El_GetStr_(const void* it) const { return (*((long*)it)); }
-  void		El_SetFmStr_(void* it, const String& val)
-  { long tmp = (long)val; *((long*)it) = tmp; }
-};
-TA_ARRAY_OPS(long_Array)
-
 typedef void* voidptr; // for maketa, which chokes on void* in a template
 class voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER
