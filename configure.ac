@@ -42,8 +42,6 @@ AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
 # Custom: check results of config.status for a few OS types
 PDP_DETERMINE_OSTYPE
 
-AC_DISABLE_SHARED
-
 # Set default language  C++
 AC_LANG_CPLUSPLUS
 PDP_PROG_CXX
