@@ -23,20 +23,20 @@ AC_DEFUN([PDP_PROG_CXX],[
 
 save_user_CXXFLAGS=${CXXFLAGS}
 CXXFLAGS=
-AC_PROG_CXX
+AC_PROG_CXX([cl g++])
 CXXFLAGS=${save_user_CXXFLAGS}
 
-dnl GNU Compiler Collection is mandatory
-AC_MSG_CHECKING([for GNU C++ compiler])
+# dnl GNU Compiler Collection is mandatory
+# AC_MSG_CHECKING([for GNU C++ compiler])
 
-if test $GXX != yes; then
+# if [ ! $GXX = "yes" ]; then
 
-  AC_MSG_WARN([GNU C++ compiler not detected.])
-  SIM_AC_CONFIGURATION_WARNING([GNU C++ compiler not detected. The maketa type scanning tool built in our project REQUIRES the gcc -E (/lib/cpp) preprocessor that comes with it])
+#   AC_MSG_WARN([GNU C++ compiler not detected.])
+#   SIM_AC_CONFIGURATION_WARNING([GNU C++ compiler not detected. The maketa type scanning tool built in our project REQUIRES the gcc -E (/lib/cpp) preprocessor that comes with it])
 
-fi
+# fi
 
-AC_MSG_RESULT([$GXX])
+# AC_MSG_RESULT([$GXX])
 ])
 
 
@@ -1669,6 +1669,7 @@ AC_DEFUN([BNV_PATH_QT_DIRECT],
     # Look for the header file in a standard set of common directories.
     bnv_include_path_list="
       /usr/include
+      `if test -n ${QTDIR};then echo ls -dr ${QTDIR}/include "2>/dev/null";fi`
       `ls -dr /usr/include/qt* 2>/dev/null`
       `ls -dr /usr/lib/qt*/include 2>/dev/null`
       `ls -dr /usr/local/qt*/include 2>/dev/null`
