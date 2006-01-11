@@ -43,7 +43,6 @@ public:
     T_Double,
     T_Char,
     
-    T_IntPtr, // int, of size of ptr (32/64)
     T_Ptr, // void*
     
     T_String,
@@ -57,6 +56,17 @@ public:
   
   Variant(); // default is null/invalid
   Variant(const Variant &cp);
+  Variant(bool val);
+  Variant(int val);
+  Variant(uint val);
+  Variant(int64_t val);
+  Variant(uint64_t val);
+  Variant(float val);
+  Variant(double val);
+  Variant(char val);
+  Variant(void* val);
+  Variant(const String& val);
+  Variant(const char* val);
   ~Variant();
 protected:
 #ifdef __MAKETA__
@@ -64,13 +74,14 @@ protected:
 #else
   union Data // sizes are given for 32/64 sys
   {
+      bool b; // 8
       int i; // 32
       uint u; // 32
-      bool b; // 8
-      float f; // 32
-      double d; // 64
       int64_t i64; // 64
       uint64_t u64; // 64
+      float f; // 32
+      double d; // 64
+      char c;
       intptr_t iptr; // 32/64
       intptr_t str; // 32/64 note: this is an in-place taString, NOT a pointer
       void* ptr; // 32/64
@@ -95,6 +106,20 @@ protected:
 };
 
 inline Variant::Variant():type(T_Invalid), is_null(true) { d.i64 = 0; } // default is null/invalid
+inline Variant::Variant(bool val):type(T_Bool), is_null(false) {d.b = val;}
+inline Variant::Variant(int val):type(T_Int), is_null(false) {d.i = val;}
+inline Variant::Variant(uint val):type(T_UInt), is_null(false) {d.u = val;}
+inline Variant::Variant(int64_t val):type(T_Int64), is_null(false) {d.i64 = val;}
+inline Variant::Variant(uint64_t val):type(T_UInt64), is_null(false) {d.u64 = val;}
+inline Variant::Variant(float val):type(T_Float), is_null(false) {d.f = val;}
+inline Variant::Variant(double val):type(T_Double), is_null(false) {d.d = val;}
+inline Variant::Variant(char val):type(T_Char), is_null(false) {d.c = val;}
+inline Variant::Variant(void* val):type(T_Ptr), is_null(false) {d.ptr = val;}
+inline Variant::Variant(const String& val):type(T_String), is_null(false) {new(&d.str)String(val);}
+inline Variant::Variant(const char* val):type(T_String), is_null(false) 
+  {if (val == NULL) {is_null = true; new(&d.str)String();} 
+   else {is_null = false; new(&d.str)String(val);}}
+
 
 #endif
 
