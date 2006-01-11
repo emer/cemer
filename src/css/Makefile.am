@@ -12,7 +12,7 @@ SRCS_GUI =\
 	css_qttype.cpp \
 	css_qttype.moc.cpp \
 	css_qt.cpp \
-	css_qttype.moc.cpp \
+	css_qt.moc.cpp \
 	css_qtdata.cpp \
 	css_qtdata.moc.cpp \
 	css_qtdialog.cpp
