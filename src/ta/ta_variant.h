@@ -49,10 +49,12 @@ public:
     T_String,
     
     T_TypeDef, // 
-    T_taBase, // ref counted
-    T_taMatrix, // ref counted
+    T_Base, // taBase ref counted
+    T_Matrix, // taMatrix ref counted
   };
 
+  Variant& 	operator =(const Variant& cp);
+  
   Variant(); // default is null/invalid
   Variant(const Variant &cp);
   ~Variant();
@@ -79,10 +81,17 @@ protected:
   uint is_null : 1;
 #endif
 
-  //note: following ONLY valid when type=T_String
+  void			releaseType(); // handles undoing of specials
+  //note: following ops don't affect is_null -- context must determine that
+  void			setString(const String& cp); // handles setting of a string 
+  void			setBase(taBase* cp); // handles setting of a taBase
+  void			setMatrix(taMatrix_impl* cp); // handles setting of a matrix
+  
+  //note: following gets ONLY valid when type is known to be of correct type
   const String& 	getString() const { return *((String*)(&d.str));}
   String& 		getString() { return *((String*)(&d.str));}
-
+  taMatrix_impl*	getMatrix() { return (taMatrix_impl*)(d.tab);} // only if type=T_Matrix
+  taMatrix_impl*	getMatrix() const { return (taMatrix_impl*)(d.tab);} // only if type=T_Matrix
 };
 
 inline Variant::Variant():type(T_Invalid), is_null(true) { d.i64 = 0; } // default is null/invalid

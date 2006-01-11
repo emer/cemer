@@ -24,19 +24,74 @@ Variant::Variant(const Variant &cp)
 {
   switch (cp.type) {
   case T_String: new(&d.str)String(cp.getString()); break;
-  case T_taBase:
-  case T_taMatrix: d.tab = NULL; taBase::SetPointer(&d.tab, cp.d.tab); break;
+  case T_Base:
+  case T_Matrix: d.tab = NULL; taBase::SetPointer(&d.tab, cp.d.tab); break;
   default: d.i64 = cp.d.i64; // just copy 64 bits, valid for all other types
   }
 }
 
 Variant::~Variant() { 
-  switch (type) {
-  case T_String: getString().~String(); break;
-  case T_taBase:
-  case T_taMatrix: taBase::DelPointer(&d.tab); break;
-  default: break; // compiler food
-  }
+  releaseType();
   type = T_Invalid; is_null = true; // helps avoid hard-to-find zombie problems
 }
 
+Variant& Variant::operator =(const Variant &cp) {
+  switch (cp.type) {
+  case T_String: setString(cp.getString()); break;
+  case T_Base: setBase(cp.d.tab); break;
+  case T_Matrix: setMatrix(cp.getMatrix()); break;
+  default: 
+    releaseType();
+    d.i64 = cp.d.i64; // just copy 64 bits, valid for all other types
+    type = cp.type;
+    break;
+  }
+  is_null = cp.is_null;
+  
+  return *this;
+}
+
+
+void Variant::releaseType() {
+  // undo specials
+  switch (type) {
+  case T_String: getString().~String(); break;
+  case T_Base:
+  case T_Matrix: taBase::DelPointer(&d.tab); break;
+  default: break; // compiler food
+  }
+}
+
+void Variant::setBase(taBase* cp) {
+  if (type == T_Base)
+    taBase::SetPointer(&d.tab, cp);
+  else {
+    // we should ref cp first, to avoid obscure self-assign deletions (ex matrix to base, but the same)
+    if (cp != NULL) taBase::Ref(cp);
+    releaseType();
+    d.tab = cp;
+    type = T_Base;
+  }
+}
+
+void Variant::setMatrix(taMatrix_impl* cp) {
+  if (type == T_Matrix)
+    taBase::SetPointer(&d.tab, cp);
+  else {
+    // we should ref cp first, to avoid obscure self-assign deletions (ex matrix to base, but the same)
+    if (cp != NULL) taBase::Ref(cp);
+    releaseType();
+    d.tab = cp;
+    type = T_Matrix;
+  }
+}
+
+void Variant::setString(const String& cp) {
+  if (type == T_String)
+    getString() = cp;
+  else {
+    releaseType();
+    new(&d.str)String(cp);
+    type = T_String;
+  }
+}
