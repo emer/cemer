@@ -60,20 +60,27 @@ template class taList<LinkPrjnConPtr>;
 template class taList<GpTessEl>;
 //template class taList<NetViewGraphic>;
 //template class taList<NetViewScaleRange>;
-template class taList<Environment>;
-template class taGroup<Environment>;
 template class taGroup<Event>;
 template class taGroup<TypeDefault>;
+
+// pdplog.h
+template class taGroup<PDPLog>; 
+
+// pdpshell.h
+template class taGroup<Project>; 
+template class taGroup<Wizard>; // pdpshell.h
+
+// v3_compat.h
+template class taList<Environment>;
+template class taGroup<Environment>;
+template class taGroup<Process>; 
+template class taList<DataItem>; 
+
+// netstru.h
+template class taGroup<Unit>;
 template class taGroup<Layer>; // netstru.h
 template class taGroup<Network>; // netstru.h
 template class taGroup<NetConduit>; // netstru.h
-template class taGroup<Process>; // process.h
-template class taGroup<PDPLog>; // pdplog.h
-template class taGroup<Project>; // pdpshell.h
-template class taGroup<Wizard>; // netstru.h
-
-
-template class taGroup<Unit>;
 
 template class SpecPtr<ConSpec>;
 template class SpecPtr<UnitSpec>;

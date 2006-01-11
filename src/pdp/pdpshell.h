@@ -21,9 +21,10 @@
 #define pdpshell_h 1
 
 #include "netstru.h"
-#include "enviro.h"
+//obs #include "enviro.h"
 #include "netdata.h"
-#include "procs_extra.h"
+//obs #include "procs_extra.h"
+#include "v3_compat.h"
 #include "pdplog.h"
 
 #include "colorscale.h"
@@ -93,7 +94,7 @@ public:
   taBase_List	layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
   TypeDef*	event_type;	// #TYPE_Event type of event to create by default
-
+/*TEMP
   virtual void	ThreeLayerNet();
   // #MENU_BUTTON #MENU_ON_Defaults set configuration to a standard three-layer network (input, hidden, output) -- DOESN'T MAKE NETWORK (use StdEnv!)
   virtual void	MultiLayerNet(int n_inputs = 1, int n_hiddens = 1, int n_outputs = 1);
@@ -160,6 +161,7 @@ public:
   // #MENU_BUTTON #MENU_SEP_BEFORE #TYPE_PDPLog create log of a given type for given process
   // todo: various ways of configuring specific types of logs?? should probably be on logs themselves
   // what about making everything black & white vs. color?
+*/
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Wizard); }
 #endif
@@ -226,7 +228,7 @@ public:
   NetConduit_MGroup	net_readers;	// NetConduits for network output
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
   Environment_MGroup	environments;	// Environments of patterns to present to networks //TODO: legacy, make hidden
-  Process_MGroup	processes;	// Processes to coordinate training/testing, etc
+  Process_MGroup	processes;	// Processes to coordinate training/testing, etc//TODO: legacy, make hidden
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI

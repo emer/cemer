@@ -94,8 +94,6 @@ public:
 
   static PDPLog* GetNewLog(Project* prj, TypeDef* typ);
   // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)
-  static Environment* GetNewEnv(Project* prj, TypeDef* typ = NULL);
-  // get a temporary environment of given type in given project (e.g., for storing data)
   static NetConduit* GetNewConduit(Project* prj, TypeDef* typ = NULL);
   // get a temporary conduit of given type in given project
   static Network* GetNewNetwork(Project* prj, TypeDef* typ = NULL);
@@ -111,13 +109,6 @@ public:
   // find a given spec by name
   static BaseSpec* FindSpecType(Project* prj, TypeDef* td);
   // find a given spec by type
-
-  static Process* FindMakeProc(Project* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
-  // find a given process and if not found, make it
-  static Process*  FindProcName(Project* prj, const char* nm);
-  // find a process of given name
-  static Process*  FindProcType(Project* prj, TypeDef* td);
-  // find a process of given type
 
   static PDPLog* FindMakeLog(Project* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // find a given log and if not found, make it

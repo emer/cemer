@@ -22,9 +22,9 @@
 #include <limits.h>
 #include <float.h>
 #include <ctype.h>
-
+/*obs
 /////////////////////////
-//	float_RArray	//
+//	DataItem	//
 //////////////////////////
 
 void DataItem::Initialize() {
@@ -159,7 +159,7 @@ bool LogData::CompareItems(const LogData& cmp) {
     return true;
   return false;
 }
-
+*/
 
 /////////////////////////
 //	float_RArray	//
@@ -1165,20 +1165,95 @@ void DataArray_impl::SetValAsString_impl(const String& val, int row, int cell) {
 
 
 //////////////////////////
-//	DataTable	//
+//  ColDescriptor	//
 //////////////////////////
 
+void ColDescriptor::Initialize() {
+  col_num = -1; // for standalone, means "at end", otherwise, when in list, is set to index number
+  val_type = DataArray_impl::VT_FLOAT; // most common type
+  save_to_file = true;
+  is_matrix = false;
+  cell_geom.EnforceSize(1);
+}
+
+void ColDescriptor::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(cell_geom, this);
+}
+ 
+void ColDescriptor::CutLinks() {
+  cell_geom.CutLinks();
+  inherited::CutLinks();
+}
+
+void ColDescriptor::Copy_(const ColDescriptor& cp) {
+  col_num = cp.col_num;
+  val_type = cp.val_type; 
+  disp_opts = cp.disp_opts;
+  save_to_file = cp.save_to_file;
+  is_matrix = cp.is_matrix;
+  cell_geom = cp.cell_geom;
+}
+
+void ColDescriptor::CopyFromDataArray(const DataArray_impl& cp) {
+  name = cp.name;
+  col_num = -1; //TODO
+  val_type = cp.valType(); 
+  disp_opts = cp.disp_opts;
+  save_to_file = cp.save_to_file;
+  is_matrix = cp.is_matrix;
+  cell_geom = cp.cell_geom;
+}
+
+
+
+String ColDescriptor::GetColText(int col, int) {
+  switch (col) {
+  case 0: return col_num;
+  case 1: return name;
+  case 2: return DataArray_impl::ValTypeToStr(val_type);
+  case 3: return disp_opts;
+  case 4: return save_to_file;
+  case 5: return is_matrix;
+  case 6: return taMatrix_impl::GeomToString(cell_geom);
+  default: return _nilString; // compiler food
+  }
+}
+
+//////////////////////////
+//  ColDescriptor_List	//
+//////////////////////////
+
+void ColDescriptor_List::El_SetIndex_(void* it, int idx) {
+  ((ColDescriptor*)it)->col_num = idx;
+}
+
+String ColDescriptor_List::GetColHeading(int col) {
+  switch (col) {
+  case 0: return "Col #";
+  case 1: return "Col Name";
+  case 2: return "Value Type";
+  case 3: return "Disp Opts";
+  case 4: return "Save";
+  case 5: return "Is Matrix";
+  case 6: return "Matrix Geom";
+  default: return _nilString; // compiler food
+  }
+}
+
+
+//////////////////////////
+//	DataTable	//
+//////////////////////////
+/* obs
 void DataTable::SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx) {
   if (dat->size <= idx) {
     return;			// not good!
   }
   DataArray_impl* da = dat->FastEl(idx);
-/*nn  if(da->AR() == NULL) {
-    da->NewAR();
-  } */
-/*  if(da->AR()->size >= data_bufsz) { // adding will 'overflow' buffer
-    da->AR()->ShiftLeftPct(data_shift);
-  } */
+//  if(da->AR()->size >= data_bufsz) { // adding will 'overflow' buffer
+//    da->AR()->ShiftLeftPct(data_shift);
+//  } 
 
   if (ditem->is_string) {
     if (da->valType() == DataArray_impl::VT_STRING)
@@ -1208,15 +1283,11 @@ void DataTable::SetFieldHead(DataItem* ditem, DataTable* dat, int idx) {
       dat->Replace(idx, da);
     }
   }
-/*  if (da->AR() == NULL) {
-    da->NewAR();
-    da->AR()->Alloc(data_bufsz);
-  } */
   da->name = ditem->name;
   da->disp_opts = ditem->disp_opts;
   dat->StructUpdate(false);
 }
-
+*/
 
 void DataTable::Initialize() {
   SetBaseType(&TA_DataArray);	// the impl doesn't inherit properly..
@@ -1270,7 +1341,7 @@ void DataTable::AddFloatVal(float val, int col, int subgp) {
   if(dt != NULL) dt->Add(val);
 }
 
-void DataTable::AddRow(LogData& ld) {
+/*obs void DataTable::AddRow(LogData& ld) {
   int cur_i = 0;		// current item at top level
   int subgp_gpi = 0;		// current subgroup index (of the group)
   int subgp_i = 0;		// current subgroup index (of the items in the group)
@@ -1311,7 +1382,7 @@ void DataTable::AddRow(LogData& ld) {
     }
   }
   RowAdded();
-}
+} */
 
 void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
   taLeafItr i;
@@ -1785,7 +1856,7 @@ void DataTable::SetColName(const char* col_nm, int col, int subgp) {
   if(da != NULL) da->name = col_nm;
 }
 
-void DataTable::SetCols(LogData& ld) {
+/*obs void DataTable::SetCols(LogData& ld) {
   int cur_i = 0;		// current item at top level
   int subgp_gpi = 0;		// current subgroup index (of the group)
   int subgp_i = 0;		// current subgroup index (of the items in the group)
@@ -1833,7 +1904,7 @@ void DataTable::SetCols(LogData& ld) {
   if (gp.size > subgp_gpi)	// keep it the same size
     gp.EnforceSize(subgp_gpi);
   StructUpdate(false);
-}
+} */
 
 void DataTable::SetFloatVal(float val, int col, int row, int subgp) {
   float_Matrix* dt = GetColFloatArray(col, subgp);

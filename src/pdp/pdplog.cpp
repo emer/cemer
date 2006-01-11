@@ -17,8 +17,7 @@
 
 // pdplog.cc
 #include "pdplog.h"
-#include "process.h"
-#include "sched_proc.h"
+//obs #include "sched_proc.h"
 #include "pdpshell.h"
 //#include "ta_qtgroup.h"
 #include "ta_filer.h"
@@ -63,7 +62,7 @@ void PDPLog::Initialize() {
   record_proc_name = false;	// don't by default..
   data_range.min = 0;
   data_range.max = -1;
-  cur_proc = NULL;
+//obs  cur_proc = NULL;
 #ifdef TA_GUI
   geom.SetXYZ(4, 1, 3);
   //TODO: new ones should offset pos in viewers so they don't overlap
@@ -75,7 +74,6 @@ void PDPLog::InitLinks() {
   taBase::Own(log_proc, this);
   taBase::Own(data, this);
   taBase::Own(data_range, this);
-  taBase::Own(log_data, this);
   taBase::Own(display_labels, this);
 #ifdef TA_GUI
   taBase::Own(pos, this);
@@ -96,7 +94,7 @@ void PDPLog::Destroy() {
 void PDPLog::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
-  cur_proc = NULL;
+//obs  cur_proc = NULL;
   RemoveAllUpdaters();
   // set any misc log pointers to NULL!
   Project* proj = GET_MY_OWNER(Project);
@@ -110,7 +108,6 @@ void PDPLog::CutLinks() {
   pos.CutLinks();
 #endif
   display_labels.CutLinks();
-  log_data.CutLinks();
   data_range.CutLinks();
   data.CutLinks();
   log_proc.CutLinks();
@@ -120,7 +117,6 @@ void PDPLog::CutLinks() {
 void PDPLog::Copy_(const PDPLog& cp) {
   if (log_file) *log_file = *(cp.log_file);
   log_lines = cp.log_lines;
-  log_data = cp.log_data;
 
   data = cp.data;
   data_bufsz = cp.data_bufsz;
@@ -129,7 +125,7 @@ void PDPLog::Copy_(const PDPLog& cp) {
   record_proc_name = cp.record_proc_name;
 
   log_proc.BorrowUnique(cp.log_proc);	// this is a link group..
-  cur_proc = cp.cur_proc;
+//obs  cur_proc = cp.cur_proc;
 
   display_labels = cp.display_labels;
 #ifdef TA_GUI
@@ -174,7 +170,7 @@ void PDPLog::UpdateAfterEdit() {
 #endif
 }
 
-void PDPLog::AddUpdater(SchedProcess* sp) {
+/*obs void PDPLog::AddUpdater(SchedProcess* sp) {
   if(sp == NULL) return;
   bool was_linked = false;
   was_linked = sp->logs.LinkUnique(this);	// add this to the list on the process
@@ -184,7 +180,7 @@ void PDPLog::AddUpdater(SchedProcess* sp) {
     SyncLogViewUpdaters();
     GetHeaders();
   }
-}
+} */
 
 void PDPLog::DataViewAdding(taDataView* dv) {
   inherited::DataViewAdding(dv);
@@ -202,31 +198,31 @@ void PDPLog::DataViewRemoving(taDataView* dv) {
   inherited::DataViewRemoving(dv);
 }
 
-void PDPLog::RemoveUpdater(SchedProcess* sp) {
+/*obs void PDPLog::RemoveUpdater(SchedProcess* sp) {
   if(sp == NULL) return;
   sp->logs.RemoveLeaf(this);	// remove this to the list on the process
   log_proc.RemoveLeaf(sp);     	// remove the process to the list on this;
   SyncLogViewUpdaters();
   GetHeaders();
-}
-
+} 
+*/
 void PDPLog::RemoveAllUpdaters() {
   int i;
-  for(i=0; i<log_proc.size; i++) {
+/*todo  for(i=0; i<log_proc.size; i++) {
     ((SchedProcess*)log_proc.FastEl(i))->logs.RemoveLeaf(this);
-  }
+  } */
   log_proc.RemoveAll();
   SyncLogViewUpdaters();
 }
 
 void PDPLog::SyncLogViewUpdaters() {
 #ifdef TA_GUI
-/*TODO:fixup  LogView* lv;
-  taListItr i;
-  FOR_ITR_EL(LogView, lv, views()->, i) {
-    lv->updaters.Reset();
-    lv->updaters.BorrowUnique(log_proc);
-  } */
+//TODO:fixup  LogView* lv;
+//  taListItr i;
+//  FOR_ITR_EL(LogView, lv, views()->, i) {
+//    lv->updaters.Reset();
+//    lv->updaters.BorrowUnique(log_proc);
+//  } 
 #endif
 }
 
@@ -388,7 +384,7 @@ void PDPLog::HeadToLogFile(LogData& ld) { // this function is deprecated in favo
   strm.flush();
 }*/
 
-DataItem* PDPLog::DataItemFromDataArray(DataArray_impl* da) {
+/*obs DataItem* PDPLog::DataItemFromDataArray(DataArray_impl* da) {
   DataItem* it = new DataItem();
   it->name = da->name;
   it->disp_opts = da->disp_opts;
@@ -396,10 +392,10 @@ DataItem* PDPLog::DataItemFromDataArray(DataArray_impl* da) {
     it->is_string = true;
   log_data.items.Add(it);
   return it;
-}
+} */
 
 void PDPLog::LogDataFromDataTable(DataTable* dt, int st_idx) {
-  int i;
+/*obs   int i;
   for(i=st_idx; i < dt->size; i++) {
     DataArray_impl* da = dt->FastEl(i);
     DataItemFromDataArray(da);
@@ -414,13 +410,13 @@ void PDPLog::LogDataFromDataTable(DataTable* dt, int st_idx) {
 	LogDataFromDataTable(ndt, 1); // start from 1 since 0 was already done..
       }
     }
-  }
+  } */
 }
 
 void PDPLog::LogDataFromBuffer() {
-  log_data.Reset();
+/*obs  log_data.Reset();
   LogDataFromDataTable(&data);
-  log_data.InitBlankData();
+  log_data.InitBlankData(); */
 }
 
 //////////////////////////
@@ -523,7 +519,7 @@ void PDPLog::DataToLogFile(LogData&) {
 } */
 
 void PDPLog::GetHeaders(bool keep_display_settings) {
-  display_labels.Reset();	// these get re-generated from the viewspecs..
+/*TODO  display_labels.Reset();	// these get re-generated from the viewspecs..
   data.Reset();		// clear out old data...
 
 #ifdef TA_GUI
@@ -559,7 +555,8 @@ void PDPLog::GetHeaders(bool keep_display_settings) {
       }
     }
   }
-#endif
+#endif 
+*/
 }
 
 ostream& PDPLog::LogColumn(ostream& strm, String& str, int tabs) {
@@ -660,6 +657,7 @@ exit:
 }
 
 void PDPLog::HeadFromLogFile(String& hdln) { // argument is mutable..
+/*TODO
   int itm_cnt = 0;
   if(hdln.lastchar() != '\t') hdln += "\t";
   while(hdln.contains('\t')) {
@@ -699,10 +697,12 @@ void PDPLog::HeadFromLogFile(String& hdln) { // argument is mutable..
   if(log_data.indexSize() != log_data.items.size)
     log_data.InitBlankData();
 //OBS  NewHead(log_data, NULL);
+*/
 }
 
 
 void PDPLog::DataFromLogFile(String& dtln) {
+/*todo
   // log data heads are assumed to be current..
   int cnt = 0;
   if(dtln.lastchar() != '\t') dtln += "\t";
@@ -721,6 +721,7 @@ void PDPLog::DataFromLogFile(String& dtln) {
     dtln=dtln.after('\t');
   }
 //OBS  DataToBuffer(log_data);
+*/
 }
 
 
@@ -778,6 +779,7 @@ exit:
 }
 
 void PDPLog::HeadToFile() {	// based on buffer
+/*todo
   if(!log_file->IsOpen() || (log_file->ostrm == NULL))
     return;
 
@@ -800,9 +802,11 @@ void PDPLog::HeadToFile() {	// based on buffer
   }
   strm << "\n";
   strm.flush();
+*/
 }
 
 void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
+/*todo
   bool new_open = false;
   if(!log_file->IsOpen() || (log_file->ostrm == NULL) || (nm != NULL)) {
     SetSaveFile(nm, no_dlg);
@@ -860,6 +864,7 @@ void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
   if(new_open) {
     CloseFile();
   }
+*/
 }
 
 void PDPLog::Buffer_F() {

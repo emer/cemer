@@ -26,8 +26,8 @@
 //#include "net_qt.h"
 //#include "pdp_qt.h"
 
-//#include "procs_extra.h"
-#include "enviro_extra.h"
+//obs #include "procs_extra.h"
+//obs #include "enviro_extra.h"
 
 #include "ta_base.h"
 #include "ta_dump.h"
@@ -170,7 +170,7 @@ void Wizard::UpdateAfterEdit() {
   taNBase::UpdateAfterEdit();
   layer_cfg.EnforceSize(n_layers);
 }
-
+/*TEMP
 void Wizard::ThreeLayerNet() {
   n_layers = 3;
   layer_cfg.EnforceSize(n_layers);
@@ -670,7 +670,7 @@ void Wizard::StdLogs(SchedProcess* proc) {
     LogProcess(trl, &TA_TextLog);
   }
 }
-
+*/
 //////////////////////////////////
 // 	Wizard_MGroup		//
 //////////////////////////////////
@@ -774,10 +774,10 @@ void Project::CutLinks() {
   deleting = true;
   SchedProcess* sp;
   taLeafItr li;
-  FOR_ITR_EL(SchedProcess, sp, processes., li) {
+/*TODO: equiv for Programs  FOR_ITR_EL(SchedProcess, sp, processes., li) {
     if(sp->running)
       sp->Stop();
-  }
+  } */
 //TODO  if(editor != NULL) { delete editor; editor = NULL; }
   inherited::CutLinks();	// close windows, etc
 #ifdef TA_GUI
@@ -981,7 +981,7 @@ void Project::MakeDefaultWiz(bool auto_opn) {
   Wizard* wiz = (Wizard*)wizards.New(1, pdpMisc::def_wizard);
   if(auto_opn) {
     wiz->auto_open = true;
-    wiz->ThreeLayerNet();
+//TEMP    wiz->ThreeLayerNet();
     wiz->Edit();
   }
 }

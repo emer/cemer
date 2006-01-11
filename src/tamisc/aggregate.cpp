@@ -210,3 +210,55 @@ float SimpleMathSpec::Evaluate(float val) const {
   return val;
 }
 
+
+//////////////////////////
+//  	CritParam      	//
+//////////////////////////
+
+void CritParam::Initialize() {
+  flag = false;
+  rel = LESSTHANOREQUAL;
+  val = 0.0f;
+  n_met = 0;
+  cnt = 1;
+};
+
+void CritParam::Copy_(const CritParam& cp) {
+  flag = cp.flag;
+  rel = cp.rel;
+  val = cp.val;
+  cnt = cp.cnt;
+  n_met = cp.n_met;
+}
+
+bool CritParam::Evaluate(float cmp) {
+  if(!flag) return false;
+  bool met = false;
+  switch(rel) {
+  case EQUAL:
+    if(cmp == val)	met = true;
+    break;
+  case NOTEQUAL:
+    if(cmp != val)	met = true;
+    break;
+  case LESSTHAN:
+    if(cmp < val)	met = true;
+    break;
+  case GREATERTHAN:
+    if(cmp > val)	met = true;
+    break;
+  case LESSTHANOREQUAL:
+    if(cmp <= val)	met = true;
+    break;
+  case GREATERTHANOREQUAL:
+    if(cmp >= val)	met = true;
+    break;
+  }
+  if(met) {
+    n_met++;
+    if(n_met >= cnt) return true;
+  }
+  else
+    n_met = 0;		// reset the counter (has to be consecutive)
+  return false;
+}

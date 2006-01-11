@@ -65,10 +65,9 @@ iDataTable::iDataTable(QWidget* parent)
 {
   m_dt = NULL;
   col_align = new QByteArray();
-  cell_widge = NULL;
 
 //<TEMP>
-//setReadOnly(true);
+setReadOnly(true);
 setSorting(false);
 //</TEMP>
 }
@@ -81,14 +80,11 @@ iDataTable::~iDataTable() {
 }
 
 QWidget* iDataTable::cellWidget(int row, int col) const {
-  return cell_widge;
+  return NULL;
 }
 
 void iDataTable::clearCellWidget(int row, int col) {
-  if (cell_widge != NULL) {
-    cell_widge->deleteLater();
-    cell_widge = NULL; 
-  }
+  //TODO
 }
 
 
@@ -96,21 +92,6 @@ void iDataTable::clearCell (int row, int col) {
   //TODO
 }
 
-QWidget* iDataTable::createEditor(int row, int col, bool initFromCell) const {
-//note: inherited will create a proper LineEdit, even when no Item
-  return inherited::createEditor(row, col, initFromCell);
-/*  QWidget* rval = NULL;
-  if (initFromCell) {
-    rval = new QLineEdit("{initFromCell=true}", NULL);
-  } else {
-  }
-  return rval; */
-}
-
-void iDataTable::insertWidget(int row, int col, QWidget* w) {
-  if (cell_widge != w)
-    cell_widge = w;
-}
 
 void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
     bool selected, const QColorGroup& cg )
@@ -146,14 +127,6 @@ void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
   }
   int align = col_align->at(col);
   p->drawText(2, 0, cr.width() - 4, cr.height(), align, str );
-}
-
-void iDataTable::setCellContentFromEditor(int row, int col) {
-  if (cell_widge == NULL) return;
-  if (cell_widge->inherits("QLineEdit")) {
-    QLineEdit* le = (QLineEdit*)cell_widge;
-    m_dt->SetValAsString(le->text(), row, col);
-  }
 }
 
 void iDataTable::setDataTable(DataTable* value) {

@@ -103,8 +103,9 @@ public:
   // following are analysis routines that copy log data to a temporary environment
   // and then run the associated function on that environment
 
-  virtual void 	CopyToEnv(taBase* data, taBase* labels, Environment* env);
-  // TODO:OBS #MENU #MENU_ON_Analyze #FROM_GROUP_1_viewspec #NULL_OK output data (must be group) with labels to environment env (NULL = new env). WARNING: reformats env to fit data!)
+  virtual void 	CopyToTable(taBase* data, taBase* labels, DataTable* dt);
+  // TODO:OBS #MENU #MENU_ON_Analyze #FROM_GROUP_1_viewspec #NULL_OK output data (must be group) with labels to datatable dt (NULL = new table). WARNING: reformats table to fit data!)
+/*obs
   virtual void	DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log, float_RArray::DistMetric metric=float_RArray::HAMMING,
 			   bool norm=false, float tol=0.0f);
   // #MENU #NULL_OK #FROM_GROUP_1_viewspec output to grid log (NULL=make new one) distance matrix for data (must be group) with labels
@@ -120,7 +121,7 @@ public:
   // #MENU #NULL_OK #FROM_GROUP_1_viewspec plot projections of data onto two principal components (eigenvectors) into a graph log (NULL = make new one)
   virtual void	MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int x_axis_component=0, int y_axis_component=1);
   // #MENU #NULL_OK #FROM_GROUP_1_viewspec plot multidimensional scaling of distance matrix of data onto two components into a graph log (NULL = make new one)
-
+*/
   virtual void		CreateViewSpec(); // #IGNORE create view spec of appropriate type
   virtual TypeDef*	DT_ViewSpecType(); // #IGNORE get type of DataTable for this log
   virtual TypeDef*	DA_ViewSpecType(); // #IGNORE get type of DataArray for this log

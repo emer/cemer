@@ -92,11 +92,6 @@ public: // overrides
 protected:
   DataTable*		m_dt;
   QByteArray*		col_align; // contains QT::Align bits
-  mutable QWidget* 		cell_widge; // #IGNORE actually, a LineEdit
-
-  QWidget* 		createEditor(int row, int col, bool initFromCell) const;  // override
-  void 			insertWidget(int row, int col, QWidget* w); // override
-  void 			setCellContentFromEditor(int row, int col); // override
 };
 
 

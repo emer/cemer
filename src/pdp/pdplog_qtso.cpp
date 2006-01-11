@@ -19,7 +19,7 @@
 
 #include "pdp_qtso.h"
 #include "pdplog_qtso.h"
-#include "sched_proc.h"
+//obs#include "sched_proc.h"
 #include "pdpshell.h"
 #include "datagraph_qtso.h"
 //#include "datagraph.h"
@@ -117,9 +117,9 @@ void LogView::UpdateAfterEdit() {
 }
 
 void LogView::AddNotify(TAPtr ud) {
-  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
+/*obs  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
     log()->AddUpdater((SchedProcess*)ud);
-  }
+  } */
 }
 
 void LogView::ClearData() {
@@ -205,9 +205,9 @@ void LogView::OnWindowBind_impl(iT3DataViewer* vw) {
 }
 
 void LogView::RemoveNotify(TAPtr ud) {
-  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
+/*obs  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
     log()->RemoveUpdater((SchedProcess*)ud);
-  }
+  } */
 }
 
 void LogView::Render_pre(taDataView* par) {
@@ -488,7 +488,7 @@ void LogView::View_FR() {
 // 	Analysis Routines 	//
 //////////////////////////////////
 
-void LogView::CopyToEnv(taBase* data, taBase* labels, Environment* env) { /* TODO OBS
+void LogView::CopyToTable(taBase* data, taBase* labels, DataTable* dt) { /* TODO OBS
   if((data == NULL) || (labels == NULL)) return;
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("CopyToEnv: copying of single column of data not supported -- please select a group of data");
@@ -548,7 +548,7 @@ void LogView::LogUpdateAfterEdit() {
   //TODO: following is legacy, and may be obsolete
 //      NotifyAllUpdaters();	// make sure logs are getting it from  us..
 }
-
+/*TODO 
 void LogView::DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log,
 			     float_RArray::DistMetric metric, bool norm, float tol) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
@@ -646,7 +646,7 @@ void LogView::MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int 
   env->MDSPrjnPlot(disp_log, 0, x_axis_component, y_axis_component);
   tabMisc::Close_Obj(env);
 }
-
+*/
 //////////////////////////
 // 	GridLogViewBase	//
 //////////////////////////

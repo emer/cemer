@@ -236,9 +236,6 @@ public:
 
   bool	CheckObjectType_impl(TAPtr obj); // don't do checking on 1st con group in units
 
-  virtual bool  	CheckConfig(Con_Group*, Layer*, Unit*, TrialProcess*, bool =false) { return true; }
-  // check for for misc configuration settings required by different algorithms, including settings on the processes
-
   virtual int		UseCount(); // return number of times this spec is used
   void	ReplacePointersHook(TAPtr old);
 
@@ -386,8 +383,6 @@ public:
   void 	UpdateWeights(Unit* ru)	 	{ spec->UpdateWeights(this,ru); }
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
 
-  bool  CheckConfig(Layer* lay, Unit* ru, TrialProcess* tp, bool quiet=false) { return spec->CheckConfig(this, lay, ru, tp, quiet); }
-
   int 	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -436,9 +431,6 @@ public:
 
   virtual void	BuildBiasCons();
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE build the bias connections according to specified type
-
-  virtual bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp, bool quiet=false);
-  // check for for misc configuration settings required by different algorithms, including settings on the processes
 
   virtual int	UseCount(); // return number of times this spec is used
   void	ReplacePointersHook(TAPtr old);
@@ -534,8 +526,6 @@ public: //
   void 	Compute_Act()		{ spec->Compute_Act(this); }
   void 	UpdateWeights()		{ spec->UpdateWeights(this); }
   void 	Compute_dWt()		{ spec->Compute_dWt(this); }
-
-  bool  CheckConfig(Layer* lay, TrialProcess* tp, bool quiet=false) { return spec->CheckConfig(this, lay, tp, quiet); }
 
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
@@ -746,8 +736,8 @@ public:
   virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of projection weights (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
-  virtual void	WeightsToEnv(Environment* env);
-  // #MENU #NULL_OK send entire set of projection weights to given environment (e.g., for analysis), with one event per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	WeightsToTable(DataTable* dt);
+  // #MENU #NULL_OK TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   void 	CopyPtrs(Projection* cp); // #IGNORE copy the pointers
 #ifdef TA_GUI
@@ -1082,8 +1072,6 @@ public:
   // #MENU set for all unit's connections in layer
   virtual bool	CheckTypes();
   // #MENU #USE_RVAL check that the object and spec types are all ok
-  virtual bool 	CheckConfig(TrialProcess* tp, bool quiet=false);
-  // check for for misc configuration settings required by different algorithms, including settings on the processes
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
 
@@ -1099,8 +1087,8 @@ public:
   virtual void	GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
-  virtual void	WeightsToEnv(Environment* env, Layer* send_lay);
-  // #MENU #NULL_OK send entire set of weights from sending layer to given environment (e.g., for analysis), with one event per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
+  // #MENU #NULL_OK TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
@@ -1258,8 +1246,6 @@ public:
 
   virtual bool	CheckTypes();
   // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
-  virtual bool	CheckConfig(TrialProcess* tp, bool quiet=false);
-  // check for for misc configuration settings required by different algorithms, including settings on the processes
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
 
@@ -1304,8 +1290,8 @@ public:
   virtual void	GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer to recv_lay (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
-  virtual void	WeightsToEnv(Environment* env, Layer* recv_lay, Layer* send_lay);
-  // #MENU #NULL_OK send entire set of weights from sending layer to recv layer in given environment (e.g., for analysis), with one event per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
+  // #MENU #NULL_OK send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // switch any units/layers using old_sp to using new_sp

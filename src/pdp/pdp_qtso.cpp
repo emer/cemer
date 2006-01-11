@@ -17,7 +17,7 @@
 
 
 #include "pdp_qtso.h"
-#include "sched_proc.h"
+//obs #include "sched_proc.h"
 #include "pdpshell.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
@@ -192,7 +192,7 @@ void taiSpecMember::CmpOrigVal(taiData* dat, void* base, bool& first_diff) {
 //////////////////////////////////
 
 void ProcessDialog::Ok() {
-  Process* prc = (Process*)cur_base;
+/*obs  Process* prc = (Process*)cur_base;
   if(prc->ctrl_panel.ctrl_panel == this) {
     prc->ctrl_panel.ctrl_panel = NULL;
     prc->ctrl_panel.active = false;
@@ -200,21 +200,21 @@ void ProcessDialog::Ok() {
   if(prc->InheritsFrom(&TA_SchedProcess)) {
     SchedProcess* sp = (SchedProcess*)prc;
     if(sp->im_run_proc)
-      sp->Stop();
-  }
+      sp->Stop(); 
+  }*/
   taiEditDataHost::Ok();
 }
 
 void ProcessDialog::Cancel() {
   Process* prc = (Process*)cur_base;
-  if(prc->ctrl_panel.ctrl_panel == this) {
+/*obs  if(prc->ctrl_panel.ctrl_panel == this) {
     prc->ctrl_panel.ctrl_panel = NULL;
     prc->ctrl_panel.active = false;
-  }
+  } */
   if(prc->InheritsFrom(&TA_SchedProcess)) {
     SchedProcess* sp = (SchedProcess*)prc;
-    if(sp->im_run_proc)
-      sp->Stop();
+/*obs    if(sp->im_run_proc)
+      sp->Stop(); */
   }
   taiEditDataHost::Cancel();
 }

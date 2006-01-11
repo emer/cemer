@@ -13,16 +13,14 @@ TAHEADS_GUI =\
 	@abs_srcdir@/netstru_so.h \
 	@abs_srcdir@/netstru_qtso.h \
 	@abs_srcdir@/pdp_qtso.h \
-	@abs_srcdir@/pdplog_qtso.h \
-	@abs_srcdir@/enviro_qtso.h
+	@abs_srcdir@/pdplog_qtso.h 
 
 HEADS_GUI =\
 	pdpview_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	pdp_qtso.h \
-	pdplog_qtso.h \
-	enviro_qtso.h
+	pdplog_qtso.h 
 
 SRCS_GUI =\
 	pdpview_qt.cpp \
@@ -32,8 +30,7 @@ SRCS_GUI =\
 	netstru_qtso.cpp \
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
-	pdplog_qtso.moc.cpp \
-	enviro_qtso.cpp
+	pdplog_qtso.moc.cpp 
 
 endif
 
@@ -48,13 +45,8 @@ TAHEADS =\
 	@abs_srcdir@/netstru.h \
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/netdata.h \
-	@abs_srcdir@/enviro.h \
-	@abs_srcdir@/enviro_extra.h \
-	@abs_srcdir@/process.h \
-	@abs_srcdir@/stats.h \
+	@abs_srcdir@/v3_compat.h \
 	@abs_srcdir@/pdplog.h \
-	@abs_srcdir@/sched_proc.h \
-	@abs_srcdir@/procs_extra.h \
 	@abs_srcdir@/pdpshell.h \
 	$(TAHEADS_GUI)
 
@@ -65,12 +57,7 @@ HEADS =\
 	netstru.h \
 	netstru_extra.h \
 	netdata.h \
-	enviro.h \
-	enviro_extra.h \
-	process.h \
-	stats.h \
-	sched_proc.h \
-	procs_extra.h \
+	v3_compat.h \
 	pdplog.h \
 	pdpshell.h \
 	$(HEADS_GUI)
@@ -82,12 +69,7 @@ SRCS =\
 	netstru.cpp \
 	netstru_extra.cpp \
 	netdata.cpp \
-	enviro.cpp \
-	enviro_extra.cpp \
-	process.cpp \
-	stats.cpp \
-	sched_proc.cpp \
-	procs_extra.cpp \
+	v3_compat.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
 	$(SRCS_GUI) \

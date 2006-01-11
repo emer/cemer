@@ -1344,15 +1344,6 @@ void UnitSpec::ReplacePointersHook(TAPtr old) {
   BaseSpec::ReplacePointersHook(old);
 }
 
-bool UnitSpec::CheckConfig(Unit* un, Layer* lay, TrialProcess* tp, bool quiet) {
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
-    if(!recv_gp->CheckConfig(lay, un, tp, quiet)) return false;
-  }
-  return true;
-}
-
 void UnitSpec::InitState(Unit* u) {
   u->InitExterns();
   u->InitDelta();
@@ -2527,10 +2518,11 @@ void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int 
   disp_log->ViewAllData();
 }
 
-void Projection::WeightsToEnv(Environment* env) {
+void Projection::WeightsToTable(DataTable* dt) {
   if(from == NULL) return;
-  if(env == NULL) {
-    env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project));
+/*TODO
+  if (dt == NULL) {
+    dt = pdpMisc::GetNewEnv(GET_MY_OWNER(Project));
   }
   if(env == NULL) return;
 
@@ -2567,7 +2559,7 @@ void Projection::WeightsToEnv(Environment* env) {
     idx++;
   }
   //TODO: in v4, clients like env must add their own datalink to net and act on the DataXXX events
-//  env->InitAllViews();
+//  env->InitAllViews(); */
 }
 #ifdef TA_GUI
 void Projection::SetFromPoints(float x1,float y1){
@@ -3751,16 +3743,6 @@ bool Layer::CheckTypes() {
   return true;
 }
 
-bool Layer::CheckConfig(TrialProcess* tp, bool quiet) {
-  // layerspec should take over this function in layers that have them!
-  Unit* u;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, u, units., ui) {
-    if(!u->CheckConfig(this, tp, quiet)) return false;
-  }
-  return true;
-}
-
 void Layer::FixPrjnIndexes() {
   Projection* p;
   taLeafItr i;
@@ -4105,14 +4087,14 @@ void Layer::GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt, in
   }
 }
 
-void Layer::WeightsToEnv(Environment* env, Layer* send_lay) {
+void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   if(send_lay == NULL) return;
   bool gotone = false;
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
     if(p->from != send_lay) continue;
-    p->WeightsToEnv(env);
+    p->WeightsToTable(dt);
     gotone = true;
   }
   if(!gotone) {
@@ -4307,7 +4289,7 @@ void Network::CutLinks() {
     if(replnet == NULL) {
       taMisc::Error("Warning: Deleting Network:",this->GetPath(),"and couldn't find replacement - processes will have NULL network pointers");
     }
-    proj->processes.ReplaceNetPtrs(this, replnet);
+//OBS    proj->processes.ReplaceNetPtrs(this, replnet);
     // also replace pointers on any netlogviews..
 #ifdef TA_GUI
     PDPLog* lg;
@@ -4880,15 +4862,6 @@ bool Network::CheckTypes() {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->CheckTypes()) return false;
-  }
-  return true;
-}
-
-bool Network::CheckConfig(TrialProcess* tp, bool quiet) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->CheckConfig(tp, quiet)) return false;
   }
   return true;
 }
@@ -5737,10 +5710,10 @@ void Network::GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_la
   recv_lay->GridViewWeights(grid_log, send_lay, use_swt, un_x, un_y, wt_x, wt_y);
 }
 
-void Network::WeightsToEnv(Environment* env, Layer* recv_lay, Layer* send_lay)
+void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {
   if(recv_lay == NULL) return;
-  recv_lay->WeightsToEnv(env, send_lay);
+  recv_lay->WeightsToTable(dt, send_lay);
 }
 
 

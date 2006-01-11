@@ -112,50 +112,6 @@ void PatternSpec::Copy_(const PatternSpec& cp) {
   global_flags = cp.global_flags;
 }
 
-void PatternSpec::SetToLayName(const char* lay_nm) {
-  to_layer = LAY_NAME;
-  name = lay_nm;
-  layer_name = lay_nm;
-}
-
-Network* PatternSpec::GetDefaultNetwork() {
-  return pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
-}
-
-void PatternSpec::SetToLayer(Layer* lay) {
-  if(lay == NULL) {
-    Network* net = GetDefaultNetwork();
-    if((net == NULL) || !SetLayer(net))
-      return;
-    lay = layer;
-    UnSetLayer();
-  }
-  to_layer = LAY_NAME;
-  layer_name = lay->name;
-  name = layer_name;
-  lay->GetActGeomNoSpc(geom);
-  geom.z = 1;
-  n_vals = MAX(lay->units.leaves,lay->n_units);
-  pos.z=0;
-  pos.x = lay->pos.x;
-  pos.y = lay->pos.y;
-  if(lay->pos.z > 0) {
-    Network* net = lay->own_net;
-    if(net != NULL) {
-      int index = net->layers.FindLeaf(lay);
-      pos.y = 0;
-      int n;
-      for(n=0;n<index;n++) {
-	Layer* nlay = (Layer*)net->layers.Leaf(n);
-	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
-	pos.y =  MAX(pos.y, y_val);
-      }
-    }
-  }
-  UpdateAfterEdit();
-  UpdateAllEvents();
-}
-
 void PatternSpec::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   Network* net = GetDefaultNetwork();
@@ -203,6 +159,50 @@ void PatternSpec::UpdateAfterEdit() {
       es->UpdateChildren();
     }
   }
+}
+
+void PatternSpec::SetToLayName(const char* lay_nm) {
+  to_layer = LAY_NAME;
+  name = lay_nm;
+  layer_name = lay_nm;
+}
+
+Network* PatternSpec::GetDefaultNetwork() {
+  return pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
+}
+
+void PatternSpec::SetToLayer(Layer* lay) {
+  if(lay == NULL) {
+    Network* net = GetDefaultNetwork();
+    if((net == NULL) || !SetLayer(net))
+      return;
+    lay = layer;
+    UnSetLayer();
+  }
+  to_layer = LAY_NAME;
+  layer_name = lay->name;
+  name = layer_name;
+  lay->GetActGeomNoSpc(geom);
+  geom.z = 1;
+  n_vals = MAX(lay->units.leaves,lay->n_units);
+  pos.z=0;
+  pos.x = lay->pos.x;
+  pos.y = lay->pos.y;
+  if(lay->pos.z > 0) {
+    Network* net = lay->own_net;
+    if(net != NULL) {
+      int index = net->layers.FindLeaf(lay);
+      pos.y = 0;
+      int n;
+      for(n=0;n<index;n++) {
+	Layer* nlay = (Layer*)net->layers.Leaf(n);
+	int y_val = nlay->pos.y + nlay->act_geom.y + 1;
+	pos.y =  MAX(pos.y, y_val);
+      }
+    }
+  }
+  UpdateAfterEdit();
+  UpdateAllEvents();
 }
 
 void PatternSpec::UpdateAllEvents() {
@@ -719,6 +719,27 @@ void EventSpec::Copy(const EventSpec& cp) {
   pattern_layout = cp.pattern_layout;
 }
 
+void EventSpec::UpdateAfterEdit() {
+  UnSetLayers();
+  if(!taMisc::is_loading && !taMisc::is_duplicating) {
+    if((patterns.leaves == 0) && (patterns.gp.size == 0)) { // new eventspec..
+      patterns.NewEl(2);
+      if(taMisc::gui_active)
+	taMisc::DelayedMenuUpdate(this);
+    }
+    if(DetectOverlap()) {
+      int choice = taMisc::Choice("Overlap of PatternSpecs",
+				  "Enforce Linear Layout", "Ignore");
+      if(choice == 0) LinearLayout();
+    }
+    PatternSpec* ps;
+    taLeafItr psi;
+    FOR_ITR_EL(PatternSpec, ps, patterns., psi)
+      ps->UpdateAfterEdit();
+  }
+  BaseSpec::UpdateAfterEdit();	// this calls UpdateSpec which calls UpdateAllEvents..
+}
+
 void EventSpec::UpdateSubSpecs() {
   EventSpec* parent = (EventSpec*)FindParent();
   if(parent != NULL) {
@@ -805,27 +826,6 @@ void EventSpec::NewEvent(Event* ev) {
 
 void EventSpec::UpdateEvent(Event* ev) {
   patterns.UpdatePatternGroup(ev, &(ev->patterns));
-}
-
-void EventSpec::UpdateAfterEdit() {
-  UnSetLayers();
-  if(!taMisc::is_loading && !taMisc::is_duplicating) {
-    if((patterns.leaves == 0) && (patterns.gp.size == 0)) { // new eventspec..
-      patterns.NewEl(2);
-      if(taMisc::gui_active)
-	taMisc::DelayedMenuUpdate(this);
-    }
-    if(DetectOverlap()) {
-      int choice = taMisc::Choice("Overlap of PatternSpecs",
-				  "Enforce Linear Layout", "Ignore");
-      if(choice == 0) LinearLayout();
-    }
-    PatternSpec* ps;
-    taLeafItr psi;
-    FOR_ITR_EL(PatternSpec, ps, patterns., psi)
-      ps->UpdateAfterEdit();
-  }
-  BaseSpec::UpdateAfterEdit();	// this calls UpdateSpec which calls UpdateAllEvents..
 }
 
 void EventSpec::UpdateAllEvents() {
@@ -1318,10 +1318,10 @@ void Environment::Destroy(){
 }
 
 void Environment::InitLinks() {
+  inherited::InitLinks();
   taBase::Own(events, this);
   taBase::Own(event_specs, this);
   taBase::Own(channels, this);
-  inherited::InitLinks();
 }
 
 void Environment::CutLinks() {

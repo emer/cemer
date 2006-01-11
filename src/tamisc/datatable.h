@@ -41,7 +41,7 @@ class byte_Data;
 class ClustNode;
 
 
-
+/*obs
 class DataItem : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE source of a piece of data
 public:
@@ -127,7 +127,7 @@ public:
   COPY_FUNS(LogData, taBase);
   TA_BASEFUNS(LogData);
 };
-
+*/
 
 class float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
@@ -436,8 +436,50 @@ protected:
   
 private:
   void	Initialize();
-  void	Destroy()	{CutLinks(); };
+  void	Destroy()	{CutLinks(); }; //
 };
+
+class ColDescriptor: public taNBase { // describes a column of data in a DataTable
+INHERITED(taNBase)
+public:
+  int			col_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
+  DataArray_impl::ValType val_type; // the type of data each cell will contain
+  String		disp_opts;	// viewer display options
+  bool			save_to_file;	// whether to save the column to a file
+  bool			is_matrix; // 'true' if the cell is a matrix, not a scalar
+  int_Array		cell_geom; //  #INLINE #CONDEDIT_ON_is_matrix:true for matrix cols, the geom of each cell
+  
+  virtual void		CopyFromDataArray(const DataArray_impl& cp);
+  
+  override String	GetColText(int col, int itm_idx = -1); 
+  void	InitLinks();
+  void	CutLinks();
+  void 	Copy_(const ColDescriptor& cp);
+  COPY_FUNS(ColDescriptor, taNBase);
+  TA_BASEFUNS(ColDescriptor);
+private:
+  void		Initialize();
+  void		Destroy() {CutLinks();}
+};
+
+
+class ColDescriptor_List: public taList<ColDescriptor> {
+INHERITED(taList<ColDescriptor>)
+public:
+  
+  TA_BASEFUNS(ColDescriptor_List);
+  
+public:
+  override void		El_SetIndex_(void* it, int idx);
+  override int		NumListCols() const {return 7;} // number of columns in a list view for this item type
+  override String	GetColHeading(int col); // header text for the indicated column
+  
+private:
+  void		Initialize() {SetBaseType(&TA_ColDescriptor);}
+  void		Destroy() {}
+};
+
+
 
 /*
   DataTable Notifications
@@ -457,8 +499,8 @@ class DataTable : public taGroup<DataArray_impl> {
   // #NO_UPDATE_AFTER table of data
 INHERITED(taGroup<DataArray_impl>)
 public:
-  static void 	SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx);
-  static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
+//obs  static void 	SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx);
+//obs  static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
 
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
@@ -472,7 +514,6 @@ public:
   // #MENU Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  virtual void	AddRow(LogData& ld); // add a row from the given log data
   virtual void	AddBlankRow();
   // #MENU add a new row to the data table, returns new row number
   virtual void	AllocRows(int n); // allocate space for at least n rows
@@ -526,7 +567,6 @@ public:
   virtual void	PutArrayToCol(const float_RArray& ar, int col, int subgp=-1);
   // just put array values into given column (if subgp >= 0, column is in given subgroup)
 
-  virtual void 	SetCols(LogData& ld);
   virtual void	SetColName(const char* col_nm, int col, int subgp=-1);
   // set column name for given column (if subgp >= 0, column is in given subgroup)
   virtual void	AddColDispOpt(const char* dsp_opt, int col, int subgp=-1);

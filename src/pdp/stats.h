@@ -30,35 +30,6 @@
 #undef Aggregate
 #endif
 
-class CritParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE stopping criteria params
-public:
-  enum Relation {
-    EQUAL,		// #LABEL_=
-    NOTEQUAL,		// #LABEL_!=
-    LESSTHAN,		// #LABEL_<
-    GREATERTHAN,	// #LABEL_>
-    LESSTHANOREQUAL,	// #LABEL_<=
-    GREATERTHANOREQUAL 	// #LABEL_>=
-  };
-
-  bool          flag;           // #LABEL_ whether to use this criterion or not
-  Relation	rel;		// #LABEL_ #CONDEDIT_ON_flag:true relation of statistic to target value
-  float		val;		// #LABEL_ #CONDEDIT_ON_flag:true target or comparison value
-  int		cnt;		// #CONDEDIT_ON_flag:true Number of times criterion must be met before stopping
-  int		n_met;		// #READ_ONLY number of times actually met
-
-  bool 	Evaluate(float cmp);
-
-  void	Init()	{ n_met = 0; }	// initialize the process (n_met counter)
-
-  void  Initialize();
-  void 	Destroy()		{ };
-  void	Copy_(const CritParam& cp);
-  COPY_FUNS(CritParam, taBase);
-  TA_BASEFUNS(CritParam);
-};
-
 class StatVal : public DataItem {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE Statistic value
 public:

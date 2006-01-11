@@ -38,7 +38,6 @@ template class taArray<ValIdx>;
 // ta_data.h
 
 // datatable.h:
-template class taList<DataItem>;
 template class taGroup<DataArray_impl>;
 template class DataArray<String_Matrix>;
 template class DataArray<float_Matrix>;

@@ -367,7 +367,7 @@ public:
 #endif
   void	UpdateAfterEdit();
   void	Initialize();
-  void 	Destroy()		{ };
+  void 	Destroy()		{CutLinks(); };
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(Event_MGroup);

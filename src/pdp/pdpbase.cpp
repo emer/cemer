@@ -24,7 +24,7 @@
 
 #include "datatable.h"
 
-#include "process.h"
+//obs #include "process.h"
 #include "pdplog.h"
 #include "pdpshell.h"
 
@@ -380,26 +380,6 @@ BaseSpec* pdpMisc::FindSpecType(Project* prj, TypeDef* td) {
   return rval;
 }
 
-Process* pdpMisc::FindMakeProc(Project* prj, const char* nm, TypeDef* td, bool& nw_itm) {
-  return (Process*)prj->processes.FindMakeProc(nm, td, nw_itm);
-}
-
-Process* pdpMisc::FindProcName(Project* prj, const char* nm) {
-  Process* rval = (Process*)prj->processes.Find(nm);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find process named:", nm);
-  }
-  return rval;
-}
-
-Process* pdpMisc::FindProcType(Project* prj, TypeDef* td) {
-  Process* rval = (Process*)prj->processes.Find(td);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find process of type:", td->name);
-  }
-  return rval;
-}
-
 PDPLog* pdpMisc::FindMakeLog(Project* prj, const char* nm, TypeDef* td, bool& nw_itm) {
   return (PDPLog*)prj->logs.FindMakeLog(nm, td, nw_itm);
 }
@@ -564,16 +544,6 @@ NetConduit* pdpMisc::GetNewConduit(Project* prj, TypeDef* typ) {
     rval = (NetConduit*)prj->net_writers.New(1, typ);
   else if (typ->InheritsFrom(TA_NetReader))
     rval = (NetConduit*)prj->net_readers.New(1, typ);
-#ifdef TA_GUI
-  taiMisc::RunPending();
-  taMisc::DelayedMenuUpdate(prj);
-#endif
-  return rval;
-}
-
-Environment* pdpMisc::GetNewEnv(Project* prj, TypeDef* typ) {
-  if(prj == NULL) return NULL;
-  Environment* rval = (Environment*)prj->environments.New(1, typ);
 #ifdef TA_GUI
   taiMisc::RunPending();
   taMisc::DelayedMenuUpdate(prj);

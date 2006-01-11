@@ -25,7 +25,7 @@
 class RndSeed : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER random seed support
 public:
-  long_Array		seed;	// #READ_ONLY the seed, 624 elements long
+  int_Array		seed;	// #READ_ONLY the seed, 624 elements long
   int			mti;	// #READ_ONLY the index into the seed, also needs to be saved
 
   void	 NewSeed();
@@ -61,7 +61,7 @@ public:
   float		var;		// #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = SD, not variance; uniform = half-range)
   float		par;		// #CONDEDIT_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)
 
-  static int	IntZeroN(int n) 	{ if(n > 0) return (int)(MTRnd::genrand_int32() % (ulong)n); return 0; }
+  static int	IntZeroN(int n) 	{ if(n > 0) return (int)(MTRnd::genrand_int32() % (uint)n); return 0; }
   // uniform random integer in the range between 0 and n, exclusive of n: [0,n)
   static float 	ZeroOne() 		{ return MTRnd::genrand_res53(); }
   // uniform random number between zero and one (inclusive of 1 due to rounding!)
@@ -100,7 +100,7 @@ public:
   void	Destroy()		 { };
   void	Copy_(const Random& cp);
   COPY_FUNS(Random, taBase);
-  TA_BASEFUNS(Random);
+  TA_BASEFUNS(Random); //
 };
 
 class TimeUsed : public taBase {

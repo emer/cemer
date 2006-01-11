@@ -18,7 +18,8 @@
 #ifndef pdplog_h
 #define pdplog_h
 
-#include "process.h"
+//#include "process.h"
+#include "v3_compat.h"
 #include "datatable.h"
 #include "datagraph.h"
 #include "ta_filer.h"
@@ -80,7 +81,7 @@ typedef taNBase inherited;
 public:
   taFiler*	log_file;	// optional file for saving
   int		log_lines;	// #READ_ONLY #NO_SAVE number of lines in the log
-  LogData	log_data;	// #NO_SAVE #HIDDEN our own log data for reading fm file
+//obs  LogData	log_data;	// #NO_SAVE #HIDDEN our own log data for reading fm file
 
   DataTable	data;		// data for the log
   int		data_bufsz;	// #DETAIL how big a data buffer size to keep
@@ -88,8 +89,8 @@ public:
   MinMaxInt	data_range;	// #READ_ONLY #NO_SAVE #SHOW range of lines in the data buffer (in log lines)
   bool		record_proc_name; // whether to record process name in log file or not
 
-  Process_Group log_proc;	// #LINK_GROUP #BROWSE processes which use this log
-  SchedProcess*	cur_proc;	// #READ_ONLY #NO_SAVE current process sending to log
+  Process_Group log_proc;	// #LINK_GROUP #BROWSE #NO_SAVE LEGACY processes which use this log
+//obs  SchedProcess*	cur_proc;	// #READ_ONLY #NO_SAVE current process sending to log
 
   String_Array	display_labels;	// ordered list of labels to use for views and log files
 #ifdef TA_GUI
@@ -126,13 +127,15 @@ public:
   virtual void	Clear();	// clears out the data
   virtual void	UpdateViewHeaders();           // update headers for all views
 
-  virtual void	AddUpdater(SchedProcess* updt_proc);
+//obs: replace
+//  virtual void	AddUpdater(SchedProcess* updt_proc);
   /* #NEW_FUN #MENU #MENU_ON_Object #MENU_SEP_BEFORE
      Tell updt_proc to update this log with new log data as the process runs */
-  virtual void	RemoveUpdater(SchedProcess* updt_proc);
+//  virtual void	RemoveUpdater(SchedProcess* updt_proc);
   // #MENU #MENU_ON_Object #FROM_GROUP_log_proc remove given updating process
   virtual void	RemoveAllUpdaters(); 		// remove this from all process logs
   virtual void	SyncLogViewUpdaters(); 		// #IGNORE
+  
 /*TODO: obs, replace
   // for processes communicating stuff to the log (and log acting on this)
   virtual void  NewData(LogData& ld, SchedProcess* sproc);
@@ -158,9 +161,9 @@ public:
   // #IGNORE output one column of data (string str), tabs is width (1 or 2)
 
   // for maintaining an internal version of the buffer format in log-data terms
-  virtual DataItem* DataItemFromDataArray(DataArray_impl* da); 	   // #IGNORE
-  virtual void 	LogDataFromDataTable(DataTable* dt, int st_idx=0); // #IGNORE
-  virtual void	LogDataFromBuffer();	// #IGNORE get log data records from current buffer
+//obs  virtual DataItem* DataItemFromDataArray(DataArray_impl* da); 	   // #IGNORE
+  virtual void 	LogDataFromDataTable(DataTable* dt, int st_idx=0); // #IGNORE OBS
+  virtual void	LogDataFromBuffer();	// #IGNORE  OBS get log data records from current buffer
 
   // functions for manually updating logs in ad-hoc manner
   virtual void	ViewAllData();		// make views display all available data

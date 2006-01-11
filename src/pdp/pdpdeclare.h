@@ -35,15 +35,16 @@ class BaseSpec;
 //class BaseSpec_List;
 class BaseSpec_MGroup;
 
-class Script;
-class Process;
+class Script; //
 
+// netstru.h
 class SigmoidSpec;
 class ConSpec;
 class Connection;
 class Con_Group;
 class UnitSpec;
 class Unit;
+class Unit_Group;
 class ProjectionSpec;
 class Projection;
 class LayerSpec;
@@ -56,38 +57,6 @@ class NetConduit;
 class Project;
 class PDPRoot;
 
-class PatternSpec;
-class EventSpec;
-class Pattern;
-class Event;
-//class Event_List;
-class Event_MGroup;
-class Environment;
-class ScriptEnv;
-class TimeEnvironment;
-
-class Stat;
-class SE_Stat;
-class MonitorStat;
-class ClosestEventStat;
-class CyclesToSettle;
-
-class ScriptStat;
-class CompareStat;
-class EpochCounterStat;
-class ProcCounterStat;
-
-class SchedProcess;
-class BatchProcess;
-class TrainProcess;
-class NEpochProcess;
-class EpochProcess;
-class SequenceProcess;
-class TrialProcess;
-class SettleProcess;
-class CycleProcess;
-
-class SequenceEpoch;
 
 class PDPLog;
 class TextLog;
@@ -111,8 +80,6 @@ class GridLogView; //
 class NetLogView; //
 class GraphLogView; //
 
-
-class ProcessDialog;
 
 // net_qt.h and netstru_so.h
 //TODO
