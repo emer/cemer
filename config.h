@@ -220,7 +220,7 @@
 /* none */
 #define QT_THREAD_SUPPORT 
 
-/* Used when debugging */
+/* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
 
 /* Define to the type of arg 1 for `select'. */
@@ -270,9 +270,6 @@
 
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */
-
-/* Used when debugging */
-/* #undef YYDEBUG */
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
