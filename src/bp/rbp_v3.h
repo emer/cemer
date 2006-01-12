@@ -220,6 +220,109 @@ inline void SymRBpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
   }
 }
 
+// perform a bp whenever the units have time_window amount of information in
+// their buffers, then, shift left those buffers by bp_gap amount
+// then, they'll be ready to go again when buffers have time_window in them again..
+// this makes it so that the units keep track of themselves, and the process
+// will interface nicely without requiring firm alignment between sequence periods
+// and various time windows..
+// indeed, one can run just the RBpTrial with a flat environment and it will work
+// just fine..
+
+// time gets set/reset by checking the buffers on the units: when they are 0
+// at start of Compute_Act then time gets reset to 0.  otherwise, time increases
+// by dt each step of processing (thus, it is not tied to a specific sequence length)
+
+class RBpTrial : public BpTrial {
+  // one presentation of an event to RBp
+public:
+  float		time;
+  // #READ_ONLY #SHOW current time (relative to start of sequence)
+  float		dt;
+  // #READ_ONLY #SHOW this is made to correspond to the dt used by units
+  float		time_window;	// time window to pay attention to derivatives for
+  float		bp_gap;		// time period to go before performing a bp
+  bool		real_time;
+  // use 'real time' model (else time_window = length of sequence)
+  bool		bp_performed;	// #READ_ONLY true if bp was just performed last step
+
+  int		time_win_ticks;	// #READ_ONLY time window in ticks
+  int		bp_gap_ticks;	// #READ_ONLY bp window in ticks
+
+  void		Init_impl();
+  void		Loop();
+  bool		Crit()		{ return true; }
+
+  virtual void  Compute_ClampExt();
+  // compute clamped external activations (for zero time step)
+
+  void		Compute_Act();
+  void		Compute_dEdA_dEdNet();
+
+  virtual void	StoreState();
+  // store current state of network in buffers
+  virtual void 	InitForBP();
+  // initialize prior to performing BP
+  virtual void	StepBack(int tick);
+  // step back during BP process at given tick
+  virtual void	RestoreState(int tick);
+  // restore state to values at given point in time
+  virtual void	ShiftBuffers();
+  // shift buffers back by bp_gap_ticks
+  virtual bool	PerformBP();
+  // checks if its time to perform bp, does so, returns if it did or not
+  virtual void	PerformBP_impl();
+  // actually do the bp
+  virtual int	GetUnitBufSize(bool in_updt_after = false);
+  // finds first unit in first layer and gets current buffer size of that unit
+
+  virtual void	ResetStored();
+  // reset the stored state values (clears bp sequence, resets time, but doesn't fully clear unit states -- callable by script if needed)
+  virtual void	CopyContext();
+  // copy the SRN context layer info (must be called by a script at appropriate times)
+
+  void		GetCntrDataItems();
+  void		GenCntrLog(LogData* ld, bool gen);
+  // output time information
+
+  bool		CheckNetwork();
+  bool		CheckUnit(Unit* ck); // check for store_states too
+
+  void	UpdateAfterEdit();
+  void 	Initialize();
+  void	InitLinks();
+  void	Destroy()		{ };
+  SIMPLE_COPY(RBpTrial);
+  COPY_FUNS(RBpTrial, BpTrial);
+  TA_BASEFUNS(RBpTrial);
+};
+
+class RBpSequence : public SequenceProcess {
+  // one sequence of events, handles TimeEvents properly
+public:
+  virtual int	GetMaxTick(float& last_time);	// get maximum tick val based on current group
+
+  void		Init_impl();
+  void		GetEventList();
+  void		GetCurEvent();
+  void		Loop();
+
+  void 	Initialize();
+  void	Destroy()		{ };
+  TA_BASEFUNS(RBpSequence);
+};
+
+
+class RBpSE_Stat : public SE_Stat {
+  // Squared error for recurrent backprop, mulitplies by dt
+public:
+  void		Network_Stat();
+
+  void	Initialize();
+  void	Destroy()		{ };
+  TA_BASEFUNS(RBpSE_Stat);
+};
+
 class RBpContextSpec : public RBpUnitSpec {
   // RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!
 public:
@@ -242,9 +345,9 @@ public:
   void	Compute_HardClampNet(RBpUnit*) { };
   void 	Compute_Error(BpUnit*)		{ };
   void 	Compute_dEdA(BpUnit*)		{ };
-  void 	Compute_dEdNet(BpUnit*)		{ }; //
+  void 	Compute_dEdNet(BpUnit*)		{ };
 
-//obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
+  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -252,6 +355,121 @@ public:
   void	Copy_(const RBpContextSpec& cp);
   COPY_FUNS(RBpContextSpec, RBpUnitSpec);
   TA_BASEFUNS(RBpContextSpec);
+};
+
+//////////////////////////////////////////
+//	Almeida-Pineda Algorithm	//
+//////////////////////////////////////////
+
+class APBpCycle : public CycleProcess {
+  // one cycle of processing in almeida-pineda (either act or bp depending on 'phase')
+public:
+  APBpSettle*	apbp_settle;
+  // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent settle proc
+  APBpTrial* 	apbp_trial;
+  // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
+
+  void		Loop();
+  bool		Crit()		{ return true; }
+
+  virtual void	Compute_Act();
+  virtual void	Compute_Error();
+  virtual void	Compute_dEdA_dEdNet();
+
+  void 	UpdateAfterEdit();
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  void	CutLinks();
+  TA_BASEFUNS(APBpCycle);
+};
+
+class APBpSettle : public SettleProcess {
+  // one settling phase in Almeide-Pineda (either act or bp depending on phase)
+public:
+  APBpTrial* 	apbp_trial;
+  // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
+
+  void		Init_impl();	// initialize start of settling
+
+  virtual void  Compute_ClampExt();
+  // compute clamped external activations (for zero time step)
+  virtual void	Compute_HardClampNet();
+
+  void 	UpdateAfterEdit();
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  void	InitLinks();
+  void	CutLinks();
+  SIMPLE_COPY(APBpSettle);
+  COPY_FUNS(APBpSettle, SettleProcess);
+  TA_BASEFUNS(APBpSettle);
+};
+
+
+class APBpTrial : public TrialProcess {
+  // one Almeida-Pineda BP Trial
+public:
+  enum StateInit {		// ways of initializing the state of the network
+    DO_NOTHING,			// do nothing
+    INIT_STATE 			// initialize state
+  };
+
+  enum Phase {
+    ACT_PHASE,			// activation phase
+    BP_PHASE 			// backpropagation phase
+  };
+
+  Counter	phase_no;	// Current phase number
+  Phase		phase;		// state variable for phase
+  StateInit	trial_init;	// how to initialize network state at start of trial
+  bool		no_bp_stats;	// don't do stats/logging in the bp phase
+  bool		no_bp_test; 	// don't run the bp phase when testing
+
+
+  virtual void	SetCurLrate();
+  virtual void	Compute_dWt();	// compute weight changes
+
+  void		C_Code();	// modify to use the no_plus_stats flag
+
+  void		Init_impl();
+  void		UpdateState();
+  bool		Crit()		{ return SchedProcess::Crit(); }
+  void		Final();	// compute weight changes at end..
+
+  void		GetCntrDataItems();
+  void		GenCntrLog(LogData* ld, bool gen);
+
+  bool		CheckNetwork();
+  bool		CheckUnit(Unit* ck); // check for store_states too
+
+  void	Initialize();
+  void	Destroy()		{ };
+  void	InitLinks();
+  void	Copy_(const APBpTrial& cp);
+  COPY_FUNS(APBpTrial, TrialProcess);
+  TA_BASEFUNS(APBpTrial);
+};
+
+class APBpMaxDa_De : public Stat {
+  /* ##COMPUTE_IN_SettleProcess ##LOOP_STAT computes max of da and ddE to determine
+     when to stop settling in almeida-pineda algorithm */
+public:
+  StatVal	da_de;		// max of delta-activation or delta-error
+
+  void		RecvCon_Run(Unit*)	{ }; // don't do these!
+  void		SendCon_Run(Unit*)	{ };
+
+  void		InitStat();
+  void		Init();
+  bool		Crit();
+  void		Network_Init();
+  void 		Unit_Stat(Unit* unit);
+
+  void 	Initialize();		// set minimums
+  void	Destroy()		{ };
+  SIMPLE_COPY(APBpMaxDa_De);
+  COPY_FUNS(APBpMaxDa_De, Stat);
+  TA_BASEFUNS(APBpMaxDa_De);
 };
 
 //////////////////////////////////////////
@@ -285,9 +503,9 @@ public:
   virtual void	SRNContext(Network* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE configure a simple-recurrent-network context layer in the network
 
-//obs  virtual bool	ToTimeEvents(Environment* env);
+  virtual bool	ToTimeEvents(Environment* env);
   // #MENU_BUTTON #MENU_ON_Environment #MENU_SEP_BEFORE convert events, groups, and environment to TimeEvent format
-//obs  virtual void	ToRBPEvents(Environment* env, int targ_time = 2);
+  virtual void	ToRBPEvents(Environment* env, int targ_time = 2);
   // #MENU_BUTTON convert events to format suitable for training by RBP, with inputs coming on first, and then targets coming on after targ_time time steps
 
   void 	Initialize();

@@ -11,15 +11,18 @@ TAHEADS =\
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
 	@abs_srcdir@/../bp/bp.h \
-	@abs_srcdir@/../bp/rbp.h
+	@abs_srcdir@/../bp/rbp.h \
+	@abs_srcdir@/../bp/bp_v3_compat.h
 
 HEADS =\
 	bp.h \
-	rbp.h
+	rbp.h \
+	bp_v3_compat.h
 
 SRCS =\
 	bp.cpp \
-	rbp.cpp \
+	rbp.cpp  \
+	bp_v3_compat.cpp \
 	main.cpp
 
 include $(top_srcdir)/Maketa.am

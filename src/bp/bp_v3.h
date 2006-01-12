@@ -273,6 +273,134 @@ inline void BpConSpec::B_UpdateWeights(BpCon* cn, BpUnit* ru) {
   C_ApplyLimits(cn, ru, NULL);
 }
 
+class BpTrial : public TrialProcess {
+  // standard Bp feed-forward trial
+public:
+  bool		bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
+
+  void 		Loop();
+  bool 		Crit()		{ return true; } // executes loop only once
+
+  virtual void	SetCurLrate();
+  virtual void	Compute_Act();
+  virtual void	Compute_Error();
+  virtual void	Compute_dEdA_dEdNet();
+  virtual void	Compute_dWt();
+
+  bool		CheckNetwork();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	InitLinks();
+  SIMPLE_COPY(BpTrial);
+  COPY_FUNS(BpTrial, TrialProcess);
+  TA_BASEFUNS(BpTrial);
+};
+
+//////////////////////////////////////////
+//	Additional Stat Types 		//
+//////////////////////////////////////////
+
+class CE_Stat : public Stat {
+  // ##COMPUTE_IN_TrialProcess Cross-entropy error statistic (asymmetric divergence)
+public:
+  StatVal	ce;			// cross-entropy error
+  float		tolerance;		// if error is less than this, its 0
+
+  void		RecvCon_Run(Unit*)	{ }; // don't do these!
+  void		SendCon_Run(Unit*)	{ };
+
+  void		InitStat();
+  void		Init();
+  bool		Crit();
+  void		Network_Init();
+  void		Layer_Run();		// only compute on TARG layers
+  void 		Unit_Stat(Unit* unit);
+
+  void		NameStatVals();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  SIMPLE_COPY(CE_Stat);
+  COPY_FUNS(CE_Stat, Stat);
+  TA_BASEFUNS(CE_Stat);
+};
+
+class NormDotProd_Stat : public Stat {
+  // ##COMPUTE_IN_TrialProcess Normalized Dot Product of act and target values
+public:
+  StatVal	ndp;		 // normalized dot product
+
+  void		RecvCon_Run(Unit*)	{ }; // don't do these!
+  void		SendCon_Run(Unit*)	{ };
+
+  void		InitStat();
+  void		Init();
+  bool		Crit();
+  void		Network_Init();
+  void		Layer_Run();		// only compute on TARG layers
+  void 		Unit_Stat(Unit* unit);
+  void		NameStatVals();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  SIMPLE_COPY(NormDotProd_Stat);
+  COPY_FUNS(NormDotProd_Stat, Stat);
+  TA_BASEFUNS(NormDotProd_Stat);
+};
+
+class VecCor_Stat : public Stat {
+  // ##COMPUTE_IN_TrialProcess Vector Correlation of act and target values
+public:
+  StatVal	vcor;		 // vector correlation
+  float		dp;		 // #HIDDEN
+  float		l1;		 // #HIDDEN
+  float		l2;		 // #HIDDEN
+
+  void		RecvCon_Run(Unit*)	{ }; // don't do these!
+  void		SendCon_Run(Unit*)	{ };
+
+  void		InitStat();
+  void		Init();
+  bool		Crit();
+  void		Network_Init();
+  void		Layer_Run();		// only compute on TARG layers
+  void 		Unit_Stat(Unit* unit);
+  void		Network_Stat();
+  void		NameStatVals();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  SIMPLE_COPY(VecCor_Stat);
+  COPY_FUNS(VecCor_Stat, Stat);
+  TA_BASEFUNS(VecCor_Stat);
+};
+
+class NormVecLen_Stat : public Stat {
+  // ##COMPUTE_IN_TrialProcess Normalized Vector Length of act and target values
+public:
+  StatVal	nvl;		 // normalized vector length
+
+  void		RecvCon_Run(Unit*)	{ }; // don't do these!
+  void		SendCon_Run(Unit*)	{ };
+
+  void		InitStat();
+  void		Init();
+  bool		Crit();
+  void		Network_Init();
+  void		Layer_Run();		// only compute on TARG layers
+  void 		Unit_Stat(Unit* unit);
+  void		Network_Stat();
+  void		NameStatVals();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  SIMPLE_COPY(NormVecLen_Stat);
+  COPY_FUNS(NormVecLen_Stat, Stat);
+  TA_BASEFUNS(NormVecLen_Stat);
+};
+
+
 //////////////////////////////////////////
 //	Additional ConSpec Types	//
 //////////////////////////////////////////
@@ -457,9 +585,9 @@ public:
   // bp special functions
   void 	Compute_Error(BpUnit*)		{ };
   void 	Compute_dEdA(BpUnit*)		{ };
-  void 	Compute_dEdNet(BpUnit*)		{ }; //
+  void 	Compute_dEdNet(BpUnit*)		{ };
 
-//obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
+  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
   void	UpdateAfterEdit();
   void 	Initialize();

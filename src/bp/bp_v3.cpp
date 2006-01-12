@@ -18,8 +18,7 @@
 // bp.cc
 
 #include "bp.h"
-
-#include "pdplog.h"
+#include "enviro.h"
 
 #include <math.h>
 #include <limits.h>
@@ -218,6 +217,421 @@ void BpUnit::Copy_(const BpUnit& cp) {
   dEdNet = cp.dEdNet;
 }
 
+//////////////////////////
+//  	Procs		//
+//////////////////////////
+
+void BpTrial::Initialize() {
+  min_unit = &TA_BpUnit;
+  min_con_group = &TA_BpCon_Group;
+  min_con = &TA_BpCon;
+  bp_to_inputs = false;
+}
+
+void BpTrial::InitLinks() {
+  TrialProcess::InitLinks();
+  if(!taMisc::is_loading && (final_stats.size == 0)) {
+    SE_Stat* st = (SE_Stat*)final_stats.NewEl(1, &TA_SE_Stat);
+    st->CreateAggregates(Aggregate::SUM);
+  }
+}
+
+void BpTrial::SetCurLrate() {
+  Layer* layer;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, layer, network->layers., l_itr) {
+    if(layer->lesion)	continue;
+    BpUnit* u;
+    taLeafItr u_itr;
+    FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
+      u->SetCurLrate(network->epoch);
+  }
+}
+
+void BpTrial::Compute_Act() {
+  // compute activations
+  Layer* lay;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, lay, network->layers., l_itr) {
+    if(lay->lesion)	continue;
+    if(!(lay->ext_flag & Unit::EXT)) {
+      lay->Compute_Net();
+#ifdef DMEM_COMPILE
+      lay->DMem_SyncNet();
+#endif
+    }
+    lay->Compute_Act();
+  }
+}
+
+void BpTrial::Compute_Error() {
+  // compute errors
+  Layer* lay;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, lay, network->layers., l_itr) {
+    if(lay->lesion || !(lay->ext_flag & Unit::TARG)) // only compute err on targs
+      continue;
+
+    BpUnit* u;
+    taLeafItr u_itr;
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+      u->dEdA = 0.0f;		// must reset -- error is incremental!
+      u->Compute_Error();
+    }
+  }
+}
+
+void BpTrial::Compute_dEdA_dEdNet() {
+  // send the error back
+  Layer* lay;
+  int i;
+  for(i=network->layers.leaves-1; i>= 0; i--) {
+    lay = ((Layer*) network->layers.Leaf(i));
+    if(lay->lesion || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
+      continue;
+
+    BpUnit* u;
+    taLeafItr u_itr;
+#ifdef DMEM_COMPILE
+    // first compute dEdA from connections and share it
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+      u->Compute_dEdA();
+    lay->dmem_share_units.Aggregate(3, MPI_SUM);
+
+    // then compute error to add to dEdA, and dEdNet
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+      u->Compute_Error();
+      u->Compute_dEdNet();
+    }
+#else
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+      u->Compute_dEdA_dEdNet();
+#endif
+  }
+}
+
+void BpTrial::Compute_dWt() {
+  if(network == NULL)	return;
+  network->Compute_dWt();
+}
+
+void BpTrial::Loop() {
+  if(network == NULL) return;
+
+  SetCurLrate();
+
+  network->InitExterns();
+  if(cur_event != NULL)
+    cur_event->ApplyPatterns(network);
+
+  Compute_Act();
+  Compute_dEdA_dEdNet();
+
+  // compute the weight err derivatives (only if not testing...)
+  if((epoch_proc != NULL) && (epoch_proc->wt_update != EpochProcess::TEST)) {
+    Compute_dWt();
+  }
+//   else {
+//     Compute_Error();		// for display purposes only..
+//   }
+
+  // weight update taken care of by the epoch process
+}
+
+bool BpTrial::CheckNetwork() {
+  if(network && (network->dmem_sync_level != Network::DMEM_SYNC_LAYER)) {
+    network->dmem_sync_level = Network::DMEM_SYNC_LAYER;
+  }
+  return TrialProcess::CheckNetwork();
+}
+
+
+//////////////////////////
+// 	CE_Stat		//
+//////////////////////////
+
+void CE_Stat::Initialize() {
+  tolerance = 0.0f;
+}
+
+void CE_Stat::NameStatVals() {
+  Stat::NameStatVals();
+  ce.AddDispOption("MIN=0");
+}
+
+void CE_Stat::InitStat() {
+  float init_val = InitStatVal();
+  ce.InitStat(init_val);
+  InitStat_impl();
+}
+
+void CE_Stat::Init() {
+  ce.Init();
+  Init_impl();
+}
+
+bool CE_Stat::Crit() {
+  if(!has_stop_crit)    return false;
+  if(n_copy_vals > 0)   return copy_vals.Crit();
+  return ce.Crit();
+}
+
+void CE_Stat::Network_Init() {
+  InitStat();
+}
+
+void CE_Stat::Layer_Run() {
+  if(layer != NULL) {
+    if(layer->lesion)      return;
+    Layer_Init(layer);
+    Unit_Run(layer);
+    Layer_Stat(layer);
+    return;
+  }
+  Layer *lay;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, lay, network->layers., i) {
+    // only target layers need to be checked for error
+    if(lay->lesion || !((lay->ext_flag & Unit::TARG) || (lay->ext_flag & Unit::COMP)))
+      continue;
+    Layer_Init(lay);
+    Unit_Run(lay);
+    Layer_Stat(lay);
+  }
+}
+
+void CE_Stat::Unit_Stat(Unit* unit) {
+  if(!((unit->ext_flag & Unit::TARG) || (unit->ext_flag & Unit::COMP)))
+    return;
+
+  float tmp = fabs(unit->targ - unit->act);
+  if(tmp < tolerance) {
+    net_agg.ComputeAgg(&ce, 0.0f);
+    return;
+  }
+
+  UnitSpec* us = unit->spec.spec;
+  if(us == NULL)	return;
+
+  float a = SigmoidSpec::Clip(us->act_range.Normalize(unit->act));
+  float t = us->act_range.Normalize(unit->targ);
+
+  if(t == 1.0f)
+    tmp = -logf(a);
+  else if(t == 0.0f)
+    tmp = -logf(1.0f - a);
+  else
+    tmp = t * logf(t/a) + (1.0f - t) * logf((1.0f - t) / (1.0f - a));
+  net_agg.ComputeAgg(&ce, tmp);
+}
+
+/////////////////////////////////
+//        NormDotProd_Stat     //
+/////////////////////////////////
+
+void NormDotProd_Stat::Initialize(){
+  ndp = 0.0f;
+  net_agg.op = Aggregate::AVG;
+}
+
+
+void NormDotProd_Stat::NameStatVals() {
+  Stat::NameStatVals();
+  ndp.AddDispOption("MIN=0");
+}
+
+void NormDotProd_Stat::InitStat() {
+  float init_val = InitStatVal();
+  ndp.InitStat(init_val);
+  InitStat_impl();
+}
+
+void NormDotProd_Stat::Init() {
+  ndp.Init();
+  Init_impl();
+}
+
+bool NormDotProd_Stat::Crit() {
+  if(!has_stop_crit)    return false;
+  if(n_copy_vals > 0)   return copy_vals.Crit();
+  return ndp.Crit();
+}
+
+void NormDotProd_Stat::Network_Init() {
+  InitStat();
+}
+
+void NormDotProd_Stat::Layer_Run() {
+  if(layer != NULL) {
+    if(layer->lesion)      return;
+    Layer_Init(layer);
+    Unit_Run(layer);
+    Layer_Stat(layer);
+    return;
+  }
+  Layer *lay;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, lay, network->layers., i) {
+    // only target layers need to be checked for error
+    if(lay->lesion || !((lay->ext_flag & Unit::TARG) || (lay->ext_flag & Unit::COMP)))
+      continue;
+    Layer_Init(lay);
+    Unit_Run(lay);
+    Layer_Stat(lay);
+  }
+}
+
+void NormDotProd_Stat::Unit_Stat(Unit* unit) {
+  if(!((unit->ext_flag & Unit::TARG) || (unit->ext_flag & Unit::COMP)))
+    return;
+
+  float tmp = unit->targ * unit->act;
+  net_agg.ComputeAgg(&ndp, tmp);
+  return;
+}
+
+
+////////////////////////////
+//        VecCor_Stat     //
+////////////////////////////
+
+void VecCor_Stat::Initialize(){
+  vcor = 0.0f;
+}
+
+
+void VecCor_Stat::NameStatVals() {
+  Stat::NameStatVals();
+  vcor.AddDispOption("MIN=0");
+}
+
+void VecCor_Stat::InitStat() {
+  float init_val = InitStatVal();
+  vcor.InitStat(init_val);
+  dp = l1 = l2 =  0.0f;
+  InitStat_impl();
+}
+
+void VecCor_Stat::Init() {
+  vcor.Init();
+  Init_impl();
+}
+
+bool VecCor_Stat::Crit() {
+  if(!has_stop_crit)    return false;
+  if(n_copy_vals > 0)   return copy_vals.Crit();
+  return vcor.Crit();
+}
+
+void VecCor_Stat::Network_Init() {
+  InitStat();
+}
+
+void VecCor_Stat::Layer_Run() {
+  if(layer != NULL) {
+    if(layer->lesion)      return;
+    Layer_Init(layer);
+    Unit_Run(layer);
+    Layer_Stat(layer);
+    return;
+  }
+  Layer *lay;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, lay, network->layers., i) {
+    // only target layers need to be checked for error
+    if(lay->lesion || !((lay->ext_flag & Unit::TARG) || (lay->ext_flag & Unit::COMP)))
+      continue;
+    Layer_Init(lay);
+    Unit_Run(lay);
+    Layer_Stat(lay);
+  }
+}
+
+void VecCor_Stat::Unit_Stat(Unit* unit) {
+  if(!((unit->ext_flag & Unit::TARG) || (unit->ext_flag & Unit::COMP)))
+    return;
+  dp += unit->targ * unit->act ;
+  l1 += unit->targ * unit->targ;
+  l2 += unit->act * unit->act;
+  return;
+}
+
+void VecCor_Stat::Network_Stat(){
+  if (l1 == 0.0 || l2 == 0.0)
+    vcor = (float) 0.0f;
+  else vcor = (float) (dp/sqrt(l1*l2));
+}
+
+
+////////////////////////////////
+//        NormVecLen_Stat     //
+////////////////////////////////
+
+void NormVecLen_Stat::Initialize(){
+  nvl = 0.0f;
+  net_agg.op = Aggregate::AVG;
+}
+
+
+void NormVecLen_Stat::NameStatVals() {
+  Stat::NameStatVals();
+  nvl.AddDispOption("MIN=0");
+}
+
+void NormVecLen_Stat::InitStat() {
+  float init_val = InitStatVal();
+  nvl.InitStat(init_val);
+  InitStat_impl();
+}
+
+void NormVecLen_Stat::Init() {
+  nvl.Init();
+  Init_impl();
+}
+
+bool NormVecLen_Stat::Crit() {
+  if(!has_stop_crit)    return false;
+  if(n_copy_vals > 0)   return copy_vals.Crit();
+  return nvl.Crit();
+}
+
+void NormVecLen_Stat::Network_Init() {
+  InitStat();
+}
+
+void NormVecLen_Stat::Layer_Run() {
+  if(layer != NULL) {
+    if(layer->lesion)      return;
+    Layer_Init(layer);
+    Unit_Run(layer);
+    Layer_Stat(layer);
+    return;
+  }
+  Layer *lay;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, lay, network->layers., i) {
+    // only target layers need to be checked for error
+    if(lay->lesion || !((lay->ext_flag & Unit::TARG) || (lay->ext_flag & Unit::COMP)))
+      continue;
+    Layer_Init(lay);
+    Unit_Run(lay);
+    Layer_Stat(lay);
+  }
+}
+
+void NormVecLen_Stat::Unit_Stat(Unit* unit) {
+  if(!((unit->ext_flag & Unit::TARG) || (unit->ext_flag & Unit::COMP)))
+    return;
+
+  float tmp = unit->act * unit->act;
+  net_agg.ComputeAgg(&nvl, tmp);
+  return;
+}
+
+void NormVecLen_Stat::Network_Stat() {
+  nvl = (float) sqrtf(nvl);
+}
+
 //////////////////////////////////////////
 //	Additional Con Types		//
 //////////////////////////////////////////
@@ -278,7 +692,7 @@ void BpContextSpec::UpdateAfterEdit() {
     taMisc::Error("BpContextSpec: could not find variable:",variable,"in BpUnit type");
 }
 
-/*obs bool BpContextSpec::CheckConfig(Unit* un, Layer* lay, TrialProcess* tp) {
+bool BpContextSpec::CheckConfig(Unit* un, Layer* lay, TrialProcess* tp) {
   if(!BpUnitSpec::CheckConfig(un, lay, tp)) return false;
   if(var_md == NULL) {
     taMisc::Error("BpContextSpec: could not find variable:",variable,"in BpUnit type");
@@ -304,7 +718,7 @@ void BpContextSpec::UpdateAfterEdit() {
     return false;
   }
   return true;
-} */
+}
 
 void BpContextSpec::InitState(Unit* u) {
   BpUnitSpec::InitState(u);
