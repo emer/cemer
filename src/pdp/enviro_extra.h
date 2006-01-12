@@ -102,7 +102,7 @@ public:
   Event* 	GetEvent(int i);
 
   void	Initialize();
-  void 	Destroy()		{ };
+  void 	Destroy()		{ CutLinks();};
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const FreqEvent_Group& cp);

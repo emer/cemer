@@ -863,18 +863,18 @@ void XYSubPatternSpec::ApplyPattern(Pattern* pat) {
 //     GroupPattern	//
 //////////////////////////
 
-void GroupPatternSpec::UpdateAfterEdit() {
-  PatternSpec::UpdateAfterEdit();
-  sub_geom.SetGtEq(1);		// no dividing by zero!
-  TDCoord& gg = gp_geom;
-  gg = geom / sub_geom;
-}
-
 void GroupPatternSpec::Initialize() {
   sub_geom.SetGtEq(1);
   TDCoord& gg = gp_geom;
   gg = geom / sub_geom;
   trans_apply = false;
+}
+
+void GroupPatternSpec::UpdateAfterEdit() {
+  PatternSpec::UpdateAfterEdit();
+  sub_geom.SetGtEq(1);		// no dividing by zero!
+  TDCoord& gg = gp_geom;
+  gg = geom / sub_geom;
 }
 
 int GroupPatternSpec::FlatToValueIdx(int index) {
