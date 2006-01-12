@@ -227,8 +227,8 @@ public:
   NetConduit_MGroup	net_writers;	// NetConduits for network input
   NetConduit_MGroup	net_readers;	// NetConduits for network output
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
-  Environment_MGroup	environments;	// Environments of patterns to present to networks //TODO: legacy, make hidden
-  Process_MGroup	processes;	// Processes to coordinate training/testing, etc//TODO: legacy, make hidden
+  Environment_MGroup	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
+  Process_MGroup	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
