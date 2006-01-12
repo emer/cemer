@@ -311,7 +311,6 @@ AC_CONFIG_FILES([Makefile
 		src/css/Makefile
 		src/tamisc/Makefile
 		src/pdp/Makefile
-		src/leabra/Makefile
 		src/bp/Makefile
 		manual/Makefile])
 AC_OUTPUT
