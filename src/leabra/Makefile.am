@@ -12,12 +12,9 @@ TAHEADS =\
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
 	@abs_srcdir@/leabra.h
 HEADS =\
-	leabra_TA_type.h \
-	leabra_TA_inst.h \
 	leabra.h
 SRCS =\
 	leabra.cpp \
-	leabra_TA.cpp \
 	main.cpp
 
 include $(top_srcdir)/Maketa.am
