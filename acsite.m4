@@ -1667,14 +1667,12 @@ AC_DEFUN([BNV_PATH_QT_DIRECT],
     # The following header file is expected to define QT_VERSION.
     qt_direct_test_header=qglobal.h
     # Look for the header file in a standard set of common directories.
-    bnv_include_path_list="
-      /usr/include
-      `if test -n ${QTDIR};then echo ls -dr ${QTDIR}/include "2>/dev/null";fi`
-      `ls -dr /usr/include/qt* 2>/dev/null`
-      `ls -dr /usr/lib/qt*/include 2>/dev/null`
-      `ls -dr /usr/local/qt*/include 2>/dev/null`
-      `ls -dr /opt/qt*/include 2>/dev/null`
-    "
+    for bnv_path in /usr/include ${QTDIR}/include /usr/include/qt* /usr/lib/qt*/include \
+                    /usr/local/qt*/include /opt/qt*/include /Developer/qt*/include; do
+      if test -d ${bnv_path}; then
+        bnv_include_path_list="${bnv_include_path_list} `ls -dr ${bnv_path} 2>/dev/null`"
+      fi
+    done
     for bnv_dir in $bnv_include_path_list; do
       if test -r "$bnv_dir/$qt_direct_test_header"; then
         bnv_dirs="$bnv_dirs $bnv_dir"
