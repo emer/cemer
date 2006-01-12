@@ -81,6 +81,7 @@ m4_defun([AC_PROG_F77],[])
 AC_PROG_CXXCPP
 SIM_AC_CONFIGURATION_SETTING([Preprocessor],[$CXXCPP])
 
+AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_RANLIB
 AC_PROG_MAKE_SET
@@ -267,7 +268,6 @@ if $debug = true; then
 
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
-  AC_DEFINE([YYDEBUG],,[Used when debugging])
   AC_DEFINE([DEBUG],,[Used when debugging])
   AC_DEFINE([TA_PROFILE],,[Used when debugging])
 
