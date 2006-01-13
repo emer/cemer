@@ -31,16 +31,19 @@ This file is part of TA/PDP++
 ])
 
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
-# in /aux/ so they don't clutter up the root
+# in /misc/ so they don't clutter up the root
 AC_CONFIG_AUX_DIR([misc])
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])
+
+# Build with VC++
+SIM_AC_SETUP_MSVCPP_IFELSE
 
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
 
-# Custom: check results of config.status for a few OS types
-PDP_DETERMINE_OSTYPE
+# Do a few host checks, mostly for MSVC stuffs
+PDP_CANONICAL_HOST
 
 # Set default language  C++
 AC_LANG_CPLUSPLUS
@@ -170,9 +173,17 @@ AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 if test $gui = true; then
 
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
-  BNV_HAVE_QT
-  LIBS="$LIBS $QT_LIBS"
-  CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS"
+  
+  SIM_AC_CHECK_QT([SIM_AC_CONFIGURATION_SETTING([Qt],[$sim_ac_qt_libs])
+                   CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
+                   LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+                   LIBS="$LIBS $sim_ac_qt_libs"],
+                   [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
+
+  SIM_AC_QT_PROG(QT_MOC, moc)
+  if test x"$MOC" = x"false"; then
+    SIM_AC_CONFIGURATION_WARNING([Failed to find moc])
+  fi
 
   # Important macro for OSX, which may use Apple's OpenGL framework. This preference is undetectable.
   #AX_CHECK_GL
