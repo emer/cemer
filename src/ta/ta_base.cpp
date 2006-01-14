@@ -305,6 +305,13 @@ void taBase::DelPointer(TAPtr* ptr) {
   *ptr = NULL;
 }
 
+String taBase::GetStringRep(TAPtr it) {
+  if (it == NULL) 
+    return String("NULL", 4);
+  else
+    return it->GetStringRep_impl();
+}
+
 void taBase::Own(TAPtr it, TAPtr onr) {
   if (it != NULL) Own(*it, onr);
 }
@@ -470,7 +477,7 @@ int taBase::Edit() {
   return false;
 }
 
-TAPtr taBase::FindFromPath(String& path, MemberDef*& ret_md, int start) const {
+TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
   if(((int)path.length() <= start) || (path == ".")) {
     ret_md = NULL;
     return (TAPtr)this;
@@ -598,26 +605,23 @@ String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
 }
 
 String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
-  if((this == par_stop) && (ta == NULL))
+  if ((this == par_stop) && (ta == NULL))
     return ".";
 
   String rval;
   taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
-  }
-  else if(this != par_stop)
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
+  } else if (this != par_stop)
     rval = par->GetPath((TAPtr)this, par_stop);
 
-  if(ta != NULL) {
+  if (ta != NULL) {
     MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
+    if ((md = FindMember(ta)) != NULL) {
       rval += "." + md->name;
-    }
-    else if((md = FindMemberPtr(ta)) != NULL) {
+    } else if ((md = FindMemberPtr(ta)) != NULL) {
       rval = String("*(") + rval + "." + md->name + ")";
-    }
-    else {
+    } else {
       rval += ".?.";
     }
   }
@@ -667,6 +671,11 @@ TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
   if(scp_tp == NULL)
     return tabMisc::root;
   return GetOwner(scp_tp);
+}
+
+String taBase::GetStringRep_impl() const {
+  String rval = GetTypeDef()->name + ":" + GetPath_Long();
+  return rval;
 }
 
 TAPtr taBase::MakeToken(TypeDef* td) {

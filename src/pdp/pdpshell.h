@@ -234,6 +234,9 @@ public:
 #ifdef TA_GUI
   SelectEdit_MGroup	edits;		// special edit dialogs for selected elements
   DataViewer_List	viewers;	// any open viewers TODO: make HIDDEN in release version
+#ifdef DEBUG
+  taBase_List		test_objs;	// just for testing, for any kind of objs
+#endif
 #endif
   bool			save_rmv_units; // remove units from network before saving (makes project file much smaller!)
   bool			use_sim_log; 	// record project changes in the SimLog file
@@ -336,6 +339,41 @@ public:
 /*obs protected:
   override void WindowClosing(bool& cancel); */
 };
+
+#ifdef DEBUG
+// just a temp test object
+class TestObj: public taNBase {
+public:
+  char			c;
+  signed char		sc;
+  unsigned char		uc;
+  byte			byt; //note: s/b same as an unsigned char
+  short			sh;
+  signed short		ssh;
+  unsigned short	ush;
+  int			i;
+  signed int		si;
+  signed		s;
+  unsigned int		ui;
+  unsigned		u;
+  long			l;
+  signed long		sl;
+  unsigned long		ul;
+  int64_t		i64;
+  long long		ll;
+  signed long long	sll;
+  uint64_t		u64;
+  unsigned long long	ull;
+  intptr_t		intptr;
+  
+  SIMPLE_COPY(TestObj)
+  COPY_FUNS(TestObj, taNBase)
+  TA_BASEFUNS(TestObj);
+private:
+  void 			Initialize();
+  void			Destroy() {}
+};
+#endif
 
 
 #endif // pdpshell_h

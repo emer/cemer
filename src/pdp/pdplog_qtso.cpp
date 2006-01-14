@@ -995,7 +995,7 @@ void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
       tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
     }
 
-    taMatrix_impl* mat = vs->data_array->AR();
+    taMatrix* mat = vs->data_array->AR();
     int act_idx;
     //calculate the actual row index, for the case of a jagged data tables
     if ((mat != NULL) && dt.idx(buff_idx, mat->frames(), act_idx)) {

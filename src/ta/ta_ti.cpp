@@ -68,17 +68,17 @@ template class taPtrList<DumpPathToken>;
 
 
 // ta_matrix.h
-template class taMatrix<String>;
+template class taMatrixT<String>;
   const String String_Matrix::blank;
-template class taMatrix<float>;
+template class taMatrixT<float>;
   const float float_Matrix::blank = 0.0f;
-template class taMatrix<int>;
+template class taMatrixT<int>;
   const int int_Matrix::blank = 0;
-template class taMatrix<unsigned char>;
+template class taMatrixT<unsigned char>;
   const unsigned char byte_Matrix::blank = '\0';
 
-template class taArray<taMatrixPtr_impl*>;
-  const taMatrixPtr_impl MatrixPtr_Array::blank;
+template class taArray<taMatrixPtr*>;
+  const taMatrixPtr MatrixPtr_Array::blank;
 
 template class taList<taGroup_impl>;
 template class taGroup<taBase>;

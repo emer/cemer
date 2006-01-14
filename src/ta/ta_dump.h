@@ -121,6 +121,7 @@ public:
   TAPtr		FindFromPath(String& pat, TypeDef* td, void* base, void* par=NULL,
 			     MemberDef* memb_def=NULL);
   // find object from given path, where path could be a path token too
+  // note: pat may be modified!
 
   ~DumpPathTokenList()          { Reset(); }
 };

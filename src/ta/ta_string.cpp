@@ -336,14 +336,24 @@ String::String(uint u, const char* format) {
 
 String::String(long i,const char* format) {
   char buf[32];
-  sprintf(buf,format,i);
+  sprintf(buf, format,i);
   newRep(Salloc(buf, -1));
 }
 
-String::String(unsigned long u, const char* format) {
+String::String(ulong u, const char* format) {
   char buf[32];
-  sprintf(buf,format,u);
+  sprintf(buf, format,u);
   newRep(Salloc(buf, -1));
+}
+
+String::String(int64_t i64, int base) {
+  QString str(QString::number(i64, base));
+  newRep(Salloc(str.latin1(), str.length()));
+}
+
+String::String(uint64_t u64, int base) {
+  QString str(QString::number(u64, base));
+  newRep(Salloc(str.latin1(), str.length()));
 }
 
 String::String(float f,const char* format) {
@@ -358,9 +368,9 @@ String::String(double f,const char* format) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(void* f,const char* format) {
+String::String(void* p) {
   char buf[32];
-  sprintf(buf,format,(long int)f);
+  sprintf(buf,"p",p);
   newRep(Salloc(buf, -1));
 }
 
@@ -632,6 +642,17 @@ String& String::set(const char* s, int slen) {
   if (slen == 0) setRep(&_nilStrRep);
   else           setRep(Salloc(s, slen, slen));
   return *this;
+}
+
+bool String::toBool() const {
+  if (mrep->len == 0) return false;
+  char c = (*this)[0];
+  return ((c == 't') || (c == '1') || (c == 'T'));
+}
+
+char String::toChar() const {
+  if (mrep->len == 1) return (*this)[0];
+  else return '\0';;
 }
 
 void String::truncate(uint new_len) {

@@ -371,11 +371,11 @@ extern "C" {
 
 int taHandleXError(Display* disp, XErrorEvent* err) {
   static int prev_err = -1;
-  static long prev_serial = -1;
+  static int prev_serial = -1;
   //  static bool already_saved = false;
   static bool already_saved = true;// disable saving for time being
 
-  if((int)err->error_code == prev_err) { // && ((long)err->serial == prev_serial + 1)) {
+  if((int)err->error_code == prev_err) { // && ((int)err->serial == prev_serial + 1)) {
     cerr << ".";		// indicate that it happened again
     prev_serial = err->serial;
   }
@@ -1309,7 +1309,7 @@ String TokenSpace::El_GetName_(void* it) const {
 #else
   if(owner == NULL) {
 #endif
-    tmp_el_name = String((long)it);
+    tmp_el_name = String((intptr_t)it);
     return tmp_el_name;
   }
 #ifndef NO_TA_BASE
@@ -2784,35 +2784,41 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
       return fun->name;
     else if(*((void**)base) == NULL)
       return "NULL";
-    return String((long)*((void**)base));
+    return String((intptr_t)*((void**)base));
   }
-  if(ptr == 0) {
+  if (ptr == 0) {
     if(DerivesFrom(TA_bool)) {
       if(*((bool*)base))
 	return String("true");
       else
 	return String("false");
     }
-    else if(DerivesFrom(TA_int)) {
-      return String(*((int*)base));
+    // note: char is generic, and typically we won't use signed char
+    else if ((DerivesFrom(TA_char)) || (DerivesFrom(TA_signed_char))) {
+      return String(*((char*)base));
+    }
+    // note: explicit use of unsigned char is "byte" in ta/pdp
+    else if ((DerivesFrom(TA_unsigned_char))) {
+      return String((uint)*((unsigned char*)base)); // treat bytes as numbers
     }
     else if(DerivesFrom(TA_short)) {
       return String((int)*((short*)base));
     }
-    else if(DerivesFrom(TA_long)) {
-      return String((int)*((long*)base));
+    else if(DerivesFrom(TA_unsigned_short)) {
+      return String((uint)*((unsigned short*)base));
     }
-    else if(DerivesFrom(TA_char))  {
-      return String(*((char*)base));
+    else if(DerivesFrom(TA_int)) {
+      return String(*((int*)base));
     }
-    else if(DerivesFrom(TA_unsigned)) {
-      return String((int)*((unsigned*)base));
+    else if(DerivesFrom(TA_unsigned_int)) {
+      return String(*((uint*)base));
     }
-#ifndef NO_SIGNED
-    else if(DerivesFrom(TA_signed)) {
-      return String((int)*((signed*)base));
+    else if(DerivesFrom(TA_int64_t)) {
+      return String(*((int64_t*)base));
     }
-#endif
+    else if(DerivesFrom(TA_uint64_t)) {
+      return String(*((uint64_t*)base));
+    }
     else if(DerivesFrom(TA_float)) {
       return String(*((float*)base));
     }
@@ -2917,7 +2923,7 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
       }
       else {
 	if(rbase != NULL)
-	  return String((long)rbase);
+	  return String((intptr_t)rbase);
 	else
 	  return "NULL";
       }
@@ -2955,7 +2961,7 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
   return name;
 }
 
-void TypeDef::SetValStr(const char* val, void* base, void* par, MemberDef* memb_def) {
+void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def) {
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
@@ -2964,32 +2970,30 @@ void TypeDef::SetValStr(const char* val, void* base, void* par, MemberDef* memb_
   }
   if(ptr == 0) {
     if(DerivesFrom(TA_bool)) {
-      String strval=val;
-      if(strval == "true")
-	*((bool*)base) = true;
-      else if(strval == "false")
-	*((bool*)base) = false;
-      else
-	*((bool*)base) = (bool)strtol(val, NULL, 0);
+      *((bool*)base) = val.toBool();
     }
-    else if(DerivesFrom(TA_int))
-      *((int*)base) = (int)strtol(val, NULL, 0);
+    // note: char is usually signed char in most C++'s
+    else if (DerivesFrom(TA_char) || DerivesFrom(TA_signed_char))
+      *((char*)base) = val.toChar();
+    // unsigned char is "byte" in ta/pdp and treated like a number
+    else if (DerivesFrom(TA_unsigned_char))
+      *((unsigned char*)base) = (unsigned char)val.toUShort();
     else if(DerivesFrom(TA_short))
-      *((short*)base) = (int)strtol(val, NULL, 0);
-    else if(DerivesFrom(TA_long))
-      *((long*)base) = strtol(val, NULL, 0);
-    else if(DerivesFrom(TA_char))
-      *((char*)base) = *(val);
-    else if(DerivesFrom(TA_unsigned))
-      *((unsigned*)base) = (int)strtol(val, NULL, 0);
-#ifndef NO_SIGNED
-    else if(DerivesFrom(TA_signed))
-      *((signed*)base) = (int)strtol(val, NULL, 0);
-#endif
+      *((short*)base) = val.toShort();
+    else if(DerivesFrom(TA_unsigned_short))
+      *((unsigned short*)base) = val.toUShort();
+    else if(DerivesFrom(TA_int))
+      *((int*)base) = val.toInt();
+    else if(DerivesFrom(TA_unsigned_int))
+      *((uint*)base) = val.toUInt();
+    else if(DerivesFrom(TA_int64_t))
+      *((int64_t*)base) = val.toInt64();
+    else if(DerivesFrom(TA_uint64_t))
+      *((uint64_t*)base) = val.toUInt64();
     else if(DerivesFrom(TA_float))
-      sscanf(val, "%g", (float*)base);
+      *((float*)base) = val.toFloat();
     else if(DerivesFrom(TA_double))
-      sscanf(val, "%lg", (double*)base);
+      *((double*)base) = val.toDouble();
     else if(DerivesFormal(TA_enum)) {
       String strval = val;
       if(strval.contains(')')) {
@@ -3109,39 +3113,37 @@ void TypeDef::SetValStr(const char* val, void* base, void* par, MemberDef* memb_
     }
   }
   else if(ptr == 1) {
-    String strval = val;
 #ifndef NO_TA_BASE
     if(DerivesFrom(TA_taBase) && (tabMisc::root != NULL)) {
       TAPtr bs = NULL;
-      if((strval != "NULL") && (strval != "Null")) {
+      if((val != "NULL") && (val != "Null")) {
+        String tmp_val(val); // FindFromPath can change it
 	if(taMisc::is_loading) {
-	  bs = dumpMisc::path_tokens.FindFromPath(strval, this, base, par, memb_def);
+	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
 	  if(bs == NULL)	// indicates error condition
 	    return;
-	}
-	else {
+	} else {
 	  MemberDef* md = NULL;
-	  bs = tabMisc::root->FindFromPath(strval, md);
+	  bs = tabMisc::root->FindFromPath(tmp_val, md);
 	  if((md == NULL) || (bs == NULL)) {
-	    taMisc::Error("*** Invalid Path in SetValStr:",strval);
+	    taMisc::Error("*** Invalid Path in SetValStr:",val);
 	    return;
 	  }
-	  if(md->type->ptr == 1) {
+	  if (md->type->ptr == 1) {
 	    bs = *((TAPtr*)bs);
 	    if(bs == NULL) {
-	      taMisc::Error("*** Null object at end of path in SetValStr:",strval);
+	      taMisc::Error("*** Null object at end of path in SetValStr:",val);
 	      return;
 	    }
-	  }
-	  else if(md->type->ptr != 0) {
-	    taMisc::Error("*** ptr count greater than 1 in path:", strval);
+	  } else if(md->type->ptr != 0) {
+	    taMisc::Error("*** ptr count greater than 1 in path:", val);
 	    return;
 	  }
 	}
       }
       if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
 	if(par == NULL)
-	  taMisc::Error("*** NULL parent for owned pointer:",strval);
+	  taMisc::Error("*** NULL parent for owned pointer:",val);
 	else
 	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
       }
@@ -3151,13 +3153,13 @@ void TypeDef::SetValStr(const char* val, void* base, void* par, MemberDef* memb_
     else
 #endif
     if(DerivesFrom(TA_TypeDef)) {
-      TypeDef* td = taMisc::types.FindName(strval);
+      TypeDef* td = taMisc::types.FindName(val);
       if(td != NULL)
 	*((TypeDef**)base) = td;
     }
     if(DerivesFrom(TA_MemberDef)) {
-      String typnm = strval.before("::");
-      String mbnm = strval.after("::");
+      String typnm = val.before("::");
+      String mbnm = val.after("::");
       if((typnm != "") && (mbnm != "")) {
 	TypeDef* td = taMisc::types.FindName(typnm);
 	if(td != NULL) {
@@ -3168,8 +3170,8 @@ void TypeDef::SetValStr(const char* val, void* base, void* par, MemberDef* memb_
       }
     }
     if(DerivesFrom(TA_MethodDef)) {
-      String typnm = strval.before("::");
-      String mbnm = strval.after("::");
+      String typnm = val.before("::");
+      String mbnm = val.after("::");
       if((typnm != "") && (mbnm != "")) {
 	TypeDef* td = taMisc::types.FindName(typnm);
 	if(td != NULL) {
@@ -3973,11 +3975,11 @@ int TypeDef::Dump_Load(istream&, void*, void*) {
    email: matumoto@math.keio.ac.jp
 */
 
-ulong MTRnd::mt[MTRnd::N]; /* the array for the state vector  */
+uint MTRnd::mt[MTRnd::N]; /* the array for the state vector  */
 int MTRnd::mti=MTRnd::N+1; /* mti==N+1 means mt[N] is not initialized */
 
 /* initializes mt[N] with a seed */
-void MTRnd::seed(ulong s) {
+void MTRnd::seed(uint s) {
   mt[0]= s & 0xffffffffUL;
   for (mti=1; mti<N; mti++) {
     mt[mti] =
@@ -3991,7 +3993,7 @@ void MTRnd::seed(ulong s) {
   }
 }
 
-ulong MTRnd::seed_time_pid() {
+uint MTRnd::seed_time_pid() {
 //NOTE: this is a bit simpler than the 3.2 version
   int pid = taPlatform::processId();
   int tc = taPlatform::tickCount(); // ms since system started
@@ -4004,7 +4006,7 @@ ulong MTRnd::seed_time_pid() {
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-void MTRnd::seed_array(ulong init_key[], int key_length) {
+void MTRnd::seed_array(uint init_key[], int key_length) {
   int i, j, k;
   seed(19650218UL);
   i=1; j=0;
@@ -4029,7 +4031,7 @@ void MTRnd::seed_array(ulong init_key[], int key_length) {
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
-ulong MTRnd::genrand_int32() {
+uint MTRnd::genrand_int32() {
   ulong y;
   static ulong mag01[2]={0x0UL, MATRIX_A};
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
@@ -4066,8 +4068,8 @@ ulong MTRnd::genrand_int32() {
 }
 
 /* generates a random number on [0,0x7fffffff]-interval */
-long MTRnd::genrand_int31() {
-  return (long)(genrand_int32()>>1);
+int MTRnd::genrand_int31() {
+  return (int)(genrand_int32()>>1);
 }
 
 /* generates a random number on [0,1]-real-interval */

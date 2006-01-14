@@ -1071,7 +1071,7 @@ void DataArray_impl::Initialize() {
 void DataArray_impl::InitLinks() {
   inherited::InitLinks();
   taBase::Own(cell_geom, this);
-  taMatrix_impl* ar = AR();
+  taMatrix* ar = AR();
   if (ar != NULL)
     taBase::Own(ar, this);
 }
@@ -1088,7 +1088,7 @@ void DataArray_impl::Copy_(const DataArray_impl& cp) {
 }
 
 void DataArray_impl::Init() {
-  taMatrix_impl* ar = AR(); //cache
+  taMatrix* ar = AR(); //cache
   if (is_matrix) {
     int_Array tdim = cell_geom;
     tdim.EnforceSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
@@ -1148,7 +1148,7 @@ String DataArray_impl::GetDisplayName() const {
 }
 
 String DataArray_impl::GetValAsString_impl(int row, int cell) const {
-  const taMatrix_impl* ar = AR(); //cache, and preserves constness
+  const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
 } 
 
@@ -1215,7 +1215,7 @@ String ColDescriptor::GetColText(int col, int) {
   case 3: return disp_opts;
   case 4: return save_to_file;
   case 5: return is_matrix;
-  case 6: return taMatrix_impl::GeomToString(cell_geom);
+  case 6: return taMatrix::GeomToString(cell_geom);
   default: return _nilString; // compiler food
   }
 }
@@ -1329,7 +1329,7 @@ void DataTable::AddBlankRow() {
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
-    taMatrix_impl* mat = ar->AR();
+    taMatrix* mat = ar->AR();
     if (!mat) continue;
     mat->EnforceFrames(mat->frames() + 1);
   }
@@ -1612,7 +1612,7 @@ DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const 
   if (dims > 2) geom[2] = d2;
   if (dims > 3) geom[3] = d3;
   String err_msg;
-  if (!taMatrix_impl::GeomIsValid(geom, &err_msg)) {
+  if (!taMatrix::GeomIsValid(geom, &err_msg)) {
     taMisc::Error("Invalid geom:", err_msg);
     return NULL;
   }

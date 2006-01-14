@@ -749,6 +749,9 @@ void Project::InitLinks() {
 #ifdef TA_GUI
   taBase::Own(edits, this);
   taBase::Own(viewers, this);
+#ifdef DEBUG
+  taBase::Own(test_objs, this);	// just for testing, for any kind of objs
+#endif
 #endif
   taBase::Own(the_colors, this);
   taBase::Own(view_colors, this);
@@ -781,6 +784,9 @@ void Project::CutLinks() {
 //TODO  if(editor != NULL) { delete editor; editor = NULL; }
   inherited::CutLinks();	// close windows, etc
 #ifdef TA_GUI
+#ifdef DEBUG
+  test_objs.CutLinks();	// just for testing, for any kind of objs
+#endif
   viewers.CutLinks();
   edits.CutLinks();
 #endif
@@ -1420,4 +1426,11 @@ void PDPRoot::GetWinPos() {
   wn_pos->GetWinPos();
 } */
 
-
+#ifdef DEBUG
+//#include <string.h>
+void TestObj::Initialize() {
+  // just zero all the data
+  size_t _size = ((intptr_t)(&intptr) + sizeof(intptr) - (intptr_t)(&c));
+  memset(&c, 0, _size);
+}
+#endif

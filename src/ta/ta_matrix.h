@@ -64,7 +64,7 @@ class float_Matrix; //
 */
 
 
-class taMatrix_impl: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
+class taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
@@ -136,9 +136,9 @@ public:
   void			InitLinks();
   void			CutLinks();
   void			UpdateAfterEdit(); // esp important to call after changing geom -- note that geom gets fixed if invalid
-  void			Copy_(const taMatrix_impl& cp);
-  COPY_FUNS(taMatrix_impl, taOBase);
-  TA_ABSTRACT_BASEFUNS(taMatrix_impl) //
+  void			Copy_(const taMatrix& cp);
+  COPY_FUNS(taMatrix, taOBase);
+  TA_ABSTRACT_BASEFUNS(taMatrix) //
 public: // don't use these, internal use only
   virtual void*		data() const = 0;  // #IGNORE
   virtual void*		FastEl_(int i) = 0;   // #IGNORE the raw element in the flat space
@@ -188,7 +188,7 @@ protected:
     // checks if in actual range
   
   virtual void		SetFixedData_(void* el_, const int_Array& geom_); // initialize fixed data
-//  virtual bool		Equal_(const taMatrix_impl& src) const; 
+//  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
 private:
@@ -196,21 +196,21 @@ private:
   void			Destroy();
 };
 
-typedef taMatrix_impl* ptaMatrix_impl;
+typedef taMatrix* ptaMatrix_impl;
 
-class taMatrix_Group: public taGroup<taMatrix_impl> { // group that can hold matrix items -- typically used for dataset elements
-INHERITED(taGroup<taMatrix_impl>)
+class taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
+INHERITED(taGroup<taMatrix>)
 public:
 
   TA_BASEFUNS(taMatrix_Group);
 private:
-  void		Initialize() {SetBaseType(&TA_taMatrix_impl);}
+  void		Initialize() {SetBaseType(&TA_taMatrix);}
   void		Destroy() {}
 };
 
 
 template<class T> 
-class taMatrix : public taMatrix_impl { // #VIRT_BASE #NO_INSTANCE 
+class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -284,7 +284,7 @@ public:
   // compatibility functions, for when dims=1
   void			Add(const T& item) {Add_(&item);}  // only valid when dims=1
 
-  TA_ABSTRACT_TMPLT_BASEFUNS(taMatrix, T)
+  TA_ABSTRACT_TMPLT_BASEFUNS(taMatrixT, T)
 public:
   override void*	FastEl_(int idx)	{ return &(el[idx]); } 
   override const void*	FastEl_(int idx) const { return &(el[idx]); } 
@@ -302,66 +302,66 @@ private: //note: forbid these for now -- if needed, define semantics
 };
 
 
-class taMatrixPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
+class taMatrixPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
 public:
-  taMatrix_impl*	ptr() {return m_ptr;} //note: strong types define strongly typed version
-  const taMatrix_impl*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
+  taMatrix*	ptr() {return m_ptr;} //note: strong types define strongly typed version
+  const taMatrix*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
   
-  taMatrixPtr_impl() {m_ptr = NULL;}
-  ~taMatrixPtr_impl() {set(NULL);} //
+  taMatrixPtr() {m_ptr = NULL;}
+  ~taMatrixPtr() {set(NULL);} //
   
-  taMatrix_impl* operator->() const {return m_ptr;} 
-  operator taMatrix_impl*() const {return m_ptr;} //
+  taMatrix* operator->() const {return m_ptr;} 
+  operator taMatrix*() const {return m_ptr;} //
   
   // WARNING: these permit incorrect assignments to strongly typed pointers, use with caution
-  taMatrixPtr_impl(const taMatrixPtr_impl& src) {m_ptr = NULL; set(src.m_ptr);} 
-  taMatrix_impl* operator=(taMatrixPtr_impl& src) {set(src.m_ptr); return m_ptr;} 
-  taMatrix_impl* operator=(taMatrix_impl* src) {set(src); return m_ptr;}  //
+  taMatrixPtr(const taMatrixPtr& src) {m_ptr = NULL; set(src.m_ptr);} 
+  taMatrix* operator=(taMatrixPtr& src) {set(src.m_ptr); return m_ptr;} 
+  taMatrix* operator=(taMatrix* src) {set(src); return m_ptr;}  //
   
   // WARNING: these are bogus operators required to enable creating an array of items (legacy issue)
   operator taString() const {return _nilString;}
-  explicit taMatrixPtr_impl(const String& ignored) {m_ptr = NULL;}
+  explicit taMatrixPtr(const String& ignored) {m_ptr = NULL;}
   
 protected:
-  taMatrix_impl*	m_ptr;
-  void		set(taMatrix_impl* src) {taBase::SetPointer((taBase**)(&m_ptr), src);} //
+  taMatrix*	m_ptr;
+  void		set(taMatrix* src) {taBase::SetPointer((taBase**)(&m_ptr), src);} //
 }; //
 
 // operators for doing NULL testing on the smart pointers 
 // note: these operators are only defined when int==0 i.e. NULL
 // note: use '0' instead of 'NULL' in your tests to avoid a compiler warning
-inline bool operator ==(const taMatrixPtr_impl& a, int b)
+inline bool operator ==(const taMatrixPtr& a, int b)
   {return ((b== 0) && (a.ptr() == NULL));} 
-inline bool operator ==(int a, const taMatrixPtr_impl& b)
+inline bool operator ==(int a, const taMatrixPtr& b)
   {return ((a == 0) && (NULL == b.ptr()));} 
-inline bool operator !=(const taMatrixPtr_impl& a, int b)
+inline bool operator !=(const taMatrixPtr& a, int b)
   {return ((b == 0) && (a.ptr() != NULL));}
-inline bool operator !=(int a, const taMatrixPtr_impl& b)
+inline bool operator !=(int a, const taMatrixPtr& b)
   {return ((a == 0) && (NULL != b.ptr()));} //
 
 // operators for doing equality testing on the smart pointers 
-inline bool operator ==(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+inline bool operator ==(const taMatrixPtr& a, const taMatrixPtr& b)
   {return (a.ptr() == b.ptr());} 
-inline bool operator ==(const taMatrixPtr_impl& a, const taMatrix_impl* b)
+inline bool operator ==(const taMatrixPtr& a, const taMatrix* b)
   {return (a.ptr() == b);} 
-inline bool operator ==(const taMatrix_impl* a, const taMatrixPtr_impl& b)
+inline bool operator ==(const taMatrix* a, const taMatrixPtr& b)
   {return (a == b.ptr());} 
-inline bool operator !=(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+inline bool operator !=(const taMatrixPtr& a, const taMatrixPtr& b)
   {return (a.ptr() != b.ptr());}
-inline bool operator !=(const taMatrixPtr_impl& a, const taMatrix_impl* b)
+inline bool operator !=(const taMatrixPtr& a, const taMatrix* b)
   {return (a.ptr() != b);}
-inline bool operator !=(const taMatrix_impl* a, const taMatrixPtr_impl& b)
+inline bool operator !=(const taMatrix* a, const taMatrixPtr& b)
   {return (a != b.ptr());}
 
 
 /*nn // bogus operators
-inline bool operator <(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+inline bool operator <(const taMatrixPtr& a, const taMatrixPtr& b)
   {return false;} 
-inline bool operator >(const taMatrixPtr_impl& a, const taMatrixPtr_impl& b)
+inline bool operator >(const taMatrixPtr& a, const taMatrixPtr& b)
   {return false;}  */
 
-// macro for creating smart ptrs of taMatrix classes
-#define taMatrixPtr_Of(T)  class T ## Ptr: public taMatrixPtr_impl { \
+// macro for creating smart ptrs of taMatrixT classes
+#define taMatrixPtr_Of(T)  class T ## Ptr: public taMatrixPtr { \
 public: \
   T* ptr() const {return (T*)m_ptr;} \
   operator T*() const {return (T*)m_ptr;} \
@@ -374,17 +374,17 @@ public: \
 };
 
 
-class MatrixPtr_Array : public taArray<taMatrixPtr_impl> {
+class MatrixPtr_Array : public taArray<taMatrixPtr> {
   // #NO_UPDATE_AFTER array (list) of matrix pointers -- used typically for multi params in data processing
 public:
-  STATIC_CONST taMatrixPtr_impl blank; // #HIDDEN #READ_ONLY 
+  STATIC_CONST taMatrixPtr blank; // #HIDDEN #READ_ONLY 
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_taMatrixPtr_impl; return FastEl_(i); }
+  { eltd = &TA_taMatrixPtr; return FastEl_(i); }
   void Initialize()	{};
   void Destroy()	{ };
   TA_BASEFUNS(MatrixPtr_Array);
-  TA_ARRAY_FUNS(MatrixPtr_Array, taMatrixPtr_impl)
+  TA_ARRAY_FUNS(MatrixPtr_Array, taMatrixPtr)
 };
 
 
@@ -414,12 +414,12 @@ public:
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
-class String_Matrix: public taMatrix<String> { // #INSTANCE
+class String_Matrix: public taMatrixT<String> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_taString;} 
   
   void			Copy_(const String_Matrix& cp) {}
-  COPY_FUNS(String_Matrix, taMatrix<String>)
+  COPY_FUNS(String_Matrix, taMatrixT<String>)
   TA_MATRIX_FUNS(String_Matrix, String)
   
 public:
@@ -434,7 +434,7 @@ taMatrixPtr_Of(String_Matrix)
 //
 
 
-class float_Matrix: public taMatrix<float> { // #INSTANCE
+class float_Matrix: public taMatrixT<float> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_float;} 
   
@@ -442,7 +442,7 @@ public:
     // accepts valid format for float
     
   void			Copy_(const float_Matrix& cp) {}
-  COPY_FUNS(float_Matrix, taMatrix<float>)
+  COPY_FUNS(float_Matrix, taMatrixT<float>)
   TA_MATRIX_FUNS(float_Matrix, float)
   
 public:
@@ -456,7 +456,7 @@ private:
 taMatrixPtr_Of(float_Matrix)
 
 
-class int_Matrix: public taMatrix<int> { // #INSTANCE
+class int_Matrix: public taMatrixT<int> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_int;} 
   
@@ -464,7 +464,7 @@ public:
     // accepts in-range for 32bit int
   
   void			Copy_(const int_Matrix& cp) {}
-  COPY_FUNS(int_Matrix, taMatrix<int>)
+  COPY_FUNS(int_Matrix, taMatrixT<int>)
   TA_MATRIX_FUNS(int_Matrix, int)
   
 public:
@@ -478,7 +478,7 @@ private:
 taMatrixPtr_Of(int_Matrix)
 
 
-class byte_Matrix: public taMatrix<byte> { // #INSTANCE
+class byte_Matrix: public taMatrixT<byte> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_unsigned_char;} 
   
@@ -486,7 +486,7 @@ public:
     // accepts 0-255 or octal or hex forms
   
   void			Copy_(const byte_Matrix& cp) {}
-  COPY_FUNS(byte_Matrix, taMatrix<byte>)
+  COPY_FUNS(byte_Matrix, taMatrixT<byte>)
   TA_MATRIX_FUNS(byte_Matrix, byte)
   
 public: //

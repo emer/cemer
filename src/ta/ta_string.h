@@ -122,19 +122,21 @@ public:
   inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
   inline String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
-  String(char c) {if (c == '\0') newRep(&_nilStrRep); else init(&c, 1);}
   String(StrRep* x) {newRep(x);} // typically only used internally
   String(uint slen, uint sz, char fill); // for allocating a writeable buffer; (1) if sz==0, then sz=slen; (2) if fill==0, then slen will be forced to 0
 
 
-// these are strangely missing in the original
+// conversion constructors
+  String(char c) {if (c == '\0') newRep(&_nilStrRep); else init(&c, 1);}
   String(int i, const char* format = "%d");
   String(uint u, const char* format = "%u");
-  String(long i, const char* format = "%ld");
-  String(unsigned long u, const char* format = "%lu");
+  String(long i, const char* format = "%ld"); //note: don't use long any more, compatibility only
+  String(ulong u, const char* format = "%lu"); //note: don't use long any more, compatibility only
+  String(int64_t i64, int base = 10);
+  String(uint64_t u64, int base = 10);
   String(float f, const char* format = "%g");
-  String(double f, const char* format = "%lg");
-  String(void* f, const char* format = "%lg"); //
+  String(double d, const char* format = "%lg");
+  String(void* p); //converts to hex
 #ifdef TA_USE_QT
   String(const QString& val);
   String&           operator = (const QString& y);
@@ -165,7 +167,12 @@ public:
   operator float() const { return (float)atof(chars()); }
   operator double() const { return atof(chars()); }
   operator char*() const { return (char*)chars(); } //
+  
+  bool 			toBool() const; // accepts true as starting with t/T, or else 1
+  char 			toChar() const; // if size 1, then that's it, otherwise 0
+  
 #ifdef TA_USE_QT
+  //TODO: must make these always available
   // converter routines, for use when linked with Qt 
   short 		toShort(bool* ok = 0, int base = 10) const 
     {QString tmp(chars()); return tmp.toShort(ok, base);}
@@ -175,13 +182,11 @@ public:
     {QString tmp(chars()); return tmp.toInt(ok, base);}
   uint 			toUInt(bool* ok = 0, int base = 10) const 
     {QString tmp(chars()); return tmp.toUInt(ok, base);}
-  long 			toLong(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toLong(ok, base);}
-  ulong 		toULong(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toULong(ok, base);}
-  int64_t 		toLongLong(bool* ok = 0, int base = 10) const 
+  int64_t 		toInt64(bool* ok = 0, int base = 10) const 
     {QString tmp(chars()); return tmp.toLongLong(ok, base);}
-  uint64_t 		toULongLong(bool* ok = 0, int base = 10) const 
+  uint64_t 		toUInt64(bool* ok = 0, int base = 10) const 
+    {QString tmp(chars()); return tmp.toULongLong(ok, base);}
+  unsigned long long	toULongLong(bool* ok = 0, int base = 10) const 
     {QString tmp(chars()); return tmp.toULongLong(ok, base);}
   float 		toFloat(bool* ok = 0) const 
     {QString tmp(chars()); return tmp.toFloat(ok);}

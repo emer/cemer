@@ -24,12 +24,16 @@ class TypeDef;
 extern TypeDef TA_void;
 extern TypeDef TA_int;
 extern TypeDef TA_long;
+extern TypeDef TA_unsigned_long;
 extern TypeDef TA_short;
 extern TypeDef TA_char;
 extern TypeDef TA_unsigned;
 extern TypeDef TA_signed;
 extern TypeDef TA_float;
 extern TypeDef TA_double;
+extern TypeDef TA_int64_t;
+extern TypeDef TA_uint64_t;
+extern TypeDef TA_intptr_t;
 extern TypeDef TA_bool;
 extern TypeDef TA_const;	// const is not formal...
 extern TypeDef TA_enum;		// par_formal
@@ -198,6 +202,9 @@ public:
   int	readfilename(int c);
   int	follow(int expect, int ifyes, int ifno);
   int	lex();
+protected:
+  void 		AddBuiltIn(TypeSpace& ts);
+  void 		InitBuiltIn(); // do once
 };
 
 

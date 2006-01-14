@@ -26,19 +26,30 @@
 #endif
 
 TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
-TypeDef TA_int			("int", 	1, 0, 0, 0, 1, "int");
-TypeDef TA_short		("short", 	1, 0, 0, 0, 1, "short");
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1, "long");
 TypeDef TA_char			("char", 	1, 0, 0, 0, 1, "char");
 TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, "signed char");
 TypeDef TA_unsigned_char	("unsigned_char", 1, 0, 0, 0, 1, "unsigned char");
-TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, "unsigned");
+TypeDef TA_short		("short", 	1, 0, 0, 0, 1, "short");
+TypeDef TA_unsigned_short	("unsigned_short", 	1, 0, 0, 0, 1, "unsigned short");
+TypeDef TA_signed_short		("signed_short", 	1, 0, 0, 0, 1, "signed short");
+TypeDef TA_int			("int", 	1, 0, 0, 0, 1, "int");
+TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, "signed int");
 TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, "signed");
+TypeDef TA_unsigned_int		("unsigned_int", 	1, 0, 0, 0, 1, "unsigned int");
+TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, "unsigned");
+TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, "int64_t");
+TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, "long long");
+TypeDef TA_signed_long_long	("signed_long_long", 	1, 0, 0, 0, 1, "signed long long");
+TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, "uint64_t");
+TypeDef TA_unsigned_long_long	("unsigned_long_long", 	1, 0, 0, 0, 1, "unsigned long long");
+// all the long types will get parented to either int (typical) or int64 types
+TypeDef TA_long			("long", 	1, 0, 0, 0, 1, "long"); 
+TypeDef TA_signed_long		("signed_long", 	1, 0, 0, 0, 1, "signed long");
+TypeDef TA_unsigned_long	("unsigned_long", 	1, 0, 0, 0, 1, "unsigned long");
+// intptr_t gets parented to either int or int64
+TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, "intptr_t"); 
 TypeDef TA_float		("float", 	1, 0, 0, 0, 1, "float");
 TypeDef TA_double		("double", 	1, 0, 0, 0, 1, "double");
-TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, "int64_t");
-TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, "uint64_t");
-TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, "intptr_t");
 TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, "bool");
 TypeDef TA_const		("const", 	1, 0, 0, 0, 1);
 TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); 	// formal
@@ -110,30 +121,14 @@ MTA::MTA() {
   spc_builtin.name = "Builtin Types";
 
   InitKeyWords();
+  InitBuiltIn();
 
   InitTypeSpace(spc_other);	// when target not being searched (need base types)
   InitTypeSpace(spc_target);
 
   // only add a subset of things to spc_builtin
   TypeSpace& ts = spc_builtin;
-  ts.Add(&TA_int);
-  ts.Add(&TA_short);
-  ts.Add(&TA_long);
-  ts.Add(&TA_char);
-  ts.Add(&TA_signed_char);
-  ts.Add(&TA_unsigned_char);
-  ts.Add(&TA_unsigned);
-  ts.Add(&TA_signed);
-  ts.Add(&TA_float);
-  ts.Add(&TA_double);
-  ts.Add(&TA_int64_t);
-  ts.Add(&TA_uint64_t);
-  ts.Add(&TA_intptr_t);
-#ifndef NO_BUILTIN_BOOL
-  ts.Add(&TA_bool);
-#endif
-  ts.Add(&TA_const);
-  ts.Add(&TA_enum);
+  AddBuiltIn(ts);
 }
 
 MTA::~MTA() {
@@ -152,6 +147,37 @@ MTA::~MTA() {
 
 //  if(verbose < 1)	return;
 //  cerr << "mta object destroyed\n";
+}
+
+void MTA::AddBuiltIn(TypeSpace& ts) { // common code
+  ts.Add(&TA_void);
+  ts.Add(&TA_char);
+  ts.Add(&TA_signed_char);
+  ts.Add(&TA_unsigned_char);
+  ts.Add(&TA_short);
+  ts.Add(&TA_signed_short);
+  ts.Add(&TA_unsigned_short);
+  ts.Add(&TA_int);
+  ts.Add(&TA_signed_int);
+  ts.Add(&TA_signed);
+  ts.Add(&TA_unsigned_int);
+  ts.Add(&TA_unsigned);
+  ts.Add(&TA_int64_t);
+  ts.Add(&TA_long_long);
+  ts.Add(&TA_signed_long_long);
+  ts.Add(&TA_uint64_t);
+  ts.Add(&TA_unsigned_long_long);
+  ts.Add(&TA_long);
+  ts.Add(&TA_signed_long);
+  ts.Add(&TA_unsigned_long);
+  ts.Add(&TA_intptr_t);
+  ts.Add(&TA_float);
+  ts.Add(&TA_double);
+#ifndef NO_BUILTIN_BOOL
+  ts.Add(&TA_bool);
+#endif
+  ts.Add(&TA_const);
+  ts.Add(&TA_enum);
 }
 
 void MTA::InitKeyWords() {
@@ -175,26 +201,21 @@ void MTA::InitKeyWords() {
   ky = new TypeDef("REG_FUN"); 	spc_keywords.Add(ky); ky->idx = REGFUN;
 }
 
+void MTA::InitBuiltIn() {
+  TA_void_ptr.AddParents(&TA_void);
+  TA_signed_short.AddParents(&TA_short);
+  TA_signed_int.AddParents(&TA_int); 
+  TA_signed.AddParents(&TA_int); 
+  TA_unsigned.AddParents(&TA_unsigned_int);
+  TA_signed_long.AddParents(&TA_long);
+  TA_long_long.AddParents(&TA_int64_t);
+  TA_signed_long_long.AddParents(&TA_int64_t);
+  TA_unsigned_long_long.AddParents(&TA_uint64_t);
+  //note: intptr_t has special runtime code to test size and add to either int or uint64_t
+}
+
 void MTA::InitTypeSpace(TypeSpace& ts) {
-  ts.Add(&TA_void);
-  ts.Add(&TA_int);
-  ts.Add(&TA_short);
-  ts.Add(&TA_long);
-  ts.Add(&TA_char);
-  ts.Add(&TA_signed_char);
-  ts.Add(&TA_unsigned_char);
-  ts.Add(&TA_unsigned);
-  ts.Add(&TA_signed);
-  ts.Add(&TA_float);
-  ts.Add(&TA_double);
-  ts.Add(&TA_int64_t);
-  ts.Add(&TA_uint64_t);
-  ts.Add(&TA_intptr_t);
-#ifndef NO_BUILTIN_BOOL
-  ts.Add(&TA_bool);
-#endif
-  ts.Add(&TA_const);
-  ts.Add(&TA_enum);
+  AddBuiltIn(ts);
   ts.Add(&TA_struct);
   ts.Add(&TA_union);
   ts.Add(&TA_class);
@@ -210,7 +231,6 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   ts.Add(&TA_taString);
   TA_taString.AddParFormal(&TA_class);
   ts.Add(&TA_void_ptr);
-  TA_void_ptr.AddParents(&TA_void);
 }
 
 void MTA::BuildHashTables() {

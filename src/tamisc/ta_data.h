@@ -52,7 +52,7 @@ public:
   bool			active; // #DEF_true set on (default) to enable data to flow through this channel
   int_Array		geom; // #SAVE #HIDDEN
   TypeDef*		matrix_type; // #NO_NULL #TYPE_taMatrix_impl type of matrix, ex float_Matrix, int_Matrix, etc., note: def is float
-  taMatrix_impl*	cached_data() const {return m_cached_data;}  
+  taMatrix*	cached_data() const {return m_cached_data;}  
   virtual int		dims() {return geom.size;}
   int			size(); // number of els in all dims, 0 if any are 0
      // number of dimensions of data; N=0 for sink is "any"
@@ -64,8 +64,8 @@ public:
   virtual void		SetGeomN(const int_Array& value); // set any geom
 
   virtual void		ClearCachedData(); // clears any cached data
-  virtual bool		SetCachedData(taMatrix_impl* data); // validates, sets if valid, true if set
-  virtual bool		ValidateData(taMatrix_impl* data); // validates, based on expected geom and type
+  virtual bool		SetCachedData(taMatrix* data); // validates, sets if valid, true if set
+  virtual bool		ValidateData(taMatrix* data); // validates, based on expected geom and type
   
   void			InitLinks();
   void			CutLinks();
@@ -74,7 +74,7 @@ public:
   TA_BASEFUNS(DataChannel); //
   
 protected:
-  taMatrixPtr_impl	m_cached_data; // #NO_SAVE most recent data set/get for this channel
+  taMatrixPtr	m_cached_data; // #NO_SAVE most recent data set/get for this channel
   
 private:
   void			Initialize();
@@ -119,7 +119,7 @@ public:
   virtual int		source_channel_count() = 0; // number of source channels
   virtual DataChannel* 	source_channel(int idx) = 0; // get a source channel
   
-  virtual bool		GetData(taMatrixPtr_impl& data, int chan = 0) // get a single channel's data
+  virtual bool		GetData(taMatrixPtr& data, int chan = 0) // get a single channel's data
     {if ((chan >= 0) && (chan < source_channel_count())) {
        data = source_channel(chan)->cached_data(); return true;
      } else return false;}
@@ -135,7 +135,7 @@ public:
   virtual ISequencable* sequencer() = 0; // sequencing interface
   virtual int		sink_channel_count() = 0; // number of sink channels
   virtual DataChannel* 	sink_channel(int idx) = 0; // get a sink channel
-  virtual bool		SetData(taMatrixPtr_impl& data, int chan = 0) // set a single channel's data
+  virtual bool		SetData(taMatrixPtr& data, int chan = 0) // set a single channel's data
     {if ((chan >= 0) && (chan < sink_channel_count()))
        return sink_channel(chan)->SetCachedData(data);
      else return false;}

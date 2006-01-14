@@ -16,7 +16,7 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-/* #undef DEBUG */
+#define DEBUG 
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
@@ -252,7 +252,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-/* #undef TA_PROFILE */
+#define TA_PROFILE 
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor

@@ -1107,7 +1107,7 @@ public:
   String	GetValStr(void* base, void* par=NULL,
 				  MemberDef* memb_def = NULL) const;
   // get a string representation of value
-  void		SetValStr(const char* val, void* base, void* par=NULL,
+  void		SetValStr(const String& val, void* base, void* par=NULL,
 				  MemberDef* memb_def = NULL);
   // set the value from a string representation
 
@@ -1172,20 +1172,20 @@ public:
 #ifndef __MAKETA__
   static const int N = 624;
   static const int M = 397;
-  static const ulong MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
-  static const ulong UPPER_MASK = 0x80000000UL; /* most significant w-r bits */
-  static const ulong LOWER_MASK = 0x7fffffffUL; /* least significant r bits */
+  static const uint MATRIX_A = 0x9908b0dfU;   /* constant vector a */
+  static const uint UPPER_MASK = 0x80000000U; /* most significant w-r bits */
+  static const uint LOWER_MASK = 0x7fffffffU; /* least significant r bits */
 
-  static ulong mt[N];
+  static uint mt[N];
   static int mti;				/* mti==N+1 means mt[N] is not initialized */
 #endif
 
-  static void seed(ulong s); 	// seed the generator with given seed value
-  static ulong seed_time_pid();	// seed the generator with a random seed produced from the time and the process id
-  static void seed_array(ulong init_key[], int key_length); // seed with given initial key
+  static void seed(uint s); 	// seed the generator with given seed value
+  static uint seed_time_pid();	// seed the generator with a random seed produced from the time and the process id
+  static void seed_array(uint init_key[], int key_length); // seed with given initial key
 
-  static ulong genrand_int32();	// generates a random number on [0,0xffffffff]-interval
-  static long  genrand_int31();	// generates a random number on [0,0x7fffffff]-interval
+  static uint genrand_int32();	// generates a random number on [0,0xffffffff]-interval
+  static int  genrand_int31();	// generates a random number on [0,0x7fffffff]-interval
   static double genrand_real1(); // generates a random number on [0,1]-real-interval
   static double genrand_real2(); // generates a random number on [0,1)-real-interval
   static double genrand_real3(); // generates a random number on (0,1)-real-interval

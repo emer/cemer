@@ -337,8 +337,8 @@ public:
   bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   int_Array		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
-  virtual taMatrix_impl* 	AR() = 0; // the matrix pointer
-  virtual const taMatrix_impl* 	AR() const = 0; // const version of the matrix pointer
+  virtual taMatrix* 	AR() = 0; // the matrix pointer
+  virtual const taMatrix* 	AR() const = 0; // const version of the matrix pointer
   virtual bool		is_numeric() const {return false;} // true if data is float, int, or byte
   virtual bool		is_string() const {return false;}// true if data is string
   virtual int		cell_size() const // for matrix type, number of elements in each cell
@@ -630,8 +630,8 @@ private:
 template<class T> 
 class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
-  override taMatrix_impl* 	AR()	{ return &ar; } // the array pointer
-  override const taMatrix_impl* AR() const { return &ar; } // the array pointer
+  override taMatrix* 	AR()	{ return &ar; } // the array pointer
+  override const taMatrix* AR() const { return &ar; } // the array pointer
 
   void	CutLinks()
     {ar.CutLinks(); DataArray_impl::CutLinks();}

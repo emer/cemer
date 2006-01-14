@@ -19,42 +19,238 @@
 
 #include "ta_matrix.h"
 
+using namespace std;
+
+ostream& operator<<(std::ostream& s, const Variant& x) {
+  x.save(s);
+  return s;
+}
+
+istream& operator>>(std::istream& s, Variant& x) {
+  x.load(s);
+  return s;
+}
+
 Variant::Variant(const Variant &cp)
-  :type(cp.type), is_null(cp.is_null)
+  :m_type(cp.m_type), m_is_null(cp.m_is_null)
 {
-  switch (cp.type) {
+  switch (cp.m_type) {
   case T_String: new(&d.str)String(cp.getString()); break;
   case T_Base:
   case T_Matrix: d.tab = NULL; taBase::SetPointer(&d.tab, cp.d.tab); break;
-  default: d.i64 = cp.d.i64; // just copy 64 bits, valid for all other types
+  default: d = cp.d; // just copy bits, valid for all other types
+  }
+}
+
+Variant::Variant(taBase* val) 
+:m_type(T_Base)
+{
+  if (val == NULL) {
+    m_is_null = true;
+    d.tab = NULL;
+  } else {
+    m_is_null = false;
+    taBase::Ref(val);
+    d.tab = val;
+  }
+}
+
+Variant::Variant(taMatrix* val) 
+:m_type(T_Matrix)
+{
+  if (val == NULL) {
+    m_is_null = true;
+    d.tab = NULL;
+  } else {
+    m_is_null = false;
+    taBase::Ref(val);
+    d.tab = val;
   }
 }
 
 Variant::~Variant() { 
   releaseType();
-  type = T_Invalid; is_null = true; // helps avoid hard-to-find zombie problems
+  m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
 }
 
+void Variant::load(istream& s) {
+  uint t;
+  s >> t;
+  if (t > T_MaxType) {
+    taMisc::Error("unrecognized Variant type code in istream: ", String(t));
+    return;
+  }
+  
+  // complex types are special, otherwise simple types are handled similarly
+  if (t == T_String) {
+      String str;
+      s >> str; 
+      setString(str);
+  } else if ((t == T_Base) || (t == T_Matrix)) { // handled almost the same
+    taString typ_name;
+    s >> typ_name; // 
+    if (typ_name == "TA_void") {
+      if (t == T_Base) setBase(NULL);
+      else setMatrix(NULL);
+    } else {
+      // get the type name
+      TypeDef* typ = taMisc::types.FindName(typ_name);
+      if (typ == NULL) {
+        taMisc::Error("While loading Variant, TypeDef not found:", typ_name);
+        return;
+      }
+      // make a token of that type, and load it in
+      taBase* ta = taBase::MakeToken(typ);
+      if (ta == NULL) {
+        taMisc::Error("While loading Variant could not make token of type:", typ_name);
+        return;
+      }
+      ta->Load(s);
+      //note: we set value according to actual type, just to be absolutely safe
+      if (ta->InheritsFrom(&TA_taMatrix))
+        setMatrix((taMatrix*)ta);
+      else setBase(ta);
+    }
+  } else {
+    releaseType();
+    m_type = t;
+    m_is_null = false; // except pointer
+    switch (t) {
+    case T_Invalid:
+      break; 
+    case T_Bool:
+      s >> d.b;
+      break;
+    case T_Int:
+      s >> d.i;
+      break;
+    case T_UInt:
+      s >> d.u;
+      break;
+    case T_Int64:
+      s >> d.i64;
+      break;
+    case T_UInt64:
+      s >> d.u64;
+      break;
+    case T_Double:
+      s >> d.d;
+      break;
+    case T_Char:
+      s >> d.c;
+      break;
+    case T_Ptr: {
+      String str;
+      s >> str; // we ignore this!
+      d.ptr = NULL;
+      m_is_null = true;
+      } break;
+    default: break ;
+    }
+  }
+}
+
+
 Variant& Variant::operator =(const Variant &cp) {
-  switch (cp.type) {
+  switch (cp.m_type) {
   case T_String: setString(cp.getString()); break;
   case T_Base: setBase(cp.d.tab); break;
   case T_Matrix: setMatrix(cp.getMatrix()); break;
   default: 
     releaseType();
-    d.i64 = cp.d.i64; // just copy 64 bits, valid for all other types
-    type = cp.type;
+    d = cp.d; // just copy bits, valid for all other types
+    m_type = cp.m_type;
     break;
   }
-  is_null = cp.is_null;
-  
+  m_is_null = cp.m_is_null;
+  return *this;
+}
+
+Variant& Variant::operator =(bool val) {
+  releaseType();
+  d.b = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(int val) {
+  releaseType();
+  d.i = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(uint val) {
+  releaseType();
+  d.u = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(int64_t val) {
+  releaseType();
+  d.i64 = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(uint64_t val) {
+  releaseType();
+  d.u64 = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(float val) {
+  releaseType();
+  d.d = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(double val) {
+  releaseType();
+  d.d = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(char val) {
+  releaseType();
+  d.c = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(void* val) {
+  releaseType();
+  d.ptr = val;
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(const String& val) {
+  setString(val);
+  m_is_null = false;
+  return *this;
+}
+
+Variant& Variant::operator =(taBase* val) {
+  setBase(val);
+  m_is_null = (val == NULL);
+  return *this;
+}
+
+Variant& Variant::operator =(taMatrix* val) {
+  setMatrix(val);
+  m_is_null = (val == NULL);
   return *this;
 }
 
 
 void Variant::releaseType() {
   // undo specials
-  switch (type) {
+  switch (m_type) {
   case T_String: getString().~String(); break;
   case T_Base:
   case T_Matrix: taBase::DelPointer(&d.tab); break;
@@ -62,36 +258,474 @@ void Variant::releaseType() {
   }
 }
 
-void Variant::setBase(taBase* cp) {
-  if (type == T_Base)
-    taBase::SetPointer(&d.tab, cp);
-  else {
-    // we should ref cp first, to avoid obscure self-assign deletions (ex matrix to base, but the same)
-    if (cp != NULL) taBase::Ref(cp);
-    releaseType();
-    d.tab = cp;
-    type = T_Base;
+void Variant::save(ostream& s) const {
+  s << (int)type();
+  
+  switch (m_type) {
+  case T_Invalid:
+    break; 
+  case T_Bool:
+    s << d.b;
+    break;
+  case T_Int:
+    s << d.i;
+    break;
+  case T_UInt:
+    s << d.u;
+    break;
+  case T_Int64:
+    s << d.i64;
+    break;
+  case T_UInt64:
+    s << d.u64;
+    break;
+  case T_Double:
+    s << d.d;
+    break;
+  case T_Char:
+    s << d.c;
+    break;
+  case T_String:
+    s << getString(); 
+    break;
+  case T_Ptr: 
+    s << toString(); //NOIE: cannot be streamed back in!!!
+    break;
+  case T_Base: 
+  case T_Matrix:
+    if (d.tab == NULL) {
+     s << "TA_void"; // indicates NULL
+    } else {
+      s << d.tab->GetTypeDef()->name;
+      d.tab->Save(s);
+    }
+    break;
+  default: break ;
   }
 }
 
-void Variant::setMatrix(taMatrix_impl* cp) {
-  if (type == T_Matrix)
+void Variant::setBase(taBase* cp) {
+  if (m_type == T_Base)
     taBase::SetPointer(&d.tab, cp);
   else {
     // we should ref cp first, to avoid obscure self-assign deletions (ex matrix to base, but the same)
     if (cp != NULL) taBase::Ref(cp);
     releaseType();
     d.tab = cp;
-    type = T_Matrix;
+    m_type = T_Base;
   }
+  m_is_null = (cp == NULL);
+}
+
+void Variant::setMatrix(taMatrix* cp) {
+  if (m_type == T_Matrix)
+    taBase::SetPointer(&d.tab, cp);
+  else {
+    // we should ref cp first, to avoid obscure self-assign deletions (ex matrix to base, but the same)
+    if (cp != NULL) taBase::Ref(cp);
+    releaseType();
+    d.tab = cp;
+    m_type = T_Matrix;
+  }
+  m_is_null = (cp == NULL);
 }
 
 void Variant::setString(const String& cp) {
-  if (type == T_String)
+  if (m_type == T_String)
     getString() = cp;
   else {
     releaseType();
     new(&d.str)String(cp);
-    type = T_String;
+    m_type = T_String;
   }
 }
+/*
+  switch (m_type) {
+  case T_Invalid: 
+  case T_Bool:
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
+  case T_Double:
+  case T_Char:
+  case T_String: 
+  case T_Ptr: 
+  case T_Base: 
+  case T_Matrix:
+  default: return ;
+  }
+  
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return ;
+  case T_Int:
+    return ;
+  case T_UInt:
+    return ;
+  case T_Int64:
+    return ;
+  case T_UInt64:
+    return ;
+  case T_Double:
+    return ;
+  case T_Char:
+    return ;
+  case T_String: 
+    return ;
+  case T_Ptr: 
+    return ;
+  case T_Base: 
+  case T_Matrix:
+    return ;
+  default: break ;
+  }
+  return ;
+  
+*/
+bool Variant::toBool() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return false;
+  case T_Bool:
+    return d.b;
+  case T_Int:
+    return (d.i != 0);
+  case T_UInt:
+    return (d.u != 0);
+  case T_Int64:
+    return (d.i64 != 0);
+  case T_UInt64:
+    return (d.u64 != 0);
+  case T_Double:
+    return (d.d != 0.0);
+  case T_Char:
+    return (d.c != 0);
+  case T_String: {
+    const String& str = getString();
+    if (str.empty()) return false;
+    else {
+      char c = str[0];
+      return ((c == 't') || (c == 'T') || (c == '1'));
+    }
+    } break;
+  case T_Ptr: 
+    return (d.ptr != NULL);
+  case T_Base: 
+  case T_Matrix:
+    return (d.tab != NULL);
+  default: break;
+  }
+  return false;
+}
+
+int Variant::toInt() const {
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return (int)d.u;
+  case T_Int64:
+    return (int)d.i64;
+  case T_UInt64:
+    return (int)d.u64;
+  case T_Double:
+    return (int)d.d;
+  case T_Char:
+    return d.c;
+  case T_String: 
+    return getString().toInt();
+  case T_Ptr: // note: not a word-size-safe conversion
+    break;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return 0;
+}
+
+uint Variant::toUInt() const {
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return (uint)d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return (uint)d.i64;
+  case T_UInt64:
+    return (uint)d.u64;
+  case T_Double:
+    return (uint)d.d;
+  case T_Char:
+    return d.c;
+  case T_String: 
+    return getString().toUInt();
+  case T_Ptr: // note: not a word-size-safe conversion
+    break;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return 0;
+}
+
+int64_t Variant::toInt64() const {
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return d.i64;
+  case T_UInt64:
+    return (int64_t)d.u64;
+  case T_Double:
+    return (int64_t)d.d;
+  case T_Char:
+    return d.c;
+  case T_String: 
+    return getString().toInt64();
+  case T_Ptr: 
+    return (int64_t)d.ptr;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return 0;
+}
+
+uint64_t Variant::toUInt64() const {
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return d.i64;
+  case T_UInt64:
+    return d.u64;
+  case T_Double:
+    return (uint64_t)d.d;
+  case T_Char:
+    return d.c;
+  case T_String: 
+    return getString().toUInt64();
+  case T_Ptr: 
+    return (uint64_t)d.ptr;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return 0;
+} 
+
+double Variant::toDouble() const {
+  switch (m_type) {
+  case T_Invalid: 
+    break ;
+  case T_Bool:
+    return (d.b) ? 1.0 : 0.0;
+  case T_Int:
+    return (double)d.i;
+  case T_UInt:
+    return (double)d.u;
+  case T_Int64:
+    return (double)d.i64;
+  case T_UInt64:
+    return (double)d.u64;
+  case T_Double:
+    return d.d;
+  case T_Char:
+    return (double)d.c;
+  case T_String: //note: may fail, if so, 0.0
+    return getString().toDouble();
+  case T_Ptr: 
+    return (double)(intptr_t)d.ptr;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return 0.0;
+}
+
+char Variant::toChar() const {
+  //note: we sort of follow Qt here
+  switch (m_type) {
+  case T_Invalid: 
+    break;
+  case T_Bool:
+    if (d.b) return '1'; else return '0';
+  case T_Int:
+    return (char)d.i;
+  case T_UInt:
+    return (char)d.u;
+  case T_Int64:
+    break ;
+  case T_UInt64:
+    break ;
+  case T_Double:
+    break ;
+  case T_Char:
+    return d.c;
+  case T_String: {
+    const String& str = getString();
+    if ((str.length() == 1))
+      return str[0];
+    } break;
+  case T_Ptr: 
+    break ;
+  case T_Base: 
+  case T_Matrix:
+    break ;
+  default: break ;
+  }
+  return '\0';
+}
+
+void* Variant::toPtr() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String: 
+    return NULL;
+  case T_Ptr: 
+    return d.ptr;
+  case T_Base: 
+  case T_Matrix:
+    return d.tab;
+  default: break ;
+  }
+  return NULL;
+}
+ 
+String Variant::toString() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return _nilString;
+  case T_Bool:
+    if (d.b) return String("true"); 
+    else     return String("false");
+  case T_Int:
+    return String(d.i);
+  case T_UInt:
+    return String(d.u);
+  case T_Int64:
+    return String(d.i64);
+  case T_UInt64:
+    return String(d.u64);
+  case T_Double:
+    return String(d.d);
+  case T_Char:
+    return String(d.c);
+  case T_String: 
+    return getString();
+  case T_Ptr: 
+    return String(d.ptr); // renders as hex
+  case T_Base: 
+  case T_Matrix:
+    return taBase::GetStringRep(d.tab);
+  default: break ;
+  }
+  return _nilString;
+}
+
+taBase* Variant::toBase() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String: 
+    return NULL;
+  case T_Ptr: 
+    return NULL;
+  case T_Base:
+    return d.tab; 
+  case T_Matrix:
+    return d.tab;
+  default: break ;
+  }
+  return NULL;
+} 
+
+taMatrix* Variant::toMatrix() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String: 
+    return NULL;
+  case T_Ptr: 
+    return NULL;
+  case T_Base:
+    if ((d.tab != NULL) && (d.tab->GetTypeDef()->InheritsFrom(TA_taMatrix)))
+      return getMatrix();
+    else return NULL;
+  case T_Matrix:
+    return getMatrix();
+  default: break ;
+  }
+  return NULL;
+} 

@@ -267,6 +267,11 @@ public:
   static TAPtr 		MakeTokenAry(TypeDef* td, int no);
   // #IGNORE make an array of tokens of the given type
 
+  static String		GetStringRep(const taBase& it) {return it.GetStringRep_impl();}
+   // #IGNORE string representation
+  static String		GetStringRep(TAPtr it); 
+  // string representation; ok if null, calls ->GetStringRep_impl
+  
   // Reference counting mechanisms, all static just for consistency..
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
   static void  		Ref(taBase& it)	{ it.refn++; }	     // #IGNORE
@@ -326,6 +331,7 @@ protected:
   virtual String 	ChildGetColText_impl(taBase* child, int col, int itm_idx = -1) const {return _nilString;}
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
+  
   virtual taDataLink* 	GetDataLink(); // forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); //note: only applicable for classes that implement datalinks
   bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this 
@@ -385,7 +391,7 @@ public:
   // #IGNORE get path from root (default), but stop at par_stop if non-null
   virtual String	GetPath(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
   // get path without name informtation, stop at par_stop if non-null
-  virtual TAPtr		FindFromPath(String& path, MemberDef*& ret_md=no_mdef, int start=0) const;
+  virtual TAPtr		FindFromPath(const String& path, MemberDef*& ret_md=no_mdef, int start=0) const;
   // find object from path (starting from this, and position start of the path)
 
   // functions for managing structural scoping
@@ -489,27 +495,27 @@ public:
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
-  { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
+    { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0)
   // #MENU #MENU_ON_Object #ARGC_1 #QUICK_SAVE Save object data to a file
-  { return GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); }
+    { return GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); }
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
   // #MENU #ARGC_1 Save object data to a new file
-  { return Save(strm,par,indent); }
+    { return Save(strm,par,indent); }
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
+    { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
+    { return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_Path(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_Path(strm, (void*)this, par, indent); } // #IGNORE
+    { return GetTypeDef()->Dump_Save_Path(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_Value(strm, (void*)this, par, indent); } // #IGNORE
+    { return GetTypeDef()->Dump_Save_Value(strm, (void*)this, par, indent); } // #IGNORE
 
   virtual int		Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); } 	// #IGNORE
+    { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); } 	// #IGNORE
   virtual int 		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
+    { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
 
   virtual int		Edit();
   // #MENU #ARGC_0 #MENU_ON_Object #LABEL_Properties #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
@@ -569,6 +575,8 @@ public:
   { }
 #endif
 protected:
+  virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
+
   int			refn;		// number of references to this object; note: MAXINT is the max allowed value
   static String		no_name; 	// return this for no names
   static int		no_idx;		// return this for no index

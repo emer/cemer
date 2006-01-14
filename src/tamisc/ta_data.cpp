@@ -58,7 +58,7 @@ void DataChannel::ClearCachedData() {
   m_cached_data = NULL; // derefs
 }
 
-bool DataChannel::SetCachedData(taMatrix_impl* data) {
+bool DataChannel::SetCachedData(taMatrix* data) {
   bool rval = ValidateData(data);
   if (rval) {
     m_cached_data = data;
@@ -118,7 +118,7 @@ int DataChannel::size() {
   return rval;
 }
 
-bool DataChannel::ValidateData(taMatrix_impl* data) {
+bool DataChannel::ValidateData(taMatrix* data) {
   // check not null
   if (data == NULL) {
     taMisc::Warning(this->GetPath(), "data is NULL");
