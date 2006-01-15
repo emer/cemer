@@ -426,8 +426,9 @@ public:
   virtual operator short() const    		{ return (short)(Int)*this; }
   virtual operator unsigned short() const	{ return (unsigned short)(Int)*this; }
   virtual operator long() const	 		{ return (long)(Int)*this; }
-  virtual operator long long() const	 		{ return (long long)(Int)*this; }
   virtual operator unsigned long() const	{ return (unsigned long)(Int)*this; }
+  virtual operator int64_t() const	 	{ return (int64_t)(Int)*this; }
+  virtual operator uint64_t() const	 	{ return (uint64_t)(Int)*this; }
 #ifndef NO_BUILTIN_BOOL
   virtual operator bool() const			{ return (Int)*this; }
 #endif

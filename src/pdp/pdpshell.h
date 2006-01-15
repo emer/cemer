@@ -341,9 +341,11 @@ public:
 };
 
 #ifdef DEBUG
+#include "ta_variant.h"
 // just a temp test object
 class TestObj: public taNBase {
 public:
+  bool			b;
   char			c;
   signed char		sc;
   unsigned char		uc;
@@ -365,6 +367,19 @@ public:
   uint64_t		u64;
   unsigned long long	ull;
   intptr_t		intptr;
+  
+  Variant		v_invalid; 
+  Variant		v_b;
+  Variant		v_c;
+  Variant		v_i;
+  Variant		v_ui;
+  Variant		v_i64;
+  Variant		v_u64;
+  Variant		v_d;
+  Variant		v_str;
+  Variant		v_ptr; 
+  Variant		v_tab; 
+  Variant		v_mat; 
   
   SIMPLE_COPY(TestObj)
   COPY_FUNS(TestObj, taNBase)

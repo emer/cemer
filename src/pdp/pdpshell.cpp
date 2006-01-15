@@ -1429,8 +1429,20 @@ void PDPRoot::GetWinPos() {
 #ifdef DEBUG
 //#include <string.h>
 void TestObj::Initialize() {
-  // just zero all the data
-  size_t _size = ((intptr_t)(&intptr) + sizeof(intptr) - (intptr_t)(&c));
-  memset(&c, 0, _size);
+  // just zero all the pod data
+  size_t _size = ((intptr_t)(&intptr) + sizeof(intptr) - (intptr_t)(&b));
+  memset(&b, 0, _size);
+  
+  v_b = false;
+  v_c = 'a';
+  v_i = 0x7fffffff;
+  v_ui = 0xffffffffU;
+  v_i64 = 0x7fffffffffffffffLL;
+  v_u64 = 0xffffffffffffffffULL;
+  v_d = 1.23e456;
+  v_str = "the rain in spain";
+  v_ptr = (void*)this;
+  v_tab = this;
+  v_mat = (taMatrix*)NULL;
 }
 #endif

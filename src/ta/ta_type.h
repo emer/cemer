@@ -878,6 +878,9 @@ public:
   int	 	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
   int	 	Dump_Load(istream& strm, void* base, void* par);
+protected:
+  int 		Dump_Save_impl(ostream& strm, TypeDef* eff_type, void* base, void* memb_base, void*, int indent);
+    // #IGNORE factored, helps with Variants
 };
 
 class TA_API MethodDef : public TypeItem {// defines a class method

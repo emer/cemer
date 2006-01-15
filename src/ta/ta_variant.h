@@ -22,6 +22,7 @@
 #include "ta_stdef.h"
 
 // externals
+class TypeDef;
 class taBase;
 class taMatrix;
 
@@ -58,7 +59,27 @@ public:
   VarType		type() const {return (VarType)m_type;} //
   
   void			save(ostream& s) const;
-  void			load(istream& s);
+  void			load(istream& s); //
+  
+  
+// following are ops to set to a specific type of value  
+  void 			setVariant(const Variant& cp); // basically a copy
+  void 			setBool(bool val, bool null = false);
+  void 			setInt(int val, bool null = false);
+  void 			setUInt(uint val, bool null = false);
+  void 			setInt64(int64_t val, bool null = false);
+  void 			setUInt64(uint64_t val, bool null = false);
+  void 			setIntPtr(intptr_t val, bool null = false)
+    {if (sizeof(intptr_t) == sizeof(int)) setInt(val, null); else setInt64(val, null);}
+  void 			setFloat(float val, bool null = false);
+  void 			setDouble(double val, bool null = false);
+  void 			setChar(char val, bool null = false);
+  void 			setPtr(void* val);
+  void			setString(const String& cp, bool null = false); // handles setting of a string 
+  void			setCString(const char* val, bool null = false)
+    {setString(String(val), null);}
+  void			setBase(taBase* cp); // handles setting of a taBase
+  void			setMatrix(taMatrix* cp); // handles setting of a matrix
   
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
   bool toBool() const;
@@ -93,19 +114,20 @@ public:
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
   // assignment operators
-  Variant& 	operator=(const Variant& cp);
-  Variant& 	operator=(bool val);
-  Variant& 	operator=(int val);
-  Variant& 	operator=(uint val);
-  Variant& 	operator=(int64_t val);
-  Variant& 	operator=(uint64_t val);
-  Variant& 	operator=(float val);
-  Variant& 	operator=(double val);
-  Variant& 	operator=(char val);
-  Variant& 	operator=(void* val);
-  Variant& 	operator=(const String& val);
-  Variant& 	operator=(taBase* val);
-  Variant& 	operator=(taMatrix* val);
+  Variant& 	operator=(const Variant& val) {setVariant(val); return *this;}
+  Variant& 	operator=(bool val) {setBool(val); return *this;}
+  Variant& 	operator=(int val) {setInt(val); return *this;}
+  Variant& 	operator=(uint val) {setUInt(val); return *this;}
+  Variant& 	operator=(int64_t val) {setInt64(val); return *this;}
+  Variant& 	operator=(uint64_t val) {setUInt64(val); return *this;}
+  Variant& 	operator=(float val) {setFloat(val); return *this;}
+  Variant& 	operator=(double val) {setDouble(val); return *this;}
+  Variant& 	operator=(char val) {setChar(val); return *this;}
+  Variant& 	operator=(void* val) {setPtr(val); return *this;}
+  Variant& 	operator=(const String& val) {setString(val); return *this;}
+  Variant& 	operator=(const char* val) {setCString(val); return *this;}
+  Variant& 	operator=(taBase* val) {setBase(val); return *this;}
+  Variant& 	operator=(taMatrix* val) {setMatrix(val); return *this;}
   
 #ifdef __MAKETA__
   friend ostream&   operator<<(ostream& s, const Variant& x);
@@ -116,6 +138,7 @@ public:
 #endif
   
   Variant(); // default is null/invalid
+  explicit Variant(VarType vt); // create with a specific type, of the default value of that type
   Variant(const Variant &cp);
   Variant(bool val);
   Variant(int val);
@@ -131,7 +154,15 @@ public:
   Variant(taBase* val);
   Variant(taMatrix* val);
   
-  ~Variant();
+  ~Variant(); //
+
+public: // following primarily for TypeDef usage, streaming, etc.
+  void			GetRepInfo(TypeDef*& typ, void*& data); // current typedef, and pointer to the data
+  void			FixNull(); // called after internal modifications, to reassert correctness of null
+  void			ForceType(VarType vt, bool null);
+    // called by streaming system to force the type to be indicated kind
+    
+
 protected:
 #ifdef __MAKETA__
   unsigned char d[12];
@@ -155,15 +186,12 @@ protected:
 
   void			releaseType(); // #IGNORE handles undoing of specials
   //note: following ops don't affect m_is_null -- context must determine that
-  void			setString(const String& cp); // #IGNORE handles setting of a string 
-  void			setBase(taBase* cp); // #IGNORE handles setting of a taBase
-  void			setMatrix(taMatrix* cp); // #IGNORE handles setting of a matrix
   
   //note: following gets ONLY valid when m_type is known to be of correct type
   const String& 	getString() const { return *((String*)(&d.str));} // #IGNORE
   String& 		getString() { return *((String*)(&d.str));} // #IGNORE
-  taMatrix*	getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
-  taMatrix*	getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
+  taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
+  taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
 };
 
 inline Variant::Variant():m_type(T_Invalid), m_is_null(true) { d.i64 = 0; } // default is null/invalid

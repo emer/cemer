@@ -21,14 +21,29 @@
 
 using namespace std;
 
-ostream& operator<<(std::ostream& s, const Variant& x) {
+ostream& operator<<(ostream& s, const Variant& x) {
   x.save(s);
   return s;
 }
 
-istream& operator>>(std::istream& s, Variant& x) {
+istream& operator>>(istream& s, Variant& x) {
   x.load(s);
   return s;
+}
+
+Variant::Variant(VarType type) {
+  memset(&d, 0, sizeof(d)); // pretty much valid for most types
+  m_is_null = false; // except ptr types
+  switch (type) {
+  case T_String: new(&d.str)String(); break;
+  case T_Ptr: 
+  case T_Base: 
+  case T_Matrix:
+    m_is_null = true; 
+    break;
+  default: break;
+  }
+  m_type = type;
 }
 
 Variant::Variant(const Variant &cp)
@@ -71,6 +86,71 @@ Variant::Variant(taMatrix* val)
 Variant::~Variant() { 
   releaseType();
   m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
+}
+/*
+  switch (m_type) {
+  case T_Invalid: 
+  case T_Bool:
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
+  case T_Double:
+  case T_Char:
+  case T_String: 
+  case T_Ptr: 
+  case T_Base: 
+  case T_Matrix:
+  default: return ;
+  }
+  
+*/
+void Variant::ForceType(VarType vt, bool null) {
+  if ((int)vt != m_type) {
+    releaseType();
+    if (vt == T_String)
+      setString(_nilString);
+    else {
+      d.i64 = 0; // fine for all others
+      m_type = vt;
+    }
+  }
+  m_is_null = null;
+}
+
+void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
+  data = &d; //note: overridden for ptr types
+  switch (m_type) {
+  case T_Invalid: typ = &TA_void; break;
+  case T_Bool: typ = &TA_bool; break;
+  case T_Int: typ = &TA_int; break;
+  case T_UInt: typ = &TA_unsigned_int; break;
+  case T_Int64: typ = &TA_int64_t; break;
+  case T_UInt64: typ = &TA_uint64_t; break;
+  case T_Double: typ = &TA_double; break;
+  case T_Char: typ = &TA_char; break;
+  case T_String:  typ = &TA_taString; break;
+  case T_Ptr: typ = &TA_void_ptr; data = d.ptr; break; 
+  case T_Base:  
+  case T_Matrix: {
+    // if null, get the base type, else the actual type
+    if (d.tab == NULL) {
+      if (m_type == T_Base) typ = &TA_taBase;
+      else typ = &TA_taMatrix;
+    } else
+      typ = d.tab->GetTypeDef();
+    data = (void*)d.tab;
+  } break;
+  }
+}
+
+void Variant::FixNull() {
+  switch (m_type) {
+  case T_Ptr: m_is_null = (d.ptr == NULL); break;
+  case T_Base: 
+  case T_Matrix: m_is_null = (d.tab == NULL); break;
+  default: break ;
+  }
 }
 
 void Variant::load(istream& s) {
@@ -151,101 +231,6 @@ void Variant::load(istream& s) {
 }
 
 
-Variant& Variant::operator =(const Variant &cp) {
-  switch (cp.m_type) {
-  case T_String: setString(cp.getString()); break;
-  case T_Base: setBase(cp.d.tab); break;
-  case T_Matrix: setMatrix(cp.getMatrix()); break;
-  default: 
-    releaseType();
-    d = cp.d; // just copy bits, valid for all other types
-    m_type = cp.m_type;
-    break;
-  }
-  m_is_null = cp.m_is_null;
-  return *this;
-}
-
-Variant& Variant::operator =(bool val) {
-  releaseType();
-  d.b = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(int val) {
-  releaseType();
-  d.i = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(uint val) {
-  releaseType();
-  d.u = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(int64_t val) {
-  releaseType();
-  d.i64 = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(uint64_t val) {
-  releaseType();
-  d.u64 = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(float val) {
-  releaseType();
-  d.d = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(double val) {
-  releaseType();
-  d.d = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(char val) {
-  releaseType();
-  d.c = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(void* val) {
-  releaseType();
-  d.ptr = val;
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(const String& val) {
-  setString(val);
-  m_is_null = false;
-  return *this;
-}
-
-Variant& Variant::operator =(taBase* val) {
-  setBase(val);
-  m_is_null = (val == NULL);
-  return *this;
-}
-
-Variant& Variant::operator =(taMatrix* val) {
-  setMatrix(val);
-  m_is_null = (val == NULL);
-  return *this;
-}
 
 
 void Variant::releaseType() {
@@ -304,6 +289,83 @@ void Variant::save(ostream& s) const {
   }
 }
 
+void Variant::setVariant(const Variant &cp) {
+  switch (cp.m_type) {
+  case T_String: setString(cp.getString()); break;
+  case T_Base: setBase(cp.d.tab); break;
+  case T_Matrix: setMatrix(cp.getMatrix()); break;
+  default: 
+    releaseType();
+    d = cp.d; // just copy bits, valid for all other types
+    m_type = cp.m_type;
+    break;
+  }
+  m_is_null = cp.m_is_null;
+}
+
+void Variant::setBool(bool val, bool null) {
+  releaseType();
+  d.b = val;
+  m_type = T_Bool;
+  m_is_null = null;
+}
+
+void Variant::setInt(int val, bool null) {
+  releaseType();
+  d.i = val;
+  m_type = T_Int;
+  m_is_null = null;
+}
+
+void Variant::setUInt(uint val, bool null) {
+  releaseType();
+  d.u = val;
+  m_type = T_UInt;
+  m_is_null = null;
+}
+
+void Variant::setInt64(int64_t val, bool null) {
+  releaseType();
+  d.i64 = val;
+  m_type = T_Int64;
+  m_is_null = null;
+}
+
+void Variant::setUInt64(uint64_t val, bool null) {
+  releaseType();
+  d.u64 = val;
+  m_type = T_UInt64;
+  m_is_null = null;
+}
+
+void Variant::setFloat(float val, bool null) {
+  releaseType();
+  d.d = val;
+  m_type = T_Double;
+  m_is_null = null;
+}
+
+void Variant::setDouble(double val, bool null) {
+  releaseType();
+  d.d = val;
+  m_type = T_Double;
+  m_is_null = null;
+}
+
+void Variant::setChar(char val, bool null) {
+  releaseType();
+  d.c = val;
+  m_type = T_Char;
+  m_is_null = null;
+}
+
+void Variant::setPtr(void* val) {
+  releaseType();
+  d.ptr = val;
+  m_type = T_Ptr;
+  m_is_null = (val == NULL);
+}
+
 void Variant::setBase(taBase* cp) {
   if (m_type == T_Base)
     taBase::SetPointer(&d.tab, cp);
@@ -330,14 +392,15 @@ void Variant::setMatrix(taMatrix* cp) {
   m_is_null = (cp == NULL);
 }
 
-void Variant::setString(const String& cp) {
+void Variant::setString(const String& val, bool null) {
   if (m_type == T_String)
-    getString() = cp;
+    getString() = val;
   else {
     releaseType();
-    new(&d.str)String(cp);
+    new(&d.str)String(val);
     m_type = T_String;
   }
+  m_is_null = null;
 }
 /*
   switch (m_type) {

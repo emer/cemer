@@ -18,6 +18,7 @@
 
 #include "ta_type.h"
 #include "ta_platform.h"
+#include "ta_variant.h"
 
 #ifndef NO_TA_BASE
 # include "ta_group.h"
@@ -2513,24 +2514,6 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
   return -1;
 }
 
-bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
-  int anidx;
-  if((anidx = parents.Find(old_tp)) >= 0) {
-    parents.ReplaceLink(anidx, new_tp);
-    name.gsub(old_tp->name, new_tp->name);
-    return true;
-  }
-  bool rval = false;
-  int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->ReplaceParent(old_tp, new_tp)) {
-      rval = true;
-      name.gsub(old_tp->name, new_tp->name); // updt name at all levels
-    }
-  }
-  return rval;
-}
-
 bool TypeDef::FindChild(const char* nm) const {
   if(children.Find(nm) >= 0)
     return true;
@@ -2754,6 +2737,24 @@ void TypeDef::Register(void* it) {
     tokens.Link(it);
 }
 
+bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
+  int anidx;
+  if((anidx = parents.Find(old_tp)) >= 0) {
+    parents.ReplaceLink(anidx, new_tp);
+    name.gsub(old_tp->name, new_tp->name);
+    return true;
+  }
+  bool rval = false;
+  int i;
+  for(i=0; i<parents.size; i++) {
+    if(parents.FastEl(i)->ReplaceParent(old_tp, new_tp)) {
+      rval = true;
+      name.gsub(old_tp->name, new_tp->name); // updt name at all levels
+    }
+  }
+  return rval;
+}
+
 void TypeDef::unRegister(void* it) {
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
@@ -2787,7 +2788,7 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
     return String((intptr_t)*((void**)base));
   }
   if (ptr == 0) {
-    if(DerivesFrom(TA_bool)) {
+    if (DerivesFrom(TA_bool)) {
       if(*((bool*)base))
 	return String("true");
       else
@@ -2832,6 +2833,18 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
     }
     else if(DerivesFrom(TA_taString))
       return *((String*)base);
+    // in general, Variant is handled by recalling this routine on its rep's typdef
+    else if (DerivesFrom(TA_Variant)) {
+      TypeDef* typ;
+      void* var_base;
+      Variant& var = *((Variant*)base);
+      if (var.isNull()) return "NULL";
+      //note: TA_void does not deal with this properly...
+      if (var.type() == Variant::T_Invalid)
+        return _nilString;
+      var.GetRepInfo(typ, var_base);
+      return typ->GetValStr(var_base, NULL, memb_def);
+    }
     else if(DerivesFormal(TA_class) && HasOption("INLINE")) {
       int i;
       String rval("{");
@@ -3029,6 +3042,21 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
     else if(DerivesFrom(TA_taString))
       *((String*)base) = val;
+    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
+    if (DerivesFrom(TA_Variant)) {
+      TypeDef* typ;
+      void* var_base;
+      Variant& var = *((Variant*)base);
+      // if it doesn't have a type, then it will just become a string
+      // (we can't let TA_void get processed...)
+      if (var.type() == Variant::T_Invalid) {
+        var = val;
+        return;
+      }
+      var.GetRepInfo(typ, var_base);
+      typ->SetValStr(val, var_base, par, memb_def);
+      var.FixNull();
+    }
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {
       taList_impl* tl = (taList_impl*)base;
@@ -3297,30 +3325,14 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       *((void**)trg_base) = *((void**)src_base); // otherwise just a voidptr
     return;
   }
-  if(ptr == 0) {
-    if(DerivesFrom(TA_bool))
-      *((bool*)trg_base) = *((bool*)src_base);
-    else if(DerivesFrom(TA_int))
-      *((int*)trg_base) = *((int*)src_base);
-    else if(DerivesFrom(TA_short))
-      *((short*)trg_base) = *((short*)src_base);
-    else if(DerivesFrom(TA_long))
-      *((long*)trg_base) = *((long*)src_base);
-    else if(DerivesFrom(TA_char))
-      *((char*)trg_base) = *((char*)src_base);
-    else if(DerivesFrom(TA_unsigned))
-      *((unsigned*)trg_base) = *((unsigned*)src_base);
-#ifndef NO_SIGNED
-    else if(DerivesFrom(TA_signed))
-      *((signed*)trg_base) = *((signed*)src_base);
-#endif
-    else if(DerivesFrom(TA_float))
-      *((float*)trg_base) = *((float*)src_base);
-    else if(DerivesFrom(TA_double))
-      *((double*)trg_base) = *((double*)src_base);
-    else if(DerivesFormal(TA_enum))
-      *((int*)trg_base) = *((int*)src_base);
-    else if(DerivesFrom(TA_taString))
+  if (ptr == 0) {
+    // internal types can simply be bit copied
+    if (internal) {
+      memcpy(trg_base, src_base, size);
+    }
+    else if (DerivesFrom(TA_Variant))
+      *((Variant*)trg_base) = *((Variant*)src_base);
+    else if (DerivesFrom(TA_taString))
       *((String*)trg_base) = *((String*)src_base);
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taBase)) {

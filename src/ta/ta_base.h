@@ -453,47 +453,47 @@ public:
 
   // these get overwritten by groups, lists, etc.
   virtual MemberDef* 	FindMembeR(const char* nm, void*& ptr) const 	// #IGNORE
-  { return GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr); }
+    { return GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr); }
   virtual MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const	// #IGNORE
-  { return GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr); }
+    { return GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr); }
 
   virtual bool		FindCheck(const char* nm) const // #IGNORE check this for the name
-  { return ((GetName() == nm) || InheritsFrom(nm)); }
+    { return ((GetName() == nm) || InheritsFrom(nm)); }
 
   virtual String	GetEnumString(const char* enum_tp_nm, int enum_val) const
-  { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
+    { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
   // get the name corresponding to given enum value in enum type enum_tp_nm
   virtual int		GetEnumVal(const char* enum_nm, String& enum_tp_nm = no_name) const
-  { return GetTypeDef()->GetEnumVal(enum_nm, enum_tp_nm); }
+    { return GetTypeDef()->GetEnumVal(enum_nm, enum_tp_nm); }
   // get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
 
   virtual void		CopyFromSameType(void* src_base) 	// #IGNORE
-  { GetTypeDef()->CopyFromSameType((void*)this, src_base); }
+    { GetTypeDef()->CopyFromSameType((void*)this, src_base); }
   virtual void		CopyOnlySameType(void* src_base)
-  { GetTypeDef()->CopyOnlySameType((void*)this, src_base); }
+    { GetTypeDef()->CopyOnlySameType((void*)this, src_base); }
   // #IGNORE copy only those members from same type (no inherited)
   virtual void		MemberCopyFrom(int memb_no, void* src_base) // #IGNORE
-  { GetTypeDef()->MemberCopyFrom(memb_no, (void*)this, src_base); }
+    { GetTypeDef()->MemberCopyFrom(memb_no, (void*)this, src_base); }
 
   virtual ostream&  	OutputType(ostream& strm) const		// #IGNORE
-  { return GetTypeDef()->OutputType(strm); }
+    { return GetTypeDef()->OutputType(strm); }
   virtual ostream&  	OutputInherit(ostream& strm) const 	// #IGNORE
-  { return GetTypeDef()->OutputInherit(strm); }
+    { return GetTypeDef()->OutputInherit(strm); }
   virtual ostream&  	OutputTokens(ostream& strm) const	//#IGNORE
-  { GetTypeDef()->tokens.List(strm); return strm; }
+    { GetTypeDef()->tokens.List(strm); return strm; }
 
   virtual ostream& 	Output(ostream& strm, int indent = 0) const // #IGNORE
-  { return GetTypeDef()->Output(strm, (void*)this, indent); }
+    { return GetTypeDef()->Output(strm, (void*)this, indent); }
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
-  { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
+    { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
   virtual taFiler*	GetFileDlg();	// #IGNORE gets file dialog for this object -- clients must ref/unrefdone
 
   virtual int	 	Load(istream& strm, TAPtr par=NULL)
   // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
-  { return GetTypeDef()->Dump_Load(strm, (void*)this, par); }
+    { return GetTypeDef()->Dump_Load(strm, (void*)this, par); }
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
-  { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
+    { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
