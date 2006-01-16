@@ -30,6 +30,9 @@ This file is part of TA/PDP++
   GNU General Public License for more details.
 ])
 
+#Disable shared libraryes
+AC_DISABLE_SHARED
+
 # Sticks config.guess  config.sub  depcomp  install-sh  ltmain.sh  missing
 # in /misc/ so they don't clutter up the root
 AC_CONFIG_AUX_DIR([misc])
