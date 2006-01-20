@@ -87,6 +87,13 @@ public:
   TAQT_TYPE_INSTANCE(taiBoolType, taiType);
 };
 
+class taiVariantType : public taiType { // TEMP: just use string values
+public:
+  int		BidForType(TypeDef* td);
+
+  TAQT_TYPE_INSTANCE(taiVariantType, taiType);
+};
+
 class taiClassType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton

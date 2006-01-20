@@ -878,9 +878,6 @@ public:
   int	 	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
   int	 	Dump_Load(istream& strm, void* base, void* par);
-protected:
-  int 		Dump_Save_impl(ostream& strm, TypeDef* eff_type, void* base, void* memb_base, void*, int indent);
-    // #IGNORE factored, helps with Variants
 };
 
 class TA_API MethodDef : public TypeItem {// defines a class method
@@ -1016,6 +1013,8 @@ public:
 
   TypeDef* 		GetNonPtrType() const;
   // gets base type (ptr=0) parent of this type
+  TypeDef* 		GetPtrType() const;
+  // gets child type that is a ptr to this type -- makes one if necessary
   TypeDef* 		GetNonRefType() const;
   // gets base type (not ref) parent of this type
   TypeDef* 		GetNonConstType() const;
@@ -1051,6 +1050,8 @@ public:
   { bool rval=0; if(par_formal.Find(it)>=0) rval=1; return rval; }
   bool 			DerivesFormal(const TypeDef& it) const { return DerivesFormal((TypeDef*)&it); }
 
+  bool			InheritsNonAtomicClass() const; // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
+  
   TypeDef*	AddParent(TypeDef* it, int p_off=0);
   // adds parent and inherits all the stuff from it
 
@@ -1165,6 +1166,8 @@ public:
   // loads the actual member values of the object (false if error)
 
   TypeDef*	FindTypeWithMember(const char* nm, MemberDef** md); // returns the type or child type with memberdef md
+protected:
+  mutable int	 m_cacheInheritsNonAtomicClass;
 };
 
 //TODO: this class doesn't belong here -- move it to a more appropriate file, or its own

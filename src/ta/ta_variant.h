@@ -55,7 +55,11 @@ public:
 #endif
   };
 
-  bool			isNull() const {return m_is_null;} // 'true' if the value is null
+  const void*		addrData() const {return &d;} // this is for low-level routines
+  
+  bool			isNull() const; // 'true' if the value is null
+  bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
+    // 'true' if the value is a taBase or taMatrix
   VarType		type() const {return (VarType)m_type;} //
   
   void			save(ostream& s) const;
@@ -161,7 +165,9 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			FixNull(); // called after internal modifications, to reassert correctness of null
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
-    
+  void			Dump_Save_Type(ostream& strm); // dumps type and null 
+  void			Dump_Load_Type(istream& strm); 
+    // loads type and null, using taMisc:: strm routines; calls ForceType 
 
 protected:
 #ifdef __MAKETA__

@@ -63,6 +63,17 @@ class float_Matrix; //
    
 */
 
+class MatrixGeom: public taOBase, public int_FixedArray { // #INLINE matrix geometry, similar to an array of int
+INHERITED(taOBase)
+public:
+  
+  void			Copy_(const MatrixGeom& cp);
+  COPY_FUNS(MatrixGeom, taOBase);
+  TA_BASEFUNS(MatrixGeom) //
+private:
+  void			Initialize();
+  void			Destroy(); //
+};
 
 class taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)

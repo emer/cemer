@@ -344,6 +344,7 @@ public:
 #include "ta_variant.h"
 // just a temp test object
 class TestObj: public taNBase {
+INHERITED(taNBase)
 public:
   bool			b;
   char			c;
@@ -372,22 +373,60 @@ public:
   Variant		v_b;
   Variant		v_c;
   Variant		v_i;
+  Variant		v_i_ro; // #READ_ONLY #SHOW #NO_SAVE
   Variant		v_ui;
   Variant		v_i64;
   Variant		v_u64;
   Variant		v_d;
   Variant		v_str;
+  void*			s_ptr;
+  String		typ_s_ptr; // #READ_ONLY #NO_SAVE #SHOW
   Variant		v_ptr; 
+  String		typ_v_ptr; // #READ_ONLY #NO_SAVE #SHOW
   Variant		v_tab; 
+  taBase*		s_tab;
+  String		typ_s_tab; // #READ_ONLY #NO_SAVE #SHOW
+  String		typ_v_tab; // #READ_ONLY #NO_SAVE #SHOW
+  taMatrix*		s_mat;
+  String		typ_s_mat; // #READ_ONLY #NO_SAVE #SHOW
   Variant		v_mat; 
+  String		typ_v_mat; // #READ_ONLY #NO_SAVE #SHOW
+  taBase*		s_own_tab; // #OWN_POINTER an object we create and own ourself
+  Variant		v_own_tab; // #OWN_POINTER an object we create and own ourself, in a variant
   
+  void			InitObj(); // #MENU #MENU_CONTEXT set the values to non-clear values
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	UpdateAfterEdit();
   SIMPLE_COPY(TestObj)
   COPY_FUNS(TestObj, taNBase)
   TA_BASEFUNS(TestObj);
+protected:
+  void			UpdateTypeDefVars();
 private:
   void 			Initialize();
-  void			Destroy() {}
+  void			Destroy() {CutLinks();}
 };
+
+class TestObj2: public taNBase {
+INHERITED(taNBase)
+public:
+  int			int_val;
+  TestObj
+  		test_obj;
+  void	InitLinks();
+  void	CutLinks();
+  void	UpdateAfterEdit();
+  void	Copy_(const TestObj2& cp);
+  COPY_FUNS(TestObj2, taNBase)
+  TA_BASEFUNS(TestObj2);
+private:
+  void 			Initialize();
+  void			Destroy() {CutLinks();}
+};
+
+
 #endif
 
 

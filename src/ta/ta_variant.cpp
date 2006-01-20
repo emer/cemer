@@ -105,21 +105,31 @@ Variant::~Variant() {
   }
   
 */
+void Variant::Dump_Load_Type(istream& strm) {
+}
+
+void Variant::Dump_Save_Type(ostream& strm) {
+  strm << " " << (int)type() << " " << (m_is_null) ? '1' : '0';
+} 
+
 void Variant::ForceType(VarType vt, bool null) {
   if ((int)vt != m_type) {
-    releaseType();
     if (vt == T_String)
       setString(_nilString);
     else {
-      d.i64 = 0; // fine for all others
-      m_type = vt;
+     releaseType();
+     d.i64 = 0; // fine for all others
+     m_type = vt;
     }
+    // we need to ignore null for the ptr types, and force it true
+    if ((vt >= T_Ptr) && (vt <= T_Matrix))
+      m_is_null = true;
+    else m_is_null = null;
   }
-  m_is_null = null;
 }
 
 void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
-  data = &d; //note: overridden for ptr types
+  data = &d; 
   switch (m_type) {
   case T_Invalid: typ = &TA_void; break;
   case T_Bool: typ = &TA_bool; break;
@@ -130,16 +140,19 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
   case T_Double: typ = &TA_double; break;
   case T_Char: typ = &TA_char; break;
   case T_String:  typ = &TA_taString; break;
-  case T_Ptr: typ = &TA_void_ptr; data = d.ptr; break; 
+  //note: in pdp, a member variable of type "void*" return md->type = "void_ptr"
+  case T_Ptr: typ = &TA_void_ptr; break; 
   case T_Base:  
   case T_Matrix: {
     // if null, get the base type, else the actual type
+    TypeDef* temp_typ;
     if (d.tab == NULL) {
-      if (m_type == T_Base) typ = &TA_taBase;
-      else typ = &TA_taMatrix;
+      if (m_type == T_Base) temp_typ = &TA_taBase;
+      else temp_typ = &TA_taMatrix;
     } else
-      typ = d.tab->GetTypeDef();
-    data = (void*)d.tab;
+      temp_typ = d.tab->GetTypeDef();
+    // now, get a ptr to that type
+    typ = temp_typ->GetPtrType();
   } break;
   }
 }
@@ -150,6 +163,18 @@ void Variant::FixNull() {
   case T_Base: 
   case T_Matrix: m_is_null = (d.tab == NULL); break;
   default: break ;
+  }
+}
+
+bool Variant::isNull() const {
+  //note: we try to keep m_is_null valid, but way safer to 
+  // base this on the actual value, particularly to avoid
+  // obscure issues when streaming in values, in case FixNull not called
+  switch (m_type) {
+  case T_Ptr: return (d.ptr == NULL);
+  case T_Base: 
+  case T_Matrix: return (d.tab == NULL);
+  default: return m_is_null;
   }
 }
 

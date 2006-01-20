@@ -308,6 +308,17 @@ void taiBoolType::GetValue_impl(taiData* dat, void* base) {
 
 
 ////////////////////////
+//  taiVariantType   //
+////////////////////////
+
+int taiVariantType::BidForType(TypeDef* td){
+  if(td->InheritsFrom(TA_Variant))
+    return(taiType::BidForType(td) + 2); // outbid taiClass type
+  return 0;
+}
+
+
+////////////////////////
 //  taiClassType    //
 ////////////////////////
 
@@ -362,6 +373,7 @@ int taiStringType::BidForType(TypeDef* td){
     return(taiClassType::BidForType(td) + 1);
   return 0;
 }
+
 taiData* taiStringType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_);
 }

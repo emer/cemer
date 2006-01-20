@@ -1572,8 +1572,18 @@ MemberDef* MemberSpace::FindAddr(void* base, void* mbr, int& idx) const {
 int MemberSpace::FindPtr(void* base, void* mbr) const {
   int i;
   for(i=0; i<size; i++) {
-    if((FastEl(i)->type->ptr == 1) && (mbr == *((void **)FastEl(i)->GetOff(base))))
+    MemberDef* md = FastEl(i);
+    // check conventional pointers of any type
+    if((md->type->ptr == 1) && (mbr == *((void **)md->GetOff(base))))
       return i;
+    // Variants: just check for equivalence to contained pointer,
+    //  if doesn't contain a ptr, test will return null
+    if (md->type->InheritsFrom(TA_Variant)) {
+      Variant& var = *((Variant*)md->GetOff(base));
+      if (mbr == var.toPtr())
+        return i;
+    }
+      
   }
   return -1;
 }
@@ -2073,6 +2083,7 @@ void TypeDef::Initialize() {
   methods.owner = this;
   templ_pars.name = "templ_pars";
   templ_pars.owner = this;
+  m_cacheInheritsNonAtomicClass = 0;
 }
 
 TypeDef::TypeDef()
@@ -2196,6 +2207,16 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
     if(md->owner == &(old->methods))
       methods.Replace(i, md->Clone());
   }
+}
+
+bool TypeDef::InheritsNonAtomicClass() const {
+  if (m_cacheInheritsNonAtomicClass == 0) {
+    // set cache
+    m_cacheInheritsNonAtomicClass =
+      (InheritsFormal(TA_class) && !InheritsFrom(TA_taString) && !InheritsFrom(TA_Variant)) ?
+      1 : -1;
+  }
+  return (m_cacheInheritsNonAtomicClass == 1);
 }
 
 void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
@@ -2512,6 +2533,26 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
       return rval;
   }
   return -1;
+}
+
+TypeDef* TypeDef::GetPtrType() const {
+  TypeDef* rval = NULL;
+  int i = children.Find(name + "_ptr");
+  if (i >= 0) {
+    rval = children.FastEl(i);
+    // make sure its ptr count is one more than ours!
+    if (rval->ptr != (ptr + 1)) {
+      rval = NULL;
+    }
+  }
+  if (rval == NULL) {
+    // need to make one, we use same pattern as maketa 
+    rval = new TypeDef(name + "_ptr", internal, ptr + 1, 0, 0, 0);
+    taMisc::types.Add(rval);
+    // unconstify us, this is an internal operation, still considered "const" access
+    rval->AddParent((TypeDef*)this);
+  }
+  return rval;
 }
 
 bool TypeDef::FindChild(const char* nm) const {

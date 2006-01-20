@@ -1434,15 +1434,168 @@ void TestObj::Initialize() {
   memset(&b, 0, _size);
   
   v_b = false;
+  v_c = '\0';
+  v_i.setInt(0);
+  v_i_ro.setInt(0x7fffffff);
+  v_ui.setUInt(0U);
+  v_i64.setInt64(0LL);
+  v_u64.setUInt64(0ULL);
+  v_d.setDouble(0.0);
+  v_str.setString(_nilString);
+  s_ptr = NULL;
+  v_ptr.setPtr(NULL);
+  s_tab = NULL;
+  v_tab.setBase(NULL);
+  s_mat = NULL;
+  v_mat.setMatrix(NULL);
+  s_own_tab = NULL;
+  v_own_tab.setBase(NULL);
+}
+
+void TestObj::InitLinks() {
+  inherited::InitLinks();
+  UpdateTypeDefVars();
+}
+
+void TestObj::CutLinks() {
+  taBase* own_tab = v_own_tab.toBase();
+  if (own_tab) {
+    own_tab->CutLinks();
+    v_own_tab.setBase(NULL); // should delete
+  }
+  if (s_own_tab) {
+    s_own_tab->CutLinks();
+    taBase::DelPointer(&s_own_tab);
+  }
+  v_tab.setBase(NULL);
+  v_mat.setMatrix(NULL);
+  inherited::CutLinks();
+}
+
+void TestObj::UpdateAfterEdit() {
+  UpdateTypeDefVars();
+  inherited::UpdateAfterEdit();
+}
+
+void TestObj::UpdateTypeDefVars() {
+  MemberDef* md;
+  TypeDef* mt = GetTypeDef();
+  md = mt->members.SafeEl(mt->members.Find("s_ptr"));
+  if (md != NULL) {
+    typ_s_ptr = md->type->name;
+  }
+  md = mt->members.SafeEl(mt->members.Find("s_tab"));
+  if (md != NULL) {
+    typ_s_tab = md->type->name;
+  }
+  md = mt->members.SafeEl(mt->members.Find("s_mat"));
+  if (md != NULL) {
+    typ_s_mat = md->type->name;
+  }
+  void* dummy;
+  TypeDef* typ;
+  v_ptr.GetRepInfo(typ, dummy);
+  typ_v_ptr = typ->name; 
+  v_tab.GetRepInfo(typ, dummy);
+  typ_v_tab = typ->name; 
+  v_mat.GetRepInfo(typ, dummy);
+  typ_v_mat = typ->name; 
+}
+
+void TestObj::InitObj() {
+  b = true;
+  c = 'a';
+  sc = 'b';
+  uc = 255;
+  byt = 254; //note: s/b same as an unsigned char
+  sh = 32767;
+  ssh = 32766;
+  ush = 65535;
+  i = 2147483647;
+  si = 2147483646;
+  s = 2147483645;
+  ui = 4294967295U;
+  u = 4294967294U;
+  l = 2147483647L;
+  sl = 2147483646L;
+  ul = 4294967295UL;
+  i64 = 9223372036854775807LL;
+  ll = 9223372036854775806LL;
+  sll = 9223372036854775805LL;
+  u64 = 18446744073709551615ULL;
+  ull = 18446744073709551614ULL;
+  intptr = (sizeof(int) == sizeof(intptr_t)) ? i : (intptr_t)i64;
+
+  v_b = true;
   v_c = 'a';
   v_i = 0x7fffffff;
   v_ui = 0xffffffffU;
   v_i64 = 0x7fffffffffffffffLL;
   v_u64 = 0xffffffffffffffffULL;
-  v_d = 1.23e456;
+  v_d = 1.23e45;
   v_str = "the rain in spain";
   v_ptr = (void*)this;
-  v_tab = this;
-  v_mat = (taMatrix*)NULL;
+  v_ptr = s_ptr;
+  taBase::SetPointer(&s_tab, this->GetOwner());
+  v_tab = s_tab;
+  // find a matrix in the owner
+  taList_impl* own_lst = GET_MY_OWNER(taList_impl);
+  if (own_lst != NULL) {
+    taBase* it;
+    taListItr itr;
+    FOR_ITR_EL(taBase, it, own_lst->, itr) {
+      if (it->InheritsFrom(&TA_taMatrix)) {
+        taBase::SetPointer((taBase**)&s_mat, it);
+        v_mat.setMatrix(s_mat);
+        break;
+      }
+    }
+  }
+  if (!taMisc::is_loading) {
+    if (s_own_tab == NULL) {
+      taBase::SetPointer(&s_own_tab, new taNBase());
+      s_own_tab->SetName("s_owned_taBase");
+      taBase::Own(s_own_tab, this);
+    }
+    if (v_own_tab.isNull()) {
+      v_own_tab = new taNBase();
+      v_own_tab.toBase()->SetName("v_owned_taBase");
+      taBase::Own(v_own_tab.toBase(), this);
+    }
+  }
+  UpdateAfterEdit();
 }
+
+
+void TestObj2::Initialize() {
+  int_val = 0;
+}
+
+void TestObj2::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(test_obj, this);
+  if (!taMisc::is_loading) {
+      if (test_obj.s_own_tab == NULL) {
+      taBase::SetPointer(&test_obj.s_own_tab, new taNBase());
+      test_obj.s_own_tab->SetName("par_created_s_owned_taBase");
+      taBase::Own(test_obj.s_own_tab, &test_obj);
+    }
+  }
+
+}
+
+void TestObj2::CutLinks() {
+  test_obj.CutLinks();
+  inherited::CutLinks();
+}
+
+void TestObj2::Copy_(const TestObj2& cp) {
+  int_val = cp.int_val;
+  test_obj = cp.test_obj;
+}
+
+void TestObj2::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+}
+
 #endif
