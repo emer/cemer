@@ -119,7 +119,7 @@ bool Variant::Dump_Load_Type(istream& strm, int& c) {
 }
 
 void Variant::Dump_Save_Type(ostream& strm) {
-  strm << " " << (int)type() << " " << (m_is_null) ? '1' : '0';
+  strm << " " << (int)type() << " " << (isNull()) ? '1' : '0';
 } 
 
 void Variant::ForceType(VarType vt, bool null) {

@@ -167,15 +167,16 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
 }
 
 int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
+  strm << "{ ";
   int i;
   if (geom.size > 0) {
     strm << "[";
     for (i=0; i< geom.size; ++i) {
-      strm << geom.FastEl(i) << " ";
+      if (i > 0) strm << " ";
+      strm << geom.FastEl(i);
     }
     strm << "] ";
   }
-  strm << "{ ";
   for (i=0; i < size; ++i) {
     strm << FastElAsStr_Flat(i) << ";";
   }
@@ -188,25 +189,24 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
   if (c == ';') // just a path
     return 2;  // signal that just a path was loaded..
 
-  // we expect, but don't require, the [..] dims 
-  // if we don't get it (Array compatability mode) then we use dim=1
-  int_Array ar; // temp, while streaming
-  if (c == '[') {
-    do {
-      c = taMisc::read_word(strm);
-      ar.Add(taMisc::LexBuf.toInt());
-      c = taMisc::skip_white(strm);
-    } while ((c != ']') && (c != EOF));
-    c = taMisc::skip_white(strm); // should get { 
-  }
-  //note: should always be at least one dim if we had [ but we check anyway
-  if (ar.size > 0)
-    SetGeomN(ar);
   
   if (c != '{') {
     taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
     return false;
   }
+  // we expect, but don't require, the [..] dims 
+  int_Array ar; // temp, while streaming
+  c = taMisc::skip_white(strm, true); // use peek mode, until we're sure
+  if (c == '[') {
+    strm.get(); // actually gets the [
+    do {
+      c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
+      ar.Add(taMisc::LexBuf.toInt());
+    } while ((c != ']') && (c != EOF));
+  }
+  //note: should always be at least one dim if we had [ but we check anyway
+  if (ar.size > 0)
+    SetGeomN(ar);
   c = taMisc::read_till_rb_or_semi(strm);
   int idx = 0;
   while ((c == ';') && (c != EOF)) {
