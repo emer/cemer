@@ -2879,10 +2879,11 @@ String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
       TypeDef* typ;
       void* var_base;
       Variant& var = *((Variant*)base);
-      if (var.isNull()) return "NULL";
-      //note: TA_void does not deal with this properly...
+      //note: TA_void does not deal with this properly, so don't indirect...
       if (var.type() == Variant::T_Invalid)
         return _nilString;
+        //NOTE: maybe we should indirect, rather than return NULL directly...
+      if (var.isNull()) return "NULL";
       var.GetRepInfo(typ, var_base);
       return typ->GetValStr(var_base, NULL, memb_def);
     }
@@ -3084,19 +3085,21 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(DerivesFrom(TA_taString))
       *((String*)base) = val;
     // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    if (DerivesFrom(TA_Variant)) {
+    else if (DerivesFrom(TA_Variant)) {
       TypeDef* typ;
       void* var_base;
       Variant& var = *((Variant*)base);
       // if it doesn't have a type, then it will just become a string
       // (we can't let TA_void get processed...)
       if (var.type() == Variant::T_Invalid) {
-        var = val;
+        // don't do anything for empty string
+        if (!val.empty())
+          var = val;
         return;
       }
       var.GetRepInfo(typ, var_base);
       typ->SetValStr(val, var_base, par, memb_def);
-      var.FixNull();
+      var.UpdateAfterLoad();
     }
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {

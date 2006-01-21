@@ -343,21 +343,32 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void*, int indent) {
   if(!DumpMember())
     return false;
   void* new_base = GetOff(base);
+  
+  // embedded classes can never be Variant, and are completely handled in this block
+  if (type->InheritsNonAtomicClass()) { 
+    taMisc::indent(strm, indent, 1) << name;
+    if (type->InheritsFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)new_base;
+      rbase->Dump_Save_inline(strm, (TAPtr)base, indent);
+    }
+    else
+      type->Dump_Save_inline(strm, new_base, base, indent);
+    strm << ";\n";
+    return true;
+  }
+  
+  // otherwise, we could have a Variant, in which case we will indirect
+  
   TypeDef* eff_type = type;
-  bool output_name = true; // for some variants, we have to output it early
-  bool output_value = true; 
-  // variant taBase types will get indirected
   if (type->InheritsFrom(TA_Variant)) {
     Variant& var = *((Variant*)(new_base));
     var.GetRepInfo(eff_type, new_base);
-    // we only output name and type info for atomic types, and null taBase types
-    if (!(var.isBaseType() && !var.isNull())) {
+    // we need to output a spurious name and type info for taBase types
+    // so they are guaranteed to have the type info before encountering taBase ops in the load
+    if (var.isBaseType()) {
       taMisc::indent(strm, indent, 1) << name;
-      output_name = false;
       var.Dump_Save_Type(strm);
-      // we only dump an actual value if valid, and atomic or not null
-      if ((var.type() == Variant::T_Invalid) || var.isNull()) 
-        output_value = false;
+      strm << ";\n";
     } 
   }
   
@@ -374,34 +385,32 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void*, int indent) {
     }
   }
 
-  // note: if we are a variant, we already output the name
-  if (output_name) taMisc::indent(strm, indent, 1) << name;
+  taMisc::indent(strm, indent, 1) << name;
 
-  if (eff_type->InheritsNonAtomicClass()) { //note: Variant can never lead to this
-    if (eff_type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)new_base;
-      rbase->Dump_Save_inline(strm, (TAPtr)base, indent);
+  bool save_value = true;
+  if (type->InheritsFrom(TA_Variant)) {
+    Variant& var = *((Variant*)(new_base));
+    var.Dump_Save_Type(strm);
+    // we don't try to save null atomics
+    if (var.isAtomic() && var.isNull()) {
+      save_value = false;
     }
-    else
-      eff_type->Dump_Save_inline(strm, new_base, base, indent);
   }
-  else {
-    if (output_value) {
-      if (eff_type->InheritsFrom(TA_taString)) {
-        //TODO: should have better substitution
-        // put quotes here because other uses of string vals don't need them
-        // also quote special characters
-        taString str = eff_type->GetValStr(new_base, base, this);
-        str.gsub("\\", "\\\\");
-        str.gsub("\"", "\\\"");
-        strm << "=\"" << str << "\"";
-      }
-      else {
-        strm << "=" << eff_type->GetValStr(new_base, base, this);
-      }
+  if (save_value) {
+    if (eff_type->InheritsFrom(TA_taString)) {
+      //TODO: should have better substitution
+      // put quotes here because other uses of string vals don't need them
+      // also quote special characters
+      taString str = eff_type->GetValStr(new_base, base, this);
+      str.gsub("\\", "\\\\");
+      str.gsub("\"", "\\\"");
+      strm << "=\"" << str << "\"";
     }
-    strm << ";\n";
+    else {
+      strm << "=" << eff_type->GetValStr(new_base, base, this);
+    }
   }
+  strm << ";\n";
 }
 
 
@@ -746,6 +755,20 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	}
       }
       if(md != NULL) {
+        // if md is a Variant, expect the type/null codes -- load them before proceeding
+        
+        TypeDef* type = md->type; 
+        if (type->DerivesFrom(TA_Variant)) {
+          Variant& var = *((Variant*)(md->GetOff(base)));
+          // read vartype(int) and null (1/0):
+          //NOTE: we don't actually bail if not found, to support possible case where
+          // a non-variant member was changed to be a variant -- however, the loading
+          // could fail because it may not be set to the the correct type
+          if (!var.Dump_Load_Type(strm, c)) {
+            taMisc::Warning("*** expected variant type information for member:", md->name,
+              "in type:", md->GetOwnerType()->name);
+          }
+        }
 	tmp = md->Dump_Load(strm, base, par);
 	if(tmp == EOF) {
 	  if(taMisc::verbose_load >= taMisc::MESSAGES)
@@ -778,6 +801,10 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 }
 
 int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
+   //NOTE: this routine can be called in either of two loading contexts:
+   // 1) loading the Path portion
+   // 2) loading the Value portion
+   // Variants of pointer subtypes stream their type info during the Path phase
   if(!DumpMember())
     return false;
 
@@ -786,102 +813,99 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << endl;
   }
-  TypeDef* eff_type = type; // overridden for variants
   void* new_base = GetOff(base);
   int rval;
 
-  // if we are a variant, then we expect the type/null codes, and will then adjust the
-  // eff_type streaming and proceed
-  if (type->DerivesFrom(TA_Variant)) {
-    Variant& var = *((Variant*)(new_base));
-    // read vartype(int) and null (1/0):
-    //TODO: should put some sanity checks in here, particularly to detect specials like: = { ;
-    taMisc::read_alnum(strm);
-    Variant::VarType vt = (Variant::VarType)taMisc::LexBuf.toInt();
-    taMisc::read_alnum(strm);
-    bool null = taMisc::LexBuf.toBool();
-    var.ForceType(vt, null);
-    // there is only data if it was valid and not null, otherwise we should expect a ;
-    if ((vt != Variant::T_Invalid) && (!null)) {
-      // we will get the underlying type and delegate to the typedef for that type
-      var.GetRepInfo(eff_type, new_base);
-      //NOTE: if we ever stream non-atomic types, we will need to do a FixNull after that
-    } else {
-      taMisc::read_till_semi(strm); //TODO: should really confirm we got it
-      return true;
-    }
-  }
   
-  if (eff_type->InheritsNonAtomicClass()) {
-    if(eff_type->InheritsFrom(TA_taBase)) {
+  if (type->InheritsNonAtomicClass()) {
+    if(type->InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)new_base;
       rval = rbase->Dump_Load_impl(strm, (TAPtr)base);
     }
     else
-      rval = eff_type->Dump_Load_impl(strm, new_base, base);
-    if(taMisc::verbose_load >= taMisc::TRACE) {
+      rval = type->Dump_Load_impl(strm, new_base, base);
+    if (taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "Leaving MemberDef::Dump_Load, member: " << name
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
 	   << endl;
     }
     return rval;
   }
-  else if((eff_type->ptr == 1) && eff_type->DerivesFrom(TA_taBase)
-	  && HasOption("OWN_POINTER"))
-  {
-    int c = taMisc::skip_white(strm, true);
-    if (c == '{') {
-      // a taBase object that was saved as a member, but is now a pointer..
-      TAPtr rbase = *((TAPtr*)new_base);
-      if(rbase == NULL) {	// it's a null object, can't load into it
-	taMisc::Error("*** Can't load into NULL pointer object for member:", name,
-		      "in eff_type:",GetOwnerType()->name);
-	return false;
-      }
-      // treat it as normal..
-      rval = rbase->Dump_Load_impl(strm, (TAPtr)base);
-      if(taMisc::verbose_load >= taMisc::TRACE) {
-	cerr << "Leaving MemberDef::Dump_Load, member: " << name
-	     << ", par = " << String((int)par) << ", base = " << String((int)base)
-	     << endl;
-      }
-      //TODO: if we allow Variant taBase pointers, need to detect and do FixNull
-      // if (type->InheritsFormal(TA_Variant) ... do FixNull
-      return rval;
-    }
-  }
-  // ok, at this point, we have exited if we streamed: Variant=Invalid, inline classes, or owned taBase
-  
-  // therefore, we expect an = sign, for a value
-  int c = taMisc::skip_white(strm);
-  if (c != '=') {
-    taMisc::Error("*** Missing '=' in dump file for member:", name,
-		  "in eff_type:",GetOwnerType()->name);
-    return false;
-  }
-  
-  if (eff_type->InheritsFrom(TA_taString)) {
-    c = taMisc::read_till_quote(strm); // get 1st quote
-    if (c == '\"')			  // "
-      c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
-  }
   else {
-    c = taMisc::read_till_rb_or_semi(strm);
+    // if we are a variant, then adjust the eff_type and proceed
+    int c = 0; // streaming char
+    TypeDef* eff_type = type; // overridden for variants
+    if (type->DerivesFrom(TA_Variant)) {
+      Variant& var = *((Variant*)(new_base));
+      // we hopefully already loaded type info, but in any event, must proceed based on 
+      // what is the current type of the variant
+      // there can only be data if it was valid and not null, otherwise we should expect a ;
+      var.GetRepInfo(eff_type, new_base);
+    }
+    
+    if ((eff_type->ptr == 1) && eff_type->DerivesFrom(TA_taBase)
+            && HasOption("OWN_POINTER"))
+    {
+      c = taMisc::skip_white(strm, true);
+      if (c == '{') {
+        // a taBase object that was saved as a member, but is now a pointer..
+        TAPtr rbase = *((TAPtr*)new_base);
+        if(rbase == NULL) {	// it's a null object, can't load into it
+          taMisc::Error("*** Can't load into NULL pointer object for member:", name,
+                        "in eff_type:",GetOwnerType()->name);
+          return false;
+        }
+        // treat it as normal..
+        rval = rbase->Dump_Load_impl(strm, (TAPtr)base);
+        if(taMisc::verbose_load >= taMisc::TRACE) {
+          cerr << "Leaving MemberDef::Dump_Load, member: " << name
+              << ", par = " << String((int)par) << ", base = " << String((int)base)
+              << endl;
+        }
+        //TODO: if we allow Variant taBase pointers, need to detect and do FixNull
+        // if (type->InheritsFormal(TA_Variant) ... do FixNull
+        return rval;
+      }
+    }
+  
+    c = taMisc::skip_white(strm); // read next char, skipping white space
+    // if semi, no value is present, so just exit
+    if (c == ';') 
+      return true;
+    // otherwise, it better be an = 
+    if (c != '=') {
+      taMisc::Error("*** Missing '=' in dump file for member:", name,
+                    "in eff_type:",GetOwnerType()->name);
+      return false;
+    }
+    
+    //note: in v3, we based expectation of " on string type, but
+    // we should rather let input stream tell us
+    c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
+    
+    if (eff_type->InheritsFrom(TA_taString)) {
+      c = taMisc::read_till_quote(strm); // get 1st quote
+      if (c == '\"')			  // "
+        c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
+    }
+    else {
+      c = taMisc::read_till_rb_or_semi(strm);
+    }
+  
+    if(c != ';') {
+      taMisc::Error("*** Missing ';' in dump file for member:", name,
+                    "in eff_type:",GetOwnerType()->name);
+      return true;		// don't scan any more after this err..
+    }
+  
+    eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
+    if(taMisc::verbose_load >= taMisc::TRACE) {
+      cerr << "Leaving MemberDef::Dump_Load, member: " << name
+          << ", par = " << String((int)par) << ", base = " << String((int)base)
+          << endl;
+    }
+    return true;
   }
-
-  if(c != ';') {
-    taMisc::Error("*** Missing ';' in dump file for member:", name,
-		  "in eff_type:",GetOwnerType()->name);
-    return true;		// don't scan any more after this err..
-  }
-
-  eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
-  if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Leaving MemberDef::Dump_Load, member: " << name
-	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
-  }
-  return true;
 }
 
 int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,

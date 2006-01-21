@@ -167,61 +167,54 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
 }
 
 int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  //NOTE: stream format is backwards compatible with Array 
-  // if no [..] dims are found on load, then we just do single dimension, dynamic load
   int i;
   if (geom.size > 0) {
     strm << "[";
     for (i=0; i< geom.size; ++i) {
-      strm << " ";
-      strm << geom.FastEl(i);
+      strm << geom.FastEl(i) << " ";
     }
-    strm << " ] ";
+    strm << "] ";
   }
   strm << "{ ";
   for (i=0; i < size; ++i) {
-    strm << El_GetStr_(FastEl_(i)) << ";";
+    strm << FastElAsStr_Flat(i) << ";";
   }
   return true;
 }
 
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = taMisc::skip_white(strm);
-  if(c == EOF)    return EOF;
-  if(c == ';') // just a path
+  if (c == EOF)    return EOF;
+  if (c == ';') // just a path
     return 2;  // signal that just a path was loaded..
 
   // we expect, but don't require, the [..] dims 
   // if we don't get it (Array compatability mode) then we use dim=1
-  int_Array ar(4); // temp, while streaming
+  int_Array ar; // temp, while streaming
   if (c == '[') {
-    c = taMisc::read_alnum(strm);
-    while ((c != ']') && (c != EOF)) {
+    do {
+      c = taMisc::read_word(strm);
       ar.Add(taMisc::LexBuf.toInt());
-      c = taMisc::read_alnum(strm);
-    }
+      c = taMisc::skip_white(strm);
+    } while ((c != ']') && (c != EOF));
     c = taMisc::skip_white(strm); // should get { 
   }
-  bool dynamic = false;
-  if (ar.size == 0) {
-    dynamic = true;
-    ar.EnforceSize(1); // leave dim=0 to signal dynamic
-  }
-  //TODO: set size
-  if(c != '{') {
+  //note: should always be at least one dim if we had [ but we check anyway
+  if (ar.size > 0)
+    SetGeomN(ar);
+  
+  if (c != '{') {
     taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
     return false;
   }
   c = taMisc::read_till_rb_or_semi(strm);
-  int cnt = 0;
-  //TODO: prob need to allocate just flat amount, then use the ar array to control dimensions
-  // or else, just stream them in flat, adding items if in dynamic mode
+  int idx = 0;
   while ((c == ';') && (c != EOF)) {
-    if (cnt > size)  {
-      taMisc::Error("Too many items encountered for Matrix:",GetTypeDef()->name,"\n");
+    if (idx >= size)  {
+      taMisc::Error("Too many items in file for type:",GetTypeDef()->name,"\n");
       return false;
     }
-    El_SetFmStr_(FastEl_(cnt++), taMisc::LexBuf);
+    SetFmStr_Flat(idx++, taMisc::LexBuf);
     c = taMisc::read_till_rb_or_semi(strm);
   }
   if (c==EOF)	return EOF;
@@ -470,7 +463,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
 
 void taMatrix::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  UpdateGeom();
+//  UpdateGeom();
 }
 
 void taMatrix::UpdateGeom() {

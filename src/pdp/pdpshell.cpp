@@ -1545,7 +1545,18 @@ void TestObj::InitObj() {
     taListItr itr;
     FOR_ITR_EL(taBase, it, own_lst->, itr) {
       if (it->InheritsFrom(&TA_taMatrix)) {
-        taBase::SetPointer((taBase**)&s_mat, it);
+        taMatrix* mat = (taMatrix*)it;
+        // initialize it if not initialized
+        if (mat->size == 0) {
+          mat->SetGeom2(2, 3);
+          mat->SetFmStr_Flat(0, "0");
+          mat->SetFmStr_Flat(1, "1");
+          mat->SetFmStr_Flat(2, "2");
+          mat->SetFmStr_Flat(3, "3");
+          mat->SetFmStr_Flat(4, "4");
+          mat->SetFmStr_Flat(5, "5");
+        }
+        taBase::SetPointer((taBase**)&s_mat, mat);
         v_mat.setMatrix(s_mat);
         break;
       }
@@ -1595,6 +1606,44 @@ void TestObj2::Copy_(const TestObj2& cp) {
 }
 
 void TestObj2::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+}
+
+
+void TestObj3::Initialize() {
+  i = 1;
+  s_own_tab = NULL;
+  f = 2.3;
+}
+
+void TestObj3::InitLinks() {
+  inherited::InitLinks();
+  if (!taMisc::is_loading) {
+    if (s_own_tab == NULL) {
+      taBase::SetPointer(&s_own_tab, new taNBase());
+      s_own_tab->SetName("s_owned_taBase");
+      taBase::Own(s_own_tab, this);
+    }
+  }
+
+}
+
+void TestObj3::CutLinks() {
+  if (s_own_tab) {
+    s_own_tab->CutLinks();
+    taBase::DelPointer(&s_own_tab);
+  }
+  inherited::CutLinks();
+}
+
+void TestObj3::Copy_(const TestObj3& cp) {
+  i = cp.i;
+  if (s_own_tab && cp.s_own_tab) 
+    s_own_tab->Copy(*(cp.s_own_tab));
+  f = cp.f;
+}
+
+void TestObj3::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 

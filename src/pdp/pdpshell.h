@@ -426,6 +426,25 @@ private:
   void			Destroy() {CutLinks();}
 };
 
+class TestObj3: public taNBase {
+INHERITED(taNBase)
+public:
+  int			i;
+  taBase*		s_own_tab; // #OWN_POINTER #IGNORE
+  float			f;
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	UpdateAfterEdit();
+  void	Copy_(const TestObj3& cp);
+  COPY_FUNS(TestObj3, taNBase)
+  TA_BASEFUNS(TestObj3);
+private:
+  void 			Initialize();
+  void			Destroy() {CutLinks();}
+};
+
+
 
 #endif
 

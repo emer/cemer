@@ -57,6 +57,8 @@ public:
 
   const void*		addrData() const {return &d;} // this is for low-level routines
   
+  bool			isAtomic() const {return (m_type <= T_String);} 
+    // 'true' for non-ptr types (includes Invalid)
   bool			isNull() const; // 'true' if the value is null
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase or taMatrix
@@ -162,12 +164,12 @@ public:
 
 public: // following primarily for TypeDef usage, streaming, etc.
   void			GetRepInfo(TypeDef*& typ, void*& data); // current typedef, and pointer to the data
-  void			FixNull(); // called after internal modifications, to reassert correctness of null
+  void			UpdateAfterLoad(); // called after internal modifications, to reassert correctness of null etc.
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
   void			Dump_Save_Type(ostream& strm); // dumps type and null 
-  void			Dump_Load_Type(istream& strm); 
-    // loads type and null, using taMisc:: strm routines; calls ForceType 
+  bool			Dump_Load_Type(istream& strm, int& last_char); 
+    // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true' if type loaded 
 
 protected:
 #ifdef __MAKETA__

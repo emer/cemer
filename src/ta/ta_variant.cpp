@@ -105,7 +105,17 @@ Variant::~Variant() {
   }
   
 */
-void Variant::Dump_Load_Type(istream& strm) {
+bool Variant::Dump_Load_Type(istream& strm, int& c) {
+  c = taMisc::read_word(strm, true); //note: use peek mode, so we don't read the terminator
+  // if we read a proper type code, it should be an int, otherwise we encountered
+  // a special streaming char like = { ; in which case it won't convert -- ditto for null
+  if (!taMisc::LexBuf.isInt()) return false;
+  Variant::VarType vt = (Variant::VarType)taMisc::LexBuf.toInt();
+  c = taMisc::read_word(strm, true); // s/b '1' or '0'
+  if (!taMisc::LexBuf.isInt()) return false;
+  bool null = taMisc::LexBuf.toBool();
+  ForceType(vt, null);
+  return true;
 }
 
 void Variant::Dump_Save_Type(ostream& strm) {
@@ -157,7 +167,7 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
   }
 }
 
-void Variant::FixNull() {
+void Variant::UpdateAfterLoad() {
   switch (m_type) {
   case T_Ptr: m_is_null = (d.ptr == NULL); break;
   case T_Base: 
