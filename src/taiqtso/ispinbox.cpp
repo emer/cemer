@@ -20,7 +20,11 @@
 
 #include <qapplication.h>
 #include <qevent.h>
-#include <qrangecontrol.h>
+//#include <qrangecontrol.h>
+
+//Qt4 TODO: the updateDisplay() no longer exists, so the hack we coded won't take effect
+
+using namespace Qt;
 
 iSpinBox::iSpinBox(QWidget* parent)
 : QSpinBox(parent)
@@ -42,28 +46,28 @@ void iSpinBox::init() {
   mhilight = false;
   mreadOnly = false;
   updating = 0;
-  connect(editor(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
+  connect(lineEdit(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
 
 }
 
 bool iSpinBox::hasSelectedText() {
-  return editor()->hasSelectedText();
+  return lineEdit()->hasSelectedText();
 }
 
 void iSpinBox::cut() {
-  editor()->cut();
+  lineEdit()->cut();
 }
 
 void iSpinBox::copy() {
-  editor()->copy();
+  lineEdit()->copy();
 }
 
 void iSpinBox::paste() {
-  editor()->paste();
+  lineEdit()->paste();
 }
 
 void iSpinBox::del() {
-  editor()->del();
+  lineEdit()->del();
 }
 
 void iSpinBox::setHilight(bool value){
@@ -71,32 +75,36 @@ void iSpinBox::setHilight(bool value){
   if (mreadOnly && value) return;  //hilighting ignored if read-only
   mhilight = value;
   if (value) {
-    setPaletteBackgroundColor(COLOR_HILIGHT);
+    setPaletteBackgroundColor3(COLOR_HILIGHT);
   } else {
-    setPaletteBackgroundColor(QApplication::palette().active().base());
+    setPaletteBackgroundColor3(QApplication::palette().color(QPalette::Base));
   }
   update();
 }
 
 void iSpinBox::setReadOnly(bool value) {
   if (mreadOnly == value) return;
-  editor()->setReadOnly(value);
+  lineEdit()->setReadOnly(value);
   if (value) {
     mhilight = false;
     setFocusPolicy(ClickFocus);
-    setPaletteBackgroundColor(QApplication::palette().active().button());
+    setPaletteBackgroundColor3(QApplication::palette().color(QPalette::Button));
   } else {
     setFocusPolicy(StrongFocus);
-    setPaletteBackgroundColor(QApplication::palette().active().base());
+    setPaletteBackgroundColor3( QApplication::palette().color(QPalette::Base));
   }
   // note: we have to dynamically disable the up/down controls in the paint event, because of how qspinbox is implemented
   mreadOnly = value;
 }
 
-void iSpinBox::setPaletteBackgroundColor(const QColor& color) {
+void iSpinBox::setPaletteBackgroundColor3(const QColor& color) {
    // pushes through to lineEdit
-  QSpinBox::setPaletteBackgroundColor(color);
-  editor()->setBackgroundColor(color);
+//  QSpinBox::setPaletteBackgroundColor(color);
+  QPalette palette;
+  palette.setColor(backgroundRole(), color);
+  setPalette(palette);
+  palette.setColor(lineEdit()->backgroundRole(), color);
+  lineEdit()->setPalette(palette);
 }
 
 void iSpinBox::stepUp() {
@@ -116,18 +124,18 @@ void iSpinBox::updateDisplay() {
     if (updating > 0) return; // needed because our actions cause reentrance
     ++updating;
     // following tricks updateDisplay() into disabling both up/down levers
-    int old_max = maxValue();
-    int old_min = minValue();
+    int old_max = maximum();
+    int old_min = minimum();
     bool old_wrap = wrapping();
-    setMaxValue(value());
-    setMinValue(value());
+    setMaximum(value());
+    setMinimum(value());
     setWrapping(false);
-    QSpinBox::updateDisplay();
+//    QSpinBox::updateDisplay();
     // restore saved values
     setRange(old_min, old_max);
     setWrapping(old_wrap);
     --updating;
   } else {
-    QSpinBox::updateDisplay();
+//    QSpinBox::updateDisplay();
   }
 }

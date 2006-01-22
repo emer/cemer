@@ -35,5 +35,10 @@
   #define TAIQTSO_API
 //#endif
 
+// Qt3 semi-compatibility macro
+#define setPaletteBackgroundColor(w,c) { \
+  QPalette pal = w->palette(); \
+  pal.setColor(QPalette::Background,c); \
+  w->setPalette(pal);} 
 
 #endif // TAIQTSO_DEF_H

@@ -21,8 +21,7 @@
 
 #include "taiqtso_def.h"
 
-#include <qobject.h>
-#include <qspinbox.h>
+#include <QSpinBox>
 
 class TAIQTSO_API iSpinBox: public QSpinBox {
   Q_OBJECT
@@ -35,7 +34,7 @@ public:
   bool		hilight() {return mhilight;}
   bool 		isReadOnly() {return mreadOnly;}
 
-  void		setPaletteBackgroundColor(const QColor &); // override, pushes through to lineEdit
+  void		setPaletteBackgroundColor3(const QColor &); // override, pushes through to lineEdit
   void		stepUp(); // override
   void		stepDown(); // override
   void		updateDisplay(); // override -- hack to disable up/down

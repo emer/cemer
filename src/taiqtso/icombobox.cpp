@@ -37,13 +37,6 @@ iComboBox::iComboBox(QWidget* parent)
   init();
 }
 
-iComboBox::iComboBox(bool rw, QWidget* parent)
-: QComboBox(rw, parent)
-{
-  defPalette = palette();
-  init();
-}
-
 void iComboBox::init() {
   mhilight = false;
 }
@@ -53,8 +46,8 @@ void iComboBox::setHilight(bool value){
   mhilight = value;
   if (value) {
     QPalette pal = QPalette(defPalette);
-    pal.setColor(QPalette::Active, QColorGroup::Button, COLOR_HILIGHT);
-    pal.setColor(QPalette::Inactive, QColorGroup::Button, COLOR_HILIGHT);
+    pal.setColor(QPalette::Active, QPalette::Button, COLOR_HILIGHT);
+    pal.setColor(QPalette::Inactive, QPalette::Button, COLOR_HILIGHT);
 
     ((iComboBox*)this)->setPalette(pal);
   } else {

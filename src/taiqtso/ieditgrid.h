@@ -34,7 +34,7 @@ public:
   void			setStripeHeight(int val);
   void			setTopMargin(int val);
 
-  iStripeWidget(QWidget* parent = NULL, const char* name = 0);
+  iStripeWidget(QWidget* parent = NULL);
   ~iStripeWidget();
 protected:
   QColor		mhiLightColor;
@@ -56,7 +56,7 @@ public:
     QVBoxLayout*	layNamesOuter;
       iStripeWidget*		bodyNames;	// parent for the name items
         QGridLayout*	layNames;
-    QScrollView*	scrBody;	// scrollbars for the body items
+    Q3ScrollView*	scrBody;	// scrollbars for the body items
       iStripeWidget*		body;		// parent for the data items
       QGridLayout* 	layBody;	// layout for the body
 
@@ -66,7 +66,7 @@ public:
   void		setDataWidget(int row, int col, QWidget* data);
   int		cols() {return mcols;}
   QWidget*	dataGridWidget() {return (QWidget*)body;} //returns data grid widget, for parentage of its children
-  void 		setPaletteBackgroundColor (const QColor& color); //override
+  void 		setPaletteBackgroundColor3 (const QColor& color); //override
   void 		setHiLightColor (const QColor& color);
   int		rows() {return mrows;}
   void		setRowNameWidget(int row, QWidget* name);
@@ -79,9 +79,9 @@ public:
   void		resizeNames() {/*resizeNames_impl();*/} // TODO: this should get called automatically inside this widget
 
 
-  iEditGrid (QWidget* parent = 0, const char* name = 0);
-  iEditGrid (int margin_, int hspace_, int vspace_, QWidget* parent = 0, const char* name = 0);
-  iEditGrid (int margin_, int hspace_, int vspace_, int rows_, int cols_, QWidget* parent = 0, const char* name = 0);
+  iEditGrid (QWidget* parent = 0);
+  iEditGrid (int margin_, int hspace_, int vspace_, QWidget* parent = 0);
+  iEditGrid (int margin_, int hspace_, int vspace_, int rows_, int cols_, QWidget* parent = 0);
   ~iEditGrid() {}
 
 protected:

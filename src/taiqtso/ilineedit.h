@@ -21,8 +21,7 @@
 
 #include "taiqtso_def.h"
 
-#include <qobject.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 
 class TAIQTSO_API iLineEdit: public QLineEdit {
   Q_OBJECT

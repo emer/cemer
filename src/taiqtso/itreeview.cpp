@@ -16,16 +16,17 @@
 
 #include "itreeview.h"
 
-#include <qheader.h>
+#include <Q3Header>
+using namespace Qt;
 
 iTreeViewItem::iTreeViewItem (iTreeView* parent, const char* label_, const void* data_)
-:QListViewItem(parent)
+:Q3ListViewItem(parent)
 {
   init(label_, data_);
 }
 
 iTreeViewItem::iTreeViewItem (iTreeViewItem* parent, const char* label_, const void* data_)
-:QListViewItem(parent)
+:Q3ListViewItem(parent)
 {
   init(label_, data_);
 }
@@ -40,18 +41,18 @@ void iTreeViewItem::setData(const void* value)  {
 }
 
 QString iTreeViewItem::text() const {
-  return QListViewItem::text(0);
+  return Q3ListViewItem::text(0);
 }
 
 void iTreeViewItem::setText(const char* value) {
-  QListViewItem::setText(0, QString(value));
+  Q3ListViewItem::setText(0, QString(value));
 }
 
 
 // iTreeView
 
-iTreeView::iTreeView (QWidget* parent, const char* name, WFlags f)
-: QListView(parent, name, f)
+iTreeView::iTreeView (QWidget* parent, WFlags f)
+: Q3ListView(parent, NULL, f)
 {
   addColumn("Items");
   setRootIsDecorated(true);
@@ -59,25 +60,25 @@ iTreeView::iTreeView (QWidget* parent, const char* name, WFlags f)
   header()->hide();
 
   // signal forwarding
-  connect(this, SIGNAL(selectionChanged ( QListViewItem*  )), this, SLOT(selectionChanged( QListViewItem*)));
-  connect(this, SIGNAL(currentChanged ( QListViewItem*  )), this, SLOT(currentChanged( QListViewItem*)));
-  connect(this, SIGNAL(clicked ( QListViewItem*  )), this, SLOT(clicked( QListViewItem*)));
-  connect(this, SIGNAL(clicked ( QListViewItem* , const QPoint&, int  )), this, SLOT(clicked( QListViewItem*, const QPoint&, int)));
-  connect(this, SIGNAL(pressed ( QListViewItem*  )), this, SLOT(pressed( QListViewItem*)));
-  connect(this, SIGNAL(pressed ( QListViewItem* , const QPoint & , int )), this, SLOT(pressed( QListViewItem*, const QPoint&, int)));
-  connect(this, SIGNAL(doubleClicked ( QListViewItem* , const QPoint & , int )), this, SLOT(doubleClicked( QListViewItem*, const QPoint&, int)));
-  connect(this, SIGNAL(returnPressed ( QListViewItem*  )), this, SLOT(returnPressed( QListViewItem*)));
-  connect(this, SIGNAL(spacePressed ( QListViewItem*  )), this, SLOT(spacePressed( QListViewItem*)));
-  connect(this, SIGNAL(rightButtonClicked ( QListViewItem* , const QPoint &, int)), this, SLOT(rightButtonClicked( QListViewItem*, const QPoint&, int)));
-  connect(this, SIGNAL(rightButtonPressed ( QListViewItem* , const QPoint &, int)), this, SLOT(rightButtonPressed( QListViewItem*, const QPoint&, int)));
-  connect(this, SIGNAL(mouseButtonPressed ( int , QListViewItem* , const QPoint&, int)), this, SLOT(mouseButtonPressed(int,  QListViewItem*, const QPoint& , int)));
-  connect(this, SIGNAL(mouseButtonClicked ( int , QListViewItem* , const QPoint&, int)), this, SLOT(mouseButtonClicked(int, QListViewItem*, const QPoint& , int)));
-  connect(this, SIGNAL(contextMenuRequested ( QListViewItem* , const QPoint&, int)), this, SLOT(contextMenuRequested( QListViewItem*, const QPoint& , int)));
-  connect(this, SIGNAL(onItem ( QListViewItem* )), this, SLOT(onItem( QListViewItem*)));
-  connect(this, SIGNAL(expanded ( QListViewItem*  )), this, SLOT(onItem( QListViewItem*)));
-  connect(this, SIGNAL(collapsed ( QListViewItem*  )), this, SLOT(collapsed( QListViewItem*)));
-  connect(this, SIGNAL(itemRenamed ( QListViewItem* , int , const QString&  )), this, SLOT(itemRenamed( QListViewItem*, int, const QString&)));
-  connect(this, SIGNAL(itemRenamed ( QListViewItem* , int  )), this, SLOT(itemRenamed( QListViewItem*, int)));
+  connect(this, SIGNAL(selectionChanged ( Q3ListViewItem*  )), this, SLOT(selectionChanged( Q3ListViewItem*)));
+  connect(this, SIGNAL(currentChanged ( Q3ListViewItem*  )), this, SLOT(currentChanged( Q3ListViewItem*)));
+  connect(this, SIGNAL(clicked ( Q3ListViewItem*  )), this, SLOT(clicked( Q3ListViewItem*)));
+  connect(this, SIGNAL(clicked ( Q3ListViewItem* , const QPoint&, int  )), this, SLOT(clicked( Q3ListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(pressed ( Q3ListViewItem*  )), this, SLOT(pressed( Q3ListViewItem*)));
+  connect(this, SIGNAL(pressed ( Q3ListViewItem* , const QPoint & , int )), this, SLOT(pressed( Q3ListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(doubleClicked ( Q3ListViewItem* , const QPoint & , int )), this, SLOT(doubleClicked( Q3ListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(returnPressed ( Q3ListViewItem*  )), this, SLOT(returnPressed( Q3ListViewItem*)));
+  connect(this, SIGNAL(spacePressed ( Q3ListViewItem*  )), this, SLOT(spacePressed( Q3ListViewItem*)));
+  connect(this, SIGNAL(rightButtonClicked ( Q3ListViewItem* , const QPoint &, int)), this, SLOT(rightButtonClicked( Q3ListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(rightButtonPressed ( Q3ListViewItem* , const QPoint &, int)), this, SLOT(rightButtonPressed( Q3ListViewItem*, const QPoint&, int)));
+  connect(this, SIGNAL(mouseButtonPressed ( int , Q3ListViewItem* , const QPoint&, int)), this, SLOT(mouseButtonPressed(int,  Q3ListViewItem*, const QPoint& , int)));
+  connect(this, SIGNAL(mouseButtonClicked ( int , Q3ListViewItem* , const QPoint&, int)), this, SLOT(mouseButtonClicked(int, Q3ListViewItem*, const QPoint& , int)));
+  connect(this, SIGNAL(contextMenuRequested ( Q3ListViewItem* , const QPoint&, int)), this, SLOT(contextMenuRequested( Q3ListViewItem*, const QPoint& , int)));
+  connect(this, SIGNAL(onItem ( Q3ListViewItem* )), this, SLOT(onItem( Q3ListViewItem*)));
+  connect(this, SIGNAL(expanded ( Q3ListViewItem*  )), this, SLOT(onItem( Q3ListViewItem*)));
+  connect(this, SIGNAL(collapsed ( Q3ListViewItem*  )), this, SLOT(collapsed( Q3ListViewItem*)));
+  connect(this, SIGNAL(itemRenamed ( Q3ListViewItem* , int , const QString&  )), this, SLOT(itemRenamed( Q3ListViewItem*, int, const QString&)));
+  connect(this, SIGNAL(itemRenamed ( Q3ListViewItem* , int  )), this, SLOT(itemRenamed( Q3ListViewItem*, int)));
 }
 
 iTreeViewItem* iTreeView::addItem(iTreeViewItem* parent_, const char* label_, const void* data_) {

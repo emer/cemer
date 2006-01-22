@@ -21,8 +21,7 @@
 
 #include "taiqtso_def.h"
 
-#include <qobject.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 class TAIQTSO_API iCheckBox: public QCheckBox {
 //class __declspec(dllexport) iCheckBox: public QCheckBox {
@@ -41,7 +40,7 @@ protected:
   bool mhilight;
   bool mreadOnly;
   void		init();
-  void    	drawButton(QPainter* ); // override
+  void    	paintEvent(QPaintEvent* pe); // override
 };
 
 #endif // ISPINBOX_H

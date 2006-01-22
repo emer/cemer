@@ -33,48 +33,48 @@
 
 #include "taiqtso_def.h"
 
-#include <qlayout.h>
-#include <qptrlist.h>
+#include <QLayout>
+#include <QRect>
+#include <QWidgetItem>
 
-#define defAlign ((Qt::AlignmentFlags)(Qt::AlignTop | Qt::AlignCenter))
+#define defAlign (Qt::AlignTop | Qt::AlignCenter)
 
 // Alignment handling:
 // Left, Right, and Center put the "spacing" value between members
 // Justify pushes items to both edges, and distributes the space evenly
 
-typedef QPtrList<QLayoutItem> QLayoutItemList; //note: not exported
+typedef QList<QLayoutItem*> QLayoutItemList; //note: not exported
 
 class TAIQTSO_API iFlowLayout : public QLayout
 {
 public:
-  iFlowLayout(QWidget *parent, int border=0, int space=-1,
-     int aligment = defAlign);
-  iFlowLayout(QLayout* parent, int space=-1,
-     int aligment = defAlign);
-  iFlowLayout(int space=-1, int aligment = defAlign);
+  iFlowLayout(QWidget *parent, int margin = 0, int spacing = -1,
+     Qt::Alignment aligment = defAlign);
+//  iFlowLayout(QLayout* parent, int spacing = -1,
+//     Qt::Alignment aligment = defAlign);
+  iFlowLayout(int spacing = -1, Qt::Alignment aligment = defAlign);
 
   ~iFlowLayout();
 
   void addItem( QLayoutItem *item);
-  void addWidget(QWidget* item) {add(item);} // for source code consistency
-  int alignment(){return malignment;}
-  void setAlignment(int value); //default is left top
+  Qt::Alignment alignment(){return malignment;}
+  void setAlignment(Qt::Alignment value); //default is left top
   bool hasHeightForWidth() const;
   int heightForWidth( int ) const;
   QSize sizeHint() const;
-  QSize minimumSize() const;
-  QLayoutIterator iterator();
-  QSizePolicy::ExpandData expanding() const;
+  QSize minimumSize() const; //
+//  QLayoutIterator iterator();
+  Qt::Orientations expandingDirections() const;
 
 protected:
-  int malignment;
+  Qt::Alignment malignment;
   void setGeometry( const QRect& );
 
 private:
   void init();
   int doLayout( const QRect&, bool testonly = FALSE );
   void layoutLine(const QRect& r, QLayoutItemList& line_it);
-  QLayoutItemList* list;
+  QLayoutItemList list;
   int cached_width;
   int cached_hfw;
 

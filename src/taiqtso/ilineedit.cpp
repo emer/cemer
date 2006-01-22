@@ -15,8 +15,8 @@
 
 #include "ilineedit.h"
 
-#include <qapplication.h>
-
+#include <QApplication>
+#include <QPalette>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -53,9 +53,9 @@ void iLineEdit::setHilight(bool value){
   if (value) {
     bg = COLOR_HILIGHT;
   } else {
-    bg = (QApplication::palette().active().base()); // current text widget background
+    bg = QApplication::palette().color(QPalette::Base); // current text widget background
   }
-  setBackgroundColor(bg);
+  setPaletteBackgroundColor(this,bg);
   update();
 }
 
@@ -65,10 +65,10 @@ void iLineEdit::setReadOnly(bool value) {
   if (value) {
     mhilight = false;
 //    setFocusPolicy(ClickFocus);
-    setPaletteBackgroundColor(QApplication::palette().active().button());
+    setPaletteBackgroundColor(this,QApplication::palette().color(QPalette::Button));
   } else {
 //    setFocusPolicy(StrongFocus);
-    setPaletteBackgroundColor(QApplication::palette().active().base());
+    setPaletteBackgroundColor(this,QApplication::palette().color(QPalette::Base));
   }
 }
 

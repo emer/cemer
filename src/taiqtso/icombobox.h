@@ -28,7 +28,6 @@ class TAIQTSO_API iComboBox: public QComboBox {
   Q_OBJECT
 public:
   iComboBox(QWidget* parent = NULL);
-  iComboBox(bool rw, QWidget* parent);
 
   bool		hilight() {return mhilight;}
 

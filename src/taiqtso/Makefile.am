@@ -12,13 +12,11 @@ HEADS =\
 	iflowlayout.h \
 	ispinbox.h \
 	iwidgetlist.h \
-	iflowbox.h \
 	itreeview.h \
 	ilineedit.h \
 	icheckbox.h \
 	icombobox.h \
 	igeometry.h \
-	itransformer.h \
 	ieditgrid.h \
 	safeptr_so.h \
 	imisc_so.h \
@@ -34,8 +32,6 @@ SRCS =\
 	ispinbox.cpp \
 	ispinbox.moc.cpp \
 	iwidgetlist.cpp \
-	iflowbox.cpp \
-	iflowbox.moc.cpp \
 	itreeview.cpp \
 	itreeview.moc.cpp \
 	ilineedit.cpp \
@@ -45,7 +41,6 @@ SRCS =\
 	icombobox.cpp \
 	icombobox.moc.cpp \
 	igeometry.cpp \
-	itransformer.cpp \
 	ieditgrid.cpp \
 	ieditgrid.moc.cpp \
 	safeptr_so.cpp \

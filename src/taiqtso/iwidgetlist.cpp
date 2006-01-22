@@ -16,4 +16,4 @@
 
 #include "iwidgetlist.h"
 
-template class QPtrList<QWidget>;
+template class QList<QWidget*>;

@@ -19,9 +19,9 @@
 #ifndef IWIDGETLIST_H
 #define IWIDGETLIST_H
 
-#include <qwidget.h>
-#include <qptrlist.h>
+#include <QWidget>
+#include <QList>
 
-typedef QPtrList<QWidget> iWidgetList;
+typedef QList<QWidget*> iWidgetList;
 
 #endif // IWIDGETLIST_H

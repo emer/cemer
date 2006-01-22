@@ -14,7 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "icheckbox.h"
-#include <qcheckbox.h>
 #ifndef QT_NO_CHECKBOX
 #include <qpalette.h>
 #include <qbrush.h>
@@ -27,6 +26,7 @@
 #include <qapplication.h>
 #include <qstyle.h>
 
+#include <QStyleOptionButton>
 
 iCheckBox::iCheckBox(QWidget* parent)
 : QCheckBox(parent)
@@ -69,23 +69,24 @@ void iCheckBox::setReadOnly(bool value) {
 
 // NOTE: this is the Trolltech routine from QCheckbox, with the Hilight color setting added in the middle
 
-void iCheckBox::drawButton(QPainter* p)
+void iCheckBox::paintEvent(QPaintEvent* pe)
 {
-  QCheckBox::drawButton(p);
-  QRect irect = style().subRect(QStyle::SR_CheckBoxIndicator, this);
+  QCheckBox::paintEvent(pe);
   if (mhilight) {
-    p->setBrush(COLOR_BRIGHT_HILIGHT);
-    p->setPen(COLOR_BRIGHT_HILIGHT);
-    p->setRasterOp(Qt::CopyROP);
+/*TODO    QPainter p;
+    QRect irect = style()->subElementRect(QStyle::SE_CheckBoxContents, QStyleOptionButton, this);
+    p.setBrush(COLOR_BRIGHT_HILIGHT);
+    p.setPen(COLOR_BRIGHT_HILIGHT);
+//TODO: Qt4     p->setRasterOp(Qt::CopyROP);
     QRect r;
     r.setRect(irect.x(), irect.y() - 2, irect.width() + 2, 2);
-    p->drawRect(r);
+    p.drawRect(r);
     r.setRect(irect.x() + irect.width() + 1, irect.y(), 2, irect.height() + 2);
-    p->drawRect(r);
+    p.drawRect(r);
     r.setRect(irect.x() - 2, irect.y() + irect.height(), irect.width() + 2, 2);
-    p->drawRect(r);
+    p.drawRect(r);
     r.setRect(irect.x() - 2, irect.y() - 2, 2, irect.height() + 2);
-    p->drawRect(r);
+    p.drawRect(r); */
   } else {
     //nothing
   }

@@ -18,7 +18,7 @@
 //   specifically for hierarchical tree views
 // NOTE: there are many functions on TreeView and TreeViewItem that take
 //   these item types as parameters -- as long as you don't try to put
-//   any QListViewItem items in the iTreeView, it should be fine
+//   any Q3ListViewItem items in the iTreeView, it should be fine
 //   to cast (iTreeViewItem*)aQTreeViewItem anywhere
 
 #ifndef ITREEVIEW_H
@@ -26,12 +26,12 @@
 
 #include "taiqtso_def.h"
 
-#include <qlistview.h>
-#include <qstring.h>
+#include <Q3ListView>
+#include <QString>
 
 class iTreeView;
 
-class TAIQTSO_API iTreeViewItem: public QListViewItem {
+class TAIQTSO_API iTreeViewItem: public Q3ListViewItem {
 public:
   iTreeViewItem (iTreeView* parent, const char* label_ = 0, const void* data_ = NULL); // a root item
   iTreeViewItem (iTreeViewItem* parent, const char* label_ = 0, const void* data_ = NULL); // a subitem
@@ -44,21 +44,21 @@ public:
   virtual void setText(const char* value);
   virtual QString text() const;
 
-  iTreeViewItem * firstChild () const {return (iTreeViewItem*)QListViewItem::firstChild();}
-  iTreeViewItem * nextSibling () const {return (iTreeViewItem*)QListViewItem::nextSibling();}
-  iTreeViewItem * parent () const {return (iTreeViewItem*)QListViewItem::parent();}
-  iTreeViewItem * itemAbove () {return (iTreeViewItem*)QListViewItem::itemAbove();}
-  iTreeViewItem * itemBelow () {return (iTreeViewItem*)QListViewItem::itemBelow();}
+  iTreeViewItem * firstChild () const {return (iTreeViewItem*)Q3ListViewItem::firstChild();}
+  iTreeViewItem * nextSibling () const {return (iTreeViewItem*)Q3ListViewItem::nextSibling();}
+  iTreeViewItem * parent () const {return (iTreeViewItem*)Q3ListViewItem::parent();}
+  iTreeViewItem * itemAbove () {return (iTreeViewItem*)Q3ListViewItem::itemAbove();}
+  iTreeViewItem * itemBelow () {return (iTreeViewItem*)Q3ListViewItem::itemBelow();}
 
 protected:
   void init(const char* label_, const void* data_);
   void* mdata;
 };
 
-class TAIQTSO_API iTreeView: public QListView {
+class TAIQTSO_API iTreeView: public Q3ListView {
   Q_OBJECT
 public:
-  iTreeView (QWidget* parent = 0, const char* name = 0, WFlags f = 0);
+  iTreeView (QWidget* parent = 0, Qt::WFlags f = 0);
 
   iTreeViewItem* addItem(iTreeViewItem* parent_ = NULL, const char* label_ = NULL, const void* data_ = NULL); // adds to root if parent = NULL
   void setSelectedData(const void* data_, bool selected = true); // select by TreeView.data value
@@ -66,10 +66,10 @@ public:
 
   iTreeViewItem* findItem(const void* data_); // find the item by the item.data
 
-  iTreeViewItem* selectedItem () const {return (iTreeViewItem*)QListView::selectedItem();}
-  iTreeViewItem* currentItem () const {return (iTreeViewItem*)QListView::currentItem();}
-  iTreeViewItem* firstChild () const {return (iTreeViewItem*)QListView::firstChild();}
-  iTreeViewItem* lastItem () const {return (iTreeViewItem*)QListView::lastItem();}
+  iTreeViewItem* selectedItem () const {return (iTreeViewItem*)Q3ListView::selectedItem();}
+  iTreeViewItem* currentItem () const {return (iTreeViewItem*)Q3ListView::currentItem();}
+  iTreeViewItem* firstChild () const {return (iTreeViewItem*)Q3ListView::firstChild();}
+  iTreeViewItem* lastItem () const {return (iTreeViewItem*)Q3ListView::lastItem();}
 #ifndef __MAKETA__
 signals:
   void selectionChanged ( iTreeViewItem * item );
@@ -93,43 +93,43 @@ signals:
   void itemRenamed ( iTreeViewItem * item, int col );
 #endif
 protected slots: // compatibility slots
-  void selectionChanged ( QListViewItem * item ) {emit selectionChanged( (iTreeViewItem*)item);}
-  void currentChanged ( QListViewItem * item ) {emit currentChanged( (iTreeViewItem*)item);}
-  void clicked ( QListViewItem * item ) {emit clicked( (iTreeViewItem*)item);}
-  void clicked ( QListViewItem * item, const QPoint & pnt, int c ) {emit clicked( (iTreeViewItem*)item, pnt, c);}
-  void pressed ( QListViewItem * item ) {emit pressed( (iTreeViewItem*)item);}
-  void pressed ( QListViewItem * item, const QPoint & pnt, int c ) {emit pressed( (iTreeViewItem*)item, pnt, c);}
-  void doubleClicked ( QListViewItem * item, const QPoint & pnt, int c) {emit doubleClicked( (iTreeViewItem*)item, pnt, c);}
-  void returnPressed ( QListViewItem * item ) {emit returnPressed( (iTreeViewItem*)item);}
-  void spacePressed ( QListViewItem * item ) {emit spacePressed( (iTreeViewItem*)item);}
-  void rightButtonClicked ( QListViewItem * item, const QPoint & pnt, int c) {emit rightButtonClicked( (iTreeViewItem*)item, pnt, c);}
-  void rightButtonPressed ( QListViewItem * item, const QPoint & pnt, int c) {emit rightButtonPressed( (iTreeViewItem*)item, pnt, c);}
-  void mouseButtonPressed ( int button, QListViewItem * item, const QPoint & pos, int c ) {emit mouseButtonPressed(button,  (iTreeViewItem*)item, pos, c);}
-  void mouseButtonClicked ( int button, QListViewItem * item, const QPoint & pos, int c ) {emit mouseButtonClicked(button,  (iTreeViewItem*)item, pos, c);}
-  void contextMenuRequested ( QListViewItem * item, const QPoint & pos, int col ) {emit contextMenuRequested( (iTreeViewItem*)item, pos, col);}
-  void onItem ( QListViewItem * item) {emit onItem( (iTreeViewItem*)item);}
-  void expanded ( QListViewItem * item ) {emit onItem( (iTreeViewItem*)item);}
-  void collapsed ( QListViewItem * item ) {emit collapsed( (iTreeViewItem*)item);}
-  void itemRenamed ( QListViewItem * item, int col, const QString & text ) {emit itemRenamed( (iTreeViewItem*)item, col, text);}
-  void itemRenamed ( QListViewItem * item, int col ) {emit itemRenamed( (iTreeViewItem*)item, col);}
+  void selectionChanged ( Q3ListViewItem * item ) {emit selectionChanged( (iTreeViewItem*)item);}
+  void currentChanged ( Q3ListViewItem * item ) {emit currentChanged( (iTreeViewItem*)item);}
+  void clicked ( Q3ListViewItem * item ) {emit clicked( (iTreeViewItem*)item);}
+  void clicked ( Q3ListViewItem * item, const QPoint & pnt, int c ) {emit clicked( (iTreeViewItem*)item, pnt, c);}
+  void pressed ( Q3ListViewItem * item ) {emit pressed( (iTreeViewItem*)item);}
+  void pressed ( Q3ListViewItem * item, const QPoint & pnt, int c ) {emit pressed( (iTreeViewItem*)item, pnt, c);}
+  void doubleClicked ( Q3ListViewItem * item, const QPoint & pnt, int c) {emit doubleClicked( (iTreeViewItem*)item, pnt, c);}
+  void returnPressed ( Q3ListViewItem * item ) {emit returnPressed( (iTreeViewItem*)item);}
+  void spacePressed ( Q3ListViewItem * item ) {emit spacePressed( (iTreeViewItem*)item);}
+  void rightButtonClicked ( Q3ListViewItem * item, const QPoint & pnt, int c) {emit rightButtonClicked( (iTreeViewItem*)item, pnt, c);}
+  void rightButtonPressed ( Q3ListViewItem * item, const QPoint & pnt, int c) {emit rightButtonPressed( (iTreeViewItem*)item, pnt, c);}
+  void mouseButtonPressed ( int button, Q3ListViewItem * item, const QPoint & pos, int c ) {emit mouseButtonPressed(button,  (iTreeViewItem*)item, pos, c);}
+  void mouseButtonClicked ( int button, Q3ListViewItem * item, const QPoint & pos, int c ) {emit mouseButtonClicked(button,  (iTreeViewItem*)item, pos, c);}
+  void contextMenuRequested ( Q3ListViewItem * item, const QPoint & pos, int col ) {emit contextMenuRequested( (iTreeViewItem*)item, pos, col);}
+  void onItem ( Q3ListViewItem * item) {emit onItem( (iTreeViewItem*)item);}
+  void expanded ( Q3ListViewItem * item ) {emit onItem( (iTreeViewItem*)item);}
+  void collapsed ( Q3ListViewItem * item ) {emit collapsed( (iTreeViewItem*)item);}
+  void itemRenamed ( Q3ListViewItem * item, int col, const QString & text ) {emit itemRenamed( (iTreeViewItem*)item, col, text);}
+  void itemRenamed ( Q3ListViewItem * item, int col ) {emit itemRenamed( (iTreeViewItem*)item, col);}
 
 };
 
-class TAIQTSO_API iTreeViewItemIterator: public QListViewItemIterator {
+class TAIQTSO_API iTreeViewItemIterator: public Q3ListViewItemIterator {
 public:
-  iTreeViewItemIterator(iTreeViewItem* item) : QListViewItemIterator(item) {}
+  iTreeViewItemIterator(iTreeViewItem* item) : Q3ListViewItemIterator(item) {}
   iTreeViewItemIterator(iTreeViewItem* item, int iteratorFlags)
-      : QListViewItemIterator(item, iteratorFlags) {}
-  iTreeViewItemIterator(iTreeView* tv) : QListViewItemIterator(tv) {}
+      : Q3ListViewItemIterator(item, iteratorFlags) {}
+  iTreeViewItemIterator(iTreeView* tv) : Q3ListViewItemIterator(tv) {}
   iTreeViewItemIterator(iTreeView* tv, int iteratorFlags)
-      : QListViewItemIterator(tv, iteratorFlags) {}
+      : Q3ListViewItemIterator(tv, iteratorFlags) {}
 
-  iTreeViewItemIterator& operator++ () {return (iTreeViewItemIterator&)QListViewItemIterator::operator++();} //prefix ++
-  iTreeViewItemIterator& operator+= (int j) {return (iTreeViewItemIterator&)QListViewItemIterator::operator+=(j);}
-  iTreeViewItemIterator& operator-- () {return (iTreeViewItemIterator&)QListViewItemIterator::operator--();} // prefix --
-  iTreeViewItemIterator& operator-= (int j) {return (iTreeViewItemIterator&)QListViewItemIterator::operator-=(j);}
-  iTreeViewItem * operator* () {return (iTreeViewItem*)QListViewItemIterator::operator*();}
-  iTreeViewItem* current () const {return (iTreeViewItem*)QListViewItemIterator::current();}
+  iTreeViewItemIterator& operator++ () {return (iTreeViewItemIterator&)Q3ListViewItemIterator::operator++();} //prefix ++
+  iTreeViewItemIterator& operator+= (int j) {return (iTreeViewItemIterator&)Q3ListViewItemIterator::operator+=(j);}
+  iTreeViewItemIterator& operator-- () {return (iTreeViewItemIterator&)Q3ListViewItemIterator::operator--();} // prefix --
+  iTreeViewItemIterator& operator-= (int j) {return (iTreeViewItemIterator&)Q3ListViewItemIterator::operator-=(j);}
+  iTreeViewItem * operator* () {return (iTreeViewItem*)Q3ListViewItemIterator::operator*();}
+  iTreeViewItem* current () const {return (iTreeViewItem*)Q3ListViewItemIterator::current();}
 
 };
 
