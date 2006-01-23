@@ -100,11 +100,8 @@ void iSpinBox::setReadOnly(bool value) {
 void iSpinBox::setPaletteBackgroundColor3(const QColor& color) {
    // pushes through to lineEdit
 //  QSpinBox::setPaletteBackgroundColor(color);
-  QPalette palette;
-  palette.setColor(backgroundRole(), color);
-  setPalette(palette);
-  palette.setColor(lineEdit()->backgroundRole(), color);
-  lineEdit()->setPalette(palette);
+  SET_PALETTE_BACKGROUND_COLOR(this, color);
+  SET_PALETTE_BACKGROUND_COLOR(lineEdit(), color);
 }
 
 void iSpinBox::stepUp() {

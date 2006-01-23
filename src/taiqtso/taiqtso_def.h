@@ -36,7 +36,7 @@
 //#endif
 
 // Qt3 semi-compatibility macro
-#define setPaletteBackgroundColor(w,c) { \
+#define SET_PALETTE_BACKGROUND_COLOR(w,c) { \
   QPalette pal = w->palette(); \
   pal.setColor(QPalette::Background,c); \
   w->setPalette(pal);} 

@@ -55,7 +55,7 @@ void iLineEdit::setHilight(bool value){
   } else {
     bg = QApplication::palette().color(QPalette::Base); // current text widget background
   }
-  setPaletteBackgroundColor(this,bg);
+  SET_PALETTE_BACKGROUND_COLOR(this,bg);
   update();
 }
 
@@ -65,10 +65,10 @@ void iLineEdit::setReadOnly(bool value) {
   if (value) {
     mhilight = false;
 //    setFocusPolicy(ClickFocus);
-    setPaletteBackgroundColor(this,QApplication::palette().color(QPalette::Button));
+    SET_PALETTE_BACKGROUND_COLOR(this,QApplication::palette().color(QPalette::Button));
   } else {
 //    setFocusPolicy(StrongFocus);
-    setPaletteBackgroundColor(this,QApplication::palette().color(QPalette::Base));
+    SET_PALETTE_BACKGROUND_COLOR(this,QApplication::palette().color(QPalette::Base));
   }
 }
 
