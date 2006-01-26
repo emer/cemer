@@ -953,28 +953,28 @@ void ISelectable::FillContextMenu_EditItems_impl(taiMenu* menu, int allowed) {
   //TODO: provide a way to add these via already existing Actions (ex toolbar)
 //  cut copy paste link delete
   if (allowed & taiClipData::EA_CUT) {
-    taiMenuEl* mel = menu->AddItem("Cu&t", this, taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)));
+    taiMenuEl* mel = menu->AddItem("Cu&t", taiMenu::use_default,
+        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
     mel->usr_data = (void*)taiClipData::EA_CUT;
   }
   if (allowed & taiClipData::EA_COPY) {
-    taiMenuEl* mel = menu->AddItem("&Copy", this, taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)));
+    taiMenuEl* mel = menu->AddItem("&Copy", taiMenu::use_default,
+        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
     mel->usr_data = (void*)taiClipData::EA_COPY;
   }
   if (allowed & taiClipData::EA_PASTE) {
-    taiMenuEl* mel = menu->AddItem("&Paste", this, taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)));
+    taiMenuEl* mel = menu->AddItem("&Paste", taiMenu::use_default,
+        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
     mel->usr_data = (void*)taiClipData::EA_PASTE;
   }
   if (allowed & taiClipData::EA_LINK) {
-    taiMenuEl* mel = menu->AddItem("&Link", this, taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)));
+    taiMenuEl* mel = menu->AddItem("&Link", taiMenu::use_default,
+        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
     mel->usr_data = (void*)taiClipData::EA_LINK;
   }
   if (allowed & taiClipData::EA_DELETE) {
-    taiMenuEl* mel = menu->AddItem("&Delete", this, taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)));
+    taiMenuEl* mel = menu->AddItem("&Delete", taiMenu::use_default,
+        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
     mel->usr_data = (void*)taiClipData::EA_DELETE;
   }
   link()->FillContextMenu_EditItems(menu, allowed);
