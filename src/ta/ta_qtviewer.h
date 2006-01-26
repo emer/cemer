@@ -48,12 +48,12 @@
 #ifndef __MAKETA__
   #include <qaction.h>
   #include <qframe.h>
-  #include <qlistview.h>
+  #include <Q3ListView>
   #include <qmainwindow.h>
   #include <qobject.h>
   #include <qpalette.h>
   #include <qpixmap.h>
-  #include <qptrlist.h>
+  #include <QList>
   #include <qsplitter.h>
   #include <qtabbar.h>
   #include <qtoolbar.h>
@@ -77,7 +77,7 @@ class iDataPanelSet; // #IGNORE
 class iDataPanel_PtrList;
 class iTabView_PtrList; // #IGNORE
 
-class taiToolBar;
+class iToolBar;
 class taiToolBar_List;
 
 class WinGeometry;
@@ -250,18 +250,18 @@ public:
 
 
 //////////////////////////
-//   taiToolBar		//
+//   iToolBar		//
 //////////////////////////
 
-class taiToolBar: public QToolBar {
+class iToolBar: public QToolBar {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 friend class ToolBar;
 friend class iDataViewer;
 public:
   ToolBar*		toolBar() {return m_toolBar;}
-  taiToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win, const char* name = 0);
+  iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win, const char* name = 0);
    // constructor just does bare-bones create; Constr() does the actual work
-  ~taiToolBar();
+  ~iToolBar();
 protected:
   ToolBar*	m_toolBar;
   void 			showEvent(QShowEvent* e); // override
@@ -276,12 +276,12 @@ private:
 //   taiToolBar_List	//
 //////////////////////////
 
-class taiToolBar_List: public QPtrList<taiToolBar> {
+class taiToolBar_List: public QList<iToolBar*> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
 friend class ToolBar;
 public:
   ~taiToolBar_List();
-  taiToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
+  iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
 protected:
   ToolBar*		m_toolBar;
 };
@@ -485,11 +485,11 @@ friend class taDataLink;
 friend class DataViewer;
 public:
   taiToolBar_List	toolbars; // list of all created toolbars
-  iAction_List		actions; // list of all created actions
-  iAction_List		dyn_actions; // list of all dynamic actions currently available, based on selection
+  taiAction_List	actions; // our own list of all created actions
+  taiAction_List	dyn_actions; // list of all dynamic actions currently available, based on selection
   DynMethod_PtrList	dyn_methods; // dynamic methods currently available, based on selection
 
-  taiMenu*		menu;		// menu bar -- note: we use the window's built-in QMenu
+  taiMenuBar*		menu;		// menu bar -- note: we use the window's built-in QMenu
   QWidget*		m_body;		// #IGNORE body of the window -- supplied by a descendant class
 
   taiMenu* 		fileMenu;
@@ -500,23 +500,23 @@ public:
   taiMenu* 		toolsMenu;
   taiMenu* 		actionsMenu; // statically added items first; bottom section is for dynamic
   taiMenu* 		helpMenu;
-  iAction* 		fileNewAction;
-  iAction* 		fileOpenAction;
-  iAction* 		fileSaveAction;
-  iAction* 		fileSaveAsAction;
-  iAction* 		fileCloseAction;
-  iAction* 		filePrintAction;
-  iAction* 		fileCloseWindowAction; //note: special, because it is always at bottom of File menu; root=Quit
-  iAction* 		editUndoAction;
-  iAction* 		editRedoAction;
-  iAction* 		editCutAction;
-  iAction* 		editCopyAction;
-  iAction* 		editPasteAction;
-  iAction* 		editDeleteAction;
-  iAction* 		editLinkAction;
-  iAction* 		viewRefreshAction;
-  iAction* 		helpHelpAction;
-  iAction* 		helpAboutAction;
+  taiAction* 		fileNewAction;
+  taiAction* 		fileOpenAction;
+  taiAction* 		fileSaveAction;
+  taiAction* 		fileSaveAsAction;
+  taiAction* 		fileCloseAction;
+  taiAction* 		filePrintAction;
+  taiAction* 		fileCloseWindowAction; //note: special, because it is always at bottom of File menu; root=Quit
+  taiAction* 		editUndoAction;
+  taiAction* 		editRedoAction;
+  taiAction* 		editCutAction;
+  taiAction* 		editCopyAction;
+  taiAction* 		editPasteAction;
+  taiAction* 		editDeleteAction;
+  taiAction* 		editLinkAction;
+  taiAction* 		viewRefreshAction;
+  taiAction* 		helpHelpAction;
+  taiAction* 		helpAboutAction;
 
 //nn  iToolBar* 		applicationToolBar;
 
@@ -528,15 +528,15 @@ public:
   //TODO: provide a list of multi-selects
   DataViewer*		viewer() {return m_viewer;} // usually replaced by strongly typed version
 
-  virtual iAction*	AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
+  virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
   virtual void		AddPanel(iDataPanel* panel) {} //  called by DataLink on creation
-  virtual taiToolBar*	AddToolBar(taiToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
+  virtual iToolBar*	AddToolBar(iToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
   virtual void		AddToolBarMenu(const String& name, int index);
   virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl)
-  taiToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
-    // can be overriden to supply custom taiToolBar
+  iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
+    // can be overriden to supply custom iToolBar
   virtual void		FillContextMenu(taiMenu* menu); // s/b called by desc class, to put dynaction items onto menu
-  virtual bool 		InitToolBar(const String& name, taiToolBar* tb); // init the toolbar with specified name, returning true if handled
+  virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
   void			emit_SetActionsEnabled();
   void			emit_GetEditActionsEnabled(int& ea); // param is one of the taiClipData EditAction values
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
@@ -561,7 +561,7 @@ public:
 
   iDataViewer(DataViewer* viewer_, QWidget* parent = NULL);
     // uses: WFlags flags = (WType_TopLevel | WStyle_SysMenu | WStyle_MinMax | WDestructiveClose)
-  iDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags); //note: only for completeness, usually use the one with implicit flags
+//obs  iDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags); //note: only for completeness, usually use the one with implicit flags
   ~iDataViewer();
 
 #ifndef __MAKETA__
@@ -652,7 +652,7 @@ toolbars are not automatically created, so 'mapped' indicates whether
 user has opened that toolbar
 */
 class ToolBar: public taNBase {// ##NO_INSTANCE ##NO_TOKENS proxy for Toolbars
-friend class taiToolBar;
+friend class iToolBar;
 friend class iDataViewer;
 friend class DataViewer;
 public:
@@ -663,7 +663,7 @@ public:
   bool			docked;		// #HIDDEN whether toolbar is docked or not
   bool			mapped; // #HIDDEN whether toolbar window has been created
 
-  taiToolBar*		toolBar() {return m_window;} // #IGNORE
+  iToolBar*		toolBar() {return m_window;} // #IGNORE
   DataViewer*		viewer();
   iDataViewer*		viewer_win();
 
@@ -685,7 +685,7 @@ public:
 
 protected:
   DataViewer*		m_viewer;  // #IGNORE cached
-  taiToolBar*		m_window;
+  iToolBar*		m_window;
   virtual void		Constr_Window_impl(); // #IGNORE sets the m_window instance
   virtual void		OpenNewWindow_impl(); // #IGNORE
   virtual void 		WindowClosing(); // #IGNORE
@@ -703,7 +703,7 @@ private:
 class ToolBar_List: public taList<ToolBar> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
 public:
-  taiToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
+  iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
   TA_BASEFUNS(ToolBar_List);
 protected:
   void	El_SetIndex_(void* it, int index) 	{((ToolBar*)it)->index = index; }
@@ -903,9 +903,9 @@ public:
   iTabView*		tabView() {return m_curTabView;} // currently active
   iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
 
-  iAction* 		viewSplitVerticalAction;
-  iAction* 		viewSplitHorizontalAction;
-  iAction* 		viewCloseCurrentViewAction;
+  taiAction* 		viewSplitVerticalAction;
+  taiAction* 		viewSplitHorizontalAction;
+  taiAction* 		viewCloseCurrentViewAction;
 
   override void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
@@ -915,7 +915,7 @@ public:
   virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
   override void		UpdateTabNames(); // called by a datalink when a tab name might have changed
   iTabDataViewer(DataViewer* viewer_, QWidget* parent = NULL); //
-  iTabDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags);// not normally used
+//obs  iTabDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags);// not normally used
   ~iTabDataViewer();
 
 public slots:
@@ -939,29 +939,17 @@ private:
 };
 
 //////////////////////////
-// 	iPanelTab 	//
-//////////////////////////
-
-class iPanelTab: public QTab { // #IGNORE encapsulates a tab for iTabView
-public:
-
-  iDataPanel*		panel() {return m_panel;} // gets the current panel, if any
-
-  void			SetPanel(iDataPanel* value, bool force = false); // set or remove (NULL) a panel
-  iPanelTab(iDataPanel* panel_ = NULL);
-  ~iPanelTab();
-protected:
-  iDataPanel*		m_panel;
-};
-
-
-//////////////////////////
 // 	iTabBar 	//
 //////////////////////////
 
 class iTabBar: public QTabBar { // #IGNORE encapsulates the TabBar for iTabView
   Q_OBJECT
 public:
+  iDataPanel*		panel(int idx); // gets the current panel, if any
+
+  int			addTab(iDataPanel* panel);
+  void			SetPanel(int idx, iDataPanel* value, bool force = false); // set or remove (NULL) a panel
+  
   iTabView*	tabView() {return (iTabView*)parent();}
   iTabBar(iTabView* parent_ = NULL);
   ~iTabBar();
@@ -971,7 +959,7 @@ protected:
   QPalette	defPalette;
   override void contextMenuEvent(QContextMenuEvent * e);
   override void mousePressEvent(QMouseEvent* e);
-  override void paint(QPainter* p, QTab* t, bool selected ) const;
+//  override void paint(QPainter* p, QTab* t, bool selected ) const;
 };
 
 
@@ -1000,7 +988,7 @@ friend class iDataPanel;
 public:
   QVBoxLayout*		layDetail;
     iTabBar*		tbPanels; //note: we always maintain at least one tab
-    QWidgetStack*	wsPanels; //
+    Q3WidgetStack*	wsPanels; //
 
   iDataPanel*		cur_panel(); // currently active panel
   iDataPanel*		panel(int idx = 0); // implementation-independent way to access panels
@@ -1015,7 +1003,7 @@ public:
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   void 			Closing(bool forced, bool& cancel);
   void 			DataPanelDestroying(iDataPanel* panel);
-  virtual void		FillTabBarContextMenu(QPopupMenu* contextMenu);
+  virtual void		FillTabBarContextMenu(Q3PopupMenu* contextMenu);
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
   void 			SetPanel(iDataPanel* panel);
@@ -1199,7 +1187,7 @@ public:
     QFrame*		frmButtons;
       QHBoxLayout*	layButtons;
       QButtonGroup*	buttons; // one QPushButton for each
-    QWidgetStack*	wsSubPanels; // subpanels
+    Q3WidgetStack*	wsSubPanels; // subpanels
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
@@ -1233,10 +1221,10 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-class iListViewItem: public QListViewItem, public ISelectable {
+class iListViewItem: public Q3ListViewItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 #ifndef __MAKETA__
-typedef QListViewItem inherited;
+typedef Q3ListViewItem inherited;
 #endif
 public:
   enum DataNodeFlags {
@@ -1267,12 +1255,12 @@ public:
 
   iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* parent_,
     iListViewItem* last_child_, const String& tree_name, int flags_ = 0);
-  iListViewItem(taiDataLink* link_, MemberDef* md_, QListView* parent_,
+  iListViewItem(taiDataLink* link_, MemberDef* md_, Q3ListView* parent_,
     iListViewItem* last_child_, const String& tree_name, int flags_ = 0);
   ~iListViewItem();
 
   override bool 	acceptDrop (const QMimeSource* mime) const;
-//  int			compare (QListViewItem* item, int col, bool ascending) const; // override
+//  int			compare (Q3ListViewItem* item, int col, bool ascending) const; // override
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 
 public: // ITypedObject interface
@@ -1318,12 +1306,12 @@ public:
   int			num; // item number, starting from 1
   iListDataPanel*	panel; // logical parent node of the list items
 
-  int 			compare (QListViewItem *i, int col, bool ascending ) const; // override
+  int 			compare (Q3ListViewItem *i, int col, bool ascending ) const; // override
 
   QString		text(int col) const; // override
 
   taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
-    QListView* parent_, taiListDataNode* last_child_, int flags_ = 0);
+    Q3ListView* parent_, taiListDataNode* last_child_, int flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListDataNode();
 public: // IDataLinkClient interface
@@ -1348,7 +1336,7 @@ typedef iDataPanelFrame inherited;
 #endif
 public:
   QVBoxLayout*		layOuter;
-  QListView*		list; //actually an iLDPListView
+  Q3ListView*		list; //actually an iLDPListView
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
@@ -1371,7 +1359,7 @@ protected:
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
 protected slots:
-  void			list_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col);
+  void			list_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col);
   void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
 };
 

@@ -38,7 +38,7 @@ public:
 
     T_Bool = 1,
     T_Int = 2,
-    T_UInt = 3,
+    T_UInt = 3, 
     T_Int64 = 4,
     T_UInt64 = 5,
     T_Double = 6,
@@ -59,9 +59,12 @@ public:
   
   bool			isAtomic() const {return (m_type <= T_String);} 
     // 'true' for non-ptr types (includes Invalid)
+  bool			isInvalid() const {return (m_type == T_Invalid);} 
   bool			isNull() const; // 'true' if the value is null
+  bool			isPtrType() const {return ((m_type >= T_Ptr) || (m_type <= T_Matrix));} 
+    // 'true' if the value is a void*, taBase*, or taMatrix*
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
-    // 'true' if the value is a taBase or taMatrix
+    // 'true' if the value is a taBase* or taMatrix*
   VarType		type() const {return (VarType)m_type;} //
   
   void			save(ostream& s) const;
@@ -71,6 +74,7 @@ public:
 // following are ops to set to a specific type of value  
   void 			setVariant(const Variant& cp); // basically a copy
   void 			setBool(bool val, bool null = false);
+  void 			setByte(byte val, bool null = false) {setUInt(val, null);}
   void 			setInt(int val, bool null = false);
   void 			setUInt(uint val, bool null = false);
   void 			setInt64(int64_t val, bool null = false);
@@ -88,21 +92,23 @@ public:
   void			setMatrix(taMatrix* cp); // handles setting of a matrix
   
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
-  bool toBool() const;
-  int toInt() const;
-  uint toUInt() const;
-  int64_t toInt64() const;
-  uint64_t toUInt64() const; //
-//  float toFloat() const;
-  double toDouble() const;
-  char toChar() const;
-  void* toPtr() const; // must be a void*, Base, or Matrix, otherwise returns NULL
-  String toString() const;
-  taBase* toBase() const; // must be a Base or Matrix, otherwise returns NULL
-  taMatrix* toMatrix() const; // must be a Matrix, otherwise returns NULL
+  bool 			toBool() const;
+  byte 			toByte() const {return (byte)toUInt();}
+  int 			toInt() const;
+  uint 			toUInt() const;
+  int64_t 		toInt64() const;
+  uint64_t 		toUInt64() const; //
+  float 		toFloat() const {return (float)toDouble();}
+  double 		toDouble() const;
+  char 			toChar() const;
+  void* 		toPtr() const; // must be a void*, Base, or Matrix, otherwise returns NULL
+  String 		toString() const;
+  taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
+  taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
   
   // following are the automatic operators for C++ casting
   operator bool() const {return toBool();}
+  operator byte() const {return toByte();}
   operator int() const {return toInt();}
   operator uint() const {return toUInt();}
   operator int64_t() const {return toInt64();}
@@ -116,12 +122,32 @@ public:
   operator taBase*() const {return toBase();}
   operator taMatrix*() const {return toMatrix();} //
   
+  // equality operations  
+  bool			eqVariant(const Variant& val) const; // value equality, using fairly relaxed type rules; Invalid never == anything
+  bool 			eqBool(bool val) const;
+  bool 			eqByte(byte val) const {return eqUInt(val);}
+  bool 			eqInt(int val) const;
+  bool 			eqUInt(uint val) const;
+  bool 			eqInt64(int64_t val) const;
+  bool 			eqUInt64(uint64_t val) const;
+  bool 			eqIntPtr(intptr_t val) const
+    {if (sizeof(intptr_t) == sizeof(int)) return eqInt(val); else return eqInt64(val);}
+  bool 			eqFloat(float val) const {return eqDouble(val);}
+  bool 			eqDouble(double val) const;
+  bool 			eqChar(char val) const;
+  bool			eqString(const String& val) const; // handles eqting of a string 
+  bool			eqCString(const char* val) const
+    {eqString(String(val));}
+  bool 			eqPtr(void* val) const;
+  bool			eqBase(taBase* val) const {return eqPtr(val);} 
+  bool			eqMatrix(taMatrix* val) const {return eqPtr(val);} 
   
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
   // assignment operators
   Variant& 	operator=(const Variant& val) {setVariant(val); return *this;}
   Variant& 	operator=(bool val) {setBool(val); return *this;}
+  Variant& 	operator=(byte val) {setUInt(val); return *this;}
   Variant& 	operator=(int val) {setInt(val); return *this;}
   Variant& 	operator=(uint val) {setUInt(val); return *this;}
   Variant& 	operator=(int64_t val) {setInt64(val); return *this;}
@@ -147,6 +173,7 @@ public:
   explicit Variant(VarType vt); // create with a specific type, of the default value of that type
   Variant(const Variant &cp);
   Variant(bool val);
+  Variant(byte val);
   Variant(int val);
   Variant(uint val);
   Variant(int64_t val);
@@ -179,7 +206,7 @@ protected:
   {
       bool b; // 8
       int i; // 32
-      uint u; // 32
+      uint u; // 32 -- also for byte
       int64_t i64; // 64
       uint64_t u64; // 64
       double d; // 64
@@ -202,8 +229,12 @@ protected:
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
 };
 
+// empty invalid variant
+#define _nilVariant Variant()
+
 inline Variant::Variant():m_type(T_Invalid), m_is_null(true) { d.i64 = 0; } // default is null/invalid
 inline Variant::Variant(bool val):m_type(T_Bool), m_is_null(false) {d.b = val;}
+inline Variant::Variant(byte val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(int val):m_type(T_Int), m_is_null(false) {d.i = val;}
 inline Variant::Variant(uint val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(int64_t val):m_type(T_Int64), m_is_null(false) {d.i64 = val;}
@@ -217,6 +248,8 @@ inline Variant::Variant(const char* val):m_type(T_String), m_is_null(false)
   {if (val == NULL) {m_is_null = true; new(&d.str)String();} 
    else {m_is_null = false; new(&d.str)String(val);}}
 
+
+bool operator==(const Variant& a, int b) {return a.eqInt(b);}
 
 #endif
 

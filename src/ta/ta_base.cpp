@@ -956,7 +956,8 @@ void taOBase::SetAdapter(taBaseAdapter* adapter_) {
   if (adapter == adapter_) return;
   if (adapter_) { // setting adapter
     if (adapter) { // chaining
-      adapter_->insertChild(adapter);
+//Qt3      adapter_->insertChild(adapter);
+      adapter->setParent(adapter_);
     }
     adapter = adapter_;
   } else { // deleting adapter

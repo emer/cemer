@@ -621,7 +621,7 @@ class taBaseAdapter: public QObject {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
 friend class taOBase;
 public:
-  taBaseAdapter(taOBase* owner_): QObject(NULL, NULL) {owner = owner_;}
+  taBaseAdapter(taOBase* owner_): QObject(NULL) {owner = owner_;}
   ~taBaseAdapter();
 protected:
   taOBase* owner; // #IGNORE

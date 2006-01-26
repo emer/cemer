@@ -134,7 +134,7 @@ void taiMisc::Initialize(bool gui, const char* classname_) {
 void taiMisc::SetMainWindow(QWidget* win) {
   main_window = win;
   QObject::connect(win, SIGNAL(destroyed()), taiM, SLOT(MainWindowDestroyed()) );
-  qApp->setMainWidget(win);
+//Qt3  qApp->setMainWidget(win);
 #ifdef TA_USE_INVENTOR
 //NOTE: we called this already, which created the special SoQApplication object
 // This second call just sets the main widget
@@ -322,14 +322,23 @@ void taiMisc::init() {
   ivResource::ref(apply_button_style);
   apply_button_style->alias("apply_button");
 */
+  
   // Wait cursor -- TODO: shouldn't we just use standard system wait cursor???
-  QBitmap waiter = QBitmap(wait_cursor_width, wait_cursor_height, wait_cursor_bits, TRUE);
-  QBitmap waiter_m = QBitmap(wait_cursor_width, wait_cursor_height, wait_mask_bits, TRUE);
+/*qt3  QBitmap waiter = QBitmap(wait_cursor_width, wait_cursor_height, wait_cursor_bits, TRUE);
+  QBitmap waiter_m = QBitmap(wait_cursor_width, wait_cursor_height, wait_mask_bits, TRUE); */
+  QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
+    wait_cursor_bits, QImage::Format_MonoLSB);
+  QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
+    wait_mask_bits, QImage::Format_MonoLSB);
   wait_cursor = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
 
   // Record cursor
-  QBitmap recorder = QBitmap(record_cursor_width, record_cursor_height, record_cursor_bits, TRUE);
-  QBitmap recorder_m = QBitmap(record_cursor_width, record_cursor_height, record_mask_bits, TRUE);
+/*qt3  QBitmap recorder = QBitmap(record_cursor_width, record_cursor_height, record_cursor_bits, TRUE);
+  QBitmap recorder_m = QBitmap(record_cursor_width, record_cursor_height, record_mask_bits, TRUE); */
+  QBitmap recorder = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height),
+    record_cursor_bits, QImage::Format_MonoLSB);
+  QBitmap recorder_m = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height), 
+    record_mask_bits, QImage::Format_MonoLSB);
   record_cursor = new QCursor(recorder, recorder_m, record_cursor_x_hot, record_cursor_y_hot);
 
   icon_bitmap = NULL;

@@ -33,6 +33,7 @@
 // Forward declarations
 
 class taiData;
+class IDataHost; // interface for top level host of data items, mostly for DataChanged
 class taiDataHost;
 class taiAction;
 class taiMenuAction;
@@ -46,34 +47,31 @@ class QWidget;
 
 
 //////////////////////////////////////////////////////////
-// 	taiAction: wrapper for Qt callbacks		//
+// 	taiMenuAction: wrapper for Qt callbacks		//
 //////////////////////////////////////////////////////////
 
-class taiAction {
-// taiAction is for generic parameterless callbacks
+class taiMenuAction { // object that holds specs for receiver for Action(taiAction*) callback
 public:
   QObject* 	receiver;
   String	member;
 
-  taiAction() {receiver = NULL;}
-  taiAction(QObject* receiver_, const char* member_) {receiver = receiver_; member = member_;}
-  taiAction(const taiAction& src) {receiver = src.receiver; member = src.member;}
+  taiMenuAction() {receiver = NULL;}
+  taiMenuAction(QObject* receiver_, const char* member_) {receiver = receiver_; member = member_;}
+  taiMenuAction(const taiMenuAction& src) {receiver = src.receiver; member = src.member;}
 
   void		connect(QObject* sender, const char* signal) const;
-  taiAction& 	operator=(const taiAction& rhs);
+  taiMenuAction& 	operator=(const taiMenuAction& rhs);
 };
 
-#define TAI_ACTION_INSTANCE(x,y) \
-x(): y() { }        				\
-x(QObject* receiver_, const char* member_) 	\
-  : y(receiver_, member_) 	{ }					\
-x(x& src): y(src) {}			\
-x& operator=(const x& rhs) {y::operator=(rhs); return *this;}			\
 
-class taiMenuAction: public taiAction {
-//taiMenuAction takes a MenuEl as a parameter
+class IDataHost {
 public:
-  TAI_ACTION_INSTANCE(taiMenuAction, taiAction)
+  virtual void		Changed() {} // called by embedded item to indicate contents have changed
+  virtual void*		This() = 0; // 'this' on the object, for reverse casting
+  virtual TypeDef*	GetTypeDef() = 0; // TypeDef on the object, for reverse casting
+  
+  IDataHost() {}
+  virtual ~IDataHost() {}
 };
 
 //////////////////////////////////////////////////////////

@@ -95,14 +95,14 @@ template class taPtrList<taiDataHost>;
 //obs template class taPtrList<taiEditDialog>;
 template class taPtrList<taiEditDataHost>;
 template class taPtrList<taiData>;
-template class taPtrList<taiMenuEl>;
+template class taPtrList<taiAction>;
 template class taPtrList<taiMenu>;
 template class taPtrList<taiType>;
 template class taPtrList<gpiList_ElData>;
-template class QPtrList<iAction>; // in ta_qtdata.h
+template class QList<iAction*>; // in ta_qtdata.h
 template class taPtrList<iDataViewer>; // in ta_qt.h
 template class taPtrList<taiMimeItem>; // in ta_qtclipdata.h
-template class QPtrList<taiToolBar>; // in ta_qtviewer.h
+template class QList<taiToolBar*>; // in ta_qtviewer.h
 template class taList<ToolBar>; // in ta_qtviewer.h
 template class taPtrList<ISelectable>; // in ta_qtviewer.h
 template class taPtrList<DynMethodDesc>; // in ta_qtviewer.h

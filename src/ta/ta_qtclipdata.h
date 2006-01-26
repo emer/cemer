@@ -24,7 +24,7 @@
 #include "ta_base.h" // for list template
 
 #ifndef __MAKETA__
-#  include <qdragobject.h>
+#  include <Q3DragObject>
 #endif
 
 // external declarations
@@ -109,7 +109,7 @@ class taBase; //
 taiClipData -- sender
 
   taiClipData is the class used by senders to supply tacss data to the clipboard system.
-  This class is derived from QDragObject, and so inherently supports Drap/Drop, and clipboard
+  This class is derived from Q3DragObject, and so inherently supports Drap/Drop, and clipboard
   operations.
 
   This class uses taiClipSrc
@@ -172,7 +172,7 @@ class taiMimeItem_List;
 // 	taiClipData		//
 //////////////////////////////////
 
-class taiClipData: public QDragObject {
+class taiClipData: public Q3DragObject {
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation

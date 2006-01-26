@@ -36,25 +36,24 @@
 #include <qdialog.h>
 #include <qevent.h>
 #include <qfiledialog.h>
-#include <qhbox.h>
-#include <qhbuttongroup.h>
+//#include <qhbox.h>
+#include <Q3ButtonGroup>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmenubar.h>
 #include <qmenudata.h>
 #include <qmessagebox.h>
 #include <qobject.h>
-#include <qobjectlist.h>
 #include <qpainter.h>
 #include <qpalette.h>
-#include <qptrlist.h>
-#include <qpopupmenu.h>
+#include <QList>
+#include <Q3PopupMenu>
 #include <qpushbutton.h>
-#include <qscrollview.h>
+#include <Q3ScrollView>
 #include <qsizepolicy.h>
 #include <qstring.h>
-#include <qstylesheet.h>
-#include <qtable.h>
+#include <Q3StyleSheet>
+//#include <qtable.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 //#include <qvbox.h>
@@ -64,11 +63,12 @@
 // TODO: why is String=osString in this file, unless I do this:
 #include "ta_string.h"
 
-class QHackMouseEvent: public QMouseEvent { // hack to enable us to change the mouse button
+
+/*obs class QHackMouseEvent: public QMouseEvent { // hack to enable us to change the mouse button
 public:
   QHackMouseEvent(const QHackMouseEvent& dummy): QMouseEvent(dummy) {}
   void		setButton(ushort val) {b = val;}
-};
+}; */
 
 //////////////////////////////////////////////////
 // 		HiLightButton			//
@@ -132,7 +132,7 @@ void HiLightButton::setHiLight(bool value) {
   }
   mhiLight = value;
 }
-
+/*obs
 void HiLightButton::mousePressEvent(QMouseEvent* mev) {
   mouse_button = mev->button();
   if (mouse_button == Qt::RightButton) {
@@ -155,7 +155,7 @@ void HiLightButton::mouseMoveEvent(QMouseEvent*  mev) {
     ((QHackMouseEvent*)mev)->setButton(Qt::LeftButton);
   }
   QPushButton::mouseMoveEvent(mev);
-}
+} */
 
 
 //////////////////////////////////
@@ -186,7 +186,7 @@ void iContextLabel::contextMenuEvent (QContextMenuEvent* e) {
 int taiChoiceDialog::ChoiceDialog(QWidget* win, const char* prompt,
 	const char* win_title, bool no_cancel)
 {
-  if (win == NULL) win = qApp->mainWidget();
+  if (win == NULL) win = taiMisc::main_window;
   taiChoiceDialog* dlg = new taiChoiceDialog(win, prompt, win_title, no_cancel);
   // show the dialog
   int rval = dlg->exec();
@@ -221,7 +221,7 @@ taiChoiceDialog::taiChoiceDialog(QWidget* par, const char* prompt,
   hblButtons = new QHBoxLayout();
   hblButtons->setSpacing(5); // TODO: button spacing should be central constant
   vblMain->addLayout(hblButtons);
-  bgChoiceButtons = new QButtonGroup(this);
+  bgChoiceButtons = new Q3ButtonGroup(this);
   bgChoiceButtons->hide(); // we just using it for organizing and signalling
 
   connect(bgChoiceButtons, SIGNAL(clicked(int)),
@@ -310,8 +310,8 @@ void taiChoiceDialog::reject() {
 // 	Dialog	//
 //////////////////////////
 
-Dialog::Dialog(taiDataHost* owner_, QWidget* parent, bool modal, WFlags f)
-:QDialog(parent, NULL, modal, f) //TODO: NULL is for name -- remove for Qt4
+Dialog::Dialog(taiDataHost* owner_, QWidget* parent, bool modal)
+:QDialog(parent, NULL, modal) //TODO: NULL is for name -- remove for Qt4
 {
   // set maximum size -- we will manually size the central widget (which should be a scrollbox)
   iSize ss = taiM->scrn_s;
@@ -405,7 +405,7 @@ void Dialog::resizeEvent(QResizeEvent* ev) {
     mcentralWidget->resize(size());
 }
 
-void Dialog::setCentralWidget(QScrollView* widg) {
+void Dialog::setCentralWidget(Q3ScrollView* widg) {
   mcentralWidget = widg;
   widg->reparent(this, QPoint(0,0), false);
   widg->show(); // layout should occur here
@@ -487,7 +487,7 @@ void EditDataPanel::resizeEvent(QResizeEvent* ev) {
     mcentralWidget->resize(size());
 }
 
-void EditDataPanel::setCentralWidget(QScrollView* widg) {
+void EditDataPanel::setCentralWidget(Q3ScrollView* widg) {
   mcentralWidget = widg;
   widg->resize(size());
   widg->reparent(this, QPoint(0,0), false);
@@ -505,10 +505,9 @@ void EditDataPanel::setCentralWidget(QScrollView* widg) {
 
 void taiDataHost::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
-  QObjectList* ol = (QObjectList*)(obj->children()); //unconstify it
-  if (ol == NULL) return;
-  for (int i = ol->count() - 1; i >= 0; --i) {
-    QObject* chobj = ol->at(i);
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  foreach (chobj, ol) {
     chobj->deleteLater(); // deleted in event loop
   }
 }
@@ -747,8 +746,8 @@ void taiDataHost::Constr_impl() {
 void taiDataHost::Constr_Widget() {
   if (mwidget != NULL) return;
 //TESTING:
-  scrDialog = new QScrollView();
-  scrDialog->setResizePolicy(QScrollView::AutoOneFit);
+  scrDialog = new Q3ScrollView();
+  scrDialog->setResizePolicy(Q3ScrollView::AutoOneFit);
   mwidget = new QWidget(scrDialog->viewport());
   scrDialog->addChild(mwidget);
   if (bg_color != NULL) {
@@ -766,9 +765,9 @@ void taiDataHost::Constr_WinName() {
 void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
-  QString s = QStyleSheet::convertFromPlainText(prompt_str);
+  QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
   prompt = new QLabel(s, widget());
-  prompt->font().setBold(true);
+  QFont f = prompt->font(); f.setBold(true); prompt->setFont(f);
   prompt->setTextFormat(Qt::RichText);
 //  prompt->setFixedHeight(taiM->label_height(ctrl_size));
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
@@ -784,9 +783,9 @@ void taiDataHost::Constr_Box() {
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
-  scrBody = new QScrollView(scr_par);
+  scrBody = new Q3ScrollView(scr_par);
   scrBody->viewport()->setPaletteBackgroundColor(*bg_color_dark);
-  scrBody->setResizePolicy(QScrollView::AutoOneFit);
+  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
   body = new iStripeWidget(scrBody->viewport());
   scrBody->addChild(body);
   if (bg_color != NULL) {
@@ -893,7 +892,7 @@ void taiDataHost::Constr_Final() {
 }
 
 void taiDataHost::label_contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e) {
-  QPopupMenu* menu = new QPopupMenu(widget());
+  QMenu* menu = new QMenu(widget());
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
@@ -944,7 +943,7 @@ int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
   return dialog->post(modal);
 }
 
-void taiDataHost::FillLabelContextMenu(iContextLabel* sender, QPopupMenu* menu, int& last_id) {
+void taiDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {
   sel_item_index = sender->index();
 }
 
@@ -1344,19 +1343,19 @@ void taiEditDataHost::Constr_ShowMenu() {
   show_menu = menu->AddSubMenu("&Show");
 
   // first two items are commands that set the other toggle flags
-  show_menu->AddItem("Normal &only", NULL, taiMenu::normal, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
-  show_menu->AddItem("&All", NULL, taiMenu::normal, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
+  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 0 );
+  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 1 );
   show_menu->AddSep();
-  show_menu->AddItem("&Normal", NULL, taiMenu::toggle, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
-  show_menu->AddItem("&Hidden", NULL, taiMenu::toggle, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
-  show_menu->AddItem("&Read Only", NULL, taiMenu::toggle, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
-  show_menu->AddItem("&Detail", NULL, taiMenu::toggle, taiMenuEl::men_act,
-      this, SLOT(ShowChange(taiMenuEl*)) );
+  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 3 );
+  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 4 );
+  show_menu->AddItem("&Read Only", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 5 );
+  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 6 );
   setShowValues(show); // sets toggles
 }
 
@@ -1410,12 +1409,12 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   return panel;
 }
 
-void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QPopupMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, Q3PopupMenu* menu, int& last_id) {
   taiDataHost::FillLabelContextMenu(sender, menu, last_id);
   FillLabelContextMenu_SelEdit(sender, menu, last_id);
 }
 
-void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopupMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3PopupMenu* menu, int& last_id) {
   if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
   MemberDef* md = memb_el.SafeEl(sel_item_index);
   if (md == NULL) return;
@@ -1425,7 +1424,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopup
   TypeDef* td = SelectEdit::StatTypeDef(0);
   if (td->tokens.size == 0) return;
   // if any edits, populate menu for adding, for all seledits not already on
-  QPopupMenu* sub = new QPopupMenu(body);
+  Q3PopupMenu* sub = new Q3PopupMenu(body);
   sub->setFont(menu->font());
   for (int i = 0; i < td->tokens.size; ++i) {
     SelectEdit* se = (SelectEdit*)td->tokens[i];
@@ -1439,7 +1438,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopup
   if (sub->count() == 0)
     menu->setItemEnabled(last_id, false); // show item for usability, but disable
   // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = new QPopupMenu(body);
+  sub = new Q3PopupMenu(body);
   sub->setFont(menu->font());
   for (int i = 0; i < td->tokens.size; ++i) {
     SelectEdit* se = (SelectEdit*)td->tokens[i];
@@ -1615,10 +1614,10 @@ void taiEditDataHost::SetItemAsHandler(taiData* item, bool set_it) {
 void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
   if (show_menu == NULL) return;
   //note: nothing to do for the command items
-  (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_READ_ONLY));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_DETAIL));
+  (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
+  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
+  (*show_menu)[5]->setChecked(!(value & taMisc::NO_READ_ONLY));
+  (*show_menu)[6]->setChecked(!(value & taMisc::NO_DETAIL));
   show = value;
 }
 
@@ -1650,20 +1649,20 @@ void taiEditDataHost::setShow(taMisc::ShowMembs value) {
   state |= SHOW_CHANGED; // will get changed in event handler for body items deleted
 }
 
-void taiEditDataHost::ShowChange(taiMenuEl* sender) {
+void taiEditDataHost::ShowChange(taiAction* sender) {
   //note: we allow modal show change in Qt version, because we don't destroy the dialog
   int new_show;
-  if (sender->index() == 0)
+  if (sender->usr_data == 0)
     new_show = taMisc::NORM_MEMBS;
-  else if (sender->index() == 1)
+  else if (sender->usr_data == 1)
     new_show = taMisc::ALL_MEMBS;
   else {
     int mask;
-    switch (sender->index()) {
-      case 2: mask = taMisc::NO_NORMAL; break;
-      case 3: mask = taMisc::NO_HIDDEN; break;
-      case 4: mask = taMisc::NO_READ_ONLY; break;
-      case 5: mask = taMisc::NO_DETAIL; break;
+    switch (sender->usr_data.toInt()) {
+      case 3: mask = taMisc::NO_NORMAL; break;
+      case 4: mask = taMisc::NO_HIDDEN; break;
+      case 5: mask = taMisc::NO_READ_ONLY; break;
+      case 6: mask = taMisc::NO_DETAIL; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
@@ -1677,7 +1676,7 @@ bool taiEditDataHost::ShowMember(MemberDef* md) {
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
   if (menu == NULL) {
-    menu = new taiMenu(taiMenu::menubar, taiMenu::normal, taiMisc::fonSmall,
+    menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
     vblDialog->setMenuBar(menu->rep_bar());
   }
@@ -1837,7 +1836,7 @@ void taiEnumDialog::Constr_Box() {
 }
 
 void taiEnumDialog::GetValue() {
-  taiMenuEl* cur = enm_rep->GetValue();
+  taiAction* cur = enm_rep->GetValue();
   EnumDef* td = NULL;
   if(cur && (cur->itm_no < enum_typ->enum_vals.size))
     td = enum_typ->enum_vals.FastEl(cur->itm_no);
@@ -1881,7 +1880,9 @@ taFiler_impl::taFiler_impl(const String& dir_, const String& filter_, bool compr
 
 bool taFiler_impl::GetFileName(String& fname, FilerOperation filerOperation) {
   bool result = false;
-  QFileDialog* fd = new QFileDialog(fname, filter, NULL, 0, true); // no parent, no name, modal
+//qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
+//qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
+  QFileDialog* fd = new QFileDialog(NULL, "", fname, filter); // no parent, no name, modal
   fd->setDir(dir);
 
   String caption;

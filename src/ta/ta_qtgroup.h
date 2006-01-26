@@ -179,7 +179,7 @@ public:
       // return an instance if there are any functions, else returns NULL;
 
   taiDataList	funs;
-  QVBox* 		rep() {return (QVBox*)m_rep;}
+  Q3VBox* 		rep() {return (Q3VBox*)m_rep;}
 
   virtual void  	CallFuns(void* obj);
 
@@ -271,7 +271,7 @@ public:
 class gpiMultiEditDataHost: public taiEditDataHost {
 public:
   QWidget*	multi; // outer container
-    QScrollView*	scrMulti;		// scrollbars for the multi items
+    Q3ScrollView*	scrMulti;		// scrollbars for the multi items
     QHBoxLayout*	lay_multi; // used by gpiGroupDialog to add its group buttons
     iEditGrid*	multi_body;
 
@@ -338,7 +338,7 @@ class gpiGroupDataHost : public gpiListDataHost {
 public:
   taiDataList	sub_data_el;	// list of data elements for sub groups
   QWidget*	subData;
-  QScrollView*	scrSubData;
+  Q3ScrollView*	scrSubData;
   QVBoxLayout*	laySubData;  // layout for the sub buttons
 
   gpiGroupDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
@@ -416,14 +416,14 @@ public:
 
 protected:
   int 			base_items;	// #IGNORE number of base items, before the user-selected items
-  QPopupMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
+  QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
   override void		Constr_Body();
   void 			Constr_Methods();
 
-  override void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopupMenu* menu, int& last_id);
-  void			MakeMenuItem(QPopupMenu* menu, const char* name, int index, int param, const char* slot);
-  QPopupMenu*		FindMenuItem(QPopupMenu* par_menu, const char* label);
+  override void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
+  void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
+  QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 
   override void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   override void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);

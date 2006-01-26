@@ -105,6 +105,11 @@ typedef unsigned char   byte;
 #define ABS(a)	((a) >= 0 ? (a) : -(a))
 #endif
 
+// hmm... these are *supposed* to be standard...
+#ifndef LLONG_MAX
+#define LLONG_MAX 9223372036854775807ULL
+#endif
+
 // Some OS-specific includes or types
 #if (defined(WIN32) && (!defined(CYGWIN)))
 #include <io.h>

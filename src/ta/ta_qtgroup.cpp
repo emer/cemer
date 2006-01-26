@@ -38,19 +38,19 @@
 // #include <qcheckbox.h>
 // #include <qcombobox.h>
 #include <qframe.h>
-#include <qheader.h>
+#include <Q3Header>
 #include <qlabel.h>
  #include <qlayout.h>
 // #include <qlineedit.h>
 // #include <qmenubar.h>
 #include <qmenudata.h>
-#include <qpopupmenu.h>
+#include <QMenu>
 // #include <qpushbutton.h>
-#include <qvbox.h>
-#include <qscrollview.h> // for gpiGroupDialog
+#include <Q3VBox>
+#include <Q3ScrollView> // for gpiGroupDialog
 // #include <qstring.h>
 #include <qtooltip.h>
-#include <qtable.h>
+#include <Q3Table>
 // #include <qwidgetstack.h>
 
 
@@ -260,10 +260,10 @@ void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
 }
 
 TAPtr gpiListEls::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
+  taiAction* cur = ta_menu->GetValue();
   if (over_max) {
-    if ((cur == NULL) || (cur->label == "<Over max, select...>")
-       || (cur->label == "gp.<Over max, select...>"))
+    if ((cur == NULL) || (cur->text() == "<Over max, select...>")
+       || (cur->text() == "gp.<Over max, select...>"))
       return cur_obj;
     else
       return (TAPtr)cur->usr_data;
@@ -312,33 +312,33 @@ void gpiListEls::Choose() {
 
 void gpiListEls::GetMenu(taiMenu* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    menu->AddItem("NULL", NULL, taiMenu::radio_update, actn);
+    menu->AddItem("NULL", taiMenu::radio_update, actn);
   if (HasFlag(flgEditOk))
-    menu->AddItem("Edit", NULL, taiMenu::normal,
-	taiMenuEl::action, this, SLOT(Edit()));
+    menu->AddItem("Edit", taiMenu::normal,
+	taiAction::action, this, SLOT(Edit()));
   if (!HasFlag(flgNoList)) {
     String nm;
     if (ths->GetName() == "")
       nm = "All";
     else
       nm = ths->GetName();
-    menu->AddItem(nm, (void*)ths, taiMenu::use_default, actn);
+    menu->AddItem(nm, taiMenu::use_default, actn, (void*)ths);
   }
   menu->AddSep(); //note: doesn't double add or add at beginning
   GetMenu_impl(ths, menu, actn);
 }
 
 void gpiListEls::UpdateMenu(taiMenuAction* actn) {
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(ta_menu, actn);
 }
 
 void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* actn) {
   if (cur_lst == NULL)	return;
   if (cur_lst->size >= taMisc::max_menu) {
-    taiMenuEl* mnel = menu->AddItem
-      ("<Over max, select...>", cur_lst, taiMenu::normal,
-	taiMenuEl::action, this, SLOT(Choose()) );
+    taiAction* mnel = menu->AddItem
+      ("<Over max, select...>", taiMenu::normal,
+	taiAction::action, this, SLOT(Choose()), cur_lst );
     over_max = true;
     if (actn != NULL) {		// also set callback action!
       mnel->connect(actn);
@@ -351,7 +351,7 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* act
     String nm = tmp->GetName();
     if (nm == "")
       nm = String("[") + String(i) + "]: (" + tmp->GetTypeDef()->name + ")";
-    menu->AddItem((char*)nm, (void*)tmp, taiMenu::radio_update, actn);
+    menu->AddItem((char*)nm, taiMenu::radio_update, actn, (void*)tmp);
   }
 }
 
@@ -399,9 +399,9 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* ac
   if (cur_lst == NULL) return;
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   if (cur_gp->size >= taMisc::max_menu) {
-    taiMenuEl* mnel = menu->AddItem
-      ("<Over max, select...>", cur_gp, taiMenu::normal,
-       taiMenuEl::action, this, SLOT(Choose()) );
+    taiAction* mnel = menu->AddItem
+      ("<Over max, select...>", taiMenu::normal,
+       taiAction::action, this, SLOT(Choose()), cur_gp );
     over_max = true;
     if (actn != NULL) {		// also set callback action!
       mnel->connect(actn);
@@ -426,11 +426,12 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* ac
 	    if (tmp_grp->leaves == 0)
 	      continue;
 
-            taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+//TODO Qt4            taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+            taiMenu* sub_menu = menu->AddSubMenu(nm);
 
-            sub_menu->AddItem(nm, (void*)tmp, taiMenu::use_default, actn);
+            sub_menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp);
 	    String subnm = String("::") + md->name;
-	    sub_menu->AddItem(subnm, (void*)tmp_grp, taiMenu::use_default, actn);
+	    sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
 	    sub_menu->AddSep();
 	    GetMenu_impl(tmp_grp, sub_menu, actn);
 	    added_sub = true;
@@ -438,14 +439,14 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* ac
 	}
       }
       if (!added_sub) {
-	menu->AddItem((char*)nm, (void*)tmp, taiMenu::use_default, actn);
+	menu->AddItem((char*)nm, taiMenu::use_default, actn, (void*)tmp);
       }
     }
   }
   if (cur_gp->gp.size >= taMisc::max_menu) {
-    taiMenuEl* mnel = menu->AddItem
-      ("gp.<Over max, select...>", &(cur_gp->gp), taiMenu::normal,
-        taiMenuEl::action, this, SLOT(ChooseGp()) );
+    taiAction* mnel = menu->AddItem
+      ("gp.<Over max, select...>", taiMenu::normal,
+        taiAction::action, this, SLOT(ChooseGp()), &(cur_gp->gp) );
     over_max = true;
     if (actn != NULL) {		// also set callback action!
       mnel->connect(actn);
@@ -456,10 +457,11 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* ac
       String nm = tmp_grp->GetName();
       if (nm == "")
 	nm = "Group [" + String(i) + "]";
-      taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+//TODO Qt4      taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+      taiMenu* sub_menu = menu->AddSubMenu(nm);
       if (!HasFlag(flgNoList)) {
 	String subnm = nm + ": All";
-	sub_menu->AddItem(subnm, (void*)tmp_grp, taiMenu::use_default, actn);
+	sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
 	sub_menu->AddSep();
       }
       GetMenu_impl(tmp_grp, sub_menu, actn);
@@ -507,15 +509,15 @@ void gpiSubGroups::GetImage(TAGPtr base_gp, TAGPtr gp) {
 }
 
 TAGPtr gpiSubGroups::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
+  taiAction* cur = ta_menu->GetValue();
   if (over_max) {
-    if((cur == NULL) || (cur->label == "<Over max, select...>"))
+    if((cur == NULL) || (cur->text() == "<Over max, select...>"))
       return (TAGPtr)cur_obj;
     else
-      return (TAGPtr)cur->usr_data;
+      return (TAGPtr)cur->usr_data.toPtr();
   }
   if (cur != NULL)
-    return (TAGPtr)cur->usr_data;
+    return (TAGPtr)cur->usr_data.toPtr();
   return NULL;
 }
 
@@ -553,10 +555,10 @@ void gpiSubGroups::Choose() {
 
 void gpiSubGroups::GetMenu(taiMenu* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    menu->AddItem("NULL", NULL, taiMenu::use_default, actn);
+    menu->AddItem("NULL", taiMenu::use_default, actn);
   if (HasFlag(flgEditOk))
-    menu->AddItem("Edit", NULL, taiMenu::normal,
-	taiMenuEl::action, this, SLOT(Edit()) );
+    menu->AddItem("Edit", taiMenu::normal,
+	taiAction::action, this, SLOT(Edit()) );
   if (ths == NULL)	return;
   String nm;
   if(ths->owner == NULL)
@@ -565,22 +567,22 @@ void gpiSubGroups::GetMenu(taiMenu* menu, taiMenuAction* actn) {
     nm = ths->owner->GetTypeDef()->name;
   else
     nm = ths->owner->GetName();
-  menu->AddItem(nm, (void*)ths, taiMenu::use_default, actn);
+  menu->AddItem(nm, taiMenu::use_default, actn, (void*)ths);
   menu->AddSep();
   GetMenu_impl(ths, menu, actn);
 }
 
 void gpiSubGroups::UpdateMenu(taiMenuAction* actn) {
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(actn);
 }
 
 void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn) {
   if (gp == NULL) return;
   if (gp->gp.size >= taMisc::max_menu) {
-    taiMenuEl* mnel = menu->AddItem
-      ("<Over max, select...>", gp, taiMenu::normal,
-        taiMenuEl::action, this, SLOT(Choose()) );
+    taiAction* mnel = menu->AddItem
+      ("<Over max, select...>", taiMenu::normal,
+        taiAction::action, this, SLOT(Choose()), gp );
     over_max = true;
     if (actn != NULL) {		// also set callback action!
       mnel->connect(actn);
@@ -604,11 +606,12 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn) {
 	  if (tmp_grp->leaves == 0)
 	    continue;
 	  if (!added_sub) {
-	    sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
-	    sub_menu->AddItem(nm, (void*)tmp, taiMenu::use_default, actn);
+//TODO: tmp_grp???	    sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+            sub_menu = menu->AddSubMenu(nm);
+	    sub_menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp);
 	  }
 	  String subnm = String("::") + md->name;
-	  sub_menu->AddItem(subnm, (void*)tmp_grp, taiMenu::use_default, actn);
+	  sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
           sub_menu->AddSep();
 	  GetMenu_impl(tmp_grp, sub_menu, actn);
 	  added_sub = true;
@@ -647,13 +650,14 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn) {
       } // for int j
     } // !has_sub_stuff
     if (has_sub_stuff) {
-      taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+//TODO qt4      taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
+      taiMenu* sub_menu = menu->AddSubMenu(nm);
       String subnm = nm + ": Group";
-      sub_menu->AddItem(subnm, (void*)tmp_grp, taiMenu::use_default, actn);
+      sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
       sub_menu->AddSep();
       GetMenu_impl(tmp_grp, sub_menu, actn);
     } else
-      menu->AddItem((char*)nm, (void*)tmp_grp, taiMenu::use_default, actn);
+      menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp_grp);
   }
 }
 
@@ -701,7 +705,7 @@ gpiNewFuns* gpiNewFuns::CondNew(TypeDef* typ_, taiDataHost* host_, taiData* par,
 gpiNewFuns::gpiNewFuns(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  SetRep(new QVBox(gui_parent_));
+  SetRep(new Q3VBox(gui_parent_));
 
   for (int i = 0;i < typ->methods.size; ++i){
     MethodDef* md = typ->methods.FastEl(i);
@@ -727,7 +731,7 @@ void gpiNewFuns::CallFuns(void* base) {
 
 TAPtr gpiListNew::New(TABLPtr the_lst, int n_els, TypeDef* td, QObject* parent)
 {
-  if (parent == NULL) parent = qApp->mainWidget();
+  if (parent == NULL) parent = taiMisc::main_window;
   gpiListNew* create = new gpiListNew(the_lst, n_els, td, false, true, parent); //read_only, modal
   create->Constr();
   bool ok_can = create->Edit(true);
@@ -854,7 +858,7 @@ void gpiListNew::GetValue() {
 TAPtr gpiGroupNew::New(TAGPtr the_gp, TAGPtr init_gp, int n_els,  TypeDef* td,
     QObject* parent)
 {
-  if (parent == NULL) parent = qApp->mainWidget();
+  if (parent == NULL) parent = taiMisc::main_window;
   gpiGroupNew* create = new gpiGroupNew(the_gp, init_gp, n_els, td, false, true, parent);
   create->Constr();
   bool ok_can = create->Edit(true);
@@ -993,14 +997,14 @@ void gpiMultiEditDataHost::ClearBody_impl() {
 void gpiMultiEditDataHost::Constr_Box() {
   // create the splitter before calling base, so scrbody gets put into the splitter
   splBody = new QSplitter(widget());
-  splBody->setOrientation(QSplitter::Vertical);
+  splBody->setOrientation(Qt::Vertical);
   vblDialog->addWidget(splBody);
 
   taiEditDataHost::Constr_Box();
 
-  scrMulti = new QScrollView(splBody);
+  scrMulti = new Q3ScrollView(splBody);
   scrMulti->viewport()->setPaletteBackgroundColor(*bg_color);
-  scrMulti->setResizePolicy(QScrollView::AutoOneFit);
+  scrMulti->setResizePolicy(Q3ScrollView::AutoOneFit);
   multi = new QWidget();
   scrMulti->addChild(multi);
 
@@ -1239,8 +1243,8 @@ void gpiGroupDataHost::Constr_Box() {
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   //TODO: maybe should always create -- may not even show if empty
   if (cur_gp->gp.size > 0) {
-    scrSubData = new QScrollView(multi);
-    scrSubData->setHScrollBarMode(QScrollView::AlwaysOff); // no h scrolling
+    scrSubData = new Q3ScrollView(multi);
+    scrSubData->setHScrollBarMode(Q3ScrollView::AlwaysOff); // no h scrolling
     subData = new QWidget();
     subData->setPaletteBackgroundColor(*bg_color_dark);
     scrSubData->viewport()->setPaletteBackgroundColor(*bg_color_dark);
@@ -1499,7 +1503,7 @@ void gpiSelectEditDataHost::ClearBody_impl() {
   cur_menu_but = NULL;
   mnuRemoveMember = NULL;
   if (menu) {
-    menu->ResetMenu();
+    menu->Reset();
   }
   taiEditDataHost::ClearBody_impl();
 }
@@ -1509,7 +1513,7 @@ void gpiSelectEditDataHost::Constr_Body() {
     meth_el.Reset();
   }
   taiEditDataHost::Constr_Body();
-  mnuRemoveMember = new QPopupMenu();
+  mnuRemoveMember = new QMenu();
 
   base_items = data_el.size;
   String nm;
@@ -1539,12 +1543,12 @@ void gpiSelectEditDataHost::Constr_Body() {
 
 void gpiSelectEditDataHost::Constr_Methods() {
   taiEditDataHost::Constr_Methods();
-  QPopupMenu* mnuRemoveMethod_menu = new QPopupMenu();
-  QPopupMenu* mnuRemoveMethod_menu_but = new QPopupMenu();
-  QPopupMenu* mnuRemoveMethod_but = new QPopupMenu();
+  QMenu* mnuRemoveMethod_menu = new QMenu();
+  QMenu* mnuRemoveMethod_menu_but = new QMenu();
+  QMenu* mnuRemoveMethod_but = new QMenu();
   if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
     cur_menu->AddSep();
-    QPopupMenu* menu_tmp = cur_menu->rep_popup();
+    QMenu* menu_tmp = cur_menu->rep_popup();
     menu_tmp->insertItem("Remove field", mnuRemoveMember);
     taiMenu* taimen_tmp = cur_menu->AddSubMenu("Remove function");
     menu_tmp = taimen_tmp->rep_popup();
@@ -1560,7 +1564,7 @@ void gpiSelectEditDataHost::Constr_Methods() {
     taiMethodData* mth_rep = md->im->GetMethodRep(sele->meth_bases.FastEl(i), this, NULL, frmMethButtons);
     if (mth_rep == NULL) continue;
     meth_el.Add(mth_rep);
-    QPopupMenu* rem_men = NULL; // remove menu
+    QMenu* rem_men = NULL; // remove menu
 
     String men_nm = sele->config.meth_labels.FastEl(i);
     if (mth_rep->is_menu_item) {
@@ -1577,7 +1581,7 @@ void gpiSelectEditDataHost::Constr_Methods() {
           cur_menu_but->setLabel(men_nm);
           DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
           ta_menu_buttons.Add(cur_menu_but);
-          rem_men = new QPopupMenu();
+          rem_men = new QMenu();
           mnuRemoveMethod_menu_but->insertItem(men_nm, rem_men);
         } else {
           rem_men = FindMenuItem(mnuRemoveMethod_menu_but, men_nm);
@@ -1590,7 +1594,7 @@ void gpiSelectEditDataHost::Constr_Methods() {
         if (cur_menu == NULL) {
           cur_menu = menu->AddSubMenu(men_nm);
           ta_menus.Add(cur_menu);
-          rem_men = new QPopupMenu();
+          rem_men = new QMenu();
           mnuRemoveMethod_menu->insertItem(men_nm, rem_men);
         } else {
           rem_men = FindMenuItem(mnuRemoveMethod_menu, men_nm);
@@ -1613,17 +1617,17 @@ void gpiSelectEditDataHost::DoRemoveSelEdit() {
   sele->RemoveField(sel_item_index - base_items);
 }
 
-void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopupMenu* menu, int& last_id) {
+void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id) {
   if (sender->index() < base_items) return; // only add for user-added items
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }
 
-QPopupMenu* gpiSelectEditDataHost::FindMenuItem(QPopupMenu* par_menu, const char* label) {
+QMenu* gpiSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
   int id = 0;
   for (uint i = 0; i < par_menu->count(); ++i) {
     id = par_menu->idAt(i);
     if (par_menu->text(id) == label)
-      return (QPopupMenu*)par_menu->findItem(id);
+      return (QMenu*)par_menu->findItem(id);
   }
   return NULL;
 }
@@ -1684,7 +1688,7 @@ void gpiSelectEditDataHost::GetImage_impl(const MemberSpace& ms, const taiDataLi
   }
 }
 
-void gpiSelectEditDataHost::MakeMenuItem(QPopupMenu* menu, const char* name, int index, int param, const char* slot) {
+void gpiSelectEditDataHost::MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot) {
     menu->insertItem(name, this, slot, 0, index);
     menu->setItemParameter(index, param);
 }

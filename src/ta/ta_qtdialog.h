@@ -64,9 +64,9 @@ protected:
 
   void			init(const char* script_); // #IGNORE
   void 			released(); // override
-  override void		mousePressEvent(QMouseEvent* mev); //we hack these to accept right mouse click
+/*no more hacks!!!  override void		mousePressEvent(QMouseEvent* mev); //we hack these to accept right mouse click
   override void		mouseReleaseEvent(QMouseEvent* mev);
-  override void		mouseMoveEvent(QMouseEvent*  mev);
+  override void		mouseMoveEvent(QMouseEvent*  mev); */
 };
 
 
@@ -132,7 +132,7 @@ public:
   QVBoxLayout*	vblMain;
   QHBoxLayout*	hblButtons;
   QLabel*	txtMessage; // maybe should be a ro edit, so user can copy???
-  QButtonGroup* bgChoiceButtons;
+  Q3ButtonGroup* bgChoiceButtons;
 
   ~taiChoiceDialog()		{ }
 
@@ -162,7 +162,7 @@ friend class taiDataHost;
 public:
   bool 		was_accepted;
 
-  Dialog(taiDataHost* owner_, QWidget* parent = 0, bool modal_ = false, WFlags f = 0);
+  Dialog(taiDataHost* owner_, QWidget* parent = 0, bool modal_ = false);
   ~Dialog();
 
   bool		post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
@@ -170,10 +170,10 @@ public:
 
   void		iconify();   // Iv compatibility routine
   void		deiconify(); // Iv compatibility routine
-  void		setCentralWidget(QScrollView* widg);
+  void		setCentralWidget(Q3ScrollView* widg);
 protected:
   taiDataHost* 	owner;
-  QScrollView* 	mcentralWidget;
+  Q3ScrollView* 	mcentralWidget;
   override void closeEvent(QCloseEvent* ev);
   override void resizeEvent(QResizeEvent* ev);
 
@@ -194,7 +194,7 @@ typedef iDataPanelFrame inherited;
 friend class taiEditDataHost;
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  void			setCentralWidget(QScrollView* widg);
+  void			setCentralWidget(Q3ScrollView* widg);
   override void		Closing(bool forced, bool& cancel);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
@@ -207,7 +207,7 @@ public: // IDataLinkClient interface
 
 protected:
   taiEditDataHost* 	owner;
-  QScrollView* 		mcentralWidget;
+  Q3ScrollView* 		mcentralWidget;
   override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
   override void 	resizeEvent(QResizeEvent* ev);
 };
@@ -220,7 +220,7 @@ protected:
 #define __CANCELED		0x05
 #define __SHOW_CHANGED		0x80
 
-class taiDataHost: public QObject {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class taiDataHost: public QObject, public IDataHost {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class Dialog;
 public:
@@ -252,12 +252,12 @@ public:
   bool		no_revert_hilight; // do not highlight the revert button
 
 
-  QScrollView*	scrDialog;	// scrollbars for the whole shebang -- widget() is the viewport()
+  Q3ScrollView*	scrDialog;	// scrollbars for the whole shebang -- widget() is the viewport()
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
     QLabel*	prompt;		// informative message at top of dialog
     QWidget*	body;		// parent for the body items
     QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
-      QScrollView*	scrBody;		// scrollbars for the body items
+      Q3ScrollView*	scrBody;		// scrollbars for the body items
       QGridLayout* 	layBody;	// layout for the body -- deleted/reconstructed when show changes
 //  QTable*	body;	// table for body elements
     QFrame*	frmMethButtons;	// method buttons
@@ -298,11 +298,16 @@ public:
   virtual void  Scroll(){}	// overload to scroll to field editor
   virtual void		SetItemAsHandler(taiData* item, bool set_it = true) {} // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
 
-  virtual TypeDef* GetTypeDef() {return &TA_taiDataHost;}
+  
+public: // IDataHost i/f
+  void*		This() {return this;} // override
+  TypeDef* 	GetTypeDef() {return &TA_taiDataHost;} // override
+public slots:
+  void  	Changed();	// override method call when data has changed
+
 public slots:
   virtual void	Apply(); //override
   virtual void	Revert(); //override
-  virtual void  Changed();	// call when data has changed
   void		BodyCleared(); // called when show changed, and body has actually been cleared (deferred)
 
 protected:
@@ -336,7 +341,7 @@ protected:
   virtual void  Constr_Methods(); // creates the box for buttons
   virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
   virtual void	Constr_Final();
-  virtual void	FillLabelContextMenu(iContextLabel* sender, QPopupMenu* menu, int& last_id); // last_id enables access menu items
+  virtual void	FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
 
 public slots:
   virtual void 	Ok(); // for dialogs
@@ -382,7 +387,7 @@ public:
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
   taiMenu*		cur_menu;	// current menu to add to (if not otherwise spec'd)
   taiMenu*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
-  taiMenu*		menu;		// menu bar
+  taiMenuBar*		menu;		// menu bar
   taiMenu*		show_menu;	// Show menu bar
   Member_List		memb_el;	// member elements (1:1 with data_el)
   taiDataList 		data_el;	// data elements (1:1 with memb_el)
@@ -413,7 +418,7 @@ public:
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   override TypeDef* GetTypeDef() {return &TA_taiEditDataHost;}
 public slots:
-  virtual void	ShowChange(taiMenuEl* sender);	// when show/hide menu changes
+  virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   void Cancel(); // override
 
 protected:
@@ -432,8 +437,8 @@ protected:
   void			Constr_MethButtons();
   virtual void		Constr_ShowMenu(); // make the show/hide menu
   override void		Constr_Final();
-  override void		FillLabelContextMenu(iContextLabel* sender, QPopupMenu* menu, int& last_id);
-  virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QPopupMenu* menu, int& last_id);
+  override void		FillLabelContextMenu(iContextLabel* sender, Q3PopupMenu* menu, int& last_id);
+  virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3PopupMenu* menu, int& last_id);
   virtual void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetButtonImage();

@@ -21,14 +21,15 @@
 
 #include "qtdefs.h"
 #include "ta_base.h"
+#include "ta_variant.h"
 #include "ta_qtdata_def.h"
 
 #ifndef __MAKETA__
   #include <qdialog.h>
   #include <qobject.h>
-  #include <qaction.h>
+  #include <QAction>
   #include <qwidget.h>
-
+  #include <QList>
   #include "icheckbox.h"
 #endif
 
@@ -297,7 +298,7 @@ protected:
 
 class taiDataDeck : public taiCompData {
 public:
-  QWidgetStack*	rep() {return (QWidgetStack*)m_rep;}
+  Q3WidgetStack*	rep() {return (Q3WidgetStack*)m_rep;}
   int		cur_deck; // current deck for operations
 
   void		setNumDecks(int n); // sets # decks
@@ -312,121 +313,119 @@ protected:
 };
 
 
-//////////////////////////////////////////////////////////
-// 		Menus					//
-//////////////////////////////////////////////////////////
+//////////////////////////////////
+//   Menus and Toolbars		//
+//////////////////////////////////
 
+class taiMenuToolBarBase;
 class taiMenu;
-class taiMenuEl;
+class taiAction;
 
-
-class taiMenuEl: public QObject {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu data -- can be the root item of a submenu
+#define taiMenuEl taiAction
+class taiAction: public QAction {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu
   Q_OBJECT
-friend class taiMenu;
-friend class taiMenuEl_List;
+friend class taiMenuToolBarBase;
+friend class taiAction_List;
 public:
   enum CallbackType {
     none,		// callback parameters ignored
     action,		// corresponds to IV "action" type of callback -- slot for signal is parameterless
-    men_act,		// corresponds to IV "men_act" type of callback -- slot for signal takes taiMenuEl* as a sender
+    men_act,		// corresponds to IV "men_act" type of callback -- slot for signal takes taiAction* as a sender
     int_act,		// corresponds to Qt menu/action signals -- slot for signal takes an int parameter
-    ptr_act		// slot for signal takes a void* parameter
+    ptr_act,		// slot for signal takes a void* parameter
+    var_act		// slot for signal takes a "const Variant&" parameter
   };
 
-  taiMenu*	owner;
-  QMenuItem* 	rep;
-  int		sel_type;
-  String	label;
-  void*		usr_data; // (note: we also overload this as "int param" for actions)
-  int		radio_grp;	// all radio items in a group are contiguous, and share the same value;
+  int			sel_type;
+  String		label() {return String(text());} // TODO: nuke, replace with refs to text()
+  Variant		usr_data; // default is Invalid, can also be int or void* 
 
-  int			id(); // the MenuItem id, or -1 if no menu item (shouldn't happen)
-  int			index() {return m_index;} // note: this is our own index in menu_el_list, not the underlying menu index in menu
-  taiMenuEl(taiMenu* owner_, QMenuItem* item_, int radio_grp_, int sel_type_, const String& label_,
-      void* usr_data_, CallbackType ct_ = none, const QObject *receiver = NULL, const char* member = NULL); // 'member' is result of Qt SLOT() macro
-  virtual ~taiMenuEl();
-
-  void connect(CallbackType ct_, const QObject *receiver, const char* member); // connect callback to given
-  void connect(const taiAction* actn); // connect Action to given callback (ignored if NULL)
-  void connect(const taiMenuAction* actn);  // connect MenuAction to given callback (ignored if NULL)
-
-  bool 			hasCallbacks() { return (connectCount > 0); }
-  virtual QPopupMenu*	SubMenu() 	{ return NULL; }
   bool			canSelect(); // true if item can be taiMenu::curSel value
   virtual bool		isSubMenu() 	{ return false; }
-  bool			isChecked(); // #GET_Checked returns 'true' if a radio or toggle item, and checked, false otherwise
-  void			setChecked(bool value); // #SET_Checked
+  bool			isGrouped(); // indicates if item in a group, ie is a radio group action
+  
+  void			AddTo(taiMenuToolBarBase* targ); // convenience function
+  
+  taiAction(int sel_type_, const String& label_); // used my taiMenu etc.
+  taiAction(const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
+  explicit taiAction(bool is_sep); // used for adding separators, which are very stoopid and know/do nothing
+  virtual ~taiAction();
+
+  void connect(CallbackType ct_, const QObject *receiver, const char* member); // connect callback to given
+  void connect(const taiMenuAction* mact); // convenience function
+
+  virtual QMenu*	SubMenu() 	{ return NULL; }
+
+  bool 			event(QEvent* ev); // override
 
 #ifndef __MAKETA__
 signals:
   void Action();			// for a direct call-back
-  void MenuAction(taiMenuEl* sender);	// for a menu-action call-back (returns item selected)
+  void MenuAction(taiAction* sender);	// for a menu-action call-back (returns item selected)
   void IntParamAction(int param);	// for Qt-style parameter ((int)usr_data)
-  void PtrParamAction(void* ptr);	// for ptr parameter (usr_data)
+  void PtrParamAction(void* ptr);	// for ptr parameter ((void*)usr_data)
+  void VarParamAction(const Variant& var);	// for variant parameter ((void*)usr_data)
 #endif // ndef __MAKETA__
 
 public slots:
-  virtual void	Select();	// slot for selecting an menu item, which then decides
-				// if action or men_act should be called subsequently
+  virtual void		Select();	// called when change() is signalled, which then decides
+				// if other actions should be called subsequently
 protected:
-  int		connectCount;
-  int		m_index; //ordinal position in parent; note: not the same as its id
-  void emitAction();
-  void emitMenuAction();
-  void emitIntParamAction();	// for Qt-style parameter ((int)usr_data)
-  void emitPtrParamAction();	// for ptr parameter (usr_data)
-  void Select_impl(bool selecting); // called by Select(), taiMenu::setCurSel and by taiMenu::GetImage -- doesn't trigger events
+  int			nref; // ref'ed when put onto a taiAction_List, deleted when ref=0
+  void			init(int sel_type_); 
+  void 			emitActions();
+  void 			Select_impl(bool selecting); // called by Select(), taiMenu::setCurSel and by taiMenu::GetImage -- doesn't trigger events
+private:
+  taiAction(const taiAction&); // no copying
+  void operator=(const taiAction&); 
 };
 
-class taiSubMenuEl: public taiMenuEl {
+class taiSubMenuEl: public taiAction { // an action used exclusively to hold a submenu
+  Q_OBJECT
+friend class taiMenuToolBarBase;
 public:
   taiMenu* 		sub_menu_data; // the taiMenu for this submenu
-  taiMenuAction 	default_child_action;
 
-  taiSubMenuEl(taiMenu* owner_, QMenuItem* item_, const String& label_,
-      void* usr_data_, QPopupMenu* sub_menu_, taiMenu* sub_menu_data,
-      const taiMenuAction* default_child_action_ = NULL); //
-  override ~taiSubMenuEl();
-
-  override QPopupMenu*	SubMenu() 	{ return sub_menu; }
-  override bool		isSubMenu() 	{ return true; }
-protected:
-  QPopupMenu*		sub_menu;
+  QMenu*		SubMenu() 	{ return menu(); } // override
+  bool			isSubMenu() 	{ return true; } // override
+  
+protected: // only allowed to be used internally when creating submenus
+  taiSubMenuEl(const String& label_, taiMenu* sub_menu_data); //
+  ~taiSubMenuEl();
 };
 
-class taiMenuEl_List : public taPtrList<taiMenuEl> {
+class taiAction_List : public taPtrList<taiAction> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-protected:
-  void	El_Done_(void* it)	{ delete (taiMenuEl*)it; }
-  void	El_SetIndex_(void* it, int idx) 	{((taiMenuEl*)it)->m_index = idx;}
-
 public:
-  ~taiMenuEl_List()            { Reset(); }
-  virtual String El_GetName_(void* it) const { return (((taiMenuEl*)it)->label); }
+  int			count() {return size;} // for Qt-api compat
+  
+  taiAction*		PeekNonSep(); // returns last non-separator item, if any
+  
+  ~taiAction_List()            { Reset(); }
+  virtual String El_GetName_(void* it) const { return (((taiAction*)it)->text()); }
+  
+protected:
+  override void*	El_Ref_(void* it)  { ((taiAction*)it)->nref++; return it; }	// when pushed
+  override void* 	El_unRef_(void* it)  { ((taiAction*)it)->nref--; return it; }	// when popped
+  override void		El_Done_(void* it);
 };
 
 
 //////////////////////////////////
-// 	    taiMenu		//
+//   taiMenuToolBarBase		//
 //////////////////////////////////
 
-class taiMenu : public taiData {
-  // (possibly) hierarchical menu for selecting a single item
+class taiMenuToolBarBase : public taiData {
+  // #VIRT_BASE common subtype for menus and menubars
   Q_OBJECT
 friend class taiMenu_List; // hack because lists return refs to strings, not values
 public:
-  enum RepType {
-    menubar,			// represent menu as a menubar
-    popupmenu,			// represent menu as a popup menu (for use in menu bars, submenus, or user-supplied buttons)
-    buttonmenu			// menu invoked from a button
-  };
-//    menuitem, 			// represent menu as menuitem (for use in a bigger bar)
   enum SelType {
     st_none =		0x00,	// no action on selection -- primarily for SubItem entries
     normal =		0x01,	// selecting the item causes an action; no persistent check mark by menu item
     normal_update =	0x81,
-    radio = 		0x02,	// only 1 of n items on the menu can be selected; selecting on deselects any other
+    radio = 		0x02,	// only 1 of n items on the menu can be selected; selecting one deselects any other
     radio_update =	0x82,
     toggle =		0x04,	// item can be checked or unchecked, independent of any other item
     toggle_update =	0x84,
@@ -437,86 +436,148 @@ public:
     update = 		0x80	// flag added to normal selection types, causes parent item to indicate Changed when item selected
   };
 
-  RepType		rep_type;
   SelType		sel_type;
   int			font_spec; //taiMisc::FontSpec
-  taiMenuEl_List	items;
+  taiAction_List	items;
   QWidget*		gui_parent; // needed for submenus
+  
+  int			count() const {return items.size;} // qt compatability -- note that count won't have separators
+  String		label() const	{ return mlabel; } //#GET_Label
+  virtual void		setLabel(const String& val); // #SET_Label replaces the SetMLabel call in IV
+  taiAction*		curSel() const;
+  void			setCurSel(taiAction* value);
+  
+  virtual void		AddSep(bool new_radio_grp = false); // add menu separator -- can also be used to create new radio groups --  won't add initial sep, or 2 separators in a row
+  virtual void		AddAction(taiAction* act); // add the already created action
+  taiAction* 		AddItem(const String& val, SelType st = use_default, 
+    taiAction::CallbackType ct = taiAction::none, const QObject *receiver = NULL, const char* member = NULL,
+    const Variant& usr = _nilVariant);
+  taiAction* 		AddItem(const String& val, SelType st, const taiMenuAction* men_act, 
+    const Variant& usr = _nilVariant);
+  taiAction* 		AddItem(const String& val, const Variant& usr);
+	
+  virtual taiMenu*	AddSubMenu(const String& val, TypeDef* typ_ = NULL); // add a submenu -- this also works for toolbars, and will create a toolbar menu button
+  
+  virtual taiAction*	GetValue()	{ return cur_sel; }
+  virtual bool 		GetImage(void* usr); // set to this usr item, uses a default if not found
+  void 			GetImageByIndex(int item);
+  taiMenu*		FindSubMenu(const char* nm); // find specified submenu, or NULL if not found
+
+  void			DeleteItem(uint index); // deletes the indicated item -- deletes the gui representation as well
+  virtual void		NewRadioGroup();	// start a new radio group (must also preceed first group)
+  virtual void		Reset();
+  
+  taiMenuToolBarBase(int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+      taiData* par, QWidget* gui_parent_, int flags_ = 0, taiMenuToolBarBase* par_menu_ = NULL);
+  ~taiMenuToolBarBase();
+#ifndef __MAKETA__
+signals:
+  void labelChanged(const char* val); //
+#endif
+
+  
+protected:  
+  QActionGroup*		cur_grp; // for radio groups, current group, if any
+  taiAction*		cur_sel;  // selection for getting value of menu -- only used by top-level menu
+  String		mlabel; // string contents of current menu label
+  taiMenuToolBarBase*	par_menu; // parent menu, if any -- many methods delegate their calls upward if there is a parent
+  taiSubMenuEl*		par_menu_el; // parent submenu element, if any
+  void 			emitLabelChanged(const char* val); // #IGNORE
+  virtual bool 		GetImage_impl(void* usr);  // #IGNORE set to this usr item, returns false if not found -- recursive for hiermenus
+  virtual void 		ItemAdded(taiAction* it); // add to rep, def adds to mrep, but overridden for menubutton type
+  virtual void 		RemoveAction(taiAction* it); // remove from rep, def removes from mrep, but overridden for menubutton type
+};
+
+//////////////////////////////////
+// 	    taiMenu		//
+//////////////////////////////////
+
+class taiMenu : public taiMenuToolBarBase {
+  // (possibly) hierarchical menu for selecting a single item
+  Q_OBJECT
+#ifndef __MAKETA__
+typedef taiMenuToolBarBase inherited;
+#endif
+friend class taiMenu_List; // hack because lists return refs to strings, not values
+friend class taiMenuToolBarBase;
+public:
+  enum RepType {
+    popupmenu,			// represent menu as a popup menu (for use in menu bars, submenus, or user-supplied buttons)
+    buttonmenu			// menu invoked from a button
+  };
+//    menuitem, 			// represent menu as menuitem (for use in a bigger bar)
+  RepType		rep_type;
 
   taiMenu(int rep_type_, int  sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
-      taiData* par, QWidget* gui_parent_, int flags_ = 0, taiMenu* par_menu_ = NULL);
+      taiData* par, QWidget* gui_parent_, int flags_ = 0, taiMenuToolBarBase* par_menu_ = NULL);
 //nbg  taiMenu(int rt, int st, int ft, QWidget* gui_parent_); // constructor for WinBase and other non-taiDialog uses
   taiMenu(QWidget* gui_parent_, int rep_type_ = popupmenu, int sel_type_= normal,
-      int font_spec_ = 0, QMenuData* exist_menu = NULL);
+      int font_spec_ = 0, QMenu* exist_menu = NULL);
     // constructor for Browser and context menus ft=0 means default font size; (optional) exist_menu MUST be proper type according to rep_type
   ~taiMenu();
 
-  taiMenuEl*		curSel() const;
-  void			setCurSel(taiMenuEl* value);
-  String		label() const	{ return mlabel; } //#GET_Label
-  void			setLabel(const String& val); // #SET_Label replaces the SetMLabel call in IV
-  QMenuData*		menu();		 // generic represenation
-  QMenuBar*		rep_bar()	{ return (rep_type == menubar) ? mrep_bar : NULL; } // strongly typed, safe
-  QPopupMenu*		rep_popup()	{ return (rep_type == popupmenu) ? mrep_popup : NULL; } // strongly typed, safe
+  QMenu*		menu();	 // generic represenation
+  QMenu*		rep_popup()	{ return mrep_popup; } // strongly typed, safe
+  void			setLabel(const String& val); // override 
 
-  virtual taiMenuEl*	GetValue()	{ return cur_sel; }
-  virtual bool 		GetImage(void* usr); // set to this usr item, uses a default if not found
-  void 			GetImageByIndex(int item);
+  taiAction*		operator[](int index) const {return items.SafeEl(index);}
 
-//NOTE: pass slot with no param for "ct=action", and slot with QObject* (sender) for "ct=men_act"
-  taiMenuEl* 		AddItem(const char* val, void* usr, SelType st, const taiAction* acn) ;
-  taiMenuEl* 		AddItem(const char* val, void* usr, SelType st, const taiMenuAction* acn) ;
-  taiMenuEl* 		AddItem(const char* val, void* usr, SelType st,	taiMenuEl::CallbackType ct, const taiMenuAction& acn)
-    {return AddItem(val, usr, st, ct, acn.receiver, acn.member);}
-  taiMenuEl* 		AddItem(const char* val, void* usr = NULL, SelType st = use_default,
-	taiMenuEl::CallbackType ct = taiMenuEl::none,
-        const QObject *receiver = NULL, const char* member = NULL, const QKeySequence* accel = NULL);
-    // 'member' is the result of the SLOT() macro
-  taiMenuEl* 		AddItem_FromAction(iAction* act); // #IGNORE only used by iAction, which adds the menu item
-  void			DeleteItem(uint index); // deletes the indicated item -- deletes the gui representation as well
-  virtual void		AddSep(bool new_radio_grp = false); // add menu separator -- can also be used to create new radio groups --  won't add 2 separators in a row
-  virtual void		NewRadioGroup() {++cur_radio_grp;}	// start a new radio group (must also preceed first group)
-  taiMenu*		AddSubMenu(const char* val, void* usr = NULL, SelType st = use_default,
-  	const taiMenuAction* default_child_action = NULL, TypeDef* typ_ = NULL); // returns new sub; dca will get added automatically to all sub items (but not recursively) -- NOTE: action items generally require the menu have a TypeDef!!!
-  taiMenu*		AddSubMenu(const char* val, TypeDef* typ_) { return AddSubMenu(val, NULL, use_default,
-    				NULL, typ_);} // for adding popup menus to main menus
-  taiMenu*		AddSubMenu(const char* val, const taiMenuAction* default_child_action);
-  taiMenu*		AddSubMenu(const char* val, const taiMenuAction& default_child_action);
-  taiMenu*		FindSubMenu(const char* nm); // find specified submenu, or NULL if not found
-  virtual void		ResetMenu();
-
-  taiMenuEl*		operator[](int index) const {return items.SafeEl(index);}
-
-  int			count() const {return items.size;} // qt compatability -- note that count won't have separators
-  int			exec (const iPoint& pos, int indexAtPoint = 0);
-  int			insertItem(const char* val, const QObject *receiver = NULL, const char* member = NULL,
-    const QKeySequence* accel = NULL); // compatability routine with QMenuData, returns id; slot is parameterless
+  void			exec(const iPoint& pos);
+  taiAction*		insertItem(const char* val, const QObject *receiver = NULL, const char* member = NULL,
+    const QKeySequence* accel = NULL); // OBS compatability routine with QMenu
   void			insertSeparator() {AddSep();} // Qt-convenience
 
-#ifndef __MAKETA__
-signals:
-  void labelChanged(const char* val);
-#endif
-
 protected:
-  String		mlabel; // string contents of current menu label
-  QMenuBar*		mrep_bar;
-  QPopupMenu*		mrep_popup;
+  QMenu*		mrep_popup;
   QPushButton*		button; // when used as popup edit button -- note that EditButton creates/manages its own button
-  taiMenu*		par_menu; // parent menu, if any -- many methods delegate their calls upward if there is a parent
-  taiMenuEl*		cur_sel;  // selection for getting value of menu -- only used by top-level menu
-  int			cur_radio_grp;	// current id of current radio group -- bumped by AddSep (ok to have unused group ids)
-  taiSubMenuEl*		par_menu_el; // parent submenu element, if any
-  void			init(int rt, int st, int ft, QWidget* gui_parent_,
-      taiMenu* par_menu_, QMenuData* exist_menu = NULL); // #IGNORE -- exist_menu MUST be proper type (main/popup)
+  void			init(int rt, QMenu* exist_menu = NULL); // #IGNORE -- exist_menu MUST be proper type (main/popup)
+  void 			ConstrPopup(QWidget* gui_parent_, QMenu* exist_popup = NULL); // #IGNORE
+  
+  override void		ItemAdded(taiAction* it); // called whenever an item is added; add to menu
+  override void 	RemoveAction(taiAction* it); // remove from rep, def removes from mrep, but overridden for 
+};
+
+//////////////////////////////////
+// 	    taiMenuBar		//
+//////////////////////////////////
+
+class taiMenuBar : public taiMenuToolBarBase {
+  // top level menu bar
+  Q_OBJECT
+#ifndef __MAKETA__
+typedef taiMenuToolBarBase inherited;
+#endif
+friend class taiMenu_List; // hack because lists return refs to strings, not values
+public:
+  QMenuBar*		rep_bar() {return mrep_bar;}
+  
+  override void		AddSep(bool new_radio_grp = false) {} // no seps or groups allowed in a menubar
+  
+  taiMenuBar(int font_spec_, TypeDef* typ_, taiDataHost* host,
+      taiData* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditDataHost
+  taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by iDataViewer
+  ~taiMenuBar();
+protected:
+  QMenuBar*		mrep_bar;
+  
+  void 			init(QMenuBar* exist_menu);
   void 			ConstrBar(QWidget* gui_parent_, QMenuBar* exist_bar = NULL); // #IGNORE
-  void 			ConstrPopup(QWidget* gui_parent_, QPopupMenu* exist_popup = NULL); // #IGNORE
-  void emitLabelChanged(const char* val); // #IGNORE
-  taiSubMenuEl*		AddSubItem(const char* val, void* usr, QPopupMenu* child, taiMenu* sub_menu_data,
-  				const taiMenuAction* default_child_action); // #IGNORE
-  virtual QMenuItem*	NewItem(const char* val, SelType st, QPopupMenu* child = NULL,
-      const QKeySequence* accel = NULL); // #IGNORE
-  virtual bool 		GetImage_impl(void* usr);  // #IGNORE set to this usr item, returns false if not found -- recursive for hiermenus
+  override QMenu*	NewSubItem(const char* val, Q3PopupMenu* child = NULL,
+      const QKeySequence* accel = NULL); // #IGNORE creates new submenu
+};
+
+class taiToolBar: public taiMenuToolBarBase {
+  Q_OBJECT
+#ifndef __MAKETA__
+typedef taiMenuToolBarBase inherited;
+#endif
+public:
+  QToolBar*		rep() {return (QToolBar*)m_rep;}
+  
+  taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar); // used by iDataViewer
+protected:
+  void 			init(QToolBar* exist_bar);
+
 };
 
 //////////////////////////////////
@@ -550,20 +611,21 @@ public:
 
 class iAction: public QAction {
   Q_OBJECT
+friend class taiMenu;
 public:
-  iAction(int param_, QObject* parent, const char* name = 0)
-      :QAction(parent, name) {init(param_);}
-  iAction(int param_, const QString& menuText, QKeySequence accel, QObject* parent, const char* name = 0)
-      :QAction(menuText, accel, parent, name) {init(param_);}
-  iAction(int param_, const QIconSet& icon, const QString& menuText, QKeySequence accel, QObject* parent, const char* name = 0 )
-      :QAction(icon, menuText, accel, parent, name) {init(param_);}
+  iAction(int param_, QObject* parent)
+      :QAction(parent) {init(param_);}
+  iAction(int param_, const QString& menuText, const QKeySequence& accel, QObject* parent)
+      :QAction(menuText, parent) {setShortcut(accel), init(param_);}
+  iAction(int param_, const QIcon& icon, const QString& menuText, const QKeySequence& accel, QObject* parent)
+      :QAction(icon, menuText, parent) {setShortcut(accel), init(param_);}
 
-  iAction(QObject* parent, const char* name = 0)
-      :QAction(parent, name) {init();}
-  iAction(const QString& menuText, QKeySequence accel, QObject* parent, const char* name = 0)
-      :QAction(menuText, accel, parent, name) {init();}
-  iAction(const QIconSet& icon, const QString& menuText, QKeySequence accel, QObject* parent, const char* name = 0 )
-      :QAction(icon, menuText, accel, parent, name) {init();}
+  iAction(QObject* parent)
+      :QAction(parent) {init();}
+  iAction(const QString& menuText, const QKeySequence& accel, QObject* parent)
+      :QAction(menuText, parent) {setShortcut(accel), init();}
+  iAction(const QIcon& icon, const QString& menuText, const QKeySequence& accel, QObject* parent)
+      :QAction(icon, menuText, parent) {setShortcut(accel), init();}
 
   void		AddTo(taiMenu* menu); // adds to a taiMenu, using the text, accel key, respects toggle, sets the param in the usr_data
 
@@ -574,14 +636,13 @@ signals:
 protected:
   QAction*	m_action;
   int 		param;
-  void addedTo(int index, QPopupMenu * menu ); // override -- set param too
-  void init(int param_ = -1); // -1 generally indicates none
+  void 		init(int param_ = -1); // -1 generally indicates none
 
 protected slots:
   void this_activated();
 };
 
-class iAction_List: public QPtrList<iAction> {
+class iAction_List: public QList<iAction*> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS corresponds to a menu item and/or toolbar button -- items are stickily created as needed (browsewin creates the common set)
 
   override String 	El_GetName_(void*) const; // name is Q object name
@@ -615,7 +676,7 @@ public:
   String_Array		items;		// the items in the list
 
   QGridLayout*		layOuter;
-  QListBox* 		browser; 	// list of items
+  Q3ListBox* 		browser; 	// list of items
   QLineEdit* 		editor;
   QHBoxLayout*		layButtons;
   QPushButton*		btnOk;
@@ -649,8 +710,8 @@ protected slots:
   void accept(); // override
   void reject(); // override
   // callbacks
-  void 		browser_selectionChanged(QListBoxItem* itm);
-  void 		browser_doubleClicked(QListBoxItem* itm);
+  void 		browser_selectionChanged(Q3ListBoxItem* itm);
+  void 		browser_doubleClicked(Q3ListBoxItem* itm);
   virtual void 	DescendBrowser();
   virtual void 	AcceptEditor();
 };
@@ -733,7 +794,7 @@ public:
 protected slots:
   virtual void	Edit();		// for edit callback
   virtual void	Chooser();	// for chooser callback
-  void ItemChosen(taiMenuEl* menu_el); // when user chooses from menu
+  void ItemChosen(taiAction* menu_el); // when user chooses from menu
 };
 
 class taiSubToken : public taiElBase {

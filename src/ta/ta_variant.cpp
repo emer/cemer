@@ -122,6 +122,132 @@ void Variant::Dump_Save_Type(ostream& strm) {
   strm << " " << (int)type() << " " << (isNull()) ? '1' : '0';
 } 
 
+bool Variant::eqVariant(const Variant& b) const {
+  // invalid never equates
+  if (isInvalid() || b.isInvalid()) return false;
+  // for pointer types, proceed directly
+  if (b.isPtrType())
+    return eqPtr(b.toPtr());
+  // otherwise, null never equates
+  else if (b.isNull()) return false;
+  else switch (b.type()) {
+  case T_Bool: return eqBool(b.toBool());
+  case T_Int: return eqInt(b.toInt());
+  case T_UInt: return eqUInt(b.toUInt());
+  case T_Int64: return eqInt64(b.toInt64());
+  case T_UInt64: return eqUInt64(b.toUInt64());
+  case T_Double: return eqDouble(b.toDouble());
+  case T_Char: return eqChar(b.toChar());
+  case T_String:  return eqString(b.toString());
+  default: return false; //compiler food, never happens
+  }
+}
+
+bool  Variant::eqBool(bool val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return (d.b == val);
+  case T_Int: 
+  case T_UInt: 
+  case T_Int64: 
+  case T_UInt64: 
+    return (toBool() == val);
+  default: return false;
+  }
+}
+
+bool  Variant::eqInt(int val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return (d.b == val);
+  case T_Int: return (d.i == val);
+  case T_UInt: 
+    return ((val > 0) && (d.u <= INT_MAX) && (d.u == val));
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64: 
+    return ((val > 0) && (d.u64 <= INT_MAX) && (d.u64 == val));
+  default: return false;
+  }
+}
+
+bool  Variant::eqUInt(uint val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return (d.b == val);
+  case T_Int: return ((d.i > 0) && (d.i == val));
+  case T_UInt:  return (d.u == val);
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == val));
+  case T_UInt64: return (d.u64 == val);
+  default: return false;
+  }
+}
+
+bool  Variant::eqInt64(int64_t val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return (d.b == val);
+  case T_Int: return (d.i == val);
+  case T_UInt: 
+    return ((val > 0) && (d.u == val));
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64: 
+    return ((val > 0) && (d.u64 < LLONG_MAX) && (d.u64 == val));
+  default: return false;
+  }
+}
+
+bool  Variant::eqUInt64(uint64_t val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return (d.b == val);
+  case T_Int: return ((d.i > 0) && (d.i == val));
+  case T_UInt:  return (d.u == val);
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == val));
+  case T_UInt64: return (d.u64 == val);
+  default: return false;
+  }
+}
+
+bool  Variant::eqDouble(double val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return false; // note: never really makes sense
+  case T_Int: 
+  case T_UInt:  
+  case T_Int64:  
+  case T_UInt64: 
+    return (toDouble() == val);
+  case T_Double:
+    return d.d == val;
+  default: return false;
+  }
+}
+
+bool  Variant::eqChar(char val) const {
+  if (isNull()) return false;
+  switch (m_type)  {
+  case T_Char: return (d.c == val); 
+  case T_String: {
+    const String& str = getString();
+    return ((str.length() == 1) && (str[0] == val));
+  }
+  default: return false;
+  }
+}
+
+bool Variant::eqString(const String& val) const {
+  if (isNull()) return false;
+  if (!isPtrType()) return false;
+  // otherwise, compare our string rep
+  return (toString() == val);
+}
+
+bool  Variant::eqPtr(void* val) const { // note: works for taBase/taMatrix as well
+  if (!isPtrType()) return false;
+  return (d.ptr == val);
+}
+
+
 void Variant::ForceType(VarType vt, bool null) {
   if ((int)vt != m_type) {
     if (vt == T_String)

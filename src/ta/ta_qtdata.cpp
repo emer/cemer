@@ -46,15 +46,15 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlistbox.h>
+#include <Q3ListBox>
+#include <Q3ListBoxText>
 #include <qmenubar.h>
 #include <qmenudata.h>
-#include <qobjectlist.h>
-#include <qpopupmenu.h>
+#include <Q3PopupMenu>
 #include <qpushbutton.h>
 #include <qstring.h>
 #include <qtooltip.h>
-#include <qwidgetstack.h>
+#include <Q3WidgetStack>
 
 /*
 #ifndef CYGWIN
@@ -74,8 +74,10 @@
 #define POINTER_ALIGN_X		.5
 #define POINTER_ALIGN_Y		.5
 
-class cssiArgDialog;
+using namespace Qt;
 
+class cssiArgDialog;
+/*obs
 void taiAction::connect(QObject* sender, const char* signal) const {
   if ((receiver != NULL) && (!member.empty()))
     QObject::connect(sender, signal, receiver, member.chars());
@@ -86,7 +88,7 @@ taiAction& taiAction::operator=(const taiAction& rhs) {
   receiver = rhs.receiver;
   member = rhs.member;
   return *this;
-}
+} */
 
 
 /* NN: ??
@@ -356,7 +358,7 @@ void taiCompData::EndLayout() { //virtual/overridable
 void taiCompData::AddChildWidget_impl(QWidget* child_widget) { //virtual/overridable
   if (last_spc != -1)
     lay->addSpacing(last_spc);
-  lay->add(child_widget);
+  lay->addWidget(child_widget);
 }
 
 QWidget* taiCompData::widgets(int index) {
@@ -498,11 +500,11 @@ taiIncrField::taiIncrField(TypeDef* typ_, taiDataHost* host_, taiData* par,
   iSpinBox* rep = this->rep();
   rep->setFixedHeight(taiM->text_height(defSize()));
 
-  rep->setMaxValue(0x7FFFFFFF);
+  rep->setMaximum(0x7FFFFFFF);
   if (HasFlag(flgPosOnly))
-    rep->setMinValue(0);
+    rep->setMinimum(0);
   else
-    rep->setMinValue(-0x80000000); // TODO: use proper minint from limits.h
+    rep->setMinimum(-0x80000000); // TODO: use proper minint from limits.h
   if (readOnly()) {
     rep->setReadOnly(true);
   } else {
@@ -696,7 +698,8 @@ void taiComboBox::Initialize(QWidget* gui_parent_) {
 
 void taiComboBox::AddItem(const String& val) {
      // add an item to the list
-  rep()->insertItem(val);
+//Qt3  rep()->insertItem(val);
+  rep()->addItem(val);
 }
 
 void taiComboBox::Clear() {
@@ -708,11 +711,11 @@ void taiComboBox::Clear() {
 
 void taiComboBox::GetImage(int itm) {
     // set to this item number
-  rep()->setCurrentItem(itm);
+  rep()->setCurrentIndex(itm);
 }
 
 void taiComboBox::GetValue(int& itm) const {
-  itm = rep()->currentItem();
+  itm = rep()->currentIndex();
 }
 /* NN
 void taiComboBox::GetImage(const String& val) {
@@ -789,14 +792,15 @@ void taiBitBox::AddBoolItem(String name, int val) {
 }
 
 void taiBitBox::GetImage(int val) {
-  QObjectListIterator it(*(m_rep->children()));
   QObject *obj;
-  while ((obj = it.current()) != NULL ) {
+/*Qt3  QObjectListIterator it(*(m_rep->children()));
+  while ((obj = it.current()) != NULL ) { */
+  foreach (obj, m_rep->children() ) {
     if (obj->inherits("iBitCheckBox")) {
       iBitCheckBox* bcb = (iBitCheckBox*)obj;
       bcb->setChecked((val & bcb->val)); //note: prob raises signal -- ok
     }
-    ++it;
+//    ++it;
   }
   m_val = val;
 }
@@ -838,7 +842,7 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
   SetRep(new QFrame(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    rep()->setPaletteBackgroundColor(*(host->colorOfRow(host->cur_row)));
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
   }
   InitLayout();
 //  QHBoxLayout* hbl = new QHBoxLayout(m_rep);
@@ -863,8 +867,8 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
 
     // add description text tooltips
     if (!desc.empty()) {
-      QToolTip::add(lbl, desc);
-      QToolTip::add(ctrl, desc);
+      lbl->setToolTip(desc);
+      ctrl->setToolTip(desc);
     }
   }
   EndLayout();
@@ -908,15 +912,15 @@ void taiPolyData::GetValue(void* base) {
 taiDataDeck::taiDataDeck(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags) {
   cur_deck = 0;
-  SetRep(new QWidgetStack(gui_parent_));
+  SetRep(new Q3WidgetStack(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    rep()->setPaletteBackgroundColor(*(host->colorOfRow(host->cur_row)));
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
   }
 }
 
 void taiDataDeck::GetImage(int i) {
-  // note: QWidgetStack doesn't seem to completely hide underneath widgets...
+  // note: Q3WidgetStack doesn't seem to completely hide underneath widgets...
   cur_deck = i;
   rep()->raiseWidget(i);
   for (int j = 0; j < widgetCount(); ++j) {
@@ -931,52 +935,58 @@ void taiDataDeck::AddChildWidget_impl(QWidget* child_widget) {
 }
 
 //////////////////////////
-// 	taiMenuEl	//
+// 	taiAction	//
 //////////////////////////
 
-taiMenuEl::taiMenuEl(taiMenu* owner_, QMenuItem* item_, int radio_grp_, int sel_type_, const String& label_,
-      void* usr_data_, CallbackType ct_, const QObject *receiver, const char* member)
-: QObject()
+taiAction::taiAction(int sel_type_, const String& label_)
+: QAction(label_, NULL)
 {
-  owner = owner_;
-  rep = item_;
-  label = label_;
-  usr_data = usr_data_;
-  radio_grp = radio_grp_;
+  init(sel_type_);
+}
+
+taiAction::taiAction(bool is_sep)
+: QAction(NULL)
+{
+  init(0);
+  setSeparator(true);
+}
+
+taiAction::~taiAction() {
+}
+
+void taiAction::init(int sel_type_)
+{
   sel_type = sel_type_;
-  connectCount = 0;
-  if (ct_ != none)
-    connect(ct_, receiver, member); // default action -- more could be added
+  nref = 0;
 }
 
-taiMenuEl::~taiMenuEl() {
-  owner = NULL;
-  rep = NULL;
+void taiAction::AddTo(taiMenuToolBarBase* targ) {
+  targ->AddAction(this);
 }
 
-bool taiMenuEl::canSelect() {
-  return ((sel_type & taiMenu::radio) && (radio_grp = -1) && !isSubMenu());
+bool taiAction::canSelect() {
+  return ((sel_type & taiMenu::radio) && (isGrouped()) && !isSubMenu());
 }
 
-int taiMenuEl::id() {
-  return (rep) ? rep->id() : -1;
+bool taiAction::isGrouped() {
+  return (actionGroup() != NULL);
 }
 
-bool taiMenuEl::isChecked() {
+/*nn bool taiAction::isChecked() {
    // returns 'true' if a radio or toggle item, and checked, false otherwise
   if (isSubMenu())
     return false;
   else return rep->isChecked();
-}
+} 
 
-void taiMenuEl::setChecked(bool value) {
+void taiAction::setChecked(bool value) {
    // ignored if not a radio or toggle item
   if (isSubMenu() || !(sel_type & (taiMenu::radio | taiMenu::toggle)))
     return;
   else owner->menu()->setItemChecked(id(), value);
-}
+} */
 
-void taiMenuEl::connect(CallbackType ct_, const QObject *receiver, const char* member) {
+void taiAction::connect(CallbackType ct_, const QObject *receiver, const char* member) {
   // connect callback to given
   if ((ct_ == none) || (receiver == NULL) || (member == NULL)) return;
 
@@ -987,7 +997,7 @@ void taiMenuEl::connect(CallbackType ct_, const QObject *receiver, const char* m
     QObject::connect(this, SIGNAL(Action()), receiver, member);
     break;
   case men_act:
-    QObject::connect(this, SIGNAL(MenuAction(taiMenuEl*)), receiver, member);
+    QObject::connect(this, SIGNAL(MenuAction(taiAction*)), receiver, member);
     break;
   case int_act:
     QObject::connect(this, SIGNAL(IntParamAction(int)), receiver, member);
@@ -995,24 +1005,75 @@ void taiMenuEl::connect(CallbackType ct_, const QObject *receiver, const char* m
   case ptr_act:
     QObject::connect(this, SIGNAL(PtrParamAction(void*)), receiver, member);
     break;
+  case var_act:
+    QObject::connect(this, SIGNAL(VarParamAction(const Variant&)), receiver, member);
+    break;
   }
-  ++connectCount;
 }
 
-void taiMenuEl::connect(const taiAction* actn) {
-   // connect Action to given callback (ignored if NULL)
-  if (actn == NULL) return;
-  connect(action, actn->receiver, actn->member);
+void taiAction::connect(const taiMenuAction* mact) {
+  if (mact == NULL) return;
+  connect(men_act, mact->receiver, mact->member);
 }
 
-void taiMenuEl::connect(const taiMenuAction* actn) {
-    // connect MenuAction to given callback (ignored if NULL)
-  if (actn == NULL) return;
-  connect(men_act, actn->receiver, actn->member);
+void taiAction::emitActions() {
+  emit Action();
+  emit MenuAction(this);
+  emit IntParamAction(usr_data.toInt());
+  emit PtrParamAction(usr_data.toPtr());
+  emit VarParamAction(usr_data);
 }
 
-void taiMenuEl::Select_impl(bool selecting) {
-   // called by Select() and by taiMenu::GetImage -- doesn't trigger events
+bool taiAction::event(QEvent* ev) {
+  bool rval = QAction::event(ev);
+  if (ev->type() == QEvent::ActionChanged) {
+    Select();
+  }
+  return rval;
+}
+
+void taiAction::Select() {
+  if (sel_type & taiMenu::toggle)
+    Select_impl(!isChecked());
+  else Select_impl(true);
+
+  emitActions();	// don't set the cur_sel if executing
+/* TODO: need to change how clients use this so we don't need an owner
+  probably need to have the client connect an appropriate signal
+  
+  // if a radio item in global group, update global selection
+  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
+    owner->setCurSel(this);
+
+  if (sel_type & taiMenu::update) {
+//    owner->Update();
+    owner->DataChanged();		// something was selected..
+  } */
+}
+
+void taiAction::Select_impl(bool selecting) {
+// TODO: verify
+  if (sel_type & taiMenu::toggle) {
+    setChecked(selecting);
+  } else if (sel_type & taiMenu::radio) {
+/*TODO Qt4    
+    if (!selecting) {
+       setChecked(false);
+    } else if (radio_grp != -1) {
+ 
+      // if non-global radio group item, then set the item in the group
+      for (int i = 0; i < owner->items.size; ++i) {
+        taiAction* mel = owner->items.FastEl(i);
+        if (mel->radio_grp != this->radio_grp) continue;
+        setChecked((mel == this));
+      } 
+    } else {
+      setChecked(true);
+    } */
+  } 
+  
+
+/*Qt3   // called by Select() and by taiMenu::GetImage -- doesn't trigger events
   if (sel_type & taiMenu::toggle) {
     owner->menu()->setItemChecked(id(), selecting);
   } else if (sel_type & taiMenu::radio) {
@@ -1022,355 +1083,204 @@ void taiMenuEl::Select_impl(bool selecting) {
 
       // if non-global radio group item, then set the item in the group
       for (int i = 0; i < owner->items.size; ++i) {
-        taiMenuEl* mel = owner->items.FastEl(i);
+        taiAction* mel = owner->items.FastEl(i);
         if (mel->radio_grp != this->radio_grp) continue;
         setChecked((mel == this));
       }
     } else {
       setChecked(true);
    }
-  }
+  } */
 }
-
-void taiMenuEl::Select() {
-  if (sel_type & taiMenu::toggle)
-    Select_impl(!isChecked());
-  else Select_impl(true);
-
-  emitAction();		// don't set the cur_sel if executing
-  emitMenuAction();	// but do it for selecting
-  emitIntParamAction();
-  emitIntParamAction();
-
-  // if a radio item in global group, update global selection
-  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
-    owner->setCurSel(this);
-
-  if (sel_type & taiMenu::update) {
-//    owner->Update();
-    owner->DataChanged();		// something was selected..
-  }
-}
-
-void taiMenuEl::emitAction() {
-  emit Action();
-}
-
-void taiMenuEl::emitMenuAction() {
-  emit MenuAction(this);
-}
-
-void taiMenuEl::emitIntParamAction() {
-  emit IntParamAction((int)usr_data);
-}
-
-void taiMenuEl::emitPtrParamAction() {
-  emit PtrParamAction(usr_data);
-}
-
 
 
 //////////////////////////
 // 	taiSubMenuEl	//
 //////////////////////////
 
-taiSubMenuEl::taiSubMenuEl(taiMenu* owner_, QMenuItem* item_, const String& label_, void* usr_data_,
-  QPopupMenu* sub_menu_, taiMenu* sub_menu_data_, const taiMenuAction* default_child_action_)
-:taiMenuEl(owner_, item_, -1, taiMenu::st_none, label_, usr_data_)
+taiSubMenuEl::taiSubMenuEl(const String& label_, taiMenu* sub_menu_data_)
+:taiAction(taiMenu::st_none, label_)
 {
-  sub_menu = sub_menu_;
   sub_menu_data = sub_menu_data_;
-  if (default_child_action_)
-    default_child_action = *default_child_action_;
+  setMenu(sub_menu_data->menu());
 }
 
 taiSubMenuEl::~taiSubMenuEl() {
-  delete sub_menu_data;
-  sub_menu_data = NULL;
+  if (sub_menu_data != NULL) {
+    delete sub_menu_data;
+    sub_menu_data = NULL;
+  }
 }
+
 
 //////////////////////////
-// 	taiMenu	//
+//  taiAction_List	//
 //////////////////////////
 
-taiMenu::taiMenu(int rt, int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_, taiMenu* par_menu_)
-: taiData(typ_, host_, par, gui_parent_, flags_)
-{
-  init(rt, st, ft, gui_parent_, par_menu_);
+void taiAction_List::El_Done_(void* it_)	{ 
+  taiAction* it = (taiAction*)it_;
+  if (it->nref == 0)
+    it->deleteLater(); 
 }
 
-/*nbg taiMenu::taiMenu(int rt, int st, int ft, QWidget* gui_parent_)
-: taiData(NULL, NULL, NULL, gui_parent_, 0)
-{
-  init(rt, st, ft, gui_parent_, NULL);
-} */
-
-taiMenu::taiMenu(QWidget* gui_parent_, int rt, int st, int ft, QMenuData* exist_menu)
-: taiData(NULL, NULL, NULL, gui_parent_, 0)
-{
-  init(rt, st, ft, gui_parent_, NULL, exist_menu);
+taiAction* taiAction_List::PeekNonSep() {
+  taiAction* rval;
+  for (int i = size - 1; i >= 0; --i) {
+    rval = FastEl(i);
+    if (!rval->isSeparator())
+      return rval;
+  }
+  return NULL;
 }
 
 
-void taiMenu::init(int rt, int st, int ft, QWidget* gui_parent_, taiMenu* par_menu_, QMenuData* exist_menu)
+//////////////////////////
+//  taiMenuToolBarBase	//
+//////////////////////////
+
+taiMenuToolBarBase::taiMenuToolBarBase(int sel_type_, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par_,
+	QWidget* gui_parent_, int flags_, taiMenuToolBarBase* par_menu_)
+: taiData(typ_, host_, par_, gui_parent_, flags_)
 {
-  mrep_bar = NULL;
-  mrep_popup = NULL;
-  rep_type = (RepType)rt;
-  sel_type = (SelType)st;
+  sel_type = (SelType)sel_type_;
   font_spec = ft;
   gui_parent = gui_parent_;
-  button = NULL;
+  cur_grp = NULL;
+  cur_sel = NULL;
   par_menu = par_menu_;
-  cur_radio_grp = -1; // global group
   par_menu_el = NULL;
-  //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
-  if (rep_type == menubar) {
-    mrep_bar = (exist_menu) ? (QMenuBar*)exist_menu : new QMenuBar(gui_parent_);
-    mrep_bar->setFont(taiM->menuFont(font_spec));
-    mrep_bar->setFixedHeight(taiM->button_height(font_spec)); // button height is ok to control bar height
-    SetRep(mrep_bar);
-  } else { // constr popup
-    mrep_popup = (exist_menu) ? (QPopupMenu*)exist_menu : new QPopupMenu(gui_parent_);
-    mrep_popup->setFont(taiM->menuFont(font_spec));
-    if (sel_type & (radio | toggle))  {
-      //TODO: probably need to always set this true, since we could have checkable items even if creating menu with normal seltype
-      mrep_popup->setCheckable(true); //note: always enabled on Windows
-    }
-    if (rep_type == buttonmenu) {
-      button = new QPushButton(gui_parent_);
-      button->setPopup(mrep_popup);
-      button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
-      button->setFixedHeight(taiM->button_height(font_spec));
-      SetRep(button);
-    } else {
-      SetRep(mrep_popup);
-    }
+}
+
+taiMenuToolBarBase::~taiMenuToolBarBase() {
+  items.Reset(); //note: DON'T call Reset, because it clears gui objects -- they should clear on their own
+}
+
+void taiMenuToolBarBase::AddAction(taiAction* act) {
+  items.Add(act);
+  if ((cur_grp != NULL)) {
+    cur_grp->addAction(act);
   }
-  cur_sel = NULL;
-;
-}
-/*
-taiMenu::taiMenu(const char* lbl, int rt, int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_)
-	: taiData(typ_, host_, par, gui_parent_)
-{
-  rep_type = (RepType)rt;
-  sel_type = (SelType)st;
-  font_spec = (FonType)ft;
-  Constr();
-  SetMLabel(lbl);
-} */
-
-taiMenu::~taiMenu() {
-  items.Reset(); //note: DON'T call ResetMenu, because it clears gui objects -- they should clear on their own
-  mrep_bar = NULL;
-  mrep_popup = NULL;
+  //TODO: more???? font compliance, maybe???
 }
 
-
-QMenuData* taiMenu::menu() {
-  if (rep_type == menubar)
-    return mrep_bar;
-  else
-    return mrep_popup;
-}
-
-void taiMenu::ResetMenu() {
-  items.Reset();
-  menu()->clear();
-  cur_sel = NULL;
-}
-
-void taiMenu::AddSep(bool new_radio_grp) {
-  //NOTE: should not add separators to menu bars
-  if (rep_type == menubar) return;
-
-  //don't double add seps or add at beginning (this check simplifies many callers, so they don't need to know
-  //  whether a previous operation added items and/or seps, or not)
-  if (menu()->count() == 0)  return;
-  if (menu()->count() > 0) {
-    // if last item is a separator, it will have an id of -count, and thus will be found (see below)
-    QMenuItem* itm = menu()->findItem(menu()->idAt(menu()->count() - 1));
-    if (itm->isSeparator()) return;
-  }
-
-  menu()->insertSeparator();
-  //NOTE: in Qt, we don't create taiMenuEl's for separators, unlike in IV version
-//  items.Add(new taiMenuEl(this,new_men,cur_item, "-", NULL,(ivAction*)NULL));
-  if (new_radio_grp)
-    ++cur_radio_grp; // note: ok for there to be unused radio group numbers
-}
-
-taiMenuEl* taiMenu::AddItem(const char* val, void* usr, SelType st, const taiAction* actn) {
-  if (actn == NULL)
-    return AddItem(val, usr, st, taiMenuEl::none);
-  else
-    return AddItem(val, usr, st, taiMenuEl::action, actn->receiver, actn->member);
-}
-
-taiMenuEl* taiMenu::AddItem(const char* val, void* usr, SelType st, const taiMenuAction* actn) {
-  if (actn == NULL)
-    return AddItem(val, usr, st, taiMenuEl::none);
-  else
-    return AddItem(val, usr, st, taiMenuEl::men_act, actn->receiver, actn->member);
-}
-
-taiMenuEl* taiMenu::AddItem(const char* val, void* usr_data, SelType st, taiMenuEl::CallbackType ct_,
-  const QObject *receiver, const char* member, const QKeySequence* accel)
+taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st, 
+  taiAction::CallbackType ct_, const QObject *receiver, const char* member,
+  const Variant& usr)
 { // 'member' is the result of the SLOT() macro
   if (st == use_default)
     st = sel_type;
 
-  taiMenuEl* rval;
+  taiAction* rval;
   // do not add items of same name -- return it instead of adding it
   for (int i = 0; i < items.size; ++i) {
     rval = items.FastEl(i);
-    if (rval->label == val) {
+    if (rval->text() == val) {
       return rval;
     }
   }
   int rgrp;
-  if (st & taiMenu::radio)
-    rgrp = cur_radio_grp;
-  else rgrp = -1;
-  QMenuItem* new_men = NewItem(val, st, NULL, accel);
-  rval = new taiMenuEl(this, new_men, rgrp, st, val, usr_data, ct_, receiver, member);
-  rval->label = val;
-  items.Add(rval);
-  menu()->connectItem(rval->id(), rval, SLOT(Select()));
+  rval = new taiAction(st, val);
+  rval->usr_data = usr;
+  AddItem(rval);
+  rval->connect(ct_, receiver, member);
+  
+/*TODO: modify for Qt4  
   // connect any parent submenu handler
   if (par_menu_el) {
     if (par_menu_el->default_child_action.receiver) {
       menu()->connectItem(rval->id(), par_menu_el->default_child_action.receiver, par_menu_el->default_child_action.member);
     }
-  }
+  } */
   return rval;
 }
 
-taiMenuEl* taiMenu::AddItem_FromAction(iAction* act)
+taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st, const taiMenuAction* mact, 
+  const Variant& usr)
 {
-  QPopupMenu* pm = rep_popup();
-  if (!pm) {
-    taMisc::Error("taiMenu::AddItem_FromAction: can only be called for QPopupMenu taiMenu objects");
-    return NULL;
-  }
-  taiMenu::SelType st = act->isToggleAction() ? taiMenu::toggle : taiMenu::normal;
-
-  taiMenuEl* rval;
-  int rgrp = -1; // radiogroup n/a
-  // use the built in api to add the menu, then retrieve it
-  act->addTo(pm);
-  QMenuItem* new_men = pm->findItem(pm->idAt(pm->count() - 1));
-
-  rval = new taiMenuEl(this, new_men, rgrp, st, act->menuText(), NULL,
-      taiMenuEl::int_act, act, SIGNAL(activated(int)));
-  rval->label = act->menuText();
-  items.Add(rval);
-  menu()->connectItem(rval->id(), rval, SLOT(Select()));
-  // connect any parent submenu handler
-  if (par_menu_el) {
-    if (par_menu_el->default_child_action.receiver) {
-      menu()->connectItem(rval->id(), par_menu_el->default_child_action.receiver, par_menu_el->default_child_action.member);
-    }
-  }
-  return rval;
+  if (mact != NULL)
+    return AddItem(val, st, taiAction::men_act, mact->receiver, mact->member, usr); 
+  else
+    return AddItem(val, st, taiAction::none, NULL, NULL, usr);
 }
 
-taiSubMenuEl* taiMenu::AddSubItem(const char* val, void* usr, QPopupMenu* child, taiMenu* sub_menu_data,
-    const taiMenuAction* default_child_action)
-{ // 'member' is the result of the SLOT() macro
-  //NOTE: we do not do any duplicate checks, because we must unconditionally add the new subitem
-  QMenuItem* new_men = NewItem(val, submenu, child);
-  taiSubMenuEl* rval = new taiSubMenuEl(this, new_men, val, usr, child, sub_menu_data, default_child_action);
-  items.Add(rval);
-  rval->label = val;
-  return rval;
+taiAction* taiMenuToolBarBase::AddItem(const String& val, const Variant& usr) {
+    return AddItem(val, sel_type, taiAction::none, NULL, NULL, usr);
 }
 
-taiMenu* taiMenu::AddSubMenu(const char* val, void* usr, SelType st,
-	const taiMenuAction* default_child_action, TypeDef* typ_)
+void taiMenuToolBarBase::AddSep(bool new_radio_grp) {
+  if (new_radio_grp) NewRadioGroup();
+  //don't double add seps or add at beginning (this check simplifies many callers, so they don't need to know
+  //  whether a previous operation added items and/or seps, or not)
+  taiAction* it = items.Peek();
+  if ((it == NULL) || it->isSeparator()) return;
+
+  it = new taiAction(true); // el dummy separator item
+  items.Add(it);
+}
+
+taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
 {
-  String subname = String(val);
-  if (st == use_default) {
-    // we use the value of the most recent submenu, otherwise ourself
-    if (items.size > 0)
-      st = (SelType)items.FastEl(items.size - 1)->sel_type;
-    else
-      st = this->sel_type;
-  }
+  SelType st;
+  // we use the value of the most recent submenu, otherwise ourself
+  taiAction* it = items.PeekNonSep();
+  if (it != NULL)
+    st = (SelType)it->sel_type;
+  else
+    st = this->sel_type;
+
   taiMenu* rval = new taiMenu(taiMenu::popupmenu, st, font_spec, typ_, host, this, gui_parent, mflags, this);
 //  int cur_item = items.size;
-  taiSubMenuEl* sme = AddSubItem(subname, usr, rval->rep_popup(), rval, default_child_action);
+  taiSubMenuEl* sme = new taiSubMenuEl(val, rval);
+  AddAction(sme);
+  //AddSubItem(subname, usr, rval->rep_popup(), rval, default_child_action);
   sme->sel_type = st;
   rval->par_menu_el = sme;
-  rval->mlabel = val;
   return rval;
 }
 
-taiMenu* taiMenu::AddSubMenu(const char* val, const taiMenuAction* default_child_action) {
-  return AddSubMenu(val, NULL, use_default, default_child_action);
-}
-
-taiMenu* taiMenu::AddSubMenu(const char* val, const taiMenuAction& default_child_action) {
-  return AddSubMenu(val, NULL, use_default, &default_child_action);
-}
-
-taiMenuEl* taiMenu::curSel() const {
+taiAction* taiMenuToolBarBase::curSel() const {
   if (par_menu != NULL)
     return par_menu->curSel();
   else  return cur_sel;
 }
 
-void taiMenu::DeleteItem(uint idx) {
+void taiMenuToolBarBase::DeleteItem(uint idx) {
   if (idx >= (uint)items.size) return;
-  taiMenuEl* mel = items[idx];
-  if (mel->rep) {
-    int id = mel->rep->id();
-    if (mrep_bar) {
-      mrep_bar->removeItem(id);
-    } else if (mrep_popup) {
-      mrep_popup->removeItem(id);
-    }
-  }
-  items.Remove(idx); // deletes
+  taiAction* act = items[idx];
+  RemoveAction(act);
+  items.Remove(idx); // deletes if ref==0
 }
 
-void taiMenu::emitLabelChanged(const char* val) {
+void taiMenuToolBarBase::emitLabelChanged(const char* val) {
   emit labelChanged(val);
 }
 
-int taiMenu::exec(const iPoint& pos, int indexAtPoint) {
-  if (mrep_popup == NULL) return -1; // shouldn't be called if not a popup; behaves as if user selected nothing
-  return mrep_popup->exec((QPoint)pos, indexAtPoint);
-}
-
-taiMenu* taiMenu::FindSubMenu(const char* nm) {
+taiMenu* taiMenuToolBarBase::FindSubMenu(const char* nm) {
   for (int i = 0; i < items.size; ++i) {
-    taiMenuEl* itm = items.FastEl(i);
+    taiAction* itm = items.FastEl(i);
     if (!itm->isSubMenu()) continue;
     taiSubMenuEl* sme = (taiSubMenuEl*)itm;
-    if (sme->label == nm)
+    if (sme->text() == nm)
       return sme->sub_menu_data;
   }
   return NULL;
 }
 
-void taiMenu::GetImageByIndex(int itm) {
+void taiMenuToolBarBase::GetImageByIndex(int itm) {
   if (itm >= items.size) return;
-  taiMenuEl* mel = items.FastEl(itm);
+  taiAction* mel = items.FastEl(itm);
   setCurSel(mel);
 //  Update();
 }
 
-bool taiMenu::GetImage_impl(void* usr) {
+bool taiMenuToolBarBase::GetImage_impl(void* usr) {
    // set to this usr item, returns false if not found
   // first, look at our items...
   for (int i = 0; i < items.size; ++i) {
-    taiMenuEl* itm = items.FastEl(i);
+    taiAction* itm = items.FastEl(i);
     if (!itm->canSelect()) continue;
     if (itm->usr_data == usr) {
-      if ((usr == NULL) && (itm->label != "NULL"))
+      if ((usr == NULL) && (itm->text() != "NULL"))
 	continue;
       if (!itm->canSelect()) continue;
       setCurSel(itm);
@@ -1379,7 +1289,7 @@ bool taiMenu::GetImage_impl(void* usr) {
   }
   // ...otherwise, recursively descend to submenus
   for (int i = 0; i < items.size; ++i) {
-    taiMenuEl* itm = items.FastEl(i);
+    taiAction* itm = items.FastEl(i);
     if (!itm->isSubMenu()) continue;
     taiSubMenuEl* sme = (taiSubMenuEl*)itm;
     taiMenu* sub_menu = sme->sub_menu_data;
@@ -1389,55 +1299,46 @@ bool taiMenu::GetImage_impl(void* usr) {
   return false;
 }
 
-bool taiMenu::GetImage(void* usr) {
+bool taiMenuToolBarBase::GetImage(void* usr) {
   // first try to find item by iterating through all eligible items and subitems
   if (GetImage_impl(usr))
       return true;
-
+/*TODO Qt4
   // otherwise get first eligible item, if any, on this menu only, with data and without any menu callbacks, as default if nothing else works
   for (int i = 0; i < items.size; ++i) {
-    taiMenuEl* itm = items.FastEl(i);
+    taiAction* itm = items.FastEl(i);
     if (!itm->canSelect()) continue;
-    if ( (itm->usr_data != NULL) && (!itm->hasCallbacks())) {
+    if ( (!itm->usr_data.isInvalid()) && (!itm->hasCallbacks())) {
       setCurSel(itm);
       return true;
     }
-  }
+  } */
   return false;
 }
 
-int taiMenu::insertItem(const char* val, const QObject *receiver, const char* member, const QKeySequence* accel) {
-  taiMenuEl* mel = AddItem(val, NULL, use_default, taiMenuEl::none, receiver, member, accel);
-  return mel->id();
+void taiMenuToolBarBase::ItemAdded(taiAction* it) {
+  // just add the action to the rep -- 
+  //TODO: won't work for button menus, because the button is the rep...
+  if (m_rep != NULL)
+    m_rep->addAction(it);
 }
 
-QMenuItem* taiMenu::NewItem(const char* val, SelType st, QPopupMenu* child, const QKeySequence* accel) {
-  QMenuItem* new_men;
-  int itemId;
-  if (st == submenu) {
-    itemId = menu()->insertItem(val, child);
-  } else {
-    if (st == use_default)
-      st = sel_type;
-    //note: you can't pass NULL/NULL to the signal params, so if you want to set things like Accel, you have to do it after
-    itemId = menu()->insertItem(val);
-    if (accel) {
-      menu()->setAccel(*accel, itemId);
-    }
-  }
-  new_men = menu()->findItem(itemId);
-/* TODO: Font control
-  if((font_spec == big) || (font_spec == big_italic)) {
-    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
-  }
-  else {
-    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
-  }
-*/
-  return new_men;
+void taiMenuToolBarBase::NewRadioGroup() {
+  cur_grp = new QActionGroup(gui_parent);
 }
 
-void taiMenu::setCurSel(taiMenuEl* value) {
+void taiMenuToolBarBase::RemoveAction(taiAction* it) {
+  GetRep()->removeAction(it);
+}
+
+void taiMenuToolBarBase::Reset() {
+  for (int i = count() - 1; i >= 0; --i) {
+    DeleteItem(i);
+  }
+  cur_sel = NULL;
+}
+
+void taiMenuToolBarBase::setCurSel(taiAction* value) {
   //curSel can only be a global radio type, or null
   if ( (value != NULL) && !value->canSelect() ) return;
   if (par_menu != NULL) {
@@ -1451,25 +1352,175 @@ void taiMenu::setCurSel(taiMenuEl* value) {
     cur_sel = value;
     if (cur_sel != NULL) {
       cur_sel->Select_impl(true);
-      setLabel(cur_sel->label);
+      setLabel(cur_sel->text());
     } else { //NOTE: special case of going from legal radio item to no item -- set label to NULL
       setLabel("NULL");
     }
   }
 }
 
-void taiMenu::setLabel(const String& val) {
+void taiMenuToolBarBase::setLabel(const String& val) {
   if (par_menu != NULL)
     par_menu->setLabel(val);
   else {
     if (mlabel == val) return;
     mlabel = val;
-    if (button != NULL) {
-      button->setText(val);
-    }
     emitLabelChanged(mlabel);
   }
 }
+
+
+//////////////////////////
+// 	taiMenu	//
+//////////////////////////
+
+taiMenu::taiMenu(int rt, int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+	QWidget* gui_parent_, int flags_, taiMenuToolBarBase* par_menu_)
+: taiMenuToolBarBase(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_)
+{
+  init(rt, NULL);
+}
+
+/*nbg taiMenu::taiMenu(int rt, int st, int ft, QWidget* gui_parent_)
+: taiData(NULL, NULL, NULL, gui_parent_, 0)
+{
+  init(rt, st, ft, gui_parent_, NULL);
+} */
+
+taiMenu::taiMenu(QWidget* gui_parent_, int rt, int st, int ft, QMenu* exist_menu)
+: taiMenuToolBarBase(st, ft, NULL, NULL, NULL, gui_parent_, 0, NULL)
+{
+  init(rt, exist_menu);
+}
+
+
+void taiMenu::init(int rt, QMenu* exist_menu)
+{
+  mrep_popup = NULL;
+  rep_type = (RepType)rt;
+  button = NULL;
+  //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
+  mrep_popup = (exist_menu) ? exist_menu : new QMenu(gui_parent);
+  mrep_popup->setFont(taiM->menuFont(font_spec));
+/*obsQt4  if (sel_type & (radio | toggle))  {
+    //TODO: probably need to always set this true, since we could have checkable items even if creating menu with normal seltype
+    mrep_popup->setCheckable(true); //note: always enabled on Windows
+  } */
+  if (rep_type == buttonmenu) {
+    button = new QPushButton(gui_parent);
+    button->setPopup(mrep_popup);
+    button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
+    button->setFixedHeight(taiM->button_height(font_spec));
+    SetRep(button);
+  } else {
+    SetRep(mrep_popup);
+  }
+}
+
+taiMenu::~taiMenu() {
+  mrep_popup = NULL;
+}
+
+/*obs taiAction* taiMenu::AddItem_FromAction(iAction* act)
+{
+  Q3PopupMenu* pm = rep_popup();
+  if (!pm) {
+    taMisc::Error("taiMenu::AddItem_FromAction: can only be called for Q3PopupMenu taiMenu objects");
+    return NULL;
+  }
+  taiMenu::SelType st = act->isToggleAction() ? taiMenu::toggle : taiMenu::normal;
+
+  taiAction* rval;
+  int rgrp = -1; // radiogroup n/a
+  // use the built in api to add the menu, then retrieve it
+  act->addTo(pm);
+  int new_id = pm->idAt(pm->count() - 1);
+  QMenuItem* new_men = pm->findItem(new_id);
+  pm->setItemParameter(new_id, act->param);
+
+  rval = new taiAction(this, new_men, rgrp, st, act->menuText(), NULL,
+      taiAction::int_act, act, SIGNAL(activated(int)));
+  rval->label = act->menuText();
+  items.Add(rval);
+//TODO: Qt4  // connect any parent submenu handler
+  if (par_menu_el) {
+    if (par_menu_el->default_child_action.receiver) {
+      menu()->connectItem(rval->id(), par_menu_el->default_child_action.receiver, par_menu_el->default_child_action.member);
+    }
+  }
+  return rval;
+} */
+
+void taiMenu::exec(const iPoint& pos) {
+  mrep_popup->exec((QPoint)pos);
+}
+
+taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const char* member, const QKeySequence* accel) {
+  taiAction* mel = AddItem(val, use_default, taiAction::none, receiver, member);
+  if (accel != NULL) mel->setShortcut(*accel);
+  return mel;
+}
+
+void taiMenu::ItemAdded(taiAction* it) {
+  // add to the menu, in case we are a button menu (in which case rep will be the button) 
+  if (mrep_popup != NULL)
+    mrep_popup->addAction(it);
+}
+
+void taiMenu::RemoveAction(taiAction* it) {
+  if (mrep_popup != NULL)
+    mrep_popup->removeAction(it);
+}
+
+void taiMenu::setLabel(const String& val) {
+  if (button != NULL) {
+    button->setText(val);
+  }
+  inherited::setLabel(val);
+}
+
+
+/*QMenu* taiMenu::NewSubItem(const char* val, QMenu* child, const QKeySequence* accel) {
+  QMenu* new_men;
+  int itemId;
+  itemId = menu()->insertItem(val, child);
+  new_men = menu()->findItem(itemId);
+// TODO: Font control
+  if((font_spec == big) || (font_spec == big_italic)) {
+    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
+  }
+  else {
+    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
+  }
+
+  return new_men;
+} */
+
+/* QAction* taiMenu::NewMenuItem(const char* val, SelType st, QMenu* child, const QKeySequence* accel) {
+  QAction* new_men;
+  int itemId;
+  if (st == submenu) {
+    itemId = menu()->insertItem(val, child);
+  } else {
+    if (st == use_default)
+      st = sel_type;
+    //note: you can't pass NULL/NULL to the signal params, so if you want to set things like Accel, you have to do it after
+    itemId = menu()->insertItem(val);
+    if (accel) {
+      menu()->setAccel(*accel, itemId);
+    }
+  }
+  new_men = menu()->findItem(itemId);
+// TODO: Font control
+  if((font_spec == big) || (font_spec == big_italic)) {
+    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
+  }
+  else {
+    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
+  }
+
+  return new_men;
+} */
 
 /*
 void taiMenu::Update() {
@@ -1494,36 +1545,68 @@ void taiMenu::Update() {
 
 
 //////////////////////////
-// 	iAction 	//
+//  taiMenuBar	 	//
 //////////////////////////
 
-void iAction::AddTo(taiMenu* menu) {
-  menu->AddItem_FromAction(this);
+taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, taiDataHost* host_,
+    taiData* par_, QWidget* gui_parent_, int flags_)
+: taiMenuToolBarBase(normal, ft, typ_, host_, par_, gui_parent_, flags_)
+{
+  init(NULL);
 }
 
-void iAction::addedTo(int index, QPopupMenu * menu ) {
-  QAction::addedTo(index, menu);
-  if (menu)
-    menu->setItemParameter(menu->idAt(index), param);
+taiMenuBar::taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu)
+: taiMenuToolBarBase(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
+{
+  init(exist_menu);
 }
 
-void iAction::init(int param_) {
-  param = param_;
-  connect(this, SIGNAL(activated()), this, SLOT(this_activated()) );
+taiMenuBar::~taiMenuBar() {
+  mrep_bar = NULL;
 }
 
-void iAction::this_activated() {
-  emit activated(param);
+void taiMenuBar::init(QMenuBar* exist_menu)
+{
+  //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
+  mrep_bar = (exist_menu) ? (QMenuBar*)exist_menu : new QMenuBar(gui_parent);
+  mrep_bar->setFont(taiM->menuFont(font_spec));
+  mrep_bar->setFixedHeight(taiM->button_height(font_spec)); // button height is ok to control bar height
+  SetRep(mrep_bar);
+//  cur_sel = NULL;
 }
+
+/* QMenu* taiMenuBar::NewSubItem(const char* val, QMenu* child, const QKeySequence* accel) {
+  QMenu* new_men;
+  int itemId;
+  itemId = menu()->insertItem(val, child);
+  new_men = menu()->findItem(itemId);
+// TODO: Font control
+  if((font_spec == big) || (font_spec == big_italic)) {
+    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
+  }
+  else {
+    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
+  }
+
+  return new_men;
+}*/
 
 
 //////////////////////////////////
-// 	Action_List 		//
+// 	taiToolBar	 	//
 //////////////////////////////////
 
-String iAction_List::El_GetName_(void* el) const {
-  iAction* ia = (iAction*)el;
-  return ia->name();
+taiToolBar::taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar) 
+: taiMenuToolBarBase(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
+{
+  init(exist_bar);
+}
+  
+void taiToolBar::init(QToolBar* exist_bar) {
+  if (exist_bar == NULL) {
+    exist_bar = new QToolBar(gui_parent);
+  }
+  SetRep(exist_bar);
 }
 
 
@@ -1609,8 +1692,8 @@ void taiEditButton::GetMethMenus() {
       continue;
     meth_el.Add(mth_rep);
     if ((ie != NULL) && (md->name == "Edit"))
-      imenu->AddItem("Edit", NULL, taiMenu::use_default,
-          taiMenuEl::action, this, SLOT(Edit()));
+      imenu->AddItem("Edit", taiMenu::use_default,
+          taiAction::action, this, SLOT(Edit()));
     else
       mth_rep->AddToMenu(imenu);
   }
@@ -1654,27 +1737,27 @@ void taiEditButton::setRepLabel(const char* label) {
 // 		taiObjChooser		//
 //////////////////////////////////////////
 
-class ocListBoxItem: public QListBoxText {
+class ocListBoxItem: public Q3ListBoxText {
 public:
   const void* data;
   ocListBoxItem(const QString& text_, const void* data_);
 };
 
 ocListBoxItem::ocListBoxItem(const QString& text_, const void* data_)
-:QListBoxText(text_)
+:Q3ListBoxText(text_)
 {
   data = data_;
 }
 
 taiObjChooser* taiObjChooser::createInstance(TAPtr parob, const char* captn, bool selonly, QWidget* par_window_) {
   if (par_window_ == NULL)
-    par_window_ = qApp->mainWidget();
+    par_window_ = taiMisc::main_window;
   return new taiObjChooser(parob, captn, selonly, par_window_);
 }
 
 taiObjChooser* taiObjChooser::createInstance(TypeDef* tpdf, const char* captn, TAPtr scope_ref_, QWidget* par_window_) {
   if (par_window_ == NULL)
-    par_window_ = qApp->mainWidget();
+    par_window_ = taiMisc::main_window;
   return new taiObjChooser(tpdf, captn, scope_ref_, par_window_);
 }
 
@@ -1704,8 +1787,9 @@ taiObjChooser::taiObjChooser(TAPtr parob, const char* captn, bool selonly, QWidg
 }
 
 taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, QWidget* par_window_)
-: QDialog(par_window_, NULL, true)
+: QDialog(par_window_)
 {
+  setModal(true);
   init(captn, true, par_window_); //select_only = true always true for typedef!
 
   if(!td->InheritsFrom(TA_taBase)) {
@@ -1750,11 +1834,14 @@ void taiObjChooser::ReRead() {
 }
 
 void taiObjChooser::Build() {
-  layOuter = new QGridLayout(this, 3, 1, taiM->vsep_c, taiM->vspc_c); // rows, cols, margin, space
-  browser = new QListBox(this);
+//Qt3  layOuter = new QGridLayout(this, 3, 1, taiM->vsep_c, taiM->vspc_c); // rows, cols, margin, space
+  layOuter = new QGridLayout(this);
+  layOuter->setMargin(taiM->vsep_c);
+  layOuter->setSpacing(taiM->vspc_c); 
+  browser = new Q3ListBox(this);
   layOuter->addWidget(browser, 1, 0);
   layOuter->setRowStretch(1, 1); // list is item to expand in host
-  layOuter->setRowSpacing(1, 100); // don't shrink to nothing
+  layOuter->setRowMinimumHeight(1, 100); // don't shrink to nothing
 
   layButtons = new QHBoxLayout();
   layButtons->addStretch();
@@ -1774,10 +1861,10 @@ void taiObjChooser::Build() {
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  connect(browser, SIGNAL(doubleClicked(QListBoxItem*)),
-      this, SLOT(browser_doubleClicked(QListBoxItem*)));
-  connect(browser, SIGNAL(selectionChanged(QListBoxItem*)),
-      this, SLOT(browser_selectionChanged(QListBoxItem*)));
+  connect(browser, SIGNAL(doubleClicked(Q3ListBoxItem*)),
+      this, SLOT(browser_doubleClicked(Q3ListBoxItem*)));
+  connect(browser, SIGNAL(selectionChanged(Q3ListBoxItem*)),
+      this, SLOT(browser_selectionChanged(Q3ListBoxItem*)));
   connect(editor, SIGNAL(returnPressed()),
       this, SLOT(AcceptEditor()) );
 
@@ -1862,7 +1949,7 @@ void taiObjChooser::AddTokens(TypeDef* td) {
 
 void taiObjChooser::AddItem(const char* itm, const void* data_) {
   items.Add(itm);
-  browser->insertItem(new ocListBoxItem(QString(itm), data_));
+  browser->insertItem(new ocListBoxItem(QString(itm), data_)); 
   if (msel_obj == data_)
     browser->setCurrentItem(browser->count() - 1);
 }
@@ -1915,14 +2002,14 @@ void taiObjChooser::accept() {
     QDialog::accept();
 }
 
-void taiObjChooser::browser_doubleClicked(QListBoxItem* itm) {
+void taiObjChooser::browser_doubleClicked(Q3ListBoxItem* itm) {
   if (select_only)
     accept();
   else
     DescendBrowser();
 }
 
-void taiObjChooser::browser_selectionChanged(QListBoxItem* itm) {
+void taiObjChooser::browser_selectionChanged(Q3ListBoxItem* itm) {
   //TODO: verify this is what we want to do... this is assumed behavior of IV FileBrowser
   GetPathStr();
   if (itm == NULL)
@@ -2050,20 +2137,20 @@ void taiFileButton::GetImage(void* base) {
 void taiFileButton::GetImage() {
   if (filemenu->items.size == 0) {
     if (!write_only)
-      filemenu->AddItem("Open", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(Open()) );
+      filemenu->AddItem("Open", taiMenu::use_default,
+	taiAction::action, this, SLOT(Open()) );
     if(!read_only && ((gf == NULL) || !gf->select_only)) {
-      filemenu->AddItem("Save", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(Save()) );
-      filemenu->AddItem("SaveAs", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(SaveAs()) );
-      filemenu->AddItem("Append", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(Append()) );
+      filemenu->AddItem("Save", taiMenu::use_default,
+	taiAction::action, this, SLOT(Save()) );
+      filemenu->AddItem("SaveAs", taiMenu::use_default,
+	taiAction::action, this, SLOT(SaveAs()) );
+      filemenu->AddItem("Append", taiMenu::use_default,
+	taiAction::action, this, SLOT(Append()) );
     }
-    filemenu->AddItem("Close", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(Close()) );
-    filemenu->AddItem("Edit", NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(Edit()) );
+    filemenu->AddItem("Close", taiMenu::use_default,
+	taiAction::action, this, SLOT(Close()) );
+    filemenu->AddItem("Edit", taiMenu::use_default,
+	taiAction::action, this, SLOT(Edit()) );
   }
 
   if ((gf == NULL) || (!gf->select_only && !gf->open_file) || (gf->fname == ""))
@@ -2186,7 +2273,7 @@ TAPtr taiToken::GetValue() {
   return cur_obj;
 }
 
-void taiToken::ItemChosen(taiMenuEl* menu_el) {
+void taiToken::ItemChosen(taiAction* menu_el) {
   setCur_obj((TAPtr)(menu_el->usr_data));
 }
 
@@ -2231,17 +2318,17 @@ void taiToken::Chooser() {
 void taiToken::GetMenu(const taiMenuAction* actn) {
   if (ownflag) {
     if (HasFlag(flgEditOk))
-      ta_menu->AddItem("Edit...", NULL, taiMenu::normal, taiMenuEl::action, this, SLOT(Edit()) );
+      ta_menu->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
     ta_menu->AddSep();
     if (HasFlag(flgNullOk)) {
-      taiMenuEl* mel = ta_menu->AddItem("NULL", NULL, taiMenu::radio, actn);
-      mel->connect(taiMenuEl::men_act, this, SLOT(ItemChosen(taiMenuEl*)));
+      taiAction* mel = ta_menu->AddItem("NULL", taiMenu::radio, actn);
+      mel->connect(taiAction::men_act, this, SLOT(ItemChosen(taiAction*)));
     }
   }
   GetMenu_impl(ta_menu, typ, actn);
 }
 void taiToken::UpdateMenu(const taiMenuAction* actn) {
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(actn);
 }
 
@@ -2249,7 +2336,7 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
   if (!td->InheritsFrom(TA_taBase)) return; // sanity check, so we don't crash...
 
   if (!td->tokens.keep) {
-    menu->AddItem("<Sorry, not keeping tokens>", (void*)NULL, taiMenu::normal);
+    menu->AddItem("<Sorry, not keeping tokens>", taiMenu::normal);
   } else {
     bool too_many = false;
     if (scope_ref != NULL) {
@@ -2261,14 +2348,14 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
       too_many = true;
     }
     if (too_many) {
-      taiMenuEl* mnel = menu->AddItem
-        ("<Over max, select...>", (void*)NULL, taiMenu::normal,
-        taiMenuEl::action, this, SLOT(Chooser()) );
+      taiAction* mnel = menu->AddItem
+        ("<Over max, select...>", taiMenu::normal,
+        taiAction::action, this, SLOT(Chooser()) );
       if (actn != NULL) {		// also set callback action!
         mnel->connect(actn);
       }
     } else {
-      taiMenuAction ma(this, SLOT(ItemChosen(taiMenuEl*)));
+      taiMenuAction ma(this, SLOT(ItemChosen(taiAction*)));
       String	nm;
       for (int i = 0; i < td->tokens.size; ++i) {
         TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
@@ -2276,7 +2363,7 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
           continue;
         if (!btmp->GetName().empty())
           nm = btmp->GetName();
-        taiMenuEl* mel = menu->AddItem((char*)nm, btmp, taiMenu::radio, actn); //connect caller's callback
+        taiAction* mel = menu->AddItem((char*)nm, taiMenu::radio, actn, Variant(btmp)); //connect caller's callback
         mel->connect(&ma); // connect our own callback
       }
     } // too_many
@@ -2295,7 +2382,8 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
     if ((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
       continue;
     if (chld->tokens.size != 0) {
-      taiMenu* submenu = menu->AddSubMenu(chld->name, (void*)chld);
+//Qt3      taiMenu* submenu = menu->AddSubMenu(chld->name, (void*)chld);
+      taiMenu* submenu = menu->AddSubMenu(chld->name);
 //huh?? why??      menu->AddSep();
       GetMenu_impl(submenu, chld, actn);
     } else {
@@ -2316,9 +2404,9 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
     too_many = true;
   }
   if (too_many) {
-    taiMenuEl* mnel = menu->AddItem
+    taiAction* mnel = menu->AddItem
       ("<Over max, select...>", (void*)NULL, taiMenu::normal,
-       taiMenuEl::action, this, SLOT(Chooser()) );
+       taiAction::action, this, SLOT(Chooser()) );
     over_max = true;
     if (actn != NULL) {		// also set callback action!
       mnel->connect(actn);
@@ -2390,7 +2478,7 @@ QWidget* taiSubToken::GetRep() {
 }
 
 void* taiSubToken::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
+  taiAction* cur = ta_menu->GetValue();
   if (cur == NULL)
     return NULL;
   else
@@ -2430,16 +2518,16 @@ void taiSubToken::GetImage(void* ths, void* sel) {
 }
 
 void taiSubToken::UpdateMenu(taiMenuAction* actn){
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(actn);
 }
 
 void taiSubToken::GetMenu(taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    ta_menu->AddItem("NULL", NULL, taiMenu::use_default, actn);
+    ta_menu->AddItem("NULL", taiMenu::use_default, actn);
   if (HasFlag(flgEditOk))
-    ta_menu->AddItem("Edit", NULL, taiMenu::normal,
-      taiMenuEl::action, this, SLOT(Edit()) );
+    ta_menu->AddItem("Edit", taiMenu::normal,
+      taiAction::action, this, SLOT(Edit()) );
   ta_menu->AddSep(); // note: never adds spurious seps
 
   GetMenuImpl(menubase, actn);
@@ -2454,7 +2542,7 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
   // if you're the right type, put yourself on the list
   if (basetd->DerivesFrom(typ)) {
     String nm = rbase->GetName();
-    ta_menu->AddItem(nm, rbase, taiMenu::use_default, actn);
+    ta_menu->AddItem(nm, taiMenu::use_default, actn, rbase);
   }
 
   // put your typed members on the list
@@ -2498,11 +2586,11 @@ QWidget* taiMemberDefMenu::GetRep() {
 }
 
 MemberDef* taiMemberDefMenu::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
+  taiAction* cur = ta_menu->GetValue();
   if (cur == NULL)
     return NULL;
   else
-    return (MemberDef*)(cur->usr_data);
+    return (MemberDef*)(cur->usr_data.toPtr());
 }
 
 void taiMemberDefMenu::GetImage(void* base, bool get_menu, void* cur_sel){
@@ -2545,13 +2633,13 @@ void taiMemberDefMenu::GetTarget() {
 
 void taiMemberDefMenu::GetMenu(void* base) {
   menubase = base;
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   if (targ_typ == NULL) {
     GetTarget();
   }
 
   if (targ_typ == NULL) {
-    ta_menu->AddItem("!!!TypeSpace Error!!!", NULL);
+    ta_menu->AddItem("!!!TypeSpace Error!!!");
     return;
   }
 
@@ -2605,7 +2693,7 @@ QWidget* taiMethodDefMenu::GetRep() {
 }
 
 void* taiMethodDefMenu::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
+  taiAction* cur = ta_menu->GetValue();
   if (cur != NULL)
     return cur->usr_data;
   return NULL;
@@ -2652,13 +2740,13 @@ void taiMethodDefMenu::GetImage(void* ths, void* sel) {
 }
 
 void taiMethodDefMenu::UpdateMenu(const taiMenuAction* actn) {
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(actn);
 }
 
 void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
   if ((typ == NULL) && (sp == NULL)) {
-    ta_menu->AddItem("TypeSpace Error", NULL);
+    ta_menu->AddItem("TypeSpace Error");
     return;
   }
   MethodDef* mbd;
@@ -2666,7 +2754,7 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
   if (mbs == NULL) mbs = &typ->methods;
   for (int i = 0; i < mbs->size; ++i){
     mbd = mbs->FastEl(i);
-    ta_menu->AddItem(mbd->GetLabel(),mbd,taiMenu::use_default, actn);
+    ta_menu->AddItem(mbd->GetLabel(),taiMenu::use_default, actn,mbd);
   }
 }
 
@@ -2705,12 +2793,12 @@ void taiTypeHier::GetImage(TypeDef* ths) {
 
 void taiTypeHier::GetMenu(const taiMenuAction* acn) {
   if (HasFlag(flgNullOk))
-    ta_menu->AddItem("NULL", NULL, taiMenu::use_default, acn);
+    ta_menu->AddItem("NULL", taiMenu::use_default, acn);
   GetMenu_impl(ta_menu, typ, acn);
 }
 
 void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
-  ta_menu->ResetMenu();
+  ta_menu->Reset();
   GetMenu(acn);
 }
 
@@ -2742,7 +2830,7 @@ bool taiTypeHier::AddType(TypeDef* typ_) {
 }
 
 void taiTypeHier::GetMenu_impl(taiMenu* menu, TypeDef* typ_, const taiMenuAction* acn) {
-  menu->AddItem((char*)typ_->name, (void*)typ_, taiMenu::use_default, acn);
+  menu->AddItem((char*)typ_->name, taiMenu::use_default, acn);
   menu->AddSep(false); //don't start new radio group
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);
@@ -2756,17 +2844,18 @@ void taiTypeHier::GetMenu_impl(taiMenu* menu, TypeDef* typ_, const taiMenuAction
     }
 
     if (CountChildren(chld) > 0) {
-      taiMenu* chld_menu = menu->AddSubMenu((char*)chld->name, (void*)chld);
+//Qt3      taiMenu* chld_menu = menu->AddSubMenu((char*)chld->name, (void*)chld);
+      taiMenu* chld_menu = menu->AddSubMenu((char*)chld->name);
       GetMenu_impl(chld_menu, chld, acn);
     }
     else
-      menu->AddItem((char*)chld->name, (void*)chld, taiMenu::use_default, acn);
+      menu->AddItem((char*)chld->name, taiMenu::use_default, acn, (void*)chld);
   }
 }
 
 TypeDef* taiTypeHier::GetValue() {
-  taiMenuEl* cur = ta_menu->GetValue();
-  if(cur) return (TypeDef*)cur->usr_data; return NULL;
+  taiAction* cur = ta_menu->GetValue();
+  if (cur) return (TypeDef*)cur->usr_data.toPtr(); return NULL;
 }
 
 
@@ -2793,8 +2882,8 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost
 void taiMethodData::AddToMenu(taiMenu* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
-  mnu->AddItem(meth->GetLabel(), NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(CallFun()) );
+  mnu->AddItem(meth->GetLabel(), taiMenu::use_default,
+	taiAction::action, this, SLOT(CallFun()) );
   if (meth->HasOption("MENU_SEP_AFTER"))
     mnu->AddSep();
 }

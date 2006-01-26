@@ -303,13 +303,16 @@ void Script_MGroup::AutoRun() {
 }
 
 #ifdef TA_GUI
-void Script_MGroup::Run_mc(taiMenuEl* sel) {
+void Script_MGroup::Run_mc(taiAction* sel) {
 //TODO  if(win_owner == NULL) return;
-  if((sel != NULL) && (sel->usr_data != NULL)) {
-    Script* itm = (Script*)sel->usr_data;
-    itm->Run();
-    if(taMisc::record_script != NULL) {
-      *taMisc::record_script << itm->GetPath() << "->Run();" << endl;
+//TODO Qt4: verify that usr_data gets set to a taBase obj
+  if((sel != NULL)) {
+    Script* itm = (Script*)sel->usr_data.toBase(); // NULL if not a Base type, or NULL
+    if (itm != NULL) {
+      itm->Run();
+      if(taMisc::record_script != NULL) {
+        *taMisc::record_script << itm->GetPath() << "->Run();" << endl;
+      }
     }
   }
 }
@@ -325,7 +328,7 @@ void Script_MGroup::GenMenu_impl(taiMenu* menu) {
 
   taiMenu* sub;
 
-  mc.member = SLOT(Run_mc(taiMenuEl*));
+  mc.member = SLOT(Run_mc(taiAction*));
   sub = menu->AddSubMenu("Run");
   itm_list->GetMenu(sub, &mc);
 

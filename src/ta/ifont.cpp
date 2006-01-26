@@ -120,12 +120,12 @@ void iFont::copyFrom(const QFont& src) {
   setItalic(src.italic());
   setUnderline(src.underline());
   stretch = src.stretch();
-  pointSize = src.pointSizeFloat();
+  pointSize = src.pointSizeF();
 }
 
 void iFont::copyTo(QFont& dst) const {
   dst.setFamily(fontName);
-  dst.setPointSizeFloat(pointSize);
+  dst.setPointSizeF(pointSize);
   dst.setBold(bold());
   dst.setItalic(italic());
   dst.setUnderline(underline());

@@ -348,12 +348,12 @@ String::String(ulong u, const char* format) {
 
 String::String(int64_t i64, int base) {
   QString str(QString::number(i64, base));
-  newRep(Salloc(str.latin1(), str.length()));
+  newRep(Salloc(str.toLatin1(), str.length()));
 }
 
 String::String(uint64_t u64, int base) {
   QString str(QString::number(u64, base));
-  newRep(Salloc(str.latin1(), str.length()));
+  newRep(Salloc(str.toLatin1(), str.length()));
 }
 
 String::String(float f,const char* format) {

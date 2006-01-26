@@ -46,7 +46,7 @@
 #include "ta_qtviewer.h"
 
 #ifndef __MAKETA__
-  #include <qlistview.h>
+  #include <Q3ListView>
 #endif
 
 // externals
@@ -94,7 +94,7 @@ public:
 
   bool			children_created;
 
-  taiTreeDataNode*	parent() const {return (taiTreeDataNode*) QListViewItem::parent();} //note: NULL for root item
+  taiTreeDataNode*	parent() const {return (taiTreeDataNode*) Q3ListViewItem::parent();} //note: NULL for root item
 //obs  iDataBrowser*		browser_win() const {return (iDataBrowser*)viewer_win();}
   DataViewer*		browser() const;
   iDataBrowserBase* 	browser_win() const;
@@ -107,7 +107,7 @@ public:
 
   taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, QListView* parent_,
+  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taiTreeDataNode();
 public: // ITypedObject interface
@@ -137,7 +137,7 @@ public:
 
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, QListView* parent_,
+  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~tabTreeDataNode();
 public: // IDataLinkClient interface
@@ -164,7 +164,7 @@ public:
 
   tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, QListView* parent_,
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~tabListTreeDataNode();
 public: // IDataLinkClient interface
@@ -194,7 +194,7 @@ public:
 
   tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, QListView* parent_,
+  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~tabGroupTreeDataNode();
 public: // IDataLinkClient interface
@@ -239,7 +239,7 @@ friend class DataBrowser;
 public:
 
   QSplitter*		splMain; // main splitter
-  QListView*		lvwDataTree; // actually an iListView
+  Q3ListView*		lvwDataTree; // actually an iListView
 
 //  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
   void*			root() { return m_root;}
@@ -262,8 +262,8 @@ public slots:
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
 
 protected slots:
-  virtual void		lvwDataTree_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col);
-  virtual void		lvwDataTree_selectionChanged(QListViewItem* item);
+  virtual void		lvwDataTree_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col);
+  virtual void		lvwDataTree_selectionChanged(Q3ListViewItem* item);
 //  void btnRecurse_toggled(bool on);
 
 

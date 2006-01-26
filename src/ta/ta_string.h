@@ -64,7 +64,7 @@ Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 #else
   #include <iostream>
   #ifdef TA_USE_QT
-    #include <qstring.h>
+    #include <QString>
   #endif
 #endif // __MAKETA__
 
@@ -417,7 +417,7 @@ int        TA_API fcompare(const String& x, const String& y); // ignore case
 // for some reason, these need to be here (inline), otherwise implicit use of these
 // functions gets reported as "undefined reference to xxxx" by the linker... weird...
 inline String::String(const QString& y) {
-  init(y.latin1(), y.length());
+  init(y.toLatin1(), y.length());
 }
 
 inline String::operator QString() const {
@@ -426,7 +426,7 @@ inline String::operator QString() const {
 }
 
 inline String& String::operator = (const QString& y) {
-  return set(y.latin1(), y.length());
+  return set(y.toLatin1(), y.length());
 }
 #endif
 
@@ -638,6 +638,15 @@ inline int String::gsub(const char* pat, const char* r)
 
 
 // a zillion comparison operators
+
+#ifdef TA_USE_QT
+inline bool operator==(const QString& x, const String& y) {
+  return compare(String(x), y) == 0;
+}
+inline bool operator==(const String& x, const QString& y) {
+  return compare(x, String(y)) == 0;
+}
+#endif
 
 inline bool operator==(const String& x, const String& y)
 {

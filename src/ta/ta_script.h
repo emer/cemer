@@ -25,7 +25,7 @@
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
-class taiMenuEl;
+class taiAction;
 #endif
 
 class cssProgSpace;		// #NO_INSTANCE
@@ -130,7 +130,7 @@ public:
 public:
   // more callbacks
 #ifdef TA_GUI
-  virtual void		Run_mc(taiMenuEl* sel);
+  virtual void		Run_mc(taiAction* sel);
 #endif
 
 //protected:
@@ -145,7 +145,7 @@ public:
 
 public slots:
   // more callbacks
-  void	Run_mc(taiMenuEl* sel)  {if(owner) ((Script_MGroup*)owner)->Run_mc(sel);}
+  void	Run_mc(taiAction* sel)  {if(owner) ((Script_MGroup*)owner)->Run_mc(sel);}
 };*/
 
 #endif // script_base_h

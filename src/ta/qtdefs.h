@@ -30,7 +30,8 @@ class	QBitmap;		// #IGNORE
 class	QBitArray;		// #IGNORE
 class	QBoxLayout;		// #IGNORE
 class	QButton;		// #IGNORE note: abstract parent class for buttons
-class	QButtonGroup;		// #IGNORE
+//class	QButtonGroup;		// #IGNORE
+class	Q3ButtonGroup;		// #IGNORE
 class	QCanvas;		// #IGNORE
 class	QCheckBox;		// #IGNORE
 class	QColor;			// #IGNORE
@@ -48,35 +49,37 @@ class	QGrid;			// #IGNORE
 class	QGridLayout;		// #IGNORE
 class	QHBox;			// #IGNORE
 class	QHBoxLayout;		// #IGNORE
-class	QHButtonGroup;		// #IGNORE
-class	QHeader;		// #IGNORE
-class	QIconSet;		// #IGNORE
+//class	QHButtonGroup;		// #IGNORE
+class	Q3HButtonGroup;		// #IGNORE
+class	Q3Header;		// #IGNORE
+//class	QIconSet;		// #IGNORE
 class	QLabel;			// #IGNORE
 class	QLayout;		// #IGNORE
 class	QLineEdit;		// #IGNORE
-class	QListBox;		// #IGNORE
-class	QListBoxItem;		// #IGNORE
-class	QListView;		// #IGNORE
-class	QListViewItem;		// #IGNORE
+class	Q3ListBox;		// #IGNORE
+class	Q3ListBoxItem;		// #IGNORE
+class	Q3ListView;		// #IGNORE
+class	Q3ListViewItem;		// #IGNORE
 class	QMainWindow;		// #IGNORE
 //no class	QMap;			// #IGNORE
+class	QMenu;			// #IGNORE Qt4
 class	QMenuBar;		// #IGNORE
-class	QMenuData;		// #IGNORE
+//obs class	QMenuData;		// #IGNORE
 class	QMenuItem;		// #IGNORE
 class	QMessageBox;		// #IGNORE
 class	QMimeSource;		// #IGNORE
 class	QObject;		// #IGNORE
-class	QObjectList;		// #IGNORE
+//class	QObjectList;		// #IGNORE
 class	QPainter;		// #IGNORE
 class	QPixmap;		// #IGNORE
 class	QPoint;			// #IGNORE
-class	QPopupMenu;		// #IGNORE
+class	Q3PopupMenu;		// #IGNORE
 class	QProgressDialog;	// #IGNORE
 class	QPushButton;		// #IGNORE
 class	QRadioButton;		// #IGNORE
 class	QRect;			// #IGNORE
 class	QScrollBar;		// #IGNORE
-class	QScrollView;		// #IGNORE
+class	Q3ScrollView;		// #IGNORE
 class	QSize;			// #IGNORE
 class	QSizePolicy;		// #IGNORE
 class	QSpacerItem;		// #IGNORE
@@ -95,12 +98,13 @@ class	QToolBar;		// #IGNORE
 class	QToolTip;		// #IGNORE
 class	QValidator;		// #IGNORE
 class	QVariant;		// #IGNORE
-class	QVBox;			// #IGNORE
+class	Q3VBox;			// #IGNORE
 class	QVBoxLayout;		// #IGNORE
-class	QVButtonGroup;		// #IGNORE
+//class	QVButtonGroup;		// #IGNORE
+class	Q3VButtonGroup;		// #IGNORE
 class	QWidget;		// #IGNORE
-class	QWidgetStack;		// #IGNORE
-class	QWMatrix;		// #IGNORE
+class	Q3WidgetStack;		// #IGNORE
+//class	QWMatrix;		// #IGNORE
 
 
 // Events
@@ -146,7 +150,6 @@ class	iColor;			// #IGNORE
 class	iCheckBox;		// #IGNORE -- support for Hilight and ReadOnly
 class	iComboBox;		// #IGNORE -- support for Hilight
 class	iEditGrid;		// #IGNORE
-class	iFlowBox;		// #IGNORE
 class	iFlowLayout;		// #IGNORE
 class	iFont;			//
 class	iLineEdit;		// #IGNORE
@@ -184,7 +187,7 @@ extern QColor& COLOR_BRIGHT_HILIGHT;
 #define	iButton 	QButton
 
 // 	IV Class	QT Class
-//	ivDeck		QWidgetStack
+//	ivDeck		Q3WidgetStack
 
 // some external systems, such as Coin3d, require this:
 #ifdef __MAKETA__
@@ -192,7 +195,6 @@ extern QColor& COLOR_BRIGHT_HILIGHT;
     #define __cplusplus
   #endif
 #endif
-
 
 #endif // QTDEFS_H
 

@@ -316,7 +316,7 @@ taiClipData::EditAction taiClipData::ClipOpToSrcCode(int ea) {
 }
 
 taiClipData::taiClipData(int src_edit_action_, QWidget* dragSource, const char * name)
-:QDragObject(dragSource, name)
+:Q3DragObject(dragSource, name)
 {
   src_edit_action = src_edit_action_;
 }

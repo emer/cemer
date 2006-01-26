@@ -79,7 +79,7 @@
 //    iListView 	//
 //////////////////////////
 
-class iListView: public QListView {
+class iListView: public Q3ListView {
 public:
   iDataBrowserBase* browser_win;
   iListView(iDataBrowserBase* browser_win_, QWidget*  parent = NULL);
@@ -101,7 +101,7 @@ protected:
 
 
 iListView::iListView(iDataBrowserBase* browser_win_, QWidget* parent)
-: QListView(parent)
+: Q3ListView(parent)
 {
   browser_win = browser_win_;
 //  focus_item = NULL;
@@ -165,7 +165,7 @@ taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeData
   init(link_, flags_);
 }
 
-taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, QListView* parent_,
+taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, Q3ListView* parent_,
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, flags_)
 {
@@ -239,7 +239,7 @@ IDataViewHost*  taiTreeDataNode::host() const {
 
 void taiTreeDataNode::moveItem(taiTreeDataNode* after) {
   if (after) {
-    QListViewItem::moveItem(after);
+    Q3ListViewItem::moveItem(after);
     return;
   }
   taiTreeDataNode* par = parent();
@@ -281,7 +281,7 @@ tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeData
   init(link_, flags_);
 }
 
-tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, QListView* parent_,
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, Q3ListView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int flags_)
 :inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, flags_)
 {
@@ -325,7 +325,7 @@ tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   init(link_, flags_);
 }
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, QListView* parent_,
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, Q3ListView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, flags_)
 {
@@ -487,7 +487,7 @@ tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* m
   init(link_, flags_);
 }
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, QListView* parent_,
+tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, Q3ListView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int flags_)
 :inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, flags_)
 {
@@ -710,10 +710,10 @@ void iDataBrowserBase::Constr_Body_impl() {
 
   splMain->setResizeMode(lvwDataTree, QSplitter::KeepSize); // when user enlarges, it is the data pane that will resize
 
-  connect(lvwDataTree, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(lvwDataTree_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(lvwDataTree, SIGNAL(selectionChanged(QListViewItem*)),
-      this, SLOT(lvwDataTree_selectionChanged(QListViewItem*)) );
+  connect(lvwDataTree, SIGNAL(contextMenuRequested(Q3ListViewItem*, const QPoint &, int)),
+      this, SLOT(lvwDataTree_contextMenuRequested(Q3ListViewItem*, const QPoint &, int)) );
+  connect(lvwDataTree, SIGNAL(selectionChanged(Q3ListViewItem*)),
+      this, SLOT(lvwDataTree_selectionChanged(Q3ListViewItem*)) );
 
   m_body = splMain;
   splMain->show();
@@ -804,7 +804,7 @@ void iDataBrowserBase::helpAbout() {
   if (taMisc::app) taMisc::app->Info();
 }
 
-void iDataBrowserBase::lvwDataTree_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
+void iDataBrowserBase::lvwDataTree_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col ) {
   iListViewItem* nd = (iListViewItem*)item;
   if (nd == NULL) return; //TODO: could possibly be multi select
 
@@ -825,7 +825,7 @@ void iDataBrowserBase::lvwDataTree_focusInEvent(QFocusEvent* ev) {
   SetThisAsHandler();
 }
 
-void iDataBrowserBase::lvwDataTree_selectionChanged(QListViewItem* item) {
+void iDataBrowserBase::lvwDataTree_selectionChanged(Q3ListViewItem* item) {
   setCurItem((taiTreeDataNode*)item);
 }
 
