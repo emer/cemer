@@ -25,6 +25,7 @@
   #include "ta_group.h"
   #include "ta_dump.h"
   #include "ta_script.h"
+  #include <QList>
 #  ifdef TA_GUI
 #    include "ta_qtgroup.h"
 #    include "ta_qtbrowse.h"

@@ -1207,7 +1207,7 @@ taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st,
   int rgrp;
   rval = new taiAction(st, val);
   rval->usr_data = usr;
-  AddItem(rval);
+  AddAction(rval);
   rval->connect(ct_, receiver, member);
   
 /*TODO: modify for Qt4  

@@ -23,7 +23,11 @@
 #include "css_c_ptr_types.h"
 #include "ta_qt.h"
 
-#include <qapplication.h>
+#ifdef TA_GUI
+#include <QApplication>
+#else
+#include <QCoreApplication>
+#endif
 #include <qeventloop.h>
 
 #ifdef TA_USE_INVENTOR
@@ -113,7 +117,7 @@ void iSession::quit() {
 void cssMisc::PreInitialize(int argc_, char** argv_) {
   cssMisc::argc = argc_;
   cssMisc::argv = argv_; // cast away constness -- we still treat it as const
-  new iSession(); // aka QEventLoop -- accessed as iSession::instance()
+#ifdef TA_GUI
 #ifdef TA_USE_INVENTOR
 //use other version  SoQt::init((QWidget*)NULL); // creates a special Coin QApplication instance
   SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
@@ -121,6 +125,12 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 #else
   new QApplication(argc, (char**)argv); // accessed as qApp
 #endif
+#else
+  new QCoreApplication(argc, (char**)argv); // accessed as qApp
+#endif
+//NOTE: in Qt3 we had to create the EventLoop prior to application,
+//  but in Qt4, it complains; also, Application now creates its own event loop in exec()
+  new iSession(); // aka QEventLoop -- accessed as iSession::instance()
 }
 
 bool cssiSession::block_stdin = false;
