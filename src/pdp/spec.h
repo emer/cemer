@@ -26,7 +26,7 @@
 #define MAX_SPEC_LONGS	(int)((256 / (sizeof(long) * 8)) + 1)
 
 #ifdef TA_GUI
-class taiMenuEl; //
+class taiAction; //
 #endif
 
 // forwards this file
@@ -72,7 +72,7 @@ public:
 
 #ifdef TA_GUI
 public:
-  virtual void		NewChildSpec_mc(taiMenuEl* sel); // callback for new child spec
+  virtual void		NewChildSpec_mc(taiAction* sel); // callback for new child spec
 #endif
 };
 

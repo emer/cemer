@@ -23,7 +23,7 @@
 #include "ta_group.h"
 
 #ifdef TA_GUI
-#include "xform.h"
+//#include "xform.h"
 #endif
 
 #include "pdpdeclare.h"

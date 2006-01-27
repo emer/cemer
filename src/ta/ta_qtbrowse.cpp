@@ -57,13 +57,13 @@
 
 #include <qclipboard.h>
 #include <qcursor.h>
-#include <qdragobject.h>
+#include <Q3DragObject>
 #include <qevent.h>
-#include <qheader.h>
+#include <Q3Header>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmime.h>
-#include <qpopupmenu.h>
+#include <QMenu>
 //#include <qpushbutton.h>
 #include <qapplication.h>
 //#include <qscrollview.h>
@@ -88,7 +88,7 @@ protected:
 
 //  iListViewItem*	focus_item;
 
-  QDragObject*  	dragObject(); // override
+  Q3DragObject*  	dragObject(); // override
   void 			focusInEvent(QFocusEvent* ev); // override
 //  void 			focusOutEvent(QFocusEvent* ev); // override
 
@@ -109,7 +109,7 @@ iListView::iListView(iDataBrowserBase* browser_win_, QWidget* parent)
   viewport()->setAcceptDrops(true);
 }
 
-QDragObject* iListView::dragObject () {
+Q3DragObject* iListView::dragObject () {
   return browser_win->GetClipData(taiClipData::EA_SRC_DRAG, true);
 }
 
@@ -217,8 +217,8 @@ void taiTreeDataNode::FillContextMenu_impl(taiMenu* menu) {
 //     menu->setItemParameter(last_id, ((int)((void*)this)) ); // we use param to hold address of this node
     // usr data is ourself
      //taiMenuEl* mel =
-     menu->AddItem("New Browser from here", this, taiMenu::use_default,
-       taiMenuEl::men_act, browser_win(), SLOT(mnuNewBrowser(taiMenuEl*)));
+     menu->AddItem("New Browser from here", taiMenu::use_default,
+       taiMenuEl::men_act, browser_win(), SLOT(mnuNewBrowser(taiMenuEl*)), this);
   }
   inherited::FillContextMenu_impl(menu);
 }
@@ -662,7 +662,7 @@ iDataBrowserBase::iDataBrowserBase(void* root_, DataViewer* browser_,
 
 
 //  resize( QSize(745, 538).expandedTo(minimumSizeHint()) );
-  clearWState( WState_Polished );
+//TODO?? Qt3  clearWState( WState_Polished );
 
   taiMisc::viewer_wins.Add(this);
 }
@@ -672,7 +672,7 @@ iDataBrowserBase::~iDataBrowserBase()
   taiMisc::viewer_wins.Remove(this);
     // no need to delete child widgets, Qt does it all for us
   toolbars.clear(); //note: widget deletion takes care of deleting the actual toolbars
-  actions.clear(); // ditto
+  actions.Reset(); // ditto
 }
 
 iTabView* iDataBrowserBase::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
@@ -884,7 +884,7 @@ void iDataBrowser::ApplyRoot() {
 
 void iDataBrowser::Constr_Menu_impl() {
   inherited::Constr_Menu_impl();
-  toolsClassBrowseAction = AddAction(new iAction(0, "Class Browser", QKeySequence(), this,"toolsClassBrowseAction"));
+  toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   toolsClassBrowseAction->AddTo(toolsMenu );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
@@ -935,7 +935,7 @@ taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, Member
 }
 
 void iDataBrowser::mnuNewBrowser(taiMenuEl* mel) {
-  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data);
+  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taiDataLink* dl = node->link();
   DataBrowser* brows = DataBrowser::New(dl->data(), node->md(), dl->GetDataTypeDef());
   if (!brows) return;

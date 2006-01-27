@@ -122,8 +122,8 @@ cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* 
 void cssiMethMenu::AddToMenu(taiMenu* menu) {
   if (css_fun->HasOption("MENU_SEP_BEFORE"))
     menu->AddSep();
-  menu->AddItem(css_fun->name, NULL, taiMenu::use_default,
-	taiMenuEl::action, this, SLOT(CallFun));
+  menu->AddItem(css_fun->name, taiMenu::use_default,
+	taiMenuEl::action, this, SLOT(CallFun), (void*)NULL);
   if (css_fun->HasOption("MENU_SEP_AFTER"))
     menu->AddSep();
 }

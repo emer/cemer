@@ -48,9 +48,8 @@
 #include <qlineedit.h>
 #include <Q3ListBox>
 #include <Q3ListBoxText>
-#include <qmenubar.h>
-#include <qmenudata.h>
-#include <Q3PopupMenu>
+#include <QMenu>
+#include <QMenuBar>
 #include <qpushbutton.h>
 #include <qstring.h>
 #include <qtooltip.h>
@@ -942,6 +941,33 @@ taiAction::taiAction(int sel_type_, const String& label_)
 : QAction(label_, NULL)
 {
   init(sel_type_);
+}
+
+taiAction::taiAction(const QString& label_, const QKeySequence& accel, const char* name_)
+: QAction(label_, NULL)
+{
+  init(0);
+  setShortcut(accel);
+  setName(name_);
+}
+
+taiAction::taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel)
+: QAction(label_, NULL)
+{
+  init(0);
+  setShortcut(accel);
+  connect(action, receiver, member);
+}
+
+
+taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel,
+  const char* name_) 
+: QAction(label_, NULL)
+{
+  init(0);
+  usr_data = usr_data_;
+  setShortcut(accel);
+  setName(name_);
 }
 
 taiAction::taiAction(bool is_sep)
@@ -2879,7 +2905,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost
   buttonRep = NULL;
 }
 
-void taiMethodData::AddToMenu(taiMenu* mnu) {
+void taiMethodData::AddToMenu(taiMenuToolBarBase* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
   mnu->AddItem(meth->GetLabel(), taiMenu::use_default,

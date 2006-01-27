@@ -96,10 +96,9 @@ template class taPtrList<taiDataHost>;
 template class taPtrList<taiEditDataHost>;
 template class taPtrList<taiData>;
 template class taPtrList<taiAction>;
-template class taPtrList<taiMenu>;
+template class taPtrList<taiMenuToolBarBase>;
 template class taPtrList<taiType>;
 template class taPtrList<gpiList_ElData>;
-template class QList<iAction*>; // in ta_qtdata.h
 template class taPtrList<iDataViewer>; // in ta_qt.h
 template class taPtrList<taiMimeItem>; // in ta_qtclipdata.h
 template class QList<taiToolBar*>; // in ta_qtviewer.h
@@ -110,9 +109,10 @@ template class taList<DataViewer>; // in ta_qtviewer.h
 template class taPtrList<iDataPanel>; // in ta_qtviewer.h
 template class taPtrList<iTabView>;
 #ifdef DARWIN // for some reason, these need to be here for MacOS
-template class QPtrList<QObject>;
-template class QValueList<int>;
-template class QValueListPrivate<int>;
+//TODO: verify this for Qt4
+template class QList<QObject*>;
+template class QList<int>;
+//template class QValueListPrivate<int>;
 template class QMemArray<char>;
 #endif // def DARWIN
 #endif // def TA_GUI

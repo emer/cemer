@@ -665,12 +665,12 @@ public:
   int			send_n;		// #READ_ONLY number of sending con_groups
 
   bool			projected; 	 // #HIDDEN t/f if connected
-#ifdef TA_GUI // TODO: prob obsolete -- not really used anywhere, except 2 funcs below
+/*#ifdef TA_GUI // TODO: prob obsolete -- not really used anywhere, except 2 funcs below
   Xform*		proj_points;     // #OWN_POINTER #HIDDEN projection points
 
   void			SetFromPoints(float x1, float y1);
   void			SetToPoints(float x1, float y1);
-#endif
+#endif */
   virtual void 	SetFrom();	// set where to receive from based on selections
 
   virtual void	SetCustomFrom(Layer* from_lay);

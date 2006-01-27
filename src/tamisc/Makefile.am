@@ -9,8 +9,7 @@ VPATH = @srcdir@
 if TA_GUI
 
 TAHEADS_GUI_PRE =\
-	@abs_srcdir@/fontspec.h \
-	@abs_srcdir@/xform.h
+	@abs_srcdir@/fontspec.h 
 
 TAHEADS_GUI =\
 	@abs_srcdir@/colorbar_qt.h \
@@ -24,7 +23,6 @@ TAHEADS_GUI =\
 
 HEADS_GUI =\
 	fontspec.h \
-	xform.h \
 	t3node_so.h \
 	t3viewer.h \
 	colorbar_qt.h \
@@ -35,7 +33,6 @@ HEADS_GUI =\
 
 SRCS_GUI =\
 	fontspec.cpp \
-	xform.cpp \
 	t3node_so.cpp \
 	t3viewer.cpp \
 	t3viewer.moc.cpp \

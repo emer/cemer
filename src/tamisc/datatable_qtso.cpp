@@ -61,10 +61,10 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 //////////////////////////
 
 iDataTable::iDataTable(QWidget* parent)
-:QTable(parent)
+:Q3Table(parent)
 {
+  col_align.err = (Qt::AlignmentFlag)0;
   m_dt = NULL;
-  col_align = new QByteArray();
 
 //<TEMP>
 setReadOnly(true);
@@ -73,9 +73,6 @@ setSorting(false);
 }
 
 iDataTable::~iDataTable() {
-  delete col_align;
-  col_align = NULL;
-
   m_dt = NULL;
 }
 
@@ -98,7 +95,7 @@ void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
 {
   //NOTE: not well documented in Qt, but the inherited routine fills the
   // background rect, and does all the grid drawing -- the fact we
-  // have no QTableItem values causes the inherited to not draw a cell contents
+  // have no Q3TableItem values causes the inherited to not draw a cell contents
   inherited::paintCell(p, row, col, cr, selected, cg);
   if (!m_dt) return;
 
@@ -125,7 +122,7 @@ void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
         str = "n/a";
     }
   }
-  int align = col_align->at(col);
+  Qt::Alignment align = col_align.SafeEl(col);
   p->drawText(2, 0, cr.width() - 4, cr.height(), align, str );
 }
 
@@ -142,7 +139,7 @@ void iDataTable::updateConfig() {
     if (n != numRows()) setNumRows(n);
     // truncate if #cols is less, otherwise we add them dynamically in the loop below
     n = m_dt->leaves;
-    col_align->resize(n);
+    col_align.EnforceSize(n);
     int pix_per_tab = 0; // only needed for sizing new cols
     if (n < numCols()) setNumCols(n);
     else if (n >= numCols()) {
@@ -151,7 +148,7 @@ void iDataTable::updateConfig() {
       pix_per_tab = fm.width(QString("00000000"));
     }
 
-    QHeader* hd = horizontalHeader();
+    Q3Header* hd = horizontalHeader();
     String hd_nm;
 
     taLeafItr i;
@@ -166,14 +163,14 @@ void iDataTable::updateConfig() {
           int tab_width = disp_wd * pix_per_tab;
           setColumnWidth(col, tab_width);
           //column alignment, right is for numerics
-          char align;
+          Qt::Alignment align;
           if (da->is_matrix)
             align = Qt::AlignCenter | Qt::AlignVCenter;
           else if (da->is_numeric())
             align = Qt::AlignRight | Qt::AlignVCenter;
           else
             align = Qt::AlignLeft | Qt::AlignVCenter;
-          col_align->at(col) = align;
+          col_align.FastEl(col) = align;
         }
         hd_nm = da->GetDisplayName();
       } else {

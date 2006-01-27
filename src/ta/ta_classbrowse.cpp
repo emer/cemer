@@ -44,10 +44,10 @@
 #include "ispinbox.h"
 
 #include <qlayout.h>
-#include <qlistview.h>
+#include <Q3ListView>
 #include <qpushbutton.h>
 #include <qsplitter.h>
-#include <qtable.h>
+//#include <qtable.h>
 #include <qtabwidget.h>
 
 /*
@@ -323,7 +323,7 @@ taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_,  taiTr
   init(link_, flags_);
 }
 
-taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, QListView* parent_, 
+taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, Q3ListView* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, NULL, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
@@ -398,7 +398,7 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, tai
   init(link_, flags_);
 }
 
-taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, QListView* parent_, 
+taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, Q3ListView* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, NULL, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
@@ -519,7 +519,7 @@ iDataPanel* iClassBrowser::MakeNewDataPanel_(taiDataLink* link) {
 } 
 
 void iClassBrowser::mnuNewBrowser(taiMenuEl* mel) {
-  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data);
+  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
   ClassBrowser* brows = ClassBrowser::New(dl->data(), dl->tik);
   if (!brows) return;

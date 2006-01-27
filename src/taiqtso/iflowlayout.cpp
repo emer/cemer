@@ -33,7 +33,7 @@ template class  QList<QLayoutItem*>;
 class iFlowLayoutIterator :public QGLayoutIterator
 {
 public:
-    iFlowLayoutIterator( QList<QLayoutItem> *l ) :idx(0), list(l)  {}
+    iFlowLayoutIterator( QList<QLayoutItem> *l ) :idx(0), itemList(l)  {}
     uint count() const;
     QLayoutItem *current();
     QLayoutItem *next();
@@ -41,18 +41,18 @@ public:
 
 private:
     int idx;
-    QList<QLayoutItem> *list;
+    QList<QLayoutItem> *itemList;
 
 };
 
 uint iFlowLayoutIterator::count() const
 {
-    return list->count();
+    return itemList->count();
 }
 
 QLayoutItem *iFlowLayoutIterator::current()
 {
-    return idx < int(count()) ? list->at(idx) : 0;
+    return idx < int(count()) ? itemList->at(idx) : 0;
 }
 
 QLayoutItem *iFlowLayoutIterator::next()
@@ -62,7 +62,7 @@ QLayoutItem *iFlowLayoutIterator::next()
 
 QLayoutItem *iFlowLayoutIterator::takeCurrent()
 {
-    return idx < int(count()) ? list->take( idx ) : 0;
+    return idx < int(count()) ? itemList->take( idx ) : 0;
 }
 */
 
@@ -120,7 +120,38 @@ int iFlowLayout::heightForWidth( int w ) const
 
 void iFlowLayout::addItem( QLayoutItem *item)
 {
-    list.append( item );
+    itemList.append( item );
+}
+
+int iFlowLayout::count() const
+{
+    return itemList.size();
+}
+
+QLayoutItem *iFlowLayout::itemAt(int index) const
+{
+    return itemList.value(index);
+}
+
+QSize iFlowLayout::minimumSize() const
+{
+    QSize size;
+    QLayoutItem *item;
+    foreach (item, itemList)
+        size = size.expandedTo(item->minimumSize());
+
+    size += QSize(2*margin(), 2*margin());
+    return size;
+}
+
+
+
+QLayoutItem *iFlowLayout::takeAt(int index)
+{
+    if (index >= 0 && index < itemList.size())
+        return itemList.takeAt(index);
+    else
+        return 0;
 }
 
 void iFlowLayout::setAlignment(Qt::Alignment value) {
@@ -146,7 +177,7 @@ Qt::Orientations iFlowLayout::expandingDirections() const
 
 /* QLayoutIterator iFlowLayout::iterator()
 {
-    return QLayoutIterator( new iFlowLayoutIterator( list ) );
+    return QLayoutIterator( new iFlowLayoutIterator( itemList ) );
 } */
 
 void iFlowLayout::setGeometry( const QRect &r )
@@ -207,9 +238,9 @@ int iFlowLayout::doLayout( const QRect &r, bool testonly ) {
   int h = 0;          //height of this line so far.
   int lines = 0;
   QLayoutItemList line_it; // items for current line
-//  QListIterator<QLayoutItem> it(*list);
+//  QListIterator<QLayoutItem> it(*itemList);
   QLayoutItem *o;
-  foreach (o, list ) {
+  foreach (o, itemList ) {
       int nextX = x + o->sizeHint().width() + spacing();
       if ( (nextX - spacing() > (r.right() - margin())) && (h > 0) ) {
         if (lines > 0)  y += spacing();
@@ -246,7 +277,7 @@ int iFlowLayout::doLayout( const QRect &r, bool testonly ) {
   int h = 0;          //height of this line so far.
   int lines = 0;
   QLayoutItemList line_it; // items for current line
-  QListIterator<QLayoutItem> it(list);
+  QListIterator<QLayoutItem> it(itemList);
   QLayoutItem *o;
   while ( (o=it.current()) != 0 ) {
       if (lines > 0)  y += spacing();
@@ -283,7 +314,7 @@ int iFlowLayout::doLayout( const QRect &r, bool testonly ) {
     int x = r.x();
     int y = r.y();
     int h = 0;          //height of this line so far.
-    QListIterator<QLayoutItem> it(list);
+    QListIterator<QLayoutItem> it(itemList);
     QLayoutItem *o;
     while ( (o=it.current()) != 0 ) {
         ++it;
@@ -303,14 +334,3 @@ int iFlowLayout::doLayout( const QRect &r, bool testonly ) {
 }
 
 */
-QSize iFlowLayout::minimumSize() const
-{
-    QSize s(0,0);
-    QLayoutItem *o;
-    foreach(o, list) {// ( (o=it.current()) != 0 ) {
- //       ++it;
-        s = s.expandedTo( o->minimumSize() );
-    }
-    return s;
-}
-

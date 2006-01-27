@@ -38,8 +38,8 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qobject.h>
-#include <qscrollview.h>
-#include <qtable.h>
+#include <Q3ScrollView>
+#include <Q3Table>
 #include <qtooltip.h>
 #include <qwidget.h>
 

@@ -40,14 +40,13 @@
 #include <Q3ButtonGroup>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qmenubar.h>
-#include <qmenudata.h>
+#include <QMenuBar>
+#include <QMenu>
 #include <qmessagebox.h>
 #include <qobject.h>
 #include <qpainter.h>
 #include <qpalette.h>
 #include <QList>
-#include <Q3PopupMenu>
 #include <qpushbutton.h>
 #include <Q3ScrollView>
 #include <qsizepolicy.h>
@@ -1409,12 +1408,12 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   return panel;
 }
 
-void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, Q3PopupMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {
   taiDataHost::FillLabelContextMenu(sender, menu, last_id);
   FillLabelContextMenu_SelEdit(sender, menu, last_id);
 }
 
-void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3PopupMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id) {
   if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
   MemberDef* md = memb_el.SafeEl(sel_item_index);
   if (md == NULL) return;
@@ -1424,7 +1423,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3Popu
   TypeDef* td = SelectEdit::StatTypeDef(0);
   if (td->tokens.size == 0) return;
   // if any edits, populate menu for adding, for all seledits not already on
-  Q3PopupMenu* sub = new Q3PopupMenu(body);
+  QMenu* sub = new QMenu(body);
   sub->setFont(menu->font());
   for (int i = 0; i < td->tokens.size; ++i) {
     SelectEdit* se = (SelectEdit*)td->tokens[i];
@@ -1438,7 +1437,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3Popu
   if (sub->count() == 0)
     menu->setItemEnabled(last_id, false); // show item for usability, but disable
   // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = new Q3PopupMenu(body);
+  sub = new QMenu(body);
   sub->setFont(menu->font());
   for (int i = 0; i < td->tokens.size; ++i) {
     SelectEdit* se = (SelectEdit*)td->tokens[i];

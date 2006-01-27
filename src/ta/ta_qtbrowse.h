@@ -302,7 +302,7 @@ class iDataBrowser : public iDataBrowserBase { // viewer window used for class b
 INHERITED(iDataBrowserBase)
 friend class DataBrowser;
 public:
-  iAction*	        toolsClassBrowseAction;
+  taiAction*	        toolsClassBrowseAction;
   
   DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
 

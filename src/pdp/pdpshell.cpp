@@ -42,7 +42,7 @@
 
   #include <qapplication.h>
   //#include <qevent.h>
-  #include <qwidgetlist.h>
+  #include <QWidgetList>
 
 #endif
 

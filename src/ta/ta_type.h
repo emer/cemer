@@ -120,10 +120,31 @@ public:
   String_PArray()				{ };
   String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   // returns first item which contains given string (-1 if none)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((String*)a) == *((String*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((String*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  {*((String*)it) = val; }
 };
 
-typedef taPlainArray<int> int_PArray;
+class int_PArray: public taPlainArray<int> {
+public:
+  void	operator=(const int_PArray& cp)	{ Copy_Duplicate(cp); }
+  int_PArray()				{ };
+  int_PArray(const int_PArray& cp)	{ Copy_Duplicate(cp); }
 
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((int*)a) == *((int*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((int*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { int tmp = (int)val; *((int*)it) = tmp; }
+};
 
 class TA_API IApp {
   // basic methods that the root/app object must support

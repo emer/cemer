@@ -16,7 +16,6 @@
 
 
 #include "fontspec.h"
-#include "xform.h"
 #include "ta_qt.h"
 #include "ta_css.h" // for label viewer and master lookup
 

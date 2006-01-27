@@ -1131,7 +1131,7 @@ int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiFunPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   taiMenu* rval = new taiMenu(taiMenu::buttonmenu, taiMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
-  rval->AddItem("NULL", NULL);
+  rval->AddItem("NULL");
   rval->AddSep();
   MethodDef* fun;
   for (int i = 0; i < TA_taRegFun.methods.size; ++i) {
@@ -1962,7 +1962,7 @@ void taiMethodPtrArgType::GetImage_impl(taiData* dat, void*) {
   taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
   rval->md = (MethodDef*)*((void**)arg_base);
   rval->menubase = typ;
-  rval->ta_menu->ResetMenu();
+  rval->ta_menu->Reset();
   MethodSpace* mbs = &(typ->methods);
   for (int i = 0; i < mbs->size; ++i){
     MethodDef* mbd = mbs->FastEl(i);

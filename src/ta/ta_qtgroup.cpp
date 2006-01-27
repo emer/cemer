@@ -1548,13 +1548,13 @@ void gpiSelectEditDataHost::Constr_Methods() {
   QMenu* mnuRemoveMethod_but = new QMenu();
   if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
     cur_menu->AddSep();
-    QMenu* menu_tmp = cur_menu->rep_popup();
+/*TODO Qt4    QMenu* menu_tmp = cur_menu->rep_popup();
     menu_tmp->insertItem("Remove field", mnuRemoveMember);
     taiMenu* taimen_tmp = cur_menu->AddSubMenu("Remove function");
     menu_tmp = taimen_tmp->rep_popup();
     menu_tmp->insertItem("Main menu", mnuRemoveMethod_menu);
     menu_tmp->insertItem("Menu buttons", mnuRemoveMethod_menu_but);
-    menu_tmp->insertItem("Buttons", mnuRemoveMethod_but);
+    menu_tmp->insertItem("Buttons", mnuRemoveMethod_but); */
   }
 
 

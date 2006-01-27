@@ -29,20 +29,20 @@
 
 #include <qbrush.h>
 #include <qevent.h>
-#include <qheader.h>
+#include <Q3Header>
 #include <qlayout.h>
-#include <qobjectlist.h>
 #include <qpainter.h>
 #include <qpen.h>
-#include <qpushbutton.h>
-#include <qscrollview.h>
+#include <Q3Button>
+#include <QPushButton>
+#include <Q3ScrollView>
 
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 
-
+using namespace Qt;
 // various graph metrics -- these could possibly become static params somewhere
 
 #define ORIGIN_OFFSET 0.08f // space between actual origin, and axes
@@ -1576,8 +1576,8 @@ void GraphViews::Reset_impl() {
 //   iAxisButton	//
 //////////////////////////
 
-class iAxisButton: public QPushButton {
-typedef QPushButton inherited;
+class iAxisButton: public Q3Button {
+typedef Q3Button inherited;
 public:
   iGraphButton*		gb() {return (iGraphButton*)parent();}
   iAxisButton(iGraphButton* parent);
@@ -1943,15 +1943,15 @@ iGraphButtons::iGraphButtons(QWidget* parent)
   m_graph = NULL;
   dv_graph = NULL;
   updating = 0;
-  scr = new QScrollView(this);
-//  scr->setHScrollBarMode(QScrollView::AlwaysOff);
-//  scr->setVScrollBarMode(QScrollView::AlwaysOn); //not super pretty, but eliminates complex sizing issues
-  scr->setResizePolicy(QScrollView::AutoOneFit);
+  scr = new Q3ScrollView(this);
+//  scr->setHScrollBarMode(Q3ScrollView::AlwaysOff);
+//  scr->setVScrollBarMode(Q3ScrollView::AlwaysOn); //not super pretty, but eliminates complex sizing issues
+  scr->setResizePolicy(Q3ScrollView::AutoOneFit);
 
   buts = new QWidget(scr->viewport());
   layWidg = new QVBoxLayout(buts);
 
-  hdr = new QHeader(buts);
+  hdr = new Q3Header(buts);
   hdr->setClickEnabled(false);
   hdr->setResizeEnabled(false);
   hdr->setMovingEnabled(false);
@@ -1965,7 +1965,7 @@ iGraphButtons::iGraphButtons(QWidget* parent)
   layWidg->addStretch(); // note: always floats at end
 
 
-//  buts = new QScrollView(this);
+//  buts = new Q3ScrollView(this);
 
   scr->addChild(buts);
   buttons = new QObjectList();
@@ -2059,7 +2059,7 @@ void iGraphButtons::Rebuild() {
 void iGraphButtons::RemoveGraphButton(int i) {
   iGraphButton* gb = button(i);
   if (!gb) return;
-  buttons->remove((uint)i);
+  buttons->removeAt((uint)i);
   gb->parent = NULL; // prevents it calling us back on delete
   gb->deleteLater();
 }

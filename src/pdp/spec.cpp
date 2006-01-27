@@ -149,7 +149,7 @@ BaseSpec* BaseSpec_MGroup::FindParent() {
   itm_list->GetMenu(sub, &mc);
 } */
 #ifdef TA_GUI
-void BaseSpec_MGroup::NewChildSpec_mc(taiMenuEl* sel) {
+void BaseSpec_MGroup::NewChildSpec_mc(taiAction* sel) {
 /*TODO  if(win_owner == NULL) return;
   if((sel != NULL) && (sel->usr_data != NULL)) {
     TAPtr itm = (TAPtr)sel->usr_data;

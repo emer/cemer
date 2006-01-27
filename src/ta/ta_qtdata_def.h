@@ -37,10 +37,7 @@ class IDataHost; // interface for top level host of data items, mostly for DataC
 class taiDataHost;
 class taiAction;
 class taiMenuAction;
-class taiMenuEl;
 class taiMenu;
-class iAction;
-class iAction_List;
 class taiMethodData;
 
 class QWidget;
@@ -57,9 +54,9 @@ public:
 
   taiMenuAction() {receiver = NULL;}
   taiMenuAction(QObject* receiver_, const char* member_) {receiver = receiver_; member = member_;}
-  taiMenuAction(const taiMenuAction& src) {receiver = src.receiver; member = src.member;}
+  taiMenuAction(const taiMenuAction& src) {receiver = src.receiver; member = src.member;} //
 
-  void		connect(QObject* sender, const char* signal) const;
+//  void		connect(QObject* sender, const char* signal) const; // #IGNORE
   taiMenuAction& 	operator=(const taiMenuAction& rhs);
 };
 

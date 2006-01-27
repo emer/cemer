@@ -31,7 +31,6 @@
 //#include "graphic_viewer.h"
 
 #ifndef __MAKETA__
-#include <qobjectlist.h>
 #include <qsizepolicy.h>
 #include <qwidget.h>
 #endif
@@ -349,7 +348,7 @@ protected:
   void		paintAxis(QPainter& p, const QRect& r); //note: p is translated; axis buttons also call this
 #ifndef __MAKETA__
   void		paintLegend(QPainter& p, const QRect& r, const iColor* color, String symbol,
-    bool draw_line = true, PenStyle ps = SolidLine);
+    bool draw_line = true, Qt::PenStyle ps = Qt::SolidLine);
 #endif
 
   void 		resizeEvent(QResizeEvent* ev);
@@ -374,10 +373,10 @@ friend class GraphButtonsDataView; // internal class
   Q_OBJECT
 public:
 
-  QScrollView*		scr; // always has vert scrolls; never hor ones
+  Q3ScrollView*		scr; // always has vert scrolls; never hor ones
   QWidget*		  buts; //
   QVBoxLayout*		  layWidg;
-  QHeader*		    hdr;
+  Q3Header*		    hdr;
 
   int			buttonCount(); // number of buttons
   iGraphButton*		button(int i); // get indicated button (NULL if out of bounds)

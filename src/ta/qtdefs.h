@@ -30,6 +30,7 @@ class	QBitmap;		// #IGNORE
 class	QBitArray;		// #IGNORE
 class	QBoxLayout;		// #IGNORE
 class	QButton;		// #IGNORE note: abstract parent class for buttons
+class	Q3Button;		// #IGNORE note: abstract parent class for buttons
 //class	QButtonGroup;		// #IGNORE
 class	Q3ButtonGroup;		// #IGNORE
 class	QCanvas;		// #IGNORE
@@ -56,6 +57,7 @@ class	Q3Header;		// #IGNORE
 class	QLabel;			// #IGNORE
 class	QLayout;		// #IGNORE
 class	QLineEdit;		// #IGNORE
+template<class T> class	QList;		// #IGNORE
 class	Q3ListBox;		// #IGNORE
 class	Q3ListBoxItem;		// #IGNORE
 class	Q3ListView;		// #IGNORE
@@ -73,7 +75,7 @@ class	QObject;		// #IGNORE
 class	QPainter;		// #IGNORE
 class	QPixmap;		// #IGNORE
 class	QPoint;			// #IGNORE
-class	Q3PopupMenu;		// #IGNORE
+//class	Q3PopupMenu;		// #IGNORE
 class	QProgressDialog;	// #IGNORE
 class	QPushButton;		// #IGNORE
 class	QRadioButton;		// #IGNORE
@@ -87,8 +89,8 @@ class	QSpinBox;		// #IGNORE
 class	QSplitter;		// #IGNORE
 class	QString;		// #IGNORE
 class	QStringList;		// #IGNORE
-class	QTable;			// #IGNORE
-class	QTableItem;			// #IGNORE
+class	Q3Table;			// #IGNORE
+class	Q3TableItem;			// #IGNORE
 class	QTabBar;		// #IGNORE
 class	QTabWidget;		// #IGNORE
 class	QTextBrowser;		// #IGNORE
@@ -142,7 +144,7 @@ class SoTransform; 		// #IGNORE
 
 // Custom Controls
 
-class	iAction;		// #IGNORE -- TODO, used cf pdplog.h
+//class	iAction;		// #IGNORE -- TODO, used cf pdplog.h
 class	iBrush;			// #IGNORE -- TODO
 //class	iButton;		// #IGNORE
 class	iColor;			// #IGNORE
@@ -184,7 +186,7 @@ extern QColor& COLOR_BRIGHT_HILIGHT;
 // IV CLASS MAPPINGS:
 
 //TEMP:
-#define	iButton 	QButton
+#define	iButton 	Q3Button
 
 // 	IV Class	QT Class
 //	ivDeck		Q3WidgetStack

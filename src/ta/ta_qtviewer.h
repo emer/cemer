@@ -67,9 +67,9 @@ class taGroup_impl;
 class taiDataLink;
 class tabDataLink;
 class tabListDataLink;
-class tabGroupDataLink;
+class tabGroupDataLink; //
 
-class iPanelTab; // #IGNORE
+//obsclass iPanelTab; // #IGNORE
 class iTabBar; // #IGNORE
 class iTabView; // #IGNORE
 class iDataPanel; //#IGNORE
@@ -78,7 +78,7 @@ class iDataPanel_PtrList;
 class iTabView_PtrList; // #IGNORE
 
 class iToolBar;
-class taiToolBar_List;
+class iToolBar_List;
 
 class WinGeometry;
 class ToolBar;
@@ -114,8 +114,8 @@ class taiDataLink: public taDataLink { // interface for viewing system
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
 
-  virtual void		FillContextMenu(taiMenu* menu); // only override to prepend to menu
-  virtual void		FillContextMenu_EditItems(taiMenu* menu, int allowed) {}
+  virtual void		FillContextMenu(taiMenuToolBarBase* menu); // only override to prepend to menu
+  virtual void		FillContextMenu_EditItems(taiMenuToolBarBase* menu, int allowed) {}
   virtual const QPixmap* GetIcon(int bmf, int& flags_supported) {return NULL;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
@@ -135,7 +135,7 @@ protected:
   DataLink_QObj*	qobj; // #IGNORE delegate object, when we need to connect or signal
 
   virtual void		Assert_QObj(); // makes sure the qobj is created
-  virtual void		FillContextMenu_impl(taiMenu* menu) {} // this is usually the one to override
+  virtual void		FillContextMenu_impl(taiMenuToolBarBase* menu) {} // this is usually the one to override
 
   virtual ~taiDataLink(); // we only ever implicitly destroy, when 0 clients
 
@@ -186,7 +186,7 @@ protected:
      taiMimeSource* ms,  int& allowed, int& forbidden);
   override int		ChildEditAction_impl(const MemberDef* par_md, taiDataLink* child,
     taiMimeSource* ms, int ea);
-  override void		FillContextMenu_impl(taiMenu* menu);
+  override void		FillContextMenu_impl(taiMenuToolBarBase* menu);
 };
 
 
@@ -259,11 +259,11 @@ friend class ToolBar;
 friend class iDataViewer;
 public:
   ToolBar*		toolBar() {return m_toolBar;}
-  iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win, const char* name = 0);
+  iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win);
    // constructor just does bare-bones create; Constr() does the actual work
   ~iToolBar();
 protected:
-  ToolBar*	m_toolBar;
+  ToolBar*		m_toolBar;
   void 			showEvent(QShowEvent* e); // override
   void 			hideEvent(QHideEvent* e); // override
   virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
@@ -273,14 +273,19 @@ private:
 
 
 //////////////////////////
-//   taiToolBar_List	//
+//   iToolBar_List	//
 //////////////////////////
 
-class taiToolBar_List: public QList<iToolBar*> {
+#ifdef __MAKETA__
+typedef iToolBar* iToolBar_ptr;
+class iToolBar_List: public QList<iToolBar_ptr> {
+#else
+class iToolBar_List: public QList<iToolBar*> {
+#endif
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
 friend class ToolBar;
 public:
-  ~taiToolBar_List();
+  ~iToolBar_List();
   iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
 protected:
   ToolBar*		m_toolBar;
@@ -318,7 +323,7 @@ public: // Interface Properties and Methods
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
-  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiMenu* menu);
+  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiMenuToolBarBase* menu);
    // normally implement the _impl
   virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
     bool for_drag) const; // delegates to the link; normally not overridden
@@ -334,8 +339,8 @@ protected:
     // do Dst op for single selected item; generally doesn't need extending
   virtual int		EditActionS_impl_(int ea);
     // do Src op for single or one of multi selected items; CUT and COPY usually just a 1 return code; we actually implement the actual clipboard transfer
-  virtual void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed); // might be extended
-  virtual void		FillContextMenu_impl(taiMenu* menu) {} // link handles most, called in FCM
+  virtual void		FillContextMenu_EditItems_impl(taiMenuToolBarBase* menu, int allowed); // might be extended
+  virtual void		FillContextMenu_impl(taiMenuToolBarBase* menu) {} // link handles most, called in FCM
   virtual void		GetEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
     // get Dst ops allowed for a single item,
   virtual void		GetEditActionsS_impl_(int& allowed, int& forbidden) const;
@@ -484,7 +489,7 @@ typedef QMainWindow inherited;
 friend class taDataLink;
 friend class DataViewer;
 public:
-  taiToolBar_List	toolbars; // list of all created toolbars
+  iToolBar_List	toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
   taiAction_List	dyn_actions; // list of all dynamic actions currently available, based on selection
   DynMethod_PtrList	dyn_methods; // dynamic methods currently available, based on selection
@@ -535,7 +540,7 @@ public:
   virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl)
   iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
     // can be overriden to supply custom iToolBar
-  virtual void		FillContextMenu(taiMenu* menu); // s/b called by desc class, to put dynaction items onto menu
+  virtual void		FillContextMenu(taiMenuToolBarBase* menu); // s/b called by desc class, to put dynaction items onto menu
   virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
   void			emit_SetActionsEnabled();
   void			emit_GetEditActionsEnabled(int& ea); // param is one of the taiClipData EditAction values
@@ -657,10 +662,9 @@ friend class iDataViewer;
 friend class DataViewer;
 public:
   int			index; // #SHOW #NO_SAVE #READ_ONLY
-  float			lft;  	// #HIDDEN when undocked, position on screen
-  float			top;	// #HIDDEN when undocked, position on screen
+  float			lft;  	// #HIDDEN when undocked, fractional position on screen
+  float			top;	// #HIDDEN when undocked, fractional position on screen
   Orientation		o; // whether hor or vert
-  bool			docked;		// #HIDDEN whether toolbar is docked or not
   bool			mapped; // #HIDDEN whether toolbar window has been created
 
   iToolBar*		toolBar() {return m_window;} // #IGNORE
@@ -669,8 +673,6 @@ public:
 
   virtual void 	GetWinPos(); // copy state of toolbar to us
   virtual void	SetWinPos();
-  virtual void  Dock();		// #MENU dock the toolbar (saves iconified state)
-  virtual void	Undock();		// deiconify the window (saves deiconified state)
   virtual void  Show();		// called when user selects from menu
   virtual void	Hide();		// called when user unselects from menu
 
@@ -774,7 +776,7 @@ public:
 
   String		name;		// name of the object
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
-  taiMenu*		menu;		// menu bar -- note: partially managed by the window
+  taiMenuBar*		menu;		// menu bar -- note: partially managed by the window
   String		win_name;	// #HIDDEN #NO_SAVE name field for the window
   String		file_name;	// #HIDDEN file name used in loading/saving
 //  DataViewer*		win_owner;	// #READ_ONLY #NO_SAVE owner that has a window
@@ -861,7 +863,7 @@ protected:
   bool			m_is_root; // #IGNORE
   bool 			m_has_changes;
   iDataViewer*		m_window;	// #IGNORE each project gets a window
-  taiMenu*		cur_menu; // for building menu
+  taiMenuToolBarBase*		cur_menu; // for building menu
   TypeDef*		link_type; // base type for GetDataLink calls
   virtual void		Constr_Window_impl() {} // #IGNORE implement this to set the m_window instance
 //  virtual void		Constr_Menu_impl(); // #IGNORE constructs the view menu
@@ -947,6 +949,9 @@ class iTabBar: public QTabBar { // #IGNORE encapsulates the TabBar for iTabView
 public:
   iDataPanel*		panel(int idx); // gets the current panel, if any
 
+#ifndef __MAKETA__
+  using			QTabBar::addTab; // bring also into scope
+#endif
   int			addTab(iDataPanel* panel);
   void			SetPanel(int idx, iDataPanel* value, bool force = false); // set or remove (NULL) a panel
   
@@ -1003,7 +1008,7 @@ public:
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   void 			Closing(bool forced, bool& cancel);
   void 			DataPanelDestroying(iDataPanel* panel);
-  virtual void		FillTabBarContextMenu(Q3PopupMenu* contextMenu);
+  virtual void		FillTabBarContextMenu(QMenu* contextMenu);
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
   void 			SetPanel(iDataPanel* panel);
@@ -1016,7 +1021,7 @@ public:
 public slots:
   void 			AddTab();
   void 			CloseTab();
-  virtual void		panelSelected(int id);
+  virtual void		panelSelected(int idx);
 
 protected:
   iTabDataViewer* 	m_viewer_win;
@@ -1186,7 +1191,7 @@ public:
   QVBoxLayout*		layDetail;
     QFrame*		frmButtons;
       QHBoxLayout*	layButtons;
-      QButtonGroup*	buttons; // one QPushButton for each
+      Q3ButtonGroup*	buttons; // one QPushButton for each
     Q3WidgetStack*	wsSubPanels; // subpanels
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}

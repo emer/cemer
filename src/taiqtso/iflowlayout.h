@@ -61,10 +61,16 @@ public:
   void setAlignment(Qt::Alignment value); //default is left top
   bool hasHeightForWidth() const;
   int heightForWidth( int ) const;
-  QSize sizeHint() const;
-  QSize minimumSize() const; //
 //  QLayoutIterator iterator();
-  Qt::Orientations expandingDirections() const;
+  Qt::Orientations expandingDirections() const; //
+
+public: // required or desired overrides
+  int 			count() const;
+  QLayoutItem* 		itemAt(int index) const;
+  QSize 		sizeHint() const;
+  QSize minimumSize() const; //
+//    void setGeometry(const QRect &rect);
+  QLayoutItem*		takeAt(int index);
 
 protected:
   Qt::Alignment malignment;
@@ -74,7 +80,7 @@ private:
   void init();
   int doLayout( const QRect&, bool testonly = FALSE );
   void layoutLine(const QRect& r, QLayoutItemList& line_it);
-  QLayoutItemList list;
+  QLayoutItemList itemList;
   int cached_width;
   int cached_hfw;
 

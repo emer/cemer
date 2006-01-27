@@ -385,10 +385,10 @@ public:
   taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
-  taiMenu*		cur_menu;	// current menu to add to (if not otherwise spec'd)
-  taiMenu*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
+  taiMenuToolBarBase*		cur_menu;	// current menu to add to (if not otherwise spec'd)
+  taiMenuToolBarBase*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
   taiMenuBar*		menu;		// menu bar
-  taiMenu*		show_menu;	// Show menu bar
+  taiMenuToolBarBase*		show_menu;	// Show menu bar
   Member_List		memb_el;	// member elements (1:1 with data_el)
   taiDataList 		data_el;	// data elements (1:1 with memb_el)
   taiDataList 		meth_el;	// method elements
@@ -437,8 +437,8 @@ protected:
   void			Constr_MethButtons();
   virtual void		Constr_ShowMenu(); // make the show/hide menu
   override void		Constr_Final();
-  override void		FillLabelContextMenu(iContextLabel* sender, Q3PopupMenu* menu, int& last_id);
-  virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, Q3PopupMenu* menu, int& last_id);
+  override void		FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id);
+  virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
   virtual void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetButtonImage();

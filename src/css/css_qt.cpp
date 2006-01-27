@@ -53,7 +53,7 @@ public:
 
   bool m_done;
 
-  iSession(QObject *parent = 0, const char *name = 0);
+  iSession(QObject *parent = 0);
   ~iSession();
 
   bool processEvents() {return QEventLoop::processEvents(QEventLoop::AllEvents);}
@@ -76,8 +76,8 @@ iSession* iSession::instance() {
   return m_instance;
 }
 
-iSession::iSession(QObject *parent, const char *name)
-: QEventLoop(parent, name) //NOTE: QEventLoop handles the (disallowed) case of multiple creation
+iSession::iSession(QObject *parent)
+: QEventLoop(parent) //NOTE: QEventLoop handles the (disallowed) case of multiple creation
 {
   m_done = false;
   m_instance = this;
@@ -204,7 +204,8 @@ int cssiSession::RunPending() {
   /* Note: call to hasPendingEvents() may not be relevant for Qt, since it processes
     all pending events in the call to processEvents() -- the Iv version used to make
     a call to process a single event, where it then made sense */
-  if (ses->hasPendingEvents() && !ses->done() && cssiSession::in_session) {
+//Qt3  if (ses->hasPendingEvents() && !ses->done() && cssiSession::in_session) {
+  if (!ses->done() && cssiSession::in_session) {
     ses->processEvents();
   }
   return (ses->done() || !(cssiSession::in_session));

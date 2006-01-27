@@ -39,7 +39,7 @@
 #include <qlayout.h>
 #include <qmenubar.h>
 //#include <qobjectlist.h>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QList>
 #include <qtooltip.h>
 //#include <qvaluelist.h>
@@ -47,6 +47,7 @@
 #include <qwhatsthis.h>
 #include <Q3WidgetStack>
 
+using namespace Qt;
 
 static const unsigned char image0_data[] = {
     0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
@@ -412,7 +413,7 @@ void taiDataLink::Assert_QObj() {
   }
 }
 
-void taiDataLink::FillContextMenu(taiMenu* menu) {
+void taiDataLink::FillContextMenu(taiMenuToolBarBase* menu) {
   FillContextMenu_impl(menu);
 }
 
@@ -597,13 +598,13 @@ Normal submenus (ex. Object Edit, etc.)
 ------
 
 */
-void tabDataLink::FillContextMenu_impl(taiMenu* menu) {
+void tabDataLink::FillContextMenu_impl(taiMenuToolBarBase* menu) {
   inherited::FillContextMenu_impl(menu);
 
   TypeDef* typ = GetDataTypeDef();
   if (typ == NULL)  return;
   taiMenu_List ta_menus;
-  taiMenu* cur_menu = NULL;
+  taiMenuToolBarBase* cur_menu = NULL;
   String men_nm;
 
   // add all the #MENU_CONTEXT items first, so they always appear before the nested submenus
@@ -822,9 +823,8 @@ String tabListItemsDataLink::GetText(DataLinkText dlt) const {
 //   iToolBar 	//
 //////////////////////////
 
-iToolBar::iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win,
-  const char* name)
-:QToolBar(par_win, name)
+iToolBar::iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win)
+:QToolBar(par_win)
 {
   m_toolBar = toolBar_;
   setLabel(label);
@@ -857,12 +857,12 @@ void iToolBar::Showing(bool showing) {
 
 
 //////////////////////////////////
-// 	taiToolBar_List 	//
+// 	iToolBar_List 	//
 //////////////////////////////////
 
-taiToolBar_List::~taiToolBar_List() {}
+iToolBar_List::~iToolBar_List() {}
 
-iToolBar* taiToolBar_List::FindToolBar(const char* name) const {
+iToolBar* iToolBar_List::FindToolBar(const char* name) const {
   iToolBar* rval = NULL;
   //TODO
   return rval;
@@ -938,14 +938,14 @@ int ISelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Qu
   return rval;
 }
 
-void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiMenu* menu) {
+void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiMenuToolBarBase* menu) {
   FillContextMenu_impl(menu);
   int allowed = GetEditActions_(sel_items);
   FillContextMenu_EditItems_impl(menu, allowed);
   link()->FillContextMenu(menu);
 }
 
-void ISelectable::FillContextMenu_EditItems_impl(taiMenu* menu, int allowed) {
+void ISelectable::FillContextMenu_EditItems_impl(taiMenuToolBarBase* menu, int allowed) {
   if (allowed == 0) return;
   if (menu->count() > 0)
     menu->AddSep();
@@ -1157,7 +1157,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
 //////////////////////////
 
 iDataViewer::iDataViewer(DataViewer* viewer_, QWidget* parent)
-: QMainWindow(parent, NULL, (WType_TopLevel | WStyle_SysMenu | WStyle_MinMax | WDestructiveClose))
+: QMainWindow(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax | Qt::WDestructiveClose))
 {
   m_viewer = viewer_;
   init();
@@ -1200,7 +1200,7 @@ void iDataViewer::init() {
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
   (void)statusBar(); // creates the status bar
-  dyn_actions.setAutoDelete(true);
+  
 }
 
 void iDataViewer::actionsMenu_aboutToShow() {
@@ -1211,12 +1211,12 @@ void iDataViewer::actionsMenu_aboutToShow() {
   }
   // add actions corresponding to dynamic list
   for (i = 0; i < (int)dyn_actions.count(); ++i) {
-    taiAction* act = dyn_actions.at(i);
+    taiAction* act = dyn_actions.FastEl(i);
     act->AddTo(actionsMenu);
   }
 }
 
-void iDataViewer::FillContextMenu(taiMenu* menu) {
+void iDataViewer::FillContextMenu(taiMenuToolBarBase* menu) {
   if (dyn_actions.count() == 0) return; // prevents spurious separator
   menu->AddSep();
   // add actions corresponding to dynamic list
@@ -1244,8 +1244,8 @@ iToolBar* iDataViewer::AddToolBar(iToolBar* tb) {
 
 void iDataViewer::AddToolBarMenu(const String& name, int index) {
 //taiMenuEl* menu =
-  toolBarMenu->AddItem(name, (void*) index, taiMenu::toggle,
-    taiMenuEl::int_act, this, SLOT(this_ToolBarSelect(int)));
+  toolBarMenu->AddItem(name, taiMenu::toggle,
+    taiMenuEl::int_act, this, SLOT(this_ToolBarSelect(int)), index);
 }
 
 void iDataViewer::ch_destroyed() {
@@ -1617,12 +1617,12 @@ void iDataViewer::SetActionsEnabled_impl() {
 
 
   // dynamically create actions
-  dyn_actions.clear(); // note: autodelete is on, so items deleted
+  dyn_actions.Reset(); // note: items ref deleted if needed
   for (int i = 0; i < dyn_methods.size; ++i) {
     DynMethodDesc* dmd = dyn_methods.FastEl(i);
-    taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), this, dmd->md->name );
+    taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
     connect(act, SIGNAL(activated(int)), this, SLOT(mnuDynAction(int)));
-    dyn_actions.append(act);
+    dyn_actions.Add(act);
   }
 }
 
@@ -1770,7 +1770,6 @@ void ToolBar::Initialize() {
   lft = 0.0f;
   top = 0.0f;
   o = Horizontal;
-  docked = true;
   mapped = false;
   m_window = NULL;
   m_viewer = NULL;
@@ -1784,7 +1783,6 @@ void ToolBar::Copy_(const ToolBar& cp) {
   lft = cp.lft;
   top = cp.top;
   o = cp.o;
-  docked = cp.docked;
   mapped = cp.mapped;
 }
 
@@ -1819,13 +1817,6 @@ void ToolBar::GetWinPos() {
   top = (float)r.top() / (float)(taiM->scrn_s.h);
 }
 
-void ToolBar::Dock() {
-  if(!m_window) return;
-  //NOTE: no way to query dock status!
-  m_window->dock();
-  docked = true;
-}
-
 void ToolBar::OpenNewWindow_impl() {
   iDataViewer* vw = viewer_win();
   if (!vw) return;
@@ -1857,13 +1848,6 @@ void ToolBar::Show() {
 void ToolBar::Hide() {
   if (!m_window) return;
   m_window->hide();
-}
-
-void ToolBar::Undock() {
-  if (!m_window) return;
-  //NOTE: no way to query dock status!
-  m_window->undock();
-  docked = false;
 }
 
 DataViewer* ToolBar::viewer() {
@@ -2643,18 +2627,18 @@ void iTabDataViewer::Closing(bool forced, bool& cancel) {
 
 void iTabDataViewer::Constr_Menu_impl() {
   iDataViewer::Constr_Menu_impl();
-  viewSplitVerticalAction = AddAction(new taiAction("Split &Vertical", QKeySequence("Ctrl+Shift+L"),
-     this, "viewSplitVerticalAction"));
+  viewSplitVerticalAction = AddAction(new taiAction(this, "Split &Vertical", QKeySequence("Ctrl+Shift+L"),
+     "viewSplitVerticalAction"));
   viewSplitVerticalAction->AddTo(viewMenu);
   connect( viewSplitVerticalAction, SIGNAL( activated() ), this, SLOT( viewSplitVertical() ) );
 
-  viewSplitHorizontalAction = AddAction(new taiAction("Split &Horizontal", QKeySequence("Ctrl+Shift+T"),
-     this, "viewSplitHorizontalAction"));
+  viewSplitHorizontalAction = AddAction(new taiAction(this, "Split &Horizontal", QKeySequence("Ctrl+Shift+T"),
+     "viewSplitHorizontalAction"));
   viewSplitHorizontalAction->AddTo(viewMenu);
   connect(viewSplitHorizontalAction, SIGNAL( activated() ), this, SLOT(viewSplitHorizontal() ) );
 
-  viewCloseCurrentViewAction = AddAction(new taiAction("Close &Current View", QKeySequence("Ctrl+Shift+R"),
-     this, "viewCloseCurrentViewAction"));
+  viewCloseCurrentViewAction = AddAction(new taiAction(this, "Close &Current View", QKeySequence("Ctrl+Shift+R"),
+     "viewCloseCurrentViewAction"));
   viewCloseCurrentViewAction->setEnabled(false); // only enabled for multi tabs
   viewCloseCurrentViewAction->AddTo(viewMenu);
   connect(viewCloseCurrentViewAction, SIGNAL( activated() ), this, SLOT(viewCloseCurrentView() ) );
@@ -2750,10 +2734,9 @@ void iTabDataViewer::viewCloseCurrentView() { // closes split, unless it is last
   }
   QSplitter* par_spl = (QSplitter*)closer->parentWidget();
   iTabView* buddy = NULL;
-  QObjectListIterator it(*par_spl->children());
+  const QObjectList& it = par_spl->children();
   QObject* obj;
-  while ((obj = it.current()) != NULL) {
-    ++it;
+  foreach (obj, it) {
     if (obj == closer) continue;
     if (!obj->inherits("iTabView")) continue;
     buddy = (iTabView*) obj;
@@ -2770,15 +2753,14 @@ void iTabDataViewer::viewCloseCurrentView() { // closes split, unless it is last
   // we determine if the parent is visually earlier than its buddy, by comparing left/top values
   bool move_first = false; // will need to move the buddy back to first
   QSplitter* gpar_spl = NULL;
-  QValueList<int> gpar_spl_sizes;
+  QList<int> gpar_spl_sizes;
   if (par_spl->parentWidget()->inherits("QSplitter")) {
     gpar_spl = (QSplitter* )par_spl->parentWidget();
     gpar_spl_sizes = gpar_spl->sizes(); // easiest way to set new list is to get an old one
 
-    it = *gpar_spl->children();
+    const QObjectList& it = gpar_spl->children();
     QWidget* widg;
-    while ((obj = it.current()) != NULL) {
-      ++it;
+    foreach (obj, it) {
       if (obj == par_spl) continue;
       if (!obj->isWidgetType()) continue;
       widg = (QWidget*)obj;
@@ -2821,7 +2803,7 @@ void iTabDataViewer::viewSplit(int o) {
   // if old parent is splitter, get it, and save the pane sizes, so we can resize the same after rebuilding
   QSplitter* old_par_spl = NULL;
   bool old_par_is_spl = (old_par->inherits("QSplitter"));
-  QValueList<int> par_spl_sizes;
+  QList<int> par_spl_sizes;
   bool move_first = false; // will need to move the new splitter back to first
   if (old_par_is_spl) {
     old_par_spl = (QSplitter* )old_par;
@@ -2829,11 +2811,10 @@ void iTabDataViewer::viewSplit(int o) {
 
     // QSplitter visual widget order is independent of children() order, and is inaccessible, so
     // we determine order by comparing left/top values
-    QObjectListIterator it(*old_par_spl->children());
+    const QObjectList& it = old_par_spl->children();
     QObject* obj;
     QWidget* widg;
-    while ((obj = it.current()) != NULL) {
-      ++it;
+    foreach (obj, it) {
       if (obj == old) continue;
       if (!obj->isWidgetType()) continue;
       widg = (QWidget*)obj;
@@ -2846,7 +2827,7 @@ void iTabDataViewer::viewSplit(int o) {
   }
 
   // get available space (we will divide it equally)
-  int spc = ((Qt::Orientation)o == Horizontal) ? old->width() : old->height();
+  int spc = ((Qt::Orientation)o == Qt::Horizontal) ? old->width() : old->height();
 
   // create a new splitter whose parent is the old parent of the splitee tabview
   QSplitter* splNew = new QSplitter((Qt::Orientation)o, old->parentWidget());
@@ -2857,7 +2838,7 @@ void iTabDataViewer::viewSplit(int o) {
   // create the new tab view, and split space evenly
   //iTabView* new_tv =
   AddTabView(splNew, old);
-  QValueList<int> new_spl_sizes = splNew->sizes(); // easiest way to set new list is to get an old one
+  QList<int> new_spl_sizes = splNew->sizes(); // easiest way to set new list is to get an old one
   new_spl_sizes[0] = spc / 2;
   new_spl_sizes[1] = spc / 2;
   splNew->setSizes(new_spl_sizes);
@@ -2875,14 +2856,14 @@ void iTabDataViewer::viewSplit(int o) {
 }
 
 void iTabDataViewer::viewSplitVertical() {
-  viewSplit(Horizontal); //note: Hor is the orientation of the splitter, which is opposite to how we split window
+  viewSplit(Qt::Horizontal); //note: Hor is the orientation of the splitter, which is opposite to how we split window
 }
 
 void iTabDataViewer::viewSplitHorizontal() {
-  viewSplit(Vertical); //note: Ver is the orientation of the splitter, which is opposite to how we split window
+  viewSplit(Qt::Vertical); //note: Ver is the orientation of the splitter, which is opposite to how we split window
 }
 
-
+/*obs
 //////////////////////////
 //    iPanelTab 	//
 //////////////////////////
@@ -2898,7 +2879,7 @@ iPanelTab::~iPanelTab() {
   if (m_panel) {
     m_panel = NULL;
   }
-}
+} */
 
 
 //////////////////////////
@@ -2918,7 +2899,7 @@ iTabBar::~iTabBar() {
 }
 
 void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
-  Q3PopupMenu* menu = new Q3PopupMenu(this);
+  QMenu* menu = new QMenu(this);
   Q_CHECK_PTR(menu);
   tabView()->FillTabBarContextMenu(menu);
   menu->exec(QCursor::pos());
@@ -2952,7 +2933,7 @@ TODO: hangs in here  iDataPanel* panel = ((iPanelTab*)t)->panel();
 }*/
 
 iDataPanel* iTabBar::panel(int idx) {
-  QVariant data(getTabData(idx)); // returns NULL variant if out of range
+  QVariant data(tabData(idx)); // returns NULL variant if out of range
   if (data.isNull() || !data.isValid()) return NULL;
   intptr_t rval = data.value<intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
   return (iDataPanel*)rval;
@@ -2964,12 +2945,12 @@ int iTabBar::addTab(iDataPanel* panel) {
   QVariant data((intptr_t)0);
   setTabData(idx, data);
   if (panel != NULL)
-    setPanel(idx, panel);
+    SetPanel(idx, panel);
   return idx;
 }
 
 void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
-  QVariant data(getTabData(idx)); // returns NULL variant if out of range
+  QVariant data(tabData(idx)); // returns NULL variant if out of range
   iDataPanel* m_panel = NULL;
   if (!data.isNull() && data.isValid())
     m_panel = (iDataPanel*)data.value<intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
@@ -2977,15 +2958,15 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   if ((m_panel == value) && !force) return;
   m_panel = value;
   if (m_panel) {
-    setText(m_panel->TabText());
+    setTabText(idx, m_panel->TabText());
 //    m_panel->mtab_cnt++;
     // make sure we show latest data
     m_panel->GetImage();
   } else {
-    setText("");
+    setTabText(idx, "");
   }
   data = (intptr_t)m_panel;
-  setTabData(idx);
+  setTabData(idx, data);
 }
 
 
@@ -3027,6 +3008,7 @@ void iTabView::init() {
   // add the default tab
 /*Qt3  iPanelTab* pt  = new iPanelTab();
   tbPanels->addTab(pt); */
+  
   tbPanels->addTab("");
   connect(tbPanels, SIGNAL(selected(int)),
       this, SLOT(panelSelected(int)) );
@@ -3041,13 +3023,10 @@ void iTabView::Activated(bool val) {
 
 bool iTabView::ActivatePanel(taiDataLink* dl) {
   for (int i = 0; i < tbPanels->count(); ++i) {
-    iPanelTab* pt = (iPanelTab*)tbPanels->tabAt(i);
-
-    iDataPanel* panel = pt->panel();
+    iDataPanel* panel = tbPanels->panel(i);
     if (!panel) continue;
     if (panel->link() == dl) {
-      int id = pt->identifier();
-      tbPanels->setCurrentTab(id);
+      tbPanels->setCurrentIndex(i);
 //???      panelSelected(id);
       return true;
     }
@@ -3073,7 +3052,7 @@ void iTabView::AddTab() {
 /*Qt3  iPanelTab* pt  = (iPanelTab*)tbPanels->tab(tbPanels->currentTab());
   pt = new iPanelTab(pt->panel());
   int id = tbPanels->addTab(pt); */
-  iDataPanel* pan  = tbPanels->panel(tbPanels->currentTab());
+  iDataPanel* pan  = tbPanels->panel(tbPanels->currentIndex());
   int id = tbPanels->addTab(pan);
   tbPanels->setCurrentTab(id);
 }
@@ -3081,8 +3060,8 @@ void iTabView::AddTab() {
 void iTabView::CloseTab() {
   // don't allow closing last tab for a modified panel
   if (tbPanels->count() > 1) {
-    tbPanels->removeTab(tbPanels->tab(tbPanels->currentTab()));
-    panelSelected(tbPanels->currentTab()); // needed to resync proper panel with tab
+    tbPanels->removeTab(tbPanels->currentIndex());
+    panelSelected(tbPanels->currentIndex()); // needed to resync proper panel with tab
   } else { // last tab
     panelSelected(-1);
   }
@@ -3100,17 +3079,22 @@ void iTabView::Closing(bool forced, bool& cancel) {
 }
 
 iDataPanel* iTabView::cur_panel() {
-  iPanelTab* pt  = (iPanelTab*)tbPanels->tab(tbPanels->currentTab());
-  return pt->panel(); // could be NULL if empty
+  iDataPanel* rval  = tbPanels->panel(tbPanels->currentIndex());
+  return rval; // could be NULL if empty
 }
 
 void iTabView::DataPanelDestroying(iDataPanel* panel) {
   RemoveDataPanel(panel);
 }
 
-void iTabView::FillTabBarContextMenu(Q3PopupMenu* contextMenu) {
-  contextMenu->insertItem( "&Add Tab",  this, SLOT(AddTab()), CTRL+ALT+Key_N );
-  taiAction act = contextMenu->insertItem( "&Close Tab", this, SLOT(CloseTab()), CTRL+ALT+Key_Q );
+void iTabView::FillTabBarContextMenu(QMenu* contextMenu) {
+  taiAction* act = new taiAction("&Add Tab",  this, SLOT(AddTab()), CTRL+ALT+Key_N );
+  // note: need to parent
+  act->setParent(contextMenu);
+  contextMenu->addAction(act);
+  act = new taiAction("&Close Tab", this, SLOT(CloseTab()), CTRL+ALT+Key_Q );
+  act->setParent(contextMenu);
+  contextMenu->addAction(act);
   act->setEnabled((tbPanels->count() > 1));
 }
 
@@ -3137,11 +3121,11 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   return rval;
 }
 
-void iTabView::panelSelected(int id) {
-  iPanelTab* pt = NULL;
-  if (id >= 0) pt = (iPanelTab*)tbPanels->tab(id); //note: uses tabId, not index
-  if (pt == NULL) wsPanels->raiseWidget((int)0);
-  else            wsPanels->raiseWidget(pt->panel());
+void iTabView::panelSelected(int idx) {
+  iDataPanel* panel = NULL;
+  if (idx >= 0) panel = tbPanels->panel(idx); 
+  if (panel == NULL) wsPanels->raiseWidget((int)0);
+  else            wsPanels->raiseWidget(panel);
   if (m_viewer_win)
     m_viewer_win->TabView_Selected(this);
 }
@@ -3153,12 +3137,12 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
   // remove any associated tabs, except leave last tab (will get deleted anyway if we are
   // destructing)
   for (int i = tbPanels->count() - 1; i >= 0; --i) {
-    iPanelTab* pt = (iPanelTab*)tbPanels->tabAt(i);
-    if (pt->panel() == panel) {
+    iDataPanel* dp = tbPanels->panel(i);
+    if (dp == panel) {
       if ((i > 0) || (tbPanels->count() > 1)) {
-        tbPanels->removeTab(pt);
+        tbPanels->removeTab(i);
       } else {
-        pt->SetPanel(NULL); // no panel
+        tbPanels->SetPanel(0, NULL); // no panel
       }
     }
   }
@@ -3167,16 +3151,15 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
 
 void iTabView::SetPanel(iDataPanel* panel) {
   wsPanels->raiseWidget(panel);
-  iPanelTab* pt = (iPanelTab*)tbPanels->tab(tbPanels->currentTab()); //note: uses tabId, not index
-  if (pt != NULL) pt->SetPanel(panel);
+  iDataPanel* dp = tbPanels->panel(tbPanels->currentIndex()); //note: uses tabId, not index
+  if (dp != NULL) tbPanels->SetPanel(tbPanels->currentIndex(), panel);
 }
 
 void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed
   for (int i = 0; i < tbPanels->count(); ++i ) {
-    iPanelTab* pt = (iPanelTab*)tbPanels->tabAt(i);
-    iDataPanel* pan = pt->panel();
+    iDataPanel* pan = tbPanels->panel(i);
     if (pan == NULL) continue; // shouldn't happen...
-    pt->setText(pan->TabText());
+    tbPanels->setTabText(i, pan->TabText());
   }
 }
 
@@ -3364,7 +3347,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 {
   cur_panel_id = -1;
   layDetail = new QVBoxLayout(this);
-  buttons = new QHButtonGroup(); // used invisibly
+  buttons = new Q3HButtonGroup(); // used invisibly
   buttons->setExclusive(true);
   buttons->setFont(taiM->buttonFont(taiMisc::sizSmall));
   frmButtons = new QFrame(this);
@@ -3687,7 +3670,7 @@ protected:
 
 //  iListViewItem*	focus_item;
 
-  QDragObject*  	dragObject(); // override
+  Q3DragObject*  	dragObject(); // override
   void 			focusInEvent(QFocusEvent* ev); // override
 //  void 			focusOutEvent(QFocusEvent* ev); // override
 
@@ -3707,7 +3690,7 @@ iLDPListView::iLDPListView(iListDataPanel* parent, const char* name)
   viewport()->setAcceptDrops(true);
 }
 
-QDragObject* iLDPListView::dragObject () {
+Q3DragObject* iLDPListView::dragObject () {
   ISelectable_PtrList sel_items;
   panel->GetSelectedItems(sel_items);
   ISelectable* ci = sel_items.SafeEl(0);
@@ -3826,7 +3809,7 @@ int iListDataPanel::GetEditActions() {
 }
 
 void iListDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  QListViewItemIterator it(list, QListViewItemIterator::Selected);
+  Q3ListViewItemIterator it(list, Q3ListViewItemIterator::Selected);
   while (it.current()) {
     lst.Add((taiListDataNode*)it.current());
     ++it;

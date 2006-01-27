@@ -27,7 +27,7 @@
 #include "fontspec.h"
 
 #ifndef __MAKETA__
-#include <qtable.h>
+#include <Q3Table>
 #endif
 
 // forwards
@@ -62,9 +62,9 @@ protected:
 You will also need to reimplement item(), setItem(), takeItem(), clearCell(), and insertWidget(), cellWidget() and clearCellWidget(). In almost every circumstance (for sorting, removing and inserting columns and rows, etc.), you also need to reimplement swapRows(), swapCells() and swapColumns(), including header handling.
 */
 
-class iDataTable: public QTable { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS
+class iDataTable: public Q3Table { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS
   Q_OBJECT
-INHERITED(QTable)
+INHERITED(Q3Table)
 public:
   DataTable*		dt() {return m_dt;}
   void			setDataTable(DataTable* value);
@@ -78,12 +78,12 @@ public: // overrides
   QWidget* 		cellWidget(int row, int col) const; // override
   void 			clearCellWidget(int row, int col); // override
   void 			clearCell(int row, int col); // override
-  void 			setItem (int row, int col, QTableItem* item) {} // override stub out
-  QTableItem* 		item(int row, int col) const  {return NULL;} // override stub out
+  void 			setItem (int row, int col, Q3TableItem* item) {} // override stub out
+  Q3TableItem* 		item(int row, int col) const  {return NULL;} // override stub out
   void 			paintCell (QPainter* p, int row, int col, const QRect& cr,
     bool selected, const QColorGroup& cg ); // override
   void 			resizeData (int len) {} // empty override, per using virtual table
-  void 			takeItem(QTableItem* item) {} // override stub out
+  void 			takeItem(Q3TableItem* item) {} // override stub out
 
   void swapRows ( int row1, int row2, bool swapHeader = FALSE ) {} // TODO
   void swapColumns ( int col1, int col2, bool swapHeader = FALSE ) {} // TODO
@@ -91,7 +91,9 @@ public: // overrides
 
 protected:
   DataTable*		m_dt;
-  QByteArray*		col_align; // contains QT::Align bits
+#ifndef __MAKETA__
+  taPlainArray<Qt::Alignment>	col_align; // contains QT::Align bits
+#endif
 };
 
 

@@ -27,6 +27,7 @@
 #ifdef TA_GUI
 #include "fontspec.h"
 #include "t3viewer.h"
+#include "datatable_qtso.h"
 #endif
 
 //template class taPtrList<GraphLine>;
@@ -61,4 +62,7 @@ template class taList<ViewLabel>;//fontspec.h
 template class SoPtr<T3Node>; // in t3node_so.h
 template class taPtrList<T3DataView>; // in t3viewer.h
 template class taList<T3DataView>; // in t3viewer.h
+
+// datatable_qtso.h
+template class taPlainArray<Qt::Alignment>;
 #endif

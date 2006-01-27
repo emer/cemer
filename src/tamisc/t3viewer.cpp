@@ -28,14 +28,14 @@
 #include <qapplication.h>
 #include <qclipboard.h>
 //#include <qcursor.h>
-#include <qdragobject.h>
+#include <Q3DragObject>
 #include <qevent.h>
 #include <qfile.h>
 #include <qfiledialog.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qmime.h>
-#include <qpopupmenu.h>
+#include <QMenu>
 //#include <qpushbutton.h>
 #include <qscrollbar.h>
 
@@ -542,7 +542,7 @@ void iRenderArea::processEvent(QEvent* ev_) {
 
   if (ev_->type() == QEvent::MouseButtonPress) {
     QMouseEvent* ev = (QMouseEvent*)ev_;
-    if (ev->button() == QMouseEvent::RightButton) {
+    if (ev->button() == Qt::RightButton) {
 //TEMP
 cerr << "iRenderArea::processEvent: right mouse press handled\n";
       //TODO: maybe should check for item under mouse???
@@ -710,7 +710,7 @@ void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
     m_horScrollBar->deleteLater();
     m_horScrollBar = NULL;
   } else {
-    m_horScrollBar = new QScrollBar(Horizontal, this);
+    m_horScrollBar = new QScrollBar(Qt::Horizontal, this);
     m_horScrollBar->show();
     emit initScrollBar(m_horScrollBar);
   }
@@ -723,7 +723,7 @@ void iT3ViewspaceWidget::setHasVerScrollBar(bool value) {
     m_verScrollBar->deleteLater();
     m_verScrollBar = NULL;
   } else {
-    m_verScrollBar = new QScrollBar(Vertical, this);
+    m_verScrollBar = new QScrollBar(Qt::Vertical, this);
     m_verScrollBar->show();
     emit initScrollBar(m_verScrollBar);
   }
@@ -811,9 +811,9 @@ void iT3DataViewer::Constr_Body_impl() {
 void iT3DataViewer::Constr_Menu_impl() {
   inherited::Constr_Menu_impl();
 
-  iAction* act = AddAction(new iAction("Inventor", QKeySequence(), this, "fileExportInventor" ));
+  taiAction* act = AddAction(new taiAction("Inventor", QKeySequence(), "fileExportInventor" ));
   act->AddTo(fileExportMenu);
-  connect( act, SIGNAL( activated() ), this, SLOT( fileExportInventor() ) );
+  act->connect(taiAction::action, this, SLOT( fileExportInventor() ) );
 
 }
 

@@ -46,7 +46,6 @@
 #include "pdpshell.h"
 //obs #include "stats.h"
 //obs #include "sched_proc.h"
-#include "xform.h"
 #include "ta_qtclipdata.h"
 #include "ta_qt.h"
 #include "ta_qtgroup.h"
@@ -65,8 +64,8 @@
 #include <qcheckbox.h>
 #include <qclipboard.h>
 #include <qlayout.h>
-#include <qlistview.h>
-#include <qscrollview.h>
+#include <Q3ListView>
+#include <Q3ScrollView>
 #include <qpushbutton.h>
 #include <qwidget.h>
 
@@ -1340,7 +1339,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
 
   layCtrls->addSpacing(5);
-  scrCmdButtons = new QScrollView(this);
+  scrCmdButtons = new Q3ScrollView(this);
   widCmdButtons = new QWidget(scrCmdButtons->viewport());
 
   layCmdButtons = new QGridLayout(widCmdButtons, 1, CMD_GEOM_X, 0, 2);
@@ -1365,13 +1364,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layCtrls->addSpacing(5);
   lblDisplayValues = new QLabel("Display Values", this, "lblDisplayValues");
   layCtrls->addWidget(lblDisplayValues);
-  lvDisplayValues = new QListView(this, "lvDisplayValues");
+  lvDisplayValues = new Q3ListView(this, "lvDisplayValues");
   lvDisplayValues->addColumn("Value", 80);
   lvDisplayValues->addColumn("Source", 50);
   lvDisplayValues->addColumn("Description");
   lvDisplayValues->setShowSortIndicator(false);
   lvDisplayValues->setSorting(-1); // not sorted, shown in add order
-  lvDisplayValues->setSelectionMode(QListView::Extended);
+  lvDisplayValues->setSelectionMode(Q3ListView::Extended);
   layCtrls->addWidget(lvDisplayValues);
 
 
@@ -1530,8 +1529,8 @@ void NetViewPanel::GetImage_impl() {
   chkDisplay->setChecked(nv->display);
   // update var selection
   int i = 0;
-  QListViewItemIterator it(lvDisplayValues);
-  QListViewItem* item;
+  Q3ListViewItemIterator it(lvDisplayValues);
+  Q3ListViewItem* item;
   while ((item = it.current())) {
     bool is_selected = (nv->ordered_uvg_list.Find(i) >= 0);
     lvDisplayValues->setSelected(item, is_selected);
@@ -1551,10 +1550,10 @@ void NetViewPanel::GetVars() {
   if (nv_->membs.size == 0) return;
 
   MemberDef* md;
-  QListViewItem* lvi = NULL;
+  Q3ListViewItem* lvi = NULL;
   for (int i=0; i < nv_->membs.size; i++) {
     md = nv_->membs[i];
-    lvi = new QListViewItem(lvDisplayValues, lvi, md->name, "todo", md->desc);
+    lvi = new Q3ListViewItem(lvDisplayValues, lvi, md->name, "todo", md->desc);
   }
 }
 
@@ -1573,8 +1572,8 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (!(nv_ = nv())) return;
   // iterate the list -- remove unselected items, and add selected items
   int i = 0;
-  QListViewItemIterator it(lvDisplayValues);
-  QListViewItem* item;
+  Q3ListViewItemIterator it(lvDisplayValues);
+  Q3ListViewItem* item;
   while ((item = it.current())) {
     if (lvDisplayValues->isSelected(item)) {
       if (nv_->ordered_uvg_list.Find(i) < 0) {

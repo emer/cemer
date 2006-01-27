@@ -349,6 +349,9 @@ public:
   
   taiAction(int sel_type_, const String& label_); // used my taiMenu etc.
   taiAction(const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
+  taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel); 
+    // used by viewer/browser
+  taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
   explicit taiAction(bool is_sep); // used for adding separators, which are very stoopid and know/do nothing
   virtual ~taiAction();
 
@@ -467,6 +470,7 @@ public:
   virtual void		NewRadioGroup();	// start a new radio group (must also preceed first group)
   virtual void		Reset();
   
+  taiAction*		operator[](int index) const {return items.SafeEl(index);}
   taiMenuToolBarBase(int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiMenuToolBarBase* par_menu_ = NULL);
   ~taiMenuToolBarBase();
@@ -516,11 +520,9 @@ public:
     // constructor for Browser and context menus ft=0 means default font size; (optional) exist_menu MUST be proper type according to rep_type
   ~taiMenu();
 
-  QMenu*		menu();	 // generic represenation
+  QMenu*		menu()	{ return mrep_popup; }	 // generic represenation
   QMenu*		rep_popup()	{ return mrep_popup; } // strongly typed, safe
   void			setLabel(const String& val); // override 
-
-  taiAction*		operator[](int index) const {return items.SafeEl(index);}
 
   void			exec(const iPoint& pos);
   taiAction*		insertItem(const char* val, const QObject *receiver = NULL, const char* member = NULL,
@@ -560,10 +562,8 @@ public:
 protected:
   QMenuBar*		mrep_bar;
   
-  void 			init(QMenuBar* exist_menu);
+  void 			init(QMenuBar* exist_menu); // #IGNORE
   void 			ConstrBar(QWidget* gui_parent_, QMenuBar* exist_bar = NULL); // #IGNORE
-  override QMenu*	NewSubItem(const char* val, Q3PopupMenu* child = NULL,
-      const QKeySequence* accel = NULL); // #IGNORE creates new submenu
 };
 
 class taiToolBar: public taiMenuToolBarBase {
@@ -586,7 +586,7 @@ protected:
 
 //NOTE: this class provided for winbase.h and others
 
-class taiMenu_List : public taPtrList<taiMenu> {
+class taiMenu_List : public taPtrList<taiMenuToolBarBase> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
   void	El_Done_(void* it)	{ if (own_items) delete (taiMenu*)it; }
@@ -595,9 +595,8 @@ public:
   bool own_items; //generally false
   taiMenu_List()            { own_items = false; }
   ~taiMenu_List()            { Reset(); }
-  virtual String El_GetName_(void* it) const { return (((taiMenu*)it)->mlabel); }
+  virtual String El_GetName_(void* it) const { return (((taiMenuToolBarBase*)it)->mlabel); }
 };
-
 
 //////////////////////////////////
 // 	iAction		//
@@ -608,6 +607,7 @@ public:
   use Actions in Edit Dialogs, but we do use them in DataViewers; they work with
   taiMenu, which is why we define it here. iAction inherits Qt's QAction.
 */
+/*obs
 
 class iAction: public QAction {
   Q_OBJECT
@@ -647,7 +647,7 @@ class iAction_List: public QList<iAction*> {
 
   override String 	El_GetName_(void*) const; // name is Q object name
 };
-
+*/
 //////////////////////////////////
 // 	taiObjChooser		//
 //////////////////////////////////
@@ -937,7 +937,7 @@ public:
 
   virtual void	GenerateScript(); // output script code equivalent if recording
 
-  virtual void 	AddToMenu(taiMenu* mnu);
+  virtual void 	AddToMenu(taiMenuToolBarBase* mnu);
 protected:
   QPushButton*	buttonRep;
   QWidget*	gui_parent;

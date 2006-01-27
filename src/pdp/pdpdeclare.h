@@ -26,7 +26,7 @@
 
 // external defines
 #ifdef TA_GUI
-class taiMenuEl;
+class taiAction;
 #endif
 
 class ColorScaleSpec;

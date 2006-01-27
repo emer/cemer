@@ -184,7 +184,7 @@
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
-/* When on cygwin */
+/* When on darwin */
 #define LINUX 1
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
@@ -216,9 +216,6 @@
 /* Note from Brian: This switch is here, i'm not quite sure why. Used in
    qglobal.h. */
 #define QT_SHARED 
-
-/* none */
-#define QT_THREAD_SUPPORT 
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -267,6 +264,9 @@
 
 /* Version number of package */
 #define VERSION "4.0"
+
+/* When on cygwin */
+/* #undef WIN32 */
 
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */

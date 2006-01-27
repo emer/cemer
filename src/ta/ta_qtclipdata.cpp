@@ -22,7 +22,7 @@
 
 #include <qapplication.h>
 #include <qclipboard.h>
-#include <qcstring.h>
+#include <QByteArray>
 
 #include <sstream>
 
@@ -422,25 +422,25 @@ QByteArray taiSingleClipData::encodedData_impl(int fmt_num, int index) {
       String(taPlatform::processId()) + ";1;\n" +
       item->type_name() + ';' +
       item->path() + ';'; // we put ; at end to facilitate parsing, and for extensibility
-    return QCString(rval.chars());
+    return QByteArray(rval.chars());
   }
   case IDX_MD_OBJECTDATA: {
     ostringstream ost;
     item->SetData(ost);
-    return QCString(ost.str().c_str());
+    return QByteArray(ost.str().c_str());
   }
   case IDX_MD_REMDATATAKEN: { // dst should only call on Cut/Paste or Drag/Move
     if (!(src_edit_action & (EA_SRC_CUT | EA_SRC_DRAG))) break;
     item->RemDataTaken();
 //CAN'T DO THIS HERE--CAUSNG CRASH    if (src_edit_action & (EA_SRC_CUT)) // only clear clipboard for clip ops, not drag ops
 //      QApplication::clipboard()->clear(QClipboard::Clipboard);
-    return QCString("ok"); //helps debugging
+    return QByteArray("ok"); //helps debugging
   }
   case IDX_MD_LOCDATATAKEN: { //simpler than REM, because internals took care of moving data itself
     item->LocDataTaken();
 //    if (src_edit_action & (EA_SRC_CUT)) // only clear clipboard for clip ops, not drag ops
 //      QApplication::clipboard()->clear(QClipboard::Clipboard);
-    return QCString("ok"); //helps debugging
+    return QByteArray("ok"); //helps debugging
   }
   }
   return taiClipData::encodedData_impl(fmt_num, index);
@@ -486,14 +486,14 @@ QByteArray taiMultiClipData::encodedData_impl(int fmt_num, int index) {
       rval = rval + '\n' + mi->type_name() + ';' +
         mi->path() + ';'; // we put ; at end to facilitate parsing, and for extensibility
     }
-    return QCString(rval.chars());
+    return QByteArray(rval.chars());
   }
   case IDX_MD_OBJECTDATA: {
     taiMimeItem* mi  = list->SafeEl(index);
     if (mi == NULL) return QByteArray();
     ostringstream ost;
     mi->SetData(ost);
-    return QCString(ost.str().c_str());
+    return QByteArray(ost.str().c_str());
   }
   case IDX_MD_REMDATATAKEN: { // dst should only call on Cut/Paste or Drag/Move
     if (!(src_edit_action & (EA_SRC_CUT | EA_SRC_DRAG))) break;
@@ -501,14 +501,14 @@ QByteArray taiMultiClipData::encodedData_impl(int fmt_num, int index) {
     if (mi) mi->RemDataTaken();
   //CAN'T DO THIS HERE--CAUSNG CRASH    if (src_edit_action & (EA_SRC_CUT)) // only clear clipboard for clip ops, not drag ops
   //      QApplication::clipboard()->clear(QClipboard::Clipboard);
-    return QCString("ok"); //helps debugging
+    return QByteArray("ok"); //helps debugging
   }
   case IDX_MD_LOCDATATAKEN: { //simpler than REM, because internals took care of moving data itself
     taiMimeItem* mi = list->SafeEl(index);
     if (mi) mi->LocDataTaken();
 //    if (src_edit_action & (EA_SRC_CUT)) // only clear clipboard for clip ops, not drag ops
 //      QApplication::clipboard()->clear(QClipboard::Clipboard);
-    return QCString("ok"); //helps debugging
+    return QByteArray("ok"); //helps debugging
   }
   }
   return taiClipData::encodedData_impl(fmt_num, index);

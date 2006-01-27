@@ -23,7 +23,6 @@
 
 
 #ifndef __MAKETA__
-#include <qobjectlist.h>
 #include <qwidget.h>
 #else
 // following for msvc

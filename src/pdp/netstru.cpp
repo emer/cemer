@@ -2344,9 +2344,9 @@ void Projection::Initialize() {
   recv_n = 1;
   send_n = 1;
   projected = false;
-#ifdef TA_GUI
+/* obs #ifdef TA_GUI
   proj_points = NULL;
-#endif
+#endif */
 }
 
 void Projection::Destroy(){
@@ -2363,9 +2363,9 @@ void Projection::CutLinks() {
   }
   RemoveCons();		// remove actual connections
   taBase::DelPointer((TAPtr*)&from);
-#ifdef TA_GUI
+/*obs #ifdef TA_GUI
   taBase::DelPointer((TAPtr*)&proj_points);
-#endif
+#endif */
   spec.CutLinks();
   con_spec.CutLinks();
   if((layer != NULL) && taMisc::gui_active) {
@@ -2397,7 +2397,7 @@ void Projection::Copy_(const Projection& cp) {
   con_type = cp.con_type;
   con_gp_type = cp.con_gp_type;
   con_spec = cp.con_spec;
-#ifdef TA_GUI
+/*obs #ifdef TA_GUI
   if(cp.proj_points != NULL) {
     if(proj_points == NULL) {
       proj_points = new Xform();
@@ -2405,7 +2405,7 @@ void Projection::Copy_(const Projection& cp) {
     }
     proj_points->Copy(*(cp.proj_points));
   }
-#endif
+#endif */
   // not to copy!
   // taBase::SetPointer((TAPtr*)&from, cp.from);
   // recv_idx = cp.recv_idx;
@@ -2561,7 +2561,7 @@ void Projection::WeightsToTable(DataTable* dt) {
   //TODO: in v4, clients like env must add their own datalink to net and act on the DataXXX events
 //  env->InitAllViews(); */
 }
-#ifdef TA_GUI
+/*obs #ifdef TA_GUI
 void Projection::SetFromPoints(float x1,float y1){
   if(proj_points == NULL){
     proj_points = new Xform();
@@ -2579,7 +2579,7 @@ void Projection::SetToPoints(float x1,float y1){
   proj_points->a10 = x1;
   proj_points->a11 = y1;
 }
-#endif
+#endif */
 void Projection::SetFrom() {
   if(layer == NULL) {
     from = NULL;

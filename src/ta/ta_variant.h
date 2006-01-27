@@ -249,7 +249,7 @@ inline Variant::Variant(const char* val):m_type(T_String), m_is_null(false)
    else {m_is_null = false; new(&d.str)String(val);}}
 
 
-bool operator==(const Variant& a, int b) {return a.eqInt(b);}
+inline bool operator==(const Variant& a, int b) {return a.eqInt(b);}
 
 #endif
 

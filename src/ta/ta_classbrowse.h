@@ -198,7 +198,7 @@ public:
   
   taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, QListView* parent_,
+  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeInfoTreeDataNode();
 public: // IDataLinkClient interface
@@ -226,7 +226,7 @@ public:
 
   taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, QListView* parent_,
+  taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeSpaceTreeDataNode();
 public: // IDataLinkClient interface

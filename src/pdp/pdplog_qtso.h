@@ -541,7 +541,7 @@ public:
   QCheckBox*		    chkDisplay;
   QCheckBox*		    chkAuto; // NOTE: only created in GridLogView
   QCheckBox*		    chkHeaders; // NOTE: only created in GridLogView
-  QButtonGroup*		    bgpTopButtons; // NOTE: invisible/unparented
+  Q3ButtonGroup*		    bgpTopButtons; // NOTE: invisible/unparented
   QHBoxLayout*		    layVcrButtons;
   QHBoxLayout*		    layInitButtons;
   QHBoxLayout*		  layContents; // subclasses put their actual content here

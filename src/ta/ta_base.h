@@ -257,8 +257,8 @@ friend class taBase_PtrList;
 friend class taList_impl;
 public:
   enum Orientation { // must be same values as Qt::Orientation
-    Horizontal = 0,
-    Vertical
+    Horizontal = 0x1,
+    Vertical = 0x2
   };
 
   static  TypeDef*	StatTypeDef(int);	// #IGNORE

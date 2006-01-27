@@ -39,13 +39,7 @@ typedef uint GFlags; // #IGNORE
 
 //define any WFlags used in header files here -- (from qnamespace.h)
 
-class Qt {
-//#IGNORE
-public:
-	int dummy; // #IGNORE
-};
-
-class QEvent: public Qt {
+class QEvent {
 public:
   enum Type {
     None = 0
@@ -53,23 +47,17 @@ public:
   int dummy; // #IGNORE
 };
 
-class QKeySequence: public Qt {
+class QKeySequence {
 public:
   int dummy; // #IGNORE
 };
 
-class QListViewItem: public Qt {
+class Q3ListViewItem {
 public:
   int dummy; // #IGNORE
 };
 
-class QObject : public Qt {
-//#IGNORE
-public:
-	int dummy; // #IGNORE
-};
-
-class QTab : public Qt {
+class QObject {
 //#IGNORE
 public:
 	int dummy; // #IGNORE
@@ -81,7 +69,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QActionGroup : public QAction {
+class QActionGroup : public QObject {
 //#IGNORE
 public:
 	int dummy; // #IGNORE
@@ -93,7 +81,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QDragObject: public QAction {
+class Q3DragObject: public QAction {
 //#IGNORE
 public:
 	int dummy; // #IGNORE
@@ -136,7 +124,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QToolBar: public QDockWindow  {
+class QToolBar: public QWidget  {
 //#IGNORE
 public:
 	int dummy; // #IGNORE
@@ -148,7 +136,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QScrollview: public QWidget {
+class Q3Scrollview: public QWidget {
 public:
   int dummy; // #IGNORE
 };
@@ -163,19 +151,13 @@ public:
   int dummy; // #IGNORE
 };
 
-class QTable: public QScrollview {
+class Q3Table: public Q3Scrollview {
 public:
   int dummy; // #IGNORE
 };
 
-class QPtrCollection {
-//#IGNORE
-public:
-	int dummy; // #IGNORE
-};
-
 template<class T>
-class QPtrList: public QPtrCollection {
+class QList {
 //#IGNORE
 public:
 	int dummy; // #IGNORE

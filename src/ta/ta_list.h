@@ -866,8 +866,29 @@ public:
 
 
 // the plainarray is not a taBase..
+/*nuke
+// Default string converter class
 
-template<class T> class taPlainArray : public taArray_impl { // #INSTANCE
+template<class T> 
+class DefaultStringConverter {
+public:
+  String s;
+  DefaultStringConverter(const T& val) {s = val;}
+  DefaultStringConverter(String& val) {s = val;}
+  DefaultStringConverter(const DefaultStringConverter& val) {s = val.s;}
+  DefaultStringConverter& operator =(const DefaultStringConverter& val) {s = val.s; return *this;} 
+  operator String() {return s;} 
+  operator T() const { return s;} // forces implicit conversion to T
+}; */
+
+#ifdef __MAKETA__
+template<class T> 
+class taPlainArray : public taArray_impl { // #INSTANCE
+#else
+//template<class T, class SC = DefaultStringConverter<T> > 
+template<class T> 
+class taPlainArray : public taArray_impl { // #INSTANCE
+#endif
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
@@ -880,9 +901,12 @@ public:
   uint		El_SizeOf_() const		{ return sizeof(T); }	 // #IGNORE
   void*		El_GetTmp_() const		{ return (void*)&tmp; }	 // #IGNORE
   const void*	El_GetErr_() const		{ return (void*)&err; }	 // #IGNORE
-  String	El_GetStr_(const void* it) const	{ return String(*((T*)it)); } // #IGNORE
-  void		El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)val; } // #IGNORE
-
+/* #ifndef __MAKETA__  
+  String	El_GetStr_(const void* it) const	{ return SC((*((T*)it))); } // #IGNORE
+  void		El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)SC(val); } // #IGNORE
+//  String	El_GetStr_(const void* it) const	{ return String(*((T*)it)); } // #IGNORE
+//  void		El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)val; } // #IGNORE
+#endif */
   taPlainArray(int init_alloc)			{el = NULL; Alloc(init_alloc); }
   taPlainArray()				{el = NULL;}
   taPlainArray(const taPlainArray<T>& cp)	{el = NULL; Alloc(cp.size); Duplicate(cp); }

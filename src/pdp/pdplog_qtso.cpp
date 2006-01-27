@@ -29,17 +29,17 @@
 
 #include "icolor.h"
 
-#include <qbutton.h>
-#include <qbuttongroup.h>
+//#include <Q3Button>
+#include <Q3ButtonGroup>
 #include <qcheckbox.h>
 #include <qclipboard.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>
-#include <qpushbutton.h>
-#include <qscrollview.h>
-#include <qvbox.h>
+#include <Q3Button>
+#include <Q3ScrollView>
+#include <Q3VBox>
 
 #include <Inventor/SbLinear.h>
 #include <Inventor/Qt/SoQt.h>
@@ -2113,10 +2113,11 @@ void iLogView_Panel::init(bool is_grid_log)
 
 
   layVcrButtons = new QHBoxLayout(layTopCtrls);
-  bgpTopButtons = new QButtonGroup(); // NOTE: invisible/unparented
+  bgpTopButtons = new Q3ButtonGroup(); // NOTE: invisible/unparented
   int but_ht = taiM->button_height(taiMisc::sizSmall);
   for (int i = BUT_BEG_ID; i <= BUT_END_ID; ++i) {
-    QPushButton* pb = new QPushButton(but_strs[i], this);
+    Q3Button* pb = new Q3Button(this);
+    pb->setText(but_strs[i]);
     pb->setMaximumHeight(but_ht);
     pb->setMaximumWidth(20);
     layVcrButtons->addWidget(pb);
@@ -2126,7 +2127,8 @@ void iLogView_Panel::init(bool is_grid_log)
 
   layInitButtons = new QHBoxLayout(layTopCtrls);
   for (int i = BUT_UPDATE; i <= BUT_CLEAR; ++i) {
-    QPushButton* pb = new QPushButton(but_strs[i], this);
+    Q3Button* pb = new Q3Button(this);
+    pb->setText(but_strs[i]);
     pb->setMaximumHeight(but_ht);
     layInitButtons->addWidget(pb);
     bgpTopButtons->insert(pb, i);

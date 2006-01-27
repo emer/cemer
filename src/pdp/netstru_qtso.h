@@ -402,11 +402,11 @@ public:
   QVBoxLayout*		  layCtrls;
   QHBoxLayout*		    layDispCheck;
   QCheckBox*		      chkDisplay;
-  QScrollView*		    scrCmdButtons;
+  Q3ScrollView*		    scrCmdButtons;
   QWidget*		    widCmdButtons;
   QGridLayout*		      layCmdButtons;
   QLabel*		    lblDisplayValues;
-  QListView*		    lvDisplayValues;
+  Q3ListView*		    lvDisplayValues;
   QVBoxLayout*		  layColorScale;
   QLabel*		    lblUnitText;
   taiComboBox*		    cmbUnitText;
