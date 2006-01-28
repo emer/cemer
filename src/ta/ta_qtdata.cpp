@@ -1178,7 +1178,7 @@ taiMenuToolBarBase::taiMenuToolBarBase(int sel_type_, int ft, TypeDef* typ_, tai
 }
 
 taiMenuToolBarBase::~taiMenuToolBarBase() {
-  items.Reset(); //note: DON'T call Reset, because it clears gui objects -- they should clear on their own
+  Reset(); 
 }
 
 void taiMenuToolBarBase::AddAction(taiAction* act) {
