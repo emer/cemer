@@ -1893,8 +1893,7 @@ bool taFiler_impl::GetFileName(String& fname, FilerOperation filerOperation) {
     break;
   case foSave:
     // TODO: will this ever be called???
-    return false;
-    break;
+    goto exit;
   case foSaveAs:
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
@@ -1914,11 +1913,12 @@ bool taFiler_impl::GetFileName(String& fname, FilerOperation filerOperation) {
         result = true;
   }
 
+exit:
   if (fd != NULL) {
     delete fd;
     fd = NULL;
   }
-  return result;
+  return result; 
 }
 
 taFiler* taFiler_CreateInstance(const String& dir, const String& filter, bool compress) {

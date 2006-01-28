@@ -1186,6 +1186,7 @@ void taiMenuToolBarBase::AddAction(taiAction* act) {
   if ((cur_grp != NULL)) {
     cur_grp->addAction(act);
   }
+  ItemAdded(act);
   //TODO: more???? font compliance, maybe???
 }
 
@@ -1254,7 +1255,16 @@ taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
   else
     st = this->sel_type;
 
-  taiMenu* rval = new taiMenu(taiMenu::popupmenu, st, font_spec, typ_, host, this, gui_parent, mflags, this);
+  taiMenu* rval;
+  taiAction* act;
+  // do not add items of same name -- return it instead of adding it
+  for (int i = 0; i < items.size; ++i) {
+    act = items.FastEl(i);
+    if (act->isSubMenu() && act->text() == val) {
+      return ((taiSubMenuEl*)act)->sub_menu_data;
+    }
+  }
+  rval = new taiMenu(taiMenu::popupmenu, st, font_spec, typ_, host, this, gui_parent, mflags, this);
 //  int cur_item = items.size;
   taiSubMenuEl* sme = new taiSubMenuEl(val, rval);
   AddAction(sme);
