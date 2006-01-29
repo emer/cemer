@@ -360,8 +360,6 @@ public:
 
   virtual QMenu*	SubMenu() 	{ return NULL; }
 
-  bool 			event(QEvent* ev); // override
-
 #ifndef __MAKETA__
 signals:
   void Action();			// for a direct call-back
@@ -371,14 +369,15 @@ signals:
   void VarParamAction(const Variant& var);	// for variant parameter ((void*)usr_data)
 #endif // ndef __MAKETA__
 
-public slots:
-  virtual void		Select();	// called when change() is signalled, which then decides
-				// if other actions should be called subsequently
 protected:
   int			nref; // ref'ed when put onto a taiAction_List, deleted when ref=0
+  int			m_changing; // for supressing recursive signals
   void			init(int sel_type_); 
   void 			emitActions();
-  void 			Select_impl(bool selecting); // called by Select(), taiMenu::setCurSel and by taiMenu::GetImage -- doesn't trigger events
+  
+protected slots:
+  virtual void		this_triggered_toggled(bool checked); // annoying, but self connect, so we can re-raise
+  
 private:
   taiAction(const taiAction&); // no copying
   void operator=(const taiAction&); 
@@ -394,8 +393,11 @@ public:
   bool			isSubMenu() 	{ return true; } // override
   
 protected: // only allowed to be used internally when creating submenus
+  void		this_triggered_toggled(bool checked) {} // override submenu items don't signal anything
+  
   taiSubMenuEl(const String& label_, taiMenu* sub_menu_data); //
   ~taiSubMenuEl();
+
 };
 
 class taiAction_List : public taPtrList<taiAction> {
@@ -488,8 +490,11 @@ protected:
   taiSubMenuEl*		par_menu_el; // parent submenu element, if any
   void 			emitLabelChanged(const char* val); // #IGNORE
   virtual bool 		GetImage_impl(void* usr);  // #IGNORE set to this usr item, returns false if not found -- recursive for hiermenus
-  virtual void 		ItemAdded(taiAction* it); // add to rep, def adds to mrep, but overridden for menubutton type
-  virtual void 		RemoveAction(taiAction* it); // remove from rep, def removes from mrep, but overridden for menubutton type
+  virtual void 		ActionAdded(taiAction* it); // add to rep, def adds to mrep, but overridden for menubutton type
+  virtual void 		ActionRemoving(taiAction* it); // remove from rep, def removes from mrep, but overridden for menubutton type
+  
+protected slots:
+  virtual void 		child_triggered_toggled(taiAction* act);
 };
 
 //////////////////////////////////
@@ -535,8 +540,8 @@ protected:
   void			init(int rt, QMenu* exist_menu = NULL); // #IGNORE -- exist_menu MUST be proper type (main/popup)
   void 			ConstrPopup(QWidget* gui_parent_, QMenu* exist_popup = NULL); // #IGNORE
   
-  override void		ItemAdded(taiAction* it); // called whenever an item is added; add to menu
-  override void 	RemoveAction(taiAction* it); // remove from rep, def removes from mrep, but overridden for 
+  override void		ActionAdded(taiAction* it); // called whenever an item is added; add to menu
+  override void 	ActionRemoving(taiAction* it); // remove from rep, def removes from mrep, but overridden for 
 };
 
 //////////////////////////////////

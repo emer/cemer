@@ -984,6 +984,9 @@ void taiAction::init(int sel_type_)
 {
   sel_type = sel_type_;
   nref = 0;
+  m_changing = 0;
+  QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(this_triggered_toggled(bool)) );
+  QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
 }
 
 void taiAction::AddTo(taiMenuToolBarBase* targ) {
@@ -1050,22 +1053,21 @@ void taiAction::emitActions() {
   emit VarParamAction(usr_data);
 }
 
-bool taiAction::event(QEvent* ev) {
-  bool rval = QAction::event(ev);
-  if (ev->type() == QEvent::ActionChanged) {
-    Select();
-  }
-  return rval;
+void taiAction::this_triggered_toggled(bool checked) {
+  ++m_changing;
+  if (m_changing == 1) 
+    emitActions();
+  --m_changing;	
 }
 
+/*obs TODO: need to change how clients use this so we don't need an owner
+  probably need to have the client connect an appropriate signal
 void taiAction::Select() {
   if (sel_type & taiMenu::toggle)
     Select_impl(!isChecked());
   else Select_impl(true);
 
   emitActions();	// don't set the cur_sel if executing
-/* TODO: need to change how clients use this so we don't need an owner
-  probably need to have the client connect an appropriate signal
   
   // if a radio item in global group, update global selection
   if ((sel_type & taiMenu::radio) && (radio_grp == -1))
@@ -1074,15 +1076,15 @@ void taiAction::Select() {
   if (sel_type & taiMenu::update) {
 //    owner->Update();
     owner->DataChanged();		// something was selected..
-  } */
-}
+  } 
+}*/
 
-void taiAction::Select_impl(bool selecting) {
+/*obs  void taiAction::Select_impl(bool selecting) {
 // TODO: verify
   if (sel_type & taiMenu::toggle) {
     setChecked(selecting);
   } else if (sel_type & taiMenu::radio) {
-/*TODO Qt4    
+  
     if (!selecting) {
        setChecked(false);
     } else if (radio_grp != -1) {
@@ -1095,8 +1097,8 @@ void taiAction::Select_impl(bool selecting) {
       } 
     } else {
       setChecked(true);
-    } */
-  } 
+    } 
+  } */
   
 
 /*Qt3   // called by Select() and by taiMenu::GetImage -- doesn't trigger events
@@ -1116,8 +1118,8 @@ void taiAction::Select_impl(bool selecting) {
     } else {
       setChecked(true);
    }
-  } */
-}
+  } 
+}*/
 
 
 //////////////////////////
@@ -1139,6 +1141,7 @@ taiSubMenuEl::~taiSubMenuEl() {
 }
 
 
+
 //////////////////////////
 //  taiAction_List	//
 //////////////////////////
@@ -1146,7 +1149,7 @@ taiSubMenuEl::~taiSubMenuEl() {
 void taiAction_List::El_Done_(void* it_)	{ 
   taiAction* it = (taiAction*)it_;
   if (it->nref == 0)
-    it->deleteLater(); 
+    delete it; //NB: don't deleteLater, because taiData->parent will be invalid by then
 }
 
 taiAction* taiAction_List::PeekNonSep() {
@@ -1186,7 +1189,8 @@ void taiMenuToolBarBase::AddAction(taiAction* act) {
   if ((cur_grp != NULL)) {
     cur_grp->addAction(act);
   }
-  ItemAdded(act);
+  ActionAdded(act);
+  connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );
   //TODO: more???? font compliance, maybe???
 }
 
@@ -1274,6 +1278,16 @@ taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
   return rval;
 }
 
+void taiMenuToolBarBase::child_triggered_toggled(taiAction* act) {
+  // if a radio item in global group, update global selection
+//TODO  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
+//    setCurSel(act);
+
+  if (act->sel_type & taiMenuToolBarBase::update) {
+    DataChanged();		// something was selected..
+  } 
+}
+
 taiAction* taiMenuToolBarBase::curSel() const {
   if (par_menu != NULL)
     return par_menu->curSel();
@@ -1283,7 +1297,7 @@ taiAction* taiMenuToolBarBase::curSel() const {
 void taiMenuToolBarBase::DeleteItem(uint idx) {
   if (idx >= (uint)items.size) return;
   taiAction* act = items[idx];
-  RemoveAction(act);
+  ActionRemoving(act);
   items.Remove(idx); // deletes if ref==0
 }
 
@@ -1352,7 +1366,7 @@ bool taiMenuToolBarBase::GetImage(void* usr) {
   return false;
 }
 
-void taiMenuToolBarBase::ItemAdded(taiAction* it) {
+void taiMenuToolBarBase::ActionAdded(taiAction* it) {
   // just add the action to the rep -- 
   //TODO: won't work for button menus, because the button is the rep...
   if (m_rep != NULL)
@@ -1363,7 +1377,7 @@ void taiMenuToolBarBase::NewRadioGroup() {
   cur_grp = new QActionGroup(gui_parent);
 }
 
-void taiMenuToolBarBase::RemoveAction(taiAction* it) {
+void taiMenuToolBarBase::ActionRemoving(taiAction* it) {
   GetRep()->removeAction(it);
 }
 
@@ -1383,11 +1397,11 @@ void taiMenuToolBarBase::setCurSel(taiAction* value) {
     // controlling root needs to unselect existing element
     if (cur_sel == value) return;
     if (cur_sel != NULL) {
-      cur_sel->Select_impl(false);
+      cur_sel->setChecked(false);
     }
     cur_sel = value;
     if (cur_sel != NULL) {
-      cur_sel->Select_impl(true);
+      cur_sel->setChecked(true);
       setLabel(cur_sel->text());
     } else { //NOTE: special case of going from legal radio item to no item -- set label to NULL
       setLabel("NULL");
@@ -1497,13 +1511,13 @@ taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const c
   return mel;
 }
 
-void taiMenu::ItemAdded(taiAction* it) {
+void taiMenu::ActionAdded(taiAction* it) {
   // add to the menu, in case we are a button menu (in which case rep will be the button) 
   if (mrep_popup != NULL)
     mrep_popup->addAction(it);
 }
 
-void taiMenu::RemoveAction(taiAction* it) {
+void taiMenu::ActionRemoving(taiAction* it) {
   if (mrep_popup != NULL)
     mrep_popup->removeAction(it);
 }
