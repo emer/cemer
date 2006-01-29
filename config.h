@@ -16,7 +16,7 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-#define DEBUG 
+/* #undef DEBUG */
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
@@ -33,9 +33,6 @@
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
 #define HAVE_ALLOCA_H 1
-
-/* Use the Apple OpenGL framework. */
-/* #undef HAVE_APPLE_OPENGL_FRAMEWORK */
 
 /* Define to 1 if your system has a working `chown' function. */
 #define HAVE_CHOWN 1
@@ -62,14 +59,14 @@
 /* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
 
+/* define if the GL header should be included as GL/gl.h */
+#define HAVE_GL_GL_H 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
 /* Define if you have a function readline library */
 #define HAVE_LIBREADLINE 1
-
-/* Define to 1 if you have the `z' library (-lz). */
-#define HAVE_LIBZ 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -99,11 +96,17 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
 
+/* define if the GL header should be included as OpenGL/gl.h */
+/* #undef HAVE_OPENGL_GL_H */
+
 /* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
 
 /* Define if you have POSIX threads libraries and header files. */
 /* #undef HAVE_PTHREAD */
+
+/* define if pthread's struct timespec uses nsecs and not usecs */
+/* #undef HAVE_PTHREAD_TIMESPEC_NSEC */
 
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
@@ -213,6 +216,9 @@
    your system. */
 /* #undef PTHREAD_CREATE_JOINABLE */
 
+/* Set when building with Qt4 support for Qt3 */
+#define QT3_SUPPORT 
+
 /* Note from Brian: This switch is here, i'm not quite sure why. Used in
    qglobal.h. */
 #define QT_SHARED 
@@ -249,7 +255,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-#define TA_PROFILE 
+/* #undef TA_PROFILE */
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor

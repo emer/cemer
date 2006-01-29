@@ -41,6 +41,10 @@ AC_CONFIG_SRCDIR([src/ta/taglobal.h])
 # Build with VC++
 SIM_AC_SETUP_MSVCPP_IFELSE
 
+# Build a digital studio project file
+SIM_AC_MSVC_DSP_ENABLE_OPTION
+SIM_AC_MSVC_DSP_SETUP([PDP],[PDP],[PDP],)
+
 # Scan the source with autoheader and create config.h
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
@@ -53,11 +57,8 @@ AC_LANG_CPLUSPLUS
 PDP_PROG_CXX
 AC_CACHE_SAVE
 
-#						  rpm enabled
-#*************************************************************
-#	     Things to do if --with-rpm is set
-#*************************************************************
-#
+
+# Set up our build modes
 
 AC_ARG_WITH([rpm],
 	      AC_HELP_STRING([--with-rpm],
@@ -65,7 +66,36 @@ AC_ARG_WITH([rpm],
 			     [rpm=true],
 			     [rpm=false])
 
+AC_ARG_ENABLE([gui],
+	      AC_HELP_STRING([--disable-gui],
+			     [Disable compiling with a GUI. Default is enabled]),
+			     [gui=false],
+			     [gui=true])
+
+AC_ARG_ENABLE([mpi],
+	      AC_HELP_STRING([--enable-mpi],
+			     [Enable the Message Passing Interface. Default is disabled.]),
+			     [mpi=true],
+			     [mpi=false])
+
+AC_ARG_ENABLE([debug],
+	      AC_HELP_STRING([--enable-debug],
+			     [Enable debugging. Default is disabled.]),
+			     [debug=true],
+			     [debug=false])
+
 AM_CONDITIONAL([RPM],[test $rpm = true])
+AM_CONDITIONAL([TA_GUI],[test $gui = true])
+AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
+AM_CONDITIONAL([MPI],[test $mpi = true])
+AM_CONDITIONAL([DEBUG],[test $debug = true])
+
+#						  rpm enabled
+#*************************************************************
+#	     Things to do if --with-rpm is set
+#*************************************************************
+#
+
 
 if $rpm = true; then
   AX_DIST_RPM([spec.tmpl])
@@ -86,6 +116,10 @@ m4_defun([AC_PROG_F77],[])
 
 AC_PROG_CXXCPP
 SIM_AC_CONFIGURATION_SETTING([Preprocessor],[$CXXCPP])
+
+# pkg-config. We don't use it much because it's not reasonable to expect
+# that everyone has it. But it's ok to use for dev stuff  during debug builds
+PKG_PROG_PKG_CONFIG
 
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -135,9 +169,11 @@ AC_CACHE_SAVE
 AC_HAVE_LIBRARY([dl],
 		[LIBS="$LIBS -ldl"],
 		[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
- 
+
 PGAC_CHECK_READLINE
-CHECK_ZLIB
+
+SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
+                           
 AC_CACHE_SAVE
 
 #					    library functions
@@ -164,57 +200,55 @@ AC_CACHE_SAVE
 #*************************************************************
 #
 
-AC_ARG_ENABLE([gui],
-	      AC_HELP_STRING([--disable-gui],
-			     [Disable compiling with a GUI. Default is enabled]),
-			     [gui=false],
-			     [gui=true])
-
-AM_CONDITIONAL([TA_GUI],[test $gui = true])
-AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
-
 if test $gui = true; then
 
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
   
-  SIM_AC_CHECK_QT([SIM_AC_CONFIGURATION_SETTING([Qt],[$sim_ac_qt_libs])
+  SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
+                   if test $debug = true; then
+                     sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest"
+                     sim_ac_qt_cppflags="$sim_ac_qt_cppflags -I${QTDIR}/include/QtTest"
+                   fi                  
+                   LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-                   LIBS="$LIBS $sim_ac_qt_libs"],
+                   sim_ac_qt_version="`echo $sim_ac_qt_version | sed -r 's/./&./g;s/.$//'`"
+                   SIM_AC_CONFIGURATION_SETTING([Qt],[v.$sim_ac_qt_version $sim_ac_qt_libs]),
                    [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
 
-  SIM_AC_QT_PROG(QT_MOC, moc)
+  SIM_AC_QT_PROG([QT_MOC],[moc])
   if test x"$MOC" = x"false"; then
     SIM_AC_CONFIGURATION_WARNING([Failed to find moc])
   fi
+  
+  SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version $sim_ac_soqt_libs])
+                           CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
+                           LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
+                           LIBS="$LIBS $sim_ac_soqt_libs"],
+                          [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])
+  
+  SIM_AC_CHECK_OPENGL([CPPFLAGS="$CPPFLAGS $sim_ac_ogl_cppflags"
+                       LDFLAGS="$LDFLAGS $sim_ac_ogl_ldflags"
+                       LIBS="$LIBS $sim_ac_ogl_libs"],
+                      [SIM_AC_CONFIGURATION_WARNING([Failed to detect an OpenGL implementation])]) 
 
-  # Important macro for OSX, which may use Apple's OpenGL framework. This preference is undetectable.
-  #AX_CHECK_GL
-  MDL_HAVE_OPENGL
-
-  AC_HAVE_LIBRARY([Coin],[LIBS="$LIBS -lCoin"],[
-				      AC_MSG_RESULT([no])
-				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libCoin])])
-
-  AC_HAVE_LIBRARY([jpeg], [LIBS="$LIBS -ljpeg"],[
-				      AC_MSG_RESULT([no])
-				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
-
-  AC_HAVE_LIBRARY([SoQt],[LIBS="$LIBS -lSoQt"],[
-				      AC_MSG_RESULT([no])
-				      SIM_AC_CONFIGURATION_WARNING([Failed to detect libSoQt])])
+  SIM_AC_HAVE_COIN_IFELSE([SIM_AC_CONFIGURATION_SETTING([Coin],[v.$sim_ac_coin_version $sim_ac_coin_libs])
+                           CPPFLAGS="$CPPFLAGS $sim_ac_coin_cppflags"
+                           CXXFLAGS="$CXXFLAGS $sim_ac_coin_cxxflags"
+                           LDFLAGS="$LDFLAGS $sim_ac_coin_ldflags"
+                           LIBS="$LIBS $sim_ac_coin_libs"],
+                          [SIM_AC_CONFIGURATION_WARNING([Failed to detect the Coin development system])])
+  
+  SIM_AC_HAVE_LIBJPEG_IFELSE([CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+                              LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+                              LIBS="$LIBS $sim_ac_libjpeg_libs"],
+                             [SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
 
   AC_DEFINE([TA_GUI],,
 	    [Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
 
   AC_DEFINE([TA_USE_QT],,
 	    [This switch is set when linking with Qt.])
-
-dnl   AH_VERBATIM([TA_USE_INVENTOR],
-dnl [/*This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.*/
-dnl #ifndef TA_USE_INVENTOR
-dnl # define TA_USE_INVENTOR
-dnl #endif])
 
   AC_DEFINE([TA_USE_INVENTOR],,
 	    [This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
@@ -229,7 +263,7 @@ else
 
   SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
   AC_DEFINE([TA_NO_GUI],,[Set when building nogui])
-
+  AC_CHECK_LIB([QtCore],[QObject],[SIM_AC_CONFIGURATION_SETTING([QtCore],[-lQtCore])],[SIM_AC_CONFIGURATION_WARNING([Failed to locate QtCore])])
 fi
 AC_CACHE_SAVE
 
@@ -238,14 +272,6 @@ AC_CACHE_SAVE
 #	     Things to do if --enable-mpi is set
 #*************************************************************
 #
-
-AC_ARG_ENABLE([mpi],
-	      AC_HELP_STRING([--enable-mpi],
-			     [Enable the Message Passing Interface. Default is disabled.]),
-			     [mpi=true],
-			     [mpi=false])
-
-AM_CONDITIONAL([MPI],[test $mpi = true])
 
 if test $mpi = true; then
 
@@ -269,14 +295,6 @@ fi
 #	     Things to do if --enable-debug is set
 #*************************************************************
 #
-
-AC_ARG_ENABLE([debug],
-	      AC_HELP_STRING([--enable-debug],
-			     [Enable debugging. Default is disabled.]),
-			     [debug=true],
-			     [debug=false])
-
-AM_CONDITIONAL([DEBUG],[test $debug = true])
 
 if $debug = true; then
 
@@ -314,6 +332,10 @@ AC_SUBST([CXXCPP])
 #		 Creation of the build system
 #*************************************************************
 #
+
+# Uncomment this to make our package work with pkg-config (creates PDP.pc)
+# TODO: Need to make the makefiles aware of this and also install it
+#AX_CREATE_PKGCONFIG_INFO
 
 # Custom macro to determine the_build_suffix to use
 PDP_DETERMINE_SUFFIX
