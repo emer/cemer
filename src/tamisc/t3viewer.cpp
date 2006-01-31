@@ -891,7 +891,7 @@ void iT3DataViewer::vs_contextMenuRequested(const QPoint& pos) {
   if (ci == NULL) return;
   T3DataView* dv = (T3DataView*)ci->This();
 
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
   //TODO: any for us first (ex. delete)
 
   dv->FillContextMenu(sel_items(), menu); // also calls link menu filler

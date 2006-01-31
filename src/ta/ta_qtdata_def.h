@@ -168,40 +168,5 @@ public:
   ~taiDataList()                       { Reset(); }
 };
 
-// note: we define taiEditButton here, because it is needed for all the group buttons,
-// and we don't want to drag the main ta_qtdata into the defs of group datas
-
-//////////////////////////////////
-// 	taiEditButton		//
-//////////////////////////////////
-
-class taiEditButton : public taiData {
-  // actually an edit menu... -- flgReadOnly creates menu which only allows for #EDIT_READ_ONLY members
-  Q_OBJECT
-public:
-  void*		cur_base;
-  taiMenu*	imenu;
-  taiEdit*	ie;
-  taiDataList 	meth_el;	// method elements
-
-  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, taiDataHost* host_, taiData* par,
-      QWidget* gui_parent_, int flags_ = 0); // uses flags: flgReadOnly, flgEditOnly -- internally sets flgEditOnly if appropriate
-  ~taiEditButton();
-
-  QPushButton*	rep() { return (QPushButton*)m_rep; }
-  taiMenu*	menu() {return imenu;}
-  virtual void	GetMethMenus();
-
-  virtual void	GetImage(void* base);
-  virtual void	SetLabel();
-
-protected:
-  QWidget*	mgui_parent;
-
-public slots:
-  virtual void	Edit();		// edit callback
-  void setRepLabel(const char* label);
-};
-
 #endif
 

@@ -421,6 +421,8 @@ void taGroup_impl::List(ostream& strm) const {
 }
 
 TAPtr taGroup_impl::New(int no, TypeDef* typ) {
+  if (typ == NULL)
+    typ = el_typ;
   if(no == 0) {
 #ifdef TA_GUI
   if(taMisc::gui_active)
@@ -428,8 +430,6 @@ TAPtr taGroup_impl::New(int no, TypeDef* typ) {
 #endif
     return NULL;
   }
-  if(typ == NULL)
-    typ = el_typ;
 
   // if requested typ inherits from the list el type, then 
   // we assume it is for a list el, and create the instances

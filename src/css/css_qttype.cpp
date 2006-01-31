@@ -179,8 +179,8 @@ taiData* cssiClassType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gu
     return rval;
   }
   else {
-    taiMenu* rval = new taiMenu
-      (taiMenu::buttonmenu, taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
+    taiButtonMenu* rval = new taiButtonMenu
+      (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
     Assert_QObj();
     rval->AddItem("Edit", taiMenu::use_default, taiMenuEl::action,
 	qobj, SLOT(CallEdit()), (void*)NULL);
@@ -225,8 +225,8 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 }
 
 taiData* cssiArrayType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
-  taiMenu* rval = new taiMenu
-    (taiMenu::buttonmenu, taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
+  taiButtonMenu* rval = new taiButtonMenu
+    (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
   Assert_QObj();
   rval->AddItem("Edit", taiMenu::use_default, taiMenuEl::action,
   	qobj, SLOT(CallEdit), (void*)NULL);

@@ -152,11 +152,11 @@ void gpiLinkEditButton::GetMethMenus() {
     if((md->name == "DuplicateEl") || (md->name == "Transfer"))
       continue;
     lst_men_nm = men_nm;
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, mgui_parent);
+    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);
-    mth_rep->AddToMenu(menu());
+    mth_rep->AddToMenu(this);
   }
 }
 
@@ -186,11 +186,11 @@ void gpiListLinkEditButton::GetMethMenus() {
       continue;
     lst_men_nm = men_nm;
 //    taiMethodData* mth_rep = md->im->GetMethodRep(typ, cur_base, dialog, mgui_parent);
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, mgui_parent);
+    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);
-    mth_rep->AddToMenu(menu());
+    mth_rep->AddToMenu(this);
   }
 }
 
@@ -228,13 +228,13 @@ void gpiArrayEditButton::SetLabel() {
 //////////////////////////
 
 
-gpiListEls::gpiListEls(int rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_,
+gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   ths = lst;
-//  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ, (void*)ths, host_, this, gui_parent_);
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+//  ta_actions = new taiMenu(rt, taiMenu::radio_update, ft, typ, (void*)ths, host_, this, gui_parent_);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   over_max = false;
 }
@@ -247,7 +247,7 @@ gpiListEls::gpiListEls(taiMenu* existing_menu, TABLPtr lst, TypeDef* typ_,
 }
 
 QWidget* gpiListEls::GetRep() {
-  return ta_menu->GetRep();
+  return ta_actions->GetRep();
 }
 
 void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
@@ -255,12 +255,12 @@ void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
     ths = base_lst;
   }
   UpdateMenu();
-  ta_menu->GetImage((void*)it);
+  ta_actions->GetImageByData(Variant((void*)it));
   setCur_obj(it, false);
 }
 
 TAPtr gpiListEls::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (over_max) {
     if ((cur == NULL) || (cur->text() == "<Over max, select...>")
        || (cur->text() == "gp.<Over max, select...>"))
@@ -288,9 +288,9 @@ void gpiListEls::Choose() {
   TABLPtr chs_root = ths;
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
-//   if((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "<Over max, select>") &&
-//      (ta_menu->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_menu->cur_sel->usr_data;
+//   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select>") &&
+//      (ta_actions->cur_sel->usr_data != NULL))
+//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "List/Group Objects", true);
   //if ((chs_obj != NULL) && !chs_obj->GetName().empty())
@@ -299,18 +299,18 @@ void gpiListEls::Choose() {
   bool rval = chs->Choose();
   if (rval) {
     setCur_obj(chs->sel_obj());
-/*TODO: even needed???    if((ta_menu->curSel() != NULL) && (ta_menu->curSel()->label == "<Over max, select...>") &&
-       (ta_menu->curSel()->men_act != NULL)) {
-      ta_menu->curSel()->usr_data = (void*)chs_obj;
-      ta_menu->curSel()->men_act->Select(ta_menu->curSel()); // call it!
+/*TODO: even needed???    if((ta_actions->curSel() != NULL) && (ta_actions->curSel()->label == "<Over max, select...>") &&
+       (ta_actions->curSel()->men_act != NULL)) {
+      ta_actions->curSel()->usr_data = (void*)chs_obj;
+      ta_actions->curSel()->men_act->Select(ta_actions->curSel()); // call it!
     }
     else */
-   //   ta_menu->setLabel(chs->sel_str());
+   //   ta_actions->setLabel(chs->sel_str());
   }
   delete chs;
 }
 
-void gpiListEls::GetMenu(taiMenu* menu, taiMenuAction* actn) {
+void gpiListEls::GetMenu(taiActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
     menu->AddItem("NULL", taiMenu::radio_update, actn);
   if (HasFlag(flgEditOk))
@@ -329,11 +329,11 @@ void gpiListEls::GetMenu(taiMenu* menu, taiMenuAction* actn) {
 }
 
 void gpiListEls::UpdateMenu(taiMenuAction* actn) {
-  ta_menu->Reset();
-  GetMenu(ta_menu, actn);
+  ta_actions->Reset();
+  GetMenu(ta_actions, actn);
 }
 
-void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* actn) {
+void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL)	return;
   if (cur_lst->size >= taMisc::max_menu) {
     taiAction* mnel = menu->AddItem
@@ -360,8 +360,8 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* act
 // 	gpiGroupEls	//
 //////////////////////////
 
-gpiGroupEls::gpiGroupEls
-(int rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_, 
+  taiData* par, QWidget* gui_parent_, int flags_)
 : gpiListEls(rt,ft,lst, typ_, host_,par, gui_parent_, flags_)
 {
 }
@@ -376,26 +376,26 @@ void gpiGroupEls::ChooseGp() {
   TABLPtr chs_root = &(((TAGPtr)ths)->gp);
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
-//   if((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "gp.<Over max, select...>") &&
-//      (ta_menu->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_menu->cur_sel->usr_data;
+//   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "gp.<Over max, select...>") &&
+//      (ta_actions->cur_sel->usr_data != NULL))
+//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "SubGroups", true);
   bool rval = chs->Choose();
   if (rval) {
     setCur_obj(chs->sel_obj());
-/*TODO: needed???    if((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "gp.<Over max, select...>") &&
-       (ta_menu->cur_sel->men_act != NULL)) {
-      ta_menu->cur_sel->usr_data = (void*)chs_obj;
-      ta_menu->cur_sel->men_act->Select(ta_menu->cur_sel); // call it!
+/*TODO: needed???    if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "gp.<Over max, select...>") &&
+       (ta_actions->cur_sel->men_act != NULL)) {
+      ta_actions->cur_sel->usr_data = (void*)chs_obj;
+      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
     }
     else
-      ta_menu->SetMLabel(chs->sel_str); */
+      ta_actions->SetMLabel(chs->sel_str); */
   }
   delete chs;
 }
 
-void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* actn) {
+void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL) return;
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   if (cur_gp->size >= taMisc::max_menu) {
@@ -475,13 +475,13 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* ac
 //////////////////////////
 
 
-gpiSubGroups::gpiSubGroups(int rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_)
+gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, 
+  taiData* par,	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   ths = gp;
-//  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, (void*)ths, typ, host_, this, gui_parent_);
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+//  ta_actions = new taiMenu(rt, taiMenu::radio_update, ft, (void*)ths, typ, host_, this, gui_parent_);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   over_max = false;
 }
@@ -496,20 +496,20 @@ gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_,
 }
 
 QWidget* gpiSubGroups::GetRep() {
-  return ta_menu->GetRep();
+  return ta_actions->GetRep();
 }
 
 void gpiSubGroups::GetImage(TAGPtr base_gp, TAGPtr gp) {
   if (ths != base_gp) {
     ths = base_gp;
-    GetMenu(ta_menu, NULL);
+    GetMenu(ta_actions, NULL);
   }
-  ta_menu->GetImage((void*)gp);
+  ta_actions->GetImageByData(Variant((void*)gp));
   setCur_obj(gp, false);
 }
 
 TAGPtr gpiSubGroups::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (over_max) {
     if((cur == NULL) || (cur->text() == "<Over max, select...>"))
       return (TAGPtr)cur_obj;
@@ -535,25 +535,25 @@ void gpiSubGroups::Choose() {
   TABLPtr chs_root = ths;
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
-//   if((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "<Over max, select>") &&
-//      (ta_menu->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_menu->cur_sel->usr_data;
+//   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select>") &&
+//      (ta_actions->cur_sel->usr_data != NULL))
+//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "SubGroups", true);
   bool rval = chs->Choose();
   if (rval) {
     setCur_obj(chs->sel_obj());
-/*TODO: needed???    if((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "<Over max, select>") &&
-       (ta_menu->cur_sel->men_act != NULL)) {
-      ta_menu->cur_sel->men_act->Select(ta_menu->cur_sel); // call it!
+/*TODO: needed???    if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select>") &&
+       (ta_actions->cur_sel->men_act != NULL)) {
+      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
     }
     else
-      ta_menu->SetMLabel(chs->sel_str); */
+      ta_actions->SetMLabel(chs->sel_str); */
   }
   delete chs;
 }
 
-void gpiSubGroups::GetMenu(taiMenu* menu, taiMenuAction* actn) {
+void gpiSubGroups::GetMenu(taiActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
     menu->AddItem("NULL", taiMenu::use_default, actn);
   if (HasFlag(flgEditOk))
@@ -573,11 +573,11 @@ void gpiSubGroups::GetMenu(taiMenu* menu, taiMenuAction* actn) {
 }
 
 void gpiSubGroups::UpdateMenu(taiMenuAction* actn) {
-  ta_menu->Reset();
+  ta_actions->Reset();
   GetMenu(actn);
 }
 
-void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn) {
+void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn) {
   if (gp == NULL) return;
   if (gp->gp.size >= taMisc::max_menu) {
     taiAction* mnel = menu->AddItem
@@ -666,8 +666,8 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn) {
 // 	gpiElTypes	//
 //////////////////////////
 
-gpiElTypes::gpiElTypes
-(int rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, 
+  taiData* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(rt, ft, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = lstd;
@@ -680,7 +680,7 @@ gpiElTypes::gpiElTypes
   lst_typd = gtd;
 }
 
-void gpiElTypes::GetMenu(taiMenu* menu, taiMenuAction* nact) {
+void gpiElTypes::GetMenu(taiActions* menu, taiMenuAction* nact) {
   GetMenu_impl(menu, typ, nact);
   menu->AddSep(); //note: won't add a spurious separator if not needed
   GetMenu_impl(menu, lst_typd, nact);	// get group types for this type
@@ -1575,8 +1575,8 @@ void gpiSelectEditDataHost::Constr_Methods() {
           men_nm = "Actions";
         cur_menu_but = ta_menu_buttons.FindName(men_nm);
         if (cur_menu_but == NULL) {
-          cur_menu_but = new
-            taiMenu(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+          cur_menu_but = taiActions::New
+            (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
                     NULL, this, NULL, widget());
           cur_menu_but->setLabel(men_nm);
           DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu

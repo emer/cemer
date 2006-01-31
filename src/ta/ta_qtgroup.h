@@ -91,15 +91,15 @@ public:
   bool		over_max;	// if over max_menu
   TABLPtr	ths;
 
-  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
-  override void  GetMenu(taiMenu* menu, taiMenuAction* actn = NULL); // variant provided for MenuGroup_impl in winbase
+  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
+  override void  GetMenu(taiActions* menu, taiMenuAction* actn = NULL); // variant provided for MenuGroup_impl in winbase
   virtual void	UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*	GetRep();
   void		GetImage(TABLPtr base_lst, TAPtr it);
   TAPtr		GetValue();
 
-  gpiListEls(int rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
   gpiListEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, taiDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
@@ -109,25 +109,25 @@ public slots:
   virtual void	Choose();	// chooser callback
 
 protected:
-  virtual void	GetMenu_impl(TABLPtr lst, taiMenu* menu, taiMenuAction* actn = NULL);
+  virtual void	GetMenu_impl(TABLPtr lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 class gpiGroupEls : public gpiListEls {
   // menu of elements in the group
   Q_OBJECT
 public:
-  gpiGroupEls(int rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
   gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp = NULL, taiDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 
-//  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
+//  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
 
 public slots:
   virtual void	ChooseGp();	// chooser callback
 
 protected:
-  override void		GetMenu_impl(TABLPtr cur_lst, taiMenu* menu, taiMenuAction* actn = NULL);
+  override void		GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 class gpiSubGroups : public taiElBase {
@@ -138,15 +138,15 @@ public:
   bool		over_max;	// if over max_menu
 //  TAGPtr	chs_obj;	// object chosen by the chooser
 
-  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
-  override void	GetMenu(taiMenu* menu, taiMenuAction* actn = NULL);
+  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
+  override void	GetMenu(taiActions* menu, taiMenuAction* actn = NULL);
   virtual void	UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*	GetRep();
   void		GetImage(TAGPtr base_gp, TAGPtr gp);
   TAGPtr	GetValue();
 
-  gpiSubGroups(int rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
   gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_ = NULL, taiDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
@@ -155,7 +155,7 @@ public slots:
   virtual void	Choose();	// chooser callback
 
 protected:
-  virtual void	GetMenu_impl(TAGPtr gp, taiMenu* menu, taiMenuAction* actn = NULL);
+  virtual void	GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 // TypeHier provides the guts, we just replace the NULL default with "Group"
@@ -163,13 +163,13 @@ class gpiElTypes : public taiTypeHier {
 public:
   TypeDef*	lst_typd;	// typedef of the list
 
-  gpiElTypes(int rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // no flags
   gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_,
       taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
-  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
-  override void		GetMenu(taiMenu* menu, taiMenuAction* nact = NULL);
+  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
+  override void		GetMenu(taiActions* menu, taiMenuAction* nact = NULL);
 };
 
 class gpiNewFuns : public taiData {

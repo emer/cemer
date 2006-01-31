@@ -989,7 +989,7 @@ void taiAction::init(int sel_type_)
   QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
 }
 
-void taiAction::AddTo(taiMenuToolBarBase* targ) {
+void taiAction::AddTo(taiActions* targ) {
   targ->AddAction(this);
 }
 
@@ -1164,11 +1164,24 @@ taiAction* taiAction_List::PeekNonSep() {
 
 
 //////////////////////////
-//  taiMenuToolBarBase	//
+//  taiActions	//
 //////////////////////////
 
-taiMenuToolBarBase::taiMenuToolBarBase(int sel_type_, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par_,
-	QWidget* gui_parent_, int flags_, taiMenuToolBarBase* par_menu_)
+taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+      taiData* par, QWidget* gui_parent_, int flags_, taiActions* par_menu_)
+{
+  taiActions* rval = NULL;
+  switch (rt) {
+  case popupmenu: 
+    return new taiMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
+  case buttonmenu: 
+    return new taiButtonMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
+  }
+}
+
+taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, 
+  taiDataHost* host_, taiData* par_, QWidget* gui_parent_, int flags_, taiActions* par_menu_,
+      bool has_menu, QMenu* exist_menu)
 : taiData(typ_, host_, par_, gui_parent_, flags_)
 {
   sel_type = (SelType)sel_type_;
@@ -1178,13 +1191,37 @@ taiMenuToolBarBase::taiMenuToolBarBase(int sel_type_, int ft, TypeDef* typ_, tai
   cur_sel = NULL;
   par_menu = par_menu_;
   par_menu_el = NULL;
+  if (has_menu) {
+    m_menu = (exist_menu) ? exist_menu : new QMenu(gui_parent);
+    m_menu->setFont(taiM->menuFont(font_spec));
+  } else {
+    m_menu = NULL;
+  } 
 }
 
-taiMenuToolBarBase::~taiMenuToolBarBase() {
+taiActions::~taiActions() {
   Reset(); 
+  if (m_menu) {
+    m_menu->setParent(NULL); // avoid potential issues 
+    m_menu->deleteLater();
+    m_menu = NULL;
+  }
 }
 
-void taiMenuToolBarBase::AddAction(taiAction* act) {
+void taiActions::ActionAdded(taiAction* it) {
+  actionsRep()->addAction(it);
+}
+
+void taiActions::ActionRemoving(taiAction* it) {
+  actionsRep()->removeAction(it);
+}
+
+QWidget* taiActions::actionsRep() {
+  if (m_menu != NULL) return m_menu;
+  else                return GetRep();
+}
+
+void taiActions::AddAction(taiAction* act) {
   items.Add(act);
   if ((cur_grp != NULL)) {
     cur_grp->addAction(act);
@@ -1194,7 +1231,7 @@ void taiMenuToolBarBase::AddAction(taiAction* act) {
   //TODO: more???? font compliance, maybe???
 }
 
-taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st, 
+taiAction* taiActions::AddItem(const String& val, SelType st, 
   taiAction::CallbackType ct_, const QObject *receiver, const char* member,
   const Variant& usr)
 { // 'member' is the result of the SLOT() macro
@@ -1225,7 +1262,7 @@ taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st,
   return rval;
 }
 
-taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st, const taiMenuAction* mact, 
+taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuAction* mact, 
   const Variant& usr)
 {
   if (mact != NULL)
@@ -1234,22 +1271,27 @@ taiAction* taiMenuToolBarBase::AddItem(const String& val, SelType st, const taiM
     return AddItem(val, st, taiAction::none, NULL, NULL, usr);
 }
 
-taiAction* taiMenuToolBarBase::AddItem(const String& val, const Variant& usr) {
+taiAction* taiActions::AddItem(const String& val, const Variant& usr) {
     return AddItem(val, sel_type, taiAction::none, NULL, NULL, usr);
 }
 
-void taiMenuToolBarBase::AddSep(bool new_radio_grp) {
+void taiActions::AddSep(bool new_radio_grp) {
   if (new_radio_grp) NewRadioGroup();
   //don't double add seps or add at beginning (this check simplifies many callers, so they don't need to know
   //  whether a previous operation added items and/or seps, or not)
-  taiAction* it = items.Peek();
+  QWidget* ar = actionsRep();
+  QAction* it = NULL;
+  if (ar->actions().count() > 0) 
+    it = ar->actions().last();
+//  taiAction* it = items.Peek();
   if ((it == NULL) || it->isSeparator()) return;
 
-  it = new taiAction(true); // el dummy separator item
-  items.Add(it);
+  it = new QAction(ar); //TODO: make sure making the rep as parent for hidden seps won't ever accumulate
+  it->setSeparator(true);
+  actionsRep()->addAction(it);
 }
 
-taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
+taiMenu* taiActions::AddSubMenu(const String& val, TypeDef* typ_)
 {
   SelType st;
   // we use the value of the most recent submenu, otherwise ourself
@@ -1268,7 +1310,7 @@ taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
       return ((taiSubMenuEl*)act)->sub_menu_data;
     }
   }
-  rval = new taiMenu(taiMenu::popupmenu, st, font_spec, typ_, host, this, gui_parent, mflags, this);
+  rval = new taiMenu(st, font_spec, typ_, host, this, gui_parent, mflags, this);
 //  int cur_item = items.size;
   taiSubMenuEl* sme = new taiSubMenuEl(val, rval);
   AddAction(sme);
@@ -1278,34 +1320,34 @@ taiMenu* taiMenuToolBarBase::AddSubMenu(const String& val, TypeDef* typ_)
   return rval;
 }
 
-void taiMenuToolBarBase::child_triggered_toggled(taiAction* act) {
+void taiActions::child_triggered_toggled(taiAction* act) {
   // if a radio item in global group, update global selection
 //TODO  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
 //    setCurSel(act);
 
-  if (act->sel_type & taiMenuToolBarBase::update) {
+  if (act->sel_type & taiActions::update) {
     DataChanged();		// something was selected..
   } 
 }
 
-taiAction* taiMenuToolBarBase::curSel() const {
+taiAction* taiActions::curSel() const {
   if (par_menu != NULL)
     return par_menu->curSel();
   else  return cur_sel;
 }
 
-void taiMenuToolBarBase::DeleteItem(uint idx) {
+void taiActions::DeleteItem(uint idx) {
   if (idx >= (uint)items.size) return;
   taiAction* act = items[idx];
   ActionRemoving(act);
   items.Remove(idx); // deletes if ref==0
 }
 
-void taiMenuToolBarBase::emitLabelChanged(const char* val) {
-  emit labelChanged(val);
+void taiActions::emitLabelChanged(const String& val) {
+  emit labelChanged(val.chars());
 }
 
-taiMenu* taiMenuToolBarBase::FindSubMenu(const char* nm) {
+taiMenu* taiActions::FindSubMenu(const char* nm) {
   for (int i = 0; i < items.size; ++i) {
     taiAction* itm = items.FastEl(i);
     if (!itm->isSubMenu()) continue;
@@ -1316,23 +1358,33 @@ taiMenu* taiMenuToolBarBase::FindSubMenu(const char* nm) {
   return NULL;
 }
 
-void taiMenuToolBarBase::GetImageByIndex(int itm) {
-  if (itm >= items.size) return;
-  taiAction* mel = items.FastEl(itm);
-  setCurSel(mel);
-//  Update();
+ bool taiActions::GetImageByData(const Variant& usr) {
+  // first try to find item by iterating through all eligible items and subitems
+  if (GetImage_impl(usr))
+      return true; 
+/*TODO Qt4
+  // otherwise get first eligible item, if any, on this menu only, with data and without any menu callbacks, as default if nothing else works
+  for (int i = 0; i < items.size; ++i) {
+    taiAction* itm = items.FastEl(i);
+    if (!itm->canSelect()) continue;
+    if ( (!itm->usr_data.isInvalid()) && (!itm->hasCallbacks())) {
+      setCurSel(itm);
+      return true;
+    }
+  } */
+  return false;
 }
 
-bool taiMenuToolBarBase::GetImage_impl(void* usr) {
+bool taiActions::GetImage_impl(const Variant& usr) {
    // set to this usr item, returns false if not found
   // first, look at our items...
   for (int i = 0; i < items.size; ++i) {
     taiAction* itm = items.FastEl(i);
     if (!itm->canSelect()) continue;
     if (itm->usr_data == usr) {
-      if ((usr == NULL) && (itm->text() != "NULL"))
-	continue;
-      if (!itm->canSelect()) continue;
+//TODO Qt4: make sure this case is automatically handled now
+//      if ((usr == NULL) && (itm->text() != "NULL"))
+//	continue;
       setCurSel(itm);
       return true;
     }
@@ -1349,46 +1401,29 @@ bool taiMenuToolBarBase::GetImage_impl(void* usr) {
   return false;
 }
 
-bool taiMenuToolBarBase::GetImage(void* usr) {
-  // first try to find item by iterating through all eligible items and subitems
-  if (GetImage_impl(usr))
-      return true;
-/*TODO Qt4
-  // otherwise get first eligible item, if any, on this menu only, with data and without any menu callbacks, as default if nothing else works
-  for (int i = 0; i < items.size; ++i) {
-    taiAction* itm = items.FastEl(i);
-    if (!itm->canSelect()) continue;
-    if ( (!itm->usr_data.isInvalid()) && (!itm->hasCallbacks())) {
-      setCurSel(itm);
-      return true;
-    }
-  } */
-  return false;
+void taiActions::GetImageByIndex(int itm) {
+  if ((itm < 0) || (itm >= items.size)) return;
+  taiAction* mel = items.FastEl(itm);
+  setCurSel(mel);
+//  Update();
 }
 
-void taiMenuToolBarBase::ActionAdded(taiAction* it) {
-  // just add the action to the rep -- 
-  //TODO: won't work for button menus, because the button is the rep...
-  if (m_rep != NULL)
-    m_rep->addAction(it);
-}
-
-void taiMenuToolBarBase::NewRadioGroup() {
+void taiActions::NewRadioGroup() {
   cur_grp = new QActionGroup(gui_parent);
 }
 
-void taiMenuToolBarBase::ActionRemoving(taiAction* it) {
-  GetRep()->removeAction(it);
-}
-
-void taiMenuToolBarBase::Reset() {
+void taiActions::Reset() {
   for (int i = count() - 1; i >= 0; --i) {
     DeleteItem(i);
   }
+  // also remove the phantom seps
   cur_sel = NULL;
+  QWidget* ar = actionsRep();
+  if (ar != NULL)
+    ar->actions().clear();
 }
 
-void taiMenuToolBarBase::setCurSel(taiAction* value) {
+void taiActions::setCurSel(taiAction* value) {
   //curSel can only be a global radio type, or null
   if ( (value != NULL) && !value->canSelect() ) return;
   if (par_menu != NULL) {
@@ -1409,12 +1444,30 @@ void taiMenuToolBarBase::setCurSel(taiAction* value) {
   }
 }
 
-void taiMenuToolBarBase::setLabel(const String& val) {
+String taiActions::label() const {
+  if (par_menu != NULL)
+    return par_menu->label();
+  else {
+    return mlabel;
+  }
+}
+
+void taiActions::setLabel(const String& val) {
   if (par_menu != NULL)
     par_menu->setLabel(val);
   else {
     if (mlabel == val) return;
     mlabel = val;
+    // we support a limited number of reps...
+    QMenu* menu_ = qobject_cast<QMenu*>(GetRep());
+    if (menu_ != NULL) {
+      menu_->menuAction()->setText(val);
+    } else {
+      QPushButton* pb_ = qobject_cast<QPushButton*>(GetRep());
+      if (pb_ != NULL) {
+        pb_->setText(val);
+      }
+    }
     emitLabelChanged(mlabel);
   }
 }
@@ -1424,11 +1477,11 @@ void taiMenuToolBarBase::setLabel(const String& val) {
 // 	taiMenu	//
 //////////////////////////
 
-taiMenu::taiMenu(int rt, int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_, taiMenuToolBarBase* par_menu_)
-: taiMenuToolBarBase(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_)
+taiMenu::taiMenu(int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
+: taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
-  init(rt, NULL);
+  init();
 }
 
 /*nbg taiMenu::taiMenu(int rt, int st, int ft, QWidget* gui_parent_)
@@ -1437,38 +1490,19 @@ taiMenu::taiMenu(int rt, int st, int ft, TypeDef* typ_, taiDataHost* host_, taiD
   init(rt, st, ft, gui_parent_, NULL);
 } */
 
-taiMenu::taiMenu(QWidget* gui_parent_, int rt, int st, int ft, QMenu* exist_menu)
-: taiMenuToolBarBase(st, ft, NULL, NULL, NULL, gui_parent_, 0, NULL)
+taiMenu::taiMenu(QWidget* gui_parent_, int st, int ft, QMenu* exist_menu)
+: taiActions(st, ft, NULL, NULL, NULL, gui_parent_, 0, NULL, true, exist_menu)
 {
-  init(rt, exist_menu);
+  init();
 }
 
 
-void taiMenu::init(int rt, QMenu* exist_menu)
+void taiMenu::init()
 {
-  mrep_popup = NULL;
-  rep_type = (RepType)rt;
-  button = NULL;
-  //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
-  mrep_popup = (exist_menu) ? exist_menu : new QMenu(gui_parent);
-  mrep_popup->setFont(taiM->menuFont(font_spec));
-/*obsQt4  if (sel_type & (radio | toggle))  {
-    //TODO: probably need to always set this true, since we could have checkable items even if creating menu with normal seltype
-    mrep_popup->setCheckable(true); //note: always enabled on Windows
-  } */
-  if (rep_type == buttonmenu) {
-    button = new QPushButton(gui_parent);
-    button->setPopup(mrep_popup);
-    button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
-    button->setFixedHeight(taiM->button_height(font_spec));
-    SetRep(button);
-  } else {
-    SetRep(mrep_popup);
-  }
+  SetRep(menu());
 }
 
 taiMenu::~taiMenu() {
-  mrep_popup = NULL;
 }
 
 /*obs taiAction* taiMenu::AddItem_FromAction(iAction* act)
@@ -1502,7 +1536,7 @@ taiMenu::~taiMenu() {
 } */
 
 void taiMenu::exec(const iPoint& pos) {
-  mrep_popup->exec((QPoint)pos);
+  menu()->exec((QPoint)pos);
 }
 
 taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const char* member, const QKeySequence* accel) {
@@ -1510,25 +1544,6 @@ taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const c
   if (accel != NULL) mel->setShortcut(*accel);
   return mel;
 }
-
-void taiMenu::ActionAdded(taiAction* it) {
-  // add to the menu, in case we are a button menu (in which case rep will be the button) 
-  if (mrep_popup != NULL)
-    mrep_popup->addAction(it);
-}
-
-void taiMenu::ActionRemoving(taiAction* it) {
-  if (mrep_popup != NULL)
-    mrep_popup->removeAction(it);
-}
-
-void taiMenu::setLabel(const String& val) {
-  if (button != NULL) {
-    button->setText(val);
-  }
-  inherited::setLabel(val);
-}
-
 
 /*QMenu* taiMenu::NewSubItem(const char* val, QMenu* child, const QKeySequence* accel) {
   QMenu* new_men;
@@ -1593,6 +1608,26 @@ void taiMenu::Update() {
 }
 */
 
+//////////////////////////
+//  taiButtonMenu 	//
+//////////////////////////
+
+taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
+: taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
+{
+  init();
+}
+
+void taiButtonMenu::init()
+{
+  QPushButton* button = new QPushButton(gui_parent);
+  button->setMenu(menu());
+  button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
+  button->setFixedHeight(taiM->button_height(font_spec));
+  SetRep(button);
+}
+
 
 //////////////////////////
 //  taiMenuBar	 	//
@@ -1600,25 +1635,24 @@ void taiMenu::Update() {
 
 taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, taiDataHost* host_,
     taiData* par_, QWidget* gui_parent_, int flags_)
-: taiMenuToolBarBase(normal, ft, typ_, host_, par_, gui_parent_, flags_)
+: taiActions(normal, ft, typ_, host_, par_, gui_parent_, flags_)
 {
   init(NULL);
 }
 
 taiMenuBar::taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu)
-: taiMenuToolBarBase(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
+: taiActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
 {
   init(exist_menu);
 }
 
 taiMenuBar::~taiMenuBar() {
-  mrep_bar = NULL;
 }
 
 void taiMenuBar::init(QMenuBar* exist_menu)
 {
   //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
-  mrep_bar = (exist_menu) ? (QMenuBar*)exist_menu : new QMenuBar(gui_parent);
+  QMenuBar* mrep_bar = (exist_menu) ? exist_menu : new QMenuBar(gui_parent);
   mrep_bar->setFont(taiM->menuFont(font_spec));
   mrep_bar->setFixedHeight(taiM->button_height(font_spec)); // button height is ok to control bar height
   SetRep(mrep_bar);
@@ -1647,7 +1681,7 @@ void taiMenuBar::init(QMenuBar* exist_menu)
 //////////////////////////////////
 
 taiToolBar::taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar) 
-: taiMenuToolBarBase(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
+: taiActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
 {
   init(exist_bar);
 }
@@ -1667,27 +1701,17 @@ void taiToolBar::init(QToolBar* exist_bar) {
 
 taiEditButton::taiEditButton(void* base, taiEdit *taie, TypeDef* typ_,
 	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
-: taiData(typ_, host_, par, gui_parent_, flags_)
+: taiButtonMenu(taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
-  mgui_parent = gui_parent_;
   cur_base = base;
   if (!typ->InheritsFrom(TA_taBase) || typ->HasOption("EDIT_ONLY"))
     SetFlag(flgEditOnly, true);
-  imenu = NULL;
   ie = taie;	// note: if null, it uses type's ie
-  SetRep(new QPushButton(gui_parent_));
-  rep()->setFixedHeight(taiM->button_height(defSize()));
-  // if true edit-only button, we create a regular pushbutton and connect it to Edit action
-  // otherwise, the button becomes a PopupMenu button, and we create a menu
+  // if true edit-only button, we just wire the action right to the button, and don't make any menu items
+  // otherwise,  we create a menu
   if (HasFlag(flgEditOnly)) {
     connect(m_rep, SIGNAL(clicked()),
         this, SLOT(Edit()) );
-  } else {
-    // note: gui_parent_ of menu is *not* the button, nor is it transferred to button when we set its popup
-    imenu = new taiMenu(taiMenu::popupmenu, taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, this, gui_parent_);
-    rep()->setPopup(imenu->rep_popup());
-//    connect(imenu, SIGNAL(labelChanged(const char*)),
-//        this, SLOT(setLabel(const char*)) );
   }
   SetLabel();
 }
@@ -1697,8 +1721,6 @@ taiEditButton::~taiEditButton(){
     delete ie;
     ie = NULL;
   }
-  delete imenu;
-  imenu = NULL;
   meth_el.Reset();
 }
 
@@ -1735,17 +1757,17 @@ void taiEditButton::GetMethMenus() {
     if ((men_nm != "Object") && (men_nm != "Edit"))
       continue;
     if ((men_nm != lst_men_nm) && (lst_men_nm != ""))
-      imenu->AddSep();
+      AddSep();
     lst_men_nm = men_nm;
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, mgui_parent);
+    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, gui_parent);
     if (mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);
     if ((ie != NULL) && (md->name == "Edit"))
-      imenu->AddItem("Edit", taiMenu::use_default,
+      AddItem("Edit", taiMenu::use_default,
           taiAction::action, this, SLOT(Edit()));
     else
-      mth_rep->AddToMenu(imenu);
+      mth_rep->AddToMenu(this);
   }
 }
 
@@ -2144,75 +2166,58 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 // 		taiFileButton		//
 //////////////////////////////////////////
 
-taiFileButton::taiFileButton(void* base, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiFileButton::taiFileButton(TypeDef* typ_, taiDataHost* host_, taiData* par,
 	QWidget* gui_parent_, bool rd_only, bool wrt_only)
-: taiData(typ_, host_, par, gui_parent_)
+: taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_)
 {
-  if (base != NULL) {
-    gf = *((taFiler**) base);
-    if (gf != NULL)
-      taRefN::Ref(gf);
-  }
-  else
-    gf = NULL;
+  gf = NULL;
   read_only = rd_only;
   write_only = wrt_only;
-  filemenu = new taiMenu(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall, typ, host_, this, gui_parent_);
-  filemenu->setLabel("------No File-----");
+  setLabel("------No File-----");
 }
 
 taiFileButton::~taiFileButton() {
-  delete filemenu;
-  if (gf != NULL)
-    taRefN::unRefDone(gf);
+  SetFiler(NULL);
 }
 
-QWidget* taiFileButton::GetRep() {
-  return (filemenu == NULL) ? NULL : filemenu->GetRep();
-}
-
-void* taiFileButton::GetValue(){
-  return (void*) gf;
-}
-
-void taiFileButton::GetImage(void* base) {
-  if (gf != NULL)
-    taRefN::unRefDone(gf);
-  gf = *((taFiler**) base);
-  if (gf != NULL)
-    taRefN::Ref(gf);
-  GetImage();
+void taiFileButton::SetFiler(taFiler* gf_) {
+  if (gf != gf_) {
+    if (gf != NULL)
+      taRefN::unRefDone(gf);
+    gf = gf_;
+    if (gf != NULL)
+      taRefN::Ref(gf);
+  }
 }
 
 void taiFileButton::GetImage() {
-  if (filemenu->items.size == 0) {
+  if (items.size == 0) {
     if (!write_only)
-      filemenu->AddItem("Open", taiMenu::use_default,
+      AddItem("Open", taiMenu::use_default,
 	taiAction::action, this, SLOT(Open()) );
     if(!read_only && ((gf == NULL) || !gf->select_only)) {
-      filemenu->AddItem("Save", taiMenu::use_default,
+      AddItem("Save", taiMenu::use_default,
 	taiAction::action, this, SLOT(Save()) );
-      filemenu->AddItem("SaveAs", taiMenu::use_default,
+      AddItem("SaveAs", taiMenu::use_default,
 	taiAction::action, this, SLOT(SaveAs()) );
-      filemenu->AddItem("Append", taiMenu::use_default,
+      AddItem("Append", taiMenu::use_default,
 	taiAction::action, this, SLOT(Append()) );
     }
-    filemenu->AddItem("Close", taiMenu::use_default,
+    AddItem("Close", taiMenu::use_default,
 	taiAction::action, this, SLOT(Close()) );
-    filemenu->AddItem("Edit", taiMenu::use_default,
+    AddItem("Edit", taiMenu::use_default,
 	taiAction::action, this, SLOT(Edit()) );
   }
 
   if ((gf == NULL) || (!gf->select_only && !gf->open_file) || (gf->fname == ""))
-    filemenu->setLabel("------No File-----");
+    setLabel("------No File-----");
   else
-    filemenu->setLabel(gf->fname);
+    setLabel(gf->fname);
 }
 
 void taiFileButton::GetGetFile() {
   if (gf ==  NULL) {
-    gf = taFiler_CreateInstance(".","",false);
-    taRefN::Ref(gf);
+    SetFiler(taFiler_CreateInstance(".","",false));
   }
 }
 
@@ -2236,12 +2241,14 @@ void taiFileButton::Save() {
     GetImage();
   }
 }
+
 void taiFileButton::SaveAs() {
   GetGetFile();
   if (gf->SaveAs() != NULL) {
     GetImage();
   }
 }
+
 void taiFileButton::Close() {
   GetGetFile();
   gf->Close();
@@ -2261,28 +2268,30 @@ void taiFileButton::Edit() {
 }
 
 
-taiElBase::taiElBase(taiMenu* menu_, TypeDef* tp, taiDataHost* host_, taiData* par,
+taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 :taiData(tp, host_, par, gui_parent_, flags_)
 {
   cur_obj = NULL;
-  ta_menu = menu_;
+  ta_actions = actions_;
   ownflag = false;
 }
 
 taiElBase::~taiElBase() {
   if (ownflag)
-    delete ta_menu;
-  ta_menu = NULL;
+    delete ta_actions;
+  ta_actions = NULL;
 }
 
 void taiElBase::setCur_obj(TAPtr value, bool do_chng) {
   if (cur_obj == value) return;
   cur_obj = value;
+  ta_actions->GetImageByData(Variant(value));
+/*TODO Qt4 -- this should happen automatically...
   if (value == NULL)
-    ta_menu->setLabel("NULL");
+    ta_actions->setLabel("NULL");
   else
-    ta_menu->setLabel(value->GetName());
+    ta_actions->setLabel(value->GetName()); */
   if (do_chng)
     DataChanged(NULL);
 }
@@ -2291,11 +2300,11 @@ void taiElBase::setCur_obj(TAPtr value, bool do_chng) {
 // 	taiToken	//
 //////////////////////////
 
-taiToken::taiToken(int rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_);
   ownflag = true;
   scope_ref = NULL;
 }
@@ -2304,7 +2313,7 @@ taiToken::taiToken(int rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* p
 	bool nul_not, bool edt_not)
 : taiData(typ_, host_, par, gui_parent_)
 {
-  ta_menu = existing_menu;
+  ta_actions = existing_menu;
   ownflag = false;
   mscope_ref = NULL;
   null_not = nul_not;
@@ -2315,7 +2324,7 @@ taiToken::taiToken(int rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* p
 
 void taiToken::GetImage(TAPtr ths, TAPtr scp_obj) {
   scope_ref = scp_obj;
-  ta_menu->GetImage(ths);
+//in setCur_obj  ta_actions->GetImage(ths);
   setCur_obj(ths, false);
 }
 
@@ -2354,13 +2363,13 @@ void taiToken::Chooser() {
   bool rval = chs->Choose();
   if (rval) {
     setCur_obj((TAPtr)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
- /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_menu->cur_sel != NULL) && (ta_menu->cur_sel->label == "<Over max, select...>") &&
-       (ta_menu->cur_sel->men_act != NULL)) {
-      ta_menu->cur_sel->usr_data = (void*)chs_obj;
-      ta_menu->cur_sel->men_act->Select(ta_menu->cur_sel); // call it!
+ /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select...>") &&
+       (ta_actions->cur_sel->men_act != NULL)) {
+      ta_actions->cur_sel->usr_data = (void*)chs_obj;
+      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
     }
     else
-      ta_menu->setLabel(chs->sel_str());*/
+      ta_actions->setLabel(chs->sel_str());*/
   }
   delete chs;
 }
@@ -2368,21 +2377,21 @@ void taiToken::Chooser() {
 void taiToken::GetMenu(const taiMenuAction* actn) {
   if (ownflag) {
     if (HasFlag(flgEditOk))
-      ta_menu->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
-    ta_menu->AddSep();
+      ta_actions->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
+    ta_actions->AddSep();
     if (HasFlag(flgNullOk)) {
-      taiAction* mel = ta_menu->AddItem("NULL", taiMenu::radio, actn);
+      taiAction* mel = ta_actions->AddItem("NULL", taiMenu::radio, actn);
       mel->connect(taiAction::men_act, this, SLOT(ItemChosen(taiAction*)));
     }
   }
-  GetMenu_impl(ta_menu, typ, actn);
+  GetMenu_impl(ta_actions, typ, actn);
 }
 void taiToken::UpdateMenu(const taiMenuAction* actn) {
-  ta_menu->Reset();
+  ta_actions->Reset();
   GetMenu(actn);
 }
 
-void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* actn) {
+void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* actn) {
   if (!td->InheritsFrom(TA_taBase)) return; // sanity check, so we don't crash...
 
   if (!td->tokens.keep) {
@@ -2507,12 +2516,12 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
 // 	taiSubToken		//
 //////////////////////////////////
 
-taiSubToken::taiSubToken(int rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
 	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   menubase = NULL;
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_); //note: only needs taiMenu, but this doesn't hurt
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_); //note: only needs taiMenu, but this doesn't hurt
   ownflag = true;
 }
 
@@ -2524,11 +2533,11 @@ taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, taiDataHost* hos
 }
 
 QWidget* taiSubToken::GetRep() {
-   return (ta_menu == NULL) ? NULL : ta_menu->GetRep();
+   return (ta_actions == NULL) ? NULL : ta_actions->GetRep();
 }
 
 void* taiSubToken::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (cur == NULL)
     return NULL;
   else
@@ -2563,22 +2572,22 @@ void taiSubToken::GetImage(void* ths, void* sel) {
   }
   if (sel == NULL)
     sel = ths;
-  if (!(ta_menu->GetImage(sel)))
-    ta_menu->GetImage(ths);
+  if (!(ta_actions->GetImageByData(Variant(sel))))
+    ta_actions->GetImageByData(Variant(ths));
 }
 
 void taiSubToken::UpdateMenu(taiMenuAction* actn){
-  ta_menu->Reset();
+  ta_actions->Reset();
   GetMenu(actn);
 }
 
 void taiSubToken::GetMenu(taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    ta_menu->AddItem("NULL", taiMenu::use_default, actn);
+    ta_actions->AddItem("NULL", taiMenu::use_default, actn);
   if (HasFlag(flgEditOk))
-    ta_menu->AddItem("Edit", taiMenu::normal,
+    ta_actions->AddItem("Edit", taiMenu::normal,
       taiAction::action, this, SLOT(Edit()) );
-  ta_menu->AddSep(); // note: never adds spurious seps
+  ta_actions->AddSep(); // note: never adds spurious seps
 
   GetMenuImpl(menubase, actn);
 }
@@ -2592,7 +2601,7 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
   // if you're the right type, put yourself on the list
   if (basetd->DerivesFrom(typ)) {
     String nm = rbase->GetName();
-    ta_menu->AddItem(nm, taiMenu::use_default, actn, rbase);
+    ta_actions->AddItem(nm, taiMenu::use_default, actn, rbase);
   }
 
   // put your typed members on the list
@@ -2613,7 +2622,7 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
 // 	taiMemberDefMenu	//
 //////////////////////////////////
 
-taiMemberDefMenu::taiMemberDefMenu(int rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   md = m;
@@ -2623,20 +2632,20 @@ taiMemberDefMenu::taiMemberDefMenu(int rt, int ft, MemberDef* m, TypeDef* targ_t
   String nm;
   if (md != NULL)
     nm = md->name;
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
-//  ta_menu->setLabel(nm);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
+//  ta_actions->setLabel(nm);
 }
 
 taiMemberDefMenu::~taiMemberDefMenu() {
-  if (ta_menu != NULL)
-    delete ta_menu;
+  if (ta_actions != NULL)
+    delete ta_actions;
 }
 QWidget* taiMemberDefMenu::GetRep() {
-  return ta_menu->GetRep();
+  return ta_actions->GetRep();
 }
 
 MemberDef* taiMemberDefMenu::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (cur == NULL)
     return NULL;
   else
@@ -2648,8 +2657,9 @@ void taiMemberDefMenu::GetImage(void* base, bool get_menu, void* cur_sel){
   if (typ == NULL)  return;
   if (get_menu)
     GetMenu(base);
-  if ((cur_sel == NULL) || (!(ta_menu->GetImage(cur_sel))))
-    ta_menu->GetImage(ta_menu->items.SafeEl(0));
+  if ((cur_sel == NULL) || (!(ta_actions->GetImageByData(Variant(cur_sel)))))
+//Qt3    ta_actions->GetImage(ta_actions->items.SafeEl(0));
+    ta_actions->GetImageByIndex(0);
 }
 
 void taiMemberDefMenu::GetTarget() {
@@ -2683,13 +2693,13 @@ void taiMemberDefMenu::GetTarget() {
 
 void taiMemberDefMenu::GetMenu(void* base) {
   menubase = base;
-  ta_menu->Reset();
+  ta_actions->Reset();
   if (targ_typ == NULL) {
     GetTarget();
   }
 
   if (targ_typ == NULL) {
-    ta_menu->AddItem("!!!TypeSpace Error!!!");
+    ta_actions->AddItem("!!!TypeSpace Error!!!");
     return;
   }
 
@@ -2710,7 +2720,7 @@ void taiMemberDefMenu::GetMenu(void* base) {
   for (int i = 0; i < mbs.size; ++i) {
     MemberDef* mbd = mbs.FastEl(i);
     if (!mbd->ShowMember(show)) continue;
-    ta_menu->AddItem(mbd->GetLabel(), mbd);
+    ta_actions->AddItem(mbd->GetLabel(), mbd);
   }
 }
 
@@ -2719,7 +2729,7 @@ void taiMemberDefMenu::GetMenu(void* base) {
 // 	taiMethodDefMenu	//
 //////////////////////////////////
 
-taiMethodDefMenu::taiMethodDefMenu(int rt, int ft, MethodDef* m, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -2729,21 +2739,21 @@ taiMethodDefMenu::taiMethodDefMenu(int rt, int ft, MethodDef* m, TypeDef* typ_, 
   String nm;
   if (md != NULL)
     nm = md->name;
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
-  ta_menu->setLabel(nm);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
+  ta_actions->setLabel(nm);
 }
 
 taiMethodDefMenu::~taiMethodDefMenu() {
-  if (ta_menu != NULL)
-    delete ta_menu;
+  if (ta_actions != NULL)
+    delete ta_actions;
 }
 
 QWidget* taiMethodDefMenu::GetRep() {
-  return ta_menu->GetRep();
+  return ta_actions->GetRep();
 }
 
 void* taiMethodDefMenu::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (cur != NULL)
     return cur->usr_data;
   return NULL;
@@ -2754,7 +2764,7 @@ void taiMethodDefMenu::GetImage(MethodSpace* space, MethodDef* memb) {
   md = memb;
   typ = NULL;
   UpdateMenu();
-  ta_menu->GetImage(md);
+  ta_actions->GetImageByData(Variant((void*)md));
 }
 
 void taiMethodDefMenu::GetImage(TypeDef* type, MethodDef* memb){
@@ -2762,7 +2772,7 @@ void taiMethodDefMenu::GetImage(TypeDef* type, MethodDef* memb){
   typ = type;
   sp = NULL;
   UpdateMenu();
-  ta_menu->GetImage(md);
+  ta_actions->GetImageByData(Variant((void*)md));
 }
 
 void taiMethodDefMenu::GetImage(void* ths, void* sel) {
@@ -2785,18 +2795,19 @@ void taiMethodDefMenu::GetImage(void* ths, void* sel) {
   }
   sp =  NULL;
   UpdateMenu();
-  if (!(ta_menu->GetImage(sel)))
-    ta_menu->GetImage(ta_menu->items.SafeEl(0));
+  if (!(ta_actions->GetImageByData(Variant(sel))))
+//Qt3    ta_actions->GetImage(ta_actions->items.SafeEl(0));
+    ta_actions->GetImageByIndex(0);
 }
 
 void taiMethodDefMenu::UpdateMenu(const taiMenuAction* actn) {
-  ta_menu->Reset();
+  ta_actions->Reset();
   GetMenu(actn);
 }
 
 void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
   if ((typ == NULL) && (sp == NULL)) {
-    ta_menu->AddItem("TypeSpace Error");
+    ta_actions->AddItem("TypeSpace Error");
     return;
   }
   MethodDef* mbd;
@@ -2804,7 +2815,7 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
   if (mbs == NULL) mbs = &typ->methods;
   for (int i = 0; i < mbs->size; ++i){
     mbd = mbs->FastEl(i);
-    ta_menu->AddItem(mbd->GetLabel(),taiMenu::use_default, actn,mbd);
+    ta_actions->AddItem(mbd->GetLabel(),taiMenu::use_default, actn,mbd);
   }
 }
 
@@ -2812,11 +2823,11 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
 // 	taiTypeHier		//
 //////////////////////////////////
 
-taiTypeHier::taiTypeHier(int  rt, int ft, TypeDef* typ_, taiDataHost* host_,
+taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  ta_menu = new taiMenu(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
 }
 
@@ -2824,31 +2835,31 @@ taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
 	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  ta_menu = existing_menu;
+  ta_actions = existing_menu;
   ownflag = false;
 }
 
 taiTypeHier::~taiTypeHier() {
-  if(ownflag && (ta_menu != NULL)) delete ta_menu;
-  ta_menu = NULL;
+  if(ownflag && (ta_actions != NULL)) delete ta_actions;
+  ta_actions = NULL;
 }
 
 QWidget* taiTypeHier::GetRep() {
-  return ta_menu->GetRep();
+  return ta_actions->GetRep();
 }
 
 void taiTypeHier::GetImage(TypeDef* ths) {
-  ta_menu->GetImage((void*)ths);
+  ta_actions->GetImageByData(Variant((void*)ths));
 }
 
 void taiTypeHier::GetMenu(const taiMenuAction* acn) {
   if (HasFlag(flgNullOk))
-    ta_menu->AddItem("NULL", taiMenu::use_default, acn);
-  GetMenu_impl(ta_menu, typ, acn);
+    ta_actions->AddItem("NULL", taiMenu::use_default, acn);
+  GetMenu_impl(ta_actions, typ, acn);
 }
 
 void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
-  ta_menu->Reset();
+  ta_actions->Reset();
   GetMenu(acn);
 }
 
@@ -2879,7 +2890,7 @@ bool taiTypeHier::AddType(TypeDef* typ_) {
   return true;
 }
 
-void taiTypeHier::GetMenu_impl(taiMenu* menu, TypeDef* typ_, const taiMenuAction* acn) {
+void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
   menu->AddItem((char*)typ_->name, taiMenu::use_default, acn);
   menu->AddSep(false); //don't start new radio group
   for (int i = 0; i < typ_->children.size; ++i) {
@@ -2904,7 +2915,7 @@ void taiTypeHier::GetMenu_impl(taiMenu* menu, TypeDef* typ_, const taiMenuAction
 }
 
 TypeDef* taiTypeHier::GetValue() {
-  taiAction* cur = ta_menu->GetValue();
+  taiAction* cur = ta_actions->curSel();
   if (cur) return (TypeDef*)cur->usr_data.toPtr(); return NULL;
 }
 
@@ -2929,7 +2940,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost
   buttonRep = NULL;
 }
 
-void taiMethodData::AddToMenu(taiMenuToolBarBase* mnu) {
+void taiMethodData::AddToMenu(taiActions* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
   mnu->AddItem(meth->GetLabel(), taiMenu::use_default,

@@ -581,17 +581,20 @@ int taiFilePtrType::BidForType(TypeDef* td) {
 }
 
 taiData* taiFilePtrType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  return new taiFileButton(NULL, typ,  host_, par, gui_parent_, flags_);
+  return new taiFileButton(typ,  host_, par, gui_parent_, flags_);
 }
 
 void taiFilePtrType::GetImage_impl(taiData* dat, void* base){
   taiFileButton* fbut = (taiFileButton*) dat;
-  fbut->GetImage(base);
+  // note: we are a taFiler*
+  fbut->SetFiler(*((taFiler**)base));
+  fbut->GetImage();
 }
 
 void taiFilePtrType::GetValue_impl(taiData* dat, void* base) {
   taiFileButton* rval = (taiFileButton*)dat;
-  *((void**)base) = rval->GetValue();
+  // safely replace filer, using ref counting
+  taRefN::SetRefDone(*((taRefN**)base), rval->GetFiler());
 }
 
 
@@ -1100,12 +1103,12 @@ void taiMemberDefPtrMember::GetImage_impl(taiData* dat, void* base){
 /*
   taiEditDialog* host_ = taiM->FindEdit(base, typ);
   if (host_ != NULL) {
-    rval->ta_menu->ResetMenu();
+    rval->ta_actions->ResetMenu();
     MemberSpace* mbs = &(typ->members);
     for (int i = 0; i < mbs->size; ++i){
       MemberDef* mbd = mbs->FastEl(i);
       if (!mbd->ShowMember(host_->show)) continue;
-      rval->ta_menu->AddItem(mbd->name, mbd);
+      rval->ta_actions->AddItem(mbd->name, mbd);
     }
   } */
   GetOrigVal(dat, base);
@@ -1129,7 +1132,7 @@ int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiFunPtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiMenu* rval = new taiMenu(taiMenu::buttonmenu, taiMenu::radio_update, taiMisc::fonSmall,
+  taiMenu* rval = new taiMenu(taiMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
   rval->AddItem("NULL");
   rval->AddSep();
@@ -1146,7 +1149,7 @@ void taiFunPtrMember::GetImage_impl(taiData* dat, void* base){
   void* new_base = mbr->GetOff(base);
   taiMenu* rval = (taiMenu*)dat;
   if(*((void**)new_base) == NULL) {
-    rval->GetImage(0);
+    rval->GetImageByData(Variant(0));
     return;
   }
   int cnt;
@@ -1160,9 +1163,9 @@ void taiFunPtrMember::GetImage_impl(taiData* dat, void* base){
 void taiFunPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   void* new_base = mbr->GetOff(base);
   taiMenu* rval = (taiMenu*)dat;
-  taiMenuEl* cur = rval->GetValue();
+  taiAction* cur = rval->curSel();
   if (cur != NULL)
-    *((void**)new_base) = cur->usr_data;
+    *((void**)new_base) = cur->usr_data.toPtr();
   CmpOrigVal(dat, base, first_diff);
 }
 
@@ -1623,10 +1626,10 @@ taiData* taiStreamArgType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWi
     }
   }
   if (arg_typ->InheritsFrom(TA_istream))
-    return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, true);
+    return new taiFileButton(NULL, host_, par, gui_parent_, true);
   else if(arg_typ->InheritsFrom(TA_ostream))
-    return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, false, true);
-  return new taiFileButton((void*)&gf, NULL, host_, par, gui_parent_, flags_);
+    return new taiFileButton(NULL, host_, par, gui_parent_, false, true);
+  return new taiFileButton(NULL, host_, par, gui_parent_, flags_);
 }
 
 void taiStreamArgType::GetImage_impl(taiData* dat, void* base){
@@ -1653,7 +1656,8 @@ void taiStreamArgType::GetImage_impl(taiData* dat, void* base){
       }
     }
   }
-  fbut->GetImage((void*)&gf);
+  fbut->SetFiler(gf);
+  fbut->GetImage();
 }
 
 void taiStreamArgType::GetValue_impl(taiData* dat, void*) {
@@ -1661,7 +1665,7 @@ void taiStreamArgType::GetValue_impl(taiData* dat, void*) {
     return;
   taiFileButton* rval = (taiFileButton*)dat;
   if (gf == NULL) {
-    gf = (taFiler*)rval->GetValue();
+    gf = (taFiler*)rval->GetFiler();
     taRefN::Ref(gf);
   }
   if (gf == NULL) {
@@ -1905,20 +1909,20 @@ void taiMemberPtrArgType::GetImage_impl(taiData* dat, void* base) {
   taiEditDialog* host_ = taiM->FindEdit(base, typ);
   if (host_ != NULL) {
     rval->menubase = typ;
-    rval->ta_menu->ResetMenu();
+    rval->ta_actions->ResetMenu();
     MemberSpace* mbs = &(typ->members);
     for (int i = 0; i < mbs->size; ++i){
       MemberDef* mbd = mbs->FastEl(i);
       if (!mbd->ShowMember(host_->show)) continue;
-      rval->ta_menu->AddItem(mbd->GetLabel(), mbd);
+      rval->ta_actions->AddItem(mbd->GetLabel(), mbd);
     }
   } */
   MemberDef* initmd = (MemberDef*)*((void**)arg_base);
   if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
-    //rval->ta_menu->GetImage_impl(initmd);
+    //rval->ta_actions->GetImage_impl(initmd);
     rval->GetImage(initmd, false); //don't reget menu
   else
-    rval->ta_menu->GetImageByIndex(0);	// just get first on list
+    rval->ta_actions->GetImageByIndex(0);	// just get first on list
 }
 
 void taiMemberPtrArgType::GetValue_impl(taiData* dat, void*) {
@@ -1962,7 +1966,7 @@ void taiMethodPtrArgType::GetImage_impl(taiData* dat, void*) {
   taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
   rval->md = (MethodDef*)*((void**)arg_base);
   rval->menubase = typ;
-  rval->ta_menu->Reset();
+  rval->ta_actions->Reset();
   MethodSpace* mbs = &(typ->methods);
   for (int i = 0; i < mbs->size; ++i){
     MethodDef* mbd = mbs->FastEl(i);
@@ -1971,13 +1975,13 @@ void taiMethodPtrArgType::GetImage_impl(taiData* dat, void*) {
        || (mbd->name == "SelectForEdit") || (mbd->name == "SelectFunForEdit")
        || (mbd->name == "Help"))
       continue;
-    rval->ta_menu->AddItem(mbd->GetLabel(), mbd);
+    rval->ta_actions->AddItem(mbd->GetLabel(), mbd);
   }
   MethodDef* initmd = (MethodDef*)*((void**)arg_base);
   if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
-    rval->ta_menu->GetImage(initmd);
+    rval->ta_actions->GetImageByData(Variant((void*)initmd));
   else
-    rval->ta_menu->GetImageByIndex(0);	// just get first on list
+    rval->ta_actions->GetImageByIndex(0);	// just get first on list
 }
 
 void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {

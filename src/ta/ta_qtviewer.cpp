@@ -413,7 +413,7 @@ void taiDataLink::Assert_QObj() {
   }
 }
 
-void taiDataLink::FillContextMenu(taiMenuToolBarBase* menu) {
+void taiDataLink::FillContextMenu(taiActions* menu) {
   FillContextMenu_impl(menu);
 }
 
@@ -598,13 +598,13 @@ Normal submenus (ex. Object Edit, etc.)
 ------
 
 */
-void tabDataLink::FillContextMenu_impl(taiMenuToolBarBase* menu) {
+void tabDataLink::FillContextMenu_impl(taiActions* menu) {
   inherited::FillContextMenu_impl(menu);
 
   TypeDef* typ = GetDataTypeDef();
   if (typ == NULL)  return;
   taiMenu_List ta_menus;
-  taiMenuToolBarBase* cur_menu = NULL;
+  taiActions* cur_menu = NULL;
   String men_nm;
 
   // add all the #MENU_CONTEXT items first, so they always appear before the nested submenus
@@ -938,14 +938,14 @@ int ISelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Qu
   return rval;
 }
 
-void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiMenuToolBarBase* menu) {
+void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu) {
   FillContextMenu_impl(menu);
   int allowed = GetEditActions_(sel_items);
   FillContextMenu_EditItems_impl(menu, allowed);
   link()->FillContextMenu(menu);
 }
 
-void ISelectable::FillContextMenu_EditItems_impl(taiMenuToolBarBase* menu, int allowed) {
+void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
   if (allowed == 0) return;
   if (menu->count() > 0)
     menu->AddSep();
@@ -1216,7 +1216,7 @@ void iDataViewer::actionsMenu_aboutToShow() {
   }
 }
 
-void iDataViewer::FillContextMenu(taiMenuToolBarBase* menu) {
+void iDataViewer::FillContextMenu(taiActions* menu) {
   if (dyn_actions.count() == 0) return; // prevents spurious separator
   menu->AddSep();
   // add actions corresponding to dynamic list
@@ -3821,7 +3821,7 @@ void iListDataPanel::list_contextMenuRequested(Q3ListViewItem* item, const QPoin
   taiListDataNode* nd = (taiListDataNode*)item;
   if (nd == NULL) return; //TODO: could possibly be multi select
 
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
   //TODO: any for us first (ex. delete)
 
   ISelectable_PtrList sel_list;

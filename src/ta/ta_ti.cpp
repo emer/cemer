@@ -97,7 +97,7 @@ template class taPtrList<taiDataHost>;
 template class taPtrList<taiEditDataHost>;
 template class taPtrList<taiData>;
 template class taPtrList<taiAction>;
-template class taPtrList<taiMenuToolBarBase>;
+template class taPtrList<taiActions>;
 template class taPtrList<taiType>;
 template class taPtrList<gpiList_ElData>;
 template class taPtrList<iDataViewer>; // in ta_qt.h

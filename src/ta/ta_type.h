@@ -390,6 +390,8 @@ public:
   static void   	unRef(taRefN* it)	{ it->refn--; }
   static void   	Done(taRefN* it)	{ if(it->refn == 0) delete it; }
   static void		unRefDone(taRefN* it)	{ unRef(it); Done(it); }
+  static void		SetRefDone(taRefN*& var, taRefN* it) // does it fast, but safe, even for var==it
+    {if (it) Ref(it); if (var != NULL) unRefDone(var); var = it;}
 
   taRefN()		{ refn = 0; }
 protected:

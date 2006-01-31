@@ -1348,13 +1348,13 @@ void taiEditDataHost::Constr_ShowMenu() {
       this, SLOT(ShowChange(taiAction*)), 1 );
   show_menu->AddSep();
   show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 3 );
+      this, SLOT(ShowChange(taiAction*)), 2 );
   show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
+      this, SLOT(ShowChange(taiAction*)), 3 );
   show_menu->AddItem("&Read Only", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 5 );
+      this, SLOT(ShowChange(taiAction*)), 4 );
   show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 6 );
+      this, SLOT(ShowChange(taiAction*)), 5 );
   setShowValues(show); // sets toggles
 }
 
@@ -1613,10 +1613,10 @@ void taiEditDataHost::SetItemAsHandler(taiData* item, bool set_it) {
 void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
   if (show_menu == NULL) return;
   //note: nothing to do for the command items
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_READ_ONLY));
-  (*show_menu)[6]->setChecked(!(value & taMisc::NO_DETAIL));
+  (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
+  (*show_menu)[3]->setChecked(!(value & taMisc::NO_HIDDEN));
+  (*show_menu)[4]->setChecked(!(value & taMisc::NO_READ_ONLY));
+  (*show_menu)[5]->setChecked(!(value & taMisc::NO_DETAIL));
   show = value;
 }
 
@@ -1658,10 +1658,10 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
   else {
     int mask;
     switch (sender->usr_data.toInt()) {
-      case 3: mask = taMisc::NO_NORMAL; break;
-      case 4: mask = taMisc::NO_HIDDEN; break;
-      case 5: mask = taMisc::NO_READ_ONLY; break;
-      case 6: mask = taMisc::NO_DETAIL; break;
+      case 2: mask = taMisc::NO_NORMAL; break;
+      case 3: mask = taMisc::NO_HIDDEN; break;
+      case 4: mask = taMisc::NO_READ_ONLY; break;
+      case 5: mask = taMisc::NO_DETAIL; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
@@ -1705,7 +1705,7 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
-  cur_menu_but = new taiMenu(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+  cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
 	    NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu

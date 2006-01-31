@@ -114,8 +114,8 @@ class taiDataLink: public taDataLink { // interface for viewing system
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
 
-  virtual void		FillContextMenu(taiMenuToolBarBase* menu); // only override to prepend to menu
-  virtual void		FillContextMenu_EditItems(taiMenuToolBarBase* menu, int allowed) {}
+  virtual void		FillContextMenu(taiActions* menu); // only override to prepend to menu
+  virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
   virtual const QPixmap* GetIcon(int bmf, int& flags_supported) {return NULL;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
@@ -135,7 +135,7 @@ protected:
   DataLink_QObj*	qobj; // #IGNORE delegate object, when we need to connect or signal
 
   virtual void		Assert_QObj(); // makes sure the qobj is created
-  virtual void		FillContextMenu_impl(taiMenuToolBarBase* menu) {} // this is usually the one to override
+  virtual void		FillContextMenu_impl(taiActions* menu) {} // this is usually the one to override
 
   virtual ~taiDataLink(); // we only ever implicitly destroy, when 0 clients
 
@@ -186,7 +186,7 @@ protected:
      taiMimeSource* ms,  int& allowed, int& forbidden);
   override int		ChildEditAction_impl(const MemberDef* par_md, taiDataLink* child,
     taiMimeSource* ms, int ea);
-  override void		FillContextMenu_impl(taiMenuToolBarBase* menu);
+  override void		FillContextMenu_impl(taiActions* menu);
 };
 
 
@@ -323,7 +323,7 @@ public: // Interface Properties and Methods
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
-  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiMenuToolBarBase* menu);
+  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
    // normally implement the _impl
   virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
     bool for_drag) const; // delegates to the link; normally not overridden
@@ -339,8 +339,8 @@ protected:
     // do Dst op for single selected item; generally doesn't need extending
   virtual int		EditActionS_impl_(int ea);
     // do Src op for single or one of multi selected items; CUT and COPY usually just a 1 return code; we actually implement the actual clipboard transfer
-  virtual void		FillContextMenu_EditItems_impl(taiMenuToolBarBase* menu, int allowed); // might be extended
-  virtual void		FillContextMenu_impl(taiMenuToolBarBase* menu) {} // link handles most, called in FCM
+  virtual void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed); // might be extended
+  virtual void		FillContextMenu_impl(taiActions* menu) {} // link handles most, called in FCM
   virtual void		GetEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
     // get Dst ops allowed for a single item,
   virtual void		GetEditActionsS_impl_(int& allowed, int& forbidden) const;
@@ -540,7 +540,7 @@ public:
   virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl)
   iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
     // can be overriden to supply custom iToolBar
-  virtual void		FillContextMenu(taiMenuToolBarBase* menu); // s/b called by desc class, to put dynaction items onto menu
+  virtual void		FillContextMenu(taiActions* menu); // s/b called by desc class, to put dynaction items onto menu
   virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
   void			emit_SetActionsEnabled();
   void			emit_GetEditActionsEnabled(int& ea); // param is one of the taiClipData EditAction values
@@ -863,7 +863,7 @@ protected:
   bool			m_is_root; // #IGNORE
   bool 			m_has_changes;
   iDataViewer*		m_window;	// #IGNORE each project gets a window
-  taiMenuToolBarBase*		cur_menu; // for building menu
+  taiActions*		cur_menu; // for building menu
   TypeDef*		link_type; // base type for GetDataLink calls
   virtual void		Constr_Window_impl() {} // #IGNORE implement this to set the m_window instance
 //  virtual void		Constr_Menu_impl(); // #IGNORE constructs the view menu

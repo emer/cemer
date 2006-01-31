@@ -385,10 +385,10 @@ public:
   taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
-  taiMenuToolBarBase*		cur_menu;	// current menu to add to (if not otherwise spec'd)
-  taiMenuToolBarBase*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
+  taiActions*		cur_menu;	// current menu to add to (if not otherwise spec'd)
+  taiActions*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
   taiMenuBar*		menu;		// menu bar
-  taiMenuToolBarBase*		show_menu;	// Show menu bar
+  taiActions*		show_menu;	// Show menu bar
   Member_List		memb_el;	// member elements (1:1 with data_el)
   taiDataList 		data_el;	// data elements (1:1 with memb_el)
   taiDataList 		meth_el;	// method elements
