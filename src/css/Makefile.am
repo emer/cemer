@@ -64,6 +64,8 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../ta \
 	-I@srcdir@/../taiqtso
 
+libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+
 bin_PROGRAMS = css@PDP_SUFFIX@++
 
 css@PDP_SUFFIX@___DEPENDENCIES = libcss@PDP_SUFFIX@.la

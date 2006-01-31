@@ -16,7 +16,7 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-/* #undef DEBUG */
+#define DEBUG 
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
@@ -35,7 +35,7 @@
 #define HAVE_ALLOCA_H 1
 
 /* Define to 1 if your system has a working `chown' function. */
-#define HAVE_CHOWN 1
+/* #undef HAVE_CHOWN */
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -43,12 +43,6 @@
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
-
-/* Define to 1 if you have the <fcntl.h> header file. */
-#define HAVE_FCNTL_H 1
-
-/* Define to 1 if you have the <float.h> header file. */
-#define HAVE_FLOAT_H 1
 
 /* Define to 1 if you have the `floor' function. */
 #define HAVE_FLOOR 1
@@ -59,27 +53,15 @@
 /* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
 
-/* define if the GL header should be included as GL/gl.h */
-#define HAVE_GL_GL_H 1
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
 /* Define if you have a function readline library */
 #define HAVE_LIBREADLINE 1
 
-/* Define to 1 if you have the <limits.h> header file. */
-#define HAVE_LIMITS_H 1
-
-/* Define to 1 if you have the <locale.h> header file. */
-#define HAVE_LOCALE_H 1
-
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #define HAVE_MALLOC 1
-
-/* Define to 1 if you have the <malloc.h> header file. */
-#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the `memmove' function. */
 #define HAVE_MEMMOVE 1
@@ -96,17 +78,8 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
 
-/* define if the GL header should be included as OpenGL/gl.h */
-/* #undef HAVE_OPENGL_GL_H */
-
 /* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
-
-/* Define if you have POSIX threads libraries and header files. */
-/* #undef HAVE_PTHREAD */
-
-/* define if pthread's struct timespec uses nsecs and not usecs */
-/* #undef HAVE_PTHREAD_TIMESPEC_NSEC */
 
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
@@ -133,9 +106,6 @@
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #define HAVE_STDBOOL_H 1
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#define HAVE_STDDEF_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -172,9 +142,6 @@
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
 
-/* Define to 1 if you have the <sys/time.h> header file. */
-#define HAVE_SYS_TIME_H 1
-
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
@@ -192,7 +159,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "PDP++"
@@ -212,15 +179,10 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "4.0"
 
-/* Define to necessary symbol if this constant uses a non-standard name on
-   your system. */
-/* #undef PTHREAD_CREATE_JOINABLE */
-
 /* Set when building with Qt4 support for Qt3 */
 #define QT3_SUPPORT 
 
-/* Note from Brian: This switch is here, i'm not quite sure why. Used in
-   qglobal.h. */
+/* Used in qglobal.h. */
 #define QT_SHARED 
 
 /* Define as the return type of signal handlers (`int' or `void'). */
@@ -255,7 +217,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-/* #undef TA_PROFILE */
+#define TA_PROFILE 
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor
@@ -274,18 +236,9 @@
 /* When on cygwin */
 /* #undef WIN32 */
 
-/* Define to 1 if the X Window System is missing or not being used. */
-/* #undef X_DISPLAY_MISSING */
-
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 /* #undef YYTEXT_POINTER */
-
-/* Special flags for pthreads on solaris, osf, hpux */
-/* #undef _REENTRANT */
-
-/* Special flags for pthreads on aix, freebsd, darwin */
-/* #undef _THREAD_SAFE */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

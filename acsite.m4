@@ -1,3 +1,51 @@
+dnl 					       PDP_SET_BUILD_MODE
+dnl *************************************************************
+dnl Figure out what kind of build mode we are doing, and prep
+dnl the system for it
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+AC_DEFUN([PDP_SET_BUILD_MODE],[
+AC_ARG_WITH([rpm],
+	      AC_HELP_STRING([--with-rpm],
+			     [Enable the creation of rpms with `make rpm'.You must first `touch aminclude.am' and set PLATFORM_SUFFIX. ]),
+			     [rpm=true],
+			     [rpm=false])
+AC_ARG_ENABLE([gui],
+	      AC_HELP_STRING([--disable-gui],
+			     [Disable compiling with a GUI. Default is enabled]),
+			     [gui=false],
+			     [gui=true])
+AC_ARG_ENABLE([mpi],
+	      AC_HELP_STRING([--enable-mpi],
+			     [Enable the Message Passing Interface. Default is disabled.]),
+			     [mpi=true],
+			     [mpi=false])
+AC_ARG_ENABLE([debug],
+	      AC_HELP_STRING([--enable-debug],
+			     [Enable debugging. Default is disabled.]),
+			     [debug=true],
+			     [debug=false])
+AM_CONDITIONAL([RPM],[test $rpm = true])
+AM_CONDITIONAL([TA_GUI],[test $gui = true])
+AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
+AM_CONDITIONAL([MPI],[test $mpi = true])
+AM_CONDITIONAL([DEBUG],[test $debug = true])
+])
+
+
 dnl 					             PDP_PROG_CXX
 dnl *************************************************************
 dnl This macro allows us to set our own level of optimization
@@ -21,22 +69,14 @@ dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_PROG_CXX],[
 
+AC_LANG_CPLUSPLUS
 save_user_CXXFLAGS=${CXXFLAGS}
 CXXFLAGS=
 AC_PROG_CXX([cl g++])
 CXXFLAGS=${save_user_CXXFLAGS}
 
-# dnl GNU Compiler Collection is mandatory
-# AC_MSG_CHECKING([for GNU C++ compiler])
-
-# if [ ! $GXX = "yes" ]; then
-
-#   AC_MSG_WARN([GNU C++ compiler not detected.])
-#   SIM_AC_CONFIGURATION_WARNING([GNU C++ compiler not detected. The maketa type scanning tool built in our project REQUIRES the gcc -E (/lib/cpp) preprocessor that comes with it])
-
-# fi
-
-# AC_MSG_RESULT([$GXX])
+# Still enable disabling optimization
+SIM_AC_COMPILER_OPTIMIZATION
 ])
 
 
@@ -113,11 +153,11 @@ if test "$mpi" = "true"; then
 fi
 if test -z ${PDP_SUFFIX}; then 
 	AC_MSG_RESULT([none])
-	SIM_AC_CONFIGURATION_SETTING([Infixing],[Disabled. Prototype of bins\libs is pdp++\libpdp.a])
+	SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp++, libraries libpdp.a])
 else
 	AC_MSG_RESULT([yes])
 	AC_SUBST([PDP_SUFFIX])
-	SIM_AC_CONFIGURATION_SETTING([Infixing],[Enabled. Prototype of bins\libs is pdp${PDP_SUFFIX}++\libpdp${PDP_SUFFIX}.a])
+	SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp${PDP_SUFFIX}++, libraries libpdp${PDP_SUFFIX}])
 fi
 ]) dnl PDP_DETERMINE_SUFFIX
 
@@ -229,241 +269,6 @@ else
 	:
 fi
 ])dnl ACX_MPI
-
-dnl ACX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
-dnl *************************************************************
-dnl  http://autoconf-archive.cryp.to/acx_pthread.html
-dnl *************************************************************
-dnl This macro figures out how to build C programs using POSIX threads.
-dnl It sets the PTHREAD_LIBS output variable to the threads library and
-dnl linker flags, and the PTHREAD_CFLAGS output variable to any special
-dnl C compiler flags that are needed. (The user can also force certain
-dnl compiler flags/libs to be tested by setting these environment
-dnl variables.)
-dnl
-dnl Also sets PTHREAD_CC to any special C compiler that is needed for
-dnl multi-threaded programs (defaults to the value of CC otherwise).
-dnl (This is necessary on AIX to use the special cc_r compiler alias.)
-dnl
-dnl NOTE: You are assumed to not only compile your program with these
-dnl flags, but also link it with them as well. e.g. you should link
-dnl with $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS
-dnl $LIBS
-dnl
-dnl If you are only building threads programs, you may wish to use
-dnl these variables in your default LIBS, CFLAGS, and CC:
-dnl
-dnl        LIBS="$PTHREAD_LIBS $LIBS"
-dnl        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-dnl        CC="$PTHREAD_CC"
-dnl
-dnl In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute
-dnl constant has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to
-dnl that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
-dnl
-dnl ACTION-IF-FOUND is a list of shell commands to run if a threads
-dnl library is found, and ACTION-IF-NOT-FOUND is a list of commands to
-dnl run it if it is not found. If ACTION-IF-FOUND is not specified, the
-dnl default action will define HAVE_PTHREAD.
-dnl
-dnl Please let the authors know if this macro fails on any platform, or
-dnl if you have any other suggestions or comments. This macro was based
-dnl on work by SGJ on autoconf scripts for FFTW (www.fftw.org) (with
-dnl help from M. Frigo), as well as ac_pthread and hb_pthread macros
-dnl posted by Alejandro Forero Cuervo to the autoconf macro repository.
-dnl We are also grateful for the helpful feedback of numerous users.
-dnl
-dnl @category InstalledPackages
-dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
-dnl @version 2005-06-15
-dnl @license GPLWithACException
-
-AC_DEFUN([ACX_PTHREAD], [
-AC_REQUIRE([AC_CANONICAL_HOST])
-AC_LANG_SAVE
-AC_LANG_C
-acx_pthread_ok=no
-
-dnl We used to check for pthread.h first, but this fails if pthread.h
-dnl requires special compiler flags (e.g. on True64 or Sequent).
-dnl It gets checked for in the link test anyway.
-
-dnl First of all, check if the user has set any of the PTHREAD_LIBS,
-dnl etcetera environment variables, and if threads linking works using
-dnl them:
-if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
-	save_CFLAGS="$CFLAGS"
-	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-	save_LIBS="$LIBS"
-	LIBS="$PTHREAD_LIBS $LIBS"
-	AC_MSG_CHECKING([for pthread_join in LIBS=$PTHREAD_LIBS with CFLAGS=$PTHREAD_CFLAGS])
-	AC_TRY_LINK_FUNC(pthread_join, acx_pthread_ok=yes)
-	AC_MSG_RESULT($acx_pthread_ok)
-	if test x"$acx_pthread_ok" = xno; then
-		PTHREAD_LIBS=""
-		PTHREAD_CFLAGS=""
-	fi
-	LIBS="$save_LIBS"
-	CFLAGS="$save_CFLAGS"
-fi
-
-dnl *************************************************************
-dnl We must check for the threads library under a number of different
-dnl names; the ordering is very important because some systems
-dnl (e.g. DEC) have both -lpthread and -lpthreads, where one of the
-dnl libraries is broken (non-POSIX).
-
-dnl Create a list of thread flags to try.  Items starting with a "-" are
-dnl C compiler flags, and other items are library names, except for "none"
-dnl which indicates that we try without any flags at all, and "pthread-config"
-dnl which is a program returning the flags for the Pth emulation library.
-
-acx_pthread_flags="pthreads none -Kthread -kthread lthread -pthread -pthreads -mthreads pthread --thread-safe -mt pthread-config"
-
-dnl The ordering *is* (sometimes) important.  Some notes on the
-dnl individual items follow:
-
-dnl pthreads: AIX (must check this before -lpthread)
-dnl none: in case threads are in libc; should be tried before -Kthread and
-dnl       other compiler flags to prevent continual compiler warnings
-dnl -Kthread: Sequent (threads in libc, but -Kthread needed for pthread.h)
-dnl -kthread: FreeBSD kernel threads (preferred to -pthread since SMP-able)
-dnl lthread: LinuxThreads port on FreeBSD (also preferred to -pthread)
-dnl -pthread: Linux/gcc (kernel threads), BSD/gcc (userland threads)
-dnl -pthreads: Solaris/gcc
-dnl -mthreads: Mingw32/gcc, Lynx/gcc
-dnl -mt: Sun Workshop C (may only link SunOS threads [-lthread], but it
-dnl      doesn't hurt to check since this sometimes defines pthreads too;
-dnl      also defines -D_REENTRANT)
-dnl pthread: Linux, etcetera
-dnl --thread-safe: KAI C++
-dnl pthread-config: use pthread-config program (for GNU Pth library)
-
-case "${host_cpu}-${host_os}" in
-	*solaris*)
-
-	dnl On Solaris (at least, for some versions), libc contains stubbed
-	dnl (non-functional) versions of the pthreads routines, so link-based
-	dnl tests will erroneously succeed.  (We need to link with -pthread or
-	dnl -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
-	dnl a function called by this macro, so we could check for that, but
-	dnl who knows whether they'll stub that too in a future libc.)  So,
-	dnl we'll just look for -pthreads and -lpthread first:
-
-	acx_pthread_flags="-pthread -pthreads pthread -mt $acx_pthread_flags"
-	;;
-esac
-
-if test x"$acx_pthread_ok" = xno; then
-for flag in $acx_pthread_flags; do
-
-	case $flag in
-		none)
-		AC_MSG_CHECKING([whether pthreads work without any flags])
-		;;
-
-		-*)
-		AC_MSG_CHECKING([whether pthreads work with $flag])
-		PTHREAD_CFLAGS="$flag"
-		;;
-
-		pthread-config)
-		AC_CHECK_PROG(acx_pthread_config, pthread-config, yes, no)
-		if test x"$acx_pthread_config" = xno; then continue; fi
-		PTHREAD_CFLAGS="`pthread-config --cflags`"
-		PTHREAD_LIBS="`pthread-config --ldflags` `pthread-config --libs`"
-		;;
-
-		*)
-		AC_MSG_CHECKING([for the pthreads library -l$flag])
-		PTHREAD_LIBS="-l$flag"
-		;;
-	esac
-
-	save_LIBS="$LIBS"
-	save_CFLAGS="$CFLAGS"
-	LIBS="$PTHREAD_LIBS $LIBS"
-	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-
-	# Check for various functions.  We must include pthread.h,
-	# since some functions may be macros.  (On the Sequent, we
-	# need a special flag -Kthread to make this header compile.)
-	# We check for pthread_join because it is in -lpthread on IRIX
-	# while pthread_create is in libc.  We check for pthread_attr_init
-	# due to DEC craziness with -lpthreads.  We check for
-	# pthread_cleanup_push because it is one of the few pthread
-	# functions on Solaris that doesn't have a non-functional libc stub.
-	# We try pthread_create on general principles.
-	AC_TRY_LINK([#include <pthread.h>],
-		    [pthread_t th; pthread_join(th, 0);
-		     pthread_attr_init(0); pthread_cleanup_push(0, 0);
-		     pthread_create(0,0,0,0); pthread_cleanup_pop(0); ],
-		    [acx_pthread_ok=yes])
-
-	LIBS="$save_LIBS"
-	CFLAGS="$save_CFLAGS"
-
-	AC_MSG_RESULT($acx_pthread_ok)
-	if test "x$acx_pthread_ok" = xyes; then
-		break;
-	fi
-
-	PTHREAD_LIBS=""
-	PTHREAD_CFLAGS=""
-done
-fi
-
-# Various other checks:
-if test "x$acx_pthread_ok" = xyes; then
-	save_LIBS="$LIBS"
-	LIBS="$PTHREAD_LIBS $LIBS"
-	save_CFLAGS="$CFLAGS"
-	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-
-	# Detect AIX lossage: JOINABLE attribute is called UNDETACHED.
-	AC_MSG_CHECKING([for joinable pthread attribute])
-	attr_name=unknown
-	for attr in PTHREAD_CREATE_JOINABLE PTHREAD_CREATE_UNDETACHED; do
-	    AC_TRY_LINK([#include <pthread.h>], [int attr=$attr;],
-			[attr_name=$attr; break])
-	done
-	AC_MSG_RESULT($attr_name)
-	if test "$attr_name" != PTHREAD_CREATE_JOINABLE; then
-	    AC_DEFINE_UNQUOTED(PTHREAD_CREATE_JOINABLE, $attr_name,
-			       [Define to necessary symbol if this constant
-				uses a non-standard name on your system.])
-	fi
-
-	AC_MSG_CHECKING([if more special flags are required for pthreads])
-	flag=no
-	case "${host_cpu}-${host_os}" in
-	    *-aix* | *-freebsd* | *-darwin*) flag="-D_THREAD_SAFE";AC_DEFINE([_THREAD_SAFE],[1],[Special flags for pthreads on aix, freebsd, darwin]);;
-	    *solaris* | *-osf* | *-hpux*) flag="-D_REENTRANT"; AC_DEFINE([_REENTRANT],[1],[Special flags for pthreads on solaris, osf, hpux]);;
-	esac
-	AC_MSG_RESULT(${flag})
-	LIBS="$save_LIBS"
-	CFLAGS="$save_CFLAGS"
-
-	# More AIX lossage: must compile with cc_r
-	AC_CHECK_PROG(PTHREAD_CC, cc_r, cc_r, ${CC})
-else
-	PTHREAD_CC="$CC"
-fi
-
-AC_SUBST(PTHREAD_LIBS)
-AC_SUBST(PTHREAD_CFLAGS)
-AC_SUBST(PTHREAD_CC)
-
-# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
-if test x"$acx_pthread_ok" = xyes; then
-	ifelse([$1],,AC_DEFINE(HAVE_PTHREAD,1,[Define if you have POSIX threads libraries and header files.]),[$1])
-	:
-else
-	acx_pthread_ok=no
-	$2
-fi
-AC_LANG_RESTORE
-])dnl ACX_PTHREAD
 
 dnl 			              AX_INSTALL_FILES (modified)
 dnl *************************************************************
@@ -4168,185 +3973,6 @@ SIM_AC_CHECK_HEADER(
 done
 ])# SIM_AC_CHECK_HEADERS
 
-
-# SIM_AC_CHECK_SIZEOF(TYPE, [INCLUDES])
-# --------------------------------------------
-AC_DEFUN([SIM_AC_CHECK_SIZEOF],
-[
-AC_CHECK_TYPE([$1], [
-  _AC_COMPUTE_INT([sizeof ($1)],
-                  [sim_ac_bytesize],
-                  [AC_INCLUDES_DEFAULT([$2])])
-], [sim_ac_bytesize=0], [$2])
-])# SIM_AC_CHECK_SIZEOF
-
-
-# SIM_AC_HAVE_BYTESIZE_TYPES_IFELSE(if-found, if-not-found, prefix
-# --------------------
-AC_DEFUN([SIM_AC_HAVE_BYTESIZE_TYPES_IFELSE],
-[
-m4_define([SIM_AC_DEF_PREFIX], ifelse([$3], [], [COIN], [$3]))
-AC_CHECK_HEADERS([inttypes.h stdint.h sys/types.h stddef.h])
-AC_MSG_CHECKING([standard bytesize typedefs])
-AC_TRY_COMPILE([
-#include <stdio.h>
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#else /* !HAVE_INTTYPES_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
-#endif /* !HAVE_INTTYPES_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif /* HAVE_STDDEF_H */
-], [
-  int8_t int8var;
-  uint8_t uint8var;
-  int16_t int16var;
-  uint16_t uint16var;
-  int32_t int32var;
-  uint32_t uint32var;
-  int64_t int64var;
-  uint64_t uint64var;
-  intptr_t intptrvar;
-  uintptr_t uintptrvar;
-],
-[sim_ac_have_have_bytesize_types=true],
-[sim_ac_have_have_bytesize_types=false])
-
-if $sim_ac_have_have_bytesize_types; then
-  AC_MSG_RESULT([available])
-  AC_DEFINE_UNQUOTED([HAVE_INT8_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[]_INT8_T, [int8_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_UINT8_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[]_UINT8_T, [uint8_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_INT16_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[]_INT16_T, [int16_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_UINT16_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[]_UINT16_T, [uint16_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_INT32_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[_INT32_T], [int32_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_UINT32_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[_UINT32_T], [uint32_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_INT64_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[_INT64_T], [int64_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_UINT64_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[_UINT64_T], [uint64_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_INTPTR_T], [1], [define this if the type is available on the system])
-  AC_DEFINE(SIM_AC_DEF_PREFIX[_INTPTR_T], [intptr_t], [define this to a type of the indicated bitwidth])
-  AC_DEFINE_UNQUOTED([HAVE_UINTPTR_T], [1], [define this if the type is available on the system])
-  AC_DEFINE_UNQUOTED(SIM_AC_DEF_PREFIX[_UINTPTR_T], [uintptr_t], [define this to a type of the indicated bitwidth])
-  $1
-else
-  AC_MSG_RESULT([not available])
-  $2
-fi
-])# SIM_AC_HAVE_BYTESIZE_TYPES_IFELSE
-
-# SIM_AC_BYTESIZE_TYPE(TYPEDEFTYPE, BYTESIZE, ALTERNATE_TYPELIST,
-#                     [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
-# ----------------------------------------------------------
-AC_DEFUN([SIM_AC_BYTESIZE_TYPE],
-[sim_ac_searching=true
-m4_define([SIM_AC_DEF_PREFIX], ifelse([$6], [], [COIN], [$6]))
-AC_MSG_CHECKING([for $1 type or equivalent])
-for sim_ac_type in $1 $3
-do
-  if $sim_ac_searching; then
-    AC_TRY_COMPILE([
-#include <stdio.h>
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#else /* !HAVE_INTTYPES_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
-#endif /* !HAVE_INTTYPES_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif /* HAVE_STDDEF_H */
-], [
-      /* establish that type '$1' is actually usable before trying to
-         make a failure-dependend compilation test case using it. */
-      $sim_ac_type variable = 0;
-], [
-      AC_TRY_COMPILE([
-#include <stdio.h>
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#else /* !HAVE_INTTYPES_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
-#endif /* !HAVE_INTTYPES_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif /* HAVE_STDDEF_H */
-], [
-      int switchval = 0;
-      /* trick compiler to abort with error if sizeof($1) equals $2 */
-      switch ( switchval ) {
-      case sizeof($sim_ac_type): break;
-      case $2: break;
-      }
-], [
-      # compile time success means we *haven't* found the type of right size
-      :
-], [
-      # constructed switch became illegal C code - meaning we have found a
-      # type that has desired size
-      AC_MSG_RESULT([$sim_ac_type])
-      sim_ac_searching=false
-      if test "$sim_ac_type" = "$1"; then
-        AC_DEFINE_UNQUOTED(SIM_AS_TR_CPP(have_$1), 1, [define this if the type is available on the system])
-      fi
-      AC_DEFINE_UNQUOTED(SIM_AC_DEF_PREFIX[]SIM_AS_TR_CPP(_$1), $sim_ac_type, [define this to a type of the indicated bitwidth])
-])])
-  fi
-done
-
-if $sim_ac_searching; then
-  AC_MSG_RESULT([no type found])
-  ifelse([$5], , :, [$5])
-else
-  # ac_msg_result invoked above
-  ifelse([$4], , :, [$4])
-fi
-])# SIM_AC_BYTESIZE_TYPE
-
-# SIM_AC_DEFINE_BYTESIZE_TYPES
-# ----------------------------------------------------------
-# 
-AC_DEFUN([SIM_AC_DEFINE_BYTESIZE_TYPES], [
-SIM_AC_HAVE_BYTESIZE_TYPES_IFELSE([
-], [
-  SIM_AC_BYTESIZE_TYPE(int8_t, 1, [char], [], AC_MSG_ERROR([could not find 8-bit type]), $1)
-  SIM_AC_BYTESIZE_TYPE(uint8_t, 1, [u_int8_t "unsigned char"], [], AC_MSG_ERROR([could not find unsigned 8-bit type]), $1)
-
-  SIM_AC_BYTESIZE_TYPE(int16_t, 2, [short int], [], AC_MSG_ERROR([could not find 16-bit type]), $1)
-  SIM_AC_BYTESIZE_TYPE(uint16_t, 2, [u_int16_t "unsigned short" "unsigned int"], [], AC_MSG_ERROR([could not find unsigned 16-bit type]), $1)
-
-  SIM_AC_BYTESIZE_TYPE(int32_t, 4, [int long], [], AC_MSG_ERROR([could not find 32-bit type]), $1)
-  SIM_AC_BYTESIZE_TYPE(uint32_t, 4, [u_int32_t "unsigned int" "unsigned long"], [], AC_MSG_ERROR([could not find unsigned 32-bit type]), $1)
-
-  SIM_AC_BYTESIZE_TYPE(int64_t, 8, [long int "long long" __int64], [], AC_MSG_WARN([could not find 64-bit type]), $1)
-  SIM_AC_BYTESIZE_TYPE(uint64_t, 8, [u_int64_t "unsigned long" "unsigned int" "unsigned long long" "unsigned __int64"], [], AC_MSG_WARN([could not find unsigned 64-bit type]), $1)
-
-  SIM_AC_BYTESIZE_TYPE(intptr_t, sizeof(void *), [int long "long long" __int64], [], AC_MSG_WARN([could not find int-pointer type]), $1)
-  SIM_AC_BYTESIZE_TYPE(uintptr_t, sizeof(void *), [u_intptr_t "_W64 unsigned int" "unsigned int" "unsigned long" u_int64_t "unsigned long long" "unsigned __int64"], [], AC_MSG_WARN([could not find unsigned int-pointer type]), $1)
-], [$1])
-])# SIM_AC_DEFINE_BYTESIZE_TYPES
-
 #   Use this file to store miscellaneous macros related to checking
 #   compiler features.
 
@@ -4423,432 +4049,74 @@ AC_LANG(C++)
 SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET([$1], [$2], [$3], [$4])
 AC_LANG_RESTORE
 ])
-dnl @synopsis AX_CREATE_PKGCONFIG_INFO [(outputfile, [requires [,libs [,summary]]])]
-dnl
-dnl defaults:
-dnl
-dnl   $1 = $PACKAGE_NAME.pc
-dnl   $2 = (empty)
-dnl   $3 = $PACKAGE_LIBS $LIBS (as set at that point in configure.ac)
-dnl   $4 = $PACKAGE_SUMMARY (or $1 Library)
-dnl   $5 = $CPPFLAGS $PACKAGE_CFLAGS (as set at the point in configure.ac)
-dnl
-dnl   PACKAGE_NAME defaults to $PACKAGE if not set.
-dnl   PACKAGE_LIBS defaults to -l$PACKAGE_NAME if not set.
-dnl
-dnl the resulting file is called $PACKAGE.pc.in / $PACKAGE.pc
-dnl
-dnl You will find this macro most useful in conjunction with
-dnl ax_spec_defaults that can read good initializers from the .spec
-dnl file. In consequencd, most of the generatable installable stuff can
-dnl be made from information being updated in a single place for the
-dnl whole project.
-dnl
-dnl @category InstalledPackages
-dnl @author Guido Draheim <guidod@gmx.de>
-dnl @version 2003-10-19
-dnl @license GPLWithACException
-
-AC_DEFUN([AX_CREATE_PKGCONFIG_INFO],[dnl
-AS_VAR_PUSHDEF([PKGCONFIG_suffix],[ax_create_pkgconfig_suffix])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_libdir],[ax_create_pkgconfig_libdir])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_libfile],[ax_create_pkgconfig_libfile])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_libname],[ax_create_pkgconfig_libname])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_version],[ax_create_pkgconfig_version])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_description],[ax_create_pkgconfig_description])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_requires],[ax_create_pkgconfig_requires])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_pkglibs],[ax_create_pkgconfig_pkglibs])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_libs],[ax_create_pkgconfig_libs])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_cppflags],[ax_create_pkgconfig_cppflags])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_generate],[ax_create_pkgconfig_generate])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_src_libdir],[ax_create_pkgconfig_src_libdir])dnl
-AS_VAR_PUSHDEF([PKGCONFIG_src_headers],[ax_create_pkgconfig_src_headers])dnl
-
-# we need the expanded forms...
-test "x$prefix" = xNONE && prefix=$ac_default_prefix
-test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
-
-AC_MSG_CHECKING(our pkgconfig libname)
-test ".$PKGCONFIG_libname" != "." || \
-PKGCONFIG_libname="ifelse($1,,${PACKAGE_NAME},`basename $1 .pc`)"
-test ".$PKGCONFIG_libname" != "." || \
-PKGCONFIG_libname="$PACKAGE"
-PKGCONFIG_libname=`eval echo "$PKGCONFIG_libname"`
-PKGCONFIG_libname=`eval echo "$PKGCONFIG_libname"`
-AC_MSG_RESULT($PKGCONFIG_libname)
-
-AC_MSG_CHECKING(our pkgconfig version)
-test ".$PKGCONFIG_version" != "." || \
-PKGCONFIG_version="${PACKAGE_VERSION}"
-test ".$PKGCONFIG_version" != "." || \
-PKGCONFIG_version="$VERSION"
-PKGCONFIG_version=`eval echo "$PKGCONFIG_version"`
-PKGCONFIG_version=`eval echo "$PKGCONFIG_version"`
-AC_MSG_RESULT($PKGCONFIG_version)
-
-AC_MSG_CHECKING(our pkgconfig_libdir)
-test ".$pkgconfig_libdir" = "." && \
-pkgconfig_libdir='${libdir}/pkgconfig'
-PKGCONFIG_libdir=`eval echo "$pkgconfig_libdir"`
-PKGCONFIG_libdir=`eval echo "$PKGCONFIG_libdir"`
-PKGCONFIG_libdir=`eval echo "$PKGCONFIG_libdir"`
-AC_MSG_RESULT($pkgconfig_libdir)
-test "$pkgconfig_libdir" != "$PKGCONFIG_libdir" && (
-AC_MSG_RESULT(expanded our pkgconfig_libdir... $PKGCONFIG_libdir))
-AC_SUBST([pkgconfig_libdir])
-
-AC_MSG_CHECKING(our pkgconfig_libfile)
-test ".$pkgconfig_libfile" != "." || \
-pkgconfig_libfile="ifelse($1,,$PKGCONFIG_libname.pc,`basename $1`)"
-PKGCONFIG_libfile=`eval echo "$pkgconfig_libfile"`
-PKGCONFIG_libfile=`eval echo "$PKGCONFIG_libfile"`
-AC_MSG_RESULT($pkgconfig_libfile)
-test "$pkgconfig_libfile" != "$PKGCONFIG_libfile" && (
-AC_MSG_RESULT(expanded our pkgconfig_libfile... $PKGCONFIG_libfile))
-AC_SUBST([pkgconfig_libfile])
-
-AC_MSG_CHECKING(our package / suffix)
-PKGCONFIG_suffix="$program_suffix"
-test ".$PKGCONFIG_suffix" != .NONE || PKGCONFIG_suffix=""
-AC_MSG_RESULT(${PACKAGE_NAME} / ${PKGCONFIG_suffix})
-
-AC_MSG_CHECKING(our pkgconfig description)
-PKGCONFIG_description="ifelse($4,,$PACKAGE_SUMMARY,$4)"
-test ".$PKGCONFIG_description" != "." || \
-PKGCONFIG_description="$PKGCONFIG_libname Library"
-PKGCONFIG_description=`eval echo "$PKGCONFIG_description"`
-PKGCONFIG_description=`eval echo "$PKGCONFIG_description"`
-AC_MSG_RESULT($PKGCONFIG_description)
-
-AC_MSG_CHECKING(our pkgconfig requires)
-PKGCONFIG_requires="ifelse($2,,$PACKAGE_REQUIRES,$2)"
-PKGCONFIG_requires=`eval echo "$PKGCONFIG_requires"`
-PKGCONFIG_requires=`eval echo "$PKGCONFIG_requires"`
-AC_MSG_RESULT($PKGCONFIG_requires)
-
-AC_MSG_CHECKING(our pkgconfig ext libs)
-PKGCONFIG_pkglibs="$PACKAGE_LIBS"
-test ".$PKGCONFIG_pkglibs" != "." || PKGCONFIG_pkglibs="-l$PKGCONFIG_libname"
-PKGCONFIG_libs="ifelse($3,,$PKGCONFIG_pkglibs $LIBS,$3)"
-PKGCONFIG_libs=`eval echo "$PKGCONFIG_libs"`
-PKGCONFIG_libs=`eval echo "$PKGCONFIG_libs"`
-AC_MSG_RESULT($PKGCONFIG_libs)
-
-AC_MSG_CHECKING(our pkgconfig cppflags)
-PKGCONFIG_cppflags="ifelse($5,,$CPPFLAGS $PACKAGE_CFLAGS,$5)"
-PKGCONFIG_cppflags=`eval echo "$PKGCONFIG_cppflags"`
-PKGCONFIG_cppflags=`eval echo "$PKGCONFIG_cppflags"`
-AC_MSG_RESULT($PKGCONFIG_cppflags)
-
-test ".$PKGCONFIG_generate" != "." || \
-PKGCONFIG_generate="ifelse($1,,$PKGCONFIG_libname.pc,$1)"
-PKGCONFIG_generate=`eval echo "$PKGCONFIG_generate"`
-PKGCONFIG_generate=`eval echo "$PKGCONFIG_generate"`
-test "$pkgconfig_libfile" != "$PKGCONFIG_generate" && (
-AC_MSG_RESULT(generate the pkgconfig later... $PKGCONFIG_generate))
-
-if test ".$PKGCONFIG_src_libdir" = "." ; then
-PKGCONFIG_src_libdir=`pwd`
-PKGCONFIG_src_libdir=`AS_DIRNAME("$PKGCONFIG_src_libdir/$PKGCONFIG_generate")`
-test ! -d $PKGCONFIG_src_libdir/src || \
-PKGCONFIG_src_libdir="$PKGCONFIG_src_libdir/src"
-case ".$objdir" in
-*libs) PKGCONFIG_src_libdir="$PKGCONFIG_src_libdir/$objdir" ;; esac
-AC_MSG_RESULT(noninstalled pkgconfig -L $PKGCONFIG_src_libdir)
-fi
-
-if test ".$PKGCONFIG_src_headers" = "." ; then
-PKGCONFIG_src_headers=`pwd`
-v="$ac_top_srcdir" ;
-test ".$v" != "." || v="$ax_spec_dir"
-test ".$v" != "." || v="$srcdir"
-case "$v" in /*) PKG_CONFIG_src_headers="" ;; esac
-PKGCONFIG_src_headers=`AS_DIRNAME("$PKGCONFIG_src_headers/$v/x")`
-test ! -d $PKGCONFIG_src_headers/incl[]ude || \
-PKGCONFIG_src_headers="$PKGCONFIG_src_headers/incl[]ude"
-AC_MSG_RESULT(noninstalled pkgconfig -I $PKGCONFIG_src_headers)
-fi
 
 
-dnl AC_CONFIG_COMMANDS crap disallows to use $PKGCONFIG_libfile here...
-AC_CONFIG_COMMANDS([$ax_create_pkgconfig_generate],[
-pkgconfig_generate="$ax_create_pkgconfig_generate"
-if test ! -f "$pkgconfig_generate.in"
-then generate="true"
-elif grep ' generated by configure ' $pkgconfig_generate.in >/dev/null
-then generate="true"
-else generate="false";
-fi
-if $generate ; then
-AC_MSG_NOTICE(creating $pkgconfig_generate.in)
-cat > $pkgconfig_generate.in <<AXEOF
-# generated by configure / remove this line to disable regeneration
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-bindir=@bindir@
-libdir=@libdir@
-datadir=@datadir@
-sysconfdir=@sysconfdir@
-includedir=@includedir@
-package=@PACKAGE@
-suffix=@suffix@
-
-Name: @PACKAGE_NAME@
-Description: @PACKAGE_DESCRIPTION@
-Version: @PACKAGE_VERSION@
-Requires: @PACKAGE_REQUIRES@
-Libs: -L\${libdir} @LIBS@
-Cflags: -I\${includedir} @CPPFLAGS@
-AXEOF
-fi # DONE generate $pkgconfig_generate.in
-AC_MSG_NOTICE(creating $pkgconfig_generate)
-cat >conftest.sed <<AXEOF
-s|@prefix@|${pkgconfig_prefix}|
-s|@exec_prefix@|${pkgconfig_execprefix}|
-s|@bindir@|${pkgconfig_bindir}|
-s|@libdir@|${pkgconfig_libdir}|
-s|@datadir@|${pkgconfig_datadir}|
-s|@sysconfdir@|${pkgconfig_sysconfdir}|
-s|@includedir@|${pkgconfig_includedir}|
-s|@suffix@|${pkgconfig_suffix}|
-s|@PACKAGE@|${pkgconfig_package}|
-s|@PACKAGE_NAME@|${pkgconfig_libname}|
-s|@PACKAGE_DESCRIPTION@|${pkgconfig_description}|
-s|@PACKAGE_VERSION@|${pkgconfig_version}|
-s|@PACKAGE_REQUIRES@|${pkgconfig_requires}|
-s|@LIBS@|${pkgconfig_libs}|
-s|@CPPFLAGS@|${pkgconfig_cppflags}|
-AXEOF
-sed -f conftest.sed  $pkgconfig_generate.in > $pkgconfig_generate
-if test ! -s $pkgconfig_generate ; then
-    AC_MSG_ERROR([$pkgconfig_generate is empty])
-fi ; rm conftest.sed # DONE generate $pkgconfig_generate
-pkgconfig_uninstalled=`echo $pkgconfig_generate |sed 's/.pc$/-uninstalled.pc/'`
-AC_MSG_NOTICE(creating $pkgconfig_uninstalled)
-cat >conftest.sed <<AXEOF
-s|@prefix@|${pkgconfig_prefix}|
-s|@exec_prefix@|${pkgconfig_execprefix}|
-s|@bindir@|${pkgconfig_bindir}|
-s|@libdir@|${pkgconfig_src_libdir}|
-s|@datadir@|${pkgconfig_datadir}|
-s|@sysconfdir@|${pkgconfig_sysconfdir}|
-s|@includedir@|${pkgconfig_src_headers}|
-s|@suffix@|${pkgconfig_suffix}|
-s|@PACKAGE@|${pkgconfig_package}|
-s|@PACKAGE_NAME@|${pkgconfig_libname}|
-s|@PACKAGE_DESCRIPTION@|${pkgconfig_description}|
-s|@PACKAGE_VERSION@|${pkgconfig_version}|
-s|@PACKAGE_REQUIRES@|${pkgconfig_requires}|
-s|@LIBS@|${pkgconfig_libs}|
-s|@CPPFLAGS@|${pkgconfig_cppflags}|
-AXEOF
-sed -f conftest.sed $pkgconfig_generate.in > $pkgconfig_uninstalled
-if test ! -s $pkgconfig_uninstalled ; then
-    AC_MSG_ERROR([$pkgconfig_uninstalled is empty])
-fi ; rm conftest.sed # DONE generate $pkgconfig_uninstalled
-           pkgconfig_requires_add=`echo ${pkgconfig_requires}`
-if test ".$pkgconfig_requires_add" != "." ; then
-           pkgconfig_requires_add="pkg-config $pkgconfig_requires_add"
-    else   pkgconfig_requires_add=":" ; fi
-pkgconfig_uninstalled=`echo $pkgconfig_generate |sed 's/.pc$/-uninstalled.sh/'`
-AC_MSG_NOTICE(creating $pkgconfig_uninstalled)
-cat >conftest.sed <<AXEOF
-s|@prefix@|\"${pkgconfig_prefix}\"|
-s|@exec_prefix@|\"${pkgconfig_execprefix}\"|
-s|@bindir@|\"${pkgconfig_bindir}\"|
-s|@libdir@|\"${pkgconfig_src_libdir}\"|
-s|@datadir@|\"${pkgconfig_datadir}\"|
-s|@sysconfdir@|\"${pkgconfig_sysconfdir}\"|
-s|@includedir@|\"${pkgconfig_src_headers}\"|
-s|@suffix@|\"${pkgconfig_suffix}\"|
-s|@PACKAGE@|\"${pkgconfig_package}\"|
-s|@PACKAGE_NAME@|\"${pkgconfig_libname}\"|
-s|@PACKAGE_DESCRIPTION@|\"${pkgconfig_description}\"|
-s|@PACKAGE_VERSION@|\"${pkgconfig_version}\"|
-s|@PACKAGE_REQUIRES@|\"${pkgconfig_requires}\"|
-s|@LIBS@|\"${pkgconfig_libs}\"|
-s|@CPPFLAGS@|\"${pkgconfig_cppflags}\"|
-s>Name:>for option\\; do case \"\$option\" in --list-all|--name) echo >
-s>Description: *>\\;\\; --help) pkg-config --help \\; echo Buildscript Of >
-s>Version: *>\\;\\; --modversion|--version) echo >
-s>Requires:>\\;\\; --requires) echo $pkgconfig_requires_add>
-s>Libs: *>\\;\\; --libs) echo >
-s>Cflags: *>\\;\\; --cflags) echo >
-/--libs)/a\\
-       $pkgconfig_requires_add
-/--cflags)/a\\
-       $pkgconfig_requires_add\\
-;; --variable=*) eval echo '\$'\`echo \$option | sed -e 's/.*=//'\`\\
-;; --uninstalled) exit 0 \\
-;; *) ;; esac done
-AXEOF
-sed -f conftest.sed  $pkgconfig_generate.in > $pkgconfig_uninstalled
-if test ! -s $pkgconfig_uninstalled ; then
-    AC_MSG_ERROR([$pkgconfig_uninstalled is empty])
-fi ; rm conftest.sed # DONE generate $pkgconfig_uninstalled
-],[
-dnl AC_CONFIG_COMMANDS crap, the AS_PUSHVAR defines are invalid here...
-ax_create_pkgconfig_generate="$ax_create_pkgconfig_generate"
-pkgconfig_prefix='$prefix'
-pkgconfig_execprefix='$exec_prefix'
-pkgconfig_bindir='$bindir'
-pkgconfig_libdir='$libdir'
-pkgconfig_includedir='$includedir'
-pkgconfig_datadir='$datadir'
-pkgconfig_sysconfdir='$sysconfdir'
-pkgconfig_suffix='$ax_create_pkgconfig_suffix'
-pkgconfig_package='$PACKAGE_NAME'
-pkgconfig_libname='$ax_create_pkgconfig_libname'
-pkgconfig_description='$ax_create_pkgconfig_description'
-pkgconfig_version='$ax_create_pkgconfig_version'
-pkgconfig_requires='$ax_create_pkgconfig_requires'
-pkgconfig_libs='$ax_create_pkgconfig_libs'
-pkgconfig_cppflags='$ax_create_pkgconfig_cppflags'
-pkgconfig_src_libdir='$ax_create_pkgconfig_src_libdir'
-pkgconfig_src_headers='$ax_create_pkgconfig_src_headers'
-])dnl
-AS_VAR_POPDEF([PKGCONFIG_suffix])dnl
-AS_VAR_POPDEF([PKGCONFIG_libdir])dnl
-AS_VAR_POPDEF([PKGCONFIG_libfile])dnl
-AS_VAR_POPDEF([PKGCONFIG_libname])dnl
-AS_VAR_POPDEF([PKGCONFIG_version])dnl
-AS_VAR_POPDEF([PKGCONFIG_description])dnl
-AS_VAR_POPDEF([PKGCONFIG_requires])dnl
-AS_VAR_POPDEF([PKGCONFIG_pkglibs])dnl
-AS_VAR_POPDEF([PKGCONFIG_libs])dnl
-AS_VAR_POPDEF([PKGCONFIG_cppflags])dnl
-AS_VAR_POPDEF([PKGCONFIG_generate])dnl
-AS_VAR_POPDEF([PKGCONFIG_src_libdir])dnl
-AS_VAR_POPDEF([PKGCONFIG_src_headers])dnl
-])
-
-# pkg.m4 - Macros to locate and utilise pkg-config.            -*- Autoconf -*-
-# 
-# Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
+# *******************************************************************
+# SIM_AC_RELATIVE_SRC_DIR
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+# Sets $sim_ac_relative_src_dir to the relative path to the source
+# directory, and $sim_ac_relative_src_dir_p to true or false depending
+# on whether a relative path can be used or not (in case of different
+# drives).
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-#
-# As a special exception to the GNU General Public License, if you
-# distribute this file as part of a program that contains a
-# configuration script generated by Autoconf, you may include it under
-# the same distribution terms that you use for the rest of that program.
-
-# PKG_PROG_PKG_CONFIG([MIN-VERSION])
-# ----------------------------------
-AC_DEFUN([PKG_PROG_PKG_CONFIG],
-[m4_pattern_forbid([^_?PKG_[A-Z_]+$])
-m4_pattern_allow([^PKG_CONFIG(_PATH)?$])
-AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])dnl
-if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
-	AC_PATH_TOOL([PKG_CONFIG], [pkg-config])
-fi
-if test -n "$PKG_CONFIG"; then
-	_pkg_min_version=m4_ifval([$1], [$1], [0.9.0])
-	AC_MSG_CHECKING([pkg-config is at least version $_pkg_min_version])
-	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
-		AC_MSG_RESULT([yes])
-	else
-		AC_MSG_RESULT([no])
-		PKG_CONFIG=""
-	fi
-		
-fi[]dnl
-])# PKG_PROG_PKG_CONFIG
-
-# PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
-#
-# Check to see whether a particular set of modules exists.  Similar
-# to PKG_CHECK_MODULES(), but does not set variables or print errors.
-#
-#
-# Similar to PKG_CHECK_MODULES, make sure that the first instance of
-# this or PKG_CHECK_MODULES is called, or make sure to call
-# PKG_CHECK_EXISTS manually
-# --------------------------------------------------------------
-AC_DEFUN([PKG_CHECK_EXISTS],
-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
-if test -n "$PKG_CONFIG" && \
-    AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$1"]); then
-  m4_ifval([$2], [$2], [:])
-m4_ifvaln([$3], [else
-  $3])dnl
-fi])
+# Author:
+#   Lars J. Aas <larsa@sim.no>
 
 
-# _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
-# ---------------------------------------------
-m4_define([_PKG_CONFIG],
-[if test -n "$PKG_CONFIG"; then
-        PKG_CHECK_EXISTS([$3],
-                         [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/null`],
-			 [pkg_failed=yes])
+AC_DEFUN([SIM_AC_RELATIVE_SRC_DIR], [
+
+temp_build_dir=`pwd`
+temp_src_dir=`cd "$srcdir"; pwd`
+
+temp_up=""
+temp_down=""
+
+while test "$temp_build_dir" != "$temp_src_dir"; do
+  srclen=`echo "$temp_src_dir" | wc -c`
+  buildlen=`echo "$temp_build_dir" | wc -c`
+  if test $srclen -gt $buildlen; then
+    # cut source tail, insert into temp_up
+    temp_src_tail=`echo "$temp_src_dir" | sed -e 's,.*/,,g'`
+    temp_src_dir=`echo "$temp_src_dir" | sed -e 's,/[[^/]]*\$,,g'`
+    if test x"$temp_up" = "x"; then
+      temp_up="$temp_src_tail"
+    else
+      temp_up="$temp_src_tail/$temp_up"
+    fi
+  else
+    # cut build tail, increase temp_down
+    temp_build_dir=`echo "$temp_build_dir" | sed -e 's,/[[^/]]*\$,,g'`
+    if test x"$temp_down" = "x"; then
+      temp_down=..
+    else
+      temp_down="../$temp_down"
+    fi
+  fi
+done
+
+if test x"$temp_down" = "x"; then
+  if test x"$temp_up" = "x"; then
+    sim_ac_relative_src_dir="."
+  else
+    sim_ac_relative_src_dir="$temp_up"
+  fi
 else
-	pkg_failed=untried
-fi[]dnl
-])# _PKG_CONFIG
+  if test x"$temp_up" = "x"; then
+    sim_ac_relative_src_dir="$temp_down"
+  else
+    sim_ac_relative_src_dir="$temp_down/$temp_up"
+  fi
+fi
 
-# PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
-# [ACTION-IF-NOT-FOUND])
-#
-#
-# Note that if there is a possibility the first call to
-# PKG_CHECK_MODULES might not happen, you should be sure to include an
-# explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
-#
-#
-# --------------------------------------------------------------
-AC_DEFUN([PKG_CHECK_MODULES],
-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
-AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
-AC_ARG_VAR([$1][_LIBS], [linker flags for $1, overriding pkg-config])dnl
-
-pkg_failed=no
-AC_MSG_CHECKING([for $1])
-
-_PKG_CONFIG([$1][_CFLAGS], [cflags], [$2])
-_PKG_CONFIG([$1][_LIBS], [libs], [$2])
-
-if test $pkg_failed = yes; then
-	$1[]_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "$2"`
-	# Put the nasty error message in config.log where it belongs
-	echo "$$1[]_PKG_ERRORS" 1>&AS_MESSAGE_LOG_FD
-
-	ifelse([$4], , [AC_MSG_ERROR(dnl
-[Package requirements ($2) were not met.
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively you may set the $1_CFLAGS and $1_LIBS environment variables
-to avoid the need to call pkg-config.  See the pkg-config man page for
-more details.])],
-		[$4])
-elif test $pkg_failed = untried; then
-	ifelse([$4], , [AC_MSG_FAILURE(dnl
-[The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively you may set the $1_CFLAGS and $1_LIBS environment variables
-to avoid the need to call pkg-config.  See the pkg-config man page for
-more details.
-
-To get pkg-config, see <http://www.freedesktop.org/software/pkgconfig>.])],
-		[$4])
+# this gives false positives on windows, but that's ok for now...
+if test -f $sim_ac_relative_src_dir/$ac_unique_file; then
+  sim_ac_relative_src_dir_p=true;
 else
-	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
-	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
-	ifelse([$3], , :, [$3])
-fi[]dnl
-])# PKG_CHECK_MODULES
+  sim_ac_relative_src_dir_p=false;
+fi
+
+AC_SUBST(ac_unique_file) # useful to have to check the relative path
+AC_SUBST(sim_ac_relative_src_dir)
+AC_SUBST(sim_ac_relative_src_dir_p)
+
+]) # SIM_AC_RELATIVE_SRC_DIR
