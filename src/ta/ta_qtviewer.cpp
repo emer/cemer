@@ -32,6 +32,7 @@
 #include <qapplication.h>
 #include <qbuttongroup.h>
 #include <qclipboard.h>
+#include <QCustomEvent>
 #include <qdialog.h>
 #include <qevent.h>
 #include <Q3HButtonGroup>
@@ -1398,10 +1399,11 @@ iToolBar* iDataViewer::Constr_ToolBar(ToolBar* tb, String name) {
   return rval;
 }
 
-void iDataViewer::customEvent(QCustomEvent* ev) {
+void iDataViewer::customEvent(QEvent* ev) {
   switch ((int)ev->type()) {
   case TA_QT_EVENT_SEL_CHANGED:
-    selectionChangedEvent(ev);
+    //Qt4: hopefully this is a QCustomEvent!!!
+    selectionChangedEvent((QCustomEvent*)ev);
     break;
   default:
     inherited::customEvent(ev);
@@ -2942,7 +2944,7 @@ iDataPanel* iTabBar::panel(int idx) {
 
 int iTabBar::addTab(iDataPanel* panel) {
   int idx = QTabBar::addTab("");
-  QVariant data((intptr_t)0);
+  QVariant data((intptr_t)panel);
   setTabData(idx, data);
   if (panel != NULL)
     SetPanel(idx, panel);
@@ -3010,7 +3012,7 @@ void iTabView::init() {
   tbPanels->addTab(pt); */
   
   tbPanels->addTab("");
-  connect(tbPanels, SIGNAL(selected(int)),
+  connect(tbPanels, SIGNAL(currentChanged(int)),
       this, SLOT(panelSelected(int)) );
 }
 
@@ -3151,8 +3153,7 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
 
 void iTabView::SetPanel(iDataPanel* panel) {
   wsPanels->raiseWidget(panel);
-  iDataPanel* dp = tbPanels->panel(tbPanels->currentIndex()); //note: uses tabId, not index
-  if (dp != NULL) tbPanels->SetPanel(tbPanels->currentIndex(), panel);
+  tbPanels->SetPanel(tbPanels->currentIndex(), panel);
 }
 
 void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed

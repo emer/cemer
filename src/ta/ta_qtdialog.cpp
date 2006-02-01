@@ -48,7 +48,7 @@
 #include <qpalette.h>
 #include <QList>
 #include <qpushbutton.h>
-#include <Q3ScrollView>
+#include <QScrollArea>
 #include <qsizepolicy.h>
 #include <qstring.h>
 #include <Q3StyleSheet>
@@ -404,16 +404,23 @@ void Dialog::resizeEvent(QResizeEvent* ev) {
     mcentralWidget->resize(size());
 }
 
-void Dialog::setCentralWidget(Q3ScrollView* widg) {
+void Dialog::setCentralWidget(QWidget* widg) {
   mcentralWidget = widg;
-  widg->reparent(this, QPoint(0,0), false);
+  widg->resize(size());
+  widg->setParent(this);
+  widg->show(); // layout should occur here
+  
+/*  
+  
+//Qt3  widg->reparent(this, QPoint(0,0), false);
+  widg->setParent(this);
   widg->show(); // layout should occur here
   qApp->processEvents();
   // size ourself to exactly fit the widget contents, except constrain widget to be our max size
   // note: the 4's are tweak factors for scrollbox
-  QSize sz = QSize(widg->contentsWidth() + 4, widg->contentsHeight() + 4).boundedTo(maximumSize());
-  setMinimumSize(sz);
-  resize(sz);
+//  QSize sz = QSize(widg->contentsWidth() + 4, widg->contentsHeight() + 4).boundedTo(maximumSize());
+//  setMinimumSize(sz);
+//  resize(sz); */
 }
 
 //////////////////////////////////
@@ -486,10 +493,10 @@ void EditDataPanel::resizeEvent(QResizeEvent* ev) {
     mcentralWidget->resize(size());
 }
 
-void EditDataPanel::setCentralWidget(Q3ScrollView* widg) {
+void EditDataPanel::setCentralWidget(QWidget* widg) {
   mcentralWidget = widg;
   widg->resize(size());
-  widg->reparent(this, QPoint(0,0), false);
+  widg->setParent(this);
   widg->show(); // layout should occur here
 //nn  qApp->processEvents();
 }
@@ -745,10 +752,11 @@ void taiDataHost::Constr_impl() {
 void taiDataHost::Constr_Widget() {
   if (mwidget != NULL) return;
 //TESTING:
-  scrDialog = new Q3ScrollView();
-  scrDialog->setResizePolicy(Q3ScrollView::AutoOneFit);
-  mwidget = new QWidget(scrDialog->viewport());
-  scrDialog->addChild(mwidget);
+  scrDialog = new QScrollArea();
+//Qt3  scrDialog->setResizePolicy(Q3ScrollView::AutoOneFit);
+  scrDialog->setWidgetResizable(true); // TODO: confirm
+  mwidget = new QWidget();
+  scrDialog->setWidget(mwidget);
   if (bg_color != NULL) {
     widget()->setPaletteBackgroundColor(*bg_color);
   }
@@ -782,11 +790,12 @@ void taiDataHost::Constr_Box() {
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
-  scrBody = new Q3ScrollView(scr_par);
+  scrBody = new QScrollArea(scr_par);
   scrBody->viewport()->setPaletteBackgroundColor(*bg_color_dark);
-  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
-  body = new iStripeWidget(scrBody->viewport());
-  scrBody->addChild(body);
+//Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
+  scrBody->setWidgetResizable(true); // TODO: confirm
+  body = new iStripeWidget();
+  scrBody->setWidget(body);
   if (bg_color != NULL) {
     body->setPaletteBackgroundColor(*bg_color);
     if (bg_color_dark != NULL)

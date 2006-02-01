@@ -170,10 +170,10 @@ public:
 
   void		iconify();   // Iv compatibility routine
   void		deiconify(); // Iv compatibility routine
-  void		setCentralWidget(Q3ScrollView* widg);
+  void		setCentralWidget(QWidget* widg);
 protected:
   taiDataHost* 	owner;
-  Q3ScrollView* 	mcentralWidget;
+  QWidget* 	mcentralWidget;
   override void closeEvent(QCloseEvent* ev);
   override void resizeEvent(QResizeEvent* ev);
 
@@ -194,7 +194,7 @@ typedef iDataPanelFrame inherited;
 friend class taiEditDataHost;
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  void			setCentralWidget(Q3ScrollView* widg);
+  void			setCentralWidget(QWidget* widg);
   override void		Closing(bool forced, bool& cancel);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
@@ -207,7 +207,7 @@ public: // IDataLinkClient interface
 
 protected:
   taiEditDataHost* 	owner;
-  Q3ScrollView* 		mcentralWidget;
+  QWidget* 		mcentralWidget;
   override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
   override void 	resizeEvent(QResizeEvent* ev);
 };
@@ -252,12 +252,12 @@ public:
   bool		no_revert_hilight; // do not highlight the revert button
 
 
-  Q3ScrollView*	scrDialog;	// scrollbars for the whole shebang -- widget() is the viewport()
+  QScrollArea*	scrDialog;	// scrollbars for the whole shebang -- widget() is the viewport()
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
     QLabel*	prompt;		// informative message at top of dialog
     QWidget*	body;		// parent for the body items
     QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
-      Q3ScrollView*	scrBody;		// scrollbars for the body items
+      QScrollArea*	scrBody;		// scrollbars for the body items
       QGridLayout* 	layBody;	// layout for the body -- deleted/reconstructed when show changes
 //  QTable*	body;	// table for body elements
     QFrame*	frmMethButtons;	// method buttons

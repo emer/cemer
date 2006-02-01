@@ -312,7 +312,7 @@ void gpiListEls::Choose() {
 
 void gpiListEls::GetMenu(taiActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    menu->AddItem("NULL", taiMenu::radio_update, actn);
+    menu->AddItem("NULL", taiMenu::radio_update, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
     menu->AddItem("Edit", taiMenu::normal,
 	taiAction::action, this, SLOT(Edit()));
@@ -555,7 +555,7 @@ void gpiSubGroups::Choose() {
 
 void gpiSubGroups::GetMenu(taiActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    menu->AddItem("NULL", taiMenu::use_default, actn);
+    menu->AddItem("NULL", taiMenu::use_default, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
     menu->AddItem("Edit", taiMenu::normal,
 	taiAction::action, this, SLOT(Edit()) );

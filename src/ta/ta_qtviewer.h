@@ -624,7 +624,7 @@ protected:
   ISelectable_PtrList	m_sel_items;
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
-  override void 	customEvent (QCustomEvent* ev); // dispatch
+  override void 	customEvent(QEvent* ev); // dispatch
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
   virtual void 		selectionChangedEvent(QCustomEvent* ev);
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation

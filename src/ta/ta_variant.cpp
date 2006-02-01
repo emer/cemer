@@ -242,7 +242,7 @@ bool Variant::eqString(const String& val) const {
   return (toString() == val);
 }
 
-bool  Variant::eqPtr(void* val) const { // note: works for taBase/taMatrix as well
+bool  Variant::eqPtr(const void* val) const { // note: works for taBase/taMatrix as well
   if (!isPtrType()) return false;
   return (d.ptr == val);
 }

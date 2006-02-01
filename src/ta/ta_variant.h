@@ -138,9 +138,9 @@ public:
   bool			eqString(const String& val) const; // handles eqting of a string 
   bool			eqCString(const char* val) const
     {eqString(String(val));}
-  bool 			eqPtr(void* val) const;
-  bool			eqBase(taBase* val) const {return eqPtr(val);} 
-  bool			eqMatrix(taMatrix* val) const {return eqPtr(val);} 
+  bool 			eqPtr(const void* val) const;
+  bool			eqBase(const taBase* val) const {return eqPtr(val);} 
+  bool			eqMatrix(const taMatrix* val) const {return eqPtr(val);} 
   
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
@@ -249,7 +249,78 @@ inline Variant::Variant(const char* val):m_type(T_String), m_is_null(false)
    else {m_is_null = false; new(&d.str)String(val);}}
 
 
+inline bool operator==(const Variant& a, const Variant& b) {return a.eqVariant(b);}
+inline bool operator!=(const Variant& a, const Variant& b) {return a.eqVariant(b);}
+
+inline bool operator==(const Variant& a, bool b) {return a.eqBool(b);}
+inline bool operator!=(const Variant& a, bool b) {return !a.eqBool(b);}
+inline bool operator==(bool a, const Variant& b) {return b.eqBool(a);}
+inline bool operator!=(bool a, const Variant& b) {return !b.eqBool(a);}
+
+inline bool operator==(const Variant& a, byte b) {return a.eqByte(b);}
+inline bool operator!=(const Variant& a, byte b) {return !a.eqByte(b);}
+inline bool operator==(byte a, const Variant& b) {return b.eqByte(a);}
+inline bool operator!=(byte a, const Variant& b) {return !b.eqByte(a);}
+
 inline bool operator==(const Variant& a, int b) {return a.eqInt(b);}
+inline bool operator!=(const Variant& a, int b) {return !a.eqInt(b);}
+inline bool operator==(int a, const Variant& b) {return b.eqInt(a);}
+inline bool operator!=(int a, const Variant& b) {return !b.eqInt(a);}
+
+inline bool operator==(const Variant& a, uint b) {return a.eqUInt(b);}
+inline bool operator!=(const Variant& a, uint b) {return !a.eqUInt(b);}
+inline bool operator==(uint a, const Variant& b) {return b.eqUInt(a);}
+inline bool operator!=(uint a, const Variant& b) {return !b.eqUInt(a);}
+
+inline bool operator==(const Variant& a, int64_t b) {return a.eqInt64(b);}
+inline bool operator!=(const Variant& a, int64_t b) {return !a.eqInt64(b);}
+inline bool operator==(int64_t a, const Variant& b) {return b.eqInt64(a);}
+inline bool operator!=(int64_t a, const Variant& b) {return !b.eqInt64(a);}
+
+inline bool operator==(const Variant& a, uint64_t b) {return a.eqUInt64(b);}
+inline bool operator!=(const Variant& a, uint64_t b) {return !a.eqUInt64(b);}
+inline bool operator==(uint64_t a, const Variant& b) {return b.eqUInt64(a);}
+inline bool operator!=(uint64_t a, const Variant& b) {return !b.eqUInt64(a);}
+
+inline bool operator==(const Variant& a, float b) {return a.eqFloat(b);}
+inline bool operator!=(const Variant& a, float b) {return !a.eqFloat(b);}
+inline bool operator==(float a, const Variant& b) {return b.eqFloat(a);}
+inline bool operator!=(float a, const Variant& b) {return !b.eqFloat(a);}
+
+inline bool operator==(const Variant& a, double b) {return a.eqDouble(b);}
+inline bool operator!=(const Variant& a, double b) {return !a.eqDouble(b);}
+inline bool operator==(double a, const Variant& b) {return b.eqDouble(a);}
+inline bool operator!=(double a, const Variant& b) {return !b.eqDouble(a);}
+
+inline bool operator==(const Variant& a, const String& b) {return a.eqString(b);}
+inline bool operator!=(const Variant& a, const String& b) {return !a.eqString(b);}
+inline bool operator==(const String& a, const Variant& b) {return b.eqString(a);}
+inline bool operator!=(const String& a, const Variant& b) {return !b.eqString(a);}
+
+inline bool operator==(const Variant& a, const char* b) {return a.eqCString(b);}
+inline bool operator!=(const Variant& a, const char* b) {return !a.eqCString(b);}
+inline bool operator==(const char* a, const Variant& b) {return b.eqCString(a);}
+inline bool operator!=(const char* a, const Variant& b) {return !b.eqCString(a);}
+
+inline bool operator==(const Variant& a, char b) {return a.eqChar(b);}
+inline bool operator!=(const Variant& a, char b) {return !a.eqChar(b);}
+inline bool operator==(char a, const Variant& b) {return b.eqChar(a);}
+inline bool operator!=(char a, const Variant& b) {return !b.eqChar(a);}
+
+inline bool operator==(const Variant& a, const void* b) {return a.eqPtr(b);}
+inline bool operator!=(const Variant& a, const void* b) {return !a.eqPtr(b);}
+inline bool operator==(const void* a, const Variant& b) {return b.eqPtr(a);}
+inline bool operator!=(const void* a, const Variant& b) {return !b.eqPtr(a);}
+
+inline bool operator==(const Variant& a, const taBase* b) {return a.eqBase(b);}
+inline bool operator!=(const Variant& a, const taBase* b) {return !a.eqBase(b);}
+inline bool operator==(const taBase* a, const Variant& b) {return b.eqBase(a);}
+inline bool operator!=(const taBase* a, const Variant& b) {return !b.eqBase(a);}
+
+inline bool operator==(const Variant& a, const taMatrix* b) {return a.eqMatrix(b);}
+inline bool operator!=(const Variant& a, const taMatrix* b) {return !a.eqMatrix(b);}
+inline bool operator==(const taMatrix* a, const Variant& b) {return b.eqMatrix(a);}
+inline bool operator!=(const taMatrix* a, const Variant& b) {return !b.eqMatrix(a);}
 
 #endif
 

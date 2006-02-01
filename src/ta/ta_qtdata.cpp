@@ -946,7 +946,7 @@ taiAction::taiAction(int sel_type_, const String& label_)
 taiAction::taiAction(const QString& label_, const QKeySequence& accel, const char* name_)
 : QAction(label_, NULL)
 {
-  init(0);
+  init(taiMenu::use_default);
   setShortcut(accel);
   setName(name_);
 }
@@ -954,7 +954,7 @@ taiAction::taiAction(const QString& label_, const QKeySequence& accel, const cha
 taiAction::taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel)
 : QAction(label_, NULL)
 {
-  init(0);
+  init(taiMenu::use_default);
   setShortcut(accel);
   connect(action, receiver, member);
 }
@@ -964,17 +964,10 @@ taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKey
   const char* name_) 
 : QAction(label_, NULL)
 {
-  init(0);
+  init(taiMenu::use_default);
   usr_data = usr_data_;
   setShortcut(accel);
   setName(name_);
-}
-
-taiAction::taiAction(bool is_sep)
-: QAction(NULL)
-{
-  init(0);
-  setSeparator(true);
 }
 
 taiAction::~taiAction() {
@@ -983,6 +976,11 @@ taiAction::~taiAction() {
 void taiAction::init(int sel_type_)
 {
   sel_type = sel_type_;
+  //note: we do this here, but also at AddAction time in case we create default here, 
+  // and it only gets its true sel_type when added
+  if (sel_type & (taiActions::radio | taiActions::toggle)) {
+    setCheckable(true);
+  }
   nref = 0;
   m_changing = 0;
   QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(this_triggered_toggled(bool)) );
@@ -994,7 +992,8 @@ void taiAction::AddTo(taiActions* targ) {
 }
 
 bool taiAction::canSelect() {
-  return ((sel_type & taiMenu::radio) && (isGrouped()) && !isSubMenu());
+  // an item can be the curSel if it is a global radio item
+  return ((sel_type & taiMenu::radio) && (!isGrouped()) && !isSubMenu());
 }
 
 bool taiAction::isGrouped() {
@@ -1054,14 +1053,13 @@ void taiAction::emitActions() {
 }
 
 void taiAction::this_triggered_toggled(bool checked) {
+  if (m_changing > 0) return;
   ++m_changing;
-  if (m_changing == 1) 
-    emitActions();
+  emitActions(); // will also cause curSel update, and datachanged
   --m_changing;	
 }
 
-/*obs TODO: need to change how clients use this so we don't need an owner
-  probably need to have the client connect an appropriate signal
+/*obs 
 void taiAction::Select() {
   if (sel_type & taiMenu::toggle)
     Select_impl(!isChecked());
@@ -1079,7 +1077,8 @@ void taiAction::Select() {
   } 
 }*/
 
-/*obs  void taiAction::Select_impl(bool selecting) {
+/*obs
+void taiAction::Select_impl(bool selecting) {
 // TODO: verify
   if (sel_type & taiMenu::toggle) {
     setChecked(selecting);
@@ -1222,13 +1221,20 @@ QWidget* taiActions::actionsRep() {
 }
 
 void taiActions::AddAction(taiAction* act) {
-  items.Add(act);
-  if ((cur_grp != NULL)) {
+  // if it is a radio item
+  if (act->sel_type & (radio | toggle)) {
+    act->setCheckable(true);
+  }
+  // if we have an explicit radio group going, add it
+  // this is not done much, only when we explicitly create groups, like for the view menu
+  if ((act->sel_type & radio) && (cur_grp != NULL)) {
     cur_grp->addAction(act);
   }
+  // font compliance
+  act->setFont(taiM->menuFont(font_spec));
+  items.Add(act);
   ActionAdded(act);
   connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );
-  //TODO: more???? font compliance, maybe???
 }
 
 taiAction* taiActions::AddItem(const String& val, SelType st, 
@@ -1293,37 +1299,46 @@ void taiActions::AddSep(bool new_radio_grp) {
 
 taiMenu* taiActions::AddSubMenu(const String& val, TypeDef* typ_)
 {
+  /*NOTE: Qt4 -- the below was way too obscure -- we should just set the st to this one
   SelType st;
   // we use the value of the most recent submenu, otherwise ourself
   taiAction* it = items.PeekNonSep();
   if (it != NULL)
     st = (SelType)it->sel_type;
   else
-    st = this->sel_type;
+    st = this->sel_type; */
 
-  taiMenu* rval;
-  taiAction* act;
-  // do not add items of same name -- return it instead of adding it
+  // do not add items of same label -- return it instead of adding it
   for (int i = 0; i < items.size; ++i) {
-    act = items.FastEl(i);
-    if (act->isSubMenu() && act->text() == val) {
+    taiAction* act = items.FastEl(i);
+    if (act->isSubMenu() && (act->text() == val)) {
       return ((taiSubMenuEl*)act)->sub_menu_data;
     }
   }
-  rval = new taiMenu(st, font_spec, typ_, host, this, gui_parent, mflags, this);
-//  int cur_item = items.size;
+  
+  taiMenu* rval = new taiMenu(sel_type, font_spec, typ_, host, this, gui_parent, mflags, this);
   taiSubMenuEl* sme = new taiSubMenuEl(val, rval);
-  AddAction(sme);
-  //AddSubItem(subname, usr, rval->rep_popup(), rval, default_child_action);
-  sme->sel_type = st;
   rval->par_menu_el = sme;
+  AddAction(sme);
   return rval;
 }
 
 void taiActions::child_triggered_toggled(taiAction* act) {
-  // if a radio item in global group, update global selection
-//TODO  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
-//    setCurSel(act);
+  // if a radio item in global group, these are the cases:
+  // * user manually unchecked it -- not an allowed operation, so  just recheck it
+  // * user selected a new item -- just request the change
+  if (act->canSelect()) {
+    if (!act->isChecked()) {
+      taiAction* cur = curSel();
+      if (act == cur) {
+        act->setChecked(true);
+        return; // skip data change, because nothing actually changed
+      }
+    } else { 
+      // just request the change on select
+      setCurSel(act); // gets ignored while already setting, ex. when unsetting the other item
+    }
+  }
 
   if (act->sel_type & taiActions::update) {
     DataChanged();		// something was selected..
@@ -1362,7 +1377,7 @@ taiMenu* taiActions::FindSubMenu(const char* nm) {
   // first try to find item by iterating through all eligible items and subitems
   if (GetImage_impl(usr))
       return true; 
-/*TODO Qt4
+/*TODO Qt4 NOTE: this is fairly horribly obscure!!!
   // otherwise get first eligible item, if any, on this menu only, with data and without any menu callbacks, as default if nothing else works
   for (int i = 0; i < items.size; ++i) {
     taiAction* itm = items.FastEl(i);
@@ -1383,7 +1398,7 @@ bool taiActions::GetImage_impl(const Variant& usr) {
     if (!itm->canSelect()) continue;
     if (itm->usr_data == usr) {
 //TODO Qt4: make sure this case is automatically handled now
-//      if ((usr == NULL) && (itm->text() != "NULL"))
+//      if (usr.isPtrType() && (usr.toPtr() == NULL) && (itm->text() != "NULL"))
 //	continue;
       setCurSel(itm);
       return true;
@@ -1432,9 +1447,12 @@ void taiActions::setCurSel(taiAction* value) {
     // controlling root needs to unselect existing element
     if (cur_sel == value) return;
     if (cur_sel != NULL) {
-      cur_sel->setChecked(false);
+      // need to get it out of curSel so unchecking is allowed by taiAction item's handler
+      taiAction* tmp = cur_sel;
+      cur_sel = NULL;
+      tmp->setChecked(false);
     }
-    cur_sel = value;
+    cur_sel = value; // need to set it to new, so checking action causes an ignore
     if (cur_sel != NULL) {
       cur_sel->setChecked(true);
       setLabel(cur_sel->text());
@@ -2380,7 +2398,7 @@ void taiToken::GetMenu(const taiMenuAction* actn) {
       ta_actions->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
     ta_actions->AddSep();
     if (HasFlag(flgNullOk)) {
-      taiAction* mel = ta_actions->AddItem("NULL", taiMenu::radio, actn);
+      taiAction* mel = ta_actions->AddItem("NULL", taiMenu::radio, actn, (void*)NULL);
       mel->connect(taiAction::men_act, this, SLOT(ItemChosen(taiAction*)));
     }
   }
@@ -2583,7 +2601,7 @@ void taiSubToken::UpdateMenu(taiMenuAction* actn){
 
 void taiSubToken::GetMenu(taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    ta_actions->AddItem("NULL", taiMenu::use_default, actn);
+    ta_actions->AddItem("NULL", taiMenu::use_default, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
     ta_actions->AddItem("Edit", taiMenu::normal,
       taiAction::action, this, SLOT(Edit()) );
@@ -2854,7 +2872,7 @@ void taiTypeHier::GetImage(TypeDef* ths) {
 
 void taiTypeHier::GetMenu(const taiMenuAction* acn) {
   if (HasFlag(flgNullOk))
-    ta_actions->AddItem("NULL", taiMenu::use_default, acn);
+    ta_actions->AddItem("NULL", taiMenu::use_default, acn, (void*)NULL);
   GetMenu_impl(ta_actions, typ, acn);
 }
 
@@ -2891,7 +2909,7 @@ bool taiTypeHier::AddType(TypeDef* typ_) {
 }
 
 void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
-  menu->AddItem((char*)typ_->name, taiMenu::use_default, acn);
+  menu->AddItem((char*)typ_->name, taiMenu::use_default, acn, (void*)typ_);
   menu->AddSep(false); //don't start new radio group
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);

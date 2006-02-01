@@ -347,12 +347,11 @@ public:
   
   void			AddTo(taiActions* targ); // convenience function
   
-  taiAction(int sel_type_, const String& label_); // used my taiMenu etc.
+  taiAction(int sel_type_, const String& label_); // used by taiMenu etc.
   taiAction(const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
   taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel); 
     // used by viewer/browser
   taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
-  explicit taiAction(bool is_sep); // used for adding separators, which are very stoopid and know/do nothing
   virtual ~taiAction();
 
   void connect(CallbackType ct_, const QObject *receiver, const char* member); // connect callback to given
@@ -440,8 +439,7 @@ public:
     toggle =		0x04,	// item can be checked or unchecked, independent of any other item
     toggle_update =	0x84,
 
-    use_default =	0x10,	// only for taiMenu::additem -- inherits from its menu
-    submenu =		0x20,	// only for taiMenu::makeitem
+    use_default =	0x10,	// only for taiActions::AddAction -- inherits from the taiActions
 
     update = 		0x80	// flag added to normal selection types, causes parent item to indicate Changed when item selected
   };

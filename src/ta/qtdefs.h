@@ -80,6 +80,7 @@ class	QProgressDialog;	// #IGNORE
 class	QPushButton;		// #IGNORE
 class	QRadioButton;		// #IGNORE
 class	QRect;			// #IGNORE
+class	QScrollArea;		// #IGNORE Qt4
 class	QScrollBar;		// #IGNORE
 class	Q3ScrollView;		// #IGNORE
 class	QSize;			// #IGNORE
@@ -113,7 +114,7 @@ class	Q3WidgetStack;		// #IGNORE
 class	QCloseEvent;		// #IGNORE
 class	QChildEvent;		// #IGNORE
 class	QContextMenuEvent;	// #IGNORE
-class	QCustomEvent;		// #IGNORE
+class	QCustomEvent;		// #IGNORE Qt3: is deprecated in Qt4, 
 class	QDropEvent;		// #IGNORE
 class	QFocusEvent;		// #IGNORE
 class	QHideEvent;		// #IGNORE
