@@ -27,8 +27,6 @@ AC_DISABLE_SHARED                                      # Disable shared librarie
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
-SIM_AC_SETUP_MSVCPP_IFELSE                             # Build with VC++
-SIM_AC_MSVC_DSP_ENABLE_OPTION                          # Build a digital studio project file
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
 PDP_CANONICAL_HOST                                     # Do a few host checks, mostly for MSVC stuff
 PDP_PROG_CXX                                           # Modify compiler optimization
@@ -46,43 +44,19 @@ AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
 
-SIM_AC_RELATIVE_SRC_DIR
-
-if $BUILD_WITH_MSVC; then
-  SIM_AC_SETUP_MSVCRT([
-    CPPFLAGS="$CPPFLAGS $sim_ac_msvcrt_CPPFLAGS"
-    CFLAGS="$CFLAGS $sim_ac_msvcrt_CFLAGS"
-    CXXFLAGS="$CXXFLAGS $sim_ac_msvcrt_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $sim_ac_msvcrt_LDFLAGS"
-    LIBS="$LIBS $sim_ac_msvcrt_LIBS"
-    # sim_ac_msvcrt_LIBLIBS is set up at the end
-    # sim_ac_msvcrt_LIBLDFLAGS is set up at the end
-  ])
-fi
-
-AC_SUBST([COIN_MSVC_LIBC], [$sim_ac_msvcrt])
-AC_SUBST([BUILD_WITH_MSVC])
-
-if $BUILD_WITH_MSVC; then
-  RANLIB=:
-  export RANLIB
-fi
-
-SIM_AC_MSVC_DSP_SETUP([PDP],[PDP],[PDP],)
-
 PGAC_CHECK_READLINE                                    # Check for readline, termcap etc...
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
 # --with-rpm
-if $rpm = true; then
+if test x"$rpm" = x"true"; then
   AX_DIST_RPM([spec.tmpl])
   AC_SUBST([INCLUDE_AMINCLUDE_AM],["include aminclude.am"])
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
 # --enable-gui
-if test $gui = true; then
+if test x"$gui" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
                    if test $debug = true; then
@@ -97,7 +71,7 @@ if test $gui = true; then
                    [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
 
   SIM_AC_QT_PROG([QT_MOC],[moc])
-  if test x"$MOC" = x"false"; then
+  if test x"$MOC" = "false"; then
     SIM_AC_CONFIGURATION_WARNING([Failed to find moc])
   fi
   # Functioning SoQt implies functioning Coin!
@@ -125,11 +99,11 @@ else
 fi
 
 # --enable-mpi is set
-if test $mpi = true; then
+if test x"$mpi" = x"true"; then
   ACX_MPI(,SIM_AC_CONFIGURATION_WARNING([Failed to detect the Message Passing Interface. Try CXX=mpiCC]))
   AC_DEFINE([DMEM_COMPILE],,[Causes mpi.h to be included])
 
-  if test $MPICXX != x; then
+  if test x"$MPICXX" != x; then
     SIM_AC_CONFIGURATION_SETTING([MPI],[Enabled. Using $MPICXX as compiler])
     CXX="$MPICXX"
   fi
@@ -138,7 +112,7 @@ else
 fi
 
 # --enable-debug
-if $debug = true; then
+if test x"$debug" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
   AC_DEFINE([DEBUG],,[Used when debugging])
@@ -183,6 +157,7 @@ AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
+
 PDP_DETERMINE_SUFFIX                                # Infixing
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile
@@ -192,7 +167,6 @@ AC_CONFIG_FILES([Makefile
 		src/tamisc/Makefile
 		src/pdp/Makefile
 		src/bp/Makefile
-		manual/Makefile
-                cfg/gendsp.sh])
+		manual/Makefile])
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY

@@ -72,7 +72,7 @@ AC_DEFUN([PDP_PROG_CXX],[
 AC_LANG_CPLUSPLUS
 save_user_CXXFLAGS=${CXXFLAGS}
 CXXFLAGS=
-AC_PROG_CXX([cl g++])
+AC_PROG_CXX([g++])
 CXXFLAGS=${save_user_CXXFLAGS}
 
 # Still enable disabling optimization
