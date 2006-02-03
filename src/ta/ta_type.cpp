@@ -1126,6 +1126,12 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   }
 }
 
+String taDataLink::GetDisplayName() const {
+  MemberDef* md = GetDataMemberDef();
+  if (md) return md->name;
+  else    return GetName();
+}
+
 TypeDef* taDataLink::GetTypeDef() {
 #if !defined(TA_NO_GUI) && !defined(NO_TA_BASE)
   return &TA_taDataLink;

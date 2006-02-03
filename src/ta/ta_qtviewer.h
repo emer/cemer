@@ -104,8 +104,14 @@ class DataLink_QObj: public QObject {
 Q_OBJECT
 public:
   taiDataLink*	dl;
-  DataLink_QObj(taiDataLink* dl_) {dl = dl_;}
+  DataLink_QObj(taiDataLink* dl_) {dl = dl_;} //
 };
+
+/*
+  TODO: the GetDataMemberDef is not too reliable, and only works for owned taOBase, but that is
+    typically sufficient for the browser, because typically only taOBase or later members are
+    ever shown in the browser, which is really all that call helps
+*/
 
 class taiDataLink: public taDataLink { // interface for viewing system
 #ifndef __MAKETA__
@@ -146,7 +152,7 @@ public: // DO NOT CALL
   virtual void		ChildQueryEditActions_impl(const MemberDef* par_md, taiDataLink* child,
     taiMimeSource* ms, int& allowed, int& forbidden) {}
   virtual int		ChildEditAction_impl(const MemberDef* par_md, taiDataLink* child,
-    taiMimeSource* ms, int ea) {return 0;}
+    taiMimeSource* ms, int ea) {return 0;} //
 };
 
 
@@ -160,14 +166,14 @@ typedef taiDataLink inherited;
 #endif
 public:
   taBase*		data() {return (taBase*)m_data;}
+  taBase*		data() const {return (taBase*)m_data;}
 
   override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
-  override TypeDef*	GetDataTypeDef();
+  override TypeDef*	GetDataTypeDef() const;
   override taiMimeItem* GetMimeItem();
-  override String	GetName();
-  override String	GetDisplayName();
+  override String	GetName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   DL_FUNS(tabDataLink); //
@@ -200,6 +206,10 @@ typedef tabDataLink inherited;
 #endif
 public:
   taOBase*		data() {return (taOBase*)m_data;}
+  taOBase*		data() const {return (taOBase*)m_data;}
+  
+  override MemberDef*	GetDataMemberDef() const;
+
   tabODataLink(taOBase* data_);
   DL_FUNS(tabODataLink); //
 };
@@ -216,6 +226,8 @@ typedef tabODataLink inherited;
 #endif
 public:
   taList_impl*		data() {return (taList_impl*)m_data;}
+  taList_impl*		data() const {return (taList_impl*)m_data;}
+  
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols(); // number of columns in a list view for this item type
   override String	GetColHeading(int col); // header text for the indicated column
@@ -241,6 +253,8 @@ typedef tabListDataLink inherited;
 #endif
 public:
   taGroup_impl*		data() {return (taGroup_impl*)m_data;}
+  const taGroup_impl*	data() const {return (taGroup_impl*)m_data;}
+  
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   tabGroupDataLink(taGroup_impl* data_);
@@ -1058,6 +1072,7 @@ public:
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
   taiDataLink*		link() {return (taiDataLink*)m_link;}
+  const taiDataLink*	link() const {return (taiDataLink*)m_link;}
   virtual bool		lockInPlace() {return false;}
     // true if panel should not be replaced when a user clicks around
   virtual String	panel_type() const {return _nilString;}

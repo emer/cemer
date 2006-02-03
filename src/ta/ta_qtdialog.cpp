@@ -337,17 +337,18 @@ void Dialog::closeEvent(QCloseEvent* ev) {
   if (owner->HasChanged()) {
     int chs = taMisc::Choice("Changes have not been applied", "&Apply", "A&bandon Changes", "&Cancel");
     switch (chs) {
-    case  2:
-      ev->ignore();
-      return;
-      break;
-    case  0:
+    case 0:
       owner->GetValue();
       owner->state = taiDataHost::ACCEPTED;
       break;
-    default:
+    case 1:
       owner->state = taiDataHost::CANCELED;
       break;
+    case 2:
+      ev->ignore();
+      return;
+      break;
+    default: break; //compiler food
     }
   } else { //!owner->modified
     owner->state = taiDataHost::CANCELED;

@@ -496,9 +496,10 @@ public:
   bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this call; CAUSES US TO DESTROY IF CLIENTS=0
 
 //  void			DestroyPanels(); // note: don't make virtual, called from destructor
-  virtual TypeDef*	GetDataTypeDef() {return NULL;} // must be replaced in descendant class
-  virtual String	GetName() {return _nilString;}
-  virtual String	GetDisplayName() {return GetName();}
+  virtual TypeDef*	GetDataTypeDef() const {return NULL;} // TypeDef of the data
+  virtual MemberDef*	GetDataMemberDef() const {return NULL;} // if a member in a class, then the MemberDef
+  virtual String	GetName() const {return _nilString;}
+  virtual String	GetDisplayName() const; // default return Member name if has MemberDef, else GetName
   void			DataDestroying(); //CAUSES US TO DESTROY
   virtual void		DataDataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 //na  virtual void		FillContextMenu(BrListViewItem* sender, taiMenu* menu);

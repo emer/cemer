@@ -690,12 +690,19 @@ cont2:
 
 }
 
-TypeDef* tabDataLink::GetDataTypeDef() {
+TypeDef* tabDataLink::GetDataTypeDef() const {
   return data()->GetTypeDef();
 }
 
 const QPixmap* tabDataLink::GetIcon(int bmf, int& flags_supported) {
   return data()->GetDataNodeBitmap(bmf, flags_supported);
+}
+
+MemberDef* tabODataLink::GetDataMemberDef() const {
+  if (!m_data) return NULL;
+  taBase* owner = data()->GetOwner();
+  if (owner) return owner->FindMember(data());
+  else return NULL;
 }
 
 taiMimeItem* tabDataLink::GetMimeItem() {
@@ -705,12 +712,8 @@ taiMimeItem* tabDataLink::GetMimeItem() {
   return rval;
 }
 
-String tabDataLink::GetName() {
+String tabDataLink::GetName() const {
   return data()->GetName();
-}
-
-String tabDataLink::GetDisplayName() {
-  return data()->GetDisplayName();
 }
 
 bool tabDataLink::HasChildItems() {
@@ -2944,10 +2947,8 @@ iDataPanel* iTabBar::panel(int idx) {
 
 int iTabBar::addTab(iDataPanel* panel) {
   int idx = QTabBar::addTab("");
-  QVariant data((intptr_t)panel);
-  setTabData(idx, data);
-  if (panel != NULL)
-    SetPanel(idx, panel);
+  setTabData(idx, QVariant((intptr_t)0)); // set to valid null value
+  SetPanel(idx, panel);
   return idx;
 }
 
@@ -3214,10 +3215,11 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
 }
 
 String iDataPanel::TabText() const {
-  ISelectable* ci = viewer_win()->curItem();
+/*Qt3  ISelectable* ci = viewer_win()->curItem();
   if (ci) {
     return ci->view_name();
-  } else return _nilString;
+  } else return _nilString; */
+  return link()->GetDisplayName();
 }
 
 void iDataPanel::this_EditAction(int param) {
