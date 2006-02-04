@@ -37,14 +37,15 @@
 #include <qevent.h>
 #include <Q3HButtonGroup>
 #include <qimage.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qmenubar.h>
 //#include <qobjectlist.h>
 #include <QMenu>
 #include <QList>
+#include <QScrollArea>
 #include <qtooltip.h>
-//#include <qvaluelist.h>
 #include <qvariant.h>
+#include <QVBoxLayout>
 #include <qwhatsthis.h>
 #include <Q3WidgetStack>
 
@@ -1757,7 +1758,7 @@ void iDataViewer::windowActivationChange(bool oldActive) {
     if (idx < 0) {
       taMisc::Error("iDataViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
     } else {
-      if (idx < (taiMisc::active_wins.size - 1)) {
+      if (idx < (taiMisc::viewer_wins.size - 1)) {
         // move us to the end
         taiMisc::viewer_wins.Move(idx, taiMisc::viewer_wins.size - 1);
       }
@@ -2046,7 +2047,6 @@ void DataViewer::CloseWindow() {
   if (!m_window) return;
   window()->m_viewer = NULL;
 
-  taiMisc::active_wins.Remove(m_window);
   m_window->m_viewer = NULL;
   m_window->deleteLater();
   m_window = NULL;
@@ -2276,7 +2276,6 @@ void DataViewer::OpenNewWindow_impl() {
   win_pos.SetWinPos();
 
   SetWinName();
-  taiMisc::active_wins.Add(m_window);
   m_window->show();
   m_window->SelectionChanged(true); // initializes selection system
 }
@@ -3192,9 +3191,14 @@ void iTabView_PtrList::DataPanelDestroying(iDataPanel* panel) {
 iDataPanel::iDataPanel(taiDataLink* dl_)
 :QFrame(NULL)
 {
-  dl_->AddDataClient(this); // sets our m_link variable
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   setFrameStyle(NoFrame | Plain);
+  scr = new QScrollArea(this);
+  scr->setWidgetResizable(true);
+  QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->addWidget(scr);
+
+  dl_->AddDataClient(this); // sets our m_link variable
 }
 
 iDataPanel::~iDataPanel() {
@@ -3212,6 +3216,11 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
     if (tabView())
       tabView()->UpdateTabNames(); //in case any changed
   }
+}
+
+void iDataPanel::setCentralWidget(QWidget* widg) {
+  scr->setWidget(widg);
+  widg->show(); 
 }
 
 String iDataPanel::TabText() const {
@@ -3349,7 +3358,8 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 :inherited(link_)
 {
   cur_panel_id = -1;
-  layDetail = new QVBoxLayout(this);
+  QWidget* widg = new QWidget();
+  layDetail = new QVBoxLayout(widg);
   buttons = new Q3HButtonGroup(); // used invisibly
   buttons->setExclusive(true);
   buttons->setFont(taiM->buttonFont(taiMisc::sizSmall));
@@ -3363,6 +3373,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 
   wsSubPanels = new Q3WidgetStack(this);
   layDetail->addWidget(wsSubPanels, 1);
+  setCentralWidget(widg);
 
   connect(buttons, SIGNAL(pressed(int)), this, SLOT(btn_pressed(int)));
 }
@@ -3718,9 +3729,8 @@ void iLDPListView::focusInEvent(QFocusEvent* ev) {
 iListDataPanel::iListDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  layOuter = new QVBoxLayout(this);
   list = new iLDPListView(this, "list");
-  layOuter->addWidget(list);
+  setCentralWidget(list);
   list->setSelectionMode(Q3ListView::Extended);
   list->setShowSortIndicator(true);
   ConfigHeader();

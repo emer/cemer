@@ -55,7 +55,7 @@
 //#include <qtable.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-//#include <qvbox.h>
+#include <QVBoxLayout>
 #include <qwidget.h>
 
 
@@ -306,32 +306,32 @@ void taiChoiceDialog::reject() {
 
 
 //////////////////////////
-// 	Dialog	//
+//   iDialog		//
 //////////////////////////
 
-Dialog::Dialog(taiDataHost* owner_, QWidget* parent, bool modal)
-:QDialog(parent, NULL, modal) //TODO: NULL is for name -- remove for Qt4
+iDialog::iDialog(taiDataHost* owner_, QWidget* parent)
+:QDialog(parent) 
 {
-  // set maximum size -- we will manually size the central widget (which should be a scrollbox)
+  owner = owner_;
+  mcentralWidget = NULL;
+  scr = new QScrollArea(this);
+  scr->setWidgetResizable(true);
+  QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->addWidget(scr);
+  
   iSize ss = taiM->scrn_s;
   setMaximumSize(ss.width(), ss.height());
   setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
-  resize(1,1);
-
-  owner = owner_;
-  mcentralWidget = NULL;
-  was_accepted = false;
 }
 
-Dialog::~Dialog() {
+iDialog::~iDialog() {
   if (owner != NULL) {
     owner->dialog = NULL;
     owner = NULL;
   }
-  taiMisc::active_wins.Remove(this); // to really be certain...
 }
 
-void Dialog::closeEvent(QCloseEvent* ev) {
+void iDialog::closeEvent(QCloseEvent* ev) {
   ev->accept(); // default, unless we override;
   if (owner == NULL) return;
   if (owner->HasChanged()) {
@@ -352,76 +352,42 @@ void Dialog::closeEvent(QCloseEvent* ev) {
     }
   } else { //!owner->modified
     owner->state = taiDataHost::CANCELED;
-  }
-  if (ev->isAccepted()) {
-     taiMisc::active_wins.Remove(this);
+    setResult(Rejected);
   }
 }
 
-bool Dialog::post(bool modal) {
-  taiMisc::active_wins.Add(this);
+bool iDialog::post(bool modal) {
   if (modal) {
-    return (exec() == 0);
+    return (exec() == Accepted);
   } else {
     show();
     return true;
   }
 }
 
-void Dialog::accept() {
-   // override -- it should return 0 for our purpose (not 1)
-  was_accepted = true;
-  done(0);
-}
-
-void Dialog::reject() {
-  // this is the easiest way to override the Esc behavior of choosing button 1
-//  if (!no_cancel)
-    done(1);
-}
-void Dialog::dismiss(bool accept_) {
+void iDialog::dismiss(bool accept_) {
   if (accept_)
     accept();
   else
     reject();
 }
 
-void Dialog::iconify() {
-     // Iv compatibility routine
-  if (isMinimized()) return;
+void iDialog::iconify() {
+  // Iv compatibility routine
+  if (isModal() || isMinimized()) return;
   showMinimized();
 }
 
-void Dialog::deiconify() {
+void iDialog::deiconify() {
    // Iv compatibility routine
-  if (!isMinimized()) return;
+  if (isModal() || !isMinimized()) return;
   showNormal();
 }
 
-void Dialog::resizeEvent(QResizeEvent* ev) {
-  QDialog::resizeEvent(ev);
-  // note: we already have our new geometry at this point
-  if (mcentralWidget)
-    mcentralWidget->resize(size());
-}
-
-void Dialog::setCentralWidget(QWidget* widg) {
+void iDialog::setCentralWidget(QWidget* widg) {
   mcentralWidget = widg;
-  widg->resize(size());
-  widg->setParent(this);
-  widg->show(); // layout should occur here
-  
-/*  
-  
-//Qt3  widg->reparent(this, QPoint(0,0), false);
-  widg->setParent(this);
-  widg->show(); // layout should occur here
-  qApp->processEvents();
-  // size ourself to exactly fit the widget contents, except constrain widget to be our max size
-  // note: the 4's are tweak factors for scrollbox
-//  QSize sz = QSize(widg->contentsWidth() + 4, widg->contentsHeight() + 4).boundedTo(maximumSize());
-//  setMinimumSize(sz);
-//  resize(sz); */
+  scr->setWidget(widg);
+  widg->show(); 
 }
 
 //////////////////////////////////
@@ -432,7 +398,6 @@ EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 :inherited(dl_)
 {
   owner = owner_;
-  mcentralWidget = NULL;
 }
 
 EditDataPanel::~EditDataPanel() {
@@ -487,21 +452,6 @@ String EditDataPanel::panel_type() const {
   return str;
 }
 
-void EditDataPanel::resizeEvent(QResizeEvent* ev) {
-  inherited::resizeEvent(ev);
-  // note: we already have our new geometry at this point
-  if (mcentralWidget)
-    mcentralWidget->resize(size());
-}
-
-void EditDataPanel::setCentralWidget(QWidget* widg) {
-  mcentralWidget = widg;
-  widg->resize(size());
-  widg->setParent(this);
-  widg->show(); // layout should occur here
-//nn  qApp->processEvents();
-}
-
 
 //////////////////////////////////
 // 	taiDataHost		//
@@ -529,7 +479,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   cur_base = NULL;
 
   prompt = NULL;
-  scrDialog = NULL;
+  mwidget = NULL;
   vblDialog = NULL;
   frmMethButtons = NULL;
   layMethButtons = NULL;
@@ -556,7 +506,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   modal = modal_;
   no_ok_but = false;
   dialog = NULL;
-  mwidget = NULL;
   state = EXISTS;
   sel_item_index = -1;
   rebuild_body = false;
@@ -682,7 +631,7 @@ void taiDataHost::BodyCleared() { // called when event loop clears last widget f
 void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling panels
   state = CANCELED;
   if (isDialog()) {
-    dialog->dismiss(0);
+    dialog->dismiss(false);
   }
 }
 
@@ -752,12 +701,7 @@ void taiDataHost::Constr_impl() {
 
 void taiDataHost::Constr_Widget() {
   if (mwidget != NULL) return;
-//TESTING:
-  scrDialog = new QScrollArea();
-//Qt3  scrDialog->setResizePolicy(Q3ScrollView::AutoOneFit);
-  scrDialog->setWidgetResizable(true); // TODO: confirm
   mwidget = new QWidget();
-  scrDialog->setWidget(mwidget);
   if (bg_color != NULL) {
     widget()->setPaletteBackgroundColor(*bg_color);
   }
@@ -911,17 +855,17 @@ void taiDataHost::label_contextMenuInvoked(iContextLabel* sender, QContextMenuEv
   delete menu;
 }
 
-void taiDataHost::DoConstr_Dialog(Dialog*& dlg) {
+void taiDataHost::DoConstr_Dialog(iDialog*& dlg) {
   // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
   if (dlg != NULL) return; // already constructed
-  dlg = new Dialog(this, qApp->activeWindow(), modal); //NOTE: dialogs should be parented to main app or
+  dlg = new iDialog(this, taiMisc::main_window);
   // another top-level window, otherwise X can't seem to handle more than 12-14 windows
   dlg->setCaption(win_str);
   //TODO: max_w seems to span both monitors of a dual head system!!!
   dlg->setMinimumWidth(400); //TODO: maybe parameterize; note: would need to set layout FreeResize as well
 }
 
-void taiDataHost::DoDestr_Dialog(Dialog*& dlg) { // common sub-code for destructing a dialog instance
+void taiDataHost::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
     dlg->close(true); // destructive close
@@ -932,7 +876,7 @@ void taiDataHost::DoDestr_Dialog(Dialog*& dlg) { // common sub-code for destruct
 void taiDataHost::DoRaise_Dialog() {
   if (!isDialog()) return;
   if (!modal) {
-    Dialog* dlg = (Dialog*)widget();
+    iDialog* dlg = (iDialog*)widget();
     dlg->raise();
     dlg->setFocus();
   }
@@ -944,7 +888,7 @@ int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
   modal = modal_;
   if (dialog == NULL) DoConstr_Dialog(dialog);
 //dialog->resize(dialog->minimumWidth(), 1);
-  dialog->setCentralWidget(scrDialog);
+  dialog->setCentralWidget(widget());
   if (!modal) {
     taiMisc::active_dialogs.AddUnique(this); // add to the list of active dialogs
   }
@@ -958,7 +902,7 @@ void taiDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& 
 
 void taiDataHost::Iconify(bool value) {
   if (!isDialog()) return;
-  Dialog* dlg = (Dialog*)widget();
+  iDialog* dlg = (iDialog*)widget();
   if (!dlg) return;
   if (value) dlg->iconify();
   else       dlg->deiconify();
@@ -976,7 +920,7 @@ void taiDataHost::Ok() { //note: only used for Dialogs
   state = ACCEPTED;
   mouse_button = okbut->mouse_button;
   if (isDialog()) {
-    dialog->dismiss(1);
+    dialog->dismiss(true);
   }
 }
 
@@ -1412,7 +1356,7 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
     return NULL;
   if (panel == NULL)
     panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
-  panel->setCentralWidget(scrDialog);
+  panel->setCentralWidget(widget());
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
   return panel;

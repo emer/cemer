@@ -18,7 +18,7 @@
 
 // NOTE: This file is *not* in the make dependency list for other files.
 
-#include "config.h"
+#include "../../config.h"
 
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H
@@ -26,24 +26,130 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Qt includes -- we typically only don't include Qt when building maketa, otherwise,
+// there are two options:
+//   non-gui builds get QtCore, but not Qt gui-related classes
+//   gui builds get QtGui etc.
+
+
+
+// when building maketa we want to make sure to turn off qt
+#ifdef NO_TA_BASE
+// configure should handle these, but we make sure we don't include Qt at all, or Inventor for maketa
+#  ifdef TA_USE_QT
+#    undef TA_USE_QT
+#  endif
+#  ifdef TA_GUI
+#    undef TA_GUI
+#  endif
+#  ifndef TA_NO_GUI
+#    define TA_NO_GUI
+#  endif
+#  ifdef TA_USE_INVENTOR
+#    undef TA_USE_INVENTOR
+#  endif
+// we don't try scanning Qt's header files when running maketa
+#elif defined(__MAKETA__)
+#  include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
+#  define TA_QT_EVENT_BASE (1000 + 128)
+#else // normal ta, in all variants
+#  ifdef TA_USE_QT // normal to always include QT
+#    include <qglobal.h>
+#    include <qevent.h>
+#    include "qtdefs.h" // declares common qt and related classes often used by pointer
+#  endif
 // new Qt Event type codes -- should be globally unique, to avoid problems
-#ifdef __MAKETA__
-  #define TA_QT_EVENT_BASE (1000	+ 128)
-  #ifdef TA_GUI
-    #include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
-  #endif
-#else
-  #ifdef TA_GUI
-    #include <qglobal.h>
-    #include <qevent.h>
-  #endif
-  #ifdef TA_GUI
-    #include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
-  #endif
-  #define TA_QT_EVENT_BASE (QEvent::User	+ 128)
+#  define TA_QT_EVENT_BASE (QEvent::User + 128)
 #endif
 
 #define TA_QT_EVENT_SEL_CHANGED	(TA_QT_EVENT_BASE + 1)
+
+// Operating System and Environment codes -- generally mirror those of Qt
+// NOTE: many of these are untested for TA/PDP, and are just included to mirror Qt
+
+#if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
+#  define TA_OS_DARWIN
+#elif defined(__CYGWIN__) // note: not supported
+#  define TA_OS_CYGWIN
+#  error "Cygwin is not supported for TA/PDP"
+#elif defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
+#  error "Win64 is not yet supported for TA/PDP (but should be soon...)"
+#  define TA_OS_WIN64
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#  define TA_OS_WIN32
+#elif defined(__MWERKS__) && defined(__INTEL__)
+#  define TA_OS_WIN32
+#elif defined(__sun) || defined(sun)
+#  define TA_OS_SOLARIS
+#elif defined(hpux) || defined(__hpux)
+#  define TA_OS_HPUX
+#elif defined(__ultrix) || defined(ultrix)
+#  define TA_OS_ULTRIX
+#elif defined(sinix)
+#  define TA_OS_RELIANT
+#elif defined(__linux__) || defined(__linux)
+#  define TA_OS_LINUX
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+#  define TA_OS_FREEBSD
+#  define TA_OS_BSD4
+#elif defined(__NetBSD__)
+#  define TA_OS_NETBSD
+#  define TA_OS_BSD4
+#elif defined(__OpenBSD__)
+#  define TA_OS_OPENBSD
+#  define TA_OS_BSD4
+#elif defined(__bsdi__)
+#  define TA_OS_BSDI
+#  define TA_OS_BSD4
+#elif defined(__sgi)
+#  define TA_OS_IRIX
+#elif defined(__osf__)
+#  define TA_OS_OSF
+#elif defined(_AIX)
+#  define TA_OS_AIX
+#elif defined(__Lynx__)
+#  define TA_OS_LYNX
+#elif defined(__GNU_HURD__)
+#  define TA_OS_HURD
+#elif defined(__DGUX__)
+#  define TA_OS_DGUX
+#elif defined(__QNXNTO__)
+#  define TA_OS_QNX6
+#elif defined(__QNX__)
+#  define TA_OS_QNX
+#elif defined(_SEQUENT_)
+#  define TA_OS_DYNIX
+#elif defined(_SCO_DS) /* SCO OpenServer 5 + GCC */
+#  define TA_OS_SCO
+#elif defined(__USLC__) /* all SCO platforms + UDK or OUDK */
+#  define TA_OS_UNIXWARE
+#elif defined(__svr4__) && defined(i386) /* Open UNIX 8 + GCC */
+#  define TA_OS_UNIXWARE
+#elif defined(__MAKEDEPEND__)
+#else
+#  error "TA/PDP has not been ported to this OS - talk to " //TODO: add pdp mailing list
+#endif
+
+#if defined(TA_OS_WIN32) || defined(TA_OS_WIN64)
+#  define TA_OS_WIN
+#endif
+
+#if defined(TA_OS_DARWIN)
+#  define TA_OS_MAC /* TA_OS_MAC is mostly for compatiblity, but also more clear */
+#endif
+
+#if defined(TA_OS_WIN)
+#  undef TA_OS_UNIX
+#elif !defined(TA_OS_UNIX)
+#  define TA_OS_UNIX
+#endif
+
+//TODO: we
+#if defined(TA_OS_DARWIN) && !defined(QT_LARGEFILE_SUPPORT)
+#  define TA_LARGEFILE_SUPPORT 64
+#endif
+
+
 
 
 // Useful pseudo keywords, for C++

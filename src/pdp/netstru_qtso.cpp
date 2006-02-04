@@ -1328,8 +1328,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 {
   updating = 0;
   cmd_x = cmd_y = 0;
+  QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
-  layOuter = new QHBoxLayout(this);
+  layOuter = new QHBoxLayout(widg);
 
   layCtrls = new QVBoxLayout(layOuter, 1); // takes up all variable space
   layDispCheck = new QHBoxLayout(layCtrls);
@@ -1405,7 +1406,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
 //  layOuter->addStretch();
 
-
+  setCentralWidget(widg);
+  
   connect(cbar, SIGNAL(scaleValueChanged()),
     this, SLOT(cbar_scaleValueChanged()) );
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );

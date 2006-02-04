@@ -39,8 +39,6 @@
 #define TA_QTBROWSE_H
 
 #include "ta_base.h"
-#include "qtdefs.h"
-#include "ta_stdef.h"
 #include "ta_qttype_def.h"
 #include "ta_qtbrowse_def.h"
 #include "ta_qtviewer.h"

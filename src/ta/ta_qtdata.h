@@ -19,7 +19,6 @@
 #ifndef TA_QTDATA_H
 #define TA_QTDATA_H
 
-#include "qtdefs.h"
 #include "ta_base.h"
 #include "ta_variant.h"
 #include "ta_qtdata_def.h"

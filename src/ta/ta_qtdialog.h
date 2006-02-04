@@ -19,7 +19,6 @@
 #ifndef ta_qtdialog_h
 #define ta_qtdialog_h 1
 
-#include "qtdefs.h"
 #include "ta_type.h"
 #include "ta_qtdata.h" //for taiMenu_List
 #include "ta_qtviewer.h"
@@ -153,34 +152,27 @@ private:
 };
 
 //////////////////////////
-// 	Dialog		//
+// 	iDialog		//
 //////////////////////////
 
-class Dialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class taiDataHost;
 public:
-  bool 		was_accepted;
-
-  Dialog(taiDataHost* owner_, QWidget* parent = 0, bool modal_ = false);
-  ~Dialog();
+  iDialog(taiDataHost* owner_, QWidget* parent = 0);
+  ~iDialog();
 
   bool		post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
   void		dismiss(bool accept_);
 
   void		iconify();   // Iv compatibility routine
   void		deiconify(); // Iv compatibility routine
-  void		setCentralWidget(QWidget* widg);
+  void		setCentralWidget(QWidget* widg); // is put in a scroll area; dialog is limited to screen size
 protected:
   taiDataHost* 	owner;
   QWidget* 	mcentralWidget;
+  QScrollArea*	scr;
   override void closeEvent(QCloseEvent* ev);
-  override void resizeEvent(QResizeEvent* ev);
-
-protected slots:
-  virtual void accept(); // override -- it should return 0 for our purpose (not 1)
-  virtual void reject(); // override -- ignore new no_cancel, also should return 1 for our purpose
-
 };
 
 //////////////////////////
@@ -194,7 +186,6 @@ typedef iDataPanelFrame inherited;
 friend class taiEditDataHost;
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  void			setCentralWidget(QWidget* widg);
   override void		Closing(bool forced, bool& cancel);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
@@ -207,9 +198,7 @@ public: // IDataLinkClient interface
 
 protected:
   taiEditDataHost* 	owner;
-  QWidget* 		mcentralWidget;
   override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
-  override void 	resizeEvent(QResizeEvent* ev);
 };
 
 
@@ -222,7 +211,7 @@ protected:
 
 class taiDataHost: public QObject, public IDataHost {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
-friend class Dialog;
+friend class iDialog;
 public:
   enum Dlg_State {
     EXISTS		= __EXISTS,
@@ -252,14 +241,12 @@ public:
   bool		no_revert_hilight; // do not highlight the revert button
 
 
-  QScrollArea*	scrDialog;	// scrollbars for the whole shebang -- widget() is the viewport()
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
     QLabel*	prompt;		// informative message at top of dialog
-    QWidget*	body;		// parent for the body items
     QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
       QScrollArea*	scrBody;		// scrollbars for the body items
       QGridLayout* 	layBody;	// layout for the body -- deleted/reconstructed when show changes
-//  QTable*	body;	// table for body elements
+        QWidget*	body;		// parent for the body items (actually an iStripeWidget)
     QFrame*	frmMethButtons;	// method buttons
       iFlowLayout*	layMethButtons;	// method buttons
     QHBoxLayout*	hblButtons;	// box of buttons on the bottom of the dialog
@@ -284,7 +271,7 @@ public:
 
   void  Constr(const char* prompt = "", const char* win_title = "", const iColor* bgcol = NULL, bool as_panel = false);
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
-  virtual int 		Edit(bool modal_ = false); // for dialogs -- creates Dialog
+  virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
   virtual void  Unchanged();	// call when data has been saved or reverted
@@ -315,7 +302,7 @@ protected:
   bool		modified;
   bool		showMethButtons; // true if any are created
   QWidget*	mwidget;	// outer container for all widgets
-  Dialog*	dialog; // dialog, when using Edit, NULL otherwise
+  iDialog*	dialog; // dialog, when using Edit, NULL otherwise
   bool		is_panel; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   int 		sel_item_index; // only used during handling of context menu for select edits
   bool		rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
@@ -349,8 +336,8 @@ public slots:
 
 protected:
 
-  void 			DoConstr_Dialog(Dialog*& dlg); // common sub-code for constructing a dialog instance
-  void 			DoDestr_Dialog(Dialog*& dlg); // common sub-code for destructing a dialog instance
+  void 			DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
+  void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
 
 protected slots:

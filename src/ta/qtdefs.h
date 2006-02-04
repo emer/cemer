@@ -24,10 +24,24 @@
 #ifndef QTDEFS_H
 #define QTDEFS_H
 
+// Qt Core defines -- always included
+
+class	QBitArray;		// #IGNORE
+class	QEvent;			// #IGNORE
+template<class T> class	QList;		// #IGNORE
+class	QObject;		// #IGNORE
+class	QString;		// #IGNORE
+class	QStringList;		// #IGNORE
+class	QVariant;		// #IGNORE
+
+class	QCustomEvent;		// #IGNORE Qt3: is deprecated in Qt4, 
+
+// Qt Gui defines -- only when TA_GUI
+
+#ifdef TA_GUI
 class	QAction;		// #IGNORE
 class	QActionGroup;		// #IGNORE
 class	QBitmap;		// #IGNORE
-class	QBitArray;		// #IGNORE
 class	QBoxLayout;		// #IGNORE
 class	QButton;		// #IGNORE note: abstract parent class for buttons
 class	Q3Button;		// #IGNORE note: abstract parent class for buttons
@@ -42,7 +56,6 @@ class	QCursor;		// #IGNORE
 class	QDialog;		// #IGNORE
 class	QDockWindow;		// #IGNORE
 class	QDragObject;		// #IGNORE
-class	QEvent;			// #IGNORE
 class	QFileDialog;		// #IGNORE
 class	QFont;			// #IGNORE
 class	QFrame;			// #IGNORE
@@ -57,7 +70,6 @@ class	Q3Header;		// #IGNORE
 class	QLabel;			// #IGNORE
 class	QLayout;		// #IGNORE
 class	QLineEdit;		// #IGNORE
-template<class T> class	QList;		// #IGNORE
 class	Q3ListBox;		// #IGNORE
 class	Q3ListBoxItem;		// #IGNORE
 class	Q3ListView;		// #IGNORE
@@ -70,7 +82,6 @@ class	QMenuBar;		// #IGNORE
 class	QMenuItem;		// #IGNORE
 class	QMessageBox;		// #IGNORE
 class	QMimeSource;		// #IGNORE
-class	QObject;		// #IGNORE
 //class	QObjectList;		// #IGNORE
 class	QPainter;		// #IGNORE
 class	QPixmap;		// #IGNORE
@@ -88,8 +99,6 @@ class	QSizePolicy;		// #IGNORE
 class	QSpacerItem;		// #IGNORE
 class	QSpinBox;		// #IGNORE
 class	QSplitter;		// #IGNORE
-class	QString;		// #IGNORE
-class	QStringList;		// #IGNORE
 class	Q3Table;			// #IGNORE
 class	Q3TableItem;			// #IGNORE
 class	QTabBar;		// #IGNORE
@@ -100,7 +109,6 @@ class	QTimer;			// #IGNORE
 class	QToolBar;		// #IGNORE
 class	QToolTip;		// #IGNORE
 class	QValidator;		// #IGNORE
-class	QVariant;		// #IGNORE
 class	Q3VBox;			// #IGNORE
 class	QVBoxLayout;		// #IGNORE
 //class	QVButtonGroup;		// #IGNORE
@@ -114,7 +122,6 @@ class	Q3WidgetStack;		// #IGNORE
 class	QCloseEvent;		// #IGNORE
 class	QChildEvent;		// #IGNORE
 class	QContextMenuEvent;	// #IGNORE
-class	QCustomEvent;		// #IGNORE Qt3: is deprecated in Qt4, 
 class	QDropEvent;		// #IGNORE
 class	QFocusEvent;		// #IGNORE
 class	QHideEvent;		// #IGNORE
@@ -132,6 +139,7 @@ class	T3ViewspaceWidget;	// #IGNORE
 class SoQtRenderArea; //#IGNORE
 class SoQtViewer; //#IGNORE
 
+#ifdef TA_USE_INVENTOR
 // Common So Classes
 class SoBaseColor;		// #IGNORE
 class SoCone; 			// #IGNORE
@@ -142,6 +150,7 @@ class SoNode; 			//
 class SoPath;			// #IGNORE
 class SoSeparator; 		//
 class SoTransform; 		// #IGNORE
+#endif
 
 // Custom Controls
 
@@ -185,9 +194,11 @@ extern QColor& COLOR_BRIGHT_HILIGHT;
 // aliases
 
 // IV CLASS MAPPINGS:
-
-//TEMP:
+//TODO: get rid of these...
 #define	iButton 	Q3Button
+#define iWidget		QWidget
+#define iWindow 	QWidget  //DO NOT CHANGE (needed for WindowList)
+#define iTopLevelWindow	QMainWindow  // tentative
 
 // 	IV Class	QT Class
 //	ivDeck		Q3WidgetStack
@@ -198,6 +209,8 @@ extern QColor& COLOR_BRIGHT_HILIGHT;
     #define __cplusplus
   #endif
 #endif
+
+#endif // TA_GUI
 
 #endif // QTDEFS_H
 

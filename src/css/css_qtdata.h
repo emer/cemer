@@ -19,7 +19,6 @@
 #ifndef CSS_QTDATA_H
 #define CSS_QTDATA_H
 
-#include "qtdefs.h"
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
 

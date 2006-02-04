@@ -37,9 +37,6 @@ typedef unsigned long XWindow;		// #IGNORE
 class taiData;
 class taiEditDataHost;
 class iDataViewer;
-class Dialog;
-
-typedef taPtrList<QWidget> 	Window_List;  // #IGNORE list of windows
 
 typedef taPtrList<QWidget> 	Widget_List;  // #IGNORE list of widgets
 
@@ -124,8 +121,6 @@ public:
   static bool			gui_active;
   // #READ_ONLY 'true' when we have a gui (mainwindow), false if not (ex. after main win closes)
 
-  static Window_List		active_wins; 	// #IGNORE list of active windows, dynamically ordered from least-recently active (idx=0) to currently active (idx=max)
-//obs  static Window_List		delete_wins; 	// #IGONRE list of windows to delete (delayed)
   static taiDialog_List		active_dialogs;	// #IGNORE list of active (NoBlock) dialogs
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
   static taiEditDataHost_List	css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
@@ -137,7 +132,7 @@ public:
   static void (*Update_Hook)(TAPtr);
   // #IGNORE called after apply in a dialog, etc. obj is the object that was edited
 
-  static QWidget*		main_window; // the main window
+  static QWidget*		main_window; // the main window (dialogs are parented to this)
 
   static taBase_PtrList		unopened_windows;
   // #HIDDEN unopened windows waiting to be opened

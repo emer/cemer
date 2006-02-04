@@ -91,8 +91,6 @@ int tai_rl_hook_proc() {
 taiMisc* taiM = NULL;
 
 bool 			taiMisc::gui_active = false;
-Window_List		taiMisc::active_wins;
-//Window_List		taiMisc::delete_wins;
 taiDialog_List 		taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
@@ -458,16 +456,6 @@ iFont taiMisc::nameFont(int fontSpec) {
   return rval;
 }
 
-/* ???
-int taiMisc::GetButton(const ivEvent& e) {
-  if(e.pointer_button() == ivEvent::left) {
-    if(e.shift_is_down()) return ivEvent::middle;
-    if(e.meta_is_down()) return ivEvent::right;
-    return ivEvent::left;
-  }
-  return(e.pointer_button());
-}
-*/
 void taiMisc::MainWindowDestroyed() {
   main_window = NULL;
   taiMisc::gui_active = false;
@@ -545,68 +533,11 @@ void taiMisc::SetWinCursors() {
   }
 
   taMisc::Error("*** Unexpected call to SetWinCursors -- not busy or recording.");
-
-/*obs:  for (int i = active_wins.size - 1; i >= 0; --i) {
-    iWindow* win = active_wins.FastEl(i);
-    if (win->isVisible()) //TODO: verify, was ivWindow->is_mapped
-      SetWinCursor(win);
-  } */
 }
 
 void taiMisc::RestoreWinCursors() {
   QApplication::restoreOverrideCursor();
-/*obs:  for (int i = active_wins.size - 1; i >= 0; --i) {
-    iWindow* win = active_wins.FastEl(i);
-    if (win->isVisible()) //TODO: verify, was ivWindow->is_mapped
-      SetWinCursor(win);
-  } */
 }
-
-/* obs:
-void taiMisc::SetWinCursor(iWindow* win) {
-  bool is_busy = false;
-  bool is_rec = false;
-  if((taiMisc::busy_count > 0) || cssiSession::block_in_event)
-    is_busy = true;
-  if(taiMisc::record_script !=NULL)
-    is_rec = true;
-
-  if (is_busy && is_rec) {	// both busy and recording (busy wins)
-    while (win->cursor() == taiM->record_cursor)
-      win->pop_cursor();	// get rid of any recording cursors..
-    if (win->cursor() != taiM->wait_cursor) {
-      win->push_cursor();
-      win->cursor(taiM->wait_cursor);
-    }
-    return;
-  }
-
-  if(is_busy) {
-    while(win->cursor() == taiM->record_cursor)
-      win->pop_cursor();	// get rid of any recording cursors..
-    if(win->cursor() != taiM->wait_cursor) {
-      win->push_cursor();
-      win->cursor(taiM->wait_cursor);
-    }
-    return;
-  }
-
-  if(is_rec) {
-    while(win->cursor() == taiM->wait_cursor)
-      win->pop_cursor();	// get rid of any waiting cursors..
-    if(win->cursor() != taiM->record_cursor) {
-      win->push_cursor();
-      win->cursor(taiM->record_cursor);
-    }
-    return;
-  }
-
-  // get rid of any special cursors..
-  while((win->cursor() == taiM->record_cursor) ||
-	(win->cursor() == taiM->wait_cursor))
-      win->pop_cursor();
-}
-*/ //TODO
 
 
 void taiMisc::PurgeDialogs() {
@@ -614,11 +545,6 @@ void taiMisc::PurgeDialogs() {
   for (int i = active_dialogs.size - 1; i >= 0; --i) {
     taiDataHost* dlg = active_dialogs.FastEl(i);
     if ((dlg->state == taiDataHost::ACCEPTED) || (dlg->state == taiDataHost::CANCELED)) {
-      // this list does not delete after, so its ok...
-//should not be needed--can't be ACC or CAN unless already dismissed...      dlg->dialog->dismiss(0);
-//nn--done in destructor      active_edits.Remove((taiEditDialog*)dlg);	// in case its on this list too
-//nn--done in destructor      css_active_edits.Remove((taiEditDialog*)dlg); // ditto
-      // this one does the deleting
       active_dialogs.Remove(i);
       did_purge = true;
     }

@@ -38,8 +38,6 @@
 #ifndef TA_QTVIEWER_H
 #define TA_QTVIEWER_H
 
-#include "qtdefs.h"
-#include "ta_stdef.h"
 #include "ta_base.h"
 #include "ta_qtdata.h"
 #include "ta_qtclipdata.h"
@@ -1069,6 +1067,7 @@ friend class iPanelTab;
 friend class iTabView;
 friend class iDataPanelSet;
 public:
+  virtual void		setCentralWidget(QWidget* widg); // sets the contents
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
   taiDataLink*		link() {return (taiDataLink*)m_link;}
@@ -1110,6 +1109,7 @@ protected slots:
 
 protected:
   iTabView*		m_tabView; // tab view in which we are shown
+  QScrollArea*		scr; // central scrollview
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
 };
 
@@ -1355,7 +1355,6 @@ class iListDataPanel: public iDataPanelFrame {
 typedef iDataPanelFrame inherited;
 #endif
 public:
-  QVBoxLayout*		layOuter;
   Q3ListView*		list; //actually an iLDPListView
 
   override String	panel_type() const; // this string is on the subpanel button for this panel

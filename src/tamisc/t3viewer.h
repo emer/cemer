@@ -21,7 +21,6 @@
 #define T3VIEWER_H
 
 #include "ta_group.h"
-#include "qtdefs.h"
 //#include "ta_qt.h"
 #include "ta_qtviewer.h"
 //#include "ta_qtdata_def.h"

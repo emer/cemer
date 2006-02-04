@@ -57,17 +57,9 @@ using namespace std;
 // Some misc. compatability defines -- made porting to Qt easier
 
 
-#ifdef TA_GUI
-
+#ifdef TA_USE_QT
 // dummy defines for Qt -- its header files are too complex and parameterized for maketa
 #  include "ta_maketa_defs.h"
-
-#define iWidget		QWidget
-#define iWindow 	QWidget  //DO NOT CHANGE (needed for WindowList)
-#define iTopLevelWindow	QMainWindow  // tentative
-
-// String converters -- may be moved, implementation in ta_qtdata.cc
-
 #endif
 
 // Some global forward declarations

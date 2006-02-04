@@ -2092,7 +2092,8 @@ const char* but_strs[] = {"|<","<<","<",">",">>",">|","Update","Init","Clear"};
 
 void iLogView_Panel::init(bool is_grid_log)
 {
-  layOuter = new QVBoxLayout(this);
+  QWidget* widg = new QWidget();
+  layOuter = new QVBoxLayout(widg);
 
   layTopCtrls = new QHBoxLayout(layOuter);
 
@@ -2136,6 +2137,7 @@ void iLogView_Panel::init(bool is_grid_log)
 
   layContents = new QHBoxLayout(layOuter);
 
+  setCentralWidget(widg);
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   connect(bgpTopButtons, SIGNAL(clicked(int)), this, SLOT(buttonClicked(int)) );
 /*TODO  list = new iLDPListView(this, "list");
