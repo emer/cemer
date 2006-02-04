@@ -35,7 +35,7 @@ bin_PROGRAMS = maketa
 
 maketa_SOURCES = $(HEADS) $(SRCS)
 
-maketa_CPPFLAGS = -I@abs_srcdir@
+maketa_CPPFLAGS = -I@abs_srcdir@ -DNO_TA_BASE
 
 BUILT_SOURCES = ta_TA_type.h
 
