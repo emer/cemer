@@ -16,7 +16,7 @@
 #ifndef IMISC_SO_H
 #define IMISC_SO_H
 
-#include "taglobal.h"
+#include "taiqtso_def.h"
 #include "igeometry.h"
 
 /* T3RenderHelper
@@ -34,7 +34,7 @@
 
 */
 
-class T3RenderHelper { // #IGNORE class used to help rendering -- issues the translation transforms
+class TAIQTSO_API T3RenderHelper { // #IGNORE class used to help rendering -- issues the translation transforms
 public:
   iVec3f	cur; // current position (initially 0,0,0)
   SoGroup*	par; // default parent

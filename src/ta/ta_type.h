@@ -67,6 +67,44 @@ class TA_API MemberDef;
 class TA_API MethodDef;
 class TA_API TypeDef; //
 
+//TENT: moved here from maketa.h to enable anything importing ta_type to assume these defs
+extern TypeDef TA_void;
+extern TypeDef TA_char;
+extern TypeDef TA_signed_char;
+extern TypeDef TA_unsigned_char;
+extern TypeDef TA_short;
+extern TypeDef TA_unsigned_short;
+extern TypeDef TA_int;
+extern TypeDef TA_unsigned_int;
+extern TypeDef TA_long;
+extern TypeDef TA_unsigned_long;
+extern TypeDef TA_unsigned;
+extern TypeDef TA_signed;
+extern TypeDef TA_float;
+extern TypeDef TA_double;
+extern TypeDef TA_int64_t;
+extern TypeDef TA_uint64_t;
+extern TypeDef TA_intptr_t;
+extern TypeDef TA_bool;
+extern TypeDef TA_const;	// const is not formal...
+extern TypeDef TA_enum;		// par_formal
+extern TypeDef TA_struct;	// par_formal
+extern TypeDef TA_union;	// par_formal
+extern TypeDef TA_class;	// par_formal
+extern TypeDef TA_template;	// par_formal
+extern TypeDef TA_templ_inst;	// par_formal template instantiation
+extern TypeDef TA_ta_array;	// par_formal (indicates "arrayness")
+extern TypeDef TA_taBase;
+extern TypeDef TA_taRegFun;	// registered functions
+extern TypeDef TA_TypeDef;	// give these to the user...
+extern TypeDef TA_MemberDef;
+extern TypeDef TA_MethodDef;
+extern TypeDef TA_ta_Globals;
+extern TypeDef TA_taString;
+extern TypeDef TA_Variant;
+extern TypeDef TA_void_ptr;
+//\TENT
+
 // externals
 // for gui support
 #ifdef TA_NO_GUI
@@ -305,7 +343,7 @@ public:
   static int 	ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr);
   // search through all tokens in all types and replace any pointer to old_ptr with first other token in same scope of same type
 
-#if ((!defined(WINDOWS)) || (defined(CYGWIN)))
+#if ((defined(TA_OS_UNIX)))
 #ifndef __MAKETA__
   static void	Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));
   // register a cleanup process in response to all terminal signals

@@ -23,8 +23,10 @@
 
 // externals
 class TypeDef;
+#ifndef NO_TA_BASE
 class taBase;
 class taMatrix;
+#endif
 
 // note: taVariant is based in part on QVariant implementation in Qt
 // Variant is always 12 bytes long on both 32/64 platforms
@@ -66,10 +68,9 @@ public:
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase* or taMatrix*
   VarType		type() const {return (VarType)m_type;} //
-  
+
   void			save(ostream& s) const;
   void			load(istream& s); //
-  
   
 // following are ops to set to a specific type of value  
   void 			setVariant(const Variant& cp); // basically a copy
@@ -88,9 +89,10 @@ public:
   void			setString(const String& cp, bool null = false); // handles setting of a string 
   void			setCString(const char* val, bool null = false)
     {setString(String(val), null);}
+#ifndef NO_TA_BASE
   void			setBase(taBase* cp); // handles setting of a taBase
   void			setMatrix(taMatrix* cp); // handles setting of a matrix
-  
+#endif  
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
   bool 			toBool() const;
   byte 			toByte() const {return (byte)toUInt();}
@@ -103,9 +105,10 @@ public:
   char 			toChar() const;
   void* 		toPtr() const; // must be a void*, Base, or Matrix, otherwise returns NULL
   String 		toString() const;
+#ifndef NO_TA_BASE
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
-  
+#endif  
   // following are the automatic operators for C++ casting
   operator bool() const {return toBool();}
   operator byte() const {return toByte();}
@@ -119,9 +122,10 @@ public:
   operator char() const {return toChar();}
   operator void*() const {return toPtr();}
   operator String() const {return toString();}
+#ifndef NO_TA_BASE
   operator taBase*() const {return toBase();}
   operator taMatrix*() const {return toMatrix();} //
-  
+#endif  
   // equality operations  
   bool			eqVariant(const Variant& val) const; // value equality, using fairly relaxed type rules; Invalid never == anything
   bool 			eqBool(bool val) const;
@@ -139,9 +143,11 @@ public:
   bool			eqCString(const char* val) const
     {eqString(String(val));}
   bool 			eqPtr(const void* val) const;
+#ifndef NO_TA_BASE
   bool			eqBase(const taBase* val) const {return eqPtr(val);} 
   bool			eqMatrix(const taMatrix* val) const {return eqPtr(val);} 
-  
+#endif
+
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
   // assignment operators
@@ -158,9 +164,11 @@ public:
   Variant& 	operator=(void* val) {setPtr(val); return *this;}
   Variant& 	operator=(const String& val) {setString(val); return *this;}
   Variant& 	operator=(const char* val) {setCString(val); return *this;}
+#ifndef NO_TA_BASE
   Variant& 	operator=(taBase* val) {setBase(val); return *this;}
   Variant& 	operator=(taMatrix* val) {setMatrix(val); return *this;}
-  
+#endif
+
 #ifdef __MAKETA__
   friend ostream&   operator<<(ostream& s, const Variant& x);
   friend istream&   operator>>(istream& s, Variant& x);
@@ -184,9 +192,10 @@ public:
   Variant(void* val);
   Variant(const String& val);
   Variant(const char* val);
+#ifndef NO_TA_BASE
   Variant(taBase* val);
   Variant(taMatrix* val);
-  
+#endif  
   ~Variant(); //
 
 public: // following primarily for TypeDef usage, streaming, etc.
@@ -213,8 +222,10 @@ protected:
       char c;
       intptr_t str; // 32/64 note: this is an in-place taString, NOT a pointer
       void* ptr; // 32/64
+#ifndef NO_TA_BASE
       taBase* tab; // 32/64 note: properly ref counted; also used for matrix
-  } d;
+#endif
+	} d;
   uint m_type : 31;
   uint m_is_null : 1;
 #endif
@@ -225,8 +236,10 @@ protected:
   //note: following gets ONLY valid when m_type is known to be of correct type
   const String& 	getString() const { return *((String*)(&d.str));} // #IGNORE
   String& 		getString() { return *((String*)(&d.str));} // #IGNORE
+#ifndef NO_TA_BASE
   taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
+#endif
 };
 
 // empty invalid variant
@@ -312,6 +325,7 @@ inline bool operator!=(const Variant& a, const void* b) {return !a.eqPtr(b);}
 inline bool operator==(const void* a, const Variant& b) {return b.eqPtr(a);}
 inline bool operator!=(const void* a, const Variant& b) {return !b.eqPtr(a);}
 
+#ifndef NO_TA_BASE
 inline bool operator==(const Variant& a, const taBase* b) {return a.eqBase(b);}
 inline bool operator!=(const Variant& a, const taBase* b) {return !a.eqBase(b);}
 inline bool operator==(const taBase* a, const Variant& b) {return b.eqBase(a);}
@@ -321,6 +335,7 @@ inline bool operator==(const Variant& a, const taMatrix* b) {return a.eqMatrix(b
 inline bool operator!=(const Variant& a, const taMatrix* b) {return !a.eqMatrix(b);}
 inline bool operator==(const taMatrix* a, const Variant& b) {return b.eqMatrix(a);}
 inline bool operator!=(const taMatrix* a, const Variant& b) {return !b.eqMatrix(a);}
+#endif
 
 #endif
 

@@ -171,28 +171,16 @@ public:
   bool 			toBool() const; // accepts true as starting with t/T, or else 1
   char 			toChar() const; // if size 1, then that's it, otherwise 0
   
-#ifdef TA_USE_QT
-  //TODO: must make these always available
-  // converter routines, for use when linked with Qt 
-  short 		toShort(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toShort(ok, base);}
-  ushort 		toUShort(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toUShort(ok, base);}
-  int 			toInt(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toInt(ok, base);}
-  uint 			toUInt(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toUInt(ok, base);}
-  int64_t 		toInt64(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toLongLong(ok, base);}
-  uint64_t 		toUInt64(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toULongLong(ok, base);}
-  unsigned long long	toULongLong(bool* ok = 0, int base = 10) const 
-    {QString tmp(chars()); return tmp.toULongLong(ok, base);}
-  float 		toFloat(bool* ok = 0) const 
-    {QString tmp(chars()); return tmp.toFloat(ok);}
-  double 		toDouble(bool* ok = 0) const 
-    {QString tmp(chars()); return tmp.toDouble(ok);}
-#endif  
+  // converter routines, NOTE: ok only works when linked to Qt! 
+  short 		toShort(bool* ok = 0, int base = 10) const; 
+  ushort 		toUShort(bool* ok = 0, int base = 10) const; 
+  int 			toInt(bool* ok = 0, int base = 10) const; 
+  uint 			toUInt(bool* ok = 0, int base = 10) const; 
+  int64_t 		toInt64(bool* ok = 0, int base = 10) const; 
+  uint64_t 		toUInt64(bool* ok = 0, int base = 10) const; 
+  float 		toFloat(bool* ok = 0) const; 
+  double 		toDouble(bool* ok = 0) const; 
+
   String&		convert(int i, const char* format = "%d");
   String&		convert(long i, const char* format = "%ld");
   String&		convert(float f, const char* format = "%g");
@@ -428,6 +416,42 @@ inline String::operator QString() const {
 inline String& String::operator = (const QString& y) {
   return set(y.toLatin1(), y.length());
 }
+
+  // converter routines, for use when linked with Qt 
+inline short String::toShort(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toShort(ok, base);}
+inline ushort String::toUShort(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toUShort(ok, base);}
+inline int String::toInt(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toInt(ok, base);}
+inline uint String::toUInt(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toUInt(ok, base);}
+inline int64_t String::toInt64(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toLongLong(ok, base);}
+inline uint64_t String::toUInt64(bool* ok, int base) const 
+  {QString tmp(chars()); return tmp.toULongLong(ok, base);}
+inline float String::toFloat(bool* ok) const 
+  {QString tmp(chars()); return tmp.toFloat(ok);}
+inline double String::toDouble(bool* ok) const 
+  {QString tmp(chars()); return tmp.toDouble(ok);}
+#else 
+//NOTE: these are primarily just for maketa, and are not fully functional
+inline short String::toShort(bool* ok, int base) const 
+  {if (ok) *ok = true; return (short)strtol(chars(), NULL, base);}
+inline ushort String::toUShort(bool* ok, int base) const 
+  {if (ok) *ok = true; return (ushort)strtoul(chars(), NULL, base);}
+inline int String::toInt(bool* ok, int base) const 
+  {if (ok) *ok = true; return strtol(chars(), NULL, base);}
+inline uint String::toUInt(bool* ok, int base) const 
+  {if (ok) *ok = true; return strtoul(chars(), NULL, base);}
+inline int64_t String::toInt64(bool* ok, int base) const 
+  {if (ok) *ok = true; return _strtoi64(chars(), NULL, base);}
+inline uint64_t String::toUInt64(bool* ok, int base) const 
+  {if (ok) *ok = true; return _strtoui64(chars(), NULL, base);}
+inline float String::toFloat(bool* ok) const 
+  {if (ok) *ok = true; return (float)strtod(chars(), NULL);}
+inline double String::toDouble(bool* ok) const 
+  {if (ok) *ok = true; return strtod(chars(), NULL);}
 #endif
 
 // same issue with this operator: must be here in .h file, or there are link errors

@@ -17,7 +17,10 @@
 
 #include "ta_variant.h"
 
+#include "ta_type.h"
+#ifndef NO_TA_BASE
 #include "ta_matrix.h"
+#endif
 
 using namespace std;
 
@@ -51,12 +54,15 @@ Variant::Variant(const Variant &cp)
 {
   switch (cp.m_type) {
   case T_String: new(&d.str)String(cp.getString()); break;
+#ifndef NO_TA_BASE
   case T_Base:
   case T_Matrix: d.tab = NULL; taBase::SetPointer(&d.tab, cp.d.tab); break;
+#endif
   default: d = cp.d; // just copy bits, valid for all other types
   }
 }
 
+#ifndef NO_TA_BASE
 Variant::Variant(taBase* val) 
 :m_type(T_Base)
 {
@@ -82,6 +88,7 @@ Variant::Variant(taMatrix* val)
     d.tab = val;
   }
 }
+#endif
 
 Variant::~Variant() { 
   releaseType();
@@ -150,7 +157,7 @@ bool  Variant::eqBool(bool val) const {
   case T_Int: 
   case T_UInt: 
   case T_Int64: 
-  case T_UInt64: 
+  case T_UInt64:
     return (toBool() == val);
   default: return false;
   }
@@ -278,6 +285,7 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
   case T_String:  typ = &TA_taString; break;
   //note: in pdp, a member variable of type "void*" return md->type = "void_ptr"
   case T_Ptr: typ = &TA_void_ptr; break; 
+#ifndef NO_TA_BASE
   case T_Base:  
   case T_Matrix: {
     // if null, get the base type, else the actual type
@@ -290,14 +298,17 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
     // now, get a ptr to that type
     typ = temp_typ->GetPtrType();
   } break;
+#endif
   }
 }
 
 void Variant::UpdateAfterLoad() {
   switch (m_type) {
   case T_Ptr: m_is_null = (d.ptr == NULL); break;
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix: m_is_null = (d.tab == NULL); break;
+#endif
   default: break ;
   }
 }
@@ -308,8 +319,10 @@ bool Variant::isNull() const {
   // obscure issues when streaming in values, in case FixNull not called
   switch (m_type) {
   case T_Ptr: return (d.ptr == NULL);
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix: return (d.tab == NULL);
+#endif
   default: return m_is_null;
   }
 }
@@ -327,7 +340,9 @@ void Variant::load(istream& s) {
       String str;
       s >> str; 
       setString(str);
-  } else if ((t == T_Base) || (t == T_Matrix)) { // handled almost the same
+  } 
+#ifndef NO_TA_BASE
+  else if ((t == T_Base) || (t == T_Matrix)) { // handled almost the same
     taString typ_name;
     s >> typ_name; // 
     if (typ_name == "TA_void") {
@@ -352,7 +367,9 @@ void Variant::load(istream& s) {
         setMatrix((taMatrix*)ta);
       else setBase(ta);
     }
-  } else {
+  } 
+#endif
+  else {
     releaseType();
     m_type = t;
     m_is_null = false; // except pointer
@@ -392,17 +409,18 @@ void Variant::load(istream& s) {
 }
 
 
-
-
 void Variant::releaseType() {
   // undo specials
   switch (m_type) {
   case T_String: getString().~String(); break;
+#ifndef NO_TA_BASE
   case T_Base:
   case T_Matrix: taBase::DelPointer(&d.tab); break;
-  default: break; // compiler food
+#endif
+	default: break; // compiler food
   }
 }
+
 
 void Variant::save(ostream& s) const {
   s << (int)type();
@@ -437,6 +455,7 @@ void Variant::save(ostream& s) const {
   case T_Ptr: 
     s << toString(); //NOIE: cannot be streamed back in!!!
     break;
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix:
     if (d.tab == NULL) {
@@ -446,6 +465,7 @@ void Variant::save(ostream& s) const {
       d.tab->Save(s);
     }
     break;
+#endif
   default: break ;
   }
 }
@@ -453,9 +473,11 @@ void Variant::save(ostream& s) const {
 void Variant::setVariant(const Variant &cp) {
   switch (cp.m_type) {
   case T_String: setString(cp.getString()); break;
+#ifndef NO_TA_BASE
   case T_Base: setBase(cp.d.tab); break;
   case T_Matrix: setMatrix(cp.getMatrix()); break;
-  default: 
+#endif
+	default: 
     releaseType();
     d = cp.d; // just copy bits, valid for all other types
     m_type = cp.m_type;
@@ -527,6 +549,7 @@ void Variant::setPtr(void* val) {
   m_is_null = (val == NULL);
 }
 
+#ifndef NO_TA_BASE
 void Variant::setBase(taBase* cp) {
   if (m_type == T_Base)
     taBase::SetPointer(&d.tab, cp);
@@ -552,6 +575,7 @@ void Variant::setMatrix(taMatrix* cp) {
   }
   m_is_null = (cp == NULL);
 }
+#endif
 
 void Variant::setString(const String& val, bool null) {
   if (m_type == T_String)
@@ -637,10 +661,12 @@ bool Variant::toBool() const {
     } break;
   case T_Ptr: 
     return (d.ptr != NULL);
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix:
     return (d.tab != NULL);
-  default: break;
+#endif
+	default: break;
   }
   return false;
 }
@@ -851,10 +877,12 @@ void* Variant::toPtr() const {
     return NULL;
   case T_Ptr: 
     return d.ptr;
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix:
     return d.tab;
-  default: break ;
+#endif
+	default: break ;
   }
   return NULL;
 }
@@ -882,14 +910,17 @@ String Variant::toString() const {
     return getString();
   case T_Ptr: 
     return String(d.ptr); // renders as hex
+#ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix:
     return taBase::GetStringRep(d.tab);
-  default: break ;
+#endif
+	default: break ;
   }
   return _nilString;
 }
 
+#ifndef NO_TA_BASE
 taBase* Variant::toBase() const {
   switch (m_type) {
   case T_Invalid: 
@@ -912,11 +943,12 @@ taBase* Variant::toBase() const {
     return NULL;
   case T_Ptr: 
     return NULL;
+#ifndef NO_TA_BASE
   case T_Base:
-    return d.tab; 
   case T_Matrix:
     return d.tab;
-  default: break ;
+#endif
+	default: break ;
   }
   return NULL;
 } 
@@ -953,3 +985,4 @@ taMatrix* Variant::toMatrix() const {
   }
   return NULL;
 } 
+#endif 

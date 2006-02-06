@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maketa", "maketa\maketa.vcproj", "{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdp", "pdp\pdp.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ta", "ta\ta.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Debug.ActiveCfg = Debug|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Debug.Build.0 = Debug|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Release.ActiveCfg = Release|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Release.Build.0 = Release|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Debug.ActiveCfg = Debug|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Debug.Build.0 = Debug|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Release.ActiveCfg = Release|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Release.Build.0 = Release|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Debug.ActiveCfg = Debug|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Debug.Build.0 = Debug|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Release.ActiveCfg = Release|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

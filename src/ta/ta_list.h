@@ -146,7 +146,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
 
 typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
 
-typedef unsigned long taHashVal;
+typedef intptr_t taHashVal; //should be same size as ptr for efficient hasing of ptrs
 
 class  taPtrList_impl { // ##NO_TOKENS implementation of the pointer list class
 protected:
@@ -768,14 +768,14 @@ public:
 
   void			Add(taHashBucket* itm)
   { taPtrList<taHashBucket>::Add(itm); }
-  void 			Add(taHashVal hash, int index);
+  void 			AddHash(taHashVal hash, int index);
   // add a new item to the hash table
 
   bool			Remove(taHashBucket* itm)
   { return taPtrList<taHashBucket>::Remove(itm); }
   bool			Remove(int idx)
   { return taPtrList<taHashBucket>::Remove(idx); }
-  bool			Remove(taHashVal hash);
+  bool			RemoveByHash(taHashVal hash);
   // remove given hash code from table
   bool			Remove(const char* string)
   { return Remove(HashCode_String(string)); }

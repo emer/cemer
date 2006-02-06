@@ -18,7 +18,7 @@
 
 #ifndef maketa_h
 #define maketa_h 1
-
+/*TENT: moved to head of ta_type, particularly to compile variant in maketa
 class TypeDef;
 
 extern TypeDef TA_void;
@@ -50,10 +50,9 @@ extern TypeDef TA_MemberDef;
 extern TypeDef TA_MethodDef;
 extern TypeDef TA_ta_Globals;
 extern TypeDef TA_taString;
-extern TypeDef TA_taSubString;
 extern TypeDef TA_void_ptr;
-
-#include "ta_type.h"
+*/
+#include "ta/ta_type.h"
 
 #ifndef TYPE
 #include "ta_parse.h"

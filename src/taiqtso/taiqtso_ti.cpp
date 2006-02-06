@@ -20,6 +20,8 @@
 #include "safeptr_so.h"
 #include "taiqtso_def.h"
 #include <qcolor.h>
+#include <Inventor/nodes/SoNode.h>
+/*TEMP
 #ifdef TA_USE_INVENTOR
 template class SoPtr<SoNode>;
 template class SoPtr<SoGroup>;
@@ -27,7 +29,7 @@ template class SoPtr<SoSeparator>;
 template class SoPtr<SoSelection>;
 template class SoPtr<SoTransform>;
 template class SoPtr<SoSeparatorKit>;
-#endif // TA_USE_INVENTOR
+#endif // TA_USE_INVENTOR */
 // note: following are defined in tai_qtso_def.h -- they aren't really templates, but
 // there was no other global .cc file in which to put them...
 

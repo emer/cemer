@@ -17,7 +17,7 @@
 #ifndef TAIQTSO_DEF_H
 #define TAIQTSO_DEF_H
 
-#include "taglobal.h"
+#include "ta/taglobal.h"
 
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TAIQTSO_EXPORTS
@@ -25,15 +25,15 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // TAIQTSO_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-/*#if ((defined(_DLL)) && (defined(WINDOWS)) && (!defined(__MAKETA__)))
+#if ((defined(TAIQTSO_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
   #ifdef TAIQTSO_EXPORTS
   #define TAIQTSO_API __declspec(dllexport)
   #else
   #define TAIQTSO_API __declspec(dllimport)
   #endif
-#else */
+#else 
   #define TAIQTSO_API
-//#endif
+#endif
 
 // Qt3 semi-compatibility macro
 #define SET_PALETTE_BACKGROUND_COLOR(w,c) { \

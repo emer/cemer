@@ -37,7 +37,7 @@
 # endif // TA_GUI */
 
 #else // ndef NO_TA_BASE
-# include "maketa.h"
+//nn anymore # include "maketa.h"
 #endif // NO_TA_BASE
 
 
@@ -47,7 +47,7 @@
 #include <signal.h>
 //nn? in stdlib #include <malloc.h>
 //nn? #include <unistd.h>
-#ifdef WINDOWS
+#ifdef TA_OS_WIN
 #else
 #include <sys/time.h>
 #include <sys/times.h>
@@ -410,7 +410,7 @@ int taHandleXIOError(Display*) {
 */
 
 
-#if ((!defined(WINDOWS)) || (defined(CYGWIN)))
+#if ((defined(TA_OS_UNIX)))
 
 void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
   // this should be the full set of terminal signals
@@ -3712,7 +3712,7 @@ ostream& MemberDef::OutputType(ostream& strm, int indent) const {
   taMisc::fmt_sep(strm, nwnm, 1, indent);
   strm << "// ";
   if(taMisc::type_info == taMisc::MEMB_OFFSETS) {
-    ulong ui_off = (ulong)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
+    intptr_t ui_off = (intptr_t)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
     ui_off -= 0x100;			      // now get rid of offset
     if(ui_off > 0) {
       strm << "+" << ui_off;

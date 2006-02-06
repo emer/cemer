@@ -15,15 +15,14 @@
 
 // irenderarea.h -- Qt and SoRenderArea compatability classes
 
-#include "config.h"
-
 #ifndef IRENDERAREA_H
 #define IRENDERAREA_H
-#ifdef TA_USE_INVENTOR
 
 #include "taiqtso_def.h"
 
-#include <qwidget.h>
+#ifdef TA_USE_INVENTOR
+
+#include <QWidget>
 
 // externals
 class SoQtRenderArea; //#IGNORE

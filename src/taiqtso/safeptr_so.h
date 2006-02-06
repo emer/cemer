@@ -18,8 +18,6 @@
 // NOTE: this file must be MAKETA scannable -- therefore, no concrete type info
 // should be required in this header file (ex. this is why all routines are in .cc file)
 
-#include "config.h"
-
 #ifndef SAFEPTRS_SO_H
 #define SAFEPTRS_SO_H
 

@@ -37,7 +37,7 @@ Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "ta_string.h"
 
-#if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
 #include <windows.h>
 // the Windows string.h doesn't define strcasecmp, so we use the Win32 equivalent
 #define strcasecmp(s1,s2) lstrcmp(s1, s2)
@@ -84,10 +84,10 @@ int _search(const char* s, int start, int sl, char c) {
     if (start >= 0) {
       const char* a = &(s[start]);
       const char* lasta = &(s[sl]);
-      while (a < lasta) if (*a++ == c) return --a - s;
+      while (a < lasta) if (*a++ == c) return (int)(--a - s); //safeint
     } else {
       const char* a = &(s[sl + start + 1]);
-      while (--a >= s) if (*a == c) return a - s;
+      while (--a >= s) if (*a == c) return (int)(a - s);
     }
   }
   return -1;
@@ -104,7 +104,7 @@ int _search(const char* s, int start, int sl, const char* t, int tl) {
       while (p <= lasts) {
         const char* x = p++;
         const char* y = t;
-        while (*x++ == *y++) if (y >= lastt) return --p - s;
+        while (*x++ == *y++) if (y >= lastt) return (int)(--p - s); //safeint
       }
     } else {
       const char* firsts = &(s[tl - 1]);
@@ -114,7 +114,7 @@ int _search(const char* s, int start, int sl, const char* t, int tl) {
       while (--p >= firsts) {
         const char* x = p;
         const char* y = lastt;
-        while (*x-- == *y--) if (y < t) return ++x - s;
+        while (*x-- == *y--) if (y < t) return (int)(++x - s); //safeint
       }
     }
   }
@@ -347,13 +347,37 @@ String::String(ulong u, const char* format) {
 }
 
 String::String(int64_t i64, int base) {
+#ifdef _MSC_VER // formats may be ms specific
+  char buf[64];
+  char* format;
+  switch (base){
+  case 8: format="%I64o";break;
+  case 16: format="%I64x";break;
+  default: format="%I64d";break;
+  }
+  _snprintf(buf, 63, format);
+  newRep(Salloc(buf, -1));
+#else
   QString str(QString::number(i64, base));
   newRep(Salloc(str.toLatin1(), str.length()));
+#endif
 }
 
 String::String(uint64_t u64, int base) {
+#ifdef _MSC_VER // formats may be ms specific
+  char buf[64];
+  char* format;
+  switch (base){
+  case 8: format="%I64o";break;
+  case 16: format="%I64x";break;
+  default: format="%I64u";break;
+  }
+  _snprintf(buf, 63, format);
+  newRep(Salloc(buf, -1));
+#else
   QString str(QString::number(u64, base));
   newRep(Salloc(str.toLatin1(), str.length()));
+#endif
 }
 
 String::String(float f,const char* format) {

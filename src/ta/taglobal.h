@@ -16,15 +16,14 @@
 
 // Standard global defines used in all header and source files
 
-// NOTE: This file is *not* in the make dependency list for other files.
-
-#include "../../config.h"
+#include "config.h"
 
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 // Qt includes -- we typically only don't include Qt when building maketa, otherwise,
 // there are two options:
@@ -150,6 +149,24 @@
 #endif
 
 
+/* DLL building options under windows */
+// currently, we are putting taiqtso/ta/css/tamisc in one dll, so slave to TA
+#ifdef TA_OS_WIN
+#ifdef TA_USE_INVENTOR
+#  define COIN_DLL
+#  define SOQT_DLL
+#endif
+#ifdef TA_DLL
+#  define TAIQTSO_DLL
+#  define CSS_DLL
+#  define TAMISC_DLL
+#endif
+#ifdef TA_EXPORTS
+#  define TAIQTSO_EXPORTS
+#  define CSS_EXPORTS
+#  define TAMISC_EXPORTS
+#endif
+#endif
 
 
 // Useful pseudo keywords, for C++
@@ -177,6 +194,17 @@ typedef uchar*		puchar;
 #endif // TA_GUI
 
 typedef unsigned char   byte;
+
+// msvc doesn't seem to define these...
+#ifdef TA_OS_WIN
+typedef signed __int64      int64_t;
+typedef unsigned __int64    uint64_t;
+#if defined(_WIN64)
+  typedef __int64	    intptr_t;
+#else
+  typedef int		    intptr_t;
+#endif
+#endif
 
 // misc. compiler hacks for MAKETA
 
@@ -217,7 +245,7 @@ typedef unsigned char   byte;
 #endif
 
 // Some OS-specific includes or types
-#if (defined(WIN32) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
 #include <io.h>
 #define F_OK 00 // Existence only 
 #define W_OK 02 // Write permission 
@@ -231,14 +259,14 @@ typedef int pid_t;
 // when about to malloc/calloc etc. a number of bytes, call tweak_alloc to optimally tweak the
 //  allocation request size -- especially useful where the allocator use 2^n blocks, or 16n blocks
 
-#if (defined(LINUX) || defined(CYGWIN))
+#if (defined(TA_OS_LINUX))
 // Linux uses Doug Lea's malloc, which has a 1-pointer overhead, and 16-byte granularity
 // strategy: round up to the amount that we will get allocated regardless
 inline size_t tweak_alloc(size_t n) {
   return  (((n + sizeof(void*)) + 15) & ~((size_t)0xF)) - sizeof(void*);
 }
 
-#elif (defined(WINDOWS) && (!defined(CYGWIN)))
+#elif (defined(TA_OS_WIN))
 inline size_t tweak_alloc(size_t n) {
 #ifdef DEBUG
   return  (((n + 16) + 15) & ~((size_t)0xF)) - 16;
@@ -247,7 +275,7 @@ inline size_t tweak_alloc(size_t n) {
 #endif
 }
 
-#elif defined(MAC)
+#elif defined(TA_OS_MAC)
 // Mac OS seemingly uses an overhead-less allocator (alloc address determines size, based on maps)
 inline size_t tweak_alloc(size_t n) {
   return  (((n + 0) + 15) & ~((size_t)0xF)) - 0;
@@ -324,7 +352,7 @@ inline void ta_exception::setWhat(const char* value, int len) {
     m_what = NULL;
   }
   if (value != NULL) {
-    if (len < 0) len = strlen(value);
+    if (len < 0) len = (int)strlen(value);
     m_what = (char*)malloc(len + 1);
     if (m_what != NULL) strcpy(m_what, value);
   }

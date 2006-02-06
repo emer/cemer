@@ -18,10 +18,11 @@
 
 #include "maketa.h"
 #include "ta_constr.h"
-#include "ta_platform.h"
+#include "ta/ta_platform.h"
+#include "ta/ta_variant.h"
 #include <signal.h>
 //nn #include <malloc.h>
-#ifdef WINDOWS
+#ifdef TA_OS_WIN
 //#include "stdafx.h"
 #endif
 
@@ -67,6 +68,8 @@ TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1);
 TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1);
 TypeDef TA_taString		("taString", "",
 				 "", "", "", sizeof(String), (void**)0, 0, 0, 0, 1);
+TypeDef TA_Variant		("taVariant", "",
+				 "", "", "", sizeof(Variant), (void**)0, 0, 0, 0, 1);
 TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1);
 
 extern int yydebug;
@@ -363,7 +366,7 @@ void MTA::SetPreParseFlag(TypeSpace& aspc, TypeSpace& pplist) {
   }
 }
 
-#if ((!defined(WINDOWS)) || (defined(CYGWIN)))
+#if (defined(TA_OS_UNIX))
 void mta_cleanup(int err) {
   signal(err, SIG_DFL);
   cerr << "maketa: exiting and cleaning up temp files from signal: ";
@@ -403,7 +406,7 @@ int main(int argc, char* argv[])
   mta->spc = &(mta->spc_other);
 
   if(argc < 2) { mta_print_commandline_args(argv); return 1;  } // wrong number of arguments
-#if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
   String cpp = "cl.exe /E /C"; //NOTE: preprocesses, preserving comments, inhibits compilation
   String rm = String("rm ");
 #else
@@ -548,7 +551,7 @@ int main(int argc, char* argv[])
     mta->fname = mta->headv.FastEl(i);
     comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_file + " " + mta->fname;
 /* hopefully the above works on all platforms, and with "gcc -E" invocation
-#if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
     mta->fname = mta->headv.FastEl(i);
 //    mta->fname.makeUnique();
 //    mta->fname.gsub("/", "\\");
@@ -567,7 +570,7 @@ int main(int argc, char* argv[])
       cout << "**maketa command did not succeed (err code  " << ret_code << ")\n";
       return ret_code;
     }
-#if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
 /*    String lef = "lef.exe " + String(tmp_file) + " " + String(tmp_file) + ".1";
     if ((ret_code = system(lef)) != 0) {
       cout << "**lef command did not succeed (err code  " << ret_code << ")\n";
