@@ -445,9 +445,9 @@ inline int String::toInt(bool* ok, int base) const
 inline uint String::toUInt(bool* ok, int base) const 
   {if (ok) *ok = true; return strtoul(chars(), NULL, base);}
 inline int64_t String::toInt64(bool* ok, int base) const 
-  {if (ok) *ok = true; return _strtoi64(chars(), NULL, base);}
+  {if (ok) *ok = true; return strtoll(chars(), NULL, base);}
 inline uint64_t String::toUInt64(bool* ok, int base) const 
-  {if (ok) *ok = true; return _strtoui64(chars(), NULL, base);}
+  {if (ok) *ok = true; return strtoull(chars(), NULL, base);}
 inline float String::toFloat(bool* ok) const 
   {if (ok) *ok = true; return (float)strtod(chars(), NULL);}
 inline double String::toDouble(bool* ok) const 

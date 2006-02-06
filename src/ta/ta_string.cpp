@@ -347,36 +347,56 @@ String::String(ulong u, const char* format) {
 }
 
 String::String(int64_t i64, int base) {
-#ifdef _MSC_VER // formats may be ms specific
+#ifdef TA_USE_QT
+  QString str(QString::number(i64, base));
+  newRep(Salloc(str.toLatin1(), str.length())); 
+#else
   char buf[64];
   char* format;
+#  ifdef _MSC_VER // MSVC
   switch (base){
   case 8: format="%I64o";break;
   case 16: format="%I64x";break;
   default: format="%I64d";break;
   }
   _snprintf(buf, 63, format);
+#  else
+//TODO: the 'll' size was taken from IBM docs, but not verified for gcc yet...
+  switch (base){
+  case 8: format="%llo";break;
+  case 16: format="%llx";break;
+  default: format="%lld";break;
+  }
+  sprintf(buf, format);
+#  endif
   newRep(Salloc(buf, -1));
-#else
-  QString str(QString::number(i64, base));
-  newRep(Salloc(str.toLatin1(), str.length()));
 #endif
 }
 
 String::String(uint64_t u64, int base) {
-#ifdef _MSC_VER // formats may be ms specific
+#ifdef TA_USE_QT
+  QString str(QString::number(u64, base));
+  newRep(Salloc(str.toLatin1(), str.length())); 
+#else
   char buf[64];
   char* format;
+#  ifdef _MSC_VER // formats may be ms specific
   switch (base){
   case 8: format="%I64o";break;
   case 16: format="%I64x";break;
   default: format="%I64u";break;
   }
   _snprintf(buf, 63, format);
+#  else
+//TODO: the 'll' size was taken from IBM docs, but not verified for gcc yet...
+  switch (base){
+  case 8: format="%llo";break;
+  case 16: format="%llx";break;
+  default: format="%llu";break;
+  }
+  sprintf(buf, format);
+#  endif
   newRep(Salloc(buf, -1));
-#else
-  QString str(QString::number(u64, base));
-  newRep(Salloc(str.toLatin1(), str.length()));
 #endif
 }
 

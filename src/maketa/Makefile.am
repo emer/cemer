@@ -9,6 +9,7 @@ HEADS =\
 	ta_stdef.h \
 	ta_platform.h \
 	ta_string.h \
+	ta_variant.h \
 	ta_list.h \
 	ta_type.h \
 	mta_parse.h \
@@ -20,6 +21,7 @@ SRCS =\
 	ta_platform.cpp \
 	ta_platform_unix.cpp \
 	ta_string.cpp \
+	ta_variant.cpp \
 	ta_list.cpp \
 	ta_type.cpp \
 	mta_parse.cpp \
@@ -35,7 +37,7 @@ bin_PROGRAMS = maketa
 
 maketa_SOURCES = $(HEADS) $(SRCS)
 
-maketa_CPPFLAGS = -I@abs_srcdir@ -DNO_TA_BASE
+maketa_CPPFLAGS = -I@abs_srcdir@ -I$(PDP4DIR) -I$(PDP4DIR)/src -DNO_TA_BASE -g -O0
 
 BUILT_SOURCES = ta_TA_type.h
 
@@ -48,8 +50,6 @@ EXTRA_DIST =\
 	ta_dump.h \
 	ta_filer.h \
 	ta_group.h \
-	ta_matrix.h \
 	ta_parse.h \
-	ta_script.h \
 	taglobal.h
 

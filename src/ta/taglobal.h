@@ -195,8 +195,9 @@ typedef uchar*		puchar;
 
 typedef unsigned char   byte;
 
-// msvc doesn't seem to define these...
+// god bless microsoft c++...
 #ifdef TA_OS_WIN
+
 typedef signed __int64      int64_t;
 typedef unsigned __int64    uint64_t;
 #if defined(_WIN64)
@@ -204,6 +205,10 @@ typedef unsigned __int64    uint64_t;
 #else
   typedef int		    intptr_t;
 #endif
+//note: prob should inline these, rather than macros, but don't want naggling little
+// type differences to cause compile issues
+#define strtoll _strtoi64
+#define strtoull _strtoui64
 #endif
 
 // misc. compiler hacks for MAKETA
