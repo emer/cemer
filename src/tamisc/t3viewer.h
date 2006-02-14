@@ -45,6 +45,7 @@ class taiMimeSource;
 class TDCoord;
 class FloatTransform;
 class SoPath; // #IGNORE
+class T3Node;
 
 // forwards
 class T3DataView;
