@@ -109,7 +109,7 @@ void taPtrList_impl::BuildHashTable(int sz) {
   hash_table->Alloc(sz);
   int i;
   for(i=0; i<size; i++)
-    hash_table->AddHash(El_GetHashVal_(el[i]), i);
+    hash_table->Add(El_GetHashVal_(el[i]), i);
 }
 
 
@@ -238,7 +238,7 @@ void taPtrList_impl::Add_(void* it) {
   if(it != NULL) {
     El_SetIndex_(El_Own_(it), size-1);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(it), size-1);
+      hash_table->Add(El_GetHashVal_(it), size-1);
   }
 }
 
@@ -324,7 +324,7 @@ bool taPtrList_impl::Insert_(void* it, int where) {
   if(it != NULL) {
     El_SetIndex_(El_Own_(it), where);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(it), where);
+      hash_table->Add(El_GetHashVal_(it), where);
     DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(where - 1));
   }
   return true;
@@ -355,7 +355,7 @@ bool taPtrList_impl::Replace_(int ol, void* nw) {
   if(nw != NULL) {
     El_SetIndex_(El_Own_(nw), ol);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(nw), ol);
+      hash_table->Add(El_GetHashVal_(nw), ol);
     DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(ol - 1));
   }
   Dirty();
@@ -384,7 +384,7 @@ void taPtrList_impl::Link_(void* it) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(it), size-1);
+      hash_table->Add(El_GetHashVal_(it), size-1);
   }
 }
 
@@ -427,7 +427,7 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(it), where);
+      hash_table->Add(El_GetHashVal_(it), where);
   }
   return true;
 }
@@ -458,7 +458,7 @@ bool taPtrList_impl::ReplaceLink_(int ol, void* nw) {
   if(nw != NULL) {
     El_Ref_(nw);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(nw), ol);
+      hash_table->Add(El_GetHashVal_(nw), ol);
     DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(ol - 1));
   }
   Dirty();
@@ -475,7 +475,7 @@ void taPtrList_impl::Push_(void* it) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table != NULL)
-      hash_table->AddHash(El_GetHashVal_(it), size-1);
+      hash_table->Add(El_GetHashVal_(it), size-1);
   }
 }
 
@@ -819,7 +819,7 @@ void taHashTable::InitList_() {
   Alloc(3);
 }
 
-void taHashTable::AddHash(taHashVal hash, int index) {
+void taHashTable::Add(taHashVal hash, int index) {
   if (size == 0) return;		// this shouldn't happen, but justin case..
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
@@ -880,7 +880,7 @@ bool taHashTable::UpdateIndex(taHashVal hash, int index) {
   return true;
 }
 
-bool taHashTable::RemoveByHash(taHashVal hash) {
+bool taHashTable::Remove(taHashVal hash) {
   if(size == 0)	return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);

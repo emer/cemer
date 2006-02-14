@@ -15,7 +15,8 @@
 
 #ifndef T3NODE_SO_H
 #define T3NODE_SO_H
-#include "tamisc_stdef.h"
+
+#include "tamisc_def.h"
 
 #include "icolor.h"
 #include "igeometry.h"

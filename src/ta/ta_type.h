@@ -85,6 +85,7 @@ extern TypeDef TA_double;
 extern TypeDef TA_int64_t;
 extern TypeDef TA_uint64_t;
 extern TypeDef TA_intptr_t;
+extern TypeDef TA_uintptr_t;
 extern TypeDef TA_bool;
 extern TypeDef TA_const;	// const is not formal...
 extern TypeDef TA_enum;		// par_formal

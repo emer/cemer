@@ -20,6 +20,7 @@
 #ifndef T3VIEWER_H
 #define T3VIEWER_H
 
+#include "tamisc_def.h"
 #include "ta_group.h"
 //#include "ta_qt.h"
 #include "ta_qtviewer.h"

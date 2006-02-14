@@ -47,8 +47,9 @@ TypeDef TA_unsigned_long_long	("unsigned_long_long", 	1, 0, 0, 0, 1, "unsigned l
 TypeDef TA_long			("long", 	1, 0, 0, 0, 1, "long"); 
 TypeDef TA_signed_long		("signed_long", 	1, 0, 0, 0, 1, "signed long");
 TypeDef TA_unsigned_long	("unsigned_long", 	1, 0, 0, 0, 1, "unsigned long");
-// intptr_t gets parented to either int or int64
+// (u)intptr_t gets parented to either (u)int or (u)int64
 TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, "intptr_t"); 
+TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, "uintptr_t"); 
 TypeDef TA_float		("float", 	1, 0, 0, 0, 1, "float");
 TypeDef TA_double		("double", 	1, 0, 0, 0, 1, "double");
 TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, "bool");
@@ -174,6 +175,7 @@ void MTA::AddBuiltIn(TypeSpace& ts) { // common code
   ts.Add(&TA_signed_long);
   ts.Add(&TA_unsigned_long);
   ts.Add(&TA_intptr_t);
+  ts.Add(&TA_uintptr_t);
   ts.Add(&TA_float);
   ts.Add(&TA_double);
 #ifndef NO_BUILTIN_BOOL
@@ -214,7 +216,7 @@ void MTA::InitBuiltIn() {
   TA_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long.AddParents(&TA_int64_t);
   TA_unsigned_long_long.AddParents(&TA_uint64_t);
-  //note: intptr_t has special runtime code to test size and add to either int or uint64_t
+  //note: (u)intptr_t has special runtime code to test size and add to either (u)int or (u)int64_t
 }
 
 void MTA::InitTypeSpace(TypeSpace& ts) {

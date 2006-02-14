@@ -1080,10 +1080,13 @@ void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PArray&
 void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   TypeDef_Generate_AddOtherParents(ths, typ_ref, strm);
   
-// intptr_t requires test at runtime:
+// (u)intptr_t requires test at runtime:
   if (ths == &TA_intptr_t) {
     strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref 
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
+  } else if (ths == &TA_uintptr_t) {
+    strm << "    if (sizeof(uintptr_t) == sizeof(uint)) " << typ_ref 
+      << "AddParents(&TA_uint);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
   } else
 // long types just get parented and thus aliased to the correct size
   if (ths == &TA_long) {

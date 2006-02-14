@@ -14,31 +14,26 @@
 //   Lesser General Public License for more details.
 
 
-#ifndef TAIQTSO_DEF_H
-#define TAIQTSO_DEF_H
+#ifndef TAMISC_DEF_H
+#define TAMISC_DEF_H
 
-#include "taglobal.h"
+#include "tamisc_stdef.h"
 
 // The following ifdef block is the standard way of creating macros which make exporting 
-// from a DLL simpler. All files within this DLL are compiled with the TAIQTSO_EXPORTS
+// from a DLL simpler. All files within this DLL are compiled with the TAMISC_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// TAIQTSO_API functions as being imported from a DLL, whereas this DLL sees symbols
+// TA_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(TAIQTSO_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
-  #ifdef TAIQTSO_EXPORTS
-  #define TAIQTSO_API __declspec(dllexport)
+#if ((defined(TAMISC_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
+  #ifdef TAMISC_EXPORTS
+  #define TAMISC_API __declspec(dllexport)
   #else
-  #define TAIQTSO_API __declspec(dllimport)
+  #define TAMISC_API __declspec(dllimport)
   #endif
 #else 
-  #define TAIQTSO_API
+#define TAMISC_API
 #endif
 
-// Qt3 semi-compatibility macro
-#define SET_PALETTE_BACKGROUND_COLOR(w,c) { \
-  QPalette pal = w->palette(); \
-  pal.setColor(QPalette::Background,c); \
-  w->setPalette(pal);} 
 
-#endif // TAIQTSO_DEF_H
+#endif // tamisc_def_h
