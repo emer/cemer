@@ -146,7 +146,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
 
 typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
 
-typedef uintptr_t taHashVal;
+//typedef uintptr_t taHashVal;
+typedef unsigned long taHashVal;
 
 class  taPtrList_impl { // ##NO_TOKENS implementation of the pointer list class
 protected:

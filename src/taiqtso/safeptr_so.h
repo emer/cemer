@@ -21,9 +21,9 @@
 #ifndef SAFEPTR_SO_H
 #define SAFEPTR_SO_H
 
-#ifdef TA_USE_INVENTOR
-
 #include "taiqtso_def.h"
+
+#ifdef TA_USE_INVENTOR
 
 // externals
 class SoBase;			//

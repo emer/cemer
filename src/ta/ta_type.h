@@ -67,7 +67,8 @@ class TA_API MemberDef;
 class TA_API MethodDef;
 class TA_API TypeDef; //
 
-//TENT: moved here from maketa.h to enable anything importing ta_type to assume these defs
+//NOTE: moved here from maketa.h to enable anything importing ta_type to assume these defs
+#ifndef __MAKETA__
 extern TypeDef TA_void;
 extern TypeDef TA_char;
 extern TypeDef TA_signed_char;
@@ -104,7 +105,7 @@ extern TypeDef TA_ta_Globals;
 extern TypeDef TA_taString;
 extern TypeDef TA_Variant;
 extern TypeDef TA_void_ptr;
-//\TENT
+#endif
 
 // externals
 // for gui support
