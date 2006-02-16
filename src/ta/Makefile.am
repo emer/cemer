@@ -137,6 +137,7 @@ libta@PDP_SUFFIX@_la_DEPENDENCIES = libtaTypeAccess@PDP_SUFFIX@.la
 libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 
 libta@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \

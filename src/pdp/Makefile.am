@@ -1,3 +1,4 @@
+
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
@@ -86,6 +87,7 @@ libpdp@PDP_SUFFIX@_la_DEPENDENCIES = libpdpTypeAccess@PDP_SUFFIX@.la
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
 libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \

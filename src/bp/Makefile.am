@@ -33,6 +33,7 @@ lib_LTLIBRARIES = libbp_TypeAccess@PDP_SUFFIX@.la
 libbp_TypeAccess@PDP_SUFFIX@_la_SOURCES = bp_TA.cpp bp_TA_type.h bp_TA_inst.h
 
 libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
 	-I@srcdir@/../ta \

@@ -25,6 +25,7 @@ lib_LTLIBRARIES = libleabra_TypeAccess@PDP_SUFFIX@.la
 libleabra_TypeAccess@PDP_SUFFIX@_la_SOURCES = leabra_TA.cpp leabra_TA_type.h leabra_TA_inst.h
 
 libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \

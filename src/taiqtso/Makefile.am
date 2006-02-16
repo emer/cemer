@@ -57,6 +57,7 @@ lib_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@.la
 libtaiqtso@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 
 libtaiqtso@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@srcdir@ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@/../ta

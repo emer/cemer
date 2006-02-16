@@ -100,6 +100,7 @@ libtamisc@PDP_SUFFIX@_la_DEPENDENCIES = libtamiscTypeAccess@PDP_SUFFIX@.la
 libtamisc@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
 
 libtamisc@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \

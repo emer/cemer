@@ -59,6 +59,7 @@ lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
 libcss@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \

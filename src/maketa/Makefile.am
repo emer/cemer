@@ -37,19 +37,23 @@ bin_PROGRAMS = maketa
 
 maketa_SOURCES = $(HEADS) $(SRCS)
 
-maketa_CPPFLAGS = -I@abs_srcdir@ -I$(PDP4DIR) -I$(PDP4DIR)/src -DNO_TA_BASE -g -O0
+maketa_CPPFLAGS =\
+	-I@abs_srcdir@/.. \
+	-I@abs_top_builddir@ \
+	-I@abs_srcdir@ \
+	-DNO_TA_BASE -g -O0
 
 BUILT_SOURCES = ta_TA_type.h
 
 CLEANFILES = ta_TA_type.h ta_TA_inst.h
 
-EXTRA_DIST =\
-	ta_base.h \
-	ta_constr.h \
-	ta_def.h \
-	ta_dump.h \
-	ta_filer.h \
-	ta_group.h \
-	ta_parse.h \
-	taglobal.h
+# EXTRA_DIST =\
+# 	ta_base.h \
+# 	ta_constr.h \
+# 	ta_def.h \
+# 	ta_dump.h \
+# 	ta_filer.h \
+# 	ta_group.h \
+# 	ta_parse.h \
+# 	taglobal.h
 
