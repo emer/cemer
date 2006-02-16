@@ -373,7 +373,7 @@ friend class GraphButtonsDataView; // internal class
   Q_OBJECT
 public:
 
-  Q3ScrollView*		scr; // always has vert scrolls; never hor ones
+  QScrollArea*		scr; // always has vert scrolls; never hor ones
   QWidget*		  buts; //
   QVBoxLayout*		  layWidg;
   Q3Header*		    hdr;

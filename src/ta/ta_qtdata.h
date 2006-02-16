@@ -96,15 +96,15 @@ public:
   QWidget*	widgets(int index);
   int		widgetCount();
 
-  virtual void	InitLayout(); // default creates a QVHBoxLayout in the Rep
-  void		AddChildWidget(QWidget* child_widget, int space_after = -1);
+  virtual void	InitLayout(); // default creates a QHBoxLayout in the Rep
+  void		AddChildWidget(QWidget* child_widget, int space_after = -1, int spacing = 0);
   virtual void	EndLayout(); // default adds a stretch
 protected:
   QHBoxLayout*	lay;	// may be ignored/unused by subclasses
   int		last_spc;	// space after last widget, -1 = none
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
-  virtual void	AddChildWidget_impl(QWidget* child_widget);	// default does an add to layout
+  virtual void	AddChildWidget_impl(QWidget* child_widget, int spacing);// default does an add to layout
 private:
   QObjectList*	mwidgets; // list of child widgets
 };
@@ -308,7 +308,7 @@ public:
 
   virtual void  GetImage(int i);
 protected:
-  override void AddChildWidget_impl(QWidget* child_widget);
+  override void AddChildWidget_impl(QWidget* child_widget, int spacing);
 };
 
 

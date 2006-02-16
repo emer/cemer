@@ -93,7 +93,7 @@ class	QRadioButton;		// #IGNORE
 class	QRect;			// #IGNORE
 class	QScrollArea;		// #IGNORE Qt4
 class	QScrollBar;		// #IGNORE
-class	Q3ScrollView;		// #IGNORE
+//class	Q3ScrollView;		// #IGNORE
 class	QSize;			// #IGNORE
 class	QSizePolicy;		// #IGNORE
 class	QSpacerItem;		// #IGNORE

@@ -48,7 +48,7 @@ taPtrList_impl taPtrList_impl::scratch_list;
 
 taHashVal taPtrList_impl::HashCode_String(const char* string) {
   // from TCL, seems to be a tiny bit faster than COOL..
-  unsigned int hash = 0;
+  taHashVal hash = 0;
   while (1) {
     unsigned int c = *string;
     string++;
@@ -57,7 +57,7 @@ taHashVal taPtrList_impl::HashCode_String(const char* string) {
     }
     hash += (hash<<3) + c;
   }
-  return (taHashVal)hash;
+  return hash;
 }
 
 taHashVal taPtrList_impl::HashCode_Ptr(const void* ptr) {

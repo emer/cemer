@@ -47,7 +47,7 @@
 #include <QMenu>
 // #include <qpushbutton.h>
 #include <Q3VBox>
-#include <Q3ScrollView> // for gpiGroupDialog
+#include <QScrollArea> // for gpiGroupDialog
 // #include <qstring.h>
 #include <qtooltip.h>
 #include <Q3Table>
@@ -1002,14 +1002,14 @@ void gpiMultiEditDataHost::Constr_Box() {
 
   taiEditDataHost::Constr_Box();
 
-  scrMulti = new Q3ScrollView(splBody);
+  scrMulti = new QScrollArea(splBody);
   scrMulti->viewport()->setPaletteBackgroundColor(*bg_color);
-  scrMulti->setResizePolicy(Q3ScrollView::AutoOneFit);
+  scrMulti->setWidgetResizable(true);
   multi = new QWidget();
-  scrMulti->addChild(multi);
+  scrMulti->setWidget(multi);
 
   lay_multi = new QHBoxLayout(multi);
-  multi_body = new iEditGrid(1, 2, 0, 1, 1, multi);  // margin, hspace, vspace, rows, cols, par
+  multi_body = new iEditGrid(2, 1, 1, 1, multi);  // , hmargins, vmargins, rows, cols, par
   multi_body->setPaletteBackgroundColor(*bg_color);
   if (bg_color_dark)
    multi_body->setHiLightColor(*bg_color_dark);
@@ -1243,12 +1243,12 @@ void gpiGroupDataHost::Constr_Box() {
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   //TODO: maybe should always create -- may not even show if empty
   if (cur_gp->gp.size > 0) {
-    scrSubData = new Q3ScrollView(multi);
-    scrSubData->setHScrollBarMode(Q3ScrollView::AlwaysOff); // no h scrolling
+    scrSubData = new QScrollArea(multi);
+    scrSubData->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // no h scrolling
     subData = new QWidget();
     subData->setPaletteBackgroundColor(*bg_color_dark);
     scrSubData->viewport()->setPaletteBackgroundColor(*bg_color_dark);
-    scrSubData->addChild(subData);
+    scrSubData->setWidget(subData);
     scrSubData->viewport()->setPaletteBackgroundColor(*bg_color_dark);
     lay_multi->addWidget(scrSubData);
 

@@ -35,7 +35,7 @@
 #include <qpen.h>
 #include <Q3Button>
 #include <QPushButton>
-#include <Q3ScrollView>
+#include <QScrollArea>
 
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoFont.h>
@@ -1943,12 +1943,12 @@ iGraphButtons::iGraphButtons(QWidget* parent)
   m_graph = NULL;
   dv_graph = NULL;
   updating = 0;
-  scr = new Q3ScrollView(this);
+  scr = new QScrollArea(this);
 //  scr->setHScrollBarMode(Q3ScrollView::AlwaysOff);
 //  scr->setVScrollBarMode(Q3ScrollView::AlwaysOn); //not super pretty, but eliminates complex sizing issues
-  scr->setResizePolicy(Q3ScrollView::AutoOneFit);
+  scr->setWidgetResizable(true);
 
-  buts = new QWidget(scr->viewport());
+  buts = new QWidget();
   layWidg = new QVBoxLayout(buts);
 
   hdr = new Q3Header(buts);
@@ -1964,10 +1964,7 @@ iGraphButtons::iGraphButtons(QWidget* parent)
   layWidg->addWidget(hdr);
   layWidg->addStretch(); // note: always floats at end
 
-
-//  buts = new Q3ScrollView(this);
-
-  scr->addChild(buts);
+  scr->setWidget(buts);
   buttons = new QObjectList();
 
   setMinimumSize(MIN_GB_WD, (hdr->height() + 40 )) ; // TODO: better value for height, ex. 2 buts

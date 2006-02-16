@@ -344,9 +344,9 @@ void taiCompData::InitLayout() { //virtual/overridable
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
-void taiCompData::AddChildWidget(QWidget* child_widget, int space_after) { // non-virtual
+void taiCompData::AddChildWidget(QWidget* child_widget, int space_after, int spacing) { // non-virtual
   mwidgets->append(child_widget);
-  AddChildWidget_impl(child_widget);
+  AddChildWidget_impl(child_widget, spacing);
   last_spc = space_after;
 }
 
@@ -354,10 +354,10 @@ void taiCompData::EndLayout() { //virtual/overridable
   lay->addStretch();
 }
 
-void taiCompData::AddChildWidget_impl(QWidget* child_widget) { //virtual/overridable
+void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing) { //virtual/overridable
   if (last_spc != -1)
     lay->addSpacing(last_spc);
-  lay->addWidget(child_widget);
+  lay->addWidget(child_widget, spacing, (Qt::AlignLeft | Qt::AlignVCenter));
 }
 
 QWidget* taiCompData::widgets(int index) {
@@ -856,13 +856,13 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
     String nm = md->GetLabel();
     QLabel* lbl = new QLabel(nm, rep());
 
-    AddChildWidget(lbl, taiM->hsep_c);
+    AddChildWidget(lbl, taiM->hsep_c, 0);
 
     // add gui representation of data
     taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
     QWidget* ctrl = mb_dat->GetRep();
     lbl->setBuddy(ctrl);
-    AddChildWidget(ctrl, taiM->hspc_c);
+    AddChildWidget(ctrl, taiM->hspc_c, 1);
 
     // add description text tooltips
     if (!desc.empty()) {
@@ -929,7 +929,7 @@ void taiDataDeck::GetImage(int i) {
   }
 }
 
-void taiDataDeck::AddChildWidget_impl(QWidget* child_widget) {
+void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing) {
   (rep()->addWidget(child_widget, cur_deck));
 }
 
@@ -984,7 +984,9 @@ void taiAction::init(int sel_type_)
   nref = 0;
   m_changing = 0;
   QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(this_triggered_toggled(bool)) );
-  QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
+//note: we don't want the toggled signal, because this causes us to signal twice in most cases
+// the only thing 'triggered' doesn't signal is programmatic changes, which is ok
+//  QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
 }
 
 void taiAction::AddTo(taiActions* targ) {

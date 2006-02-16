@@ -562,8 +562,12 @@ int taiDataHost::AddName(int row, const String& name, const String& desc, QWidge
     layBody->expand(row + 1, 2);
   }
   layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
-  layBody->addWidget(label, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  layBody->addItem(new QSpacerItem(2, row_height), row, 0);
+  QHBoxLayout* layH = new QHBoxLayout();
+  layH->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+/*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
+    1, 1, (Qt::AlignRight | Qt::AlignVCenter)); */
+  layH->addSpacing(2);
+  layBody->addLayout(layH, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
   label->show(); // needed for rebuilds, to make the widget show
   return row;
 }
@@ -652,6 +656,7 @@ void taiDataHost::Changed() {
 void taiDataHost::ClearBody() {
   rebuild_body = true;
   ClearBody_impl();
+//nn  cssiSession::RunPending(); // needed to get the defered deletes to process now
 }
 
 void taiDataHost::ClearBody_impl() {
@@ -755,14 +760,24 @@ void taiDataHost::Constr_Box() {
 
 
 void taiDataHost::Constr_Body() {
-  QVBoxLayout* vbl = new QVBoxLayout(body);
-  layBody = new QGridLayout((int)1, 2, LAYBODY_SPACING); //margin, space between
+/*test  layBody = new QGridLayout(body);
+  layBody->setSpacing(LAYBODY_SPACING);
   layBody->setMargin(LAYBODY_MARGIN);
+  // since vbl is first object in body, we use its deletion after showchange to indicate we can rebuild
+  connect(layBody, SIGNAL(destroyed()), this, SLOT(BodyCleared()) ); */
+  QVBoxLayout* vbl = new QVBoxLayout(body);
+  vbl->setMargin(0);
+//Qt3  layBody = new QGridLayout((int)1, 2, LAYBODY_SPACING); //margin, space between
+  layBody = new QGridLayout();
+  layBody->setSpacing(LAYBODY_SPACING);
+  layBody->setMargin(LAYBODY_MARGIN);
+  layBody->setColumnStretch(1,1);
   vbl->addLayout(layBody);
   vbl->addStretch(1);
   // since vbl is first object in body, we use its deletion after showchange to indicate we can rebuild
   connect(vbl, SIGNAL(destroyed()), this, SLOT(BodyCleared()) );
 }
+
 void taiDataHost::Constr_Methods() { //note: conditional constructions used by SelectEditHost to rebuild methods
   QFrame* tmp = frmMethButtons;
   if (frmMethButtons == NULL) {

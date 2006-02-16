@@ -271,7 +271,7 @@ public:
 class gpiMultiEditDataHost: public taiEditDataHost {
 public:
   QWidget*	multi; // outer container
-    Q3ScrollView*	scrMulti;		// scrollbars for the multi items
+    QScrollArea*	scrMulti;		// scrollbars for the multi items
     QHBoxLayout*	lay_multi; // used by gpiGroupDialog to add its group buttons
     iEditGrid*	multi_body;
 
@@ -338,7 +338,7 @@ class gpiGroupDataHost : public gpiListDataHost {
 public:
   taiDataList	sub_data_el;	// list of data elements for sub groups
   QWidget*	subData;
-  Q3ScrollView*	scrSubData;
+  QScrollArea*	scrSubData;
   QVBoxLayout*	laySubData;  // layout for the sub buttons
 
   gpiGroupDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
