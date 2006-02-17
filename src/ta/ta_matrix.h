@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "ta_stdef.h"
 
+#include "ta_variant.h"
 #include "ta_base.h"
 #include "ta_group.h"
 #include "ta_TA_type.h"
@@ -109,6 +110,17 @@ public:
   void			SetFmStr_Flat(int idx, const String& str) 	
     {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
     // treats the matrix like a flat array, sets the element as a string
+    
+  // universal Variant access/set, for flat array
+  Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_(idx)); } 
+    // treats the matrix like a flat array, returns the element as a variant
+  Variant		SafeElAsVar_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_(idx)); else return _nilVariant; } 
+    // treats the matrix like a flat array, returns the element as a variant
+  void			SetFmVar_Flat(int idx, const Variant& var) 	
+    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_(idx), var); } 
+    // treats the matrix like a flat array, sets the element as a string
+    
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
     {return true;}
     // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
@@ -156,8 +168,11 @@ public: // don't use these, internal use only
   virtual const void*	FastEl_(int i) const = 0;   // #IGNORE
   virtual const void*	SafeEl_(int i) const 
     {if ((i > 0) && (i < size)) return FastEl_(i); else return NULL;}   // #IGNORE raw element in flat space, else NULL
+  // every subclass should implement these:
   virtual String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
   virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
+  virtual Variant	El_GetVar_(const void*) const		{ return _nilVariant; } // #IGNORE
+  virtual void		El_SetFmVar_(void*, const Variant&) 	{ };       // #IGNORE
  
 protected:
   int			alloc_size; // -1 means fixed (external data)
@@ -434,8 +449,13 @@ public:
   TA_MATRIX_FUNS(String_Matrix, String)
   
 public:
-  override String	El_GetStr_(const void* it) const { return *((String*)it); } // #IGNORE
+  override String	El_GetStr_(const void* it) const {return *((String*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((String*)it) = str;}  // #IGNORE
+  override Variant	El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
+protected:
+  override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
+
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -459,6 +479,8 @@ public:
 public:
   override String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
+  override Variant	El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -481,6 +503,8 @@ public:
 public:
   override String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
   override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
+  override Variant	El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -504,6 +528,8 @@ public: //
   //note: for streaming, we convert to hex, rather than char
   override String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
+  override Variant	El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -512,5 +538,30 @@ private:
 taMatrixPtr_Of(byte_Matrix)
 
 
+class Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
+public:
+  override TypeDef*	data_type() const {return &TA_Variant;} 
+  
+  void			Copy_(const Variant_Matrix& cp) {}
+  COPY_FUNS(Variant_Matrix, taMatrixT<Variant>)
+  TA_MATRIX_FUNS(Variant_Matrix, Variant) //
+  
+public:
+  //NOTE: setString may not be exactly what is wanted -- that will change variant to String
+  // what we may want is to set the current value as its type, from a string
+  override String	El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {((Variant*)it)->setString(str);}  // #IGNORE
+  override Variant	El_GetVar_(const void* it) const {return Variant(*((Variant*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
+protected:
+  override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
+
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+taMatrixPtr_Of(Variant_Matrix)
+//
 
 #endif

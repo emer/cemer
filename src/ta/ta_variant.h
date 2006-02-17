@@ -28,6 +28,7 @@ class taBase;
 class taMatrix;
 #endif
 
+
 // note: taVariant is based in part on QVariant implementation in Qt
 // Variant is always 12 bytes long on both 32/64 platforms
 
@@ -73,6 +74,7 @@ public:
   void			load(istream& s); //
   
 // following are ops to set to a specific type of value  
+  void 			setInvalid(); // invalid/null
   void 			setVariant(const Variant& cp); // basically a copy
   void 			setBool(bool val, bool null = false);
   void 			setByte(byte val, bool null = false) {setUInt(val, null);}
@@ -93,6 +95,7 @@ public:
   void			setBase(taBase* cp); // handles setting of a taBase
   void			setMatrix(taMatrix* cp); // handles setting of a matrix
 #endif  
+
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
   bool 			toBool() const;
   byte 			toByte() const {return (byte)toUInt();}
@@ -177,6 +180,14 @@ public:
   friend std::istream&   operator>>(std::istream& s, Variant& x);  // expects: type code then value
 #endif
   
+#ifdef TA_USE_QT
+  Variant(const QVariant &val);
+  void 		setQVariant(const QVariant& cp); 
+  Variant& 	operator=(const QVariant& val) {setQVariant(val); return *this;}
+  QVariant 	toQVariant() const;
+  operator QVariant() {return toQVariant();}
+#endif 
+
   Variant(); // default is null/invalid
   explicit Variant(VarType vt); // create with a specific type, of the default value of that type
   Variant(const Variant &cp);
@@ -195,7 +206,7 @@ public:
 #ifndef NO_TA_BASE
   Variant(taBase* val);
   Variant(taMatrix* val);
-#endif  
+#endif 
   ~Variant(); //
 
 public: // following primarily for TypeDef usage, streaming, etc.
@@ -225,7 +236,7 @@ protected:
 #ifndef NO_TA_BASE
       taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
-	} d;
+  } d;
   uint m_type : 31;
   uint m_is_null : 1;
 #endif

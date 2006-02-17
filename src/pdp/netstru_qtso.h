@@ -402,7 +402,7 @@ public:
   QVBoxLayout*		  layCtrls;
   QHBoxLayout*		    layDispCheck;
   QCheckBox*		      chkDisplay;
-  Q3ScrollView*		    scrCmdButtons;
+  QScrollArea*		    scrCmdButtons;
   QWidget*		    widCmdButtons;
   QGridLayout*		      layCmdButtons;
   QLabel*		    lblDisplayValues;

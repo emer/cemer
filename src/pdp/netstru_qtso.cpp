@@ -65,7 +65,7 @@
 #include <qclipboard.h>
 #include <qlayout.h>
 #include <Q3ListView>
-#include <Q3ScrollView>
+#include <QScrollArea>
 #include <qpushbutton.h>
 #include <qwidget.h>
 
@@ -1340,11 +1340,11 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
 
   layCtrls->addSpacing(5);
-  scrCmdButtons = new Q3ScrollView(this);
-  widCmdButtons = new QWidget(scrCmdButtons->viewport());
+  scrCmdButtons = new QScrollArea(this);
+  scrCmdButtons->setWidgetResizable(true);
+  scrCmdButtons->setWidget(widCmdButtons);
 
   layCmdButtons = new QGridLayout(widCmdButtons, 1, CMD_GEOM_X, 0, 2);
-  scrCmdButtons->addChild(widCmdButtons);
 
   layCtrls->addWidget(scrCmdButtons);
 

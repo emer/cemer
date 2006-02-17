@@ -22,6 +22,10 @@
 #include "ta_matrix.h"
 #endif
 
+#ifdef TA_USE_QT
+#  include <QVariant>
+#endif
+
 using namespace std;
 
 ostream& operator<<(ostream& s, const Variant& x) {
@@ -470,6 +474,13 @@ void Variant::save(ostream& s) const {
   }
 }
 
+void Variant::setInvalid() {
+  releaseType();
+  d.i64 = 0LL; // valid for all other types
+  m_type = T_Invalid;
+  m_is_null = true;
+}
+
 void Variant::setVariant(const Variant &cp) {
   switch (cp.m_type) {
   case T_String: setString(cp.getString()); break;
@@ -915,7 +926,7 @@ String Variant::toString() const {
   case T_Matrix:
     return taBase::GetStringRep(d.tab);
 #endif
-	default: break ;
+  default: break ;
   }
   return _nilString;
 }
@@ -986,3 +997,83 @@ taMatrix* Variant::toMatrix() const {
   return NULL;
 } 
 #endif 
+
+#ifdef TA_USE_QT
+Variant::Variant(const QVariant &val) {
+  m_type = T_Invalid; // should have a valid type, so possible call to releaseType() won't fail;
+  setQVariant(val);
+}
+
+void Variant::setQVariant(const QVariant& cp) {
+  switch (cp.userType()) {
+  case QVariant::Invalid: 
+    setInvalid(); break;
+  case QVariant::Bool:
+    setBool(cp.toBool(), cp.isNull()); break; 
+  case QVariant::Int:
+    setInt(cp.toInt(), cp.isNull()); break;
+  case QVariant::UInt:
+    setUInt(cp.toUInt(), cp.isNull()); break;
+  case QVariant::LongLong:
+    setInt64(cp.toLongLong(), cp.isNull()); break;
+  case QVariant::ULongLong:
+    setUInt64(cp.toULongLong(), cp.isNull()); break;
+  case QVariant::Double:
+    setDouble(cp.toDouble(), cp.isNull()); break;
+  case QVariant::Char:
+    setChar(cp.toChar().toLatin1(), cp.isNull()); break;
+  case QVariant::String: 
+    setString(cp.toString(), cp.isNull()); break;
+  default:
+#ifdef DEBUG
+  taMisc::Warning("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
+    String(cp.userType()) );
+#endif
+    setInvalid(); break;
+  }
+
+}
+
+QVariant Variant::toQVariant() const {
+  switch (m_type) {
+  case T_Invalid: 
+    return QVariant();
+  case T_Bool:
+    return QVariant(d.b); 
+  case T_Int:
+    return QVariant(d.i);
+  case T_UInt:
+    return QVariant(d.u);
+  case T_Int64:
+    return QVariant(d.i64);
+  case T_UInt64:
+    return QVariant(d.u64);
+  case T_Double:
+    return QVariant(d.d);
+  case T_Char:
+    return QVariant(d.c);
+  case T_String: 
+    return QVariant(getString().chars());
+/* others are invalid
+//TODO: maybe add extensions to QVariant handlers to handle our types.
+  case T_Ptr: 
+    return QVariant(d.ptr); // renders as hex
+#ifndef NO_TA_BASE
+//TODO:  maybe stream the data, or copy the path 
+  case T_Base: 
+  case T_Matrix:
+    return taBase::GetStringRep(d.tab);
+    
+#endif
+*/
+  default: 
+#ifdef DEBUG
+  taMisc::Warning("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
+    String(m_type) );
+#endif
+    break ;
+  }
+  return QVariant();
+}
+#endif 
+

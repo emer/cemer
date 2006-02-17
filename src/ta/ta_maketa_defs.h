@@ -63,6 +63,13 @@ public:
 	int dummy; // #IGNORE
 };
 
+class QAbstractTableModel: public QObject {
+//#IGNORE
+public:
+	int dummy; // #IGNORE
+};
+
+
 class QAction : public QObject {
 //#IGNORE
 public:

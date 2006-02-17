@@ -493,6 +493,16 @@ void taMatrix::UpdateGeom() {
 }
 
 //////////////////////////
+//   String_Matrix	//
+//////////////////////////
+
+void String_Matrix::ReclaimOrphans_(int from, int to) {
+  for (int i = from; i <= to; ++i) {
+    el[i] = _nilString;
+  }
+}
+
+//////////////////////////
 //   float_Matrix	//
 //////////////////////////
 
@@ -537,5 +547,15 @@ bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   if (!rval && (err_msg != NULL))
     *err_msg = "not a valid byte value (0-255)";
   return rval;
+}
+
+//////////////////////////
+//   Variant_Matrix	//
+//////////////////////////
+
+void Variant_Matrix::ReclaimOrphans_(int from, int to) {
+  for (int i = from; i <= to; ++i) {
+    el[i] = _nilVariant;
+  }
 }
 

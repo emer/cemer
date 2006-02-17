@@ -39,6 +39,7 @@ class	QCustomEvent;		// #IGNORE Qt3: is deprecated in Qt4,
 // Qt Gui defines -- only when TA_GUI
 
 #ifdef TA_GUI
+class	QAbstractItemModel;	// #IGNORE
 class	QAction;		// #IGNORE
 class	QActionGroup;		// #IGNORE
 class	QBitmap;		// #IGNORE
@@ -100,6 +101,7 @@ class	QSpacerItem;		// #IGNORE
 class	QSpinBox;		// #IGNORE
 class	QSplitter;		// #IGNORE
 class	Q3Table;			// #IGNORE
+class	QTableView;		// #IGNORE
 class	Q3TableItem;			// #IGNORE
 class	QTabBar;		// #IGNORE
 class	QTabWidget;		// #IGNORE

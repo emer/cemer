@@ -69,6 +69,8 @@ template class taPtrList<DumpPathToken>;
 
 
 // ta_matrix.h
+template class taMatrixT<Variant>;
+  const Variant Variant_Matrix::blank;
 template class taMatrixT<String>;
   const String String_Matrix::blank;
 template class taMatrixT<float>;

@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-
 #ifndef datatable_h
 #define datatable_h
 
@@ -28,6 +26,7 @@
 
 #ifdef TA_GUI
 #include "fontspec.h"
+class DataTableModel;
 #endif
 
 
@@ -358,6 +357,8 @@ public:
   
   // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
+  Variant 	GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
+    // valid for all types, -ve row is from end (-1=last)
   String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
@@ -368,6 +369,8 @@ public:
     // valid only if type is byte, -ve row is from end (-1=last)
     
   // Matrix versions
+  Variant 	GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
+    // valid for all types, -ve row is from end (-1=last)
   String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
@@ -377,32 +380,38 @@ public:
   byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
     // valid only if type is byte, -ve row is from end (-1=last)
 
-  void	 	SetValAsString(const String& val, int row) 
-    {SetValAsString_impl(val, row, 0);} 
+  bool	 	SetValAsVar(const Variant& val, int row) 
+    {return SetValAsVar_impl(val, row, 0);} 
     // valid for all types, -ve row is from end (-1=last)
-  void	 	SetValAsFloat(float val, int row) 
+  bool	 	SetValAsString(const String& val, int row) 
+    {return SetValAsString_impl(val, row, 0);} 
+    // valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsFloat(float val, int row) 
     // valid only if type is float, -ve row is from end (-1=last)
-    {SetValAsFloat_impl(val, row, 0);} 
-  void	 	SetValAsInt(int val, int row) 
+    {return SetValAsFloat_impl(val, row, 0);} 
+  bool	 	SetValAsInt(int val, int row) 
     // valid if type is int or float, -ve row is from end (-1=last)
-    {SetValAsInt_impl(val, row, 0);} 
-  void	 	SetValAsByte(byte val, int row) 
+    {return SetValAsInt_impl(val, row, 0);} 
+  bool	 	SetValAsByte(byte val, int row) 
     // valid if type is numeric, -ve row is from end (-1=last)
-    {SetValAsByte_impl(val, row, 0);} 
+    {return SetValAsByte_impl(val, row, 0);} 
     
   // Matrix versions
-  void	 	SetValAsStringM(const String& val, int row, int cell) 
-    {SetValAsString_impl(val, row, cell);} 
+  bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
+    {return SetValAsVar_impl(val, row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
-  void	 	SetValAsFloatM(float val, int row, int cell) 
+  bool	 	SetValAsStringM(const String& val, int row, int cell) 
+    {return SetValAsString_impl(val, row, cell);} 
+    // valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsFloatM(float val, int row, int cell) 
     // valid only if type is float, -ve row is from end (-1=last)
-    {SetValAsFloat_impl(val, row, cell);} 
-  void	 	SetValAsIntM(int val, int row, int cell) 
+    {return SetValAsFloat_impl(val, row, cell);} 
+  bool	 	SetValAsIntM(int val, int row, int cell) 
     // valid if type is int or float, -ve row is from end (-1=last)
-    {SetValAsInt_impl(val, row, cell);} 
-  void	 	SetValAsByteM(byte val, int row, int cell) 
+    {return SetValAsInt_impl(val, row, cell);} 
+  bool	 	SetValAsByteM(byte val, int row, int cell) 
     // valid if type is numeric, -ve row is from end (-1=last)
-    {SetValAsByte_impl(val, row, cell);} 
+    {return SetValAsByte_impl(val, row, cell);} 
 
   bool		HasDispOption(const char* opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
@@ -421,18 +430,21 @@ protected:
   // in all accessor routines, -ve row is from end (-1=last)
   int			IndexOfEl_Flat(int row, int cell) const; 
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
+  virtual Variant 	GetValAsVar_impl(int row, int cell) const; 
   virtual String 	GetValAsString_impl(int row, int cell) const; 
   virtual float 	GetValAsFloat_impl(int row, int cell) const 
     {return (float)GetValAsInt_impl(row, cell);}
   virtual int	 	GetValAsInt_impl(int row, int cell) const 
     {return (int)GetValAsByte_impl(row, cell);}
   virtual byte	 	GetValAsByte_impl(int row, int cell) const {return 0;} 
-  virtual void	 	SetValAsString_impl(const String& val, int row, int cell); 
-  virtual void	 	SetValAsFloat_impl(float val, int row, int cell) {} 
-  virtual void	 	SetValAsInt_impl(int val, int row, int cell) 
-    {SetValAsFloat_impl((float)val, row, cell);} 
-  virtual void	 	SetValAsByte_impl(byte val, int row, int cell) 
-    {SetValAsInt_impl((int)val, row, cell);} 
+  
+  virtual bool	 	SetValAsVar_impl(const Variant& val, int row, int cell); // true if set 
+  virtual bool	 	SetValAsString_impl(const String& val, int row, int cell);  // true if set 
+  virtual bool	 	SetValAsFloat_impl(float val, int row, int cell) {return false;}  // true if set 
+  virtual bool	 	SetValAsInt_impl(int val, int row, int cell)  // true if set 
+    {return SetValAsFloat_impl((float)val, row, cell);} 
+  virtual bool	 	SetValAsByte_impl(byte val, int row, int cell)  // true if set 
+    {return SetValAsInt_impl((int)val, row, cell);} 
   
 private:
   void	Initialize();
@@ -505,8 +517,10 @@ public:
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
   
+  bool		hasData(int row, int col, int subgp=-1); // true if data at that cell
   bool		idx(int row_num, int col_size, int& act_idx)
     {act_idx = col_size - (rows - row_num); return act_idx >= 0;} // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
+  
   override void	Reset();
   virtual void	ResetData();
   // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
@@ -592,6 +606,11 @@ public:
   void 		SetValAsString(const String& val, int col, int row, int subgp=-1);
   // set data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); does nothing if no cell
 
+  Variant 	GetValAsVar(int col, int row, int subgp=-1);
+  // get data of any type, in Variant form, for given column, row (if subgp >= 0, column is in given subgroup); Invalid/NULL if no cell
+  bool 		SetValAsVar(const Variant& val, int col, int row, int subgp=-1);
+  // set data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); does nothing if no cell
+
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   virtual void 	SaveHeader(ostream& strm); // saves header information, tab-separated, 
   virtual void 	SaveData(ostream& strm); // saves data, one line per rec, tab-separated
@@ -603,6 +622,10 @@ public:
 
   override int		NumListCols() const {return 3;} // Name, data type (float, etc.), disp options
   override String	GetColHeading(int col); // header text for the indicated column
+
+#ifdef TA_GUI
+  QAbstractItemModel*	GetDataModel(); // returns new if none exists, or existing -- enables views to be shared
+#endif
 
   void	Initialize();
   void	Destroy();
@@ -617,6 +640,9 @@ public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a 
   void	AddStringVal_deprecated(const char* val, int col, int subgp=-1) {AddStringVal(val, col, subgp);} // #IGNORE
 
 protected:
+#ifdef TA_GUI
+  DataTableModel*	m_dtm; // #IGNORE note: once we create, always exists
+#endif
   virtual DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, const char* col_nm);
    // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
 private:
@@ -675,8 +701,8 @@ public:
 protected:
   override float 	GetValAsFloat_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override void	 	SetValAsFloat_impl(float val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}
@@ -697,8 +723,8 @@ public:
 protected:
   override int 		GetValAsInt_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override void	 	SetValAsInt_impl(int val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+  override bool	 	SetValAsInt_impl(int val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}
@@ -719,8 +745,8 @@ public:
 protected:
   override byte 	GetValAsByte_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override void	 	SetValAsByte_impl(byte val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val);}
+  override bool	 	SetValAsByte_impl(byte val, int row, int cell)
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}

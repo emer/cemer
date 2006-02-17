@@ -19,6 +19,10 @@
 
 #include "datatable.h"
 
+#ifdef TA_GUI
+#  include "datatable_qtso.h"
+#endif
+
 #include <limits.h>
 #include <float.h>
 #include <ctype.h>
@@ -1152,6 +1156,11 @@ String DataArray_impl::GetValAsString_impl(int row, int cell) const {
   return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
 } 
 
+Variant DataArray_impl::GetValAsVar_impl(int row, int cell) const {
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
+} 
+
 int DataArray_impl::IndexOfEl_Flat(int row, int cell) const {
   if ((cell < 0) || (cell >= cell_size())) return -1;
   if (row < 0) row = rows() + row; // abs row, if request was from end
@@ -1159,8 +1168,14 @@ int DataArray_impl::IndexOfEl_Flat(int row, int cell) const {
   return (row * cell_size()) + cell;
 } 
 
-void DataArray_impl::SetValAsString_impl(const String& val, int row, int cell) {
+bool DataArray_impl::SetValAsString_impl(const String& val, int row, int cell) {
   AR()->SetFmStr_Flat(IndexOfEl_Flat(row, cell), val); // note: safe operation
+  return true;
+} 
+
+bool DataArray_impl::SetValAsVar_impl(const Variant& val, int row, int cell) {
+  AR()->SetFmVar_Flat(IndexOfEl_Flat(row, cell), val); // note: safe operation
+  return true;
 } 
 
 
@@ -1293,9 +1308,18 @@ void DataTable::Initialize() {
   SetBaseType(&TA_DataArray);	// the impl doesn't inherit properly..
   rows = 0;
   save_data = false;
+#ifdef TA_GUI
+  m_dtm = NULL; // returns new if none exists, or existing -- enables views to be shared
+#endif
 }
 
 void DataTable::Destroy() {
+#ifdef TA_GUI
+  if (m_dtm) {
+   delete m_dtm;
+   m_dtm = NULL;
+  }
+#endif
 }
 
 void DataTable::Copy_(const DataTable& cp) {
@@ -1496,33 +1520,54 @@ String_Matrix* DataTable::GetColStringArray(int col, int subgp) {
   return NULL;
 }
 
+#ifdef TA_GUI
+QAbstractItemModel* DataTable::GetDataModel() {
+  if (!m_dtm) {
+    m_dtm = new DataTableModel();
+    m_dtm->setDataTable(this);
+  }
+  return m_dtm;
+}
+#endif
+
 float DataTable::GetFloatVal(int col, int row, int subgp) {
-  float_Matrix* dt = GetColFloatArray(col, subgp);
-  if (dt != NULL) return dt->SafeEl(row);
-  return 0.0f;
+  DataArray_impl* da = GetColData(col, subgp);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsFloat(i);
+  else return 0.0f;
 }
 
 String DataTable::GetValAsString(int col, int row, int subgp) {
   DataArray_impl* da = GetColData(col, subgp);
-  return (da) ? da->GetValAsString(row) : _nilString;
-}
-void DataTable::SetValAsString(const String& val, int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  if (da == NULL) return;
-  //TODO: maybe need to ignore for matrix type
-  if (da->is_matrix) return;
   int i;
-  if (idx(row, da->rows(), i)) {
-    da->SetValAsString(val, i);
-  }
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsString(i);
+  else return "n/a";
+}
 
+Variant DataTable::GetValAsVar(int col, int row, int subgp) {
+  DataArray_impl* da = GetColData(col, subgp);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsVar(i);
+  else return _nilVariant;
 }
 
 String DataTable::GetStringVal(int col, int row, int subgp) {
-  String_Matrix* dt = GetColStringArray(col, subgp);
-  if(dt != NULL) return dt->SafeEl(row);
-  return "";
+  DataArray_impl* da = GetColData(col, subgp);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsString(i);
+  else return _nilString;
 }
+
+bool DataTable::hasData(int row, int col, int subgp) {
+  DataArray_impl* da = GetColData(col, subgp);
+  int i;
+  return (da && idx(row, da->rows(), i));
+}
+
 
 int DataTable::MaxLength() {
   return rows;
@@ -1937,6 +1982,27 @@ void DataTable::SetStringVal(const char* val, int col, int row, int subgp) {
   if ((dt != NULL) && (dt->InRange(row)))
     dt->FastEl(row) = val;
 }
+
+void DataTable::SetValAsString(const String& val, int col, int row, int subgp) {
+  DataArray_impl* da = GetColData(col, subgp);
+  if (da == NULL) return;
+  //TODO: maybe need to ignore for matrix type
+  if (da->is_matrix) return;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsString(val, i);
+  }
+}
+
+bool DataTable::SetValAsVar(const Variant& val, int col, int row, int subgp) {
+  DataArray_impl* da = GetColData(col, subgp);
+  if (da == NULL) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    return da->SetValAsVar(val, i);
+  } else return false;
+}
+
 
 void DataTable::UpdateAllRanges() {
 /*TODO

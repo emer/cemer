@@ -139,7 +139,7 @@ void iEditGrid::init(int hmargin_, int vmargin_, int rows_, int cols_) {
   layOuter->addWidget(bodyNames);
 //nn  layOuter->addSpacing(mhmargin);
   scrBody = new QScrollArea(this);
-  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // use outer container for scrolling, to keep names in sync
+  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // use outer container for scrolling, to keep names in sync
   scrBody->setWidgetResizable(true);
   body = new iStripeWidget();		// parent for the data items
   body->resize(1, 1); // let it expand

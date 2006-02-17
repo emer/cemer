@@ -22,17 +22,130 @@
 #include "ta_qtgroup.h"
 #include "ta_qtclipdata.h"
 
-#include <qbitarray.h>
 #include <qlayout.h>
-#include <qlineedit.h>
-#include <qpainter.h>
 #include <qpalette.h>
+#include <QTableView>
 
 #include <limits.h>
 #include <float.h>
 //nn? #include <unistd.h>
 
 #define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
+
+DataTableModel::DataTableModel(QObject* parent) 
+:inherited(parent)
+{
+  m_dt = NULL;
+}
+
+DataTableModel::~DataTableModel() {
+  setDataTable(NULL, false);
+}
+
+int DataTableModel::columnCount(const QModelIndex& parent) const {
+  if (!m_dt) return 0;
+  else       return m_dt->leaves;
+}
+
+QVariant DataTableModel::data(const QModelIndex& index, int role) const {
+  if (!m_dt || !index.isValid()) return QVariant();
+  
+  switch (role) {
+  case Qt::TextAlignmentRole: {
+    DataArray_impl* col = m_dt->GetColData(index.column());
+    if (col) {
+      if (col->is_numeric())
+        return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+      else
+        return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+    } 
+    } break;
+  case Qt::DisplayRole:
+    return m_dt->GetValAsVar(index.column(), index.row());
+  default: break;
+  }
+  return QVariant();
+}
+
+void DataTableModel::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  //TODO: change notification more particular????
+  emit layoutChanged();
+}
+
+void DataTableModel::DataLinkDestroying(taDataLink* dl) {
+  setDataTable(NULL);
+  //TODO: change notification
+}
+
+Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
+  if (!m_dt || !index.isValid()) return 0;
+  Qt::ItemFlags rval = 0;
+  if (ValidateIndex(index)) {
+    // don't enable null cells
+    if (m_dt->hasData(index.row(), index.column())) {
+      rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+      //TODO: determine if not editable, ex. maybe for matrix types
+      DataArray_impl* col = m_dt->GetColData(index.column());
+      if (col && !col->is_matrix)  
+        rval |= Qt::ItemIsEditable;
+    }
+  }
+  return rval;
+}
+
+QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role != Qt::DisplayRole)
+    return QVariant();
+  if (orientation == Qt::Horizontal) {
+    DataArray_impl* col = m_dt->GetColData(section);
+    if (col)  
+      return QString(col->GetDisplayName().chars());
+    else 
+      return QString();
+  } else {
+    return QString::number(section);
+  }
+}
+
+int DataTableModel::rowCount(const QModelIndex& parent) const {
+  if (!m_dt) return 0;
+  else       return m_dt->rows;
+}
+
+bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
+  if (!m_dt || !index.isValid()) return false;
+  bool rval = false;
+  switch (role) {
+  case Qt::EditRole:
+    rval = m_dt->SetValAsVar(value, index.column(), index.row());
+    if (rval) 
+      emit dataChanged(index, index);
+    return rval;
+  default: return false;
+  }
+}
+
+
+void DataTableModel::setDataTable(DataTable* value, bool notify) {
+  if (m_dt == value) return;
+  if (m_dt) { // disconnect
+    m_dt->RemoveDataClient(this);
+  }
+  m_dt = value;
+  if (m_dt) { // connect
+    m_dt->AddDataClient(this);
+  }
+  //TODO: make sure this is the right signal
+  if (notify) {
+    emit layoutChanged();
+  }
+}
+
+bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
+  if (!m_dt) return false;
+  return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->leaves));
+}
+
 
 //////////////////////////
 // tabDataTableViewType	//
@@ -56,136 +169,6 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 
-//////////////////////////
-//   iDataTable		//
-//////////////////////////
-
-iDataTable::iDataTable(QWidget* parent)
-:Q3Table(parent)
-{
-  col_align.err = (Qt::AlignmentFlag)0;
-  m_dt = NULL;
-
-//<TEMP>
-setReadOnly(true);
-setSorting(false);
-//</TEMP>
-}
-
-iDataTable::~iDataTable() {
-  m_dt = NULL;
-}
-
-QWidget* iDataTable::cellWidget(int row, int col) const {
-  return NULL;
-}
-
-void iDataTable::clearCellWidget(int row, int col) {
-  //TODO
-}
-
-
-void iDataTable::clearCell (int row, int col) {
-  //TODO
-}
-
-
-void iDataTable::paintCell(QPainter* p, int row, int col, const QRect& cr,
-    bool selected, const QColorGroup& cg )
-{
-  //NOTE: not well documented in Qt, but the inherited routine fills the
-  // background rect, and does all the grid drawing -- the fact we
-  // have no Q3TableItem values causes the inherited to not draw a cell contents
-  inherited::paintCell(p, row, col, cr, selected, cg);
-  if (!m_dt) return;
-
-  // text color
-  if (selected) {
-    p->setPen(cg.highlightedText());
-  } else {
-    p->setPen(cg.text());
-  }
-
-
-  // get the data, compensating for jagged arrays -- if not data, we print "n/a"
-  int idx;
-  String str;
-  DataArray_impl* da = m_dt->GetColData(col);
-  if ((da != NULL) && (row < m_dt->rows)) {
-    //TEMP: just show matrix cells in special text, will replace with editor
-    if (da->is_matrix) {
-      str = "[matrix]";
-    } else {
-      if (m_dt->idx(row, da->rows(), idx))
-        str = da->GetValAsString(idx);
-      else
-        str = "n/a";
-    }
-  }
-  Qt::Alignment align = col_align.SafeEl(col);
-  p->drawText(2, 0, cr.width() - 4, cr.height(), align, str );
-}
-
-void iDataTable::setDataTable(DataTable* value) {
-  if (m_dt == value) return;
-  m_dt = value;
-  updateConfig();
-}
-
-void iDataTable::updateConfig() {
-  if (m_dt) {
-    //note: qtable doesn't ignore spurious row/col changes, so we omit spurious ones
-    int n = m_dt->MaxLength();
-    if (n != numRows()) setNumRows(n);
-    // truncate if #cols is less, otherwise we add them dynamically in the loop below
-    n = m_dt->leaves;
-    col_align.EnforceSize(n);
-    int pix_per_tab = 0; // only needed for sizing new cols
-    if (n < numCols()) setNumCols(n);
-    else if (n >= numCols()) {
-      // we only need font metrics if we have new cols
-      const QFontMetrics& fm = this->fontMetrics();
-      pix_per_tab = fm.width(QString("00000000"));
-    }
-
-    Q3Header* hd = horizontalHeader();
-    String hd_nm;
-
-    taLeafItr i;
-    int col = 0;
-    DataArray_impl* da;
-    FOR_ITR_EL(DataArray_impl, da, m_dt->, i) {
-      if (da) {
-        if (col >= numCols()) {
-          setNumCols(col + 1);
-          int disp_wd = da->displayWidth();
-          if (disp_wd < 0) disp_wd = 1; // arbitrary
-          int tab_width = disp_wd * pix_per_tab;
-          setColumnWidth(col, tab_width);
-          //column alignment, right is for numerics
-          Qt::Alignment align;
-          if (da->is_matrix)
-            align = Qt::AlignCenter | Qt::AlignVCenter;
-          else if (da->is_numeric())
-            align = Qt::AlignRight | Qt::AlignVCenter;
-          else
-            align = Qt::AlignLeft | Qt::AlignVCenter;
-          col_align.FastEl(col) = align;
-        }
-        hd_nm = da->GetDisplayName();
-      } else {
-        hd_nm = _nilString;
-      }
-      hd->setLabel(col, hd_nm);
-      ++col;
-    }
-
-  } else {
-    setNumRows(0);
-    setNumCols(0);
-  }
-  update(); // probably superfluous
-}
 
 //////////////////////////
 //    iDataTablePanel 	//
@@ -194,12 +177,17 @@ void iDataTable::updateConfig() {
 iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  layOuter = new QVBoxLayout(this);
-  idt = new iDataTable(this);
-  layOuter->addWidget(idt);
+/*  layOuter = NULL; // nuke
+  idt = new iDataTable();
+  setCentralWidget(idt);
+  idt->setDataTable(dt()); */
 
-  idt->setDataTable(dt());
-
+  tv = new QTableView();
+  setCentralWidget(tv);
+  DataTable* dt_ = dt();
+  if (dt_) {
+    tv->setModel(dt_->GetDataModel());
+  }
 /*  list->setSelectionMode(QListView::Extended);
   list->setShowSortIndicator(true);
   // set up number of cols, based on link
@@ -219,8 +207,9 @@ iDataTablePanel::~iDataTablePanel() {
 
 void iDataTablePanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
 //TODO: maybe we should do something less crude???
-  idt->updateConfig();
+//  idt->updateConfig();
 }
 
 int iDataTablePanel::EditAction(int ea) {
