@@ -115,6 +115,16 @@ public:
   TAQT_TYPE_INSTANCE(taiStringType, taiClassType);
 };
 
+class taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
+public:
+  int 		BidForType(TypeDef* td);
+  taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void		GetImage_impl(taiData* dat, void* base);
+  void		GetValue_impl(taiData* dat, void* base);
+
+  TAQT_TYPE_INSTANCE(taiMatrixGeomType, taiClassType);
+};
+
 class gpiListType : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);

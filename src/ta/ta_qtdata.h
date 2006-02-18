@@ -19,8 +19,8 @@
 #ifndef TA_QTDATA_H
 #define TA_QTDATA_H
 
-#include "ta_base.h"
 #include "ta_variant.h"
+#include "ta_base.h"
 #include "ta_qtdata_def.h"
 
 #ifndef __MAKETA__
@@ -38,6 +38,7 @@
 
 // externals
 class QKeySequence; // #IGNORE
+class MatrixGeom;
 
 /* //TODO: re-evaluate
 class IconGlyph : public QWidget {
@@ -265,6 +266,27 @@ protected:
 private:
   void		Initialize(QWidget* gui_parent_);
 };
+
+class taiDimEdit : public taiData { // specify number of dims and each dim value, ex. for Matrix dims
+INHERITED(taiData)
+  Q_OBJECT
+public:
+  iDimEdit*		rep() const {return (iDimEdit*)m_rep;}
+  taiDimEdit(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+    // uses flags: 
+
+  void 			GetImage(const MatrixGeom* arr);
+  void 			GetValue(MatrixGeom* arr) const;
+
+/*TODO protected:
+  override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
+  override void 	this_EditAction(int param); // for when control is clipboard handler
+  override void 	this_SetActionsEnabled(); // for when control is clipboard handler */
+private:
+  void 			Initialize(QWidget* gui_parent_);
+
+};
+
 
 //////////////////////////
 //     taiPolyData	//

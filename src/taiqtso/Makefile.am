@@ -21,6 +21,7 @@ HEADS =\
 	safeptr_so.h \
 	imisc_so.h \
 	irenderarea.h \
+	idimedit.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -43,6 +44,8 @@ SRCS =\
 	igeometry.cpp \
 	ieditgrid.cpp \
 	ieditgrid.moc.cpp \
+	idimedit.cpp \
+	idimedit.moc.cpp \
 	safeptr_so.cpp \
 	imisc_so.cpp \
 	irenderarea.cpp \

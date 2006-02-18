@@ -1901,8 +1901,8 @@ void* MemberDef::GetOff(void* base) const {
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
   if (show == taMisc::USE_SHOW_DEF)
     show = taMisc::show;
-//  if (HasOption("SHOW"))
-//    return true;			// always show
+  if (HasOption("SHOW"))
+    return true;			// always show
   if ((show & taMisc::NO_HIDDEN) && (HasOption("HIDDEN")))
     return false;
   if ((show & taMisc::NO_READ_ONLY) && (HasOption("READ_ONLY")))

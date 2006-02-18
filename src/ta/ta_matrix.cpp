@@ -21,15 +21,95 @@
 //  MatrixGeom		//
 //////////////////////////
 
+MatrixGeom::MatrixGeom(int init_size) {
+  Initialize();
+  EnforceSize(init_size);
+}
+  
 void MatrixGeom::Initialize() {
+  size = 0;
 }
 
 void MatrixGeom::Destroy() {
+#ifdef DEBUG
+  // helps detect multi-delete errors
+  for (int i = size - 1; i >= 0; el[i--] = 0); 
+  size = 0; 
+#endif
 }
 
 void MatrixGeom::Copy_(const MatrixGeom& cp) {
-  int_FixedArray::Copy(cp);
+  EnforceSize(cp.size);
+  for (int i = 0; i < size; ++i) {
+    el[i] = cp.el[i];
+  }
 } 
+
+void MatrixGeom::Add(int value) {
+  if (size >= TA_MATRIX_DIMS_MAX) return;
+  el[size++] = value;
+}
+
+int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
+  strm << "{ ";
+  int i;
+  for (i=0; i < size; i++) {
+    strm << FastEl(i) << ";";
+  }
+  return true;
+}
+
+int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)    return EOF;
+  if(c == ';') // just a path
+    return 2;  // signal that just a path was loaded..
+
+  if(c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  c = taMisc::read_till_rb_or_semi(strm);
+  int cnt = 0;
+  int val;
+  while ((c == ';') && (c != EOF)) {
+    val = taMisc::LexBuf.toInt();
+    if (cnt > size-1)
+      Add(val);
+    else Set(cnt, val);
+    ++cnt;
+    c = taMisc::read_till_rb_or_semi(strm);
+  }
+  if (c==EOF)	return EOF;
+  return true;
+}
+
+
+void MatrixGeom::EnforceSize(int new_sz) {
+  if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return;
+  // zero out new elements
+  for (int i = size; i < new_sz; ++i)
+    el[i] = 0;
+  size = new_sz;
+}
+
+bool MatrixGeom::Equal(const MatrixGeom& other) const {
+  if (size != other.size) return false;
+  for (int i = 0; i < size; ++i) {
+    if (el[i] != other.el[i]) return false;
+  }
+  return true;
+} 
+
+int MatrixGeom::Product() const {
+  if (size == 0) return 0;
+  int rval = el[0];
+  for (int i = 1; i < size; ++i)
+    rval *= el[i];
+  return rval;
+}
+
+
 
 //////////////////////////
 //  taMatrix		//
@@ -54,7 +134,7 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
   return true;
 }
 
-String taMatrix::GeomToString(const int_Array& geom) {
+String taMatrix::GeomToString(const MatrixGeom& geom) {
   String rval("[");
   for (int i = 0; i < geom.size; ++i) {
     if (i > 0) rval += ',';
@@ -75,16 +155,6 @@ void taMatrix::Destroy() {
   size = 0;
   alloc_size = 0;
   CutLinks();
-}
-  
-void taMatrix::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(geom, this);
-}
-
-void taMatrix::CutLinks() {
-  inherited::CutLinks();
-  geom.CutLinks();
 }
   
 void taMatrix::Add_(const void* it) {
@@ -195,7 +265,7 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
     return false;
   }
   // we expect, but don't require, the [..] dims 
-  int_Array ar; // temp, while streaming
+  MatrixGeom ar; // temp, while streaming
   c = taMisc::skip_white(strm, true); // use peek mode, until we're sure
   if (c == '[') {
     strm.get(); // actually gets the [
@@ -238,7 +308,7 @@ void taMatrix::EnforceFrames(int n) {
     ReclaimOrphans_(new_size, size - 1);
   }
   size = new_size;
-  geom[geom.size-1] = n;	
+  geom.Set(geom.size-1, n);	
 }
 
 int taMatrix::FastElIndex(int d0) const {
@@ -281,7 +351,7 @@ int taMatrix::FastElIndex4(int d0, int d1, int d2, int d3) const {
   return rval;
 }
  
-int taMatrix::FastElIndexN(const int_Array& indices) const {
+int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
   Assert((geom.size >= 1), "matrix geometry has not been initialized");
   Assert((indices.size >= 1), "at least 1 index must be specified");
   Assert((indices.size <= geom.size), "too many indices for matrix");
@@ -344,7 +414,7 @@ bool taMatrix::InRange4(int d0, int d1, int d2, int d3) const {
     ;
 }
  
-bool taMatrix::InRangeN(const int_Array& indices) const {
+bool taMatrix::InRangeN(const MatrixGeom& indices) const {
   if (indices.size < geom.size) return false;
   for (int i = 0; i < indices.size; ++i) {
     int di = indices[i];
@@ -409,7 +479,7 @@ int taMatrix::SafeElIndex4(int d0, int d1, int d2, int d3) const {
   return rval;
 }
  
-int taMatrix::SafeElIndexN(const int_Array& indices) const {
+int taMatrix::SafeElIndexN(const MatrixGeom& indices) const {
   Check((geom.size >= 1), "matrix geometry has not been initialized");
   Check((indices.size >= 1), "at least 1 index must be specified");
   Check((indices.size <= geom.size), "too many indices for matrix");
@@ -428,7 +498,7 @@ int taMatrix::SafeElIndexN(const int_Array& indices) const {
   return rval;
 }
  
-void taMatrix::SetFixedData_(void* el_, const int_Array& geom_) {
+void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_) {
   // first, clear out any old data
   SetArray_(el_);
   alloc_size = -1; // flag for fixed data

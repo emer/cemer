@@ -106,6 +106,19 @@ public:
 			TypeDef* GetTypeDef() const { return &TA_##y; } \
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
+#define TA_BASEFUNS_LITE(y) y () {Initialize();} \
+			y (const y& cp) {Initialize(); Copy(cp); } \
+			~y () {Destroy();} \
+			TAPtr Clone() { return new y(*this); }  \
+			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
+						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
+			void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy(*this); } \
+			TAPtr MakeToken(){ return (TAPtr)(new y); } \
+			TAPtr MakeTokenAry(int no){ return (TAPtr)(new y[no]); } \
+			void operator=(const y& cp) { Copy(cp); } \
+			TypeDef* GetTypeDef() const { return &TA_##y; } \
+			static TypeDef* StatTypeDef(int) { return &TA_##y; }
+
 // macro for abstract base classes
 #define TA_ABSTRACT_BASEFUNS(y) y () { Initialize(); } \
 			y (const y& cp) { Initialize(); Copy(cp); } \
@@ -1169,7 +1182,6 @@ public:
   STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
-  int 		Product() const; // returns product of all elements
   
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_int; return FastEl_(i); }

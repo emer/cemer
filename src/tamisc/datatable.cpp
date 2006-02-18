@@ -1069,7 +1069,7 @@ void DataArray_impl::Initialize() {
   is_matrix = false;
   // default initialize to scalar
   cell_geom.EnforceSize(1);
-  cell_geom[0] = 1;
+  cell_geom.Set(0, 1);
 }
 
 void DataArray_impl::InitLinks() {
@@ -1094,7 +1094,7 @@ void DataArray_impl::Copy_(const DataArray_impl& cp) {
 void DataArray_impl::Init() {
   taMatrix* ar = AR(); //cache
   if (is_matrix) {
-    int_Array tdim = cell_geom;
+    MatrixGeom tdim = cell_geom;
     tdim.EnforceSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
     ar->SetGeomN(tdim);
   } else {
@@ -1637,7 +1637,7 @@ int_Data* DataTable::NewColInt(const char* col_nm) {
 }
 
 DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
-    const int_Array& cell_geom) 
+    const MatrixGeom& cell_geom) 
 {
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
@@ -1651,11 +1651,11 @@ DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, co
 DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const char* col_nm,
     int dims, int d0, int d1, int d2, int d3)
 {
-  int_Array geom(dims);
-  if (dims > 0) geom[0] = d0; //note: required, but is checked in the validation routine
-  if (dims > 1) geom[1] = d1;
-  if (dims > 2) geom[2] = d2;
-  if (dims > 3) geom[3] = d3;
+  MatrixGeom geom(dims);
+  if (dims > 0) geom.FastEl(0) = d0; //note: required, but is checked in the validation routine
+  if (dims > 1) geom.FastEl(1) = d1;
+  if (dims > 2) geom.FastEl(2) = d2;
+  if (dims > 3) geom.FastEl(3) = d3;
   String err_msg;
   if (!taMatrix::GeomIsValid(geom, &err_msg)) {
     taMisc::Error("Invalid geom:", err_msg);

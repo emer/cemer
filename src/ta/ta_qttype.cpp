@@ -388,6 +388,31 @@ void taiStringType::GetValue_impl(taiData* dat, void* base) {
 
 
 //////////////////////////////////
+// 	taiMatrixGeomType		//
+//////////////////////////////////
+
+int taiMatrixGeomType::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_MatrixGeom))
+    return (taiClassType::BidForType(td) +1);
+  return 0;
+}
+taiData* taiMatrixGeomType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiDimEdit *rval = new taiDimEdit(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiMatrixGeomType::GetImage_impl(taiData* dat, void* base) {
+  taiDimEdit *rval = (taiDimEdit*)dat;
+  rval->GetImage((const MatrixGeom*)base);
+}
+
+void taiMatrixGeomType::GetValue_impl(taiData* dat, void* base) {
+  taiDimEdit *rval = (taiDimEdit*)dat;
+  rval->GetValue((MatrixGeom*)base);
+}
+
+
+//////////////////////////////////
 // 	gpiListType		//
 //////////////////////////////////
 

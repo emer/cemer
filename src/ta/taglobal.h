@@ -148,6 +148,19 @@
 #  define TA_LARGEFILE_SUPPORT 64
 #endif
 
+// word size -- we use this occassionally
+// known to be defined on gcc; prob not on Windows
+#ifndef _WORDSIZE
+#if defined(__arch64__) || defined(__x86_64__) \
+    || defined(__amd64__) || defined(__ia64__) \
+    || defined(__alpha__) || defined(__sparcv9)
+#define _WORDSIZE 64
+#else
+#define _WORDSIZE 32
+#endif
+#endif
+
+
 
 /* DLL building options under windows */
 // currently, we are putting taiqtso/ta/css/tamisc in one dll, so slave to TA

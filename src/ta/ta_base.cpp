@@ -2036,14 +2036,6 @@ void int_Array::FillSeq(int start, int inc) {
     FastEl(i) = v;
 }
 
-int int_Array::Product() const {
-  if (size == 0) return 0;
-  int rval = el[0];
-  for (int i = 1; i < size; ++i)
-    rval *= el[i];
-  return rval;
-}
-
 
 #ifdef TA_GUI
 

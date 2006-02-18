@@ -17,6 +17,7 @@
 // tai_data.cc
 
 #include "ta_filer.h"
+#include "ta_matrix.h"
 #include "ta_qtdata.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
@@ -32,6 +33,7 @@
 #include "icolor.h"
 #include "icheckbox.h"
 #include "icombobox.h"
+#include "idimedit.h"
 #include "iflowlayout.h"
 #include "ilineedit.h"
 #include "ispinbox.h"
@@ -809,6 +811,36 @@ void taiBitBox::GetValue(int& val) const {
 }
 
 
+//////////////////////////////////
+// 	taiDimEdit		//
+//////////////////////////////////
+
+taiDimEdit::taiDimEdit(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+:taiData(typ_, host_, par, gui_parent_, flags_)
+{
+  Initialize(gui_parent_);
+}
+
+void taiDimEdit::Initialize(QWidget* gui_parent_) {
+  SetRep(new iDimEdit(gui_parent_));
+  connect(m_rep, SIGNAL(changed(iDimEdit)), this, SLOT(repChanged()) );
+}
+
+void taiDimEdit::GetImage(const MatrixGeom* arr) {
+  iDimEdit* de = rep(); // cache
+  de->setDims(arr->size);
+  for (int i = 0; i < arr->size; ++i) {
+    de->setDim(i, arr->FastEl(i));
+  }
+}
+
+void taiDimEdit::GetValue(MatrixGeom* arr) const {
+  iDimEdit* de = rep(); // cache
+  arr->EnforceSize(de->dims());
+  for (int i = 0; i < de->dims(); ++i) {
+    arr->Set(i, de->dim(i));
+  }
+}
 
 
 //////////////////////////////////

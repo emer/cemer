@@ -334,7 +334,7 @@ public:
   String		disp_opts;	// viewer default display options
   bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
   bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
-  int_Array		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
+  MatrixGeom		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
   virtual taMatrix* 	AR() = 0; // the matrix pointer
   virtual const taMatrix* 	AR() const = 0; // const version of the matrix pointer
@@ -459,7 +459,7 @@ public:
   String		disp_opts;	// viewer display options
   bool			save_to_file;	// whether to save the column to a file
   bool			is_matrix; // 'true' if the cell is a matrix, not a scalar
-  int_Array		cell_geom; //  #INLINE #CONDEDIT_ON_is_matrix:true for matrix cols, the geom of each cell
+  MatrixGeom		cell_geom; //  #INLINE #CONDEDIT_ON_is_matrix:true for matrix cols, the geom of each cell
   
   virtual void		CopyFromDataArray(const DataArray_impl& cp);
   
@@ -556,7 +556,7 @@ public:
     int dims = 1, int d0 = 0, int d1 = 0, int d2 = 0, int d3 = 0);
    // #MENU #MENU_ON_Table create new matrix column of data of specified type, with specified cell geom
   DataArray_impl*	NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
-    const int_Array& cell_geom);
+    const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
   virtual float_Data*	NewColFloat(const char* col_nm); // create new column of floating point data
   virtual int_Data*	NewColInt(const char* col_nm); 	 // create new column of integer-level data (= narrow display, actually stored as float)

@@ -31,8 +31,8 @@ typedef QSpinBox inherited;
 public:
   iSpinBox(QWidget* parent = 0);
 
-  bool		hilight() {return mhilight;}
-  bool 		isReadOnly() {return mreadOnly;}
+  bool		hilight() const {return mhilight;}
+  bool 		isReadOnly() const {return mreadOnly;}
 
   void		setPaletteBackgroundColor3(const QColor &); // override, pushes through to lineEdit
   void		stepUp(); // override

@@ -163,6 +163,7 @@ class	iColor;			// #IGNORE
 //class	iCoord;			// support Iv/float-Qt/int compatability
 class	iCheckBox;		// #IGNORE -- support for Hilight and ReadOnly
 class	iComboBox;		// #IGNORE -- support for Hilight
+class	iDimEdit;		// #IGNORE for editing dimensions of a Matrix
 class	iEditGrid;		// #IGNORE
 class	iFlowLayout;		// #IGNORE
 class	iFont;			//

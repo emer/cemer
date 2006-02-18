@@ -64,30 +64,65 @@ class float_Matrix; //
    
 */
 
-class MatrixGeom: public taOBase, public int_FixedArray { // #INLINE matrix geometry, similar to an array of int
-INHERITED(taOBase)
+#define TA_MATRIX_DIMS_MAX 6
+
+class MatrixGeom: public taBase  { // matrix geometry, similar to an array of int
+INHERITED(taBase)
+friend class taMatrix;
 public:
+  int			size;
   
+  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  int 			Product() const; // returns product of all elements
+  
+  void			EnforceSize(int sz);
+  int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
+    // the element at the given index
+  int			FastEl(int i) const {return el[i];}
+    // fast element (no range checking)
+  int&			FastEl(int i) 	{return el[i];}
+  
+  void			Add(int value); // safely add a new element
+  void			Set(int i, int value) // safely set an element
+    {if (InRange(i)) el[i] = value;}
+  
+  void			Reset() {EnforceSize(0);}
+  bool			Equal(const MatrixGeom& other) const;
+  int			operator [](int i) const {if (InRange(i)) return el[i]; else return 0;}  
+  
+  override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
-  COPY_FUNS(MatrixGeom, taOBase);
-  TA_BASEFUNS(MatrixGeom) //
+  explicit MatrixGeom(int init_size);
+  COPY_FUNS(MatrixGeom, taBase);
+  TA_BASEFUNS_LITE(MatrixGeom);
+
+protected:
+  int			el[TA_MATRIX_DIMS_MAX];
+  int&			operator [](int i) {return el[i];}  
+  
 private:
   void			Initialize();
-  void			Destroy(); //
+  void			Destroy();
 };
+
+inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
+  {return a.Equal(b);}
+inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
+  {return !a.Equal(b);}
 
 class taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
     // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
-  static bool		GeomIsValid(const int_Array& geom_, String* err_msg = NULL)
+  static bool		GeomIsValid(const MatrixGeom& geom_, String* err_msg = NULL)
     {return GeomIsValid(geom_.size, geom_.el, err_msg);}
     // validates proposed geom, ex. dims >=1, and valid values for supplied geoms
-  static String		GeomToString(const int_Array& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
+  static String		GeomToString(const MatrixGeom& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
   
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
-  int_Array		geom; // #SHOW #READ_ONLY dimensions array
+  MatrixGeom		geom; // #SHOW #READ_ONLY dimensions array
   
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
   virtual TypeDef*	data_type() const = 0; // type of data, ex TA_int, TA_float, etc.
@@ -136,7 +171,7 @@ public:
   bool			InRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
   bool			InRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
   bool			InRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
-  bool			InRangeN(const int_Array& indices) const;  // 'true' if >= indices-d and indices in range
+  bool			InRangeN(const MatrixGeom& indices) const;  // 'true' if >= indices-d and indices in range
   
   void			SetGeom(int d0)  
     {int d[1]; d[0]=d0; SetGeom_(1, d);} // set geom for 1-d array
@@ -146,7 +181,7 @@ public:
     {int d[3]; d[0]=d0; d[1]=d1; d[2]=d2; SetGeom_(3, d);} // set geom for 3-d array
   void			SetGeom4(int d0, int d1, int d2, int d3)  
     {int d[4]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; SetGeom_(4, d);} // set geom for 4-d array
-  void			SetGeomN(const int_Array& geom_) 
+  void			SetGeomN(const MatrixGeom& geom_) 
     {SetGeom_(geom_.size, geom_.el);} // set geom for any sized array
   
   virtual void 		List(ostream& strm=cout) const; 	// List the items
@@ -156,8 +191,6 @@ public:
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  void			InitLinks();
-  void			CutLinks();
   void			UpdateAfterEdit(); // esp important to call after changing geom -- note that geom gets fixed if invalid
   void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taOBase);
@@ -184,14 +217,14 @@ protected:
   int			FastElIndex2(int d0, int d1) const; 
   int			FastElIndex3(int d0, int d1, int d2) const; 
   int			FastElIndex4(int d0, int d1, int d2, int d3) const; 
-  int			FastElIndexN(const int_Array& indices) const; 
+  int			FastElIndexN(const MatrixGeom& indices) const; 
   
   // the SafeElIndex functions always check the bounds
   int			SafeElIndex(int d0) const; 
   int			SafeElIndex2(int d0, int d1) const; 
   int			SafeElIndex3(int d0, int d1, int d2) const; 
   int			SafeElIndex4(int d0, int d1, int d2, int d3) const; 
-  int			SafeElIndexN(const int_Array& indices) const; 
+  int			SafeElIndexN(const MatrixGeom& indices) const; 
   
   virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
   virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type; raise exception on failure
@@ -213,7 +246,7 @@ protected:
   inline bool		InRange_Flat(int idx) const {return ((idx >= 0) && (idx < size));}
     // checks if in actual range
   
-  virtual void		SetFixedData_(void* el_, const int_Array& geom_); // initialize fixed data
+  virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_); // initialize fixed data
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
@@ -242,7 +275,7 @@ public:
 
   override void*	data() const {return el;}
   
-  void			SetFixedData(T* data_, const int_Array& geom_) {SetFixedData_(data_, geom_);} 
+  void			SetFixedData(T* data_, const MatrixGeom& geom_) {SetFixedData_(data_, geom_);} 
   // sets external (fixed) data, setting the geom/size
   
   ////////////////////////////////////////////////
@@ -259,7 +292,7 @@ public:
     { return el[FastElIndex3(d0,d1,d2)]; }
   T&			FastEl4(int d0, int d1, int d2, int d3) // #IGNORE 
     { return el[FastElIndex4(d0,d1,d2,d3)]; } 
-  T&			FastElN(const int_Array& indices) // #IGNORE 
+  T&			FastElN(const MatrixGeom& indices) // #IGNORE 
     {return el[FastElIndexN(indices)]; }
   
   const T&		FastEl_Flat(int idx) const // #IGNORE	treats matrix like a flat array
@@ -272,7 +305,7 @@ public:
     { return el[FastElIndex3(d0,d1,d2)]; }
   const T&		FastEl4(int d0, int d1, int d2, int d3) const //  
     { return el[FastElIndex4(d0,d1,d2,d3)]; } 
-  const T&		FastElN(const int_Array& indices) const //  
+  const T&		FastElN(const MatrixGeom& indices) const //  
     { return el[FastElIndexN(indices)]; } 
   
   const T&		SafeEl_Flat(int idx) const 	
@@ -285,7 +318,7 @@ public:
     { return el[SafeElIndex3(d0,d1,d2)]; } // access the element for reading
   const T&		SafeEl4(int d0, int d1, int d2, int d3) const  
     { return el[SafeElIndex4(d0,d1,d2,d3)]; }  // access the element for reading
-  const T&		SafeElN(const int_Array& indices) const  
+  const T&		SafeElN(const MatrixGeom& indices) const  
     { return el[SafeElIndexN(indices)]; }  // access the element for reading
   
   void			Set_Flat(int idx, const T& item) 	
@@ -303,7 +336,7 @@ public:
   void			Set4(int d0, int d1, int d2, int d3, const T& item) 	
     {  el[SafeElIndex4(d0,d1,d2,d3)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
-  void			SetN(const int_Array& indices, const T& item) 	
+  void			SetN(const MatrixGeom& indices, const T& item) 	
     {  el[SafeElIndexN(indices)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
   
@@ -429,13 +462,12 @@ public:
 */
 
 #define TA_MATRIX_FUNS(y,T) \
-  STATIC_CONST T blank; \
   explicit y(int d0)		{SetGeom(d0);} \
   y(int d0, int d1)		{SetGeom2(d0,d1);} \
   y(int d0, int d1, int d2)	{SetGeom3(d0,d1,d2);} \
   y(int d0, int d1, int d2, int d3) {SetGeom4(d0,d1,d2,d3);} \
-  explicit y(const int_Array& geom_) {SetGeomN(geom_);} \
-  y(T* data_, const int_Array& geom_) {SetFixedData(data_, geom_);} \
+  explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
+  y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
   TA_BASEFUNS(y) \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
@@ -454,6 +486,7 @@ public:
   override Variant	El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
+  STATIC_CONST String	blank; // #IGNORE
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 
 private:
@@ -481,6 +514,8 @@ public:
   override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
   override Variant	El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
+protected:
+  STATIC_CONST float	blank; // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -505,6 +540,8 @@ public:
   override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
   override Variant	El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
+protected:
+  STATIC_CONST int	blank; // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -530,6 +567,8 @@ public: //
   override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
   override Variant	El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
+protected:
+  STATIC_CONST byte	blank; // #IGNORE
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -554,6 +593,7 @@ public:
   override Variant	El_GetVar_(const void* it) const {return Variant(*((Variant*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
+  STATIC_CONST Variant	blank; // #IGNORE
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 
 private:
