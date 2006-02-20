@@ -1592,9 +1592,14 @@ recommend you to upgrade.])
       ## all of the above. See bug item #028 in SoQt/BUGS.txt.
       ## 20040805 mortene.
 
-      sim_ac_qt_suffix=
-      if $sim_ac_qt_debug; then
-        sim_ac_qt_suffix=d
+#       sim_ac_qt_suffix=
+#       if $sim_ac_qt_debug; then
+#         sim_ac_qt_suffix=d
+#       f
+
+      # Enable Qt Debugging
+      if test x"$debug" = x"true"; then
+        sim_ac_qt_suffix=_debug
       fi
 
       # Note that we need to always check for -lqt-mt before -lqt, because
@@ -1608,7 +1613,7 @@ recommend you to upgrade.])
       for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
         for sim_ac_qt_libcheck in \
             "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtOpenGL${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtNetwork${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
-            "-lQtGui -lQt3Support -lQtOpenGL -lQtNetwork" \
+            "-lQtGui${sim_ac_qt_suffix} -lQt3Support${sim_ac_qt_suffix} -lQtOpenGL${sim_ac_qt_suffix} -lQtNetwork${sim_ac_qt_suffix}" \
             "-lqt-gl" \
             "-lqt-mt" \
             "-lqt" \

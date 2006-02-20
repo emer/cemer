@@ -55,20 +55,64 @@ if test x"$rpm" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
+
+# --enable-debug
+if test x"$debug" = x"true"; then
+  SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
+  AC_DEFINE([DEBUG],,[Used when debugging])
+  AC_DEFINE([TA_PROFILE],,[Used when debugging])
+  AC_SUBST([OPT_LEVEL],["-g -O0"])                       # No optimization in debug mode
+  # Checks for headers
+  AC_FUNC_ALLOCA
+  AC_HEADER_DIRENT
+  AC_HEADER_STDC
+  AC_HEADER_SYS_WAIT
+  AC_CACHE_SAVE
+  # Checks for typedefs, structures, compiler characteristics
+  AC_HEADER_STDBOOL
+  AC_HEADER_TIME
+  AC_C_CONST
+  AC_C_INLINE
+  AC_C_RESTRICT
+  AC_C_VOLATILE
+  AC_TYPE_SIGNAL
+  AC_TYPE_SIZE_T
+  AC_TYPE_PID_T
+  AC_CACHE_SAVE
+  # Checks for library functions
+  AC_FUNC_CHOWN
+  AC_FUNC_ERROR_AT_LINE
+  AC_FUNC_GETPGRP
+  AC_FUNC_SELECT_ARGTYPES
+  AC_TYPE_SIGNAL
+  AC_FUNC_STAT
+  AC_FUNC_STRTOD
+  AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found. Build may fail.])])
+  AC_CACHE_SAVE
+else
+  SIM_AC_CONFIGURATION_SETTING([Debugging],[Disabled])
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
+  AC_SUBST([OPT_LEVEL],["-g -O2"])
+fi
+
 # --enable-gui
 if test x"$gui" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
+  
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
-                   if test $debug = true; then
+                   if test x"$debug" = x"true"; then
                      sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest"
                      sim_ac_qt_cppflags="$sim_ac_qt_cppflags -I${QTDIR}/include/QtTest"
-                   fi                  
+#                     sim_ac_qt_libs="`echo $sim_ac_qt_libs | sed -r 's/(\-lQt[A-Za-z0-9]*)/\1_debug/g'`"
+                   fi
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
                    sim_ac_qt_version="`echo $sim_ac_qt_version | sed -r 's/./&./g;s/.$//'`"
                    SIM_AC_CONFIGURATION_SETTING([Qt],[v.$sim_ac_qt_version $sim_ac_qt_libs]),
                    [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
+
 
   SIM_AC_QT_PROG([QT_MOC],[moc])
   if test x"$MOC" = "false"; then
@@ -109,46 +153,6 @@ if test x"$mpi" = x"true"; then
   fi
 else
   SIM_AC_CONFIGURATION_SETTING([MPI],[Disabled])	
-fi
-
-# --enable-debug
-if test x"$debug" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
-  AC_DEFINE([DEBUG],,[Used when debugging])
-  AC_DEFINE([TA_PROFILE],,[Used when debugging])
-  AC_SUBST([OPT_LEVEL],["-g -O0"])                       # No optimization in debug mode
-  # Checks for headers
-  AC_FUNC_ALLOCA
-  AC_HEADER_DIRENT
-  AC_HEADER_STDC
-  AC_HEADER_SYS_WAIT
-  AC_CACHE_SAVE
-  # Checks for typedefs, structures, compiler characteristics
-  AC_HEADER_STDBOOL
-  AC_HEADER_TIME
-  AC_C_CONST
-  AC_C_INLINE
-  AC_C_RESTRICT
-  AC_C_VOLATILE
-  AC_TYPE_SIGNAL
-  AC_TYPE_SIZE_T
-  AC_TYPE_PID_T
-  AC_CACHE_SAVE
-  # Checks for library functions
-  AC_FUNC_CHOWN
-  AC_FUNC_ERROR_AT_LINE
-  AC_FUNC_GETPGRP
-  AC_FUNC_SELECT_ARGTYPES
-  AC_TYPE_SIGNAL
-  AC_FUNC_STAT
-  AC_FUNC_STRTOD
-  AC_CHECK_FUNCS([alarm floor getcwd gettimeofday memmove memset pow putenv rmdir select setlocale sqrt strcasecmp strtol],,[AC_MSG_WARN([not found. Build may fail.])])
-  AC_CACHE_SAVE
-else
-  SIM_AC_CONFIGURATION_SETTING([Debugging],[Disabled])
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
-  AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
 AC_SUBST([abs_top_builddir])
