@@ -1840,7 +1840,7 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
   // we will be calling our own L routines...
   // however, if child is NULL, and our ops don't do anything, then we must call base ops
   // determine the list-only operations allowed/forbidden, and apply to ea
-  int rval = 0;
+  int rval = taiClipData::ER_IGNORED;
   int allowed = 0;
   int forbidden = 0;
   ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
@@ -1850,11 +1850,11 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
   if (ea & taiClipData::EA_SRC_OPS) {
     // for COPY, CUT, and DRAG, nothing more for us to do; just ack
     if (ea & (taiClipData::EA_COPY | taiClipData::EA_CUT | taiClipData::EA_DRAG))
-      return 1;
+      return taiClipData::ER_OK;
 
     rval = ChildEditActionLS_impl(md, child, eax);
   } else  if (ea & taiClipData::EA_DST_OPS) {
-    if (ms == NULL) return 0;
+    if (ms == NULL) return taiClipData::ER_IGNORED;
 
     // decode src location
     if (ms->IsThisProcess())
@@ -1865,31 +1865,31 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
     }
   }
 
-  if ((rval == 0) && (child == NULL))
+  if ((rval == taiClipData::ER_IGNORED) && (child == NULL))
       rval = taBase::ChildEditAction_impl(md, NULL, ms, ea);
   return rval;
 }
 
 int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
-  if (lst_itm == NULL) return 0;
+  if (lst_itm == NULL) return taiClipData::ER_IGNORED;
   switch (ea & taiClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself, or outer controller if multi
   case taiClipData::EA_DELETE: {
     Close_Child(lst_itm);
-    return 1;
+    return taiClipData::ER_OK;
   }
   case taiClipData::EA_UNLINK: {
     Remove(lst_itm);
-    return 1;
+    return taiClipData::ER_OK;
   }
   default: break; // compiler food
   }
-  return 0;
+  return taiClipData::ER_IGNORED;
 }
 
 int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea)
 {
-  if (!ms->is_tab()) return 0; //not taBase
+  if (!ms->is_tab()) return taiClipData::ER_IGNORED; //not taBase
   // itm_idx, -1 means parent itself
   int obj_idx = -1; // -1 means not in this list
   taBase* obj = NULL;
@@ -1901,12 +1901,33 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     obj = ms->tab_object();
     if (obj == NULL) {
       taMisc::Error("Could not retrieve object for operation.");
-      return -2;
+      return taiClipData::ER_ERROR;
     }
     // already in this list? (affects how we do drops/copies, etc.)
     obj_idx = Find(obj);
   }
-
+  
+  // All non-move paste ops (i.e., copy an object)
+  if (
+    (ea & (taiClipData::EA_DROP_COPY)) ||
+    //  Cut/Paste is a move
+    ((ea & taiClipData::EA_PASTE) && (ms->src_action() & taiClipData::EA_SRC_COPY))
+  ) {
+    // TODO: instead of cloning, we might be better off just streaming a new copy
+    // since this will better guarantee that in-proc and outof-proc behavior is same
+    taBase* new_obj = obj->Clone();
+    //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
+    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
+    int new_idx;
+    if (itm_idx <= 0) 
+      new_idx = 0; // if dest is list, then insert at beginning
+    else if (itm_idx == (size - 1)) 
+      new_idx = -1; // if clicked on last, then insert at end
+    else new_idx = itm_idx + 1;
+    Insert(new_obj, new_idx);
+    return taiClipData::ER_OK;
+  }
+  
   // All Move-like ops
   if (
     (ea & (taiClipData::EA_DROP_MOVE)) ||
@@ -1920,19 +1941,19 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
         Move(obj_idx, itm_idx + 1);
       } else if (itm_idx > obj_idx) { // for after, to will just be the dst
         Move(obj_idx, itm_idx);
-      } else return 1; // do nothing case of drop on self
+      } else return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not in this list, need to do a transfer
       if (Transfer(obj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
         Move(size - 1, itm_idx + 1);
-      } else return -2;
+      } else return taiClipData::ER_ERROR;
     }
     // acknowledge action to source
     if ((ms->src_action() & (taiClipData::EA_SRC_CUT)) || (ea & (taiClipData::EA_DROP_MOVE)))
     {
       ms->loc_data_taken();
     }
-    return 1;
+    return taiClipData::ER_OK;
   }
 
   // Link ops
@@ -1941,14 +1962,14 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
   {
     if (obj_idx >= 0) return -1; // in this list: link forbidden
     InsertLink(obj, itm_idx + 1);
-    return 1;
+    return taiClipData::ER_OK;
   }
-  return 0;
+  return taiClipData::ER_IGNORED;
 }
 
 int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea) {
   // if src is not even a taBase, we just stop
-  if (!ms->is_tab()) return 0;
+  if (!ms->is_tab()) return taiClipData::ER_IGNORED;
 
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
   switch (ea & taiClipData::EA_OP_MASK) {
@@ -1962,20 +1983,21 @@ int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, ta
       int dump_val = td->Dump_Load(istr, this, this);
       if (dump_val == 0) {
         //TODO: error output
-        return -2; // load failed
+        return taiClipData::ER_ERROR; // load failed
       }
       // delete from source if it was a CUT or similar
       if ((ms->src_action() & (taiClipData::EA_SRC_CUT)) || (ea & (taiClipData::EA_DROP_MOVE)))
       {
         ms->rem_data_taken();
       }
-      return 1;
+      return taiClipData::ER_OK;
     } else { // no data
-      return -2;
+        //TODO: error output
+      return taiClipData::ER_ERROR;
     }
   }
   }
-  return 0;
+  return taiClipData::ER_IGNORED;
 }
 
 #endif

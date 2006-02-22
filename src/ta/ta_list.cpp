@@ -225,6 +225,8 @@ bool taPtrList_impl::Swap(int pos1, int pos2) {
 /////////////////////////
 
 void taPtrList_impl::AddEl_(void* it) {
+//TODO: note, the logistics of the DataChanged are wrong, since ex. Add_
+// causes the notification before it has set the index and owned the item, renaming it
   if(size+1 >= alloc_size)
     Alloc(size+1);
   void* op2 = Peek_(); //for DataChanged

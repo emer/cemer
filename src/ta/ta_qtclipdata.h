@@ -208,6 +208,13 @@ public:
     EA_OP_MASK		= 0xFFFF0 // masks all operation codes
 
   };
+  
+  enum EditResult { // passed as result in the various XxxEditAction routines
+    ER_ERROR		= -2, // indicates action was attempted but an error occurred
+    ER_FORBIDDEN	= -1, // indicates action is not allowed (may not have been resolvable at EditActionsAllowed stage)
+    ER_IGNORED 		=  0, // indicates no action was taken, may indicate need to call another handler
+    ER_OK		=  1  // indicates successful action taken
+  };
 
   virtual int		count() const = 0; // number of items
   virtual bool		is_multi() const = 0;
@@ -316,10 +323,10 @@ class tabSndMimeItem: public taiMimeItem { // specialized for taBase sending
 friend class taiMimeItem;
 public:
   void*			obj() const {return mobj;}
-  TypeDef*		td() const {return (mobj) ? mobj->GetTypeDef() : NULL;}
+  TypeDef*		td() const;
   String		type_name() const;
   bool			is_tab() const {return (mobj);} // only if obj actually exists
-  String		path() const {return (mobj) ? mobj->GetPath_Long() : "";}
+  String		path() const;
 
 protected:
   taBase*		mobj;

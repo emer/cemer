@@ -882,7 +882,7 @@ iToolBar* iToolBar_List::FindToolBar(const char* name) const {
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   taiMimeSource* ms = NULL;
   taiClipData* cd = NULL;
-  int rval = 0; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
+  int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
   // get the appropriate data, either clipboard data, or item data, depending on op
   if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
     if (sel_items.size <= 1) { // single select
@@ -919,13 +919,13 @@ int ISelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows s
   taiDataLink* pdl = par_link();
   //note: called routines must requery for allowed
 
-  int rval = 0;
+  int rval = taiClipData::ER_IGNORED;
   if (pdl) {
     rval = pdl->ChildEditAction_impl(par_md(), link(), ms, ea);
   }
-  if (rval == 0)
+  if (rval == taiClipData::ER_IGNORED)
     rval = link()->ChildEditAction_impl(this->md(), NULL, ms, ea);
-  if (rval == 0)
+  if (rval == taiClipData::ER_IGNORED)
     rval = link()->EditAction_impl(ms, ea);
   return rval;
 }
@@ -934,11 +934,11 @@ int ISelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Qu
   taiDataLink* pdl = par_link();
   //note: called routines must requery for allowed
 
-  int rval = 0;
+  int rval = taiClipData::ER_IGNORED;
   if (pdl) {
     rval = pdl->ChildEditAction_impl(par_md(), link(), NULL, ea);
   }
-  if (rval == 0)
+  if (rval == taiClipData::ER_IGNORED)
     rval = link()->EditAction_impl(NULL, ea);
   return rval;
 }
@@ -960,27 +960,27 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) 
   if (allowed & taiClipData::EA_CUT) {
     taiMenuEl* mel = menu->AddItem("Cu&t", taiMenu::use_default,
         taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
-    mel->usr_data = (void*)taiClipData::EA_CUT;
+    mel->usr_data = taiClipData::EA_CUT;
   }
   if (allowed & taiClipData::EA_COPY) {
     taiMenuEl* mel = menu->AddItem("&Copy", taiMenu::use_default,
         taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
-    mel->usr_data = (void*)taiClipData::EA_COPY;
+    mel->usr_data = taiClipData::EA_COPY;
   }
   if (allowed & taiClipData::EA_PASTE) {
     taiMenuEl* mel = menu->AddItem("&Paste", taiMenu::use_default,
         taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
-    mel->usr_data = (void*)taiClipData::EA_PASTE;
+    mel->usr_data = taiClipData::EA_PASTE;
   }
   if (allowed & taiClipData::EA_LINK) {
     taiMenuEl* mel = menu->AddItem("&Link", taiMenu::use_default,
         taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
-    mel->usr_data = (void*)taiClipData::EA_LINK;
+    mel->usr_data = taiClipData::EA_LINK;
   }
   if (allowed & taiClipData::EA_DELETE) {
     taiMenuEl* mel = menu->AddItem("&Delete", taiMenu::use_default,
         taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
-    mel->usr_data = (void*)taiClipData::EA_DELETE;
+    mel->usr_data = taiClipData::EA_DELETE;
   }
   link()->FillContextMenu_EditItems(menu, allowed);
 }
@@ -3470,6 +3470,11 @@ public:
   ~DataNodeDeleter() {delete node;}
 };
 
+void iListViewItem_DropHelper::mnuBrowseNodeDrop(taiAction* act) {
+  mnuBrowseNodeDrop_param = act->data().toInt();
+}
+
+
 iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* node,
   iListViewItem* last_child_, const String& tree_name, int flags_)
 :inherited(node, last_child_, tree_name)
@@ -3556,63 +3561,69 @@ void iListViewItem::dragLeft() {
 
 void iListViewItem::dropped(QDropEvent* ev) {
   taiMimeSource* ms = taiMimeSource::New(ev);
-  int ea = 0;
+/*Qt3  int ea = 0;
   //NOTE: ev->action() was always observed to be Copy, whether the + was shown or not in the UI
   // NOTE: we always force clip ops to be MOVE in this version of the app
   ea |= taiClipData::EA_DROP_MOVE;
 //TODO: always seems to be Copy even if + is not shown in Ui
-/* not working:  switch (ev->action()) {
-  case QDropEvent::Copy: ea |= taiClipData::EA_DROP_COPY; break;
-  case QDropEvent::Link: ea |= taiClipData::EA_DROP_LINK; break;
-  case QDropEvent::Move: ea |= taiClipData::EA_DROP_MOVE; break;
-  default: break;
-  } */
+// not working:  switch (ev->action()) {
+//  case QDropEvent::Copy: ea |= taiClipData::EA_DROP_COPY; break;
+//  case QDropEvent::Link: ea |= taiClipData::EA_DROP_LINK; break;
+//  case QDropEvent::Move: ea |= taiClipData::EA_DROP_MOVE; break;
+//  default: break;
+//  } 
   EditActionD_impl_(ms, ea);
-  delete ms;
+  */
 
-/* todo: not using drop menu
-    Q3PopupMenu* menu = new Q3PopupMenu(listView());
-  Q_CHECK_PTR(menu);
-  int last_id = -1;
-
-  menu->insertItem("&Move Here", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, BDA_MOVE );
-  menu->insertItem("&Copy Here", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, BDA_COPY );
-  menu->insertItem("&Link Here", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, BDA_LINK );
-  menu->insertItem("Move as &Subgroup of This Item", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, BDA_MOVE_AS_SUBGROUP );
-  menu->insertItem("Move as &Subitem of This Item", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, BDA_MOVE_AS_SUBITEM );
-  menu->insertSeparator();
-  menu->insertItem("C&ancel", browser(), SLOT(mnuBrowseNodeDrop(int)), 0, ++last_id);
-  menu->setItemParameter(last_id, -1 );
-
-  //TODO: any for us last (ex. delete)
-  if (last_id > -1) { //only show if any items!
-    browser()->mnuBrowseNodeDrop_param = -1; // in case Esc used
+  int ea = GetEditActions_(ms);
+  // only show a menu if any actions possible (note: shouldn't have dropped otherwise!)
+  if (ea != 0) {
+    // create an aux object to handle the signal (because we are not a QObject)
+    iListViewItem_DropHelper* dh = new iListViewItem_DropHelper();
+    QMenu* menu = new QMenu(listView());
+    QAction* act;
+  
+    act = menu->addAction("&Move Here");
+    act->setShortcut(QKeySequence("Shift"));
+    act->setData(taiClipData::EA_DROP_MOVE);
+    act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
+    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    act = menu->addAction("&Copy Here");
+    act->setShortcut(QKeySequence("Ctrl"));
+    act->setData(taiClipData::EA_DROP_COPY);
+    act->setEnabled(ea & taiClipData::EA_DROP_COPY);
+    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    act = menu->addAction("&Link Here");
+    act->setShortcut(QKeySequence("Ctrl+Shift"));
+    act->setData(taiClipData::EA_DROP_LINK);
+    act->setEnabled(ea & taiClipData::EA_DROP_LINK);
+    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+/*TODO    act = menu->addAction("Move as &Subgroup of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
+    QObject::connect(act, SIGNAL(triggered(taiAction*)) dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    act->setData( BDA_MOVE_AS_SUBGROUP );
+    act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
+    act = menu->addAction("Move as &Subitem of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
+    QObject::connect(act, SIGNAL(triggered(taiAction*)) dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    act->setData( BDA_MOVE_AS_SUBITEM ); 
+    act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
+    */
+    menu->addSeparator();
+    act = menu->addAction("C&ancel");
+    act->setShortcut(QKeySequence("Esc"));
+  
+    //TODO: any for us last (ex. delete)
+    dh->mnuBrowseNodeDrop_param = -1; // in case Esc used
     QPoint pos = listView()->mapToGlobal(ev->pos() );
+    
     menu->exec(pos);
-    switch (browser()->mnuBrowseNodeDrop_param) {
-    case BDA_MOVE: {
-    }
-      break;
-    case BDA_COPY: {
-    }
-      break;
-    case BDA_LINK: {
-    }
-      break;
-    case BDA_MOVE_AS_SUBGROUP: {
-    }
-      break;
-    case BDA_MOVE_AS_SUBITEM: {
-    }
-      break;
+    int ea = dh->mnuBrowseNodeDrop_param;
+    delete menu;
+    delete dh;
+    if (ea != -1) {
+      EditActionD_impl_(ms, ea);
     }
   }
-  delete menu; */
+  delete ms;
 }
 
 void iListViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {

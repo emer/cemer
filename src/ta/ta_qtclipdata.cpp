@@ -91,6 +91,11 @@ void tabSndMimeItem::LocDataTaken() {
     mobj = NULL;
 }
 
+String tabSndMimeItem::path() const {
+  //note: can't use Path_Long because path parsing routines don't handle names in paths
+  return (mobj) ? mobj->GetPath() : "";
+}
+
 void tabSndMimeItem::RemDataTaken() {
   if (mobj) {
     mobj->Close();
@@ -102,6 +107,10 @@ void tabSndMimeItem::SetData(ostream& ost) {
   if (mobj) {
     mobj->Save(ost);
   }
+}
+
+TypeDef* tabSndMimeItem::td() const {
+  return (mobj) ? mobj->GetTypeDef() : NULL;
 }
 
 

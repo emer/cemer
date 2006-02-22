@@ -1065,6 +1065,8 @@ void taMisc::SREAssignment(taBase* tab,MemberDef* md){
 
 IDataLinkClient::~IDataLinkClient() {
   if (m_link) {
+    //NOTE: since this is destructor, the 'this' we pass is our *own* virtual v-table
+    // version, therefore, RemoveDataClient may NOT use any of our virtual or pure-virtual methods
     m_link->RemoveDataClient(this); //nulls our ref
   }
 }
@@ -1090,18 +1092,9 @@ taDataLink::~taDataLink() {
   *m_link_ref = NULL; //note: m_link_ref is always valid, because the constructor passed it by reference
 }
 
-#ifdef TA_PROFILE
-void link_dlc_out(taDataLink* dl, IDataLinkClient* dlc, int cnt) {
-  cerr << "DLC '" << dlc->GetTypeDef()->name << "' to/from Link '" << dl->GetTypeDef()->name << ":" << dl->GetName() << "'" << "(cnt=" << cnt << ")\n";
-}
-#endif
-
 void taDataLink::AddDataClient(IDataLinkClient* dlc) {
   if (!clients.AddUnique(dlc)) return; // already added
   dlc->m_link = this;
-#ifdef TA_PROFILE
-  cerr << "added "; link_dlc_out(this, dlc, clients.size);
-#endif
 }
 
 void taDataLink::DataDestroying() { //note: linklist will automatically remove us
@@ -1141,10 +1134,8 @@ TypeDef* taDataLink::GetTypeDef() {
 }
 
 bool taDataLink::RemoveDataClient(IDataLinkClient* dlc) {
-#ifdef TA_PROFILE
-  if (dlc && (clients.Find(dlc) >= 0))
-    {cerr << "removing "; link_dlc_out(this, dlc, clients.size - 1);}
-#endif
+  //WARNING: dlc calls this in its destructor, therefore 'dlc' is IDataLinkClient virtual
+  // version, therefore, RemoveDataClient may NOT use any IDataLinkClient virtual methods
   dlc->m_link = NULL;
   // NOTE: in case where client calls us back during call to their DataLinkDestroying,
   // we will not find the client on our list, and so must return and not attempt to

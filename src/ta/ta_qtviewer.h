@@ -1241,11 +1241,19 @@ protected:
   void			removeChild(QObject* obj);
 };
 
+#ifndef __MAKETA__
+class iListViewItem_DropHelper: public QObject {
+  Q_OBJECT
+public:
+  int			mnuBrowseNodeDrop_param; 
+public slots:
+  void			mnuBrowseNodeDrop(taiAction* act); // called by context menu on drop, we cache the code
+};
+#endif
+
 class iListViewItem: public Q3ListViewItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
-#ifndef __MAKETA__
-typedef Q3ListViewItem inherited;
-#endif
+INHERITED(Q3ListViewItem)
 public:
   enum DataNodeFlags {
     DNF_IS_FOLDER 	= 0x001, // true for list/group folder nodes (note: does *not* indicate whether item can contain other things or not)
@@ -1258,13 +1266,13 @@ public:
     DNF_IS_LIST_NODE 	= 0x080 // true for nodes in a list view (in panel, not on tree)
   };
 
-  enum BrowseDropAction {
+/*nn  enum BrowseDropAction {
     BDA_MOVE,
     BDA_COPY,
     BDA_LINK,
     BDA_MOVE_AS_SUBGROUP, // moves item as a subgroup, ex a Unit group
     BDA_MOVE_AS_SUBITEM // moves item as a subitem, ex a sub spec, or subprocess
-  };
+  }; */
 
   int			flags; // any of DataNodeFlags
 
@@ -1282,6 +1290,7 @@ public:
   override bool 	acceptDrop (const QMimeSource* mime) const;
 //  int			compare (Q3ListViewItem* item, int col, bool ascending) const; // override
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
+
 
 public: // ITypedObject interface
   override void*	This() {return (void*)this;}
