@@ -122,7 +122,7 @@ public:
   static String		GeomToString(const MatrixGeom& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
   
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
-  MatrixGeom		geom; // #SHOW #READ_ONLY dimensions array
+  MatrixGeom		geom; // #SHOW dimensions array
   
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
   virtual TypeDef*	data_type() const = 0; // type of data, ex TA_int, TA_float, etc.
@@ -182,7 +182,7 @@ public:
   void			SetGeom4(int d0, int d1, int d2, int d3)  
     {int d[4]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; SetGeom_(4, d);} // set geom for 4-d array
   void			SetGeomN(const MatrixGeom& geom_) 
-    {SetGeom_(geom_.size, geom_.el);} // set geom for any sized array
+    {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix set geom for any sized array
   
   virtual void 		List(ostream& strm=cout) const; 	// List the items
   

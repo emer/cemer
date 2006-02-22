@@ -638,13 +638,15 @@ void taiTypeItemDataHost::Constr_Labels() {
 //    rep = mb_dat->GetRep();
   iLineEdit* rep = new iLineEdit(ti->name, body);
   rep->setReadOnly(true);
-  AddName(row, "name", "name of the type item", rep);
+//  AddName(row, "name", "name of the type item", rep);
+  AddName(row, "name", "name of the type item", NULL);
   AddData(row++, rep, true);
   
   // description
   rep = new iLineEdit(ti->desc, body);
   rep->setReadOnly(true);
-  AddName(row, "description", "description of the type item", rep);
+//  AddName(row, "description", "description of the type item", rep);
+  AddName(row, "description", "description of the type item", NULL);
   AddData(row++, rep, true);
   
   // opts
@@ -652,7 +654,8 @@ void taiTypeItemDataHost::Constr_Labels() {
   String tmp = ti->opts.AsString();
   rep = new iLineEdit(tmp, body);
   rep->setReadOnly(true);
-  AddName(row, "options", "ta # options, including inherited", rep);
+//  AddName(row, "options", "ta # options, including inherited", rep);
+  AddName(row, "options", "ta # options, including inherited", NULL);
   AddData(row++, rep, true);
   
   switch (tik) {
@@ -676,7 +679,8 @@ void taiTypeItemDataHost::Constr_Labels() {
     iSpinBox* repi = new iSpinBox(body);
     repi->setValue(td->size);
     repi->setReadOnly(true);
-    AddName(row, "size", "size, in bytes, of the type", repi);
+//    AddName(row, "size", "size, in bytes, of the type", repi);
+    AddName(row, "size", "size, in bytes, of the type", NULL);
     AddData(row++, repi);
     // ptr
     // ref

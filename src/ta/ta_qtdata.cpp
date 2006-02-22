@@ -178,20 +178,18 @@ taiData::taiData()
 {
   typ = NULL;
   host = NULL;
-  museHiBG = false;
-  mhiBG = false;
+  mhighlight = false;
   m_rep = NULL;
   mparent = NULL;
   mflags = 0;
 }
 
 taiData::taiData(TypeDef* typ_, taiDataHost* host_, taiData* parent_, QWidget* gui_widget, int flags_)
-:QObject(NULL)
+:QObject()
 {
   typ = typ_;
   host = host_;
-  museHiBG = false;
-  mhiBG = false;
+  mhighlight = false;
   m_rep = NULL;
   mparent = NULL; // must be valid before calling setParent!
   mflags = flags_;
@@ -226,8 +224,8 @@ int taiData::defSize() {
   else return taiM->ctrl_size;
 }
 
-void taiData::emit_settingHiBG(bool value) {
-  emit settingHiBG(value);
+void taiData::emit_settingHighlight(bool value) {
+  emit settingHighlight(value);
 }
 
 void taiData::emit_UpdateUi() {
@@ -263,14 +261,14 @@ bool taiData::readOnly() {
     return (mflags & flgReadOnly);
 }
 
-void taiData::setHiBG(bool value) {
-  if ((!museHiBG) || (mhiBG == value)) return;
-  setHiBG_impl(value);
+void taiData::setHighlight(bool value) {
+  if (mhighlight == value) return;
+  setHighlight_impl(value);
 }
 
-void taiData::setHiBG_impl(bool value) {
-  mhiBG = value;
-  emit_settingHiBG(value);
+void taiData::setHighlight_impl(bool value) {
+  mhighlight = value;
+  emit_settingHighlight(value);
 }
 
 void taiData::setParent(taiData* value) {
@@ -442,8 +440,6 @@ taiField::taiField(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui
     QObject::connect(m_rep, SIGNAL(textChanged(const QString&) ),
           this, SLOT(repChanged() ) );
   }
-  QObject::connect(this, SIGNAL(settingHiBG(bool)),
-    m_rep, SLOT(setHilight(bool) ) );
   // cliphandling connections
   QObject::connect(m_rep, SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
@@ -512,8 +508,6 @@ taiIncrField::taiIncrField(TypeDef* typ_, taiDataHost* host_, taiData* par,
     QObject::connect(m_rep, SIGNAL(valueChanged(int) ),
           this, SLOT(repChanged() ) );
   }
-  QObject::connect(this, SIGNAL(settingHiBG(bool)),
-    m_rep, SLOT(setHilight(bool) ) );
   // cliphandling connections
   QObject::connect(m_rep, SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
@@ -586,8 +580,6 @@ taiToggle::taiToggle(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* g
     QObject::connect(m_rep, SIGNAL(toggled(bool) ),
           this, SLOT(repChanged() ) );
   }
-  QObject::connect(this, SIGNAL(settingHiBG(bool)),
-    m_rep, SLOT(setHilight(bool) ) );
 }
 
 void taiToggle::GetImage(bool val) {
@@ -693,8 +685,6 @@ void taiComboBox::Initialize(QWidget* gui_parent_) {
   // also to aux signal (used by non-taiDataHost clients)
   QObject::connect(m_rep, SIGNAL(activated(int) ),
     this, SIGNAL(itemChanged(int)) );
-  QObject::connect(this, SIGNAL(settingHiBG(bool)),
-    m_rep, SLOT(setHilight(bool) ) );
 }
 
 void taiComboBox::AddItem(const String& val) {
@@ -823,7 +813,7 @@ taiDimEdit::taiDimEdit(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget*
 
 void taiDimEdit::Initialize(QWidget* gui_parent_) {
   SetRep(new iDimEdit(gui_parent_));
-  connect(m_rep, SIGNAL(changed(iDimEdit)), this, SLOT(repChanged()) );
+  connect(m_rep, SIGNAL(changed(iDimEdit*)), this, SLOT(repChanged()) );
 }
 
 void taiDimEdit::GetImage(const MatrixGeom* arr) {

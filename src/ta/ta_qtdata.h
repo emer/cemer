@@ -116,8 +116,6 @@ public:
   iLineEdit*		rep() const { return (iLineEdit*)m_rep; }
   taiField(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
-  override void		setUseHiBG(bool value) { museHiBG = value;} // this control can use background highlighting
-
   void 	GetImage(const String& val);
   String GetValue() const;
 
@@ -138,7 +136,6 @@ public:
   taiIncrField(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: flgPosOnly
 
-  override void		setUseHiBG(bool value) { museHiBG = value;} // this control can use background highlighting
   void 			GetImage(int val);
   int 			GetValue() const;
 
@@ -159,7 +156,6 @@ public:
   taiToggle(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 //  ~taiToggle() {}
 
-  override void		setUseHiBG(bool value) { museHiBG = value;} // this control can use background highlighting
   void 	GetImage(bool val);
   bool	GetValue() const;
 };
@@ -200,7 +196,6 @@ public:
   taiComboBox(bool is_enum, TypeDef* typ_, taiDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
-  override void		setUseHiBG(bool value) { museHiBG = value;} // this control can use background highlighting
   void		AddItem(const String& val); // add an item to the list
   void		Clear(); //clears all items (only needed if refilling list)
 

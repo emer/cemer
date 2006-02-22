@@ -211,7 +211,7 @@ void taiTreeDataNode::CreateChildren() {
   last_member_node = last_child_node; //note: will be NULL if no members issued
 }
 
-void taiTreeDataNode::FillContextMenu_impl(taiMenu* menu) {
+void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
   if (flags & DNF_CAN_BROWSE) {
 //obs     int last_id = menu->insertItem("New Browser from here", browser(), SLOT(mnuNewBrowser(int)), 0);
 //     menu->setItemParameter(last_id, ((int)((void*)this)) ); // we use param to hold address of this node

@@ -24,8 +24,8 @@
 #include "ta_qtviewer.h"
 
 #ifndef __MAKETA__
+  #include <ilabel.h>
   #include <qdialog.h>
-  #include <qlabel.h>
   #include <qobject.h>
   #include <qpushbutton.h>
 #endif
@@ -73,13 +73,14 @@ protected:
 // 	iContextLabel		//
 //////////////////////////////////
 
-class iContextLabel: public QLabel {
+class iContextLabel: public iLabel {
   Q_OBJECT
+INHERITED(iLabel)
 public:
   int			index() {return mindex;}
 
-  iContextLabel(QWidget* parent = NULL, const char* name = NULL);
-  iContextLabel(int index_, const String& text, QWidget* parent = NULL, const char* name = NULL);
+  iContextLabel(QWidget* parent = NULL);
+  iContextLabel(int index_, const String& text, QWidget* parent = NULL);
   ~iContextLabel()	{};
 
 #ifndef __MAKETA__
@@ -307,7 +308,7 @@ protected:
   int 		sel_item_index; // only used during handling of context menu for select edits
   bool		rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
-  int		AddName(int row, const String& name, const String& desc, QWidget* buddy = NULL);
+  int		AddName(int row, const String& name, const String& desc, taiData* buddy = NULL);
     // add a label item in first column; row<0 means "next row"; returns row
 //  void		AddLabel(int index, QWidget* label); // add a label item in first column
   int		AddData(int row, QWidget* data, bool fill_hor = false);

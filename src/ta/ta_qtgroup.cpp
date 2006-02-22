@@ -807,11 +807,11 @@ void gpiListNew::Constr_Body() {
   int row;
   trep = num_rep->GetRep();
   row = AddData(0, trep);
-  AddName(0, "number", "the number of new items to make", trep);
+  AddName(0, "number", "the number of new items to make", num_rep);
 
   trep = typ_rep->GetRep();
   row = AddData(1, trep);
-  AddName(1, "of type", "the Type of new items to make", trep);
+  AddName(1, "of type", "the Type of new items to make", typ_rep);
 
   Constr_SubGpList(); // hook for groups
 
@@ -819,7 +819,7 @@ void gpiListNew::Constr_Body() {
   if ((fun_list != NULL) && (fun_list->funs.size > 0)) {
     trep = fun_list->GetRep();
     row = AddData(-1, trep);
-    AddName(row, "call funs", "optional functions to call on each instance", trep);
+    AddName(row, "call funs", "optional functions to call on each instance", fun_list);
   }
 }
 
@@ -929,7 +929,7 @@ void gpiGroupNew::Constr_SubGpList() {
   QWidget* trep;
   trep = subgp_list->GetRep();
   int row = AddData(-1, trep);
-  AddName(row, "in", "the subgroup in which to add items", trep);
+  AddName(row, "in", "the subgroup in which to add items", subgp_list);
 }
 
 void gpiGroupNew::ClearBody_impl() {
@@ -1399,7 +1399,7 @@ void gpiArrayEditDataHost::Constr_AryData() {
     rep = mb_dat->GetRep();
     String nm = String("[") + String(i) + "]";
     AddData(i + n_ary_membs, rep);
-    AddName(i + n_ary_membs, nm, String(""), rep);
+    AddName(i + n_ary_membs, nm, String(""), mb_dat);
   }
 }
 
@@ -1460,7 +1460,7 @@ void SArgEditDataHost::Constr_AryData() {
     if (!lbl.empty())
       nm = lbl + nm;
     AddData(i + n_ary_membs, rep);
-    AddName(i + n_ary_membs, nm, String(""), rep);
+    AddName(i + n_ary_membs, nm, String(""), mb_dat);
   }
 }
 
@@ -1531,7 +1531,7 @@ void gpiSelectEditDataHost::Constr_Body() {
     GetName(md, nm, help_text); //note: we just call this to get the help text
     if (!new_lbl.empty())
       nm = new_lbl;
-    AddName(row, nm, help_text, data);
+    AddName(row, nm, help_text, mb_dat);
     MakeMenuItem(mnuRemoveMember, nm, i, i, SLOT(mnuRemoveMember_select(int)));
   }
   // we deleted the normally not-deleted methods, so redo them here

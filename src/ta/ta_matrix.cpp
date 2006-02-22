@@ -533,7 +533,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
 
 void taMatrix::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-//  UpdateGeom();
+  UpdateGeom();
 }
 
 void taMatrix::UpdateGeom() {
@@ -550,7 +550,7 @@ void taMatrix::UpdateGeom() {
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
     if (geom[i] <= 0) {
-      taMisc::Warning(this->GetPath(), "geoms[0..N-2] must be > 0; object is now invalid");
+      taMisc::Error(this->GetPath(), "geoms[0..N-2] must be > 0; object is now invalid");
       return;
     }
   }

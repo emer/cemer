@@ -10,6 +10,7 @@ VPATH = @srcdir@
 HEADS =\
 	taiqtso_def.h \
 	iflowlayout.h \
+	ilabel.h \
 	ispinbox.h \
 	iwidgetlist.h \
 	itreeview.h \
@@ -30,6 +31,8 @@ HEADS =\
 
 SRCS =\
 	iflowlayout.cpp \
+	ilabel.cpp \
+	ilabel.moc.cpp \
 	ispinbox.cpp \
 	ispinbox.moc.cpp \
 	iwidgetlist.cpp \

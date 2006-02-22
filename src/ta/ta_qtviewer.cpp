@@ -3363,7 +3363,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   buttons = new Q3HButtonGroup(); // used invisibly
   buttons->setExclusive(true);
   buttons->setFont(taiM->buttonFont(taiMisc::sizSmall));
-  frmButtons = new QFrame(this);
+  frmButtons = new QFrame(widg);
   frmButtons->setFrameShape(QFrame::Box);
   frmButtons->setFrameShadow(QFrame::Sunken);
   layButtons = new QHBoxLayout(frmButtons);
@@ -3371,7 +3371,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   layButtons->setSpacing(taiM->hspc_c);
   layDetail->addWidget(frmButtons);
 
-  wsSubPanels = new Q3WidgetStack(this);
+  wsSubPanels = new Q3WidgetStack(widg);
   layDetail->addWidget(wsSubPanels, 1);
   setCentralWidget(widg);
 

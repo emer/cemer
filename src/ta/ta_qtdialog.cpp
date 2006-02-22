@@ -161,14 +161,14 @@ void HiLightButton::mouseMoveEvent(QMouseEvent*  mev) {
 // 	iContextLabel		//
 //////////////////////////////////
 
-iContextLabel::iContextLabel(QWidget* parent, const char* name)
-:QLabel(parent, name)
+iContextLabel::iContextLabel(QWidget* parent)
+:inherited(parent)
 {
   mindex = -1;
 }
 
-iContextLabel::iContextLabel(int index_, const String& text, QWidget* parent, const char* name)
-:QLabel(text, parent, name)
+iContextLabel::iContextLabel(int index_, const String& text, QWidget* parent)
+:inherited(text.chars(), parent)
 {
   mindex = index_;
 }
@@ -542,17 +542,25 @@ const iColor* taiDataHost::colorOfRow(int row) const {
   }
 }
 
-int taiDataHost::AddName(int row, const String& name, const String& desc, QWidget* buddy) {
+int taiDataHost::AddName(int row, const String& name, const String& desc, taiData* buddy) {
   iContextLabel* label = new iContextLabel(row, name, body);
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
   connect(label, SIGNAL(contextMenuInvoked(iContextLabel*, QContextMenuEvent*)),
       this, SLOT(label_contextMenuInvoked(iContextLabel*, QContextMenuEvent*)) );
+// if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
+  QWidget* buddy_widg = NULL;
+  if (buddy) {
+    buddy_widg = buddy->GetRep();
+    connect(buddy, SIGNAL(settingHighlight(bool)),
+        label, SLOT(setHighlight(bool)) );
+  }
+  
 
   if (!desc.empty()) {
     QToolTip::add(label, desc);
-    if (buddy != NULL) {
-      QToolTip::add(buddy, desc);
+    if (buddy_widg != NULL) {
+      QToolTip::add(buddy_widg, desc);
     }
   }
   // add a label item in first column
@@ -1207,12 +1215,10 @@ void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl)
     if (!ShowMember(md))
       continue;
 
+    taiData* mb_dat = NULL;
     // Get data widget, if dl provided
-    rep = NULL;
     if (dl != NULL) {
-      taiData* mb_dat = dl->SafeEl(cnt);
-      if (mb_dat != NULL)
-        rep = mb_dat->GetRep();
+      mb_dat = dl->SafeEl(cnt);
     }
 
     // create label
@@ -1221,7 +1227,7 @@ void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl)
     GetName(md, name, desc);
 
     // add to layout
-    AddName(cnt, name, desc, rep);
+    AddName(cnt, name, desc, mb_dat);
     ++cnt;
   }
 }

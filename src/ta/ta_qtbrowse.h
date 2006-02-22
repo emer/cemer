@@ -118,7 +118,7 @@ public: // ISelectable interface
 protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
   taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
-  override void		FillContextMenu_impl(taiMenu* menu);
+  override void		FillContextMenu_impl(taiActions* menu);
 private:
   void			init(taiDataLink* link_, int flags_); // #IGNORE
 };

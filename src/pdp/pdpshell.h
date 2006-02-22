@@ -346,7 +346,7 @@ public:
 class TestObj: public taNBase {
 INHERITED(taNBase)
 public:
-  bool			b;
+  bool			b; // #DEF_false
   char			c;
   signed char		sc;
   unsigned char		uc;
@@ -354,7 +354,7 @@ public:
   short			sh;
   signed short		ssh;
   unsigned short	ush;
-  int			i;
+  int			i; // #DEF_0
   signed int		si;
   signed		s;
   unsigned int		ui;

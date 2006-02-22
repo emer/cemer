@@ -25,19 +25,14 @@
 
 class TAIQTSO_API iSpinBox: public QSpinBox {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef QSpinBox inherited;
-#endif
+INHERITED(QSpinBox)
 public:
   iSpinBox(QWidget* parent = 0);
 
-  bool		hilight() const {return mhilight;}
-  bool 		isReadOnly() const {return mreadOnly;}
-
   void		setPaletteBackgroundColor3(const QColor &); // override, pushes through to lineEdit
-  void		stepUp(); // override
-  void		stepDown(); // override
-  void		updateDisplay(); // override -- hack to disable up/down
+//  void		stepUp(); // override
+//  void		stepDown(); // override
+//  void		updateDisplay(); // override -- hack to disable up/down
 
   // from hidden lineedit
   bool		hasSelectedText();
@@ -53,11 +48,8 @@ signals:
 #endif
 
 public slots:
-  virtual void	setHilight(bool value);
-  virtual void	setReadOnly(bool value);
+  virtual void	setReadOnly(bool value); //note: hides inherited member
 protected:
-  bool mhilight;
-  bool mreadOnly;
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
   void		init();

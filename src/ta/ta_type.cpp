@@ -1092,7 +1092,7 @@ taDataLink::~taDataLink() {
 
 #ifdef TA_PROFILE
 void link_dlc_out(taDataLink* dl, IDataLinkClient* dlc, int cnt) {
-  cerr << "DLC '" << dlc->GetDataTypeDef()->name << "' to/from Link '" << dl->GetDataTypeDef()->name << ":" << dl->GetName() << "'" << "(cnt=" << cnt << ")\n";
+  cerr << "DLC '" << dlc->GetTypeDef()->name << "' to/from Link '" << dl->GetTypeDef()->name << ":" << dl->GetName() << "'" << "(cnt=" << cnt << ")\n";
 }
 #endif
 

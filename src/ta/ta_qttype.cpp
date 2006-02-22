@@ -729,9 +729,6 @@ void taiMember::GetValue(taiData* dat, void* base) {
 
 taiData* taiMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   taiData* dat = mbr->type->it->GetDataRepEx(host_, par, gui_parent_, flags_, this);
-  // if not readonly, and has a default value, then set data to use hilighting for non-default values
-  if (!(flags_ & taiData::flgReadOnly) && (!(mbr->OptionAfter("DEF_")).empty()))
-    dat->setUseHiBG(true);
   return dat;
 }
 
@@ -747,12 +744,15 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
 
 void taiMember::GetOrigVal(taiData* dat, void* base) {
   dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
-  if (dat->useHiBG()) {
+  // if a default value was specified, compare and set the highlight accordingly
+  if (!(dat->HasFlag(taiData::flgReadOnly))) { 
     String defval = mbr->OptionAfter("DEF_");
-    if (dat->orig_val != defval)
-      dat->setHiBG(true);
-    else
-      dat->setHiBG(false);
+    if (!defval.empty()) {
+      if (dat->orig_val != defval)
+        dat->setHighlight(true);
+      else
+        dat->setHighlight(false);
+    }
   }
 }
 

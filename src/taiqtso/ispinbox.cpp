@@ -43,11 +43,8 @@ void iSpinBox::focusOutEvent(QFocusEvent* ev) {
 }
 
 void iSpinBox::init() {
-  mhilight = false;
-  mreadOnly = false;
   updating = 0;
   connect(lineEdit(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
-
 }
 
 bool iSpinBox::hasSelectedText() {
@@ -70,20 +67,10 @@ void iSpinBox::del() {
   lineEdit()->del();
 }
 
-void iSpinBox::setHilight(bool value){
-  if (mhilight == value) return;
-  if (mreadOnly && value) return;  //hilighting ignored if read-only
-  mhilight = value;
-  if (value) {
-    setPaletteBackgroundColor3(COLOR_HILIGHT);
-  } else {
-    setPaletteBackgroundColor3(QApplication::palette().color(QPalette::Base));
-  }
-  update();
-}
-
 void iSpinBox::setReadOnly(bool value) {
-  if (mreadOnly == value) return;
+  inherited::setReadOnly(value);
+
+/*Qt3  if (mreadOnly == value) return;
   lineEdit()->setReadOnly(value);
   if (value) {
     mhilight = false;
@@ -94,7 +81,7 @@ void iSpinBox::setReadOnly(bool value) {
     setPaletteBackgroundColor3( QApplication::palette().color(QPalette::Base));
   }
   // note: we have to dynamically disable the up/down controls in the paint event, because of how qspinbox is implemented
-  mreadOnly = value;
+  mreadOnly = value; */
 }
 
 void iSpinBox::setPaletteBackgroundColor3(const QColor& color) {
@@ -104,7 +91,7 @@ void iSpinBox::setPaletteBackgroundColor3(const QColor& color) {
   SET_PALETTE_BACKGROUND_COLOR(lineEdit(), color);
 }
 
-void iSpinBox::stepUp() {
+/*void iSpinBox::stepUp() {
    if (mreadOnly) return;
    QSpinBox::stepUp();
 }
@@ -135,4 +122,4 @@ void iSpinBox::updateDisplay() {
   } else {
 //    QSpinBox::updateDisplay();
   }
-}
+} */

@@ -134,7 +134,7 @@ void cssiEditDialog::Constr_Labels() {
     taiData* mb_dat = data_el.SafeEl(index);
     // now get label
     GetName(i, md, name, desc);
-    AddName(i, name, desc, mb_dat->GetRep());
+    AddName(i, name, desc, mb_dat);
     ++index;
   }
 }
@@ -501,7 +501,6 @@ void cssiArgDialog::Constr_Data() {
 }
 
 void cssiArgDialog::Constr_Labels() {
-  QWidget* rep;
   String name;
   String desc;
   taiData* mb_dat;
@@ -512,13 +511,10 @@ void cssiArgDialog::Constr_Labels() {
     int j = i - hide_args;
     cssEl* md = obj->members->FastEl(i);
 
-    rep = NULL;
     mb_dat = data_el.SafeEl(j);
-    if (mb_dat != NULL)
-      rep = mb_dat->GetRep();
 
     GetName(j, md, name, desc);
-    AddName(j - 1, name, desc, rep);
+    AddName(j - 1, name, desc, mb_dat);
   }
 }
 

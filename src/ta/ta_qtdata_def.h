@@ -109,10 +109,8 @@ public:
   int			defSize();		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
   void			emit_UpdateUi();
   virtual bool		isConstructed();	// true if our parents (ex dialog) are fully constructed
-  bool			hiBG() { return mhiBG; }	// #GET_HiBG  background highlight, if applicable -- default is suitable for text-like or bool controls;
-  virtual void		setHiBG(bool value);	// #SET_HiBG
-  virtual bool		useHiBG() {return museHiBG;}
-  virtual void		setUseHiBG(bool value) {}	// enable background highlight, if applicable -- control must override to implement
+  bool			highlight() { return mhighlight; }	// #GET_highlight  changed highlight
+  virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
 
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
@@ -126,18 +124,17 @@ public:
 
 #ifndef __MAKETA__
 signals:
-  void 			settingHiBG(bool value);
+  void 			settingHighlight(bool value); // gets set for non-default values
   void			UpdateUi(); // cliphandler callback, to get it to requery the ui items
 #endif
 
 protected:
-  bool			mhiBG;
-  bool			museHiBG;	// true if control should attempt to use background hilighting
+  bool			mhighlight;
   QWidget*		m_rep;		// widget that represents the data
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
-  void 			emit_settingHiBG(bool value); // emits the settingHiBg signal
-  virtual void		setHiBG_impl(bool value); // can be overriden by subclasses that handle HiBG; defaults to emitting signal
+  void 			emit_settingHighlight(bool value); 
+  virtual void		setHighlight_impl(bool value); // can be overriden by subclasses that handle Highlight; defaults to emitting signal
   virtual void		SetRep(QWidget* val);
   virtual void		ChildAdd(taiData* child) {}
   virtual void		ChildRemove(taiData* child) {}
