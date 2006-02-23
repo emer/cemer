@@ -24,6 +24,10 @@
 
 const char    taPlatform::pathSep = '/'; 
 
+int taPlatform::exec(const String& cmd) {
+  return system(cmd.chars());
+}
+
 String taPlatform::getTempPath() {
   String rval = "/tmp";
   return rval;

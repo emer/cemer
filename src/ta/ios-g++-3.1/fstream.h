@@ -24,7 +24,7 @@ the executable file might be covered by the GNU General Public License. */
 
 #ifndef _FSTREAM_H
 #define _FSTREAM_H
-#include <iostream.h>
+#include "iostream.h"
 
 extern "C++" {
 

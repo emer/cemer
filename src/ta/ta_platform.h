@@ -33,6 +33,9 @@ public:
   static String finalSep(const String& in); // return string that has a valid final separator
   static String getTempPath(); // get a valid temporary path (that user can write to)
   static String getFileName(const String& in); // retrieves only the filename&ext, w/o leading path info
+
+// Process execution
+  static int	exec(const String& cmd);
 };
 
 

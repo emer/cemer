@@ -39,7 +39,7 @@
 #ifndef _CPP_SSTREAM
 #define _CPP_SSTREAM	1
 
-#include <iostream.h>
+#include "iostream.h"
 
 extern "C++" {
 

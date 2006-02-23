@@ -29,7 +29,7 @@ the executable file might be covered by the GNU General Public License. */
 // #ifndef __STRSTREAM_H
 // #define __STRSTREAM_H
 
-// #include <iostream.h>
+// #include "iostream.h"
 
 // extern "C++" {
 

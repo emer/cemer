@@ -172,6 +172,15 @@
 					RelativePath="..\..\..\src\ta\ifont.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_base.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_classbrowse.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_defaults.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_dll.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -185,15 +194,6 @@
 							Name="VCCLCompilerTool"
 							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\ta_base.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\ta_classbrowse.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\ta_defaults.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_dump.cpp">
@@ -435,6 +435,9 @@
 					RelativePath="..\..\..\src\taiqtso\icombobox.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\idimedit.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\ieditgrid.h">
 				</File>
 				<File
@@ -442,6 +445,9 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\igeometry.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\taiqtso\ilabel.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\ilineedit.h">
@@ -478,6 +484,9 @@
 					RelativePath=".\icombobox.moc.cpp">
 				</File>
 				<File
+					RelativePath=".\idimedit.moc.cpp">
+				</File>
+				<File
 					RelativePath=".\ieditgrid.moc.cpp">
 				</File>
 				<File
@@ -485,6 +494,9 @@
 				</File>
 				<File
 					RelativePath=".\igeometry.moc.cpp">
+				</File>
+				<File
+					RelativePath=".\ilabel.moc.cpp">
 				</File>
 				<File
 					RelativePath=".\ilineedit.moc.cpp">

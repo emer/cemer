@@ -25,9 +25,10 @@
 #include <string.h>
 
 #ifdef __MAKETA__
-# include <iostream.h>
-# include <fstream.h>
-#include <sstream.h>
+//NOTE: must use "" for msvc
+#  include "iostream.h"
+#  include "fstream.h"
+#  include "sstream.h"
 #else
 # include <iostream>
 # include <fstream>

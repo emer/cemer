@@ -25,7 +25,7 @@ the executable file might be covered by the GNU General Public License. */
 #ifndef _IOSTREAM_H
 #define _IOSTREAM_H
 
-#include <streambuf.h>
+#include "streambuf.h"
 
 extern "C++" {
 class istream; class ostream;
