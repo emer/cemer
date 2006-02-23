@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
   if(argc < 2) { mta_print_commandline_args(argv); return 1;  } // wrong number of arguments
 #if (defined(TA_OS_WIN))
   String cpp = "cl.exe /E /C"; //NOTE: preprocesses, preserving comments, inhibits compilation
-  String rm = String("rm ");
+  String rm = String("del ");
 #else
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) mta_cleanup);
   String cpp = "/usr/lib/cpp";
@@ -471,8 +471,8 @@ int main(int argc, char* argv[])
       incs += tmp + " ";
     else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
-        i++; // get filename
-        incs += String("/I ") + (const char*)argv[i] + " ";
+        i++; // get filename, put in quotes in case of spaces
+        incs += String("/I \"") + (const char*)argv[i] + "\" ";
       }
     } else if(tmp(0,2) == "-D")
       incs += tmp + " ";
@@ -551,19 +551,16 @@ int main(int argc, char* argv[])
     String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) + 
       taPlatform::getFileName(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
     mta->fname = mta->headv.FastEl(i);
-    comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_file + " " + mta->fname;
-/* hopefully the above works on all platforms, and with "gcc -E" invocation
 #if (defined(TA_OS_WIN))
-    mta->fname = mta->headv.FastEl(i);
 //    mta->fname.makeUnique();
 //    mta->fname.gsub("/", "\\");
 //mta->fname.gsub(":", ":\\");
-    comnd = comnd_base + " -C -D__MAKETA__ " + mta->fname + " > " + tmp_file;
+    comnd = comnd_base + " /D __MAKETA__ " + mta->fname + " > " + tmp_file;
 #else
-    mta->fname = mta->headv.FastEl(i);
-    comnd = comnd_base + " -C -D__MAKETA__ " + mta->fname + " > " + tmp_file;
+    comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_file + " " + mta->fname;
+//    comnd = comnd_base + " -C -D__MAKETA__ " + mta->fname + " > " + tmp_file;
 #endif
-*/
+
     if(mta->verbose > 0)
       cerr << comnd << "\n";
     cout.flush();
