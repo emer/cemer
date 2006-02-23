@@ -105,6 +105,10 @@ static unsigned char pdp_bitmap_bits[] = {
 #endif
 
 
+InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
+  pdpMisc::initHookList()->Add_((void*)init_proc);
+}
+
 //////////////////////////
 //	pdpMisc		//
 //////////////////////////
@@ -120,8 +124,15 @@ float		pdpMisc::pdpZScale = 4.0f;
 float		pdpMisc::pts_per_so_unit = 36.0f;
 float		pdpMisc::char_pts_per_so_unit = 72.0f;
 
-void (*pdpMisc::Init_Hook)() = NULL;
+//void (*pdpMisc::Init_Hook)() = NULL;
 
+taPtrList_impl* pdpMisc::initHookList() {
+  static taPtrList_impl* p_initHookList = NULL;
+  if (p_initHookList == NULL) {
+    p_initHookList = new taPtrList_impl();
+  }
+  return p_initHookList;
+}
 
 // this is the main that should be called..
 
@@ -167,10 +178,17 @@ int pdpMisc::Main(int argc, char *argv[]) {
     }
   }
 
-  if (Init_Hook != NULL)
+/*obs  if (Init_Hook != NULL)
     (*Init_Hook)();	// call the user's init function (which will call pdp)
   else
-    ta_Init_pdp();		// always has to be first
+    ta_Init_pdp();		// always has to be first */
+  // initialize type system for us, followed by the various clients, ex. bp, leabra, etc.
+  ta_Init_pdp();
+  taPtrList_impl* ihl = initHookList();
+  for (int i = 0; i < ihl->size; ++i) {
+    init_proc_t ip = (init_proc_t)ihl->FastEl_(i);
+    ip();
+  }
 
 /*obs  if (cssMisc::gui && (taMisc::dmem_proc == 0))
     new ivSession("PDP++", argc, argv, PDP_options, PDP_defs); */

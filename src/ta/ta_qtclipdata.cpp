@@ -346,10 +346,12 @@ QByteArray taiClipData::encodedData_impl(int , int ) {
 
 
 const char* taiClipData::format(int i) const {
+  // NOTE: we only enumerate the non-hidden types, even though we accept them
   if (i < 0) return NULL;
-  if (i <= IDX_MD_MAX)
+  if (i <= IDX_MD_VISIBLE_MAX)
     return mime_types[i];
-
+  else return NULL;
+/*obs
   // must enumerate all index-decorated types as well
   i = i - IDX_MD_MAX - 1; // renormalize back to 0
   if (i >= (count() * 3)) return NULL;
@@ -367,7 +369,7 @@ const char* taiClipData::format(int i) const {
     ((taiMultiClipData*)this)->fmt_cache = tacss_locdatataken + String(idx);
     break;
   }
-  return fmt_cache.chars();
+  return fmt_cache.chars(); */
 }
 
 bool taiClipData::DecodeFormat(const char* mimeType, int& fmt_num, int& index) const {

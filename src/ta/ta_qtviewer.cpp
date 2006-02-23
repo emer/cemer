@@ -3470,11 +3470,6 @@ public:
   ~DataNodeDeleter() {delete node;}
 };
 
-void iListViewItem_DropHelper::mnuBrowseNodeDrop(taiAction* act) {
-  mnuBrowseNodeDrop_param = act->data().toInt();
-}
-
-
 iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* node,
   iListViewItem* last_child_, const String& tree_name, int flags_)
 :inherited(node, last_child_, tree_name)
@@ -3579,7 +3574,6 @@ void iListViewItem::dropped(QDropEvent* ev) {
   // only show a menu if any actions possible (note: shouldn't have dropped otherwise!)
   if (ea != 0) {
     // create an aux object to handle the signal (because we are not a QObject)
-    iListViewItem_DropHelper* dh = new iListViewItem_DropHelper();
     QMenu* menu = new QMenu(listView());
     QAction* act;
   
@@ -3587,38 +3581,38 @@ void iListViewItem::dropped(QDropEvent* ev) {
     act->setShortcut(QKeySequence("Shift"));
     act->setData(taiClipData::EA_DROP_MOVE);
     act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
-    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    
     act = menu->addAction("&Copy Here");
     act->setShortcut(QKeySequence("Ctrl"));
     act->setData(taiClipData::EA_DROP_COPY);
     act->setEnabled(ea & taiClipData::EA_DROP_COPY);
-    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+    
     act = menu->addAction("&Link Here");
     act->setShortcut(QKeySequence("Ctrl+Shift"));
     act->setData(taiClipData::EA_DROP_LINK);
     act->setEnabled(ea & taiClipData::EA_DROP_LINK);
-    QObject::connect(act, SIGNAL(triggered(taiAction*)), dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
+
 /*TODO    act = menu->addAction("Move as &Subgroup of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
-    QObject::connect(act, SIGNAL(triggered(taiAction*)) dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
     act->setData( BDA_MOVE_AS_SUBGROUP );
     act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
+    
     act = menu->addAction("Move as &Subitem of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
-    QObject::connect(act, SIGNAL(triggered(taiAction*)) dh, SLOT(mnuBrowseNodeDrop(taiAction*)));
     act->setData( BDA_MOVE_AS_SUBITEM ); 
     act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
     */
     menu->addSeparator();
     act = menu->addAction("C&ancel");
+    act->setData(-1);
     act->setShortcut(QKeySequence("Esc"));
   
     //TODO: any for us last (ex. delete)
-    dh->mnuBrowseNodeDrop_param = -1; // in case Esc used
     QPoint pos = listView()->mapToGlobal(ev->pos() );
     
-    menu->exec(pos);
-    int ea = dh->mnuBrowseNodeDrop_param;
-    delete menu;
-    delete dh;
+    act = menu->exec(pos);
+    int ea = -1;
+    if (act)
+      ea = act->data().toInt();
+    menu->deleteLater();
     if (ea != -1) {
       EditActionD_impl_(ms, ea);
     }

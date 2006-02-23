@@ -1216,7 +1216,28 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
     // already in this list? (affects how we do drops/copies, etc.)
     srcgrp_idx = gp.Find(srcobj);
   }
-
+/*TODO: work out logistics for this... maybe this should only be for when the src is a group
+  // All non-move paste ops (i.e., copy an object)
+  if (
+    (ea & (taiClipData::EA_DROP_COPY)) ||
+    //  Cut/Paste is a move
+    ((ea & taiClipData::EA_PASTE) && (ms->src_action() & taiClipData::EA_SRC_COPY))
+  ) {
+    // TODO: instead of cloning, we might be better off just streaming a new copy
+    // since this will better guarantee that in-proc and outof-proc behavior is same
+    taBase* new_obj = obj->Clone();
+    //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
+    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
+    int new_idx;
+    if (itm_idx <= 0) 
+      new_idx = 0; // if dest is list, then insert at beginning
+    else if (itm_idx == (size - 1)) 
+      new_idx = -1; // if clicked on last, then insert at end
+    else new_idx = itm_idx + 1;
+    subgrp->Insert(new_obj, new_idx);
+    return taiClipData::ER_OK;
+  } */
+  
   // All Move-like ops
   if (
     (ea & (taiClipData::EA_DROP_MOVE)) ||
@@ -1237,11 +1258,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
         gp.Move(gp.size - 1, subgrp_idx + 1);
       } else return taiClipData::ER_ERROR; //TODO: error message
     }
-    // acknowledge action to source
-    if ((ms->src_action() & (taiClipData::EA_SRC_CUT)) || (ea & (taiClipData::EA_DROP_MOVE)))
-    {
-      ms->loc_data_taken();
-    }
+    // NOTE: we don't acknowledge action to source because we moved the item ourself
     return taiClipData::ER_OK;
   }
 

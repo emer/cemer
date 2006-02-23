@@ -79,12 +79,18 @@ class taBase; //
       [\n<typename>;<pdp path of object>[;<optional extended data>]*]xN
 
     The <src edit action> enables us to differentiate between a Cut and a Copied object
-    (these flags are also used for drag and drop, where we do a Move or a Copy).
+    (these flags are NOT used for drag and drop, since the dest determines whether it is a DragMove
+    or a DragCopy operation).
     The <taiClipData addr> enables us to efficiently access the source directly (in-process only)
     rather than go indirectly through the clipboard.
+    
+    Qt4: because Qt4 started enumerating all the data formats, the actual data and command
+    formats are "hidden", i.e., they don't show up when enumerating, but will exist if
+    you query directly for them -- if you get the "tacss/objectdesc[Xxx]" format, you can be 
+    sure you can also access the hidden formats.
 
 
-  MIME TYPE "tacss/objectdata{i}" -- i (optional, def=0) is: 0 <= i < N
+  MIME TYPE "tacss/objectdata{i}" [hidden] -- i (optional, def=0) is: 0 <= i < N
 
     The data is the rep (ext dump save text) of the object.
 
@@ -94,16 +100,17 @@ class taBase; //
     The same string as the objectdesc string (primarily for diagnostic purposes).
     NOTE: this may be altered
 
-  MIME TYPE "tacss/remdatataken{i}" -- i (optional, def=0) is: 0 <= i < N
+  MIME TYPE "tacss/remdatataken{i}" [hidden] -- i (optional, def=0) is: 0 <= i < N
 
     This is a pseudo-mime type, used to enable receiver to communicate deletion
-    back to sender when Cut data has been successfully pasted.
+    back to sender when Cut or Drag/Move data has been successfully pasted.
 
 
-  MIME TYPE "tacss/locdatataken{i}" -- i (optional, def=0) is: 0 <= i < N
+  MIME TYPE "tacss/locdatataken{i}" [hidden] -- i (optional, def=0) is: 0 <= i < N
 
     This is a pseudo-mime type, used to enable in-process receiver to communicate
-    back to sender when Cut data has been successfully pasted.
+    back to sender when Cut data has been successfully pasted (if the receiver
+    didn't just move the object).
 
 
 taiClipData -- sender
@@ -153,6 +160,7 @@ COMMAND FORMATS
 #define IDX_MD_REMDATATAKEN		3
 #define IDX_MD_LOCDATATAKEN		4
 #define IDX_MD_MAX			4
+#define IDX_MD_VISIBLE_MAX		1
 
 // mime-type strings
 extern const char* text_plain;
@@ -398,14 +406,14 @@ public:
     // ITER if a taBase object, its full path; if not taBase, or not tacss, then NULL;
   bool			is_tab() const {return in_range() ? item()->is_tab() : false;};
     // ITER true if the object is derived from taBase
-  void			loc_data_taken() const; // sends a loc_data_taken for the current index
-  void			rem_data_taken() const; // sends a rem_data_taken for the current index
-
   const char* 		format(int i = 0) const; // override
   QByteArray 		encodedData(const char * fmt) const; // #IGNORE override - queries for proper index and calls teh _impl function
   bool			provides(const char * mimeType) const; // override delegates
   int			encodedData(const char* mimeType, taString& result) const; // provides data to a String; returns # bytes
   int			encodedData(const char* mimeType, istringstream& result) const; // provides data to an istrstream; returns # bytes
+  void			loc_data_taken() const; // sends a loc_data_taken for the current index; only call if consumer didn't move/consume the item
+  void			rem_data_taken() const; // sends a rem_data_taken for the current index, called by consumer when CUT-like item is accepted
+
 
 
   virtual bool		IsThisProcess() const = 0; // true if object originates in this process (ie, we can do low-level object-based ops)
@@ -418,6 +426,7 @@ protected:
   virtual taiMimeItem*	item() const = 0; // current item -- must always be checked with in_range before access
 
   void			AssertList(); // makes sure list is constructed
+
   taiMimeSource(const QMimeSource* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
 

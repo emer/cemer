@@ -29,6 +29,10 @@
 #include <mpi.h>
 #endif
 
+// module initialization
+InitProcRegistrar mod_init(ta_Init_bp);
+
+
 //////////////////////////
 //  	Con, Spec	//
 //////////////////////////

@@ -31,12 +31,23 @@
 #include "pdp_TA_type.h"
 
 
+typedef  void (*init_proc_t)() ;	// initialization proc
+
+
+class InitProcRegistrar { // #IGNORE object used as a module static instance to register an init_proc
+public:
+  InitProcRegistrar(init_proc_t init_proc);
+private:
+  InitProcRegistrar(const InitProcRegistrar&);
+  InitProcRegistrar& operator =(const InitProcRegistrar&);
+};
 
 
 // all of these functions are cached out in pdpshell.cc
 
 class pdpMisc {
   // #NO_TOKENS miscellaneous things for pdp
+friend class InitProcRegistrar;
 public:
   //note: this enum must be duplicated in Project
   enum ViewColors {		// indicies for view_colors
@@ -71,11 +82,13 @@ public:
   static String_Array	proj_to_load;	// list of projects to load
   static taBase_List	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
   static TypeDef*	def_wizard; 	// default network wizard type to create (this should be set by the specific application Main function)
-  static void (*Init_Hook)();	 	// #READ_ONLY set this in user's main to init ta, etc.
+//  static void (*Init_Hook)();	 	// #READ_ONLY set this in user's main to init ta, etc.
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
   static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
   static float		char_pts_per_so_unit; // #DEF_72 chars*pt size / so unit
 
+  static taPtrList_impl* initHookList(); // need to use accessor to resolve module initialization ambiguity
+  
   static int	Main(int argc, char* argv[]);
   // #IGNORE the pdp main startup function: call this from user's main
 //NOTE: v4 waitprocs (aka event loop handling)
@@ -128,6 +141,8 @@ public:
   static int	DMem_WaitProc(bool send_stop_to_subs = false);
   // #IGNORE waiting process for dmem_proc = 0, if send_stop_to_subs, sends a stop command to sub procs so they bail out of sub loop
 #endif
+protected:
+  static void	AddInitHook(init_proc_t init_proc); // #IGNORE called during module initialization, before main()
 };
 
 int get_unique_file_number(int st_no, const char* prefix, const char* suffix);

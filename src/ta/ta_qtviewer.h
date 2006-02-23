@@ -1241,16 +1241,6 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-#ifndef __MAKETA__
-class iListViewItem_DropHelper: public QObject {
-  Q_OBJECT
-public:
-  int			mnuBrowseNodeDrop_param; 
-public slots:
-  void			mnuBrowseNodeDrop(taiAction* act); // called by context menu on drop, we cache the code
-};
-#endif
-
 class iListViewItem: public Q3ListViewItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(Q3ListViewItem)

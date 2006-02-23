@@ -1948,11 +1948,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
         Move(size - 1, itm_idx + 1);
       } else return taiClipData::ER_ERROR;
     }
-    // acknowledge action to source
-    if ((ms->src_action() & (taiClipData::EA_SRC_CUT)) || (ea & (taiClipData::EA_DROP_MOVE)))
-    {
-      ms->loc_data_taken();
-    }
+    //NOTE: we never issue a data_taken() because we have actually moved the item ourself
     return taiClipData::ER_OK;
   }
 
