@@ -22,6 +22,7 @@
 #ifndef NETSTRU_SO_H
 #define NETSTRU_SO_H
 
+#include "pdp_def.h"
 #include "t3node_so.h"
 
 // externals

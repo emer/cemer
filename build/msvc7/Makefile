@@ -219,7 +219,7 @@ colorbar_qt.moc.cpp: $(PDP4DIR)\src\tamisc\colorbar_qt.h
 datatable_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datatable_qtso.h
 	$(MOC) %s -o $@
 
-datagraph_qtso.cpp: $(PDP4DIR)\src\tamisc\datagraph_qtso.h
+datagraph_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datagraph_qtso.h
 	$(MOC) %s -o $@
 
 datagraph_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datagraph_qtso.h
@@ -296,7 +296,7 @@ leabra_TA_type.h: $(LEABRA_MAKETA)
 clean: 
   del *.moc.cpp
  
-taiqtso_files: $(TAIQTSO_MOCS)
+taiqtso_files: TAIQTSO_MOCS
  
 ta_files: ta_TA_type.h $(TA_MAKETA) TA_MOCS
   

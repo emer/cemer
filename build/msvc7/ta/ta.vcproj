@@ -517,37 +517,37 @@
 				Name="Built Files"
 				Filter="">
 				<File
-					RelativePath=".\icheckbox.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\icheckbox.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\icombobox.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\icombobox.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\idimedit.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\idimedit.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\ieditgrid.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\ieditgrid.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\iflowlayout.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\iflowlayout.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\igeometry.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\igeometry.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\ilabel.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\ilabel.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\ilineedit.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\ilineedit.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\irenderarea.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\irenderarea.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\ispinbox.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\ispinbox.moc.cpp">
 				</File>
 				<File
-					RelativePath=".\itreeview.moc.cpp">
+					RelativePath="..\..\..\src\taiqtso\itreeview.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -825,6 +825,9 @@
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">
+		</File>
+		<File
+			RelativePath=".\ta_prebuild.cmd">
 		</File>
 	</Files>
 	<Globals>
