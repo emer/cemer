@@ -19,6 +19,8 @@
 #ifndef CSS_EXTERN_SUPPORT_H
 #define CSS_EXTERN_SUPPORT_H 1
 
+#include "css_def.h"
+
 #ifndef MAKE_CSS_EXECUTABLE
 
 // put in all external types that are supported, etc in here

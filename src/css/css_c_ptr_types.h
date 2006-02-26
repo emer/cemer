@@ -23,7 +23,7 @@
 #include "css_basic_types.h"
 
 
-class cssCPtr_int : public cssCPtr {
+class CSS_API cssCPtr_int : public cssCPtr {
   // Points to a C integer
 public:
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
@@ -111,7 +111,7 @@ public:
 #define cssCPtr_int_inst_ptr_nm(l,n,x,s) l .Push(x = new cssCPtr_int(n,1,s))
 
 
-class cssCPtr_short : public cssCPtr_int {
+class CSS_API cssCPtr_short : public cssCPtr_int {
 public:
   uint		GetSize() const 	{ return sizeof(short); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_short)"; }
@@ -155,7 +155,7 @@ public:
 
 };
 
-class cssCPtr_bool : public cssCPtr_int {
+class CSS_API cssCPtr_bool : public cssCPtr_int {
 public:
   uint		GetSize() const 	{ return sizeof(bool); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_bool)"; }
@@ -191,7 +191,7 @@ public:
   void operator=(const cssEl& t);
 };
 
-class cssCPtr_long : public cssCPtr_int {
+class CSS_API cssCPtr_long : public cssCPtr_int {
 public:
   uint		GetSize() const 	{ return sizeof(long); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_long)"; }
@@ -235,7 +235,7 @@ public:
   void operator|=(cssEl& t);
 };
 
-class cssCPtr_char : public cssCPtr_int {
+class CSS_API cssCPtr_char : public cssCPtr_int {
 public:
   uint		GetSize() const 	{ return sizeof(char); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_char)"; }
@@ -279,7 +279,7 @@ public:
   void operator|=(cssEl& t);
 };
 
-class cssCPtr_enum : public cssCPtr_int {
+class CSS_API cssCPtr_enum : public cssCPtr_int {
 public:
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_enum)"; }
@@ -311,7 +311,7 @@ public:
   void operator=(const cssEl& t);
 };
 
-class cssCPtr_double : public cssCPtr {
+class CSS_API cssCPtr_double : public cssCPtr {
 public:
   uint		GetSize() const 	{ return sizeof(double); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_double)"; }
@@ -380,7 +380,7 @@ public:
 };
 
 
-class cssCPtr_float : public cssCPtr_double {
+class CSS_API cssCPtr_float : public cssCPtr_double {
 public:
   uint		GetSize() const 	{ return sizeof(float); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_float)"; }
@@ -418,7 +418,7 @@ public:
 };
 
 
-class cssCPtr_String : public cssCPtr {
+class CSS_API cssCPtr_String : public cssCPtr {
 public:
   uint		GetSize() const 	{ return sizeof(String); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_String)"; }

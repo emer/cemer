@@ -16,6 +16,8 @@
 
 #include <math.h>
 
+#include "css_def.h"
+
 /* the value of a 'Real' should be defined.. (it is already in css) */
 /* todo: figure out a way to conditionalize this... */
 typedef double Real;
@@ -31,49 +33,49 @@ typedef double Real;
 /* _den is the density function */
 
 /* helpful functions */
-Real fact_ln(int n);			/* ln of factorial for given n */
-Real bico_ln(int n, int j);		/* ln of n choose j */
+CSS_API Real fact_ln(int n);			/* ln of factorial for given n */
+CSS_API Real bico_ln(int n, int j);		/* ln of n choose j */
 
-Real hyperg(int j, int s, int t, int n); /* hypergeometric (j t's of sample s in n) */
+CSS_API Real hyperg(int j, int s, int t, int n); /* hypergeometric (j t's of sample s in n) */
 
-Real gamma_ln(Real z);			/* ln of gamma function (not distribution)
+CSS_API Real gamma_ln(Real z);			/* ln of gamma function (not distribution)
 					   generalization of (n-1)! to real values */
-Real gamma_p(Real a, Real x);		/* incomplete gamma function */
-Real gamma_q(Real a, Real x);		/* incomplete gamma function (complement of p)*/
-Real beta(Real z, Real w); 		/* beta function */
-Real beta_i(Real a, Real b, Real x); 	/* incomplete beta function */
+CSS_API Real gamma_p(Real a, Real x);		/* incomplete gamma function */
+CSS_API Real gamma_q(Real a, Real x);		/* incomplete gamma function (complement of p)*/
+CSS_API Real beta(Real z, Real w); 		/* beta function */
+CSS_API Real beta_i(Real a, Real b, Real x); 	/* incomplete beta function */
 
 /* probability functions */
 
-Real binom_den(int n, int j, Real p);	/* binomial probability function */
-Real binom_cum(int n, int j, Real p); 	/* cumulative binomial probability */
-Real binom_dev(int n, Real p);		/* binomial deviate: p prob with n trials */
+CSS_API Real binom_den(int n, int j, Real p);	/* binomial probability function */
+CSS_API Real binom_cum(int n, int j, Real p); 	/* cumulative binomial probability */
+CSS_API Real binom_dev(int n, Real p);		/* binomial deviate: p prob with n trials */
 
-Real poisson_den(int j, Real l);	/* poisson distribution */
-Real poisson_cum(int j, Real l);	/* cumulative Poisson P_l(<j) (0 thru j-1) */
-Real poisson_dev(Real l);		/* poisson deviate:  mean is l */
+CSS_API Real poisson_den(int j, Real l);	/* poisson distribution */
+CSS_API Real poisson_cum(int j, Real l);	/* cumulative Poisson P_l(<j) (0 thru j-1) */
+CSS_API Real poisson_dev(Real l);		/* poisson deviate:  mean is l */
 
-Real gamma_den(int j, Real l, Real t); 	/* gamma probability distribution:
+CSS_API Real gamma_den(int j, Real l, Real t); 	/* gamma probability distribution:
 					   j events, l lambda, t time */
-Real gamma_cum(int j, Real l, Real t);	/* gamma cumulative */
-Real gamma_dev(int j);			/* gamma deviate: how long to wait
+CSS_API Real gamma_cum(int j, Real l, Real t);	/* gamma cumulative */
+CSS_API Real gamma_dev(int j);			/* gamma deviate: how long to wait
 					   until j events with  unit lambda */
 
-Real gauss_den(Real x);			/* gaussian distribution */
-Real gauss_cum(Real z);			/* cumulative gaussian (unit variance) to z */
-Real gauss_inv(Real p);			/* inverse of the cumulative for p: z value for given p */
-Real gauss_dev();			/* gaussian deviate: normally distributed */
+CSS_API Real gauss_den(Real x);			/* gaussian distribution */
+CSS_API Real gauss_cum(Real z);			/* cumulative gaussian (unit variance) to z */
+CSS_API Real gauss_inv(Real p);			/* inverse of the cumulative for p: z value for given p */
+CSS_API Real gauss_dev();			/* gaussian deviate: normally distributed */
 #ifdef HP800
-Real erf(Real x);			/* error function */
+CSS_API Real erf(Real x);			/* error function */
 #endif
-Real erf_c(Real x);			/* complement of the error function */
+CSS_API Real erf_c(Real x);			/* complement of the error function */
 
 /* statisitics functions */
 
-Real chisq_p(Real X, Real v); 		/* P(X^2 | v) */
-Real chisq_q(Real X, Real v); 		/* Q(X^2 | v) (complement) */
-Real students_cum(Real t, Real df);	/* cumulative student's distribution df deg of free t test*/
-Real students_den(Real t, Real df);	/* density fctn of student's distribution df deg of free t test*/
-Real Ftest_q(Real F, Real v1, Real v2); /* F distribution probability F | (v1 < v2) */
+CSS_API Real chisq_p(Real X, Real v); 		/* P(X^2 | v) */
+CSS_API Real chisq_q(Real X, Real v); 		/* Q(X^2 | v) (complement) */
+CSS_API Real students_cum(Real t, Real df);	/* cumulative student's distribution df deg of free t test*/
+CSS_API Real students_den(Real t, Real df);	/* density fctn of student's distribution df deg of free t test*/
+CSS_API Real Ftest_q(Real F, Real v1, Real v2); /* F distribution probability F | (v1 < v2) */
 
 

@@ -21,7 +21,7 @@
 
 class cssTA_Base;
 
-class cssBI { // built-in functions for css
+class CSS_API cssBI { // built-in functions for css
 public:
   static cssElCFun*	asgn;
   static cssElCFun*	asgn_add;

@@ -21,7 +21,7 @@
 
 #include "css_machine.h"
 
-class cssInt : public cssEl {
+class CSS_API cssInt : public cssEl {
   // an integer value
 public:
   Int		val;
@@ -111,7 +111,7 @@ public:
   bool operator||(cssEl& s) 	{ return (val || (Int)s); }
 };
 
-class cssChar : public cssInt {
+class CSS_API cssChar : public cssInt {
   // a character (for string conversions)
 public:
   const char*	GetTypeName() const { return "(char)"; }
@@ -145,7 +145,7 @@ public:
 #define cssInt_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt(n, #x))
 #define cssInt_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt(n, s))
 
-class cssReal : public cssEl {
+class CSS_API cssReal : public cssEl {
   // a real (floating point) value
 public:
   Real		val;
@@ -240,7 +240,7 @@ public:
 
 class taFiler;
 
-class cssString : public cssEl {
+class CSS_API cssString : public cssEl {
   // a character-string value
 public:
   String	val;
@@ -333,7 +333,7 @@ public:
 #define cssString_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssString(n, #x))
 #define cssString_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssString(n, s))
 
-class cssBool : public cssEl {
+class CSS_API cssBool : public cssEl {
   // a boolean value
 public:
   bool		val;
@@ -380,7 +380,7 @@ public:
   bool operator||(cssEl& s) 	{ return (val || (Int)s); }
 };
 
-class cssPtr : public cssEl {
+class CSS_API cssPtr : public cssEl {
   // this is an el for pointing to other el's
 public:
   cssElPtr	ptr;
@@ -484,7 +484,7 @@ public:
   bool operator||(cssEl& s) { return (GetIntVal() || (Int)s); }
 };
 
-class cssArray : public cssPtr {
+class CSS_API cssArray : public cssPtr {
 public:
   cssSpace*	items;		// what's in the array
 
@@ -544,7 +544,7 @@ public:
 };
 
 
-class cssArrayType : public cssArray {
+class CSS_API cssArrayType : public cssArray {
   // an array definition, no actual allocation
 public:
   int           size;           // defined size of array
@@ -610,7 +610,7 @@ public:
 };
 
 
-class cssRef : public cssEl {
+class CSS_API cssRef : public cssEl {
   // reference to an el
 public:
   cssElPtr	ptr;
@@ -779,7 +779,7 @@ public:
 //	Enums		//
 //////////////////////////
 
-class cssEnumType : public cssEl {
+class CSS_API cssEnumType : public cssEl {
   // this is a class that defines a type (collection) of enums
 public:
   String	type_name;
@@ -814,7 +814,7 @@ public:
   cssEl*	FindValue(int val) const;
 };
 
-class cssEnum : public cssInt {
+class CSS_API cssEnum : public cssInt {
   // an instance of an enum type (ie. a particular enum value)
 public:
   cssEnumType*	type_def;	// definition of the enum type
@@ -867,7 +867,7 @@ public:
 //	Classes		//
 //////////////////////////
 
-class cssClassMember : public cssEl {
+class CSS_API cssClassMember : public cssEl {
   // contains class members (name is member name, points to type object)
 public:
   cssEl*	mbr_type;	// type of this member
@@ -900,7 +900,7 @@ public:
   cssEl* GetScoped(const char* s) const  	{ return mbr_type->GetScoped(s); }
 };
 
-class cssClassType : public cssEl {
+class CSS_API cssClassType : public cssEl {
   // this is a class that defines the css class type
 public:
   String	type_name;
@@ -993,7 +993,7 @@ public:
   cssEl* NewOpr();
 };
 
-class cssClassInst : public cssEl {
+class CSS_API cssClassInst : public cssEl {
   // this is a class that defines the css class
 public:
   cssClassType*	type_def;	// defines the type of this class
@@ -1063,7 +1063,7 @@ public:
   cssEl* GetScoped(const char* memb) const;
 };
 
-class cssSubShell : public cssEl {
+class CSS_API cssSubShell : public cssEl {
   // contains a separate prog space
 public:
   cssProgSpace		prog_space;

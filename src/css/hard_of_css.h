@@ -21,6 +21,8 @@
 // basically establishes the same level of includes, libraries, etc.
 
 #include <ta/ta_stdef.h>
+#include "css_def.h"
+
 #include <css/special_math.h>
 #include <css/css_misc_funs.h>
 

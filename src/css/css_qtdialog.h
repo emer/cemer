@@ -32,7 +32,7 @@ class cssClassType;
 class taiType_List;
 class cssClassInst;
 
-class cssiEditDialog : public taiEditDataHost {
+class CSS_API cssiEditDialog : public taiEditDataHost {
   // edit dialog for editing css classes
 public:
   cssClassInst*	obj;		// class object to edit
@@ -69,7 +69,7 @@ protected:
 //    cssiArgDialog       //
 ///////////////////////////
 
-class cssiArgDialog : public cssiEditDialog {
+class CSS_API cssiArgDialog : public cssiEditDialog {
   // #IGNORE edit dialog for editing function arguments
 public:
   bool		err_flag; 	// true if an arg was improperly set

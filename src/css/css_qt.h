@@ -20,12 +20,13 @@
 #define CSS_QT_H
 
 #include "ta_stdef.h"
+#include "css_def.h"
 
 class cssProgSpace;
 class cssClassType;
 class cssClassInst;
 
-class cssiSession  { // this handles events for css/qt
+class CSS_API cssiSession  { // this handles events for css/qt
 public:
   static bool	block_stdin;	// block the processing of stdin input
   static bool	done_busy;	// true if done being busy after all events proc'd

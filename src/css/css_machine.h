@@ -92,7 +92,7 @@ class cssIJump;
 class cssProg;
 class cssProgSpace;
 
-class cssMisc { // misc stuff for css
+class CSS_API cssMisc { // misc stuff for css
 public:
 
   static jmp_buf 	begin;
@@ -189,7 +189,7 @@ public:
 };
 
 
-class cssElPtr {
+class CSS_API cssElPtr {
   // a pointer to an el used in code, makes pointers context relative to current frame
 public:
   enum	PtrType {
@@ -242,7 +242,7 @@ public:
   cssElPtr(cssSpace* spc, int idx = -1)	{ Reset(); SetSpace(spc, idx); }
 };
 
-class cssElPlusIVal {
+class CSS_API cssElPlusIVal {
   // this is used for parsing only, where a return value and an obj are needed
 public:
   cssElPtr	el;
@@ -265,7 +265,7 @@ public:
   cssEl* 	AnonClone() 	  { return new x (*this, ""); }	      \
 
 
-class cssEl {
+class CSS_API cssEl {
 public:
   int		refn;		// number of times referred to
   static String no_string;	// when no string val is avail
@@ -556,7 +556,7 @@ public:
 };
 
 
-class cssSpace {
+class CSS_API cssSpace {
   // a name space of some sort, can be a stack, or a list
 protected:
 friend	class cssArray;
@@ -620,7 +620,7 @@ public:
 };
 
 
-class cssElFun : public cssEl {
+class CSS_API cssElFun : public cssEl {
   // basic things for function-type objects (this is a base type for other classes)
 public:
   static const int ArgMax;      // maximum number of arguments
@@ -645,7 +645,7 @@ public:
   ~cssElFun();
 };
 
-class cssElCFun : public cssElFun {
+class CSS_API cssElCFun : public cssElFun {
   // a C function returning a cssEl pointer
 public:
   int		parse;				// parser token code
@@ -683,7 +683,7 @@ public:
 #define cssElCFun_inst_ptr(l,x,n,pt,hl)	l .Push(cssBI::x = new cssElCFun(n, cssElCFun_ ## x ## _stub, #x, pt, hl))
 #define cssElCFun_inst_ptr_nm(l,x,n,s,pt,hl) l .Push(cssBI::x = new cssElCFun(n, cssElCFun_ ## x ## _stub, s, pt, hl))
 
-class cssElInCFun : public cssElCFun {
+class CSS_API cssElInCFun : public cssElCFun {
   // a simple internal C function (having fixed number of parameters)
 public:
   int		BindArgs(cssEl** args, int& act_argc);
@@ -705,7 +705,7 @@ public:
 #define cssElInCFun_inst_ptr(l,x,n,pt) 	l .Push(cssBI::x = new cssElInCFun(n, cssElCFun_ ## x ## _stub, #x, pt))
 #define cssElInCFun_inst_ptr_nm(l,x,n,s,pt) l .Push(cssBI::x = new cssElInCFun(n, cssElCFun_ ## x ## _stub, s, pt))
 
-class cssMbrCFun : public cssElFun {
+class CSS_API cssMbrCFun : public cssElFun {
   // a C code member function returning a pointer to a cssEl
 public:
   cssEl*	(*funp)(void* ths, int na, cssEl* args[]); // function pointer
@@ -746,7 +746,7 @@ public:
 // switch default case name
 #define cssSwitchDefault_Name "_switch_default"
 
-class cssScriptFun : public cssElFun {
+class CSS_API cssScriptFun : public cssElFun {
   // a function defined in the script language
 public:
   cssElPtr* 	argv;		// the actual argument holders (0 is retv)
@@ -781,7 +781,7 @@ public:
   // return retv_type token, else cssInt
 };
 
-class cssMbrScriptFun : public cssScriptFun {
+class CSS_API cssMbrScriptFun : public cssScriptFun {
   // a function defined in the script language
 public:
   cssClassType*	type_def;	// the class fun belongs to
@@ -824,7 +824,7 @@ public:
     { return new x ( init, ptr_cnt, (const char*)*(arg[1])); }	      \
 
 
-class cssCPtr : public cssEl {
+class CSS_API cssCPtr : public cssEl {
   // base class for ptrs to C objects
 protected:
   cssEl*	class_parent;	// if this pointer was derived from a class structure
@@ -903,14 +903,14 @@ public:
 
 // lexer & preprocessor stuff (#define, etc)
 
-class cssLex {
+class CSS_API cssLex {
 public:
   static String Buf;
 
   static int readword(cssProg* prog, int c);
 };
 
-class cssDef : public cssElFun {
+class CSS_API cssDef : public cssElFun {
   // a pre-processor define
 public:
   String_Array	val;		// contains the bits and pieces that surround the args
@@ -935,7 +935,7 @@ public:
   cssCloneFuns(cssDef, 0);
 };
 
-class cssInst {
+class CSS_API cssInst {
 public:
   enum CodeFlags {
     Stop = -1 				// signal to stop execution
@@ -972,7 +972,7 @@ public:
   virtual cssInst* Clone() { return new cssInst(*this); }
 };
 
-class cssIJump : public cssInst {
+class CSS_API cssIJump : public cssInst {
 public:
   css_progdx    jumpto;			// idx to jump to
 
@@ -992,7 +992,7 @@ public:
 };
 
 
-class cssListEl {
+class CSS_API cssListEl {
 public:
   css_progdx    stpc;		// starting pc for this line
   int		ln;		// line no in source code
@@ -1010,7 +1010,7 @@ public:
 };
 
 
-class cssFrame {
+class CSS_API cssFrame {
 public:
   cssProg*	prog;			// program I belong to
   int		fr_no;		        // frame number
@@ -1022,7 +1022,7 @@ public:
   cssFrame(cssProg* prg);
 };
 
-class cssProg {
+class CSS_API cssProg {
   // a single chunk of script code (a block, a function, etc.)
 protected:
   friend class	cssProgSpace;
@@ -1205,7 +1205,7 @@ public:
   bool		unSetBreak(int srcln);
 };
 
-class cssProgStack {
+class CSS_API cssProgStack {
   // contains an index of what frame a given program is in
 public:
   cssProg*	prog;
@@ -1213,7 +1213,7 @@ public:
 };
 
 
-class cssProgSpace {
+class CSS_API cssProgSpace {
   // an entire program space, including all functions defined, variables etc.
 protected:
 friend class cssProg;

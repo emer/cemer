@@ -21,6 +21,7 @@
 
 #include "ta_qttype_def.h"
 //#include "ta_qtdata.h"
+#include "css_def.h"
 
 #include <qobject.h>
 
@@ -45,7 +46,7 @@ class cssEnumType;
 #define CSS_TYPE_FUNS(x,y)
 
 
-class cssiType_QObj : public QObject { // #IGNORE delegate for cssitype
+class CSS_API cssiType_QObj : public QObject { // #IGNORE delegate for cssitype
 friend class cssiType;
   Q_OBJECT
 public:
@@ -57,7 +58,7 @@ protected:
   cssiType* 	owner;
 };
 
-class cssiType : public taiType {
+class CSS_API cssiType : public taiType {
   // css types call their corresponding type for all of the functions
 friend class cssiType_QObj;
 public:
@@ -87,7 +88,7 @@ protected:
 };
 
 
-class cssiROType : public cssiType {
+class CSS_API cssiROType : public cssiType {
   // a css read-only type
 public:
   override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
@@ -102,7 +103,7 @@ public:
   cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type = false);
 };
 
-class cssiEnumType : public cssiType {
+class CSS_API cssiEnumType : public cssiType {
   // a css enum type
 public:
   cssEnumType*	enum_type;
@@ -119,7 +120,7 @@ public:
   cssiEnumType(cssEl* orgo, cssEnumType* enm_typ, void* bs);
 };
 
-class cssiClassType : public cssiType {
+class CSS_API cssiClassType : public cssiType {
   // a css class type
 public:
 
@@ -138,7 +139,7 @@ public:
 
 };
 
-class cssiArrayType : public cssiType {
+class CSS_API cssiArrayType : public cssiType {
   // a css array type
 public:
   override void		CallEdit();     // invoke an edit dialog (normally called from qobj)

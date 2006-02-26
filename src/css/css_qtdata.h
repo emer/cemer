@@ -21,6 +21,7 @@
 
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
+#include "css_def.h"
 
 // forward declarations
 class cssClassInst;
@@ -33,7 +34,7 @@ class cssProgSpace;
 //   taiData for css       //
 //////////////////////////////
 
-class cssiPolyData : public taiData {
+class CSS_API cssiPolyData : public taiData {
   // supports INLINE members for css
 public:
   cssClassInst*	obj;
@@ -56,7 +57,7 @@ protected:
 };
 
 
-class cssiMethMenu : public taiMethMenu {
+class CSS_API cssiMethMenu : public taiMethMenu {
   // css member functions of css classes
   Q_OBJECT
 public:

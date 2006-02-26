@@ -23,7 +23,7 @@
 #include "css_basic_types.h"
 #include "ta_type.h"
 
-class cssTA : public cssCPtr {
+class CSS_API cssTA : public cssCPtr {
 public:
   TypeDef*	type_def;	// TypeDef Info
 
@@ -135,7 +135,7 @@ public:
 // this one is specially for taBase types
 // calls the overloaded (taBase) versions of TypeDef functions
 
-class cssTA_Base : public cssTA {
+class CSS_API cssTA_Base : public cssTA {
 public:
   String	PrintStr() const;
   String	PrintFStr() const;
@@ -198,7 +198,7 @@ public:
 #define cssTA_Base_inst_ptr_nm(l,n,c,t,x,s) l .Push(x = new cssTA_Base(n, c, t, s))
 
 
-class cssFStream : public cssTA {
+class CSS_API cssFStream : public cssTA {
 public:
   static TypeDef*	TA_TypeDef(); // returns TA_fstream
   uint		GetSize() const	{ return sizeof(*this); }
@@ -237,7 +237,7 @@ public:
   void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
-class cssSStream : public cssTA {
+class CSS_API cssSStream : public cssTA {
 public:
   uint		GetSize() const	{ return sizeof(*this); }
 
@@ -275,7 +275,7 @@ public:
   void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
-class cssLeafItr : public cssTA {
+class CSS_API cssLeafItr : public cssTA {
 public:
   static TypeDef*	TA_TypeDef(); // returns TA_taLeafItr
   uint		GetSize() const	{ return sizeof(*this); }
@@ -314,7 +314,7 @@ public:
   void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
-class cssTAEnum : public cssTA {
+class CSS_API cssTAEnum : public cssTA {
 public:
   Int 		val;
   uint		GetSize() const	{ return sizeof(*this); }
