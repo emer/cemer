@@ -37,11 +37,11 @@ class float_Data;
 class int_Data;
 class byte_Data;
 
-class ClustNode;
+class ClustNode; //
 
 
 /*obs
-class DataItem : public taOBase {
+class TAMISC_API DataItem : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE source of a piece of data
 public:
 
@@ -75,7 +75,7 @@ public:
 };
 
 
-class DataItem_List : public taList<DataItem> {
+class TAMISC_API DataItem_List : public taList<DataItem> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of DataItem objects
 public:
   void	Initialize() 		{SetBaseType(&TA_DataItem); };
@@ -84,7 +84,7 @@ public:
 };
 
 
-class LogData : public taBase {
+class TAMISC_API LogData : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER log data is communicated with these objects
 #ifndef __MAKETA__
 typedef taBase inherited;
@@ -128,7 +128,7 @@ public:
 };
 */
 
-class float_RArray : public float_Array {
+class TAMISC_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
 public:
   enum DistMetric {		// generalized distance metrics
@@ -314,7 +314,7 @@ protected:
 
 */
 
-class DataArray_impl : public taNBase {
+class TAMISC_API DataArray_impl : public taNBase {
   // #VIRT_BASE ##NO_TOKENS #NO_INSTANCE holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
 INHERITED(taNBase)
 friend class DataTable;
@@ -451,7 +451,7 @@ private:
   void	Destroy()	{CutLinks(); }; //
 };
 
-class ColDescriptor: public taNBase { // describes a column of data in a DataTable
+class TAMISC_API ColDescriptor: public taNBase { // describes a column of data in a DataTable
 INHERITED(taNBase)
 public:
   int			col_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
@@ -475,7 +475,7 @@ private:
 };
 
 
-class ColDescriptor_List: public taList<ColDescriptor> {
+class TAMISC_API ColDescriptor_List: public taList<ColDescriptor> {
 INHERITED(taList<ColDescriptor>)
 public:
   
@@ -507,7 +507,7 @@ private:
       columns have been added after some rows already exist
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
 */
-class DataTable : public taGroup<DataArray_impl> {
+class TAMISC_API DataTable : public taGroup<DataArray_impl> {
   // #NO_UPDATE_AFTER table of data
 INHERITED(taGroup<DataArray_impl>)
 public:
@@ -654,7 +654,7 @@ private:
 };
 
 template<class T> 
-class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
+class TAMISC_API DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
   override taMatrix* 	AR()	{ return &ar; } // the array pointer
   override const taMatrix* AR() const { return &ar; } // the array pointer
@@ -671,7 +671,7 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
-class String_Data : public DataArray<String_Matrix> {
+class TAMISC_API String_Data : public DataArray<String_Matrix> {
   // string data
 INHERITED(DataArray<String_Matrix>)
 friend class DataTable;
@@ -687,7 +687,7 @@ private:
 };
 
 
-class float_Data : public DataArray<float_Matrix> {
+class TAMISC_API float_Data : public DataArray<float_Matrix> {
   // floating point data
 INHERITED(DataArray<float_Matrix>)
 friend class DataTable;
@@ -709,7 +709,7 @@ private:
   void	Destroy() {}
 };
 
-class int_Data : public DataArray<int_Matrix> {
+class TAMISC_API int_Data : public DataArray<int_Matrix> {
   // int data
 INHERITED(DataArray<int_Matrix>)
 friend class DataTable;
@@ -731,7 +731,7 @@ private:
   void	Destroy() {}
 };
 
-class byte_Data : public DataArray<byte_Matrix> {
+class TAMISC_API byte_Data : public DataArray<byte_Matrix> {
   // byte data
 INHERITED(DataArray<byte_Matrix>)
 friend class DataTable;
@@ -755,7 +755,7 @@ private:
 
 
 
-class ClustLink : public taBase {
+class TAMISC_API ClustLink : public taBase {
   // #INLINE ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
 public:
   float		dist;		// distance to this node from parent
@@ -770,7 +770,7 @@ public:
 };
 
 
-class ClustNode : public taNBase {
+class TAMISC_API ClustNode : public taNBase {
   /* ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
      use one with leaves as children as a root node for cluster */
 public:
@@ -840,7 +840,7 @@ public:
   TA_BASEFUNS(ClustNode);
 };
 
-class DA_ViewSpec : public taNBase {
+class TAMISC_API DA_ViewSpec : public taNBase {
   // ##SCOPE_DT_ViewSpec base specification for the display of log data_array (DA)
 public:
   DataArray_impl*	data_array;	// #READ_ONLY #NO_SAVE the data array
@@ -867,7 +867,7 @@ public:
   TA_BASEFUNS(DA_ViewSpec);
 };
 
-class DT_ViewSpec :  public taGroup<DA_ViewSpec> {
+class TAMISC_API DT_ViewSpec :  public taGroup<DA_ViewSpec> {
   // base specification for the display of log data_table (DT)
 #ifndef __MAKETA__
 typedef taGroup<DA_ViewSpec> inherited;
@@ -905,7 +905,7 @@ public:
     NARROW -- in addition to base spec, also sets column with to 1 tab
 
 */
-class DA_TextViewSpec: public DA_ViewSpec {
+class TAMISC_API DA_TextViewSpec: public DA_ViewSpec {
   // data-array view spec for text-based display
 public:
   int		width;			// width of the column, in tabs (8 chars/tab)
@@ -919,7 +919,7 @@ public:
   TA_BASEFUNS(DA_TextViewSpec);
 };
 
-class DA_NetViewSpec: public DA_ViewSpec {
+class TAMISC_API DA_NetViewSpec: public DA_ViewSpec {
   // data-array view spec for netview based display
 public:
   int	label_index;	// index into the netview's label list
@@ -930,7 +930,7 @@ public:
   TA_BASEFUNS(DA_NetViewSpec);
 };
 
-class DA_GridViewSpec : public DA_ViewSpec {
+class TAMISC_API DA_GridViewSpec : public DA_ViewSpec {
   // information for display of a data array in a grid display
 public:
   enum DisplayStyle {
@@ -953,7 +953,7 @@ public:
   TA_BASEFUNS(DA_GridViewSpec);
 };
 
-class DT_GridViewSpec : public DT_ViewSpec {
+class TAMISC_API DT_GridViewSpec : public DT_ViewSpec {
   // information for display of a datatable in a grid display
 public:
   enum BlockFill {		// ways that grid blocks can be filled

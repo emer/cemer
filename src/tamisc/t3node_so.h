@@ -73,7 +73,7 @@ class SoUnits; // #IGNORE
 // yet **another** color class!! but SbColor is not very convenient or intuitive, so
 // we use this to facilitate api simplification
 
-class T3Color { // ##NO_INSTANCE ##NO_TOKENS
+class TAMISC_API T3Color { // ##NO_INSTANCE ##NO_TOKENS
 public:
 #ifdef __MAKETA__
   float 	r;
@@ -203,7 +203,7 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 
 
 */
-class T3Node: public SoSeparator {
+class TAMISC_API T3Node: public SoSeparator {
 // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
@@ -261,7 +261,7 @@ private:
   SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
 };
 
-class T3NodeLeaf: public T3Node {
+class TAMISC_API T3NodeLeaf: public T3Node {
 // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
@@ -284,7 +284,7 @@ protected:
 };
 
 
-class T3NodeParent: public T3Node {
+class TAMISC_API T3NodeParent: public T3Node {
 // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
@@ -311,7 +311,7 @@ private:
   SoSeparator*		childNodes_; // #IGNORE
 };
 
-class SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+class TAMISC_API SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -345,7 +345,7 @@ protected:
   void 		renderV(); // #IGNORE
 };
 /*obs
-class SoFrame: public SoSeparator { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+class TAMISC_API SoFrame: public SoSeparator { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 

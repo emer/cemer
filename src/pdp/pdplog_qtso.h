@@ -49,7 +49,7 @@ class iGraphLogView_Panel;
 //   LogView		//
 //////////////////////////
 
-class LogView : public T3DataViewPar {
+class PDP_API LogView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS parent class of all log views (Par is only for GraphLogView)
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
@@ -173,7 +173,7 @@ protected:
 
 };
 
-class LogViewAdapter: public taBaseAdapter { // ##IGNORE
+class PDP_API LogViewAdapter: public taBaseAdapter { // ##IGNORE
   Q_OBJECT
 public:
   LogViewAdapter(LogView* owner_): taBaseAdapter(owner_) {}
@@ -189,7 +189,7 @@ public slots:
     {if(owner) ((LogView*)owner)->viewWin_selectionChanged(sels);}
 };
 
-class GridLogViewBase : public LogView {
+class PDP_API GridLogViewBase : public LogView {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common subclass of TextLogView and GridLogView
 #ifndef __MAKETA__
 typedef LogView inherited;
@@ -231,7 +231,7 @@ protected:
   override void		Reset_impl();
 };
 
-class TextLogView : public GridLogViewBase {
+class PDP_API TextLogView : public GridLogViewBase {
   // #INSTANCE a textual view of the log data
 #ifndef __MAKETA__
 typedef GridLogViewBase inherited;
@@ -274,7 +274,7 @@ protected:
   void			UpdateFromBuffer_AddLine(int row, int buff_idx); // creates a data line
 };
 
-class NetLogView : public LogView {
+class PDP_API NetLogView : public LogView {
   // #INSTANCE displays log information in the network view window
 #ifndef __MAKETA__
 typedef LogView inherited;
@@ -308,7 +308,7 @@ protected:
   void		UpdateFromBuffer_impl();
 };
 
-class GridLogView : public LogView {
+class PDP_API GridLogView : public LogView {
   // #INSTANCE displays log information as colored grids
 #ifndef __MAKETA__
 typedef LogView inherited;
@@ -382,7 +382,7 @@ protected:
   override void		UpdateFromBuffer_impl();
 };
 
-class GridLogViewAdapter: public LogViewAdapter {
+class PDP_API GridLogViewAdapter: public LogViewAdapter {
   Q_OBJECT
 public:
   GridLogViewAdapter(GridLogView* owner_): LogViewAdapter(owner_) {}
@@ -391,7 +391,7 @@ public slots:
 };
 
 
-class GraphLogViewLabel : public ViewLabel {
+/*nnclass GraphLogViewLabel : public ViewLabel {
   // view labels for graph logs
 public:
   void		GetMasterViewer();
@@ -399,9 +399,9 @@ public:
   void	Initialize()	{ };
   void	Destroy()	{ };
   TA_BASEFUNS(GraphLogViewLabel);
-};
+};*/
 
-class GraphLogView : public LogView {
+class PDP_API GraphLogView : public LogView {
   // #INSTANCE View log data as a graph of lines
 #ifndef __MAKETA__
 typedef LogView inherited;
@@ -409,7 +409,7 @@ typedef LogView inherited;
 public:
   int			x_axis_index;	// index of index in array
 //  Graph*		graph;		// data/configuration portion of graph
-  ViewLabel_List	labels;		// misc labels in the graph view
+//  ViewLabel_List	labels;		// misc labels in the graph view
   MinMaxInt		actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
   ColorScaleSpec* 	colorspec; 	// The color spectrum for this display (for TRACE_COLOR or VALUE_COLOR line displays)
   bool			separate_graphs; // draw each group of lines sharing a Y axis using separate graphs
@@ -516,7 +516,7 @@ protected:
 //   iLogView_DataPanel //
 //////////////////////////
 
-class iLogView_Panel: public iViewPanelFrame {
+class PDP_API iLogView_Panel: public iViewPanelFrame {
   // abstract base for logview panels
 #ifndef __MAKETA__
 typedef iViewPanelFrame inherited;
@@ -604,7 +604,7 @@ private:
 // iGridLogViewBase_Panel//
 //////////////////////////
 
-class iGridLogViewBase_Panel: public iLogView_Panel {
+class PDP_API iGridLogViewBase_Panel: public iLogView_Panel {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iLogView_Panel inherited;
@@ -634,7 +634,7 @@ protected:
 // iTextLogView_Panel//
 //////////////////////////
 
-class iTextLogView_Panel: public iGridLogViewBase_Panel {
+class PDP_API iTextLogView_Panel: public iGridLogViewBase_Panel {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iGridLogViewBase_Panel inherited;
@@ -668,7 +668,7 @@ protected:
 // iNetLogView_Panel//
 //////////////////////////
 
-class iNetLogView_Panel: public iLogView_Panel {
+class PDP_API iNetLogView_Panel: public iLogView_Panel {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iLogView_Panel inherited;
@@ -697,7 +697,7 @@ protected:
 // iGridLogView_Panel//
 //////////////////////////
 
-class iGridLogView_Panel: public iLogView_Panel {
+class PDP_API iGridLogView_Panel: public iLogView_Panel {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iLogView_Panel inherited;
@@ -732,7 +732,7 @@ protected slots:
 // iGraphLogView_Panel//
 //////////////////////////
 
-class iGraphLogView_Panel: public iLogView_Panel {
+class PDP_API iGraphLogView_Panel: public iLogView_Panel {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iLogView_Panel inherited;

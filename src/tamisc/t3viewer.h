@@ -64,7 +64,7 @@ SoPtr_Of(T3Node);
 //   T3DataView_List	//
 //////////////////////////
 
-class T3DataView_List: public taList<T3DataView> { // ##NO_TOKENS
+class TAMISC_API T3DataView_List: public taList<T3DataView> { // ##NO_TOKENS
 #ifndef __MAKETA__
   typedef taList<T3DataView> inherited;
 #endif
@@ -95,7 +95,7 @@ private:
 
 */
 
-class T3DataView: public taDataView, public virtual ISelectable {
+class TAMISC_API T3DataView: public taDataView, public virtual ISelectable {
   // ##NO_TOKENS base class for 3d-based DataView objects
 #ifndef __MAKETA__
   typedef taDataView	inherited;
@@ -226,7 +226,7 @@ private:
 //   T3DataView_PtrList	//
 //////////////////////////
 
-class T3DataView_PtrList: public taPtrList<T3DataView> { // for selection lists, aux lists, etc.
+class TAMISC_API T3DataView_PtrList: public taPtrList<T3DataView> { // for selection lists, aux lists, etc.
 #ifndef __MAKETA__
 typedef taPtrList<T3DataView> inherited;
 #endif
@@ -244,7 +244,7 @@ protected:
 //   T3DataViewPar	//
 //////////////////////////
 
-class T3DataViewPar: public T3DataView { // T3DataView that has child T3DataView's
+class TAMISC_API T3DataViewPar: public T3DataView { // T3DataView that has child T3DataView's
 #ifndef __MAKETA__
 typedef T3DataView inherited;
 #endif
@@ -278,7 +278,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class T3DataViewRoot: public T3DataViewPar { // Root item for a viewwidget type
+class TAMISC_API T3DataViewRoot: public T3DataViewPar { // Root item for a viewwidget type
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
@@ -327,7 +327,7 @@ private:
 //   iSoSelectionEvent	//
 //////////////////////////
 
-class iSoSelectionEvent { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS note: this is not a Qt event
+class TAMISC_API iSoSelectionEvent { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS note: this is not a Qt event
 public:
   bool 			is_selected;
   const SoPath*		path;
@@ -346,7 +346,7 @@ public:
     SoSeparator* items -- the actual items get rendered
 
 */
-class iT3ViewspaceWidget: public QWidget { // widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
+class TAMISC_API iT3ViewspaceWidget: public QWidget { // widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
   Q_OBJECT
 #ifndef __MAKETA__
 typedef QWidget inherited;
@@ -413,7 +413,7 @@ private:
 //   iT3DataViewer	//
 //////////////////////////
 
-class iT3DataViewer : public iTabDataViewer {
+class TAMISC_API iT3DataViewer : public iTabDataViewer {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS outer widget that contains 3D data views
   Q_OBJECT
 friend class T3DataViewer;
@@ -466,7 +466,7 @@ private:
 //   T3DataViewer	//
 //////////////////////////
 
-class T3DataViewer : public DataViewer {
+class TAMISC_API T3DataViewer : public DataViewer {
   // top-level DataViewer object that contains 3D data views
 #ifndef __MAKETA__
   typedef DataViewer	inherited;

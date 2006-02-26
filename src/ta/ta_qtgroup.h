@@ -29,7 +29,7 @@
 // 	Edit Buttons	//
 //////////////////////////
 
-class gpiListEditButton : public taiEditButton {
+class TA_API gpiListEditButton : public taiEditButton {
 public:
   gpiListEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
@@ -37,7 +37,7 @@ public:
   // display the number of items in the list in the label
 };
 
-class gpiGroupEditButton : public taiEditButton {
+class TA_API gpiGroupEditButton : public taiEditButton {
 public:
   gpiGroupEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
@@ -46,7 +46,7 @@ public:
 };
 
 // this one sets the name of the sub group..
-class gpiSubEditButton : public taiEditButton {
+class TA_API gpiSubEditButton : public taiEditButton {
 public:
   String 	label;
   gpiSubEditButton(void* base, const char* nm,
@@ -55,7 +55,7 @@ public:
 };
 
 // link groups don't have the option to create or xfer
-class gpiLinkEditButton : public gpiGroupEditButton {
+class TA_API gpiLinkEditButton : public gpiGroupEditButton {
 public:
   gpiLinkEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
@@ -63,14 +63,14 @@ public:
 };
 
 // link lists don't have the option to create or xfer
-class gpiListLinkEditButton : public gpiListEditButton {
+class TA_API gpiListLinkEditButton : public gpiListEditButton {
 public:
   gpiListLinkEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void		GetMethMenus();	// exclude certain methods here..
 };
 
-class gpiArrayEditButton : public taiEditButton {
+class TA_API gpiArrayEditButton : public taiEditButton {
 public:
   gpiArrayEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
@@ -84,7 +84,7 @@ public:
 //     Element Menus 	//
 //////////////////////////
 
-class gpiListEls : public taiElBase {
+class TA_API gpiListEls : public taiElBase {
   // menu of elements in the list
   Q_OBJECT
 public:
@@ -112,7 +112,7 @@ protected:
   virtual void	GetMenu_impl(TABLPtr lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
-class gpiGroupEls : public gpiListEls {
+class TA_API gpiGroupEls : public gpiListEls {
   // menu of elements in the group
   Q_OBJECT
 public:
@@ -130,7 +130,7 @@ protected:
   override void		GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
-class gpiSubGroups : public taiElBase {
+class TA_API gpiSubGroups : public taiElBase {
   // menu of sub-groups within a group
   Q_OBJECT
 public:
@@ -159,7 +159,7 @@ protected:
 };
 
 // TypeHier provides the guts, we just replace the NULL default with "Group"
-class gpiElTypes : public taiTypeHier {
+class TA_API gpiElTypes : public taiTypeHier {
 public:
   TypeDef*	lst_typd;	// typedef of the list
 
@@ -172,7 +172,7 @@ public:
   override void		GetMenu(taiActions* menu, taiMenuAction* nact = NULL);
 };
 
-class gpiNewFuns : public taiData {
+class TA_API gpiNewFuns : public taiData {
   // functions to call during New
 public:
   static gpiNewFuns* 	CondNew(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
@@ -190,7 +190,7 @@ public:
 // 	 gpi Dialogs		//
 //////////////////////////////////
 
-class gpiListNew : public taiDataHost {
+class TA_API gpiListNew : public taiDataHost {
 public:
   // this is the function you actually call to create it..
   static TAPtr 	New(TABLPtr the_lst, int n_els = 1, TypeDef* td = NULL, QObject* parent = NULL);
@@ -217,7 +217,7 @@ protected:
   override void	GetValue();
 };
 
-class gpiGroupNew : public gpiListNew {
+class TA_API gpiGroupNew : public gpiListNew {
 public:
   // this is the function you actually call..
   static TAPtr 	New(TAGPtr the_gp, TAGPtr init_gp = NULL, int n_els=1,  TypeDef* td = NULL,
@@ -244,7 +244,7 @@ protected:
 // 	gpiList Edits       //
 ////////////////////////////////
 
-class gpiList_ElData {
+class TA_API gpiList_ElData {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
 public:
   TypeDef*	typ;
@@ -255,7 +255,7 @@ public:
   virtual ~gpiList_ElData();
 };
 
-class gpiList_ElDataList : public taPtrList<gpiList_ElData> {
+class TA_API gpiList_ElDataList : public taPtrList<gpiList_ElData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
   void	El_Done_(void* it)	{ delete (gpiList_ElData*)it; }
@@ -268,7 +268,7 @@ public:
 // 		gpiMultiEditDialog			//
 //////////////////////////////////////////////////////////
 
-class gpiMultiEditDataHost: public taiEditDataHost {
+class TA_API gpiMultiEditDataHost: public taiEditDataHost {
 public:
   QWidget*	multi; // outer container
     QScrollArea*	scrMulti;		// scrollbars for the multi items
@@ -300,7 +300,7 @@ protected:
 // 		gpiListDialog				//
 //////////////////////////////////////////////////////////
 
-class gpiListDataHost : public gpiMultiEditDataHost {
+class TA_API gpiListDataHost : public gpiMultiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   gpiList_ElDataList lst_data_el;	// list of data elements
@@ -334,7 +334,7 @@ protected:
 // 	taiGroup Edits      //
 ////////////////////////////////
 
-class gpiGroupDataHost : public gpiListDataHost {
+class TA_API gpiGroupDataHost : public gpiListDataHost {
 public:
   taiDataList	sub_data_el;	// list of data elements for sub groups
   QWidget*	subData;
@@ -363,7 +363,7 @@ protected:
 // 	gpiArray Edits		//
 //////////////////////////////////
 
-class gpiArrayEditDataHost : public taiEditDataHost {
+class TA_API gpiArrayEditDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   int		n_ary_membs;
@@ -388,7 +388,7 @@ protected:
 // 	SArgEditDataHost	//
 //////////////////////////////////
 
-class SArgEditDataHost : public gpiArrayEditDataHost {
+class TA_API SArgEditDataHost : public gpiArrayEditDataHost {
   // ##NO_INSTANCE
 public:
   bool 		ShowMember(MemberDef* md);
@@ -400,7 +400,7 @@ protected:
   override void		Constr_AryData();
 };
 
-class gpiSelectEditDataHost : public taiEditDataHost {
+class TA_API gpiSelectEditDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
   Q_OBJECT
 public:

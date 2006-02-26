@@ -1206,7 +1206,6 @@ void taiEditDataHost::Constr_Labels() {
 }
 
 void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl) {
-  QWidget* rep;
   String name;
   String desc;
   int cnt = 0;

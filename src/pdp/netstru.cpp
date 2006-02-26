@@ -6341,6 +6341,7 @@ void LayerReader::Copy_(const LayerReader& cp) {
 }
 
 bool LayerReader::DoProduceData() {
+  return false;
   //TODO
 }
 

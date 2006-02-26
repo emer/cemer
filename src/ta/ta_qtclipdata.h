@@ -180,7 +180,7 @@ class taiMimeItem_List;
 // 	taiClipData		//
 //////////////////////////////////
 
-class taiClipData: public Q3DragObject {
+class TA_API taiClipData: public Q3DragObject {
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
@@ -251,7 +251,7 @@ private:
 // 	taiSingleClipData	//
 //////////////////////////////////
 
-class taiSingleClipData: public taiClipData { // ClipData for a single object -- simplest, most common case
+class TA_API taiSingleClipData: public taiClipData { // ClipData for a single object -- simplest, most common case
 public:
   int			count() const {return 1;} // override
   bool			is_multi() const {return false;} // override
@@ -272,7 +272,7 @@ protected:
 //////////////////////////////////
 
 
-class taiMultiClipData: public taiClipData { // ClipData for multi selection of objects
+class TA_API taiMultiClipData: public taiClipData { // ClipData for multi selection of objects
   Q_OBJECT
 public:
   int			count() const; // override
@@ -294,7 +294,7 @@ protected:
 // 	taiMimeItem		//
 //////////////////////////////////
 
-class taiMimeItem: public QObject { // we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)
+class TA_API taiMimeItem: public QObject { // we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)
   Q_OBJECT
 friend class taiMimeSource;
 friend class taiSingleClipData;
@@ -322,12 +322,12 @@ protected:
 };
 
 
-class taiMimeItem_List: public taPtrList<taiMimeItem> {
+class TA_API taiMimeItem_List: public taPtrList<taiMimeItem> {
 public:
   void			El_Done_(void*);	// override, when "done" (delete)
 };
 
-class tabSndMimeItem: public taiMimeItem { // specialized for taBase sending
+class TA_API tabSndMimeItem: public taiMimeItem { // specialized for taBase sending
 friend class taiMimeItem;
 public:
   void*			obj() const {return mobj;}
@@ -346,7 +346,7 @@ protected:
 };
 
 
-class taiRcvMimeItem: public taiMimeItem { // specialized for tacss receiving
+class TA_API taiRcvMimeItem: public taiMimeItem { // specialized for tacss receiving
 friend class taiExtMimeSource;
 public:
   void*			obj() const; // override -- NOTE: only called by taiExtMimeSource if we are InProcess
@@ -379,7 +379,7 @@ protected:
     xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
 
 */
-class taiMimeSource: public QMimeSource { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
+class TA_API taiMimeSource: public QMimeSource { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
 public:
   static taiMimeSource*	New(const QMimeSource* ms); // we use a static method for extensibility -- creates correct subtype
   static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
@@ -430,7 +430,7 @@ protected:
   taiMimeSource(const QMimeSource* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
 
-class taiIntMimeSource: public taiMimeSource { // a taiMimeSource that wraps our own in-process taiClipData
+class TA_API taiIntMimeSource: public taiMimeSource { // a taiMimeSource that wraps our own in-process taiClipData
 friend class taiMimeSource;
 public:
   int			src_action() const {return cd->src_edit_action;} // override
@@ -448,7 +448,7 @@ protected:
   taiIntMimeSource(taiClipData* cd); // creates an instance from a cd
 };
 
-class taiExtMimeSource: public taiMimeSource { // a taiMime that wraps data from the clipboard etc.
+class TA_API taiExtMimeSource: public taiMimeSource { // a taiMime that wraps data from the clipboard etc.
 friend class taiMimeSource;
 public:
   int			src_action() const {return msrc_action;} // override

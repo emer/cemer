@@ -15,8 +15,8 @@
 
 
 
-#ifndef bp_h
-#define bp_h
+#ifndef bp_v3_h
+#define bp_v3_h
 
 #include "pdpbase.h"
 #include "netstru.h"

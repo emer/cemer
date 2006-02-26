@@ -28,7 +28,7 @@
 class taiAction;
 #endif
 
-class cssProgSpace;		// #NO_INSTANCE
+class cssProgSpace;		// #IGNORE
 
 class TA_API ScriptBase {
   // class for adding a script to other objects

@@ -44,7 +44,7 @@ class PDPLog; //
 //   LogView_PtrList	//
 //////////////////////////
 
-class LogView_PtrList : public taPtrList<LogView> { // link list of associated logviews
+class PDP_API LogView_PtrList : public taPtrList<LogView> { // link list of associated logviews
 #ifndef __MAKETA__
 typedef taPtrList<LogView> inherited;
 #endif
@@ -73,7 +73,7 @@ public:
   virt_lines		log_lines		#lines
 */
 
-class PDPLog : public taNBase {
+class PDP_API PDPLog : public taNBase {
   // ##EXT_log Records data from processes, displaying and saving it
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -192,7 +192,7 @@ protected:
 BaseGroup_of(PDPLog);
 
 // note: PDPLog_MGroup name is for compatiblity with v3.2 files
-class PDPLog_MGroup : public taGroup<PDPLog> {
+class PDP_API PDPLog_MGroup : public taGroup<PDPLog> {
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -205,7 +205,7 @@ public:
   TA_BASEFUNS(PDPLog_MGroup);
 };
 
-class TextLog : public PDPLog {
+class PDP_API TextLog : public PDPLog {
   // log with textview as a default display
 public:
 #ifdef TA_GUI
@@ -217,7 +217,7 @@ public:
   TA_BASEFUNS(TextLog);
 };
 
-class GridLog : public TextLog {
+class PDP_API GridLog : public TextLog {
   // log with grid as a default display
 public:
 #ifdef TA_GUI
@@ -229,7 +229,7 @@ public:
   TA_BASEFUNS(GridLog);
 };
 
-class NetLog: public TextLog {
+class PDP_API NetLog: public TextLog {
   // log with netlog as a default display
 public:
   virtual void	SetNetwork(Network* net);
@@ -244,7 +244,7 @@ public:
   TA_BASEFUNS(NetLog);
 };
 
-class GraphLog : public PDPLog {
+class PDP_API GraphLog : public PDPLog {
   // log with graph as a default display
 public:
 #ifdef TA_GUI

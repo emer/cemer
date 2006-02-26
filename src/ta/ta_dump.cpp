@@ -411,6 +411,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void*, int indent) {
     }
   }
   strm << ";\n";
+  return true;
 }
 
 

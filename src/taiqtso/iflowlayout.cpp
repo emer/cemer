@@ -188,7 +188,7 @@ void iFlowLayout::setGeometry( const QRect &r )
 
 int spaceUsed(QLayoutItemList& line_it) {
   int rval = 0;
-  for (uint i = 0; i < line_it.count(); ++i) {
+  for (int i = 0; i < line_it.count(); ++i) {
     QLayoutItem* o = line_it.at(i);
     rval += o->sizeHint().width();
   }
@@ -221,7 +221,7 @@ void iFlowLayout::layoutLine(const QRect& r, QLayoutItemList& line_it) {
     x += (r.width() - (used + ((num - 1) * spc))) / 2;
   } // else assume Left
 
-  for (uint i = 0; i < line_it.count(); ++i) {
+  for (int i = 0; i < line_it.count(); ++i) {
     QLayoutItem* o = line_it.at(i);
     o->setGeometry( QRect( QPoint(x, y ), o->sizeHint() ) );
     x = x + o->sizeHint().width() + spc;

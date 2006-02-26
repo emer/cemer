@@ -497,11 +497,11 @@ taiIncrField::taiIncrField(TypeDef* typ_, taiDataHost* host_, taiData* par,
   iSpinBox* rep = this->rep();
   rep->setFixedHeight(taiM->text_height(defSize()));
 
-  rep->setMaximum(0x7FFFFFFF);
+  rep->setMaximum(INT_MAX);
   if (HasFlag(flgPosOnly))
     rep->setMinimum(0);
   else
-    rep->setMinimum(-0x80000000); // TODO: use proper minint from limits.h
+    rep->setMinimum(INT_MIN); // TODO: use proper minint from limits.h
   if (readOnly()) {
     rep->setReadOnly(true);
   } else {
@@ -1193,13 +1193,14 @@ taiAction* taiAction_List::PeekNonSep() {
 taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 {
-  taiActions* rval = NULL;
+  taiActions* rval = NULL; //note: switch handles all actual cases, NULL=compiler food
   switch (rt) {
   case popupmenu: 
-    return new taiMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
+    rval = new taiMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
   case buttonmenu: 
-    return new taiButtonMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
+    rval = new taiButtonMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
   }
+  return rval;
 }
 
 taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, 
@@ -1276,7 +1277,6 @@ taiAction* taiActions::AddItem(const String& val, SelType st,
       return rval;
     }
   }
-  int rgrp;
   rval = new taiAction(st, val);
   rval->usr_data = usr;
   AddAction(rval);

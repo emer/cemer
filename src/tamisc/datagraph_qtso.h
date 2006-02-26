@@ -48,7 +48,7 @@ class iGraphButtons; // #IGNORE
  */
 
 
-class AxisView : public T3DataView { // an axis on a graph -- note: mdata is the AxisSpec
+class TAMISC_API AxisView : public T3DataView { // an axis on a graph -- note: mdata is the AxisSpec
 #ifndef __MAKETA__
 typedef T3DataView inherited;
 #endif
@@ -103,7 +103,7 @@ private:
   void			Destroy();
 };
 
-class GraphLine: public T3DataView { // a line on a graph -- mdata is the colspec -- lines are deleted if any of their AxisView refs get deleted
+class TAMISC_API GraphLine: public T3DataView { // a line on a graph -- mdata is the colspec -- lines are deleted if any of their AxisView refs get deleted
 #ifndef __MAKETA__
 typedef T3DataView inherited;
 #endif
@@ -188,7 +188,7 @@ private:
   void			Destroy();
 };
 
-/*nn class GraphViewer : public GlyphViewer {
+/*nn class TAMISC_API GraphViewer : public GlyphViewer {
 protected:
   void rate_zoom();
   void grab_scroll();
@@ -206,7 +206,7 @@ public:
   ~GraphViewer();
 }; */
 
-class GraphView : public T3DataViewPar {
+class TAMISC_API GraphView : public T3DataViewPar {
   // represents one entire graph object, including axes and lines -- mdata is the graphlet list
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
@@ -252,7 +252,7 @@ private:
   void			Destroy();
 };
 
-class GraphViews : public T3DataViewPar {
+class TAMISC_API GraphViews : public T3DataViewPar {
   // container to hold one (single view) or more (multi view) graphs (.children contains GraphView objs)
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
@@ -296,7 +296,7 @@ private:
 
 class iAxisButton; // #IGNORE QPushbutton-derivitive defined in .cc file
 
-class iGraphButton : public QWidget {
+class TAMISC_API iGraphButton : public QWidget {
   // #NO_CSS #NO_INSTANCE the button is used as a gui for each column of data
 #ifndef __MAKETA__
 typedef QWidget inherited;
@@ -364,7 +364,7 @@ protected:
 
 class GraphButtonsDataView; // #IGNORE pvt class, taDataView
 
-class iGraphButtons: public QWidget {
+class TAMISC_API iGraphButtons: public QWidget {
   //  #NO_CSS #NO_INSTANCE container for iGraphButtons; provides header
 #ifndef __MAKETA__
 typedef QWidget inherited;

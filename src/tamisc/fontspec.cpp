@@ -17,14 +17,10 @@
 
 #include "fontspec.h"
 #include "ta_qt.h"
-#include "ta_css.h" // for label viewer and master lookup
-
-#include "ifont.h"
 
 #include <qfontdialog.h>
 
 void FontSpec::Initialize() {
-  text_g = NULL;
 }
 
 void FontSpec::InitLinks() {
@@ -43,7 +39,6 @@ void FontSpec::InitLinks() {
 }
 
 void FontSpec::CutLinks() {
-  text_g = NULL;
 /*obs  if(text_g != NULL) {
     ivResource::unref(text_g);
     text_g = NULL;
@@ -72,13 +67,6 @@ void FontSpec::SetFontSize(int sz) {
     pattern += szstr + "*";
   }
   UpdateAfterEdit(); */
-}
-
-void FontSpec::SetTextG(NoScale_Text_G* txg) {
-//obs  if(text_g != NULL)
-//obs    ivResource::unref(text_g);
-  text_g = txg;
-//obs  ivResource::ref(text_g);
 }
 
 void FontSpec::UpdateAfterEdit(){
@@ -142,9 +130,6 @@ void FontSpec::UpdateAfterEdit(){
     pattern = _nilString;
 #endif
   }
-/*TODO:  if(text_g != NULL) {
-    text_g->font(fnt);
-  } */
   inherited::UpdateAfterEdit();
 }
 
@@ -163,127 +148,4 @@ void FontSpec::Copy_(const FontSpec& cp) {
   pattern = cp.pattern;
   iFont::copy((iFont)cp);
 }
-
-
-//////////////////////////
-//	ViewLabel	//
-//////////////////////////
-
-void ViewLabel::Initialize() {
-  label_xform = NULL;
-  master = NULL;
-  viewer = NULL;
-  select_effect = NULL;
-  get_color = NULL;
-}
-
-void ViewLabel::Destroy() {
-  CutLinks();
-  master = NULL;
-  viewer = NULL;
-}
-
-void ViewLabel::Copy_(const ViewLabel& cp) {
-  spec = cp.spec;
-/*TODO  if(cp.label_xform != NULL) {
-    SetLabelXform((Xform*)cp.label_xform->Clone());
-  } */
-}
-
-void ViewLabel::UpdateAfterEdit(){
-  taNBase::UpdateAfterEdit();
-  if(!taMisc::gui_active) return;
-/*TODO  // we need to find something with a viewer and a GraphicMaster
-  GetMasterViewer();
-  UpdateView(); */
-}
-
-void ViewLabel::InitLinks(){
-  taNBase::InitLinks(); //TODO: huh??? spec says NOT to call inherited
-  taBase::Own(spec, this);
-  if (!taMisc::gui_active) return;
-}
-
-void ViewLabel::CutLinks() {
-  spec.CutLinks();
-//TODO  RemoveFromView();
-  taBase::DelPointer((TAPtr*)&label_xform);
-  taNBase::CutLinks();
-}
-/*TODO
-void ViewLabel::SetLabelXform(Xform* xf){
-  if(label_xform != NULL)
-    taBase::DelPointer((TAPtr*)&label_xform);
-  label_xform = xf;
-  taBase::Own(label_xform,this);
-}
-
-void ViewLabel::XFontSel(){
-  spec.XFontSel();
-}
-
-void ViewLabel::MakeText() {
-  GetMasterViewer();
-  if((master == NULL) || (viewer == NULL)) return;
-  if(spec.text_g == NULL) {
-    ivWidgetKit* wkit = ivWidgetKit::instance();
-    spec.SetTextG(new NoScale_Text_G(this,master,spec.fnt,wkit->foreground(),
-				     name,NULL));
-    spec.text_g->editable = true;
-    if(select_effect != NULL) spec.text_g->select_effect = select_effect;
-    if(get_color != NULL) spec.text_g->get_color = get_color;
-    if(label_xform != NULL) {
-      ivTransformer* tx = label_xform->transformer();
-      spec.text_g->transformer(tx);
-      ivResource::unref(tx);	// unref the self-ref from transform
-    }
-  }
-  AddToView();
-}
-
-void ViewLabel::AddToView() {
-  if(UpdateView()) return;
-  master->append_(spec.text_g);
-}
-
-bool ViewLabel::UpdateView() {
-  if((viewer == NULL) || (master == NULL) || (spec.text_g == NULL))  return false;
-  spec.text_g->select_effect = select_effect;
-  spec.text_g->text(name);
-  if(label_xform != NULL) {
-    ivTransformer* tx = label_xform->transformer();
-    spec.text_g->transformer(tx);
-    ivResource::unref(tx);	// unref the self-ref from transform
-  }
-  Graphic* vlg;
-  ivGlyphIndex j;
-  for(j=master->count_()-1; j>=0; j--) {
-    vlg = master->component_(j);
-    if((vlg->InheritsFrom(&TA_NoScale_Text_G)) && (((NoScale_Text_G*)vlg)->obj == this)) {
-      //	  master->modified_(j);
-      if(viewer->canvas() != NULL)
-	vlg->damage_me(viewer->canvas());
-      return true;
-    }
-  }
-  return false;
-}
-
-void ViewLabel::RemoveFromView() {
-  if((viewer == NULL) || (master == NULL))  return;
-  Graphic* vlg;
-  ivGlyphIndex j;
-  for(j=master->count_()-1; j>=0; j--) {
-    vlg = master->component_(j);
-    if((vlg->InheritsFrom(&TA_NoScale_Text_G)) && (((NoScale_Text_G*)vlg)->obj == this)) {
-      if(viewer->canvas() != NULL)
-	vlg->damage_me(viewer->canvas());
-      master->remove_(j);
-      return; // we've found and removed the label no need to keep searching
-    }
-  }
-}
-*/
-
-
 

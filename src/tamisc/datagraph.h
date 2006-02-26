@@ -81,7 +81,7 @@ class GraphSpec;
 */
 
 
-class GraphColSpec: public DA_ViewSpec {
+class TAMISC_API GraphColSpec: public DA_ViewSpec {
   // #BUTROWS_1 data-array view spec for graph-based display
 #ifndef __MAKETA__
 typedef DA_ViewSpec inherited;
@@ -183,7 +183,7 @@ public:
 };
 
 
-class AxisSpec: public taNBase { // #VIRT_BASE #NO_INSTANCE specs of the axis on a graph, name is cloned from primary col
+class TAMISC_API AxisSpec: public taNBase { // #VIRT_BASE #NO_INSTANCE specs of the axis on a graph, name is cloned from primary col
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif
@@ -234,7 +234,7 @@ private:
   void			Destroy();
 };
 
-class XAxisSpec: public AxisSpec { // specs of the X axis on a graph, name is cloned from primary col
+class TAMISC_API XAxisSpec: public AxisSpec { // specs of the X axis on a graph, name is cloned from primary col
 #ifndef __MAKETA__
 typedef AxisSpec inherited;
 #endif
@@ -257,7 +257,7 @@ private:
   void			Destroy() {}
 };
 
-class YAxisSpec: public AxisSpec { // specs of the Y axis on a graph, name is cloned from primary col
+class TAMISC_API YAxisSpec: public AxisSpec { // specs of the Y axis on a graph, name is cloned from primary col
 #ifndef __MAKETA__
 typedef AxisSpec inherited;
 #endif
@@ -278,7 +278,7 @@ private:
   void			Destroy() {}
 };
 
-class ZAxisSpec: public AxisSpec { // specs of the Z axis on a graph, name is cloned from primary col
+class TAMISC_API ZAxisSpec: public AxisSpec { // specs of the Z axis on a graph, name is cloned from primary col
 #ifndef __MAKETA__
 typedef AxisSpec inherited;
 #endif
@@ -299,7 +299,7 @@ private:
 };
 
 
-class YAxisSpec_List: public taList<YAxisSpec> {
+class TAMISC_API YAxisSpec_List: public taList<YAxisSpec> {
 #ifndef __MAKETA__
 typedef taList<AxisSpec> inherited;
 #endif
@@ -314,7 +314,7 @@ private:
 };
 
 
-class GraphletSpec: public YAxisSpec_List {
+class TAMISC_API GraphletSpec: public YAxisSpec_List {
   // link list of axes, plus additional per-graphlet info
 #ifndef __MAKETA__
 typedef YAxisSpec_List inherited;
@@ -328,7 +328,7 @@ private:
   void			Destroy() {}
 };
 
-class GraphletSpec_List: public taList<GraphletSpec> {
+class TAMISC_API GraphletSpec_List: public taList<GraphletSpec> {
 #ifndef __MAKETA__
 typedef taList<GraphletSpec> inherited;
 #endif
@@ -341,7 +341,7 @@ private:
 };
 
 
-class GraphSpec : public DT_ViewSpec {
+class TAMISC_API GraphSpec : public DT_ViewSpec {
   // controls display of datatable in a graph format
 #ifndef __MAKETA__
 typedef DT_ViewSpec inherited;
@@ -473,7 +473,7 @@ protected:
 };
 
 /*
-class Graph: public taNBase {
+class TAMISC_API Graph: public taNBase {
   // represents one entire graph object, including axes
 #ifndef __MAKETA__
 typedef taNBase inherited;

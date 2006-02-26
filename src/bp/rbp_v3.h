@@ -17,8 +17,8 @@
 
 // rbp.h
 
-#ifndef rbp_h
-#define rbp_h
+#ifndef rbp_v3_h
+#define rbp_v3_h
 
 #include "bp.h"
 #include "pdpshell.h"	// needed for Wizard

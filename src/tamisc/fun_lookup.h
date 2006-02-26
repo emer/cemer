@@ -21,7 +21,7 @@
 #include "datatable.h"
 #include "tamisc_TA_type.h"
 
-class FunLookup : public float_RArray {
+class TAMISC_API FunLookup : public float_RArray {
   // function lookup for non-computable functions and optimization
 public:
   MinMaxRange	x_range;	// range of the x axis
@@ -61,7 +61,7 @@ public:
   TA_BASEFUNS(FunLookup);
 };
 
-class Tokenizer {
+class TAMISC_API Tokenizer {
   // #IGNORE this is a basic class for parsing a stream of input into alpha/numeric categories. written by Dan Cer
 protected:
   istream  	*ifstrm;	// the input stream
@@ -88,7 +88,7 @@ public:
 };
 
 // the following was written by Dan Cer (modified by O'Reilly)
-class FunLookupND : public taNBase {
+class TAMISC_API FunLookupND : public taNBase {
   // #NO_UPDATE_AFTER n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
 public:
   int 		n_dims;		// number of dimensions

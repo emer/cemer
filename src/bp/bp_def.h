@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 
-#ifndef PDP_DEF_H
-#define PDP_DEF_H
+#ifndef BP_DEF_H
+#define BP_DEF_H
 
 #include "taglobal.h"
 
@@ -24,17 +24,17 @@
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// PDP_API functions as being imported from a DLL, whereas this DLL sees symbols
+// BP_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(PDP_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
-  #ifdef PDP_EXPORTS
-  #define PDP_API __declspec(dllexport)
+#if ((defined(BP_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
+  #ifdef BP_EXPORTS
+  #define BP_API __declspec(dllexport)
   #else
-  #define PDP_API __declspec(dllimport)
+  #define BP_API __declspec(dllimport)
   #endif
 #else 
-#define PDP_API
+#define BP_API
 #endif
 
 
-#endif // PDP_DEF_H
+#endif // BP_DEF_H

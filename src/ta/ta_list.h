@@ -149,7 +149,7 @@ typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in 
 //typedef uintptr_t taHashVal;
 typedef unsigned long taHashVal;
 
-class  taPtrList_impl { // ##NO_TOKENS implementation of the pointer list class
+class TA_API  taPtrList_impl { // ##NO_TOKENS implementation of the pointer list class
 protected:
 //  static String		 no_el_name;	// when the el has no name..
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs
@@ -356,7 +356,7 @@ public:
 };
 
 
-class  taFixedArray_impl {
+class TA_API  taFixedArray_impl {
   // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS basic subtype for FixedArray, no tokens of which are ever kept
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
@@ -438,7 +438,7 @@ protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
 template<class T> 
-class taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
+class TA_API taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -484,11 +484,11 @@ protected:
 };
 
 
-class int_FixedArray: public taFixedArray<int> { // #INLINE
+class TA_API int_FixedArray: public taFixedArray<int> { // #INLINE
   TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
 };
 
-class  taArray_impl {
+class TA_API  taArray_impl {
   // ##NO_TOKENS Base Type for Arrays, no tokens of which are ever kept
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
@@ -590,7 +590,7 @@ protected:
 };
 
 
-template<class T> class taPtrList : public taPtrList_impl { // #INSTANCE
+template<class T> class TA_API taPtrList : public taPtrList_impl { // #INSTANCE
 public:
   taPtrList()					{ };
   taPtrList(const taPtrList<T>& cp) 		{ Borrow(cp); }
@@ -698,7 +698,7 @@ public:
 
 
 #define taPtrList_of(T)						      \
-class T ## _List : public taPtrList<T> {				      \
+class TA_API T ## _List : public taPtrList<T> {				      \
 protected:								      \
   void	El_Done_(void* item)	{ delete (T*)item; }			      \
 public:                                                                       \
@@ -708,7 +708,7 @@ public:                                                                       \
 // the hash table is for use in looking up things in PtrList's by name
 // it contains hash codes and corresponding indicies for items in the list
 
-class  taHashEl {
+class TA_API  taHashEl {
   // ##NO_TOKENS holds information for one entry of the hash table
 public:
   taHashVal	hash_code;	// hash-coded value of name
@@ -719,7 +719,7 @@ public:
   taHashEl(taHashVal hash, int idx)	{ hash_code = hash; list_idx = idx; }
 };
 
-class  taHashBucket : public taPtrList<taHashEl> {
+class TA_API  taHashBucket : public taPtrList<taHashEl> {
   // holds a set of hash table entries that all have the same hash_code modulo value
 protected:
   void	El_Done_(void* it)	{ delete (taHashEl*)it; }
@@ -738,7 +738,7 @@ public:
   ~taHashBucket()               { Reset(); }
 };
 
-class  taHashTable : public taPtrList<taHashBucket> {
+class TA_API  taHashTable : public taPtrList<taHashBucket> {
   // table has a number of buckets, each with some hash values
 protected:
   void	El_Done_(void* it)	{ delete (taHashBucket*)it; }
@@ -790,7 +790,7 @@ public:
 };
 
 
-template<class T> class taPtrList_base : public taPtrList_impl { // #INSTANCE
+template<class T> class TA_API taPtrList_base : public taPtrList_impl { // #INSTANCE
 public:
   taPtrList_base()					{ };
   taPtrList_base(const taPtrList_base<T>& cp) 		{ Duplicate(cp); };
@@ -884,11 +884,11 @@ public:
 
 #ifdef __MAKETA__
 template<class T> 
-class taPlainArray : public taArray_impl { // #INSTANCE
+class TA_API taPlainArray : public taArray_impl { // #INSTANCE
 #else
 //template<class T, class SC = DefaultStringConverter<T> > 
 template<class T> 
-class taPlainArray : public taArray_impl { // #INSTANCE
+class TA_API taPlainArray : public taArray_impl { // #INSTANCE
 #endif
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory

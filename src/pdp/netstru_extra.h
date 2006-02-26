@@ -24,7 +24,7 @@
 
 #include "netstru.h"
 
-class FullPrjnSpec : public ProjectionSpec {
+class PDP_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
 public:
   void 	Connect_impl(Projection* prjn);
@@ -36,7 +36,7 @@ public:
   TA_BASEFUNS(FullPrjnSpec);
 };
 
-class TessEl : public taOBase {
+class PDP_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a tesselation specification
 public:
   TwoDCoord	send_off;	// offset from current receiving unit
@@ -50,7 +50,7 @@ public:
   TA_BASEFUNS(TessEl);
 };
 
-class TessEl_List : public taList<TessEl> {
+class PDP_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of TessEl objects
 public:
   void	Initialize() 		{ };
@@ -58,7 +58,7 @@ public:
   TA_BASEFUNS(TessEl_List);
 };
 
-class TesselPrjnSpec : public ProjectionSpec {
+class PDP_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity
 public:
   enum LinkType {
@@ -116,7 +116,7 @@ public:
   TA_BASEFUNS(TesselPrjnSpec);
 };
 
-class OneToOnePrjnSpec : public ProjectionSpec {
+class PDP_API OneToOnePrjnSpec : public ProjectionSpec {
   // one-to-one connectivity (1st unit to 1st unit, etc)
 public:
   int	n_conns;		// number of connections to make (-1 for size of layer)
@@ -132,7 +132,7 @@ public:
   TA_BASEFUNS(OneToOnePrjnSpec);
 };
 
-class UniformRndPrjnSpec : public ProjectionSpec {
+class PDP_API UniformRndPrjnSpec : public ProjectionSpec {
   // Uniform random connectivity between layers
 public:
   float		p_con;		// overall probability of connection
@@ -153,7 +153,7 @@ public:
   TA_BASEFUNS(UniformRndPrjnSpec);
 };
 
-class PolarRndPrjnSpec : public ProjectionSpec {
+class PDP_API PolarRndPrjnSpec : public ProjectionSpec {
   // random connectivity defined as a function of distance and angle
 public:
   enum UnitDistType {	// how to compute the distance between two units
@@ -196,7 +196,7 @@ public:
   TA_BASEFUNS(PolarRndPrjnSpec);
 };
 
-class SymmetricPrjnSpec : public ProjectionSpec {
+class PDP_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
 public:
   void 	Connect_impl(Projection* prjn);
@@ -206,7 +206,7 @@ public:
   TA_BASEFUNS(SymmetricPrjnSpec);
 };
 
-class LinkPrjnConPtr : public taOBase {
+class PDP_API LinkPrjnConPtr : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER specifies a connection to link
 public:
   String	recv_layer;	// layer name receiving unit is in
@@ -225,7 +225,7 @@ public:
   TA_BASEFUNS(LinkPrjnConPtr);
 };
 
-class LinkPrjnConPtr_List : public taList<LinkPrjnConPtr> {
+class PDP_API LinkPrjnConPtr_List : public taList<LinkPrjnConPtr> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of LinkPrjnConPtr objects
 public:
   void	Initialize() 		{ };
@@ -233,7 +233,7 @@ public:
   TA_BASEFUNS(LinkPrjnConPtr_List);
 };
 
-class LinkPrjnSpec : public ProjectionSpec {
+class PDP_API LinkPrjnSpec : public ProjectionSpec {
   // links an arbitrary set of wts, which must already be created!
 public:
   LinkPrjnConPtr_List	links;
@@ -252,7 +252,7 @@ public:
   TA_BASEFUNS(LinkPrjnSpec);
 };
 
-class ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
+class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
   // Script-controlled connectivity
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
@@ -278,7 +278,7 @@ public:
   TA_BASEFUNS(ScriptPrjnSpec);
 };
 
-class CustomPrjnSpec : public ProjectionSpec {
+class PDP_API CustomPrjnSpec : public ProjectionSpec {
   // connectivity is defined manually (i.e. unit-by-unit)
 public:
 
@@ -293,7 +293,7 @@ public:
 //	UnitGroup-based PrjnSpecs	//
 //////////////////////////////////////////
 
-class GpFullPrjnSpec : public FullPrjnSpec {
+class PDP_API GpFullPrjnSpec : public FullPrjnSpec {
   // unit_group based full connectivity with distinct con_groups for each unit group
 public:
   enum NConGroups {		// number of connection groups for this projection
@@ -316,7 +316,7 @@ public:
   TA_BASEFUNS(GpFullPrjnSpec);
 };
 
-class GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
+class PDP_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 public:
   void	Connect_impl(Projection* prjn);
@@ -326,7 +326,7 @@ public:
   TA_BASEFUNS(GpOneToOnePrjnSpec);
 };
 
-class RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
+class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
   // uniform random connectivity between one-to-one groups
 public:
   float		p_con;		// overall probability of connection
@@ -345,7 +345,7 @@ public:
   TA_BASEFUNS(RndGpOneToOnePrjnSpec);
 };
 
-class GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
+class PDP_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-many connectivity (one sending gp to all recv units)
 public:
   enum NConGroups {		// number of connection groups for this projection
@@ -369,7 +369,7 @@ public:
   TA_BASEFUNS(GpOneToManyPrjnSpec);
 };
 
-class GpTessEl : public taOBase {
+class PDP_API GpTessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a tesselation specification for groups
 public:
   TwoDCoord	send_gp_off;	// offset of group from current receiving group
@@ -383,7 +383,7 @@ public:
   TA_BASEFUNS(GpTessEl);
 };
 
-class GpTessEl_List : public taList<GpTessEl> {
+class PDP_API GpTessEl_List : public taList<GpTessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of GpTessEl objects
 public:
   void	Initialize() 		{ };
@@ -391,7 +391,7 @@ public:
   TA_BASEFUNS(GpTessEl_List);
 };
 
-class GpRndTesselPrjnSpec : public ProjectionSpec {
+class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
   // specifies patterns of groups to connect with, with random connectivity within each group
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
@@ -432,7 +432,7 @@ public:
   TA_BASEFUNS(GpRndTesselPrjnSpec);
 };
 
-class TiledRFPrjnSpec : public ProjectionSpec {
+class PDP_API TiledRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
 public:
   TwoDCoord	recv_gp_border;		// number of groups around edge of layer to not connect 
@@ -456,7 +456,7 @@ public:
   TA_BASEFUNS(TiledRFPrjnSpec);
 };
 
-class TiledGpRFPrjnSpec : public ProjectionSpec {
+class PDP_API TiledGpRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups
 public:
   TwoDCoord	send_gp_size;		// number of groups in the sending receptive field

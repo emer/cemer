@@ -126,6 +126,10 @@ public:
   bool		class_only;	// parse structs of type "class" only (not struct or union)
   bool		old_cfront;	// support old cfront member pointer initializer
   int		verbose;	// level of verbosity
+#ifdef TA_OS_WIN
+  bool		win_dll;	// if true, use the XXX_API macro for dll linkage
+  String	win_dll_str;	// when using win_dll, the macro to use, 
+#endif
   int		hash_size;	// hash_table size (default 2000)
 
   String	fname;		// file name
@@ -204,6 +208,44 @@ public:
 protected:
   void 		AddBuiltIn(TypeSpace& ts);
   void 		InitBuiltIn(); // do once
+public: // these used to be standalone functions
+//////////////////////////////////
+// 	Declarations		//
+//////////////////////////////////
+// (_TA_type.h _TA_inst.h files)
+
+ void TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm,
+				    const String_PArray& hv);
+ void TypeDef_Declare_Types(TypeDef* ths, ostream& strm);
+
+ void TypeSpace_Declare_Instances(TypeSpace* ths, ostream& strm,
+					const String_PArray& hv);
+ void TypeDef_Declare_Instances(TypeDef* ths, ostream& strm);
+
+//////////////////////////////////
+// 	  _TA.cc File		//
+//////////////////////////////////
+
+ void TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArray& hv,
+			       const String_PArray& ppfiles);
+//////////////////////////////////
+// 	TypeDef Constructors	//
+//////////////////////////////////
+// (part 1 of _TA.cc file)
+
+  void TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm);
+  void TypeDef_FixOpts(String_PArray& op);
+  void TypeDef_Generate_Types(TypeDef* ths, ostream& strm);
+
+
+//////////////////////////////////
+//   Type Instances & stubs	//
+//////////////////////////////////
+// (part 2 of _TA.cc file)
+
+  void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
+  void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
+
 };
 
 

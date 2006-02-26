@@ -17,7 +17,7 @@
 // maketa: Make TypeAccess Data Structures
 
 #include "maketa.h"
-#include "ta_constr.h"
+#include "mta_constr.h"
 #include "ta/ta_platform.h"
 #include "ta/ta_variant.h"
 #include <signal.h>
@@ -103,6 +103,9 @@ MTA::MTA() {
   class_only = true;
   old_cfront = false;
   verbose = 0;
+#ifdef TA_OS_WIN
+  win_dll = false;
+#endif
   hash_size = 2000;
 
   st_line = 0;
@@ -386,7 +389,7 @@ void mta_print_commandline_args(char* argv[]) {
       << "\n[-[-]help | -[-]?]     print this argument listing"
       << "\n[-w]                wait for input before starting (useful when attaching debugger in Windows)"
       << "\n[-v<level>]         verbosity level, 1-5, 1=results,2=more detail,3=trace,4=source,5=parse"
-      << "\n[-hx | -nohx]       generate .hx, .ccx files instead of .h, .cc (for cmp-based updating)"
+      << "\n[-hx | -nohx]       generate .hx, .ccx files instead of .h, .cpp (for cmp-based updating)"
       << "\n[-css]              generate CSS stub functions"
       << "\n[-instances]        generate instance tokens of types"
       << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
@@ -397,7 +400,8 @@ void mta_print_commandline_args(char* argv[]) {
       << "\n[-hash<size>]       size of hash tables (default 2000), use -v1 to see actual sizes"
       << "\n[-f <filename>]     read list of header files from given file"
       << "\n[-k]                keep temporary files (useful for debugging)"
-      << "\nproject             stub project name (generates project_TA[.cc|_type.h|_inst.h])"
+      << "\n[-win_dll[=STR]]    use macro for external linkage, default is XXX_API where XXX is proj name (win only)"
+      << "\nproject             stub project name (generates project_TA[.cpp|_type.h|_inst.h])"
       << "\nfiles...            the header files to be processed\n";
 }
 
@@ -467,9 +471,14 @@ int main(int argc, char* argv[])
       if(vl > 0)
 	mta->hash_size = vl;
     }
-    else if(tmp(0,2) == "-I")
+    else if(tmp(0,2) == "-I") {
+#ifdef TA_OS_WIN
+      // to avoid space issues, put filename in quotes, and use MSVC style
+      incs += String("/I \"") + tmp.from(2) + "\" ";
+#else
       incs += tmp + " ";
-    else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
+#endif
+    } else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
         i++; // get filename, put in quotes in case of spaces
         incs += String("/I \"") + (const char*)argv[i] + "\" ";
@@ -484,6 +493,12 @@ int main(int argc, char* argv[])
     } else if(tmp(0,5) == "-cpp=") {
       if (tmp.length() > 5)
         cpp = tmp.after(4);
+    } else if(tmp(0,8) == "-win_dll") {
+#ifdef TA_OS_WIN
+      mta->win_dll = true;
+      if(tmp(8,1) == "=")
+        mta->win_dll_str = tmp.after(9);
+#endif
     } else if(tmp(0,2) == "-f") {
       fstream fh(argv[i+1], ios::in);
       if(fh.bad() || fh.eof()) {
@@ -510,6 +525,12 @@ int main(int argc, char* argv[])
     }
   }
   
+#ifdef TA_OS_WIN
+  if (mta->win_dll) { // make sure macro value is set
+    if (mta->win_dll_str.empty())
+      mta->win_dll_str = upcase(mta->basename) + "_API";
+  }
+#endif
   if (wait) {
     cerr << "Press Enter key to start...";
     cin.get();
@@ -543,7 +564,7 @@ int main(int argc, char* argv[])
   mta->spc_target.name = mta->basename;
   mta->ta_type_h = mta->basename + "_TA_type.h";
   mta->ta_inst_h = mta->basename + "_TA_inst.h";
-  mta->ta_ccname = mta->basename + "_TA.cc";
+  mta->ta_ccname = mta->basename + "_TA.cpp";
 
 
   String comnd;
@@ -638,11 +659,11 @@ int main(int argc, char* argv[])
   out_inst_h.open((char*)mta->ta_inst_h, ios::out);
   outc.open((char*)mta->ta_ccname, ios::out);
 
-  TypeSpace_Declare_Types(&(mta->spc_target), out_type_h, mta->headv);
+  mta->TypeSpace_Declare_Types(&(mta->spc_target), out_type_h, mta->headv);
   out_type_h.close();  out_type_h.clear();
-  TypeSpace_Declare_Instances(&(mta->spc_target), out_inst_h, mta->headv);
+  mta->TypeSpace_Declare_Instances(&(mta->spc_target), out_inst_h, mta->headv);
   out_inst_h.close();  out_inst_h.clear();
-  TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
+  mta->TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
   outc.close();  outc.clear();
 
   /* update times...why do we have to do this?? */

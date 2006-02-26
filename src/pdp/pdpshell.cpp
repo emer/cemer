@@ -1613,7 +1613,7 @@ void TestObj2::UpdateAfterEdit() {
 void TestObj3::Initialize() {
   i = 1;
   s_own_tab = NULL;
-  f = 2.3;
+  f = 2.3f;
 }
 
 void TestObj3::InitLinks() {

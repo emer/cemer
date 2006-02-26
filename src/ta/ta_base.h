@@ -58,13 +58,6 @@ class taFiler;
 class taiMimeSource; //
 #endif
 
-/*#ifdef TA_GUI
-class iColor;
-class ivStyle;		// #IGNORE
-class iWindow;		// #IGNORE
-class taiDialog;	// #IGNORE
-#endif */
-
 // forwards
 class taBase;
 class taOBase;
@@ -73,7 +66,7 @@ class taNBase;
 class taBase_List;
 class taBase_PtrList;
 
-class tabMisc {
+class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
 public:
   static TAPtr		root;
@@ -131,7 +124,7 @@ public:
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
 // macro for creating smart ptrs of taBase classes
-#define taPtr_Of(T)  class T ## Ptr: public taPtr_impl { \
+#define taPtr_Of(T)  class TA_API T ## Ptr: public taPtr_impl { \
 public: \
   T* ptr() const {return (T*)m_ptr;} \
   operator T*() const {return (T*)m_ptr;} \
@@ -262,7 +255,7 @@ protected: \
 
 */
 
-class taBase {
+class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes
   // has auto instances for all taBases unless NO_INSTANCE
 friend class taDataView;
@@ -601,7 +594,7 @@ inline istream& operator>>(istream &strm, taBase &obj)
 inline ostream& operator<<(ostream &strm, taBase &obj)
 { obj.Save(strm); return strm; }
 
-class taPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts
+class TA_API taPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts
 public:
   taPtr_impl() {m_ptr = NULL;}
   ~taPtr_impl() {set(NULL);}
@@ -630,7 +623,7 @@ protected:
  * or to a combination.
 */
 
-class taBaseAdapter: public QObject {
+class TA_API taBaseAdapter: public QObject {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
 friend class taOBase;
 public:
@@ -642,7 +635,7 @@ protected:
 #endif // TA_GUI
 
 
-class taOBase : public taBase {
+class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 #ifndef __MAKETA__
 typedef taBase inherited;
@@ -688,7 +681,7 @@ protected:
   However, if a dataobject is destroying, it will destroy all its views
 
 */
-class taDataView: public taOBase, public virtual IDataLinkClient {
+class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
   // #NO_TOKENS  base class for views of an object
 #ifndef __MAKETA__
 typedef taOBase inherited_taBase;
@@ -763,7 +756,7 @@ private:
   TA_REF_BASEFUNS(x); \
   void* This() {return (void*)this;}
 
-class taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
+class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 #ifndef __MAKETA__
 typedef taOBase inherited;
 #endif
@@ -785,7 +778,7 @@ public:
 typedef taNBase* TANPtr; // this comment needed for maketa parser
 
 
-class taFBase: public taNBase {
+class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -804,7 +797,7 @@ public:
 
 
 
-class taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects, ex. in win_base.h
+class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects, ex. in win_base.h
 
 protected:
   taBase	par; // dummy item to enable parentage
@@ -834,7 +827,7 @@ typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for ma
 class taList_impl;
 typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 
-class taList_impl : public taOBase, public taPtrList_ta_base {
+class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
   // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER implementation for a taBase list class
 #ifndef __MAKETA__
 typedef taBase inherited_taBase;
@@ -979,7 +972,7 @@ protected:
 };
 
 template<class T> 
-class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
+class TA_API taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // get element at index
@@ -1045,7 +1038,7 @@ public:
 // use the following as a template instead..
 
 // define default base list to not keep tokens
-class taBase_List : public taList<taBase> {
+class TA_API taBase_List : public taList<taBase> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER list of objects
 public:
   void	Initialize() 		{ };
@@ -1054,7 +1047,7 @@ public:
 };
 
 
-class taArray_base : public taOBase, public taArray_impl {
+class TA_API taArray_base : public taOBase, public taArray_impl {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
 public:
   ostream& 	Output(ostream& strm, int indent = 0) const;
@@ -1086,7 +1079,7 @@ protected: \
   inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));}
 
 template<class T>
-class taArray : public taArray_base {
+class TA_API taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
@@ -1176,7 +1169,7 @@ protected:
 
 // use these as templates instead
 
-class int_Array : public taArray<int> {
+class TA_API int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
@@ -1207,7 +1200,7 @@ protected:
 };
 TA_ARRAY_OPS(int_Array)
 
-class float_Array : public taArray<float> {
+class TA_API float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
@@ -1228,7 +1221,7 @@ protected:
 };
 TA_ARRAY_OPS(float_Array)
 
-class double_Array : public taArray<double> {
+class TA_API double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
@@ -1249,7 +1242,7 @@ protected:
 };
 TA_ARRAY_OPS(double_Array)
 
-class String_Array : public taArray<String> {
+class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
@@ -1270,7 +1263,7 @@ protected:
 };
 TA_ARRAY_OPS(String_Array)
 
-class SArg_Array : public String_Array {
+class TA_API SArg_Array : public String_Array {
   // string argument array: has labels for each argument to make it easier in the interface
 public:
   String_Array	labels;		// labels for each argument
@@ -1288,7 +1281,7 @@ public:
 };
 
 typedef void* voidptr; // for maketa, which chokes on void* in a template
-class voidptr_Array : public taArray<voidptr> {
+class TA_API voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
@@ -1306,7 +1299,7 @@ protected:
 
 // define selectedit if no gui
 #ifdef TA_NO_GUI
-class SelectEdit {
+class TA_API SelectEdit {
   bool	do_nothing;
 };
 #endif // def TA_NO_GUI

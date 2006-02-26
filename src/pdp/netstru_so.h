@@ -56,7 +56,7 @@ class T3GridLogViewBaseNode;
       shape: SoCylinder (could be changed to something else)
 */
 
-class T3UnitNode: public T3NodeLeaf { //
+class PDP_API T3UnitNode: public T3NodeLeaf { //
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -79,7 +79,7 @@ protected:
 };
 
 /*TODO
-class T3UnitNode_Color: public T3UnitNode { // 2d color
+class PDP_API T3UnitNode_Color: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -106,7 +106,7 @@ private:
 }; */
 
 
-class T3UnitNode_Cylinder: public T3UnitNode { // 2d color
+class PDP_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Cylinder);
@@ -128,7 +128,7 @@ private:
   SoCylinder*		shape_; //#IGNORE
 };
 
-class T3UnitNode_Circle: public T3UnitNode { // 2d color
+class PDP_API T3UnitNode_Circle: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Circle);
@@ -149,7 +149,7 @@ private:
 };
 
 
-class T3UnitNode_Block: public T3UnitNode { // 2d color
+class PDP_API T3UnitNode_Block: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Block);
@@ -172,7 +172,7 @@ private:
   SoCube*		shape_; //#IGNORE
 };
 
-class T3UnitNode_Rect: public T3UnitNode { // 2d color
+class PDP_API T3UnitNode_Rect: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Rect);
@@ -197,7 +197,7 @@ private:
 //   T3UnitGroupNode	//
 //////////////////////////
 
-class T3UnitGroupNode: public T3NodeParent {
+class PDP_API T3UnitGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -237,7 +237,7 @@ private:
 //////////////////////////
 
 
-class T3LayerNode: public T3NodeParent {
+class PDP_API T3LayerNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -273,7 +273,7 @@ private:
 //   T3PrjnNode		//
 //////////////////////////
 
-class T3PrjnNode: public T3NodeParent {
+class PDP_API T3PrjnNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -300,7 +300,7 @@ private:
 
 
 
-class T3NetNode: public T3NodeParent {
+class PDP_API T3NetNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -339,7 +339,7 @@ private:
         canvas: SoSeparator
 */
 
-class T3LogViewNode: public T3NodeParent {
+class PDP_API T3LogViewNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -382,7 +382,7 @@ private:
           body: SoGroup
 */
 
-class T3GridLogViewBaseNode: public T3LogViewNode {
+class PDP_API T3GridLogViewBaseNode: public T3LogViewNode {
 #ifndef __MAKETA__
 typedef T3LogViewNode inherited;
 
@@ -416,7 +416,7 @@ protected:
           body: SoGroup
 */
 
-class T3GraphLogViewNode: public T3LogViewNode {
+class PDP_API T3GraphLogViewNode: public T3LogViewNode {
 #ifndef __MAKETA__
 typedef T3LogViewNode inherited;
 

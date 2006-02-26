@@ -35,7 +35,7 @@ class TypeDef;
 class TypeDefault;
 class taiEditDataHost;
 
-class taiType_List : public taPtrList<taiType> {
+class TA_API taiType_List : public taPtrList<taiType> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
   void	El_Done_(void* it)	{ delete (taiType*)it; }
@@ -49,7 +49,7 @@ public:
 //       taiTypes         //
 //////////////////////////////
 
-class taiIntType : public taiType {
+class TA_API taiIntType : public taiType {
 public:
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -62,7 +62,7 @@ public:
 
 
 
-class taiEnumType : public taiType {
+class TA_API taiEnumType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO iLineEdit w/ enum name
   int		BidForType(TypeDef* td);
@@ -76,7 +76,7 @@ protected:
   void		Initialize();
 };
 
-class taiBoolType : public taiType {
+class TA_API taiBoolType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO iCheckBox
   int		BidForType(TypeDef* td);
@@ -87,14 +87,14 @@ public:
   TAQT_TYPE_INSTANCE(taiBoolType, taiType);
 };
 
-class taiVariantType : public taiType { // TEMP: just use string values
+class TA_API taiVariantType : public taiType { // TEMP: just use string values
 public:
   int		BidForType(TypeDef* td);
 
   TAQT_TYPE_INSTANCE(taiVariantType, taiType);
 };
 
-class taiClassType : public taiType {
+class TA_API taiClassType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
   int		BidForType(TypeDef* td);
@@ -106,7 +106,7 @@ public:
   TAQT_TYPE_INSTANCE(taiClassType, taiType);
 };
 
-class taiStringType : public taiClassType { //note: inherits handlesReadOnly==true
+class TA_API taiStringType : public taiClassType { //note: inherits handlesReadOnly==true
 public:
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -115,7 +115,7 @@ public:
   TAQT_TYPE_INSTANCE(taiStringType, taiClassType);
 };
 
-class taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
+class TA_API taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -125,7 +125,7 @@ public:
   TAQT_TYPE_INSTANCE(taiMatrixGeomType, taiClassType);
 };
 
-class gpiListType : public taiClassType {
+class TA_API gpiListType : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -135,7 +135,7 @@ public:
   TAQT_TYPE_INSTANCE(gpiListType, taiClassType);
 };
 
-class gpiGroupType : public gpiListType {
+class TA_API gpiGroupType : public gpiListType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -145,7 +145,7 @@ public:
   TAQT_TYPE_INSTANCE(gpiGroupType, gpiListType);
 };
 
-class gpiArray_Type : public taiClassType {
+class TA_API gpiArray_Type : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -157,7 +157,7 @@ public:
 
 
 // TODO: does anything actually use this???
-class taiTokenPtrType : public taiType {
+class TA_API taiTokenPtrType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO EditButton
   int		BidForType(TypeDef* td);
@@ -168,7 +168,7 @@ public:
   TAQT_TYPE_INSTANCE(taiTokenPtrType, taiType);
 };
 
-class taiTypePtr : public taiType {
+class TA_API taiTypePtr : public taiType {
   // typedef pointer
 public:
   TypeDef*	orig_typ;
@@ -182,7 +182,7 @@ public:
   TAQT_TYPE_INSTANCE(taiTypePtr, taiType);
 };
 
-class taiFilePtrType : public taiType {// ptr to tai_getFiles
+class TA_API taiFilePtrType : public taiType {// ptr to tai_getFiles
 public:
    int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -197,7 +197,7 @@ public:
 //       taiEdits         //
 //////////////////////////////
 
-class taiDefaultEdit : public taiEdit {
+class TA_API taiDefaultEdit : public taiEdit {
 public:
   int	BidForEdit(TypeDef*) { return 0; }
   TAQT_EDIT_INSTANCE(taiDefaultEdit, taiEdit);
@@ -210,7 +210,7 @@ protected:
 // 	taiMember	//
 //////////////////////////
 
-class taiMember : public taiType {
+class TA_API taiMember : public taiType {
 public:
   MemberDef*	mbr;
 
@@ -277,7 +277,7 @@ TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 // these have BidforMember() functions which may depend on the opts
 // of a member
 /*
-class taiROMember : public taiMember {
+class TA_API taiROMember : public taiMember {
   // read-only member -- delegates to types that handle readOnly, otherwise defaults to readonly string
 public:
   override bool	handlesReadOnly() {return true;}
@@ -290,7 +290,7 @@ public:
 };
 
 */
-class taiTokenPtrMember : public taiMember {
+class TA_API taiTokenPtrMember : public taiMember {
   // for taBase pointer members (allows scoping by owner obj)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -302,7 +302,7 @@ public:
 };
 
 // Special edit menu for the TDefault's token member
-class taiDefaultToken : public taiTokenPtrMember {
+class TA_API taiDefaultToken : public taiTokenPtrMember {
 public:
   TypeDefault*	tpdflt;
 
@@ -315,7 +315,7 @@ public:
   TAQT_MEMBER_INSTANCE(taiDefaultToken, taiTokenPtrMember);
 };
 
-class taiSubTokenPtrMember : public taiMember {
+class TA_API taiSubTokenPtrMember : public taiMember {
   // a token ptr that points to sub-objects of current object
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -326,7 +326,7 @@ public:
   TAQT_MEMBER_INSTANCE(taiSubTokenPtrMember, taiMember);
 };
 
-class taiTypePtrMember : public taiMember {
+class TA_API taiTypePtrMember : public taiMember {
   // typedef ptrs that have member-comment directives
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -337,7 +337,7 @@ public:
   TAQT_MEMBER_INSTANCE(taiTypePtrMember, taiMember);
 };
 
-class taiMemberDefPtrMember : public taiMember {
+class TA_API taiMemberDefPtrMember : public taiMember {
   // pointer to a member-def
 public:
   TypeDef*	tmbr; // type for the member
@@ -349,7 +349,7 @@ public:
   TAQT_MEMBER_INSTANCE(taiMemberDefPtrMember, taiMember);
 };
 
-class taiFunPtrMember : public taiMember {
+class TA_API taiFunPtrMember : public taiMember {
   // pointer to a function
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -360,7 +360,7 @@ public:
   TAQT_MEMBER_INSTANCE(taiFunPtrMember, taiMember);
 };
 
-class taiCondEditMember : public taiMember {
+class TA_API taiCondEditMember : public taiMember {
   // conditional editing member
 public:
   taiMember*	ro_im;		// member for read-only (no editing)
@@ -383,7 +383,7 @@ protected:
 
 class TypeDefault;
 
-class taiTDefaultMember : public taiMember {
+class TA_API taiTDefaultMember : public taiMember {
 // special for the TypeDefault member (add the "active" box)
 public:
   TypeDefault*	tpdflt;
@@ -407,7 +407,7 @@ public:
 // the default method bids 0, so it doesn't get created, and is more of a virtual
 // type
 
-class taiMethod : public taiType {
+class TA_API taiMethod : public taiType {
 public:
   MethodDef*	meth;
 
@@ -451,7 +451,7 @@ TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 //       taiMethods        //
 //////////////////////////////
 
-class taiButtonMethod : public taiMethod {
+class TA_API taiButtonMethod : public taiMethod {
 public:
   int			BidForMethod(MethodDef* md, TypeDef* td);
 
@@ -460,7 +460,7 @@ protected:
   taiMethodData*	GetMethodRep_impl(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
-class taiMenuMethod : public taiMethod {
+class TA_API taiMenuMethod : public taiMethod {
   // covers MENU and MENU_BUTTON types
 public:
   int 			BidForMethod(MethodDef* md, TypeDef* td);
@@ -470,7 +470,7 @@ protected:
   taiMethodData*	GetMethodRep_impl(void* base, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
-/*class taiMenuButtonMethod : public taiMethod {
+/*class TA_API taiMenuButtonMethod : public taiMethod {
 public:
   int			BidForMethod(MethodDef* md, TypeDef* td);
 
@@ -484,7 +484,7 @@ protected:
 // 	taiArgType	//
 //////////////////////////
 
-class taiArgType : public taiType {
+class TA_API taiArgType : public taiType {
   // unlike taiTypes, these are created and destroyed each time
   // thus, they cache their values
 public:
@@ -536,7 +536,7 @@ TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 //       taiArgTypes	    //
 //////////////////////////////
 
-class taiStreamArgType : public taiArgType {
+class TA_API taiStreamArgType : public taiArgType {
   // for ios derived args (uses a file-requestor)
 public:
   taFiler*	gf;
@@ -555,7 +555,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(taiStreamArgType, taiArgType);
 };
 
-class taiBoolArgType : public taiArgType {
+class TA_API taiBoolArgType : public taiArgType {
   // for bool int types
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -564,7 +564,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(taiBoolArgType, taiArgType);
 };
 
-class taiTokenPtrArgType : public taiArgType {
+class TA_API taiTokenPtrArgType : public taiArgType {
   // for pointers to tokens (uses appropriate scoping)
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -578,7 +578,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(taiTokenPtrArgType, taiArgType);
 };
 
-class taiTypePtrArgType : public taiArgType {
+class TA_API taiTypePtrArgType : public taiArgType {
   // for typedef ptr types
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -592,7 +592,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(taiTypePtrArgType, taiArgType);
 };
 
-class taiMemberPtrArgType : public taiArgType {
+class TA_API taiMemberPtrArgType : public taiArgType {
   // for memberdef ptr types
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -606,7 +606,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(taiMemberPtrArgType, taiArgType);
 };
 
-class taiMethodPtrArgType : public taiArgType {
+class TA_API taiMethodPtrArgType : public taiArgType {
   // for methoddef ptr types
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -626,7 +626,7 @@ public:
 //////////////////////////////////////////////////////////
 /* All these are subsumed under EditButton's ability to handle read_only
 
-class taiROListMember: public taiROMember {
+class TA_API taiROListMember: public taiROMember {
 // allows one to view a listing of the members of a ReadOnly object that is a list or array
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -638,7 +638,7 @@ public:
 };
 
 
-class taiROGroupMember: public taiROMember {
+class TA_API taiROGroupMember: public taiROMember {
 // allows one to view a listing of the members of a ReadOnly object that is a Group or array
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -650,7 +650,7 @@ public:
 };
 
 
-class taiROArrayMember: public taiROMember {
+class TA_API taiROArrayMember: public taiROMember {
 // allows one to view a listing of the members of a ReadOnly object that is a array or array
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -662,7 +662,7 @@ public:
 };
 */
 
-class gpiDefaultEl : public taiMember {
+class TA_API gpiDefaultEl : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -672,7 +672,7 @@ public:
   TAQT_MEMBER_INSTANCE(gpiDefaultEl, taiMember);
 };
 
-class gpiLinkGP : public taiMember {
+class TA_API gpiLinkGP : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -682,7 +682,7 @@ public:
   TAQT_MEMBER_INSTANCE(gpiLinkGP, taiMember);
 };
 
-class gpiLinkList : public taiMember {
+class TA_API gpiLinkList : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -692,7 +692,7 @@ public:
   TAQT_MEMBER_INSTANCE(gpiLinkList, taiMember);
 };
 
-class gpiFromGpTokenPtrMember : public taiTokenPtrMember {
+class TA_API gpiFromGpTokenPtrMember : public taiTokenPtrMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -711,7 +711,7 @@ public:
 // 	 taiArgTypes:   Lists and Groups	//
 //////////////////////////////////////////////////
 
-class gpiTAPtrArgType : public taiTokenPtrArgType {
+class TA_API gpiTAPtrArgType : public taiTokenPtrArgType {
   // for taBase pointers in groups, sets the typedef to be the right one..
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -719,7 +719,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(gpiTAPtrArgType, taiTokenPtrArgType);
 };
 
-class gpiInObjArgType : public gpiTAPtrArgType {
+class TA_API gpiInObjArgType : public gpiTAPtrArgType {
   // for taBase pointers in groups with ARG_IN_OBJ
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -731,7 +731,7 @@ public:
   TAQT_ARGTYPE_INSTANCE(gpiInObjArgType, gpiTAPtrArgType);
 };
 
-class gpiFromGpArgType : public taiTokenPtrArgType {
+class TA_API gpiFromGpArgType : public taiTokenPtrArgType {
   // for taBase pointers with FROM_GROUP_xxx
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
@@ -750,7 +750,7 @@ public:
 // 		taiType: 	Array Edits		//
 //////////////////////////////////////////////////////////
 
-class gpiListEdit : public taiEdit {
+class TA_API gpiListEdit : public taiEdit {
 public:
   int		BidForEdit(TypeDef* td);
   TAQT_EDIT_INSTANCE(gpiListEdit, taiEdit);
@@ -758,7 +758,7 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class gpiGroupEdit : public gpiListEdit {
+class TA_API gpiGroupEdit : public gpiListEdit {
 public:
   int		BidForEdit(TypeDef* td);
   TAQT_EDIT_INSTANCE(gpiGroupEdit, gpiListEdit);
@@ -766,7 +766,7 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class gpiArrayEdit : public taiEdit {
+class TA_API gpiArrayEdit : public taiEdit {
 public:
   int		BidForEdit(TypeDef* td);
   TAQT_EDIT_INSTANCE(gpiArrayEdit, taiEdit);
@@ -775,7 +775,7 @@ protected:
 };
 
 
-class SArgEdit : public gpiArrayEdit {
+class TA_API SArgEdit : public gpiArrayEdit {
 public:
   int		BidForEdit(TypeDef* td);
   TAQT_EDIT_INSTANCE(SArgEdit, gpiArrayEdit);
@@ -783,7 +783,7 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class gpiSelectEdit : public taiEdit {
+class TA_API gpiSelectEdit : public taiEdit {
 public:
   int		BidForEdit(TypeDef* td);
   TAQT_EDIT_INSTANCE(gpiSelectEdit, taiEdit);
@@ -797,7 +797,7 @@ protected:
 //   Viewer Types 	//
 //////////////////////////
 
-class tabViewType: public taiViewType { // for taBase and descendants
+class TA_API tabViewType: public taiViewType { // for taBase and descendants
 #ifndef __MAKETA__
 typedef taiViewType inherited;
 #endif
@@ -813,7 +813,7 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class tabOViewType: public tabViewType { // for taOBase and descendants
+class TA_API tabOViewType: public tabViewType { // for taOBase and descendants
 #ifndef __MAKETA__
 typedef tabViewType inherited;
 #endif
@@ -827,7 +827,7 @@ protected:
   override taiDataLink*	CreateDataLink_impl(taBase* data_);
 };
 
-class tabListViewType: public tabOViewType { // for taList
+class TA_API tabListViewType: public tabOViewType { // for taList
 #ifndef __MAKETA__
 typedef tabOViewType inherited;
 #endif
@@ -841,7 +841,7 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class tabGroupViewType: public tabListViewType { // for taGroup
+class TA_API tabGroupViewType: public tabListViewType { // for taGroup
 #ifndef __MAKETA__
 typedef tabListViewType inherited;
 #endif

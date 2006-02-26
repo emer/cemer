@@ -98,7 +98,7 @@ class iListDataPanel; //
 //   taiDataLink	//
 //////////////////////////
 
-class DataLink_QObj: public QObject {
+class TA_API DataLink_QObj: public QObject {
 Q_OBJECT
 public:
   taiDataLink*	dl;
@@ -111,7 +111,7 @@ public:
     ever shown in the browser, which is really all that call helps
 */
 
-class taiDataLink: public taDataLink { // interface for viewing system
+class TA_API taiDataLink: public taDataLink { // interface for viewing system
 #ifndef __MAKETA__
   typedef taDataLink inherited;
 #endif
@@ -158,7 +158,7 @@ public: // DO NOT CALL
 //   tabDataLink	//
 //////////////////////////
 
-class tabDataLink: public taiDataLink { // DataLink for taBase objects
+class TA_API tabDataLink: public taiDataLink { // DataLink for taBase objects
 #ifndef __MAKETA__
 typedef taiDataLink inherited;
 #endif
@@ -198,7 +198,7 @@ protected:
 //   tabODataLink	//
 //////////////////////////
 
-class tabODataLink: public tabDataLink { // DataLink for taOBase objects
+class TA_API tabODataLink: public tabDataLink { // DataLink for taOBase objects
 #ifndef __MAKETA__
 typedef tabDataLink inherited;
 #endif
@@ -217,7 +217,7 @@ public:
 //   tabListDataLink	//
 //////////////////////////
 
-class tabListDataLink: public tabODataLink {
+class TA_API tabListDataLink: public tabODataLink {
   // DataLink for taList objects -- note that it also manages the ListView nodes
 #ifndef __MAKETA__
 typedef tabODataLink inherited;
@@ -244,7 +244,7 @@ public: // this section for all the delegated menu commands
 //   tabGroupDataLink	//
 //////////////////////////
 
-class tabGroupDataLink: public tabListDataLink {
+class TA_API tabGroupDataLink: public tabListDataLink {
   // DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups
 #ifndef __MAKETA__
 typedef tabListDataLink inherited;
@@ -265,7 +265,7 @@ public:
 //   iToolBar		//
 //////////////////////////
 
-class iToolBar: public QToolBar {
+class TA_API iToolBar: public QToolBar {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 friend class ToolBar;
 friend class iDataViewer;
@@ -290,9 +290,9 @@ private:
 
 #ifdef __MAKETA__
 typedef iToolBar* iToolBar_ptr;
-class iToolBar_List: public QList<iToolBar_ptr> {
+class TA_API iToolBar_List: public QList<iToolBar_ptr> {
 #else
-class iToolBar_List: public QList<iToolBar*> {
+class TA_API iToolBar_List: public QList<iToolBar*> {
 #endif
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
 friend class ToolBar;
@@ -323,7 +323,7 @@ protected:
  deleted or being removed from the viewing hierarchy.
 */
 
-class ISelectable: public virtual IDataLinkClient { //
+class TA_API ISelectable: public virtual IDataLinkClient { //
 public: // Interface Properties and Methods
   virtual MemberDef*	md() const = 0; // memberdef in parent, if any, of the selected item
   virtual taiDataLink*	par_link() const = 0; // parent item's (if any) link
@@ -367,7 +367,7 @@ protected:
 // Note: for inheritance hierarchies, only the first parent is searched, as that is
 // always the primary class in cases where there is multiple inheritance
 
-class ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
+class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
 #ifndef __MAKETA__
 typedef taPtrList<ISelectable> inherited;
 #endif
@@ -386,7 +386,7 @@ protected:
 //   DynMethodDesc	//
 //////////////////////////
 
-class DynMethodDesc { // #IGNORE
+class TA_API DynMethodDesc { // #IGNORE
 friend class DynMethod_PtrList;
 public:
   int			idx; // list index, used as param in the action callback routine
@@ -401,7 +401,7 @@ protected:
 //   DynMethod_PtrList	//
 //////////////////////////
 
-class DynMethod_PtrList: public taPtrList<DynMethodDesc> { // #IGNORE
+class TA_API DynMethod_PtrList: public taPtrList<DynMethodDesc> { // #IGNORE
 #ifndef __MAKETA__
 typedef taPtrList<DynMethodDesc> inherited;
 #endif
@@ -428,7 +428,7 @@ protected:
 
 // Interface exposed by the GUI widget hosting the dataview
 
-class IDataViewHost {
+class TA_API IDataViewHost {
 public:
   virtual QWidget*	This() = 0;
   virtual bool 		ObjectRemoving(ISelectable* item) = 0; // call from item when deleting or removing -- makes sure it is removed from sel lists, etc.
@@ -492,7 +492,7 @@ public:
     true (indicating the object must reconfigure the gui to match the sel list)
 
 */
-class iDataViewer: public QMainWindow, public IDataViewHost {
+class TA_API iDataViewer: public QMainWindow, public IDataViewHost {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
 #ifndef __MAKETA__
@@ -668,7 +668,7 @@ private:
 toolbars are not automatically created, so 'mapped' indicates whether
 user has opened that toolbar
 */
-class ToolBar: public taNBase {// ##NO_INSTANCE ##NO_TOKENS proxy for Toolbars
+class TA_API ToolBar: public taNBase {// ##NO_INSTANCE ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
 friend class iDataViewer;
 friend class DataViewer;
@@ -714,7 +714,7 @@ private:
 //   ToolBar_List	//
 //////////////////////////
 
-class ToolBar_List: public taList<ToolBar> {
+class TA_API ToolBar_List: public taList<ToolBar> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
 public:
   iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
@@ -734,7 +734,7 @@ private:
 //   WinGeometry	//
 //////////////////////////
 
-class WinGeometry : public taBase {
+class TA_API WinGeometry : public taBase {
   // ##NO_TOKENS #INLINE Window geometry (position, size) saved in 1.0f-relative coordinates
 public:
   static float	Offs(float cur, float by); // offset cur by 'by' amount (0 > by >= 1.0); wraps if >1
@@ -770,7 +770,7 @@ private:
 //   	DataViewer	//
 //////////////////////////
 
-class DataViewer : public taDataView {
+class TA_API DataViewer : public taDataView {
   // #NO_TOKENS #VIRT_BASE the base type for objects with a top-level window or panel and a menu
 #ifndef __MAKETA__
   typedef taDataView inherited;
@@ -893,7 +893,7 @@ private:
 //	DataViewer_List		//
 //////////////////////////////////
 
-class DataViewer_List: public taList<DataViewer> { // #NO_TOKENS
+class TA_API DataViewer_List: public taList<DataViewer> { // #NO_TOKENS
 public:
   TA_BASEFUNS(DataViewer_List)
 private:
@@ -907,7 +907,7 @@ private:
 //////////////////////////
 
 //Note: used by Browser and 3D Viewers
-class iTabDataViewer : public iDataViewer { // viewer window used for class browsing
+class TA_API iTabDataViewer : public iDataViewer { // viewer window used for class browsing
     Q_OBJECT
 INHERITED(iDataViewer)
 friend class iTabView;
@@ -956,7 +956,7 @@ private:
 // 	iTabBar 	//
 //////////////////////////
 
-class iTabBar: public QTabBar { // #IGNORE encapsulates the TabBar for iTabView
+class TA_API iTabBar: public QTabBar { // #IGNORE encapsulates the TabBar for iTabView
   Q_OBJECT
 public:
   iDataPanel*		panel(int idx); // gets the current panel, if any
@@ -984,7 +984,7 @@ protected:
 //   iDataPanel_PtrList	//
 //////////////////////////
 
-class iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   iDataPanel_PtrList() {}
   ~iDataPanel_PtrList() {}
@@ -996,7 +996,7 @@ public:
 //////////////////////////
 
 //NOTE: maybe should inherit from QDockWindow -- then it would be dockable...
-class iTabView: public QWidget {
+class TA_API iTabView: public QWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS  control for managing tabbed data pages
   Q_OBJECT
 friend class iTabBar;
@@ -1047,7 +1047,7 @@ private:
 //   iTabView_PtrList	//
 //////////////////////////
 
-class iTabView_PtrList: public taPtrList<iTabView> {
+class TA_API iTabView_PtrList: public taPtrList<iTabView> {
 public:
   void			DataPanelDestroying(iDataPanel* panel); // dispatch to all
   iTabView_PtrList() {}
@@ -1059,7 +1059,7 @@ public:
 //   iDataPanel 	//
 //////////////////////////
 
-class iDataPanel: public QFrame, public IDataLinkClient {
+class TA_API iDataPanel: public QFrame, public IDataLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels (note: don't inherit directly)
   Q_OBJECT
 friend class taDataLink;
@@ -1118,7 +1118,7 @@ protected:
 //   iDataPanelFrame 	//
 //////////////////////////
 
-class iDataPanelFrame: public iDataPanel {
+class TA_API iDataPanelFrame: public iDataPanel {
   // interface for panel frames
   Q_OBJECT
 #ifndef __MAKETA__
@@ -1152,7 +1152,7 @@ protected:
 //   iViewPanelFrame 	//
 //////////////////////////
 
-class iViewPanelFrame: public iDataPanel {
+class TA_API iViewPanelFrame: public iDataPanel {
   // frame for gui interface to a view element -- usually posted by the view, and locked
 #ifndef __MAKETA__
 typedef iDataPanel inherited;
@@ -1195,7 +1195,7 @@ protected:
 //NOTE: this class is only designed to handle a once-only adding of its subpanels; it cannot
 // handle dynamically adding and removing subpanels
 
-class iDataPanelSet: public iDataPanel { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
+class TA_API iDataPanelSet: public iDataPanel { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iDataPanel inherited;
@@ -1241,7 +1241,7 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-class iListViewItem: public Q3ListViewItem, public ISelectable {
+class TA_API iListViewItem: public Q3ListViewItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(Q3ListViewItem)
 public:
@@ -1317,7 +1317,7 @@ protected:
 //   taiListDataNode 	//
 //////////////////////////
 
-class taiListDataNode: public iListViewItem {
+class TA_API taiListDataNode: public iListViewItem {
 #ifndef __MAKETA__
 typedef iListViewItem inherited;
 #endif
@@ -1348,7 +1348,7 @@ public: // ISelectable interface
 //   iListDataPanel 	//
 //////////////////////////
 
-class iListDataPanel: public iDataPanelFrame {
+class TA_API iListDataPanel: public iDataPanelFrame {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iDataPanelFrame inherited;

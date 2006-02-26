@@ -32,7 +32,7 @@ class taMatrix;
 // note: taVariant is based in part on QVariant implementation in Qt
 // Variant is always 12 bytes long on both 32/64 platforms
 
-class Variant { // flexible value m_type that can hold many different types of content
+class TA_API Variant { // flexible value m_type that can hold many different types of content
 public:
 
   // note: VarType values must never change, they are used in persistence, add new ones only
@@ -144,7 +144,7 @@ public:
   bool 			eqChar(char val) const;
   bool			eqString(const String& val) const; // handles eqting of a string 
   bool			eqCString(const char* val) const
-    {eqString(String(val));}
+    {return eqString(String(val));}
   bool 			eqPtr(const void* val) const;
 #ifndef NO_TA_BASE
   bool			eqBase(const taBase* val) const {return eqPtr(val);} 

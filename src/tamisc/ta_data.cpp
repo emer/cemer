@@ -204,6 +204,7 @@ bool SequenceMaster::UpdateClient(int64_t& client_cycle, int64_t* diff) {
 /////////////////////////
 
 bool DirectoryCatalog::OpenData() {
+  return false;
  //TODO
 }
 

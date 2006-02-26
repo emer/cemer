@@ -44,7 +44,7 @@ class taiTypeHier; //
 // 	taiType 	//
 //////////////////////////
 
-class taiTypeBase {
+class TA_API taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
   static void		InitializeTypes();  // called at startup to initialize the type system
@@ -81,7 +81,7 @@ TypeDef*	GetTypeDef() const {return &TA_##x; }
 // 	taiType 	//
 //////////////////////////
 
-class taiType: public taiTypeBase {
+class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
 
@@ -136,7 +136,7 @@ taiTypeBase* 	TypInst(TypeDef* td)	 			\
   {return (taiTypeBase*) new x(td);}				\
 TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
-class taiViewType: public taiTypeBase {
+class TA_API taiViewType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS viewer services for the type
 #ifndef __MAKETA__
 typedef taiTypeBase inherited; // #IGNORE
@@ -171,7 +171,7 @@ private:
 
 // offloads lots of the work to the edit panel...
 
-class taiEdit : public taiType {
+class TA_API taiEdit : public taiType {
 public:
   taiEdit* 		sub_types() {return (taiEdit*)m_sub_types;}
   taiEdit** 		addr_sub_types() {return (taiEdit**)&m_sub_types;}

@@ -55,7 +55,7 @@ class APBpMaxDa_De;
 // backward passes: do Compute_Error, then Compute_Send_dEdNet, the Step_Back
 // and iterate..
 
-class RBpConSpec : public BpConSpec {
+class BP_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 public:
   inline void 		C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su);
@@ -67,7 +67,7 @@ public:
   TA_BASEFUNS(RBpConSpec);
 };
 
-class SymRBpConSpec : public RBpConSpec {
+class BP_API SymRBpConSpec : public RBpConSpec {
   // Recurrent Backprop Con Spec: option to maintain weight symmetry through simple averaging of two weight changes
 public:
   bool	sym_wt_updt;		// if true, use symmetric weight updates
@@ -82,7 +82,7 @@ public:
 };
 
 
-class RBpUnitSpec : public BpUnitSpec {
+class BP_API RBpUnitSpec : public BpUnitSpec {
   // Recurrent Backprop Unit Specification
 public:
   enum TimeAvgType {	// type of time-averaging to perform
@@ -124,7 +124,7 @@ public:
   TA_BASEFUNS(RBpUnitSpec);
 };
 
-class float_CircBuffer : public float_Array {
+class BP_API float_CircBuffer : public float_Array {
  // Circular buffer for holding state information
 public:
   int		st_idx;		// starting index
@@ -152,7 +152,7 @@ public:
 };
 
 
-class RBpUnit : public BpUnit {
+class BP_API RBpUnit : public BpUnit {
   // recurrent BP unit
 public:
   float		da;		// delta-activation (change in activation value)
@@ -220,7 +220,7 @@ inline void SymRBpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
   }
 }
 
-class RBpContextSpec : public RBpUnitSpec {
+class BP_API RBpContextSpec : public RBpUnitSpec {
   // RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!
 public:
   float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
@@ -258,7 +258,7 @@ public:
 //	Additional Unit Types		//
 //////////////////////////////////////////
 
-class NoisyRBpUnitSpec : public RBpUnitSpec {
+class BP_API NoisyRBpUnitSpec : public RBpUnitSpec {
   // RBp with noisy output signal (act plus noise)
 public:
   Random	noise;		// what kind of noise to add to activations
@@ -279,7 +279,7 @@ public:
 //	Bp Wizard		//
 //////////////////////////////////
 
-class BpWizard : public Wizard {
+class BP_API BpWizard : public Wizard {
   // backprop-specific wizard for automating construction of simulation objects
 public:
   virtual void	SRNContext(Network* net);

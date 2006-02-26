@@ -22,7 +22,7 @@
 #include "css_special_math.h"
 #include "tamisc_TA_type.h"
 
-class RndSeed : public taOBase {
+class TAMISC_API RndSeed : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER random seed support
 public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
@@ -44,7 +44,7 @@ public:
   TA_BASEFUNS(RndSeed);
 };
 
-class Random : public taBase {
+class TAMISC_API Random : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE Random Number Generation
 public:
   enum Type {
@@ -103,7 +103,7 @@ public:
   TA_BASEFUNS(Random); //
 };
 
-class TimeUsed : public taBase {
+class TAMISC_API TimeUsed : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER stores and computes time used for processing information
 public:
   bool		rec;		// flag that determines whether to record timing information: OFF by default

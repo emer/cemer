@@ -207,8 +207,7 @@ void PDPLog::DataViewRemoving(taDataView* dv) {
 } 
 */
 void PDPLog::RemoveAllUpdaters() {
-  int i;
-/*todo  for(i=0; i<log_proc.size; i++) {
+/*todo  for(int i=0; i<log_proc.size; i++) {
     ((SchedProcess*)log_proc.FastEl(i))->logs.RemoveLeaf(this);
   } */
   log_proc.RemoveAll();

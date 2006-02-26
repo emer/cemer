@@ -69,42 +69,42 @@ class TA_API TypeDef; //
 
 //NOTE: moved here from maketa.h to enable anything importing ta_type to assume these defs
 #ifndef __MAKETA__
-extern TypeDef TA_void;
-extern TypeDef TA_char;
-extern TypeDef TA_signed_char;
-extern TypeDef TA_unsigned_char;
-extern TypeDef TA_short;
-extern TypeDef TA_unsigned_short;
-extern TypeDef TA_int;
-extern TypeDef TA_unsigned_int;
-extern TypeDef TA_long;
-extern TypeDef TA_unsigned_long;
-extern TypeDef TA_unsigned;
-extern TypeDef TA_signed;
-extern TypeDef TA_float;
-extern TypeDef TA_double;
-extern TypeDef TA_int64_t;
-extern TypeDef TA_uint64_t;
-extern TypeDef TA_intptr_t;
-extern TypeDef TA_uintptr_t;
-extern TypeDef TA_bool;
-extern TypeDef TA_const;	// const is not formal...
-extern TypeDef TA_enum;		// par_formal
-extern TypeDef TA_struct;	// par_formal
-extern TypeDef TA_union;	// par_formal
-extern TypeDef TA_class;	// par_formal
-extern TypeDef TA_template;	// par_formal
-extern TypeDef TA_templ_inst;	// par_formal template instantiation
-extern TypeDef TA_ta_array;	// par_formal (indicates "arrayness")
-extern TypeDef TA_taBase;
-extern TypeDef TA_taRegFun;	// registered functions
-extern TypeDef TA_TypeDef;	// give these to the user...
-extern TypeDef TA_MemberDef;
-extern TypeDef TA_MethodDef;
-extern TypeDef TA_ta_Globals;
-extern TypeDef TA_taString;
-extern TypeDef TA_Variant;
-extern TypeDef TA_void_ptr;
+extern TA_API TypeDef TA_void;
+extern TA_API TypeDef TA_char;
+extern TA_API TypeDef TA_signed_char;
+extern TA_API TypeDef TA_unsigned_char;
+extern TA_API TypeDef TA_short;
+extern TA_API TypeDef TA_unsigned_short;
+extern TA_API TypeDef TA_int;
+extern TA_API TypeDef TA_unsigned_int;
+extern TA_API TypeDef TA_long;
+extern TA_API TypeDef TA_unsigned_long;
+extern TA_API TypeDef TA_unsigned;
+extern TA_API TypeDef TA_signed;
+extern TA_API TypeDef TA_float;
+extern TA_API TypeDef TA_double;
+extern TA_API TypeDef TA_int64_t;
+extern TA_API TypeDef TA_uint64_t;
+extern TA_API TypeDef TA_intptr_t;
+extern TA_API TypeDef TA_uintptr_t;
+extern TA_API TypeDef TA_bool;
+extern TA_API TypeDef TA_const;	// const is not formal...
+extern TA_API TypeDef TA_enum;		// par_formal
+extern TA_API TypeDef TA_struct;	// par_formal
+extern TA_API TypeDef TA_union;	// par_formal
+extern TA_API TypeDef TA_class;	// par_formal
+extern TA_API TypeDef TA_template;	// par_formal
+extern TA_API TypeDef TA_templ_inst;	// par_formal template instantiation
+extern TA_API TypeDef TA_ta_array;	// par_formal (indicates "arrayness")
+extern TA_API TypeDef TA_taBase;
+extern TA_API TypeDef TA_taRegFun;	// registered functions
+extern TA_API TypeDef TA_TypeDef;	// give these to the user...
+extern TA_API TypeDef TA_MemberDef;
+extern TA_API TypeDef TA_MethodDef;
+extern TA_API TypeDef TA_ta_Globals;
+extern TA_API TypeDef TA_taString;
+extern TA_API TypeDef TA_Variant;
+extern TA_API TypeDef TA_void_ptr;
 #endif
 
 // externals

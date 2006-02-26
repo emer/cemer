@@ -29,7 +29,7 @@ double nicenum(double x, bool round);
 class float_Matrix;
 
 
-class MinMax : public taBase {
+class TAMISC_API MinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values
 public:
   float		min;	// minimum value
@@ -97,7 +97,7 @@ public:
   TA_BASEFUNS(MinMax);
 };
 
-class MinMaxRange : public MinMax {
+class TAMISC_API MinMaxRange : public MinMax {
   // min-max values plus scale and range #INLINE
 public:
   float		range;		// #HIDDEN distance between min and max
@@ -119,7 +119,7 @@ public:
   TA_BASEFUNS(MinMaxRange);
 };
 
-class FixedMinMax : public taBase {
+class TAMISC_API FixedMinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values with toggles for usage
 public:
   bool		fix_min;	// use fixed minimum value?
@@ -141,7 +141,7 @@ public:
   TA_BASEFUNS(FixedMinMax);
 };
 
-class Modulo : public taOBase {
+class TAMISC_API Modulo : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE modulo for things that happen periodically
 public:
   bool	         flag;		// Modulo is active?
@@ -156,7 +156,7 @@ public:
   TA_BASEFUNS(Modulo);
 };
 
-class MinMaxInt : public taBase {
+class TAMISC_API MinMaxInt : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values
 public:
   int		min;	// minimum value

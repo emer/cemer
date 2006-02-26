@@ -84,7 +84,7 @@ public:
 // class     taiMethToggle;   // toggle representation of a method (does not call directly, but
 
 
-class taiCompData : public taiData {
+class TA_API taiCompData : public taiData {
   //  #NO_INSTANCE base class for composite data elements
 public:
 
@@ -110,7 +110,7 @@ private:
   QObjectList*	mwidgets; // list of child widgets
 };
 
-class taiField : public taiData {
+class TA_API taiField : public taiData {
   Q_OBJECT
 public:
   iLineEdit*		rep() const { return (iLineEdit*)m_rep; }
@@ -129,7 +129,7 @@ protected:
 };
 
 // this is for integers -- includes up and down arrow buttons
-class taiIncrField : public taiData { // increment/decrement field
+class TA_API taiIncrField : public taiData { // increment/decrement field
   Q_OBJECT
 public:
   iSpinBox*	rep() const { return (iSpinBox*)m_rep; }
@@ -149,7 +149,7 @@ protected:
 };
 
 
-class taiToggle : public taiData {
+class TA_API taiToggle : public taiData {
 public:
   iCheckBox*	rep() const { return (iCheckBox*)m_rep; }
 
@@ -161,7 +161,7 @@ public:
 };
 
 
-class taiPlusToggle : public taiCompData {
+class TA_API taiPlusToggle : public taiCompData {
 // a regular field plus a toggle..
   Q_OBJECT
 public:
@@ -187,7 +187,7 @@ protected:
 //     taiComboBox	//
 //////////////////////////
 
-class taiComboBox : public taiData {
+class TA_API taiComboBox : public taiData {
   Q_OBJECT
 public:
   iComboBox*	rep() const { return (iComboBox*)m_rep; }
@@ -215,7 +215,7 @@ private:
 //     taiBitBox	//
 //////////////////////////
 
-class iBitCheckBox: public iCheckBox { // #IGNORE specialized checkbox for the taiBitBox class
+class TA_API iBitCheckBox: public iCheckBox { // #IGNORE specialized checkbox for the taiBitBox class
   Q_OBJECT
 public:
   int		val;
@@ -232,7 +232,7 @@ signals:
 
 
 
-class taiBitBox : public taiData { // supports enums that are bit fields (TODO: maybe support int fields too)
+class TA_API taiBitBox : public taiData { // supports enums that are bit fields (TODO: maybe support int fields too)
   Q_OBJECT
 public:
   QFrame*	rep() const { return (QFrame*)m_rep; }
@@ -262,7 +262,7 @@ private:
   void		Initialize(QWidget* gui_parent_);
 };
 
-class taiDimEdit : public taiData { // specify number of dims and each dim value, ex. for Matrix dims
+class TA_API taiDimEdit : public taiData { // specify number of dims and each dim value, ex. for Matrix dims
 INHERITED(taiData)
   Q_OBJECT
 public:
@@ -290,7 +290,7 @@ private:
 // this class supports the use of hierarchical sub-data within a data item
 // its default behavior is to put everything in an hbox with labels
 
-class taiPolyData : public taiCompData {
+class TA_API taiPolyData : public taiCompData {
 public:
   QFrame*	rep() const { return (QFrame*)m_rep; } //note: actual class may be subclass of QFrame
   int		show;
@@ -312,7 +312,7 @@ protected:
 
 // contains sub-data's within a deck (aka Qt Stack) -- can toggle between them
 
-class taiDataDeck : public taiCompData {
+class TA_API taiDataDeck : public taiCompData {
 public:
   Q3WidgetStack*	rep() {return (Q3WidgetStack*)m_rep;}
   int		cur_deck; // current deck for operations
@@ -338,7 +338,7 @@ class taiMenu;
 class taiAction;
 
 #define taiMenuEl taiAction
-class taiAction: public QAction {
+class TA_API taiAction: public QAction {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu
   Q_OBJECT
 friend class taiActions;
@@ -398,7 +398,7 @@ private:
   void operator=(const taiAction&); 
 };
 
-class taiSubMenuEl: public taiAction { // an action used exclusively to hold a submenu
+class TA_API taiSubMenuEl: public taiAction { // an action used exclusively to hold a submenu
   Q_OBJECT
 friend class taiActions;
 public:
@@ -415,7 +415,7 @@ protected: // only allowed to be used internally when creating submenus
 
 };
 
-class taiAction_List : public taPtrList<taiAction> {
+class TA_API taiAction_List : public taPtrList<taiAction> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   int			count() {return size;} // for Qt-api compat
@@ -436,7 +436,7 @@ protected:
 //   taiActions		//
 //////////////////////////////////
 
-class taiActions : public taiData {
+class TA_API taiActions : public taiData {
   // #VIRT_BASE common subtype for menus and menubars
   Q_OBJECT
 friend class taiMenu_List; // hack because lists return refs to strings, not values
@@ -526,7 +526,7 @@ protected slots:
 // 	    taiMenu		//
 //////////////////////////////////
 
-class taiMenu : public taiActions {
+class TA_API taiMenu : public taiActions {
   // (possibly) hierarchical menu for selecting a single item
   Q_OBJECT
 #ifndef __MAKETA__
@@ -556,7 +556,7 @@ private:
 //  taiButtonMenu		//
 //////////////////////////////////
 
-class taiButtonMenu: public taiActions { // a button, in which the actions appear as a popup menu
+class TA_API taiButtonMenu: public taiActions { // a button, in which the actions appear as a popup menu
   Q_OBJECT
 #ifndef __MAKETA__
 typedef taiActions inherited;
@@ -575,7 +575,7 @@ private:
 // 	    taiMenuBar		//
 //////////////////////////////////
 
-class taiMenuBar : public taiActions {
+class TA_API taiMenuBar : public taiActions {
   // top level menu bar
   Q_OBJECT
 #ifndef __MAKETA__
@@ -596,7 +596,7 @@ protected:
   void 			ConstrBar(QWidget* gui_parent_, QMenuBar* exist_bar = NULL); // #IGNORE
 };
 
-class taiToolBar: public taiActions { // a toolbar, in which the actions appear as toolbuttons or button menus
+class TA_API taiToolBar: public taiActions { // a toolbar, in which the actions appear as toolbuttons or button menus
   Q_OBJECT
 #ifndef __MAKETA__
 typedef taiActions inherited;
@@ -616,7 +616,7 @@ protected:
 
 //NOTE: this class provided for winbase.h and others
 
-class taiMenu_List : public taPtrList<taiActions> {
+class TA_API taiMenu_List : public taPtrList<taiActions> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
   void	El_Done_(void* it)	{ if (own_items) delete (taiMenu*)it; }
@@ -683,7 +683,7 @@ class iAction_List: public QList<iAction*> {
 // 	taiEditButton		//
 //////////////////////////////////
 
-class taiEditButton : public taiButtonMenu {
+class TA_API taiEditButton : public taiButtonMenu {
   // actually an edit menu... -- flgReadOnly creates menu which only allows for #EDIT_READ_ONLY members
   Q_OBJECT
 public:
@@ -710,7 +710,7 @@ public slots:
 // 	taiObjChooser		//
 //////////////////////////////////
 
-class taiObjChooser: QDialog {
+class TA_API taiObjChooser: QDialog {
 // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 // select objects from a list, much like a file chooser.  can be tokens from typedef or items on a list
   Q_OBJECT
@@ -778,7 +778,7 @@ protected slots:
 // 	taiFileButton		//
 //////////////////////////////////
 
-class taiFileButton : public taiButtonMenu {
+class TA_API taiFileButton : public taiButtonMenu {
   Q_OBJECT
 public:
   bool			read_only;	// only reading streams is an option
@@ -812,7 +812,7 @@ protected:
 
 // base class for sundry taiData items that use a menu, and have a taBase-derived current item
 
-class taiElBase: public taiData {
+class TA_API taiElBase: public taiData {
 public:
   TAPtr		cur_obj;
 //  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
@@ -829,7 +829,7 @@ protected:
 // 	taiToken,Sub		//
 //////////////////////////////////
 
-class taiToken : public taiElBase {
+class TA_API taiToken : public taiElBase {
   // for making menus of tokens
   Q_OBJECT
 public:
@@ -854,7 +854,7 @@ protected slots:
   void ItemChosen(taiAction* menu_el); // when user chooses from menu
 };
 
-class taiSubToken : public taiElBase {
+class TA_API taiSubToken : public taiElBase {
   // Menu for sub tokens of a giventype
   Q_OBJECT
 public:
@@ -882,7 +882,7 @@ public slots:
 // 	taiMemberDef		//
 //////////////////////////////////
 
-class taiMemberDefMenu : public taiData {
+class TA_API taiMemberDefMenu : public taiData {
 // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
 public:
   MemberDef*	md;
@@ -908,7 +908,7 @@ protected:
 // 	taiMethodDef		//
 //////////////////////////////////
 
-class taiMethodDefMenu : public taiData {
+class TA_API taiMethodDefMenu : public taiData {
 // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
 public:
   MethodDef*	md;
@@ -936,7 +936,7 @@ public:
 // 	taiTypeHier		//
 //////////////////////////////////
 
-class taiTypeHier : public taiData {
+class TA_API taiTypeHier : public taiData {
 // for menus of type hierarchy
 public:
   taiActions* 	ta_actions;
@@ -972,7 +972,7 @@ protected:
 class cssClass;			// #IGNORE
 class cssiArgDialog;		// #IGNORE
 
-class taiMethodData : public taiData {
+class TA_API taiMethodData : public taiData {
   // all representations of member functions must inherit from this one
   Q_OBJECT
 public:
@@ -1006,7 +1006,7 @@ public slots:
 
 };
 
-class taiMethMenu : public taiMethodData {
+class TA_API taiMethMenu : public taiMethodData {
   // all representations of member functions must inherit from this one
   // NOTE: gui_parent is the parent of the Button, since the menu item is already parented in menu
 public:
@@ -1017,7 +1017,7 @@ public:
   QWidget*	GetRep()		{ return (QWidget*)buttonRep; }
 };
 
-class taiMethButton : public taiMethodData {
+class TA_API taiMethButton : public taiMethodData {
   // button representation of a method -- uses the QPushButton, and sets it as the Rep as well
 public:
   taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host, taiData* par,
@@ -1026,7 +1026,7 @@ public:
 };
 
 //TODO: double check proper base class (was taiMethMenu in IV)
-class taiMethToggle : public taiMethodData {
+class TA_API taiMethToggle : public taiMethodData {
   // toggle representation of a method (does not call directly, but checks flag)
   Q_OBJECT
 public:

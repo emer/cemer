@@ -92,7 +92,7 @@ protected:
 //   nvDataView		//
 //////////////////////////
 
-class nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
+class PDP_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
 #ifndef __MAKETA__
   typedef T3DataViewPar inherited;
 #endif
@@ -119,7 +119,7 @@ private:
 // UnitView objects are only created and associated with a T3Unit object
 // when the need arises (ex. user selects a T3Unit in the gui)
 
-class UnitView: public T3DataView {
+class PDP_API UnitView: public T3DataView {
 #ifndef __MAKETA__
   typedef T3DataView inherited;
 #endif
@@ -144,7 +144,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class UnitViewData { // #IGNORE dynamically maintained data for each unit so we don't need UnitViews
+class PDP_API UnitViewData { // #IGNORE dynamically maintained data for each unit so we don't need UnitViews
 public:
   void*		disp_base;	// #IGNORE base pointer used for display
   UnitViewData() {Initialize();}
@@ -159,7 +159,7 @@ private:
 inline bool operator ==(const UnitViewData& a, const UnitViewData& b)
   {return ((a.disp_base == b.disp_base));}
 
-class UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
+class PDP_API UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
 INHERITED(taPlainArray<UnitViewData>)
 public:
   UnitViewData&		FastEl(const TwoDCoord& c) {return el[(c.y * m_x) + c.x];}
@@ -180,7 +180,7 @@ protected:
 //
 // The Units font is here, so we don't replicate it in every Unit
 
-class UnitGroupView: public nvDataView {
+class PDP_API UnitGroupView: public nvDataView {
 #ifndef __MAKETA__
   typedef nvDataView inherited;
 #endif
@@ -217,7 +217,7 @@ private:
 //   LayerView	//
 //////////////////////////
 
-class LayerView: public nvDataView {
+class PDP_API LayerView: public nvDataView {
 #ifndef __MAKETA__
   typedef nvDataView inherited;
 #endif
@@ -246,7 +246,7 @@ private:
 //   PrjnView		//
 //////////////////////////
 
-class PrjnView: public nvDataView {
+class PDP_API PrjnView: public nvDataView {
 #ifndef __MAKETA__
   typedef nvDataView inherited;
 #endif
@@ -270,7 +270,7 @@ private:
 //   NetView		//
 //////////////////////////
 
-class NetViewAdapter: public taBaseAdapter {
+class PDP_API NetViewAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
   Q_OBJECT
 friend class NetView;
@@ -286,7 +286,7 @@ public slots:
  * of iteration
 */
 
-class NetView: public T3DataViewPar {
+class PDP_API NetView: public T3DataViewPar {
 #ifndef __MAKETA__
   typedef T3DataViewPar inherited;
 #endif
@@ -390,7 +390,7 @@ private:
 //   NetViewPanel 	//
 //////////////////////////
 
-class NetViewPanel: public iViewPanelFrame {
+class PDP_API NetViewPanel: public iViewPanelFrame {
   // frame for gui interface to a NetView -- usually posted by the netview
 #ifndef __MAKETA__
 typedef iViewPanelFrame inherited;

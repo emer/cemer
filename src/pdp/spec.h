@@ -33,7 +33,7 @@ class taiAction; //
 
 class BaseSpec;
 
-class BaseSpec_MGroup: public taBase_Group {
+class PDP_API BaseSpec_MGroup: public taBase_Group {
 #ifndef __MAKETA__
   typedef taBase_Group inherited;
 #endif
@@ -78,7 +78,7 @@ public:
 
 
 
-class BaseSpec : public taNBase {
+class PDP_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU base specification class
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -135,7 +135,7 @@ public:
   TA_BASEFUNS(BaseSpec);
 };
 
-class BaseSubSpec : public taNBase {
+class PDP_API BaseSubSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU specification class for sub-objects of specs
 public:
   unsigned long unique[MAX_SPEC_LONGS]; // #HIDDEN bits representing members unique
@@ -168,7 +168,7 @@ public:
   TA_BASEFUNS(BaseSubSpec);
 };
 
-class SpecPtr_impl : public taBase {
+class PDP_API SpecPtr_impl : public taBase {
   // ##INLINE ##NO_TOKENS ##NO_UPDATE_AFTER magic pointer to a spec
 public:
   TAPtr		owner;		// #NO_SAVE #READ_ONLY to get to proj..
@@ -194,7 +194,7 @@ public:
 };
 
 
-template<class T> class SpecPtr : public SpecPtr_impl {
+template<class T> class PDP_API SpecPtr : public SpecPtr_impl {
 public:
   T*		spec;		// the actual spec itself
 
@@ -254,7 +254,7 @@ public:
 
 
 #define SpecPtr_of(T)							      \
-class T ## _SPtr : public SpecPtr<T> {					      \
+class PDP_API T ## _SPtr : public SpecPtr<T> {					      \
 public:									      \
   void 	Initialize() 		{ };					      \
   void	Destroy()		{ };					      \

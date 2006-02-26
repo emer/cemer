@@ -164,6 +164,11 @@
 
 /* DLL building options under windows */
 // currently, we are putting taiqtso/ta/css/tamisc in one dll, so slave to TA
+// define flags as follows:
+// DLL	    USING	  BUILDING
+// ta	    TA_DLL	  TA_DLL,TA_EXPORTS
+// pdp	    PDP_DLL	  PDP_DLL,PDP_EXPORTS
+
 #ifdef TA_OS_WIN
 #ifdef TA_USE_INVENTOR
 #  define COIN_DLL
@@ -179,6 +184,18 @@
 #  define CSS_EXPORTS
 #  define TAMISC_EXPORTS
 #endif
+
+#ifdef PDP_DLL
+#  define BP_DLL
+#  define LEABRA_DLL
+//TODO: the other net types
+#endif
+#ifdef PDP_EXPORTS
+#  define BP_EXPORTS
+#  define LEABRA_EXPORTS
+//TODO: the other net types
+#endif
+
 #endif
 
 

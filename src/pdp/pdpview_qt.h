@@ -29,7 +29,7 @@
 //	PDPView:  view for pdp system		//
 //////////////////////////////////////////////////
 
-class PDPView : public DataViewer {
+class PDP_API PDPView : public DataViewer {
   // #NO_TOKENS pdp version of a win view
 public:
   void		AddNotify(TAPtr ud);

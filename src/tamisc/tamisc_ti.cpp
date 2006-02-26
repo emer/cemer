@@ -25,7 +25,7 @@
 #include "datagraph.h"
 #include "colorscale.h"
 #ifdef TA_GUI
-#include "fontspec.h"
+//#include "fontspec.h"
 #include "t3viewer.h"
 #include "datatable_qtso.h"
 #endif
@@ -57,8 +57,7 @@ template class taGroup<ColorScaleSpec>;
 template class taList<ScaleRange>;
 
 #ifdef TA_GUI
-template class taList<Xform>; // xform.h
-template class taList<ViewLabel>;//fontspec.h
+//template class taList<Xform>; // xform.h
 template class SoPtr<T3Node>; // in t3node_so.h
 template class taPtrList<T3DataView>; // in t3viewer.h
 template class taList<T3DataView>; // in t3viewer.h

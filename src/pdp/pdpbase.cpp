@@ -243,11 +243,11 @@ int pdpMisc::Main(int argc, char *argv[]) {
    cssiSession::WaitProc = pdpMisc::WaitProc;
 #endif
 
-#if ((!defined(DMEM_COMPILE)) && ((!defined(WINDOWS)) || (defined(CYGWIN)))) 
+#if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
 #endif
 
-#if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
   String pdp_dir = "C:/PDP++"; // default pdp home directory
 #else
   String pdp_dir = "/usr/local/pdp++"; // default pdp home directory
@@ -292,8 +292,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   }
 
   String vers = "-version";
-  int i;
-  for(i=1; i<=argc; i++) {
+  for (int i=1; i<=argc; i++) {
     //if(vers == static_cast<const char*>(argv[i])) {
     if(vers == argv[i]) {
 	root->Info();

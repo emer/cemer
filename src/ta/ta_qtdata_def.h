@@ -47,7 +47,7 @@ class QWidget;
 // 	taiMenuAction: wrapper for Qt callbacks		//
 //////////////////////////////////////////////////////////
 
-class taiMenuAction { // object that holds specs for receiver for Action(taiAction*) callback
+class TA_API taiMenuAction { // object that holds specs for receiver for Action(taiAction*) callback
 public:
   QObject* 	receiver;
   String	member;
@@ -61,7 +61,7 @@ public:
 };
 
 
-class IDataHost {
+class TA_API IDataHost {
 public:
   virtual void		Changed() {} // called by embedded item to indicate contents have changed
   virtual void*		This() = 0; // 'this' on the object, for reverse casting
@@ -77,7 +77,7 @@ public:
 
 // NOTE: see ta_qtviewer.h for clipboard handling details.
 
-class taiData: public QObject {
+class TA_API taiData: public QObject {
   // #INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
   Q_OBJECT
   friend class taiCompData; // for parenting
@@ -154,7 +154,7 @@ protected slots:
 //    taiDataList	//
 //////////////////////////
 
-class taiDataList : public taPtrList<taiData> {
+class TA_API taiDataList : public taPtrList<taiData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS taiData list, OBJECTS ARE DELETED ON REMOVAL
 protected:
 //  void*		El_Ref_(void* it)	{ taRefN::Ref((taiData*)it); return it; }

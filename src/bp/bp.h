@@ -18,6 +18,7 @@
 #ifndef bp_h
 #define bp_h
 
+#include "bp_def.h"
 #include "pdpbase.h"
 #include "netstru.h"
 #include "bp_TA_type.h"
@@ -30,7 +31,7 @@ class BpUnit;
 class BpUnitSpec;
 
 
-class BpCon : public Connection {
+class BP_API BpCon : public Connection {
   // Bp connection
 public:
   float 		dwt; 		// #NO_SAVE Change in weight
@@ -49,7 +50,7 @@ public:
 // every time a C_ version is overloaded, it is necessary to overload the B_
 // version, where the new B_ just calls the new C_
 
-class BpConSpec : public ConSpec {
+class BP_API BpConSpec : public ConSpec {
   // Bp connection specifications
 public:
   enum MomentumType {
@@ -111,15 +112,15 @@ public:
 // the following functions are possible weight decay functions
 
 // #REG_FUN
-void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+BP_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
 // #LIST_BpConSpec_WtDecay Simple weight decay (subtract decay*wt)
      ;				// term here so scanner picks up comment
 // #REG_FUN
-void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
 // #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
      ;				// term here so scanner picks up comment
 
-class BpCon_Group : public Con_Group {
+class BP_API BpCon_Group : public Con_Group {
   // group of Bp connections
 public:
   // these are "convenience" functions for those defined in the spec
@@ -135,7 +136,7 @@ public:
 
 class BpUnit;
 
-class BpUnitSpec : public UnitSpec {
+class BP_API BpUnitSpec : public UnitSpec {
   // specifications for Bp units
 public:
   SigmoidSpec	sig;		// sigmoid activation parameters
@@ -172,16 +173,16 @@ public:
 // the following functions are possible error functions.
 
 // #REG_FUN
-void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
+BP_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
 // #LIST_BpUnit_Error Squared error function for bp
      ;				// term here so scanner picks up comment
 // #REG_FUN
-void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
+BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
 // #LIST_BpUnit_Error Cross entropy error function for bp
      ;				// term here so scanner picks up comment
 
 
-class BpUnit : public Unit {
+class BP_API BpUnit : public Unit {
   // ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
 public:
   float 	err; 		// this is E, not dEdA
@@ -277,7 +278,7 @@ inline void BpConSpec::B_UpdateWeights(BpCon* cn, BpUnit* ru) {
 //	Additional ConSpec Types	//
 //////////////////////////////////////////
 
-class HebbBpConSpec : public BpConSpec {
+class BP_API HebbBpConSpec : public BpConSpec {
   // Simple Hebbian wt update (send act * recv act)
 public:
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
@@ -302,7 +303,7 @@ inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
   cn->dEdW +=  ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
 }
 
-class ErrScaleBpConSpec : public BpConSpec {
+class BP_API ErrScaleBpConSpec : public BpConSpec {
   // con spec that scales the error by given parameter
 public:
   float		err_scale;	// the scaling parameter
@@ -326,7 +327,7 @@ inline float ErrScaleBpConSpec::Compute_dEdA(BpCon_Group* cg, BpUnit* su) {
   return rval;
 }
 
-class DeltaBarDeltaBpCon : public BpCon {
+class BP_API DeltaBarDeltaBpCon : public BpCon {
   // delta-bar-delta connection object with local learning rate
 public:
   float 		lrate; 		// #NO_SAVE local learning rate
@@ -338,7 +339,7 @@ public:
   TA_BASEFUNS(DeltaBarDeltaBpCon);
 };
 
-class DeltaBarDeltaBpConSpec : public BpConSpec {
+class BP_API DeltaBarDeltaBpConSpec : public BpConSpec {
   // delta-bar-delta has local learning rates for each connection
 public:
   float		lrate_incr;	// rate of learning rate increase (additive)
@@ -434,7 +435,7 @@ inline void DeltaBarDeltaBpConSpec::B_UpdateWeights(BpCon* cn, BpUnit* ru) {
 //	Additional Unit Types		//
 //////////////////////////////////////////
 
-class BpContextSpec : public BpUnitSpec {
+class BP_API BpContextSpec : public BpUnitSpec {
   // for context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, must be AFTER that layer in .layers
 public:
   float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
@@ -470,7 +471,7 @@ public:
   TA_BASEFUNS(BpContextSpec);
 };
 
-class LinearBpUnitSpec : public BpUnitSpec {
+class BP_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
 public:
   void 		Compute_Act(Unit* u);
@@ -482,7 +483,7 @@ public:
   TA_BASEFUNS(LinearBpUnitSpec);
 };
 
-class ThreshLinBpUnitSpec : public BpUnitSpec {
+class BP_API ThreshLinBpUnitSpec : public BpUnitSpec {
   // thresholded linear unit in Bp
 public:
   float		threshold;
@@ -498,7 +499,7 @@ public:
   TA_BASEFUNS(ThreshLinBpUnitSpec);
 };
 
-class NoisyBpUnitSpec : public BpUnitSpec {
+class BP_API NoisyBpUnitSpec : public BpUnitSpec {
   // Bp with noisy output signal (act plus noise)
 public:
   Random	noise;		// what kind of noise to add to activations
@@ -513,7 +514,7 @@ public:
   TA_BASEFUNS(NoisyBpUnitSpec);
 };
 
-class StochasticBpUnitSpec : public BpUnitSpec {
+class BP_API StochasticBpUnitSpec : public BpUnitSpec {
   // Bp with a binary stochastic activation function
 public:
   void				Compute_Act(Unit* u);
@@ -522,7 +523,7 @@ public:
   TA_BASEFUNS(StochasticBpUnitSpec);
 };
 
-class RBFBpUnitSpec : public BpUnitSpec {
+class BP_API RBFBpUnitSpec : public BpUnitSpec {
   // Radial basis function (Gaussian) function units in Bp
 public:
   float         var;            // variance of Gaussian
@@ -541,7 +542,7 @@ public:
   TA_BASEFUNS(RBFBpUnitSpec);
 };
 
-class BumpBpUnitSpec : public BpUnitSpec {
+class BP_API BumpBpUnitSpec : public BpUnitSpec {
   // bump function in Bp: Gaussian of std net input
 public:
   float         mean;           // mean of Gaussian
@@ -559,7 +560,7 @@ public:
   TA_BASEFUNS(BumpBpUnitSpec);
 };
 
-class ExpBpUnitSpec : public BpUnitSpec {
+class BP_API ExpBpUnitSpec : public BpUnitSpec {
   // exponential units in Bp: simple exponent of net input
 public:
   void          Compute_Act(Unit* u);
@@ -570,7 +571,7 @@ public:
   TA_BASEFUNS(ExpBpUnitSpec);
 };
 
-class SoftMaxBpUnitSpec : public BpUnitSpec {
+class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
   /* SoftMax Units: first one-to-one prjn is from corresp exponential unit,
      second prjn is from single summing linear unit, this then divides two */
 public:

@@ -36,7 +36,7 @@
   #include "fontspec.h"
 #endif
 
-class TypeDefault_MGroup : public taGroup<TypeDefault> {
+class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
 public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -48,7 +48,7 @@ public:
 };
 #ifdef TA_GUI
 // note: _MGroup name is for compatiblity with v3.2 files
-class SelectEdit_MGroup : public taGroup<SelectEdit> {
+class PDP_API SelectEdit_MGroup : public taGroup<SelectEdit> {
   // group of select edit dialog objects
 public:
   virtual void	AutoEdit();
@@ -62,7 +62,7 @@ public:
 //			Wizard			//
 //////////////////////////////////////////////////
 
-class LayerWizEl : public taNBase {
+class PDP_API LayerWizEl : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER specifies basic parameters for a layer
 public:
   enum InputOutput {
@@ -81,7 +81,7 @@ public:
   TA_BASEFUNS(LayerWizEl);
 };
 
-class Wizard : public taNBase {
+class PDP_API Wizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 public:
   enum Connectivity {
@@ -176,7 +176,7 @@ public:
 };
 
 // note: _MGroup name is for compatiblity with v3.2 files
-class Wizard_MGroup : public taGroup<Wizard> {
+class PDP_API Wizard_MGroup : public taGroup<Wizard> {
   // group of wizard objects
 public:
   virtual void	AutoEdit();
@@ -186,7 +186,7 @@ public:
   TA_BASEFUNS(Wizard_MGroup);
 };
 
-class Project : public taFBase {
+class PDP_API Project : public taFBase {
   // ##EXT_proj ##COMPRESS A Project has everything
 #ifndef __MAKETA__
 typedef taFBase inherited;
@@ -291,7 +291,7 @@ public:
 
 
 // note: _MGroup name is for compatiblity with v3.2 files
-class Project_MGroup : public taGroup<Project> {
+class PDP_API Project_MGroup : public taGroup<Project> {
 public:
   ColorScaleSpec_MGroup*	colorspecs;	// #HIDDEN #NO_SAVE -- aliased from projects
 
@@ -303,7 +303,7 @@ public:
 };
 
 
-class PDPRoot : public taNBase, IApp {
+class PDP_API PDPRoot : public taNBase, IApp {
   // structural root of object hierarchy
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
@@ -343,7 +343,7 @@ public:
 #ifdef DEBUG
 #include "ta_variant.h"
 // just a temp test object
-class TestObj: public taNBase {
+class PDP_API TestObj: public taNBase {
 INHERITED(taNBase)
 public:
   bool			b; // #DEF_false
@@ -409,7 +409,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class TestObj2: public taNBase {
+class PDP_API TestObj2: public taNBase {
 INHERITED(taNBase)
 public:
   int			int_val;
@@ -426,7 +426,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class TestObj3: public taNBase {
+class PDP_API TestObj3: public taNBase {
 INHERITED(taNBase)
 public:
   int			i;

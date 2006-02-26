@@ -69,7 +69,7 @@ enum TypeInfoKind { // used in switch statements to particularize instances
 //   tabDataLink	//
 //////////////////////////
 
-class taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
+class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
 INHERITED(taiDataLink)
 public:
   const TypeInfoKind 	tik;
@@ -81,7 +81,7 @@ protected:
 };
 
 
-class taTypeInfoDataLink: public taClassDataLink { // DataLink for TypeInfo objects
+class TA_API taTypeInfoDataLink: public taClassDataLink { // DataLink for TypeInfo objects
 INHERITED(taClassDataLink)
 public:
   TypeItem*		data() {return (TypeItem*)m_data;} //
@@ -109,7 +109,7 @@ protected:
 };
 
 
-class taTypeSpaceDataLink_Base: public taClassDataLink {
+class TA_API taTypeSpaceDataLink_Base: public taClassDataLink {
   // DataLink for XxxSpace objects -- note that it also manages the ListView nodes
 INHERITED(taClassDataLink)
 public:
@@ -125,7 +125,7 @@ public:
   DL_FUNS(taTypeSpaceDataLink_Base) //
 };
 
-class taTypeSpaceDataLink: public taTypeSpaceDataLink_Base {
+class TA_API taTypeSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for TypeSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)
 public:
@@ -140,7 +140,7 @@ public:
 };
 
 
-class taEnumSpaceDataLink: public taTypeSpaceDataLink_Base {
+class TA_API taEnumSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for EnumSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)
 public:
@@ -155,7 +155,7 @@ public:
 };
 
 
-class taMethodSpaceDataLink: public taTypeSpaceDataLink_Base {
+class TA_API taMethodSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for MethodSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)
 public:
@@ -170,7 +170,7 @@ public:
 };
 
 
-class taMemberSpaceDataLink: public taTypeSpaceDataLink_Base {
+class TA_API taMemberSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for MemberSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)
 public:
@@ -186,7 +186,7 @@ public:
 
 
 
-class taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
+class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
   const TypeInfoKind	tik;
@@ -211,7 +211,7 @@ private:
 };
 
 
-class taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
+class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeDataNode)
 public:
   const TypeInfoKind	tik;
@@ -242,7 +242,7 @@ private:
 };
 
 
-class iClassBrowser: public iDataBrowserBase { // viewer window used for class browsing
+class TA_API iClassBrowser: public iDataBrowserBase { // viewer window used for class browsing
     Q_OBJECT
 INHERITED(iDataBrowserBase)
 friend class ClassBrowser;
@@ -275,7 +275,7 @@ protected:
 //	DataBrowser		//
 //////////////////////////////////
 
-class ClassBrowser : public DataViewer {
+class TA_API ClassBrowser : public DataViewer {
   // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
 friend class iClassBrowser;
 public:
@@ -303,7 +303,7 @@ private:
 };
 
 
-class taiTypeItemDataHost: public taiEditDataHost { // #IGNORE displays data on a TypeItem item
+class TA_API taiTypeItemDataHost: public taiEditDataHost { // #IGNORE displays data on a TypeItem item
 INHERITED(taiEditDataHost)
 public:
   TypeItem*		ti; // #IGNORE

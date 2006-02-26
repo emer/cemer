@@ -66,7 +66,7 @@ class float_Matrix; //
 
 #define TA_MATRIX_DIMS_MAX 6
 
-class MatrixGeom: public taBase  { // matrix geometry, similar to an array of int
+class TA_API MatrixGeom: public taBase  { // matrix geometry, similar to an array of int
 INHERITED(taBase)
 friend class taMatrix;
 public:
@@ -111,7 +111,7 @@ inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
 inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
   {return !a.Equal(b);}
 
-class taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
+class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
@@ -257,7 +257,7 @@ private:
 
 typedef taMatrix* ptaMatrix_impl;
 
-class taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
+class TA_API taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)
 public:
 
@@ -269,7 +269,7 @@ private:
 
 
 template<class T> 
-class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
+class TA_API taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -361,7 +361,7 @@ private: //note: forbid these for now -- if needed, define semantics
 };
 
 
-class taMatrixPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
+class TA_API taMatrixPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
 public:
   taMatrix*	ptr() {return m_ptr;} //note: strong types define strongly typed version
   const taMatrix*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
@@ -420,7 +420,7 @@ inline bool operator >(const taMatrixPtr& a, const taMatrixPtr& b)
   {return false;}  */
 
 // macro for creating smart ptrs of taMatrixT classes
-#define taMatrixPtr_Of(T)  class T ## Ptr: public taMatrixPtr { \
+#define taMatrixPtr_Of(T)  class TA_API T ## Ptr: public taMatrixPtr { \
 public: \
   T* ptr() const {return (T*)m_ptr;} \
   operator T*() const {return (T*)m_ptr;} \
@@ -433,7 +433,7 @@ public: \
 };
 
 
-class MatrixPtr_Array : public taArray<taMatrixPtr> {
+class TA_API MatrixPtr_Array : public taArray<taMatrixPtr> {
   // #NO_UPDATE_AFTER array (list) of matrix pointers -- used typically for multi params in data processing
 public:
   STATIC_CONST taMatrixPtr blank; // #HIDDEN #READ_ONLY 
@@ -472,7 +472,7 @@ public:
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
-class String_Matrix: public taMatrixT<String> { // #INSTANCE
+class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_taString;} 
   
@@ -498,7 +498,7 @@ taMatrixPtr_Of(String_Matrix)
 //
 
 
-class float_Matrix: public taMatrixT<float> { // #INSTANCE
+class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_float;} 
   
@@ -524,7 +524,7 @@ private:
 taMatrixPtr_Of(float_Matrix)
 
 
-class int_Matrix: public taMatrixT<int> { // #INSTANCE
+class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_int;} 
   
@@ -550,7 +550,7 @@ private:
 taMatrixPtr_Of(int_Matrix)
 
 
-class byte_Matrix: public taMatrixT<byte> { // #INSTANCE
+class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_unsigned_char;} 
   
@@ -577,7 +577,7 @@ private:
 taMatrixPtr_Of(byte_Matrix)
 
 
-class Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
+class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
 public:
   override TypeDef*	data_type() const {return &TA_Variant;} 
   

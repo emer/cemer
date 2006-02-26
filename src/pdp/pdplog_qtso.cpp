@@ -1566,26 +1566,26 @@ void GridLogView::AllBlockTextOff() {
   }
   InitDisplay();
 }
-
+/*TODO nn??
 //////////////////////////
 //    GraphLogView	//
 //////////////////////////
 
 void GraphLogViewLabel::GetMasterViewer() {
-/*TODO  GraphLogView* glv = GET_MY_OWNER(GraphLogView);
+  GraphLogView* glv = GET_MY_OWNER(GraphLogView);
   if((glv != NULL) && (glv->editor != NULL)) {
     GraphEditor* ge = glv->editor;
     if(ge->first_graph != NULL) {
       viewer = ge->first_graph->viewer;
       master = ge->first_graph->graphg;
     }
-  } */
-}
+  } 
+}*/
 
 void GraphLogView::Initialize() {
   x_axis_index = 0;
 //  graph = new Graph();
-  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
+//  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
   view_range.max = 10000;
   view_bufsz = 10000;
   colorspec = NULL;
@@ -1605,14 +1605,14 @@ TypeDef* GraphLogView::DA_ViewSpecType() {
 
 void GraphLogView::InitLinks() {
 //  taBase::Own(graph, this);
-  taBase::Own(labels,this);
+//  taBase::Own(labels,this);
   taBase::Own(actual_range,this);
   inherited::InitLinks();
   UpdateViewRange();
 }
 
 void GraphLogView::CutLinks() {
-  labels.CutLinks();
+//  labels.CutLinks();
   taBase::DelPointer((TAPtr*)&colorspec);
 //  if (graph) graph.CutLinks();
   inherited::CutLinks();
@@ -1628,7 +1628,7 @@ void GraphLogView::Destroy() {
 
 void GraphLogView::Copy_(const GraphLogView& cp) {
   x_axis_index = cp.x_axis_index;
-  labels = cp.labels;
+//  labels = cp.labels;
   actual_range = cp.actual_range;
   taBase::SetPointer((TAPtr*)&colorspec, cp.colorspec);
   separate_graphs = cp.separate_graphs;
@@ -1637,7 +1637,7 @@ void GraphLogView::Copy_(const GraphLogView& cp) {
 
 void GraphLogView::UpdateAfterEdit() {
   LogView::UpdateAfterEdit();
-  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
+//  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
 /*TODO  if((editor == NULL) || (log() == NULL)) return;
   bool init = false;
   if((colorspec != NULL) && (editor->scale->spec != colorspec)) {

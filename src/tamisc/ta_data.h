@@ -46,7 +46,7 @@ class IDataSink; //
 
 */
 
-class DataChannel: public taNBase { // #INSTANCE ##NO_TOKENS a source or sink of data
+class TAMISC_API DataChannel: public taNBase { // #INSTANCE ##NO_TOKENS a source or sink of data
 INHERITED(taNBase)
 public:
   bool			active; // #DEF_true set on (default) to enable data to flow through this channel
@@ -82,7 +82,7 @@ private:
 };
 
 
-class DataChannel_Group: public taGroup<DataChannel> { // groups of channels
+class TAMISC_API DataChannel_Group: public taGroup<DataChannel> { // groups of channels
 INHERITED(taGroup<DataChannel>)
 public:
   virtual void		ClearCachedData(); // clear cached data of all channels
@@ -96,7 +96,7 @@ private:
 };
 
 
-class ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources;\n only one instance of this interface is allowed per data block
+class TAMISC_API ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources;\n only one instance of this interface is allowed per data block
 public:
   virtual int		num_items() {return -1;} // N<0 if items unknown, or cannot be accessed randomly
   virtual bool		is_indexable() {return false;} // 'true' if can be accessed by index
@@ -112,7 +112,7 @@ public:
 
 
 
-class IDataSource { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
+class TAMISC_API IDataSource { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
 friend class SourceChannel;
 public:
   virtual ISequencable* sequencer() = 0; // sequencing interface
@@ -129,7 +129,7 @@ public:
   virtual ~IDataSource() {} //
 };
 
-class IDataSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
+class TAMISC_API IDataSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
 friend class SinkChannel;
 public:
   virtual ISequencable* sequencer() = 0; // sequencing interface
@@ -146,7 +146,7 @@ public:
 };
 
 /*nn??
-class DataBlock: public taNBase, public ISequencable {
+class TAMISC_API DataBlock: public taNBase, public ISequencable {
  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS generic base for sources, sinks, and filters
 INHERITED(taNBase)
 public:
@@ -175,7 +175,7 @@ private:
 }; */
 
 /* prob NN
-class SequenceMaster { // #NO_INSTANCE singleton class
+class TAMISC_API SequenceMaster { // #NO_INSTANCE singleton class
 public:
   static SequenceMaster& instance();
   
@@ -210,7 +210,7 @@ private:
 
 */
 
-class DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
+class TAMISC_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
 INHERITED(taNBase)
 public:
 
@@ -224,7 +224,7 @@ private:
 };
 
 
-class DirectoryCatalog: public DataCatalog {// #INSTANCE a DirectoryCatalog provides a collection of data items, described by a DataCatalogItemSpec
+class TAMISC_API DirectoryCatalog: public DataCatalog {// #INSTANCE a DirectoryCatalog provides a collection of data items, described by a DataCatalogItemSpec
 INHERITED(DataCatalog)
 public:
   String		directory; // path to the directory where the files are

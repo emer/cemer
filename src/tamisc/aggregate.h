@@ -19,9 +19,10 @@
 #define aggregate_h
 
 #include "ta_base.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
-class CountParam : public taBase {
+class TAMISC_API CountParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE counting criteria params
 public:
   enum Relation {
@@ -45,7 +46,7 @@ public:
   TA_BASEFUNS(CountParam);
 };
 
-class Aggregate : public taOBase {
+class TAMISC_API Aggregate : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE Basic aggregation operations
 public:
   enum Operator {		// Aggregate Operators
@@ -98,7 +99,7 @@ public:
   TA_BASEFUNS(Aggregate);
 };
 
-class SimpleMathSpec : public taBase {
+class TAMISC_API SimpleMathSpec : public taBase {
   // #INLINE #NO_UPDATE_AFTER ##NO_TOKENS params for std kinds of simple math operators
 public:
   enum MathOpr {
@@ -136,7 +137,7 @@ public:
 };
 
 
-class CritParam : public taBase {
+class TAMISC_API CritParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE stopping criteria params
 public:
   enum Relation {

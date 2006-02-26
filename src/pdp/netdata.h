@@ -20,7 +20,7 @@
 #ifndef NETDATA_H
 #define NETDATA_H
 
-
+#include "pdp_def.h"
 //#include "pdpbase.h"
 //#include "spec.h"
 #include "datatable.h"
@@ -33,7 +33,7 @@ class DataTable_MGroup;
 
 
 
-class DataTable_MGroup : public taGroup<DataTable> {
+class PDP_API DataTable_MGroup : public taGroup<DataTable> {
   // group of data objects
 INHERITED(taGroup<DataTable>)
 public:

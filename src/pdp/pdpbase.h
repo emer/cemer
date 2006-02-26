@@ -34,7 +34,7 @@
 typedef  void (*init_proc_t)() ;	// initialization proc
 
 
-class InitProcRegistrar { // #IGNORE object used as a module static instance to register an init_proc
+class PDP_API InitProcRegistrar { // #IGNORE object used as a module static instance to register an init_proc
 public:
   InitProcRegistrar(init_proc_t init_proc);
 private:
@@ -45,7 +45,7 @@ private:
 
 // all of these functions are cached out in pdpshell.cc
 
-class pdpMisc {
+class PDP_API pdpMisc {
   // #NO_TOKENS miscellaneous things for pdp
 friend class InitProcRegistrar;
 public:
@@ -180,7 +180,7 @@ public:									      	\
 
 #else // USE_TEMPLATE_GROUPS
 */
-class PosGroup : public taBase_Group { // ##NO_TOKENS
+class PDP_API PosGroup : public taBase_Group { // ##NO_TOKENS
 public:
   TDCoord	pos;		// Position of Group
 
@@ -193,7 +193,7 @@ public:
 };
 
 #define PosGroup_of(T)							      \
-class T ## _Group : public PosGroup {					      \
+class PDP_API T ## _Group : public PosGroup {					      \
 public:									      \
   void	Initialize() 		{ SetBaseType(&TA_ ## T); }		      \
   void 	Destroy()		{ };					      \
@@ -201,7 +201,7 @@ public:									      \
 }
 
 #define PosMGroup_of(T)							      	\
-class T ## _MGroup : public taGroup<T> {				      	\
+class PDP_API T ## _MGroup : public taGroup<T> {				      	\
 public:									      	\
   TDCoord	pos;			     			\
   void	Initialize() 		{ }					      	\

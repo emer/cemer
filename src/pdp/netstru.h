@@ -64,7 +64,7 @@ const float SIGMOID_MAX_VAL = 0.999999f; // max eval value
 const float SIGMOID_MIN_VAL = 0.000001f; // min eval value
 const float SIGMOID_MAX_NET = 13.81551f;	// maximium net input value
 
-class SigmoidSpec : public taBase {
+class PDP_API SigmoidSpec : public taBase {
 // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 public:
   float		off;		// offset for .5 point
@@ -87,7 +87,7 @@ public:
 };
 
 
-class SchedItem : public taOBase {
+class PDP_API SchedItem : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a schedule
 public:
   int		start_ctr;	// ctr number to start at for this item
@@ -105,7 +105,7 @@ public:
   TA_BASEFUNS(SchedItem);
 };
 
-class Schedule : public taList<SchedItem> {
+class PDP_API Schedule : public taList<SchedItem> {
   // A schedule for parameters that vary over time
 public:
   int 		last_ctr;	// the last counter index called
@@ -128,7 +128,7 @@ public:
 // the connection is managed fully by the ConSpec and the Con_Group
 // don't put any functions on the connection itself
 
-class Connection : public taBase {
+class PDP_API Connection : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER Generic Connections
 public:
   float 	wt;		// weight of connection
@@ -162,7 +162,7 @@ public:
   for(int i=0; i<cg->size; i++) \
     expr
 
-class WeightLimits : public taBase {
+class PDP_API WeightLimits : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER specifies weight limits for connections
 public:
   enum LimitType {
@@ -191,7 +191,7 @@ public:
   TA_BASEFUNS(WeightLimits);
 };
 
-class ConSpec : public BaseSpec {
+class PDP_API ConSpec : public BaseSpec {
   // Connection Group Specs: for processing over connections
 public:
   TypeDef*	min_con_type;
@@ -262,7 +262,7 @@ SpecPtr_of(ConSpec);
 
 // assumes no USE_TEMPLATE_GROUPS
 
-class Unit_List : public taList<Unit> {
+class PDP_API Unit_List : public taList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER
 public:
   void	Initialize() 		{ };
@@ -270,7 +270,7 @@ public:
   TA_BASEFUNS(Unit_List);
 };
 
-class Con_Group : public taBase_Group {
+class PDP_API Con_Group : public taBase_Group {
   // ##NO_TOKENS ##NO_UPDATE_AFTER Group of connections, controlls processing over them
   // entire group must have same connection object type
 public:
@@ -402,7 +402,7 @@ public:
   TA_BASEFUNS(Con_Group);
 };
 
-class UnitSpec : public BaseSpec { // Generic Unit Specification
+class PDP_API UnitSpec : public BaseSpec { // Generic Unit Specification
 #ifndef __MAKETA__
 typedef BaseSpec inherited;
 #endif
@@ -452,7 +452,7 @@ public:
 
 SpecPtr_of(UnitSpec);
 
-class Unit : public taNBase {
+class PDP_API Unit : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 Generic unit
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -598,7 +598,7 @@ public: //
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
 // ProjectionSpec does the connectivity, and optionally the weight init
 
-class ProjectionSpec : public BaseSpec {
+class PDP_API ProjectionSpec : public BaseSpec {
   // #VIRT_BASE Specifies the connectivity between layers (ie. full vs. partial)
 public:
   bool		self_con;	// whether to create self-connections or not (if applicable)
@@ -639,7 +639,7 @@ public:
 
 SpecPtr_of(ProjectionSpec);
 
-class Projection : public taNBase {
+class PDP_API Projection : public taNBase {
   // Projection describes connectivity between layers (from receivers perspective)
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -835,7 +835,7 @@ inline void ConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
 }
 
 
-class Unit_Group : public taGroup<Unit> {
+class PDP_API Unit_Group : public taGroup<Unit> {
   // #NO_UPDATE_AFTER a group of units
 #ifndef __MAKETA__
 typedef taGroup<Unit> inherited;
@@ -907,7 +907,7 @@ protected:
 #endif
 };
 
-class LayerSpec : public BaseSpec {
+class PDP_API LayerSpec : public BaseSpec {
   // generic layer specification
 public:
   virtual int	UseCount(); // return number of times this spec is used
@@ -931,7 +931,7 @@ public:
   act -- NxM float array, of the activation values
   
 */
-class Layer : public taNBase {
+class PDP_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS layer containing units
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -1133,7 +1133,7 @@ public:
 PosMGroup_of(Layer);
 
 //class Network : public WinMgr {
-class Network : public taNBase {
+class PDP_API Network : public taNBase {
   // ##EXT_net ##COMPRESS A network, containing layers, units, etc..
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -1345,7 +1345,7 @@ protected:
 };
 
 //note: Network_MGroup name is for compatability with v3.2 files
-class Network_MGroup : public taGroup<Network> {
+class PDP_API Network_MGroup : public taGroup<Network> {
 public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
@@ -1356,7 +1356,7 @@ public:
 };
 
 
-class LayerRWBase: public IDataLinkClient  {
+class PDP_API LayerRWBase: public IDataLinkClient  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS mixin class for LayerXxx
 INHERITED(IDataLinkClient)
 public:
@@ -1397,7 +1397,7 @@ protected:
   virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
 };
 
-class LayerWriter: public DataChannel, public LayerRWBase {
+class PDP_API LayerWriter: public DataChannel, public LayerRWBase {
   // object that writes data from a datasource to a layer
 INHERITED(DataChannel)
 public: //
@@ -1461,7 +1461,7 @@ private:
 
 
 
-class LayerReader: public DataChannel, public LayerRWBase {
+class PDP_API LayerReader: public DataChannel, public LayerRWBase {
   // object that reads data from a layer
 INHERITED(DataChannel)
 public:
@@ -1488,7 +1488,7 @@ private:
 };
 
 
-class NetConduit : public taNBase, public ISequencable {
+class PDP_API NetConduit : public taNBase, public ISequencable {
   // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE #VIRT_BASE #NO_TOKENS #NO_INSTANCE event specification
 INHERITED(taNBase)
 public:
@@ -1525,7 +1525,7 @@ private:
 };
 
 
-class NetConduit_MGroup : public taGroup<NetConduit> {
+class PDP_API NetConduit_MGroup : public taGroup<NetConduit> {
   // group of data objects
 INHERITED(taGroup<NetConduit>)
 public:
@@ -1538,7 +1538,7 @@ private:
 };
 
 
-class NetWriter : public NetConduit, public IDataSink {
+class PDP_API NetWriter : public NetConduit, public IDataSink {
   // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
 INHERITED(NetConduit)
 public:
@@ -1567,7 +1567,7 @@ private:
 };
 
 
-class NetReader : public NetConduit, public IDataSource {
+class PDP_API NetReader : public NetConduit, public IDataSource {
   // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
 INHERITED(NetConduit)
 public:

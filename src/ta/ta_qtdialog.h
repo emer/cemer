@@ -45,7 +45,7 @@ class taiEditDataHost; //
 // 	HiLightButton		//
 //////////////////////////////////
 
-class HiLightButton: public QPushButton {
+class TA_API HiLightButton: public QPushButton {
   // combines v3.2 Script Button and HiLightButton -- set script_ to script name, to enable ScriptButton functionality
 public:
   int			mouse_button;	// (Qt::Button) the mouse button that pressed the button (defaults to NoButton, when actuated by keyboard)
@@ -73,7 +73,7 @@ protected:
 // 	iContextLabel		//
 //////////////////////////////////
 
-class iContextLabel: public iLabel {
+class TA_API iContextLabel: public iLabel {
   Q_OBJECT
 INHERITED(iLabel)
 public:
@@ -119,7 +119,7 @@ class taiTypeHier;
 // Button 1 is the Cancel, if user presses Esc (only if "no_cancel" option false)
 // User can also press the number associated with the button, starting from 0
 
-class taiChoiceDialog : public QDialog {
+class TA_API taiChoiceDialog : public QDialog {
   Q_OBJECT
 public:
   // puts up a modal choice dialog.  returns value of Edit()
@@ -156,7 +156,7 @@ private:
 // 	iDialog		//
 //////////////////////////
 
-class iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class taiDataHost;
 public:
@@ -180,7 +180,7 @@ protected:
 // 	EditDataPanel	//
 //////////////////////////
 
-class EditDataPanel: public iDataPanelFrame { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API EditDataPanel: public iDataPanelFrame { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 #ifndef __MAKETA__
 typedef iDataPanelFrame inherited;
 #endif
@@ -210,7 +210,7 @@ protected:
 #define __CANCELED		0x05
 #define __SHOW_CHANGED		0x80
 
-class taiDataHost: public QObject, public IDataHost {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiDataHost: public QObject, public IDataHost {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class iDialog;
 public:
@@ -347,7 +347,7 @@ protected slots:
 
 
 
-class taiDialog_List : public taPtrList<taiDataHost> { // #IGNORE list of DataHosts that have been dialoged
+class TA_API taiDialog_List : public taPtrList<taiDataHost> { // #IGNORE list of DataHosts that have been dialoged
 protected:
   void	El_Done_(void* it)	{ delete (taiDataHost*)it; }
 
@@ -355,7 +355,7 @@ public:
   ~taiDialog_List()            { Reset(); }
 };
 
-class Member_List : public taPtrList<MemberDef> {
+class TA_API Member_List : public taPtrList<MemberDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS list of members -- simpler than MemberSpace, no ownership
 public:
   ~Member_List()            { Reset(); }
@@ -365,7 +365,7 @@ public:
 // 	taiEditDataHost		//
 //////////////////////////////////
 
-class taiEditDataHost : public taiDataHost {
+class TA_API taiEditDataHost : public taiDataHost {
   // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
   Q_OBJECT
 friend class EditDataPanel;

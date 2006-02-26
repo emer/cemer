@@ -24,7 +24,7 @@
 #include "colorscale.h"
 #include "colorbar_qt.h"
 #include "datatable.h"
-#include "fontspec.h"
+//#include "fontspec.h"
 
 #ifndef __MAKETA__
 #include <QAbstractTableModel> 
@@ -36,7 +36,7 @@ class tabDataTableViewType;
 class iDataTablePanel;
 
 
-class DataTableModel: public QAbstractTableModel, public IDataLinkClient { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
+class TAMISC_API DataTableModel: public QAbstractTableModel, public IDataLinkClient { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
 INHERITED(QAbstractTableModel)
 public:
 
@@ -74,7 +74,7 @@ protected:
 //  tabDataTableViewType//
 //////////////////////////
 
-class tabDataTableViewType: public tabGroupViewType {
+class TAMISC_API tabDataTableViewType: public tabGroupViewType {
 #ifndef __MAKETA__
 typedef tabGroupViewType inherited;
 #endif
@@ -93,7 +93,7 @@ protected:
 //  iDatatableDataPanel //
 //////////////////////////
 
-class iDataTablePanel: public iDataPanelFrame {
+class TAMISC_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT
 #ifndef __MAKETA__
 typedef iDataPanelFrame inherited;

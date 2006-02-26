@@ -125,7 +125,7 @@ public:
 
 */
 
-class ColorPad : public QWidget { // #IGNORE color pads for palletes
+class TAMISC_API ColorPad : public QWidget { // #IGNORE color pads for palletes
 #ifndef __MAKETA__
 typedef QWidget inherited;
 #endif
@@ -161,7 +161,7 @@ public:
 };
 
 
-class ScaleBar : public QWidget { // #IGNORE  Scalebar
+class TAMISC_API ScaleBar : public QWidget { // #IGNORE  Scalebar
 #ifndef __MAKETA__
 typedef QWidget inherited;
 #endif
@@ -249,7 +249,7 @@ private:
 };
 
 
-class HCScaleBar : public ScaleBar { //  scale bar with horizontal color blocks
+class TAMISC_API HCScaleBar : public ScaleBar { //  scale bar with horizontal color blocks
 #ifndef __MAKETA__
 typedef ScaleBar inherited;
 #endif
@@ -263,7 +263,7 @@ private:
 };
 
 
-class VCScaleBar : public ScaleBar {//  #IGNORE scale bar with vertical color blocks
+class TAMISC_API VCScaleBar : public ScaleBar {//  #IGNORE scale bar with vertical color blocks
 #ifndef __MAKETA__
 typedef ScaleBar inherited;
 #endif
@@ -277,7 +277,7 @@ private:
 };
 
 /*TODO
-class PScaleBar : public ScaleBar {
+class TAMISC_API PScaleBar : public ScaleBar {
   //  Scalebar with a pallete
 public:
 
@@ -307,7 +307,7 @@ public:
   float GetSelectedVal();
 };
 
-class HPScaleBar : public PScaleBar {
+class TAMISC_API HPScaleBar : public PScaleBar {
   //  Horizontal Scalebar with a pallete
 public:
 
@@ -321,7 +321,7 @@ public:
 	     int b=16,int h=16, int w=16);
 };
 
-class VPScaleBar : public PScaleBar {
+class TAMISC_API VPScaleBar : public PScaleBar {
   //  Vertical Scalebar with a pallete
 public:
   virtual DAStepper* GenEnlarger();
@@ -335,7 +335,7 @@ public:
 };
 
 
-class PadButton : public ivActiveHandler {
+class TAMISC_API PadButton : public ivActiveHandler {
 public:
   ColorPad* 	cp;
 
@@ -346,7 +346,7 @@ public:
 	    ColorPad::BlockFill sh=ColorPad::COLOR, int w=8,int h=8);
 };
 
-class PaintPad : public ivInputHandler {
+class TAMISC_API PaintPad : public ivInputHandler {
 public:
   ColorPad* pb;
   void* obj;			    // object to pass to change_notify
@@ -360,7 +360,7 @@ public:
   PaintPad(ColorPad* c,void* o, void (*cn)(void*));
 };
 
-class DynamicBackground : public ivMonoGlyph {
+class TAMISC_API DynamicBackground : public ivMonoGlyph {
 public:
   DynamicBackground(ivGlyph* body, const iColor*);
   virtual ~DynamicBackground();
@@ -373,7 +373,7 @@ protected:
 };
 
 
-class CachePatch_Impl {
+class TAMISC_API CachePatch_Impl {
 public:
   enum FakeLevel {
     FIRST,
@@ -387,7 +387,7 @@ public:
   ~CachePatch_Impl(){};
 };
 
-class CachePatch : public ivPatch {
+class TAMISC_API CachePatch : public ivPatch {
 public:
   void request(ivRequisition&) const;
   CachePatch_Impl *impl;

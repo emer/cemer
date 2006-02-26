@@ -84,7 +84,7 @@ protected:
 }; */
 
 
-class taiTreeDataNode: public iListViewItem {
+class TA_API taiTreeDataNode: public iListViewItem {
 #ifndef __MAKETA__
 typedef iListViewItem inherited;
 #endif
@@ -124,7 +124,7 @@ private:
 };
 
 
-class tabTreeDataNode: public taiTreeDataNode {
+class TA_API tabTreeDataNode: public taiTreeDataNode {
 #ifndef __MAKETA__
 typedef taiTreeDataNode inherited;
 #endif
@@ -148,7 +148,7 @@ private:
 };
 
 
-class tabListTreeDataNode: public tabTreeDataNode {
+class TA_API tabListTreeDataNode: public tabTreeDataNode {
 #ifndef __MAKETA__
 typedef tabTreeDataNode inherited;
 #endif
@@ -178,7 +178,7 @@ private:
 };
 
 
-class tabGroupTreeDataNode: public tabListTreeDataNode {
+class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
 #ifndef __MAKETA__
 typedef tabListTreeDataNode inherited;
 #endif
@@ -230,7 +230,7 @@ private:
            DataPanel destructs -- if still connected to a link, it severs the link connection
 */
 
-class iDataBrowserBase : public iTabDataViewer { // base of viewer window used for class browsing
+class TA_API iDataBrowserBase : public iTabDataViewer { // base of viewer window used for class browsing
     Q_OBJECT
 INHERITED(iTabDataViewer)
 friend class DataBrowser;
@@ -295,7 +295,7 @@ protected:
   void			Constr_Body_impl(); // replace to construct body
 };
 
-class iDataBrowser : public iDataBrowserBase { // viewer window used for class browsing of taBase objects
+class TA_API iDataBrowser : public iDataBrowserBase { // viewer window used for class browsing of taBase objects
     Q_OBJECT
 INHERITED(iDataBrowserBase)
 friend class DataBrowser;
@@ -329,7 +329,7 @@ protected:
 //	DataBrowser		//
 //////////////////////////////////
 
-class DataBrowser : public DataViewer {
+class TA_API DataBrowser : public DataViewer {
   // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
 friend class iDataBrowser;
 public:
