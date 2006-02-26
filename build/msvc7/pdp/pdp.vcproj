@@ -19,31 +19,35 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PDP_EXPORTS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="PDP_DLL;PDP_EXPORTS;TA_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="3"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4250"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/pdp.dll"
+				AdditionalDependencies="ta_debug.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				OutputFile="$(OutDir)/pdp_debug.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/pdp.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/pdp.lib"
+				ImportLibrary="$(OutDir)/pdp_debug.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="pdp_prebuild.cmd"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -67,18 +71,20 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PDP_EXPORTS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="PDP_DLL;PDP_EXPORTS;TA_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ta.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
 				OutputFile="$(OutDir)/pdp.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -90,7 +96,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="pdp_prebuild.cmd"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -108,6 +115,9 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
+			Name="ta"/>
 	</References>
 	<Files>
 		<Filter
@@ -138,9 +148,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\src\pdp\pdp_def.h">
-			</File>
-			<File
 				RelativePath=".\stdafx.h">
 			</File>
 		</Filter>
@@ -148,6 +155,149 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+		</Filter>
+		<Filter
+			Name="pdp"
+			Filter="">
+			<Filter
+				Name="Source Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\pdp\netdata.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_extra.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_so.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_ti.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpbase.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpbase_win.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdplog.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdplog_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpshell.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpview_qt.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\spec.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\v3_compat.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\pdp\netdata.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_extra.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_so.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpbase.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpdeclare.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdplog.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdplog_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpshell.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpview_qt.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\script_base.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\spec.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\v3_compat.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+			</Filter>
+		</Filter>
+		<Filter
+			Name="bp"
+			Filter="">
+			<Filter
+				Name="Source Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\bp\bp.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\bp_ti.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\rbp.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\bp\bp.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\bp_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\rbp.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">

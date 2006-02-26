@@ -16,31 +16,35 @@
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
-			CharacterSet="2">
+			CharacterSet="2"
+			ManagedExtensions="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				MinimalRebuild="TRUE"
-				BasicRuntimeChecks="3"
+				MinimalRebuild="FALSE"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib"
-				OutputFile="$(OutDir)/ta.dll"
+				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				OutputFile="$(OutDir)/ta_debug.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
+				AssemblyDebug="1"
 				ProgramDatabaseFile="$(OutDir)/ta.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/ta.lib"
+				OptimizeForWindows98="1"
+				ImportLibrary="$(OutDir)/ta_debug.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -48,7 +52,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="run_make.cmd"/>
+				CommandLine="ta_prebuild.cmd"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -72,7 +76,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;TA_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -83,9 +87,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
 				OutputFile="$(OutDir)/ta.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -97,7 +102,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="ta_prebuild.cmd"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -181,21 +187,6 @@
 					RelativePath="..\..\..\src\ta\ta_defaults.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_dll.cpp">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\ta_dump.cpp">
 				</File>
 				<File
@@ -223,10 +214,10 @@
 					RelativePath="..\..\..\src\ta\ta_qtbrowse.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_qtclipdata_dll.cpp">
+					RelativePath="..\..\..\src\ta\ta_qtclipdata.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_qtdata_dll.cpp">
+					RelativePath="..\..\..\src\ta\ta_qtdata.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_qtdialog.cpp">
@@ -262,9 +253,6 @@
 					RelativePath="..\..\..\src\ta\ta_type_qt.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_uifiler_qt.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\ta_variant.cpp">
 				</File>
 			</Filter>
@@ -279,9 +267,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\qtdefs.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\ta.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_base.h">
@@ -371,15 +356,63 @@
 					RelativePath="..\..\..\src\ta\ta_type_constr.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_uifiler_qt.h">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\ta_variant.h">
 				</File>
 			</Filter>
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\ta\ta_classbrowse.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_matrix_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtbrowse.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtbrowse_def.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtclipdata.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtdata.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtdata_def.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtdialog.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtgroup.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qttype.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qttype_def.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_qtviewer.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_seledit.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_TA_type.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -395,6 +428,9 @@
 					RelativePath="..\..\..\src\taiqtso\icombobox.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\idimedit.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\ieditgrid.cpp">
 				</File>
 				<File
@@ -402,6 +438,9 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\igeometry.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\taiqtso\ilabel.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\ilineedit.cpp">
@@ -518,10 +557,119 @@
 			<Filter
 				Name="Source Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\css\css_basic_types.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_builtin.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_c_ptr_types.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_lex.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_machine.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_misc_funs.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_parse.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qt.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdata.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdialog.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qttype.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_special_math.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_ti.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\readline_win.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\ta_css.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\xmemory.cpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="Header Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\css\css_basic_types.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_builtin.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_c_ptr_types.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_extern_support.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_machine.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_misc_funs.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_parse.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qt.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdata.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdialog.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qttype.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_special_math.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\hard_of_css.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\ta_css.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\css\css_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdata.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qtdialog.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_qttype.moc.cpp">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -530,10 +678,149 @@
 			<Filter
 				Name="Source Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\tamisc\aggregate.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorbar_qt.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorbar_so.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorscale.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph_so.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datatable.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datatable_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\fontspec.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\fun_lookup.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\minmax.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\t3node_so.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\t3viewer.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\ta_data.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_ti.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tarandom.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tdgeometry.cpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="Header Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\tamisc\aggregate.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorbar_qt.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorbar_so.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\colorscale.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph_so.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datatable.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datatable_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\fontspec.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\fun_lookup.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\minmax.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\t3node_so.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\t3viewer.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\ta_data.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_maketa_defs.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_stdef.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tarandom.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tdgeometry.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\tamisc\colorbar_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datagraph_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\datatable_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\t3viewer.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tamisc\tamisc_TA_type.h">
+				</File>
 			</Filter>
 		</Filter>
 		<File

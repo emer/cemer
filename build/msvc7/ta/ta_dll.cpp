@@ -18,7 +18,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	}
     return TRUE;
 }
-
+/*
 // This is an example of an exported variable
 TA_API int nta=0;
 
@@ -34,3 +34,4 @@ Cta::Cta()
 { 
 	return; 
 }
+*/

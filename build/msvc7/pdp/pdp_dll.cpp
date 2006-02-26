@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "pdp.h"
+#include "pdp_def.h"
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
@@ -18,7 +18,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	}
     return TRUE;
 }
-
+/*
 // This is an example of an exported variable
 PDP_API int npdp=0;
 
@@ -34,3 +34,4 @@ Cpdp::Cpdp()
 { 
 	return; 
 }
+*/
