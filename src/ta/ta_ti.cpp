@@ -14,9 +14,9 @@
 //   Lesser General Public License for more details.
 
 
-// regexp for template searching: '<[a-z|A-Z|_]\{2,\}>'
+// regexp for TA_API template searching: '<[a-z|A-Z|_]\{2,\}>'
 
-// ta_ti.cc: template instantiation file for ta library
+// ta_ti.cc: TA_API template instantiation file for ta library
 
 #include "ta_list.h"
 #include "ta_type.h"
@@ -34,89 +34,89 @@
 #  endif
 #endif
 
-template class taPtrList<taHashEl>;
-template class taPtrList<taHashBucket>;
-template class taPlainArray<String>;
+template class TA_API taPtrList<taHashEl>;
+template class TA_API taPtrList<taHashBucket>;
+template class TA_API taPlainArray<String>;
 //  const String String_PArray::blank = "";
-template class taPlainArray<int>;
+template class TA_API taPlainArray<int>;
 //  const int int_PArray::blank = 0;
-template class taPtrList<EnumDef>;
-template class taPtrList<void>;
-template class taPtrList<MemberDef>;
-template class taPtrList<MethodDef>;
-template class taPtrList<TypeDef>;
-template class taPtrList<IDataLinkClient>;
+template class TA_API taPtrList<EnumDef>;
+template class TA_API taPtrList<void>;
+template class TA_API taPtrList<MemberDef>;
+template class TA_API taPtrList<MethodDef>;
+template class TA_API taPtrList<TypeDef>;
+template class TA_API taPtrList<IDataLinkClient>;
 
 #ifndef NO_TA_BASE
-template class taFixedArray<int>;
+template class TA_API taFixedArray<int>;
   const int int_FixedArray::blank = 0;
-template class taPtrList<taBase>;
-template class taPtrList_base<taBase>;
-template class taList<taBase>;
-template class taArray<int>;
+template class TA_API taPtrList<taBase>;
+template class TA_API taPtrList_base<taBase>;
+template class TA_API taList<taBase>;
+template class TA_API taArray<int>;
   const int int_Array::blank = 0;
-template class taArray<float>;
+template class TA_API taArray<float>;
   const float float_Array::blank = 0.0f;
-template class taArray<double>;
+template class TA_API taArray<double>;
   const double double_Array::blank = 0.0;
-template class taArray<String>;
+template class TA_API taArray<String>;
   const String String_Array::blank = "";
-template class taArray<void*>;
+template class TA_API taArray<void*>;
   const voidptr voidptr_Array::blank = NULL;
-template class taPtrList<VPUnref>;
-template class taPtrList<DumpPathSub>;
-template class taPtrList<DumpPathToken>;
+template class TA_API taPtrList<VPUnref>;
+template class TA_API taPtrList<DumpPathSub>;
+template class TA_API taPtrList<DumpPathToken>;
 
 
 // ta_matrix.h
-template class taMatrixT<Variant>;
+template class TA_API taMatrixT<Variant>;
   const Variant Variant_Matrix::blank;
-template class taMatrixT<String>;
+template class TA_API taMatrixT<String>;
   const String String_Matrix::blank;
-template class taMatrixT<float>;
+template class TA_API taMatrixT<float>;
   const float float_Matrix::blank = 0.0f;
-template class taMatrixT<int>;
+template class TA_API taMatrixT<int>;
   const int int_Matrix::blank = 0;
-template class taMatrixT<unsigned char>;
+template class TA_API taMatrixT<unsigned char>;
   const unsigned char byte_Matrix::blank = '\0';
 
-template class taArray<taMatrixPtr*>;
+template class TA_API taArray<taMatrixPtr*>;
   const taMatrixPtr MatrixPtr_Array::blank;
 
-template class taList<taGroup_impl>;
-template class taGroup<taBase>;
+template class TA_API taList<taGroup_impl>;
+template class TA_API taGroup<taBase>;
 
-template class taPtrList<ScriptBase>; // in script_base.h
-template class taGroup<Script>; // in script_base.h
+template class TA_API taPtrList<ScriptBase>; // in script_base.h
+template class TA_API taGroup<Script>; // in script_base.h
 
 
 #ifdef TA_GUI
-template class taPtrList<QWidget>;
-//template class taPtrList<iWindow>;
-template class taPtrList<taiDataLink>;
-template class taPtrList<taiDataHost>;
-//obs template class taPtrList<taiEditDialog>;
-template class taPtrList<taiEditDataHost>;
-template class taPtrList<taiData>;
-template class taPtrList<taiAction>;
-template class taPtrList<taiActions>;
-template class taPtrList<taiType>;
-template class taPtrList<gpiList_ElData>;
-template class taPtrList<iDataViewer>; // in ta_qt.h
-template class taPtrList<taiMimeItem>; // in ta_qtclipdata.h
-template class QList<taiToolBar*>; // in ta_qtviewer.h
-template class taList<ToolBar>; // in ta_qtviewer.h
-template class taPtrList<ISelectable>; // in ta_qtviewer.h
-template class taPtrList<DynMethodDesc>; // in ta_qtviewer.h
-template class taList<DataViewer>; // in ta_qtviewer.h
-template class taPtrList<iDataPanel>; // in ta_qtviewer.h
-template class taPtrList<iTabView>;
+template class TA_API taPtrList<QWidget>;
+//template class TA_API taPtrList<iWindow>;
+template class TA_API taPtrList<taiDataLink>;
+template class TA_API taPtrList<taiDataHost>;
+//obs template class TA_API taPtrList<taiEditDialog>;
+template class TA_API taPtrList<taiEditDataHost>;
+template class TA_API taPtrList<taiData>;
+template class TA_API taPtrList<taiAction>;
+template class TA_API taPtrList<taiActions>;
+template class TA_API taPtrList<taiType>;
+template class TA_API taPtrList<gpiList_ElData>;
+template class TA_API taPtrList<iDataViewer>; // in ta_qt.h
+template class TA_API taPtrList<taiMimeItem>; // in ta_qtclipdata.h
+template class TA_API QList<taiToolBar*>; // in ta_qtviewer.h
+template class TA_API taList<ToolBar>; // in ta_qtviewer.h
+template class TA_API taPtrList<ISelectable>; // in ta_qtviewer.h
+template class TA_API taPtrList<DynMethodDesc>; // in ta_qtviewer.h
+template class TA_API taList<DataViewer>; // in ta_qtviewer.h
+template class TA_API taPtrList<iDataPanel>; // in ta_qtviewer.h
+template class TA_API taPtrList<iTabView>;
 #ifdef DARWIN // for some reason, these need to be here for MacOS
 //TODO: verify this for Qt4
-template class QList<QObject*>;
-template class QList<int>;
-//template class QValueListPrivate<int>;
-template class QMemArray<char>;
+template class TA_API QList<QObject*>;
+template class TA_API QList<int>;
+//template class TA_API QValueListPrivate<int>;
+template class TA_API QMemArray<char>;
 #endif // def DARWIN
 #endif // def TA_GUI
 

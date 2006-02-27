@@ -18,9 +18,9 @@
 #ifndef bp_h
 #define bp_h
 
-#include "bp_def.h"
 #include "pdpbase.h"
 #include "netstru.h"
+#include "bp_def.h"
 #include "bp_TA_type.h"
 
 // forwards this file

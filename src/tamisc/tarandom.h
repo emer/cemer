@@ -20,6 +20,7 @@
 
 #include "ta_base.h"
 #include "css_special_math.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 class TAMISC_API RndSeed : public taOBase {

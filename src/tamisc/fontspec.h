@@ -20,6 +20,7 @@
 
 #include "ta_base.h"
 #include "ifont.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 class TAMISC_API FontSpec : public taOBase, public iFont {

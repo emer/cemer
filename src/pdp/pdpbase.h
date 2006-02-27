@@ -26,8 +26,8 @@
 //#include "xform.h"
 #endif
 
-#include "pdpdeclare.h"
 #include "tdgeometry.h"
+#include "pdpdeclare.h"
 #include "pdp_TA_type.h"
 
 

@@ -18,11 +18,10 @@
 #ifndef declare_h
 #define declare_h
 
-#include "pdp_def.h"
 #include "ta_stdef.h"
-
 #include "ta_TA_type.h"
 #include "tamisc_TA_type.h"
+#include "pdp_def.h"
 
 
 // external defines

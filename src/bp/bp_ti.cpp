@@ -21,4 +21,4 @@
 
 #include "bp.h"
 
-template class SpecPtr<BpConSpec>;
+template class BP_API SpecPtr<BpConSpec>;

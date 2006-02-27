@@ -1,3 +1,4 @@
+VCINSTALLDIR = C:\Program Files\Microsoft Visual Studio .NET 2003
 INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(PDP4DIR)\src\taiqtso" "-I$(PDP4DIR)\src\css" "-I$(PDP4DIR)\src\tamisc" \
   "-I$(PDP4DIR)\src\pdp" "-I$(PDP4DIR)\src\bp"  "-I$(PDP4DIR)\src\leabra" \
@@ -189,6 +190,7 @@ TAMISC_MAKETA_GUI =\
 
 TAMISC_MAKETA =\
 	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	tamisc_def.h \
 	fontspec.h \
 	tarandom.h \
 	tdgeometry.h \
@@ -207,7 +209,6 @@ TAMISC_MOCS: \
 	t3viewer.moc.cpp \
 	colorbar_qt.moc.cpp \
 	datatable_qtso.moc.cpp \
-	datagraph_qtso.cpp \
 	datagraph_qtso.moc.cpp
 
 t3viewer.moc.cpp: $(PDP4DIR)\src\tamisc\t3viewer.h
@@ -217,9 +218,6 @@ colorbar_qt.moc.cpp: $(PDP4DIR)\src\tamisc\colorbar_qt.h
 	$(MOC) %s -o $@
 
 datatable_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datatable_qtso.h
-	$(MOC) %s -o $@
-
-datagraph_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datagraph_qtso.h
 	$(MOC) %s -o $@
 
 datagraph_qtso.moc.cpp: $(PDP4DIR)\src\tamisc\datagraph_qtso.h
@@ -235,6 +233,7 @@ PDP_MAKETA_GUI =\
 PDP_MAKETA =\
 	$(PDP4DIR)/src/ta/ta_TA_type.h \
 	$(PDP4DIR)/src/tamisc/tamisc_TA_type.h \
+	pdp_def.h \
 	pdpdeclare.h \
 	pdpbase.h \
 	spec.h \
@@ -265,8 +264,10 @@ BP_MAKETA =\
 	$(PDP4DIR)/src/ta/ta_TA_type.h \
 	$(PDP4DIR)/src/tamisc/tamisc_TA_type.h \
 	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	bp_def.h \
 	bp.h \
-	rbp.h 
+	rbp.h \
+	bp_v3_compat.h \
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow

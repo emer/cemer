@@ -19,6 +19,7 @@
 #define minmax_h
 
 #include "ta_base.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 #include <math.h>

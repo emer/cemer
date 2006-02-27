@@ -188,12 +188,6 @@ enum CustomEventType {
 }; */
 
 #define COLOR_BLACK Qt::black
-//#define COLOR_HILIGHT qtsoMisc::color_hilight
-// NOTE: these are instantiated in tai_qtso_ti.cc (for want of a better place)
-// COLOR_BRIGHT_HILIGHT is for checkboxes, for better contrast
-//#define COLOR_BRIGHT_HILIGHT qtsoMisc::color_bright_hilight
-extern QColor& COLOR_HILIGHT;
-extern QColor& COLOR_BRIGHT_HILIGHT;
 
 // aliases
 

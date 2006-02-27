@@ -52,45 +52,47 @@
 #include "netstru_qtso.h"
 #endif
 
-template class taPtrList<Unit>;
-template class taList<SchedItem>;
-template class taList<Unit>;
-template class taList<TessEl>;
-template class taList<LinkPrjnConPtr>;
-template class taList<GpTessEl>;
-//template class taList<NetViewGraphic>;
-//template class taList<NetViewScaleRange>;
-template class taGroup<Event>;
-template class taGroup<TypeDefault>;
+template class PDP_API taPtrList<Unit>;
+template class PDP_API taList<SchedItem>;
+template class PDP_API taList<Unit>;
+template class PDP_API taList<TessEl>;
+template class PDP_API taList<LinkPrjnConPtr>;
+template class PDP_API taList<GpTessEl>;
+//template class PDP_API taList<NetViewGraphic>;
+//template class PDP_API taList<NetViewScaleRange>;
+template class PDP_API taGroup<Event>;
+template class PDP_API taGroup<TypeDefault>;
 
 // pdplog.h
-template class taGroup<PDPLog>; 
+template class PDP_API taGroup<PDPLog>; 
 
 // pdpshell.h
-template class taGroup<Project>; 
-template class taGroup<Wizard>; // pdpshell.h
+template class PDP_API taGroup<Project>; 
+template class PDP_API taGroup<Wizard>; // pdpshell.h
 
 // v3_compat.h
-template class taList<Environment>;
-template class taGroup<Environment>;
-template class taGroup<Process>; 
-template class taList<DataItem>; 
+template class PDP_API taList<Environment>;
+template class PDP_API taGroup<Environment>;
+template class PDP_API taGroup<Process>; 
+template class PDP_API taList<DataItem>; 
 
 // netstru.h
-template class taGroup<Unit>;
-template class taGroup<Layer>; // netstru.h
-template class taGroup<Network>; // netstru.h
-template class taGroup<NetConduit>; // netstru.h
+template class PDP_API taList<SchedItem>;
+template class PDP_API taList<Unit>;
+template class PDP_API taGroup<Unit>;
+template class PDP_API taGroup<Layer>; // netstru.h
+template class PDP_API taGroup<Network>; // netstru.h
+template class PDP_API taGroup<NetConduit>; // netstru.h
 
-template class SpecPtr<ConSpec>;
-template class SpecPtr<UnitSpec>;
-template class SpecPtr<ProjectionSpec>;
-template class SpecPtr<EventSpec>;
+template class PDP_API SpecPtr<ConSpec>;
+template class PDP_API SpecPtr<UnitSpec>;
+template class PDP_API SpecPtr<ProjectionSpec>;
+template class PDP_API SpecPtr<EventSpec>;
 
 #ifdef TA_GUI
-template class taGroup<SelectEdit>; // pdpshell.h
-template class taPlainArray<UnitViewData>; // netstru_qtso.h
-template class taPtrList<LogView>; // pdplog.h
+template class PDP_API taGroup<SelectEdit>; // pdpshell.h
+template class PDP_API taPlainArray<UnitViewData>; // netstru_qtso.h
+template class PDP_API taPtrList<LogView>; // pdplog.h
 
 
 #endif

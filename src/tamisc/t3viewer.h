@@ -20,13 +20,13 @@
 #ifndef T3VIEWER_H
 #define T3VIEWER_H
 
-#include "tamisc_def.h"
 #include "ta_group.h"
 //#include "ta_qt.h"
 #include "ta_qtviewer.h"
 //#include "ta_qtdata_def.h"
-#include "t3node_so.h"
 #include "ta_TA_type.h"
+#include "t3node_so.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 #include "igeometry.h"

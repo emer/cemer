@@ -22,6 +22,7 @@
 #include "bp.h"
 #include "rbp.h"
 #include "v3_compat.h"
+#include "bp_def.h"
 #include "bp_TA_type.h"
 
 // forwards this file

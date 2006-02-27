@@ -462,7 +462,7 @@ public:
 
 // Mixin interface for Node that uses datalinks, ex. tree node or Inventor node
 
-class IDataLinkClient : public virtual ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
+class TA_API IDataLinkClient : public virtual ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
   // this is the interface available to the host data object
 friend class taDataLink;
 public:
@@ -527,7 +527,7 @@ public:
     ~IDataLinkClient_PtrList() {} // MAKETA requires at least one member item
 };
 
-class taDataLink {
+class TA_API taDataLink {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS #VIRT_BASE interface for taiDataLink and descendants
 friend class taDataLinkItr;
 public:

@@ -44,7 +44,12 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="@echo on
+copy $(TargetDir)pdp*.dll $(SolutionDir)lib
+copy $(TargetDir)pdp*.lib $(SolutionDir)lib
+copy $(TargetDir)pdp*.exp $(SolutionDir)lib
+copy $(TargetDir)pdp*.dll $(SolutionDir)bin"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="pdp_prebuild.cmd"/>
@@ -263,6 +268,24 @@
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\pdp\netstru_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_TA_type.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdplog_qtso.moc.cpp">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -278,6 +301,9 @@
 					RelativePath="..\..\..\src\bp\bp_ti.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\bp\bp_v3_compat.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\bp\rbp.cpp">
 				</File>
 			</Filter>
@@ -291,12 +317,24 @@
 					RelativePath="..\..\..\src\bp\bp_def.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\bp\bp_v3_compat.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\bp\rbp.h">
 				</File>
 			</Filter>
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\bp\bp_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\bp_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\bp_TA_type.h">
+				</File>
 			</Filter>
 		</Filter>
 		<File

@@ -30,6 +30,9 @@ Global
 		{8469AE41-9D63-4819-B0F0-C30849686581}.Release.ActiveCfg = Release|Win32
 		{8469AE41-9D63-4819-B0F0-C30849686581}.Release.Build.0 = Release|Win32
 	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		Makefile = Makefile
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution

@@ -19,6 +19,7 @@
 #define colorscale_h
 
 #include "ta_group.h"
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 #include "icolor.h"

@@ -20,12 +20,12 @@
 #ifndef TA_DATA_H
 #define TA_DATA_H
 
-#include "tamisc_stdef.h"
 
 #include "ta_matrix.h"
 #include "ta_base.h"
 #include "ta_group.h"
 
+#include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
 
