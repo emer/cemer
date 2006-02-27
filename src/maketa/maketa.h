@@ -246,6 +246,13 @@ public: // these used to be standalone functions
   void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
   void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
 
+//////////////////////////////////
+// 	  Init Function		//
+//////////////////////////////////
+// (part 4 of _TA.cc file)
+
+  void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
+				    const String_PArray& ppfiles);
 };
 
 

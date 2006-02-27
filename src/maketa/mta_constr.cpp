@@ -151,7 +151,12 @@ void MTA::TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm, const String_PA
 #endif
 
   strm << "class TypeDef;\n";
+#ifdef TA_OS_WIN
+  if (win_dll)
+  strm << "extern " << win_dll_str << " void" << " ta_Init_" << ths->name << "();\n\n";
+#else
   strm << "extern void" << " ta_Init_" << ths->name << "();\n\n";
+#endif
 
   int i;
   for(i=0; i < ths->size; i++) {
@@ -1068,11 +1073,16 @@ void TypeDef_Init_MethodData(TypeDef* ths, ostream& strm) {
 // (part 4 of _TA.cc file)
 
 
-void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PArray& ppfiles) {
+void MTA::TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PArray& ppfiles) {
   strm << "\n// Init Function\n";
   strm << "\n\nstatic bool ta_Init_" << ths->name << "_done = false;\n\n";
 
+#ifdef TA_OS_WIN
+  if (win_dll)
+  strm << win_dll_str << " void ta_Init_" << ths->name << "() {\n";
+#else
   strm << "void ta_Init_" << ths->name << "() {\n";
+#endif
   strm << "  TypeDef* sbt;\n\n";
 
   strm << "  if(ta_Init_" << ths->name << "_done) return;\n";

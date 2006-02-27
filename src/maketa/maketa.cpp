@@ -565,7 +565,13 @@ int main(int argc, char* argv[])
   mta->ta_type_h = mta->basename + "_TA_type.h";
   mta->ta_inst_h = mta->basename + "_TA_inst.h";
   mta->ta_ccname = mta->basename + "_TA.cpp";
-
+  
+  // create stub _type.h file if doesn't exist, so compiles don't fail
+  FILE* dummy = fopen(mta->ta_type_h, "r");
+  if (!dummy) {
+    dummy = fopen(mta->ta_type_h, "w");
+  }
+  fclose(dummy);
 
   String comnd;
   for(i=0; i<mta->headv.size; i++) {
@@ -667,12 +673,16 @@ int main(int argc, char* argv[])
   outc.close();  outc.clear();
 
   /* update times...why do we have to do this?? */
+#ifdef TA_OS_WIN
+//TODO: fails on Windows (no "touch" command)
+#else
   comnd = String("touch ") + mta->ta_type_h;
   system(comnd);
   comnd = String("touch ") + mta->ta_inst_h;
   system(comnd);
   comnd = String("touch ") + mta->ta_ccname;
   system(comnd);
+#endif
 
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
     cerr << "\n TypeSpace size and hash_table bucket_max values:\n"

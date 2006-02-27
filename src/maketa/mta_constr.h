@@ -176,8 +176,8 @@ extern void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& 
 //////////////////////////////////
 // (part 4 of _TA.cc file)
 
-extern void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
-				    const String_PArray& ppfiles);
+/*extern void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
+				    const String_PArray& ppfiles); */
 
 extern void TypeDef_Generate_Init(TypeDef* ths, ostream& strm);
 extern void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
