@@ -1,0 +1,112 @@
+Qt4 Port TODO Items
+
+
+ta_qtclipdata.h/cpp
+
+* port to new Qt4 mime/drag class framework
+
+ta_qttype.h/cpp
+
+* in taiArgType -- need to revise for the recently added types
+
+ta_qtgroup.cpp
+
+* fixup SelectEdit menu populating -- maybe do via comment directives?
+
+ta_qtviewer.h/cpp
+
+* port to new model/view architecture
+* test splitting/joining of panels
+
+
+BUGS
+
+* inline xyz editor not being properly centered
+* in default display panel, the group view is not displaying, 
+  but it does display when using "properties" (separate window)
+
+* create a DataTable in data; give it a name in Properties; press Apply
+  error msg occurs (like "Cannot save, list size has changed")
+* List/Group bug: when adding a new item, it appears first as "[N]TypeName" 
+  even if given a name -- it only displays correct name if something updates
+  the view, ex. adding a new item (test using DataTable and adding cols)
+* taMisc::Error -- doesn't raise error dialog (note: requiring the *** to raise
+  interactive dialogs is a terrible convention...)
+* when moving an item in a list via drag/drop, the item ends up getting deleted
+  (note: code seems correct in taList, i.e. it does execute the Move op --
+   maybe the source is incorrectly deleting it)
+* per above, also, when cancelling a drag op, the item still disappears!
+* drop context menu not in correct place
+* drop context menu not showing up when dropping on another object somewhere
+* ** idle program seems to actively leak memory (can possibly be a quitted
+  version, where the ui is gone, but the program hasn't quit yet)
+  
+* Show menu, enabling logic is correct, but doesn't seem to do anything
+  CAUSE: seems to relate to delay in dispatching the deleted() signal from the
+    defer delete components in the body -- Qt docs say it dispatches those in the
+    event loop, but only when returning to a specific event loop, so maybe we 
+    rarely hit the condition of recalling ProcessEvents in the same event loop
+    
+* app not quiting from command line,  it displays console prompt
+* in iEditGrid (used in ta_qtgroup) there is an ugly hack to workaround a
+  seeming bug in QGridLayout->setRowMinimumHeight
+  NOTE: still not working right!
+
+
+NetViewer
+* nothing in "Display" mini-window
+* rotary controls not displaying images
+  (may be related to the qtassistant in this buildof Qt not showing icons)
+
+
+ISSUES
+
+taiAction 
+
+* lifetime management is not correct -- possibly can't use a refcounted approach
+ambiguity:
+ - what happens when you add a QAction to a widget? it needs to be referenced, right?
+The owner/creator of the Action will control the lifetime of its container,
+ex. taiMenuToolBarBase
+* if we manage lifetime via a ref count, we cannot also have parent-managed lifetime,
+  IF the parent-managed lifetime can be shorter than the ref counted one
+* QAction is a QObject derivitive; presumably, only for lifetime management
+
+
+curSel
+
+set: by code, to cause the item to become current
+  by the user, when the user selects an item
+cleared: when moving one item to another
+
+when the user selects an item:
+code must retrieve previous item, and deselect (could be on another menu)
+
+when Action is added, we can detect if it participates in global selection:
+  is radio && not in a local group
+  
+item toggling/setting/resetting can occur:
+* because user clicked it
+* because code is unsetting it due to new curSel
+* because code is unsetting it due to user clicking new item
+* because code is setting it
+
+do we need to do anything, really, for toggle???
+
+
+Events for use cases
+
+Code changes curSel
+  if exist, code sets check off for cur
+    cur will raise its toggle() signal
+      toggle(false) handler for cur will run
+      
+User selects a new radio item in menu
+  item will raise its toggle(true) signal
+  
+things we should ignore:
+  toggles for local radio group items
+  toggles for toggle items
+  
+things we should act on:
+  toggles for global radio group items
