@@ -654,7 +654,7 @@ private:
 };
 
 template<class T> 
-class TAMISC_API DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
+class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
   override taMatrix* 	AR()	{ return &ar; } // the array pointer
   override const taMatrix* AR() const { return &ar; } // the array pointer

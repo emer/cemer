@@ -194,7 +194,8 @@ public:
 };
 
 
-template<class T> class PDP_API SpecPtr : public SpecPtr_impl {
+template<class T> 
+class SpecPtr : public SpecPtr_impl {
 public:
   T*		spec;		// the actual spec itself
 

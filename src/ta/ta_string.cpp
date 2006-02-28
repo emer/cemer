@@ -156,7 +156,7 @@ Cstring_prof string_prof;
 #endif
 
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
-StrRep* Snew(int slen, uint cap) {
+TA_API StrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
   uint allocsize = tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
   cap = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
@@ -177,7 +177,7 @@ StrRep* Snew(int slen, uint cap) {
 }
 
 // allocate a new StrRep by copying from a given string (can be NULL)
-StrRep* Salloc(const char* s, int slen, uint cap) {
+TA_API StrRep* Salloc(const char* s, int slen, uint cap) {
   if (slen < 0) slen = s ? strlen(s) : 0;
   StrRep* rval = Snew(slen, cap); //note: alloc failure returns NULL
   if (slen && (rval->sz >= (uint)slen)) memcpy(rval->s, s, slen);
@@ -185,11 +185,11 @@ StrRep* Salloc(const char* s, int slen, uint cap) {
 }
 
 // allocate & concatenate
-StrRep* Scat(StrRep* srep, const char* s, int slen) {
+TA_API StrRep* Scat(StrRep* srep, const char* s, int slen) {
   return Scat(srep->s, srep->len, s, slen);
 }
 
-StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
+TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
   if (slen1 < 0) slen1 = s1 ? strlen(s1) : 0;
   if (slen2 < 0) slen2 = s2 ? strlen(s2) : 0;
   uint newlen = slen1 + slen2;
@@ -230,7 +230,7 @@ static StrRep* Sresize(StrRep* old, uint new_sz) {
   return rep;
 } */
 
-StrRep* Sreverse(const StrRep* src)
+TA_API StrRep* Sreverse(const StrRep* src)
 {
   StrRep* dest = Snew(src->len);
   char* a = dest->s;
@@ -989,7 +989,7 @@ String common_suffix(const String& x, const String& y, int startpos) {
 
 // IO
 #define ISTR_RESIZE_QUANTA 80
-istream& operator>>(istream& s, String& x) {
+TA_API istream& operator>>(istream& s, String& x) {
   //  if (!s.ipfx(0) || (!(s.flags() & ios::skipws) && !ws(s)))
   if ((!(s.flags() & ios::skipws) && !ws(s)))
   {
@@ -1015,7 +1015,7 @@ istream& operator>>(istream& s, String& x) {
   return s;
 }
 
-int readline(istream& s, String& x, char terminator, int discard) {
+TA_API int readline(istream& s, String& x, char terminator, int discard) {
 //   if (!s.ipfx(0))
 //     return 0;
   int ch;

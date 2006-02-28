@@ -27,8 +27,8 @@
 // Lesser General Public License for more details.
 // Hack file for maketa because it chokes on Qt header files
 
-#ifndef QTMAKETA_H
-#define QTMAKETA_H
+#ifndef TA_MAKETA_DEFS_H
+#define TA_MAKETA_DEFS_H
 
 #ifdef __MAKETA__
 

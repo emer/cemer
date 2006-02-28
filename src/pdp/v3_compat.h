@@ -16,6 +16,8 @@
 // v3_compat.h -- version 3 compatability objects, 
 //  only for converting v3.x files -- no other files should ref this,
 //  since conversion routines should be in this file
+// NOTE: symbols exported because they are used by value in the Project,
+//  so require to be linked externally.
 
 #ifndef V3_COMPAT_H
 #define V3_COMPAT_H
@@ -75,7 +77,7 @@ class Environment;
 //TODO class TimeEnvironment;
 
 #ifdef TA_GUI
-class CtrlPanelData : public taOBase {
+class PDP_API CtrlPanelData : public taOBase {
   // ##NO_TOKENS #INLINE data for the control panel
 INHERITED(taOBase)
 public:
@@ -91,7 +93,7 @@ public:
 };
 #endif
 
-class Process : public taNBase, public ScriptBase {
+class PDP_API Process : public taNBase, public ScriptBase {
   // ##EXT_proc simple processes for controlling and coordinating execution
 INHERITED(taNBase)
 public:
@@ -134,7 +136,7 @@ public:
   TA_BASEFUNS(Process);
 };
 
-class Process_Group : public taBase_Group {
+class PDP_API Process_Group : public taBase_Group {
   // ##NO_TOKENS a regular group of processes
 public:
   bool		Close_Child(TAPtr obj);
@@ -145,7 +147,7 @@ public:
 };
 
 
-class Process_MGroup : public taGroup<Process> {
+class PDP_API Process_MGroup : public taGroup<Process> {
   // ##NO_TOKENS a menu group for processes
 public:
 
@@ -158,7 +160,7 @@ public:
 };
 
 
-class DataItem : public taOBase {
+class PDP_API DataItem : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE source of a piece of data
 public:
 
@@ -187,7 +189,7 @@ public:
   TA_BASEFUNS(DataItem);
 };
 
-class DataItem_List : public taList<DataItem> {
+class PDP_API DataItem_List : public taList<DataItem> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of DataItem objects
 public:
   void	Initialize() 		{SetBaseType(&TA_DataItem); };
@@ -196,7 +198,7 @@ public:
 };
 
 
-class StatVal : public DataItem {
+class PDP_API StatVal : public DataItem {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE Statistic value
 public:
   float		val;		// value of statistic
@@ -216,7 +218,7 @@ public:
 };
 
 
-class StatVal_List : public taBase_List {
+class PDP_API StatVal_List : public taBase_List {
   // ##NO_UPDATE_AFTER group of stat values
 public:
   virtual bool	HasStopCrit();
@@ -229,7 +231,7 @@ public:
 };
 
 
-class StatValAgg : public Aggregate {
+class PDP_API StatValAgg : public Aggregate {
   // #INLINE Aggregation for StatVal-based values
 public:
 /*  void 		ComputeAgg(float& to, float fm)
@@ -260,7 +262,7 @@ public:
   TA_BASEFUNS(StatValAgg);
 };
 
-class AggStat : public StatValAgg {
+class PDP_API AggStat : public StatValAgg {
   // #INLINE Aggregate statistics over time (processing levels)
 public:
   Stat*		real_stat;	// #READ_ONLY #NO_SAVE the 'real' (non-agg) stat
@@ -284,7 +286,7 @@ public:
   TA_BASEFUNS(AggStat);
 };
 
-class Stat : public Process {
+class PDP_API Stat : public Process {
   // Generic Statistic Process
 public:
   enum LoopInitType {
@@ -340,7 +342,7 @@ public:
   TA_BASEFUNS(Stat);
 };
 
-class Stat_Group : public taBase_Group {
+class PDP_API Stat_Group : public taBase_Group {
   // ##NO_TOKENS a group of statistics
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -363,7 +365,7 @@ public:
 
 // SE_Stat and MonitorStat are so basic that they are here, and not in extra
 
-class SE_Stat : public Stat {
+class PDP_API SE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Squared Error Statistic
 public:
   StatVal	se;			// squared errors
@@ -381,7 +383,7 @@ public:
   TA_BASEFUNS(SE_Stat);
 };
 
-class MonitorStat: public Stat {
+class PDP_API MonitorStat: public Stat {
   // ##COMPUTE_IN_TrialProcess Network Monitor Statistic
 public:
   static String GetObjName(TAPtr obj); // get name of object for naming stats, etc
@@ -427,7 +429,7 @@ public:
 };
 
 
-class Counter : public taBase {
+class PDP_API Counter : public taBase {
   // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER Holds the value of a loop counter
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
@@ -443,7 +445,7 @@ public:
 };
 
 
-class StepParams : public taBase {
+class PDP_API StepParams : public taBase {
   // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER Holds steping process parameters
 public:
   SchedProcess* owner;		// #READ_ONLY #NO_SAVE use this to find the subtypes
@@ -464,7 +466,7 @@ public:
 };
 
 
-class SchedProcess : public Process {
+class PDP_API SchedProcess : public Process {
   // ##MEMB_IN_GPMENU Generic scheduling, looping process
 INHERITED(Process)
 public:
@@ -542,7 +544,7 @@ public:
 // 	CycleProcess	//
 //////////////////////////
 
-class CycleProcess : public SchedProcess {
+class PDP_API CycleProcess : public SchedProcess {
   // ##AGGOP_SUM Runs one cycle of activation update
 public:
   void 	Initialize();
@@ -555,7 +557,7 @@ public:
 // 	SettleProcess	//
 //////////////////////////
 
-class SettleProcess : public SchedProcess {
+class PDP_API SettleProcess : public SchedProcess {
   // ##AGGOP_SUM Settles over cycles of activation propagation
 public:
   Counter	cycle;			// Current cycle number
@@ -573,7 +575,7 @@ public:
 // 	TrialProcess	//
 //////////////////////////
 
-class TrialProcess : public SchedProcess {
+class PDP_API TrialProcess : public SchedProcess {
   // ##AGGOP_SUM Runs a single trial (one event)
 public:
   Event* 	cur_event;
@@ -598,7 +600,7 @@ public:
 // 	EpochProcess	//
 //////////////////////////
 
-class EpochProcess : public SchedProcess {
+class PDP_API EpochProcess : public SchedProcess {
   // ##AGGOP_SUM Loops over entire set of trials (events) in the environment.\nIf multiple dmem processors are available (after network dmem_nprocs) events are distributed across\nprocessors, and weights synchronized: every batch_n for SMALL_BATCH (=ONLINE), or at end for BATCH.
 public:
   enum Order {
@@ -638,7 +640,7 @@ public:
   TA_BASEFUNS(EpochProcess);
 };
 
-class SequenceProcess : public SchedProcess {
+class PDP_API SequenceProcess : public SchedProcess {
   // ##AGGOP_SUM Processes a sequence of trials in one event group (must be under a SequenceEpoch, which loops over event groups)
 public:
   enum Order {
@@ -678,7 +680,7 @@ public:
   TA_BASEFUNS(SequenceProcess);
 };
 
-class SequenceEpoch : public EpochProcess {
+class PDP_API SequenceEpoch : public EpochProcess {
   // Loops over sequences (groups of events) instead of individual events (enviro must have event groups!).
 public:
   enum SmallBatchType {
@@ -703,7 +705,7 @@ public:
   TA_BASEFUNS(SequenceEpoch);
 };
 
-class InteractiveEpoch : public EpochProcess {
+class PDP_API InteractiveEpoch : public EpochProcess {
   // Loops over events in an environment using the interactive interface of GetNextEvent(), which can generate new events based on current state
 public:
   int		last_trial_val;	// #READ_ONLY #NO_SAVE last trial.val when GetCurEvent was called -- decide wether its time to get a new event or not
@@ -717,7 +719,7 @@ public:
 // 	TrainProcess	//
 //////////////////////////
 
-class NEpochProcess : public SchedProcess {
+class PDP_API NEpochProcess : public SchedProcess {
   // ##AGGOP_LAST Runs epochs to train network
 INHERITED(SchedProcess)
 public:
@@ -739,7 +741,7 @@ public:
   TA_BASEFUNS(NEpochProcess);
 };
 
-class TrainProcess : public SchedProcess {
+class PDP_API TrainProcess : public SchedProcess {
   // ##AGGOP_LAST Runs epochs to train network
 public:
   Counter	epoch; 			// Epoch Counter
@@ -761,7 +763,7 @@ public:
 // 	BatchProcess	//
 //////////////////////////
 
-class BatchProcess : public SchedProcess {
+class PDP_API BatchProcess : public SchedProcess {
   // ##AGGOP_LAST Runs multiple trainings
 public:
   Counter	batch;		// number of batches run
@@ -789,7 +791,7 @@ class Pattern;
 class Pattern_Group;
 class PSChannel; // #IGNORE impl class for SourceChannel
 
-class PatternSpec : public BaseSubSpec {
+class PDP_API PatternSpec : public BaseSubSpec {
   // ##SCOPE_Environment sub-spec for patterns within an eventspec
 INHERITED(BaseSubSpec)
 friend class Environment;
@@ -876,7 +878,7 @@ public:
   TA_BASEFUNS(PatternSpec); //
 };
 
-class PatternSpec_Group : public taBase_Group {
+class PDP_API PatternSpec_Group : public taBase_Group {
   // ##SCOPE_Environment group of pattern specs (acts like a template for pattern groups)
 INHERITED(taBase_Group)
 public:
@@ -890,7 +892,7 @@ public:
   TA_BASEFUNS(PatternSpec_Group);
 };
 
-class EventSpec : public BaseSpec {
+class PDP_API EventSpec : public BaseSpec {
   // ##SCOPE_Environment ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
 public:
   enum PatternLayout {
@@ -914,7 +916,7 @@ public:
   TA_BASEFUNS(EventSpec);
 };
 
-class EventSpec_SPtr : public SpecPtr<EventSpec> {
+class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec> {
 public:
   BaseSpec_MGroup*	GetSpecGroup();	// event specs go in environment
   void 	Initialize() 		{ };
@@ -927,7 +929,7 @@ public:
 //   Pattern/Event    //
 ////////////////////////
 
-class Pattern : public taOBase {
+class PDP_API Pattern : public taOBase {
   // ##SCOPE_Environment ##EXT_pat ##NO_TOKENS ##NO_UPDATE_AFTER Contains activation values to be applied to a network layer
 public:
   float_RArray 	value;  	// Values of Pattern
@@ -945,7 +947,7 @@ public:
 BaseGroup_of(Pattern);
 
 
-class Event : public taNBase {
+class PDP_API Event : public taNBase {
   // ##SCOPE_Environment ##EXT_evt ##NO_TOKENS ##NO_UPDATE_AFTER Contains patterns of activation for different layers in the network specifying one event
 public:
   int			index;		// #NO_SAVE #READ_ONLY Index of this event within group
@@ -968,7 +970,7 @@ public:
 // other models are definable, but the standard EpochProcess will not
 // understand them.
 
-class Event_MGroup : public taGroup<Event> {
+class PDP_API Event_MGroup : public taGroup<Event> {
   // ##SCOPE_Environment Group of events
 protected:
   void	El_SetIndex_(void* base, int idx) { ((Event*)base)->index = idx; }
@@ -983,7 +985,7 @@ public:
 //   Environment      //
 ////////////////////////
 
-class Environment : public taNBase {
+class PDP_API Environment : public taNBase {
   // ##EXT_env ##COMPRESS basic environment: contains events to present to the network, and can be used to hold data for analysis
 INHERITED(taNBase)
 public:
@@ -1027,7 +1029,7 @@ public:
 };
 
 // note: Environment_MGroup name is for compatiblity with v3.2 files
-class Environment_MGroup : public taGroup<Environment> {
+class PDP_API Environment_MGroup : public taGroup<Environment> {
   // group of environments
 public:
   void  Initialize()            { SetBaseType(&TA_Environment); }
@@ -1036,7 +1038,7 @@ public:
 };
 
 
-class ScriptEnv : public Environment, public ScriptBase {
+class PDP_API ScriptEnv : public Environment, public ScriptBase {
   // For algorithmically generated events: Initialization of events is done by a script at the start of each epoch through the InitEvents() function
 public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
@@ -1052,7 +1054,7 @@ public:
   TA_BASEFUNS(ScriptEnv);
 };
 
-class InteractiveScriptEnv : public ScriptEnv {
+class PDP_API InteractiveScriptEnv : public ScriptEnv {
   // For interactively-generated environments: Script is called for each event in GetNextEvent function (use with InteractiveEpoch)
 public:
   void 	Initialize() {}
@@ -1066,7 +1068,7 @@ public:
 //      Frequency 	//
 //////////////////////////
 
-class FreqEvent : public Event {
+class PDP_API FreqEvent : public Event {
   // an event that has a frequency associated with it
 public:
   float 	frequency;	// #ENVIROVIEW_freq frequency of occurance for this event
@@ -1080,7 +1082,7 @@ public:
 
 class FreqEnv;
 
-class FreqEvent_Group : public Event_MGroup {
+class PDP_API FreqEvent_Group : public Event_MGroup {
   // an event group that has a frequency associated with it
 public:
   FreqEnv*	fenv;		// #READ_ONLY #NO_SAVE parent frequency environment
@@ -1097,7 +1099,7 @@ public:
 };
 
 
-class FreqEnv : public Environment {
+class PDP_API FreqEnv : public Environment {
   // environment which has a frequency for each event
 public:
   enum FreqLevel {
@@ -1139,7 +1141,7 @@ public:
 //         Time 	//
 //////////////////////////
 
-class TimeEvent : public Event {
+class PDP_API TimeEvent : public Event {
   // an event which occurs at a specific time
 public:
   float		time;		// #ENVIROVIEW time at which it should appear
@@ -1151,7 +1153,7 @@ public:
   TA_BASEFUNS(TimeEvent);
 };
 
-class TimeEvent_MGroup : public Event_MGroup {
+class PDP_API TimeEvent_MGroup : public Event_MGroup {
   // a group of time-based events
 public:
   enum Interpolate {
@@ -1172,7 +1174,7 @@ public:
   TA_BASEFUNS(TimeEvent_MGroup);
 };
 
-class TimeEnvironment : public Environment {
+class PDP_API TimeEnvironment : public Environment {
   // an environment that manages time-based events
 public:
   enum Interpolate {
@@ -1195,7 +1197,7 @@ public:
 //     FreqTime 	//
 //////////////////////////
 
-class FreqTimeEvent : public TimeEvent {
+class PDP_API FreqTimeEvent : public TimeEvent {
   // a time event that has a frequency associated with it
 public:
   float 	frequency;	// #ENVIROVIEW_freq frequency of occurance for this event
@@ -1207,7 +1209,7 @@ public:
   TA_BASEFUNS(FreqTimeEvent);
 };
 
-class FreqTimeEvent_Group : public TimeEvent_MGroup {
+class PDP_API FreqTimeEvent_Group : public TimeEvent_MGroup {
   // a time event group that has a frequency associated with it
 public:
   float		frequency;	// frequency of occurance for this group of events
@@ -1220,7 +1222,7 @@ public:
 };
 
 
-class FreqTimeEnv : public TimeEnvironment {
+class PDP_API FreqTimeEnv : public TimeEnvironment {
   // a time environment which has a frequency for each event
 public:
   enum FreqLevel {
@@ -1260,7 +1262,7 @@ public:
 //     Probability 	//
 //////////////////////////
 
-class ProbPattern : public Pattern {
+class PDP_API ProbPattern : public Pattern {
   // pattern is chosen from group of patterns with given probability
 public:
   float    	prob;		// #ENVIROVIEW probability of showing this pattern
@@ -1274,7 +1276,7 @@ public:
   TA_BASEFUNS(ProbPattern);
 };
 
-class ProbPatternSpec_Group : public PatternSpec_Group {
+class PDP_API ProbPatternSpec_Group : public PatternSpec_Group {
   // defines a group of patterns that are chosen according to their probabilities
 public:
 
@@ -1287,7 +1289,7 @@ public:
   TA_BASEFUNS(ProbPatternSpec_Group);
 };
 
-class ProbEventSpec : public EventSpec {
+class PDP_API ProbEventSpec : public EventSpec {
   // events have probabalistically-chosen patterns contained in ProbPatternSpec_Groups
 public:
   float		default_prob;	// default probability
@@ -1301,7 +1303,7 @@ public:
 //     XY Offset	//
 //////////////////////////
 
-class XYPatternSpec : public PatternSpec {
+class PDP_API XYPatternSpec : public PatternSpec {
   // for patterns that are positioned at a particular x,y offset location
 public:
   bool		wrap;
@@ -1318,7 +1320,7 @@ public:
   TA_BASEFUNS(XYPatternSpec);
 };
 
-class XYPattern : public Pattern {
+class PDP_API XYPattern : public Pattern {
   // specifies the x,y offset location of the pattern in the layer
 public:
   TwoDCoord	offset;		// #ENVIROVIEW offset within network layer for pattern
@@ -1335,7 +1337,7 @@ public:
 //     XY Subset	//
 //////////////////////////
 
-class XYSubPatternSpec : public PatternSpec {
+class PDP_API XYSubPatternSpec : public PatternSpec {
   // presents rectagular subsets (size of layer) of large patterns at x,y offset
 public:
   bool		wrap;
@@ -1348,7 +1350,7 @@ public:
   TA_BASEFUNS(XYSubPatternSpec);
 };
 
-class XYSubPattern : public Pattern {
+class PDP_API XYSubPattern : public Pattern {
   // specifies the x,y offset location of the layer within the pattern
 public:
   TwoDCoord	offset;		// #ENVIROVIEW offset within pattern for network layer
@@ -1365,7 +1367,7 @@ public:
 //     GroupPattern	//
 //////////////////////////
 
-class GroupPatternSpec : public PatternSpec {
+class PDP_API GroupPatternSpec : public PatternSpec {
   // organizes pattern values into sub-groups for viewing and/or sending to network
 public:
   PosTDCoord	sub_geom;
@@ -1399,7 +1401,7 @@ public:
 // 	Duration  Events		//
 //////////////////////////////////////////
 
-class DurEvent : public Event {
+class PDP_API DurEvent : public Event {
   // an event which lasts for a particular amount of time
 public:
   float		duration;	// #ENVIROVIEW length of time (cycles) event should be presented
@@ -1415,7 +1417,7 @@ public:
 // 	Read from File  		//
 //////////////////////////////////////////
 
-class FromFileEnv : public Environment {
+class PDP_API FromFileEnv : public Environment {
   // Environment that reads events incrementally from a file into events. NOT SUPPORTED IN CONVERSION
 public:
 /*  enum 	ReadMode {

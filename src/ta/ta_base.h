@@ -972,7 +972,7 @@ protected:
 };
 
 template<class T> 
-class TA_API taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
+class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // get element at index
@@ -1079,7 +1079,7 @@ protected: \
   inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));}
 
 template<class T>
-class TA_API taArray : public taArray_base {
+class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory

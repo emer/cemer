@@ -438,7 +438,7 @@ protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
 template<class T> 
-class TA_API taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
+class taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -590,7 +590,8 @@ protected:
 };
 
 
-template<class T> class TA_API taPtrList : public taPtrList_impl { // #INSTANCE
+template<class T> 
+class taPtrList : public taPtrList_impl { // #INSTANCE
 public:
   taPtrList()					{ };
   taPtrList(const taPtrList<T>& cp) 		{ Borrow(cp); }
@@ -790,7 +791,8 @@ public:
 };
 
 
-template<class T> class TA_API taPtrList_base : public taPtrList_impl { // #INSTANCE
+template<class T> 
+class taPtrList_base : public taPtrList_impl { // #INSTANCE
 public:
   taPtrList_base()					{ };
   taPtrList_base(const taPtrList_base<T>& cp) 		{ Duplicate(cp); };
@@ -884,11 +886,11 @@ public:
 
 #ifdef __MAKETA__
 template<class T> 
-class TA_API taPlainArray : public taArray_impl { // #INSTANCE
+class taPlainArray : public taArray_impl { // #INSTANCE
 #else
 //template<class T, class SC = DefaultStringConverter<T> > 
 template<class T> 
-class TA_API taPlainArray : public taArray_impl { // #INSTANCE
+class taPlainArray : public taArray_impl { // #INSTANCE
 #endif
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory

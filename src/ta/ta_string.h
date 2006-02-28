@@ -108,11 +108,11 @@ extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience
   slen -- len of the string if known; -1 means call strlen function
   cap -- capacity; 0 means use the string len
 */
-StrRep*		Snew(int slen, uint cap = 0); // for an empty rep, for filling by caller; len is set
-StrRep*		Salloc(const char* s, int slen = -1, uint cap = 0); // the most-used alloc
-StrRep*		Scat(StrRep* srep, const char* s, uint slen = -1);
-StrRep*		Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
-StrRep*		Sreverse(const StrRep* x);
+TA_API StrRep*		Snew(int slen, uint cap = 0); // for an empty rep, for filling by caller; len is set
+TA_API StrRep*		Salloc(const char* s, int slen = -1, uint cap = 0); // the most-used alloc
+TA_API StrRep*		Scat(StrRep* srep, const char* s, uint slen = -1);
+TA_API StrRep*		Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
+TA_API StrRep*		Sreverse(const StrRep* x);
 
 class TA_API String { // reference counted string
 friend class StrRep;
@@ -351,10 +351,10 @@ public:
                              char terminator = '\n',
                              int discard_terminator = 1); //
 #else
-  friend std::ostream&   operator<<(std::ostream& s, const String& x);
-  friend std::istream&   operator>>(std::istream& s, String& x);
+  friend std::ostream&   operator<<(std::ostream& s, const String& x); // is inline
+  TA_API friend std::istream&   operator>>(std::istream& s, String& x);
 
-  friend int        readline(std::istream& s, String& x,
+  TA_API friend int        readline(std::istream& s, String& x,
                              char terminator = '\n',
                              int discard_terminator = 1);
 #endif

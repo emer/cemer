@@ -269,7 +269,7 @@ private:
 
 
 template<class T> 
-class TA_API taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
+class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 

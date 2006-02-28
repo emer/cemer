@@ -15,10 +15,11 @@
 
 
 
-#ifndef TA_MISC_STDEF_H
-#define TA_MISC_STDEF_H
+#ifndef TAMISC_STDEF_H
+#define TAMISC_STDEF_H
 
 // standard definitions, etc
 
+#include "ta_stdef.h"
 #include "tamisc_maketa_defs.h"
 #endif

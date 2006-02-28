@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta_debug.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				AdditionalDependencies="ta_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
 				OutputFile="$(OutDir)/pdp_debug.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -49,7 +49,8 @@
 copy $(TargetDir)pdp*.dll $(SolutionDir)lib
 copy $(TargetDir)pdp*.lib $(SolutionDir)lib
 copy $(TargetDir)pdp*.exp $(SolutionDir)lib
-copy $(TargetDir)pdp*.dll $(SolutionDir)bin"/>
+copy $(TargetDir)pdp*.dll $(SolutionDir)bin
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="pdp_prebuild.cmd"/>
@@ -86,7 +87,7 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin"/>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				AdditionalDependencies="ta.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
 				OutputFile="$(OutDir)/pdp.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"

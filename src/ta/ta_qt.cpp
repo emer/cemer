@@ -59,12 +59,6 @@
   #endif */
 #endif
 
-/*
-#ifndef CYGWIN
-#include <IV-X11/xwindow.h>	// this is for window dumps
-#include <IV-X11/xdisplay.h>	// this is for window dumps
-#endif
-*/
 
 //#include <ostream.h>
 
@@ -88,7 +82,7 @@ int tai_rl_hook_proc() {
 // 	taiMisc: miscellaneous useful stuff 		//
 //////////////////////////////////////////////////////////
 
-taiMisc* taiM = NULL;
+TA_API taiMisc* taiM = NULL;
 
 bool 			taiMisc::gui_active = false;
 taiDialog_List 		taiMisc::active_dialogs;

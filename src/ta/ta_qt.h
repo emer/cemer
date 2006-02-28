@@ -302,7 +302,7 @@ protected:
 };
 #endif
 
-extern taiMisc* taiM;	// this is an instance to use for all seasons..
+extern TA_API taiMisc* taiM;	// this is an instance to use for all seasons..
 
 
 #endif // TA_QT_H
