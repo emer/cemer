@@ -77,8 +77,8 @@ template class PDP_API taGroup<Process>;
 template class PDP_API taList<DataItem>; 
 
 // netstru.h
-template class PDP_API taList<SchedItem>;
-template class PDP_API taList<Unit>;
+// template class PDP_API taList<SchedItem>;
+// template class PDP_API taList<Unit>;
 template class PDP_API taGroup<Unit>;
 template class PDP_API taGroup<Layer>; // netstru.h
 template class PDP_API taGroup<Network>; // netstru.h
