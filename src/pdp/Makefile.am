@@ -31,7 +31,8 @@ SRCS_GUI =\
 	netstru_qtso.cpp \
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
-	pdplog_qtso.moc.cpp 
+	pdplog_qtso.moc.cpp \
+	v3_compat.moc.cpp 
 
 endif
 
@@ -46,10 +47,10 @@ TAHEADS =\
 	@abs_srcdir@/netstru.h \
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/netdata.h \
-	@abs_srcdir@/v3_compat.h \
 	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
-	$(TAHEADS_GUI)
+	$(TAHEADS_GUI) \
+	@abs_srcdir@/v3_compat.h 
 
 HEADS =\
 	pdpdeclare.h \
@@ -58,10 +59,10 @@ HEADS =\
 	netstru.h \
 	netstru_extra.h \
 	netdata.h \
-	v3_compat.h \
 	pdplog.h \
 	pdpshell.h \
-	$(HEADS_GUI)
+	$(HEADS_GUI) \
+	v3_compat.h
 
 SRCS =\
 	pdpbase.cpp \
@@ -70,10 +71,10 @@ SRCS =\
 	netstru.cpp \
 	netstru_extra.cpp \
 	netdata.cpp \
-	v3_compat.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
 	$(SRCS_GUI) \
+	v3_compat.cpp \
 	pdp_ti.cpp
 
 include $(top_srcdir)/Maketa.am
