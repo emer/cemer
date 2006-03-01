@@ -2650,11 +2650,6 @@ char* css_scoped_generator(char* text, int state) {
 
 extern "C" {
   extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
-  extern int readline_nogui_waitproc(void);
-}
-
-int readline_nogui_waitproc() {
-  return tabMisc::WaitProc();
 }
 
 int cssMisc::Initialize() {
@@ -2663,8 +2658,6 @@ int cssMisc::Initialize() {
 
   // use our completion function
   rl_attempted_completion_function = (rl_function*)css_attempted_completion;
- // set the hook to our nogui "waitproc" -- can be overridden later
-  rl_event_hook = readline_nogui_waitproc;
 
   // functions
   cssEl::Ref(&cssMisc::Void);		// reference this to keep it around

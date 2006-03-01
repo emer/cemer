@@ -324,18 +324,24 @@ inline size_t tweak_alloc(size_t n) {
 #endif
 
 // exceptions and assertions
-
+// note: maketa doesn't (yet) grok the throw() syntax
 #ifdef TA_NO_EXCEPTIONS
-class ta_exception {
+class ta_exception { }; //TODO: should this even exist?
 #else
 #ifdef __MAKETA__
 class ta_exception {
+public:
+  void setWhat(const char* value, int len = -1);
+  ta_exception();
+  ta_exception(const ta_exception& cp);
+  explicit ta_exception(const char* value, int len = -1);
+  ~ta_exception();
+  const char* what() const; // note: override
+  ta_exception& operator =(const ta_exception& cp);
+};
 #else
 #include <exception>
 class ta_exception: public std::exception {
-#endif
-#endif
-
 public:
   void setWhat(const char* value, int len = -1);
   
@@ -351,6 +357,11 @@ protected:
   char* m_what; // dynamically allocated
 };
 
+#endif
+#endif
+
+
+#ifndef __MAKETA__
 inline ta_exception::ta_exception() throw() {
   m_what = NULL;
 }
@@ -397,6 +408,7 @@ inline const char* ta_exception::what() const throw() {
   if (m_what != NULL) return m_what;
   else return "";
 }
+#endif // ndef __MAKETA__
 
 // Macros for assertions and exceptions
 // An Assertion is something that may be optimized out for the release version
@@ -427,5 +439,12 @@ inline void Check(bool cond, const char* msg) {if (!(cond)) throw ta_exception(m
 
 #define THROW(msg) throw ta_exception(msg);
 
+// Qt Event IDs in the PDP system should be allocated here:
+#ifdef TA_USE_QT
+enum CustomEventType {
+  FirstEvent		= 1000, //note: QT's custom events start at 1000
+  cssMisc_StartupShell_EventType // css_machine.h
+};
+#endif
 
 #endif // STDEFS_H

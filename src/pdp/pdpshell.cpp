@@ -1285,7 +1285,8 @@ void PDPRoot::Settings() {
 
 void PDPRoot::Quit() {
 #ifdef TA_GUI
-  cssiSession::quitting = true;
+  //cssiSession::quitting = true;
+  cssiSession::Quit();
   if (taiMisc::main_window) taiMisc::main_window->close();
 //obs  window->close(); //TODO: causing an exception, after the confirm dialog and window closing, but closing directly causes no prob
 //  QApplication::postEvent(window, new QCloseEvent());

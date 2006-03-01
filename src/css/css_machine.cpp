@@ -19,10 +19,17 @@
 #include "css_machine.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
+
 #ifdef TA_GUI
-#include "css_qt.h"		// for cancelEdits
+# include <QApplication>
+# ifdef TA_USE_INVENTOR
+#   include <Inventor/Qt/SoQt.h>
+# endif
+# include "css_qt.h"		// for cancelEdits, and cssiSession
 #endif
 
+#include <QEvent>
+#include <QCoreApplication>
 
 //nn #include <unistd.h>
 #include <sstream>
@@ -46,10 +53,13 @@ extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
   extern int rl_stuff_char(int);
+}
 
-/*obs #ifdef TA_GUI
-//  extern int readline_waitproc(void);   // iv's wait proc
-#endif // TA_GUI */
+int cssMisc::readline_waitproc() {
+  //TODO: anything else???
+  // prob need to replicate most of the stuff in css_qt.cpp
+  // maybe even try to factor out and eliminate duplication
+  return 0;
 }
 
 
@@ -119,13 +129,6 @@ cssRef		cssMisc::VoidRef;  // for maketoken
 int		cssMisc::argc = 0;		// number of args passed by commandline to app
 char**		cssMisc::argv = NULL;		// args passed by commandline to app
 bool		cssMisc::gui = false;
-#ifdef TA_NO_GUI
-//note: see css_qt.cc for the Qt version of this function -- must start with code below
-void cssMisc::PreInitialize(int argc_, char** argv_) {
-  cssMisc::argc = argc_;
-  cssMisc::argv = argv_;
-}
-#endif
 
 void cssMisc::CodeConstExpr() {
   code_cur_top = ConstExprTop;
@@ -219,6 +222,26 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   }
   top->ferr->flush();
 }
+
+void cssMisc::PreInitialize(int argc_, char** argv_) {
+  cssMisc::argc = argc_;
+  cssMisc::argv = argv_; // cast away constness -- we still treat it as const
+#ifdef TA_GUI
+# ifdef TA_USE_INVENTOR
+//use other version  SoQt::init((QWidget*)NULL); // creates a special Coin QApplication instance
+  SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
+//note: must still set SoQtP.h:SoQtP::mainwidget to the main widget, before calling event loop
+# else
+  new QApplication(argc, (char**)argv); // accessed as qApp
+# endif
+  rl_event_hook = cssiSession::readline_waitproc; // set the hook to cssiSession's "waitproc"
+#else
+  new QCoreApplication(argc, (char**)argv); // accessed as qApp
+  rl_event_hook = readline_waitproc; // set the hook to our "waitproc"
+#endif
+  rl_done = false;
+}
+
 
 #if (!defined(TA_OS_WIN))
 void cssMisc::fpecatch(int) {
@@ -3613,6 +3636,7 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
 //    char* surep;
 //    if(!(surep = rl_readline("Quit, Are You Sure (y/n)? ")) || (*surep == 'y') ||
 //       (*surep == 'Y'))
+      qApp->quit();
       break;
   }
 
@@ -3621,13 +3645,26 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
   cssMisc::PopCurTop(old_top);
 }
 
-void cssProgSpace::StartupShell(istream& fhi, ostream& fho) {
+void cssProgSpace::customEvent(QEvent* ev) {
+  switch ((int)ev->type()) {
+  case cssMisc_StartupShell_EventType: 
+    StartupShell_impl(); break;
+  default: inherited::customEvent(ev); break;
+  }
+}
+
+void cssProgSpace::StartupShellAsync(istream& fhi, ostream& fho) {
   fshell = &fhi;
   fout = &fho;
+  QEvent* ev = new QEvent((QEvent::Type)cssMisc_StartupShell_EventType);
+  QCoreApplication::postEvent(this, ev); // returns immediately
+}
+
+void cssProgSpace::StartupShell_impl() {
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
 
 #ifndef __GNUG__
-  fho.sync_with_stdio();
+  fout->sync_with_stdio();
 #endif
   if(cssMisc::init_debug >= 0) {
     SetDebug(cssMisc::init_debug);

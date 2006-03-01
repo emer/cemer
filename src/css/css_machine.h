@@ -36,6 +36,8 @@
 #include "ta_type.h"
 #include "ta_base.h"
 
+#include <QObject>
+
 #include <signal.h>
 #include <setjmp.h>
 
@@ -156,7 +158,8 @@ public:
   static int		argc;		// number of args passed by commandline to app
   static char**		argv;		// args passed by commandline to app
   static bool		gui;		// startup switch, whether using gui or not
-
+  
+  static int		readline_waitproc(); // note: not used in GUI mode, see css_qt.h
   static void		PreInitialize(int argc_, char** argv_);
   // this must be called immediately after main(), and before any other css/ta initialization
 //  static void 		Initialize(int argc, const char** argv);
@@ -1213,11 +1216,12 @@ public:
 };
 
 
-class CSS_API cssProgSpace {
+class CSS_API cssProgSpace: QObject {
   // an entire program space, including all functions defined, variables etc.
-protected:
+  //note: no signals/slots or metadata, so we don't use Q_Object macro
+INHERITED(QObject)
 friend class cssProg;
-
+protected:
   enum ShellCmds {	// these flag that the given command was requested to run
     SC_None,
     SC_Compile,			// file name is in sc_compile_this
@@ -1239,23 +1243,7 @@ friend class cssProg;
     CC_Include			// file name is in cc_include_this
   };
 
-  int 		alloc_size;		// allocated number of prog_stacks
-  int		old_debug;		// saved version
-  cssElPtr	el_retv;		// return value for getel
-
-  bool		cont_pending;		// a continue is pending
-  css_progdx	cont_here;		// continue at this point
-
-  CompileCtrl	compile_ctrl;		// control flags for delayed compile actions
-  cssProg*	cc_push_this;		// push this object
-  String	cc_include_this;	// filename to be included
-
-  ShellCmds	shell_cmds;		// shell command to run next
-  int		sc_undo_this;		// undo this program index
-  String	sc_compile_this;	// filename to be compiled
-  cssProgSpace* sc_shell_this;		// shell to shell
 public:
-
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
@@ -1378,7 +1366,8 @@ public:
   bool		InShell()		{ return (state & cssProg::State_Shell); }
   void		Shell(istream& fhi = cin);
   void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
-  void		StartupShell(istream& fhi = cin, ostream& fho = cout);
+  void		StartupShellAsync(istream& fhi = cin, ostream& fho = cout); 
+    // startup via event dispatch to event loop
   void 		Source(const char* fname);	// run a file as if in a shell
 
   bool		ShellCmdPending()	{ return (shell_cmds != SC_None); }
@@ -1415,6 +1404,26 @@ public:
   void 		SetBreak(int srcln);
   void		ShowBreaks();
   void		unSetBreak(int srcln);
+
+protected:
+  int 		alloc_size;		// allocated number of prog_stacks
+  int		old_debug;		// saved version
+  cssElPtr	el_retv;		// return value for getel
+
+  bool		cont_pending;		// a continue is pending
+  css_progdx	cont_here;		// continue at this point
+
+  CompileCtrl	compile_ctrl;		// control flags for delayed compile actions
+  cssProg*	cc_push_this;		// push this object
+  String	cc_include_this;	// filename to be included
+
+  ShellCmds	shell_cmds;		// shell command to run next
+  int		sc_undo_this;		// undo this program index
+  String	sc_compile_this;	// filename to be compiled
+  cssProgSpace* sc_shell_this;		// shell to shell
+
+  void		customEvent(QEvent* event); // override
+  void		StartupShell_impl();
 };
 
 inline cssInst* cssProg::Next_Peek() {

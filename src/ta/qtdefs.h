@@ -181,12 +181,6 @@ class	iTransformer;		// #IGNORE
 class	iTreeView;		// #IGNORE
 class	iTreeViewItem;		// #IGNORE
 
-// All Event IDs in the PDP system should be allocated here:
-/* if needed
-enum CustomEventType {
-  FirstEvent		= 1000 //note: QT's custom events start at 1000
-}; */
-
 #define COLOR_BLACK Qt::black
 
 // aliases

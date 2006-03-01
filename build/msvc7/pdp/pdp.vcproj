@@ -27,7 +27,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4250"/>
+				DisableSpecificWarnings="4250;4661"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool

@@ -33,6 +33,7 @@ public:
   static bool	in_session;	// if we are in this session or not
   static bool	quitting; // #IGNORE set when user chooses Quit command in gui or shell
 
+  static int	readline_waitproc(); // note: nongui version in cssMisc
   static void	CancelProgEdits(cssProgSpace* prsp);
   // cancel any active edit dialogs for given prog space
   static void	CancelClassEdits(cssClassType* cltyp);

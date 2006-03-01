@@ -35,12 +35,14 @@
 #include "ta_qtviewer.h"
 #include "ta_qtbrowse.h"
 #include <qbitmap.h>
+#include <QApplication>
 #endif
 
 #ifdef TA_USE_INVENTOR
   #include <Inventor/Qt/SoQt.h>
 #endif
 
+#include <QCoreApplication>
 
 #ifdef DMEM_COMPILE
 #include <mpi.h>
@@ -317,11 +319,11 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	cssMisc::Top->StartupShell(cin, cout);
+	cssMisc::Top->StartupShellAsync(cin, cout);
+	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
-      }
-      else {
+      } else {
 	cssMisc::gui = false;	// not for subguys
 	if(proj_to_load.size > 0) {
 	  if(taMisc::dmem_debug)
@@ -335,18 +337,21 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// get rid of wait proc for rl -- we call it ourselves
 	extern int (*rl_event_hook)(void);
  	rl_event_hook = NULL;
- 	cssMisc::Top->StartupShell(cin, cout);
+ 	cssMisc::Top->StartupShellAsync(cin, cout);
+	qApp->exec();
 	//	cssMisc::Top->debug = 2;
 	DMem_SubEventLoop();
 	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
       }
     }
     else {
-      cssMisc::Top->StartupShell(cin, cout);
-    }
+      cssMisc::Top->StartupShellAsync(cin, cout);
+      qApp->exec();
+   }
   }
   else {
-    cssMisc::Top->StartupShell(cin, cout);
+    cssMisc::Top->StartupShellAsync(cin, cout);
+    qApp->exec();
 #ifdef TA_USE_INVENTOR
     SoQt::done();
 #endif
@@ -354,7 +359,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
   MPI_Finalize();
 
 #else
-  cssMisc::Top->StartupShell(cin, cout);
+  cssMisc::Top->StartupShellAsync(cin, cout);
+  qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();
 #endif

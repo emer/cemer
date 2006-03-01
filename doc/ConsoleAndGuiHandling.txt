@@ -115,6 +115,13 @@ machine.cc:
 
 Current Version (3/1/06)
 
+* event loop:
+  custom iSession aka QEventLoop
+  contains code in exit:
+    if cssMisc::cur_top
+    cur_top->ExitShell
+    QApplication::sendPostedEvents( 0, QEvent::DeferredDelete );
+
 * startup:
 cssMisc::PreInitialize
   SoQt::init
