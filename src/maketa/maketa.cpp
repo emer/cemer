@@ -565,7 +565,7 @@ int main(int argc, char* argv[])
   if(mta->make_hx) {
     mta->ta_type_h = mta->basename + "_TA_type.hx";
     mta->ta_inst_h = mta->basename + "_TA_inst.hx";
-    mta->ta_ccname = mta->basename + "_TA.cxx";
+    mta->ta_ccname = mta->basename + "_TA.ccx";
  } else {
     mta->ta_type_h = mta->basename + "_TA_type.h";
     mta->ta_inst_h = mta->basename + "_TA_inst.h";
