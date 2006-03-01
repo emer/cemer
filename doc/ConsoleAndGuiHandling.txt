@@ -113,7 +113,49 @@ machine.cc:
   extern void add_history(char*);
   extern int rl_stuff_char(int);
 
+Current Version (3/1/06)
 
+* startup:
+cssMisc::PreInitialize
+  SoQt::init
+  creates new QQpplication
+  creates new iSession, aka QEventLoop
+cssMisc::Top->StartupShell(cin, cout)
+  Run()
+  
+* shutdown from console:
+  user types 'exit'
+  
+* gui shutdown:
+  root window calls taMisc::app->Quit();
+  (taMisc::app is usually a PDPRoot)
+  PDPRoot::Quit()
+    cssiSession::quitting = true;
+    taiMisc::main_window->close()
+  
+  
+TODO:
+
+* nuke the IApp thing in ta_type
+
+* make sure we have a ta/pdp global event type place (prob in taglobal.h)
+
+* replace the call:
+    cssMisc::Top->StartupShell(cin, cout)
+  with:
+    (send an event to get the startup shell going)
+    qApp->exec()
+    
+* shutdown handling(1) -- final mechanism:
+  have shutdown be effected by a call to qApp->exit
+  can be done by a direct call, or connecting a signal to it
+  
+* shutdown handling(2) -- invoking
+  1) confirmed or final main window close
+  2) exiting from the top shell (can confirm 'exit' from top shell)
+  3) quitting from any shell
+
+  
   
   
 
