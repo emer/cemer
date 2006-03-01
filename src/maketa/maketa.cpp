@@ -562,10 +562,17 @@ int main(int argc, char* argv[])
   String comnd_base = cpp + " " + incs;
 
   mta->spc_target.name = mta->basename;
-  mta->ta_type_h = mta->basename + "_TA_type.h";
-  mta->ta_inst_h = mta->basename + "_TA_inst.h";
-  mta->ta_ccname = mta->basename + "_TA.cpp";
-  
+  if(mta->make_hx) {
+    mta->ta_type_h = mta->basename + "_TA_type.hx";
+    mta->ta_inst_h = mta->basename + "_TA_inst.hx";
+    mta->ta_ccname = mta->basename + "_TA.cxx";
+ } else {
+    mta->ta_type_h = mta->basename + "_TA_type.h";
+    mta->ta_inst_h = mta->basename + "_TA_inst.h";
+    mta->ta_ccname = mta->basename + "_TA.cpp";
+  }
+
+
   // create stub _type.h file if doesn't exist, so compiles don't fail
   FILE* dummy = fopen(mta->ta_type_h, "r");
   if (!dummy) {
@@ -638,12 +645,6 @@ int main(int argc, char* argv[])
     cout << "\nPreParsed Types\n";   mta->spc_pre_parse.List();
   }
   mta->SetPreParseFlag(mta->spc_target, mta->spc_pre_parse);
-
-  if(mta->make_hx) {
-    mta->ta_type_h += "x";
-    mta->ta_inst_h += "x";
-    mta->ta_ccname += "x";
-  }
 
   // give it 5 passes through to try to get everything in order..
   int swp_cnt = 0;
