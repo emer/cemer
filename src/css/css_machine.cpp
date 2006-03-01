@@ -220,7 +220,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   top->ferr->flush();
 }
 
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
 void cssMisc::fpecatch(int) {
   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   cssProgSpace* top = cssMisc::cur_top;
@@ -1534,7 +1534,7 @@ void cssSpace::CopyUniqNameOld(const cssSpace &cp) {
 
 void cssSpace::Reset() {
   int i;
-  for(i=0; i<size; i++)
+  for (i=size - 1; i >= 0; --i)
     cssEl::unRefDone(els[i]);
   size = 0;
 }
@@ -3637,7 +3637,7 @@ void cssProgSpace::StartupShell(istream& fhi, ostream& fho) {
   CompileRunClear(".cssinitrc");
 
   SetName(cssMisc::prompt);
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);

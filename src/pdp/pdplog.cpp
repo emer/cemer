@@ -97,7 +97,7 @@ void PDPLog::CutLinks() {
 //obs  cur_proc = NULL;
   RemoveAllUpdaters();
   // set any misc log pointers to NULL!
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if((proj != NULL) && !proj->deleting) {
     in_repl = true;
     taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
@@ -159,9 +159,9 @@ void PDPLog::UpdateAfterEdit() {
     data_range.max = data.MaxLength()-1;
     data_range.min = 0;
   }
-  if((log_proc.size > 0) && (GetName().empty() || GetName().contains(GetTypeDef()->name))) {
+/*obs  if((log_proc.size > 0) && (GetName().empty() || GetName().contains(GetTypeDef()->name))) {
     SetName(((SchedProcess*)log_proc[0])->GetName() + "_" + GetTypeDef()->name);
-  }
+  } */
 #ifdef TA_GUI
   taListItr i; LogView* lv;
   FOR_ITR_EL(LogView, lv, views., i) {
@@ -247,7 +247,7 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
 {
   //TODO: we really need a wizard to pop up here, to let user configure before rendering
   if (!vwr) { // show in a new viewer
-    Project* prj = GET_MY_OWNER(Project);
+    ProjectBase* prj = GET_MY_OWNER(ProjectBase);
     if (!prj) return;
     vwr = prj->NewViewer();
     if (!vwr) return;

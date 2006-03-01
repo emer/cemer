@@ -20,6 +20,8 @@
 
 #include "pdpbase.h"
 #include "netstru.h"
+#include "pdpshell.h"
+
 #include "bp_def.h"
 #include "bp_TA_type.h"
 
@@ -588,6 +590,28 @@ public:
   void  Destroy()	{ };
   TA_BASEFUNS(SoftMaxBpUnitSpec);
 };
+
+
+class PDP_API BpNetwork : public Network {
+  // project for BP networks
+INHERITED(Network)
+public:
+
+  void	Initialize();
+  void 	Destroy()		{}
+  TA_BASEFUNS(BpNetwork);
+};
+
+class PDP_API BpProject : public ProjectBase {
+  // project for BP networks
+INHERITED(ProjectBase)
+public:
+
+  void	Initialize();
+  void 	Destroy()		{}
+  TA_BASEFUNS(BpProject);
+};
+
 
 
 #endif // bp.h

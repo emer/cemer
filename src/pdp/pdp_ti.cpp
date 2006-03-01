@@ -46,21 +46,19 @@
 #include "pdpshell.h"
 #include "netstru_extra.h"
 #include "pdplog.h"
+#include "v3_compat.h"
 
 #ifdef TA_GUI
 //#include "pdp_qtso.h"
 #include "netstru_qtso.h"
 #endif
 
-template class PDP_API taPtrList<Unit>;
-template class PDP_API taList<SchedItem>;
 template class PDP_API taList<Unit>;
 template class PDP_API taList<TessEl>;
 template class PDP_API taList<LinkPrjnConPtr>;
 template class PDP_API taList<GpTessEl>;
 //template class PDP_API taList<NetViewGraphic>;
 //template class PDP_API taList<NetViewScaleRange>;
-template class PDP_API taGroup<Event>;
 template class PDP_API taGroup<TypeDefault>;
 
 // pdplog.h
@@ -71,14 +69,15 @@ template class PDP_API taGroup<Project>;
 template class PDP_API taGroup<Wizard>; // pdpshell.h
 
 // v3_compat.h
+template class PDP_API taGroup<Event>;
 template class PDP_API taList<Environment>;
 template class PDP_API taGroup<Environment>;
 template class PDP_API taGroup<Process>; 
 template class PDP_API taList<DataItem>; 
 
 // netstru.h
-// template class PDP_API taList<SchedItem>;
-// template class PDP_API taList<Unit>;
+template class PDP_API taList<SchedItem>;
+template class PDP_API taList<Unit>;
 template class PDP_API taGroup<Unit>;
 template class PDP_API taGroup<Layer>; // netstru.h
 template class PDP_API taGroup<Network>; // netstru.h
@@ -93,7 +92,5 @@ template class PDP_API SpecPtr<EventSpec>;
 template class PDP_API taGroup<SelectEdit>; // pdpshell.h
 template class PDP_API taPlainArray<UnitViewData>; // netstru_qtso.h
 template class PDP_API taPtrList<LogView>; // pdplog.h
-
-
 #endif
 

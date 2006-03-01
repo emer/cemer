@@ -22,6 +22,13 @@
 #ifndef V3_COMPAT_H
 #define V3_COMPAT_H
 
+#include "pdp_def.h"
+#ifdef TA_GUI
+#  include "ta_qttype.h"
+#  include "ta_qtdata.h"
+#  include "ta_qtdialog.h"
+#endif
+
 #include "ta_script.h"
 #include "tarandom.h"
 #include "minmax.h"
@@ -29,6 +36,7 @@
 #include "pdpdeclare.h"
 #include "pdpbase.h"
 #include "spec.h"
+#include "pdpshell.h"
 
 #include "pdp_TA_type.h"
 
@@ -70,11 +78,14 @@ class EventSpec;
 class Pattern;
 class Event;
 class Event_MGroup;
-class Environment;
+class Environment; //
 
 // from enviro_extra.h
 //TODO class ScriptEnv;
 //TODO class TimeEnvironment;
+
+// from pdpshell.h
+class Project; //
 
 #ifdef TA_GUI
 class PDP_API CtrlPanelData : public taOBase {
@@ -91,6 +102,60 @@ public:
   COPY_FUNS(CtrlPanelData, taOBase);
   TA_BASEFUNS(CtrlPanelData);
 };
+class PDP_API ProcessDialog : public taiEditDataHost {
+  // #IGNORE
+  Q_OBJECT
+public:
+  ProcessDialog(void* base, TypeDef* tp, bool readonly = false)
+    : taiEditDataHost(base, tp, readonly) { };
+  ProcessDialog()				{ };
+  ~ProcessDialog();
+
+  virtual bool	CtrlPanel()	{ return false; }
+
+public slots:
+  void		Ok();		// override - stop the process when these are hit..
+  void		Cancel(); // override
+};
+
+class PDP_API Process_RunDlg : public ProcessDialog {
+  // #IGNORE
+public:
+  Process_RunDlg(void* base, TypeDef* tp, bool readonly = false)
+    : ProcessDialog(base, tp, readonly) {};
+  Process_RunDlg() {};
+  ~Process_RunDlg();
+
+  bool	CtrlPanel()	{ return true; }
+
+  bool ShowMember(MemberDef* md);
+};
+
+class PDP_API taiProcess : public taiEdit {
+  // adds control buttons to the edit window
+public:
+  taiProcess*	run_ie;
+
+  int		BidForEdit(TypeDef* td);
+  override int 	Edit(void* base, bool readonly = false, const iColor* bgclr = NULL); // unusual case, so we override
+
+  void Initialize();
+  void Destroy();
+  TAQT_EDIT_INSTANCE(taiProcess, taiEdit);
+protected:
+  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
+};
+
+
+class PDP_API taiProcessRunBox : public taiProcess {
+  // just has the control buttons
+public:
+  int		BidForEdit(TypeDef*) 	{ return 0; }
+  TAQT_EDIT_INSTANCE(taiProcessRunBox, taiProcess);
+protected:
+  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
+};
+
 #endif
 
 class PDP_API Process : public taNBase, public ScriptBase {
@@ -1446,6 +1511,24 @@ public:
 //  COPY_FUNS(FromFileEnv, Environment);
   TA_BASEFUNS(FromFileEnv);
 };
+
+class PDP_API Project : public ProjectBase {
+  // #HIDDEN for loading legacy (v3.x) projects only
+INHERITED(ProjectBase)
+public:
+  Environment_MGroup	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
+  Process_MGroup	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
+
+  void	UpdateAfterEdit();
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  void 	InitLinks();
+  void	CutLinks();
+  void	Copy_(const Project& cp);
+  COPY_FUNS(Project, ProjectBase);
+  TA_BASEFUNS(Project);
+};
+
 
 #endif
 

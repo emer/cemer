@@ -17,6 +17,10 @@
 
 #include "v3_compat.h"
 
+#ifdef TA_GUI
+#include "ta_qt.h"
+#endif
+
 #include "ta_css.h"
 #include "netstru.h"
 #include "pdpshell.h"
@@ -37,6 +41,104 @@ void CtrlPanelData::Copy_(const CtrlPanelData& cp) {
   lft = cp.lft;
   top = cp.top;
 }
+
+
+//////////////////////////////////
+//     ProcessDialog		//
+//////////////////////////////////
+
+void ProcessDialog::Ok() {
+/*obs  Process* prc = (Process*)cur_base;
+  if(prc->ctrl_panel.ctrl_panel == this) {
+    prc->ctrl_panel.ctrl_panel = NULL;
+    prc->ctrl_panel.active = false;
+  }
+  if(prc->InheritsFrom(&TA_SchedProcess)) {
+    SchedProcess* sp = (SchedProcess*)prc;
+    if(sp->im_run_proc)
+      sp->Stop(); 
+  }*/
+  taiEditDataHost::Ok();
+}
+
+void ProcessDialog::Cancel() {
+  Process* prc = (Process*)cur_base;
+/*obs  if(prc->ctrl_panel.ctrl_panel == this) {
+    prc->ctrl_panel.ctrl_panel = NULL;
+    prc->ctrl_panel.active = false;
+  } */
+  if(prc->InheritsFrom(&TA_SchedProcess)) {
+    SchedProcess* sp = (SchedProcess*)prc;
+/*obs    if(sp->im_run_proc)
+      sp->Stop(); */
+  }
+  taiEditDataHost::Cancel();
+}
+
+ProcessDialog::~ProcessDialog() {
+//obs  CloseWindow();
+}
+
+//////////////////////////////////
+//     taiProcess		//
+//////////////////////////////////
+
+int taiProcess::BidForEdit(TypeDef* td){
+  if(td->InheritsFrom(&TA_Process))
+    return taiEdit::BidForEdit(td) +1;
+  return 0;
+}
+
+taiEditDataHost* taiProcess::CreateDataHost(void* base, bool readonly) {
+  return new ProcessDialog(base, typ, readonly);
+}
+
+int taiProcess::Edit(void* base, bool readonly, const iColor* bgclr) {
+  ProcessDialog* dlg = (ProcessDialog*)taiMisc::FindEdit(base, typ);
+  if ((dlg == NULL) || dlg->CtrlPanel()) {
+    dlg = (ProcessDialog*)CreateDataHost(base, readonly);
+    dlg->Constr("", "", bgclr);
+//    dlg->cancel_only = readonly;
+    return dlg->Edit(false);
+  }
+  if(!dlg->modal) {
+    dlg->Iconify(false);
+    dlg->Raise();
+  }
+  return 2;
+}
+
+void taiProcess::Initialize()	{
+  run_ie = NULL;
+}
+
+void taiProcess::Destroy() {
+  if(run_ie) delete run_ie;
+  run_ie = NULL;
+}
+
+Process_RunDlg::~Process_RunDlg() {
+//obs  CloseWindow();
+}
+
+bool Process_RunDlg::ShowMember(MemberDef* md) {
+  if((ProcessDialog::ShowMember(md)) &&
+     (md->type->InheritsFrom(&TA_Counter) || md->HasOption("CONTROL_PANEL")))
+    return true;
+  return false;
+}
+
+
+//////////////////////////////////
+//     taiProcessRunBox		//
+//////////////////////////////////
+
+taiEditDataHost* taiProcessRunBox::CreateDataHost(void* base, bool readonly) {
+  return new Process_RunDlg(base, typ, readonly);
+}
+
+
+
 #endif // TA_GUI
 
 
@@ -2647,3 +2749,35 @@ int GroupPatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
   return PatternSpec::Flag(flag_type, pat, idx);
 }
 
+
+//////////////////////////
+//  Project		//
+//////////////////////////
+
+void Project::Initialize() {
+  environments.SetBaseType(&TA_Environment);
+  processes.SetBaseType(&TA_SchedProcess);
+}
+
+void Project::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(environments, this);
+  taBase::Own(processes, this);
+}
+
+void Project::CutLinks() {
+  deleting = true;
+  processes.CutLinks();
+  environments.CutLinks();
+  inherited::CutLinks();
+}
+
+void Project::Copy_(const Project& cp) {
+  environments = cp.environments;
+  processes = cp.processes;
+}
+
+void Project::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  //TODO: here is maybe where we can trap having loaded legacy, and convert
+}

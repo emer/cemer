@@ -337,7 +337,6 @@ class taiActions;
 class taiMenu;
 class taiAction;
 
-#define taiMenuEl taiAction
 class TA_API taiAction: public QAction {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu
   Q_OBJECT

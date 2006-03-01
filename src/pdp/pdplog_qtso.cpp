@@ -499,7 +499,7 @@ void LogView::CopyToTable(taBase* data, taBase* labels, DataTable* dt) { /* TODO
     return;
   }
   if(env == NULL) {
-    env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+    env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
     if(env == NULL) return;
   }
   env->events.Reset();
@@ -559,7 +559,7 @@ void LogView::DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log,
     taMisc::Error("DistMatrixGrid: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->DistMatrixGrid(disp_log, 0, metric, norm, tol);
@@ -576,7 +576,7 @@ void LogView::ClusterPlot(taBase* data, taBase* labels, GraphLog* disp_log,
     taMisc::Error("ClusterPlot: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->ClusterPlot(disp_log, 0, metric, norm, tol);
@@ -592,7 +592,7 @@ void LogView::CorrelMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log) 
     taMisc::Error("CorrelMatrixGrid: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->CorrelMatrixGrid(disp_log, 0);
@@ -608,7 +608,7 @@ void LogView::PCAEigenGrid(taBase* data, taBase* labels, GridLog* disp_log) {
     taMisc::Error("PCAEigenGrid: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->PCAEigenGrid(disp_log, 0);
@@ -624,7 +624,7 @@ void LogView::PCAPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int 
     taMisc::Error("PCAPrjnPlot: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->PCAPrjnPlot(disp_log, 0, x_axis_component, y_axis_component);
@@ -640,7 +640,7 @@ void LogView::MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int 
     taMisc::Error("MDSPrjnPlot: labels must be a single column in the log, not a group");
     return;
   }
-  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project), &TA_Environment);
+  Environment* env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
   if(env == NULL) return;
   CopyToEnv(data, labels, env);
   env->MDSPrjnPlot(disp_log, 0, x_axis_component, y_axis_component);
@@ -1031,7 +1031,7 @@ void NetLogView::InitLinks() {
 }
 
 void NetLogView::CutLinks() {
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if((proj != NULL) && !proj->deleting)
     RemoveLabels();
   inherited::CutLinks();

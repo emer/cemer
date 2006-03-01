@@ -207,7 +207,7 @@ void ConSpec::InitLinks() {
 }
 
 void ConSpec::CutLinks() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if((prj != NULL) && !prj->deleting) {
     ConSpec* rsp = (ConSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
@@ -252,7 +252,7 @@ void ConSpec::Copy_(const ConSpec& cp) {
 
 void ConSpec::ReplacePointersHook(TAPtr old) {
   ConSpec* spold = (ConSpec*)old;
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   taMisc::DelayedMenuUpdate(this);
   Network* net;
@@ -281,7 +281,7 @@ void ConSpec::ReplacePointersHook(TAPtr old) {
 }
 
 int ConSpec::UseCount() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if(prj->networks.size == 0) return -1; // no networks!
   int cnt = 0;
   Network* net;
@@ -304,7 +304,7 @@ int ConSpec::UseCount() {
 }
 
 void ConSpec::InitWeights() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   Network* net;
   taLeafItr ni;
@@ -1266,7 +1266,7 @@ void UnitSpec::UpdateAfterEdit() {
   if(taMisc::is_loading) return;
 
   if(!taMisc::gui_active) return;
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   Network* net;
   taLeafItr ni;
@@ -1280,7 +1280,7 @@ void UnitSpec::UpdateAfterEdit() {
 }
 
 int UnitSpec::UseCount() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if(prj->networks.size == 0) return -1; // no networks!
   int cnt = 0;
   Network* net;
@@ -1292,7 +1292,7 @@ int UnitSpec::UseCount() {
 }
 
 void UnitSpec::BuildBiasCons() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   Network* net;
   taLeafItr ni;
@@ -1302,7 +1302,7 @@ void UnitSpec::BuildBiasCons() {
 }
 
 void UnitSpec::CutLinks() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if((prj != NULL) && !prj->deleting) {
     UnitSpec* rsp = (UnitSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
@@ -1329,7 +1329,7 @@ void UnitSpec::CutLinks() {
 
 void UnitSpec::ReplacePointersHook(TAPtr old) {
   UnitSpec* spold = (UnitSpec*)old;
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
   Network* net;
@@ -2099,7 +2099,7 @@ void ProjectionSpec::InitLinks() {
 }
 
 void ProjectionSpec::CutLinks() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if((prj != NULL) && !prj->deleting) {
     ProjectionSpec* rsp = (ProjectionSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
@@ -2125,7 +2125,7 @@ void ProjectionSpec::CutLinks() {
 
 void ProjectionSpec::ReplacePointersHook(TAPtr old) {
   ProjectionSpec* spold = (ProjectionSpec*)old;
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
   Network* net;
@@ -2141,7 +2141,7 @@ void ProjectionSpec::ReplacePointersHook(TAPtr old) {
 }
 
 int ProjectionSpec::UseCount() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if(prj->networks.size == 0) return -1; // no networks!
   int cnt = 0;
   Network* net;
@@ -2440,7 +2440,7 @@ void Projection::UpdateAfterEdit() {
 
 void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
   if(disp_log == NULL) {
-    disp_log = (GridLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GridLog);
+    disp_log = (GridLog*) pdpMisc::GetNewLog(GET_MY_OWNER(ProjectBase), &TA_GridLog);
     if(disp_log == NULL) return;
   }
   else {
@@ -2522,7 +2522,7 @@ void Projection::WeightsToTable(DataTable* dt) {
   if(from == NULL) return;
 /*TODO
   if (dt == NULL) {
-    dt = pdpMisc::GetNewEnv(GET_MY_OWNER(Project));
+    dt = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase));
   }
   if(env == NULL) return;
 
@@ -3167,7 +3167,7 @@ void LayerSpec::InitLinks() {
 }
 
 void LayerSpec::CutLinks() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if((prj != NULL) && !prj->deleting) {
     LayerSpec* rsp = (LayerSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
@@ -3193,7 +3193,7 @@ void LayerSpec::CutLinks() {
 
 void LayerSpec::ReplacePointersHook(TAPtr old) {
   LayerSpec* spold = (LayerSpec*)old;
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if (prj == NULL) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
   Network* net;
@@ -3209,7 +3209,7 @@ void LayerSpec::ReplacePointersHook(TAPtr old) {
 }
 
 int LayerSpec::UseCount() {
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   if(prj->networks.size == 0) return -1; // no networks!
   int cnt = 0;
   Network* net;
@@ -3298,7 +3298,7 @@ void Layer::CutLinks() {
   units.CutLinks();
   unit_spec.CutLinks();
   // un-set any other pointers to this object!
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if((proj != NULL) && !proj->deleting) {
     in_repl = true;
     taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
@@ -4232,7 +4232,7 @@ void Network::Initialize() {
 }
 
 void Network::InitLinks() {
-  proj = GET_MY_OWNER(Project);
+  proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(layers, this);
   taBase::Own(max_size, this);
 #ifdef DMEM_COMPILE
@@ -4314,6 +4314,13 @@ void Network::CutLinks() {
 }
 
 void Network::RemoveMonitors() {
+  //TODO (maybe)
+}
+void Network::UpdateMonitors() {
+  //TODO (maybe)
+}
+/*obs
+void Network::RemoveMonitors() {
   if(proj == NULL) return;
   taLeafItr pi;
   SchedProcess* sp;
@@ -4347,7 +4354,7 @@ void Network::UpdateMonitors() {
 	((MonitorStat*)st)->UpdateAfterEdit();
     }
   }
-}
+}*/
 
 // cfront requires this to be outside class function
 enum NetSection {NS_NONE, NS_DEFINITIONS, NS_CONSTRAINTS,
@@ -4408,7 +4415,7 @@ void Network::ReadOldPDPNet(istream& strm, bool skip_dots){
   int cur_send = 0;
   int cur_recv = 0;
   char con_char = '\0';
-  Project* prj = (Project *) GET_MY_OWNER(Project);
+  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
   Layer* lay = (Layer *) layers.New(1);
   Projection* prjn = (Projection *) lay->projections.New(1);
   TypeDef* conspec_type = prjn->con_spec.type;
@@ -6510,7 +6517,7 @@ void NetConduit::InitData() {
 
 void NetConduit::InitFromNetwork(Network* net) {
   if (net == NULL)
-    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
+    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
   if (net == NULL) return;
   
   channels.Reset();
@@ -6533,7 +6540,7 @@ void NetWriter::Initialize() {
 
 /*TODO DataSet* NetWriter::CreateDataSet() {
   DataSet* rval = NULL;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if (proj == NULL) return rval;
   
   rval = (DataSet*)proj->data.New(1);
@@ -6664,7 +6671,7 @@ void NetReader::Initialize() {
 
 /* DataSet* NetReader::CreateDataSet() {
   DataSet* rval = NULL;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if (proj == NULL) return rval;
   
   rval = (DataSet*)proj->data.New(1);

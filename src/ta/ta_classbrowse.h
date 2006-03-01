@@ -253,7 +253,7 @@ public:
   ~iClassBrowser();
 
 public slots:
-  virtual void		mnuNewBrowser(taiMenuEl* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
 
 protected:
   iClassBrowser(void* root_, TypeInfoKind tik, ClassBrowser* browser_,

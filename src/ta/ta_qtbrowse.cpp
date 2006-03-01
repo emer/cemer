@@ -216,9 +216,9 @@ void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
 //obs     int last_id = menu->insertItem("New Browser from here", browser(), SLOT(mnuNewBrowser(int)), 0);
 //     menu->setItemParameter(last_id, ((int)((void*)this)) ); // we use param to hold address of this node
     // usr data is ourself
-     //taiMenuEl* mel =
+     //taiAction* mel =
      menu->AddItem("New Browser from here", taiMenu::use_default,
-       taiMenuEl::men_act, browser_win(), SLOT(mnuNewBrowser(taiMenuEl*)), this);
+       taiAction::men_act, browser_win(), SLOT(mnuNewBrowser(taiAction*)), this);
   }
   inherited::FillContextMenu_impl(menu);
 }
@@ -934,7 +934,7 @@ taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, Member
   return rval;
 }
 
-void iDataBrowser::mnuNewBrowser(taiMenuEl* mel) {
+void iDataBrowser::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taiDataLink* dl = node->link();
   DataBrowser* brows = DataBrowser::New(dl->data(), node->md(), dl->GetDataTypeDef());

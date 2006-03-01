@@ -182,7 +182,7 @@ taiData* cssiClassType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gu
     taiButtonMenu* rval = new taiButtonMenu
       (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
     Assert_QObj();
-    rval->AddItem("Edit", taiMenu::use_default, taiMenuEl::action,
+    rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
 	qobj, SLOT(CallEdit()), (void*)NULL);
     String lbl = String(obj->GetTypeName()) + ": Actions";
     rval->setLabel(lbl);
@@ -228,7 +228,7 @@ taiData* cssiArrayType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gu
   taiButtonMenu* rval = new taiButtonMenu
     (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
   Assert_QObj();
-  rval->AddItem("Edit", taiMenu::use_default, taiMenuEl::action,
+  rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
   	qobj, SLOT(CallEdit), (void*)NULL);
   cssArray* obj = (cssArray*) cur_base;
   String lbl = String(obj->GetTypeName()) + ": Actions";

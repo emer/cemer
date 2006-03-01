@@ -2920,21 +2920,36 @@ int  taiTypeHier::CountChildren(TypeDef* td) {
 bool taiTypeHier::AddType(TypeDef* typ_) {
   if (!typ_->InheritsFormal(TA_class)) // only type classes please..
     return false;
+/*todo: nuke, we don't add templates
   // don't add any template instances that have a single further subclass
   // (use the subclass instead)
   if (typ_->InheritsFormal(TA_templ_inst)) {
     if ((typ_->children.size != 1) || (typ_->children.FastEl(0)->parents.size > 1))
       return true;
     return false;
-  }
+  } */
+  // no templates (since a template is not itself a type)
+  if (typ_->InheritsFormal(TA_templ_inst))
+    return false;
+  // no nested typedefs TODO: find a better way to identify nested typedefs
+  if (typ_->name == "inherited") return false;
+
+
+  // don't clutter list with these..
   if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
-    return false;		// don't clutter list with these..
+    return false;		
+  // some types are not really intended for users...
+  if (typ_->HasOption("HIDDEN"))
+    return false;
   return true;
 }
 
 void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
-  menu->AddItem((char*)typ_->name, taiMenu::use_default, acn, (void*)typ_);
-  menu->AddSep(false); //don't start new radio group
+  // it is hard to do recursive menus, so we just build optimistically, then delete empties
+  if (AddType(typ_)) {
+    menu->AddItem((char*)typ_->name, taiMenu::use_default, acn, (void*)typ_);
+    menu->AddSep(false); //don't start new radio group
+  }
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);
     if (chld->ptr != 0)

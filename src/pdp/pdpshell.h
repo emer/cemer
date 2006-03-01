@@ -20,21 +20,18 @@
 #ifndef pdpshell_h
 #define pdpshell_h 1
 
-#include "netstru.h"
-//obs #include "enviro.h"
-#include "netdata.h"
-//obs #include "procs_extra.h"
-#include "v3_compat.h"
-#include "pdplog.h"
-
-#include "colorscale.h"
 #include "ta_defaults.h"
-
+#include "colorscale.h"
 #ifdef TA_GUI
   #include "ta_seledit.h"
   #include "ta_qtviewer.h"
   #include "fontspec.h"
 #endif
+
+#include "netstru.h"
+#include "netdata.h"
+#include "pdplog.h"
+
 
 class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
@@ -163,7 +160,7 @@ public:
   // what about making everything black & white vs. color?
 */
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Wizard); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Wizard); }
 #endif
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -186,11 +183,10 @@ public:
   TA_BASEFUNS(Wizard_MGroup);
 };
 
-class PDP_API Project : public taFBase {
-  // ##EXT_proj ##COMPRESS A Project has everything
-#ifndef __MAKETA__
-typedef taFBase inherited;
-#endif
+
+class PDP_API ProjectBase : public taFBase {
+  // ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
+INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -227,8 +223,6 @@ public:
   NetConduit_MGroup	net_writers;	// NetConduits for network input
   NetConduit_MGroup	net_readers;	// NetConduits for network output
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
-  Environment_MGroup	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
-  Process_MGroup	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
@@ -284,20 +278,20 @@ public:
   void 	Destroy()		{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const Project& cp);
-  COPY_FUNS(Project, taFBase);
-  TA_BASEFUNS(Project);
+  void	Copy_(const ProjectBase& cp);
+  COPY_FUNS(ProjectBase, taFBase);
+  TA_BASEFUNS(ProjectBase);
 };
 
 
 // note: _MGroup name is for compatiblity with v3.2 files
-class PDP_API Project_MGroup : public taGroup<Project> {
+class PDP_API Project_MGroup : public taGroup<ProjectBase> {
 public:
   ColorScaleSpec_MGroup*	colorspecs;	// #HIDDEN #NO_SAVE -- aliased from projects
 
   int		Load(istream& strm, TAPtr par=NULL); // call reconnect on nets afterwards
 
-  void	Initialize() 		{SetBaseType(&TA_Project);}
+  void	Initialize() 		{SetBaseType(&TA_ProjectBase);}
   void 	Destroy()		{ };
   TA_BASEFUNS(Project_MGroup);
 };

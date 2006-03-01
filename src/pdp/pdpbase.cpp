@@ -119,7 +119,6 @@ char* 		pdpMisc::defaults_str = NULL;
 String_Array	pdpMisc::proj_to_load;
 taBase_List	pdpMisc::post_load_opr;
 
-TypeDef*	pdpMisc::def_wizard = &TA_Wizard;
 float		pdpMisc::pdpZScale = 4.0f;
 float		pdpMisc::pts_per_so_unit = 36.0f;
 float		pdpMisc::char_pts_per_so_unit = 72.0f;
@@ -373,15 +372,15 @@ int pdpMisc::Main(int argc, char *argv[]) {
   return 0;
 }
 
-BaseSpec_MGroup* pdpMisc::FindMakeSpecGp(Project* prj, const char* nm, bool& nw_itm) {
+BaseSpec_MGroup* pdpMisc::FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm) {
   return prj->FindMakeSpecGp(nm, nw_itm);
 }
 
-BaseSpec* pdpMisc::FindMakeSpec(Project* prj, const char* nm, TypeDef* td, bool& nw_itm) {
+BaseSpec* pdpMisc::FindMakeSpec(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm) {
   return (BaseSpec*)prj->specs.FindMakeSpec(nm, td, nw_itm);
 }
 
-BaseSpec* pdpMisc::FindSpecName(Project* prj, const char* nm) {
+BaseSpec* pdpMisc::FindSpecName(ProjectBase* prj, const char* nm) {
   BaseSpec* rval = (BaseSpec*)prj->specs.FindSpecName(nm);
   if(rval == NULL) {
     taMisc::Error("Error: could not find spec named:", nm);
@@ -389,7 +388,7 @@ BaseSpec* pdpMisc::FindSpecName(Project* prj, const char* nm) {
   return rval;
 }
 
-BaseSpec* pdpMisc::FindSpecType(Project* prj, TypeDef* td) {
+BaseSpec* pdpMisc::FindSpecType(ProjectBase* prj, TypeDef* td) {
   BaseSpec* rval = (BaseSpec*)prj->specs.FindSpecType(td);
   if(rval == NULL) {
     taMisc::Error("Error: could not find spec of type:", td->name);
@@ -397,11 +396,11 @@ BaseSpec* pdpMisc::FindSpecType(Project* prj, TypeDef* td) {
   return rval;
 }
 
-PDPLog* pdpMisc::FindMakeLog(Project* prj, const char* nm, TypeDef* td, bool& nw_itm) {
+PDPLog* pdpMisc::FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm) {
   return (PDPLog*)prj->logs.FindMakeLog(nm, td, nw_itm);
 }
 
-PDPLog* pdpMisc::FindLogName(Project* prj, const char* nm) {
+PDPLog* pdpMisc::FindLogName(ProjectBase* prj, const char* nm) {
   PDPLog* rval = (PDPLog*)prj->logs.Find(nm);
   if(rval == NULL) {
     taMisc::Error("Error: could not find log named:", nm);
@@ -409,7 +408,7 @@ PDPLog* pdpMisc::FindLogName(Project* prj, const char* nm) {
   return rval;
 }
 
-PDPLog* pdpMisc::FindLogType(Project* prj, TypeDef* td) {
+PDPLog* pdpMisc::FindLogType(ProjectBase* prj, TypeDef* td) {
   PDPLog* rval = (PDPLog*)prj->logs.Find(td);
   if(rval == NULL) {
     taMisc::Error("Error: could not find log of type:", td->name);
@@ -417,11 +416,11 @@ PDPLog* pdpMisc::FindLogType(Project* prj, TypeDef* td) {
   return rval;
 }
 #ifdef TA_GUI
-SelectEdit* pdpMisc::FindSelectEdit(Project* prj) {
+SelectEdit* pdpMisc::FindSelectEdit(ProjectBase* prj) {
   return (SelectEdit*)prj->edits.DefaultEl();
 }
 
-SelectEdit* pdpMisc::FindMakeSelectEdit(Project* prj) {
+SelectEdit* pdpMisc::FindMakeSelectEdit(ProjectBase* prj) {
   SelectEdit* rval = (SelectEdit*)prj->edits.DefaultEl();
   if(rval != NULL) return rval;
   rval = (SelectEdit*)prj->edits.New(1, &TA_SelectEdit);
@@ -429,12 +428,12 @@ SelectEdit* pdpMisc::FindMakeSelectEdit(Project* prj) {
 }
 #endif
 
-const iColor* pdpMisc::GetObjColor(Project* proj, ViewColors vc) {
+const iColor* pdpMisc::GetObjColor(ProjectBase* proj, ViewColors vc) {
   if (proj == NULL) return NULL;
-  return proj->GetObjColor((Project::ViewColors)vc);
+  return proj->GetObjColor((ProjectBase::ViewColors)vc);
 }
 
-const iColor* pdpMisc::GetObjColor(Project* proj, TypeDef* td) {
+const iColor* pdpMisc::GetObjColor(ProjectBase* proj, TypeDef* td) {
   if((proj == NULL) || (td == NULL)) return NULL;
   return proj->GetObjColor(td);
 }
@@ -478,12 +477,12 @@ int pdpMisc::WaitProc_LoadProj() {
     gf->fname = fnm;
     istream* strm = gf->open_read();
     if((strm == NULL) || !(gf->open_file))
-      taMisc::Error("Project Load: could not open file", fnm);
+      taMisc::Error("ProjectBase Load: could not open file", fnm);
     else {
 //obs      taiM->CreateLoadDialog();
       root->projects.Load(*strm);
       if(root->projects.size > i)
-	((Project*)root->projects[i])->file_name = fnm;
+	((ProjectBase*)root->projects[i])->file_name = fnm;
 //obs      taiM->RemoveLoadDialog();
     }
     gf->Close();
@@ -544,7 +543,7 @@ int pdpMisc::WaitProc() {
 #endif
 }
 
-PDPLog* pdpMisc::GetNewLog(Project* prj, TypeDef* typ) {
+PDPLog* pdpMisc::GetNewLog(ProjectBase* prj, TypeDef* typ) {
   if((prj == NULL) || (typ == NULL)) return NULL;
   PDPLog* rval = (PDPLog*)prj->logs.New(1, typ);
 #ifdef TA_GUI
@@ -554,7 +553,7 @@ PDPLog* pdpMisc::GetNewLog(Project* prj, TypeDef* typ) {
   return rval;
 }
 
-NetConduit* pdpMisc::GetNewConduit(Project* prj, TypeDef* typ) {
+NetConduit* pdpMisc::GetNewConduit(ProjectBase* prj, TypeDef* typ) {
   if(prj == NULL) return NULL;
   NetConduit* rval = NULL;
   if (typ->InheritsFrom(TA_NetWriter))
@@ -568,7 +567,7 @@ NetConduit* pdpMisc::GetNewConduit(Project* prj, TypeDef* typ) {
   return rval;
 }
 
-Network* pdpMisc::GetNewNetwork(Project* prj, TypeDef* typ) {
+Network* pdpMisc::GetNewNetwork(ProjectBase* prj, TypeDef* typ) {
   if(prj == NULL) return NULL;
   Network* rval = (Network*)prj->networks.New(1, typ);
 #ifdef TA_GUI
@@ -578,7 +577,7 @@ Network* pdpMisc::GetNewNetwork(Project* prj, TypeDef* typ) {
   return rval;
 }
 
-Network* pdpMisc::GetDefNetwork(Project* prj) {
+Network* pdpMisc::GetDefNetwork(ProjectBase* prj) {
   if(prj == NULL) return NULL;
   return (Network*)prj->networks.DefaultEl();
 }

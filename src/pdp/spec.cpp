@@ -36,7 +36,7 @@ void BaseSpec_MGroup::Initialize() {
 }
 
 const iColor* BaseSpec_MGroup::GetEditColor() {
-  return pdpMisc::GetObjColor(GET_MY_OWNER(Project), el_base);
+  return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase), el_base);
 }
 
 BaseSpec* BaseSpec_MGroup::FindSpecType(TypeDef* td) {
@@ -784,7 +784,7 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
 }
 
 BaseSpec_MGroup* SpecPtr_impl::GetSpecGroup() {
-  Project* prj = GET_OWNER(owner,Project);
+  ProjectBase* prj = GET_OWNER(owner,ProjectBase);
   if(prj == NULL)
     return NULL;
   return &(prj->specs);

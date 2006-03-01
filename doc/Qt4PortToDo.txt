@@ -40,6 +40,8 @@ BUGS
 * drop context menu not showing up when dropping on another object somewhere
 * ** idle program seems to actively leak memory (can possibly be a quitted
   version, where the ui is gone, but the program hasn't quit yet)
+* dialogs have an ugly frame border
+* in TypeHier type list from taBase, there is an entry called "inherited"
   
 * Show menu, enabling logic is correct, but doesn't seem to do anything
   CAUSE: seems to relate to delay in dispatching the deleted() signal from the
@@ -51,6 +53,10 @@ BUGS
 * in iEditGrid (used in ta_qtgroup) there is an ugly hack to workaround a
   seeming bug in QGridLayout->setRowMinimumHeight
   NOTE: still not working right!
+
+WINDOWS
+
+* context menu items  not doing anything
 
 
 NetViewer

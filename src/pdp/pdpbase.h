@@ -49,7 +49,7 @@ class PDP_API pdpMisc {
   // #NO_TOKENS miscellaneous things for pdp
 friend class InitProcRegistrar;
 public:
-  //note: this enum must be duplicated in Project
+  //note: this enum must be duplicated in ProjectBase
   enum ViewColors {		// indicies for view_colors
     TEXT,
     BACKGROUND,
@@ -81,7 +81,6 @@ public:
   // string representation of basic defaults compiled into executable
   static String_Array	proj_to_load;	// list of projects to load
   static taBase_List	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
-  static TypeDef*	def_wizard; 	// default network wizard type to create (this should be set by the specific application Main function)
 //  static void (*Init_Hook)();	 	// #READ_ONLY set this in user's main to init ta, etc.
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
   static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
@@ -99,41 +98,41 @@ public:
   // error handling function that saves a recover file when system crashes
   static ColorScaleSpec* GetDefaultColor();  // gets the default color scale
 
-  static const iColor* GetObjColor(Project* prj, ViewColors vc);
+  static const iColor* GetObjColor(ProjectBase* prj, ViewColors vc);
   // #IGNORE get default object color (for edit dialogs and project view)
-  static const iColor* GetObjColor(Project* prj, TypeDef* typ);
+  static const iColor* GetObjColor(ProjectBase* prj, TypeDef* typ);
   // get default object color (for edit dialogs and project view)
 
 
-  static PDPLog* GetNewLog(Project* prj, TypeDef* typ);
+  static PDPLog* GetNewLog(ProjectBase* prj, TypeDef* typ);
   // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)
-  static NetConduit* GetNewConduit(Project* prj, TypeDef* typ = NULL);
+  static NetConduit* GetNewConduit(ProjectBase* prj, TypeDef* typ = NULL);
   // get a temporary conduit of given type in given project
-  static Network* GetNewNetwork(Project* prj, TypeDef* typ = NULL);
+  static Network* GetNewNetwork(ProjectBase* prj, TypeDef* typ = NULL);
   // get a new network object
-  static Network* GetDefNetwork(Project* prj);
+  static Network* GetDefNetwork(ProjectBase* prj);
   // get default network from project
 
-  static BaseSpec_MGroup* FindMakeSpecGp(Project* prj, const char* nm, bool& nw_itm = nw_itm_def_arg);
+  static BaseSpec_MGroup* FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm = nw_itm_def_arg);
   // find a given spec group and if not found, make it
-  static BaseSpec* FindMakeSpec(Project* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
+  static BaseSpec* FindMakeSpec(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // find a given spec and if not found, make it
-  static BaseSpec* FindSpecName(Project* prj, const char* nm);
+  static BaseSpec* FindSpecName(ProjectBase* prj, const char* nm);
   // find a given spec by name
-  static BaseSpec* FindSpecType(Project* prj, TypeDef* td);
+  static BaseSpec* FindSpecType(ProjectBase* prj, TypeDef* td);
   // find a given spec by type
 
-  static PDPLog* FindMakeLog(Project* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
+  static PDPLog* FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // find a given log and if not found, make it
-  static PDPLog*  FindLogName(Project* prj, const char* nm);
+  static PDPLog*  FindLogName(ProjectBase* prj, const char* nm);
   // find a log of given name
-  static PDPLog*  FindLogType(Project* prj, TypeDef* td);
+  static PDPLog*  FindLogType(ProjectBase* prj, TypeDef* td);
   // find a log of given type
 
 #ifdef TA_GUI
-  static SelectEdit* FindSelectEdit(Project* prj);
+  static SelectEdit* FindSelectEdit(ProjectBase* prj);
   // find a select edit if it exists
-  static SelectEdit* FindMakeSelectEdit(Project* prj);
+  static SelectEdit* FindMakeSelectEdit(ProjectBase* prj);
   // find a select edit if it exists, otherwise make it
 #endif
 #ifdef DMEM_COMPILE

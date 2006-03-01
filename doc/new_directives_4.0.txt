@@ -3,6 +3,7 @@ OBJECT DIRECTIVES
 
 #LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
 #UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
+#HIDDEN -- prevents type from showing in TypeHier lists
 
 ENUM DIRECTIVES (note: this is new)
 ---------------

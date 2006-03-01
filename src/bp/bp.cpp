@@ -161,7 +161,7 @@ void BpUnitSpec::UpdateWeights(Unit* u) {
 
 void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
   if(graph_log == NULL) {
-    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
+    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(BpProject), &TA_GraphLog);
     if(graph_log == NULL) return;
   }
   graph_log->SetName(GetName() + ": Act Fun");
@@ -532,3 +532,20 @@ void SoftMaxBpUnitSpec::Compute_dEdNet(BpUnit* u) {
   u->dEdNet = u->dEdA;
 }
 
+
+//////////////////////////
+//   BpNetwork	        //
+//////////////////////////
+
+void BpNetwork::Initialize() {
+}
+
+
+//////////////////////////
+//   BpProject	        //
+//////////////////////////
+
+void BpProject::Initialize() {
+  networks.SetBaseType(&TA_BpNetwork);
+  wizards.SetBaseType(&TA_BpWizard);
+}

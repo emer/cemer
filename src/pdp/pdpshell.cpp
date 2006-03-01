@@ -20,15 +20,6 @@
 #include "pdpshell.h"
 
 
-//#include "spec.h"
-//#include "sched_proc.h"
-//#include "pdplog.h"
-//#include "net_qt.h"
-//#include "pdp_qt.h"
-
-//obs #include "procs_extra.h"
-//obs #include "enviro_extra.h"
-
 #include "ta_base.h"
 #include "ta_dump.h"
 #include "ta_css.h"
@@ -204,7 +195,7 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
 }
 
 void Wizard::StdNetwork(Network* net) {
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(net == NULL)
     net = pdpMisc::GetNewNetwork(proj);
   if(net == NULL) return;
@@ -300,13 +291,13 @@ void Wizard::StdNetwork(Network* net) {
 //////////////////////////////////
 
 void Wizard::StdConduit(NetConduit* cond, Network* net) {
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if (cond == NULL) {
     cond = pdpMisc::GetNewConduit(proj);
   }
   if (cond == NULL) return;
   if (net == NULL) {
-    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(Project));
+    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
   }
   if (net == NULL) return; // TODO, maybe create net
   cond->InitFromNetwork(net);
@@ -314,7 +305,7 @@ void Wizard::StdConduit(NetConduit* cond, Network* net) {
 
 void Wizard::StdEnv(Environment* env, int n_events) {
   if(env == NULL) {
-    env = pdpMisc::GetNewEnv(GET_MY_OWNER(Project));
+    env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase));
   }
   if(env == NULL) return;
   layer_cfg.EnforceSize(n_layers);
@@ -399,7 +390,7 @@ void Wizard::TimeSeqEvents(TimeEnvironment* env, int n_seqs, int events_per_seq,
 //////////////////////////////////
 
 void Wizard::StdProcs() {
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   BatchProcess* batch = (BatchProcess*)pdpMisc::FindMakeProc(proj, "Batch_0", &TA_BatchProcess);
   batch->CreateSubProcs();
 #ifdef TA_GUI
@@ -418,7 +409,7 @@ void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
 
 EpochProcess* Wizard::AutoTestProc(SchedProcess* tproc, Environment* tenv) {
   if((tproc == NULL) || (tenv == NULL)) return NULL;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   EpochProcess* cve = (EpochProcess*)pdpMisc::FindMakeProc(proj, "TestEpoch", &TA_EpochProcess);
   cve->CreateSubProcs();
   cve->SetEnv(tenv);
@@ -486,7 +477,7 @@ MonitorStat* Wizard::RecordLayerValues(SchedProcess* proc, SchedProcess::StatLoc
 
 CopyToEnvStat* Wizard::SaveValuesInDataEnv(MonitorStat* stat) {
   if(stat == NULL) return NULL;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   Stat_Group* sgp = (Stat_Group*)stat->owner;
   int idx = sgp->Find(stat);
   CopyToEnvStat* cte;
@@ -556,7 +547,7 @@ UnitActRFStat* Wizard::ActBasedReceptiveField(SchedProcess* rec_proc, SchedProce
 					      SchedProcess* disp_proc, SchedProcess::ProcLoc disp_loc)
 {
   if((rec_proc == NULL) || (disp_proc == NULL)) return NULL;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   Stat_Group* tgp = rec_proc->GetStatGroup(&TA_UnitActRFStat, rec_loc);
   UnitActRFStat* rfs = (UnitActRFStat*)tgp->FindMakeStat(&TA_UnitActRFStat);
   taBase::SetPointer((TAPtr*)&rfs->layer, recv_layer);
@@ -646,7 +637,7 @@ TimeCounterStat* Wizard::AddTimeCounter(SchedProcess* inc_proc, SchedProcess::St
 
 void Wizard::LogProcess(SchedProcess* proc, TypeDef* log_type) {
   if((proc == NULL) || (log_type == NULL)) return;
-  Project* proj = GET_MY_OWNER(Project);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   String nm = proc->name + "_" + log_type->name;
   PDPLog* plog = pdpMisc::FindMakeLog(proj, nm, log_type);
   if(plog->log_proc.size == 0)
@@ -685,9 +676,10 @@ void Wizard_MGroup::AutoEdit() {
 }
 
 
-///////////////////////////
-//	Project		//
 //////////////////////////
+//  ProjectBase		//
+//////////////////////////
+
 #ifdef TA_GUI
 class SimLogEditDialog : public taiEditDataHost {
 public:
@@ -705,19 +697,16 @@ public:
   	bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
 };
 #endif
-bool Project::nw_itm_def_arg = false;
+bool ProjectBase::nw_itm_def_arg = false;
 
 
-void Project::Initialize() {
+void ProjectBase::Initialize() {
   defaults.SetBaseType(&TA_TypeDefault);
   wizards.SetBaseType(&TA_Wizard);
-  wizards.el_typ = pdpMisc::def_wizard;
   specs.SetBaseType(&TA_BaseSpec);
   networks.SetBaseType(&TA_Network);
   net_writers.SetBaseType(&TA_NetWriter);
   net_readers.SetBaseType(&TA_NetReader);
-  environments.SetBaseType(&TA_Environment);
-  processes.SetBaseType(&TA_SchedProcess);
   logs.SetBaseType(&TA_TextLog);
   scripts.SetBaseType(&TA_Script);
 #ifdef TA_GUI
@@ -734,7 +723,7 @@ void Project::Initialize() {
   deleting = false;
 }
 
-void Project::InitLinks() {
+void ProjectBase::InitLinks() {
   taBase::Own(defaults, this);
   taBase::Own(wizards, this);
   taBase::Own(specs, this);
@@ -742,8 +731,6 @@ void Project::InitLinks() {
   taBase::Own(net_writers, this);
   taBase::Own(net_readers, this);
   taBase::Own(data, this);
-  taBase::Own(environments, this);
-  taBase::Own(processes, this);
   taBase::Own(logs, this);
   taBase::Own(scripts, this);
 #ifdef TA_GUI
@@ -773,11 +760,12 @@ void Project::InitLinks() {
   inherited::InitLinks();
 }
 
-void Project::CutLinks() {
+void ProjectBase::CutLinks() {
   deleting = true;
+/*TODO: equiv for Programs
   SchedProcess* sp;
   taLeafItr li;
-/*TODO: equiv for Programs  FOR_ITR_EL(SchedProcess, sp, processes., li) {
+  FOR_ITR_EL(SchedProcess, sp, processes., li) {
     if(sp->running)
       sp->Stop();
   } */
@@ -792,8 +780,6 @@ void Project::CutLinks() {
 #endif
   scripts.CutLinks();
   logs.CutLinks();
-  processes.CutLinks();
-  environments.CutLinks();
   data.CutLinks();
   net_readers.CutLinks();
   net_writers.CutLinks();
@@ -805,15 +791,13 @@ void Project::CutLinks() {
   the_colors.CutLinks();
 }
 
-void Project::Copy_(const Project& cp) {
+void ProjectBase::Copy_(const ProjectBase& cp) {
   defaults = cp.defaults;
   specs = cp.specs;
   networks = cp.networks;
   net_writers = cp.net_writers;
   net_readers = cp.net_readers;
   data = cp.data;
-  environments = cp.environments;
-  processes = cp.processes;
   logs = cp.logs;
   scripts = cp.scripts;
 #ifdef TA_GUI
@@ -824,13 +808,13 @@ void Project::Copy_(const Project& cp) {
   the_colors = cp.the_colors;
 }
 
-void Project::UpdateAfterEdit() {
+void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
   UpdateColors();
 }
 
-BaseSpec_MGroup* Project::FindMakeSpecGp(const char* nm, bool& nw_itm) {
+BaseSpec_MGroup* ProjectBase::FindMakeSpecGp(const char* nm, bool& nw_itm) {
   BaseSpec_MGroup* gp = (BaseSpec_MGroup*)specs.gp.FindName(nm);
   nw_itm = false;
   if(gp == NULL) {
@@ -841,7 +825,7 @@ BaseSpec_MGroup* Project::FindMakeSpecGp(const char* nm, bool& nw_itm) {
   return gp;
 }
 
-void Project::GetDefaultColors() {
+void ProjectBase::GetDefaultColors() {
   view_colors.EnforceSize(COLOR_COUNT);
   view_colors[TEXT]->name = "black";
   view_colors[TEXT]->desc = "Text";
@@ -890,7 +874,7 @@ void Project::GetDefaultColors() {
   UpdateColors();
 }
 
-const iColor* Project::GetObjColor(TypeDef* td) {
+const iColor* ProjectBase::GetObjColor(TypeDef* td) {
 #ifdef TA_GUI
   if(view_colors.size != COLOR_COUNT) {
     view_colors.Reset();
@@ -899,34 +883,34 @@ const iColor* Project::GetObjColor(TypeDef* td) {
   if(the_colors.size != COLOR_COUNT)
     UpdateColors();
   if(td->InheritsFrom(TA_ConSpec))
-    return the_colors.FastEl(Project::CON_SPEC)->color();
+    return the_colors.FastEl(ProjectBase::CON_SPEC)->color();
   else if(td->InheritsFrom(TA_UnitSpec))
-    return the_colors.FastEl(Project::UNIT_SPEC)->color();
+    return the_colors.FastEl(ProjectBase::UNIT_SPEC)->color();
   else if(td->InheritsFrom(TA_ProjectionSpec))
-    return the_colors.FastEl(Project::PRJN_SPEC)->color();
+    return the_colors.FastEl(ProjectBase::PRJN_SPEC)->color();
   else if(td->InheritsFrom(TA_LayerSpec))
-    return the_colors.FastEl(Project::LAYER_SPEC)->color();
+    return the_colors.FastEl(ProjectBase::LAYER_SPEC)->color();
   else if(td->InheritsFrom(TA_Network))
-    return the_colors.FastEl(Project::NETWORK)->color();
+    return the_colors.FastEl(ProjectBase::NETWORK)->color();
   else if(td->InheritsFrom(TA_Environment))
-    return the_colors.FastEl(Project::ENVIRONMENT)->color();
+    return the_colors.FastEl(ProjectBase::ENVIRONMENT)->color();
   else if(td->InheritsFrom(TA_PDPLog))
-    return the_colors.FastEl(Project::PDPLOG)->color();
+    return the_colors.FastEl(ProjectBase::PDPLOG)->color();
   else if(td->InheritsFrom(TA_SchedProcess))
-    return the_colors.FastEl(Project::SCHED_PROC)->color();
+    return the_colors.FastEl(ProjectBase::SCHED_PROC)->color();
   else if(td->InheritsFrom(TA_Stat))
-    return the_colors.FastEl(Project::STAT_PROC)->color();
+    return the_colors.FastEl(ProjectBase::STAT_PROC)->color();
   else if(td->InheritsFrom(TA_Process))
-    return the_colors.FastEl(Project::OTHER_PROC)->color();
+    return the_colors.FastEl(ProjectBase::OTHER_PROC)->color();
   else if(td->InheritsFrom(TA_taGroup_impl))
-    return the_colors.FastEl(Project::GEN_GROUP)->color();
+    return the_colors.FastEl(ProjectBase::GEN_GROUP)->color();
   else if(td->InheritsFrom(TA_Wizard))
-    return the_colors.FastEl(Project::WIZARD)->color();
+    return the_colors.FastEl(ProjectBase::WIZARD)->color();
 #endif
   return NULL;
 }
 
-const iColor* Project::GetObjColor(ViewColors vc) {
+const iColor* ProjectBase::GetObjColor(ViewColors vc) {
 #ifdef TA_GUI
   if(view_colors.size != COLOR_COUNT) {
     view_colors.Reset();
@@ -941,7 +925,7 @@ const iColor* Project::GetObjColor(ViewColors vc) {
   return NULL;
 }
 
-int Project::Load(istream& strm, TAPtr par) {
+int ProjectBase::Load(istream& strm, TAPtr par) {
   int rval = inherited::Load(strm, par); // load-em-up
   if (rval) {	 // don't do this as a dump_load_value cuz we need an updateafteredit..
     if (taMisc::gui_active) {
@@ -961,7 +945,7 @@ int Project::Load(istream& strm, TAPtr par) {
   return rval;
 }
 
-void Project::LoadDefaults() {
+void ProjectBase::LoadDefaults() {
   bool loading = taMisc::is_loading; // cache is loading flag
   fstream def;
   if(!pdpMisc::root->default_file.empty() && cssProgSpace::GetFile(def, pdpMisc::root->default_file)) {
@@ -983,8 +967,8 @@ void Project::LoadDefaults() {
   taMisc::is_loading = loading;
 }
 
-void Project::MakeDefaultWiz(bool auto_opn) {
-  Wizard* wiz = (Wizard*)wizards.New(1, pdpMisc::def_wizard);
+void ProjectBase::MakeDefaultWiz(bool auto_opn) {
+  Wizard* wiz = (Wizard*)wizards.New(1, wizards.el_typ);
   if(auto_opn) {
     wiz->auto_open = true;
 //TEMP    wiz->ThreeLayerNet();
@@ -993,7 +977,7 @@ void Project::MakeDefaultWiz(bool auto_opn) {
 }
 
 #ifdef TA_GUI
-pdpDataViewer* Project::NewViewer() {
+pdpDataViewer* ProjectBase::NewViewer() {
   pdpDataViewer* vwr = NULL;
   vwr = pdpDataViewer::New(this);
   viewers.Add(vwr);
@@ -1001,7 +985,7 @@ pdpDataViewer* Project::NewViewer() {
 }
 #endif
 #ifdef TA_GUI
-void Project::OpenNetworkViewer(Network* net) {
+void ProjectBase::OpenNetworkViewer(Network* net) {
   if (!net) return;
 
   // network objects
@@ -1012,7 +996,7 @@ void Project::OpenNetworkViewer(Network* net) {
   vwr->ViewWindow();
 }
 #endif
-int Project::SaveAs(ostream& strm, TAPtr par, int indent) {
+int ProjectBase::SaveAs(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
   if (use_sim_log) {
     UpdateSimLog();
@@ -1021,7 +1005,7 @@ int Project::SaveAs(ostream& strm, TAPtr par, int indent) {
   return inherited::SaveAs(strm, par, indent);
 }
 
-int Project::Save(ostream& strm, TAPtr par, int indent) {
+int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
   if(taMisc::gui_active) {
     taMisc::Busy();
   }
@@ -1061,12 +1045,12 @@ int Project::Save(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
-bool Project::SetFileName(const String& val) {
+bool ProjectBase::SetFileName(const String& val) {
   prev_file_nm = GetFileName();
   return inherited::SetFileName(val);
 }
 
-void Project::UpdateColors() {
+void ProjectBase::UpdateColors() {
   if(view_colors.size != COLOR_COUNT) {
     view_colors.Reset();
     GetDefaultColors();
@@ -1081,7 +1065,7 @@ void Project::UpdateColors() {
   }
 }
 #ifdef TA_GUI
-void Project::UpdateSimLog() {
+void ProjectBase::UpdateSimLog() {
   SimLogEditDialog* dlg = new SimLogEditDialog(this, GetTypeDef(), false, true);
   dlg->Constr("Update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  Click off use_sim_log if you are not using this feature");
   if(dlg->Edit(true) && use_sim_log) {
@@ -1120,11 +1104,11 @@ int Project_MGroup::Load(istream& strm, TAPtr par) {
     ta_file->dir = "";
     ta_file->fname = fnm;
   } */
-  int rval = taGroup<Project>::Load(strm, par);
+  int rval = taGroup<ProjectBase>::Load(strm, par);
   if (rval) {
-    Project* p;
+    ProjectBase* p;
     taLeafItr i;
-    FOR_ITR_EL(Project, p, this->, i) {
+    FOR_ITR_EL(ProjectBase, p, this->, i) {
       if (taMisc::gui_active) {
 	pdpMisc::post_load_opr.Link(&(p->wizards));
 	pdpMisc::post_load_opr.Link(&(p->scripts));
@@ -1151,7 +1135,7 @@ int Project_MGroup::Load(istream& strm, TAPtr par) {
 void PDPRoot::Initialize() {
   version_no = taMisc::version_no;
   SetName("root");
-  projects.SetBaseType(&TA_Project);
+  projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
   projects.SetName("projects");
   colorspecs.SetBaseType(&TA_ColorScaleSpec);
   projects.colorspecs = &colorspecs;
@@ -1353,8 +1337,8 @@ exit:
 void PDPRoot::SaveAll() {
 //#ifdef TA_GUI
   taLeafItr i;
-  Project* pr;
-  FOR_ITR_EL(Project, pr, projects., i) {
+  ProjectBase* pr;
+  FOR_ITR_EL(ProjectBase, pr, projects., i) {
     taFiler* taf = pr->GetFileDlg();
     if (taf) {
       taRefN::Ref(taf);
@@ -1398,7 +1382,7 @@ void PDPRoot::GetWindow() {
 void PDPRoot::SetWinPos(float left, float top, float width, float height) {
   WinGeometry* wn_pos = &win_pos;
   if(projects.leaves > 0)
-    wn_pos = &(((Project*)projects.Leaf(0))->root_win_pos);
+    wn_pos = &(((ProjectBase*)projects.Leaf(0))->root_win_pos);
 
   bool was_set = false;
   if((left != -1.0f) && (top != -1.0f)) {
@@ -1422,7 +1406,7 @@ void PDPRoot::SetWinPos(float left, float top, float width, float height) {
 void PDPRoot::GetWinPos() {
   WinGeometry* wn_pos = &win_pos;
   if(projects.leaves > 0)
-    wn_pos = &(((Project*)projects.Leaf(0))->root_win_pos);
+    wn_pos = &(((ProjectBase*)projects.Leaf(0))->root_win_pos);
   wn_pos->GetWinPos();
 } */
 

@@ -441,7 +441,7 @@ void BpWizard::SRNContext(Network* net) {
     taMisc::Error("SRNContext: must have basic constructed network first");
     return;
   }
-  Project* proj = GET_MY_OWNER(Project);
+  BpProject* proj = GET_MY_OWNER(BpProject);
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)pdpMisc::FindMakeSpec(proj, "CtxtPrjn", &TA_OneToOnePrjnSpec);
   BpContextSpec* ctxts = (BpContextSpec*)pdpMisc::FindMakeSpec(proj, "CtxtUnits", &TA_BpContextSpec);
 

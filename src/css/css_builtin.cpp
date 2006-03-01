@@ -40,12 +40,12 @@
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>
-#ifdef LINUX
+#ifdef TA_OS_LINUX
 #include <sys/time.h>
 #endif
 #include <locale.h>
 
-#if (defined(WIN32) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
 #include <complex>
 #endif
 // when using the .c version
@@ -1415,7 +1415,7 @@ static cssRealFun_stub1(sinh);
 static cssRealFun_stub1(sqrt);
 static cssRealFun_stub1(tan);
 static cssRealFun_stub1(tanh);
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
 static cssRealFun_stub1(acosh);
 static cssRealFun_stub1(asinh);
 static cssRealFun_stub1(atanh);
@@ -1483,7 +1483,7 @@ static cssRealFun_stub1(gauss_den);
 static cssRealFun_stub1(gauss_cum);
 static cssRealFun_stub0(gauss_dev);
 static cssRealFun_stub1(gauss_inv);
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
 static cssRealFun_stub1(erf);
 static cssRealFun_stub1(erf_c);
 #endif
@@ -1636,7 +1636,7 @@ static void Install_Math() {
   cssRealFun_inst(cssMisc::Functions, gauss_dev , 0,
 "The Gaussian or normal probability density function at x with sigma = 1\
  and mean = 0.");
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
   cssRealFun_inst(cssMisc::Functions, erf       , 1,
 "(Real x) The error function, which provides an approximation to the integral of\
  the normal distribution.");
@@ -1658,7 +1658,7 @@ static void Install_Math() {
 
 // MSVC does not include these
 // hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
-#if (!( (defined(WIN32) && (!defined(CYGWIN))) || defined(HP800)) )
+#if (!(defined(TA_OS_WIN) || defined(HP800)) )
   cssRealFun_inst(cssMisc::Functions, acosh, 1,
 "(Real x) The hyperbolic arc-cosine.");
   cssRealFun_inst(cssMisc::Functions, asinh, 1,
@@ -1816,7 +1816,7 @@ static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
 //////////////////////////////////
 // 	POSIX Functions  	//
 //////////////////////////////////
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
 static cssEl* cssElCFun_access_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
   rval->val = access((const char*)*arg[1], (int)*arg[2]);
@@ -2163,7 +2163,7 @@ static void Install_MiscFun() {
  it.");
 
   // POSIX functions
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN))
   cssElCFun_inst(cssMisc::Functions, access, 2, CSS_FUN,
 "(String fname, int ac_type) This POSIX command determines if the given file name is accessible\
  according to the ac_type argument, which should be some bitwise OR of\
@@ -2704,10 +2704,10 @@ int cssMisc::Initialize() {
   String home = getenv("HOME");
   taMisc::include_paths.AddUnique(home); // this is first on the list..
 
-#ifndef CYGWIN
-  String css_dir = "/usr/local/pdp++"; // default css home directory
-#else
+#ifdef TA_OS_WIN
   String css_dir = "C:/PDP++"; // default pdp home directory
+#else
+  String css_dir = "/usr/local/pdp++"; // default css home directory
 #endif
   char* css_dir_env = getenv("CSSDIR");
   if(css_dir_env != NULL)

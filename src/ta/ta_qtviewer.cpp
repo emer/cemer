@@ -855,7 +855,7 @@ void iToolBar::Showing(bool showing) {
   if (!m_toolBar) return;
   iDataViewer* dv = m_toolBar->viewer_win();
   if (!dv) return;
-  taiMenuEl* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
+  taiAction* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
   if (!me) return;
   me->setChecked(showing);
 }
@@ -958,28 +958,28 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) 
   //TODO: provide a way to add these via already existing Actions (ex toolbar)
 //  cut copy paste link delete
   if (allowed & taiClipData::EA_CUT) {
-    taiMenuEl* mel = menu->AddItem("Cu&t", taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
+    taiAction* mel = menu->AddItem("Cu&t", taiMenu::use_default,
+        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
     mel->usr_data = taiClipData::EA_CUT;
   }
   if (allowed & taiClipData::EA_COPY) {
-    taiMenuEl* mel = menu->AddItem("&Copy", taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
+    taiAction* mel = menu->AddItem("&Copy", taiMenu::use_default,
+        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
     mel->usr_data = taiClipData::EA_COPY;
   }
   if (allowed & taiClipData::EA_PASTE) {
-    taiMenuEl* mel = menu->AddItem("&Paste", taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
+    taiAction* mel = menu->AddItem("&Paste", taiMenu::use_default,
+        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
     mel->usr_data = taiClipData::EA_PASTE;
   }
   if (allowed & taiClipData::EA_LINK) {
-    taiMenuEl* mel = menu->AddItem("&Link", taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
+    taiAction* mel = menu->AddItem("&Link", taiMenu::use_default,
+        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
     mel->usr_data = taiClipData::EA_LINK;
   }
   if (allowed & taiClipData::EA_DELETE) {
-    taiMenuEl* mel = menu->AddItem("&Delete", taiMenu::use_default,
-        taiMenuEl::men_act, widget(), SLOT(mnuEditAction(taiMenuEl*)), this);
+    taiAction* mel = menu->AddItem("&Delete", taiMenu::use_default,
+        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
     mel->usr_data = taiClipData::EA_DELETE;
   }
   link()->FillContextMenu_EditItems(menu, allowed);
@@ -1248,9 +1248,9 @@ iToolBar* iDataViewer::AddToolBar(iToolBar* tb) {
 }
 
 void iDataViewer::AddToolBarMenu(const String& name, int index) {
-//taiMenuEl* menu =
+//taiAction* menu =
   toolBarMenu->AddItem(name, taiMenu::toggle,
-    taiMenuEl::int_act, this, SLOT(this_ToolBarSelect(int)), index);
+    taiAction::int_act, this, SLOT(this_ToolBarSelect(int)), index);
 }
 
 void iDataViewer::ch_destroyed() {
@@ -1564,7 +1564,7 @@ void iDataViewer::mnuDynAction(int idx) {
 
 }
 
-void iDataViewer::mnuEditAction(taiMenuEl* mel) {
+void iDataViewer::mnuEditAction(taiAction* mel) {
    // called from context; cast obj to an taiClipData::EditAction
   emit_EditAction((int)(mel->usr_data));
 }
@@ -1728,7 +1728,7 @@ void iDataViewer::this_SetActionsEnabled() {
 
 void iDataViewer::this_ToolBarSelect(int param) {
   if (!m_viewer) return;
-  taiMenuEl* me = toolBarMenu->items.SafeEl(param);
+  taiAction* me = toolBarMenu->items.SafeEl(param);
   if (!me) return; // shouldn't happen
   ToolBar* tb = m_viewer->toolbars.SafeEl(param);
   if (!tb) return; // shouldn't happen

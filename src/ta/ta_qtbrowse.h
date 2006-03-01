@@ -54,7 +54,7 @@ class taGroup_impl;
 class taiClipData;
 class taiMimeItem;
 class taiMimeSource;
-class taiMenuEl;
+class taiAction;
 class taiMenu; //
 
 // forwards this file
@@ -256,7 +256,7 @@ public:
   ~iDataBrowserBase();
 
 public slots:
-  virtual void		mnuNewBrowser(taiMenuEl* mel){} // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void		mnuNewBrowser(taiAction* mel){} // called from context 'New Browse from here'; cast obj to taiNode*
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
 
 protected slots:
@@ -307,7 +307,7 @@ public:
   ~iDataBrowser();
 
 public slots:
-  virtual void		mnuNewBrowser(taiMenuEl* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
   virtual void		toolsClassBrowser();
   
 protected:

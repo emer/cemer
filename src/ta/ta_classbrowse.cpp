@@ -518,7 +518,7 @@ iDataPanel* iClassBrowser::MakeNewDataPanel_(taiDataLink* link) {
   return dp;
 } 
 
-void iClassBrowser::mnuNewBrowser(taiMenuEl* mel) {
+void iClassBrowser::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
   ClassBrowser* brows = ClassBrowser::New(dl->data(), dl->tik);

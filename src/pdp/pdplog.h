@@ -18,8 +18,6 @@
 #ifndef pdplog_h
 #define pdplog_h
 
-//#include "process.h"
-#include "v3_compat.h"
 #include "datatable.h"
 #include "datagraph.h"
 #include "ta_filer.h"
@@ -29,6 +27,7 @@
 #include "igeometry.h"
 #endif
 
+#include "pdpbase.h"
 #include "pdp_TA_type.h"
 
 // forwards this file
@@ -36,8 +35,8 @@
 class PDPLog; //
 
 // externals
-//class T3DataViewer; //
-//class pdpDataViewer; //
+class LogView; //
+class T3DataViewer; //
 
 #ifdef TA_GUI
 //////////////////////////
@@ -89,7 +88,7 @@ public:
   MinMaxInt	data_range;	// #READ_ONLY #NO_SAVE #SHOW range of lines in the data buffer (in log lines)
   bool		record_proc_name; // whether to record process name in log file or not
 
-  Process_Group log_proc;	// #LINK_GROUP #BROWSE #NO_SAVE LEGACY processes which use this log
+  taGroup_impl log_proc;	// #LINK_GROUP #BROWSE #NO_SAVE LEGACY processes which use this log
 //obs  SchedProcess*	cur_proc;	// #READ_ONLY #NO_SAVE current process sending to log
 
   String_Array	display_labels;	// ordered list of labels to use for views and log files
@@ -171,7 +170,7 @@ public:
   int	Dump_Save_Value(ostream& strm, TAPtr par, int indent); // check for open log_file..
 #ifdef TA_GUI
   TypeDef*	GetDefaultView()	{ return views.el_typ; }
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_PDPLog); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_PDPLog); }
   virtual LogView* NewLogView();// return correct type of logview
   virtual void	ShowInViewer(T3DataViewer* vw = NULL); // #NULL_OK #MENU #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT Show this log in a new or existing T3 Viewer
 #endif
@@ -198,7 +197,7 @@ public:
 
   virtual PDPLog* FindMakeLog(const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_PDPLog); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_PDPLog); }
 #endif
   void	Initialize() 		{SetBaseType(&TA_PDPLog);}
   void 	Destroy()		{ }

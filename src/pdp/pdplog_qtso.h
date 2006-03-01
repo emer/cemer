@@ -20,12 +20,12 @@
 #ifndef PDPLOG_QTSO_H
 #define PDPLOG_QTSO_H
 
+#include "ta_qttype.h"
+#include "t3viewer.h"
+
 #include "pdplog.h"
 #include "pdp_qtso.h"
-#include "t3viewer.h"
 #include "datagraph.h"
-#include "ta_qttype.h"
-
 #include "netstru_so.h"
 #include "pdp_TA_type.h"
 
@@ -136,7 +136,7 @@ public:
   virtual void 		LogUpdateAfterEdit(); // called by log in its uae
   virtual void		Log_Clear() {} // called by log in its Clear()
 
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_PDPLog); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_PDPLog); }
 
   void 	UpdateAfterEdit();
   void 	Initialize();

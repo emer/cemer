@@ -609,7 +609,7 @@ public slots:
   virtual void helpContents();*/
   virtual void 		helpAbout() {}
 
-  virtual void		mnuEditAction(taiMenuEl* mel);
+  virtual void		mnuEditAction(taiAction* mel);
   virtual void		mnuDynAction(int idx); // a dynamic action
 
   void			actionsMenu_aboutToShow(); // populates dynamic items

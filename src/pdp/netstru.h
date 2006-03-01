@@ -135,7 +135,7 @@ public:
 
   bool		ChangeMyType(TypeDef* new_type);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void 	SetTypeDefaults()	{ }; // overload this to do nothing (faster)
   void	UpdateAfterEdit();	     // might want to override any default updates..
@@ -247,7 +247,7 @@ public:
   virtual MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dwt"); }
   // name of weight-change variable to share across dmem processors in BATCH mode learning
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_ConSpec); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_ConSpec); }
 #endif
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -390,7 +390,7 @@ public:
 
   bool	ChangeMyType(TypeDef* new_type);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -436,7 +436,7 @@ public:
   void	ReplacePointersHook(TAPtr old);
 
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_UnitSpec); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_UnitSpec); }
 //  virtual Unit_So*	MakeSo(Unit* unit, Layer_So* par);
 #endif
 
@@ -583,7 +583,7 @@ public: //
   virtual void	CopyPtrs(Unit* cp); // #IGNORE copy the pointers directly
   void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void  UpdateAfterEdit();
   void	Initialize();
@@ -626,7 +626,7 @@ public:
   virtual int	UseCount(); // return number of times this spec is used
   void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_ProjectionSpec); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_ProjectionSpec); }
 #endif
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -741,7 +741,7 @@ public:
 
   void 	CopyPtrs(Projection* cp); // #IGNORE copy the pointers
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void 	UpdateAfterEdit();
   void 	Initialize();
@@ -891,7 +891,7 @@ public:
 
   void		RemoveAll();
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	UpdateAfterEdit();
   void	Initialize();
@@ -914,7 +914,7 @@ public:
   void	ReplacePointersHook(TAPtr old);
 
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_LayerSpec); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_LayerSpec); }
 //  virtual Layer_So*	MakeSo(Layer* layer, Network_So* par);
 #endif
 
@@ -1112,7 +1112,7 @@ public:
   virtual void	CopyPtrs(Layer* cp); // #IGNORE the pointers
   void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -1178,7 +1178,7 @@ public:
   int		n_cons;		// #READ_ONLY #SHOW total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #SHOW maximum size in each dimension of the net
 
-  Project*	proj;		// #READ_ONLY #NO_SAVE Project this network is in
+  ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 //obs  bool		net_will_updt;	// #HIDDEN #NO_SAVE if true, network will do update of display so don't do at lower level
 
 #ifdef DMEM_COMPILE
@@ -1328,7 +1328,7 @@ public:
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   // call reconnect afterwards
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -1348,7 +1348,7 @@ protected:
 class PDP_API Network_MGroup : public taGroup<Network> {
 public:
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Network); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
@@ -1426,7 +1426,7 @@ public: //
   // #BUTTON set the names of units in the network according to the current value_names
 
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT); }
 #endif
 
   void	UpdateAfterEdit();	// gets information off of the layer, etc
@@ -1467,7 +1467,7 @@ INHERITED(DataChannel)
 public:
 
 #ifdef TA_GUI
-  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT);}
+  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT);}
 #endif
   void	UpdateAfterEdit();	// gets information off of the layer, etc
   void  InitLinks();
@@ -1503,7 +1503,7 @@ public:
   virtual void		UnSetLayers() {} 		 // clear layer pointers (and last_net)
   
 #ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),pdpMisc::ENVIRONMENT); }
+  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT); }
 #endif
   void  UpdateAfterEdit();
   void	InitLinks();

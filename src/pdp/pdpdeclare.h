@@ -54,7 +54,7 @@ class LayerReader;
 class LayerWriter;
 class NetConduit;
 
-class Project;
+class ProjectBase;
 class PDPRoot;
 
 
@@ -83,34 +83,7 @@ class GraphLogView; //
 
 // net_qt.h and netstru_so.h
 //TODO
-//obs class TDTransform;
 class Network_so; // #IGNORE
-//class NetViewGraphic_G;
-//class Layer_G;
-//class LayerNameEdit;
-//class LayerText_G;
-//class LayerBox_G;
-//class Unit_Group_G;
-//class Projection_G;
-//class PLine_G;
-//class SelfCon_PLine_G;
-//class Unit_G;
-//class UnitValue_G;
-//class SquareUnit_G;
-//class AreaUnit_G;
-//class LinearUnit_G;
-//class FillUnit_G;
-//class DirFillUnit_G;
-//class ThreeDUnit_G;
-//class RoundUnit_G;
-//class HgtFieldUnit_G;
-//class HgtPeakUnit_G;
-//class NetEditor;
-
-// ??.h
-//class DTEditor;
-//class GraphEditor;
-
 #endif // TA_GUI
 
 #endif //declare_h

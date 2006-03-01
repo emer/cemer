@@ -17,7 +17,6 @@
 
 
 #include "pdp_qtso.h"
-//obs #include "sched_proc.h"
 #include "pdpshell.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
@@ -187,102 +186,6 @@ void taiSpecMember::CmpOrigVal(taiData* dat, void* base, bool& first_diff) {
 }
 
 
-//////////////////////////////////
-//     ProcessDialog		//
-//////////////////////////////////
-
-void ProcessDialog::Ok() {
-/*obs  Process* prc = (Process*)cur_base;
-  if(prc->ctrl_panel.ctrl_panel == this) {
-    prc->ctrl_panel.ctrl_panel = NULL;
-    prc->ctrl_panel.active = false;
-  }
-  if(prc->InheritsFrom(&TA_SchedProcess)) {
-    SchedProcess* sp = (SchedProcess*)prc;
-    if(sp->im_run_proc)
-      sp->Stop(); 
-  }*/
-  taiEditDataHost::Ok();
-}
-
-void ProcessDialog::Cancel() {
-  Process* prc = (Process*)cur_base;
-/*obs  if(prc->ctrl_panel.ctrl_panel == this) {
-    prc->ctrl_panel.ctrl_panel = NULL;
-    prc->ctrl_panel.active = false;
-  } */
-  if(prc->InheritsFrom(&TA_SchedProcess)) {
-    SchedProcess* sp = (SchedProcess*)prc;
-/*obs    if(sp->im_run_proc)
-      sp->Stop(); */
-  }
-  taiEditDataHost::Cancel();
-}
-
-ProcessDialog::~ProcessDialog() {
-//obs  CloseWindow();
-}
-
-//////////////////////////////////
-//     taiProcess		//
-//////////////////////////////////
-
-int taiProcess::BidForEdit(TypeDef* td){
-  if(td->InheritsFrom(&TA_Process))
-    return taiEdit::BidForEdit(td) +1;
-  return 0;
-}
-
-taiEditDataHost* taiProcess::CreateDataHost(void* base, bool readonly) {
-  return new ProcessDialog(base, typ, readonly);
-}
-
-int taiProcess::Edit(void* base, bool readonly, const iColor* bgclr) {
-  ProcessDialog* dlg = (ProcessDialog*)taiMisc::FindEdit(base, typ);
-  if ((dlg == NULL) || dlg->CtrlPanel()) {
-    dlg = (ProcessDialog*)CreateDataHost(base, readonly);
-    dlg->Constr("", "", bgclr);
-//    dlg->cancel_only = readonly;
-    return dlg->Edit(false);
-  }
-  if(!dlg->modal) {
-    dlg->Iconify(false);
-    dlg->Raise();
-  }
-  return 2;
-}
-
-void taiProcess::Initialize()	{
-  run_ie = NULL;
-}
-
-void taiProcess::Destroy() {
-  if(run_ie) delete run_ie;
-  run_ie = NULL;
-}
-
-Process_RunDlg::~Process_RunDlg() {
-//obs  CloseWindow();
-}
-
-bool Process_RunDlg::ShowMember(MemberDef* md) {
-  if((ProcessDialog::ShowMember(md)) &&
-     (md->type->InheritsFrom(&TA_Counter) || md->HasOption("CONTROL_PANEL")))
-    return true;
-  return false;
-}
-
-
-//////////////////////////////////
-//     taiProcessRunBox		//
-//////////////////////////////////
-
-taiEditDataHost* taiProcessRunBox::CreateDataHost(void* base, bool readonly) {
-  return new Process_RunDlg(base, typ, readonly);
-}
-
-
-
 //////////////////////////
 //   ipdpDataViewer	//
 //////////////////////////
@@ -306,7 +209,7 @@ ipdpDataViewer::~ipdpDataViewer()
 //	pdpDataViewer	//
 //////////////////////////
 
-pdpDataViewer* pdpDataViewer::New(Project* proj_) {
+pdpDataViewer* pdpDataViewer::New(ProjectBase* proj_) {
   pdpDataViewer* rval = new pdpDataViewer();
   proj_->AddDataView(rval);
   return rval;
