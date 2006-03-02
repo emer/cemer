@@ -562,17 +562,13 @@ int main(int argc, char* argv[])
   String comnd_base = cpp + " " + incs;
 
   mta->spc_target.name = mta->basename;
-  if(mta->make_hx) {
-    mta->ta_type_h = mta->basename + "_TA_type.hx";
-    mta->ta_inst_h = mta->basename + "_TA_inst.hx";
-    mta->ta_ccname = mta->basename + "_TA.ccx";
- } else {
-    mta->ta_type_h = mta->basename + "_TA_type.h";
-    mta->ta_inst_h = mta->basename + "_TA_inst.h";
-    mta->ta_ccname = mta->basename + "_TA.cpp";
-  }
-
-
+  //note: even for hx mode, the filenames need to be proper here
+  // during the scan, because code does some kind of funky comparisons
+  // so we fix them up later
+  mta->ta_type_h = mta->basename + "_TA_type.h";
+  mta->ta_inst_h = mta->basename + "_TA_inst.h";
+  mta->ta_ccname = mta->basename + "_TA.cpp";
+  
   // create stub _type.h file if doesn't exist, so compiles don't fail
   FILE* dummy = fopen(mta->ta_type_h, "r");
   if (!dummy) {
@@ -659,7 +655,13 @@ int main(int argc, char* argv[])
   if(mta->verbose > 3) {
     mta->spc_target.List();
   }
-
+  
+  // if using hx mode, modify filenames now at this point for output
+  if(mta->make_hx) {
+    mta->ta_type_h = mta->basename + "_TA_type.hx";
+    mta->ta_inst_h = mta->basename + "_TA_inst.hx";
+    mta->ta_ccname = mta->basename + "_TA.ccx";
+  }
   fstream out_type_h, out_inst_h, outc;
 
   out_type_h.open((char*)mta->ta_type_h, ios::out);
