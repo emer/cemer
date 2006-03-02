@@ -53,7 +53,6 @@
 #include "netstru_qtso.h"
 #endif
 
-template class PDP_API taList<Unit>;
 template class PDP_API taList<TessEl>;
 template class PDP_API taList<LinkPrjnConPtr>;
 template class PDP_API taList<GpTessEl>;

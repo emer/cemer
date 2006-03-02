@@ -77,6 +77,32 @@ extern int yydebug;
 extern "C" int getpid();
 MTA* mta;		// holds mta
 
+// returns 'true' if both files exist and are the same
+bool files_same(const char* fname1, const char* fname2) {
+  bool rval = false;
+  fstream in1, in2;
+
+  in1.open(fname1, ios::in);
+  if (!in1.is_open()) goto exit2;
+  in2.open(fname2, ios::in);
+  if (!in1.is_open()) goto exit1;
+  char c1;  char c2;
+  while (true) {
+    if (!in1.good() && !in2.good()) break; // same size, done 
+    if (!(in1.good() && in2.good())) goto exit; // different sizes
+    in1.get(c1);
+    in2.get(c2);
+    if (c1 != c2) goto exit;  // different content
+  }
+  rval = true; 
+
+exit:
+  in2.close();
+exit1:
+  in1.close();
+exit2:
+  return rval;
+}
 
 char MTA::LastLn[8192];
 

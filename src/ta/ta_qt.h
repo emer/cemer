@@ -27,12 +27,6 @@
 
 //nn? #include <unistd.h>
 
-/*obs#if (!(defined(WINDOWS) || defined(CYGWIN)))
-#include <X11/X.h>
-struct _XDisplay;		// #IGNORE
-typedef unsigned long XWindow;		// #IGNORE
-#endif*/
-
 // external classes:
 class taiData;
 class taiEditDataHost;

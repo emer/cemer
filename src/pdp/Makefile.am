@@ -14,14 +14,16 @@ TAHEADS_GUI =\
 	@abs_srcdir@/netstru_so.h \
 	@abs_srcdir@/netstru_qtso.h \
 	@abs_srcdir@/pdp_qtso.h \
-	@abs_srcdir@/pdplog_qtso.h 
+	@abs_srcdir@/pdplog_qtso.h \
+	@abs_srcdir@/v3_compat_qtso.h 
 
 HEADS_GUI =\
 	pdpview_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	pdp_qtso.h \
-	pdplog_qtso.h 
+	pdplog_qtso.h \
+	v3_compat_qtso.h 
 
 SRCS_GUI =\
 	pdpview_qt.cpp \
@@ -32,7 +34,8 @@ SRCS_GUI =\
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
 	pdplog_qtso.moc.cpp \
-	v3_compat.moc.cpp 
+	v3_compat_qtso.cpp \
+	v3_compat_qtso.moc.cpp 
 
 endif
 
@@ -49,8 +52,8 @@ TAHEADS =\
 	@abs_srcdir@/netdata.h \
 	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
-	$(TAHEADS_GUI) \
-	@abs_srcdir@/v3_compat.h 
+	@abs_srcdir@/v3_compat.h \
+	$(TAHEADS_GUI) 
 
 HEADS =\
 	pdpdeclare.h \
@@ -61,8 +64,8 @@ HEADS =\
 	netdata.h \
 	pdplog.h \
 	pdpshell.h \
-	$(HEADS_GUI) \
-	v3_compat.h
+	v3_compat.h \
+	$(HEADS_GUI)
 
 SRCS =\
 	pdpbase.cpp \
@@ -73,8 +76,8 @@ SRCS =\
 	netdata.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
-	$(SRCS_GUI) \
 	v3_compat.cpp \
+	$(SRCS_GUI) \
 	pdp_ti.cpp
 
 include $(top_srcdir)/Maketa.am

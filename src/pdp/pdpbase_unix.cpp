@@ -58,7 +58,7 @@ void pdpMisc::SaveRecoverFile(int err) {
   String home_dir = getenv("HOME"); // home directory if curent dir does not work.
   taFiler* gf = taFiler_CreateInstance();		// use a getfile for compressed writes..
   taRefN::Ref(gf);
-  Project* p;
+  ProjectBase* p;
   int cnt = 0;
   for (int i = 0; i < pdpMisc::root->projects.size; ++i) {
     p = root->projects.FastEl(i);
