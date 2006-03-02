@@ -226,8 +226,8 @@ value=\"BpTrial\";\n\
 
 int main(int argc, char* argv[]) {
 //  pdpMisc::Init_Hook = ta_Init_bp;
-  pdpMisc::defaults_str = my_defaults;
-  pdpMisc::def_wizard = &TA_BpWizard;
+//  pdpMisc::defaults_str = my_defaults;
+//  pdpMisc::def_wizard = &TA_BpWizard;
   return pdpMisc::Main(argc, argv);
 }
 
