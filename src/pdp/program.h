@@ -21,6 +21,7 @@
 #include "ta_group.h"
 #include "ta_script.h"
 
+#include "pdp_def.h"
 #include "pdp_TA_type.h"
 
 class PDP_API ProgEl: public taOBase {

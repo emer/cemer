@@ -50,6 +50,7 @@ TAHEADS =\
 	@abs_srcdir@/netstru.h \
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/netdata.h \
+	@abs_srcdir@/program.h \
 	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
 	@abs_srcdir@/v3_compat.h \
@@ -62,6 +63,7 @@ HEADS =\
 	netstru.h \
 	netstru_extra.h \
 	netdata.h \
+	program.h \
 	pdplog.h \
 	pdpshell.h \
 	v3_compat.h \
@@ -74,6 +76,7 @@ SRCS =\
 	netstru.cpp \
 	netstru_extra.cpp \
 	netdata.cpp \
+	program.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
 	v3_compat.cpp \
