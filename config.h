@@ -16,42 +16,42 @@
 /* #undef DARWIN */
 
 /* Used when debugging */
-#define DEBUG 
+/* #undef DEBUG */
 
 /* Causes mpi.h to be included */
 /* #undef DMEM_COMPILE */
 
 /* Define to 1 if the `getpgrp' function requires zero arguments. */
-#define GETPGRP_VOID 1
+/* #undef GETPGRP_VOID */
 
 /* Define to 1 if you have the `alarm' function. */
-#define HAVE_ALARM 1
+/* #undef HAVE_ALARM */
 
 /* Define to 1 if you have `alloca', as a function or macro. */
-#define HAVE_ALLOCA 1
+/* #undef HAVE_ALLOCA */
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
-#define HAVE_ALLOCA_H 1
+/* #undef HAVE_ALLOCA_H */
 
 /* Define to 1 if your system has a working `chown' function. */
-#define HAVE_CHOWN 1
+/* #undef HAVE_CHOWN */
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-#define HAVE_DIRENT_H 1
+/* #undef HAVE_DIRENT_H */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the `floor' function. */
-#define HAVE_FLOOR 1
+/* #undef HAVE_FLOOR */
 
 /* Define to 1 if you have the `getcwd' function. */
-#define HAVE_GETCWD 1
+/* #undef HAVE_GETCWD */
 
 /* Define to 1 if you have the `gettimeofday' function. */
-#define HAVE_GETTIMEOFDAY 1
+/* #undef HAVE_GETTIMEOFDAY */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -64,13 +64,13 @@
 #define HAVE_MALLOC 1
 
 /* Define to 1 if you have the `memmove' function. */
-#define HAVE_MEMMOVE 1
+/* #undef HAVE_MEMMOVE */
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `memset' function. */
-#define HAVE_MEMSET 1
+/* #undef HAVE_MEMSET */
 
 /* Define if you have the MPI library. */
 /* #undef HAVE_MPI */
@@ -79,33 +79,33 @@
 /* #undef HAVE_NDIR_H */
 
 /* Define to 1 if you have the `pow' function. */
-#define HAVE_POW 1
+/* #undef HAVE_POW */
 
 /* Define to 1 if you have the `putenv' function. */
-#define HAVE_PUTENV 1
+/* #undef HAVE_PUTENV */
 
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */
 #define HAVE_REALLOC 1
 
 /* Define to 1 if you have the `rmdir' function. */
-#define HAVE_RMDIR 1
+/* #undef HAVE_RMDIR */
 
 /* Define to 1 if you have the `select' function. */
-#define HAVE_SELECT 1
+/* #undef HAVE_SELECT */
 
 /* Define to 1 if you have the `setlocale' function. */
-#define HAVE_SETLOCALE 1
+/* #undef HAVE_SETLOCALE */
 
 /* Define to 1 if you have the `sqrt' function. */
-#define HAVE_SQRT 1
+/* #undef HAVE_SQRT */
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
 /* #undef HAVE_STAT_EMPTY_STRING_BUG */
 
 /* Define to 1 if stdbool.h conforms to C99. */
-#define HAVE_STDBOOL_H 1
+/* #undef HAVE_STDBOOL_H */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -114,7 +114,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the `strcasecmp' function. */
-#define HAVE_STRCASECMP 1
+/* #undef HAVE_STRCASECMP */
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
@@ -123,7 +123,7 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strtol' function. */
-#define HAVE_STRTOL 1
+/* #undef HAVE_STRTOL */
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
@@ -134,10 +134,10 @@
 /* #undef HAVE_SYS_NDIR_H */
 
 /* Define to 1 if you have the <sys/select.h> header file. */
-#define HAVE_SYS_SELECT_H 1
+/* #undef HAVE_SYS_SELECT_H */
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
-#define HAVE_SYS_SOCKET_H 1
+/* #undef HAVE_SYS_SOCKET_H */
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -146,7 +146,7 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
-#define HAVE_SYS_WAIT_H 1
+/* #undef HAVE_SYS_WAIT_H */
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
@@ -159,7 +159,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "PDP++"
@@ -186,16 +186,16 @@
 #define QT_SHARED 
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE void
+/* #undef RETSIGTYPE */
 
 /* Define to the type of arg 1 for `select'. */
-#define SELECT_TYPE_ARG1 int
+/* #undef SELECT_TYPE_ARG1 */
 
 /* Define to the type of args 2, 3 and 4 for `select'. */
-#define SELECT_TYPE_ARG234 (fd_set *)
+/* #undef SELECT_TYPE_ARG234 */
 
 /* Define to the type of arg 5 for `select'. */
-#define SELECT_TYPE_ARG5 (struct timeval *)
+/* #undef SELECT_TYPE_ARG5 */
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -217,7 +217,7 @@
 /* #undef TA_NO_GUI */
 
 /* Used when debugging */
-#define TA_PROFILE 
+/* #undef TA_PROFILE */
 
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor
@@ -228,7 +228,7 @@
 #define TA_USE_QT 
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#define TIME_WITH_SYS_TIME 1
+/* #undef TIME_WITH_SYS_TIME */
 
 /* Version number of package */
 #define VERSION "4.0"
@@ -263,7 +263,7 @@
 
 /* Define to equivalent of C99 restrict keyword, or to nothing if this is not
    supported. Do not define if restrict is supported directly. */
-#define restrict __restrict
+/* #undef restrict */
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 /* #undef size_t */
