@@ -67,27 +67,27 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
-bin_PROGRAMS = css@PDP_SUFFIX@++
+# bin_PROGRAMS = css@PDP_SUFFIX@++
 
-css@PDP_SUFFIX@___DEPENDENCIES = libcss@PDP_SUFFIX@.la
+# css@PDP_SUFFIX@___DEPENDENCIES = libcss@PDP_SUFFIX@.la
 
-css@PDP_SUFFIX@___SOURCES = main.cpp
+# css@PDP_SUFFIX@___SOURCES = main.cpp
 
-css@PDP_SUFFIX@___LDADD =\
-	../ta/libta@PDP_SUFFIX@.la \
-	libcss@PDP_SUFFIX@.la
+# css@PDP_SUFFIX@___LDADD =\
+# 	../ta/libta@PDP_SUFFIX@.la \
+# 	libcss@PDP_SUFFIX@.la
 
-css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
+# css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
 
-css@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
+# css@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
 
 #**************************************************
 #
 #                      GUI
 #
 #**************************************************
-if TA_GUI
+# if TA_GUI
 
-css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
+# css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 
-endif
+# endif
