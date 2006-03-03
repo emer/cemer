@@ -228,7 +228,8 @@ PDP_MAKETA_GUI =\
 	netstru_so.h \
 	netstru_qtso.h \
 	pdp_qtso.h \
-	pdplog_qtso.h 
+	pdplog_qtso.h \
+	v3_compat_qtso.h
 
 PDP_MAKETA =\
 	$(PDP4DIR)/src/ta/ta_TA_type.h \
@@ -240,16 +241,17 @@ PDP_MAKETA =\
 	netstru.h \
 	netstru_extra.h \
 	netdata.h \
+	program.h \
 	pdplog.h \
 	pdpshell.h \
-	$(PDP_MAKETA_GUI) \
-	v3_compat.h
+	v3_compat.h \
+	$(PDP_MAKETA_GUI)
 
 PDP_MOCS: \
 	pdp_qtso.moc.cpp \
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.moc.cpp \
-	v3_compat.moc.cpp 
+	v3_compat_qtso.moc.cpp 
 
 pdp_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_qtso.h
 	$(MOC) %s -o $@
@@ -260,7 +262,7 @@ netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
 pdplog_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdplog_qtso.h
 	$(MOC) %s -o $@
 
-v3_compat.moc.cpp: $(PDP4DIR)\src\pdp\v3_compat.h
+v3_compat_qtso.moc.cpp: $(PDP4DIR)\src\pdp\v3_compat_qtso.h
 	$(MOC) %s -o $@
 
 BP_MAKETA =\

@@ -31,6 +31,7 @@
 #include "netstru.h"
 #include "netdata.h"
 #include "pdplog.h"
+#include "program.h"
 
 
 class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
@@ -224,6 +225,7 @@ public:
   NetConduit_MGroup	net_readers;	// NetConduits for network output
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
+  Program_MGroup	programs;	// Gui-based programs to run simulations and other processing
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
   SelectEdit_MGroup	edits;		// special edit dialogs for selected elements

@@ -732,6 +732,7 @@ void ProjectBase::InitLinks() {
   taBase::Own(net_readers, this);
   taBase::Own(data, this);
   taBase::Own(logs, this);
+  taBase::Own(programs, this);
   taBase::Own(scripts, this);
 #ifdef TA_GUI
   taBase::Own(edits, this);
@@ -779,6 +780,7 @@ void ProjectBase::CutLinks() {
   edits.CutLinks();
 #endif
   scripts.CutLinks();
+  programs.CutLinks();
   logs.CutLinks();
   data.CutLinks();
   net_readers.CutLinks();
@@ -799,6 +801,9 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
   net_readers = cp.net_readers;
   data = cp.data;
   logs = cp.logs;
+  // delete scripts, in case linked to programs
+  scripts.Reset();
+  programs = cp.programs;
   scripts = cp.scripts;
 #ifdef TA_GUI
   edits = cp.edits;

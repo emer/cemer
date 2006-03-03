@@ -208,10 +208,16 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\pdp\pdpview_qt.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\pdp\program.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\pdp\spec.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\pdp\v3_compat.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\v3_compat_qtso.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -257,6 +263,9 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\pdp\pdpview_qt.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\pdp\program.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\pdp\script_base.h">
 				</File>
 				<File
@@ -264,6 +273,9 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\pdp\v3_compat.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\v3_compat_qtso.h">
 				</File>
 			</Filter>
 			<Filter
@@ -288,7 +300,7 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\pdp\pdplog_qtso.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\pdp\v3_compat.moc.cpp">
+					RelativePath="..\..\..\src\pdp\v3_compat_qtso.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>

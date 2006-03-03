@@ -216,7 +216,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiMisc::Initialize(cssMisc::gui, "PDP++");
     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
     	pdp_bitmap_height, pdp_bitmap_bits);
-
+//    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
 /*    root->WinInit();
     root->OpenNewWindow();
     taiMisc::SetMainWindow(root->window); */

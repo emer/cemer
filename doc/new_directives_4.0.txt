@@ -22,6 +22,7 @@ MEMBER DIRECTIVES
 #BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
 #NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
 #INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
+#EDITOR -- for String types, enables a button for a dialog editor (for long strings)
 
 METHOD DIRECTIVES
 -----------------
