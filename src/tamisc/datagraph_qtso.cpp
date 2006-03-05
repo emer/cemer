@@ -243,7 +243,7 @@ void AxisView::UpdateAxis_X(T3Axis* t3ax, AxisSpec* as) {
     if (fabs(lab_val) < .001) {
       if (fabs(lab_val) < .0001)
 	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001;
+      else lab_val = .001f;
     }
     label = String(lab_val);
 
@@ -284,7 +284,7 @@ void AxisView::UpdateAxis_Y(T3Axis* t3ax, AxisSpec* as) {
     if (fabs(lab_val) < .001) {
       if (fabs(lab_val) < .0001)
 	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001;
+      else lab_val = .001f;
     }
     label = String(lab_val);
 
@@ -326,7 +326,7 @@ void AxisView::UpdateAxis_Z(T3Axis* t3ax, AxisSpec* as) {
     if (fabs(lab_val) < .001) {
       if (fabs(lab_val) < .0001)
 	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001;
+      else lab_val = .001f;
     }
     label = String(lab_val);
 

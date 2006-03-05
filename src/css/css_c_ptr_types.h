@@ -43,7 +43,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_int, (void*)NULL);
 
   // converters
-  String& GetStr() const	{ ((cssEl*)this)->tmp_str = String((Int)*this); return (String&)tmp_str; }
+  String GetStr() const	{ return String((Int)*this); }
+  Variant GetVar() const {return Variant((Int)*this); }
   operator Int() const		{ return *((int*)GetNonNullVoidPtr()); }
   operator Real() const		{ return (Real)((Int)*this); }
   operator int*() const		{ return (int*)GetNonNullVoidPtr(); }
@@ -172,7 +173,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_bool, (void*)NULL);
 
   // converters
-  String& GetStr() const;
+  String GetStr() const;
+  Variant GetVar() const {return Variant(((Int)*this) != 0); } // make a bool Variant
   operator Int() const		{ return *((bool*)GetNonNullVoidPtr()); }
 #ifndef NO_BUILTIN_BOOL
   operator bool*() const	{ return (bool*)GetNonNullVoidPtr(); }
@@ -208,6 +210,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_long, (void*)NULL);
 
   // converters
+  Variant GetVar() const	{ return Variant((intptr_t)((long*)GetNonNullVoidPtr())); }
+    //TODO: should probably create an entire type for long long
   operator Int() const		{ return *((long*)GetNonNullVoidPtr()); }
   operator long() const		{ return *((long*)GetNonNullVoidPtr()); }
   operator long*() const	{ return (long*)GetNonNullVoidPtr(); }
@@ -252,7 +256,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_char, (void*)NULL);
 
   // converters
-  String& GetStr() const	{ ((cssEl*)this)->tmp_str = (const char*)GetNonNullVoidPtr(); return (String&)tmp_str; }
+  String GetStr() const	{ return (const char*)GetNonNullVoidPtr(); }
+  Variant GetVar() const {return Variant((const char*)GetNonNullVoidPtr()); }
   operator Int() const		{ return *((char*)GetNonNullVoidPtr()); }
   operator const char*() const	{ return (const char*)GetNonNullVoidPtr(); }
   operator int*() const		{ CvtErr("(int*)"); return NULL; }
@@ -299,7 +304,7 @@ public:
   cssCPtr_CloneFuns(cssCPtr_enum, (void*)NULL);
 
   // converters
-  String& 	GetStr() const;
+  String 	GetStr() const;
 
   void operator=(Real cp) 	{ *((int*)GetNonNullVoidPtr()) = (int)cp; }
   void operator=(Int cp)	{ *((int*)GetNonNullVoidPtr()) = cp; }
@@ -331,7 +336,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_double, (void*)NULL);
 
   // converters
-  String& GetStr() const	{ ((cssEl*)this)->tmp_str=String((Real)*this); return (String&)tmp_str; }
+  String GetStr() const	  { return String((Real)*this); }
+  Variant GetVar() const	{ return Variant((Real)*this); }
   operator Real() const		{ return *((double*)GetNonNullVoidPtr()); }
   operator Int() const		{ return (Int)(Real)*this; }
   operator double*() const	{ return (double*)GetNonNullVoidPtr(); }
@@ -438,7 +444,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr_String, (void*)NULL);
 
   // converters
-  String& GetStr() const	{ return *((String*)GetNonNullVoidPtr()); }
+  String GetStr() const	{ return *((String*)GetNonNullVoidPtr()); }
+  Variant GetVar() const	{ return Variant(GetStr()); }
   operator Real() const 	{ Real r = atof((const char*)GetStr()); return r; }
   operator Int() const		{ Int r = (int)GetStr(); return r; }
   operator String*() const	{ return (String*)GetNonNullVoidPtr(); }
@@ -481,6 +488,80 @@ public:
   cssEl* GetMemberFun(const char* memb) const;
   cssEl* GetMemberFun(int memb) const;
   cssEl* GetScoped(const char*) const;
+};
+
+
+class CSS_API cssCPtr_Variant : public cssCPtr {
+public:
+  uint		GetSize() const 	{ return sizeof(Variant); } // use for ptrs
+  const char*	GetTypeName() const  	{ return "(c_Variant)"; }
+
+  String 	PrintStr() const;
+  String	PrintFStr() const 	{ return (*((Variant*)ptr)).toString(); }
+
+  // constructors
+  cssCPtr_Variant() 				: cssCPtr(){};
+  cssCPtr_Variant(void* it, int pc) 		: cssCPtr(it,pc){};
+  cssCPtr_Variant(void* it, int pc, const char* nm)	: cssCPtr(it,pc,nm){};
+  cssCPtr_Variant(void* it, int pc, const char* nm, cssEl* cp, bool ro)
+  : cssCPtr(it,pc,nm,cp,ro){};
+  cssCPtr_Variant(const cssCPtr_Variant& cp) 		: cssCPtr(cp){};
+  cssCPtr_Variant(const cssCPtr_Variant& cp, const char* nm) : cssCPtr(cp,nm){};
+
+  cssCPtr_CloneFuns(cssCPtr_Variant, (void*)NULL);
+
+  // converters
+  String GetStr() const	{ return (*((Variant*)GetNonNullVoidPtr())).toString(); }
+  Variant GetVar() const	{ return *((Variant*)GetNonNullVoidPtr()); }
+  operator Real() const 	{ return GetVar().toDouble(); }
+  operator Int() const		{ return GetVar().toInt(); }
+  //operator String*() const	{ return (String*)GetNonNullVoidPtr(); }
+  //operator String**() const	{ return (String**)GetNonNullVoidPtr(2); }
+
+  void operator=(Real cp) 	{ *((Variant*)GetNonNullVoidPtr()) = cp; }
+  void operator=(Int cp)	{ *((Variant*)GetNonNullVoidPtr()) = cp; }
+  void operator=(const String& cp) { *((Variant*)GetNonNullVoidPtr()) = cp; }
+  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+
+  // operators
+  void operator=(const cssEl& t);
+
+  cssEl* operator+(cssEl &t)
+    { cssVariant *r = new cssVariant(GetVar(),""); r->val += t.GetVar(); return r; }
+  cssEl* operator-(cssEl& t)
+    { cssVariant *r = new cssVariant(GetVar(),""); r->val -= t.GetVar(); return r; }
+  cssEl* operator*()			{ return cssCPtr::operator*(); }
+  cssEl* operator*(cssEl& t)
+  { cssVariant *r = new cssVariant(GetVar(),""); r->val *= t.GetVar(); return r; }
+  cssEl* operator/(cssEl& t)
+  { cssVariant *r = new cssVariant(GetVar(),""); r->val /= t.GetVar(); return r; }
+  cssEl* operator%(cssEl& t)
+  { cssVariant *r = new cssVariant(GetVar(),""); r->val %= t.GetVar(); return r; }
+  cssEl* operator-()
+  { cssVariant *r = new cssVariant(-GetVar(),""); return r; }
+
+  void operator+=(cssEl& t);
+
+  bool operator< (cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) < s.GetVar()); }
+  bool operator> (cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) > s.GetVar()); }
+  bool operator! () 	    { return !((Variant*)GetNonNullVoidPtr())->toBool(); }
+  bool operator<=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) <= s.GetVar()); }
+  bool operator>=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) >= s.GetVar()); }
+  bool operator==(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) == s.GetVar()); }
+  bool operator!=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) != s.GetVar()); }
+  bool operator&&(cssEl& s) { return (((Variant*)GetNonNullVoidPtr())->toBool() && (Int)s); }
+  bool operator||(cssEl& s) { return (((Variant*)GetNonNullVoidPtr())->toBool() || (Int)s); }
+
+  // these use the TA info to perform actions
+  cssEl* operator[](int idx) const;
+  cssEl* GetMemberFun_impl(MethodDef* md) const;
+  int	 GetMemberFunNo(const char*) const;
+  cssEl* GetMemberFun(const char* memb) const;
+  cssEl* GetMemberFun(int memb) const;
+  cssEl* GetScoped(const char*) const;
+protected:
+  Variant& GetVar() { return *((Variant*)GetNonNullVoidPtr()); } //convenience
 };
 
 

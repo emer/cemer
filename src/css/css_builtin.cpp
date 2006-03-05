@@ -2321,6 +2321,8 @@ static void Install_Types() {
   cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "double");
   cssString_inst_nm(cssMisc::TypesSpace, "", "String");
   cssString_inst_nm(cssMisc::TypesSpace, "", "string");
+  cssVariant_inst_nm(cssMisc::TypesSpace, "", "Variant");
+  cssVariant_inst_nm(cssMisc::TypesSpace, "", "variant");
   cssMisc::TypesSpace.Push(new cssChar(' ', "char"));
   cssCPtr_inst_nm(cssMisc::TypesSpace, 0, 1, "c_ptr");
   cssMisc::TypesSpace.Push(new cssSubShell("SubShell"));
@@ -2335,6 +2337,7 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssCPtr_double(NULL, 1, "c_double"));
   cssMisc::TypesSpace.Push(new cssCPtr_float(NULL, 1, "c_float"));
   cssMisc::TypesSpace.Push(new cssCPtr_String(NULL, 1, "c_String"));
+  cssMisc::TypesSpace.Push(new cssCPtr_Variant(NULL, 1, "c_Variant"));
 
   // ta types
   cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_void, "TA");

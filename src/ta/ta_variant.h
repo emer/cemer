@@ -64,6 +64,11 @@ public:
     // 'true' for non-ptr types (includes Invalid)
   bool			isInvalid() const {return (m_type == T_Invalid);} 
   bool			isNull() const; // 'true' if the value is null
+  bool			isNumeric() const; 
+    // 'true' if NumericStrict, or valid numeric string
+  bool			isNumericStrict() const; // 'true' if an int-ish, float, or char type
+  bool			isStringType() const {return ((m_type == T_String) || (m_type == T_Char));}
+   // 'true' if a char or String
   bool			isPtrType() const {return ((m_type >= T_Ptr) || (m_type <= T_Matrix));} 
     // 'true' if the value is a void*, taBase*, or taMatrix*
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
@@ -112,7 +117,9 @@ public:
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
 #endif  
-  // following are the automatic operators for C++ casting
+  // following are the operators for C++ casting -- note they are all explicit
+  // because you can't mix having cast operators with having various math operators
+/*can't have converters and ops
   operator bool() const {return toBool();}
   operator byte() const {return toByte();}
   operator int() const {return toInt();}
@@ -129,6 +136,7 @@ public:
   operator taBase*() const {return toBase();}
   operator taMatrix*() const {return toMatrix();} //
 #endif  
+*/
   // equality operations  
   bool			eqVariant(const Variant& val) const; // value equality, using fairly relaxed type rules; Invalid never == anything
   bool 			eqBool(bool val) const;
@@ -151,6 +159,28 @@ public:
   bool			eqMatrix(const taMatrix* val) const {return eqPtr(val);} 
 #endif
 
+  // comparison operations, < -ve, == 0, > +ve
+  int			cmpVariant(const Variant& val) const; // value compare, using fairly relaxed type rules; Invalid never == anything
+  int 			cmpBool(bool val) const;
+  int 			cmpByte(byte val) const {return cmpUInt(val);}
+  int 			cmpInt(int val) const;
+  int 			cmpUInt(uint val) const;
+  int 			cmpInt64(int64_t val) const;
+  int 			cmpUInt64(uint64_t val) const;
+  int 			cmpIntPtr(intptr_t val) const
+    {if (sizeof(intptr_t) == sizeof(int)) return cmpInt(val); else return cmpInt64(val);}
+  int 			cmpFloat(float val) const {return cmpDouble(val);}
+  int 			cmpDouble(double val) const;
+  int 			cmpChar(char val) const;
+  int			cmpString(const String& val) const; // handles cmpting of a string 
+  int			cmpCString(const char* val) const
+    {return cmpString(String(val));}
+  int 			cmpPtr(const void* val) const;
+#ifndef NO_TA_BASE
+  int			cmpBase(const taBase* val) const {return cmpPtr(val);} 
+  int			cmpMatrix(const taMatrix* val) const {return cmpPtr(val);} 
+#endif
+
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
   // assignment operators
@@ -166,11 +196,102 @@ public:
   Variant& 	operator=(char val) {setChar(val); return *this;}
   Variant& 	operator=(void* val) {setPtr(val); return *this;}
   Variant& 	operator=(const String& val) {setString(val); return *this;}
-  Variant& 	operator=(const char* val) {setCString(val); return *this;}
+  Variant& 	operator=(const char* val) {setCString(val); return *this;} //
 #ifndef NO_TA_BASE
   Variant& 	operator=(taBase* val) {setBase(val); return *this;}
-  Variant& 	operator=(taMatrix* val) {setMatrix(val); return *this;}
+  Variant& 	operator=(taMatrix* val) {setMatrix(val); return *this;} //
 #endif
+
+  Variant& 	operator+=(const String& rhs); 
+    // concatenation, result is String if input is String or atomic
+
+  //note: x= operators can cause type to change following C++ type promotion semantics:
+  // if either is "double" result is "double"
+  // else if equal-sized or longer op is "unsigned" other op is forced to "unsigned" 
+  //   and size is forced to largest of two ops 
+  Variant& 	operator+=(char rhs); // note: also does concat if we are a String
+  Variant& 	operator+=(int rhs);
+  Variant& 	operator+=(uint rhs);
+  Variant& 	operator+=(int64_t rhs);
+  Variant& 	operator+=(uint64_t rhs);
+  Variant& 	operator+=(double rhs);
+  Variant& 	operator+=(const Variant& rhs);
+  
+  Variant& 	operator-=(char rhs);
+  Variant& 	operator-=(int rhs);
+  Variant& 	operator-=(uint rhs);
+  Variant& 	operator-=(int64_t rhs);
+  Variant& 	operator-=(uint64_t rhs);
+  Variant& 	operator-=(double rhs);
+  Variant& 	operator-=(const Variant& rhs);
+  
+  Variant& 	operator*=(char rhs);
+  Variant& 	operator*=(int rhs);
+  Variant& 	operator*=(uint rhs);
+  Variant& 	operator*=(int64_t rhs);
+  Variant& 	operator*=(uint64_t rhs);
+  Variant& 	operator*=(double rhs);
+  Variant& 	operator*=(const Variant& rhs);
+  
+  Variant& 	operator/=(char rhs);
+  Variant& 	operator/=(int rhs);
+  Variant& 	operator/=(uint rhs);
+  Variant& 	operator/=(int64_t rhs);
+  Variant& 	operator/=(uint64_t rhs);
+  Variant& 	operator/=(double rhs);
+  Variant& 	operator/=(const Variant& rhs); //
+  
+  //note: %, <<, >>, and bitwise operator only valid for int types, not reals
+  Variant& 	operator%=(char rhs);
+  Variant& 	operator%=(int rhs);
+  Variant& 	operator%=(uint rhs);
+  Variant& 	operator%=(int64_t rhs);
+  Variant& 	operator%=(uint64_t rhs);
+  Variant& 	operator%=(const Variant& rhs); //
+
+  Variant& 	operator<<=(char rhs);
+  Variant& 	operator<<=(int rhs);
+  Variant& 	operator<<=(uint rhs);
+  Variant& 	operator<<=(int64_t rhs);
+  Variant& 	operator<<=(uint64_t rhs);
+  Variant& 	operator<<=(const Variant& rhs); //
+
+  Variant& 	operator>>=(char rhs);
+  Variant& 	operator>>=(int rhs);
+  Variant& 	operator>>=(uint rhs);
+  Variant& 	operator>>=(int64_t rhs);
+  Variant& 	operator>>=(uint64_t rhs);
+  Variant& 	operator>>=(const Variant& rhs); //
+
+  Variant& 	operator&=(char rhs);
+  Variant& 	operator&=(int rhs);
+  Variant& 	operator&=(uint rhs);
+  Variant& 	operator&=(int64_t rhs);
+  Variant& 	operator&=(uint64_t rhs);
+  Variant& 	operator&=(const Variant& rhs); //
+
+  Variant& 	operator|=(char rhs);
+  Variant& 	operator|=(int rhs);
+  Variant& 	operator|=(uint rhs);
+  Variant& 	operator|=(int64_t rhs);
+  Variant& 	operator|=(uint64_t rhs);
+  Variant& 	operator|=(const Variant& rhs); //
+
+  Variant& 	operator^=(char rhs); // xor
+  Variant& 	operator^=(int rhs);
+  Variant& 	operator^=(uint rhs);
+  Variant& 	operator^=(int64_t rhs);
+  Variant& 	operator^=(uint64_t rhs);
+  Variant& 	operator^=(const Variant& rhs); //
+
+  Variant& 	operator++(); // prefix
+  Variant 	operator++(int); // postfix (arg is dummy)
+  Variant& 	operator--(); // prefix
+  Variant 	operator--(int); // postfix (arg is dummy)
+  
+  Variant&	operator-(); // unary -
+  Variant&	operator~(); // unary ~
+  bool		operator!() {return !toBool();} 
 
 #ifdef __MAKETA__
   friend ostream&   operator<<(ostream& s, const Variant& x);
@@ -237,7 +358,9 @@ protected:
       taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
   } d;
-  uint m_type : 31;
+  uint m_type : 29;
+  mutable uint m_is_numeric : 1; // true when we've tested string for numeric
+  mutable uint m_is_numeric_valid : 1; // set when we've set is_numeric; clear on set of str
   uint m_is_null : 1;
 #endif
 
@@ -251,6 +374,7 @@ protected:
   taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
 #endif
+  void			warn(const char* msg) const; // maybe output warning of invalid operation
 };
 
 // empty invalid variant
@@ -272,69 +396,288 @@ inline Variant::Variant(const char* val):m_type(T_String), m_is_null(false)
   {if (val == NULL) {m_is_null = true; new(&d.str)String();} 
    else {m_is_null = false; new(&d.str)String(val);}}
 
+inline Variant operator+(const Variant& a, int b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, uint b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, int64_t b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, uint64_t b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, double b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, char b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, const String b) {Variant r(a); r += b; return r;}
+inline Variant operator+(int a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(uint a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(int64_t a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(uint64_t a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(double a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(char a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const String a, const Variant& b) {Variant r(a); r += b; return r;}
+
+inline Variant operator-(const Variant& a, int b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, uint b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, int64_t b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, uint64_t b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, double b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, char b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(int a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(uint a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(int64_t a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(uint64_t a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(double a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(char a, const Variant& b) {Variant r(a); r -= b; return r;}
+
+inline Variant operator*(const Variant& a, int b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, uint b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, int64_t b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, uint64_t b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, double b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, char b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(int a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(uint a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(int64_t a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(uint64_t a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(double a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(char a, const Variant& b) {Variant r(a); r *= b; return r;}
+
+inline Variant operator/(const Variant& a, int b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, uint b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, int64_t b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, uint64_t b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, double b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, char b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(int a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(uint a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(int64_t a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(uint64_t a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(double a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(char a, const Variant& b) {Variant r(a); r /= b; return r;}
+
+inline Variant operator%(const Variant& a, int b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(const Variant& a, uint b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(const Variant& a, int64_t b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(const Variant& a, uint64_t b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(const Variant& a, char b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(int a, const Variant& b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(uint a, const Variant& b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(int64_t a, const Variant& b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(uint64_t a, const Variant& b) {Variant r(a); r %= b; return r;}
+inline Variant operator%(char a, const Variant& b) {Variant r(a); r %= b; return r;}
+
+inline Variant operator<<(const Variant& a, int b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(const Variant& a, uint b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(const Variant& a, int64_t b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(const Variant& a, uint64_t b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(const Variant& a, char b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(int a, const Variant& b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(uint a, const Variant& b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(int64_t a, const Variant& b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(uint64_t a, const Variant& b) {Variant r(a); r <<= b; return r;}
+inline Variant operator<<(char a, const Variant& b) {Variant r(a); r <<= b; return r;}
+
+inline Variant operator>>(const Variant& a, int b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(const Variant& a, uint b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(const Variant& a, int64_t b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(const Variant& a, uint64_t b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(const Variant& a, char b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(int a, const Variant& b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(uint a, const Variant& b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(int64_t a, const Variant& b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(uint64_t a, const Variant& b) {Variant r(a); r >>= b; return r;}
+inline Variant operator>>(char a, const Variant& b) {Variant r(a); r >>= b; return r;}
+
+inline Variant operator&(const Variant& a, int b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(const Variant& a, uint b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(const Variant& a, int64_t b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(const Variant& a, uint64_t b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(const Variant& a, char b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(int a, const Variant& b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(uint a, const Variant& b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(int64_t a, const Variant& b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(uint64_t a, const Variant& b) {Variant r(a); r &= b; return r;}
+inline Variant operator&(char a, const Variant& b) {Variant r(a); r &= b; return r;}
+
+inline Variant operator|(const Variant& a, int b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(const Variant& a, uint b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(const Variant& a, int64_t b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(const Variant& a, uint64_t b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(const Variant& a, char b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(int a, const Variant& b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(uint a, const Variant& b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(int64_t a, const Variant& b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(uint64_t a, const Variant& b) {Variant r(a); r |= b; return r;}
+inline Variant operator|(char a, const Variant& b) {Variant r(a); r |= b; return r;}
+
+inline Variant operator^(const Variant& a, int b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(const Variant& a, uint b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(const Variant& a, int64_t b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(const Variant& a, uint64_t b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(const Variant& a, char b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(int a, const Variant& b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(uint a, const Variant& b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(int64_t a, const Variant& b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(uint64_t a, const Variant& b) {Variant r(a); r ^= b; return r;}
+inline Variant operator^(char a, const Variant& b) {Variant r(a); r ^= b; return r;}
 
 inline bool operator==(const Variant& a, const Variant& b) {return a.eqVariant(b);}
 inline bool operator!=(const Variant& a, const Variant& b) {return a.eqVariant(b);}
+inline bool operator< (const Variant& a, const Variant& b) {return a.cmpVariant(b) < 0;}
+inline bool operator<=(const Variant& a, const Variant& b) {return a.cmpVariant(b) <= 0;}
+inline bool operator> (const Variant& a, const Variant& b) {return a.cmpVariant(b) > 0;}
+inline bool operator>=(const Variant& a, const Variant& b) {return a.cmpVariant(b) >= 0;}
 
 inline bool operator==(const Variant& a, bool b) {return a.eqBool(b);}
 inline bool operator!=(const Variant& a, bool b) {return !a.eqBool(b);}
 inline bool operator==(bool a, const Variant& b) {return b.eqBool(a);}
 inline bool operator!=(bool a, const Variant& b) {return !b.eqBool(a);}
+inline bool operator< (const Variant& a, bool b) {return a.cmpBool(b) < 0;}
+inline bool operator<=(const Variant& a, bool b) {return a.cmpBool(b) <= 0;}
+inline bool operator> (const Variant& a, bool b) {return a.cmpBool(b) > 0;}
+inline bool operator>=(const Variant& a, bool b) {return a.cmpBool(b) >= 0;}
+inline bool operator< (bool a, const Variant& b) {return b.cmpBool(a) >= 0;}
+inline bool operator<=(bool a, const Variant& b) {return b.cmpBool(a) > 0;}
+inline bool operator> (bool a, const Variant& b) {return b.cmpBool(a) <= 0;}
+inline bool operator>=(bool a, const Variant& b) {return b.cmpBool(a) < 0;}
 
 inline bool operator==(const Variant& a, byte b) {return a.eqByte(b);}
 inline bool operator!=(const Variant& a, byte b) {return !a.eqByte(b);}
 inline bool operator==(byte a, const Variant& b) {return b.eqByte(a);}
 inline bool operator!=(byte a, const Variant& b) {return !b.eqByte(a);}
+inline bool operator< (const Variant& a, byte b) {return a.cmpByte(b) < 0;}
+inline bool operator<=(const Variant& a, byte b) {return a.cmpByte(b) <= 0;}
+inline bool operator> (const Variant& a, byte b) {return a.cmpByte(b) > 0;}
+inline bool operator>=(const Variant& a, byte b) {return a.cmpByte(b) >= 0;}
+inline bool operator< (byte a, const Variant& b) {return b.cmpByte(a) >= 0;}
+inline bool operator<=(byte a, const Variant& b) {return b.cmpByte(a) > 0;}
+inline bool operator> (byte a, const Variant& b) {return b.cmpByte(a) <= 0;}
+inline bool operator>=(byte a, const Variant& b) {return b.cmpByte(a) < 0;}
 
 inline bool operator==(const Variant& a, int b) {return a.eqInt(b);}
 inline bool operator!=(const Variant& a, int b) {return !a.eqInt(b);}
 inline bool operator==(int a, const Variant& b) {return b.eqInt(a);}
 inline bool operator!=(int a, const Variant& b) {return !b.eqInt(a);}
+inline bool operator< (const Variant& a, int b) {return a.cmpInt(b) < 0;}
+inline bool operator<=(const Variant& a, int b) {return a.cmpInt(b) <= 0;}
+inline bool operator> (const Variant& a, int b) {return a.cmpInt(b) > 0;}
+inline bool operator>=(const Variant& a, int b) {return a.cmpInt(b) >= 0;}
+inline bool operator< (int a, const Variant& b) {return b.cmpInt(a) >= 0;}
+inline bool operator<=(int a, const Variant& b) {return b.cmpInt(a) > 0;}
+inline bool operator> (int a, const Variant& b) {return b.cmpInt(a) <= 0;}
+inline bool operator>=(int a, const Variant& b) {return b.cmpInt(a) < 0;}
 
 inline bool operator==(const Variant& a, uint b) {return a.eqUInt(b);}
 inline bool operator!=(const Variant& a, uint b) {return !a.eqUInt(b);}
 inline bool operator==(uint a, const Variant& b) {return b.eqUInt(a);}
 inline bool operator!=(uint a, const Variant& b) {return !b.eqUInt(a);}
+inline bool operator< (const Variant& a, uint b) {return a.cmpUInt(b) < 0;}
+inline bool operator<=(const Variant& a, uint b) {return a.cmpUInt(b) <= 0;}
+inline bool operator> (const Variant& a, uint b) {return a.cmpUInt(b) > 0;}
+inline bool operator>=(const Variant& a, uint b) {return a.cmpUInt(b) >= 0;}
+inline bool operator< (uint a, const Variant& b) {return b.cmpUInt(a) >= 0;}
+inline bool operator<=(uint a, const Variant& b) {return b.cmpUInt(a) > 0;}
+inline bool operator> (uint a, const Variant& b) {return b.cmpUInt(a) <= 0;}
+inline bool operator>=(uint a, const Variant& b) {return b.cmpUInt(a) < 0;}
 
 inline bool operator==(const Variant& a, int64_t b) {return a.eqInt64(b);}
 inline bool operator!=(const Variant& a, int64_t b) {return !a.eqInt64(b);}
 inline bool operator==(int64_t a, const Variant& b) {return b.eqInt64(a);}
 inline bool operator!=(int64_t a, const Variant& b) {return !b.eqInt64(a);}
+inline bool operator< (const Variant& a, int64_t b) {return a.cmpInt64(b) < 0;}
+inline bool operator<=(const Variant& a, int64_t b) {return a.cmpInt64(b) <= 0;}
+inline bool operator> (const Variant& a, int64_t b) {return a.cmpInt64(b) > 0;}
+inline bool operator>=(const Variant& a, int64_t b) {return a.cmpInt64(b) >= 0;}
+inline bool operator< (int64_t a, const Variant& b) {return b.cmpInt64(a) >= 0;}
+inline bool operator<=(int64_t a, const Variant& b) {return b.cmpInt64(a) > 0;}
+inline bool operator> (int64_t a, const Variant& b) {return b.cmpInt64(a) <= 0;}
+inline bool operator>=(int64_t a, const Variant& b) {return b.cmpInt64(a) < 0;}
 
 inline bool operator==(const Variant& a, uint64_t b) {return a.eqUInt64(b);}
 inline bool operator!=(const Variant& a, uint64_t b) {return !a.eqUInt64(b);}
 inline bool operator==(uint64_t a, const Variant& b) {return b.eqUInt64(a);}
 inline bool operator!=(uint64_t a, const Variant& b) {return !b.eqUInt64(a);}
+inline bool operator< (const Variant& a, uint64_t b) {return a.cmpUInt64(b) < 0;}
+inline bool operator<=(const Variant& a, uint64_t b) {return a.cmpUInt64(b) <= 0;}
+inline bool operator> (const Variant& a, uint64_t b) {return a.cmpUInt64(b) > 0;}
+inline bool operator>=(const Variant& a, uint64_t b) {return a.cmpUInt64(b) >= 0;}
+inline bool operator< (uint64_t a, const Variant& b) {return b.cmpUInt64(a) >= 0;}
+inline bool operator<=(uint64_t a, const Variant& b) {return b.cmpUInt64(a) > 0;}
+inline bool operator> (uint64_t a, const Variant& b) {return b.cmpUInt64(a) <= 0;}
+inline bool operator>=(uint64_t a, const Variant& b) {return b.cmpUInt64(a) < 0;}
 
 inline bool operator==(const Variant& a, float b) {return a.eqFloat(b);}
 inline bool operator!=(const Variant& a, float b) {return !a.eqFloat(b);}
 inline bool operator==(float a, const Variant& b) {return b.eqFloat(a);}
 inline bool operator!=(float a, const Variant& b) {return !b.eqFloat(a);}
+inline bool operator< (const Variant& a, float b) {return a.cmpFloat(b) < 0;}
+inline bool operator<=(const Variant& a, float b) {return a.cmpFloat(b) <= 0;}
+inline bool operator> (const Variant& a, float b) {return a.cmpFloat(b) > 0;}
+inline bool operator>=(const Variant& a, float b) {return a.cmpFloat(b) >= 0;}
+inline bool operator< (float a, const Variant& b) {return b.cmpFloat(a) >= 0;}
+inline bool operator<=(float a, const Variant& b) {return b.cmpFloat(a) > 0;}
+inline bool operator> (float a, const Variant& b) {return b.cmpFloat(a) <= 0;}
+inline bool operator>=(float a, const Variant& b) {return b.cmpFloat(a) < 0;}
 
 inline bool operator==(const Variant& a, double b) {return a.eqDouble(b);}
 inline bool operator!=(const Variant& a, double b) {return !a.eqDouble(b);}
 inline bool operator==(double a, const Variant& b) {return b.eqDouble(a);}
 inline bool operator!=(double a, const Variant& b) {return !b.eqDouble(a);}
+inline bool operator< (const Variant& a, double b) {return a.cmpDouble(b) < 0;}
+inline bool operator<=(const Variant& a, double b) {return a.cmpDouble(b) <= 0;}
+inline bool operator> (const Variant& a, double b) {return a.cmpDouble(b) > 0;}
+inline bool operator>=(const Variant& a, double b) {return a.cmpDouble(b) >= 0;}
+inline bool operator< (double a, const Variant& b) {return b.cmpDouble(a) >= 0;}
+inline bool operator<=(double a, const Variant& b) {return b.cmpDouble(a) > 0;}
+inline bool operator> (double a, const Variant& b) {return b.cmpDouble(a) <= 0;}
+inline bool operator>=(double a, const Variant& b) {return b.cmpDouble(a) < 0;}
 
 inline bool operator==(const Variant& a, const String& b) {return a.eqString(b);}
 inline bool operator!=(const Variant& a, const String& b) {return !a.eqString(b);}
 inline bool operator==(const String& a, const Variant& b) {return b.eqString(a);}
 inline bool operator!=(const String& a, const Variant& b) {return !b.eqString(a);}
+inline bool operator< (const Variant& a, const String& b) {return a.cmpString(b) < 0;}
+inline bool operator<=(const Variant& a, const String& b) {return a.cmpString(b) <= 0;}
+inline bool operator> (const Variant& a, const String& b) {return a.cmpString(b) > 0;}
+inline bool operator>=(const Variant& a, const String& b) {return a.cmpString(b) >= 0;}
+inline bool operator< (const String& a, const Variant& b) {return b.cmpString(a) >= 0;}
+inline bool operator<=(const String& a, const Variant& b) {return b.cmpString(a) > 0;}
+inline bool operator> (const String& a, const Variant& b) {return b.cmpString(a) <= 0;}
+inline bool operator>=(const String& a, const Variant& b) {return b.cmpString(a) < 0;}
 
 inline bool operator==(const Variant& a, const char* b) {return a.eqCString(b);}
 inline bool operator!=(const Variant& a, const char* b) {return !a.eqCString(b);}
 inline bool operator==(const char* a, const Variant& b) {return b.eqCString(a);}
 inline bool operator!=(const char* a, const Variant& b) {return !b.eqCString(a);}
+inline bool operator< (const Variant& a, const char* b) {return a.cmpCString(b) < 0;}
+inline bool operator<=(const Variant& a, const char* b) {return a.cmpCString(b) <= 0;}
+inline bool operator> (const Variant& a, const char* b) {return a.cmpCString(b) > 0;}
+inline bool operator>=(const Variant& a, const char* b) {return a.cmpCString(b) >= 0;}
+inline bool operator< (const char* a, const Variant& b) {return b.cmpCString(a) >= 0;}
+inline bool operator<=(const char* a, const Variant& b) {return b.cmpCString(a) > 0;}
+inline bool operator> (const char* a, const Variant& b) {return b.cmpCString(a) <= 0;}
+inline bool operator>=(const char* a, const Variant& b) {return b.cmpCString(a) < 0;}
 
 inline bool operator==(const Variant& a, char b) {return a.eqChar(b);}
 inline bool operator!=(const Variant& a, char b) {return !a.eqChar(b);}
 inline bool operator==(char a, const Variant& b) {return b.eqChar(a);}
 inline bool operator!=(char a, const Variant& b) {return !b.eqChar(a);}
+inline bool operator< (const Variant& a, char b) {return a.cmpChar(b) < 0;}
+inline bool operator<=(const Variant& a, char b) {return a.cmpChar(b) <= 0;}
+inline bool operator> (const Variant& a, char b) {return a.cmpChar(b) > 0;}
+inline bool operator>=(const Variant& a, char b) {return a.cmpChar(b) >= 0;}
+inline bool operator< (char a, const Variant& b) {return b.cmpChar(a) >= 0;}
+inline bool operator<=(char a, const Variant& b) {return b.cmpChar(a) > 0;}
+inline bool operator> (char a, const Variant& b) {return b.cmpChar(a) <= 0;}
+inline bool operator>=(char a, const Variant& b) {return b.cmpChar(a) < 0;}
 
 inline bool operator==(const Variant& a, const void* b) {return a.eqPtr(b);}
 inline bool operator!=(const Variant& a, const void* b) {return !a.eqPtr(b);}
 inline bool operator==(const void* a, const Variant& b) {return b.eqPtr(a);}
 inline bool operator!=(const void* a, const Variant& b) {return !b.eqPtr(a);}
+inline bool operator< (const Variant& a, const void* b) {return a.cmpPtr(b) < 0;}
+inline bool operator<=(const Variant& a, const void* b) {return a.cmpPtr(b) <= 0;}
+inline bool operator> (const Variant& a, const void* b) {return a.cmpPtr(b) > 0;}
+inline bool operator>=(const Variant& a, const void* b) {return a.cmpPtr(b) >= 0;}
+inline bool operator< (const void* a, const Variant& b) {return b.cmpPtr(a) >= 0;}
+inline bool operator<=(const void* a, const Variant& b) {return b.cmpPtr(a) > 0;}
+inline bool operator> (const void* a, const Variant& b) {return b.cmpPtr(a) <= 0;}
+inline bool operator>=(const void* a, const Variant& b) {return b.cmpPtr(a) < 0;}
 
 #ifndef NO_TA_BASE
 inline bool operator==(const Variant& a, const taBase* b) {return a.eqBase(b);}

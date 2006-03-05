@@ -77,11 +77,9 @@ public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   static PDPRoot*	root;		// root of pdp class hierarchy
-  static char*		defaults_str;
-  // string representation of basic defaults compiled into executable
   static String_Array	proj_to_load;	// list of projects to load
   static taBase_List	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
-//  static void (*Init_Hook)();	 	// #READ_ONLY set this in user's main to init ta, etc.
+  static String		user_spec_def;	// provided by user using -d option
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
   static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
   static float		char_pts_per_so_unit; // #DEF_72 chars*pt size / so unit

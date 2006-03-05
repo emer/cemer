@@ -69,7 +69,8 @@ public:
   void* 	GetVoidPtrOfType(const char* td) const;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
-  String& GetStr() const; 		// check for istream, get result if so
+  String GetStr() const; 		// check for istream, get result if so
+  Variant GetVar() const {return Variant(GetStr());} // can't see much use for anything else...
   operator Real() const;
   operator Int() const;
   operator TAPtr() const;
@@ -169,6 +170,7 @@ public:
   operator TAPtr() const	{ return (TAPtr)GetVoidPtr(); }
   operator TAPtr*() const	{ return (TAPtr*)GetVoidPtr(2); }
 
+  Variant GetVar() const { return Variant(GetTAPtr());}
   void operator=(Real) 		{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
   void operator=(const String& cp)	{ cssTA::operator=(cp); }
@@ -333,6 +335,7 @@ public:
   { return new cssTAEnum(type_def, (const char*)*(arg[1])); }
 
   // converters
+  Variant GetVar() const { return Variant(val);}
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
 

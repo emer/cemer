@@ -34,7 +34,7 @@
 #include "program.h"
 
 
-class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
+class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
 public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -42,7 +42,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_MGroup);
+  TA_BASEFUNS(TypeDefault_Group);
 };
 #ifdef TA_GUI
 // note: _MGroup name is for compatiblity with v3.2 files
@@ -217,7 +217,7 @@ public:
   };
 
 
-  TypeDefault_MGroup	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
+  TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units
@@ -249,6 +249,9 @@ public:
   RGBA_List		view_colors; 	// colors to use in the project view
   bool			mnu_updating; 	// #READ_ONLY #NO_SAVE if menu is already being updated (don't init display)
   bool			deleting; 	// #READ_ONLY #NO_SAVE if object is currently being deleted
+  String		defaults_str;
+  // #READ_ONLY #NO_SAVE string representation of basic defaults for the subclass; set in constructor
+  String		defaults_file; 	// #READ_ONLY #NO_SAVE default name of defaults file, typically like "bp.def"
 
   virtual void	LoadDefaults();
   // load defaults according to root::default_file or precompiled defaults
@@ -303,7 +306,6 @@ class PDP_API PDPRoot : public taNBase, IApp {
   // structural root of object hierarchy
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
-  String		default_file; 	// default name of defaults file
   Project_MGroup	projects; 	// The projects
   ColorScaleSpec_MGroup colorspecs;	// Color Specs -- aliased in projects (for browser)
 

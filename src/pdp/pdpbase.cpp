@@ -117,15 +117,13 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 
 bool 		pdpMisc::nw_itm_def_arg = false;
 PDPRoot* 	pdpMisc::root = NULL;
-char* 		pdpMisc::defaults_str = NULL;
 String_Array	pdpMisc::proj_to_load;
 taBase_List	pdpMisc::post_load_opr;
-
+String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
 float		pdpMisc::pts_per_so_unit = 36.0f;
 float		pdpMisc::char_pts_per_so_unit = 72.0f;
 
-//void (*pdpMisc::Init_Hook)() = NULL;
 
 taPtrList_impl* pdpMisc::initHookList() {
   static taPtrList_impl* p_initHookList = NULL;
@@ -273,24 +271,6 @@ int pdpMisc::Main(int argc, char *argv[]) {
   }
 
   String prognm = argv[0];
-  if(prognm.contains('/'))
-    prognm = prognm.after('/',-1);
-  if(prognm.contains("++"))	// the distribution version of an executable
-    prognm = prognm.before("++");
-  if(prognm.contains('.'))	// some kind of extention
-    prognm = prognm.before('.', -1);
-
-  // set the defaults to be the given executable's name
-  if((prognm == "pdpshell") || (prognm == "pdp") || (prognm == "bp"))
-    root->default_file = "bp.def";
-  else
-    root->default_file = prognm + ".def";
-
-  if(!user_spec_def.empty()) {
-    root->default_file = user_spec_def;
-    if(!root->default_file.contains(".def"))
-      root->default_file += ".def"; // justin case
-  }
 
   String vers = "-version";
   for (int i=1; i<=argc; i++) {

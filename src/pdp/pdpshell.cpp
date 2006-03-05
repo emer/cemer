@@ -106,7 +106,7 @@ static ivPropertyData PDP_defs[] = {
 //	TypeDefault_Group	//
 //////////////////////////////////
 
-int TypeDefault_MGroup::Dump_Load_Value(istream& strm, TAPtr par) {
+int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
   Reset();			// get rid of any existing defaults before loading
   return taGroup<TypeDefault>::Dump_Load_Value(strm, par);
 }
@@ -953,21 +953,26 @@ int ProjectBase::Load(istream& strm, TAPtr par) {
 void ProjectBase::LoadDefaults() {
   bool loading = taMisc::is_loading; // cache is loading flag
   fstream def;
-  if(!pdpMisc::root->default_file.empty() && cssProgSpace::GetFile(def, pdpMisc::root->default_file)) {
+  // use a user-provided default 
+  //TODO: this may not be a great idea in the v4 integrated runtime
+  String def_file;
+  if (!pdpMisc::user_spec_def.empty())
+    def_file = pdpMisc::user_spec_def;
+  else
+    def_file = defaults_file;
+  if (!def_file.empty() && cssProgSpace::GetFile(def, def_file)) {
     defaults.Load(def);
     def.close(); def.clear();
     //    cerr << "Successfully loaded default file: " << pdpMisc::root->default_file << "\n";
-  }
-  else if(pdpMisc::defaults_str != NULL) {
-    std::string def_str = pdpMisc::defaults_str;
+  } else if (!defaults_str.empty()) {
+    std::string def_str = defaults_str.chars();
     std::istringstream sdef(def_str);
     sdef.seekg(0, ios::beg);
     defaults.Load(sdef);
     if(taMisc::dmem_proc == 0)
       cerr << "Using standard pre-compiled defaults file\n";
-  }
-  else {
-    taMisc::Error("Warning: no default file was available - created objects will not automatically be of correct type");
+  } else {
+    taMisc::Error("Warning: no default file or defaults were available - created objects will not automatically be of correct type");
   }
   taMisc::is_loading = loading;
 }

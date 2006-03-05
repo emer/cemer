@@ -207,7 +207,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(QTDIR)\lib\QtCore4.lib $(QTDIR)\lib\QtGui4.lib $(QTDIR)\lib\QtOpenGL4.lib $(QTDIR)\lib\Qt3Support4.lib $(COINDIR)\lib\coin2d.lib opengl32.lib winmm.lib"
+				AdditionalDependencies="$(QTDIR)\lib\QtCored4.lib $(QTDIR)\lib\QtGuid4.lib $(QTDIR)\lib\QtOpenGLd4.lib $(QTDIR)\lib\Qt3Supportd4.lib $(COINDIR)\lib\coin2d.lib opengl32.lib winmm.lib"
 				OutputFile="soqt1d.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -3216,10 +3216,10 @@
 				RelativePath="src\Inventor\Qt\SoQtBasic.h">
 			</File>
 			<File
-				RelativePath="src\Inventor\Qt\editors\SoQtColorEditor.h">
+				RelativePath="src\Inventor\Qt\SoQtColorEditor.h">
 			</File>
 			<File
-				RelativePath="src\Inventor\Qt\SoQtColorEditor.h">
+				RelativePath="src\Inventor\Qt\editors\SoQtColorEditor.h">
 			</File>
 			<File
 				RelativePath="src\Inventor\Qt\SoQtComponent.h">

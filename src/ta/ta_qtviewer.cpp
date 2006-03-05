@@ -1566,7 +1566,7 @@ void iDataViewer::mnuDynAction(int idx) {
 
 void iDataViewer::mnuEditAction(taiAction* mel) {
    // called from context; cast obj to an taiClipData::EditAction
-  emit_EditAction((int)(mel->usr_data));
+  emit_EditAction(mel->usr_data.toInt());
 }
 
 bool iDataViewer::ObjectRemoving(ISelectable* item) {

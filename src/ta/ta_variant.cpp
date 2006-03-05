@@ -28,6 +28,23 @@
 
 using namespace std;
 
+/* prototype case
+  switch (m_type) {
+  case T_Invalid: 
+  case T_Bool:
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
+  case T_Double:
+  case T_Char:
+  case T_String: 
+  case T_Ptr: 
+  case T_Base: 
+  case T_Matrix:
+  default: return ;
+  }
+*/
 ostream& operator<<(ostream& s, const Variant& x) {
   x.save(s);
   return s;
@@ -98,24 +115,7 @@ Variant::~Variant() {
   releaseType();
   m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
 }
-/*
-  switch (m_type) {
-  case T_Invalid: 
-  case T_Bool:
-  case T_Int:
-  case T_UInt:
-  case T_Int64:
-  case T_UInt64:
-  case T_Double:
-  case T_Char:
-  case T_String: 
-  case T_Ptr: 
-  case T_Base: 
-  case T_Matrix:
-  default: return ;
-  }
-  
-*/
+
 bool Variant::Dump_Load_Type(istream& strm, int& c) {
   c = taMisc::read_word(strm, true); //note: use peek mode, so we don't read the terminator
   // if we read a proper type code, it should be an int, otherwise we encountered
@@ -258,6 +258,145 @@ bool  Variant::eqPtr(const void* val) const { // note: works for taBase/taMatrix
   return (d.ptr == val);
 }
 
+#define cmp(a,b) (((a) < (b)) ? -1 : \
+  ((a) == (b)) ?  0 : 1)
+int Variant::cmpVariant(const Variant& b) const {
+  // invalid never cmpuates
+  if (isInvalid() || b.isInvalid()) return -2;
+  // for pointer types, proceed directly
+  if (b.isPtrType())
+    return cmpPtr(b.toPtr());
+  // otherwise, null never cmpuates
+  else if (b.isNull()) return false;
+  else switch (b.type()) {
+  case T_Bool: return cmpBool(b.toBool());
+  case T_Int: return cmpInt(b.toInt());
+  case T_UInt: return cmpUInt(b.toUInt());
+  case T_Int64: return cmpInt64(b.toInt64());
+  case T_UInt64: return cmpUInt64(b.toUInt64());
+  case T_Double: return cmpDouble(b.toDouble());
+  case T_Char: return cmpChar(b.toChar());
+  case T_String:  return cmpString(b.toString());
+  default: return -2; //compiler food, never happens
+  }
+}
+
+int Variant::cmpBool(bool val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return cmp(d.b, val);
+  case T_Int: 
+  case T_UInt: 
+  case T_Int64: 
+  case T_UInt64:
+  case T_Char: 
+     return cmp(toBool(), val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpInt(int val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+
+int  Variant::cmpUInt(uint val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpInt64(int64_t val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint64_t)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint64_t)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpUInt64(uint64_t val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpDouble(double val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((double)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpChar(char val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((char)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  case T_String: {
+    const String& str = getString();
+    return cmp(str, val);
+  }
+  default: return -2;
+  }
+}
+
+int Variant::cmpString(const String& val) const {
+  if (isNull()) return -2;
+  if (!isPtrType()) return -2;
+  // otherwise, compare our string rep
+  const String str(toString());
+  return cmp(str, val);
+}
+
+int Variant::cmpPtr(const void* val) const { // note: works for taBase/taMatrix as well
+  if (!isPtrType()) return -2;
+  return cmp(d.ptr, val);
+}
+
 
 void Variant::ForceType(VarType vt, bool null) {
   if ((int)vt != m_type) {
@@ -329,6 +468,32 @@ bool Variant::isNull() const {
 #endif
   default: return m_is_null;
   }
+}
+
+bool Variant::isNumeric() const {
+  if ((m_type >= T_Int) && (m_type <= T_Double))
+    return true;
+  else if (m_type == T_String) {
+    if (!m_is_numeric_valid) {
+#ifdef TA_USE_QT
+      // we check if a valid number by using QString's converter
+      QString tmp(getString());
+      bool ok;
+      tmp.toDouble(&ok);
+      m_is_numeric = ok;
+      m_is_numeric_valid = true;
+#else
+      // TODO: should reallysupport, but not needed for maketa
+      warn("isNumeric() routine without Qt");
+#endif
+    }
+    return m_is_numeric;
+  } else return false;
+}
+
+bool Variant::isNumericStrict() const {
+  return (((m_type >= T_Int) && (m_type <= T_Double)) 
+    || (m_type == T_Char));
 }
 
 void Variant::load(istream& s) {
@@ -412,6 +577,875 @@ void Variant::load(istream& s) {
   }
 }
 
+Variant& Variant::operator+=(const String& rhs) {
+  if (isAtomic())
+    setString(toString() + rhs);
+  return *this;
+}
+
+Variant& Variant::operator+=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i += rhs; break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: d.c += rhs; break;
+  case T_String: setString(getString() + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i += rhs; break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setInt(d.c + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i + rhs); break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setUInt(d.c + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i + rhs); break;
+  case T_UInt: setInt64(d.u + rhs); break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setInt64(d.c + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i + rhs); break;
+  case T_UInt: setUInt64(d.u + rhs); break;
+  case T_Int64: setUInt64(d.i64 + rhs); break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setUInt64(d.c + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(double rhs) {
+  switch (m_type) {
+  case T_Int: setDouble(d.i + rhs); break;
+  case T_UInt: setDouble(d.u + rhs); break;
+  case T_Int64: setDouble(d.i64 + rhs); break;
+  case T_UInt64: setDouble(d.u64 + rhs); break;
+  case T_Double: setDouble(d.d + rhs); break;
+  case T_Char: setDouble(d.c + rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator+=(const Variant& rhs) {//TODO
+  switch (rhs.type()) {
+  case T_Int: return operator+=(rhs.d.i);
+  case T_UInt: return operator+=(rhs.d.u);
+  case T_Int64: return operator+=(rhs.d.i64);
+  case T_UInt64: return operator+=(rhs.d.u64);
+  case T_Double: return operator+=(rhs.d.d);
+  case T_Char: return operator+=(rhs.d.c);
+  case T_String: return operator+=(rhs.getString());
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i -= rhs; break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: d.c -= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i -= rhs; break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setInt(d.c - rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i - rhs); break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setUInt(d.c - rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i - rhs); break;
+  case T_UInt: setInt64(d.u - rhs); break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setInt64(d.c - rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i - rhs); break;
+  case T_UInt: setUInt64(d.u - rhs); break;
+  case T_Int64: setUInt64(d.i64 - rhs); break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setUInt64(d.c - rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(double rhs) {
+  switch (m_type) {
+  case T_Int: setDouble(d.i - rhs); break;
+  case T_UInt: setDouble(d.u - rhs); break;
+  case T_Int64: setDouble(d.i64 - rhs); break;
+  case T_UInt64: setDouble(d.u64 - rhs); break;
+  case T_Double: setDouble(d.d - rhs); break;
+  case T_Char: setDouble(d.c - rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator-=(const Variant& rhs) {//TODO
+  switch (rhs.type()) {
+  case T_Int: return operator-=(rhs.d.i);
+  case T_UInt: return operator-=(rhs.d.u);
+  case T_Int64: return operator-=(rhs.d.i64);
+  case T_UInt64: return operator-=(rhs.d.u64);
+  case T_Double: return operator-=(rhs.d.d);
+  case T_Char: return operator-=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i *= rhs; break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: d.c *= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i *= rhs; break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setInt(d.c * rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i * rhs); break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setUInt(d.c * rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i * rhs); break;
+  case T_UInt: setInt64(d.u * rhs); break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setInt64(d.c * rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i * rhs); break;
+  case T_UInt: setUInt64(d.u * rhs); break;
+  case T_Int64: setUInt64(d.i64 * rhs); break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setUInt64(d.c * rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(double rhs) {
+  switch (m_type) {
+  case T_Int: setDouble(d.i * rhs); break;
+  case T_UInt: setDouble(d.u * rhs); break;
+  case T_Int64: setDouble(d.i64 * rhs); break;
+  case T_UInt64: setDouble(d.u64 * rhs); break;
+  case T_Double: setDouble(d.d * rhs); break;
+  case T_Char: setDouble(d.c * rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator*=(const Variant& rhs) {//TODO
+  switch (rhs.type()) {
+  case T_Int: return operator*=(rhs.d.i);
+  case T_UInt: return operator*=(rhs.d.u);
+  case T_Int64: return operator*=(rhs.d.i64);
+  case T_UInt64: return operator*=(rhs.d.u64);
+  case T_Double: return operator*=(rhs.d.d);
+  case T_Char: return operator*=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i /= rhs; break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: d.c /= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i /= rhs; break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setInt(d.c / rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i / rhs); break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setUInt(d.c / rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i / rhs); break;
+  case T_UInt: setInt64(d.u / rhs); break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setInt64(d.c / rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i / rhs); break;
+  case T_UInt: setUInt64(d.u / rhs); break;
+  case T_Int64: setUInt64(d.i64 / rhs); break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setUInt64(d.c / rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(double rhs) {
+  switch (m_type) {
+  case T_Int: setDouble(d.i / rhs); break;
+  case T_UInt: setDouble(d.u / rhs); break;
+  case T_Int64: setDouble(d.i64 / rhs); break;
+  case T_UInt64: setDouble(d.u64 / rhs); break;
+  case T_Double: setDouble(d.d / rhs); break;
+  case T_Char: setDouble(d.c / rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator/=(const Variant& rhs) {//TODO
+  switch (rhs.type()) {
+  case T_Int: return operator/=(rhs.d.i);
+  case T_UInt: return operator/=(rhs.d.u);
+  case T_Int64: return operator/=(rhs.d.i64);
+  case T_UInt64: return operator/=(rhs.d.u64);
+  case T_Double: return operator/=(rhs.d.d);
+  case T_Char: return operator/=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i %= rhs; break;
+  case T_UInt: d.u %= rhs; break;
+  case T_Int64: d.i64 %= rhs; break;
+  case T_UInt64: d.u64 %= rhs; break;
+  case T_Char: d.c %= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i %= rhs; break;
+  case T_UInt: d.u %= rhs; break;
+  case T_Int64: d.i64 %= rhs; break;
+  case T_UInt64: d.u64 %= rhs; break;
+  case T_Char: setInt(d.c % rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i % rhs); break;
+  case T_UInt: d.u %= rhs; break;
+  case T_Int64: d.i64 %= rhs; break;
+  case T_UInt64: d.u64 %= rhs; break;
+  case T_Char: setUInt(d.c % rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i % rhs); break;
+  case T_UInt: setInt64(d.u % rhs); break;
+  case T_Int64: d.i64 %= rhs; break;
+  case T_UInt64: d.u64 %= rhs; break;
+  case T_Char: setInt64(d.c % rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i % rhs); break;
+  case T_UInt: setUInt64(d.u % rhs); break;
+  case T_Int64: setUInt64(d.i64 % rhs); break;
+  case T_UInt64: d.u64 %= rhs; break;
+  case T_Char: setUInt64(d.c % rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator%=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator%=(rhs.d.i);
+  case T_UInt: return operator%=(rhs.d.u);
+  case T_Int64: return operator%=(rhs.d.i64);
+  case T_UInt64: return operator%=(rhs.d.u64);
+  case T_Char: return operator%=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+Variant& Variant::operator<<=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i <<= rhs; break;
+  case T_UInt: d.u <<= rhs; break;
+  case T_Int64: d.i64 <<= rhs; break;
+  case T_UInt64: d.u64 <<= rhs; break;
+  case T_Char: d.c <<= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator<<=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i <<= rhs; break;
+  case T_UInt: d.u <<= rhs; break;
+  case T_Int64: d.i64 <<= rhs; break;
+  case T_UInt64: d.u64 <<= rhs; break;
+  case T_Char: setInt(d.c << rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator<<=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i << rhs); break;
+  case T_UInt: d.u <<= rhs; break;
+  case T_Int64: d.i64 <<= rhs; break;
+  case T_UInt64: d.u64 <<= rhs; break;
+  case T_Char: setUInt(d.c << rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator<<=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i << rhs); break;
+  case T_UInt: setInt64(d.u << rhs); break;
+  case T_Int64: d.i64 <<= rhs; break;
+  case T_UInt64: d.u64 <<= rhs; break;
+  case T_Char: setInt64(d.c << rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator<<=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i << rhs); break;
+  case T_UInt: setUInt64(d.u << rhs); break;
+  case T_Int64: setUInt64(d.i64 << rhs); break;
+  case T_UInt64: d.u64 <<= rhs; break;
+  case T_Char: setUInt64(d.c << rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator<<=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator<<=(rhs.d.i);
+  case T_UInt: return operator<<=(rhs.d.u);
+  case T_Int64: return operator<<=(rhs.d.i64);
+  case T_UInt64: return operator<<=(rhs.d.u64);
+  case T_Char: return operator<<=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i >>= rhs; break;
+  case T_UInt: d.u >>= rhs; break;
+  case T_Int64: d.i64 >>= rhs; break;
+  case T_UInt64: d.u64 >>= rhs; break;
+  case T_Char: d.c >>= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i >>= rhs; break;
+  case T_UInt: d.u >>= rhs; break;
+  case T_Int64: d.i64 >>= rhs; break;
+  case T_UInt64: d.u64 >>= rhs; break;
+  case T_Char: setInt(d.c >> rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i >> rhs); break;
+  case T_UInt: d.u >>= rhs; break;
+  case T_Int64: d.i64 >>= rhs; break;
+  case T_UInt64: d.u64 >>= rhs; break;
+  case T_Char: setUInt(d.c >> rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i >> rhs); break;
+  case T_UInt: setInt64(d.u >> rhs); break;
+  case T_Int64: d.i64 >>= rhs; break;
+  case T_UInt64: d.u64 >>= rhs; break;
+  case T_Char: setInt64(d.c >> rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i >> rhs); break;
+  case T_UInt: setUInt64(d.u >> rhs); break;
+  case T_Int64: setUInt64(d.i64 >> rhs); break;
+  case T_UInt64: d.u64 >>= rhs; break;
+  case T_Char: setUInt64(d.c >> rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator>>=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator>>=(rhs.d.i);
+  case T_UInt: return operator>>=(rhs.d.u);
+  case T_Int64: return operator>>=(rhs.d.i64);
+  case T_UInt64: return operator>>=(rhs.d.u64);
+  case T_Char: return operator>>=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i &= rhs; break;
+  case T_UInt: d.u &= rhs; break;
+  case T_Int64: d.i64 &= rhs; break;
+  case T_UInt64: d.u64 &= rhs; break;
+  case T_Char: d.c &= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i &= rhs; break;
+  case T_UInt: d.u &= rhs; break;
+  case T_Int64: d.i64 &= rhs; break;
+  case T_UInt64: d.u64 &= rhs; break;
+  case T_Char: setInt(d.c & rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i & rhs); break;
+  case T_UInt: d.u &= rhs; break;
+  case T_Int64: d.i64 &= rhs; break;
+  case T_UInt64: d.u64 &= rhs; break;
+  case T_Char: setUInt(d.c & rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i & rhs); break;
+  case T_UInt: setInt64(d.u & rhs); break;
+  case T_Int64: d.i64 &= rhs; break;
+  case T_UInt64: d.u64 &= rhs; break;
+  case T_Char: setInt64(d.c & rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i & rhs); break;
+  case T_UInt: setUInt64(d.u & rhs); break;
+  case T_Int64: setUInt64(d.i64 & rhs); break;
+  case T_UInt64: d.u64 &= rhs; break;
+  case T_Char: setUInt64(d.c & rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator&=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator&=(rhs.d.i);
+  case T_UInt: return operator&=(rhs.d.u);
+  case T_Int64: return operator&=(rhs.d.i64);
+  case T_UInt64: return operator&=(rhs.d.u64);
+  case T_Char: return operator&=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i |= rhs; break;
+  case T_UInt: d.u |= rhs; break;
+  case T_Int64: d.i64 |= rhs; break;
+  case T_UInt64: d.u64 |= rhs; break;
+  case T_Char: d.c |= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i |= rhs; break;
+  case T_UInt: d.u |= rhs; break;
+  case T_Int64: d.i64 |= rhs; break;
+  case T_UInt64: d.u64 |= rhs; break;
+  case T_Char: setInt(d.c | rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i | rhs); break;
+  case T_UInt: d.u |= rhs; break;
+  case T_Int64: d.i64 |= rhs; break;
+  case T_UInt64: d.u64 |= rhs; break;
+  case T_Char: setUInt(d.c | rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i | rhs); break;
+  case T_UInt: setInt64(d.u | rhs); break;
+  case T_Int64: d.i64 |= rhs; break;
+  case T_UInt64: d.u64 |= rhs; break;
+  case T_Char: setInt64(d.c | rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i | rhs); break;
+  case T_UInt: setUInt64(d.u | rhs); break;
+  case T_Int64: setUInt64(d.i64 | rhs); break;
+  case T_UInt64: d.u64 |= rhs; break;
+  case T_Char: setUInt64(d.c | rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator|=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator|=(rhs.d.i);
+  case T_UInt: return operator|=(rhs.d.u);
+  case T_Int64: return operator|=(rhs.d.i64);
+  case T_UInt64: return operator|=(rhs.d.u64);
+  case T_Char: return operator|=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(char rhs) {
+  switch (m_type) {
+  case T_Int: d.i ^= rhs; break;
+  case T_UInt: d.u ^= rhs; break;
+  case T_Int64: d.i64 ^= rhs; break;
+  case T_UInt64: d.u64 ^= rhs; break;
+  case T_Char: d.c ^= rhs; break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(int rhs) {
+  switch (m_type) {
+  case T_Int: d.i ^= rhs; break;
+  case T_UInt: d.u ^= rhs; break;
+  case T_Int64: d.i64 ^= rhs; break;
+  case T_UInt64: d.u64 ^= rhs; break;
+  case T_Char: setInt(d.c ^ rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(uint rhs) {
+  switch (m_type) {
+  case T_Int: setUInt(d.i ^ rhs); break;
+  case T_UInt: d.u ^= rhs; break;
+  case T_Int64: d.i64 ^= rhs; break;
+  case T_UInt64: d.u64 ^= rhs; break;
+  case T_Char: setUInt(d.c ^ rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(int64_t rhs) {
+  switch (m_type) {
+  case T_Int: setInt64(d.i ^ rhs); break;
+  case T_UInt: setInt64(d.u ^ rhs); break;
+  case T_Int64: d.i64 ^= rhs; break;
+  case T_UInt64: d.u64 ^= rhs; break;
+  case T_Char: setInt64(d.c ^ rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(uint64_t rhs) {
+  switch (m_type) {
+  case T_Int: setUInt64(d.i ^ rhs); break;
+  case T_UInt: setUInt64(d.u ^ rhs); break;
+  case T_Int64: setUInt64(d.i64 ^ rhs); break;
+  case T_UInt64: d.u64 ^= rhs; break;
+  case T_Char: setUInt64(d.c ^ rhs); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator^=(const Variant& rhs) {
+  switch (rhs.type()) {
+  case T_Int: return operator^=(rhs.d.i);
+  case T_UInt: return operator^=(rhs.d.u);
+  case T_Int64: return operator^=(rhs.d.i64);
+  case T_UInt64: return operator^=(rhs.d.u64);
+  case T_Char: return operator^=(rhs.d.c);
+  default: break;
+  }
+  return *this;
+}
+
+Variant& Variant::operator++() {
+  switch (m_type) {
+  case T_Int: ++(d.i); break;
+  case T_UInt: ++(d.u); break;
+  case T_Int64: ++(d.i64); break;
+  case T_UInt64: ++(d.u64); break;
+  case T_Double: d.d += 1.0; break;
+  case T_Char: ++(d.c); break;
+  default: break;
+  }
+  return *this;
+}
+
+Variant Variant::operator++(int) {
+  Variant rval(*this);
+  operator++();
+  return rval;
+}
+
+Variant& Variant::operator--() {
+  switch (m_type) {
+  case T_Int: --(d.i); break;
+  case T_UInt: --(d.u); break;
+  case T_Int64: --(d.i64); break;
+  case T_UInt64: --(d.u64); break;
+  case T_Double: d.d -= 1.0; break;
+  case T_Char: --(d.c); break;
+  default: warn("-- operator"); break;
+  }
+  return *this;
+}
+
+Variant Variant::operator--(int) {
+  Variant rval(*this);
+  operator--();
+  return rval;
+}
+
+Variant& Variant::operator-() {
+  switch (m_type) {
+  case T_Invalid: break;
+  case T_Bool: d.b = -(int)d.b; break; // makes no sense, but compiler allows
+  case T_Int: d.i = -d.i; break;
+  case T_UInt: d.u = (uint)-((int)d.u); break; // forces unsigned
+  case T_Int64: d.i64 = -d.i64; break;
+  case T_UInt64: d.u64 = (uint64_t)-((int64_t)d.u64); break; // forces unsigned
+  case T_Double: d.d = -d.d; break;
+  case T_Char: d.c = -d.c; break;
+  default: warn("unary - operator"); break ;
+  }
+  return *this;
+}
+
+Variant& Variant::operator~() {
+  switch (m_type) {
+  case T_Invalid: break;
+  case T_Bool: d.b = ~(int)d.b; break; // makes no sense, but compiler allows
+  case T_Int: d.i = ~d.i; break;
+  case T_UInt: d.u = ~d.u; break; 
+  case T_Int64: d.i64 = ~d.i64; break;
+  case T_UInt64: d.u64 = ~d.u64; break;
+  case T_Char: d.c = -d.c; break;
+  default: warn("~ operator"); break ;
+  }
+  return *this;
+}
 
 void Variant::releaseType() {
   // undo specials
@@ -597,6 +1631,7 @@ void Variant::setString(const String& val, bool null) {
     m_type = T_String;
   }
   m_is_null = null;
+  m_is_numeric_valid = false;
 }
 /*
   switch (m_type) {
@@ -931,6 +1966,10 @@ String Variant::toString() const {
   return _nilString;
 }
 
+void Variant::warn(const char* msg) const {
+  cerr << "** Warning: operation not supported on Variant type " << type() << ": " << msg << "\n";
+}
+
 #ifndef NO_TA_BASE
 taBase* Variant::toBase() const {
   switch (m_type) {
@@ -1077,3 +2116,11 @@ QVariant Variant::toQVariant() const {
 }
 #endif 
 
+//#ifdef DEBUG
+// some test code
+void test1() {
+  Variant var1;
+  Variant var2 = 100U;
+  var1 = var2 + 2.0;
+}
+//#endif

@@ -18,6 +18,8 @@
 
 #include "css_c_ptr_types.h"
 #include "ta_css.h"
+
+#include "ta_matrix.h"
 #include "ta_TA_type.h"
 
 ///////////////////
@@ -156,15 +158,14 @@ void cssCPtr_short::operator|=(cssEl& t)	{
 //     bool      //
 ///////////////////
 
-String& cssCPtr_bool::GetStr() const {
+String cssCPtr_bool::GetStr() const {
   bool myb = *((bool*)GetNonNullVoidPtr());
   if(myb == true)
-    ((cssEl*)this)->tmp_str = "true";
+    return String("true");
   else if(myb == false)
-    ((cssEl*)this)->tmp_str = "false";
+    return String("false");
   else
-    ((cssEl*)this)->tmp_str=String((int)myb);
-  return (String&)tmp_str;
+    return String((int)myb);
 }
 
 void cssCPtr_bool::operator=(const String& cp) {
@@ -329,14 +330,12 @@ MemberDef* cssCPtr_enum::GetEnumType() const {
   return NULL;
 }
 
-String& cssCPtr_enum::GetStr() const {
+String cssCPtr_enum::GetStr() const {
   MemberDef* md = GetEnumType();
   if(md != NULL) {
-    ((cssEl*)this)->tmp_str = md->type->GetValStr(GetNonNullVoidPtr(), NULL, md);
-    return (String&)tmp_str;
+    return md->type->GetValStr(GetNonNullVoidPtr(), NULL, md);
   }
-  ((cssEl*)this)->tmp_str = String((Int)*this);
-  return (String&)tmp_str;
+  return String((Int)*this);
 }
 
 void cssCPtr_enum::operator=(const String& cp) {
@@ -518,3 +517,100 @@ cssEl* cssCPtr_String::GetScoped(const char* memb) const {
   return GetMemberFun_impl(md);
 }
 
+
+///////////////////
+//     Variant    //
+///////////////////
+
+String cssCPtr_Variant::PrintStr() const {
+  String rval = String(GetTypeName())+" "+name+" --> ";
+  if(GetVoidPtr() != NULL)
+    rval += (*((Variant*)GetVoidPtr())).toString();
+  else
+    rval += "NULL";
+  return rval;
+}
+void cssCPtr_Variant::operator=(const cssEl& t) {
+  if(t.GetType() == T_C_Ptr) PtrAssignPtr((cssCPtr*)&t);
+  else {
+    if(!ROCheck()) return;
+    *((Variant*)GetNonNullVoidPtr()) = t.GetVar();
+    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  }
+}
+void cssCPtr_Variant::operator+=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((Variant*)GetNonNullVoidPtr()) += t.GetVar();
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+
+cssEl* cssCPtr_Variant::operator[](int idx) const {
+  void* pt = GetVoidPtr();	if(pt == NULL) return &cssMisc::Void;
+  Variant& val = *(Variant*)pt;
+  switch (val.type()) {
+  case Variant::T_String: {
+    //TODO: maybe this should be Char???
+    String nw_val = val.toString().elem(idx);
+    return new cssString(nw_val);
+    } break;
+  case Variant::T_Matrix: {
+    if (val.isNull()) break;
+    taMatrix* mat = val.toMatrix();
+    Variant var(mat->SafeElAsVar_Flat(idx));
+    return new cssVariant(var);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+int cssCPtr_Variant::GetMemberFunNo(const char* memb) const {
+  int md;
+  TA_Variant.methods.FindName(memb, md);
+  return md;
+}
+cssEl* cssCPtr_Variant::GetMemberFun(const char* memb) const {
+  MethodDef* md = TA_Variant.methods.FindName(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", memb, "in class of type: Variant");
+    return &cssMisc::Void;
+  }
+  return GetMemberFun_impl(md);
+}
+cssEl* cssCPtr_Variant::GetMemberFun(int memb) const {
+  MethodDef* md = TA_Variant.methods.SafeEl(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type: Variant");
+    return &cssMisc::Void;
+  }
+  return GetMemberFun_impl(md);
+}
+cssEl* cssCPtr_Variant::GetMemberFun_impl(MethodDef* md) const {
+  void* pt = GetVoidPtr();	if(pt == NULL) return &cssMisc::Void;
+  Variant* val = (Variant*)pt;
+  if(md->stubp != NULL) {
+    if(md->fun_argd >= 0)
+      return new cssMbrCFun(VarArg, (void*)val, md->stubp, md->name);
+    else
+      return new cssMbrCFun(md->fun_argc, (void*)val, md->stubp, md->name);
+  }
+  else {
+    cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
+	      "in class of type: Variant");
+    return &cssMisc::Void;
+  }
+}
+
+cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
+  EnumDef* ed = TA_Variant.FindEnum(memb);
+  if(ed != NULL) {
+    return new cssInt(ed->enum_no);
+  }
+
+  MethodDef* md = TA_Variant.methods.FindName(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type: Variant");
+    return &cssMisc::Void;
+  }
+
+  return GetMemberFun_impl(md);
+}

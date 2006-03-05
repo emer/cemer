@@ -30,6 +30,7 @@ public:
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return T_Int; }
   const char*	GetTypeName() const	{ return "(Int)"; }
+  bool		IsNumericTypeStrict() const   { return true; }
 
   String 	PrintStr() const
   { return String(GetTypeName())+" " + name + " = " + String(val); }
@@ -47,7 +48,8 @@ public:
   cssCloneFuns(cssInt, 0);
 
   // converters
-  String& GetStr() const	{ ((cssEl*)this)->tmp_str=String(val); return (String&)tmp_str; }
+  String GetStr() const	{ return String(val); }
+  Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
 
@@ -115,6 +117,8 @@ class CSS_API cssChar : public cssInt {
   // a character (for string conversions)
 public:
   const char*	GetTypeName() const { return "(char)"; }
+  bool		IsStringType() const   	{ return true; }
+  bool		IsNumericTypeStrict() const   { return true; }
 
   String 	PrintStr() const
   { return String(GetTypeName())+" " + name + " = '" + (char)val + "'"; }
@@ -127,7 +131,8 @@ public:
   cssChar(const cssChar& cp, const char* nm) : cssInt(cp, nm) 	{ };
   cssCloneFuns(cssChar, *this);
 
-  String& GetStr() const	{ ((cssEl*)this)->tmp_str=(char)val; return (String&)tmp_str; }
+  String GetStr() const	{ return (String)val; }
+  Variant GetVar() const { return Variant((char)val); }
 
   void operator=(Real cp) 		{ val = (int)cp; }
   void operator=(Int cp)		{ val = cp; }
@@ -154,6 +159,7 @@ public:
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return T_Real; }
   const char*	GetTypeName() const 	{ return "(Real)"; }
+  bool		IsNumericTypeStrict() const   { return true; }
 
   String 	PrintStr() const
   { return String(GetTypeName())+" "+ name + " = " + String(val); }
@@ -171,7 +177,8 @@ public:
   cssCloneFuns(cssReal, 0.0);
 
   // converters
-  String& GetStr() const	{ ((cssReal*)this)->tmp_str = String(val); return (String&)tmp_str; }
+  String GetStr() const	{ return String(val); }
+  Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return val; }
   operator Int() const	 	{ return (int)val; }
 
@@ -250,6 +257,7 @@ public:
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return T_String; }
   const char*	GetTypeName() const	{ return "(String)"; }
+  bool		IsStringType() const   	{ return true; }
 
   String 	PrintStr() const
   { return String(GetTypeName())+" "+name + " = " + String(val); }
@@ -281,7 +289,8 @@ public:
   cssCloneFuns(cssString, "");
 
   // converters
-  String& GetStr() const	{ return (String&)val; }
+  String GetStr() const	  { return val; }
+  Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ Real r = atof((const char*)val); return r; }
   operator Int() const		{ Int r = (int)strtol((const char*)val, NULL, 0); return r; }
   operator String() const	{ return val; }
@@ -359,7 +368,8 @@ public:
   cssCloneFuns(cssBool, false);
 
   // converters
-  String& GetStr() const;
+  String GetStr() const;
+  Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
 
@@ -380,6 +390,83 @@ public:
   bool operator||(cssEl& s) 	{ return (val || (Int)s); }
 };
 
+
+class CSS_API cssVariant: public cssEl {
+INHERITED(cssEl)
+public:
+  Variant	val;
+
+  int		GetParse() const	{ return CSS_VAR; }
+  uint		GetSize() const		{ return sizeof(*this); }
+  cssTypes 	GetType() const		{ return T_Variant; }
+  const char*	GetTypeName() const 	{ return "(Variant)"; }
+
+  String 	PrintStr() const
+  { return String(GetTypeName())+" "+ name + " = " + val.toString(); }
+  String	PrintFStr() const { return val.toString(); }
+
+  // constructors
+  void 		Constr()		{ Register(); } // default is Invalid
+  void		Copy(const cssVariant& cp) { cssEl::Copy(cp); val = cp.val; }
+  cssVariant()				{ Constr(); }
+  cssVariant(Variant vl)		{ Constr(); val = vl; }
+  cssVariant(Variant vl, const char* nm) { Constr(); val = vl; name = nm; }
+  cssVariant(const cssVariant& cp)		{ Constr(); Copy(cp); }
+  cssVariant(const cssVariant& cp, const char* nm){ Constr(); Copy(cp); name = nm; }
+
+  cssCloneFuns(cssVariant, _nilVariant);
+
+  // converters
+  String GetStr() const	{ return val.toString(); }
+  Variant GetVar() const { return val; }
+  operator Real() const	 { if (val.isNumeric()) return val.toDouble(); else return cssEl::operator Real();}
+  operator Int() const	 { if (val.isNumeric()) return val.toInt(); else return cssEl::operator Int();}
+  operator TAPtr() const;
+  
+  void operator=(Real cp) 		{ val = cp; }
+  void operator=(Int cp)		{ val = cp; }
+  void operator=(const String& cp)	{ val = cp; }
+  void operator=(const Variant& cp) { val = cp;}
+
+  void operator=(void* ptr)	 	{ val = ptr; }
+  void operator=(void**)	{ CvtErr("(void**)"); }
+
+  // operators
+  void operator=(const cssEl& s)	{ val = (Variant)s; }
+
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*();
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
+
+  // implement the to-the-power of operator as ^
+  cssEl* operator^(cssEl& t);
+
+  cssEl* operator-();
+
+  void operator+=(cssEl& t);
+  void operator-=(cssEl& t);
+  void operator*=(cssEl& t);
+  void operator/=(cssEl& t);
+
+  bool operator< (cssEl& s);
+  bool operator> (cssEl& s);
+  bool operator! ();
+  bool operator<=(cssEl& s);
+  bool operator>=(cssEl& s);
+  bool operator==(cssEl& s);
+  bool operator!=(cssEl& s);
+  bool operator&&(cssEl& s);
+  bool operator||(cssEl& s);
+};
+
+#define cssVariant_inst(l,n,x)		l .Push(new cssVariant(n, #x))
+#define cssVariant_inst_nm(l,n,s)	l .Push(new cssVariant(n, s))
+#define cssVariant_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssVariant(n, #x))
+#define cssVariant_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssVariant(n, s))
+
+
 class CSS_API cssPtr : public cssEl {
   // this is an el for pointing to other el's
 public:
@@ -391,6 +478,10 @@ public:
   cssTypes 	GetType() const		{ return T_Ptr; }
   const char*	GetTypeName() const	{ return el_type->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return el_type; }
+  bool		IsStringType() const   	{ cssEl* el = ((cssPtr*)this)->GetActualObj();
+    if (el) return el->IsStringType(); else return false;}
+  bool		IsNumericTypeStrict() const { cssEl* el = ((cssPtr*)this)->GetActualObj();
+    if (el) return el->IsNumericTypeStrict(); else return false;}
 
   cssEl*	GetActualObj() 		{ return ptr.El()->GetActualObj(); }
 
@@ -434,7 +525,8 @@ public:
   { Int rval = (Int)(long)(ptr.El()); if(ptr.El() == &cssMisc::Void) rval = 0;
     return rval; }
 
-  String&	GetStr() const;
+  String	GetStr() const;
+  Variant	GetVar() const { return Variant((void*)ptr.El()); } // raw pointer
   operator 	Real() const	{ return (Real)GetIntVal(); }
   operator 	Int() const	{ return GetIntVal(); }
 
@@ -524,7 +616,8 @@ public:
   // set prog of the el_type also
 
   // converters
-  String&	GetStr() const;
+  String	GetStr() const;
+  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
   operator 	Real() const	{ CvtErr("(Real)"); return 0; }
   operator 	Int() const	{ CvtErr("(Int)"); return 0; }
 
@@ -621,6 +714,8 @@ public:
   const char*	GetTypeName() const	{ return ptr.El()->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return ptr.El()->GetTypeObject(); }
   int		IsRef()	const		{ return true; }
+  bool		IsStringType() const   	{ return ptr.El()->IsStringType(); }
+  bool		IsNumericTypeStrict() const { return ptr.El()->IsNumericTypeStrict(); }
   cssElPtr	GetAddr() const;
 
   cssEl*	GetActualObj() 		{ return ptr.El()->GetActualObj(); }
@@ -660,7 +755,8 @@ public:
   { return new cssRef(ptr, (const char*)*(arg[1])); }
 
   // converters
-  String& GetStr() const 	{ return ptr.El()->GetStr(); }
+  String GetStr() const 	{ return ptr.El()->GetStr(); }
+  Variant GetVar() const 	{ return ptr.El()->GetVar(); }
   operator Real() const	 	{ return (Real)*(ptr.El()); }
   operator Int() const	 	{ return (Int)*(ptr.El()); }
   operator void*() const	{ return (void*)*(ptr.El()); }
@@ -843,7 +939,8 @@ public:
   cssCloneFuns(cssEnum, *this);
 
   // converters
-  String& GetStr() const;
+  String GetStr() const; //
+  // Variant GetVar() const; same as base
 
   void operator=(Real cp) 		{ val = (int)cp; }
   void operator=(Int cp)		{ val = cp; }
@@ -979,7 +1076,8 @@ public:
   // extract info for options and desc for class object from comment
 
   // converters
-  String&	GetStr() const;
+  String	GetStr() const;
+  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
   operator 	Real() const		{ CvtErr("(Real)"); return 0; }
   operator 	Int() const		{ CvtErr("(Int)"); return 0; }
 
@@ -1039,7 +1137,8 @@ public:
   void	 DestructToken();	// call destructor on this class
 
   // converters
-  String&	GetStr() const;
+  String	GetStr() const;
+  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
   operator 	Real() const		{ CvtErr("(Real)"); return 0; }
   operator 	Int() const		{ CvtErr("(Int)"); return 0; }
 

@@ -204,14 +204,13 @@ void cssString::Load(istream& strm) {
 // 	cssBool 	//
 //////////////////////////
 
-String& cssBool::GetStr() const {
+String cssBool::GetStr() const {
   if(val == true)
-    ((cssEl*)this)->tmp_str = "true";
+    return String("true");
   else if(val == false)
-    ((cssEl*)this)->tmp_str = "false";
+    return String("false");
   else
-    ((cssEl*)this)->tmp_str=String((int)val);
-  return (String&)tmp_str;
+    return String((int)val);
 }
 
 void cssBool::operator=(const cssEl& s) {
@@ -229,6 +228,81 @@ void cssBool::operator=(const String& cp) {
   else
     val = (bool)strtol((const char*)cp, NULL, 0);
 }
+
+
+/////////////////////////
+//  cssVariant	       //
+/////////////////////////
+
+cssVariant::operator TAPtr() const {
+  if (val.isBaseType()) 
+    return val.toBase();
+  else return inherited::operator TAPtr();
+}
+
+cssEl* cssVariant::operator+(cssEl& t) { 
+// string concatenation takes precedence over numeric addition
+ if (val.isStringType()) {
+   cssVariant* r = new cssVariant(*this,""); 
+   r->val += (String)t; 
+   return r; 
+ } else {
+   cssVariant* r = new cssVariant(*this,""); 
+   r->val += (Variant)t; 
+   return r; 
+ }
+}
+
+cssEl* cssVariant::operator-(cssEl& t) { 
+  cssVariant* r = new cssVariant(*this,""); 
+  r->val -= (Variant)t; 
+  return r;
+}
+
+cssEl* cssVariant::operator*() {
+  return cssEl::operator*(); 
+}
+
+cssEl* cssVariant::operator*(cssEl& t) { 
+  cssVariant* r = new cssVariant(*this,""); 
+  r->val *= (Variant)t; 
+  return r; 
+}
+
+cssEl* cssVariant::operator/(cssEl& t) {
+  cssVariant* r = new cssVariant(*this,""); 
+  r->val /= (Variant)t; 
+  return r; 
+}
+
+// implement the to-the-power of cssVariant::operator as ^
+cssEl* cssVariant::operator^(cssEl& t) { 
+  if (val.isNumeric()) {
+    cssVariant* r = new cssVariant(); 
+    r->val = pow(val.toDouble(), (Real)t); 
+    return r; 
+  } else return inherited::operator^(t);
+}
+
+cssEl* cssVariant::operator-() { 
+  cssVariant* r = new cssVariant(-val,""); 
+  return r; 
+}
+
+void cssVariant::operator+=(cssEl& t) 	{ val += (Variant)t; }
+void cssVariant::operator-=(cssEl& t) 	{ val -= (Variant)t; }
+void cssVariant::operator*=(cssEl& t) 	{ val *= (Variant)t; }
+void cssVariant::operator/=(cssEl& t) 	{ val /= (Variant)t; }
+
+bool cssVariant::operator< (cssEl& s) { return (val < (Variant)s); }
+bool cssVariant::operator> (cssEl& s) { return (val > (Variant)s); }
+bool cssVariant::operator! () 	    { return ( ! val); }
+bool cssVariant::operator<=(cssEl& s) { return (val <= (Variant)s); }
+bool cssVariant::operator>=(cssEl& s) { return (val >= (Variant)s); }
+bool cssVariant::operator==(cssEl& s) { return (val == (Variant)s); }
+bool cssVariant::operator!=(cssEl& s) { return (val != (Variant)s); }
+bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && ((Variant)s).toBool()); }
+bool cssVariant::operator||(cssEl& s) { return (val.toBool() || ((Variant)s).toBool()); }
 
 
 //////////////////////////////////
@@ -282,9 +356,8 @@ String cssPtr::PrintStr() const {
     tmp = (ptr.El())->PrintStr();
   return String(GetTypeName()) + "* " + name + " --> " + tmp;
 }
-String& cssPtr::GetStr() const {
-  ((cssEl*)this)->tmp_str = String("--> ") + (ptr.El())->name + " = " + (ptr.El())->GetStr();
-  return (String&)tmp_str;
+String cssPtr::GetStr() const {
+  return String("--> ") + (ptr.El())->name + " = " + (ptr.El())->GetStr();
 }
 
 cssEl* cssPtr::GetNonPtrTypeObj() const {
@@ -483,9 +556,8 @@ cssEl::RunStat cssArray::Do(cssProg* prg) {
   return cssEl::Running;
 }
 
-String& cssArray::GetStr() const {
-  ((cssEl*)this)->tmp_str=PrintFStr();
-  return (String&)tmp_str;
+String cssArray::GetStr() const {
+  return PrintFStr();
 }
 
 int cssArray::Alloc(int no) {
@@ -881,12 +953,11 @@ String cssEnum::PrintFStr() const {
   return nm->name;
 }
 
-String& cssEnum::GetStr() const {
+String cssEnum::GetStr() const {
   cssEl* nm = type_def->FindValue(val);
   if(nm == &cssMisc::Void)
     return cssInt::GetStr();
-  ((cssEl*)this)->tmp_str = nm->name;
-  return (String&)tmp_str;
+  return nm->name;
 }
 
 void cssEnum::operator=(const String& cp) {
@@ -1176,9 +1247,8 @@ void cssClassType::SetTypeName(const char* nm) {
   types->name = name + "::types";
 }
 
-String& cssClassType::GetStr() const {
-  ((cssEl*)this)->tmp_str=PrintFStr();
-  return (String&)tmp_str;
+String cssClassType::GetStr() const {
+  return PrintFStr();
 }
 void cssClassType::AddParent(cssClassType* par) {
   parents->Push(par);
@@ -1604,9 +1674,8 @@ int cssClassInst::Edit(bool wait) {
 }
 #endif //
 
-String& cssClassInst::GetStr() const {
-  ((cssEl*)this)->tmp_str=PrintFStr();
-  return (String&)tmp_str;
+String cssClassInst::GetStr() const {
+  return PrintFStr();
 }
 
 String	cssClassInst::PrintStr() const {

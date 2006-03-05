@@ -121,6 +121,7 @@ cssArrayType    cssMisc::VoidArrayType;         // just needed for maketoken
 
 String		cssMisc::VoidStringVal;
 cssString	cssMisc::VoidString;
+cssVariant	cssMisc::VoidVariant;
 cssEnumType	cssMisc::VoidEnumType("VoidEnum");
 cssClassType	cssMisc::VoidClassType("VoidClass");
 
@@ -360,7 +361,7 @@ const int cssElFun::ArgMax = 64;
 // 	cssEl    	//
 //////////////////////////
 
-String cssEl::no_string;
+//String cssEl::no_string;
 
 cssEl::~cssEl() {
   if(addr != NULL)
@@ -516,6 +517,31 @@ void cssEl::Load(istream& strm) {
     return;
   }
   *this = taMisc::LexBuf;	// set via string assgn
+}
+
+void cssEl::operator=(const Variant& val) {
+  switch (val.type()) {
+  case Variant::T_Invalid: 
+    CvtErr("(_nilVariant)"); break;
+  case Variant::T_Bool: // note: because a cssBool derives from cssInt
+  case Variant::T_Char: // note: because a cssChar derives from cssInt
+  case Variant::T_Int:
+    operator=(val.toInt()); break;
+  // not great, but anything unsigned, or large, should be Real
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+  case Variant::T_Double:
+    operator=(val.toDouble()); break;
+  case Variant::T_String: 
+    operator=(val.toString()); break;
+  case Variant::T_Ptr: 
+    operator=(val.toPtr()); break;
+  case Variant::T_Base: 
+  case Variant::T_Matrix:
+    operator=(val.toBase()); break;
+  default: return ;
+  }
 }
 
 cssEl::operator TAPtr() const {

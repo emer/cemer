@@ -646,6 +646,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\css\css_parse.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\css\css_parse.y">
+				</File>
+				<File
 					RelativePath="..\..\..\src\css\css_qt.h">
 				</File>
 				<File

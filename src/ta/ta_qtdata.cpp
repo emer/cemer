@@ -2375,7 +2375,7 @@ TAPtr taiToken::GetValue() {
 }
 
 void taiToken::ItemChosen(taiAction* menu_el) {
-  setCur_obj((TAPtr)(menu_el->usr_data));
+  setCur_obj(menu_el->usr_data.toBase());
 }
 
 void taiToken::Edit() {
@@ -2583,7 +2583,7 @@ void* taiSubToken::GetValue() {
   if (cur == NULL)
     return NULL;
   else
-    return cur->usr_data;
+    return cur->usr_data.toPtr();
 }
 
 void taiSubToken::Edit() {
@@ -2797,7 +2797,7 @@ QWidget* taiMethodDefMenu::GetRep() {
 void* taiMethodDefMenu::GetValue() {
   taiAction* cur = ta_actions->curSel();
   if (cur != NULL)
-    return cur->usr_data;
+    return cur->usr_data.toPtr();
   return NULL;
 }
 

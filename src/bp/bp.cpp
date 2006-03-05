@@ -545,7 +545,135 @@ void BpNetwork::Initialize() {
 //   BpProject	        //
 //////////////////////////
 
+String bp_defaults =
+"// ta_Dump File v2.0\n\
+TypeDefault_Group .projects[0].defaults { \n\
+TypeDefault_Group .projects[0].defaults {\n\
+TypeDefault @[0] { \n\
+taBase_Group @.active_membs {\n\
+NameValue @[0] { };\n\
+NameValue @[1] { };\n\
+NameValue @[2] { };\n\
+NameValue @[3] { };\n\
+};\n\
+};\n\
+TypeDefault @[1] { \n\
+taBase_Group @.active_membs {\n\
+NameValue @[0] { };\n\
+NameValue @[1] { };\n\
+};\n\
+};\n\
+TypeDefault @[2] { \n\
+taBase_Group @.active_membs {\n\
+NameValue @[0] { };\n\
+};\n\
+};\n\
+TypeDefault @[3] { \n\
+taBase_Group @.active_membs {\n\
+NameValue @[0] { };\n\
+};\n\
+};\n\
+TypeDefault @[4] { \n\
+taBase_Group @.active_membs {\n\
+NameValue @[0] { };\n\
+};\n\
+};\n\
+};\n\
+};\n\
+TypeDefault_Group .projects[0].defaults {\n\
+el_typ=TypeDefault;\n\
+el_def=0;\n\
+name=\"\";\n\
+TypeDefault @[0] {\n\
+name=\"Projection\";\n\
+default_type=Projection;\n\
+active_membs {\n\
+el_typ=NameValue;\n\
+el_def=0;\n\
+name=\"taBase_Group_6\";\n\
+NameValue @[0] {\n\
+name=\"spec\";\n\
+value=\"{type=FullPrjnSpec: spec=NULL: }\";\n\
+};\n\
+NameValue @[1] {\n\
+name=\"con_type\";\n\
+value=\"BpCon\";\n\
+};\n\
+NameValue @[2] {\n\
+name=\"con_gp_type\";\n\
+value=\"BpCon_Group\";\n\
+};\n\
+NameValue @[3] {\n\
+name=\"con_spec\";\n\
+value=\"{type=BpConSpec: spec=NULL: }\";\n\
+};\n\
+};\n\
+};\n\
+TypeDefault @[1] {\n\
+name=\"Layer\";\n\
+default_type=Layer;\n\
+active_membs {\n\
+el_typ=NameValue;\n\
+el_def=0;\n\
+name=\"taBase_Group_1\";\n\
+NameValue @[0] {\n\
+name=\"units\";\n\
+value=\"Size: 0 (BpUnit)\";\n\
+};\n\
+NameValue @[1] {\n\
+name=\"unit_spec\";\n\
+value=\"{type=BpUnitSpec: spec=NULL: }\";\n\
+};\n\
+};\n\
+};\n\
+};\n\
+TypeDefault .projects[0].defaults[0] {\n\
+name=\"Projection\";\n\
+default_type=Projection;\n\
+active_membs {\n\
+el_typ=NameValue;\n\
+el_def=0;\n"
+"name=\"taBase_Group_6\";\n\
+NameValue @[0] {\n\
+name=\"spec\";\n\
+value=\"{type=FullPrjnSpec: spec=NULL: }\";\n\
+};\n\
+NameValue @[1] {\n\
+name=\"con_type\";\n\
+value=\"BpCon\";\n\
+};\n\
+NameValue @[2] {\n\
+name=\"con_gp_type\";\n\
+value=\"BpCon_Group\";\n\
+};\n\
+NameValue @[3] {\n\
+name=\"con_spec\";\n\
+value=\"{type=BpConSpec: spec=NULL: }\";\n\
+};\n\
+};\n\
+};\n\
+TypeDefault .projects[0].defaults[1] {\n\
+name=\"Layer\";\n\
+default_type=Layer;\n\
+active_membs {\n\
+el_typ=NameValue;\n\
+el_def=0;\n\
+name=\"taBase_Group_1\";\n\
+NameValue @[0] {\n\
+name=\"units\";\n\
+value=\"Size: 0 (BpUnit)\";\n\
+};\n\
+NameValue @[1] {\n\
+name=\"unit_spec\";\n\
+value=\"{type=BpUnitSpec: spec=NULL: }\";\n\
+};\n\
+};\n\
+};\n\
+";
+
 void BpProject::Initialize() {
   networks.SetBaseType(&TA_BpNetwork);
   wizards.SetBaseType(&TA_BpWizard);
+  defaults_str = bp_defaults;
+  defaults_file = "bp.def";
 }

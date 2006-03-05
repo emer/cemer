@@ -27,6 +27,7 @@
 #include <sstream>
 
 #include "ta_string.h"
+#include "ta_variant.h"
 #include "css_extern_support.h"
 
 // support for ta_type is neccessary to get file and string member funcs
@@ -36,7 +37,9 @@
 #include "ta_type.h"
 #include "ta_base.h"
 
-#include <QObject>
+#ifdef TA_USE_QT
+# include <QObject>
+#endif
 
 #include <signal.h>
 #include <setjmp.h>
@@ -53,6 +56,7 @@ class cssInt;
 class cssChar;
 class cssReal;
 class cssString;
+class cssVariant;
 class cssBool;
 
 class cssPtr;
@@ -85,6 +89,7 @@ class cssCPtr_enum;
 class cssCPtr_double;
 class cssCPtr_float;
 class cssCPtr_String;
+class cssCPtr_Variant;
 
 class cssDef;
 
@@ -152,6 +157,7 @@ public:
   static cssArrayType   VoidArrayType;  // a void array type (for maketoken)
   static String		VoidStringVal;
   static cssString	VoidString;
+  static cssVariant	VoidVariant;
   static cssEnumType	VoidEnumType; 	// a void enum type
   static cssClassType	VoidClassType; 	// a void class type
 
@@ -271,10 +277,10 @@ public:
 class CSS_API cssEl {
 public:
   int		refn;		// number of times referred to
-  static String no_string;	// when no string val is avail
+//obs  static String no_string;	// when no string val is avail
 // todo: tmp_str should be mutable, can get rid of all those stupid casts..
-// mutable String tmp_str;	// temporary string when a char* cast is needed
-  String 	tmp_str;	// temporary string when a char* cast is needed
+ mutable String tmp_str;	// string used by parsing system
+//obs  String 	tmp_str;	// temporary string when a char* cast is needed
   cssElPtr*	addr;		// address of this item (if other than 'this')
 public:
   enum cssTypes {
@@ -298,7 +304,8 @@ public:
     T_C_Ptr,			// a pointer to a C object
     T_TA,			// TypeAccess type
     T_PP_Def, 			// pre-processor define
-    T_SubShell			// sub-shell prog space
+    T_SubShell,			// sub-shell prog space
+    T_Variant			// Variant
   };
 
   enum RunStat {	// css running status
@@ -331,6 +338,11 @@ public:
   virtual int		GetParse() const	{ return CSS_VAR; }
   virtual int		IsRef() const	      	{ return false; }
   // check to see if a var is actually a ref to a var
+  virtual bool		IsStringType() const   	{ return false; }
+    // true for string-ish types, including cssString, cssChar, and a Variant of those types
+  virtual bool		IsNumericTypeStrict() const   { return false; }
+    // true for number types, including cssReal, cssInt, cssChar,  a Variant of those types
+    // NOTE: Char is true for both, so know your context before assuming...
   virtual cssEl*	GetActualObj() 		{ return this; }
   // get non-reference, non-pointer object
 
@@ -419,7 +431,8 @@ public:
   { cssMisc::Error(prog, "Conversion:", opr, "not defined for type:", GetTypeName()); }
 
   // convert from types
-  virtual String& GetStr() const 		{ return no_string; }
+  virtual String GetStr() const 		{ return _nilString; }
+  virtual Variant GetVar() const 		{ return _nilVariant; }
   virtual operator Real() const	 		{ return 0; }
   virtual operator float() const 		{ return (float)(Real)*this; }
   virtual operator Int() const	 		{ return 0; }
@@ -438,6 +451,7 @@ public:
   virtual operator const char*() const 		{ return (const char*)GetStr(); }
   virtual operator String() const		{ return GetStr(); }
   virtual operator char*() const		{ return (char*)(const char*)GetStr(); }
+          operator Variant() const		{ return GetVar(); }
   virtual operator unsigned char*() const	{ return (unsigned char*)(const char*)*this; }
 #ifndef NO_SIGNED
   virtual operator signed char*() const		{ return (signed char*)(const char*)*this; }
@@ -459,6 +473,7 @@ public:
   virtual operator double*() const	{ CvtErr("(double*)"); return NULL; }
   virtual operator float*() const	{ CvtErr("(float*)"); return NULL; }
   virtual operator String*() const	{ CvtErr("(String*)"); return NULL; }
+  virtual operator Variant*() const	{ CvtErr("(Variant*)"); return NULL; }
 #ifndef NO_BUILTIN_BOOL
   virtual operator bool*() const	{ CvtErr("(bool*)"); return NULL; }
 #endif
@@ -469,6 +484,7 @@ public:
   virtual operator double**() const	{ CvtErr("(double**)"); return NULL; }
   virtual operator float**() const	{ CvtErr("(float**)"); return NULL; }
   virtual operator String**() const	{ CvtErr("(String**)"); return NULL; }
+  virtual operator Variant**() const	{ CvtErr("(Variant**)"); return NULL; }
 #ifndef NO_BUILTIN_BOOL
   virtual operator bool**() const	{ CvtErr("(bool**)"); return NULL; }
 #endif
@@ -492,12 +508,15 @@ public:
   virtual operator TypeDef*() const;
   virtual operator MemberDef*() const;
   virtual operator MethodDef*() const;
+  virtual void operator=(TAPtr*) 		{ CvtErr("(TAPtr)"); }
 #endif
 
   // assign from types
   virtual void operator=(Real)	 		{ CvtErr("(Real)"); }
   virtual void operator=(Int)			{ CvtErr("(Int)"); }
   virtual void operator=(const String&)	 	{ CvtErr("(String)"); }
+  virtual void operator=(const Variant& val); 
+    // usually not overridden, just dispatches according to type
 
   virtual void operator=(void*)	 		{ CvtErr("(void*)"); }
   virtual void operator=(void**)		{ CvtErr("(void**)"); }
@@ -677,7 +696,8 @@ public:
   cssCloneOnly(cssElCFun);
   cssEl*	MakeToken_stub(int na, cssEl* arg[]);
   // return retv_type token, else cssInt
-  String& GetStr() const	{ return (String&)name; } // types can give strings...
+  String GetStr() const	{ return name; } // types can give strings...
+  Variant GetVar() const { return name; }
 };
 
 // pt can be either the parsetype or the retv_type
@@ -863,7 +883,8 @@ public:
   virtual void*	GetVoidPtr(int cnt = 1) const;	// goes down till ptr_cnt == cnt
   virtual void* GetNonNullVoidPtr(int cnt = 1) const; // generates error if null
 
-  String&	GetStr() const	{ ((cssEl*)this)->tmp_str = String((long)ptr); return (String&)tmp_str; }
+  String	GetStr() const	{ return String((long)ptr);}
+  Variant	GetVar() const { return Variant(ptr); }
   operator	Real() const	{ CvtErr("(Real)"); return 0.0; }
   operator 	Int() const	{ return (Int)(long)(ptr); }
   operator 	void*()	const	{ return GetVoidPtr(1); }
@@ -1216,9 +1237,9 @@ public:
 };
 
 
-class CSS_API cssProgSpace: QObject {
+class CSS_API cssProgSpace: public QObject {
   // an entire program space, including all functions defined, variables etc.
-  //note: no signals/slots or metadata, so we don't use Q_Object macro
+  //note: no signals/slots or metadata, so we don't use Q_OBJECT macro
 INHERITED(QObject)
 friend class cssProg;
 protected:

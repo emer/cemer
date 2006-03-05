@@ -28,6 +28,10 @@
 #include "ta_qttype_def.h"
 #endif
 
+/////////////////////////
+//  cssTA	       //
+/////////////////////////
+
 void cssTA::Constr() {
   type_def = NULL;
 }
@@ -236,16 +240,17 @@ cssTA::operator TAPtr*() const {
 }
 
 
-String& cssTA::GetStr() const {
+String cssTA::GetStr() const {
+  String rval;
   if(type_def->InheritsFrom(&TA_istream) || type_def->InheritsFrom(&TA_fstream)) {
-    if(ptr == NULL)
-      return no_string;
-    *((istream*)*this) >> ((cssEl*)this)->tmp_str;
-    return (String&)tmp_str;
+    if (ptr == NULL)
+      return rval;
+    *((istream*)*this) >> rval;
+    return rval;
   }
   if(type_def->InheritsFrom(TA_TypeDef)) {
     if(ptr == NULL)
-      return no_string;
+      return rval;
     else if(ptr_cnt == 1)
       return ((TypeDef*)ptr)->name;
     else if((ptr_cnt == 2) && *((TypeDef**)ptr) != NULL)
@@ -254,38 +259,38 @@ String& cssTA::GetStr() const {
   }
   else if(type_def->InheritsFrom(TA_MemberDef)) {
     if(ptr == NULL)
-      return no_string;
+      return rval;
     else if(ptr_cnt == 1)
-      ((cssEl*)this)->tmp_str = TA_MemberDef_ptr.GetValStr((void*)&ptr);
+      rval = TA_MemberDef_ptr.GetValStr((void*)&ptr);
     else if((ptr_cnt == 2) && *((MemberDef**)ptr) != NULL)
-      ((cssEl*)this)->tmp_str = TA_MemberDef_ptr.GetValStr(((MemberDef**)ptr));
-    return (String&)tmp_str;
+      rval = TA_MemberDef_ptr.GetValStr(((MemberDef**)ptr));
+    return rval;
   }
   else if(type_def->InheritsFrom(TA_MethodDef)) {
     if(ptr == NULL)
-      return no_string;
+      return rval;
     else if(ptr_cnt == 1)
-      ((cssEl*)this)->tmp_str = TA_MethodDef_ptr.GetValStr((void*)&ptr);
+      rval = TA_MethodDef_ptr.GetValStr((void*)&ptr);
     else if((ptr_cnt == 2) && *((MethodDef**)ptr) != NULL)
-      ((cssEl*)this)->tmp_str = TA_MethodDef_ptr.GetValStr(((MethodDef**)ptr));
-    return (String&)tmp_str;
+      rval = TA_MethodDef_ptr.GetValStr(((MethodDef**)ptr));
+    return rval;
   }
   if(ptr != NULL) {
     if(ptr_cnt == 1)
-      ((cssEl*)this)->tmp_str = type_def->GetValStr(ptr);
+      rval = type_def->GetValStr(ptr);
     else if(ptr_cnt == 2) {
       // need the correct typedef here, either find it or make it..
       String ptrnm = type_def->name + "_ptr";
       TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
       if(ptr_typ != NULL)
-	((cssEl*)this)->tmp_str = ptr_typ->GetValStr(ptr);
+	rval = ptr_typ->GetValStr(ptr);
       else {
 	TypeDef nw_tp(*type_def);
 	nw_tp.ptr++;
-	((cssEl*)this)->tmp_str = nw_tp.GetValStr(ptr);
+	rval = nw_tp.GetValStr(ptr);
       }
     }
-    return (String&)tmp_str;
+    return rval;
   }
   return type_def->name;
 }
@@ -1029,6 +1034,8 @@ void cssTA_Base::operator=(const cssEl& s) {
   cssTA::operator=(s);
   Assign_impl(s);
 }
+//void operator=(TAPtr*);
+
 void cssTA_Base::InitAssign(const cssEl& s) {
   cssTA::InitAssign(s);
   Assign_impl(s);

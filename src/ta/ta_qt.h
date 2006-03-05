@@ -44,7 +44,7 @@ typedef taPtrList<iDataViewer> 	iDataViewer_PtrList; // #IGNORE
 //////////////////////////////
 
 
-class TA_API taiMisc: public QObject { // #NO_TOKENS #INSTANCE miscellaneous stuff for tai
+class TA_API taiMisc: public QObject { // #NO_TOKENS #NO_INSTANCE miscellaneous stuff for tai
   Q_OBJECT
 public:
   //NOTE: all xxSize values use the ls 4 bits of every enum -- this enables

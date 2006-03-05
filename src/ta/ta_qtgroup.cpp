@@ -266,10 +266,10 @@ TAPtr gpiListEls::GetValue() {
        || (cur->text() == "gp.<Over max, select...>"))
       return cur_obj;
     else
-      return (TAPtr)cur->usr_data;
+      return cur->usr_data.toBase();
   }
   if(cur != NULL)
-    return (TAPtr)cur->usr_data;
+    return cur->usr_data.toBase();
   return NULL;
 }
 
