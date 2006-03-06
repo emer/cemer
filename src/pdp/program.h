@@ -45,27 +45,10 @@ private:
   void	Destroy()	{}
 };
 
-class PDP_API UserScriptEl: public ProgEl { 
-  // ProgEl for a user scriptlet
-INHERITED(ProgEl)
-public:
-  String	    user_script; // #EDITOR content of the user scriptlet
-  
-  void	Copy_(const UserScriptEl& cp);
-  COPY_FUNS(UserScriptEl, ProgEl);
-  TA_BASEFUNS(UserScriptEl);
-
-protected:
-  override String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
-
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
 class PDP_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
+  virtual String    GenCss(int indent_level = 0); // generate the Css code for this object
   TA_BASEFUNS(ProgEl_List);
 
 private:
@@ -92,6 +75,64 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{CutLinks();}
+};
+
+
+class PDP_API ProgVar: public ProgEl { // #INLINE a program variable, or function argument
+INHERITED(ProgEl)
+public:
+  String	    var_name; // name of the variable
+  TypeDef*	    var_type; // #DEF_TA_Variant #NO_NULL type of the variable
+  String	    init_val; // (optional) initial value of variable
+  
+  void	Copy_(const ProgVar& cp);
+  COPY_FUNS(ProgVar, ProgEl);
+  TA_BASEFUNS(ProgVar);
+ 
+protected:
+  override String    GenCssBody_impl(int indent_level); // note: no separator/terminator, ident ignored
+ 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+
+class PDP_API ProgVar_List: public ProgEl_List {
+INHERITED(ProgEl_List)
+public:
+  enum VarContext {
+    VC_ProgVars,  // program variables
+    VC_FuncArgs  // function arguments
+  };
+  
+  VarContext	    var_context; // #HIDDEN context of vars, set by owner
+  
+  override String    GenCss(int indent_level = 0); // generate the Css code for this object
+  TA_BASEFUNS(ProgVar_List);
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+
+class PDP_API UserScriptEl: public ProgEl { 
+  // ProgEl for a user scriptlet
+INHERITED(ProgEl)
+public:
+  String	    user_script; // #EDITOR content of the user scriptlet
+  
+  void	Copy_(const UserScriptEl& cp);
+  COPY_FUNS(UserScriptEl, ProgEl);
+  TA_BASEFUNS(UserScriptEl);
+
+protected:
+  override String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
 };
 
 
@@ -124,8 +165,8 @@ class PDP_API CondEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   String	    cond_test; // condition test
-  ProgList	    true_els; // items to execute if condition true
-  ProgList	    false_els; // items to execute if condition false
+  ProgEl_List	    true_els; // #BROWSE items to execute if condition true
+  ProgEl_List	    false_els; // #BROWSE items to execute if condition false
   
   void	InitLinks();
   void	CutLinks();

@@ -54,6 +54,73 @@ String UserScriptEl::GenCssBody_impl(int indent_level) {
 
 
 //////////////////////////
+//  ProgEl_List		//
+//////////////////////////
+
+String ProgEl_List::GenCss(int indent_level) {
+  String rval;
+  taListItr itr;
+  ProgEl* el;
+  FOR_ITR_EL(ProgEl, el, this->, itr) {
+    rval += el->GenCss(indent_level); 
+  }
+  return rval;;
+}
+
+
+//////////////////////////
+//  ProgVar		//
+//////////////////////////
+
+void ProgVar::Initialize() {
+  var_type = &TA_Variant;
+}
+
+void ProgVar::Copy_(const ProgVar& cp) {
+  var_name = cp.var_name;
+  var_type = cp.var_type;
+  init_val = cp.init_val;
+}
+
+String ProgVar::GenCssBody_impl(int) {//indent ignored
+  String rval = var_type->name + " " + var_name;
+  //TODO: maybe should check for missing "" for
+  // strings, and automatically provide; or could do in UAE
+  if (!init_val.empty())
+    rval += " = " + init_val;
+  return rval;
+}
+
+
+//////////////////////////
+//  ProgVar_List		//
+//////////////////////////
+
+void ProgVar_List::Initialize() {
+  SetBaseType(&TA_ProgVar);
+  var_context = VC_ProgVars;
+}
+
+String ProgVar_List::GenCss(int indent_level) {
+  String rval;
+  ProgVar* el;
+  for (int i = 0; i < size; ++i) {
+    el = (ProgVar*)FastEl(i);
+    if (var_context == VC_FuncArgs) {
+      if (i > 0)
+        rval += ", ";
+    } else {
+      rval += ProgEl::indent(indent_level); 
+    }
+    rval += el->GenCss(0); //note: indent not used by ProgVar
+    if (var_context == VC_ProgVars)
+      rval += ";\n";
+  }
+  return rval;
+}
+
+
+//////////////////////////
 //  ProgList		//
 //////////////////////////
 
@@ -75,13 +142,7 @@ void ProgList::Copy_(const ProgList& cp) {
 }
 
 String ProgList::GenCssBody_impl(int indent_level) {
-  String rval;
-  taListItr itr;
-  ProgEl* el;
-  FOR_ITR_EL(ProgEl, el, prog_els., itr) {
-    rval += el->GenCss(indent_level); 
-  }
-  return rval;;
+  return prog_els.GenCss(indent_level);
 }
 
 
@@ -91,9 +152,9 @@ String ProgList::GenCssBody_impl(int indent_level) {
 
 void LoopEl::Initialize() {
   loop_var = "i"; // the loop variable
-  init_val = "i = 0"; // initial value of loop variable
+  init_val = "0"; // initial value of loop variable
   loop_test = "i < 20"; // the test each time
-  loop_iter = "i++"; // the iteration operation
+  loop_iter = "i += 1"; // the iteration operation
 }
 
 void LoopEl::Copy_(const LoopEl& cp) {
@@ -105,8 +166,10 @@ void LoopEl::Copy_(const LoopEl& cp) {
 
 String LoopEl::GenCssPre_impl(int indent_level) {
   String rval = indent(indent_level);
-  rval += "for (Int " + loop_var + "; " + loop_test
-    + "; " + loop_iter + ") {\n";
+  rval += "{Int " + loop_var + ";\n";
+  rval += "for (" + loop_var + " = " + init_val + "; "
+    + loop_test + "; " 
+    + loop_iter + ") {\n";
   return rval; 
 }
 
@@ -115,7 +178,7 @@ String LoopEl::GenCssBody_impl(int indent_level) {
 }
 
 String LoopEl::GenCssPost_impl(int indent_level) {
-  return indent(indent_level) + "}\n";
+  return indent(indent_level) + "}}\n";
 }
 
 
