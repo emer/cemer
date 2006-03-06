@@ -432,7 +432,7 @@ public:
   void operator=(void**)	{ CvtErr("(void**)"); }
 
   // operators
-  void operator=(const cssEl& s)	{ val = (Variant)s; }
+  void operator=(const cssEl& s)	{ val = s.GetVar(); }
 
   cssEl* operator+(cssEl& t);
   cssEl* operator-(cssEl& t);

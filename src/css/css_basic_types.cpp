@@ -244,18 +244,18 @@ cssEl* cssVariant::operator+(cssEl& t) {
 // string concatenation takes precedence over numeric addition
  if (val.isStringType()) {
    cssVariant* r = new cssVariant(*this,""); 
-   r->val += (String)t; 
+   r->val += t.GetStr(); 
    return r; 
  } else {
    cssVariant* r = new cssVariant(*this,""); 
-   r->val += (Variant)t; 
+   r->val += t.GetVar(); 
    return r; 
  }
 }
 
 cssEl* cssVariant::operator-(cssEl& t) { 
   cssVariant* r = new cssVariant(*this,""); 
-  r->val -= (Variant)t; 
+  r->val -= t.GetVar(); 
   return r;
 }
 
@@ -265,13 +265,13 @@ cssEl* cssVariant::operator*() {
 
 cssEl* cssVariant::operator*(cssEl& t) { 
   cssVariant* r = new cssVariant(*this,""); 
-  r->val *= (Variant)t; 
+  r->val *= t.GetVar(); 
   return r; 
 }
 
 cssEl* cssVariant::operator/(cssEl& t) {
   cssVariant* r = new cssVariant(*this,""); 
-  r->val /= (Variant)t; 
+  r->val /= t.GetVar(); 
   return r; 
 }
 
@@ -289,20 +289,20 @@ cssEl* cssVariant::operator-() {
   return r; 
 }
 
-void cssVariant::operator+=(cssEl& t) 	{ val += (Variant)t; }
-void cssVariant::operator-=(cssEl& t) 	{ val -= (Variant)t; }
-void cssVariant::operator*=(cssEl& t) 	{ val *= (Variant)t; }
-void cssVariant::operator/=(cssEl& t) 	{ val /= (Variant)t; }
+void cssVariant::operator+=(cssEl& s) 	{ val += s.GetVar(); }
+void cssVariant::operator-=(cssEl& s) 	{ val -= s.GetVar(); }
+void cssVariant::operator*=(cssEl& s) 	{ val *= s.GetVar(); }
+void cssVariant::operator/=(cssEl& s) 	{ val /= s.GetVar(); }
 
-bool cssVariant::operator< (cssEl& s) { return (val < (Variant)s); }
-bool cssVariant::operator> (cssEl& s) { return (val > (Variant)s); }
+bool cssVariant::operator< (cssEl& s) { return (val < s.GetVar()); }
+bool cssVariant::operator> (cssEl& s) { return (val > s.GetVar()); }
 bool cssVariant::operator! () 	    { return ( ! val); }
-bool cssVariant::operator<=(cssEl& s) { return (val <= (Variant)s); }
-bool cssVariant::operator>=(cssEl& s) { return (val >= (Variant)s); }
-bool cssVariant::operator==(cssEl& s) { return (val == (Variant)s); }
-bool cssVariant::operator!=(cssEl& s) { return (val != (Variant)s); }
-bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && ((Variant)s).toBool()); }
-bool cssVariant::operator||(cssEl& s) { return (val.toBool() || ((Variant)s).toBool()); }
+bool cssVariant::operator<=(cssEl& s) { return (val <= s.GetVar()); }
+bool cssVariant::operator>=(cssEl& s) { return (val >= s.GetVar()); }
+bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
+bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
+bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && (s.GetVar()).toBool()); }
+bool cssVariant::operator||(cssEl& s) { return (val.toBool() || (s.GetVar()).toBool()); }
 
 
 //////////////////////////////////

@@ -477,7 +477,7 @@ bool Variant::isNumeric() const {
     if (!m_is_numeric_valid) {
 #ifdef TA_USE_QT
       // we check if a valid number by using QString's converter
-      QString tmp(getString());
+      QString tmp(getString().chars());
       bool ok;
       tmp.toDouble(&ok);
       m_is_numeric = ok;
