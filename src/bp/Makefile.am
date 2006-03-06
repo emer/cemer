@@ -28,9 +28,6 @@ SRCS=\
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
-pdp_TA_type.h:
-	cd ../pdp && ${MAKE} pdp_TA_type.h && cd ../bp && ${MAKE} bp_TA_type.h
-
 noinst_LTLIBRARIES =\
 	libbp_TypeAccess@PDP_SUFFIX@.la \
 	libbp@PDP_SUFFIX@.la
@@ -62,5 +59,5 @@ libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libbp@PDP_SUFFIX@_la_CPPFLAGS)
 
 libbp_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
 
-BUILT_SOURCES = pdp_TA_type.h
+BUILT_SOURCES = bp_TA_type.h
 
