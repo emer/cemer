@@ -94,9 +94,8 @@ changelog:
 force_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log
