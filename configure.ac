@@ -174,8 +174,10 @@ AC_CONFIG_FILES([Makefile
 		src/css/Makefile
 		src/css_bin/Makefile
 		src/tamisc/Makefile
+		src/ta_lib/Makefile
 		src/bp/Makefile
 		src/pdp/Makefile
+		src/pdp_lib/Makefile
 		src/pdp_bin/Makefile
 		manual/Makefile])
 AC_OUTPUT

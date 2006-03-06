@@ -80,7 +80,9 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-lib_LTLIBRARIES = libpdp@PDP_SUFFIX@.la
+noinst_LTLIBRARIES =\
+	libpdp@PDP_SUFFIX@.la \
+	libpdpTypeAccess@PDP_SUFFIX@.la
 
 libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
@@ -105,8 +107,6 @@ if TA_GUI
 libpdp@PDP_SUFFIX@_la_LIBADD +=\
 	 @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 endif
-
-noinst_LTLIBRARIES = libpdpTypeAccess@PDP_SUFFIX@.la
 
 libpdpTypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	pdp_TA.cpp \

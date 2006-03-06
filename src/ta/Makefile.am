@@ -133,7 +133,7 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-lib_LTLIBRARIES = libta@PDP_SUFFIX@.la
+noinst_LTLIBRARIES = libta@PDP_SUFFIX@.la libtaTypeAccess@PDP_SUFFIX@.la
 
 libta@PDP_SUFFIX@_la_DEPENDENCIES = libtaTypeAccess@PDP_SUFFIX@.la
 
@@ -158,8 +158,6 @@ if TA_GUI
 libta@PDP_SUFFIX@_la_LIBADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 
 endif
-
-noinst_LTLIBRARIES = libtaTypeAccess@PDP_SUFFIX@.la
 
 libtaTypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	ta_TA.cpp \

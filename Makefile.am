@@ -6,8 +6,31 @@ dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 # SUBDIRS tells the autotools which directories have Makefile.am's in them.
 # If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
 
-DIST_SUBDIRS = src/maketa src/taiqtso src/css src/tamisc src/ta src/bp src/pdp src/pdp_bin manual
-SUBDIRS = src/maketa @WANT_TAIQTSO@ src/css src/tamisc src/ta src/bp src/pdp src/pdp_bin manual
+DIST_SUBDIRS =\
+	src/maketa \
+	src/taiqtso \
+	src/css \
+	src/ta \
+	src/tamisc \
+	src/ta_lib \
+	src/bp \
+	src/pdp \
+	src/pdp_lib \
+	src/pdp_bin \
+	manual
+
+SUBDIRS =\
+	src/maketa \
+	@WANT_TAIQTSO@ \
+	src/css \
+	src/ta \
+	src/tamisc \
+	src/ta_lib \
+	src/bp \
+	src/pdp \
+	src/pdp_lib \
+	src/pdp_bin \
+	manual
 
 EXTRA_DIST += src/ta/ios-g++-3.1
 

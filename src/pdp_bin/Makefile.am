@@ -13,8 +13,8 @@ bin_PROGRAMS = pdp@PDP_SUFFIX@++
 pdp@PDP_SUFFIX@___SOURCES = main.cpp
 
 pdp@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/pdp/libpdp@PDP_SUFFIX@.la \
-	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@.la
+	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/ta_lib/libta@PDP_SUFFIX@.la
 
 pdp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@abs_top_builddir@ \
