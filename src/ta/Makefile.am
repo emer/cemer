@@ -148,11 +148,23 @@ libta@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libta@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
-libta@PDP_SUFFIX@_la_LIBADD = @abs_top_builddir@/src/ta/libtaTypeAccess@PDP_SUFFIX@.la
+libta@PDP_SUFFIX@_la_LIBADD =\
+	libtaTypeAccess@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@.la \
+	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la
+
+if TA_GUI
+
+libta@PDP_SUFFIX@_la_LIBADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
+
+endif
 
 noinst_LTLIBRARIES = libtaTypeAccess@PDP_SUFFIX@.la
 
-libtaTypeAccess@PDP_SUFFIX@_la_SOURCES = ta_TA.cpp ta_TA_type.h ta_TA_inst.h
+libtaTypeAccess@PDP_SUFFIX@_la_SOURCES =\
+	ta_TA.cpp \
+	ta_TA_type.h \
+	ta_TA_inst.h
 
 libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libta@PDP_SUFFIX@_la_CPPFLAGS)
 

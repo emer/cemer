@@ -6,14 +6,10 @@ dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 # SUBDIRS tells the autotools which directories have Makefile.am's in them.
 # If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
 
-DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/bp manual
-SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/bp manual
+DIST_SUBDIRS = src/maketa src/taiqtso src/css src/tamisc src/ta src/bp src/pdp src/pdp_bin manual
+SUBDIRS = src/maketa @WANT_TAIQTSO@ src/css src/tamisc src/ta src/bp src/pdp src/pdp_bin manual
 
-# DIST_SUBDIRS = src/maketa src/taiqtso src/ta src/css src/tamisc src/pdp src/leabra src/bp manual
-# SUBDIRS = src/maketa @WANT_TAIQTSO@ src/ta src/css src/tamisc src/pdp src/leabra src/bp manual
-
-EXTRA_DIST +=\
-	src/ta/ios-g++-3.1
+EXTRA_DIST += src/ta/ios-g++-3.1
 
 #For make rpm
 if RPM
@@ -75,9 +71,9 @@ changelog:
 force_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log

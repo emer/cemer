@@ -154,6 +154,9 @@
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
+/* Fix for strange pthread compiler error */
+#define HAVE___ATTRIBUTE__ 
+
 /* When on darwin */
 #define LINUX 1
 

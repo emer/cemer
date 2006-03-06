@@ -23,7 +23,7 @@ This file is part of TA/PDP++
   GNU General Public License for more details.
 ])
 
-AC_DISABLE_SHARED                                      # Disable shared libraries
+#AC_DISABLE_SHARED                                      # Disable shared libraries
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
@@ -43,10 +43,10 @@ AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
-
 PGAC_CHECK_READLINE                                    # Check for readline, termcap etc...
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
+AC_DEFINE([HAVE___ATTRIBUTE__],,[Fix for strange pthread compiler error])
 
 # --with-rpm
 if test x"$rpm" = x"true"; then
@@ -58,6 +58,9 @@ fi
 
 # --enable-debug
 if test x"$debug" = x"true"; then
+  # Create css++ in debug mode
+  AC_SUBST([WANT_CSS_BIN],[src/css_bin])
+
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
   AC_DEFINE([DEBUG],,[Used when debugging])
@@ -96,10 +99,6 @@ else
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
-# --enable-gui
-if test x"$gui" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
-  
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
                    if test x"$debug" = x"true"; then
                      sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest"
@@ -118,6 +117,11 @@ if test x"$gui" = x"true"; then
   if test x"$MOC" = "false"; then
     SIM_AC_CONFIGURATION_WARNING([Failed to find moc])
   fi
+
+# --enable-gui
+if test x"$gui" = x"true"; then
+  SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
+  
   # Functioning SoQt implies functioning Coin!
   SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version -lSoQt -lCoin])
                            CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
@@ -168,9 +172,11 @@ AC_CONFIG_FILES([Makefile
 		src/taiqtso/Makefile
 		src/ta/Makefile
 		src/css/Makefile
+		src/css_bin/Makefile
 		src/tamisc/Makefile
-		src/pdp/Makefile
 		src/bp/Makefile
+		src/pdp/Makefile
+		src/pdp_bin/Makefile
 		manual/Makefile])
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY

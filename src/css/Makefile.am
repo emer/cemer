@@ -54,7 +54,10 @@ HEADS =\
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-lib_LTLIBRARIES = libcss@PDP_SUFFIX@.la
+ta_TA_type.h:
+	cd ../ta && ${MAKE} ta_TA_type.h
+
+noinst_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
@@ -67,27 +70,4 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 
 libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
-# bin_PROGRAMS = css@PDP_SUFFIX@++
-
-# css@PDP_SUFFIX@___DEPENDENCIES = libcss@PDP_SUFFIX@.la
-
-# css@PDP_SUFFIX@___SOURCES = main.cpp
-
-# css@PDP_SUFFIX@___LDADD =\
-# 	../ta/libta@PDP_SUFFIX@.la \
-# 	libcss@PDP_SUFFIX@.la
-
-# css@PDP_SUFFIX@___CPPFLAGS = $(libcss@PDP_SUFFIX@_la_CPPFLAGS)
-
-# css@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
-
-#**************************************************
-#
-#                      GUI
-#
-#**************************************************
-# if TA_GUI
-
-# css@PDP_SUFFIX@___LDADD += @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-
-# endif
+BUILT_SOURCES = ta_TA_type.h
