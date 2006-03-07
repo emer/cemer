@@ -223,10 +223,6 @@ void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
     }
   }
 
-// this is presently not defined
-//  if(mta->gen_iv)
-//    strm << "#include <ta/taiv_type.h>\n";
-
   int i;
   for(i=0; i<hv.size; i++) {
     String nstr = hv.FastEl(i);
@@ -878,7 +874,7 @@ void MemberSpace_Generate_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
       n_non_statics++;
   }
 
-  if((n_non_statics > 0) && !mta->old_cfront) {
+  if (n_non_statics > 0) {
     mbr_off_nm = String("TA_") + ownr->name + "_MbrOff";
     strm << "static int " << ownr->Get_C_Name() << "::* " << mbr_off_nm << ";\n";
   }
@@ -897,19 +893,13 @@ void MemberSpace_Generate_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
     strm << "  {" << tpfld << ",\"" << md->name << "\",\"" << md->desc << "\",\""
 	 << str_opts << "\",\"" << str_lists << "\",\n";
 
-    if(md->is_static) {
+    if (md->is_static) {
       strm << "    (ta_memb_ptr)NULL,1,";
       strm << "(void*)(&" << ownr->Get_C_Name() << "::" << md->name << ")";
-    }
-    else {
-      if(mta->old_cfront) {
-	strm << "    (ta_memb_ptr)(&" << ownr->Get_C_Name() << "::" << md->name << ")";
-      }
-      else {
-	strm << "    *((ta_memb_ptr*)&(" << mbr_off_nm
-	     << "=(int " << ownr->Get_C_Name() << "::*)(&"
-	     << ownr->Get_C_Name() << "::" << md->name << ")))";
-      }
+    } else {
+      strm << "    *((ta_memb_ptr*)&(" << mbr_off_nm
+	    << "=(int " << ownr->Get_C_Name() << "::*)(&"
+	    << ownr->Get_C_Name() << "::" << md->name << ")))";
       strm << ",0,NULL";
     }
     if(md->fun_ptr)	strm << ",1";

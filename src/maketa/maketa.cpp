@@ -77,21 +77,41 @@ extern int yydebug;
 extern "C" int getpid();
 MTA* mta;		// holds mta
 
+// copy the source to the destination, returning true if successful
+bool copy_file(const char* src, const char* dst) {
+  bool rval = false;
+  fstream fsrc, fdst;
+  fsrc.open(src, ios::in | ios::binary);
+  if (!fsrc.is_open()) return false;
+  fdst.open(dst, ios::out | ios::binary);
+  if (!fdst.is_open()) goto exit1;
+  char c1;
+  // from stroustrup
+  while (fsrc.get(c1)) fdst.put(c1);
+  rval = true;
+//exit2:
+  fdst.close();
+exit1:
+  fsrc.close();
+  return rval;
+}
+
 // returns 'true' if both files exist and are the same
 bool files_same(const char* fname1, const char* fname2) {
   bool rval = false;
   fstream in1, in2;
 
-  in1.open(fname1, ios::in);
+  in1.open(fname1, ios::in | ios::binary);
   if (!in1.is_open()) goto exit2;
-  in2.open(fname2, ios::in);
-  if (!in1.is_open()) goto exit1;
+  in2.open(fname2, ios::in | ios::binary);
+  if (!in2.is_open()) goto exit1;
   char c1;  char c2;
+  bool g1;  bool g2;
   while (true) {
-    if (!in1.good() && !in2.good()) break; // same size, done 
-    if (!(in1.good() && in2.good())) goto exit; // different sizes
-    in1.get(c1);
-    in2.get(c2);
+    g1 = in1.get(c1);
+    g2 = in2.get(c2);
+    if (!g1 && !g2) break; // same size, done 
+    if (!(g1 && g2)) goto exit; // different sizes
     if (c1 != c2) goto exit;  // different content
   }
   rval = true; 
@@ -122,12 +142,11 @@ MTA::MTA() {
   thisname = false;
   constcoln = false;
   burp_fundefn = false;
-  gen_css = false;
-  gen_iv = false;
+  gen_css = true;
   gen_instances = false;
   make_hx = false;
+  auto_hx = false;
   class_only = true;
-  old_cfront = false;
   verbose = 0;
 #ifdef TA_OS_WIN
   win_dll = false;
@@ -412,14 +431,15 @@ void mta_cleanup(int err) {
 
 void mta_print_commandline_args(char* argv[]) {
     cerr << "Usage:\t" << argv[0]
-      << "\n[-[-]help | -[-]?]     print this argument listing"
+      << "\n(* indicates default argument)"
+      << "\n[-[-]help | -[-]?]  print this argument listing"
       << "\n[-w]                wait for input before starting (useful when attaching debugger in Windows)"
       << "\n[-v<level>]         verbosity level, 1-5, 1=results,2=more detail,3=trace,4=source,5=parse"
-      << "\n[-hx | -nohx]       generate .hx, .ccx files instead of .h, .cpp (for cmp-based updating)"
-      << "\n[-css]              generate CSS stub functions"
+      << "\n[-hx | -nohx*]      generate .hx, .ccx files instead of .h, .cpp (for cmp-based updating)"
+      << "\n[-autohx | -noautohx*] if making hx files, update h files if changed (autohx implies hx)"
+      << "\n[-css* | -nocss]     generate CSS stub functions"
       << "\n[-instances]        generate instance tokens of types"
       << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
-      << "\n[-old_cfront        support old cfront style class member pointer initializer"
       << "\n[-I<include>]...    path to include files (one path per -I)"
       << "\n[-D<define>]...     define a pre-processor macro"
       << "\n[-cpp=<cpp command>] explicit path for c-pre-processor"
@@ -462,20 +482,23 @@ int main(int argc, char* argv[])
     }
     if(tmp == "-css")
       mta->gen_css = true;
-    else if(tmp == "-iv")
-      mta->gen_iv = true;
+    else if(tmp == "-nocss")
+      mta->gen_css = false;
     else if(tmp == "-instances")
       mta->gen_instances = true;
-    else if(tmp == "-nohx")
+    else if(tmp == "-nohx") 
       mta->make_hx = false;
     else if(tmp == "-hx")
       mta->make_hx = true;
-    else if(tmp == "-class_only")
+    else if(tmp == "-noautohx")
+      mta->auto_hx = false;
+    else if(tmp == "-autohx") {
+      mta->make_hx = true;
+      mta->auto_hx = true;
+    } else if(tmp == "-class_only")
       mta->class_only = true;
     else if(tmp == "-struct_union")
       mta->class_only = false;
-    else if(tmp == "-old_cfront")
-      mta->old_cfront = true;
     else if(tmp == "-w") 
       wait = true;
     else if(tmp == "-k") 
@@ -713,6 +736,26 @@ int main(int argc, char* argv[])
   system(comnd);
 #endif
 
+  // if in autohx mode, then update files that changed
+  if (mta->make_hx && mta->auto_hx) {
+    String fin, fout;
+    fin = mta->basename + "_TA_type.hx";
+    fout = mta->basename + "_TA_type.h";
+    if (!files_same(fin.chars(), fout.chars())) {
+      copy_file(fin.chars(), fout.chars());
+    }
+    fin = mta->basename + "_TA_inst.hx";
+    fout = mta->basename + "_TA_inst.h";
+    if (!files_same(fin.chars(), fout.chars())) {
+      copy_file(fin.chars(), fout.chars());
+    }
+    fin = mta->basename + "_TA.ccx";
+    fout = mta->basename + "_TA.cpp";
+    if (!files_same(fin.chars(), fout.chars())) {
+      copy_file(fin.chars(), fout.chars());
+    }
+  }
+  
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
     cerr << "\n TypeSpace size and hash_table bucket_max values:\n"
 	 << "spc_target:\t" << mta->spc_target.size << "\t" << mta->spc_target.hash_table->bucket_max << "\n"

@@ -120,11 +120,10 @@ public:
   bool		constcoln;	// true if a constructor colon was encountered
   bool		burp_fundefn;	// true if needs to burp after parsing fundefn
   bool		gen_css;	// generate css stuff?
-  bool		gen_iv;		// generate iv stuff (currently not used)
   bool		gen_instances;	// generate instances?
   bool		make_hx;	// make an hx file instead of an h file
+  bool		auto_hx;	// if making hx files, update h files if changed
   bool		class_only;	// parse structs of type "class" only (not struct or union)
-  bool		old_cfront;	// support old cfront member pointer initializer
   int		verbose;	// level of verbosity
 #ifdef TA_OS_WIN
   bool		win_dll;	// if true, use the XXX_API macro for dll linkage
