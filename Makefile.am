@@ -13,8 +13,8 @@ DIST_SUBDIRS =\
 	src/ta \
 	src/tamisc \
 	src/ta_lib \
-	src/bp \
 	src/pdp \
+	src/bp \
 	src/pdp_lib \
 	src/pdp_bin \
 	manual
@@ -26,8 +26,8 @@ SUBDIRS =\
 	src/ta \
 	src/tamisc \
 	src/ta_lib \
-	src/bp \
 	src/pdp \
+	src/bp \
 	src/pdp_lib \
 	src/pdp_bin \
 	manual

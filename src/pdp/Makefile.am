@@ -100,13 +100,7 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 libpdp@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
 
 libpdp@PDP_SUFFIX@_la_LIBADD =\
-	libpdpTypeAccess@PDP_SUFFIX@.la \
-	@abs_top_builddir@/src/bp/libbp@PDP_SUFFIX@.la
-
-if TA_GUI
-libpdp@PDP_SUFFIX@_la_LIBADD +=\
-	 @abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
-endif
+	libpdpTypeAccess@PDP_SUFFIX@.la
 
 libpdpTypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	pdp_TA.cpp \
