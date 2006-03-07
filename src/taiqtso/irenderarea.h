@@ -33,13 +33,13 @@ public:
   SoQtRenderArea* 	renderArea(); // autocreated if not assigned
   void			setRenderArea(SoQtRenderArea* value); // must have been created with us as parent!!
 
-  void 			resize(int w, int h); //override
-
   iRenderAreaWrapper(SoQtRenderArea* ra, QWidget* parent = NULL);
   iRenderAreaWrapper(QWidget* parent = NULL);
   ~iRenderAreaWrapper();
 protected:
   SoQtRenderArea* 	m_renderArea;
+  void resizeEvent(QResizeEvent* ev); // override
+  
 };
 
 #endif // TA_USE_INVENTOR

@@ -44,10 +44,11 @@ SoQtRenderArea* iRenderAreaWrapper::renderArea() {
   return m_renderArea;
 }
 
-void iRenderAreaWrapper::resize(int w, int h) {
-  QWidget::resize(w, h);
+void iRenderAreaWrapper::resizeEvent(QResizeEvent* ev) {
+  QWidget::resizeEvent(ev);
+  //note: we have already set the new size
   if (m_renderArea) {
-    m_renderArea->setSize(SbVec2s(w, h));
+    m_renderArea->setSize(SbVec2s(width(), height()));
   }
 }
 
