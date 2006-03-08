@@ -2,7 +2,6 @@
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 PROJNAME = ta
-DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 

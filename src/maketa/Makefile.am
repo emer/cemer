@@ -1,9 +1,7 @@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-
 PROJNAME = maketa
-DEFS=
 
 HEADS =\
 	ta_stdef.h \

@@ -4,7 +4,6 @@
 PROJNAME = css
 srcdir = @srcdir@
 VPATH = @srcdir@
-DEFS=
 
 if TA_GUI
 
