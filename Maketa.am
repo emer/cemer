@@ -1,34 +1,10 @@
-# Set by AC_PROG_MAKE_SET in configure.ac
-@SET_MAKE@
-
 # Rules for running maketa
-# To avoid race conditions on parallel builds we only refer
-# directly to ${PROJNAME}_TA_type.
-${PROJNAME}_TA_type.h:	${PROJNAME}_TA_type.hx
-${PROJNAME}_TA_type.hx: ${TAHEADS}
-	if ! cmp -s ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h; then \
-		${MAKE} force_ta; fi
-${TAHEADS}:
 
-# You can call `make force_ta' directly in any directory.
-# If you call it in the top directory it will be run in
-# every directory that uses maketa.
-force_ta:
-#	# If maketa doesn't exist make it
+${PROJNAME}_TA_type.h:	${TAHEADS}
 	if [ ! -x ../maketa/./maketa ]; then \
 		cd ../maketa && make;fi
-
-#	# If the final TA files don't exist, create empty ones. (solves chicken/egg)
-	if [ ! -e ${PROJNAME}_TA_type.h ]; then \
-		touch -t 0412312359 ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h ${PROJNAME}_TA.cpp;fi
-
 #	# Run maketa on TAHEADS
-	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
-
-#	# Copy the cache file over to the main file.
-	cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h
-	cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h
-	cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp
+	../maketa/./maketa -autohx ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
 
 # Instruct automake to clean these files on make clean
