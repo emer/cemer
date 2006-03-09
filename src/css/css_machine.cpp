@@ -50,7 +50,8 @@ extern "C" {
   extern int rl_pending_input;
   extern int (*rl_event_hook)(void);	// this points to the Qt event loop pump if running TA_GUI
 
-  extern char* rl_readline(char*);
+//  extern char* rl_readline(char*);
+  extern char* readline(char*);
   extern void add_history(char*);
   extern int rl_stuff_char(int);
 }
@@ -2455,7 +2456,8 @@ int cssProg::ReadLn() {
       top->act_prompt = top->prompt + pt + " ";
 
     top->in_readline = true;
-    curln = rl_readline((char*)top->act_prompt);
+//obs    curln = rl_readline((char*)top->act_prompt);
+    curln = readline((char*)top->act_prompt);
     if(curln == (char*)0)
       return EOF;
     top->in_readline = false;
