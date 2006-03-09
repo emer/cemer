@@ -92,10 +92,10 @@ changelog:
 	svn log --xml --verbose | xsltproc /home/mingus/opt/svn2cl-0.3/svn2cl.xsl - > ChangeLog
 
 force_ta:
-	cd ${abs_top_builddir}/src/ta && ${MAKE} ta_TA_type.h
-	cd ${abs_top_builddir}/src/tamisc && ${MAKE} tamisc_TA_type.h
-	cd ${abs_top_builddir}/src/pdp && ${MAKE} pdp_TA_type.h
-	cd ${abs_top_builddir}/src/bp && ${MAKE} bp_TA_type.h
+	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log

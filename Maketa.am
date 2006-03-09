@@ -1,11 +1,16 @@
 # Rules for running maketa
 
-${PROJNAME}_TA_type.h:	${TAHEADS}
+@SET_MAKE@
+
+${PROJNAME}_TA_type.h:	${TAHEADS} maketa
+	${MAKE} force_ta
+
+force_ta:	maketa
+	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+
+maketa:
 	if [ ! -x ../maketa/./maketa ]; then \
 		cd ../maketa && make;fi
-#	# Run maketa on TAHEADS
-	../maketa/./maketa -autohx ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
-
 
 # Instruct automake to clean these files on make clean
 CLEANFILES =\
@@ -17,7 +22,7 @@ CLEANFILES =\
 	${PROJNAME}_TA.ccx
 
 MAKETA_FLAGS =\
-	-hx \
+	-autohx \
 	-css \
 	-cpp="@CXXCPP@" \
 	-I@abs_top_builddir@ \
