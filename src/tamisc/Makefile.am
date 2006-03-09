@@ -118,6 +118,3 @@ libtamiscTypeAccess@PDP_SUFFIX@_la_SOURCES = tamisc_TA.cpp tamisc_TA_type.h tami
 libtamiscTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libtamisc@PDP_SUFFIX@_la_CPPFLAGS)
 
 libtamiscTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
-
-BUILT_SOURCES = tamisc_TA_type.h
-

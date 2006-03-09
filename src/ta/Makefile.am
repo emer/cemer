@@ -162,5 +162,3 @@ libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS =\
 	$(libta@PDP_SUFFIX@_la_CPPFLAGS)
 
 libtaTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
-
-BUILT_SOURCES = ta_TA_type.h

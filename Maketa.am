@@ -1,16 +1,9 @@
 # Rules for running maketa
-
-@SET_MAKE@
-
-${PROJNAME}_TA_type.h:	${TAHEADS} maketa
+${PROJNAME}_TA_type.h:	${TAHEADS}
 	${MAKE} force_ta
 
-force_ta:	maketa
+force_ta:
 	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
-
-maketa:
-	if [ ! -x ../maketa/./maketa ]; then \
-		cd ../maketa && make;fi
 
 # Instruct automake to clean these files on make clean
 CLEANFILES =\
@@ -36,3 +29,5 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../taiqtso \
 	-I@abs_srcdir@/../bp \
 	-I@abs_srcdir@/../tamisc
+
+BUILT_SOURCES = ${PROJNAME}_TA_type.h

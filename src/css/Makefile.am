@@ -53,9 +53,6 @@ HEADS =\
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-ta_TA_type.h:
-	cd ../ta && ${MAKE} ta_TA_type.h
-
 noinst_LTLIBRARIES = libcss@PDP_SUFFIX@.la
 
 libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
@@ -68,5 +65,3 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../taiqtso
 
 libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
-
-BUILT_SOURCES = ta_TA_type.h

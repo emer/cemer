@@ -9,8 +9,8 @@ dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 DIST_SUBDIRS =\
 	src/maketa \
 	src/taiqtso \
-	src/css \
 	src/ta \
+	src/css \
 	src/tamisc \
 	src/ta_lib \
 	src/pdp \
@@ -22,8 +22,8 @@ DIST_SUBDIRS =\
 SUBDIRS =\
 	src/maketa \
 	@WANT_TAIQTSO@ \
-	src/css \
 	src/ta \
+	src/css \
 	src/tamisc \
 	src/ta_lib \
 	src/pdp \

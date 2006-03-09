@@ -57,6 +57,3 @@ libbp_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
 libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libbp@PDP_SUFFIX@_la_CPPFLAGS)
 
 libbp_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
-
-BUILT_SOURCES = bp_TA_type.h
-

@@ -109,5 +109,3 @@ libpdpTypeAccess@PDP_SUFFIX@_la_SOURCES =\
 libpdpTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
 
 libpdpTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
-
-BUILT_SOURCES = pdp_TA_type.h

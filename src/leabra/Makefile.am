@@ -35,5 +35,3 @@ libleabra@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../pdp_lib
 
 libleabra@PDP_SUFFIX@_la_CXXFLAGS = -O0
-
-BUILT_SOURCES = pdp_TA_type.h leabra_TA_type.h
