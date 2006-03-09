@@ -276,7 +276,7 @@ BP_MAKETA =\
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
-MAKETA_FLAGS = $(INCLUDE) /D DEBUG -win_dll
+MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
 
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.h: $(TA_MAKETA)

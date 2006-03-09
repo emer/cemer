@@ -94,7 +94,7 @@ int _search(const char* s, int start, int sl, char c) {
 }
 
 int _search(const char* s, int start, int sl, const char* t, int tl) {
-  if (tl < 0) tl =  t ? strlen(t) : 0;
+  if (tl < 0) tl =  t ? (int)strlen(t) : 0;
   if (sl > 0 && tl > 0) {
     if (start >= 0) {
       const char* lasts = &(s[sl - tl]);
@@ -158,7 +158,7 @@ Cstring_prof string_prof;
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
 TA_API StrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
-  uint allocsize = tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
+  uint allocsize = (uint)tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
   cap = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
 #ifdef TA_PROFILE
   ++Cstring_prof::inst_cnt;
@@ -178,7 +178,7 @@ TA_API StrRep* Snew(int slen, uint cap) {
 
 // allocate a new StrRep by copying from a given string (can be NULL)
 TA_API StrRep* Salloc(const char* s, int slen, uint cap) {
-  if (slen < 0) slen = s ? strlen(s) : 0;
+  if (slen < 0) slen = s ? (int)strlen(s) : 0;
   StrRep* rval = Snew(slen, cap); //note: alloc failure returns NULL
   if (slen && (rval->sz >= (uint)slen)) memcpy(rval->s, s, slen);
   return rval;
@@ -190,8 +190,8 @@ TA_API StrRep* Scat(StrRep* srep, const char* s, int slen) {
 }
 
 TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
-  if (slen1 < 0) slen1 = s1 ? strlen(s1) : 0;
-  if (slen2 < 0) slen2 = s2 ? strlen(s2) : 0;
+  if (slen1 < 0) slen1 = s1 ? (int)strlen(s1) : 0;
+  if (slen2 < 0) slen2 = s2 ? (int)strlen(s2) : 0;
   uint newlen = slen1 + slen2;
   if (newlen == 0) return &_nilStrRep;
 
@@ -259,7 +259,7 @@ void StrRep::downcase() { //note: should only be called on cnt==1
 }
 
 int StrRep::match(int start, int sl, int exact, const char* t, int tl) const {
-  if (tl < 0) tl =  t ? strlen(t) : 0;
+  if (tl < 0) tl =  t ? (int)strlen(t) : 0;
 
   if (start < 0) {
     start = sl + start - tl + 1;
@@ -493,8 +493,8 @@ int String::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
 int String::_gsub(const char* pat, int pl, const char* r, int rl) {
   makeUnique(); // just to be safe
   if (mrep->len == 0)  return 0;
-  if (pl < 0) pl = pat ? strlen(pat) : 0;
-  if (rl < 0) rl = r ? strlen(r) : 0;
+  if (pl < 0) pl = pat ? (int)strlen(pat) : 0;
+  if (rl < 0) rl = r ? (int)strlen(r) : 0;
   if ((pl == 0) || (mrep->len < (uint)pl))
     return 0;
   if (pl == rl)     return _gsub_eq(pat, pl, r);
@@ -504,7 +504,7 @@ int String::_gsub(const char* pat, int pl, const char* r, int rl) {
 }
 
 int String::assertLength() {
-  uint slen = strlen(mrep->s);
+  uint slen = (uint)strlen(mrep->s);
   if (slen <= mrep->sz) {
     mrep->len = slen;
     mrep->s[slen] = '\0';
@@ -521,7 +521,7 @@ String& String::cat(const String& y) {
 }
 
 String& String::cat(const char* y) {
-  uint slen = (y) ? strlen(y) : 0;
+  uint slen = (y) ? (uint)strlen(y) : 0;
   if (mrep->canCat(slen))
     mrep->cat(y, slen);
   else
@@ -586,7 +586,7 @@ void String::del(int pos, int len)
 
 void String::del(const char* t, int startpos)
 {
-  int tlen =  t ? strlen(t) : 0;
+  int tlen =  t ? (int)strlen(t) : 0;
   int p = search(startpos, length(), t, tlen);
   del(p, tlen);
 }
@@ -612,7 +612,7 @@ void String::error(const char* msg) const {
 }
 
 void String::init(const char* s, int slen) {
-  if (slen < 0)  slen = s ? strlen(s) : 0;
+  if (slen < 0)  slen = s ? (int)strlen(s) : 0;
   if (slen == 0) newRep(&_nilStrRep);
   else           newRep(Salloc(s, slen, slen));
 }
@@ -656,7 +656,7 @@ String& String::prepend(const String& y) {
 }
 
 String& String::prepend(const char* y) {
-  uint slen = (y) ? strlen(y) : 0;
+  uint slen = (y) ? (uint)strlen(y) : 0;
   if (mrep->canCat(slen))
     mrep->prepend(y, slen);
   else
@@ -682,7 +682,7 @@ String& String::reverse() {
 
 String& String::set(const char* s, int slen) {
   if (slen < 0)
-    slen = s ? strlen(s) : 0;
+    slen = s ? (int)strlen(s) : 0;
   if (slen == 0) setRep(&_nilStrRep);
   else           setRep(Salloc(s, slen, slen));
   return *this;
@@ -760,7 +760,7 @@ String String::at(const String& y, int startpos) const {
 }
 
 String String::at(const char* t, int startpos) const {
-  int tlen = t ? strlen(t) : 0;
+  int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   return _substr(first, tlen);
 }
@@ -781,7 +781,7 @@ String String::before(char c, int startpos) const {
 }
 
 String String::before(const char* t, int startpos) const {
-  int tlen = t ? strlen(t) : 0;
+  int tlen = t ? (int)strlen(t) : 0;
   int last = search(startpos, length(), t, tlen);
   return _substr(0, last);
 }
@@ -799,7 +799,7 @@ String String::through(char c, int startpos) const {
 }
 
 String String::through(const char* t, int startpos) const {
-  int tlen = t ? strlen(t) : 0;
+  int tlen = t ? (int)strlen(t) : 0;
   int last = search(startpos, length(), t, tlen);
   if (last >= 0) last += tlen;
   return _substr(0, last);
@@ -818,7 +818,7 @@ String String::after(char c, int startpos) const {
 }
 
 String String::after(const char* t, int startpos) const {
-  int tlen = t ? strlen(t) : 0;
+  int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   if (first >= 0) first += tlen;
   return _substr(first, length() - first);
@@ -835,7 +835,7 @@ String String::from(char c, int startpos) const {
 }
 
 String String::from(const char* t, int startpos) const {
-  int tlen = t ? strlen(t) : 0;
+  int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   return _substr(first, length() - first);
 }

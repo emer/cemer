@@ -602,7 +602,8 @@ bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
       continue;
     // this object contains the given one
     if((dlg->cur_base <= obj) && ((char*)obj <= ((char*)dlg->cur_base + dlg->typ->size))) {
-       dlg->SetRevert();	// it's been changed..
+      // if not modified, then update it, otherwise we should notify the user
+       dlg->NotifyChanged();	// it's been changed..
       got_one = true;
       continue;
     }
@@ -611,7 +612,7 @@ bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
       continue;
     taList_impl* lst = (taList_impl*)dlg->cur_base;
     if(lst->Find((TAPtr)obj) >= 0) {
-       dlg->SetRevert();	// it's been changed..
+       dlg->NotifyChanged();	// it's been changed..
        got_one = true;
     }
   }

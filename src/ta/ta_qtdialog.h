@@ -239,7 +239,8 @@ public:
   bool		modal;	// true if dialog is of the modal variety, always false for edit panels
   bool		no_ok_but;	// no ok button
   int		mouse_button;	// (Qt::ButtonState) the mouse button that pressed ok
-  bool		no_revert_hilight; // do not highlight the revert button
+  bool		no_revert_hilight; // flag to indicate we are the instance that caused the update
+  bool		warn_clobber; // was changed elsewhere while edited here; warn user before saving
 
 
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
@@ -281,6 +282,7 @@ public:
   virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
+  virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
   virtual bool  HasChanged() {return modified;}	// returns true if user has changed anything
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor

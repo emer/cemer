@@ -51,8 +51,6 @@ public:
   virtual void	InteractScript();
   // #MENU #LABEL_Interact change to this shell in script (terminal) window to interact, debug etc script
 
-  virtual void	InstallThis();
-  // #IGNORE install the this object in the script typespace
   virtual void	UpdateReCompile();
   // #IGNORE recompile if reselected by user
   virtual TypeDef* GetThisTypeDef();
@@ -62,6 +60,10 @@ public:
 
   ScriptBase();
   virtual ~ScriptBase();
+  
+protected:
+  virtual void	LoadScript_impl(); // #IGNORE
+  virtual void ScriptCompiled() {} // #IGNORE called when script is recompiled;
 private:
   ScriptBase(const ScriptBase& cp); // #IGNORE not allowed
   ScriptBase& operator=(const ScriptBase& cp); // #IGNORE not allowed
@@ -102,7 +104,6 @@ public:
   virtual void	AutoRun();
   // run this script if auto_run is set
 
-  void		InstallThis();
   TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
 

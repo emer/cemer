@@ -91,10 +91,13 @@ void ScriptBase::LoadScript(const char* nm) {
     taMisc::Error("Cannot Load Script: No script file or string specified");
     return;
   }
+}
 
-  if(script == NULL) {
+void ScriptBase::LoadScript_impl() {
+  if (script == NULL) {
     script = new cssProgSpace();
-    InstallThis();
+    cssTA_Base* ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
+    ths->InstallThis(script);
   }
 
   if(script->in_readline) {
@@ -107,6 +110,7 @@ void ScriptBase::LoadScript(const char* nm) {
     script->CompileCode(script_string);	// compile the string itself
   else
     script->Compile(script_file->fname);
+  ScriptCompiled();
 }
 
 void ScriptBase::LoadScriptString(const char* string) {
@@ -114,11 +118,6 @@ void ScriptBase::LoadScriptString(const char* string) {
     script_string = string;
   script_file->fname = "";
   LoadScript();
-}
-
-void ScriptBase::InstallThis() {
-  cssTA_Base* ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
-  ths->InstallThis(script);
 }
 
 bool ScriptBase::RunScript() {
@@ -184,10 +183,6 @@ void Script::UpdateAfterEdit() {
     if(name.contains('/'))
       name = name.after('/', -1);
   }
-}
-
-void Script::InstallThis() {
-  ScriptBase::InstallThis();
 }
 
 bool Script::Run() {

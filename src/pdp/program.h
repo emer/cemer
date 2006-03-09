@@ -30,9 +30,13 @@ INHERITED(taOBase)
 public:
   static String	    indent(int indent_level); // generally 2 spaces per level
   
-  virtual ProgEl*   parentEl() {return GET_MY_OWNER(ProgEl);}
-  virtual String    GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
+  virtual bool	    isDirty();
+  virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
   
+  virtual String    GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
+  virtual void	    Dirty(); // set whenever an el changes
+  
+  void UpdateAfterEdit();
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
@@ -186,14 +190,24 @@ private:
 
 
 class PDP_API Program: public ProgList, public ScriptBase {
+  // program, either from a file, or from ProgEls
 INHERITED(ProgList)
 public:
   String	    name;
+  bool		    script_compiled; // #IGNORE true when compiled
 
+  override bool	    isDirty() {return m_dirty;}
+  
+  virtual void	    Compile(bool force = false); 
+    // #MENU compile the script
+  override void	    Dirty();
+    
   bool 		SetName(const char* nm)    	{return SetName(String(nm));}
   bool 		SetName(const String& nm)    	{ name = nm; return true; }
   String	GetName() const		{ return name; }
-
+  
+  virtual void	Run();
+  
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
@@ -201,9 +215,20 @@ public:
   COPY_FUNS(Program, ProgList);
   TA_BASEFUNS(Program);
 
+public: // ScriptBase i/f
+  override TypeDef*	GetThisTypeDef() {return GetTypeDef();}
+  // #IGNORE
+  override void*	GetThisPtr() { return (void*)this; }
+  // #IGNORE
+
+protected:
+  bool		    m_dirty;
+  override void	LoadScript_impl(); // #IGNORE
+  override void ScriptCompiled(); // #IGNORE
+  
 private:
   void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void	Destroy();
 };
 
 class PDP_API Program_MGroup : public taGroup<Program> {

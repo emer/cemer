@@ -145,6 +145,7 @@ String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 // this is for remote accessing:
 //String	taMisc::help_cmd = "netscape -remote openURL\\(file:%s\\)";
 ostream*	taMisc::record_script = NULL;
+bool taMisc::beep_on_error = false;
 void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbusy; var is 'busy'
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 void (*taMisc::DelayedMenuUpdate_Hook)(taBase*) = NULL; // gui callback -- avoids zillions of gui ifdefs everywhere
@@ -214,7 +215,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cerr << "" << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
+  if (beep_on_error) cerr << '\a'; // BEL character
+  cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
     " " << g << " " << h << " " << i  << "\n";
 }
 

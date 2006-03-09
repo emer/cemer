@@ -509,6 +509,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   state = EXISTS;
   sel_item_index = -1;
   rebuild_body = false;
+  warn_clobber = false;
 }
 
 taiDataHost::~taiDataHost() {
@@ -627,6 +628,16 @@ void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget*
 }
 
 void taiDataHost::Apply() {
+  if (warn_clobber) {
+    int chs = taiChoiceDialog::ChoiceDialog
+      (NULL, "Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?!Apply!Revert!Cancel!");
+    if(chs == 1) {
+      Revert();
+      return;
+    }
+    if(chs == 2)
+      return;
+  }
   no_revert_hilight = true;
   GetValue();
   GetImage();
@@ -645,6 +656,7 @@ void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling pa
   if (isDialog()) {
     dialog->dismiss(false);
   }
+  warn_clobber = false; // just in case
 }
 
 void taiDataHost::Changed() {
@@ -765,7 +777,6 @@ void taiDataHost::Constr_Box() {
   if (splBody == NULL) vblDialog->addWidget(scrBody);
   //note: the layout is added in Constr_Body, because it gets deleted when we change the 'show'
 }
-
 
 void taiDataHost::Constr_Body() {
 /*test  layBody = new QGridLayout(body);
@@ -938,12 +949,27 @@ void taiDataHost::Ok() { //note: only used for Dialogs
     Cancel();
     return;
   }
-  if (HasChanged())
+  // NOTE: we herein might be bypassing the clobber warn, but shouldn't really
+  //be possible to modify ourself externally inside a dialog
+  if (HasChanged()) {
     GetValue();
+    Unchanged();
+  }
   state = ACCEPTED;
   mouse_button = okbut->mouse_button;
   if (isDialog()) {
     dialog->dismiss(true);
+  }
+}
+
+void taiDataHost::NotifyChanged() {
+  if (no_revert_hilight) return; // it is us that caused this
+  // if no changes have been made in this instance, then just refresh,
+  // otherwise, user will have to decide what to do, i.e., revert
+  if (HasChanged()) {
+    warn_clobber = true;
+  } else {
+    GetImage();
   }
 }
 
@@ -982,6 +1008,7 @@ void taiDataHost::Unchanged() {
       revert_but->setEnabled(false);
       revert_but->setHiLight(false);
   }
+  warn_clobber = false;
 }
 
 

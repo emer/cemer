@@ -499,6 +499,9 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
       strm << "refarg_" << j << ";";
       not_mod = false;		got_one = true;
     }
+    //TODO: seems to be a conceptual bug, since we should be able to pass
+    //  generic pointer to &ref to access the arg by value; therefore, no
+    // copying back should be necessary, in fact, that is probably not desirable
     if(not_mod && (mta->verbose > 0)) {
       String stargno = String(j);
       String stmbnm = ownr->Get_C_Name() + "::" + md->name + "()";
@@ -511,6 +514,7 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
 }
 
 String MethodDef_GetCSSType(TypeDef* td) {
+//TODO: update for new atomic type hier, 64 bit types, and Variant
   if(td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
      td->DerivesFrom(TA_long) || td->DerivesFrom(TA_char) ||
      td->DerivesFormal(TA_enum) || td->DerivesFrom(TA_signed) ||
@@ -648,11 +652,16 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
   strm << "    ";
 
   if(md->type->ptr == 0) {
-    if(md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_short) ||
-       md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_char) ||
-       md->type->DerivesFrom(TA_unsigned) || md->type->DerivesFrom(TA_signed) ||
-       md->type->DerivesFrom(TA_bool))
+    if (md->type->DerivesFrom(TA_char))
+      cmd = "cssChar(";
+    else if (md->type->DerivesFrom(TA_bool))
+      cmd = "cssBool(";
+    else if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_short) ||
+       md->type->DerivesFrom(TA_long) || 
+       md->type->DerivesFrom(TA_unsigned) || md->type->DerivesFrom(TA_signed))
       cmd = "cssInt((int)";
+    else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
+      cmd = "cssVariant(";
     else if(md->type->DerivesFrom(TA_float) || md->type->DerivesFrom(TA_double))
       cmd = "cssReal((double)";
     else if (md->type->DerivesFrom(TA_taString))

@@ -15,6 +15,8 @@
 
 #include "program.h"
 
+#include "css_machine.h"
+#include "ta_qt.h"
 
 //////////////////////////
 //  ProgEl		//
@@ -28,10 +30,26 @@ String ProgEl::indent(int indent_level) {
 void ProgEl::Initialize() {
 }
 
+void ProgEl::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  Dirty();
+}
+
 String ProgEl::GenCss(int indent_level) {
   String rval;
   rval = GenCssPre_impl(indent_level) + GenCssBody_impl(indent_level) + GenCssPost_impl(indent_level);
   return rval;
+}
+
+bool ProgEl::isDirty() {
+  ProgEl* par = parent();
+  if (par) return par->isDirty();
+  else return false;
+}
+
+void ProgEl::Dirty() {
+  ProgEl* par = parent();
+  if (par) par->Dirty();
 }
 
 
@@ -232,6 +250,19 @@ String CondEl::GenCssPost_impl(int indent_level) {
 //////////////////////////
 
 void Program::Initialize() {
+  m_dirty = false; 
+  script_compiled = false;
+}
+
+void Program::Destroy()	{ 
+  CutLinks();
+  if (script != NULL) {
+    if (script->DeleteOk())
+      delete script;
+    else
+      script->DeferredDelete();
+    script = NULL;
+  }
 }
 
 void Program::InitLinks() {
@@ -244,11 +275,45 @@ void Program::CutLinks() {
 
 void Program::Copy_(const Program& cp) {
   name = cp.name;
+  m_dirty = true;
+  script_compiled = false;
 }
 
 void Program::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
+
+
+void Program::Compile(bool force) {
+  if (force) script_compiled = false;
+  LoadScript_impl();
+}
+
+void Program::Dirty() {
+  if (m_dirty) return;
+  m_dirty = true;
+}
+
+void Program::LoadScript_impl() {
+  // usual case is not to be using a script file
+  if ((m_dirty) || (script_string.empty())) {
+    script_string = GenCss(); // s/b empty if using a file
+    m_dirty = false;
+    script_compiled = false;
+  }
+  if (script_compiled) return;
+  ScriptBase::LoadScript_impl();
+}
+
+void Program::Run() {
+//TODO
+}
+
+void Program::ScriptCompiled() {
+  script_compiled = true;
+  taiMisc::NotifyEdits(this, this->GetTypeDef());
+}
+
 
 
 //////////////////////////
