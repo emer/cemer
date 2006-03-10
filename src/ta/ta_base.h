@@ -543,7 +543,7 @@ public:
   virtual bool		CopyTo(TAPtr cpy_to);
   // #MENU #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
-  virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled) {}
+  virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
    // if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner
   virtual bool		DuplicateMe();
   // #MENU #CONFIRM #UPDATE_MENUS Make another copy of myself (done through owner)
@@ -637,9 +637,7 @@ protected:
 
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
-#ifndef __MAKETA__
-typedef taBase inherited;
-#endif
+INHERITED(taBase)
 friend class taBaseAdapter;
 public:
   TAPtr		owner;		// #READ_ONLY #NO_SAVE pointer to owner
@@ -663,8 +661,6 @@ public:
 #endif
   void	Destroy();
   void	CutLinks();
-  void	UpdateAfterEdit(); // notify the edit dialogs
-  void  ChildUpdateAfterEdit(TAPtr child, bool& handled); // default, can be called after subclass impl, will forward to owner if not already handled
   TA_BASEFUNS(taOBase);
 protected:
   taDataLink*		m_data_link;
@@ -1265,6 +1261,7 @@ TA_ARRAY_OPS(String_Array)
 
 class TA_API SArg_Array : public String_Array {
   // string argument array: has labels for each argument to make it easier in the interface
+INHERITED(String_Array)
 public:
   String_Array	labels;		// labels for each argument
 

@@ -25,18 +25,16 @@
 #include "pdp_TA_type.h"
 
 class PDP_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE definition of a program element
+  // #NO_INSTANCE #VIRT_BASE #UAE_OWNER definition of a program element
 INHERITED(taOBase)
 public:
   static String	    indent(int indent_level); // generally 2 spaces per level
   
-  virtual bool	    isDirty();
   virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
   
   virtual String    GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
-  virtual void	    Dirty(); // set whenever an el changes
   
-  void UpdateAfterEdit();
+//  void UpdateAfterEdit();
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
@@ -193,22 +191,21 @@ class PDP_API Program: public ProgList, public ScriptBase {
   // program, either from a file, or from ProgEls
 INHERITED(ProgList)
 public:
-  String	    name;
-  bool		    script_compiled; // #IGNORE true when compiled
+  String	    	name;
+  bool		    	script_compiled; // #IGNORE true when compiled
 
-  override bool	    isDirty() {return m_dirty;}
-  
-  virtual void	    Compile(bool force = false); 
+  bool			isDirty() {return m_dirty;}
+
+  virtual void	    	Compile(bool force = false); 
     // #MENU compile the script
-  override void	    Dirty();
+  override void	    	Dirty();
+  virtual void		Run();
     
-  bool 		SetName(const char* nm)    	{return SetName(String(nm));}
-  bool 		SetName(const String& nm)    	{ name = nm; return true; }
-  String	GetName() const		{ return name; }
-  
-  virtual void	Run();
-  
+  bool 	SetName(const char* nm)    	{return SetName(String(nm));}
+  bool 	SetName(const String& nm)    	{ name = nm; return true; }
+  String GetName() const		{ return name; }
   void	UpdateAfterEdit();
+  void	ChildUpdateAfterEdit(TAPtr child, bool& handled);
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Program& cp);

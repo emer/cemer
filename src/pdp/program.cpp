@@ -30,26 +30,10 @@ String ProgEl::indent(int indent_level) {
 void ProgEl::Initialize() {
 }
 
-void ProgEl::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  Dirty();
-}
-
 String ProgEl::GenCss(int indent_level) {
   String rval;
   rval = GenCssPre_impl(indent_level) + GenCssBody_impl(indent_level) + GenCssPost_impl(indent_level);
   return rval;
-}
-
-bool ProgEl::isDirty() {
-  ProgEl* par = parent();
-  if (par) return par->isDirty();
-  else return false;
-}
-
-void ProgEl::Dirty() {
-  ProgEl* par = parent();
-  if (par) par->Dirty();
 }
 
 
@@ -77,9 +61,9 @@ String UserScriptEl::GenCssBody_impl(int indent_level) {
 
 String ProgEl_List::GenCss(int indent_level) {
   String rval;
-  taListItr itr;
   ProgEl* el;
-  FOR_ITR_EL(ProgEl, el, this->, itr) {
+  for (int i = 0; i < size; ++i) {
+    el = FastEl(i);
     rval += el->GenCss(indent_level); 
   }
   return rval;;
@@ -250,6 +234,7 @@ String CondEl::GenCssPost_impl(int indent_level) {
 //////////////////////////
 
 void Program::Initialize() {
+  ssro = true;
   m_dirty = false; 
   script_compiled = false;
 }
@@ -283,6 +268,13 @@ void Program::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+void Program::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  if (!handled && child->InheritsFrom(&TA_ProgEl)) {
+    m_dirty = true;
+    handled = true;
+  }
+  inherited::ChildUpdateAfterEdit(child, handled);
+} 
 
 void Program::Compile(bool force) {
   if (force) script_compiled = false;
@@ -300,6 +292,7 @@ void Program::LoadScript_impl() {
     script_string = GenCss(); // s/b empty if using a file
     m_dirty = false;
     script_compiled = false;
+    UpdateAfterEdit();
   }
   if (script_compiled) return;
   ScriptBase::LoadScript_impl();
@@ -311,7 +304,6 @@ void Program::Run() {
 
 void Program::ScriptCompiled() {
   script_compiled = true;
-  taiMisc::NotifyEdits(this, this->GetTypeDef());
 }
 
 

@@ -51,6 +51,7 @@ ScriptBase::ScriptBase() {
   script_file->compress = false;	// don't compress
   script_file->mode = taFiler::NO_AUTO;
   taRefN::Ref(script_file);
+  ssro = false;
 }
 
 ScriptBase::~ScriptBase() {
@@ -91,6 +92,7 @@ void ScriptBase::LoadScript(const char* nm) {
     taMisc::Error("Cannot Load Script: No script file or string specified");
     return;
   }
+  LoadScript_impl();
 }
 
 void ScriptBase::LoadScript_impl() {

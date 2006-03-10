@@ -37,7 +37,7 @@ POST_UNINSTALL = :
 build_triplet = i686-pc-linux-gnu
 host_triplet = i686-pc-linux-gnu
 am__append_1 = \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/taiqtso/libtaiqtso_debug.la
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/taiqtso/libtaiqtso_debug.la
 
 subdir = src/ta_lib
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -57,11 +57,11 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am__DEPENDENCIES_1 = /home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/taiqtso/libtaiqtso_debug.la
+am__DEPENDENCIES_1 = /home/baisa/pdp4.0/src/ta_lib/../.././src/taiqtso/libtaiqtso_debug.la
 libta_debug_la_DEPENDENCIES =  \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/tamisc/libtamisc_debug.la \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/css/libcss_debug.la \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/ta/libta_debug.la \
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/tamisc/libtamisc_debug.la \
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/css/libcss_debug.la \
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/ta/libta_debug.la \
 	$(am__DEPENDENCIES_1)
 am_libta_debug_la_OBJECTS =
 libta_debug_la_OBJECTS = $(am_libta_debug_la_OBJECTS)
@@ -84,16 +84,16 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 srcdir = .
 top_srcdir = ../..
-ACLOCAL = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run aclocal-1.9
+ACLOCAL = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run aclocal-1.9
 ALLOCA = 
 AMDEP_FALSE = #
 AMDEP_TRUE = 
 AMINCLUDE = 
-AMTAR = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run tar
+AMTAR = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run automake-1.9
+AUTOCONF = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run automake-1.9
 AWK = gawk
 AX_RPM_SPEC_FILE = 
 CC = gcc
@@ -104,7 +104,7 @@ CPPFLAGS =   -I/usr/local/include/Inventor/annex -D_REENTRANT -I/usr/X11R6/inclu
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS =  -I/usr/local/Trolltech/Qt-4.1.0/include -I/usr/local/Trolltech/Qt-4.1.0/include/Qt -I/usr/local/Trolltech/Qt-4.1.0/include/QtOpenGL -I/usr/local/Trolltech/Qt-4.1.0/include/QtCore -I/usr/local/Trolltech/Qt-4.1.0/include/QtGui -I/usr/local/Trolltech/Qt-4.1.0/include/QtNetwork -I/usr/local/Trolltech/Qt-4.1.0/include/QtXml -I/usr/local/Trolltech/Qt-4.1.0/include/QtTest -I/usr/local/Trolltech/Qt-4.1.0/include/Qt3Support  -I/usr/local/Trolltech/Qt-4.1.0/include/QtTest
+CXXFLAGS = -D_GLIBCXX_GTHREAD_USE_WEAK=0 -pthread -I/usr/local/Trolltech/Qt-4.1.0/include -I/usr/local/Trolltech/Qt-4.1.0/include/Qt -I/usr/local/Trolltech/Qt-4.1.0/include/QtOpenGL -I/usr/local/Trolltech/Qt-4.1.0/include/QtCore -I/usr/local/Trolltech/Qt-4.1.0/include/QtGui -I/usr/local/Trolltech/Qt-4.1.0/include/QtNetwork -I/usr/local/Trolltech/Qt-4.1.0/include/QtXml -I/usr/local/Trolltech/Qt-4.1.0/include/QtTest -I/usr/local/Trolltech/Qt-4.1.0/include/Qt3Support  -I/usr/local/Trolltech/Qt-4.1.0/include/QtTest
 CYGPATH_W = echo
 DEBUG_FALSE = #
 DEBUG_TRUE = 
@@ -114,7 +114,7 @@ ECHO = echo
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EDITOR = emacs -nw
+EDITOR = 
 EGREP = grep -E
 EXEEXT = 
 INCLUDE_AMINCLUDE_AM = 
@@ -132,7 +132,7 @@ LIBS = -lreadline -ltermcap  -ldl -lQtGui_debug -lQt3Support_debug -lQtOpenGL_de
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LN_S = ln -s
 LTLIBOBJS =  error$U.lo strtod$U.lo
-MAKEINFO = ${SHELL} /home/mingus/pdp4.0/trunk/cfg/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/baisa/pdp4.0/cfg/missing --run makeinfo
 MPICXX = 
 MPI_FALSE = 
 MPI_TRUE = #
@@ -148,7 +148,7 @@ PACKAGE_TARNAME = PDP++
 PACKAGE_VERSION = 4.0
 PATH_SEPARATOR = :
 PDP_SUFFIX = _debug
-PLATFORM_SUFFIX = fc4
+PLATFORM_SUFFIX = 
 POW_LIB = 
 QT_MOC = /usr/local/Trolltech/Qt-4.1.0/bin/moc
 RANLIB = ranlib
@@ -164,8 +164,8 @@ VERSION = 4.0
 WANT_CSS_BIN = src/css_bin
 WANT_TAIQTSO = src/taiqtso
 YACC = bison -y
-abs_srcdir = /home/mingus/pdp4.0/trunk/src/ta_lib
-abs_top_builddir = /home/mingus/pdp4.0/trunk/src/ta_lib/../../.
+abs_srcdir = /home/baisa/pdp4.0/src/ta_lib
+abs_top_builddir = /home/baisa/pdp4.0/src/ta_lib/../../.
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -195,14 +195,14 @@ host_os = linux-gnu
 host_vendor = pc
 includedir = ${prefix}/include
 infodir = ${prefix}/info
-install_sh = /home/mingus/pdp4.0/trunk/cfg/install-sh
+install_sh = /home/baisa/pdp4.0/cfg/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localstatedir = ${prefix}/var
 mandir = ${prefix}/man
 mkdir_p = mkdir -p --
 oldincludedir = /usr/include
-prefix = /home/mingus
+prefix = /usr/local
 program_transform_name = s,x,x,
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
@@ -216,9 +216,9 @@ libta_debug_la_SOURCES =
 # Dummy C++ source to cause C++ linking.
 nodist_EXTRA_libta_debug_la_SOURCES = dummy.cxx
 libta_debug_la_LIBADD =  \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/tamisc/libtamisc_debug.la \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/css/libcss_debug.la \
-	/home/mingus/pdp4.0/trunk/src/ta_lib/../.././src/ta/libta_debug.la $(am__append_1)
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/tamisc/libtamisc_debug.la \
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/css/libcss_debug.la \
+	/home/baisa/pdp4.0/src/ta_lib/../.././src/ta/libta_debug.la $(am__append_1)
 all: all-am
 
 .SUFFIXES:

@@ -366,6 +366,19 @@ void taBase::UpdateAfterEdit() {
   tabMisc::NotifyEdits(this);
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(DCR_UPDATE_AFTER_EDIT);
+  taBase* _owner = GetOwner();
+  if (_owner && GetTypeDef()->HasOption("UAE_OWNER")) {
+    bool handled = false;
+    _owner->ChildUpdateAfterEdit(this, handled);
+  }
+}
+
+void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  if (!handled) {
+    taBase* _owner = GetOwner();
+    if (_owner)
+      _owner->ChildUpdateAfterEdit(child, handled);
+  }
 }
 
 
@@ -991,7 +1004,7 @@ void taOBase::CutLinks() {
   inherited::CutLinks();
 }
 
-void taOBase::UpdateAfterEdit(){
+/* all in taBase void taOBase::UpdateAfterEdit(){
   inherited::UpdateAfterEdit();
   tabMisc::NotifyEdits(this);
   if (owner && GetTypeDef()->HasOption("UAE_OWNER")) {
@@ -1003,7 +1016,7 @@ void taOBase::UpdateAfterEdit(){
 void taOBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   if (!handled && owner)
     owner->ChildUpdateAfterEdit(child, handled);
-}
+} */
 
 
 //////////////////////////
@@ -2180,6 +2193,7 @@ void SArg_Array::InitLinks() {
 
 void SArg_Array::UpdateAfterEdit() {
   labels.EnforceSize(size);
+  inherited::UpdateAfterEdit();
 }
 
 void SArg_Array::Copy_(const SArg_Array& cp) {

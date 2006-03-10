@@ -36,7 +36,9 @@ public:
   cssProgSpace* script;			// #HIDDEN the script, if defined
   taFiler*	script_file;		// file to use for the script
   String	script_string;
-  // script code to be run, instead of loading from file
+  // #CONDEDIT_OFF_ssro_true script code to be run, instead of loading from file
+  bool		ssro;
+  // #NO_SHOW #NO_SAVE for subclasses that manage script_string themselves
 
   virtual bool	HasScript();
   // returns true if we have some kind of script file or string to run
