@@ -23,7 +23,7 @@ This file is part of TA/PDP++
   GNU General Public License for more details.
 ])
 
-#AC_DISABLE_SHARED                                      # Disable shared libraries
+AC_DISABLE_STATIC                                      # Disable shared libraries
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
