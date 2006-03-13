@@ -81,6 +81,9 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
   else
 #endif
   {
+  //TODO: program sometimes ends up here even when in gui mode
+  // and it is hung in the gui, actually waiting for a cmd line 
+  // response from user
     int   chn = 0;
     String chstr = text;
     chstr += "\n";

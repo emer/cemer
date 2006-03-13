@@ -18,6 +18,10 @@
 #include "css_machine.h"
 #include "ta_qt.h"
 
+#ifdef TA_GUI
+# include <QMessageBox>
+#endif
+
 //////////////////////////
 //  ProgEl		//
 //////////////////////////
@@ -234,78 +238,54 @@ String CondEl::GenCssPost_impl(int indent_level) {
 //////////////////////////
 
 void Program::Initialize() {
-  ssro = true;
-  m_dirty = false; 
-  script_compiled = false;
+  m_dirty = true; 
 }
 
 void Program::Destroy()	{ 
-  CutLinks();
-  if (script != NULL) {
-    if (script->DeleteOk())
-      delete script;
-    else
-      script->DeferredDelete();
-    script = NULL;
-  }
-}
-
-void Program::InitLinks() {
-  inherited::InitLinks();
-}
-
-void Program::CutLinks() {
-  inherited::CutLinks();
 }
 
 void Program::Copy_(const Program& cp) {
-  name = cp.name;
-  m_dirty = true;
-  script_compiled = false;
+  m_dirty = true; // require rebuild/refetch
+  m_scriptCache = "";
+  if (script)
+    script->ClearAll();
 }
 
 void Program::UpdateAfterEdit() {
+  script_compiled = false; // have to assume user changed something
+  m_dirty = true;
   inherited::UpdateAfterEdit();
 }
 
-void Program::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled && child->InheritsFrom(&TA_ProgEl)) {
-    m_dirty = true;
-    handled = true;
-  }
-  inherited::ChildUpdateAfterEdit(child, handled);
-} 
-
-void Program::Compile(bool force) {
-  if (force) script_compiled = false;
-  LoadScript_impl();
+void Program::InitScriptObj_impl() {
+  AbstractScriptBase::InitScriptObj_impl();
+  //TODO: add global vars
 }
 
-void Program::Dirty() {
-  if (m_dirty) return;
-  m_dirty = true;
+bool Program::Run() {
+  return RunScript();
 }
 
-void Program::LoadScript_impl() {
-  // usual case is not to be using a script file
-  if ((m_dirty) || (script_string.empty())) {
-    script_string = GenCss(); // s/b empty if using a file
-    m_dirty = false;
-    script_compiled = false;
-    UpdateAfterEdit();
-  }
-  if (script_compiled) return;
-  ScriptBase::LoadScript_impl();
+void  Program::ScriptCompiled() {
+  AbstractScriptBase::ScriptCompiled();
+  //TODO: maybe inform gui
 }
 
-void Program::Run() {
-//TODO
+#ifdef TA_GUI
+void Program::RunGui() {
+  //TODO: need to put up a progress/cancel dialog
+  // TODO: actually need to provide a global strategy for running!!!!!
+  bool ran = Run();
+  if (ran) 
+    QMessageBox::information(NULL, QString("Operation Succeeded"),
+      QString("The Program finished"), QMessageBox::Ok);
+  else 
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      QString("The Program did not run -- check that there is script source, and that there were no compile errors"), QMessageBox::Ok, QMessageBox::NoButton);
+ ; 
+  
 }
-
-void Program::ScriptCompiled() {
-  script_compiled = true;
-}
-
+#endif
 
 
 //////////////////////////
@@ -315,3 +295,89 @@ void Program::ScriptCompiled() {
 void Program_MGroup::Initialize() {
   SetBaseType(&TA_Program);
 }
+
+
+
+//////////////////////////
+//  ProgElProgram	//
+//////////////////////////
+
+void ProgElProgram::Initialize() {
+}
+
+void ProgElProgram::Destroy()	{ 
+  CutLinks();
+}
+
+void ProgElProgram::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(prog_els, this);
+}
+
+void ProgElProgram::CutLinks() {
+  prog_els.CutLinks();
+  inherited::CutLinks();
+}
+
+void ProgElProgram::Copy_(const ProgElProgram& cp) {
+  prog_els = cp.prog_els;
+}
+
+void ProgElProgram::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+}
+
+void ProgElProgram::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  if (!handled && child->InheritsFrom(&TA_ProgEl)) {
+    m_dirty = true;
+    handled = true;
+    UpdateAfterEdit();
+  }
+  inherited::ChildUpdateAfterEdit(child, handled);
+} 
+
+const String ProgElProgram::scriptString() {
+  if (m_dirty) {
+    m_scriptCache = "void main() {\n";
+    m_scriptCache += prog_els.GenCss(1);
+    m_scriptCache += "}\n";
+    m_dirty = false;
+  }
+  return m_scriptCache;
+}
+
+//////////////////////////
+//  FileProgram	//
+//////////////////////////
+
+void FileProgram::Initialize() {
+  script_file = taFiler_CreateInstance(".","*.css",false);
+  script_file->compress = false;	// don't compress
+  script_file->mode = taFiler::NO_AUTO;
+  taRefN::Ref(script_file);
+}
+
+
+void FileProgram::Destroy() { 
+  if (script_file) {
+    taRefN::unRefDone(script_file);
+    script_file = NULL;
+  }
+}
+
+void FileProgram::Copy_(const FileProgram& cp) {
+  if (script_file && cp.script_file)
+    *script_file = *(cp.script_file);
+}
+
+const String FileProgram::scriptFilename() {
+  return script_file->fname;
+}
+
+AbstractScriptBase::ScriptSource FileProgram::scriptSource() {
+  if (script_file->fname.empty())
+    return NoScript;
+  else
+    return ScriptFile;
+}
+

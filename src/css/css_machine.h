@@ -1356,12 +1356,12 @@ public:
   { st_list_ln = list_ln; st_src_ln = src_ln; return src_ln; }
   void		RestoreListStart(int old_src_ln)
   { src_ln = old_src_ln; list_ln = st_list_ln; }
-  int		CompileLn(istream& fh = cin);	// parse next line of file
-  void 		Compile(istream& fh = cin);	// parse a file and produce a program
+  int		CompileLn(istream& fh = cin);	// parse next line of stream
+  void 		Compile(istream& fh = cin);	// parse a stream and produce a program
   void 		Compile(const char* fname);	// parse a file and produce a program
-  void 		CompileCode(const String& code);// parse string of code, produce a program
+  void 		CompileCode(const String& code);// parse a string and produce a program
   void		Include(const char* fname);	// include a file
-  void		CompileRunClear(const char* fname); // complile, run and clearall
+  void		CompileRunClear(const char* fname); // compile a file, run, then clearall
   void 		reCompile();			// parse same file and produce a program
   void		Undo(int st);
   void		Undo()			{ Undo(src_ln-2); }

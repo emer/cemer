@@ -2322,7 +2322,8 @@ void ScriptEnv::Copy_(const ScriptEnv& cp) {
 
 void ScriptEnv::UpdateAfterEdit() {
   Environment::UpdateAfterEdit();
-  UpdateReCompile();
+//v3  UpdateReCompile();
+  CompileScript(true);
 }
 
 

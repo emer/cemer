@@ -1050,6 +1050,8 @@ public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
 
+  TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
+  void*		GetThisPtr()		{ return (void*)this; }
   void	UpdateAfterEdit();
 
   void 	Initialize()	{ };

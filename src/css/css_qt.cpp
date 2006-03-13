@@ -97,14 +97,7 @@ int cssiSession::Run() {
 
   if (//!ses->done() &&
   in_session && !rl_done) {
-    // keep processing events semi-indefinitely while more to do, but don't
-    // let ourself get locked into a loop we can't quit from 
-    // note that processing more events has higher priority than exiting,
-    // so that things like defered deletes get done 
-    int max_loops = 50;
-    while ((max_loops-- > 0) && QCoreApplication::hasPendingEvents()) {
-      QCoreApplication::processEvents();
-    }
+    QCoreApplication::processEvents();
 
     if (in_session && !rl_done && !quitting) {
       int rval = false;

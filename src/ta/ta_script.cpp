@@ -19,6 +19,8 @@
 #include "ta_script.h"
 
 #include "ta_css.h"
+#include "ta_platform.h"
+
 #ifdef TA_GUI
   #include "ta_qt.h"
 #include "ta_qtdata.h"
@@ -27,124 +29,153 @@
 #endif
 
 
-ScriptBase_List Script::recompile_scripts;
+ScriptBase_List AbstractScriptBase::recompile_scripts;
 
-bool Script::Wait_RecompileScripts() {
-  if(recompile_scripts.size == 0)
+bool AbstractScriptBase::Wait_RecompileScripts() {
+  if (recompile_scripts.size == 0)
     return false;
   int i;
-  for(i=0; i<recompile_scripts.size; i++)
-    recompile_scripts[i]->LoadScript();
+  for (i=0; i<recompile_scripts.size; ++i)
+    recompile_scripts[i]->CompileScript();
   recompile_scripts.Reset();
   return true;
 }
 
 //////////////////////////
-// 	ScriptBase	//
+// 	AbstractScriptBase	//
 //////////////////////////
 
 //TODO: should always create the filer on startup, because inherited classes may not check if
 // exists (in Iv, it was a value member)
-ScriptBase::ScriptBase() {
+AbstractScriptBase::AbstractScriptBase() {
   script=NULL;
-  script_file = taFiler_CreateInstance(".","*.css*",false);
-  script_file->compress = false;	// don't compress
-  script_file->mode = taFiler::NO_AUTO;
-  taRefN::Ref(script_file);
-  ssro = false;
+  script_compiled = false;
+  ths = NULL;
 }
 
-ScriptBase::~ScriptBase() {
-  if(script != NULL) {
-    if(script->DeleteOk())
+AbstractScriptBase::~AbstractScriptBase() {
+  ths = NULL;
+  if (script) {
+    if (script->DeleteOk())
       delete script;
     else
       script->DeferredDelete();
-  }
-  script = NULL;
-  if (script_file != NULL) {
-      taRefN::unRefDone(script_file);
-      script_file = NULL;
+    script = NULL;
   }
 }
 
-TypeDef* ScriptBase::GetThisTypeDef() {
-  return &TA_Script;
-}
-
-bool ScriptBase::HasScript() {
-  if(script_file->fname.empty() && script_string.empty())
+bool AbstractScriptBase::CompileScript(bool force) {
+  if (script_compiled && !force) return true;
+  if (!HasScript()) {
+    taMisc::Error("Cannot Load Script: No script file or string specified");
     return false;
+  }
+  return CompileScript_impl();
+}
+
+void AbstractScriptBase::InitScriptObj_impl() {
+  if (script == NULL) {
+    script = new cssProgSpace();
+    ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
+    ths->InstallThis(script);
+  }
+}
+
+bool AbstractScriptBase::CompileScript_impl() {
+  InitScriptObj_impl();
+
+  if (script->in_readline) {
+    Script::recompile_scripts.AddUnique(this);
+    script->ExitShell();
+    return false;
+  }
+  
+  script->ClearAll();
+  switch (scriptSource()) {
+  case NoScript: return false; //nothing to do
+  case ScriptString:
+    script->CompileCode(scriptString());
+    break;
+  case ScriptFile:
+    script->Compile(scriptFilename());
+    break;
+  default: break;// shouldn't happen
+  }
+  script_compiled = true;
+  ScriptCompiled();
   return true;
 }
 
-void ScriptBase::SetScript(const char* nm) {
-  script_file->select_only = true;	// just selecting a file name here
-  script_file->fname = nm;
-//  script_file->UpdateGF();
-}
-
-void ScriptBase::LoadScript(const char* nm) {
-  if(nm != NULL)
-    SetScript(nm);
-
-  if(!HasScript()) {
-    taMisc::Error("Cannot Load Script: No script file or string specified");
-    return;
-  }
-  LoadScript_impl();
-}
-
-void ScriptBase::LoadScript_impl() {
-  if (script == NULL) {
-    script = new cssProgSpace();
-    cssTA_Base* ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
-    ths->InstallThis(script);
-  }
-
-  if(script->in_readline) {
-    Script::recompile_scripts.Add(this);
-    script->ExitShell();
-    return;
-  }
-  script->ClearAll();
-  if(script_file->fname.empty())
-    script->CompileCode(script_string);	// compile the string itself
-  else
-    script->Compile(script_file->fname);
-  ScriptCompiled();
-}
-
-void ScriptBase::LoadScriptString(const char* string) {
-  if(string != NULL)
-    script_string = string;
-  script_file->fname = "";
-  LoadScript();
-}
-
-bool ScriptBase::RunScript() {
-  if (script == NULL)   return false;
+bool AbstractScriptBase::RunScript() {
+  if (!CompileScript()) return false;
   script->Run();		// just run the script
   return true;
 }
 
-void ScriptBase::InteractScript() {
-  if(script == NULL)   return;
+void AbstractScriptBase::InteractScript() {
+  if (!CompileScript()) return;
   cssMisc::next_shell = script;
 }
 
-// todo: replace this with a time-stamp for recompiling
-// maybe this should be done at a lower level within css itself
 
-void ScriptBase::UpdateReCompile() {
-  if(!HasScript())
-    return;
+///////////////////////////
+//  ScriptBase		//
+//////////////////////////
 
-  if((script == NULL) || script_file->file_selected || !script_string.empty()) {
-    script_file->file_selected = false;
-    LoadScript();
+ScriptBase::ScriptBase() {
+  script_file = taFiler_CreateInstance(".","*.css*",false);
+  script_file->compress = false;	// don't compress
+  script_file->mode = taFiler::NO_AUTO;
+  taRefN::Ref(script_file);
+}
+
+ScriptBase::~ScriptBase() {
+  if (script_file) {
+    taRefN::unRefDone(script_file);
+    script_file = NULL;
   }
 }
+
+void ScriptBase::Copy_(const ScriptBase& cp) {
+  if (script_file && cp.script_file)
+    *script_file = *(cp.script_file);
+  script_string = cp.script_string;
+}
+
+void ScriptBase::LoadScript(const String& file_nm) {
+  SetScript(file_nm);
+
+  CompileScript();
+}
+
+void ScriptBase::LoadScriptString(const String& string) {
+  script_string = string;
+  script_file->fname = "";
+  script_compiled = false;
+  
+  CompileScript();
+}
+
+const String ScriptBase::scriptFilename() {
+  return script_file->fname;
+}
+
+AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
+  if (!script_file->fname.empty())
+    return ScriptFile;
+  else if (!script_string.empty()) 
+    return ScriptString;
+  else return NoScript;
+}
+
+void ScriptBase::SetScript(const String& file_nm) {
+  script_file->select_only = true;	// just selecting a file name here
+  script_file->fname = file_nm;
+  script_string = _nilString; // either/or
+  script_compiled = false;
+//  script_file->UpdateGF();
+}
+
 
 ///////////////////////////
 // 	Script		//
@@ -153,6 +184,10 @@ void ScriptBase::UpdateReCompile() {
 void Script::Initialize() {
   recording = false;
   auto_run = false;
+}
+
+void Script::Destroy() {
+  CutLinks();
 }
 
 void Script::InitLinks() {
@@ -169,22 +204,30 @@ void Script::CutLinks() {
 }
 
 void Script::Copy_(const Script& cp) {
+  ScriptBase::Copy_(cp);
   auto_run = cp.auto_run;
   s_args = cp.s_args;
-  script_file = cp.script_file;
-  script_string = cp.script_string;
+  script_compiled = false; // redo compile
 }
 
 void Script::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
-  UpdateReCompile();
-  if(!script_file->fname.empty()) {
+  // have to assume user changed something
+  script_compiled = false;
+  // if user supplied a string, then nuke the filename
+  if (!script_string.empty()) {
+    script_file->file_selected = false;
+    script_file->fname = _nilString;
+  }
+  // if based on a script, we automatically update our name
+  else if (!script_file->fname.empty()) {
     name = script_file->fname;
     if(name.contains(".css"))
       name = name.before(".css");
-    if(name.contains('/'))
-      name = name.after('/', -1);
+    name = taPlatform::getFileName(name); // strip path
   }
+  taNBase::UpdateAfterEdit();
+  if (HasScript())
+    CompileScript();
 }
 
 bool Script::Run() {
@@ -201,9 +244,9 @@ void Script::Record(const char* file_nm) {
   Script_MGroup* mg = GET_MY_OWNER(Script_MGroup);
   if(mg != NULL)
     mg->StopRecording();
-  if(file_nm != NULL)
+  if (file_nm != NULL)
     SetScript(file_nm);
-  if(script_file->fname.empty()) {
+  if (script_file->fname.empty()) {
     taMisc::Error("Record: No script file selected.\n Open a Script file and press Apply");
     return;
   }
@@ -255,7 +298,7 @@ void Script::Clear() {
 }
 
 void Script::Compile() {
-  LoadScript();
+  CompileScript();
 }
 
 void Script::AutoRun() {

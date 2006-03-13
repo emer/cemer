@@ -15,7 +15,7 @@
 
 
 // machine.cc
-
+#include "ta_platform.h"
 #include "css_machine.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
@@ -31,9 +31,6 @@
 #include <QEvent>
 #include <QCoreApplication>
 
-//nn #include <unistd.h>
-#include <sstream>
-
 #ifndef CSS_NUMBER
 #include "css_parse.h"
 #endif
@@ -41,6 +38,8 @@
 #include "ta_css.h"
 #include "ta_base.h"		// for debugging alloc_list
 #include "ta_TA_type.h"
+
+#include <sstream>
 
 int yyparse(void);
 void yyerror(char* s);
@@ -3370,7 +3369,7 @@ void cssProgSpace::Compile(const char* fname) {
       return;
     }
     // make sure directory is in include path
-    String dir = fnm.before('/', -1);
+    String dir = taPlatform::getFilePath(fnm);
     if(!dir.empty())
       taMisc::include_paths.AddUnique(dir);
     SetName(fname);

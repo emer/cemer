@@ -1116,7 +1116,8 @@ void ScriptPrjnSpec::Connect_impl(Projection* prj) {
 }
 
 void ScriptPrjnSpec::UpdateAfterEdit() {
-  UpdateReCompile();
+//v3  UpdateReCompile();
+  CompileScript_impl();
   if(!script_file->fname.empty()) {
     name = script_file->fname.before(".css");
     if(name.contains('/'))
@@ -1133,7 +1134,7 @@ void ScriptPrjnSpec::Interact() {
 }
 
 void ScriptPrjnSpec::Compile() {
-  LoadScript();
+  CompileScript();
 }
 
 /////////////////////////////

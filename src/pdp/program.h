@@ -25,7 +25,7 @@
 #include "pdp_TA_type.h"
 
 class PDP_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE #UAE_OWNER definition of a program element
+  // #NO_INSTANCE #VIRT_BASE ##UAE_OWNER definition of a program element
 INHERITED(taOBase)
 public:
   static String	    indent(int indent_level); // generally 2 spaces per level
@@ -187,29 +187,22 @@ private:
 };
 
 
-class PDP_API Program: public ProgList, public ScriptBase {
-  // program, either from a file, or from ProgEls
-INHERITED(ProgList)
+class PDP_API Program: public taNBase, public AbstractScriptBase {
+  // #HIDDEN a program, with global vars and its own program run space
+INHERITED(taNBase)
 public:
-  String	    	name;
-  bool		    	script_compiled; // #IGNORE true when compiled
 
-  bool			isDirty() {return m_dirty;}
+  virtual bool		Run(); // run the script
 
-  virtual void	    	Compile(bool force = false); 
-    // #MENU compile the script
-  override void	    	Dirty();
-  virtual void		Run();
+#ifdef TA_GUI
+public: // XxxGui versions provide feedback to the user
+  virtual void		RunGui();
+    // #MENU #LABEL_Run #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
+#endif
     
-  bool 	SetName(const char* nm)    	{return SetName(String(nm));}
-  bool 	SetName(const String& nm)    	{ name = nm; return true; }
-  String GetName() const		{ return name; }
   void	UpdateAfterEdit();
-  void	ChildUpdateAfterEdit(TAPtr child, bool& handled);
-  void	InitLinks();
-  void	CutLinks();
   void	Copy_(const Program& cp);
-  COPY_FUNS(Program, ProgList);
+  COPY_FUNS(Program, taNBase);
   TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f
@@ -219,9 +212,10 @@ public: // ScriptBase i/f
   // #IGNORE
 
 protected:
-  bool		    m_dirty;
-  override void	LoadScript_impl(); // #IGNORE
-  override void ScriptCompiled(); // #IGNORE
+  bool		    	m_dirty;
+  String		m_scriptCache; // cache of script, managed by implementation
+  override void		InitScriptObj_impl(); // #IGNORE add the global vars
+  override void 	ScriptCompiled(); // #IGNORE
   
 private:
   void	Initialize();
@@ -237,6 +231,44 @@ public:
 private:
   void	Initialize();
   void 	Destroy()		{Reset(); };
+};
+
+class PDP_API ProgElProgram: public Program {
+  // a program based on ProgEls, with global vars and its own program run space
+INHERITED(Program)
+public:
+  ProgEl_List		prog_els;
+  
+  override ScriptSource	scriptSource() {return ScriptString;}
+  override const String	scriptString();
+    
+  void	UpdateAfterEdit();
+  void	ChildUpdateAfterEdit(TAPtr child, bool& handled);
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const ProgElProgram& cp);
+  COPY_FUNS(ProgElProgram, Program);
+  TA_BASEFUNS(ProgElProgram);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class PDP_API FileProgram: public Program {
+  // a program defined in a file, with global vars and its own program run space
+INHERITED(Program)
+public:
+  taFiler*	script_file;		// file to use for the script
+  
+  override ScriptSource	scriptSource();
+  override const String	scriptFilename();
+    
+  void	Copy_(const FileProgram& cp);
+  COPY_FUNS(FileProgram, Program);
+  TA_BASEFUNS(FileProgram);
+private:
+  void	Initialize();
+  void	Destroy();
 };
 
 #endif

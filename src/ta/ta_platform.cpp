@@ -28,16 +28,27 @@ String taPlatform::finalSep(const String& in) {
 }
 
 String taPlatform::getFileName(const String& in) {
-  String rval = in;
-  bool cont = true;
-  while (cont) {
-    if (rval.contains(':'))
-      rval = rval.after(':', -1);
-    else if (rval.contains('/')) //note: works for "//" as well
-      rval = rval.after('/', -1);
-    else if (rval.contains('\\'))
-      rval = rval.after('\\', -1);
-    else cont = false;
+  int pfs = posFinalSep(in);
+  if (pfs < 0) return in;
+  else return in.after(pfs);
+}
+
+
+String taPlatform::getFilePath(const String& in) {
+  int pfs = posFinalSep(in);
+  if (pfs < 0) return _nilString;
+  else return in.before(pfs + 1); // we include the finalpos
+}
+
+int taPlatform::posFinalSep(const String& in) {
+  int rval = in.length() - 1;
+  char c;
+  while (rval >= 0) {
+    c = in.elem(rval);
+    if ((c == '/') || (c == '\\')  || (c == ':'))
+      break;
+    --rval;
   }
   return rval;
 }
+
