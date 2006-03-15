@@ -47,14 +47,10 @@ PGAC_CHECK_READLINE                                    # Check for readline, ter
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
-AH_VERBATIM([_GLIBCXX_GTHREAD_USE_WEAK],
-[/* Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 */
-#ifndef _GLIBCXX_GTHREAD_USE_WEAK
- #define _GLIBCXX_GTHREAD_USE_WEAK 0
-#endif
-])
+# Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
+CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
-#AC_DEFINE([_GLIBCXX_GTHREAD_USE_WEAK],[0],[Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484])
+
 
 # --with-rpm
 if test x"$rpm" = x"true"; then
@@ -66,6 +62,10 @@ fi
 
 # --enable-debug
 if test x"$debug" = x"true"; then
+
+  # Link with any debug-configurated libraries on the system
+  export CONFIG=debug
+
   # Create css++ in debug mode
   AC_SUBST([WANT_CSS_BIN],[src/css_bin])
 

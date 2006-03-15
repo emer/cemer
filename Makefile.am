@@ -71,14 +71,14 @@ endif
 
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
-	cp -p $(srcdir)/src/ta/taglobal.h \
-		$(srcdir)/src/ta/platform.h \
-		$(srcdir)/src/ta/qtdefs.h\
-		$(distdir)/src/ta
-	cp -p $(srcdir)/src/tamisc/tamisc_maketa_defs.h \
-		$(distdir)/src/tamisc/tamisc_maketa_defs.h
-	cp -p $(srcdir)/src/ta/ta_maketa_defs.h \
-		$(distdir)/src/ta/ta_maketa_defs.h
+# 	cp -cp $(srcdir)/src/ta/taglobal.h \
+# 		$(srcdir)/src/ta/ta_platform.h \
+# 		$(srcdir)/src/ta/qtdefs.h\
+# 		$(distdir)/src/ta
+# 	cp -cp $(srcdir)/src/tamisc/tamisc_maketa_defs.h \
+# 		$(distdir)/src/tamisc/tamisc_maketa_defs.h
+# 	cp -cp $(srcdir)/src/ta/ta_maketa_defs.h \
+# 		$(distdir)/src/ta/ta_maketa_defs.h
 #	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
 
 # Count the number of lines in *.h and *.cpp files
