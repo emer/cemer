@@ -31,7 +31,7 @@ ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
 	then touch -t 0412312359 ta_TA_type.h ta_TA_inst.h;fi
 
-ta_platform.cpp ta_platform_unix.cpp ta_string.cpp ta_variant.cpp ta_list.cpp ta_type.cpp:
+ta_ti.cpp ta_platform.cpp ta_platform_unix.cpp ta_string.cpp ta_variant.cpp ta_list.cpp ta_type.cpp:
 
 bin_PROGRAMS = maketa
 
