@@ -1028,9 +1028,13 @@ void taiVariant::cmbVarType_itemChanged(int itm) {
     break;
   case Variant::T_Base: 
     stack->setCurrentIndex(scBase);
+    tabVal->GetMenu();
+    tabVal->GetImage(NULL, NULL); // obj, no scope
     break;
   case Variant::T_Matrix:
     stack->setCurrentIndex(scMatrix);
+    matVal->GetMenu();
+    matVal->GetImage(NULL, NULL); // obj, no scope
     break;
   default: return ;
   }
@@ -1081,9 +1085,11 @@ void taiVariant::Constr(QWidget* gui_parent_) {
   stack->addWidget(lbl);
   
   tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
+  tabVal->GetMenu();
   stack->addWidget(tabVal->GetRep());
   
   matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
+  matVal->GetMenu();
   stack->addWidget(matVal->GetRep());
     
 
@@ -1122,9 +1128,13 @@ void taiVariant::GetImage(const Variant& var) {
     break;
   case Variant::T_Base: 
     stack->setCurrentIndex(scBase);
+    tabVal->GetMenu();
+    tabVal->GetImage(var.toBase(), NULL); // obj, no scope
     break;
   case Variant::T_Matrix:
     stack->setCurrentIndex(scMatrix);
+    matVal->GetMenu();
+    matVal->GetImage(var.toMatrix(), NULL); // obj, no scope
     break;
   default: return ;
   }
@@ -1162,10 +1172,10 @@ void taiVariant::GetValue(Variant& var) {
     //TODO;
     break;
   case Variant::T_Base: 
-    //TODO;
+    var.setBase(tabVal->GetValue());
     break;
   case Variant::T_Matrix:
-    //TODO;
+    var.setBase(matVal->GetValue());
     break;
   default: return ;
   }

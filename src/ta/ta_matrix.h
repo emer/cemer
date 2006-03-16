@@ -111,7 +111,7 @@ inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
 inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
   {return !a.Equal(b);}
 
-class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##NO_TOKENS ref counted multi-dimensional data array
+class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
