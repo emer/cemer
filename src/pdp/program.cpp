@@ -26,15 +26,10 @@
 //  ProgEl		//
 //////////////////////////
 
-String ProgEl::indent(int indent_level) {
-  if (indent_level == 0) return _nilString;
-  else return String(indent_level * 2, 0, ' ');
-}
-
 void ProgEl::Initialize() {
 }
 
-String ProgEl::GenCss(int indent_level) {
+const String ProgEl::GenCss(int indent_level) {
   String rval;
   rval = GenCssPre_impl(indent_level) + GenCssBody_impl(indent_level) + GenCssPost_impl(indent_level);
   return rval;
@@ -53,7 +48,7 @@ void UserScriptEl::Copy_(const UserScriptEl& cp) {
   user_script = cp.user_script;
 }
 
-String UserScriptEl::GenCssBody_impl(int indent_level) {
+const String UserScriptEl::GenCssBody_impl(int indent_level) {
 // TODO: maybe indent every line by the indent amount
   return user_script;
 }
@@ -63,7 +58,7 @@ String UserScriptEl::GenCssBody_impl(int indent_level) {
 //  ProgEl_List		//
 //////////////////////////
 
-String ProgEl_List::GenCss(int indent_level) {
+const String ProgEl_List::GenCss(int indent_level) {
   String rval;
   ProgEl* el;
   for (int i = 0; i < size; ++i) {
@@ -75,54 +70,28 @@ String ProgEl_List::GenCss(int indent_level) {
 
 
 //////////////////////////
-//  ProgVar		//
+//  ProgVars		//
 //////////////////////////
 
-void ProgVar::Initialize() {
-  var_type = &TA_Variant;
+void ProgVars::Initialize() {
 }
 
-void ProgVar::Copy_(const ProgVar& cp) {
-  var_name = cp.var_name;
-  var_type = cp.var_type;
-  init_val = cp.init_val;
+void ProgVars::Destroy() {
+  CutLinks();
 }
 
-String ProgVar::GenCssBody_impl(int) {//indent ignored
-  String rval = var_type->name + " " + var_name;
-  //TODO: maybe should check for missing "" for
-  // strings, and automatically provide; or could do in UAE
-  if (!init_val.empty())
-    rval += " = " + init_val;
-  return rval;
+void ProgVars::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(script_vars, this);
 }
 
-
-//////////////////////////
-//  ProgVar_List		//
-//////////////////////////
-
-void ProgVar_List::Initialize() {
-  SetBaseType(&TA_ProgVar);
-  var_context = VC_ProgVars;
+void ProgVars::CutLinks() {
+  script_vars.CutLinks();
+  inherited::CutLinks();
 }
 
-String ProgVar_List::GenCss(int indent_level) {
-  String rval;
-  ProgVar* el;
-  for (int i = 0; i < size; ++i) {
-    el = (ProgVar*)FastEl(i);
-    if (var_context == VC_FuncArgs) {
-      if (i > 0)
-        rval += ", ";
-    } else {
-      rval += ProgEl::indent(indent_level); 
-    }
-    rval += el->GenCss(0); //note: indent not used by ProgVar
-    if (var_context == VC_ProgVars)
-      rval += ";\n";
-  }
-  return rval;
+const String ProgVars::GenCssBody_impl(int indent_level) {
+  return script_vars.GenCss(indent_level);
 }
 
 
@@ -147,7 +116,7 @@ void ProgList::Copy_(const ProgList& cp) {
   prog_els = cp.prog_els; //TODO: need to make sure this is a value copy
 }
 
-String ProgList::GenCssBody_impl(int indent_level) {
+const String ProgList::GenCssBody_impl(int indent_level) {
   return prog_els.GenCss(indent_level);
 }
 
@@ -170,8 +139,8 @@ void LoopEl::Copy_(const LoopEl& cp) {
   loop_iter = cp.loop_iter;
 }
 
-String LoopEl::GenCssPre_impl(int indent_level) {
-  String rval = indent(indent_level);
+const String LoopEl::GenCssPre_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level);
   rval += "{Int " + loop_var + ";\n";
   rval += "for (" + loop_var + " = " + init_val + "; "
     + loop_test + "; " 
@@ -179,12 +148,12 @@ String LoopEl::GenCssPre_impl(int indent_level) {
   return rval; 
 }
 
-String LoopEl::GenCssBody_impl(int indent_level) {
+const String LoopEl::GenCssBody_impl(int indent_level) {
   return inherited::GenCssBody_impl(indent_level + 1);
 }
 
-String LoopEl::GenCssPost_impl(int indent_level) {
-  return indent(indent_level) + "}}\n";
+const String LoopEl::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "}}\n";
 }
 
 
@@ -214,21 +183,21 @@ void CondEl::Copy_(const CondEl& cp) {
   false_els = cp.false_els; //TODO: need to make sure this is a value copy
 }
 
-String CondEl::GenCssPre_impl(int indent_level) {
-  String rval = indent(indent_level);
+const String CondEl::GenCssPre_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level);
   rval += "if (" + cond_test + ") {\n";
   return rval; 
 }
 
-String CondEl::GenCssBody_impl(int indent_level) {
+const String CondEl::GenCssBody_impl(int indent_level) {
   String rval = true_els.GenCss(indent_level + 1);
-  rval += indent(indent_level) + "} else {\n";
+  rval += cssMisc::Indent(indent_level) + "} else {\n";
   rval += false_els.GenCss(indent_level + 1);
   return rval;
 }
 
-String CondEl::GenCssPost_impl(int indent_level) {
-  return indent(indent_level) + "}\n";
+const String CondEl::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "}\n";
 }
 
 

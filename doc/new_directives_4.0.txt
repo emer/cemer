@@ -22,7 +22,10 @@ MEMBER DIRECTIVES
 #BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
 #NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
 #INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
-#EDITOR -- for String types, enables a button for a dialog editor (for long strings)
+#VARTYPE_READ_ONLY -- user can only change value, not the type, of a Variant
+#NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
+
+tbd: #EDITOR -- for String types, enables a button for a dialog editor (for long strings)
 
 METHOD DIRECTIVES
 -----------------

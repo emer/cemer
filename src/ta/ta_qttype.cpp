@@ -317,6 +317,24 @@ int taiVariantType::BidForType(TypeDef* td){
   return 0;
 }
 
+taiData* taiVariantType::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiVariant* rval = new taiVariant(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiVariantType::GetImage_impl(taiData* dat, void* base) {
+  if (!base) return; // error
+  taiVariant* rval = (taiVariant*)dat;
+  rval->GetImage(*(Variant*)base);
+}
+
+void taiVariantType::GetValue_impl(taiData* dat, void* base) {
+  if (!base) return; // error
+  taiVariant* rval = (taiVariant*)dat;
+  
+  rval->GetValue(*(Variant*)base);
+}
+
 
 ////////////////////////
 //  taiClassType    //

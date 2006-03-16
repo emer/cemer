@@ -100,6 +100,7 @@ class	QSizePolicy;		// #IGNORE
 class	QSpacerItem;		// #IGNORE
 class	QSpinBox;		// #IGNORE
 class	QSplitter;		// #IGNORE
+class	QStackedWidget;		// #IGNORE
 class	Q3Table;			// #IGNORE
 class	QTableView;		// #IGNORE
 class	Q3TableItem;			// #IGNORE

@@ -377,7 +377,6 @@ public:
 
   virtual bool		SetName(const char* nm) {return 0;} // #IGNORE
   virtual bool		SetName(const String& nm) {return SetName(nm.chars());}
-//obs  virtual const String&	GetName() const 	{ return no_name; } // #IGNORE
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
   bool			SetFileName(const char* val)    {return SetFileName((String)val);} // #IGNORE

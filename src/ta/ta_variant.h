@@ -37,21 +37,21 @@ public:
 
   // note: VarType values must never change, they are used in persistence, add new ones only
   enum VarType {
-    T_Invalid = 0,
+    T_Invalid = 0, 	// #LABEL_Invalid
 
-    T_Bool = 1,
-    T_Int = 2,
-    T_UInt = 3, 
-    T_Int64 = 4,
-    T_UInt64 = 5,
-    T_Double = 6,
-    T_Char = 7,
-    T_String = 9,
+    T_Bool = 1, 	// #LABEL_bool
+    T_Int = 2, 		// #LABEL_int
+    T_UInt = 3, 	// #LABEL_uint
+    T_Int64 = 4, 	// #LABEL_int64_t
+    T_UInt64 = 5, 	// #LABEL_uint64_t
+    T_Double = 6, 	// #LABEL_double
+    T_Char = 7, 	// #LABEL_char
+    T_String = 9, 	// #LABEL_String
     
-    T_Ptr = 10, // void*
+    T_Ptr = 10, 	// #LABEL_ptr void*
     
-    T_Base = 11, // taBase ref counted
-    T_Matrix = 12 // taMatrix ref counted
+    T_Base = 11, 	// #LABEL_taBase taBase ref counted
+    T_Matrix = 12 	// #LABEL_taMatrix taMatrix ref counted
 #ifndef __MAKETA__    
     ,T_MaxType = T_Matrix
     ,T_LastType = 0xffffffff // need this so that gcc >= 3.4 allocates 32 bits for Type
@@ -74,6 +74,7 @@ public:
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase* or taMatrix*
   VarType		type() const {return (VarType)m_type;} //
+  void			setType(VarType value); // force it to be given type, if changed, set to default value
 
   void			save(ostream& s) const;
   void			load(istream& s); //
@@ -101,6 +102,8 @@ public:
   void			setMatrix(taMatrix* cp); // handles setting of a matrix
 #endif  
 
+  void			updateFromString(const String& val); // set value from string, but keep current type
+  
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
   bool 			toBool() const;
   byte 			toByte() const {return (byte)toUInt();}
@@ -117,6 +120,7 @@ public:
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
 #endif  
+  const String		toCssLiteral() const; // to a form suitable for initializing a Css variable, ex. quoted strings, U suffix for unsigned, path for taBase variable, etc.
   // following are the operators for C++ casting -- note they are all explicit
   // because you can't mix having cast operators with having various math operators
 /*can't have converters and ops

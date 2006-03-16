@@ -202,6 +202,9 @@ public:
   void 		GetImage(int itm);  // set to this item number
   void		GetValue(int& itm) const;
 
+  void 		GetEnumImage(int enum_val);  // set to item number corresponding to this enum value, enum mode only
+  void		GetEnumValue(int& enum_val) const; // set to enum value corresponding to item number, enum mode only
+  
 #ifndef __MAKETA__
 signals:
   void		itemChanged(int itm); // for use by non-taiDataHost users, forwards chkbox signal
@@ -292,7 +295,7 @@ private:
 
 class TA_API taiPolyData : public taiCompData {
 public:
-  QFrame*	rep() const { return (QFrame*)m_rep; } //note: actual class may be subclass of QFrame
+  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   int		show;
 
   taiPolyData(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
@@ -325,7 +328,47 @@ public:
 
   virtual void  GetImage(int i);
 protected:
-  override void AddChildWidget_impl(QWidget* child_widget, int spacing);
+  override void AddChildWidget_impl(QWidget* child_widget, int spacing); //
+};
+
+
+class TA_API taiVariant: public taiCompData {
+INHERITED(taiPolyData)
+  Q_OBJECT
+public:
+  
+  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  taiVariant(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiVariant();
+
+  void  	GetImage(const Variant& var);
+  void	 	GetValue(Variant& var);
+
+protected:
+  enum StackControls { // #IGNORE indexes of controls in the stack
+    scInvalid,
+    scBool,
+    scAtomics, // includes string and char
+    scPtr,
+    scBase,
+    scMatrix
+  };
+  
+  int			m_updating;
+  
+  taiComboBox*		cmbVarType;
+  QStackedWidget*	stack; // holds the subfields for different types
+  
+  taiToggle*		togVal; // for: bool
+  taiField*		fldVal; // for: char, string, numbers
+  taiToken*		tabVal; // for taBase token (note: browsing could be hairy!!!)
+  taiToken*		matVal; // for Matrix token
+  
+  virtual void	Constr(QWidget* gui_parent_);
+  
+protected slots:
+  void			cmbVarType_itemChanged(int itm);
+
 };
 
 

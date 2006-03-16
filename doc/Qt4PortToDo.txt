@@ -1,5 +1,9 @@
 Qt4 Port TODO Items
 
+css (general)
+
+* parse longlong literals (xxLL and xxULL)
+* handling of css args, need to grok Variant
 
 ta_qtclipdata.h/cpp
 

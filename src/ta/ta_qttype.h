@@ -87,9 +87,13 @@ public:
   TAQT_TYPE_INSTANCE(taiBoolType, taiType);
 };
 
-class TA_API taiVariantType : public taiType { // TEMP: just use string values
+class TA_API taiVariantType : public taiType { 
 public:
+  bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
   int		BidForType(TypeDef* td);
+  taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void 		GetImage_impl(taiData* dat, void* base);
+  void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiVariantType, taiType);
 };

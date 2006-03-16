@@ -117,6 +117,9 @@ TA_API StrRep*		Sreverse(const StrRep* x);
 class TA_API String { // reference counted string
 friend class StrRep;
 public:
+  static const String	CharToCppLiteral(char c); // converts a character to a C++ valid literal; can be embedded in a C++ string
+  static const String	StringToCppLiteral(const String& str); // converts a string to a C++ valid literal
+    
 // constructors & assignment
   inline String() {newRep(&_nilStrRep);} // el blanco
   inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
@@ -363,6 +366,8 @@ public:
 
 //obs  int               OK() const;	// check if the string is allocated properly, etc.
 protected:
+  static void 		AppendCharToCppStringLiteral(String& str, char c, bool char_mode); // #IGNORE
+  
   StrRep*		mrep;   // Strings are pointers to their representations
   void			init(const char* s, int slen = -1); // for calling in constructors
   void			newRep(StrRep* rep_); // for setting rep in a constructor

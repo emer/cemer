@@ -28,6 +28,78 @@
 //#include "ta_qtgroup.h"
 #endif
 
+//////////////////////////
+//   ScriptVar		//
+//////////////////////////
+
+void ScriptVar::Initialize() {
+  init = false;
+}
+
+void ScriptVar::Destroy() {
+}
+
+void ScriptVar::Copy_(const ScriptVar& cp) {
+  name = cp.name;
+  value = cp.value;
+  init = cp.init;
+}
+
+void ScriptVar::UpdateAfterEdit() {
+  // TODO: validate name
+  inherited::UpdateAfterEdit();
+}
+
+const String ScriptVar::GenCss() {
+  String rval(0, 80, '\0');
+  rval += "Variant ";
+  rval += name;
+  if (init) {
+    rval += "= ";
+    rval += value.toCssLiteral();
+  }
+  return rval;
+}
+
+//////////////////////////
+//   ScriptVar_List	//
+//////////////////////////
+
+void ScriptVar_List::Initialize() {
+  SetBaseType(&TA_ScriptVar);
+  var_context = VC_ProgVars;
+}
+
+void ScriptVar_List::El_SetIndex_(void* it_, int idx) {
+  ScriptVar* it = (ScriptVar*)it_;
+  if (it->name.empty()) {
+    it->name = "Var_" + (String)idx;
+  }
+}
+
+const String ScriptVar_List::GenCss(int indent_level) const {
+  String rval(0, 20 * size, '\0'); // buffer with typical-ish room
+  ScriptVar* el;
+  for (int i = 0; i < size; ++i) {
+    el = FastEl(i);
+    if (var_context == VC_FuncArgs) {
+      if (i > 0)
+        rval += ", ";
+    } else {
+      rval += cssMisc::Indent(indent_level); 
+    }
+    rval += el->GenCss(); 
+    if (var_context == VC_ProgVars)
+      rval += ";\n";
+  }
+  return rval;
+}
+
+
+
+//////////////////////////
+//   AbstractScriptBase	//
+//////////////////////////
 
 ScriptBase_List AbstractScriptBase::recompile_scripts;
 
@@ -42,7 +114,7 @@ bool AbstractScriptBase::Wait_RecompileScripts() {
 }
 
 //////////////////////////
-// 	AbstractScriptBase	//
+//   AbstractScriptBase	//
 //////////////////////////
 
 //TODO: should always create the filer on startup, because inherited classes may not check if

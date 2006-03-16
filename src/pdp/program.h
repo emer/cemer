@@ -28,19 +28,17 @@ class PDP_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE ##UAE_OWNER definition of a program element
 INHERITED(taOBase)
 public:
-  static String	    indent(int indent_level); // generally 2 spaces per level
-  
   virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
   
-  virtual String    GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
+  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
 //  void UpdateAfterEdit();
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
-  virtual String    GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object
-  virtual String    GenCssBody_impl(int indent_level) = 0; // #IGNORE generate the Css body code for this object
-  virtual String    GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
+  virtual const String    GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
+  virtual const String    GenCssBody_impl(int indent_level) = 0; // #IGNORE generate the Css body code for this object
+  virtual const String    GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
 private:
   void	Initialize();
@@ -50,7 +48,7 @@ private:
 class PDP_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
-  virtual String    GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual const String    GenCss(int indent_level = 0); // generate the Css code for this object
   TA_BASEFUNS(ProgEl_List);
 
 private:
@@ -72,7 +70,7 @@ public:
   TA_BASEFUNS(ProgList);
 
 protected:
-  override String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
   void	Initialize();
@@ -80,42 +78,21 @@ private:
 };
 
 
-class PDP_API ProgVar: public ProgEl { // #INLINE a program variable, or function argument
+class PDP_API ProgVars: public ProgEl {
 INHERITED(ProgEl)
 public:
-  String	    var_name; // name of the variable
-  TypeDef*	    var_type; // #DEF_TA_Variant #NO_NULL type of the variable
-  String	    init_val; // (optional) initial value of variable
+  ScriptVar_List	script_vars;
   
-  void	Copy_(const ProgVar& cp);
-  COPY_FUNS(ProgVar, ProgEl);
-  TA_BASEFUNS(ProgVar);
- 
+  void	InitLinks();
+  void	CutLinks();
+  TA_BASEFUNS(ProgVars);
+
 protected:
-  override String    GenCssBody_impl(int indent_level); // note: no separator/terminator, ident ignored
- 
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
-
-class PDP_API ProgVar_List: public ProgEl_List {
-INHERITED(ProgEl_List)
-public:
-  enum VarContext {
-    VC_ProgVars,  // program variables
-    VC_FuncArgs  // function arguments
-  };
-  
-  VarContext	    var_context; // #HIDDEN context of vars, set by owner
-  
-  override String    GenCss(int indent_level = 0); // generate the Css code for this object
-  TA_BASEFUNS(ProgVar_List);
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy();
 };
 
 
@@ -130,7 +107,7 @@ public:
   TA_BASEFUNS(UserScriptEl);
 
 protected:
-  override String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
   void	Initialize();
@@ -142,19 +119,19 @@ class PDP_API LoopEl: public ProgList {
   // ProgEl for an iteration over the elements
 INHERITED(ProgList)
 public:
-  String	    loop_var; // the loop variable
-  String	    init_val; // initial value of loop variable
-  String	    loop_test; // the test each time
-  String	    loop_iter; // the iteration operation
+  String	    	loop_var; // the loop variable
+  String	    	init_val; // initial value of loop variable
+  String	    	loop_test; // the test each time
+  String	    	loop_iter; // the iteration operation
   
   void	Copy_(const LoopEl& cp);
   COPY_FUNS(LoopEl, ProgList);
   TA_BASEFUNS(LoopEl);
 
 protected:
-  override String    GenCssPre_impl(int indent_level); 
-  override String    GenCssBody_impl(int indent_level); 
-  override String    GenCssPost_impl(int indent_level); 
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
 
 private:
   void	Initialize();
@@ -177,9 +154,9 @@ public:
   TA_BASEFUNS(CondEl);
 
 protected:
-  override String    GenCssPre_impl(int indent_level); 
-  override String    GenCssBody_impl(int indent_level); 
-  override String    GenCssPost_impl(int indent_level); 
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
 
 private:
   void	Initialize();

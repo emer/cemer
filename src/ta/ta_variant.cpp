@@ -1633,6 +1633,29 @@ void Variant::setString(const String& val, bool null) {
   m_is_null = null;
   m_is_numeric_valid = false;
 }
+
+void Variant::setType(VarType value) {
+  if (m_type == value) return;
+  releaseType();
+  switch (value) {
+  case T_Invalid: setInvalid(); break;
+  case T_Bool: setBool(false); break;
+  case T_Int: setInt(0); break;
+  case T_UInt:  setUInt(0U); break;
+  case T_Int64:  setInt64(0LL); break;
+  case T_UInt64: setUInt64(0ULL); break;
+  case T_Double: setDouble(0.0); break;
+  case T_Char: setChar('\0'); break;
+  case T_String:  setString(""); break;
+  case T_Ptr:  setPtr(NULL); break;
+#ifndef NO_TA_BASE
+  case T_Base:  
+  case T_Matrix: setBase(NULL); break;
+#endif
+  default: return ;
+  }
+}
+
 /*
   switch (m_type) {
   case T_Invalid: 
@@ -1715,6 +1738,52 @@ bool Variant::toBool() const {
 	default: break;
   }
   return false;
+}
+
+const String Variant::toCssLiteral() const {
+  String rval;
+  switch (type()) {
+  case T_Invalid: rval = "_nilVariant"; break;
+  case T_Bool: rval = toString(); break;
+  case T_Int: rval = toString(); break;
+  case T_UInt:
+    rval = toString(); 
+    rval += "U";
+    break;
+  case T_Int64:
+    rval = toString(); 
+    rval += "LL";
+    break;
+  case T_UInt64:
+    rval = toString(); 
+    rval += "ULL";
+    break;
+  case T_Double: rval = toString(); break;
+  case T_Char:
+    rval = String::CharToCppLiteral(d.c);
+    break;
+  case T_String: 
+    rval = String::StringToCppLiteral(getString());
+    break;
+  case T_Ptr: 
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      warn("toCssLiteral() on a non-null raw pointer");
+      // todo, maybe should emit code breaking literal
+    }  break; 
+#ifndef NO_TA_BASE
+  case T_Base: 
+  case T_Matrix:
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      rval += d.tab->GetPath();
+    }
+#endif
+  default: break ;
+  }
+  return rval;
 }
 
 int Variant::toInt() const {
@@ -1964,6 +2033,32 @@ String Variant::toString() const {
   default: break ;
   }
   return _nilString;
+}
+
+void Variant::updateFromString(const String& val) {
+  switch (m_type) {
+  case T_Invalid: break; // ignored 
+  case T_Bool: d.b = val.toBool(); break;
+  case T_Int: d.i = val.toInt(); break;
+  case T_UInt: d.u = val.toUInt(); break;
+  case T_Int64: d.i64 = val.toInt64(); break;
+  case T_UInt64: d.u64 = val.toUInt64(); break;
+  case T_Double: d.d = val.toDouble(); break;
+  case T_Char: d.c = val.toChar(); break;
+  case T_String: getString() = val; break;
+  case T_Ptr:
+    if ((val == "NULL") || (val == "(NULL)")) d.ptr = NULL;
+    else warn("updateFromString() setting ptr to other than NULL");
+    break; 
+#ifndef NO_TA_BASE
+ // TODO: should look up from path
+  case T_Base: 
+  case T_Matrix: {
+    warn("updateFromString() setting T_Base");
+  }
+#endif
+  default: break ;
+  }
 }
 
 void Variant::warn(const char* msg) const {

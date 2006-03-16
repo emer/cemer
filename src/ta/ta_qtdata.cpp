@@ -53,6 +53,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <qpushbutton.h>
+#include <QStackedWidget>
 #include <qstring.h>
 #include <qtooltip.h>
 #include <Q3WidgetStack>
@@ -341,6 +342,7 @@ void taiCompData::ChildRemove(taiData* child) {
 
 void taiCompData::InitLayout() { //virtual/overridable
   lay = new QHBoxLayout(GetRep());
+  lay->setMargin(0); // in Qt4 it adds style-dependent defaults
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
@@ -351,7 +353,8 @@ void taiCompData::AddChildWidget(QWidget* child_widget, int space_after, int spa
 }
 
 void taiCompData::EndLayout() { //virtual/overridable
-  lay->addStretch();
+  if (last_spc != -1)
+    lay->addStretch();
 }
 
 void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing) { //virtual/overridable
@@ -708,6 +711,24 @@ void taiComboBox::GetImage(int itm) {
 void taiComboBox::GetValue(int& itm) const {
   itm = rep()->currentIndex();
 }
+
+void taiComboBox::GetEnumImage(int enum_val) {
+  int i = typ->enum_vals.size - 1;
+  while (i >= 0) {
+    if (typ->enum_vals.FastEl(i)->enum_no == enum_val) break;
+    --i;
+  }
+  rep()->setCurrentIndex(i);
+}
+
+void taiComboBox::GetEnumValue(int& enum_val) const {
+  int itm = rep()->currentIndex();
+  //NOTE: should work, except maybe if there were no values at all for some reason
+  EnumDef* ed = typ->enum_vals.SafeEl(itm); 
+  if (ed) enum_val = ed->enum_no;
+  else enum_val = 0; // perhaps the safest invalid choice...
+}
+
 /* NN
 void taiComboBox::GetImage(const String& val) {
   // set to this string item
@@ -860,7 +881,7 @@ bool taiPolyData::ShowMember(MemberDef* md) {
 }
 
 void taiPolyData::Constr(QWidget* gui_parent_) {
-  SetRep(new QFrame(gui_parent_));
+  SetRep(new QWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
     SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
@@ -954,6 +975,203 @@ void taiDataDeck::GetImage(int i) {
 void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing) {
   (rep()->addWidget(child_widget, cur_deck));
 }
+
+
+//////////////////////////////////
+// 	taiVariant		//
+//////////////////////////////////
+
+taiVariant::taiVariant(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+: taiCompData(typ_, host_, par, gui_parent_, flags)
+{
+  Constr(gui_parent_);
+}
+
+taiVariant::~taiVariant() {
+  data_el.Reset();
+}
+/*
+bool taiVariant::ShowMember(MemberDef* md) {
+  if (md->HasOption("HIDDEN_INLINE"))
+    return false;
+  else
+    return md->ShowMember((taMisc::ShowMembs)show);
+} */
+
+void taiVariant::cmbVarType_itemChanged(int itm) {
+  if (m_updating != 0) return;
+  ++m_updating;
+  int vt; //Variant::VarType
+  // set combo box to right type
+  cmbVarType->GetEnumValue(vt);
+  switch (vt) {
+  case Variant::T_Invalid: 
+    stack->setCurrentIndex(scInvalid);
+    break;
+  
+  case Variant::T_Bool:
+    stack->setCurrentIndex(scBool);
+    break;
+  
+  case Variant::T_Int:
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+  case Variant::T_Double:
+  case Variant::T_Char:
+  case Variant::T_String: 
+    stack->setCurrentIndex(scAtomics);
+    break;
+  
+  case Variant::T_Ptr: 
+    stack->setCurrentIndex(scPtr);
+    break;
+  case Variant::T_Base: 
+    stack->setCurrentIndex(scBase);
+    break;
+  case Variant::T_Matrix:
+    stack->setCurrentIndex(scMatrix);
+    break;
+  default: return ;
+  }
+  --m_updating;
+}
+
+void taiVariant::Constr(QWidget* gui_parent_) {
+  cmbVarType = NULL;
+  fldVal = NULL;
+  togVal = NULL;
+  m_updating = 0;
+  
+  SetRep(new QWidget(gui_parent_));
+  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
+  }
+  InitLayout();
+  // type stuff
+  QLabel* lbl = new QLabel("var type", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  bool vt_ro = false; // todo, need to be able to set this from a memberdef
+  
+  if (vt_ro) {
+    // todo: create a ro edit for type
+  } else {
+    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
+    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
+    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
+    lbl->setBuddy(cmbVarType->rep());
+    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+    
+  }
+  lbl = new QLabel("var value", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  stack = new QStackedWidget(rep());
+  AddChildWidget(stack, -1, 1); // fill rest of space
+  lbl->setBuddy(stack);
+  
+  // created in order of StackControls
+  lbl = new QLabel("(no value for type Invalid)");
+  stack->addWidget(lbl);
+  togVal = new taiToggle(typ, host, this, NULL);
+  stack->addWidget(togVal->rep());
+  fldVal = new taiField(typ, host, this, NULL);
+  stack->addWidget(fldVal->rep());
+  lbl = new QLabel("(Ptr cannot be set)");
+  stack->addWidget(lbl);
+  
+  tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
+  stack->addWidget(tabVal->GetRep());
+  
+  matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
+  stack->addWidget(matVal->GetRep());
+    
+
+  
+  EndLayout();
+}
+
+void taiVariant::GetImage(const Variant& var) {
+  ++m_updating;
+  // set combo box to right type
+  cmbVarType->GetEnumImage(var.type());
+  
+  switch (var.type()) {
+  case Variant::T_Invalid: 
+    stack->setCurrentIndex(scInvalid);
+    break;
+  
+  case Variant::T_Bool:
+    stack->setCurrentIndex(scBool);
+    togVal->GetImage(var.toBool());
+    break;
+  
+  case Variant::T_Int:
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+  case Variant::T_Double:
+  case Variant::T_Char:
+  case Variant::T_String: 
+    stack->setCurrentIndex(scAtomics);
+    fldVal->GetImage(var.toString());
+    break;
+  
+  case Variant::T_Ptr: 
+    stack->setCurrentIndex(scPtr);
+    break;
+  case Variant::T_Base: 
+    stack->setCurrentIndex(scBase);
+    break;
+  case Variant::T_Matrix:
+    stack->setCurrentIndex(scMatrix);
+    break;
+  default: return ;
+  }
+  --m_updating;
+}
+
+void taiVariant::GetValue(Variant& var) {
+  ++m_updating;
+  int vt; //Variant::VarType
+  // set combo box to right type
+  cmbVarType->GetEnumValue(vt);
+  var.setType((Variant::VarType)vt);
+  
+  //note: the correct widget should be visible...
+  
+  switch (var.type()) {
+  case Variant::T_Invalid: 
+    break;
+  
+  case Variant::T_Bool:
+    var.setBool(togVal->GetValue());
+    break;
+  
+  case Variant::T_Int:
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+  case Variant::T_Double:
+  case Variant::T_Char:
+  case Variant::T_String: 
+    var.updateFromString(fldVal->GetValue());
+    break;
+  
+  case Variant::T_Ptr: 
+    //TODO;
+    break;
+  case Variant::T_Base: 
+    //TODO;
+    break;
+  case Variant::T_Matrix:
+    //TODO;
+    break;
+  default: return ;
+  }
+  --m_updating;
+}
+
 
 //////////////////////////
 // 	taiAction	//

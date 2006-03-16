@@ -5,6 +5,9 @@ ${PROJNAME}_TA_type.h:	${TAHEADS}
 force_ta:
 	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
+do_ta:
+	../maketa/./maketa ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
+
 # Instruct automake to clean these files on make clean
 CLEANFILES =\
 	${PROJNAME}_TA_type.h \
@@ -15,7 +18,6 @@ CLEANFILES =\
 	${PROJNAME}_TA.ccx
 
 MAKETA_FLAGS =\
-	-autohx \
 	-css \
 	-cpp="@CXXCPP@" \
 	-I@abs_top_builddir@ \

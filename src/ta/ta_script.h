@@ -22,6 +22,7 @@
 #include "ta_base.h"
 #include "ta_group.h"
 #include "ta_filer.h"
+#include "ta_variant.h"
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
@@ -34,6 +35,52 @@ class cssTA_Base;		// #IGNORE
 
 // forwards
 class ScriptBase_List;
+class ScriptVar;
+
+class TA_API ScriptVar: public taOBase { // ##NO_TOKENS #INLINE #UAE_OWNER a script variable, accessible from the outer system, and inside the script
+INHERITED(taOBase)
+public:
+  String		name; // name of the variable -- must be a legal css name
+  Variant		value; // the actual variableuse_init_value
+  bool			init; // if true, use an initial value
+  
+  const String		GenCss(); // css code (no terminator or newline)
+  
+  bool	SetName(const char* nm) {name = nm; return true;} // #IGNORE
+  bool	SetName(const String& nm) {name = nm; return true;} // #IGNORE
+  String GetName() const { return name; } // #IGNORE
+  void 	SetDefaultName() {} // make it local to list, set by list
+  void	UpdateAfterEdit();
+  void	Copy_(const ScriptVar& cp);
+  COPY_FUNS(ScriptVar, taOBase);
+  TA_BASEFUNS(ScriptVar);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ScriptVar_List : public taList<ScriptVar> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #UAE_OWNER list of script variables
+INHERITED(taList<ScriptVar>)
+public:
+  enum VarContext {
+    VC_ProgVars,  // #LABEL_ProgramVariables program variables
+    VC_FuncArgs  //  #LABEL_FunctionArguments function arguments
+  };
+  
+  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN context of vars, set by owner
+  
+  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  
+  TA_BASEFUNS(ScriptVar_List);
+  
+protected:
+  override void	El_SetIndex_(void*, int);
+  
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
 
 
 class TA_API AbstractScriptBase {

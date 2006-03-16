@@ -313,6 +313,46 @@ void StrRep::upcase() {//note: should only be called on cnt<=1
 //	String		//
 //////////////////////////
 
+void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) { 
+  //note: char_mode=true is for doing a single conversion for a char literal
+  switch (c) { // do the specials first, since some printables are special
+  case '\n': str += "\\n"; break;
+  case '\t': str += "\\t"; break;
+  case '\v': str += "\\v"; break;
+  case '\b': str += "\\b"; break;
+  case '\r': str += "\\r"; break;
+  case '\f': str += "\\f"; break;
+  case '\?': str += "\\?"; break;
+  case '\\': str += "\\\\"; break;
+  case '\'': if (char_mode) str += "\\'"; else str += "'"; break;
+  case '\"': if (char_mode) str += "\""; else str += "\\\""; break;
+  default: 
+    if ((c >= ' ') && ((uint)c < 127)) 
+      str += c;
+    else { // octal format with 3 digits is deterministically parsable in strings
+      str += "\\";
+      str += String((int)c, "%o03.3"); // exactly 3 octal digits 
+    } break;
+  } 
+}
+
+const String String::CharToCppLiteral(char c) { 
+  String rval(1, 6, '\''); // buffer
+  AppendCharToCppStringLiteral(rval, c, true);
+  rval += '\'';
+  return rval;
+}
+
+const String String::StringToCppLiteral(const String& str) {
+  String rval(1, (str.length() * 11 ) / 10, '"'); // 10% extra sized buffer
+  int len = str.length(); // cache
+  for (int i = 0; i < len; ++i) 
+    AppendCharToCppStringLiteral(rval, str.elem(i), false);
+  rval += '"';
+  return rval;
+}
+
+
 String::String(uint slen, uint sz, char fill) {
   if (sz == 0) sz = slen;
   if (fill == '\0') slen = 0;
