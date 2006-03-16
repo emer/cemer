@@ -174,6 +174,7 @@ public:
   static bool		HasCmdLineSwitch(const char* sw_name); // looks for the switch value (include the '-' if applicable) --
   static bool		HasCmdLineSwitch(const char* sw_name, int& index); // looks for the switch value (include the '-' if applicable)
   static bool		CmdLineSwitchValue(const char* sw_name, String& sw_value); // looks for the switch value, and returns following string
+  static String	    	Indent(int indent_level); // generally 2 spaces per level
 
   static cssProgSpace*	SetCurTop(cssProgSpace* pspc)
   { cssProgSpace* rval = cur_top; cur_top = pspc; return rval; }
@@ -549,7 +550,7 @@ public:
   virtual cssEl* GetMember(const char*) const  { NopErr(".,->"); return &cssMisc::Void; }
   virtual cssEl* GetMember(int) const  { NopErr(".,->"); return &cssMisc::Void; }
   virtual int	 GetMemberFunNo(const char*) const { NopErr(".,->()"); return -1; }
-  virtual cssEl* GetMemberFun(const char*) const { NopErr(".,->()"); return &cssMisc::Void; }
+  virtual cssEl* GetMemberFun(const char* nm) const { return GetMemberFun(GetMemberNo(nm)); }
   virtual cssEl* GetMemberFun(int) const { NopErr(".,->()"); return &cssMisc::Void; }
   virtual cssEl* GetScoped(const char*) const { NopErr("::"); return &cssMisc::Void; }
   virtual cssEl* NewOpr();
@@ -575,6 +576,12 @@ public:
   virtual void operator&=(cssEl&) { NopErr("&="); }
   virtual void operator^=(cssEl&) { NopErr("^="); }
   virtual void operator|=(cssEl&) { NopErr("|="); }
+protected:
+  int	 GetMemberFunNo_impl(const TypeDef& typ, const char*) const;
+  cssEl* GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const;
+  cssEl* GetMemberFun_impl(void* base, MethodDef* md) const;
+  cssEl* GetScoped_impl(const TypeDef& typ, void* base, const char*) const;
+  cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
 };
 
 

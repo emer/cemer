@@ -330,9 +330,7 @@ public:
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
-  cssEl* GetMemberFun_impl(MethodDef* md) const;
   int	 GetMemberFunNo(const char*) const;
-  cssEl* GetMemberFun(const char* memb) const;
   cssEl* GetMemberFun(int memb) const;
   cssEl* GetScoped(const char*) const;
 };
@@ -459,6 +457,12 @@ public:
   bool operator!=(cssEl& s);
   bool operator&&(cssEl& s);
   bool operator||(cssEl& s);
+  
+  // these use the TA info to perform actions
+  cssEl* operator[](int idx) const; // only valid for Matrixes, gets flat el
+  int	 GetMemberFunNo(const char*) const;
+  cssEl* GetMemberFun(int memb) const;
+  cssEl* GetScoped(const char*) const;
 };
 
 #define cssVariant_inst(l,n,x)		l .Push(new cssVariant(n, #x))
@@ -842,7 +846,6 @@ public:
   cssEl* GetMember(const char* s) const  	{ return ptr.El()->GetMember(s); }
   cssEl* GetMember(int s) const  		{ return ptr.El()->GetMember(s); }
   int	 GetMemberFunNo(const char* s) const;
-  cssEl* GetMemberFun(const char* s) const	{ return ptr.El()->GetMemberFun(s); }
   cssEl* GetMemberFun(int s) const		{ return ptr.El()->GetMemberFun(s); }
   cssEl* GetScoped(const char* s) const  	{ return ptr.El()->GetScoped(s); }
   cssEl* NewOpr()   				{ return ptr.El()->NewOpr(); }

@@ -77,53 +77,15 @@ cssEl* cssString::operator[](int idx) const {
 }
 
 int cssString::GetMemberFunNo(const char* memb) const {
-  int md;
-  TA_taString.methods.FindName(memb, md);
-  return md;
+  return GetMemberFunNo_impl(TA_taString, memb);
 }
-cssEl* cssString::GetMemberFun(const char* memb) const {
-  MethodDef* md = TA_taString.methods.FindName(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member function not found:", memb, "in class of type: String");
-    return &cssMisc::Void;
-  }
-  return GetMemberFun_impl(md);
-}
+
 cssEl* cssString::GetMemberFun(int memb) const {
-  MethodDef* md = TA_taString.methods.SafeEl(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type: String");
-    return &cssMisc::Void;
-  }
-  return GetMemberFun_impl(md);
-}
-cssEl* cssString::GetMemberFun_impl(MethodDef* md) const {
-  if(md->stubp != NULL) {
-    if(md->fun_argd >= 0)
-      return new cssMbrCFun(VarArg, (void*)&val, md->stubp, md->name);
-    else
-      return new cssMbrCFun(md->fun_argc, (void*)&val, md->stubp, md->name);
-  }
-  else {
-    cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
-	      "in class of type: String");
-    return &cssMisc::Void;
-  }
+  return GetMemberFun_impl(TA_taString, (void*)&val, memb);
 }
 
 cssEl* cssString::GetScoped(const char* memb) const {
-  EnumDef* ed = TA_taString.FindEnum(memb);
-  if(ed != NULL) {
-    return new cssInt(ed->enum_no);
-  }
-
-  MethodDef* md = TA_taString.methods.FindName(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type: String");
-    return &cssMisc::Void;
-  }
-
-  return GetMemberFun_impl(md);
+  return GetScoped_impl(TA_taString, (void*)&val, memb);
 }
 
 // delete any open files at this point
@@ -303,6 +265,22 @@ bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
 bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
 bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && (s.GetVar()).toBool()); }
 bool cssVariant::operator||(cssEl& s) { return (val.toBool() || (s.GetVar()).toBool()); }
+
+int cssVariant::GetMemberFunNo(const char* memb) const {
+  return GetMemberFunNo_impl(TA_Variant, memb);
+}
+
+cssEl* cssVariant::GetMemberFun(int memb) const {
+  return GetMemberFun_impl(TA_Variant, (void*)&val, memb);
+}
+
+cssEl* cssVariant::GetScoped(const char* memb) const {
+  return GetScoped_impl(TA_Variant, (void*)&val, memb);
+}
+
+cssEl* cssVariant::operator[](int idx) const {
+  return GetVariantEl_impl(val, idx);
+}
 
 
 //////////////////////////////////

@@ -19,6 +19,15 @@
 #include "css_machine.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
+#ifndef CSS_NUMBER
+# include "css_parse.h"
+#endif
+
+
+#include "ta_css.h"
+#include "ta_base.h"		// for debugging alloc_list
+#include "ta_matrix.h"
+
 
 #ifdef TA_GUI
 # include <QApplication>
@@ -30,14 +39,6 @@
 
 #include <QEvent>
 #include <QCoreApplication>
-
-#ifndef CSS_NUMBER
-#include "css_parse.h"
-#endif
-
-#include "ta_css.h"
-#include "ta_base.h"		// for debugging alloc_list
-#include "ta_TA_type.h"
 
 #include <sstream>
 
@@ -198,6 +199,11 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
     }
     top->run = cssEl::ExecError;
   }
+}
+
+String cssMisc::Indent(int indent_level) {
+  if (indent_level == 0) return _nilString;
+  else return String(indent_level * 2, 0, ' ');
 }
 
 void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
@@ -554,6 +560,75 @@ cssEl::operator TAPtr() const {
   }
   CvtErr("(TAPtr)"); return (TAPtr)NULL;
 }
+
+cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
+  switch (val.type()) {
+  case Variant::T_String: {
+    //TODO: maybe this should be Char???
+    String nw_val = val.toString().elem(idx);
+    return new cssString(nw_val);
+    } break;
+  case Variant::T_Matrix: {
+    if (val.isNull()) {
+      NopErr("[] on Variant Matrix that is null"); 
+      break;
+    }
+    taMatrix* mat = val.toMatrix();
+    Variant var(mat->SafeElAsVar_Flat(idx));
+    return new cssVariant(var);
+    }
+  default:
+    NopErr("[] on Variant that is not a String or Matrix"); 
+  }
+  return &cssMisc::Void;
+}
+
+
+int cssEl::GetMemberFunNo_impl(const TypeDef& typ, const char* memb) const {
+  int md;
+  typ.methods.FindName(memb, md);
+  return md;
+}
+
+cssEl* cssEl::GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const {
+  MethodDef* md = typ.methods.SafeEl(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type: ", typ.name);
+    return &cssMisc::Void;
+  }
+  return GetMemberFun_impl(base, md);
+}
+
+cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md) const {
+  if(md->stubp != NULL) {
+    if(md->fun_argd >= 0)
+      return new cssMbrCFun(VarArg, base, md->stubp, md->name);
+    else
+      return new cssMbrCFun(md->fun_argc, base, md->stubp, md->name);
+  }
+  else {
+    cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
+	      "in class of type: ", md->GetOwnerType()->name);
+    return &cssMisc::Void;
+  }
+}
+
+cssEl* cssEl::GetScoped_impl(const TypeDef& typ, void* base, const char* memb) const {
+  EnumDef* ed = typ.FindEnum(memb);
+  if (ed != NULL) {
+    return new cssInt(ed->enum_no);
+  }
+
+  MethodDef* md = typ.methods.FindName(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type: ", typ.name);
+    return &cssMisc::Void;
+  }
+
+  return GetMemberFun_impl(base, md);
+}
+
+
 
 #ifdef CSS_SUPPORT_TYPEA
 cssEl::operator TypeDef*() const {

@@ -2300,6 +2300,7 @@ static void Install_MiscFun() {
   cssMisc::Internal.Push(cssBI::true_int); // keep them on this list (to refn)
   cssMisc::Internal.Push(cssBI::false_int);
   cssInt_inst	(cssMisc::Constants, 0, NULL);
+  cssMisc::Constants.Push(new cssVariant(_nilVariant, "_nilVariant"));
 }
 
 

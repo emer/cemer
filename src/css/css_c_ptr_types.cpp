@@ -545,22 +545,10 @@ void cssCPtr_Variant::operator+=(cssEl& t)	{
 }
 
 cssEl* cssCPtr_Variant::operator[](int idx) const {
-  void* pt = GetVoidPtr();	if(pt == NULL) return &cssMisc::Void;
+  void* pt = GetVoidPtr();	
+  if (pt == NULL) return &cssMisc::Void;
   Variant& val = *(Variant*)pt;
-  switch (val.type()) {
-  case Variant::T_String: {
-    //TODO: maybe this should be Char???
-    String nw_val = val.toString().elem(idx);
-    return new cssString(nw_val);
-    } break;
-  case Variant::T_Matrix: {
-    if (val.isNull()) break;
-    taMatrix* mat = val.toMatrix();
-    Variant var(mat->SafeElAsVar_Flat(idx));
-    return new cssVariant(var);
-    }
-  }
-  return &cssMisc::Void;
+  return GetVariantEl_impl(val, idx);
 }
 
 int cssCPtr_Variant::GetMemberFunNo(const char* memb) const {

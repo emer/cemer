@@ -831,7 +831,7 @@ cssEl* cssTA::GetFromTA(TypeDef* td, void* itm, const char* nm, cssTA*, MemberDe
     if(md->HasOption("READ_ONLY"))
       ro = true;
   }
-
+  //TODO: update for new atomic types
   if(nptd->DerivesFrom(TA_bool))
     return new cssCPtr_bool(itm, td->ptr+1, nm, (cssEl*)this, ro);
   else if(nptd->DerivesFormal(TA_enum))
