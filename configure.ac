@@ -51,7 +51,7 @@ SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libz
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
 # Explicit template instantiation
-CXXFLAGS="$CXXFLAGS -fno-implicit-templates"
+#CXXFLAGS="$CXXFLAGS -fno-implicit-templates"
 
 # --with-rpm
 if test x"$rpm" = x"true"; then
