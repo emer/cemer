@@ -50,7 +50,8 @@ SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libz
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
-
+# Explicit template instantiation
+CXXFLAGS="$CXXFLAGS -fno-implicit-templates"
 
 # --with-rpm
 if test x"$rpm" = x"true"; then
