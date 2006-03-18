@@ -39,29 +39,26 @@ public:
   enum VarType {
     T_Invalid = 0, 	// #LABEL_Invalid
 
-    T_Bool = 1, 	// #LABEL_bool
-    T_Int = 2, 		// #LABEL_int
-    T_UInt = 3, 	// #LABEL_uint
-    T_Int64 = 4, 	// #LABEL_int64_t
-    T_UInt64 = 5, 	// #LABEL_uint64_t
-    T_Double = 6, 	// #LABEL_double
-    T_Char = 7, 	// #LABEL_char
+    T_Bool = 1, 	// #LABEL_Bool
+    T_Int = 2, 		// #LABEL_Int
+    T_UInt = 3, 	// #LABEL_UInt
+    T_Int64 = 4, 	// #LABEL_Int64
+    T_UInt64 = 5, 	// #LABEL_UInt64
+    T_Double = 6, 	// #LABEL_Real
+    T_Char = 7, 	// #LABEL_Char
     T_String = 9, 	// #LABEL_String
     
-    T_Ptr = 10, 	// #LABEL_ptr void*
+    T_Ptr = 10, 	// #LABEL_Ptr void*
     
     T_Base = 11, 	// #LABEL_taBase taBase ref counted
     T_Matrix = 12 	// #LABEL_taMatrix taMatrix ref counted
-#ifndef __MAKETA__    
-    ,T_MaxType = T_Matrix
-    ,T_LastType = 0xffffffff // need this so that gcc >= 3.4 allocates 32 bits for Type
-#endif
   };
 
   const void*		addrData() const {return &d;} // this is for low-level routines
   
   bool			isAtomic() const {return (m_type <= T_String);} 
     // 'true' for non-ptr types (includes Invalid)
+  bool			isDefault() const; // returns 'true' if contains the default value for the type (null is ignored)
   bool			isInvalid() const {return (m_type == T_Invalid);} 
   bool			isNull() const; // 'true' if the value is null
   bool			isNumeric() const; 
@@ -76,8 +73,8 @@ public:
   VarType		type() const {return (VarType)m_type;} //
   void			setType(VarType value); // force it to be given type, if changed, set to default value
 
-  void			save(ostream& s) const;
-  void			load(istream& s); //
+  void			save(ostream& s) const; // streams out using << for the type
+  void			load(istream& s); // streams in as a string, use toXxx if it is of another type
   
 // following are ops to set to a specific type of value  
   void 			setInvalid(); // invalid/null

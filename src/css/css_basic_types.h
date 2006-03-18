@@ -407,8 +407,8 @@ public:
   void 		Constr()		{ Register(); } // default is Invalid
   void		Copy(const cssVariant& cp) { cssEl::Copy(cp); val = cp.val; }
   cssVariant()				{ Constr(); }
-  cssVariant(Variant vl)		{ Constr(); val = vl; }
-  cssVariant(Variant vl, const char* nm) { Constr(); val = vl; name = nm; }
+  cssVariant(const Variant& vl)		{ Constr(); val = vl; }
+  cssVariant(const Variant& vl, const char* nm) { Constr(); val = vl; name = nm; }
   cssVariant(const cssVariant& cp)		{ Constr(); Copy(cp); }
   cssVariant(const cssVariant& cp, const char* nm){ Constr(); Copy(cp); name = nm; }
 

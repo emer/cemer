@@ -16,6 +16,7 @@
 #include "program.h"
 
 #include "css_machine.h"
+#include "css_basic_types.h"
 #include "ta_qt.h"
 
 #ifdef TA_GUI
@@ -208,10 +209,23 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 
 void Program::Initialize() {
   m_dirty = true; 
+  m_our_hardvar_base_index = -1; // flag that not set yet
 }
 
 void Program::Destroy()	{ 
+  CutLinks();
 }
+
+void Program::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(global_vars, this);
+}
+
+void Program::CutLinks() {
+  global_vars.CutLinks();
+  inherited::CutLinks();
+}
+
 
 void Program::Copy_(const Program& cp) {
   m_dirty = true; // require rebuild/refetch
@@ -228,7 +242,20 @@ void Program::UpdateAfterEdit() {
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl();
-  //TODO: add global vars
+  // if first time, find last intrinsic hardvar, else wipe our previous ones
+  if (m_our_hardvar_base_index < 0) {
+    m_our_hardvar_base_index = script->hard_vars.size;
+  } else {
+    while (script->hard_vars.size > m_our_hardvar_base_index) {
+      script->hard_vars.DelPop();
+    }
+  }
+  // add our global vars
+  for (int i = 0; i < global_vars.size; ++i) {
+    ScriptVar* sv = global_vars.FastEl(i);
+    cssEl* el = new cssVariant(sv->value, sv->name);
+    script->hard_vars.Push(el);
+  }
 }
 
 bool Program::Run() {
@@ -307,9 +334,14 @@ void ProgElProgram::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
 
 const String ProgElProgram::scriptString() {
   if (m_dirty) {
-    m_scriptCache = "void main() {\n";
-    m_scriptCache += prog_els.GenCss(1);
-    m_scriptCache += "}\n";
+    m_scriptCache = "// ";
+    m_scriptCache += GetName();
+    m_scriptCache += "\n\n/* globals added to hardvars:\n";
+    m_scriptCache += global_vars.GenCss(0);
+    m_scriptCache += "*/\n\n";
+    
+    m_scriptCache += prog_els.GenCss(0);
+    m_scriptCache += "\n";
     m_dirty = false;
   }
   return m_scriptCache;

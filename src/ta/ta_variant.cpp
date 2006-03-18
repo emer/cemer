@@ -116,6 +116,145 @@ Variant::~Variant() {
   m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
 }
 
+#define cmp(a,b) (((a) < (b)) ? -1 : \
+  ((a) == (b)) ?  0 : 1)
+int Variant::cmpVariant(const Variant& b) const {
+  // invalid never cmpuates
+  if (isInvalid() || b.isInvalid()) return -2;
+  // for pointer types, proceed directly
+  if (b.isPtrType())
+    return cmpPtr(b.toPtr());
+  // otherwise, null never cmpuates
+  else if (b.isNull()) return false;
+  else switch (b.type()) {
+  case T_Bool: return cmpBool(b.toBool());
+  case T_Int: return cmpInt(b.toInt());
+  case T_UInt: return cmpUInt(b.toUInt());
+  case T_Int64: return cmpInt64(b.toInt64());
+  case T_UInt64: return cmpUInt64(b.toUInt64());
+  case T_Double: return cmpDouble(b.toDouble());
+  case T_Char: return cmpChar(b.toChar());
+  case T_String:  return cmpString(b.toString());
+  default: return -2; //compiler food, never happens
+  }
+}
+
+int Variant::cmpBool(bool val) const {
+  if (isNull()) return false;
+  switch (m_type) {
+  case T_Bool: return cmp(d.b, val);
+  case T_Int: 
+  case T_UInt: 
+  case T_Int64: 
+  case T_UInt64:
+  case T_Char: 
+     return cmp(toBool(), val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpInt(int val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+
+int  Variant::cmpUInt(uint val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpInt64(int64_t val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint64_t)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint64_t)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpUInt64(uint64_t val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpDouble(double val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((double)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
+  }
+}
+
+int  Variant::cmpChar(char val) const {
+  if (isNull()) return -2;
+  switch (m_type) {
+  case T_Bool: return cmp((char)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  case T_String: {
+    const String& str = getString();
+    return cmp(str, val);
+  }
+  default: return -2;
+  }
+}
+
+int Variant::cmpString(const String& val) const {
+  if (isNull()) return -2;
+  if (!isPtrType()) return -2;
+  // otherwise, compare our string rep
+  const String str(toString());
+  return cmp(str, val);
+}
+
+int Variant::cmpPtr(const void* val) const { // note: works for taBase/taMatrix as well
+  if (!isPtrType()) return -2;
+  return cmp(d.ptr, val);
+}
+
 bool Variant::Dump_Load_Type(istream& strm, int& c) {
   c = taMisc::read_word(strm, true); //note: use peek mode, so we don't read the terminator
   // if we read a proper type code, it should be an int, otherwise we encountered
@@ -258,145 +397,6 @@ bool  Variant::eqPtr(const void* val) const { // note: works for taBase/taMatrix
   return (d.ptr == val);
 }
 
-#define cmp(a,b) (((a) < (b)) ? -1 : \
-  ((a) == (b)) ?  0 : 1)
-int Variant::cmpVariant(const Variant& b) const {
-  // invalid never cmpuates
-  if (isInvalid() || b.isInvalid()) return -2;
-  // for pointer types, proceed directly
-  if (b.isPtrType())
-    return cmpPtr(b.toPtr());
-  // otherwise, null never cmpuates
-  else if (b.isNull()) return false;
-  else switch (b.type()) {
-  case T_Bool: return cmpBool(b.toBool());
-  case T_Int: return cmpInt(b.toInt());
-  case T_UInt: return cmpUInt(b.toUInt());
-  case T_Int64: return cmpInt64(b.toInt64());
-  case T_UInt64: return cmpUInt64(b.toUInt64());
-  case T_Double: return cmpDouble(b.toDouble());
-  case T_Char: return cmpChar(b.toChar());
-  case T_String:  return cmpString(b.toString());
-  default: return -2; //compiler food, never happens
-  }
-}
-
-int Variant::cmpBool(bool val) const {
-  if (isNull()) return false;
-  switch (m_type) {
-  case T_Bool: return cmp(d.b, val);
-  case T_Int: 
-  case T_UInt: 
-  case T_Int64: 
-  case T_UInt64:
-  case T_Char: 
-     return cmp(toBool(), val);
-  default: return -2;
-  }
-}
-
-int  Variant::cmpInt(int val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((int)d.b, val);
-  case T_Int: return cmp(d.i, val);
-  case T_UInt: return cmp(d.u, (uint)val);
-  case T_Int64:  return cmp(d.i64, val);
-  case T_UInt64: return cmp(d.u64, (uint)val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp(d.c, val);
-  default: return -2;
-  }
-}
-
-
-int  Variant::cmpUInt(uint val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((uint)d.b, val);
-  case T_Int: return cmp((uint)d.i, val);
-  case T_UInt: return cmp(d.u, val);
-  case T_Int64:  return cmp((uint64_t)d.i64, val);
-  case T_UInt64: return cmp(d.u64, val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp((uint)d.c, val);
-  default: return -2;
-  }
-}
-
-int  Variant::cmpInt64(int64_t val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((int)d.b, val);
-  case T_Int: return cmp(d.i, val);
-  case T_UInt: return cmp(d.u, (uint64_t)val);
-  case T_Int64:  return cmp(d.i64, val);
-  case T_UInt64: return cmp(d.u64, (uint64_t)val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp(d.c, val);
-  default: return -2;
-  }
-}
-
-int  Variant::cmpUInt64(uint64_t val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((uint)d.b, val);
-  case T_Int: return cmp((uint)d.i, val);
-  case T_UInt: return cmp(d.u, val);
-  case T_Int64:  return cmp((uint64_t)d.i64, val);
-  case T_UInt64: return cmp(d.u64, val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp((uint)d.c, val);
-  default: return -2;
-  }
-}
-
-int  Variant::cmpDouble(double val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((double)d.b, val);
-  case T_Int: return cmp(d.i, val);
-  case T_UInt: return cmp(d.u, val);
-  case T_Int64:  return cmp(d.i64, val);
-  case T_UInt64: return cmp(d.u64, val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp(d.c, val);
-  default: return -2;
-  }
-}
-
-int  Variant::cmpChar(char val) const {
-  if (isNull()) return -2;
-  switch (m_type) {
-  case T_Bool: return cmp((char)d.b, val);
-  case T_Int: return cmp(d.i, val);
-  case T_UInt: return cmp(d.u, (uint)val);
-  case T_Int64:  return cmp(d.i64, val);
-  case T_UInt64: return cmp(d.u64, (uint)val);
-  case T_Double: return cmp(d.d, val);
-  case T_Char: return cmp(d.c, val);
-  case T_String: {
-    const String& str = getString();
-    return cmp(str, val);
-  }
-  default: return -2;
-  }
-}
-
-int Variant::cmpString(const String& val) const {
-  if (isNull()) return -2;
-  if (!isPtrType()) return -2;
-  // otherwise, compare our string rep
-  const String str(toString());
-  return cmp(str, val);
-}
-
-int Variant::cmpPtr(const void* val) const { // note: works for taBase/taMatrix as well
-  if (!isPtrType()) return -2;
-  return cmp(d.ptr, val);
-}
-
 
 void Variant::ForceType(VarType vt, bool null) {
   if ((int)vt != m_type) {
@@ -445,14 +445,22 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
   }
 }
 
-void Variant::UpdateAfterLoad() {
+bool Variant::isDefault() const {
   switch (m_type) {
-  case T_Ptr: m_is_null = (d.ptr == NULL); break;
-#ifndef NO_TA_BASE
-  case T_Base: 
-  case T_Matrix: m_is_null = (d.tab == NULL); break;
-#endif
-  default: break ;
+  case T_Invalid: return true; 
+  case T_Bool: return (!d.b);
+  case T_Int: return (d.i == 0);
+  case T_UInt: return (d.u == 0U);
+  case T_Int64: return (d.i64 == 0LL);
+  case T_UInt64: return (d.u64 == 0ULL);
+  case T_Double: return (d.d == 0.0);
+  case T_Char: return (d.c == '\0');
+  case T_String: return (getString().empty()); 
+  case T_Ptr: 
+  case T_Base:  
+  case T_Matrix: 
+     return (d.ptr == 0) ;
+//  default: return ;
   }
 }
 
@@ -497,84 +505,8 @@ bool Variant::isNumericStrict() const {
 }
 
 void Variant::load(istream& s) {
-  uint t;
-  s >> t;
-  if (t > T_MaxType) {
-    taMisc::Error("unrecognized Variant type code in istream: ", String(t));
-    return;
-  }
-  
-  // complex types are special, otherwise simple types are handled similarly
-  if (t == T_String) {
-      String str;
-      s >> str; 
-      setString(str);
-  } 
-#ifndef NO_TA_BASE
-  else if ((t == T_Base) || (t == T_Matrix)) { // handled almost the same
-    taString typ_name;
-    s >> typ_name; // 
-    if (typ_name == "TA_void") {
-      if (t == T_Base) setBase(NULL);
-      else setMatrix(NULL);
-    } else {
-      // get the type name
-      TypeDef* typ = taMisc::types.FindName(typ_name);
-      if (typ == NULL) {
-        taMisc::Error("While loading Variant, TypeDef not found:", typ_name);
-        return;
-      }
-      // make a token of that type, and load it in
-      taBase* ta = taBase::MakeToken(typ);
-      if (ta == NULL) {
-        taMisc::Error("While loading Variant could not make token of type:", typ_name);
-        return;
-      }
-      ta->Load(s);
-      //note: we set value according to actual type, just to be absolutely safe
-      if (ta->InheritsFrom(&TA_taMatrix))
-        setMatrix((taMatrix*)ta);
-      else setBase(ta);
-    }
-  } 
-#endif
-  else {
-    releaseType();
-    m_type = t;
-    m_is_null = false; // except pointer
-    switch (t) {
-    case T_Invalid:
-      break; 
-    case T_Bool:
-      s >> d.b;
-      break;
-    case T_Int:
-      s >> d.i;
-      break;
-    case T_UInt:
-      s >> d.u;
-      break;
-    case T_Int64:
-      s >> d.i64;
-      break;
-    case T_UInt64:
-      s >> d.u64;
-      break;
-    case T_Double:
-      s >> d.d;
-      break;
-    case T_Char:
-      s >> d.c;
-      break;
-    case T_Ptr: {
-      String str;
-      s >> str; // we ignore this!
-      d.ptr = NULL;
-      m_is_null = true;
-      } break;
-    default: break ;
-    }
-  }
+  setType(T_String);
+  s >> getString();
 }
 
 Variant& Variant::operator+=(const String& rhs) {
@@ -1656,52 +1588,6 @@ void Variant::setType(VarType value) {
   }
 }
 
-/*
-  switch (m_type) {
-  case T_Invalid: 
-  case T_Bool:
-  case T_Int:
-  case T_UInt:
-  case T_Int64:
-  case T_UInt64:
-  case T_Double:
-  case T_Char:
-  case T_String: 
-  case T_Ptr: 
-  case T_Base: 
-  case T_Matrix:
-  default: return ;
-  }
-  
-  switch (m_type) {
-  case T_Invalid: 
-    break ;
-  case T_Bool:
-    return ;
-  case T_Int:
-    return ;
-  case T_UInt:
-    return ;
-  case T_Int64:
-    return ;
-  case T_UInt64:
-    return ;
-  case T_Double:
-    return ;
-  case T_Char:
-    return ;
-  case T_String: 
-    return ;
-  case T_Ptr: 
-    return ;
-  case T_Base: 
-  case T_Matrix:
-    return ;
-  default: break ;
-  }
-  return ;
-  
-*/
 bool Variant::toBool() const {
   switch (m_type) {
   case T_Invalid: 
@@ -2033,6 +1919,17 @@ String Variant::toString() const {
   default: break ;
   }
   return _nilString;
+}
+
+void Variant::UpdateAfterLoad() {
+  switch (m_type) {
+  case T_Ptr: m_is_null = (d.ptr == NULL); break;
+#ifndef NO_TA_BASE
+  case T_Base: 
+  case T_Matrix: m_is_null = (d.tab == NULL); break;
+#endif
+  default: break ;
+  }
 }
 
 void Variant::updateFromString(const String& val) {

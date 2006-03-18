@@ -37,12 +37,11 @@ class cssTA_Base;		// #IGNORE
 class ScriptBase_List;
 class ScriptVar;
 
-class TA_API ScriptVar: public taOBase { // ##NO_TOKENS #INLINE #UAE_OWNER a script variable, accessible from the outer system, and inside the script
+class TA_API ScriptVar: public taOBase { // ##NO_TOKENS #UAE_OWNER a script variable, accessible from the outer system, and inside the script
 INHERITED(taOBase)
 public:
   String		name; // name of the variable -- must be a legal css name
   Variant		value; // the actual variableuse_init_value
-  bool			init; // if true, use an initial value
   
   const String		GenCss(); // css code (no terminator or newline)
   

@@ -206,6 +206,25 @@ String cssMisc::Indent(int indent_level) {
   else return String(indent_level * 2, 0, ' ');
 }
 
+inline bool btwn(char c, char l, char u) 
+  {return ((c >= l) && (c <= u));}
+inline bool is_alphalike(char c) 
+  {return (btwn(c, 'a', 'z') || btwn(c, 'A', 'Z') || (c == '_'));}
+inline bool is_num(char c) 
+  {return btwn(c, '0', '9');}
+  
+bool cssMisc::IsNameValid(const String& nm) {
+  if (nm.empty()) return false;
+  char c = nm.elem(0);
+  if (!is_alphalike(c)) return false;
+  int len = nm.length();
+  for (int i = 1; i < len; ++i) {
+    char c = nm.elem(i);
+    if (!(is_alphalike(c) || is_num(c))) return false;
+  }
+  return true;
+}
+
 void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
 		    const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
 {

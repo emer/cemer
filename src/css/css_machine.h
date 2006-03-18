@@ -175,7 +175,7 @@ public:
   static bool		HasCmdLineSwitch(const char* sw_name, int& index); // looks for the switch value (include the '-' if applicable)
   static bool		CmdLineSwitchValue(const char* sw_name, String& sw_value); // looks for the switch value, and returns following string
   static String	    	Indent(int indent_level); // generally 2 spaces per level
-
+  static bool		IsNameValid(const String& nm); // validates a css name
   static cssProgSpace*	SetCurTop(cssProgSpace* pspc)
   { cssProgSpace* rval = cur_top; cur_top = pspc; return rval; }
   // set cur_top to given value, return previous cur_top, used for PopCurTop

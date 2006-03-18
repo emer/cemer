@@ -168,8 +168,9 @@ class PDP_API Program: public taNBase, public AbstractScriptBase {
   // #HIDDEN a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
-
-  virtual bool		Run(); // run the script
+  ScriptVar_List	global_vars; // global variables accessible outside and inside script
+  
+  virtual bool		Run(); // run the program
 
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user
@@ -178,6 +179,8 @@ public: // XxxGui versions provide feedback to the user
 #endif
     
   void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
   void	Copy_(const Program& cp);
   COPY_FUNS(Program, taNBase);
   TA_BASEFUNS(Program);
@@ -191,6 +194,7 @@ public: // ScriptBase i/f
 protected:
   bool		    	m_dirty;
   String		m_scriptCache; // cache of script, managed by implementation
+  int			m_our_hardvar_base_index; // each time we recompile, we reinstall our vars
   override void		InitScriptObj_impl(); // #IGNORE add the global vars
   override void 	ScriptCompiled(); // #IGNORE
   

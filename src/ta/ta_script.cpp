@@ -33,7 +33,6 @@
 //////////////////////////
 
 void ScriptVar::Initialize() {
-  init = false;
 }
 
 void ScriptVar::Destroy() {
@@ -42,11 +41,13 @@ void ScriptVar::Destroy() {
 void ScriptVar::Copy_(const ScriptVar& cp) {
   name = cp.name;
   value = cp.value;
-  init = cp.init;
 }
 
 void ScriptVar::UpdateAfterEdit() {
-  // TODO: validate name
+  if (!cssMisc::IsNameValid(name)) {
+    taMisc::Error("'", name, "' is not a valid name in css scripts; must be alphanums or underscores");
+//TODO: should revert
+  }
   inherited::UpdateAfterEdit();
 }
 
@@ -54,6 +55,7 @@ const String ScriptVar::GenCss() {
   String rval(0, 80, '\0');
   rval += "Variant ";
   rval += name;
+  bool init = !value.isDefault();
   if (init) {
     rval += "= ";
     rval += value.toCssLiteral();
