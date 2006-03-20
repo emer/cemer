@@ -299,8 +299,8 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
 int MemberSpace::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   int rval = true;
   int i;
-  for(i=0; i<size; i++) {
-    if(!FastEl(i)->Dump_Save(strm, base, par, indent))
+  for(i=0; i<size; ++i) {
+    if (!FastEl(i)->Dump_Save(strm, base, par, indent))
       rval = false;
   }
   return rval;
@@ -309,7 +309,7 @@ int MemberSpace::Dump_Save(ostream& strm, void* base, void* par, int indent) {
 int MemberSpace::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
   int rval = false;
   int i;
-  for(i=0; i<size; i++) {
+  for(i=0; i<size; ++i) {
     if(FastEl(i)->Dump_SaveR(strm, base, par, indent))
       rval = true;
   }
@@ -319,17 +319,23 @@ int MemberSpace::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
 int MemberSpace::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
   int rval = false;
   int i;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->Dump_Save_PathR(strm, base, par, indent))
+  for(i=0; i<size; ++i) {
+    if (FastEl(i)->Dump_Save_PathR(strm, base, par, indent))
       rval = true;
   }
   return rval;
 }
 
-bool MemberDef::DumpMember() {
-  if((is_static && !HasOption("SAVE")) || HasOption("NO_SAVE"))
+bool MemberDef::DumpMember(void* par) {
+  if ((is_static && !HasOption("SAVE")) || HasOption("NO_SAVE"))
     return false;
-
+  // if taBase, query it for member save
+  TypeDef* par_typ = GetOwnerType();
+  if (par && par_typ && par_typ->InheritsFrom(&TA_taBase)) {
+    taBase* par_ = (taBase*)par;
+    return par_->Dump_QuerySaveMember(this); 
+  }
+  
   if((type->ptr == 0) || type->DerivesFrom(TA_taBase) ||
      type->DerivesFrom(TA_TypeDef) || type->DerivesFrom(TA_MemberDef))
     return true;
@@ -339,8 +345,8 @@ bool MemberDef::DumpMember() {
 }
 
 
-int MemberDef::Dump_Save(ostream& strm, void* base, void*, int indent) {
-  if(!DumpMember())
+int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
+  if(!DumpMember(par))
     return false;
   void* new_base = GetOff(base);
   
@@ -415,8 +421,8 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void*, int indent) {
 }
 
 
-int MemberDef::Dump_SaveR(ostream& strm, void* base, void*, int indent) {
-  if(!DumpMember())
+int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
+  if(!DumpMember(par))
     return false;
 
   int rval = false;
@@ -451,8 +457,8 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void*, int indent) {
   return rval;
 }
 
-int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void*, int indent) {
-  if(!DumpMember())
+int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
+  if(!DumpMember(par))
     return false;
   if(HasOption("NO_SAVE_PATH_R") || HasOption("LINK_GROUP")) // don't save these ones..
     return false;
@@ -780,7 +786,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	  taMisc::skip_past_err(strm);
       }
       else {
-	taMisc::Error("*** Member:",mb_name,"not found in type:",
+	taMisc::Warning("*** Member:",mb_name,"not found in type:",
 			owner->name, "(this is likely just harmless version skew)");
 	int sv_vld = taMisc::verbose_load;
 	taMisc::verbose_load = taMisc::SOURCE;
@@ -806,7 +812,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
    // 1) loading the Path portion
    // 2) loading the Value portion
    // Variants of pointer subtypes stream their type info during the Path phase
-  if(!DumpMember())
+  if(!DumpMember(par))
     return false;
 
   if(taMisc::verbose_load >= taMisc::TRACE) {

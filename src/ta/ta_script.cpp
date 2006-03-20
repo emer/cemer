@@ -110,7 +110,7 @@ bool AbstractScriptBase::Wait_RecompileScripts() {
     return false;
   int i;
   for (i=0; i<recompile_scripts.size; ++i)
-    recompile_scripts[i]->CompileScript();
+    recompile_scripts[i]->DoCompileScript();
   recompile_scripts.Reset();
   return true;
 }
@@ -141,21 +141,9 @@ AbstractScriptBase::~AbstractScriptBase() {
 bool AbstractScriptBase::CompileScript(bool force) {
   if (script_compiled && !force) return true;
   if (!HasScript()) {
-    taMisc::Error("Cannot Load Script: No script file or string specified");
+    taMisc::Error("** Cannot Compile Script: No script file or string specified");
     return false;
   }
-  return CompileScript_impl();
-}
-
-void AbstractScriptBase::InitScriptObj_impl() {
-  if (script == NULL) {
-    script = new cssProgSpace();
-    ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
-    ths->InstallThis(script);
-  }
-}
-
-bool AbstractScriptBase::CompileScript_impl() {
   InitScriptObj_impl();
 
   if (script->in_readline) {
@@ -164,6 +152,10 @@ bool AbstractScriptBase::CompileScript_impl() {
     return false;
   }
   
+  return DoCompileScript();
+}
+
+bool AbstractScriptBase::CompileScript_impl() {
   script->ClearAll();
   switch (scriptSource()) {
   case NoScript: return false; //nothing to do
@@ -178,6 +170,19 @@ bool AbstractScriptBase::CompileScript_impl() {
   script_compiled = true;
   ScriptCompiled();
   return true;
+}
+
+bool AbstractScriptBase::DoCompileScript() {
+  PreCompileScript_impl();
+  return CompileScript_impl();
+}
+
+void AbstractScriptBase::InitScriptObj_impl() {
+  if (script == NULL) {
+    script = new cssProgSpace();
+    ths = new cssTA_Base(GetThisPtr(), 1, GetThisTypeDef(), "this");
+    ths->InstallThis(script);
+  }
 }
 
 bool AbstractScriptBase::RunScript() {

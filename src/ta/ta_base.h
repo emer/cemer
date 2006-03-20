@@ -521,6 +521,10 @@ public:
     { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); } 	// #IGNORE
   virtual int 		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
+  virtual bool		Dump_QuerySaveMember(MemberDef* md) 
+    {return true;} // override to make save decision at runtime
+  virtual bool		Dump_QuerySaveChildren() 
+    {return true;} // override to make save decision at runtime
 
   virtual int		Edit();
   // #MENU #ARGC_0 #MENU_ON_Object #LABEL_Properties #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui

@@ -1020,14 +1020,15 @@ int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
     taMisc::Busy();
   }
   taMisc::is_saving = true;
-  if (save_rmv_units) {
+  //NOTE: in v4 we dynamically avoid saving units 
+/*  if (save_rmv_units) {
     for(int i=0; i< networks.size; i++) {
       Network* net = (Network*)networks[i];
       net->RemoveUnits();
     }
-  }
+  } */
   dumpMisc::path_tokens.Reset();
-  strm << "// ta_Dump File v1.0\n";   // be sure to check version with Load
+  strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
   int rval = Dump_Save_Path(strm, par, indent);
   if(rval == false) {
     if(taMisc::gui_active)  taMisc::DoneBusy();

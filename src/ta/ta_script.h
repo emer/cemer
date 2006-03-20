@@ -107,7 +107,7 @@ public:
   virtual bool  RunScript();
   // run the script (returns false for no scr)
   virtual bool	CompileScript(bool force = false);
-  // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format
+  // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
   virtual void	InteractScript();
   // #MENU #LABEL_Interact change to this shell in script (terminal) window to interact, debug etc script
 
@@ -120,9 +120,11 @@ public:
   virtual ~AbstractScriptBase();
   
 protected:
+  bool			DoCompileScript(); // called directly, or in WaitProc
   virtual void		InitScriptObj_impl(); // #IGNORE called to initialize script object prior to compiling, create 'script' and 'ths'; can be extended to add more to script etc. 
+  virtual void 		PreCompileScript_impl() {} // #IGNORE called before compile
   virtual bool		CompileScript_impl(); // #IGNORE
-  virtual void 		ScriptCompiled() {} // #IGNORE called when script is recompiled;
+  virtual void 		ScriptCompiled() {} // #IGNORE called when script is recompiled
 private:
   AbstractScriptBase(const AbstractScriptBase& cp); // #IGNORE not allowed
   AbstractScriptBase& operator=(const AbstractScriptBase& cp); // #IGNORE not allowed

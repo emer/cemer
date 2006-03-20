@@ -242,29 +242,61 @@ void Program::UpdateAfterEdit() {
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl();
-  // if first time, find last intrinsic hardvar, else wipe our previous ones
+  // if first time, find last intrinsic hardvar
   if (m_our_hardvar_base_index < 0) {
     m_our_hardvar_base_index = script->hard_vars.size;
-  } else {
-    while (script->hard_vars.size > m_our_hardvar_base_index) {
-      script->hard_vars.DelPop();
-    }
-  }
-  // add our global vars
-  for (int i = 0; i < global_vars.size; ++i) {
-    ScriptVar* sv = global_vars.FastEl(i);
-    cssEl* el = new cssVariant(sv->value, sv->name);
-    script->hard_vars.Push(el);
   }
 }
 
+void Program::PreCompileScript_impl() {
+  AbstractScriptBase::PreCompileScript_impl();
+  UpdateScriptVars();
+}
+
 bool Program::Run() {
+  if (!script_compiled) {
+    if (!CompileScript())
+      return false; // deferred or error
+  } else {
+    UpdateScriptVars();
+  }
   return RunScript();
 }
 
 void  Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   //TODO: maybe inform gui
+}
+
+void  Program::UpdateScriptVars() {
+// makes sure the global vars are in the script, and values are current
+  // nuke any unnecessary ones (ex. user deleted a global_var)
+  while ((script->hard_vars.size - m_our_hardvar_base_index) > 
+    global_vars.size) 
+  {
+    script->hard_vars.DelPop(); // removes/unref-deletes
+  }
+    
+  int i = 0;
+  ScriptVar* sv;
+  cssEl* el;
+  // update names and values of existing (if any)
+  while ((m_our_hardvar_base_index + i) < script->hard_vars.size) {
+    sv = global_vars.FastEl(i);
+    el = script->hard_vars.FastEl(m_our_hardvar_base_index + i);
+    // easiest (harmless) is to just update, even if not changed 
+    el->name = sv->name;
+    *el = sv->value;
+    ++i;
+  }
+  
+  // add new
+  while (i < global_vars.size) {
+    sv = global_vars.FastEl(i);
+    el = new cssVariant(sv->value, sv->name);
+    script->hard_vars.Push(el); //refs
+    ++i;
+  }
 }
 
 #ifdef TA_GUI

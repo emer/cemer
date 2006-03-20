@@ -127,7 +127,8 @@ taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NO_HID_RO_DET;
 taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
-taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
+taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
+  //note: PRETTY is barely more expensive, since we compress files
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 bool	taMisc::dmem_debug = false;
@@ -3904,7 +3905,7 @@ int MemberSpace::Dump_Save_PathR(ostream&, void*, void*, int) {
   return false;
 }
 
-bool MemberDef::DumpMember() {
+bool MemberDef::DumpMember(void* par) {
   return false;
 }
 

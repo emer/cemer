@@ -937,7 +937,7 @@ public:
   ostream& 	OutputR(ostream& strm, void* base, int indent) const;
 
   // for dump files
-  bool		DumpMember(); 		// decide whether to dump or not
+  bool		DumpMember(void* par); 		// decide whether to dump or not
   int		Dump_Save(ostream& strm, void* base, void* par, int indent);
   int	 	Dump_SaveR(ostream& strm, void* base, void* par, int indent);
   int	 	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);

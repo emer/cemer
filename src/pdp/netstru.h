@@ -981,6 +981,8 @@ public:
 
   bool			uses_groups() {return (geom.z > 1);}
   
+  ProjectBase*		project(); // this layer's project
+  	
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
   virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
@@ -1114,6 +1116,7 @@ public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
+  bool	Dump_QuerySaveMember(MemberDef* md);
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

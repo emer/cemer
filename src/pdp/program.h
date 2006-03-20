@@ -195,8 +195,10 @@ protected:
   bool		    	m_dirty;
   String		m_scriptCache; // cache of script, managed by implementation
   int			m_our_hardvar_base_index; // each time we recompile, we reinstall our vars
-  override void		InitScriptObj_impl(); // #IGNORE add the global vars
+  override void		InitScriptObj_impl();
+  override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
   override void 	ScriptCompiled(); // #IGNORE
+  virtual void		UpdateScriptVars(); // put global vars in script, set values
   
 private:
   void	Initialize();

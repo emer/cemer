@@ -3355,6 +3355,15 @@ void Layer::ConnectFrom(Layer* from_lay) {
   net->FindMakePrjn(this, from_lay);
 }
 
+bool Layer::Dump_QuerySaveMember(MemberDef* md) {
+  if (md->name == "units") {
+    ProjectBase* prj = project();
+    if (prj && prj->save_rmv_units)
+      return false;
+  }
+  return inherited::Dump_QuerySaveMember(md);
+}
+
 void Layer::ReplacePointersHook(TAPtr old) {
   Layer* ol = (Layer*)old;
   CopyPtrs(ol);
@@ -3529,6 +3538,13 @@ void Layer::RecomputeGeometry() {
     gp_geom.FitNinXY(geom.z);	// fit all groups in there..
   else
     act_geom = geom;
+}
+
+ProjectBase* Layer::project() {
+  ProjectBase* rval = NULL;
+  if (own_net)
+    rval = GET_OWNER(own_net, ProjectBase);
+  return rval;
 }
 
 bool Layer::SetLayerSpec(LayerSpec*) {
