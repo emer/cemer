@@ -34,15 +34,16 @@
 #include "program.h"
 
 
-class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
+class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
+INHERITED(taGroup<TypeDefault>)
 public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
   // reset members before loading..
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_Group);
+  TA_BASEFUNS(TypeDefault_MGroup);
 };
 #ifdef TA_GUI
 // note: _MGroup name is for compatiblity with v3.2 files
@@ -217,7 +218,7 @@ public:
   };
 
 
-  TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
+  TypeDefault_MGroup	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units

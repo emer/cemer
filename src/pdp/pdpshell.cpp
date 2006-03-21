@@ -24,17 +24,15 @@
 #include "ta_dump.h"
 #include "ta_css.h"
 #ifdef TA_GUI
-  #include "css_qt.h"
-  #include "ta_qt.h"
-  #include "ta_qtdata.h" // for taiObjChooser
-  #include "ta_qtdialog.h"
-  #include "ta_qttype_def.h"
-  #include "netstru_qtso.h"
+# include "css_qt.h"
+# include "ta_qt.h"
+# include "ta_qtdata.h" // for taiObjChooser
+# include "ta_qtdialog.h"
+# include "ta_qttype_def.h"
+# include "netstru_qtso.h"
 
-  #include <qapplication.h>
-  //#include <qevent.h>
-  #include <QWidgetList>
-
+# include <qapplication.h>
+# include <QWidgetList>
 #endif
 
 #include <time.h>
@@ -42,74 +40,17 @@
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
-/*obs
-static ivOptionDesc PDP_options[] = {
-    { NULL }
-};
-
-static ivPropertyData PDP_defs[] = {
-  {"PDP++*gui", "sgimotif"},
-  {"PDP++*PopupWindow*overlay", "true"},
-  {"PDP++*PopupWindow*saveUnder", "on"},
-  {"PDP++*TransientWindow*saveUnder", "on"},
-  {"PDP++*double_buffered",	"on"},
-  {"PDP++*flat",		"#c0c4d3"},
-  {"PDP++*background",  	"#70c0d8"},
-  {"PDP++*name*flat",		"#70c0d8"},
-  {"PDP++*apply_button*flat",	"#c090b0"},
-  {"PDP++*FieldEditor*background", "white"},
-  {"PDP++*FileChooser*filter", 	"on"},
-  {"PDP++*FileChooser.rows", 	"20"},
-  {"PDP++*FileChooser.width", 	"300"},
-  {"PDP++*taivObjChooser.width", "300"},
-  {"PDP++*taivObjChooser.rows",	"20"},
-  {"PDP++*PaletteButton*minimumWidth", "72.0"},
-  {"PDP++*PushButton*minimumWidth", "72.0"},
-  {"PDP++*TaIVButton*SmallWidth", "46.0"},
-  {"PDP++*TaIVButton*MediumWidth", "72.0"},
-  {"PDP++*TaIVButton*BigWidth", "115.0"},
-  {"PDP++*toggleScale",		"1.5"},
-#ifndef CYGWIN
-  {"PDP++*font",		"*-helvetica-medium-r-*-*-10*"},
-  {"PDP++*name*font",		"*-helvetica-medium-r-*-*-10*"},
-  {"PDP++*title*font",		"*-helvetica-bold-r-*-*-10*"},
-  {"PDP++*small_menu*font",	"*-helvetica-medium-r-*-*-10*"},
-  {"PDP++*small_submenu*font",	"*-helvetica-medium-r-*-*-10*"},
-  {"PDP++*big_menu*font",	"*-helvetica-medium-r-*-*-12*"},
-  {"PDP++*big_submenu*font",	"*-helvetica-medium-r-*-*-12*"},
-  {"PDP++*big_menubar*font",	"*-helvetica-bold-r-*-*-14*"},
-  {"PDP++*big_italic_menubar*font","*-helvetica-bold-o-*-*-14*"},
-#else
-  {"PDP++*font",		"*Arial*medium*--12*"},
-  {"PDP++*name*font",		"*Arial*medium*--12*"},
-  {"PDP++*title*font",		"*Arial*bold*--12*"},
-  {"PDP++*small_menu*font",	"*Arial*medium*--12*"},
-  {"PDP++*small_submenu*font",	"*Arial*medium*--12*"},
-  {"PDP++*big_menu*font",	"*Arial*medium*--12*"},
-  {"PDP++*big_submenu*font",	"*Arial*medium*--12*"},
-  {"PDP++*big_menubar*font",	"*Arial*bold*--14*"},
-  {"PDP++*big_italic_menubar*font","*Arial*italic*--14*"},
-  // following are def'd in smf_kit.cpp
-  {"PDP++*MenuBar*font", 	"*Arial*bold*--12*"},
-  {"PDP++*MenuItem*font", 	"*Arial*bold*--12*"},
-  {"PDP++*MenuBar*font", 	"*Arial*bold*--12*"},
-  {"PDP++*MenuItem*font", 	"*Arial*bold*--12*"},
-  // this sets the scaling of the windows to 1.25 -- much closer to unix pdp sizing
-  {"PDP++*mswin_scale",		"1.25"},
-#endif
-  { NULL }
-};
-*/
 
 
 //////////////////////////////////
-//	TypeDefault_Group	//
+//	TypeDefault_MGroup	//
 //////////////////////////////////
 
-int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
+int TypeDefault_MGroup::Dump_Load_Value(istream& strm, TAPtr par) {
   Reset();			// get rid of any existing defaults before loading
-  return taGroup<TypeDefault>::Dump_Load_Value(strm, par);
+  return inherited::Dump_Load_Value(strm, par);
 }
+
 #ifdef TA_GUI
 //////////////////////////////////
 //	SelectEdit_MGroup	//

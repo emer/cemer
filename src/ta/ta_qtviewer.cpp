@@ -1317,6 +1317,8 @@ void iDataViewer::Constr_Menu_impl() {
   fileSaveAction->setIconSet( QIconSet( image2 ) );
   fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
   fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
+  fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
+  
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
   filePrintAction->setIconSet( QIconSet( image3 ) );
   if (is_root)
@@ -1348,6 +1350,7 @@ void iDataViewer::Constr_Menu_impl() {
   fileSaveAction->AddTo(fileMenu );
   fileSaveAsAction->AddTo(fileMenu);
   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
+  fileOptionsAction->AddTo( fileMenu );
   fileMenu->insertSeparator();
   filePrintAction->AddTo( fileMenu );
 
@@ -1382,6 +1385,7 @@ void iDataViewer::Constr_Menu_impl() {
   connect( fileSaveAction, SIGNAL( activated() ), this, SLOT( fileSave() ) );
   connect( fileSaveAsAction, SIGNAL( activated() ), this, SLOT( fileSaveAs() ) );
   connect( fileCloseAction, SIGNAL( activated() ), this, SLOT( fileClose() ) );
+  connect( fileOptionsAction, SIGNAL( activated() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
     connect( fileCloseWindowAction, SIGNAL( activated() ), this, SLOT( fileCloseWindow() ) );
 //    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
@@ -1461,6 +1465,13 @@ void iDataViewer::fileCloseWindow() {
   if (is_root) {
     if (taMisc::app) taMisc::app->Quit();
   } else close();
+}
+
+void iDataViewer::fileOptions() {
+  if (!taMisc::gui_active) return;
+  taiEdit* ie =  TA_taMisc.ie;
+  if (ie)
+    ie->Edit(TA_taMisc.GetInstance());
 }
 
 int iDataViewer::GetEditActions() {

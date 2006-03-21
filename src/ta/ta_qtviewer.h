@@ -522,6 +522,7 @@ public:
   taiAction* 		fileSaveAction;
   taiAction* 		fileSaveAsAction;
   taiAction* 		fileCloseAction;
+  taiAction* 		fileOptionsAction;
   taiAction* 		filePrintAction;
   taiAction* 		fileCloseWindowAction; //note: special, because it is always at bottom of File menu; root=Quit
   taiAction* 		editUndoAction;
@@ -596,6 +597,7 @@ public slots:
   virtual void 		fileSave(){}
   virtual void 		fileSaveAs(){}
   virtual void 		fileClose(){}
+  virtual void 		fileOptions(); // edits taMisc
   virtual void 		filePrint(){}
   virtual void 		fileCloseWindow(); // Quit (root) or Close Window (non-root)
 /*  virtual void editUndo();

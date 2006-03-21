@@ -359,7 +359,6 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     }
     else
       type->Dump_Save_inline(strm, new_base, base, indent);
-    strm << ";\n";
     return true;
   }
   
@@ -411,12 +410,11 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       str.gsub("\\", "\\\\");
       str.gsub("\"", "\\\"");
       strm << "=\"" << str << "\"";
-    }
-    else {
+    } else {
       strm << "=" << eff_type->GetValStr(new_base, base, this);
     }
+    strm << ";\n";
   }
-  strm << ";\n";
   return true;
 }
 
