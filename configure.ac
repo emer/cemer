@@ -41,11 +41,6 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-
-# Set PDP's version here
-AC_SUBST([PDP_VERSION],[4.0.0])
-
-
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
@@ -117,11 +112,11 @@ else
 fi
 
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
-                   if test x"$debug" = x"true"; then
-                     sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest"
-                     sim_ac_qt_cppflags="$sim_ac_qt_cppflags -I${QTDIR}/include/QtTest"
-#                     sim_ac_qt_libs="`echo $sim_ac_qt_libs | sed -r 's/(\-lQt[A-Za-z0-9]*)/\1_debug/g'`"
-                   fi
+dnl                    if test x"$debug" = x"true"; then
+dnl                      sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest_debug"
+dnl                      sim_ac_qt_cppflags="$sim_ac_qt_cppflags -I${QTDIR}/include/QtTest"
+dnl #                     sim_ac_qt_libs="`echo $sim_ac_qt_libs | sed -r 's/(\-lQt[A-Za-z0-9]*)/\1_debug/g'`"
+dnl                    fi
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
