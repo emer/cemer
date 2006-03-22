@@ -3,6 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 #*************************************************************
 #
+
 AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU],[PDP++])
 AC_PREREQ([2.59]) # Autoconf 2.59 required
 

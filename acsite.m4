@@ -123,7 +123,7 @@ SIM_AC_CONFIGURATION_SETTING([Host],[$host])
 
 dnl 					     PDP_DETERMINE_SUFFIX
 dnl *************************************************************
-dnl  Adds configure flag dependent suffixes. E.g. bp_nogui_debug_mpi++
+dnl  Adds configure flag dependent suffixes. E.g. bp4_nogui_debug_mpi++
 dnl *************************************************************
 dnl Copyright, 1995-2005, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
@@ -141,7 +141,12 @@ dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_DETERMINE_SUFFIX],[
+
 AC_MSG_CHECKING([whether we are infixing bin and lib names])
+
+# Version of pdp++
+PDP_SUFFIX=4
+
 if test "$gui" = "false" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
 fi
@@ -151,14 +156,9 @@ fi
 if test "$mpi" = "true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
 fi
-if test -z ${PDP_SUFFIX}; then 
-	AC_MSG_RESULT([none])
-	SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp++, libraries libpdp.a])
-else
-	AC_MSG_RESULT([yes])
-	AC_SUBST([PDP_SUFFIX])
-	SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp${PDP_SUFFIX}++, libraries libpdp${PDP_SUFFIX}])
-fi
+AC_MSG_RESULT([yes])
+AC_SUBST([PDP_SUFFIX])
+SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp${PDP_SUFFIX}++, libraries libpdp${PDP_SUFFIX}])
 ]) dnl PDP_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
