@@ -4,7 +4,8 @@
 #*************************************************************
 #
 
-AC_INIT([PDP],[4.0],[pdp-discuss@psych-srv3.Colorado.EDU],[PDP++])
+AC_INIT([PDP],[4.0.0],[pdp-discuss@psych-srv3.Colorado.EDU],[PDP++])
+
 AC_PREREQ([2.59]) # Autoconf 2.59 required
 
 AC_COPYRIGHT([
@@ -40,6 +41,11 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+
+# Set PDP's version here
+AC_SUBST([PDP_VERSION],[4.0.0])
+
+
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
@@ -47,6 +53,7 @@ AC_PROG_LEX
 PGAC_CHECK_READLINE                                    # Check for readline, termcap etc...
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
+
 
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
