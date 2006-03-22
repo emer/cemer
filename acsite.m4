@@ -145,7 +145,7 @@ AC_DEFUN([PDP_DETERMINE_SUFFIX],[
 AC_MSG_CHECKING([whether we are infixing bin and lib names])
 
 # Version of pdp++
-PDP_SUFFIX=4
+#PDP_SUFFIX=4
 
 if test "$gui" = "false" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
