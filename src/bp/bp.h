@@ -596,7 +596,17 @@ class PDP_API BpNetwork : public Network {
   // project for BP networks
 INHERITED(Network)
 public:
+  bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
+  virtual void		BpSetCurLrate();
+  virtual void		BpCompute_Error();
+  virtual void		BpCompute_dEdA_dEdNet();
+  virtual void 		BpCompute_Act();
+  
+  virtual void		BpTrial_Loop(); // one loop of BpTrial
+  
+  override void		Compute_Act() {BpCompute_Act();}
+  
   void	Initialize();
   void 	Destroy()		{}
   TA_BASEFUNS(BpNetwork);

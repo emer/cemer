@@ -538,6 +538,103 @@ void SoftMaxBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 //////////////////////////
 
 void BpNetwork::Initialize() {
+  bp_to_inputs = false;
+}
+
+void BpNetwork::BpCompute_Act() {
+  // compute activations; replaces generic
+  Layer* lay;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, lay, layers., l_itr) {
+    if (lay->lesion)	continue;
+    if (!(lay->ext_flag & Unit::EXT)) {
+      lay->Compute_Net();
+#ifdef DMEM_COMPILE
+      lay->DMem_SyncNet();
+#endif
+    }
+    lay->Compute_Act();
+  }
+}
+
+void BpNetwork::BpCompute_dEdA_dEdNet() {
+  // send the error back
+  Layer* lay;
+  int i;
+  for (i = layers.leaves-1; i>= 0; i--) {
+    lay = ((Layer*) layers.Leaf(i));
+    if(lay->lesion || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
+      continue;
+
+    BpUnit* u;
+    taLeafItr u_itr;
+#ifdef DMEM_COMPILE
+    // first compute dEdA from connections and share it
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+      u->Compute_dEdA();
+    lay->dmem_share_units.Aggregate(3, MPI_SUM);
+
+    // then compute error to add to dEdA, and dEdNet
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+      u->Compute_Error();
+      u->Compute_dEdNet();
+    }
+#else
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+      u->Compute_dEdA_dEdNet();
+#endif
+  }
+}
+
+void BpNetwork::BpCompute_Error() {
+  // compute errors
+  Layer* lay;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, lay, layers., l_itr) {
+    if (lay->lesion || !(lay->ext_flag & Unit::TARG)) // only compute err on targs
+      continue;
+
+    BpUnit* u;
+    taLeafItr u_itr;
+    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+      u->dEdA = 0.0f;		// must reset -- error is incremental!
+      u->Compute_Error();
+    }
+  }
+}
+
+void BpNetwork::BpSetCurLrate() {
+  Layer* layer;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, layer, layers., l_itr) {
+    if (layer->lesion)	continue;
+    BpUnit* u;
+    taLeafItr u_itr;
+    FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
+      u->SetCurLrate(epoch);
+  }
+}
+
+void BpNetwork::BpTrial_Loop() {
+  BpSetCurLrate();
+
+  InitExterns();
+/*/TODO  
+  if (cur_event != NULL)
+    cur_event->ApplyPatterns(network); */
+
+  Compute_Act();
+  BpCompute_dEdA_dEdNet();
+
+  // compute the weight err derivatives (only if not testing...)
+/*TODO  if((epoch_proc != NULL) && (epoch_proc->wt_update != EpochProcess::TEST)) {
+    Compute_dWt();
+  }*/
+//   else {
+//     Compute_Error();		// for display purposes only..
+//   }
+
+  // weight update taken care of by the epoch process
 }
 
 

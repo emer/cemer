@@ -24,8 +24,10 @@ MEMBER DIRECTIVES
 #INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
 #VARTYPE_READ_ONLY -- user can only change value, not the type, of a Variant
 #NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
+#ENUM_TYPES -- for TypeDef* members, indicates to show Enum types in the interface
 
 tbd: #EDITOR -- for String types, enables a button for a dialog editor (for long strings)
+
 
 METHOD DIRECTIVES
 -----------------

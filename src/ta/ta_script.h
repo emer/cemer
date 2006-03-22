@@ -37,22 +37,63 @@ class cssTA_Base;		// #IGNORE
 class ScriptBase_List;
 class ScriptVar;
 
-class TA_API ScriptVar: public taOBase { // ##NO_TOKENS #UAE_OWNER a script variable, accessible from the outer system, and inside the script
-INHERITED(taOBase)
+class TA_API ScriptVar: public taNBase { // ##NO_TOKENS ##UAE_OWNER a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
+INHERITED(taNBase)
 public:
-  String		name; // name of the variable -- must be a legal css name
-  Variant		value; // the actual variableuse_init_value
+  Variant		value; // the actual variable
+  virtual const String	GenCss(bool is_arg = false) 
+    {return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;} // css code (terminated if Var);
   
-  const String		GenCss(); // css code (no terminator or newline)
+  virtual cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
   
-  bool	SetName(const char* nm) {name = nm; return true;} // #IGNORE
-  bool	SetName(const String& nm) {name = nm; return true;} // #IGNORE
-  String GetName() const { return name; } // #IGNORE
   void 	SetDefaultName() {} // make it local to list, set by list
   void	UpdateAfterEdit();
   void	Copy_(const ScriptVar& cp);
-  COPY_FUNS(ScriptVar, taOBase);
+  COPY_FUNS(ScriptVar, taNBase);
   TA_BASEFUNS(ScriptVar);
+protected:
+  virtual const String	GenCssArg_impl();
+  virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+class TA_API EnumScriptVar: public ScriptVar { // a script variable to hold enums
+INHERITED(ScriptVar)
+public:
+  TypeDef*		enum_type; // #ENUM_TYPES the type of the enum
+  bool			init; // when true, initialize the enum value
+  
+  const String		enumName(); // ex, taBase::Orientation
+  
+  const String		ValToId(int val);
+  
+  override cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
+  
+  void	Copy_(const EnumScriptVar& cp);
+  COPY_FUNS(EnumScriptVar, ScriptVar);
+  TA_BASEFUNS(EnumScriptVar);
+protected:
+  override const String	GenCssArg_impl();
+  override const String	GenCssVar_impl(bool, TypeDef*);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ObjectScriptVar: public ScriptVar { // a script variable to hold taBase objects
+INHERITED(ScriptVar)
+public:
+  TypeDef*		val_type; // #NO_NULL the minimum acceptable type of the value 
+  bool			make_new; // #LABEL_new create a new instance
+  
+  override const String	GenCss(bool is_arg = false) 
+    {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
+  
+  void	Copy_(const ObjectScriptVar& cp);
+  COPY_FUNS(ObjectScriptVar, ScriptVar);
+  TA_BASEFUNS(ObjectScriptVar);
 private:
   void	Initialize();
   void	Destroy();

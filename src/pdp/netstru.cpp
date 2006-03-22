@@ -5456,7 +5456,7 @@ void Network::Send_Net() {
 #endif
 }
 
-void Network::Compute_Act() {
+void Network::Compute_Act_default() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {

@@ -293,7 +293,7 @@ void  Program::UpdateScriptVars() {
   // add new
   while (i < global_vars.size) {
     sv = global_vars.FastEl(i);
-    el = new cssVariant(sv->value, sv->name);
+    el = sv->NewCssEl();
     script->hard_vars.Push(el); //refs
     ++i;
   }

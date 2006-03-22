@@ -1269,7 +1269,9 @@ public:
 
   virtual void	Compute_Net();	// Compute NetInput
   virtual void	Send_Net();	// sender-based computation of net input
-  virtual void	Compute_Act();	// Compute Activation
+  virtual void	Compute_Act() {Compute_Act_default();}
+  	// Compute Activation; subtypes may replace with their own algorithm
+  virtual void	Compute_Act_default(); // default version, may be replaced or extended
   virtual void	UpdateWeights(); // update weights for whole net
   virtual void	Compute_dWt(); // update weights for whole net
 

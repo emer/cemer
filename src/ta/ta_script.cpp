@@ -20,6 +20,7 @@
 
 #include "ta_css.h"
 #include "ta_platform.h"
+#include "css_basic_types.h"
 
 #ifdef TA_GUI
   #include "ta_qt.h"
@@ -32,14 +33,7 @@
 //   ScriptVar		//
 //////////////////////////
 
-void ScriptVar::Initialize() {
-}
-
-void ScriptVar::Destroy() {
-}
-
 void ScriptVar::Copy_(const ScriptVar& cp) {
-  name = cp.name;
   value = cp.value;
 }
 
@@ -51,16 +45,112 @@ void ScriptVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-const String ScriptVar::GenCss() {
-  String rval(0, 80, '\0');
+const String ScriptVar::GenCssArg_impl() {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
   rval += "Variant ";
   rval += name;
   bool init = !value.isDefault();
   if (init) {
-    rval += "= ";
+    rval += " = ";
     rval += value.toCssLiteral();
   }
   return rval;
+}
+
+const String ScriptVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += "Variant ";
+  rval += name;
+  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
+    rval += " = new ";
+    rval += val_type->name + "()";
+  } else { 
+    bool init = !value.isDefault();
+    if (init) {
+      rval += " = ";
+      rval += value.toCssLiteral();
+    } else if (!value.isInvalid()) {
+      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
+    }
+  }
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* ScriptVar::NewCssEl() {
+  cssVariant* rval = new cssVariant(value, name);
+  return rval;
+}
+
+//////////////////////////
+//   EnumScriptVar	//
+//////////////////////////
+
+void EnumScriptVar::Initialize() {
+  value.setType(Variant::T_Int);
+  enum_type = NULL;
+  init = true;
+}
+
+void EnumScriptVar::Destroy() {
+}
+
+void EnumScriptVar::Copy_(const EnumScriptVar& cp) {
+  enum_type = cp.enum_type;
+  init = cp.init;
+}
+
+const String EnumScriptVar::enumName() {
+  if (enum_type) {
+    //TODO: need to make sure it is type::enum
+    return enum_type->Get_C_Name();
+  } else return _nilString;
+}
+
+const String EnumScriptVar::GenCssArg_impl() {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += enumName() + " ";
+  rval += name;
+  if (init) {
+    rval += " = ";
+    rval += ValToId(value.toInt());
+  }
+  return rval;
+}
+
+const String EnumScriptVar::GenCssVar_impl(bool, TypeDef*) {
+  String rval = GenCssArg_impl();
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* EnumScriptVar::NewCssEl() {
+  cssEnum* rval = new cssEnum(value.toInt(), name);
+  return rval;
+}
+
+const String EnumScriptVar::ValToId(int val) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  //TODO
+  return rval;
+}
+
+
+//////////////////////////
+//   ObjectScriptVar	//
+//////////////////////////
+
+void ObjectScriptVar::Initialize() {
+  val_type = &TA_taOBase; //note: < taOBase generally not interesting
+  make_new = false;
+}
+
+void ObjectScriptVar::Destroy() {
+}
+
+void ObjectScriptVar::Copy_(const ObjectScriptVar& cp) {
+  val_type = cp.val_type;
+  make_new = cp.make_new;
 }
 
 //////////////////////////
@@ -80,19 +170,18 @@ void ScriptVar_List::El_SetIndex_(void* it_, int idx) {
 }
 
 const String ScriptVar_List::GenCss(int indent_level) const {
-  String rval(0, 20 * size, '\0'); // buffer with typical-ish room
+  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
   ScriptVar* el;
   for (int i = 0; i < size; ++i) {
     el = FastEl(i);
-    if (var_context == VC_FuncArgs) {
+    bool is_arg = (var_context == VC_FuncArgs);
+    if (is_arg) {
       if (i > 0)
         rval += ", ";
     } else {
       rval += cssMisc::Indent(indent_level); 
     }
-    rval += el->GenCss(); 
-    if (var_context == VC_ProgVars)
-      rval += ";\n";
+    rval += el->GenCss(is_arg); 
   }
   return rval;
 }
