@@ -69,7 +69,7 @@ TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1);
 TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1);
 TypeDef TA_taString		("taString", "",
 				 "", "", "", sizeof(String), (void**)0, 0, 0, 0, 1);
-TypeDef TA_Variant		("taVariant", "",
+TypeDef TA_Variant		("Variant", "",
 				 "", "", "", sizeof(Variant), (void**)0, 0, 0, 0, 1);
 TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1);
 
@@ -279,10 +279,15 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   TA_taBase.AddParFormal(&TA_class);
   ts.Add(&TA_taRegFun);
   ts.Add(&TA_TypeDef);
+  TA_TypeDef.AddParFormal(&TA_class);
   ts.Add(&TA_MemberDef);
+  TA_MemberDef.AddParFormal(&TA_class);
   ts.Add(&TA_MethodDef);
+  TA_MethodDef.AddParFormal(&TA_class);
   ts.Add(&TA_taString);
   TA_taString.AddParFormal(&TA_class);
+  ts.Add(&TA_Variant);
+  TA_Variant.AddParFormal(&TA_class);
   ts.Add(&TA_void_ptr);
 }
 

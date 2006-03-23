@@ -336,6 +336,12 @@ class TA_API taiVariant: public taiCompData {
 INHERITED(taiPolyData)
   Q_OBJECT
 public:
+  enum CustomFlags { // #BITS
+    flgNoInvalid	= 0x010000, // don't let user choose Invalid
+    flgNoAtomics	= 0x020000, // don't let user choose any atomics
+    flgNoPtr		= 0x040000, // don't let user choose raw ptr
+    flgNoBase		= 0x080000 // don't let user choose taBase or taMatrix
+  };
   
   QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   taiVariant(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);

@@ -990,6 +990,62 @@ taiVariant::taiVariant(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget*
 taiVariant::~taiVariant() {
   data_el.Reset();
 }
+
+void taiVariant::Constr(QWidget* gui_parent_) { 
+  cmbVarType = NULL;
+  fldVal = NULL;
+  togVal = NULL;
+  m_updating = 0;
+  
+  SetRep(new QWidget(gui_parent_));
+  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
+  }
+  InitLayout();
+  // type stuff
+  QLabel* lbl = new QLabel("var type", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  bool vt_ro = false; // todo, need to be able to set this from a memberdef
+  
+  if (vt_ro) {
+    // todo: create a ro edit for type
+  } else {
+    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
+    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
+    //TODO: remove invalid types according to flags
+    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
+    lbl->setBuddy(cmbVarType->rep());
+    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+    
+  }
+  lbl = new QLabel("var value", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  stack = new QStackedWidget(rep());
+  AddChildWidget(stack, -1, 1); // fill rest of space
+  lbl->setBuddy(stack);
+  
+  // created in order of StackControls
+  lbl = new QLabel("(no value for type Invalid)");
+  stack->addWidget(lbl);
+  togVal = new taiToggle(typ, host, this, NULL);
+  stack->addWidget(togVal->rep());
+  fldVal = new taiField(typ, host, this, NULL);
+  stack->addWidget(fldVal->rep());
+  lbl = new QLabel("(Ptr cannot be set)");
+  stack->addWidget(lbl);
+  
+  tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
+  tabVal->GetMenu();
+  stack->addWidget(tabVal->GetRep());
+  
+  matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
+  matVal->GetMenu();
+  stack->addWidget(matVal->GetRep());
+    
+  EndLayout();
+}
+
 /*
 bool taiVariant::ShowMember(MemberDef* md) {
   if (md->HasOption("HIDDEN_INLINE"))
@@ -1039,62 +1095,6 @@ void taiVariant::cmbVarType_itemChanged(int itm) {
   default: return ;
   }
   --m_updating;
-}
-
-void taiVariant::Constr(QWidget* gui_parent_) {
-  cmbVarType = NULL;
-  fldVal = NULL;
-  togVal = NULL;
-  m_updating = 0;
-  
-  SetRep(new QWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
-  if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
-  }
-  InitLayout();
-  // type stuff
-  QLabel* lbl = new QLabel("var type", rep());
-  AddChildWidget(lbl, taiM->hsep_c, 0);
-  bool vt_ro = false; // todo, need to be able to set this from a memberdef
-  
-  if (vt_ro) {
-    // todo: create a ro edit for type
-  } else {
-    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
-    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
-    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
-    lbl->setBuddy(cmbVarType->rep());
-    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
-    
-  }
-  lbl = new QLabel("var value", rep());
-  AddChildWidget(lbl, taiM->hsep_c, 0);
-  stack = new QStackedWidget(rep());
-  AddChildWidget(stack, -1, 1); // fill rest of space
-  lbl->setBuddy(stack);
-  
-  // created in order of StackControls
-  lbl = new QLabel("(no value for type Invalid)");
-  stack->addWidget(lbl);
-  togVal = new taiToggle(typ, host, this, NULL);
-  stack->addWidget(togVal->rep());
-  fldVal = new taiField(typ, host, this, NULL);
-  stack->addWidget(fldVal->rep());
-  lbl = new QLabel("(Ptr cannot be set)");
-  stack->addWidget(lbl);
-  
-  tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
-  tabVal->GetMenu();
-  stack->addWidget(tabVal->GetRep());
-  
-  matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
-  matVal->GetMenu();
-  stack->addWidget(matVal->GetRep());
-    
-
-  
-  EndLayout();
 }
 
 void taiVariant::GetImage(const Variant& var) {

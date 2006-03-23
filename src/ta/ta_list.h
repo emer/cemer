@@ -47,7 +47,7 @@
 
 
 // externals
-class TypeDef; //#IGNORE
+class TypeDef; //
 class taDataLink; //
 
 // forwards

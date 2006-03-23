@@ -1128,7 +1128,7 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
     strm << "    if (sizeof(unsigned long) == sizeof(unsigned int)) " << typ_ref 
       << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
   }
-
+  
   if(ths->parents.size == 0)
     return;
 

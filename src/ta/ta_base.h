@@ -1149,24 +1149,10 @@ protected:
   void		El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
   uint		El_SizeOf_() const		{ return sizeof(T); }
   const void*	El_GetErr_() const		{ return (void*)&err; }
-  void*		El_GetTmp_() const		{ return (void*)&tmp; }
+  void*		El_GetTmp_() const		{ return (void*)&tmp; } //
 
 };
 
-// do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
-// which cannot be put inside the macro!
-//
-// #define taArray_of(T)
-// class T ## _Array : public taArray<T> {
-// public:
-//   virtual void*		GetTA_Element(int i, TypeDef*& eltd) const
-//   { eltd = &TA_ ## T; return SafeEl_(i); }
-//   void Initialize()	{ };
-//   void Destroy()	{ };
-//   TA_BASEFUNS(T ## _Array);
-// }
-
-// use these as templates instead
 
 class TA_API int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER
@@ -1199,6 +1185,7 @@ protected:
 };
 TA_ARRAY_OPS(int_Array)
 
+
 class TA_API float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER
 public:
@@ -1219,6 +1206,7 @@ protected:
   { float tmp = (float)val; *((float*)it) = tmp; }
 };
 TA_ARRAY_OPS(float_Array)
+
 
 class TA_API double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER
@@ -1241,6 +1229,7 @@ protected:
 };
 TA_ARRAY_OPS(double_Array)
 
+
 class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER
 public:
@@ -1262,6 +1251,7 @@ protected:
 };
 TA_ARRAY_OPS(String_Array)
 
+
 class TA_API SArg_Array : public String_Array {
   // string argument array: has labels for each argument to make it easier in the interface
 INHERITED(String_Array)
@@ -1279,6 +1269,7 @@ public:
   COPY_FUNS(SArg_Array, String_Array);
   TA_BASEFUNS(SArg_Array);
 };
+
 
 typedef void* voidptr; // for maketa, which chokes on void* in a template
 class TA_API voidptr_Array : public taArray<voidptr> {
