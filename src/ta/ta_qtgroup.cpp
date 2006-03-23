@@ -14,44 +14,31 @@
 //   Lesser General Public License for more details.
 
 
-// ta_qtgroup.cc
-
+// ta_qtgroup.cpp
 #include "ta_qtgroup.h"
-#include "ta_css.h"
-#include "ta_type.h"
-# include "ta_base.h"
-// #include "ta_filer.h"
+
+
+#include "ta_base.h"
 #include "ta_qt.h"
 #include "ta_qttype.h"
 #include "ta_seledit.h"
-// #include "css_qt.h"
-// #include "css_qtdialog.h"
-// #include "css_basic_types.h"
-// #include "ta_css.h"
-#include "ta_TA_type.h"
-//
+
+#include "ta_css.h"
+
 #include "icolor.h"
 #include "ieditgrid.h"
-// #include "ispinbox.h"
 
 #include <qapplication.h>
-// #include <qcheckbox.h>
-// #include <qcombobox.h>
 #include <qframe.h>
 #include <Q3Header>
 #include <qlabel.h>
- #include <qlayout.h>
-// #include <qlineedit.h>
-// #include <qmenubar.h>
+#include <qlayout.h>
 #include <qmenudata.h>
 #include <QMenu>
-// #include <qpushbutton.h>
 #include <Q3VBox>
 #include <QScrollArea> // for gpiGroupDialog
-// #include <qstring.h>
 #include <qtooltip.h>
 #include <Q3Table>
-// #include <qwidgetstack.h>
 
 
 //////////////////////////
@@ -990,8 +977,17 @@ void gpiMultiEditDataHost::SetMultiSize(int rows, int cols) {
 }
 
 void gpiMultiEditDataHost::ClearBody_impl() {
-  multi_body->clearLater(); // clears items in event loop
+  ClearMultiBody_impl();
   taiEditDataHost::ClearBody_impl();
+}
+
+void gpiMultiEditDataHost::ClearMultiBody_impl() {
+  multi_body->clearLater(); // clears items in event loop
+}
+
+void gpiMultiEditDataHost::Constr_Body() {
+  inherited::Constr_Body(); // reuse entire implementation for list members
+  Constr_MultiBody();
 }
 
 void gpiMultiEditDataHost::Constr_Box() {
@@ -1017,6 +1013,11 @@ void gpiMultiEditDataHost::Constr_Box() {
   lay_multi->addWidget(multi_body);
 }
 
+void gpiMultiEditDataHost::Constr_MultiBody() {
+  // nothing
+}
+
+
 
 //////////////////////////////////////////////////////////
 // 		gpiListDataHost				//
@@ -1035,12 +1036,13 @@ gpiListDataHost::~gpiListDataHost() {
   lst_membs.Reset();
 }
 
-void gpiListDataHost::ClearBody_impl() {
+void gpiListDataHost::ClearMultiBody_impl() {
   lst_data_el.Reset();
   lst_membs.Reset();
   num_lst_fields = 0;
-  gpiMultiEditDataHost::ClearBody_impl();
+  inherited::ClearMultiBody_impl();
 }
+
 
 void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
   prompt_str = cur_lst->GetTypeDef()->name + ": ";
@@ -1064,11 +1066,28 @@ void gpiListDataHost::Constr_Final() {
   multi_body->resizeNames(); //temp: idatatable should do this automatically
 }
 
-void gpiListDataHost::Constr_Body() {
-  gpiMultiEditDataHost::Constr_Body(); // reuse entire implementation for list members
+void gpiListDataHost::Constr_MultiBody() {
+  inherited::Constr_MultiBody(); 
+  Constr_ElData();
   Constr_ListLabels();
   Constr_ListData();
 }
+
+void gpiListDataHost::Constr_ElData() {
+  for (int lf = 0; lf < cur_lst->size; ++lf) {
+    TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
+    if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
+    TypeDef* tmp_td = tmp_lf->GetTypeDef();
+    lst_data_el.Add(new gpiList_ElData(tmp_td, tmp_lf));
+    // add to the unique list of all showable members
+    for (int i = 0; i < tmp_td->members.size; ++i) {
+      MemberDef* md = tmp_td->members.FastEl(i);
+      if (ShowMember(md)) {
+        lst_membs.AddUnique(md->name);
+      }
+    }
+  }
+} 
 
 void gpiListDataHost::Constr_ListData() {
   for (int lf = 0; lf < lst_data_el.size; ++lf) {
@@ -1076,48 +1095,24 @@ void gpiListDataHost::Constr_ListData() {
     String nm = String("[") + String(lf) + "]: (" + lf_el->typ->name + ")";
     AddMultiColName(lf, nm, String(""));
 
-    cur_row = 0;
     for (int i = 0; i < lf_el->typ->members.size; ++i) {
       MemberDef* md = lf_el->typ->members.FastEl(i);
-      if(!ShowMember(md))
-	continue;
-      MemberDef* lst_md = lst_membs.FindName(md->name);
-      if (lst_md == NULL)
-	continue;
-      for (int idx = cur_row; idx < lst_md->idx; ++idx) {	// align with other elements in List
-	++cur_row;
-      }
+      if (!ShowMember(md)) continue;
+      int lst_idx = lst_membs.Find(md->name);
+      if (lst_idx < 0) continue; //note: shouldn't happen!!!
+      cur_row = lst_idx; 
       taiData* mb_dat = md->im->GetDataRep(this, NULL, multi_body->dataGridWidget());
       lf_el->data_el.Add(mb_dat);
       AddMultiData(cur_row, lf, mb_dat->GetRep());
-      ++cur_row;
     }
   }
 }
 
 void gpiListDataHost::Constr_ListLabels() {
-  bool has_labels = false;
-  if (lst_membs.size > 0)
-    has_labels = true;
   int row = 0;
-  for (int lf = 0; lf < cur_lst->size; ++lf) {
-    TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
-    if (tmp_lf == NULL)	continue;
-    TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new gpiList_ElData(tmp_td, tmp_lf));
-    if (has_labels)
-      continue;
-    for (int i = 0; i < tmp_td->members.size; ++i) {
-      MemberDef* md = tmp_td->members.FastEl(i);
-      if (ShowMember(md) && !(lst_membs.FindName(md->name))) {
-	MemberDef* nmd = md->Clone();
-	lst_membs.Add(nmd);	// index now reflects position in list...
-        String desc = "";
-        GetMembDesc(md, desc, "");
-        AddMultiRowName(row, md->name, desc);
-        ++row;
-      }
-    }
+  for (int lf = 0; lf < lst_membs.size; ++lf) {
+    //NOTE: no desc's because same name'd member could conflict
+    AddMultiRowName(lf, lst_membs.FastEl(lf), "");
   }
 }
 
@@ -1132,6 +1127,8 @@ void gpiListDataHost::GetValue() {
       }
     }
   }
+ // NOTE: we should always be able to do a GetValue, because we always rebuild
+ // when data changes (ie, in program, or from another gui panel)
   if (rebuild) {
     taMisc::Error("Cannot apply changes: List size or elements have changed");
     return;
@@ -1162,14 +1159,11 @@ void gpiListDataHost::GetImage() {
       }
     }
   }
-if (rebuild) return; //TEMP
-/*TODO  if (rebuild) {
-    if (cur_lst->size == 0) {
-      taMisc::Error("List has zero elements: canceling edit");
-      Cancel();
-      return;
-    }
-    lst_data_el.Reset();
+
+  if (rebuild) {
+    ClearMultiBody_impl();
+    Constr_MultiBody(); 
+  /*obs lst_data_el.Reset();
     ivGlyphIndex i;
     for(i=lst_data_g->count()-1; i >= 0; i--)
       lst_data_g->remove(i);
@@ -1178,8 +1172,8 @@ if (rebuild) return; //TEMP
     lst_membs.Reset();
     Constr_ListMembs();
     Constr_Labels_impl(lst_membs);
-    Constr_ElData();
-  } */
+    Constr_ElData(); */
+  } 
 
   // first for the List-structure members
   GetImage_impl(typ->members, data_el, cur_base);
@@ -1187,7 +1181,7 @@ if (rebuild) return; //TEMP
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+//TEMP    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
   }
   Unchanged();
 }

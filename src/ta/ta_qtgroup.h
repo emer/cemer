@@ -240,10 +240,6 @@ protected:
 };
 
 
-////////////////////////////////
-// 	gpiList Edits       //
-////////////////////////////////
-
 class TA_API gpiList_ElData {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
 public:
@@ -258,22 +254,21 @@ public:
 class TA_API gpiList_ElDataList : public taPtrList<gpiList_ElData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
-  void	El_Done_(void* it)	{ delete (gpiList_ElData*)it; }
+  void	El_Done_(void* it)	{ delete (gpiList_ElData*)it; } //
 
 public:
-  ~gpiList_ElDataList()        { Reset(); }
+  ~gpiList_ElDataList()        { Reset(); } //
 };
 
-//////////////////////////////////////////////////////////
-// 		gpiMultiEditDialog			//
-//////////////////////////////////////////////////////////
+
 
 class TA_API gpiMultiEditDataHost: public taiEditDataHost {
+INHERITED(taiEditDataHost)
 public:
-  QWidget*	multi; // outer container
+  QWidget*		multi; // outer container
     QScrollArea*	scrMulti;		// scrollbars for the multi items
     QHBoxLayout*	lay_multi; // used by gpiGroupDialog to add its group buttons
-    iEditGrid*	multi_body;
+    iEditGrid*		multi_body;
 
   gpiMultiEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);
@@ -291,21 +286,20 @@ protected:
   int		multi_rows;
   int		multi_cols;
   override void Constr_Box(); // add the multi box
+  override void 	Constr_Body();
+  virtual void		Constr_MultiBody(); // added in after Constr_Body -- also used for reshowing multi-body
+  virtual void		ClearMultiBody_impl(); // clears multi-body for reshowing
 };
-//class tbScrollBox;		// #IGNORE
-//class lrScrollBox;		// #IGNORE
 
-
-//////////////////////////////////////////////////////////
-// 		gpiListDialog				//
-//////////////////////////////////////////////////////////
 
 class TA_API gpiListDataHost : public gpiMultiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(gpiMultiEditDataHost)
 public:
-  gpiList_ElDataList lst_data_el;	// list of data elements
+  gpiList_ElDataList 	lst_data_el;	// list of data elements
   TABLPtr		cur_lst;
-  MemberSpace		lst_membs;	// list of members
+//  MemberSpace		lst_membs;	// list of members
+  String_PArray		lst_membs; // list of members, by name
   int			num_lst_fields; // number of editble list memberdefs with fields
 
   gpiListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
@@ -313,7 +307,6 @@ public:
   gpiListDataHost() 				{ };
   ~gpiListDataHost();
 
-  override void	ClearBody_impl();	// clear body data for reshowing
   void		GetImage();
   void		GetValue();
 
@@ -322,17 +315,17 @@ public:
   bool		ShowMember(MemberDef* md);
 
 protected:
+  override void		ClearMultiBody_impl(); // clears multi-body for reshowing
+
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
-  override void		Constr_Body();
-  virtual void  Constr_ListData();  	// construct list members themselves
-  virtual void  Constr_ListLabels();  	// construct list labels themselves
-  override void Constr_Final(); //TEMP
+  override void		Constr_MultiBody();
+  virtual void		Constr_ElData(); 
+  virtual void  	Constr_ListData();  	// construct list members themselves
+  virtual void  	Constr_ListLabels();  	// construct list labels themselves
+  override void 	Constr_Final(); //TEMP
 };
 
 
-////////////////////////////////
-// 	taiGroup Edits      //
-////////////////////////////////
 
 class TA_API gpiGroupDataHost : public gpiListDataHost {
 public:

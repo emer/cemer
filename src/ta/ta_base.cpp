@@ -1183,8 +1183,7 @@ void taList_impl::Copy(const taList_impl& cp) {
 }
 
 void taList_impl::UpdateAfterEdit(){
-  //NOTE: we specifically bypass taOBase, since it notifies edits
-  taBase::UpdateAfterEdit();
+  inherited_taBase::UpdateAfterEdit();
 }
 
 void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
@@ -1203,10 +1202,12 @@ String taList_impl::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
 }
 
 void taList_impl::DataChanged(int dcr, void* op1, void* op2) {
-  //note: this is functionally the same as the taPtrList_impl version, but is more efficient since
+  //note: this is functionally similar to the taPtrList_impl version, but is more efficient since
   // we know about our data_link reference, unlike PtrList which has to go through a virtual function
+  // also, we NotifyEdits, so that they will update their presentation
 #ifdef TA_GUI
   if (m_data_link) m_data_link->DataDataChanged(dcr, op1, op2);
+//temp  tabMisc::NotifyEdits(this);
 #endif
 }
 
