@@ -1342,6 +1342,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layCtrls->addSpacing(5);
   scrCmdButtons = new QScrollArea(this);
   scrCmdButtons->setWidgetResizable(true);
+  widCmdButtons = new QWidget();
   scrCmdButtons->setWidget(widCmdButtons);
 
   layCmdButtons = new QGridLayout(widCmdButtons, 1, CMD_GEOM_X, 0, 2);

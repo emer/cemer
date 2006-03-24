@@ -62,7 +62,7 @@ private:
 class TA_API EnumScriptVar: public ScriptVar { // a script variable to hold enums
 INHERITED(ScriptVar)
 public:
-  TypeDef*		enum_type; // #ENUM_TYPES the type of the enum
+  TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
   bool			init; // when true, initialize the enum value
   
   const String		enumName(); // ex, taBase::Orientation
@@ -85,7 +85,7 @@ private:
 class TA_API ObjectScriptVar: public ScriptVar { // a script variable to hold taBase objects
 INHERITED(ScriptVar)
 public:
-  TypeDef*		val_type; // #NO_NULL the minimum acceptable type of the value 
+  TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
   bool			make_new; // #LABEL_new create a new instance
   
   override const String	GenCss(bool is_arg = false) 

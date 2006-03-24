@@ -644,8 +644,8 @@ void BpNetwork::BpTrial_Loop() {
 
 String bp_defaults =
 "// ta_Dump File v2.0\n\
-TypeDefault_Group .projects[0].defaults { \n\
-TypeDefault_Group .projects[0].defaults {\n\
+TypeDefault_MGroup .projects[0].defaults { \n\
+TypeDefault_MGroup .projects[0].defaults {\n\
 TypeDefault @[0] { \n\
 taBase_Group @.active_membs {\n\
 NameValue @[0] { };\n\
@@ -677,7 +677,7 @@ NameValue @[0] { };\n\
 };\n\
 };\n\
 };\n\
-TypeDefault_Group .projects[0].defaults {\n\
+TypeDefault_MGroup .projects[0].defaults {\n\
 el_typ=TypeDefault;\n\
 el_def=0;\n\
 name=\"\";\n\

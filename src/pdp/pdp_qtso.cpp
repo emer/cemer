@@ -216,7 +216,7 @@ pdpDataViewer* pdpDataViewer::New(ProjectBase* proj_) {
 }
 
 void pdpDataViewer::Initialize() {
-  data_base = &TA_Project;
+  data_base = &TA_ProjectBase;
 }
 
 void pdpDataViewer::Destroy() {

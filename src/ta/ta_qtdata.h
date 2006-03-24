@@ -989,13 +989,12 @@ class TA_API taiTypeHier : public taiData {
 public:
   taiActions* 	ta_actions;
   bool		ownflag;
+  bool		enum_mode; // when set, creates a hier of enum TypeDefs, for picking an enum type
 
   virtual void	GetMenu() {GetMenu(NULL);}
   virtual void	GetMenu(const taiMenuAction* acn);
   virtual void	UpdateMenu() {UpdateMenu(NULL);}
   virtual void	UpdateMenu(const taiMenuAction* acn);
-  virtual int	CountChildren(TypeDef* typ_);
-  virtual bool	AddType(TypeDef* typ_); 	// true if type should be added
 
   override QWidget* GetRep();
   virtual void		GetImage(TypeDef* ths);
@@ -1007,7 +1006,12 @@ public:
     QWidget* gui_parent_, int flags_ = 0);
   ~taiTypeHier();
 protected:
-  virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn);
+  bool		AddType_Enum(TypeDef* typ_); 
+  bool		AddType_Class(TypeDef* typ_); 
+  int		CountChildren(TypeDef* typ_);
+  int		CountEnums(TypeDef* typ_);
+  virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); 
+  void	GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); 
 };
 
 //////////////////////////////////

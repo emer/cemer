@@ -547,10 +547,10 @@ public:
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator[](int) const { NopErr("[]"); return &cssMisc::Void; }
   virtual int	 GetMemberNo(const char*) const { NopErr(".,->"); return -1; }
-  virtual cssEl* GetMember(const char*) const  { NopErr(".,->"); return &cssMisc::Void; }
+  virtual cssEl* GetMember(const char* nm) const  { return GetMember(GetMemberNo(nm));  }
   virtual cssEl* GetMember(int) const  { NopErr(".,->"); return &cssMisc::Void; }
   virtual int	 GetMemberFunNo(const char*) const { NopErr(".,->()"); return -1; }
-  virtual cssEl* GetMemberFun(const char* nm) const { return GetMemberFun(GetMemberNo(nm)); }
+  virtual cssEl* GetMemberFun(const char* nm) const { return GetMemberFun(GetMemberFunNo(nm)); }
   virtual cssEl* GetMemberFun(int) const { NopErr(".,->()"); return &cssMisc::Void; }
   virtual cssEl* GetScoped(const char*) const { NopErr("::"); return &cssMisc::Void; }
   virtual cssEl* NewOpr();

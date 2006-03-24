@@ -271,7 +271,38 @@ int cssVariant::GetMemberFunNo(const char* memb) const {
 }
 
 cssEl* cssVariant::GetMemberFun(int memb) const {
-  return GetMemberFun_impl(TA_Variant, (void*)&val, memb);
+  TypeDef* td = NULL;
+  void* base = (void*)val.addrData(); // unconstify
+  switch (val.type()) {
+  case Variant::T_String:
+    td = &TA_taString;
+    break;
+  case Variant::T_Base:
+  case Variant::T_Matrix: {
+    taBase* tab = val.toBase();
+    if (tab) {
+      td = tab->GetTypeDef();
+      base = tab; // base is content, not addr of content
+    } else {
+      cssMisc::Error(prog, "GetMemberFun: NULL pointer");
+      return &cssMisc::Void;
+    }
+    } break;
+  default: break;
+  }
+  if (td)
+    return GetMemberFun_impl(*td, (void*)base, memb);
+  else 
+    return inherited::GetMemberFun(memb);
+}
+
+int cssVariant::GetMemberNo(const char* memb) const {
+//TODO: 
+return 0;
+}
+
+cssEl* cssVariant::GetMember(int memb) const {
+return NULL;
 }
 
 cssEl* cssVariant::GetScoped(const char* memb) const {

@@ -413,8 +413,8 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     } else {
       strm << "=" << eff_type->GetValStr(new_base, base, this);
     }
-    strm << ";\n";
   }
+  strm << ";\n";
   return true;
 }
 

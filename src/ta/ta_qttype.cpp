@@ -1063,7 +1063,7 @@ void taiSubTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_dif
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) &&
      ((md->OptionAfter("TYPE_") != "") || (md->OptionAfter("TYPE_ON_") != "")
-      || (md->HasOption("NULL_OK")))
+      || (md->OptionAfter("ENUM_TYPE_") != "") || (md->HasOption("NULL_OK")))
      && md->type->DerivesFrom(TA_TypeDef))
     return (taiMember::BidForMember(md,td) + 1);
   return 0;
@@ -1074,7 +1074,9 @@ taiData* taiTypePtrMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWi
     flags_ |= taiData::flgNullOk;
   taiTypeHier* rval =
     new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall, mbr->type, host_, par, gui_parent_, flags_);
-  rval->GetMenu();
+  rval->enum_mode = (mbr->HasOption("ENUM_TYPE"));
+  //NOTE: shouldn't get menu yet, do in Impl 
+  //rval->GetMenu();
   return rval;
 }
 
