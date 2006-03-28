@@ -730,6 +730,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     new_flags |= taiData::flgReadOnly;
   if (mbr->HasOption("INLINE"))
     new_flags |= taiData::flgInline;
+  if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
+    new_flags |= taiData::flgEditDialog;
     
   taiData* dat = GetDataRep_impl(host_, par, gui_parent_, new_flags);
   return dat;

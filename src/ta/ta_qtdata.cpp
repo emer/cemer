@@ -337,8 +337,7 @@ void ScrollFieldEditor::keystroke(const ivEvent& e) {
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  //temp: true always
-  if (true || (flags_ && flgEditDialog)) {
+  if (flags_ && flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
@@ -960,7 +959,7 @@ void taiVariant::Constr(QWidget* gui_parent_) {
   stack->addWidget(lbl);
   togVal = new taiToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
-  fldVal = new taiField(typ, host, this, NULL);
+  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
   stack->addWidget(fldVal->rep());
   lbl = new QLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
@@ -3286,8 +3285,9 @@ void taiMethodData::ShowReturnVal(cssEl* rval) {
 }
 
 void taiMethodData::ApplyBefore() {
-/*hopefully nn!!  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
-    return;*/
+//nn??  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
+  if (host == NULL) 
+    return;
   if (meth->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
   if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {

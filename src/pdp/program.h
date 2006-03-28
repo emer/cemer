@@ -100,7 +100,7 @@ class PDP_API UserScriptEl: public ProgEl {
   // ProgEl for a user scriptlet
 INHERITED(ProgEl)
 public:
-  String	    user_script; // #EDITOR content of the user scriptlet
+  String	    user_script; // #EDIT_DIALOG content of the user scriptlet
   
   void	Copy_(const UserScriptEl& cp);
   COPY_FUNS(UserScriptEl, ProgEl);
