@@ -43,7 +43,7 @@ public:
   int		show;
 
 
-  cssiPolyData(cssClassInst* ob, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent, int flags_ = 0);
   ~cssiPolyData();
 
@@ -67,7 +67,7 @@ public:
   cssClassInst*		arg_obj; 	// argument object (if necc)
 
   cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-	TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
+	TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
 //  ~cssiMethMenu();
 
   void		ShowReturnVal(cssEl* rval);

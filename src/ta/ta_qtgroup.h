@@ -31,7 +31,7 @@
 
 class TA_API gpiListEditButton : public taiEditButton {
 public:
-  gpiListEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiListEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void		SetLabel();
   // display the number of items in the list in the label
@@ -39,7 +39,7 @@ public:
 
 class TA_API gpiGroupEditButton : public taiEditButton {
 public:
-  gpiGroupEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiGroupEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   void		SetLabel();
   // display the number of items in the group in the label
@@ -50,14 +50,14 @@ class TA_API gpiSubEditButton : public taiEditButton {
 public:
   String 	label;
   gpiSubEditButton(void* base, const char* nm,
-	TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+	TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   override void		SetLabel();
 };
 
 // link groups don't have the option to create or xfer
 class TA_API gpiLinkEditButton : public gpiGroupEditButton {
 public:
-  gpiLinkEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiLinkEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void		GetMethMenus();	// exclude certain methods here..
 };
@@ -65,14 +65,14 @@ public:
 // link lists don't have the option to create or xfer
 class TA_API gpiListLinkEditButton : public gpiListEditButton {
 public:
-  gpiListLinkEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiListLinkEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void		GetMethMenus();	// exclude certain methods here..
 };
 
 class TA_API gpiArrayEditButton : public taiEditButton {
 public:
-  gpiArrayEditButton(void* base, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiArrayEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void		SetLabel();
   // display the number of items in the group in the label
@@ -99,9 +99,9 @@ public:
   void		GetImage(TABLPtr base_lst, TAPtr it);
   TAPtr		GetValue();
 
-  gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
-  gpiListEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiListEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
 
 public slots:
@@ -116,9 +116,9 @@ class TA_API gpiGroupEls : public gpiListEls {
   // menu of elements in the group
   Q_OBJECT
 public:
-  gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, taiDataHost* host_, taiData* par,
+  gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
-  gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp = NULL, taiDataHost* host_ = NULL, taiData* par = NULL,
+  gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 
 //  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
@@ -146,9 +146,9 @@ public:
   void		GetImage(TAGPtr base_gp, TAGPtr gp);
   TAGPtr	GetValue();
 
-  gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
-  gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_ = NULL, taiDataHost* host_ = NULL, taiData* par = NULL,
+  gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_ = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
 public slots:
   virtual void	Edit();		// edit callback
@@ -163,9 +163,9 @@ class TA_API gpiElTypes : public taiTypeHier {
 public:
   TypeDef*	lst_typd;	// typedef of the list
 
-  gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // no flags
-  gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_,
+  gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IDataHost* host_,
       taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
   void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
@@ -175,7 +175,7 @@ public:
 class TA_API gpiNewFuns : public taiData {
   // functions to call during New
 public:
-  static gpiNewFuns* 	CondNew(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  static gpiNewFuns* 	CondNew(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
       // return an instance if there are any functions, else returns NULL;
 
   taiDataList	funs;
@@ -183,7 +183,7 @@ public:
 
   virtual void  	CallFuns(void* obj);
 
-  gpiNewFuns(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
+  gpiNewFuns(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 };
 
 //////////////////////////////////
@@ -191,6 +191,7 @@ public:
 //////////////////////////////////
 
 class TA_API gpiListNew : public taiDataHost {
+INHERITED(taiDataHost)
 public:
   // this is the function you actually call to create it..
   static TAPtr 	New(TABLPtr the_lst, int n_els = 1, TypeDef* td = NULL, QObject* parent = NULL);
@@ -208,13 +209,16 @@ public:
 
   override void	ClearBody_impl();	//
 
+public: // IDataHost
+  override void GetImage();
+  override void	GetValue();
+
 protected:
   override void	Constr_Strings(const char* prompt="", const char* win_title="");
   override void	Constr_Body();
   virtual void	Constr_SubGpList()	{ }  // hook for group new
   override void	Constr_Final();
-  override void GetImage();
-  override void	GetValue();
+  
 };
 
 class TA_API gpiGroupNew : public gpiListNew {

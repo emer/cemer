@@ -805,6 +805,8 @@ void taBase::SetTypeDefaults() {
 void taBase::UpdateAllViews() {
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(DCR_UPDATE_VIEWS);
+  //TODO: eliminate this when notifyedits is eliminated
+  tabMisc::NotifyEdits(this);
 }
 
 

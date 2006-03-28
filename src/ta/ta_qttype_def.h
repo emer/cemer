@@ -25,7 +25,7 @@
 // externals
 class taBase;
 class taiData;
-class taiDataHost;
+class IDataHost;
 class taiEditDataHost;
 class iColor;
 class iDataPanel;
@@ -94,10 +94,10 @@ public:
   // bid for (appropriateness) for given type
 
 
-  virtual taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent_,
+  virtual taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
   	taiType* parent_type_ = NULL);
   // get taiData rep of type -- delegates to _impl of type, except if readonly and it can't handle ro; bg_color is for striping
-  virtual taiData*	GetDataRepEx(taiDataHost* host_, taiData* par, QWidget* gui_parent_, int or_flags_,
+  virtual taiData*	GetDataRepEx(IDataHost* host_, taiData* par, QWidget* gui_parent_, int or_flags_,
   	taiType* parent_type_ = NULL);
   // like GetDataRep, but lets us pass in additional flags to or -- used esp. when we want to force a read_only rep
 
@@ -113,8 +113,8 @@ public:
   TAQT_TYPE_INSTANCE(taiType, taiTypeBase);
 protected:
   iColor*		bg_color; // #IGNORE for when a striping bg_color passed in
-  virtual bool		isReadOnly(taiData* dat, taiDataHost* host_ = NULL); // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
-  virtual taiData*	GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
+  virtual bool		isReadOnly(taiData* dat, IDataHost* host_ = NULL); // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
+  virtual taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
   // default behavior uses a taiField type
 
   virtual void		GetImage_impl(taiData* dat, void* base);

@@ -176,6 +176,26 @@ protected:
   override void closeEvent(QCloseEvent* ev);
 };
 
+
+class TA_API iTextEditDialog : public QDialog { // #NO_CSS
+  Q_OBJECT
+INHERITED(QDialog)
+public:
+  QTextEdit*	txtText;
+  QPushButton*	btnOk; // read/write only
+  QPushButton* 	btnCancel; // or close, if read only
+  
+  bool		isReadOnly() {return m_readOnly;}
+  virtual void	setText(const String& value);
+  
+  iTextEditDialog(bool readOnly = false, QWidget* parent = 0);
+  ~iTextEditDialog();
+protected:
+  bool		m_readOnly;
+private:
+  void 		init(bool readOnly);
+};
+
 //////////////////////////
 // 	EditDataPanel	//
 //////////////////////////
@@ -203,24 +223,18 @@ protected:
 };
 
 
-#define __EXISTS		0x01
-#define __CONSTRUCTED		0x02
-#define __ACTIVE		0x03
-#define __ACCEPTED		0x04
-#define __CANCELED		0x05
-#define __SHOW_CHANGED		0x80
-
-class TA_API taiDataHost: public QObject, public IDataHost {		// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiDataHost: public QObject, public IDataHost {	
+// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class iDialog;
 public:
   enum Dlg_State {
-    EXISTS		= __EXISTS,
-    CONSTRUCTED		= __CONSTRUCTED,
-    ACTIVE		= __ACTIVE,
-    ACCEPTED		= __ACCEPTED,
-    CANCELED		= __CANCELED,
-    SHOW_CHANGED	= __SHOW_CHANGED	// flag to indicate what to show was changed, reconstruct!
+    EXISTS		= 0x01,
+    CONSTRUCTED		= 0x02,
+    ACTIVE		= 0x03,
+    ACCEPTED		= 0x04,
+    CANCELED		= 0x05,
+    SHOW_CHANGED	= 0x80	// flag to indicate what to show was changed, reconstruct!
   };
 
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
@@ -259,7 +273,6 @@ public:
 
 
   iColor* 	bg_color;	// background color of host -- only set via setBgColor
-  virtual bool	isConstructed() {return state > EXISTS;}
   virtual bool	isDialog() {return !is_panel;} // 'true' when we will be been posted as a dialog
   virtual bool	isPanel() {return is_panel;} // 'true' when we will be shown in a panel
   virtual void	setBgColor(const iColor* new_bg); // #SET_bg_color
@@ -277,28 +290,32 @@ public:
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
   virtual void  Unchanged();	// call when data has been saved or reverted
-  virtual void	GetImage()	{ };
-  virtual void	GetValue()	{ };
   virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
   virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
-  virtual bool  HasChanged() {return modified;}	// returns true if user has changed anything
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
-  virtual void		SetItemAsHandler(taiData* item, bool set_it = true) {} // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
-
   
 public: // IDataHost i/f
+  const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
+  bool  	HasChanged() {return modified;}	
+  bool		isConstructed() {return state > EXISTS;}
+  bool		isModal() {return modal;}
+  bool		isReadOnly() {return read_only;}
+  void*		Base() {return cur_base;} // base of the object
+  TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
   void*		This() {return this;} // override
   TypeDef* 	GetTypeDef() {return &TA_taiDataHost;} // override
+  void		SetItemAsHandler(taiData* item, bool set_it = true) {}
+//  void		GetImage()	{ }
+//  void		GetValue()	{ }
 public slots:
   void  	Changed();	// override method call when data has changed
 
 public slots:
   virtual void	Apply(); //override
   virtual void	Revert(); //override
-  void		BodyCleared(); // called when show changed, and body has actually been cleared (deferred)
 
 protected:
   iColor*	bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
@@ -318,6 +335,7 @@ protected:
   void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
   void		AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
+  void		BodyCleared(); // called when show changed, and body has actually been cleared
   void		SetMultiSize(int rows, int cols) {} // implemented in gpiMultiEditHost
   virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   virtual void	Constr_Strings(const char* prompt="", const char* win_title=""); // called by static Constr

@@ -43,6 +43,7 @@
 #include <QMenu>
 #include <QList>
 #include <QScrollArea>
+#include <QTextEdit>
 #include <qtooltip.h>
 #include <qvariant.h>
 #include <QVBoxLayout>
@@ -3870,6 +3871,69 @@ void iListDataPanel::list_selectionChanged() {
 
 String iListDataPanel::panel_type() const {
   static String str("List View");
+  return str;
+}
+
+
+//////////////////////////
+//    iTextDataPanel 	//
+//////////////////////////
+
+iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  txtText = new QTextEdit(this);
+  setCentralWidget(txtText);
+  // default is ro
+  setReadOnly(true);
+  connect(txtText, SIGNAL(copyAvailable(bool)),
+      this, SLOT(textText_copyAvailable(bool)) );
+}
+
+iTextDataPanel::~iTextDataPanel() {
+}
+
+void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (dcr == DCR_UPDATE_AFTER_EDIT) ;
+  //get updated text
+}
+
+int iTextDataPanel::EditAction(int ea) {
+  int rval = 0;
+//todo
+  return rval;
+}
+
+
+int iTextDataPanel::GetEditActions() {
+  int rval = 0;
+  QTextCursor tc(txtText->textCursor());
+  if (tc.hasSelection())
+    rval |= taiClipData::EA_COPY;
+//TODO: more, if not readonly
+  return rval;
+}
+
+bool iTextDataPanel::readOnly() {
+  return txtText->isReadOnly();
+}
+
+void iTextDataPanel::setReadOnly(bool value) {
+  txtText->setReadOnly(value);
+}
+
+void iTextDataPanel::setText(const String& value) {
+  txtText->setPlainText(value);
+}
+
+  
+void iTextDataPanel::textText_copyAvailable (bool) {
+  viewer_win()->UpdateUi();
+}
+
+String iTextDataPanel::panel_type() const {
+  static String str("Text View");
   return str;
 }
 

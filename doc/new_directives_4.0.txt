@@ -27,7 +27,7 @@ MEMBER DIRECTIVES
 #ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from xxx) in the interface;
   should still include a TYPE_xxx directive to anchor type
 
-tbd: #EDITOR -- for String types, enables a button for a dialog editor (for long strings)
+#EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
 
 
 METHOD DIRECTIVES

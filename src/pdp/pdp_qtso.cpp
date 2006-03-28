@@ -45,27 +45,27 @@ int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
 //      (((BaseSpec*)dlg->cur_base)->GetOwner(&TA_BaseSpec) == NULL))
 //   {
 
-bool taiSpecMember::NoCheckBox(taiDataHost* host_) {
-  if((host_ == NULL) || (host_->cur_base == NULL) || (host_->typ == NULL))
+bool taiSpecMember::NoCheckBox(IDataHost* host_) {
+  void* base = host_->Base();
+  TypeDef* typ = host_->GetBaseTypeDef();
+  if((host_ == NULL) || (base == NULL) || (typ == NULL))
     return true;
 
-  if(host_->typ->InheritsFrom(TA_BaseSpec_MGroup))
+  if(typ->InheritsFrom(TA_BaseSpec_MGroup))
     return false;		// always use a check box for these..
 
-  if(host_->typ->InheritsFrom(TA_BaseSpec)) {
-    BaseSpec* bs = (BaseSpec*)host_->cur_base;
+  if(typ->InheritsFrom(TA_BaseSpec)) {
+    BaseSpec* bs = (BaseSpec*)base;
     if(bs->FindParent() != NULL)
       return false;		// owner has a parent spec, needs a box
     return true;		// no owner, no box..
-  }
-  else if(host_->typ->InheritsFrom(TA_BaseSubSpec)) {
-    BaseSubSpec* bs = (BaseSubSpec*)host_->cur_base;
+  } else if(typ->InheritsFrom(TA_BaseSubSpec)) {
+    BaseSubSpec* bs = (BaseSubSpec*)base;
     if(bs->FindParent() != NULL)
       return false;		// owner has a parent spec, needs a box
     return true;		// no owner, no box..
-  }
-  else {
-    TAPtr tap = (TAPtr)host_->cur_base;
+  } else {
+    TAPtr tap = (TAPtr)base;
     BaseSpec* bs = (BaseSpec*)tap->GetOwner(&TA_BaseSpec); // find an owner..
     if(bs == NULL)
       return true;		// no owner, no box..
@@ -76,7 +76,7 @@ bool taiSpecMember::NoCheckBox(taiDataHost* host_) {
 }
 
 
-taiData* taiSpecMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
+taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
   if(NoCheckBox(host_)) {
     taiData* rdat;
     if (m_sub_types != NULL)
@@ -100,7 +100,7 @@ taiData* taiSpecMember::GetDataRep_impl(taiDataHost* host_, taiData* par, QWidge
 }
 
 void taiSpecMember::GetImage_impl(taiData* dat, void* base) {
-  taiDataHost* host_ = dat->host;
+  IDataHost* host_ = dat->host;
   if(NoCheckBox(host_)) {
     if (m_sub_types != NULL)
       sub_types()->GetImage(dat,base);
@@ -130,7 +130,7 @@ void taiSpecMember::GetImage_impl(taiData* dat, void* base) {
 }
 
 void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  taiDataHost* host_ = dat->host;
+  IDataHost* host_ = dat->host;
   if(NoCheckBox(host_)) {
     if (m_sub_types != NULL)
       sub_types()->GetMbrValue(dat, base, first_diff);

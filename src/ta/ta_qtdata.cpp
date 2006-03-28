@@ -14,16 +14,15 @@
 //   Lesser General Public License for more details.
 
 
-// tai_data.cc
+// ta_qtdata.cpp
+
+#include "ta_qtdata.h"
 
 #include "ta_filer.h"
 #include "ta_matrix.h"
-#include "ta_qtdata.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
 #include "ta_qttype_def.h"
-//#include "ta_qttype.h"
-//#include "css_qt.h"
 #include "ta_qtclipdata.h" // for clip-aware controls
 #include "css_basic_types.h"
 #include "css_qtdialog.h"
@@ -55,17 +54,10 @@
 #include <qpushbutton.h>
 #include <QStackedWidget>
 #include <qstring.h>
+#include <QTextEdit>
+#include <QToolButton>
 #include <qtooltip.h>
 #include <Q3WidgetStack>
-
-/*
-#ifndef CYGWIN
-#include <IV-X11/xwindow.h>	// this is for window dumps
-#include <IV-X11/xdisplay.h>	// this is for window dumps
-#endif
-*/
-
-//#include <ostream.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -79,87 +71,6 @@
 using namespace Qt;
 
 class cssiArgDialog;
-/*obs
-void taiAction::connect(QObject* sender, const char* signal) const {
-  if ((receiver != NULL) && (!member.empty()))
-    QObject::connect(sender, signal, receiver, member.chars());
-}
-
-taiAction& taiAction::operator=(const taiAction& rhs) {
-  if (&rhs == this) return *this;
-  receiver = rhs.receiver;
-  member = rhs.member;
-  return *this;
-} */
-
-
-/* NN: ??
-//////////////////////////
-// 	IconGlyph 	//
-//////////////////////////
-
-IconGlyph::IconGlyph(QWidget* g,ivManagedWindow* w,void* o)
-: ivMonoGlyph(g) {
-  window = w;
-  obj = o;
-  last_draw_allocation.x_allotment().span(-1); // bogus initial
-  first_draw = true;
-  ScriptIconify = NULL;
-  SetIconify = NULL;
-}
-
-void IconGlyph::SetWindow(ivManagedWindow* w){
-  window = w;
-  if(taiM->icon_bitmap != NULL)  window->icon_bitmap(taiM->icon_bitmap);
-}
-
-
-// for some reason, when you load an object that is iconified),
-// undraw gets called twice, and then draw gets called once.
-// first_draw ignores this first drawing.
-
-// CYGWIN: these are not supported because they wreak havoc with
-// everything -- the user needs to use the Iconify and DeIconify calls
-// explicitly instead of relying on the window manager
-
-void IconGlyph::draw(ivCanvas* c, const ivAllocation& a) const {
-  ivMonoGlyph::draw(c,a);
-#ifndef CYGWIN
-  if(window == NULL) return;
-  taiMisc::SetWinCursor(window);
-
-  if(taMisc::is_loading) return;
-  if(first_draw == true) {
-    ((IconGlyph*)this)->first_draw = false;
-    return;
-  }
-  if(SetIconify == NULL) return;
-  if((*SetIconify)(obj,-1) != false) {
-    (*SetIconify)(obj,0);
-    if(!(last_draw_allocation.equals(a,0.01))) {
-      if(ScriptIconify != NULL) (*ScriptIconify)(obj,0);
-      ((IconGlyph *) this)->last_draw_allocation = a;
-    }
-  }
-#endif
-}
-
-void IconGlyph::undraw(){
-  ivMonoGlyph::undraw();
-#ifndef CYGWIN
-  if(taMisc::is_loading) return;
-  if(SetIconify == NULL) return;
-  if((*SetIconify)(obj,-1) != true) {
-    (*SetIconify)(obj,1);
-    ivAllocation bogus_allocation;
-    if(!(last_draw_allocation.equals(bogus_allocation,0.01))) {
-      if(ScriptIconify != NULL) (*ScriptIconify)(obj,1);
-      last_draw_allocation = bogus_allocation;
-    }
-  }
-#endif
-} */ // OBS NN
-
 
 //////////////////////////
 //    taiDataList	//
@@ -173,7 +84,7 @@ void taiDataList::El_Done_(void* it) {
 // 	taiData: glyphs to represent kinds of data	//
 //////////////////////////////////////////////////////////
 
-// NOTE: this is for ta_TA.cc only
+// NOTE: this is for ta_TA.cpp only
 taiData::taiData()
 :QObject()
 {
@@ -185,7 +96,7 @@ taiData::taiData()
   mflags = 0;
 }
 
-taiData::taiData(TypeDef* typ_, taiDataHost* host_, taiData* parent_, QWidget* gui_widget, int flags_)
+taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_widget, int flags_)
 :QObject()
 {
   typ = typ_;
@@ -220,13 +131,9 @@ void taiData::DataChanged(taiData* chld) {
 int taiData::defSize() {
   if (mparent != NULL)
     return mparent->defSize();
-  else if (host != NULL)
-    return host->ctrl_size;
+/*  else if (host != NULL)
+    return host->ctrl_size; */
   else return taiM->ctrl_size;
-}
-
-void taiData::emit_settingHighlight(bool value) {
-  emit settingHighlight(value);
 }
 
 void taiData::emit_UpdateUi() {
@@ -264,14 +171,9 @@ bool taiData::readOnly() {
 
 void taiData::setHighlight(bool value) {
   if (mhighlight == value) return;
-  setHighlight_impl(value);
+  mhighlight == value;
+  emit settingHighlight(value);
 }
-
-void taiData::setHighlight_impl(bool value) {
-  mhighlight = value;
-  emit_settingHighlight(value);
-}
-
 void taiData::setParent(taiData* value) {
   if (mparent == value) return;
   if (mparent != NULL)
@@ -312,7 +214,7 @@ void taiData::repDestroyed(QObject* obj) {
 //	taiCompData		//
 //////////////////////////////////
 
-taiCompData::taiCompData(TypeDef* typ_, taiDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
+taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
       :taiData(typ_, host_, parent_, gui_parent_, flags_)
 {
   lay = NULL; // usually created in InitLayout;
@@ -432,22 +334,50 @@ void ScrollFieldEditor::keystroke(const ivEvent& e) {
 //////////////////////////////////
 
 
-taiField::taiField(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  SetRep(new iLineEdit(gui_parent_));
+  //temp: true always
+  if (true || (flags_ && flgEditDialog)) {
+    QWidget* act_par = new QWidget(gui_parent_);
+    QHBoxLayout* lay = new QHBoxLayout(act_par);
+    lay->setMargin(0);
+    lay->setSpacing(1);
+    leText = new iLineEdit(act_par);
+    lay->addWidget(leText, 1);
+    btnEdit = new QToolButton(act_par);
+    btnEdit->setText("...");
+    btnEdit->setFixedHeight(taiM->text_height(defSize()));
+    lay->addWidget(btnEdit);
+    SetRep(act_par);
+    connect(btnEdit, SIGNAL(clicked(bool)),
+      this, SLOT(btnEdit_clicked(bool)) );
+  } else {
+    SetRep(leText = new iLineEdit(gui_parent_));
+    btnEdit = NULL;
+  }
   rep()->setFixedHeight(taiM->text_height(defSize()));
   if (readOnly()) {
     rep()->setReadOnly(true);
   } else {
-    QObject::connect(m_rep, SIGNAL(textChanged(const QString&) ),
+    QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
           this, SLOT(repChanged() ) );
   }
   // cliphandling connections
-  QObject::connect(m_rep, SIGNAL(selectionChanged()),
+  QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
 }
 
+void taiField::btnEdit_clicked(bool) {
+  iTextEditDialog* dlg = new iTextEditDialog(); // no parent needed for modals
+  if (readOnly())
+    dlg->txtText->setReadOnly(true);
+  dlg->txtText->setPlainText(rep()->text());
+  if (!readOnly() && (dlg->exec() == QDialog::Accepted)) {
+    rep()->setText(dlg->txtText->toPlainText());
+  }
+  dlg->deleteLater();
+}
 
 void taiField::GetImage(const String& val) {
   rep()->setText(val);
@@ -492,7 +422,7 @@ void taiField::this_SetActionsEnabled() {
 //	taiIncrField		//
 //////////////////////////////////
 
-taiIncrField::taiIncrField(TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -566,7 +496,7 @@ void taiIncrField::this_SetActionsEnabled() {
 //	taiToggle		//
 //////////////////////////////////
 
-taiToggle::taiToggle(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
+taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
        taiData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep( new iCheckBox(gui_parent_) );
@@ -598,7 +528,7 @@ bool taiToggle::GetValue() const {
 //	taiLabel		//
 //////////////////////////////////
 
-taiLabel::taiLabel(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_) :
+taiLabel::taiLabel(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_) :
 	taiData(typ_, host_, par, gui_parent_)
 {
   SetRep( new QLabel(gui_parent_) );
@@ -614,7 +544,7 @@ void taiLabel::GetImage(const char* val) {
 //	taiPlusToggle		//
 //////////////////////////////////
 
-taiPlusToggle::taiPlusToggle(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiCompData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep(new QFrame(gui_parent_));
@@ -658,13 +588,13 @@ void taiPlusToggle::DataChanged_impl(taiData* chld) {
 //     taiComboBox	//
 //////////////////////////
 
-taiComboBox::taiComboBox(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiComboBox::taiComboBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
 }
 
-taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -685,7 +615,7 @@ void taiComboBox::Initialize(QWidget* gui_parent_) {
   //connect changed signal to our slot
   QObject::connect(m_rep, SIGNAL(activated(int) ),
         this, SLOT(repChanged() ) );
-  // also to aux signal (used by non-taiDataHost clients)
+  // also to aux signal (used by non-IDataHost clients)
   QObject::connect(m_rep, SIGNAL(activated(int) ),
     this, SIGNAL(itemChanged(int)) );
 }
@@ -753,13 +683,13 @@ void iBitCheckBox::this_toggled(bool on)
 }
 
 
-taiBitBox::taiBitBox(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiBitBox::taiBitBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
 }
 
-taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -826,7 +756,7 @@ void taiBitBox::GetValue(int& val) const {
 // 	taiDimEdit		//
 //////////////////////////////////
 
-taiDimEdit::taiDimEdit(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiDimEdit::taiDimEdit(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
@@ -858,7 +788,7 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
 // 	taiPolyData		//
 //////////////////////////////////
 
-taiPolyData::taiPolyData(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   if (host_ && (host_->GetTypeDef()->InheritsFrom(TA_taiEditDataHost))) {
@@ -884,7 +814,7 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
   SetRep(new QWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
   }
   InitLayout();
 //  QHBoxLayout* hbl = new QHBoxLayout(m_rep);
@@ -951,13 +881,13 @@ void taiPolyData::GetValue(void* base) {
 // 	taiDataDeck		//
 //////////////////////////////////
 
-taiDataDeck::taiDataDeck(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags) {
   cur_deck = 0;
   SetRep(new Q3WidgetStack(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
   }
 }
 
@@ -981,7 +911,7 @@ void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing) {
 // 	taiVariant		//
 //////////////////////////////////
 
-taiVariant::taiVariant(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiVariant::taiVariant(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   Constr(gui_parent_);
@@ -1000,7 +930,7 @@ void taiVariant::Constr(QWidget* gui_parent_) {
   SetRep(new QWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfRow(host->cur_row)));
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
   }
   InitLayout();
   // type stuff
@@ -1418,7 +1348,7 @@ taiAction* taiAction_List::PeekNonSep() {
 //  taiActions	//
 //////////////////////////
 
-taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 {
   taiActions* rval = NULL; //note: switch handles all actual cases, NULL=compiler food
@@ -1432,7 +1362,7 @@ taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* 
 }
 
 taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, 
-  taiDataHost* host_, taiData* par_, QWidget* gui_parent_, int flags_, taiActions* par_menu_,
+  IDataHost* host_, taiData* par_, QWidget* gui_parent_, int flags_, taiActions* par_menu_,
       bool has_menu, QMenu* exist_menu)
 : taiData(typ_, host_, par_, gui_parent_, flags_)
 {
@@ -1747,7 +1677,7 @@ void taiActions::setLabel(const String& val) {
 // 	taiMenu	//
 //////////////////////////
 
-taiMenu::taiMenu(int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
 	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
@@ -1882,7 +1812,7 @@ void taiMenu::Update() {
 //  taiButtonMenu 	//
 //////////////////////////
 
-taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
 	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
@@ -1903,7 +1833,7 @@ void taiButtonMenu::init()
 //  taiMenuBar	 	//
 //////////////////////////
 
-taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, taiDataHost* host_,
+taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IDataHost* host_,
     taiData* par_, QWidget* gui_parent_, int flags_)
 : taiActions(normal, ft, typ_, host_, par_, gui_parent_, flags_)
 {
@@ -1970,7 +1900,7 @@ void taiToolBar::init(QToolBar* exist_bar) {
 
 
 taiEditButton::taiEditButton(void* base, taiEdit *taie, TypeDef* typ_,
-	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiButtonMenu(taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   cur_base = base;
@@ -2054,7 +1984,7 @@ void taiEditButton::Edit() {
   if (typ->InheritsFrom(TA_taBase)) {
     bgclr = ((TAPtr)cur_base)->GetEditColorInherit();
   }
-  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
+//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
 /*obs  bool modal = false;
   if (host != NULL)
     modal = host->modal; */
@@ -2436,7 +2366,7 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 // 		taiFileButton		//
 //////////////////////////////////////////
 
-taiFileButton::taiFileButton(TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiFileButton::taiFileButton(TypeDef* typ_, IDataHost* host_, taiData* par,
 	QWidget* gui_parent_, bool rd_only, bool wrt_only)
 : taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_)
 {
@@ -2538,7 +2468,7 @@ void taiFileButton::Edit() {
 }
 
 
-taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, taiDataHost* host_, taiData* par,
+taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 :taiData(tp, host_, par, gui_parent_, flags_)
 {
@@ -2570,7 +2500,7 @@ void taiElBase::setCur_obj(TAPtr value, bool do_chng) {
 // 	taiToken	//
 //////////////////////////
 
-taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -2579,7 +2509,7 @@ taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* h
   scope_ref = NULL;
 }
 
-/*taiToken::taiToken(taiMenu* existing_menu, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_,
+/*taiToken::taiToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_,
 	bool nul_not, bool edt_not)
 : taiData(typ_, host_, par, gui_parent_)
 {
@@ -2619,7 +2549,7 @@ void taiToken::Edit() {
   else {
     gc = (taiEdit*)typ->ie;
   }
-  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
+//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
 /*obs  bool wait = false;
   if (host != NULL) wait = host->modal; */
 
@@ -2627,8 +2557,8 @@ void taiToken::Edit() {
 }
 
 void taiToken::Chooser() {
-  QWidget* par_window = (host == NULL) ? NULL : host->widget();
-  taiObjChooser* chs = taiObjChooser::createInstance(typ, "Tokens of Given Type", scope_ref, par_window);
+/*nn  QWidget* par_window = (host == NULL) ? NULL : host->widget(); */
+  taiObjChooser* chs = taiObjChooser::createInstance(typ, "Tokens of Given Type", scope_ref, NULL);
   chs->setSel_obj(cur_obj); // set initial selection
   bool rval = chs->Choose();
   if (rval) {
@@ -2786,7 +2716,7 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
 // 	taiSubToken		//
 //////////////////////////////////
 
-taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
 	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -2795,7 +2725,7 @@ taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataH
   ownflag = true;
 }
 
-taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, taiDataHost* host_,
+taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
@@ -2828,7 +2758,7 @@ void taiSubToken::Edit() {
     gc = (taiEdit*)typ->ie;
   }
 
-  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
+//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
 /*obs  bool modal = false;
   if (host != NULL) modal = host->modal; */
 
@@ -2892,7 +2822,7 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
 // 	taiMemberDefMenu	//
 //////////////////////////////////
 
-taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   md = m;
@@ -2999,7 +2929,7 @@ void taiMemberDefMenu::GetMenu(void* base) {
 // 	taiMethodDefMenu	//
 //////////////////////////////////
 
-taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -3093,7 +3023,7 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
 // 	taiTypeHier		//
 //////////////////////////////////
 
-taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host_,
+taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -3103,7 +3033,7 @@ taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataH
 }
 
 taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
-	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   ta_actions = existing_menu;
@@ -3251,7 +3181,7 @@ void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
 // 	taiMethodData     //
 ///////////////////////////
 
-taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_) {
   base = bs;
@@ -3317,7 +3247,7 @@ void taiMethodData::CallFun() {
   if (typ->InheritsFrom(TA_taBase)) {
     bgclr = ((TAPtr)base)->GetEditColorInherit();
   }
-  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
+//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
   arg_dlg->Constr("", "", bgclr);
   int ok_can = arg_dlg->Edit(true);	// true = wait for a response
   if (ok_can && !arg_dlg->err_flag) {
@@ -3345,7 +3275,7 @@ void taiMethodData::ShowReturnVal(cssEl* rval) {
 
   if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
     if (host != NULL)
-      rval->Edit(host->modal);
+      rval->Edit(host->isModal());
     else
       rval->Edit(false);
     return;
@@ -3356,8 +3286,8 @@ void taiMethodData::ShowReturnVal(cssEl* rval) {
 }
 
 void taiMethodData::ApplyBefore() {
-  if ((host == NULL) || (host->state != taiDataHost::ACTIVE))
-    return;
+/*hopefully nn!!  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
+    return;*/
   if (meth->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
   if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
@@ -3365,8 +3295,7 @@ void taiMethodData::ApplyBefore() {
       (NULL, "Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?,Apply,Revert");
     if (chs == 0)
       host->GetValue();
-  }
-  else {
+  } else {
     host->GetValue();
   }
 }
@@ -3375,7 +3304,10 @@ void taiMethodData::UpdateAfter() {
   if (meth->HasOption("NO_REVERT_AFTER"))
     return;
   // this is for stuff just called from menus, not host
-  if ((host == NULL) || (host->state != taiDataHost::ACTIVE)) {
+  if ((host == NULL) || 
+    (host->GetTypeDef()->InheritsFrom(&TA_taiDataHost) && 
+    (((taiDataHost*)host->This())->state != taiDataHost::ACTIVE)) ) 
+  {
     if(base == NULL) return;
     TAPtr tap = (TAPtr)base;
     if (meth->HasOption("UPDATE_MENUS"))
@@ -3383,13 +3315,17 @@ void taiMethodData::UpdateAfter() {
     return;
   }
   // this is inside the host itself
-  if ((host->typ != NULL) && host->typ->InheritsFrom(TA_taBase)) {
-    TAPtr tap = (TAPtr)host->cur_base;
-    if (meth->HasOption("UPDATE_MENUS"))
+  if ((host->GetBaseTypeDef() != NULL) && 
+    host->GetBaseTypeDef()->InheritsFrom(TA_taBase)) 
+  {
+    TAPtr tap = (TAPtr)host->Base();
+    if (tap && meth->HasOption("UPDATE_MENUS")) {
       taiMisc::Update(tap);	// update menus and stuff
+      tap->UpdateAllViews(); // tell others to update
+    }
   }
-  // almost always revert host..
-  host->Revert();		// apply stuff dealt with already
+/*obs  // almost always revert host..
+  host->Revert();		// apply stuff dealt with already*/
 }
 
 void taiMethodData::GenerateScript() {
@@ -3482,7 +3418,7 @@ void taiMethodData::GenerateScript() {
 // 	taiMethMenu    //
 /////////////////////////////
 
-taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_) {
   is_menu_item = true;
@@ -3493,7 +3429,7 @@ taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* ho
 // 	taiMethButton    //
 /////////////////////////////
 
-taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
@@ -3507,7 +3443,7 @@ taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost
 // 	taiMethToggle     //
 //////////////////////////////
 
-taiMethToggle::taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host_, taiData* par,
+taiMethToggle::taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {

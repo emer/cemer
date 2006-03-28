@@ -1383,5 +1383,37 @@ protected slots:
   void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
 };
 
+class TA_API iTextDataPanel: public iDataPanelFrame {
+  // a panel frame for displaying text; used, ex. by Scripts and Programs
+  Q_OBJECT
+INHERITED(iDataPanelFrame)
+public:
+  QTextEdit*		txtText; // the text of the script
+  
+  virtual bool		readOnly();
+  virtual void		setReadOnly(bool value);
+  virtual void		setText(const String& value);
+  
+
+  override String	panel_type() const;
+
+  override int 		EditAction(int ea);
+  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+
+  iTextDataPanel(taiDataLink* dl_);
+  ~iTextDataPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iTextDataPanel;}
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+
+protected slots:
+  void 			textText_copyAvailable (bool yes);
+
+};
+
 
 #endif // TA_QTVIEWER_H

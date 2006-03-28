@@ -53,6 +53,7 @@
 #include <qstring.h>
 #include <Q3StyleSheet>
 //#include <qtable.h>
+#include <QTextEdit>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <QVBoxLayout>
@@ -305,6 +306,52 @@ void taiChoiceDialog::reject() {
 }
 
 
+//////////////////////////////////
+//  iTextEditDialog		//
+//////////////////////////////////
+
+
+iTextEditDialog::iTextEditDialog(bool readOnly_, QWidget* parent)
+:inherited(parent)
+{
+  init(readOnly_);
+}
+
+void iTextEditDialog::init(bool readOnly_) {
+  m_readOnly = readOnly_;
+  this->resize(taiM->dialogSize(taiMisc::hdlg_m));
+  QVBoxLayout* layOuter = new QVBoxLayout(this);
+  txtText = new QTextEdit(this);
+  layOuter->addWidget(txtText);
+  QHBoxLayout* layButtons = new QHBoxLayout();
+  layButtons->setMargin(taiM->dlgm_c);
+  layButtons->setSpacing(taiM->hspc_c);
+  layOuter->addLayout(layButtons);
+  layButtons->addStretch();
+  if (m_readOnly) {
+    txtText->setReadOnly(true);
+    btnOk = NULL;
+    btnCancel = new QPushButton("&Close", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  } else {
+    btnOk = new QPushButton("&Ok", this);
+    layButtons->addWidget(btnOk);
+    btnCancel = new QPushButton("&Cancel", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  }
+ }
+ 
+iTextEditDialog::~iTextEditDialog() {
+}
+
+void iTextEditDialog::setText(const String& value) {
+  txtText->setPlainText(value);
+}
+
+
 //////////////////////////
 //   iDialog		//
 //////////////////////////
@@ -464,7 +511,9 @@ void taiDataHost::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
   const QObjectList& ol = obj->children(); 
-  foreach (chobj, ol) {
+  for (int i = ol.count() - 1; i >= 0; --i) {
+    chobj = ol.at(i);
+    chobj->setParent(NULL);
     chobj->deleteLater(); // deleted in event loop
   }
 }
@@ -590,7 +639,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
     layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
     QHBoxLayout* hbl = new QHBoxLayout();
     layBody->addLayout(hbl, row, 1);
-    hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
+    hbl->addWidget(data, 0);
     if (!fill_hor) hbl->addStretch();
     data->show(); // needed for rebuilds, to make the widget show
     return row;
@@ -645,7 +694,7 @@ void taiDataHost::Apply() {
   no_revert_hilight = false;
 }
 
-void taiDataHost::BodyCleared() { // called when event loop clears last widget from body
+void taiDataHost::BodyCleared() { // called when last widget cleared from body
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
   ReConstr_Body();
   state &= ~SHOW_CHANGED;
@@ -676,14 +725,11 @@ void taiDataHost::Changed() {
 void taiDataHost::ClearBody() {
   rebuild_body = true;
   ClearBody_impl();
-//nn  cssiSession::RunPending(); // needed to get the defered deletes to process now
+  BodyCleared();
+  cssiSession::RunPending(); // get the defered deletes to process now
 }
 
 void taiDataHost::ClearBody_impl() {
-  // now request for delete of the constructed body widgets
-  // we must do deferred delete, because Qt specifies that it is dangerous to delete widgets for
-  // whom there may be events outstanding -- deleteLater puts the object in the event loop queue
-  // for deletion
   DeleteChildrenLater(body);
 }
 
@@ -779,22 +825,14 @@ void taiDataHost::Constr_Box() {
 }
 
 void taiDataHost::Constr_Body() {
-/*test  layBody = new QGridLayout(body);
-  layBody->setSpacing(LAYBODY_SPACING);
-  layBody->setMargin(LAYBODY_MARGIN);
-  // since vbl is first object in body, we use its deletion after showchange to indicate we can rebuild
-  connect(layBody, SIGNAL(destroyed()), this, SLOT(BodyCleared()) ); */
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
-//Qt3  layBody = new QGridLayout((int)1, 2, LAYBODY_SPACING); //margin, space between
   layBody = new QGridLayout();
   layBody->setSpacing(LAYBODY_SPACING);
   layBody->setMargin(LAYBODY_MARGIN);
   layBody->setColumnStretch(1,1);
   vbl->addLayout(layBody);
   vbl->addStretch(1);
-  // since vbl is first object in body, we use its deletion after showchange to indicate we can rebuild
-  connect(vbl, SIGNAL(destroyed()), this, SLOT(BodyCleared()) );
 }
 
 void taiDataHost::Constr_Methods() { //note: conditional constructions used by SelectEditHost to rebuild methods
@@ -1272,8 +1310,8 @@ void taiEditDataHost::Constr_Data_impl(const MemberSpace& ms, taiDataList* dl) {
     taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
     dl->Add(mb_dat);
     rep = mb_dat->GetRep();
-
-    AddData(cnt, rep, true);
+    bool fill_hor = mb_dat->fillHor();
+    AddData(cnt, rep, fill_hor);
     ++cnt;
     ++cur_row;
   }

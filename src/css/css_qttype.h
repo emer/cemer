@@ -69,7 +69,7 @@ public:
 
   int		BidForType(TypeDef*)	{ return 0; } // don't do any real types!
   virtual void		CallEdit() {}     // invoke an edit dialog (normally called from qobj)
-  override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   void		GetImage(taiData* dat, void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
@@ -91,7 +91,7 @@ protected:
 class CSS_API cssiROType : public cssiType {
   // a css read-only type
 public:
-  override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   void		GetImage(taiData* dat, void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
@@ -108,7 +108,7 @@ class CSS_API cssiEnumType : public cssiType {
 public:
   cssEnumType*	enum_type;
 
-  override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   void		GetImage(taiData* dat, void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
@@ -124,7 +124,7 @@ class CSS_API cssiClassType : public cssiType {
   // a css class type
 public:
 
-  override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   override void		CallEdit();     // invoke an edit dialog (normally called from qobj)
   void          GetImage(taiData* dat, void* base);
@@ -144,7 +144,7 @@ class CSS_API cssiArrayType : public cssiType {
 public:
   override void		CallEdit();     // invoke an edit dialog (normally called from qobj)
 
-  override taiData*	GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   void          GetImage(taiData* dat, void* base) {}
   void          GetImage(taiData* dat)  { GetImage(dat, cur_base); }

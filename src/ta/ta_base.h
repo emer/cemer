@@ -422,8 +422,6 @@ public:
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // add a dataview (not usually overridden)
   virtual bool		RemoveDataView(taDataView* dv); // removes a dataview (not usually overridden)
-//obs  virtual void		InitAllViews(); // call this when something bigger (than Update) happens
-//obs  virtual void		UpdateAllViews(); // call this when something big happens
 protected:
   virtual void		DataViewAdding(taDataView* dv); // adds a dataview that has been validated
   virtual void		DataViewRemoving(taDataView* dv) {} // signals removal of dataview

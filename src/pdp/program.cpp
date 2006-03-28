@@ -17,9 +17,11 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
-#include "ta_qt.h"
 
 #ifdef TA_GUI
+# include "ta_qt.h"
+# include "ta_qtdialog.h"
+
 # include <QMessageBox>
 #endif
 
@@ -313,7 +315,11 @@ void Program::RunGui() {
  ; 
   
 }
-#endif
+
+void Program::ViewScript() {
+  ViewScript_impl();
+}
+#endif  // TA_GUI
 
 
 //////////////////////////
@@ -379,6 +385,14 @@ const String ProgElProgram::scriptString() {
   return m_scriptCache;
 }
 
+#ifdef TA_GUI
+void ProgElProgram::ViewScript_impl() {
+  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
+  dlg->setText(scriptString());
+  dlg->exec();
+}
+#endif // TA_GUI
+
 //////////////////////////
 //  FileProgram	//
 //////////////////////////
@@ -413,4 +427,10 @@ AbstractScriptBase::ScriptSource FileProgram::scriptSource() {
   else
     return ScriptFile;
 }
+
+#ifdef TA_GUI
+void FileProgram::ViewScript_impl() {
+  //TODO: edit in editor
+}
+#endif // TA_GUI
 

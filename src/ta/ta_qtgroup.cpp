@@ -47,7 +47,7 @@
 
 
 gpiListEditButton::gpiListEditButton
-(void* base, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }
@@ -65,7 +65,7 @@ void gpiListEditButton::SetLabel() {
 }
 
 gpiGroupEditButton::gpiGroupEditButton
-(void* base, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }
@@ -88,7 +88,7 @@ void gpiGroupEditButton::SetLabel() {
 
 
 gpiSubEditButton::gpiSubEditButton
-(void* base, const char* nm, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, const char* nm, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
   label = nm;
@@ -115,7 +115,7 @@ void gpiSubEditButton::SetLabel() {
 //////////////////////////////////
 
 gpiLinkEditButton::gpiLinkEditButton
-(void* base, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : gpiGroupEditButton(base, tp, host_, par, gui_parent_, flags_)
 {
 }
@@ -148,7 +148,7 @@ void gpiLinkEditButton::GetMethMenus() {
 }
 
 gpiListLinkEditButton::gpiListLinkEditButton
-(void* base, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : gpiListEditButton(base, tp, host_, par, gui_parent_, flags_)
 {
 }
@@ -188,7 +188,7 @@ void gpiListLinkEditButton::GetMethMenus() {
 
 
 gpiArrayEditButton::gpiArrayEditButton
-(void* base, TypeDef* tp, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }
@@ -215,7 +215,7 @@ void gpiArrayEditButton::SetLabel() {
 //////////////////////////
 
 
-gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_,
+gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, IDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -227,7 +227,7 @@ gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ
 }
 
 gpiListEls::gpiListEls(taiMenu* existing_menu, TABLPtr lst, TypeDef* typ_,
-	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_) {
   ths = lst;
   over_max = false;
@@ -347,13 +347,13 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* 
 // 	gpiGroupEls	//
 //////////////////////////
 
-gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, taiDataHost* host_, 
+gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, IDataHost* host_, 
   taiData* par, QWidget* gui_parent_, int flags_)
 : gpiListEls(rt,ft,lst, typ_, host_,par, gui_parent_, flags_)
 {
 }
 
-gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, taiDataHost* host_, taiData* par,
+gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_) // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 : gpiListEls(existing_menu, gp, tp, host_,par, gui_parent_, flags_)
 {
@@ -462,7 +462,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
 //////////////////////////
 
 
-gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, taiDataHost* host_, 
+gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, IDataHost* host_, 
   taiData* par,	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -474,7 +474,7 @@ gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* t
 }
 
 gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_,
-	taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   ths = gp;
@@ -653,7 +653,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
 // 	gpiElTypes	//
 //////////////////////////
 
-gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, taiDataHost* host_, 
+gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IDataHost* host_, 
   taiData* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(rt, ft, typ_, host_, par, gui_parent_, flags_)
 {
@@ -661,7 +661,7 @@ gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* t
 }
 
 gpiElTypes::gpiElTypes
-(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = gtd;
@@ -678,7 +678,7 @@ void gpiElTypes::GetMenu(taiActions* menu, taiMenuAction* nact) {
 //    gpiNewFuns	//
 //////////////////////////
 
-gpiNewFuns* gpiNewFuns::CondNew(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+gpiNewFuns* gpiNewFuns::CondNew(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 {
   for (int i = 0; i < typ_->methods.size; ++i){
     MethodDef* md = typ_->methods.FastEl(i);
@@ -689,7 +689,7 @@ gpiNewFuns* gpiNewFuns::CondNew(TypeDef* typ_, taiDataHost* host_, taiData* par,
   return NULL;
 }
 
-gpiNewFuns::gpiNewFuns(TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+gpiNewFuns::gpiNewFuns(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep(new Q3VBox(gui_parent_));
@@ -780,7 +780,7 @@ gpiListNew::~gpiListNew() {
 }
 
 void gpiListNew::Constr_Body() {
-  taiDataHost::Constr_Body();
+  inherited::Constr_Body();
   num_rep = new taiIncrField(NULL, this, NULL, body);//, taiData::flgPosOnly);
   typ_rep = new gpiElTypes(taiMenu::buttonmenu, taiMisc::fonSmall,
 			       ths->GetTypeDef(), ths->el_base, this, NULL, body);
@@ -814,15 +814,15 @@ void gpiListNew::ClearBody_impl() {
   if (fun_list) {delete fun_list; fun_list = NULL;}
   if (typ_rep) {delete typ_rep; typ_rep = NULL;}
   num_rep = NULL;
-  taiDataHost::ClearBody_impl();
+  inherited::ClearBody_impl();
 }
 
 void gpiListNew::Constr_Strings(const char*, const char* win_title) {
-  taiDataHost::Constr_Strings("New: Create new object(s)", win_title);
+  inherited::Constr_Strings("New: Create new object(s)", win_title);
 }
 
 void gpiListNew::Constr_Final() {
-  taiDataHost::Constr_Final();
+  inherited::Constr_Final();
   GetImage();
 }
 
@@ -1391,8 +1391,9 @@ void gpiArrayEditDataHost::Constr_AryData() {
     taiData* mb_dat = tit->GetDataRep(this, NULL, body);
     data_el.Add(mb_dat);
     rep = mb_dat->GetRep();
+    bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
-    AddData(i + n_ary_membs, rep);
+    AddData(i + n_ary_membs, rep, fill_hor);
     AddName(i + n_ary_membs, nm, String(""), mb_dat);
   }
 }
@@ -1449,11 +1450,12 @@ void SArgEditDataHost::Constr_AryData() {
     taiData* mb_dat = it->GetDataRep(this, NULL, body);
     data_el.Add(mb_dat);
     rep = mb_dat->GetRep();
+    bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
     String lbl = cur_ary->labels[i];
     if (!lbl.empty())
       nm = lbl + nm;
-    AddData(i + n_ary_membs, rep);
+    AddData(i + n_ary_membs, rep, fill_hor);
     AddName(i + n_ary_membs, nm, String(""), mb_dat);
   }
 }

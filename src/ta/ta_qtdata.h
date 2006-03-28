@@ -88,7 +88,7 @@ class TA_API taiCompData : public taiData {
   //  #NO_INSTANCE base class for composite data elements
 public:
 
-  taiCompData(TypeDef* typ_, taiDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
+  taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
   override ~taiCompData();
 
   virtual QLayout*	GetLayout() {return (QLayout*)lay;}
@@ -113,16 +113,20 @@ private:
 class TA_API taiField : public taiData {
   Q_OBJECT
 public:
-  iLineEdit*		rep() const { return (iLineEdit*)m_rep; }
-  taiField(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  iLineEdit*		rep() const { return leText; }
+  bool			fillHor() {return true;} // override 
+  taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
   void 	GetImage(const String& val);
   String GetValue() const;
 
 protected slots:
   void			selectionChanged();
+  void			btnEdit_clicked(bool);
 
 protected:
+  iLineEdit*		leText;
+  QToolButton*		btnEdit; // if requested, button to invoke dialog editor
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
@@ -133,7 +137,7 @@ class TA_API taiIncrField : public taiData { // increment/decrement field
   Q_OBJECT
 public:
   iSpinBox*	rep() const { return (iSpinBox*)m_rep; }
-  taiIncrField(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiIncrField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: flgPosOnly
 
   void 			GetImage(int val);
@@ -153,7 +157,7 @@ class TA_API taiToggle : public taiData {
 public:
   iCheckBox*	rep() const { return (iCheckBox*)m_rep; }
 
-  taiToggle(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 //  ~taiToggle() {}
 
   void 	GetImage(bool val);
@@ -169,7 +173,7 @@ public:
   QCheckBox* 	but_rep;
   QFrame* 	rep() {return (QFrame*)m_rep;} //parent of contained controls
 
-  taiPlusToggle(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiPlusToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiPlusToggle();
 
   override void	InitLayout();
@@ -192,8 +196,8 @@ class TA_API taiComboBox : public taiData {
 public:
   iComboBox*	rep() const { return (iComboBox*)m_rep; }
 
-  taiComboBox(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
-  taiComboBox(bool is_enum, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiComboBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   void		AddItem(const String& val); // add an item to the list
@@ -207,7 +211,7 @@ public:
   
 #ifndef __MAKETA__
 signals:
-  void		itemChanged(int itm); // for use by non-taiDataHost users, forwards chkbox signal
+  void		itemChanged(int itm); // for use by non-IDataHost users, forwards chkbox signal
 #endif
 
 private:
@@ -239,9 +243,10 @@ class TA_API taiBitBox : public taiData { // supports enums that are bit fields 
   Q_OBJECT
 public:
   QFrame*	rep() const { return (QFrame*)m_rep; }
+  bool			fillHor() {return true;} // override 
 
-  taiBitBox(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
-  taiBitBox(bool is_enum, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiBitBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   //TODO: maybe default highlighting???
@@ -255,7 +260,7 @@ public slots:
 
 #ifndef __MAKETA__
 signals:
-  void		itemChanged(int itm); // for use by non-taiDataHost users, forwards chkbox signal
+  void		itemChanged(int itm); // for use by non-IDataHost users, forwards chkbox signal
 #endif
 
 protected:
@@ -270,7 +275,8 @@ INHERITED(taiData)
   Q_OBJECT
 public:
   iDimEdit*		rep() const {return (iDimEdit*)m_rep;}
-  taiDimEdit(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  bool			fillHor() {return true;} // override 
+  taiDimEdit(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: 
 
   void 			GetImage(const MatrixGeom* arr);
@@ -296,9 +302,10 @@ private:
 class TA_API taiPolyData : public taiCompData {
 public:
   QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  bool			fillHor() {return true;} // override 
   int		show;
 
-  taiPolyData(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiPolyData();
 
   void  	GetImage(void* base);
@@ -324,7 +331,7 @@ public:
 
   override void	InitLayout() {} // nothing in this class
   override void	EndLayout() {} // nothing in this class
-  taiDataDeck(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiDataDeck(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
   virtual void  GetImage(int i);
 protected:
@@ -344,7 +351,8 @@ public:
   };
   
   QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
-  taiVariant(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  bool			fillHor() {return true;} // override 
+  taiVariant(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiVariant();
 
   void  	GetImage(const Variant& var);
@@ -508,7 +516,7 @@ public:
     update = 		0x80	// flag added to normal selection types, causes parent item to indicate Changed when item selected
   };
   
-  static taiActions* New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+  static taiActions* New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL); // note: this is primarily for compatibility with Qt3 version code
 
   SelType		sel_type;
@@ -544,7 +552,7 @@ public:
   virtual void		Reset();
   
   taiAction*		operator[](int index) const {return items.SafeEl(index);}
-  taiActions(int sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+  taiActions(int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL,
       bool has_menu = false, QMenu* exist_menu = NULL);
   ~taiActions();
@@ -583,7 +591,7 @@ typedef taiActions inherited;
 friend class taiMenu_List; // hack because lists return refs to strings, not values
 friend class taiActions;
 public:
-  taiMenu(int  sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+  taiMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
 //nbg  taiMenu(int rt, int st, int ft, QWidget* gui_parent_); // constructor for WinBase and other non-taiDialog uses
   taiMenu(QWidget* gui_parent_, int sel_type_= normal, int font_spec_ = 0, QMenu* exist_menu = NULL);
@@ -612,7 +620,7 @@ typedef taiActions inherited;
 public:
   QPushButton*		rep() {return (QPushButton*)m_rep;}
   
-  taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, taiDataHost* host,
+  taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
 private:
   void 			init();
@@ -635,7 +643,7 @@ public:
   
   override void		AddSep(bool new_radio_grp = false) {} // no seps or groups allowed in a menubar
   
-  taiMenuBar(int font_spec_, TypeDef* typ_, taiDataHost* host,
+  taiMenuBar(int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditDataHost
   taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by iDataViewer
   ~taiMenuBar();
@@ -739,7 +747,7 @@ public:
   taiEdit*	ie;
   taiDataList 	meth_el;	// method elements
 
-  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, taiDataHost* host_, taiData* par,
+  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgReadOnly, flgEditOnly -- internally sets flgEditOnly if appropriate
   ~taiEditButton();
 
@@ -838,7 +846,7 @@ public:
 
   virtual void		GetGetFile();	// make sure we have a getfile..
 
-  taiFileButton(TypeDef* typ_, taiDataHost* host, taiData* par, QWidget* gui_parent_,
+  taiFileButton(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
 		  bool rd_only = false, bool wrt_only = false);
   ~taiFileButton();
 
@@ -866,7 +874,7 @@ public:
 //  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
   virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void 		setCur_obj(TAPtr value, bool do_chng = true); // set cur_obj and notifies change if different
-  taiElBase(taiActions* actions_, TypeDef* tp, taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiElBase();
 protected:
   taiActions*	ta_actions;
@@ -893,7 +901,7 @@ public:
   virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
 
 
-  taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);
 protected slots:
@@ -917,9 +925,9 @@ public:
   virtual void	GetImage(void* ths, void* sel=NULL);
   virtual void*	GetValue();
 
-  taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = flgEditOk); // uses flgNullOk, and flgEditOk
-  taiSubToken(taiMenu* existing_menu, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = flgEditOk); // uses flgNullOk, and flgEditOk
 
 public slots:
@@ -946,7 +954,7 @@ public:
   virtual MemberDef*	GetValue();
 
   taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_,
-     taiDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
+     IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
   ~taiMemberDefMenu();
 protected:
   void GetTarget(); // determines the target type for the lookup menu
@@ -974,7 +982,7 @@ public:
   virtual void	GetImage(void* ths, void* sel=NULL);
   virtual void*	GetValue();
 
-  taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   ~taiMethodDefMenu();
 };
@@ -1000,9 +1008,9 @@ public:
   virtual void		GetImage(TypeDef* ths);
   virtual TypeDef*	GetValue();
 
-  taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, taiDataHost* host, taiData* par, 
+  taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags_ = 0);
-  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, taiDataHost* host, taiData* par, 
+  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags_ = 0);
   ~taiTypeHier();
 protected:
@@ -1035,7 +1043,7 @@ public:
   cssiArgDialog* arg_dlg;
   int		use_argc;
 
-  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
   virtual QPushButton*	GetButtonRep() {return buttonRep;}
@@ -1062,7 +1070,7 @@ class TA_API taiMethMenu : public taiMethodData {
   // all representations of member functions must inherit from this one
   // NOTE: gui_parent is the parent of the Button, since the menu item is already parented in menu
 public:
-  taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
   override QPushButton*	GetButtonRep() {return makeButton();}
@@ -1072,7 +1080,7 @@ public:
 class TA_API taiMethButton : public taiMethodData {
   // button representation of a method -- uses the QPushButton, and sets it as the Rep as well
 public:
-  taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 //  ~taiMethButton();
 };
@@ -1084,7 +1092,7 @@ class TA_API taiMethToggle : public taiMethodData {
 public:
   QCheckBox* 	rep() {return (QCheckBox*)m_rep;}
 
-  taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, taiDataHost* host, taiData* par,
+  taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
 public slots:

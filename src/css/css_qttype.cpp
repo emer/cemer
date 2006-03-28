@@ -79,7 +79,7 @@ void  cssiType::Assert_QObj() {
   }
 }
 
-taiData* cssiType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
+taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
   if (use_it != NULL)
     return use_it->GetDataRep(host_, par, gui_parent);
   else
@@ -111,7 +111,7 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 {
 }
 
-taiData* cssiROType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
+taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
   taiField* rval = new taiField(typ, host_, par, gui_parent, true);
   return rval;
 }
@@ -131,7 +131,7 @@ cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
   enum_type = enum_typ;
 }
 
-taiData* cssiEnumType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
+taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
   taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent);
   for (int i = 0; i < enum_type->enums->size; ++i) {
     rval->AddItem(enum_type->enums->FastEl(i)->name);
@@ -170,7 +170,7 @@ cssiClassType::cssiClassType(cssEl* orgo, void* bs)
 : cssiType(orgo, &TA_void, bs, false) {
 }
 
-taiData* cssiClassType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
+taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if ((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
 	|| obj->type_def->HasOption("EDIT_INLINE")))
@@ -224,7 +224,7 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 {
 }
 
-taiData* cssiArrayType::GetDataRep(taiDataHost* host_, taiData* par, QWidget* gui_parent) {
+taiData* cssiArrayType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
   taiButtonMenu* rval = new taiButtonMenu
     (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
   Assert_QObj();

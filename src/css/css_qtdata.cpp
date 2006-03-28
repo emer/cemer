@@ -38,7 +38,7 @@
 // 		cssiPolyData			//
 //////////////////////////////////////////////////
 
-cssiPolyData::cssiPolyData(cssClassInst* ob, TypeDef* typ_, taiDataHost* host_, taiData* par,
+cssiPolyData::cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent, int flags_)
 : taiData(typ_, host_, par, gui_parent, flags_) {
   obj = ob;
@@ -102,7 +102,7 @@ void cssiPolyData::GetValue(void*) {
 //////////////////////////////////////////////////
 
 cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-	TypeDef* typ_, taiDataHost* host_, taiData* par, QWidget* gui_parent, int flags_)
+	TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_)
 : taiMethMenu(NULL, (MethodDef*)NULL, typ_, host_, par, gui_parent, flags_)
 {
   obj = ob;
@@ -217,7 +217,7 @@ void cssiMethMenu::ShowReturnVal(cssEl* rval) {
 
   if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
     if (host != NULL)
-      rval->Edit(host->modal);
+      rval->Edit(host->isModal());
     else
       rval->Edit(false);
     return;
@@ -228,8 +228,8 @@ void cssiMethMenu::ShowReturnVal(cssEl* rval) {
 }
 
 void cssiMethMenu::ApplyBefore() {
-  if ((host == NULL) || (host->state != taiDataHost::ACTIVE))
-    return;
+//  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
+  if (host == NULL) return;
   if (css_fun->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
   if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
@@ -246,9 +246,10 @@ void cssiMethMenu::ApplyBefore() {
 void cssiMethMenu::UpdateAfter() {
   if (css_fun->HasOption("NO_REVERT_AFTER"))
      return;
-  if ((host == NULL) || (host->state != taiDataHost::ACTIVE))
+//  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
+  if (host == NULL)
     return;
-  host->Revert();		// apply stuff dealt with already
+  host->GetImage();		// apply stuff dealt with already
 }
 
 void cssiMethMenu::GenerateScript() {

@@ -165,7 +165,7 @@ private:
 
 
 class PDP_API Program: public taNBase, public AbstractScriptBase {
-  // #HIDDEN a program, with global vars and its own program run space
+  // #VIRT_BASE #HIDDEN #NO_INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
   ScriptVar_List	global_vars; // global variables accessible outside and inside script
@@ -176,6 +176,8 @@ public:
 public: // XxxGui versions provide feedback to the user
   virtual void		RunGui();
     // #MENU #LABEL_Run #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
+  void			ViewScript();
+    // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON view the script
 #endif
     
   void	UpdateAfterEdit();
@@ -183,7 +185,7 @@ public: // XxxGui versions provide feedback to the user
   void	CutLinks();
   void	Copy_(const Program& cp);
   COPY_FUNS(Program, taNBase);
-  TA_BASEFUNS(Program);
+  TA_ABSTRACT_BASEFUNS(Program);
 
 public: // ScriptBase i/f
   override TypeDef*	GetThisTypeDef() {return GetTypeDef();}
@@ -199,7 +201,10 @@ protected:
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateScriptVars(); // put global vars in script, set values
-  
+#ifdef TA_GUI
+  virtual void		ViewScript_impl() = 0;
+#endif
+
 private:
   void	Initialize();
   void	Destroy();
@@ -232,6 +237,9 @@ public:
   void	Copy_(const ProgElProgram& cp);
   COPY_FUNS(ProgElProgram, Program);
   TA_BASEFUNS(ProgElProgram);
+protected:
+  override void		ViewScript_impl();
+
 private:
   void	Initialize();
   void	Destroy();
@@ -249,6 +257,8 @@ public:
   void	Copy_(const FileProgram& cp);
   COPY_FUNS(FileProgram, Program);
   TA_BASEFUNS(FileProgram);
+protected:
+  override void		ViewScript_impl();
 private:
   void	Initialize();
   void	Destroy();

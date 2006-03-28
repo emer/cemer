@@ -61,11 +61,21 @@ public:
 };
 
 
-class TA_API IDataHost {
+class TA_API IDataHost { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:
-  virtual void		Changed() {} // called by embedded item to indicate contents have changed
+  virtual const iColor* colorOfCurRow() const = 0; // background color of cur row
+  virtual bool		isConstructed() = 0;
+  virtual bool		isModal() = 0;
+  virtual bool		isReadOnly() = 0;
+  virtual bool		HasChanged() = 0; // 'true' if has changed
+  virtual void*		Base() = 0; // base of the object
+  virtual TypeDef*	GetBaseTypeDef() = 0; // TypeDef on the base, for casting
   virtual void*		This() = 0; // 'this' on the object, for reverse casting
   virtual TypeDef*	GetTypeDef() = 0; // TypeDef on the object, for reverse casting
+  virtual void		GetValue() = 0; // copy gui to value
+  virtual void		GetImage() = 0; // copy value to gui
+  virtual void		Changed() {} // called by embedded item to indicate contents have changed
+  virtual void		SetItemAsHandler(taiData* item, bool set_it = true) = 0; // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
   
   IDataHost() {}
   virtual ~IDataHost() {}
@@ -94,16 +104,17 @@ public:
     flgNoGroup		= 0x010,  // used typically by menus to include groups of items -- note this is the same as NoList
     flgNoInGroup	= 0x020,  // used by gpiGroupEls
     flgEditOnly		= 0x040,  // used by EditButton
-    flgInline		= 0x080   // used by members that support #INLINE directive, esp. Array
+    flgInline		= 0x080,   // used by members that support INLINE directive, esp. Array
+    flgEditDialog	= 0x100   // for taiField, enables dialog for EDIT_DIALOG directive
   };
 
   TypeDef* 		typ;		// type for the gui object
-  taiDataHost*		host;		// dialog or edit panel that this belongs to (optional)
+  IDataHost*		host;		// dialog or edit panel that this belongs to (optional)
   String		orig_val;	// text of original data value
   taiData*		parent() {return mparent;} // #GET_Parent if data is contained within data, this the parent container
   void			setParent(taiData* value); // #SET_Parent
   taiData(); // for ta_TA.cc only
-  taiData(TypeDef* typ_, taiDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
+  taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
   virtual ~taiData();
 
   int			defSize();		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
@@ -112,7 +123,7 @@ public:
   bool			highlight() { return mhighlight; }	// #GET_highlight  changed highlight
   virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
-
+  virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
   virtual QWidget*	GetRep()	{ return m_rep; }
   bool			HasFlag(int flag_) {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
@@ -124,7 +135,7 @@ public:
 
 #ifndef __MAKETA__
 signals:
-  void 			settingHighlight(bool value); // gets set for non-default values
+  bool 			settingHighlight(bool setting); // invoked when highlight state changes
   void			UpdateUi(); // cliphandler callback, to get it to requery the ui items
 #endif
 
@@ -133,8 +144,6 @@ protected:
   QWidget*		m_rep;		// widget that represents the data
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
-  void 			emit_settingHighlight(bool value); 
-  virtual void		setHighlight_impl(bool value); // can be overriden by subclasses that handle Highlight; defaults to emitting signal
   virtual void		SetRep(QWidget* val);
   virtual void		ChildAdd(taiData* child) {}
   virtual void		ChildRemove(taiData* child) {}
