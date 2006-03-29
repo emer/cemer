@@ -39,6 +39,7 @@
 // externals
 class QKeySequence; // #IGNORE
 class MatrixGeom;
+class ScriptVar;
 
 /* //TODO: re-evaluate
 class IconGlyph : public QWidget {
@@ -340,7 +341,7 @@ protected:
 
 
 class TA_API taiVariant: public taiCompData {
-INHERITED(taiPolyData)
+INHERITED(taiCompData)
   Q_OBJECT
 public:
   enum CustomFlags { // #BITS
@@ -385,6 +386,24 @@ protected slots:
 
 };
 
+
+class TA_API taiScriptVar: public taiCompData {
+INHERITED(taiCompData)
+  Q_OBJECT
+public:
+  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  bool		fillHor() {return true;} // override 
+  taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiScriptVar();
+
+  void  	GetImage(const ScriptVar* var);
+  void	 	GetValue(ScriptVar* var);
+
+protected:
+  int		m_updating;
+  void		Constr(QWidget* gui_parent_);
+
+};
 
 //////////////////////////////////
 //   Menus and Toolbars		//

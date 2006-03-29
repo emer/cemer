@@ -546,7 +546,7 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
   }
   else */
   if (InheritsNonAtomicClass()) {
-    if(HasOption("INLINE")) {
+    if(HasOption("INLINE_DUMP")) {
       strm << " " << GetValStr(base, par) << ";\n";
     }
     else {
@@ -582,7 +582,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Path(strm, base, par, indent);
     Dump_Save_Value(strm, base, par, indent);
   }
-  if(InheritsNonAtomicClass() && !HasOption("INLINE")) {
+  if(InheritsNonAtomicClass() && !HasOption("INLINE_DUMP")) {
     if(InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
@@ -591,7 +591,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
       Dump_SaveR(strm, base, base, indent+1);
     taMisc::indent(strm, indent, 1) << "};\n";
   }
-//   if(InheritsFormal(TA_class) && !HasOption("INLINE")) {
+//   if(InheritsFormal(TA_class) && !HasOption("INLINE_DUMP")) {
 //     members.Dump_SaveR(strm, base, par, indent+1);
 //     taMisc::indent(strm, indent, 1) << "};\n";
 //   }
@@ -618,7 +618,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
     Dump_Save_Value(strm, base, par, indent);
   }
   if(InheritsNonAtomicClass() &&
-     !HasOption("INLINE"))
+     !HasOption("INLINE_DUMP"))
   {
     if(InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;
@@ -628,7 +628,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
       Dump_SaveR(strm, base, base, indent+1);
     taMisc::indent(strm, indent, 1) << "};\n";
   }
-//   if(InheritsFormal(TA_class) && !HasOption("INLINE")) {
+//   if(InheritsFormal(TA_class) && !HasOption("INLINE_DUMP")) {
 //     members.Dump_SaveR(strm, base, par, indent+1);
 //     taMisc::indent(strm, indent, 1) << "};\n";
 //   }
@@ -1183,7 +1183,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     return 2;
   }
 
-  if(HasOption("INLINE")) {
+  if(HasOption("INLINE_DUMP")) {
     if(c != '{') {
       taMisc::Error("*** Missing '{' in dump file for inline type:", name);
       return false;

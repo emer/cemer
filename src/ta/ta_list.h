@@ -484,7 +484,7 @@ protected:
 };
 
 
-class TA_API int_FixedArray: public taFixedArray<int> { // #INLINE
+class TA_API int_FixedArray: public taFixedArray<int> { // #INLINE #INLINE_DUMP
   TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
 };
 

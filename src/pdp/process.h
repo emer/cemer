@@ -30,7 +30,7 @@ class ProcessDialog;	// #IGNORE
 
 #ifdef TA_GUI
 class CtrlPanelData : public taOBase {
-  // ##NO_TOKENS #INLINE data for the control panel
+  // ##NO_TOKENS #INLINE #INLINE_DUMP data for the control panel
 public:
   ProcessDialog* ctrl_panel;	// #IGNORE pointer to current ctrl panel
   bool		active;		// is panel active (save this state)

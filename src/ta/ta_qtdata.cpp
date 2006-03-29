@@ -1112,6 +1112,78 @@ void taiVariant::GetValue(Variant& var) {
 }
 
 
+//////////////////////////////////
+//   taiScriptVar		//
+//////////////////////////////////
+
+taiScriptVar::taiScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+: taiCompData(typ_, host_, par, gui_parent_, flags)
+{
+  Constr(gui_parent_);
+}
+
+taiScriptVar::~taiScriptVar() {
+}
+
+void taiScriptVar::Constr(QWidget* gui_parent_) { 
+  m_updating = 0;
+  
+  SetRep(new QWidget(gui_parent_));
+  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
+  }
+  InitLayout();
+  // type stuff
+/*TODO  QLabel* lbl = new QLabel("var type", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  bool vt_ro = false; // todo, need to be able to set this from a memberdef
+  
+  if (vt_ro) {
+    // todo: create a ro edit for type
+  } else {
+    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
+    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
+    //TODO: remove invalid types according to flags
+    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
+    lbl->setBuddy(cmbVarType->rep());
+    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+    
+  }
+  lbl = new QLabel("var value", rep());
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  stack = new QStackedWidget(rep());
+  AddChildWidget(stack, -1, 1); // fill rest of space
+  lbl->setBuddy(stack);
+  
+  // created in order of StackControls
+  lbl = new QLabel("(no value for type Invalid)");
+  stack->addWidget(lbl);
+  togVal = new taiToggle(typ, host, this, NULL);
+  stack->addWidget(togVal->rep());
+  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
+  stack->addWidget(fldVal->rep());
+  lbl = new QLabel("(Ptr cannot be set)");
+  stack->addWidget(lbl);
+  
+  tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
+  tabVal->GetMenu();
+  stack->addWidget(tabVal->GetRep());
+  
+  matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
+  matVal->GetMenu();
+  stack->addWidget(matVal->GetRep());
+*/    
+  EndLayout();
+}
+
+void taiScriptVar::GetImage(const ScriptVar* var) {
+}
+
+void taiScriptVar::GetValue(ScriptVar* var) {
+}
+  
+
 //////////////////////////
 // 	taiAction	//
 //////////////////////////

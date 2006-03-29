@@ -1019,15 +1019,15 @@ void gpiMultiEditDataHost::Constr_MultiBody() {
 
 
 
-//////////////////////////////////////////////////////////
-// 		gpiListDataHost				//
-//////////////////////////////////////////////////////////
+//////////////////////////////////
+//  gpiListDataHost		//
+//////////////////////////////////
 
 gpiListDataHost::gpiListDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
-  cur_lst = (TAGPtr)cur_base;
+  cur_lst = (TABLPtr)cur_base;
   num_lst_fields = 0;
 }
 
@@ -1195,6 +1195,148 @@ int gpiListDataHost::Edit() {
   }
   return gpiMultiEditDataHost::Edit();
 } */
+
+
+//////////////////////////////////
+//  gpiCompactListDataHost		//
+//////////////////////////////////
+
+gpiCompactListDataHost::gpiCompactListDataHost(void* base, TypeDef* typ_, bool read_only_,
+  	bool modal_, QObject* parent)
+: gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
+{
+  cur_lst = (TABLPtr)cur_base;
+}
+
+gpiCompactListDataHost::~gpiCompactListDataHost() {
+  lst_data_el.Reset();
+}
+
+void gpiCompactListDataHost::ClearMultiBody_impl() {
+  lst_data_el.Reset();
+  inherited::ClearMultiBody_impl();
+}
+
+
+void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) {
+  prompt_str = cur_lst->GetTypeDef()->name + ": ";
+  if (cur_lst->GetTypeDef()->desc == taBase_List::StatTypeDef(0)->desc) {
+    prompt_str += cur_lst->el_typ->name + "s: " + cur_lst->el_typ->desc;
+  }
+  else {
+    prompt_str += cur_lst->GetTypeDef()->desc;
+  }
+  win_str = String(taiM->classname()) + ": " + win_title
+     + " " + cur_lst->GetPath();
+}
+
+// don't check for null im ptr here
+bool gpiCompactListDataHost::ShowMember(MemberDef* md) {
+  return md->ShowMember(show);
+}
+
+void gpiCompactListDataHost::Constr_ElData() {
+  for (int lf = 0; lf < cur_lst->size; ++lf) {
+    TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
+    if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
+    TypeDef* tmp_td = tmp_lf->GetTypeDef();
+    lst_data_el.Add(new gpiList_ElData(tmp_td, tmp_lf));
+  }
+} 
+
+void gpiCompactListDataHost::Constr_Final() {
+  gpiMultiEditDataHost::Constr_Final();
+  multi_body->resizeNames(); //temp: idatatable should do this automatically
+}
+
+void gpiCompactListDataHost::Constr_MultiBody() {
+  inherited::Constr_MultiBody(); 
+  Constr_ListData();
+}
+
+
+void gpiCompactListDataHost::Constr_ListData() {
+  for (int i = 0; i < lst_data_el.size; ++i) {
+    gpiList_ElData* lf_el = lst_data_el.FastEl(i);
+    String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
+    AddMultiRowName(i, nm, String(""));
+    // note: the type better grok INLINE!!!!
+    taiData* mb_dat = lf_el->typ->it->GetDataRep(this, NULL, multi_body->dataGridWidget());
+    lf_el->data_el.Add(mb_dat);
+    AddMultiData(i, 1, mb_dat->GetRep());
+  }
+}
+
+void gpiCompactListDataHost::GetValue() {
+  bool rebuild = false;
+  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (!rebuild) {		// check that same elements are present!
+    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
+      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+	rebuild = true;
+	break;
+      }
+    }
+  }
+ // NOTE: we should always be able to do a GetValue, because we always rebuild
+ // when data changes (ie, in program, or from another gui panel)
+  if (rebuild) {
+    taMisc::Error("Cannot apply changes: List size or elements have changed");
+    return;
+  }
+
+  // first for the List-structure members
+  GetValue_impl(typ->members, data_el, cur_base);
+  // then the List elements
+  for (int lf=0;  lf < lst_data_el.size;  ++lf) {
+    gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
+    GetValue_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+    ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
+  }
+  cur_lst->UpdateAfterEdit();	// call here too!
+  taiMisc::Update((TAPtr)cur_lst);
+  GetButtonImage();
+  Unchanged();
+}
+
+void gpiCompactListDataHost::GetImage() {
+  bool rebuild = false;
+  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (!rebuild) {		// check that same elements are present!
+    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
+      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+	rebuild = true;
+	break;
+      }
+    }
+  }
+
+  if (rebuild) {
+    ClearMultiBody_impl();
+    Constr_MultiBody(); 
+  } 
+
+  // first for the List-structure members
+  GetImage_impl(typ->members, data_el, cur_base);
+
+  // then the elements
+  for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
+    gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
+//TEMP    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+  }
+  Unchanged();
+}
+/* TODO
+int gpiCompactListDataHost::Edit() {
+  if ((cur_lst != NULL) && (cur_lst->size > 100)) {
+    int rval = taMisc::Choice("List contains more than 100 items (size = " +
+			      String(cur_lst->size) + "), continue with Edit?",
+			      "Ok", "Cancel");
+    if (rval == 1) return 0;
+  }
+  return gpiMultiEditDataHost::Edit();
+} */
+
 
 
 //////////////////////////////////

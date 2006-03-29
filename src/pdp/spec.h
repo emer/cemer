@@ -169,7 +169,7 @@ public:
 };
 
 class PDP_API SpecPtr_impl : public taBase {
-  // ##INLINE ##NO_TOKENS ##NO_UPDATE_AFTER magic pointer to a spec
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER magic pointer to a spec
 public:
   TAPtr		owner;		// #NO_SAVE #READ_ONLY to get to proj..
   TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field

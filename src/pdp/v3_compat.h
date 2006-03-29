@@ -84,7 +84,7 @@ class Project; //
 
 #ifdef TA_GUI
 class PDP_API CtrlPanelData : public taOBase {
-  // ##NO_TOKENS #INLINE data for the control panel
+  // ##NO_TOKENS #INLINE #INLINE_DUMP data for the control panel
 INHERITED(taOBase)
 public:
   bool		active;		// is panel active (save this state)
@@ -167,7 +167,7 @@ public:
 
 
 class PDP_API DataItem : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE source of a piece of data
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP source of a piece of data
 public:
 
   String	name;		// #HIDDEN_INLINE name of data item
@@ -205,7 +205,7 @@ public:
 
 
 class PDP_API StatVal : public DataItem {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE Statistic value
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP Statistic value
 public:
   float		val;		// value of statistic
   String	str_val;	// #HIDDEN_INLINE value of statistic if its a string
@@ -238,7 +238,7 @@ public:
 
 
 class PDP_API StatValAgg : public Aggregate {
-  // #INLINE Aggregation for StatVal-based values
+  // #INLINE #INLINE_DUMP Aggregation for StatVal-based values
 public:
 /*  void 		ComputeAgg(float& to, float fm)
   { Aggregate::ComputeAgg(to, fm); }
@@ -269,7 +269,7 @@ public:
 };
 
 class PDP_API AggStat : public StatValAgg {
-  // #INLINE Aggregate statistics over time (processing levels)
+  // #INLINE #INLINE_DUMP Aggregate statistics over time (processing levels)
 public:
   Stat*		real_stat;	// #READ_ONLY #NO_SAVE the 'real' (non-agg) stat
   Stat* 	from;
@@ -436,7 +436,7 @@ public:
 
 
 class PDP_API Counter : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER Holds the value of a loop counter
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds the value of a loop counter
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
   int 		val;			// #IV_READ_ONLY #SHOW value of the counter
@@ -452,7 +452,7 @@ public:
 
 
 class PDP_API StepParams : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER Holds steping process parameters
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds steping process parameters
 public:
   SchedProcess* owner;		// #READ_ONLY #NO_SAVE use this to find the subtypes
   SchedProcess*	proc;		// #SUBTYPE_SchedProcess process to step

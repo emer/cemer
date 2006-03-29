@@ -23,7 +23,7 @@
 #include "tamisc_TA_type.h"
 
 class TAMISC_API CountParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE counting criteria params
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP counting criteria params
 public:
   enum Relation {
     EQUAL,		// #LABEL_=
@@ -47,7 +47,7 @@ public:
 };
 
 class TAMISC_API Aggregate : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE Basic aggregation operations
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Basic aggregation operations
 public:
   enum Operator {		// Aggregate Operators
     DEFAULT=-1,			// select the default specified for the object
@@ -100,7 +100,7 @@ public:
 };
 
 class TAMISC_API SimpleMathSpec : public taBase {
-  // #INLINE #NO_UPDATE_AFTER ##NO_TOKENS params for std kinds of simple math operators
+  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS params for std kinds of simple math operators
 public:
   enum MathOpr {
     NONE,			// no function
@@ -138,7 +138,7 @@ public:
 
 
 class TAMISC_API CritParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE stopping criteria params
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP stopping criteria params
 public:
   enum Relation {
     EQUAL,		// #LABEL_=

@@ -65,7 +65,7 @@ const float SIGMOID_MIN_VAL = 0.000001f; // min eval value
 const float SIGMOID_MAX_NET = 13.81551f;	// maximium net input value
 
 class PDP_API SigmoidSpec : public taBase {
-// ##NO_TOKENS #INLINE #NO_UPDATE_AFTER Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
+// ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 public:
   float		off;		// offset for .5 point
   float		gain;		// gain
@@ -163,7 +163,7 @@ public:
     expr
 
 class PDP_API WeightLimits : public taBase {
-  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER specifies weight limits for connections
+  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER specifies weight limits for connections
 public:
   enum LimitType {
     NONE,			// no weight limitations

@@ -46,7 +46,7 @@ public:
 };
 
 class TAMISC_API Random : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE Random Number Generation
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Random Number Generation
 public:
   enum Type {
     UNIFORM,			// uniform with var = half-range
@@ -105,7 +105,7 @@ public:
 };
 
 class TAMISC_API TimeUsed : public taBase {
-  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER stores and computes time used for processing information
+  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER stores and computes time used for processing information
 public:
   bool		rec;		// flag that determines whether to record timing information: OFF by default
   long 		usr;		// user clock ticks used

@@ -24,7 +24,7 @@
 #include "tamisc_TA_type.h"
 
 class TAMISC_API FontSpec : public taOBase, public iFont {
- // #INLINE a specification of a font (for Unix - X logical font description)
+ // #INLINE #INLINE_DUMP a specification of a font (for Unix - X logical font description)
 INHERITED(taOBase)
 public:
   String		pattern; // #READ_ONLY #NO_SAVE DEPRECATED the name of the font

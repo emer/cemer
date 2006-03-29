@@ -42,7 +42,7 @@ class ClustNode; //
 
 /*obs
 class TAMISC_API DataItem : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE source of a piece of data
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP source of a piece of data
 public:
 
   String	name;		// #HIDDEN_INLINE name of data item
@@ -756,7 +756,7 @@ private:
 
 
 class TAMISC_API ClustLink : public taBase {
-  // #INLINE ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
+  // #INLINE #INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
 public:
   float		dist;		// distance to this node from parent
   ClustNode*	node;		// cluster node
@@ -771,7 +771,7 @@ public:
 
 
 class TAMISC_API ClustNode : public taNBase {
-  /* ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
+  /* ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
      use one with leaves as children as a root node for cluster */
 public:
   float_RArray*	pat;		// pattern I point to (if leaf)

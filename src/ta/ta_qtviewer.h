@@ -737,7 +737,7 @@ private:
 //////////////////////////
 
 class TA_API WinGeometry : public taBase {
-  // ##NO_TOKENS #INLINE Window geometry (position, size) saved in 1.0f-relative coordinates
+  // ##NO_TOKENS #INLINE #INLINE_DUMP Window geometry (position, size) saved in 1.0f-relative coordinates
 public:
   static float	Offs(float cur, float by); // offset cur by 'by' amount (0 > by >= 1.0); wraps if >1
 

@@ -42,7 +42,7 @@ class ColorScale;
 
 
 class TAMISC_API RGBA : public taNBase {
-  // ##INLINE ##NO_TOKENS Red Green Blue Alpha color specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS Red Green Blue Alpha color specification
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif

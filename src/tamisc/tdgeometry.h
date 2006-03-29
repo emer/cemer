@@ -36,7 +36,7 @@ class FloatTwoDCoord;
 class FloatTDCoord;
 
 class TAMISC_API TwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE a value in 2D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
 public:
   int 		x;  		// horizontal
   int 		y;  		// vertical
@@ -189,7 +189,7 @@ inline TwoDCoord operator / (int td, const TwoDCoord& v) {
 }
 
 class TAMISC_API PosTwoDCoord : public TwoDCoord {
-  // #NO_UPDATE_AFTER #INLINE positive-only value in 2D coordinate space
+  // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
 public:
   void	UpdateAfterEdit();
   void	Initialize()		{ }
@@ -202,7 +202,7 @@ public:
 };
 
 class TAMISC_API TDCoord : public TwoDCoord {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE a value in 3D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space
 public:
   int 		z;  		// depth
 
@@ -360,7 +360,7 @@ inline TDCoord operator / (int td, const TDCoord& v) {
 }
 
 class TAMISC_API PosTDCoord : public TDCoord {
-  // #NO_UPDATE_AFTER #INLINE positive-only value in 3D coordinate space
+  // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 3D coordinate space
 public:
   void	UpdateAfterEdit();
   void	Initialize()		{ x = y = z = 0; }
@@ -373,7 +373,7 @@ public:
 };
 
 class TAMISC_API FloatTwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE a value in 2D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
 public:
   float		x;  		// horizontal
   float		y;  		// vertical
@@ -495,7 +495,7 @@ inline FloatTwoDCoord operator / (float td, const FloatTwoDCoord& v) {
 }
 
 class TAMISC_API FloatTDCoord : public FloatTwoDCoord {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE a real value in 3D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a real value in 3D coordinate space
 public:
   float 	z;  		// depth
 
@@ -632,7 +632,7 @@ inline FloatTDCoord operator / (float td, const FloatTDCoord& v) {
 }
 
 class TAMISC_API FloatRotation: public FloatTDCoord {
-  //  ##NO_TOKENS #NO_UPDATE_AFTER #INLINE 3-d rotation data, xyz specify the rotation axis
+  //  ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d rotation data, xyz specify the rotation axis
 #ifndef __MAKETA__
 typedef FloatTDCoord inherited;
 #endif
@@ -659,7 +659,7 @@ public:
 };
 
 class TAMISC_API FloatTransform: public taBase {
-  // // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE 3-d transformation data; applied in order: s, r, t
+  // // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d transformation data; applied in order: s, r, t
 #ifndef __MAKETA__
 typedef taBase inherited;
 #endif
@@ -683,7 +683,7 @@ private:
 // TODO: Brad -- you might need to update this with system-wide constructor changes, etc
 
 class TAMISC_API ValIdx : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE a float value and an index: very useful for sorting!
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a float value and an index: very useful for sorting!
 public:
   float		val;  		// value
   int		idx;		// index

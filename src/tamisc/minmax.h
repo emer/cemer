@@ -31,7 +31,7 @@ class float_Matrix;
 
 
 class TAMISC_API MinMax : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values
 public:
   float		min;	// minimum value
   float		max;	// maximum value
@@ -99,7 +99,7 @@ public:
 };
 
 class TAMISC_API MinMaxRange : public MinMax {
-  // min-max values plus scale and range #INLINE
+  // min-max values plus scale and range #INLINE #INLINE_DUMP
 public:
   float		range;		// #HIDDEN distance between min and max
   float		scale;		// #HIDDEN scale (1.0 / range)
@@ -121,7 +121,7 @@ public:
 };
 
 class TAMISC_API FixedMinMax : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values with toggles for usage
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values with toggles for usage
 public:
   bool		fix_min;	// use fixed minimum value?
   float		min;		// minimum value
@@ -143,7 +143,7 @@ public:
 };
 
 class TAMISC_API Modulo : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE modulo for things that happen periodically
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP modulo for things that happen periodically
 public:
   bool	         flag;		// Modulo is active?
   int		 m;	        // Modulo N mod m, where N is counter
@@ -158,7 +158,7 @@ public:
 };
 
 class TAMISC_API MinMaxInt : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE minimum-maximum values
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values
 public:
   int		min;	// minimum value
   int		max;	// maximum value

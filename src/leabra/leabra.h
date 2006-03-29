@@ -116,7 +116,7 @@ public:
 };
 
 class WtScaleSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER weight scaling specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER weight scaling specification
 public:
   float		abs;		// #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] relative scaling (subject to normalization across all other projections into unit)
@@ -131,7 +131,7 @@ public:
 };
 
 class WtSigSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER sigmoidal weight function specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sigmoidal weight function specification
 public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
@@ -158,7 +158,7 @@ public:
 };
 
 class LearnMixSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER mixture of learning factors (hebbian vs. error-driven) specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER mixture of learning factors (hebbian vs. error-driven) specification
 public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
@@ -173,7 +173,7 @@ public:
 };
 
 class SAvgCorSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER sending average activation correction specifications: affects hebbian learning and netinput computation
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sending average activation correction specifications: affects hebbian learning and netinput computation
 public:
   float		cor;		// #DEF_0.4 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
@@ -360,7 +360,7 @@ public:
 };
 
 class ActFunSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER activation function specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activation function specifications
 public:
   enum IThrFun {	       
     STD,			// include all currents (except bias weights) in inhibitory threshold computation
@@ -384,7 +384,7 @@ public:
 };
 
 class SpikeFunSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER spiking activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER spiking activation function specs
 public:
   float		decay;		// #DEF_0.05 exponential decay of activation produced by a spike (act(t+1) = act(t) * (1-decay))
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect
@@ -400,7 +400,7 @@ public:
 };
 
 class DepressSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER depressing synapses activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER depressing synapses activation function specs
 public:
   enum PSpike {
     P_NXX1,			// probability of spiking is based on NOISY_XX1 f(Vm - Q)
@@ -422,7 +422,7 @@ public:
 };
 
 class OptThreshSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER optimization thresholds for faster processing
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER optimization thresholds for faster processing
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraSettle::send_delta is on!
@@ -438,7 +438,7 @@ public:
 };
 
 class DtSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER time constants
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER time constants
 public:
   float		vm;		// #DEF_0.2 membrane potential time constant -- if units oscillate between 0 and 1, this is too high!  reduce.
   float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
@@ -451,7 +451,7 @@ public:
 };
 
 class LeabraChannels : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra
 public:
   float		e;		// Excitatory (glutamatergic synaptic sodium (Na) channel)
   float		l;		// Constant leak (potassium, K+) channel 
@@ -467,7 +467,7 @@ public:
 };
 
 class VChanSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER voltage gated channel specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER voltage gated channel specs
 public:
   bool		on;		// #DEF_false true if channel is on
   float		b_dt;		// #CONDEDIT_ON_on:true time constant for integrating basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
@@ -495,7 +495,7 @@ public:
 };
 
 class ActRegSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER activity regulation via weight adjustment
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activity regulation via weight adjustment
 public:
   bool		on;		// whether to activity regulation is on (active) or not
   float		min;		// #CONDEDIT_ON_on:true #DEF_0 increase weights for units below this level of average activation
@@ -681,7 +681,7 @@ public:
 };
 
 class VChanBasis : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
 public:
   float		hyst;		// hysteresis
   float		acc;		// fast accomodation
@@ -698,7 +698,7 @@ public:
 };
 
 class LeabraUnitChans : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra units
 public:
   float		l;		// leak
   float		i;		// #DMEM_SHARE_SET_1 inhibitory
@@ -829,7 +829,7 @@ public:
 // misc data-holding structures
 
 class KWTASpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
 public:
   enum K_From {
     USE_K,			// use the k specified directly
@@ -852,7 +852,7 @@ public:
 };
 
 class AdaptISpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
 public:
   enum AdaptType {
     NONE,			// don't adapt anything
@@ -876,7 +876,7 @@ public:
 };
 
 class ClampSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs to this layer or not
   float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
@@ -890,7 +890,7 @@ public:
 };
 
 class DecaySpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
 public:
   float		event;		// #DEF_1 proportion decay of state vars between events
   float		phase;		// #DEF_1 proportion decay of state vars between minus and plus phases 
@@ -1079,7 +1079,7 @@ public:
 SpecPtr_of(LeabraLayerSpec);
 
 class AvgMaxVals : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
 public:
   float		avg;		// average value
   float		max;		// maximum value
@@ -1093,7 +1093,7 @@ public:
 };
 
 class KWTAVals : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
 public:
   int		k;       	// target number of active units for this collection
   float		pct;		// actual percent activity in group
@@ -1114,7 +1114,7 @@ public:
 };
 
 class AdaptIVals : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
 public:
   float		avg_avg;	// average of the average activation in a layer
   float		i_kwta_pt;	// adapting point to place inhibition between k and k+1 for kwta
@@ -1129,7 +1129,7 @@ public:
 };
 
 class InhibVals : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
 public:
   float		kwta;		// inhibition due to kwta function
   float		g_i;		// overall value of the inhibition
@@ -1830,7 +1830,7 @@ public:
 //////////////////////////////////////////
 
 class CtxtUpdateSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -1952,7 +1952,7 @@ public:
 };
 
 class SynDepSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
@@ -2084,7 +2084,7 @@ public:
 };
 
 class FastWtSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
+  // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -2257,7 +2257,7 @@ public:
 // spikes, because of syndep..
 
 class ScalarValSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -2293,7 +2293,7 @@ public:
 };
 
 class ScalarValBias : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -2414,7 +2414,7 @@ public:
 //////////////////////////////////
 
 class TwoDValSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -2454,7 +2454,7 @@ public:
 };
 
 class TwoDValBias : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -2582,7 +2582,7 @@ public:
 };
 
 class DaModSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
 public:
   enum ModType {
     PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
@@ -2636,7 +2636,7 @@ public:
 //////////////////////////////////////////
 
 class AvgExtRewSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
@@ -2649,7 +2649,7 @@ public:
 };
 
 class OutErrSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
 public:
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
@@ -2663,7 +2663,7 @@ public:
 };
 
 class ExtRewSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
@@ -2830,7 +2830,7 @@ public:
 //////////////////////////////////////////
 
 class TDRewIntegSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
 
@@ -2962,7 +2962,7 @@ public:
 };
 
 class PVDetectSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for detecting if a primary value is present or expected
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for detecting if a primary value is present or expected
 public:
   float		thr_min;	// #DEF_0.2 minimum threshold on PVe (ExtRew) or PVi, below which PV is considered present (i.e., punishment) (set to 0 if PVe.rew.norew_val = 0)
   float		thr_max;	// #DEF_0.8 maximum threshold on PVe (ExtRew) or PVi, above which PV is considered present (i.e., reward) (set to .4 if PVe.rew.norew_val = 0)
@@ -3049,7 +3049,7 @@ public:
 };
 
 class LVSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for learned value layers
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for learned value layers
 public:
   float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
@@ -3102,7 +3102,7 @@ public:
 //////////////////////////
 
 class PVLVDaSpec : public taBase {
-  // #INLINE ##NO_TOKENS #NO_UPDATE_AFTER specs for PVLV da parameters
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for PVLV da parameters
 public:
   enum	DaMode {
     LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
@@ -3170,7 +3170,7 @@ public:
 };
 
 class SNcMiscSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER misc parameters for SNc layer
+  // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc parameters for SNc layer
 public:
   enum PatchMode {
     NO_PATCH,			// no patch at all
@@ -3332,7 +3332,7 @@ public:
 //////////////////////////////////
 
 class ContrastSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER contrast enhancement of the GO units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER contrast enhancement of the GO units
 public:
   float		gain;		// #DEF_1 overall gain for da modulation
   float		go_p;		// #DEF_0.5 proportion of da * gate_act for DA+ on GO units: contrast enhancement
@@ -3348,7 +3348,7 @@ public:
 };
 
 class MatrixRndGoSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
 public:
   bool		on;		// #DEF_true whether to use random go firing function or not (if not, over max_mnt Go firing is still used)
   float		go_p;		// #CONDEDIT_ON_on:true #DEF_0.1 probability of actually firing a random Go when all the conditions have been met
@@ -3364,7 +3364,7 @@ public:
 };
 
 class MatrixRndGoThrSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER thresholds for matrix random Go firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER thresholds for matrix random Go firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
 public:
   float		abs_thr;	// #DEF_0 absolute threshold on per stripe avg_go_da value (-1..1) for triggering random GO (if stripe_agd < abs_thr then Go p(go_p))
   float		abs_max;	// #DEF_0.1 absolute maximum on per stripe avg_go_da value (-1..1) above which no random GO can occur (if stripe_agd > abs_max then never Go)
@@ -3380,7 +3380,7 @@ public:
 };
 
 class MatrixMiscSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the matrix layer
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the matrix layer
 public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
@@ -3478,7 +3478,7 @@ public:
 //////////////////////////////////
 
 class PFCGateSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER basal ganglia gating specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basal ganglia gating specifications
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate GO unit fired 

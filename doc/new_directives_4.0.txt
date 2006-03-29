@@ -1,9 +1,12 @@
 OBJECT DIRECTIVES
 -----------------
 
+#INLINE -- (existing directive) this now only controls inlining in the gui, not in dumping
+#INLINE_DUMP -- replaces INLINE for dump/load
 #LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
 #UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
 #HIDDEN -- prevents type from showing in TypeHier lists
+
 
 ENUM DIRECTIVES (note: this is new)
 ---------------

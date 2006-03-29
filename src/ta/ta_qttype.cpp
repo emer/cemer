@@ -336,9 +336,9 @@ void taiVariantType::GetValue_impl(taiData* dat, void* base) {
 }
 
 
-////////////////////////
-//  taiClassType    //
-////////////////////////
+//////////////////////////
+//  taiClassType	//
+//////////////////////////
 
 int taiClassType::BidForType(TypeDef* td) {
   if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
@@ -427,6 +427,32 @@ void taiMatrixGeomType::GetImage_impl(taiData* dat, void* base) {
 void taiMatrixGeomType::GetValue_impl(taiData* dat, void* base) {
   taiDimEdit *rval = (taiDimEdit*)dat;
   rval->GetValue((MatrixGeom*)base);
+}
+
+
+//////////////////////////
+//  taiScriptVarType	//
+//////////////////////////
+
+int taiScriptVarType::BidForType(TypeDef* td) {
+  if(td->InheritsFrom(TA_ScriptVar)) //iCoord handled by built-in type system
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiScriptVarType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiScriptVar* rval = new taiScriptVar(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiScriptVarType::GetImage_impl(taiData* dat, void* base) {
+  taiScriptVar* rval = (taiScriptVar*)dat;
+  rval->GetImage((ScriptVar*)base);
+}
+
+void taiScriptVarType::GetValue_impl(taiData* dat, void* base) {
+  taiScriptVar* rval = (taiScriptVar*)dat;
+  rval->GetValue((ScriptVar*)base);
 }
 
 
