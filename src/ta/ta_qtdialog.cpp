@@ -513,7 +513,8 @@ void taiDataHost::DeleteChildrenLater(QObject* obj) {
   const QObjectList& ol = obj->children(); 
   for (int i = ol.count() - 1; i >= 0; --i) {
     chobj = ol.at(i);
-    chobj->setParent(NULL);
+    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
+    else  chobj->setParent((QObject*)NULL);
     chobj->deleteLater(); // deleted in event loop
   }
 }
@@ -916,6 +917,17 @@ void taiDataHost::Constr_Final() {
   frmMethButtons->setHidden(!showMethButtons);
 }
 
+void taiDataHost::DataLinkDestroying(taDataLink* dl) {
+// TENT, TODO: confirm this is right...
+  cur_base = NULL;
+}
+ 
+void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  // TODO: finish
+  //NOTE: we handle the list types, so list subclasses don't have to
+  
+}
+
 void taiDataHost::label_contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e) {
   QMenu* menu = new QMenu(widget());
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
@@ -1168,6 +1180,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   show_menu = NULL;
   menu = NULL;
   panel = NULL;
+  //note: don't register for notification until constr is done
 }
 
 taiEditDataHost::~taiEditDataHost() {
@@ -1175,6 +1188,11 @@ taiEditDataHost::~taiEditDataHost() {
   meth_el.Reset();
   taiMisc::active_edits.Remove(this);
   taiMisc::css_active_edits.Remove(this);
+  if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
+    ((taBase*)cur_base)->RemoveDataClient(this);
+    cur_base = NULL;
+  }
+
 }
 
 void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
@@ -1401,6 +1419,10 @@ void taiEditDataHost::Constr_Final() {
   taiDataHost::Constr_Final();
   Constr_ShowMenu();
   GetImage();
+  //now we finally register as a dlc!
+  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
+    ((taBase*)cur_base)->AddDataClient(this);
+  }
 }
 
 void taiEditDataHost::DoAddMethButton(QPushButton* but) {

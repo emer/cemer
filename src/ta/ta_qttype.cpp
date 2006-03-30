@@ -435,9 +435,9 @@ void taiMatrixGeomType::GetValue_impl(taiData* dat, void* base) {
 //////////////////////////
 
 int taiScriptVarType::BidForType(TypeDef* td) {
-  if(td->InheritsFrom(TA_ScriptVar)) //iCoord handled by built-in type system
-    return (taiType::BidForType(td) +1);
-  return 0;
+  if (td->InheritsFrom(TA_ScriptVar)) 
+    return (inherited::BidForType(td) +1);
+  else  return 0;
 }
 
 taiData* taiScriptVarType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
@@ -2586,7 +2586,10 @@ int gpiListEdit::BidForEdit(TypeDef* td) {
 }
 
 taiEditDataHost* gpiListEdit::CreateDataHost(void* base, bool readonly) {
-  return new gpiListDataHost(base, typ, readonly);
+  if (typ->HasOption("CHILDREN_INLINE"))
+    return new gpiCompactListDataHost(base, typ, readonly);
+  else 
+    return new gpiListDataHost(base, typ, readonly);
 }
 
 //////////////////////////////////

@@ -167,13 +167,16 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
   {const QObjectList& ol = bodyNames->children(); //unconstify it
   for (int i = ol.count() - 1; i > 0; --i) { //Note: we presume item 0 is layNames
     QObject* chobj = ol.at(i);
-    chobj->setParent(NULL);
+    // NOTE: can't use the QObject version to remove a parent
+    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
+    else  chobj->setParent((QObject*)NULL);
     chobj->deleteLater(); // deleted in event loop
   }}
   {const QObjectList& ol = body->children(); //unconstify it
   for (int i = ol.count() - 1; i > 0; --i) { //Note: we presume item 0 is layN
     QObject* chobj = ol.at(i);
-    chobj->setParent(NULL);
+    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
+    else  chobj->setParent((QObject*)NULL);
     chobj->deleteLater(); // deleted in event loop
   }}
 }

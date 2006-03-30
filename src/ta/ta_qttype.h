@@ -129,15 +129,16 @@ public:
   TAQT_TYPE_INSTANCE(taiMatrixGeomType, taiClassType);
 };
 
-class TA_API taiScriptVarType : public taiType { 
+class TA_API taiScriptVarType : public taiClassType { 
+INHERITED(taiClassType)
 public:
-  bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
+  bool		handlesReadOnly() { return true; } 
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   void 		GetImage_impl(taiData* dat, void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  TAQT_TYPE_INSTANCE(taiScriptVarType, taiType);
+  TAQT_TYPE_INSTANCE(taiScriptVarType, taiClassType);
 };
 
 class TA_API gpiListType : public taiClassType {

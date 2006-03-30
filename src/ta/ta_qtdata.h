@@ -24,12 +24,12 @@
 #include "ta_qtdata_def.h"
 
 #ifndef __MAKETA__
-  #include <qdialog.h>
-  #include <qobject.h>
-  #include <QAction>
-  #include <qwidget.h>
-  #include <QList>
-  #include "icheckbox.h"
+# include <qdialog.h>
+# include <qobject.h>
+# include <QAction>
+# include <qwidget.h>
+# include <QList>
+# include "icheckbox.h"
 #endif
 
 #include "igeometry.h"
@@ -39,7 +39,13 @@
 // externals
 class QKeySequence; // #IGNORE
 class MatrixGeom;
-class ScriptVar;
+class ScriptVar; //
+
+// forwards
+class   taiToggle;
+class   taiToken;
+class   taiTypeHier; //
+
 
 /* //TODO: re-evaluate
 class IconGlyph : public QWidget {
@@ -60,30 +66,6 @@ public:
   IconGlyph(QWidget* g, ivManagedWindow* w=NULL,void* o=NULL);
 }; */
 
-//////////////////////////////////////////////////////////
-// 	taiData: glyphs to represent kinds of data	//
-//////////////////////////////////////////////////////////
-
-// class taiData;
-// class   taiField;
-// class   taiIncrField;
- class   taiToggle;
-// class   taiLabel;
-// class   taiPlusToggle;
-// class   taiPolyData;
-// class   taiDataDeck; // contains subdata within a deck
-// class   taiMenu;
-// class     taiMenu;
- class   taiToken;  // for making menus of tokens
-// class   taiSubToken;   // Menu for sub tokens of a giventype
-// class   taiMemberDefMenu;   // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
-// class   taiMethodDefMenu;   // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
- class   taiTypeHier;   // for menus of type hierarchy
-// class   taiMethodData;  // all representations of member functions must inherit from this one
-// class     taiMethMenu;  // menu and optional button representation of a method
-// class     taiMethButton;   // button representation of a method
-// class     taiMethToggle;   // toggle representation of a method (does not call directly, but
-
 
 class TA_API taiCompData : public taiData {
   //  #NO_INSTANCE base class for composite data elements
@@ -100,6 +82,7 @@ public:
 
   virtual void	InitLayout(); // default creates a QHBoxLayout in the Rep
   void		AddChildWidget(QWidget* child_widget, int space_after = -1, int spacing = 0);
+  void 		AddChildMember(MemberDef* md); // adds label and control for the member
   virtual void	EndLayout(); // default adds a stretch
 protected:
   QHBoxLayout*	lay;	// may be ignored/unused by subclasses
@@ -340,7 +323,8 @@ protected:
 };
 
 
-class TA_API taiVariant: public taiCompData {
+class TA_API taiVariantBase: public taiCompData {
+  // common code/members for complex types that use a variant
 INHERITED(taiCompData)
   Q_OBJECT
 public:
@@ -351,13 +335,9 @@ public:
     flgNoBase		= 0x080000 // don't let user choose taBase or taMatrix
   };
   
-  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   bool			fillHor() {return true;} // override 
-  taiVariant(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-  ~taiVariant();
-
-  void  	GetImage(const Variant& var);
-  void	 	GetValue(Variant& var);
+  taiVariantBase(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiVariantBase();
 
 protected:
   enum StackControls { // #IGNORE indexes of controls in the stack
@@ -379,7 +359,12 @@ protected:
   taiToken*		tabVal; // for taBase token (note: browsing could be hairy!!!)
   taiToken*		matVal; // for Matrix token
   
-  virtual void	Constr(QWidget* gui_parent_);
+  void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
+  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); 
+    // (possibly) extend, and called in your constructor
+  void  		GetImage_Variant(const Variant& var);
+  void	 		GetValue_Variant(Variant& var);
+
   
 protected slots:
   void			cmbVarType_itemChanged(int itm);
@@ -387,8 +372,23 @@ protected slots:
 };
 
 
-class TA_API taiScriptVar: public taiCompData {
-INHERITED(taiCompData)
+class TA_API taiVariant: public taiVariantBase {
+INHERITED(taiVariantBase)
+  Q_OBJECT
+public:
+  
+  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+
+  void  	GetImage(const Variant& var) {GetImage_Variant(var);}
+  void	 	GetValue(Variant& var) {GetValue_Variant(var);}
+  
+  taiVariant(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiVariant();
+};
+
+
+class TA_API taiScriptVar: public taiVariantBase {
+INHERITED(taiVariantBase)
   Q_OBJECT
 public:
   QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
@@ -400,8 +400,9 @@ public:
   void	 	GetValue(ScriptVar* var);
 
 protected:
-  int		m_updating;
-  void		Constr(QWidget* gui_parent_);
+  taiField*		fldName;
+  
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
 
 };
 

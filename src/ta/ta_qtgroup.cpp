@@ -1251,6 +1251,7 @@ void gpiCompactListDataHost::Constr_Final() {
 
 void gpiCompactListDataHost::Constr_MultiBody() {
   inherited::Constr_MultiBody(); 
+  Constr_ElData();
   Constr_ListData();
 }
 

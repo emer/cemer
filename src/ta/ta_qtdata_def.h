@@ -61,7 +61,7 @@ public:
 };
 
 
-class TA_API IDataHost { // #VIRT_BASE #NO_INSTANCE #NO_CSS
+class TA_API IDataHost: public ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:
   virtual const iColor* colorOfCurRow() const = 0; // background color of cur row
   virtual bool		isConstructed() = 0;
@@ -70,8 +70,6 @@ public:
   virtual bool		HasChanged() = 0; // 'true' if has changed
   virtual void*		Base() = 0; // base of the object
   virtual TypeDef*	GetBaseTypeDef() = 0; // TypeDef on the base, for casting
-  virtual void*		This() = 0; // 'this' on the object, for reverse casting
-  virtual TypeDef*	GetTypeDef() = 0; // TypeDef on the object, for reverse casting
   virtual void		GetValue() = 0; // copy gui to value
   virtual void		GetImage() = 0; // copy value to gui
   virtual void		Changed() {} // called by embedded item to indicate contents have changed

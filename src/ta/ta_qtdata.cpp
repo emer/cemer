@@ -20,6 +20,7 @@
 
 #include "ta_filer.h"
 #include "ta_matrix.h"
+#include "ta_script.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
 #include "ta_qttype_def.h"
@@ -252,6 +253,28 @@ void taiCompData::AddChildWidget(QWidget* child_widget, int space_after, int spa
   mwidgets->append(child_widget);
   AddChildWidget_impl(child_widget, spacing);
   last_spc = space_after;
+}
+
+void taiCompData::AddChildMember(MemberDef* md) {
+  String desc = md->desc;
+
+  // add caption
+  String nm = md->GetLabel();
+  QLabel* lbl = new QLabel(nm, GetRep());
+
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+
+  // add gui representation of data
+  taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
+  QWidget* ctrl = mb_dat->GetRep();
+  lbl->setBuddy(ctrl);
+  AddChildWidget(ctrl, taiM->hspc_c, 1);
+
+  // add description text tooltips
+  if (!desc.empty()) {
+    lbl->setToolTip(desc);
+    ctrl->setToolTip(desc);
+  }
 }
 
 void taiCompData::EndLayout() { //virtual/overridable
@@ -821,26 +844,8 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md))
       continue;
-
-    String desc = md->desc;
-
-    // add caption
-    String nm = md->GetLabel();
-    QLabel* lbl = new QLabel(nm, rep());
-
-    AddChildWidget(lbl, taiM->hsep_c, 0);
-
-    // add gui representation of data
-    taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
-    QWidget* ctrl = mb_dat->GetRep();
-    lbl->setBuddy(ctrl);
-    AddChildWidget(ctrl, taiM->hspc_c, 1);
-
-    // add description text tooltips
-    if (!desc.empty()) {
-      lbl->setToolTip(desc);
-      ctrl->setToolTip(desc);
-    }
+    AddChildMember(md);
+      
   }
   EndLayout();
 }
@@ -907,50 +912,56 @@ void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing) {
 
 
 //////////////////////////////////
-// 	taiVariant		//
+// 	taiVariantBase		//
 //////////////////////////////////
 
-taiVariant::taiVariant(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiVariantBase::taiVariantBase(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
-  Constr(gui_parent_);
+  //note: call Constr in your own class' constructor
 }
 
-taiVariant::~taiVariant() {
+taiVariantBase::~taiVariantBase() {
   data_el.Reset();
 }
 
-void taiVariant::Constr(QWidget* gui_parent_) { 
+void taiVariantBase::Constr(QWidget* gui_parent_) { 
   cmbVarType = NULL;
   fldVal = NULL;
   togVal = NULL;
   m_updating = 0;
   
-  SetRep(new QWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  QWidget* rep_ = new QWidget(gui_parent_);
+  SetRep(rep_);
+  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
+    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
   }
   InitLayout();
+  Constr_impl(gui_parent_, (mflags & flgReadOnly));
+  EndLayout();
+}
+
+void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   // type stuff
-  QLabel* lbl = new QLabel("var type", rep());
+  QWidget* rep_ =  GetRep();
+  QLabel* lbl = new QLabel("var type",rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
-  bool vt_ro = false; // todo, need to be able to set this from a memberdef
   
-  if (vt_ro) {
-    // todo: create a ro edit for type
+  if (read_only_) {
+    // TODO: create a ro edit for type
   } else {
     TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
-    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
+    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
     //TODO: remove invalid types according to flags
     AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
     lbl->setBuddy(cmbVarType->rep());
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
     
   }
-  lbl = new QLabel("var value", rep());
+  lbl = new QLabel("var value", rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
-  stack = new QStackedWidget(rep());
+  stack = new QStackedWidget(rep_);
   AddChildWidget(stack, -1, 1); // fill rest of space
   lbl->setBuddy(stack);
   
@@ -971,19 +982,18 @@ void taiVariant::Constr(QWidget* gui_parent_) {
   matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
   matVal->GetMenu();
   stack->addWidget(matVal->GetRep());
-    
-  EndLayout();
 }
+    
 
 /*
-bool taiVariant::ShowMember(MemberDef* md) {
+bool taiVariantBase::ShowMember(MemberDef* md) {
   if (md->HasOption("HIDDEN_INLINE"))
     return false;
   else
     return md->ShowMember((taMisc::ShowMembs)show);
 } */
 
-void taiVariant::cmbVarType_itemChanged(int itm) {
+void taiVariantBase::cmbVarType_itemChanged(int itm) {
   if (m_updating != 0) return;
   ++m_updating;
   int vt; //Variant::VarType
@@ -1026,7 +1036,7 @@ void taiVariant::cmbVarType_itemChanged(int itm) {
   --m_updating;
 }
 
-void taiVariant::GetImage(const Variant& var) {
+void taiVariantBase::GetImage_Variant(const Variant& var) {
   ++m_updating;
   // set combo box to right type
   cmbVarType->GetEnumImage(var.type());
@@ -1070,7 +1080,7 @@ void taiVariant::GetImage(const Variant& var) {
   --m_updating;
 }
 
-void taiVariant::GetValue(Variant& var) {
+void taiVariantBase::GetValue_Variant(Variant& var) {
   ++m_updating;
   int vt; //Variant::VarType
   // set combo box to right type
@@ -1113,11 +1123,25 @@ void taiVariant::GetValue(Variant& var) {
 
 
 //////////////////////////////////
+// 	taiVariant		//
+//////////////////////////////////
+
+taiVariant::taiVariant(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+:inherited(typ_, host_, par, gui_parent_, flags)
+{
+  Constr(gui_parent_);
+}
+
+taiVariant::~taiVariant() {
+}
+
+
+//////////////////////////////////
 //   taiScriptVar		//
 //////////////////////////////////
 
 taiScriptVar::taiScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags)
+: inherited(typ_, host_, par, gui_parent_, flags)
 {
   Constr(gui_parent_);
 }
@@ -1125,62 +1149,20 @@ taiScriptVar::taiScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidge
 taiScriptVar::~taiScriptVar() {
 }
 
-void taiScriptVar::Constr(QWidget* gui_parent_) { 
-  m_updating = 0;
-  
-  SetRep(new QWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
-  if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
-  }
-  InitLayout();
-  // type stuff
-/*TODO  QLabel* lbl = new QLabel("var type", rep());
-  AddChildWidget(lbl, taiM->hsep_c, 0);
-  bool vt_ro = false; // todo, need to be able to set this from a memberdef
-  
-  if (vt_ro) {
-    // todo: create a ro edit for type
-  } else {
-    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
-    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep());
-    //TODO: remove invalid types according to flags
-    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
-    lbl->setBuddy(cmbVarType->rep());
-    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
-    
-  }
-  lbl = new QLabel("var value", rep());
-  AddChildWidget(lbl, taiM->hsep_c, 0);
-  stack = new QStackedWidget(rep());
-  AddChildWidget(stack, -1, 1); // fill rest of space
-  lbl->setBuddy(stack);
-  
-  // created in order of StackControls
-  lbl = new QLabel("(no value for type Invalid)");
-  stack->addWidget(lbl);
-  togVal = new taiToggle(typ, host, this, NULL);
-  stack->addWidget(togVal->rep());
-  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
-  stack->addWidget(fldVal->rep());
-  lbl = new QLabel("(Ptr cannot be set)");
-  stack->addWidget(lbl);
-  
-  tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
-  tabVal->GetMenu();
-  stack->addWidget(tabVal->GetRep());
-  
-  matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
-  matVal->GetMenu();
-  stack->addWidget(matVal->GetRep());
-*/    
-  EndLayout();
+void taiScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
+  MemberDef* md = typ->members.FindName("name"); // should be found
+  if (md) AddChildMember(md);
+  inherited::Constr_impl(gui_parent_, read_only_);
 }
 
 void taiScriptVar::GetImage(const ScriptVar* var) {
+
+  GetImage_Variant(var->value);
 }
 
 void taiScriptVar::GetValue(ScriptVar* var) {
+
+  GetValue_Variant(var->value);
 }
   
 

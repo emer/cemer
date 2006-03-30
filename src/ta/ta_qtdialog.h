@@ -223,8 +223,8 @@ protected:
 };
 
 
-class TA_API taiDataHost: public QObject, public IDataHost {	
-// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiDataHost: public QObject, public IDataLinkClient, public IDataHost 
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class iDialog;
 public:
@@ -297,6 +297,14 @@ public:
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
   
+public: // ITypedObject i/f (common to IDLC and IDH)
+  void*		This() {return this;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_taiDataHost;} // override
+
+public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+  void		DataLinkDestroying(taDataLink* dl); 
+  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+
 public: // IDataHost i/f
   const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
   bool  	HasChanged() {return modified;}	
@@ -305,9 +313,7 @@ public: // IDataHost i/f
   bool		isReadOnly() {return read_only;}
   void*		Base() {return cur_base;} // base of the object
   TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
-  void*		This() {return this;} // override
-  TypeDef* 	GetTypeDef() {return &TA_taiDataHost;} // override
-  void		SetItemAsHandler(taiData* item, bool set_it = true) {}
+  void		SetItemAsHandler(taiData* item, bool set_it = true) {} //
 //  void		GetImage()	{ }
 //  void		GetValue()	{ }
 public slots:
