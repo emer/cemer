@@ -25,14 +25,14 @@
 #include "pdp_TA_type.h"
 
 class PDP_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE ##UAE_OWNER definition of a program element
+  // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
 public:
   virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
   
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-//  void UpdateAfterEdit();
+  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
@@ -44,6 +44,7 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
+
 
 class PDP_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
@@ -170,6 +171,9 @@ INHERITED(taNBase)
 public:
   ScriptVar_List	global_vars; // global variables accessible outside and inside script
   
+  bool			isDirty() {return m_dirty;}
+  void			setDirty(bool value); // indicates a component has changed
+  
   virtual bool		Run(); // run the program
 
 #ifdef TA_GUI
@@ -197,6 +201,7 @@ protected:
   bool		    	m_dirty;
   String		m_scriptCache; // cache of script, managed by implementation
   int			m_our_hardvar_base_index; // each time we recompile, we reinstall our vars
+  virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
   override void 	ScriptCompiled(); // #IGNORE

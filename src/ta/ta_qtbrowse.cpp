@@ -297,7 +297,7 @@ tabTreeDataNode::~tabTreeDataNode()
 
 void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr != DCR_UPDATE_AFTER_EDIT) return;
+  if (dcr != DCR_ITEM_UPDATED) return;
   if (this->flags & iListViewItem::DNF_UPDATE_NAME) {
     taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
     if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...

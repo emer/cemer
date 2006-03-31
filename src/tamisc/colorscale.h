@@ -141,7 +141,7 @@ public:
 //////////////////////////
 
 class TAMISC_API ScaleRange : public taNBase {
-  // ##NO_TOKENS #UAE_OWNER saves scale ranges for different variables viewed in netview
+  // ##NO_TOKENS saves scale ranges for different variables viewed in netview
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif

@@ -32,6 +32,15 @@
 void ProgEl::Initialize() {
 }
 
+void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if (!(dcr == DCR_ITEM_UPDATED)) return;
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    prog->setDirty(true);
+  }
+}
+
 const String ProgEl::GenCss(int indent_level) {
   String rval;
   rval = GenCssPre_impl(indent_level) + GenCssBody_impl(indent_level) + GenCssPost_impl(indent_level);
@@ -238,7 +247,7 @@ void Program::Copy_(const Program& cp) {
 
 void Program::UpdateAfterEdit() {
   script_compiled = false; // have to assume user changed something
-  m_dirty = true;
+  setDirty(true);
   inherited::UpdateAfterEdit();
 }
 
@@ -265,9 +274,15 @@ bool Program::Run() {
   return RunScript();
 }
 
-void  Program::ScriptCompiled() {
+void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   //TODO: maybe inform gui
+}
+
+void Program::setDirty(bool value) {
+  if (m_dirty == value) return;
+  m_dirty = value;
+  DirtyChanged_impl();
 }
 
 void  Program::UpdateScriptVars() {

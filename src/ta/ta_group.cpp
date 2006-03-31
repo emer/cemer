@@ -112,9 +112,9 @@ void taGroup_impl::CutLinks() {
 void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   taList_impl::DataChanged(dcr, op1, op2); // normal processing
   // send LIST events to the root group as a GROUP_ITEM event
-/*HUH???  if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
+  if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
     root_gp->DataChanged(dcr + (DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN) , op1, op2);
-  } */
+  } 
 }
 
 void taGroup_impl::Dirty() {

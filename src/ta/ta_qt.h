@@ -152,10 +152,10 @@ public:
   static bool	RevertEdits(void* obj, TypeDef* td);
   // revert any open edit dialogs for given object
 
-  static bool	CloseEdits(void* obj, TypeDef* td);
+//obs  static bool	CloseEdits(void* obj, TypeDef* td);
   // close any open edit dialogs for object or sub-objs
 
-  static bool	NotifyEdits(void* obj, TypeDef* td);
+//obs  static bool	NotifyEdits(void* obj, TypeDef* td);
   // notifies any open edit dialogs for given object that a change in its data has occured
 
   static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);

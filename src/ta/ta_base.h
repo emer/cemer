@@ -80,7 +80,7 @@ public:
   // call this to implement closing object function
   static int	WaitProc();
   // wait process function: remove objects from groups, update others
-  static bool	NotifyEdits(TAPtr obj);
+//obs  static bool	NotifyEdits(TAPtr obj);
   // notify any edit dialogs of a taptr object that object has changed
   static void	DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
@@ -412,8 +412,12 @@ public:
 
   virtual void		UpdateAfterEdit();
   // called after editing, or any user change to members (eg. in the interface, script)
+  virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
+   // #IGNORE called by a child in its UAE routine; provides child notifications\nNOTE: only member objects are detected; subclasses that want to notify on owned TAPtr members must override and check for those instances manually
   virtual void		UpdateAllViews();
   // called after data changes, to update views
+  virtual void 		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+    // sends the indicated notification to all datalink clients, if any;\nvirtual so we can override to trap/monitor
   void			StructUpdate(bool begin) {BatchUpdate(begin, true);}
   // bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
@@ -544,8 +548,6 @@ public:
   virtual bool		CopyTo(TAPtr cpy_to);
   // #MENU #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
-  virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
-   // if enabled by UAE_OWNER directive, notifies parent; altered in lists/groups to send to their owner
   virtual bool		DuplicateMe();
   // #MENU #CONFIRM #UPDATE_MENUS Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
@@ -726,7 +728,7 @@ public: // IDataLinkClient interface
 protected:
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
   // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
-  taDataView* 		m_parent; // cached/autoset
+  mutable taDataView* 	m_parent; // cached/autoset
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
@@ -861,8 +863,8 @@ public:
 
   void		Close();
   bool		Close_Child(TAPtr obj);
-  override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // sends to owner (typically desire behavior)
-  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // called when list has changed -- more fine-grained than
+  override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
+  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // called when list has changed 
 
   // IO
   ostream& 	OutputR(ostream& strm, int indent = 0) const;

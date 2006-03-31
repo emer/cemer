@@ -165,13 +165,13 @@ int tabMisc::WaitProc() {
   return did_something;
 }
 
-bool tabMisc::NotifyEdits(TAPtr obj) {
+/*obsbool tabMisc::NotifyEdits(TAPtr obj) {
 #ifdef TA_GUI
   return taiMisc::NotifyEdits(obj, obj->GetTypeDef());
 #else
   return false;
 #endif
-}
+} */
 
 void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
   delayed_updateafteredit.Link(obj);
@@ -364,29 +364,25 @@ TypeDef* taBase::GetTypeDef() const {
 
 void taBase::UpdateAfterEdit() {
   tabMisc::NotifyEdits(this);
-  taDataLink* dl = data_link();
-  if (dl) dl->DataDataChanged(DCR_UPDATE_AFTER_EDIT);
+  DataChanged(DCR_ITEM_UPDATED);
   taBase* _owner = GetOwner();
-  if (_owner && GetTypeDef()->HasOption("UAE_OWNER")) {
+  if (_owner ) {
     bool handled = false;
     _owner->ChildUpdateAfterEdit(this, handled);
   }
 }
 
 void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled) {
-    taBase* _owner = GetOwner();
-    if (_owner)
-      _owner->ChildUpdateAfterEdit(child, handled);
+  if (handled) return; // note: really shouldn't have been handled already if we are called...
+  // call notify if it is an owned member object (but not list/group items)
+  if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
+    handled = true;
+    DataChanged(DCR_CHILD_ITEM_UPDATED);
+    return;
   }
 }
 
-
 void taBase::CutLinks() {
-}
-
-TAPtr taBase::New(int, TypeDef*) {
-  return NULL;
 }
 
 void taBase::AddDataView(taDataView* dv) {
@@ -407,15 +403,26 @@ void taBase::BatchUpdate(bool begin, bool struc) {
   if (!dl) return;
   if (begin) {
     if (struc)
-      dl->DataDataChanged(DCR_STRUCT_UPDATE_BEGIN);
+      DataChanged(DCR_STRUCT_UPDATE_BEGIN);
     else
-      dl->DataDataChanged(DCR_DATA_UPDATE_BEGIN);
+      DataChanged(DCR_DATA_UPDATE_BEGIN);
   } else {
     if (struc)
-      dl->DataDataChanged(DCR_STRUCT_UPDATE_END);
+      DataChanged(DCR_STRUCT_UPDATE_END);
     else
-      dl->DataDataChanged(DCR_DATA_UPDATE_END);
+      DataChanged(DCR_DATA_UPDATE_END);
   }
+}
+
+void taBase::CallFun(const char* fun_name) {
+#ifdef TA_GUI
+  if(!taMisc::gui_active) return;
+#endif
+  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
+  if(md != NULL)
+    md->CallFun((void*)this);
+  else
+    taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
 }
 
 void taBase::Close() {
@@ -543,6 +550,7 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
   return NULL;
 }
 
+
 String taBase::GetColText(int col, int /*itm_idx*/) {
    // text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention,
    // 0=name, 1=type; itm_idx is usually ignored by items
@@ -575,6 +583,26 @@ const iColor* taBase::GetEditColorInherit() {
     }
   }
   return bgclr;
+}
+
+taFiler* taBase::GetFileDlg() {
+  if (!taMisc::gui_active)
+    return NULL;
+
+  TypeDef* td = GetTypeDef();
+  String fltr;
+  int opt;
+  if((opt = td->opts.FindContains("EXT_")) >= 0) {
+    fltr = td->opts.FastEl(opt).after("EXT_");
+    fltr = "*." + fltr + "*";
+  }
+  else
+    fltr = "*";
+  bool cmprs = false;
+  if(td->HasOption("COMPRESS"))
+    cmprs = true;
+  taFiler* result = taFiler_CreateInstance(".", fltr, cmprs);
+  return result;
 }
 
 TAPtr taBase::GetOwner(TypeDef* td) const {
@@ -691,6 +719,25 @@ String taBase::GetStringRep_impl() const {
   return rval;
 }
 
+void taBase::Help() {
+  TypeDef* mytd = GetTypeDef();
+  String full_file;
+  while((mytd != NULL) && full_file.empty()) {
+    String help_file = taMisc::help_file_tmplt;
+    help_file.gsub("%t", mytd->name);
+    full_file = taMisc::FindFileInclude(help_file);
+    mytd = mytd->parents.SafeEl(0);	// go with the parent
+  }
+  if(full_file.empty()) {
+    taMisc::Error("Sorry, no help available for type:", GetTypeDef()->name);
+    return;
+  }
+
+  String help_cmd = taMisc::help_cmd;
+  help_cmd.gsub("%s", full_file);
+  system(help_cmd);
+}
+
 TAPtr taBase::MakeToken(TypeDef* td) {
   if(td->GetInstance() != NULL) {
     return ((TAPtr)td->GetInstance())->MakeToken();
@@ -705,6 +752,15 @@ TAPtr taBase::MakeTokenAry(TypeDef* td, int no) {
   }
   else
     return NULL;
+}
+
+TAPtr taBase::New(int, TypeDef*) {
+  return NULL;
+}
+
+void taBase::DataChanged(DataChangedReason dcr, void* op1, void* op2) {
+  taDataLink* dl = data_link();
+  if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
 
 int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
@@ -731,7 +787,7 @@ bool taBase::RemoveDataView(taDataView* dv) {
   DataViewRemoving(dv);
   bool rval = false;
 #ifdef TA_GUI
-  taDataLink* dl = data_link(); // sets data_link
+  taDataLink* dl = data_link(); // doesn't autocreate
   //note: we should already have a datalink, because we must have added it earlier
   if (dl) rval = dl->RemoveDataClient(dv);
   // note: data_link may be deleted by this point
@@ -803,8 +859,7 @@ void taBase::SetTypeDefaults() {
 }
 
 void taBase::UpdateAllViews() {
-  taDataLink* dl = data_link();
-  if (dl) dl->DataDataChanged(DCR_UPDATE_VIEWS);
+  DataChanged(DCR_UPDATE_VIEWS);
   //TODO: eliminate this when notifyedits is eliminated
   tabMisc::NotifyEdits(this);
 }
@@ -902,56 +957,6 @@ bool taBase::SelectFunForEditNm(const char* function, SelectEdit* editor, const 
 #else
   return false;
 #endif
-}
-
-taFiler* taBase::GetFileDlg() {
-  if (!taMisc::gui_active)
-    return NULL;
-
-  TypeDef* td = GetTypeDef();
-  String fltr;
-  int opt;
-  if((opt = td->opts.FindContains("EXT_")) >= 0) {
-    fltr = td->opts.FastEl(opt).after("EXT_");
-    fltr = "*." + fltr + "*";
-  }
-  else
-    fltr = "*";
-  bool cmprs = false;
-  if(td->HasOption("COMPRESS"))
-    cmprs = true;
-  taFiler* result = taFiler_CreateInstance(".", fltr, cmprs);
-  return result;
-}
-
-void taBase::Help() {
-  TypeDef* mytd = GetTypeDef();
-  String full_file;
-  while((mytd != NULL) && full_file.empty()) {
-    String help_file = taMisc::help_file_tmplt;
-    help_file.gsub("%t", mytd->name);
-    full_file = taMisc::FindFileInclude(help_file);
-    mytd = mytd->parents.SafeEl(0);	// go with the parent
-  }
-  if(full_file.empty()) {
-    taMisc::Error("Sorry, no help available for type:", GetTypeDef()->name);
-    return;
-  }
-
-  String help_cmd = taMisc::help_cmd;
-  help_cmd.gsub("%s", full_file);
-  system(help_cmd);
-}
-
-void taBase::CallFun(const char* fun_name) {
-#ifdef TA_GUI
-  if(!taMisc::gui_active) return;
-#endif
-  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
-  if(md != NULL)
-    md->CallFun((void*)this);
-  else
-    taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
 }
 
 
@@ -1074,7 +1079,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   if ((m_dbu_cnt > 0) || (par_dbu_cnt() > 0))
     return;
   //TODO: need to confirm that supressing UAE's is not harmful...
-  if (dcr == DCR_UPDATE_AFTER_EDIT)
+  if (dcr == DCR_ITEM_UPDATED)
     DataUpdateAfterEdit_impl();
   else if (dcr == DCR_UPDATE_VIEWS)
     DataUpdateView_impl();
@@ -1109,7 +1114,7 @@ int taDataView::par_dbu_cnt() {
 
 taDataView* taDataView::parent() const { // note: changing caches is still "const"
   if (!m_parent)
-    ((taDataView*) this)->m_parent = GET_MY_OWNER(taDataView);
+    m_parent = GET_MY_OWNER(taDataView);
   return m_parent;
 }
 
@@ -1189,8 +1194,13 @@ void taList_impl::UpdateAfterEdit(){
 }
 
 void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled && owner)
-    owner->ChildUpdateAfterEdit(child, handled);
+  // check for embedded member
+  inherited_taBase::ChildUpdateAfterEdit(child, handled);
+  // otherwise, we assume it is an owned list member
+  if (!handled) {
+    DataChanged(DCR_LIST_ITEM_UPDATED, child);
+    handled = true;
+  }
 }
 
 String taList_impl::ChildGetColText(void* child, TypeDef* typ, int col, int itm_idx) {
@@ -1204,13 +1214,7 @@ String taList_impl::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
 }
 
 void taList_impl::DataChanged(int dcr, void* op1, void* op2) {
-  //note: this is functionally similar to the taPtrList_impl version, but is more efficient since
-  // we know about our data_link reference, unlike PtrList which has to go through a virtual function
-  // also, we NotifyEdits, so that they will update their presentation
-#ifdef TA_GUI
-  if (m_data_link) m_data_link->DataDataChanged(dcr, op1, op2);
-//temp  tabMisc::NotifyEdits(this);
-#endif
+  inherited_taBase::DataChanged(dcr, op1, op2);
 }
 
 String taList_impl::GetColHeading(int col) {

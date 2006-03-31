@@ -592,6 +592,7 @@ bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
   return got_one;
 }
 
+/*
 bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
   if(!gui_active)    return false;
   bool got_one = false;
@@ -618,7 +619,7 @@ bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
   }
   return got_one;
 }
-
+*/
 bool taiMisc::RevertEdits(void* obj, TypeDef*) {
   if (!gui_active)    return false;
   bool got_one = false;

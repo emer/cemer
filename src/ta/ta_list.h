@@ -96,13 +96,24 @@ class  taHashTable; //
   state and whether an update should be triggered.
 
 */
+
+/* What happens on various DCRs
+
+  DCR_ITEM_UPDATED
+    taiEditDataHost: does a GetImage
+    
+  
+*/
+
 enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) --
  some data change operations will emit multiple DataChanged calls */
-  DCR_UPDATE_AFTER_EDIT, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
-  DCR_UPDATE_VIEWS, 	// after data has changed ex. taBase::UpdateAllViews call; ops not used
+  DCR_ITEM_UPDATED, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
 
+  DCR_CHILD_ITEM_UPDATED, // invoked for owned member objects (but not list/group items)
+  
   DCR_LIST_INIT,
   DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
+  DCR_LIST_ITEM_UPDATE,	// op1=item
   DCR_LIST_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
   DCR_LIST_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
   DCR_LIST_ITEMS_SWAP,	// op1=item1, op2=item2
@@ -112,8 +123,9 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_GROUP_REMOVE,	// op1=group -- note, item not DisOwned yet, but has been removed from list
   DCR_GROUP_MOVED,	// op1=group, op2=group_after, null=at beginning
   DCR_GROUPS_SWAP,	// op1=group1, op2=group2
-
+  
   DCR_GROUP_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
+  DCR_GROUP_ITEM_UPDATE,	// op1=item
   DCR_GROUP_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
   DCR_GROUP_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
   DCR_GROUP_ITEMS_SWAP,	// op1=item1, op2=item2
@@ -129,6 +141,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_LIST_MAX		= DCR_LIST_SORTED,
   DCR_GROUP_MIN		= DCR_GROUP_INSERT,
   DCR_GROUP_MAX		= DCR_GROUPS_SWAP,
+  DCR_LIST_ITEM_MIN	= DCR_LIST_ITEM_INSERT,
+  DCR_LIST_ITEM_MAX	= DCR_LIST_SORTED,
   DCR_GROUP_ITEM_MIN	= DCR_GROUP_ITEM_INSERT,
   DCR_GROUP_ITEM_MAX	= DCR_GROUP_LIST_SORTED
 #endif
@@ -268,9 +282,7 @@ public:
   ////////////////////////////////////////////////
 
   virtual TypeDef* 	GetElType() const {return NULL;}		// #IGNORE Default type for objects in group
-  virtual taDataLink** GetDataLinkRef() {return NULL;}
-  // #IGNORE address in which IDataLinks pointer is stored
-  virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
+  virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {} // called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   virtual void	Dirty()		{ };	// #IGNORE what to do when the list is modified (called after all DataChanged() are issued)
   virtual void	Alloc(int sz);
   // allocate a list big enough for given number of elements (or current size)

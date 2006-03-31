@@ -112,16 +112,6 @@ void taPtrList_impl::BuildHashTable(int sz) {
     hash_table->Add(El_GetHashVal_(el[i]), i);
 }
 
-
-void taPtrList_impl::DataChanged(int dcr, void* op1, void* op2) {
-  //note: inherited classes can replace with the line below if they allocated a data_link variable, for efficiency
-//  if (data_links) data_links->DataDataChanged(dcr, op1, op2);
-#ifdef TA_GUI
-  taDataLink** data_link_ref = GetDataLinkRef();
-  if ((data_link_ref) && (*data_link_ref)) (*data_link_ref)->DataDataChanged(dcr, op1, op2);
-#endif
-}
-
 taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   int kt = 0;
   if (hash_table) kt = hash_table->key_type;

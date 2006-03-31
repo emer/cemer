@@ -37,7 +37,7 @@ class cssTA_Base;		// #IGNORE
 class ScriptBase_List; //
 
 
-class TA_API ScriptVar: public taNBase { // ##NO_TOKENS ##UAE_OWNER ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
+class TA_API ScriptVar: public taNBase { // ##NO_TOKENS ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
 INHERITED(taNBase)
 public:
   Variant		value; // the actual variable
@@ -100,7 +100,7 @@ private:
 };
 
 class TA_API ScriptVar_List : public taList<ScriptVar> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #UAE_OWNER ##CHILDREN_INLINE list of script variables
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
 INHERITED(taList<ScriptVar>)
 public:
   enum VarContext {
