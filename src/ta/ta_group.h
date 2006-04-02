@@ -31,7 +31,6 @@ typedef taList<taGroup_impl> TALOG; // list of groups (LOG)
 class 	TA_API taSubGroup : public TALOG {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
 public:
-  override void	Dirty();
   override  void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // forward LIST events as GROUP events to owner
 
   bool	Transfer(taBase* item);
@@ -89,7 +88,6 @@ public:
   TALOG* 	leaf_gp; 	// #READ_ONLY #NO_SAVE 'flat' list of leaf-containing-gps
   TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE the root group, 'this' for root group itself; never NULL
 
-  void		Dirty();		// when anything changes..
   bool		IsEmpty()	{ return (leaves == 0) ? true : false; }
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 

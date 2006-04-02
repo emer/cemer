@@ -332,8 +332,9 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* 
     }
     return;
   }
+  TAPtr tmp;
   for (int i = 0; i < cur_lst->size; ++i) {
-    TAPtr tmp = (TAPtr)cur_lst->FastEl_(i);
+    tmp = (TAPtr)cur_lst->FastEl_(i);
     if (tmp == NULL) continue;
     String nm = tmp->GetName();
     if (nm == "")

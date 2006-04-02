@@ -294,6 +294,7 @@ public:
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
   virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
+  virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
   

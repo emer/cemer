@@ -273,8 +273,9 @@ void SelectEdit::MoveFun(int from, int to) {
 }
 
 void SelectEdit::NewEdit() {
-  CloseEdit();
-  Edit();
+  DataChanged(DCR_ITEM_REBUILT);
+/*obs  CloseEdit();
+  Edit(); */
 }
 
 bool SelectEdit::BaseClosing(TAPtr base) {

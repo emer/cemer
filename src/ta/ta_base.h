@@ -530,7 +530,7 @@ public:
 
   virtual int		Edit();
   // #MENU #ARGC_0 #MENU_ON_Object #LABEL_Properties #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
-  virtual bool		CloseEdit();	// close any open edit dialogs for this object
+//obs  virtual bool		CloseEdit();	// close any open edit dialogs for this object
   virtual bool		ReShowEdit(bool force = false);	// reshows any open edit dialogs for this object
   virtual const iColor* GetEditColor()  { return NULL; } // #IGNORE background color for edit dialog
   virtual const iColor* GetEditColorInherit(); // #IGNORE background color for edit dialog, include inherited colors from parents

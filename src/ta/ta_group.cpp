@@ -36,10 +36,6 @@
 // not only sub-groups cause dirtiness, because if you add an el to a
 // previously null group, it needs added, etc..
 
-void taSubGroup::Dirty() {
-  if(owner != NULL) ((TAGPtr)owner)->Dirty();
-}
-
 void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
@@ -55,12 +51,11 @@ bool taSubGroup::Transfer(taBase* it) {
     return false;
   taGroup_impl* old_own = git->super_gp;
   bool rval = TALOG::Transfer(git);
-  if(rval) {
+  //TODO: notification is not right, because counts are not rejigged yet!
+  if (rval) {
     old_own->UpdateLeafCount_(-git->leaves);
-    old_own->Dirty();
     if(myown != NULL) {
       myown->UpdateLeafCount_(git->leaves);
-      myown->Dirty();
     }
   }
   return rval;
@@ -115,15 +110,6 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
     root_gp->DataChanged(dcr + (DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN) , op1, op2);
   } 
-}
-
-void taGroup_impl::Dirty() {
-  if(leaf_gp != NULL) {
-    taBase::unRefDone(leaf_gp);
-    leaf_gp = NULL;
-  }
-  if(super_gp != NULL)
-    super_gp->Dirty();
 }
 
 void taGroup_impl::InitLeafGp() const {

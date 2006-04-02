@@ -1170,7 +1170,7 @@ void MonitorStat::ScanObjects() {
     return;
   MonitorStat* rstat = (MonitorStat*)time_agg.real_stat;
   n_copy_vals = 0;		// use this as a counter for mon_vals!
-  tabMisc::NotifyEdits(&mon_vals);
+//  tabMisc::NotifyEdits(&mon_vals);
   ptrs.RemoveAll();
   members.RemoveAll();
   if(rstat->objects.size == 0) return;

@@ -108,6 +108,7 @@ class  taHashTable; //
 enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) --
  some data change operations will emit multiple DataChanged calls */
   DCR_ITEM_UPDATED, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
+  DCR_ITEM_REBUILT, // for complex items that support the STRUCT updates
 
   DCR_CHILD_ITEM_UPDATED, // invoked for owned member objects (but not list/group items)
   
@@ -131,6 +132,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_GROUP_ITEMS_SWAP,	// op1=item1, op2=item2
   DCR_GROUP_LIST_SORTED,	// after sorting; ops not used
 
+  DCR_UPDATE_VIEWS, // no ops; sent for UpdateAllViews
+  
   DCR_STRUCT_UPDATE_BEGIN, // for some updating, like doing Layer->Build, better for gui to just do one
   DCR_STRUCT_UPDATE_END,  // update operation at the end of everything
   DCR_DATA_UPDATE_BEGIN, // for some data changes, like various log updates, better for gui to just do one
@@ -252,7 +255,7 @@ public:
 
   virtual void	AddEl_(void* it);
   // #IGNORE just puts the el on the list, doesn't do anything else
-  virtual void	Add_(void* it);				// #IGNORE
+  virtual void	Add_(void* it, bool no_notify = false); 	// #IGNORE
   virtual bool	AddUnique_(void* it);			// #IGNORE
   virtual bool	AddUniqNameNew_(void* it);
   // #IGNORE add a new object so that list only has one, new replaces existing
@@ -261,7 +264,7 @@ public:
   virtual bool	Insert_(void* it, int where);		// #IGNORE
   virtual bool 	Replace_(void* ol, void* nw);		// #IGNORE
   virtual bool 	Replace_(const char* ol, void* nw);	// #IGNORE
-  virtual bool 	Replace_(int ol, void* nw);		// #IGNORE
+  virtual bool 	Replace_(int ol, void* nw, bool no_notify_insert = false); // #IGNORE
   virtual bool 	Transfer_(void* it);			// #IGNORE
   virtual bool	Remove_(void* it);			// #IGNORE
   virtual bool	MoveBefore_(void* trg, void* item); 	// #IGNORE
@@ -283,7 +286,6 @@ public:
 
   virtual TypeDef* 	GetElType() const {return NULL;}		// #IGNORE Default type for objects in group
   virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {} // called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
-  virtual void	Dirty()		{ };	// #IGNORE what to do when the list is modified (called after all DataChanged() are issued)
   virtual void	Alloc(int sz);
   // allocate a list big enough for given number of elements (or current size)
   virtual void 	Reset()			{ RemoveAll(); }

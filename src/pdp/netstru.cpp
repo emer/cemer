@@ -3670,9 +3670,6 @@ void Layer::Build() {
       pjn->projected = false;
     }
   }
-  //TODO: NUKE entire NE mechanism, in favor of using datalinks, etc.
-  if(taMisc::gui_active)
-    tabMisc::NotifyEdits(this);
   StructUpdate(false);
   taMisc::DoneBusy();
 }

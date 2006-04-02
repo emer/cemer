@@ -1702,7 +1702,7 @@ void GLVSetXAxis(TAPtr tap, int idx){
   GraphLogView* glv = (GraphLogView *) tap;
   if(glv->x_axis_index != idx){
     glv->x_axis_index = idx;
-    tabMisc::NotifyEdits(glv);
+    glv->DataChanged(DCR_ITEM_UPDATED); //obs tabMisc::NotifyEdits(glv);
   }
 }
 

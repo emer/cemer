@@ -1805,7 +1805,7 @@ void ToolBar::Copy_(const ToolBar& cp) {
 }
 
 void ToolBar::CutLinks() {
-  taiMisc::CloseEdits((void*)this, GetTypeDef());
+//obs  taiMisc::CloseEdits((void*)this, GetTypeDef());
   CloseWindow();
 //obs  win_owner = NULL;
   inherited::CutLinks();
@@ -2015,7 +2015,7 @@ void DataViewer::WinInit() {
 }
 
 void DataViewer::CutLinks() {
-  taiMisc::CloseEdits((void*)this, GetTypeDef());
+//obs  taiMisc::CloseEdits((void*)this, GetTypeDef());
   CloseWindow();
   win_pos.CutLinks();
   toolbars.CutLinks();

@@ -920,11 +920,16 @@ void taiDataHost::Constr_Final() {
 void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
   cur_base = NULL;
+  Cancel();
 }
  
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-  // TODO: finish
-  //NOTE: we handle the list types, so list subclasses don't have to
+  // we only care about the rebuilding ones, for others, we just call notify
+  //NOTE: list/group subclasses typically detect changes in their GetImage routine
+  //  so we don't really subclass this routine or explicitly detect the list/group notifies
+  if (dcr == DCR_ITEM_REBUILT) 
+    ReShow();
+  else  NotifyChanged();
   
 }
 
@@ -1026,6 +1031,17 @@ void taiDataHost::NotifyChanged() {
 void taiDataHost::ReConstr_Body() {
   Constr_Body();
   GetImage();
+}
+
+void taiDataHost::ReShow() {
+  if (no_revert_hilight) return; // it is us that caused this
+  if (HasChanged()) {
+    warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
+  } else {
+    state |= SHOW_CHANGED; // will get changed in event handler for body items deleted
+    // clear body -- much of the deleting is deferred, so event loop must pick up when it changes
+    ClearBody();
+  }
 }
 
 void taiDataHost::Revert() {
@@ -1704,9 +1720,7 @@ void taiEditDataHost::setShow(taMisc::ShowMembs value) {
 
   // only reconfigure if view actually changed
   if (old_show == value) return;
-  // clear body -- much of the deleting is deferred, so event loop must pick up when it changes
-  ClearBody();
-  state |= SHOW_CHANGED; // will get changed in event handler for body items deleted
+  ReShow();
 }
 
 void taiEditDataHost::ShowChange(taiAction* sender) {

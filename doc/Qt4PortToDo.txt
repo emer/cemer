@@ -25,7 +25,9 @@ ta_qtviewer.h/cpp
 
 BUGS
 
-* inline xyz editor not being properly centered
+* when taiActions for menu type deleting, in its Reset, it accesses the widget
+  and seemingly that widget has already been deleted because the actions()
+  list call results in 0x0 for the private data of the widget
 * in default display panel, the group view is not displaying, 
   but it does display when using "properties" (separate window)
 

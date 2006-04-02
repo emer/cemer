@@ -1668,9 +1668,9 @@ void iGraphButton::chkShow_toggled(bool on) {
   if (updating) return;
   ShowHideLine();
   if (line)
-    tabMisc::NotifyEdits(line);
+    line->DataChanged(DCR_ITEM_UPDATED); //obstabMisc::NotifyEdits(line);
   if (axis)
-    tabMisc::NotifyEdits(axis);
+    axis->DataChanged(DCR_ITEM_UPDATED); //obstabMisc::NotifyEdits(axis);
 }
 
 void iGraphButton::configure() {

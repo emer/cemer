@@ -546,7 +546,7 @@ void taiMisc::PurgeDialogs() {
 }
 
 
-bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
+/*obs bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
   if(!gui_active)    return false;
   PurgeDialogs();
   bool got_one = false;
@@ -590,7 +590,7 @@ bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
        edh->SetRevert();	// it's been changed..
   }
   return got_one;
-}
+} */
 
 /*
 bool taiMisc::NotifyEdits(void* obj, TypeDef*) {

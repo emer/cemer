@@ -124,12 +124,13 @@ taBase_PtrList tabMisc::delayed_updateafteredit;
 
 void tabMisc::Close_Obj(TAPtr obj) {
   delayed_remove.Link(obj);
+/*obs -- the obj will send a delete notify
 #ifdef TA_GUI
   if(taMisc::gui_active) {
     taiMisc::CloseEdits((void*)obj, obj->GetTypeDef());
     return;
   }
-#endif
+#endif */
   //  WaitProc();		// kill me now ?
 }
 
@@ -363,7 +364,7 @@ TypeDef* taBase::GetTypeDef() const {
 }
 
 void taBase::UpdateAfterEdit() {
-  tabMisc::NotifyEdits(this);
+//obs  tabMisc::NotifyEdits(this);
   DataChanged(DCR_ITEM_UPDATED);
   taBase* _owner = GetOwner();
   if (_owner ) {
@@ -435,12 +436,12 @@ bool taBase::Close_Child(TAPtr) {
   return false;
 }
 
-bool taBase::CloseEdit() {
+/*obsbool taBase::CloseEdit() {
 #ifdef TA_GUI
   return taiMisc::CloseEdits((void*)this, GetTypeDef());
 #endif
   return false;
-}
+} */
 
 bool taBase::CopyFrom(TAPtr cpy_from) {
   if(cpy_from == NULL) return false;
@@ -758,7 +759,7 @@ TAPtr taBase::New(int, TypeDef*) {
   return NULL;
 }
 
-void taBase::DataChanged(DataChangedReason dcr, void* op1, void* op2) {
+void taBase::DataChanged(int dcr, void* op1, void* op2) {
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
@@ -860,8 +861,6 @@ void taBase::SetTypeDefaults() {
 
 void taBase::UpdateAllViews() {
   DataChanged(DCR_UPDATE_VIEWS);
-  //TODO: eliminate this when notifyedits is eliminated
-  tabMisc::NotifyEdits(this);
 }
 
 
@@ -1150,10 +1149,11 @@ void taNBase::CutLinks() {
   SelectEdit::BaseClosingAll(this); // close any select edits affecting this guy (before cutting owner!)
 #endif
   owner = NULL; //note: also done in taOBase, but we need to do it now, before the CloseEdits call
+/*obs -- implicitly done in taOBase
 #ifdef TA_GUI
   if (taMisc::gui_active)
     taiMisc::CloseEdits((void*)this, GetTypeDef());
-#endif
+#endif */
   taOBase::CutLinks();
 }
 
@@ -1198,7 +1198,7 @@ void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   inherited_taBase::ChildUpdateAfterEdit(child, handled);
   // otherwise, we assume it is an owned list member
   if (!handled) {
-    DataChanged(DCR_LIST_ITEM_UPDATED, child);
+    DataChanged(DCR_LIST_ITEM_UPDATE, child);
     handled = true;
   }
 }

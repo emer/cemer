@@ -345,7 +345,7 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
 	    (((taArray_impl*)md->GetOff((void*)from))->size);
 	}
 	MemberCopyFrom(memb_no, from);
-	tabMisc::NotifyEdits(this);
+	DataChanged(DCR_ITEM_UPDATED); //obs tabMisc::NotifyEdits(this);
       }
     }
   }
@@ -619,7 +619,7 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
 	   md->HasOption("NO_INHERIT")))
       {
 	MemberCopyFrom(memb_no, from);
-	tabMisc::NotifyEdits(this);
+	DataChanged(DCR_ITEM_UPDATED); //obstabMisc::NotifyEdits(this);
       }
     }
   }
