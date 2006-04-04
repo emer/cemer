@@ -1198,8 +1198,17 @@ int gpiListDataHost::Edit() {
 } */
 
 
+gpiCompactList_ElData::gpiCompactList_ElData(TypeDef* typ_, TAPtr base, taiData* data_el_) {
+  typ = typ_;
+  cur_base = base;
+  data_el = data_el_;
+}
+
+gpiCompactList_ElData::~gpiCompactList_ElData() {}
+
+
 //////////////////////////////////
-//  gpiCompactListDataHost		//
+//  gpiCompactListDataHost	//
 //////////////////////////////////
 
 gpiCompactListDataHost::gpiCompactListDataHost(void* base, TypeDef* typ_, bool read_only_,
@@ -1241,7 +1250,7 @@ void gpiCompactListDataHost::Constr_ElData() {
     TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new gpiList_ElData(tmp_td, tmp_lf));
+    lst_data_el.Add(new gpiCompactList_ElData(tmp_td, tmp_lf));
   }
 } 
 
@@ -1259,12 +1268,12 @@ void gpiCompactListDataHost::Constr_MultiBody() {
 
 void gpiCompactListDataHost::Constr_ListData() {
   for (int i = 0; i < lst_data_el.size; ++i) {
-    gpiList_ElData* lf_el = lst_data_el.FastEl(i);
+    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(i);
     String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
     AddMultiRowName(i, nm, String(""));
     // note: the type better grok INLINE!!!!
     taiData* mb_dat = lf_el->typ->it->GetDataRep(this, NULL, multi_body->dataGridWidget());
-    lf_el->data_el.Add(mb_dat);
+    lf_el->data_el = mb_dat;
     AddMultiData(i, 1, mb_dat->GetRep());
   }
 }
@@ -1291,8 +1300,8 @@ void gpiCompactListDataHost::GetValue() {
   GetValue_impl(typ->members, data_el, cur_base);
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
-    gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-    GetValue_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
+    lf_el->typ->it->GetValue(lf_el->data_el, lf_el->cur_base);
     ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
@@ -1323,8 +1332,8 @@ void gpiCompactListDataHost::GetImage() {
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-    gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-//TEMP    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
+    lf_el->typ->it->GetImage(lf_el->data_el, lf_el->cur_base);
   }
   Unchanged();
 }

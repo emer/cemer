@@ -1186,8 +1186,12 @@ void taiScriptVarBase::Constr(QWidget* gui_parent_) {
 }
 
 void taiScriptVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  MemberDef* md = typ->members.FindName("name"); // should be found
-  if (md) AddChildMember(md);
+  QWidget* rep_ = GetRep();
+  QLabel* lbl = new QLabel("name", rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+
+  fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
+  AddChildWidget(fldName->GetRep(), taiM->hsep_c);
 }
 
 void taiScriptVarBase::GetImage(const ScriptVar* var) {
@@ -1224,15 +1228,16 @@ void taiScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   QWidget* rep_ = GetRep();
   vfVariant = new taiVariant(host, this, rep_, 
     (mflags & flgReadOnly) | taiVariantBase::flgNoPtr | taiVariantBase:: flgNoBase);
+  AddChildWidget(vfVariant->GetRep(), taiM->hsep_c);
 }
 
 void taiScriptVar::GetImage(const ScriptVar* var) {
-  fldName->GetImage(var->name);
+  inherited::GetImage(var);
   vfVariant->GetImage(var->value);
 }
 
 void taiScriptVar::GetValue(ScriptVar* var) {
-  var->name = fldName->GetValue();
+  inherited::GetValue(var);
   vfVariant->GetValue(var->value);
 }
   
@@ -1264,6 +1269,7 @@ void taiEnumScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
   thEnumType->enum_mode = true;
+  thEnumType->GetMenu();
   AddChildWidget(thEnumType->GetRep(), taiM->hsep_c, 0);
   //TODO: init_value, needs to have its values dynamically updated
 }
@@ -1308,6 +1314,7 @@ void taiObjectScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   AddChildWidget(lbl, taiM->hsep_c, 0);
   thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
+  thValType->GetMenu();
   AddChildWidget(thValType->GetRep(), taiM->hsep_c, 0);
   //TODO: make_new and init token
   

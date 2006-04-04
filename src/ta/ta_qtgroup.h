@@ -244,28 +244,6 @@ protected:
 };
 
 
-class TA_API gpiList_ElData {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
-public:
-  TypeDef*	typ;
-  TAPtr		cur_base;
-  taiDataList data_el;	// data elements
-
-  gpiList_ElData(TypeDef* tp, TAPtr base);
-  virtual ~gpiList_ElData();
-};
-
-class TA_API gpiList_ElDataList : public taPtrList<gpiList_ElData> {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-protected:
-  void	El_Done_(void* it)	{ delete (gpiList_ElData*)it; } //
-
-public:
-  ~gpiList_ElDataList()        { Reset(); } //
-};
-
-
-
 class TA_API gpiMultiEditDataHost: public taiEditDataHost {
 INHERITED(taiEditDataHost)
 public:
@@ -293,6 +271,28 @@ protected:
   override void 	Constr_Body();
   virtual void		Constr_MultiBody(); // added in after Constr_Body -- also used for reshowing multi-body
   virtual void		ClearMultiBody_impl(); // clears multi-body for reshowing
+};
+
+
+class TA_API gpiList_ElData {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
+public:
+  TypeDef*	typ;
+  TAPtr		cur_base;
+  taiDataList data_el;	// data elements
+
+  gpiList_ElData(TypeDef* tp, TAPtr base);
+  virtual ~gpiList_ElData();
+};
+
+
+class TA_API gpiList_ElDataList : public taPtrList<gpiList_ElData> {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+protected:
+  void	El_Done_(void* it)	{ delete (gpiList_ElData*)it; } //
+
+public:
+  ~gpiList_ElDataList()        { Reset(); } //
 };
 
 
@@ -330,12 +330,34 @@ protected:
 };
 
 
+class TA_API gpiCompactList_ElData {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
+public:
+  TypeDef*	typ;
+  TAPtr		cur_base;
+  taiData*	data_el;	// data element provided by the typ->it
+
+  gpiCompactList_ElData(TypeDef* tp, TAPtr base, taiData* data_el = NULL);
+  virtual ~gpiCompactList_ElData();
+};
+
+
+class TA_API gpiCompactList_ElDataList : public taPtrList<gpiCompactList_ElData> {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+protected:
+  void	El_Done_(void* it)	{ delete (gpiCompactList_ElData*)it; } //
+
+public:
+  ~gpiCompactList_ElDataList()        { Reset(); } //
+};
+
+
 class TA_API gpiCompactListDataHost : public gpiMultiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS compact vertical list for when the els have an inline rep
 INHERITED(gpiMultiEditDataHost)
 public:
   TABLPtr		cur_lst;
-  gpiList_ElDataList 	lst_data_el;	// list of data elements, only one data_el per item in list (inline)
+  gpiCompactList_ElDataList	lst_data_el;	// list of (inline) data elements
 
   gpiCompactListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);

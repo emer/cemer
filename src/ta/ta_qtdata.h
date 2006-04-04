@@ -436,8 +436,8 @@ protected:
 };
 
 
-class TA_API taiEnumScriptVar: public taiScriptVar {
-INHERITED(taiScriptVar)
+class TA_API taiEnumScriptVar: public taiScriptVarBase {
+INHERITED(taiScriptVarBase)
   Q_OBJECT
 public:
   static taiEnumScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
@@ -455,8 +455,8 @@ protected:
 };
 
 
-class TA_API taiObjectScriptVar: public taiScriptVar {
-INHERITED(taiScriptVar)
+class TA_API taiObjectScriptVar: public taiScriptVarBase {
+INHERITED(taiScriptVarBase)
   Q_OBJECT
 public:
   static taiObjectScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
