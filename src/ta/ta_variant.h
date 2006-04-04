@@ -52,6 +52,10 @@ public:
     
     T_Base = 11, 	// #LABEL_taBase taBase ref counted
     T_Matrix = 12 	// #LABEL_taMatrix taMatrix ref counted
+#ifndef __MAKETA__
+    ,T_Atomic_Min = T_Bool,
+    T_Atomic_Max = T_String
+#endif
   };
 
   const void*		addrData() const {return &d;} // this is for low-level routines

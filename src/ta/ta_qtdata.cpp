@@ -623,7 +623,8 @@ taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData*
   Initialize(gui_parent_);
   if (is_enum && typ) {
     for (int i = 0; i < typ->enum_vals.size; ++i) {
-      AddItem(typ->enum_vals.FastEl(i)->GetLabel());
+      EnumDef* ed = typ->enum_vals.FastEl(i);
+      AddItem(ed->GetLabel(), QVariant(ed->enum_no));
     }
   }
 }
@@ -642,10 +643,10 @@ void taiComboBox::Initialize(QWidget* gui_parent_) {
     this, SIGNAL(itemChanged(int)) );
 }
 
-void taiComboBox::AddItem(const String& val) {
+void taiComboBox::AddItem(const String& val, const QVariant& usrData) {
      // add an item to the list
 //Qt3  rep()->insertItem(val);
-  rep()->addItem(val);
+  rep()->addItem(val, usrData);
 }
 
 void taiComboBox::Clear() {
@@ -665,19 +666,13 @@ void taiComboBox::GetValue(int& itm) const {
 }
 
 void taiComboBox::GetEnumImage(int enum_val) {
-  int i = typ->enum_vals.size - 1;
-  while (i >= 0) {
-    if (typ->enum_vals.FastEl(i)->enum_no == enum_val) break;
-    --i;
-  }
+  int i = rep()->findData(QVariant(enum_val));
   rep()->setCurrentIndex(i);
 }
 
 void taiComboBox::GetEnumValue(int& enum_val) const {
-  int itm = rep()->currentIndex();
-  //NOTE: should work, except maybe if there were no values at all for some reason
-  EnumDef* ed = typ->enum_vals.SafeEl(itm); 
-  if (ed) enum_val = ed->enum_no;
+  int i = rep()->currentIndex();
+  if (i >= 0) enum_val = rep()->itemData(i).toInt();
   else enum_val = 0; // perhaps the safest invalid choice...
 }
 
@@ -687,6 +682,19 @@ void taiComboBox::GetImage(const String& val) {
   rep()->setCurrentText(val);
 } */
 
+void taiComboBox::RemoveItemByData(const QVariant& userData) {
+  int i;
+  while ((i = rep()->findData(userData)) != -1) {
+    rep()->removeItem(i);
+  }
+}
+
+void taiComboBox::RemoveItemByText(const String& val) {
+  int i;
+  while ((i = rep()->findText(val)) != -1) {
+    rep()->removeItem(i);
+  }
+}
 
 //////////////////////////
 //     taiBitBox	//
@@ -953,7 +961,23 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   } else {
     TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
     cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
-    //TODO: remove invalid types according to flags
+    //remove unused variant enum types according to flags
+    if (mflags & (flgNoInvalid | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
+    }
+    if (mflags & (flgNoAtomics | flgIntOnly)) {
+      for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
+        if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
+          cmbVarType->RemoveItemByData(QVariant(vt));
+      }
+    }
+    if (mflags & (flgNoPtr | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Ptr));
+    }
+    if (mflags & (flgNoBase | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
+    }
     AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
     lbl->setBuddy(cmbVarType->rep());
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
@@ -1126,8 +1150,8 @@ void taiVariantBase::GetValue_Variant(Variant& var) {
 // 	taiVariant		//
 //////////////////////////////////
 
-taiVariant::taiVariant(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-:inherited(typ_, host_, par, gui_parent_, flags)
+taiVariant::taiVariant(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+:inherited(&TA_Variant, host_, par, gui_parent_, flags)
 {
   Constr(gui_parent_);
 }
@@ -1137,34 +1161,171 @@ taiVariant::~taiVariant() {
 
 
 //////////////////////////////////
+//   taiScriptVarBase		//
+//////////////////////////////////
+
+taiScriptVarBase::taiScriptVarBase(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
+: inherited(typ_, host_, par, gui_parent_, flags)
+{
+}
+
+taiScriptVarBase::~taiScriptVarBase() {
+}
+
+void taiScriptVarBase::Constr(QWidget* gui_parent_) { 
+  QWidget* rep_ = new QWidget(gui_parent_);
+  SetRep(rep_);
+  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
+  }
+  InitLayout();
+  Constr_impl(gui_parent_, (mflags & flgReadOnly));
+  EndLayout();
+}
+
+void taiScriptVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
+  MemberDef* md = typ->members.FindName("name"); // should be found
+  if (md) AddChildMember(md);
+}
+
+void taiScriptVarBase::GetImage(const ScriptVar* var) {
+  fldName->GetImage(var->name);
+}
+
+void taiScriptVarBase::GetValue(ScriptVar* var) {
+  var->name = fldName->GetValue();
+}
+  
+
+//////////////////////////////////
 //   taiScriptVar		//
 //////////////////////////////////
+
+taiScriptVar* taiScriptVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
+{
+  taiScriptVar* rval = new taiScriptVar(typ_, host_, par, gui_parent_, flags);
+  rval->Constr(gui_parent_);
+  return rval;
+}
 
 taiScriptVar::taiScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {
-  Constr(gui_parent_);
 }
 
 taiScriptVar::~taiScriptVar() {
 }
 
 void taiScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  MemberDef* md = typ->members.FindName("name"); // should be found
-  if (md) AddChildMember(md);
   inherited::Constr_impl(gui_parent_, read_only_);
+  QWidget* rep_ = GetRep();
+  vfVariant = new taiVariant(host, this, rep_, 
+    (mflags & flgReadOnly) | taiVariantBase::flgNoPtr | taiVariantBase:: flgNoBase);
 }
 
 void taiScriptVar::GetImage(const ScriptVar* var) {
-
-  GetImage_Variant(var->value);
+  fldName->GetImage(var->name);
+  vfVariant->GetImage(var->value);
 }
 
 void taiScriptVar::GetValue(ScriptVar* var) {
-
-  GetValue_Variant(var->value);
+  var->name = fldName->GetValue();
+  vfVariant->GetValue(var->value);
 }
   
+
+//////////////////////////////////
+//   taiEnumScriptVar		//
+//////////////////////////////////
+
+taiEnumScriptVar* taiEnumScriptVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+{
+  taiEnumScriptVar* rval = new taiEnumScriptVar(typ_, host_, par, gui_parent_, flags);
+  rval->Constr(gui_parent_);
+  return rval;
+}
+
+taiEnumScriptVar::taiEnumScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+: inherited(typ_, host_, par, gui_parent_, flags)
+{
+}
+
+taiEnumScriptVar::~taiEnumScriptVar() {
+}
+
+void taiEnumScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
+  inherited::Constr_impl(gui_parent_, read_only_);
+  QWidget* rep_ =  GetRep();
+  QLabel* lbl = new QLabel("enum_type",rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
+    &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
+  thEnumType->enum_mode = true;
+  AddChildWidget(thEnumType->GetRep(), taiM->hsep_c, 0);
+  //TODO: init_value, needs to have its values dynamically updated
+}
+
+void taiEnumScriptVar::GetImage(const ScriptVar* var_) {
+  inherited::GetImage(var_);
+  const EnumScriptVar* var = (const EnumScriptVar*)var_;
+  thEnumType->GetImage(var->enum_type);
+}
+
+void taiEnumScriptVar::GetValue(ScriptVar* var_) {
+  inherited::GetValue(var_);
+  EnumScriptVar* var = (EnumScriptVar*)var_;
+  var->enum_type = thEnumType->GetValue();
+}
+  
+
+//////////////////////////////////
+//   taiObjectScriptVar		//
+//////////////////////////////////
+
+taiObjectScriptVar* taiObjectScriptVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
+{
+  taiObjectScriptVar* rval = new taiObjectScriptVar(typ_, host_, par, gui_parent_, flags);
+  rval->Constr(gui_parent_);
+  return rval;
+}
+
+taiObjectScriptVar::taiObjectScriptVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+: inherited(typ_, host_, par, gui_parent_, flags)
+{
+}
+
+taiObjectScriptVar::~taiObjectScriptVar() {
+}
+
+void taiObjectScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
+  inherited::Constr_impl(gui_parent_, read_only_);
+  QWidget* rep_ =  GetRep();
+  QLabel* lbl = new QLabel("val_type",rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
+    &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
+  AddChildWidget(thValType->GetRep(), taiM->hsep_c, 0);
+  //TODO: make_new and init token
+  
+}
+
+void taiObjectScriptVar::GetImage(const ScriptVar* var_) {
+  inherited::GetImage(var_);
+  const ObjectScriptVar* var = (const ObjectScriptVar*)var_;
+  thValType->GetImage(var->val_type);
+}
+
+void taiObjectScriptVar::GetValue(ScriptVar* var_) {
+  inherited::GetValue(var_);
+  ObjectScriptVar* var = (ObjectScriptVar*)var_;
+  var->val_type = thValType->GetValue(); 
+}
+  
+
 
 //////////////////////////
 // 	taiAction	//
@@ -1429,6 +1590,8 @@ taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_,
   if (has_menu) {
     m_menu = (exist_menu) ? exist_menu : new QMenu(gui_parent);
     m_menu->setFont(taiM->menuFont(font_spec));
+    connect(m_menu, SIGNAL(destroyed(QObject*)), 
+      this, SLOT(repDestroyed(QObject*)) );
   } else {
     m_menu = NULL;
   } 
@@ -1705,6 +1868,12 @@ String taiActions::label() const {
   }
 }
 
+void taiActions::repDestroyed(QObject* obj) {
+  if (obj == m_menu)
+    m_menu = NULL;
+  else inherited::repDestroyed(obj);
+}
+
 void taiActions::setLabel(const String& val) {
   if (par_menu != NULL)
     par_menu->setLabel(val);
@@ -1725,6 +1894,15 @@ void taiActions::setLabel(const String& val) {
   }
 }
 
+void taiActions::SetRep(QWidget* val) {
+  if (val) 
+    connect(val, SIGNAL(destroyed(QObject*)),
+      this, SLOT(repDestroyed(QObject*)) );
+  else if (m_rep)
+    disconnect(m_rep, SIGNAL(destroyed(QObject*)),
+      this, SLOT(repDestroyed(QObject*)) );
+  inherited::SetRep(val);
+}
 
 //////////////////////////
 // 	taiMenu	//

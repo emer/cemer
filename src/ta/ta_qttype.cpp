@@ -318,7 +318,7 @@ int taiVariantType::BidForType(TypeDef* td){
 }
 
 taiData* taiVariantType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiVariant* rval = new taiVariant(typ, host_, par, gui_parent_, flags_);
+  taiVariant* rval = new taiVariant(host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -440,18 +440,26 @@ int taiScriptVarType::BidForType(TypeDef* td) {
   else  return 0;
 }
 
-taiData* taiScriptVarType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiScriptVar* rval = new taiScriptVar(typ, host_, par, gui_parent_, flags_);
+taiData* taiScriptVarType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) 
+{
+  //note: we use a static New function because of funky construction-time virtual functions
+  taiScriptVarBase* rval;
+  if (typ->InheritsFrom(TA_ObjectScriptVar))
+    rval = taiObjectScriptVar::New(typ, host_, par, gui_parent_, flags_);
+  else if (typ->InheritsFrom(TA_EnumScriptVar))
+    rval = taiEnumScriptVar::New(typ, host_, par, gui_parent_, flags_);
+  else 
+    rval = taiScriptVar::New(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiScriptVarType::GetImage_impl(taiData* dat, void* base) {
-  taiScriptVar* rval = (taiScriptVar*)dat;
+  taiScriptVarBase* rval = (taiScriptVarBase*)dat;
   rval->GetImage((ScriptVar*)base);
 }
 
 void taiScriptVarType::GetValue_impl(taiData* dat, void* base) {
-  taiScriptVar* rval = (taiScriptVar*)dat;
+  taiScriptVarBase* rval = (taiScriptVarBase*)dat;
   rval->GetValue((ScriptVar*)base);
 }
 

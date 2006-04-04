@@ -42,9 +42,12 @@ class MatrixGeom;
 class ScriptVar; //
 
 // forwards
-class   taiToggle;
-class   taiToken;
-class   taiTypeHier; //
+class taiToggle;
+class taiToken;
+class taiTypeHier;
+class taiActions;
+class taiMenu;
+class taiAction; //
 
 
 /* //TODO: re-evaluate
@@ -184,8 +187,10 @@ public:
   taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
-  void		AddItem(const String& val); // add an item to the list
+  void		AddItem(const String& val, const QVariant& userData = QVariant()); // add an item to the list
   void		Clear(); //clears all items (only needed if refilling list)
+  void 		RemoveItemByData(const QVariant& userData); // remove item with indicated data
+  void 		RemoveItemByText(const String& val); // remove item with indicated text
 
   void 		GetImage(int itm);  // set to this item number
   void		GetValue(int& itm) const;
@@ -331,8 +336,9 @@ public:
   enum CustomFlags { // #BITS
     flgNoInvalid	= 0x010000, // don't let user choose Invalid
     flgNoAtomics	= 0x020000, // don't let user choose any atomics
-    flgNoPtr		= 0x040000, // don't let user choose raw ptr
-    flgNoBase		= 0x080000 // don't let user choose taBase or taMatrix
+    flgIntOnly		= 0x040000, // Int only (used for Enum)
+    flgNoPtr		= 0x080000, // don't let user choose raw ptr
+    flgNoBase		= 0x100000 // don't let user choose taBase or taMatrix
   };
   
   bool			fillHor() {return true;} // override 
@@ -382,37 +388,97 @@ public:
   void  	GetImage(const Variant& var) {GetImage_Variant(var);}
   void	 	GetValue(Variant& var) {GetValue_Variant(var);}
   
-  taiVariant(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiVariant(IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiVariant();
 };
 
 
-class TA_API taiScriptVar: public taiVariantBase {
-INHERITED(taiVariantBase)
+class TA_API taiScriptVarBase: public taiCompData { 
+  //note: this set of classes uses a static New instead of new because of funky virtual Constr
+INHERITED(taiCompData)
   Q_OBJECT
 public:
-  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  QWidget*	rep() const { return (QWidget*)m_rep; } 
   bool		fillHor() {return true;} // override 
-  taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-  ~taiScriptVar();
+  ~taiScriptVarBase();
 
-  void  	GetImage(const ScriptVar* var);
-  void	 	GetValue(ScriptVar* var);
+  void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
+  virtual void  	GetImage(const ScriptVar* var);
+  virtual void	 	GetValue(ScriptVar* var);
 
 protected:
   taiField*		fldName;
   
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  taiScriptVarBase(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+};
 
+
+class TA_API taiScriptVar: public taiScriptVarBase { 
+  //note: this set of classes uses a static New instead of new because of funky virtual Constr
+INHERITED(taiScriptVarBase)
+  Q_OBJECT
+public:
+  static taiScriptVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  
+  ~taiScriptVar();
+
+  virtual void  	GetImage(const ScriptVar* var);
+  virtual void	 	GetValue(ScriptVar* var);
+
+protected:
+  taiVariant*		vfVariant;
+  
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+};
+
+
+class TA_API taiEnumScriptVar: public taiScriptVar {
+INHERITED(taiScriptVar)
+  Q_OBJECT
+public:
+  static taiEnumScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  ~taiEnumScriptVar();
+
+  void  		GetImage(const ScriptVar* var); // override
+  void	 		GetValue(ScriptVar* var); // override
+
+protected:
+  taiTypeHier*		thEnumType;
+  
+  taiEnumScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
+};
+
+
+class TA_API taiObjectScriptVar: public taiScriptVar {
+INHERITED(taiScriptVar)
+  Q_OBJECT
+public:
+  static taiObjectScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  ~taiObjectScriptVar();
+
+  void  		GetImage(const ScriptVar* var); // override
+  void	 		GetValue(ScriptVar* var); // override
+
+protected:
+  taiTypeHier*		thValType;
+  taiToken*		tkObjectValue;
+  
+  taiObjectScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
+private: 
 };
 
 //////////////////////////////////
 //   Menus and Toolbars		//
 //////////////////////////////////
 
-class taiActions;
-class taiMenu;
-class taiAction;
 
 class TA_API taiAction: public QAction {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu
@@ -515,6 +581,7 @@ protected:
 class TA_API taiActions : public taiData {
   // #VIRT_BASE common subtype for menus and menubars
   Q_OBJECT
+INHERITED(taiData)
 friend class taiMenu_List; // hack because lists return refs to strings, not values
 public:
   enum RepType { // for parameterized creation of a compatible subtype
@@ -551,6 +618,7 @@ public:
   taiAction*		curSel() const;
   void			setCurSel(taiAction* value);
   QWidget*		actionsRep(); // where actions are stored, in menu if a menu, else in Rep
+  void			SetRep(QWidget* val); // override
   virtual void		AddSep(bool new_radio_grp = false); // add menu separator -- can also be used to create new radio groups --  won't add initial sep, or 2 separators in a row; seps don't count as taiActions
   virtual void		AddAction(taiAction* act); // add the already created action
   taiAction* 		AddItem(const String& val, SelType st = use_default, 
@@ -596,6 +664,7 @@ protected:
   
 protected slots:
   virtual void 		child_triggered_toggled(taiAction* act);
+  void			repDestroyed(QObject* obj); //override
 };
 
 //////////////////////////////////
