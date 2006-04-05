@@ -195,6 +195,7 @@ public:
   void 		GetImage(int itm);  // set to this item number
   void		GetValue(int& itm) const;
 
+  void		SetEnumType(TypeDef* enum_typ, bool force = false); // sets a new enum type
   void 		GetEnumImage(int enum_val);  // set to item number corresponding to this enum value, enum mode only
   void		GetEnumValue(int& enum_val) const; // set to enum value corresponding to item number, enum mode only
   
@@ -407,6 +408,7 @@ public:
   virtual void	 	GetValue(ScriptVar* var);
 
 protected:
+  int			m_changing; // used to prevent recursions
   taiField*		fldName;
   
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
@@ -449,9 +451,11 @@ public:
 
 protected:
   taiTypeHier*		thEnumType;
+  taiComboBox*		cboEnumValue;
   
-  taiEnumScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
+  void			DataChanged_impl(taiData* chld); // override
+  taiEnumScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
 
@@ -461,18 +465,22 @@ INHERITED(taiScriptVarBase)
 public:
   static taiObjectScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags = 0);
-  ~taiObjectScriptVar();
 
   void  		GetImage(const ScriptVar* var); // override
   void	 		GetValue(ScriptVar* var); // override
+  ~taiObjectScriptVar();
 
 protected:
   taiTypeHier*		thValType;
+  taiToggle*		chkMakeNew;
+  QLabel*		lblObjectValue;
   taiToken*		tkObjectValue;
   
-  taiObjectScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  void			MakeNew_Setting(bool value); // common code jigs visibility
+  
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
-private: 
+  void			DataChanged_impl(taiData* chld); // override
+  taiObjectScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
 //////////////////////////////////
@@ -984,7 +992,9 @@ public:
   virtual void	GetImage(TAPtr ths, TAPtr scp_obj);
   virtual TAPtr	GetValue();
   override QWidget*	GetRep() { return (ta_actions == NULL) ? NULL : ta_actions->GetRep(); }
-
+  virtual void	SetTypeScope(TypeDef* new_typ, TAPtr new_scope = NULL, bool force = false); 
+   // dynamically set a new base type and/or scope; calls GetMenu
+  
   virtual void	GetMenu(const taiMenuAction* actn = NULL);
   virtual void	UpdateMenu(const taiMenuAction* actn = NULL);
   virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);

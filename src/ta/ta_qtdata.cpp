@@ -622,18 +622,13 @@ taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData*
 {
   Initialize(gui_parent_);
   if (is_enum && typ) {
-    for (int i = 0; i < typ->enum_vals.size; ++i) {
-      EnumDef* ed = typ->enum_vals.FastEl(i);
-      AddItem(ed->GetLabel(), QVariant(ed->enum_no));
-    }
+    SetEnumType(typ, true);
   }
 }
 
 void taiComboBox::Initialize(QWidget* gui_parent_) {
   SetRep(new iComboBox(gui_parent_));
   rep()->setFixedHeight(taiM->combo_height(defSize()));
-  // prevent from expanding horizontally -- may want to permit this if using the built in label
-//dnw  rep()->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed)); //def is Minimum,Preferred
 
   //connect changed signal to our slot
   QObject::connect(m_rep, SIGNAL(activated(int) ),
@@ -644,16 +639,11 @@ void taiComboBox::Initialize(QWidget* gui_parent_) {
 }
 
 void taiComboBox::AddItem(const String& val, const QVariant& usrData) {
-     // add an item to the list
-//Qt3  rep()->insertItem(val);
   rep()->addItem(val, usrData);
 }
 
 void taiComboBox::Clear() {
-   //clears all items
-  for (int i = rep()->count() - 1; i >= 0; --i) {
-    rep()->removeItem(i);
-  }
+  rep()->clear();
 }
 
 void taiComboBox::GetImage(int itm) {
@@ -676,12 +666,6 @@ void taiComboBox::GetEnumValue(int& enum_val) const {
   else enum_val = 0; // perhaps the safest invalid choice...
 }
 
-/* NN
-void taiComboBox::GetImage(const String& val) {
-  // set to this string item
-  rep()->setCurrentText(val);
-} */
-
 void taiComboBox::RemoveItemByData(const QVariant& userData) {
   int i;
   while ((i = rep()->findData(userData)) != -1) {
@@ -695,6 +679,18 @@ void taiComboBox::RemoveItemByText(const String& val) {
     rep()->removeItem(i);
   }
 }
+
+void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
+  if ((typ != enum_typ) || force) {
+    Clear();
+    typ = enum_typ;
+    for (int i = 0; i < typ->enum_vals.size; ++i) {
+      EnumDef* ed = typ->enum_vals.FastEl(i);
+      AddItem(ed->GetLabel(), QVariant(ed->enum_no));
+    }
+  }
+}
+
 
 //////////////////////////
 //     taiBitBox	//
@@ -739,10 +735,6 @@ void taiBitBox::Initialize(QWidget* gui_parent_) {
   SetRep(new QFrame(gui_parent_));
   rep()->setFixedHeight(taiM->label_height(defSize()));
   lay = new QHBoxLayout(m_rep);
-
-  // prevent from expanding horizontally -- may want to permit this if using the built in label
-//dnw  rep()->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed)); //def is Minimum,Preferred
-
 }
 
 void taiBitBox::bitCheck_toggled(iBitCheckBox* sender, bool on) {
@@ -765,14 +757,11 @@ void taiBitBox::AddBoolItem(String name, int val) {
 
 void taiBitBox::GetImage(int val) {
   QObject *obj;
-/*Qt3  QObjectListIterator it(*(m_rep->children()));
-  while ((obj = it.current()) != NULL ) { */
   foreach (obj, m_rep->children() ) {
     if (obj->inherits("iBitCheckBox")) {
       iBitCheckBox* bcb = (iBitCheckBox*)obj;
       bcb->setChecked((val & bcb->val)); //note: prob raises signal -- ok
     }
-//    ++it;
   }
   m_val = val;
 }
@@ -1168,6 +1157,7 @@ taiScriptVarBase::taiScriptVarBase(TypeDef* typ_, IDataHost* host_, taiData* par
   QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {
+  m_changing = 0;
 }
 
 taiScriptVarBase::~taiScriptVarBase() {
@@ -1264,26 +1254,45 @@ taiEnumScriptVar::~taiEnumScriptVar() {
 void taiEnumScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   inherited::Constr_impl(gui_parent_, read_only_);
   QWidget* rep_ =  GetRep();
-  QLabel* lbl = new QLabel("enum_type",rep_);
+  QLabel* lbl = new QLabel("enum type",rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
   thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
   thEnumType->enum_mode = true;
   thEnumType->GetMenu();
   AddChildWidget(thEnumType->GetRep(), taiM->hsep_c, 0);
-  //TODO: init_value, needs to have its values dynamically updated
+  lbl = new QLabel("enum value",rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  cboEnumValue = new taiComboBox(true, NULL, host, this, rep_, (mflags & flgReadOnly));
+  AddChildWidget(cboEnumValue->GetRep(), taiM->hsep_c, 0);
+}
+
+void taiEnumScriptVar::DataChanged_impl(taiData* chld) {
+  inherited::DataChanged_impl(chld);
+  if (m_changing > 0) return;
+  ++m_changing;
+  if (chld == thEnumType) {
+    cboEnumValue->SetEnumType(thEnumType->GetValue());
+    //note: prev value of value may no longer be a valid enum value!
+  }
+  --m_changing;
 }
 
 void taiEnumScriptVar::GetImage(const ScriptVar* var_) {
   inherited::GetImage(var_);
   const EnumScriptVar* var = (const EnumScriptVar*)var_;
   thEnumType->GetImage(var->enum_type);
+  cboEnumValue->SetEnumType(var->enum_type);
+  cboEnumValue->GetEnumImage(var->value.toInt());
 }
 
 void taiEnumScriptVar::GetValue(ScriptVar* var_) {
   inherited::GetValue(var_);
   EnumScriptVar* var = (EnumScriptVar*)var_;
   var->enum_type = thEnumType->GetValue();
+  int val;
+  cboEnumValue->GetEnumValue(val); // 0 if no valid type
+  var->value = val;
 }
   
 
@@ -1317,21 +1326,66 @@ void taiObjectScriptVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   thValType->GetMenu();
   AddChildWidget(thValType->GetRep(), taiM->hsep_c, 0);
   //TODO: make_new and init token
-  
+  lbl = new QLabel("make new",rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+  chkMakeNew = new taiToggle(&TA_bool, host, this, rep_, (mflags & flgReadOnly));
+  AddChildWidget(chkMakeNew->GetRep(), taiM->hsep_c, 0);
+  lblObjectValue = new QLabel("value",rep_);
+  AddChildWidget(lblObjectValue, taiM->hsep_c, 0);
+  tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
+     thValType->typ, host, this, rep_, ((mflags & flgReadOnly) | flgNullOk));
+  AddChildWidget(tkObjectValue->GetRep(), taiM->hsep_c, 0);
+}
+
+void taiObjectScriptVar::DataChanged_impl(taiData* chld) {
+  inherited::DataChanged_impl(chld);
+  if (m_changing > 0) return;
+  ++m_changing;
+  if (chld == chkMakeNew) {
+    MakeNew_Setting(chkMakeNew->GetValue());
+  } else if (chld == thValType) {
+    tkObjectValue->SetTypeScope(thValType->GetValue());
+    // previous token may no longer be in scope!
+  }
+  --m_changing;
 }
 
 void taiObjectScriptVar::GetImage(const ScriptVar* var_) {
   inherited::GetImage(var_);
   const ObjectScriptVar* var = (const ObjectScriptVar*)var_;
   thValType->GetImage(var->val_type);
+  chkMakeNew->GetImage(var->make_new);
+  MakeNew_Setting(var->make_new);
+  if (var->make_new) {
+    //maybe should initialize the token with NULL???
+  } else {
+    tkObjectValue->SetTypeScope(var->val_type, NULL); // no scope
+    tkObjectValue->GetImage(var->value.toBase(), NULL);
+  }
 }
 
 void taiObjectScriptVar::GetValue(ScriptVar* var_) {
   inherited::GetValue(var_);
   ObjectScriptVar* var = (ObjectScriptVar*)var_;
   var->val_type = thValType->GetValue(); 
+  var->make_new = chkMakeNew->GetValue();
+  if (var->make_new) {
+    var->value.setBase(NULL);
+  } else {
+    var->value.setBase(tkObjectValue->GetValue());
+  }
 }
   
+void taiObjectScriptVar::MakeNew_Setting(bool value) {
+  if (value) {
+    tkObjectValue->GetRep()->setVisible(false);
+    lblObjectValue->setVisible(false);
+  } else {
+    lblObjectValue->setVisible(true);
+    tkObjectValue->GetRep()->setVisible(true);
+  }
+}
+
 
 
 //////////////////////////
@@ -2949,6 +3003,12 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
   }
 }*/
 
+void taiToken::SetTypeScope(TypeDef* new_typ, TAPtr new_scope, bool force) {
+  if ((new_typ == typ) && (new_scope == scope_ref) && !force) return;
+  typ = new_typ;
+  scope_ref = new_scope;
+  GetMenu();
+}
 
 //////////////////////////////////
 // 	taiSubToken		//
