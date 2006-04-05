@@ -82,6 +82,12 @@ public:
 	int dummy; // #IGNORE
 };
 
+class QPluginLoader: public QObject {
+//#IGNORE
+public:
+	int dummy; // #IGNORE
+};
+
 class QByteArray {
 //#IGNORE
 public:

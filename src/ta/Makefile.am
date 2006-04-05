@@ -8,6 +8,7 @@ VPATH = @srcdir@
 if TA_GUI
 
 TAHEADS_GUI =\
+	@abs_srcdir@/ta_plugin.h \
 	@abs_srcdir@/ta_qt.h \
 	@abs_srcdir@/ta_matrix_qt.h \
 	@abs_srcdir@/ta_qtdata_def.h \
@@ -25,6 +26,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/../taiqtso/igeometry.h
 
 HEADS_GUI =\
+	ta_plugin.h \
 	ta_qt.h \
 	ta_matrix_qt.h \
 	ta_qtdata_def.h \
@@ -42,6 +44,8 @@ HEADS_GUI =\
 	ta_seledit.h
 
 SRCS_GUI =\
+	ta_plugin.cpp \
+	ta_plugin.moc.cpp \
 	ta_qt.cpp \
 	ta_qt.moc.cpp \
 	ta_type_qt.cpp \
