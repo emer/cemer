@@ -65,6 +65,47 @@ const String UserScriptEl::GenCssBody_impl(int indent_level) {
   return user_script;
 }
 
+//////////////////////////
+//  MethodCallEl	//
+//////////////////////////
+
+void MethodCallEl::Initialize() {
+  script_obj = NULL;
+  method = NULL;
+}
+
+void MethodCallEl::CutLinks() {
+  taBase::DelPointer((taBase**)&script_obj);
+  inherited::CutLinks();
+}
+
+void MethodCallEl::Copy_(const MethodCallEl& cp) {
+  taBase::SetPointer((taBase**)&script_obj, cp.script_obj);
+  method = cp.method;
+}
+
+void MethodCallEl::UpdateAfterEdit() {
+  //TODO: if object changed, we need to make sure MethodDef is still valid
+  inherited::UpdateAfterEdit();
+}
+
+const String MethodCallEl::GenCssBody_impl(int indent_level) {
+  if (!script_obj && !method) return _nilString;
+  
+  String rval(80, 0, '\0');
+  //TODO: return value
+  rval += cssMisc::Indent(indent_level);
+  rval += script_obj->name;
+  rval += "->";
+  rval += method->name;
+  rval += "(";
+  //TODO: args
+  rval += ");\n";
+  
+  return rval;
+}
+
+
 
 //////////////////////////
 //  ProgEl_List		//

@@ -116,6 +116,28 @@ private:
 };
 
 
+class PDP_API MethodCallEl: public ProgEl { 
+  // ProgEl for a call to an object method
+INHERITED(ProgEl)
+public:
+  ObjectScriptVar*	script_obj; // #TYPE_ObjectScriptVar the script object that has the method
+  MethodDef*		method; // #TYPE_ON_object the method to call
+  
+  void	UpdateAfterEdit();
+  void	CutLinks();
+  void	Copy_(const MethodCallEl& cp);
+  COPY_FUNS(MethodCallEl, ProgEl);
+  TA_BASEFUNS(MethodCallEl);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+
 class PDP_API LoopEl: public ProgList { 
   // ProgEl for an iteration over the elements
 INHERITED(ProgList)
