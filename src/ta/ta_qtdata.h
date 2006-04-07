@@ -415,6 +415,8 @@ protected:
   taiField*		fldName;
   
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  override void		GetImage_impl(const void* base) {GetImage((const ScriptVar*)base);}
+  override void		GetValue_impl(void* base) const {GetValue((ScriptVar*)base);} 
   taiScriptVarBase(TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags = 0);
 };
@@ -430,15 +432,13 @@ public:
   
   ~taiScriptVar();
 
-  virtual void  	GetImage(const ScriptVar* var);
-  virtual void	 	GetValue(ScriptVar* var) const;
+  void  		GetImage(const ScriptVar* var);
+  void	 		GetValue(ScriptVar* var) const;
 
 protected:
   taiVariant*		vfVariant;
   
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  override void		GetImage_impl(const void* base) {GetImage((const ScriptVar*)base);}
-  override void		GetValue_impl(void* base) const {GetValue((ScriptVar*)base);} 
   taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 

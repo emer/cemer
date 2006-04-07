@@ -80,11 +80,11 @@ class TA_API taiBoolType : public taiType {
 public:
   bool		handlesReadOnly() { return true; } // uses a RO iCheckBox
   int		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 	GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-
   TAQT_TYPE_INSTANCE(taiBoolType, taiType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void 		GetImage_impl(taiData* dat, const void* base);
+  void		GetValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiStringType : public taiType { 
@@ -92,6 +92,9 @@ public:
   bool		handlesReadOnly() { return true; } 
   int		BidForType(TypeDef* td);
   TAQT_TYPE_INSTANCE(taiStringType, taiType);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void 		GetImage_impl(taiData* dat, const void* base);
+  void		GetValue_impl(taiData* dat, void* base);
 };
 
 
@@ -109,7 +112,7 @@ public:
 
 class TA_API taiClassType : public taiType {
 public:
-  override bool		allowInline() const; // determine from comment directive
+  override bool		allowsInline() const; // determine from comment directive
   bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
   int		BidForType(TypeDef* td);
   void 		GetImage_impl(taiData* dat, const void* base);
@@ -147,34 +150,31 @@ protected:
   taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
+
 class TA_API gpiListType : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-
   TAQT_TYPE_INSTANCE(gpiListType, taiClassType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
+
 
 class TA_API gpiGroupType : public gpiListType {
 public:
   int 		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-
   TAQT_TYPE_INSTANCE(gpiGroupType, gpiListType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
+
 
 class TA_API gpiArray_Type : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-
   TAQT_TYPE_INSTANCE(gpiArray_Type, taiClassType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
 

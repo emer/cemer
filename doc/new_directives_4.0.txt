@@ -1,12 +1,15 @@
 OBJECT DIRECTIVES
 -----------------
 
+//TODO: revert this meaning, since we always had the EDIT_INLINE
 #INLINE -- (existing directive) this now only controls inlining in the gui, not in dumping
+//TODO: change this to DUMP_INLINE or SAVE_INLINE to be consistent with EDIT_INLINE
 #INLINE_DUMP -- replaces INLINE for dump/load
 #LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
 #UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
 #HIDDEN -- prevents type from showing in TypeHier lists
 #CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
+#NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
 
 ENUM DIRECTIVES (note: this is new)
 ---------------

@@ -924,6 +924,8 @@ void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 }
  
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  // note: we should have unlinked if cancelled, but if not, ignore if cancelled
+  if (state == CANCELED) return;
   // we only care about the rebuilding ones, for others, we just call notify
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
@@ -1204,6 +1206,7 @@ taiEditDataHost::~taiEditDataHost() {
   meth_el.Reset();
   taiMisc::active_edits.Remove(this);
   taiMisc::css_active_edits.Remove(this);
+  // remove data client -- harmless if already done in Cancel
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);
     cur_base = NULL;
@@ -1221,6 +1224,9 @@ void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
 
 void taiEditDataHost::Cancel() {
   state = CANCELED;
+  if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
+    ((taBase*)cur_base)->RemoveDataClient(this);
+  }
   if (isPanel()) {
     if (panel != NULL)
       panel->ClosePanel();
@@ -1292,7 +1298,7 @@ void taiEditDataHost::GetMembDescRep(MemberDef* md, ivMenu* dscm, String indent)
 
 void taiEditDataHost::Constr_Body() {
   taiDataHost::Constr_Body();
-  if (typ && typ->it->requireInline()) {
+  if (typ && typ->it->requiresInline()) {
     Constr_Inline();
   } else {
     Constr_Data();
@@ -1574,7 +1580,7 @@ void taiEditDataHost::GetButtonImage() {
 
 void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
-  if (typ->it->requireInline()) {
+  if (typ->it->requiresInline()) {
     GetImageInline_impl(cur_base);
   } else {
     GetImage_impl(typ->members, data_el, cur_base);

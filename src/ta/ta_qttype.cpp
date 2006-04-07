@@ -110,11 +110,11 @@ taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent
     ro = ro || parent_type_->isReadOnly(par);
   if (ro)
     flags |= taiData::flgReadOnly;
-  if (requireInline())
+  if (requiresInline())
     flags |= taiData::flgInline;
   if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
     return taiType::GetDataRep_impl(host_, par, gui_parent_, flags);
-  } else if ((flags & taiData::flgInline) && allowInline()) {
+  } else if ((flags & taiData::flgInline) && allowsInline()) {
     return GetDataRepInline_impl(host_, par, gui_parent_, flags);
   } else {
     return GetDataRep_impl(host_, par, gui_parent_, flags);
@@ -308,6 +308,19 @@ int taiStringType::BidForType(TypeDef* td){
   return 0;
 }
 
+taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiStringType::GetImage_impl(taiData* dat, const void* base) {
+  dat->GetImage_(base);
+}
+
+void taiStringType::GetValue_impl(taiData* dat, void* base) {
+  dat->GetValue_(base); //noop for taiEditButton
+}
+
 
 
 ////////////////////////
@@ -349,7 +362,7 @@ int taiClassType::BidForType(TypeDef* td) {
   return 0;
 }
 
-bool taiClassType::allowInline() const {
+bool taiClassType::allowsInline() const {
   return (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"));
 }
 
@@ -433,14 +446,6 @@ taiData* gpiListType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* g
   return rval;
 }
 
-void gpiListType::GetImage_impl(taiData* dat, const void* base) {
-  gpiListEditButton *rval = (gpiListEditButton*)dat;
-  rval->GetImage_(base);
-}
-
-void gpiListType::GetValue_impl(taiData*, void*) {
-}
-
 
 //////////////////////////////////
 // 	gpiGroupType		//
@@ -454,13 +459,6 @@ int gpiGroupType::BidForType(TypeDef* td) {
 taiData* gpiGroupType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
-}
-
-void gpiGroupType::GetImage_impl(taiData* dat, const void* base) {
-  gpiGroupEditButton *rval = (gpiGroupEditButton*)dat;
-  rval->GetImage_(base);
-}
-void gpiGroupType::GetValue_impl(taiData*, void*) {
 }
 
 
@@ -483,13 +481,6 @@ taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
   return rval;
 }
 
-void gpiArray_Type::GetImage_impl(taiData* dat, const void* base) {
-  gpiArrayEditButton *rval = (gpiArrayEditButton*)dat;
-  rval->GetImage_(base);
-}
-
-void gpiArray_Type::GetValue_impl(taiData*, void*) {
-}
 
 
 //////////////////////////////////
@@ -724,7 +715,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
     flags |= taiData::flgReadOnly;
-  if ((mbr->HasOption("INLINE")) || mbr->type->it->allowInline())
+  if ((mbr->HasOption("INLINE")) || (mbr->HasOption("EDIT_INLINE")) 
+    || mbr->type->it->allowsInline())
     flags |= taiData::flgInline;
   if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
     flags |= taiData::flgEditDialog;
@@ -2548,7 +2540,17 @@ int gpiListEdit::BidForEdit(TypeDef* td) {
 }
 
 taiEditDataHost* gpiListEdit::CreateDataHost(void* base, bool readonly) {
-  if (typ->HasOption("CHILDREN_INLINE"))
+  // compact is either specified explicitly, 
+  // or we must use it if the base_type of the list requires inline
+  bool use_compact = false; 
+  if (!typ->HasOption("NO_CHILDREN_INLINE")) {
+    use_compact = typ->HasOption("CHILDREN_INLINE");
+    if (!use_compact && base) { // try checking base type
+      taList_impl* lst = (taList_impl*)base;
+      use_compact = lst->el_typ->it->requiresInline();
+    }
+  }
+  if (use_compact)
     return new gpiCompactListDataHost(base, typ, readonly);
   else 
     return new gpiListDataHost(base, typ, readonly);

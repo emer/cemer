@@ -25,6 +25,10 @@ ta_qtviewer.h/cpp
 
 BUGS
 
+* token menu puzzling behavior:
+  - shows "sorry not keeping tokens" even when showing a list of tokens
+  - not clear what criteria it uses for showing, based on a type;
+    ex. choose taOBase, and shows none, but show Network, and shows BpNetworks
 * when taiActions for menu type deleting, in its Reset, it accesses the widget
   and seemingly that widget has already been deleted because the actions()
   list call results in 0x0 for the private data of the widget
@@ -33,9 +37,6 @@ BUGS
 
 * create a DataTable in data; give it a name in Properties; press Apply
   error msg occurs (like "Cannot save, list size has changed")
-* List/Group bug: when adding a new item, it appears first as "[N]TypeName" 
-  even if given a name -- it only displays correct name if something updates
-  the view, ex. adding a new item (test using DataTable and adding cols)
 * taMisc::Error -- doesn't raise error dialog (note: requiring the *** to raise
   interactive dialogs is a terrible convention...)
 * when moving an item in a list via drag/drop, the item ends up getting deleted
@@ -122,3 +123,11 @@ things we should ignore:
   
 things we should act on:
   toggles for global radio group items
+  
+  
+  
+FIXED
+
+* List/Group bug: when adding a new item, it appears first as "[N]TypeName" 
+  even if given a name -- it only displays correct name if something updates
+  the view, ex. adding a new item (test using DataTable and adding cols)
