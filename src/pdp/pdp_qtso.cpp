@@ -45,7 +45,7 @@ int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
 //      (((BaseSpec*)dlg->cur_base)->GetOwner(&TA_BaseSpec) == NULL))
 //   {
 
-bool taiSpecMember::NoCheckBox(IDataHost* host_) {
+bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   void* base = host_->Base();
   TypeDef* typ = host_->GetBaseTypeDef();
   if((host_ == NULL) || (base == NULL) || (typ == NULL))
@@ -77,7 +77,7 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) {
 
 
 taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
-  if(NoCheckBox(host_)) {
+  if (NoCheckBox(host_)) {
     taiData* rdat;
     if (m_sub_types != NULL)
       rdat = sub_types()->GetDataRep(host_, par, gui_parent);
@@ -89,7 +89,7 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
     rval->InitLayout();
     taiData* rdat;
     if (m_sub_types)
-      rdat = sub_types()->GetDataRepEx(host_, rval, rval->GetRep(), flags_);
+      rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_);
     else
       rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_);
     rval->data = rdat;
@@ -99,9 +99,9 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
   }
 }
 
-void taiSpecMember::GetImage_impl(taiData* dat, void* base) {
+void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
   IDataHost* host_ = dat->host;
-  if(NoCheckBox(host_)) {
+  if (NoCheckBox(host_)) {
     if (m_sub_types != NULL)
       sub_types()->GetImage(dat,base);
     else

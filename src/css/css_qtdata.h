@@ -49,11 +49,11 @@ public:
 
   QFrame*	rep() const { return (QFrame*)m_rep; } //note: actual class may be subclass of QFrame
 
-  virtual void  GetImage(void* base);
-  virtual void	GetValue(void* base);
-
 protected:
   virtual void	Constr(QWidget* gui_parent_);
+  virtual void  GetImage_impl(const void* base);
+  virtual void	GetValue_impl(void* base) const;
+
 };
 
 

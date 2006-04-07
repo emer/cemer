@@ -71,7 +71,7 @@ public:
   virtual void		CallEdit() {}     // invoke an edit dialog (normally called from qobj)
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
-  void		GetImage(taiData* dat, void* base);
+  void		GetImage(taiData* dat, const void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
 
   void		GetValue(taiData* dat, void* base);
@@ -93,7 +93,7 @@ class CSS_API cssiROType : public cssiType {
 public:
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
-  void		GetImage(taiData* dat, void* base);
+  void		GetImage(taiData* dat, const void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
 
   void		GetValue(taiData*, void*) {}
@@ -110,7 +110,7 @@ public:
 
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
-  void		GetImage(taiData* dat, void* base);
+  void		GetImage(taiData* dat, const void* base);
   void		GetImage(taiData* dat)  { GetImage(dat, cur_base); }
 
   void		GetValue(taiData* dat, void* base);
@@ -127,7 +127,7 @@ public:
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
   override void		CallEdit();     // invoke an edit dialog (normally called from qobj)
-  void          GetImage(taiData* dat, void* base);
+  void          GetImage(taiData* dat, const void* base);
   void          GetImage(taiData* dat)  { GetImage(dat, cur_base); }
 
   void          GetValue(taiData* dat, void* base);
@@ -146,7 +146,7 @@ public:
 
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent);
 
-  void          GetImage(taiData* dat, void* base) {}
+  void          GetImage(taiData* dat, const void* base) {}
   void          GetImage(taiData* dat)  { GetImage(dat, cur_base); }
 
   void          GetValue(taiData* dat, void* base) {}

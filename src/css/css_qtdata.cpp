@@ -80,7 +80,7 @@ void cssiPolyData::Constr(QWidget* gui_parent_) {
   } */
 }
 
-void cssiPolyData::GetImage(void*) {
+void cssiPolyData::GetImage_impl(const void*) {
   for (int i = 0; i <type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
@@ -88,7 +88,7 @@ void cssiPolyData::GetImage(void*) {
   }
 }
 
-void cssiPolyData::GetValue(void*) {
+void cssiPolyData::GetValue_impl(void*) const {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);

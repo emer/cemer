@@ -120,8 +120,8 @@ class PDP_API MethodCallEl: public ProgEl {
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
 public:
-  ObjectScriptVar*	script_obj; // #TYPE_ObjectScriptVar the script object that has the method
-  MethodDef*		method; // #TYPE_ON_object the method to call
+  ObjectScriptVar*	script_obj; // the script object that has the method
+  MethodDef*		method; // the method to call
   
   void	UpdateAfterEdit();
   void	CutLinks();

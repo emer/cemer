@@ -404,8 +404,8 @@ public:
   taiActions*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
   taiMenuBar*		menu;		// menu bar
   taiActions*		show_menu;	// Show menu bar
-  Member_List		memb_el;	// member elements (1:1 with data_el)
-  taiDataList 		data_el;	// data elements (1:1 with memb_el)
+  Member_List		memb_el;	// member elements (1:1 with data_el), empty in inline mode
+  taiDataList 		data_el;	// data elements (1:1 with memb_el), except in inline mode
   taiDataList 		meth_el;	// method elements
 
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
@@ -445,6 +445,7 @@ protected:
   override void		Constr_Body();    // construct the data of the dialog
   virtual void		Constr_Data(); // members, or equivalent in inherited classes, and labels
   virtual void		Constr_Labels(); // labels
+  virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
   virtual void		Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl = NULL); //dl non-null enables label-buddy linking
   virtual void		Constr_Data_impl(const MemberSpace& ms, taiDataList* dl);
   override void		Constr_Methods(); // construct the methods (buttons and menus)
@@ -454,6 +455,8 @@ protected:
   override void		Constr_Final();
   override void		FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
+  virtual void		GetImageInline_impl(const void* base);
+  virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
   virtual void		GetButtonImage();

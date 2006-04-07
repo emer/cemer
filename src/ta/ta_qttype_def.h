@@ -84,8 +84,10 @@ TypeDef*	GetTypeDef() const {return &TA_##x; }
 class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
-
+  virtual bool		allowInline() const {return false;}
   virtual bool		handlesReadOnly() { return false; } // for types like taiString and taiInt whose editors handle readOnly
+  virtual bool		isCompound() const {return false;} // true if requires multiple edit fields
+  virtual bool		requireInline() const {return false;}
   taiType* 		sub_types() {return (taiType*)m_sub_types;}
   taiType** 		addr_sub_types() {return (taiType**)&m_sub_types;}
 
@@ -95,15 +97,11 @@ public:
 
 
   virtual taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  	taiType* parent_type_ = NULL);
+  	taiType* parent_type_ = NULL, int flags = 0);
   // get taiData rep of type -- delegates to _impl of type, except if readonly and it can't handle ro; bg_color is for striping
-  virtual taiData*	GetDataRepEx(IDataHost* host_, taiData* par, QWidget* gui_parent_, int or_flags_,
-  	taiType* parent_type_ = NULL);
-  // like GetDataRep, but lets us pass in additional flags to or -- used esp. when we want to force a read_only rep
-
   virtual bool		CanBrowse() {return false;} // only things from taBase classes up can be browse nodes
 
-  virtual void		GetImage(taiData* dat, void* base);
+  virtual void		GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void		GetValue(taiData* dat, void* base);
   // get the value from the representation -- same rules as GetDataRep
@@ -112,12 +110,13 @@ public:
   void			Destroy();
   TAQT_TYPE_INSTANCE(taiType, taiTypeBase);
 protected:
-  iColor*		bg_color; // #IGNORE for when a striping bg_color passed in
   virtual bool		isReadOnly(taiData* dat, IDataHost* host_ = NULL); // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
   virtual taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
   // default behavior uses a taiField type
+  virtual taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
+  // default behavior same as GetDataRep_impl
 
-  virtual void		GetImage_impl(taiData* dat, void* base);
+  virtual void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data --  default behavior uses a taiField type
   virtual void		GetValue_impl(taiData* dat, void* base);
   // get the value from the representation --  default behavior uses a taiField type

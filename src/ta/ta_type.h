@@ -916,7 +916,7 @@ public:
   MemberDef*	Clone()		{ return new MemberDef(*this); }
   MemberDef*	MakeToken()	{ return new MemberDef(); }
 
-  void*			GetOff(void* base) const;
+  void*			GetOff(const void* base) const;
   TypeDef* 	GetOwnerType() const
   { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
 
@@ -1173,7 +1173,7 @@ public:
   void 		Register(void* it);
   void 		unRegister(void* it);
 
-  String	GetValStr(void* base, void* par=NULL,
+  String	GetValStr(const void* base, void* par=NULL,
 				  MemberDef* memb_def = NULL) const;
   // get a string representation of value
   void		SetValStr(const String& val, void* base, void* par=NULL,

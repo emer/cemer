@@ -53,7 +53,7 @@ class TA_API taiIntType : public taiType {
 public:
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
+  void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
   bool		handlesReadOnly() { return true; } // uses a RO iSpinBox
 
@@ -67,7 +67,7 @@ public:
   bool		handlesReadOnly() { return true; } // uses a RO iLineEdit w/ enum name
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
+  void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiEnumType, taiType);
@@ -81,71 +81,77 @@ public:
   bool		handlesReadOnly() { return true; } // uses a RO iCheckBox
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 	GetImage_impl(taiData* dat, void* base);
+  void 	GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiBoolType, taiType);
 };
 
+class TA_API taiStringType : public taiType { 
+public:
+  bool		handlesReadOnly() { return true; } 
+  int		BidForType(TypeDef* td);
+  TAQT_TYPE_INSTANCE(taiStringType, taiType);
+};
+
+
 class TA_API taiVariantType : public taiType { 
 public:
-  bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
+  bool		handlesReadOnly() { return true; } 
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
+  void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiVariantType, taiType);
 };
 
+
 class TA_API taiClassType : public taiType {
 public:
+  override bool		allowInline() const; // determine from comment directive
   bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
   int		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
+  void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
   override bool		CanBrowse();
 
   TAQT_TYPE_INSTANCE(taiClassType, taiType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
-class TA_API taiStringType : public taiClassType { //note: inherits handlesReadOnly==true
-public:
-  int		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-  TAQT_TYPE_INSTANCE(taiStringType, taiClassType);
-};
 
 class TA_API taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
 public:
+  bool		allowsInline() const {return true;}
   int 		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
-  void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiMatrixGeomType, taiClassType);
+protected:
+  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
+
 
 class TA_API taiScriptVarType : public taiClassType { 
 INHERITED(taiClassType)
 public:
+  bool		allowsInline() const {return true;}
+  bool		requiresInline() const {return true;}
   bool		handlesReadOnly() { return true; } 
   int		BidForType(TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
-  void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiScriptVarType, taiClassType);
+protected:
+  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
 class TA_API gpiListType : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(gpiListType, taiClassType);
@@ -155,7 +161,7 @@ class TA_API gpiGroupType : public gpiListType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(gpiGroupType, gpiListType);
@@ -165,7 +171,7 @@ class TA_API gpiArray_Type : public taiClassType {
 public:
   int 		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(gpiArray_Type, taiClassType);
@@ -178,7 +184,7 @@ public:
   bool		handlesReadOnly() { return true; } // uses a RO EditButton
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void 		GetImage_impl(taiData* dat, void* base);
+  void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiTokenPtrType, taiType);
@@ -191,7 +197,7 @@ public:
 
    int		BidForType(TypeDef* td);
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, void* base);
+   void		GetImage_impl(taiData* dat, const void* base);
    void		GetValue_impl(taiData* dat, void* base);
 
   void		Initialize();
@@ -202,7 +208,7 @@ class TA_API taiFilePtrType : public taiType {// ptr to tai_getFiles
 public:
    int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, void* base);
+   void		GetImage_impl(taiData* dat, const void* base);
    void  	GetValue_impl(taiData* dat, void* base);
 
   TAQT_TYPE_INSTANCE(taiFilePtrType, taiType);
@@ -228,6 +234,9 @@ protected:
 
 class TA_API taiMember : public taiType {
 public:
+  static  void	EndScript(const void* base);
+        // calling function has to use this function to end script if neccesary
+  
   MemberDef*	mbr;
 
   taiMember* 		sub_types() {return (taiMember*)m_sub_types;}
@@ -241,9 +250,9 @@ public:
 //   // default member action is to pass thru to the type
 //
   override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  	taiType* parent_type_ = NULL);
+  	taiType* parent_type_ = NULL, int flags = 0);
   // get taiData rep of type -- delegates to mbr's it
-  override void		GetImage(taiData* dat, void* base);
+  override void		GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   override void		GetValue(taiData* dat, void* base);
   // get the value from the representation -- same rules as GetDataRep
@@ -252,12 +261,10 @@ public:
         // this is the one to call to get a member value
 //
   // script-generation code
-  virtual void	GetOrigVal(taiData* dat, void* base);
+  virtual void	GetOrigVal(taiData* dat, const void* base);
         // gets original value and adds it to the orig_vals list
-  virtual void	StartScript(void* base);
-  static  void	EndScript(void* base);
-        // calling function has to use this function to end script if neccesary
-  virtual void	CmpOrigVal(taiData* dat, void* base, bool& first_diff);
+  virtual void	StartScript(const void* base);
+  virtual void	CmpOrigVal(taiData* dat, const void* base, bool& first_diff);
         // compares to original value and generates script code to change it
 
   taiMember(MemberDef* mb, TypeDef* td) : taiType(td)	{ mbr = mb; }
@@ -270,7 +277,7 @@ public:
   TypeDef*	GetTypeDef() const {return &TA_taiMember;}
 protected:
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  override void		GetImage_impl(taiData* dat, void* base);
+  override void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   override void		GetValue_impl(taiData* dat, void* base)
    	{ mbr->type->it->GetValue(dat, mbr->GetOff(base)); }
@@ -299,7 +306,7 @@ public:
   override bool	handlesReadOnly() {return true;}
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiROMember, taiMember);
@@ -311,7 +318,7 @@ class TA_API taiTokenPtrMember : public taiMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTokenPtrMember, taiMember);
@@ -324,7 +331,7 @@ public:
 
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
   void		Initialize()	{ tpdflt = NULL; }
 
@@ -336,7 +343,7 @@ class TA_API taiSubTokenPtrMember : public taiMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiSubTokenPtrMember, taiMember);
@@ -347,7 +354,7 @@ class TA_API taiTypePtrMember : public taiMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, void* base);
+   void		GetImage_impl(taiData* dat, const void* base);
    void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTypePtrMember, taiMember);
@@ -359,7 +366,7 @@ public:
   TypeDef*	tmbr; // type for the member
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiMemberDefPtrMember, taiMember);
@@ -370,7 +377,7 @@ class TA_API taiFunPtrMember : public taiMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiFunPtrMember, taiMember);
@@ -394,7 +401,7 @@ public:
   void		Initialize();
 protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
 };
 
 class TypeDefault;
@@ -406,7 +413,7 @@ public:
 
   virtual int	BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
   void		Initialize()	{ tpdflt = NULL; }
   void		Destroy()	{ m_sub_types = NULL; } // prevent from being destroyed
@@ -524,7 +531,7 @@ public:
   // this is responsible for setting arg_base and arg_val (base is parent base)
 
   // base passed here is of the parent object(!)
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   taiArgType(TypeDef* argt, MethodDef* mb, TypeDef* td);
@@ -562,7 +569,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
   virtual void	GetValueFromGF(); // actually get the value from the getfile
 
@@ -586,7 +593,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   void 	Initialize()	{};
@@ -600,7 +607,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   void 	Initialize()	{};
@@ -614,7 +621,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   void 	Initialize()	{};
@@ -628,7 +635,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   void 	Initialize()	{};
@@ -647,7 +654,7 @@ class TA_API taiROListMember: public taiROMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiROListMember, taiROMember);
@@ -659,7 +666,7 @@ class TA_API taiROGroupMember: public taiROMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiROGroupMember, taiROMember);
@@ -671,7 +678,7 @@ class TA_API taiROArrayMember: public taiROMember {
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiROArrayMember, taiROMember);
@@ -682,7 +689,7 @@ class TA_API gpiDefaultEl : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiDefaultEl, taiMember);
@@ -692,7 +699,7 @@ class TA_API gpiLinkGP : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiLinkGP, taiMember);
@@ -702,7 +709,7 @@ class TA_API gpiLinkList : public taiMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiLinkList, taiMember);
@@ -712,11 +719,11 @@ class TA_API gpiFromGpTokenPtrMember : public taiTokenPtrMember {
 public:
   int 		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   virtual MemberDef*	GetFromMd();
-  virtual TABLPtr	GetList(MemberDef* from_md, void* base);
+  virtual TABLPtr	GetList(MemberDef* from_md, const void* base);
 
   TAQT_MEMBER_INSTANCE(gpiFromGpTokenPtrMember, taiTokenPtrMember);
 };
@@ -741,7 +748,7 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_ARGTYPE_INSTANCE(gpiInObjArgType, gpiTAPtrArgType);
@@ -753,11 +760,11 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, void* base);
+  void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
   virtual MemberDef*	GetFromMd();
-  virtual TABLPtr	GetList(MemberDef* from_md, void* base);
+  virtual TABLPtr	GetList(MemberDef* from_md, const void* base);
 
   TAQT_ARGTYPE_INSTANCE(gpiFromGpArgType, taiTokenPtrArgType);
 };

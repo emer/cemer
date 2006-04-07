@@ -76,7 +76,7 @@ public:
   virtual void		SetItemAsHandler(taiData* item, bool set_it = true) = 0; // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
   
   IDataHost() {}
-  virtual ~IDataHost() {}
+  virtual ~IDataHost() {} //
 };
 
 //////////////////////////////////////////////////////////
@@ -84,6 +84,24 @@ public:
 //////////////////////////////////////////////////////////
 
 // NOTE: see ta_qtviewer.h for clipboard handling details.
+/*
+  Use of GetImage_ and GetValue_ (and _impl routines)
+  
+  The GetImage_ and GetValue_ provide a generic way for strongly typed data manipulators to
+  get/set data values in a generic way. Not every subclass of taiData provides the generic
+  implementations. However, every subclass of taiCompData, which is used for all inline
+  editing of compound data, must provide an implementation.
+  
+  taiData classes that take/provide strongly typed atomic data, such as int's, bool's,
+  and strings use "void* base" to refer to the address of an instance of that type,
+    ex.  *((int*)base) is an int reference
+  
+  taiData classes that take/provide pointers to instances of classes, ex. TypeDef* use
+  the void* base pointer to refer to an instance of the class
+    ex.  (TypeDef*)base refers to a TypeDef 
+   
+  taiMember and derived classes use "void* base" to refer to the address of the member
+*/
 
 class TA_API taiData: public QObject {
   // #INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
@@ -102,7 +120,7 @@ public:
     flgNoGroup		= 0x010,  // used typically by menus to include groups of items -- note this is the same as NoList
     flgNoInGroup	= 0x020,  // used by gpiGroupEls
     flgEditOnly		= 0x040,  // used by EditButton
-    flgInline		= 0x080,   // used by members that support INLINE directive, esp. Array
+    flgInline		= 0x080,   // used by types and members that support INLINE directive, esp. Array
     flgEditDialog	= 0x100   // for taiField, enables dialog for EDIT_DIALOG directive
   };
 
@@ -131,6 +149,9 @@ public:
   void			DataChanged(taiData* chld = NULL);
   // indicates something changed in the data from user input, if chld is passed then it called parent->DataChanged(this); ignored if parent or ourself is not fully constructed
 
+  void			GetImage_(const void* base) {GetImage_impl(base);} // base points to value of type
+  void			GetValue_(void* base) const {GetValue_impl(base);} // base points to value of type
+  
 #ifndef __MAKETA__
 signals:
   bool 			settingHighlight(bool setting); // invoked when highlight state changes
@@ -145,7 +166,10 @@ protected:
   virtual void		SetRep(QWidget* val);
   virtual void		ChildAdd(taiData* child) {}
   virtual void		ChildRemove(taiData* child) {}
-  virtual void		DataChanged_impl(taiData* chld) {} // only called if isConstructed;
+  virtual void		DataChanged_impl(taiData* chld) {} // only called if isConstructed
+  virtual void		GetImage_impl(const void* base) {}
+  virtual void		GetValue_impl(void* base) const {} 
+  
 protected slots:
   void 			repChanged(); //signal from rep that data has changed
   virtual void 		repDestroyed(QObject* obj); // available if instance wants to insure its rep member is not invalid -- not connected by default, but class can override SetRep conveniently to connect

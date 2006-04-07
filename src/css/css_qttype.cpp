@@ -86,7 +86,7 @@ taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_paren
     return typ->it->GetDataRep(host_, par, gui_parent);
 }
 
-void cssiType::GetImage(taiData* dat, void* base) {
+void cssiType::GetImage(taiData* dat, const void* base) {
   if (use_it != NULL)
     use_it->GetImage(dat, base);
   else
@@ -116,7 +116,7 @@ taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_par
   return rval;
 }
 
-void cssiROType::GetImage(taiData* dat, void* base) {
+void cssiROType::GetImage(taiData* dat, const void* base) {
   taiField* rval = (taiField*)dat;
   String strval = typ->GetValStr(base);
   rval->GetImage(strval);
@@ -139,7 +139,7 @@ taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_p
   return rval;
 }
 
-void cssiEnumType::GetImage(taiData* dat, void* base) {
+void cssiEnumType::GetImage(taiData* dat, const void* base) {
   taiComboBox* rval = (taiComboBox*)dat;
   int enm_val = *((int*)base);
   for (int i = 0; i < enum_type->enums->size; ++i) {
@@ -190,12 +190,12 @@ taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_
   }
 }
 
-void cssiClassType::GetImage(taiData* dat, void* base) {
+void cssiClassType::GetImage(taiData* dat, const void* base) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
 				 || obj->type_def->HasOption("EDIT_INLINE"))) {
     cssiPolyData* rval = (cssiPolyData*)dat;
-    rval->GetImage(base);
+    rval->GetImage_(base);
   }
 }
 
@@ -205,7 +205,7 @@ void cssiClassType::GetValue(taiData* dat, void* base) {
 	 || obj->type_def->HasOption("EDIT_INLINE")))
   {
     cssiPolyData* rval = (cssiPolyData*)dat;
-    rval->GetValue(base);
+    rval->GetValue_(base);
   }
 }
 

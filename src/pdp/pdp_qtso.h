@@ -42,12 +42,12 @@ public:
 
   void		CmpOrigVal(taiData* dat, void* base, bool& first_diff);
 
-  virtual bool	NoCheckBox(IDataHost* host_); // deterimine if check box should be used
+  virtual bool	NoCheckBox(IDataHost* host_) const; // deterimine if check box should be used
 
   TAQT_MEMBER_INSTANCE(taiSpecMember, taiMember);
 protected:
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  override void		GetImage_impl(taiData* dat, void* base);
+  override void		GetImage_impl(taiData* dat, const void* base);
 };
 
 

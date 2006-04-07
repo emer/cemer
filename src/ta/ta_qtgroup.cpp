@@ -1430,7 +1430,7 @@ return;
     if(nm == "")
       nm = String("[") + String(lf) + "]";
     sub_dat->label = nm;
-    sub_dat->GetImage((void*)sub);
+    sub_dat->GetImage_((void*)sub);
   }
 }
 

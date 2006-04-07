@@ -1292,8 +1292,12 @@ void taiEditDataHost::GetMembDescRep(MemberDef* md, ivMenu* dscm, String indent)
 
 void taiEditDataHost::Constr_Body() {
   taiDataHost::Constr_Body();
-  Constr_Data();
-  Constr_Labels();
+  if (typ && typ->it->requireInline()) {
+    Constr_Inline();
+  } else {
+    Constr_Data();
+    Constr_Labels();
+  }
 }
 
 void taiEditDataHost::Constr_Data() {
@@ -1302,6 +1306,16 @@ void taiEditDataHost::Constr_Data() {
 
 void taiEditDataHost::Constr_Labels() {
   Constr_Labels_impl(typ->members, &data_el);
+}
+
+void taiEditDataHost::Constr_Inline() {
+  data_el.Reset(); // should already be clear
+  // specify inline flag, just to be sure
+  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
+  data_el.Add(mb_dat);
+  QWidget* rep = mb_dat->GetRep();
+  bool fill_hor = mb_dat->fillHor();
+  AddData(0, rep, fill_hor);
 }
 
 void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl) {
@@ -1560,9 +1574,25 @@ void taiEditDataHost::GetButtonImage() {
 
 void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
-  GetImage_impl(typ->members, data_el, cur_base);
+  if (typ->it->requireInline()) {
+    GetImageInline_impl(cur_base);
+  } else {
+    GetImage_impl(typ->members, data_el, cur_base);
+  }
   GetButtonImage();
   Unchanged();
+}
+
+void taiEditDataHost::GetImageInline_impl(const void* base) {
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetImage(mb_dat, base);
+}
+
+void taiEditDataHost::GetValueInline_impl(void* base) const {
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetValue(mb_dat, base);
 }
 
 void taiEditDataHost::GetImage_impl(const MemberSpace& ms, const taiDataList& dl,

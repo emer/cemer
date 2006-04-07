@@ -114,6 +114,8 @@ protected slots:
 protected:
   iLineEdit*		leText;
   QToolButton*		btnEdit; // if requested, button to invoke dialog editor
+  override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
+  override void		GetValue_impl(void* base) const {*((String*)base) = GetValue();} 
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
@@ -272,8 +274,10 @@ public:
   void 			GetImage(const MatrixGeom* arr);
   void 			GetValue(MatrixGeom* arr) const;
 
-/*TODO protected:
-  override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
+protected:
+  override void		GetImage_impl(const void* base) {GetImage((const MatrixGeom*)base);}
+  override void		GetValue_impl(void* base) const {GetValue((MatrixGeom*)base);} 
+/*TODO  override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler */
 private:
@@ -298,12 +302,11 @@ public:
   taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiPolyData();
 
-  void  	GetImage(void* base);
-  void	 	GetValue(void* base);
-
 protected:
-  virtual void	Constr(QWidget* gui_parent_);
-  virtual bool	ShowMember(MemberDef* md);
+  virtual void		Constr(QWidget* gui_parent_);
+  override void		GetImage_impl(const void* base);
+  override void		GetValue_impl(void* base) const; 
+  virtual bool		ShowMember(MemberDef* md) const;
 };
 
 //////////////////////////
@@ -405,7 +408,7 @@ public:
 
   void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
   virtual void  	GetImage(const ScriptVar* var);
-  virtual void	 	GetValue(ScriptVar* var);
+  virtual void	 	GetValue(ScriptVar* var) const;
 
 protected:
   int			m_changing; // used to prevent recursions
@@ -428,12 +431,14 @@ public:
   ~taiScriptVar();
 
   virtual void  	GetImage(const ScriptVar* var);
-  virtual void	 	GetValue(ScriptVar* var);
+  virtual void	 	GetValue(ScriptVar* var) const;
 
 protected:
   taiVariant*		vfVariant;
   
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  override void		GetImage_impl(const void* base) {GetImage((const ScriptVar*)base);}
+  override void		GetValue_impl(void* base) const {GetValue((ScriptVar*)base);} 
   taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
@@ -447,7 +452,7 @@ public:
   ~taiEnumScriptVar();
 
   void  		GetImage(const ScriptVar* var); // override
-  void	 		GetValue(ScriptVar* var); // override
+  void	 		GetValue(ScriptVar* var) const; // override
 
 protected:
   taiTypeHier*		thEnumType;
@@ -467,7 +472,7 @@ public:
     QWidget* gui_parent_, int flags = 0);
 
   void  		GetImage(const ScriptVar* var); // override
-  void	 		GetValue(ScriptVar* var); // override
+  void	 		GetValue(ScriptVar* var) const; // override
   ~taiObjectScriptVar();
 
 protected:
@@ -850,12 +855,13 @@ public:
 
   virtual void	GetMethMenus();
 
-  virtual void	GetImage(void* base);
   virtual void	SetLabel();
 
 public slots:
   virtual void	Edit();		// edit callback
   void setRepLabel(const char* label);
+protected:
+  override void		GetImage_impl(const void* base); 
 };
 
 
@@ -1021,7 +1027,7 @@ public:
   virtual void	UpdateMenu(taiMenuAction* actn = NULL);
   virtual void	GetMenuImpl(void* base, taiMenuAction* actn = NULL);
 
-  virtual void	GetImage(void* ths, void* sel=NULL);
+  virtual void	GetImage(const void* ths, void* sel=NULL);
   virtual void*	GetValue();
 
   taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
@@ -1048,8 +1054,8 @@ public:
   override QWidget* GetRep();
 
 
-  virtual void		GetMenu(void* base);
-  virtual void 		GetImage(void* base, bool get_menu = true, void* cur_sel = NULL);
+  virtual void		GetMenu(const void* base);
+  virtual void 		GetImage(const void* base, bool get_menu = true, void* cur_sel = NULL);
   virtual MemberDef*	GetValue();
 
   taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_,

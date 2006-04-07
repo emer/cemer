@@ -1885,7 +1885,7 @@ bool MemberDef::CheckList(const String_PArray& lst) const {
   return false;
 }
 
-void* MemberDef::GetOff(void* base) const {
+void* MemberDef::GetOff(const void* base) const {
   void* rval = addr;
   if (!is_static)
     rval = (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
@@ -2812,7 +2812,8 @@ void TypeDef::unRegister(void* it) {
 // 	Get/SetValStr		//
 //////////////////////////////////
 
-String TypeDef::GetValStr(void* base, void*, MemberDef* memb_def) const {
+String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
+  void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;

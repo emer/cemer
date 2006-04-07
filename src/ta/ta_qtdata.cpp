@@ -822,7 +822,7 @@ taiPolyData::~taiPolyData() {
   data_el.Reset();
 }
 
-bool taiPolyData::ShowMember(MemberDef* md) {
+bool taiPolyData::ShowMember(MemberDef* md) const {
   if (md->HasOption("HIDDEN_INLINE"))
     return false;
   else
@@ -847,7 +847,7 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
   EndLayout();
 }
 
-void taiPolyData::GetImage(void* base) {
+void taiPolyData::GetImage_impl(const void* base) {
 //NN??  cur_base = base;
   int cnt = 0;
   for (int i = 0; i < typ->members.size; ++i) {
@@ -859,7 +859,7 @@ void taiPolyData::GetImage(void* base) {
   }
 }
 
-void taiPolyData::GetValue(void* base) {
+void taiPolyData::GetValue_impl(void* base) const {
   ostream* rec_scrpt = taMisc::record_script; // don't record script stuff now
   taMisc::record_script = NULL;
   bool first_diff = true;
@@ -1188,7 +1188,7 @@ void taiScriptVarBase::GetImage(const ScriptVar* var) {
   fldName->GetImage(var->name);
 }
 
-void taiScriptVarBase::GetValue(ScriptVar* var) {
+void taiScriptVarBase::GetValue(ScriptVar* var) const {
   var->name = fldName->GetValue();
 }
   
@@ -1226,7 +1226,7 @@ void taiScriptVar::GetImage(const ScriptVar* var) {
   vfVariant->GetImage(var->value);
 }
 
-void taiScriptVar::GetValue(ScriptVar* var) {
+void taiScriptVar::GetValue(ScriptVar* var) const {
   inherited::GetValue(var);
   vfVariant->GetValue(var->value);
 }
@@ -1286,7 +1286,7 @@ void taiEnumScriptVar::GetImage(const ScriptVar* var_) {
   cboEnumValue->GetEnumImage(var->value.toInt());
 }
 
-void taiEnumScriptVar::GetValue(ScriptVar* var_) {
+void taiEnumScriptVar::GetValue(ScriptVar* var_) const {
   inherited::GetValue(var_);
   EnumScriptVar* var = (EnumScriptVar*)var_;
   var->enum_type = thEnumType->GetValue();
@@ -1364,7 +1364,7 @@ void taiObjectScriptVar::GetImage(const ScriptVar* var_) {
   }
 }
 
-void taiObjectScriptVar::GetValue(ScriptVar* var_) {
+void taiObjectScriptVar::GetValue(ScriptVar* var_) const {
   inherited::GetValue(var_);
   ObjectScriptVar* var = (ObjectScriptVar*)var_;
   var->val_type = thValType->GetValue(); 
@@ -2263,8 +2263,8 @@ void taiEditButton::GetMethMenus() {
   }
 }
 
-void taiEditButton::GetImage(void* base) {
-  cur_base = base;
+void taiEditButton::GetImage_impl(const void* base) {
+  cur_base = (void*)base; //ok to deconstify
   SetLabel();
   GetMethMenus();
 }
@@ -2289,7 +2289,7 @@ void taiEditButton::Edit() {
     ie->typ = typ;
     ie->Edit(cur_base, false, bgclr);
   }
-  GetImage(cur_base);
+  GetImage_impl(cur_base);
 }
 
 void taiEditButton::setRepLabel(const char* label) {
@@ -3063,13 +3063,13 @@ void taiSubToken::Edit() {
   gc->Edit(cur_base, false, bgclr);
 }
 
-void taiSubToken::GetImage(void* ths, void* sel) {
+void taiSubToken::GetImage(const void* ths, void* sel) {
   if (menubase != ths) {
-    menubase = ths;
+    menubase = (void*)ths;
     UpdateMenu();
   }
   if (sel == NULL)
-    sel = ths;
+    sel = (void*)ths;
   if (!(ta_actions->GetImageByData(Variant(sel))))
     ta_actions->GetImageByData(Variant(ths));
 }
@@ -3150,8 +3150,8 @@ MemberDef* taiMemberDefMenu::GetValue() {
     return (MemberDef*)(cur->usr_data.toPtr());
 }
 
-void taiMemberDefMenu::GetImage(void* base, bool get_menu, void* cur_sel){
-  menubase = base;
+void taiMemberDefMenu::GetImage(const void* base, bool get_menu, void* cur_sel){
+  menubase = (void*)base; // ok
   if (typ == NULL)  return;
   if (get_menu)
     GetMenu(base);
@@ -3189,8 +3189,8 @@ void taiMemberDefMenu::GetTarget() {
   }
 }
 
-void taiMemberDefMenu::GetMenu(void* base) {
-  menubase = base;
+void taiMemberDefMenu::GetMenu(const void* base) {
+  menubase = (void*)base; // ok
   ta_actions->Reset();
   if (targ_typ == NULL) {
     GetTarget();
