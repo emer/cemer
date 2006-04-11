@@ -24,6 +24,11 @@
 #include "pdp_def.h"
 #include "pdp_TA_type.h"
 
+// forwards
+
+class Program;
+
+
 class PDP_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
@@ -187,6 +192,29 @@ private:
 };
 
 
+class PDP_API ProgramCallEl: public ProgEl { 
+  // ProgEl to invoke another program
+INHERITED(ProgEl)
+public:
+  Program*		target; // the program to be called
+  UserScriptEl		fail_el; // what to do if can't compile or run--default is cerr and Stop
+  
+  void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const ProgramCallEl& cp);
+  COPY_FUNS(ProgramCallEl, ProgEl);
+  TA_BASEFUNS(ProgramCallEl);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+
 class PDP_API Program: public taNBase, public AbstractScriptBase {
   // #VIRT_BASE #HIDDEN #NO_INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
@@ -258,7 +286,6 @@ public:
   override const String	scriptString();
     
   void	UpdateAfterEdit();
-  void	ChildUpdateAfterEdit(TAPtr child, bool& handled);
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgElProgram& cp);

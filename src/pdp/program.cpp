@@ -254,6 +254,63 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 }
 
 
+//////////////////////////
+//  ProgramCallEl	//
+//////////////////////////
+
+void ProgramCallEl::Initialize() {
+  target = NULL;
+}
+
+
+void ProgramCallEl::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(fail_el, this);
+  if (!taMisc::is_loading) {
+    fail_el.user_script = "cerr << \"Program Call failed--Stopping\\n\";ths->Stop();\n";
+  }
+}
+
+void ProgramCallEl::CutLinks() {
+  taBase::DelPointer((taBase**)&target);
+  inherited::CutLinks();
+}
+
+void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
+  taBase::SetPointer((taBase**)&target, cp.target);
+}
+
+void ProgramCallEl::UpdateAfterEdit() {
+  //TODO: 
+  inherited::UpdateAfterEdit();
+}
+
+const String ProgramCallEl::GenCssBody_impl(int indent_level) {
+  if (!target) return _nilString;
+  String rval(200, 0, '\0');
+  rval += cssMisc::Indent(indent_level);
+  rval += "{Bool call_succeeded = false;\n";
+  rval += cssMisc::Indent(indent_level);
+  rval += "Program target = ";
+  rval += target->GetPath();
+  rval += ";\n";
+  rval += "if (target->Compile()) {\n"; ++indent_level;
+  //TODO:  set args
+  rval += cssMisc::Indent(indent_level);
+  rval += "call_succeeded = target->Run();\n";
+  --indent_level;
+  rval += cssMisc::Indent(indent_level);
+  rval += "}\n";
+  rval += cssMisc::Indent(indent_level);
+  rval += "if (!call_succeeded) {\n";
+  rval += fail_el.GenCss(indent_level + 1);
+  rval += cssMisc::Indent(indent_level);
+  rval += "}}\n";
+  
+  return rval;
+}
+
+
 
 //////////////////////////
 //  Program		//
@@ -287,7 +344,6 @@ void Program::Copy_(const Program& cp) {
 }
 
 void Program::UpdateAfterEdit() {
-  script_compiled = false; // have to assume user changed something
   setDirty(true);
   inherited::UpdateAfterEdit();
 }
@@ -323,6 +379,7 @@ void Program::ScriptCompiled() {
 void Program::setDirty(bool value) {
   if (m_dirty == value) return;
   m_dirty = value;
+  script_compiled = false; // have to assume user changed something
   DirtyChanged_impl();
 }
 
@@ -416,15 +473,6 @@ void ProgElProgram::Copy_(const ProgElProgram& cp) {
 void ProgElProgram::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
-
-void ProgElProgram::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled && child->InheritsFrom(&TA_ProgEl)) {
-    m_dirty = true;
-    handled = true;
-    UpdateAfterEdit();
-  }
-  inherited::ChildUpdateAfterEdit(child, handled);
-} 
 
 const String ProgElProgram::scriptString() {
   if (m_dirty) {
