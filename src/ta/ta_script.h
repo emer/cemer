@@ -143,12 +143,14 @@ public:
   virtual const String	scriptFilename() {return _nilString;} // override this
   virtual const String	scriptString() {return _nilString;} // override this
   
-  virtual bool	HasScript() {return (scriptSource() != NoScript);}
+  virtual bool		HasScript() {return (scriptSource() != NoScript);}
   // returns true if we have some kind of script file or string to run
-  virtual bool  RunScript();
+  virtual bool  	RunScript();
   // run the script (returns false for no scr)
-  virtual bool	CompileScript(bool force = false);
+  virtual bool		CompileScript(bool force = false);
   // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
+  virtual void  	StopScript();
+  // stops the running script
   virtual void	InteractScript();
   // #MENU #LABEL_Interact change to this shell in script (terminal) window to interact, debug etc script
 

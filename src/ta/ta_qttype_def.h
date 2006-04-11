@@ -84,10 +84,10 @@ TypeDef*	GetTypeDef() const {return &TA_##x; }
 class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
-  virtual bool		allowsInline() const {return false;}
+  virtual bool		allowsInline() const {return false;} // the type allows inline reps, obtained GetDataRepInline
+  virtual bool		requiresInline() const {return false;} // only inline reps allowed, no member-by-member reps
   virtual bool		handlesReadOnly() { return false; } // for types like taiString and taiInt whose editors handle readOnly
   virtual bool		isCompound() const {return false;} // true if requires multiple edit fields
-  virtual bool		requiresInline() const {return false;}
   taiType* 		sub_types() {return (taiType*)m_sub_types;}
   taiType** 		addr_sub_types() {return (taiType**)&m_sub_types;}
 

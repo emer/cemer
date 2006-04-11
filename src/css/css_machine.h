@@ -1363,10 +1363,10 @@ public:
   { st_list_ln = list_ln; st_src_ln = src_ln; return src_ln; }
   void		RestoreListStart(int old_src_ln)
   { src_ln = old_src_ln; list_ln = st_list_ln; }
-  int		CompileLn(istream& fh = cin);	// parse next line of stream
-  void 		Compile(istream& fh = cin);	// parse a stream and produce a program
-  void 		Compile(const char* fname);	// parse a file and produce a program
-  void 		CompileCode(const String& code);// parse a string and produce a program
+  int		CompileLn(istream& fh = cin, bool* err = NULL);	// parse next line of stream, set optional err if error
+  bool 		Compile(istream& fh = cin);	// parse a stream and produce a program, 'true' if successful
+  bool 		Compile(const char* fname);	// parse a file and produce a program, 'true' if successful
+  bool 		CompileCode(const String& code);// parse a string and produce a program, 'true' if successful
   void		Include(const char* fname);	// include a file
   void		CompileRunClear(const char* fname); // compile a file, run, then clearall
   void 		reCompile();			// parse same file and produce a program
@@ -1387,6 +1387,7 @@ public:
   cssEl* 	Cont(css_progdx st);
   cssEl* 	ContSrc(int srcln);
   cssEl*	Run();
+  void		Stop(); // can be called from inside or outside a program to cause it to stop
   void		SetCont(int it=-1)	{ cont_pending = true; cont_here = it; }
   void		EndRunPop()		{ Prog()->EndRunPop(); }
 

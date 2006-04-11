@@ -267,7 +267,7 @@ void ProgramCallEl::InitLinks() {
   inherited::InitLinks();
   taBase::Own(fail_el, this);
   if (!taMisc::is_loading) {
-    fail_el.user_script = "cerr << \"Program Call failed--Stopping\\n\";ths->Stop();\n";
+    fail_el.user_script = "cerr << \"Program Call failed--Stopping\\n\";\nthis->StopScript();\n";
   }
 }
 
@@ -294,7 +294,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += "Program target = ";
   rval += target->GetPath();
   rval += ";\n";
-  rval += "if (target->Compile()) {\n"; ++indent_level;
+  rval += "if (target->CompileScript()) {\n"; ++indent_level;
   //TODO:  set args
   rval += cssMisc::Indent(indent_level);
   rval += "call_succeeded = target->Run();\n";

@@ -3409,7 +3409,7 @@ int cssProgSpace::GetFile(fstream& fh, const char* fname) {
 }
 
 // this compiles one line of code, does not allow for run-last type shell execution
-int cssProgSpace::CompileLn(istream&) {
+int cssProgSpace::CompileLn(istream&, bool* err) {
   Prog()->MarkParseStart();
   int old_src_ln = MarkListStart();
   if(step_mode > 0)		// this is needed to get blank lines
@@ -3423,7 +3423,8 @@ int cssProgSpace::CompileLn(istream&) {
 
   parsing_command = false;
 
-  if(retval == cssProg::YY_Err) { // remove source code associated with errors
+  if (retval == cssProg::YY_Err) { // remove source code associated with errors
+    if (err) *err = true;
     RestoreListStart(old_src_ln);
     Prog()->ZapLastParse();
   }
@@ -3434,7 +3435,8 @@ int cssProgSpace::CompileLn(istream&) {
 }
 
 // this just does compiling, no shell-style execution
-void cssProgSpace::Compile(istream& fh) {
+bool cssProgSpace::Compile(istream& fh) {
+  bool err = false;
   istream* old_fh = fin;
   fin = &fh;
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
@@ -3442,41 +3444,43 @@ void cssProgSpace::Compile(istream& fh) {
   state &= ~cssProg::State_Shell;
   external_exit = false;	// don't exit!
 
-  while((CompileLn(fh) != cssProg::YY_Exit) && !external_exit);
+  while ((CompileLn(fh, &err) != cssProg::YY_Exit) && !external_exit);
 
   state = old_state;
   fin = old_fh;
   cssMisc::PopCurTop(old_top);
+  return !err;
 }
 
-void cssProgSpace::Compile(const char* fname) {
+bool cssProgSpace::Compile(const char* fname) {
+  bool rval = false;
   String fnm = fname;
-  if(fnm == "-") {
-    Compile(*fin);
-  }
-  else {
+  if (fnm == "-") {
+    rval = Compile(*fin);
+  }  else {
     fstream fh;
     if(!GetFile(fh, fname)) {
       if(!((fnm.length() > 1) && (fnm[0] == '.') && (!fnm.contains('/')))) {
 	cssMisc::Warning(Prog(), "File Not Found:",fname); // don't complain about . files..
       }
-      return;
+      return rval;
     }
     // make sure directory is in include path
     String dir = taPlatform::getFilePath(fnm);
     if(!dir.empty())
       taMisc::include_paths.AddUnique(dir);
     SetName(fname);
-    Compile(fh);
+    rval = Compile(fh);
     fh.close(); fh.clear();
   }
+  return rval;
 }
 
-void cssProgSpace::CompileCode(const String& code) {
+bool cssProgSpace::CompileCode(const String& code) {
   stringstream fh;
   fh << code << endl;
   fh.seekg(0, ios::beg);
-  Compile(fh);
+  return Compile(fh);
 }
 
 void cssProgSpace::Include(const char* fname) {
@@ -3647,12 +3651,18 @@ cssEl* cssProgSpace::Run() {
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
   state |= cssProg::State_Run;
   Restart();
+  external_exit = false; // NOTE: added 4/11/06 to support Stop()
   cssEl* rval = Cont();
   state &= ~cssProg::State_Run;
   cssMisc::PopCurTop(old_top);
   return rval;
 }
 
+void cssProgSpace::Stop() {
+//NOTE: added 4/11/06 to support stopping when a program call fails
+// this implementation may have side-effects, and needs to be validated
+  external_exit = true;
+}
 
 //////////////////////////////////////////////////
 // 	cssProgSpace:   Shell Commands		//

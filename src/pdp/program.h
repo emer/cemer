@@ -197,7 +197,7 @@ class PDP_API ProgramCallEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   Program*		target; // the program to be called
-  UserScriptEl		fail_el; // what to do if can't compile or run--default is cerr and Stop
+  UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
   
   void	UpdateAfterEdit();
   void	InitLinks();

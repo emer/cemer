@@ -245,20 +245,23 @@ bool AbstractScriptBase::CompileScript(bool force) {
 }
 
 bool AbstractScriptBase::CompileScript_impl() {
+  bool rval = false;
   script->ClearAll();
   switch (scriptSource()) {
   case NoScript: return false; //nothing to do
   case ScriptString:
-    script->CompileCode(scriptString());
+    rval = script->CompileCode(scriptString());
     break;
   case ScriptFile:
-    script->Compile(scriptFilename());
+    rval = script->Compile(scriptFilename());
     break;
   default: break;// shouldn't happen
   }
-  script_compiled = true;
-  ScriptCompiled();
-  return true;
+  if (rval) {
+    script_compiled = true;
+    ScriptCompiled();
+  }
+  return rval;
 }
 
 bool AbstractScriptBase::DoCompileScript() {
@@ -283,6 +286,11 @@ bool AbstractScriptBase::RunScript() {
 void AbstractScriptBase::InteractScript() {
   if (!CompileScript()) return;
   cssMisc::next_shell = script;
+}
+
+void AbstractScriptBase::StopScript() {
+  if (script)
+    script->Stop();
 }
 
 

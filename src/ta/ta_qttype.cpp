@@ -362,8 +362,12 @@ int taiClassType::BidForType(TypeDef* td) {
   return 0;
 }
 
-bool taiClassType::allowsInline() const {
-  return (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"));
+taiData* taiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  taiType* parent_type_, int flags_) 
+{
+  if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
+    flags_ |= taiData::flgInline;
+  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_); 
 }
 
 taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {

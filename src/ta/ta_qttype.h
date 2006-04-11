@@ -111,10 +111,13 @@ public:
 
 
 class TA_API taiClassType : public taiType {
+INHERITED(taiType)
 public:
-  override bool		allowsInline() const; // determine from comment directive
+  bool		allowsInline() const {return true;}
   bool		handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
   int		BidForType(TypeDef* td);
+  override taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  	taiType* parent_type_ = NULL, int flags = 0); // add in req for inline
   void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
   override bool		CanBrowse();
@@ -128,7 +131,7 @@ protected:
 
 class TA_API taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
 public:
-  bool		allowsInline() const {return true;}
+  bool		requiresInline() const {return true;}
   int 		BidForType(TypeDef* td);
 
   TAQT_TYPE_INSTANCE(taiMatrixGeomType, taiClassType);
@@ -140,7 +143,6 @@ protected:
 class TA_API taiScriptVarType : public taiClassType { 
 INHERITED(taiClassType)
 public:
-  bool		allowsInline() const {return true;}
   bool		requiresInline() const {return true;}
   bool		handlesReadOnly() { return true; } 
   int		BidForType(TypeDef* td);
@@ -153,6 +155,7 @@ protected:
 
 class TA_API gpiListType : public taiClassType {
 public:
+  bool		allowsInline() const {return false;}
   int 		BidForType(TypeDef* td);
   TAQT_TYPE_INSTANCE(gpiListType, taiClassType);
 protected:
@@ -171,6 +174,7 @@ protected:
 
 class TA_API gpiArray_Type : public taiClassType {
 public:
+  bool		allowsInline() const {return false;}
   int 		BidForType(TypeDef* td);
   TAQT_TYPE_INSTANCE(gpiArray_Type, taiClassType);
 protected:
