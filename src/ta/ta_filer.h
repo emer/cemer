@@ -37,7 +37,8 @@ enum FilerOperation {
 
 // A subclass in this library will implement the GetFileName method
 
-TA_API taFiler* taFiler_CreateInstance(const String& dir = ".", const String& filter = "", bool compress = false); // creates instance
+#define taFiler_CreateInstance(dir, filt, comp) \
+  taFiler::New(dir, filt, comp)
 
 //////////////////////////////////
 // 	taFiler		//
@@ -58,6 +59,8 @@ public:
   static String	last_fname;	// last file name processed
   static String	last_dir;	// last directory name processed
 
+  static taFiler* 	New(const String& dir = ".", const String& filter = "", bool compress = false); // creates instance
+  
   String	filter;
   String	dir;
   String	fname;
@@ -79,7 +82,6 @@ public:
   virtual ostream* 	open_append();
   virtual bool		open_write_exist_check(); // returns true if file already exists for writing
 
-  void			Init(const String& dir_ = ".", const String& filter_ = "", bool compress_ = false); // same as constructor
   virtual istream*	Open(const char* nm = NULL, bool no_dlg = false);
   // to get a file for reading (already exists)
   virtual ostream*	Save(const char* nm = NULL, bool no_dlg = false);
@@ -93,18 +95,18 @@ public:
   virtual void		AutoOpen();		// auto-open a file based on mode
   virtual bool		IsOpen();		// check if file is open
 
-  virtual bool		GetFileName(String& fname, FilerOperation filerOperation) = 0; // gui-dependent routine to get filename from user
+  virtual bool		GetFileName(String& fname, FilerOperation filerOperation); // gui-dependent routine to get filename from user
   virtual void		FixFileName(); // make sure suffix is right
   virtual void		GetDir();      // get directory from file name
 
 
   virtual taFiler& operator=(const taFiler& cp); // copy operator used extensively in src/pdp files (copies very few props)
 protected:
-  taFiler();
-  virtual ~taFiler();
   taFiler(const String& dir_, const String& filter_, bool compress_);
+  virtual ~taFiler();
 private:
   taFiler(const taFiler& cp); // #IGNORE copy construction not allowed
+  void	Init(const String& dir_ = ".", const String& filter_ = "", bool compress_ = false); // same as constructor
 };
 
 

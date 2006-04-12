@@ -1971,24 +1971,11 @@ int taiEnumDialog::GetEnum(TypeDef* td, const char* prompt, int init_vl,
 */
 
 //////////////////////////////////
-// 	taFiler_impl		//
+// 	taFiler		//
 //////////////////////////////////
 
-class taFiler_impl : public taFiler {
-public:
-  override bool	GetFileName(String& fname, FilerOperation filerOperation);
 
-  taFiler_impl(const String& dir_, const String& filter_, bool compress_);
-  ~taFiler_impl() {}
-};
-
-taFiler_impl::taFiler_impl(const String& dir_, const String& filter_, bool compress_) :
-  taFiler(dir_, filter_, compress_)
-{
-  //does nothing
-}
-
-bool taFiler_impl::GetFileName(String& fname, FilerOperation filerOperation) {
+bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
@@ -2032,7 +2019,4 @@ exit:
   return result; 
 }
 
-taFiler* taFiler_CreateInstance(const String& dir, const String& filter, bool compress) {
-  return new taFiler_impl(dir, filter, compress);
-}
 

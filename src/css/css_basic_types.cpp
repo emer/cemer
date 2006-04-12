@@ -98,7 +98,7 @@ void cssString::deReferenced() {
 cssString::operator ostream*() const {
   cssString* ths = (cssString*)this;
   if(ths->gf == NULL) {
-    ths->gf = taFiler_CreateInstance();
+    ths->gf = taFiler::New();
     taRefN::Ref(ths->gf);
   }
   ths->gf->fname = val;
@@ -129,7 +129,7 @@ cssString::operator ostream*() const {
 cssString::operator istream*() const {
   cssString* ths = (cssString*)this;
   if(ths->gf == NULL) {
-    ths->gf = taFiler_CreateInstance();
+    ths->gf = taFiler::New();
     taRefN::Ref(ths->gf);
   }
   ths->gf->fname = val;

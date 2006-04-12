@@ -270,7 +270,7 @@ void gzstreambase::close() {
 // 	taFiler		//
 //////////////////////////////////
 
-#if (defined(WIN32) && (!defined(CYGWIN)))
+#ifdef TA_OS_WIN
 
 #else
 #include <sys/stat.h>
@@ -281,43 +281,33 @@ int taFiler::buf_size = 1016;
 String taFiler::last_fname;
 String taFiler::last_dir;
 
-taFiler::taFiler() {
-  ifstrm = NULL;
-  iofbuf = NULL;
-//obs  compress_pid = 0;
-  ofstrm = NULL;
-  fstrm = NULL;
-  istrm = NULL;
-  ostrm = NULL;
-  compress = false;
-  open_file = false;
-  select_only = false;
-  file_selected = false;
-  mode = NO_AUTO;
+taFiler* taFiler::New(const String& dir, const String& filter, bool compress) {
+  return new taFiler(dir, filter, compress);
 }
 
 taFiler::taFiler(const String& dir_, const String& filter_, bool compress_) {
   Init(dir_, filter_, compress_);
-  ifstrm = NULL;
-  iofbuf = NULL;
-//obs  compress_pid = 0;
-  ofstrm = NULL;
-  fstrm = NULL;
-  istrm = NULL;
-  ostrm = NULL;
-  open_file = false;
-  select_only = false;
-  file_selected = false;
-}
-
-taFiler::~taFiler() {
-  Close();
 }
 
 void taFiler::Init(const String& dir_, const String& filter_, bool compress_) {
   dir = dir_;
   filter = filter_;
   compress = compress_;
+  ifstrm = NULL;
+  iofbuf = NULL;
+//obs  compress_pid = 0;
+  ofstrm = NULL;
+  fstrm = NULL;
+  istrm = NULL;
+  ostrm = NULL;
+  open_file = false;
+  select_only = false;
+  file_selected = false;
+  mode = NO_AUTO;
+}
+
+taFiler::~taFiler() {
+  Close();
 }
 
 taFiler& taFiler::operator=(const taFiler& cp) {
@@ -538,12 +528,12 @@ ostream* taFiler::Save(const char* nm, bool no_dlg) {
 
 ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
   file_selected = false;
-  if(nm != NULL) {
+  if (nm != NULL) {
     fname = nm;
     file_selected = true;
   }
 #ifdef TA_NO_GUI
-  if(no_dlg) {
+  if (no_dlg) {
     return open_write();
   } else {
     taMisc::Error("FileSaveAs: dialog not allowed in no-gui version of this program.");
@@ -671,25 +661,11 @@ void taFiler::Close() {
 
 #ifdef TA_NO_GUI
 
-//////////////////////////////////
-// 	taFiler_impl		//
-//////////////////////////////////
+//////////////////////////
+//   taFiler		//
+//////////////////////////
 
-class taFiler_impl : public taFiler {
-public:
-  override bool	GetFileName(String& fname, FilerOperation filerOperation);
-
-  taFiler_impl(const String& dir_, const String& filter_, bool compress_);
-  ~taFiler_impl() {}
-};
-
-taFiler_impl::taFiler_impl(const String& dir_, const String& filter_, bool compress_)
-:  taFiler(dir_, filter_, compress_)
-{
-  //does nothing
-}
-
-bool taFiler_impl::GetFileName(String& fname, FilerOperation filerOperation) {
+bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
   bool result = false;
  /*  TODO: implement, except maybe it isn't even called in TA_NO_GUI version!!!
   chooser->style()->attribute("filter", "on");
