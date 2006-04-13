@@ -55,6 +55,8 @@
 //#include <sstream>
 #include <time.h>
 
+#include <QDir>
+#include <ta_plugin.h>
 
 #ifdef TA_GUI
 #define pdp_bitmap_width 64
@@ -183,6 +185,12 @@ int pdpMisc::Main(int argc, char *argv[]) {
     ta_Init_pdp();		// always has to be first */
   // initialize type system for us, followed by the various clients, ex. bp, leabra, etc.
   ta_Init_pdp();
+
+  // load plugin system
+  const QString& localdir = QDir::homeDirPath() + "/pdp++/plugins" ;
+  taPlugins::AddPluginFolder(localdir);
+  taPlugins::LoadPlugins();
+
   taPtrList_impl* ihl = initHookList();
   for (int i = 0; i < ihl->size; ++i) {
     init_proc_t ip = (init_proc_t)ihl->FastEl_(i);
@@ -242,6 +250,10 @@ int pdpMisc::Main(int argc, char *argv[]) {
    cssiSession::WaitProc = pdpMisc::WaitProc;
 #endif
 
+
+   // initialize plugins
+   taPlugins::InitPlugins();
+
 #if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
 #endif
@@ -280,6 +292,10 @@ int pdpMisc::Main(int argc, char *argv[]) {
       break;
     }
   }
+
+  // Initialize plugin system
+  taPlugins::InitPlugins();
+
 
   root->LoadConfig();
 
