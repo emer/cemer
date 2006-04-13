@@ -197,6 +197,7 @@ class PDP_API ProgramCallEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   Program*		target; // the program to be called
+  ScriptVar_List	global_args; // arguments to the global program--copied to prog before call
   UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
   
   void	UpdateAfterEdit();
@@ -207,8 +208,11 @@ public:
   TA_BASEFUNS(ProgramCallEl);
 
 protected:
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-
+  Program*		old_target; // the last target, used to detect changes
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+  virtual void		UpdateGlobalArgs(); // called when target changed
 private:
   void	Initialize();
   void	Destroy()	{}

@@ -412,6 +412,7 @@ public:
 
 protected:
   int			m_changing; // used to prevent recursions
+  taiToggle*		tglIgnore;
   taiField*		fldName;
   
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
@@ -435,7 +436,7 @@ public:
   void  		GetImage(const ScriptVar* var);
   void	 		GetValue(ScriptVar* var) const;
 
-protected:
+protected: 
   taiVariant*		vfVariant;
   
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override

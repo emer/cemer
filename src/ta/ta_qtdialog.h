@@ -422,7 +422,7 @@ public:
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   void			GetImage(); //override
   void			GetValue(); //override
-  virtual bool		ShowMember(MemberDef* md);
+  virtual bool		ShowMember(MemberDef* md) const;
   virtual void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
 //obs  virtual QWidget* 	GetNameRep(MemberDef* md, QWidget* dataWidget);	// returns one name item (typically a label)
   virtual void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
@@ -455,10 +455,10 @@ protected:
   override void		Constr_Final();
   override void		FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
-  virtual void		GetImageInline_impl(const void* base);
-  virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
-  virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
+  virtual void		GetImageInline_impl(const void* base);
+  virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base) const;
+  virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetButtonImage();
   void			AddMethButton(taiMethodData* mth_rep, const char* label = NULL);
     // uses mth's label, if no label passed

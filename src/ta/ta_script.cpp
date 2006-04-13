@@ -33,7 +33,12 @@
 //   ScriptVar		//
 //////////////////////////
 
+void ScriptVar::Initialize() {
+  ignore = false;
+}
+
 void ScriptVar::Copy_(const ScriptVar& cp) {
+  ignore = cp.ignore;
   value = cp.value;
 }
 
@@ -44,6 +49,16 @@ void ScriptVar::UpdateAfterEdit() {
   }
   inherited::UpdateAfterEdit();
 }
+
+void ScriptVar::Freshen(const ScriptVar& cp) {
+  value = cp.value;
+} 
+
+const String ScriptVar::GenCss(bool is_arg) {
+  if (ignore) return _nilString;
+  return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
+} 
+
 
 const String ScriptVar::GenCssArg_impl() {
   String rval(0, 80, '\0'); //note: buffer will extend if needed
@@ -107,6 +122,15 @@ const String EnumScriptVar::enumName() {
   } else return _nilString;
 }
 
+void EnumScriptVar::Freshen(const ScriptVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_EnumScriptVar)) {
+    const EnumScriptVar& cp = (const EnumScriptVar&)(cp_);
+    enum_type = cp.enum_type;
+    init = cp.init;
+  }
+} 
+
 const String EnumScriptVar::GenCssArg_impl() {
   String rval(0, 80, '\0'); //note: buffer will extend if needed
   rval += enumName() + " ";
@@ -153,6 +177,15 @@ void ObjectScriptVar::Copy_(const ObjectScriptVar& cp) {
   make_new = cp.make_new;
 }
 
+void ObjectScriptVar::Freshen(const ScriptVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_ObjectScriptVar)) {
+    const ObjectScriptVar& cp = (const ObjectScriptVar&)(cp_);
+    val_type = cp.val_type;
+    make_new = cp.make_new;
+  }
+} 
+
 //////////////////////////
 //   ScriptVar_List	//
 //////////////////////////
@@ -172,16 +205,19 @@ void ScriptVar_List::El_SetIndex_(void* it_, int idx) {
 const String ScriptVar_List::GenCss(int indent_level) const {
   String rval(0, 40 * size, '\0'); // buffer with typical-ish room
   ScriptVar* el;
+  int cnt = 0;
   for (int i = 0; i < size; ++i) {
     el = FastEl(i);
+    if (el->ignore) continue;
     bool is_arg = (var_context == VC_FuncArgs);
     if (is_arg) {
-      if (i > 0)
+      if (cnt > 0)
         rval += ", ";
     } else {
       rval += cssMisc::Indent(indent_level); 
     }
     rval += el->GenCss(is_arg); 
+    ++cnt;
   }
   return rval;
 }

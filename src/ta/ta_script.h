@@ -40,9 +40,12 @@ class ScriptBase_List; //
 class TA_API ScriptVar: public taNBase { // ##NO_TOKENS ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
 INHERITED(taNBase)
 public:
+  bool			ignore; // don't use this variable
   Variant		value; // the actual variable
-  virtual const String	GenCss(bool is_arg = false) 
-    {return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;} // css code (terminated if Var);
+  
+  virtual void		Freshen(const ScriptVar& cp); 
+    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
+  virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
   virtual cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
   
@@ -55,7 +58,7 @@ protected:
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
 private:
-  void	Initialize() {}
+  void	Initialize();
   void	Destroy() {}
 };
 
@@ -69,6 +72,7 @@ public:
   
   const String		ValToId(int val);
   
+  override void		Freshen(const ScriptVar& cp); 
   override cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
   
   void	Copy_(const EnumScriptVar& cp);
@@ -88,6 +92,7 @@ public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
   bool			make_new; // #LABEL_new create a new instance
   
+  override void		Freshen(const ScriptVar& cp); 
   override const String	GenCss(bool is_arg = false) 
     {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
   

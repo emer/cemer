@@ -452,7 +452,7 @@ int pdpMisc::WaitProc_LoadProj() {
 //    gf = root->projects.ta_file;
   }
   if (gf == NULL) {
-    gf = taFiler_CreateInstance();
+    gf = taFiler::New();
   }
   taRefN::Ref(gf); //refs regardless if our own, or external
 

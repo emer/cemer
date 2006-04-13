@@ -56,7 +56,7 @@ void pdpMisc::SaveRecoverFile(int err) {
   String proj_sfx = ".proj";	proj_sfx += taMisc::compress_sfx;
 
   String home_dir = getenv("HOME"); // home directory if curent dir does not work.
-  taFiler* gf = taFiler_CreateInstance();		// use a getfile for compressed writes..
+  taFiler* gf = taFiler::New();		// use a getfile for compressed writes..
   taRefN::Ref(gf);
   ProjectBase* p;
   int cnt = 0;

@@ -154,7 +154,6 @@ public:
   virtual void	DataFromLogFile(String& dtln);	// #IGNORE put log data into buffer
   virtual void	ReadNewLogFile();		// #IGNORE a new log file was opened, read it
   virtual void	LogFileToBuffer();		// #IGNORE read current data_range into buffer
-  virtual void 	InitFile();			// #IGNORE initialize log_file object
 
   static ostream& LogColumn(ostream& strm, String& str, int tabs);
   // #IGNORE output one column of data (string str), tabs is width (1 or 2)

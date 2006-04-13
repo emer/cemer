@@ -1595,12 +1595,6 @@ void taiEditDataHost::GetImageInline_impl(const void* base) {
     typ->it->GetImage(mb_dat, base);
 }
 
-void taiEditDataHost::GetValueInline_impl(void* base) const {
-  taiData* mb_dat = data_el.SafeEl(0);
-  if (mb_dat) 
-    typ->it->GetValue(mb_dat, base);
-}
-
 void taiEditDataHost::GetImage_impl(const MemberSpace& ms, const taiDataList& dl,
 	void* base)
 {
@@ -1658,7 +1652,11 @@ void taiEditDataHost::GetName(MemberDef* md, String& name, String& desc) {
 
 void taiEditDataHost::GetValue() {
   if ((typ == NULL) || (cur_base == NULL)) return;
-  GetValue_impl(typ->members, data_el, cur_base);
+  if (typ->it->requiresInline()) {
+    GetValueInline_impl(cur_base);
+  } else {
+    GetValue_impl(typ->members, data_el, cur_base);
+  }
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
@@ -1669,7 +1667,7 @@ void taiEditDataHost::GetValue() {
 }
 
 void taiEditDataHost::GetValue_impl(const MemberSpace& ms, const taiDataList& dl,
-	void* base)
+  void* base) const
 {
   bool first_diff = true;
   int cnt = 0;
@@ -1685,6 +1683,12 @@ void taiEditDataHost::GetValue_impl(const MemberSpace& ms, const taiDataList& dl
   }
   if (!first_diff)
     taiMember::EndScript(base);
+}
+
+void taiEditDataHost::GetValueInline_impl(void* base) const {
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetValue(mb_dat, base);
 }
 
 bool taiEditDataHost::ReShow(bool force) {
@@ -1780,7 +1784,7 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
   setShow((taMisc::ShowMembs)new_show);
 }
 
-bool taiEditDataHost::ShowMember(MemberDef* md) {
+bool taiEditDataHost::ShowMember(MemberDef* md) const {
   return (md->ShowMember(show) && (md->im != NULL));
 }
 

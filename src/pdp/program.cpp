@@ -61,7 +61,9 @@ void UserScriptEl::Copy_(const UserScriptEl& cp) {
 }
 
 const String UserScriptEl::GenCssBody_impl(int indent_level) {
-// TODO: maybe indent every line by the indent amount
+  // we could just return the string, but that wouldn't indent...
+// TODO: indent every line by the indent amount
+//  String rval(user_script.length() + 20, 0, '\0');
   return user_script;
 }
 
@@ -260,11 +262,13 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 
 void ProgramCallEl::Initialize() {
   target = NULL;
+  old_target = NULL;
 }
 
 
 void ProgramCallEl::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(global_args, this);
   taBase::Own(fail_el, this);
   if (!taMisc::is_loading) {
     fail_el.user_script = "cerr << \"Program Call failed--Stopping\\n\";\nthis->StopScript();\n";
@@ -273,27 +277,39 @@ void ProgramCallEl::InitLinks() {
 
 void ProgramCallEl::CutLinks() {
   taBase::DelPointer((taBase**)&target);
+  global_args.CutLinks();
+  old_target = NULL;
   inherited::CutLinks();
 }
 
 void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
   taBase::SetPointer((taBase**)&target, cp.target);
+  global_args = cp.global_args;
+  fail_el = cp.fail_el;
 }
 
 void ProgramCallEl::UpdateAfterEdit() {
-  //TODO: 
+  if (target != old_target) {
+    old_target = target; // note: we don't ref, because we just need to check ptr addr
+    UpdateGlobalArgs();
+  }
   inherited::UpdateAfterEdit();
+}
+
+const String ProgramCallEl::GenCssPre_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "{\n";
 }
 
 const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
-  String rval(200, 0, '\0');
+  String rval(250, 0, '\0');
   rval += cssMisc::Indent(indent_level);
-  rval += "{Bool call_succeeded = false;\n";
+  rval += "Bool call_succeeded = false;\n";
   rval += cssMisc::Indent(indent_level);
   rval += "Program target = ";
   rval += target->GetPath();
   rval += ";\n";
+  rval += cssMisc::Indent(indent_level);
   rval += "if (target->CompileScript()) {\n"; ++indent_level;
   //TODO:  set args
   rval += cssMisc::Indent(indent_level);
@@ -305,12 +321,54 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += "if (!call_succeeded) {\n";
   rval += fail_el.GenCss(indent_level + 1);
   rval += cssMisc::Indent(indent_level);
-  rval += "}}\n";
+  rval += "}\n";
   
   return rval;
 }
 
+const String ProgramCallEl::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "} // ProgramCallEl\n";
+}
 
+void ProgramCallEl::UpdateGlobalArgs() {
+  if (!target) return; // just leave existing stuff for now
+  // we prefix our local copies of prog args with following:
+  const String prfx = "__prog_";
+  int i;
+  int t;
+  ScriptVar* ths_var; // our copy
+  ScriptVar* prg_var; // target's copy
+  String nm;
+  // delete defunct, in ours but not in target
+  // when we find matches, we update our copy
+  for (i = global_args.size - 1; i >= 0; --i) {
+    ths_var = global_args.FastEl(i);
+    nm = ths_var->name.after(prfx);
+    t = target->global_vars.Find(nm);
+    if (t >= 0) { 
+      // found, but make sure same type
+      prg_var = target->global_vars.FastEl(t);
+      if (ths_var->GetTypeDef() == prg_var->GetTypeDef()) {
+        // ok, match, so update our copy and continue
+        ths_var->Freshen(*prg_var);
+        continue; 
+      }
+    }
+    // not found, or not same type
+    global_args.Remove(i);
+  }
+  // add new
+  for (i = 0; i < target->global_vars.size; ++i) {
+    prg_var = target->global_vars.FastEl(i);
+    nm = prfx + prg_var->name;
+    t = global_args.Find(nm);
+    if (t >= 0) 
+      continue; 
+    ths_var = (ScriptVar*)prg_var->Clone();
+    global_args.Add(ths_var);
+    ths_var->name = nm;
+  }
+}
 
 //////////////////////////
 //  Program		//

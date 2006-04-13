@@ -51,7 +51,7 @@
 //////////////////////////
 
 void PDPLog::Initialize() {
-  log_file = taFiler_CreateInstance(".","*log*",false);
+  log_file = taFiler::New(".","*log*",false);
   taRefN::Ref(log_file);
   log_file->mode = taFiler::NO_AUTO;
   log_lines = 0;
@@ -81,8 +81,7 @@ void PDPLog::InitLinks() {
 #endif
 
   inherited::InitLinks();
-  InitFile();
-  log_file->Close();
+//nn  log_file->Close();
 }
 
 void PDPLog::Destroy() {
@@ -233,10 +232,6 @@ int PDPLog::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   return inherited::Dump_Save_Value(strm, par, indent);
 }
 
-void PDPLog::InitFile() {
-  log_file->Init(".","*log*",false);
-  log_file->fname = "";
-}
 #ifdef TA_GUI
 LogView* PDPLog::NewLogView() {
   LogView* rval = (LogView*)taBase::MakeToken(views.el_typ);
@@ -638,7 +633,7 @@ int PDPLog::GetFileLength() {
   taFiler* gf = NULL;		// use a getfile for compressed reads..
   if(!log_file->IsOpen()) return 0;
 
-  gf = taFiler_CreateInstance();		// use a getfile for compressed reads..
+  gf = taFiler::New();		// use a getfile for compressed reads..
   taRefN::Ref(gf);
   gf->fname = log_file->fname;
   istream* strm = gf->open_read();
@@ -735,7 +730,7 @@ void PDPLog::LogFileToBuffer() {
   data.ResetData();		// clear out the arrays for new data
   data_range.MinGT(0);		// min must be greater than 0
 
-  gf = taFiler_CreateInstance();		// use a getfile for compressed reads..
+  gf = taFiler::New();		// use a getfile for compressed reads..
   taRefN::Ref(gf);
   gf->fname = log_file->fname;
   istream* strm = gf->open_read();

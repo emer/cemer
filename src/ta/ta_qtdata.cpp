@@ -1177,7 +1177,13 @@ void taiScriptVarBase::Constr(QWidget* gui_parent_) {
 
 void taiScriptVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   QWidget* rep_ = GetRep();
-  QLabel* lbl = new QLabel("name", rep_);
+  QLabel* lbl = new QLabel("ignore", rep_);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
+
+  tglIgnore = new taiToggle(&TA_bool, host, this, rep_, mflags & flgReadOnly);
+  AddChildWidget(tglIgnore->GetRep(), taiM->hsep_c);
+  
+  lbl = new QLabel("name", rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
 
   fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
@@ -1185,10 +1191,12 @@ void taiScriptVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 }
 
 void taiScriptVarBase::GetImage(const ScriptVar* var) {
+  tglIgnore->GetImage(var->ignore);
   fldName->GetImage(var->name);
 }
 
 void taiScriptVarBase::GetValue(ScriptVar* var) const {
+  var->ignore = tglIgnore->GetValue();
   var->name = fldName->GetValue();
 }
   
