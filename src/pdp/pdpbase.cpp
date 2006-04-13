@@ -187,6 +187,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   ta_Init_pdp();
 
   // load plugin system
+  // TODO: Check if directory exists and allow for /usr/local/pdp++/plugins
   const QString& localdir = QDir::homeDirPath() + "/pdp++/plugins" ;
   taPlugins::AddPluginFolder(localdir);
   taPlugins::LoadPlugins();
