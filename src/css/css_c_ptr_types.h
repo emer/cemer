@@ -210,8 +210,7 @@ public:
   cssCPtr_CloneFuns(cssCPtr_long, (void*)NULL);
 
   // converters
-  Variant GetVar() const	{ return Variant((intptr_t)((long*)GetNonNullVoidPtr())); }
-    //TODO: should probably create an entire type for long long
+  Variant GetVar() const	{ return Variant(*((long*)GetNonNullVoidPtr())); }
   operator Int() const		{ return *((long*)GetNonNullVoidPtr()); }
   operator long() const		{ return *((long*)GetNonNullVoidPtr()); }
   operator long*() const	{ return (long*)GetNonNullVoidPtr(); }
@@ -222,6 +221,51 @@ public:
   void operator=(Real cp) 	{ *((long*)GetNonNullVoidPtr()) = (long)cp; }
   void operator=(Int cp)	{ *((long*)GetNonNullVoidPtr()) = (long)cp; }
   void operator=(const String& cp) { *((long*)GetNonNullVoidPtr()) = (long)(int)cp; }
+  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+
+  // operators
+  void operator=(const cssEl& t);
+  void operator+=(cssEl& t);
+  void operator-=(cssEl& t);
+  void operator*=(cssEl& t);
+  void operator/=(cssEl& t);
+  void operator%=(cssEl& t);
+  void operator<<=(cssEl& t);
+  void operator>>=(cssEl& t);
+  void operator&=(cssEl& t);
+  void operator^=(cssEl& t);
+  void operator|=(cssEl& t);
+};
+
+class CSS_API cssCPtr_long_long : public cssCPtr_int {
+public:
+  uint		GetSize() const 	{ return sizeof(long long); }
+  const char*	GetTypeName() const  	{ return "(c_long_long)"; }
+
+  // constructors
+  cssCPtr_long_long() 				: cssCPtr_int(){};
+  cssCPtr_long_long(void* it, int pc) 		: cssCPtr_int(it,pc){};
+  cssCPtr_long_long(void* it, int pc, const char* nm)	: cssCPtr_int(it,pc,nm){};
+  cssCPtr_long_long(void* it, int pc, const char* nm, cssEl* cp, bool ro)
+  : cssCPtr_int(it,pc,nm,cp,ro){};
+  cssCPtr_long_long(const cssCPtr_long_long& cp) 		: cssCPtr_int(cp){};
+  cssCPtr_long_long(const cssCPtr_long_long& cp, const char* nm) 	: cssCPtr_int(cp,nm){};
+
+  cssCPtr_CloneFuns(cssCPtr_long_long, (void*)NULL);
+
+  // converters
+  Variant GetVar() const	{ return Variant(*((int64_t*)GetNonNullVoidPtr())); }
+  operator Int() const		{ return *((int64_t*)GetNonNullVoidPtr()); }
+  operator long() const		{ return *((int64_t*)GetNonNullVoidPtr()); }
+  operator long*() const	{ CvtErr("(long*)"); return NULL; }
+  operator long**() const	{ CvtErr("(long**)"); return NULL; }
+  operator int*() const		{ CvtErr("(int*)"); return NULL; }
+  operator int**() const	{ CvtErr("(int**)"); return NULL; }
+
+  void operator=(Real cp) 	{ *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
+  void operator=(Int cp)	{ *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
+  void operator=(const String& cp) { *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 

@@ -67,47 +67,6 @@ const String UserScriptEl::GenCssBody_impl(int indent_level) {
   return user_script;
 }
 
-//////////////////////////
-//  MethodCallEl	//
-//////////////////////////
-
-void MethodCallEl::Initialize() {
-  script_obj = NULL;
-  method = NULL;
-}
-
-void MethodCallEl::CutLinks() {
-  taBase::DelPointer((taBase**)&script_obj);
-  inherited::CutLinks();
-}
-
-void MethodCallEl::Copy_(const MethodCallEl& cp) {
-  taBase::SetPointer((taBase**)&script_obj, cp.script_obj);
-  method = cp.method;
-}
-
-void MethodCallEl::UpdateAfterEdit() {
-  //TODO: if object changed, we need to make sure MethodDef is still valid
-  inherited::UpdateAfterEdit();
-}
-
-const String MethodCallEl::GenCssBody_impl(int indent_level) {
-  if (!script_obj && !method) return _nilString;
-  
-  String rval(80, 0, '\0');
-  //TODO: return value
-  rval += cssMisc::Indent(indent_level);
-  rval += script_obj->name;
-  rval += "->";
-  rval += method->name;
-  rval += "(";
-  //TODO: args
-  rval += ");\n";
-  
-  return rval;
-}
-
-
 
 //////////////////////////
 //  ProgEl_List		//
@@ -181,6 +140,7 @@ const String ProgList::GenCssBody_impl(int indent_level) {
 //////////////////////////
 
 void LoopEl::Initialize() {
+  loop_var_type = "Int"; // the loop variable
   loop_var = "i"; // the loop variable
   init_val = "0"; // initial value of loop variable
   loop_test = "i < 20"; // the test each time
@@ -196,7 +156,7 @@ void LoopEl::Copy_(const LoopEl& cp) {
 
 const String LoopEl::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
-  rval += "{Int " + loop_var + ";\n";
+  rval += "{" + loop_var_type + " " + loop_var + ";\n";
   rval += "for (" + loop_var + " = " + init_val + "; "
     + loop_test + "; " 
     + loop_iter + ") {\n";
@@ -257,14 +217,56 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 
 
 //////////////////////////
+//  MethodCallEl	//
+//////////////////////////
+
+void MethodCallEl::Initialize() {
+  script_obj = NULL;
+  method = NULL;
+}
+
+void MethodCallEl::CutLinks() {
+  taBase::DelPointer((taBase**)&script_obj);
+  inherited::CutLinks();
+}
+
+void MethodCallEl::Copy_(const MethodCallEl& cp) {
+  taBase::SetPointer((taBase**)&script_obj, cp.script_obj);
+  method = cp.method;
+}
+
+void MethodCallEl::UpdateAfterEdit() {
+  //TODO: if object changed, we need to make sure MethodDef is still valid
+  inherited::UpdateAfterEdit();
+}
+
+const String MethodCallEl::GenCssBody_impl(int indent_level) {
+  if (!script_obj && !method) return _nilString;
+  
+  String rval(80, 0, '\0');
+  //TODO: return value
+  rval += cssMisc::Indent(indent_level);
+  rval += script_obj->name;
+  rval += "->";
+  rval += method->name;
+  rval += "(";
+  //TODO: args
+  rval += ");\n";
+  
+  return rval;
+}
+
+
+//////////////////////////
 //  ProgramCallEl	//
 //////////////////////////
+
+const String ProgramCallEl::prfx = "__prog_";
 
 void ProgramCallEl::Initialize() {
   target = NULL;
   old_target = NULL;
 }
-
 
 void ProgramCallEl::InitLinks() {
   inherited::InitLinks();
@@ -310,8 +312,27 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += target->GetPath();
   rval += ";\n";
   rval += cssMisc::Indent(indent_level);
-  rval += "if (target->CompileScript()) {\n"; ++indent_level;
-  //TODO:  set args
+  rval += "if (target->CompileScript()) {\n"; 
+  ++indent_level;
+  
+  rval += cssMisc::Indent(indent_level);
+  rval += "// set global vars of target\n";
+  String nm;
+  ScriptVar* ths_var;
+  ScriptVar* prg_var;
+  for (int i = 0; i < global_args.size; ++i) {
+    ths_var = global_args.FastEl(i);
+    if (ths_var->ignore) continue;
+    nm = ths_var->name.after(prfx);
+    prg_var = target->global_vars.FindName(nm);
+    if (!prg_var || prg_var->ignore) continue;
+    rval += cssMisc::Indent(indent_level);
+    rval += ths_var->GenCss();
+    rval += cssMisc::Indent(indent_level);
+    rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
+      + ths_var->name + ");\n";
+  }
+  
   rval += cssMisc::Indent(indent_level);
   rval += "call_succeeded = target->Run();\n";
   --indent_level;
@@ -333,7 +354,6 @@ const String ProgramCallEl::GenCssPost_impl(int indent_level) {
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
   // we prefix our local copies of prog args with following:
-  const String prfx = "__prog_";
   int i;
   int t;
   ScriptVar* ths_var; // our copy
@@ -351,6 +371,10 @@ void ProgramCallEl::UpdateGlobalArgs() {
       if (ths_var->GetTypeDef() == prg_var->GetTypeDef()) {
         // ok, match, so update our copy and continue
         ths_var->Freshen(*prg_var);
+        // we don't unignore, but will copy ignore
+        if (prg_var->ignore)
+          ths_var->ignore = true;
+        ths_var->UpdateAfterEdit();
         continue; 
       }
     }
@@ -439,6 +463,14 @@ void Program::setDirty(bool value) {
   m_dirty = value;
   script_compiled = false; // have to assume user changed something
   DirtyChanged_impl();
+}
+
+bool Program::SetGlobalVar(const String& nm, const Variant& value) {
+  cssElPtr& el_ptr = script->hard_vars.FindName(nm);
+  if (el_ptr == cssMisc::VoidElPtr) return false;
+  cssEl* el = el_ptr.El();
+  *el = value;
+  return true;
 }
 
 void  Program::UpdateScriptVars() {

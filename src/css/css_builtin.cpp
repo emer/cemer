@@ -2333,6 +2333,7 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssCPtr_bool(NULL, 1, "c_bool"));
   cssMisc::TypesSpace.Push(new cssCPtr_short(NULL, 1, "c_short"));
   cssMisc::TypesSpace.Push(new cssCPtr_long(NULL, 1, "c_long"));
+  cssMisc::TypesSpace.Push(new cssCPtr_long_long(NULL, 1, "c_long_long"));
   cssMisc::TypesSpace.Push(new cssCPtr_char(NULL, 1, "c_char"));
   cssMisc::TypesSpace.Push(new cssCPtr_enum(NULL, 1, "c_enum"));
   cssMisc::TypesSpace.Push(new cssCPtr_double(NULL, 1, "c_double"));

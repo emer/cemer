@@ -771,13 +771,13 @@ cssEl* cssTA::GetElement_impl(TAPtr ths, int i) const {
     return &cssMisc::Void;
   }
   String nm = ths->GetName() + String("[") + String((int)i) + "]";
-  return GetFromTA(eltd, el, nm, (cssTA*)this);
+  return GetFromTA_impl(eltd, el, nm);
 }
 
 int cssTA::GetMemberNo(const char* memb) const {
-  int md;
-  type_def->members.FindName(memb, md);	// just 1st order search
-  return md;
+  if (type_def)
+    return GetMemberNo_impl(*type_def, memb);
+  else return -1;
 }
 
 cssEl* cssTA::GetMember(const char* memb) const {
@@ -814,55 +814,12 @@ cssEl* cssTA::GetMember(int memb) const {
   return GetMember_impl(md, mbr);
 }
 
-cssEl* cssTA::GetMember_impl(MemberDef* md, void* mbr) const {
-  return GetFromTA(md->type, mbr, md->name, (cssTA*)this, md);
-}
-
-cssEl* cssTA::GetFromTA(TypeDef* td, void* itm, const char* nm, cssTA*, MemberDef* md) const {
-  TypeDef* nptd;
-
-  nptd = td->GetNonPtrType(); // always create one of these
-
-  if(nptd == NULL)
-    return &cssMisc::Void;
-
-  bool ro = false;
-  if(md != NULL) {
-    if(md->HasOption("READ_ONLY"))
-      ro = true;
-  }
-  //TODO: update for new atomic types
-  if(nptd->DerivesFrom(TA_bool))
-    return new cssCPtr_bool(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFormal(TA_enum))
-    return new cssCPtr_enum(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_int))
-    return new cssCPtr_int(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_short))
-    return new cssCPtr_short(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_long))
-    return new cssCPtr_long(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_char))
-    return new cssCPtr_char(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_unsigned) || nptd->DerivesFrom(TA_signed))
-    return new cssCPtr_int(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_float))
-    return new cssCPtr_float(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_double))
-    return new cssCPtr_double(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_taString))
-    return new cssCPtr_String(itm, td->ptr+1, nm, (cssEl*)this, ro);
-  else if(nptd->DerivesFrom(TA_taBase))
-    return new cssTA_Base(itm, td->ptr+1, nptd, nm, (cssEl*)this, ro);
-
-  return new cssTA(itm, td->ptr+1, nptd, nm, (cssEl*)this, ro);
-}
-
 int cssTA::GetMemberFunNo(const char* memb) const {
   int md;
   type_def->methods.FindName(memb, md);
   return md;
 }
+
 cssEl* cssTA::GetMemberFun(const char* memb) const {
   void* pt = GetVoidPtr();
   if(pt == NULL) {

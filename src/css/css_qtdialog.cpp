@@ -254,6 +254,8 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
     return new cssiClassType(orig_obj, (void*)el);
   case cssEl::T_String:
     return new cssiType(orig_obj, &TA_taString, (void*)&(((cssString*)el)->val));
+  case cssEl::T_Variant:
+    return new cssiType(orig_obj, &TA_Variant, (void*)&(((cssVariant*)el)->val));
   case cssEl::T_Enum:
     return new cssiEnumType(orig_obj, ((cssEnum*)el)->type_def,
 			     (void*)&(((cssEnum*)el)->val));
@@ -279,6 +281,11 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
 	return new cssiROType(orig_obj, &TA_long, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_long, (void*)(((cssCPtr*)el)->ptr));
     }
+    if(sb_typ == "(c_long_long)") {
+      if(read_only)
+	return new cssiROType(orig_obj, &TA_int64_t, (void*)(((cssCPtr*)el)->ptr));
+      return new cssiType(orig_obj, &TA_int64_t, (void*)(((cssCPtr*)el)->ptr));
+    }
     if(sb_typ == "(c_char)") {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_char, (void*)(((cssCPtr*)el)->ptr));
@@ -298,6 +305,11 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_taString, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_taString, (void*)(((cssCPtr*)el)->ptr));
+    }
+    if(sb_typ == "(c_Variant)") {
+      if(read_only)
+	return new cssiROType(orig_obj, &TA_Variant, (void*)(((cssCPtr*)el)->ptr));
+      return new cssiType(orig_obj, &TA_Variant, (void*)(((cssCPtr*)el)->ptr));
     }
     if(sb_typ == "(c_enum)") {
       cssCPtr_enum* enm = (cssCPtr_enum*)el;

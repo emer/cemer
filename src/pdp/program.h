@@ -121,32 +121,11 @@ private:
 };
 
 
-class PDP_API MethodCallEl: public ProgEl { 
-  // ProgEl for a call to an object method
-INHERITED(ProgEl)
-public:
-  ObjectScriptVar*	script_obj; // the script object that has the method
-  MethodDef*		method; // the method to call
-  
-  void	UpdateAfterEdit();
-  void	CutLinks();
-  void	Copy_(const MethodCallEl& cp);
-  COPY_FUNS(MethodCallEl, ProgEl);
-  TA_BASEFUNS(MethodCallEl);
-
-protected:
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
-
 class PDP_API LoopEl: public ProgList { 
-  // ProgEl for an iteration over the elements
+  // #EDIT_INLINE ProgEl for an iteration over the elements
 INHERITED(ProgList)
 public:
+  String	    	loop_var_type; // the loop variable CSS type
   String	    	loop_var; // the loop variable
   String	    	init_val; // initial value of loop variable
   String	    	loop_test; // the test each time
@@ -192,13 +171,40 @@ private:
 };
 
 
+class PDP_API MethodCallEl: public ProgEl { 
+  // ProgEl for a call to an object method
+INHERITED(ProgEl)
+public:
+  ObjectScriptVar*	script_obj; // the script object that has the method
+  MethodDef*		method; // the method to call
+  
+  void	UpdateAfterEdit();
+  void	CutLinks();
+  void	Copy_(const MethodCallEl& cp);
+  COPY_FUNS(MethodCallEl, ProgEl);
+  TA_BASEFUNS(MethodCallEl);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+
 class PDP_API ProgramCallEl: public ProgEl { 
   // ProgEl to invoke another program
 INHERITED(ProgEl)
 public:
+  static const String prfx; // #READ_ONLY the prefix we apply to our names of global vars in target
+  
   Program*		target; // the program to be called
   ScriptVar_List	global_args; // arguments to the global program--copied to prog before call
   UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
+  
+  virtual void		UpdateGlobalArgs(); 
+    // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
   
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -212,7 +218,6 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
-  virtual void		UpdateGlobalArgs(); // called when target changed
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -229,6 +234,8 @@ public:
   void			setDirty(bool value); // indicates a component has changed
   
   virtual bool		Run(); // run the program
+  virtual bool		SetGlobalVar(const String& nm, const Variant& value);
+    // set the value of a global variable (in the cssProgSpace) prior to calling Run
 
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user

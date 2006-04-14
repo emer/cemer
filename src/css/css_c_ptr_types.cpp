@@ -253,6 +253,68 @@ void cssCPtr_long::operator|=(cssEl& t)	{
 }
 
 ///////////////////
+//  long_long    //
+///////////////////
+void cssCPtr_long_long::operator=(const cssEl& t) {
+  if(t.GetType() == T_C_Ptr) PtrAssignPtr((cssCPtr*)&t);
+  else {
+    if(!ROCheck()) return;
+    *((int64_t*)GetNonNullVoidPtr()) = (int64_t)t;
+    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  }
+}
+void cssCPtr_long_long::operator+=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) += (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator-=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) -= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator*=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) *= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator/=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) /= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator%=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) %= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator<<=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) <<= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator>>=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) >>= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator&=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) &= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator^=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) ^= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_long_long::operator|=(cssEl& t)	{
+  if(!ROCheck()) return;
+  *((int64_t*)GetNonNullVoidPtr()) |= (int64_t)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+
+///////////////////
 //     char      //
 ///////////////////
 void cssCPtr_char::operator=(const cssEl& t) {

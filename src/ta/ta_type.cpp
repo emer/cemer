@@ -2888,7 +2888,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
       var.GetRepInfo(typ, var_base);
       return typ->GetValStr(var_base, NULL, memb_def);
     }
-    else if(DerivesFormal(TA_class) && HasOption("INLINE")) {
+    else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       int i;
       String rval("{");
       for(i=0; i<members.size; i++) {
@@ -3128,7 +3128,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	gp->InitFromString(val);
     }
 #endif
-    else if(DerivesFormal(TA_class) && HasOption("INLINE")) {
+    else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       String rval = val;
       rval = rval.after('{');
       while(rval.contains(':')) {

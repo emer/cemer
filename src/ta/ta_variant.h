@@ -321,6 +321,8 @@ public:
   Variant(byte val);
   Variant(int val);
   Variant(uint val);
+  Variant(long val);
+  Variant(unsigned long val);
   Variant(int64_t val);
   Variant(uint64_t val);
   Variant(float val);
@@ -390,6 +392,9 @@ inline Variant::Variant(bool val):m_type(T_Bool), m_is_null(false) {d.b = val;}
 inline Variant::Variant(byte val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(int val):m_type(T_Int), m_is_null(false) {d.i = val;}
 inline Variant::Variant(uint val):m_type(T_UInt), m_is_null(false) {d.u = val;}
+//NOTE: long versions assume size(int)==size(long), s/b true for our platforms
+inline Variant::Variant(long val):m_type(T_Int), m_is_null(false) {d.i = val;}
+inline Variant::Variant(unsigned long val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(int64_t val):m_type(T_Int64), m_is_null(false) {d.i64 = val;}
 inline Variant::Variant(uint64_t val):m_type(T_UInt64), m_is_null(false) {d.u64 = val;}
 inline Variant::Variant(float val):m_type(T_Double), m_is_null(false) {d.d = val;}

@@ -577,11 +577,16 @@ public:
   virtual void operator^=(cssEl&) { NopErr("^="); }
   virtual void operator|=(cssEl&) { NopErr("|="); }
 protected:
+  int	 GetMemberNo_impl(const TypeDef& typ, const char*) const;
   int	 GetMemberFunNo_impl(const TypeDef& typ, const char*) const;
+  cssEl* GetMember_impl(const TypeDef& typ, void* base, int memb) const;
+  cssEl* GetMember_impl(MemberDef* md, void* mbr) const;
   cssEl* GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const;
   cssEl* GetMemberFun_impl(void* base, MethodDef* md) const;
   cssEl* GetScoped_impl(const TypeDef& typ, void* base, const char*) const;
   cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
+  virtual cssEl* GetFromTA_impl(TypeDef* td, void* itm, const char* nm, 
+    MemberDef* md = NULL) const; // helper for getting members and array elements
 };
 
 

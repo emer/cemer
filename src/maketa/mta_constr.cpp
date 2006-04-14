@@ -514,13 +514,30 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
 }
 
 String MethodDef_GetCSSType(TypeDef* td) {
-//TODO: update for new atomic type hier, 64 bit types, and Variant
-  if(td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
+//NOTE: changed 4/13/06 BA
+/*was  if(td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
      td->DerivesFrom(TA_long) || td->DerivesFrom(TA_char) ||
      td->DerivesFormal(TA_enum) || td->DerivesFrom(TA_signed) ||
      td->DerivesFrom(TA_unsigned) || td->DerivesFrom(TA_bool))
-    return String("(Int)");
+    return String("(Int)"); */
 
+  if (td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
+      td->DerivesFrom(TA_unsigned_short) ||
+     td->DerivesFrom(TA_unsigned_int) || td->DerivesFormal(TA_unsigned_long) ||
+     td->DerivesFrom(TA_long) || td->DerivesFormal(TA_enum) ||
+     td->DerivesFrom(TA_unsigned_char) || td->DerivesFormal(TA_signed_char))
+    return String("(Int)");
+  
+  if(td->DerivesFrom(TA_char))
+    return String("(Char)");
+  
+  if(td->DerivesFrom(TA_bool))
+    return String("(bool)");
+  
+  if (td->DerivesFrom(TA_int64_t) || td->DerivesFrom(TA_uint64_t) ||
+    td->DerivesFrom(TA_Variant))
+    return String("(Variant)");
+  
   if(td->DerivesFrom(TA_double) || td->DerivesFrom(TA_float))
     return String("(Real)");
 
@@ -569,6 +586,12 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
       strm << "arg[" << j+1 << "]->GetStr()";
     else
       strm << "(String" << argt->GetPtrString() << ")*arg[" << j+1 << "]";
+  }
+  else if(argt->DerivesFrom(TA_Variant)) {
+    if(argt->ptr == 0)
+      strm << "arg[" << j+1 << "]->GetVar()";
+    else
+      strm << "(Variant" << argt->GetPtrString() << ")*arg[" << j+1 << "]";
   }
   else if(argt->DerivesFrom("ios")) { // cssEl's can cast these directly
     if(argt->ptr == 0)
@@ -651,16 +674,18 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
   }
   strm << "    ";
 
-  if(md->type->ptr == 0) {
-    if (md->type->DerivesFrom(TA_char))
+  if (md->type->ptr == 0) {
+    if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int) ||
+       md->type->DerivesFrom(TA_signed_char) || md->type->DerivesFrom(TA_unsigned_char) ||
+       md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short) ||
+       md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_unsigned_long))
+      cmd = "cssInt((int)";
+    else if (md->type->DerivesFrom(TA_char))
       cmd = "cssChar(";
     else if (md->type->DerivesFrom(TA_bool))
       cmd = "cssBool(";
-    else if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_short) ||
-       md->type->DerivesFrom(TA_long) || 
-       md->type->DerivesFrom(TA_unsigned) || md->type->DerivesFrom(TA_signed))
-      cmd = "cssInt((int)";
-    else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
+    else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t) ||
+      md->type->DerivesFrom(TA_Variant))
       cmd = "cssVariant(";
     else if(md->type->DerivesFrom(TA_float) || md->type->DerivesFrom(TA_double))
       cmd = "cssReal((double)";
@@ -682,32 +707,37 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
     MethodDef_GenStubCall(ownr, md, strm);
     MethodDef_GenArgs(md, strm, act_argc);
     strm << "));";
-  }
-  else {
+  } else { // ptr > 0, is a ptr
+  //TODO: this seems wrong -- aren't we assuming it is exactly one indirection, 
+  // i.e., type* -- what if it ptr>=2????
     bool include_td = false;
 
-    if(md->type->DerivesFrom(TA_int))
+    if(md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int))
       cmd = "cssCPtr_int(";
-    else if(md->type->DerivesFrom(TA_short))
+    else if(md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short))
       cmd = "cssCPtr_short(";
-    else if(md->type->DerivesFrom(TA_long))
+    else if(md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_unsigned_long))
       cmd = "cssCPtr_long(";
-    else if(md->type->DerivesFrom(TA_char))
+    //NOTE: slightly wrong conceptually to include the signed/unsigned, since these
+    // are really math types, not a char type, but the ptr groks the size, so that is
+    // more important, and the cssChar type can grok math, so only output might be affected
+    else if(md->type->DerivesFrom(TA_char) || md->type->DerivesFrom(TA_signed_char) ||
+      md->type->DerivesFrom(TA_unsigned_char))
       cmd = "cssCPtr_char(";
     else if(md->type->DerivesFormal(TA_enum))
-      cmd = "cssCPtr_int(";
-    else if(md->type->DerivesFrom(TA_signed))
-      cmd = "cssCPtr_int(";
-    else if(md->type->DerivesFrom(TA_unsigned))
       cmd = "cssCPtr_int(";
     else if(md->type->DerivesFrom(TA_double))
       cmd = "cssCPtr_double(";
     else if(md->type->DerivesFrom(TA_float))
       cmd = "cssCPtr_float(";
     else if(md->type->DerivesFrom(TA_bool))
-      cmd = "cssCPtr_int(";
+      cmd = "cssCPtr_int("; //TODO: why not cssCPtr_bool ????
+    else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
+      cmd = "cssCPtr_long_long(";
     else if(md->type->DerivesFrom(TA_taString))
       cmd = "cssCPtr_String(";
+    else if(md->type->DerivesFrom(TA_Variant))
+      cmd = "cssCPtr_Variant(";
     else if(md->type->DerivesFrom(TA_taBase)) {
       cmd = "cssTA_Base(";
       include_td = true;
@@ -1117,8 +1147,8 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
     strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref 
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
   } else if (ths == &TA_uintptr_t) {
-    strm << "    if (sizeof(uintptr_t) == sizeof(uint)) " << typ_ref 
-      << "AddParents(&TA_uint);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
+    strm << "    if (sizeof(uintptr_t) == sizeof(unsigned int)) " << typ_ref 
+      << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
   } else
 // long types just get parented and thus aliased to the correct size
   if (ths == &TA_long) {

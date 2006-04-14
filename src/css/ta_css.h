@@ -111,9 +111,6 @@ public:
   cssEl* operator<<(cssEl& s);	// for iostreams..
   cssEl* operator>>(cssEl& s);
 
-  virtual cssEl* 	GetFromTA(TypeDef* td, void* itm, const char* nm, cssTA* ths,
-				  MemberDef* md = NULL) const;
-  virtual cssEl* 	GetMember_impl(MemberDef* md, void* mbr) const;
   virtual cssEl* 	GetMemberFun_impl(MethodDef* md, void* pt) const;
   virtual cssEl*	GetElement_impl(TAPtr ths, int i) const;
 

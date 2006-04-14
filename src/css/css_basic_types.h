@@ -461,9 +461,10 @@ public:
   // these delegate to the string or taBase, otherwise non for atomics
   cssEl* operator[](int idx) const; // only valid for Matrixes, gets flat el
   int	 GetMemberFunNo(const char*) const;
-  cssEl* GetMemberFun(int memb) const;
-  int	 GetMemberNo(const char* memb) const;
-  cssEl* GetMember(int memb) const;
+  cssEl* GetMemberFun(int memb) const; // numbers only refer to intrinsic Variant funcs
+  cssEl* GetMemberFun(const char* nm) const;
+  int	 GetMemberNo(const char* memb) const {return -1;} // no statics
+  cssEl* GetMember(const char* nm) const;
   cssEl* GetScoped(const char*) const;
 };
 

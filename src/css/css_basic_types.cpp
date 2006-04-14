@@ -267,10 +267,18 @@ bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && (s.GetVar()).toB
 bool cssVariant::operator||(cssEl& s) { return (val.toBool() || (s.GetVar()).toBool()); }
 
 int cssVariant::GetMemberFunNo(const char* memb) const {
+  // note: only intrinsic Variant functions can be accessed by num
   return GetMemberFunNo_impl(TA_Variant, memb);
 }
 
 cssEl* cssVariant::GetMemberFun(int memb) const {
+  // note: only intrinsic Variant functions can be accessed by num
+  void* base = (void*)&val; // unconstify
+  return GetMemberFun_impl(TA_Variant, base, memb);
+}
+
+cssEl* cssVariant::GetMemberFun(const char* nm) const {
+  // note: if dynamic, then probably not an intrinsic, so only look to types
   TypeDef* td = NULL;
   void* base = (void*)val.addrData(); // unconstify
   switch (val.type()) {
@@ -291,18 +299,37 @@ cssEl* cssVariant::GetMemberFun(int memb) const {
   default: break;
   }
   if (td)
-    return GetMemberFun_impl(*td, (void*)base, memb);
-  else 
-    return inherited::GetMemberFun(memb);
+    return GetMemberFun_impl(*td, (void*)base, GetMemberFunNo_impl(*td, nm));
+  else {
+    NopErr(".,->"); 
+    return &cssMisc::Void;
+  }
 }
 
-int cssVariant::GetMemberNo(const char* memb) const {
-//TODO: 
-return 0;
-}
-
-cssEl* cssVariant::GetMember(int memb) const {
-return NULL;
+cssEl* cssVariant::GetMember(const char* memb) const {
+  // note: if dynamic, then probably not an intrinsic, so only look to types
+  TypeDef* td = NULL;
+  void* base = (void*)val.addrData(); // unconstify
+  switch (val.type()) {
+  case Variant::T_Base:
+  case Variant::T_Matrix: {
+    taBase* tab = val.toBase();
+    if (tab) {
+      td = tab->GetTypeDef();
+      base = tab; // base is content, not addr of content
+    } else {
+      cssMisc::Error(prog, "GetMember: NULL pointer");
+      return &cssMisc::Void;
+    }
+    } break;
+  default: break;
+  }
+  if (td)
+    return GetMember_impl(*td, (void*)base, GetMemberNo_impl(*td, memb));
+  else {
+    NopErr(".,->"); 
+    return &cssMisc::Void;
+  }
 }
 
 cssEl* cssVariant::GetScoped(const char* memb) const {
