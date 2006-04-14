@@ -660,7 +660,8 @@ cssEl* cssEl::GetMember_impl(const TypeDef& typ, void* base, int memb) const {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ.name);
     return &cssMisc::Void;
   }
-  return GetMember_impl(base, md);
+  void* mbr = md->GetOff(base);
+  return GetMember_impl(md, mbr);
 }
 
 cssEl* cssEl::GetMember_impl(MemberDef* md, void* mbr) const {

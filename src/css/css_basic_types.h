@@ -420,6 +420,9 @@ public:
   operator Real() const	 { if (val.isNumeric()) return val.toDouble(); else return cssEl::operator Real();}
   operator Int() const	 { if (val.isNumeric()) return val.toInt(); else return cssEl::operator Int();}
   operator TAPtr() const;
+#ifndef NO_BUILTIN_BOOL
+  operator bool() const	{ return val.toBool(); }
+#endif
   
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = cp; }

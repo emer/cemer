@@ -258,7 +258,7 @@ void cssVariant::operator/=(cssEl& s) 	{ val /= s.GetVar(); }
 
 bool cssVariant::operator< (cssEl& s) { return (val < s.GetVar()); }
 bool cssVariant::operator> (cssEl& s) { return (val > s.GetVar()); }
-bool cssVariant::operator! () 	    { return ( ! val); }
+bool cssVariant::operator! () 	    { return (!val.toBool()); }
 bool cssVariant::operator<=(cssEl& s) { return (val <= s.GetVar()); }
 bool cssVariant::operator>=(cssEl& s) { return (val >= s.GetVar()); }
 bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
