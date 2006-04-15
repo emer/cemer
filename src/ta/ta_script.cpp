@@ -29,12 +29,16 @@
 //#include "ta_qtgroup.h"
 #endif
 
+
 //////////////////////////
 //   ScriptVar		//
 //////////////////////////
 
 void ScriptVar::Initialize() {
   ignore = false;
+}
+
+void ScriptVar::Destroy() {
 }
 
 void ScriptVar::Copy_(const ScriptVar& cp) {
@@ -71,6 +75,55 @@ const String ScriptVar::GenCssArg_impl() {
   }
   return rval;
 }
+/*new???
+const String ScriptVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += "Variant ";
+  rval += name;
+  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
+    rval += " = new ";
+    rval += val_type->name + "()";
+  } else { 
+    bool init = !value.isDefault();
+    if (init) {
+      rval += " = ";
+      rval += value.toCssLiteral();
+    } else if (!value.isInvalid()) {
+      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
+    }
+  }
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* ScriptVar::NewCssEl() {
+  cssEl* rval;
+  switch (value.type()) {
+  //case T_Invalid: 
+  case T_Bool:
+    rval = new cssBool(value.toBool(), name);
+    break;
+  case T_Int:
+  case T_UInt:
+    rval = new cssInt(value.toInt(), name);
+    break;
+  case T_Int64: //WARNING: 64-bit int types not really well rep'ed in css
+  case T_UInt64:
+  case T_Double:
+    rval = new cssReal(value.toDouble(), name);
+    break;
+  case T_Char:
+    rval = new cssChar(value.toChar(), name);
+    break;
+  case T_String: 
+    rval = new cssString(value.toString(), name);
+    break;
+  default: 
+    taMisc::Warning("ScriptVar: unexpected can't create cssEl for VarType: ", String(value.type()));
+    rval = &cssMisc::Void ;
+  }
+  return rval;
+} */
 
 const String ScriptVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
   String rval(0, 80, '\0'); //note: buffer will extend if needed
@@ -93,9 +146,15 @@ const String ScriptVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
 }
 
 cssEl* ScriptVar::NewCssEl() {
+ //TODO: maybe we should cache???
+  return NewCssEl_impl();
+}
+
+cssEl* ScriptVar::NewCssEl_impl() {
   cssVariant* rval = new cssVariant(value, name);
   return rval;
 }
+
 
 //////////////////////////
 //   EnumScriptVar	//
@@ -148,7 +207,7 @@ const String EnumScriptVar::GenCssVar_impl(bool, TypeDef*) {
   return rval;
 }
 
-cssEl* EnumScriptVar::NewCssEl() {
+cssEl* EnumScriptVar::NewCssEl_impl() {
   cssEnum* rval = new cssEnum(value.toInt(), name);
   return rval;
 }
@@ -185,6 +244,15 @@ void ObjectScriptVar::Freshen(const ScriptVar& cp_) {
     make_new = cp.make_new;
   }
 } 
+
+cssEl* ObjectScriptVar::NewCssEl_impl() {
+  // note: use the val_type, not the actual type, in case user
+  // wanted the var to be more generic than current instance
+  taBase* tab = value.toBase();
+  cssTA* rval = new cssTA(tab, 1, val_type, name);
+  return rval;
+}
+
 
 //////////////////////////
 //   ScriptVar_List	//

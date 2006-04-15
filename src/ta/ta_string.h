@@ -392,6 +392,8 @@ private:
 //note: can't use global static, because ctor not guarenteed to run before use
 #define _nilString taString()
 
+#define STRING_BUF(name, size)  String name(0, size, '\0')
+
 // this is provided for placed instances, where memory is already supplied
 // the owner of a placed versions MUST call s->~String() manually, to ensure proper destruction
   

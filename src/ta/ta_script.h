@@ -47,20 +47,22 @@ public:
     // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
-  virtual cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
+  cssEl*		NewCssEl(); // get a new cssEl of an appropriate type, name/value initialized
   
   void 	SetDefaultName() {} // make it local to list, set by list
-  void	UpdateAfterEdit();
+  void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
   void	Copy_(const ScriptVar& cp);
   COPY_FUNS(ScriptVar, taNBase);
   TA_BASEFUNS(ScriptVar);
 protected:
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
+  virtual cssEl*	NewCssEl_impl(); // make a new cssEl of an appropriate type, name/value initialized
 private:
   void	Initialize();
-  void	Destroy() {}
+  void	Destroy();
 };
+
 
 class TA_API EnumScriptVar: public ScriptVar { // a script variable to hold enums
 INHERITED(ScriptVar)
@@ -73,7 +75,6 @@ public:
   const String		ValToId(int val);
   
   override void		Freshen(const ScriptVar& cp); 
-  override cssEl*	NewCssEl(); // make a new cssEl of an appropriate type, name/value initialized
   
   void	Copy_(const EnumScriptVar& cp);
   COPY_FUNS(EnumScriptVar, ScriptVar);
@@ -81,6 +82,7 @@ public:
 protected:
   override const String	GenCssArg_impl();
   override const String	GenCssVar_impl(bool, TypeDef*);
+  override cssEl*	NewCssEl_impl(); 
 private:
   void	Initialize();
   void	Destroy();
@@ -99,6 +101,10 @@ public:
   void	Copy_(const ObjectScriptVar& cp);
   COPY_FUNS(ObjectScriptVar, ScriptVar);
   TA_BASEFUNS(ObjectScriptVar);
+  
+protected:
+  override cssEl*	NewCssEl_impl(); 
+  
 private:
   void	Initialize();
   void	Destroy();

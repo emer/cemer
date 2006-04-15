@@ -32,6 +32,14 @@
 void ProgEl::Initialize() {
 }
 
+void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  inherited::ChildUpdateAfterEdit(child, handled);
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    prog->setDirty(true);
+  }
+}
+
 void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   if (!(dcr == DCR_ITEM_UPDATED)) return;
@@ -299,12 +307,18 @@ void ProgramCallEl::UpdateAfterEdit() {
 }
 
 const String ProgramCallEl::GenCssPre_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "{\n";
+  STRING_BUF(rval, 50);
+  rval = cssMisc::Indent(indent_level);
+  rval += "{ // call program: "; 
+  if (target)
+    rval += target->name;
+  rval += "\n";
+  return rval;
 }
 
 const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
-  String rval(250, 0, '\0');
+  STRING_BUF(rval, 250);
   rval += cssMisc::Indent(indent_level);
   rval += "Bool call_succeeded = false;\n";
   rval += cssMisc::Indent(indent_level);
@@ -327,10 +341,9 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     prg_var = target->global_vars.FindName(nm);
     if (!prg_var || prg_var->ignore) continue;
     rval += cssMisc::Indent(indent_level);
-    rval += ths_var->GenCss();
-    rval += cssMisc::Indent(indent_level);
+    //TODO: need to be using ScriptArg instead of ScriptVar
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
-      + ths_var->name + ");\n";
+      + ths_var->value.toCssLiteral() + ");\n";
   }
   
   rval += cssMisc::Indent(indent_level);
@@ -348,7 +361,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
 }
 
 const String ProgramCallEl::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "} // ProgramCallEl\n";
+  return cssMisc::Indent(indent_level) + "} // call program\n";
 }
 
 void ProgramCallEl::UpdateGlobalArgs() {
@@ -447,8 +460,6 @@ bool Program::Run() {
   if (!script_compiled) {
     if (!CompileScript())
       return false; // deferred or error
-  } else {
-    UpdateScriptVars();
   }
   return RunScript();
 }
@@ -474,20 +485,26 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
 }
 
 void  Program::UpdateScriptVars() {
-// makes sure the global vars are in the script, and values are current
-  // nuke any unnecessary ones (ex. user deleted a global_var)
-  while ((script->hard_vars.size - m_our_hardvar_base_index) > 
-    global_vars.size) 
-  {
+// easiest is just to nuke and recreate...
+  // nuke existing
+  while (script->hard_vars.size >= m_our_hardvar_base_index) {
     script->hard_vars.DelPop(); // removes/unref-deletes
   }
     
-  int i = 0;
+  // add new
+  for (int i = 0; i < global_vars.size; ++i) {
+    ScriptVar* sv = global_vars.FastEl(i);
+    if (sv->ignore) continue;
+    cssEl* el = sv->NewCssEl();
+    script->hard_vars.Push(el); //refs
+  } 
+/*old  int i = 0;
   ScriptVar* sv;
   cssEl* el;
   // update names and values of existing (if any)
   while ((m_our_hardvar_base_index + i) < script->hard_vars.size) {
     sv = global_vars.FastEl(i);
+    if (sv->ignore) continue;
     el = script->hard_vars.FastEl(m_our_hardvar_base_index + i);
     // easiest (harmless) is to just update, even if not changed 
     el->name = sv->name;
@@ -498,10 +515,11 @@ void  Program::UpdateScriptVars() {
   // add new
   while (i < global_vars.size) {
     sv = global_vars.FastEl(i);
+    if (sv->ignore) continue;
     el = sv->NewCssEl();
     script->hard_vars.Push(el); //refs
     ++i;
-  }
+  } */
 }
 
 #ifdef TA_GUI

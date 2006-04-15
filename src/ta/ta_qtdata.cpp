@@ -286,6 +286,7 @@ void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing) { //vi
   if (last_spc != -1)
     lay->addSpacing(last_spc);
   lay->addWidget(child_widget, spacing, (Qt::AlignLeft | Qt::AlignVCenter));
+  child_widget->show();
 }
 
 QWidget* taiCompData::widgets(int index) {

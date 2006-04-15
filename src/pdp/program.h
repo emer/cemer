@@ -38,6 +38,7 @@ public:
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
