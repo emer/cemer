@@ -33,7 +33,7 @@ using namespace std;
    but we just go with the flow here, and implement readline
 */
 
-// basic readline interface -- from css_machine.cc
+// basic readline interface -- from css_machine.cpp
 
 extern "C" {
   extern int rl_done;		// readline done reading
@@ -43,6 +43,7 @@ extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
   extern int rl_stuff_char(int);
+  extern int rl_set_keyboard_input_timeout (int u); // wait u microseconds between callbacks, default .1s
 }
 
 // readline waitproc and events -- from css_qt.cc (only included for TA_GUI)
@@ -186,10 +187,16 @@ int init_readline() {
 extern "C" {
 int rl_done = 0;		// readline done reading
 int rl_pending_input = 0;
+int rl_keyboard_input_timeout_ms = 100; // default of .1s
 char* rl_line_buffer = rl_line_buffer_;
 int (*rl_event_hook)(void) = NULL;	// this points to the Qt event loop pump if running TA_GUI
 int (*rl_attempted_completion_function)(void) = NULL;
 
+int rl_set_keyboard_input_timeout (int u) { // in microseconds
+  if (u < 2000) u = 2000; // sanity
+  rl_keyboard_input_timeout_ms = u / 1000;
+  return u;
+}
 
 char** completion_matches (char* text, rl_generator_fun* gen) {
   return NULL;
@@ -218,13 +225,16 @@ char* readline(char* prompt) {
     // see if anything available, else wait
     if (rl_event_hook)
       rl_event_hook();
-    Sleep(20); // note: readline says it calls back 10x/s, but this is sluggish
+    Sleep(rl_keyboard_input_timeout_ms); 
   }
   if (read_error == ERROR_HANDLE_EOF) {
-    return NULL; // our way of signalling NULL
+    return NULL; // our way of signalling EOF
   }
   rl_line_buffer_[num_read] = '\0'; // not sure if this is done, so do it
-  return rl_line_buffer_;
+  // gnu readline actually returns a new string
+  char* rval = (char*)malloc(num_read + 1);
+  strcpy(rval, rl_line_buffer_);
+  return rval;
 }
 
 void add_history(char*) {

@@ -1038,7 +1038,7 @@ public:
   { stpc = cp.stpc; ln = cp.ln; src = cp.src; }
 
   cssListEl()			{ stpc = 0;   ln = 0; }
-  cssListEl(css_progdx pc, int l, const char* cd)
+  cssListEl(css_progdx pc, int l, const String& cd)
   { stpc = pc;  ln = l;  src = cd;  }
   cssListEl(const cssListEl& cp)	{ Copy(cp); }
 

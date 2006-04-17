@@ -54,6 +54,7 @@ extern "C" {
   extern char* readline(char*);
   extern void add_history(char*);
   extern int rl_stuff_char(int);
+  extern int rl_set_keyboard_input_timeout (int u); // wait u microseconds between callbacks, default .1s
 }
 
 int cssMisc::readline_waitproc() {
@@ -265,6 +266,8 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
   new QCoreApplication(argc, (char**)argv); // accessed as qApp
   rl_event_hook = readline_waitproc; // set the hook to our "waitproc"
 #endif
+  // have waitproc called back 20/s (instead of 10/s)
+  rl_set_keyboard_input_timeout(50000); 
   rl_done = false;
 }
 
@@ -2599,7 +2602,6 @@ int cssProg::ReadLn() {
   if((top->InShell() || (top->state & cssProg::State_Defn)) &&
      (top->fin == top->fshell))
   {
-    char* curln;
     const char* pt;
     pt = (top->state & cssProg::State_Defn) ? "#" : ">";
     if(top->depth > 0)
@@ -2609,9 +2611,13 @@ int cssProg::ReadLn() {
 
     top->in_readline = true;
 //obs    curln = rl_readline((char*)top->act_prompt);
-    curln = readline((char*)top->act_prompt);
-    if(curln == (char*)0)
+    //NOTE: according to rl spec, we must call free() on the string returned
+    char* curln_ = readline((char*)top->act_prompt);
+    if (!curln_)
       return EOF;
+    String curln(curln_);
+    free(curln_); 
+    curln_ = NULL;
     top->in_readline = false;
 /*obs #ifdef TA_GUI
     if(taMisc::gui_active && rl_event_hook == NULL) // might get set to null somewhere -- reset it
@@ -2624,8 +2630,7 @@ int cssProg::ReadLn() {
     line = AddSrc(curln);	// put onto buffer
     if(source[line]->src.length() > 0)
       add_history(curln);
-  }
-  else {
+  } else {
     int c;
     line = AddSrc("");			// new line
 
