@@ -2082,9 +2082,10 @@ cssInst::~cssInst() {
 }
 
 void cssInst::SetInst(const cssElPtr& it) {
-  if((it.ptr_type == cssElPtr::SPACE) &&
+  if ((it.ptr_type == cssElPtr::SPACE) &&
      ((it.ptr == (void*)&(prog->top->statics)) ||
       (it.ptr == (void*)&(prog->top->hard_vars)) ||
+      (it.ptr == (void*)&(prog->top->prog_vars)) ||
       (it.ptr == (void*)&(prog->top->hard_funs))))
   {
     cssScriptFun* cur_fun = prog->top->GetCurrentFun();
@@ -2096,8 +2097,11 @@ void cssInst::SetInst(const cssElPtr& it) {
 	cssMbrScriptFun* scrf = (cssMbrScriptFun*)cur_fun;
 	if(!scrf->type_def->multi_space) do_msg = false; // if not actually in multiple spaces, don't complain!
       }
-      if(do_msg) {
-	if((it.ptr == (void*)&(prog->top->hard_vars)) ||
+      if (do_msg) {
+	if (it.ptr == (void*)&(prog->top->prog_vars))
+	  cssMisc::Warning(prog, "Warning: Referring to Program variable in a class method",
+			   "or extern function, which is non-portable if script is used multiple times");
+	else if((it.ptr == (void*)&(prog->top->hard_vars)) ||
 	   (it.ptr == (void*)&(prog->top->hard_funs)))
 	  cssMisc::Warning(prog, "Warning: Referring to hard-coded variable or function in a class method",
 			   "or extern function, which is non-portable if script is used multiple times");
@@ -2110,8 +2114,7 @@ void cssInst::SetInst(const cssElPtr& it) {
       cssEl::SetRefElPtr(inst, nw_ptr);
       return;
     }
-  }
-  else if((it.ptr_type == cssElPtr::PROG_AUTO) ||
+  } else if ((it.ptr_type == cssElPtr::PROG_AUTO) ||
 	  (it.ptr_type == cssElPtr::CLASS_MEMBER) ||
 	  (it.ptr_type == cssElPtr::NVIRT_METHOD) ||
 	  (it.ptr_type == cssElPtr::VIRT_METHOD))
@@ -3051,8 +3054,9 @@ void cssProgSpace::ExitShell() {
 
 void cssProgSpace::SetName(const char* nm) {
   name = nm;
-  hard_funs.name = name + ".hard_funs";
+  prog_vars.name = name + ".prog_vars";
   hard_vars.name = name + ".hard_vars";
+  hard_funs.name = name + ".hard_funs";
   statics.name = name + ".statics";
   types.name = name + ".types";
 }
@@ -3334,13 +3338,16 @@ cssElPtr& cssProgSpace::FindName(const char* nm) {	// lookup by name
     if((el_retv = Prog(i)->FindAutoName(nm)) != 0)
       return el_retv;
   }
-  if((el_retv = statics.FindName(nm)) != 0)
+  if ((el_retv = statics.FindName(nm)) != 0)
     return el_retv;
-  if((el_retv = hard_funs.FindName(nm)) != 0)
+  if ((el_retv = hard_funs.FindName(nm)) != 0)
     return el_retv;
-  return hard_vars.FindName(nm);
+  if ((el_retv = hard_vars.FindName(nm)) != 0)
+    return el_retv;
+  return prog_vars.FindName(nm);
 }
 
+// idx is an arbitrary number, returns NULL when no more values
 cssSpace* cssProgSpace::GetParseSpace(int idx) {
   static int max_prog;		// highest prog to search back to
   int dynamics = (2 * size) + 2; // number of "dynamic" spaces (changes based on size)
@@ -3402,6 +3409,8 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     return &cssMisc::Enums;
   else if(idx == dynamics+10)
     return &cssMisc::Settings;
+  else if(idx == dynamics+11)
+    return &prog_vars;
   else
     return NULL;
 }
@@ -4117,10 +4126,12 @@ variables argv (an array of strings) and argc (an int)\n";
   *fout << "\nThe following functions and debugging & control commands are available\n";
   cssMisc::Functions.NameList(*fout);
   cssMisc::Commands.NameList(*fout);
-  *fout << "\n And the following hard-coded functions are available\n";
+  *fout << "\n ...and the following hard-coded functions are available\n";
   hard_funs.NameList(*fout);
   cssMisc::HardFuns.NameList(*fout);
-  *fout << "\n And the following hard-coded variables are available\n";
+  *fout << "\n ...and the following Program variables are available\n";
+  prog_vars.NameList(*fout);
+  *fout << "\n ...and the following hard-coded variables are available\n";
   hard_vars.NameList(*fout);
   cssMisc::HardVars.NameList(*fout);
   *fout << "\n";

@@ -379,7 +379,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
     nm = ths_var->name.after(prfx);
     t = target->global_vars.Find(nm);
     if (t >= 0) { 
-      // found, but make sure same type
+      // found, but make sure they are of same type
       prg_var = target->global_vars.FastEl(t);
       if (ths_var->GetTypeDef() == prg_var->GetTypeDef()) {
         // ok, match, so update our copy and continue
@@ -413,7 +413,6 @@ void ProgramCallEl::UpdateGlobalArgs() {
 
 void Program::Initialize() {
   m_dirty = true; 
-  m_our_hardvar_base_index = -1; // flag that not set yet
 }
 
 void Program::Destroy()	{ 
@@ -445,10 +444,7 @@ void Program::UpdateAfterEdit() {
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl();
-  // if first time, find last intrinsic hardvar
-  if (m_our_hardvar_base_index < 0) {
-    m_our_hardvar_base_index = script->hard_vars.size;
-  }
+  //NOTE: nothing else, could be eliminated
 }
 
 void Program::PreCompileScript_impl() {
@@ -466,7 +462,9 @@ bool Program::Run() {
 
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
-  //TODO: maybe inform gui
+  m_dirty = false;
+  script_compiled = true;
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 void Program::setDirty(bool value) {
@@ -474,10 +472,11 @@ void Program::setDirty(bool value) {
   m_dirty = value;
   script_compiled = false; // have to assume user changed something
   DirtyChanged_impl();
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 bool Program::SetGlobalVar(const String& nm, const Variant& value) {
-  cssElPtr& el_ptr = script->hard_vars.FindName(nm);
+  cssElPtr& el_ptr = script->prog_vars.FindName(nm);
   if (el_ptr == cssMisc::VoidElPtr) return false;
   cssEl* el = el_ptr.El();
   *el = value;
@@ -485,18 +484,18 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
 }
 
 void  Program::UpdateScriptVars() {
+  //NOTE: if we have to nuke any or change any types then we have to recompile!
+  // but currently, we only do this before recompiling anyway, so no worries!
 // easiest is just to nuke and recreate...
   // nuke existing
-  while (script->hard_vars.size >= m_our_hardvar_base_index) {
-    script->hard_vars.DelPop(); // removes/unref-deletes
-  }
+  script->prog_vars.Reset(); // removes/unref-deletes
     
   // add new
   for (int i = 0; i < global_vars.size; ++i) {
     ScriptVar* sv = global_vars.FastEl(i);
     if (sv->ignore) continue;
     cssEl* el = sv->NewCssEl();
-    script->hard_vars.Push(el); //refs
+    script->prog_vars.Push(el); //refs
   } 
 /*old  int i = 0;
   ScriptVar* sv;

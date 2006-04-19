@@ -664,9 +664,9 @@ public:
 #endif
   void	Destroy();
   void	CutLinks();
-  TA_BASEFUNS(taOBase);
+  TA_BASEFUNS(taOBase); //
 protected:
-  taDataLink*		m_data_link;
+  taDataLink*		m_data_link; //
 };
 
 

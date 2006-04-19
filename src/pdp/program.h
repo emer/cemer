@@ -262,7 +262,6 @@ public: // ScriptBase i/f
 protected:
   bool		    	m_dirty;
   String		m_scriptCache; // cache of script, managed by implementation
-  int			m_our_hardvar_base_index; // each time we recompile, we reinstall our vars
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars

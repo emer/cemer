@@ -54,6 +54,10 @@ void ScriptVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+int ScriptVar::cssType() {
+  return cssEl::T_Variant;
+}
+
 void ScriptVar::Freshen(const ScriptVar& cp) {
   value = cp.value;
 } 
@@ -174,6 +178,10 @@ void EnumScriptVar::Copy_(const EnumScriptVar& cp) {
   init = cp.init;
 }
 
+int EnumScriptVar::cssType() {
+  return cssEl::T_Enum;
+}
+
 const String EnumScriptVar::enumName() {
   if (enum_type) {
     //TODO: need to make sure it is type::enum
@@ -234,6 +242,10 @@ void ObjectScriptVar::Destroy() {
 void ObjectScriptVar::Copy_(const ObjectScriptVar& cp) {
   val_type = cp.val_type;
   make_new = cp.make_new;
+}
+
+int ObjectScriptVar::cssType() {
+  return cssEl::T_TA;
 }
 
 void ObjectScriptVar::Freshen(const ScriptVar& cp_) {

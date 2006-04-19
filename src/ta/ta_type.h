@@ -472,12 +472,12 @@ public:
 #else
   taDataLink*		link() const {return m_link;}
 #endif
+  TypeDef*		GetDataTypeDef(); // convenience function, gets data from link
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
-  TypeDef*		GetDataTypeDef(); // convenience function, gets data from link
   virtual bool		IsDataView() {return false;} // 'true' for dlc's that are DataViews (see taBase)
   IDataLinkClient() {m_link = NULL;}
-  ~IDataLinkClient(); // removes us from datalink
+  ~IDataLinkClient();
 protected:
   taDataLink*		m_link; // NOTE: will always be a taiDataLink or subclass
 };

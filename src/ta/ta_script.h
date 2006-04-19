@@ -43,6 +43,8 @@ public:
   bool			ignore; // don't use this variable
   Variant		value; // the actual variable
   
+  virtual int		cssType(); // int value of cssEl::Type generated
+  
   virtual void		Freshen(const ScriptVar& cp); 
     // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
@@ -70,6 +72,7 @@ public:
   TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
   bool			init; // when true, initialize the enum value
   
+  override int		cssType(); // int value of cssEl::Type generated
   const String		enumName(); // ex, taBase::Orientation
   
   const String		ValToId(int val);
@@ -93,6 +96,8 @@ INHERITED(ScriptVar)
 public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
   bool			make_new; // #LABEL_new create a new instance
+  
+  override int		cssType(); // int value of cssEl::Type generated
   
   override void		Freshen(const ScriptVar& cp); 
   override const String	GenCss(bool is_arg = false) 

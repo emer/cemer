@@ -467,6 +467,11 @@ bool taBase::CopyTo(TAPtr cpy_to) {
   return true;
 }
 
+void taBase::DataChanged(int dcr, void* op1, void* op2) {
+  taDataLink* dl = data_link();
+  if (dl) dl->DataDataChanged(dcr, op1, op2);
+}
+
 void taBase::DataViewAdding(taDataView* dv) {
 #ifdef TA_GUI
   taDataLink* dl = GetDataLink(); // sets data_link
@@ -757,11 +762,6 @@ TAPtr taBase::MakeTokenAry(TypeDef* td, int no) {
 
 TAPtr taBase::New(int, TypeDef*) {
   return NULL;
-}
-
-void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  taDataLink* dl = data_link();
-  if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
 
 int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {

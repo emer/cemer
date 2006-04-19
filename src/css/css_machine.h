@@ -1281,12 +1281,13 @@ public:
   String	prompt;
   String	act_prompt;		// the actual prompt
 
-  int 		size;
+  int 		size;			// size of progs, in els
   cssProgStack** progs;
 
   int		state;
   int		depth;			// number of levels in shells, etc.
 
+  cssSpace	prog_vars;		// external Program vars, only used by pdp Programs, act like hard_vars
   cssSpace	hard_vars;		// space-specific extern vars
   cssSpace	hard_funs;		// space-specific extern funs
   cssSpace	statics;		// global variables (in space)
