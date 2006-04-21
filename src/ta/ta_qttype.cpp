@@ -1557,28 +1557,24 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
       arg_val = new cssInt(0, nm);
       arg_base = (void*)&(((cssInt*)arg_val)->val);
       return arg_val;
-    }
-    else if(arg_typ->DerivesFrom(TA_float) || arg_typ->DerivesFrom(TA_double)) {
+    } else if (arg_typ->DerivesFrom(TA_float) || arg_typ->DerivesFrom(TA_double)) {
       arg_typ = &TA_double;
       arg_val = new cssReal(0, nm);
       arg_base = (void*)&(((cssReal*)arg_val)->val);
       return arg_val;
-    }
-    else if(arg_typ->DerivesFrom(TA_taString)) {
+    } else if (arg_typ->DerivesFrom(TA_taString)) {
       arg_typ = &TA_taString;
       arg_val = new cssString("", nm);
       arg_base = (void*)&(((cssString*)arg_val)->val);
       return arg_val;
-    }
-    else if(arg_typ->DerivesFrom(TA_taBase)) {
+    } else if (arg_typ->DerivesFrom(TA_taBase)) {
       arg_typ = arg_typ->GetNonRefType()->GetNonConstType();
       if(arg_typ->GetInstance() == NULL) return NULL;
       obj_inst = ((TAPtr)arg_typ->GetInstance())->MakeToken();
       arg_val = new cssTA_Base(obj_inst, 1, arg_typ, nm);
       arg_base = obj_inst;
       return arg_val;
-    }
-    else if(arg_typ->DerivesFormal(TA_enum)) {
+    } else if (arg_typ->DerivesFormal(TA_enum)) {
       arg_val = new cssEnum(0, nm);
       arg_base = (void*)&(((cssEnum*)arg_val)->val);
       return arg_val;
