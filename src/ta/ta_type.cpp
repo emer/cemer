@@ -2105,6 +2105,7 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 {
   Initialize();
   name = nm; desc = dsc;
+  c_name = nm;
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
@@ -2117,22 +2118,15 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 }
 
 TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
-		 bool global_obj,
-#ifdef NO_TA_BASE 
-	  String size_str
-#else
-	  uint siz
-#endif	  
+		 bool global_obj, uint siz, const char* c_nm
 )
 :inherited()
 {
   Initialize();
   name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml; 
-#ifdef NO_TA_BASE 
-  size_of_str = size_str;
-#else
-  size = siz;
-#endif	  
+  size = siz; // note: may get updated later
+  if (c_nm) c_name = c_nm;
+  else c_name = name;
   if(ptr > 0) size = sizeof(void*);
   if(global_obj)
     taRefN::Ref(this);		// reference if static (non-new'ed) global object
@@ -2147,6 +2141,7 @@ TypeDef::TypeDef(const TypeDef& cp)
 
 void TypeDef::Copy(const TypeDef& cp) {
   inherited::Copy(cp);
+  c_name	= cp.c_name;
   size		= cp.size    ;
   ptr		= cp.ptr     ;
   ref		= cp.ref     ;
@@ -2382,7 +2377,7 @@ String TypeDef::Get_C_Name() const {
       taMisc::Error("Null TemplParent in TypeDef::Get_C_Name()", name);
       return name;
     }
-    rval += tmpar->name + "<";
+    rval += tmpar->name + "<"; // note: name is always its valid c_name
     for(i=0; i<templ_pars.size; i++) {
       rval += templ_pars.FastEl(i)->Get_C_Name();
       if(i < templ_pars.size-1)
@@ -2392,7 +2387,12 @@ String TypeDef::Get_C_Name() const {
     return rval;
   }
 
-  rval += name;			// the default
+  //note: normally, c_name should be valid, but may be cases, ex. templates, dynamic types, etc
+  // where c_name was not set or updated, so most contexts the name is the same
+  if (c_name.empty())
+    rval += name;			// the default
+  else 
+    rval += c_name;			// the default
   return rval;
 }
 

@@ -439,6 +439,7 @@ public:
   virtual operator Int() const	 		{ return 0; }
   virtual operator unsigned int() const 	{ return (unsigned int)(Int)*this; }
   virtual operator char() const	 		{ return (char)(Int)*this; }
+  virtual operator signed char() const 		{ return (signed char)(Int)*this; }
   virtual operator unsigned char() const 	{ return (unsigned char)(Int)*this; }
   virtual operator short() const    		{ return (short)(Int)*this; }
   virtual operator unsigned short() const	{ return (unsigned short)(Int)*this; }

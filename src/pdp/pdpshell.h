@@ -368,6 +368,7 @@ public:
   unsigned long long	ull;
   intptr_t		intptr;
   
+  Variant		v; // used for dynamic testing in the object
   Variant		v_invalid; 
   Variant		v_b;
   Variant		v_c;
@@ -394,6 +395,32 @@ public:
   Variant		v_own_tab; // #OWN_POINTER an object we create and own ourself, in a variant
   
   void			InitObj(); // #MENU #MENU_CONTEXT set the values to non-clear values
+  
+  virtual bool		TestMethod1(
+    bool		b = false, 
+    char		c = 'a',
+    signed char		sc = -127,
+    unsigned char	uc = 255,
+    byte		byt = 254, 
+    short		sh = -32767,
+    signed short	ssh = -32766,
+    unsigned short	ush = 65535,
+    int			i = 2147483647, 
+    signed int		si = 2147483646,
+    signed		s = 2147483645,
+    unsigned int	ui = 4294967295U,
+    unsigned		u = 4294967294U,
+    long		l = 2147483647L,
+    signed long		sl = 2147483646L,
+    unsigned long	ul = 4294967295UL,
+    int64_t		i64 = 9223372036854775807LL,
+    long long		ll = 9223372036854775806LL,
+    signed long long	sll = 9223372036854775805LL,
+    uint64_t		u64 = 18446744073709551615ULL,
+    unsigned long long	ull = 18446744073709551614ULL,
+    const Variant&	v = _nilVariant, 
+    taBase*		s_tab = NULL
+  ); // #MENU #MENU_CONTEXT a method used to test the various argument types; returns b
   
   void	InitLinks();
   void	CutLinks();

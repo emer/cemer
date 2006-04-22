@@ -1515,6 +1515,59 @@ void TestObj::InitObj() {
 }
 
 
+bool TestObj::TestMethod1(
+    bool		b,
+    char		c,
+    signed char		sc,
+    unsigned char	uc,
+    byte		byt,
+    short		sh,
+    signed short	ssh,
+    unsigned short	ush,
+    int			i,
+    signed int		si,
+    signed		s,
+    unsigned int	ui,
+    unsigned		u,
+    long		l,
+    signed long		sl,
+    unsigned long	ul,
+    int64_t		i64,
+    long long		ll,
+    signed long long	sll,
+    uint64_t		u64,
+    unsigned long long	ull,
+    const Variant&	v, 
+    taBase*		s_tab
+) 
+{
+  this->b = b; // #DEF_false
+  this->c = c;
+  this->sc = sc;
+  this->uc = uc;
+  this->byt = byt; //note: s/b same as an unsigned char
+  this->sh = sh;
+  this->ssh = ssh;
+  this->ush = ush;
+  this->i = i; // #DEF_0
+  this->si = si;
+  this->s = s;
+  this->ui = ui;
+  this->u = u;
+  this->l = l;
+  this->sl = sl;
+  this->ul = ul;
+  this->i64 = i64;
+  this->ll = ll;
+  this->sll = sll;
+  this->u64 = u64;
+  this->ull = ull;
+  this->v =v; 
+  taBase::SetPointer(&(this->s_tab), s_tab);
+  return b;
+}
+
+
 void TestObj2::Initialize() {
   int_val = 0;
 }

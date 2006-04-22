@@ -485,7 +485,6 @@ void taiIncrField::selectionChanged() {
   emit_UpdateUi();
 }
 
-
 void taiIncrField::this_GetEditActionsEnabled(int& ea) {
   if (!readOnly())
     ea |= taiClipData::EA_PASTE;
@@ -621,13 +620,14 @@ taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData*
   QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  Initialize(gui_parent_);
+  Initialize(gui_parent_, is_enum);
   if (is_enum && typ) {
     SetEnumType(typ, true);
   }
 }
 
-void taiComboBox::Initialize(QWidget* gui_parent_) {
+void taiComboBox::Initialize(QWidget* gui_parent_, bool is_enum_) {
+  m_is_enum = is_enum_;
   SetRep(new iComboBox(gui_parent_));
   rep()->setFixedHeight(taiM->combo_height(defSize()));
 
@@ -946,33 +946,33 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   QLabel* lbl = new QLabel("var type",rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
   
-  if (read_only_) {
-    // TODO: create a ro edit for type
-  } else {
-    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
-    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
-    //remove unused variant enum types according to flags
-    if (mflags & (flgNoInvalid | flgIntOnly)) {
-      cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
-    }
-    if (mflags & (flgNoAtomics | flgIntOnly)) {
-      for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
-        if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
-          cmbVarType->RemoveItemByData(QVariant(vt));
-      }
-    }
-    if (mflags & (flgNoPtr | flgIntOnly)) {
-      cmbVarType->RemoveItemByData(QVariant(Variant::T_Ptr));
-    }
-    if (mflags & (flgNoBase | flgIntOnly)) {
-      cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
-      cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
-    }
-    AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
-    lbl->setBuddy(cmbVarType->rep());
-    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
-    
+  TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
+  cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
+  //remove unused variant enum types according to flags
+  if (mflags & (flgNoInvalid | flgIntOnly)) {
+    cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
   }
+  if (mflags & (flgNoAtomics | flgIntOnly)) {
+    for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
+      if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
+        cmbVarType->RemoveItemByData(QVariant(vt));
+    }
+  }
+  if (mflags & (flgNoPtr | flgIntOnly)) {
+    cmbVarType->RemoveItemByData(QVariant(Variant::T_Ptr));
+  }
+  if (mflags & (flgNoBase | flgIntOnly)) {
+    cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
+    cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
+  }
+  AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
+  lbl->setBuddy(cmbVarType->rep());
+  if (read_only_) {
+    cmbVarType->rep()->setEnabled(false);
+  } else {
+    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+  }
+  
   lbl = new QLabel("var value", rep_);
   AddChildWidget(lbl, taiM->hsep_c, 0);
   stack = new QStackedWidget(rep_);
@@ -1094,7 +1094,7 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
   --m_updating;
 }
 
-void taiVariantBase::GetValue_Variant(Variant& var) {
+void taiVariantBase::GetValue_Variant(Variant& var) const {
   ++m_updating;
   int vt; //Variant::VarType
   // set combo box to right type
@@ -1130,9 +1130,10 @@ void taiVariantBase::GetValue_Variant(Variant& var) {
   case Variant::T_Matrix:
     var.setBase(matVal->GetValue());
     break;
-  default: return ;
+  default: break;
   }
   --m_updating;
+  return;
 }
 
 

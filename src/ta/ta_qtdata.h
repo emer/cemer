@@ -116,6 +116,8 @@ protected:
   QToolButton*		btnEdit; // if requested, button to invoke dialog editor
   override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
   override void		GetValue_impl(void* base) const {*((String*)base) = GetValue();} 
+  override void		GetImageVar_impl(const Variant& val) {GetImage(val.toString());}
+  override void		GetValueVar_impl(Variant& val) const {val.updateFromString(GetValue());} 
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
@@ -136,6 +138,8 @@ protected slots:
   void			selectionChanged();
 
 protected:
+  override void		GetImageVar_impl(const Variant& val) {GetImage(val.toInt());}
+  override void		GetValueVar_impl(Variant& val) const {val = GetValue();} 
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
@@ -151,6 +155,9 @@ public:
 
   void 	GetImage(bool val);
   bool	GetValue() const;
+protected:
+  override void		GetImageVar_impl(const Variant& val) {GetImage(val.toBool());}
+  override void		GetValueVar_impl(Variant& val) const {val = GetValue();} 
 };
 
 
@@ -206,8 +213,15 @@ signals:
   void		itemChanged(int itm); // for use by non-IDataHost users, forwards chkbox signal
 #endif
 
+protected:
+  override void		GetImageVar_impl(const Variant& val) 
+    {if (m_is_enum) GetEnumImage(val.toInt()); else GetImage(val.toInt());}
+  override void		GetValueVar_impl(Variant& val) const 
+    {int i; if (m_is_enum) GetEnumValue(i); else GetValue(i); val = i;} 
+
 private:
-  void		Initialize(QWidget* gui_parent_);
+  bool		m_is_enum;
+  void		Initialize(QWidget* gui_parent_, bool is_enum = false);
 };
 
 //////////////////////////
@@ -258,6 +272,9 @@ signals:
 protected:
   QHBoxLayout* 	lay; //#IGNORE
   int		m_val; //#IGNORE
+  override void		GetImageVar_impl(const Variant& val)  {GetImage(val.toInt());}
+  override void		GetValueVar_impl(Variant& val) const 
+    {int i; GetValue(i); val = i;} 
 private:
   void		Initialize(QWidget* gui_parent_);
 };
@@ -359,7 +376,7 @@ protected:
     scMatrix
   };
   
-  int			m_updating;
+  mutable int		m_updating;
   
   taiComboBox*		cmbVarType;
   QStackedWidget*	stack; // holds the subfields for different types
@@ -373,7 +390,7 @@ protected:
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); 
     // (possibly) extend, and called in your constructor
   void  		GetImage_Variant(const Variant& var);
-  void	 		GetValue_Variant(Variant& var);
+  void	 		GetValue_Variant(Variant& var) const;
 
   
 protected slots:
@@ -390,10 +407,13 @@ public:
   QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
 
   void  	GetImage(const Variant& var) {GetImage_Variant(var);}
-  void	 	GetValue(Variant& var) {GetValue_Variant(var);}
+  void	 	GetValue(Variant& var) const {GetValue_Variant(var);}
   
   taiVariant(IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiVariant();
+protected:
+  override void		GetImageVar_impl(const Variant& val) {GetImage(val);}
+  override void		GetValueVar_impl(Variant& val) const {GetValue(val);} 
 };
 
 

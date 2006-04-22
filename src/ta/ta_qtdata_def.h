@@ -21,6 +21,7 @@
 
 #include "qtdefs.h"
 #include "ta_base.h"
+#include "ta_variant.h"
 
 #ifndef __MAKETA__
 #include <qobject.h>
@@ -152,6 +153,9 @@ public:
   void			GetImage_(const void* base) {GetImage_impl(base);} // base points to value of type
   void			GetValue_(void* base) const {GetValue_impl(base);} // base points to value of type
   
+  void			GetImageVar_(const Variant& val) {GetImageVar_impl(val);} // get as Var, mostly used by css
+  void			GetValueVar_(Variant& val) const {GetValueVar_impl(val);} // set as Var, mostly used by css
+  
 #ifndef __MAKETA__
 signals:
   bool 			settingHighlight(bool setting); // invoked when highlight state changes
@@ -169,6 +173,8 @@ protected:
   virtual void		DataChanged_impl(taiData* chld) {} // only called if isConstructed
   virtual void		GetImage_impl(const void* base) {}
   virtual void		GetValue_impl(void* base) const {} 
+  virtual void		GetImageVar_impl(const Variant& val) {}
+  virtual void		GetValueVar_impl(Variant& val) const {} 
   
 protected slots:
   void 			repChanged(); //signal from rep that data has changed

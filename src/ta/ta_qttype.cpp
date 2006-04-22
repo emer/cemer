@@ -183,7 +183,8 @@ bool taiType::isReadOnly(taiData* dat, IDataHost* host_) { // used in GetImage a
 ////////////////////////
 
 int taiIntType::BidForType(TypeDef* td){
-  if(td->InheritsFrom("Int") || td->InheritsFrom("int"))
+  // we handle all 32-bit types -- TBA: support for 64-bit types
+  if (td->InheritsFrom("Int") || td->InheritsFrom("int"))
     return (taiType::BidForType(td) +1);
   return 0;
 }
@@ -1531,7 +1532,7 @@ void taiArgType::GetImage_impl(taiData* dat, const void*) {
 void taiArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL) return;
 
-  if (use_it != NULL)
+  if (use_it)
     use_it->GetValue(dat, arg_base);
   else
     arg_typ->it->GetValue(dat, arg_base);
@@ -1540,22 +1541,41 @@ void taiArgType::GetValue_impl(taiData* dat, void*) {
 taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   if (arg_base == NULL) return NULL;
 
-  if (use_it != NULL)
+  if (use_it)
     return use_it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
-
-  return arg_typ->it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+  else
+    return arg_typ->it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
 }
 
 cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
   if(arg_typ->ptr == 0) {
-    if(arg_typ->DerivesFrom(TA_int) || arg_typ->DerivesFrom(TA_short) ||
-       arg_typ->DerivesFrom(TA_long) || arg_typ->DerivesFrom(TA_char) ||
-       arg_typ->DerivesFrom(TA_unsigned) || arg_typ->DerivesFrom(TA_signed) ||
-       arg_typ->DerivesFrom(TA_bool))
-    {
+    /* type notes:
+      explicitly signed/unsigned chars are treated as numbers, whereas char is a char
+    */
+    if (arg_typ->DerivesFrom(TA_int) || arg_typ->DerivesFrom(TA_unsigned_int) ||
+      arg_typ->DerivesFrom(TA_short) || arg_typ->DerivesFrom(TA_unsigned_short) ||
+      arg_typ->DerivesFrom(TA_long) || arg_typ->DerivesFrom(TA_unsigned_long) ||
+      arg_typ->DerivesFrom(TA_signed_char) || arg_typ->DerivesFrom(TA_unsigned_char) 
+    ) {
       arg_typ = &TA_int;
       arg_val = new cssInt(0, nm);
       arg_base = (void*)&(((cssInt*)arg_val)->val);
+      return arg_val;
+    } else if (arg_typ->DerivesFrom(TA_int64_t) || arg_typ->DerivesFrom(TA_uint64_t)
+    ) {
+      arg_val = new cssVariant(Variant(0LL), nm);
+      arg_base = (void*)&(((cssVariant*)arg_val)->val);
+      use_it = new taiType(arg_typ); // make an it for it...
+      return arg_val;
+    } else if (arg_typ->DerivesFrom(TA_bool)) {
+      arg_val = new cssBool(false, nm);
+      arg_base = (void*)&(((cssBool*)arg_val)->val);
+      use_it = new taiBoolType(arg_typ); // make an it for it...
+      return arg_val;
+    } else if (arg_typ->DerivesFrom(TA_char)) {
+      arg_typ = &TA_char;
+      arg_val = new cssChar(0, nm);
+      arg_base = (void*)&(((cssChar*)arg_val)->val);
       return arg_val;
     } else if (arg_typ->DerivesFrom(TA_float) || arg_typ->DerivesFrom(TA_double)) {
       arg_typ = &TA_double;
@@ -1566,6 +1586,11 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
       arg_typ = &TA_taString;
       arg_val = new cssString("", nm);
       arg_base = (void*)&(((cssString*)arg_val)->val);
+      return arg_val;
+    } else if (arg_typ->DerivesFrom(TA_Variant)) {
+      arg_typ = &TA_Variant;
+      arg_val = new cssVariant(_nilVariant, nm);
+      arg_base = (void*)&(((cssVariant*)arg_val)->val);
       return arg_val;
     } else if (arg_typ->DerivesFrom(TA_taBase)) {
       arg_typ = arg_typ->GetNonRefType()->GetNonConstType();
@@ -1603,9 +1628,6 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
 }
 
 
-/////////////////////////////
-//       taiArgTypes     //
-/////////////////////////////
 
 //////////////////////////////////
 //       taiStreamArgType     //
@@ -1733,22 +1755,6 @@ void taiStreamArgType::GetValueFromGF() {
   }
 }
 
-//////////////////////////////////////////
-//       taiBoolArgType		//
-//////////////////////////////////////////
-
-int taiBoolArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if(argt->InheritsFrom(TA_bool))
-    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
-  return 0;
-}
-
-cssEl* taiBoolArgType::GetElFromArg(const char* nm, void*) {
-  arg_val = new cssBool(false, nm);
-  arg_base = (void*)&(((cssBool*)arg_val)->val);
-  use_it = new taiBoolType(arg_typ); // make an it for it...
-  return arg_val;
-}
 
 //////////////////////////////////////////
 //       taiTokenPtrArgType		//

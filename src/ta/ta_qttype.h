@@ -559,10 +559,6 @@ TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
 
 
-//////////////////////////////
-//       taiArgTypes	    //
-//////////////////////////////
-
 class TA_API taiStreamArgType : public taiArgType {
   // for ios derived args (uses a file-requestor)
 public:
@@ -580,15 +576,6 @@ public:
   void Initialize();
   void Destroy();
   TAQT_ARGTYPE_INSTANCE(taiStreamArgType, taiArgType);
-};
-
-class TA_API taiBoolArgType : public taiArgType {
-  // for bool int types
-public:
-  int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  cssEl*	GetElFromArg(const char* arg_nm, void* base);
-
-  TAQT_ARGTYPE_INSTANCE(taiBoolArgType, taiArgType);
 };
 
 class TA_API taiTokenPtrArgType : public taiArgType {

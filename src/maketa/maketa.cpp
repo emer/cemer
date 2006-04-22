@@ -27,32 +27,32 @@
 #endif
 
 TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
-TypeDef TA_char			("char", 	1, 0, 0, 0, 1, "char");
-TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, "signed char");
-TypeDef TA_unsigned_char	("unsigned_char", 1, 0, 0, 0, 1, "unsigned char");
-TypeDef TA_short		("short", 	1, 0, 0, 0, 1, "short");
-TypeDef TA_unsigned_short	("unsigned_short", 	1, 0, 0, 0, 1, "unsigned short");
-TypeDef TA_signed_short		("signed_short", 	1, 0, 0, 0, 1, "signed short");
-TypeDef TA_int			("int", 	1, 0, 0, 0, 1, "int");
-TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, "signed int");
-TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, "signed");
-TypeDef TA_unsigned_int		("unsigned_int", 	1, 0, 0, 0, 1, "unsigned int");
-TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, "unsigned");
-TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, "int64_t");
-TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, "long long");
-TypeDef TA_signed_long_long	("signed_long_long", 	1, 0, 0, 0, 1, "signed long long");
-TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, "uint64_t");
-TypeDef TA_unsigned_long_long	("unsigned_long_long", 	1, 0, 0, 0, 1, "unsigned long long");
+TypeDef TA_char			("char", 	1, 0, 0, 0, 1, 0, "char");
+TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, 0, "signed char");
+TypeDef TA_unsigned_char	("unsigned_char", 1, 0, 0, 0, 1, 0, "unsigned char");
+TypeDef TA_short		("short", 	1, 0, 0, 0, 1, 0, "short");
+TypeDef TA_signed_short		("signed_short", 	1, 0, 0, 0, 1, 0, "signed short");
+TypeDef TA_unsigned_short	("unsigned_short", 	1, 0, 0, 0, 1, 0, "unsigned short");
+TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 0, "int");
+TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 0, "signed int");
+TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1);
+TypeDef TA_unsigned_int		("unsigned_int", 	1, 0, 0, 0, 1, 0, "unsigned int");
+TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1);
+TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1);
+TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 0, "long long");
+TypeDef TA_signed_long_long	("signed_long_long", 	1, 0, 0, 0, 1, 0, "signed long long");
+TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1);
+TypeDef TA_unsigned_long_long	("unsigned_long_long", 	1, 0, 0, 0, 1, 0, "unsigned long long");
 // all the long types will get parented to either int (typical) or int64 types
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1, "long"); 
-TypeDef TA_signed_long		("signed_long", 	1, 0, 0, 0, 1, "signed long");
-TypeDef TA_unsigned_long	("unsigned_long", 	1, 0, 0, 0, 1, "unsigned long");
+TypeDef TA_long			("long", 	1, 0, 0, 0, 1); 
+TypeDef TA_signed_long		("signed_long", 	1, 0, 0, 0, 1, 0, "signed long");
+TypeDef TA_unsigned_long	("unsigned_long", 	1, 0, 0, 0, 1, 0, "unsigned long");
 // (u)intptr_t gets parented to either (u)int or (u)int64
-TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, "intptr_t"); 
-TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, "uintptr_t"); 
-TypeDef TA_float		("float", 	1, 0, 0, 0, 1, "float");
-TypeDef TA_double		("double", 	1, 0, 0, 0, 1, "double");
-TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, "bool");
+TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1); 
+TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1); 
+TypeDef TA_float		("float", 	1, 0, 0, 0, 1);
+TypeDef TA_double		("double", 	1, 0, 0, 0, 1);
+TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1);
 TypeDef TA_const		("const", 	1, 0, 0, 0, 1);
 TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); 	// formal
 TypeDef TA_struct		("struct", 	1, 0, 0, 1, 1);	// formal

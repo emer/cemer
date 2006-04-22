@@ -451,12 +451,19 @@ void cssiArgDialog::Constr_ArgTypes() {
   obj->members->Push(&cssMisc::Void); // this is just a place-holder for arg[0]
   // note: constr all args, even if any leading hidden
   for (int i = 0; i < use_argc; ++i) {
-    taiArgType* art = GetBestArgType(i, md->arg_types.FastEl(i),
+    String arg_name = md->arg_names.FastEl(i);
+    TypeDef* argtd = md->arg_types.FastEl(i);
+    taiArgType* art = GetBestArgType(i, argtd,
 				       md, typ);
-    if (art == NULL)
+    if (art == NULL) {
+      taMisc::Warning("could not get a taiArgType for parameter of type: ", argtd->name,
+        "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
       break;			// don't add new args after bad one..
-    cssEl* el = art->GetElFromArg(md->arg_names.FastEl(i), base);
+    }
+    cssEl* el = art->GetElFromArg(arg_name, base);
     if (el == NULL) {
+      taMisc::Warning("could not get a cssEl for taiArgType: ", art->GetTypeDef()->name,
+        "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
       delete art;
       break;
     }

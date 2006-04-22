@@ -67,26 +67,65 @@ class TA_API MemberDef;
 class TA_API MethodDef;
 class TA_API TypeDef; //
 
-//NOTE: moved here from maketa.h to enable anything importing ta_type to assume these defs
+/*
+  These are the basic pre-defined built in type definitions. Many of these are synonyms
+  for each other (ex. int==signed==signed int== etc.)
+  
+  The indentation here indicates a DerivesFrom parentage hierarchy (for synonyms.)
+  In any context where you want to treat all synonyms of a type the same way, you only
+  need to check for "DerivesFrom(TA_xxx)" of the most primary type below.
+  ex. if you check for TA_int, you'll get all the synonyms of it.
+  
+  
+  'long' is the same size as 'int' on all our 32 and 64-bit platforms. We consider 'long'
+  types deprecated.
+  
+  intptr_t is an int type whose size is the same as a pointer on your platform. It is not
+  actually a basic type, but will be a synonym for either int or int64_t.
+  
+  'long long' is 64-bits, but we prefer to use the ansi designation 'int64_t' -- we
+  provide a guarded typedef for this (for Windows) in the taglobal.h header file.
+  
+  Note that our code is not well tested against any use of unsigned types, and apart from
+  'byte' we suggest not using them, particularly in gui contexts.
+  
+  Note that the C standard specifies that 'char' 'unsigned char' and 'signed char' are
+  distinct types. Most C's (including the ones we support) treat char as signed.
+  In tacss/pdp, we use 'char' for its normal purpose (ansi character), and char* for 
+  C-style strings.
+  We use 'byte' as a synonym for 'unsigned char' and treat it as an 8 bit unsigned int. 
+  This is principally used for color values and in network data patterns. We don't use
+  'signed char' but if you use it in your code, it will be treated in the gui as a
+  8-bit signed numeric type, not an ansi character.
+*/
 #ifndef __MAKETA__
 extern TA_API TypeDef TA_void;
+extern TA_API TypeDef TA_void_ptr;
 extern TA_API TypeDef TA_char;
 extern TA_API TypeDef TA_signed_char;
 extern TA_API TypeDef TA_unsigned_char;
 extern TA_API TypeDef TA_short;
+  extern TA_API TypeDef TA_signed_short;
 extern TA_API TypeDef TA_unsigned_short;
 extern TA_API TypeDef TA_int;
+  extern TA_API TypeDef TA_signed;
+  extern TA_API TypeDef TA_signed_int;
+//extern TA_API TypeDef TA_intptr_t; // on 32-bit systems
 extern TA_API TypeDef TA_unsigned_int;
+  extern TA_API TypeDef TA_unsigned;
 extern TA_API TypeDef TA_long;
+  extern TA_API TypeDef TA_signed_long;
 extern TA_API TypeDef TA_unsigned_long;
-extern TA_API TypeDef TA_unsigned;
-extern TA_API TypeDef TA_signed;
+extern TA_API TypeDef TA_int64_t;
+  extern TA_API TypeDef TA_long_long;
+  extern TA_API TypeDef TA_signed_long_long;
+//extern TA_API TypeDef TA_intptr_t; // on 64-bit systems
+extern TA_API TypeDef TA_uint64_t;
+  extern TA_API TypeDef TA_unsigned_long_long;
+extern TA_API TypeDef TA_intptr_t; //NOTE: synonym, will either be 'int' or 'int64_t'
+extern TA_API TypeDef TA_uintptr_t;
 extern TA_API TypeDef TA_float;
 extern TA_API TypeDef TA_double;
-extern TA_API TypeDef TA_int64_t;
-extern TA_API TypeDef TA_uint64_t;
-extern TA_API TypeDef TA_intptr_t;
-extern TA_API TypeDef TA_uintptr_t;
 extern TA_API TypeDef TA_bool;
 extern TA_API TypeDef TA_const;	// const is not formal...
 extern TA_API TypeDef TA_enum;		// par_formal
@@ -104,7 +143,6 @@ extern TA_API TypeDef TA_MethodDef;
 extern TA_API TypeDef TA_ta_Globals;
 extern TA_API TypeDef TA_taString;
 extern TA_API TypeDef TA_Variant;
-extern TA_API TypeDef TA_void_ptr;
 #endif
 
 // externals
@@ -1042,6 +1080,7 @@ public:
   MethodSpace	methods;	// member functions (methods) for class
   String_PArray	ignore_meths;	// methods to be ignored
   TypeSpace	templ_pars;	// template parameters
+  String	c_name;		// C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
 
   void 		Initialize();
   void		Copy(const TypeDef& cp);
@@ -1051,13 +1090,8 @@ public:
 	  uint siz, void** inst, bool toks=false, int ptrs=0, bool refnc=false,
 	  bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
   TypeDef(const char* nm, bool intrnl, int ptrs=0, bool refnc=false, bool forml=false,
-	  bool global_obj=false,
-#ifdef NO_TA_BASE 
-	  String size_str = ""
-#else
-	  uint siz = 0
-#endif	  
-	  ); // global_obj=ture for global (non new'ed) typedef objs
+	  bool global_obj=false, uint siz = 0, const char* c_nm = NULL
+	  ); // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
   TypeDef(const TypeDef& td);
   virtual ~TypeDef();
   TypeDef*		Clone()		{ return new TypeDef(*this); }
