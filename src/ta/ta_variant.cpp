@@ -1843,8 +1843,8 @@ char Variant::toChar() const {
     return d.c;
   case T_String: {
     const String& str = getString();
-    if ((str.length() == 1))
-      return str[0];
+    if (str.length() >= 1) 
+      return str.elem(0);
     } break;
   case T_Ptr: 
     break ;

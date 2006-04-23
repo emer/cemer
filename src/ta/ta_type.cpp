@@ -2343,7 +2343,7 @@ String TypeDef::Get_C_Name() const {
     return rval;
   }
 
-  if(ptr > 0) {
+  if (ptr > 0) {
     TypeDef* npt;
     if((npt = GetNonPtrType()) == NULL) {
       taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
@@ -2354,7 +2354,7 @@ String TypeDef::Get_C_Name() const {
   }
 
   // combo type
-  if((parents.size > 1) && !InheritsFormal(TA_class)) {
+  if ((parents.size > 1) && !InheritsFormal(TA_class)) {
     int i;
     for(i=0; i<parents.size; i++) {
       TypeDef* pt = parents.FastEl(i);
@@ -2366,19 +2366,19 @@ String TypeDef::Get_C_Name() const {
 
   // on some local list and not internal
   // (which were not actually delcared at this scope anyway)
-  if(!(internal) && (owner != NULL) && (owner->owner != NULL)) {
+  if (!(internal) && (owner != NULL) && (owner->owner != NULL)) {
     rval = owner->owner->Get_C_Name() + "::";
   }
 
-  if(InheritsFormal(TA_templ_inst) && (templ_pars.size > 0)) {
+  if (InheritsFormal(TA_templ_inst) && (templ_pars.size > 0)) {
     int i;
     TypeDef* tmpar = GetTemplParent();
-    if(tmpar == NULL) {
+    if (tmpar == NULL) {
       taMisc::Error("Null TemplParent in TypeDef::Get_C_Name()", name);
       return name;
     }
     rval += tmpar->name + "<"; // note: name is always its valid c_name
-    for(i=0; i<templ_pars.size; i++) {
+    for (i=0; i<templ_pars.size; i++) {
       rval += templ_pars.FastEl(i)->Get_C_Name();
       if(i < templ_pars.size-1)
 	rval += ",";
@@ -2837,8 +2837,12 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
 	return String("false");
     }
     // note: char is generic, and typically we won't use signed char
-    else if ((DerivesFrom(TA_char)) || (DerivesFrom(TA_signed_char))) {
+    else if (DerivesFrom(TA_char)) {
       return String(*((char*)base));
+    }
+    // note: explicit use of signed char is treated like a number
+    else if ((DerivesFrom(TA_signed_char))) {
+      return String((int)*((signed char*)base)); // treat as numbers
     }
     // note: explicit use of unsigned char is "byte" in ta/pdp
     else if ((DerivesFrom(TA_unsigned_char))) {
@@ -3028,9 +3032,12 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     if(DerivesFrom(TA_bool)) {
       *((bool*)base) = val.toBool();
     }
-    // note: char is usually signed char in most C++'s
-    else if (DerivesFrom(TA_char) || DerivesFrom(TA_signed_char))
+    // note: char is treated as an ansi character
+    else if (DerivesFrom(TA_char))
       *((char*)base) = val.toChar();
+    // signed char is treated like a number
+    else if (DerivesFrom(TA_signed_char))
+      *((signed char*)base) = (signed char)val.toShort();
     // unsigned char is "byte" in ta/pdp and treated like a number
     else if (DerivesFrom(TA_unsigned_char))
       *((unsigned char*)base) = (unsigned char)val.toUShort();

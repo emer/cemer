@@ -178,34 +178,100 @@ bool taiType::isReadOnly(taiData* dat, IDataHost* host_) { // used in GetImage a
 
 
 
-////////////////////////
-//  taiIntType      //
-////////////////////////
+//////////////////////////
+//  taiIntType		//
+//////////////////////////
 
 int taiIntType::BidForType(TypeDef* td){
-  // we handle all 32-bit types -- TBA: support for 64-bit types
-  if (td->InheritsFrom("Int") || td->InheritsFrom("int"))
+//NOTE: we can't properly handle uints, so we don't bid for them
+// we left the handler code in the other routines, in case we implement them
+  // we handle all numeric int types < 32 bits but NOT uint/ulong
+  if (td->DerivesFrom(&TA_int) 
+    || td->DerivesFrom(&TA_short) || td->DerivesFrom(&TA_unsigned_short)
+    || td->DerivesFrom(&TA_signed_char) || td->DerivesFrom(&TA_unsigned_char)
+  )
     return (taiType::BidForType(td) +1);
   return 0;
 }
 
 taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  if (typ->HasOption("POS_ONLY"))
-    flags_ |= taiData::flgPosOnly;
+//TODO: the taiIncrField control can only handle int values, so can't handle uint range
+// should either replace with a DoubleSpin, or longlongspin
   taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
+  // put limits on values
+  int min = 0; 
+  int max = 0;
+  if (typ->DerivesFrom(&TA_int)) {
+    min = INT_MIN;  max = INT_MAX;
+//  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+//    min = 0;  max = INT_MAX;//NOTE: does not cover entire uint range
+  } else if (typ->DerivesFrom(&TA_short)) {
+    min = SHRT_MIN;  max = SHRT_MAX;
+  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
+    min = 0;  max = USHRT_MAX;
+  } else if (typ->DerivesFrom(&TA_signed_char)) {
+    min = SCHAR_MIN;  max = SCHAR_MAX;
+  } else { //if typ->DerivesFrom(&TA_unsigned_char)
+    min = 0;  max = UCHAR_MAX;
+  }
+  if (typ->HasOption("POS_ONLY"))
+    min = 0;
+  rval->setMinimum(min);
+  rval->setMaximum(max);
   return rval;
 }
 
 void taiIntType::GetImage_impl(taiData* dat, const void* base) {
-  int val = *((int*)base);
+  int val = 0;
+  if (typ->DerivesFrom(&TA_int)) {
+    val = *((int*)base);
+  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+    val = (int)*((uint*)base); //NOTE: overflow issue
+  } else if (typ->DerivesFrom(&TA_short)) {
+    val = (int)*((short*)base); 
+  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
+    val = (int)*((unsigned short*)base); 
+  } else if (typ->DerivesFrom(&TA_signed_char)) {
+    val = (int)*((signed char*)base); 
+  } else if (typ->DerivesFrom(&TA_unsigned_char)) {
+    val = (int)*((unsigned char*)base); 
+  } //note: should never not be one of these
   taiIncrField* rval = (taiIncrField*)dat;
   rval->GetImage(val);
 }
 
 void taiIntType::GetValue_impl(taiData* dat, void* base) {
   taiIncrField* rval = (taiIncrField*)dat;
-  *((int*)base) = rval->GetValue();
+  int val = rval->GetValue();
+  if (typ->DerivesFrom(&TA_int)) {
+    *((int*)base) = val;
+  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+   *((uint*)base) = (uint)val; //NOTE: range issue
+  } else if (typ->DerivesFrom(&TA_short)) {
+    *((short*)base) = (short)val; 
+  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
+    *((unsigned short*)base) = (unsigned short)val; 
+  } else if (typ->DerivesFrom(&TA_signed_char)) {
+    *((signed char*)base) = (signed char)val; 
+  } else if (typ->DerivesFrom(&TA_unsigned_char)) {
+    *((unsigned char*)base) = (unsigned char)val; 
+  } //note: should never not be one of these
 }
+
+
+//////////////////////////
+//  taiInt64Type	//
+//////////////////////////
+
+int taiInt64Type::BidForType(TypeDef* td){
+  // we handle all 64-bit types
+  if (td->DerivesFrom(&TA_int64_t) || td->DerivesFrom(&TA_uint64_t))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+//TODO: we really are still just using the taiType defaults
+// need to create a 64-bit spin, or at least a customized edit
 
 
 ////////////////////////
@@ -1551,10 +1617,10 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
   if(arg_typ->ptr == 0) {
     /* type notes:
       explicitly signed/unsigned chars are treated as numbers, whereas char is a char
+      current gui stuff can't handle uints well, so we lump them with variants
     */
-    if (arg_typ->DerivesFrom(TA_int) || arg_typ->DerivesFrom(TA_unsigned_int) ||
+    if (arg_typ->DerivesFrom(TA_int)  ||
       arg_typ->DerivesFrom(TA_short) || arg_typ->DerivesFrom(TA_unsigned_short) ||
-      arg_typ->DerivesFrom(TA_long) || arg_typ->DerivesFrom(TA_unsigned_long) ||
       arg_typ->DerivesFrom(TA_signed_char) || arg_typ->DerivesFrom(TA_unsigned_char) 
     ) {
       arg_typ = &TA_int;
@@ -1562,6 +1628,7 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
       arg_base = (void*)&(((cssInt*)arg_val)->val);
       return arg_val;
     } else if (arg_typ->DerivesFrom(TA_int64_t) || arg_typ->DerivesFrom(TA_uint64_t)
+      || arg_typ->DerivesFrom(TA_unsigned_int)
     ) {
       arg_val = new cssVariant(Variant(0LL), nm);
       arg_base = (void*)&(((cssVariant*)arg_val)->val);

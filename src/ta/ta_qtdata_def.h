@@ -114,7 +114,6 @@ typedef QObject inherited;
 public:
   enum Flags { // flags are so we don't have to keep adding parameters to constructor... flags >= 10000 are custom per type
     flgReadOnly		= 0x001,
-    flgPosOnly		= 0x002, // used by SpinEdit to limit to non-negative values only
     flgNullOk		= 0x004, // used typically by menus of tokens or objects, to allow NULL
     flgEditOk		= 0x008,  // used typically by menus to allow Edit of item
     flgNoList		= 0x010,  // used typically by menus to include lists of item

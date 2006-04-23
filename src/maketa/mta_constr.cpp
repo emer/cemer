@@ -313,18 +313,21 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
 #endif
       strm << "TypeDef TA_" << ths->name;
 
- if(ths->internal) {
+ if (ths->internal) {
     strm <<  "(\"" << ths->name << "\", 1, " << ths->ptr;
     if(ths->ref)	strm << ", 1";
     else		strm << ", 0";
     if(ths->formal)	strm << ", 1";
     else		strm << ", 0";
     strm << ", 1";		// this true makes it global object
-    // if it is a built-in type, we get its size
-    if (ths->size_of_str.empty())	strm << ", 0";
-    else		strm << ", sizeof(" << ths->size_of_str << ")";
+    // if it is a built-in actual type, we get its size, otherwise just output 0
+    if ((ths->size == 1) & !ths->formal)	
+      strm << ", sizeof(" << ths->Get_C_Name() << ")";
+    else		
+      strm << ", " << 0;
     strm << ");\n";
   } else {
+    // non-internals, includes, ex. taString and all parsed classes
     String_PArray act_opts = ths->opts;
     String_PArray act_inh_opts = ths->inh_opts;
 

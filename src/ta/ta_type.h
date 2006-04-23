@@ -111,8 +111,10 @@ extern TA_API TypeDef TA_int;
   extern TA_API TypeDef TA_signed;
   extern TA_API TypeDef TA_signed_int;
 //extern TA_API TypeDef TA_intptr_t; // on 32-bit systems
+//extern TA_API TypeDef TA_long; // where long is 32-bit
 extern TA_API TypeDef TA_unsigned_int;
   extern TA_API TypeDef TA_unsigned;
+//extern TA_API TypeDef TA_unsigned_long; // where long is 32-bit
 extern TA_API TypeDef TA_long;
   extern TA_API TypeDef TA_signed_long;
 extern TA_API TypeDef TA_unsigned_long;
@@ -120,8 +122,10 @@ extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_long_long;
   extern TA_API TypeDef TA_signed_long_long;
 //extern TA_API TypeDef TA_intptr_t; // on 64-bit systems
+//extern TA_API TypeDef TA_long; // where long is 64-bit
 extern TA_API TypeDef TA_uint64_t;
   extern TA_API TypeDef TA_unsigned_long_long;
+//extern TA_API TypeDef TA_unsigned_long; // where long is 64-bit
 extern TA_API TypeDef TA_intptr_t; //NOTE: synonym, will either be 'int' or 'int64_t'
 extern TA_API TypeDef TA_uintptr_t;
 extern TA_API TypeDef TA_float;
@@ -1053,9 +1057,6 @@ public:
   bool		internal;	// true if an internal type (auto generated)
   bool		formal;		// true if a formal type (e.g. class, const, enum..)
   bool		pre_parsed;	// true if previously parsed by maketa
-#ifdef NO_TA_BASE
-  String	size_of_str;	// maketa hack -- a place to put sizeof(xx) for internals
-#endif
   String_PArray	inh_opts;	// inherited options (##xxx)
 
   TypeSpace	parents;	// type(s) this inherits from
@@ -1074,7 +1075,7 @@ public:
   taBase_List*	defaults;	// default values registered for this type
 
   // the following only apply to enums or classes
-  EnumSpace	enum_vals;	// if type is an enum, this is are the labels
+  EnumSpace	enum_vals;	// if type is an enum, these are the labels
   TypeSpace	sub_types;	// sub types scoped within class (incl enums)
   MemberSpace	members;	// member variables for class
   MethodSpace	methods;	// member functions (methods) for class

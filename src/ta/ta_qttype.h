@@ -49,7 +49,7 @@ public:
 //       taiTypes         //
 //////////////////////////////
 
-class TA_API taiIntType : public taiType {
+class TA_API taiIntType : public taiType { // handles numeric int types, up to 32-bits
 public:
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -59,6 +59,18 @@ public:
 
   TAQT_TYPE_INSTANCE(taiIntType, taiType);
 };
+
+class TA_API taiInt64Type : public taiType { // handles 64-bit numeric int types
+public:
+  int		BidForType(TypeDef* td);
+//  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+//  void 		GetImage_impl(taiData* dat, const void* base);
+//  void		GetValue_impl(taiData* dat, void* base);
+//  bool		handlesReadOnly() { return true; } // uses a RO iSpinBox
+
+  TAQT_TYPE_INSTANCE(taiInt64Type, taiType);
+};
+
 
 
 

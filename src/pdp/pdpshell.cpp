@@ -1442,14 +1442,14 @@ void TestObj::UpdateTypeDefVars() {
 void TestObj::InitObj() {
   b = true;
   c = 'a';
-  sc = 'b';
+  sc = -128;
   uc = 255;
   byt = 254; //note: s/b same as an unsigned char
-  sh = 32767;
+  sh = -32768;
   ssh = 32766;
   ush = 65535;
   i = 2147483647;
-  si = 2147483646;
+  si = -2147483648;
   s = 2147483645;
   ui = 4294967295U;
   u = 4294967294U;
@@ -1567,6 +1567,37 @@ bool TestObj::TestMethod1(
   return b;
 }
 
+bool TestObj::TestMethod_ProblemDefs(
+    char		c,
+    unsigned int	ui,
+    unsigned		u,
+    long		l,
+    signed long		sl,
+    unsigned long	ul,
+    int64_t		i64,
+    long long		ll,
+    signed long long	sll,
+    uint64_t		u64,
+    unsigned long long	ull,
+    const Variant&	v, 
+    taBase*		s_tab
+) 
+{
+  this->c = c;
+  this->ui = ui;
+  this->u = u;
+  this->l = l;
+  this->sl = sl;
+  this->ul = ul;
+  this->i64 = i64;
+  this->ll = ll;
+  this->sll = sll;
+  this->u64 = u64;
+  this->ull = ull;
+  this->v =v; 
+  taBase::SetPointer(&(this->s_tab), s_tab);
+  return true;
+}
 
 void TestObj2::Initialize() {
   int_val = 0;

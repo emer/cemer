@@ -398,7 +398,7 @@ public:
   
   virtual bool		TestMethod1(
     bool		b = false, 
-    char		c = 'a',
+    char		c = 65, 
     signed char		sc = -127,
     unsigned char	uc = 255,
     byte		byt = 254, 
@@ -408,6 +408,22 @@ public:
     int			i = 2147483647, 
     signed int		si = 2147483646,
     signed		s = 2147483645,
+    unsigned int	ui = 4294967295,
+    unsigned		u = 4294967294,
+    long		l = 2,
+    signed long		sl = 3,
+    unsigned long	ul = 4,
+    int64_t		i64 = -5,
+    long long		ll = -6,
+    signed long long	sll = -7,
+    uint64_t		u64 = 8,
+    unsigned long long	ull = 9,
+    const Variant&	v = _nilVariant, 
+    taBase*		s_tab = NULL
+  ); // #MENU #MENU_CONTEXT a method used to test the various argument types; returns b
+  
+  virtual bool		TestMethod_ProblemDefs(
+    char		c = 'a',
     unsigned int	ui = 4294967295U,
     unsigned		u = 4294967294U,
     long		l = 2147483647L,
@@ -420,7 +436,7 @@ public:
     unsigned long long	ull = 18446744073709551614ULL,
     const Variant&	v = _nilVariant, 
     taBase*		s_tab = NULL
-  ); // #MENU #MENU_CONTEXT a method used to test the various argument types; returns b
+  ); // #MENU #MENU_CONTEXT a method used to test the various problematic default argument types; returns b
   
   void	InitLinks();
   void	CutLinks();

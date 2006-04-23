@@ -131,6 +131,9 @@ public:
   taiIncrField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: flgPosOnly
 
+  virtual void		setMinimum(const Variant& min); //NOTE: for iSpinBox, this must be an int
+  virtual void		setMaximum(const Variant& max); //NOTE: for iSpinBox, this must be an int
+
   void 			GetImage(int val);
   int 			GetValue() const;
 

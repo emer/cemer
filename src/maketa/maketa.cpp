@@ -20,59 +20,73 @@
 #include "mta_constr.h"
 #include "ta/ta_platform.h"
 #include "ta/ta_variant.h"
+
 #include <signal.h>
 //nn #include <malloc.h>
 #ifdef TA_OS_WIN
 //#include "stdafx.h"
 #endif
+//NOTE on TypeDef.size -- size is irrelevant when building maketa, and is basically inaccessible
+// when running maketa -- therefore, the only thing we use sz for in building maketa is to
+// control how we want size information generated -- the following are the codes:
+// sz=0: don't generate sizeof info, unless a real class
+// sz=1: generate sizeof info, ex. "sizeof(int)"
 
+//                               s nm, b intrnl, i ptrs, b ref, b forml, b global, u sz, s c_nm
 TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
-TypeDef TA_char			("char", 	1, 0, 0, 0, 1, 0, "char");
-TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, 0, "signed char");
-TypeDef TA_unsigned_char	("unsigned_char", 1, 0, 0, 0, 1, 0, "unsigned char");
-TypeDef TA_short		("short", 	1, 0, 0, 0, 1, 0, "short");
-TypeDef TA_signed_short		("signed_short", 	1, 0, 0, 0, 1, 0, "signed short");
-TypeDef TA_unsigned_short	("unsigned_short", 	1, 0, 0, 0, 1, 0, "unsigned short");
-TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 0, "int");
-TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 0, "signed int");
-TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1);
-TypeDef TA_unsigned_int		("unsigned_int", 	1, 0, 0, 0, 1, 0, "unsigned int");
-TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1);
-TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1);
-TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 0, "long long");
-TypeDef TA_signed_long_long	("signed_long_long", 	1, 0, 0, 0, 1, 0, "signed long long");
-TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1);
-TypeDef TA_unsigned_long_long	("unsigned_long_long", 	1, 0, 0, 0, 1, 0, "unsigned long long");
+TypeDef TA_char			("char", 	1, 0, 0, 0, 1, 1, "char");
+TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, 1, "signed char");
+TypeDef TA_unsigned_char      ("unsigned_char", 1, 0, 0, 0, 1, 1, "unsigned char");
+TypeDef TA_short		("short", 	1, 0, 0, 0, 1, 1, "short");
+TypeDef TA_signed_short	       ("signed_short", 1, 0, 0, 0, 1, 1, "signed short");
+TypeDef TA_unsigned_short    ("unsigned_short", 1, 0, 0, 0, 1, 1, "unsigned short");
+TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 1, "int");
+TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 1, "signed int");
+TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_unsigned_int	       ("unsigned_int", 1, 0, 0, 0, 1, 1, "unsigned int");
+TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 1, "long long");
+TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, 1, "signed long long");
+TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, 1);
+TypeDef 
+    TA_unsigned_long_long("unsigned_long_long", 1, 0, 0, 0, 1, 1, "unsigned long long");
 // all the long types will get parented to either int (typical) or int64 types
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1); 
-TypeDef TA_signed_long		("signed_long", 	1, 0, 0, 0, 1, 0, "signed long");
-TypeDef TA_unsigned_long	("unsigned_long", 	1, 0, 0, 0, 1, 0, "unsigned long");
+TypeDef TA_long			("long", 	1, 0, 0, 0, 1, 1); 
+TypeDef TA_signed_long		("signed_long", 1, 0, 0, 0, 1, 1, "signed long");
+TypeDef TA_unsigned_long      ("unsigned_long", 1, 0, 0, 0, 1, 1, "unsigned long");
 // (u)intptr_t gets parented to either (u)int or (u)int64
-TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1); 
-TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1); 
-TypeDef TA_float		("float", 	1, 0, 0, 0, 1);
-TypeDef TA_double		("double", 	1, 0, 0, 0, 1);
-TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1);
-TypeDef TA_const		("const", 	1, 0, 0, 0, 1);
-TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); 	// formal
+TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, 1); 
+TypeDef TA_float		("float", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_double		("double", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_const		("const", 	1, 0, 0, 1, 1); // formal
+TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); // formal
 TypeDef TA_struct		("struct", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_union		("union", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_class		("class", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_template		("template", 	1, 0, 0, 1, 1);// formal
+TypeDef TA_template		("template", 	1, 0, 0, 1, 1); // formal
 TypeDef TA_templ_inst		("templ_inst", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_ta_array		("ta_array", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
-	"", "", "", 8, (void**)0, 0, 0, 0, 1);
-TypeDef TA_taRegFun		("taRegFun", 	1, 0, 0, 0, 1);
-TypeDef TA_TypeDef		("TypeDef", 	1, 0, 0, 0, 1);
-TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1);
-TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1);
-TypeDef TA_taString		("taString", "",
-				 "", "", "", sizeof(String), (void**)0, 0, 0, 0, 1);
-TypeDef TA_Variant		("Variant", "",
-				 "", "", "", sizeof(Variant), (void**)0, 0, 0, 0, 1);
-TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1);
+TypeDef TA_taRegFun		("taRegFun", 	1, 0, 0, 0, 1); // pseudo formal, for global functions
+TypeDef TA_TypeDef		("TypeDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
 
+//                               s nm, s dsc, 
+//                               s inop, s op, s lis, u siz, ** inst, b toks, i ptrs, b ref, b global
+//NOTE: the actual versions generated into the target code dynamically compute their size in the runtime
+TypeDef TA_taString		("taString", "",
+				 "", "", "", 0, (void**)0, 0, 0, 0, 1);
+TypeDef TA_Variant		("Variant", "",
+				 "", "", "", 0, (void**)0, 0, 0, 0, 1);
+//NOTE: taBase is never actually encountered while building maketa, so its size is irrelevant...
+// it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp 
+TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
+	"", "", "", 0, (void**)0, 0, 0, 0, 1); 
+	  
 extern int yydebug;
 extern "C" int getpid();
 MTA* mta;		// holds mta

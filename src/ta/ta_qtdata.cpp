@@ -453,11 +453,7 @@ taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
   iSpinBox* rep = this->rep();
   rep->setFixedHeight(taiM->text_height(defSize()));
 
-  rep->setMaximum(INT_MAX);
-  if (HasFlag(flgPosOnly))
-    rep->setMinimum(0);
-  else
-    rep->setMinimum(INT_MIN); // TODO: use proper minint from limits.h
+  //note: the taiType will set the max/min
   if (readOnly()) {
     rep->setReadOnly(true);
   } else {
@@ -467,10 +463,6 @@ taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
   // cliphandling connections
   QObject::connect(m_rep, SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
-
-  // prevent from expanding too much horizontally -- may want to permit this if using the built in label
-//NN  rep()->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred)); //def is Minimum,Fixed
-
 }
 
 void taiIncrField::GetImage(const int val) {
@@ -483,6 +475,14 @@ int taiIncrField::GetValue() const {
 
 void taiIncrField::selectionChanged() {
   emit_UpdateUi();
+}
+
+void taiIncrField::setMinimum(const Variant& min) {
+  rep()->setMinimum(min.toInt()); 
+}
+
+void taiIncrField::setMaximum(const Variant& max) {
+  rep()->setMaximum(max.toInt());
 }
 
 void taiIncrField::this_GetEditActionsEnabled(int& ea) {
