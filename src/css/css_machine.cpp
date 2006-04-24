@@ -555,10 +555,10 @@ void cssEl::operator=(const Variant& val) {
   case Variant::T_Char: // note: because a cssChar derives from cssInt
   case Variant::T_Int:
     operator=(val.toInt()); break;
-  // not great, but anything unsigned, or large, should be Real
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
+    operator=(val.toInt64()); break;
   case Variant::T_Double:
     operator=(val.toDouble()); break;
   case Variant::T_String: 
@@ -609,6 +609,8 @@ cssEl* cssEl::GetFromTA_impl(TypeDef* td, void* itm, const char* nm, MemberDef* 
   else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
     || nptd->DerivesFrom(TA_signed_char))
     return new cssCPtr_char(itm, td->ptr+1, nm, (cssEl*)this, ro);
+  else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
+    return new cssCPtr_long_long(itm, td->ptr+1, nm, (cssEl*)this, ro);
   else if(nptd->DerivesFrom(TA_float))
     return new cssCPtr_float(itm, td->ptr+1, nm, (cssEl*)this, ro);
   else if(nptd->DerivesFrom(TA_double))
@@ -1515,7 +1517,9 @@ void cssCPtr::PtrAssignPtr(cssCPtr* s) {
   String s_tpnm = s->GetTypeName();
   if(ptr_cnt == s->ptr_cnt) {
     if((ptr_cnt == 1) && (class_parent != NULL) && (ptr != NULL) && (s->ptr != NULL)) {
-      if((tpnm == "(c_double)") || (tpnm == "(c_float)"))
+      if ((tpnm == "(c_long_long)"))
+	*this = (int64_t)*s;
+      else if((tpnm == "(c_double)") || (tpnm == "(c_float)"))
 	*this = (Real)*s;
       else if(tpnm == "(c_String)")
 	*this = s->GetStr();

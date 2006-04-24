@@ -1630,9 +1630,10 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
     } else if (arg_typ->DerivesFrom(TA_int64_t) || arg_typ->DerivesFrom(TA_uint64_t)
       || arg_typ->DerivesFrom(TA_unsigned_int)
     ) {
+      arg_typ = &TA_Variant;
       arg_val = new cssVariant(Variant(0LL), nm);
       arg_base = (void*)&(((cssVariant*)arg_val)->val);
-      use_it = new taiType(arg_typ); // make an it for it...
+      use_it = new taiType(arg_typ); // note: only use the vanilla string field gui, not the Variant gui
       return arg_val;
     } else if (arg_typ->DerivesFrom(TA_bool)) {
       arg_val = new cssBool(false, nm);

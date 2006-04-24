@@ -984,6 +984,8 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(lbl);
   togVal = new taiToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
+  incVal = new taiIncrField(typ, host, this, NULL, mflags & flgEditDialog);
+  stack->addWidget(incVal->rep());
   fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
   stack->addWidget(fldVal->rep());
   lbl = new QLabel("(Ptr cannot be set)");
@@ -1023,13 +1025,16 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
     break;
   
   case Variant::T_Int:
+    stack->setCurrentIndex(scInt);
+    break;
+  
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
   case Variant::T_Double:
   case Variant::T_Char:
   case Variant::T_String: 
-    stack->setCurrentIndex(scAtomics);
+    stack->setCurrentIndex(scField);
     break;
   
   case Variant::T_Ptr: 
@@ -1066,18 +1071,23 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
     break;
   
   case Variant::T_Int:
+    stack->setCurrentIndex(scInt);
+    incVal->GetImage(var.toInt());
+    break;
+  
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
   case Variant::T_Double:
   case Variant::T_Char:
   case Variant::T_String: 
-    stack->setCurrentIndex(scAtomics);
+    stack->setCurrentIndex(scField);
     fldVal->GetImage(var.toString());
     break;
   
   case Variant::T_Ptr: 
     stack->setCurrentIndex(scPtr);
+    //TODO: need to set something! 
     break;
   case Variant::T_Base: 
     stack->setCurrentIndex(scBase);
@@ -1105,6 +1115,7 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
   
   switch (var.type()) {
   case Variant::T_Invalid: 
+    var = _nilVariant;
     break;
   
   case Variant::T_Bool:
@@ -1112,6 +1123,9 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
     break;
   
   case Variant::T_Int:
+    var = incVal->GetValue();
+    break;
+  
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
@@ -1122,7 +1136,7 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
     break;
   
   case Variant::T_Ptr: 
-    //TODO;
+    //TODO: need to set something! maybe should be NULL
     break;
   case Variant::T_Base: 
     var.setBase(tabVal->GetValue());

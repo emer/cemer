@@ -150,6 +150,113 @@ public:
 #define cssInt_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt(n, #x))
 #define cssInt_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt(n, s))
 
+class CSS_API cssInt64 : public cssEl {
+  // a 64-bt integer value
+public:
+  int64_t		val;
+
+  int		GetParse() const	{ return CSS_VAR; }
+  uint		GetSize() const		{ return sizeof(*this); }
+  cssTypes 	GetType() const		{ return T_Int64; }
+  const char*	GetTypeName() const	{ return "(Int64)"; }
+  bool		IsNumericTypeStrict() const   { return true; }
+
+  String 	PrintStr() const
+  { return String(GetTypeName())+" " + name + " = " + String(val); }
+  String	PrintFStr() const { return String(val); }
+
+  // constructors
+  void 		Constr()		{ Register(); val = 0LL; }
+  void		Copy(const cssInt64& cp)	{ cssEl::Copy(cp); val = cp.val; }
+  cssInt64()				{ Constr(); }
+  cssInt64(Int vl)			{ Constr(); val = vl; }
+  cssInt64(Int vl, const char* nm) 	{ Constr(); name = nm;  val = vl; }
+  cssInt64(const cssInt64& cp)		{ Constr(); Copy(cp); }
+  cssInt64(const cssInt64& cp, const char* nm)  { Constr(); Copy(cp); name = nm; }
+
+  cssCloneFuns(cssInt64, 0);
+
+  // converters
+  String GetStr() const	{ return String(val); }
+  Variant GetVar() const { return Variant(val); }
+  operator Real() const	 	{ return (Real)val; }
+  operator Int() const	 	{ return (Int)val; }
+  operator float() const 		{ return (float)val; }
+  operator unsigned int() const 	{ return (unsigned int)val; }
+  operator unsigned char() const 	{ return (unsigned char)val; }
+  operator unsigned short() const	{ return (unsigned short)val; }
+  operator unsigned long() const	{ return (unsigned long)val; }
+  operator int64_t() const	 	{ return val; }
+  operator uint64_t() const	 	{ return (uint64_t)val; }
+
+//  operator void*() const; //TODO64 -- Int64 should hold pointers in 64-bit version
+//  operator void**() const;
+
+  void operator=(Real cp) 		{ val = (int64_t)cp; }
+  void operator=(Int cp)		{ val = (int)cp; }
+  void operator=(int64_t cp)		{ val = cp; }
+  void operator=(uint64_t cp)		{ val = cp; }
+  void operator=(const String& cp)	{ val = cp.toInt64(); }
+
+  void operator=(void*)	 	{ CvtErr("(void*)"); }
+  void operator=(void**)	{ CvtErr("(void**)"); }
+
+  // operators
+  void operator=(const cssEl& s) { val = (int64_t)s; }
+
+  cssEl* operator+(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val += (int64_t)t; return r; }
+  cssEl* operator-(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val -= (int64_t)t; return r; }
+  cssEl* operator*()		{ return cssEl::operator*(); }
+  cssEl* operator*(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val *= (int64_t)t; return r; }
+  cssEl* operator/(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val /= (int64_t)t; return r; }
+  cssEl* operator%(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val %= (int64_t)t; return r; }
+  cssEl* operator<<(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val <<= (int64_t)t; return r; }
+  cssEl* operator>>(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val >>= (int64_t)t; return r; }
+  cssEl* operator&(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val &= (int64_t)t; return r; }
+  cssEl* operator^(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val ^= (int64_t)t; return r; }
+  cssEl* operator|(cssEl& t)
+  { cssInt64* r = new cssInt64(*this,""); r->val |= (int64_t)t; return r; }
+
+  cssEl* operator-()
+  { cssInt64* r = new cssInt64(*this,""); r->val = -val; return r; }
+
+  void operator+=(cssEl& t) 	{ val += (int64_t)t; }
+  void operator-=(cssEl& t) 	{ val -= (int64_t)t; }
+  void operator*=(cssEl& t) 	{ val *= (int64_t)t; }
+  void operator/=(cssEl& t) 	{ val /= (int64_t)t; }
+  void operator%=(cssEl& t) 	{ val %= (int64_t)t; }
+  void operator<<=(cssEl& t) 	{ val <<= (int64_t)t; }
+  void operator>>=(cssEl& t) 	{ val >>= (int64_t)t; }
+  void operator&=(cssEl& t) 	{ val &= (int64_t)t; }
+  void operator^=(cssEl& t) 	{ val ^= (int64_t)t; }
+  void operator|=(cssEl& t) 	{ val |= (int64_t)t; }
+
+  bool operator< (cssEl& s) 	{ return (val < (int64_t)s); }
+  bool operator> (cssEl& s) 	{ return (val > (int64_t)s); }
+  bool operator! () 	    	{ return ( ! val); }
+  bool operator<=(cssEl& s) 	{ return (val <= (int64_t)s); }
+  bool operator>=(cssEl& s) 	{ return (val >= (int64_t)s); }
+  bool operator==(cssEl& s) 	{ return (val == (int64_t)s); }
+  bool operator!=(cssEl& s) 	{ return (val != (int64_t)s); }
+  bool operator&&(cssEl& s) 	{ return (val && (int64_t)s); }
+  bool operator||(cssEl& s) 	{ return (val || (int64_t)s); }
+};
+
+#define cssInt64_inst(l,n,x)          l .Push(new cssInt64((int64_t) n,(const char *) #x))
+#define cssInt64_inst_nm(l,n,s)       l .Push(new cssInt64(n, s))
+#define cssInt64_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt64(n, #x))
+#define cssInt64_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt64(n, s))
+
+
 class CSS_API cssReal : public cssEl {
   // a real (floating point) value
 public:
@@ -184,6 +291,8 @@ public:
 
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = (Real)cp; }
+  void operator=(int64_t cp)		{ operator=((Real)cp); }
+  void operator=(uint64_t cp)		{ operator=((Real)cp); }
   void operator=(const String& cp)	{ val = atof((const char*)cp); }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
@@ -301,6 +410,8 @@ public:
 
   void operator=(Real cp) 		{ val = String(cp); }
   void operator=(Int cp)		{ val = String(cp); }
+  void operator=(int64_t cp)		{ val = String(cp); }
+  void operator=(uint64_t cp)		{ val = String(cp); }
   void operator=(const String& cp)	{ val = cp; }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
@@ -414,11 +525,15 @@ public:
 
   cssCloneFuns(cssVariant, _nilVariant);
 
-  // converters
+  // converters -- note, be as permissive as possible, because strings can easily arise
+  // unexpectedly in most other atomic contexts (esp numeric)
   String GetStr() const	{ return val.toString(); }
   Variant GetVar() const { return val; }
-  operator Real() const	 { if (val.isNumeric()) return val.toDouble(); else return cssEl::operator Real();}
-  operator Int() const	 { if (val.isNumeric()) return val.toInt(); else return cssEl::operator Int();}
+  operator Real() const	 { return val.toDouble();}
+  operator float() const { return val.toFloat();}
+  operator Int() const	 { return val.toInt();}
+  operator int64_t() const { return val.toInt64(); }
+  operator uint64_t() const { return val.toUInt64(); }
   operator TAPtr() const;
 #ifndef NO_BUILTIN_BOOL
   operator bool() const	{ return val.toBool(); }
@@ -426,6 +541,8 @@ public:
   
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = cp; }
+  void operator=(int64_t cp)		{ val = cp; }
+  void operator=(uint64_t cp)		{ val = cp; }
   void operator=(const String& cp)	{ val = cp; }
   void operator=(const Variant& cp) { val = cp;}
 
@@ -543,9 +660,9 @@ public:
   void	DelOpr()		{ SetPtr(cssMisc::VoidElPtr); }
   // delete is done by unrefing thing we point to, seting ptr to null..
 
-  void operator=(Real)	 	{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
+//  void operator=(Real)	 	{ CvtErr("(Real)"); }
+//  void operator=(Int)		{ CvtErr("(Int)"); }
+//  void operator=(const String&)	{ CvtErr("(String)"); }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }

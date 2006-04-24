@@ -2314,6 +2314,8 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssEl("void"));
   cssInt_inst_nm(cssMisc::TypesSpace, 0, "Int");
   cssInt_inst_nm(cssMisc::TypesSpace, 0, "int");
+  cssInt64_inst_nm(cssMisc::TypesSpace, 0, "Int64");
+  cssInt64_inst_nm(cssMisc::TypesSpace, 0, "int64_t");
   cssMisc::TypesSpace.Push(new cssBool(false, "bool"));
   cssMisc::TypesSpace.Push(new cssBool(false, "Bool"));
   cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "Real");

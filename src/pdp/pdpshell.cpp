@@ -1516,6 +1516,12 @@ void TestObj::InitObj() {
 
 
 bool TestObj::TestMethod1(
+    const Variant&	v, 
+    int64_t		i64,
+    long long		ll,
+    signed long long	sll,
+    uint64_t		u64,
+    unsigned long long	ull,
     bool		b,
     char		c,
     signed char		sc,
@@ -1532,15 +1538,15 @@ bool TestObj::TestMethod1(
     long		l,
     signed long		sl,
     unsigned long	ul,
-    int64_t		i64,
-    long long		ll,
-    signed long long	sll,
-    uint64_t		u64,
-    unsigned long long	ull,
-    const Variant&	v, 
     taBase*		s_tab
 ) 
 {
+  this->v =v; 
+  this->i64 = i64;
+  this->ll = ll;
+  this->sll = sll;
+  this->u64 = u64;
+  this->ull = ull;
   this->b = b; // #DEF_false
   this->c = c;
   this->sc = sc;
@@ -1557,13 +1563,8 @@ bool TestObj::TestMethod1(
   this->l = l;
   this->sl = sl;
   this->ul = ul;
-  this->i64 = i64;
-  this->ll = ll;
-  this->sll = sll;
-  this->u64 = u64;
-  this->ull = ull;
-  this->v =v; 
   taBase::SetPointer(&(this->s_tab), s_tab);
+  UpdateAfterEdit();
   return b;
 }
 
@@ -1596,6 +1597,7 @@ bool TestObj::TestMethod_ProblemDefs(
   this->ull = ull;
   this->v =v; 
   taBase::SetPointer(&(this->s_tab), s_tab);
+  UpdateAfterEdit();
   return true;
 }
 

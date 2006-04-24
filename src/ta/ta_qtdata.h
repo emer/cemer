@@ -373,7 +373,8 @@ protected:
   enum StackControls { // #IGNORE indexes of controls in the stack
     scInvalid,
     scBool,
-    scAtomics, // includes string and char
+    scInt,
+    scField, // includes string and char
     scPtr,
     scBase,
     scMatrix
@@ -385,7 +386,8 @@ protected:
   QStackedWidget*	stack; // holds the subfields for different types
   
   taiToggle*		togVal; // for: bool
-  taiField*		fldVal; // for: char, string, numbers
+  taiIncrField*		incVal; // for: ints
+  taiField*		fldVal; // for: char, string, most numbers
   taiToken*		tabVal; // for taBase token (note: browsing could be hairy!!!)
   taiToken*		matVal; // for Matrix token
   

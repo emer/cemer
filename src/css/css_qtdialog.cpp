@@ -468,16 +468,15 @@ void cssiArgDialog::Constr_ArgTypes() {
       break;
     }
     // set to default value if not empty
-    if (!md->arg_vals.FastEl(i).empty()) {
+    String val = md->arg_vals.FastEl(i);
+    if (!val.empty()) {
       // not for type def pointers (cuz you lose ability to select other types)
       if (!art->arg_typ->DerivesFrom(&TA_TypeDef) && !art->arg_typ->DerivesFrom(&TA_ios)) {
-	String val = md->arg_vals.FastEl(i);
 	while (val.firstchar() == ' ')
           val = val.after(' ');
 	if (art->arg_typ->DerivesFormal(TA_enum)) {
 	  art->arg_typ->SetValStr(val, art->arg_base);
-	}
-	else {
+	} else {
 	  *el = val;
 	}
       }

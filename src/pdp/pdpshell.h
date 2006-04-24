@@ -397,6 +397,12 @@ public:
   void			InitObj(); // #MENU #MENU_CONTEXT set the values to non-clear values
   
   virtual bool		TestMethod1(
+    const Variant&	v, 
+    int64_t		i64 = -5,
+    long long		ll = -6,
+    signed long long	sll = -7,
+    uint64_t		u64 = 8,
+    unsigned long long	ull = 9,
     bool		b = false, 
     char		c = 65, 
     signed char		sc = -127,
@@ -413,12 +419,6 @@ public:
     long		l = 2,
     signed long		sl = 3,
     unsigned long	ul = 4,
-    int64_t		i64 = -5,
-    long long		ll = -6,
-    signed long long	sll = -7,
-    uint64_t		u64 = 8,
-    unsigned long long	ull = 9,
-    const Variant&	v = _nilVariant, 
     taBase*		s_tab = NULL
   ); // #MENU #MENU_CONTEXT a method used to test the various argument types; returns b
   

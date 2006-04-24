@@ -26,6 +26,10 @@
 #include "css_qtdialog.h"
 #endif
 
+//////////////////////////
+// 	cssInt		//
+//////////////////////////
+
 cssInt::operator void*() const {
   if(val == 0)
     return NULL;
@@ -40,6 +44,10 @@ cssInt::operator void**() const {
   return NULL;
 }
 
+//////////////////////////
+// cssChar		//
+//////////////////////////
+
 void cssChar::operator=(const cssEl& t) {
   if(t.GetType() == T_String) {
     *this = t.GetStr();		// use string converter
@@ -48,6 +56,7 @@ void cssChar::operator=(const cssEl& t) {
     val = (Int)t;
   }
 }
+
 
 //////////////////////////
 // 	cssString	//

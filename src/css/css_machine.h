@@ -306,7 +306,8 @@ public:
     T_TA,			// TypeAccess type
     T_PP_Def, 			// pre-processor define
     T_SubShell,			// sub-shell prog space
-    T_Variant			// Variant
+    T_Variant,			// Variant
+    T_Int64			// 64-bit integer
   };
 
   enum RunStat {	// css running status
@@ -445,8 +446,8 @@ public:
   virtual operator unsigned short() const	{ return (unsigned short)(Int)*this; }
   virtual operator long() const	 		{ return (long)(Int)*this; }
   virtual operator unsigned long() const	{ return (unsigned long)(Int)*this; }
-  virtual operator int64_t() const	 	{ return (int64_t)(Int)*this; }
-  virtual operator uint64_t() const	 	{ return (uint64_t)(Int)*this; }
+  virtual operator int64_t() const	 	{ return 0LL; }
+  virtual operator uint64_t() const	 	{ return 0ULL; }
 #ifndef NO_BUILTIN_BOOL
   virtual operator bool() const			{ return (Int)*this; }
 #endif
@@ -516,6 +517,8 @@ public:
   // assign from types
   virtual void operator=(Real)	 		{ CvtErr("(Real)"); }
   virtual void operator=(Int)			{ CvtErr("(Int)"); }
+  virtual void operator=(int64_t cp)		{ operator=((Int)cp); }
+  virtual void operator=(uint64_t cp)		{ operator=((Int)cp); }
   virtual void operator=(const String&)	 	{ CvtErr("(String)"); }
   virtual void operator=(const Variant& val); 
     // usually not overridden, just dispatches according to type
@@ -905,6 +908,8 @@ public:
 
   void operator=(Real)	 	{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
+  void operator=(int64_t cp)	{ CvtErr("(Int64)"); }
+  void operator=(uint64_t cp)	{ CvtErr("(Int64)"); }
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
