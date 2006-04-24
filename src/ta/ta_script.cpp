@@ -100,7 +100,7 @@ const String ScriptVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
   return rval;
 }
 
-cssEl* ScriptVar::NewCssEl() {
+cssEl* ScriptVar::NewCssEl_impl() {
   cssEl* rval;
   switch (value.type()) {
   //case T_Invalid: 
@@ -111,8 +111,10 @@ cssEl* ScriptVar::NewCssEl() {
   case T_UInt:
     rval = new cssInt(value.toInt(), name);
     break;
-  case T_Int64: //WARNING: 64-bit int types not really well rep'ed in css
+  case T_Int64: 
   case T_UInt64:
+    rval = new cssInt64(value.toInt64(), name);
+    break;
   case T_Double:
     rval = new cssReal(value.toDouble(), name);
     break;
