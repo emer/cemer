@@ -375,8 +375,7 @@ public:
   void 			operator=(const taBase& cp)	{ Copy(cp); }
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
 
-  virtual bool		SetName(const char* nm) {return 0;} // #IGNORE
-  virtual bool		SetName(const String& nm) {return SetName(nm.chars());}
+  virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
   bool			SetFileName(const char* val)    {return SetFileName((String)val);} // #IGNORE
@@ -762,7 +761,6 @@ typedef taOBase inherited;
 public:
   String	name;		// name of the object
 
-  bool 		SetName(const char* nm)    	{return SetName(String(nm));}
   bool 		SetName(const String& nm)    	{ name = nm; return true; }
   String	GetName() const		{ return name; }
 
@@ -841,7 +839,6 @@ public:
   int		el_def;		// Index of default element in group
 
   // stuff for the taBase
-  bool 		SetName(const char* nm)    	{return SetName(String(nm));}
   bool 		SetName(const String& nm)    	{name = nm; return true;}
   String	GetName() const		{ return name; }
 

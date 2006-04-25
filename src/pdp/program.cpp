@@ -55,10 +55,6 @@ int ProgVar::cssType() {
   return cssEl::T_Variant;
 }
 
-void ProgVar::Freshen(const ProgVar& cp) {
-  value = cp.value;
-} 
-
 const String ProgVar::GenCss(bool is_arg) {
   if (ignore) return _nilString;
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
@@ -188,15 +184,6 @@ const String EnumProgVar::enumName() {
   } else return _nilString;
 }
 
-void EnumProgVar::Freshen(const ProgVar& cp_) {
-  inherited::Freshen(cp_);
-  if (cp_.GetTypeDef()->InheritsFrom(&TA_EnumProgVar)) {
-    const EnumProgVar& cp = (const EnumProgVar&)(cp_);
-    enum_type = cp.enum_type;
-    init = cp.init;
-  }
-} 
-
 const String EnumProgVar::GenCssArg_impl() {
   String rval(0, 80, '\0'); //note: buffer will extend if needed
   rval += enumName() + " ";
@@ -247,15 +234,6 @@ int ObjectProgVar::cssType() {
   return cssEl::T_TA;
 }
 
-void ObjectProgVar::Freshen(const ProgVar& cp_) {
-  inherited::Freshen(cp_);
-  if (cp_.GetTypeDef()->InheritsFrom(&TA_ObjectProgVar)) {
-    const ObjectProgVar& cp = (const ObjectProgVar&)(cp_);
-    val_type = cp.val_type;
-    make_new = cp.make_new;
-  }
-} 
-
 cssEl* ObjectProgVar::NewCssEl_impl() {
   // note: use the val_type, not the actual type, in case user
   // wanted the var to be more generic than current instance
@@ -272,6 +250,10 @@ cssEl* ObjectProgVar::NewCssEl_impl() {
 void ProgVar_List::Initialize() {
   SetBaseType(&TA_ProgVar);
   var_context = VC_ProgVars;
+}
+
+void ProgVar_List::Copy_(const ProgVar_List& cp) {
+  var_context = cp.var_context;
 }
 
 void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
@@ -309,6 +291,94 @@ const String ProgVar_List::GenCss(int indent_level) const {
   return rval;
 }
 
+
+//////////////////////////
+//   ProgArg		//
+//////////////////////////
+
+void ProgArg::Initialize() {
+}
+
+void ProgArg::Destroy() {
+}
+
+void ProgArg::Copy_(const ProgArg& cp) {
+  name = cp.name;
+  value = cp.value;
+}
+
+void ProgArg::Freshen(const ProgVar& cp) {
+//TODO: need to look at both the ProgVar type, as well as value type, to get right value
+  value = cp.value.toCssLiteral();
+} 
+/*
+void ProgVar::Freshen(const ProgVar& cp) {
+  value = cp.value;
+} 
+void EnumProgVar::Freshen(const ProgVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_EnumProgVar)) {
+    const EnumProgVar& cp = (const EnumProgVar&)(cp_);
+    enum_type = cp.enum_type;
+    init = cp.init;
+  }
+} 
+void ObjectProgVar::Freshen(const ProgVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_ObjectProgVar)) {
+    const ObjectProgVar& cp = (const ObjectProgVar&)(cp_);
+    val_type = cp.val_type;
+    make_new = cp.make_new;
+  }
+} */
+
+
+
+//////////////////////////
+//   ProgArg_List	//
+//////////////////////////
+
+void ProgArg_List::Initialize() {
+  SetBaseType(&TA_ProgArg);
+}
+
+void ProgArg_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    prog->setDirty(true);
+  }
+}
+
+void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
+  int i;  int ti;
+  ProgArg* pa;
+  ProgVar* pv;
+  // delete args not in target; freshen those that are
+  for (i = size - 1; i >= 0; --i) {
+    pa = FastEl(i);
+    pv = targ.FindName(pa->name, ti);
+    if (ti >= 0) {
+      pa->Freshen(*pv);
+    } else {
+      Remove(i);
+    }
+  }
+  // add args in target not in us, and put in the right order
+  for (ti = 0; ti < targ.size; ++ti) {
+    pv =targ.FastEl(ti);
+    FindName(pv->name, i);
+    if (i < 0) {
+      pa = new ProgArg();
+      pa->name = pv->name;
+      Insert(pa, ti);
+    } else if (i != ti) {
+      Move(i, ti);
+    }
+  }
+}
+
+
 //////////////////////////
 //  ProgEl		//
 //////////////////////////
@@ -335,7 +405,11 @@ void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
 
 const String ProgEl::GenCss(int indent_level) {
   String rval;
-  rval = GenCssPre_impl(indent_level) + GenCssBody_impl(indent_level) + GenCssPost_impl(indent_level);
+  if (!desc.empty())
+    rval = cssMisc::Indent(indent_level) + "//" + desc + "\n";
+  rval += GenCssPre_impl(indent_level);
+  rval += GenCssBody_impl(indent_level);
+  rval += GenCssPost_impl(indent_level);
   return rval;
 }
 
@@ -345,7 +419,8 @@ const String ProgEl::GenCss(int indent_level) {
 //////////////////////////
 
 void UserScriptEl::Initialize() {
-  user_script = "// TODO: Add your CSS script code here.\n";
+  static String _def_user_script("// TODO: Add your CSS script code here.\n");
+  user_script = _def_user_script;
 }
 
 void UserScriptEl::Copy_(const UserScriptEl& cp) {
@@ -511,7 +586,7 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 //////////////////////////
 //  MethodCallEl	//
 //////////////////////////
-
+/*tbdone
 void MethodCallEl::Initialize() {
   script_obj = NULL;
   method = NULL;
@@ -547,13 +622,12 @@ const String MethodCallEl::GenCssBody_impl(int indent_level) {
   
   return rval;
 }
-
+*/
 
 //////////////////////////
 //  ProgramCallEl	//
 //////////////////////////
 
-const String ProgramCallEl::prfx = "__prog_";
 
 void ProgramCallEl::Initialize() {
   target = NULL;
@@ -561,11 +635,12 @@ void ProgramCallEl::Initialize() {
 }
 
 void ProgramCallEl::InitLinks() {
+  static String _def_user_script("cerr << \"Program Call failed--Stopping\\n\";\nthis->StopScript();\n");
   inherited::InitLinks();
   taBase::Own(global_args, this);
   taBase::Own(fail_el, this);
   if (!taMisc::is_loading) {
-    fail_el.user_script = "cerr << \"Program Call failed--Stopping\\n\";\nthis->StopScript();\n";
+    fail_el.user_script = _def_user_script;
   }
 }
 
@@ -616,18 +691,16 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += cssMisc::Indent(indent_level);
   rval += "// set global vars of target\n";
   String nm;
-  ProgVar* ths_var;
+  ProgArg* ths_arg;
   ProgVar* prg_var;
   for (int i = 0; i < global_args.size; ++i) {
-    ths_var = global_args.FastEl(i);
-    if (ths_var->ignore) continue;
-    nm = ths_var->name.after(prfx);
+    ths_arg = global_args.FastEl(i);
+    nm = ths_arg->name;
     prg_var = target->global_vars.FindName(nm);
     if (!prg_var || prg_var->ignore) continue;
     rval += cssMisc::Indent(indent_level);
-    //TODO: need to be using ScriptArg instead of ProgVar
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
-      + ths_var->value.toCssLiteral() + ");\n";
+      + ths_arg->value + ");\n";
   }
   
   rval += cssMisc::Indent(indent_level);
@@ -650,45 +723,7 @@ const String ProgramCallEl::GenCssPost_impl(int indent_level) {
 
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
-  // we prefix our local copies of prog args with following:
-  int i;
-  int t;
-  ProgVar* ths_var; // our copy
-  ProgVar* prg_var; // target's copy
-  String nm;
-  // delete defunct, in ours but not in target
-  // when we find matches, we update our copy
-  for (i = global_args.size - 1; i >= 0; --i) {
-    ths_var = global_args.FastEl(i);
-    nm = ths_var->name.after(prfx);
-    t = target->global_vars.Find(nm);
-    if (t >= 0) { 
-      // found, but make sure they are of same type
-      prg_var = target->global_vars.FastEl(t);
-      if (ths_var->GetTypeDef() == prg_var->GetTypeDef()) {
-        // ok, match, so update our copy and continue
-        ths_var->Freshen(*prg_var);
-        // we don't unignore, but will copy ignore
-        if (prg_var->ignore)
-          ths_var->ignore = true;
-        ths_var->UpdateAfterEdit();
-        continue; 
-      }
-    }
-    // not found, or not same type
-    global_args.Remove(i);
-  }
-  // add new
-  for (i = 0; i < target->global_vars.size; ++i) {
-    prg_var = target->global_vars.FastEl(i);
-    nm = prfx + prg_var->name;
-    t = global_args.Find(nm);
-    if (t >= 0) 
-      continue; 
-    ths_var = (ProgVar*)prg_var->Clone();
-    global_args.Add(ths_var);
-    ths_var->name = nm;
-  }
+  global_args.ConformToTarget(target->global_vars);
 }
 
 //////////////////////////

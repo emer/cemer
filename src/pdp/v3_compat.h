@@ -184,7 +184,6 @@ public:
   bool		HasDispOption(const char* opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
   
-  bool 		SetName(const char* nm) 	{ name = nm; return true; }
   bool 		SetName(const String& nm) 	{ name = nm; return true; }
   String	GetName() const			{ return name; }
 

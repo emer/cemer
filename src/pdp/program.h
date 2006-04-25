@@ -29,7 +29,7 @@
 class Program;
 
 
-class PDP_API ProgVar: public taNBase { // ##NO_TOKENS ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
+class PDP_API ProgVar: public taNBase { // ##NO_TOKENS ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
 public:
   bool			ignore; // don't use this variable
@@ -37,8 +37,6 @@ public:
   
   virtual int		cssType(); // int value of cssEl::Type generated
   
-  virtual void		Freshen(const ProgVar& cp); 
-    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
   cssEl*		NewCssEl(); // get a new cssEl of an appropriate type, name/value initialized
@@ -58,7 +56,7 @@ private:
 };
 
 
-class PDP_API EnumProgVar: public ProgVar { // a script variable to hold enums
+class PDP_API EnumProgVar: public ProgVar { // a program variable to hold enums
 INHERITED(ProgVar)
 public:
   TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
@@ -68,8 +66,6 @@ public:
   const String		enumName(); // ex, taBase::Orientation
   
   const String		ValToId(int val);
-  
-  override void		Freshen(const ProgVar& cp); 
   
   void	Copy_(const EnumProgVar& cp);
   COPY_FUNS(EnumProgVar, ProgVar);
@@ -83,7 +79,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API ObjectProgVar: public ProgVar { // a script variable to hold taBase objects
+class PDP_API ObjectProgVar: public ProgVar { // a program variable to hold taBase objects
 INHERITED(ProgVar)
 public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
@@ -91,7 +87,6 @@ public:
   
   override int		cssType(); // int value of cssEl::Type generated
   
-  override void		Freshen(const ProgVar& cp); 
   override const String	GenCss(bool is_arg = false) 
     {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
   
@@ -121,6 +116,8 @@ public:
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
   
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void	Copy_(const ProgVar_List& cp);
+  COPY_FUNS(ProgVar_List, taList<ProgVar>);
   TA_BASEFUNS(ProgVar_List);
   
 protected:
@@ -132,10 +129,48 @@ private:
 };
 
 
+class PDP_API ProgArg: public taOBase { // ##NO_TOKENS ##INSTANCE a program or method argument (NOTE: v3.9 preliminary version)
+INHERITED(taOBase)
+public:
+  String		name; // #SHOW #READ_ONLY the name of the argument (always same as the target)
+  String		value; // the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
+  
+  virtual void		Freshen(const ProgVar& cp); 
+    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
+  virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
+  
+  void 	SetDefaultName() {} // name is always the same as the referent
+  void	Copy_(const ProgArg& cp);
+  bool 	SetName(const String& nm) {name = nm; return true;}
+  String GetName() const{ return name; }
+  COPY_FUNS(ProgArg, taOBase);
+  TA_BASEFUNS(ProgArg);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class PDP_API ProgArg_List : public taList<ProgArg> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of arguments
+INHERITED(taList<ProgArg>)
+public:
+  virtual void		ConformToTarget(ProgVar_List& targ); // make us conform to the target
+  
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  TA_BASEFUNS(ProgArg_List);
+  
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
+
+
 class PDP_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
 public:
+  String		desc; // optional brief description of element's function; included as comment in script
   virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
   
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
@@ -271,10 +306,10 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void	Destroy()	{CutLinks();} //
 };
 
-
+/* TBdone
 class PDP_API MethodCallEl: public ProgEl { 
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
@@ -294,17 +329,15 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{}
-};
+}; */
 
 
 class PDP_API ProgramCallEl: public ProgEl { 
   // ProgEl to invoke another program
 INHERITED(ProgEl)
 public:
-  static const String prfx; // #READ_ONLY the prefix we apply to our names of global vars in target
-  
   Program*		target; // the program to be called
-  ProgVar_List	global_args; // arguments to the global program--copied to prog before call
+  ProgArg_List		global_args; // arguments to the global program--copied to prog before call
   UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
   
   virtual void		UpdateGlobalArgs(); 

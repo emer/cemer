@@ -50,7 +50,6 @@ public:
   bool		is_string;	// #HIDDEN_INLINE is a string-valued item
   int		vec_n;		// #HIDDEN_INLINE length of vector (0 if not)
 
-  bool 		SetName(const char* nm) 	{ name = nm; return true; }
   bool 		SetName(const String& nm) 	{ name = nm; return true; }
   String	GetName() const			{ return name; }
 

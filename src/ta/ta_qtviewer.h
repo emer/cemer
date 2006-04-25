@@ -804,7 +804,6 @@ public:
 
   iDataViewer*	window() {return m_window;} // #IGNORE valid if in a window
 
-  bool 			SetName(const char* nm) {return SetName(String(nm));}
   bool 			SetName(const String& nm) {name = nm; return true;}
   String		GetName() const {return name; }
   virtual bool	HasChanges() {return m_has_changes;} // 'true' when something needs to be saved
