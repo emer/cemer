@@ -479,30 +479,6 @@ taiData* taiMatrixGeomType::GetDataRepInline_impl(IDataHost* host_, taiData* par
 
 
 
-//////////////////////////
-//  taiScriptVarType	//
-//////////////////////////
-
-int taiScriptVarType::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_ScriptVar)) 
-    return (inherited::BidForType(td) +1);
-  else  return 0;
-}
-
-taiData* taiScriptVarType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) 
-{
-  //note: we use a static New function because of funky construction-time virtual functions
-  taiScriptVarBase* rval;
-  if (typ->InheritsFrom(TA_ObjectScriptVar))
-    rval = taiObjectScriptVar::New(typ, host_, par, gui_parent_, flags_);
-  else if (typ->InheritsFrom(TA_EnumScriptVar))
-    rval = taiEnumScriptVar::New(typ, host_, par, gui_parent_, flags_);
-  else 
-    rval = taiScriptVar::New(typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
-
-
 //////////////////////////////////
 // 	gpiListType		//
 //////////////////////////////////

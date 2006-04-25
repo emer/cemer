@@ -29,6 +29,109 @@
 class Program;
 
 
+class PDP_API ProgVar: public taNBase { // ##NO_TOKENS ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
+INHERITED(taNBase)
+public:
+  bool			ignore; // don't use this variable
+  Variant		value; // the actual variable
+  
+  virtual int		cssType(); // int value of cssEl::Type generated
+  
+  virtual void		Freshen(const ProgVar& cp); 
+    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
+  virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
+  
+  cssEl*		NewCssEl(); // get a new cssEl of an appropriate type, name/value initialized
+  
+  void 	SetDefaultName() {} // make it local to list, set by list
+  void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
+  void	Copy_(const ProgVar& cp);
+  COPY_FUNS(ProgVar, taNBase);
+  TA_BASEFUNS(ProgVar);
+protected:
+  virtual const String	GenCssArg_impl();
+  virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
+  virtual cssEl*	NewCssEl_impl(); // make a new cssEl of an appropriate type, name/value initialized
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class PDP_API EnumProgVar: public ProgVar { // a script variable to hold enums
+INHERITED(ProgVar)
+public:
+  TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
+  bool			init; // when true, initialize the enum value
+  
+  override int		cssType(); // int value of cssEl::Type generated
+  const String		enumName(); // ex, taBase::Orientation
+  
+  const String		ValToId(int val);
+  
+  override void		Freshen(const ProgVar& cp); 
+  
+  void	Copy_(const EnumProgVar& cp);
+  COPY_FUNS(EnumProgVar, ProgVar);
+  TA_BASEFUNS(EnumProgVar);
+protected:
+  override const String	GenCssArg_impl();
+  override const String	GenCssVar_impl(bool, TypeDef*);
+  override cssEl*	NewCssEl_impl(); 
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class PDP_API ObjectProgVar: public ProgVar { // a script variable to hold taBase objects
+INHERITED(ProgVar)
+public:
+  TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
+  bool			make_new; // #LABEL_new create a new instance
+  
+  override int		cssType(); // int value of cssEl::Type generated
+  
+  override void		Freshen(const ProgVar& cp); 
+  override const String	GenCss(bool is_arg = false) 
+    {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
+  
+  void	Copy_(const ObjectProgVar& cp);
+  COPY_FUNS(ObjectProgVar, ProgVar);
+  TA_BASEFUNS(ObjectProgVar);
+  
+protected:
+  override cssEl*	NewCssEl_impl(); 
+  
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class PDP_API ProgVar_List : public taList<ProgVar> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
+INHERITED(taList<ProgVar>)
+public:
+  enum VarContext {
+    VC_ProgVars,  // #LABEL_ProgramVariables program variables
+    VC_FuncArgs  //  #LABEL_FunctionArguments function arguments
+  };
+  
+  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN context of vars, set by owner
+  
+  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  TA_BASEFUNS(ProgVar_List);
+  
+protected:
+  override void	El_SetIndex_(void*, int);
+  
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
+
+
 class PDP_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
@@ -88,7 +191,7 @@ private:
 class PDP_API ProgVars: public ProgEl {
 INHERITED(ProgEl)
 public:
-  ScriptVar_List	script_vars;
+  ProgVar_List	script_vars;
   
   void	InitLinks();
   void	CutLinks();
@@ -176,7 +279,7 @@ class PDP_API MethodCallEl: public ProgEl {
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
 public:
-  ObjectScriptVar*	script_obj; // the script object that has the method
+  ObjectProgVar*	script_obj; // the script object that has the method
   MethodDef*		method; // the method to call
   
   void	UpdateAfterEdit();
@@ -201,7 +304,7 @@ public:
   static const String prfx; // #READ_ONLY the prefix we apply to our names of global vars in target
   
   Program*		target; // the program to be called
-  ScriptVar_List	global_args; // arguments to the global program--copied to prog before call
+  ProgVar_List	global_args; // arguments to the global program--copied to prog before call
   UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
   
   virtual void		UpdateGlobalArgs(); 
@@ -229,7 +332,7 @@ class PDP_API Program: public taNBase, public AbstractScriptBase {
   // #VIRT_BASE #HIDDEN #NO_INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
-  ScriptVar_List	global_vars; // global variables accessible outside and inside script
+  ProgVar_List	global_vars; // global variables accessible outside and inside script
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
@@ -266,7 +369,7 @@ protected:
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
   override void 	ScriptCompiled(); // #IGNORE
-  virtual void		UpdateScriptVars(); // put global vars in script, set values
+  virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
   virtual void		ViewScript_impl() = 0;
 #endif

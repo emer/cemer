@@ -37,108 +37,6 @@ class cssTA_Base;		// #IGNORE
 class ScriptBase_List; //
 
 
-class TA_API ScriptVar: public taNBase { // ##NO_TOKENS ##INSTANCE a script variable, accessible from the outer system, and inside the script;\n this class handles simple values like Ints and Strings
-INHERITED(taNBase)
-public:
-  bool			ignore; // don't use this variable
-  Variant		value; // the actual variable
-  
-  virtual int		cssType(); // int value of cssEl::Type generated
-  
-  virtual void		Freshen(const ScriptVar& cp); 
-    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
-  virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
-  
-  cssEl*		NewCssEl(); // get a new cssEl of an appropriate type, name/value initialized
-  
-  void 	SetDefaultName() {} // make it local to list, set by list
-  void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
-  void	Copy_(const ScriptVar& cp);
-  COPY_FUNS(ScriptVar, taNBase);
-  TA_BASEFUNS(ScriptVar);
-protected:
-  virtual const String	GenCssArg_impl();
-  virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
-  virtual cssEl*	NewCssEl_impl(); // make a new cssEl of an appropriate type, name/value initialized
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-
-class TA_API EnumScriptVar: public ScriptVar { // a script variable to hold enums
-INHERITED(ScriptVar)
-public:
-  TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
-  bool			init; // when true, initialize the enum value
-  
-  override int		cssType(); // int value of cssEl::Type generated
-  const String		enumName(); // ex, taBase::Orientation
-  
-  const String		ValToId(int val);
-  
-  override void		Freshen(const ScriptVar& cp); 
-  
-  void	Copy_(const EnumScriptVar& cp);
-  COPY_FUNS(EnumScriptVar, ScriptVar);
-  TA_BASEFUNS(EnumScriptVar);
-protected:
-  override const String	GenCssArg_impl();
-  override const String	GenCssVar_impl(bool, TypeDef*);
-  override cssEl*	NewCssEl_impl(); 
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-class TA_API ObjectScriptVar: public ScriptVar { // a script variable to hold taBase objects
-INHERITED(ScriptVar)
-public:
-  TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
-  bool			make_new; // #LABEL_new create a new instance
-  
-  override int		cssType(); // int value of cssEl::Type generated
-  
-  override void		Freshen(const ScriptVar& cp); 
-  override const String	GenCss(bool is_arg = false) 
-    {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
-  
-  void	Copy_(const ObjectScriptVar& cp);
-  COPY_FUNS(ObjectScriptVar, ScriptVar);
-  TA_BASEFUNS(ObjectScriptVar);
-  
-protected:
-  override cssEl*	NewCssEl_impl(); 
-  
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-class TA_API ScriptVar_List : public taList<ScriptVar> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
-INHERITED(taList<ScriptVar>)
-public:
-  enum VarContext {
-    VC_ProgVars,  // #LABEL_ProgramVariables program variables
-    VC_FuncArgs  //  #LABEL_FunctionArguments function arguments
-  };
-  
-  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN context of vars, set by owner
-  
-  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
-  
-  TA_BASEFUNS(ScriptVar_List);
-  
-protected:
-  override void	El_SetIndex_(void*, int);
-  
-private:
-  void	Initialize();
-  void	Destroy() {Reset();}
-};
-
-
 class TA_API AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE abstract class for adding a script to other objects
 public:
@@ -275,21 +173,8 @@ public:
 #ifdef TA_GUI
   virtual void		Run_mc(taiAction* sel);
 #endif
-
-//protected:
-//  override void 	GenMenu_impl(taiMenu* menu);		// add a 'run' menu..
 };
 
-/*
-class Script_MGroupAdapter : public MenuGroup_implAdapter {
-  Q_OBJECT
-public:
-  Script_MGroupAdapter(Script_MGroup* owner_): MenuGroup_implAdapter(owner_) {}
-
-public slots:
-  // more callbacks
-  void	Run_mc(taiAction* sel)  {if(owner) ((Script_MGroup*)owner)->Run_mc(sel);}
-};*/
 
 #endif // script_base_h
 

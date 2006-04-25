@@ -17,6 +17,7 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
+#include "ta_css.h"
 
 #ifdef TA_GUI
 # include "ta_qt.h"
@@ -24,6 +25,289 @@
 
 # include <QMessageBox>
 #endif
+
+
+//////////////////////////
+//   ProgVar		//
+//////////////////////////
+
+void ProgVar::Initialize() {
+  ignore = false;
+}
+
+void ProgVar::Destroy() {
+}
+
+void ProgVar::Copy_(const ProgVar& cp) {
+  ignore = cp.ignore;
+  value = cp.value;
+}
+
+void ProgVar::UpdateAfterEdit() {
+  if (!cssMisc::IsNameValid(name)) {
+    taMisc::Error("'", name, "' is not a valid name in css scripts; must be alphanums or underscores");
+//TODO: should revert
+  }
+  inherited::UpdateAfterEdit();
+}
+
+int ProgVar::cssType() {
+  return cssEl::T_Variant;
+}
+
+void ProgVar::Freshen(const ProgVar& cp) {
+  value = cp.value;
+} 
+
+const String ProgVar::GenCss(bool is_arg) {
+  if (ignore) return _nilString;
+  return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
+} 
+
+
+const String ProgVar::GenCssArg_impl() {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += "Variant ";
+  rval += name;
+  bool init = !value.isDefault();
+  if (init) {
+    rval += " = ";
+    rval += value.toCssLiteral();
+  }
+  return rval;
+}
+/*new???
+const String ProgVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += "Variant ";
+  rval += name;
+  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
+    rval += " = new ";
+    rval += val_type->name + "()";
+  } else { 
+    bool init = !value.isDefault();
+    if (init) {
+      rval += " = ";
+      rval += value.toCssLiteral();
+    } else if (!value.isInvalid()) {
+      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
+    }
+  }
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* ProgVar::NewCssEl_impl() {
+  cssEl* rval;
+  switch (value.type()) {
+  //case T_Invalid: 
+  case T_Bool:
+    rval = new cssBool(value.toBool(), name);
+    break;
+  case T_Int:
+  case T_UInt:
+    rval = new cssInt(value.toInt(), name);
+    break;
+  case T_Int64: 
+  case T_UInt64:
+    rval = new cssInt64(value.toInt64(), name);
+    break;
+  case T_Double:
+    rval = new cssReal(value.toDouble(), name);
+    break;
+  case T_Char:
+    rval = new cssChar(value.toChar(), name);
+    break;
+  case T_String: 
+    rval = new cssString(value.toString(), name);
+    break;
+  default: 
+    taMisc::Warning("ProgVar: unexpected can't create cssEl for VarType: ", String(value.type()));
+    rval = &cssMisc::Void ;
+  }
+  return rval;
+} */
+
+const String ProgVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += "Variant ";
+  rval += name;
+  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
+    rval += " = new ";
+    rval += val_type->name + "()";
+  } else { 
+    bool init = !value.isDefault();
+    if (init) {
+      rval += " = ";
+      rval += value.toCssLiteral();
+    } else if (!value.isInvalid()) {
+      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
+    }
+  }
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* ProgVar::NewCssEl() {
+ //TODO: maybe we should cache???
+  return NewCssEl_impl();
+}
+
+cssEl* ProgVar::NewCssEl_impl() {
+  cssVariant* rval = new cssVariant(value, name);
+  return rval;
+}
+
+
+//////////////////////////
+//   EnumProgVar	//
+//////////////////////////
+
+void EnumProgVar::Initialize() {
+  value.setType(Variant::T_Int);
+  enum_type = NULL;
+  init = true;
+}
+
+void EnumProgVar::Destroy() {
+}
+
+void EnumProgVar::Copy_(const EnumProgVar& cp) {
+  enum_type = cp.enum_type;
+  init = cp.init;
+}
+
+int EnumProgVar::cssType() {
+  return cssEl::T_Enum;
+}
+
+const String EnumProgVar::enumName() {
+  if (enum_type) {
+    //TODO: need to make sure it is type::enum
+    return enum_type->Get_C_Name();
+  } else return _nilString;
+}
+
+void EnumProgVar::Freshen(const ProgVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_EnumProgVar)) {
+    const EnumProgVar& cp = (const EnumProgVar&)(cp_);
+    enum_type = cp.enum_type;
+    init = cp.init;
+  }
+} 
+
+const String EnumProgVar::GenCssArg_impl() {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  rval += enumName() + " ";
+  rval += name;
+  if (init) {
+    rval += " = ";
+    rval += ValToId(value.toInt());
+  }
+  return rval;
+}
+
+const String EnumProgVar::GenCssVar_impl(bool, TypeDef*) {
+  String rval = GenCssArg_impl();
+  rval += ";\n";
+  return rval;
+}
+
+cssEl* EnumProgVar::NewCssEl_impl() {
+  cssEnum* rval = new cssEnum(value.toInt(), name);
+  return rval;
+}
+
+const String EnumProgVar::ValToId(int val) {
+  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  //TODO
+  return rval;
+}
+
+
+//////////////////////////
+//   ObjectProgVar	//
+//////////////////////////
+
+void ObjectProgVar::Initialize() {
+  val_type = &TA_taOBase; //note: < taOBase generally not interesting
+  make_new = false;
+}
+
+void ObjectProgVar::Destroy() {
+}
+
+void ObjectProgVar::Copy_(const ObjectProgVar& cp) {
+  val_type = cp.val_type;
+  make_new = cp.make_new;
+}
+
+int ObjectProgVar::cssType() {
+  return cssEl::T_TA;
+}
+
+void ObjectProgVar::Freshen(const ProgVar& cp_) {
+  inherited::Freshen(cp_);
+  if (cp_.GetTypeDef()->InheritsFrom(&TA_ObjectProgVar)) {
+    const ObjectProgVar& cp = (const ObjectProgVar&)(cp_);
+    val_type = cp.val_type;
+    make_new = cp.make_new;
+  }
+} 
+
+cssEl* ObjectProgVar::NewCssEl_impl() {
+  // note: use the val_type, not the actual type, in case user
+  // wanted the var to be more generic than current instance
+  taBase* tab = value.toBase();
+  cssTA* rval = new cssTA(tab, 1, val_type, name);
+  return rval;
+}
+
+
+//////////////////////////
+//   ProgVar_List	//
+//////////////////////////
+
+void ProgVar_List::Initialize() {
+  SetBaseType(&TA_ProgVar);
+  var_context = VC_ProgVars;
+}
+
+void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    prog->setDirty(true);
+  }
+}
+
+void ProgVar_List::El_SetIndex_(void* it_, int idx) {
+  ProgVar* it = (ProgVar*)it_;
+  if (it->name.empty()) {
+    it->name = "Var_" + (String)idx;
+  }
+}
+
+const String ProgVar_List::GenCss(int indent_level) const {
+  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+  ProgVar* el;
+  int cnt = 0;
+  for (int i = 0; i < size; ++i) {
+    el = FastEl(i);
+    if (el->ignore) continue;
+    bool is_arg = (var_context == VC_FuncArgs);
+    if (is_arg) {
+      if (cnt > 0)
+        rval += ", ";
+    } else {
+      rval += cssMisc::Indent(indent_level); 
+    }
+    rval += el->GenCss(is_arg); 
+    ++cnt;
+  }
+  return rval;
+}
 
 //////////////////////////
 //  ProgEl		//
@@ -332,8 +616,8 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += cssMisc::Indent(indent_level);
   rval += "// set global vars of target\n";
   String nm;
-  ScriptVar* ths_var;
-  ScriptVar* prg_var;
+  ProgVar* ths_var;
+  ProgVar* prg_var;
   for (int i = 0; i < global_args.size; ++i) {
     ths_var = global_args.FastEl(i);
     if (ths_var->ignore) continue;
@@ -341,7 +625,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     prg_var = target->global_vars.FindName(nm);
     if (!prg_var || prg_var->ignore) continue;
     rval += cssMisc::Indent(indent_level);
-    //TODO: need to be using ScriptArg instead of ScriptVar
+    //TODO: need to be using ScriptArg instead of ProgVar
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
       + ths_var->value.toCssLiteral() + ");\n";
   }
@@ -369,8 +653,8 @@ void ProgramCallEl::UpdateGlobalArgs() {
   // we prefix our local copies of prog args with following:
   int i;
   int t;
-  ScriptVar* ths_var; // our copy
-  ScriptVar* prg_var; // target's copy
+  ProgVar* ths_var; // our copy
+  ProgVar* prg_var; // target's copy
   String nm;
   // delete defunct, in ours but not in target
   // when we find matches, we update our copy
@@ -401,7 +685,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
     t = global_args.Find(nm);
     if (t >= 0) 
       continue; 
-    ths_var = (ScriptVar*)prg_var->Clone();
+    ths_var = (ProgVar*)prg_var->Clone();
     global_args.Add(ths_var);
     ths_var->name = nm;
   }
@@ -449,7 +733,7 @@ void Program::InitScriptObj_impl() {
 
 void Program::PreCompileScript_impl() {
   AbstractScriptBase::PreCompileScript_impl();
-  UpdateScriptVars();
+  UpdateProgVars();
 }
 
 bool Program::Run() {
@@ -483,7 +767,7 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
   return true;
 }
 
-void  Program::UpdateScriptVars() {
+void  Program::UpdateProgVars() {
   //NOTE: if we have to nuke any or change any types then we have to recompile!
   // but currently, we only do this before recompiling anyway, so no worries!
 // easiest is just to nuke and recreate...
@@ -492,13 +776,13 @@ void  Program::UpdateScriptVars() {
     
   // add new
   for (int i = 0; i < global_vars.size; ++i) {
-    ScriptVar* sv = global_vars.FastEl(i);
+    ProgVar* sv = global_vars.FastEl(i);
     if (sv->ignore) continue;
     cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
 /*old  int i = 0;
-  ScriptVar* sv;
+  ProgVar* sv;
   cssEl* el;
   // update names and values of existing (if any)
   while ((m_our_hardvar_base_index + i) < script->hard_vars.size) {

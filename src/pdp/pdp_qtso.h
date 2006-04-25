@@ -33,6 +33,18 @@
 // forwards this file
 class pdpDataViewer;
 
+class PDP_API taiProgVarType : public taiClassType { 
+INHERITED(taiClassType)
+public:
+  bool		requiresInline() const {return true;}
+  bool		handlesReadOnly() { return true; } 
+  int		BidForType(TypeDef* td);
+
+  TAQT_TYPE_INSTANCE(taiProgVarType, taiClassType);
+protected:
+  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+};
+
 
 class PDP_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
@@ -48,6 +60,99 @@ public:
 protected:
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void		GetImage_impl(taiData* dat, const void* base);
+};
+
+
+class PDP_API taiProgVarBase: public taiCompData { 
+  //note: this set of classes uses a static New instead of new because of funky virtual Constr
+INHERITED(taiCompData)
+  Q_OBJECT
+public:
+  QWidget*	rep() const { return (QWidget*)m_rep; } 
+  bool		fillHor() {return true;} // override 
+  ~taiProgVarBase();
+
+  void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
+  virtual void  	GetImage(const ProgVar* var);
+  virtual void	 	GetValue(ProgVar* var) const;
+
+protected:
+  int			m_changing; // used to prevent recursions
+  taiToggle*		tglIgnore;
+  taiField*		fldName;
+  
+  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
+  override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 
+  taiProgVarBase(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+};
+
+
+class PDP_API taiProgVar: public taiProgVarBase { 
+  //note: this set of classes uses a static New instead of new because of funky virtual Constr
+INHERITED(taiProgVarBase)
+  Q_OBJECT
+public:
+  static taiProgVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  
+  ~taiProgVar();
+
+  void  		GetImage(const ProgVar* var);
+  void	 		GetValue(ProgVar* var) const;
+
+protected: 
+  taiVariant*		vfVariant;
+  
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  taiProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+};
+
+
+class PDP_API taiEnumProgVar: public taiProgVarBase {
+INHERITED(taiProgVarBase)
+  Q_OBJECT
+public:
+  static taiEnumProgVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  ~taiEnumProgVar();
+
+  void  		GetImage(const ProgVar* var); // override
+  void	 		GetValue(ProgVar* var) const; // override
+
+protected:
+  taiTypeHier*		thEnumType;
+  taiComboBox*		cboEnumValue;
+  
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
+  void			DataChanged_impl(taiData* chld); // override
+  taiEnumProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+};
+
+
+class PDP_API taiObjectProgVar: public taiProgVarBase {
+INHERITED(taiProgVarBase)
+  Q_OBJECT
+public:
+  static taiObjectProgVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+
+  void  		GetImage(const ProgVar* var); // override
+  void	 		GetValue(ProgVar* var) const; // override
+  ~taiObjectProgVar();
+
+protected:
+  taiTypeHier*		thValType;
+  taiToggle*		chkMakeNew;
+  QLabel*		lblObjectValue;
+  taiToken*		tkObjectValue;
+  
+  void			MakeNew_Setting(bool value); // common code jigs visibility
+  
+  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
+  void			DataChanged_impl(taiData* chld); // override
+  taiObjectProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
 

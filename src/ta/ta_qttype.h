@@ -152,19 +152,6 @@ protected:
 };
 
 
-class TA_API taiScriptVarType : public taiClassType { 
-INHERITED(taiClassType)
-public:
-  bool		requiresInline() const {return true;}
-  bool		handlesReadOnly() { return true; } 
-  int		BidForType(TypeDef* td);
-
-  TAQT_TYPE_INSTANCE(taiScriptVarType, taiClassType);
-protected:
-  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-};
-
-
 class TA_API gpiListType : public taiClassType {
 public:
   bool		allowsInline() const {return false;}

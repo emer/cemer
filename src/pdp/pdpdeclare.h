@@ -33,9 +33,12 @@ class ColorScaleSpec;
 
 class BaseSpec;
 //class BaseSpec_List;
-class BaseSpec_MGroup;
+class BaseSpec_MGroup; //
 
+// program.h
+class ProgVar;
 class Script; //
+class Program;
 
 // netstru.h
 class SigmoidSpec;

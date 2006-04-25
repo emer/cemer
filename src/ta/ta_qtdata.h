@@ -39,7 +39,6 @@
 // externals
 class QKeySequence; // #IGNORE
 class MatrixGeom;
-class ScriptVar; //
 
 // forwards
 class taiToggle;
@@ -421,98 +420,6 @@ protected:
   override void		GetValueVar_impl(Variant& val) const {GetValue(val);} 
 };
 
-
-class TA_API taiScriptVarBase: public taiCompData { 
-  //note: this set of classes uses a static New instead of new because of funky virtual Constr
-INHERITED(taiCompData)
-  Q_OBJECT
-public:
-  QWidget*	rep() const { return (QWidget*)m_rep; } 
-  bool		fillHor() {return true;} // override 
-  ~taiScriptVarBase();
-
-  void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
-  virtual void  	GetImage(const ScriptVar* var);
-  virtual void	 	GetValue(ScriptVar* var) const;
-
-protected:
-  int			m_changing; // used to prevent recursions
-  taiToggle*		tglIgnore;
-  taiField*		fldName;
-  
-  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  override void		GetImage_impl(const void* base) {GetImage((const ScriptVar*)base);}
-  override void		GetValue_impl(void* base) const {GetValue((ScriptVar*)base);} 
-  taiScriptVarBase(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-};
-
-
-class TA_API taiScriptVar: public taiScriptVarBase { 
-  //note: this set of classes uses a static New instead of new because of funky virtual Constr
-INHERITED(taiScriptVarBase)
-  Q_OBJECT
-public:
-  static taiScriptVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-  
-  ~taiScriptVar();
-
-  void  		GetImage(const ScriptVar* var);
-  void	 		GetValue(ScriptVar* var) const;
-
-protected: 
-  taiVariant*		vfVariant;
-  
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  taiScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-};
-
-
-class TA_API taiEnumScriptVar: public taiScriptVarBase {
-INHERITED(taiScriptVarBase)
-  Q_OBJECT
-public:
-  static taiEnumScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-  ~taiEnumScriptVar();
-
-  void  		GetImage(const ScriptVar* var); // override
-  void	 		GetValue(ScriptVar* var) const; // override
-
-protected:
-  taiTypeHier*		thEnumType;
-  taiComboBox*		cboEnumValue;
-  
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
-  void			DataChanged_impl(taiData* chld); // override
-  taiEnumScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-};
-
-
-class TA_API taiObjectScriptVar: public taiScriptVarBase {
-INHERITED(taiScriptVarBase)
-  Q_OBJECT
-public:
-  static taiObjectScriptVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-
-  void  		GetImage(const ScriptVar* var); // override
-  void	 		GetValue(ScriptVar* var) const; // override
-  ~taiObjectScriptVar();
-
-protected:
-  taiTypeHier*		thValType;
-  taiToggle*		chkMakeNew;
-  QLabel*		lblObjectValue;
-  taiToken*		tkObjectValue;
-  
-  void			MakeNew_Setting(bool value); // common code jigs visibility
-  
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
-  void			DataChanged_impl(taiData* chld); // override
-  taiObjectScriptVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-};
 
 //////////////////////////////////
 //   Menus and Toolbars		//
