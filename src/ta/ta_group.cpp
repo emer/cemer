@@ -440,7 +440,7 @@ TAPtr taGroup_impl::New(int no, TypeDef* typ) {
     return rval;
   }
 err: 
-  taMisc::Error("*** Attempt to create type:", typ->name,
+  taMisc::Warning("*** Attempt to create type:", typ->name,
 		   "in group of type:", GetTypeDef()->name,
 		   "with base element type:", el_base->name);
   return NULL;

@@ -1461,6 +1461,12 @@ public:
   Environment_MGroup	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
   Process_MGroup	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
 
+#ifdef TA_GUI
+  void			ConvertToVersion4(); 
+    // #MENU #MENU_CONTEXT #MENU_BUTTON convert the project to v4.x format
+#endif
+  bool			ConvertToVersion4_impl(); 
+    // #HIDDEN non-gui implementation; returns 'true' if successful
   void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }

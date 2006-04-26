@@ -97,6 +97,7 @@ int cssiSession::Run() {
 
   if (//!ses->done() &&
   in_session && !rl_done) {
+    // this processes events until there are no more to process
     QCoreApplication::processEvents();
 
     if (in_session && !rl_done && !quitting) {

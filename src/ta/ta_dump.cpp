@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// ta_dump.cc
+// ta_dump.cpp
 
 #include "ta_dump.h"
 #include "ta_variant.h"
@@ -26,6 +26,15 @@
 #  include "css_qt.h"
 #endif
 
+/* Version 4.x Note on Error handling
+
+  Version 3.x had a mechanism whereby any taMisc::Error call with a non-
+  alphanum first character in the error msg would only print to cerr
+  not raise an error dialog. In v4.x we have added a taMisc::Warning
+  call for this purpose. So any call in the dump code that previously
+  did not raise a gui window has been converted to a Warning.
+
+*/
 taBase_PtrList 	dumpMisc::update_after;
 DumpPathSubList	dumpMisc::path_subs;
 DumpPathTokenList dumpMisc::path_tokens;
@@ -54,13 +63,13 @@ TAPtr VPUnref::Resolve() {
       return NULL;
   }
   else if(md->type->ptr != 0) {
-    taMisc::Error("*** ptr count greater than 1 in path:", path);
+    taMisc::Warning("*** ptr count greater than 1 in path:", path);
     return NULL;
   }
 
   if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
     if(parent == NULL)
-      taMisc::Error("*** NULL parent for owned pointer:",path);
+      taMisc::Warning("*** NULL parent for owned pointer:",path);
     else
       taBase::OwnPointer(base, bs, parent);
   }
@@ -68,7 +77,7 @@ TAPtr VPUnref::Resolve() {
     taBase::SetPointer(base, bs);
 
   if(taMisc::verbose_load >= taMisc::MESSAGES)
-    taMisc::Error("<== Resolved Reference:",path);
+    taMisc::Warning("<== Resolved Reference:",path);
   if(parent != NULL)
     parent->UpdateAfterEdit();
   return *base;
@@ -86,7 +95,7 @@ void VPUList::Resolve() {
       String par_path;
       if(vp->parent != NULL)
 	par_path = vp->parent->GetPath();
-      taMisc::Error("*** Warning: Could not resolve following path:",vp->path,
+      taMisc::Warning("*** Warning: Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;
     }
@@ -96,7 +105,7 @@ void VPUList::Resolve() {
 void VPUList::Add(TAPtr* b, TAPtr par, const String& p, MemberDef* md) {
   AddUniqNameOld(new VPUnref(b,par,p,md));
   if(taMisc::verbose_load >= taMisc::MESSAGES)
-    taMisc::Error("==> Unresolved Reference:",p);
+    taMisc::Warning("==> Unresolved Reference:",p);
 }
 
 
@@ -136,7 +145,7 @@ void DumpPathSubList::Add(TypeDef* td, TAPtr par, String& o, String& n) {
   }
   if(taMisc::verbose_load >= taMisc::MESSAGES) {
     String ppath = par->GetPath();
-    taMisc::Error("---> New Path Fix, old:",*op,"new:",*np,"in:",ppath);
+    taMisc::Warning("---> New Path Fix, old:",*op,"new:",*np,"in:",ppath);
   }
   DumpPathSub* nwsb = new DumpPathSub(td, par, *op, *np);
   Add(nwsb);
@@ -148,7 +157,7 @@ void DumpPathSubList::Add(TypeDef* td, TAPtr par, String& o, String& n) {
     nwsb = new DumpPathSub(td, tabMisc::root, long_o, long_n);
     Add(nwsb);
     if(taMisc::verbose_load >= taMisc::MESSAGES) {
-      taMisc::Error("---> New Global Path Fix, old:",long_o,"new:",long_n);
+      taMisc::Warning("---> New Global Path Fix, old:",long_o,"new:",long_n);
     }
   }
 }
@@ -225,7 +234,7 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
   Add(NULL, pat);
   DumpPathToken* tok = FastEl(size-1);
   if(tok_num != size-1) {
-    taMisc::Error("*** Path Tokens out of order, on list:", tok->token_id, "in file:",
+    taMisc::Warning("*** Path Tokens out of order, on list:", tok->token_id, "in file:",
 		   tok_id);
     tok->object = NULL;
     tok->path = "";
@@ -235,7 +244,7 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
     tok->path = pat;
   }
   if(taMisc::verbose_load >= taMisc::MESSAGES) {
-    taMisc::Error("---> New Path Token:",tok_id,"path:",pat);
+    taMisc::Warning("---> New Path Token:",tok_id,"path:",pat);
   }
 }
 
@@ -246,7 +255,7 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
     String num = pat(1,pat.index('$',-1)-1); // get the number
     DumpPathToken* tok = SafeEl((int)num);
     if(tok == NULL) {
-      taMisc::Error("*** Path Token Not Created Yet:", pat);
+      taMisc::Warning("*** Path Token Not Created Yet:", pat);
       return NULL;
     }
     if((tok->object == NULL) && (base != NULL)) {
@@ -282,7 +291,7 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
     }
   }
   else if(md->type->ptr != 0) {
-    taMisc::Error("*** ptr count greater than 1 in path:", pat);
+    taMisc::Warning("*** ptr count greater than 1 in path:", pat);
     return NULL;
   }
   if(tok != NULL)
@@ -703,7 +712,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
     }
     if(c == EOF) {
       if(taMisc::verbose_load >= taMisc::MESSAGES)
-	taMisc::Error("<<< EOF in MemberSpace::Dump_Load", taMisc::LexBuf);
+	taMisc::Warning("<<< EOF in MemberSpace::Dump_Load", taMisc::LexBuf);
       return EOF;
     }
     if(c == '}') {
@@ -727,7 +736,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
       c = taMisc::read_till_lb_or_semi(strm);
       if(c == EOF) {
 	if(taMisc::verbose_load >= taMisc::MESSAGES)
-	  taMisc::Error("<<< EOF in MemberSpace::Dump_Load", taMisc::LexBuf);
+	  taMisc::Warning("<<< EOF in MemberSpace::Dump_Load", taMisc::LexBuf);
 	return EOF;
       }
       String path_val = taMisc::LexBuf;
@@ -777,7 +786,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	tmp = md->Dump_Load(strm, base, par);
 	if(tmp == EOF) {
 	  if(taMisc::verbose_load >= taMisc::MESSAGES)
-	    taMisc::Error("<<< EOF in MemberSpace::Dump_Load::else:", mb_name);
+	    taMisc::Warning("<<< EOF in MemberSpace::Dump_Load::else:", mb_name);
 	  return EOF;
 	}
 	if(tmp == false)
@@ -856,7 +865,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
         // a taBase object that was saved as a member, but is now a pointer..
         TAPtr rbase = *((TAPtr*)new_base);
         if(rbase == NULL) {	// it's a null object, can't load into it
-          taMisc::Error("*** Can't load into NULL pointer object for member:", name,
+          taMisc::Warning("*** Can't load into NULL pointer object for member:", name,
                         "in eff_type:",GetOwnerType()->name);
           return false;
         }
@@ -879,7 +888,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       return true;
     // otherwise, it better be an = 
     if (c != '=') {
-      taMisc::Error("*** Missing '=' in dump file for member:", name,
+      taMisc::Warning("*** Missing '=' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return false;
     }
@@ -898,7 +907,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     }
   
     if(c != ';') {
-      taMisc::Error("*** Missing ';' in dump file for member:", name,
+      taMisc::Warning("*** Missing ';' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
     }
@@ -929,7 +938,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   c = taMisc::read_till_lb_or_semi(strm, true);
   if(c == EOF) {
     if(taMisc::verbose_load >= taMisc::MESSAGES)
-      taMisc::Error("<<< EOF in Dump_Load_Path:", name, taMisc::LexBuf);
+      taMisc::Warning("<<< EOF in Dump_Load_Path:", name, taMisc::LexBuf);
     return EOF;
   }
 
@@ -967,13 +976,13 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   else {
     td = taMisc::types.FindName(tpnm);
     if(td == NULL) {
-      taMisc::Error("*** Unknown type:",tpnm,"in Dump_Load_Path");
+      taMisc::Warning("*** Unknown type:",tpnm,"in Dump_Load_Path");
       return false;
     }
 
     if(!DerivesFrom(TA_taBase)) {
       if(!DerivesFrom(td)) {
-	taMisc::Error("*** Type mismatch, expecting:",name,"Got:",td->name);
+	taMisc::Warning("*** Type mismatch, expecting:",name,"Got:",td->name);
 	return false;
       }
     }
@@ -1017,7 +1026,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
 
   if(path.firstchar() == '@') {		// relative to current parent..
     if(par == NULL) {
-      taMisc::Error("*** Relative path with NULL parent:", path);
+      taMisc::Warning("*** Relative path with NULL parent:", path);
       return false;
     }
     path = path.after('@');
@@ -1064,12 +1073,12 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   TAPtr ppar = find_base->FindFromPath(ppar_path, ppar_md); // path-parent
 
   if(ppar == NULL) {
-    taMisc::Error("*** Could not find a parent for:",el_path,"in",ppar_path);
+    taMisc::Warning("*** Could not find a parent for:",el_path,"in",ppar_path);
     return false;
   }
 
   if((ppar_md != NULL) && !(ppar_md->type->InheritsFrom(TA_taBase))) {
-    taMisc::Error("*** Parent must be a taBase type for:",el_path,"in",ppar_path,
+    taMisc::Warning("*** Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
   }
@@ -1085,7 +1094,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   if((el == NULL) || (el_md == NULL)) {   // did not find the thing
     el = ppar->New(1,this);
     if(el == NULL) {
-      taMisc::Error("*** New: Could not make a token of:",name,"in:",ppar->GetPath(),
+      taMisc::Warning("*** New: Could not make a token of:",name,"in:",ppar->GetPath(),
 		    path);
       return false;
     }
@@ -1111,7 +1120,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
       *elp = taBase::MakeToken(this);
       el = *elp;
       if(*elp == NULL) {
-	taMisc::Error("*** MakeToken: Could not make a token of:",name,"in:", path);
+	taMisc::Warning("*** MakeToken: Could not make a token of:",name,"in:", path);
 	return false;
       }
       taBase::Own(el,(TAPtr) par);
@@ -1132,13 +1141,13 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   {
     // object not the right type, try to create new one..
     if(taMisc::verbose_load >= taMisc::MESSAGES) {
-      taMisc::Error("*** Object at path:",ppar->GetPath(),path,
+      taMisc::Warning("*** Object at path:",ppar->GetPath(),path,
 		    "of type:",el->GetTypeDef()->name,"is not the right type:",name,
 		    ", attempting to create new one");
     }
     el = ppar->New(1,this);
     if(el == NULL) {
-      taMisc::Error("*** Could not make a token of:",name,"in:",ppar->GetPath(),
+      taMisc::Warning("*** Could not make a token of:",name,"in:",ppar->GetPath(),
 		    path);
       return false;
     }
@@ -1169,7 +1178,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   int c = taMisc::skip_white(strm);
   if(c == EOF) {
     if(taMisc::verbose_load >= taMisc::MESSAGES)
-      taMisc::Error("<<< EOF in Dump_Load_Value:", name);
+      taMisc::Warning("<<< EOF in Dump_Load_Value:", name);
     return EOF;
   }
   if(c == ';')    return 2;  // signal that just a path was loaded..
@@ -1185,12 +1194,12 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
 
   if(HasOption("INLINE_DUMP")) {
     if(c != '{') {
-      taMisc::Error("*** Missing '{' in dump file for inline type:", name);
+      taMisc::Warning("*** Missing '{' in dump file for inline type:", name);
       return false;
     }
     c = taMisc::read_till_rb_or_semi(strm);
     if(c != '}') {
-      taMisc::Error("*** Missing '}' in dump file for inline type:", name);
+      taMisc::Warning("*** Missing '}' in dump file for inline type:", name);
       return false;
     }
     taMisc::LexBuf = String("{") + taMisc::LexBuf; // put lb back in..
@@ -1198,7 +1207,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   }
   else if(InheritsFormal(TA_class)) {
     if(c != '{') {
-      taMisc::Error("*** Missing '{' in dump file for type:",name);
+      taMisc::Warning("*** Missing '{' in dump file for type:",name);
       return false;
     }
     return members.Dump_Load(strm, base, par);
@@ -1207,18 +1216,18 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     c = taMisc::skip_white(strm);
     if(c == EOF) {
       if(taMisc::verbose_load >= taMisc::MESSAGES)
-	taMisc::Error("<<< EOF in Dump_Load_Value::else:", name);
+	taMisc::Warning("<<< EOF in Dump_Load_Value::else:", name);
       return EOF;
     }
     if(c != '=') {
-      taMisc::Error("*** Missing '=' in dump file for type:",name);
+      taMisc::Warning("*** Missing '=' in dump file for type:",name);
       return false;
     }
 
     c = taMisc::read_till_rb_or_semi(strm);
     if(c == EOF) {
       if(taMisc::verbose_load >= taMisc::MESSAGES)
-	taMisc::Error("<<< EOF in Dump_Load_Value::rb", name);
+	taMisc::Warning("<<< EOF in Dump_Load_Value::rb", name);
       return EOF;
     }
 
@@ -1267,7 +1276,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     }
     if(rval == EOF) {
       if(taMisc::verbose_load >= taMisc::MESSAGES)
-	taMisc::Error("<<< EOF in Dump_Load_impl:", name);
+	taMisc::Warning("<<< EOF in Dump_Load_impl:", name);
       return EOF;
     }
     if(rval == false) {
@@ -1322,7 +1331,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
 
 int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
   if(base == NULL) {
-    taMisc::Error("*** Cannot load into NULL");
+    taMisc::Warning("*** Cannot load into NULL");
     return false;
   }
 
@@ -1370,7 +1379,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
     TAPtr par = (TAPtr)base;		// given base must be a parent
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
-      taMisc::Error("*** Could not make a:",td->name,"in:",par->GetPath());
+      taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
       taMisc::is_loading = false;
       return false;
     }
@@ -1393,7 +1402,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
   for(i=0; i<dumpMisc::update_after.size; i++) {
     TAPtr tmp = dumpMisc::update_after.FastEl(i);
     if(taBase::GetRefn(tmp) <= 1) {
-      taMisc::Error("*** Object: of type:",
+      taMisc::Warning("*** Object: of type:",
 		      tmp->GetTypeDef()->name,"named:",tmp->GetName(),"is unowned!");
       taBase::Ref(tmp);
     }

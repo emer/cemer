@@ -136,8 +136,7 @@ public:
   String		value; // the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
   
   virtual void		Freshen(const ProgVar& cp); 
-    // updates our value/type information and commensurable fields from compatible type (but not name or ignore)
-  virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
+    // updates our value/type information and commensurable fields from compatible type (but not name)
   
   void 	SetDefaultName() {} // name is always the same as the referent
   void	Copy_(const ProgArg& cp);

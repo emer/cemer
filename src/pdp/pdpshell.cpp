@@ -648,7 +648,7 @@ void ProjectBase::Initialize() {
   networks.SetBaseType(&TA_Network);
   net_writers.SetBaseType(&TA_NetWriter);
   net_readers.SetBaseType(&TA_NetReader);
-  logs.SetBaseType(&TA_TextLog);
+//nn  logs.SetBaseType(&TA_TextLog);
   scripts.SetBaseType(&TA_Script);
 #ifdef TA_GUI
   edits.SetBaseType(&TA_SelectEdit);
@@ -896,6 +896,7 @@ void ProjectBase::LoadDefaults() {
   fstream def;
   // use a user-provided default 
   //TODO: this may not be a great idea in the v4 integrated runtime
+  //TODO: the entire handling of defaults in v4 needs to be redone
   String def_file;
   if (!pdpMisc::user_spec_def.empty())
     def_file = pdpMisc::user_spec_def;
@@ -913,7 +914,7 @@ void ProjectBase::LoadDefaults() {
     if(taMisc::dmem_proc == 0)
       cerr << "Using standard pre-compiled defaults file\n";
   } else {
-    taMisc::Error("Warning: no default file or defaults were available - created objects will not automatically be of correct type");
+    taMisc::Warning("no default file or defaults were available - created objects will not automatically be of correct type");
   }
   taMisc::is_loading = loading;
 }

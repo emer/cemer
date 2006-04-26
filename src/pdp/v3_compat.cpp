@@ -22,6 +22,7 @@
 #include "pdpshell.h"
 
 #ifdef TA_GUI
+#include <QMessageBox>
 //////////////////////////
 // 	CtrlPanelData	//
 //////////////////////////
@@ -2679,4 +2680,21 @@ void Project::Copy_(const Project& cp) {
 void Project::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   //TODO: here is maybe where we can trap having loaded legacy, and convert
+}
+
+#ifdef TA_GUI
+void Project::ConvertToVersion4() {
+  int ch = taMisc::Choice("This will convert the legacy v3.x project to v4.x format. The new project will have the old name with a _v4 suffix. Do you want to continue?", "Yes", "No");
+  if (ch != 0) return;
+  if (ConvertToVersion4_impl())
+    QMessageBox::information(NULL, "Operation Succeeded", "The conversion succeeded!", 
+      QMessageBox::Ok);
+  else
+    QMessageBox::warning(NULL, "Operation Failed", "The conversion did not succeed -- please see the console log for warning messages.", 
+      QMessageBox::Ok, QMessageBox::NoButton);
+}
+#endif
+bool Project::ConvertToVersion4_impl() {
+  taMisc::Warning("sorry... conversion is not yet implemented");
+  return false;
 }

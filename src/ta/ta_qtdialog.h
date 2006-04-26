@@ -273,7 +273,7 @@ public:
 
 
   iColor* 	bg_color;	// background color of host -- only set via setBgColor
-  virtual bool	isDialog() {return !is_panel;} // 'true' when we will be been posted as a dialog
+  virtual bool	isDialog() {return dialog;} // 'true' when we will be been posted as a dialog
   virtual bool	isPanel() {return is_panel;} // 'true' when we will be shown in a panel
   virtual void	setBgColor(const iColor* new_bg); // #SET_bg_color
   virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas

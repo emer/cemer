@@ -703,7 +703,7 @@ void taiDataHost::BodyCleared() { // called when last widget cleared from body
 
 void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling panels
   state = CANCELED;
-  if (isDialog()) {
+  if (dialog) {
     dialog->dismiss(false);
   }
   warn_clobber = false; // just in case
@@ -857,7 +857,7 @@ void taiDataHost::Constr_Methods() { //note: conditional constructions used by S
 void taiDataHost::Constr_Buttons() {
   QWidget* par = widget();
   hblButtons->addStretch();
-  if (isDialog()) { // add dialog-like buttons
+  if (!is_panel) { // add dialog-like buttons
     if(!modal && no_ok_but) {
       okbut = NULL;
     }
@@ -965,11 +965,10 @@ void taiDataHost::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destruc
 }
 
 void taiDataHost::DoRaise_Dialog() {
-  if (!isDialog()) return;
+  if (!dialog) return;
   if (!modal) {
-    iDialog* dlg = (iDialog*)widget();
-    dlg->raise();
-    dlg->setFocus();
+    dialog->raise();
+    dialog->setFocus();
   }
 }
 
@@ -992,11 +991,9 @@ void taiDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& 
 }
 
 void taiDataHost::Iconify(bool value) {
-  if (!isDialog()) return;
-  iDialog* dlg = (iDialog*)widget();
-  if (!dlg) return;
-  if (value) dlg->iconify();
-  else       dlg->deiconify();
+  if (!dialog) return;
+  if (value) dialog->iconify();
+  else       dialog->deiconify();
 }
 
 void taiDataHost::Ok() { //note: only used for Dialogs
@@ -1014,7 +1011,7 @@ void taiDataHost::Ok() { //note: only used for Dialogs
   }
   state = ACCEPTED;
   mouse_button = okbut->mouse_button;
-  if (isDialog()) {
+  if (dialog) {
     dialog->dismiss(true);
   }
 }

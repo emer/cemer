@@ -119,11 +119,11 @@ public:
 
   TAPtr	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf
   { TAPtr rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
-    if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->el[0]; return rval; }
+    if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->SafeEl_(0); return rval; }
   TAPtr	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
   { TAPtr rval=NULL; if(++lf.i >= lf.cgp->size) {
     lf.i = 0; lf.cgp = leaf_gp->SafeEl(++lf.g); }
-    if(lf.cgp != NULL) rval = (TAPtr)lf.cgp->el[lf.i]; return rval; }
+    if(lf.cgp != NULL) rval = (TAPtr)lf.cgp->SafeEl_(lf.i); return rval; }
 
   virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
