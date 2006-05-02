@@ -110,6 +110,13 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
     root_gp->DataChanged(dcr + (DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN) , op1, op2);
   } 
+  // GROUP events cause invalidation of the group iteration cache
+  else if ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)) {
+    if (leaf_gp != NULL) {
+      taBase::unRefDone(leaf_gp);
+      leaf_gp = NULL;
+    }
+  }
 }
 
 void taGroup_impl::InitLeafGp() const {
@@ -381,13 +388,13 @@ TAPtr taGroup_impl::Leaf_(int idx) const {
   return NULL;
 }
 
-TAGPtr taGroup_impl::LeafGp_(int idx) const {
-  if(idx >= leaves)
+TAGPtr taGroup_impl::LeafGp_(int leaf_idx) const {
+  if(leaf_idx >= leaves)
     return NULL;
-  if(size && (idx < size))
+  if(size && (leaf_idx < size))
     return (TAGPtr)this;
 
-  int nw_idx = (int)idx - size;
+  int nw_idx = (int)leaf_idx - size;
   int i;
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
@@ -396,7 +403,7 @@ TAGPtr taGroup_impl::LeafGp_(int idx) const {
       return sbg->LeafGp_(nw_idx);
     nw_idx -= (int)sbg->leaves;
   }
-  return NULL;
+  return NULL; 
 }
 
 void taGroup_impl::List(ostream& strm) const {
@@ -561,6 +568,12 @@ int taGroup_impl::ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_
     nchg += FastGp_(i)->ReplaceAllPtrsThis(obj_typ, old_ptr, new_ptr);
   }
   return nchg;
+}
+
+TAGPtr taGroup_impl::SafeLeafGp_(int gp_idx) const {
+  if (gp_idx == 0) return const_cast<TAGPtr>(this);
+  if (!leaf_gp) InitLeafGp();
+  return leaf_gp->SafeEl(gp_idx);
 }
 
 void taGroup_impl::UpdateLeafCount_(int no) {

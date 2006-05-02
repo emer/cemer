@@ -2290,17 +2290,11 @@ void Environment::UpdateAfterEdit() {
 }
 
 int Environment::GroupCount() {
-  if(events.gp.size == 0)
-    return 0;
-  if(events.leaf_gp == NULL) events.InitLeafGp();
-  return events.leaf_gp->size;
+  return events.LeafGpCount();
 }
 
 Event_MGroup* Environment::GetGroup(int i) {
-  if(events.gp.size == 0)
-    return NULL;
-  if(events.leaf_gp == NULL) events.InitLeafGp();
-  return (Event_MGroup*)events.leaf_gp->SafeEl(i);
+  return (Event_MGroup*)events.SafeLeafGp(i);
 }
 
 
@@ -2417,8 +2411,7 @@ int FreqEnv::GroupCount() {
 
 Event_MGroup* FreqEnv::GetGroup(int i) {
   if((freq_level == GROUP) || (freq_level == GROUP_EVENT)) {
-    if(events.leaf_gp == NULL) events.InitLeafGp();
-    return (Event_MGroup*)events.leaf_gp->SafeEl(list.SafeEl(i));
+    return (Event_MGroup*)events.SafeLeafGp(list.SafeEl(i));
   }
   return Environment::GetGroup(i);
 }
@@ -2514,8 +2507,7 @@ int FreqTimeEnv::GroupCount() {
 
 Event_MGroup* FreqTimeEnv::GetGroup(int i) {
   if(freq_level == GROUP) {
-    if(events.leaf_gp == NULL) events.InitLeafGp();
-    return (Event_MGroup*)events.leaf_gp->SafeEl(list.SafeEl(i));
+    return (Event_MGroup*)events.SafeLeafGp(list.SafeEl(i));
   }
   return TimeEnvironment::GetGroup(i);
 }

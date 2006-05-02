@@ -1498,8 +1498,8 @@ class PDP_API NetConduit : public taNBase, public ISequencable {
 INHERITED(taNBase)
 public:
   Network*		last_net;
-  DataChannel_Group	channels; // of type LayerReader
   // #READ_ONLY #NO_SAVE last network connected to
+  DataChannel_Group	channels; // of type LayerReader
   
   virtual void 		InitFromNetwork(Network* net = NULL);
   // #BUTTON #NULL_OK creates readers/writers according to current state of net -- deletes existing readers/writers

@@ -55,7 +55,6 @@ for(el = (T*) grp FirstEl(itr); el; el = (T*) grp NextEl(itr))
 #define FOR_ITR_GP(T, el, grp, itr) \
 for(el = (T*) grp FirstGp(itr); el; el = (T*) grp NextGp(itr))
 
-// move some of the iv interface stuff into this guy..
 
 class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER implementation of a group
@@ -65,8 +64,10 @@ typedef taList_impl inherited;
 protected:
   virtual String	GetValStr(const TypeDef* td, void* par=NULL,
 	MemberDef* memb_def = NULL) const;
+  virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
 #ifdef TA_GUI
 protected:
+  mutable TALOG*	leaf_gp; 	// #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
   override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
     int& allowed, int& forbidden);
   virtual void	ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, const taiMimeSource* ms,
@@ -85,7 +86,6 @@ public:
   int 		leaves;		// #READ_ONLY #NO_SAVE total number of leaves
   taSubGroup	gp; 		// #HIDDEN #NO_FIND #NO_SAVE sub-groups within this one
   TAGPtr	super_gp;	// #READ_ONLY #NO_SAVE super-group above this
-  TALOG* 	leaf_gp; 	// #READ_ONLY #NO_SAVE 'flat' list of leaf-containing-gps
   TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE the root group, 'this' for root group itself; never NULL
 
   bool		IsEmpty()	{ return (leaves == 0) ? true : false; }
@@ -106,24 +106,29 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  TAGPtr	 Gp_(int i) const	{ return gp.SafeEl(i); } // #IGNORE
-  TAGPtr 	 FastGp_(int i) const	{ return gp.FastEl(i); } // #IGNORE
-  virtual TAPtr  Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
-  virtual TAGPtr LeafGp_(int idx) const; // #IGNORE the group having this leaf in it
-
+  TAGPtr	Gp_(int i) const	{ return gp.SafeEl(i); } // #IGNORE
+  TAGPtr 	FastGp_(int i) const	{ return gp.FastEl(i); } // #IGNORE
+  virtual TAPtr	Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
+  TAGPtr 	FastLeafGp_(int gp_idx) const // #IGNORE the flat leaf group, note: 0 is "this"
+    { if (gp_idx == 0) return const_cast<TAGPtr>(this); if (!leaf_gp) InitLeafGp();
+      return (TAGPtr)leaf_gp->el[gp_idx];}
+  TAGPtr 	SafeLeafGp_(int gp_idx) const; // #IGNORE the flat leaf group, note: 0 is "this"
+  
   // iterator-like functions
   TAGPtr 	FirstGp_(int& g) const	// #IGNORE first sub-gp
   { g = 0; if(leaf_gp == NULL) InitLeafGp(); return leaf_gp->SafeEl(0); }
   TAGPtr 	NextGp_(int& g)	const	// #IGNORE next sub-gp
   { return leaf_gp->SafeEl(++g); }
+  int	 	LeafGpCount()	const	// #IGNORE count of leaf groups **including self**; optimized for no subgroups
+    { if (gp.size == 0) return 1; if (leaf_gp == NULL) InitLeafGp(); return leaf_gp->size; }
 
   TAPtr	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf
   { TAPtr rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
-    if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->SafeEl_(0); return rval; }
+    if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->el[0]; return rval; }
   TAPtr	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
   { TAPtr rval=NULL; if(++lf.i >= lf.cgp->size) {
     lf.i = 0; lf.cgp = leaf_gp->SafeEl(++lf.g); }
-    if(lf.cgp != NULL) rval = (TAPtr)lf.cgp->SafeEl_(lf.i); return rval; }
+    if(lf.cgp != NULL) rval = (TAPtr)lf.cgp->el[lf.i]; return rval; }
 
   virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
@@ -136,7 +141,7 @@ public:
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
 
-  virtual void	InitLeafGp() const;		// Initialize the leaf group
+  virtual void	InitLeafGp() const;		// Initialize the leaf group iter list, always ok to call
   virtual void	InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
   virtual void	AddEl_(void* it); 		// #IGNORE update leaf count
   virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
@@ -367,10 +372,13 @@ public:
   // get group at index
   taGroup<T>*	FastGp(int i) const		{ return (taGroup<T>*)gp.FastEl(i); }
   // the sub group at index
+  taGroup<T>* 	FastLeafGp(int gp_idx) const	{ return (taGroup<T>*)FastLeafGp_(gp_idx); } 
+  // the leaf sub group at index, note: 0 is always "this"
+  taGroup<T>* 	SafeLeafGp(int gp_idx) const	{ return (taGroup<T>*)SafeLeafGp_(gp_idx); } 
+  // the leaf sub group at index, note: 0 is always "this"
+
   T*		Leaf(int idx) const		{ return (T*)Leaf_(idx); }
   // get leaf element at index
-  taGroup<T>* 	LeafGp(int idx) const		{ return (taGroup<T>*)LeafGp_(idx); }
-  // the group containing given leaf
   taGroup<T>* 	RootGp() const 			{ return (taGroup<T>*)root_gp;  }
     // the root group ('this' for the root group)
 
@@ -428,6 +436,9 @@ public:
   TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new taGroup<T>[no]); }
   void operator=(const taGroup<T>& cp)	{ Copy(cp); }
   TA_TMPLT_TYPEFUNS(taGroup,T);
+protected:
+  taGroup<T>* 	LeafGp(int leaf_idx) const		{ return (taGroup<T>*)LeafGp_(leaf_idx); }
+  // the group containing given leaf; NOTE: **don't confuse this with the Safe/FastLeafGp funcs*** -- moved here to try to flush out any use, since it is so confusing and nonstandard and likely to be mixed up with the XxxLeafGp funcs 
 };
 
 

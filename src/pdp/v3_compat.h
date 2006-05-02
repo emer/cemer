@@ -1018,7 +1018,7 @@ public:
 
   // the leaf-group model of the environment
   virtual int	GroupCount();
-  // #MENU #USE_RVAL number of event groups in environment
+  // #MENU #USE_RVAL number of event groups in environment, including root
   virtual Event_MGroup* GetGroup(int gp_index);
   // get the event group (collection of events) at the specified index of all groups in the environment
 
