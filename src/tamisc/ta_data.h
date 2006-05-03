@@ -111,38 +111,58 @@ public:
 };
 
 
+class TAMISC_API IDataSourceSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common interface for DataSink and/or DataSource
+public:
+  virtual int		itemCount() const {return -1;} // N<0 if items unknown, or cannot be accessed randomly
+  virtual bool		isIndexable() const {return false;} // 'true' if can be accessed by index
+  virtual bool		isSequential() const {return false;} // 'true' if can be accessed sequentially
+  
+  virtual ~IDataSourceSink() {};
+};
 
-class TAMISC_API IDataSource { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
+
+
+class TAMISC_API IDataSource: public virtual IDataSourceSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
 friend class SourceChannel;
 public:
-  virtual ISequencable* sequencer() = 0; // sequencing interface
-  virtual int		source_channel_count() = 0; // number of source channels
-  virtual DataChannel* 	source_channel(int idx) = 0; // get a source channel
+  virtual int		sourceChannelCount() const = 0; // number of source channels
+  virtual DataChannel* 	sourceChannel(int idx) const = 0; // get a source channel
+  
+  virtual void		ReadInit() {} // if sequencable, initializes read iteration
+  virtual bool		ReadNext() {return false;} // if sequencable, goes to next item, 'true' if item available
+  virtual bool		ReadItem(int idx) {return false;} // if indexable, goes to item N, 'true' if item exists
   
   virtual bool		GetData(taMatrixPtr& data, int chan = 0) // get a single channel's data
-    {if ((chan >= 0) && (chan < source_channel_count())) {
-       data = source_channel(chan)->cached_data(); return true;
+    {if ((chan >= 0) && (chan < sourceChannelCount())) {
+       data = sourceChannel(chan)->cached_data(); return true;
      } else return false;}
   virtual bool		GetDataMulti(MatrixPtr_Array& data) 
     {for (int i = 0; i < data.size; ++i) if (!GetData(data.FastEl(i), i)) return false; return true;}
     // get all channels of data
-  virtual ~IDataSource() {} //
+    
+  ~IDataSource() {} //
 };
 
-class TAMISC_API IDataSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
+class TAMISC_API IDataSink: public virtual IDataSourceSink  { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
 friend class SinkChannel;
 public:
-  virtual ISequencable* sequencer() = 0; // sequencing interface
-  virtual int		sink_channel_count() = 0; // number of sink channels
-  virtual DataChannel* 	sink_channel(int idx) = 0; // get a sink channel
+  virtual int		sinkChannelCount() const = 0; // number of sink channels
+  virtual DataChannel* 	sinkChannel(int idx) const = 0; // get a sink channel
+  
+  virtual void		WriteInit() {} // if sequencable, initializes write iteration
+  virtual bool		WriteNext() {return false;} // if sequencable, goes to next item, 'true' if item available
+  virtual bool		WriteItem(int idx) {return false;} // if indexable, goes to item N, 'true' if item exists
+  virtual void		WriteDone() {} // call after writing all channels of the item, for impl-dependent commit
+  
   virtual bool		SetData(taMatrixPtr& data, int chan = 0) // set a single channel's data
-    {if ((chan >= 0) && (chan < sink_channel_count()))
-       return sink_channel(chan)->SetCachedData(data);
+    {if ((chan >= 0) && (chan < sinkChannelCount()))
+       return sinkChannel(chan)->SetCachedData(data);
      else return false;}
   virtual bool		SetDataMulti(MatrixPtr_Array& data) 
     {for (int i = 0; i < data.size; ++i) if (!SetData(data.FastEl(i), i)) return false; return true;}
-    // get all channels of data
-  virtual ~IDataSink() {} //
+    // set all channels of data
+    
+  ~IDataSink() {} //
 };
 
 /*nn??

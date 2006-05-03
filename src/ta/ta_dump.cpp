@@ -394,7 +394,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     if((tap != NULL) && (tap->GetOwner() == NULL)) { // no owner, fake path name
       strm << tap->GetTypeDef()->name << " @*(." << name << ")";
       tap->Dump_Save_Value(strm, (TAPtr)base, indent);
-      taMisc::indent(strm, indent, 1) << "};\n";
+//TEMP...nn???      taMisc::indent(strm, indent, 1) << "};\n";
       return true;
     }
   }

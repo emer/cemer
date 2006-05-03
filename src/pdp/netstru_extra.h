@@ -260,7 +260,7 @@ public:
 
   void		Connect_impl(Projection* prj);
 
-  TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
+  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
 
   virtual void	Interact();

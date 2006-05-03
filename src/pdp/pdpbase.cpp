@@ -556,19 +556,6 @@ PDPLog* pdpMisc::GetNewLog(ProjectBase* prj, TypeDef* typ) {
   return rval;
 }
 
-NetConduit* pdpMisc::GetNewConduit(ProjectBase* prj, TypeDef* typ) {
-  if(prj == NULL) return NULL;
-  NetConduit* rval = NULL;
-  if (typ->InheritsFrom(TA_NetWriter))
-    rval = (NetConduit*)prj->net_writers.New(1, typ);
-  else if (typ->InheritsFrom(TA_NetReader))
-    rval = (NetConduit*)prj->net_readers.New(1, typ);
-#ifdef TA_GUI
-  taiMisc::RunPending();
-  taMisc::DelayedMenuUpdate(prj);
-#endif
-  return rval;
-}
 
 Network* pdpMisc::GetNewNetwork(ProjectBase* prj, TypeDef* typ) {
   if(prj == NULL) return NULL;

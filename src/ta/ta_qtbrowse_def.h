@@ -59,55 +59,5 @@ enum NodeBitmapFlags {
 
 #define _defaultToolBar		"defaultToolBar"
 
-/* NUKE
-
-class ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
-public:
-  virtual void*		This() = 0; // returns the base pointer to the object ("this"); cast to type
-  virtual void*		GetTypeDef() = 0; // returns the ta typedef -- do a cast to TypeDef*
-  virtual bool		InheritsFrom_(void* typ) = 0; // returns true if we inherit from typ; casts typ to TypeDef*
-  virtual ~ITypedObject() {}
-};
-
-
-
-class ISelectionContainer: public ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
-public:
-  virtual void 		SetActionEnabled_(const char* act_name, bool enabled) = 0; // enable/disable an action
-  virtual void 		SetActionChecked_(const char* act_name, bool checked) = 0; // check/uncheck a toggle action
-  virtual bool 		GetActionEnabled_(const char* act_name) = 0; // get enable/disable status of an action
-  virtual void 		GetActionChecked_(const char* act_name) = 0; // get check/uncheck status of a toggle action
-
-  virtual ~ISelectionContainer() {}
-};
-
-
-
-
-class ISelectionList {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
-public:
-  virtual int		Count_(); // number if items in list
-  virtual ISelectable*	Item_(int idx); // get the item at idx
-  virtual ~ISelectionList() {}
-};
-
-
-class ISelectable: public ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
-public:
-  virtual ISelectionContainer*	SelectionContainer_() = 0; // returns sc for this object
-    // called by UI; item should set result=true if it can select in this context
-  virtual void		CanSelect_(ISelectionList* slist, bool& result) = 0;
-    // called by UI; item should set result=true if it can select in this context
-  virtual bool		CanMultiSelect_() = 0;
-    // generally a static property of elements of this class -- return 'true' if this item can be selected with other items
-  virtual void		SelectionChanged_(ISelectionList* slist) = 0;
-    // called by UI when another item has been added or removed from selection -- we should update
-  virtual ~ISelectable() {}
-};
-*/
 
 #endif

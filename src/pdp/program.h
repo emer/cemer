@@ -389,7 +389,7 @@ public: // XxxGui versions provide feedback to the user
   TA_ABSTRACT_BASEFUNS(Program);
 
 public: // ScriptBase i/f
-  override TypeDef*	GetThisTypeDef() {return GetTypeDef();}
+  override TypeDef*	GetThisTypeDef() const {return GetTypeDef();}
   // #IGNORE
   override void*	GetThisPtr() { return (void*)this; }
   // #IGNORE

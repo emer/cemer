@@ -1074,7 +1074,7 @@ IDataLinkClient::~IDataLinkClient() {
   }
 }
 
-TypeDef* IDataLinkClient::GetDataTypeDef() {
+TypeDef* IDataLinkClient::GetDataTypeDef() const {
     return (m_link) ? m_link->GetDataTypeDef() : NULL;
 }
 
@@ -1128,7 +1128,7 @@ String taDataLink::GetDisplayName() const {
   else    return GetName();
 }
 
-TypeDef* taDataLink::GetTypeDef() {
+TypeDef* taDataLink::GetTypeDef() const {
 #if !defined(TA_NO_GUI) && !defined(NO_TA_BASE)
   return &TA_taDataLink;
 #else

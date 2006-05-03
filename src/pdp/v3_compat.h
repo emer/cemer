@@ -127,7 +127,7 @@ public:
   // #IGNORE get default project, network, env ptrs
   
   // stuff for script_base
-  TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
+  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
   void		LoadScript(const char* file_nm = NULL);
   bool		RunScript();
@@ -1049,7 +1049,7 @@ public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
 
-  TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
+  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
   void	UpdateAfterEdit();
 

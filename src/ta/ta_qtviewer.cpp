@@ -1639,7 +1639,7 @@ void iDataViewer::SetActionsEnabled_impl() {
   for (int i = 0; i < dyn_methods.size; ++i) {
     DynMethodDesc* dmd = dyn_methods.FastEl(i);
     taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
-    connect(act, SIGNAL(activated(int)), this, SLOT(mnuDynAction(int)));
+    connect(act, SIGNAL(IntParamAction(int)), this, SLOT(mnuDynAction(int)));
     dyn_actions.Add(act);
   }
 }

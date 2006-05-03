@@ -346,9 +346,9 @@ public:
   static ostream*	record_script;
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
   // stream to use for recording a script of interface activity (NULL if no record)
-  static void (*Busy_Hook)(bool); // gui callback when prog goes busy/unbusy; var is 'busy'
-  static void (*ScriptRecordingGui_Hook)(bool); // gui callback when script starts/stops; var is 'start'
-  static void (*DelayedMenuUpdate_Hook)(taBase*); // gui callback -- avoids zillions of gui ifdefs everywhere
+  static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
+  static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
+  static void (*DelayedMenuUpdate_Hook)(taBase*); // #IGNORE gui callback -- avoids zillions of gui ifdefs everywhere
 
   void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
   void	LoadConfig();		// #BUTTON #CONFIRM load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
@@ -514,7 +514,7 @@ public:
 #else
   taDataLink*		link() const {return m_link;}
 #endif
-  TypeDef*		GetDataTypeDef(); // convenience function, gets data from link
+  virtual TypeDef*	GetDataTypeDef() const; // convenience function, default gets data type from link
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
   virtual bool		IsDataView() {return false;} // 'true' for dlc's that are DataViews (see taBase)
@@ -561,7 +561,7 @@ protected:
 
 */
 
-#define DL_FUNS(y) 	TypeDef* GetTypeDef() {return &TA_ ## y;} \
+#define DL_FUNS(y) 	TypeDef* GetTypeDef() const {return &TA_ ## y;} \
 
 
 class TA_API IDataLinkClient_PtrList: public taPtrList<IDataLinkClient> {
@@ -595,7 +595,7 @@ public:
   virtual String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1) {return child->GetColText(col, itm_idx);}
     // default delegates to child; lists can override to control this
 
-  virtual TypeDef* 	GetTypeDef();
+  virtual TypeDef* 	GetTypeDef() const;
   taDataLink(void* data_, taDataLink* &link_ref_);
 protected:
   void*			m_data; // subclasses usually replace with strongly typed version

@@ -84,7 +84,6 @@ template class PDP_API taList<Unit>;
 template class PDP_API taGroup<Unit>;
 template class PDP_API taGroup<Layer>; // netstru.h
 template class PDP_API taGroup<Network>; // netstru.h
-template class PDP_API taGroup<NetConduit>; // netstru.h
 
 template class PDP_API SpecPtr<ConSpec>;
 template class PDP_API SpecPtr<UnitSpec>;

@@ -998,4 +998,5 @@ public:
   TA_BASEFUNS(DT_GridViewSpec);
 };
 
+
 #endif // datatable_h

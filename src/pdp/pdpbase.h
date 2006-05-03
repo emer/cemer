@@ -104,8 +104,6 @@ public:
 
   static PDPLog* GetNewLog(ProjectBase* prj, TypeDef* typ);
   // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)
-  static NetConduit* GetNewConduit(ProjectBase* prj, TypeDef* typ = NULL);
-  // get a temporary conduit of given type in given project
   static Network* GetNewNetwork(ProjectBase* prj, TypeDef* typ = NULL);
   // get a new network object
   static Network* GetDefNetwork(ProjectBase* prj);

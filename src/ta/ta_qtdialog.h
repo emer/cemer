@@ -431,7 +431,8 @@ public:
   override void		SetItemAsHandler(taiData* item, bool set_it = true);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
-  override TypeDef* GetTypeDef() {return &TA_taiEditDataHost;}
+public: // ITypedObject i/f (common to IDLC and IDH)
+  override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   void Cancel(); // override

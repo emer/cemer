@@ -89,7 +89,7 @@ public:
 //  override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
-  override TypeDef*	GetDataTypeDef();
+  override TypeDef*	GetDataTypeDef() const;
   override taiMimeItem* GetMimeItem();
   override String	GetName();
   override String	GetDisplayName();

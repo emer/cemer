@@ -462,15 +462,20 @@ protected:
   static Con_Group*	scg_rval; // return value for connecting
 public: //
   // NOTE: ExtType bits are also the same in LayerWriter::ExtType
-  enum ExtType {		// indicates type of external input unit received
-    NO_EXTERNAL = 0x00,		// no input
-    TARG 	= 0x01,		// target input (value is in targ)
-    EXT 	= 0x02,		// external input (value is in ext)
-    TARG_EXT 	= 0x03,		// target and external input
-    COMP	= 0x04,		// comparison value (for error) (value is in targ)
-    COMP_TARG	= 0x05,		// comparision and target
-    COMP_EXT	= 0x06,		// comparison and external input
-    COMP_TARG_EXT = 0x07 	// comparison, target, and external input
+  enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
+    DEFAULT 		= 0x00,	// #NO_BIT (Layer ctrl param only) set default layer flags based on parameter in data
+    NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
+    TARG 		= 0x01,	// #LABEL_Target as a target value
+    EXT 		= 0x02,	// #LABEL_External as an external input value
+    TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
+    COMP		= 0x04,	// #LABEL_Comparison as a comparison value
+    COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
+    COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
+    COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
+    NO_UNIT_FLAGS	= 0x10, // (Layer + Layer ctrl param) don't set unit flags at all
+    NO_LAYER_FLAGS	= 0x20, // (Layer ctrl param only) don't set layer flags at all
+    EXT_FLAGS_MASK	= 0x07, // #NO_BIT mask for setting layer/unit flags
+    LAYER_FLAGS_MASK	= 0x1F // #NO_BIT mask for setting layer flags
   };
 
   UnitSpec_SPtr spec;		// unit specification
@@ -951,14 +956,6 @@ public:
     TARGET 	= 0x04		// layer will (or may) be supplied with target (training) data
   }; //
   
-  //note: GroupRWModel is commensurable with LayerRWBase::GroupRWModel
-  enum GroupRWModel { // default model to use in reading/writing layer that has groups
-    FLAT,	// ignore groups, read/write as if one flat 2-d space of units
-    GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
-    GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
-    CUSTOM  // use this when a non-standard model is used, ex. partial access
-  };
-
   Network*		own_net;	// #READ_ONLY #NO_SAVE Network this layer is in
   LayerType		layer_type;	// design hint on layer usage (but input/output always allowed)
   int			n_units;
@@ -968,7 +965,6 @@ public:
   PosTDCoord		pos;		// position of layer
   PosTDCoord		gp_geom;	// #CONDEDIT_OFF_geom.z:1 geometry of sub-groups (if geom.z > 1)
   PosTDCoord		gp_spc;		// #CONDEDIT_OFF_geom.z:1 spacing between sub-groups (if geom.z > 1)
-  GroupRWModel		gp_rw_model;	// #CONDEDIT_OFF_geom.z:1 group read/write model	
   PosTDCoord		act_geom;	// #HIDDEN actual geometry (if geom.z > 1)
   Projection_Group  	projections;	// group of receiving projections
   Projection_Group  	send_prjns;	// #HIDDEN #LINK_GROUP group of sending projections
@@ -1361,67 +1357,42 @@ public:
 };
 
 
-class PDP_API LayerRWBase: public IDataLinkClient  {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS mixin class for LayerXxx
-INHERITED(IDataLinkClient)
+class PDP_API LayerRWBase: public taOBase  {
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS auxilliary object to read/write data to/from layers
+INHERITED(taOBase)
 public:
-  //note: GroupRWModel is commensurable with Layer::GroupRWModel
-  enum GroupRWModel { // model to use in reading/writing layer that has groups
-    FLAT,	// ingore groups, read/write as if one flat 2-d space of units
+  enum GroupRWModel { // default model to use in reading/writing layer that has groups
+    FLAT,	// ignore groups, read/write as if one flat 2-d space of units
     GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
-    GROUPED_CHANNELS // read/write via N*M channels, each accessing one 2-d group of units
+    GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
+    CUSTOM  // use this when a non-standard model is used, ex. partial access
   };
 
+  Layer* 		layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
+  PosTwoDCoord		offset;		// offset in layer or unit group at which to start reading/writing
+  GroupRWModel		gp_rw_model;	// unit group read/write model
+  PosTwoDCoord  	gp_offset;	// #CONDEDIT_OFF_gp_rw_model:FLAT when using GROUPED access, specifies the starting group coords
   
-  TDCoord	pos;		// #DETAIL position in viewer
-  String        layer_name;  	// name of layer that we connect to
-  Layer* 	layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
-  PosTwoDCoord	offset;		// offset in layer or unit group at which to start reading/writing
-  GroupRWModel	gp_rw_model;	// unit group read/write model
-  PosTwoDCoord  gp_offset;	// #CONDEDIT_OFF_gp_rw_model:FLAT when using GROUPED access, specifies the starting group coords
-  
-  virtual void 		InitFromLayer(Layer* lay); // initializes based on the layer
-  
-  virtual void 		SetLayer(Layer* lay); // sets or clears layer; calls _impl
+  void 			SetLayer(Layer* lay); // sets or clears layer; calls _impl
     
-  virtual void		UnSetLayer(); 		 // clear layer pointer 
-    
-  void 		Copy_(const LayerRWBase& cp); // called from the main class
-  LayerRWBase();
-  virtual ~LayerRWBase();
-  
-public: // 
-
-public: // ITypedObject/IDataLinkClient
-//  override void*	This() {return this;}  //
-  override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove datalink ref in dlc upon return
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); // monitors for name change of target layer
+  void  InitLinks();
+  void	CutLinks();
+  void 	Copy_(const LayerRWBase& cp); 
+  COPY_FUNS(LayerRWBase, taOBase);
+  TA_BASEFUNS(LayerRWBase);
   
 protected:
-  virtual void		InitDataChannel(DataChannel* self); // called to init data channel, based on our specs
   virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
+private:
+  void	Initialize();
+  void 	Destroy();
 };
 
-class PDP_API LayerWriter: public DataChannel, public LayerRWBase {
+class PDP_API LayerWriter: public LayerRWBase {
   // object that writes data from a datasource to a layer
-INHERITED(DataChannel)
+INHERITED(LayerRWBase)
 public: //
-  //NOTE: some bits are same as Unit::ExtType enum
-  enum ExtType {	// #BITS how to flag the layer/unit external input status
-    DEFAULT 		= 0x00,	// #NO_BIT set default layer flags based on parameter in data
-    TARG 		= 0x01,	// #LABEL_Target as a target value
-    EXT 		= 0x02,	// #LABEL_External as an external input value
-    TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
-    COMP		= 0x04,	// #LABEL_Comparison as a comparison value
-    COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
-    COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
-    COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_LAYER_FLAGS	= 0x10, // don't set layer flags at all
-    NO_UNIT_FLAGS	= 0x20, // don't set unit flags at all
-    EXT_FLAGS_MASK	= 0x07 // #NO_BIT mask for setting layer/unit flags
-  };
-
-  ExtType	ext_flags;	// how to flag the unit/layer's external input status
+  Unit::ExtType	ext_flags;	// how to flag the unit/layer's external input status
   Random	noise;		// noise optionally added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
   virtual void	ApplyData(const float_Matrix& data);
@@ -1430,23 +1401,12 @@ public: //
   virtual void 	ApplyNames();
   // #BUTTON set the names of units in the network according to the current value_names
 
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT); }
-#endif
-
-  void	UpdateAfterEdit();	// gets information off of the layer, etc
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerWriter& cp);
-  COPY_FUNS(LayerWriter, DataChannel);
+  COPY_FUNS(LayerWriter, LayerRWBase);
   TA_BASEFUNS(LayerWriter); //
   
-public: // ITypedObject/IDataLinkClient
-  override void*	This() {return this;}  //
-  
-public: // SinkChannel functions
-  override bool		DoConsumeData(); // we invoke the ApplyData on cached data
-
 protected:
   virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
   // gets the effective flag values, from ourself, and possibly data and/or context
@@ -1465,139 +1425,20 @@ private:
 };
 
 
-
-class PDP_API LayerReader: public DataChannel, public LayerRWBase {
+class PDP_API LayerReader: public LayerRWBase {
   // object that reads data from a layer
-INHERITED(DataChannel)
+INHERITED(LayerRWBase)
 public:
 
-#ifdef TA_GUI
-  const iColor* GetEditColor() {return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT);}
-#endif
-  void	UpdateAfterEdit();	// gets information off of the layer, etc
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerReader& cp);
-  COPY_FUNS(LayerReader, DataChannel);
+  COPY_FUNS(LayerReader, LayerRWBase);
   TA_BASEFUNS(LayerReader);
   
-public: // ITypedObject/IDataLinkClient
-  override void*	This() {return this;}  //
-  
-public: // SourceChannel functions
-  override bool		DoProduceData(); // 
-
 private:
   void	Initialize();
   void 	Destroy();
 };
-
-
-class PDP_API NetConduit : public taNBase, public ISequencable {
-  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE #VIRT_BASE #NO_TOKENS #NO_INSTANCE event specification
-INHERITED(taNBase)
-public:
-  Network*		last_net;
-  // #READ_ONLY #NO_SAVE last network connected to
-  DataChannel_Group	channels; // of type LayerReader
-  
-  virtual void 		InitFromNetwork(Network* net = NULL);
-  // #BUTTON #NULL_OK creates readers/writers according to current state of net -- deletes existing readers/writers
-  virtual void		SetNetwork(Network* net){} // bind to given network
-  
-  virtual void		UnSetLayers() {} 		 // clear layer pointers (and last_net)
-  
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),pdpMisc::ENVIRONMENT); }
-#endif
-  void  UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy(const NetConduit& cp);
-  TA_ABSTRACT_BASEFUNS(NetConduit);
-  
-public: // ISequencable i/f
-  virtual bool		is_sequential() {return true;} // 'true' if can be accessed sequentially
-  virtual void		InitData(); // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
-//  virtual bool		NextItem(); // for seq access, goes to the next item, 'true' if there was a next item
-
-protected:
-  virtual void 		InitFromLayer(Layer* lay) {} // particularized in subclass
-  
-private:
-  void	Initialize();
-  void 	Destroy() 	{ }
-};
-
-
-class PDP_API NetConduit_MGroup : public taGroup<NetConduit> {
-  // group of data objects
-INHERITED(taGroup<NetConduit>)
-public:
-
-  TA_BASEFUNS(NetConduit_MGroup);
-  
-private:
-  void	Initialize() 		{ } //note: you must set the NetWriter or NetReader base type
-  void 	Destroy()		{ }
-};
-
-
-class PDP_API NetWriter : public NetConduit, public IDataSink {
-  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
-INHERITED(NetConduit)
-public:
-//  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project (for pattern input)
-
-  override void		SetNetwork(Network* net); // bind to given network
-  override void		UnSetLayers(); 
-  
-  TA_BASEFUNS(NetWriter);
-  
-public: // ISequencable i/f
-  override bool		NextItem(); // applies data from channel caches into layers
-
-public: // IDataSink i/f and impl
-  override ISequencable* sequencer() {return this;} // sequencing interface
-  override int		sink_channel_count() {return channels.leaves;} // number of sink channels
-  override DataChannel* sink_channel(int idx) {return (DataChannel*)channels.Leaf(idx);} // get a sink channel
-
-protected:
-  override void 	InitFromLayer(Layer* lay); 
-  virtual void 		InitLayerWriter(Layer* lay, LayerWriter* lrw);
-
-private:
-  void	Initialize();
-  void 	Destroy() 	{ }
-};
-
-
-class PDP_API NetReader : public NetConduit, public IDataSource {
-  // ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
-INHERITED(NetConduit)
-public:
-//  virtual DataSet*	CreateDataSet(); // #BUTTON  create a compatible data set in the project
-  override void		SetNetwork(Network* net); // bind to given network
-  override void		UnSetLayers(); 
-
-  TA_BASEFUNS(NetReader);
-  
-public: // ISequencable i/f
-  override bool		NextItem(); // fetches data from layers into channel caches
-
-public: // IDataSource i/f and impl
-  override ISequencable* sequencer() {return this;} // sequencing interface
-  override int		source_channel_count() {return channels.leaves;} // number of source channels
-  override DataChannel* source_channel(int idx) {return channels.Leaf(idx);} // get a source channel
-  
-protected:
-  override void 	InitFromLayer(Layer* lay); 
-  virtual void 		InitLayerReader(Layer* lay, LayerReader* lrw);
-
-private:
-  void	Initialize();
-  void 	Destroy() 	{}
-};
-
 
 #endif /* netstru_h */

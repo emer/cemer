@@ -646,8 +646,6 @@ void ProjectBase::Initialize() {
   wizards.SetBaseType(&TA_Wizard);
   specs.SetBaseType(&TA_BaseSpec);
   networks.SetBaseType(&TA_Network);
-  net_writers.SetBaseType(&TA_NetWriter);
-  net_readers.SetBaseType(&TA_NetReader);
 //nn  logs.SetBaseType(&TA_TextLog);
   scripts.SetBaseType(&TA_Script);
 #ifdef TA_GUI
@@ -669,8 +667,6 @@ void ProjectBase::InitLinks() {
   taBase::Own(wizards, this);
   taBase::Own(specs, this);
   taBase::Own(networks, this);
-  taBase::Own(net_writers, this);
-  taBase::Own(net_readers, this);
   taBase::Own(data, this);
   taBase::Own(logs, this);
   taBase::Own(programs, this);
@@ -724,8 +720,6 @@ void ProjectBase::CutLinks() {
   programs.CutLinks();
   logs.CutLinks();
   data.CutLinks();
-  net_readers.CutLinks();
-  net_writers.CutLinks();
   networks.CutLinks();
   specs.CutLinks();
   defaults.CutLinks();
@@ -738,8 +732,6 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
   defaults = cp.defaults;
   specs = cp.specs;
   networks = cp.networks;
-  net_writers = cp.net_writers;
-  net_readers = cp.net_readers;
   data = cp.data;
   logs = cp.logs;
   // delete scripts, in case linked to programs
@@ -1450,7 +1442,7 @@ void TestObj::InitObj() {
   ssh = 32766;
   ush = 65535;
   i = 2147483647;
-  si = -2147483648;
+  si = -2147483647;
   s = 2147483645;
   ui = 4294967295U;
   u = 4294967294U;
@@ -1670,5 +1662,44 @@ void TestObj3::Copy_(const TestObj3& cp) {
 void TestObj3::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
+
+#include "tdgeometry.h"
+
+void TestOwnObj::Initialize() {
+  ft_own = NULL;
+}
+
+void TestOwnObj::InitLinks() {
+  inherited::InitLinks();
+  if (!taMisc::is_loading) {
+    if (ft_own == NULL) {
+      taBase::SetPointer((taBase**)&ft_own, (taBase*)new FloatTransform());
+      taBase::Own(ft_own, this);
+    }
+  } else {
+    if (ft_own) {
+      taBase::Own(ft_own, this);
+    }
+  }
+}
+
+void TestOwnObj::CutLinks() {
+  if (ft_own) {
+    ft_own->CutLinks();
+    taBase::DelPointer((taBase**)&ft_own);
+  }
+  inherited::CutLinks();
+}
+
+void TestOwnObj::Copy_(const TestOwnObj& cp) {
+  ft_inst = cp.ft_inst;
+  if (ft_own && cp.ft_own) 
+    ft_own->Copy(*(cp.ft_own));
+}
+
+void TestOwnObj::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+}
+
 
 #endif

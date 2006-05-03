@@ -68,7 +68,7 @@ public:
   virtual void	InteractScript();
   // #MENU #LABEL_Interact change to this shell in script (terminal) window to interact, debug etc script
 
-  virtual TypeDef* GetThisTypeDef() = 0;
+  virtual TypeDef* GetThisTypeDef() const = 0;
   // #IGNORE overload this function to get the typedef of 'this' object, which must be taBase
   virtual void*	GetThisPtr() = 0;
   // #IGNORE overload this function to get the 'this' pointer for object (must be taBase)
@@ -143,7 +143,7 @@ public:
   virtual void	AutoRun();
   // run this script if auto_run is set
 
-  TypeDef*	GetThisTypeDef()	{ return GetTypeDef(); }
+  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
 
   void	UpdateAfterEdit();

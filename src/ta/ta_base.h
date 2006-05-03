@@ -697,7 +697,6 @@ public:
   virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
   taDataView*		parent() const;
 
-  virtual TypeDef*	GetDataTypeDef() {return m_data->GetTypeDef();} // TypeDef of the data
   virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
   virtual void		DataDestroying() {}
@@ -715,9 +714,10 @@ public:
 
 public: // ITypedObject interface
   override void*	This() {return (void*)this;} //
-//already in taBase: override TypeDef*	GetTypeDef();
+//already in taBase: override TypeDef*	GetTypeDef() const;
 
 public: // IDataLinkClient interface
+  override TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
    // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
   override void		DataLinkDestroying(taDataLink* dl);

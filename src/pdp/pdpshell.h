@@ -222,8 +222,6 @@ public:
   Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
   BaseSpec_MGroup     	specs;		// Specifications for network parameters
   Network_MGroup	networks;	// Networks of interconnected units
-  NetConduit_MGroup	net_writers;	// NetConduits for network input
-  NetConduit_MGroup	net_readers;	// NetConduits for network output
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Program_MGroup	programs;	// Gui-based programs to run simulations and other processing
@@ -414,8 +412,8 @@ public:
     int			i = 2147483647, 
     signed int		si = 2147483646,
     signed		s = 2147483645,
-    unsigned int	ui = 4294967295,
-    unsigned		u = 4294967294,
+    unsigned int	ui = 2,
+    unsigned		u = 3,
     long		l = 2,
     signed long		sl = 3,
     unsigned long	ul = 4,
@@ -486,6 +484,23 @@ private:
   void			Destroy() {CutLinks();}
 };
 
+class FloatTransform;
+class PDP_API TestOwnObj: public taNBase {
+INHERITED(taNBase)
+public:
+  FloatTransform	ft_inst;
+  FloatTransform*	ft_own;
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	UpdateAfterEdit();
+  void	Copy_(const TestOwnObj& cp);
+  COPY_FUNS(TestOwnObj, taNBase)
+  TA_BASEFUNS(TestOwnObj);
+private:
+  void 			Initialize();
+  void			Destroy() {CutLinks();}
+};
 
 
 #endif

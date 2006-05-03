@@ -1334,13 +1334,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
   layCtrls = new QVBoxLayout(layOuter, 1); // takes up all variable space
   layDispCheck = new QHBoxLayout(layCtrls);
-  chkDisplay = new QCheckBox("Display", this, "chkDisplay");
+  chkDisplay = new QCheckBox("Display", widg, "chkDisplay");
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addStretch();
 
 
   layCtrls->addSpacing(5);
-  scrCmdButtons = new QScrollArea(this);
+  scrCmdButtons = new QScrollArea(widg);
   scrCmdButtons->setWidgetResizable(true);
   widCmdButtons = new QWidget();
   scrCmdButtons->setWidget(widCmdButtons);
@@ -1364,9 +1364,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
 
   layCtrls->addSpacing(5);
-  lblDisplayValues = new QLabel("Display Values", this, "lblDisplayValues");
+  lblDisplayValues = new QLabel("Display Values", widg, "lblDisplayValues");
   layCtrls->addWidget(lblDisplayValues);
-  lvDisplayValues = new Q3ListView(this, "lvDisplayValues");
+  lvDisplayValues = new Q3ListView(widg, "lvDisplayValues");
   lvDisplayValues->addColumn("Value", 80);
   lvDisplayValues->addColumn("Source", 50);
   lvDisplayValues->addColumn("Description");
@@ -1379,28 +1379,28 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layOuter->addSpacing(5);
   layColorScale = new QVBoxLayout(layOuter);
 
-  lblUnitText = new QLabel("Unit Text", this, "lblUnitText");
+  lblUnitText = new QLabel("Unit Text", widg, "lblUnitText");
   layColorScale->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-    NULL, NULL, this);
+    NULL, NULL, widg);
   layColorScale->addWidget(cmbUnitText->GetRep());
 
-  lblDispMode = new QLabel("Disp Mode", this, "lblDispMode");
+  lblDispMode = new QLabel("Disp Mode", widg, "lblDispMode");
   layColorScale->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    NULL, NULL, this);
+    NULL, NULL, widg);
   layColorScale->addWidget(cmbDispMode->GetRep());
 
-  chkAutoScale = new QCheckBox("auto scale", this, "chkAutoScale");
+  chkAutoScale = new QCheckBox("auto scale", widg, "chkAutoScale");
   layColorScale->addWidget(chkAutoScale);
 
-  butScaleDefault = new QPushButton("set default", this, "butScaleDefault");
+  butScaleDefault = new QPushButton("set default", widg, "butScaleDefault");
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
 
 
-  cbar = new VCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, this);
+  cbar = new VCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   layColorScale->addWidget(cbar, 1); // stretchfact=1 so it stretches to fill the space
 

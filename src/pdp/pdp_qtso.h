@@ -178,10 +178,8 @@ protected:
 //   pdpDataViewer	//
 //////////////////////////
 
-class PDP_API pdpDataViewer: public T3DataViewer { // master viewer for network, i/o, etc.
-#ifndef __MAKETA__
-  typedef pdpDataViewer inherited;
-#endif
+class PDP_API pdpDataViewer: public T3DataViewer { // #INSTANCE master viewer for network, i/o, etc.
+INHERITED(T3DataViewer)
 public:
   static pdpDataViewer*	New(ProjectBase* proj); // populates all elements (all layers, prjns, i/o, etc.)
 

@@ -102,7 +102,7 @@ bool taTypeInfoDataLink::HasChildItems() {
   return rval;
 }
 
-TypeDef* taTypeInfoDataLink::GetDataTypeDef() {
+TypeDef* taTypeInfoDataLink::GetDataTypeDef() const {
   return NULL;
 }
 
