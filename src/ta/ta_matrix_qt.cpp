@@ -44,8 +44,8 @@ int MatrixTableModel::columnCount(const QModelIndex& parent) const {
   if (m_matrix->dims() < 1)
     return 0;
   else if (m_matrix->dims() == 1)
-    return m_matrix->GetGeom(0);
-  else return m_matrix->GetGeom(m_matrix->dims() - 2);
+    return m_matrix->dim(0);
+  else return m_matrix->dim(m_matrix->dims() - 2);
 }
 
 QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
@@ -82,7 +82,7 @@ int MatrixTableModel::rowCount(const QModelIndex& parent) const {
     return 0;
   else if (m_matrix->dims() == 1)
     return 1;
-  else return m_matrix->GetGeom(m_matrix->dims() - 1);
+  else return m_matrix->dim(m_matrix->dims() - 1);
 }
 
 bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {

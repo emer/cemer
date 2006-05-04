@@ -1592,6 +1592,25 @@ void Unit::ReplacePointersHook(TAPtr old) {
   taNBase::ReplacePointersHook(old);
 }
 
+void Unit::ApplyValue(float val, ExtType act_ext_flags, Random* ran)
+{
+  // note: not all flag values are valid, so following is a fuzzy cascade
+  // ext is the default place, so we check for 
+  if (ran && (ran->type != Random::NONE)) {
+    val += ran->Gen();
+  }
+  if (act_ext_flags & Unit::EXT) {
+    ext = val;
+    SetExtFlag(Unit::EXT);
+  } else {
+    targ = val;
+    if (act_ext_flags & Unit::TARG)
+      SetExtFlag(Unit::TARG);
+    else if (act_ext_flags & Unit::COMP)
+      SetExtFlag(Unit::COMP);
+  }
+}
+
 void Unit::CopyNetwork(Network* anet, Network* cn, Unit* cp) {
   int g;
   for(g=0; g<recv.gp.size && g<cp->recv.gp.size; g++) {
@@ -3344,6 +3363,87 @@ void Layer::UpdateAfterEdit() {
     if(view->display_toggle)
       view->FixLayer(this);
   }*/
+}
+
+void Layer::ApplyData(const IMatrix& data, Unit::ExtType ext_flags,
+    Random* ran, const PosTwoDCoord* offset) 
+{
+  // determine layer flags
+  Unit::ExtType act_ext_flags = ext_flags;
+//TODO: determine non-default layer flags  
+  
+  ApplyDataStruct ads(data, act_ext_flags, ran, offset);
+  // set layer flag
+  // determine unit-level flags
+  // determine effective offset
+  
+  // apply flags if we are the controller
+// if there is  non-zero offset, we usually won't control the layer flags
+  if ((ads.offs_x == 0) && (ads.offs_y == 0)) {
+    ApplyLayerFlags(act_ext_flags);
+  }
+  // apply data according to the applicable model
+  
+  if (uses_groups()) {
+    if (data.dims() > 2) {
+      ApplyData_Gp4d(ads);
+    } else {
+      ApplyData_Gp2d(ads);
+    }
+  } else {
+    if (data.dims() > 2) {
+      ApplyData_Flat4d(ads);
+    } else {
+      ApplyData_Flat2d(ads);
+    }
+  }
+}
+
+void Layer::ApplyData_Flat2d(const ApplyDataStruct& ads) {
+  Unit* un; 	// current unit
+  int u_x = ads.offs_x;  int u_y = ads.offs_y; // current unit coord
+  int d_x = 0;  int d_y = 0; // current data coord
+  Unit_Group* ug = &(this->units);
+  float val;
+  //note: a partially filled this will return a null unit when we reach the end of actual units
+  while (u_y < this->geom.y) {
+    while (u_x < this->geom.x) {
+      un = ug->FindUnitFmCoord(u_x, u_y);
+      if (un == NULL) goto break1;
+      // if we've run out of data for this row, no sense continuing, go to next row
+      if (!(ads.data.InRange2(d_x, d_y))) 
+        break; 
+      val = ads.data.SafeElAsVar(d_x, d_y).toFloat();
+      un->ApplyValue(val, ads.ext_flags, ads.ran);
+      d_x++;
+      u_x++;
+    }
+    d_x = 0;
+    u_x = ads.offs_x;
+    d_y++;
+    u_y++;
+  }
+break1:
+  ;
+}
+
+void Layer::ApplyData_Flat4d(const ApplyDataStruct& ads) {
+  //TODO:
+}
+
+void Layer::ApplyData_Gp2d(const ApplyDataStruct& ads) {
+  //TODO:
+}
+
+void Layer::ApplyData_Gp4d(const ApplyDataStruct& ads) {
+  //TODO:
+}
+
+
+void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
+  if (act_ext_flags & Unit::NO_LAYER_FLAGS)
+    return;
+  SetExtFlag(act_ext_flags & Unit::LAYER_FLAGS_MASK); // the bits are the same..
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -5928,6 +6028,7 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 */
 #endif
 
+/*obs
 //////////////////////
 //   LayerRWBase    //
 //////////////////////
@@ -6006,111 +6107,7 @@ void LayerWriter::Copy_(const LayerWriter& cp) {
   value_names = cp.value_names;
 }
 
-void LayerWriter::ApplyData(const float_Matrix& data) {
-  if (layer == NULL) return;
-  int act_ext_flags;
-  GetExtFlags(data, act_ext_flags);
-  // apply flags if we are the controller
-  if ((gp_rw_model != GROUPED_CHANNELS) || ((gp_offset.x == 0) && (gp_offset.y == 0))) {
-    ApplyLayerFlags(act_ext_flags);
-  }
-  // apply data according to the applicable model
-  if (!layer->uses_groups()) {
-    ApplyData_Flat(data, act_ext_flags);
-  } else switch (gp_rw_model) {
-  case FLAT: 
-    ApplyData_GpFlat(data, act_ext_flags);
-    break;
-  case GROUPED_DATA: 
-    ApplyData_GpData(data, act_ext_flags);
-    break;
-  case GROUPED_CHANNELS: 
-    ApplyData_GpChannels(data, act_ext_flags);
-    break;
-  default: // unexpected
-    break;
-  }
-}
 
-void LayerWriter::ApplyData_Flat(const float_Matrix& data, int act_ext_flags) {
-  Unit* un; 	// current unit
-  int u_x = offset.x;  int u_y = offset.y; // current unit coord
-  int d_x = 0;  int d_y = 0; // current data coord
-  Unit_Group* ug = &(layer->units);
-  float val;
-  //note: a partially filled layer will return a null unit when we reach the end of actual units
-  while (u_y < layer->geom.y) {
-    while (u_x < layer->geom.x) {
-      un = ug->FindUnitFmCoord(u_x, u_y);
-      if (un == NULL) goto break1;
-      // if we've run out of data for this row, no sense continuing, go to next row
-      if (!(data.InRange2(d_x, d_y))) 
-        break; 
-      val = data.FastEl2(d_x, d_y);
-      ApplyValue(un, val, act_ext_flags);
-      d_x++;
-      u_x++;
-    }
-    d_x = 0;
-    u_x = offset.x;
-    d_y++;
-    u_y++;
-  }
-break1:
-  ;
-}
-
-void LayerWriter::ApplyData_GpFlat(const float_Matrix& data, int act_ext_flags) {
-  //TODO:
-}
-
-void LayerWriter::ApplyData_GpData(const float_Matrix& data, int act_ext_flags) {
-  //TODO:
-}
-
-void LayerWriter::ApplyData_GpChannels(const float_Matrix& data, int act_ext_flags) {
-  //TODO:
-}
-
-
-void LayerWriter::ApplyLayerFlags(int act_ext_flags) {
-  if (act_ext_flags & Unit::NO_LAYER_FLAGS)
-    return;
-  layer->SetExtFlag(act_ext_flags & Unit::LAYER_FLAGS_MASK); // the bits are the same..
-}
-
-void LayerWriter::ApplyNames() {
-/*todo  if(layer == NULL)
-    return;
-  int v;     	// current value index;
-  Unit* u; 	// current unit
-  taLeafItr j;
-  Unit_Group* ug = &(layer->units);
-  int val_sz = value_names.size;
-  for(u = (Unit*)ug->FirstEl(j), v = 0; (u && (v < val_sz));
-      u = (Unit*)ug->NextEl(j), v++)
-  {
-    u->name = value_names[v];
-  } */
-}
-
-void LayerWriter::ApplyValue(Unit* un, float val, int act_ext_flags)
-{
-  if (noise.type != Random::NONE)
-    val += noise.Gen();
-  // note: not all flag values are valid, so following is a fuzzy cascade
-  // ext is the default place, so we check for 
-  if (act_ext_flags & Unit::EXT) {
-    un->ext = val;
-    un->SetExtFlag(Unit::EXT);
-  } else {
-    un->targ = val;
-    if (act_ext_flags & Unit::TARG)
-      un->SetExtFlag(Unit::TARG);
-    else if (act_ext_flags & Unit::COMP)
-      un->SetExtFlag(Unit::COMP);
-  }
-}
 
 void LayerWriter::GetExtFlags(const float_Matrix& data, int& act_ext_flags) {
   act_ext_flags = ext_flags;
@@ -6142,7 +6139,7 @@ void LayerReader::CutLinks() {
 void LayerReader::Copy_(const LayerReader& cp) {
   //TODO: need to copy source info
 }
-
+*/
 /*
 void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
   IDataSource::GetData_(ch, data, handled);

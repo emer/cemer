@@ -1169,12 +1169,12 @@ int DataArray_impl::IndexOfEl_Flat(int row, int cell) const {
 } 
 
 bool DataArray_impl::SetValAsString_impl(const String& val, int row, int cell) {
-  AR()->SetFmStr_Flat(IndexOfEl_Flat(row, cell), val); // note: safe operation
+  AR()->SetFmStr_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
   return true;
 } 
 
 bool DataArray_impl::SetValAsVar_impl(const Variant& val, int row, int cell) {
-  AR()->SetFmVar_Flat(IndexOfEl_Flat(row, cell), val); // note: safe operation
+  AR()->SetFmVar_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
   return true;
 } 
 

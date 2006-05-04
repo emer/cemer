@@ -22,7 +22,6 @@
 
 #include "tarandom.h"
 #include "ta_script.h"
-#include "ta_data.h"
 #include "datatable.h"
 
 #include "spec.h"
@@ -43,9 +42,6 @@
 
 // forwards this file
 class Unit_Group; //
-class LayerRWBase;
-class LayerWriter;
-class LayerReader;
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -532,6 +528,8 @@ public: //
   void 	UpdateWeights()		{ spec->UpdateWeights(this); }
   void 	Compute_dWt()		{ spec->Compute_dWt(this); }
 
+  void 		ApplyValue(float val, ExtType act_ext_flags, Random* ran = NULL);
+    // called by layer to apply input or target pattern
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
   virtual bool	CheckBuild();
@@ -1091,6 +1089,10 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
+  virtual void	ApplyData(const IMatrix& data, Unit::ExtType ext_flags = Unit::DEFAULT,
+    Random* ran = NULL, const PosTwoDCoord* offset = NULL);
+    // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d
+
   Unit*		FindUnitFmCoord(int x, int y);
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -1127,6 +1129,37 @@ public:
 //protected:
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
 #endif
+
+protected:
+  class ApplyDataStruct { // #IGNORE
+  public:
+    const IMatrix&	data;
+    Unit::ExtType	ext_flags;
+    Random* 		ran;
+    int			offs_x;
+    int			offs_y;
+    ApplyDataStruct(
+      const IMatrix& data_,
+      Unit::ExtType	ext_flags_,
+      Random* 		ran_,
+      const PosTwoDCoord* offs
+    ) 
+#ifndef __MAKETA__
+    :data(data_), ext_flags(ext_flags_), ran(ran_)
+#endif
+    {if (offs) {offs_x=offs->x; offs_y=offs->y;} else {offs_x=0; offs_y=0;}} // maketa can't parse :syntax
+  };
+  
+  virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
+    // #IGNORE set layer flag to reflect the kind of input received
+  virtual void		ApplyData_Flat2d(const ApplyDataStruct& ads);
+    // #IGNORE flat layer, 2d data
+  virtual void		ApplyData_Flat4d(const ApplyDataStruct& ads);
+    // #IGNORE flat layer, 4d data
+  virtual void		ApplyData_Gp2d(const ApplyDataStruct& ads);
+    // #IGNORE grouped layer, 2d data
+  virtual void		ApplyData_Gp4d(const ApplyDataStruct& ads);
+    // #IGNORE grouped layer, 4d data
 };
 
 PosMGroup_of(Layer);
@@ -1356,7 +1389,7 @@ public:
   TA_BASEFUNS(Network_MGroup);
 };
 
-
+/*obs
 class PDP_API LayerRWBase: public taOBase  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS auxilliary object to read/write data to/from layers
 INHERITED(taOBase)
@@ -1410,12 +1443,6 @@ public: //
 protected:
   virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
   // gets the effective flag values, from ourself, and possibly data and/or context
-  virtual void		ApplyLayerFlags(int act_ext_flags);
-  // set layer flag to reflect the kind of input received
-  virtual void		ApplyData_Flat(const float_Matrix& data, int act_ext_flags);
-  virtual void		ApplyData_GpFlat(const float_Matrix& data, int act_ext_flags);
-  virtual void		ApplyData_GpData(const float_Matrix& data, int act_ext_flags);
-  virtual void		ApplyData_GpChannels(const float_Matrix& data, int act_ext_flags);
   virtual void 		ApplyValue(Unit* u, float val, int act_ext_flags);
   // assign unit value and ext_flag based on data at given coord, does nothing if out of range
 
@@ -1440,5 +1467,6 @@ private:
   void	Initialize();
   void 	Destroy();
 };
+*/
 
 #endif /* netstru_h */

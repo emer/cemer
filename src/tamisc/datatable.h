@@ -507,15 +507,15 @@ private:
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
 */
 class TAMISC_API DataTable : public taGroup<DataArray_impl> {
-  // #NO_UPDATE_AFTER table of data
+  // #NO_UPDATE_AFTER #TOKENS table of data
 INHERITED(taGroup<DataArray_impl>)
 public:
 //obs  static void 	SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx);
 //obs  static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
-
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
   
+  int		cols() {return leaves;}
   bool		hasData(int row, int col, int subgp=-1); // true if data at that cell
   bool		idx(int row_num, int col_size, int& act_idx)
     {act_idx = col_size - (rows - row_num); return act_idx >= 0;} // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)

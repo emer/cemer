@@ -53,8 +53,6 @@ class Projection;
 class LayerSpec;
 class Layer;
 class Network;
-class LayerReader;
-class LayerWriter;
 
 class ProjectBase;
 class PDPRoot;

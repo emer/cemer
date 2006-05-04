@@ -20,7 +20,6 @@
 // tamisc_ti.cc: TAMISC_API template instantiation file for ta_misc library
 
 #include "tdgeometry.h"
-#include "ta_data.h"
 #include "datatable.h"
 #include "datagraph.h"
 #include "colorscale.h"
@@ -35,8 +34,6 @@
 // tdgeometry
 template class TAMISC_API taArray<ValIdx>;
   const ValIdx ValIdx_Array::blank;
-
-// ta_data.h
 
 // datatable.h:
 template class TAMISC_API taGroup<DataArray_impl>;

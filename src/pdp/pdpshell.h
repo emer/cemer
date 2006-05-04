@@ -502,6 +502,19 @@ private:
   void			Destroy() {CutLinks();}
 };
 
+class DataTable;
+class PDP_API NetHelper: public taNBase {
+INHERITED(taNBase)
+public:
+  
+  void			InitXorNetEnviroTable(DataTable* dt); // #MENU #MENU_CONTEXT initialize table for Xor data pattern
+  
+  TA_BASEFUNS(NetHelper);
+private:
+  void 			Initialize() {}
+  void			Destroy() {}
+};
+
 
 #endif
 

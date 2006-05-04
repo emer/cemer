@@ -219,7 +219,7 @@ void taMatrix::List(ostream& strm) const {
   strm << "["; 
   for (int d = 0; d < dims(); ++d) {
     if (d > 0) strm << ",";
-    strm << GetGeom(d);
+    strm << dim(d);
   }
   strm << "] {";
   int i;
@@ -311,7 +311,8 @@ void taMatrix::EnforceFrames(int n) {
   geom.Set(geom.size-1, n);	
 }
 
-int taMatrix::FastElIndex(int d0) const {
+int taMatrix::FastElIndex(int d0, int d1, int d2, int d3) const {
+//TODO: rewrite for extra dims
   Assert((geom.size >= 1), "matrix geometry has not been initialized");
   Assert(((d0 >= 0) && (d0 < geom[0])), 
     "matrix index out of bounds");
@@ -384,7 +385,8 @@ int taMatrix::frameSize() const {
   return rval;
 }
 
-bool taMatrix::InRange(int d0) const {
+bool taMatrix::InRange(int d0, int d1, int d2, int d3) const {
+//TODO: rewrite
   return (geom.size >= 1)
     && ((d0 >= 0) && (d0 < geom[0]))
     ;
@@ -439,7 +441,8 @@ void taMatrix::RemoveFrame(int n) {
   EnforceFrames(frames_ - 1); // this properly resizes, and reclaims orphans
 }
 
-int taMatrix::SafeElIndex(int d0) const {
+int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3) const {
+//TODO: rewrite
   Check((geom.size >= 1), "matrix geometry has not been initialized");
   Check(((d0 >= 0) && (d0 < geom[0])), 
     "matrix index out of bounds");

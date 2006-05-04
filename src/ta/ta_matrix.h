@@ -65,6 +65,7 @@ class float_Matrix; //
 */
 
 #define TA_MATRIX_DIMS_MAX 6
+#define IMatrix taMatrix
 
 class TA_API MatrixGeom: public taBase  { // matrix geometry, similar to an array of int
 INHERITED(taBase)
@@ -113,6 +114,48 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 
 class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
+
+public: // ITypedObject i/f
+// TypeDef*		GetTypeDef() const; // in taBase
+  void*			This() {return (void*)this;}
+  
+public: // IMatrix i/f
+  int			count() const {return size;}
+  int			dims() const {return geom.size;}
+  int			dim(int d) const {return geom.FastEl(d);}
+  int 			frames() const;	// number of frames currently in use (value of highest dimension) 
+  int 			frameSize() const;	// number of elements in each frame (product of inner dimensions) 
+   	
+  virtual TypeDef*	GetDataTypeDef() const = 0; // type of data, ex TA_int, TA_float, etc.
+   	
+  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0) const	
+    {return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3)); }
+    // (safely) returns the element as a string
+  const String		SafeElAsStrN(const MatrixGeom& indices) const	
+    {return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
+    // (safely) returns the element as a string
+  const String		SafeElAsStr_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_(idx)); else return _nilString; } 
+    // treats the matrix like a flat array, returns the element as a string
+  
+  void			SetFmStr_Flat(const String& str, int idx) 	
+    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
+    // treats the matrix like a flat array, sets the element as a string
+  
+  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0) const	
+    {return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3)); } 
+    // (safely) returns the element as a variant
+  const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
+    {return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
+    // (safely) returns the element as a variant
+  const Variant		SafeElAsVar_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_(idx)); else return _nilVariant; } 
+    // treats the matrix like a flat array, returns the element as a variant
+    
+  void			SetFmVar_Flat(const Variant& var, int idx) 	
+    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_(idx), var); } 
+    // treats the matrix like a flat array, sets the element as a string
+   	
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
     // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
@@ -125,11 +168,6 @@ public:
   MatrixGeom		geom; // #SHOW dimensions array
   
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
-  virtual TypeDef*	data_type() const = 0; // type of data, ex TA_int, TA_float, etc.
-  int			dims() const {return geom.size;}
-  int			GetGeom(int dim) const {return geom.FastEl(dim);}
-  int 			frames() const;	// number of frames currently in use (value of highest dimension) 
-  int 			frameSize() const;	// number of elements in each frame (product of inner dimensions) 
   
   bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
   
@@ -137,24 +175,12 @@ public:
     // returns the flat base index of the specified frame
   
   // universal string access/set, for flat array
-  String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_(idx)); } 
+  const String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_(idx)); } 
     // treats the matrix like a flat array, returns the element as a string
-  String		SafeElAsStr_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_(idx)); else return _nilString; } 
-    // treats the matrix like a flat array, returns the element as a string
-  void			SetFmStr_Flat(int idx, const String& str) 	
-    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
-    // treats the matrix like a flat array, sets the element as a string
     
   // universal Variant access/set, for flat array
-  Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_(idx)); } 
+  const Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_(idx)); } 
     // treats the matrix like a flat array, returns the element as a variant
-  Variant		SafeElAsVar_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_(idx)); else return _nilVariant; } 
-    // treats the matrix like a flat array, returns the element as a variant
-  void			SetFmVar_Flat(int idx, const Variant& var) 	
-    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_(idx), var); } 
-    // treats the matrix like a flat array, sets the element as a string
     
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
     {return true;}
@@ -167,7 +193,7 @@ public:
   virtual void		RemoveFrame(int n); // remove the given frame, copying data backwards if needed
   virtual void		Reset() {EnforceFrames(0);}
   
-  bool			InRange(int d0) const; // 'true' if >= 1-d and index in range
+  bool			InRange(int d0, int d1=0, int d2=0, int d3=0) const; // 'true' if index in range
   bool			InRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
   bool			InRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
   bool			InRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
@@ -202,9 +228,9 @@ public: // don't use these, internal use only
   virtual const void*	SafeEl_(int i) const 
     {if ((i > 0) && (i < size)) return FastEl_(i); else return NULL;}   // #IGNORE raw element in flat space, else NULL
   // every subclass should implement these:
-  virtual String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
+  virtual const String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
   virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
-  virtual Variant	El_GetVar_(const void*) const		{ return _nilVariant; } // #IGNORE
+  virtual const Variant	El_GetVar_(const void*) const		{ return _nilVariant; } // #IGNORE
   virtual void		El_SetFmVar_(void*, const Variant&) 	{ };       // #IGNORE
  
 protected:
@@ -213,14 +239,14 @@ protected:
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   // the FastElIndex functions only check the bounds in debug version
-  int			FastElIndex(int d0) const; 
+  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0) const; 
   int			FastElIndex2(int d0, int d1) const; 
   int			FastElIndex3(int d0, int d1, int d2) const; 
   int			FastElIndex4(int d0, int d1, int d2, int d3) const; 
   int			FastElIndexN(const MatrixGeom& indices) const; 
   
   // the SafeElIndex functions always check the bounds
-  int			SafeElIndex(int d0) const; 
+  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0) const; 
   int			SafeElIndex2(int d0, int d1) const; 
   int			SafeElIndex3(int d0, int d1, int d2) const; 
   int			SafeElIndex4(int d0, int d1, int d2, int d3) const; 
@@ -474,16 +500,16 @@ protected: \
 
 class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE
 public:
-  override TypeDef*	data_type() const {return &TA_taString;} 
+  override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   
   void			Copy_(const String_Matrix& cp) {}
   COPY_FUNS(String_Matrix, taMatrixT<String>)
   TA_MATRIX_FUNS(String_Matrix, String)
   
 public:
-  override String	El_GetStr_(const void* it) const {return *((String*)it); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const {return *((String*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((String*)it) = str;}  // #IGNORE
-  override Variant	El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
   STATIC_CONST String	blank; // #IGNORE
@@ -500,7 +526,7 @@ taMatrixPtr_Of(String_Matrix)
 
 class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE
 public:
-  override TypeDef*	data_type() const {return &TA_float;} 
+  override TypeDef*	GetDataTypeDef() const {return &TA_float;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for float
@@ -510,9 +536,9 @@ public:
   TA_MATRIX_FUNS(float_Matrix, float)
   
 public:
-  override String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
-  override Variant	El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
 protected:
   STATIC_CONST float	blank; // #IGNORE
@@ -526,7 +552,7 @@ taMatrixPtr_Of(float_Matrix)
 
 class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE
 public:
-  override TypeDef*	data_type() const {return &TA_int;} 
+  override TypeDef*	GetDataTypeDef() const {return &TA_int;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in-range for 32bit int
@@ -536,9 +562,9 @@ public:
   TA_MATRIX_FUNS(int_Matrix, int)
   
 public:
-  override String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
+  override const String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
   override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
-  override Variant	El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
 protected:
   STATIC_CONST int	blank; // #IGNORE
@@ -552,7 +578,7 @@ taMatrixPtr_Of(int_Matrix)
 
 class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE
 public:
-  override TypeDef*	data_type() const {return &TA_unsigned_char;} 
+  override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts 0-255 or octal or hex forms
@@ -563,9 +589,9 @@ public:
   
 public: //
   //note: for streaming, we convert to hex, rather than char
-  override String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
-  override Variant	El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
 protected:
   STATIC_CONST byte	blank; // #IGNORE
@@ -579,7 +605,7 @@ taMatrixPtr_Of(byte_Matrix)
 
 class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
 public:
-  override TypeDef*	data_type() const {return &TA_Variant;} 
+  override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   
   void			Copy_(const Variant_Matrix& cp) {}
   COPY_FUNS(Variant_Matrix, taMatrixT<Variant>)
@@ -588,9 +614,9 @@ public:
 public:
   //NOTE: setString may not be exactly what is wanted -- that will change variant to String
   // what we may want is to set the current value as its type, from a string
-  override String	El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {((Variant*)it)->setString(str);}  // #IGNORE
-  override Variant	El_GetVar_(const void* it) const {return Variant(*((Variant*)it));} // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return *((Variant*)it);} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
   STATIC_CONST Variant	blank; // #IGNORE

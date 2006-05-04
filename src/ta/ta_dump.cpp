@@ -394,7 +394,10 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     if((tap != NULL) && (tap->GetOwner() == NULL)) { // no owner, fake path name
       strm << tap->GetTypeDef()->name << " @*(." << name << ")";
       tap->Dump_Save_Value(strm, (TAPtr)base, indent);
-//TEMP...nn???      taMisc::indent(strm, indent, 1) << "};\n";
+//NOTE: BA 5/3/06 the following line was putting an unneeded extra "};" when
+// saving an inlined FloatTransform* object -- not known whether
+// it is only inline-related, or shouldn't be here for all cases
+//      taMisc::indent(strm, indent, 1) << "};\n";
       return true;
     }
   }

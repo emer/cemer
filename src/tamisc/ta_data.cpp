@@ -138,8 +138,8 @@ bool DataChannel::ValidateData(taMatrix* data) {
     return false;
   }
   for (int i = 0; i < dims(); ++i) {
-    int dim = this->GetGeom(i);
-    if ((dim != 0) && (data->GetGeom(i) != dim)) {
+    int dim = this->dim(i);
+    if ((dim != 0) && (data->dim(i) != dim)) {
       taMisc::Warning(this->GetPath(), "data has wrong geometry");
       return false;
     }

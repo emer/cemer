@@ -17,12 +17,12 @@
 
 #include "tarandom.h"
 
-#if (defined(WIN32) && (!defined(CYGWIN)))
-#include <time.h>
+#if (defined(TA_OS_WIN))
+# include <time.h>
 #else
-#include <sys/time.h>
-#include <sys/times.h>
-#include <unistd.h>
+# include <sys/time.h>
+# include <sys/times.h>
+# include <unistd.h>
 #endif
 
 //////////////////////////
@@ -56,18 +56,18 @@ void RndSeed::OldSeed() {
   seed.EnforceSize(MTRnd::N);
   bool all_zero = true;
   int i;
-  for(i=0;i<seed.size;i++) {
-    if(seed.FastEl(i) != 0) {
+  for (i=0;i<seed.size;i++) {
+    if (seed.FastEl(i) != 0) {
       all_zero = false;
       break;
     }
   }
-  if(all_zero) {
+  if (all_zero) {
     taMisc::Error("*** RndSeed::OldSeed: random seed is all zero and this doesn't work; getting current random seed!");
     GetCurrent();
     return;
   }
-  for(i=0;i<seed.size;i++) {
+  for (i=0;i<seed.size;i++) {
     MTRnd::mt[i] = (ulong)seed.FastEl(i);
   }
   MTRnd::mti = mti;
