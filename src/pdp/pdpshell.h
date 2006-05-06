@@ -502,6 +502,75 @@ private:
   void			Destroy() {CutLinks();}
 };
 
+class PDP_API TestOwnedObj_taBase: public taBase {
+public:
+  int			i;
+  String		s;
+  TA_BASEFUNS(TestOwnedObj_taBase);
+private:
+  void 			Initialize() {i = 1; s = "s1";}
+  void			Destroy() {}
+};
+
+class PDP_API TestOwnedObj_taOBase: public taOBase {
+public:
+  int			i;
+  String		s;
+  TA_BASEFUNS(TestOwnedObj_taOBase);
+private:
+  void 			Initialize() {i = 2; s = "s2";}
+  void			Destroy() {}
+};
+
+class PDP_API TestOwnedObj_taBase_inline: public taBase { // #INLINE_DUMP
+public:
+  int			i;
+  String		s;
+  TA_BASEFUNS(TestOwnedObj_taBase_inline);
+private:
+  void 			Initialize() {i = 3; s = "s3";}
+  void			Destroy() {}
+};
+
+class PDP_API TestOwnedObj_taOBase_inline: public taOBase {// #INLINE_DUMP
+public:
+  int			i;
+  String		s;
+  TA_BASEFUNS(TestOwnedObj_taOBase_inline);
+private:
+  void 			Initialize() {i = 4; s = "s4";}
+  void			Destroy() {}
+};
+
+class PDP_API TestOwnedObj: public taNBase {
+INHERITED(taNBase)
+public:
+  TestOwnedObj_taBase* o1; 
+  TestOwnedObj_taOBase* o2; 
+  TestOwnedObj_taBase_inline* o3; 
+  TestOwnedObj_taOBase_inline* o4; 
+  
+  TestOwnedObj_taBase* o5; // #OWN_POINTER
+  TestOwnedObj_taOBase* o6;  // #OWN_POINTER
+  TestOwnedObj_taBase_inline* o7;  // #OWN_POINTER
+  TestOwnedObj_taOBase_inline* o8;  // #OWN_POINTER
+  
+  TestOwnedObj_taOBase* o9;  // not owned
+  TestOwnedObj_taOBase_inline* oA;  // not owned
+  
+  TestOwnedObj_taOBase* oB;  // #OWN_POINTER except not owned
+  TestOwnedObj_taOBase_inline* oC;  // #OWN_POINTER except not owned
+  
+  void	InitLinks();
+  void	CutLinks();
+  TA_BASEFUNS(TestOwnedObj);
+private:
+  void 			Initialize() 
+    {o1=NULL; o2=NULL; o3=NULL; o4=NULL; o5=NULL; o6=NULL; o7=NULL; o8=NULL;
+     o9=NULL; oA=NULL; oB=NULL; oC=NULL;}
+  void			Destroy() {}
+};
+
 class DataTable;
 class PDP_API NetHelper: public taNBase {
 INHERITED(taNBase)

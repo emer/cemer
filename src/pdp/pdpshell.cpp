@@ -1701,6 +1701,55 @@ void TestOwnObj::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+
+ 
+void TestOwnedObj::InitLinks() {
+  inherited::InitLinks();
+  taBase::OwnPointer((TAPtr*)&o1, new TestOwnedObj_taBase, this);
+  taBase::OwnPointer((TAPtr*)&o2, new TestOwnedObj_taOBase, this); 
+  taBase::OwnPointer((TAPtr*)&o3, new TestOwnedObj_taBase_inline, this); 
+  taBase::OwnPointer((TAPtr*)&o4, new TestOwnedObj_taOBase_inline, this); 
+  
+  taBase::OwnPointer((TAPtr*)&o5, new TestOwnedObj_taBase, this);
+  o5->i = 5; o5->s = "s5";
+  taBase::OwnPointer((TAPtr*)&o6, new TestOwnedObj_taOBase, this); 
+  o6->i = 6; o6->s = "s6";
+  taBase::OwnPointer((TAPtr*)&o7, new TestOwnedObj_taBase_inline, this); 
+  o7->i = 7; o7->s = "s7";
+  taBase::OwnPointer((TAPtr*)&o8, new TestOwnedObj_taOBase_inline, this); 
+  o8->i = 8; o8->s = "s8";
+  
+  // following are not owned
+  taBase::SetPointer((TAPtr*)&o9, new TestOwnedObj_taOBase); 
+  o9->i = 9; o9->s = "s9";
+  taBase::SetPointer((TAPtr*)&oA, new TestOwnedObj_taOBase_inline); 
+  oA->i = 10; oA->s = "sA";
+  
+  taBase::SetPointer((TAPtr*)&oB, new TestOwnedObj_taOBase); 
+  oB->i = 11; oB->s = "sB";
+  taBase::SetPointer((TAPtr*)&oC, new TestOwnedObj_taOBase_inline); 
+  oC->i = 12; oC->s = "sC";
+  
+}
+
+void TestOwnedObj::CutLinks() {
+  taBase::DelPointer((TAPtr*)&oC);
+  taBase::DelPointer((TAPtr*)&oB);
+  taBase::DelPointer((TAPtr*)&oA);
+  taBase::DelPointer((TAPtr*)&o9);
+  
+  if (o8) {o8->CutLinks(); taBase::DelPointer((TAPtr*)&o8);}
+  if (o7) {o7->CutLinks(); taBase::DelPointer((TAPtr*)&o7);}
+  if (o6) {o6->CutLinks(); taBase::DelPointer((TAPtr*)&o6);}
+  if (o5) {o5->CutLinks(); taBase::DelPointer((TAPtr*)&o5);}
+  if (o4) {o4->CutLinks(); taBase::DelPointer((TAPtr*)&o4);}
+  if (o3) {o3->CutLinks(); taBase::DelPointer((TAPtr*)&o3);}
+  if (o2) {o2->CutLinks(); taBase::DelPointer((TAPtr*)&o2);}
+  if (o1) {o1->CutLinks(); taBase::DelPointer((TAPtr*)&o1);}
+  inherited::CutLinks();
+}
+
+
 #include "datatable.h"
 void NetHelper::InitXorNetEnviroTable(DataTable* dt) {
   if (!dt) return;

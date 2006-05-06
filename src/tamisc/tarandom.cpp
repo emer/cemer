@@ -176,14 +176,14 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
   return rv;
 }
 
-#if (defined(WIN32) && (!defined(CYGWIN)))
+#if defined(TA_OS_WIN)
 
 String TimeUsed::GetString() {
   if(!rec) return "time not recorded";
-  long ticks_per = CLOCKS_PER_SEC;
-  float ustr = (float)((double)usr / (double)ticks_per);
-  float sstr = (float)((double)sys / (double)ticks_per);
-  float tstr = (float)((double)tot / (double)ticks_per);
+  double ticks_per = (double)CLOCKS_PER_SEC;
+  float ustr = (float)((double)usr / ticks_per);
+  float sstr = (float)((double)sys / ticks_per);
+  float tstr = (float)((double)tot / ticks_per);
   String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
     + " sys: " + taMisc::FormatValue(sstr, 15, 7)
     + " tot: " + taMisc::FormatValue(tstr, 15, 7)
@@ -203,10 +203,10 @@ void TimeUsed::GetTimes() {
 #else
 String TimeUsed::GetString() {
   if(!rec) return "time not recorded";
-  long ticks_per = sysconf(_SC_CLK_TCK);
-  float ustr = (float)((double)usr / (double)ticks_per);
-  float sstr = (float)((double)sys / (double)ticks_per);
-  float tstr = (float)((double)tot / (double)ticks_per);
+  double ticks_per = (double)sysconf(_SC_CLK_TCK);
+  float ustr = (float)((double)usr / ticks_per);
+  float sstr = (float)((double)sys / ticks_per);
+  float tstr = (float)((double)tot / ticks_per);
   String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
     + " sys: " + taMisc::FormatValue(sstr, 15, 7)
     + " tot: " + taMisc::FormatValue(tstr, 15, 7)
