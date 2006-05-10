@@ -32,7 +32,6 @@
 #include <qapplication.h>
 #include <qbuttongroup.h>
 #include <qclipboard.h>
-#include <QCustomEvent>
 #include <qdialog.h>
 #include <qevent.h>
 #include <Q3HButtonGroup>
@@ -1410,9 +1409,8 @@ iToolBar* iDataViewer::Constr_ToolBar(ToolBar* tb, String name) {
 
 void iDataViewer::customEvent(QEvent* ev) {
   switch ((int)ev->type()) {
-  case TA_QT_EVENT_SEL_CHANGED:
-    //Qt4: hopefully this is a QCustomEvent!!!
-    selectionChangedEvent((QCustomEvent*)ev);
+  case iDataViewer_SelectionChanged_EventType:
+    selectionChangedEvent(ev);
     break;
   default:
     inherited::customEvent(ev);
@@ -1594,11 +1592,11 @@ bool iDataViewer::RemoveSelectedItem(ISelectable* item,  bool forced) {
 }
 
 void iDataViewer::SelectionChanged(bool forced) {
-  QCustomEvent* ev = new QCustomEvent(TA_QT_EVENT_SEL_CHANGED);
-  QApplication::postEvent(this, ev); // defers until we return to event loop
+  QEvent* ev = new QEvent((QEvent::Type)iDataViewer_SelectionChanged_EventType);
+  QCoreApplication::postEvent(this, ev); // returns immediately
 }
 
-void iDataViewer::selectionChangedEvent(QCustomEvent* ev) {
+void iDataViewer::selectionChangedEvent(QEvent* ev) {
   emit selectionChanged(m_sel_items);
   UpdateUi();
 }
@@ -2671,7 +2669,7 @@ iDataPanel* iTabDataViewer::MakeNewDataPanel_(taiDataLink* link) {
   return rval;
 }
 
-void iTabDataViewer::selectionChangedEvent(QCustomEvent* ev) {
+void iTabDataViewer::selectionChangedEvent(QEvent* ev) {
   //TODO: should actually check if old panel=new panel, since theoretically, two different
   // gui items can have the same datalink (i.e., underlying data)
   iDataPanel* pn = NULL;

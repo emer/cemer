@@ -2812,10 +2812,14 @@ void TypeDef::unRegister(void* it) {
 // 	Get/SetValStr		//
 //////////////////////////////////
 
-String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
+String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
+  ValContext vc) const 
+{
+  if (vc == VC_DEFAULT) 
+    vc = (taMisc::is_saving) ? VC_STREAMING : VC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
-  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+  if (InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun;
     if(memb_def != NULL)
@@ -2838,6 +2842,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
     }
     // note: char is generic, and typically we won't use signed char
     else if (DerivesFrom(TA_char)) {
+    //TODO: need to modalize for streaming etc.
       return String(*((char*)base));
     }
     // note: explicit use of signed char is treated like a number
@@ -2890,7 +2895,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
         //NOTE: maybe we should indirect, rather than return NULL directly...
       if (var.isNull()) return "NULL";
       var.GetRepInfo(typ, var_base);
-      return typ->GetValStr(var_base, NULL, memb_def);
+      return typ->GetValStr(var_base, NULL, memb_def, vc);
     }
     else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       int i;
@@ -2901,7 +2906,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
 	  continue;
 	rval += md->name + "=";
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += md->type->GetValStr(md->GetOff(base), base, md);
+	rval += md->type->GetValStr(md->GetOff(base), base, md, vc);
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
 	rval += ": ";
       }
@@ -2974,7 +2979,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
     if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = *((TAPtr*)base);
       if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root))) {
-	if(taMisc::is_saving) {
+	if (vc == VC_STREAMING) {
 	  return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
 	}
 	else {
@@ -3021,7 +3026,11 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def) const {
   return name;
 }
 
-void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def) {
+void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
+  ValContext vc) 
+{
+  if (vc == VC_DEFAULT) 
+    vc = (taMisc::is_loading) ? VC_STREAMING : VC_VALUE;
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
@@ -3106,7 +3115,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
         return;
       }
       var.GetRepInfo(typ, var_base);
-      typ->SetValStr(val, var_base, par, memb_def);
+      typ->SetValStr(val, var_base, par, memb_def, vc);
       var.UpdateAfterLoad();
     }
 #ifndef NO_TA_BASE
@@ -3179,13 +3188,13 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	}
 	if((md != NULL) && !mb_val.empty())
-	  md->type->SetValStr(mb_val, md->GetOff(base), base, md);
+	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, vc);
       }
 #ifndef NO_TA_BASE
       if(InheritsFrom(TA_taBase)) {
 	TAPtr rbase = (TAPtr)base;
 	if(rbase != NULL) {
-	  if(!taMisc::is_loading)
+	  if (vc != VC_STREAMING)
 	    rbase->UpdateAfterEdit(); 	// only when not loading (else will happen after)
 	}
       }
@@ -3198,7 +3207,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       TAPtr bs = NULL;
       if((val != "NULL") && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
-	if(taMisc::is_loading) {
+	if (vc == VC_STREAMING) {
 	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
 	  if(bs == NULL)	// indicates error condition
 	    return;

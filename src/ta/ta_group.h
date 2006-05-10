@@ -88,7 +88,8 @@ public:
   TAGPtr	super_gp;	// #READ_ONLY #NO_SAVE super-group above this
   TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE the root group, 'this' for root group itself; never NULL
 
-  bool		IsEmpty()	{ return (leaves == 0) ? true : false; }
+  bool		IsEmpty() const	{ return (leaves == 0) ? true : false; }
+  bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   TAPtr 	New(int no=0, TypeDef* typ = NULL);

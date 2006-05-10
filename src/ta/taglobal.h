@@ -50,18 +50,14 @@
 // we don't try scanning Qt's header files when running maketa
 #elif defined(__MAKETA__)
 #  include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
-#  define TA_QT_EVENT_BASE (1000 + 128)
 #else // normal ta, in all variants
 #  ifdef TA_USE_QT // normal to always include QT
 #    include <qglobal.h>
 #    include <qevent.h>
 #    include "qtdefs.h" // declares common qt and related classes often used by pointer
 #  endif
-// new Qt Event type codes -- should be globally unique, to avoid problems
-#  define TA_QT_EVENT_BASE (QEvent::User + 128)
 #endif
 
-#define TA_QT_EVENT_SEL_CHANGED	(TA_QT_EVENT_BASE + 1)
 
 // Operating System and Environment codes -- generally mirror those of Qt
 // NOTE: many of these are untested for TA/PDP, and are just included to mirror Qt
@@ -443,7 +439,8 @@ inline void Check(bool cond, const char* msg) {if (!(cond)) throw ta_exception(m
 #ifdef TA_USE_QT
 enum CustomEventType {
   FirstEvent		= 1000, //note: QT's custom events start at 1000
-  cssMisc_StartupShell_EventType // css_machine.h
+  cssMisc_StartupShell_EventType, // css_machine.h
+  iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
 };
 #endif
 

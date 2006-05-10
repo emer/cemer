@@ -117,7 +117,10 @@ extern TA_API TypeDef TA_unsigned_int;
 //extern TA_API TypeDef TA_unsigned_long; // where long is 32-bit
 extern TA_API TypeDef TA_long;
   extern TA_API TypeDef TA_signed_long;
+  extern TA_API TypeDef TA_long_int;
+  extern TA_API TypeDef TA_signed_long_int;
 extern TA_API TypeDef TA_unsigned_long;
+  extern TA_API TypeDef TA_unsigned_long_int;
 extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_long_long;
   extern TA_API TypeDef TA_signed_long_long;
@@ -1043,6 +1046,13 @@ class TA_API TypeDef : public TypeItem {// defines a type itself
 typedef TypeItem inherited;
 #endif
 public:
+  enum ValContext { // context for getting or setting a string value
+    VC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
+    VC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
+    VC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
+    VC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
+  };
+  
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
 
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
@@ -1209,10 +1219,10 @@ public:
   void 		unRegister(void* it);
 
   String	GetValStr(const void* base, void* par=NULL,
-				  MemberDef* memb_def = NULL) const;
+    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT) const;
   // get a string representation of value
   void		SetValStr(const String& val, void* base, void* par=NULL,
-				  MemberDef* memb_def = NULL);
+    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT);
   // set the value from a string representation
 
   void		CopyFromSameType(void* trg_base, void* src_base,

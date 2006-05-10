@@ -640,7 +640,7 @@ protected:
   override void 	closeEvent(QCloseEvent* ev);
   override void 	customEvent(QEvent* ev); // dispatch
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
-  virtual void 		selectionChangedEvent(QCustomEvent* ev);
+  virtual void 		selectionChangedEvent(QEvent* ev);
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 
   virtual void		Closing(bool forced, bool& cancel) {} // called to notify window in closeEvent, when certain to close
@@ -946,7 +946,7 @@ protected:
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   void			Constr_Menu_impl(); // override
   virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
-  override void 	selectionChangedEvent(QCustomEvent* ev);
+  override void 	selectionChangedEvent(QEvent* ev);
   void 			viewSplit(int o);
 
 private:

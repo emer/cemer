@@ -28,8 +28,6 @@ class	QString;		// #IGNORE
 class	QStringList;		// #IGNORE
 class	QVariant;		// #IGNORE
 
-class	QCustomEvent;		// #IGNORE Qt3: is deprecated in Qt4, 
-
 // Qt Gui defines -- only when TA_GUI
 
 #ifdef TA_GUI

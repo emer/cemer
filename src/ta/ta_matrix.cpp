@@ -236,23 +236,6 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
   return strm;
 }
 
-int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  strm << "{ ";
-  int i;
-  if (geom.size > 0) {
-    strm << "[";
-    for (i=0; i< geom.size; ++i) {
-      if (i > 0) strm << " ";
-      strm << geom.FastEl(i);
-    }
-    strm << "] ";
-  }
-  for (i=0; i < size; ++i) {
-    strm << FastElAsStr_Flat(i) << ";";
-  }
-  return true;
-}
-
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
@@ -288,6 +271,23 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
     c = taMisc::read_till_rb_or_semi(strm);
   }
   if (c==EOF)	return EOF;
+  return true;
+}
+
+int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
+  strm << "{ ";
+  int i;
+  if (geom.size > 0) {
+    strm << "[";
+    for (i=0; i< geom.size; ++i) {
+      if (i > 0) strm << " ";
+      strm << geom.FastEl(i);
+    }
+    strm << "] ";
+  }
+  for (i=0; i < size; ++i) {
+    strm << FastElAsStr_Flat(i) << ";";
+  }
   return true;
 }
 

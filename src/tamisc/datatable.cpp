@@ -1118,6 +1118,13 @@ void DataArray_impl::AddDispOption(const char* opt) {
   disp_opts += nm;
 }
 
+DataTable* DataArray_impl::dataTable() {
+  DataTable* rval = GET_MY_OWNER(DataTable);
+  if (rval) 
+    rval = (DataTable*)rval->root_gp;
+  return rval;
+}
+
 int DataArray_impl::displayWidth() const {// low level display width, in tabs (8 chars/tab), taken from spec
   int rval = 2; // default
   // explicit width has highest priority
@@ -1134,6 +1141,17 @@ String DataArray_impl::DispOptionAfter(const char* opt) const {
   String rval = disp_opts.after(opt);
   rval = rval.before(',');
   return rval;
+}
+
+bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
+  if (md->name == "ar") {
+    // if no save, don't need to check DataTable global
+    if (!save_to_file) return false;
+    DataTable* dt = dataTable();
+    if (dt)
+      return dt->save_data;
+    else return true;
+  } else return inherited::Dump_QuerySaveMember(md);
 }
 
 String DataArray_impl::GetColText(int col, int itm_idx) {
@@ -1260,48 +1278,15 @@ String ColDescriptor_List::GetColHeading(int col) {
 //////////////////////////
 //	DataTable	//
 //////////////////////////
-/* obs
-void DataTable::SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx) {
-  if (dat->size <= idx) {
-    return;			// not good!
-  }
-  DataArray_impl* da = dat->FastEl(idx);
-//  if(da->AR()->size >= data_bufsz) { // adding will 'overflow' buffer
-//    da->AR()->ShiftLeftPct(data_shift);
-//  } 
 
-  if (ditem->is_string) {
-    if (da->valType() == DataArray_impl::VT_STRING)
-      ((String_Array*)da->AR())->Add(ld.GetString(ldi));
-  } else {
-    if(da->InheritsFrom(&TA_float_Data))
-      ((float_Array*)da->AR())->Add(ld.GetFloat(ldi));
-  }
-}
-
-void DataTable::SetFieldHead(DataItem* ditem, DataTable* dat, int idx) {
-  dat->StructUpdate(true);
-  DataArray_impl* da = NULL;
-  if (dat->size <= idx) {
-    if (ditem->is_string)
-      da = dat->NewColString("");
-    else
-      da = dat->NewColFloat("");
-  } else {
-    da = dat->FastEl(idx);
-    if(ditem->is_string && !da->InheritsFrom(&TA_String_Data)) {
-      da = new String_Data;
-      dat->Replace(idx, da);
-    }
-    if (!ditem->is_string && !da->InheritsFrom(&TA_float_Data)) {
-      da = new float_Data;
-      dat->Replace(idx, da);
-    }
-  }
-  da->name = ditem->name;
-  da->disp_opts = ditem->disp_opts;
-  dat->StructUpdate(false);
-}
+/*
+  Streaming Format:
+  
+  The normal streaming format for the DataTable itself, and its columns is followed.
+  The data is streamed after the column info, in a row major format:
+  (note: "rows" was already loaded into DataTable, so it is used to preallocate space in the arrays)
+  
+   
 */
 
 void DataTable::Initialize() {
@@ -1477,6 +1462,25 @@ void DataTable::AllocRows(int n) {
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     ar->AR()->AllocFrames(n); //noop if already has more alloc'ed
   }
+}
+
+int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
+  int c = inherited::Dump_Load_Value(strm, par);
+  if (c == EOF) return EOF;
+  if (c == 2) return 2; // signal that it was just a path
+  // otherwise, if data was loaded, we need to set the rows
+  if (save_data && IsRoot()) {
+    int i;
+    DataArray_impl* col;
+    for (i = 0; i < cols(); ++i) {
+      col = GetColData(i);
+      if (!col->save_to_file) continue;
+      int frms = col->AR()->frames();
+      // number of rows is going to be = biggest number in individual cols
+      rows = max(rows, frms);
+    }
+  }
+  return c;
 }
 
 String DataTable::GetColHeading(int col) {

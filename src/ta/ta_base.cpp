@@ -480,6 +480,11 @@ void taBase::DataViewAdding(taDataView* dv) {
   dv->SetData_impl(this);
 }
 
+bool taBase::Dump_QuerySaveMember(MemberDef* md) { 
+  // default is to save, unless explicit comment directive
+  return !md->HasOption("NO_SAVE");
+}
+
 bool taBase::DuplicateMe() {
   TAPtr ownr = GetOwner();
   if(ownr == NULL) return false;
@@ -1329,7 +1334,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
 int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
   int cnt = 0;
   int i;
-  for(i=0; i<size; i++) {
+  for (i=0; i<size; i++) {
     TAPtr itm = (TAPtr)el[i];
     if(itm == NULL)
       continue;
@@ -1340,7 +1345,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
       continue;
     }
     taMisc::indent(strm, indent, 1);
-    itm->Dump_Save_Path(strm, par, indent);
+    itm->Dump_Save_Path(strm, this, indent);
     // can't put this in dump_save_path cuz don't want it during non PathR times..
     if(itm->InheritsFrom(TA_taList_impl)) {
       taList_impl* litm = (taList_impl*)itm;
@@ -1357,7 +1362,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
       }
     }
     strm << " { ";
-    if(itm->Dump_Save_PathR(strm, itm, indent+1))
+    if(itm->Dump_Save_PathR(strm, this, indent+1))
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
     cnt++;
@@ -1373,7 +1378,7 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
     if(el[i] == NULL) continue;
     TAPtr itm = (TAPtr)el[i];
     if(El_GetOwner_((TAPtr)el[i]) == this) {
-      itm->Dump_Save_impl(strm, par, indent);
+      itm->Dump_Save_impl(strm, this, indent);
     }
     else if(El_GetOwner_(itm) != NULL) {	// a link
       taMisc::indent(strm, indent, 1) << GetTypeDef()->name << " ";

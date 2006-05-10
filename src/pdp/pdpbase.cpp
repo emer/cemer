@@ -316,7 +316,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	cssMisc::Top->StartupShellAsync(cin, cout);
+//	cssMisc::Top->StartupShellAsync(cin, cout);
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
@@ -334,7 +334,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// get rid of wait proc for rl -- we call it ourselves
 	extern int (*rl_event_hook)(void);
  	rl_event_hook = NULL;
- 	cssMisc::Top->StartupShellAsync(cin, cout);
+// 	cssMisc::Top->StartupShellAsync(cin, cout);
 	qApp->exec();
 	//	cssMisc::Top->debug = 2;
 	DMem_SubEventLoop();
@@ -342,12 +342,12 @@ int pdpMisc::Main(int argc, char *argv[]) {
       }
     }
     else {
-      cssMisc::Top->StartupShellAsync(cin, cout);
+//      cssMisc::Top->StartupShellAsync(cin, cout);
       qApp->exec();
    }
   }
   else {
-    cssMisc::Top->StartupShellAsync(cin, cout);
+//    cssMisc::Top->StartupShellAsync(cin, cout);
     qApp->exec();
 #ifdef TA_USE_INVENTOR
     SoQt::done();
@@ -356,7 +356,9 @@ int pdpMisc::Main(int argc, char *argv[]) {
   MPI_Finalize();
 
 #else
-  cssMisc::Top->StartupShellAsync(cin, cout);
+//  cssMisc::Top->StartupShellAsync(cin, cout);
+//TODO: HACKS because we aren't calling the shell
+cssiSession::in_session = true;
   qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();

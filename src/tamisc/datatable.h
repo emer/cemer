@@ -32,6 +32,7 @@ class DataTableModel;
 
 // forwards this file
 
+class DataTable;
 class String_Data; 
 class float_Data;
 class int_Data;
@@ -335,7 +336,7 @@ public:
   bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
-  virtual taMatrix* 	AR() = 0; // the matrix pointer
+  virtual taMatrix* 	AR() = 0; // the matrix pointer -- NOTE: actual member should be called 'ar'
   virtual const taMatrix* 	AR() const = 0; // const version of the matrix pointer
   virtual bool		is_numeric() const {return false;} // true if data is float, int, or byte
   virtual bool		is_string() const {return false;}// true if data is string
@@ -348,6 +349,7 @@ public:
   int			rows() const {return AR()->frames();}
 
   int			displayWidth() const; // low level display width, in tabs (8 chars/tab), taken from spec
+  DataTable*		dataTable(); // root data table this col belongs to
   virtual int		maxColWidth() const {return -1;} // aprox max number of columns, in characters, -1 if variable or unknown
   virtual ValType 	valType() const = 0; // the type of data in each element
 
@@ -417,6 +419,8 @@ public:
   String 	DispOptionAfter(const char* opt) const;
   void		AddDispOption(const char* opt);
 
+  override bool		Dump_QuerySaveMember(MemberDef* md); // dynamically check for saving data 
+  
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   void  UpdateAfterEdit();
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
@@ -507,11 +511,9 @@ private:
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
 */
 class TAMISC_API DataTable : public taGroup<DataArray_impl> {
-  // #NO_UPDATE_AFTER #TOKENS table of data
+  // #NO_UPDATE_AFTER ##TOKENS table of data
 INHERITED(taGroup<DataArray_impl>)
 public:
-//obs  static void 	SetFieldData(LogData& ld, int ldi, DataItem* ditem, DataTable* dat, int idx);
-//obs  static void 	SetFieldHead(DataItem* ditem, DataTable* dat, int idx);
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
   
@@ -626,6 +628,8 @@ public:
   QAbstractItemModel*	GetDataModel(); // returns new if none exists, or existing -- enables views to be shared
 #endif
 
+  override int 		Dump_Load_Value(istream& strm, TAPtr par);
+
   void	Initialize();
   void	Destroy();
   void 	Copy_(const DataTable& cp);
@@ -664,7 +668,7 @@ public:
   COPY_FUNS(DataArray<T>, DataArray_impl);
   TA_ABSTRACT_TMPLT_BASEFUNS(DataArray, T); //
 public: //DO NOT ACCESS DIRECTLY
-  T		ar;		// #NO_SAVE #SHOW #BROWSE the array itself
+  T		ar;		// #SHOW #BROWSE the array itself
 private:
   void	Initialize()		{}
   void	Destroy()		{ CutLinks(); }
