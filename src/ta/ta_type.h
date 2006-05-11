@@ -443,6 +443,8 @@ public:
 
   static int	skip_white(istream& strm, bool peek = false);
   static int	skip_white_noeol(istream& strm, bool peek = false); // don't skip end-of-line
+  static int	skip_till_start_quote_or_semi(istream& strm, bool peek = false);      
+    // used to seek up to an opening " for a string; will terminate on a ;
   static int	read_word(istream& strm, bool peek = false);
   static int	read_alnum(istream& strm, bool peek = false); 		// alpha-numeric
   static int    read_alnum_noeol(istream& strm, bool peek = false);
@@ -452,10 +454,10 @@ public:
   static int	read_till_lb_or_semi(istream& strm, bool peek = false);
   static int	read_till_rbracket(istream& strm, bool peek = false);
   static int	read_till_rb_or_semi(istream& strm, bool peek = false);
-  static int	read_till_start_quote(istream& strm, bool peek = false);      
-    // used to seek up to an opening " for a string
+  static int 	read_till_end_quote(istream& strm, bool peek = false);
+    // read-counterpart to write_quoted_string; read-escaping, until "
   static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
-    // read-counterpart to write_quoted_string; read-escaping, until ";
+    // read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
   static int	skip_past_err(istream& strm, bool peek = false);
   // skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
@@ -463,8 +465,9 @@ public:
 
   // output functions
   static ostream& indent(ostream& strm, int indent, int tsp=2);
-  static ostream& write_quoted_str(ostream& strm, const String& str);
-    // writes the string, escaping so we can read back using read_till_end_quote funcs
+  static ostream& write_quoted_string(ostream& strm, const String& str, 
+    bool write_if_empty = false);
+    // writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
   static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
 			  int tsp=2);
   static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,

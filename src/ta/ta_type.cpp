@@ -537,6 +537,57 @@ String taMisc::FormatValue(float val, int width, int precision) {
 //    return sval;
 }
 
+ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
+  strm << itm << " ";
+  if((no+1) % prln == 0) {
+    strm << "\n";
+    return strm;
+  }
+  int len = itm.length() + 1;
+  int i;
+  for(i=tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
+  }
+  return strm;
+}
+
+// no == 0 = indent
+ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  if(no == 0) {			// indent
+    for(i=0; i<itabs; i++)
+      strm << "\t";
+    for(i=0; i<ispcs; i++)
+      strm << " ";
+  }
+
+  strm << itm << " ";
+
+  int len = itm.length() + 1 + ispcs;
+  for(i=taMisc::sep_tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
+  }
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
+}
+
+ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
+  if(is_saving && (save_format == PLAIN))	return strm;
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  for(i=0; i<itabs; i++)
+    strm << "\t";
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
+}
+
 String taMisc::StringMaxLen(const String& str, int len) {
   if((int)str.length() <= len) return str;
   String rval = ((String)str).before(len);
@@ -893,29 +944,17 @@ int taMisc::read_till_quote_semi(istream& strm, bool peek) {
 
 */
 
-int taMisc::read_till_start_quote(istream& strm, bool peek) {
-// read in the stream until a start quote
+int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
+// read in the stream until a start quote or a semi
   int c = skip_white(strm, true);
   bool bs = false;		// backspace quoting of quotes, for example
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) { // "
-      if (bs)
-        bs = false;
-      else
-        bs = (c == '\\');
-      cerr << (char)c;
-      LexBuf += (char)c; strm.get();
-    }
-    if(c != EOF) cerr << (char)c;
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+      cerr << strm.get(); // consume it
   } else {
-    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) {  // "
-      if (bs)
-        bs = false;
-      else
-        bs = (c == '\\');
-      LexBuf += (char)c; strm.get();
-    }
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+      strm.get(); // consume it
   }
   if(!peek)
     strm.get();
@@ -923,34 +962,30 @@ int taMisc::read_till_start_quote(istream& strm, bool peek) {
 }
 
 
-int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
+int taMisc::read_till_end_quote(istream& strm, bool peek) {
   // don't skip initial whitespace because we're presumably reading a string literal
   int c;
   bool bs = false;
   LexBuf = "";
   if (taMisc::verbose_load >= taMisc::SOURCE) {
     while (true) {
-      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
+      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')) ) ) 
+      {  // "
         bs = false;
         cerr << (char)c;
         LexBuf += (char)c; strm.get();
       }
       if (c == EOF) break;
-      cerr << (char)c;
+      //NOTE: don't echo escape chars
       if (c == '\\') {
         strm.get();             // get the backslash (don't put in LexBuf)
         bs = true;              // backslash-quoted character coming
-      } else if (c == '\"') {      // "
-        strm.get();             // get the quote
-        c = strm.peek();        // get next char
-        cerr << (char)c;
-	if (c == ';') break;	// done
-	LexBuf += '\"';		// add the quote..
-      }
+      } else // if (c == '\"')
+        break;
     }
   } else {
     while (true) {
-      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
+      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')))) {  // "
         bs = false;
         LexBuf += (char)c; strm.get();
       }
@@ -958,16 +993,24 @@ int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
       if (c == '\\') {
         strm.get();             // get the backslash (don't put in LexBuf)
         bs = true;              // backslash-quoted character coming
-      } else if (c == '\"') {           // "
-        strm.get();             // get the quote
-        c = strm.peek();        // get next char
-        if (c == ';') break;     // done
-	LexBuf += '\"';		// add the quote..
-      }
+      } else // if (c == '\"')
+        break;
     }
   }
   if (!peek)
-    strm.get();
+    strm.get(); // consume the "
+  return c;
+}
+
+int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
+  int c = read_till_end_quote(strm, peek);
+  if (c == EOF) return c;
+  if (peek) strm.get(); // consume the "
+  while (((c = strm.peek()) != EOF) && (c != ';'))
+    c = strm.get();
+  if (c == EOF) return c;
+  if (!peek) 
+    strm.get(); // consume the ;
   return c;
 }
 
@@ -1025,19 +1068,21 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   return c;
 }
 
-
-ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
-  strm << itm << " ";
-  if((no+1) % prln == 0) {
-    strm << "\n";
-    return strm;
+ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool write_if_empty) {
+  if (!write_if_empty && str.empty()) return strm;
+  
+  strm << "\"";
+  int l = str.length();
+  for (int i = 0; i < l; ++i) {
+    char c = str.elem(i);
+    // we slash escape slashes and quotes 
+    //TODO: perhaps we should escape other control chars as well
+    if ((c == '\"') || (c == '\\'))
+      str << '\\';
+    //else
+    str << c;
   }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
+  str << '\"';
   return strm;
 }
 
@@ -1047,42 +1092,6 @@ String taMisc::remove_name(String& path) {
     return path.before("(") + path.after(")");
 
   return path;
-}
-
-// no == 0 = indent
-ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  if(no == 0) {			// indent
-    for(i=0; i<itabs; i++)
-      strm << "\t";
-    for(i=0; i<ispcs; i++)
-      strm << " ";
-  }
-
-  strm << itm << " ";
-
-  int len = itm.length() + 1 + ispcs;
-  for(i=taMisc::sep_tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
-}
-
-ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
-  if(is_saving && (save_format == PLAIN))	return strm;
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  for(i=0; i<itabs; i++)
-    strm << "\t";
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
 }
 
 // Script recording

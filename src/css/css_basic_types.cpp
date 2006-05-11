@@ -152,16 +152,13 @@ cssString::operator istream*() const {
 
 void cssString::Save(ostream& strm) {
   String str = GetStr();
-  // quote special characters
-  str.gsub("\\", "\\\\");
-  str.gsub("\"", "\\\"");
-  strm << "\"" << str << "\"";
+  taMisc::write_quoted_string(strm, str, true); // always write the quotes
 }
 
 void cssString::Load(istream& strm) {
-  int c = taMisc::read_till_quote(strm);
-    if(c == '\"')			  // "
-      c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
+  int c = taMisc::skip_till_start_quote_or_semi(strm);
+  if (c == '\"')			  // "
+    c = taMisc::read_till_end_quote_semi(strm);// then till second followed by semi
 
   if(c != ';') {
     taMisc::Error("*** Missing ';' in dump file for string:", name);

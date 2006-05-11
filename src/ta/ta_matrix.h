@@ -276,6 +276,10 @@ protected:
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
+  virtual void		Dump_Save_Item(ostream& strm, int idx); 
+    // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
+  virtual int		Dump_Load_Item(istream& strm, int idx); 
+    // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
 private:
   void 			Initialize();
   void			Destroy();
@@ -513,6 +517,8 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
   STATIC_CONST String	blank; // #IGNORE
+  override void		Dump_Save_Item(ostream& strm, int idx);
+  override int		Dump_Load_Item(istream& strm, int idx); 
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 
 private:
@@ -620,6 +626,8 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
   STATIC_CONST Variant	blank; // #IGNORE
+  override void		Dump_Save_Item(ostream& strm, int idx);
+  override int		Dump_Load_Item(istream& strm, int idx); // ret is last char read, s/b ;
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 
 private:

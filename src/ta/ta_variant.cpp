@@ -45,6 +45,7 @@ using namespace std;
   default: return ;
   }
 */
+
 ostream& operator<<(ostream& s, const Variant& x) {
   x.save(s);
   return s;
@@ -53,7 +54,7 @@ ostream& operator<<(ostream& s, const Variant& x) {
 istream& operator>>(istream& s, Variant& x) {
   x.load(s);
   return s;
-}
+} 
 
 Variant::Variant(VarType type) {
   memset(&d, 0, sizeof(d)); // pretty much valid for most types
@@ -268,7 +269,7 @@ bool Variant::Dump_Load_Type(istream& strm, int& c) {
   return true;
 }
 
-void Variant::Dump_Save_Type(ostream& strm) {
+void Variant::Dump_Save_Type(ostream& strm) const {
   strm << " " << (int)type() << " " << (isNull()) ? '1' : '0';
 } 
 

@@ -415,16 +415,13 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     }
   }
   if (save_value) {
+    String str = eff_type->GetValStr(new_base, base, this);
+    strm << "=";
     if (eff_type->InheritsFrom(TA_taString)) {
-      //TODO: should have better substitution
-      // put quotes here because other uses of string vals don't need them
-      // also quote special characters
-      taString str = eff_type->GetValStr(new_base, base, this);
-      str.gsub("\\", "\\\\");
-      str.gsub("\"", "\\\"");
-      strm << "=\"" << str << "\"";
+      // note: it won't stream an empty string
+      taMisc::write_quoted_string(strm, str);
     } else {
-      strm << "=" << eff_type->GetValStr(new_base, base, this);
+      strm << str;
     }
   }
   strm << ";\n";
@@ -570,6 +567,8 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
     }
   } //NOTE: shouldn't this never happen???
   else {
+taMisc::Warning("TypeDef::Dump_Save_Value unexpectedly doing atomic value dump for type: ",
+  name);
     strm << " = " << GetValStr(base, par) << "\n";
   }
   return true;
@@ -920,8 +919,8 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
     // in 4.x, we let the stream tell us if a quoted string is coming...
     if (c == '\"') {
-      taMisc::read_till_start_quote(strm); // duh, has to succeed!
-      c = taMisc::read_till_end_quote_semi(strm); // get 1st quote
+      c = taMisc::skip_till_start_quote_or_semi(strm); // duh, has to succeed!
+      c = taMisc::read_till_end_quote_semi(strm); // 
       
     } else {
       c = taMisc::read_till_rb_or_semi(strm);
