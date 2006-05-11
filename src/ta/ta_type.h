@@ -452,8 +452,10 @@ public:
   static int	read_till_lb_or_semi(istream& strm, bool peek = false);
   static int	read_till_rbracket(istream& strm, bool peek = false);
   static int	read_till_rb_or_semi(istream& strm, bool peek = false);
-  static int	read_till_quote(istream& strm, bool peek = false);      // dbl quote
-  static int	read_till_quote_semi(istream& strm, bool peek = false); // dbl quote followed by a semi
+  static int	read_till_start_quote(istream& strm, bool peek = false);      
+    // used to seek up to an opening " for a string
+  static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
+    // read-counterpart to write_quoted_string; read-escaping, until ";
   static int	skip_past_err(istream& strm, bool peek = false);
   // skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
@@ -461,6 +463,8 @@ public:
 
   // output functions
   static ostream& indent(ostream& strm, int indent, int tsp=2);
+  static ostream& write_quoted_str(ostream& strm, const String& str);
+    // writes the string, escaping so we can read back using read_till_end_quote funcs
   static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
 			  int tsp=2);
   static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,
@@ -1046,11 +1050,11 @@ class TA_API TypeDef : public TypeItem {// defines a type itself
 typedef TypeItem inherited;
 #endif
 public:
-  enum ValContext { // context for getting or setting a string value
-    VC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
-    VC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
-    VC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
-    VC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
+  enum StrContext { // context for getting or setting a string value
+    SC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
+    SC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
+    SC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
+    SC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
   };
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
@@ -1219,10 +1223,10 @@ public:
   void 		unRegister(void* it);
 
   String	GetValStr(const void* base, void* par=NULL,
-    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT) const;
+    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT) const;
   // get a string representation of value
   void		SetValStr(const String& val, void* base, void* par=NULL,
-    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT);
+    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // set the value from a string representation
 
   void		CopyFromSameType(void* trg_base, void* src_base,

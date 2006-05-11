@@ -267,7 +267,7 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
       taMisc::Error("Too many items in file for type:",GetTypeDef()->name,"\n");
       return false;
     }
-    SetFmStr_Flat(idx++, taMisc::LexBuf);
+    SetFmStr_Flat(taMisc::LexBuf, idx++);
     c = taMisc::read_till_rb_or_semi(strm);
   }
   if (c==EOF)	return EOF;
@@ -290,6 +290,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   }
   return true;
 }
+
 
 void taMatrix::EnforceFrames(int n) {
   Check(canResize(), "resizing not allowed");

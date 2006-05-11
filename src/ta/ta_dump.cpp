@@ -899,7 +899,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       return false;
     }
     
-    //note: in v3, we based expectation of " on string type, but
+/*obs    //note: in v3, we based expectation of " on string type, but
     // we should rather let input stream tell us
     c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
     
@@ -907,8 +907,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       c = taMisc::read_till_quote(strm); // get 1st quote
       if (c == '\"')			  // "
         c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
-    }
-    else {
+    } else {
       c = taMisc::read_till_rb_or_semi(strm);
     }
   
@@ -916,8 +915,23 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       taMisc::Warning("*** Missing ';' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
+    }*/
+  
+    c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
+    // in 4.x, we let the stream tell us if a quoted string is coming...
+    if (c == '\"') {
+      taMisc::read_till_start_quote(strm); // duh, has to succeed!
+      c = taMisc::read_till_end_quote_semi(strm); // get 1st quote
+      
+    } else {
+      c = taMisc::read_till_rb_or_semi(strm);
     }
   
+    if (c != ';') {
+      taMisc::Warning("*** Missing ';' in dump file for member:", name,
+                    "in eff_type:",GetOwnerType()->name);
+      return true;		// don't scan any more after this err..
+    }
     eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
     if(taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "Leaving MemberDef::Dump_Load, member: " << name

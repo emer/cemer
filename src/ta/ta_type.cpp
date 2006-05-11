@@ -809,6 +809,7 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   return c;
 }
 
+/*obs, 3.x
 int taMisc::read_till_quote(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   bool bs = false;		// backspace quoting of quotes, for example
@@ -885,6 +886,87 @@ int taMisc::read_till_quote_semi(istream& strm, bool peek) {
     }
   }
   if(!peek)
+    strm.get();
+  return c;
+}
+
+
+*/
+
+int taMisc::read_till_start_quote(istream& strm, bool peek) {
+// read in the stream until a start quote
+  int c = skip_white(strm, true);
+  bool bs = false;		// backspace quoting of quotes, for example
+  LexBuf = "";
+  if(taMisc::verbose_load >= taMisc::SOURCE) {
+    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) { // "
+      if (bs)
+        bs = false;
+      else
+        bs = (c == '\\');
+      cerr << (char)c;
+      LexBuf += (char)c; strm.get();
+    }
+    if(c != EOF) cerr << (char)c;
+  } else {
+    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) {  // "
+      if (bs)
+        bs = false;
+      else
+        bs = (c == '\\');
+      LexBuf += (char)c; strm.get();
+    }
+  }
+  if(!peek)
+    strm.get();
+  return c;
+}
+
+
+int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
+  // don't skip initial whitespace because we're presumably reading a string literal
+  int c;
+  bool bs = false;
+  LexBuf = "";
+  if (taMisc::verbose_load >= taMisc::SOURCE) {
+    while (true) {
+      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
+        bs = false;
+        cerr << (char)c;
+        LexBuf += (char)c; strm.get();
+      }
+      if (c == EOF) break;
+      cerr << (char)c;
+      if (c == '\\') {
+        strm.get();             // get the backslash (don't put in LexBuf)
+        bs = true;              // backslash-quoted character coming
+      } else if (c == '\"') {      // "
+        strm.get();             // get the quote
+        c = strm.peek();        // get next char
+        cerr << (char)c;
+	if (c == ';') break;	// done
+	LexBuf += '\"';		// add the quote..
+      }
+    }
+  } else {
+    while (true) {
+      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
+        bs = false;
+        LexBuf += (char)c; strm.get();
+      }
+      if (c == EOF) break;
+      if (c == '\\') {
+        strm.get();             // get the backslash (don't put in LexBuf)
+        bs = true;              // backslash-quoted character coming
+      } else if (c == '\"') {           // "
+        strm.get();             // get the quote
+        c = strm.peek();        // get next char
+        if (c == ';') break;     // done
+	LexBuf += '\"';		// add the quote..
+      }
+    }
+  }
+  if (!peek)
     strm.get();
   return c;
 }
@@ -2813,10 +2895,10 @@ void TypeDef::unRegister(void* it) {
 //////////////////////////////////
 
 String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
-  ValContext vc) const 
+  StrContext sc) const 
 {
-  if (vc == VC_DEFAULT) 
-    vc = (taMisc::is_saving) ? VC_STREAMING : VC_VALUE;
+  if (sc == SC_DEFAULT) 
+    sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
   if (InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
@@ -2835,6 +2917,12 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
+      bool b = *((bool*)base);
+      switch (sc) {
+      case SC_STREAMING: return (b) ? String::one() : String::zero();
+      default:
+        return String(b);
+      }
       if(*((bool*)base))
 	return String("true");
       else
@@ -2842,8 +2930,11 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     }
     // note: char is generic, and typically we won't use signed char
     else if (DerivesFrom(TA_char)) {
-    //TODO: need to modalize for streaming etc.
-      return String(*((char*)base));
+      switch (sc) {
+      case SC_STREAMING: return String((int)*((char*)base));
+      default:
+        return String(*((char*)base));
+      }
     }
     // note: explicit use of signed char is treated like a number
     else if ((DerivesFrom(TA_signed_char))) {
@@ -2895,7 +2986,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
         //NOTE: maybe we should indirect, rather than return NULL directly...
       if (var.isNull()) return "NULL";
       var.GetRepInfo(typ, var_base);
-      return typ->GetValStr(var_base, NULL, memb_def, vc);
+      return typ->GetValStr(var_base, NULL, memb_def, sc);
     }
     else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       int i;
@@ -2906,7 +2997,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 	  continue;
 	rval += md->name + "=";
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += md->type->GetValStr(md->GetOff(base), base, md, vc);
+	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
 	rval += ": ";
       }
@@ -2979,7 +3070,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = *((TAPtr*)base);
       if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root))) {
-	if (vc == VC_STREAMING) {
+	if (sc == SC_STREAMING) {
 	  return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
 	}
 	else {
@@ -3027,10 +3118,10 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 }
 
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
-  ValContext vc) 
+  StrContext sc) 
 {
-  if (vc == VC_DEFAULT) 
-    vc = (taMisc::is_loading) ? VC_STREAMING : VC_VALUE;
+  if (sc == SC_DEFAULT) 
+    sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
@@ -3043,6 +3134,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
     // note: char is treated as an ansi character
     else if (DerivesFrom(TA_char))
+    //TODO: char conversion heuristics
       *((char*)base) = val.toChar();
     // signed char is treated like a number
     else if (DerivesFrom(TA_signed_char))
@@ -3115,7 +3207,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
         return;
       }
       var.GetRepInfo(typ, var_base);
-      typ->SetValStr(val, var_base, par, memb_def, vc);
+      typ->SetValStr(val, var_base, par, memb_def, sc);
       var.UpdateAfterLoad();
     }
 #ifndef NO_TA_BASE
@@ -3188,13 +3280,13 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	}
 	if((md != NULL) && !mb_val.empty())
-	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, vc);
+	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, sc);
       }
 #ifndef NO_TA_BASE
       if(InheritsFrom(TA_taBase)) {
 	TAPtr rbase = (TAPtr)base;
 	if(rbase != NULL) {
-	  if (vc != VC_STREAMING)
+	  if (sc != SC_STREAMING)
 	    rbase->UpdateAfterEdit(); 	// only when not loading (else will happen after)
 	}
       }
@@ -3207,7 +3299,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       TAPtr bs = NULL;
       if((val != "NULL") && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
-	if (vc == VC_STREAMING) {
+	if (sc == SC_STREAMING) {
 	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
 	  if(bs == NULL)	// indicates error condition
 	    return;
