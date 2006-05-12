@@ -666,7 +666,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
     rbase->Dump_Save_impl(strm, (TAPtr)par, indent);
-    rbase->Dump_SaveR(strm, (TAPtr)par, indent);
+//nn,already in _impl    rbase->Dump_SaveR(strm, (TAPtr)par, indent);
   } else {
     Dump_Save_Path(strm, base, par, indent);
     if (InheritsNonAtomicClass()) {

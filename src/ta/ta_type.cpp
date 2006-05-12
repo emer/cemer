@@ -2973,14 +2973,14 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     }
     else if(DerivesFrom(TA_float)) {
       switch (sc) {
-      case SC_STREAMING: return String(*((float*)base), "%g.9");
+      case SC_STREAMING: return String(*((float*)base), "%.8g");
       default:
         return String(*((float*)base));
       }
     }
     else if(DerivesFrom(TA_double)) {
       switch (sc) {
-      case SC_STREAMING: return String(*((double*)base), "%g.17");
+      case SC_STREAMING: return String(*((double*)base), "%.16lg");
       default:
         return String(*((double*)base));
       }

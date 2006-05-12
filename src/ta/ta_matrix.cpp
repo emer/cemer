@@ -609,7 +609,7 @@ void String_Matrix::ReclaimOrphans_(int from, int to) {
 
 void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {
 // note: we don't write "" for empty
-  taMisc::write_quoted_string(strm, String(FastEl_Flat(idx), "%g.9"));
+  taMisc::write_quoted_string(strm, String(FastEl_Flat(idx), "%.8g"));
 }
 
 bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
@@ -725,7 +725,7 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
     strm << ' ' << val.toString();
     break;
   case Variant::T_Double:
-    strm << ' ' << String(val.toDouble(), "%g.17");
+    strm << ' ' << String(val.toDouble(), "%.16lg");
     break;
   case Variant::T_Char: // write chars as ints
     strm << ' ' << val.toInt();

@@ -950,44 +950,38 @@ int ProjectBase::SaveAs(ostream& strm, TAPtr par, int indent) {
 }
 
 int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
-  if(taMisc::gui_active) {
+  if (taMisc::gui_active) {
     taMisc::Busy();
   }
   taMisc::is_saving = true;
-  //NOTE: in v4 we dynamically avoid saving units 
-/*  if (save_rmv_units) {
-    for(int i=0; i< networks.size; i++) {
-      Network* net = (Network*)networks[i];
-      net->RemoveUnits();
-    }
-  } */
   dumpMisc::path_tokens.Reset();
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
   int rval = Dump_Save_Path(strm, par, indent);
-  if(rval == false) {
-    if(taMisc::gui_active)  taMisc::DoneBusy();
-    return rval;
-  }
+  if (rval == false) 
+     goto exit;
   strm << " {\n";
 
   // save defaults within project save as first item
   defaults.Dump_Save_Path(strm, par, indent+1);
   strm << " { ";
-  if(defaults.Dump_Save_PathR(strm, par, indent+2))
+  if (defaults.Dump_Save_PathR(strm, par, indent+2))
     taMisc::indent(strm, indent+1, 1);
   strm << "  };\n";
   defaults.Dump_Save_impl(strm, par, indent+1);
-  defaults.Dump_SaveR(strm, par, indent+1);
+//nn,already in _impl  defaults.Dump_SaveR(strm, par, indent+1);
 
-  if(Dump_Save_PathR(strm, par, indent+1))
+  if (Dump_Save_PathR(strm, par, indent+1))
     taMisc::indent(strm, indent, 1);
   strm << "};\n";
   Dump_Save_impl(strm, par, indent);
-  Dump_SaveR(strm, par, indent);
+//nn,already in _impl  Dump_SaveR(strm, par, indent);
+  rval = true;
+  
+exit:
   taMisc::is_saving = false;
   dumpMisc::path_tokens.Reset();
-  if(taMisc::gui_active)  taMisc::DoneBusy();
-  return true;
+  if (taMisc::gui_active)  taMisc::DoneBusy();
+  return rval;
 }
 
 bool ProjectBase::SetFileName(const String& val) {
