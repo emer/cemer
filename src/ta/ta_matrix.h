@@ -548,6 +548,7 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
 protected:
   STATIC_CONST float	blank; // #IGNORE
+  override void		Dump_Save_Item(ostream& strm, int idx); // stream in full precision
 private:
   void		Initialize() {}
   void		Destroy() {}

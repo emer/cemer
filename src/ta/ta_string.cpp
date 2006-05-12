@@ -412,7 +412,7 @@ String::String(int64_t i64) {
 //  default: format="%I64d";break;
 //  }
   format = "%I64d";
-  _snprintf(buf, 63, format);
+  _snprintf(buf, 63, format, i64);
 #else // Unix
 // the 'll' size should work on Linux and Unix...
 //  switch (base){
@@ -421,7 +421,7 @@ String::String(int64_t i64) {
 //  default: format="%lld";break;
 //  }
   format = "%lld";
-  sprintf(buf, format);
+  sprintf(buf, format, i64);
 #endif
   newRep(Salloc(buf, -1));
 }
@@ -436,7 +436,7 @@ String::String(uint64_t u64) {
 //  default: format="%I64u";break;
 //  }
   format = "%I64u";
-  _snprintf(buf, 63, format);
+  _snprintf(buf, 63, format, u64);
 #else
 //the 'ull' should work on Linux and Unix
 //  switch (base){
@@ -445,7 +445,7 @@ String::String(uint64_t u64) {
 //  default: format="%llu";break;
 //  }
   format = "%llu";
-  sprintf(buf, format);
+  sprintf(buf, format, u64);
 #endif
   newRep(Salloc(buf, -1));
 }

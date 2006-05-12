@@ -266,14 +266,17 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
     } while ((c != ']') && (c != EOF));
   }
   //note: should always be at least one dim if we had [ but we check anyway
-  if (ar.size > 0)
+  if (ar.size > 0) {
     SetGeomN(ar);
-  //note: we always write the correct number, so early termination is an error!
-  int i = 0;
-  while ((i < size) && (c != EOF)) {
-    c = Dump_Load_Item(strm, i++);
+    //note: we always write the correct number, so early termination is an error!
+    int i = 0;
+    while ((i < size) && (c != EOF)) {
+      c = Dump_Load_Item(strm, i++);
+    }
   }
   c = taMisc::read_till_rbracket(strm);
+  if (c==EOF)	return EOF;
+  c = taMisc::read_till_semi(strm);
   if (c==EOF)	return EOF;
   return true;
 }
@@ -591,7 +594,7 @@ int String_Matrix::Dump_Load_Item(istream& strm, int idx) {
 
 void String_Matrix::Dump_Save_Item(ostream& strm, int idx) {
 // note: we don't write "" for empty
-  taMisc::write_quoted_string(strm, FastEl(idx));
+  taMisc::write_quoted_string(strm, FastEl_Flat(idx));
 }
 
 void String_Matrix::ReclaimOrphans_(int from, int to) {
@@ -603,6 +606,11 @@ void String_Matrix::ReclaimOrphans_(int from, int to) {
 //////////////////////////
 //   float_Matrix	//
 //////////////////////////
+
+void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+// note: we don't write "" for empty
+  taMisc::write_quoted_string(strm, String(FastEl_Flat(idx), "%g.9"));
+}
 
 bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   bool rval = true;
@@ -685,22 +693,20 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
       val.updateFromString(taMisc::LexBuf);
     }
     break;
-  case Variant::T_Ptr:  //not streamable
+//  case Variant::T_Ptr:  //not streamable
 //TODO: maybe we should issue a warning???
-    break;
+//    break;
   
-  case Variant::T_Base: 
-  case Variant::T_Matrix:
+//  case Variant::T_Base: 
+//  case Variant::T_Matrix:
 //TODO: what is the meaning of streaming a taBase????
 // should it be the path??? what if unowned???
-    break;
+//    break;
   
   default: 
+    c = taMisc::read_till_semi(strm);
     break;
   }
-  // for types we skipped, read the semi
-  if (c != ';')
-    c = taMisc::read_till_semi(strm);
   
 end:
   return c;
@@ -716,8 +722,10 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
-  case Variant::T_Double:
     strm << ' ' << val.toString();
+    break;
+  case Variant::T_Double:
+    strm << ' ' << String(val.toDouble(), "%g.17");
     break;
   case Variant::T_Char: // write chars as ints
     strm << ' ' << val.toInt();

@@ -1071,18 +1071,18 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
 ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool write_if_empty) {
   if (!write_if_empty && str.empty()) return strm;
   
-  strm << "\"";
+  strm << '\"';
   int l = str.length();
   for (int i = 0; i < l; ++i) {
     char c = str.elem(i);
     // we slash escape slashes and quotes 
     //TODO: perhaps we should escape other control chars as well
     if ((c == '\"') || (c == '\\'))
-      str << '\\';
+      strm << '\\';
     //else
-    str << c;
+    strm << c;
   }
-  str << '\"';
+  strm << '\"';
   return strm;
 }
 
@@ -2972,10 +2972,18 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
       return String(*((uint64_t*)base));
     }
     else if(DerivesFrom(TA_float)) {
-      return String(*((float*)base));
+      switch (sc) {
+      case SC_STREAMING: return String(*((float*)base), "%g.9");
+      default:
+        return String(*((float*)base));
+      }
     }
     else if(DerivesFrom(TA_double)) {
-      return String(*((double*)base));
+      switch (sc) {
+      case SC_STREAMING: return String(*((double*)base), "%g.17");
+      default:
+        return String(*((double*)base));
+      }
     }
     else if(DerivesFormal(TA_enum)) {
       EnumDef* ed = enum_vals.FindNo(*((int*)base));
