@@ -926,12 +926,14 @@ void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (state == CANCELED) return;
+  dch.UpdateFromDataChanged(dcr);
   // we only care about the rebuilding ones, for others, we just call notify
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
-  if (dcr == DCR_ITEM_REBUILT) 
+  if (dch.doStructUpdate()) //note: clears su and du states
     ReShow();
-  else  NotifyChanged();
+  else if (dch.doDataUpdate()) //note: clears du state
+    NotifyChanged();
   
 }
 
