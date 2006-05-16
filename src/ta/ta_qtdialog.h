@@ -223,7 +223,8 @@ protected:
 };
 
 
-class TA_API taiDataHost: public QObject, public IDataLinkClient, public IDataHost 
+class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
+  virtual public IDataHost 
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class iDialog;

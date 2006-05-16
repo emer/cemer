@@ -43,6 +43,12 @@
 #include "ta_def.h"
 #include "ta_list.h"
 
+#ifdef TA_USE_QT
+# ifndef __MAKETA__
+#   include <QObject>
+# endif
+#endif
+
 // comment directives which are parsed 'internally' (add a # sign before each)
 // "NO_TOKENS"
 // "IGNORE"
@@ -248,6 +254,42 @@ public:
   virtual ~IApp() {}
 };
 
+#ifndef NO_TA_BASE
+class TA_API taiMiscCore: public QObject { 
+  // ##NO_TOKENS ##NO_INSTANCE object for Qt Core event processing, etc. taiMisc inherits; taiM is always instance
+INHERITED(QObject)
+Q_OBJECT
+public:
+  
+  static taiMiscCore*	New(QObject* parent = NULL);
+    // either call this or call taiMisc::New 
+  
+  static void		WaitProc(); // the core idle loop process
+  
+  static int		RunPending();	// run any pending qt events that might need processed
+  static void		Quit(); // call to quit, invokes Quit_impl on instance first
+  
+  const String		classname(); // 3.x compatability, basically the app name
+  
+  taiMiscCore(QObject* parent = NULL);
+  ~taiMiscCore();
+protected slots:
+  virtual void	timer_timeout(); // called when timer times out, for waitproc processing
+  
+protected:
+  QTimer*		timer; // for idle processing
+  virtual void			Init(bool gui = false); // NOTE: called from static New
+  virtual void		Quit_impl();
+};
+
+extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
+#ifdef TA_GUI
+# define taiM taiM_
+#else
+# define taiM taiMC_
+#endif
+#endif
+
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
@@ -305,6 +347,7 @@ public:
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
 
   static bool		in_init;	// #READ_ONLY #NO_SAVE true if in ta initialization function
+  static bool		quitting;	// #READ_ONLY #NO_SAVE true once we are quitting
   static bool		not_constr;	// #READ_ONLY true if ta types are not yet constructed (or are destructed)
 
   static bool		gui_active;	// #READ_ONLY #NO_SAVE if gui has been started up or not
@@ -352,6 +395,8 @@ public:
   static ostream*	record_script;
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
   // stream to use for recording a script of interface activity (NULL if no record)
+  static void	(*WaitProc)();
+  // set this to a work process for idle time processing
   static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
   static void (*DelayedMenuUpdate_Hook)(taBase*); // #IGNORE gui callback -- avoids zillions of gui ifdefs everywhere

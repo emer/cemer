@@ -1099,14 +1099,10 @@ void PDPRoot::Destroy() {
   }
   colorspecs.RemoveAll();
   CutLinks();
-#ifdef TA_GUI
-  if (we_are_root && taMisc::gui_active) {
-    cssiSession::RunPending();
-      if(cssiSession::WaitProc != NULL) 	// then its safe to do some work
-	(*cssiSession::WaitProc)();
-    cssiSession::Quit();	    // then quit..
+  if (we_are_root) {
+    taiMiscCore::RunPending();
+    taiMiscCore::Quit();
   }
-#endif
 }
 
 void PDPRoot::InitLinks() {
@@ -1225,7 +1221,7 @@ void PDPRoot::Settings() {
 void PDPRoot::Quit() {
 #ifdef TA_GUI
   //cssiSession::quitting = true;
-  cssiSession::Quit();
+  taiMiscCore::Quit();
   if (taiMisc::main_window) taiMisc::main_window->close();
 //obs  window->close(); //TODO: causing an exception, after the confirm dialog and window closing, but closing directly causes no prob
 //  QApplication::postEvent(window, new QCloseEvent());
@@ -1753,8 +1749,8 @@ void NetHelper::InitXorNetEnviroTable(DataTable* dt) {
   if (dt->cols() == 1) {
     dt->NewColMatrix(DataArray_impl::VT_FLOAT, "output", 2, 1, 1); 
   }
-  float_Matrix* mat0 = dt->GetColFloatArray(0);
-  float_Matrix* mat1 = dt->GetColFloatArray(1);
+  float_Matrix* mat0 = (float_Matrix*)dt->GetColMatrix(0);
+  float_Matrix* mat1 = (float_Matrix*)dt->GetColMatrix(1);
   if (!(mat0 && mat1)) return; 
   while (dt->rows < 4) dt->AddBlankRow();
   // 00:0

@@ -24,7 +24,8 @@
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_TA_type.h"
-
+# include  <QCoreApplication>
+# include  <QTimer>
 # ifdef TA_GUI
 #  include "ta_qtdata.h"
 #  include "ta_qttype.h"
@@ -37,7 +38,7 @@
 # endif // TA_GUI */
 
 #else // ndef NO_TA_BASE
-//nn anymore # include "maketa.h"
+//# include "maketa.h"
 #endif // NO_TA_BASE
 
 
@@ -86,6 +87,73 @@ int String_PArray::FindContains(const char* op, int start) const {
   return -1;
 }
 
+//////////////////////////
+//  taiMiscCore		//
+//////////////////////////
+
+#ifndef NO_TA_BASE
+TA_API taiMiscCore* taiMC_ = NULL; 
+
+taiMiscCore* taiMiscCore::New(QObject* parent) {
+  taiMiscCore* rval = new taiMiscCore(parent);
+  rval->Init();
+  return rval;
+}
+
+void taiMiscCore::Quit() {
+  taMisc::quitting = true;
+  if (taiMC_)
+    taiMC_->Quit_impl();
+}
+
+int taiMiscCore::RunPending() {
+//TODO: do more???  static void		WorkProc(); // the core idle loop process
+
+  QCoreApplication::processEvents();
+  return 0;
+}
+
+void taiMiscCore::WaitProc() {
+  tabMisc::WaitProc();
+}
+
+taiMiscCore::taiMiscCore(QObject* parent)
+:inherited(parent) 
+{
+}
+
+taiMiscCore::~taiMiscCore() {
+  if (taiMC_ == this)
+    taiMC_ = NULL;
+}
+  
+const String taiMiscCore::classname() {
+  return String(QCoreApplication::instance()->applicationName());
+}
+
+void taiMiscCore::Init(bool gui) {
+  taMisc::gui_active = gui;
+  
+  // special timeout=0 does idle processing in Qt
+  timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+  timer->start();
+}
+
+void taiMiscCore::Quit_impl() {
+  if (timer)
+    timer->stop();
+  QCoreApplication::instance()->quit();
+}
+
+void taiMiscCore::timer_timeout() {
+  if (taMisc::WaitProc)
+    taMisc::WaitProc();
+}
+
+
+#endif // NO_TA_BASE
+
 //////////////////////////////////
 // 	     taMisc		//
 //////////////////////////////////
@@ -98,6 +166,7 @@ String	taMisc::version_no = "3.5";
 
 String 	taMisc::LexBuf;
 bool	taMisc::in_init = false;
+bool	taMisc::quitting = false;
 bool	taMisc::not_constr = true;
 bool 	taMisc::gui_active = false;
 bool	taMisc::is_loading = false;
@@ -147,6 +216,7 @@ String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 //String	taMisc::help_cmd = "netscape -remote openURL\\(file:%s\\)";
 ostream*	taMisc::record_script = NULL;
 bool taMisc::beep_on_error = false;
+void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbusy; var is 'busy'
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 void (*taMisc::DelayedMenuUpdate_Hook)(taBase*) = NULL; // gui callback -- avoids zillions of gui ifdefs everywhere

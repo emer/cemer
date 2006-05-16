@@ -25,7 +25,7 @@ void FontSpec::Initialize() {
 
 void FontSpec::InitLinks() {
   inherited::InitLinks();
-  if(!taiMisc::gui_active) return;
+  if (!taMisc::gui_active) return;
 /*obs
 #ifndef WINDOWS
   pattern = "*" + (String) fnt->name + "-*";
@@ -70,10 +70,10 @@ void FontSpec::SetFontSize(int sz) {
 }
 
 void FontSpec::UpdateAfterEdit(){
-  if(!taiMisc::gui_active) return;
+  if (!taMisc::gui_active) return;
   if (!pattern.empty()) {
     //legacy value -- from load
-  #if (defined(WINDOWS) && (!defined(CYGWIN)))
+#if (defined(TA_OS_WIN))
     if(pattern.contains("-Helvetica-medium-r"))
       pattern.gsub("Helvetica-medium-r", "Arial*medium*");
     if(pattern.contains("-helvetica-medium-r"))
@@ -91,7 +91,7 @@ void FontSpec::UpdateAfterEdit(){
       else if((int)nwsz < 9) pointSize = 9;
       else pointSize = (int)nwsz;
     }
-  #else
+#else
   /*code was:  const iFont* f = iFont::lookup(pattern);
     if((f==NULL) && pattern.contains("Arial*medium*")) {
       String szs = pattern.after("Arial*medium*");

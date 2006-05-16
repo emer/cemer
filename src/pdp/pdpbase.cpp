@@ -220,7 +220,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
 #ifdef TA_GUI
   if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
-    taiMisc::Initialize(cssMisc::gui, "PDP++");
+    taiM_ = taiMisc::New(cssMisc::gui);
+    taiMC_ = taiM_;
     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
     	pdp_bitmap_height, pdp_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
@@ -241,15 +242,15 @@ int pdpMisc::Main(int argc, char *argv[]) {
 //obs    winbMisc::group_leader = root->window;
 //temp    taMisc::DelayedMenuUpdate(root); 	// get menus after startup..
   }
+#else // NO TA_GUI
+  taiMC_ = taiMiscCore::New();
 #endif //TA_GUI
   // create colorspecs even if nogui, since they are referred to in projects
   root->colorspecs.SetDefaultColor();	// set color after starting up..
 
 //3.2a:  if(cssiSession::WaitProc == NULL)
    //always use our wait proc, since there is a predefined chain backwards anyways...
-#ifdef TA_GUI
-   cssiSession::WaitProc = pdpMisc::WaitProc;
-#endif
+  taMisc::WaitProc = pdpMisc::WaitProc;
 
 
    // initialize plugins
@@ -305,7 +306,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   if((proj_to_load.size > 0) && !cssMisc::gui)
     pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
 #ifdef TA_GUI
-  if (taiMisc::gui_active) taiMisc::OpenWindows();
+  if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif
 
 #ifdef DMEM_COMPILE
@@ -357,8 +358,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
 #else
 //  cssMisc::Top->StartupShellAsync(cin, cout);
-//TODO: HACKS because we aren't calling the shell
-cssiSession::in_session = true;
+//TODO: eliminate these HACKS because we aren't calling the shell
+//no hacks yet...
   qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();
@@ -464,7 +465,7 @@ int get_unique_file_number(int st_no, const char* prefix, const char* suffix) {
   return i;
 }
 
-int pdpMisc::WaitProc_LoadProj() {
+void pdpMisc::WaitProc_LoadProj() {
   taFiler* gf = NULL;
   if(taMisc::gui_active) {
 //obs    root->GetFileDlg();
@@ -498,10 +499,9 @@ int pdpMisc::WaitProc_LoadProj() {
   taRefN::unRefDone(gf);
   proj_to_load.Reset();
   taMisc::DoneBusy();
-  return 0;
 }
 
-int pdpMisc::WaitProc_PostLoadOpr() {
+void pdpMisc::WaitProc_PostLoadOpr() {
   int i;
   for(i=0;i<post_load_opr.size;i++) {
     TAPtr obj = post_load_opr[i];
@@ -518,10 +518,9 @@ int pdpMisc::WaitProc_PostLoadOpr() {
     }
   }
   post_load_opr.Reset();
-  return 0;
 }
 
-int pdpMisc::WaitProc() {
+void pdpMisc::WaitProc() {
   if(proj_to_load.size > 0) {
     WaitProc_LoadProj();
   }
@@ -538,13 +537,10 @@ int pdpMisc::WaitProc() {
 #ifdef TA_GUI
   if(taMisc::gui_active) {
     taiMisc::OpenWindows();
-    return taiMisc::WaitProc();
   }
-  else {
-    return tabMisc::WaitProc();
-  }
+  taiMisc::WaitProc();
 #else
-  return 0; // TODO: check that this is a correct value
+  taiMiscCore::WaitProc();
 #endif
 }
 
@@ -582,7 +578,7 @@ Network* pdpMisc::GetDefNetwork(ProjectBase* prj) {
 static cssProgSpace* dmem_space1 = NULL;
 static cssProgSpace* dmem_space2 = NULL;
 
-int pdpMisc::DMem_WaitProc(bool send_stop_to_subs) {
+void pdpMisc::DMem_WaitProc(bool send_stop_to_subs) {
   if(dmem_space1 == NULL) dmem_space1 = new cssProgSpace;
   if(dmem_space2 == NULL) dmem_space2 = new cssProgSpace;
 
@@ -633,7 +629,6 @@ int pdpMisc::DMem_WaitProc(bool send_stop_to_subs) {
     DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
 		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdstr");
   }
-  return 0;
 }
 
 int pdpMisc::DMem_SubEventLoop() {

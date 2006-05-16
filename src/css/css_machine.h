@@ -138,7 +138,6 @@ public:
   static cssProgSpace*	cur_top;	// current top-level (set for parsing, running)
   static cssProgSpace*	code_cur_top;	// cur_top for coding (e.g. if top switched for ConstExpr)
   static cssProgSpace*	delete_me;	// delete this space, couldn't be done earlier
-  static cssProgSpace*	next_shell;	// make this the next shell (if not null); set in tascript.cc when user asks for interactive editing of script
 
   static cssArray*	s_argv;		// args passed by shell to scripts
   static cssInt*	s_argc;		// number of args passed by shell to scripts

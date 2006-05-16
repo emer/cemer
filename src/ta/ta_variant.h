@@ -311,7 +311,7 @@ public:
   void 		setQVariant(const QVariant& cp); 
   Variant& 	operator=(const QVariant& val) {setQVariant(val); return *this;}
   QVariant 	toQVariant() const;
-  operator QVariant() {return toQVariant();}
+  operator QVariant() const {return toQVariant();}
 #endif 
 
   Variant(); // default is null/invalid

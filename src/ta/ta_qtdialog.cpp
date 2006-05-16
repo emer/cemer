@@ -727,7 +727,7 @@ void taiDataHost::ClearBody() {
   rebuild_body = true;
   ClearBody_impl();
   BodyCleared();
-  cssiSession::RunPending(); // get the defered deletes to process now
+  taiMiscCore::RunPending(); // get the defered deletes to process now
 }
 
 void taiDataHost::ClearBody_impl() {
@@ -1369,7 +1369,8 @@ void taiEditDataHost::Constr_Data_impl(const MemberSpace& ms, taiDataList* dl) {
 }
 
 void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
-  win_str = String(taiM->classname()) + ": " + win_title;
+//  win_str = String(taiM->classname()) + ": " + win_title;
+  win_str = String(win_title);
   if (typ != NULL) {
     prompt_str = typ->name;
     if (typ->InheritsFrom(TA_taBase)) {
@@ -1980,12 +1981,15 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
+  if (dir.empty())
+    dir = last_dir;
   QFileDialog* fd = new QFileDialog(NULL, "", fname, filter); // no parent, no name, modal
   fd->setDir(dir);
 
   String caption;
   switch (filerOperation) {
   case foOpen:
+    fd->setAcceptMode(QFileDialog::AcceptOpen);
     fd->setMode(QFileDialog::ExistingFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Open for Reading");
     caption = String("Open: ") + filter;
@@ -1994,11 +1998,13 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
     // TODO: will this ever be called???
     goto exit;
   case foSaveAs:
+    fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
     caption = String("Save: ") + filter;
     break;
   case foAppend:
+    fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");
     caption = String("Append: ") + filter;
@@ -2009,6 +2015,7 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
 
   if (fd->exec() == QDialog::Accepted) {
         fname = fd->selectedFile();
+        dir = fd->directory().absolutePath();
         result = true;
   }
 

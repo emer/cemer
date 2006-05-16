@@ -1427,8 +1427,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
     }
     tmp->UpdateAfterEdit();
 #ifdef TA_GUI
-//was:    taiMisc::RunPending();	// process events as they happen in updates..
-    cssiSession::RunPending();	// process events as they happen in updates..
+    taiMisc::RunPending();	// process events as they happen in updates..
 #endif
   }
 

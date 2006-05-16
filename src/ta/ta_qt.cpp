@@ -82,9 +82,8 @@ int tai_rl_hook_proc() {
 // 	taiMisc: miscellaneous useful stuff 		//
 //////////////////////////////////////////////////////////
 
-TA_API taiMisc* taiM = NULL;
+TA_API taiMisc* taiM_ = NULL;
 
-bool 			taiMisc::gui_active = false;
 taiDialog_List 		taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
@@ -97,35 +96,15 @@ void (*taiMisc::Update_Hook)(TAPtr) = NULL;
 int taiMisc::busy_count = 0;
 
 
-void taiMisc::Initialize(bool gui, const char* classname_) {
-  cssiSession::Init();		// setup the interaction between qt & css
-  // sets the readline idle handler to cssiSession::Run
-
-  // allocate gui structures
-  taiM = new taiMisc(classname_);
-
-  // initialize the type system
-  taiType::InitializeTypes();
-
-#ifdef CYGWIN
-  extern void iv_display_scale(float scale);
-  iv_display_scale(taMisc::mswin_scale);
-#endif
-
-  if (gui & !cssiSession::WaitProc) {
-    cssiSession::WaitProc = tabMisc::WaitProc;
-  }
-
-  //NOTE: we need to preset gui here, to enable things like the root to actually make its window..
-  // however, strictly speaking, we really shouldn't set these until the main window is set via
-  // SetMainWindow
-  taiMisc::gui_active = gui;
-  taMisc::gui_active = gui;
+taiMisc* taiMisc::New(bool gui, QObject* parent) {
+  taiMisc* rval = new taiMisc(parent);
+  rval->Init(gui);
+  return rval;
 }
 
 void taiMisc::SetMainWindow(QWidget* win) {
   main_window = win;
-  QObject::connect(win, SIGNAL(destroyed()), taiM, SLOT(MainWindowDestroyed()) );
+  QObject::connect(win, SIGNAL(destroyed()), taiM_, SLOT(MainWindowDestroyed()) );
 //Qt3  qApp->setMainWidget(win);
 #ifdef TA_USE_INVENTOR
 //NOTE: we called this already, which created the special SoQApplication object
@@ -135,9 +114,7 @@ void taiMisc::SetMainWindow(QWidget* win) {
 #endif
 
   win->show(); //note: doesn't actually show until event loop called, from rl callback
-  // indicate gui_active -- cleared when main window destroyed
-  taiMisc::gui_active = true;		// now it is activated
-  taMisc::gui_active = true;		// now it is activated
+  // indicate taMisc::gui_active -- cleared when main window destroyed
 }
 
 /* Qt Metrics note
@@ -204,14 +181,19 @@ int taiMisc::text_height(int sizeSpec) {
 }
 
 
-taiMisc::taiMisc(const char* classname_) {
-  mclassname = classname_;
-  init();
+taiMisc::taiMisc(QObject* parent)
+:inherited(parent) 
+{
 }
-taiMisc::taiMisc() {
-  init();
-}
-void taiMisc::init() {
+
+void taiMisc::Init(bool gui) {
+  inherited::Init(gui);
+
+  // initialize the type system
+  taiType::InitializeTypes();
+
+  taMisc::WaitProc = &WaitProc; // typically gets replaced in pdpbase.cpp
+
   taMisc::Busy_Hook = &Busy_;
   taMisc::ScriptRecordingGui_Hook = &ScriptRecordingGui_; // note: ok to do more than once
   taMisc::DelayedMenuUpdate_Hook = &DelayedMenuUpdate_;
@@ -341,6 +323,8 @@ taiMisc::~taiMisc() {
   wait_cursor = NULL;
   delete record_cursor;
   record_cursor = NULL;
+  if (taiM_ == this)
+    taiM_ = NULL;
 }
 
 void taiMisc::InitMetrics() {
@@ -452,7 +436,6 @@ iFont taiMisc::nameFont(int fontSpec) {
 
 void taiMisc::MainWindowDestroyed() {
   main_window = NULL;
-  taiMisc::gui_active = false;
   taMisc::gui_active = false;
 }
 
@@ -466,13 +449,20 @@ void taiMisc::MainWindowClosing(bool& cancel) {
   //TODO: we will need to figure out how to do this, because we need to pump the event loop!
 }
 
+void taiMisc::Quit_impl() {
+// called when quitting -- 
+// TODO: close all windows etc.
+  inherited::Quit_impl();
+
+}
+
 void taiMisc::Update(TAPtr obj) {
   if (Update_Hook != NULL)
     (*Update_Hook)(obj);
 }
 
 void taiMisc::Busy_(bool busy) {
-  if (!gui_active)    return;
+  if (!taMisc::gui_active)    return;
   if (busy) {
     ++busy_count;	// keep track of number of times called
   //  if (cssiSession::block_in_event == true) // already busy
@@ -481,7 +471,6 @@ void taiMisc::Busy_(bool busy) {
     if (busy_count == 1) SetWinCursors();
   } else {
     if(--busy_count == 0) {
-      cssiSession::done_busy = true;
       RestoreWinCursors(); //added 4.0
     }
     if (busy_count < 0) {
@@ -492,18 +481,13 @@ void taiMisc::Busy_(bool busy) {
 }
 
 void taiMisc::DoneBusy_impl() {
-  if (!gui_active)    return;
+  if (!taMisc::gui_active)    return;
 //  cssiSession::block_in_event = false;
 //3.2a  RestoreWinCursors();
 }
 
-int taiMisc::RunPending() {
-  if (!gui_active)    return false;
-  return cssiSession::RunPending();
-}
-
 void taiMisc::ScriptRecordingGui_(bool start){
-  if (!gui_active)    return;
+  if (!taMisc::gui_active)    return;
   if (start) SetWinCursors();
   else       RestoreWinCursors();
 }
@@ -547,7 +531,7 @@ void taiMisc::PurgeDialogs() {
 
 
 /*obs bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
-  if(!gui_active)    return false;
+  if(!taMisc::gui_active)    return false;
   PurgeDialogs();
   bool got_one = false;
   //note: for panels, Cancel() causes panel to close/delete
@@ -594,7 +578,7 @@ void taiMisc::PurgeDialogs() {
 
 /*
 bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
-  if(!gui_active)    return false;
+  if(!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size - 1; i >= 0; --i) {
     taiEditDataHost* dlg = active_edits.FastEl(i);
@@ -621,7 +605,7 @@ bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
 }
 */
 bool taiMisc::RevertEdits(void* obj, TypeDef*) {
-  if (!gui_active)    return false;
+  if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
     taiEditDataHost* dlg = active_edits.FastEl(i);
@@ -634,7 +618,7 @@ bool taiMisc::RevertEdits(void* obj, TypeDef*) {
 }
 
 bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
-  if (!gui_active)    return false;
+  if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
     taiEditDataHost* edh = active_edits.FastEl(i);
@@ -650,7 +634,7 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iDataViewer* not_in_win)
   // NULL: ok to return any edit (typically used to get show value)
   // !NULL: must get other win that not; used to raise that edit panel to top, so
   //  shouldn't hide the edit panel that invoked the operation
-  if (!gui_active) return NULL;
+  if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
     taiEditDataHost* host = active_edits.FastEl(i);
     if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
@@ -694,11 +678,9 @@ void taiMisc::OpenWindows(){
   taiMisc::RunPending();
 }
 
-int taiMisc::WaitProc() {
-  if(tabMisc::WaitProc())
-    return true;
-
-  if(!taMisc::gui_active)    return false;
+void taiMisc::WaitProc() {
+  taiMiscCore::WaitProc();
+  if (!taMisc::gui_active) return;
 
 /*obs  if(update_winpos.size > 0) {
     Wait_UpdateWinPos();
@@ -708,11 +690,11 @@ int taiMisc::WaitProc() {
     Wait_UpdateMenus();
     return true;
   } */
-  return Script::Wait_RecompileScripts();
+  Script::Wait_RecompileScripts();
 }
 
 /*obs void winbMisc::Wait_UpdateMenus() {
-  if(!taMisc::gui_active)    return;
+  if(!taMisc::taMisc::gui_active)    return;
   taMisc::Busy();
   int i;
   for(i=0; i<update_menus.size; i++) {
@@ -729,7 +711,7 @@ int taiMisc::WaitProc() {
 }*/
 
 /*obs void winbMisc::Wait_UpdateWinPos() {
-  if(!taMisc::gui_active)    return;
+  if(!taMisc::taMisc::gui_active)    return;
   taMisc::Busy();
   int i;
   for(i=0; i<update_winpos.size; i++) {
@@ -748,7 +730,7 @@ int taiMisc::WaitProc() {
 } */
 
 void taiMisc::DelayedMenuUpdate_(TAPtr obj) {
-  if(!taMisc::gui_active)    return;
+  if(!taMisc::taMisc::gui_active)    return;
 /*obs   if(taBase::GetRefn(obj) == 0) {
     taMisc::Error("*** Object is not owned:", obj->GetName(), "of type:",
 		  obj->GetTypeDef()->name);
@@ -758,7 +740,7 @@ void taiMisc::DelayedMenuUpdate_(TAPtr obj) {
 }
 
 /*obs void winbMisc::MenuUpdate(TAPtr obj) {
-  if(!taMisc::gui_active)	return;
+  if(!taMisc::taMisc::gui_active)	return;
 
   taMisc::Busy();
 
@@ -840,7 +822,7 @@ void taiMisc::ScriptIconify(void*, int) {
 
 
 /*nn void taiMisc::CreateLoadDialog(const char* caption){
-  if (!gui_active) return;
+  if (!taMisc::gui_active) return;
   String cap = caption;
   if (caption)
     cap = caption;
@@ -854,7 +836,7 @@ void taiMisc::ScriptIconify(void*, int) {
 }
 
 void taiMisc::SetLoadDialog(char* tpname, int totalSteps){
-  if (!taMisc::gui_active) return;
+  if (!taMisc::taMisc::gui_active) return;
   if (load_dlg == NULL) return;
   String loadstring = String("Loading: ") + String(tpname);
   load_dlg->setLabelText(loadstring);
@@ -865,13 +847,13 @@ void taiMisc::SetLoadDialog(char* tpname, int totalSteps){
 }
 
 void taiMisc::StepLoadDialog(int stepNum) {
-  if (!taMisc::gui_active) return;
+  if (!taMisc::taMisc::gui_active) return;
   if (load_dlg == NULL) return;
   load_dlg->setProgress(stepNum);
   RunPending();
 }
 void taiMisc::RemoveLoadDialog(){
-  if (!taMisc::gui_active) return;
+  if (!taMisc::taMisc::gui_active) return;
   if (load_dlg == NULL) return;
   load_dlg->close();
   RunPending();

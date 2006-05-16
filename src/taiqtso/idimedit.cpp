@@ -52,6 +52,7 @@ void iDimEdit::init() {
   lay->addSpacing(2);
   wdgDimEdits = new QWidget(this);
   layDimEdits = new QHBoxLayout(wdgDimEdits);
+  layDimEdits->setMargin(0);
   layDimEdits->setSpacing(2);
   lay->addWidget(wdgDimEdits);
   lay->addStretch();

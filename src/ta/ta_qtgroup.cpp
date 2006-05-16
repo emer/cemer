@@ -1053,7 +1053,7 @@ void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(taiM->classname()) + ": " + win_title
+  win_str = String(win_title)
      + " " + cur_lst->GetPath();
 }
 
@@ -1236,7 +1236,7 @@ void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) 
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(taiM->classname()) + ": " + win_title
+  win_str = String(win_title)
      + " " + cur_lst->GetPath();
 }
 
@@ -1380,8 +1380,7 @@ void gpiGroupDataHost::Constr_Strings(const char*, const char* win_title) {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(taiM->classname()) + ": " +
-    win_title + " " + cur_lst->GetPath();
+  win_str = String(win_title) + " " + cur_lst->GetPath();
 }
 
 
@@ -1410,7 +1409,7 @@ void gpiGroupDataHost::Constr_Body() {
 }
 
 void gpiGroupDataHost::GetImage() {
-  gpiListDataHost::GetImage();
+  inherited::GetImage();
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   if (sub_data_el.size != cur_gp->gp.size) {
 return;

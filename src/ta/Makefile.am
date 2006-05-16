@@ -122,6 +122,7 @@ SRCS =\
 	ta_filer.cpp \
 	icolor.cpp \
 	ta_type.cpp \
+	ta_type.moc.cpp \
 	ta_type_constr.cpp \
 	ta_base.cpp \
 	ta_group.cpp \

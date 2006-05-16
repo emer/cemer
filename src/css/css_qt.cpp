@@ -16,8 +16,55 @@
 
 
 // These are some routines to handle simultaneous use of css and interviews
-
 #include "css_qt.h"
+
+#include "css_qtdialog.h"
+#include "css_basic_types.h"
+#include "css_c_ptr_types.h"
+#include "ta_qt.h"
+
+void cssiSession::CancelProgEdits(cssProgSpace* prsp) {
+  int i;
+  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
+    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
+    if ((dlg->state == taiDataHost::ACTIVE) && ((dlg->top == prsp) || (dlg->top == NULL)))
+      dlg->Cancel();
+  }
+  taiMisc::PurgeDialogs();
+}
+
+void cssiSession::CancelClassEdits(cssClassType* cltyp) {
+  int i;
+  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
+    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
+    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj->type_def == cltyp))
+      dlg->Cancel();
+  }
+  taiMisc::PurgeDialogs();
+}
+
+void cssiSession::CancelObjEdits(cssClassInst* clobj) {
+  int i;
+  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
+    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
+    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj == clobj))
+      dlg->Cancel();
+  }
+  taiMisc::PurgeDialogs();
+}
+
+void cssiSession::RaiseObjEdits() {
+  int i;
+  taiMiscCore::RunPending();
+  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
+    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
+    if (dlg->state == taiDataHost::ACTIVE)
+      dlg->Raise();
+  }
+  taiMiscCore::RunPending();
+}
+
+/*
 #include "css_qtdialog.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
@@ -43,22 +90,6 @@ extern "C" {
 }
 
 
-/*obs nuke
-void iSession::exit(int retcode) {
-  // override -- called by Qt if it gets a Quit message
-  if (!m_done) {
-    m_done = true;
-    QEventLoop::exit(retcode); // sets the exit flag, for compatability
-    //following is what QEventLoop does when it gets a Quit message in the proper event loop (that we don't run)
-    // note however that we don't need the aboutToQuit() signal, and Coin/Inventor does not use it either
-//    ((iApplication*)qApp)->emit_aboutToQuit();
-  if (cssMisc::cur_top)
-    cssMisc::cur_top->ExitShell(); //forces exit from shell
-    QApplication::sendPostedEvents( 0, QEvent::DeferredDelete );
-  }
-} */
-
-
 
 //////////////////////////////////
 // 	cssMisc		//
@@ -73,6 +104,16 @@ int (*cssiSession::WaitProc)() = NULL; // user sets this to a work process
 int cssiSession::readline_waitproc() {
   return Run();
 }
+
+int cssiSession::RunPending() {
+  in_session = true;
+
+  if (!QCoreApplication::closingDown() && in_session && !quitting) {
+    QCoreApplication::processEvents();
+  }
+  return (QCoreApplication::closingDown() || !in_session || !quitting);
+}
+
 
 void cssiSession::Init() {
   //note: init of waitproc was done in cssMisc::Preinitialize
@@ -135,68 +176,5 @@ int cssiSession::Run() {
 
 // returns if it was stopped or not..
 
-int cssiSession::RunPending() {
-  in_session = true;
 
-//Qt3  if (ses->hasPendingEvents() && !ses->done() && cssiSession::in_session) {
-  if (!QCoreApplication::closingDown() && in_session && !quitting) {
-    QCoreApplication::processEvents();
-  }
-  return (QCoreApplication::closingDown() || !in_session || !quitting);
-}
-
-/* 
-// this is apparently if some problem occurs, not sure how to deal with it
-// at this point..
-int cssiSession::exceptionRaised(int) {
-  stdin_event = true;
-  Stop();
-  taMisc::Error("exception raised on stdin in cssiSession");
-  return 0;
-} */
-
-
-void cssiSession::CancelProgEdits(cssProgSpace* prsp) {
-  int i;
-  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
-    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && ((dlg->top == prsp) || (dlg->top == NULL)))
-      dlg->Cancel();
-  }
-  taiMisc::PurgeDialogs();
-}
-
-void cssiSession::CancelClassEdits(cssClassType* cltyp) {
-  int i;
-  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
-    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj->type_def == cltyp))
-      dlg->Cancel();
-  }
-  taiMisc::PurgeDialogs();
-}
-
-void cssiSession::CancelObjEdits(cssClassInst* clobj) {
-  int i;
-  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
-    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj == clobj))
-      dlg->Cancel();
-  }
-  taiMisc::PurgeDialogs();
-}
-
-void cssiSession::RaiseObjEdits() {
-  int i;
-  for (i=0;i<10;i++)
-    RunPending();
-  for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
-    cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if (dlg->state == taiDataHost::ACTIVE)
-      dlg->Raise();
-  }
-  for (i=0;i<10;i++)
-    RunPending();
-}
-
-
+*/
