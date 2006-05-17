@@ -571,6 +571,29 @@ private:
   void			Destroy() {}
 };
 
+class PDP_API TestFloat: public taNBase {
+INHERITED(taNBase)
+public:
+  float			f1;
+  float			f2;
+  float			f3;
+  double		d1;
+  double		d2;
+  double		d3;
+  
+  TA_BASEFUNS(TestFloat);
+private:
+  void 			Initialize() 
+    {f1=0.0f;
+     f2=3.141592653f; 
+     f3=-0.123456789E-15f; 
+     d1=0.0; 
+     d2=3.14159265358979323; 
+     d3=-0.1234567890123456789E-45;
+     }
+  void			Destroy() {}
+};
+
 class DataTable;
 class PDP_API NetHelper: public taNBase {
 INHERITED(taNBase)

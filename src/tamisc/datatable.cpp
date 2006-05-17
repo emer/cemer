@@ -44,25 +44,25 @@ void DataItem::Copy_(const DataItem& cp) {
   vec_n = cp.vec_n;
 }
 
-String DataItem::DispOptionAfter(const char* opt) {
+String DataItem::DispOptionAfter(const String& opt) {
   String opt_after = disp_opts.after(opt);
   opt_after = opt_after.before(',');
   return opt_after;
 }
 
-void DataItem::SetStringName(const char* nm) {
+void DataItem::SetStringName(const String& nm) {
   name = "$";
   name += nm;
   is_string = true;
 }
 
-void DataItem::SetNarrowName(const char* nm) {
+void DataItem::SetNarrowName(const String& nm) {
   name = "|";
   name += nm;
   AddDispOption("NARROW");
 }
 
-void DataItem::SetFloatVecNm(const char* nm, int n) {
+void DataItem::SetFloatVecNm(const String& nm, int n) {
   if(n > 1) {
     name = String("<") + (String)n + ">" + nm;
     vec_n = n;
@@ -73,7 +73,7 @@ void DataItem::SetFloatVecNm(const char* nm, int n) {
   }
 }
 
-void DataItem::SetStringVecNm(const char* nm, int n) {
+void DataItem::SetStringVecNm(const String& nm, int n) {
   is_string = true;
   if(n > 1) {
     name = String("$<") + (String)n + ">" + nm;
@@ -85,7 +85,7 @@ void DataItem::SetStringVecNm(const char* nm, int n) {
   }
 }
 
-void DataItem::AddDispOption(const char* opt) {
+void DataItem::AddDispOption(const String& opt) {
   String nm = " ";		// pad with preceding blank to provide start cue
   nm += String(opt) + ",";
   if(HasDispOption(nm))
@@ -1055,11 +1055,13 @@ String DataArray_impl::ValTypeToStr(ValType vt) {
   static String str_float("float");
   static String str_int("int");
   static String str_byte("byte");
+  static String str_Variant("Variant");
   switch (vt) {
   case VT_STRING: return str_String;
   case VT_FLOAT: return str_float;
   case VT_INT: return str_int;
   case VT_BYTE: return str_byte;
+  case VT_VARIANT: return str_Variant;
   default: return _nilString; // compiler food
   }
 }
@@ -1110,7 +1112,7 @@ void DataArray_impl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void DataArray_impl::AddDispOption(const char* opt) {
+void DataArray_impl::AddDispOption(const String& opt) {
   String nm = " ";		// pad with preceding blank to provide start cue
   nm += String(opt) + ",";
   if(HasDispOption(nm))
@@ -1137,7 +1139,7 @@ int DataArray_impl::displayWidth() const {// low level display width, in tabs (8
   return rval;
 }
 
-String DataArray_impl::DispOptionAfter(const char* opt) const {
+const String DataArray_impl::DispOptionAfter(const String& opt) const {
   String rval = disp_opts.after(opt);
   rval = rval.before(',');
   return rval;
@@ -1169,12 +1171,12 @@ String DataArray_impl::GetDisplayName() const {
   return rval;
 }
 
-String DataArray_impl::GetValAsString_impl(int row, int cell) const {
+const String DataArray_impl::GetValAsString_impl(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
 } 
 
-Variant DataArray_impl::GetValAsVar_impl(int row, int cell) const {
+const Variant DataArray_impl::GetValAsVar_impl(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
 } 
@@ -1279,20 +1281,10 @@ String ColDescriptor_List::GetColHeading(int col) {
 //	DataTable	//
 //////////////////////////
 
-/*
-  Streaming Format:
-  
-  The normal streaming format for the DataTable itself, and its columns is followed.
-  The data is streamed after the column info, in a row major format:
-  (note: "rows" was already loaded into DataTable, so it is used to preallocate space in the arrays)
-  
-   
-*/
-
 void DataTable::Initialize() {
   SetBaseType(&TA_DataArray);	// the impl doesn't inherit properly..
   rows = 0;
-  save_data = false;
+  save_data = true;
 #ifdef TA_GUI
   m_dtm = NULL; // returns new if none exists, or existing -- enables views to be shared
 #endif
@@ -1312,8 +1304,8 @@ void DataTable::Copy_(const DataTable& cp) {
   save_data = cp.save_data;
 }
 
-void DataTable::AddColDispOpt(const char* dsp_opt, int col, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+void DataTable::AddColDispOpt(const String& dsp_opt, int col) {
+  DataArray_impl* da = GetColData(col);
   if(da != NULL) da->AddDispOption(dsp_opt);
 }
 
@@ -1345,11 +1337,6 @@ void DataTable::AddBlankRow() {
   RowAdded();
 }
 
-void DataTable::AddFloatVal(float val, int col, int subgp) {
-  float_Matrix* dt = GetColFloatArray(col, subgp);
-  if(dt != NULL) dt->Add(val);
-}
-
 /*obs void DataTable::AddRow(LogData& ld) {
   int cur_i = 0;		// current item at top level
   int subgp_gpi = 0;		// current subgroup index (of the group)
@@ -1373,7 +1360,7 @@ void DataTable::AddFloatVal(float val, int col, int subgp) {
 	subgp_max = 1;		// need at least one in group (this one!)
       subgp_i = 0;
 
-      SetFieldData(ld, ldi, ditem, subgp, subgp_i);
+      SetFieldData(ld, ldi, ditem_i);
     } else {
       if (subgp != NULL) {	// in a subgroup
 	subgp_i++;		// increment the index
@@ -1382,7 +1369,7 @@ void DataTable::AddFloatVal(float val, int col, int subgp) {
 	  SetFieldData(ld, ldi, ditem, this, cur_i);
 	  cur_i++;
 	} else {			// get item from this group
-	  SetFieldData(ld, ldi, ditem, subgp, subgp_i);
+	  SetFieldData(ld, ldi, ditem_i);
 	}
       } else {			// in top-level group
 	SetFieldData(ld, ldi, ditem, this, cur_i);
@@ -1402,11 +1389,6 @@ void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
       val = ((float_RArray*)ar->AR())->SafeEl(row_num);
     tar.Add(val);
   }
-}
-
-void DataTable::AddStringVal(const char* val, int col, int subgp) {
-  String_Matrix* dt = GetColStringArray(col, subgp);
-  if(dt != NULL) dt->Add(val);
 }
 
 void DataTable::AggRowToArray(float_RArray& tar, int row_num, Aggregate& agg) const {
@@ -1492,37 +1474,18 @@ String DataTable::GetColHeading(int col) {
   }
 }
 
-DataArray_impl* DataTable::GetColData(int col, int subgp) {
-  DataTable* tbl;
-  if(subgp < 0) tbl = this;
-  else { if(subgp >= gp.size) return NULL; tbl = (DataTable*)gp.FastEl(subgp); }
-  if(col >= tbl->size) return NULL;
-  return (DataArray_impl*)tbl->FastEl(col);
+DataArray_impl* DataTable::GetColData(int col) const {
+  DataTable* tbl = NULL;
+  if (col >= leaves) return NULL;
+  else return Leaf(col);
 }
 
-float_Data* DataTable::GetColFloatData(int col, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  if((da != NULL) && da->InheritsFrom(TA_float_Data)) return (float_Data*)da;
-  return NULL;
+taMatrix* DataTable::GetColMatrix(int col) const {
+  DataArray_impl* da = GetColData(col);
+  if (da) return da->AR();
+  else return NULL;
 }
 
-String_Data* DataTable::GetColStringData(int col, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  if((da != NULL) && da->InheritsFrom(TA_String_Data)) return (String_Data*)da;
-  return NULL;
-}
-
-float_Matrix* DataTable::GetColFloatArray(int col, int subgp) {
-  float_Data* dt = GetColFloatData(col, subgp);
-  if(dt != NULL) return (float_Matrix*)(dt->AR());
-  return NULL;
-}
-
-String_Matrix* DataTable::GetColStringArray(int col, int subgp) {
-  String_Data* dt = GetColStringData(col, subgp);
-  if(dt != NULL) return (String_Matrix*)(dt->AR());
-  return NULL;
-}
 
 #ifdef TA_GUI
 QAbstractItemModel* DataTable::GetDataModel() {
@@ -1534,40 +1497,32 @@ QAbstractItemModel* DataTable::GetDataModel() {
 }
 #endif
 
-float DataTable::GetFloatVal(int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+float DataTable::GetValAsFloat(int col, int row) {
+  DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsFloat(i);
   else return 0.0f;
 }
 
-String DataTable::GetValAsString(int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+const String DataTable::GetValAsString(int col, int row) const {
+  DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsString(i);
   else return "n/a";
 }
 
-Variant DataTable::GetValAsVar(int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+const Variant DataTable::GetValAsVar(int col, int row) const {
+  DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsVar(i);
   else return _nilVariant;
 }
 
-String DataTable::GetStringVal(int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  int i;
-  if (da &&  idx(row, da->rows(), i))
-    return da->GetValAsString(i);
-  else return _nilString;
-}
-
-bool DataTable::hasData(int row, int col, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+bool DataTable::hasData(int col, int row) {
+  DataArray_impl* da = GetColData(col);
   int i;
   return (da && idx(row, da->rows(), i));
 }
@@ -1597,7 +1552,7 @@ int DataTable::MinLength() {
   return min;
 }
 
-DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const char* col_nm) {
+DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const String& col_nm) {
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
@@ -1605,13 +1560,14 @@ DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const char* 
   return rval;
 }
 
-DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const char* col_nm) {
+DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const String& col_nm) {
   TypeDef* td;
   switch (val_type) {
   case DataArray_impl::VT_STRING: td = &TA_String_Data; break;
   case DataArray_impl::VT_FLOAT:  td = &TA_float_Data; break;
   case DataArray_impl::VT_INT:  td = &TA_int_Data; break;
   case DataArray_impl::VT_BYTE:  td = &TA_byte_Data; break;
+  case DataArray_impl::VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
   DataArray_impl* rval = (DataArray_impl*) NewEl(1, td);
@@ -1632,15 +1588,15 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const c
   return rval;
 }
 
-float_Data* DataTable::NewColFloat(const char* col_nm) {
+float_Data* DataTable::NewColFloat(const String& col_nm) {
   return (float_Data*)NewCol(DataArray_impl::VT_FLOAT, col_nm);
 }
 
-int_Data* DataTable::NewColInt(const char* col_nm) {
+int_Data* DataTable::NewColInt(const String& col_nm) {
   return (int_Data*)NewCol(DataArray_impl::VT_INT, col_nm);
 }
 
-DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
+DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, const String& col_nm,
     const MatrixGeom& cell_geom) 
 {
   StructUpdate(true);
@@ -1652,7 +1608,7 @@ DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, co
   return rval;
 }
 
-DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const char* col_nm,
+DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
     int dims, int d0, int d1, int d2, int d3)
 {
   MatrixGeom geom(dims);
@@ -1670,11 +1626,11 @@ DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const 
   return rval;
 }
 
-String_Data* DataTable::NewColString(const char* col_nm) {
+String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(DataArray_impl::VT_STRING, col_nm);
 }
 
-DataTable* DataTable::NewGroupFloat(const char* col_nm, int n) {
+DataTable* DataTable::NewGroupFloat(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
@@ -1694,7 +1650,7 @@ DataTable* DataTable::NewGroupFloat(const char* col_nm, int n) {
   return rval;
 }
 
-DataTable* DataTable::NewGroupInt(const char* col_nm, int n) {
+DataTable* DataTable::NewGroupInt(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
@@ -1716,7 +1672,7 @@ DataTable* DataTable::NewGroupInt(const char* col_nm, int n) {
   return rval;
 }
 
-DataTable* DataTable::NewGroupString(const char* col_nm, int n) {
+DataTable* DataTable::NewGroupString(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
   DataTable* rval = (DataTable*)NewGp(1);
@@ -1736,9 +1692,9 @@ DataTable* DataTable::NewGroupString(const char* col_nm, int n) {
   return rval;
 }
 
-void DataTable::PutArrayToCol(const float_RArray& ar, int col, int subgp) {
+void DataTable::PutArrayToCol(const float_RArray& ar, int col) {
 /*TODO
-  float_Matrix* far = GetColFloatArray(col, subgp);
+  float_Matrix* far = GetColFloatArray(col);
   if (far != NULL) {
     far->CopyFrom((taBase*)&ar);
   }*/
@@ -1899,9 +1855,8 @@ void DataTable::LoadData(istream& strm, int max_recs) {
   ResetData();
 }
 
-
-void DataTable::SetColName(const char* col_nm, int col, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
+void DataTable::SetColName(const String& col_nm, int col) {
+  DataArray_impl* da = GetColData(col);
   if(da != NULL) da->name = col_nm;
 }
 
@@ -1931,7 +1886,7 @@ void DataTable::SetColName(const char* col_nm, int col, int subgp) {
 
       if(subgp->size > subgp_max)
 	subgp->EnforceSize(subgp_max); // trim excess (but don't add -- could be wrong)
-      SetFieldHead(ditem, subgp, subgp_i);
+      SetFieldHead(ditem_i);
     } else {
       if (subgp != NULL) {	// in a subgroup
 	subgp_i++;		// increment the index
@@ -1940,7 +1895,7 @@ void DataTable::SetColName(const char* col_nm, int col, int subgp) {
 	  SetFieldHead(ditem, this, cur_i);
 	  cur_i++;
 	} else {			// get item from this group
-	  SetFieldHead(ditem, subgp, subgp_i);
+	  SetFieldHead(ditem_i);
 	}
       } else {			// in top-level group
 	SetFieldHead(ditem, this, cur_i);
@@ -1955,24 +1910,6 @@ void DataTable::SetColName(const char* col_nm, int col, int subgp) {
   StructUpdate(false);
 } */
 
-void DataTable::SetFloatVal(float val, int col, int row, int subgp) {
-  float_Matrix* dt = GetColFloatArray(col, subgp);
-  if ((dt != NULL) && (dt->InRange(row)))
-    dt->FastEl(row) = val;
-}
-
-void DataTable::SetLastFloatVal(float val, int col, int subgp) {
-  float_Matrix* dt = GetColFloatArray(col, subgp);
-  if ((dt != NULL) && (dt->size > 0))
-    dt->FastEl(dt->size - 1) = val;
-}
-
-void DataTable::SetLastStringVal(const char* val, int col, int subgp) {
-  String_Matrix* dt = GetColStringArray(col, subgp);
-  if ((dt != NULL) && (dt->size > 0))
-    dt->FastEl(dt->size - 1) = val;
-}
-
 void DataTable::SetSaveToFile(bool save_to_file) {
   taLeafItr i;
   DataArray_impl* ar;
@@ -1981,16 +1918,19 @@ void DataTable::SetSaveToFile(bool save_to_file) {
   }
 }
 
-void DataTable::SetStringVal(const char* val, int col, int row, int subgp) {
-  String_Matrix* dt = GetColStringArray(col, subgp);
-  if ((dt != NULL) && (dt->InRange(row)))
-    dt->FastEl(row) = val;
+void DataTable::SetValAsFloat(float val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return;
+  if (da->is_matrix) return;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsFloat(val, i);
+  }
 }
 
-void DataTable::SetValAsString(const String& val, int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  if (da == NULL) return;
-  //TODO: maybe need to ignore for matrix type
+void DataTable::SetValAsString(const String& val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return;
   if (da->is_matrix) return;
   int i;
   if (idx(row, da->rows(), i)) {
@@ -1998,13 +1938,14 @@ void DataTable::SetValAsString(const String& val, int col, int row, int subgp) {
   }
 }
 
-bool DataTable::SetValAsVar(const Variant& val, int col, int row, int subgp) {
-  DataArray_impl* da = GetColData(col, subgp);
-  if (da == NULL) return false;
+void DataTable::SetValAsVar(const Variant& val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return;
+  if (da->is_matrix) return;
   int i;
   if (idx(row, da->rows(), i)) {
-    return da->SetValAsVar(val, i);
-  } else return false;
+    da->SetValAsVar(val, i);
+  }
 }
 
 
@@ -2171,7 +2112,7 @@ void ClustNode::Graph_impl(ostream& strm) {
   }
 }
 
-void ClustNode::XGraph(const char* fnm, const char* title) {
+void ClustNode::XGraph(const String& fnm, const String& title) {
   fstream fh;
   fh.open(fnm, ios::out);
   fh << "TitleText: " << title << "\n";
@@ -2205,43 +2146,43 @@ void ClustNode::GraphData(DataTable* dt) {
 void ClustNode::GraphData_impl(DataTable* dt) {
   if(pat != NULL) {
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist - nn_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist - nn_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
 
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist, 0);
-    dt->SetLastFloatVal(y, 1);
-    dt->SetLastStringVal(name, 2);
+    dt->SetValAsFloat(par_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
+    dt->SetValAsString(name, 2, -1);
 
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist - nn_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist - nn_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
 
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist - nn_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist - nn_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
   }
   else {
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist - nn_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist - nn_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
 
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
 
     int i;
     for(i=0; i<children.size; i++) {
       ClustLink* nd = (ClustLink*)children[i];
       nd->node->GraphData_impl(dt);
       dt->AddBlankRow();
-      dt->SetLastFloatVal(par_dist, 0);
-      dt->SetLastFloatVal(y, 1);
+      dt->SetValAsFloat(par_dist, 0, -1);
+      dt->SetValAsFloat(y, 1, -1);
     }
 
     dt->AddBlankRow();
-    dt->SetLastFloatVal(par_dist - nn_dist, 0);
-    dt->SetLastFloatVal(y, 1);
+    dt->SetValAsFloat(par_dist - nn_dist, 0, -1);
+    dt->SetValAsFloat(y, 1, -1);
   }
 }
 
@@ -2697,7 +2638,7 @@ void DT_ViewSpec::ReBuildFromDataTable() {
   delete old;
 }
 
-void DT_ViewSpec::SetDispNms(const char* base_name) {
+void DT_ViewSpec::SetDispNms(const String& base_name) {
   display_name = base_name;
   int i;
   for(i=0;i<size;i++) {

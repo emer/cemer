@@ -467,18 +467,14 @@ istream* taFiler::Open(const char* nm, bool no_dlg) {
     fname = nm;
     file_selected = true;
   }
-#ifdef TA_NO_GUI
   if (no_dlg) {
     return open_read();
+#ifdef TA_NO_GUI
   } else {
     taMisc::Error("FileOpen: dialog not allowed in no-gui version of this program.");
     return NULL;
-  }
 #endif
-
-#ifdef TA_GUI
-  if (no_dlg || !cssiSession::in_session)
-    return open_read();
+  }
 
   bool wasFileChosen = GetFileName(fname, foOpen);
 
@@ -495,7 +491,6 @@ istream* taFiler::Open(const char* nm, bool no_dlg) {
     }
   }
   return rstrm;
-#endif // TA_GUI
 }
 
 ostream* taFiler::Save(const char* nm, bool no_dlg) {
@@ -503,18 +498,14 @@ ostream* taFiler::Save(const char* nm, bool no_dlg) {
     fname = nm;
     file_selected = true;
   }
-#ifdef TA_NO_GUI
   if (no_dlg) {
     return open_write();
+#ifdef TA_NO_GUI
   } else {
     taMisc::Error("FileSave: dialog not allowed in no-gui version of this program.");
     return NULL;
-  }
 #endif
-
-#ifdef TA_GUI
-  if (no_dlg || !cssiSession::in_session)
-    return open_write();
+  }
 
   if(fname == "")
     return SaveAs();
@@ -523,7 +514,6 @@ ostream* taFiler::Save(const char* nm, bool no_dlg) {
     return SaveAs();
   }
   return ostrm;
-#endif // TA_GUI
 }
 
 ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
@@ -532,18 +522,14 @@ ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
     fname = nm;
     file_selected = true;
   }
-#ifdef TA_NO_GUI
   if (no_dlg) {
     return open_write();
+#ifdef TA_NO_GUI
   } else {
     taMisc::Error("FileSaveAs: dialog not allowed in no-gui version of this program.");
     return NULL;
-  }
 #endif
-
-#ifdef TA_GUI
-  if (no_dlg || !cssiSession::in_session)
-    return open_write();
+  }
 
   bool wasFileChosen = GetFileName(fname, foSaveAs);
 
@@ -566,7 +552,6 @@ ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
     }
   }
   return rstrm;
-#endif // TA_GUI
 }
 
 ostream* taFiler::Append(const char* nm, bool no_dlg) {
@@ -575,18 +560,14 @@ ostream* taFiler::Append(const char* nm, bool no_dlg) {
     fname = nm;
     file_selected = true;
   }
-#ifdef TA_NO_GUI
-  if(no_dlg) {
+  if (no_dlg) {
     return open_append();
+#ifdef TA_NO_GUI
   } else {
     taMisc::Error("FileAppend: dialog not allowed in no-gui version of this program.");
     return NULL;
-  }
 #endif
-
-#ifdef TA_GUI
-  if (no_dlg || !cssiSession::in_session)
-    return open_append();
+  }
 
   bool wasFileChosen = GetFileName(fname, foAppend);
 
@@ -603,7 +584,6 @@ ostream* taFiler::Append(const char* nm, bool no_dlg) {
     }
   }
   return rstrm;
-#endif // TA_GUI
 }
 
 void taFiler::Close() {

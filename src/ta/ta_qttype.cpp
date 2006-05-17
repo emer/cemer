@@ -950,7 +950,7 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   if(mbr->HasOption("NO_SCOPE"))
     rval->scope_ref = NULL;
   else if((host_ != NULL) && (host_->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
-    rval->scope_ref = (TAPtr)(((taiEditDataHost*)host_)->cur_base);
+    rval->scope_ref = (TAPtr)(host_->Base());
   rval->GetMenu();
   return rval;
 }

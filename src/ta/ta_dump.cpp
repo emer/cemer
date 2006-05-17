@@ -415,16 +415,13 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     }
   }
   if (save_value) {
+    String str = eff_type->GetValStr(new_base, base, this);
+    strm << "=";
     if (eff_type->InheritsFrom(TA_taString)) {
-      //TODO: should have better substitution
-      // put quotes here because other uses of string vals don't need them
-      // also quote special characters
-      taString str = eff_type->GetValStr(new_base, base, this);
-      str.gsub("\\", "\\\\");
-      str.gsub("\"", "\\\"");
-      strm << "=\"" << str << "\"";
+      // note: it won't stream an empty string
+      taMisc::write_quoted_string(strm, str);
     } else {
-      strm << "=" << eff_type->GetValStr(new_base, base, this);
+      strm << str;
     }
   }
   strm << ";\n";
@@ -570,6 +567,8 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
     }
   } //NOTE: shouldn't this never happen???
   else {
+taMisc::Warning("TypeDef::Dump_Save_Value unexpectedly doing atomic value dump for type: ",
+  name);
     strm << " = " << GetValStr(base, par) << "\n";
   }
   return true;
@@ -667,7 +666,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
     rbase->Dump_Save_impl(strm, (TAPtr)par, indent);
-    rbase->Dump_SaveR(strm, (TAPtr)par, indent);
+//nn,already in _impl    rbase->Dump_SaveR(strm, (TAPtr)par, indent);
   } else {
     Dump_Save_Path(strm, base, par, indent);
     if (InheritsNonAtomicClass()) {
@@ -899,7 +898,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       return false;
     }
     
-    //note: in v3, we based expectation of " on string type, but
+/*obs    //note: in v3, we based expectation of " on string type, but
     // we should rather let input stream tell us
     c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
     
@@ -907,8 +906,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       c = taMisc::read_till_quote(strm); // get 1st quote
       if (c == '\"')			  // "
         c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
-    }
-    else {
+    } else {
       c = taMisc::read_till_rb_or_semi(strm);
     }
   
@@ -916,8 +914,23 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       taMisc::Warning("*** Missing ';' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
+    }*/
+  
+    c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
+    // in 4.x, we let the stream tell us if a quoted string is coming...
+    if (c == '\"') {
+      c = taMisc::skip_till_start_quote_or_semi(strm); // duh, has to succeed!
+      c = taMisc::read_till_end_quote_semi(strm); // 
+      
+    } else {
+      c = taMisc::read_till_rb_or_semi(strm);
     }
   
+    if (c != ';') {
+      taMisc::Warning("*** Missing ';' in dump file for member:", name,
+                    "in eff_type:",GetOwnerType()->name);
+      return true;		// don't scan any more after this err..
+    }
     eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
     if(taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "Leaving MemberDef::Dump_Load, member: " << name
@@ -1414,8 +1427,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
     }
     tmp->UpdateAfterEdit();
 #ifdef TA_GUI
-//was:    taiMisc::RunPending();	// process events as they happen in updates..
-    cssiSession::RunPending();	// process events as they happen in updates..
+    taiMisc::RunPending();	// process events as they happen in updates..
 #endif
   }
 

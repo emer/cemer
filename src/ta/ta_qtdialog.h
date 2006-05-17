@@ -223,7 +223,8 @@ protected:
 };
 
 
-class TA_API taiDataHost: public QObject, public IDataLinkClient, public IDataHost 
+class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
+  virtual public IDataHost 
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class iDialog;
@@ -325,14 +326,15 @@ public slots:
   virtual void	Revert(); //override
 
 protected:
-  iColor*	bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
-  bool		modified;
-  bool		showMethButtons; // true if any are created
-  QWidget*	mwidget;	// outer container for all widgets
-  iDialog*	dialog; // dialog, when using Edit, NULL otherwise
-  bool		is_panel; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
-  int 		sel_item_index; // only used during handling of context menu for select edits
-  bool		rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
+  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
+  bool			modified;
+  bool			showMethButtons; // true if any are created
+  QWidget*		mwidget;	// outer container for all widgets
+  iDialog*		dialog; // dialog, when using Edit, NULL otherwise
+  bool			is_panel; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
+  int 			sel_item_index; // only used during handling of context menu for select edits
+  bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
+  DataChangeHelper 	dch; // helps track the state of datachanges
 
   int		AddName(int row, const String& name, const String& desc, taiData* buddy = NULL);
     // add a label item in first column; row<0 means "next row"; returns row

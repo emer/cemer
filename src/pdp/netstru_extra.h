@@ -263,8 +263,6 @@ public:
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
 
-  virtual void	Interact();
-  // #BUTTON change to this shell in script (terminal) window to interact, debug etc script
   virtual void	Compile();
   // #BUTTON compile script from script file into internal runnable format
 

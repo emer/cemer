@@ -24,7 +24,8 @@
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_TA_type.h"
-
+# include  <QCoreApplication>
+# include  <QTimer>
 # ifdef TA_GUI
 #  include "ta_qtdata.h"
 #  include "ta_qttype.h"
@@ -37,7 +38,7 @@
 # endif // TA_GUI */
 
 #else // ndef NO_TA_BASE
-//nn anymore # include "maketa.h"
+//# include "maketa.h"
 #endif // NO_TA_BASE
 
 
@@ -86,6 +87,73 @@ int String_PArray::FindContains(const char* op, int start) const {
   return -1;
 }
 
+//////////////////////////
+//  taiMiscCore		//
+//////////////////////////
+
+#ifndef NO_TA_BASE
+TA_API taiMiscCore* taiMC_ = NULL; 
+
+taiMiscCore* taiMiscCore::New(QObject* parent) {
+  taiMiscCore* rval = new taiMiscCore(parent);
+  rval->Init();
+  return rval;
+}
+
+void taiMiscCore::Quit() {
+  taMisc::quitting = true;
+  if (taiMC_)
+    taiMC_->Quit_impl();
+}
+
+int taiMiscCore::RunPending() {
+//TODO: do more???  static void		WorkProc(); // the core idle loop process
+
+  QCoreApplication::processEvents();
+  return 0;
+}
+
+void taiMiscCore::WaitProc() {
+  tabMisc::WaitProc();
+}
+
+taiMiscCore::taiMiscCore(QObject* parent)
+:inherited(parent) 
+{
+}
+
+taiMiscCore::~taiMiscCore() {
+  if (taiMC_ == this)
+    taiMC_ = NULL;
+}
+  
+const String taiMiscCore::classname() {
+  return String(QCoreApplication::instance()->applicationName());
+}
+
+void taiMiscCore::Init(bool gui) {
+  taMisc::gui_active = gui;
+  
+  // special timeout=0 does idle processing in Qt
+  timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+  timer->start(50);
+}
+
+void taiMiscCore::Quit_impl() {
+  if (timer)
+    timer->stop();
+  QCoreApplication::instance()->quit();
+}
+
+void taiMiscCore::timer_timeout() {
+  if (taMisc::WaitProc)
+    taMisc::WaitProc();
+}
+
+
+#endif // NO_TA_BASE
+
 //////////////////////////////////
 // 	     taMisc		//
 //////////////////////////////////
@@ -98,6 +166,7 @@ String	taMisc::version_no = "3.5";
 
 String 	taMisc::LexBuf;
 bool	taMisc::in_init = false;
+bool	taMisc::quitting = false;
 bool	taMisc::not_constr = true;
 bool 	taMisc::gui_active = false;
 bool	taMisc::is_loading = false;
@@ -124,7 +193,7 @@ bool	taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 
 taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
-taMisc::ShowMembs  	taMisc::show_gui = taMisc::NO_HID_RO_DET;
+taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
@@ -147,6 +216,7 @@ String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 //String	taMisc::help_cmd = "netscape -remote openURL\\(file:%s\\)";
 ostream*	taMisc::record_script = NULL;
 bool taMisc::beep_on_error = false;
+void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbusy; var is 'busy'
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 void (*taMisc::DelayedMenuUpdate_Hook)(taBase*) = NULL; // gui callback -- avoids zillions of gui ifdefs everywhere
@@ -537,6 +607,57 @@ String taMisc::FormatValue(float val, int width, int precision) {
 //    return sval;
 }
 
+ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
+  strm << itm << " ";
+  if((no+1) % prln == 0) {
+    strm << "\n";
+    return strm;
+  }
+  int len = itm.length() + 1;
+  int i;
+  for(i=tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
+  }
+  return strm;
+}
+
+// no == 0 = indent
+ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  if(no == 0) {			// indent
+    for(i=0; i<itabs; i++)
+      strm << "\t";
+    for(i=0; i<ispcs; i++)
+      strm << " ";
+  }
+
+  strm << itm << " ";
+
+  int len = itm.length() + 1 + ispcs;
+  for(i=taMisc::sep_tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
+  }
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
+}
+
+ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
+  if(is_saving && (save_format == PLAIN))	return strm;
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  for(i=0; i<itabs; i++)
+    strm << "\t";
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
+}
+
 String taMisc::StringMaxLen(const String& str, int len) {
   if((int)str.length() <= len) return str;
   String rval = ((String)str).before(len);
@@ -809,6 +930,7 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   return c;
 }
 
+/*obs, 3.x
 int taMisc::read_till_quote(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   bool bs = false;		// backspace quoting of quotes, for example
@@ -889,6 +1011,79 @@ int taMisc::read_till_quote_semi(istream& strm, bool peek) {
   return c;
 }
 
+
+*/
+
+int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
+// read in the stream until a start quote or a semi
+  int c = skip_white(strm, true);
+  bool bs = false;		// backspace quoting of quotes, for example
+  LexBuf = "";
+  if(taMisc::verbose_load >= taMisc::SOURCE) {
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+      cerr << strm.get(); // consume it
+  } else {
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+      strm.get(); // consume it
+  }
+  if(!peek)
+    strm.get();
+  return c;
+}
+
+
+int taMisc::read_till_end_quote(istream& strm, bool peek) {
+  // don't skip initial whitespace because we're presumably reading a string literal
+  int c;
+  bool bs = false;
+  LexBuf = "";
+  if (taMisc::verbose_load >= taMisc::SOURCE) {
+    while (true) {
+      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')) ) ) 
+      {  // "
+        bs = false;
+        cerr << (char)c;
+        LexBuf += (char)c; strm.get();
+      }
+      if (c == EOF) break;
+      //NOTE: don't echo escape chars
+      if (c == '\\') {
+        strm.get();             // get the backslash (don't put in LexBuf)
+        bs = true;              // backslash-quoted character coming
+      } else // if (c == '\"')
+        break;
+    }
+  } else {
+    while (true) {
+      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')))) {  // "
+        bs = false;
+        LexBuf += (char)c; strm.get();
+      }
+      if (c == EOF) break;
+      if (c == '\\') {
+        strm.get();             // get the backslash (don't put in LexBuf)
+        bs = true;              // backslash-quoted character coming
+      } else // if (c == '\"')
+        break;
+    }
+  }
+  if (!peek)
+    strm.get(); // consume the "
+  return c;
+}
+
+int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
+  int c = read_till_end_quote(strm, peek);
+  if (c == EOF) return c;
+  if (peek) strm.get(); // consume the "
+  while (((c = strm.peek()) != EOF) && (c != ';'))
+    c = strm.get();
+  if (c == EOF) return c;
+  if (!peek) 
+    strm.get(); // consume the ;
+  return c;
+}
+
 int taMisc::skip_past_err(istream& strm, bool peek) {
   int c;
   int depth = 0;
@@ -943,19 +1138,21 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   return c;
 }
 
-
-ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
-  strm << itm << " ";
-  if((no+1) % prln == 0) {
-    strm << "\n";
-    return strm;
+ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool write_if_empty) {
+  if (!write_if_empty && str.empty()) return strm;
+  
+  strm << '\"';
+  int l = str.length();
+  for (int i = 0; i < l; ++i) {
+    char c = str.elem(i);
+    // we slash escape slashes and quotes 
+    //TODO: perhaps we should escape other control chars as well
+    if ((c == '\"') || (c == '\\'))
+      strm << '\\';
+    //else
+    strm << c;
   }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
+  strm << '\"';
   return strm;
 }
 
@@ -965,42 +1162,6 @@ String taMisc::remove_name(String& path) {
     return path.before("(") + path.after(")");
 
   return path;
-}
-
-// no == 0 = indent
-ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  if(no == 0) {			// indent
-    for(i=0; i<itabs; i++)
-      strm << "\t";
-    for(i=0; i<ispcs; i++)
-      strm << " ";
-  }
-
-  strm << itm << " ";
-
-  int len = itm.length() + 1 + ispcs;
-  for(i=taMisc::sep_tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
-}
-
-ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
-  if(is_saving && (save_format == PLAIN))	return strm;
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  for(i=0; i<itabs; i++)
-    strm << "\t";
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
 }
 
 // Script recording
@@ -1166,6 +1327,54 @@ void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
   }
   return rval;
 }
+
+
+//////////////////////////
+//   DataChangeHelper	//
+//////////////////////////
+
+
+bool DataChangeHelper::doStructUpdate() {
+  bool rval = su;
+  su = false;
+  if (rval) du = false;
+  return rval;
+}
+
+bool DataChangeHelper::doDataUpdate() {
+  bool rval = du;
+  du = false;
+  return rval;
+}
+
+void DataChangeHelper::UpdateFromDataChanged(int dcr) {
+  if (dcr == DCR_STRUCT_UPDATE_BEGIN) {
+    ++struct_up_cnt;
+    return;
+  } else if (dcr == DCR_DATA_UPDATE_BEGIN) {
+    ++data_up_cnt;
+    return;
+  } else if (dcr == DCR_STRUCT_UPDATE_END) {
+    if (--struct_up_cnt > 0) return;
+    su = true;
+    du = true;
+  } else if (dcr == DCR_DATA_UPDATE_END) {
+    if ((--data_up_cnt > 0) || (struct_up_cnt > 0))  return;
+    du = true;
+  } else if (dcr == DCR_ITEM_REBUILT) {
+    su = true;
+    du = true;
+  } else
+    du = true;
+}
+
+void DataChangeHelper::Reset() {
+  struct_up_cnt = 0;
+  data_up_cnt = 0;
+  su = false;
+  du = false;
+}
+
 
 
 //////////////////////////////////
@@ -1893,15 +2102,20 @@ void* MemberDef::GetOff(const void* base) const {
 }
 
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
-  if (show == taMisc::USE_SHOW_DEF)
-    show = taMisc::show;
   if (HasOption("SHOW"))
     return true;			// always show
+  // note: show uses ==, show_gui just needs flag -- done for 3.x compatibility
+  if (show & taMisc::USE_SHOW_GUI_DEF)
+    show = taMisc::show_gui;
+  else if (show == taMisc::USE_SHOW_DEF)
+    show = taMisc::show;
   if ((show & taMisc::NO_HIDDEN) && (HasOption("HIDDEN")))
     return false;
   if ((show & taMisc::NO_READ_ONLY) && (HasOption("READ_ONLY")))
     return false;
   if ((show & taMisc::NO_DETAIL) && (HasOption("DETAIL")))
+    return false;
+  if ((show & taMisc::NO_EXPERT) && (HasOption("EXPERT")))
     return false;
 
   if (show & taMisc::NO_NORMAL)
@@ -2813,10 +3027,10 @@ void TypeDef::unRegister(void* it) {
 //////////////////////////////////
 
 String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
-  ValContext vc) const 
+  StrContext sc) const 
 {
-  if (vc == VC_DEFAULT) 
-    vc = (taMisc::is_saving) ? VC_STREAMING : VC_VALUE;
+  if (sc == SC_DEFAULT) 
+    sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
   if (InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
@@ -2835,6 +3049,12 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
+      bool b = *((bool*)base);
+      switch (sc) {
+      case SC_STREAMING: return (b) ? String::one() : String::zero();
+      default:
+        return String(b);
+      }
       if(*((bool*)base))
 	return String("true");
       else
@@ -2842,8 +3062,11 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     }
     // note: char is generic, and typically we won't use signed char
     else if (DerivesFrom(TA_char)) {
-    //TODO: need to modalize for streaming etc.
-      return String(*((char*)base));
+      switch (sc) {
+      case SC_STREAMING: return String((int)*((char*)base));
+      default:
+        return String(*((char*)base));
+      }
     }
     // note: explicit use of signed char is treated like a number
     else if ((DerivesFrom(TA_signed_char))) {
@@ -2872,10 +3095,18 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
       return String(*((uint64_t*)base));
     }
     else if(DerivesFrom(TA_float)) {
-      return String(*((float*)base));
+      switch (sc) {
+      case SC_STREAMING: return String(*((float*)base), "%.8g");
+      default:
+        return String(*((float*)base));
+      }
     }
     else if(DerivesFrom(TA_double)) {
-      return String(*((double*)base));
+      switch (sc) {
+      case SC_STREAMING: return String(*((double*)base), "%.16lg");
+      default:
+        return String(*((double*)base));
+      }
     }
     else if(DerivesFormal(TA_enum)) {
       EnumDef* ed = enum_vals.FindNo(*((int*)base));
@@ -2895,7 +3126,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
         //NOTE: maybe we should indirect, rather than return NULL directly...
       if (var.isNull()) return "NULL";
       var.GetRepInfo(typ, var_base);
-      return typ->GetValStr(var_base, NULL, memb_def, vc);
+      return typ->GetValStr(var_base, NULL, memb_def, sc);
     }
     else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       int i;
@@ -2906,7 +3137,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 	  continue;
 	rval += md->name + "=";
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += md->type->GetValStr(md->GetOff(base), base, md, vc);
+	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
 	rval += ": ";
       }
@@ -2979,7 +3210,7 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = *((TAPtr*)base);
       if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root))) {
-	if (vc == VC_STREAMING) {
+	if (sc == SC_STREAMING) {
 	  return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
 	}
 	else {
@@ -3027,10 +3258,10 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 }
 
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
-  ValContext vc) 
+  StrContext sc) 
 {
-  if (vc == VC_DEFAULT) 
-    vc = (taMisc::is_loading) ? VC_STREAMING : VC_VALUE;
+  if (sc == SC_DEFAULT) 
+    sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
@@ -3043,6 +3274,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
     // note: char is treated as an ansi character
     else if (DerivesFrom(TA_char))
+    //TODO: char conversion heuristics
       *((char*)base) = val.toChar();
     // signed char is treated like a number
     else if (DerivesFrom(TA_signed_char))
@@ -3115,7 +3347,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
         return;
       }
       var.GetRepInfo(typ, var_base);
-      typ->SetValStr(val, var_base, par, memb_def, vc);
+      typ->SetValStr(val, var_base, par, memb_def, sc);
       var.UpdateAfterLoad();
     }
 #ifndef NO_TA_BASE
@@ -3188,13 +3420,13 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	}
 	if((md != NULL) && !mb_val.empty())
-	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, vc);
+	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, sc);
       }
 #ifndef NO_TA_BASE
       if(InheritsFrom(TA_taBase)) {
 	TAPtr rbase = (TAPtr)base;
 	if(rbase != NULL) {
-	  if (vc != VC_STREAMING)
+	  if (sc != SC_STREAMING)
 	    rbase->UpdateAfterEdit(); 	// only when not loading (else will happen after)
 	}
       }
@@ -3207,7 +3439,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       TAPtr bs = NULL;
       if((val != "NULL") && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
-	if (vc == VC_STREAMING) {
+	if (sc == SC_STREAMING) {
 	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
 	  if(bs == NULL)	// indicates error condition
 	    return;

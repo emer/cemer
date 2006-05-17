@@ -89,9 +89,9 @@ public:
   static int	Main(int argc, char* argv[]);
   // #IGNORE the pdp main startup function: call this from user's main
 //NOTE: v4 waitprocs (aka event loop handling)
-  static int	WaitProc();  		// waiting process
-  static int	WaitProc_LoadProj(); // waiting process
-  static int	WaitProc_PostLoadOpr(); // waiting process
+  static void		WaitProc();  		// waiting process
+  static void		WaitProc_LoadProj(); // waiting process
+  static void		WaitProc_PostLoadOpr(); // waiting process
   static void 	SaveRecoverFile(int err = 1);
   // error handling function that saves a recover file when system crashes
   static ColorScaleSpec* GetDefaultColor();  // gets the default color scale

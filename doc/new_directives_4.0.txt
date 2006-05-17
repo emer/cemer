@@ -25,6 +25,7 @@ ENUM ITEM DIRECTIVES (note: this is new)
 MEMBER DIRECTIVES
 -----------------
 
+#EXPERT -- show directive, like DETAIL etc.; especially for advanced parameters in net sims
 #BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
 #NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
 #INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array

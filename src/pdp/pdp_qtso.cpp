@@ -241,13 +241,13 @@ void taiProgVarBase::Constr(QWidget* gui_parent_) {
 void taiProgVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   QWidget* rep_ = GetRep();
   QLabel* lbl = new QLabel("ignore", rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
 
   tglIgnore = new taiToggle(&TA_bool, host, this, rep_, mflags & flgReadOnly);
   AddChildWidget(tglIgnore->GetRep(), taiM->hsep_c);
   
   lbl = new QLabel("name", rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
 
   fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
   AddChildWidget(fldName->GetRep(), taiM->hsep_c);
@@ -326,16 +326,16 @@ void taiEnumProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   inherited::Constr_impl(gui_parent_, read_only_);
   QWidget* rep_ =  GetRep();
   QLabel* lbl = new QLabel("enum type",rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
   thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
   thEnumType->enum_mode = true;
   thEnumType->GetMenu();
-  AddChildWidget(thEnumType->GetRep(), taiM->hsep_c, 0);
+  AddChildWidget(thEnumType->GetRep(), taiM->hsep_c);
   lbl = new QLabel("enum value",rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
   cboEnumValue = new taiComboBox(true, NULL, host, this, rep_, (mflags & flgReadOnly));
-  AddChildWidget(cboEnumValue->GetRep(), taiM->hsep_c, 0);
+  AddChildWidget(cboEnumValue->GetRep(), taiM->hsep_c);
 }
 
 void taiEnumProgVar::DataChanged_impl(taiData* chld) {
@@ -391,21 +391,21 @@ void taiObjectProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   inherited::Constr_impl(gui_parent_, read_only_);
   QWidget* rep_ =  GetRep();
   QLabel* lbl = new QLabel("val_type",rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
   thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
   thValType->GetMenu();
-  AddChildWidget(thValType->GetRep(), taiM->hsep_c, 0);
+  AddChildWidget(thValType->GetRep(), taiM->hsep_c);
   //TODO: make_new and init token
   lbl = new QLabel("make new",rep_);
-  AddChildWidget(lbl, taiM->hsep_c, 0);
+  AddChildWidget(lbl, taiM->hsep_c);
   chkMakeNew = new taiToggle(&TA_bool, host, this, rep_, (mflags & flgReadOnly));
-  AddChildWidget(chkMakeNew->GetRep(), taiM->hsep_c, 0);
+  AddChildWidget(chkMakeNew->GetRep(), taiM->hsep_c);
   lblObjectValue = new QLabel("value",rep_);
-  AddChildWidget(lblObjectValue, taiM->hsep_c, 0);
+  AddChildWidget(lblObjectValue, taiM->hsep_c);
   tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
      thValType->typ, host, this, rep_, ((mflags & flgReadOnly) | flgNullOk));
-  AddChildWidget(tkObjectValue->GetRep(), taiM->hsep_c, 0);
+  AddChildWidget(tkObjectValue->GetRep(), taiM->hsep_c);
 }
 
 void taiObjectProgVar::DataChanged_impl(taiData* chld) {

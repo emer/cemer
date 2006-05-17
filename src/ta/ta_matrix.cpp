@@ -236,6 +236,14 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
   return strm;
 }
 
+int taMatrix::Dump_Load_Item(istream& strm, int idx) {
+  int c = taMisc::read_till_semi(strm);
+  if (c != EOF) {
+    SetFmStr_Flat(taMisc::LexBuf, idx);
+  }
+  return c;
+}
+
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
@@ -258,20 +266,23 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
     } while ((c != ']') && (c != EOF));
   }
   //note: should always be at least one dim if we had [ but we check anyway
-  if (ar.size > 0)
+  if (ar.size > 0) {
     SetGeomN(ar);
-  c = taMisc::read_till_rb_or_semi(strm);
-  int idx = 0;
-  while ((c == ';') && (c != EOF)) {
-    if (idx >= size)  {
-      taMisc::Error("Too many items in file for type:",GetTypeDef()->name,"\n");
-      return false;
+    //note: we always write the correct number, so early termination is an error!
+    int i = 0;
+    while ((i < size) && (c != EOF)) {
+      c = Dump_Load_Item(strm, i++);
     }
-    SetFmStr_Flat(idx++, taMisc::LexBuf);
-    c = taMisc::read_till_rb_or_semi(strm);
   }
+  c = taMisc::read_till_rbracket(strm);
+  if (c==EOF)	return EOF;
+  c = taMisc::read_till_semi(strm);
   if (c==EOF)	return EOF;
   return true;
+}
+
+void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
+  strm << FastElAsStr_Flat(idx);
 }
 
 int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
@@ -286,7 +297,8 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
     strm << "] ";
   }
   for (i=0; i < size; ++i) {
-    strm << FastElAsStr_Flat(i) << ";";
+    Dump_Save_Item(strm, i);
+    strm <<  ';';
   }
   return true;
 }
@@ -569,6 +581,22 @@ void taMatrix::UpdateGeom() {
 //   String_Matrix	//
 //////////////////////////
 
+int String_Matrix::Dump_Load_Item(istream& strm, int idx) {
+  int c = taMisc::skip_till_start_quote_or_semi(strm);
+  if (c == '\"') {
+    c = taMisc::read_till_end_quote_semi(strm);
+  }
+  if (c != EOF) {
+    FastEl_Flat(idx) = taMisc::LexBuf;
+  }
+  return c;
+}
+
+void String_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+// note: we don't write "" for empty
+  taMisc::write_quoted_string(strm, FastEl_Flat(idx));
+}
+
 void String_Matrix::ReclaimOrphans_(int from, int to) {
   for (int i = from; i <= to; ++i) {
     el[i] = _nilString;
@@ -578,6 +606,11 @@ void String_Matrix::ReclaimOrphans_(int from, int to) {
 //////////////////////////
 //   float_Matrix	//
 //////////////////////////
+
+void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+// note: we don't write "" for empty
+  taMisc::write_quoted_string(strm, String(FastEl_Flat(idx), "%.8g"));
+}
 
 bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   bool rval = true;
@@ -625,6 +658,98 @@ bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 //////////////////////////
 //   Variant_Matrix	//
 //////////////////////////
+
+int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
+  int c;
+  Variant& val = FastEl_Flat(idx);
+  if (!val.Dump_Load_Type(strm, c)) goto end;
+  if (c == EOF) return c;
+  
+  switch (val.type()) {
+  case Variant::T_Invalid: // no content
+    c = taMisc::skip_white(strm); // should read ;
+    break; 
+  case Variant::T_Bool:
+  case Variant::T_Int:
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+  case Variant::T_Double:
+    c = taMisc::read_till_semi(strm);
+    val.updateFromString(taMisc::LexBuf);
+    break;
+  case Variant::T_Char: {// reads chars as ints
+    c = taMisc::read_till_semi(strm);
+    int sc = taMisc::LexBuf.toInt();
+    val.setChar((char)sc, val.isNull());
+    }
+    break;
+  
+  case Variant::T_String: 
+    //note: an empty string was not written
+    c = taMisc::skip_till_start_quote_or_semi(strm);
+    if (c == '\"') {
+      c = taMisc::read_till_end_quote_semi(strm);
+      val.updateFromString(taMisc::LexBuf);
+    }
+    break;
+//  case Variant::T_Ptr:  //not streamable
+//TODO: maybe we should issue a warning???
+//    break;
+  
+//  case Variant::T_Base: 
+//  case Variant::T_Matrix:
+//TODO: what is the meaning of streaming a taBase????
+// should it be the path??? what if unowned???
+//    break;
+  
+  default: 
+    c = taMisc::read_till_semi(strm);
+    break;
+  }
+  
+end:
+  return c;
+}
+
+void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+  const Variant& val = FastEl_Flat(idx);
+  val.Dump_Save_Type(strm);
+  switch (val.type()) {
+  case Variant::T_Invalid: break; // no content
+  case Variant::T_Bool:
+  case Variant::T_Int:
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+    strm << ' ' << val.toString();
+    break;
+  case Variant::T_Double:
+    strm << ' ' << String(val.toDouble(), "%.16lg");
+    break;
+  case Variant::T_Char: // write chars as ints
+    strm << ' ' << val.toInt();
+    break;
+  
+  case Variant::T_String: 
+    strm << ' ';
+    //note: doesn't write empty strings
+    taMisc::write_quoted_string(strm, val.toString());
+    break;
+  case Variant::T_Ptr:  //not streamable
+//TODO: maybe we should issue a warning???
+    break;
+  
+  case Variant::T_Base: 
+  case Variant::T_Matrix:
+//TODO: what is the meaning of streaming a taBase????
+// should it be the path??? what if unowned???
+    break;
+  
+  default: 
+    break;
+  }
+}
 
 void Variant_Matrix::ReclaimOrphans_(int from, int to) {
   for (int i = from; i <= to; ++i) {
