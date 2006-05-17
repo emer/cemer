@@ -226,7 +226,7 @@ public: // don't use these, internal use only
   virtual void*		FastEl_(int i) = 0;   // #IGNORE the raw element in the flat space
   virtual const void*	FastEl_(int i) const = 0;   // #IGNORE
   virtual const void*	SafeEl_(int i) const 
-    {if ((i > 0) && (i < size)) return FastEl_(i); else return NULL;}   // #IGNORE raw element in flat space, else NULL
+    {if ((i > 0) && (i < size)) return FastEl_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
   // every subclass should implement these:
   virtual const String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
   virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
@@ -351,22 +351,13 @@ public:
   const T&		SafeElN(const MatrixGeom& indices) const  
     { return el[SafeElIndexN(indices)]; }  // access the element for reading
   
-  void			Set_Flat(int idx, const T& item) 	
+  void			Set_Flat(const T& item, int idx) 	
     { if (InRange_Flat(idx)) el[idx] = item; }
   // use this for safely assigning values to items in the matrix, treated as a flat vector
-  void			Set(int d0, const T& item) 	
+  void			Set(const T& item, int d0) 	
     { el[SafeElIndex(d0)] = item; }
-  // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set2(int d0, int d1, const T& item) 	
-    { el[SafeElIndex2(d0,d1)] = item; }
-  // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set3(int d0, int d1, int d2, const T& item) 	
-    {  el[SafeElIndex3(d0,d1,d2)] = item; }
-  // use this for safely assigning values to items in the matrix, esp. from script code
-  void			Set4(int d0, int d1, int d2, int d3, const T& item) 	
-    {  el[SafeElIndex4(d0,d1,d2,d3)] = item; }
-  // use this for safely assigning values to items in the matrix, esp. from script code
-  void			SetN(const MatrixGeom& indices, const T& item) 	
+  // (TODO: add remaining d's) use this for safely assigning values to items in the matrix, esp. from script code
+  void			SetN(const T& item, const MatrixGeom& indices) 	
     {  el[SafeElIndexN(indices)] = item; }
   // use this for safely assigning values to items in the matrix, esp. from script code
   

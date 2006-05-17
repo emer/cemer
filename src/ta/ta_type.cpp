@@ -137,7 +137,7 @@ void taiMiscCore::Init(bool gui) {
   // special timeout=0 does idle processing in Qt
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
-  timer->start();
+  timer->start(50);
 }
 
 void taiMiscCore::Quit_impl() {
@@ -193,7 +193,7 @@ bool	taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 
 taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
-taMisc::ShowMembs  	taMisc::show_gui = taMisc::NO_HID_RO_DET;
+taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
@@ -2102,15 +2102,20 @@ void* MemberDef::GetOff(const void* base) const {
 }
 
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
-  if (show == taMisc::USE_SHOW_DEF)
-    show = taMisc::show;
   if (HasOption("SHOW"))
     return true;			// always show
+  // note: show uses ==, show_gui just needs flag -- done for 3.x compatibility
+  if (show & taMisc::USE_SHOW_GUI_DEF)
+    show = taMisc::show_gui;
+  else if (show == taMisc::USE_SHOW_DEF)
+    show = taMisc::show;
   if ((show & taMisc::NO_HIDDEN) && (HasOption("HIDDEN")))
     return false;
   if ((show & taMisc::NO_READ_ONLY) && (HasOption("READ_ONLY")))
     return false;
   if ((show & taMisc::NO_DETAIL) && (HasOption("DETAIL")))
+    return false;
+  if ((show & taMisc::NO_EXPERT) && (HasOption("EXPERT")))
     return false;
 
   if (show & taMisc::NO_NORMAL)

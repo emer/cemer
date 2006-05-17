@@ -293,20 +293,22 @@ extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
-  enum ShowMembs {
+  enum ShowMembs { // #BITS
     NO_HIDDEN 		= 0x01,
     NO_READ_ONLY 	= 0x02,
     NO_DETAIL 		= 0x04,
     NO_NORMAL		= 0x08,
+    NO_EXPERT		= 0x10,
 
-    ALL_MEMBS		= 0x00,
-    NO_HID_RO 		= 0x03,
-    NO_HID_DET 		= 0x05,
-    NO_RO_DET 		= 0x06,
-    NO_HID_RO_DET 	= 0x07,
-    NORM_MEMBS 		= 0x07,
+    ALL_MEMBS		= 0x00, // #NO_BIT
+    NO_HID_RO 		= 0x03, // #NO_BIT
+    NO_HID_DET 		= 0x05, // #NO_BIT
+    NO_RO_DET 		= 0x06, // #NO_BIT
+    NO_HID_RO_DET 	= 0x07, // #NO_BIT
+    NORM_MEMBS 		= 0x17, // #NO_BIT
 
-    USE_SHOW_DEF 	= 0x80 	// use default from taMisc::show
+    USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
+    USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
   };
 
 

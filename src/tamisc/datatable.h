@@ -675,20 +675,19 @@ private:
 
 
 class TAMISC_API Variant_Data : public DataArray<Variant_Matrix> {
-  // string data
+  // Variant data
 INHERITED(DataArray<Variant_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_string() const {return true;} 
-  override ValType 	valType() const  {return VT_STRING;}
+  override ValType 	valType() const  {return VT_VARIANT;}
 
   TA_BASEFUNS(Variant_Data);
 
 protected:
   override const Variant GetValAsVar_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override bool	 	SetValAsFloat_impl(const Variant& val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
+  override bool	 	SetValAsVar_impl(const Variant& val, int row, int cell)
+    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
 
 private:
   void	Initialize() {}
@@ -711,7 +710,7 @@ protected:
   override float 	GetValAsFloat_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsFloat_impl(float val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
+    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
 
 private:
   void	Initialize() {}
@@ -733,7 +732,7 @@ protected:
   override int 		GetValAsInt_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsInt_impl(int val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
+    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
 
 private:
   void	Initialize() {}
@@ -755,7 +754,7 @@ protected:
   override byte 	GetValAsByte_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsByte_impl(byte val, int row, int cell)
-    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
+    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
 
 private:
   void	Initialize() {}

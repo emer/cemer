@@ -1182,7 +1182,7 @@ void gpiListDataHost::GetImage() {
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-//TEMP    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
   }
   Unchanged();
 }

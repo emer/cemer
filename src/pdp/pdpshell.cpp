@@ -1742,38 +1742,6 @@ void TestOwnedObj::CutLinks() {
 
 #include "datatable.h"
 void NetHelper::InitXorNetEnviroTable(DataTable* dt) {
-  if (!dt) return;
-  if (dt->cols() == 0) {
-    dt->NewColMatrix(DataArray_impl::VT_FLOAT, "input", 2, 2, 1); 
-  }
-  if (dt->cols() == 1) {
-    dt->NewColMatrix(DataArray_impl::VT_FLOAT, "output", 2, 1, 1); 
-  }
-  float_Matrix* mat0 = (float_Matrix*)dt->GetColMatrix(0);
-  float_Matrix* mat1 = (float_Matrix*)dt->GetColMatrix(1);
-  if (!(mat0 && mat1)) return; 
-  while (dt->rows < 4) dt->AddBlankRow();
-  // 00:0
-  mat0->Set3(0, 0, 0, 0.0f);
-  mat0->Set3(1, 0, 0, 0.0f);
-  mat1->Set3(0, 0, 0, 0.0f);
-  
-  // 01:1
-  mat0->Set3(0, 0, 1, 0.0f);
-  mat0->Set3(1, 0, 1, 1.0f);
-  mat1->Set3(0, 0, 1, 1.0f);
-  
-  // 10:1
-  mat0->Set3(0, 0, 2, 1.0f);
-  mat0->Set3(1, 0, 2, 0.0f);
-  mat1->Set3(0, 0, 2, 1.0f);
-  
-  // 11:0
-  mat0->Set3(0, 0, 3, 0.0f);
-  mat0->Set3(1, 0, 3, 0.0f);
-  mat1->Set3(0, 0, 3, 0.0f);
-  
-  dt->DataChanged(DCR_ITEM_UPDATED);
   
 }
 
