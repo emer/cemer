@@ -352,15 +352,6 @@ const String String::StringToCppLiteral(const String& str) {
   return rval;
 }
 
-const String& String::one() {
-  static String o("1");
-  return o;
-}
-
-const String& String::zero() {
-  static String z("0");
-  return z;
-}
 
 String::String(uint slen, uint sz, char fill) {
   if (sz == 0) sz = slen;
@@ -369,13 +360,6 @@ String::String(uint slen, uint sz, char fill) {
   if (fill) {
     memset(mrep->s, fill, slen);
   }
-}
-
-String::String(bool b) {
-  static String t("true");
-  static String f("false");
-  if (b) newRep(t.mrep);
-  else   newRep(f.mrep);
 }
 
 String::String(int i,const char* format) {
@@ -402,52 +386,58 @@ String::String(ulong u, const char* format) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(int64_t i64) {
+String::String(int64_t i64, int base) {
+#ifdef TA_USE_QT
+  QString str(QString::number(i64, base));
+  newRep(Salloc(str.toLatin1(), str.length())); 
+#else
   char buf[64];
   char* format;
-#ifdef _MSC_VER // MSVC
-//  switch (base){
-//  case 8: format="%I64o";break;
-//  case 16: format="%I64x";break;
-//  default: format="%I64d";break;
-//  }
-  format = "%I64d";
-  _snprintf(buf, 63, format, i64);
-#else // Unix
-// the 'll' size should work on Linux and Unix...
-//  switch (base){
-//  case 8: format="%llo";break;
-//  case 16: format="%llx";break;
-//  default: format="%lld";break;
-//  }
-  format = "%lld";
-  sprintf(buf, format, i64);
-#endif
+#  ifdef _MSC_VER // MSVC
+  switch (base){
+  case 8: format="%I64o";break;
+  case 16: format="%I64x";break;
+  default: format="%I64d";break;
+  }
+  _snprintf(buf, 63, format);
+#  else
+//TODO: the 'll' size was taken from IBM docs, but not verified for gcc yet...
+  switch (base){
+  case 8: format="%llo";break;
+  case 16: format="%llx";break;
+  default: format="%lld";break;
+  }
+  sprintf(buf, format);
+#  endif
   newRep(Salloc(buf, -1));
+#endif
 }
 
-String::String(uint64_t u64) {
+String::String(uint64_t u64, int base) {
+#ifdef TA_USE_QT
+  QString str(QString::number(u64, base));
+  newRep(Salloc(str.toLatin1(), str.length())); 
+#else
   char buf[64];
   char* format;
-#ifdef _MSC_VER // formats may be ms specific
-//  switch (base){
-//  case 8: format="%I64o";break;
-//  case 16: format="%I64x";break;
-//  default: format="%I64u";break;
-//  }
-  format = "%I64u";
-  _snprintf(buf, 63, format, u64);
-#else
-//the 'ull' should work on Linux and Unix
-//  switch (base){
-//  case 8: format="%llo";break;
-//  case 16: format="%llx";break;
-//  default: format="%llu";break;
-//  }
-  format = "%llu";
-  sprintf(buf, format, u64);
-#endif
+#  ifdef _MSC_VER // formats may be ms specific
+  switch (base){
+  case 8: format="%I64o";break;
+  case 16: format="%I64x";break;
+  default: format="%I64u";break;
+  }
+  _snprintf(buf, 63, format);
+#  else
+//TODO: the 'll' size was taken from IBM docs, but not verified for gcc yet...
+  switch (base){
+  case 8: format="%llo";break;
+  case 16: format="%llx";break;
+  default: format="%llu";break;
+  }
+  sprintf(buf, format);
+#  endif
   newRep(Salloc(buf, -1));
+#endif
 }
 
 String::String(float f,const char* format) {

@@ -304,14 +304,14 @@ public:
 #else
   friend std::ostream&   operator<<(std::ostream& s, const Variant& x); // streams type code, then value
   friend std::istream&   operator>>(std::istream& s, Variant& x);  // expects: type code then value
-#endif 
+#endif
   
 #ifdef TA_USE_QT
   Variant(const QVariant &val);
   void 		setQVariant(const QVariant& cp); 
   Variant& 	operator=(const QVariant& val) {setQVariant(val); return *this;}
   QVariant 	toQVariant() const;
-  operator QVariant() const {return toQVariant();}
+  operator QVariant() {return toQVariant();}
 #endif 
 
   Variant(); // default is null/invalid
@@ -342,7 +342,7 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			UpdateAfterLoad(); // called after internal modifications, to reassert correctness of null etc.
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
-  void			Dump_Save_Type(ostream& strm) const; // dumps type and null 
+  void			Dump_Save_Type(ostream& strm); // dumps type and null 
   bool			Dump_Load_Type(istream& strm, int& last_char); 
     // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true' if type loaded 
 

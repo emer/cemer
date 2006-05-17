@@ -38,7 +38,6 @@ template class TAMISC_API taArray<ValIdx>;
 // datatable.h:
 template class TAMISC_API taGroup<DataArray_impl>;
 template class TAMISC_API DataArray<String_Matrix>;
-template class TAMISC_API DataArray<Variant_Matrix>;
 template class TAMISC_API DataArray<float_Matrix>;
 template class TAMISC_API DataArray<int_Matrix>;
 template class TAMISC_API DataArray<byte_Matrix>;

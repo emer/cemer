@@ -248,10 +248,10 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_builtin.h"
-#include "css_qt.h"
 #include "ta_css.h"
 
 #ifdef TA_GUI
+#include "css_qt.h"
 #include "css_qtdata.h"
 #include "css_qtdialog.h"
 #endif

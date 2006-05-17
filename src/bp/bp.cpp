@@ -177,8 +177,8 @@ void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
     un.net = x;
     Compute_Act(&un);
     dt->AddBlankRow();
-    dt->SetValAsFloat(x, 0, -1);
-    dt->SetValAsFloat(un.act, 1, -1);
+    dt->SetLastFloatVal(x, 0);
+    dt->SetLastFloatVal(un.act, 1);
   }
   dt->UpdateAllRanges();
   graph_log->ViewAllData();

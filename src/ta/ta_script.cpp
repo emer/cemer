@@ -126,6 +126,11 @@ bool AbstractScriptBase::RunScript() {
   return true;
 }
 
+void AbstractScriptBase::InteractScript() {
+  if (!CompileScript()) return;
+  cssMisc::next_shell = script;
+}
+
 void AbstractScriptBase::StopScript() {
   if (script)
     script->Stop();
@@ -286,6 +291,11 @@ void Script::StopRecording() {
 #endif
   script_file->Close();
   recording = false;
+}
+
+void Script::Interact() {
+  if(script == NULL)   return;
+  cssMisc::next_shell = script;
 }
 
 void Script::Clear() {

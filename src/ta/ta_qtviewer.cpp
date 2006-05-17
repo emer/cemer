@@ -1259,7 +1259,7 @@ void iDataViewer::ch_destroyed() {
 }
 
 void iDataViewer::closeEvent (QCloseEvent* e) {
-  bool forced = taMisc::quitting || (m_viewer == NULL); // always closing if we no longer have our mummy
+  bool forced = cssiSession::quitting || (m_viewer == NULL); // always closing if we no longer have our mummy
   bool cancel = false; // falling through to end of routine is "proceed"
 
   if (m_viewer && (forced || !cancel)) {
@@ -2477,7 +2477,7 @@ void DataViewer::ViewWindow() {
 }
 
 void DataViewer::WindowClosing(bool& cancel) {
-  bool forced = taMisc::quitting;
+  bool forced = cssiSession::quitting;
   cancel = false; // falling through to end of routine is "proceed"
 
   if (HasChanges()) {
@@ -2505,13 +2505,13 @@ void DataViewer::WindowClosing(bool& cancel) {
       if (taMisc::app) taMisc::app->SaveAll();
       //fall through
     case 0:
-      taMisc::quitting = true;
+      cssiSession::quitting = true;
       taiM->MainWindowClosing(cancel);
       if (cancel) {
-       taMisc::quitting = false;
+       cssiSession::quitting = false;
        return;
       }
-      forced = taMisc::quitting;
+      forced = cssiSession::quitting;
       break;
     case 2:
       cancel = true;

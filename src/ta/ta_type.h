@@ -43,12 +43,6 @@
 #include "ta_def.h"
 #include "ta_list.h"
 
-#ifdef TA_USE_QT
-# ifndef __MAKETA__
-#   include <QObject>
-# endif
-#endif
-
 // comment directives which are parsed 'internally' (add a # sign before each)
 // "NO_TOKENS"
 // "IGNORE"
@@ -112,10 +106,7 @@ extern TA_API TypeDef TA_signed_char;
 extern TA_API TypeDef TA_unsigned_char;
 extern TA_API TypeDef TA_short;
   extern TA_API TypeDef TA_signed_short;
-  extern TA_API TypeDef TA_short_int;
-  extern TA_API TypeDef TA_signed_short_int;
 extern TA_API TypeDef TA_unsigned_short;
-  extern TA_API TypeDef TA_unsigned_short_int;
 extern TA_API TypeDef TA_int;
   extern TA_API TypeDef TA_signed;
   extern TA_API TypeDef TA_signed_int;
@@ -254,61 +245,23 @@ public:
   virtual ~IApp() {}
 };
 
-#ifndef NO_TA_BASE
-class TA_API taiMiscCore: public QObject { 
-  // ##NO_TOKENS ##NO_INSTANCE object for Qt Core event processing, etc. taiMisc inherits; taiM is always instance
-INHERITED(QObject)
-Q_OBJECT
-public:
-  
-  static taiMiscCore*	New(QObject* parent = NULL);
-    // either call this or call taiMisc::New 
-  
-  static void		WaitProc(); // the core idle loop process
-  
-  static int		RunPending();	// run any pending qt events that might need processed
-  static void		Quit(); // call to quit, invokes Quit_impl on instance first
-  
-  const String		classname(); // 3.x compatability, basically the app name
-  
-  taiMiscCore(QObject* parent = NULL);
-  ~taiMiscCore();
-protected slots:
-  virtual void	timer_timeout(); // called when timer times out, for waitproc processing
-  
-protected:
-  QTimer*		timer; // for idle processing
-  virtual void			Init(bool gui = false); // NOTE: called from static New
-  virtual void		Quit_impl();
-};
-
-extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
-#ifdef TA_GUI
-# define taiM taiM_
-#else
-# define taiM taiMC_
-#endif
-#endif
-
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
-  enum ShowMembs { // #BITS
+  enum ShowMembs {
     NO_HIDDEN 		= 0x01,
     NO_READ_ONLY 	= 0x02,
     NO_DETAIL 		= 0x04,
     NO_NORMAL		= 0x08,
-    NO_EXPERT		= 0x10,
 
-    ALL_MEMBS		= 0x00, // #NO_BIT
-    NO_HID_RO 		= 0x03, // #NO_BIT
-    NO_HID_DET 		= 0x05, // #NO_BIT
-    NO_RO_DET 		= 0x06, // #NO_BIT
-    NO_HID_RO_DET 	= 0x07, // #NO_BIT
-    NORM_MEMBS 		= 0x17, // #NO_BIT
+    ALL_MEMBS		= 0x00,
+    NO_HID_RO 		= 0x03,
+    NO_HID_DET 		= 0x05,
+    NO_RO_DET 		= 0x06,
+    NO_HID_RO_DET 	= 0x07,
+    NORM_MEMBS 		= 0x07,
 
-    USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
-    USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
+    USE_SHOW_DEF 	= 0x80 	// use default from taMisc::show
   };
 
 
@@ -349,7 +302,6 @@ public:
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
 
   static bool		in_init;	// #READ_ONLY #NO_SAVE true if in ta initialization function
-  static bool		quitting;	// #READ_ONLY #NO_SAVE true once we are quitting
   static bool		not_constr;	// #READ_ONLY true if ta types are not yet constructed (or are destructed)
 
   static bool		gui_active;	// #READ_ONLY #NO_SAVE if gui has been started up or not
@@ -397,8 +349,6 @@ public:
   static ostream*	record_script;
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
   // stream to use for recording a script of interface activity (NULL if no record)
-  static void	(*WaitProc)();
-  // set this to a work process for idle time processing
   static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
   static void (*DelayedMenuUpdate_Hook)(taBase*); // #IGNORE gui callback -- avoids zillions of gui ifdefs everywhere
@@ -493,8 +443,6 @@ public:
 
   static int	skip_white(istream& strm, bool peek = false);
   static int	skip_white_noeol(istream& strm, bool peek = false); // don't skip end-of-line
-  static int	skip_till_start_quote_or_semi(istream& strm, bool peek = false);      
-    // used to seek up to an opening " for a string; will terminate on a ;
   static int	read_word(istream& strm, bool peek = false);
   static int	read_alnum(istream& strm, bool peek = false); 		// alpha-numeric
   static int    read_alnum_noeol(istream& strm, bool peek = false);
@@ -504,10 +452,8 @@ public:
   static int	read_till_lb_or_semi(istream& strm, bool peek = false);
   static int	read_till_rbracket(istream& strm, bool peek = false);
   static int	read_till_rb_or_semi(istream& strm, bool peek = false);
-  static int 	read_till_end_quote(istream& strm, bool peek = false);
-    // read-counterpart to write_quoted_string; read-escaping, until "
-  static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
-    // read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
+  static int	read_till_quote(istream& strm, bool peek = false);      // dbl quote
+  static int	read_till_quote_semi(istream& strm, bool peek = false); // dbl quote followed by a semi
   static int	skip_past_err(istream& strm, bool peek = false);
   // skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
@@ -515,9 +461,6 @@ public:
 
   // output functions
   static ostream& indent(ostream& strm, int indent, int tsp=2);
-  static ostream& write_quoted_string(ostream& strm, const String& str, 
-    bool write_if_empty = false);
-    // writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
   static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
 			  int tsp=2);
   static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,
@@ -679,23 +622,6 @@ protected:
 // iterates through a datalink, returning only object refs to objects of indicated type (or descendant)
 #define FOR_DLC_EL_OF_TYPE(T, el, dl, itr) \
 for(itr.Reset(), el = (T*) itr.NextEl(dl, &TA_ ## T); el; el = (T*) itr.NextEl(dl, &TA_ ## T))
-
-class TA_API DataChangeHelper {
-  // class to help track data changes to help clients defer updates, etc;
-public:
-  bool		doStructUpdate(); // after update, will be true if struct changed; CLEARED ON READ, and if true, clears DataUpdate, so check this one first if separately handling struct changes
-  bool		doDataUpdate(); // after update, will be true if data or structure changed; CLEARED ON READ
-
-  void		UpdateFromDataChanged(int dcr); // pass the DataDataChanged dcr value in
-  void		Reset(); // reset everything; normally not needed
-  DataChangeHelper() {Reset();}
-  
-protected:
-  short		struct_up_cnt; // count of struct updates in progress
-  short		data_up_cnt; // count of data updates in progress
-  bool		su;
-  bool		du;
-};
 
 
 //////////////////////////
@@ -1120,11 +1046,11 @@ class TA_API TypeDef : public TypeItem {// defines a type itself
 typedef TypeItem inherited;
 #endif
 public:
-  enum StrContext { // context for getting or setting a string value
-    SC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
-    SC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
-    SC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
-    SC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
+  enum ValContext { // context for getting or setting a string value
+    VC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
+    VC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
+    VC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
+    VC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
   };
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
@@ -1293,10 +1219,10 @@ public:
   void 		unRegister(void* it);
 
   String	GetValStr(const void* base, void* par=NULL,
-    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT) const;
+    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT) const;
   // get a string representation of value
   void		SetValStr(const String& val, void* base, void* par=NULL,
-    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
+    MemberDef* memb_def = NULL, ValContext vc = VC_DEFAULT);
   // set the value from a string representation
 
   void		CopyFromSameType(void* trg_base, void* src_base,

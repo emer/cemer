@@ -65,6 +65,8 @@ public:
   // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
   virtual void  	StopScript();
   // stops the running script
+  virtual void	InteractScript();
+  // #MENU #LABEL_Interact change to this shell in script (terminal) window to interact, debug etc script
 
   virtual TypeDef* GetThisTypeDef() const = 0;
   // #IGNORE overload this function to get the typedef of 'this' object, which must be taBase
@@ -128,6 +130,8 @@ public:
   // #BUTTON #GHOST_OFF_recording #ARGC_0 #NO_SCRIPT record script code for interface actions
   virtual void	StopRecording();
   // #BUTTON #LABEL_StopRec #GHOST_ON_recording stop recording script code
+  virtual void	Interact();
+  // #BUTTON #GHOST_OFF_recording change to this shell in script (terminal) window to interact, debug etc script
   virtual void	Clear();
   // #BUTTON #CONFIRM clear script file
   virtual void	Compile();

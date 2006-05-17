@@ -117,9 +117,6 @@ TA_API StrRep*		Sreverse(const StrRep* x);
 class TA_API String { // reference counted string
 friend class StrRep;
 public:
-  static const String&		zero(); // "0" occurs so often, we optimize it with a global inst
-  static const String&		one(); // "1" occurs so often, we optimize it with a global inst
-  
   static const String	CharToCppLiteral(char c); // converts a character to a C++ valid literal; can be embedded in a C++ string
   static const String	StringToCppLiteral(const String& str); // converts a string to a C++ valid literal
     
@@ -133,14 +130,13 @@ public:
 
 
 // conversion constructors
-  String(bool b);
   String(char c) {if (c == '\0') newRep(&_nilStrRep); else init(&c, 1);}
   String(int i, const char* format = "%d");
   String(uint u, const char* format = "%u");
   String(long i, const char* format = "%ld"); //note: don't use long any more, compatibility only
   String(ulong u, const char* format = "%lu"); //note: don't use long any more, compatibility only
-  String(int64_t i64); //NOTE: no fmts because they are not cross-platform standard
-  String(uint64_t u64); //NOTE: no fmts because they are not cross-platform standard
+  String(int64_t i64, int base = 10);
+  String(uint64_t u64, int base = 10);
   String(float f, const char* format = "%g");
   String(double d, const char* format = "%lg");
   String(void* p); //converts to hex
@@ -178,7 +174,7 @@ public:
   operator char*() const { return (char*)chars(); } //
   
   bool 			toBool() const; // accepts true as starting with t/T, or else 1
-  char 			toChar() const; // if size 1, then that's it, else try heuristics
+  char 			toChar() const; // if size 1, then that's it, otherwise 0
   
   // converter routines, NOTE: ok only works when linked to Qt! 
   short 		toShort(bool* ok = 0, int base = 10) const; 

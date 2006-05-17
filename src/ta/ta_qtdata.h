@@ -83,8 +83,7 @@ public:
   int		widgetCount();
 
   virtual void	InitLayout(); // default creates a QHBoxLayout in the Rep
-  void		AddChildWidget(QWidget* child_widget, int space_after = -1);
-    // s_a=-1 for default taiM->hspc_c
+  void		AddChildWidget(QWidget* child_widget, int space_after = -1, int spacing = 0);
   void 		AddChildMember(MemberDef* md); // adds label and control for the member
   virtual void	EndLayout(); // default adds a stretch
 protected:
@@ -251,7 +250,7 @@ signals:
 class TA_API taiBitBox : public taiData { // supports enums that are bit fields (TODO: maybe support int fields too)
   Q_OBJECT
 public:
-  QWidget*	rep() const { return (QWidget*)m_rep; }
+  QFrame*	rep() const { return (QFrame*)m_rep; }
   bool			fillHor() {return true;} // override 
 
   taiBitBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);

@@ -82,7 +82,7 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
   Qt::ItemFlags rval = 0;
   if (ValidateIndex(index)) {
     // don't enable null cells
-    if (m_dt->hasData(index.column(), index.row() )) {
+    if (m_dt->hasData(index.row(), index.column())) {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       //TODO: determine if not editable, ex. maybe for matrix types
       DataArray_impl* col = m_dt->GetColData(index.column());
@@ -117,8 +117,9 @@ bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, i
   bool rval = false;
   switch (role) {
   case Qt::EditRole:
-    m_dt->SetValAsVar(value, index.column(), index.row());
-    emit dataChanged(index, index);
+    rval = m_dt->SetValAsVar(value, index.column(), index.row());
+    if (rval) 
+      emit dataChanged(index, index);
     return rval;
   default: return false;
   }

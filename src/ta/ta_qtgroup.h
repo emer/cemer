@@ -306,18 +306,17 @@ public:
   String_PArray		lst_membs; // list of members, by name
   int			num_lst_fields; // number of editble list memberdefs with fields
 
-//TODO  int		Edit();
-
-  bool			ShowMember(MemberDef* md);
-  
   gpiListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);
   gpiListDataHost() 				{ };
-  ~gpiListDataHost(); //
+  ~gpiListDataHost();
 
-public: // IDataHost i/f
   void		GetImage();
   void		GetValue();
+
+//TODO  int		Edit();
+
+  bool		ShowMember(MemberDef* md);
 
 protected:
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
@@ -385,7 +384,6 @@ protected:
 
 
 class TA_API gpiGroupDataHost : public gpiListDataHost {
-INHERITED(gpiListDataHost)
 public:
   taiDataList	sub_data_el;	// list of data elements for sub groups
   QWidget*	subData;
@@ -398,8 +396,6 @@ public:
   ~gpiGroupDataHost();
 
   override void	ClearBody_impl();	// clear body data for reshowing
-  
-public: // IDataHost i/f
   override void		GetImage();
 
 //TODO  int		Edit();

@@ -76,13 +76,13 @@ public:
   static taBase_PtrList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
 
-  static void		Close_Obj(TAPtr obj);
+  static void	Close_Obj(TAPtr obj);
   // call this to implement closing object function
-  static void		WaitProc();
+  static int	WaitProc();
   // wait process function: remove objects from groups, update others
 //obs  static bool	NotifyEdits(TAPtr obj);
   // notify any edit dialogs of a taptr object that object has changed
-  static void		DelayedUpdateAfterEdit(TAPtr obj);
+  static void	DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
 };
 

@@ -44,9 +44,7 @@ typedef taPtrList<iDataViewer> 	iDataViewer_PtrList; // #IGNORE
 //////////////////////////////
 
 
-class TA_API taiMisc: public taiMiscCore { 
-INHERITED(taiMiscCore)
- //  miscellaneous stuff for tai
+class TA_API taiMisc: public QObject { // #NO_TOKENS #NO_INSTANCE miscellaneous stuff for tai
   Q_OBJECT
 public:
   //NOTE: all xxSize values use the ls 4 bits of every enum -- this enables
@@ -114,6 +112,9 @@ public:
 
   };
 
+  static bool			gui_active;
+  // #READ_ONLY 'true' when we have a gui (mainwindow), false if not (ex. after main win closes)
+
   static taiDialog_List		active_dialogs;	// #IGNORE list of active (NoBlock) dialogs
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
   static taiEditDataHost_List	css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
@@ -129,16 +130,13 @@ public:
 
   static taBase_PtrList		unopened_windows;
   // #HIDDEN unopened windows waiting to be opened
-  
-  static taiMisc* 		New(bool gui, QObject* parent = NULL);
-   // #IGNORE initialize Qt interface system -- launch main window if gui; 
-  
   static void   OpenWindows(); //  open all unopened windows
-  static void 	WaitProc();	// waiting process function
+  static int 	WaitProc();	// waiting process function
   // update menus relevant to the given object, which might have changed
   static void	ScriptIconify(void* obj, int onoff); // record iconify command for obj to script
   static int	SetIconify(void* obj, int onoff); // set iconified field of winbase obj to onoff
 
+  static void	Initialize(bool gui, const char* classname_ = "");	// #IGNORE initialize Qt interface system -- launch main window if gui
 
   static void	Update(TAPtr obj); // #IGNORE update stuff after modification (uses hook fun)
 
@@ -146,6 +144,7 @@ public:
 
 //  static void	SetWinCursor(iWindow* win);
   // #IGNORE sets cursor for given window based on busy and record status
+  static int	RunPending();	// run any pending qt events that might need processed
 
   static void	PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)
@@ -256,6 +255,8 @@ public:
 
 
 */
+//OBS  const iColor* font_foreground;
+  const char* 	classname() const {return mclassname;} // replaces the Iv:session->instance()->classname()
   float 	edit_darkbg_brightness;
   float 	edit_lightbg_brightness;
 static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
@@ -287,14 +288,15 @@ static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrigh
   // dump interviews window to tiff file
 #endif */
 
-  taiMisc(QObject* parent = NULL);
+  taiMisc(const char* classname_);
+  taiMisc(); // #IGNORE for ta_TA only
   ~taiMisc();
 protected:
-  override void			Init(bool gui); // NOTE: called from static New
-  override void		Quit_impl();
+  void init(); // #IGNORE
 };
 #endif
 
-extern TA_API taiMisc* taiM_; // use taiM macro instead
+extern TA_API taiMisc* taiM;	// this is an instance to use for all seasons..
+
 
 #endif // TA_QT_H

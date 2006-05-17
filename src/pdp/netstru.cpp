@@ -2468,7 +2468,7 @@ void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int 
     if((lv == NULL) || !lv->display_toggle || !lv->IsMapped())
       return; */
   }
-/*TODO: replace subgroup usage with a Matrix-type col instead
+
   disp_log->SetName((String)"GridViewWeights: " + layer->GetName() + ", " + GetName());
 
   DataTable* md = &(disp_log->data);
@@ -2535,7 +2535,6 @@ void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int 
   }
 
   disp_log->ViewAllData();
-*/
 }
 
 void Projection::WeightsToTable(DataTable* dt) {

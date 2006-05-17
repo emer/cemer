@@ -34,7 +34,6 @@ class DataTableModel;
 
 class DataTable;
 class String_Data; 
-class Variant_Data; 
 class float_Data;
 class int_Data;
 class byte_Data;
@@ -56,16 +55,16 @@ public:
   String	GetName() const			{ return name; }
 
   // set options to encode type information
-  virtual void	SetStringName(const String& nm);
-  virtual void	SetNarrowName(const String& nm);
-  virtual void	SetFloatVecNm(const String& nm, int n);
-  virtual void	SetStringVecNm(const String& nm, int n);
+  virtual void	SetStringName(const char* nm);
+  virtual void	SetNarrowName(const char* nm);
+  virtual void	SetFloatVecNm(const char* nm, int n);
+  virtual void	SetStringVecNm(const char* nm, int n);
 
-  virtual void 	AddDispOption(const String& opt);
+  virtual void 	AddDispOption(const char* opt);
   // adds an option, checking that it is not already there first..
-  bool		HasDispOption(const String& opt) const
+  bool		HasDispOption(const char* opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
-  String 	DispOptionAfter(const String& opt);
+  String 	DispOptionAfter(const char* opt);
   // returns portion of option after given opt fragment
 
   void	Initialize();
@@ -324,8 +323,7 @@ public:
     VT_STRING,
     VT_FLOAT,
     VT_INT,
-    VT_BYTE,
-    VT_VARIANT
+    VT_BYTE
   };
 
   static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
@@ -360,9 +358,9 @@ public:
   
   // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
-  const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
+  Variant 	GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
     // valid for all types, -ve row is from end (-1=last)
-  const String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
+  String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
     // valid if type is numeric, -ve row is from end (-1=last)
@@ -372,9 +370,9 @@ public:
     // valid only if type is byte, -ve row is from end (-1=last)
     
   // Matrix versions
-  const Variant GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
+  Variant 	GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
-  const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
+  String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
     // valid if type is numeric, -ve row is from end (-1=last)
@@ -416,10 +414,10 @@ public:
     // valid if type is numeric, -ve row is from end (-1=last)
     {return SetValAsByte_impl(val, row, cell);} 
 
-  bool		HasDispOption(const String& opt) const
+  bool		HasDispOption(const char* opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
-  const String 	DispOptionAfter(const String& opt) const;
-  void		AddDispOption(const String& opt);
+  String 	DispOptionAfter(const char* opt) const;
+  void		AddDispOption(const char* opt);
 
   override bool		Dump_QuerySaveMember(MemberDef* md); // dynamically check for saving data 
   
@@ -435,8 +433,8 @@ protected:
   // in all accessor routines, -ve row is from end (-1=last)
   int			IndexOfEl_Flat(int row, int cell) const; 
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
-  virtual const Variant GetValAsVar_impl(int row, int cell) const; 
-  virtual const String 	GetValAsString_impl(int row, int cell) const; 
+  virtual Variant 	GetValAsVar_impl(int row, int cell) const; 
+  virtual String 	GetValAsString_impl(int row, int cell) const; 
   virtual float 	GetValAsFloat_impl(int row, int cell) const 
     {return (float)GetValAsInt_impl(row, cell);}
   virtual int	 	GetValAsInt_impl(int row, int cell) const 
@@ -511,7 +509,6 @@ private:
     - all fuctions using row numbers work properly for jagged tables, i.e. those to which
       columns have been added after some rows already exist
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
-    - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TAMISC_API DataTable : public taGroup<DataArray_impl> {
   // #NO_UPDATE_AFTER ##TOKENS table of data
@@ -521,94 +518,105 @@ public:
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
   
   int		cols() {return leaves;}
-  bool		hasData(int col, int row); // true if data at that cell
-  bool		idx(int row_num, int col_size, int& act_idx) const
-    {if (row_num < 0) row_num = rows + row_num;
-    act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
-    // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
+  bool		hasData(int row, int col, int subgp=-1); // true if data at that cell
+  bool		idx(int row_num, int col_size, int& act_idx)
+    {act_idx = col_size - (rows - row_num); return act_idx >= 0;} // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
   
   override void	Reset();
-  void		ResetData();
-    // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
-  void		RemoveRow(int row_num);
-    // #MENU Remove an entire row of data
+  virtual void	ResetData();
+  // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
+  virtual void	RemoveRow(int row_num);
+  // #MENU Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  void	AddBlankRow();
+  virtual void	AddBlankRow();
   // #MENU add a new row to the data table, returns new row number
-  void	AllocRows(int n); // allocate space for at least n rows
+  virtual void	AllocRows(int n); // allocate space for at least n rows
 
-  void	SetSaveToFile(bool save_to_file);
+  virtual void	SetSaveToFile(bool save_to_file);
   // #MENU set the save_to_file flag for entire group of data elements
 
-  void	AddRowToArray(float_RArray& ar, int row_num) const;
+  virtual void	AddRowToArray(float_RArray& ar, int row_num) const;
   // add a row of the datatable to given array
-  void	AggRowToArray(float_RArray& ar, int row_num, Aggregate& agg) const;
+  virtual void	AggRowToArray(float_RArray& ar, int row_num, Aggregate& agg) const;
   // aggregate a row of the datatable to given array using parameters in agg
-  float	AggRowToVal(int row_num, Aggregate& agg) const;
+  virtual float	AggRowToVal(int row_num, Aggregate& agg) const;
   // aggregate a row of the datatable to a value using parameters in agg
-  void	AddArrayToRow(float_RArray& ar);
+  virtual void	AddArrayToRow(float_RArray& ar);
   // add contents of array to datatable
-  void	AggArrayToRow(const float_RArray& ar, int row_num, Aggregate& agg);
+  virtual void	AggArrayToRow(const float_RArray& ar, int row_num, Aggregate& agg);
   // aggregate contents of array to datatable at given row
-  void	PutArrayToRow(const float_RArray& ar, int row_num);
+  virtual void	PutArrayToRow(const float_RArray& ar, int row_num);
   // just put array values into given row of data
-  void	UpdateAllRanges();
+  virtual void	UpdateAllRanges();
   // update all min-max range data for all float_Data elements in log
 
-  DataArray_impl*	NewCol(DataArray_impl::ValType val_type, const String& col_nm);
+  DataArray_impl*	NewCol(DataArray_impl::ValType val_type, const char* col_nm);
    // #MENU #MENU_ON_Table create new scalar column of data of specified type
-  DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
+  DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const char* col_nm,
     int dims = 1, int d0 = 0, int d1 = 0, int d2 = 0, int d3 = 0);
    // #MENU #MENU_ON_Table create new matrix column of data of specified type, with specified cell geom
-  DataArray_impl*	NewColMatrixGeom(DataArray_impl::ValType val_type, 
-    const String& col_nm,  const MatrixGeom& cell_geom);
+  DataArray_impl*	NewColMatrixGeom(DataArray_impl::ValType val_type, const char* col_nm,
+    const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
-  float_Data*		NewColFloat(const String& col_nm); 
-    // create new column of floating point data
-  int_Data*		NewColInt(const String& col_nm); 	 
-    // create new column of integer-level data (= narrow display, actually stored as float)
-  String_Data*		NewColString(const String& col_nm); 
-    // create new column of string data
-  DataTable*		NewGroupFloat(const String& base_nm, int n); 
-    // create new sub-group of floats of size n, named as base_nm_index
-  DataTable*		NewGroupInt(const String& base_nm, int n); 
-    // create new sub-group of ints of size n, named as base_nm_index
-  DataTable*		NewGroupString(const String& base_nm, int n); 
-    // create new sub-group of strings of size n, named as base_nm_index
+  virtual float_Data*	NewColFloat(const char* col_nm); // create new column of floating point data
+  virtual int_Data*	NewColInt(const char* col_nm); 	 // create new column of integer-level data (= narrow display, actually stored as float)
+  virtual String_Data*	NewColString(const char* col_nm); // create new column of string data
+  virtual DataTable*	NewGroupFloat(const char* base_nm, int n); // create new sub-group of floats of size n, named as base_nm_index
+  virtual DataTable*	NewGroupInt(const char* base_nm, int n); // create new sub-group of ints of size n, named as base_nm_index
+  virtual DataTable*	NewGroupString(const char* base_nm, int n); // create new sub-group of strings of size n, named as base_nm_index
 
-  DataArray_impl* 	GetColData(int col) const;
-    // get col data for given leaf column 
-  taMatrix*		GetColMatrix(int col) const;
-    // get matrix for given leaf column -- WARNING: this is NOT row-number safe 
+  virtual DataArray_impl* GetColData(int col, int subgp=-1);
+  // get data for given column (if subgp >= 0, column is in given subgroup)
 
-  void			PutArrayToCol(const float_RArray& ar, int col);
+  virtual float_Data* GetColFloatData(int col, int subgp=-1);
+  // get float_Data for given column (if subgp >= 0, column is in given subgroup)
+  virtual String_Data* GetColStringData(int col, int subgp=-1);
+  // get string data for given column (if subgp >= 0, column is in given subgroup)
+
+  virtual float_Matrix* GetColFloatArray(int col, int subgp=-1);
+  // get float_RArray for given column (if subgp >= 0, column is in given subgroup)
+  virtual String_Matrix* GetColStringArray(int col, int subgp=-1);
+  // get string data for given column (if subgp >= 0, column is in given subgroup)
+
+  virtual void	PutArrayToCol(const float_RArray& ar, int col, int subgp=-1);
   // just put array values into given column (if subgp >= 0, column is in given subgroup)
 
-  void			SetColName(const String& col_nm, int col);
-  // set column name for given column
-  void			AddColDispOpt(const String& dsp_opt, int col);
-  // add display option for given leaf column
+  virtual void	SetColName(const char* col_nm, int col, int subgp=-1);
+  // set column name for given column (if subgp >= 0, column is in given subgroup)
+  virtual void	AddColDispOpt(const char* dsp_opt, int col, int subgp=-1);
+  // add display option for given column (if subgp >= 0, column is in given subgroup)
   
-  float 		GetValAsFloat(int col, int row);
-  // get data of any type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
-  void 			SetValAsFloat(float val, int col, int row);
-  // set data of any type, in String form, for given leaf column, row; does nothing if no cell
-  const String 		GetValAsString(int col, int row) const;
-  // get data of any type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
-  void 			SetValAsString(const String& val, int col, int row);
-  // set data of any type, in String form, for given leaf column, row; does nothing if no cell
+  virtual void	SetFloatVal(float val, int col, int row, int subgp=-1);
+  // set float/int data for given column, row (if subgp >= 0, column is in given subgroup)
+  virtual void	SetStringVal(const char* val, int col, int row, int subgp=-1);
+  // set string data for given column, row (if subgp >= 0, column is in given subgroup)
 
-  const Variant 	GetValAsVar(int col, int row) const;
-  // get data of any type, in Variant form, for given column, row; Invalid/NULL if no cell
-  void 			SetValAsVar(const Variant& val, int col, int row);
-  // set data of any type, in Variant form, for given leaf column, row; does nothing if no cell
+  virtual void	SetLastFloatVal(float val, int col, int subgp=-1);
+  // set last row float/int data for given column (if subgp >= 0, column is in given subgroup)
+  virtual void	SetLastStringVal(const char* val, int col, int subgp=-1);
+  // set last row string data for given column (if subgp >= 0, column is in given subgroup)
+
+  virtual float GetFloatVal(int col, int row, int subgp=-1);
+  // get float data for given column, row (if subgp >= 0, column is in given subgroup)
+  virtual String GetStringVal(int col, int row, int subgp=-1);
+  // get string data for given column, row (if subgp >= 0, column is in given subgroup)
+  
+  String 	GetValAsString(int col, int row, int subgp=-1);
+  // get data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); if data is NULL, then "n/a" is returned
+  void 		SetValAsString(const String& val, int col, int row, int subgp=-1);
+  // set data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); does nothing if no cell
+
+  Variant 	GetValAsVar(int col, int row, int subgp=-1);
+  // get data of any type, in Variant form, for given column, row (if subgp >= 0, column is in given subgroup); Invalid/NULL if no cell
+  bool 		SetValAsVar(const Variant& val, int col, int row, int subgp=-1);
+  // set data of any type, in String form, for given column, row (if subgp >= 0, column is in given subgroup); does nothing if no cell
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveHeader(ostream& strm); // saves header information, tab-separated, 
-  void 			SaveData(ostream& strm); // saves data, one line per rec, tab-separated
-  void 			LoadHeader(istream& strm); // loads header information -- preserves current headers if possible
-  void 			LoadData(istream& strm, int max_recs = -1); // loads data, up to max num of recs (-1 for all)
+  virtual void 	SaveHeader(ostream& strm); // saves header information, tab-separated, 
+  virtual void 	SaveData(ostream& strm); // saves data, one line per rec, tab-separated
+  virtual void 	LoadHeader(istream& strm); // loads header information -- preserves current headers if possible
+  virtual void 	LoadData(istream& strm, int max_recs = -1); // loads data, up to max num of recs (-1 for all)
   
   int  		MinLength();		// #IGNORE
   int  		MaxLength();		// #IGNORE
@@ -631,13 +639,21 @@ public:
 public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
   virtual void	RowAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
   virtual void	RowAdded(); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowAdding)
+  void	AddFloatVal_deprecated(float val, int col, int subgp=-1) {AddFloatVal(val, col, subgp);} // #IGNORE
+  void	AddStringVal_deprecated(const char* val, int col, int subgp=-1) {AddStringVal(val, col, subgp);} // #IGNORE
 
 protected:
 #ifdef TA_GUI
   DataTableModel*	m_dtm; // #IGNORE note: once we create, always exists
 #endif
-  DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, const String& col_nm);
+  virtual DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, const char* col_nm);
    // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
+private:
+  virtual void	AddFloatVal(float val, int col, int subgp=-1);
+  // add float/int data for given column (if subgp >= 0, column is in given subgroup)
+  virtual void	AddStringVal(const char* val, int col, int subgp=-1);
+  // add string data for given column (if subgp >= 0, column is in given subgroup)
+
 };
 
 template<class T> 
@@ -652,7 +668,7 @@ public:
   COPY_FUNS(DataArray<T>, DataArray_impl);
   TA_ABSTRACT_TMPLT_BASEFUNS(DataArray, T); //
 public: //DO NOT ACCESS DIRECTLY
-  T		ar;		// #NO_SHOW  the array itself
+  T		ar;		// #SHOW #BROWSE the array itself
 private:
   void	Initialize()		{}
   void	Destroy()		{ CutLinks(); }
@@ -667,27 +683,6 @@ public:
   override ValType 	valType() const  {return VT_STRING;}
 
   TA_BASEFUNS(String_Data);
-
-private:
-  void	Initialize() {}
-  void	Destroy() {}
-};
-
-
-class TAMISC_API Variant_Data : public DataArray<Variant_Matrix> {
-  // Variant data
-INHERITED(DataArray<Variant_Matrix>)
-friend class DataTable;
-public:
-  override ValType 	valType() const  {return VT_VARIANT;}
-
-  TA_BASEFUNS(Variant_Data);
-
-protected:
-  override const Variant GetValAsVar_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override bool	 	SetValAsVar_impl(const Variant& val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
 
 private:
   void	Initialize() {}
@@ -710,7 +705,7 @@ protected:
   override float 	GetValAsFloat_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsFloat_impl(float val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}
@@ -732,7 +727,7 @@ protected:
   override int 		GetValAsInt_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsInt_impl(int val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}
@@ -754,7 +749,7 @@ protected:
   override byte 	GetValAsByte_impl(int row, int cell) const
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsByte_impl(byte val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+    {ar.Set_Flat(IndexOfEl_Flat(row, cell), val); return true;}
 
 private:
   void	Initialize() {}
@@ -814,7 +809,7 @@ public:
   virtual void	Graph_impl(ostream& strm);
   // #IGNORE implementation
 
-  virtual void	XGraph(const String& fnm, const String& title);
+  virtual void	XGraph(const char* fnm, const char* title);
   // generate graph in given file name with given title, and call xgraph on result
 
   virtual void	GraphData(DataTable* dt);
@@ -890,7 +885,7 @@ public:
   virtual bool	BuildFromDataTable(DataTable* tdt=NULL);
   virtual void	ReBuildFromDataTable();
 
-  virtual void	SetDispNms(const String& base_name);
+  virtual void	SetDispNms(const char* base_name);
   // #BUTTON set display_name for all view specs in group to base_name + "_" + no where no is number in group
   virtual void	RmvNmPrefix();
   // #BUTTON set display_name for all view specs in group to current name without prefix (i.e., "prefix_rest" -> "rest")

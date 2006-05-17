@@ -1053,7 +1053,7 @@ void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(win_title)
+  win_str = String(taiM->classname()) + ": " + win_title
      + " " + cur_lst->GetPath();
 }
 
@@ -1182,7 +1182,7 @@ void gpiListDataHost::GetImage() {
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+//TEMP    GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
   }
   Unchanged();
 }
@@ -1236,7 +1236,7 @@ void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) 
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(win_title)
+  win_str = String(taiM->classname()) + ": " + win_title
      + " " + cur_lst->GetPath();
 }
 
@@ -1380,7 +1380,8 @@ void gpiGroupDataHost::Constr_Strings(const char*, const char* win_title) {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(win_title) + " " + cur_lst->GetPath();
+  win_str = String(taiM->classname()) + ": " +
+    win_title + " " + cur_lst->GetPath();
 }
 
 
@@ -1409,7 +1410,7 @@ void gpiGroupDataHost::Constr_Body() {
 }
 
 void gpiGroupDataHost::GetImage() {
-  inherited::GetImage();
+  gpiListDataHost::GetImage();
   TAGPtr cur_gp = (TAGPtr)cur_lst;
   if (sub_data_el.size != cur_gp->gp.size) {
 return;

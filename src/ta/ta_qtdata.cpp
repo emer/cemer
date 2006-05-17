@@ -249,6 +249,12 @@ void taiCompData::InitLayout() { //virtual/overridable
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
+void taiCompData::AddChildWidget(QWidget* child_widget, int space_after, int spacing) { // non-virtual
+  mwidgets->append(child_widget);
+  AddChildWidget_impl(child_widget, spacing);
+  last_spc = space_after;
+}
+
 void taiCompData::AddChildMember(MemberDef* md) {
   String desc = md->desc;
 
@@ -256,13 +262,13 @@ void taiCompData::AddChildMember(MemberDef* md) {
   String nm = md->GetLabel();
   QLabel* lbl = new QLabel(nm, GetRep());
 
-  AddChildWidget(lbl, taiM->hsep_c);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
 
   // add gui representation of data
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
-  AddChildWidget(ctrl, taiM->hspc_c);
+  AddChildWidget(ctrl, taiM->hspc_c, 1);
 
   // add description text tooltips
   if (!desc.empty()) {
@@ -276,17 +282,10 @@ void taiCompData::EndLayout() { //virtual/overridable
     lay->addStretch();
 }
 
-void taiCompData::AddChildWidget(QWidget* child_widget, int space_after) { 
-  if (space_after == -1) space_after = taiM->hspc_c;
-  mwidgets->append(child_widget);
-  AddChildWidget_impl(child_widget, last_spc);
-  last_spc = space_after;
-}
-
 void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing) { //virtual/overridable
-  if (spacing != -1)
+  if (last_spc != -1)
     lay->addSpacing(last_spc);
-  lay->addWidget(child_widget, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  lay->addWidget(child_widget, spacing, (Qt::AlignLeft | Qt::AlignVCenter));
   child_widget->show();
 }
 
@@ -724,23 +723,19 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
   Initialize(gui_parent_);
   if (is_enum && typ) {
     for (int i = 0; i < typ->enum_vals.size; ++i) {
-      if (i > 0)
-        lay->addSpacing(taiM->hspc_c);
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT")) continue;
       
       AddBoolItem(ed->GetLabel(), ed->enum_no);
     }
-    lay->addStretch();
   }
 }
 
 
 void taiBitBox::Initialize(QWidget* gui_parent_) {
-  SetRep(new QWidget(gui_parent_));
+  SetRep(new QFrame(gui_parent_));
   rep()->setFixedHeight(taiM->label_height(defSize()));
   lay = new QHBoxLayout(m_rep);
-  lay->setMargin(0); // in Qt4 it adds style-dependent defaults
 }
 
 void taiBitBox::bitCheck_toggled(iBitCheckBox* sender, bool on) {
@@ -817,7 +812,7 @@ taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget*
 : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   if (host_ && (host_->GetTypeDef()->InheritsFrom(TA_taiEditDataHost))) {
-    show = (dynamic_cast<taiEditDataHost*>(host_))->show;
+    show = ((taiEditDataHost*)host_)->show;
   } else {
     show = taMisc::show_gui;
   }
@@ -842,11 +837,13 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
     SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
   }
   InitLayout();
+//  QHBoxLayout* hbl = new QHBoxLayout(m_rep);
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md))
       continue;
     AddChildMember(md);
+      
   }
   EndLayout();
 }
@@ -881,7 +878,6 @@ void taiPolyData::GetValue_impl(void* base) const {
   }
   taMisc::record_script = rec_scrpt;
 }
-
 
 //////////////////////////////////
 // 	taiDataDeck		//
@@ -948,7 +944,7 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   // type stuff
   QWidget* rep_ =  GetRep();
   QLabel* lbl = new QLabel("var type",rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
   
   TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
   cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
@@ -969,7 +965,7 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
     cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
   }
-  AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
+  AddChildWidget(cmbVarType->rep(), taiM->hsep_c, 0);
   lbl->setBuddy(cmbVarType->rep());
   if (read_only_) {
     cmbVarType->rep()->setEnabled(false);
@@ -978,9 +974,9 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   }
   
   lbl = new QLabel("var value", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
+  AddChildWidget(lbl, taiM->hsep_c, 0);
   stack = new QStackedWidget(rep_);
-  AddChildWidget(stack); // fill rest of space
+  AddChildWidget(stack, -1, 1); // fill rest of space
   lbl->setBuddy(stack);
   
   // created in order of StackControls

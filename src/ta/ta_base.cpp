@@ -134,11 +134,13 @@ void tabMisc::Close_Obj(TAPtr obj) {
   //  WaitProc();		// kill me now ?
 }
 
-void tabMisc::WaitProc() {
+int tabMisc::WaitProc() {
 #ifdef TA_GUI
   taiMisc::PurgeDialogs();
 #endif
-  if (delayed_remove.size > 0) {
+  bool did_something = false;
+  if(delayed_remove.size > 0) {
+    did_something = true;
     int i;
     for(i=0; i<delayed_remove.size; i++) {
       TAPtr it = delayed_remove.FastEl(i);
@@ -152,7 +154,8 @@ void tabMisc::WaitProc() {
     }
     delayed_remove.RemoveAll();
   }
-  if (delayed_updateafteredit.size > 0) {
+  if(delayed_updateafteredit.size > 0) {
+    did_something = true;
     int i;
     for(i=0; i<delayed_updateafteredit.size; i++) {
       TAPtr it = delayed_updateafteredit.FastEl(i);
@@ -160,6 +163,7 @@ void tabMisc::WaitProc() {
     }
     delayed_updateafteredit.RemoveAll();
   }
+  return did_something;
 }
 
 /*obsbool tabMisc::NotifyEdits(TAPtr obj) {

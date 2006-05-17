@@ -30,11 +30,11 @@
 
 
 #ifdef TA_GUI
-# include "css_qt.h"
 # include <QApplication>
 # ifdef TA_USE_INVENTOR
 #   include <Inventor/Qt/SoQt.h>
 # endif
+# include "css_qt.h"		// for cancelEdits, and cssiSession
 #endif
 
 #include <QEvent>
@@ -104,6 +104,7 @@ cssProgSpace* 	cssMisc::Top = NULL;
 cssProgSpace*	cssMisc::cur_top = NULL;
 cssProgSpace*	cssMisc::code_cur_top = NULL;
 cssProgSpace*	cssMisc::delete_me = NULL;
+cssProgSpace*	cssMisc::next_shell = NULL;
 
 cssArray*	cssMisc::s_argv;
 cssInt*		cssMisc::s_argc;
@@ -260,10 +261,10 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 # else
   new QApplication(argc, (char**)argv); // accessed as qApp
 # endif
-//obs  rl_event_hook = cssiSession::readline_waitproc; // set the hook to cssiSession's "waitproc"
+  rl_event_hook = cssiSession::readline_waitproc; // set the hook to cssiSession's "waitproc"
 #else
   new QCoreApplication(argc, (char**)argv); // accessed as qApp
-//obs  rl_event_hook = readline_waitproc; // set the hook to our "waitproc"
+  rl_event_hook = readline_waitproc; // set the hook to our "waitproc"
 #endif
   // have waitproc called back 20/s (instead of 10/s)
   rl_set_keyboard_input_timeout(50000); 

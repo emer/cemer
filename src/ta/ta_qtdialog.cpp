@@ -511,14 +511,11 @@ void taiDataHost::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
   const QObjectList& ol = obj->children(); 
-  int i = 0;
-  while (ol.count() > 0) {
-    i = ol.size() - 1;
+  for (int i = ol.count() - 1; i >= 0; --i) {
     chobj = ol.at(i);
-    delete chobj;
-/*    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
+    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
     else  chobj->setParent((QObject*)NULL);
-    chobj->deleteLater(); // deleted in event loop */
+    chobj->deleteLater(); // deleted in event loop
   }
 }
 
@@ -700,7 +697,6 @@ void taiDataHost::Apply() {
 
 void taiDataHost::BodyCleared() { // called when last widget cleared from body
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
-  rebuild_body = true;
   ReConstr_Body();
   state &= ~SHOW_CHANGED;
 }
@@ -728,9 +724,10 @@ void taiDataHost::Changed() {
 }
 
 void taiDataHost::ClearBody() {
+  rebuild_body = true;
   ClearBody_impl();
-  taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
-  BodyCleared(); //rebuilds if ShowChanged
+  BodyCleared();
+  cssiSession::RunPending(); // get the defered deletes to process now
 }
 
 void taiDataHost::ClearBody_impl() {
@@ -929,14 +926,12 @@ void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (state == CANCELED) return;
-  dch.UpdateFromDataChanged(dcr);
   // we only care about the rebuilding ones, for others, we just call notify
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
-  if (dch.doStructUpdate()) //note: clears su and du states
+  if (dcr == DCR_ITEM_REBUILT) 
     ReShow();
-  else if (dch.doDataUpdate()) //note: clears du state
-    NotifyChanged();
+  else  NotifyChanged();
   
 }
 
@@ -1194,7 +1189,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
 {
   cur_base = base;
   use_show = true; // some descendant classes override, as well as construction methods
-  show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+  show = taMisc::show_gui;
   cur_menu = NULL;
   cur_menu_but = NULL;
   show_menu = NULL;
@@ -1374,8 +1369,7 @@ void taiEditDataHost::Constr_Data_impl(const MemberSpace& ms, taiDataList* dl) {
 }
 
 void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
-//  win_str = String(taiM->classname()) + ": " + win_title;
-  win_str = String(win_title);
+  win_str = String(taiM->classname()) + ": " + win_title;
   if (typ != NULL) {
     prompt_str = typ->name;
     if (typ->InheritsFrom(TA_taBase)) {
@@ -1430,8 +1424,29 @@ void taiEditDataHost::Constr_Methods_impl() {
   }
 }
 
-//void taiEditDataHost::Constr_ShowMenu() {
-// moved to be by the setShow etc. calls, for clarity
+void taiEditDataHost::Constr_ShowMenu() {
+  if (!use_show) return;
+  if (menu == NULL) return;	// if don't even have a menu, bail
+//note: ok in Qt version, TODO: delete this line  if (modal) return; // can't change what to show on modal dialog
+
+  show_menu = menu->AddSubMenu("&Show");
+
+  // first two items are commands that set the other toggle flags
+  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 0 );
+  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 1 );
+  show_menu->AddSep();
+  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 2 );
+  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 3 );
+  show_menu->AddItem("&Read Only", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 4 );
+  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 5 );
+  setShowValues(show); // sets toggles
+}
 
 void taiEditDataHost::Constr_Final() {
   taiDataHost::Constr_Final();
@@ -1689,8 +1704,9 @@ bool taiEditDataHost::ReShow(bool force) {
       }
     }
   }
-  state |= SHOW_CHANGED; 
-  ClearBody(); // rebuilds body after clearing
+  // clear body -- much of the deleting is deferred, so event loop must pick up when it changes
+  ClearBody();
+  state |= SHOW_CHANGED; // will get changed in event handler for body items deleted
   return true;
 }
 
@@ -1708,61 +1724,20 @@ void taiEditDataHost::SetItemAsHandler(taiData* item, bool set_it) {
   }
 }
 
-void taiEditDataHost::Constr_ShowMenu() {
-  if (!use_show) return;
-  if (menu == NULL) return;	// if don't even have a menu, bail
-//note: ok in Qt version, TODO: delete this line  if (modal) return; // can't change what to show on modal dialog
-
-  show_menu = menu->AddSubMenu("&Show");
-
-  // first item controls whether to slave to app's global value, or override
-  show_menu->AddItem("App de&fault", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), taMisc::USE_SHOW_GUI_DEF );
-  show_menu->AddSep();
-  // next two items are commands that set the other toggle flags
-  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 0 );
-  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 1 );
-  show_menu->AddSep();
-  //  toggle flags
-  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 2 );
-  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 3 );
-  show_menu->AddItem("&Read Only", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
-  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 5 );
-  show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 6 );
-  setShowValues(show); // sets toggles
-}
-
 void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
   if (show_menu == NULL) return;
-  (*show_menu)[0]->setChecked((value & taMisc::USE_SHOW_GUI_DEF));
   //note: nothing to do for the command items
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_READ_ONLY));
-  (*show_menu)[6]->setChecked(!(value & taMisc::NO_DETAIL));
-  (*show_menu)[7]->setChecked(!(value & taMisc::NO_EXPERT));
-  // disable menus if not overriding default
-  bool en = !(value & taMisc::USE_SHOW_GUI_DEF);
-  for (int i = 1; i <= 7; ++i) {
-    (*show_menu)[i]->setEnabled(en);
-  }
-  
+  (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
+  (*show_menu)[3]->setChecked(!(value & taMisc::NO_HIDDEN));
+  (*show_menu)[4]->setChecked(!(value & taMisc::NO_READ_ONLY));
+  (*show_menu)[5]->setChecked(!(value & taMisc::NO_DETAIL));
   show = value;
 }
 
 void taiEditDataHost::setShow(taMisc::ShowMembs value) {
   if (show_menu == NULL) return;
   taMisc::ShowMembs old_show = show;
-  // note: we only do actual change processing for show changes,
-  // not change to/from app default if our last shows were the same except for that
-  if ((~taMisc::USE_SHOW_GUI_DEF & show) != (~taMisc::USE_SHOW_GUI_DEF & value)) {
+  if (show != value) {
       // get confirmation if changed, and possibly exit
     if (HasChanged()) {
       int chs = taMisc::Choice("Changes must be applied before changing view", "&Apply", "&Cancel");
@@ -1770,6 +1745,7 @@ void taiEditDataHost::setShow(taMisc::ShowMembs value) {
       case  1: // just ignore and exit
   	setShowValues(old_show); // need to correct menu before cancelling
         return;
+        break;
       case  0:
       default:
         Apply();
@@ -1780,8 +1756,7 @@ void taiEditDataHost::setShow(taMisc::ShowMembs value) {
   setShowValues(value);
 
   // only reconfigure if view actually changed
-  if ((~taMisc::USE_SHOW_GUI_DEF & old_show) == (~taMisc::USE_SHOW_GUI_DEF & value))
-     return;
+  if (old_show == value) return;
   ReShow();
 }
 
@@ -1792,9 +1767,6 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
     new_show = taMisc::NORM_MEMBS;
   else if (sender->usr_data == 1)
     new_show = taMisc::ALL_MEMBS;
-  else if (sender->usr_data == taMisc::USE_SHOW_GUI_DEF)
-    new_show = sender->isChecked() ? 
-      taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui : show & ~taMisc::USE_SHOW_GUI_DEF;
   else {
     int mask;
     switch (sender->usr_data.toInt()) {
@@ -1802,7 +1774,6 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
       case 3: mask = taMisc::NO_HIDDEN; break;
       case 4: mask = taMisc::NO_READ_ONLY; break;
       case 5: mask = taMisc::NO_DETAIL; break;
-      case 6: mask = taMisc::NO_EXPERT; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
@@ -2009,15 +1980,12 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
-  if (dir.empty())
-    dir = last_dir;
   QFileDialog* fd = new QFileDialog(NULL, "", fname, filter); // no parent, no name, modal
   fd->setDir(dir);
 
   String caption;
   switch (filerOperation) {
   case foOpen:
-    fd->setAcceptMode(QFileDialog::AcceptOpen);
     fd->setMode(QFileDialog::ExistingFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Open for Reading");
     caption = String("Open: ") + filter;
@@ -2026,13 +1994,11 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
     // TODO: will this ever be called???
     goto exit;
   case foSaveAs:
-    fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
     caption = String("Save: ") + filter;
     break;
   case foAppend:
-    fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");
     caption = String("Append: ") + filter;
@@ -2043,7 +2009,6 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
 
   if (fd->exec() == QDialog::Accepted) {
         fname = fd->selectedFile();
-        dir = fd->directory().absolutePath();
         result = true;
   }
 

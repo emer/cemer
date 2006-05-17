@@ -1128,6 +1128,11 @@ void ScriptPrjnSpec::UpdateAfterEdit() {
   }
 }
 
+void ScriptPrjnSpec::Interact() {
+  if(script == NULL)   return;
+  cssMisc::next_shell = script;
+}
+
 void ScriptPrjnSpec::Compile() {
   CompileScript();
 }

@@ -480,7 +480,7 @@ cssEl* cssTA::operator>>(cssEl& s) {
 	  else {
 	    if(c == '\"') { // "
 	      strm->get();
-	      c = taMisc::read_till_end_quote(*strm);
+	      c = taMisc::read_till_quote(*strm);
 	      if(c == EOF)	break;
 	      tp_str->val = taMisc::LexBuf;
 	    }
