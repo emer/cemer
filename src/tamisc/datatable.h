@@ -526,7 +526,7 @@ public:
     {if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
     // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  
+  bool		RowInRangeNormalize(int& row); // normalizes row (if -ve) and tests result in range 
   override void	Reset();
   void		ResetData();
     // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure

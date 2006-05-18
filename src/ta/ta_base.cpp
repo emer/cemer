@@ -1300,12 +1300,17 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
   // first save any sub-members (this really doesn't ever happen, cuz there isn't any!)
   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
-  if(IsEmpty())  return rval;
+  if (IsEmpty())  return rval;
 
   strm << "\n";			// actually saving a path: put a newline
-
-  if(par != this) {		// par == this when saved as member of a group
-    taMisc::indent(strm, indent, 1);
+/* BA 2006-05-18
+TODO: don't see why this code needs to be here -- par should always be consistent;
+if we need a special mode, then we MUST add a parameter, not play games with par
+*/
+//  bool gp_mode = (par == this); // par == this when saved as member of a group
+  bool gp_mode = false; // TODO: temp, for testing, never allow this weird mode
+  if (!gp_mode) {		
+    taMisc::indent(strm, indent);
     Dump_Save_Path(strm, par, indent); // save my path!
     if(HasOption("ARRAY_ALLOC")) { // allocate thing as an array
       TAPtr sb = (TAPtr)el[0];	// check 1st guy to see if onwed or linked!
@@ -1318,12 +1323,12 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
       strm << " = [" << size << "] {\n";
   }
 
-  Dump_Save_PathR_impl(strm, this, indent+1);
-
-  if(par != this) {
-    taMisc::indent(strm, indent, 1);
+  Dump_Save_PathR_impl(strm, par, indent+1);
+  
+  if (!gp_mode) {
+    taMisc::indent(strm, indent);
     strm << "};\n";
-  }
+  } 
   return true;
 }
 
@@ -1335,15 +1340,15 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
     if(itm == NULL)
       continue;
 
-    if(El_GetOwner_(itm) != this) { // a link, create a dummy placeholder
-      taMisc::indent(strm, indent, 1);
+    if (El_GetOwner_(itm) != this) { // a link, create a dummy placeholder
+      taMisc::indent(strm, indent);
       strm << itm->GetTypeDef()->name << " @[" << i << "] { };\n";
       continue;
     }
-    taMisc::indent(strm, indent, 1);
+    taMisc::indent(strm, indent);
     itm->Dump_Save_Path(strm, this, indent);
     // can't put this in dump_save_path cuz don't want it during non PathR times..
-    if(itm->InheritsFrom(TA_taList_impl)) {
+    if (itm->InheritsFrom(TA_taList_impl)) {
       taList_impl* litm = (taList_impl*)itm;
       if(!litm->IsEmpty()) {
 	if(litm->HasOption("ARRAY_ALLOC")) { // actually save and allocate as one "array"
@@ -1358,8 +1363,8 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
       }
     }
     strm << " { ";
-    if(itm->Dump_Save_PathR(strm, this, indent+1))
-      taMisc::indent(strm, indent, 1);
+    if (itm->Dump_Save_PathR(strm, this, indent+1))
+      taMisc::indent(strm, indent);
     strm << "};\n";
     cnt++;
   }
@@ -1377,7 +1382,7 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
       itm->Dump_Save_impl(strm, this, indent);
     }
     else if(El_GetOwner_(itm) != NULL) {	// a link
-      taMisc::indent(strm, indent, 1) << GetTypeDef()->name << " ";
+      taMisc::indent(strm, indent) << GetTypeDef()->name << " ";
       if(par != NULL) strm << "@";
       strm << mypath << " = ";
       strm << "[" << i << "] = ";

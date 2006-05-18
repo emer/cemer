@@ -183,17 +183,17 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
 
 // save the path of all the elements in the group
 int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
-  int rval = taList_impl::Dump_Save_PathR_impl(strm, par, indent); // save first-level
+  int rval = inherited::Dump_Save_PathR_impl(strm, par, indent); // save first-level
   if(rval == false)
-    rval = gp.Dump_Save_PathR_impl(strm, par, indent);
+    rval = gp.Dump_Save_PathR_impl(strm, this, indent);
   else
-    gp.Dump_Save_PathR_impl(strm, par, indent);
+    gp.Dump_Save_PathR_impl(strm, this, indent);
   return rval;
 }
 
 int taGroup_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
-  taList_impl::Dump_SaveR(strm, par, indent);
-  gp.Dump_SaveR(strm, par, indent); // subgroups get saved
+  inherited::Dump_SaveR(strm, par, indent);
+  gp.Dump_SaveR(strm, this, indent); // subgroups get saved
   return true;
 }
 

@@ -1701,32 +1701,38 @@ void DataTable::PutArrayToCol(const float_RArray& ar, int col) {
 } 
 
 void DataTable::PutArrayToRow(const float_RArray& tar, int row_num) {
-  if(tar.size == 0)	return;
+  if (tar.size == 0)	return;
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
-    if(ar->InheritsFrom(TA_float_Data)) {
-      static_cast<float_Matrix*>(ar->AR())->Set(row_num, tar.FastEl(cnt));
+    if (ar->InheritsFrom(TA_float_Data)) {
+      ar->SetValAsFloat(tar.FastEl(cnt), row_num);
     }
-    cnt++;
-    if(cnt >= tar.size)	break;
+    ++cnt;
+    if (cnt >= tar.size) break;
   }
 }
 
-void DataTable::RemoveRow(int row_num) {
-  if (row_num >= rows) return;
+void DataTable::RemoveRow(int row) {
+  if (!RowInRangeNormalize(row)) return;
   DataUpdate(true);
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, this->, i) {
     int act_row;
-    if (idx(row_num, ar->AR()->size, act_row))
+    if (idx(row, ar->AR()->size, act_row))
       ar->AR()->RemoveFrame(act_row);
   }
   --rows;
   DataUpdate(false);
 }
+
+bool DataTable::RowInRangeNormalize(int& row) {
+  if (row < 0) row = rows + row;
+  return ((row >= 0) && (row < rows));
+} 
+
 
 /*TODO void DataTable::ShiftUp(int num_rows) {
 

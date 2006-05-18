@@ -608,8 +608,7 @@ void String_Matrix::ReclaimOrphans_(int from, int to) {
 //////////////////////////
 
 void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {
-// note: we don't write "" for empty
-  taMisc::write_quoted_string(strm, String(FastEl_Flat(idx), "%.8g"));
+  strm << String(FastEl_Flat(idx), "%.8g");
 }
 
 bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
