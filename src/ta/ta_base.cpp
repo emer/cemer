@@ -1296,36 +1296,31 @@ bool taList_impl::Close_Child(TAPtr obj) {
   return Remove(obj);
 }
 
-int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
-  // first save any sub-members (this really doesn't ever happen, cuz there isn't any!)
+int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) 
+{
+   bool dump_my_path = !(this == par);
+  // dump_my_path is a bit of a hack, to enable us to use this same
+  // routine either for Dump_Save_PathR or when dumping list items
+  // recursively -- when dump_my_path=false, we have already dumped the
+  // item path one level above, so only need its members, and children
+  
+  // first save any sub-members (there usually aren't any)
   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
   if (IsEmpty())  return rval;
 
   strm << "\n";			// actually saving a path: put a newline
-/* BA 2006-05-18
-TODO: don't see why this code needs to be here -- par should always be consistent;
-if we need a special mode, then we MUST add a parameter, not play games with par
-*/
-//  bool gp_mode = (par == this); // par == this when saved as member of a group
-  bool gp_mode = false; // TODO: temp, for testing, never allow this weird mode
-  if (!gp_mode) {		
+  if (dump_my_path) {		
     taMisc::indent(strm, indent);
     Dump_Save_Path(strm, par, indent); // save my path!
-    if(HasOption("ARRAY_ALLOC")) { // allocate thing as an array
-      TAPtr sb = (TAPtr)el[0];	// check 1st guy to see if onwed or linked!
-      if((sb->GetOwner() == NULL) || (sb->GetOwner() == (TAPtr)this))
-	strm << " = [" << size << "] " << el_typ->name << " {\n";
-      else
-	strm << " = [" << size << "] {\n"; // not owned, don't save type!
-    }
-    else		// always pre-allocate ptrs for the size to make memory cleaner
-      strm << " = [" << size << "] {\n";
+    strm << " = [" << size << "] {\n";
+    ++indent; // bump up 
   }
-
-  Dump_Save_PathR_impl(strm, par, indent+1);
+  // note: we bumped indent if it is truly nested...
+  Dump_Save_PathR_impl(strm, par, indent);
   
-  if (!gp_mode) {
+  if (dump_my_path) {
+    --indent;
     taMisc::indent(strm, indent);
     strm << "};\n";
   } 
@@ -1339,6 +1334,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
     TAPtr itm = (TAPtr)el[i];
     if(itm == NULL)
       continue;
+    cnt++; // sure we are dumping something at this point
 
     if (El_GetOwner_(itm) != this) { // a link, create a dummy placeholder
       taMisc::indent(strm, indent);
@@ -1351,22 +1347,29 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
     if (itm->InheritsFrom(TA_taList_impl)) {
       taList_impl* litm = (taList_impl*)itm;
       if(!litm->IsEmpty()) {
-	if(litm->HasOption("ARRAY_ALLOC")) { // actually save and allocate as one "array"
-	  TAPtr sb = (TAPtr)litm->el[0];	// check 1st guy to see if onwed or linked!
-	  if((sb->GetOwner() == NULL) || (sb->GetOwner() == (TAPtr)litm))
-	    strm << " = [" << litm->size << "] " << litm->el_typ->name;
-	  else			// always pre-allocate ptrs for the size to make memory cleaner
-	    strm << " = [" << litm->size << "]";
-	}
-	else			// always pre-allocate ptrs for the size to make memory cleaner
-	  strm << " = [" << litm->size << "]";
+        strm << " = [" << litm->size << "]";
+      }
+    }
+    strm << " { ";
+    // NOTE: incredibly sleazy trick, we pass par=this to flag the outer routine
+    // not to redo our path etc. -- no easy workaround or redesign
+    if (itm->Dump_Save_PathR(strm, itm, indent+1))
+      taMisc::indent(strm, indent);
+    strm << "};\n";
+/*was
+    itm->Dump_Save_Path(strm, this, indent);
+    // can't put this in dump_save_path cuz don't want it during non PathR times..
+    if (itm->InheritsFrom(TA_taList_impl)) {
+      taList_impl* litm = (taList_impl*)itm;
+      if(!litm->IsEmpty()) {
+        strm << " = [" << litm->size << "]";
       }
     }
     strm << " { ";
     if (itm->Dump_Save_PathR(strm, this, indent+1))
       taMisc::indent(strm, indent);
     strm << "};\n";
-    cnt++;
+*/
   }
   return cnt;
 }

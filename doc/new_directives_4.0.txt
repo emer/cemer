@@ -60,6 +60,11 @@ METHOD DIRECTIVES
 DEPRECATED DIRECTIVES
 ---------------------
 
+OBJECT DIRECTIVES (DEPRECATED )
+-----------------
+
+#ARRAY_ALLOC -- wasn't used anywhere, and seemed unnecessary and possibly dangerous
+
 DISPLAY DIRECTIVES
 
 NARROW -- 

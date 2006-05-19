@@ -101,7 +101,6 @@ public:
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
   int		Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
-  int		Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//
@@ -202,6 +201,9 @@ public:
   void  Destroy();
   void 	Copy(const taGroup_impl& cp);
   TA_BASEFUNS(taGroup_impl);
+  
+protected:
+  override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 };
 
 #ifdef DMEM_COMPILE

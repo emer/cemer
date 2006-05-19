@@ -868,7 +868,7 @@ public:
 
   int		Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   int		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
-  virtual int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
+  virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); 
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   TAPtr		DefaultEl_() const	{ return (TAPtr)SafeEl_(el_def); } // #IGNORE
