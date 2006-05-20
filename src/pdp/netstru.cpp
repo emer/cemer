@@ -3460,7 +3460,7 @@ void Layer::ApplyData_Gp4d(const TxferDataStruct& ads) {
 void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
   if (act_ext_flags & Unit::NO_LAYER_FLAGS)
     return;
-  SetExtFlag(act_ext_flags & Unit::LAYER_FLAGS_MASK); // the bits are the same..
+  SetExtFlag(act_ext_flags & Unit::EXT_FLAGS_MASK); // the bits are the same..
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {

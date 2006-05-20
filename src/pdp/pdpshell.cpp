@@ -1749,14 +1749,15 @@ void NetHelper::InitXorNetEnviroTable(DataTable* dt) {
 #include "bp.h"
 void WingeObjBase::CutLinks() {
   taBase::DelPointer((taBase**)&net);
+  proj = NULL;
   inherited::CutLinks();
 }
 
-bool WingeObjBase::Init(bool gui) {
-  bool rval = Init_impl();
+bool WingeObjBase::Init(bool gui, bool force) {
+  bool rval = ((init_done && !force) || Init_impl());
   if (gui) {
     if (rval) {
-      QMessageBox::information(NULL, QString("Operation Succeeded"),
+      if (force) QMessageBox::information(NULL, QString("Operation Succeeded"),
         QString("The Winge init'ed"), QMessageBox::Ok);
     } else {
       QMessageBox::warning(NULL, QString("Operation Failed"),
@@ -1764,19 +1765,24 @@ bool WingeObjBase::Init(bool gui) {
     }
   }
   UpdateAfterEdit();
+  if (rval) init_done = true;
   return rval;
 } 
 
 bool WingeObjBase::Init_impl() {
-  BpProject* proj = GET_MY_OWNER(BpProject);
+  if (!proj)
+    proj = GET_MY_OWNER(ProjectBase);
   if (!proj) return false;
-  taBase::SetPointer((taBase**)&net, (BpNetwork*)proj->networks[0]);
+  taBase::SetPointer((taBase**)&net, proj->networks[0]);
   return true;
 }
 
 
 bool WingeObjBase::Run(bool gui) {
-  bool rval = Run_impl();
+  bool rval = true;;
+  if (!init_done) rval = Init(gui, false);
+  if (rval)
+    rval = Run_impl();
   if (gui){
     if (rval) {
       QMessageBox::information(NULL, QString("Operation Succeeded"),
@@ -1802,7 +1808,6 @@ void WingeObj_Data::CutLinks() {
 bool WingeObj_Data::Init_impl() {
   bool rval = inherited::Init_impl();
   if (!rval) return false;
-  BpProject* proj = GET_MY_OWNER(BpProject);
   if (!proj) return false;
   taBase::SetPointer((taBase**)&data, proj->data[0]);
   taBase::SetPointer((taBase**)&in_mat, data->GetColMatrix(0));
@@ -1813,12 +1818,9 @@ bool WingeObj_Data::Init_impl() {
 }
 
 bool WingeObj_Data::Run_impl() {
-  if (!data && !Init_impl()) return false;
-  if (!in_lay) return false;
   in_lay->ApplyData(*in_mat, frame);
   if (context == Network::TRAIN)
     out_lay->ApplyData(*out_mat, frame);
-
   return true;
 }
 
@@ -1831,10 +1833,10 @@ void WingeObj_BpXor_TrainProc::CutLinks() {
 bool WingeObj_BpXor_TrainProc::Init_impl() {
   bool rval = inherited::Init_impl();
   if (!rval) return false;
-  BpProject* proj = GET_MY_OWNER(BpProject);
-  if (!proj) return false;
   taBase::SetPointer((taBase**)&wod, proj->test_objs.FindName("data_proc"));
   if (!wod) return false;
+  rval = wod->Init(false, false);
+  if (!rval) return false;
   cnt_epoch = 1; 
   cnt_trial = 1;
   wod->context = Network::TRAIN;
@@ -1843,8 +1845,6 @@ bool WingeObj_BpXor_TrainProc::Init_impl() {
 }
 
 bool WingeObj_BpXor_TrainProc::Run_impl() {
-  if (!wod)
-    if (!Init_impl()) return false;
   bool rval = true;
   do {
     rval = Step_Train();
@@ -1854,6 +1854,7 @@ bool WingeObj_BpXor_TrainProc::Run_impl() {
 }
 
 bool WingeObj_BpXor_TrainProc::Step_Train() {
+  if (!init_done && !Init(true, false)) return false;
   bool rval = true;
   rval = Step_TrainEpoch();
   if (!rval) goto exit;
@@ -1865,6 +1866,7 @@ exit:
 }
 
 bool WingeObj_BpXor_TrainProc::Step_TrainEpoch() {
+  if (!init_done && !Init(true, false)) return false;
   bool rval = true;
   do {
     rval = Step_TrainTrial();
@@ -1874,6 +1876,7 @@ bool WingeObj_BpXor_TrainProc::Step_TrainEpoch() {
 }
 
 bool WingeObj_BpXor_TrainProc::Step_TrainTrial() {
+  if (!init_done && !Init(true, false)) return false;
   bool rval;
   wod->frame = cnt_trial - 1;
   // apply the data

@@ -610,18 +610,21 @@ private:
 class PDP_API WingeObjBase: public taNBase {
 INHERITED(taNBase)
 public:
+  ProjectBase*		proj; // #IGNORE note: not ref'ed, because it indirectly owns us
   Network*		net; // note: actually a XxxNetwork probably
   
-  bool			Init(bool gui = true); // #ARGC_0 #MENU #MENU_CONTEXT init the winge object
+  bool			Init(bool gui = true, bool force = true); 
+    // #ARGC_0 #MENU #MENU_CONTEXT init the winge object
   bool			Run(bool gui = true); // #ARGC_0 #MENU #MENU_CONTEXT run the winge object
   
   void	CutLinks();
   TA_BASEFUNS(WingeObjBase);
 protected:
+  bool			init_done;
   virtual bool		Init_impl();
   virtual bool		Run_impl() {}
 private:
-  void 			Initialize() {net = NULL;}
+  void 			Initialize() {proj = NULL; net = NULL; init_done = false;}
   void			Destroy() {CutLinks();}
 };
 
