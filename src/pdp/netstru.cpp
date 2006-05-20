@@ -3366,41 +3366,56 @@ void Layer::UpdateAfterEdit() {
   }*/
 }
 
-void Layer::ApplyData(const IMatrix& data, Unit::ExtType ext_flags,
+void Layer::ApplyData(const taMatrix& data, int frame, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
-  // determine layer flags
-  Unit::ExtType act_ext_flags = ext_flags;
-//TODO: determine non-default layer flags  
+  // check correct geom of data
+  if ((data.dims() != 3) && (data.dims() != 5)) {
+    taMisc::Error("Layer::ApplyData: data.dims must be 3 (2-d) or 5 (4-d); is: ",
+      String(data.dims()));
+    return;
+  }
+  // adjust frame if -eve, and check frame in bounds
+  if (frame < 0) frame = data.frames() + frame;
+  if ((frame < 0) || (frame >= data.frames())) {
+    taMisc::Error("Layer::ApplyData: frame index out of bounds; frame=", String(frame),
+      " data.frames()=", String(data.frames()));
+    return;
+  }
+  // determine non-default unit and layer flags  
+  if ((ext_flags & Unit::EXT_FLAGS_MASK) == Unit::DEFAULT) {
+    if (layer_type & INPUT)
+      ext_flags = (Unit::ExtType)(ext_flags | Unit::EXT);
+    if (layer_type & TARGET)
+      ext_flags = (Unit::ExtType)(ext_flags | Unit::TARG);
+  }
   
-  ApplyDataStruct ads(data, act_ext_flags, ran, offset);
-  // set layer flag
-  // determine unit-level flags
-  // determine effective offset
+  TxferDataStruct ads(data, frame, ext_flags, ran, offset);
+  // TODO determine effective offset
   
-  // apply flags if we are the controller
-// if there is  non-zero offset, we usually won't control the layer flags
+  // apply flags if we are the controller (zero offset)
   if ((ads.offs_x == 0) && (ads.offs_y == 0)) {
-    ApplyLayerFlags(act_ext_flags);
+    ApplyLayerFlags(ext_flags);
   }
   // apply data according to the applicable model
-  
+  DataUpdate(true);
   if (uses_groups()) {
-    if (data.dims() > 2) {
+    if (data.dims() == 5) {
       ApplyData_Gp4d(ads);
     } else {
       ApplyData_Gp2d(ads);
     }
   } else {
-    if (data.dims() > 2) {
+    if (data.dims() == 5) {
       ApplyData_Flat4d(ads);
     } else {
       ApplyData_Flat2d(ads);
     }
   }
+  DataUpdate(false);
 }
 
-void Layer::ApplyData_Flat2d(const ApplyDataStruct& ads) {
+void Layer::ApplyData_Flat2d(const TxferDataStruct& ads) {
   Unit* un; 	// current unit
   int u_x = ads.offs_x;  int u_y = ads.offs_y; // current unit coord
   int d_x = 0;  int d_y = 0; // current data coord
@@ -3409,34 +3424,35 @@ void Layer::ApplyData_Flat2d(const ApplyDataStruct& ads) {
   //note: a partially filled this will return a null unit when we reach the end of actual units
   while (u_y < this->geom.y) {
     while (u_x < this->geom.x) {
+      // if we've run out of data for this row, go to next row
+      if (d_x >= ads.data.dim(0)) break;
       un = ug->FindUnitFmCoord(u_x, u_y);
+      // if we run out of units, there will be no more, period
       if (un == NULL) goto break1;
-      // if we've run out of data for this row, no sense continuing, go to next row
-      if (!(ads.data.InRange2(d_x, d_y))) 
-        break; 
-      val = ads.data.SafeElAsVar(d_x, d_y).toFloat();
+      val = ads.data.SafeElAsVar(d_x, d_y, ads.frame).toFloat();
       un->ApplyValue(val, ads.ext_flags, ads.ran);
-      d_x++;
-      u_x++;
+      ++d_x;
+      ++u_x;
     }
+    ++d_y;
+    if (d_y >= ads.data.dim(1)) break;
     d_x = 0;
     u_x = ads.offs_x;
-    d_y++;
-    u_y++;
+    ++u_y;
   }
 break1:
   ;
 }
 
-void Layer::ApplyData_Flat4d(const ApplyDataStruct& ads) {
+void Layer::ApplyData_Flat4d(const TxferDataStruct& ads) {
   //TODO:
 }
 
-void Layer::ApplyData_Gp2d(const ApplyDataStruct& ads) {
+void Layer::ApplyData_Gp2d(const TxferDataStruct& ads) {
   //TODO:
 }
 
-void Layer::ApplyData_Gp4d(const ApplyDataStruct& ads) {
+void Layer::ApplyData_Gp4d(const TxferDataStruct& ads) {
   //TODO:
 }
 
@@ -4341,6 +4357,7 @@ void Network::Initialize() {
   dmem_gp = -1;
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_SELF;
 #endif
+  net_context = DEFAULT;
 }
 
 void Network::InitLinks() {
@@ -4368,6 +4385,7 @@ void Network::Copy_(const Network& cp) {
 #endif
   ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
   //note: batch update in tabase copy
+  net_context = cp.net_context;
 }
 
 void Network::UpdateAfterEdit(){

@@ -1468,7 +1468,7 @@ void TestObj::InitObj() {
         taMatrix* mat = (taMatrix*)it;
         // initialize it if not initialized
         if (mat->size == 0) {
-          mat->SetGeom2(2, 3);
+          mat->SetGeom(2, 2, 3);
           mat->SetFmStr_Flat("0", 0);
           mat->SetFmStr_Flat("1", 1);
           mat->SetFmStr_Flat("2", 2);
@@ -1743,6 +1743,150 @@ void TestOwnedObj::CutLinks() {
 #include "datatable.h"
 void NetHelper::InitXorNetEnviroTable(DataTable* dt) {
   
+}
+
+#include <QMessageBox>
+#include "bp.h"
+void WingeObjBase::CutLinks() {
+  taBase::DelPointer((taBase**)&net);
+  inherited::CutLinks();
+}
+
+bool WingeObjBase::Init(bool gui) {
+  bool rval = Init_impl();
+  if (gui) {
+    if (rval) {
+      QMessageBox::information(NULL, QString("Operation Succeeded"),
+        QString("The Winge init'ed"), QMessageBox::Ok);
+    } else {
+      QMessageBox::warning(NULL, QString("Operation Failed"),
+        QString("The Winge init failed"), QMessageBox::Ok, QMessageBox::NoButton);
+    }
+  }
+  UpdateAfterEdit();
+  return rval;
+} 
+
+bool WingeObjBase::Init_impl() {
+  BpProject* proj = GET_MY_OWNER(BpProject);
+  if (!proj) return false;
+  taBase::SetPointer((taBase**)&net, (BpNetwork*)proj->networks[0]);
+  return true;
+}
+
+
+bool WingeObjBase::Run(bool gui) {
+  bool rval = Run_impl();
+  if (gui){
+    if (rval) {
+      QMessageBox::information(NULL, QString("Operation Succeeded"),
+        QString("The Winge finished"), QMessageBox::Ok);
+    } else {
+      QMessageBox::warning(NULL, QString("Operation Failed"),
+        QString("The Winge did not succeed"), QMessageBox::Ok, QMessageBox::NoButton);
+    }
+  }
+  return rval;
+}
+
+
+void WingeObj_Data::CutLinks() {
+  taBase::DelPointer((taBase**)&in_mat);
+  taBase::DelPointer((taBase**)&out_mat);
+  taBase::DelPointer((taBase**)&in_lay);
+  taBase::DelPointer((taBase**)&out_lay);
+  taBase::DelPointer((taBase**)&data);
+  inherited::CutLinks();
+}
+
+bool WingeObj_Data::Init_impl() {
+  bool rval = inherited::Init_impl();
+  if (!rval) return false;
+  BpProject* proj = GET_MY_OWNER(BpProject);
+  if (!proj) return false;
+  taBase::SetPointer((taBase**)&data, proj->data[0]);
+  taBase::SetPointer((taBase**)&in_mat, data->GetColMatrix(0));
+  taBase::SetPointer((taBase**)&out_mat, data->GetColMatrix(1));
+  taBase::SetPointer((taBase**)&in_lay, net->layers[0]); // TODO: lookup by name
+  taBase::SetPointer((taBase**)&out_lay, net->layers[2]); // TODO: lookup by name
+  return true;
+}
+
+bool WingeObj_Data::Run_impl() {
+  if (!data && !Init_impl()) return false;
+  if (!in_lay) return false;
+  in_lay->ApplyData(*in_mat, frame);
+  if (context == Network::TRAIN)
+    out_lay->ApplyData(*out_mat, frame);
+
+  return true;
+}
+
+
+void WingeObj_BpXor_TrainProc::CutLinks() {
+  taBase::DelPointer((taBase**)&wod);
+  inherited::CutLinks();
+}
+
+bool WingeObj_BpXor_TrainProc::Init_impl() {
+  bool rval = inherited::Init_impl();
+  if (!rval) return false;
+  BpProject* proj = GET_MY_OWNER(BpProject);
+  if (!proj) return false;
+  taBase::SetPointer((taBase**)&wod, proj->test_objs.FindName("data_proc"));
+  if (!wod) return false;
+  cnt_epoch = 1; 
+  cnt_trial = 1;
+  wod->context = Network::TRAIN;
+  net->net_context = Network::TRAIN;
+  return true;
+}
+
+bool WingeObj_BpXor_TrainProc::Run_impl() {
+  if (!wod)
+    if (!Init_impl()) return false;
+  bool rval = true;
+  do {
+    rval = Step_Train();
+  } while (rval && (cnt_epoch != 1));
+
+  return rval;
+}
+
+bool WingeObj_BpXor_TrainProc::Step_Train() {
+  bool rval = true;
+  rval = Step_TrainEpoch();
+  if (!rval) goto exit;
+  if (++cnt_epoch > max_epoch) cnt_epoch = 1;
+  
+exit:
+  UpdateAfterEdit();
+  return rval;
+}
+
+bool WingeObj_BpXor_TrainProc::Step_TrainEpoch() {
+  bool rval = true;
+  do {
+    rval = Step_TrainTrial();
+  } while (rval && (cnt_trial != 1));
+  UpdateAfterEdit();
+  return rval;
+}
+
+bool WingeObj_BpXor_TrainProc::Step_TrainTrial() {
+  bool rval;
+  wod->frame = cnt_trial - 1;
+  // apply the data
+  rval = wod->Run(false);
+  if (!rval) goto exit;
+  // cycle the net
+  ((BpNetwork*)net)->BpTrial_Loop();
+  if (++cnt_trial > 4) cnt_trial = 1;
+  
+exit:
+  UpdateAfterEdit();
+taiMiscCore::RunPending();
+  return rval;
 }
 
 #endif

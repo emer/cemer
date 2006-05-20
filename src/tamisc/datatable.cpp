@@ -1100,7 +1100,7 @@ void DataArray_impl::Init() {
     tdim.EnforceSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
     ar->SetGeomN(tdim);
   } else {
-    ar->SetGeom(0); // sets to 1-d, with flex sizing
+    ar->SetGeom(1, 0); // sets to 1-d, with flex sizing
   }
 }
 

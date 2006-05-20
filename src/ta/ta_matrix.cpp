@@ -323,44 +323,27 @@ void taMatrix::EnforceFrames(int n) {
   geom.Set(geom.size-1, n);	
 }
 
-int taMatrix::FastElIndex(int d0, int d1, int d2, int d3) const {
+int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
 //TODO: rewrite for extra dims
-  Assert((geom.size >= 1), "matrix geometry has not been initialized");
-  Assert(((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  Assert((d0 < size), "matrix element is out of bounds");
-  return d0;
-}
- 
-int taMatrix::FastElIndex2(int d0, int d1) const {
-  Assert((geom.size >= 2), "too many indices for matrix");
-  Assert(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
+  int rval = -1;
+  switch (geom.size) {
+  case 0: Assert(false, "matrix geometry has not been initialized");
+  case 1: rval = d0;
+    break;
+  case 2: rval = (d1 * geom[0]) + d0;
+    break;
+  case 3: rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  case 4: rval = (((((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  case 5: rval = (((((((d4 * geom[3]) + d3) * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  default: break;
+  }
+    
   
-  int rval = (d1 * geom[0]) + d0;
   Assert((rval < size), "matrix element is out of bounds");
-  return rval;
-}
- 
-int taMatrix::FastElIndex3(int d0, int d1, int d2) const {
-  Assert((geom.size >= 3), "too many indices for matrix");
-  Assert(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
-    && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  
-  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
-  Assert((rval < size), "matrix element is out of bounds");
-  return rval;
-}
- 
-int taMatrix::FastElIndex4(int d0, int d1, int d2, int d3) const {
-  Assert((geom.size >= 4), "too many indices for matrix");
-  Assert(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
-    && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  
-  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-  Assert((rval < size), "matrix element is out of bounds");
+  if (rval < 0) rval = 0; // 0 is probably the "safest" unsafe value
   return rval;
 }
  
@@ -397,36 +380,28 @@ int taMatrix::frameSize() const {
   return rval;
 }
 
-bool taMatrix::InRange(int d0, int d1, int d2, int d3) const {
-//TODO: rewrite
-  return (geom.size >= 1)
-    && ((d0 >= 0) && (d0 < geom[0]))
-    ;
-}
- 
-bool taMatrix::InRange2(int d0, int d1) const {
-  return (geom.size >= 2)
-    && ((d0 >= 0) && (d0 < geom[0]))
+bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4) const {
+  switch (geom.size) {
+  case 0: return false; // not initialized
+  case 1: return ((d0 >= 0) && (d0 < geom[0]));
+  case 2: return ((d0 >= 0) && (d0 < geom[0]))
+    && ((d1 >= 0) && (d1 < geom[1]));
+  case 3: return ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
-    ;
-}
- 
-bool taMatrix::InRange3(int d0, int d1, int d2) const {
-  return (geom.size >= 3)
-    && ((d0 >= 0) && (d0 < geom[0]))
+    && ((d2 >= 0) && (d2 < geom[2]));
+  case 4: return ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
     && ((d2 >= 0) && (d2 < geom[2]))
-    ;
-}
- 
-bool taMatrix::InRange4(int d0, int d1, int d2, int d3) const {
-  return (geom.size >= 4)
-    && ((d0 >= 0) && (d0 < geom[0]))
+    && ((d3 >= 0) && (d3 < geom[3]));
+  case 5: ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
     && ((d2 >= 0) && (d2 < geom[2]))
     && ((d3 >= 0) && (d3 < geom[3]))
-    ;
+    && ((d4 >= 0) && (d4 < geom[4]));
+  default: return false;
+  }
 }
+ 
  
 bool taMatrix::InRangeN(const MatrixGeom& indices) const {
   if (indices.size < geom.size) return false;
@@ -453,44 +428,44 @@ void taMatrix::RemoveFrame(int n) {
   EnforceFrames(frames_ - 1); // this properly resizes, and reclaims orphans
 }
 
-int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3) const {
-//TODO: rewrite
-  Check((geom.size >= 1), "matrix geometry has not been initialized");
-  Check(((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  Check((d0 < size), "matrix element is out of bounds");
-  return d0;
-}
- 
-int taMatrix::SafeElIndex2(int d0, int d1) const {
-  Check((geom.size >= 2), "too many indices for matrix");
-  Check(((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  
-  int rval = (d1 * geom[0]) + d0;
-  Check((rval < size), "matrix element is out of bounds");
-  return rval;
-}
- 
-int taMatrix::SafeElIndex3(int d0, int d1, int d2) const {
-  Check((geom.size >= 3), "too many indices for matrix");
-  Check(((d2 >= 0) && (d2 < geom[2])) && ((d1 >= 0) && (d1 < geom[1])) 
-    && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  
-  int rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
-  Check((rval < size), "matrix element is out of bounds");
-  return rval;
-}
- 
-int taMatrix::SafeElIndex4(int d0, int d1, int d2, int d3) const {
-  Check((geom.size >= 4), "too many indices for matrix");
-  Check(((d3 >= 0) && (d3 < geom[3])) && ((d2 >= 0) && (d2 < geom[2])) 
-    && ((d1 >= 0) && (d1 < geom[1])) && ((d0 >= 0) && (d0 < geom[0])), 
-    "matrix index out of bounds");
-  
-  int rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-  Check((rval < size), "matrix element is out of bounds");
+int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
+  int rval = -1;
+  switch (geom.size) {
+  //case 0: Assert(false, "matrix geometry has not been initialized");
+  case 1: //note: no extra dim check needed because size is dim
+    rval = d0;
+    break;
+  case 2: 
+    if (((d0 >= 0) && (d0 < geom[0]))
+      && ((d1 >= 0) && (d1 < geom[1]))
+    ) rval = (d1 * geom[0]) + d0;
+    break;
+  case 3: 
+    if (((d0 >= 0) && (d0 < geom[0]))
+      && ((d1 >= 0) && (d1 < geom[1]))
+      && ((d2 >= 0) && (d2 < geom[2]))
+    ) rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  case 4:
+    if (((d0 >= 0) && (d0 < geom[0]))
+      && ((d1 >= 0) && (d1 < geom[1]))
+      && ((d2 >= 0) && (d2 < geom[2]))
+      && ((d3 >= 0) && (d3 < geom[3]))
+    ) rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  case 5: 
+    if (((d0 >= 0) && (d0 < geom[0]))
+      && ((d1 >= 0) && (d1 < geom[1]))
+      && ((d2 >= 0) && (d2 < geom[2]))
+      && ((d3 >= 0) && (d3 < geom[3]))
+      && ((d4 >= 0) && (d4 < geom[4]))
+    ) rval = (((((((d4 * geom[3]) + d3) * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
+    break;
+  default: break;
+  }
+  if ((rval < 0) || (rval >= size)) {
+    rval = -1;
+  }
   return rval;
 }
  

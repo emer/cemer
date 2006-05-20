@@ -616,25 +616,23 @@ void BpNetwork::BpSetCurLrate() {
 }
 
 void BpNetwork::BpTrial_Loop() {
+  DataUpdate(true);
   BpSetCurLrate();
 
   InitExterns();
-/*/TODO  
-  if (cur_event != NULL)
-    cur_event->ApplyPatterns(network); */
 
   Compute_Act();
   BpCompute_dEdA_dEdNet();
 
   // compute the weight err derivatives (only if not testing...)
-/*TODO  if((epoch_proc != NULL) && (epoch_proc->wt_update != EpochProcess::TEST)) {
+  if (net_context == TRAIN) {
     Compute_dWt();
-  }*/
-//   else {
-//     Compute_Error();		// for display purposes only..
-//   }
-
-  // weight update taken care of by the epoch process
+  } else {
+    BpCompute_Error();		// for display purposes only..
+  }
+//TODO: verify below comment from 3.x
+// weight update taken care of by the epoch process
+  DataUpdate(false);
 }
 
 

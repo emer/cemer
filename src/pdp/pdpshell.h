@@ -607,6 +607,73 @@ private:
   void			Destroy() {}
 };
 
+class PDP_API WingeObjBase: public taNBase {
+INHERITED(taNBase)
+public:
+  Network*		net; // note: actually a XxxNetwork probably
+  
+  bool			Init(bool gui = true); // #ARGC_0 #MENU #MENU_CONTEXT init the winge object
+  bool			Run(bool gui = true); // #ARGC_0 #MENU #MENU_CONTEXT run the winge object
+  
+  void	CutLinks();
+  TA_BASEFUNS(WingeObjBase);
+protected:
+  virtual bool		Init_impl();
+  virtual bool		Run_impl() {}
+private:
+  void 			Initialize() {net = NULL;}
+  void			Destroy() {CutLinks();}
+};
+
+
+class PDP_API WingeObj_Data: public WingeObjBase { // #AKA_WingeObj1
+INHERITED(WingeObjBase)
+public:
+  
+  DataTable*		data;
+  int		frame;
+  int		context; //Network::NetContext
+  taMatrix* in_mat; // #IGNORE
+  taMatrix* out_mat; // #IGNORE
+  Layer* in_lay; // #IGNORE
+  Layer* out_lay; // #IGNORE
+  
+  void	CutLinks();
+  TA_BASEFUNS(WingeObj_Data);
+protected:
+  override bool		Init_impl();
+  override bool		Run_impl();
+private:
+  void 			Initialize() 
+    {data = NULL; frame = 0; context = 0; in_mat = NULL; out_mat = NULL; 
+     in_lay = NULL; out_lay = NULL;}
+  void			Destroy() {CutLinks();}
+};
+
+
+class PDP_API WingeObj_BpXor_TrainProc: public WingeObjBase { // 
+INHERITED(WingeObjBase)
+public:
+  WingeObj_Data*	wod;
+  
+  int			max_epoch;
+  int			cnt_epoch;
+  int			cnt_trial; // 1-4, is also frame+1
+  
+  bool			Step_Train(); // #MENU #MENU_CONTEXT
+  bool			Step_TrainEpoch(); // #MENU #MENU_CONTEXT
+  bool			Step_TrainTrial(); // #MENU #MENU_CONTEXT
+  
+  void	CutLinks();
+  TA_BASEFUNS(WingeObj_BpXor_TrainProc);//
+protected:
+  override bool		Init_impl();
+  override bool		Run_impl();
+private:
+  void 			Initialize()
+    {wod = NULL; max_epoch = 1000; cnt_epoch = 1; cnt_trial = 1;}
+  void			Destroy() {CutLinks();}
+};
 
 #endif
 

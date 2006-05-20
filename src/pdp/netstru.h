@@ -457,20 +457,20 @@ protected:
   static Con_Group*	rcg_rval; // return value for connecting
   static Con_Group*	scg_rval; // return value for connecting
 public: //
-  // NOTE: ExtType bits are also the same in LayerWriter::ExtType
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
     DEFAULT 		= 0x00,	// #NO_BIT (Layer ctrl param only) set default layer flags based on parameter in data
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
     TARG 		= 0x01,	// #LABEL_Target as a target value
     EXT 		= 0x02,	// #LABEL_External as an external input value
-    TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
     COMP		= 0x04,	// #LABEL_Comparison as a comparison value
+    reserved1		= 0x08, // #IGNORE
+    TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
     COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
     COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
     NO_UNIT_FLAGS	= 0x10, // (Layer + Layer ctrl param) don't set unit flags at all
     NO_LAYER_FLAGS	= 0x20, // (Layer ctrl param only) don't set layer flags at all
-    EXT_FLAGS_MASK	= 0x07, // #NO_BIT mask for setting layer/unit flags
+    EXT_FLAGS_MASK	= 0x0F, // #NO_BIT mask for setting layer/unit flags
     LAYER_FLAGS_MASK	= 0x1F // #NO_BIT mask for setting layer flags
   };
 
@@ -1089,9 +1089,10 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyData(const IMatrix& data, Unit::ExtType ext_flags = Unit::DEFAULT,
+  virtual void	ApplyData(const taMatrix& data, int frame = -1, 
+    Unit::ExtType ext_flags = Unit::DEFAULT,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
-    // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d
+    // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
   Unit*		FindUnitFmCoord(int x, int y);
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
@@ -1131,34 +1132,36 @@ public:
 #endif
 
 protected:
-  class ApplyDataStruct { // #IGNORE
+  class TxferDataStruct { // #
   public:
-    const IMatrix&	data;
+    const taMatrix&	data;
+    int			frame;
     Unit::ExtType	ext_flags;
     Random* 		ran;
     int			offs_x;
     int			offs_y;
-    ApplyDataStruct(
-      const IMatrix& data_,
+    TxferDataStruct(
+      const taMatrix& data_,
+      int		frame_,
       Unit::ExtType	ext_flags_,
       Random* 		ran_,
       const PosTwoDCoord* offs
     ) 
 #ifndef __MAKETA__
-    :data(data_), ext_flags(ext_flags_), ran(ran_)
+    :data(data_), frame(frame_), ext_flags(ext_flags_), ran(ran_)
 #endif
     {if (offs) {offs_x=offs->x; offs_y=offs->y;} else {offs_x=0; offs_y=0;}} // maketa can't parse :syntax
   };
   
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
     // #IGNORE set layer flag to reflect the kind of input received
-  virtual void		ApplyData_Flat2d(const ApplyDataStruct& ads);
+  virtual void		ApplyData_Flat2d(const TxferDataStruct& ads);
     // #IGNORE flat layer, 2d data
-  virtual void		ApplyData_Flat4d(const ApplyDataStruct& ads);
+  virtual void		ApplyData_Flat4d(const TxferDataStruct& ads);
     // #IGNORE flat layer, 4d data
-  virtual void		ApplyData_Gp2d(const ApplyDataStruct& ads);
+  virtual void		ApplyData_Gp2d(const TxferDataStruct& ads);
     // #IGNORE grouped layer, 2d data
-  virtual void		ApplyData_Gp4d(const ApplyDataStruct& ads);
+  virtual void		ApplyData_Gp4d(const TxferDataStruct& ads);
     // #IGNORE grouped layer, 4d data
 };
 
@@ -1194,6 +1197,14 @@ public:
     BINARY,			// weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
     BINARY_IDX 			// binary format plus unit indexes (useful for partially-connected networks where connections might change)
   };
+  
+  enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
+    DEFAULT	= 0,		// misc value used when not set by anything else
+    TRAIN	= 1,		// usually indicates patterns are being clamped on outs etc.
+    TEST	= 2,		// usually indicates outputs are not clamped, net being tested
+    
+    CUSTOM_BASE	= 10		// use this value as a base for NetContext2 etc.
+  };
 
   Layer_MGroup	layers;		// Layers or Groups of Layers
   int		epoch;		// epoch counter (updated by process)
@@ -1212,6 +1223,7 @@ public:
 
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 //obs  bool		net_will_updt;	// #HIDDEN #NO_SAVE if true, network will do update of display so don't do at lower level
+  int		net_context;	// #READ_ONLY #NO_SAVE #DETAIL used by programs to provide context modality to cycling algorithms
 
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units

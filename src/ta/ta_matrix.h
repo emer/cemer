@@ -53,9 +53,22 @@ class float_Matrix; //
    
    The object supports partially filled arrays, but not ragged arrays.
    Strongly-typed instances support external fixed data, via setFixedData() call.
-
-   NOTE: Matrix in its current form is not streamable.
    
+   Frames
+     a "frame" is a set of data comprising the outermost dimension;
+     ex. a 3-d array has a 2-d frame
+     
+   Accessors
+     most routines provide two accessor variants:
+     Xxx(d0, d1, d2, d3, d4, int d4) for use in up to a 4-d matrix -- d's higher than
+       the actual dimension of the matrix are ignored and not checked
+     XxxN(MatrixGeom&) -- for any dimensionality -- it is unspecified whether
+       the dims may be higher, but there must be at least the correct amount
+       
+   Dimensions
+     if you cannot be happy with 5-dimensional matrices, 
+       you will never be happy in life
+
    Matrix vs. Array
    'Array' classes are typically 1-d vectors or interpreted as 2-d arrays.
    Array supports dynamic operations, like inserting, sorting, etc.
@@ -64,10 +77,11 @@ class float_Matrix; //
    
 */
 
-#define TA_MATRIX_DIMS_MAX 6
+#define TA_MATRIX_DIMS_MAX 5
 #define IMatrix taMatrix
 
-class TA_API MatrixGeom: public taBase  { // matrix geometry, similar to an array of int
+class TA_API MatrixGeom: public taBase  { 
+  // matrix geometry, similar to an array of int, defaults to 1-d
 INHERITED(taBase)
 friend class taMatrix;
 public:
@@ -128,8 +142,8 @@ public: // IMatrix i/f
    	
   virtual TypeDef*	GetDataTypeDef() const = 0; // type of data, ex TA_int, TA_float, etc.
    	
-  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0) const	
-    {return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3)); }
+  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
+    {return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4)); }
     // (safely) returns the element as a string
   const String		SafeElAsStrN(const MatrixGeom& indices) const	
     {return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
@@ -142,8 +156,8 @@ public: // IMatrix i/f
     {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
     // treats the matrix like a flat array, sets the element as a string
   
-  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0) const	
-    {return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3)); } 
+  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
+    {return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
     // (safely) returns the element as a variant
   const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
     {return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
@@ -193,20 +207,14 @@ public:
   virtual void		RemoveFrame(int n); // remove the given frame, copying data backwards if needed
   virtual void		Reset() {EnforceFrames(0);}
   
-  bool			InRange(int d0, int d1=0, int d2=0, int d3=0) const; // 'true' if index in range
-  bool			InRange2(int d0, int d1) const;  // 'true' if >= 2-d and indices in range
-  bool			InRange3(int d0, int d1, int d2) const;  // 'true' if >= 3-d and indices in range
-  bool			InRange4(int d0, int d1, int d2, int d3) const;  // 'true' if >= 4-d and indices in range
-  bool			InRangeN(const MatrixGeom& indices) const;  // 'true' if >= indices-d and indices in range
+  bool			InRange(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+    // 'true' if indices in range; ignores irrelevant dims
+  bool			InRangeN(const MatrixGeom& indices) const;  
+    // 'true' if indices in range; MAY ignore under-supplied dims
   
-  void			SetGeom(int d0)  
-    {int d[1]; d[0]=d0; SetGeom_(1, d);} // set geom for 1-d array
-  void			SetGeom2(int d0, int d1)  
-    {int d[2]; d[0]=d0; d[1]=d1; SetGeom_(2, d);} // set geom for 12-d array
-  void			SetGeom3(int d0, int d1, int d2)  
-    {int d[3]; d[0]=d0; d[1]=d1; d[2]=d2; SetGeom_(3, d);} // set geom for 3-d array
-  void			SetGeom4(int d0, int d1, int d2, int d3)  
-    {int d[4]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; SetGeom_(4, d);} // set geom for 4-d array
+  void			SetGeom(int size, int d0, int d1=0, int d2=0, int d3=0, int d4=0)  
+    {int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
+    // set geom for matrix
   void			SetGeomN(const MatrixGeom& geom_) 
     {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix set geom for any sized array
   
@@ -238,19 +246,15 @@ protected:
   
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
-  // the FastElIndex functions only check the bounds in debug version
-  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0) const; 
-  int			FastElIndex2(int d0, int d1) const; 
-  int			FastElIndex3(int d0, int d1, int d2) const; 
-  int			FastElIndex4(int d0, int d1, int d2, int d3) const; 
-  int			FastElIndexN(const MatrixGeom& indices) const; 
+  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+    // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  int			FastElIndexN(const MatrixGeom& indices) const; //
+    // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   
-  // the SafeElIndex functions always check the bounds
-  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0) const; 
-  int			SafeElIndex2(int d0, int d1) const; 
-  int			SafeElIndex3(int d0, int d1, int d2) const; 
-  int			SafeElIndex4(int d0, int d1, int d2, int d3) const; 
+  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+    // check bounds and return flat index, -1 if any dim out of bounds
   int			SafeElIndexN(const MatrixGeom& indices) const; 
+    // check bounds and return flat index, -1 if any dim out of bounds
   
   virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
   virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type; raise exception on failure
@@ -314,42 +318,26 @@ public:
 
   T&			FastEl_Flat(int idx) // #IGNORE	treats matrix like a flat array
     { return el[idx]; }
-  T&			FastEl(int d0) // #IGNORE 	
+  T&			FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) // #IGNORE 	
     { return el[FastElIndex(d0)]; }
-  T&			FastEl2(int d0, int d1) // #IGNORE 
-    { return el[FastElIndex2(d0,d1)]; }
-  T&			FastEl3(int d0, int d1, int d2) // #IGNORE 
-    { return el[FastElIndex3(d0,d1,d2)]; }
-  T&			FastEl4(int d0, int d1, int d2, int d3) // #IGNORE 
-    { return el[FastElIndex4(d0,d1,d2,d3)]; } 
   T&			FastElN(const MatrixGeom& indices) // #IGNORE 
     {return el[FastElIndexN(indices)]; }
   
   const T&		FastEl_Flat(int idx) const // #IGNORE	treats matrix like a flat array
     { return el[idx]; }
-  const T&		FastEl(int d0) const // 	
-    { return el[FastElIndex(d0)]; }
-  const T&		FastEl2(int d0, int d1) const //  
-    { return el[FastElIndex2(d0,d1)]; }
-  const T&		FastEl3(int d0, int d1, int d2) const //  
-    { return el[FastElIndex3(d0,d1,d2)]; }
-  const T&		FastEl4(int d0, int d1, int d2, int d3) const //  
-    { return el[FastElIndex4(d0,d1,d2,d3)]; } 
+  const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const // 	
+    { return el[FastElIndex(d0,d1,d2,d3,d4)]; }
   const T&		FastElN(const MatrixGeom& indices) const //  
     { return el[FastElIndexN(indices)]; } 
   
   const T&		SafeEl_Flat(int idx) const 	
     { return *((T*)(SafeEl_(idx))); } // access the matrix as if it were a flat vector, for reading
-  const T&		SafeEl(int d0) const 	
-    { return el[SafeElIndex(d0)]; } // access the element for reading
-  const T&		SafeEl2(int d0, int d1) const  
-    { return el[SafeElIndex2(d0,d1)]; } // access the element for reading
-  const T&		SafeEl3(int d0, int d1, int d2) const  
-    { return el[SafeElIndex3(d0,d1,d2)]; } // access the element for reading
-  const T&		SafeEl4(int d0, int d1, int d2, int d3) const  
-    { return el[SafeElIndex4(d0,d1,d2,d3)]; }  // access the element for reading
+  const T&		SafeEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 	
+    { return *((T*)(SafeEl_(SafeElIndex(d0,d1,d2,d3,d4)))); } 
+     // access the element for reading
   const T&		SafeElN(const MatrixGeom& indices) const  
-    { return el[SafeElIndexN(indices)]; }  // access the element for reading
+    { return *((T*)(SafeElIndexN(indices))); }  
+    // access the element for reading
   
   void			Set_Flat(const T& item, int idx) 	
     { if (InRange_Flat(idx)) el[idx] = item; }
@@ -483,10 +471,8 @@ public:
 */
 
 #define TA_MATRIX_FUNS(y,T) \
-  explicit y(int d0)		{SetGeom(d0);} \
-  y(int d0, int d1)		{SetGeom2(d0,d1);} \
-  y(int d0, int d1, int d2)	{SetGeom3(d0,d1,d2);} \
-  y(int d0, int d1, int d2, int d3) {SetGeom4(d0,d1,d2,d3);} \
+  y(int dims_, int d0, int d1=0, int d2=0, int d3=0, int d4=0) \
+    {SetGeom(dims_, d0,d1,d2,d3,d4);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
   TA_BASEFUNS(y) \
