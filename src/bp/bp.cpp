@@ -616,10 +616,11 @@ void BpNetwork::BpSetCurLrate() {
 }
 
 void BpNetwork::BpTrial_Loop() {
-//TEMP  DataUpdate(true);
+  DataUpdate(true);
   BpSetCurLrate();
 
-  InitExterns();
+//NOTE: from 3.x, needed to pull this to outer
+//  InitExterns();
 
   Compute_Act();
   BpCompute_dEdA_dEdNet();
@@ -632,7 +633,7 @@ void BpNetwork::BpTrial_Loop() {
   }
 //TODO: verify below comment from 3.x
 // weight update taken care of by the epoch process
-//TEMP  DataUpdate(false);
+  DataUpdate(false);
 }
 
 

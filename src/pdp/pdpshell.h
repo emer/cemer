@@ -612,10 +612,12 @@ INHERITED(taNBase)
 public:
   ProjectBase*		proj; // #IGNORE note: not ref'ed, because it indirectly owns us
   Network*		net; // note: actually a XxxNetwork probably
+  bool			cancel; // #NO_SHOW
   
   bool			Init(bool gui = true, bool force = true); 
     // #ARGC_0 #MENU #MENU_CONTEXT init the winge object
   bool			Run(bool gui = true); // #ARGC_0 #MENU #MENU_CONTEXT run the winge object
+  void			Cancel(); // #BUTTON cancel the running process
   
   void	CutLinks();
   TA_BASEFUNS(WingeObjBase);
@@ -624,7 +626,7 @@ protected:
   virtual bool		Init_impl();
   virtual bool		Run_impl() {}
 private:
-  void 			Initialize() {proj = NULL; net = NULL; init_done = false;}
+  void 			Initialize() {proj = NULL; net = NULL; cancel = false; init_done = false;}
   void			Destroy() {CutLinks();}
 };
 
@@ -654,7 +656,7 @@ private:
 };
 
 
-class PDP_API WingeObj_BpXor_TrainProc: public WingeObjBase { // 
+class PDP_API WingeObj_BpXor_Proc: public WingeObjBase { // 
 INHERITED(WingeObjBase)
 public:
   WingeObj_Data*	wod;
@@ -663,19 +665,47 @@ public:
   int			cnt_epoch;
   int			cnt_trial; // 1-4, is also frame+1
   
+  void	CutLinks();
+  TA_BASEFUNS(WingeObj_BpXor_Proc);//
+protected:
+  override bool		Init_impl();
+  override bool		Run_impl();
+private:
+  void 			Initialize()
+    {wod = NULL; max_epoch = 1; cnt_epoch = 1; cnt_trial = 1;}
+  void			Destroy() {CutLinks();}
+};
+
+class PDP_API WingeObj_BpXor_TrainProc: public WingeObj_BpXor_Proc { // 
+INHERITED(WingeObj_BpXor_Proc)
+public:
   bool			Step_Train(); // #MENU #MENU_CONTEXT
   bool			Step_TrainEpoch(); // #MENU #MENU_CONTEXT
   bool			Step_TrainTrial(); // #MENU #MENU_CONTEXT
   
-  void	CutLinks();
   TA_BASEFUNS(WingeObj_BpXor_TrainProc);//
 protected:
   override bool		Init_impl();
   override bool		Run_impl();
 private:
   void 			Initialize()
-    {wod = NULL; max_epoch = 1000; cnt_epoch = 1; cnt_trial = 1;}
-  void			Destroy() {CutLinks();}
+    {max_epoch = 1000;}
+  void			Destroy() {}
+};
+
+class PDP_API WingeObj_BpXor_TestProc: public WingeObj_BpXor_Proc { // 
+INHERITED(WingeObj_BpXor_Proc)
+public:
+  bool			Step_Test(); // #MENU #MENU_CONTEXT
+  bool			Step_TestTrial(); // #MENU #MENU_CONTEXT
+  
+  TA_BASEFUNS(WingeObj_BpXor_TestProc);//
+protected:
+  override bool		Init_impl();
+  override bool		Run_impl();
+private:
+  void 			Initialize()    {}
+  void			Destroy() {}
 };
 
 #endif

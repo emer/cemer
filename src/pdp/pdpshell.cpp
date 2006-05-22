@@ -1753,7 +1753,12 @@ void WingeObjBase::CutLinks() {
   inherited::CutLinks();
 }
 
+void WingeObjBase::Cancel() {
+  cancel  = true;
+}
+
 bool WingeObjBase::Init(bool gui, bool force) {
+  cancel = false;
   bool rval = ((init_done && !force) || Init_impl());
   if (gui) {
     if (rval) {
@@ -1779,6 +1784,7 @@ bool WingeObjBase::Init_impl() {
 
 
 bool WingeObjBase::Run(bool gui) {
+  cancel = false;
   bool rval = true;;
   if (!init_done) rval = Init(gui, false);
   if (rval)
@@ -1825,17 +1831,29 @@ bool WingeObj_Data::Run_impl() {
 }
 
 
-void WingeObj_BpXor_TrainProc::CutLinks() {
+void WingeObj_BpXor_Proc::CutLinks() {
   taBase::DelPointer((taBase**)&wod);
   inherited::CutLinks();
 }
 
-bool WingeObj_BpXor_TrainProc::Init_impl() {
+bool WingeObj_BpXor_Proc::Init_impl() {
   bool rval = inherited::Init_impl();
   if (!rval) return false;
   taBase::SetPointer((taBase**)&wod, proj->test_objs.FindName("data_proc"));
   if (!wod) return false;
   rval = wod->Init(false, false);
+  return rval;
+}
+
+bool WingeObj_BpXor_Proc::Run_impl() {
+  bool rval = inherited::Run_impl();
+  return rval;
+}
+
+
+
+bool WingeObj_BpXor_TrainProc::Init_impl() {
+  bool rval = inherited::Init_impl();
   if (!rval) return false;
   cnt_epoch = 1; 
   cnt_trial = 1;
@@ -1848,7 +1866,7 @@ bool WingeObj_BpXor_TrainProc::Run_impl() {
   bool rval = true;
   do {
     rval = Step_Train();
-  } while (rval && (cnt_epoch != 1));
+  } while (!cancel && rval && (cnt_epoch != 1));
 
   return rval;
 }
@@ -1870,7 +1888,7 @@ bool WingeObj_BpXor_TrainProc::Step_TrainEpoch() {
   bool rval = true;
   do {
     rval = Step_TrainTrial();
-  } while (rval && (cnt_trial != 1));
+  } while (!cancel && rval && (cnt_trial != 1));
   UpdateAfterEdit();
   return rval;
 }
@@ -1879,6 +1897,8 @@ bool WingeObj_BpXor_TrainProc::Step_TrainTrial() {
   if (!init_done && !Init(true, false)) return false;
   bool rval;
   wod->frame = cnt_trial - 1;
+  // init externals
+  net->InitExterns();
   // apply the data
   rval = wod->Run(false);
   if (!rval) goto exit;
@@ -1891,5 +1911,55 @@ exit:
 taiMiscCore::RunPending();
   return rval;
 }
+
+
+bool WingeObj_BpXor_TestProc::Run_impl() {
+  bool rval = true;
+  do {
+    rval = Step_Test();
+  } while (!cancel && rval && (cnt_epoch < max_epoch));
+
+  return rval;
+}
+
+bool WingeObj_BpXor_TestProc::Init_impl() {
+  bool rval = inherited::Init_impl();
+  if (!rval) return false;
+  cnt_trial = 1;
+  wod->context = Network::TEST;
+  net->net_context = Network::TEST;
+  return true;
+}
+
+bool WingeObj_BpXor_TestProc::Step_Test() {
+  if (!init_done && !Init(true, false)) return false;
+  bool rval = true;
+  do {
+    rval = Step_TestTrial();
+  } while (!cancel && rval && (cnt_trial != 1));
+  UpdateAfterEdit();
+  return rval;
+}
+
+bool WingeObj_BpXor_TestProc::Step_TestTrial() {
+  if (!init_done && !Init(true, false)) return false;
+  bool rval;
+  wod->frame = cnt_trial - 1;
+  // init externals
+  net->InitExterns();
+  // apply the data
+  rval = wod->Run(false);
+  if (!rval) goto exit;
+  // cycle the net
+  ((BpNetwork*)net)->BpTrial_Loop();
+  if (++cnt_trial > 4) cnt_trial = 1;
+  
+exit:
+  UpdateAfterEdit();
+taiMiscCore::RunPending();
+  return rval;
+}
+
+
 
 #endif

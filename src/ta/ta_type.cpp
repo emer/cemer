@@ -2102,8 +2102,11 @@ void* MemberDef::GetOff(const void* base) const {
 }
 
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
+  // check for always show or always not
   if (HasOption("SHOW"))
     return true;			// always show
+  if (HasOption("NO_SHOW"))
+    return false;			// never show
   // note: show uses ==, show_gui just needs flag -- done for 3.x compatibility
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;

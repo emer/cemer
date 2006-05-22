@@ -102,7 +102,7 @@ class LeabraMaxDa;
     code \
   } 
   
-class LeabraCon : public Connection {
+class LEABRA_API LeabraCon : public Connection {
   // Leabra connection
 public:
   float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
@@ -115,7 +115,7 @@ public:
   TA_BASEFUNS(LeabraCon);
 };
 
-class WtScaleSpec : public taBase {
+class LEABRA_API WtScaleSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER weight scaling specification
 public:
   float		abs;		// #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
@@ -130,7 +130,7 @@ public:
   TA_BASEFUNS(WtScaleSpec);
 };
 
-class WtSigSpec : public taBase {
+class LEABRA_API WtSigSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sigmoidal weight function specification
 public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
@@ -157,7 +157,7 @@ public:
   TA_BASEFUNS(WtSigSpec);
 };
 
-class LearnMixSpec : public taBase {
+class LEABRA_API LearnMixSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER mixture of learning factors (hebbian vs. error-driven) specification
 public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
@@ -172,7 +172,7 @@ public:
   TA_BASEFUNS(LearnMixSpec);
 };
 
-class SAvgCorSpec : public taBase {
+class LEABRA_API SAvgCorSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sending average activation correction specifications: affects hebbian learning and netinput computation
 public:
   float		cor;		// #DEF_0.4 proportion of correction to apply (0=none, 1=all, .5=half, etc)
@@ -186,7 +186,7 @@ public:
   TA_BASEFUNS(SAvgCorSpec);
 };
 
-class LeabraConSpec : public ConSpec {
+class LEABRA_API LeabraConSpec : public ConSpec {
   // Leabra connection specs
 public:
   enum	LRSValue {		// what value to drive the learning rate schedule with
@@ -309,7 +309,7 @@ public:
   TA_BASEFUNS(LeabraConSpec);
 };
 
-class LeabraBiasSpec : public LeabraConSpec {
+class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 public:
   float		dwt_thresh;  // #DEF_0.1 don't change if dwt < thresh, prevents buildup of small changes
@@ -328,7 +328,7 @@ public:
   TA_BASEFUNS(LeabraBiasSpec);
 };
 
-class LeabraCon_Group : public Con_Group {
+class LEABRA_API LeabraCon_Group : public Con_Group {
   // Leabra connection group
 public:
   float		scale_eff;	// #NO_SAVE effective scale parameter for netin
@@ -359,7 +359,7 @@ public:
   TA_BASEFUNS(LeabraCon_Group);
 };
 
-class ActFunSpec : public taBase {
+class LEABRA_API ActFunSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activation function specifications
 public:
   enum IThrFun {	       
@@ -383,7 +383,7 @@ public:
   TA_BASEFUNS(ActFunSpec);
 };
 
-class SpikeFunSpec : public taBase {
+class LEABRA_API SpikeFunSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER spiking activation function specs
 public:
   float		decay;		// #DEF_0.05 exponential decay of activation produced by a spike (act(t+1) = act(t) * (1-decay))
@@ -399,7 +399,7 @@ public:
   TA_BASEFUNS(SpikeFunSpec);
 };
 
-class DepressSpec : public taBase {
+class LEABRA_API DepressSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER depressing synapses activation function specs
 public:
   enum PSpike {
@@ -421,7 +421,7 @@ public:
   TA_BASEFUNS(DepressSpec);
 };
 
-class OptThreshSpec : public taBase {
+class LEABRA_API OptThreshSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER optimization thresholds for faster processing
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
@@ -437,7 +437,7 @@ public:
   TA_BASEFUNS(OptThreshSpec);
 };
 
-class DtSpec : public taBase {
+class LEABRA_API DtSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER time constants
 public:
   float		vm;		// #DEF_0.2 membrane potential time constant -- if units oscillate between 0 and 1, this is too high!  reduce.
@@ -450,7 +450,7 @@ public:
   TA_BASEFUNS(DtSpec);
 };
 
-class LeabraChannels : public taBase {
+class LEABRA_API LeabraChannels : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra
 public:
   float		e;		// Excitatory (glutamatergic synaptic sodium (Na) channel)
@@ -466,7 +466,7 @@ public:
   TA_BASEFUNS(LeabraChannels);
 };
 
-class VChanSpec : public taBase {
+class LEABRA_API VChanSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER voltage gated channel specs
 public:
   bool		on;		// #DEF_false true if channel is on
@@ -494,7 +494,7 @@ public:
   TA_BASEFUNS(VChanSpec);
 };
 
-class ActRegSpec : public taBase {
+class LEABRA_API ActRegSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activity regulation via weight adjustment
 public:
   bool		on;		// whether to activity regulation is on (active) or not
@@ -509,7 +509,7 @@ public:
   TA_BASEFUNS(ActRegSpec);
 };
 
-class LeabraUnitSpec : public UnitSpec {
+class LEABRA_API LeabraUnitSpec : public UnitSpec {
   // Leabra unit specifications, point-neuron approximation
 public:
   enum ActFun {
@@ -680,7 +680,7 @@ public:
   TA_BASEFUNS(LeabraUnitSpec);
 };
 
-class VChanBasis : public taBase {
+class LEABRA_API VChanBasis : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
 public:
   float		hyst;		// hysteresis
@@ -697,7 +697,7 @@ public:
   TA_BASEFUNS(VChanBasis);
 };
 
-class LeabraUnitChans : public taBase {
+class LEABRA_API LeabraUnitChans : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra units
 public:
   float		l;		// leak
@@ -712,7 +712,7 @@ public:
   TA_BASEFUNS(LeabraUnitChans);
 };
 
-class LeabraUnit : public Unit {
+class LEABRA_API LeabraUnit : public Unit {
   // ##DMEM_SHARE_SETS_5 Leabra unit, point-neuron approximation
 public:
   float		act_eq;		// #NO_SAVE rate-code equivalent activity value (time-averaged spikes or just act)
@@ -814,7 +814,7 @@ public:
   TA_BASEFUNS(LeabraUnit);
 };
 
-class LeabraSort : public taPtrList<LeabraUnit> {
+class LEABRA_API LeabraSort : public taPtrList<LeabraUnit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER used for sorting units in kwta computation
 protected:
   int		El_Compare_(void* a, void* b) const
@@ -828,7 +828,7 @@ public:
 
 // misc data-holding structures
 
-class KWTASpec : public taBase {
+class LEABRA_API KWTASpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
 public:
   enum K_From {
@@ -851,7 +851,7 @@ public:
   TA_BASEFUNS(KWTASpec);
 };
 
-class AdaptISpec : public taBase {
+class LEABRA_API AdaptISpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
 public:
   enum AdaptType {
@@ -875,7 +875,7 @@ public:
   TA_BASEFUNS(AdaptISpec);
 };
 
-class ClampSpec : public taBase {
+class LEABRA_API ClampSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs to this layer or not
@@ -889,7 +889,7 @@ public:
   TA_BASEFUNS(ClampSpec);
 };
 
-class DecaySpec : public taBase {
+class LEABRA_API DecaySpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
 public:
   float		event;		// #DEF_1 proportion decay of state vars between events
@@ -904,7 +904,7 @@ public:
   TA_BASEFUNS(DecaySpec);
 };
 
-class LeabraLayerSpec : public LayerSpec {
+class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // Leabra layer specs, computes inhibitory input for all units in layer
 public:
   enum Compute_I {		// how to compute the inhibition
@@ -1078,7 +1078,7 @@ public:
 
 SpecPtr_of(LeabraLayerSpec);
 
-class AvgMaxVals : public taBase {
+class LEABRA_API AvgMaxVals : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
 public:
   float		avg;		// average value
@@ -1092,7 +1092,7 @@ public:
   TA_BASEFUNS(AvgMaxVals);
 };
 
-class KWTAVals : public taBase {
+class LEABRA_API KWTAVals : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
 public:
   int		k;       	// target number of active units for this collection
@@ -1113,7 +1113,7 @@ public:
   TA_BASEFUNS(KWTAVals);
 };
 
-class AdaptIVals : public taBase {
+class LEABRA_API AdaptIVals : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
 public:
   float		avg_avg;	// average of the average activation in a layer
@@ -1128,7 +1128,7 @@ public:
   TA_BASEFUNS(AdaptIVals);
 };
 
-class InhibVals : public taBase {
+class LEABRA_API InhibVals : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
 public:
   float		kwta;		// inhibition due to kwta function
@@ -1142,7 +1142,7 @@ public:
   TA_BASEFUNS(InhibVals);
 };
 
-class LeabraInhib {
+class LEABRA_API LeabraInhib {
   // holds threshold-computation values, used as a parent class for layers, etc
 public:
   LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE list of active units
@@ -1167,7 +1167,7 @@ public:
   void	Inhib_Copy_(const LeabraInhib& cp);
 };
 
-class LeabraLayer : public Layer, public LeabraInhib {
+class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // Leabra Layer: implicit inhibition for soft kWTA behavior
 public:
   LeabraLayerSpec_SPtr	spec;	// the spec for this layer: controls all functions of layer
@@ -1238,7 +1238,7 @@ public:
   TA_BASEFUNS(LeabraLayer);
 };
 
-class LeabraUnit_Group : public Unit_Group, public LeabraInhib {
+class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
   // for independent subgroups of competing units within a single layer
 public:
   int		misc_state;	// miscellaneous state variable
@@ -1486,7 +1486,7 @@ inline void LeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
 // 	Processes	//
 //////////////////////////
 
-class LeabraCycle : public CycleProcess {
+class LEABRA_API LeabraCycle : public CycleProcess {
   // one Leabra cycle of activation updating
 public:
   LeabraSettle*	leabra_settle;
@@ -1510,7 +1510,7 @@ public:
   TA_BASEFUNS(LeabraCycle);
 };
 
-class LeabraSettle : public SettleProcess {
+class LEABRA_API LeabraSettle : public SettleProcess {
   // Leabra settling phase of activation updating
 public:
   LeabraTrial* 	leabra_trial;
@@ -1549,7 +1549,7 @@ public:
   TA_BASEFUNS(LeabraSettle);
 };
 
-class LeabraTrial : public TrialProcess {
+class LEABRA_API LeabraTrial : public TrialProcess {
   // Leabra trial process, iterates over phases
 public:
   enum StateInit {		// ways of initializing the state of the network
@@ -1657,7 +1657,7 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
 // 	Stats 		//
 //////////////////////////
 
-class LeabraMaxDa : public Stat {
+class LEABRA_API LeabraMaxDa : public Stat {
   // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes when equilibrium is
 public:
   enum dAType {
@@ -1692,7 +1692,7 @@ public:
   TA_BASEFUNS(LeabraMaxDa);
 };
 
-class LeabraSE_Stat : public SE_Stat {
+class LEABRA_API LeabraSE_Stat : public SE_Stat {
   // squared error for leabra, controls when to compute SE 
 public:
   LeabraTrial* 	trial_proc;	// #READ_ONLY #NO_SAVE the trial process to get phase info
@@ -1713,7 +1713,7 @@ public:
   TA_BASEFUNS(LeabraSE_Stat);
 };
 
-class LeabraGoodStat : public Stat {
+class LEABRA_API LeabraGoodStat : public Stat {
   // ##COMPUTE_IN_TrialProcess constraint satisfaction goodness statistic
 public:
   bool		subtr_inhib;	// subtract inhibition from harmony?
@@ -1739,7 +1739,7 @@ public:
   TA_BASEFUNS(LeabraGoodStat);
 };
 
-class LeabraSharpStat : public Stat {
+class LEABRA_API LeabraSharpStat : public Stat {
   // ##COMPUTE_IN_TrialProcess layer sharpness statistic: just max / avg
 public:
   StatVal	sharp;		// sharpness = max / avg 
@@ -1763,7 +1763,7 @@ public:
   TA_BASEFUNS(LeabraSharpStat);
 };
 
-class WrongOnStat : public Stat {
+class LEABRA_API WrongOnStat : public Stat {
   // ##COMPUTE_IN_TrialProcess Reports an error if a unit is on when it shouldn't have been (for multiple output cases)
 public:
   Layer*	trg_lay;
@@ -1794,7 +1794,7 @@ public:
   TA_BASEFUNS(WrongOnStat);
 };
 
-class LeabraPrjnRelNetinStat : public Stat {
+class LEABRA_API LeabraPrjnRelNetinStat : public Stat {
   // ##COMPUTE_IN_TrialProcess computes overall relative netinput contributions for the different projections into a layer. Useful for setting wt_scale parameters to achieve desired relative contributions of different inputs.  you MUST set the layer parameter to the layer in question
 public:
   StatVal_List	relnet;		// relative netinput contributions for the different projections into units in this layer
@@ -1829,7 +1829,7 @@ public:
 // 	Context Layer for Sequential	//
 //////////////////////////////////////////
 
-class CtxtUpdateSpec : public taBase {
+class LEABRA_API CtxtUpdateSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
@@ -1843,7 +1843,7 @@ public:
   TA_BASEFUNS(CtxtUpdateSpec);
 };
 
-class LeabraContextLayerSpec : public LeabraLayerSpec {
+class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
 public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
@@ -1870,7 +1870,7 @@ public:
 // 	Phase-Order  Environment	//
 //////////////////////////////////////////
 
-class PhaseOrderEventSpec : public EventSpec {
+class LEABRA_API PhaseOrderEventSpec : public EventSpec {
   // event specification including order of phases
 public:
   enum PhaseOrder {
@@ -1893,7 +1893,7 @@ public:
 // 	Misc Special Objects		//
 //////////////////////////////////////////
 
-class LeabraLinUnitSpec : public LeabraUnitSpec {
+class LEABRA_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
 public:
   void 	Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraTrial* trl);
@@ -1905,7 +1905,7 @@ public:
   TA_BASEFUNS(LeabraLinUnitSpec);
 };
 
-class LeabraNegBiasSpec : public LeabraBiasSpec {
+class LEABRA_API LeabraNegBiasSpec : public LeabraBiasSpec {
   // only learns negative bias changes, not positive ones (decay restores back to zero)
 public:
   float		decay;		// rate of weight decay towards zero 
@@ -1939,7 +1939,7 @@ public:
   TA_BASEFUNS(LeabraNegBiasSpec);
 };
 
-class TrialSynDepCon : public LeabraCon {
+class LEABRA_API TrialSynDepCon : public LeabraCon {
   // synaptic depression connection at the trial level (as opposed to cycle level)
 public:
   float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
@@ -1951,7 +1951,7 @@ public:
   TA_BASEFUNS(TrialSynDepCon);
 };
 
-class SynDepSpec : public taBase {
+class LEABRA_API SynDepSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
@@ -1964,7 +1964,7 @@ public:
   TA_BASEFUNS(SynDepSpec);
 };
 
-class TrialSynDepConSpec : public LeabraConSpec {
+class LEABRA_API TrialSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the trial level (as opposed to cycle level)
 public:
   SynDepSpec	syn_dep;	// synaptic depression specifications
@@ -2070,7 +2070,7 @@ public:
   TA_BASEFUNS(TrialSynDepConSpec);
 };
 
-class FastWtCon : public LeabraCon {
+class LEABRA_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
   float		swt;		// slow weight value
@@ -2083,7 +2083,7 @@ public:
   TA_BASEFUNS(FastWtCon);
 };
 
-class FastWtSpec : public taBase {
+class LEABRA_API FastWtSpec : public taBase {
   // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
 public:
   enum DecayMode {
@@ -2113,7 +2113,7 @@ public:
 
 // TODO: following code is not dealing with contrast enhancement on the swt vals!!!!
 
-class FastWtConSpec : public LeabraConSpec {
+class LEABRA_API FastWtConSpec : public LeabraConSpec {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
@@ -2256,7 +2256,7 @@ public:
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
 
-class ScalarValSpec : public taBase {
+class LEABRA_API ScalarValSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
 public:
   enum	RepType {
@@ -2292,7 +2292,7 @@ public:
   TA_BASEFUNS(ScalarValSpec);
 };
 
-class ScalarValBias : public taBase {
+class LEABRA_API ScalarValBias : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
@@ -2326,7 +2326,7 @@ public:
   TA_BASEFUNS(ScalarValBias);
 };
 
-class ScalarValLayerSpec : public LeabraLayerSpec {
+class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
   // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
@@ -2389,7 +2389,7 @@ public:
   TA_BASEFUNS(ScalarValLayerSpec);
 };
 
-class ScalarValSelfPrjnSpec : public ProjectionSpec {
+class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
   // special projection for making self-connection that establishes neighbor similarity in scalar val
 public:
   int	width;			// width of neighborhood, in units (i.e., connect width units to the left, and width units to the right)
@@ -2413,7 +2413,7 @@ public:
 // 	TwoD Value Layer	//
 //////////////////////////////////
 
-class TwoDValSpec : public taBase {
+class LEABRA_API TwoDValSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
 public:
   enum	RepType {
@@ -2453,7 +2453,7 @@ public:
   TA_BASEFUNS(TwoDValSpec);
 };
 
-class TwoDValBias : public taBase {
+class LEABRA_API TwoDValBias : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
@@ -2481,7 +2481,7 @@ public:
   TA_BASEFUNS(TwoDValBias);
 };
 
-class TwoDValLayerSpec : public LeabraLayerSpec {
+class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  first row represents scalar value(s).  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
 public:
   TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
@@ -2547,7 +2547,7 @@ public:
 // 	Reinforcement Learning Algorithms (TD/PVLV/BG/PFC)	//
 //////////////////////////////////////////////////////////////////
 
-class MarkerConSpec : public LeabraConSpec {
+class LEABRA_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 public:
   // don't send regular net inputs or learn!
@@ -2565,7 +2565,7 @@ public:
   TA_BASEFUNS(MarkerConSpec);
 };
 
-class DaModUnit : public LeabraUnit {
+class LEABRA_API DaModUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
 public:
   float		act_m2;		// second minus phase activation
@@ -2581,7 +2581,7 @@ public:
   TA_BASEFUNS(DaModUnit);
 };
 
-class DaModSpec : public taBase {
+class LEABRA_API DaModSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
 public:
   enum ModType {
@@ -2603,7 +2603,7 @@ public:
   TA_BASEFUNS(DaModSpec);
 };
 
-class DaModUnitSpec : public LeabraUnitSpec {
+class LEABRA_API DaModUnitSpec : public LeabraUnitSpec {
   // Leabra unit with temporal-differences error modulation of minus phase activation for learning
 public:
   DaModSpec	da_mod;		// da modulation of activations (for da-based learning, and other effects)
@@ -2635,7 +2635,7 @@ public:
 //	External Reward Layer		//
 //////////////////////////////////////////
 
-class AvgExtRewSpec : public taBase {
+class LEABRA_API AvgExtRewSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
@@ -2648,7 +2648,7 @@ public:
   TA_BASEFUNS(AvgExtRewSpec);
 };
 
-class OutErrSpec : public taBase {
+class LEABRA_API OutErrSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
 public:
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
@@ -2662,7 +2662,7 @@ public:
   TA_BASEFUNS(OutErrSpec);
 };
 
-class ExtRewSpec : public taBase {
+class LEABRA_API ExtRewSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
@@ -2676,7 +2676,7 @@ public:
   TA_BASEFUNS(ExtRewSpec);
 };
 
-class ExtRewLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
   // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
 public:
   enum RewardType {		// how do we get the reward values?
@@ -2723,7 +2723,7 @@ public:
   TA_BASEFUNS(ExtRewLayerSpec);
 };
 
-class ExtRew_Stat : public Stat {
+class LEABRA_API ExtRew_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess ##FINAL_STAT external reward statistic
 public:
   StatVal	rew;		// external reward value
@@ -2751,7 +2751,7 @@ public:
 // 	Standard TD Reinforcement Learning 		//
 //////////////////////////////////////////////////////////
 
-class TDRewPredConSpec : public LeabraConSpec {
+class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 public:
   inline float C_Compute_Err(LeabraCon* cn, DaModUnit* ru, DaModUnit* su) {
@@ -2794,7 +2794,7 @@ public:
 //	TD Reward Prediction Layer		//
 //////////////////////////////////////////////////
 
-class TDRewPredLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
 public:
   virtual void 	Compute_SavePred(Unit_Group* ugp, LeabraTrial* trl); // save current prediction to misc_1 for later clamping
@@ -2829,7 +2829,7 @@ public:
 //	TD Reward Integration Layer	//
 //////////////////////////////////////////
 
-class TDRewIntegSpec : public taBase {
+class LEABRA_API TDRewIntegSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
@@ -2841,7 +2841,7 @@ public:
   TA_BASEFUNS(TDRewIntegSpec);
 };
 
-class TDRewIntegLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
@@ -2866,7 +2866,7 @@ public:
 //	  TdLayer 	//
 //////////////////////////
 
-class TdLayerSpec : public LeabraLayerSpec {
+class LEABRA_API TdLayerSpec : public LeabraLayerSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
 public:
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraTrial* trl);
@@ -2919,7 +2919,7 @@ public:
 // orig wt from last wt change, apply dwt every trial, and then subtract wt - origwt ->dwt
 // aggretate these dwts as a SUM, apply to wts!
 
-class PVConSpec : public LeabraConSpec {
+class LEABRA_API PVConSpec : public LeabraConSpec {
   // primary value connection spec: learns using delta rule from PVe - PVi values
 public:
   inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -2961,7 +2961,7 @@ public:
   TA_BASEFUNS(PVConSpec);
 };
 
-class PVDetectSpec : public taBase {
+class LEABRA_API PVDetectSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for detecting if a primary value is present or expected
 public:
   float		thr_min;	// #DEF_0.2 minimum threshold on PVe (ExtRew) or PVi, below which PV is considered present (i.e., punishment) (set to 0 if PVe.rew.norew_val = 0)
@@ -2974,7 +2974,7 @@ public:
   TA_BASEFUNS(PVDetectSpec);
 };
 
-class PViLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values
 public:
   PVDetectSpec	pv_detect;	// primary reward value detection spec: detect if a primary reward is present or expected
@@ -3005,7 +3005,7 @@ public:
 //	LV: Learned Value Layer		//
 //////////////////////////////////////////
 
-class LVConSpec : public TrialSynDepConSpec {
+class LEABRA_API LVConSpec : public TrialSynDepConSpec {
   // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering
 public:
   inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -3048,7 +3048,7 @@ public:
   TA_BASEFUNS(LVConSpec);
 };
 
-class LVSpec : public taBase {
+class LEABRA_API LVSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for learned value layers
 public:
   float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
@@ -3061,7 +3061,7 @@ public:
   TA_BASEFUNS(LVSpec);
 };
 
-class LVeLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
   // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version
 public:
   LVSpec	lv;	// learned value specs
@@ -3088,7 +3088,7 @@ public:
   TA_BASEFUNS(LVeLayerSpec);
 };
 
-class LViLayerSpec : public LVeLayerSpec {
+class LEABRA_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 public:
 
@@ -3101,7 +3101,7 @@ public:
 //	  DaLayer 	//
 //////////////////////////
 
-class PVLVDaSpec : public taBase {
+class LEABRA_API PVLVDaSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for PVLV da parameters
 public:
   enum	DaMode {
@@ -3122,7 +3122,7 @@ public:
   TA_BASEFUNS(PVLVDaSpec);
 };
 
-class PVLVDaLayerSpec : public LeabraLayerSpec {
+class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
   // computes PVLV 'Da' signal: typically if(ER), da = ER-PV, else LVe - LVs
 public:
   PVLVDaSpec	da;		// parameters for the lvpv da computation
@@ -3160,7 +3160,7 @@ public:
 //	  Patch/SNc	 	//
 //////////////////////////////////
 
-class PatchLayerSpec : public LVeLayerSpec {
+class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
   // simulates Patch as a LV layer: currently no doing anything different than regular LV
 public:
 
@@ -3169,7 +3169,7 @@ public:
   TA_BASEFUNS(PatchLayerSpec);
 };
 
-class SNcMiscSpec : public taBase {
+class LEABRA_API SNcMiscSpec : public taBase {
   // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc parameters for SNc layer
 public:
   enum PatchMode {
@@ -3187,7 +3187,7 @@ public:
   TA_BASEFUNS(SNcMiscSpec);
 };
 
-class SNcLayerSpec : public PVLVDaLayerSpec {
+class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
   // computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported); Does not do SNrThal modulation, which is computed directly in Matrix units
 public:
   SNcMiscSpec	snc;		// misc SNc specific parameters controlling influence of patch modulation
@@ -3210,7 +3210,7 @@ public:
 //	  Matrix Con/Units	//
 //////////////////////////////////
 
-class MatrixConSpec : public LeabraConSpec {
+class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
 public:
   enum LearnRule {
@@ -3281,7 +3281,7 @@ public:
   TA_BASEFUNS(MatrixConSpec);
 };
 
-class MatrixBiasSpec : public LeabraBiasSpec {
+class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
   // noise bias connection -- holds noise value separate from orig value
 public:
   enum LearnRule {
@@ -3308,7 +3308,7 @@ public:
   TA_BASEFUNS(MatrixBiasSpec);
 };
 
-class MatrixUnitSpec : public DaModUnitSpec {
+class LEABRA_API MatrixUnitSpec : public DaModUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (PFC in 2+ phase, MOTOR in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
@@ -3331,7 +3331,7 @@ public:
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
-class ContrastSpec : public taBase {
+class LEABRA_API ContrastSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER contrast enhancement of the GO units
 public:
   float		gain;		// #DEF_1 overall gain for da modulation
@@ -3347,7 +3347,7 @@ public:
   TA_BASEFUNS(ContrastSpec);
 };
 
-class MatrixRndGoSpec : public taBase {
+class LEABRA_API MatrixRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
 public:
   bool		on;		// #DEF_true whether to use random go firing function or not (if not, over max_mnt Go firing is still used)
@@ -3363,7 +3363,7 @@ public:
   TA_BASEFUNS(MatrixRndGoSpec);
 };
 
-class MatrixRndGoThrSpec : public taBase {
+class LEABRA_API MatrixRndGoThrSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER thresholds for matrix random Go firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
 public:
   float		abs_thr;	// #DEF_0 absolute threshold on per stripe avg_go_da value (-1..1) for triggering random GO (if stripe_agd < abs_thr then Go p(go_p))
@@ -3379,7 +3379,7 @@ public:
   TA_BASEFUNS(MatrixRndGoThrSpec);
 };
 
-class MatrixMiscSpec : public taBase {
+class LEABRA_API MatrixMiscSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the matrix layer
 public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
@@ -3396,7 +3396,7 @@ public:
   TA_BASEFUNS(MatrixMiscSpec);
 };
 
-class MatrixLayerSpec : public LeabraLayerSpec {
+class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer: fire actions/WM updates, or nogo; PFC = gate in 1+ and 2+, MOTOR = gate in -
 public:
   enum 	BGType {       		// which type of basal ganglia circuit is this?
@@ -3450,7 +3450,7 @@ public:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
-class SNrThalLayerSpec : public LeabraLayerSpec {
+class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
   // computes activation = GO - NOGO from MatrixLayerSpec
 public:
   float		avg_net_dt;	// time-averaged netinput computation integration rate
@@ -3477,7 +3477,7 @@ public:
 //	PFC Layer Spec		//
 //////////////////////////////////
 
-class PFCGateSpec : public taBase {
+class LEABRA_API PFCGateSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basal ganglia gating specifications
 public:
   enum	GateSignal {
@@ -3509,7 +3509,7 @@ public:
   TA_BASEFUNS(PFCGateSpec);
 };
 
-class PFCLayerSpec : public LeabraLayerSpec {
+class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
   // Prefrontal cortex layer: gets gating signal from matrix, gate updates before each plus phase (toggle off, toggle on)
 public:
   enum MaintUpdtAct {
@@ -3553,7 +3553,7 @@ public:
 //	Leabra Wizard		//
 //////////////////////////////////
 
-class LeabraWiz : public Wizard {
+class LEABRA_API LeabraWiz : public Wizard {
   // Leabra-specific wizard for automating construction of simulation objects
 public:
   virtual void 	StdNetwork(Network* net = NULL);
