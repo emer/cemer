@@ -30,6 +30,8 @@ SRCS =\
 	mta_constr.cpp \
 	maketa.cpp
 
+include $(top_srcdir)/mfstamp.am
+
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
 	then touch -t 0412312359 ta_TA_type.h ta_TA_inst.h;fi

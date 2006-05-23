@@ -11,6 +11,7 @@ DIST_SUBDIRS =\
 	src/taiqtso \
 	src/ta \
 	src/css \
+        src/css_bin \
 	src/tamisc \
 	src/ta_lib \
 	src/pdp \
@@ -24,6 +25,7 @@ SUBDIRS =\
 	@WANT_TAIQTSO@ \
 	src/ta \
 	src/css \
+#        src/css_bin \
 	src/tamisc \
 	src/ta_lib \
 	src/pdp \
@@ -44,7 +46,7 @@ EXTRA_DIST += aminclude.am spec.tmpl.in
 
 CLEANFILES =\
 	*do-stamp* \
-	pdp-4.0.spec \
+	PDP++-4.0.0.spec \
 	RPMChangeLog 
 
 DISTCLEANFILES =\
@@ -71,12 +73,11 @@ endif
 
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
-# 	cp -cp $(srcdir)/src/ta/taglobal.h \
-# 		$(srcdir)/src/ta/ta_platform.h \
-# 		$(srcdir)/src/ta/qtdefs.h\
-# 		$(distdir)/src/ta
-# 	cp -cp $(srcdir)/src/tamisc/tamisc_maketa_defs.h \
-# 		$(distdir)/src/tamisc/tamisc_maketa_defs.h
+	cp -cp $(srcdir)/src/ta/taglobal.h \
+		$(srcdir)/src/ta/qtdefs.h\
+		$(distdir)/src/ta
+	cp -cp $(srcdir)/src/tamisc/tamisc_maketa_defs.h \
+		$(distdir)/src/tamisc/tamisc_maketa_defs.h
 # 	cp -cp $(srcdir)/src/ta/ta_maketa_defs.h \
 # 		$(distdir)/src/ta/ta_maketa_defs.h
 #	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in

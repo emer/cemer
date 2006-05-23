@@ -18,26 +18,37 @@ dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 AC_DEFUN([PDP_SET_BUILD_MODE],[
+AC_ARG_ENABLE([readline],
+	      AC_HELP_STRING([--disable-readline],
+			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
+			     [readline=false],
+			     [readline=true])
 AC_ARG_WITH([rpm],
 	      AC_HELP_STRING([--with-rpm],
-			     [Enable the creation of rpms with `make rpm'.You must first `touch aminclude.am' and set PLATFORM_SUFFIX. ]),
+			     [Enable the creation of rpms with `make rpm'.You must first `touch aminclude.am' and set PLATFORM_SUFFIX (see below).  @<:@default=disabled@:>@ ]),
 			     [rpm=true],
 			     [rpm=false])
 AC_ARG_ENABLE([gui],
 	      AC_HELP_STRING([--disable-gui],
-			     [Disable compiling with a GUI. Default is enabled]),
+			     [Disable compiling with a GUI. @<:@default=enabled@:>@]),
 			     [gui=false],
 			     [gui=true])
 AC_ARG_ENABLE([mpi],
 	      AC_HELP_STRING([--enable-mpi],
-			     [Enable the Message Passing Interface. Default is disabled.]),
+			     [Enable the Message Passing Interface.  @<:@default=disabled@:>@]),
 			     [mpi=true],
 			     [mpi=false])
 AC_ARG_ENABLE([debug],
 	      AC_HELP_STRING([--enable-debug],
-			     [Enable debugging. Default is disabled.]),
+			     [Enable debugging.  @<:@default=disabled@:>@]),
 			     [debug=true],
 			     [debug=false])
+AC_ARG_ENABLE([plugins],
+	      AC_HELP_STRING([--enable-plugins],
+			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
+			     [plugins=true],
+			     [plugins=false])
+AM_CONDITIONAL([PLUGINS],[test $plugins = true])
 AM_CONDITIONAL([RPM],[test $rpm = true])
 AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
@@ -910,11 +921,7 @@ AC_DEFUN([PGAC_CHECK_READLINE],
 AC_CACHE_VAL([pgac_cv_check_readline],
 [pgac_cv_check_readline=no
 pgac_save_LIBS=$LIBS
-if test x"$with_libedit_preferred" != x"yes"
-then	READLINE_ORDER="-lreadline -ledit"
-else	READLINE_ORDER="-ledit -lreadline"
-fi
-for pgac_rllib in $READLINE_ORDER ; do
+for pgac_rllib in -lreadline -ledit; do
   AC_MSG_CHECKING([for ${pgac_rllib}])
   for pgac_lib in "" " -ltermcap" " -lncurses" " -lcurses" ; do
     LIBS="${pgac_rllib}${pgac_lib} $pgac_save_LIBS"
@@ -928,7 +935,6 @@ for pgac_rllib in $READLINE_ORDER ; do
             pgac_lib=" -lcurses"
           fi ;;
       esac
-
       pgac_cv_check_readline="${pgac_rllib}${pgac_lib}"
       break
     ]])
@@ -937,21 +943,19 @@ for pgac_rllib in $READLINE_ORDER ; do
     AC_MSG_RESULT([yes ($pgac_cv_check_readline)])
     break
   else
-    AC_MSG_RESULT(no)
+    AC_MSG_RESULT([no])
   fi
 done
 LIBS=$pgac_save_LIBS
 ])[]dnl AC_CACHE_VAL
-
 if test "$pgac_cv_check_readline" != no ; then
   LIBS="$pgac_cv_check_readline $LIBS"
-  AC_DEFINE(HAVE_LIBREADLINE, 1, [Define if you have a function readline library])
+  AC_DEFINE([TA_USE_READLINE],[1],[Define if you have a function readline library])
+  SIM_AC_CONFIGURATION_SETTING([Readline],[enabled...$pgac_cv_check_readline])
 else
-    SIM_AC_CONFIGURATION_WARNING([none of termcap, ncurses, curses, readline, edit found])
+  SIM_AC_CONFIGURATION_WARNING([none of termcap, ncurses, curses, readline, edit found. Readline support disabled.])
 fi
-
 ])dnl PGAC_CHECK_READLINE
-
 
 dnl 					 configuration_summary.m4
 dnl *************************************************************
@@ -4187,3 +4191,86 @@ AC_MSG_RESULT([$RELEASEINFO $VERSIONINFO])
 AC_SUBST([RELEASEINFO])
 AC_SUBST([VERSIONINFO])
 ])
+dnl @synopsis VL_LIB_READLINE
+dnl
+dnl Searches for a readline compatible library. If found, defines
+dnl `HAVE_LIBREADLINE'. If the found library has the `add_history'
+dnl function, sets also `HAVE_READLINE_HISTORY'. Also checks for the
+dnl locations of the necessary include files and sets `HAVE_READLINE_H'
+dnl or `HAVE_READLINE_READLINE_H' and `HAVE_READLINE_HISTORY_H' or
+dnl 'HAVE_HISTORY_H' if the corresponding include files exists.
+dnl
+dnl The libraries that may be readline compatible are `libedit',
+dnl `libeditline' and `libreadline'. Sometimes we need to link a
+dnl termcap library for readline to work, this macro tests these cases
+dnl too by trying to link with `libtermcap', `libcurses' or
+dnl `libncurses' before giving up.
+dnl
+dnl Here is an example of how to use the information provided by this
+dnl macro to perform the necessary includes or declarations in a C
+dnl file:
+dnl
+dnl   #ifdef HAVE_LIBREADLINE
+dnl   #  if defined(HAVE_READLINE_READLINE_H)
+dnl   #    include <readline/readline.h>
+dnl   #  elif defined(HAVE_READLINE_H)
+dnl   #    include <readline.h>
+dnl   #  else /* !defined(HAVE_READLINE_H) */
+dnl   extern char *readline ();
+dnl   #  endif /* !defined(HAVE_READLINE_H) */
+dnl   char *cmdline = NULL;
+dnl   #else /* !defined(HAVE_READLINE_READLINE_H) */
+dnl     /* no readline */
+dnl   #endif /* HAVE_LIBREADLINE */
+dnl
+dnl   #ifdef HAVE_READLINE_HISTORY
+dnl   #  if defined(HAVE_READLINE_HISTORY_H)
+dnl   #    include <readline/history.h>
+dnl   #  elif defined(HAVE_HISTORY_H)
+dnl   #    include <history.h>
+dnl   #  else /* !defined(HAVE_HISTORY_H) */
+dnl   extern void add_history ();
+dnl   extern int write_history ();
+dnl   extern int read_history ();
+dnl   #  endif /* defined(HAVE_READLINE_HISTORY_H) */
+dnl     /* no history */
+dnl   #endif /* HAVE_READLINE_HISTORY */
+dnl
+dnl @category InstalledPackages
+dnl @author Ville Laurikari <vl@iki.fi>
+dnl @version 2002-04-04
+dnl @license AllPermissive
+
+AC_DEFUN([VL_LIB_READLINE], [
+  AC_CACHE_CHECK([for a readline compatible library],[vl_cv_lib_readline], [
+    ORIG_LIBS="$LIBS"
+    for readline_lib in readline edit editline; do
+      for termcap_lib in "" termcap curses ncurses; do
+        if test -z "$termcap_lib"; then
+          TRY_LIB="-l$readline_lib"
+        else
+          TRY_LIB="-l$readline_lib -l$termcap_lib"
+        fi
+        LIBS="$ORIG_LIBS $TRY_LIB"
+        AC_TRY_LINK_FUNC([readline],[vl_cv_lib_readline="$TRY_LIB"])
+        if test -n "$vl_cv_lib_readline"; then
+          break
+        fi
+      done
+      if test -n "$vl_cv_lib_readline"; then
+        break
+      fi
+    done
+    if test -z "$vl_cv_lib_readline"; then
+      vl_cv_lib_readline="no"
+      LIBS="$ORIG_LIBS"
+      SIM_AC_CONFIGURATION_WARNING([Unable to to find readline, edit, editline, or termcap, curses ncurses. Readline disabled])
+    fi
+  ])
+  if test "$vl_cv_lib_readline" != "no"; then
+    AC_DEFINE([TA_USE_READLINE],[1],[Define if you have a readline compatible library])
+    AC_CHECK_HEADERS([readline.h readline/readline.h])
+#    LIBS="$LIBS $vl_cv_lib_readline"
+    SIM_AC_CONFIGURATION_SETTING([Readline],[$vl_cv_lib_readline])
+  fi
+])dnl

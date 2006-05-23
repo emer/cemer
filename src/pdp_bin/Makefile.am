@@ -1,6 +1,8 @@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
+include $(top_srcdir)/mfstamp.am
+
 PROJNAME = pdp_bin
 DEFS=
 srcdir = @srcdir@

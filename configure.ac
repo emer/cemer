@@ -45,16 +45,18 @@ AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
-PGAC_CHECK_READLINE                                    # Check for readline, termcap etc...
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
-
 
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
-# Explicit template instantiation
-#CXXFLAGS="$CXXFLAGS -fno-implicit-templates"
+# --with-readline
+if test "$readline" = "true"; then
+  VL_LIB_READLINE
+else
+ SIM_AC_CONFIGURATION_SETTING([Readline],[Disabled])
+fi
 
 # --with-rpm
 if test x"$rpm" = x"true"; then
@@ -62,7 +64,6 @@ if test x"$rpm" = x"true"; then
   AC_SUBST([INCLUDE_AMINCLUDE_AM],["include aminclude.am"])
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
-
 
 # --enable-debug
 if test x"$debug" = x"true"; then
@@ -169,6 +170,11 @@ if test x"$mpi" = x"true"; then
   fi
 else
   SIM_AC_CONFIGURATION_SETTING([MPI],[Disabled])	
+fi
+
+if test x"$debug" = x"true"; then
+  SIM_AC_CONFIGURATION_SETTING([LIBS],[$LIBS])
+#  SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
 fi
 
 AC_SUBST([abs_top_builddir])

@@ -1,3 +1,5 @@
+include $(top_srcdir)/mfstamp.am
+
 lib_LTLIBRARIES = libta4@PDP_SUFFIX@.la
 libta4@PDP_SUFFIX@_la_SOURCES =
 
