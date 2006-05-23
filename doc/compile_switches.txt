@@ -65,6 +65,12 @@ MOD_QUAL (m)
   * module qualifiers, appended to base name of library or executable
   * is empty for default, which is no debug, gui, no mpi
   
+
+Misc
+
+TA_USE_READLINE
+  * defined when using the GNU readline library for console handling
+
    
 Maketa
 
@@ -74,27 +80,26 @@ __MAKETA__
    
 Platform
 
-These are the main platform switches:
+These are the main platform switches -- they follow the convention for the Qt switches:
 
-WINDOWS -- Win32 or Win64
+TA_OS_WIN -- Win32 or Win64
   * all Windows platforms use a Windows-based gui
-DARWIN -- MacOS X
-LINUX -- Linux
-SOLARIS -- Sun Solaris
-
+TA_OS_MAC -- MacOS X
+TA_OS_LINUX -- Linux
+TA_OS_UNIX -- defined on all unixes (including Mac)
 [MORE TBD]
 
 These are also defined under the given conditions:
-UNIX -- for any Unix platform, including MacOS X
-  * all Unix platforms use X Windows-based gui
-WIN32 -- for 32 bit Windows
-WIN64 -- for 64 bit Windows
+TA_OS_UNIX -- for any Unix platform, including MacOS X
+  * all Unix platforms (except Mac OS) use X Windows-based gui
+?? TA_OS_WIN32 -- for 32 bit Windows
+?? TA_OS_WIN64 -- for 64 bit Windows
 
 
 Architecture
 
 These are the architecture switches:
-
+TODO: **OUT OF DATE**
 I386 -- Intel i386
 X86_64 -- AMD/Intel 64 bit
 IA64 -- Intel Itanium (64 bit)
@@ -109,7 +114,7 @@ TA_64BIT -- defined for all 64 bit targets
   
 
 Makefile Variables
-
+TODO: out of date
 TARG_DEFINES
   * modal -Dxx defines, depending on target
   

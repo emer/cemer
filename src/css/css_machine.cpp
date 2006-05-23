@@ -45,25 +45,6 @@
 int yyparse(void);
 void yyerror(char* s);
 
-extern "C" {
-  extern int rl_done;		// readline done reading
-  extern int rl_pending_input;
-  extern int (*rl_event_hook)(void);	// this points to the Qt event loop pump if running TA_GUI
-
-//  extern char* rl_readline(char*);
-  extern char* readline(char*);
-  extern void add_history(char*);
-  extern int rl_stuff_char(int);
-  extern int rl_set_keyboard_input_timeout (int u); // wait u microseconds between callbacks, default .1s
-}
-
-int cssMisc::readline_waitproc() {
-  //TODO: anything else???
-  // prob need to replicate most of the stuff in css_qt.cpp
-  // maybe even try to factor out and eliminate duplication
-  return 0;
-}
-
 
 //////////////////////////
 // 	cssMisc    	//
@@ -113,6 +94,7 @@ String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
+cssConsole*	cssMisc::console = NULL;
 
 cssEl 		cssMisc::Void("Void"); 	// the null return value
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr
@@ -254,20 +236,26 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
   cssMisc::argv = argv_; // cast away constness -- we still treat it as const
 #ifdef TA_GUI
 # ifdef TA_USE_INVENTOR
-//use other version  SoQt::init((QWidget*)NULL); // creates a special Coin QApplication instance
   SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
-//note: must still set SoQtP.h:SoQtP::mainwidget to the main widget, before calling event loop
 # else
   new QApplication(argc, (char**)argv); // accessed as qApp
 # endif
-//obs  rl_event_hook = cssiSession::readline_waitproc; // set the hook to cssiSession's "waitproc"
 #else
   new QCoreApplication(argc, (char**)argv); // accessed as qApp
-//obs  rl_event_hook = readline_waitproc; // set the hook to our "waitproc"
 #endif
-  // have waitproc called back 20/s (instead of 10/s)
-  rl_set_keyboard_input_timeout(50000); 
-  rl_done = false;
+
+// create the system console
+//TODO: may need to move somewhere if we are using a gui console
+  if (!console) {
+    console = cssConsole::Get_SysConsole();
+  
+#ifdef TA_USE_READLINE
+    // have waitproc called back 20/s (instead of 10/s)
+    rl_set_keyboard_input_timeout(50000); 
+#endif //  TA_USE_READLINE
+//TODO: modalize
+    rl_done = false;
+  }
 }
 
 
@@ -389,6 +377,32 @@ const int cssElFun::ArgMax = 64;
 //////////////////////////
 
 //String cssEl::no_string;
+
+void cssEl::Done(cssEl* it) { 
+#ifdef DEBUG
+  if (it->refn < 0) {
+    cerr << "**WARNING** cssEl::Done: it->refn < 0 (is: " << it->refn
+      << ")for item name(type): "
+      << it->GetName() << "(" << it->GetTypeName() << ") -- not deleted\n";
+    return;
+  } 
+#endif
+  if (it->refn <= 0) 
+    delete it; 
+  else 
+    it->deReferenced(); 
+}
+
+void cssEl::unRef(cssEl* it) { 
+#ifdef DEBUG
+  if (it->refn <= 0) {
+    cerr << "**WARNING** cssEl::unRef: it->refn <= 0 (is: " << it->refn
+      << ") -- **not decremented**\n";
+    return;
+  }
+#endif
+  it->refn--;
+}
 
 cssEl::~cssEl() {
   if(addr != NULL)
@@ -2608,13 +2622,16 @@ int cssProg::ReadLn() {
   if((top->InShell() || (top->state & cssProg::State_Defn)) &&
      (top->fin == top->fshell))
   {
+//TEMP
+cerr << "**ABORTED** cssProg::ReadLn does not yet support console\n";
+return EOF;
+/*TODO: replace
     const char* pt;
     pt = (top->state & cssProg::State_Defn) ? "#" : ">";
     if(top->depth > 0)
       top->act_prompt = String(top->depth) + " " + top->prompt + pt + " ";
     else
       top->act_prompt = top->prompt + pt + " ";
-
     top->in_readline = true;
 //obs    curln = rl_readline((char*)top->act_prompt);
     //NOTE: according to rl spec, we must call free() on the string returned
@@ -2624,18 +2641,15 @@ int cssProg::ReadLn() {
     String curln(curln_);
     free(curln_); 
     curln_ = NULL;
+
     top->in_readline = false;
-/*obs #ifdef TA_GUI
-    if(taMisc::gui_active && rl_event_hook == NULL) // might get set to null somewhere -- reset it
-      rl_event_hook = readline_waitproc;
-#endif // TA_GUI */
 
     if(top->external_exit) 	// bail if external exit flag was set during readline
       return EOF;
 
     line = AddSrc(curln);	// put onto buffer
     if(source[line]->src.length() > 0)
-      add_history(curln);
+      add_history(curln);*/
   } else {
     int c;
     line = AddSrc("");			// new line
@@ -3026,6 +3040,9 @@ cssProgSpace::~cssProgSpace() {
   Reset();
   DelProg();
   free(progs);
+}
+
+void cssProgSpace::AcceptNewLine(String ln, bool eof) {
 }
 
 bool cssProgSpace::DeleteOk() {

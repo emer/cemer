@@ -29,6 +29,7 @@
 #include "ta_string.h"
 #include "ta_variant.h"
 #include "css_extern_support.h"
+#include "css_console.h"
 
 // support for ta_type is neccessary to get file and string member funcs
 // TYPEA is an internal type access library
@@ -44,12 +45,16 @@
 #include <signal.h>
 #include <setjmp.h>
 
+// externals
+class cssConsole;
+
 typedef int Int;
 typedef double Real;
 typedef int css_progdx;		// program index type
 
 typedef cssEl* (*css_fun_stub_ptr)(void*, int, cssEl**);
 
+// forwards
 class cssElPtr;
 class cssEl;
 class cssInt;
@@ -147,6 +152,7 @@ public:
   static int		init_debug;	// initial debug level (by -v arg from user)
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
+  static cssConsole*	console;	// the console, IF CREATED
 
   static cssEl 		Void; 		// a void element
   static cssElPtr 	VoidElPtr;	// a void el pointer (to a void element)
@@ -401,10 +407,9 @@ public:
   virtual cssEl::RunStat 	MakeTempToken(cssProg* prg);
 
   // all static just for consistency..
-  static void   	Done(cssEl* it)
-  { if(it->refn <= 0) delete it; else it->deReferenced(); }
+  static void   	Done(cssEl* it);
   static void  		Ref(cssEl* it)		{ it->refn++; }
-  static void   	unRef(cssEl* it)	{ it->refn--; }
+  static void   	unRef(cssEl* it);
   static void		unRefDone(cssEl* it)	{ unRef(it); Done(it); }
 
   // routines for reference pointers
@@ -1204,7 +1209,6 @@ public:
   void		ZapLastRun()		{ ZapFrom(run_st_size, run_st_src_size); }
   int 		Getc();
   void 		unGetc()		{ col--; }
-  int 		ReadLn();		// read the line in from filein
 
   int 		Code(cssEl* it);
   int 		Code(cssElPtr &it);
@@ -1244,6 +1248,8 @@ public:
   bool		IsBreak()		{ return IsBreak(PC()); }
   void		ShowBreaks(ostream& fh = cout);
   bool		unSetBreak(int srcln);
+protected:
+  int 		ReadLn();		// read the line in from filein
 };
 
 class CSS_API cssProgStack {
@@ -1256,9 +1262,9 @@ public:
 
 class CSS_API cssProgSpace: public QObject {
   // an entire program space, including all functions defined, variables etc.
-  //note: no signals/slots or metadata, so we don't use Q_OBJECT macro
 INHERITED(QObject)
 friend class cssProg;
+  Q_OBJECT
 protected:
   enum ShellCmds {	// these flag that the given command was requested to run
     SC_None,
@@ -1445,6 +1451,10 @@ public:
   void		ShowBreaks();
   void		unSetBreak(int srcln);
 
+public slots:
+  void		AcceptNewLine(String ln, bool eof); 
+    // called when a new line of text becomes available, usually from console
+    
 protected:
   int 		alloc_size;		// allocated number of prog_stacks
   int		old_debug;		// saved version

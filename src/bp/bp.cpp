@@ -625,12 +625,14 @@ void BpNetwork::BpTrial_Loop() {
   Compute_Act();
   BpCompute_dEdA_dEdNet();
 
+/*NOTE: from 3.x, we put this in the program
   // compute the weight err derivatives (only if not testing...)
   if (net_context == TRAIN) {
     Compute_dWt();
   } else {
     BpCompute_Error();		// for display purposes only..
   }
+*/
 //TODO: verify below comment from 3.x
 // weight update taken care of by the epoch process
   DataUpdate(false);

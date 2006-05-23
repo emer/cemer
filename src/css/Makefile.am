@@ -24,8 +24,11 @@ HEADS_GUI =\
 endif
 
 SRCS =\
+	css_console.cpp \
+	css_console.moc.cpp \
 	css_parse.cpp \
 	css_machine.cpp \
+	css_machine.moc.cpp \
 	css_basic_types.cpp \
 	css_c_ptr_types.cpp \
 	css_builtin.cpp \
@@ -38,6 +41,7 @@ SRCS =\
 	css_ti.cpp
 
 HEADS =\
+	css_console.h \
 	css_machine.h \
 	css_basic_types.h \
 	css_c_ptr_types.h \

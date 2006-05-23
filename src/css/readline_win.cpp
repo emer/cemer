@@ -33,30 +33,7 @@ using namespace std;
    but we just go with the flow here, and implement readline
 */
 
-// basic readline interface -- from css_machine.cpp
-
-extern "C" {
-  extern int rl_done;		// readline done reading
-  extern int rl_pending_input;
-  extern int (*rl_event_hook)(void);	// this points to the Qt event loop pump if running TA_GUI
-
-  extern char* rl_readline(char*);
-  extern void add_history(char*);
-  extern int rl_stuff_char(int);
-  extern int rl_set_keyboard_input_timeout (int u); // wait u microseconds between callbacks, default .1s
-}
-
-// readline waitproc and events -- from css_qt.cc (only included for TA_GUI)
-extern "C" {
-//  extern int readline_waitproc(void); // this is supplied by ta/css
-  extern int (*rl_event_hook)(void);	// this points to the waitproc if running Qt
-  extern int rl_done;			// set this to kill readline..
-}
-
-
-// readline completion -- from css_builtin.cc
-
-extern "C" {
+extern "C" { // readline completion -- either refers to readline, or we fake it
   typedef int rl_function(void);
   typedef char* rl_generator_fun(char*, int);
 
@@ -64,13 +41,15 @@ extern "C" {
   extern int (*rl_attempted_completion_function)(void);
 
   extern char** completion_matches (char* text, rl_generator_fun* gen);
+}
 
-  // following defined in css_builtin.cc
+extern "C" { // following defined in css_builtin.cc
   extern char** css_attempted_completion(char* text, int start, int end);
   extern char* css_path_generator(char* text, int state); // rl_generator_fun
   extern char* css_scoped_generator(char* text, int state); // rl_generator_fun
   extern char* css_keyword_generator(char* text, int state); // rl_generator_fun
 }
+
 
 enum ReadStatus {
   Idle = 0,

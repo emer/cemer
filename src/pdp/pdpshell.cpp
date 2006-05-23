@@ -1896,6 +1896,7 @@ bool WingeObj_BpXor_TrainProc::Step_TrainEpoch() {
 bool WingeObj_BpXor_TrainProc::Step_TrainTrial() {
   if (!init_done && !Init(true, false)) return false;
   bool rval;
+  BpNetwork* net = (BpNetwork*)this->net;
   wod->frame = cnt_trial - 1;
   // init externals
   net->InitExterns();
@@ -1903,7 +1904,11 @@ bool WingeObj_BpXor_TrainProc::Step_TrainTrial() {
   rval = wod->Run(false);
   if (!rval) goto exit;
   // cycle the net
-  ((BpNetwork*)net)->BpTrial_Loop();
+  net->DataUpdate(true);
+  net->BpTrial_Loop();
+  net->Compute_dWt();
+  net->UpdateWeights();
+  net->DataUpdate(false);
   if (++cnt_trial > 4) cnt_trial = 1;
   
 exit:
@@ -1944,14 +1949,18 @@ bool WingeObj_BpXor_TestProc::Step_Test() {
 bool WingeObj_BpXor_TestProc::Step_TestTrial() {
   if (!init_done && !Init(true, false)) return false;
   bool rval;
+  BpNetwork* net = (BpNetwork*)this->net;
   wod->frame = cnt_trial - 1;
   // init externals
   net->InitExterns();
   // apply the data
   rval = wod->Run(false);
   if (!rval) goto exit;
-  // cycle the net
-  ((BpNetwork*)net)->BpTrial_Loop();
+  // cycle the net and update
+  net->DataUpdate(true);
+  net->BpTrial_Loop();
+  net->BpCompute_Error();		// for display purposes only.
+  net->DataUpdate(false);
   if (++cnt_trial > 4) cnt_trial = 1;
   
 exit:
