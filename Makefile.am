@@ -25,7 +25,6 @@ SUBDIRS =\
 	@WANT_TAIQTSO@ \
 	src/ta \
 	src/css \
-#        src/css_bin \
 	src/tamisc \
 	src/ta_lib \
 	src/pdp \
