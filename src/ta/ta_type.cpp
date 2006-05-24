@@ -2101,6 +2101,15 @@ void* MemberDef::GetOff(const void* base) const {
   return rval;
 }
 
+const String MemberDef::GetPathName() const {
+  String rval; 
+  TypeDef* owner = GetOwnerType();
+  if (owner) 
+    rval = owner->GetPathName();
+  rval += "::" + name;
+  return rval;
+} 
+
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
   // check for always show or always not
   if (HasOption("SHOW"))
@@ -2245,6 +2254,15 @@ void MethodDef::CallFun(void* base) const {
   }
 #endif
 }
+
+const String MethodDef::GetPathName() const {
+  String rval; 
+  TypeDef* owner = GetOwnerType();
+  if (owner) 
+    rval = owner->GetPathName();
+  rval += "::" + name;
+  return rval;
+} 
 
 
 //////////////////////////
@@ -2682,6 +2700,49 @@ void TypeDef::AddParCache(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p6 != NULL)    par_cache.LinkUnique(p6);
 }
 
+void TypeDef::ComputeMembBaseOff() {
+  int i;
+  for(i=0; i<members.size; i++) {
+    MemberDef* md = members.FastEl(i);
+    TypeDef* mo = md->GetOwnerType();
+
+    if((mo == this) || (mo == NULL))
+      continue;
+
+    int base_off = GetParOff(mo);
+    if(base_off > 0) {		// only those that need it!
+      MemberDef* nmd = md->Clone();
+      nmd->base_off = base_off;
+      members.Replace(i, nmd);
+    }
+    else if(base_off < 0) {
+      taMisc::Error("ComputeMembBaseOff(): parent type not found:",mo->name,
+		     "in type of:", name);
+    }
+  }
+}
+
+bool TypeDef::FindChild(const char* nm) const {
+  if(children.Find(nm) >= 0)
+    return true;
+  int i;
+  for(i=0; i < children.size; i++) {
+    if(children.FastEl(i)->FindChild(nm))
+      return true;
+  }
+  return false;
+}
+bool TypeDef::FindChild(TypeDef* it) const {
+  if(children.Find(it) >= 0)
+    return true;
+  int i;
+  for(i=0; i < children.size; i++) {
+    if(children.FastEl(i)->FindChild(it))
+      return true;
+  }
+  return false;
+}
+
 bool TypeDef::FindParent(const char* nm) const {
   if(parents.Find(nm) >= 0)
     return true;
@@ -2752,6 +2813,20 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
   return -1;
 }
 
+const String TypeDef::GetPathName() const {
+  // are we owned?
+  // are we an EnumDef?
+  
+//TEMP: just try to dumb version, see if it works...
+  String rval; 
+  TypeDef* owner = GetOwnerType();
+  if (owner) { 
+    rval = owner->GetPathName() + "::"; 
+  }
+  rval += name; 
+  return rval;
+}
+
 TypeDef* TypeDef::GetPtrType() const {
   TypeDef* rval = NULL;
   int i = children.Find(name + "_ptr");
@@ -2772,64 +2847,6 @@ TypeDef* TypeDef::GetPtrType() const {
   return rval;
 }
 
-bool TypeDef::FindChild(const char* nm) const {
-  if(children.Find(nm) >= 0)
-    return true;
-  int i;
-  for(i=0; i < children.size; i++) {
-    if(children.FastEl(i)->FindChild(nm))
-      return true;
-  }
-  return false;
-}
-bool TypeDef::FindChild(TypeDef* it) const {
-  if(children.Find(it) >= 0)
-    return true;
-  int i;
-  for(i=0; i < children.size; i++) {
-    if(children.FastEl(i)->FindChild(it))
-      return true;
-  }
-  return false;
-}
-
-
-void TypeDef::ComputeMembBaseOff() {
-  int i;
-  for(i=0; i<members.size; i++) {
-    MemberDef* md = members.FastEl(i);
-    TypeDef* mo = md->GetOwnerType();
-
-    if((mo == this) || (mo == NULL))
-      continue;
-
-    int base_off = GetParOff(mo);
-    if(base_off > 0) {		// only those that need it!
-      MemberDef* nmd = md->Clone();
-      nmd->base_off = base_off;
-      members.Replace(i, nmd);
-    }
-    else if(base_off < 0) {
-      taMisc::Error("ComputeMembBaseOff(): parent type not found:",mo->name,
-		     "in type of:", name);
-    }
-  }
-}
-
-bool TypeDef::IgnoreMeth(const String& nm) const {
-  if(!InheritsFormal(TA_class))
-    return false;
-  if(ignore_meths.Find(nm) >= 0)
-    return true;
-
-  int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->IgnoreMeth(nm))
-      return true;
-  }
-  return false;
-}
-
 TypeDef* TypeDef::GetTemplParent() const {
   int i;
   for(i=0; i<parents.size; i++) {
@@ -2846,6 +2863,20 @@ String TypeDef::GetTemplName(const TypeSpace& inst_pars) const {
     rval += String("_") + inst_pars.FastEl(i)->name + "_";
   }
   return rval;
+}
+
+bool TypeDef::IgnoreMeth(const String& nm) const {
+  if(!InheritsFormal(TA_class))
+    return false;
+  if(ignore_meths.Find(nm) >= 0)
+    return true;
+
+  int i;
+  for(i=0; i<parents.size; i++) {
+    if(parents.FastEl(i)->IgnoreMeth(nm))
+      return true;
+  }
+  return false;
 }
 
 void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
@@ -3229,29 +3260,33 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
     }
     else
 #endif
-    if(DerivesFrom(TA_TypeDef)) {
+    if (DerivesFrom(TA_TypeDef)) {
       TypeDef* td = *((TypeDef**)base);
-      if(td != NULL)
-	return td->name;
-      else
+/*      if (td != NULL)
+	return td->name; */
+      if (td) {
+        return td->GetPathName();
+      } else
 	return "NULL";
     }
-    else if(DerivesFrom(TA_MemberDef)) {
+    else if (DerivesFrom(TA_MemberDef)) {
       MemberDef* md = *((MemberDef**)base);
-      if((md != NULL) && (md->GetOwnerType() != NULL)) {
+/*      if((md != NULL) && (md->GetOwnerType() != NULL)) {
 	String tmp = md->GetOwnerType()->name + "::" + md->name;
-	return tmp;
-      }
-      else
+	return tmp; */
+      if (md) {
+        return md->GetPathName();
+      } else
 	return "NULL";
     }
-    else if(DerivesFrom(TA_MethodDef)) {
+    else if (DerivesFrom(TA_MethodDef)) {
       MethodDef* md = *((MethodDef**)base);
-      if((md != NULL) && (md->GetOwnerType() != NULL)) {
+/*      if((md != NULL) && (md->GetOwnerType() != NULL)) {
 	String tmp = md->GetOwnerType()->name + "::" + md->name;
-	return tmp;
-      }
-      else
+	return tmp; */
+      if (md) {
+        return md->GetPathName();
+      } else
 	return "NULL";
     }
 //    else

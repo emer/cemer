@@ -220,6 +220,8 @@ public:
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink*)m_link)->data();}
   taTypeInfoDataLink* 	child_link(int idx);
   taTypeSpaceDataLink* 	link() const {return (taTypeSpaceDataLink*)m_link;}
+  bool			ShowItem(TypeDef* td) const; 
+    // determine whether to show, ex. based on a filter
 
   override void 	CreateChildren(); // called by the Node when it needs to create its children
 //  override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
@@ -276,7 +278,7 @@ protected:
 //////////////////////////////////
 
 class TA_API ClassBrowser : public DataViewer {
-  // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
+  // #NO_TOKENS represents a class browser instance
 friend class iClassBrowser;
 public:
   static ClassBrowser*	New(void* root_, TypeInfoKind tik);

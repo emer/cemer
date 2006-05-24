@@ -433,6 +433,8 @@ void taTypeSpaceTreeDataNode::CreateChildren() {
   String tree_nm;
   taiTreeDataNode* last_child_node = NULL;
   for (int i = 0; i < data()->size; ++i) {
+    TypeDef* td = static_cast<TypeDef*>(data()->SafeEl_(i));
+    if (!ShowItem(td)) continue;
     taTypeInfoDataLink* dl = child_link(i);
     if (dl == NULL) continue; // shouldn't happen...
 
@@ -443,6 +445,15 @@ void taTypeSpaceTreeDataNode::CreateChildren() {
     int flags = iListViewItem::DNF_CAN_BROWSE;
     last_child_node = browser_win()->CreateTreeDataNode(dl, (MemberDef*)NULL, this, last_child_node, tree_nm, flags);
   }
+}
+
+bool taTypeSpaceTreeDataNode::ShowItem(TypeDef* td) const {
+  // basic behavior is that we don't show derivitive types, ex. consts, refs, ptrs, etc.
+  if ((td->ptr > 0) 
+    || (td->ref)
+    || (td->formal)
+  ) return false;
+  return true;
 }
 
 

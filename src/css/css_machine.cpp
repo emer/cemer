@@ -382,8 +382,7 @@ void cssEl::Done(cssEl* it) {
 #ifdef DEBUG
   if (it->refn < 0) {
     cerr << "**WARNING** cssEl::Done: it->refn < 0 (is: " << it->refn
-      << ")for item name(type): "
-      << it->GetName() << "(" << it->GetTypeName() << ") -- not deleted\n";
+      << ") -- **not deleted again**\n";
     return;
   } 
 #endif
@@ -397,8 +396,7 @@ void cssEl::unRef(cssEl* it) {
 #ifdef DEBUG
   if (it->refn <= 0) {
     cerr << "**WARNING** cssEl::unRef: it->refn <= 0 (is: " << it->refn
-      << ") -- **not decremented**\n";
-    return;
+      << ")\n";
   }
 #endif
   it->refn--;
@@ -2609,23 +2607,33 @@ int cssProg::AddSrc(const char* ln) {
 
 int cssProg::Getc() {
   state &= ~State_WasBurped;
-  if((line < src_size) && (col < (int)source[line]->src.length()))
+  // if possible, we return an unconsumed char already in input lines
+  if ((line < src_size) && (col < (int)source[line]->src.length()))
     return (int) (source[line]->src[col++]);
-  if(ReadLn() == EOF)
+    
+  switch (top->GetInputMode()) {
+  case cssProgSpace::IM_File:
+    // if reading from file, get more input and try again
+    if (ReadLn_File() == EOF)
+      return EOF;
+    break;
+  case cssProgSpace::IM_Console:
+    // if using push mode from a console, just tell caller no more text (now)
     return EOF;
+  //default: NOTE: don't put a default, must handle all cases
+  }
+    
+  // ok, presumably we got more text, so are now recursively calling ourself again
   return Getc();
 }
 
+/*obs
 int cssProg::ReadLn() {
   if(top->external_exit)	// bail if external exit flag was set
     return EOF;
   if((top->InShell() || (top->state & cssProg::State_Defn)) &&
      (top->fin == top->fshell))
   {
-//TEMP
-cerr << "**ABORTED** cssProg::ReadLn does not yet support console\n";
-return EOF;
-/*TODO: replace
     const char* pt;
     pt = (top->state & cssProg::State_Defn) ? "#" : ">";
     if(top->depth > 0)
@@ -2649,7 +2657,7 @@ return EOF;
 
     line = AddSrc(curln);	// put onto buffer
     if(source[line]->src.length() > 0)
-      add_history(curln);*/
+      add_history(curln);
   } else {
     int c;
     line = AddSrc("");			// new line
@@ -2662,6 +2670,30 @@ return EOF;
   }
   source[line]->src += '\n';	// always end with a newline
   if(top->debug >= 3)
+    cerr << "\nsrc ===> " << source[line]->src;	// get a source code trace here..
+  col = 0;
+
+  st_col = col;			// reset the st_lines..
+  st_line = line;
+
+  return 1;
+}*/
+
+int cssProg::ReadLn_File() {
+  if(top->external_exit)	// bail if external exit flag was set
+    return EOF;
+    
+  int c;
+  line = AddSrc("");			// new line
+  while (((c = top->fin->get()) != EOF) && (c != '\n')) {
+    source[line]->src += (char)c;	// add
+  }
+//TODO: note: seems wrong to exit here with EOF, without doing rest of routine...
+  if (c == EOF)
+    return EOF;
+  
+  source[line]->src += '\n';	// always end with a newline
+  if (top->debug >= 3)
     cerr << "\nsrc ===> " << source[line]->src;	// get a source code trace here..
   col = 0;
 
@@ -2995,6 +3027,13 @@ void cssProgSpace::Constr() {
   sc_undo_this = -1;
   sc_shell_this = NULL;
 
+  old_src_ln = 0;
+  init_depth = 0;
+  old_state = 0;
+  old_top = NULL;
+  old_fh = NULL;
+  old_prog = NULL;
+
   prompt = cssMisc::prompt;
   act_prompt = prompt;
 
@@ -3043,6 +3082,34 @@ cssProgSpace::~cssProgSpace() {
 }
 
 void cssProgSpace::AcceptNewLine(String ln, bool eof) {
+  CompileCode(ln);
+
+  int rval = CompileLn(*fshell);
+
+  if(external_exit || ShellCmdPending() || (rval == cssProg::YY_Exit)) {
+    step_mode = 0;
+    return;
+  }
+  // if in step mode and blank line, exit shell (and continue, presumably)
+  if((step_mode > 0) && (rval == cssProg::YY_Blank))
+    return;
+
+  if(Prog()->CurSrcCharsLeft() > 0)
+    return;             // more source remains to be parsed (multi statements)
+  if(depth > init_depth) {
+    if(cssMisc::cur_top->debug > 0)
+      cerr << "<parsing more (depth)>\n";
+    return;		// this will parse more if you put brackets in..
+  }
+  if(cssMisc::cur_top->debug > 0)
+    cerr << "<running last statements..>\n";
+  Prog()->RunLast();
+  Prog()->ZapLastRun();
+  RestoreListStart(old_src_ln);
+
+    // if continue is pending, exit shell (and continue)
+//    if(cont_pending)
+//      break;
 }
 
 bool cssProgSpace::DeleteOk() {
@@ -3096,6 +3163,7 @@ void cssProgSpace::Reset() {
   run = cssEl::Waiting;
   external_exit = false;
   ClearShellCmds();
+  //TODO: might have to reset some of the new PushNewShell/PopShell vars
 }
 
 void cssProgSpace::ClearAll() {
@@ -3207,6 +3275,13 @@ cssScriptFun* cssProgSpace::GetCurrentFun() {
     return pg->owner;
   }
   return NULL;
+}
+
+cssProgSpace::InputMode cssProgSpace::GetInputMode() const {
+  if ((InShell() || (state & cssProg::State_Defn)) &&
+     (fin == fshell))
+    return IM_Console;
+  else return IM_File;
 }
 
 
@@ -3686,7 +3761,9 @@ cssEl* cssProgSpace::Cont() {
     if((ths->run == cssEl::ExecError) || (ths->run == cssEl::BreakPoint) ||
        (ths->step_mode > 0))
     {
-      ths->Shell(*(ths->fshell));
+cerr << "cssProgSpace::Cont -- attempt to run Shell not supported!\n";
+//TODO: fixup
+//      ths->Shell(*(ths->fshell));
     }
 
     // allow for things inside the shell to have led to another exit condition
@@ -3762,60 +3839,41 @@ void cssProgSpace::Stop() {
 //////////////////////////////////////////////////
 
 
-void cssProgSpace::Shell(istream& fh) {
-  istream* old_fh = fin;
+void cssProgSpace::PushNewShell(istream& fh) {
+  old_fh = fin;
   fin = &fh;
-  cssProgSpace* old_top = cssMisc::SetCurTop(this);
-  int old_state = state;
-  cssProg* cur_prog = Prog();
-  cur_prog->SaveStack();	// save the stack at this point
-
-  Prog()->MarkRunStart();	// runlast starts here
-  int old_src_ln = MarkListStart();
-  int init_depth = depth;
-
-  while(!external_exit && !ShellCmdPending()) {
-    run = cssEl::Waiting;
-    state = cssProg::State_Shell;
-
-    int rval = CompileLn(*fshell);
-
-    if(external_exit || ShellCmdPending() || (rval == cssProg::YY_Exit)) {
-      step_mode = 0;
-      break;
-    }
-    // if in step mode and blank line, exit shell (and continue, presumably)
-    if((step_mode > 0) && (rval == cssProg::YY_Blank))
-      break;
-
-    if(Prog()->CurSrcCharsLeft() > 0)
-      continue;             // more source remains to be parsed (multi statements)
-    if(depth > init_depth) {
-      if(cssMisc::cur_top->debug > 0)
-	cerr << "<parsing more (depth)>\n";
-      continue;		// this will parse more if you put brackets in..
-    }
-    if(cssMisc::cur_top->debug > 0)
-      cerr << "<running last statements..>\n";
-    Prog()->RunLast();
-    Prog()->ZapLastRun();
-    RestoreListStart(old_src_ln);
-
-    // if continue is pending, exit shell (and continue)
-    if(cont_pending)
-      break;
+  old_top = cssMisc::SetCurTop(this);
+  old_state = state;
+  old_prog = Prog(); //TODO: could anything delete this prior to PopShell???
+  if (old_prog) {
+    old_prog->SaveStack();	// save the stack at this point
   }
 
-  if(Prog() == cur_prog)
-    cur_prog->ReloadStack();
+  Prog()->MarkRunStart();	// runlast starts here
+  old_src_ln = MarkListStart();
+  init_depth = depth;
+
+  run = cssEl::Waiting;
+  state = cssProg::State_Shell;
+}
+
+void cssProgSpace::PopShell() {
+  if (old_prog && (Prog() == old_prog)) {
+    old_prog->ReloadStack();
+    old_prog = NULL;
+  }
   state = old_state;
   fin = old_fh;
   cssMisc::PopCurTop(old_top);
 }
 
+
 // this is the top-level control point for a shell
 void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
   // process delayed deletes upon entering new shell
+
+  return; // not doing this now..
+
   if((cssMisc::delete_me != NULL) && (cssMisc::delete_me != this)) {
     delete cssMisc::delete_me;
     cssMisc::delete_me = NULL;
@@ -3844,7 +3902,7 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
     prompt = prompt.before(".css");
 
   while(!external_exit) {
-    Shell(*fshell);
+//TODO: no longer exists    Shell(*fshell);
     if(DoShellCmd())		// we just popped out to do a command, continue
       continue;
     if(external_exit)
@@ -3860,7 +3918,7 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
 //    char* surep;
 //    if(!(surep = rl_readline("Quit, Are You Sure (y/n)? ")) || (*surep == 'y') ||
 //       (*surep == 'Y'))
-      qApp->quit();
+//      qApp->quit();
       break;
   }
 
@@ -3869,22 +3927,9 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
   cssMisc::PopCurTop(old_top);
 }
 
-void cssProgSpace::customEvent(QEvent* ev) {
-  switch ((int)ev->type()) {
-  case cssMisc_StartupShell_EventType: 
-    StartupShell_impl(); break;
-  default: inherited::customEvent(ev); break;
-  }
-}
-
-void cssProgSpace::StartupShellAsync(istream& fhi, ostream& fho) {
+void cssProgSpace::StartupShellInit(istream& fhi, ostream& fho) {
   fshell = &fhi;
   fout = &fho;
-  QEvent* ev = new QEvent((QEvent::Type)cssMisc_StartupShell_EventType);
-  QCoreApplication::postEvent(this, ev); // returns immediately
-}
-
-void cssProgSpace::StartupShell_impl() {
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
 
 #ifndef __GNUG__
@@ -3924,7 +3969,7 @@ void cssProgSpace::StartupShell_impl() {
   }
 
   // allow both startup_file and startup_code to co-exist..
-  if(cssMisc::startup_code != "") {
+  if (cssMisc::startup_code != "") {
     Reset();
     CompileCode(cssMisc::startup_code);
     state |= cssProg::State_Shell;
@@ -3934,18 +3979,35 @@ void cssProgSpace::StartupShell_impl() {
     run_flag = true;
   }
 
-  if(!run_flag || cssMisc::init_interactive)
+/*  if(!run_flag || cssMisc::init_interactive)
     CtrlShell(*fshell, *fout);
 
-  cssMisc::PopCurTop(old_top);
+  cssMisc::PopCurTop(old_top);*/
+
+  PushNewShell(*fshell);
+  // todo: this shell is never popped!  needs to be added to quit routine
+  // also, this is not the ctrl shell that is being pushed, just a plain shell
+  
+  // connect us to the console
+  if (cssMisc::console) {
+    //NB: we must use queued connection, because console lives in our thread,
+    // but signal may be raised in another thread
+    connect(cssMisc::console, SIGNAL(NewLine(String, bool)),
+      this, SLOT(AcceptNewLine(String, bool)), Qt::QueuedConnection);
+  } 
+#ifdef DEBUG
+  //TODO: should warn that console was expected
+#endif
 }
 
 void cssProgSpace::Source(const char* fname) {
+cerr << "cssProgSpace::Source is currently not implemented\n";
+return;
+//TODO: need to fix to get Shell back again
   String fnm = fname;
-  if(fnm == "-") {
-    Shell(*fin);
-  }
-  else {
+  if (fnm == "-") {
+//    Shell(*fin);
+  } else {
     fstream fh;
     if(!GetFile(fh, fname)) {
       cssMisc::Warning(Prog(), "File Not Found:",fname);
@@ -3955,7 +4017,7 @@ void cssProgSpace::Source(const char* fname) {
     String dir = fnm.before('/', -1);
     if(!dir.empty())
       taMisc::include_paths.AddUnique(dir);
-    Shell(fh);
+//    Shell(fh);
     fh.close(); fh.clear();
   }
 }

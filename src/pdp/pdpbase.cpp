@@ -312,16 +312,16 @@ int pdpMisc::Main(int argc, char *argv[]) {
 #ifdef DMEM_COMPILE
   if(taMisc::dmem_nprocs > 1) {
     if (cssMisc::gui) {
-      if(taMisc::dmem_proc == 0) {
+      if (taMisc::dmem_proc == 0) { // master dmem
 	DMemShare::InitCmdStream();
 	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-//	cssMisc::Top->StartupShellAsync(cin, cout);
+	cssMisc::Top->StartupShellInit(cin, cout);
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
-      } else {
+      } else { // slave dmems
 	cssMisc::gui = false;	// not for subguys
 	if(proj_to_load.size > 0) {
 	  if(taMisc::dmem_debug)
@@ -335,7 +335,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// get rid of wait proc for rl -- we call it ourselves
 	extern int (*rl_event_hook)(void);
  	rl_event_hook = NULL;
-// 	cssMisc::Top->StartupShellAsync(cin, cout);
+//TODO: need to determine how to change shell usage for slaves dmems
+ 	cssMisc::Top->StartupShellInit(cin, cout);
 	qApp->exec();
 	//	cssMisc::Top->debug = 2;
 	DMem_SubEventLoop();
@@ -343,12 +344,12 @@ int pdpMisc::Main(int argc, char *argv[]) {
       }
     }
     else {
-//      cssMisc::Top->StartupShellAsync(cin, cout);
+      cssMisc::Top->StartupShellInit(cin, cout);
       qApp->exec();
    }
   }
   else {
-//    cssMisc::Top->StartupShellAsync(cin, cout);
+    cssMisc::Top->StartupShellInit(cin, cout);
     qApp->exec();
 #ifdef TA_USE_INVENTOR
     SoQt::done();

@@ -965,6 +965,10 @@ public:
   String_PArray	lists;		// user-spec'd lists   (#LIST_xxx)
   taDataLink*	data_link;
 
+  virtual TypeDef* 	GetOwnerType() const {return NULL;}
+  virtual const String	GetPathName() const {return name;} 
+    // name used for saving a reference in stream files, can be used to lookup again
+    
   void		Copy(const TypeItem& cp);
   bool		HasOption(const char* op) const { return (opts.Find(op) >= 0); }
     // check if option is set
@@ -1036,8 +1040,10 @@ public:
   MemberDef*	MakeToken()	{ return new MemberDef(); }
 
   void*			GetOff(const void* base) const;
-  TypeDef* 	GetOwnerType() const
+  override TypeDef* 	GetOwnerType() const
   { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override const String	GetPathName() const; 
+    // name used for saving a reference in stream files, can be used to lookup again
 
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
@@ -1099,8 +1105,9 @@ public:
 
   MethodDef*		Clone()		{ return new MethodDef(*this); }
   MethodDef*		MakeToken()	{ return new MethodDef(); }
-  TypeDef* 		GetOwnerType() const
+  override TypeDef* 	GetOwnerType() const
     { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override const String	GetPathName() const;
   bool			CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
   bool			CompareArgs(MethodDef* it) const;	// true if same, false if not
@@ -1133,7 +1140,7 @@ public:
   int_PArray	dmem_type;
   virtual int 	GetDMemType(int share_set);
 #endif
-  TypeSpace	*owner;		// the owner of this one
+  TypeSpace*	owner;		// the owner of this one
 
   uint          size;		// size (in bytes) of item
   int		ptr;		// number of pointers
@@ -1192,6 +1199,8 @@ public:
 
   void*			GetInstance() const
   { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
+  override TypeDef* 	GetOwnerType() const
+    { if (owner) return owner->owner; else return NULL; }
   TypeDef*		GetParent() const { return parents.SafeEl(0); }
   // gets (first) parent of this type (assumes no multiple inheritance)
 
@@ -1211,6 +1220,7 @@ public:
   // gets a string of pointer symbols (*) corresponding to the number ptrs
   String		Get_C_Name() const;
   // returns the actual c-code name for this type
+  override const String	GetPathName() const;
 
   // you inherit from yourself.  This ensures that you are a "base" class (ptr == 0)
   bool 			InheritsFrom(const char *nm) const

@@ -414,10 +414,12 @@ public:
 
   // routines for reference pointers
   static void		SetRefPointer(cssEl** ptr, cssEl* it)
-  { if(*ptr != &cssMisc::Void)  cssEl::unRefDone(*ptr);
-    *ptr = it; if(*ptr != &cssMisc::Void)  cssEl::Ref(*ptr); }
+  { if (*ptr == it) return;  if (*ptr != &cssMisc::Void) cssEl::unRefDone(*ptr);
+    *ptr = it;  if (it && (it != &cssMisc::Void)) cssEl::Ref(it); }
+    // can be safely used with cssEl subtype variables of any kind
   static void		DelRefPointer(cssEl** ptr)
-  { if(*ptr != &cssMisc::Void)  cssEl::unRefDone(*ptr); *ptr = &cssMisc::Void; }
+  { if (*ptr && (*ptr != &cssMisc::Void)) cssEl::unRefDone(*ptr); *ptr = &cssMisc::Void; }
+    // can only be used with cssEl* variables
 
   // and reference ElPtr's
   static void		SetRefElPtr(cssElPtr& ptr, const cssElPtr& it)
@@ -1249,7 +1251,8 @@ public:
   void		ShowBreaks(ostream& fh = cout);
   bool		unSetBreak(int srcln);
 protected:
-  int 		ReadLn();		// read the line in from filein
+//  int 		ReadLn();		// read the line in from filein
+  int 		ReadLn_File();		// read the line in from filein
 };
 
 class CSS_API cssProgStack {
@@ -1285,6 +1288,11 @@ protected:
     CC_Push,			// prog to push in cc_push_this
     CC_Pop,
     CC_Include			// file name is in cc_include_this
+  };
+  
+  enum InputMode { // current input mode, either file (fin) or interactive from console
+    IM_File,
+    IM_Console
   };
 
 public:
@@ -1322,8 +1330,17 @@ public:
   int		lstop_ln;		// stopping line
   int	 	prev_ln;		// previous line no (listing)
 
+  int		old_src_ln;		// for shell, previous source line
+  int		init_depth;		// for shell, initial depth
+  int		old_state;		// for shell, previous state
+  cssProgSpace* old_top;		// for shell, previous top
+  istream*	old_fh;			// for shell, previous fin
+  cssProg* 	old_prog;		// for shell, previous prog
+
   bool		parsing_command; 	// true if we are presently parsing a command
 
+
+  InputMode 	GetInputMode() const;
 
   void Constr();
   cssProgSpace();
@@ -1409,11 +1426,11 @@ public:
   void		EndRunPop()		{ Prog()->EndRunPop(); }
 
   // shell execution and commands
-  bool		InShell()		{ return (state & cssProg::State_Shell); }
-  void		Shell(istream& fhi = cin);
+  bool		InShell() const		{ return (state & cssProg::State_Shell); }
   void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
-  void		StartupShellAsync(istream& fhi = cin, ostream& fho = cout); 
-    // startup via event dispatch to event loop
+  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
+  void 		PushNewShell(istream& fh);
+  void 		PopShell();
   void 		Source(const char* fname);	// run a file as if in a shell
 
   bool		ShellCmdPending()	{ return (shell_cmds != SC_None); }
@@ -1471,9 +1488,6 @@ protected:
   int		sc_undo_this;		// undo this program index
   String	sc_compile_this;	// filename to be compiled
   cssProgSpace* sc_shell_this;		// shell to shell
-
-  void		customEvent(QEvent* event); // override
-  void		StartupShell_impl();
 };
 
 inline cssInst* cssProg::Next_Peek() {
