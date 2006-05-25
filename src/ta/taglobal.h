@@ -156,7 +156,10 @@
 #endif
 #endif
 
+// misc stuff
 
+// provide rich error messages for css
+#define YYERROR_VERBOSE 1
 
 /* DLL building options under windows */
 // currently, we are putting taiqtso/ta/css/tamisc in one dll, so slave to TA
