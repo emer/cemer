@@ -358,9 +358,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   MPI_Finalize();
 
 #else
-//  cssMisc::Top->StartupShellAsync(cin, cout);
-//TODO: eliminate these HACKS because we aren't calling the shell
-//no hacks yet...
+  cssMisc::Top->StartupShellInit(cin, cout);
   qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();

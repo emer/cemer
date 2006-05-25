@@ -3055,6 +3055,7 @@ void cssProgSpace::Constr() {
   list_ln = 0; list_n = 20;
   st_list_ln = 0;
   lstop_ln = 0; prev_ln = 0;
+  in_shell = false;
 
   parsing_command = false;
 
@@ -3081,7 +3082,7 @@ cssProgSpace::~cssProgSpace() {
   free(progs);
 }
 
-void cssProgSpace::AcceptNewLine(String ln, bool eof) {
+void cssProgSpace::AcceptNewLine(QString ln, bool eof) {
   CompileCode(ln);
 
   int rval = CompileLn(*fshell);
@@ -3927,6 +3928,11 @@ void cssProgSpace::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
   cssMisc::PopCurTop(old_top);
 }
 
+bool cssProgSpace::InShell() const { 
+  //was, 3.2: return (state & cssProg::State_Shell);
+  return in_shell; 
+}
+
 void cssProgSpace::StartupShellInit(istream& fhi, ostream& fho) {
   fshell = &fhi;
   fout = &fho;
@@ -3988,16 +3994,28 @@ void cssProgSpace::StartupShellInit(istream& fhi, ostream& fho) {
   // todo: this shell is never popped!  needs to be added to quit routine
   // also, this is not the ctrl shell that is being pushed, just a plain shell
   
+//TODO: stuff taken from CrtlShell that is probably important...
+  prompt = cssMisc::prompt;
+//end stuff taken  
+  
   // connect us to the console
   if (cssMisc::console) {
+    cssMisc::console->setPrompt(prompt);
     //NB: we must use queued connection, because console lives in our thread,
     // but signal may be raised in another thread
-    connect(cssMisc::console, SIGNAL(NewLine(String, bool)),
-      this, SLOT(AcceptNewLine(String, bool)), Qt::QueuedConnection);
+    connect(cssMisc::console, SIGNAL(NewLine(QString, bool)),
+      this, SLOT(AcceptNewLine(QString, bool)), Qt::QueuedConnection);
+    in_shell = true;
+    cssMisc::console->Start();
   } 
 #ifdef DEBUG
   //TODO: should warn that console was expected
 #endif
+
+/*TODO: More things to do:
+  *now that input is async, the prompt will be wrong when it changes (since it will
+    already have been output as the old value)
+*/
 }
 
 void cssProgSpace::Source(const char* fname) {

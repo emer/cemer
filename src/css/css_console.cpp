@@ -62,10 +62,24 @@ friend class ConThread;
 public:
   ConThread*		thread;
   
-  override const String	prompt() 
-    {if (thread) return thread->prompt; else return _nilString;}
-  override void		setPrompt(const String& value)
-    {if (thread) thread->prompt = value;}
+  override const String	prompt() {
+    if (thread) return thread->prompt; else return _nilString;
+  }
+  override void		setPrompt(const String& value) {
+    if (thread) {
+      if (thread->prompt == value) return;
+      //TODO: try tot erase last prompt if any
+      thread->prompt = value;
+      cout << value;
+    }
+  }
+  
+  override void		Start() {
+     if (!thread) return;
+     //TODO: maybe need to check not already started???
+     thread->start();
+  } 
+
 
   void			emit_NewLine(String ln, bool eof)
     {emit NewLine(ln, eof);}
@@ -76,7 +90,6 @@ public:
 
 cssConsole* cssConsole::New_SysConsole(QObject* parent) {
  cssUnixConsole* rval = new cssUnixConsole(parent);
- rval->thread->start();
  return rval;
 }
 

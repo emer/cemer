@@ -48,11 +48,13 @@ public:
   virtual const String	prompt() = 0;
   virtual void		setPrompt(const String& value) = 0;
   
+  virtual void		Start() {} // call when prompt set, and ready to receive input
+  
   cssConsole(QObject* parent = NULL);
   ~cssConsole();
   
 signals:
-  void			NewLine(String ln, bool eof); 
+  void			NewLine(QString ln, bool eof); 
     // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
   
 protected:

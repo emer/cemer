@@ -649,7 +649,7 @@ public:
   cssElPtr&	Push(cssEl* it);
   cssElPtr&	PushUniqNameNew(cssEl* it);
   cssElPtr&	PushUniqNameOld(cssEl* it);
-  cssEl*	Pop();			// this pop does not delete
+  cssEl*	Pop();			// this pop unRef's -- you must do Done
   void		DelPop(); 		// pop and delete item
   bool		Remove(cssEl* it); 	// not a good idea, because ptrs are index based
   bool		Replace(cssEl* old, cssEl* nw); // replace at index with it
@@ -1426,7 +1426,7 @@ public:
   void		EndRunPop()		{ Prog()->EndRunPop(); }
 
   // shell execution and commands
-  bool		InShell() const		{ return (state & cssProg::State_Shell); }
+  bool		InShell() const;
   void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
   void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
   void 		PushNewShell(istream& fh);
@@ -1469,7 +1469,7 @@ public:
   void		unSetBreak(int srcln);
 
 public slots:
-  void		AcceptNewLine(String ln, bool eof); 
+  void		AcceptNewLine(QString ln, bool eof); 
     // called when a new line of text becomes available, usually from console
     
 protected:
@@ -1488,6 +1488,8 @@ protected:
   int		sc_undo_this;		// undo this program index
   String	sc_compile_this;	// filename to be compiled
   cssProgSpace* sc_shell_this;		// shell to shell
+  
+  bool		in_shell;		// new 4.0 indicates we are wired to console
 };
 
 inline cssInst* cssProg::Next_Peek() {
