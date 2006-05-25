@@ -1393,6 +1393,16 @@ void*	TypeSpace::El_MakeToken_(void* it)  { return (void*)((TypeDef*)it)->MakeTo
 void*	TypeSpace::El_Copy_(void* trg, void* src)
 { ((TypeDef*)trg)->Copy(*((TypeDef*)src)); return trg; }
 
+TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
+  if (fqname.contains("::")) {
+    TypeDef* td = FindName(fqname.before("::"));
+    if (!td) return NULL;
+    return td->sub_types.FindTypeR(fqname.after("::"));
+  } else {
+    return FindName(fqname);
+  }
+}
+
 
 bool TypeSpace::ReplaceLinkAll(TypeDef* ol, TypeDef* nw) {
   bool rval = false;
@@ -3512,15 +3522,16 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else
 #endif
     if(DerivesFrom(TA_TypeDef)) {
-      TypeDef* td = taMisc::types.FindName(val);
+      TypeDef* td = taMisc::types.FindTypeR(val);
+      //TODO: shouldn't we set NULL values????? (also for members, etc.)
       if(td != NULL)
 	*((TypeDef**)base) = td;
     }
     if(DerivesFrom(TA_MemberDef)) {
-      String typnm = val.before("::");
-      String mbnm = val.after("::");
-      if((typnm != "") && (mbnm != "")) {
-	TypeDef* td = taMisc::types.FindName(typnm);
+      String fqtypnm = val.before("::", -1); // before final ::
+      String mbnm = val.after("::", -1); // after final ::
+      if((fqtypnm != "") && (mbnm != "")) {
+	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
 	if(td != NULL) {
 	  MemberDef* md = td->members.FindName(mbnm);
 	  if(md != NULL)
@@ -3529,12 +3540,12 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       }
     }
     if(DerivesFrom(TA_MethodDef)) {
-      String typnm = val.before("::");
-      String mbnm = val.after("::");
-      if((typnm != "") && (mbnm != "")) {
-	TypeDef* td = taMisc::types.FindName(typnm);
+      String fqtypnm = val.before("::", -1); // before final ::
+      String mthnm = val.after("::", -1);
+      if((fqtypnm != "") && (mthnm != "")) {
+	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
 	if(td != NULL) {
-	  MethodDef* md = td->methods.FindName(mbnm);
+	  MethodDef* md = td->methods.FindName(mthnm);
 	  if(md != NULL)
 	    *((MethodDef**)base) = md;
 	}

@@ -937,6 +937,7 @@ public:
 
   void operator=(const TypeSpace& cp)	{ Borrow(cp); }
 
+  TypeDef*	FindTypeR(const String& fqname) const; // find a possibly nested subtype based on :: name
   virtual bool	ReplaceLinkAll(TypeDef* ol, TypeDef* nw);
   virtual bool 	ReplaceParents(const TypeSpace& ol, const TypeSpace& nw);
   // replace any parents on the old list with those on the new for all types
@@ -954,9 +955,7 @@ public:
 
 class TA_API TypeItem: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
-#ifndef __MAKETA__
-typedef taRefN inherited;
-#endif
+INHERITED(taRefN)
 public:
   int		idx;		// the index number for this type
   String	name;
