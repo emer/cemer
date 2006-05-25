@@ -339,9 +339,18 @@ taTypeInfoTreeDataNode::~taTypeInfoTreeDataNode() {
 void taTypeInfoTreeDataNode::CreateChildren() {
   if (children_created) return;
   switch (tik) {
-  case TIK_ENUM: break;
-  case TIK_MEMBER: break;
-  case TIK_METHOD: break;
+  case TIK_ENUM: {
+    }
+    break;
+  case TIK_MEMBER: {
+    }
+    break;
+  case TIK_METHOD: {
+    MethodDef* md = static_cast<MethodDef*>(data());
+    //TODO: enumerate params
+    taiDataLink* dl = NULL;
+    }
+    break;
   case TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
     if (td->internal) {
@@ -350,38 +359,47 @@ void taTypeInfoTreeDataNode::CreateChildren() {
     taiDataLink* dl = NULL;
 //    taTypeSpaceTreeDataNode dn = NULL;
     // enums
-    dl = ClassBrowser::StatGetDataLink(&td->enum_vals, TIK_ENUMSPACE);
-    last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
-      this, last_child_node, "enums",
-      (iListViewItem::DNF_NO_CAN_DROP)); 
+    EnumSpace* es = &td->enum_vals;
+    if (es->size > 0) {
+      dl = ClassBrowser::StatGetDataLink(es, TIK_ENUMSPACE);
+      last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
+        this, last_child_node, "enums",
+        (iListViewItem::DNF_NO_CAN_DROP)); 
+    }
    
     // subtypes
-    dl = ClassBrowser::StatGetDataLink(&td->sub_types, TIK_TYPESPACE);
-    last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
-      this, last_child_node, "sub types",
-      (iListViewItem::DNF_IS_FOLDER | iListViewItem::DNF_NO_CAN_DROP)); 
+    TypeSpace* st = &td->sub_types;
+    if (st->size > 0) {
+      dl = ClassBrowser::StatGetDataLink(st, TIK_TYPESPACE);
+      last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
+        this, last_child_node, "sub types",
+        (iListViewItem::DNF_IS_FOLDER | iListViewItem::DNF_NO_CAN_DROP));
+    } 
    
-    // members
-    // methods
-    // child types
-    dl = ClassBrowser::StatGetDataLink(&td->children, TIK_TYPESPACE);
+    // members -- always show, even if blank (very unlikely)
+    dl = ClassBrowser::StatGetDataLink(&td->members, TIK_MEMBERSPACE);
     last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
-      this, last_child_node, "child types",
-      (iListViewItem::DNF_IS_FOLDER | iListViewItem::DNF_NO_CAN_DROP)); 
+      this, last_child_node, "members",
+      (iListViewItem::DNF_NO_CAN_DROP)); 
+   
+    // methods -- always show (extremely unlikely to be blank)
+    dl = ClassBrowser::StatGetDataLink(&td->methods, TIK_METHODSPACE);
+    last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
+      this, last_child_node, "methods",
+      (iListViewItem::DNF_NO_CAN_DROP)); 
+   
+    // child types
+    TypeSpace* ct = &td->children;
+    if (ct->size > 0) {
+      dl = ClassBrowser::StatGetDataLink(ct, TIK_TYPESPACE);
+      last_child_node = new taTypeSpaceTreeDataNode(static_cast<taTypeSpaceDataLink*>(dl), 
+        this, last_child_node, "child types",
+        (iListViewItem::DNF_IS_FOLDER | iListViewItem::DNF_NO_CAN_DROP)); 
+    }
    
     }
   default:break; // compiler food
   }
-  
-  //TODO: depends on type
-  /*Type
-  EnumSpace	enum_vals;	// if type is an enum, this is are the labels
-  TypeSpace	sub_types;	// sub types scoped within class (incl enums)
-  MemberSpace	members;	// member variables for class
-  MethodSpace	methods;	// member functions (methods) for class */
-  //Enum
-  //Member
-  //Method
   children_created = true;
 }
 
@@ -453,6 +471,9 @@ bool taTypeSpaceTreeDataNode::ShowItem(TypeDef* td) const {
     || (td->ref)
     || (td->formal)
   ) return false;
+  // need to check parentage for const -- (note: const is not formal for some weird reason)
+  if (td->InheritsFrom(&TA_const)) 
+    return false;
   return true;
 }
 
@@ -706,193 +727,4 @@ void taiTypeItemDataHost::Constr_Labels() {
   default: break; // compiler food
   }
 }
-
-
-/*
-class taiCBItem: public QListViewItem {
-public:
-  TypeDef* typ;
-  taiCBItem(TypeDef* typ_, QListView* parent, QString label1);
-  taiCBItem(TypeDef* typ_, taiCBItem* parent, QString label1);
-};
-
-taiCBItem::taiCBItem(TypeDef* typ_, QListView* parent, QString label1)
-: QListViewItem(parent, label1)
-{
-  typ = typ_;
-}
-
-taiCBItem::taiCBItem(TypeDef* typ_, taiCBItem* parent, QString label1)
-: QListViewItem(parent, label1)
-{
-  typ = typ_;
-}
-
-#define NUM_MEMBER_COLS 3
-#define NUM_METHOD_COLS 3
-
-taiClassBrowser::taiClassBrowser(TypeDef* root_, QWidget* parent, const char* name)
-: QScrollView(parent, name)
-{
-  mroot = NULL;
-  mcurItem = NULL;
-  mrecurse = false;
-
-  this->setCaption("Class Browser");
-
-  //TODO: make layOuter part of class
-  QVBoxLayout* layOuter = new QVBoxLayout(this);
-  splTree_Detail = new QSplitter(this, "splTree_Detail");
-  layOuter->addWidget(splTree_Detail);
-  lvwClassTree = new QListView(splTree_Detail, "lvwClassTree");
-  layOuter->addWidget(lvwClassTree);
-  frmDetail = new QFrame(splTree_Detail, "frmDetail");
-  layDetail = new QVBoxLayout(frmDetail);
-  frmDetailButtons = new QFrame(frmDetail, "frmDetailButtons");
-  layDetail->addWidget(frmDetailButtons);
-  layDetailButtons = new QHBoxLayout(frmDetailButtons);
-  btnRecurse = new QPushButton(frmDetailButtons);
-  layDetailButtons->addWidget(btnRecurse);
-  //todo: more buttons here
-  layDetailButtons->addStretch();
-  ctlDetail = new QTabWidget(frmDetail, "ctlDetail");
-  layDetail->addWidget(ctlDetail);
-  tabMembers = new QTable(0, NUM_MEMBER_COLS, ctlDetail, "tabMembers");
-  ctlDetail->addTab(tabMembers, "Members");
-  tabMethods = new QTable(0, NUM_METHOD_COLS, ctlDetail, "tabMethods");
-  ctlDetail->addTab(tabMethods, "Methods");
-
-
-  lvwClassTree->addColumn("");
-
-  btnRecurse->setText("Recurse");
-  btnRecurse->setToggleButton(true);
-  connect(btnRecurse, SIGNAL(toggled(bool)),
-      this, SLOT(btnRecurse_toggled(bool)) );
-
-  tabMembers->horizontalHeader()->setLabel(0, "P#");
-  tabMembers->horizontalHeader()->setLabel(1, "Name: Type");
-  tabMembers->horizontalHeader()->setLabel(2, "Description");
-
-  tabMethods->horizontalHeader()->setLabel(0, "P#");
-  tabMethods->horizontalHeader()->setLabel(1, "Name: RetType");
-  tabMethods->horizontalHeader()->setLabel(2, "Description");
-
-
-  connect(lvwClassTree, SIGNAL(selectionChanged(QListViewItem*)),
-      this, SLOT(ItemSelected(QListViewItem*)) );
-  setRoot(root_);
-
-}
-
-//taiClassBrowser::~taiClassBrowser() {}
-
-void taiClassBrowser::ClearDetail() {
-  tabMembers->setNumRows(0);
-//  tabMembers->setText(0, 0, "");
-//  tabMembers->setText(0, 1, "");
-  tabMethods->setNumRows(0);
-//  tabMethods->setText(0, 0, "");
-//  tabMethods->setText(0, 1, "");
-}
-
-void taiClassBrowser::AddMember(MemberDef* mbd, TypeDef* typ, int parentLevel) {
-  int i = tabMembers->numRows();
-  tabMembers->setNumRows(i + 1);
-  String nm = mbd->name + ": " + mbd->type->name;
-  tabMembers->setText(i, 0, String(parentLevel));
-  tabMembers->setText(i, 1, nm);
-  tabMembers->setText(i, 2, mbd->desc); //TEMP
-}
-
-void taiClassBrowser::AddMethod(MethodDef* mthd, TypeDef* typ, int parentLevel) {
-  int i = tabMethods->numRows();
-  tabMethods->setNumRows(i + 1);
-  String nm = mthd->name + ": " + mthd->type->name;
-  tabMethods->setText(i, 0, String(parentLevel));
-  tabMethods->setText(i, 1, nm);
-  tabMethods->setText(i, 2, mthd->desc); //TEMP
-}
-
-void taiClassBrowser::AddMembers(TypeDef* typ, bool recurse, int parentLevel) {
-  // add type's members
-  for (int i = 0; i < typ->members.size; ++i) {
-    MemberDef* mbd = typ->members.FastEl(i);
-    AddMember(mbd, typ, parentLevel);
-  }
-
-  // add parent members, if requested and any
-  if (recurse && (typ->parents.size > 0)) {
-    for (int i = 0; i < typ->parents.size; ++i) {
-      TypeDef* par = typ->parents.FastEl(i);
-      AddMembers(par, true, parentLevel + 1);
-    }
-  }
-
-}
-
-void taiClassBrowser::AddMethods(TypeDef* typ, bool recurse, int parentLevel) {
-  // add type's members
-  for (int i = 0; i < typ->methods.size; ++i) {
-    MethodDef* mthd = typ->methods.FastEl(i);
-    AddMethod(mthd, typ, parentLevel);
-  }
-
-  // add parent members, if requested and any
-  if (recurse && (typ->parents.size > 0)) {
-    for (int i = 0; i < typ->parents.size; ++i) {
-      TypeDef* par = typ->parents.FastEl(i);
-      AddMethods(par, true, parentLevel + 1);
-    }
-  }
-
-}
-
-void taiClassBrowser::setCurItem(taiCBItem* item, bool forceUpdate) {
-  if ((mcurItem == item) && (!forceUpdate)) return;
-  ClearDetail();
-  mcurItem = item;
-  AddMembers(item->typ, mrecurse, 0);
-  AddMethods(item->typ, mrecurse, 0);
-}
-
-void taiClassBrowser::setRoot(TypeDef* value) {
-  if (mroot == value) return;
-  mroot = value;
-  Reset();
-  if (mroot == NULL) return;
-
-  taiCBItem* item = new taiCBItem(mroot, lvwClassTree, mroot->name);
-  InitItem(mroot, item);
-  AddItems(mroot, item);
-}
-
-void taiClassBrowser::AddItems(TypeDef* cls, taiCBItem* par_item) {
-  for (int i = 0; i < cls->children.size; ++i) {
-    TypeDef* typ = cls->children.FastEl(i);
-    taiCBItem* item = new taiCBItem(typ, par_item, typ->name);
-    InitItem(typ, item);
-    // recursively add children
-    AddItems(typ, item);
-  }
-}
-
-void taiClassBrowser::InitItem(TypeDef* cls, taiCBItem* item) {
-//  item->setText(0, cls->name);
-  //TODO: more
-}
-
-void taiClassBrowser::Reset() {
-  lvwClassTree->clear();
-}
-
-void taiClassBrowser::btnRecurse_toggled(bool on) {
-  mrecurse = on;
-  setCurItem(mcurItem, true);
-}
-
-void taiClassBrowser::ItemSelected(QListViewItem* item) {
-  setCurItem((taiCBItem*)item);
-}
-*/
 
