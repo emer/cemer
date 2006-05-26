@@ -2965,7 +2965,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
 }
 
 
-EnumDef* TypeDef::FindEnum(const char* nm) const {
+EnumDef* TypeDef::FindEnum(const String& nm) const {
   EnumDef* rval;
   if((rval = enum_vals.FindName(nm)) != NULL)
     return rval;
@@ -2990,7 +2990,7 @@ EnumDef* TypeDef::FindEnum(const char* nm) const {
   return NULL;
 }
 
-int TypeDef::GetEnumVal(const char* nm, String& enum_tp_nm) const {
+int TypeDef::GetEnumVal(const String& nm, String& enum_tp_nm) const {
   EnumDef* rval = FindEnum(nm);
   if(rval != NULL) {
     if((rval->owner != NULL) && (rval->owner->owner != NULL))
@@ -3000,7 +3000,7 @@ int TypeDef::GetEnumVal(const char* nm, String& enum_tp_nm) const {
   return -1;
 }
 
-String TypeDef::GetEnumString(const char* enum_tp_nm, int enum_val) const {
+String TypeDef::GetEnumString(const String& enum_tp_nm, int enum_val) const {
   EnumDef* rval;
   if(enum_vals.size > 0) {
     rval = enum_vals.FindNo(enum_val);
@@ -3009,12 +3009,38 @@ String TypeDef::GetEnumString(const char* enum_tp_nm, int enum_val) const {
   int i;
   for(i=0; i < sub_types.size; i++) {
     TypeDef* td = sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum) && ((enum_tp_nm == NULL) || (td->name == enum_tp_nm))) {
+    if(td->InheritsFormal(TA_enum) && (enum_tp_nm.empty() || (td->name == enum_tp_nm))) {
       rval = td->enum_vals.FindNo(enum_val);
       if(rval != NULL) return rval->name;
     }
   }
   return "";
+}
+
+const String TypeDef::Get_C_EnumString(int enum_val) const {
+  // note: the containing type for an enumtypedef is the owner
+  TypeDef* par_td = GetOwnerType();
+  if (!par_td) return _nilString;
+  String par_typnm = par_td->GetPathName();
+  STRING_BUF(rval, 80); // extends if needed
+  
+  bool made = false; // indicates we succeeded
+  if (HasOption("BITS")) {
+    // compose the result from bits
+//TODO:
+  } else { // no bits
+    EnumDef* ed = enum_vals.FindNo(enum_val);
+    if (ed) {
+      rval.cat(par_typnm).cat("::").cat(ed->name);
+      made = true;
+    }
+  }
+  
+  if (!made) {
+    // ok, no joy, so winge out and just cast
+    rval.cat("((").cat(par_typnm).cat(")").cat(String(enum_val)).cat(")");
+  }
+  return rval;
 }
 
 #ifndef NO_TA_BASE

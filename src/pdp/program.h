@@ -48,7 +48,7 @@ public:
   TA_BASEFUNS(ProgVar);
 protected:
   virtual const String	GenCssArg_impl();
-  virtual const String	GenCssVar_impl(bool make_new = false, TypeDef* val_type = NULL);
+  virtual const String	GenCssVar_impl();
   virtual cssEl*	NewCssEl_impl(); // make a new cssEl of an appropriate type, name/value initialized
 private:
   void	Initialize();
@@ -72,14 +72,14 @@ public:
   TA_BASEFUNS(EnumProgVar);
 protected:
   override const String	GenCssArg_impl();
-  override const String	GenCssVar_impl(bool, TypeDef*);
+  override const String	GenCssVar_impl();
   override cssEl*	NewCssEl_impl(); 
 private:
   void	Initialize();
   void	Destroy();
 };
 
-class PDP_API ObjectProgVar: public ProgVar { // a program variable to hold taBase objects
+class PDP_API ObjectProgVar: public ProgVar { // ##SCOPE_ProgElProgram a program variable to hold taBase objects
 INHERITED(ProgVar)
 public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
@@ -87,14 +87,13 @@ public:
   
   override int		cssType(); // int value of cssEl::Type generated
   
-  override const String	GenCss(bool is_arg = false) 
-    {return is_arg ? GenCssArg_impl() : GenCssVar_impl(make_new, val_type) ;} // css code (no terminator or newline);
-  
   void	Copy_(const ObjectProgVar& cp);
   COPY_FUNS(ObjectProgVar, ProgVar);
   TA_BASEFUNS(ObjectProgVar);
   
 protected:
+  override const String	GenCssArg_impl();
+  override const String	GenCssVar_impl();
   override cssEl*	NewCssEl_impl(); 
   
 private:
@@ -308,13 +307,15 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
-/* TBdone
+
 class PDP_API MethodCallEl: public ProgEl { 
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
 public:
-  ObjectProgVar*	script_obj; // the script object that has the method
-  MethodDef*		method; // the method to call
+  String		var; // the variable name
+  
+  ObjectProgVar*	script_obj; // the previously defined script object that has the method
+  MethodDef*		method; // #TYPE_ON_script_obj.val_type the method to call
   
   void	UpdateAfterEdit();
   void	CutLinks();
@@ -327,8 +328,8 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{}
-}; */
+  void	Destroy()	{CutLinks();}
+}; 
 
 
 class PDP_API ProgramCallEl: public ProgEl { 

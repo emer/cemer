@@ -124,21 +124,16 @@ cssEl* ProgVar::NewCssEl_impl() {
   return rval;
 } */
 
-const String ProgVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
-  String rval(0, 80, '\0'); //note: buffer will extend if needed
+const String ProgVar::GenCssVar_impl() {
+  STRING_BUF(rval, 80); //note: buffer will extend if needed
   rval += "Variant ";
   rval += name;
-  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
-    rval += " = new ";
-    rval += val_type->name + "()";
-  } else { 
-    bool init = !value.isDefault();
-    if (init) {
-      rval += " = ";
-      rval += value.toCssLiteral();
-    } else if (!value.isInvalid()) {
-      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
-    }
+  bool init = !value.isDefault();
+  if (init) {
+    rval += " = ";
+    rval += value.toCssLiteral();
+  } else if (!value.isInvalid()) {
+    rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
   }
   rval += ";\n";
   return rval;
@@ -185,7 +180,7 @@ const String EnumProgVar::enumName() {
 }
 
 const String EnumProgVar::GenCssArg_impl() {
-  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  STRING_BUF(rval, 80); //note: buffer will extend if needed
   rval += enumName() + " ";
   rval += name;
   if (init) {
@@ -195,7 +190,7 @@ const String EnumProgVar::GenCssArg_impl() {
   return rval;
 }
 
-const String EnumProgVar::GenCssVar_impl(bool, TypeDef*) {
+const String EnumProgVar::GenCssVar_impl() {
   String rval = GenCssArg_impl();
   rval += ";\n";
   return rval;
@@ -207,9 +202,9 @@ cssEl* EnumProgVar::NewCssEl_impl() {
 }
 
 const String EnumProgVar::ValToId(int val) {
-  String rval(0, 80, '\0'); //note: buffer will extend if needed
-  //TODO
-  return rval;
+  if (enum_type) {
+    return enum_type->Get_C_EnumString(val);
+  } else return _nilString;
 }
 
 
@@ -232,6 +227,34 @@ void ObjectProgVar::Copy_(const ObjectProgVar& cp) {
 
 int ObjectProgVar::cssType() {
   return cssEl::T_TA;
+}
+
+const String ObjectProgVar::GenCssArg_impl() {
+  if (!val_type) return _nilString; // shouldn't happen...
+  STRING_BUF(rval, 80); //note: buffer will extend if needed
+  rval += val_type->GetPathName() + "* ";
+  rval += name;
+  //NOTE: make_new not supported
+  return rval;
+}
+
+const String ObjectProgVar::GenCssVar_impl() {
+  if (!val_type) return _nilString; // shouldn't happen...
+  STRING_BUF(rval, 80); //note: buffer will extend if needed
+  rval += val_type->GetPathName() + "* ";
+  rval += name;
+  if (make_new) { 
+    rval += " = new ";
+    rval += val_type->GetPathName() + "()";
+  } else { 
+    bool init = !value.isDefault();
+    if (init) {
+      rval += " = ";
+      rval += value.toCssLiteral();
+    }
+  }
+  rval += ";\n";
+  return rval;
 }
 
 cssEl* ObjectProgVar::NewCssEl_impl() {
@@ -404,9 +427,9 @@ void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
 }
 
 const String ProgEl::GenCss(int indent_level) {
-  String rval;
+  STRING_BUF(rval, 120); // grows if needed, but may be good for many cases
   if (!desc.empty())
-    rval = cssMisc::Indent(indent_level) + "//" + desc + "\n";
+    rval.cat(cssMisc::Indent(indent_level)).cat("//").cat(desc).cat("\n");
   rval += GenCssPre_impl(indent_level);
   rval += GenCssBody_impl(indent_level);
   rval += GenCssPost_impl(indent_level);
@@ -586,7 +609,7 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 //////////////////////////
 //  MethodCallEl	//
 //////////////////////////
-/*tbdone
+
 void MethodCallEl::Initialize() {
   script_obj = NULL;
   method = NULL;
@@ -610,7 +633,7 @@ void MethodCallEl::UpdateAfterEdit() {
 const String MethodCallEl::GenCssBody_impl(int indent_level) {
   if (!script_obj && !method) return _nilString;
   
-  String rval(80, 0, '\0');
+  STRING_BUF(rval, 80); // more allocated if needed
   //TODO: return value
   rval += cssMisc::Indent(indent_level);
   rval += script_obj->name;
@@ -622,7 +645,7 @@ const String MethodCallEl::GenCssBody_impl(int indent_level) {
   
   return rval;
 }
-*/
+
 
 //////////////////////////
 //  ProgramCallEl	//

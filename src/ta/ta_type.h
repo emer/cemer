@@ -1297,12 +1297,15 @@ public:
   void		SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
   // set type of a template class
 
-  EnumDef*	FindEnum(const char* enum_nm) const;
+  EnumDef*	FindEnum(const String& enum_nm) const;
   // find an enum and return its definition (or NULL if not found).  searches in enum_vals, then subtypes
-  int		GetEnumVal(const char* enum_nm, String& enum_tp_nm) const;
+  int		GetEnumVal(const String& enum_nm, String& enum_tp_nm) const;
   // find an enum and return its enum_no value, and set enum_tp_nm at the type name of the enum.  if not found, returns -1 and enum_tp_nm is empty
-  String	GetEnumString(const char* enum_tp_nm, int enum_val) const;
+  String	GetEnumString(const String& enum_tp_nm, int enum_val) const;
   // get the name of enum with given value in enum list of given type (e.g., enum defined within class)
+  const String	Get_C_EnumString(int enum_val) const;
+  // we must be the enumtypedef; get the C string for given value in enum list of given type (e.g., enum defined within class); for BIT types, will compose the bits and cast; worst case will cast int to type
+  
 #ifndef NO_TA_BASE  
   void*			GetInstance() const
   { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
