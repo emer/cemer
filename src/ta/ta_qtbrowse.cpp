@@ -202,6 +202,7 @@ void taiTreeDataNode::CreateChildren() {
 //TODO: sorting doesn't work because treeview won't only sort just one child
 //    sort();
   }
+  children_created = true;
 }
 
 void taiTreeDataNode::CreateChildren_impl() {

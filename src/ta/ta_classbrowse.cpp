@@ -181,11 +181,11 @@ String taTypeSpaceDataLink::ChildGetColText(taDataLink* child, int col, int itm_
 bool taTypeSpaceDataLink::ShowChild(TypeDef* td) const {
   bool rval = false; // have to find at least one show condition
   if (dm & DM_ShowRoot) {
-    if (td->parents.size > 0) return false;
+    if (td->InheritsFormal(&TA_class) && td->is_subclass) return false;
     else rval = true;
   }
   if (dm & DM_ShowNonRoot) {
-    if (td->parents.size == 0) return false;
+    if (!(td->InheritsFormal(&TA_class) && td->is_subclass)) return false;
     else rval = true;
   }
   if (dm & DM_ShowEnums) {
@@ -572,7 +572,9 @@ void iClassBrowser::ApplyRoot() {
   if (dl == NULL) return; // shouldn't happen...
 
   taiTreeDataNode* node;
-  node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, dl->GetName(), iListViewItem::DNF_UPDATE_NAME);
+  String nm = dl->GetName();
+  if (nm.empty()) nm = "(root)";
+  node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, nm, iListViewItem::DNF_UPDATE_NAME);
     
   // always show the first items under the root
   node->CreateChildren();

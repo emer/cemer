@@ -2324,6 +2324,7 @@ void TypeDef::Initialize() {
 #ifdef NO_TA_BASE
   pre_parsed = false;	// true if previously parsed by maketa
 #else
+  is_subclass = false;
   instance = NULL;
   defaults = NULL;
 #endif
@@ -2418,6 +2419,7 @@ void TypeDef::Copy(const TypeDef& cp) {
 #ifdef NO_TA_BASE
   pre_parsed	= cp.pre_parsed;
 #else
+  is_subclass	= cp.is_subclass;
   instance	= cp.instance ;
 // don't copy the tokens..
 #endif
@@ -2710,6 +2712,9 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
 			  TypeDef* p3, int p3_off, TypeDef* p4, int p4_off,
 			  TypeDef* p5, int p5_off, TypeDef* p6, int p6_off)
 {
+#ifndef NO_TA_BASE
+  is_subclass = true;
+#endif
   bool mi = false;
   if(p1 != NULL)    AddParent(p1,p1_off);
   if(p2 != NULL)    { AddParent(p2,p2_off); mi = true; }

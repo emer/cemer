@@ -137,10 +137,10 @@ public:
     DM_ShowNonEnums	= 0x0008, // show types that are not enums (really only applies to .sub_types)
   
 #ifndef __MAKETA__    
-    DM_DefaultRoot	= DM_ShowNonRoot | DM_ShowNonEnums,
-    DM_DefaultChildren	= DM_ShowRoot | DM_ShowNonEnums,
-    DM_DefaultEnum	= DM_ShowRoot | DM_ShowEnums,
-    DM_DefaultSubTypes	= DM_ShowRoot | DM_ShowNonEnums,
+    DM_DefaultRoot	= DM_ShowRoot | DM_ShowNonEnums,
+    DM_DefaultChildren	= DM_ShowNonRoot | DM_ShowNonEnums,
+    DM_DefaultEnum	= DM_ShowEnums,
+    DM_DefaultSubTypes	= DM_ShowNonRoot | DM_ShowNonEnums,
     DM_Default		= DM_DefaultChildren
 #endif
   };

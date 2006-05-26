@@ -1162,6 +1162,7 @@ public:
 #ifdef NO_TA_BASE
   bool		pre_parsed;	// true if previously parsed by maketa
 #else
+  bool		is_subclass;	// true if is a class, and inherits from another
   void**	instance;	// pointer to the instance ptr of this type
   taBase_List*	defaults;	// default values registered for this type
 #endif
