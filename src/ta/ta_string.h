@@ -153,7 +153,7 @@ public:
   ~String() {mrep->unRef();}
   void			setRep(StrRep* rep_); // for replacing rep (non-constructor) -- rep_ must be non-null
 
-  unsigned int		length() const {return mrep->len;} // how many characters in the string
+  int			length() const {return mrep->len;} // how many characters in the string
   bool			empty() const {return mrep->len == 0;}  // true if the string is empty
   bool			isInt() const;  // true if the string contains a value that can be interpreted as an integer [+-]dd*
 

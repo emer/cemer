@@ -206,9 +206,9 @@ public:
   { String fad=it; return taPlainArray<String>::AddUnique(fad); }
 
 #ifdef __MAKETA__
-  String 	AsString(const char* sep) const;
+  const String 	AsString(const char* sep) const;
 #else
-  String 	AsString(const char* sep = ", ") const;
+  const String 	AsString(const char* sep = ", ") const;
 #endif
   void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   String_PArray()				{ };
@@ -1113,6 +1113,7 @@ public:
   ostream&   		OutputType(ostream& strm, int indent = 1) const;
   void			CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
+  const String		ParamsAsString() const; // returns what would be in () for a definition
 };
 
 class taBase_List;
@@ -1122,9 +1123,7 @@ class taBase_List;
 
 
 class TA_API TypeDef : public TypeItem {// defines a type itself
-#ifndef __MAKETA__
-typedef TypeItem inherited;
-#endif
+INHERITED(TypeItem)
 public:
   enum StrContext { // context for getting or setting a string value
     SC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
@@ -1146,7 +1145,6 @@ public:
   bool 		ref;		// true if a reference variable
   bool		internal;	// true if an internal type (auto generated)
   bool		formal;		// true if a formal type (e.g. class, const, enum..)
-  bool		pre_parsed;	// true if previously parsed by maketa
   String_PArray	inh_opts;	// inherited options (##xxx)
 
   TypeSpace	parents;	// type(s) this inherits from
@@ -1154,15 +1152,19 @@ public:
   TypeSpace	par_formal;	// formal parents (e.g. class, const, enum..)
   TypeSpace	par_cache;	// cache of certain parent types for speedup
   TypeSpace	children;	// inherited from this
-
-  void**	instance;	// pointer to the instance ptr of this type
   TokenSpace	tokens;		// tokens of this type (if kept)
+
 #ifdef TA_GUI
   taiType*	it;		// single glyph representation of type (was 'iv')
   taiEdit*	ie;		// editing window rep. of type (was 'ive')
   taiViewType*	iv;		// browser representation of type
 #endif
+#ifdef NO_TA_BASE
+  bool		pre_parsed;	// true if previously parsed by maketa
+#else
+  void**	instance;	// pointer to the instance ptr of this type
   taBase_List*	defaults;	// default values registered for this type
+#endif
 
   // the following only apply to enums or classes
   EnumSpace	enum_vals;	// if type is an enum, these are the labels
@@ -1177,9 +1179,15 @@ public:
   void		Copy(const TypeDef& cp);
   TypeDef();
   TypeDef(const char* nm);
+#ifdef NO_TA_BASE
+  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
+	  uint siz, int ptrs=0, bool refnc=false,
+	  bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
+#else
   TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
 	  uint siz, void** inst, bool toks=false, int ptrs=0, bool refnc=false,
 	  bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
+#endif
   TypeDef(const char* nm, bool intrnl, int ptrs=0, bool refnc=false, bool forml=false,
 	  bool global_obj=false, uint siz = 0, const char* c_nm = NULL
 	  ); // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
@@ -1196,8 +1204,6 @@ public:
   bool			CheckList(const String_PArray& lst) const;
   // check if have a list in common
 
-  void*			GetInstance() const
-  { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
   override TypeDef* 	GetOwnerType() const
     { if (owner) return owner->owner; else return NULL; }
   TypeDef*		GetParent() const { return parents.SafeEl(0); }
@@ -1220,6 +1226,9 @@ public:
   String		Get_C_Name() const;
   // returns the actual c-code name for this type
   override const String	GetPathName() const;
+  
+  bool			HasEnumDefs() const; // true if any subtypes are enums
+  bool			HasSubTypes() const; // true if any non-enum subtypes
 
   // you inherit from yourself.  This ensures that you are a "base" class (ptr == 0)
   bool 			InheritsFrom(const char *nm) const
@@ -1293,10 +1302,13 @@ public:
   // find an enum and return its enum_no value, and set enum_tp_nm at the type name of the enum.  if not found, returns -1 and enum_tp_nm is empty
   String	GetEnumString(const char* enum_tp_nm, int enum_val) const;
   // get the name of enum with given value in enum list of given type (e.g., enum defined within class)
+#ifndef NO_TA_BASE  
+  void*			GetInstance() const
+  { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
   int		FindTokenR(void* addr, TypeDef*& ptr) const;
   int		FindTokenR(const char* nm, TypeDef*& ptr) const;
   // recursive search for token among children
-
+#endif
   // for token management
   void 		Register(void* it);
   void 		unRegister(void* it);

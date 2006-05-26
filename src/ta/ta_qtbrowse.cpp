@@ -197,6 +197,14 @@ iDataBrowserBase* taiTreeDataNode::browser_win() const {
 }
 
 void taiTreeDataNode::CreateChildren() {
+  CreateChildren_impl();
+  if (flags & DNF_SORT_CHILDREN) {
+//TODO: sorting doesn't work because treeview won't only sort just one child
+//    sort();
+  }
+}
+
+void taiTreeDataNode::CreateChildren_impl() {
   MemberSpace* ms = &(link()->GetDataTypeDef()->members);
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
@@ -350,8 +358,8 @@ void tabListTreeDataNode::AssertLastListItem() {
 
 }
 
-void tabListTreeDataNode::CreateChildren() {
-  inherited::CreateChildren();
+void tabListTreeDataNode::CreateChildren_impl() {
+  inherited::CreateChildren_impl();
   String tree_nm;
   for (int i = 0; i < data()->size; ++i) {
     // the subgroups are themselves taGroup items
@@ -501,8 +509,8 @@ tabGroupTreeDataNode::~tabGroupTreeDataNode()
 {
 }
 
-void tabGroupTreeDataNode::CreateChildren() {
-  inherited::CreateChildren();
+void tabGroupTreeDataNode::CreateChildren_impl() {
+  inherited::CreateChildren_impl();
   String tree_nm;
   for (int i = 0; i < data()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
@@ -725,7 +733,7 @@ taiTreeDataNode* iDataBrowserBase::CreateTreeDataNode(taiDataLink* link, MemberD
 {
   taiTreeDataNode* rval = CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
       tree_name, flags_);
-  if (rval != NULL) {
+  if (rval) {
     rval->setExpandable(link->HasChildItems() || (rval->flags & iListViewItem::DNF_IS_FOLDER));
     rval->DecorateDataNode();
   }
@@ -927,7 +935,7 @@ taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, Member
       rval = new taiTreeDataNode(link, md_, parent_, last_child_, tree_name, flags_);
    // else not supported yet
   }
-  if (rval == NULL) {
+  if (!rval) {
     rval = inherited::CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
       tree_name, flags_);
   }

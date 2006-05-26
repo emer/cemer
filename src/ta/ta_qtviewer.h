@@ -1254,7 +1254,8 @@ public:
     DNF_CAN_DRAG	= 0x010, // 16 can allow drags
     DNF_NO_CAN_DROP	= 0x020, // 32 cannot accept drops
     DNF_IS_MEMBER 	= 0x040, // 64 true for members (and root), not for list/group items -- helps node configure edit ops
-    DNF_IS_LIST_NODE 	= 0x080 // true for nodes in a list view (in panel, not on tree)
+    DNF_IS_LIST_NODE 	= 0x080, // true for nodes in a list view (in panel, not on tree)
+    DNF_SORT_CHILDREN	= 0x100	// true if we are to sort children after creating
   };
 
 /*nn  enum BrowseDropAction {
@@ -1268,9 +1269,6 @@ public:
   int			flags; // any of DataNodeFlags
 
   void* 		data() {return m_link->data();} //
-
-//  DataViewer*		viewer();
-//  iTabDataViewer*	viewer_win() const {return (iTabDataViewer*)viewer_win_();}
 
   iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* parent_,
     iListViewItem* last_child_, const String& tree_name, int flags_ = 0);

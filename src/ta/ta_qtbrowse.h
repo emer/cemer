@@ -118,6 +118,7 @@ public: // ISelectable interface
 protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
   taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
+  virtual void 		CreateChildren_impl(); // implement child creating here
   override void		FillContextMenu_impl(taiActions* menu);
 private:
   void			init(taiDataLink* link_, int flags_); // #IGNORE
@@ -157,7 +158,6 @@ public:
   tabListDataLink* 	link() const {return (tabListDataLink*)m_link;}
 
   void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
-  override void 	CreateChildren(); // called by the Node when it needs to create its children
   override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
   tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
@@ -171,6 +171,7 @@ public: // IDataLinkClient interface
 protected:
   taiTreeDataNode*	last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
+  override void 	CreateChildren_impl(); 
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
@@ -186,7 +187,6 @@ public:
   taGroup_impl* 	data() {return ((tabGroupDataLink*)m_link)->data();}
   tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
 
-  override void 	CreateChildren(); // called by the Node when it needs to create its children
   void 			CreateSubGroup(taiTreeDataNode* after_node, void* el); // for dynamic changes to tree
   override void		UpdateChildNames(); // #IGNORE
 
@@ -199,6 +199,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_tabGroupTreeDataNode;}
 protected:
+  override void 	CreateChildren_impl(); 
   override void		DataChanged_impl(int dcr, void* op1, void* op2); // handle DCR_GROUP_xxx ops
   void			UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
@@ -243,9 +244,10 @@ public:
   void*			root() { return m_root;}
 
   iTabView*		AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL);// override
+  virtual taiTreeDataNode* CreateTreeDataNode(taiDataLink* link, MemberDef* md_, 
+    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, 
+    const String& tree_name, int flags_);
   void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
-  virtual taiTreeDataNode* 	CreateTreeDataNode(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
-     taiTreeDataNode* last_child_, const String& tree_name, int flags_);
   void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
 //nn  void		RemovePanel(iDataPanel* panel); // removes and deletes the indicated panel
   taiClipData*		GetClipData(int src_edit_action, bool for_drag = false); // gets clipboard data (called on Cut/Copy or Drag)
@@ -266,9 +268,10 @@ protected slots:
 
 
 protected:
+  virtual taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, 
+    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name,
+    int flags_) {return NULL;}
   iDataBrowserBase(void* root_, DataViewer* browser_,  QWidget* parent = 0);
-  virtual taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
-     taiTreeDataNode* last_child_, const String& tree_name, int flags_) {return NULL;}
 
 public: // overridden slots
   void 		fileNew();
@@ -320,8 +323,9 @@ protected:
   TypeDef*		m_typ;
 
   void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
-  override taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, taiTreeDataNode* parent_,
-     taiTreeDataNode* last_child_, const String& tree_name, int flags_); // pass parent=null if this is a root item
+  override taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,
+    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, 
+    const String& tree_name, int flags_); // pass parent=null if this is a root item
 };
 
 //////////////////////////////////

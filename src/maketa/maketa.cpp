@@ -82,16 +82,14 @@ TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
 
 //                               s nm, s dsc, 
-//                               s inop, s op, s lis, u siz, ** inst, b toks, i ptrs, b ref, b global
+//                               s inop, s op, s lis, u siz, i ptrs, b ref, b global
 //NOTE: the actual versions generated into the target code dynamically compute their size in the runtime
-TypeDef TA_taString		("taString", "",
-				 "", "", "", 0, (void**)0, 0, 0, 0, 1);
-TypeDef TA_Variant		("Variant", "",
-				 "", "", "", 0, (void**)0, 0, 0, 0, 1);
+TypeDef TA_taString		("taString", "", "", "", "", 0, 0, 0, 1);
+TypeDef TA_Variant		("Variant", "", "", "", "", 0, 0, 0, 1);
 //NOTE: taBase is never actually encountered while building maketa, so its size is irrelevant...
 // it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp 
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
-	"", "", "", 0, (void**)0, 0, 0, 0, 1); 
+	"", "", "", 0, 0, 0, 1); 
 	  
 extern int yydebug;
 extern "C" int getpid();

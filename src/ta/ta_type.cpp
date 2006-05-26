@@ -55,7 +55,8 @@
 #endif
 
 
-String String_PArray::AsString(const char* sep_) const {
+const String String_PArray::AsString(const char* sep_) const {
+  if (size == 0) return _nilString;
   // more efficient to know the length, so we don't resize...
   String sep(sep_);
   int xlen = MAX(0, (size - 1) * sep.length()); // for seps
@@ -2274,6 +2275,23 @@ const String MethodDef::GetPathName() const {
   return rval;
 } 
 
+const String MethodDef::ParamsAsString() const {
+  if (arg_types.size == 0) return _nilString;
+  STRING_BUF(rval, arg_types.size * 20); 
+  String arg_def;
+  for (int i = 0; i < arg_types.size; ++i) {
+    if (i > 0) rval += ", ";
+    TypeDef* arg_typ = arg_types.FastEl(i);
+    rval += arg_typ->Get_C_Name() + " ";
+    rval += arg_names.FastEl(i);
+    arg_def = arg_defs.FastEl(i); //note: same string used in original definition
+    if (arg_def.length() > 0) {
+      rval += " = " + arg_def;
+    }
+  } 
+  return rval;
+}
+
 
 //////////////////////////
 //    TypeDef		//
@@ -2297,15 +2315,18 @@ void TypeDef::Initialize() {
   ref = false;
   internal = false;
   formal = false;
-  pre_parsed = false;
 
-  instance = NULL;
 #ifdef TA_GUI
   it = NULL;
   ie = NULL;
   iv = NULL;
 #endif
+#ifdef NO_TA_BASE
+  pre_parsed = false;	// true if previously parsed by maketa
+#else
+  instance = NULL;
   defaults = NULL;
+#endif
 
   parents.name = "parents";
   parents.owner = this;
@@ -2344,18 +2365,26 @@ TypeDef::TypeDef(const char* nm)
   name = nm;
 }
 
+#ifdef NO_TA_BASE
 TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
-		 uint siz, void** inst, bool toks, int ptrs, bool refnc, bool global_obj)
+  uint siz, int ptrs, bool refnc, bool global_obj)
+#else
+TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
+  uint siz, void** inst, bool toks, int ptrs, bool refnc, bool global_obj)
+#endif
 :inherited()
 {
   Initialize();
+#ifndef NO_TA_BASE
+  instance = inst;
+  tokens.keep = toks;
+#endif  
   name = nm; desc = dsc;
   c_name = nm;
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
-  size = siz; instance = inst;
-  tokens.keep = toks;
+  size = siz; 
   ptr = ptrs;
   ref = refnc;
   if(global_obj)
@@ -2386,13 +2415,18 @@ TypeDef::TypeDef(const TypeDef& cp)
 
 void TypeDef::Copy(const TypeDef& cp) {
   inherited::Copy(cp);
+#ifdef NO_TA_BASE
+  pre_parsed	= cp.pre_parsed;
+#else
+  instance	= cp.instance ;
+// don't copy the tokens..
+#endif
   c_name	= cp.c_name;
   size		= cp.size    ;
   ptr		= cp.ptr     ;
   ref		= cp.ref     ;
   internal	= cp.internal;
   formal	= cp.formal  ;
-  pre_parsed	= cp.pre_parsed;
 
   inh_opts	= cp.inh_opts ;
 
@@ -2401,10 +2435,7 @@ void TypeDef::Copy(const TypeDef& cp) {
   par_cache	= cp.par_cache;
   children	= cp.children ;	// not sure about this one..
 
-  instance	= cp.instance ;
-
-// don't copy the tokens..
-// or the it's
+// don't copy the it's
 //   it	 	= cp.it       ;
 //   ie	   	= cp.ie      ;
 // or the defaults
@@ -2981,7 +3012,7 @@ String TypeDef::GetEnumString(const char* enum_tp_nm, int enum_val) const {
   return "";
 }
 
-// find token recursively among this class or its descendants
+#ifndef NO_TA_BASE
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   int rval;
   if((rval = tokens.Find(addr)) >= 0) {
@@ -3014,6 +3045,27 @@ int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
   }
   aptr = NULL;
   return -1;
+}
+#endif // ndef NO_TA_BASE
+
+bool TypeDef::HasEnumDefs() const {
+  for (int i = 0; i < sub_types.size; ++i) {
+    TypeDef* td = sub_types.FastEl(i);
+    if (td->enum_vals.size > 0) return true;
+  }
+  return false;
+}
+
+bool TypeDef::HasSubTypes() const {
+  bool rval = false;
+  for (int i = 0; i < sub_types.size; ++i) {
+    TypeDef* td = sub_types.FastEl(i);
+    if (td->enum_vals.size == 0) {
+      rval = true;
+      break;
+    }
+  }
+  return rval;
 }
 
 void TypeDef::Register(void* it) {

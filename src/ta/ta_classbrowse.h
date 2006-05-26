@@ -58,7 +58,6 @@ enum TypeInfoKind { // used in switch statements to particularize instances
   TIK_MEMBER,
   TIK_METHOD,
   TIK_TYPE,
-  TIK_ENUMSPACE,
   TIK_MEMBERSPACE,
   TIK_METHODSPACE,
   TIK_TYPESPACE,
@@ -85,14 +84,15 @@ class TA_API taTypeInfoDataLink: public taClassDataLink { // DataLink for TypeIn
 INHERITED(taClassDataLink)
 public:
   TypeItem*		data() {return (TypeItem*)m_data;} //
+  TypeItem*		data() const {return (TypeItem*)m_data;} //
 
 //  override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
   override taiMimeItem* GetMimeItem();
-  override String	GetName();
-  override String	GetDisplayName();
+  override String	GetName() const;
+  override String	GetDisplayName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   taTypeInfoDataLink(TypeInfoKind tik_, TypeItem* data_);  //
@@ -129,29 +129,33 @@ class TA_API taTypeSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for TypeSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)
 public:
+  enum DisplayMode { // #BITS
+    DM_None		= 0x0000, // #NO_BIT
+    DM_ShowRoot		= 0x0001, // show global items (really only applies to a root type space)
+    DM_ShowNonRoot	= 0x0002, // show inherited items (really only applies to a root type space)
+    DM_ShowEnums	= 0x0004, // show types that are enums (really only applies to .sub_types)
+    DM_ShowNonEnums	= 0x0008, // show types that are not enums (really only applies to .sub_types)
+  
+#ifndef __MAKETA__    
+    DM_DefaultRoot	= DM_ShowNonRoot | DM_ShowNonEnums,
+    DM_DefaultChildren	= DM_ShowRoot | DM_ShowNonEnums,
+    DM_DefaultEnum	= DM_ShowRoot | DM_ShowEnums,
+    DM_DefaultSubTypes	= DM_ShowRoot | DM_ShowNonEnums,
+    DM_Default		= DM_DefaultChildren
+#endif
+  };
+  
+  DisplayMode		dm;
   TypeSpace*		data() {return (TypeSpace*)m_data;}
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols(); // number of columns in a list view for this item type
   override String	GetColHeading(int col); // header text for the indicated column
   override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
+  
+  bool			ShowChild(TypeDef* td) const; // determine whether to show, based on dm
 
   taTypeSpaceDataLink(TypeSpace* data_);
   DL_FUNS(taTypeSpaceDataLink) //
-};
-
-
-class TA_API taEnumSpaceDataLink: public taTypeSpaceDataLink_Base {
-  // DataLink for EnumSpace objects -- note that it also manages the ListView nodes
-INHERITED(taTypeSpaceDataLink_Base)
-public:
-  EnumSpace*		data() {return (EnumSpace*)m_data;}
-  override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols(); // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
-
-  taEnumSpaceDataLink(EnumSpace* data_);
-  DL_FUNS(taEnumSpaceDataLink) //
 };
 
 
@@ -185,7 +189,6 @@ public:
 };
 
 
-
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
@@ -194,7 +197,6 @@ public:
   TypeItem* 		data() {return ((taTypeInfoDataLink*)m_link)->data();}
   taTypeInfoDataLink* 	link() const {return (taTypeInfoDataLink*)m_link;}
 
-  override void 	CreateChildren(); // called by the Node when it needs to create 
   
   taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
@@ -205,6 +207,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taTypeInfoTreeDataNode;}
 protected:
+  override void 	CreateChildren_impl(); // called by the Node when it needs to create 
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
 private:
   void			init(taTypeInfoDataLink* link_, int flags_); // #IGNORE
@@ -217,18 +220,23 @@ public:
   const TypeInfoKind	tik;
   TypeInfoKind		child_tik(){return m_child_tik;}
   
-  taPtrList_impl* 	data() {return ((taTypeSpaceDataLink*)m_link)->data();}
+  taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
   taTypeInfoDataLink* 	child_link(int idx);
-  taTypeSpaceDataLink* 	link() const {return (taTypeSpaceDataLink*)m_link;}
-  bool			ShowItem(TypeDef* td) const; 
+  taTypeSpaceDataLink_Base* 	link() const {return (taTypeSpaceDataLink_Base*)m_link;}
+  bool			ShowItem(TypeItem* ti) const; 
+    // determine whether to show, ex. based on a filter
+  bool			ShowType(TypeDef* td) const; 
+    // determine whether to show, ex. based on a filter
+  bool			ShowMember(MemberDef* md) const; 
+    // determine whether to show, ex. based on a filter
+  bool			ShowMethod(MethodDef* md) const; 
     // determine whether to show, ex. based on a filter
 
-  override void 	CreateChildren(); // called by the Node when it needs to create its children
 //  override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, taiTreeDataNode* parent_,
+  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink* link_, Q3ListView* parent_,
+  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, Q3ListView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeSpaceTreeDataNode();
 public: // IDataLinkClient interface
@@ -237,10 +245,11 @@ public: // IDataLinkClient interface
 protected:
   TypeInfoKind		m_child_tik;
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
+  override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
 //  void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
-  void			init(taTypeSpaceDataLink* link_, int flags_); // #IGNORE
+  void			init(taTypeSpaceDataLink_Base* link_, int flags_); // #IGNORE
 };
 
 

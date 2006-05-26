@@ -22,11 +22,7 @@
 //	in ta_filer.cc for no gui, and ta_xxdialog.cc for gui
 #include "ta_type.h"
 
-class taFiler;
-
-//////////////////////////////////
-// 	taUiFiler		//
-//////////////////////////////////
+class taFiler; //
 
 enum FilerOperation {
   foOpen,
@@ -35,14 +31,8 @@ enum FilerOperation {
   foAppend
 };
 
-// A subclass in this library will implement the GetFileName method
-
 #define taFiler_CreateInstance(dir, filt, comp) \
   taFiler::New(dir, filt, comp)
-
-//////////////////////////////////
-// 	taFiler		//
-//////////////////////////////////
 
 class TA_API taFiler : public taRefN {
   // ##NO_TOKENS associate this with each file that is managed
