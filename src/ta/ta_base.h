@@ -528,7 +528,7 @@ public:
     {return true;} // override to make save decision at runtime
 
   virtual int		Edit();
-  // #MENU #ARGC_0 #MENU_ON_Object #LABEL_Properties #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
 //obs  virtual bool		CloseEdit();	// close any open edit dialogs for this object
   virtual bool		ReShowEdit(bool force = false);	// reshows any open edit dialogs for this object
   virtual const iColor* GetEditColor()  { return NULL; } // #IGNORE background color for edit dialog
@@ -1253,7 +1253,7 @@ class TA_API SArg_Array : public String_Array {
   // string argument array: has labels for each argument to make it easier in the interface
 INHERITED(String_Array)
 public:
-  String_Array	labels;		// labels for each argument
+  String_Array	labels;		// #HIDDEN labels for each argument
 
   int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);

@@ -973,57 +973,67 @@ public slots:
   virtual void	Edit();		// for edit callback
 };
 
-//////////////////////////////////
-// 	taiMemberDef		//
-//////////////////////////////////
-
-class TA_API taiMemberDefMenu : public taiData {
-// Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
+class TA_API taiMembMethDefMenuBase : public taiData {
+// common base for MemberDefs and MethodDefs of a typedef in the object with a MDTYPE_xxx option
 public:
-  MemberDef*	md;
-  TypeDef*	targ_typ;	// target type from which to get list of members -- may be same as typ, but could differ
+  MemberDef*	memb_md; // MemberDef of the member that will get the target pointer
+  TypeDef*	targ_typ;	// target type from which to get list of items -- may be same as typ, but could differ
   void*		menubase;	// the address of the object
   taiActions*	ta_actions;
 
   override QWidget* GetRep();
 
 
-  virtual void		GetMenu(const void* base);
+  virtual void		GetMenu() = 0;
   virtual void 		GetImage(const void* base, bool get_menu = true, void* cur_sel = NULL);
+
+  taiMembMethDefMenuBase(taiActions::RepType rt, int ft, MemberDef* memb_md_, 
+    TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
+  ~taiMembMethDefMenuBase();
+protected:
+  virtual void 		GetTarget(); // determines the target type for the lookup menu
+};
+
+
+//////////////////////////////////
+// 	taiMemberDef		//
+//////////////////////////////////
+
+class TA_API taiMemberDefMenu : public taiMembMethDefMenuBase {
+// Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
+INHERITED(taiMembMethDefMenuBase)
+public:
+  MemberDef*	md;
+
+  override void		GetMenu();
   virtual MemberDef*	GetValue();
 
-  taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_,
-     IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
-  ~taiMemberDefMenu();
-protected:
-  void GetTarget(); // determines the target type for the lookup menu
+  taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_,
+    MemberDef* memb_md_, TypeDef* typ_, IDataHost* host, 
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
 };
 
 //////////////////////////////////
 // 	taiMethodDef		//
 //////////////////////////////////
 
-class TA_API taiMethodDefMenu : public taiData {
+class TA_API taiMethodDefMenu : public taiMembMethDefMenuBase {
 // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
+INHERITED(taiMembMethDefMenuBase)
 public:
   MethodDef*	md;
-  void*		menubase;	// the address of the object
   MethodSpace*  sp;
-  taiActions*	ta_actions;
 
-  override QWidget* GetRep();
+  override void		GetMenu() {GetMenu(NULL);}
+  virtual void		GetMenu(const taiMenuAction* actn);
+  virtual void		UpdateMenu(const taiMenuAction* actn = NULL);
 
-  virtual void	GetMenu(const taiMenuAction* actn = NULL);
-  virtual void	UpdateMenu(const taiMenuAction* actn = NULL);
+  virtual MethodDef*	GetValue();
 
-  virtual void 	GetImage(TypeDef* type, MethodDef* memb);
-  virtual void 	GetImage(MethodSpace* space, MethodDef* memb);
-  virtual void	GetImage(void* ths, void* sel=NULL);
-  virtual void*	GetValue();
-
-  taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_, 
+    MemberDef* memb_md_, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
-  ~taiMethodDefMenu();
 };
 
 

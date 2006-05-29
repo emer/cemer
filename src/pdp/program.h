@@ -28,8 +28,7 @@
 
 class Program;
 
-
-class PDP_API ProgVar: public taNBase { // ##NO_TOKENS ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
+class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
 public:
   bool			ignore; // don't use this variable
@@ -110,7 +109,7 @@ public:
     VC_FuncArgs  //  #LABEL_FunctionArguments function arguments
   };
   
-  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN context of vars, set by owner
+  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
   
@@ -308,23 +307,47 @@ private:
 };
 
 
+class PDP_API MethodSpec: public taOBase { 
+  // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCallEl; has custom taiData
+INHERITED(taOBase)
+public:
+  ObjectProgVar*	script_obj; // #SCOPE_ProgElProgram the previously defined script object that has the method
+  TypeDef*		var_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.var_type
+  MethodDef*		method; //  #TYPE_ON_var_type the method to call
+  
+  void	UpdateAfterEdit();
+  void	CutLinks();
+  void	Copy_(const MethodSpec& cp);
+  COPY_FUNS(MethodSpec, taOBase);
+  TA_BASEFUNS(MethodSpec);
+  
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
 class PDP_API MethodCallEl: public ProgEl { 
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
+friend class MethodSpec;
 public:
-  String		var; // the variable name
-  
-  ObjectProgVar*	script_obj; // the previously defined script object that has the method
-  MethodDef*		method; // #TYPE_ON_script_obj.val_type the method to call
+  String		result_var; // result variable (optional)
+  MethodSpec		method_spec; //  the method to call
+  SArg_Array		args; // arguments to the method
   
   void	UpdateAfterEdit();
+  void	InitLinks();
   void	CutLinks();
   void	Copy_(const MethodCallEl& cp);
   COPY_FUNS(MethodCallEl, ProgEl);
   TA_BASEFUNS(MethodCallEl);
 
 protected:
+  ObjectProgVar*	lst_script_obj; 
+  MethodDef*		lst_method; 
+  
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
 private:
   void	Initialize();

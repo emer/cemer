@@ -596,8 +596,11 @@ const String CondEl::GenCssPre_impl(int indent_level) {
 
 const String CondEl::GenCssBody_impl(int indent_level) {
   String rval = true_els.GenCss(indent_level + 1);
-  rval += cssMisc::Indent(indent_level) + "} else {\n";
-  rval += false_els.GenCss(indent_level + 1);
+  // don't gen 'else' portion unless there are els
+  if (false_els.size > 0) {
+    rval += cssMisc::Indent(indent_level) + "} else {\n";
+    rval += false_els.GenCss(indent_level + 1);
+  }
   return rval;
 }
 
@@ -607,43 +610,113 @@ const String CondEl::GenCssPost_impl(int indent_level) {
 
 
 //////////////////////////
-//  MethodCallEl	//
+//  MethodSpec	//
 //////////////////////////
 
-void MethodCallEl::Initialize() {
+void MethodSpec::Initialize() {
   script_obj = NULL;
   method = NULL;
+  var_type = &TA_taBase; // placeholder
 }
 
-void MethodCallEl::CutLinks() {
+void MethodSpec::CutLinks() {
   taBase::DelPointer((taBase**)&script_obj);
+  method = NULL;
   inherited::CutLinks();
 }
 
-void MethodCallEl::Copy_(const MethodCallEl& cp) {
+void MethodSpec::Copy_(const MethodSpec& cp) {
   taBase::SetPointer((taBase**)&script_obj, cp.script_obj);
   method = cp.method;
 }
 
+void MethodSpec::UpdateAfterEdit() {
+//TODO: maybe update owner MethodCallEl
+  if (script_obj && script_obj->val_type)
+    var_type = script_obj->val_type;
+  else var_type = &TA_taBase; // placeholder
+  inherited::UpdateAfterEdit();
+  if (taMisc::is_loading) return;
+  MethodCallEl* own = GET_MY_OWNER(MethodCallEl);
+  if (own) own->UpdateAfterEdit();
+}
+
+
+//////////////////////////
+//  MethodCallEl	//
+//////////////////////////
+
+void MethodCallEl::Initialize() {
+  lst_script_obj = NULL;
+  lst_method = NULL;
+}
+
+void MethodCallEl::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(method_spec, this);
+  taBase::Own(args, this);
+}
+
+void MethodCallEl::CutLinks() {
+  args.CutLinks();
+  method_spec.CutLinks();
+  lst_script_obj = NULL;
+  lst_method = NULL;
+  inherited::CutLinks();
+}
+
+void MethodCallEl::Copy_(const MethodCallEl& cp) {
+  args = cp.args;
+  method_spec = cp.method_spec;
+  lst_script_obj = cp.lst_script_obj;
+  lst_method = cp.lst_method;
+}
+
 void MethodCallEl::UpdateAfterEdit() {
-  //TODO: if object changed, we need to make sure MethodDef is still valid
+  if (taMisc::is_loading) goto inh;
+  CheckUpdateArgs();
+  
+inh:
+  lst_script_obj = method_spec.script_obj; //note: don't ref
+  lst_method = method_spec.method;
   inherited::UpdateAfterEdit();
 }
 
 const String MethodCallEl::GenCssBody_impl(int indent_level) {
-  if (!script_obj && !method) return _nilString;
+  if (!method_spec.script_obj && !method_spec.method) return _nilString;
   
   STRING_BUF(rval, 80); // more allocated if needed
-  //TODO: return value
   rval += cssMisc::Indent(indent_level);
-  rval += script_obj->name;
+  if (!result_var.empty())
+    rval += result_var + " = ";
+  rval += method_spec.script_obj->name;
   rval += "->";
-  rval += method->name;
+  rval += method_spec.method->name;
   rval += "(";
-  //TODO: args
+    for (int i = 0; i < args.size; ++ i) {
+      if (i > 0) rval += ", ";
+      rval += args[i];
+    }
   rval += ");\n";
   
   return rval;
+}
+
+void MethodCallEl::CheckUpdateArgs(bool force) {
+  if ((method_spec.method == lst_method) && (!force)) return;
+  args.Reset(); args.labels.Reset();
+  if (!method_spec.method) return;
+  MethodDef* md = method_spec.method; //cache
+  String arg_nm;
+  for (int i = 0; i < md->arg_types.size; ++i) {
+    TypeDef* arg_typ = md->arg_types.FastEl(i);
+    arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[i] ;
+    args.labels.Add(arg_nm);
+    // preseed the arg value with the default
+    args.Add(md->arg_defs.SafeEl(i)); 
+  }
+  args.UpdateAfterEdit(); // note: arrays don't have very good data notify
+  lst_method = method_spec.method;
 }
 
 

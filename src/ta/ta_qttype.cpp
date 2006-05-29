@@ -1155,15 +1155,15 @@ void taiTypePtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
 
 int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MemberDef)))
-    return (taiMember::BidForMember(md,td) + 1);
+    return (inherited::BidForMember(md,td) + 1);
   return 0;
 }
 
-taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-
-  taiMemberDefMenu* rval =
-//was:    new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall, mbr, NULL, host_, par, gui_parent_, flags_);
-    new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall, mbr, NULL, typ, host_, par, gui_parent_, flags_);
+taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_) 
+{
+  taiMemberDefMenu* rval =  new taiMemberDefMenu(taiMenu::buttonmenu, 
+    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -1194,6 +1194,54 @@ void taiMemberDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_di
   *((void**)new_base) = rval->GetValue();
   CmpOrigVal(dat, base, first_diff);
 }
+
+
+//////////////////////////////////////////
+//	taiMethodDefPtrMember		//
+//////////////////////////////////////////
+
+int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MethodDef)))
+    return (inherited::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_) 
+{
+  taiMethodDefMenu* rval =  new taiMethodDefMenu(taiMenu::buttonmenu, 
+    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiMethodDefPtrMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  MethodDef* cur_sel = *((MethodDef**)(new_base));
+  rval->GetImage(base, true, (void*)cur_sel);
+//  rval->GetImage_impl(*((MemberDef**)new_base));
+//  rval->GetImage_impl(base,*((void **)new_base));
+/*
+  taiEditDialog* host_ = taiM->FindEdit(base, typ);
+  if (host_ != NULL) {
+    rval->ta_actions->ResetMenu();
+    MemberSpace* mbs = &(typ->members);
+    for (int i = 0; i < mbs->size; ++i){
+      MemberDef* mbd = mbs->FastEl(i);
+      if (!mbd->ShowMember(host_->show)) continue;
+      rval->ta_actions->AddItem(mbd->name, mbd);
+    }
+  } */
+  GetOrigVal(dat, base);
+}
+
+void taiMethodDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  void* new_base = mbr->GetOff(base);
+  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  *((void**)new_base) = rval->GetValue();
+  CmpOrigVal(dat, base, first_diff);
+}
+
 
 //////////////////////////////
 //	taiFunPtrMember   //
@@ -1971,7 +2019,7 @@ taiData* taiMemberPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QW
   else
     init_md = typ->members.SafeEl(0);*/
   taiMemberDefMenu* rval = new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
-	NULL, typ, typ, host_, par, gui_parent_, flags_);
+	NULL, NULL, typ, host_, par, gui_parent_, flags_);
 //  rval->GetMenu();
   return rval;
 }
@@ -1981,7 +2029,8 @@ void taiMemberPtrArgType::GetImage_impl(taiData* dat, const void* base) {
     return;
   taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
   rval->md = (MemberDef*)*((void**)arg_base);
-  rval->GetMenu(base);
+  rval->menubase = (void*)base; //ok
+  rval->GetMenu();
 /* obs???
   taiEditDialog* host_ = taiM->FindEdit(base, typ);
   if (host_ != NULL) {
@@ -2032,7 +2081,7 @@ taiData* taiMethodPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QW
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);
   taiMethodDefMenu* rval = new taiMethodDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
-	init_md, typ, host_, par, gui_parent_, flags_);
+	init_md, NULL, typ, host_, par, gui_parent_, flags_);
   rval->GetMenu();
   return rval;
 }

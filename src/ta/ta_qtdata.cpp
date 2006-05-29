@@ -2900,29 +2900,83 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
 
 
 //////////////////////////////////
+//   taiMembMethDefMenuBase	//
+//////////////////////////////////
+
+taiMembMethDefMenuBase::taiMembMethDefMenuBase(taiActions::RepType rt, int ft, 
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_)
+: taiData(typ_, host_, par, gui_parent_, flags_)
+{
+  targ_typ = NULL; // gets set later
+  memb_md = memb_md_; 
+  menubase = NULL;
+  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
+}
+
+taiMembMethDefMenuBase::~taiMembMethDefMenuBase() {
+  if (ta_actions != NULL) {
+    delete ta_actions;
+    ta_actions = NULL;
+  }
+}
+
+void taiMembMethDefMenuBase::GetImage(const void* base, bool get_menu, void* cur_sel){
+  menubase = (void*)base; // ok
+//??  if (!typ)  return;
+  if (get_menu)
+    GetMenu();
+  if ((!cur_sel) || (!(ta_actions->GetImageByData(Variant(cur_sel)))))
+    ta_actions->GetImageByIndex(0);
+}
+
+
+QWidget* taiMembMethDefMenuBase::GetRep() {
+  if (ta_actions) return ta_actions->GetRep();
+  else return NULL;
+}
+
+void taiMembMethDefMenuBase::GetTarget() {
+  targ_typ = typ; // may get overridden by comment directives
+  if (!memb_md)  return;
+  // a XxxDef* can have one of three options to specify the
+  // target type for its XxxDef menu.
+  // 1) a TYPE_xxxx in its comment directives
+  // 2) a TYPE_ON_xxx in is comment directives, specifying the name
+  //    of the member in the same object which is a TypeDef*
+  // 3) Nothing, which defaults to the type of the object the memberdef
+  //      is in.
+
+  String mb_nm = memb_md->OptionAfter("TYPE_ON_");
+  if (!mb_nm.empty()) {
+//    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
+    if (menubase != NULL) {
+      void* adr; // discarded
+      MemberDef* tdmd = ((taBase*)menubase)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
+      if (tdmd != NULL)
+        targ_typ = *((TypeDef **) tdmd->GetOff(menubase));
+    }
+    return;
+  } 
+  
+  mb_nm = memb_md->OptionAfter("TYPE_");
+  if (!mb_nm.empty()) {
+    targ_typ = taMisc::types.FindName(mb_nm);
+    return;
+  }
+}
+
+
+//////////////////////////////////
 // 	taiMemberDefMenu	//
 //////////////////////////////////
 
-taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* m, TypeDef* targ_typ_, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
-: taiData(typ_, host_, par, gui_parent_, flags_)
+taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_, 
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_)
+: inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
-  md = m;
-  targ_typ = targ_typ_; // if NULL, will get determined in GetMenu
-  menubase = NULL;
-//  sp =  NULL;
-  String nm;
-  if (md != NULL)
-    nm = md->name;
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
-//  ta_actions->setLabel(nm);
-}
-
-taiMemberDefMenu::~taiMemberDefMenu() {
-  if (ta_actions != NULL)
-    delete ta_actions;
-}
-QWidget* taiMemberDefMenu::GetRep() {
-  return ta_actions->GetRep();
+  md = md_;
 }
 
 MemberDef* taiMemberDefMenu::GetValue() {
@@ -2933,51 +2987,10 @@ MemberDef* taiMemberDefMenu::GetValue() {
     return (MemberDef*)(cur->usr_data.toPtr());
 }
 
-void taiMemberDefMenu::GetImage(const void* base, bool get_menu, void* cur_sel){
-  menubase = (void*)base; // ok
-  if (typ == NULL)  return;
-  if (get_menu)
-    GetMenu(base);
-  if ((cur_sel == NULL) || (!(ta_actions->GetImageByData(Variant(cur_sel)))))
-//Qt3    ta_actions->GetImage(ta_actions->items.SafeEl(0));
-    ta_actions->GetImageByIndex(0);
-}
-
-void taiMemberDefMenu::GetTarget() {
-  if (md == NULL)  return;
-  // a memberdef* can have one of three options to specify the
-  // target type for its memberdefmenu.
-  // 1) a TYPE_xxxx in its comment directives
-  // 2) a TYPE_ON_xxx in is comment directives, specifying the name
-  //    of the member in the same object which is a TypeDef*
-  // 3) Nothing, which defaults to the type of the object the memberdef
-  //      is in.
-
-  String mb_nm = md->OptionAfter("TYPE_ON_");
-  if (mb_nm != "") {
-//    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
-    if (menubase != NULL) {
-      void* adr; // discarded
-      MemberDef* tdmd = ((taBase*)menubase)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
-      if (tdmd != NULL)
-        targ_typ = *((TypeDef **) tdmd->GetOff(menubase));
-    }
-  } else {
-    mb_nm = md->OptionAfter("TYPE_");
-    if (mb_nm != "") {
-      targ_typ = taMisc::types.FindName((char *) mb_nm);
-    } else {
-      targ_typ = typ;
-    }
-  }
-}
-
-void taiMemberDefMenu::GetMenu(const void* base) {
-  menubase = (void*)base; // ok
+void taiMemberDefMenu::GetMenu() {
   ta_actions->Reset();
-  if (targ_typ == NULL) {
-    GetTarget();
-  }
+  //always get target, because it could be dynamic
+  GetTarget();
 
   if (targ_typ == NULL) {
     ta_actions->AddItem("!!!TypeSpace Error!!!");
@@ -3010,75 +3023,21 @@ void taiMemberDefMenu::GetMenu(const void* base) {
 // 	taiMethodDefMenu	//
 //////////////////////////////////
 
-taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* m, TypeDef* typ_, IDataHost* host_, taiData* par,
-    QWidget* gui_parent_, int flags_)
-: taiData(typ_, host_, par, gui_parent_, flags_)
+taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_, 
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_)
+: inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
-  md = m;
-  menubase = NULL;
+  md = md_;
   sp =  NULL;
-  String nm;
-  if (md != NULL)
-    nm = md->name;
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
-  ta_actions->setLabel(nm);
 }
 
-taiMethodDefMenu::~taiMethodDefMenu() {
-  if (ta_actions != NULL)
-    delete ta_actions;
-}
 
-QWidget* taiMethodDefMenu::GetRep() {
-  return ta_actions->GetRep();
-}
-
-void* taiMethodDefMenu::GetValue() {
+MethodDef* taiMethodDefMenu::GetValue() {
   taiAction* cur = ta_actions->curSel();
   if (cur != NULL)
-    return cur->usr_data.toPtr();
+    return (MethodDef*)cur->usr_data.toPtr();
   return NULL;
-}
-
-void taiMethodDefMenu::GetImage(MethodSpace* space, MethodDef* memb) {
-  sp = space;
-  md = memb;
-  typ = NULL;
-  UpdateMenu();
-  ta_actions->GetImageByData(Variant((void*)md));
-}
-
-void taiMethodDefMenu::GetImage(TypeDef* type, MethodDef* memb){
-  md = memb;
-  typ = type;
-  sp = NULL;
-  UpdateMenu();
-  ta_actions->GetImageByData(Variant((void*)md));
-}
-
-void taiMethodDefMenu::GetImage(void* ths, void* sel) {
-  if (menubase != ths) {
-    menubase = ths;
-  }
-
-  String mb_nm = md->OptionAfter("TYPE_ON_");
-  if (mb_nm != "") {
-    void* adr;
-    MemberDef* tdmd = ((taBase*) menubase)->FindMembeR(mb_nm, adr);
-    if(tdmd == NULL) return;
-    typ = *((TypeDef **) tdmd->GetOff(ths));
-  } else {
-    mb_nm = md->OptionAfter("TYPE_");
-    if (mb_nm != "")
-      typ = taMisc::types.FindName((char *) mb_nm);
-    else
-      typ = ((taBase *)ths)->GetTypeDef();
-  }
-  sp =  NULL;
-  UpdateMenu();
-  if (!(ta_actions->GetImageByData(Variant(sel))))
-//Qt3    ta_actions->GetImage(ta_actions->items.SafeEl(0));
-    ta_actions->GetImageByIndex(0);
 }
 
 void taiMethodDefMenu::UpdateMenu(const taiMenuAction* actn) {
@@ -3087,13 +3046,17 @@ void taiMethodDefMenu::UpdateMenu(const taiMenuAction* actn) {
 }
 
 void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
-  if ((typ == NULL) && (sp == NULL)) {
+  ta_actions->Reset();
+  //always get target, because it could be dynamic
+  GetTarget();
+  if (!targ_typ) {
     ta_actions->AddItem("TypeSpace Error");
     return;
   }
   MethodDef* mbd;
   MethodSpace* mbs = sp;
-  if (mbs == NULL) mbs = &typ->methods;
+  if (!mbs) 
+    mbs = &targ_typ->methods;
   for (int i = 0; i < mbs->size; ++i){
     mbd = mbs->FastEl(i);
     ta_actions->AddItem(mbd->GetLabel(),taiMenu::use_default, actn,mbd);

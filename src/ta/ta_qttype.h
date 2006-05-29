@@ -318,6 +318,7 @@ public:
 */
 class TA_API taiTokenPtrMember : public taiMember {
   // for taBase pointer members (allows scoping by owner obj)
+INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -327,8 +328,9 @@ public:
   TAQT_MEMBER_INSTANCE(taiTokenPtrMember, taiMember);
 };
 
-// Special edit menu for the TDefault's token member
 class TA_API taiDefaultToken : public taiTokenPtrMember {
+// Special edit menu for the TDefault's token member
+INHERITED(taiTokenPtrMember)
 public:
   TypeDefault*	tpdflt;
 
@@ -343,6 +345,7 @@ public:
 
 class TA_API taiSubTokenPtrMember : public taiMember {
   // a token ptr that points to sub-objects of current object
+INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -354,29 +357,46 @@ public:
 
 class TA_API taiTypePtrMember : public taiMember {
   // typedef ptrs that have member-comment directives
+INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, const void* base);
    void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTypePtrMember, taiMember);
+protected:
+   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+   void		GetImage_impl(taiData* dat, const void* base);
 };
 
 class TA_API taiMemberDefPtrMember : public taiMember {
   // pointer to a member-def
+INHERITED(taiMember)
 public:
-  TypeDef*	tmbr; // type for the member
   int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiMemberDefPtrMember, taiMember);
+protected:
+   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+   void		GetImage_impl(taiData* dat, const void* base);
+};
+
+class TA_API taiMethodDefPtrMember : public taiMember {
+  // pointer to a MethodDef
+INHERITED(taiMember)
+public:
+  int		BidForMember(MemberDef* md, TypeDef* td);
+  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
+
+  TAQT_MEMBER_INSTANCE(taiMethodDefPtrMember, taiMember);
+protected:
+   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+   void		GetImage_impl(taiData* dat, const void* base);
 };
 
 class TA_API taiFunPtrMember : public taiMember {
   // pointer to a function
+INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
