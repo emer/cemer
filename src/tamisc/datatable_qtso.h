@@ -70,28 +70,18 @@ protected:
 };
 
 
-//////////////////////////
-//  tabDataTableViewType//
-//////////////////////////
-
-class TAMISC_API tabDataTableViewType: public tabGroupViewType {
-#ifndef __MAKETA__
-typedef tabGroupViewType inherited;
-#endif
+class TAMISC_API tabDataTableViewType: public tabOViewType {
+INHERITED(tabOViewType)
 public:
   override int		BidForView(TypeDef*);
   void			Initialize() {}
   void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(tabDataTableViewType, tabGroupViewType) //
+  TA_VIEW_TYPE_FUNS(tabDataTableViewType, tabOViewType) //
 protected:
 //nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-
-//////////////////////////
-//  iDatatableDataPanel //
-//////////////////////////
 
 class TAMISC_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT

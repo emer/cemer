@@ -49,6 +49,7 @@ endif
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	$(TAHEADS_GUI_PRE) \
+	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/tarandom.h \
 	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/aggregate.h \
@@ -63,6 +64,7 @@ TAHEADS =\
 
 HEADS =\
 	tamisc_stdef.h \
+	ta_data.h \
 	tarandom.h \
 	tdgeometry.h \
 	aggregate.h \

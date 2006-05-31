@@ -29,6 +29,155 @@
 #include "tamisc_TA_type.h"
 
 
+class TAMISC_API IDataSourceSink: public virtual ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common interface for DataSink and/or DataSource
+public:
+  virtual int		itemCount() const {return 0;} 
+    // number of items (if indexable)
+  virtual bool		isIndexable() const = 0; 
+    // 'true' if can be accessed by index (can always be accessed sequentially)
+  
+  virtual void		ResetData() = 0; // for supported devices, clears all the data (but not the schema)
+  
+protected: // note: you can make these public if you implement them
+  virtual int		channelCount() const {return 0;}
+    // for combo src/sinks where channels are all the same
+  virtual const String	channelName(int chan) const {return _nilString;}
+    // for combo src/sinks where channels are all the same
+};
+
+
+
+class TAMISC_API IDataSource: public virtual IDataSourceSink { 
+ // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
+public:
+  virtual int		sourceChannelCount() const // number of source channels
+    {return channelCount();}
+  inline bool		sourceChannelInRange(int chan) const
+    {return ((chan >= 0) && (chan < sourceChannelCount()));}
+  virtual const String	sourceChannelName(int chan) const
+    {return channelName(chan);}
+  virtual bool		sourceItemAvailable() const = 0;
+    // true when a valid item is available for reading
+  
+  virtual int		GetSourceChannelIndexByName(const String& ch_nm)
+    {int scc = sourceChannelCount();  for (int i; i < scc; ++i) 
+     if (ch_nm == sourceChannelName(i)) return i;   return -1;}
+    // get the channel number for the name; -1 if none
+  virtual void		ReadInit() = 0;
+    // initializes sequential read iteration
+  virtual bool		ReadNext() = 0;
+    // read next item, 'true' if item available
+  virtual bool		ReadItem(int idx) = 0; 
+    // if indexable, goes to item idx, 'true' if item exists and was read
+  
+  const Variant		GetData(int chan) 
+    {if (sourceItemAvailable() && sourceChannelInRange(chan)) 
+       return GetData_impl(chan);
+     else return _nilVariant;}
+  const Variant		GetDataByChannelName(const String& ch_nm) 
+    {int chan; if (sourceItemAvailable() &&
+     ((chan = GetSourceChannelIndexByName(ch_nm)) >= 0)) 
+       return GetData_impl(chan);
+     else return _nilVariant;}
+ 
+  taMatrix*		GetMatrixData(int chan) 
+    {if (sourceItemAvailable() && sourceChannelInRange(chan))
+       return GetMatrixData_impl(chan);
+     else return NULL;}
+    // get Matrix data; note: you should ref/unref the matrix
+  taMatrix*		GetMatrixDataByChannelName(const String& ch_nm) 
+    {int chan; if (sourceItemAvailable() &&
+     ((chan = GetSourceChannelIndexByName(ch_nm)) >= 0)) 
+       return GetMatrixData_impl(chan);
+     else return NULL;}
+    // get Matrix data; note: you should ref/unref the matrix
+    
+protected:
+  virtual const Variant	GetData_impl(int chan) = 0;
+    // get data at current position
+  virtual taMatrix*	GetMatrixData_impl(int chan) = 0;
+    // get matrix data at current position
+  virtual bool		ReadItem_impl() {return true;} 
+    // read the item at current position
+};
+
+
+
+class TAMISC_API IDataSource_Idx: public virtual IDataSource { 
+ // #VIRT_BASE #NO_INSTANCE #NO_TOKENS partial implementation for an indexable data source
+public:
+  override bool		sourceItemAvailable() const
+    {return ((rd_itr >= 0) && (rd_itr < itemCount()));}
+  
+  override void		ReadInit() {rd_itr = -1;}
+    // initializes sequential read iteration
+  override bool		ReadNext() 
+    {if (rd_itr < -1) return false;  ++rd_itr;
+     if (rd_itr >= itemCount()) {rd_itr = -2; return false;}
+     return ReadItem_impl();} 
+    //  advance itr; read next item, 'true' if item available
+  override bool		ReadItem(int idx) 
+    {if ((idx < 0) || (idx >= itemCount())) return false;
+     rd_itr = idx;  return ReadItem_impl();} 
+    // if indexable, goes to item idx, 'true' if item exists and was read
+  
+protected:
+  int			rd_itr;  // an int iterator for reading
+    // -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
+  void			Initialize() {rd_itr = -2;} //call in constructor
+  void			Copy_(const IDataSource_Idx& cp)
+     {rd_itr = -2;}
+};
+
+/*TODO
+class TAMISC_API IDataSink: public virtual IDataSourceSink  { 
+// #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
+friend class SinkChannel;
+public:
+  virtual int		sinkChannelCount() const // number of sink channels
+    {return channelCount();}
+  inline bool		sinkChannelInRange(int chan) const
+    {return ((chan >= 0) && (chan < sinkChannelCount()));}
+  virtual const String	sinkChannelName(int idx) const
+    {return channelName(chan);}
+  
+  virtual int		GetSinkChannelIndexByName(const String& ch_nm)
+    {int scc = sinkChannelCount();  for (int i; i < scc; ++i) 
+     if (ch_nm == sinkChannelName(i)) return i;   return -1;}
+    // get the channel number for the name; -1 if none
+  virtual void		WriteInit() {wr_itr = -1;} 
+    // initializes write iteration
+  virtual bool		WriteNext()
+    {bool rval = WriteItem(wr_itr); if (rval) BumpItr(rd_itr); return rval;} 
+    // goes to next item, creating a new one if at end; 'true' if item available
+  virtual bool		WriteItem(int idx) {return false;} 
+  // if indexable, goes to item idx, if 1+end, Adds a new item; 'true' if item available
+  virtual void		WriteDone() {} 
+    // call after writing all channels of the item, for impl-dependent commit
+  
+  void			SetData(const Variant& data, int chan) 
+    {if (sinkChannelInRange(chan)) SetData_impl(data, wr_itr, chan);}
+  void			SetDataByChannelName(const Variant& data, const String& ch_nm) 
+    {SetData(data, wr_itr, GetSinkChannelIndexByName(ch_nm));}
+ 
+  void			SetMatrixData(const taMatrix* data, int chan) 
+    {if (sinkChannelInRange(chan)) SetMatrixData_impl(data, rd_itr, chan);}
+    // set the data from a Matrix
+  void			SetMatrixDataByChannelName(const taMatrix* data, const String& ch_nm) 
+    {SetMatrixData(data, GetSinkChannelIndexByName(ch_nm));}
+    // set the data from a Matrix
+protected:
+  int			wr_itr;  // an int iterator for writing
+  virtual bool		AddItem_impl() = 0; // implements the adding of a new item
+  virtual void		SetData_impl(const Variant& data, int idx, int chan) = 0;
+  virtual void		SetMatrixData_impl(const taMatrix* data, int idx, int chan) = 0;
+  virtual bool		ReadItem_impl() {return true;} // read the itr item, itr validated
+};
+
+*/
+
+
+/* OBS
 // forwards this file
 class DataChannel;
 class DataChannel_Group;
@@ -38,13 +187,13 @@ class IDataSink; //
 //class SequenceMaster; 
 
 
-/* DataChannel
+// DataChannel
 
-  A DataChannel is specialized into SourceChannel and SinkChannel.
-  We provide generic implementations here that should generally serve most
-  purposes, but you can override the implementation if you want.
+//  A DataChannel is specialized into SourceChannel and SinkChannel.
+//  We provide generic implementations here that should generally serve most
+//  purposes, but you can override the implementation if you want.
 
-*/
+
 
 class TAMISC_API DataChannel: public taNBase { // #INSTANCE ##NO_TOKENS a source or sink of data
 INHERITED(taNBase)
@@ -164,7 +313,7 @@ public:
     
   ~IDataSink() {} //
 };
-
+*/
 /*nn??
 class TAMISC_API DataBlock: public taNBase, public ISequencable {
  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS generic base for sources, sinks, and filters
@@ -229,7 +378,7 @@ private:
    The Catalog provides the location/path, enumeration, and retrieval functions.
 
 */
-
+/*TODO
 class TAMISC_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
 INHERITED(taNBase)
 public:
@@ -258,7 +407,7 @@ private:
   void			Destroy() {}
 };
 
-
+*/
 //TODO: prob move these to an _extras file
 
 #endif

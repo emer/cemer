@@ -36,6 +36,8 @@ class float_Matrix; //
 
 /* Matrix -- a specialized, richer implementation of Array
 
+   WARNING: taMatrix CANNOT be used 
+
    Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS.
    
    Each concrete class holds one specific type of data, ex. byte or float. 
@@ -109,6 +111,7 @@ public:
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
   explicit MatrixGeom(int init_size);
+  MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
   COPY_FUNS(MatrixGeom, taBase);
   TA_BASEFUNS_LITE(MatrixGeom);
 
@@ -218,6 +221,19 @@ public:
   void			SetGeomN(const MatrixGeom& geom_) 
     {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix set geom for any sized array
   
+  // Slicing -- NOTES: 
+  // 1. outstanding slices make the parent non-extensible
+  // 2. slices are not guaranteed to be unique (i.e. same spec may return same slice ref)
+  // 3a. you *must* ref/unref the slice
+  // 3b. a slice refs its parent; unrefs it on destroy
+  // 4. you may only request "proper slices", i.e., full dimensional subsets
+  
+  virtual taMatrix*	GetSlice_(const MatrixGeom& base, 
+    int slice_frame_dims = -1, int num_slice_frames = 1);
+    // return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
+  virtual taMatrix*	GetFrameSlice_(int frame);
+    // return a slice, of exactly one frame; will have dim-1 of us
+  
   virtual void 		List(ostream& strm=cout) const; 	// List the items
   
   ostream& 		Output(ostream& strm, int indent = 0) const;
@@ -242,7 +258,14 @@ public: // don't use these, internal use only
   virtual void		El_SetFmVar_(void*, const Variant&) 	{ };       // #IGNORE
  
 protected:
+  static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
+   // called after slice created -- static for consistency
+  static void		SliceDestroying(taMatrix* par_slice, const taMatrix* child_slice); 
+   //called by child slice on destroy -- static because it can cause destruction
+  
   int			alloc_size; // -1 means fixed (external data)
+  int			slice_cnt; // number of extant slices -- slices force no reallocs
+  taMatrix*		slice_par; // slice parent -- we ref/unref it
   
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
@@ -279,6 +302,7 @@ protected:
   virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_); // initialize fixed data
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
+    
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
   virtual void		Dump_Save_Item(ostream& strm, int idx); 
     // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
@@ -471,6 +495,9 @@ public:
 */
 
 #define TA_MATRIX_FUNS(y,T) \
+  y* GetSlice(const MatrixGeom& base, int sfd = -1, int nsf = 1) \
+   {return (y*)GetSlice_(base, sfd, nsf);} \
+  y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
   y(int dims_, int d0, int d1=0, int d2=0, int d3=0, int d4=0) \
     {SetGeom(dims_, d0,d1,d2,d3,d4);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \

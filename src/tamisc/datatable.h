@@ -22,6 +22,7 @@
 #include "minmax.h"
 #include "aggregate.h"
 #include "colorscale.h" // for DT && DA Viewspecs
+#include "ta_data.h"
 #include "tamisc_TA_type.h"
 
 #ifdef TA_GUI
@@ -497,6 +498,14 @@ private:
 };
 
 
+class TAMISC_API DataTableCols: public taGroup<DataArray_impl> {
+INHERITED(taGroup<DataArray_impl>)
+public:
+  TA_BASEFUNS(DataTableCols); //
+private:
+  void	Initialize();
+  void	Destroy()		{}
+};
 
 /*
   DataTable Notifications
@@ -513,23 +522,22 @@ private:
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
-class TAMISC_API DataTable : public taGroup<DataArray_impl> {
+class TAMISC_API DataTable : public taNBase, public virtual IDataSource_Idx {
   // #NO_UPDATE_AFTER ##TOKENS table of data
-INHERITED(taGroup<DataArray_impl>)
+INHERITED(taNBase)
 public:
-  int 		rows; // #READ_ONLY #NO_SAVE #SHOW NOTE: this is only valid for top-level DataTable, not its subgroups
+  int 		rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
+  DataTableCols	data; // all the columns and actual data
   
-  int		cols() {return leaves;}
+  int		cols() const {return data.leaves;}
   bool		hasData(int col, int row); // true if data at that cell
   bool		idx(int row_num, int col_size, int& act_idx) const
     {if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
     // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
   bool		RowInRangeNormalize(int& row); // normalizes row (if -ve) and tests result in range 
-  override void	Reset();
-  void		ResetData();
-    // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
+  virtual void	Reset();
   void		RemoveRow(int row_num);
     // #MENU Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
@@ -556,12 +564,13 @@ public:
   void	UpdateAllRanges();
   // update all min-max range data for all float_Data elements in log
 
-  DataArray_impl*	NewCol(DataArray_impl::ValType val_type, const String& col_nm);
-   // #MENU #MENU_ON_Table create new scalar column of data of specified type
+  DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
+    const String& col_nm, DataTableCols* col_gp = NULL);
+   // #MENU #MENU_ON_Table #ARG_C_2 create new scalar column of data of specified type
   DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
-    int dims = 1, int d0 = 0, int d1 = 0, int d2 = 0, int d3 = 0);
+    int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
    // #MENU #MENU_ON_Table create new matrix column of data of specified type, with specified cell geom
-  DataArray_impl*	NewColMatrixGeom(DataArray_impl::ValType val_type, 
+  DataArray_impl*	NewColMatrixN(DataArray_impl::ValType val_type, 
     const String& col_nm,  const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
   float_Data*		NewColFloat(const String& col_nm); 
@@ -570,12 +579,13 @@ public:
     // create new column of integer-level data (= narrow display, actually stored as float)
   String_Data*		NewColString(const String& col_nm); 
     // create new column of string data
-  DataTable*		NewGroupFloat(const String& base_nm, int n); 
-    // create new sub-group of floats of size n, named as base_nm_index
-  DataTable*		NewGroupInt(const String& base_nm, int n); 
-    // create new sub-group of ints of size n, named as base_nm_index
-  DataTable*		NewGroupString(const String& base_nm, int n); 
-    // create new sub-group of strings of size n, named as base_nm_index
+    
+  DataTableCols*		NewGroupFloat(const String& base_nm, int n); 
+    // OBS create new sub-group of floats of size n, named as base_nm_index
+  DataTableCols*		NewGroupInt(const String& base_nm, int n); 
+    // OBS create new sub-group of ints of size n, named as base_nm_index
+  DataTableCols*		NewGroupString(const String& base_nm, int n); 
+    // OBS create new sub-group of strings of size n, named as base_nm_index
 
   DataArray_impl* 	GetColData(int col) const;
     // get col data for given leaf column 
@@ -622,22 +632,48 @@ public:
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
-  void	Initialize();
-  void	Destroy();
+  void	InitLinks();
+  void	CutLinks();
   void 	Copy_(const DataTable& cp);
-  COPY_FUNS(DataTable, taGroup<DataArray_impl>);
+  COPY_FUNS(DataTable, taNBase);
   TA_BASEFUNS(DataTable); //
 
 public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
   virtual void	RowAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
   virtual void	RowAdded(); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowAdding)
 
+public: // ITypedObject i/f
+  override void*	This() {return this;}
+//  virtual TypeDef*	GetTypeDef() const = 0;
+
+public: // IDataSourceSink i/f
+  override int		channelCount() const {return data.leaves;}
+    // for combo src/sinks where channels are all the same
+  override const String	channelName(int chan) const 
+    {DataArray_impl* da = data.Leaf(chan);
+     if (da) return da->name; else return _nilString;}
+  override int		itemCount() const {return rows;} 
+    // number of items (if indexable)
+  override bool		isIndexable() const {return true;} 
+    // 'true' if can be accessed by index (can always be accessed sequentially)
+  override void		ResetData();
+    // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
+protected: // IDataSource_Idx i/f
+  override const Variant GetData_impl(int chan)
+    {return GetValAsVar(rd_itr, chan);}
+  override taMatrix*	GetMatrixData_impl(int chan);
+//  virtual bool		ReadItem_impl() {return true;} 
+
 protected:
 #ifdef TA_GUI
   DataTableModel*	m_dtm; // #IGNORE note: once we create, always exists
 #endif
-  DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, const String& col_nm);
-   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
+  DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
+    const String& col_nm, DataTableCols* col_gp = NULL);
+   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
+private:
+  void	Initialize();
+  void	Destroy();
 };
 
 template<class T> 

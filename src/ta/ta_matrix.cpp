@@ -15,7 +15,7 @@
 
 
 #include "ta_matrix.h"
-
+#include "ta_thread.h"
 
 //////////////////////////
 //  MatrixGeom		//
@@ -26,6 +26,16 @@ MatrixGeom::MatrixGeom(int init_size) {
   EnforceSize(init_size);
 }
   
+MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
+  Initialize();
+  EnforceSize(dims);
+  el[0] = d0;
+  el[1] = d1;
+  el[2] = d2;
+  el[3] = d3;
+  el[4] = d4;
+}
+
 void MatrixGeom::Initialize() {
   size = 0;
 }
@@ -144,17 +154,44 @@ String taMatrix::GeomToString(const MatrixGeom& geom) {
   return rval;
 }
 
+void taMatrix::SliceDestroying(taMatrix* par_slice, const taMatrix* child_slice) {
+  taAtomic::Decrement(par_slice->slice_cnt);
+#ifdef DEBUG 
+  if (par_slice->slice_cnt < 0) {
+    taMisc::Error("taMatrix::SliceDestroying slice_cnt < 0, is: ",
+      String(par_slice->slice_cnt));
+  }
+#endif
+  taBase::UnRef(par_slice);
+}
+
+void taMatrix::SliceInitialize(taMatrix* par_slice, taMatrix* child_slice) {
+  taBase::Ref(par_slice);
+  taAtomic::Increment(par_slice->slice_cnt);
+  child_slice->slice_par = par_slice;
+}
 
 void taMatrix::Initialize()
 {
   size = 0;
   alloc_size = 0;
+  slice_cnt = 0;
+  slice_par = NULL;
 }
  
 void taMatrix::Destroy() {
   size = 0;
   alloc_size = 0;
   CutLinks();
+  if (slice_par) {
+    SliceDestroying(slice_par, this);
+    slice_par = NULL; // helps prevent multi-destroy bugs
+  }
+#ifdef DEBUG 
+  if (slice_cnt != 0) {
+    taMisc::Error("taMatrix being destroyed with slice_cnt=", String(slice_cnt));
+  }
+#endif
 }
   
 void taMatrix::Add_(const void* it) {
@@ -173,6 +210,7 @@ void taMatrix::AddFrames(int n) {
 
 void taMatrix::Alloc_(int new_alloc) {
   Check((alloc_size >= 0), "cannot alloc a fixed data matrix");
+  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
   
 //NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
@@ -190,7 +228,7 @@ void taMatrix::AllocFrames(int n) {
 }
 
 bool taMatrix::canResize() const {
-  return ((alloc_size >= 0));
+  return ((alloc_size >= 0) && (slice_cnt == 0));
 }
 
 
@@ -380,6 +418,65 @@ int taMatrix::frameSize() const {
   return rval;
 }
 
+taMatrix* taMatrix::GetFrameSlice_(int frame) {
+  int dims_m1 = dims() - 1; //cache
+  Check((dims_m1 > 0),
+    "dims must be >1 to GetFrameSlice");
+  int frames_ = frames(); // cache
+  // check frame_base and num_frames in bounds
+  Check(((frame >= 0) && (frame < frames_)),
+    "frame is out of bounds");
+    
+  taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
+  Check((rval), "could not make token of matrix");
+  
+  MatrixGeom slice_geom(dims_m1);
+  for (int i = 0; i < dims_m1; ++i)
+    slice_geom.Set(i, dim(i));
+  int sl_i = BaseIndexOfFrame(frame); //note: must be valid because of prior checks
+  rval->SetFixedData_(FastEl_(sl_i), slice_geom);
+  // we do all the funky ref counting etc. in one place
+  SliceInitialize(this, rval);
+  return rval;
+}
+
+taMatrix* taMatrix::GetSlice_(const MatrixGeom& base, 
+    int slice_frame_dims, int num_slice_frames)
+{
+  Check((num_slice_frames > 0),
+    "num_slice_frames must be >= 1");
+  // (note: we check resulting slice dims in bounds later)
+  if (slice_frame_dims = -1)
+    slice_frame_dims = dims() - 1;
+  // check dim size in bounds
+  Check((slice_frame_dims >= 0) && (slice_frame_dims < (dims() - 1)),
+    "slice_frame_dims must be >= 0 and < parent Matrix");
+  // check start cell in bounds and legal
+  int sl_i = SafeElIndexN(base); // -1 if out of bounds
+  Check((sl_i >= 0),
+    "slice base is out of bounds");
+
+  // create geom of slice, and copy our dims
+  // note that since we are talking in frames, the dims = frames+1
+  MatrixGeom slice_geom(slice_frame_dims + 1); // geometry of the resulting slice
+  for (int i = 0; i < slice_frame_dims; ++i)
+    slice_geom.Set(i, dim(i));
+  slice_geom.Set(slice_frame_dims, num_slice_frames);
+  
+  // easiest to now check for frames in bounds
+  int sl_tot = slice_geom.Product();
+  Check(((sl_i + sl_tot) <= size),
+    "slice end is out of bounds");
+    
+  taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
+  Check((rval), "could not make token of matrix");
+  
+  rval->SetFixedData_(FastEl_(sl_i), slice_geom);
+  // we do all the funky ref counting etc. in one place
+  SliceInitialize(this, rval);
+  return rval;
+}
+
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4) const {
   switch (geom.size) {
   case 0: return false; // not initialized
@@ -413,6 +510,7 @@ bool taMatrix::InRangeN(const MatrixGeom& indices) const {
 }
  
 void taMatrix::RemoveFrame(int n) {
+  Check(canResize(), "matrix is not resizable");
   int frames_ = frames(); // cache
   Check(((n >= 0) && (n < frames_)), "frame number out of bounds");
   // check if we have to copy data

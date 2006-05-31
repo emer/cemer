@@ -1122,8 +1122,6 @@ void DataArray_impl::AddDispOption(const String& opt) {
 
 DataTable* DataArray_impl::dataTable() {
   DataTable* rval = GET_MY_OWNER(DataTable);
-  if (rval) 
-    rval = (DataTable*)rval->root_gp;
   return rval;
 }
 
@@ -1278,11 +1276,20 @@ String ColDescriptor_List::GetColHeading(int col) {
 
 
 //////////////////////////
+//  DataTableCols	//
+//////////////////////////
+
+void DataTableCols::Initialize() {
+  SetBaseType(&TA_DataArray);
+}
+
+
+//////////////////////////
 //	DataTable	//
 //////////////////////////
 
 void DataTable::Initialize() {
-  SetBaseType(&TA_DataArray);	// the impl doesn't inherit properly..
+  IDataSource_Idx::Initialize();
   rows = 0;
   save_data = true;
 #ifdef TA_GUI
@@ -1297,9 +1304,22 @@ void DataTable::Destroy() {
    m_dtm = NULL;
   }
 #endif
+  CutLinks();
+}
+
+void DataTable::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(data, this);
+}
+
+void DataTable::CutLinks() {
+  data.CutLinks();
+  inherited::CutLinks();
 }
 
 void DataTable::Copy_(const DataTable& cp) {
+  IDataSource_Idx::Copy_(cp);
+  data = cp.data;
   rows = cp.rows;
   save_data = cp.save_data;
 }
@@ -1315,7 +1335,7 @@ void DataTable::AddArrayToRow(float_RArray& tar) {
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     if(ar->InheritsFrom(TA_float_Data))
       ((float_RArray*)ar->AR())->Add(tar.FastEl(cnt));
     cnt++;
@@ -1325,11 +1345,11 @@ void DataTable::AddArrayToRow(float_RArray& tar) {
 }
 
 void DataTable::AddBlankRow() {
-  if (leaves == 0) return;
+  if (cols() == 0) return;
   RowAdding();
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     taMatrix* mat = ar->AR();
     if (!mat) continue;
     mat->EnforceFrames(mat->frames() + 1);
@@ -1349,8 +1369,8 @@ void DataTable::AddBlankRow() {
   for (ldi=0; ldi < ld.items.size; ldi++) {
     DataItem* ditem = ld.items.FastEl(ldi);
     if (ld.IsVec(ldi)) {
-      if (this->gp.size > subgp_gpi)
-	subgp = (DataTable*)this->gp[subgp_gpi];
+      if (data.gp.size > subgp_gpi)
+	subgp = (DataTable*)data.gp[subgp_gpi];
       else {
 	return;			// should not happen!
       }
@@ -1383,7 +1403,7 @@ void DataTable::AddBlankRow() {
 void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     float val = 0;
     if(ar->InheritsFrom(TA_float_Data))
       val = ((float_RArray*)ar->AR())->SafeEl(row_num);
@@ -1392,12 +1412,12 @@ void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
 }
 
 void DataTable::AggRowToArray(float_RArray& tar, int row_num, Aggregate& agg) const {
-  if(tar.size < leaves)
-    tar.Insert(0, tar.size, leaves - tar.size);
+  if (tar.size < cols())
+    tar.Insert(0, tar.size, cols() - tar.size);
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     float val = 0;
     if(ar->InheritsFrom(TA_float_Data))
       val = ((float_RArray*)ar->AR())->SafeEl(row_num);
@@ -1411,7 +1431,7 @@ float DataTable::AggRowToVal(int row_num, Aggregate& agg) const {
   agg.Init();
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     float val = 0;
     if(ar->InheritsFrom(TA_float_Data))
       val = ((float_RArray*)ar->AR())->SafeEl(row_num);
@@ -1425,7 +1445,7 @@ void DataTable::AggArrayToRow(const float_RArray& tar, int row_num, Aggregate& a
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     if(ar->InheritsFrom(TA_float_Data)) {
       float_Matrix* far = static_cast<float_Matrix*>(ar->AR());
       if (far->InRange(row_num)) {
@@ -1441,7 +1461,7 @@ void DataTable::AggArrayToRow(const float_RArray& tar, int row_num, Aggregate& a
 void DataTable::AllocRows(int n) {
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     ar->AR()->AllocFrames(n); //noop if already has more alloc'ed
   }
 }
@@ -1451,7 +1471,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
-  if (save_data && IsRoot()) {
+  if (save_data) {
     int i;
     DataArray_impl* col;
     for (i = 0; i < cols(); ++i) {
@@ -1476,8 +1496,8 @@ String DataTable::GetColHeading(int col) {
 
 DataArray_impl* DataTable::GetColData(int col) const {
   DataTable* tbl = NULL;
-  if (col >= leaves) return NULL;
-  else return Leaf(col);
+  if (col >= cols()) return NULL;
+  else return data.Leaf(col);
 }
 
 taMatrix* DataTable::GetColMatrix(int col) const {
@@ -1496,6 +1516,14 @@ QAbstractItemModel* DataTable::GetDataModel() {
   return m_dtm;
 }
 #endif
+
+taMatrix* DataTable::GetMatrixData_impl(int chan) {
+  DataArray_impl* da = GetColData(chan);
+  int i;
+  if (!da || !da->is_matrix ||
+    !idx(rd_itr, da->rows(), i)) return NULL;
+  return da->AR()->GetFrameSlice_(i);
+}
 
 float DataTable::GetValAsFloat(int col, int row) {
   DataArray_impl* da = GetColData(col);
@@ -1535,24 +1563,27 @@ int DataTable::MaxLength() {
   int max = 0;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     max = MAX(max,ar->AR()->size);
   }
   return max;
 } */
 
 int DataTable::MinLength() {
-  if(size == 0) return 0;
+  if (cols() == 0) return 0;
   int min = INT_MAX;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     min = MIN(min,ar->AR()->size);
   }
   return min;
 }
 
-DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const String& col_nm) {
+DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, 
+  const String& col_nm, DataTableCols* col_gp) 
+{
+  if (!col_gp) col_gp = &data;
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
@@ -1560,7 +1591,10 @@ DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, const String
   return rval;
 }
 
-DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const String& col_nm) {
+DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, 
+  const String& col_nm, DataTableCols* col_gp) 
+{
+  if (!col_gp) col_gp = &data;
   TypeDef* td;
   switch (val_type) {
   case DataArray_impl::VT_STRING: td = &TA_String_Data; break;
@@ -1570,7 +1604,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, const S
   case DataArray_impl::VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
-  DataArray_impl* rval = (DataArray_impl*) NewEl(1, td);
+  DataArray_impl* rval = (DataArray_impl*) col_gp->NewEl(1, td);
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {
@@ -1596,8 +1630,22 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
   return (int_Data*)NewCol(DataArray_impl::VT_INT, col_nm);
 }
 
-DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, const String& col_nm,
-    const MatrixGeom& cell_geom) 
+DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
+    int dims, int d0, int d1, int d2, int d3, int d4)
+{
+  MatrixGeom geom(dims, d0, d1, d2, d3, d4);
+  String err_msg;
+  if (!taMatrix::GeomIsValid(geom, &err_msg)) {
+    taMisc::Error("Invalid geom:", err_msg);
+    return NULL;
+  }
+  
+  DataArray_impl* rval = NewColMatrixN(val_type, col_nm, geom);
+  return rval;
+}
+
+DataArray_impl* DataTable::NewColMatrixN(DataArray_impl::ValType val_type, 
+  const String& col_nm, const MatrixGeom& cell_geom) 
 {
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
@@ -1608,63 +1656,45 @@ DataArray_impl* DataTable::NewColMatrixGeom(DataArray_impl::ValType val_type, co
   return rval;
 }
 
-DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
-    int dims, int d0, int d1, int d2, int d3)
-{
-  MatrixGeom geom(dims);
-  if (dims > 0) geom.FastEl(0) = d0; //note: required, but is checked in the validation routine
-  if (dims > 1) geom.FastEl(1) = d1;
-  if (dims > 2) geom.FastEl(2) = d2;
-  if (dims > 3) geom.FastEl(3) = d3;
-  String err_msg;
-  if (!taMatrix::GeomIsValid(geom, &err_msg)) {
-    taMisc::Error("Invalid geom:", err_msg);
-    return NULL;
-  }
-  
-  DataArray_impl* rval = NewColMatrixGeom(val_type, col_nm, geom);
-  return rval;
-}
-
 String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(DataArray_impl::VT_STRING, col_nm);
 }
 
-DataTable* DataTable::NewGroupFloat(const String& col_nm, int n) {
+DataTableCols* DataTable::NewGroupFloat(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
-  DataTable* rval = (DataTable*)NewGp(1);
+  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
   rval->el_typ = &TA_float_Data;
   rval->EnforceSize(n);
   rval->name = col_nm;
   if(n > 0) {
-    float_Data* da = rval->NewColFloat(col_nm);
+    float_Data* da = (float_Data*)NewCol(DataArray_impl::VT_FLOAT, col_nm, rval);
     da->name = String("<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
   }
   int i;
   for(i=1;i<n;i++) {
-    float_Data* da = rval->NewColFloat(col_nm);
+    float_Data* da = (float_Data*)NewCol(DataArray_impl::VT_FLOAT, col_nm, rval);
     da->name = String(col_nm) + "_" + String(i);
   }
   StructUpdate(false);
   return rval;
 }
 
-DataTable* DataTable::NewGroupInt(const String& col_nm, int n) {
+DataTableCols* DataTable::NewGroupInt(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
-  DataTable* rval = (DataTable*)NewGp(1);
+  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
   rval->el_typ = &TA_int_Data;
   rval->EnforceSize(n);
   rval->name = String("|") + col_nm;
   if(n > 0) {
-    int_Data* da = (int_Data*)rval->NewCol(DataArray_impl::VT_INT, col_nm);
+    int_Data* da = (int_Data*)NewCol(DataArray_impl::VT_INT, col_nm, rval);
     da->name = String("|<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
     da->AddDispOption("NARROW");
   }
   int i;
   for(i=1;i<n;i++) {
-    int_Data* da = (int_Data*)rval->NewCol(DataArray_impl::VT_INT, col_nm);
+    int_Data* da = (int_Data*)NewCol(DataArray_impl::VT_INT, col_nm, rval);
     da->name = String("|") + String(col_nm) + "_" + String(i);
     da->AddDispOption("NARROW");
   }
@@ -1672,20 +1702,20 @@ DataTable* DataTable::NewGroupInt(const String& col_nm, int n) {
   return rval;
 }
 
-DataTable* DataTable::NewGroupString(const String& col_nm, int n) {
+DataTableCols* DataTable::NewGroupString(const String& col_nm, int n) {
 //TODO: obs
   StructUpdate(true);
-  DataTable* rval = (DataTable*)NewGp(1);
+  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
   rval->el_typ = &TA_String_Data;
   rval->EnforceSize(n);
   rval->name = String("$") + col_nm;
   if(n > 0) {
-    String_Data* da = rval->NewColString(col_nm);
+    String_Data* da = (String_Data*)NewCol(DataArray_impl::VT_STRING, col_nm, rval);
     da->name = String("$<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
   }
   int i;
   for(i=1;i<n;i++) {
-    String_Data* da = rval->NewColString(col_nm);
+    String_Data* da = (String_Data*)NewCol(DataArray_impl::VT_STRING, col_nm, rval);
     da->name = String("$") + String(col_nm) + "_" + String(i);
   }
   StructUpdate(false);
@@ -1705,7 +1735,7 @@ void DataTable::PutArrayToRow(const float_RArray& tar, int row_num) {
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     if (ar->InheritsFrom(TA_float_Data)) {
       ar->SetValAsFloat(tar.FastEl(cnt), row_num);
     }
@@ -1719,7 +1749,7 @@ void DataTable::RemoveRow(int row) {
   DataUpdate(true);
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     int act_row;
     if (idx(row, ar->AR()->size, act_row))
       ar->AR()->RemoveFrame(act_row);
@@ -1743,7 +1773,7 @@ bool DataTable::RowInRangeNormalize(int& row) {
   DataUpdate(true);
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     int act_num_rows = num_rows - (rows - ar->AR()->size);
     if (act_num_rows > 0)
       ar->AR()->ShiftLeft(act_num_rows);
@@ -1755,7 +1785,7 @@ bool DataTable::RowInRangeNormalize(int& row) {
 
 void DataTable::Reset() {
   StructUpdate(true);
-  inherited::Reset();
+  data.Reset();
   rows = 0;
   StructUpdate(false);
 }
@@ -1764,7 +1794,7 @@ void DataTable::ResetData() {
   DataUpdate(true);
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     ar->AR()->Reset();
   }
   rows = 0;
@@ -1806,7 +1836,7 @@ void DataTable::SaveHeader(ostream& strm) {
   DataArray_impl* da;
   taLeafItr itr;
   String rootnm;
-  FOR_ITR_EL(DataArray_impl, da, this->, itr) {
+  FOR_ITR_EL(DataArray_impl, da, data., itr) {
     if (!da->save_to_file) goto cont1;
     // we must precheck for invalid matrix types
     if (da->cell_size() == 0) goto cont1; // TODO: should probably issue a warning
@@ -1919,7 +1949,7 @@ void DataTable::SetColName(const String& col_nm, int col) {
 void DataTable::SetSaveToFile(bool save_to_file) {
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     ar->save_to_file = save_to_file;
   }
 }
@@ -1959,7 +1989,7 @@ void DataTable::UpdateAllRanges() {
 /*TODO
   taLeafItr i;
   DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, this->, i) {
+  FOR_ITR_EL(DataArray_impl, ar, data., i) {
     if(ar->InheritsFrom(TA_float_Data)) {
       ((float_Matrix*)ar->AR())->UpdateAllRange();
     }
@@ -2391,7 +2421,7 @@ void DA_ViewSpec::UpdateAfterEdit() {
       if(idx >= 0) {
 	DataTable* dt = dtv->data_table;
 	if(dt != NULL) {
-	  DataArray_impl* da = dt->SafeEl(idx);
+	  DataArray_impl* da = dt->data.SafeEl(idx);
 	  if(da != NULL)
 	    taBase::SetPointer((TAPtr*)&data_array, da);
 	}
@@ -2552,8 +2582,8 @@ bool DT_ViewSpec::BuildFromDataTable(DataTable* tdt){
   if(data_table == NULL)
     return false;
 
-  bool same_size = ((size == data_table->size) && (leaves == data_table->leaves)
-    && (gp.size == data_table->gp.size));
+  bool same_size = ((size == data_table->data.size) && (leaves == data_table->cols())
+    && (gp.size == data_table->data.gp.size));
 
   bool same_name = (name == data_table->name);
 
@@ -2569,13 +2599,13 @@ void DT_ViewSpec::ReBuildFromDataTable() {
   // first save the current view information, then try to update based on old info
   DT_ViewSpec* old = (DT_ViewSpec*)Clone();
 
-  int delta = (int)fabs(float(data_table->size - size)); // change in size
+  int delta = (int)fabs(float(data_table->data.size - size)); // change in size
   delta = MAX(delta, 4);	// minimum look-ahead
-  int gp_delta = (int)fabs(float(data_table->gp.size - gp.size)); // change in size
+  int gp_delta = (int)fabs(float(data_table->data.gp.size - gp.size)); // change in size
   gp_delta = MAX(gp_delta, 4);
 
   // ensure number of elements is the same;
-  EnforceSize(data_table->size);
+  EnforceSize(data_table->data.size);
 
   name = data_table->name;	// always get the name
   if(!name.empty() && display_name.empty())
@@ -2584,7 +2614,7 @@ void DT_ViewSpec::ReBuildFromDataTable() {
   int old_i = 0;
   int i;
   for(i=0;i<size;i++) {
-    DataArray_impl* nda =     ((DataArray_impl *) data_table->FastEl(i));
+    DataArray_impl* nda =     ((DataArray_impl *) data_table->data.FastEl(i));
     DA_ViewSpec*    ndavs = (DA_ViewSpec *) FastEl(i);
     ndavs->BuildFromDataArray(nda);
 
@@ -2610,12 +2640,12 @@ void DT_ViewSpec::ReBuildFromDataTable() {
 
   // ensure the groups matchup
   gp.el_base = gp.el_typ = GetTypeDef();
-  gp.EnforceSize(data_table->gp.size);
+  gp.EnforceSize(data_table->data.gp.size);
 
   old_i = 0;
-  for(i=0;i<data_table->gp.size;i++){
+  for(i=0;i<data_table->data.gp.size;i++){
     DT_ViewSpec* nvs = (DT_ViewSpec *) FastGp(i);
-    DataTable* ndt = (DataTable *) data_table->FastGp(i);
+    DataTable* ndt = (DataTable *) data_table->data.FastGp(i);
     nvs->el_base = nvs->el_typ = el_typ;
     if(!nvs->BuildFromDataTable(ndt))
       nvs->ReBuildFromDataTable(); // make sure it is rebuilt!
@@ -2625,7 +2655,7 @@ void DT_ViewSpec::ReBuildFromDataTable() {
       if(oldvs->name == nvs->name) { // simple match, done
 	old_i++;
 	nvs->CopyFrom(oldvs); // get the info from the old guy
-	nvs->EnforceSize(ndt->size); // make sure we don't get bigger from the copy!!
+	nvs->EnforceSize(ndt->data.size); // make sure we don't get bigger from the copy!!
 	continue;
       }
       int j;
@@ -2634,7 +2664,7 @@ void DT_ViewSpec::ReBuildFromDataTable() {
 	if(oldvs->name == nvs->name) { // simple match, done
 	  old_i = j;
 	  nvs->CopyFrom(oldvs); // get the info from the old guy
-	  nvs->EnforceSize(ndt->size); // make sure we don't get bigger from the copy!!!
+	  nvs->EnforceSize(ndt->data.size); // make sure we don't get bigger from the copy!!!
 	  continue;
 	}
       }

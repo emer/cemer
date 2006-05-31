@@ -44,7 +44,7 @@ DataTableModel::~DataTableModel() {
 
 int DataTableModel::columnCount(const QModelIndex& parent) const {
   if (!m_dt) return 0;
-  else       return m_dt->leaves;
+  else       return m_dt->cols();
 }
 
 QVariant DataTableModel::data(const QModelIndex& index, int role) const {
@@ -142,7 +142,7 @@ void DataTableModel::setDataTable(DataTable* value, bool notify) {
 
 bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
   if (!m_dt) return false;
-  return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->leaves));
+  return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->cols()));
 }
 
 

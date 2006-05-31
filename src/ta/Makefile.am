@@ -76,6 +76,7 @@ TAHEADS =\
 	@abs_srcdir@/ios-g++-3.1/fstream.h \
 	@abs_srcdir@/ios-g++-3.1/sstream.h \
 	@abs_srcdir@/ta_def.h \
+	@abs_srcdir@/ta_thread.h \
 	@abs_srcdir@/ta_string.h \
 	@abs_srcdir@/ta_stdef.h \
 	@abs_srcdir@/ta_variant.h \
@@ -95,6 +96,7 @@ TAHEADS =\
 HEADS =\
 	ta_def.h \
 	ta_platform.h \
+	ta_thread.h \
 	ta_string.h \
 	ta_stdef.h \
 	ta_variant.h \
@@ -115,6 +117,7 @@ HEADS =\
 SRCS =\
 	ta_platform.cpp \
 	ta_platform_unix.cpp \
+	ta_thread.cpp \
 	ta_string.cpp \
 	ta_variant.cpp \
 	ifont.cpp \

@@ -543,7 +543,7 @@ void LogView::CopyToTable(taBase* data, taBase* labels, DataTable* dt) { /* TODO
 } 
 
 void LogView::LogUpdateAfterEdit() {
-  if (viewspec && (viewspec->leaves != log()->data.leaves))
+  if (viewspec && (viewspec->leaves != log()->data.cols()))
     NewHead();
   //TODO: following is legacy, and may be obsolete
 //      NotifyAllUpdaters();	// make sure logs are getting it from  us..
@@ -1822,7 +1822,7 @@ void GraphLogView::Render_pre(taDataView* par) {
 }
 
 int GraphLogView::SetXAxis(char* nm) {
-  int dx = log()->data.FindLeaf(nm);
+  int dx = log()->data.data.FindLeaf(nm); //TODO: replace with the portable DataTable i/f
   if(dx >= 0) {
     x_axis_index = dx;
     UpdateAfterEdit();

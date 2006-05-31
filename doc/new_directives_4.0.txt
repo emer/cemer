@@ -11,6 +11,7 @@ OBJECT DIRECTIVES
 #CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
 #NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
 
+
 ENUM DIRECTIVES (note: this is new)
 ---------------
 
@@ -33,7 +34,6 @@ MEMBER DIRECTIVES
 #NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
 #ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from xxx) in the interface;
   should still include a TYPE_xxx directive to anchor type
-
 #EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
 
 
@@ -55,6 +55,9 @@ METHOD DIRECTIVES
 #NO_MENU_CONTEXT -- does not put the item anywhere in a context menu.
 
 #VMENU -- similar to MENU, but specifies a view item (for DataView classes) -- only VMENU items get put in View window menus. (Note: View items should generally not be edited as data items -- they are usually hidden in the browser hierarchy.)
+
+#TYPE_ -- added this; same semantics as for members
+#TYPE_ON_ -- added this; same semantics as for members
 
 
 DEPRECATED DIRECTIVES

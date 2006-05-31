@@ -56,7 +56,7 @@ void PDPLog::Initialize() {
   log_file->mode = taFiler::NO_AUTO;
   log_lines = 0;
 
-  data.el_typ = &TA_float_Data;
+//no: don't force type  data.el_typ = &TA_float_Data;
   data_bufsz = 10000;		// default bufsz is 5000 lines
   data_shift = .20f;		// shift 20 percent
   record_proc_name = false;	// don't by default..
@@ -932,7 +932,7 @@ void PDPLog::Clear() {
 }
 
 void PDPLog::ViewAllData() {
-  if (data.leaves == 0) return;
+  if (data.cols() == 0) return;
   data_range.min = 0;
   data_range.max = data.rows - 1;
 #ifdef TA_GUI

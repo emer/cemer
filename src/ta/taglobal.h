@@ -248,6 +248,7 @@ typedef unsigned __int64    uint64_t;
 #define INHERITED(c)
 #define STATIC_CONST static
 #define USING(b)
+#define volatile
 #else
 #define INHERITED(c) typedef c inherited;
 #define STATIC_CONST static const
@@ -286,8 +287,9 @@ typedef unsigned __int64    uint64_t;
 #define R_OK 04 // Read permission 
 //#define F_OK 06 // Read and write permission 
 
-typedef int pid_t;
+typedef int pid_t; //
 #endif
+
 
 // Memory Management optimizers:
 // when about to malloc/calloc etc. a number of bytes, call tweak_alloc to optimally tweak the
@@ -424,7 +426,7 @@ inline void Assert(bool cond) {if (!(cond)) {int i=0; int k=1/i;}}
 inline void Assert(bool cond, const char* msg) {if (!(cond)) 
   {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
 
-inline void Check(bool cond) {if (!(cond)) throw ta_exception();}
+inline void Check(bool cond) {if (!(cond)) {int i=0; int k=1/i;}}
 inline void Check(bool cond, const char* msg) {if (!(cond))  
   {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
 
