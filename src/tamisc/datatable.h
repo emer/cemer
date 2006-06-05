@@ -522,9 +522,9 @@ private:
     - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
-class TAMISC_API DataTable : public taNBase, public virtual IDataSource_Idx {
+class TAMISC_API DataTable : public DataBlock_Idx {
   // #NO_UPDATE_AFTER ##TOKENS table of data
-INHERITED(taNBase)
+INHERITED(DataBlock_Idx)
 public:
   int 		rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
   bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
@@ -627,7 +627,7 @@ public:
   override String	GetColHeading(int col); // header text for the indicated column
 
 #ifdef TA_GUI
-  QAbstractItemModel*	GetDataModel(); // returns new if none exists, or existing -- enables views to be shared
+  QAbstractItemModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
 #endif
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
@@ -635,30 +635,31 @@ public:
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const DataTable& cp);
-  COPY_FUNS(DataTable, taNBase);
+  COPY_FUNS(DataTable, DataBlock_Idx);
   TA_BASEFUNS(DataTable); //
 
 public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
   virtual void	RowAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
   virtual void	RowAdded(); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowAdding)
 
-public: // ITypedObject i/f
-  override void*	This() {return this;}
-//  virtual TypeDef*	GetTypeDef() const = 0;
-
-public: // IDataSourceSink i/f
-  override int		channelCount() const {return data.leaves;}
-    // for combo src/sinks where channels are all the same
-  override const String	channelName(int chan) const 
+public: // DataBlock i/f and common routines
+  override DBOptions	dbOptions() const {return DB_IND_SEQ_SRC_SNK;} 
+    // options the instance type support
+  override int		itemCount() const {return rows;} 
+protected: // DataBlock i/f and common routines
+  inline int		channelCount() const {return data.leaves;} // #IGNORE
+  inline const String	channelName(int chan) const  // #IGNORE
     {DataArray_impl* da = data.Leaf(chan);
      if (da) return da->name; else return _nilString;}
-  override int		itemCount() const {return rows;} 
-    // number of items (if indexable)
-  override bool		isIndexable() const {return true;} 
-    // 'true' if can be accessed by index (can always be accessed sequentially)
+
+public: // DataSource i/f
+  override int		sourceChannelCount() const {return channelCount();}
+    // for combo src/sinks where channels are all the same
+  override const String	sourceChannelName(int chan) const 
+    {return channelName(chan);}
   override void		ResetData();
     // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
-protected: // IDataSource_Idx i/f
+protected: // DataSource i/f
   override const Variant GetData_impl(int chan)
     {return GetValAsVar(rd_itr, chan);}
   override taMatrix*	GetMatrixData_impl(int chan);
@@ -817,6 +818,7 @@ public:
 class TAMISC_API ClustNode : public taNBase {
   /* ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
      use one with leaves as children as a root node for cluster */
+INHERITED(taNBase)
 public:
   float_RArray*	pat;		// pattern I point to (if leaf)
   int		leaf_idx;	// original leaf index, used for pointing into master distance table
@@ -886,6 +888,7 @@ public:
 
 class TAMISC_API DA_ViewSpec : public taNBase {
   // ##SCOPE_DT_ViewSpec base specification for the display of log data_array (DA)
+INHERITED(taNBase)
 public:
   DataArray_impl*	data_array;	// #READ_ONLY #NO_SAVE the data array
   String		display_name;	// name used in display
@@ -913,9 +916,7 @@ public:
 
 class TAMISC_API DT_ViewSpec :  public taGroup<DA_ViewSpec> {
   // base specification for the display of log data_table (DT)
-#ifndef __MAKETA__
-typedef taGroup<DA_ViewSpec> inherited;
-#endif
+INHERITED(taGroup<DA_ViewSpec>)
 public:
   DataTable*		data_table;	// #READ_ONLY the data table;
   String		display_name;	// name used in display

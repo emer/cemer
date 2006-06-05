@@ -29,34 +29,44 @@
 #include "tamisc_TA_type.h"
 
 
-class TAMISC_API IDataSourceSink: public virtual ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common interface for DataSink and/or DataSource
+class TAMISC_API DataBlock: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS base class for objects that provide and/or accept data
+INHERITED(taNBase)
 public:
+  enum DBOptions { // #BITS datablock options -- they also have individual convenience accessors
+    DB_NONE		= 0,      // #NO_BIT 
+    DB_INDEXABLE	= 0x0001, // items can be access randomly, by index
+    DB_SEQUENCABLE	= 0x0002, // items can be accessed sequentially (note: usually true)
+    DB_SOURCE		= 0x0004, // is a data source (provides data, "read")
+    DB_SINK		= 0x0008 // is a data sink (accepts data, "write")
+#ifndef __MAKETA__
+    ,DB_IND_SEQ_SRC_SNK = 0x000F
+#endif
+  };
+  virtual DBOptions	dbOptions() const = 0; // options the instance type support
+  
+  inline bool		isIndexable() const {return (dbOptions() & DB_INDEXABLE);} 
+    // 'true' if can be accessed by index
+  inline bool		isSequencable() const {return (dbOptions() & DB_SEQUENCABLE);} 
+    // 'true' if can be accessed sequentially
+  inline bool		isSource() const {return (dbOptions() & DB_SOURCE);} 
+    // 'true' if is a data source
+  inline bool		isSink() const {return (dbOptions() & DB_SINK);} 
+    // 'true' if is a data sink
+  
   virtual int		itemCount() const {return 0;} 
     // number of items (if indexable)
-  virtual bool		isIndexable() const = 0; 
-    // 'true' if can be accessed by index (can always be accessed sequentially)
   
   virtual void		ResetData() = 0; // for supported devices, clears all the data (but not the schema)
+  TA_ABSTRACT_BASEFUNS(DataBlock); //
   
-protected: // note: you can make these public if you implement them
-  virtual int		channelCount() const {return 0;}
-    // for combo src/sinks where channels are all the same
-  virtual const String	channelName(int chan) const {return _nilString;}
-    // for combo src/sinks where channels are all the same
-};
-
-
-
-class TAMISC_API IDataSource: public virtual IDataSourceSink { 
- // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
-public:
-  virtual int		sourceChannelCount() const // number of source channels
-    {return channelCount();}
+public: // DataSource i/f
+  virtual int		sourceChannelCount() const {return 0;}
+    // number of source channels
   inline bool		sourceChannelInRange(int chan) const
     {return ((chan >= 0) && (chan < sourceChannelCount()));}
   virtual const String	sourceChannelName(int chan) const
-    {return channelName(chan);}
-  virtual bool		sourceItemAvailable() const = 0;
+    {return _nilString;}
+  virtual bool		sourceItemAvailable() const {return false;}
     // true when a valid item is available for reading
   
   virtual int		GetSourceChannelIndexByName(const String& ch_nm)
@@ -91,21 +101,26 @@ public:
        return GetMatrixData_impl(chan);
      else return NULL;}
     // get Matrix data; note: you should ref/unref the matrix
-    
-protected:
-  virtual const Variant	GetData_impl(int chan) = 0;
+protected: // DataSource i/f
+  virtual const Variant	GetData_impl(int chan) {return _nilVariant;}
     // get data at current position
-  virtual taMatrix*	GetMatrixData_impl(int chan) = 0;
+  virtual taMatrix*	GetMatrixData_impl(int chan) {return NULL;}
     // get matrix data at current position
   virtual bool		ReadItem_impl() {return true;} 
     // read the item at current position
+  
+  
+private:
+  void			Initialize() {}
+  void			Destroy() {}
 };
 
 
 
-class TAMISC_API IDataSource_Idx: public virtual IDataSource { 
- // #VIRT_BASE #NO_INSTANCE #NO_TOKENS partial implementation for an indexable data source
-public:
+
+class TAMISC_API DataBlock_Idx: public DataBlock { 
+ // #VIRT_BASE #NO_INSTANCE partial implementation for an indexable data block
+public: // DataSource i/f
   override bool		sourceItemAvailable() const
     {return ((rd_itr >= 0) && (rd_itr < itemCount()));}
   
@@ -121,12 +136,18 @@ public:
      rd_itr = idx;  return ReadItem_impl();} 
     // if indexable, goes to item idx, 'true' if item exists and was read
   
+  void	Copy_(const DataBlock_Idx& cp)
+     {rd_itr = -2;}
+  COPY_FUNS(DataBlock_Idx, DataBlock)
+  TA_ABSTRACT_BASEFUNS(DataBlock_Idx); //
+  
 protected:
   int			rd_itr;  // an int iterator for reading
     // -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
-  void			Initialize() {rd_itr = -2;} //call in constructor
-  void			Copy_(const IDataSource_Idx& cp)
-     {rd_itr = -2;}
+     
+private:
+  void			Initialize() {rd_itr = -2;}
+  void			Destroy() {}
 };
 
 /*TODO

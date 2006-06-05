@@ -163,13 +163,7 @@ extern TA_API TypeDef TA_Variant;
 
 // externals
 // for gui support
-#ifdef TA_NO_GUI
-class taiType;			// #IGNORE
-class taiEdit;			// #IGNORE
-class taiViewType;		// #IGNORE
-class taiMember;		// #IGNORE
-class taiMethod;		// #IGNORE
-#else
+#ifdef TA_GUI
 class taiDataLink; //
 class taiType; //
 class taiEdit; //
@@ -177,6 +171,7 @@ class taiViewType; //
 class taiMember; //
 class taiMethod; //
 #endif
+
 // for css support
 class cssEl; 			// #IGNORE
 

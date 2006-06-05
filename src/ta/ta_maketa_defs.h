@@ -58,93 +58,93 @@ public:
 };
 
 class QObject {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QAbstractTableModel: public QObject {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 
 class QAction : public QObject {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QActionGroup : public QObject {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QPluginLoader: public QObject {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QByteArray {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class Q3DragObject: public QAction {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 
 class QWidget : public QObject, public QPaintDevice {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class iRenderAreaWrapper: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QDialog: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QButton: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QPushButton: public QButton  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QDockWindow: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QToolBar: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QMainWindow: public QWidget  {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
@@ -171,65 +171,65 @@ public:
 
 template<class T>
 class QList {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QColor {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QIconSet {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QObjectList {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QPaintDevice {
-//#IGNORE
+//  
 public:
 	int dummy2; // #IGNORE
 };
 
 class QPalette {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QPixmap {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QPoint {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
 class QRect {
-//#IGNORE
+//  
 public:
 	int dummy; // #IGNORE
 };
 
-class QSize { //#IGNORE
+class QSize { //  
 public:
 	int dummy; // #IGNORE
 };
 
-class QSizePolicy { //#IGNORE
+class QSizePolicy { //  
 public:
 	int dummy; // #IGNORE
 };

@@ -27,7 +27,7 @@
 // externals
 class SoQtRenderArea; //#IGNORE
 
-class TAIQTSO_API iRenderAreaWrapper: public QWidget {
+class TAIQTSO_API iRenderAreaWrapper: public QWidget { // ##NO_CSS ##NO_INSTANCE ##NO_TOKENS
   Q_OBJECT
 public:
   SoQtRenderArea* 	renderArea(); // autocreated if not assigned

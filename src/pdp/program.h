@@ -388,7 +388,8 @@ class PDP_API Program: public taNBase, public AbstractScriptBase {
   // #VIRT_BASE #HIDDEN #NO_INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
-  ProgVar_List	global_vars; // global variables accessible outside and inside script
+  taBase_List		misc_objs; // sundry objects that are used in this program
+  ProgVar_List		global_vars; // global variables accessible outside and inside script
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed

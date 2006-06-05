@@ -23,7 +23,7 @@
 #include "taglobal.h"
 
 #ifdef TA_GUI
-class QColor; // #IGNORE
+class QColor; // 
 #endif
 
 #ifdef TA_USE_INVENTOR

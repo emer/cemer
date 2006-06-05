@@ -113,9 +113,9 @@ public:
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
 // macro for abstract base classes
-#define TA_ABSTRACT_BASEFUNS(y) y () { Initialize(); } \
-			y (const y& cp) { Initialize(); Copy(cp); } \
-			~y () {Destroy(); } \
+#define TA_ABSTRACT_BASEFUNS(y) y () { Register(); Initialize(); } \
+			y (const y& cp) { Register(); Initialize(); Copy(cp); } \
+			~y () {unRegister(); Destroy(); } \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
 			void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy(*this); } \

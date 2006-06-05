@@ -34,7 +34,7 @@
 #include "ta_string.h"
 
 #ifdef TA_GUI
-class QFont; // #IGNORE
+class QFont; // 
 #endif
 
 #ifdef TA_USE_INVENTOR

@@ -1400,48 +1400,54 @@ public:
   void 	Destroy()		{ };
   TA_BASEFUNS(Network_MGroup); //
 };
-/*TODO
+
 class PDP_API LayerRWBase: public taOBase  {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS auxilliary object to read/write data to/from layers
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS helper object to read/write data to/from layers
 INHERITED(taOBase)
 public:
-  enum GroupRWModel { // default model to use in reading/writing layer that has groups
-    FLAT,	// ignore groups, read/write as if one flat 2-d space of units
-    GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
-    GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
-    CUSTOM  // use this when a non-standard model is used, ex. partial access
-  };
-
-  Layer* 		layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
-  PosTwoDCoord		offset;		// offset in layer or unit group at which to start reading/writing
+  DataBlock*		data_block; // source or sink of the data (as appropriate)
+  Layer* 		layer;	// the Layer that will get read or written
+  PosTwoDCoord		offset;	// offset in layer or unit group at which to start reading/writing
   
-  void 			SetLayer(Layer* lay); // sets or clears layer; calls _impl
-    
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerRWBase& cp); 
   COPY_FUNS(LayerRWBase, taOBase);
   TA_BASEFUNS(LayerRWBase);
   
-protected:
-  virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
 private:
   void	Initialize();
   void 	Destroy();
 };
 
+
+class PDP_API LayerRWBase_List: public taList<LayerRWBase> {
+  // ##TOKENS list of individual LayerWriter objects
+INHERITED(taList<LayerRWBase>)
+public:
+  DataBlock::DBOptions	db_options; // #READ_ONLY #SHOW the type of data block we are interested in
+  
+  virtual void		FillFromDataBlock(DataBlock* db, Network* net);
+    // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
+  virtual void		FillFromTable(DataTable* dt, Network* net);
+    // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+    
+  void	Copy_(const LayerRWBase_List& cp);
+  COPY_FUNS(LayerRWBase_List, taList<LayerRWBase>)
+  TA_BASEFUNS(LayerRWBase_List); //
+
+private:
+  void	Initialize();
+  void 	Destroy() {}
+};
+
 class PDP_API LayerWriter: public LayerRWBase {
-  // object that writes data from a datasource to a layer
+  // object that writes data from a DataSource to a layer
 INHERITED(LayerRWBase)
-public: //
+public: 
   Unit::ExtType	ext_flags;	// how to flag the unit/layer's external input status
   Random	noise;		// noise optionally added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
-  virtual void	ApplyData(const float_Matrix& data);
-  // #IGNORE apply the data to all units (layer must already be set)
-
-  virtual void 	ApplyNames();
-  // #BUTTON set the names of units in the network according to the current value_names
 
   void  InitLinks();
   void	CutLinks();
@@ -1449,18 +1455,26 @@ public: //
   COPY_FUNS(LayerWriter, LayerRWBase);
   TA_BASEFUNS(LayerWriter); //
   
-protected:
-  virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
-  // gets the effective flag values, from ourself, and possibly data and/or context
-  virtual void 		ApplyValue(Unit* u, float val, int act_ext_flags);
-  // assign unit value and ext_flag based on data at given coord, does nothing if out of range
-
 private:
   void	Initialize();
   void 	Destroy();
 };
 
+class PDP_API LayerWriter_List: public LayerRWBase_List {
+  // list of individual LayerWriter objects
+INHERITED(LayerRWBase_List)
+public:
+  LayerWriter*	SafeEl(int idx) const { return (LayerWriter*)SafeEl_(idx); }
+  LayerWriter*	FastEl(int i) const { return (LayerWriter*)el[i]; }
+  
+  TA_BASEFUNS(LayerWriter_List); //
 
+private:
+  void	Initialize();
+  void 	Destroy() {}
+};
+
+/*
 class PDP_API LayerReader: public LayerRWBase {
   // object that reads data from a layer
 INHERITED(LayerRWBase)

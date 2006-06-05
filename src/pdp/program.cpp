@@ -827,6 +827,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //////////////////////////
 
 void Program::Initialize() {
+  misc_objs.SetBaseType(&TA_taOBase);
   m_dirty = true; 
 }
 
@@ -836,16 +837,19 @@ void Program::Destroy()	{
 
 void Program::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(misc_objs, this);
   taBase::Own(global_vars, this);
 }
 
 void Program::CutLinks() {
   global_vars.CutLinks();
+  misc_objs.CutLinks();
   inherited::CutLinks();
 }
 
 
 void Program::Copy_(const Program& cp) {
+  misc_objs = cp.misc_objs;
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
   if (script)

@@ -346,7 +346,7 @@ public:
     SoSeparator* items -- the actual items get rendered
 
 */
-class TAMISC_API iT3ViewspaceWidget: public QWidget { // widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
+class TAMISC_API iT3ViewspaceWidget: public QWidget { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
   Q_OBJECT
 #ifndef __MAKETA__
 typedef QWidget inherited;

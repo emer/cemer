@@ -1289,7 +1289,6 @@ void DataTableCols::Initialize() {
 //////////////////////////
 
 void DataTable::Initialize() {
-  IDataSource_Idx::Initialize();
   rows = 0;
   save_data = true;
 #ifdef TA_GUI
@@ -1318,7 +1317,6 @@ void DataTable::CutLinks() {
 }
 
 void DataTable::Copy_(const DataTable& cp) {
-  IDataSource_Idx::Copy_(cp);
   data = cp.data;
   rows = cp.rows;
   save_data = cp.save_data;
@@ -2030,7 +2028,7 @@ void ClustNode::Initialize() {
 }
 
 void ClustNode::InitLinks() {
-  taNBase::InitLinks();
+  inherited::InitLinks();
   taBase::Own(children, this);
   taBase::Own(nns, this);
 }
@@ -2040,7 +2038,7 @@ void ClustNode::CutLinks() {
   taBase::DelPointer((TAPtr*)&pat);
   children.Reset();
   nns.Reset();
-  taNBase::CutLinks();
+  inherited::CutLinks();
 }
 
 void ClustNode::SetPat(float_RArray* pt) {
@@ -2404,7 +2402,7 @@ void DA_ViewSpec::Initialize(){
 
 void DA_ViewSpec::CutLinks() {
   taBase::DelPointer((TAPtr*)&data_array);
-  taNBase::CutLinks();
+  inherited::CutLinks();
 }
 
 void DA_ViewSpec::Copy_(const DA_ViewSpec& cp) {
@@ -2413,7 +2411,7 @@ void DA_ViewSpec::Copy_(const DA_ViewSpec& cp) {
 }
 
 void DA_ViewSpec::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
+  inherited::UpdateAfterEdit();
   if (data_array == NULL) {
     DT_ViewSpec* dtv = GET_MY_OWNER(DT_ViewSpec);
     if(dtv != NULL) {

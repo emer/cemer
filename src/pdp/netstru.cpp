@@ -6047,14 +6047,14 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 */
 #endif
 
-/*obs
+
 //////////////////////
 //   LayerRWBase    //
 //////////////////////
 
 void LayerRWBase::Initialize() {
+  data_block = NULL;
   layer = NULL;
-  gp_rw_model = FLAT;
 }
 
 void LayerRWBase::Destroy() {
@@ -6062,35 +6062,46 @@ void LayerRWBase::Destroy() {
 }
 
 void LayerRWBase::Copy_(const LayerRWBase& cp) {
-  SetLayer(cp.layer);
+  taBase::SetPointer((TAPtr*)&data_block, cp.data_block);
+  taBase::SetPointer((TAPtr*)&layer, cp.layer);
   offset = cp.offset;
-  gp_rw_model = cp.gp_rw_model;
-  gp_offset = cp.gp_offset;
 }
 
 void LayerRWBase::InitLinks(){
   inherited::InitLinks();
   taBase::Own(offset, this);
-  taBase::Own(gp_offset,this);
 }
 
 void LayerRWBase::CutLinks() {
-  SetLayer(NULL);
-  gp_offset.CutLinks();
   offset.CutLinks();
+  taBase::DelPointer((TAPtr*)&layer);
+  taBase::DelPointer((TAPtr*)&data_block);
   inherited::CutLinks();
 }
 
-void LayerRWBase::SetLayer(Layer* lay) {
-  if (lay == layer) return;
-  SetLayer_impl(lay);
-}
-  
-void LayerRWBase::SetLayer_impl(Layer* lay) {
-  taBase::SetPointer((taBase**)&layer, lay);
+
+//////////////////////////
+//  LayerRWBase_List	//
+//////////////////////////
+
+void LayerRWBase_List::Initialize() {
+  SetBaseType(&TA_LayerRWBase);
+  db_options = DataBlock::DB_NONE; // the subclass must set
 }
 
+void LayerRWBase_List::Copy_(const LayerRWBase_List& cp) {
+  db_options = cp.db_options;
+}
 
+void LayerRWBase_List::FillFromDataBlock(DataBlock* db, Network* net) {
+  if (!db & !net) return;
+  //TODO
+}
+
+void LayerRWBase_List::FillFromTable(DataTable* dt, Network* net) {
+  if (!dt & !net) return;
+  //TODO
+}
 
 //////////////////////
 //   LayerWriter    //
@@ -6114,7 +6125,6 @@ void LayerWriter::InitLinks(){
 }
 
 void LayerWriter::CutLinks() {
-  taBase::DelPointer((TAPtr*)&layer);
   value_names.CutLinks();
   noise.CutLinks();
   inherited::CutLinks();
@@ -6127,13 +6137,17 @@ void LayerWriter::Copy_(const LayerWriter& cp) {
 }
 
 
+//////////////////////////
+//  LayerWriter_List	//
+//////////////////////////
 
-void LayerWriter::GetExtFlags(const float_Matrix& data, int& act_ext_flags) {
-  act_ext_flags = ext_flags;
-  //TODO: look for flag values from environment or data
+void LayerWriter_List::Initialize() {
+  db_options = (DataBlock::DBOptions) (db_options | DataBlock::DB_SOURCE);
+  SetBaseType(&TA_LayerWriter);
 }
 
 
+/*TODO
 //////////////////////
 //   LayerReader    //
 //////////////////////

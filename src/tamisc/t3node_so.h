@@ -204,7 +204,7 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 
 */
 class TAMISC_API T3Node: public SoSeparator {
-// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 

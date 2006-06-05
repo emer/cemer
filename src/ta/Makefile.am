@@ -76,6 +76,7 @@ TAHEADS =\
 	@abs_srcdir@/ios-g++-3.1/fstream.h \
 	@abs_srcdir@/ios-g++-3.1/sstream.h \
 	@abs_srcdir@/ta_def.h \
+	@abs_srcdir@/ta_platform.h \
 	@abs_srcdir@/ta_thread.h \
 	@abs_srcdir@/ta_string.h \
 	@abs_srcdir@/ta_stdef.h \

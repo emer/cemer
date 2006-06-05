@@ -927,6 +927,15 @@ void taiROMember::GetMbrValue(taiData*, void*, bool&) {
 //////////////////////////////////
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+//TEMP
+if (md->name == "data_block") {
+  int i = 0;
+  ++i;
+}
+if (md->name == "layer") {
+  int i = 0;
+  ++i;
+}
   if(td->InheritsFrom(TA_taBase) &&
      (md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase))
     return taiMember::BidForMember(md,td)+1;

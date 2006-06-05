@@ -197,7 +197,7 @@ public:
 				const char* e="", const char* f="", const char* g="", const char* h="",
 				const char* i="", const char* j="", const char* k="", const char* l="");
 public:
-#if (!(defined(WIN32) && (!defined(CYGWIN))))
+#if (!defined(TA_OS_WIN32))
   static void 		fpecatch(int);	// floating point exception handling
   static void 		intrcatch(int);	// interrupt exception handling
 #endif
