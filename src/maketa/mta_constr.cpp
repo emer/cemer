@@ -1149,50 +1149,77 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   if (ths == &TA_intptr_t) {
     strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref 
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
+    return;
   } else if (ths == &TA_uintptr_t) {
     strm << "    if (sizeof(uintptr_t) == sizeof(unsigned int)) " << typ_ref 
       << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
+    return;
   } else
 // long types just get parented and thus aliased to the correct size
   if (ths == &TA_long) {
     strm << "    if (sizeof(long) == sizeof(int)) " << typ_ref 
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
+    return;
   } else if (ths == &TA_unsigned_long) {
     strm << "    if (sizeof(unsigned long) == sizeof(unsigned int)) " << typ_ref 
       << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
+    return;
   }
-  
   if(ths->parents.size == 0)
     return;
 
-  int mx_no = MIN(ths->parents.size, PAR_ARG_COUNT);
   int cnt=0;
   int i;
-  for(i=0; i < mx_no; i++) {
+  // see if there are any parents, and also check for too many for us to handle!
+  for (i=0; i < ths->parents.size; i++) {
     TypeDef* ptd = ths->parents.FastEl(i);
-    if((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-       (mta->spc_builtin.FindName(ptd->name) == NULL)) {
-      mx_no = MIN(ths->parents.size, mx_no+1); 
-/*obs      if(ths->name == "DT_ViewSpec_ptr") {
-	cerr << "skipping!" << endl;
-	  } */
+/*NOTE: following is very gruesome...
+  in short, we don't want to add parent TypeDef's that don't actually exist,
+  BUT, we can have them from earlier files, in which they will be in
+  the spc_pre_parse list -- so we need to generate if in there
+  (earlier version 3.x handled this wrong -- the use cases are fairly
+   infrequent, but critical, typical example is where a base class is defined
+   in an early module, and things like subclasses or pointers to that class
+   only defined in a later module)
+*/
+    if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
+       (mta->spc_builtin.FindName(ptd->name) == NULL) &&
+       (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
+if (mta->verbose > 0) {
+	cerr << "maketa: ("
+	<< (ptd->owner != ths->owner) << ", "
+	<< !ptd->pre_parsed << ", "
+	<< (mta->spc_builtin.FindName(ptd->name) == NULL) 
+	<< ") skipping parent '" << ptd->name << "' for: " << ths->name << endl;
+	if (ptd->owner) cerr << " ptd space: " <<  ptd->owner->name << endl;
+	if (ths->owner) cerr << " ths space: " <<  ths->owner->name << endl;
+}
       continue; // add parents only if on same list. (except if pre-parsed or builtin)
-    }
+    } 
     cnt++;
   }
-  if(cnt == 0)
+  if (cnt == 0)
     return;
+  if (cnt > PAR_ARG_COUNT) {
+    taMisc::Error("AddParents(): parents.size > ", String(PAR_ARG_COUNT), 
+      ", increase number of args to AddParents()", "type name:", ths->name);
+    return;
+  }
 
   strm << "    " << typ_ref;
   if(ths->InheritsFormal(TA_class) && !ths->internal)	strm << "AddClassPar(";
   else					strm << "AddParents(";
   String ths_cnm = ths->Get_C_Name();
-  for(i=0; i < cnt; i++) {
+  cnt = 0;
+  for (i=0; i < ths->parents.size; ++i) {
     TypeDef* ptd = ths->parents.FastEl(i);
-    if((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-       (mta->spc_builtin.FindName(ptd->name) == NULL)) {
+    if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
+       (mta->spc_builtin.FindName(ptd->name) == NULL) &&
+       (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
       continue; // add parents only if on same list. (except if pre-parsed)
-    }
+    } 
+    if (cnt > 0)
+      strm << ", ";
     if((ptd->owner != NULL) && (ptd->owner->owner != NULL))
       strm << "TA_" << ptd->owner->owner->name << ".sub_types.FindName(\"" << ptd->name << "\")";
     else
@@ -1216,15 +1243,9 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
       else
 	strm << ",0";
     }
-    if(i < cnt -1)
-      strm << ", ";
+    ++cnt;
   }
   strm << ");\n";
-
-  if(ths->parents.size > PAR_ARG_COUNT) {
-    taMisc::Error("AddParents(): parents.size > 6, increase number of args to AddParents()",
-		   "type name:", ths->name);
-  }
 }
 
 // this assumes never more than PAR_ARG_COUNT of either
