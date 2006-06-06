@@ -2784,9 +2784,12 @@ int cssMisc::Initialize() {
 #else
   gui = false;
 #endif // TA_GUI
-  int gui_idx, no_gui_idx;
-  cssMisc::HasCmdLineSwitch("-gui", gui_idx); // -1 if none
-  cssMisc::HasCmdLineSwitch("-nogui", no_gui_idx); // -1 if none
+  int gui_idx = 1;
+  int no_gui_idx = 1;
+  if (!cssMisc::HasCmdLineSwitch("-gui", gui_idx))
+    gui_idx = -1; // -1 if none
+  if (!cssMisc::HasCmdLineSwitch("-nogui", no_gui_idx))
+    no_gui_idx = -1; // -1 if none
   if      (gui_idx > no_gui_idx) gui = true;
   else if (gui_idx < no_gui_idx) gui = false;
 

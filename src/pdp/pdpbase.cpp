@@ -138,16 +138,6 @@ taPtrList_impl* pdpMisc::initHookList() {
 // this is the main that should be called..
 
 int pdpMisc::Main(int argc, char *argv[]) {
-//<TEMP>
-  //fix for unparented DT_ViewSpec
-#ifdef TA_GUI
-//NOTE: not showing up in nogui compiles, but that could possibly change if it
-//starts getting referenced
-  if (TA_DT_ViewSpec_ptr.parents.size == 0)
-    TA_DT_ViewSpec_ptr.AddParents(&TA_DT_ViewSpec);
-#endif
-//</TEMP>
-
 /* following creates QApplication and event loop -- these
    must get created first, and are needed even if we don't open a gui
    Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
@@ -159,30 +149,28 @@ int pdpMisc::Main(int argc, char *argv[]) {
   taMisc::DMem_Initialize();
 #endif
 
-  String user_spec_def;
-  for (int ac = 1; ac < argc; ac++) {
-    String tmp = argv[ac];
-    // project is either flagged with a -p flag or the first or second argument
-    if((tmp == "-p") || ((ac <= 2) && tmp.contains(".proj"))) {
-      if(tmp == "-p") {
-	if(argc > ac+1) {
-	  proj_to_load.Add(argv[ac+1]);
-	  ac++;			// skip over it so as to not load 2x
-	}
-      }
-      else
-	proj_to_load.Add(tmp);
-    }
-    if((tmp == "-d") || (tmp == "-def")) {
-      if(argc > ac+1)
-	user_spec_def = argv[ac+1];
+  // check for special case of a project as first arg (no switch needed)
+  String tmp;
+  int idx_start = 1; // default start for searching for switches
+  if (argc >= 2) {
+    String tmp = argv[1];
+    if (tmp.contains(".proj")) {
+      idx_start = 2;
+      proj_to_load.Add(tmp);
     }
   }
+  // check for projects to load
+  int idx = idx_start;
+  while (idx < argc) {
+    if (!cssMisc::CmdLineSwitchValue("-p", idx, tmp)) break;
+    proj_to_load.Add(tmp);
+  }
+  
+  // check for defaults
+  String user_spec_def;
+  idx = idx_start;
+  cssMisc::CmdLineSwitchValue("-d", idx, user_spec_def, true);
 
-/*obs  if (Init_Hook != NULL)
-    (*Init_Hook)();	// call the user's init function (which will call pdp)
-  else
-    ta_Init_pdp();		// always has to be first */
   // initialize type system for us, followed by the various clients, ex. bp, leabra, etc.
   ta_Init_pdp();
 
@@ -286,13 +274,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
   String prognm = argv[0];
 
-  String vers = "-version";
-  for (int i=1; i<=argc; i++) {
-    //if(vers == static_cast<const char*>(argv[i])) {
-    if(vers == argv[i]) {
-	root->Info();
-      break;
-    }
+  if (cssMisc::HasCmdLineSwitch("-version")) {
+    root->Info();
   }
 
   // Initialize plugin system

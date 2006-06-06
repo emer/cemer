@@ -392,9 +392,6 @@ public:
   cssString(const cssString& cp, const char* nm) { Constr(); Copy(cp); name = nm; }
   ~cssString();
 
-  void		deReferenced();
-  // delete any open files when dereferenced
-
   cssCloneFuns(cssString, "");
 
   // converters

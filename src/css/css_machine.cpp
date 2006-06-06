@@ -96,7 +96,7 @@ int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
 cssConsole*	cssMisc::console = NULL;
 
-cssEl 		cssMisc::Void("Void"); 	// the null return value
+cssEl 		cssMisc::Void("Void"); 	
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr
 cssPtr		cssMisc::VoidPtr;		// in theory, points to voidptr
 cssArray	cssMisc::VoidArray;		// just needed for maketoken
@@ -123,31 +123,38 @@ void cssMisc::CodeTop() {
   code_cur_top = NULL;
 }
 
-bool cssMisc::HasCmdLineSwitch(const char* sw_name) {
-  int dummy;
-  return HasCmdLineSwitch(sw_name, dummy);
+bool cssMisc::HasCmdLineSwitch(const String& sw_name, bool starts_with) {
+  int dummy = 1;
+  return HasCmdLineSwitch(sw_name, dummy, starts_with);
 }
 
-bool cssMisc::HasCmdLineSwitch(const char* sw_name, int& index) {
+bool cssMisc::HasCmdLineSwitch(const String& sw_name, int& index,
+  bool starts_with) 
+{
   // looks for the switch value (include the '-' if applicable)
-  index = 1;
-  while (index < argc) {
-    String tmp = argv[index];
-    if (tmp == sw_name)
-      return true;
+  bool rval = false;
+  String tmp;
+  while (!rval && (index < argc)) {
+    tmp = argv[index];
+    if (starts_with)
+      rval = tmp.matches(sw_name); 
+    else rval = (tmp == sw_name);
     ++index;
   }
-  index = -1;
-  return false;
+  return rval;
 }
 
-bool cssMisc::CmdLineSwitchValue(const char* sw_name, String& sw_value) {
-   // looks for the switch value, and returns following
-  int index;
-  bool rval = HasCmdLineSwitch(sw_name, index);
-  sw_value = "";
-  if (rval && (argc > index + 1))
-    sw_value = argv[index + 1];
+bool cssMisc::CmdLineSwitchValue(const String& sw_name, int& index, 
+  String& sw_value, bool starts_with) 
+{
+  bool rval = HasCmdLineSwitch(sw_name, index, starts_with); //note: index advanced
+  if (rval) {
+    if (index < argc) {
+      sw_value = argv[index++];
+    } else {
+      sw_value = "";
+    }
+  }
   return rval;
 }
 
@@ -378,29 +385,68 @@ const int cssElFun::ArgMax = 64;
 
 //String cssEl::no_string;
 
-void cssEl::Done(cssEl* it) { 
 #ifdef DEBUG
-  if (it->refn < 0) {
-    cerr << "**WARNING** cssEl::Done: it->refn < 0 (is: " << it->refn
-      << ") -- **not deleted again**\n";
-    return;
-  } 
-#endif
-  if (it->refn <= 0) 
-    delete it; 
-  else 
-    it->deReferenced(); 
+void print_cssEl(cssEl* it, bool addr_only = false) {
+  if (it) {
+    String tmp;
+    tmp = QString::number((intptr_t)it, 16); // only platform-independent way 
+    cerr << "cssEl{" << tmp << "} ";
+    if (!addr_only) {
+      tmp = it->GetName();
+      if (!tmp.empty()) cerr << tmp << " ";
+      cerr << it->GetTypeName(); //note: is already in parens
+    }
+    cerr << " refn=" << it->refn;
+  } else {
+    cerr << "cssEl{NULL}";
+  }
 }
 
-void cssEl::unRef(cssEl* it) { 
-#ifdef DEBUG
-  if (it->refn <= 0) {
-    cerr << "**WARNING** cssEl::unRef: it->refn <= 0 (is: " << it->refn
-      << ")\n";
+void cssEl::Done(cssEl* it) {
+  if (it->refn < 0) {
+    cerr << "**WARNING** ";
+    print_cssEl(it, true);
+    cerr << "::Done(): it->refn < 0  -- **MAY BE MULTI-DELETED**\n";
+  } 
+  else if (cssMisc::init_debug > 1) {
+    print_cssEl(it);
+    cerr << "::Done()\n";
   }
-#endif
-  it->refn--;
+  //note: legacy compatibility for <= 0 in case some use cases do unRefs ???
+  if (it->refn <= 0) 
+    delete it; 
 }
+
+void cssEl::unRef(cssEl* it) {
+  --(it->refn);
+  if (it->refn < 0) {
+    cerr << "**WARNING** ";
+    print_cssEl(it, true);
+    cerr << "::unRef(): it->refn < 0\n";
+  }
+  else if (cssMisc::init_debug > 1) {
+    print_cssEl(it);
+    cerr << "::unRef()\n";
+  }
+}
+
+void cssEl::unRefDone(cssEl* it) {
+  --(it->refn);
+  if (it->refn < 0) {
+    cerr << "**WARNING** ";
+    print_cssEl(it, true);
+    cerr << "::unRefDone: it->refn <= 0 -- **MAY BE MULTI-DELETED**\n";
+  }
+  else if (cssMisc::init_debug > 1) {
+    print_cssEl(it);
+    cerr << "::unRefDone()\n";
+  }
+
+  if (it->refn <= 0) 
+    delete it; 
+}
+
+#endif //DEBUG
 
 cssEl::~cssEl() {
   if(addr != NULL)

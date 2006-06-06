@@ -97,13 +97,6 @@ cssEl* cssString::GetScoped(const char* memb) const {
   return GetScoped_impl(TA_taString, (void*)&val, memb);
 }
 
-// delete any open files at this point
-void cssString::deReferenced() {
-  if(gf != NULL)
-    taRefN::unRefDone(gf);
-  gf = NULL;
-}
-
 cssString::operator ostream*() const {
   cssString* ths = (cssString*)this;
   if(ths->gf == NULL) {

@@ -176,9 +176,10 @@ public:
 //  static void 		Initialize(int argc, const char** argv);
   static int 		Initialize();
   // this is called to install builtin funcs, setup system, etc.; returns 0 if ok
-  static bool		HasCmdLineSwitch(const char* sw_name); // looks for the switch value (include the '-' if applicable) --
-  static bool		HasCmdLineSwitch(const char* sw_name, int& index); // looks for the switch value (include the '-' if applicable)
-  static bool		CmdLineSwitchValue(const char* sw_name, String& sw_value); // looks for the switch value, and returns following string
+  static bool		HasCmdLineSwitch(const String& sw_name, bool starts_with = false); // looks for the switch value (include the '-' if applicable)
+  static bool		HasCmdLineSwitch(const String& sw_name, int& index, bool starts_with = false); // looks for the switch value (include the '-' if applicable) starting from index; index advanced
+  static bool		CmdLineSwitchValue(const String& sw_name, int& index, 
+    String& sw_value, bool starts_with = false); // looks for the switch value from index and returns following string; advances index
   static String	    	Indent(int indent_level); // generally 2 spaces per level
   static bool		IsNameValid(const String& nm); // validates a css name
   static cssProgSpace*	SetCurTop(cssProgSpace* pspc)
@@ -282,13 +283,6 @@ public:
 
 class CSS_API cssEl {
 public:
-  int		refn;		// number of times referred to
-//obs  static String no_string;	// when no string val is avail
-// todo: tmp_str should be mutable, can get rid of all those stupid casts..
- mutable String tmp_str;	// string used by parsing system
-//obs  String 	tmp_str;	// temporary string when a char* cast is needed
-  cssElPtr*	addr;		// address of this item (if other than 'this')
-public:
   enum cssTypes {
     T_Void,			// No Type
     T_Int,			// Integer
@@ -332,8 +326,36 @@ public:
     NoArg  = -2 	// #IGNORE no args at all
   };
 
+  int		refn;		// number of times referred to
+// todo: tmp_str should be mutable, can get rid of all those const casts..
+  mutable String tmp_str;	// string used by parsing system
+//obs  String 	tmp_str;	// temporary string when a char* cast is needed
+  cssElPtr*	addr;		// address of this item (if other than 'this')
   String 	name;
   cssProg*	prog;		// cur program (filled in each time)
+
+  // all static just for consistency.. (inline below when not DEBUG compile)
+  static void  		Ref(cssEl* it);
+  static void	   	unRef(cssEl* it); // reduces count, but doesn't delete
+  static void		Done(cssEl*); // deletes if refn<=0 
+  static void		unRefDone(cssEl* it); 
+
+public:
+  // routines for reference pointers
+  static void		SetRefPointer(cssEl** ptr, cssEl* it)
+  { if (*ptr == it) return;  if (*ptr != &cssMisc::Void) cssEl::unRefDone(*ptr);
+    *ptr = it;  if (it && (it != &cssMisc::Void)) cssEl::Ref(it); }
+    // can be safely used with cssEl subtype variables of any kind
+  static void		DelRefPointer(cssEl** ptr)
+  { if (*ptr && (*ptr != &cssMisc::Void)) cssEl::unRefDone(*ptr); *ptr = &cssMisc::Void; }
+    // can only be used with cssEl* variables
+
+  // and reference ElPtr's
+  static void		SetRefElPtr(cssElPtr& ptr, const cssElPtr& it)
+  { if(ptr.El() != &cssMisc::Void)  cssEl::unRefDone(ptr.El());
+    ptr = it; if(ptr.El() != &cssMisc::Void)  cssEl::Ref(ptr.El()); }
+  static void		DelRefElPtr(cssElPtr& ptr)
+  { if(ptr.El() != &cssMisc::Void)  cssEl::unRefDone(ptr.El()); ptr.Reset(); }
 
   virtual uint		GetSize() const     	{ return sizeof(*this); }
   virtual const char* 	GetName() const    	{ return (const char*)name; }
@@ -404,32 +426,7 @@ public:
   virtual cssEl*	MakeToken_stub(int, cssEl**) 	{ return &cssMisc::Void; }
 
   virtual cssEl::RunStat 	MakeToken(cssProg* prg);
-  virtual cssEl::RunStat 	MakeTempToken(cssProg* prg);
-
-  // all static just for consistency..
-  static void   	Done(cssEl* it);
-  static void  		Ref(cssEl* it)		{ it->refn++; }
-  static void   	unRef(cssEl* it);
-  static void		unRefDone(cssEl* it)	{ unRef(it); Done(it); }
-
-  // routines for reference pointers
-  static void		SetRefPointer(cssEl** ptr, cssEl* it)
-  { if (*ptr == it) return;  if (*ptr != &cssMisc::Void) cssEl::unRefDone(*ptr);
-    *ptr = it;  if (it && (it != &cssMisc::Void)) cssEl::Ref(it); }
-    // can be safely used with cssEl subtype variables of any kind
-  static void		DelRefPointer(cssEl** ptr)
-  { if (*ptr && (*ptr != &cssMisc::Void)) cssEl::unRefDone(*ptr); *ptr = &cssMisc::Void; }
-    // can only be used with cssEl* variables
-
-  // and reference ElPtr's
-  static void		SetRefElPtr(cssElPtr& ptr, const cssElPtr& it)
-  { if(ptr.El() != &cssMisc::Void)  cssEl::unRefDone(ptr.El());
-    ptr = it; if(ptr.El() != &cssMisc::Void)  cssEl::Ref(ptr.El()); }
-  static void		DelRefElPtr(cssElPtr& ptr)
-  { if(ptr.El() != &cssMisc::Void)  cssEl::unRefDone(ptr.El()); ptr.Reset(); }
-
-  virtual void		deReferenced()		{ };
-  // this is a hook for when obj is de-referenced but not actually done
+  virtual cssEl::RunStat 	MakeTempToken(cssProg* prg); //
 
   void NopErr(const char* opr="") const
   { cssMisc::Error(prog, "Operation:", opr, "not defined for type:", GetTypeName()); }
@@ -599,6 +596,12 @@ protected:
     MemberDef* md = NULL) const; // helper for getting members and array elements
 };
 
+inline void cssEl::Ref(cssEl* it) { ++(it->refn); }
+#ifndef DEBUG
+inline void cssEl::unRef(cssEl* it) { --(it->refn); }
+inline void cssEl::unRefDone(cssEl* it) { if (--(it->refn) <= 0) delete it;}
+inline void cssEl::Done(cssEl* it) { if (it->refn <= 0) delete it;}
+#endif
 
 class CSS_API cssSpace {
   // a name space of some sort, can be a stack, or a list
