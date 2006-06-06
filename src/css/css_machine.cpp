@@ -435,14 +435,15 @@ void cssEl::unRefDone(cssEl* it) {
   if (it->refn < 0) {
     cerr << "**WARNING** ";
     print_cssEl(it, true);
-    cerr << "::unRefDone: it->refn <= 0 -- **MAY BE MULTI-DELETED**\n";
+    cerr << "::unRefDone: it->refn <= 0 -- **WILL NOT BE MULTI-DELETED**\n";
+    return;
   }
   else if (cssMisc::init_debug > 1) {
     print_cssEl(it);
     cerr << "::unRefDone()\n";
   }
 
-  if (it->refn <= 0) 
+  if (it->refn < 0) 
     delete it; 
 }
 
