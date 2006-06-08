@@ -71,9 +71,8 @@ Variant::Variant(VarType type) {
   m_type = type;
 }
 
-Variant::Variant(const Variant &cp)
-  :m_type(cp.m_type), m_is_null(cp.m_is_null)
-{
+Variant::Variant(const Variant &cp) {
+  init(cp.m_type, cp.m_is_numeric, cp.m_is_numeric_valid, cp.m_is_null);
   switch (cp.m_type) {
   case T_String: new(&d.str)String(cp.getString()); break;
 #ifndef NO_TA_BASE
@@ -86,8 +85,8 @@ Variant::Variant(const Variant &cp)
 
 #ifndef NO_TA_BASE
 Variant::Variant(taBase* val) 
-:m_type(T_Base)
 {
+  init(T_Base);
   if (val == NULL) {
     m_is_null = true;
     d.tab = NULL;
@@ -99,8 +98,8 @@ Variant::Variant(taBase* val)
 }
 
 Variant::Variant(taMatrix* val) 
-:m_type(T_Matrix)
 {
+  init(T_Matrix);
   if (val == NULL) {
     m_is_null = true;
     d.tab = NULL;
@@ -2032,9 +2031,15 @@ taMatrix* Variant::toMatrix() const {
 
 #ifdef TA_USE_QT
 Variant::Variant(const QVariant &val) {
-  m_type = T_Invalid; // should have a valid type, so possible call to releaseType() won't fail;
+  init();
   setQVariant(val);
 }
+
+Variant::Variant(const QString& val) {
+  init();
+  setCString(val.toLatin1());
+}
+
 
 void Variant::setQVariant(const QVariant& cp) {
   switch (cp.userType()) {

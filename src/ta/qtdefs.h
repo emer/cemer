@@ -23,6 +23,7 @@
 // #IGNORE Qt Core defines -- always included
 #ifdef TA_USE_QT
 class	QBitArray;		// #IGNORE 
+class	QDir;			// #IGNORE
 class	QEvent;			// #IGNORE 
 template<class T> class	QList;	// #IGNORE 
 class	QObject;		// #IGNORE 

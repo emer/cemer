@@ -49,30 +49,32 @@ endif
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	$(TAHEADS_GUI_PRE) \
-	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/tarandom.h \
 	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/aggregate.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
+	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/datatable.h \
 	@abs_srcdir@/datagraph.h \
 	@abs_srcdir@/fun_lookup.h \
+	@abs_srcdir@/ta_data_extras.h \
 	$(TAHEADS_GUI) \
 	@abs_srcdir@/tamisc_maketa_defs.h \
 	@abs_srcdir@/tamisc_stdef.h
 
 HEADS =\
 	tamisc_stdef.h \
-	ta_data.h \
 	tarandom.h \
 	tdgeometry.h \
 	aggregate.h \
 	minmax.h \
 	colorscale.h \
+	ta_data.h \
 	datatable.h \
 	datagraph.h \
 	fun_lookup.h \
+	ta_data_extras.h \
 	$(HEADS_GUI)
 
 SRCS =\
@@ -81,9 +83,11 @@ SRCS =\
 	aggregate.cpp \
 	minmax.cpp \
 	colorscale.cpp \
+	ta_data.cpp \
 	datatable.cpp \
 	datagraph.cpp \
 	fun_lookup.cpp \
+	ta_data_extras.cpp \
 	$(SRCS_GUI) \
 	tamisc_ti.cpp
 

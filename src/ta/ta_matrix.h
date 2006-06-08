@@ -199,6 +199,22 @@ public:
   const Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_(idx)); } 
     // treats the matrix like a flat array, returns the element as a variant
     
+  // universal numeric access -- primarily to make numeric ops efficient
+  float			FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+    const {return El_GetFloat_(FastEl_(FastElIndex(d0, d1, d2, d3, d4))); }
+  float			FastElAsFloatN(const MatrixGeom& indices) const	
+    {return El_GetFloat_(FastEl_(FastElIndexN(indices))); }   
+  float			FastElAsFloat_Flat(int idx) const 
+    {return El_GetFloat_(FastEl_(idx)); } 
+  float			SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+    const {return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+    // (safely) returns the element as a variant
+  float			SafeElAsFloatN(const MatrixGeom& indices) const	
+    {return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
+    // (safely) returns the element as a variant
+  float			SafeElAsFloat_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_(idx)); else return 0.0f; } 
+    
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
     {return true;}
     // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
@@ -252,10 +268,11 @@ public: // don't use these, internal use only
   virtual const void*	SafeEl_(int i) const 
     {if ((i > 0) && (i < size)) return FastEl_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
   // every subclass should implement these:
-  virtual const String	El_GetStr_(const void*) const		{ return _nilString; } // #IGNORE
-  virtual void		El_SetFmStr_(void*, const String&) 	{ };       // #IGNORE
-  virtual const Variant	El_GetVar_(const void*) const		{ return _nilVariant; } // #IGNORE
-  virtual void		El_SetFmVar_(void*, const Variant&) 	{ };       // #IGNORE
+  virtual float		El_GetFloat_(const void*) const	{ return 0.0f; } // #IGNORE
+  virtual const String	El_GetStr_(const void*) const	{ return _nilString; } // #IGNORE
+  virtual void		El_SetFmStr_(void*, const String&) { }; // #IGNORE
+  virtual const Variant	El_GetVar_(const void*) const	{ return _nilVariant; } // #IGNORE
+  virtual void		El_SetFmVar_(void*, const Variant&) { };  // #IGNORE
  
 protected:
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
@@ -515,6 +532,8 @@ public:
   TA_MATRIX_FUNS(String_Matrix, String)
   
 public:
+  override float	El_GetFloat_(const void* it) const	
+    { return ((String*)it)->toFloat(); } // #IGNORE
   override const String	El_GetStr_(const void* it) const {return *((String*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((String*)it) = str;}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
@@ -546,6 +565,7 @@ public:
   TA_MATRIX_FUNS(float_Matrix, float)
   
 public:
+  override float	El_GetFloat_(const void* it) const { return *((float*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
@@ -573,6 +593,7 @@ public:
   TA_MATRIX_FUNS(int_Matrix, int)
   
 public:
+  override float	El_GetFloat_(const void* it) const { return (float)*((int*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
   override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
@@ -600,6 +621,7 @@ public:
   
 public: //
   //note: for streaming, we convert to hex, rather than char
+  override float	El_GetFloat_(const void* it) const { return (float)*((byte*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
@@ -625,6 +647,7 @@ public:
 public:
   //NOTE: setString may not be exactly what is wanted -- that will change variant to String
   // what we may want is to set the current value as its type, from a string
+  override float	El_GetFloat_(const void* it) const { return ((Variant*)it)->toFloat(); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); } // #IGNORE
   override void		El_SetFmStr_(void* it, const String& str) {((Variant*)it)->setString(str);}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return *((Variant*)it);} // #IGNORE

@@ -17,6 +17,7 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
+#include "css_c_ptr_types.h"
 #include "ta_css.h"
 
 #ifdef TA_GUI
@@ -731,7 +732,7 @@ void ProgramCallEl::Initialize() {
 }
 
 void ProgramCallEl::InitLinks() {
-  static String _def_user_script("cerr << \"Program Call failed--Stopping\\n\";\nthis->StopScript();\n");
+  static String _def_user_script("cerr << \"Program Call failed--Stopping\\n\";\nret_val = Program::RV_PROG_CALL_FAILED;\nthis->StopScript();\n");
   inherited::InitLinks();
   taBase::Own(global_args, this);
   taBase::Own(fail_el, this);
@@ -775,7 +776,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
   STRING_BUF(rval, 250);
   rval += cssMisc::Indent(indent_level);
-  rval += "Bool call_succeeded = false;\n";
+  rval += "Int call_result = Program::RV_COMPILE_ERR;\n";
   rval += cssMisc::Indent(indent_level);
   rval += "Program target = ";
   rval += target->GetPath();
@@ -800,12 +801,12 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   }
   
   rval += cssMisc::Indent(indent_level);
-  rval += "call_succeeded = target->Run();\n";
+  rval += "call_result = target->Run();\n";
   --indent_level;
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
   rval += cssMisc::Indent(indent_level);
-  rval += "if (!call_succeeded) {\n";
+  rval += "if (call_result != 0) {\n";
   rval += fail_el.GenCss(indent_level + 1);
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
@@ -827,7 +828,9 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //////////////////////////
 
 void Program::Initialize() {
-  misc_objs.SetBaseType(&TA_taOBase);
+  prog_objs.SetBaseType(&TA_taOBase);
+  ret_val = 0;
+  init_done = false;
   m_dirty = true; 
 }
 
@@ -837,19 +840,28 @@ void Program::Destroy()	{
 
 void Program::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(misc_objs, this);
+  taBase::Own(prog_objs, this);
   taBase::Own(global_vars, this);
+  taBase::Own(init_els, this);
+  taBase::Own(prog_els, this);
 }
 
 void Program::CutLinks() {
+  prog_els.CutLinks();
+  init_els.CutLinks();
   global_vars.CutLinks();
-  misc_objs.CutLinks();
+  prog_objs.CutLinks();
   inherited::CutLinks();
 }
 
 
 void Program::Copy_(const Program& cp) {
-  misc_objs = cp.misc_objs;
+  prog_objs = cp.prog_objs;
+  global_vars = cp.global_vars; //TODO: prob should do fixups for refs to prog_objs
+  init_els = cp.init_els;
+  prog_els = cp.prog_els;
+  ret_val = 0; // redo
+  init_done = false;
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
   if (script)
@@ -871,18 +883,30 @@ void Program::PreCompileScript_impl() {
   UpdateProgVars();
 }
 
-bool Program::Run() {
+int Program::Run() {
+  ret_val = RV_OK; 
   if (!script_compiled) {
-    if (!CompileScript())
-      return false; // deferred or error
+    if (!CompileScript()) {
+      ret_val = RV_COMPILE_ERR; 
+      return ret_val; // deferred or error
+    }
   }
-  return RunScript();
+  bool ran_ok = RunScript();
+  if (ran_ok) { //still need to check for init etc.
+    if (!init_done)
+      ret_val = RV_INIT_ERR;
+  } else {
+    ret_val = RV_RUNTIME_ERR;
+  }
+  return ret_val;
 }
 
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   m_dirty = false;
   script_compiled = true;
+  init_done = false;
+  ret_val = 0;
   DataChanged(DCR_ITEM_UPDATED);
 }
 
@@ -902,18 +926,64 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
   return true;
 }
 
+const String Program::scriptString() {
+  if (m_dirty) {
+    m_scriptCache = "// ";
+    m_scriptCache += GetName();
+    m_scriptCache += "\n\n/* globals added to hardvars:\n";
+    m_scriptCache += "Int ret_val;\n";
+    m_scriptCache += "bool init_done;\n";
+    m_scriptCache += global_vars.GenCss(0);
+    m_scriptCache += "*/\n\n";
+    
+    if (init_els.size > 0) {
+      m_scriptCache += "void function Init() {\n";
+      m_scriptCache += init_els.GenCss(1);
+      m_scriptCache += "  init_done = true;\n";
+      m_scriptCache += "}\n\n";
+    } else {
+    }
+    
+    m_scriptCache += "ret_val = Program::RV_OK;\n";
+    if (init_els.size > 0) {
+      m_scriptCache += "if (!init_done) {\n";
+      m_scriptCache += "  Init();\n";
+      m_scriptCache += "}\n\n";
+      m_scriptCache += "if ((!init_done) || (ret_val != Program::RV_OK)) {\n";
+      m_scriptCache += "  return;\n";
+      m_scriptCache += "}\n\n";
+    } else {
+      m_scriptCache += "init_done = true;\n";
+    }
+    
+    m_scriptCache += prog_els.GenCss(0);
+    m_scriptCache += "\n";
+    m_dirty = false;
+  }
+  return m_scriptCache;
+}
+
+
 void  Program::UpdateProgVars() {
   //NOTE: if we have to nuke any or change any types then we have to recompile!
   // but currently, we only do this before recompiling anyway, so no worries!
 // easiest is just to nuke and recreate...
   // nuke existing
   script->prog_vars.Reset(); // removes/unref-deletes
-    
+  
+  // add the ones in the object -- note, we use *pointers* to these
+  cssEl* el = new cssCPtr_int(&ret_val, 1, "ret_val");
+  script->prog_vars.Push(el); //refs
+  el = new cssCPtr_bool(&init_done, 1, "init_done");
+  script->prog_vars.Push(el); //refs
+  el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
+  script->prog_vars.Push(el); //refs
+  
   // add new
   for (int i = 0; i < global_vars.size; ++i) {
     ProgVar* sv = global_vars.FastEl(i);
     if (sv->ignore) continue;
-    cssEl* el = sv->NewCssEl();
+    el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
 /*old  int i = 0;
@@ -944,13 +1014,15 @@ void  Program::UpdateProgVars() {
 void Program::RunGui() {
   //TODO: need to put up a progress/cancel dialog
   // TODO: actually need to provide a global strategy for running!!!!!
-  bool ran = Run();
-  if (ran) 
+  int rval = Run();
+  if (rval == 0) 
     QMessageBox::information(NULL, QString("Operation Succeeded"),
       QString("The Program finished"), QMessageBox::Ok);
   else 
     QMessageBox::warning(NULL, QString("Operation Failed"),
-      QString("The Program did not run -- check that there is script source, and that there were no compile errors"), QMessageBox::Ok, QMessageBox::NoButton);
+      String(
+      "The Program did not run -- ret_val=").cat(String(rval)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
  ; 
   
 }
@@ -958,6 +1030,13 @@ void Program::RunGui() {
 void Program::ViewScript() {
   ViewScript_impl();
 }
+
+void Program::ViewScript_impl() {
+  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
+  dlg->setText(scriptString());
+  dlg->exec();
+}
+
 #endif  // TA_GUI
 
 
@@ -968,99 +1047,4 @@ void Program::ViewScript() {
 void Program_MGroup::Initialize() {
   SetBaseType(&TA_Program);
 }
-
-
-
-//////////////////////////
-//  ProgElProgram	//
-//////////////////////////
-
-void ProgElProgram::Initialize() {
-}
-
-void ProgElProgram::Destroy()	{ 
-  CutLinks();
-}
-
-void ProgElProgram::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(prog_els, this);
-}
-
-void ProgElProgram::CutLinks() {
-  prog_els.CutLinks();
-  inherited::CutLinks();
-}
-
-void ProgElProgram::Copy_(const ProgElProgram& cp) {
-  prog_els = cp.prog_els;
-}
-
-void ProgElProgram::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
-const String ProgElProgram::scriptString() {
-  if (m_dirty) {
-    m_scriptCache = "// ";
-    m_scriptCache += GetName();
-    m_scriptCache += "\n\n/* globals added to hardvars:\n";
-    m_scriptCache += global_vars.GenCss(0);
-    m_scriptCache += "*/\n\n";
-    
-    m_scriptCache += prog_els.GenCss(0);
-    m_scriptCache += "\n";
-    m_dirty = false;
-  }
-  return m_scriptCache;
-}
-
-#ifdef TA_GUI
-void ProgElProgram::ViewScript_impl() {
-  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
-  dlg->setText(scriptString());
-  dlg->exec();
-}
-#endif // TA_GUI
-
-//////////////////////////
-//  FileProgram	//
-//////////////////////////
-
-void FileProgram::Initialize() {
-  script_file = taFiler_CreateInstance(".","*.css",false);
-  script_file->compress = false;	// don't compress
-  script_file->mode = taFiler::NO_AUTO;
-  taRefN::Ref(script_file);
-}
-
-
-void FileProgram::Destroy() { 
-  if (script_file) {
-    taRefN::unRefDone(script_file);
-    script_file = NULL;
-  }
-}
-
-void FileProgram::Copy_(const FileProgram& cp) {
-  if (script_file && cp.script_file)
-    *script_file = *(cp.script_file);
-}
-
-const String FileProgram::scriptFilename() {
-  return script_file->fname;
-}
-
-AbstractScriptBase::ScriptSource FileProgram::scriptSource() {
-  if (script_file->fname.empty())
-    return NoScript;
-  else
-    return ScriptFile;
-}
-
-#ifdef TA_GUI
-void FileProgram::ViewScript_impl() {
-  //TODO: edit in editor
-}
-#endif // TA_GUI
 

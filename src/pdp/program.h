@@ -385,16 +385,31 @@ private:
 
 
 class PDP_API Program: public taNBase, public AbstractScriptBase {
-  // #VIRT_BASE #HIDDEN #NO_INSTANCE a program, with global vars and its own program run space
+  // #TOKENS #INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
-  taBase_List		misc_objs; // sundry objects that are used in this program
+  enum ReturnVals { // system defined return values (>0 are for user defined)
+    RV_OK		= 0, // program finished successfully
+    RV_COMPILE_ERR	= -1, // script couldn't be compiled
+    RV_INIT_ERR		= -2, // initialization failed (note: user prog may use its own value)
+    RV_RUNTIME_ERR	= -3, // misc runtime error (ex, null pointer ref, etc.)
+    RV_PROG_CALL_FAILED	= -4 // a program call failed (probably an error in that program)
+  };
+  
+  int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, -ve=sys-defined err, +ve=user-defined err
+  taBase_List		prog_objs; // sundry objects that are used in this program
   ProgVar_List		global_vars; // global variables accessible outside and inside script
+  bool			init_done; // #HIDDEN #IV_READ_ONLY #NO_SAVE 'true' when init done; also accessible inside program
+  ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
+  ProgEl_List		prog_els; // the prog els for the main program
+  
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
+  override ScriptSource	scriptSource() {return ScriptString;}
+  override const String	scriptString();
   
-  virtual bool		Run(); // run the program
+  virtual int		Run(); // run the program, 0=success
   virtual bool		SetGlobalVar(const String& nm, const Variant& value);
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
 
@@ -411,7 +426,7 @@ public: // XxxGui versions provide feedback to the user
   void	CutLinks();
   void	Copy_(const Program& cp);
   COPY_FUNS(Program, taNBase);
-  TA_ABSTRACT_BASEFUNS(Program);
+  TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f
   override TypeDef*	GetThisTypeDef() const {return GetTypeDef();}
@@ -428,7 +443,7 @@ protected:
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
-  virtual void		ViewScript_impl() = 0;
+  virtual void		ViewScript_impl();
 #endif
 
 private:
@@ -447,46 +462,5 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-class PDP_API ProgElProgram: public Program {
-  // a program based on ProgEls, with global vars and its own program run space
-INHERITED(Program)
-public:
-  ProgEl_List		prog_els;
-  
-  override ScriptSource	scriptSource() {return ScriptString;}
-  override const String	scriptString();
-    
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const ProgElProgram& cp);
-  COPY_FUNS(ProgElProgram, Program);
-  TA_BASEFUNS(ProgElProgram);
-protected:
-  override void		ViewScript_impl();
-
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-class PDP_API FileProgram: public Program {
-  // a program defined in a file, with global vars and its own program run space
-INHERITED(Program)
-public:
-  taFiler*	script_file;		// file to use for the script
-  
-  override ScriptSource	scriptSource();
-  override const String	scriptFilename();
-    
-  void	Copy_(const FileProgram& cp);
-  COPY_FUNS(FileProgram, Program);
-  TA_BASEFUNS(FileProgram);
-protected:
-  override void		ViewScript_impl();
-private:
-  void	Initialize();
-  void	Destroy();
-};
 
 #endif

@@ -56,8 +56,12 @@ public:
   virtual int		itemCount() const {return 0;} 
     // number of items (if indexable)
   
-  virtual void		ResetData() = 0; // for supported devices, clears all the data (but not the schema)
+  virtual void		ResetData() {} // for supported devices, clears all the data (but not the schema)
   TA_ABSTRACT_BASEFUNS(DataBlock); //
+  
+public: // Properties i/f
+  virtual void		SetProperty(const String& name, const Variant& value) {}
+  virtual const Variant GetProperty(const String& name) const {return _nilVariant;}
   
 public: // DataSource i/f
   virtual int		sourceChannelCount() const {return 0;}
@@ -73,11 +77,17 @@ public: // DataSource i/f
     {int scc = sourceChannelCount();  for (int i; i < scc; ++i) 
      if (ch_nm == sourceChannelName(i)) return i;   return -1;}
     // get the channel number for the name; -1 if none
-  virtual void		ReadInit() = 0;
-    // initializes sequential read iteration
-  virtual bool		ReadNext() = 0;
-    // read next item, 'true' if item available
-  virtual bool		ReadItem(int idx) = 0; 
+    
+  bool			ReadOpen() {bool ok = true; ReadOpen_impl(ok); 
+    return ok;}
+    // opens the block for read operation -- must be called after changing params
+  void			ReadClose() {ReadClose_impl();}
+    // closes the block for read operation -- call when done
+  bool			ReadFirst() {ReadItrInit(); return ReadNext();}
+    // (re-)initializes sequential read iteration, reads first item
+  virtual bool		ReadNext() {return false;}
+    // if sequencable, read next item, 'true' if item available
+  virtual bool		ReadItem(int idx) {return false;} 
     // if indexable, goes to item idx, 'true' if item exists and was read
   
   const Variant		GetData(int chan) 
@@ -106,8 +116,10 @@ protected: // DataSource i/f
     // get data at current position
   virtual taMatrix*	GetMatrixData_impl(int chan) {return NULL;}
     // get matrix data at current position
-  virtual bool		ReadItem_impl() {return true;} 
-    // read the item at current position
+  virtual void		ReadItrInit() {}
+  virtual void		ReadOpen_impl(bool& ok) {} // extend
+  virtual void		ReadClose_impl() {} // extend
+  virtual bool		ReadItem_impl() {return true;} // replace
   
   
 private:
@@ -124,8 +136,6 @@ public: // DataSource i/f
   override bool		sourceItemAvailable() const
     {return ((rd_itr >= 0) && (rd_itr < itemCount()));}
   
-  override void		ReadInit() {rd_itr = -1;}
-    // initializes sequential read iteration
   override bool		ReadNext() 
     {if (rd_itr < -1) return false;  ++rd_itr;
      if (rd_itr >= itemCount()) {rd_itr = -2; return false;}
@@ -145,6 +155,8 @@ protected:
   int			rd_itr;  // an int iterator for reading
     // -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
      
+  override void		ReadItrInit() {rd_itr = -1;}
+    // initializes sequential read iteration
 private:
   void			Initialize() {rd_itr = -2;}
   void			Destroy() {}
@@ -198,172 +210,6 @@ protected:
 */
 
 
-/* OBS
-// forwards this file
-class DataChannel;
-class DataChannel_Group;
-class ISequencable;
-class IDataSource;
-class IDataSink; //
-//class SequenceMaster; 
-
-
-// DataChannel
-
-//  A DataChannel is specialized into SourceChannel and SinkChannel.
-//  We provide generic implementations here that should generally serve most
-//  purposes, but you can override the implementation if you want.
-
-
-
-class TAMISC_API DataChannel: public taNBase { // #INSTANCE ##NO_TOKENS a source or sink of data
-INHERITED(taNBase)
-public:
-  bool			active; // #DEF_true set on (default) to enable data to flow through this channel
-  int_Array		geom; // #SAVE #HIDDEN
-  TypeDef*		matrix_type; // #NO_NULL #TYPE_taMatrix_impl type of matrix, ex float_Matrix, int_Matrix, etc., note: def is float
-  taMatrix*	cached_data() const {return m_cached_data;}  
-  virtual int		dims() {return geom.size;}
-  int			size(); // number of els in all dims, 0 if any are 0
-     // number of dimensions of data; N=0 for sink is "any"
-  virtual int		GetGeom(int dim) {return geom.SafeEl(dim);}// geom for dimension
-  void			SetGeom(int d0); // set 1-d geom
-  void			SetGeom2(int d0, int d1); // set 2-d geom
-  void			SetGeom3(int d0, int d1, int d2); // set 3-d geom
-  void			SetGeom4(int d0, int d1, int d2, int d3); // set 4-d geom
-  virtual void		SetGeomN(const int_Array& value); // set any geom
-
-  virtual void		ClearCachedData(); // clears any cached data
-  virtual bool		SetCachedData(taMatrix* data); // validates, sets if valid, true if set
-  virtual bool		ValidateData(taMatrix* data); // validates, based on expected geom and type
-  
-  void			InitLinks();
-  void			CutLinks();
-  void			Copy_(const DataChannel& cp);
-  COPY_FUNS(DataChannel, taNBase);
-  TA_BASEFUNS(DataChannel); //
-  
-protected:
-  taMatrixPtr	m_cached_data; // #NO_SAVE most recent data set/get for this channel
-  
-private:
-  void			Initialize();
-  void			Destroy();
-};
-
-
-class TAMISC_API DataChannel_Group: public taGroup<DataChannel> { // groups of channels
-INHERITED(taGroup<DataChannel>)
-public:
-  virtual void		ClearCachedData(); // clear cached data of all channels
-  
-  override void		CutLinks(); // clear cached data as early as possible, to avoid issues
-  TA_BASEFUNS(DataChannel_Group); //
-  
-private:
-  void			Initialize() {}
-  void			Destroy() {CutLinks();}
-};
-
-
-class TAMISC_API ISequencable { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS interface exposed by entities that can be sequenced, particularly DataSources;\n only one instance of this interface is allowed per data block
-public:
-  virtual int		num_items() {return -1;} // N<0 if items unknown, or cannot be accessed randomly
-  virtual bool		is_indexable() {return false;} // 'true' if can be accessed by index
-  virtual bool		is_sequential() {return false;} // 'true' if can be accessed sequentially
-  
-  virtual void		InitData() {} // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
-  virtual void		ResetData() {InitData();} // if defined, clears existing data (impl should also call InitData)
-  virtual bool		NextItem()  {return false;} // for seq access, goes to the next item, 'true' if there was a next item
-  virtual void		GoToItem(int index) {} // for indexed access, goes to the item 
-  
-  virtual ~ISequencable() {};
-};
-
-
-class TAMISC_API IDataSourceSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common interface for DataSink and/or DataSource
-public:
-  virtual int		itemCount() const {return -1;} // N<0 if items unknown, or cannot be accessed randomly
-  virtual bool		isIndexable() const {return false;} // 'true' if can be accessed by index
-  virtual bool		isSequential() const {return false;} // 'true' if can be accessed sequentially
-  
-  virtual ~IDataSourceSink() {};
-};
-
-
-
-class TAMISC_API IDataSource: public virtual IDataSourceSink { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a source of data
-friend class SourceChannel;
-public:
-  virtual int		sourceChannelCount() const = 0; // number of source channels
-  virtual DataChannel* 	sourceChannel(int idx) const = 0; // get a source channel
-  
-  virtual void		ReadInit() {} // if sequencable, initializes read iteration
-  virtual bool		ReadNext() {return false;} // if sequencable, goes to next item, 'true' if item available
-  virtual bool		ReadItem(int idx) {return false;} // if indexable, goes to item N, 'true' if item exists
-  
-  virtual bool		GetData(taMatrixPtr& data, int chan = 0) // get a single channel's data
-    {if ((chan >= 0) && (chan < sourceChannelCount())) {
-       data = sourceChannel(chan)->cached_data(); return true;
-     } else return false;}
-  virtual bool		GetDataMulti(MatrixPtr_Array& data) 
-    {for (int i = 0; i < data.size; ++i) if (!GetData(data.FastEl(i), i)) return false; return true;}
-    // get all channels of data
-    
-  ~IDataSource() {} //
-};
-
-class TAMISC_API IDataSink: public virtual IDataSourceSink  { // #VIRT_BASE #NO_INSTANCE #NO_TOKENS represents a consumer of data
-friend class SinkChannel;
-public:
-  virtual int		sinkChannelCount() const = 0; // number of sink channels
-  virtual DataChannel* 	sinkChannel(int idx) const = 0; // get a sink channel
-  
-  virtual void		WriteInit() {} // if sequencable, initializes write iteration
-  virtual bool		WriteNext() {return false;} // if sequencable, goes to next item, 'true' if item available
-  virtual bool		WriteItem(int idx) {return false;} // if indexable, goes to item N, 'true' if item exists
-  virtual void		WriteDone() {} // call after writing all channels of the item, for impl-dependent commit
-  
-  virtual bool		SetData(taMatrixPtr& data, int chan = 0) // set a single channel's data
-    {if ((chan >= 0) && (chan < sinkChannelCount()))
-       return sinkChannel(chan)->SetCachedData(data);
-     else return false;}
-  virtual bool		SetDataMulti(MatrixPtr_Array& data) 
-    {for (int i = 0; i < data.size; ++i) if (!SetData(data.FastEl(i), i)) return false; return true;}
-    // set all channels of data
-    
-  ~IDataSink() {} //
-};
-*/
-/*nn??
-class TAMISC_API DataBlock: public taNBase, public ISequencable {
- // #VIRT_BASE #NO_INSTANCE #NO_TOKENS generic base for sources, sinks, and filters
-INHERITED(taNBase)
-public:
-  DataChannel_Group	channels;
-
-  virtual void		ClearCachedData(); // clears all cached data in channels
-  
-  TA_ABSTRACT_BASEFUNS(DataChannel); //
-  
-public: // ISequencable i/f DO NOT OVERRIDE THESE AGAIN, use the _impl functions if needed
-  virtual int		num_items() {return -1;} // N<0 if items unknown, or cannot be accessed randomly
-  virtual bool		is_indexable() {return false;} // 'true' if can be accessed by index
-  virtual bool		is_sequential() {return false;} // 'true' if can be accessed sequentially
-  
-  virtual void		InitData() {} // initializes data system (ex. clears cache, sets state to 0, enumerates count, etc.)
-  virtual void		ResetData() {} // if defined, clears existing data (impl should also call InitData)
-  virtual bool		NextItem()  {return false;} // for seq access, goes to the next item, 'true' if there was a next item
-  virtual void		GoToItem(int index) {} // for indexed access, goes to the item 
-
-protected:
-  int			m_cur_item; // for pseudo-sequential access
-
-private:
-  void 		Initialize();
-  void		Destroy();
-}; */
-
 /* prob NN
 class TAMISC_API SequenceMaster { // #NO_INSTANCE singleton class
 public:
@@ -399,7 +245,7 @@ private:
    The Catalog provides the location/path, enumeration, and retrieval functions.
 
 */
-/*TODO
+/*
 class TAMISC_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
 INHERITED(taNBase)
 public:
@@ -412,23 +258,7 @@ private:
   void			Initialize() {}
   void			Destroy() {}
 };
-
-
-class TAMISC_API DirectoryCatalog: public DataCatalog {// #INSTANCE a DirectoryCatalog provides a collection of data items, described by a DataCatalogItemSpec
-INHERITED(DataCatalog)
-public:
-  String		directory; // path to the directory where the files are
-  
-  override bool		OpenData(); // opens the data source, returns true if successful
-  override void		CloseData(); // closes the data source
-  
-  TA_BASEFUNS(DirectoryCatalog)
-private:
-  void			Initialize() {}
-  void			Destroy() {}
-};
-
 */
-//TODO: prob move these to an _extras file
+
 
 #endif

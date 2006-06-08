@@ -312,6 +312,9 @@ public:
   Variant& 	operator=(const QVariant& val) {setQVariant(val); return *this;}
   QVariant 	toQVariant() const;
   operator QVariant() const {return toQVariant();}
+  Variant(const QString& val);
+  Variant&	operator = (const QString& y) {setCString(y.toLatin1()); return *this;}
+  operator QString() const {return QString(toString().chars());}
 #endif 
 
   Variant(); // default is null/invalid
@@ -365,12 +368,16 @@ protected:
       taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
   } d;
-  uint m_type : 29;
-  mutable uint m_is_numeric : 1; // true when we've tested string for numeric
-  mutable uint m_is_numeric_valid : 1; // set when we've set is_numeric; clear on set of str
-  uint m_is_null : 1;
+  int m_type : 29;
+  mutable int m_is_numeric : 1; // true when we've tested string for numeric
+  mutable int m_is_numeric_valid : 1; // set when we've set is_numeric; clear on set of str
+  int m_is_null : 1;
 #endif
 
+  inline void		init(int type_ = T_Invalid, bool is_numeric_ = 0, 
+    bool is_numeric_valid_ = 0, bool is_null_ = 1) 
+    { m_type = type_; m_is_numeric = is_numeric_; 
+    m_is_numeric_valid = is_numeric_valid_;  m_is_null = is_null_;}
   void			releaseType(); // #IGNORE handles undoing of specials
   //note: following ops don't affect m_is_null -- context must determine that
   
@@ -387,7 +394,8 @@ protected:
 // empty invalid variant
 #define _nilVariant Variant()
 
-inline Variant::Variant():m_type(T_Invalid), m_is_null(true) { d.i64 = 0; } // default is null/invalid
+inline Variant::Variant():m_type(T_Invalid), m_is_numeric(false), m_is_null(true) 
+  { d.i64 = 0; } // default is null/invalid
 inline Variant::Variant(bool val):m_type(T_Bool), m_is_null(false) {d.b = val;}
 inline Variant::Variant(byte val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(int val):m_type(T_Int), m_is_null(false) {d.i = val;}
