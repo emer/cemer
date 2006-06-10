@@ -37,7 +37,8 @@ public:
     DB_INDEXABLE	= 0x0001, // items can be access randomly, by index
     DB_SEQUENCABLE	= 0x0002, // items can be accessed sequentially (note: usually true)
     DB_SOURCE		= 0x0004, // is a data source (provides data, "read")
-    DB_SINK		= 0x0008 // is a data sink (accepts data, "write")
+    DB_SINK		= 0x0008, // is a data sink (accepts data, "write")
+    DB_SINK_GROWABLE	= 0x0010  // a sink that can be extended (via AddItem)
 #ifndef __MAKETA__
     ,DB_IND_SEQ_SRC_SNK = 0x000F
 #endif
@@ -52,6 +53,8 @@ public:
     // 'true' if is a data source
   inline bool		isSink() const {return (dbOptions() & DB_SINK);} 
     // 'true' if is a data sink
+  inline bool		isSinkGrowable() const {return (dbOptions() & DB_SINK_GROWABLE);} 
+    // 'true' if sink is growable (via AddItem)
   
   virtual int		itemCount() const {return 0;} 
     // number of items (if indexable)
@@ -74,7 +77,7 @@ public: // DataSource i/f
     // true when a valid item is available for reading
   
   virtual int		GetSourceChannelIndexByName(const String& ch_nm)
-    {int scc = sourceChannelCount();  for (int i; i < scc; ++i) 
+    {int scc = sourceChannelCount();  for (int i = 0; i < scc; ++i) 
      if (ch_nm == sourceChannelName(i)) return i;   return -1;}
     // get the channel number for the name; -1 if none
     
@@ -121,6 +124,62 @@ protected: // DataSource i/f
   virtual void		ReadClose_impl() {} // extend
   virtual bool		ReadItem_impl() {return true;} // replace
   
+public: // DataSink i/f
+  virtual int		sinkChannelCount() const {return 0;}
+   // number of sink channels
+  inline bool		sinkChannelInRange(int chan) const
+    {return ((chan >= 0) && (chan < sinkChannelCount()));}
+  virtual const String	sinkChannelName(int chan) const {return _nilString;}
+  virtual bool		sinkItemAvailable() const {return false;}
+    // true when a valid item is available for writing
+  
+  virtual int		GetSinkChannelIndexByName(const String& ch_nm)
+    {int scc = sinkChannelCount();  for (int i = 0; i < scc; ++i) 
+     if (ch_nm == sinkChannelName(i)) return i;   return -1;}
+    // get the channel number for the name; -1 if none
+  bool			WriteOpen() {bool ok = true; WriteOpen_impl(ok); 
+    return ok;}
+    // opens the block for write operation -- must be called after changing params
+  void			WriteClose() {WriteClose_impl();}
+    // closes the block for write operation -- call when done
+  bool			WriteFirst() {WriteItrInit(); return WriteNext();}
+    // (re-)initializes sequential write iteration, prepares first item for write
+  virtual bool		WriteNext() {return false;} 
+    // goes to next item, creating a new one if at end; 'true' if item available
+  virtual bool		WriteItem(int idx) {return false;} 
+  // if indexable, goes to item idx, if 1+end, Adds a new item; 'true' if item available
+  virtual void		WriteDone() {} 
+    // call after writing all channels of the item, for impl-dependent commit
+  
+  bool			SetData(const Variant& data, int chan) 
+    {if (sinkItemAvailable() && sinkChannelInRange(chan)) 
+       return SetData_impl(data, chan); else return false;}
+    // set the data, returns 'true' if successful
+  bool			SetDataByChannelName(const Variant& data, const String& ch_nm) 
+    {int chan; if (sinkItemAvailable() &&
+     ((chan = GetSinkChannelIndexByName(ch_nm)) >= 0)) 
+       return SetData_impl(data, chan); else return false;}
+    // set the data, returns 'true' if successful
+ 
+  bool			SetMatrixData(const taMatrix* data, int chan) 
+    {if (sinkItemAvailable() && sinkChannelInRange(chan)) 
+       return SetMatrixData_impl(data, chan); else return false;}
+    // set the data from a Matrix, returns 'true' if successful
+  bool			SetMatrixDataByChannelName(const taMatrix* data, const String& ch_nm) 
+    {int chan; if (sinkItemAvailable() &&
+     ((chan = GetSinkChannelIndexByName(ch_nm)) >= 0)) 
+       return SetMatrixData_impl(data, chan); else return false;}
+    // set the data from a Matrix, returns 'true' if successful
+protected:
+  virtual bool		AddItem_impl(int n) {return false;} // adds n items
+  virtual void		WriteOpen_impl(bool& ok) {} // open for writing
+  virtual void		WriteClose_impl() {} // close writing
+  virtual void		WriteItrInit() {}   // initializes write iteration
+  
+  virtual bool		SetData_impl(const Variant& data, int chan) {return false;}
+  virtual bool		SetMatrixData_impl(const taMatrix* data, int chan) {return false;}
+  virtual bool		WriteItem_impl() {return true;} // write the current item
+
   
 private:
   void			Initialize() {}
@@ -132,7 +191,7 @@ private:
 
 class TAMISC_API DataBlock_Idx: public DataBlock { 
  // #VIRT_BASE #NO_INSTANCE partial implementation for an indexable data block
-public: // DataSource i/f
+public: 
   override bool		sourceItemAvailable() const
     {return ((rd_itr >= 0) && (rd_itr < itemCount()));}
   
@@ -145,6 +204,21 @@ public: // DataSource i/f
     {if ((idx < 0) || (idx >= itemCount())) return false;
      rd_itr = idx;  return ReadItem_impl();} 
     // if indexable, goes to item idx, 'true' if item exists and was read
+    
+  override bool		sinkItemAvailable() const
+    {return ((wr_itr >= 0) && (wr_itr < itemCount()));}
+  
+  override bool		WriteNext() 
+    {if (wr_itr < -1) return false;  ++wr_itr;
+     if ((wr_itr == itemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
+     if (wr_itr >= itemCount()) {wr_itr = -2; return false;}
+     return WriteItem_impl();} 
+    //  advance itr; read next item, 'true' if item available
+  override bool		WriteItem(int idx) 
+    {if ((idx == itemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
+     if ((idx < 0) || (idx >= itemCount())) return false;
+     wr_itr = idx;  return WriteItem_impl();} 
+    // if indexable, goes to item idx, 'true' if item exists and was read
   
   void	Copy_(const DataBlock_Idx& cp)
      {rd_itr = -2;}
@@ -154,9 +228,14 @@ public: // DataSource i/f
 protected:
   int			rd_itr;  // an int iterator for reading
     // -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
+  int			wr_itr;  // an int iterator for writing
+    // -3=WriteItem error, -2=EOF, -1=BOF, >=0 is valid item
      
   override void		ReadItrInit() {rd_itr = -1;}
     // initializes sequential read iteration
+    
+  override void		WriteItrInit() {wr_itr = -1;}
+    // initializes sequential write iteration
 private:
   void			Initialize() {rd_itr = -2;}
   void			Destroy() {}

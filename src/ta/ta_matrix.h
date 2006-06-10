@@ -89,7 +89,10 @@ friend class taMatrix;
 public:
   int			size;
   
+  bool			Equal(const MatrixGeom& other) const;
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  bool			IsFrameOf(const MatrixGeom& other) const; 
+    // 'true' if this is a proper frame of other
   int 			Product() const; // returns product of all elements
   
   void			EnforceSize(int sz);
@@ -104,7 +107,6 @@ public:
     {if (InRange(i)) el[i] = value;}
   
   void			Reset() {EnforceSize(0);}
-  bool			Equal(const MatrixGeom& other) const;
   int			operator [](int i) const {if (InRange(i)) return el[i]; else return 0;}  
   
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -224,6 +226,8 @@ public:
   virtual void		AllocFrames(int n); // make sure space exists for n frames
   virtual void		EnforceFrames(int n); // set size to n frames, blanking new elements if added
   virtual void		RemoveFrame(int n); // remove the given frame, copying data backwards if needed
+  virtual bool		CopyFrame(const taMatrix& src, int frame); // copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
+  
   virtual void		Reset() {EnforceFrames(0);}
   
   bool			InRange(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 

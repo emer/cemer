@@ -463,13 +463,12 @@ public: //
     TARG 		= 0x01,	// #LABEL_Target as a target value
     EXT 		= 0x02,	// #LABEL_External as an external input value
     COMP		= 0x04,	// #LABEL_Comparison as a comparison value
-    reserved1		= 0x08, // #IGNORE
     TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
     COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
     COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_UNIT_FLAGS	= 0x10, // (Layer + Layer ctrl param) don't set unit flags at all
-    NO_LAYER_FLAGS	= 0x20, // (Layer ctrl param only) don't set layer flags at all
+    NO_UNIT_FLAGS	= 0x10, // #NO_BIT (Layer + Layer ctrl param) don't set unit flags at all
+    NO_LAYER_FLAGS	= 0x20, // #NO_BIT (Layer ctrl param only) don't set layer flags at all
     EXT_FLAGS_MASK	= 0x0F, // #NO_BIT mask for setting layer/unit flags
     LAYER_FLAGS_MASK	= 0x1F // #NO_BIT mask for setting layer flags
   };
@@ -1422,24 +1421,29 @@ private:
 
 
 class PDP_API LayerRWBase_List: public taList<LayerRWBase> {
-  // ##TOKENS list of individual LayerWriter objects
+  // #VIRT_BASE #NO_INSTANCE list of individual LayerRWBase objects
 INHERITED(taList<LayerRWBase>)
 public:
-  DataBlock::DBOptions	db_options; // #READ_ONLY #SHOW the type of data block we are interested in
+  LayerRWBase*		FindByDataBlockLayer(DataBlock* db, Layer* lay);
+    // find the item by source and target -- note: finds first if multiple the same
   
-  virtual void		FillFromDataBlock(DataBlock* db, Network* net);
+  void			FillFromDataBlock(DataBlock* db, Network* net, bool freshen_only);
     // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
-  virtual void		FillFromTable(DataTable* dt, Network* net);
+  void			FillFromTable(DataTable* dt, Network* net, bool freshen_only);
     // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
     
-  void	Copy_(const LayerRWBase_List& cp);
-  COPY_FUNS(LayerRWBase_List, taList<LayerRWBase>)
-  TA_BASEFUNS(LayerRWBase_List); //
+  TA_ABSTRACT_BASEFUNS(LayerRWBase_List); //
+
+protected:
+  virtual void		FillFromDataBlock_impl(DataBlock* db, Network* net,
+    bool freshen, Layer::LayerType lt) = 0;
+    
 
 private:
-  void	Initialize();
+  void	Initialize() {SetBaseType(&TA_LayerRWBase);}
   void 	Destroy() {}
 };
+
 
 class PDP_API LayerWriter: public LayerRWBase {
   // object that writes data from a DataSource to a layer
@@ -1461,20 +1465,22 @@ private:
 };
 
 class PDP_API LayerWriter_List: public LayerRWBase_List {
-  // list of individual LayerWriter objects
+  // ##TOKENS #INSTANCE list of individual LayerWriter objects
 INHERITED(LayerRWBase_List)
 public:
-  LayerWriter*	SafeEl(int idx) const { return (LayerWriter*)SafeEl_(idx); }
-  LayerWriter*	FastEl(int i) const { return (LayerWriter*)el[i]; }
   
   TA_BASEFUNS(LayerWriter_List); //
 
+protected:
+  override void		FillFromDataBlock_impl(DataBlock* db, Network* net,
+    bool freshen, Layer::LayerType lt);
+    
 private:
-  void	Initialize();
+  void	Initialize() {SetBaseType(&TA_LayerWriter);}
   void 	Destroy() {}
 };
 
-/*
+
 class PDP_API LayerReader: public LayerRWBase {
   // object that reads data from a layer
 INHERITED(LayerRWBase)
@@ -1490,7 +1496,25 @@ private:
   void	Initialize();
   void 	Destroy();
 };
-*/
+
+
+class PDP_API LayerReader_List: public LayerRWBase_List {
+  // ##TOKENS #INSTANCE list of LayerReader objects
+INHERITED(LayerRWBase_List)
+public:
+  TA_BASEFUNS(LayerReader_List); //
+
+protected:
+  override void		FillFromDataBlock_impl(DataBlock* db, Network* net,
+    bool freshen, Layer::LayerType lt);
+    
+private:
+  void	Initialize() {SetBaseType(&TA_LayerReader);}
+  void 	Destroy() {}
+};
+
+
+
 /*obs
 class PDP_API LayerRWBase: public taOBase  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS auxilliary object to read/write data to/from layers

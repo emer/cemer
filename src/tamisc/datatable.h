@@ -400,7 +400,7 @@ public:
     // valid if type is numeric, -ve row is from end (-1=last)
     {return SetValAsByte_impl(val, row, 0);} 
     
-  // Matrix versions
+  // Matrix versions of scalar data 
   bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
     {return SetValAsVar_impl(val, row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
@@ -417,6 +417,12 @@ public:
     // valid if type is numeric, -ve row is from end (-1=last)
     {return SetValAsByte_impl(val, row, cell);} 
 
+  // Matrix ops
+  taMatrix*	GetValAsMatrix(int row);
+    // gets the cell as a slice of the entire column (note: not const -- you can write it)
+  bool	 	SetValAsMatrix(const taMatrix* val, int row);
+    // set the matrix cell from a same-sized matrix 
+  
   bool		HasDispOption(const String& opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
   const String 	DispOptionAfter(const String& opt) const;
@@ -514,7 +520,7 @@ private:
     this includes adding and removing data columns
   Row Adding/Removing -- DCR_DATA_UPDATE_BEGIN..DCR_DATA_UPDATE_END
     this includes adding and removing whole rows, or individual items to a row -- if the client
-    code calls RowAdding/RowAdded
+    code calls RowsAdding/RowsAdded
 
   Row Numbers
     - all fuctions using row numbers work properly for jagged tables, i.e. those to which
@@ -526,42 +532,43 @@ class TAMISC_API DataTable : public DataBlock_Idx {
   // #NO_UPDATE_AFTER ##TOKENS table of data
 INHERITED(DataBlock_Idx)
 public:
-  int 		rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
-  bool		save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
+  int 			rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
+  bool			save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
   DataTableCols	data; // all the columns and actual data
   
-  int		cols() const {return data.leaves;}
-  bool		hasData(int col, int row); // true if data at that cell
-  bool		idx(int row_num, int col_size, int& act_idx) const
+  int			cols() const {return data.leaves;}
+  bool			hasData(int col, int row); // true if data at that cell
+  bool			idx(int row_num, int col_size, int& act_idx) const
     {if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
     // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  bool		RowInRangeNormalize(int& row); // normalizes row (if -ve) and tests result in range 
-  virtual void	Reset();
-  void		RemoveRow(int row_num);
+  bool			RowInRangeNormalize(int& row); // normalizes row (if -ve) and tests result in range 
+  virtual void		Reset();
+  void			RemoveRow(int row_num);
     // #MENU Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  void	AddBlankRow();
-  // #MENU add a new row to the data table, returns new row number
-  void	AllocRows(int n); // allocate space for at least n rows
+  void			AddBlankRow() {AddRow(1);}
+  // #MENU add a new row to the data table
+  bool			AddRow(int n); // add n rows, 'true' if added
+  void			AllocRows(int n); // allocate space for at least n rows
 
-  void	SetSaveToFile(bool save_to_file);
+  void			SetSaveToFile(bool save_to_file);
   // #MENU set the save_to_file flag for entire group of data elements
 
-  void	AddRowToArray(float_RArray& ar, int row_num) const;
+  void			AddRowToArray(float_RArray& ar, int row_num) const;
   // add a row of the datatable to given array
-  void	AggRowToArray(float_RArray& ar, int row_num, Aggregate& agg) const;
+  void			AggRowToArray(float_RArray& ar, int row_num, Aggregate& agg) const;
   // aggregate a row of the datatable to given array using parameters in agg
-  float	AggRowToVal(int row_num, Aggregate& agg) const;
+  float			AggRowToVal(int row_num, Aggregate& agg) const;
   // aggregate a row of the datatable to a value using parameters in agg
-  void	AddArrayToRow(float_RArray& ar);
+  void			AddArrayToRow(float_RArray& ar);
   // add contents of array to datatable
-  void	AggArrayToRow(const float_RArray& ar, int row_num, Aggregate& agg);
+  void			AggArrayToRow(const float_RArray& ar, int row_num, Aggregate& agg);
   // aggregate contents of array to datatable at given row
-  void	PutArrayToRow(const float_RArray& ar, int row_num);
+  void			PutArrayToRow(const float_RArray& ar, int row_num);
   // just put array values into given row of data
-  void	UpdateAllRanges();
+  void			UpdateAllRanges();
   // update all min-max range data for all float_Data elements in log
 
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
@@ -580,11 +587,11 @@ public:
   String_Data*		NewColString(const String& col_nm); 
     // create new column of string data
     
-  DataTableCols*		NewGroupFloat(const String& base_nm, int n); 
+  DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
     // OBS create new sub-group of floats of size n, named as base_nm_index
-  DataTableCols*		NewGroupInt(const String& base_nm, int n); 
+  DataTableCols*	NewGroupInt(const String& base_nm, int n); 
     // OBS create new sub-group of ints of size n, named as base_nm_index
-  DataTableCols*		NewGroupString(const String& base_nm, int n); 
+  DataTableCols*	NewGroupString(const String& base_nm, int n); 
     // OBS create new sub-group of strings of size n, named as base_nm_index
 
   DataArray_impl* 	GetColData(int col) const;
@@ -601,18 +608,23 @@ public:
   // add display option for given leaf column
   
   float 		GetValAsFloat(int col, int row);
-  // get data of any type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
-  void 			SetValAsFloat(float val, int col, int row);
-  // set data of any type, in String form, for given leaf column, row; does nothing if no cell
+  // get data of scalar type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
+  bool 			SetValAsFloat(float val, int col, int row);
+  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
   const String 		GetValAsString(int col, int row) const;
-  // get data of any type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
-  void 			SetValAsString(const String& val, int col, int row);
-  // set data of any type, in String form, for given leaf column, row; does nothing if no cell
+  // get data of scalar type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
+  bool 			SetValAsString(const String& val, int col, int row);
+  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell; 'true if set
 
   const Variant 	GetValAsVar(int col, int row) const;
-  // get data of any type, in Variant form, for given column, row; Invalid/NULL if no cell
-  void 			SetValAsVar(const Variant& val, int col, int row);
-  // set data of any type, in Variant form, for given leaf column, row; does nothing if no cell
+  // get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
+  bool 			SetValAsVar(const Variant& val, int col, int row);
+  // set data of scalar type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+
+  taMatrix*	 	GetValAsMatrix(int col, int row);
+  // get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
+  // set data of any type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   void 			SaveHeader(ostream& strm); // saves header information, tab-separated, 
@@ -620,8 +632,8 @@ public:
   void 			LoadHeader(istream& strm); // loads header information -- preserves current headers if possible
   void 			LoadData(istream& strm, int max_recs = -1); // loads data, up to max num of recs (-1 for all)
   
-  int  		MinLength();		// #IGNORE
-  int  		MaxLength();		// #IGNORE
+  int  			MinLength();		// #IGNORE
+  int  			MaxLength();		// #IGNORE
 
   override int		NumListCols() const {return 3;} // Name, data type (float, etc.), disp options
   override String	GetColHeading(int col); // header text for the indicated column
@@ -639,8 +651,8 @@ public:
   TA_BASEFUNS(DataTable); //
 
 public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
-  virtual void	RowAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
-  virtual void	RowAdded(); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowAdding)
+  void			RowsAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
+  void			RowsAdded(int n = 1); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowsAdding)
 
 public: // DataBlock i/f and common routines
   override DBOptions	dbOptions() const {return DB_IND_SEQ_SRC_SNK;} 
@@ -662,8 +674,18 @@ public: // DataSource i/f
 protected: // DataSource i/f
   override const Variant GetData_impl(int chan)
     {return GetValAsVar(rd_itr, chan);}
-  override taMatrix*	GetMatrixData_impl(int chan);
+  override taMatrix*	GetMatrixData_impl(int chan);//
 //  virtual bool		ReadItem_impl() {return true;} 
+
+public: // DataSink i/f
+  override int		sinkChannelCount() const {return channelCount();}
+  override const String	sinkChannelName(int chan) const {return channelName(chan);}//
+protected: // DataSink i/f
+  override bool		AddItem_impl(int n) {return AddRow(n);} // adds n items
+  override bool		SetData_impl(const Variant& data, int chan) 
+    {return SetValAsVar(data, chan, wr_itr);}
+  override bool		SetMatrixData_impl(const taMatrix* data, int chan) 
+    {return SetValAsMatrix(data, chan, wr_itr);}
 
 protected:
 #ifdef TA_GUI

@@ -233,6 +233,9 @@ protected: \
 #define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)
 #define GET_OWNER(B,T)  (T *) B ->GetOwner(T::StatTypeDef(0))
 
+#define SET_POINTER(var,obj) (taBase::SetPointer((TAPtr*)&(var), (TAPtr)(obj)))
+#define DEL_POINTER(var) (taBase::DelPointer((TAPtr*)&(var)))
+
 /* Clipboard (Edit) operation summary
 
    Clipboard operations are of two basic types:

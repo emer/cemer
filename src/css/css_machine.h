@@ -152,6 +152,7 @@ public:
   static int		init_debug;	// initial debug level (by -v arg from user)
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
+  static int		init_refcnt_trace; // user wants refcnt tracing (-rct from arg)
   static cssConsole*	console;	// the console, IF CREATED
 
   static cssEl 		Void; 		// a void element

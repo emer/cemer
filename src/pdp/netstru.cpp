@@ -6084,23 +6084,31 @@ void LayerRWBase::CutLinks() {
 //  LayerRWBase_List	//
 //////////////////////////
 
-void LayerRWBase_List::Initialize() {
-  SetBaseType(&TA_LayerRWBase);
-  db_options = DataBlock::DB_NONE; // the subclass must set
-}
-
-void LayerRWBase_List::Copy_(const LayerRWBase_List& cp) {
-  db_options = cp.db_options;
-}
-
-void LayerRWBase_List::FillFromDataBlock(DataBlock* db, Network* net) {
+void LayerRWBase_List::FillFromDataBlock(DataBlock* db, Network* net, 
+  bool freshen_only) 
+{
   if (!db & !net) return;
-  //TODO
+  Layer::LayerType lt;
+  if (GetTypeDef()->InheritsFrom(&TA_LayerWriter_List))
+    lt = (Layer::LayerType)(Layer::INPUT | Layer::TARGET);
+  else lt = (Layer::LayerType)(Layer::OUTPUT);
+  FillFromDataBlock_impl(db, net, freshen_only, lt);
 }
 
-void LayerRWBase_List::FillFromTable(DataTable* dt, Network* net) {
-  if (!dt & !net) return;
-  //TODO
+void LayerRWBase_List::FillFromTable(DataTable* dt, Network* net, 
+  bool freshen_only) 
+{
+  FillFromDataBlock(dt, net, freshen_only);
+}
+
+LayerRWBase* LayerRWBase_List::FindByDataBlockLayer(DataBlock* db, Layer* lay) {
+  LayerRWBase* it;
+  for(int i = 0; i < size; ++i) {
+    it = FastEl(i);
+    if ((it->data_block == db) && (it->layer == lay))
+      return it;
+  }
+  return NULL;
 }
 
 //////////////////////
@@ -6141,13 +6149,36 @@ void LayerWriter::Copy_(const LayerWriter& cp) {
 //  LayerWriter_List	//
 //////////////////////////
 
-void LayerWriter_List::Initialize() {
-  db_options = (DataBlock::DBOptions) (db_options | DataBlock::DB_SOURCE);
-  SetBaseType(&TA_LayerWriter);
+void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
+  bool freshen, Layer::LayerType lt) 
+{
+  if (!freshen) Reset();
+  Layer* lay;
+  taLeafItr itr;
+  FOR_ITR_EL(Layer, lay, net->layers., itr) {
+    //note: we only look for any lt flags, not all of them
+    if (!(lay->layer_type & lt)) continue;
+    int chan = db->GetSourceChannelIndexByName(lay->name);
+    if (chan < 0) continue;
+    // find matching existing, or make new
+    LayerWriter* lrw = NULL;
+    if (freshen) 
+      lrw = (LayerWriter*)FindByDataBlockLayer(db, lay);
+    if (!lrw) {
+      lrw = (LayerWriter*)New(1);
+      SET_POINTER(lrw->data_block, db);
+      SET_POINTER(lrw->layer, lay);
+    }
+    /*Unit::ExtType*/ int ext_flags = lrw->ext_flags;
+    ext_flags |= Unit::EXT;
+    lrw->ext_flags = (Unit::ExtType)ext_flags;
+    lrw->DataChanged(DCR_ITEM_UPDATED);
+  }
 }
 
 
-/*TODO
+
+
 //////////////////////
 //   LayerReader    //
 //////////////////////
@@ -6172,7 +6203,37 @@ void LayerReader::CutLinks() {
 void LayerReader::Copy_(const LayerReader& cp) {
   //TODO: need to copy source info
 }
-*/
+
+//////////////////////////
+//  LayerReader_List	//
+//////////////////////////
+
+void LayerReader_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
+  bool freshen, Layer::LayerType lt) 
+{
+  if (!freshen) Reset();
+  Layer* lay;
+  taLeafItr itr;
+  FOR_ITR_EL(Layer, lay, net->layers., itr) {
+    //note: we only look for any lt flags, not all of them
+    if (!(lay->layer_type & lt)) continue;
+    int chan = db->GetSinkChannelIndexByName(lay->name);
+    if (chan < 0) continue;
+    // find matching existing, or make new
+    LayerReader* lrw = NULL;
+    if (freshen) 
+      lrw = (LayerReader*)FindByDataBlockLayer(db, lay);
+    if (!lrw) {
+      lrw = (LayerReader*)New(1);
+      SET_POINTER(lrw->data_block, db);
+      SET_POINTER(lrw->layer, lay);
+    }
+    //TODO: set additional props
+    lrw->DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
+
 /*
 void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
   IDataSource::GetData_(ch, data, handled);

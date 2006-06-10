@@ -94,6 +94,7 @@ String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
+int		cssMisc::init_refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
 cssConsole*	cssMisc::console = NULL;
 
 cssEl 		cssMisc::Void("Void"); 	
@@ -241,6 +242,12 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
 void cssMisc::PreInitialize(int argc_, char** argv_) {
   cssMisc::argc = argc_;
   cssMisc::argv = argv_; // cast away constness -- we still treat it as const
+  int i = 1;
+  String sw_val;
+  CmdLineSwitchValue("-rct", i, sw_val);
+  if (!sw_val.empty()) {
+    init_refcnt_trace = sw_val.toInt();
+  }
 #ifdef TA_GUI
 # ifdef TA_USE_INVENTOR
   SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
@@ -424,7 +431,7 @@ void cssEl::unRef(cssEl* it) {
     print_cssEl(it, true);
     cerr << "::unRef(): it->refn < 0\n";
   }
-  else if (cssMisc::init_debug > 1) {
+  else if (cssMisc::init_refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::unRef()\n";
   }
@@ -438,7 +445,7 @@ void cssEl::unRefDone(cssEl* it) {
     cerr << "::unRefDone: it->refn <= 0 -- **WILL NOT BE MULTI-DELETED**\n";
     return;
   }
-  else if (cssMisc::init_debug > 1) {
+  else if (cssMisc::init_refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::unRefDone()\n";
   }

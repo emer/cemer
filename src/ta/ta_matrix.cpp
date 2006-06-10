@@ -111,6 +111,14 @@ bool MatrixGeom::Equal(const MatrixGeom& other) const {
   return true;
 } 
 
+bool MatrixGeom::IsFrameOf(const MatrixGeom& other) const {
+  if (size != (other.size + 1)) return false;
+  for (int i = 0; i < size; ++i) {
+    if (el[i] != other.el[i]) return false;
+  }
+  return true;
+}
+
 int MatrixGeom::Product() const {
   if (size == 0) return 0;
   int rval = el[0];
@@ -251,6 +259,25 @@ void taMatrix::Copy_(const taMatrix& cp) {
       El_Copy_(FastEl_(i), cp.FastEl_(i));
     }
   }
+}
+
+bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
+  if (!src.geom.IsFrameOf(geom)) return false;
+  if ((frame < 0) || (frame >= frames())) return false;
+  int n = frameSize();
+  int base = BaseIndexOfFrame(frame);
+  // if same data types, we use an optimized copy, else must use variants
+  // note that "Inherits" should imply same data type
+  if (GetTypeDef()->InheritsFrom(src.GetTypeDef())) {
+    for (int i = 0; i < n; ++i) {
+      El_Copy_(FastEl_(base + i), src.FastEl_(i));
+    }
+  } else {
+    for (int i = 0; i < n; ++i) {
+      El_SetFmVar_(FastEl_(base + i), src.El_GetVar_(src.FastEl_(i)));
+    }
+  }
+  return true;
 }
 
 void taMatrix::List(ostream& strm) const {
