@@ -74,6 +74,8 @@ public:
     // 'true' if the value is a void*, taBase*, or taMatrix*
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase* or taMatrix*
+  bool			isMatrixType() const {return (m_type == T_Matrix);} 
+    // 'true' if the value is a taMatrix*, BUT could be NULL
   VarType		type() const {return (VarType)m_type;} //
   void			setType(VarType value); // force it to be given type, if changed, set to default value
 

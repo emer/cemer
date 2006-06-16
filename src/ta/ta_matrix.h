@@ -98,14 +98,11 @@ public:
   void			EnforceSize(int sz);
   int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
     // the element at the given index
-  int			FastEl(int i) const {return el[i];}
-    // fast element (no range checking)
-  int&			FastEl(int i) 	{return el[i];}
   
   void			Add(int value); // safely add a new element
   void			Set(int i, int value) // safely set an element
     {if (InRange(i)) el[i] = value;}
-  
+    
   void			Reset() {EnforceSize(0);}
   int			operator [](int i) const {if (InRange(i)) return el[i]; else return 0;}  
   
@@ -115,11 +112,16 @@ public:
   explicit MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
   COPY_FUNS(MatrixGeom, taBase);
-  TA_BASEFUNS_LITE(MatrixGeom);
+  TA_BASEFUNS_LITE(MatrixGeom); //
+
+public: // functions for internal/trusted use only
+  inline int		FastEl(int i) const {return el[i];} // #IGNORE
+  inline int&		FastEl(int i) {return el[i];} // #IGNORE
+    
+  inline int&		operator [](int i) {return el[i];}  // #IGNORE 
 
 protected:
   int			el[TA_MATRIX_DIMS_MAX];
-  int&			operator [](int i) {return el[i];}  
   
 private:
   void			Initialize();
@@ -171,9 +173,17 @@ public: // IMatrix i/f
     { if (InRange_Flat(idx)) return El_GetVar_(FastEl_(idx)); else return _nilVariant; } 
     // treats the matrix like a flat array, returns the element as a variant
     
+  void			SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0) 	
+    {int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
+       El_SetFmVar_(FastEl_(idx), var); } 
+    // (safely) sets the element as a variant
+  void			SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
+    {int idx; if ((idx = SafeElIndexN(indices)) >= 0)
+       El_SetFmVar_(FastEl_(idx), var); } 
+    // (safely) sets the element as a variant
   void			SetFmVar_Flat(const Variant& var, int idx) 	
     {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_(idx), var); } 
-    // treats the matrix like a flat array, sets the element as a string
+    // treats the matrix like a flat array, (safely) sets the element as a variant
    	
 public:
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
@@ -397,6 +407,7 @@ public:
   // compatibility functions, for when dims=1
   void			Add(const T& item) {Add_(&item);}  // only valid when dims=1
 
+  void	CutLinks() 	{SetArray_(NULL); taMatrix::CutLinks();}
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrixT, T)
 public:
   override void*	FastEl_(int idx)	{ return &(el[idx]); } 
@@ -411,7 +422,7 @@ protected:
 
 private: //note: forbid these for now -- if needed, define semantics
   void			Initialize()	{el = NULL;}
-  void			Destroy() { SetArray_(NULL);}
+  void			Destroy() { CutLinks();}
 };
 
 

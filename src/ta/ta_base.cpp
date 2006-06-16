@@ -352,6 +352,62 @@ TypeDef* taBase::StatTypeDef(int) {
   return &TA_taBase;
 }
 
+taBase::ValType taBase::ValTypeForType(TypeDef* td) {
+  if (td->ptr == 0) {
+    if (td->DerivesFrom(TA_bool)) {
+      return VT_INT;
+    }
+    // note: char is generic char, and typically we won't use signed char
+    else if (td->DerivesFrom(TA_char)) {
+      return VT_STRING; 
+    }
+    // note: explicit use of signed char is treated like a number
+    else if (td->DerivesFrom(TA_unsigned_char))
+      return VT_BYTE;
+    else if (td->DerivesFrom(TA_signed_char) 
+      || td->DerivesFrom(TA_short)
+      || td->DerivesFrom(TA_unsigned_short)
+      || td->DerivesFrom(TA_int)
+      || td->DerivesFrom(TA_unsigned_int)
+      ) 
+    {
+      return VT_INT; 
+    }
+    else if(td->DerivesFrom(TA_float)
+      || td->DerivesFrom(TA_double)  //TODO: maybe we should use Variant???  
+      ) 
+    {
+      return VT_FLOAT; 
+    }
+    else if(td->DerivesFormal(TA_enum)) { //maybe we should use String's for these???
+      return VT_INT; 
+    }
+    else if(td->DerivesFrom(TA_taString))
+      return VT_STRING;
+    else if(td->DerivesFrom(TA_Variant)) {
+      return VT_VARIANT;
+    }
+  }
+  return VT_VARIANT;
+}
+
+const String taBase::ValTypeToStr(ValType vt) {
+  static String str_String("String");
+  static String str_float("float");
+  static String str_int("int");
+  static String str_byte("byte");
+  static String str_Variant("Variant");
+  switch (vt) {
+  case VT_STRING: return str_String;
+  case VT_FLOAT: return str_float;
+  case VT_INT: return str_int;
+  case VT_BYTE: return str_byte;
+  case VT_VARIANT: return str_Variant;
+  default: return _nilString; // compiler food
+  }
+}
+
+
 void taBase::Destroy() {
 }
 
@@ -411,7 +467,7 @@ void taBase::BatchUpdate(bool begin, bool struc) {
   }
 }
 
-void taBase::CallFun(const char* fun_name) {
+void taBase::CallFun(const String& fun_name) {
 #ifdef TA_GUI
   if(!taMisc::gui_active) return;
 #endif
@@ -923,7 +979,7 @@ int taBase::ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
   return GetTypeDef()->ReplaceAllPtrsThis((void*)this, obj_typ, old_ptr, new_ptr);
 }
 
-bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const char* extra_label) {
+bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
   if((editor == NULL) || (member == NULL)) return false;
 #ifdef TA_GUI
   return editor->SelectMember(this, member, extra_label);
@@ -932,8 +988,8 @@ bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const char* ex
 #endif
 }
 
-bool taBase::SelectForEditNm(const char* member, SelectEdit* editor, const char* extra_label) {
-  if((editor == NULL) || (member == NULL)) return false;
+bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
 #ifdef TA_GUI
   return editor->SelectMemberNm(this, member, extra_label);
 #else
@@ -941,8 +997,8 @@ bool taBase::SelectForEditNm(const char* member, SelectEdit* editor, const char*
 #endif
 }
 
-bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const char* extra_label) {
-  if((editor == NULL) || (function == NULL)) return false;
+bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
 #ifdef TA_GUI
   return editor->SelectMethod(this, function, extra_label);
 #else
@@ -950,8 +1006,8 @@ bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const cha
 #endif
 }
 
-bool taBase::SelectFunForEditNm(const char* function, SelectEdit* editor, const char* extra_label) {
-  if((editor == NULL) || (function == NULL)) return false;
+bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
 #ifdef TA_GUI
   return editor->SelectMethodNm(this, function, extra_label);
 #else
@@ -1534,7 +1590,7 @@ int taList_impl::Find(TypeDef* it) const {
   return -1;
 }
 
-MemberDef* taList_impl::FindMembeR(const char* nm, void*& ptr) const {
+MemberDef* taList_impl::FindMembeR(const String& nm, void*& ptr) const {
   String idx_str = nm;
   idx_str = idx_str.before(']');
   if(idx_str != "") {
@@ -1768,7 +1824,7 @@ int taList_impl::SetDefaultEl(TAPtr it) {
   return idx;
 }
 
-int taList_impl::SetDefaultEl(const char* nm) {
+int taList_impl::SetDefaultEl(const String& nm) {
   int idx = Find(nm);
   if(idx >= 0)    el_def = idx;
   return idx;

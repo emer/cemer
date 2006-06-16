@@ -40,6 +40,13 @@ TwoDCoord& TwoDCoord::operator=(const FloatTwoDCoord& cp) {
   return *this;
 }
 
+void TwoDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
+// NOTE: TDCoord just replaces this whole routine, for simplicity
+  geom.EnforceSize(2);
+  geom.FastEl(0) = x;
+  geom.FastEl(1) = y;
+}
+
 bool TwoDCoord::FitN(int n) {
   if((x * y) >= n)	return false;
   y = (int)sqrtf((float)n);
@@ -87,6 +94,14 @@ void  TDCoord::UnSafeCopy(TAPtr cp) {
 TDCoord& TDCoord::operator=(const FloatTDCoord& cp) {
   x = (int)cp.x; y = (int)cp.y;	z = (int)cp.z;
   return *this;
+}
+
+void TDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
+// NOTE: TDCoord just replaces this whole routine, for simplicity
+  geom.EnforceSize(3);
+  geom.FastEl(0) = x;
+  geom.FastEl(1) = y;
+  geom.FastEl(2) = z;
 }
 
 bool TDCoord::FitNinXY(int n) {

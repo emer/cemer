@@ -42,6 +42,7 @@
 
 #include "ta_def.h"
 #include "ta_list.h"
+#include "ta_variant.h"
 
 #ifdef TA_USE_QT
 # ifndef __MAKETA__
@@ -1039,6 +1040,8 @@ public:
   override const String	GetPathName() const; 
     // name used for saving a reference in stream files, can be used to lookup again
 
+  const Variant		GetValVar(const void* base, void* par = NULL) const;
+  
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
@@ -1315,6 +1318,9 @@ public:
   String	GetValStr(const void* base, void* par=NULL,
     MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT) const;
   // get a string representation of value
+  const Variant	GetValVar(const void* base, void* par=NULL,
+    const MemberDef* memb_def = NULL) const;
+  // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
   void		SetValStr(const String& val, void* base, void* par=NULL,
     MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // set the value from a string representation

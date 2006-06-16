@@ -19,6 +19,7 @@
 #define tdgeometry_h
 
 #include "ta_base.h"
+#include "ta_matrix.h"
 #include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
@@ -45,6 +46,7 @@ public:
   inline void 	SetXY(int xx, int yy) { x = xx; y = yy;  }
   inline void 	SetXY(float xx, float yy) { x = (int)xx; y = (int)yy; }
   inline void 	GetXY(float& xx, float& yy) { xx = (float)x; yy = (float)y; }
+  virtual void	CopyToMatrixGeom(MatrixGeom& geom);
 
   inline void 	Initialize() 		{ x = y = 0; }
   inline void 	Destroy()		{ };
@@ -217,6 +219,7 @@ public:
   inline void 	GetXYZ(float& xx, float& yy, float& zz) {
     xx = (float)x; yy = (float)y; zz = (float)z;
   }
+  override void	CopyToMatrixGeom(MatrixGeom& geom);
 
   inline void 	Initialize() 		{ x = y = z = 0; }
   inline void 	Destroy()		{ };

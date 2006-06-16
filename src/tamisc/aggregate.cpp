@@ -210,6 +210,13 @@ float SimpleMathSpec::Evaluate(float val) const {
   return val;
 }
 
+Variant& SimpleMathSpec::EvaluateVar(Variant& val) const {
+  // we just detect the NONE case to avoid conversions, otherwise we just float it!
+  if (opr == NONE) return val;
+  val = Evaluate(val.toFloat());
+  return val;
+}
+
 
 //////////////////////////
 //  	CritParam      	//

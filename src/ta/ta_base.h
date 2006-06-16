@@ -270,6 +270,16 @@ public:
     Vertical = 0x2
   };
 
+  enum ValType { // the basic data types widely supported by data-handling api's, esp. matrices
+    VT_STRING,		// an ANSI string of any length
+    VT_FLOAT,		// a 4-byte floating point value (aprox 7 sig decimal digits)
+    VT_INT,		// a 32-bit signed integer
+    VT_BYTE,		// an unsigned 8-bit integer; used mostly for image components (rgb)
+    VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
+  };
+
+  static const String 	ValTypeToStr(ValType vt);
+  static ValType	ValTypeForType(TypeDef* td); // return the appropriate ValType
   static  TypeDef*	StatTypeDef(int);	// #IGNORE
   static TAPtr 		MakeToken(TypeDef* td);
   // #IGNORE make a token of the given type
@@ -451,7 +461,7 @@ public:
   bool		InheritsFormal(const TypeDef& it) const	// #IGNORE
   { return GetTypeDef()->InheritsFormal(it); }
 
-  virtual MemberDef*	FindMember(const char* nm, int& idx=no_idx) const // #IGNORE
+  virtual MemberDef*	FindMember(const String& nm, int& idx=no_idx) const // #IGNORE
   { return GetTypeDef()->members.FindName(nm, idx); }
   virtual MemberDef*	FindMember(TypeDef* it, int& idx=no_idx) const 	// #IGNORE
   { return GetTypeDef()->members.FindType(it, idx); }
@@ -461,18 +471,18 @@ public:
   { return GetTypeDef()->members.FindAddrPtr((void*)this, mbr, idx); }	// #IGNORE
 
   // these get overwritten by groups, lists, etc.
-  virtual MemberDef* 	FindMembeR(const char* nm, void*& ptr) const 	// #IGNORE
+  virtual MemberDef* 	FindMembeR(const String& nm, void*& ptr) const 	// #IGNORE
     { return GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr); }
   virtual MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const	// #IGNORE
     { return GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr); }
 
-  virtual bool		FindCheck(const char* nm) const // #IGNORE check this for the name
+  virtual bool		FindCheck(const String& nm) const // #IGNORE check this for the name
     { return ((GetName() == nm) || InheritsFrom(nm)); }
 
-  virtual String	GetEnumString(const char* enum_tp_nm, int enum_val) const
+  virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
     { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
   // get the name corresponding to given enum value in enum type enum_tp_nm
-  virtual int		GetEnumVal(const char* enum_nm, String& enum_tp_nm = no_name) const
+  virtual int		GetEnumVal(const String& enum_nm, String& enum_tp_nm = no_name) const
     { return GetTypeDef()->GetEnumVal(enum_nm, enum_tp_nm); }
   // get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
 
@@ -554,13 +564,13 @@ public:
   // #MENU #CONFIRM #UPDATE_MENUS Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
   // #MENU #TYPE_this #UPDATE_MENUS Change me into a different type of object, copying current info (done through owner)
-  virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const char* extra_label);
+  virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
   // select a given member for editing --<br>if already on dialog, removes it & returns false (else true)
-  virtual bool		SelectForEditNm(const char* memb_nm, SelectEdit* editor, const char* extra_label);
+  virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
   // #IGNORE hard code interface for updating editors
-  virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const char* extra_label);
+  virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
   // #MENU select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)
-  virtual bool		SelectFunForEditNm(const char* function_nm, SelectEdit* editor, const char* extra_label);
+  virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
   // #IGNORE hard code interface for updating editors
   virtual void		Help();
   // #MENU get help on using this object
@@ -570,7 +580,7 @@ public:
   virtual int		ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
   // #IGNORE replace all pointers to old_ptr with new_ptr (calls TypeDef::ReplaceAllPtrsThis by default)
 
-  virtual void		CallFun(const char* fun_name);
+  virtual void		CallFun(const String& fun_name);
   // call function of given name on this object, prompting for args using gui interface
 
 #ifdef DMEM_COMPILE
@@ -855,10 +865,10 @@ public:
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
 
-  bool 		FindCheck(const char* nm) const // also check for el_typ
+  bool 		FindCheck(const String& nm) const // also check for el_typ
   { return ((name == nm) || InheritsFrom(nm) || el_typ->InheritsFrom(nm)); }
 
-  MemberDef* 	FindMembeR(const char* nm, void*& ptr) const;    // extended to search in the list
+  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;    // extended to search in the list
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const; // extended to search in the list
 
   void		Close();
@@ -877,10 +887,10 @@ public:
   TAPtr		DefaultEl_() const	{ return (TAPtr)SafeEl_(el_def); } // #IGNORE
 
   virtual int	SetDefaultEl(TypeDef* it);
-  virtual int	SetDefaultEl(const char* nm);
+  virtual int	SetDefaultEl(const String& nm);
   virtual int	SetDefaultEl(TAPtr it);
   // set the default element to be given item
-  virtual int	SetDefaultElName(const char* nm)	{ return SetDefaultEl(nm); }
+  virtual int	SetDefaultElName(const String& nm)	{ return SetDefaultEl(nm); }
   // set the default element to be item with given name
   virtual int	SetDefaultElType(TypeDef* it)	{ return SetDefaultEl(it); }
   // set the default element to be item with given type
@@ -889,9 +899,9 @@ public:
 //  virtual int	Find(const TAPtr item) const		{ return taPtrList_ta_base::Find(item); }
   virtual int	Find(TypeDef* item) const;
   // find element of given type
-  virtual int	Find(const char* item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
+  virtual int	Find(const String& item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
 
-  virtual bool	Remove(const char* item_nm)	{ return taPtrList_ta_base::Remove(item_nm); }
+  virtual bool	Remove(const String& item_nm)	{ return taPtrList_ta_base::Remove(item_nm); }
   virtual bool	Remove(TAPtr item)	{ return taPtrList_ta_base::Remove(item); }
   virtual bool	Remove(int idx);
   // Remove object at given index on list
@@ -937,7 +947,7 @@ protected:
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
   TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
-  bool		El_FindCheck_(void* it, const char* nm) const
+  bool		El_FindCheck_(void* it, const String& nm) const
   { return (((TAPtr)it)->FindCheck(nm) &&
 	    ((El_GetOwner_(it) != NULL) || (El_GetOwner_(it) == (TALPtr) this))); }
 
@@ -985,7 +995,7 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(Find((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  virtual T*	FindName(const char* item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
   // #MENU #USE_RVAL #ARGC_1 #LABEL_Find Find element with given name (item_nm)
   virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
   // find given type element (NULL = not here), sets idx

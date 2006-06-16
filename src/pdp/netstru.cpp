@@ -22,6 +22,7 @@
 #include "netstru.h"
 #include "pdpshell.h"
 //#include "css_qt.h"		// for the cssiSession
+#include "ta_data.h"
 #include "ta_filer.h"
 
 #ifdef TA_GUI
@@ -3256,13 +3257,15 @@ void Layer::Initialize() {
 
 void Layer::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(unit_spec, this);
+  taBase::Own(units, this);
   taBase::Own(projections, this);
   taBase::Own(send_prjns, this);
-  taBase::Own(units, this);
   taBase::Own(pos, this);
   taBase::Own(geom, this);
   taBase::Own(gp_geom, this);
   taBase::Own(gp_spc, this);
+  taBase::Own(flat_geom, this);
   taBase::Own(act_geom, this);
   taBase::Own(sent_already, this);
 #ifdef DMEM_COMPILE
@@ -3278,44 +3281,19 @@ void Layer::CutLinks() {
   static bool in_repl = false;
   if (in_repl || (owner == NULL)) return; // already replacing or already dead
   DisConnect();
-  // remove layer transforms and layer_name transforms
-  if(own_net != NULL) {
-/*TODO     int index = own_net->layers.FindLeaf(this);
-    Network* prvnet = own_net;
-    own_net = NULL;		// this indicates to netview not to display this guy (or anything in it)
-   Xform* xf;
-    taLeafItr i;
-    NetView* view;
-    FOR_ITR_EL(NetView, view, prvnet->views., i) {
-      if(view->lay_forms != NULL) {
-	if((xf = view->lay_forms->FindName(String(index))) != NULL) {
-	  view->lay_forms->Remove(xf);
-	  int j;
-	  for(j=0;j<view->lay_forms->size;j++) {
-	    Xform* xf = (Xform*)view->lay_forms->FastEl(j);
-	    int nmdx = (int)xf->name;
-	    if(nmdx > index) xf->name = (String)(nmdx - 1);
-	  }
-	}
-      }
-      if(view->label_forms != NULL) {
-	if((xf = view->label_forms->FindName(String(index))) != NULL) {
-	  view->label_forms->Remove(xf);
-	  int j;
-	  for(j=0;j<view->label_forms->size;j++) {
-	    Xform* xf = (Xform*)view->label_forms->FastEl(j);
-	    int nmdx = (int)xf->name;
-	    if(nmdx > index) xf->name = (String)(nmdx - 1);
-	  }
-	}
-      }
-      view->InitDisplay();
-    }*/
-  }
+  sent_already.CutLinks();
+  act_geom.CutLinks();
+  flat_geom.CutLinks();
+  gp_spc.CutLinks();
+  gp_geom.CutLinks();
+  geom.CutLinks();
+  pos.CutLinks();
   send_prjns.CutLinks();
   projections.CutLinks();
   units.CutLinks();
   unit_spec.CutLinks();
+  //TODO: this global ptr replace mechanism seems fragile!
+  // maybe replace with WeakRefs or something similar
   // un-set any other pointers to this object!
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if((proj != NULL) && !proj->deleting) {
@@ -3335,6 +3313,8 @@ void Layer::Copy_(const Layer& cp) {
   pos.x+=2; // move it over so it can be seen!
   gp_geom = cp.gp_geom;
   gp_spc = cp.gp_spc;
+  flat_geom = cp.flat_geom;
+  act_geom = cp.act_geom;
   projections = cp.projections;
   units = cp.units;
   unit_spec = cp.unit_spec;
@@ -3346,13 +3326,13 @@ void Layer::Copy_(const Layer& cp) {
 }
 
 void Layer::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
   //  spec.CheckSpec();  // ADD THIS TO ANY LAYERS WITH SPECS!
   unit_spec.CheckSpec();
   // no negative geoms., y,z must be 1 (for display)
   SyncSendPrjns();
   RecomputeGeometry();
 
+  inherited::UpdateAfterEdit();
   if(taMisc::is_loading) return;
   if (own_net == NULL) return;
   own_net->UpdtAfterNetMod();
@@ -3649,10 +3629,16 @@ void Layer::RecomputeGeometry() {
   geom.FitNinXY(n_units);
   if(n_units == 0)
     n_units = geom.x * geom.y;
-  if(geom.z > 1)
+  if (geom.z > 1) {
     gp_geom.FitNinXY(geom.z);	// fit all groups in there..
-  else
+    flat_geom.x = geom.x * gp_geom.x;
+    flat_geom.y = geom.y * gp_geom.y;
+    //NOTE: act_geom must get computed later....
+  } else {
+    flat_geom.x = geom.x;
+    flat_geom.y = geom.y;
     act_geom = geom;
+  }
 }
 
 ProjectBase* Layer::project() {
@@ -4459,11 +4445,11 @@ void Network::RemoveMonitors() {
     Stat* st;
     FOR_ITR_EL(Stat, st, sp->loop_stats., si) {
       if(st->InheritsFrom(TA_MonitorStat))
-	((MonitorStat*)st)->ptrs.RemoveAll();
+	((NetMonItem*)st)->ptrs.RemoveAll();
     }
     FOR_ITR_EL(Stat, st, sp->final_stats., si) {
       if(st->InheritsFrom(TA_MonitorStat))
-	((MonitorStat*)st)->ptrs.RemoveAll();
+	((NetMonItem*)st)->ptrs.RemoveAll();
     }
   }
 }
@@ -4477,11 +4463,11 @@ void Network::UpdateMonitors() {
     Stat* st;
     FOR_ITR_EL(Stat, st, sp->loop_stats., si) {
       if(st->InheritsFrom(TA_MonitorStat))
-	((MonitorStat*)st)->UpdateAfterEdit();
+	((NetMonItem*)st)->UpdateAfterEdit();
     }
     FOR_ITR_EL(Stat, st, sp->final_stats., si) {
       if(st->InheritsFrom(TA_MonitorStat))
-	((MonitorStat*)st)->UpdateAfterEdit();
+	((NetMonItem*)st)->UpdateAfterEdit();
     }
   }
 }*/
@@ -6178,7 +6164,7 @@ void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
 
 
 
-
+/*TODO
 //////////////////////
 //   LayerReader    //
 //////////////////////
@@ -6232,35 +6218,595 @@ void LayerReader_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
     lrw->DataChanged(DCR_ITEM_UPDATED);
   }
 }
+*/
 
 
-/*
-void Layer::GetData_(SourceChannel* ch, ptaMatrix_impl& data, bool& handled) {
-  IDataSource::GetData_(ch, data, handled);
-  if (handled) return;
-  if (ch->name == "act") {
-    //TODO: prob create a generic helper routine for grabbing a member of Units
-    //TODO: need to deal with groups!
-    // allocate a float matrix
-    //TODO: Multi UnitGroups
-    float_Matrix* fm = new float_Matrix(1, 1, geom.x, geom.y);
-    
-    // fill it with our act data
-    Unit* un;
-    TwoDCoord c;
-    while (c.x < geom.x) {
-      while (c.y < geom.y) {
-        un = units.FindUnitFmCoord(c);
-        if (un != NULL) 
-          fm->FastEl4(1, 1, c.x, c.y) = un->act;
-        ++(c.y);
-      }
-      c.y = 0;
-      ++(c.x);
+
+//////////////////////////
+//  NetMonItem		//
+//////////////////////////
+
+/* Data Type valus
+
+Object Names
+
+if object has a name, then return up to first 4 chars
+else:
+  Unit:
+    * start with first 4 chars of LayerName
+    * add linear index of Unit in its UnitGroup
+    ex. inpu[23]
+  UnitGroup:
+    * start with first 4 chars of LayerName
+    * add '.un'
+    * if not root UG, then at its linear index in root
+    ex.:
+      outp.un   (for root UG)
+      outp.un[2]  (for a nested UG)
+  any other type:
+    'no_nm' (literal)
+  
+Unit
+  Single Variable (no .)
+    * one mon
+    * name like: unit.variable
+    ex. myun.act
+  Compound Variable
+    s.* or r.* -- translate to 'recv.' and 'send.'
+    if var is ConnectionGroup (recv or send)
+      Scan the ConnectionGroup using the name after 
+    else, allow 1 more level, ex. bias.X
+
+ConnectionGroup
+   For each CG:
+     * get the MemberDef of el_type, for varname
+     * get owning Unit u of CG
+     * part name: ObjName(u) + [CG index in CG root]
+     For each Connection:
+       * link ptr, add MemberDef (same for all)
+       * name = partname + [con idx]. + varname
+       
+Projection
+   if member found based on variable, 
+     then link that in
+   else, required to be a Layer, either s. or r.:
+   if r.* then use lay = proj.layer
+   if s.* then use lay = proj.from
+   * scan all Units in root UG of that layer
+   
+Layer
+   Look for variable in Layer
+   if variable is a x.y look for X in layer
+   else, assume it is Unit variable
+     * ScanUnits of Layer for the variable
+     * if found, add GEOM X and Y opts to first dataitem
+      
+UnitGroup
+   Look for variable in UG
+   if variable is a x.y look for X in UG
+   else, assume it is Unit variable
+     * ScanUnits of UG for the variable
+     * if found, add GEOM X and Y (of UG) opts to first dataitem
+  
+  
+X: some member name
+UNnm -- derived Unit name
+
+ 
+Net Obj		Variable ex	Value Dimensionality
+Unit		var		S
+Unit		s.X r.X		[N] n in CG
+Unit		bias.X		S
+Projection	var		S
+Projection	s.X or r.X	[N] n in to or from Layer.units
+Layer		var (of lay)	S
+Layer		var.X		S (obj is var)
+Layer		var (of U's)	[Y X] (flat) XxY of Units
+UnitGroup	var (of UG)	S
+UnitGroup	var.X		S  (obj is var)
+UnitGroup	var (of U's)	[Y X] XxY of UG.units
+(note: CGs are only called internally)
+ConGroup	var (of Cons)	[N] # Connections in leafs
+
+ex. (in possible order of use case) 
+Object		Var Memb of	Col Type; data
+Unit		unit		type(var) (float, int, string)
+Unit		con		float[c]
+UnitGroup	unit		[y x]; float, unit.act
+UnitGroup	ug		type(var)
+Layer		con		YxX cols; float[c]
+Layer		unit		type[Y X];  unit.act	
+Layer		ug		type[gy gx]
+Net	etc.
+
+c - connection count
+y x -- Unit dims of a UnitGroup (or simple Layer)
+Y X -- (flat) Unit dims of a Layer
+gy gx -- group dims in a compound layer
+  b) Unit dims of a UnitGroup
+  
+Issues:
+  * C is variable
+  * any attempt at "funky" inner data rep schemes will likely cause
+    lots of other complexity, such as graphing, matrix ops, etc.
+Possible Solutions
+  * split up outers so that C only has one inner
+
+Assignment algorithm:
+  geom.size = 0
+  call outer object
+  each object invokes more inner ones if necessary
+  at the end of an object, do the following:
+    increment the geometry
+*/
+//TODO:
+// fix up the mon_vals to use appropriate geom
+// fix up the Stats calc routine to use mon_vals
+void NetMonItem::Initialize() {
+  variable = "act";
+  object = NULL;
+}
+
+void NetMonItem::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(val_specs,this);
+  taBase::Own(ptrs,this);
+  ptrs.SetBaseType(&TA_taBase);
+  taBase::Own(pre_proc_1,this);
+  taBase::Own(pre_proc_2,this);
+  taBase::Own(pre_proc_3,this);
+}
+
+void NetMonItem::CutLinks() {
+  pre_proc_3.CutLinks();
+  pre_proc_2.CutLinks();
+  pre_proc_1.CutLinks();
+  ptrs.RemoveAll();
+  members.Reset();
+  val_specs.CutLinks();
+  DEL_POINTER(object);
+  inherited::CutLinks();
+}
+
+void NetMonItem::Copy_(const NetMonItem& cp) {
+  SET_POINTER(object, cp.object);
+  variable = cp.variable;
+//NOTE:  val_specs, members, and ptrs done in UAE
+  pre_proc_1 = cp.pre_proc_1;
+  pre_proc_2 = cp.pre_proc_2;
+  pre_proc_3 = cp.pre_proc_3;
+}
+
+void NetMonItem::UpdateAfterEdit() {
+  if (!owner) return;
+  if ((!object) || variable.empty()) return;
+  
+  ScanObjects();
+
+  // add variable and object name, if relevant
+ //?? String altnm = AltTypeName();
+  if(name.contains(GetTypeDef()->name) ) {
+    name += String("_") + variable;
+    if (object) {
+      String objnm = GetObjName(object);
+      if (!objnm.empty())
+	name += String("_") + objnm;
     }
-    handled = true;
+  }
+  inherited::UpdateAfterEdit();
+}
+
+bool NetMonItem::AddCellName(const String& cellname) {
+  ChannelSpec* cs = val_specs.Peek();
+  if (!cs) return false;
+  
+  if (cs->isMatrix()) {
+    MatrixChannelSpec* mcs = (MatrixChannelSpec*)cs;
+    // note: usually either allocated matrix, or growable [1]
+    if (cell_num < (mcs->cell_names.size -1))
+      mcs->cell_names.AddFrames(1); 
+    mcs->cell_names.SetFmStr_Flat(cellname, cell_num++);
+  } else { // scalar
+  }
+  return true;
+}
+
+MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType val_type,
+  const MatrixGeom* geom) 
+{
+  cell_num = 0;
+  MatrixChannelSpec* cs = (MatrixChannelSpec*)val_specs.New(1, &TA_MatrixChannelSpec);
+  cs->SetName(valname);
+  cs->val_type = val_type;
+  cs->uses_cell_names = true;
+  if (geom) {
+    cs->cell_geom = *geom;
+  }
+  cs->UpdateAfterEdit();
+  return cs;
+}
+
+ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType val_type) {
+  cell_num = 0;
+  ChannelSpec* cs = (ChannelSpec*)val_specs.New(1, &TA_ChannelSpec);
+  cs->SetName(valname);
+  cs->val_type = val_type;
+  cs->UpdateAfterEdit();
+  return cs;
+}
+
+bool NetMonItem::GetMonVal(int i, Variant& rval) {
+  void* obj = NULL;
+  MemberDef* md = NULL;
+  if (i < ptrs.size) {
+    obj = (void*)ptrs.FastEl(i);
+    md = members.FastEl(i);
+  }
+  if (!md || !obj) {
+    rval = _nilVariant;
+    return false;
+  }
+  rval = md->GetValVar(obj);
+  // pre-process.. 
+  // note: NONE op leaves Variant in same format, otherwise converted to float
+  pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
+  return true;
+}
+
+String NetMonItem::GetObjName(TAPtr obj) {
+  String nm = obj->GetName();
+  if (!nm.empty()) {
+    if (nm.length() > 4) nm = nm.before(4);
+    return nm;
+  }
+  if (obj->InheritsFrom(TA_Unit)) {
+    Unit* u = (Unit*)obj;
+    Layer* lay = GET_OWNER(obj, Layer);
+    if (lay != NULL) {
+      nm = lay->name;
+      if (nm.length() > 4) nm = nm.before(4);
+      int index = ((Unit_Group*)u->owner)->Find(u);
+      nm += String("[") + String(index) + "]";
+      return nm;
+    }
+  } else if (obj->InheritsFrom(TA_Unit_Group)) {
+    Unit_Group* ug = (Unit_Group*)obj;
+    Layer* lay = GET_OWNER(obj, Layer);
+    if (lay != NULL) {
+      nm = lay->name;
+      if (nm.length() > 4) nm = nm.before(4);
+      nm += ".un";
+      if (ug != &(lay->units)) {
+	int index = lay->units.gp.Find(ug);
+	if (index >= 0)
+	  nm += String("[") + String(index) + "]";
+      }
+      return nm;
+    }
+  }
+  return "no_nm";
+}
+
+void NetMonItem::ScanObjects() {
+//TODO: what about orphaned columns in the sink?????
+  val_specs.RemoveAll();
+  ptrs.RemoveAll();
+  members.RemoveAll();
+  if (!object) return;
+  
+  if (object->InheritsFrom(&TA_Unit)) 
+    ScanObjects_Unit((Unit*)object, NULL, true);
+  else if (object->InheritsFrom(&TA_Layer)) 
+    ScanObjects_Layer((Layer*)object);
+  else if (object->InheritsFrom(&TA_Unit_Group))
+    ScanObjects_UnitGroup((Unit_Group*)object, true);
+  else if (object->InheritsFrom(&TA_Projection))
+    ScanObjects_Projection((Projection*)object);
+  else if (object->InheritsFrom(&TA_Network))
+    ScanObjects_Network((Network*)object);
+  else {			
+    // could be any type of object
+    //TODO: maybe support more, such as lists, etc.
+    int temp = 0;
+    MemberDef* md = object->FindMember(variable, temp);
+    if (md) {
+      ptrs.Link(object);
+      members.Add(md);
+      String valname = GetObjName(object) + String(".") + variable;
+      AddScalarChan(valname, ValTypeForType(md->type));
+    }
   }
 }
 
-*/
+void NetMonItem::ScanObjects_ConGroup(Con_Group* mcg, const String& varname,
+  const String& colname, Projection* p) 
+{
+  MemberDef* md;
+  String valname;
+  String unitname;
+  //note: assume float, since really no other con types make sense, and using Variant
+  // could be extremely wasteful since there are so many cons
+  MatrixChannelSpec* cs = AddMatrixChan(colname, VT_FLOAT);
+  cs->cell_names.SetGeom(1, 0); //dynamic
+  //NOTE: we expand the cell names of the spec on the fly
+  int i;
+  Con_Group* cg;
+  FOR_ITR_GP(Con_Group, cg, mcg->, i) {
+    if ((p) && (cg->prjn != p)) continue;
+    md = cg->el_typ->members.FindNameR(varname);
+    if (!md) continue;
+    Unit* u = GET_OWNER(cg,Unit);
+    if (!u) continue;
+    unitname = GetObjName(u) + String("[") + String(i) + "]";
+    int j;
+    for (j=0; j<cg->size; ++j) {
+      Connection* c = (Connection *) cg->Cn(j);
+      ptrs.Link(c);
+      members.Add(md);
+      valname = unitname.cat("[").cat(String(j)).cat("].").cat(varname);
+      AddCellName(valname);
+    }
+  }
+  cs->cell_geom = cs->cell_names.geom;
+  cs->UpdateAfterEdit();
+}
 
+void NetMonItem::ScanObjects_Layer(Layer* lay) {
+  TAPtr ths = lay;
+  MemberDef* md = NULL;
+  String varname = variable;
+  String valname = GetObjName(lay) + String(".") + variable;
+  if (variable.contains('.')) {
+    varname = variable.before('.');
+    md = lay->FindMember(varname);
+    if (md) {
+      if (md->type->ptr == 1)
+	ths = *((TAPtr*)md->GetOff((void*)lay));
+      else
+	ths = (TAPtr) md->GetOff((void*)lay);
+      varname = variable.after('.');
+    } else			// variable not there, go to units
+      ths = NULL;
+  }
+  if (ths) {
+    // now search from 'ths'
+    md = ths->FindMember(varname);
+    if (md) {
+      AddScalarChan(valname, ValTypeForType(md->type));
+      ptrs.Link(ths);
+      members.Add(md);
+      return;
+    }
+  }
+  // the default is to scan the units for the variable
+  // we make a chan spec assuming the var is on units, but we can delete it
+  MatrixGeom geom(2, lay->flat_geom.x, lay->flat_geom.y);
+  MatrixChannelSpec* mcs = AddMatrixChan(valname, VT_FLOAT, &geom);
+  int val_sz = val_specs.size; // lets us detect if new ones made
+  taLeafItr i;
+  Unit* u;
+  TwoDCoord c;
+  int cols = val_specs.size; // use to detect con vals made
+  for (c.y = 0; c.y < lay->flat_geom.y; ++c.y) {
+    for (c.x = 0; c.x < lay->flat_geom.x; ++c.x) {
+      u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
+      //TODO: Forbid this evil capability!!!!!
+      if (!u) { 
+        taMisc::Error("Monitoring of partially full Layers is not supported! Please use full Layers (N = XxY)");
+        goto cont;
+      }
+      ScanObjects_Unit(u);
+    }
+  }
+cont:
+  // if nested objs made chans, delete ours and mark a new group
+  if (val_sz < val_specs.size) {
+    val_specs.Remove(val_sz - 1);
+    val_specs.FastEl(val_sz)->new_group_name = valname;
+  } 
+}
+
+void NetMonItem::ScanObjects_Network(Network* net) {
+  // Note: no special grouping or such needed at this high level
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, net->layers., itr)
+    ScanObjects_Layer(lay);
+}
+
+void NetMonItem::ScanObjects_Projection(Projection* p) {
+  int temp=0;
+  MemberDef* md = p->FindMember(variable,temp);
+  String valname = GetObjName(p) + String(".") + variable;
+  if(md != NULL) {
+    AddScalarChan(valname, ValTypeForType(md->type));
+    ptrs.Link(p);
+    members.Add(md);
+    return;
+  }
+  Layer* lay = NULL;
+  if (variable.before('.') == "r") lay = p->layer;
+  else if (variable.before('.') == "s") lay = p->from;
+  if (lay == NULL) {
+    taMisc::Error("NetMonItem Projection does not have layer's set or",
+		   "selected variable does not apply to connections");
+    return;
+  }
+  int val_sz = val_specs.size; // for detecting chans added
+  taLeafItr i;
+  Unit* u;
+  FOR_ITR_EL(Unit, u, lay->units., i)
+    ScanObjects_Unit(u, p);
+  // if nested objs made chans, mark a new group
+  if (val_sz < val_specs.size) {
+    val_specs.FastEl(val_sz)->new_group_name = valname;
+  } 
+}
+
+void NetMonItem::ScanObjects_Unit(Unit* u, Projection* p, bool mk_col) {
+  //NOTE: we must always add an item, if not scanning cons
+  TAPtr ths = u;
+  void* temp;
+  MemberDef* md = NULL;
+  String varname = variable;
+  String valname = GetObjName(u) + String(".") + variable;
+  int val_sz= val_specs.size; // for marking current spot
+  if (variable.contains('.')) {
+    varname = variable.before('.');
+    // for selected projections:
+    if (varname=="r") varname = "recv";
+    else if(varname=="s") varname = "send";
+    md = u->FindMembeR(varname,temp);
+    if ((md == NULL) || (temp == NULL)) goto cont;
+    if (md->type->ptr == 1) {
+      ths = *((TAPtr*)temp);
+      if(ths == NULL) goto cont;
+    } else
+      ths = (TAPtr) temp;
+    varname = variable.after('.');
+    if (ths->InheritsFrom(&TA_Con_Group)) {
+      ScanObjects_ConGroup((Con_Group *) ths, varname, valname, p);
+      // if nested objs made chans, delete ours and mark a new group
+      if (val_sz < val_specs.size) {
+        val_specs.FastEl(val_sz)->new_group_name = valname;
+      } 
+      return;
+    }
+    // otherwise it must be bias or some other sub object
+  }
+cont:
+  if (ths) {
+    md = ths->FindMember(varname);
+  }
+  members.Add(md);
+  ptrs.Link(ths);
+  if (mk_col) {
+    ValType val_type =  (md) ? ValTypeForType(md->type) : VT_VARIANT;
+    AddScalarChan(valname, val_type);
+  } else {
+    AddCellName(valname);
+  }
+}
+
+void NetMonItem::ScanObjects_UnitGroup(Unit_Group* ug, bool mk_col) {
+  TAPtr ths = ug;
+  MemberDef* md = NULL;
+  String varname = variable;
+  String valname = GetObjName(ug) + String(".") + variable;
+  if (variable.contains('.')) {
+    varname = variable.before('.');
+    md = ug->FindMember(varname);
+    if (md) {
+      if (md->type->ptr == 1)
+	ths = *((TAPtr*)md->GetOff((void*)ug));
+      else
+	ths = (TAPtr) md->GetOff((void*)ug);
+      varname = variable.after('.');
+    } else			// variable not there, go to units
+      ths = NULL;
+  }
+  if (ths) {
+    // now search from 'ths'
+    md = ths->FindMember(varname);
+    if (md) {
+      ptrs.Link(ths);
+      members.Add(md);
+      if (mk_col) {
+        AddScalarChan(valname, ValTypeForType(md->type));
+      } else {
+        AddCellName(valname);
+      }
+      return;
+    }
+  }
+  // the default is to scan the units for the variable
+  taLeafItr i;
+  Unit* u;
+  TwoDCoord c;
+  MatrixChannelSpec* cs = NULL;
+  if (mk_col) {
+    MatrixGeom geom(2, ug->geom.x, ug->geom.y);
+    cs = AddMatrixChan(valname, VT_FLOAT, &geom);
+  }
+  int val_sz = val_specs.size; // use to detect con vals made
+  for (c.y = 0; c.y < ug->geom.y; ++c.y) {
+    for (c.x = 0; c.x < ug->geom.x; ++c.x) {
+      u = ug->FindUnitFmCoord(c); // NULL if odd size geom, remainder will be NULL
+      //TODO: Forbid this evil capability!!!!!
+      if (!u) { 
+        taMisc::Error("Monitoring of partially full UnitGroups is not supported! Please use full UnitGroups (N = XxY)");
+        goto cont;
+      }
+      ScanObjects_Unit(u);
+    }
+  }
+cont:
+  if (mk_col) {
+    // if nested objs made chans, delete ours and mark a new group
+    if (val_sz < val_specs.size) {
+      val_specs.Remove(val_sz - 1);
+      val_specs.FastEl(val_sz)->new_group_name = valname;
+    }
+  }
+}
+
+void NetMonItem::UpdateMonVals(DataBlock* db) {
+  if ((!db) || variable.empty())  return;
+
+  int mon = 0; 
+  //note: there should always be the exact same number of mons as items to set,
+  // but in case of mismatch, the GetMonVal will return Invalid,
+  Variant mbval;
+  for (int ch = 0; ch < val_specs.size; ++ch) {
+    ChannelSpec* cs = val_specs.FastEl(ch);
+    if (cs->isMatrix()) {
+      int vals = cs->cellGeom().Product();
+      taMatrix* mat = db->GetSinkMatrix(cs->chan_num); // pre-ref'ed
+      if (mat) {
+        for (int j = 0; j < vals; ++j) {
+          GetMonVal(mon++, mbval); // note: we don't care if not set, ie invalid
+          mat->SetFmVar_Flat(mbval, j);
+        }
+        taBase::UnRef(mat);
+      }
+    } else { // scalar
+      GetMonVal(mon++, mbval);
+      db->SetData(mbval, cs->chan_num);
+    }
+  }
+}
+
+void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
+  if ((object == obj) && (variable == var)) return; 
+  SET_POINTER(object, obj);
+  variable = var;
+  UpdateAfterEdit();
+}
+
+
+//////////////////////////
+//  NetMonitor		//
+//////////////////////////
+
+void NetMonitor::AddObject(TAPtr obj, const String& variable) {
+  // check for exact obj/variable already there, otherwise add one
+  NetMonItem* nmi;
+  for (int i = 0; i < size; ++i) {
+    nmi = FastEl(i);
+    if ((nmi->object == obj) && (nmi->variable == variable))
+      return;
+  }
+  nmi = (NetMonItem*)New(1, &TA_NetMonItem);
+  nmi->SetMonVals(obj, variable);
+}
+
+void NetMonitor::UpdateChannels(DataBlock* db) {
+}
+
+void NetMonitor::UpdateMonVals(DataBlock* db) {
+  NetMonItem* nmi;
+  for (int i = 0; i < size; ++i) {
+    nmi = FastEl(i);
+    nmi->UpdateMonVals(db);
+  }
+}

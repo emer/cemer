@@ -839,9 +839,7 @@ inline void ConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
 
 class PDP_API Unit_Group : public taGroup<Unit> {
   // #NO_UPDATE_AFTER a group of units
-#ifndef __MAKETA__
-typedef taGroup<Unit> inherited;
-#endif
+INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE layer owner
   int		n_units;	// number of units to create in the group (0 = use layer n_units)
@@ -945,7 +943,7 @@ public:
   }; //
   
   
-  //NOTE: LayerType bits are same as NetWriter LayerFlags bits
+  //NOTE: LayerType bits are same as LayerWriter LayerFlags bits
   enum LayerType { // #BITS design hint on layer usage (but input/output always allowed)
     HIDDEN	= 0x00, 	// #NO_BIT layer probably won't be externally connected
     INPUT 	= 0x01,		// layer will (or may) receive external input
@@ -962,7 +960,8 @@ public:
   PosTDCoord		pos;		// position of layer
   PosTDCoord		gp_geom;	// #CONDEDIT_OFF_geom.z:1 geometry of sub-groups (if geom.z > 1)
   PosTDCoord		gp_spc;		// #CONDEDIT_OFF_geom.z:1 spacing between sub-groups (if geom.z > 1)
-  PosTDCoord		act_geom;	// #HIDDEN actual geometry (if geom.z > 1)
+  TwoDCoord		flat_geom;	// #SHOW #READ_ONLY #NO_SAVE flat unit geometry (esp. when geom.z > 1)
+  PosTDCoord		act_geom;	// #HIDDEN actual view geometry, incl spaces and with gps
   Projection_Group  	projections;	// group of receiving projections
   Projection_Group  	send_prjns;	// #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group		units;		// units or groups of units
@@ -1426,19 +1425,18 @@ INHERITED(taList<LayerRWBase>)
 public:
   LayerRWBase*		FindByDataBlockLayer(DataBlock* db, Layer* lay);
     // find the item by source and target -- note: finds first if multiple the same
-  
   void			FillFromDataBlock(DataBlock* db, Network* net, bool freshen_only);
     // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
   void			FillFromTable(DataTable* dt, Network* net, bool freshen_only);
     // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
     
+  
   TA_ABSTRACT_BASEFUNS(LayerRWBase_List); //
 
 protected:
   virtual void		FillFromDataBlock_impl(DataBlock* db, Network* net,
-    bool freshen, Layer::LayerType lt) = 0;
+    bool freshen, Layer::LayerType lt){}
     
-
 private:
   void	Initialize() {SetBaseType(&TA_LayerRWBase);}
   void 	Destroy() {}
@@ -1480,12 +1478,13 @@ private:
   void 	Destroy() {}
 };
 
-
+/*TODO
 class PDP_API LayerReader: public LayerRWBase {
-  // object that reads data from a layer
+  // object that reads data from a Layer to a DataSink 
 INHERITED(LayerRWBase)
 public:
 
+  
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerReader& cp);
@@ -1512,87 +1511,98 @@ private:
   void	Initialize() {SetBaseType(&TA_LayerReader);}
   void 	Destroy() {}
 };
-
-
-
-/*obs
-class PDP_API LayerRWBase: public taOBase  {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS auxilliary object to read/write data to/from layers
-INHERITED(taOBase)
-public:
-  enum GroupRWModel { // default model to use in reading/writing layer that has groups
-    FLAT,	// ignore groups, read/write as if one flat 2-d space of units
-    GROUPED_DATA,	// read/write via one channel using 4-d data (N*M groups, X*Y units/gp)
-    GROUPED_CHANNELS, // read/write via N*M channels, each accessing one 2-d group of units
-    CUSTOM  // use this when a non-standard model is used, ex. partial access
-  };
-
-  Layer* 		layer;		// #READ_ONLY #NO_SAVE Pointer to Layer
-  PosTwoDCoord		offset;		// offset in layer or unit group at which to start reading/writing
-  GroupRWModel		gp_rw_model;	// unit group read/write model
-  PosTwoDCoord  	gp_offset;	// #CONDEDIT_OFF_gp_rw_model:FLAT when using GROUPED access, specifies the starting group coords
-  
-  void 			SetLayer(Layer* lay); // sets or clears layer; calls _impl
-    
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerRWBase& cp); 
-  COPY_FUNS(LayerRWBase, taOBase);
-  TA_BASEFUNS(LayerRWBase);
-  
-protected:
-  virtual void 		SetLayer_impl(Layer* lay); // sets or clears layer
-private:
-  void	Initialize();
-  void 	Destroy();
-};
-
-class PDP_API LayerWriter: public LayerRWBase {
-  // object that writes data from a datasource to a layer
-INHERITED(LayerRWBase)
-public: //
-  Unit::ExtType	ext_flags;	// how to flag the unit/layer's external input status
-  Random	noise;		// noise optionally added to values when applied
-  String_Array  value_names;	// display names of the individual pattern values
-  virtual void	ApplyData(const float_Matrix& data);
-  // #IGNORE apply the data to all units (layer must already be set)
-
-  virtual void 	ApplyNames();
-  // #BUTTON set the names of units in the network according to the current value_names
-
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerWriter& cp);
-  COPY_FUNS(LayerWriter, LayerRWBase);
-  TA_BASEFUNS(LayerWriter); //
-  
-protected:
-  virtual void		GetExtFlags(const float_Matrix& data, int& act_ext_flags);
-  // gets the effective flag values, from ourself, and possibly data and/or context
-  virtual void 		ApplyValue(Unit* u, float val, int act_ext_flags);
-  // assign unit value and ext_flag based on data at given coord, does nothing if out of range
-
-private:
-  void	Initialize();
-  void 	Destroy();
-};
-
-
-class PDP_API LayerReader: public LayerRWBase {
-  // object that reads data from a layer
-INHERITED(LayerRWBase)
-public:
-
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerReader& cp);
-  COPY_FUNS(LayerReader, LayerRWBase);
-  TA_BASEFUNS(LayerReader);
-  
-private:
-  void	Initialize();
-  void 	Destroy();
-};
 */
+
+class PDP_API NetMonItem: public taNBase {
+  // used for monitoring the value of a net object:\nLayer, Projection, UnitGroup, Unit
+INHERITED(taNBase)
+public:
+  TAPtr 		object;		// #the network object being monitored
+  String        	variable;	// Variable (member) to monitor
+  ChannelSpec_List	val_specs;	// specs of the values being monitored 
+  MemberSpace   	members;	// #IGNORE memberdefs
+  taBase_List		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
+  SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
+  SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
+  SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
+  
+
+  void		SetMonVals(TAPtr obj, const String& var); 
+    // set object and variable, and update appropriately
+//TODO: add funcs for specific object types, and put in gui directives
+
+  static String GetObjName(TAPtr obj); // get name of object for naming stats, etc
+
+//obs  void		NameStatVals();
+  virtual void 		UpdateMonVals(DataBlock* db); // get all the values!
+  
+  void  InitLinks();
+  void	CutLinks();
+  void	UpdateAfterEdit();
+  void 	Copy_(const NetMonItem& cp);
+  COPY_FUNS(NetMonItem, taNBase);
+  TA_BASEFUNS(NetMonItem);//
+  
+protected:
+  int			cell_num; // current cell number, when adding mon vals
+  ChannelSpec* 		AddScalarChan(const String& valname, ValType val_type);
+  MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType val_type,
+    const MatrixGeom* geom = NULL);
+    // caller resp for somehow setting geom if NULL; clears cell_num
+  bool 			AddCellName(const String& cellname);
+  bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
+  // these are for finding the members and building the stat
+  // out of the objects and the variable
+  void			ScanObjects();	// #IGNORE
+  void			ScanObjects_Network(Network* net); // #IGNORE
+  void			ScanObjects_Layer(Layer* lay); // #IGNORE
+  void			ScanObjects_Projection(Projection* p); // #IGNORE
+  void			ScanObjects_UnitGroup(Unit_Group* ug, bool mk_col = false);	// #IGNORE
+  void			ScanObjects_Unit(Unit* u, Projection* p = NULL, bool mk_col = false); // #IGNORE
+  void			ScanObjects_ConGroup(Con_Group* cg, const String& varname,
+    const String& valname, Projection* p = NULL); // #IGNORE note: always makes a col
+  
+// following return 'true' if the routine handled making the colspecs
+
+private:
+  void	Initialize();
+  void 	Destroy() {CutLinks();}
+};
+
+
+class TAMISC_API NetMonitor: public taList<NetMonItem> { // object for monitoring data 
+INHERITED(taList<NetMonItem>)
+public:
+
+  void		AddNetwork(Network* net, const String& variable)
+    {AddObject(net, variable);}
+    // #MENU monitor a value in the Network or its subobjects
+  void		AddLayer(Layer* lay, const String& variable)
+    {AddObject(lay, variable);}
+    // #MENU monitor a value in the Layer or its subobjects
+  void		AddProjection(Projection* prj, const String& variable)
+    {AddObject(prj, variable);}
+    // #MENU monitor a value in the Projection or its subobjects
+  void		AddUnitGroup(Unit_Group* ug, const String& variable)
+    {AddObject(ug, variable);}
+    // #MENU monitor a value in the UnitGroup or its subobjects
+  void		AddUnit(Unit* un, const String& variable)
+    {AddObject(un, variable);}
+    // #MENU monitor a value in the Unit or its subobjects
+  
+  void		AddObject(TAPtr obj, const String& variable);
+    // monitor a value in the object or its subobjects
+  void 		UpdateChannels(DataBlock* db); // create or update the channels
+  void 		UpdateMonVals(DataBlock* db); // get all the values!
+  
+//  int	NumListCols() const {return 7;} // number of columns in a list view for this item type
+//  String GetColHeading(int col); // header text for the indicated column
+  TA_BASEFUNS(NetMonitor);
+private:
+  void		Initialize() {SetBaseType(&TA_NetMonItem);}
+  void		Destroy() {}
+};
+
+
 
 #endif /* netstru_h */

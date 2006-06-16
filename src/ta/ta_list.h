@@ -173,7 +173,7 @@ protected:
 //  static String		 no_el_name;	// when the el has no name..
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs
 
-  static taHashVal	HashCode_String(const char* string);
+  static taHashVal	HashCode_String(const String& string);
   // get a hash code value from given string
   static taHashVal	HashCode_Ptr(const void* ptr);
   // get a hash code value from given ptr
@@ -191,7 +191,7 @@ protected:
   // set owner to this
   virtual void	El_SetIndex_(void*, int) 	{ };
   // sets the element's self-index
-  virtual bool  El_FindCheck_(void* it, const char* nm) const
+  virtual bool  El_FindCheck_(void* it, const String& nm) const
   { return (El_GetName_(it) == nm); }
   virtual int	El_Compare_(void* a, void* b) const
   { int rval=-1; if(El_GetName_(a) > El_GetName_(b)) rval=1;
@@ -210,7 +210,7 @@ protected:
   // how to copy from given item (2nd arg)
 
   void		InitList_();
-  virtual int	Scratch_Find_(const char* it) const;
+  virtual int	Scratch_Find_(const String& it) const;
   // find item on the scratch_list using derived El_FindCheck_()
   void		UpdateIndex_(int idx);
   // update the index of the item at given index (i.e., which was just moved)
@@ -225,7 +225,7 @@ public:
   taPtrList_impl(const taPtrList_impl& cp)	{ InitList_(); Duplicate(cp); }
   virtual ~taPtrList_impl();
 
-  static ostream& Indenter(ostream& strm, const char* itm, int no, int prln, int tabs);
+  static ostream& Indenter(ostream& strm, const String& itm, int no, int prln, int tabs);
   static int	Idx;			// #HIDDEN pass to find if you don't want one
 
 
@@ -238,7 +238,7 @@ public:
   void*		SafeEl_(int i) const
   { void* rval=NULL; if((i >= 0) && (i < size)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
-  virtual void*	FindName_(const char* it, int& idx=Idx) const;	// #IGNORE
+  virtual void*	FindName_(const String& it, int& idx=Idx) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
   void*		Peek_() const
   { void* rval=NULL; if(size > 0) rval = el[size-1]; return rval; }  // #IGNORE
@@ -265,7 +265,7 @@ public:
   // #IGNORE duplicate given item and add to list
   virtual bool	Insert_(void* it, int where);		// #IGNORE
   virtual bool 	Replace_(void* ol, void* nw);		// #IGNORE
-  virtual bool 	Replace_(const char* ol, void* nw);	// #IGNORE
+  virtual bool 	Replace_(const String& ol, void* nw);	// #IGNORE
   virtual bool 	Replace_(int ol, void* nw, bool no_notify_insert = false); // #IGNORE
   virtual bool 	Transfer_(void* it);			// #IGNORE
   virtual bool	Remove_(void* it);			// #IGNORE
@@ -277,7 +277,7 @@ public:
   virtual bool	LinkUniqNameNew_(void* it);		// #IGNORE
   virtual bool	InsertLink_(void* it, int where);	// #IGNORE
   virtual bool 	ReplaceLink_(void* ol, void* nw);	// #IGNORE
-  virtual bool 	ReplaceLink_(const char* ol, void* nw);	// #IGNORE
+  virtual bool 	ReplaceLink_(const String& ol, void* nw);	// #IGNORE
   virtual bool 	ReplaceLink_(int ol, void* nw);		// #IGNORE
 
   virtual void	Push_(void* it);			// #IGNORE
@@ -297,13 +297,13 @@ public:
   virtual void	BuildHashTable(int n_buckets);
   // build a hash table with given number of buckets (not dynamic, so make it big)
 
-  virtual int	Find(const char* nm) const;
+  virtual int	Find(const String& nm) const;
   // find named element in list
 
-  virtual bool	Remove(const char* item_nm);
+  virtual bool	Remove(const String& item_nm);
   virtual bool	Remove(int idx);
   // remove (and delete) element from list at index
-  virtual bool	RemoveName(const char* item_nm)		{ return Remove(item_nm); }
+  virtual bool	RemoveName(const String& item_nm)		{ return Remove(item_nm); }
   // remove given named element from list (if on list)
   virtual bool	RemoveLast();
   // remove the last element on the list
@@ -594,7 +594,7 @@ public:
   // copy values from other array at given start and end points, and putting at given point in this
   virtual void	List(ostream& strm = cout) const;
   // print out all of the elements in the array
-  virtual void	InitFromString(const char* val);
+  virtual void	InitFromString(const String& val);
   // initialize an array from given string (does reset first)
 protected:
 
@@ -629,7 +629,7 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(Find(item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  virtual T*	FindName(const char* item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
   // find given named element (NULL = not here), sets idx
 
   virtual T*	Pop()				{ return (T*)Pop_(); }
@@ -648,7 +648,7 @@ public:
 
   virtual int	Find(const T* item) const	{ return Find_((const void*)item); }
   // find element in list (-1 if not there)
-  virtual int	Find(const char* item_nm) const	{ return taPtrList_impl::Find(item_nm); }
+  virtual int	Find(const String& item_nm) const	{ return taPtrList_impl::Find(item_nm); }
   virtual int	FindEl(const T* item) const	{ return Find(item); }
   // find given element in list (-1 if not there)
 
@@ -664,15 +664,15 @@ public:
   virtual bool	Insert(T* item, int idx)	{ return Insert_((void*)item, idx); }
   // Add or insert element at idx (-1 for end)
   virtual bool 	Replace(T* old_it, T* new_it)		{ return Replace_((void*)old_it, (void*)new_it); }
-  virtual bool 	Replace(const char* old_nm, T* new_it)	{ return Replace_(old_nm, (void*)new_it); }
+  virtual bool 	Replace(const String& old_nm, T* new_it)	{ return Replace_(old_nm, (void*)new_it); }
   virtual bool 	Replace(int old_idx, T* new_it)	{ return Replace_(old_idx, (void*)new_it); }
   // replace element at index with the new one
   virtual bool 	ReplaceEl(T* old_it, T* new_it)		{ return Replace(old_it, new_it); }
   // replace given element with the new one
-  virtual bool 	ReplaceName(const char* old_nm, T* new_it) { return Replace(old_nm, new_it); }
+  virtual bool 	ReplaceName(const String& old_nm, T* new_it) { return Replace(old_nm, new_it); }
   // replace named element with the new one
 
-  virtual bool	Remove(const char* item_nm) 	{ return taPtrList_impl::Remove(item_nm);}
+  virtual bool	Remove(const String& item_nm) 	{ return taPtrList_impl::Remove(item_nm);}
   virtual bool	Remove(T* item)			{ return Remove_((void*)item); }
   virtual bool	Remove(int idx)			{ return taPtrList_impl::Remove(idx); }
   // Remove element at given index
@@ -691,12 +691,12 @@ public:
   virtual bool	InsertLink(T* item, int idx= -1) { return InsertLink_((void*)item, idx);}
   // #MENU #LABEL_Link #UPDATE_MENUS Insert a link at index (-1 for end)
   virtual bool 	ReplaceLink(T* old_it, T* new_it)	{ return ReplaceLink_((void*)old_it, (void*)new_it); }
-  virtual bool 	ReplaceLink(const char* old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
+  virtual bool 	ReplaceLink(const String& old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
   virtual bool 	ReplaceLink(int old_idx, T* new_it)	{ return ReplaceLink_(old_idx, (void*)new_it); }
   // replace element with a link to the new one
   virtual bool 	ReplaceLinkEl(T* old_it, T* new_it)	{ return ReplaceLink(old_it, new_it); }
   // replace given element (if on list) with the new one
-  virtual bool	ReplaceLinkName(const char* old_nm, T* new_it){ return ReplaceLink(old_nm, new_it); }
+  virtual bool	ReplaceLinkName(const String& old_nm, T* new_it){ return ReplaceLink(old_nm, new_it); }
   // replace given named element (if on list) with the new one
 
   virtual void	Push(T* item)			{ Push_((void*)item); }
@@ -743,7 +743,7 @@ protected:
 public:
   int		Find(taHashEl* itm) const
   { return taPtrList<taHashEl>::Find(itm); }
-  int		Find(const char* itm) const
+  int		Find(const String& itm) const
   { return taPtrList<taHashEl>::Find(itm); }
 
   int		Find(taHashVal hash) const;
@@ -780,7 +780,7 @@ public:
 
   bool			UpdateIndex(taHashVal hash, int index);
   // update index associated with item
-  bool			UpdateIndex(const char* string, int index)
+  bool			UpdateIndex(const String& string, int index)
   { return UpdateIndex(HashCode_String(string), index); }
   // update index associated with item
 
@@ -795,7 +795,7 @@ public:
   { return taPtrList<taHashBucket>::Remove(idx); }
   bool			Remove(taHashVal hash);
   // remove given hash code from table
-  bool			Remove(const char* string)
+  bool			Remove(const String& string)
   { return Remove(HashCode_String(string)); }
   // remove given string from table
 
@@ -817,7 +817,7 @@ public:
   // 	functions that are passed el of type	//
   ////////////////////////////////////////////////
 
-  virtual int	Find(const char* item_nm) const	{ return taPtrList_impl::Find(item_nm); }
+  virtual int	Find(const String& item_nm) const	{ return taPtrList_impl::Find(item_nm); }
   virtual int	Find(const T* item) const	{ return Find_((const void*)item); }
   // find element in list (-1 if not there)
   virtual int	FindEl(T* item) const		{ return Find(item); }
@@ -835,15 +835,15 @@ public:
   virtual bool	Insert(T* item, int where)	{ return Insert_((void*)item, where); }
   // insert element at index (-1 for end)
   virtual bool 	Replace(T* old_it, T* new_it)		{ return Replace_((void*)old_it, (void*)new_it); }
-  virtual bool 	Replace(const char* old_nm, T* new_it)	{ return Replace_(old_nm, (void*)new_it); }
+  virtual bool 	Replace(const String& old_nm, T* new_it)	{ return Replace_(old_nm, (void*)new_it); }
   virtual bool 	Replace(int old_idx, T* new_it)		{ return Replace_(old_idx, (void*)new_it); }
   // replace element at index with the new one
   virtual bool 	ReplaceEl(T* old_it, T* new_it)		{ return Replace(old_it, new_it); }
   // replace given element with the new one
-  virtual bool 	ReplaceName(const char* old_nm, T* new_it) { return Replace(old_nm, new_it); }
+  virtual bool 	ReplaceName(const String& old_nm, T* new_it) { return Replace(old_nm, new_it); }
   // replace named element with the new one
 
-  virtual bool	Remove(const char* item_nm) 	{ return taPtrList_impl::Remove(item_nm);}
+  virtual bool	Remove(const String& item_nm) 	{ return taPtrList_impl::Remove(item_nm);}
   virtual bool	Remove(T* item)			{ return Remove_((void*)item); }
   virtual bool	Remove(int i)			{ return taPtrList_impl::Remove(i); }
   virtual bool	RemoveEl(T* item)		{ return Remove(item); }
@@ -861,12 +861,12 @@ public:
   virtual bool	InsertLink(T* item, int idx= -1)	{ return InsertLink_((void*)item, idx);}
   // #MENU #LABEL_Link #UPDATE_MENUS Insert a link at index (-1 for end)
   virtual bool 	ReplaceLink(T* old_it, T* new_it)	{ return ReplaceLink_((void*)old_it, (void*)new_it); }
-  virtual bool 	ReplaceLink(const char* old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
+  virtual bool 	ReplaceLink(const String& old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
   virtual bool 	ReplaceLink(int old_idx, T* new_it)	{ return ReplaceLink_(old_idx, (void*)new_it); }
   // replace element with a link to the new one
   virtual bool 	ReplaceLinkEl(T* old_it, T* new_it)	{ return ReplaceLink(old_it, new_it); }
   // replace given element (if on list) with the new one
-  virtual bool	ReplaceLinkName(const char* old_nm, T* new_it){ return ReplaceLink(old_nm, new_it); }
+  virtual bool	ReplaceLinkName(const String& old_nm, T* new_it){ return ReplaceLink(old_nm, new_it); }
   // replace given named element (if on list) with the new one
 
   virtual void	Push(T* item)			{ Push_((void*)item); }

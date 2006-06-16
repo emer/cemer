@@ -2121,6 +2121,10 @@ const String MemberDef::GetPathName() const {
   return rval;
 } 
 
+const Variant MemberDef::GetValVar(const void* base, void* par) const {
+  return type->GetValVar(GetOff(base), par, this); //TODO: no par???
+}
+
 bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
   // check for always show or always not
   if (HasOption("SHOW"))
@@ -2893,15 +2897,6 @@ TypeDef* TypeDef::GetPtrType() const {
   return rval;
 }
 
-TypeDef* TypeDef::GetTemplParent() const {
-  int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->InheritsFormal(TA_template))
-      return parents.FastEl(i);
-  }
-  return NULL;
-}
-
 String TypeDef::GetTemplName(const TypeSpace& inst_pars) const {
   String rval = name;
   int i;
@@ -2909,6 +2904,15 @@ String TypeDef::GetTemplName(const TypeSpace& inst_pars) const {
     rval += String("_") + inst_pars.FastEl(i)->name + "_";
   }
   return rval;
+}
+
+TypeDef* TypeDef::GetTemplParent() const {
+  int i;
+  for(i=0; i<parents.size; i++) {
+    if(parents.FastEl(i)->InheritsFormal(TA_template))
+      return parents.FastEl(i);
+  }
+  return NULL;
 }
 
 bool TypeDef::IgnoreMeth(const String& nm) const {
@@ -2923,45 +2927,6 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
       return true;
   }
   return false;
-}
-
-void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
-  if(inst_pars.size != templ_pars.size) {
-    String defn_no(templ_pars.size);
-    String inst_no(inst_pars.size);
-    taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
-		   inst_no);
-    cerr << "Defined with parameters: ";
-    templ_pars.List(cerr);
-    cerr << "\nInstantiated with parameters: ";
-    inst_pars.List(cerr);
-    return;
-  }
-
-  parents.Reset();			// bag the template's parents
-  parents.LinkUnique(templ_par);	// parent is the templ_par
-  par_formal.Remove(&TA_template);
-  par_formal.Link(&TA_templ_inst); 	// now a template instantiation
-  templ_par->children.LinkUnique(this);
-  internal = false;			// not internal any more
-  children.Reset();			// don't have any real children..
-
-  int i;
-  for(i=0; i<inst_pars.size; i++) {
-    TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
-    TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
-
-    templ_pars.ReplaceLink(i, inst_tp); // actually replace it
-
-    // update sub-types based on defn_tp (go backwards to get most extended types 1st)
-    int j;
-    for(j=sub_types.size-1; j>=0; j--) {
-      sub_types.FastEl(j)->ReplaceParent(defn_tp, inst_tp);
-    }
-  }
-
-  // update to use new types
-  UpdateMDTypes(templ_par->templ_pars, templ_pars);
 }
 
 
@@ -3137,6 +3102,45 @@ bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
   return rval;
 }
 
+void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
+  if(inst_pars.size != templ_pars.size) {
+    String defn_no(templ_pars.size);
+    String inst_no(inst_pars.size);
+    taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
+		   inst_no);
+    cerr << "Defined with parameters: ";
+    templ_pars.List(cerr);
+    cerr << "\nInstantiated with parameters: ";
+    inst_pars.List(cerr);
+    return;
+  }
+
+  parents.Reset();			// bag the template's parents
+  parents.LinkUnique(templ_par);	// parent is the templ_par
+  par_formal.Remove(&TA_template);
+  par_formal.Link(&TA_templ_inst); 	// now a template instantiation
+  templ_par->children.LinkUnique(this);
+  internal = false;			// not internal any more
+  children.Reset();			// don't have any real children..
+
+  int i;
+  for(i=0; i<inst_pars.size; i++) {
+    TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
+    TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
+
+    templ_pars.ReplaceLink(i, inst_tp); // actually replace it
+
+    // update sub-types based on defn_tp (go backwards to get most extended types 1st)
+    int j;
+    for(j=sub_types.size-1; j>=0; j--) {
+      sub_types.FastEl(j)->ReplaceParent(defn_tp, inst_tp);
+    }
+  }
+
+  // update to use new types
+  UpdateMDTypes(templ_par->templ_pars, templ_pars);
+}
+
 void TypeDef::unRegister(void* it) {
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
@@ -3150,7 +3154,7 @@ void TypeDef::unRegister(void* it) {
 
 
 //////////////////////////////////
-// 	Get/SetValStr		//
+// 	Get/SetVal		//
 //////////////////////////////////
 
 String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
@@ -3386,6 +3390,102 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 //      return String((int)*((void**)base));
   }
   return name;
+}
+
+const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb_def) const 
+{
+  void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
+  // if its void, odds are its a function..
+  if (InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) {
+    int lidx;
+    MethodDef* fun;
+    if(memb_def != NULL)
+      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
+						 memb_def->lists, lidx);
+    else
+      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    if (fun != NULL)
+      return fun->name;
+    else if(*((void**)base) == NULL)
+      return Variant((void*)NULL);//"NULL";
+    else 
+      return String((intptr_t)*((void**)base)); //TODO: is this the best??
+  }
+  if (ptr == 0) {
+    if (DerivesFrom(TA_bool)) {
+      bool b = *((bool*)base);
+      return b; //T_Bool
+    }
+    // note: char is generic char, and typically we won't use signed char
+    else if (DerivesFrom(TA_char)) {
+      return *((char*)base); // T_Char
+    }
+    // note: explicit use of signed char is treated like a number
+    else if ((DerivesFrom(TA_signed_char))) {
+      return (int)*((signed char*)base); // T_Int
+    }
+    // note: explicit use of unsigned char is "byte" in ta/pdp
+    else if ((DerivesFrom(TA_unsigned_char))) {
+      return (uint)*((unsigned char*)base);  // T_UInt
+    }
+    else if(DerivesFrom(TA_short)) {
+      return (int)*((short*)base);  // T_Int
+    }
+    else if(DerivesFrom(TA_unsigned_short)) {
+      return (uint)*((unsigned short*)base);  // T_UInt
+    }
+    else if(DerivesFrom(TA_int)) {
+      return *((int*)base);  // T_Int
+    }
+    else if(DerivesFrom(TA_unsigned_int)) {
+      return *((uint*)base);  // T_UInt
+    }
+    else if(DerivesFrom(TA_int64_t)) {
+      return *((int64_t*)base);  // T_Int64
+    }
+    else if(DerivesFrom(TA_uint64_t)) {
+      return *((uint64_t*)base);  // T_UInt64
+    }
+    else if(DerivesFrom(TA_float)) {
+      return *((float*)base); // T_Double
+    }
+    else if(DerivesFrom(TA_double)) {
+      return *((double*)base); // T_Double
+    }
+    else if(DerivesFormal(TA_enum)) {
+      return *((int*)base); // T_Int
+    }
+    else if(DerivesFrom(TA_taString))
+      return *((String*)base); // T_String
+    else if(DerivesFrom(TA_Variant)) {
+      return *((Variant*)base);
+    }
+#ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)base;
+      //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
+      return rbase; // T_Base
+    }
+#endif
+    // NOTE: other value types are not really supported, just fall through to return invalid
+  }
+  else if (ptr == 1) {
+    if (DerivesFrom(TA_char)) {
+      return *((char**)base); // T_String
+    }
+#ifndef NO_TA_BASE
+    else if (DerivesFrom(TA_taBase)) {
+      //NOTE: strictly speaking, we should be returning a generic ptr which points to the
+      // base value, but in practice, this is never what we want, since members that
+      // are TAPtr's are ubiquitous, what we actually want is a reference to the thing
+      // being pointed to, ie., the content of the variable
+      TAPtr rbase = *((TAPtr*)base);
+      return rbase; // T_Base
+    }
+#endif
+  }
+  // other types and degress of indirection not really supported
+  return _nilVariant; 
 }
 
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 

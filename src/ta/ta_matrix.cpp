@@ -188,12 +188,12 @@ void taMatrix::Initialize()
 }
  
 void taMatrix::Destroy() {
+  CutLinks();
   size = 0;
   alloc_size = 0;
-  CutLinks();
   if (slice_par) {
     SliceDestroying(slice_par, this);
-    slice_par = NULL; // helps prevent multi-destroy bugs
+    slice_par = NULL; 
   }
 #ifdef DEBUG 
   if (slice_cnt != 0) {
@@ -201,7 +201,7 @@ void taMatrix::Destroy() {
   }
 #endif
 }
-  
+
 void taMatrix::Add_(const void* it) {
   Check(canResize(), "resizing not allowed");
   Check((dims() == 1), "Add() only allowed when dims=1");

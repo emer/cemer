@@ -44,71 +44,29 @@ class ClustNode; //
 
 
 /*obs
-class TAMISC_API DataItem : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP source of a piece of data
-public:
-
-  String	name;		// #HIDDEN_INLINE name of data item
-  String	disp_opts;	// #HIDDEN_INLINE default display options for item
-  bool		is_string;	// #HIDDEN_INLINE is a string-valued item
-  int		vec_n;		// #HIDDEN_INLINE length of vector (0 if not)
-
-  bool 		SetName(const String& nm) 	{ name = nm; return true; }
-  String	GetName() const			{ return name; }
-
-  // set options to encode type information
-  virtual void	SetStringName(const String& nm);
-  virtual void	SetNarrowName(const String& nm);
-  virtual void	SetFloatVecNm(const String& nm, int n);
-  virtual void	SetStringVecNm(const String& nm, int n);
-
-  virtual void 	AddDispOption(const String& opt);
-  // adds an option, checking that it is not already there first..
-  bool		HasDispOption(const String& opt) const
-  { return disp_opts.contains(opt); } // check if a given display option is set
-  String 	DispOptionAfter(const String& opt);
-  // returns portion of option after given opt fragment
-
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Copy_(const DataItem& cp);
-  COPY_FUNS(DataItem, taOBase);
-  TA_BASEFUNS(DataItem);
-};
-
-
-class TAMISC_API DataItem_List : public taList<DataItem> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of DataItem objects
-public:
-  void	Initialize() 		{SetBaseType(&TA_DataItem); };
-  void 	Destroy()		{ };
-  TA_BASEFUNS(DataItem_List);
-};
-
-
 class TAMISC_API LogData : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER log data is communicated with these objects
 #ifndef __MAKETA__
 typedef taBase inherited;
 #endif
 public:
-  DataItem_List	items;		// #LINK_GROUP data items for each column of log data
+  ChannelSpec_List	items;		// #LINK_GROUP data items for each column of log data
 private:  int_Array	index;		// index of item either in r_data or s_data
   float_Array	r_data;		// float-valued data
   String_Array	s_data;		// string-valued data
 public:
   int		indexSize() {return index.size;}
   virtual void	Reset();		// reset all data
-  virtual void	AddFloat(DataItem* head, float val);	  // add a float data item
-  virtual void	AddString(DataItem* head, char* val);
+  virtual void	AddFloat(ChannelSpec* head, float val);	  // add a float data item
+  virtual void	AddString(ChannelSpec* head, char* val);
   // add a string data item (head code is set by this function)
 
   bool	IsString(int i)		// return true if ith item is a string
-  { return ((DataItem*)items[i])->is_string; }
+  { return ((ChannelSpec*)items[i])->is_string; }
   bool	IsVec(int i)		// return true if ith item is a vector
-  { return (((DataItem*)items[i])->vec_n > 0); }
+  { return (((ChannelSpec*)items[i])->vec_n > 0); }
   int	GetVecN(int i)		// return length of vector
-  { return ((DataItem*)items[i])->vec_n; }
+  { return ((ChannelSpec*)items[i])->vec_n; }
 
   float&   GetFloat(int i)	// get the ith data item (which better be a float)
   { return r_data[index[i]]; }
@@ -321,18 +279,8 @@ class TAMISC_API DataArray_impl : public taNBase {
 INHERITED(taNBase)
 friend class DataTable;
 public:
-  enum ValType {
-    VT_STRING,
-    VT_FLOAT,
-    VT_INT,
-    VT_BYTE,
-    VT_VARIANT
-  };
-
   static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
     // note: vt is -1 if unknown
-  static String 	ValTypeToStr(ValType vt);
-
 
   String		disp_opts;	// viewer default display options
   bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
@@ -463,46 +411,6 @@ private:
   void	Destroy()	{CutLinks(); }; //
 };
 
-class TAMISC_API ColDescriptor: public taNBase { // describes a column of data in a DataTable
-INHERITED(taNBase)
-public:
-  int			col_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
-  DataArray_impl::ValType val_type; // the type of data each cell will contain
-  String		disp_opts;	// viewer display options
-  bool			save_to_file;	// whether to save the column to a file
-  bool			is_matrix; // 'true' if the cell is a matrix, not a scalar
-  MatrixGeom		cell_geom; //  #INLINE #CONDEDIT_ON_is_matrix:true for matrix cols, the geom of each cell
-  
-  virtual void		CopyFromDataArray(const DataArray_impl& cp);
-  
-  override String	GetColText(int col, int itm_idx = -1); 
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy_(const ColDescriptor& cp);
-  COPY_FUNS(ColDescriptor, taNBase);
-  TA_BASEFUNS(ColDescriptor);
-private:
-  void		Initialize();
-  void		Destroy() {CutLinks();}
-};
-
-
-class TAMISC_API ColDescriptor_List: public taList<ColDescriptor> {
-INHERITED(taList<ColDescriptor>)
-public:
-  
-  TA_BASEFUNS(ColDescriptor_List);
-  
-public:
-  override void		El_SetIndex_(void* it, int idx);
-  override int		NumListCols() const {return 7;} // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  
-private:
-  void		Initialize() {SetBaseType(&TA_ColDescriptor);}
-  void		Destroy() {}
-};
-
 
 class TAMISC_API DataTableCols: public taGroup<DataArray_impl> {
 INHERITED(taGroup<DataArray_impl>)
@@ -571,6 +479,10 @@ public:
   void			UpdateAllRanges();
   // update all min-max range data for all float_Data elements in log
 
+  void			RemoveCol(int col); // removes indicated column; 'true' if removed
+  
+  bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
+    // returns 'true' if the col has the same name and a compatible data type
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
     const String& col_nm, DataTableCols* col_gp = NULL);
    // #MENU #MENU_ON_Table #ARG_C_2 create new scalar column of data of specified type
@@ -580,6 +492,15 @@ public:
   DataArray_impl*	NewColMatrixN(DataArray_impl::ValType val_type, 
     const String& col_nm,  const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
+  
+  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
+   // #MENU_1N create new matrix column of data based on name/type in the data item (default is Variant)
+    {if (cs) return NewColFromChannelSpec_impl(cs); else return NULL;}
+    
+  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
+   // #MENU_1N find existing or create new matrix column of data based on name/type in the data item
+    {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
+    
   float_Data*		NewColFloat(const String& col_nm); 
     // create new column of floating point data
   int_Data*		NewColInt(const String& col_nm); 	 
@@ -655,8 +576,8 @@ public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a 
   void			RowsAdded(int n = 1); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowsAdding)
 
 public: // DataBlock i/f and common routines
-  override DBOptions	dbOptions() const {return DB_IND_SEQ_SRC_SNK;} 
-    // options the instance type support
+  override DBOptions	dbOptions() const // options the instance type support
+    {return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC);} 
   override int		itemCount() const {return rows;} 
 protected: // DataBlock i/f and common routines
   inline int		channelCount() const {return data.leaves;} // #IGNORE
@@ -680,8 +601,13 @@ protected: // DataSource i/f
 public: // DataSink i/f
   override int		sinkChannelCount() const {return channelCount();}
   override const String	sinkChannelName(int chan) const {return channelName(chan);}//
+  override bool		AddSinkChannel(ChannelSpec* cs); 
+  override bool		AssertSinkChannel(ChannelSpec* cs); //
 protected: // DataSink i/f
   override bool		AddItem_impl(int n) {return AddRow(n);} // adds n items
+  override void		DeleteSinkChannel_impl(int chan) {RemoveCol(chan);}
+  override taMatrix*	GetSinkMatrix(int chan) 
+    {return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
   override bool		SetData_impl(const Variant& data, int chan) 
     {return SetValAsVar(data, chan, wr_itr);}
   override bool		SetMatrixData_impl(const taMatrix* data, int chan) 
@@ -694,6 +620,9 @@ protected:
   DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
     const String& col_nm, DataTableCols* col_gp = NULL);
    // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
+  DataArray_impl*	GetColForChannelSpec_impl(ChannelSpec* cs);
+  DataArray_impl*	NewColFromChannelSpec_impl(ChannelSpec* cs);
+  
 private:
   void	Initialize();
   void	Destroy();

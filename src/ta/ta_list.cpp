@@ -46,9 +46,10 @@ int taPtrList_impl::Idx = 0;
 //String taPtrList_impl::no_el_name;
 taPtrList_impl taPtrList_impl::scratch_list;
 
-taHashVal taPtrList_impl::HashCode_String(const char* string) {
+taHashVal taPtrList_impl::HashCode_String(const String& string_) {
   // from TCL, seems to be a tiny bit faster than COOL..
   taHashVal hash = 0;
+  const char* string = string_.chars();
   while (1) {
     unsigned int c = *string;
     string++;
@@ -134,7 +135,7 @@ int taPtrList_impl::Find_(const void* it) const {
   }
   return -1;
 }
-int taPtrList_impl::Find(const char* nm) const {
+int taPtrList_impl::Find(const String& nm) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
     return hash_table->FindIndex(HashCode_String(nm));
 
@@ -146,7 +147,7 @@ int taPtrList_impl::Find(const char* nm) const {
   return -1;
 }
 
-void* taPtrList_impl::FindName_(const char* it, int& idx) const {
+void* taPtrList_impl::FindName_(const String& it, int& idx) const {
   idx = Find(it);
   if(idx >= 0) return el[idx];
   return NULL;
@@ -158,7 +159,7 @@ void taPtrList_impl::UpdateIndex_(int idx) {
   if(El_GetOwner_(el[idx]) == this)
     El_SetIndex_(el[idx], idx);
   if(hash_table != NULL)
-    hash_table->UpdateIndex((const char*)El_GetName_(el[idx]), idx);
+    hash_table->UpdateIndex(El_GetName_(el[idx]), idx);
 }
 
 bool taPtrList_impl::Move(int fm, int to) {
@@ -260,7 +261,7 @@ bool taPtrList_impl::Remove(int i) {
   //note: change in 4.0 - don't disown until after removed from list
   if(tel != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove((const char*)El_GetName_(tel));
+      hash_table->Remove(El_GetName_(tel));
   }
   int j;
   for(j=i; j < size-1; j++) {		// compact, if necc
@@ -279,7 +280,7 @@ bool taPtrList_impl::Remove_(void* it) {
     return false;
   return Remove(i);
 }
-bool taPtrList_impl::Remove(const char* it) {
+bool taPtrList_impl::Remove(const String& it) {
   int i;
   if((i = Find(it)) < 0)
     return false;
@@ -323,7 +324,7 @@ bool taPtrList_impl::Replace_(void* ol, void* nw) {
   Replace_(i, nw);
   return true;
 }
-bool taPtrList_impl::Replace_(const char* ol, void* nw) {
+bool taPtrList_impl::Replace_(const String& ol, void* nw) {
   int i;
   if((i = Find(ol)) < 0)
     return false;
@@ -334,7 +335,7 @@ bool taPtrList_impl::Replace_(int ol, void* nw, bool no_notify_insert) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove((const char*)El_GetName_(el[ol]));
+      hash_table->Remove(El_GetName_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -434,7 +435,7 @@ bool taPtrList_impl::ReplaceLink_(void* ol, void* nw) {
   return true;
 }
 
-bool taPtrList_impl::ReplaceLink_(const char* ol, void* nw) {
+bool taPtrList_impl::ReplaceLink_(const String& ol, void* nw) {
   int i;
   if((i = Find(ol)) < 0)
     return false;
@@ -447,7 +448,7 @@ bool taPtrList_impl::ReplaceLink_(int ol, void* nw) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove((const char*)El_GetName_(el[ol]));
+      hash_table->Remove(El_GetName_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -481,7 +482,7 @@ void* taPtrList_impl::Pop_() {
   void* rval = el[--size];
   if(rval != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove((const char*)El_GetName_(rval));
+      hash_table->Remove(El_GetName_(rval));
     DataChanged(DCR_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }
@@ -584,7 +585,7 @@ void taPtrList_impl::Stealth_Borrow(const taPtrList_impl& cp) {
 }
 
 // this uses the local FindCheck insteaad of scratch_lists
-int taPtrList_impl::Scratch_Find_(const char* it) const {
+int taPtrList_impl::Scratch_Find_(const String& it) const {
   int i;
   for(i=0; i < scratch_list.size; i++) {
     if(El_FindCheck_(scratch_list.el[i], it))
@@ -747,7 +748,7 @@ void taPtrList_impl::Copy_Borrow(const taPtrList_impl& cp) {
     Link_(cp.el[i]);
 }
 
-ostream& taPtrList_impl::Indenter(ostream& strm, const char* itm, int no, int prln, int tabs)
+ostream& taPtrList_impl::Indenter(ostream& strm, const String& itm, int no, int prln, int tabs)
 {
   strm << itm << " ";
   if((no+1) % prln == 0) {
@@ -1272,7 +1273,7 @@ void taArray_impl::List(ostream& strm) const {
   strm << "}";
 }
 
-void taArray_impl::InitFromString(const char* val) {
+void taArray_impl::InitFromString(const String& val) {
   String tmp = val;
   Reset();
   tmp = tmp.after('{');		// find starting point

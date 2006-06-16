@@ -128,6 +128,7 @@ public:
 
 
   float		Evaluate(float val) const; // evaluate math operator on given value
+  Variant&	EvaluateVar(Variant& val) const; // #IGNORE evaluate math operator on given value
 
   void 	Initialize();
   void	Destroy()	{ };
