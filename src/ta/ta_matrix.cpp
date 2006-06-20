@@ -28,12 +28,7 @@ MatrixGeom::MatrixGeom(int init_size) {
   
 MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
   Initialize();
-  EnforceSize(dims);
-  el[0] = d0;
-  el[1] = d1;
-  el[2] = d2;
-  el[3] = d3;
-  el[4] = d4;
+  SetGeom(dims, d0, d1, d2, d3, d4);
 }
 
 void MatrixGeom::Initialize() {
@@ -127,6 +122,15 @@ int MatrixGeom::Product() const {
   return rval;
 }
 
+void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
+  EnforceSize(dims);
+  el[0] = d0;
+  el[1] = d1;
+  el[2] = d2;
+  el[3] = d3;
+  el[4] = d4;
+}
+
 
 
 //////////////////////////
@@ -156,7 +160,7 @@ String taMatrix::GeomToString(const MatrixGeom& geom) {
   String rval("[");
   for (int i = 0; i < geom.size; ++i) {
     if (i > 0) rval += ',';
-    rval += i;
+    rval += String(geom.el[i]);
   }
   rval += "]";
   return rval;

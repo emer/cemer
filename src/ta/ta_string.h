@@ -644,17 +644,17 @@ inline bool String::contains(const String& y, int p) const
 
 inline bool String::matches(const String& y, int p) const
 {
-  return match(p, length(), 1, y.chars(), y.length()) >= 0;
+  return match(p, length(), 0, y.chars(), y.length()) >= 0;
 }
 
 inline bool String::matches(const char* t, int p) const
 {
-  return match(p, length(), 1, t) >= 0;
+  return match(p, length(), 0, t) >= 0;
 }
 
 inline bool String::matches(char c, int p) const
 {
-  return match(p, length(), 1, &c, 1) >= 0;
+  return match(p, length(), 0, &c, 1) >= 0;
 }
 
 inline int String::gsub(const String& pat, const String& r)

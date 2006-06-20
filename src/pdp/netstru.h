@@ -187,7 +187,7 @@ public:
   TA_BASEFUNS(WeightLimits);
 };
 
-class PDP_API ConSpec : public BaseSpec {
+class PDP_API ConSpec: public BaseSpec {
   // Connection Group Specs: for processing over connections
 public:
   TypeDef*	min_con_type;
@@ -258,7 +258,7 @@ SpecPtr_of(ConSpec);
 
 // assumes no USE_TEMPLATE_GROUPS
 
-class PDP_API Unit_List : public taList<Unit> {
+class PDP_API Unit_List: public taList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER
 public:
   void	Initialize() 		{ };
@@ -266,7 +266,7 @@ public:
   TA_BASEFUNS(Unit_List);
 };
 
-class PDP_API Con_Group : public taBase_Group {
+class PDP_API Con_Group: public taBase_Group {
   // ##NO_TOKENS ##NO_UPDATE_AFTER Group of connections, controlls processing over them
   // entire group must have same connection object type
 public:
@@ -398,7 +398,7 @@ public:
   TA_BASEFUNS(Con_Group);
 };
 
-class PDP_API UnitSpec : public BaseSpec { // Generic Unit Specification
+class PDP_API UnitSpec: public BaseSpec { // Generic Unit Specification
 #ifndef __MAKETA__
 typedef BaseSpec inherited;
 #endif
@@ -448,7 +448,7 @@ public:
 
 SpecPtr_of(UnitSpec);
 
-class PDP_API Unit : public taNBase {
+class PDP_API Unit: public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 Generic unit
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -474,7 +474,6 @@ public: //
   };
 
   UnitSpec_SPtr spec;		// unit specification
-  TDCoord       pos;		// position in space relative to owning group, layer
   ExtType	ext_flag;	// #READ_ONLY #SHOW tells what kind of external input unit received
   float 	targ;		// target pattern
   float 	ext;		// external input
@@ -484,16 +483,16 @@ public: //
   Con_Group 	send;		// Sending Connection Groups
   Connection*	bias;		// #OWN_POINTER bias weight (type set in unit spec)
   int		n_recv_cons;	// #DMEM_SHARE_SET_0 total number of receiving connections
-
 #ifdef DMEM_COMPILE
-  int 		dmem_local_proc; // #IGNORE processor on which these units are local
   static int	dmem_this_proc;	// #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network
+  int 		dmem_local_proc; // #IGNORE processor on which these units are local
   virtual bool 	DMem_IsLocalProc(int proc)   	{ return dmem_local_proc == proc; } // #IGNORE
   virtual bool 	DMem_IsLocal()       		{ return dmem_local_proc == dmem_this_proc; }  // #IGNORE
   virtual int 	DMem_GetLocalProc() 		{ return dmem_local_proc; } // #IGNORE
   virtual void 	DMem_SetLocalProc(int lproc) 	{ dmem_local_proc = lproc; } // #IGNORE
   virtual void 	DMem_SetThisProc(int proc) 	{ dmem_this_proc = proc; } // #IGNORE
 #endif
+  TDCoord       pos;		// position in space relative to owning group, layer
 
   Unit_Group*	ugrp() {return GET_MY_OWNER(Unit_Group);}
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
@@ -641,7 +640,7 @@ public:
 
 SpecPtr_of(ProjectionSpec);
 
-class PDP_API Projection : public taNBase {
+class PDP_API Projection: public taNBase {
   // Projection describes connectivity between layers (from receivers perspective)
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -837,7 +836,7 @@ inline void ConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
 }
 
 
-class PDP_API Unit_Group : public taGroup<Unit> {
+class PDP_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER a group of units
 INHERITED(taGroup<Unit>)
 public:
@@ -931,7 +930,7 @@ public:
   act -- NxM float array, of the activation values
   
 */
-class PDP_API Layer : public taNBase {
+class PDP_API Layer: public taNBase {
   // ##EXT_lay ##COMPRESS layer containing units
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -950,6 +949,9 @@ public:
     OUTPUT 	= 0x02,		// layer will (or may) provide external output
     TARGET 	= 0x04		// layer will (or may) be supplied with target (training) data
   }; //
+  
+  int			numUnits() const; // count of N units, regardless of geom
+  bool			isSparse() const; // true if N units doesn't fit evenly into geom or 4-d geom
   
   Network*		own_net;	// #READ_ONLY #NO_SAVE Network this layer is in
   LayerType		layer_type;	// design hint on layer usage (but input/output always allowed)
@@ -1517,9 +1519,14 @@ class PDP_API NetMonItem: public taNBase {
   // used for monitoring the value of a net object:\nLayer, Projection, UnitGroup, Unit
 INHERITED(taNBase)
 public:
+  static const String 	GetObjName(TAPtr obj, TAPtr own = NULL); 
+   // get name of object for naming stats, etc. qualifies up to Layer; looks up own if NULL
+  static const String	DotCat(const String& lhs, const String& rhs); 
+    // cat with . except if either empty, just return the other
+  
   TAPtr 		object;		// #the network object being monitored
   String        	variable;	// Variable (member) to monitor
-  ChannelSpec_List	val_specs;	// specs of the values being monitored 
+  ChannelSpec_List	val_specs;	// #SHOW #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
   taBase_List		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
@@ -1531,7 +1538,6 @@ public:
     // set object and variable, and update appropriately
 //TODO: add funcs for specific object types, and put in gui directives
 
-  static String GetObjName(TAPtr obj); // get name of object for naming stats, etc
 
 //obs  void		NameStatVals();
   virtual void 		UpdateMonVals(DataBlock* db); // get all the values!
@@ -1553,14 +1559,26 @@ protected:
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
   // these are for finding the members and building the stat
   // out of the objects and the variable
-  void			ScanObjects();	// #IGNORE
-  void			ScanObjects_Network(Network* net); // #IGNORE
-  void			ScanObjects_Layer(Layer* lay); // #IGNORE
-  void			ScanObjects_Projection(Projection* p); // #IGNORE
-  void			ScanObjects_UnitGroup(Unit_Group* ug, bool mk_col = false);	// #IGNORE
-  void			ScanObjects_Unit(Unit* u, Projection* p = NULL, bool mk_col = false); // #IGNORE
-  void			ScanObjects_ConGroup(Con_Group* cg, const String& varname,
-    const String& valname, Projection* p = NULL); // #IGNORE note: always makes a col
+  void			ScanObject();	// #IGNORE
+  
+/*  void 			ScanObject_InObject(TAPtr obj, String var);
+  void			ScanObject_IterLayer(Layer* lay, String var); // #IGNORE
+  void			ScanObject_IterUnitGroup(Unit_Group* ug, String var);	// #IGNORE
+  void			ScanObject_IterGroup(taGroup_impl* gp, String var);	// #IGNORE
+  void			ScanObject_IterList(taList_impl* list, String var);	// #IGNORE
+*/  
+  
+  bool 			ScanObject_InObject(TAPtr obj, String var, 
+    bool mk_col = false, TAPtr own = NULL);
+  void			ScanObject_Network(Network* net, String var); // #IGNORE
+  void			ScanObject_Layer(Layer* lay, String var); // #IGNORE
+  void			ScanObject_Projection(Projection* p, String var); // #IGNORE
+  void			ScanObject_UnitGroup(Unit_Group* ug, String var, 
+    bool mk_col = false);	// #IGNORE
+  void			ScanObject_Unit(Unit* u, String var,
+    Projection* p = NULL, bool mk_col = false); // #IGNORE
+  void			ScanObject_ConGroup(Con_Group* cg, String var,
+    Projection* p = NULL); // #IGNORE note: always makes a col
   
 // following return 'true' if the routine handled making the colspecs
 

@@ -41,6 +41,7 @@ void iDimEdit::init() {
   m_readOnly = false;
   m_dimsReadOnly = false;
   lay = new QHBoxLayout(this);
+  lay->setMargin(0);
   lay->addSpacing(2);
   lblDims = new QLabel("dims:", this);
   lay->addWidget(lblDims);

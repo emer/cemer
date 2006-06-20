@@ -265,7 +265,7 @@ int StrRep::match(int start, int sl, int exact, const char* t, int tl) const {
     start = sl + start - tl + 1;
     if (start < 0 || (exact && start != 0))
       return -1;
-  } else if (exact && sl - start != tl)
+  } else if (exact && ((sl - start) != tl))
     return -1;
 
   if (sl == 0 || tl == 0 || sl - start < tl || start >= sl)

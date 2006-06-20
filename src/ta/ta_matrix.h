@@ -102,6 +102,7 @@ public:
   void			Add(int value); // safely add a new element
   void			Set(int i, int value) // safely set an element
     {if (InRange(i)) el[i] = value;}
+  void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
     
   void			Reset() {EnforceSize(0);}
   int			operator [](int i) const {if (InRange(i)) return el[i]; else return 0;}  
