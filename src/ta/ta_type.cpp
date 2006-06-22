@@ -2489,9 +2489,13 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
 bool TypeDef::InheritsNonAtomicClass() const {
   if (m_cacheInheritsNonAtomicClass == 0) {
     // set cache
-    m_cacheInheritsNonAtomicClass =
-      (InheritsFormal(TA_class) && !InheritsFrom(TA_taString) && !InheritsFrom(TA_Variant)) ?
-      1 : -1;
+    m_cacheInheritsNonAtomicClass = (InheritsFormal(TA_class) 
+        && !InheritsFrom(TA_taString) 
+        && !InheritsFrom(TA_Variant)
+#ifndef NO_TA_BASE
+        && !InheritsFrom(TA_taSmartRef)
+#endif
+    ) ? 1 : -1;
   }
   return (m_cacheInheritsNonAtomicClass == 1);
 }
@@ -3326,6 +3330,23 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 	return rbase->GetPath();
       return name;
     }
+    else if (DerivesFrom(TA_taSmartRef)) {
+      taSmartRef& ref = *((taSmartRef*)base);
+      TAPtr rbase = ref;
+      if (rbase) {
+        if ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)) {
+          switch (sc) {
+          case SC_STREAMING:
+            return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
+          case SC_DISPLAY:
+            return rbase->GetName();
+          default:
+            return rbase->GetPath();
+          }
+        } else
+          return String((intptr_t)rbase);
+      } else  return "NULL";
+    }
 #endif
     else if(DerivesFormal(TA_struct))
       return "struct " + name;
@@ -3499,36 +3520,14 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       *((ta_void_fun*)base) = fun->addr;
     return;
   }
-  if(ptr == 0) {
+  if (ptr == 0) {
     if(DerivesFrom(TA_bool)) {
       *((bool*)base) = val.toBool();
     }
-    // note: char is treated as an ansi character
-    else if (DerivesFrom(TA_char))
-    //TODO: char conversion heuristics
-      *((char*)base) = val.toChar();
-    // signed char is treated like a number
-    else if (DerivesFrom(TA_signed_char))
-      *((signed char*)base) = (signed char)val.toShort();
-    // unsigned char is "byte" in ta/pdp and treated like a number
-    else if (DerivesFrom(TA_unsigned_char))
-      *((unsigned char*)base) = (unsigned char)val.toUShort();
-    else if(DerivesFrom(TA_short))
-      *((short*)base) = val.toShort();
-    else if(DerivesFrom(TA_unsigned_short))
-      *((unsigned short*)base) = val.toUShort();
     else if(DerivesFrom(TA_int))
       *((int*)base) = val.toInt();
-    else if(DerivesFrom(TA_unsigned_int))
-      *((uint*)base) = val.toUInt();
-    else if(DerivesFrom(TA_int64_t))
-      *((int64_t*)base) = val.toInt64();
-    else if(DerivesFrom(TA_uint64_t))
-      *((uint64_t*)base) = val.toUInt64();
     else if(DerivesFrom(TA_float))
       *((float*)base) = val.toFloat();
-    else if(DerivesFrom(TA_double))
-      *((double*)base) = val.toDouble();
     else if(DerivesFormal(TA_enum)) {
       String strval = val;
       if(strval.contains(')')) {
@@ -3581,6 +3580,28 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       typ->SetValStr(val, var_base, par, memb_def, sc);
       var.UpdateAfterLoad();
     }
+    // note: char is treated as an ansi character
+    else if (DerivesFrom(TA_char))
+    //TODO: char conversion heuristics
+      *((char*)base) = val.toChar();
+    // signed char is treated like a number
+    else if (DerivesFrom(TA_signed_char))
+      *((signed char*)base) = (signed char)val.toShort();
+    // unsigned char is "byte" in ta/pdp and treated like a number
+    else if (DerivesFrom(TA_unsigned_char))
+      *((unsigned char*)base) = (unsigned char)val.toUShort();
+    else if(DerivesFrom(TA_short))
+      *((short*)base) = val.toShort();
+    else if(DerivesFrom(TA_unsigned_short))
+      *((unsigned short*)base) = val.toUShort();
+    else if(DerivesFrom(TA_unsigned_int))
+      *((uint*)base) = val.toUInt();
+    else if(DerivesFrom(TA_int64_t))
+      *((int64_t*)base) = val.toInt64();
+    else if(DerivesFrom(TA_uint64_t))
+      *((uint64_t*)base) = val.toUInt64();
+    else if(DerivesFrom(TA_double))
+      *((double*)base) = val.toDouble();
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {
       taList_impl* tl = (taList_impl*)base;
@@ -3605,6 +3626,35 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       taArray_impl* gp = (taArray_impl*)base;
       if(gp != NULL)
 	gp->InitFromString(val);
+    }
+    else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
+      TAPtr bs = NULL;
+      if ((val != "NULL") && (val != "Null")) {
+        String tmp_val(val); // FindFromPath can change it
+	if (sc == SC_STREAMING) {
+	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
+	  if (!bs)return;	// indicates deferred
+	} else {
+	  MemberDef* md = NULL;
+	  bs = tabMisc::root->FindFromPath(tmp_val, md);
+	  if((md == NULL) || (bs == NULL)) {
+	    taMisc::Error("*** Invalid Path in SetValStr:",val);
+	    return;
+	  }
+	  if (md->type->ptr == 1) {
+	    bs = *((TAPtr*)bs);
+	    if(bs == NULL) {
+	      taMisc::Error("*** Null object at end of path in SetValStr:",val);
+	      return;
+	    }
+	  } else if(md->type->ptr != 0) {
+	    taMisc::Error("*** ptr count greater than 1 in path:", val);
+	    return;
+	  }
+	}
+      }
+      taSmartRef& ref = *((taSmartRef*)base);
+      ref = bs;
     }
 #endif
     else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
@@ -3666,7 +3716,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
   }
   else if(ptr == 1) {
 #ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taBase) && (tabMisc::root != NULL)) {
+    if(DerivesFrom(TA_taBase) && (tabMisc::root)) {
       TAPtr bs = NULL;
       if((val != "NULL") && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it

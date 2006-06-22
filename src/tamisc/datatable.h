@@ -283,6 +283,8 @@ public:
     // note: vt is -1 if unknown
 
   String		disp_opts;	// viewer default display options
+  bool			mark; // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
+  bool			pin; // set true to prevent this column from being deleted on orphan deleting
   bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
   bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
@@ -480,6 +482,8 @@ public:
   // update all min-max range data for all float_Data elements in log
 
   void			RemoveCol(int col); // removes indicated column; 'true' if removed
+  void			MarkCols(); // mark all cols before updating, for orphan deleting
+  void			RemoveOrphanCols(); // removes all non-pinned marked cols
   
   bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
     // returns 'true' if the col has the same name and a compatible data type

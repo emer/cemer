@@ -1016,6 +1016,23 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, cons
 }
 
 
+//////////////////////////
+//  taSmartRef		//
+//////////////////////////
+
+void taSmartRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
+  if (m_own) {
+    m_own->SmartRef_DataChanged(this, m_ptr, dcr, op1, op2);
+  }
+}
+void taSmartRef::DataLinkDestroying(taDataLink* dl) {
+  if (m_own) {
+    m_own->SmartRef_DataDestroying(this, m_ptr); 
+    m_ptr = NULL;
+    m_own->UpdateAfterEdit();
+  } else 
+    m_ptr = NULL;
+}
 
 //////////////////////////
 //	taOBase		//

@@ -28,6 +28,9 @@
 #include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
+// forwards
+class DataBlock;
+
 class TAMISC_API ChannelSpec: public taNBase { // describes a channel of data in a DataBlock
 INHERITED(taNBase)
 public: 
@@ -84,6 +87,7 @@ private:
 class TAMISC_API ChannelSpec_List: public taList<ChannelSpec> { // 
 INHERITED(taList<ChannelSpec>)
 public:
+  void		UpdateDataBlockSchema(DataBlock* db);
 
   int	NumListCols() const {return 7;} // number of columns in a list view for this item type
   String GetColHeading(int col); // header text for the indicated column

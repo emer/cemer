@@ -6359,7 +6359,10 @@ const String NetMonItem::DotCat(const String& lhs, const String& rhs) {
   if (lhs.empty()) return rhs;
   if (rhs.empty()) return lhs;
   STRING_BUF(rval, lhs.length() + rhs.length() + 1);
-  rval.cat(lhs).cat('.').cat(rhs);
+  rval.cat(lhs);
+  if (!(lhs.matches('.', -1) || (rhs.matches('.'))))
+    rval.cat('.');
+  rval.cat(rhs);
   return rval;
 }
   
@@ -6404,7 +6407,7 @@ const String NetMonItem::GetObjName(TAPtr obj, TAPtr own) {
     if (lay) {
       String pfx = GetObjName(lay);
       if (nm.empty()) { // most likely case
-        nm = ug->GetPath(lay, lay);
+        nm = own->GetPath(ug, lay); //note: 'own' valid if lay exists
       }
       nm = DotCat(pfx, nm);;
     }
@@ -6414,19 +6417,25 @@ const String NetMonItem::GetObjName(TAPtr obj, TAPtr own) {
     Unit* un = GET_OWNER(obj, Unit);
     // note: con groups are not named, will be rooted in send or recv
     if (un) {
-      String pfx = GetObjName(un);
-      nm = un->GetPath(cg, un);
-      nm = DotCat(pfx, nm);;
+     nm = own->GetPath(cg, un);  //note: 'own' valid if lay exists
+     String pfx = GetObjName(un);
+      nm = DotCat(pfx, nm);
     }
   }
   if (!nm.empty()) goto exit;
   
-  // if object is embedded in a network, use its path from net
-  {
-    Network* net = (Network*)obj->GetOwner(&TA_Network);
-    if (net) {
-      nm = own->GetPath(obj, net);
-    }
+  // default is try to concat owner name with ours, assuming
+  // we are a member
+  // note: likely that obj itself has no owner member, so
+  // we use the passed-in own to root our search
+  if (own) {
+    String pfx = GetObjName(own);
+    // see if it is a member, otherwise just use its typename
+    MemberDef* md = own->FindMember((void*)obj);
+    if (!md)   md = own->FindMemberPtr((void*)obj);
+    if (md) nm = md->name;
+    else nm = obj->GetTypeDef()->name; 
+    nm = DotCat(pfx, nm);;
   }
 exit:  
   // strip leading .
@@ -6493,8 +6502,8 @@ exit:
 }
 
 void NetMonItem::Initialize() {
+  object.Init(this);
   variable = "act";
-  object = NULL;
 }
 
 void NetMonItem::InitLinks() {
@@ -6511,17 +6520,16 @@ void NetMonItem::CutLinks() {
   pre_proc_3.CutLinks();
   pre_proc_2.CutLinks();
   pre_proc_1.CutLinks();
-  ptrs.RemoveAll();
-  members.Reset();
+  ResetMonVals();
   val_specs.CutLinks();
-  DEL_POINTER(object);
+  object = NULL;
   inherited::CutLinks();
 }
 
 void NetMonItem::Copy_(const NetMonItem& cp) {
-  SET_POINTER(object, cp.object);
+  ResetMonVals(); // won't be valid anymore
+  object = cp.object; // ptr only
   variable = cp.variable;
-//NOTE:  val_specs, members, and ptrs done in UAE
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -6596,6 +6604,15 @@ ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType val_type) 
   return cs;
 }
 
+String NetMonItem::GetColText(int col, int itm_idx) {
+  switch (col) {
+  case 0: return (object) ? object->GetName() : _nilString;
+  case 1: return (object) ? object->GetTypeDef()->name : _nilString;
+  case 2: return variable;
+  default: return _nilString;
+  } 
+}
+
 bool NetMonItem::GetMonVal(int i, Variant& rval) {
   void* obj = NULL;
   MemberDef* md = NULL;
@@ -6614,26 +6631,30 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   return true;
 }
 
-void NetMonItem::ScanObject() {
-//TODO: what about orphaned columns in the sink?????
+void NetMonItem::ResetMonVals() {
   val_specs.RemoveAll();
   ptrs.RemoveAll();
   members.RemoveAll();
+}
+
+void NetMonItem::ScanObject() {
+//TODO: what about orphaned columns in the sink?????
+  ResetMonVals();
   if (!object) return;
   
   if (object->InheritsFrom(&TA_Unit)) 
-    ScanObject_Unit((Unit*)object, variable, NULL, true);
+    ScanObject_Unit((Unit*)object.ptr(), variable, NULL, true);
   else if (object->InheritsFrom(&TA_Layer)) 
-    ScanObject_Layer((Layer*)object, variable);
+    ScanObject_Layer((Layer*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Unit_Group))
-    ScanObject_UnitGroup((Unit_Group*)object, variable, true);
+    ScanObject_UnitGroup((Unit_Group*)object.ptr(), variable, true);
   else if (object->InheritsFrom(&TA_Projection))
-    ScanObject_Projection((Projection*)object, variable);
+    ScanObject_Projection((Projection*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Network))
-    ScanObject_Network((Network*)object, variable);
+    ScanObject_Network((Network*)object.ptr(), variable);
   else {
-    // could be any type of object
-    ScanObject_InObject(object, variable, true);			
+    // could be any type of object.ptr()
+    ScanObject_InObject(object.ptr(), variable, true);			
   }
 }
 
@@ -6953,6 +6974,23 @@ cont:
   }
 }
 
+void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
+  if ((object == obj) && (variable == var)) return; 
+  object = obj;
+  variable = var;
+  UpdateAfterEdit();
+}
+
+void NetMonItem::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+  ResetMonVals();
+}
+
+void NetMonItem::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+    int dcr, void* op1_, void* op2_) 
+{
+  ScanObject();
+}
+
 void NetMonItem::UpdateMonVals(DataBlock* db) {
   if ((!db) || variable.empty())  return;
 
@@ -6979,13 +7017,6 @@ void NetMonItem::UpdateMonVals(DataBlock* db) {
   }
 }
 
-void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
-  if ((object == obj) && (variable == var)) return; 
-  SET_POINTER(object, obj);
-  variable = var;
-  UpdateAfterEdit();
-}
-
 
 //////////////////////////
 //  NetMonitor		//
@@ -7003,7 +7034,33 @@ void NetMonitor::AddObject(TAPtr obj, const String& variable) {
   nmi->SetMonVals(obj, variable);
 }
 
-void NetMonitor::UpdateChannels(DataBlock* db) {
+String NetMonitor::GetColHeading(int col) {
+  static String col_obj("Object Name");
+  static String col_typ("Object Type");
+  static String col_var("Variable");
+  
+  switch (col) {
+  case 0: return col_obj;
+  case 1: return col_typ;
+  case 2: return col_var;
+  default: return _nilString;
+  } 
+}
+
+void NetMonitor::UpdateChannels(DataTable* dt, bool delete_orphans) {
+  if (!dt) return;
+  if (delete_orphans) 
+    dt->MarkCols();
+  // this will probably be big, so wrap the whole thing
+  dt->StructUpdate(true);
+  // (re)scan all the objects
+  for (int i = 0; i < size; ++i) {
+    NetMonItem* nmi = FastEl(i);
+    nmi->ScanObject();
+    nmi->val_specs.UpdateDataBlockSchema(dt);
+  }
+  dt->RemoveOrphanCols();
+  dt->StructUpdate(false);
 }
 
 void NetMonitor::UpdateMonVals(DataBlock* db) {

@@ -60,6 +60,7 @@ class taiMimeSource; //
 
 // forwards
 class taBase;
+class taSmartRef;
 class taOBase;
 class taDataView;
 class taNBase;
@@ -261,6 +262,7 @@ protected: \
 class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes
   // has auto instances for all taBases unless NO_INSTANCE
+friend class taSmartRef;
 friend class taDataView;
 friend class taBase_PtrList;
 friend class taList_impl;
@@ -443,6 +445,11 @@ protected:
   virtual void		DataViewRemoving(taDataView* dv) {} // signals removal of dataview
   virtual void		BatchUpdate(bool begin, bool struc);
   // bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
+  virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {}
+    // the obj (to which we have a ref) is about to destroy (the ref will null its ptr on return)
+  virtual void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+    int dcr, void* op1_, void* op2_) {}
+    // the obj (to which we have a ref) has signalled the indicated data change
 
 public:
   // the following are selected functions from TypeDef
@@ -617,6 +624,75 @@ protected:
   taBase*	m_ptr;
   void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
 };
+
+// base calls
+    
+class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" reference for taBase objects -- does not ref count, but is a dlc so it tracks changes etc.
+friend class taBase;
+friend class TypeDef; // for various
+friend class MemberDef; // for streaming
+public:
+  inline taBase*	ptr() const {return m_ptr;}
+  
+  
+  inline 		operator taBase*() const {return (taBase*)m_ptr;}
+  inline taBase* 	operator->() const {return (taBase*)m_ptr;}
+  taBase* 		operator=(const taSmartRef& src) 
+    {set((taBase*)src.m_ptr); return (taBase*)m_ptr;} 
+    //NOTE: copy only implies ptr, NOT the owner!
+  taBase* 		operator=(taBase* src) {set(src); return (taBase*)m_ptr;} 
+  
+  inline void 		Init(taBase* own_) {m_own = own_;} // call in owner's Initialize
+  taSmartRef() {m_own = NULL; m_ptr = NULL;}
+  explicit taSmartRef(taBase* own_) {m_own = own_; m_ptr = NULL;}
+  ~taSmartRef() {set(NULL); m_own = NULL;}
+  
+protected:
+  taBase*		m_own; 
+  mutable taBase*	m_ptr;
+  
+  void			set(taBase* src) {if (src == m_ptr) return;
+    if (m_ptr) {m_ptr->RemoveDataClient(this);}
+    if (src) {src->AddDataClient(this);}  m_ptr = src;}
+    
+  
+private:
+  taSmartRef(const taSmartRef& src); // not defined 
+  
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;} //
+  override TypeDef*	GetTypeDef() const {return &TA_taSmartRef;} //note: only one typedef for all
+
+public: // IDataLinkClient interface
+  override TypeDef*	GetDataTypeDef() const 
+    {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_void;} // TypeDef of the data
+  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
+  override void		DataLinkDestroying(taDataLink* dl);
+};
+
+
+template<class T>
+class taSmartRefT: public taSmartRef { 
+public:
+  inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
+
+  inline 	operator T*() const {return (T*)m_ptr;}
+  inline T* 	operator->() const {return (T*)m_ptr;}
+  T* 		operator=(const taSmartRefT<T>& src) 
+    {set((T*)src.m_ptr); return (T*)m_ptr;} 
+    //NOTE: copy only implies ptr, NOT the owner!
+  T* 		operator=(T* src) {set(src); return (T*)m_ptr;} 
+  
+  taSmartRefT() {} 
+  explicit taSmartRefT(taBase* own_): taSmartRef(own_) {}
+  
+private:
+  taSmartRefT(const taSmartRefT<T>& src); // not defined 
+};
+
+// macro for creating smart refs of taBase classes
+
+#define SmartRef_Of(T)  typedef taSmartRefT<T> T ## Ref 
 
 
 #ifdef TA_GUI

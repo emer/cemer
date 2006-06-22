@@ -142,6 +142,7 @@ public:
   TA_BASEFUNS(Connection);
 };
 
+SmartRef_Of(Connection); // ConnectionSRef
 
 // the ConSpec has 2 versions of every function: one to go through the group
 // and the other to apply to a single connection.
@@ -1524,7 +1525,7 @@ public:
   static const String	DotCat(const String& lhs, const String& rhs); 
     // cat with . except if either empty, just return the other
   
-  TAPtr 		object;		// #the network object being monitored
+  taSmartRef 		object;		// #NO_SCOPE the network object being monitored
   String        	variable;	// Variable (member) to monitor
   ChannelSpec_List	val_specs;	// #SHOW #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
@@ -1539,9 +1540,12 @@ public:
 //TODO: add funcs for specific object types, and put in gui directives
 
 
+  void			ScanObject();	// #IGNORE update the schema
 //obs  void		NameStatVals();
   virtual void 		UpdateMonVals(DataBlock* db); // get all the values!
+  void			ResetMonVals(); // deletes the cached vars
   
+  String GetColText(int col, int itm_idx = -1);
   void  InitLinks();
   void	CutLinks();
   void	UpdateAfterEdit();
@@ -1551,6 +1555,10 @@ public:
   
 protected:
   int			cell_num; // current cell number, when adding mon vals
+  override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+  override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+    int dcr, void* op1_, void* op2_);
+
   ChannelSpec* 		AddScalarChan(const String& valname, ValType val_type);
   MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType val_type,
     const MatrixGeom* geom = NULL);
@@ -1559,7 +1567,6 @@ protected:
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
   // these are for finding the members and building the stat
   // out of the objects and the variable
-  void			ScanObject();	// #IGNORE
   
 /*  void 			ScanObject_InObject(TAPtr obj, String var);
   void			ScanObject_IterLayer(Layer* lay, String var); // #IGNORE
@@ -1588,13 +1595,14 @@ private:
 };
 
 
-class TAMISC_API NetMonitor: public taList<NetMonItem> { // object for monitoring data 
+
+class PDP_API NetMonitor: public taList<NetMonItem> { // ##TOKENS used for monitoring values of network objects
 INHERITED(taList<NetMonItem>)
 public:
 
   void		AddNetwork(Network* net, const String& variable)
     {AddObject(net, variable);}
-    // #MENU monitor a value in the Network or its subobjects
+    // #MENU #MENU_ON_Action monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
     {AddObject(lay, variable);}
     // #MENU monitor a value in the Layer or its subobjects
@@ -1603,19 +1611,22 @@ public:
     // #MENU monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
     {AddObject(ug, variable);}
-    // #MENU monitor a value in the UnitGroup or its subobjects
+    // monitor a value in the UnitGroup or its subobjects
   void		AddUnit(Unit* un, const String& variable)
     {AddObject(un, variable);}
-    // #MENU monitor a value in the Unit or its subobjects
+    // monitor a value in the Unit or its subobjects
   
   void		AddObject(TAPtr obj, const String& variable);
     // monitor a value in the object or its subobjects
-  void 		UpdateChannels(DataBlock* db); // create or update the channels
+  void 		UpdateChannels(DataTable* dt, 
+    bool delete_orphans = true); // #MENU #MENU_SEP_BEFORE create or update the channels
   void 		UpdateMonVals(DataBlock* db); // get all the values!
   
-//  int	NumListCols() const {return 7;} // number of columns in a list view for this item type
-//  String GetColHeading(int col); // header text for the indicated column
+  int	NumListCols() const {return 3;} 
+    // number of columns in a list view for this item type
+  String GetColHeading(int col); // header text for the indicated column
   TA_BASEFUNS(NetMonitor);
+  
 private:
   void		Initialize() {SetBaseType(&TA_NetMonItem);}
   void		Destroy() {}

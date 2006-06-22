@@ -1052,6 +1052,8 @@ void DataArray_impl::DecodeName(String nm, String& base_nm, int& vt, int& vec_co
 
 void DataArray_impl::Initialize() {
   save_to_file = true;
+  mark = false;
+  pin = false;
   is_matrix = false;
   // default initialize to scalar
   cell_geom.EnforceSize(1);
@@ -1072,6 +1074,9 @@ void DataArray_impl::CutLinks() {
 }
 
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
+  mark = cp.mark;
+  pin = cp.pin;
+  save_to_file = cp.save_to_file;
   disp_opts = cp.disp_opts;
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
@@ -1310,13 +1315,23 @@ DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
     ++(cs->chan_num);
     if (rval->name != cs->name) continue;
     // if name matches, but not contents, we need to remake it...
-    if (ColMatchesChannelSpec(rval, cs)) return rval;
-    else {
+    if (ColMatchesChannelSpec(rval, cs)) {
+      rval->mark = false; // reset mark for orphan tracking
+      return rval;
+    } else {
       rval->Close();
     }
   }
   rval = NewColFromChannelSpec_impl(cs);
   return rval;
+}
+
+void DataTable::MarkCols() {
+  DataArray_impl* da;
+  taLeafItr itr;
+  FOR_ITR_EL(DataArray_impl, da, data., itr) {
+    da->mark = true;
+  }
 }
 
 DataArray_impl* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
@@ -1730,13 +1745,24 @@ void DataTable::RemoveCol(int col) {
   if (!da) return;
   StructUpdate(true);
   da->Close();
-  // update row count, in case that col had more than the others
-  rows = 0;
-  taLeafItr i;
-  FOR_ITR_EL(DataArray_impl, da, data., i) {
-    rows = MAX(rows, da->AR()->frames());
-  }
   StructUpdate(false);
+  //note: you can possibly get left with completely NULL rows,
+  // but we don't renormalize
+}
+
+void DataTable::RemoveOrphanCols() {
+  int cls_cnt = 0; // used to prevent spurious struct updates
+  DataArray_impl* da;
+  taLeafItr itr;
+  FOR_ITR_EL(DataArray_impl, da, data., itr) {
+    if (da->mark && !da->pin) {
+      if (cls_cnt++ == 0) StructUpdate(true);
+      da->Close();
+    }
+  }
+  if (cls_cnt)  {
+    StructUpdate(false);
+  }
 }
 
 void DataTable::RemoveRow(int row) {

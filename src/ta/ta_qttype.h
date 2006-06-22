@@ -320,6 +320,11 @@ class TA_API taiTokenPtrMember : public taiMember {
   // for taBase pointer members (allows scoping by owner obj)
 INHERITED(taiMember)
 public:
+  enum Mode {
+    MD_BASE,		// taBase pointer
+    MD_SMART_REF	// taSmartRef
+  };
+  
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   void		GetImage_impl(taiData* dat, const void* base);

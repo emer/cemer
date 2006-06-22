@@ -144,6 +144,13 @@ String ChannelSpec_List::GetColHeading(int col) {
   }
 }
 
+void ChannelSpec_List::UpdateDataBlockSchema(DataBlock* db) {
+  if (!db) return;
+  for (int i = 0; i < size; ++i) {
+    ChannelSpec* cs = FastEl(i);
+    db->AssertSinkChannel(cs);
+  }
+}
 
 /* prob nn
 /////////////////////////

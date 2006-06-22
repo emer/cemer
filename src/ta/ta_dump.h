@@ -41,13 +41,13 @@ class TA_API VPUnref {			// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   String	name;		// just for looking up purposes
   MemberDef*	memb_def;	// memberdef of the pointer
-  TAPtr* 	base;		// location of ptr to set
+  void* 	base;		// location of ptr to set, usually TAPtr*, but could be taSmartRef*
   TAPtr 	parent;		// location's parent to update
   String 	path;
 
   TAPtr 	Resolve();
 
-  VPUnref(TAPtr* b, TAPtr par, const String& p, MemberDef* md = NULL);
+  VPUnref(void* base, TAPtr par, const String& p, MemberDef* md = NULL);
 };
 
 // a list of unresolved variable pointers that are to be resolved later..
@@ -60,7 +60,7 @@ protected:
 public:
   void	Resolve();	// attempt to resolve references
   void	Add(VPUnref* it)	{ taPtrList<VPUnref>::Add(it); }
-  void	Add(TAPtr* b, TAPtr par, const String& p, MemberDef* md = NULL);
+  void	Add(void* b, TAPtr par, const String& p, MemberDef* md = NULL);
 
   ~VPUList()                            { Reset(); }
 };

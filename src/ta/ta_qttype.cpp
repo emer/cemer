@@ -424,6 +424,11 @@ void taiVariantType::GetValue_impl(taiData* dat, void* base) {
 //////////////////////////
 
 int taiClassType::BidForType(TypeDef* td) {
+//temp
+if (td->name == "taSmartRef") {
+  int i = 0;
+  ++i;
+}
   if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
     return (taiType::BidForType(td) +1);
   return 0;
@@ -762,8 +767,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
     flags |= taiData::flgReadOnly;
-  if ((mbr->HasOption("INLINE")) || (mbr->HasOption("EDIT_INLINE")) 
-    || mbr->type->it->allowsInline())
+  if (((mbr->HasOption("INLINE")) || (mbr->HasOption("EDIT_INLINE"))) 
+    && mbr->type->it->allowsInline())
     flags |= taiData::flgInline;
   if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
     flags |= taiData::flgEditDialog;
@@ -927,36 +932,42 @@ void taiROMember::GetMbrValue(taiData*, void*, bool&) {
 //////////////////////////////////
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-//TEMP
-if (md->name == "data_block") {
-  int i = 0;
-  ++i;
-}
-if (md->name == "layer") {
-  int i = 0;
-  ++i;
-}
-  if(td->InheritsFrom(TA_taBase) &&
-     (md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase))
+  if (td->InheritsFrom(TA_taBase) && (
+     ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase))
+     || ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartRef)))
+  )
     return taiMember::BidForMember(md,td)+1;
   return 0;
 }
 
-taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  TypeDef* npt = mbr->type->GetNonPtrType();
-  if (!npt->tokens.keep) {
-    taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
-    return ebrval;
-  }
+taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  int flags_) 
+{
+  TypeDef* npt = NULL;
   int token_flags = 0;
+  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
+  switch (mode) {
+  case MD_BASE: {
+    npt = mbr->type->GetNonPtrType();
+    if (!npt->tokens.keep) {
+      taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
+      return ebrval;
+    } 
+    if (!mbr->HasOption("NO_EDIT"))
+      token_flags |= taiData::flgEditOk;
+  } break;
+  case MD_SMART_REF: {
+    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
+    if (mbr->HasOption("EDIT"))
+      token_flags |= taiData::flgEditOk;
+  } break;
+  }
   if (!mbr->HasOption("NO_NULL"))
     token_flags |= taiData::flgNullOk;
-  if (!mbr->HasOption("NO_EDIT"))
-    token_flags |= taiData::flgEditOk;
 
   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
 	token_flags);
-  if(mbr->HasOption("NO_SCOPE"))
+  if (mbr->HasOption("NO_SCOPE"))
     rval->scope_ref = NULL;
   else if((host_ != NULL) && (host_->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
     rval->scope_ref = (TAPtr)(host_->Base());
@@ -965,49 +976,97 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
 }
 
 void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
-  TypeDef* npt = mbr->type->GetNonPtrType();
-  if(!npt->tokens.keep) {
-    taiEditButton *ebrval = (taiEditButton*) dat;
-    ebrval->GetImage_(*((void**) mbr->GetOff(base)));
-    return;
+  TypeDef* npt = NULL; //always set
+  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
+  switch (mode) {
+  case MD_BASE: {
+    npt = mbr->type->GetNonPtrType();
+    if (!npt->tokens.keep) {
+      taiEditButton *ebrval = (taiEditButton*) dat;
+      ebrval->GetImage_(*((void**) mbr->GetOff(base)));
+      return;
+    } 
+  } break;
+  case MD_SMART_REF: {
+    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
+  } break;
   }
-
-  String mb_nm = mbr->OptionAfter("TYPE_ON_");
-  if(mb_nm != "") {
-    MemberDef* md = typ->members.FindName(mb_nm);
-    if(md != NULL)
+  // dynamic (member-based) type scoping
+  String tmp = mbr->OptionAfter("TYPE_ON_");
+  if (!tmp.empty()) {
+    MemberDef* md = typ->members.FindName(tmp);
+    if (md)
       npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  } else {
+    // static type scoping
+    tmp = mbr->OptionAfter("TYPE_");
+    if(!tmp.empty()) {
+      npt = taMisc::types.FindName(tmp);
+    }
   }
 
   taiToken* rval = (taiToken*)dat;
-  if(mbr->HasOption("NO_SCOPE"))
-    rval->scope_ref = NULL;
-  else if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
-      rval->scope_ref = (TAPtr)(rval->host)->Base();
-  else
-    rval->scope_ref = (TAPtr)base;
-  rval->UpdateMenu();
-  rval->GetImage(*((TAPtr*)mbr->GetOff(base)), rval->scope_ref);
+  TAPtr scope = NULL;
+  if (!mbr->HasOption("NO_SCOPE")) {
+    if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
+      scope = (TAPtr)(rval->host)->Base();
+    else
+      scope = (TAPtr)base;
+  }
+    
+  rval->SetTypeScope(npt, scope, true); // updates menu
+  switch (mode) {
+  case MD_BASE:
+    rval->GetImage(*((TAPtr*)mbr->GetOff(base)), rval->scope_ref);
+    break;
+  case MD_SMART_REF: {
+    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+    rval->GetImage(ref, rval->scope_ref);
+  } break;
+  }
   GetOrigVal(dat, base);
 }
 
 void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  TypeDef* npt = mbr->type->GetNonPtrType();
-  if(!npt->tokens.keep) {
-    // do nothing
-    return;
+  TypeDef* npt = NULL; //always set
+  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
+  switch (mode) {
+  case MD_BASE: {
+    npt = mbr->type->GetNonPtrType();
+    if (!npt->tokens.keep) {
+      // do nothing
+      return;
+    }
+  } break;
+  case MD_SMART_REF: {
+    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
+  } break;
   }
-  String mb_nm = mbr->OptionAfter("TYPE_ON_");
-  if(mb_nm != "") {
-    MemberDef* md = typ->members.FindName(mb_nm);
+    
+  String tmp = mbr->OptionAfter("TYPE_ON_");
+  if(!tmp.empty()) {
+    MemberDef* md = typ->members.FindName(tmp);
     if(md != NULL)
       npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  } else {
+    tmp = mbr->OptionAfter("TYPE_");
+    if (!tmp.empty()) {
+      npt = taMisc::types.FindName(tmp);
+    }
   }
   taiToken* rval = (taiToken*)dat;
-  if(!no_setpointer && npt->DerivesFrom(TA_taBase))
-    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
-  else
-    *((void**)mbr->GetOff(base)) = rval->GetValue();
+  switch (mode) {
+  case MD_BASE:
+    if (!no_setpointer)
+      taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+    else
+      *((void**)mbr->GetOff(base)) = rval->GetValue();
+    break;
+  case MD_SMART_REF: {
+    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+    ref = (TAPtr)rval->GetValue();
+  } break;
+  }
   CmpOrigVal(dat, base, first_diff);
 }
 

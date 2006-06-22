@@ -46,9 +46,9 @@ VPUList 	dumpMisc::vpus;
 //////////////////////////
 
 
-VPUnref::VPUnref(TAPtr* b, TAPtr par, const String& p, MemberDef* md) {
-  base = b; parent = par; path = p; memb_def = md;
-  name = String((long)base);
+VPUnref::VPUnref(void* base_, TAPtr par, const String& p, MemberDef* md) {
+  base = base_; parent = par; path = p; memb_def = md;
+  name = String((intptr_t)base);
 }
 
 TAPtr VPUnref::Resolve() {
@@ -57,7 +57,7 @@ TAPtr VPUnref::Resolve() {
   if((md == NULL) || (bs == NULL))
     return NULL;
 
-  if(md->type->ptr == 1) {
+  if (md->type->ptr == 1) {
     bs = *((TAPtr*)bs);
     if(bs == NULL)
       return NULL;
@@ -67,20 +67,24 @@ TAPtr VPUnref::Resolve() {
     return NULL;
   }
 
-  if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
-    if(parent == NULL)
-      taMisc::Warning("*** NULL parent for owned pointer:",path);
-    else
-      taBase::OwnPointer(base, bs, parent);
+  if (memb_def && memb_def->type->InheritsFrom(&TA_taSmartRef)) {
+    taSmartRef& ref = *((taSmartRef*)base);
+    ref = bs;
+  } else {// assume it is taBase_ptr
+    if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
+      if(parent == NULL)
+        taMisc::Warning("*** NULL parent for owned pointer:",path);
+      else
+        taBase::OwnPointer((TAPtr*)base, bs, parent);
+    } else 
+      taBase::SetPointer((TAPtr*)base, bs);
   }
-  else
-    taBase::SetPointer(base, bs);
 
   if(taMisc::verbose_load >= taMisc::MESSAGES)
     taMisc::Warning("<== Resolved Reference:",path);
   if(parent != NULL)
     parent->UpdateAfterEdit();
-  return *base;
+  return bs;
 }
 
 void VPUList::Resolve() {
@@ -102,7 +106,7 @@ void VPUList::Resolve() {
   } while(i < size);
 }
 
-void VPUList::Add(TAPtr* b, TAPtr par, const String& p, MemberDef* md) {
+void VPUList::Add(void* b, TAPtr par, const String& p, MemberDef* md) {
   AddUniqNameOld(new VPUnref(b,par,p,md));
   if(taMisc::verbose_load >= taMisc::MESSAGES)
     taMisc::Warning("==> Unresolved Reference:",p);
@@ -259,7 +263,7 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
       return NULL;
     }
     if((tok->object == NULL) && (base != NULL)) {
-      dumpMisc::vpus.Add((TAPtr*)base, (TAPtr)par, pat, memb_def);
+      dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
       return NULL;
     }
     return tok->object;		// this is what we're looking for
@@ -278,7 +282,7 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
   TAPtr rval = tabMisc::root->FindFromPath(pat, md);
   if((md == NULL) || (rval == NULL)) {
     if(base != NULL)
-      dumpMisc::vpus.Add((TAPtr*)base, (TAPtr)par, pat, memb_def);
+      dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
     return NULL;
   }
 
@@ -286,7 +290,7 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
     rval = *((TAPtr*)rval);
     if(rval == NULL) {
       if(base != NULL)
-	dumpMisc::vpus.Add((TAPtr*)base, (TAPtr)par, pat, memb_def);
+	dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
       return NULL;
     }
   }
@@ -359,6 +363,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   if(!DumpMember(base))
     return false;
   void* new_base = GetOff(base);
+  TypeDef* eff_type = type;
   
   // embedded classes can never be Variant, and are completely handled in this block
   if (type->InheritsNonAtomicClass()) { 
@@ -373,9 +378,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   }
   
   // otherwise, we could have a Variant, in which case we will indirect
-  
-  TypeDef* eff_type = type;
-  if (type->InheritsFrom(TA_Variant)) {
+  else if (type->InheritsFrom(TA_Variant)) {
     Variant& var = *((Variant*)(new_base));
     var.GetRepInfo(eff_type, new_base);
     // we need to output a spurious name and type info for taBase types
@@ -834,8 +837,8 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   }
   void* new_base = GetOff(base);
   int rval;
+  TypeDef* eff_type = type; // overridden for variants
 
-  
   if (type->InheritsNonAtomicClass()) {
     if(type->InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)new_base;
@@ -853,8 +856,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   else {
     // if we are a variant, then adjust the eff_type and proceed
     int c = 0; // streaming char
-    TypeDef* eff_type = type; // overridden for variants
-    if (type->DerivesFrom(TA_Variant)) {
+    if (eff_type->DerivesFrom(TA_Variant)) {
       Variant& var = *((Variant*)(new_base));
       // we hopefully already loaded type info, but in any event, must proceed based on 
       // what is the current type of the variant
