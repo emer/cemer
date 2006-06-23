@@ -632,6 +632,8 @@ private:
   void	Destroy();
 };
 
+SmartRef_Of(DataTable) // DataTableRef
+
 template<class T> 
 class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
 public:

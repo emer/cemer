@@ -4335,7 +4335,11 @@ void Network::Initialize() {
 //TODO  views.SetBaseType(&TA_NetView);
   layers.SetBaseType(&TA_Layer);
 
+  net_context = DEFAULT;
+  batch = 0;
   epoch = 0;
+  trial = 0;
+  phase = 0;
   re_init = false;
   dmem_sync_level = DMEM_SYNC_NETWORK;
   dmem_nprocs = 1;
@@ -4355,7 +4359,6 @@ void Network::Initialize() {
   dmem_gp = -1;
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_SELF;
 #endif
-  net_context = DEFAULT;
 }
 
 void Network::InitLinks() {
@@ -4442,7 +4445,14 @@ void Network::CutLinks() {
 }
 
 void Network::RemoveMonitors() {
-  //TODO (maybe)
+  if (!proj) return;
+  TokenSpace& ts = TA_NetMonitor.tokens;
+  for (int i = 0; i < ts.size; ++i) {
+    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
+    if (nm->GetOwner(&TA_Project) != proj) continue;
+    nm->RemoveMonitors();
+  }
+  
 }
 void Network::UpdateMonitors() {
   //TODO (maybe)
@@ -7019,22 +7029,10 @@ void NetMonItem::UpdateMonVals(DataBlock* db) {
 
 
 //////////////////////////
-//  NetMonitor		//
+//  NetMonItem_List	//
 //////////////////////////
 
-void NetMonitor::AddObject(TAPtr obj, const String& variable) {
-  // check for exact obj/variable already there, otherwise add one
-  NetMonItem* nmi;
-  for (int i = 0; i < size; ++i) {
-    nmi = FastEl(i);
-    if ((nmi->object == obj) && (nmi->variable == variable))
-      return;
-  }
-  nmi = (NetMonItem*)New(1, &TA_NetMonItem);
-  nmi->SetMonVals(obj, variable);
-}
-
-String NetMonitor::GetColHeading(int col) {
+String NetMonItem_List::GetColHeading(int col) {
   static String col_obj("Object Name");
   static String col_typ("Object Type");
   static String col_var("Variable");
@@ -7047,27 +7045,85 @@ String NetMonitor::GetColHeading(int col) {
   } 
 }
 
-void NetMonitor::UpdateChannels(DataTable* dt, bool delete_orphans) {
-  if (!dt) return;
-  if (delete_orphans) 
-    dt->MarkCols();
-  // this will probably be big, so wrap the whole thing
-  dt->StructUpdate(true);
-  // (re)scan all the objects
-  for (int i = 0; i < size; ++i) {
-    NetMonItem* nmi = FastEl(i);
-    nmi->ScanObject();
-    nmi->val_specs.UpdateDataBlockSchema(dt);
-  }
-  dt->RemoveOrphanCols();
-  dt->StructUpdate(false);
+
+//////////////////////////
+//  NetMonitor		//
+//////////////////////////
+
+void NetMonitor::Initialize() {
+  rmv_orphan_cols = true;
 }
 
-void NetMonitor::UpdateMonVals(DataBlock* db) {
+void NetMonitor::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(items, this);
+  taBase::Own(data, this);
+}
+
+void NetMonitor::CutLinks() {
+  data.CutLinks();
+  items.CutLinks();
+  inherited::CutLinks();
+}
+
+void NetMonitor::Copy_(const NetMonitor& cp) {
+  items = cp.items;
+  rmv_orphan_cols = cp.rmv_orphan_cols;
+  data = cp.data; //warning: generates a UAE, but we ignore it
+}
+
+void NetMonitor::UpdateAfterEdit() {
+  if (taMisc::is_loading || taMisc::is_duplicating) return;
+  
+  UpdateMonitors();
+  inherited::UpdateAfterEdit();
+}
+
+
+void NetMonitor::AddObject(TAPtr obj, const String& variable) {
+  // check for exact obj/variable already there, otherwise add one
   NetMonItem* nmi;
-  for (int i = 0; i < size; ++i) {
-    nmi = FastEl(i);
-    nmi->UpdateMonVals(db);
+  for (int i = 0; i < items.size; ++i) {
+    nmi = items.FastEl(i);
+    if ((nmi->object == obj) && (nmi->variable == variable))
+      return;
+  }
+  nmi = (NetMonItem*)items.New(1, &TA_NetMonItem);
+  nmi->SetMonVals(obj, variable);
+}
+
+void NetMonitor::RemoveMonitors() {
+  for (int i = 0; i < items.size; ++i) {
+    NetMonItem* nmi = items.FastEl(i);
+    nmi->ResetMonVals();
+  }
+}
+
+void NetMonitor::SetDataTable(DataTable* dt) {
+  data = dt; // note: auto does UAE
+}
+
+void NetMonitor::UpdateMonitors() {
+  if (!data) return;
+  if (rmv_orphan_cols) 
+    data->MarkCols();
+  // this will probably be big, so wrap the whole thing
+  data->StructUpdate(true);
+  // (re)scan all the objects
+  for (int i = 0; i < items.size; ++i) {
+    NetMonItem* nmi = items.FastEl(i);
+    nmi->ScanObject();
+    nmi->val_specs.UpdateDataBlockSchema(data);
+  }
+  if (rmv_orphan_cols)
+    data->RemoveOrphanCols();
+  data->StructUpdate(false);
+}
+
+void NetMonitor::UpdateMonVals() {
+  for (int i = 0; i < items.size; ++i) {
+    NetMonItem* nmi = items.FastEl(i);
+    nmi->UpdateMonVals(data);
   }
 }
 

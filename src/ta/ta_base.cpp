@@ -329,6 +329,10 @@ void taBase::Own(taBase& it, TAPtr onr) {
   }
 }
 
+void taBase::Own(taSmartRef& it, TAPtr onr) {
+  it.Init(onr);
+}
+
 void taBase::OwnPointer(TAPtr* ptr, TAPtr new_val, TAPtr onr) {
   if (*ptr == new_val) return;
   if (*ptr != NULL)

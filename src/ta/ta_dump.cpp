@@ -70,7 +70,7 @@ TAPtr VPUnref::Resolve() {
   if (memb_def && memb_def->type->InheritsFrom(&TA_taSmartRef)) {
     taSmartRef& ref = *((taSmartRef*)base);
     ref = bs;
-  } else {// assume it is taBase_ptr
+  } else {// assume it is taBase_ptr or (binary-compat) taBasePtr
     if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
       if(parent == NULL)
         taMisc::Warning("*** NULL parent for owned pointer:",path);

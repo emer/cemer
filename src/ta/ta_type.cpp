@@ -2493,6 +2493,7 @@ bool TypeDef::InheritsNonAtomicClass() const {
         && !InheritsFrom(TA_taString) 
         && !InheritsFrom(TA_Variant)
 #ifndef NO_TA_BASE
+        && !InheritsFrom(TA_taSmartPtr)
         && !InheritsFrom(TA_taSmartRef)
 #endif
     ) ? 1 : -1;
@@ -3161,9 +3162,10 @@ void TypeDef::unRegister(void* it) {
 // 	Get/SetVal		//
 //////////////////////////////////
 
-String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
+String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
   StrContext sc) const 
 {
+//note: par is not used (except for recursive calls) and should maybe be nuked
   if (sc == SC_DEFAULT) 
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
@@ -3330,6 +3332,10 @@ String TypeDef::GetValStr(const void* base_, void*, MemberDef* memb_def,
 	return rbase->GetPath();
       return name;
     }
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      // we just delegate to taBase* since we are binary compatible
+      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc);
+    }
     else if (DerivesFrom(TA_taSmartRef)) {
       taSmartRef& ref = *((taSmartRef*)base);
       TAPtr rbase = ref;
@@ -3482,9 +3488,18 @@ const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb
       return *((Variant*)base);
     }
 #ifndef NO_TA_BASE
+    //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
     else if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;
       //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
+      return rbase; // T_Base
+    }
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      TAPtr rbase = (TAPtr)base;
+      return rbase; // T_Base
+    }
+    else if (DerivesFrom(TA_taSmartRef)) {
+      TAPtr rbase = *((taSmartRef*)base);
       return rbase; // T_Base
     }
 #endif
@@ -3626,6 +3641,11 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       taArray_impl* gp = (taArray_impl*)base;
       if(gp != NULL)
 	gp->InitFromString(val);
+    }
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      // we just delegate, since we are binary compat
+      TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc);
+      return;
     }
     else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
       TAPtr bs = NULL;

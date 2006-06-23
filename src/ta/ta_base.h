@@ -124,36 +124,6 @@ public:
 			TypeDef* GetTypeDef() const { return &TA_##y; } \
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
-// macro for creating smart ptrs of taBase classes
-#define taPtr_Of(T)  class TA_API T ## Ptr: public taPtr_impl { \
-public: \
-  T* ptr() const {return (T*)m_ptr;} \
-  operator T*() const {return (T*)m_ptr;} \
-  T* operator->() const {return (T*)m_ptr;} \
-  T* operator=(T ## Ptr& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
-  T* operator=(T* src) {set(src); return (T*)m_ptr;} \
-  T ## Ptr() {} \
-  T ## Ptr(T ## Ptr& src) {set((T*)src.m_ptr);} \
-  T ## Ptr(T* src) {set(src);} \
-};
-
-// for creating a ref-counted lifetime class -- note destructor is inaccessible
-/*#define TA_REF_BASEFUNS(y) y () { Register(); Initialize(); SetDefaultName(); } \
-	y (const y& cp) { Register(); Initialize(); Copy(cp); } \
-	void UnRef() {if (--refn <= 0) delete this;} \
-        TAPtr Clone() { return new y(*this); }  \
-        void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
-						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-        void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy(*this); } \
-        TAPtr MakeToken(){ return (TAPtr)(new y); } \
-        TAPtr MakeTokenAry(int no){ return (TAPtr)(new y[no]); } \
-        void operator=(const y& cp) { Copy(cp); } \
-        TypeDef* GetTypeDef() const { return &TA_##y; } \
-        static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-protected: \
-        ~y () { unRegister(); Destroy(); }
-*/
-
 // use this when you have consts in your class and can't use the generic constrs
 #define TA_CONST_BASEFUNS(y) ~y () { unRegister(); Destroy(); } \
 			TAPtr Clone() { return new y(*this); }  \
@@ -191,13 +161,6 @@ protected: \
 			TypeDef* GetTypeDef() const { return &TA_##y; } \
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
-//#define SIMPLE_COPY(T)	  void Copy_(const T& cp)	{ TA_ ## T.CopyOnlySameType((void*)this, (void*)&cp); }
-
-// simplified Get owner functions B = ta_base object, T = class name
-//#define GET_MY_OWNER(T) (T *) GetOwner(&TA_ ## T)
-//#define GET_OWNER(B,T)  (T *) B ->GetOwner(&TA_ ## T)
-
-// NEW MACROS -- use these instead of the deprecated versions (xxxDECL for .h, xxxIMPL for .cc)
 
 //WARNING: _INLINE is not very stable, since it assumes registration before any access to StatTypeDef...
 
@@ -300,6 +263,7 @@ public:
   static void		UnRef(TAPtr it) { if (--(it->refn) == 0) delete it;}// #IGNORE
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(TAPtr it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
+  static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
 protected: // legacy ref counting routines, for compatability -- do not use for new code
   static void   	unRef(TAPtr it) { it->refn--; }	     // #IGNORE
   static void   	Done(TAPtr it) 	{ if (it->refn == 0) delete it;} // #IGNORE
@@ -616,17 +580,58 @@ inline istream& operator>>(istream &strm, taBase &obj)
 inline ostream& operator<<(ostream &strm, taBase &obj)
 { obj.Save(strm); return strm; }
 
-class TA_API taPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts
+class TA_API taSmartPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*
 public:
-  taPtr_impl() {m_ptr = NULL;}
-  ~taPtr_impl() {set(NULL);}
+  inline taBase*	ptr() const {return m_ptr;}
+  
+  inline		operator bool() const {return (m_ptr);}
+    // needed to avoid ambiguities when we have derived T* operators
+  inline 		operator taBase*() const {return m_ptr;}
+  inline taBase* 	operator->() const {return m_ptr;}
+  inline TAPtr* 	operator&() const {return &m_ptr;}
+    //note: operator& is *usually* verbotten but we are binary compat -- it simplifies low-level compat
+  inline taBase* 	operator=(const taSmartPtr& src) 
+    {set(src.m_ptr); return m_ptr;} 
+  inline taBase* 	operator=(taBase* src) {set(src); return m_ptr;} 
+  
+  taSmartPtr() {m_ptr = NULL;}
+  ~taSmartPtr() {set(NULL);} //note: DO NOT change to be virtual!
 protected:
-  taBase*	m_ptr;
-  void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
+  mutable taBase*	m_ptr;
+  inline void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
+private:
+  taSmartPtr(const taSmartPtr& src); // not defined 
 };
 
-// base calls
-    
+
+template<class T>
+class taSmartPtrT: public taSmartPtr { 
+public:
+  inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
+
+  inline 	operator T*() const {return (T*)m_ptr;}
+  inline T* 	operator->() const {return (T*)m_ptr;}
+  inline T** 	operator&() const {return (T**)(&m_ptr);}
+    //note: operator& is *usually* verbotten but we are binary compat -- it simplifies low-level compat
+  T* 		operator=(const taSmartPtrT<T>& src) 
+    {set((T*)src.m_ptr); return (T*)m_ptr;} 
+    //NOTE: copy only implies ptr, NOT the owner!
+  T* 		operator=(T* src) {set(src); return (T*)m_ptr;} 
+  
+  taSmartPtrT() {} 
+  
+private:
+  taSmartPtrT(const taSmartPtrT<T>& src); // not defined 
+};
+
+// macro for creating smart ptrs of taBase classes
+
+#define SmartPtr_Of(T)  typedef taSmartPtrT<T> T ## Ptr;
+
+// compatibility macro 
+#define taPtr_Of(T)  SmartPtr_Of(T)
+
+
 class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" reference for taBase objects -- does not ref count, but is a dlc so it tracks changes etc.
 friend class taBase;
 friend class TypeDef; // for various
@@ -634,18 +639,19 @@ friend class MemberDef; // for streaming
 public:
   inline taBase*	ptr() const {return m_ptr;}
   
-  
-  inline 		operator taBase*() const {return (taBase*)m_ptr;}
-  inline taBase* 	operator->() const {return (taBase*)m_ptr;}
+  inline		operator bool() const {return (m_ptr);}
+    // needed to avoid ambiguities when we have derived T* operators
+  inline 		operator taBase*() const {return m_ptr;}
+  inline taBase* 	operator->() const {return m_ptr;}
   taBase* 		operator=(const taSmartRef& src) 
-    {set((taBase*)src.m_ptr); return (taBase*)m_ptr;} 
+    {set(src.m_ptr); return m_ptr;} 
     //NOTE: copy only implies ptr, NOT the owner!
-  taBase* 		operator=(taBase* src) {set(src); return (taBase*)m_ptr;} 
+  taBase* 		operator=(taBase* src) {set(src); return m_ptr;} 
   
-  inline void 		Init(taBase* own_) {m_own = own_;} // call in owner's Initialize
+  inline void 		Init(taBase* own_) {m_own = own_;} // call in owner's Initialize or InitLinks
+  inline void		CutLinks() {set(NULL); m_own = NULL;}
   taSmartRef() {m_own = NULL; m_ptr = NULL;}
-  explicit taSmartRef(taBase* own_) {m_own = own_; m_ptr = NULL;}
-  ~taSmartRef() {set(NULL); m_own = NULL;}
+  ~taSmartRef() {CutLinks();}
   
 protected:
   taBase*		m_own; 
@@ -654,7 +660,6 @@ protected:
   void			set(taBase* src) {if (src == m_ptr) return;
     if (m_ptr) {m_ptr->RemoveDataClient(this);}
     if (src) {src->AddDataClient(this);}  m_ptr = src;}
-    
   
 private:
   taSmartRef(const taSmartRef& src); // not defined 
@@ -665,7 +670,7 @@ public: // ITypedObject interface
 
 public: // IDataLinkClient interface
   override TypeDef*	GetDataTypeDef() const 
-    {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_void;} // TypeDef of the data
+    {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taBase;} // TypeDef of the data
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
   override void		DataLinkDestroying(taDataLink* dl);
 };
@@ -676,15 +681,11 @@ class taSmartRefT: public taSmartRef {
 public:
   inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
 
-  inline 	operator T*() const {return (T*)m_ptr;}
-  inline T* 	operator->() const {return (T*)m_ptr;}
-  T* 		operator=(const taSmartRefT<T>& src) 
-    {set((T*)src.m_ptr); return (T*)m_ptr;} 
-    //NOTE: copy only implies ptr, NOT the owner!
-  T* 		operator=(T* src) {set(src); return (T*)m_ptr;} 
+  inline 	operator T*() const {return (T*)m_ptr;} //
+  inline T* 	operator->() const {return (T*)m_ptr;} //
   
+protected: // must use macro below to make instance classes
   taSmartRefT() {} 
-  explicit taSmartRefT(taBase* own_): taSmartRef(own_) {}
   
 private:
   taSmartRefT(const taSmartRefT<T>& src); // not defined 
@@ -692,8 +693,15 @@ private:
 
 // macro for creating smart refs of taBase classes
 
-#define SmartRef_Of(T)  typedef taSmartRefT<T> T ## Ref 
-
+#define SmartRef_Of(T)  class T ## Ref: public taSmartRefT<T> { \
+public: \
+  T* operator=(const T ## Ref& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
+  T* operator=(T* src) {set(src); return (T*)m_ptr;} \
+  TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_ ## T;} \
+  T ## Ref() {} \
+private:\
+  T ## Ref(const T ## Ref& src); \
+};
 
 #ifdef TA_GUI
 

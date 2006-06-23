@@ -1208,7 +1208,12 @@ public:
   };
 
   Layer_MGroup	layers;		// Layers or Groups of Layers
-  int		epoch;		// epoch counter (updated by process)
+  int		net_context;	// #READ_ONLY_IV #NO_SAVE #DETAIL used by programs to provide context modality to cycling algorithms
+  int		batch;		// #READ_ONLY_IV batch counter (updated by program)
+  int		epoch;		// #READ_ONLY_IV epoch counter (updated by program)
+  int		trial;		// #READ_ONLY_IV trial counter (updated by program)
+  int		phase;		// #READ_ONLY_IV phase counter, used by some algos(updated by program)
+  
   bool		re_init;	// should net be initialized (InitWtState) by process?
   DMem_SyncLevel dmem_sync_level; // at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -1224,7 +1229,6 @@ public:
 
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 //obs  bool		net_will_updt;	// #HIDDEN #NO_SAVE if true, network will do update of display so don't do at lower level
-  int		net_context;	// #READ_ONLY #NO_SAVE #DETAIL used by programs to provide context modality to cycling algorithms
 
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
@@ -1517,7 +1521,7 @@ private:
 */
 
 class PDP_API NetMonItem: public taNBase {
-  // used for monitoring the value of a net object:\nLayer, Projection, UnitGroup, Unit
+  //  #NO_TOKENS #NO_UPDATE_AFTER used for monitoring the value of a net object:\nLayer, Projection, UnitGroup, Unit
 INHERITED(taNBase)
 public:
   static const String 	GetObjName(TAPtr obj, TAPtr own = NULL); 
@@ -1595,14 +1599,30 @@ private:
 };
 
 
-
-class PDP_API NetMonitor: public taList<NetMonItem> { // ##TOKENS used for monitoring values of network objects
+class PDP_API NetMonItem_List: public taList<NetMonItem> { 
 INHERITED(taList<NetMonItem>)
 public:
 
+  int	NumListCols() const {return 3;} 
+  String GetColHeading(int col); // header text for the indicated column
+  TA_BASEFUNS(NetMonItem_List);
+  
+private:
+  void		Initialize() {SetBaseType(&TA_NetMonItem);}
+  void		Destroy() {}
+};
+
+class PDP_API NetMonitor: public taNBase { // ##TOKENS #NO_UPDATE_AFTER used for monitoring values of network objects
+INHERITED(taNBase)
+public:
+  NetMonItem_List	items; // the list of items being monitored
+  DataTableRef		data; // the data table that will be used to hold the monitor data
+  bool			rmv_orphan_cols; // #DEF_true remove orphan columns when updating table schema
+
+  void		SetDataTable(DataTable* dt); // #MENU #MENU_ON_Action set the data table used
   void		AddNetwork(Network* net, const String& variable)
     {AddObject(net, variable);}
-    // #MENU #MENU_ON_Action monitor a value in the Network or its subobjects
+    // #MENU #MENU_ON_Action #MENU_SEP_BEFORE monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
     {AddObject(lay, variable);}
     // #MENU monitor a value in the Layer or its subobjects
@@ -1618,18 +1638,21 @@ public:
   
   void		AddObject(TAPtr obj, const String& variable);
     // monitor a value in the object or its subobjects
-  void 		UpdateChannels(DataTable* dt, 
-    bool delete_orphans = true); // #MENU #MENU_SEP_BEFORE create or update the channels
-  void 		UpdateMonVals(DataBlock* db); // get all the values!
+  void 		UpdateMonitors(); // #MENU #MENU_SEP_BEFORE create or update the channels
+  void 		UpdateMonVals(); // get all the values!
   
-  int	NumListCols() const {return 3;} 
-    // number of columns in a list view for this item type
-  String GetColHeading(int col); // header text for the indicated column
+  void		RemoveMonitors(); //called by net to remove the objs from lists
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const NetMonitor& cp);
+  void	UpdateAfterEdit();
+  COPY_FUNS(NetMonitor, taNBase);
   TA_BASEFUNS(NetMonitor);
   
 private:
-  void		Initialize() {SetBaseType(&TA_NetMonItem);}
-  void		Destroy() {}
+  void		Initialize();
+  void		Destroy() {CutLinks();}
 };
 
 

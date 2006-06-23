@@ -1377,7 +1377,7 @@ public:
 
   TypeDef*	FindTypeWithMember(const char* nm, MemberDef** md); // returns the type or child type with memberdef md
 protected:
-  mutable int	 m_cacheInheritsNonAtomicClass;
+  mutable signed char	 m_cacheInheritsNonAtomicClass;
 };
 
 //TODO: this class doesn't belong here -- move it to a more appropriate file, or its own
