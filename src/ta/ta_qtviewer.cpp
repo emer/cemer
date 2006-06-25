@@ -2040,11 +2040,6 @@ void DataViewer::Clear() {
   inherited::Clear();
 }
 
-void DataViewer::Close() {
-  if (GetOwner() == NULL) return;
-  tabMisc::Close_Obj(this);
-}
-
 void DataViewer::CloseWindow() {
   if (!taMisc::gui_active) return;
   if (print_file != NULL) {

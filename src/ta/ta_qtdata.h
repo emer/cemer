@@ -926,27 +926,34 @@ class TA_API taiToken : public taiElBase {
   // for making menus of tokens
   Q_OBJECT
 public:
-  TAPtr		scope_ref;	// reference object for scoping
 //  bool		over_max;	// over max_menu
 
-  virtual void	GetImage(TAPtr ths, TAPtr scp_obj);
-  virtual TAPtr	GetValue();
-  override QWidget*	GetRep() { return (ta_actions == NULL) ? NULL : ta_actions->GetRep(); }
-  virtual void	SetTypeScope(TypeDef* new_typ, TAPtr new_scope = NULL, bool force = false); 
-   // dynamically set a new base type and/or scope; calls GetMenu
+  override QWidget*	GetRep() { return (ta_actions) ? ta_actions->GetRep() : NULL; }
   
-  virtual void	GetMenu(const taiMenuAction* actn = NULL);
-  virtual void	UpdateMenu(const taiMenuAction* actn = NULL);
-  virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
+  virtual void		GetImage(TAPtr ths);
+    // get image, using the current type and scope
+  virtual void		GetImage(TAPtr ths, TypeDef* new_typ, TAPtr new_scope);
+    // get image, using the new type and scope supplied
+  virtual TAPtr		GetValue(); //
+//nn  virtual void		SetTypeScope(TypeDef* new_typ, TAPtr new_scope); 
+    // set a new base type and scope; doesn't update menu
+  
+  virtual void		GetUpdateMenu(const taiMenuAction* actn = NULL); 
+    // gets or updates the menu
 
 
   taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);
+protected:
+  TAPtr		scope_ref;	// reference object for scoping, default is none
+  
+  virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
+
 protected slots:
   virtual void	Edit();		// for edit callback
   virtual void	Chooser();	// for chooser callback
-  void ItemChosen(taiAction* menu_el); // when user chooses from menu
+  void 		ItemChosen(taiAction* menu_el); // when user chooses from menu
 };
 
 class TA_API taiSubToken : public taiElBase {

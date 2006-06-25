@@ -818,8 +818,6 @@ public:
   int  		Load(istream& strm, TAPtr par=NULL);
   // load object from a file
   int		Edit(bool wait=false);
-  void		Close();
-  // close this structure/window
   virtual void	Print(PrintFmt format, const char* fname = NULL);
   // #MENU #ARGC_1 #MENU_SEP_BEFORE #LABEL_Print_(Window) Print this object's entire window (including buttons, etc) to file (prompted next) in given format
   virtual void	Print_Data(PrintFmt format, const char* fname = NULL);

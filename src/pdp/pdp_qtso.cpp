@@ -415,8 +415,10 @@ void taiObjectProgVar::DataChanged_impl(taiData* chld) {
   if (chld == chkMakeNew) {
     MakeNew_Setting(chkMakeNew->GetValue());
   } else if (chld == thValType) {
-    tkObjectValue->SetTypeScope(thValType->GetValue());
     // previous token may no longer be in scope!
+    tkObjectValue->typ = thValType->GetValue();
+    tkObjectValue->GetUpdateMenu();
+//    tkObjectValue->SetTypeScope(thValType->GetValue());
   }
   --m_changing;
 }
@@ -430,8 +432,7 @@ void taiObjectProgVar::GetImage(const ProgVar* var_) {
   if (var->make_new) {
     //maybe should initialize the token with NULL???
   } else {
-    tkObjectValue->SetTypeScope(var->val_type, NULL); // no scope
-    tkObjectValue->GetImage(var->value.toBase(), NULL);
+    tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
   }
 }
 

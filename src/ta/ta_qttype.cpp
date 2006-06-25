@@ -556,7 +556,7 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
   else {
     flags_ |= (taiData::flgNullOk | taiData::flgEditOk);
     taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_, flags_);
-    rval->GetMenu();
+//nn here, do in getimage    rval->GetMenu();
     return rval;
   }
 }
@@ -570,8 +570,7 @@ void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
   }
   else {
     taiToken* rval = (taiToken*)dat;
-    rval->UpdateMenu();
-    rval->GetImage(*((TAPtr*)base), NULL);
+    rval->GetImage(*((TAPtr*)base)); // default typ, no scope
   }
 }
 
@@ -967,11 +966,6 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
 
   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
 	token_flags);
-  if (mbr->HasOption("NO_SCOPE"))
-    rval->scope_ref = NULL;
-  else if((host_ != NULL) && (host_->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
-    rval->scope_ref = (TAPtr)(host_->Base());
-  rval->GetMenu();
   return rval;
 }
 
@@ -988,7 +982,8 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
     } 
   } break;
   case MD_SMART_REF: {
-    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
+    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+    npt = ref.GetDataTypeDef(); // either base type of smartref if null, or act type of data if not
   } break;
   }
   // dynamic (member-based) type scoping
@@ -1014,46 +1009,32 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
       scope = (TAPtr)base;
   }
     
-  rval->SetTypeScope(npt, scope, true); // updates menu
   switch (mode) {
   case MD_BASE:
-    rval->GetImage(*((TAPtr*)mbr->GetOff(base)), rval->scope_ref);
+    rval->GetImage(*((TAPtr*)mbr->GetOff(base)), npt, scope);
     break;
   case MD_SMART_REF: {
     taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
-    rval->GetImage(ref, rval->scope_ref);
+    rval->GetImage(ref, npt, scope);
   } break;
   }
   GetOrigVal(dat, base);
 }
 
 void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  TypeDef* npt = NULL; //always set
   Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
   switch (mode) {
   case MD_BASE: {
+    TypeDef* npt = NULL; //always set
     npt = mbr->type->GetNonPtrType();
     if (!npt->tokens.keep) {
       // do nothing
       return;
     }
   } break;
-  case MD_SMART_REF: {
-    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
-  } break;
+  default: break;
   }
     
-  String tmp = mbr->OptionAfter("TYPE_ON_");
-  if(!tmp.empty()) {
-    MemberDef* md = typ->members.FindName(tmp);
-    if(md != NULL)
-      npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
-  } else {
-    tmp = mbr->OptionAfter("TYPE_");
-    if (!tmp.empty()) {
-      npt = taMisc::types.FindName(tmp);
-    }
-  }
   taiToken* rval = (taiToken*)dat;
   switch (mode) {
   case MD_BASE:
@@ -1944,7 +1925,6 @@ taiData* taiTokenPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWi
     token_flags |= taiData::flgEditOk;
   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
 	token_flags);
-  rval->GetMenu();
   return rval;
 }
 
@@ -1967,16 +1947,15 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
     }
   }
   taiToken* rval = (taiToken*)dat;
-  rval->typ = npt;
+  TAPtr scope = NULL;
   if(meth->HasOption("NO_SCOPE"))
-    rval->scope_ref = NULL;
+    scope = NULL;
   else if((rval->host != NULL) && (rval->host->GetBaseTypeDef() != NULL) &&
 	  (rval->host->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
-    rval->scope_ref = (TAPtr)(rval->host)->Base();
+    scope = (TAPtr)(rval->host)->Base();
   else
-    rval->scope_ref = (TAPtr)base;
-  rval->UpdateMenu();
-  rval->GetImage(*((TAPtr*)arg_base), rval->scope_ref);
+    scope = (TAPtr)base;
+  rval->GetImage(*((TAPtr*)arg_base), npt, scope);
 }
 
 void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {

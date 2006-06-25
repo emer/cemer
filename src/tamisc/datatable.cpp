@@ -1754,7 +1754,7 @@ void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   DataArray_impl* da;
   taLeafItr itr;
-  FOR_ITR_EL(DataArray_impl, da, data., itr) {
+  FOR_ITR_EL_REV(DataArray_impl, da, data., itr) {
     if (da->mark && !da->pin) {
       if (cls_cnt++ == 0) StructUpdate(true);
       da->Close();

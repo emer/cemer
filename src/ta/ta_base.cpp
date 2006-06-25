@@ -143,11 +143,13 @@ void tabMisc::WaitProc() {
     for(i=0; i<delayed_remove.size; i++) {
       TAPtr it = delayed_remove.FastEl(i);
       TAPtr ownr = it->GetOwner();
-      if(ownr != NULL) {
+      if (ownr) {
 	if(!ownr->Close_Child(it)) { // didn't work
 	  if(it->InheritsFrom(TA_taList_impl))
 	    ((taList_impl*)it)->RemoveAll(); // remove all might have been called
 	}
+      } else {
+        taBase::UnRef(it);
       }
     }
     delayed_remove.RemoveAll();
@@ -483,8 +485,13 @@ void taBase::CallFun(const String& fun_name) {
 }
 
 void taBase::Close() {
-  if(GetOwner() == NULL)
+  TAPtr own = GetOwner();
+  if (own && own->Close_Child(this))
     return;
+  taBase::UnRef(this);
+}
+
+void taBase::CloseLater() {
   tabMisc::Close_Obj(this);
 }
 
@@ -1360,13 +1367,10 @@ bool taList_impl::ChangeType(TAPtr itm, TypeDef* new_type) {
 }
 
 void taList_impl::Close() {
-  if(size > 0) {
+  if (size > 0) {
     RemoveAll();
-    return;
   }
-  if(GetOwner() == NULL)
-    return;
-  tabMisc::Close_Obj(this);
+  inherited_taBase::Close();
 }
 
 bool taList_impl::Close_Child(TAPtr obj) {

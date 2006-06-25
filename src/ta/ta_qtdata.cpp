@@ -996,11 +996,11 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(lbl);
   
   tabVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taNBase, host, this, NULL);
-  tabVal->GetMenu();
+//nn  tabVal->GetMenu();
   stack->addWidget(tabVal->GetRep());
   
   matVal = new taiToken(taiActions::buttonmenu, taiMisc::defFontSize, &TA_taMatrix, host, this, NULL);
-  matVal->GetMenu();
+//nn  matVal->GetMenu();
   stack->addWidget(matVal->GetRep());
 }
     
@@ -1046,13 +1046,11 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
     break;
   case Variant::T_Base: 
     stack->setCurrentIndex(scBase);
-    tabVal->GetMenu();
-    tabVal->GetImage(NULL, NULL); // obj, no scope
+    tabVal->GetImage(NULL); // obj, no scope
     break;
   case Variant::T_Matrix:
     stack->setCurrentIndex(scMatrix);
-    matVal->GetMenu();
-    matVal->GetImage(NULL, NULL); // obj, no scope
+    matVal->GetImage(NULL); // obj, no scope
     break;
   default: return ;
   }
@@ -1095,13 +1093,11 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
     break;
   case Variant::T_Base: 
     stack->setCurrentIndex(scBase);
-    tabVal->GetMenu();
-    tabVal->GetImage(var.toBase(), NULL); // obj, no scope
+    tabVal->GetImage(var.toBase()); // obj, no scope
     break;
   case Variant::T_Matrix:
     stack->setCurrentIndex(scMatrix);
-    matVal->GetMenu();
-    matVal->GetImage(var.toMatrix(), NULL); // obj, no scope
+    matVal->GetImage(var.toMatrix()); // obj, no scope
     break;
   default: return ;
   }
@@ -2584,31 +2580,22 @@ taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* hos
   scope_ref = NULL;
 }
 
-/*taiToken::taiToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_,
-	bool nul_not, bool edt_not)
-: taiData(typ_, host_, par, gui_parent_)
-{
-  ta_actions = existing_menu;
-  ownflag = false;
-  mscope_ref = NULL;
-  null_not = nul_not;
-  edit_not = edt_not;
-  over_max = false;
-  chs_obj = NULL;
-}*/
-
-void taiToken::GetImage(TAPtr ths, TAPtr scp_obj) {
-  scope_ref = scp_obj;
-//in setCur_obj  ta_actions->GetImage(ths);
-  setCur_obj(ths, false);
-}
-
-TAPtr taiToken::GetValue() {
-  return cur_obj;
-}
-
-void taiToken::ItemChosen(taiAction* menu_el) {
-  setCur_obj(menu_el->usr_data.toBase());
+void taiToken::Chooser() {
+/*nn  QWidget* par_window = (host == NULL) ? NULL : host->widget(); */
+  taiObjChooser* chs = taiObjChooser::createInstance(typ, "Tokens of Given Type", scope_ref, NULL);
+  chs->setSel_obj(cur_obj); // set initial selection
+  bool rval = chs->Choose();
+  if (rval) {
+    setCur_obj((TAPtr)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
+ /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select...>") &&
+       (ta_actions->cur_sel->men_act != NULL)) {
+      ta_actions->cur_sel->usr_data = (void*)chs_obj;
+      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
+    }
+    else
+      ta_actions->setLabel(chs->sel_str());*/
+  }
+  delete chs;
 }
 
 void taiToken::Edit() {
@@ -2631,25 +2618,19 @@ void taiToken::Edit() {
   gc->Edit(cur_base, false, bgclr);
 }
 
-void taiToken::Chooser() {
-/*nn  QWidget* par_window = (host == NULL) ? NULL : host->widget(); */
-  taiObjChooser* chs = taiObjChooser::createInstance(typ, "Tokens of Given Type", scope_ref, NULL);
-  chs->setSel_obj(cur_obj); // set initial selection
-  bool rval = chs->Choose();
-  if (rval) {
-    setCur_obj((TAPtr)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
- /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select...>") &&
-       (ta_actions->cur_sel->men_act != NULL)) {
-      ta_actions->cur_sel->usr_data = (void*)chs_obj;
-      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
-    }
-    else
-      ta_actions->setLabel(chs->sel_str());*/
-  }
-  delete chs;
+void taiToken::GetImage(TAPtr ths) {
+  GetUpdateMenu();
+  setCur_obj(ths, false);
 }
 
-void taiToken::GetMenu(const taiMenuAction* actn) {
+void taiToken::GetImage(TAPtr ths, TypeDef* new_typ, TAPtr new_scope) {
+  scope_ref = new_scope;
+  typ = new_typ;
+  GetImage(ths);
+}
+
+void taiToken::GetUpdateMenu(const taiMenuAction* actn) {
+  ta_actions->Reset();
   if (ownflag) {
     if (HasFlag(flgEditOk))
       ta_actions->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
@@ -2661,9 +2642,9 @@ void taiToken::GetMenu(const taiMenuAction* actn) {
   }
   GetMenu_impl(ta_actions, typ, actn);
 }
-void taiToken::UpdateMenu(const taiMenuAction* actn) {
-  ta_actions->Reset();
-  GetMenu(actn);
+
+TAPtr taiToken::GetValue() {
+  return cur_obj;
 }
 
 void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* actn) {
@@ -2725,6 +2706,11 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
     }
   }
 }
+
+void taiToken::ItemChosen(taiAction* menu_el) {
+  setCur_obj(menu_el->usr_data.toBase());
+}
+
 /* taiToken is by definition only for taBase descendants -- therefore, we nuke all TA_taBase stuff...
 void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* actn) {
   String	nm;
@@ -2785,13 +2771,14 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
     }
   }
 }*/
-
+/*obs
 void taiToken::SetTypeScope(TypeDef* new_typ, TAPtr new_scope, bool force) {
   if ((new_typ == typ) && (new_scope == scope_ref) && !force) return;
   typ = new_typ;
   scope_ref = new_scope;
-  GetMenu();
-}
+  GetUpdateMenu();
+}*/
+
 
 //////////////////////////////////
 // 	taiSubToken		//

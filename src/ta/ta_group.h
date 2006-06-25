@@ -52,6 +52,9 @@ public:
 #define FOR_ITR_EL(T, el, grp, itr) \
 for(el = (T*) grp FirstEl(itr); el; el = (T*) grp NextEl(itr))
 
+#define FOR_ITR_EL_REV(T, el, grp, itr) \
+for(el = (T*) grp LastEl(itr); el; el = (T*) grp PrevEl(itr))
+
 #define FOR_ITR_GP(T, el, grp, itr) \
 for(el = (T*) grp FirstGp(itr); el; el = (T*) grp NextGp(itr))
 
@@ -117,18 +120,29 @@ public:
   // iterator-like functions
   TAGPtr 	FirstGp_(int& g) const	// #IGNORE first sub-gp
   { g = 0; if(leaf_gp == NULL) InitLeafGp(); return leaf_gp->SafeEl(0); }
+  TAGPtr 	LastGp_(int& g) const	// #IGNORE last sub-gp (for rev iter)
+  {if(leaf_gp == NULL) InitLeafGp(); g = leaf_gp->size - 1; return leaf_gp->Peek(); }
   TAGPtr 	NextGp_(int& g)	const	// #IGNORE next sub-gp
   { return leaf_gp->SafeEl(++g); }
   int	 	LeafGpCount()	const	// #IGNORE count of leaf groups **including self**; optimized for no subgroups
     { if (gp.size == 0) return 1; if (leaf_gp == NULL) InitLeafGp(); return leaf_gp->size; }
 
-  TAPtr	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf
+  TAPtr	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf iter init
   { TAPtr rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
     if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->el[0]; return rval; }
   TAPtr	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
-  { TAPtr rval=NULL; if(++lf.i >= lf.cgp->size) {
-    lf.i = 0; lf.cgp = leaf_gp->SafeEl(++lf.g); }
-    if(lf.cgp != NULL) rval = (TAPtr)lf.cgp->el[lf.i]; return rval; }
+  { if (++lf.i >= lf.cgp->size) {
+    lf.i = 0; if (!(lf.cgp = leaf_gp->SafeEl(++lf.g))) return NULL; }
+    return (TAPtr)lf.cgp->el[lf.i];}
+
+  TAPtr	 	LastEl_(taLeafItr& lf) const	// #IGNORE last leaf iter init
+  { if (!(lf.cgp = LastGp_(lf.g))) return NULL;
+    lf.i = lf.cgp->size - 1; return (TAPtr)lf.cgp->el[lf.i];  }
+  TAPtr	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf
+  { if (--lf.i < 0) {
+      if (!(lf.cgp = leaf_gp->SafeEl(--lf.g))) return NULL; 
+      lf.i = lf.cgp->size - 1;}
+    return (TAPtr)lf.cgp->el[lf.i];}
 
   virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
@@ -386,10 +400,15 @@ public:
     // the root group ('this' for the root group)
 
   // iterator-like functions
-  T*		FirstEl(taLeafItr& lf) const	{ return (T*)FirstEl_(lf); }
+  inline T*	FirstEl(taLeafItr& lf) const	{ return (T*)FirstEl_(lf); }
   // returns first leaf element and inits indexes
-  T*		NextEl(taLeafItr& lf) const 	{ return (T*)NextEl_(lf); }
+  inline T*	NextEl(taLeafItr& lf) const 	{ return (T*)NextEl_(lf); }
   // returns next leaf element and incs indexes
+  inline T*	LastEl(taLeafItr& lf) const	{ return (T*)LastEl_(lf); }
+  // returns first leaf element and inits indexes
+  inline T*	PrevEl(taLeafItr& lf) const 	{ return (T*)PrevEl_(lf); }
+  // returns next leaf element and incs indexes
+
 
   taGroup<T>*	FirstGp(int& g)	const		{ return (taGroup<T>*)FirstGp_(g); }
   // returns first leaf group and inits index

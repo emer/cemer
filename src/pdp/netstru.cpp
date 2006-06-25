@@ -4452,47 +4452,16 @@ void Network::RemoveMonitors() {
     if (nm->GetOwner(&TA_Project) != proj) continue;
     nm->RemoveMonitors();
   }
-  
 }
 void Network::UpdateMonitors() {
-  //TODO (maybe)
-}
-/*obs
-void Network::RemoveMonitors() {
-  if(proj == NULL) return;
-  taLeafItr pi;
-  SchedProcess* sp;
-  FOR_ITR_EL(SchedProcess, sp, proj->processes., pi) {
-    taLeafItr si;
-    Stat* st;
-    FOR_ITR_EL(Stat, st, sp->loop_stats., si) {
-      if(st->InheritsFrom(TA_MonitorStat))
-	((NetMonItem*)st)->ptrs.RemoveAll();
-    }
-    FOR_ITR_EL(Stat, st, sp->final_stats., si) {
-      if(st->InheritsFrom(TA_MonitorStat))
-	((NetMonItem*)st)->ptrs.RemoveAll();
-    }
+  if (!proj) return;
+  TokenSpace& ts = TA_NetMonitor.tokens;
+  for (int i = 0; i < ts.size; ++i) {
+    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
+    if (nm->GetOwner(&TA_Project) != proj) continue;
+    nm->UpdateMonitors();
   }
 }
-
-void Network::UpdateMonitors() {
-  if(proj == NULL) return;
-  taLeafItr pi;
-  SchedProcess* sp;
-  FOR_ITR_EL(SchedProcess, sp, proj->processes., pi) {
-    taLeafItr si;
-    Stat* st;
-    FOR_ITR_EL(Stat, st, sp->loop_stats., si) {
-      if(st->InheritsFrom(TA_MonitorStat))
-	((NetMonItem*)st)->UpdateAfterEdit();
-    }
-    FOR_ITR_EL(Stat, st, sp->final_stats., si) {
-      if(st->InheritsFrom(TA_MonitorStat))
-	((NetMonItem*)st)->UpdateAfterEdit();
-    }
-  }
-}*/
 
 // cfront requires this to be outside class function
 enum NetSection {NS_NONE, NS_DEFINITIONS, NS_CONSTRAINTS,

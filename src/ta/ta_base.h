@@ -521,8 +521,9 @@ public:
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
-  virtual void		Close();
+  virtual void		CloseLater();
   // #MENU #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT PERMANENTLY Destroy this object!  This is not Iconify.
+  virtual void		Close(); // an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
   // #IGNORE actually closes a child object (should be immediate child)
   virtual bool		CopyFrom(TAPtr cpy_from);
@@ -955,8 +956,8 @@ public:
   MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;    // extended to search in the list
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const; // extended to search in the list
 
-  void		Close();
-  bool		Close_Child(TAPtr obj);
+  override void	Close();
+  override bool	Close_Child(TAPtr obj);
   override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // called when list has changed 
 
