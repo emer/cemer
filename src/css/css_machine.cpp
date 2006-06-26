@@ -1888,6 +1888,15 @@ cssElPtr& cssSpace::FindName(const char* nm) {	// lookup by name
   }
   return cssMisc::VoidElPtr;
 }
+
+int cssSpace::IndexOfName(const String& nm) const {
+  for (int i = 0; i < size; ++i) {
+    if (els[i]->name == nm) 
+      return i;
+  }
+  return -1;
+}
+
 cssElPtr& cssSpace::Find(Int nm) {	// lookup by number value
   for(el_retv.dx=0; el_retv.dx<size; el_retv.dx++) {
     if((els[el_retv.dx]->GetType() == cssEl::T_Int) && (els[el_retv.dx]->name == "") &&

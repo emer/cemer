@@ -27,6 +27,7 @@
 // forwards
 
 class Program;
+class Program_MGroup;
 
 class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
@@ -257,19 +258,20 @@ private:
 };
 
 
-class PDP_API LoopEl: public ProgList { 
-  // #EDIT_INLINE ProgEl for an iteration over the elements
-INHERITED(ProgList)
+class PDP_API LoopEl: public ProgEl { 
+  // #VIRT_BASE #EDIT_INLINE #NO_TOKENS ProgEl base for loops
+INHERITED(ProgEl)
 public:
-  String	    	loop_var_type; // the loop variable CSS type
+  ProgList		loop_els; // #BROWSE the items to execute in the loop
+  String	    	loop_var_type; // the loop variable CSS type to create, or blank if exists
   String	    	loop_var; // the loop variable
-  String	    	init_val; // initial value of loop variable
-  String	    	loop_test; // the test each time
-  String	    	loop_iter; // the iteration operation
+  String	    	init_val; // initial value of loop variable. blank if default or none
   
+  void	InitLinks();
+  void	CutLinks();
   void	Copy_(const LoopEl& cp);
-  COPY_FUNS(LoopEl, ProgList);
-  TA_BASEFUNS(LoopEl);
+  COPY_FUNS(LoopEl, ProgEl);
+  TA_ABSTRACT_BASEFUNS(LoopEl);
 
 protected:
   override const String	GenCssPre_impl(int indent_level); 
@@ -277,7 +279,62 @@ protected:
   override const String	GenCssPost_impl(int indent_level); 
 
 private:
+  void	Initialize() {}
+  void	Destroy()	{CutLinks();}
+};
+
+
+class PDP_API ForLoopEl: public LoopEl { 
+  // #EDIT_INLINE #TOKENS LoopEl for an iteration over the elements
+INHERITED(LoopEl)
+public:
+  String	    	loop_test; // the test each time
+  String	    	loop_iter; // the iteration operation
+  
+  void	Copy_(const ForLoopEl& cp);
+  COPY_FUNS(ForLoopEl, LoopEl);
+  TA_BASEFUNS(ForLoopEl);
+
+protected:
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
   void	Initialize();
+  void	Destroy()	{}
+};
+
+
+class PDP_API WhileLoopEl: public LoopEl { 
+  // #EDIT_INLINE #TOKENS LoopEl for a 'while' (pre-test) iteration over the elements
+INHERITED(LoopEl)
+public:
+  
+  TA_BASEFUNS(WhileLoopEl);
+
+protected:
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize() {}
+  void	Destroy()	{}
+};
+
+
+class PDP_API UntilLoopEl: public LoopEl { 
+  // #EDIT_INLINE LoopEl for a 'while' (pre-test) iteration over the elements
+INHERITED(LoopEl)
+public:
+  
+  TA_BASEFUNS(UntilLoopEl);
+
+protected:
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize() {}
   void	Destroy()	{}
 };
 
@@ -454,7 +511,14 @@ private:
 class PDP_API Program_MGroup : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
+  ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
+  void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const Program_MGroup& cp);
+  COPY_FUNS(Program_MGroup, taGroup<Program>)
   TA_BASEFUNS(Program_MGroup);
 
 private:

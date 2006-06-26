@@ -282,9 +282,15 @@ void ProgVar_List::Copy_(const ProgVar_List& cp) {
 
 void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
+  // if we are in a prog, dirty prog
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
     prog->setDirty(true);
+  } else {
+  // if we are in a group, dirty all progs
+    Program_MGroup* grp = GET_MY_OWNER(Program_MGroup);
+    if (grp)
+      grp->SetProgsDirty();
   }
 }
 
@@ -530,36 +536,117 @@ const String ProgList::GenCssBody_impl(int indent_level) {
 //  LoopEl		//
 //////////////////////////
 
-void LoopEl::Initialize() {
-  loop_var_type = "Int"; // the loop variable
-  loop_var = "i"; // the loop variable
-  init_val = "0"; // initial value of loop variable
-  loop_test = "i < 20"; // the test each time
-  loop_iter = "i += 1"; // the iteration operation
+void LoopEl::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(loop_els, this);
+}
+
+void LoopEl::CutLinks() {
+  loop_els.CutLinks();
+  inherited::CutLinks();
 }
 
 void LoopEl::Copy_(const LoopEl& cp) {
+  loop_els = cp.loop_els;
+  loop_var_type = cp.loop_var_type;
   loop_var = cp.loop_var;
   init_val = cp.init_val;
+}
+
+const String LoopEl::GenCssPre_impl(int indent_level) {
+  //NOTE: ForLoopEl replaces this, since it inits its var in the for()
+  if (loop_var_type.empty()) return _nilString;
+  String rval = cssMisc::Indent(indent_level);
+  rval += "{" + loop_var_type + " " + loop_var;
+  if (!init_val.empty())
+    rval += " = " + init_val;
+  rval += ";\n";
+  return rval; 
+}
+
+const String LoopEl::GenCssBody_impl(int indent_level) {
+  return loop_els.GenCss(indent_level + 1);
+}
+
+const String LoopEl::GenCssPost_impl(int indent_level) {
+  if (loop_var_type.empty()) return _nilString;
+  
+  return cssMisc::Indent(indent_level) + "}\n";
+}
+
+//////////////////////////
+//  ForLoopEl		//
+//////////////////////////
+
+void ForLoopEl::Initialize() {
+  // the following are just default examples for the user
+  loop_var_type = "int";
+  loop_var = "i";
+  init_val = "0";
+  loop_test = "i < 10";
+  loop_iter = "i += 1";
+}
+
+void ForLoopEl::Copy_(const ForLoopEl& cp) {
   loop_test = cp.loop_test;
   loop_iter = cp.loop_iter;
 }
 
-const String LoopEl::GenCssPre_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level);
-  rval += "{" + loop_var_type + " " + loop_var + ";\n";
+const String ForLoopEl::GenCssPre_impl(int indent_level) {
+//NOTE: we replace the default LoopEl routine
+  String rval;
+  if (!loop_var_type.empty()) {
+    rval += cssMisc::Indent(indent_level);
+    rval += "{" + loop_var_type + " " + loop_var + ";\n";
+  }
+  rval += cssMisc::Indent(indent_level);
   rval += "for (" + loop_var + " = " + init_val + "; "
     + loop_test + "; " 
     + loop_iter + ") {\n";
   return rval; 
 }
 
-const String LoopEl::GenCssBody_impl(int indent_level) {
-  return inherited::GenCssBody_impl(indent_level + 1);
+const String ForLoopEl::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "}\n";
+  rval += inherited::GenCssPost_impl(indent_level);
+  return rval;
 }
 
-const String LoopEl::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}}\n";
+
+//////////////////////////
+//  WhileLoopEl		//
+//////////////////////////
+
+const String WhileLoopEl::GenCssPre_impl(int indent_level) {
+  String rval = inherited::GenCssPre_impl(indent_level);
+  rval += cssMisc::Indent(indent_level);
+  rval += "while (" + loop_var + ") {\n";
+  return rval; 
+}
+
+const String WhileLoopEl::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "}\n";
+  rval += inherited::GenCssPost_impl(indent_level);
+  return rval;
+}
+
+
+//////////////////////////
+//  UntilLoopEl		//
+//////////////////////////
+
+const String UntilLoopEl::GenCssPre_impl(int indent_level) {
+  String rval = inherited::GenCssPre_impl(indent_level);
+  rval += cssMisc::Indent(indent_level);
+  rval += "do {\n";
+  return rval; 
+}
+
+const String UntilLoopEl::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level);
+  rval += "} while (" + loop_var + ");\n";
+  rval += inherited::GenCssPost_impl(indent_level);
+  return rval;
 }
 
 
@@ -979,13 +1066,27 @@ void  Program::UpdateProgVars() {
   el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
   script->prog_vars.Push(el); //refs
   
-  // add new
+  // add new in the program
   for (int i = 0; i < global_vars.size; ++i) {
     ProgVar* sv = global_vars.FastEl(i);
     if (sv->ignore) continue;
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
+  
+  // add new (with unique names) from our groups, starting at most inner
+  Program_MGroup* grp = GET_MY_OWNER(Program_MGroup);
+  while (grp) {
+    for (int i = 0; i < grp->global_vars.size; ++i) {
+      ProgVar* sv = grp->global_vars.FastEl(i);
+      if (sv->ignore) continue;
+      // for group vars, we only add with unique names 
+      if (script->prog_vars.IndexOfName(sv->GetName()) >= 0) continue;
+      el = sv->NewCssEl();
+      script->prog_vars.Push(el); //refs
+    } 
+    grp = (Program_MGroup*)grp->GetOwner(&TA_Program_MGroup);
+  }
 /*old  int i = 0;
   ProgVar* sv;
   cssEl* el;
@@ -1046,5 +1147,27 @@ void Program::ViewScript_impl() {
 
 void Program_MGroup::Initialize() {
   SetBaseType(&TA_Program);
+}
+
+void Program_MGroup::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(global_vars, this);
+}
+
+void Program_MGroup::CutLinks() {
+  global_vars.CutLinks();
+  inherited::CutLinks();
+}
+
+void Program_MGroup::Copy_(const Program_MGroup& cp) {
+  global_vars = cp.global_vars;
+}
+
+void Program_MGroup::SetProgsDirty() {
+  taLeafItr itr;
+  Program* prog;
+  FOR_ITR_EL(Program, prog, this->, itr) {
+    prog->setDirty(true);
+  }
 }
 

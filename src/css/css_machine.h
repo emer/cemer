@@ -636,6 +636,7 @@ public:
   cssElPtr&	Find(Real nm);		// lookup by number value
   cssElPtr&	Find(const String& nm); // lookup by string value
   int		GetIndex(cssEl* it);	// find it, return index
+  int		IndexOfName(const String& nm) const; // return index of name, -1 if not found
 
   void 		List(ostream& fh = cout) const; 	// (elaborate print format)
   void 		NameList(ostream& fh = cout) const;   // just the names
