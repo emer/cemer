@@ -262,7 +262,7 @@ class PDP_API LoopEl: public ProgEl {
   // #VIRT_BASE #EDIT_INLINE #NO_TOKENS ProgEl base for loops
 INHERITED(ProgEl)
 public:
-  ProgList		loop_els; // #BROWSE the items to execute in the loop
+  ProgEl_List		loop_els; // #BROWSE the items to execute in the loop
   String	    	loop_var_type; // the loop variable CSS type to create, or blank if exists
   String	    	loop_var; // the loop variable
   String	    	init_val; // initial value of loop variable. blank if default or none
