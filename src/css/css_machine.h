@@ -182,6 +182,8 @@ public:
   static bool		CmdLineSwitchValue(const String& sw_name, int& index, 
     String& sw_value, bool starts_with = false); // looks for the switch value from index and returns following string; advances index
   static String	    	Indent(int indent_level); // generally 2 spaces per level
+  static String	    	IndentLines(const String& lines, int indent_level); 
+    // indent every line by the indent amount
   static bool		IsNameValid(const String& nm); // validates a css name
   static cssProgSpace*	SetCurTop(cssProgSpace* pspc)
   { cssProgSpace* rval = cur_top; cur_top = pspc; return rval; }

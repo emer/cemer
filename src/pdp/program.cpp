@@ -458,10 +458,7 @@ void UserScriptEl::Copy_(const UserScriptEl& cp) {
 }
 
 const String UserScriptEl::GenCssBody_impl(int indent_level) {
-  // we could just return the string, but that wouldn't indent...
-// TODO: indent every line by the indent amount
-//  String rval(user_script.length() + 20, 0, '\0');
-  return user_script;
+  return cssMisc::IndentLines(user_script, indent_level);
 }
 
 
@@ -881,7 +878,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     ths_arg = global_args.FastEl(i);
     nm = ths_arg->name;
     prg_var = target->global_vars.FindName(nm);
-    if (!prg_var || prg_var->ignore) continue;
+    if (!prg_var || prg_var->ignore || ths_arg->value.empty()) continue;
     rval += cssMisc::Indent(indent_level);
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
       + ths_arg->value + ");\n";

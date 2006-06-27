@@ -196,6 +196,20 @@ String cssMisc::Indent(int indent_level) {
   else return String(indent_level * 2, 0, ' ');
 }
 
+String cssMisc::IndentLines(const String& lines, int indent_level) {
+  if (lines.empty()) return _nilString;
+  if (indent_level == 0) return lines;
+  // slightly complicated because we don't want to add spaces after trailing \n
+  STRING_BUF(rval, (int)(lines.length() * 1.2f));
+  rval += Indent(indent_level);
+  bool final_n = lines.matches('\n', -1);
+  if (final_n) rval += lines(0, lines.length() - 1);
+  else         rval += lines;
+  rval.gsub("\n", "\n" + Indent(indent_level));
+  if (final_n) rval += '\n';
+  return rval;
+}
+
 inline bool btwn(char c, char l, char u) 
   {return ((c >= l) && (c <= u));}
 inline bool is_alphalike(char c) 
