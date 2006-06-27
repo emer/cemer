@@ -13,14 +13,21 @@ Serious/Fatal:
   just after setting pallete -- MAYBE CAN'T DO THIS RELIABLY
 * when pasting a new item into a list view, the text shows up as the previous item,
   not the new item (but it is correct if you open a new browser and view it there)
-* browser: clip handling not working in tree view
-* t3viewer: clip handling not working
+* (FIXED?) browser: clip handling not working in tree view
+* t3viewer: clip handling not working:
+  ex., Projection doesn't have its proper clip actions, ex Delete
+  caused because code gets the parent link from the visual object (NetView), not the 
+  containing object (taGroup)
 * in Chapter2/units.prj -- the Settle/LoopProc does not indicate the name of the script
   (but did in v3.2); also, this project is not working, and probably has to do with this script;
   note: doesn't even indicate script is loaded even when the script folder is current folder
 * MAKETA: under win32-msvc build (maybe others), typedef's must have a trailing comment, otherwise
   the parser gets out of sync and the force_ta will fail
-
+* program crashes when deleting project
+  context: had main window, NetView, and a separate browse of XOR net open
+  deleted proj; caused a seg fault (in some Qt code, related to painting)
+  
+  
 Medium Important:
 
 * in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
@@ -36,7 +43,11 @@ Medium Important:
   worked around by adding that as a dummy function in ta_type.h, but it is a bug that 
   needs to be fixed (see mta_constr.cc line 1080)
 * when calling up Properties for int_Array, size shows as 1, even though it is greater
-
+* when you load an object from file, if the object is named, its name will show 
+  correctly in the panel, but will still have its default name (ex "MyType_0") in the tree view
+* (at least) in Variant ui for int, the spinbox can only go up to 99
+* for LayerWriter, TARG is not getting pulled from Layer
+  
 Cosmetic/Usability/etc. (lower priority):
 
 * font for iAction-created taiMenuEl items is not being inherited from the parent taiMenu item

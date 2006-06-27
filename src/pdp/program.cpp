@@ -1022,8 +1022,8 @@ const String Program::scriptString() {
     
     if (init_els.size > 0) {
       m_scriptCache += "void Init() {\n";
-      m_scriptCache += init_els.GenCss(1);
       m_scriptCache += "  init_done = true;\n";
+      m_scriptCache += init_els.GenCss(1);
       m_scriptCache += "}\n\n";
     } else {
     }
