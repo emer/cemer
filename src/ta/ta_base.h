@@ -595,6 +595,7 @@ public:
     {set(src.m_ptr); return m_ptr;} 
   inline taBase* 	operator=(taBase* src) {set(src); return m_ptr;} 
   
+  taSmartPtr(taBase* val) {m_ptr = NULL; set(val);}
   taSmartPtr() {m_ptr = NULL;}
   ~taSmartPtr() {set(NULL);} //note: DO NOT change to be virtual!
 protected:
@@ -619,6 +620,7 @@ public:
     //NOTE: copy only implies ptr, NOT the owner!
   T* 		operator=(T* src) {set(src); return (T*)m_ptr;} 
   
+  taSmartPtrT(T* val): taSmartPtr(val) {}
   taSmartPtrT() {} 
   
 private:

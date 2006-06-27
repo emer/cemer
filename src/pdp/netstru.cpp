@@ -3346,20 +3346,21 @@ void Layer::UpdateAfterEdit() {
   }*/
 }
 
-void Layer::ApplyData(const taMatrix& data, int frame, Unit::ExtType ext_flags,
+void Layer::ApplyData(taMatrix* data, int frame, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
+  if (!data) return;
   // check correct geom of data
-  if ((data.dims() != 3) && (data.dims() != 5)) {
-    taMisc::Error("Layer::ApplyData: data.dims must be 3 (2-d) or 5 (4-d); is: ",
-      String(data.dims()));
+  if ((data->dims() != 3) && (data->dims() != 5)) {
+    taMisc::Error("Layer::ApplyData: data->dims must be 3 (2-d) or 5 (4-d); is: ",
+      String(data->dims()));
     return;
   }
   // adjust frame if -eve, and check frame in bounds
-  if (frame < 0) frame = data.frames() + frame;
-  if ((frame < 0) || (frame >= data.frames())) {
+  if (frame < 0) frame = data->frames() + frame;
+  if ((frame < 0) || (frame >= data->frames())) {
     taMisc::Error("Layer::ApplyData: frame index out of bounds; frame=", String(frame),
-      " data.frames()=", String(data.frames()));
+      " data->frames()=", String(data->frames()));
     return;
   }
   // determine non-default unit and layer flags  
@@ -3380,13 +3381,13 @@ void Layer::ApplyData(const taMatrix& data, int frame, Unit::ExtType ext_flags,
   // apply data according to the applicable model
   DataUpdate(true);
   if (uses_groups()) {
-    if (data.dims() == 5) {
+    if (data->dims() == 5) {
       ApplyData_Gp4d(ads);
     } else {
       ApplyData_Gp2d(ads);
     }
   } else {
-    if (data.dims() == 5) {
+    if (data->dims() == 5) {
       ApplyData_Flat4d(ads);
     } else {
       ApplyData_Flat2d(ads);
@@ -3405,17 +3406,17 @@ void Layer::ApplyData_Flat2d(const TxferDataStruct& ads) {
   while (u_y < this->geom.y) {
     while (u_x < this->geom.x) {
       // if we've run out of data for this row, go to next row
-      if (d_x >= ads.data.dim(0)) break;
+      if (d_x >= ads.data->dim(0)) break;
       un = ug->FindUnitFmCoord(u_x, u_y);
       // if we run out of units, there will be no more, period
       if (un == NULL) goto break1;
-      val = ads.data.SafeElAsVar(d_x, d_y, ads.frame).toFloat();
+      val = ads.data->SafeElAsVar(d_x, d_y, ads.frame).toFloat();
       un->ApplyValue(val, ads.ext_flags, ads.ran);
       ++d_x;
       ++u_x;
     }
     ++d_y;
-    if (d_y >= ads.data.dim(1)) break;
+    if (d_y >= ads.data->dim(1)) break;
     d_x = 0;
     u_x = ads.offs_x;
     ++u_y;
@@ -4335,11 +4336,12 @@ void Network::Initialize() {
 //TODO  views.SetBaseType(&TA_NetView);
   layers.SetBaseType(&TA_Layer);
 
-  net_context = DEFAULT;
+  context = TEST;
   batch = 0;
   epoch = 0;
   trial = 0;
   phase = 0;
+  cycle = 0;
   re_init = false;
   dmem_sync_level = DMEM_SYNC_NETWORK;
   dmem_nprocs = 1;
@@ -4376,7 +4378,12 @@ void Network::InitLinks() {
 void Network::Copy_(const Network& cp) {
   layers = cp.layers;
   max_size = cp.max_size;
+  context = cp.context;
+  batch = cp.batch;
   epoch = cp.epoch;
+  trial = cp.trial;
+  phase = cp.phase;
+  cycle = cp.cycle;
   re_init = cp.re_init;
   lay_layout = cp.lay_layout;
   CopyNetwork((Network*)&cp);
@@ -4386,7 +4393,6 @@ void Network::Copy_(const Network& cp) {
 #endif
   ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
   //note: batch update in tabase copy
-  net_context = cp.net_context;
 }
 
 void Network::UpdateAfterEdit(){
@@ -6030,8 +6036,6 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 //////////////////////
 
 void LayerRWBase::Initialize() {
-  data_block = NULL;
-  layer = NULL;
 }
 
 void LayerRWBase::Destroy() {
@@ -6039,22 +6043,39 @@ void LayerRWBase::Destroy() {
 }
 
 void LayerRWBase::Copy_(const LayerRWBase& cp) {
-  taBase::SetPointer((TAPtr*)&data_block, cp.data_block);
-  taBase::SetPointer((TAPtr*)&layer, cp.layer);
+  data_block = cp.data_block;
+  layer = cp.layer;
   offset = cp.offset;
 }
 
 void LayerRWBase::InitLinks(){
   inherited::InitLinks();
+  taBase::Own(data_block, this);
+  taBase::Own(layer, this);
   taBase::Own(offset, this);
 }
 
 void LayerRWBase::CutLinks() {
   offset.CutLinks();
-  taBase::DelPointer((TAPtr*)&layer);
-  taBase::DelPointer((TAPtr*)&data_block);
+  layer.CutLinks();
+  data_block.CutLinks();
   inherited::CutLinks();
 }
+
+void LayerRWBase::UpdateAfterEdit() {
+  // redo channel cache
+  //GetChanIdx: should prob warn if invalid
+  GetChanIdx(true);
+  inherited::UpdateAfterEdit();
+}
+
+int LayerRWBase::GetChanIdx(bool force_lookup) {
+  if ((force_lookup || (chan_idx < 0)) && data_block) {
+    chan_idx = data_block->GetSinkChannelIndexByName(chan_name);
+  }
+  return chan_idx; // note: could still be -1 if no name etc.
+}
+
 
 
 //////////////////////////
@@ -6097,6 +6118,7 @@ void LayerWriter::Initialize() {
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
+  chan_idx = -1;
 }
 
 void LayerWriter::Destroy() {
@@ -6119,12 +6141,32 @@ void LayerWriter::Copy_(const LayerWriter& cp) {
   ext_flags = cp.ext_flags;
   noise = cp.noise;
   value_names = cp.value_names;
+  chan_idx = -1; // redo lookup
 }
 
+void LayerWriter::ApplyData(int context) {
+  if (!data_block || !layer) return;
+  // we only apply target data in TRAIN mode
+  if ((context != Network::TRAIN) && (ext_flags & Unit::TARG))
+    return;
+  // get the data as a slice -- therefore, frame is always 0
+  taMatrixPtr mat(data_block->GetMatrixData(GetChanIdx())); //note: refs mat
+  if (!mat) return; //TODO: maybe we should warn?
+  layer->ApplyData(mat, 0, ext_flags, &noise, &offset);
+  // mat unrefs at this point, or on exit from routine
+  
+}
 
 //////////////////////////
 //  LayerWriter_List	//
 //////////////////////////
+
+void LayerWriter_List::ApplyData(int context) {
+  for (int i = 0; i < size; ++i) {
+    LayerWriter* lrw = FastEl(i);
+    lrw->ApplyData(context);
+  }
+}
 
 void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
   bool freshen, Layer::LayerType lt) 
@@ -6143,12 +6185,21 @@ void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
       lrw = (LayerWriter*)FindByDataBlockLayer(db, lay);
     if (!lrw) {
       lrw = (LayerWriter*)New(1);
-      SET_POINTER(lrw->data_block, db);
-      SET_POINTER(lrw->layer, lay);
+      lrw->chan_name = lay->name;
     }
-    /*Unit::ExtType*/ int ext_flags = lrw->ext_flags;
-    ext_flags |= Unit::EXT;
-    lrw->ext_flags = (Unit::ExtType)ext_flags;
+    lrw->chan_idx = chan; // might as well avoid another lookup!
+    lrw->data_block = db; //smart=
+    lrw->layer = lay; // smart=
+    
+    // note, we only follow hints, and only change if not freshening
+    if (!freshen) {
+      /*Unit::ExtType*/ int ext_flags = lrw->ext_flags;
+      if (lay->layer_type & Layer::INPUT)
+        ext_flags |= Unit::EXT;
+      if (lay->layer_type & Layer::TARGET)
+        ext_flags |= Unit::TARG;
+      lrw->ext_flags = (Unit::ExtType)ext_flags;
+    }
     lrw->DataChanged(DCR_ITEM_UPDATED);
   }
 }

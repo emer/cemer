@@ -80,9 +80,6 @@ template class TA_API taMatrixT<int>;
 template class TA_API taMatrixT<unsigned char>;
   const unsigned char byte_Matrix::blank = '\0';
 
-template class TA_API taArray<taMatrixPtr*>;
-  const taMatrixPtr MatrixPtr_Array::blank;
-
 template class TA_API taList<taGroup_impl>;
 template class TA_API taGroup<taBase>;
 

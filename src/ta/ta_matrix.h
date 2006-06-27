@@ -346,6 +346,7 @@ private:
 };
 
 typedef taMatrix* ptaMatrix_impl;
+SmartPtr_Of(taMatrix); // taMatrixPtr
 
 class TA_API taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)
@@ -426,7 +427,7 @@ private: //note: forbid these for now -- if needed, define semantics
   void			Destroy() { CutLinks();}
 };
 
-
+/*obs
 class TA_API taMatrixPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
 public:
   taMatrix*	ptr() {return m_ptr;} //note: strong types define strongly typed version
@@ -479,12 +480,6 @@ inline bool operator !=(const taMatrix* a, const taMatrixPtr& b)
   {return (a != b.ptr());}
 
 
-/*nn // bogus operators
-inline bool operator <(const taMatrixPtr& a, const taMatrixPtr& b)
-  {return false;} 
-inline bool operator >(const taMatrixPtr& a, const taMatrixPtr& b)
-  {return false;}  */
-
 // macro for creating smart ptrs of taMatrixT classes
 #define taMatrixPtr_Of(T)  class TA_API T ## Ptr: public taMatrixPtr { \
 public: \
@@ -510,7 +505,7 @@ public:
   void Destroy()	{ };
   TA_BASEFUNS(MatrixPtr_Array);
   TA_ARRAY_FUNS(MatrixPtr_Array, taMatrixPtr)
-};
+};*/
 
 
 /* XxxData
@@ -565,8 +560,7 @@ private:
   void		Destroy() {}
 };
 
-taMatrixPtr_Of(String_Matrix)
-//
+//nn?? SmartPtr_Of(String_Matrix); // String_MatrixPtr
 
 
 class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE
@@ -594,7 +588,7 @@ private:
   void		Destroy() {}
 };
 
-taMatrixPtr_Of(float_Matrix)
+//nn?? SmartPtr_Of(float_Matrix)
 
 
 class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE
@@ -618,10 +612,10 @@ protected:
   STATIC_CONST int	blank; // #IGNORE
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() {} //
 };
 
-taMatrixPtr_Of(int_Matrix)
+//nn? SmartPtr_Of(int_Matrix)
 
 
 class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE
@@ -646,10 +640,10 @@ protected:
   STATIC_CONST byte	blank; // #IGNORE
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() {} //
 };
 
-taMatrixPtr_Of(byte_Matrix)
+//nn? SmartPtr_Of(byte_Matrix)
 
 
 class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
@@ -679,7 +673,6 @@ private:
   void		Destroy() {}
 };
 
-taMatrixPtr_Of(Variant_Matrix)
-//
+//nn? SmartPtr_Of(Variant_Matrix) //
 
 #endif

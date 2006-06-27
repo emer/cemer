@@ -281,7 +281,7 @@ private:
   void			Destroy() {}
 };
 
-
+SmartRef_Of(DataBlock); // DataBlockRef
 
 
 class TAMISC_API DataBlock_Idx: public DataBlock { 

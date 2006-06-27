@@ -1897,7 +1897,8 @@ float WinGeometry::Offs(float cur, float by) {
 void WinGeometry::Initialize() {
   owner = NULL;
   lft = top = 0.0f;
-  wd = ht = 0.6f; // default window size
+  wd = 0.75f;
+  ht = 0.8f; // default window size
 }
 
 void WinGeometry::Copy_(const WinGeometry& cp) {

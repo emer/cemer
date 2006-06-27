@@ -468,8 +468,10 @@ public: //
     COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
     COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_UNIT_FLAGS	= 0x10, // #NO_BIT (Layer + Layer ctrl param) don't set unit flags at all
-    NO_LAYER_FLAGS	= 0x20, // #NO_BIT (Layer ctrl param only) don't set layer flags at all
+    NO_UNIT_FLAGS	= 0x10, 
+      // #LABEL_no_Unit_flags (Layer + Layer ctrl param) don't set unit flags at all
+    NO_LAYER_FLAGS	= 0x20, 
+      // #LABEL_no_Layer_flags (Layer ctrl param only) don't set layer flags at all
     EXT_FLAGS_MASK	= 0x0F, // #NO_BIT mask for setting layer/unit flags
     LAYER_FLAGS_MASK	= 0x1F // #NO_BIT mask for setting layer flags
   };
@@ -1090,7 +1092,7 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyData(const taMatrix& data, int frame = -1, 
+  virtual void	ApplyData(taMatrix* data, int frame = -1, 
     Unit::ExtType ext_flags = Unit::DEFAULT,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
     // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
@@ -1135,14 +1137,14 @@ public:
 protected:
   class TxferDataStruct { // #
   public:
-    const taMatrix&	data;
+    taMatrix*		data;
     int			frame;
     Unit::ExtType	ext_flags;
     Random* 		ran;
     int			offs_x;
     int			offs_y;
     TxferDataStruct(
-      const taMatrix& data_,
+      taMatrix*		data_,
       int		frame_,
       Unit::ExtType	ext_flags_,
       Random* 		ran_,
@@ -1167,6 +1169,7 @@ protected:
 };
 
 PosMGroup_of(Layer);
+SmartRef_Of(Layer); // LayerRef
 
 //class Network : public WinMgr {
 class PDP_API Network : public taNBase {
@@ -1200,20 +1203,17 @@ public:
   };
   
   enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
-    DEFAULT	= 0,		// misc value used when not set by anything else
-    TRAIN	= 1,		// usually indicates patterns are being clamped on outs etc.
-    TEST	= 2,		// usually indicates outputs are not clamped, net being tested
-    
-    CUSTOM_BASE	= 10		// use this value as a base for NetContext2 etc.
+    TEST	= 0,	// indicates outputs are not clamped, net being tested or run
+    TRAIN	= 1	// usually indicates patterns are being clamped on outs etc.
   };
 
   Layer_MGroup	layers;		// Layers or Groups of Layers
-  int		net_context;	// #READ_ONLY_IV #NO_SAVE #DETAIL used by programs to provide context modality to cycling algorithms
+  int		context;	// #READ_ONLY_IV used by programs to provide context modality to cycling algorithms
   int		batch;		// #READ_ONLY_IV batch counter (updated by program)
   int		epoch;		// #READ_ONLY_IV epoch counter (updated by program)
   int		trial;		// #READ_ONLY_IV trial counter (updated by program)
-  int		phase;		// #READ_ONLY_IV phase counter, used by some algos(updated by program)
-  
+  int		phase;		// #READ_ONLY_IV phase counter, used by some algos (updated by program)
+  int		cycle;		// #READ_ONLY_IV cycle counter, used by some algos (updated by program)	
   bool		re_init;	// should net be initialized (InitWtState) by process?
   DMem_SyncLevel dmem_sync_level; // at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -1408,18 +1408,26 @@ public:
 
 class PDP_API LayerRWBase: public taOBase  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS helper object to read/write data to/from layers
+friend class LayerRWBase_List;
+friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
-  DataBlock*		data_block; // source or sink of the data (as appropriate)
-  Layer* 		layer;	// the Layer that will get read or written
+  DataBlockRef		data_block; // source or sink of the data (as appropriate)
+  String		chan_name; // name of the chan/col to use (we'll cache its col_idx for efficiency)
+  LayerRef 		layer;	// the Layer that will get read or written
   PosTwoDCoord		offset;	// offset in layer or unit group at which to start reading/writing
   
+  void  UpdateAfterEdit();
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerRWBase& cp); 
   COPY_FUNS(LayerRWBase, taOBase);
   TA_BASEFUNS(LayerRWBase);
   
+protected:
+  int			chan_idx; // cached col, -1 = not looked up, or invalid
+  
+  int			GetChanIdx(bool force_lookup = false); // recalcs if needed
 private:
   void	Initialize();
   void 	Destroy();
@@ -1458,6 +1466,9 @@ public:
   Random	noise;		// noise optionally added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
 
+  virtual void 		ApplyData(int context);
+    // convenience method for applying data in indicated context
+  
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerWriter& cp);
@@ -1474,6 +1485,10 @@ class PDP_API LayerWriter_List: public LayerRWBase_List {
 INHERITED(LayerRWBase_List)
 public:
   
+  inline LayerWriter*	FastEl(int i) {return (LayerWriter*)FastEl_(i);}
+  void			ApplyData(int context);
+    // convenience method that iterates the writers and applies data
+    
   TA_BASEFUNS(LayerWriter_List); //
 
 protected:
