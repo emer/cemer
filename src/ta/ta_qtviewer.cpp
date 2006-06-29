@@ -2107,7 +2107,9 @@ void DataViewer::DeIconify() {
 
 int DataViewer::Dump_Load_Value(istream& strm, TAPtr par) {
   int rval = taDataView::Dump_Load_Value(strm, par);
-  taiMisc::RunPending();
+//woah, this really screws things up when loading!!!!
+// whyever it was here, its eveil and cannot be done!
+//evil:  taiMisc::RunPending();
   return rval;
 }
 

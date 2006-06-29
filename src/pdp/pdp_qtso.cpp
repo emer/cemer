@@ -240,13 +240,7 @@ void taiProgVarBase::Constr(QWidget* gui_parent_) {
 
 void taiProgVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   QWidget* rep_ = GetRep();
-  QLabel* lbl = new QLabel("ignore", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-
-  tglIgnore = new taiToggle(&TA_bool, host, this, rep_, mflags & flgReadOnly);
-  AddChildWidget(tglIgnore->GetRep(), taiM->hsep_c);
-  
-  lbl = new QLabel("name", rep_);
+  QLabel* lbl = new QLabel("name", rep_);
   AddChildWidget(lbl, taiM->hsep_c);
 
   fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
@@ -254,12 +248,10 @@ void taiProgVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 }
 
 void taiProgVarBase::GetImage(const ProgVar* var) {
-  tglIgnore->GetImage(var->ignore);
   fldName->GetImage(var->name);
 }
 
 void taiProgVarBase::GetValue(ProgVar* var) const {
-  var->ignore = tglIgnore->GetValue();
   var->name = fldName->GetValue();
 }
   
@@ -390,17 +382,13 @@ taiObjectProgVar::~taiObjectProgVar() {
 void taiObjectProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   inherited::Constr_impl(gui_parent_, read_only_);
   QWidget* rep_ =  GetRep();
+  
   QLabel* lbl = new QLabel("val_type",rep_);
   AddChildWidget(lbl, taiM->hsep_c);
   thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
     &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
   thValType->GetMenu();
   AddChildWidget(thValType->GetRep(), taiM->hsep_c);
-  //TODO: make_new and init token
-  lbl = new QLabel("make new",rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-  chkMakeNew = new taiToggle(&TA_bool, host, this, rep_, (mflags & flgReadOnly));
-  AddChildWidget(chkMakeNew->GetRep(), taiM->hsep_c);
   lblObjectValue = new QLabel("value",rep_);
   AddChildWidget(lblObjectValue, taiM->hsep_c);
   tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
@@ -412,9 +400,7 @@ void taiObjectProgVar::DataChanged_impl(taiData* chld) {
   inherited::DataChanged_impl(chld);
   if (m_changing > 0) return;
   ++m_changing;
-  if (chld == chkMakeNew) {
-    MakeNew_Setting(chkMakeNew->GetValue());
-  } else if (chld == thValType) {
+  if (chld == thValType) {
     // previous token may no longer be in scope!
     tkObjectValue->typ = thValType->GetValue();
     tkObjectValue->GetUpdateMenu();
@@ -427,37 +413,16 @@ void taiObjectProgVar::GetImage(const ProgVar* var_) {
   inherited::GetImage(var_);
   const ObjectProgVar* var = (const ObjectProgVar*)var_;
   thValType->GetImage(var->val_type);
-  chkMakeNew->GetImage(var->make_new);
-  MakeNew_Setting(var->make_new);
-  if (var->make_new) {
-    //maybe should initialize the token with NULL???
-  } else {
-    tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
-  }
+  tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
 }
 
 void taiObjectProgVar::GetValue(ProgVar* var_) const {
   inherited::GetValue(var_);
   ObjectProgVar* var = (ObjectProgVar*)var_;
   var->val_type = thValType->GetValue(); 
-  var->make_new = chkMakeNew->GetValue();
-  if (var->make_new) {
-    var->value.setBase(NULL);
-  } else {
-    var->value.setBase(tkObjectValue->GetValue());
-  }
+  var->value.setBase(tkObjectValue->GetValue());
 }
   
-void taiObjectProgVar::MakeNew_Setting(bool value) {
-  if (value) {
-    tkObjectValue->GetRep()->setVisible(false);
-    lblObjectValue->setVisible(false);
-  } else {
-    lblObjectValue->setVisible(true);
-    tkObjectValue->GetRep()->setVisible(true);
-  }
-}
-
 
 
 //////////////////////////

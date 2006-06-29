@@ -94,7 +94,11 @@ String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
+#ifdef DEBUG
+int		cssMisc::init_refcnt_trace = 1; // user wants refcnt tracing (-rct from arg)
+#else
 int		cssMisc::init_refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
+#endif
 cssConsole*	cssMisc::console = NULL;
 
 cssEl 		cssMisc::Void("Void"); 	
@@ -429,7 +433,7 @@ void cssEl::Done(cssEl* it) {
     print_cssEl(it, true);
     cerr << "::Done(): it->refn < 0  -- **MAY BE MULTI-DELETED**\n";
   } 
-  else if (cssMisc::init_debug > 1) {
+  else if (cssMisc::init_refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::Done()\n";
   }

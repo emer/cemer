@@ -808,6 +808,8 @@ public:
   virtual void		Reset() {Clear_impl(); Reset_impl();} // clears, and deletes any components (note: usually override _impl)
 
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
+  
+  void	UpdateAfterEdit();
   void			InitLinks();
   void			CutLinks();
   TA_BASEFUNS(taDataView)

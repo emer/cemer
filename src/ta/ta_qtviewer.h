@@ -830,7 +830,7 @@ public:
   virtual bool	IsMapped();		// return the 'mapped' status of the window
 //  virtual void	ViewWindow(float left = -1.0f, float top = -1.0f, float width = -1.0f, float height = -1.0);
   virtual void	ViewWindow();
-  // either de-iconfiy or create a new view to view this object
+  // #MENU #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
 
   virtual void 	OpenNewWindow();	// #IGNORE open a new window for this class
   virtual void 	CloseWindow();		// #IGNORE close the window or panel

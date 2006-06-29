@@ -286,6 +286,25 @@ extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
 #endif
 #endif
 
+#ifdef __MAKETA__
+//typedef unsigned char ContextFlag; // binary-compat alias for CSS
+#define ContextFlag unsigned char
+#else
+class TA_API ContextFlag { // replacement for is_xxx flags that retains bool test semantics, but does proper enter/exit counting; use in ++ ... -- pairs
+public:
+  operator bool() {return (cnt);}
+  signed char 	operator++() {return ++cnt;}
+  signed char 	operator++(int) {return cnt++;} // post
+  signed char 	operator--() {return --cnt;}
+  signed char 	operator--(int)  {return cnt--;} // post
+  
+  ContextFlag() {cnt = 0;} // NOTE: default binary copy constructor and copy operator are fine
+private:
+  signed char	cnt; // keep same size as bool -- should never be nesting this deep
+};
+#endif // __MAKETA__
+
+
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
@@ -349,9 +368,9 @@ public:
   static bool		not_constr;	// #READ_ONLY true if ta types are not yet constructed (or are destructed)
 
   static bool		gui_active;	// #READ_ONLY #NO_SAVE if gui has been started up or not
-  static bool		is_loading;	// #READ_ONLY #NO_SAVE true if currently loading an object
-  static bool		is_saving;	// #READ_ONLY #NO_SAVE true if currently saving an object
-  static bool		is_duplicating;	// #READ_ONLY #NO_SAVE true if currently duplicating an object
+  static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE true if currently loading an object
+  static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE true if currently saving an object
+  static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE true if currently duplicating an object
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
 
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
@@ -390,11 +409,11 @@ public:
   static String		compress_sfx;	// #SAVE suffix to use for compressing files
   static String		help_file_tmplt; // #SAVE template for converting type name into a help file (%t = type name)
   static String		help_cmd;	// #SAVE how to run html browser to get help, %s is entire path to help file
-  static ostream*	record_script;
+  static ostream*	record_script;// #IGNORE 
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
   // stream to use for recording a script of interface activity (NULL if no record)
   static void	(*WaitProc)();
-  // set this to a work process for idle time processing
+  // #IGNORE set this to a work process for idle time processing
   static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
   static void (*DelayedMenuUpdate_Hook)(taBase*); // #IGNORE gui callback -- avoids zillions of gui ifdefs everywhere

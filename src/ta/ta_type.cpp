@@ -170,9 +170,9 @@ bool	taMisc::in_init = false;
 bool	taMisc::quitting = false;
 bool	taMisc::not_constr = true;
 bool 	taMisc::gui_active = false;
-bool	taMisc::is_loading = false;
-bool	taMisc::is_saving = false;
-bool	taMisc::is_duplicating = false;
+ContextFlag	taMisc::is_loading;
+ContextFlag	taMisc::is_saving;
+ContextFlag	taMisc::is_duplicating;
 int	taMisc::strm_ver = 2;
 
 int	taMisc::dmem_proc = 0;

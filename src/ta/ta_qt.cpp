@@ -652,8 +652,10 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iDataViewer* not_in_win)
 
 void taiMisc::OpenWindows(){
   if(unopened_windows.size == 0)	return;
+  if (taMisc::is_loading) return; // don't recurse
 
-  taMisc::is_loading = true;
+  //TODO: WHY are we setting the loading context????
+  ++taMisc::is_loading;
   int i;
   for(i=0;i < unopened_windows.size;i++){
     DataViewer* win = (DataViewer*)unopened_windows.FastEl(i);
@@ -666,7 +668,7 @@ void taiMisc::OpenWindows(){
     if (win->iconified) win->Iconify();
   }
   unopened_windows.RemoveAll();
-  taMisc::is_loading = false;
+  --taMisc::is_loading;
   cssiSession::RaiseObjEdits(); // make sure css objects are in front!
 
   taiMisc::RunPending();

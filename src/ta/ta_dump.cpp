@@ -656,7 +656,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   if (base == NULL)
     return false;
 
-  taMisc::is_saving = true;
+  ++taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
 
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
@@ -683,7 +683,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
 
     Dump_Save_impl(strm, base, par, indent);
   }
-  taMisc::is_saving = false;
+  --taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
   return true;
 }
@@ -1390,7 +1390,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
     cout << "Loading: " << td->name << " " << path << " rval: " << rval << "\n";
   }
 
-  taMisc::is_loading = true;
+  ++taMisc::is_loading;
 
   TAPtr el;				// the loaded element
   if(InheritsFrom(td)) {		// we are the same as load token
@@ -1401,7 +1401,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
       taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
-      taMisc::is_loading = false;
+      --taMisc::is_loading;
       return false;
     }
   }
@@ -1433,7 +1433,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
 #endif
   }
 
-  taMisc::is_loading = false;
+  --taMisc::is_loading;
 
   dumpMisc::update_after.Reset();
   dumpMisc::path_subs.Reset();

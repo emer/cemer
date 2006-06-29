@@ -884,7 +884,6 @@ int ProjectBase::Load(istream& strm, TAPtr par) {
 }
 
 void ProjectBase::LoadDefaults() {
-  bool loading = taMisc::is_loading; // cache is loading flag
   fstream def;
   // use a user-provided default 
   //TODO: this may not be a great idea in the v4 integrated runtime
@@ -908,7 +907,6 @@ void ProjectBase::LoadDefaults() {
   } else {
     taMisc::Warning("no default file or defaults were available - created objects will not automatically be of correct type");
   }
-  taMisc::is_loading = loading;
 }
 
 void ProjectBase::MakeDefaultWiz(bool auto_opn) {
@@ -953,7 +951,7 @@ int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
   if (taMisc::gui_active) {
     taMisc::Busy();
   }
-  taMisc::is_saving = true;
+  ++taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
   int rval = Dump_Save_Path(strm, par, indent);
@@ -978,7 +976,7 @@ int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
   rval = true;
   
 exit:
-  taMisc::is_saving = false;
+  --taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
   if (taMisc::gui_active)  taMisc::DoneBusy();
   return rval;

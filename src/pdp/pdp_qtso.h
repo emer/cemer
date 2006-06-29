@@ -78,7 +78,6 @@ public:
 
 protected:
   int			m_changing; // used to prevent recursions
-  taiToggle*		tglIgnore;
   taiField*		fldName;
   
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
@@ -144,11 +143,8 @@ public:
 
 protected:
   taiTypeHier*		thValType;
-  taiToggle*		chkMakeNew;
   QLabel*		lblObjectValue;
   taiToken*		tkObjectValue;
-  
-  void			MakeNew_Setting(bool value); // common code jigs visibility
   
   void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
   void			DataChanged_impl(taiData* chld); // override

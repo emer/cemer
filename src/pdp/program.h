@@ -32,7 +32,6 @@ class Program_MGroup;
 class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
 public:
-  bool			ignore; // don't use this variable
   Variant		value; // the actual variable
   
   virtual int		cssType(); // int value of cssEl::Type generated
@@ -83,7 +82,6 @@ class PDP_API ObjectProgVar: public ProgVar { // ##SCOPE_ProgElProgram a program
 INHERITED(ProgVar)
 public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
-  bool			make_new; // #LABEL_new create a new instance
   
   override int		cssType(); // int value of cssEl::Type generated
   
@@ -455,6 +453,7 @@ public:
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, -ve=sys-defined err, +ve=user-defined err
   taBase_List		prog_objs; // sundry objects that are used in this program
+  ProgVar_List		param_vars; // global variables that are parameters for callers
   ProgVar_List		global_vars; // global variables accessible outside and inside script
   bool			init_done; // #HIDDEN #IV_READ_ONLY #NO_SAVE 'true' when init done; also accessible inside program
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 

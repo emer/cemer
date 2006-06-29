@@ -1123,6 +1123,8 @@ void taDataView::Initialize() {
 
 void taDataView::InitLinks() {
   inherited_taBase::InitLinks();
+  //BA 2006-06-28 -- this may have been here for loading, but mdata not set yet at this point
+  // so if no other purpose, it can be removed
   if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
 }
 
@@ -1132,6 +1134,13 @@ void taDataView::CutLinks() {
   }
   m_parent = NULL;
   inherited_taBase::CutLinks();
+}
+
+void taDataView::UpdateAfterEdit() {
+  if (taMisc::is_loading) {
+    if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
+  }
+  inherited_taBase::UpdateAfterEdit();
 }
 
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {

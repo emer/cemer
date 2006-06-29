@@ -218,9 +218,7 @@ private:
 //////////////////////////
 
 class PDP_API LayerView: public nvDataView {
-#ifndef __MAKETA__
-  typedef nvDataView inherited;
-#endif
+INHERITED(nvDataView)
 public:
   T3DataView_PtrList	ugrps; // #NO_SAVE
 
@@ -229,6 +227,7 @@ public:
 
   override void		BuildAll(); // creates fully populated subviews
 
+  override bool		Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView)
 protected:
   override void 	ChildRemoving(T3DataView* child); // #IGNORE also remove from aux list

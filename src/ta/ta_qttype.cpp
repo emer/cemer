@@ -636,7 +636,7 @@ void taiTypePtr::GetImage_impl(taiData* dat, const void* base) {
 
 void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
   if (orig_typ == NULL) {
-    taiType::GetValue(dat, base);
+    taiType::GetValue_impl(dat, base);
     return;
   }
 

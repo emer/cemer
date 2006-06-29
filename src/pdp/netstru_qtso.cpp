@@ -671,6 +671,12 @@ void LayerView::DataUpdateAfterEdit_impl() {
   nv->Layer_DataUAE(this);
 }
 
+bool LayerView::Dump_QuerySaveMember(MemberDef* md) {
+  static String str_ch("children");
+  if (md->name == str_ch) return false;
+  else return inherited::Dump_QuerySaveMember(md);
+}
+
 void LayerView::Render_pre(taDataView* par) {
   m_node_so = new T3LayerNode(this);
 

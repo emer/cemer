@@ -567,11 +567,11 @@ void taPtrList_impl::UpdateAllIndicies() {
 bool taPtrList_impl::DuplicateEl_(void* it) {
   if(it == NULL)
     return false;
-  taMisc::is_duplicating = true;
+  ++taMisc::is_duplicating;
   void* nw = El_MakeToken_(it);
   Add_(nw, true); //defer notify until after copy
   El_Copy_(nw, it);
-  taMisc::is_duplicating = false;
+  --taMisc::is_duplicating;
   DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
   return true;
 }
@@ -601,12 +601,12 @@ void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
     if(cp.el[i] == NULL)
       Add_(NULL);
     else {
-      taMisc::is_duplicating = true;
+      ++taMisc::is_duplicating;
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
-      taMisc::is_duplicating = false;
+      --taMisc::is_duplicating;
     }
   }
 }
@@ -623,7 +623,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
   int i;
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)  continue;
-    taMisc::is_duplicating = true;
+    ++taMisc::is_duplicating;
     void* it = El_MakeToken_(cp.el[i]);
     int idx;
     if((idx=Scratch_Find_(El_GetName_(cp.el[i]))) >= 0) {
@@ -635,7 +635,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
     }
-    taMisc::is_duplicating = false;
+    --taMisc::is_duplicating;
   }
   scratch_list.Reset();
 }
@@ -647,12 +647,12 @@ void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)  continue;
     if(Scratch_Find_(El_GetName_(cp.el[i])) < 0) {
-      taMisc::is_duplicating = true;
+      ++taMisc::is_duplicating;
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
-      taMisc::is_duplicating = false;
+      --taMisc::is_duplicating;
     }
   }
   scratch_list.size = 0;
@@ -727,12 +727,12 @@ void taPtrList_impl::Copy_Duplicate(const taPtrList_impl& cp) {
     else {
       TALPtr elo = El_GetOwner_(cp.el[i]);
       if((elo == NULL) || (elo == &cp)) {
-	taMisc::is_duplicating = true;
+	++taMisc::is_duplicating;
 	void* it = El_MakeToken_(cp.el[i]);
 	Add_(it, true);
 	El_Copy_(it, cp.el[i]);
         DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
-	taMisc::is_duplicating = false;
+	--taMisc::is_duplicating;
       }  else {
 	// if object is not owned by copying list, then it is linked, so link here!
 	Link_(cp.el[i]);

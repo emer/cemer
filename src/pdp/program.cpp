@@ -33,14 +33,12 @@
 //////////////////////////
 
 void ProgVar::Initialize() {
-  ignore = false;
 }
 
 void ProgVar::Destroy() {
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
-  ignore = cp.ignore;
   value = cp.value;
 }
 
@@ -57,7 +55,6 @@ int ProgVar::cssType() {
 }
 
 const String ProgVar::GenCss(bool is_arg) {
-  if (ignore) return _nilString;
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
 } 
 
@@ -215,7 +212,6 @@ const String EnumProgVar::ValToId(int val) {
 
 void ObjectProgVar::Initialize() {
   val_type = &TA_taOBase; //note: < taOBase generally not interesting
-  make_new = false;
 }
 
 void ObjectProgVar::Destroy() {
@@ -223,7 +219,6 @@ void ObjectProgVar::Destroy() {
 
 void ObjectProgVar::Copy_(const ObjectProgVar& cp) {
   val_type = cp.val_type;
-  make_new = cp.make_new;
 }
 
 int ObjectProgVar::cssType() {
@@ -244,15 +239,10 @@ const String ObjectProgVar::GenCssVar_impl() {
   STRING_BUF(rval, 80); //note: buffer will extend if needed
   rval += val_type->GetPathName() + "* ";
   rval += name;
-  if (make_new) { 
-    rval += " = new ";
-    rval += val_type->GetPathName() + "()";
-  } else { 
-    bool init = !value.isDefault();
-    if (init) {
-      rval += " = ";
-      rval += value.toCssLiteral();
-    }
+  bool init = !value.isDefault();
+  if (init) {
+    rval += " = ";
+    rval += value.toCssLiteral();
   }
   rval += ";\n";
   return rval;
@@ -307,7 +297,6 @@ const String ProgVar_List::GenCss(int indent_level) const {
   int cnt = 0;
   for (int i = 0; i < size; ++i) {
     el = FastEl(i);
-    if (el->ignore) continue;
     bool is_arg = (var_context == VC_FuncArgs);
     if (is_arg) {
       if (cnt > 0)
@@ -878,7 +867,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     ths_arg = global_args.FastEl(i);
     nm = ths_arg->name;
     prg_var = target->global_vars.FindName(nm);
-    if (!prg_var || prg_var->ignore || ths_arg->value.empty()) continue;
+    if (!prg_var || ths_arg->value.empty()) continue;
     rval += cssMisc::Indent(indent_level);
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
       + ths_arg->value + ");\n";
@@ -904,7 +893,7 @@ const String ProgramCallEl::GenCssPost_impl(int indent_level) {
 
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
-  global_args.ConformToTarget(target->global_vars);
+  global_args.ConformToTarget(target->param_vars);
 }
 
 //////////////////////////
@@ -925,6 +914,7 @@ void Program::Destroy()	{
 void Program::InitLinks() {
   inherited::InitLinks();
   taBase::Own(prog_objs, this);
+  taBase::Own(param_vars, this);
   taBase::Own(global_vars, this);
   taBase::Own(init_els, this);
   taBase::Own(prog_els, this);
@@ -934,6 +924,7 @@ void Program::CutLinks() {
   prog_els.CutLinks();
   init_els.CutLinks();
   global_vars.CutLinks();
+  param_vars.CutLinks();
   prog_objs.CutLinks();
   inherited::CutLinks();
 }
@@ -941,6 +932,7 @@ void Program::CutLinks() {
 
 void Program::Copy_(const Program& cp) {
   prog_objs = cp.prog_objs;
+  param_vars = cp.param_vars;
   global_vars = cp.global_vars; //TODO: prob should do fixups for refs to prog_objs
   init_els = cp.init_els;
   prog_els = cp.prog_els;
@@ -1017,7 +1009,14 @@ const String Program::scriptString() {
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
     m_scriptCache += "Int ret_val;\n";
     m_scriptCache += "bool init_done;\n";
-    m_scriptCache += global_vars.GenCss(0);
+    if (param_vars.size > 0) {
+      m_scriptCache += "// global script parameters\n";
+      m_scriptCache += param_vars.GenCss(0);
+    }
+    if (global_vars.size > 0) {
+      m_scriptCache += "// global (non-param) variables\n";
+      m_scriptCache += global_vars.GenCss(0);
+    }
     m_scriptCache += "*/\n\n";
     
     if (init_els.size > 0) {
@@ -1064,19 +1063,23 @@ void  Program::UpdateProgVars() {
   script->prog_vars.Push(el); //refs
   
   // add new in the program
-  for (int i = 0; i < global_vars.size; ++i) {
-    ProgVar* sv = global_vars.FastEl(i);
-    if (sv->ignore) continue;
+  for (int i = 0; i < param_vars.size; ++i) {
+    ProgVar* sv = param_vars.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
+  for (int i = 0; i < global_vars.size; ++i) {
+    ProgVar* sv = global_vars.FastEl(i);
+    el = sv->NewCssEl();
+    script->prog_vars.Push(el); //refs
+  } 
+  
   
   // add new (with unique names) from our groups, starting at most inner
   Program_MGroup* grp = GET_MY_OWNER(Program_MGroup);
   while (grp) {
     for (int i = 0; i < grp->global_vars.size; ++i) {
       ProgVar* sv = grp->global_vars.FastEl(i);
-      if (sv->ignore) continue;
       // for group vars, we only add with unique names 
       if (script->prog_vars.IndexOfName(sv->GetName()) >= 0) continue;
       el = sv->NewCssEl();
