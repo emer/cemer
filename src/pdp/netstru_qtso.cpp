@@ -1374,7 +1374,6 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layCtrls->addWidget(lblDisplayValues);
   lvDisplayValues = new Q3ListView(widg, "lvDisplayValues");
   lvDisplayValues->addColumn("Value", 80);
-  lvDisplayValues->addColumn("Source", 50);
   lvDisplayValues->addColumn("Description");
   lvDisplayValues->setShowSortIndicator(false);
   lvDisplayValues->setSorting(-1); // not sorted, shown in add order
@@ -1562,7 +1561,7 @@ void NetViewPanel::GetVars() {
   Q3ListViewItem* lvi = NULL;
   for (int i=0; i < nv_->membs.size; i++) {
     md = nv_->membs[i];
-    lvi = new Q3ListViewItem(lvDisplayValues, lvi, md->name, "todo", md->desc);
+    lvi = new Q3ListViewItem(lvDisplayValues, lvi, md->name, md->desc);
   }
 }
 

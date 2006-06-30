@@ -989,6 +989,8 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   togVal = new taiToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
   incVal = new taiIncrField(typ, host, this, NULL, mflags & flgEditDialog);
+  incVal->setMinimum(INT_MIN); //note: must be int
+  incVal->setMaximum(INT_MAX); //note: must be int
   stack->addWidget(incVal->rep());
   fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
   stack->addWidget(fldVal->rep());

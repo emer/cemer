@@ -32,7 +32,6 @@ Medium Important:
 
 * in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
 * secondary view windows, "File/Close Browser" doesn't work
-* when loading a project, the list view says "Project_0" even if it has a different name, ex. "Proj"
 * can't seem to drag 3 items from listview -- only first 2 items seem to get dragged
 * don't repeatedly create new tabs for changed items if one such tab already exists
 * SelEdit: when you change the Mbr labels from the menu item, the Accept/Cancel gets lit up on the seledit dialog
@@ -45,7 +44,6 @@ Medium Important:
 * when calling up Properties for int_Array, size shows as 1, even though it is greater
 * when you load an object from file, if the object is named, its name will show 
   correctly in the panel, but will still have its default name (ex "MyType_0") in the tree view
-* (at least) in Variant ui for int, the spinbox can only go up to 99
 * for LayerWriter, TARG is not getting pulled from Layer
   
 Cosmetic/Usability/etc. (lower priority):
@@ -87,6 +85,8 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* (at least) in Variant ui for int, the spinbox can only go up to 99
+* when loading a project, the list view says "Project_0" even if it has a different name, ex. "Proj"
 * project, t3views not reopening properly, in OnWindowOpen_impl of NetView, attempt to open
   panel fails because NetView's datalink returns NULL (probably not being properly linked
   during load, vs. new in program)
