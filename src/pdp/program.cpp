@@ -449,7 +449,7 @@ void UserScriptEl::Copy_(const UserScriptEl& cp) {
 const String UserScriptEl::GenCssBody_impl(int indent_level) {
   String rval(cssMisc::IndentLines(user_script, indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
-  rval = trimr(rval);
+//TEMP  rval = trimr(rval);
   if (rval.lastchar() != '\n')
     rval += '\n';
   return rval;
@@ -1064,7 +1064,8 @@ void  Program::UpdateProgVars() {
   
   // add the ones in the object -- note, we use *pointers* to these
   cssEl* el = NULL;
-  el = new cssCPtr_enum(&run_mode, 1, "run_mode"); //note: static
+//buggy??  el = new cssCPtr_enum(&run_mode, 1, "run_mode"); //note: static
+  el = new cssCPtr_int(&run_mode, 1, "run_mode"); //note: static
   script->prog_vars.Push(el); //refs
   el = new cssCPtr_int(&ret_val, 1, "ret_val");
   script->prog_vars.Push(el); //refs

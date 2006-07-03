@@ -141,19 +141,17 @@
 
 //TODO: we
 #if defined(TA_OS_DARWIN) && !defined(QT_LARGEFILE_SUPPORT)
-#  define TA_LARGEFILE_SUPPORT 64
+# define TA_LARGEFILE_SUPPORT 64
 #endif
 
 // word size -- we use this occassionally
 // known to be defined on gcc; prob not on Windows
 #ifndef _WORDSIZE
-#if defined(__arch64__) || defined(__x86_64__) \
-    || defined(__amd64__) || defined(__ia64__) \
-    || defined(__alpha__) || defined(__sparcv9)
-#define _WORDSIZE 64
-#else
-#define _WORDSIZE 32
-#endif
+# if (QT_POINTER_SIZE == 8)
+#   define _WORDSIZE 64
+# else
+#   define _WORDSIZE 32
+# endif
 #endif
 
 // misc stuff
@@ -224,20 +222,40 @@ typedef uchar*		puchar;
 
 typedef unsigned char   byte;
 
-// god bless microsoft c++...
+// god bless Microsoft c++...
 #ifdef TA_OS_WIN
 
-typedef signed __int64      int64_t;
-typedef unsigned __int64    uint64_t;
-#if defined(_WIN64)
-  typedef __int64	    intptr_t;
-#else
-  typedef int		    intptr_t;
-#endif
-//note: prob should inline these, rather than macros, but don't want naggling little
-// type differences to cause compile issues
-#define strtoll _strtoi64
-#define strtoull _strtoui64
+  typedef signed __int64      	int64_t;
+  typedef unsigned __int64    	uint64_t;
+# if defined(_WIN64)
+    typedef __int64	    	intptr_t;
+    typedef unsigned __int64	uintptr_t;
+# else
+    typedef int			intptr_t;
+    typedef unsigned int		uintptr_t;
+# endif
+  //note: prob should inline these, rather than macros, but don't want naggling little
+  // type differences to cause compile issues
+# define strtoll _strtoi64
+# define strtoull _strtoui64
+
+#elif (defined(TA_OS_MAC))
+// and god bless Trolltech and Mac OS...
+# if (QT_POINTER_SIZE == 4)
+#   define ta_intptr_t int
+#   define ta_uintptr_t unsigned int
+# else
+#   define ta_intptr_t qint64
+#   define ta_uintptr_t quint64
+# endif
+#endif // intptr_t hacks
+
+
+
+// defaults for our Trolltech hack:
+#ifndef ta_intptr_t
+# define ta_intptr_t intptr_t
+# define ta_uintptr_t uintptr_t
 #endif
 
 // misc. compiler hacks for MAKETA

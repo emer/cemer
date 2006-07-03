@@ -2954,7 +2954,7 @@ iDataPanel* iTabBar::panel(int idx) {
 
 int iTabBar::addTab(iDataPanel* panel) {
   int idx = QTabBar::addTab("");
-  setTabData(idx, QVariant((intptr_t)0)); // set to valid null value
+  setTabData(idx, QVariant((ta_intptr_t)0)); // set to valid null value
   SetPanel(idx, panel);
   return idx;
 }

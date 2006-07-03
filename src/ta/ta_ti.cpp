@@ -86,6 +86,10 @@ template class TA_API taGroup<taBase>;
 template class TA_API taPtrList<ScriptBase>; // in script_base.h
 template class TA_API taGroup<Script>; // in script_base.h
 
+#ifdef TA_OS_MAC // for some reason, these need to be here for MacOS
+  template class TA_API QList<QObject*>;
+  template class TA_API QList<int>;
+#endif // def MAC
 
 #ifdef TA_GUI
 template class TA_API taPtrList<QWidget>;
@@ -108,13 +112,6 @@ template class TA_API taPtrList<DynMethodDesc>; // in ta_qtviewer.h
 template class TA_API taList<DataViewer>; // in ta_qtviewer.h
 template class TA_API taPtrList<iDataPanel>; // in ta_qtviewer.h
 template class TA_API taPtrList<iTabView>;
-#ifdef DARWIN // for some reason, these need to be here for MacOS
-//TODO: verify this for Qt4
-template class TA_API QList<QObject*>;
-template class TA_API QList<int>;
-//template class TA_API QValueListPrivate<int>;
-template class TA_API QMemArray<char>;
-#endif // def DARWIN
 #endif // def TA_GUI
 
 #endif // !def NO_TA_BASE

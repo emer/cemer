@@ -32,7 +32,6 @@ extern "C" { // basic readline interface -- either refers to readline, or we fak
   extern char* readline(char*);
   extern void add_history(char*);
   extern int rl_stuff_char(int);
-  extern int rl_set_keyboard_input_timeout (int u); // wait u microseconds between callbacks, default .1s
 }
 
 

@@ -415,8 +415,7 @@ public:
 #endif
 
   cssEl()			{ name = ""; Constr(); }
-  explicit cssEl(const char* nm) { name = nm; Constr();}
-    // init param is to init static instances like Void with 1
+  cssEl(const char* nm) { name = nm; Constr();}
   cssEl(const cssEl& cp)	{ Constr(); Copy(cp); }
   cssEl(const cssEl& cp, const char* nm) { Constr(); Copy(cp); name = nm; }
 

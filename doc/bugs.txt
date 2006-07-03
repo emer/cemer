@@ -35,6 +35,9 @@ yyparse(): css_parse.y line 797
   'it' had address 6e2a08 which suggest in static program data area
   major confound: can't find an implementation of yyerror
    and in the code, it is calling cssProgSpace.Reset ????
+* in Scripts, once you have a script file set, you can't seem to get it to 
+  reload the file (make changes to the file, select Open again, but it 
+  still retains the first contents.)
   
 Medium Important:
 

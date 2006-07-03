@@ -288,10 +288,6 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
   if (!console) {
     console = cssConsole::Get_SysConsole();
   
-#ifdef TA_USE_READLINE
-    // have waitproc called back 20/s (instead of 10/s)
-    rl_set_keyboard_input_timeout(50000); 
-#endif //  TA_USE_READLINE
 //TODO: modalize
     rl_done = false;
   }
