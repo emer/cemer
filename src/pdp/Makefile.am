@@ -12,14 +12,16 @@ TAHEADS_GUI =\
 	@abs_srcdir@/netstru_so.h \
 	@abs_srcdir@/netstru_qtso.h \
 	@abs_srcdir@/pdp_qtso.h \
-	@abs_srcdir@/pdplog_qtso.h 
+	@abs_srcdir@/pdplog_qtso.h \
+	@abs_srcdir@/program_qtso.h 
 
 HEADS_GUI =\
 	pdpview_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	pdp_qtso.h \
-	pdplog_qtso.h 
+	pdplog_qtso.h \
+	program_qtso.h 
 
 SRCS_GUI =\
 	pdpview_qt.cpp \
@@ -29,7 +31,9 @@ SRCS_GUI =\
 	netstru_qtso.cpp \
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
-	pdplog_qtso.moc.cpp 
+	pdplog_qtso.moc.cpp \
+	program_qtso.cpp  \
+	program_qtso.moc.cpp 
 
 endif
 

@@ -152,7 +152,7 @@ public:
   static int		init_debug;	// initial debug level (by -v arg from user)
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
-  static int		init_refcnt_trace; // user wants refcnt tracing (-rct from arg)
+  static int		refcnt_trace; // user wants refcnt tracing (-rct from arg)
   static cssConsole*	console;	// the console, IF CREATED
 
   static cssEl 		Void; 		// a void element
@@ -161,7 +161,6 @@ public:
   static cssRef		VoidRef;	// a void reference (for maketoken)
   static cssArray	VoidArray;	// a void array (for maketoken)
   static cssArrayType   VoidArrayType;  // a void array type (for maketoken)
-  static String		VoidStringVal;
   static cssString	VoidString;
   static cssVariant	VoidVariant;
   static cssEnumType	VoidEnumType; 	// a void enum type
@@ -416,7 +415,8 @@ public:
 #endif
 
   cssEl()			{ name = ""; Constr(); }
-  cssEl(const char* nm)		{ name = nm; Constr(); }
+  explicit cssEl(const char* nm) { name = nm; Constr();}
+    // init param is to init static instances like Void with 1
   cssEl(const cssEl& cp)	{ Constr(); Copy(cp); }
   cssEl(const cssEl& cp, const char* nm) { Constr(); Copy(cp); name = nm; }
 

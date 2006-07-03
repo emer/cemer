@@ -2129,6 +2129,8 @@ bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
   // check for always show or always not
   if (HasOption("SHOW"))
     return true;			// always show
+  // if static, don't show unless we explicitly said yes
+  if (is_static) return false;
   if (HasOption("NO_SHOW"))
     return false;			// never show
   // note: show uses ==, show_gui just needs flag -- done for 3.x compatibility
@@ -2147,6 +2149,7 @@ bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
 
   if (show & taMisc::NO_NORMAL)
     return false;
+  
   return true;
 }
 

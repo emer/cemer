@@ -26,7 +26,15 @@ Serious/Fatal:
 * program crashes when deleting project
   context: had main window, NetView, and a separate browse of XOR net open
   deleted proj; caused a seg fault (in some Qt code, related to painting)
-  
+* trying to compile a program that hit the following error line:
+yyparse(): css_parse.y line 797
+  yyerror("const type not accepted in this context");
+  nests down into: cssProg::Reset(); cssSpace::Reset(); then into
+  cssEl::unRefDone(); causes seg fault in debug code when 
+  accessing GetName() of 'it' ('it' is valid address)
+  'it' had address 6e2a08 which suggest in static program data area
+  major confound: can't find an implementation of yyerror
+   and in the code, it is calling cssProgSpace.Reset ????
   
 Medium Important:
 
@@ -45,6 +53,7 @@ Medium Important:
 * when you load an object from file, if the object is named, its name will show 
   correctly in the panel, but will still have its default name (ex "MyType_0") in the tree view
 * for LayerWriter, TARG is not getting pulled from Layer
+* just adding ex. a UserScriptEl to init_els doesn't dirty the Program
   
 Cosmetic/Usability/etc. (lower priority):
 

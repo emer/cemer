@@ -324,13 +324,16 @@ public:
   friend String     replicate(char c, int n);
   friend String     replicate(const char* y, int n);
   friend String     replicate(const String& y, int n);
-  friend String     join(const String src[], int n, const String& sep);
+  friend String     join(const String src[], int n, const String& sep); //
 
 // simple builtin transformations
-  friend inline String     reverse(const String& x);
-  friend inline String     upcase(const String& x);
-  friend inline String     downcase(const String& x);
-  friend inline String     capitalize(const String& x);
+//todo  friend String		triml(const String& x); // trims leading spaces
+  friend String		trimr(const String& x); // trims trailing spaces
+//todo  friend String		trim(const String& x); // trims leadingand trailing  spaces
+  friend inline String	reverse(const String& x);
+  friend inline String	upcase(const String& x);
+  friend inline String	downcase(const String& x);
+  friend inline String	capitalize(const String& x);
 
 // in-place versions of above -- they automatically makeUnique
   String&		reverse();	// reverse order of string

@@ -27,7 +27,11 @@
 // forwards
 
 class Program;
+class ProgramRef;
 class Program_MGroup;
+class Program_List;
+class Controller;
+class Controller_MGroup;
 
 class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
@@ -443,34 +447,63 @@ class PDP_API Program: public taNBase, public AbstractScriptBase {
   // #TOKENS #INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
-  enum ReturnVals { // system defined return values (>0 are for user defined)
-    RV_OK		= 0, // program finished successfully
-    RV_COMPILE_ERR	= -1, // script couldn't be compiled
-    RV_INIT_ERR		= -2, // initialization failed (note: user prog may use its own value)
-    RV_RUNTIME_ERR	= -3, // misc runtime error (ex, null pointer ref, etc.)
-    RV_PROG_CALL_FAILED	= -4 // a program call failed (probably an error in that program)
+  enum ProgFlags { // #BITS mode flags
+    PF_NONE		= 0, // #NO_BIT
+    SHOW_IN_CP		= 0x0001, // show in control panel
+    CP_ROOT_OK		= 0x0002 // allowed to be a root in a control panel
   };
   
-  int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, -ve=sys-defined err, +ve=user-defined err
+  enum ReturnVal { // system defined return values (<0 are for user defined)
+    RV_OK	= 0, 	// program finished successfully
+    RV_COMPILE_ERR, 	// script couldn't be compiled
+    RV_INIT_ERR, 	// initialization failed (note: user prog may use its own value)
+    RV_RUNTIME_ERR,	// misc runtime error (ex, null pointer ref, etc.)
+    RV_PROG_CALL_FAILED // a program call failed (probably an error in that program)
+  };
+  
+  enum RunMode { // current run state, is global to all active programs
+    STOP,
+    INIT,	// the enables every prog to reset its state to the beginning
+    RUN,
+    STEP,
+    STEP_WAIT,
+  };
+  
+  static RunMode	run_mode; // the one and only global run mode for current running prog
+  static ProgramRef	step_prog; // the top level step prog
+  
+  ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program
   ProgVar_List		param_vars; // global variables that are parameters for callers
   ProgVar_List		global_vars; // global variables accessible outside and inside script
-  bool			init_done; // #HIDDEN #IV_READ_ONLY #NO_SAVE 'true' when init done; also accessible inside program
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_els; // the prog els for the main program
   
+  int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   
+  inline bool		cpRootOk() {return (flags & CP_ROOT_OK);}
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
+  inline bool		showInCp() {return (flags & SHOW_IN_CP);}
   
-  virtual int		Run(); // run the program, 0=success
+  virtual int		RunEx(RunMode rm); 
+    // run in the given mode, returning the ReturnVal (0=success); stacks/restores global run_mode
+  int			Init() {return RunEx(INIT);} 
+    // run the program's Init() procedure, 0=success
+  int			Run() {return RunEx(RUN);} 
+    // run the program, 0=success
   virtual bool		SetGlobalVar(const String& nm, const Variant& value);
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
 
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user
+  void			AddToController(Controller* cont);
+    // #MENU #MENU_CONTEXT add the program to the indicated controller
+   
+  virtual void		InitGui();
+    // #MENU #LABEL_Init #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
   virtual void		RunGui();
     // #MENU #LABEL_Run #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
   void			ViewScript();
@@ -507,6 +540,9 @@ private:
   void	Destroy();
 };
 
+SmartRef_Of(Program); // ProgramRef
+
+
 class PDP_API Program_MGroup : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
@@ -519,6 +555,56 @@ public:
   void	Copy_(const Program_MGroup& cp);
   COPY_FUNS(Program_MGroup, taGroup<Program>)
   TA_BASEFUNS(Program_MGroup);
+
+private:
+  void	Initialize();
+  void 	Destroy()		{Reset(); };
+};
+
+
+class PDP_API Program_List : public taList<Program> {
+INHERITED(taList<Program>)
+public:
+  
+  TA_BASEFUNS(Program_List);
+
+private:
+  void	Initialize();
+  void 	Destroy()		{Reset(); };
+};
+
+
+class PDP_API Controller: public taNBase {
+  // #TOKENS #INSTANCE the data representation of a control panel for running programs
+INHERITED(taNBase)
+public:
+  Program_List		progs; // #LINK_GROUP the programs that will be listed in the cp
+  
+  void			AddProgram(Program* prog); // #MENU #MENU_CONTEXT add a program
+  
+#ifdef TA_GUI
+  virtual void		InitGui(); // #LABEL_Run #MENU #MENU_ON_Run #MENU_CONTEXT #BUTTON initialize the top-level program
+  virtual void		RunGui(); // #LABEL_Run #MENU #MENU_ON_Run #MENU_CONTEXT #BUTTON run the top-level program
+#endif
+
+  void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const Controller& cp);
+  COPY_FUNS(Controller, taNBase);
+  TA_BASEFUNS(Controller);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class PDP_API Controller_MGroup : public taGroup<Controller> {
+INHERITED(taGroup<Controller>)
+public:
+  
+  TA_BASEFUNS(Controller_MGroup);
 
 private:
   void	Initialize();

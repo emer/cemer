@@ -23,6 +23,7 @@
 #include "tdgeometry.h"
 #include "ta_qtclipdata.h"
 
+#include "css_machine.h" // for trace flag
 //#include "irenderarea.h"
 
 #include <qapplication.h>
@@ -128,7 +129,8 @@ void T3DataView::Initialize() {
 //TODO  setDropEnabled(!(flags & DNF_NO_CAN_DROP));
 #ifdef TA_PROFILE
   ++T3DataView_inst_cnt;
-  cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
+  if (cssMisc::refcnt_trace)
+    cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
 #endif
 }
 
@@ -137,7 +139,8 @@ void T3DataView::Destroy() {
   CutLinks();
 #ifdef TA_PROFILE
   --T3DataView_inst_cnt;
-  cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
+  if (cssMisc::refcnt_trace)
+    cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
 #endif
 }
 

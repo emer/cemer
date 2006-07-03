@@ -313,6 +313,25 @@ void StrRep::upcase() {//note: should only be called on cnt<=1
 //	String		//
 //////////////////////////
 
+void trimr_(String& rval, char c) {
+  do {
+    rval.truncate(rval.length() - 1);
+    c = rval.lastchar();
+  } while ((c== ' ') || (c == '\t')); 
+}
+
+String trimr(const String& x) {
+  // note: c=0 when len=0
+  char c = x.lastchar();
+  if (!((c== ' ') || (c == '\t')))
+    return x;
+  
+  String rval(x);
+  rval.makeUnique();
+  trimr_(rval, c);
+  return rval;
+}
+
 void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) { 
   //note: char_mode=true is for doing a single conversion for a char literal
   switch (c) { // do the specials first, since some printables are special

@@ -447,7 +447,12 @@ void UserScriptEl::Copy_(const UserScriptEl& cp) {
 }
 
 const String UserScriptEl::GenCssBody_impl(int indent_level) {
-  return cssMisc::IndentLines(user_script, indent_level);
+  String rval(cssMisc::IndentLines(user_script, indent_level));
+  // strip trailing non-newline ws, and make sure there is a trailing newline
+  rval = trimr(rval);
+  if (rval.lastchar() != '\n')
+    rval += '\n';
+  return rval;
 }
 
 
@@ -900,10 +905,13 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //  Program		//
 //////////////////////////
 
+Program::RunMode Program::run_mode = Program::STOP; 
+ProgramRef 	Program::step_prog;
+
 void Program::Initialize() {
+  flags = PF_NONE;
   prog_objs.SetBaseType(&TA_taOBase);
   ret_val = 0;
-  init_done = false;
   m_dirty = true; 
 }
 
@@ -937,7 +945,6 @@ void Program::Copy_(const Program& cp) {
   init_els = cp.init_els;
   prog_els = cp.prog_els;
   ret_val = 0; // redo
-  init_done = false;
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
   if (script)
@@ -947,6 +954,11 @@ void Program::Copy_(const Program& cp) {
 void Program::UpdateAfterEdit() {
   setDirty(true);
   inherited::UpdateAfterEdit();
+}
+
+void Program::AddToController(Controller* cont) {
+  if (!cont) return;
+  cont->AddProgram(this);
 }
 
 void Program::InitScriptObj_impl() {
@@ -959,21 +971,24 @@ void Program::PreCompileScript_impl() {
   UpdateProgVars();
 }
 
-int Program::Run() {
-  ret_val = RV_OK; 
+int Program::RunEx(RunMode rm) {
+  ret_val = RV_OK;
   if (!script_compiled) {
     if (!CompileScript()) {
       ret_val = RV_COMPILE_ERR; 
       return ret_val; // deferred or error
     }
   }
+  
+  RunMode last = run_mode;
+  run_mode = rm;
   bool ran_ok = RunScript();
-  if (ran_ok) { //still need to check for init etc.
-    if (!init_done)
-      ret_val = RV_INIT_ERR;
-  } else {
+  if (!ran_ok) { //still need to check for init etc.
     ret_val = RV_RUNTIME_ERR;
   }
+  run_mode = last;
+  //note: shared var state likely changed, so update gui
+  DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
 }
 
@@ -981,7 +996,6 @@ void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   m_dirty = false;
   script_compiled = true;
-  init_done = false;
   ret_val = 0;
   DataChanged(DCR_ITEM_UPDATED);
 }
@@ -1007,8 +1021,8 @@ const String Program::scriptString() {
     m_scriptCache = "// ";
     m_scriptCache += GetName();
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
-    m_scriptCache += "Int ret_val;\n";
-    m_scriptCache += "bool init_done;\n";
+    m_scriptCache += "Program::RunMode run_mode; //note: global static\n";
+    m_scriptCache += "int ret_val;\n";
     if (param_vars.size > 0) {
       m_scriptCache += "// global script parameters\n";
       m_scriptCache += param_vars.GenCss(0);
@@ -1021,23 +1035,17 @@ const String Program::scriptString() {
     
     if (init_els.size > 0) {
       m_scriptCache += "void Init() {\n";
-      m_scriptCache += "  init_done = true;\n";
-      m_scriptCache += init_els.GenCss(1);
+      m_scriptCache += init_els.GenCss(1); // ok if empty, returns nothing
       m_scriptCache += "}\n\n";
-    } else {
     }
     
-    m_scriptCache += "ret_val = Program::RV_OK;\n";
+    m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
+    m_scriptCache += "if (run_mode == Program::INIT) {\n";
     if (init_els.size > 0) {
-      m_scriptCache += "if (!init_done) {\n";
-      m_scriptCache += "  Init();\n";
-      m_scriptCache += "}\n\n";
-      m_scriptCache += "if ((!init_done) || (ret_val != Program::RV_OK)) {\n";
-      m_scriptCache += "  return;\n";
-      m_scriptCache += "}\n\n";
-    } else {
-      m_scriptCache += "init_done = true;\n";
+    m_scriptCache += "  Init();\n";
     }
+    m_scriptCache += "  return;\n";
+    m_scriptCache += "}\n\n";
     
     m_scriptCache += prog_els.GenCss(0);
     m_scriptCache += "\n";
@@ -1055,9 +1063,10 @@ void  Program::UpdateProgVars() {
   script->prog_vars.Reset(); // removes/unref-deletes
   
   // add the ones in the object -- note, we use *pointers* to these
-  cssEl* el = new cssCPtr_int(&ret_val, 1, "ret_val");
+  cssEl* el = NULL;
+  el = new cssCPtr_enum(&run_mode, 1, "run_mode"); //note: static
   script->prog_vars.Push(el); //refs
-  el = new cssCPtr_bool(&init_done, 1, "init_done");
+  el = new cssCPtr_int(&ret_val, 1, "ret_val");
   script->prog_vars.Push(el); //refs
   el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
   script->prog_vars.Push(el); //refs
@@ -1112,6 +1121,19 @@ void  Program::UpdateProgVars() {
 }
 
 #ifdef TA_GUI
+void Program::InitGui() {
+  //TODO: maybe need to put up a progress/cancel dialog
+  // TODO: actually need to provide a global strategy for running!!!!!
+  int rval = Init();
+  //note: init should be quick, so we don't confirm
+  if (rval != 0) 
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      String(
+      "The Program did not run -- ret_val=").cat(String(rval)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
+ ; 
+}
+
 void Program::RunGui() {
   //TODO: need to put up a progress/cancel dialog
   // TODO: actually need to provide a global strategy for running!!!!!
@@ -1169,5 +1191,72 @@ void Program_MGroup::SetProgsDirty() {
   FOR_ITR_EL(Program, prog, this->, itr) {
     prog->setDirty(true);
   }
+}
+
+
+//////////////////////////
+//  Program_List	//
+//////////////////////////
+
+void Program_List::Initialize() {
+  SetBaseType(&TA_Program);
+}
+
+
+//////////////////////////
+//  Controller	//
+//////////////////////////
+
+void Controller::Initialize() {
+}
+
+void Controller::Destroy() {
+  CutLinks();
+}
+
+void Controller::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+}
+
+void Controller::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(progs, this);
+}
+
+void Controller::CutLinks() {
+  progs.CutLinks();
+  inherited::CutLinks();
+}
+
+void Controller::Copy_(const Controller& cp) {
+  progs = cp.progs;
+}
+
+void Controller::AddProgram(Program* prog) {
+  progs.LinkUnique(prog);
+}
+
+
+#ifdef TA_GUI
+void Controller::InitGui() {
+  Program* prog = progs.SafeEl(0);
+  if (prog)
+    prog->InitGui();
+}
+
+void Controller::RunGui() {
+  Program* prog = progs.SafeEl(0);
+  if (prog)
+    prog->RunGui();
+}
+#endif // TA_GUI
+
+
+//////////////////////////
+//  Controller_MGroup	//
+//////////////////////////
+
+void Controller_MGroup::Initialize() {
+  SetBaseType(&TA_Controller);
 }
 

@@ -225,6 +225,7 @@ public:
   DataTable_MGroup	data;		// Misc data, such as patterns for network input
   PDPLog_MGroup		logs;		// Logs to display statistics in processes
   Program_MGroup	programs;	// Gui-based programs to run simulations and other processing
+  Controller_MGroup	controllers;	// Controllers, to run programs and monitor values
   Script_MGroup		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
   SelectEdit_MGroup	edits;		// special edit dialogs for selected elements

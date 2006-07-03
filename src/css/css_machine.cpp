@@ -94,11 +94,7 @@ String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
-#ifdef DEBUG
-int		cssMisc::init_refcnt_trace = 1; // user wants refcnt tracing (-rct from arg)
-#else
-int		cssMisc::init_refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
-#endif
+int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
 cssConsole*	cssMisc::console = NULL;
 
 cssEl 		cssMisc::Void("Void"); 	
@@ -107,7 +103,6 @@ cssPtr		cssMisc::VoidPtr;		// in theory, points to voidptr
 cssArray	cssMisc::VoidArray;		// just needed for maketoken
 cssArrayType    cssMisc::VoidArrayType;         // just needed for maketoken
 
-String		cssMisc::VoidStringVal;
 cssString	cssMisc::VoidString;
 cssVariant	cssMisc::VoidVariant;
 cssEnumType	cssMisc::VoidEnumType("VoidEnum");
@@ -258,13 +253,25 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
 }
 
 void cssMisc::PreInitialize(int argc_, char** argv_) {
+// ref all the statics, just to be sure
+/*temp  cssEl::Ref(&Void);
+  cssEl::Ref(&VoidPtr);
+  cssEl::Ref(&VoidRef);
+  cssEl::Ref(&VoidArray);
+  cssEl::Ref(&VoidArrayType);
+  cssEl::Ref(&VoidString);
+  cssEl::Ref(&VoidVariant);
+  cssEl::Ref(&VoidEnumType);
+  cssEl::Ref(&VoidClassType);
+*/  
+// ok
   cssMisc::argc = argc_;
   cssMisc::argv = argv_; // cast away constness -- we still treat it as const
   int i = 1;
   String sw_val;
   CmdLineSwitchValue("-rct", i, sw_val);
   if (!sw_val.empty()) {
-    init_refcnt_trace = sw_val.toInt();
+    refcnt_trace = sw_val.toInt();
   }
 #ifdef TA_GUI
 # ifdef TA_USE_INVENTOR
@@ -433,7 +440,7 @@ void cssEl::Done(cssEl* it) {
     print_cssEl(it, true);
     cerr << "::Done(): it->refn < 0  -- **MAY BE MULTI-DELETED**\n";
   } 
-  else if (cssMisc::init_refcnt_trace > 0) {
+  else if (cssMisc::refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::Done()\n";
   }
@@ -449,7 +456,7 @@ void cssEl::unRef(cssEl* it) {
     print_cssEl(it, true);
     cerr << "::unRef(): it->refn < 0\n";
   }
-  else if (cssMisc::init_refcnt_trace > 0) {
+  else if (cssMisc::refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::unRef()\n";
   }
@@ -463,7 +470,7 @@ void cssEl::unRefDone(cssEl* it) {
     cerr << "::unRefDone: it->refn <= 0 -- **WILL NOT BE MULTI-DELETED**\n";
     return;
   }
-  else if (cssMisc::init_refcnt_trace > 0) {
+  else if (cssMisc::refcnt_trace > 0) {
     print_cssEl(it);
     cerr << "::unRefDone()\n";
   }
