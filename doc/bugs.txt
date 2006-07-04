@@ -26,15 +26,6 @@ Serious/Fatal:
 * program crashes when deleting project
   context: had main window, NetView, and a separate browse of XOR net open
   deleted proj; caused a seg fault (in some Qt code, related to painting)
-* trying to compile a program that hit the following error line:
-yyparse(): css_parse.y line 797
-  yyerror("const type not accepted in this context");
-  nests down into: cssProg::Reset(); cssSpace::Reset(); then into
-  cssEl::unRefDone(); causes seg fault in debug code when 
-  accessing GetName() of 'it' ('it' is valid address)
-  'it' had address 6e2a08 which suggest in static program data area
-  major confound: can't find an implementation of yyerror
-   and in the code, it is calling cssProgSpace.Reset ????
 * in Scripts, once you have a script file set, you can't seem to get it to 
   reload the file (make changes to the file, select Open again, but it 
   still retains the first contents.)
@@ -56,7 +47,11 @@ Medium Important:
 * when you load an object from file, if the object is named, its name will show 
   correctly in the panel, but will still have its default name (ex "MyType_0") in the tree view
 * for LayerWriter, TARG is not getting pulled from Layer
-* just adding ex. a UserScriptEl to init_els doesn't dirty the Program
+* if you put a function in your Program that has the same name as a method on
+  the object, horrible things happen (first discovered when __Init() was called
+  Init() and there is also a Program::Init() ) -- see the fixed log below for more
+  details -- it seems to cause some horrible corruption that is then difficult to
+  diagnose what is happening
   
 Cosmetic/Usability/etc. (lower priority):
 
@@ -97,6 +92,23 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* just adding ex. a UserScriptEl to init_els doesn't dirty the Program
+* trying to compile a program that hit the following error line:
+yyparse(): css_parse.y line 797
+  yyerror("const type not accepted in this context");
+  nests down into: cssProg::Reset(); cssSpace::Reset(); then into
+  cssEl::unRefDone(); causes seg fault in debug code when 
+  accessing GetName() of 'it' ('it' is valid address)
+  'it' had address 6e2a08 which suggest in static program data area
+  major confound: can't find an implementation of yyerror
+   and in the code, it is calling cssProgSpace.Reset ????
+* NOTE: when CSS assigns a value, if it has a TA parent, it does UAE on that
+  parent, so, ex. when we have Program::ret_value, when the program assigns
+  value to ret_value, the Program gets a UAE! this is not expected!!!
+  Issues:
+  1) not expected UAEs
+  2) confound between design-time UAE's for things like changing prog,
+     vs. runtime UAEs for things like prog values changing
 * (at least) in Variant ui for int, the spinbox can only go up to 99
 * when loading a project, the list view says "Project_0" even if it has a different name, ex. "Proj"
 * project, t3views not reopening properly, in OnWindowOpen_impl of NetView, attempt to open

@@ -194,6 +194,8 @@ class PDP_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
   virtual const String    GenCss(int indent_level = 0); // generate the Css code for this object
+  
+  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgEl_List);
 
 private:
@@ -470,7 +472,7 @@ public:
   };
   
   static RunMode	run_mode; // the one and only global run mode for current running prog
-  static ProgramRef	step_prog; // the top level step prog
+//temp//temp   static ProgramRef	step_prog; // the top level step prog
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program

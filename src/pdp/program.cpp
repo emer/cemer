@@ -434,6 +434,20 @@ const String ProgEl::GenCss(int indent_level) {
 
 
 //////////////////////////
+//  ProgEl_List	//
+//////////////////////////
+
+void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if ((dcr < DCR_LIST_ITEM_MIN) || (dcr > DCR_LIST_ITEM_MAX)) return;
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    prog->setDirty(true);
+  }
+}
+
+
+//////////////////////////
 //  UserScriptEl	//
 //////////////////////////
 
@@ -906,7 +920,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //////////////////////////
 
 Program::RunMode Program::run_mode = Program::STOP; 
-ProgramRef 	Program::step_prog;
+//temp ProgramRef 	Program::step_prog;
 
 void Program::Initialize() {
   flags = PF_NONE;
@@ -952,7 +966,14 @@ void Program::Copy_(const Program& cp) {
 }
 
 void Program::UpdateAfterEdit() {
-  setDirty(true);
+  //WARNING: the running css prog calls this on any changes to our vars,
+  // such as ret_val -- therefore, DO NOT do things here that are incompatible
+  // with the runtime, in particular, do NOT invalidate the following state flags:
+  //   m_dirty, script_compiled
+  
+  //TODO: the following *do* affect generated script, so we should probably call
+  // setDirty(true) if not running, and these changed:
+  // name, (more TBD...)
   inherited::UpdateAfterEdit();
 }
 
@@ -1034,7 +1055,7 @@ const String Program::scriptString() {
     m_scriptCache += "*/\n\n";
     
     if (init_els.size > 0) {
-      m_scriptCache += "void Init() {\n";
+      m_scriptCache += "void __Init() {\n";
       m_scriptCache += init_els.GenCss(1); // ok if empty, returns nothing
       m_scriptCache += "}\n\n";
     }
@@ -1042,7 +1063,7 @@ const String Program::scriptString() {
     m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
     m_scriptCache += "if (run_mode == Program::INIT) {\n";
     if (init_els.size > 0) {
-    m_scriptCache += "  Init();\n";
+    m_scriptCache += "  __Init();\n";
     }
     m_scriptCache += "  return;\n";
     m_scriptCache += "}\n\n";
