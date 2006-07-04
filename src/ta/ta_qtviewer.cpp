@@ -2975,7 +2975,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   } else {
     setTabText(idx, "");
   }
-  data = (intptr_t)m_panel;
+  data = (ta_intptr_t)m_panel;
   setTabData(idx, data);
 }
 
