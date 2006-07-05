@@ -440,8 +440,11 @@ public:
 class LEABRA_API DtSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER time constants
 public:
-  float		vm;		// #DEF_0.2 membrane potential time constant -- if units oscillate between 0 and 1, this is too high!  reduce.
+  float		vm;		// #DEF_0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
   float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
+  float		d_vm_max;	// #DEF_0.025 maximum change in vm at any timestep (limits blowup)
+  int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
+  float		vm_eq_dt;	// #DEF_1 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
 
   void	Initialize();
   void	Destroy()	{ };
@@ -550,6 +553,7 @@ public:
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT gaussian for convolution
 
   void 		InitWtState(Unit* u);
+  virtual void 	InitActAvg(LeabraUnit* u);
 
   virtual void	SetCurLrate(LeabraUnit* u, LeabraTrial* trl, int epoch);
   // set current learning rate based on epoch
@@ -564,6 +568,10 @@ public:
 
   virtual void 	Compute_NetScale(LeabraUnit* u, LeabraLayer* lay, LeabraTrial* trl);
   // compute net input scaling values and input from hard-clamped inputs
+  virtual void 	Compute_NetRescale(LeabraUnit* u, LeabraLayer* lay, LeabraTrial* trl, float new_scale);
+  // rescale netinput scales by given amount
+  virtual void 	Init_ClampNet(LeabraUnit* u, LeabraLayer* lay, LeabraTrial* trl);
+  // init clam net value prior to sending
   virtual void 	Send_ClampNet(LeabraUnit* u, LeabraLayer* lay, LeabraTrial* trl);
   // compute net input from hard-clamped inputs (sender based)
 
@@ -744,6 +752,9 @@ public:
   float		spk_amp;	// amplitude of spiking output (for depressing synapse activation function)
   float		misc_1;		// #NO_VIEW miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
 
+  void		InitActAvg()
+  { ((LeabraUnitSpec*)spec.spec)->InitActAvg(this); }
+
   void		InitDelta()
   { ((LeabraUnitSpec*)spec.spec)->InitDelta(this); }
   void		InitState(LeabraLayer* lay)
@@ -754,6 +765,10 @@ public:
 
   void		Compute_NetScale(LeabraLayer* lay, LeabraTrial* trl)
   { ((LeabraUnitSpec*)spec.spec)->Compute_NetScale(this, lay, trl); }
+  void		Compute_NetRescale(LeabraLayer* lay, LeabraTrial* trl, float new_scale)
+  { ((LeabraUnitSpec*)spec.spec)->Compute_NetRescale(this, lay, trl, new_scale); }
+  void		Init_ClampNet(LeabraLayer* lay, LeabraTrial* trl)
+  { ((LeabraUnitSpec*)spec.spec)->Init_ClampNet(this, lay, trl); }
   void		Send_ClampNet(LeabraLayer* lay, LeabraTrial* trl)
   { ((LeabraUnitSpec*)spec.spec)->Send_ClampNet(this, lay, trl); }
 
@@ -843,12 +858,28 @@ public:
   float		pat_q;		// #HIDDEN #DEF_0.5 threshold for pat_k based activity level: add to k if ext > pat_q
   bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for overall layer activation
   float		act_pct;	// #CONDEDIT_ON_diff_act_pct:true actual percent activity to put in kwta.pct field of layer
+  bool		gp_i;		// compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value
+  float		gp_g;		// #CONDEDIT_ON_gp_i:true how much this item (layer or unit group) contributes to the pooled layer group values
 
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(KWTASpec);
   COPY_FUNS(KWTASpec, taBase);
   TA_BASEFUNS(KWTASpec);
+};
+
+class LEABRA_API KwtaTieBreak : public taBase {
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
+public:
+  bool		on;		// whether to perform the tie breaking function at all
+  float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
+  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold on difference ratio between top k and rest (k_ithr - k1_ithr) / k_ithr for a tie to be indicated.  This is also how much k1_ithr is reduced relative to k_ithr to fix the tie: sets a lower limit on this value.  larger values mean higher overall activations during ties, but you dont' want to activate the tie mechanism unnecessarily either.
+
+  void	Initialize();
+  void 	Destroy()	{ };
+  SIMPLE_COPY(KwtaTieBreak);
+  COPY_FUNS(KwtaTieBreak, taBase);
+  TA_BASEFUNS(KwtaTieBreak);
 };
 
 class LEABRA_API AdaptISpec : public taBase {
@@ -904,6 +935,20 @@ public:
   TA_BASEFUNS(DecaySpec);
 };
 
+class LEABRA_API LayNetRescaleSpec : public taBase {
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER global rescale of layer netinputs to prevent blowup
+public:
+  bool		on;		// whether to apply layer netinput rescaling
+  float		max_net; 	// #CONDEDIT_ON_on:true #DEF_0.6 target maximum netinput value
+  float		net_extra;	// #CONDEDIT_ON_on:true #DEF_0.2 extra netin value to add to actual to anticipate further increases, preventing too many updates
+
+  void	Initialize();
+  void 	Destroy()	{ };
+  SIMPLE_COPY(LayNetRescaleSpec);
+  COPY_FUNS(LayNetRescaleSpec, taBase);
+  TA_BASEFUNS(LayNetRescaleSpec);
+};
+
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // Leabra layer specs, computes inhibitory input for all units in layer
 public:
@@ -916,9 +961,8 @@ public:
 
   enum InhibGroup {
     ENTIRE_LAYER,		// treat entire layer as one inhibitory group (even if subgroups exist)
-    UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups
-    LAY_AND_GPS,		// compute inhib over both groups and whole layer, inhibi is max of layer and group inhib
-    GPS_THEN_UNITS		// first find top gp_kwta.k most active (on average) groups, then find top kwta.k units within those groups (else all units inhibbed)
+    UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups (but also uses gp_i and gp_g if set, to have some sharing of inhib across groups
+    LAY_AND_GPS			// compute inhib over both groups and whole layer, inhibi is max of layer and group inhib
   };
 
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
@@ -927,12 +971,16 @@ public:
   Compute_I	compute_i;	// how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
   float		i_kwta_pt;	// [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		gp_i_pt;	// #CONDEDIT_ON_compute_i:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+  KwtaTieBreak	tie_brk;	// break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
   AdaptISpec	adapt_i;	// #AKA_adapt_pt adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
+  LayNetRescaleSpec net_rescale; // rescale layer-wide netinputs to prevent blowup, when max net exceeds specified net value
 
   virtual void	InitWtState(LeabraLayer* lay);
   // initialize weight values and other permanent state
+  virtual void	InitActAvg(LeabraLayer* lay);
+  // initialize act_avg values
 
   virtual void	SetCurLrate(LeabraLayer* lay, LeabraTrial* trl, int epoch);
   // set current learning rate based on epoch
@@ -956,6 +1004,8 @@ public:
   // prior to settling: hard-clamp inputs
   virtual void	Compute_NetScale(LeabraLayer* lay, LeabraTrial* trl);
   // prior to settling: compute netinput scaling values
+  virtual void	Init_ClampNet(LeabraLayer* lay, LeabraTrial* trl);
+  // prior to settling: init clamp net variable prior to sending
   virtual void	Send_ClampNet(LeabraLayer* lay, LeabraTrial* trl);
   // prior to settling: compute input from hard-clamped
 
@@ -996,6 +1046,11 @@ public:
   // implementation of avg-max-pt inhibition computation
   virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraTrial* trl);
   // implementation of GPS_THEN_UNITS kwta on groups
+  virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);
+  // break any ties in the kwta function
+
+  virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraTrial* trl);
+  // Stage 3.25: for layer groups, need to propagate inhib out to unit groups
 
   ////// Stage 3.5: second pass of inhibition to do averaging
 
@@ -1020,6 +1075,8 @@ public:
   virtual void 	Compute_Act(LeabraLayer* lay, LeabraTrial* trl);
   // stage three: compute final activation
   virtual void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraTrial* trl);
+  virtual void 	Compute_NetRescale(LeabraLayer* lay, LeabraTrial* trl);
+  // do net rescaling to prevent blowup based on netin.max
 
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
@@ -1102,6 +1159,8 @@ public:
   float		k_ithr;		// inhib threshold for k unit (top k for kwta_avg)
   float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
   float		ithr_r;		// log of ratio of ithr values (indicates signal differentiation)
+  float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
+  int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
 
   void		Compute_Pct(int n_units);
   void		Compute_IThrR(); // compute ithr_r ratio value
@@ -1133,7 +1192,8 @@ class LEABRA_API InhibVals : public taBase {
 public:
   float		kwta;		// inhibition due to kwta function
   float		g_i;		// overall value of the inhibition
-  float		g_i_orig; 	// #HIDDEN original value of the inhibition (before linking)
+  float		gp_g_i;		// g_i from the layer or unit group, if applicable
+  float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
 
   void	Initialize();
   void 	Destroy()	{ };
@@ -1175,12 +1235,14 @@ public:
   bool		hard_clamped;	// this layer is actually hard clamped
   int		prv_phase;	// #READ_ONLY previous phase value (needed for 2nd plus phases and the like)
   float		dav;		// #READ_ONLY dopamine-like modulatory value (where applicable)
+  float		net_rescale;	// #READ_ONLY computed netinput rescaling factor (updated by net_rescale)
   int		da_updt;	// #READ_ONLY true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN misc int array of data
 
   void	Build();
 
   void	InitWtState() 	{ spec->InitWtState(this); }
+  void	InitActAvg() 	{ spec->InitActAvg(this); }
   void	InitInhib() 	{ spec->InitInhib(this); } // initialize inhibitory state
   void	ModifyState()	{ spec->DecayEvent(this, NULL); } // this is what modify means..
 
@@ -1191,6 +1253,7 @@ public:
 
   void	Compute_HardClamp(LeabraTrial* trl) 	{ spec->Compute_HardClamp(this, trl); }
   void	Compute_NetScale(LeabraTrial* trl) 	{ spec->Compute_NetScale(this, trl); }
+  void	Init_ClampNet(LeabraTrial* trl) 	{ spec->Init_ClampNet(this, trl); }
   void	Send_ClampNet(LeabraTrial* trl) 	{ spec->Send_ClampNet(this, trl); }
 
   void	Send_Net()				{ spec->Send_Net(this); }
@@ -1199,6 +1262,7 @@ public:
   void	Compute_Clamp_NetAvg(LeabraTrial* trl)  { spec->Compute_Clamp_NetAvg(this, trl); }
 
   void	Compute_Inhib(LeabraTrial* trl) 	{ spec->Compute_Inhib(this, trl); }
+  void	Compute_LayInhibToGps(LeabraTrial* trl) { spec->Compute_LayInhibToGps(this, trl); }
   void	Compute_InhibAvg(LeabraTrial* trl)	{ spec->Compute_InhibAvg(this, trl); }
 
   void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
@@ -1658,7 +1722,7 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
 //////////////////////////
 
 class LEABRA_API LeabraMaxDa : public Stat {
-  // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes when equilibrium is
+  // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes maximum change in activation, used for determining equilibrium to stop settling; also looks for maximum activation on target layers to provide that as an additional stopping criterion
 public:
   enum dAType {
     DA_ONLY,			// just use da
@@ -1670,7 +1734,8 @@ public:
   dAType	da_type;	// #DEF_INET_DA type of activation change measure to use
   float		inet_scale;	// #DEF_1 how to scale the inet measure to be like da
   float		lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
-  StatVal	da;		// absolute value of activation change
+  StatVal	da;		// absolute value of activation change -- set the stopping criterion here to stop network settling when change has gone below threshold (typically .005)
+  StatVal	trg_max_act;	// target layer(s) maximum activation value -- set the stopping criterion here to stop network settling when activation in target layer exceeds threshold (typically .85)
 
   void		RecvCon_Run(Unit*)	{}; // don't do these!
   void		SendCon_Run(Unit*)	{};
@@ -1681,6 +1746,7 @@ public:
   void		Network_Init();
 
   void 		Unit_Stat(Unit* unit);
+  void 		Layer_Stat(Layer* lay);
   void		Network_Stat();
 
   void	UpdateAfterEdit();
@@ -2651,6 +2717,7 @@ public:
 class LEABRA_API OutErrSpec : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
 public:
+  float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   bool		seq_all_cor;	// #DEF_false require that all RewTarg events in a sequence be correct before giving reward (on the last event in sequence);  if graded is checked, this reward is a graded function of % correct
@@ -3214,35 +3281,33 @@ class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
 public:
   enum LearnRule {
-    MOTOR_DELTA,		// delta rule for BG_motor: (bg+ - bg-) * s-
-    MOTOR_CHL,			// CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
-    PFC   			// PFC learning rule: (bg_p2 - bg_p) * s_p
+    OUTPUT_DELTA,		// #AKA_MOTOR_DELTA delta rule for BG_motor: (bg+ - bg-) * s-
+    OUTPUT_CHL,			// #AKA_MOTOR_CHL CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
+    MAINT   			// #AKA_PFC MAINT learning rule: (bg_p2 - bg_p) * s_p
   };
 
   LearnRule	learn_rule;	// learning rule to use
-  bool		pfc_hebb_nego;	// only allow negative dwts for pfc hebb learning
 
   inline float C_Compute_Hebb(LeabraCon* cn, LeabraCon_Group* cg, DaModUnit* ru, DaModUnit* su) {
     // wt is negative in linear form, so using opposite sign of usual here
     float rval;
-    if((learn_rule == MOTOR_DELTA) || (learn_rule == MOTOR_DELTA))
+    if((learn_rule == OUTPUT_DELTA) || (learn_rule == OUTPUT_CHL))
       rval = ru->act_p * (su->act_p * (cg->savg_cor + cn->wt) + (1.0f - su->act_p) * cn->wt);
     else
       rval = ru->act_p2 * (su->act_p * (cg->savg_cor + cn->wt) + (1.0f - su->act_p) * cn->wt);
-    if(pfc_hebb_nego && (rval > 0.0f)) rval = 0.0f;
     return rval;
   }
 
   inline float C_Compute_Err(LeabraCon* cn, DaModUnit* ru, DaModUnit* su) {
     float err = 0.0f;
     switch(learn_rule) {
-    case MOTOR_DELTA:
-      err = (ru->act_p  - ru->act_m) * su->act_m;
+    case OUTPUT_DELTA:
+      err = (ru->act_p - ru->act_m) * su->act_m;
       break;
-    case MOTOR_CHL:
+    case OUTPUT_CHL:
       err = (ru->act_p * su->act_p) - (ru->act_m * su->act_m);
       break;
-    case PFC:
+    case MAINT:
       err = (ru->act_p2  - ru->act_p) * su->act_p;
       break;
     }
@@ -3282,12 +3347,12 @@ public:
 };
 
 class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
-  // noise bias connection -- holds noise value separate from orig value
+  // Matrix bias spec: special learning paramters for matrix units
 public:
   enum LearnRule {
-    MOTOR_DELTA,		// delta rule for BG_motor: (bg+ - bg-) * s-
-    MOTOR_CHL,			// CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
-    PFC   			// PFC: learn on 2p - p
+    OUTPUT_DELTA,		// delta rule for BG_motor: (bg+ - bg-) * s-
+    OUTPUT_CHL,			// CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
+    MAINT   			// MAINT: learn on 2p - p
   };
 
   LearnRule	learn_rule;	// learning rule to use
@@ -3295,7 +3360,7 @@ public:
   void B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
     DaModUnit* dau = (DaModUnit*)ru;
     float err;
-    if(learn_rule == PFC)
+    if(learn_rule == MAINT)
       err = dau->act_p2 - dau->act_p;
     else
       err = ru->act_p - ru->act_m;
@@ -3311,7 +3376,7 @@ public:
 class LEABRA_API MatrixUnitSpec : public DaModUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 public:
-  bool	freeze_net;		// #DEF_true freeze netinput (PFC in 2+ phase, MOTOR in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
+  bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
   void 	Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* trl, LeabraTrial* trl);
   void	PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
@@ -3331,6 +3396,21 @@ public:
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
+class LEABRA_API MatrixMiscSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the matrix layer
+public:
+  float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
+  float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
+  float		perf_gain;	// #DEF_0 performance effect da gain (in 2- phase for trans, 1+ for gogo)
+  bool		no_snr_mod;	// #DEF_false disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
+
+  void	Initialize();
+  void	Destroy()	{ };
+  SIMPLE_COPY(MatrixMiscSpec);
+  COPY_FUNS(MatrixMiscSpec, taBase);
+  TA_BASEFUNS(MatrixMiscSpec);
+};
+
 class LEABRA_API ContrastSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER contrast enhancement of the GO units
 public:
@@ -3348,13 +3428,16 @@ public:
 };
 
 class LEABRA_API MatrixRndGoSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc random go specifications (unconditional, nogo)
 public:
-  bool		on;		// #DEF_true whether to use random go firing function or not (if not, over max_mnt Go firing is still used)
-  float		go_p;		// #CONDEDIT_ON_on:true #DEF_0.1 probability of actually firing a random Go when all the conditions have been met
-  float		rgo_da;		// #CONDEDIT_ON_on:true #DEF_20 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) when max_mnt is up or a random Go is active (applied during learning, after Go/NoGo already computed)
-  float		prf_go_p;	// #CONDEDIT_ON_on:true #DEF_1e-04 uniform random performance-only Go firing (not conditional on thresholds; happens randomly; does not cause learning)
-  float		prf_rgo_da;	// #CONDEDIT_ON_on:true #DEF_1 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) on a purely random basis (prf_go_p)
+  float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer) -- once network is doing well overall, shutdown the exploration.  This is true for all cases EXCEPT err rnd go
+
+  float		ucond_p;	// #DEF_1e-04 unconditional random go probability (on every trial, each stripe has this probability of firing a Go randomly, without conditions)
+  float		ucond_da;	// #DEF_1 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for the unconditional random go
+
+  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  float		nogo_p;		// #DEF_0.1 probability of actually firing a nogo random Go once the threshold is exceeded
+  float		nogo_da;	// #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
 
   void	Initialize();
   void	Destroy()	{ };
@@ -3363,57 +3446,68 @@ public:
   TA_BASEFUNS(MatrixRndGoSpec);
 };
 
-class LEABRA_API MatrixRndGoThrSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER thresholds for matrix random Go firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
+class LEABRA_API MatrixErrRndGoSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER matrix random Go firing to encourage exploration when (a series of) errors occur: a stripe is chosen from a softmax over the snrthal netinputs (closer to firing chosen with higher probability)
 public:
-  float		abs_thr;	// #DEF_0 absolute threshold on per stripe avg_go_da value (-1..1) for triggering random GO (if stripe_agd < abs_thr then Go p(go_p))
-  float		abs_max;	// #DEF_0.1 absolute maximum on per stripe avg_go_da value (-1..1) above which no random GO can occur (if stripe_agd > abs_max then never Go)
-  float		rel;		// #DEF_0.05 relative threshold on per stripe avg_go_da value (-1..1) for triggering random GO (if (stripe_agd - avg_agd) < -agd_rel then Go p(go_p))
-  int		mnt;		// #DEF_10 minimum maintenance duration (trials of sustained maintenance/off) for a stripe before a random GO will fire
-  float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer)
+  bool		on;		// #DEF_true whether to use error-driven random go
+  int		min_cor;	// #CONDEDIT_ON_on:true [Default is 5 for MAINT, 1 for OUTPUT] minimum number of sequential correct to start counting errors and doing random go: need some amount of correct before errors count!
+  int		min_errs;	// #CONDEDIT_ON_on:true #DEF_1 minimum number of sequential errors to start this random go exploration
+  float		err_p;		// #CONDEDIT_ON_on:true #DEF_1 baseline probability of firing Go, once above min_cor and min_errs
+  float		gain;		// #CONDEDIT_ON_on:true [Default is .2 for MAINT, .5 for OUTPUT] gain on softmax over netinputs on snrthal units for choosing the stripe to activate Go for: softmax = normalized exp(gain * snrthal->net)
+  float		if_go_p;	// #CONDEDIT_ON_on:true #DEF_0 probability of firing a random Go if some stripes are actually currently firing a Go (i.e., the not-all-nogo case); by default, only fire Go if all stripes are firing nogo
+  float		err_da;		// #CONDEDIT_ON_on:true #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) when error Go is fired (for learning effect) -- this multiplies the actual DA value coming from the SNc, and is also weighted by the netinput of the snrthal stripe; da = -dav * err_da * (snrthal->net + 1)
 
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(MatrixRndGoThrSpec);
-  COPY_FUNS(MatrixRndGoThrSpec, taBase);
-  TA_BASEFUNS(MatrixRndGoThrSpec);
+  SIMPLE_COPY(MatrixErrRndGoSpec);
+  COPY_FUNS(MatrixErrRndGoSpec, taBase);
+  TA_BASEFUNS(MatrixErrRndGoSpec);
 };
 
-class LEABRA_API MatrixMiscSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the matrix layer
+class LEABRA_API MatrixAvgDaRndGoSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER matrix random Go firing to encourage exploration for non-productive stripes based on softmax of avg_go_da for that stripe (matrix_u->misc_1)
 public:
-  float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
-  float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
-  float		perf_gain;	// #DEF_0 performance effect da gain (in 2- phase for trans, 1+ for gogo)
-  int		max_mnt;	// #DEF_50 maximum maintenance duration: if longer than this, NOGO is activated as per rnd_go
-  float		avg_go_dt;	// #DEF_0.005 time constant for integrating the average DA value associated with Go firing for each stripe (stored in u->misc_1)
-  bool		no_snr_mod;	// #DEF_false disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
+  bool		on;		// [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
+  float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
+  float		gain;		// #CONDEDIT_ON_on:true #DEF_0.5 gain on softmax over avgda values on snrthal units for choosing the stripe to activate Go for (softmax = normalized exp(gain * (avgda_thr - avg_go_da))
+  float		avgda_thr;	// #CONDEDIT_ON_on:true #DEF_0.1 threshold on per stripe avg_go_da value (-1..1) below which the random Go starts happening (and is subtracted from avgda as the reference point for the softmax computation)
+  int		nogo_thr;	// #CONDEDIT_ON_on:true #DEF_10 minimum number of sequential nogos in a row for a stripe before a avg-da random Go will fire (not to be confused with nogo_thr, which is regardless of avgda -- this is specifically for avg-da random go)
+  float		avgda_da;	// #CONDEDIT_ON_on:true #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) when go is fired (for learning effect)
+  float		avgda_dt;	// #CONDEDIT_ON_on:true #DEF_0.005 time constant for integrating the average DA value associated with Go firing for each stripe (stored in matrix_u->misc_1)
 
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(MatrixMiscSpec);
-  COPY_FUNS(MatrixMiscSpec, taBase);
-  TA_BASEFUNS(MatrixMiscSpec);
+  SIMPLE_COPY(MatrixAvgDaRndGoSpec);
+  COPY_FUNS(MatrixAvgDaRndGoSpec, taBase);
+  TA_BASEFUNS(MatrixAvgDaRndGoSpec);
 };
 
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
-  // basal ganglia matrix layer: fire actions/WM updates, or nogo; PFC = gate in 1+ and 2+, MOTOR = gate in -
+  // basal ganglia matrix layer: fire actions/WM updates, or nogo; MAINT = gate in 1+ and 2+, OUTPUT = gate in -
 public:
   enum 	BGType {       		// which type of basal ganglia circuit is this?
-    MOTOR,			// matrix that gates motor cortex responses
-    PFC				// matrix that gates pfc working memory updating
+    OUTPUT,			// #AKA_MOTOR matrix that does output gating: controls access of frontal activations to other areas (e.g., motor output, or output of maintained PFC information)
+    MAINT			// #AKA_PFC matrix that does maintenance gating: controls toggling of maintenance of activity patterns (e.g., PFC) over time
   };
 
-  BGType		bg_type;	// type of basal ganglia/frontal system: motor or pfc
+  BGType		bg_type;	// type of basal ganglia/frontal system: output gating (e.g., motor) or maintenance gating (e.g., pfc)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
-  MatrixRndGoSpec	rnd_go;		// matrix random GO firing to encourage exploration for non-productive stripes based on avg_go_da for that stripe (matrix_u->misc_1)
-  MatrixRndGoThrSpec	rnd_go_thr;	// #CONDEDIT_ON_rnd_go.on:true random Go firing thresholds: when to fire a random Go that drives learning
+  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for unconditional and nogo firing stripes cases
+  MatrixErrRndGoSpec	err_rnd_go;	// matrix random Go firing to encourage exploration when (a series of) errors are made: chooses stripe to Go at random using probabilities from a softmax over snrthal netinput values: stripes that are closer to firing fire more often
+  MatrixAvgDaRndGoSpec	avgda_rnd_go;	// matrix random Go firing based on average da to encourage exploration for non-productive stripes based on a softmax over the avg_go_da for that stripe (matrix_u->misc_1) 
 
-  virtual void 	Compute_RndGo(LeabraLayer* lay, LeabraTrial* trl);
-  // compute random GO signal for stripes that have been dormant a longish time
+  virtual bool 	Check_RndGoAvgRew(LeabraLayer* lay, LeabraTrial* trl);
+  // check avg_rew levels to see whether we should compute random go (don't do when avg_rew is good!); false = don't do rnd go, true = do it
+  virtual void 	Compute_UCondNoGoRndGo(LeabraLayer* lay, LeabraTrial* trl);
+  // compute random Go for unconditional and nogo cases
+  virtual void 	Compute_ErrRndGo(LeabraLayer* lay, LeabraTrial* trl);
+  // compute random Go signal when errors have been made recently
+  virtual void 	Compute_AvgDaRndGo(LeabraLayer* lay, LeabraTrial* trl);
+  // compute random Go signal based on average da values for stripes 
   virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraTrial* trl);
   // clear the rnd go signal
+
   virtual void 	Compute_DaModUnit_NoContrast(DaModUnit* u, float dav, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
   virtual void 	Compute_DaModUnit_Contrast(DaModUnit* u, float dav, float gating_act, int go_no);
@@ -3426,6 +3520,8 @@ public:
   // compute dynamic da modulation: evaluation modulation, which is sensitive to GO/NOGO firing and activation in action phase
   virtual void 	Compute_AvgGoDa(LeabraLayer* lay, LeabraTrial* trl);
   // compute average da present when stripes fire a Go (stored in u->misc_1); used to modulate rnd_go firing
+  virtual void 	Compute_MotorGate(LeabraLayer* lay, LeabraTrial* trl);
+  // compute gating signal for OUTPUT Matrix_out
 
   void	InitWtState(LeabraLayer* lay);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraTrial* trl);
@@ -3450,10 +3546,24 @@ public:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
+class SNrThalMiscSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the snrthal layer
+public:
+  float		avg_net_dt;	// #DEF_0.005 time-averaged netinput computation integration rate
+  float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
+  float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
+
+  void	Initialize();
+  void	Destroy()	{ };
+  SIMPLE_COPY(SNrThalMiscSpec);
+  COPY_FUNS(SNrThalMiscSpec, taBase);
+  TA_BASEFUNS(SNrThalMiscSpec);
+};
+
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
   // computes activation = GO - NOGO from MatrixLayerSpec
 public:
-  float		avg_net_dt;	// time-averaged netinput computation integration rate
+  SNrThalMiscSpec	snrthal; // misc specs for snrthal layer
 
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraTrial* trl);
   // compute netinput as GO - NOGO on matrix layer
@@ -3473,16 +3583,16 @@ public:
   TA_BASEFUNS(SNrThalLayerSpec);
 };
 
-//////////////////////////////////
-//	PFC Layer Spec		//
-//////////////////////////////////
+//////////////////////////////////////////
+//	PFC Layer Spec	(Maintenance)	//
+//////////////////////////////////////////
 
 class LEABRA_API PFCGateSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basal ganglia gating specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER gating specifications for basal ganglia gating of PFC maintenance layer
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate GO unit fired 
-    GATE_NOGO = 1,		// gate NOGO unit fired
+    GATE_NOGO = 1		// gate NOGO unit fired
   };
   
   enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group
@@ -3492,15 +3602,15 @@ public:
     LATCH_NOGO,			// stripe was already latched, got a NOGO
     LATCH_GOGO,			// stripe was already latched, got a GO then another GO
     NO_GATE,			// no gating took place
-    RANDOM_GO,			// matrix random-Go for stripes firing lots of NoGo (causes learning)
-    PERF_RND_GO			// performance-only unconditional matrix random-Go 
+    UCOND_RND_GO,		// unconditional random go: just fire random go with a given probability, 
+    NOGO_RND_GO,		// random go for stripes constantly firing nogo
+    ERR_RND_GO,			// random go when an error has just been made: explore on error (ACC/LC?)
+    AVGDA_RND_GO		// random go for stripes with consistently low average dopamine levels (under performers)
   };
 
-  float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a GO
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
   bool		updt_reset_sd;	// #DEF_true reset synaptic depression when units are updated
-  float		snr_tie_thr;	// #DEF_0.2 how high does the average netinput need to be to detect a tie-deadlock among a set of snrthal units all sending equally strong GO signals, such that the net activation is < go_thr?
-  bool		snr_tie_max;	// #DEF_false choose the max active units to win in the case of a snrthal tie deadlock 
+  bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
   void	Initialize();
   void	Destroy()	{ };
@@ -3510,7 +3620,7 @@ public:
 };
 
 class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
-  // Prefrontal cortex layer: gets gating signal from matrix, gate updates before each plus phase (toggle off, toggle on)
+  // Prefrontal cortex layer: gets gating signal from SNrThal, gate updates before plus and 2nd plus (update) phase (toggle off, toggle on)
 public:
   enum MaintUpdtAct {
     NO_UPDT,			// no update action
@@ -3531,8 +3641,6 @@ public:
   // send misc_state gating state variables to the snrthal and matrix layers
   virtual void 	Compute_TmpClear(LeabraLayer* lay, LeabraTrial* trl);
   // temporarily clear the maintenance of pfc units to prepare way for transient acts
-  virtual void 	Compute_GatingTrans(LeabraLayer* lay, LeabraTrial* trl);
-  // compute the gating signal based on SNrThal layer: TRANS model
   virtual void 	Compute_GatingGOGO(LeabraLayer* lay, LeabraTrial* trl);
   // compute the gating signal based on SNrThal layer: GOGO model
 
@@ -3547,6 +3655,45 @@ public:
   void	Destroy()		{ CutLinks(); }
   void	InitLinks();
   TA_BASEFUNS(PFCLayerSpec);
+};
+
+//////////////////////////////////////////
+//	PFC Layer Spec	(Output)	//
+//////////////////////////////////////////
+
+class LEABRA_API PFCOutGateSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifications for pfc output gating
+public:
+  float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
+  float		go_gain;	// #DEF_0.5 how much extra to add for a Go signal
+  bool		graded_go;	// #DEF_false use a graded Go signal as a function of strength of corresponding SNrThal unit?
+
+  void	Initialize();
+  void	Destroy()	{ };
+  SIMPLE_COPY(PFCOutGateSpec);
+  COPY_FUNS(PFCOutGateSpec, taBase);
+  TA_BASEFUNS(PFCOutGateSpec);
+};
+
+class LEABRA_API PFCOutLayerSpec : public LeabraLayerSpec {
+  // Prefrontal cortex output gated layer: gets gating signal from SNrThal and activations from PFC_mnt layer: gating modulates strength of activation
+public:
+  PFCOutGateSpec out_gate;		// parameters controlling the output gating of pfc units
+
+  void	Compute_HardClamp(LeabraLayer* lay, LeabraTrial* trl);
+
+  void	Compute_Inhib(LeabraLayer* lay, LeabraTrial* trl);
+  void 	Compute_InhibAvg(LeabraLayer* lay, LeabraTrial* trl);
+  void 	Compute_Act(LeabraLayer* lay, LeabraTrial* trl);
+  void	Compute_dWt(LeabraLayer* lay, LeabraTrial* trl);
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  void	Defaults();
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
+  void	InitLinks();
+  TA_BASEFUNS(PFCOutLayerSpec);
 };
 
 //////////////////////////////////
@@ -3573,8 +3720,8 @@ public:
   virtual void 	PVLV(Network* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false);
   // #MENU_BUTTON configure PVLV (pavlovian perceived value and local value) learning layers in a network; bio_labels = use biologically-based labels for layers, else functional; localist_val = use localist value representations for lvpv layers; da_mod_all = have da value modulate all the regular units in the network
 
-  virtual void 	BgPFC(Network* net, bool bio_labels = false, bool localist_val = true, int n_stripes=4, bool fm_hid_cons=true, bool fm_out_cons=false, bool mat_fm_pfc_full = false, bool make_patch=false, bool nolrn_pfc=false, bool da_mod_all = false, bool lr_sched = true);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); patch per-stripe learning system optional; nolrn_pfc = pfc does not learn -- just copies input acts directly; da_mod_all = have da value modulate all the regular units in the network; lr_sched = make a learning rate schedule on BG learn cons
+  virtual void 	BgPFC(Network* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false, int n_stripes=4, bool mat_fm_pfc_full = false, bool out_gate=false, bool nolrn_pfc=false, bool lr_sched = true);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; patch per-stripe learning system optional; nolrn_pfc = pfc does not learn -- just copies input acts directly; da_mod_all = have da value modulate all the regular units in the network; lr_sched = make a learning rate schedule on BG learn cons
 
   virtual void SetPFCStripes(Network* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
