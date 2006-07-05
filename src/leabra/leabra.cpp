@@ -3352,6 +3352,186 @@ bool LeabraNetwork::CheckUnit(Unit* ck) {
   return rval;
 }
 
+static char* leabra_defaults =
+"// ta_Dump File v1.0\n\
+TypeDefault_MGroup .projects[0].defaults { \n\
+ TypeDefault .projects[0].defaults[0] { \n\
+  NameValue @.active_membs[0] { };\n\
+  NameValue @.active_membs[1] { };\n\
+  NameValue @.active_membs[2] { };\n\
+  NameValue @.active_membs[3] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[1] { \n\
+  NameValue @.active_membs[0] { };\n\
+  NameValue @.active_membs[1] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[2] { \n\
+  NameValue @.active_membs[0] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[3] { \n\
+  NameValue @.active_membs[0] { };\n\
+  NameValue @.active_membs[1] { };\n\
+  NameValue @.active_membs[2] { };\n\
+  NameValue @.active_membs[3] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[4] { \n\
+  NameValue @.active_membs[0] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[5] { \n\
+  NameValue @.active_membs[0] { };\n\
+ };\n\
+ TypeDefault .projects[0].defaults[6] { \n\
+  NameValue @.active_membs[0] { };\n\
+  NameValue @.active_membs[1] { };\n\
+  NameValue @.active_membs[2] { };\n\
+  NameValue @.active_membs[3] { };\n\
+ };\n\
+};\n\
+TypeDefault_MGroup .projects[0].defaults {\n\
+ el_typ = TypeDefault;\n\
+ el_def = 0;\n\
+ name = \"\";\n\
+};\n\
+TypeDefault .projects[0].defaults[0] {\n\
+ name = \"Projection\";\n\
+ default_type = Projection;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"spec\";\n\
+  value = \"{type=FullPrjnSpec: spec=NULL: }\";\n\
+ };\n\
+ NameValue @.active_membs[1] {\n\
+  name = \"con_type\";\n\
+  value = \"LeabraCon\";\n\
+ };\n\
+ NameValue @.active_membs[2] {\n\
+  name = \"con_gp_type\";\n\
+  value = \"LeabraCon_Group\";\n\
+ };\n\
+ NameValue @.active_membs[3] {\n\
+  name = \"con_spec\";\n\
+  value = \"{type=LeabraConSpec: spec=NULL: }\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[1] {\n\
+ name = \"LeabraLayer\";\n\
+ default_type = LeabraLayer;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"units\";\n\
+  value = \"Size: 0 (LeabraUnit)\";\n\
+ };\n\
+ NameValue @.active_membs[1] {\n\
+  name = \"unit_spec\";\n\
+  value = \"{type=LeabraUnitSpec: spec=NULL: }\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[2] {\n\
+ name = \"Network\";\n\
+ default_type = Network;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"layers\";\n\
+  value = \"LeabraLayer\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[3] {\n\
+ name = \"EpochProcess\";\n\
+ default_type = EpochProcess;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"sub_proc_type\";\n\
+  value = \"LeabraTrial\";\n\
+ };\n\
+ NameValue @.active_membs[1] {\n\
+  name = \"order\";\n\
+  value = \"PERMUTED\";\n\
+ };\n\
+ NameValue @.active_membs[2] {\n\
+  name = \"wt_update\";\n\
+  value = \"ON_LINE\";\n\
+ };\n\
+ NameValue @.active_membs[3] {\n\
+  name = \"between_events\";\n\
+  value = \"INIT_STATE\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[4] {\n\
+ name = \"SequenceProcess\";\n\
+ default_type = SequenceProcess;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"sub_proc_type\";\n\
+  value = \"LeabraTrial\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[5] {\n\
+ name = \"SE_Stat\";\n\
+ default_type = SE_Stat;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"tolerance\";\n\
+  value = \"0.5\";\n\
+ };\n\
+};\n\
+TypeDefault .projects[0].defaults[6] {\n\
+ name = \"SyncEpochProc\";\n\
+ default_type = SyncEpochProc;\n\
+ active_membs  taBase_Group  {\n\
+  el_typ = NameValue;\n\
+  el_def = 0;\n\
+  name = \"\";\n\
+ };\n\
+ NameValue @.active_membs[0] {\n\
+  name = \"sub_proc_type\";\n\
+  value = \"LeabraTrial\";\n\
+ };\n\
+ NameValue @.active_membs[1] {\n\
+  name = \"order\";\n\
+  value = \"PERMUTED\";\n\
+ };\n\
+ NameValue @.active_membs[2] {\n\
+  name = \"wt_update\";\n\
+  value = \"ON_LINE\";\n\
+ };\n\
+ NameValue @.active_membs[3] {\n\
+  name = \"second_proc_type\";\n\
+  value = \"LeabraTrial\";\n\
+ };\n\
+};\n\
+";
+
+void LeabraProject::Initialize() {
+  networks.SetBaseType(&TA_LeabraNetwork);
+  wizards.SetBaseType(&TA_LeabraWizard);
+  defaults_str = leabra_defaults;
+  defaults_file = "leabra.def";
+}
+
 // todo: replace with comparable progs
 
 // //////////////////////////
