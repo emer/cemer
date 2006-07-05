@@ -254,6 +254,8 @@ public:
   TA_BASEFUNS(GraphLog);
 };
 
+typedef GraphLog* GraphLog_ptr;	/* needed to prevent conflicts in TA_GraphLog_ptr in algos */
+
 
 #endif // pdplog.h
 

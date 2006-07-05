@@ -1254,6 +1254,15 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
   bias_spec = cp.bias_spec;
 }
 
+bool UnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
+  Con_Group* recv_gp;
+  int g;
+  FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
+    if(!recv_gp->CheckConfig(lay, un, net, quiet)) return false;
+  }
+  return true;
+}
+
 void UnitSpec::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   act_range.UpdateAfterEdit();
@@ -3858,6 +3867,16 @@ bool Layer::CheckTypes() {
   return true;
 }
 
+bool Layer::CheckConfig(Network* net, bool quiet) {
+  // layerspec should take over this function in layers that have them!
+  Unit* u;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, u, units., ui) {
+    if(!u->CheckConfig(this, net, quiet)) return false;
+  }
+  return true;
+}
+
 void Layer::FixPrjnIndexes() {
   Projection* p;
   taLeafItr i;
@@ -4988,6 +5007,15 @@ bool Network::CheckTypes() {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->CheckTypes()) return false;
+  }
+  return true;
+}
+
+bool Network::CheckConfig(bool quiet) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->CheckConfig(this, quiet)) return false;
   }
   return true;
 }

@@ -18,12 +18,18 @@
 #ifndef leabra_h
 #define leabra_h
 
-#include "pdpshell.h"	// needed for Wizard
+#include "pdpbase.h"
+#include "netstru.h"
+#include "pdpshell.h"
+
 #include "fun_lookup.h"
+
+#include "leabra_def.h"
 #include "leabra_TA_type.h"
-#include <math.h>
-#include <limits.h>
-#include <float.h>
+
+/* #include <math.h> */
+/* #include <limits.h> */
+/* #include <float.h> */
 
 // pre-declare
 
@@ -42,8 +48,6 @@ class LeabraLayer;
 
 class LeabraNetwork;
 class LeabraProject;
-
-class LeabraMaxDa;
 
 // _
 
@@ -99,7 +103,7 @@ class LeabraMaxDa;
     code \
   } 
   
-class LEABRA_API LeabraCon : public Connection {
+class LeabraCon : public Connection {
   // Leabra connection
 public:
   float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
@@ -341,7 +345,7 @@ public:
   }
   // hook for setting other weight-like values after initializing the weight value
 
-  void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)spec.spec)->SetCurLrate(epoch, trl); }
+  void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)spec.spec)->SetCurLrate(epoch, net); }
 
   inline void 	Send_ClampNet(LeabraUnit* su)
   { ((LeabraConSpec*)spec.spec)->Send_ClampNet(this, su); }
@@ -660,7 +664,7 @@ public:
 
   void		UpdateWeights(Unit* u);
 
-  virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraTrial*)	{ };
+  virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*)	{ };
   // encode current state information (hook for time-based learning)
 
   virtual void	CreateNXX1Fun();  // create convolved gaussian and x/x+1 
@@ -674,7 +678,7 @@ public:
   virtual void	GraphActFmNetFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph log)
 
-  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp, bool quiet=false);
+  bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);
 
   void	UpdateAfterEdit();	// to set _impl sig
   void 	Initialize();
@@ -758,16 +762,16 @@ public:
   { ((LeabraUnitSpec*)spec.spec)->InitState(this, lay); }
 
   void		SetCurLrate(LeabraNetwork* net, int epoch)
-  { ((LeabraUnitSpec*)spec.spec)->SetCurLrate(this, trl, epoch); }
+  { ((LeabraUnitSpec*)spec.spec)->SetCurLrate(this, net, epoch); }
 
   void		Compute_NetScale(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Compute_NetScale(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_NetScale(this, lay, net); }
   void		Compute_NetRescale(LeabraLayer* lay, LeabraNetwork* net, float new_scale)
-  { ((LeabraUnitSpec*)spec.spec)->Compute_NetRescale(this, lay, trl, new_scale); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_NetRescale(this, lay, net, new_scale); }
   void		Init_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Init_ClampNet(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Init_ClampNet(this, lay, net); }
   void		Send_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Send_ClampNet(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Send_ClampNet(this, lay, net); }
 
   void		Send_Net(LeabraLayer* lay)
   { ((LeabraUnitSpec*)spec.spec)->Send_Net(this, lay); }
@@ -775,46 +779,46 @@ public:
   { ((LeabraUnitSpec*)spec.spec)->Send_NetDelta(this, lay); }
 
   void		Compute_NetAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Compute_NetAvg(this, lay, athr, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_NetAvg(this, lay, athr, net); }
   void		Compute_InhibAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Compute_InhibAvg(this, lay, athr, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_InhibAvg(this, lay, athr, net); }
   void		Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.spec)->Compute_HardClamp(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_HardClamp(this, lay, net); }
   void		Compute_HardClampNoClip(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.spec)->Compute_HardClampNoClip(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_HardClampNoClip(this, lay, net); }
   bool		Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net) 
-  { return ((LeabraUnitSpec*)spec.spec)->Compute_SoftClamp(this, lay, trl); }
+  { return ((LeabraUnitSpec*)spec.spec)->Compute_SoftClamp(this, lay, net); }
 
   float		Compute_IThresh(LeabraLayer* lay, LeabraNetwork* net)
-  { return ((LeabraUnitSpec*)spec.spec)->Compute_IThresh(this, lay, trl); }
+  { return ((LeabraUnitSpec*)spec.spec)->Compute_IThresh(this, lay, net); }
   float		Compute_IThreshNoAH(LeabraLayer* lay, LeabraNetwork* net)
-  { return ((LeabraUnitSpec*)spec.spec)->Compute_IThreshNoAH(this, lay, trl); }
+  { return ((LeabraUnitSpec*)spec.spec)->Compute_IThreshNoAH(this, lay, net); }
 
   void		Compute_Act()	{ Unit::Compute_Act(); }
   void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.spec)->Compute_Act(this, lay, athr, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_Act(this, lay, athr, net); }
 
   void		PhaseInit(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->PhaseInit(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->PhaseInit(this, lay, net); }
   void		DecayEvent(LeabraLayer* lay, LeabraNetwork* net, float decay)
-  { ((LeabraUnitSpec*)spec.spec)->DecayEvent(this, lay, trl, decay); }
+  { ((LeabraUnitSpec*)spec.spec)->DecayEvent(this, lay, net, decay); }
   void		DecayPhase(LeabraLayer* lay, LeabraNetwork* net, float decay)
-  { ((LeabraUnitSpec*)spec.spec)->DecayPhase(this, lay, trl, decay); }
+  { ((LeabraUnitSpec*)spec.spec)->DecayPhase(this, lay, net, decay); }
   void		ExtToComp(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->ExtToComp(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->ExtToComp(this, lay, net); }
   void		TargExtToComp(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->TargExtToComp(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->TargExtToComp(this, lay, net); }
   void		PostSettle(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net, bool set_both=false)
-  { ((LeabraUnitSpec*)spec.spec)->PostSettle(this, lay, athr, trl, set_both); }
+  { ((LeabraUnitSpec*)spec.spec)->PostSettle(this, lay, athr, net, set_both); }
 
   void 		Compute_dWt(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->Compute_dWt(this, lay, trl); }	  
+  { ((LeabraUnitSpec*)spec.spec)->Compute_dWt(this, lay, net); }	  
 
   void 		Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.spec)->Compute_WtFmLin(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->Compute_WtFmLin(this, lay, net); }
 
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.spec)->EncodeState(this, lay, trl); }
+  { ((LeabraUnitSpec*)spec.spec)->EncodeState(this, lay, net); }
 
   void		GetInSubGp();
 
@@ -1059,13 +1063,13 @@ public:
   //	Stage 4: the final activation 	//
   ////////////////////////////////////////
 
-  virtual void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
+  virtual void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
   virtual void	Compute_ActAvg(LeabraLayer* lay, LeabraNetwork* net);
   // helper function to compute acts.avg from act_eq
-  virtual void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
+  virtual void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
   virtual void	Compute_ActMAvg(LeabraLayer* lay, LeabraNetwork* net);
   // helper function to compute acts_m.avg from act_m
-  virtual void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
+  virtual void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
   virtual void	Compute_ActPAvg(LeabraLayer* lay, LeabraNetwork* net);
   // helper function to compute acts_p.avg from act_p
 
@@ -1115,7 +1119,7 @@ public:
   // find a layer in network based on the type of layer spec
 
   virtual void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  virtual bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  virtual bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes
 
   virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
@@ -1243,40 +1247,40 @@ public:
   void	InitInhib() 	{ spec->InitInhib(this); } // initialize inhibitory state
   void	ModifyState()	{ spec->DecayEvent(this, NULL); } // this is what modify means..
 
-  void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, trl, epoch); }
+  void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, net, epoch); }
   
   void	Compute_Active_K()			{ spec->Compute_Active_K(this); }
   void	InitState() 				{ spec->InitState(this); }
 
-  void	Compute_HardClamp(LeabraNetwork* net) 	{ spec->Compute_HardClamp(this, trl); }
-  void	Compute_NetScale(LeabraNetwork* net) 	{ spec->Compute_NetScale(this, trl); }
-  void	Init_ClampNet(LeabraNetwork* net) 	{ spec->Init_ClampNet(this, trl); }
-  void	Send_ClampNet(LeabraNetwork* net) 	{ spec->Send_ClampNet(this, trl); }
+  void	Compute_HardClamp(LeabraNetwork* net) 	{ spec->Compute_HardClamp(this, net); }
+  void	Compute_NetScale(LeabraNetwork* net) 	{ spec->Compute_NetScale(this, net); }
+  void	Init_ClampNet(LeabraNetwork* net) 	{ spec->Init_ClampNet(this, net); }
+  void	Send_ClampNet(LeabraNetwork* net) 	{ spec->Send_ClampNet(this, net); }
 
   void	Send_Net()				{ spec->Send_Net(this); }
   void	Send_NetDelta()				{ spec->Send_NetDelta(this); }
 
-  void	Compute_Clamp_NetAvg(LeabraNetwork* net)  { spec->Compute_Clamp_NetAvg(this, trl); }
+  void	Compute_Clamp_NetAvg(LeabraNetwork* net)  { spec->Compute_Clamp_NetAvg(this, net); }
 
-  void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, trl); }
-  void	Compute_LayInhibToGps(LeabraNetwork* net) { spec->Compute_LayInhibToGps(this, trl); }
-  void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, trl); }
+  void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, net); }
+  void	Compute_LayInhibToGps(LeabraNetwork* net) { spec->Compute_LayInhibToGps(this, net); }
+  void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
 
   void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
-  void	Compute_Act(LeabraNetwork* net) 		{ spec->Compute_Act(this, trl); }
+  void	Compute_Act(LeabraNetwork* net) 		{ spec->Compute_Act(this, net); }
 
-  void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, trl); }
-  void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, trl); } // decay between events
-  void	DecayPhase(LeabraNetwork* net)    	{ spec->DecayPhase(this, trl); } // decay between phases
-  void	DecayPhase2(LeabraNetwork* net)  		{ spec->DecayPhase2(this, trl); } // decay between 2nd set of phases
+  void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, net); }
+  void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); } // decay between events
+  void	DecayPhase(LeabraNetwork* net)    	{ spec->DecayPhase(this, net); } // decay between phases
+  void	DecayPhase2(LeabraNetwork* net)  		{ spec->DecayPhase2(this, net); } // decay between 2nd set of phases
 
-  void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, trl); }
-  void	TargExtToComp(LeabraNetwork* net)		{ spec->TargExtToComp(this, trl); }
-  void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, trl, set_both); }
+  void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, net); }
+  void	TargExtToComp(LeabraNetwork* net)		{ spec->TargExtToComp(this, net); }
+  void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, net, set_both); }
 
-  void	Compute_dWt(LeabraNetwork* net) 		{ spec->Compute_dWt(this, trl); }
+  void	Compute_dWt(LeabraNetwork* net) 		{ spec->Compute_dWt(this, net); }
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
-  void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, trl); }
+  void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
   void	UpdateWeights();
 
   virtual void	ResetSortBuf();
@@ -1285,8 +1289,8 @@ public:
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
   bool		CheckTypes();
 
-  bool  CheckConfig(TrialProcess* tp, bool quiet=false)
-  { return spec->CheckConfig(this, (LeabraTrial*)tp, quiet); }
+  bool  CheckConfig(Network* net, bool quiet=false)
+  { return spec->CheckConfig(this, (LeabraNetwork*)net, quiet); }
 
   void	UpdateAfterEdit();	// reset sort_buf after any edits..
 
@@ -1580,6 +1584,7 @@ public:
   };
 
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] number and order of phases to present
+  bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
   int		phase_no;	// phase as an ordinal number (regular phase is Phase enum)
@@ -1614,9 +1619,6 @@ public:
   virtual void	Send_ClampNet();
   virtual void	PostSettle();
   virtual void	PostSettle_NStdLay();
-  virtual void	Compute_dWt_NStdLay(); // on non-nstandard layers
-  virtual void	Compute_dWt();		// on all layers
-  virtual void	UpdateWeights();
 
   // todo: not sure if we want these wrapper funs or just put their contents in the prog itself
   virtual void  Settle_Init();	  // initialize network for settle-level processing
@@ -1635,12 +1637,12 @@ public:
   virtual void	Trial_Final();	// do final processing after trial
 
   virtual bool	CheckNetwork();
-  virtual bool	CheckUnit(LeabraUnit* ck);
+  virtual bool	CheckUnit(Unit* ck);
  
-  SIMPLE_COPY(LeabraNetwork);
-  COPY_FUNS(LeabraNetwork, Network);
   void	Initialize();
   void 	Destroy()		{}
+  SIMPLE_COPY(LeabraNetwork);
+  COPY_FUNS(LeabraNetwork, Network);
   TA_BASEFUNS(LeabraNetwork);
 };
 
@@ -1651,7 +1653,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{}
-  TA_BASEFUNS(BpProject);
+  TA_BASEFUNS(LeabraProject);
 };
 
 //////////////////////////
@@ -1665,13 +1667,13 @@ void LeabraUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib
   }
   u->net = u->prv_net + dt.net * (u->net - u->prv_net);
   u->prv_net = u->net;
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (trl->cycle >= 0)) {
-    u->net += noise_sched.GetVal(trl->cycle) * noise.Gen();
+  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    u->net += noise_sched.GetVal(net->cycle) * noise.Gen();
   }
-  u->i_thr = Compute_IThresh(u, lay, trl);
+  u->i_thr = Compute_IThresh(u, lay, net);
 }
 
-void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* thr, LeabraTrial*) {
+void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* thr, LeabraNetwork*) {
   if(act.send_delta) {
     u->g_i_raw += u->g_i_delta;
     u->gc.i = u->g_i_raw;
@@ -1686,182 +1688,11 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
   //  u->gc.i += g_bar.i * thr->i_val.g_i; // add in inhibition from global inhib fctn
 }
 
-
 //////////////////////////
 // 	Stats 		//
 //////////////////////////
 
-// todo: replace with comparable programs
-
-// class LEABRA_API LeabraMaxDa : public Stat {
-//   // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes maximum change in activation, used for determining equilibrium to stop settling; also looks for maximum activation on target layers to provide that as an additional stopping criterion
-// public:
-//   enum dAType {
-//     DA_ONLY,			// just use da
-//     INET_ONLY,			// just use inet
-//     INET_DA			// use inet if no activity, then use da
-//   };
-
-//   LeabraSettle* settle_proc;	// #READ_ONLY #NO_SAVE the settle process
-//   dAType	da_type;	// #DEF_INET_DA type of activation change measure to use
-//   float		inet_scale;	// #DEF_1 how to scale the inet measure to be like da
-//   float		lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
-//   StatVal	da;		// absolute value of activation change -- set the stopping criterion here to stop network settling when change has gone below threshold (typically .005)
-//   StatVal	trg_max_act;	// target layer(s) maximum activation value -- set the stopping criterion here to stop network settling when activation in target layer exceeds threshold (typically .85)
-
-//   void		RecvCon_Run(Unit*)	{}; // don't do these!
-//   void		SendCon_Run(Unit*)	{};
-
-//   void		InitStat();
-//   void		Init();
-//   bool		Crit();
-//   void		Network_Init();
-
-//   void 		Unit_Stat(Unit* unit);
-//   void 		Layer_Stat(Layer* lay);
-//   void		Network_Stat();
-
-//   void	UpdateAfterEdit();
-//   void 	Initialize();		// set minimums
-//   void	Destroy()		{ CutLinks(); }
-//   void	CutLinks();
-//   SIMPLE_COPY(LeabraMaxDa);
-//   COPY_FUNS(LeabraMaxDa, Stat);
-//   TA_BASEFUNS(LeabraMaxDa);
-// };
-
-// class LEABRA_API LeabraSE_Stat : public SE_Stat {
-//   // squared error for leabra, controls when to compute SE 
-// public:
-//   LeabraTrial* 	trial_proc;	// #READ_ONLY #NO_SAVE the trial process to get phase info
-//   Unit::ExtType	targ_or_comp;	// when to compute SE: targ = 1st minus, comp = 2nd minus, both = both
-//   bool		no_off_err;	// do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
-
-//   void		Network_Run();	// only run in certain phases based on targ_or_comp
-//   void		Init();		// only init at the right time too
-//   void 		Unit_Stat(Unit* unit);
-//   void		NameStatVals();
-  
-//   void	UpdateAfterEdit();
-//   void	Initialize();
-//   void	Destroy()		{ CutLinks(); }
-//   void	CutLinks();
-//   SIMPLE_COPY(LeabraSE_Stat);
-//   COPY_FUNS(LeabraSE_Stat, SE_Stat);
-//   TA_BASEFUNS(LeabraSE_Stat);
-// };
-
-// class LEABRA_API LeabraGoodStat : public Stat {
-//   // ##COMPUTE_IN_TrialProcess constraint satisfaction goodness statistic
-// public:
-//   bool		subtr_inhib;	// subtract inhibition from harmony?
-//   StatVal	hrmny;		// harmony = act * netin = a_i sum_j a_j w_ij
-//   StatVal	strss;		// stress = act * log(act)
-//   StatVal	gdnss;		// goodness = harmony + stress
-
-//   void		InitStat();
-//   void		Init();
-//   bool		Crit();
-
-//   void		RecvCon_Run(Unit*)	{ }; // don't do these!
-//   void		SendCon_Run(Unit*)	{ };
-
-//   void		Network_Init();
-//   void		Unit_Stat(Unit* un);
-//   void		Network_Stat();
-
-//   void	Initialize();
-//   void	Destroy();
-//   void	Copy_(const LeabraGoodStat& cp);
-//   COPY_FUNS(LeabraGoodStat, Stat);
-//   TA_BASEFUNS(LeabraGoodStat);
-// };
-
-// class LEABRA_API LeabraSharpStat : public Stat {
-//   // ##COMPUTE_IN_TrialProcess layer sharpness statistic: just max / avg
-// public:
-//   StatVal	sharp;		// sharpness = max / avg 
-
-//   void		InitStat();
-//   void		Init();
-//   bool		Crit();
-
-//   void		RecvCon_Run(Unit*)	{ }; // don't do these!
-//   void		SendCon_Run(Unit*)	{ };
-
-//   void		Unit_Run(Layer*)	{ }; // no unit stat
-//   void		Layer_Stat(Layer*);
-
-//   void		Network_Init();
-
-//   void	Initialize();
-//   void	Destroy();
-//   void	Copy_(const LeabraSharpStat& cp);
-//   COPY_FUNS(LeabraSharpStat, Stat);
-//   TA_BASEFUNS(LeabraSharpStat);
-// };
-
-// class LEABRA_API WrongOnStat : public Stat {
-//   // ##COMPUTE_IN_TrialProcess Reports an error if a unit is on when it shouldn't have been (for multiple output cases)
-// public:
-//   Layer*	trg_lay;
-//   // target layer, containing activation pattern for all possible correct responses
-//   StatVal	wrng;		// wrong on error statistic
-//   float		threshold;	// activation value to consider unit being on
-
-//   void		RecvCon_Run(Unit*)	{ }; // don't do these!
-//   void		SendCon_Run(Unit*)	{ };
-
-//   void		InitStat();
-//   void		Init();
-//   bool		Crit();
-//   void		Network_Init();
-//   void		Layer_Run();		// only compute on TARG layers
-//   void 		Unit_Run(Layer* lay);
-
-//   void		NameStatVals();
-
-//   bool		CheckLayerInNet(); // also check trg_lay
-
-//   void	Initialize();
-//   void 	Destroy()		{ CutLinks(); }
-//   void	InitLinks();
-//   void	CutLinks();
-//   SIMPLE_COPY(WrongOnStat);
-//   COPY_FUNS(WrongOnStat, Stat);
-//   TA_BASEFUNS(WrongOnStat);
-// };
-
-// class LEABRA_API LeabraPrjnRelNetinStat : public Stat {
-//   // ##COMPUTE_IN_TrialProcess computes overall relative netinput contributions for the different projections into a layer. Useful for setting wt_scale parameters to achieve desired relative contributions of different inputs.  you MUST set the layer parameter to the layer in question
-// public:
-//   StatVal_List	relnet;		// relative netinput contributions for the different projections into units in this layer
-//   float		recv_act_thr;	// #DEF_0.1 only compute netinput for receiving units that are active above this threshold (prevents dilution by varying numbers of inactive units)
-
-//   void		InitStat();
-//   void		Init();
-//   bool		Crit();
-
-//   void		RecvCon_Run(Unit*)	{ }; // don't do these!
-//   void		SendCon_Run(Unit*)	{ };
-//   void		Unit_Run(Layer*)	{ }; // no unit stat
-
-//   void		Network_Init();
-
-//   void		NameStatVals();
-//   void		Layer_Stat(Layer*);
-
-//   virtual String GetPrjnNm(const char* prjn_nm);
-
-//   void	UpdateAfterEdit();
-
-//   void	Initialize();
-//   void	Destroy();
-//   void	InitLinks();
-//   void	Copy_(const LeabraPrjnRelNetinStat& cp);
-//   COPY_FUNS(LeabraPrjnRelNetinStat, Stat);
-//   TA_BASEFUNS(LeabraPrjnRelNetinStat);
-// };
+// todo: replace with comparable programs: see leabra_v3_compat
 
 //////////////////////////////////////////
 // 	Context Layer for Sequential	//
@@ -1892,7 +1723,7 @@ public:
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
 
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
 
   void	Defaults();
 
@@ -1902,29 +1733,6 @@ public:
   SIMPLE_COPY(LeabraContextLayerSpec);
   COPY_FUNS(LeabraContextLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(LeabraContextLayerSpec);
-};
-
-//////////////////////////////////////////
-// 	Phase-Order  Environment	//
-//////////////////////////////////////////
-
-class LEABRA_API PhaseOrderEventSpec : public EventSpec {
-  // event specification including order of phases
-public:
-  enum PhaseOrder {
-    MINUS_PLUS,			// minus phase, then plus phase
-    PLUS_MINUS,			// plus phase, then minus phase
-    MINUS_ONLY,			// only present minus
-    PLUS_ONLY			// only present plus
-  };
-
-  PhaseOrder	phase_order;	// order to present phases of stimuli to network
-
-  void	Initialize();
-  void	Destroy() 	{ };
-  void	Copy_(const PhaseOrderEventSpec& cp);
-  COPY_FUNS(PhaseOrderEventSpec, EventSpec);
-  TA_BASEFUNS(PhaseOrderEventSpec);
 };
 
 //////////////////////////////////////////
@@ -2404,9 +2212,9 @@ public:
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
 
   // don't include first unit in any of these computations!
-  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
-  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
-  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
+  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
 
   virtual void 	Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
@@ -2416,7 +2224,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -2556,9 +2364,9 @@ public:
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
 
   // don't include first unit in any of these computations!
-  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
-  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
-  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraTrial*);
+  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
 
   virtual void 	Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
@@ -2568,7 +2376,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -2658,7 +2466,7 @@ public:
   void		PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			   LeabraNetwork* net, bool set_both=false);
 
-  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp, bool quiet=false);
+  bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);
 
   void	Defaults();
   void	Initialize();
@@ -2750,7 +2558,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -2762,29 +2570,33 @@ public:
   TA_BASEFUNS(ExtRewLayerSpec);
 };
 
-class LEABRA_API ExtRew_Stat : public Stat {
-  // ##COMPUTE_IN_TrialProcess ##FINAL_STAT external reward statistic
-public:
-  StatVal	rew;		// external reward value
+// todo: need to replace with comensurate prog!  this is used (inappropriately) in various
+// places.  the strategy is to have this value on the network, and then add some funs
+// on the network to compute it, and then have the prog call these funs..
 
-  void	RecvCon_Run(Unit*)	{ }; // don't do these!
-  void	SendCon_Run(Unit*)	{ };
+// class LEABRA_API ExtRew_Stat : public Stat {
+//   // ##COMPUTE_IN_TrialProcess ##FINAL_STAT external reward statistic
+// public:
+//   StatVal	rew;		// external reward value
 
-  void	InitStat();
-  void	Init();
-  bool	Crit();
-  void	Network_Run();	// do everything here
+//   void	RecvCon_Run(Unit*)	{ }; // don't do these!
+//   void	SendCon_Run(Unit*)	{ };
 
-  void 	ComputeAggregates(); // special aggregation to only count when data avail!
+//   void	InitStat();
+//   void	Init();
+//   bool	Crit();
+//   void	Network_Run();	// do everything here
 
-  void	NameStatVals();
+//   void 	ComputeAggregates(); // special aggregation to only count when data avail!
+
+//   void	NameStatVals();
   
-  void	Initialize();
-  void	Destroy()		{ };
-  SIMPLE_COPY(ExtRew_Stat);
-  COPY_FUNS(ExtRew_Stat, Stat);
-  TA_BASEFUNS(ExtRew_Stat);
-};
+//   void	Initialize();
+//   void	Destroy()		{ };
+//   SIMPLE_COPY(ExtRew_Stat);
+//   COPY_FUNS(ExtRew_Stat, Stat);
+//   TA_BASEFUNS(ExtRew_Stat);
+// };
 
 //////////////////////////////////////////////////////////
 // 	Standard TD Reinforcement Learning 		//
@@ -2852,7 +2664,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -2889,7 +2701,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -2918,10 +2730,10 @@ public:
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
 
-  void	Compute_dWt(LeabraLayer*, LeabraTrial*) { }; // nop
+  void	Compute_dWt(LeabraLayer*, LeabraNetwork*) { }; // nop
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -3028,7 +2840,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -3115,7 +2927,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -3175,10 +2987,10 @@ public:
 
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer*, LeabraTrial*);
+  void	Compute_dWt(LeabraLayer*, LeabraNetwork*);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -3234,7 +3046,7 @@ public:
   void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -3350,7 +3162,7 @@ class LEABRA_API MatrixUnitSpec : public DaModUnitSpec {
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
-  void 	Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* trl, LeabraNetwork* net);
+  void 	Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   void	PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 		   LeabraNetwork* net, bool set_both=false);
 
@@ -3502,7 +3314,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -3541,10 +3353,10 @@ public:
   // compute netinput as GO - NOGO on matrix layer
 
   void 	Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer*, LeabraTrial*);
+  void	Compute_dWt(LeabraLayer*, LeabraNetwork*);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -3621,7 +3433,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
@@ -3660,7 +3472,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraTrial* tp, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
   void	Defaults();
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
@@ -3677,25 +3489,25 @@ class LEABRA_API LeabraWiz : public Wizard {
 public:
   virtual void 	StdNetwork(Network* net = NULL);
 
-  virtual void	StdLayerSpecs(Network* net);
+  virtual void	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
 
-  virtual void	SRNContext(Network* net);
+  virtual void	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
 
-  virtual void	UnitInhib(Network* net, int n_inhib_units=10);
+  virtual void	UnitInhib(LeabraNetwork* net, int n_inhib_units=10);
   // #MENU_BUTTON configures unit-based inhibition for all layers in the network
 
-  virtual void 	TD(Network* net, bool bio_labels = false, bool td_mod_all = false);
+  virtual void 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; bio_labels = use biologically-based labels for layers, else functional; td_mod_all = have td value modulate all the regular units in the network
 
-  virtual void 	PVLV(Network* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false);
+  virtual void 	PVLV(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false);
   // #MENU_BUTTON configure PVLV (pavlovian perceived value and local value) learning layers in a network; bio_labels = use biologically-based labels for layers, else functional; localist_val = use localist value representations for lvpv layers; da_mod_all = have da value modulate all the regular units in the network
 
-  virtual void 	BgPFC(Network* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false, int n_stripes=4, bool mat_fm_pfc_full = false, bool out_gate=false, bool nolrn_pfc=false, bool lr_sched = true);
+  virtual void 	BgPFC(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false, int n_stripes=4, bool mat_fm_pfc_full = false, bool out_gate=false, bool nolrn_pfc=false, bool lr_sched = true);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; patch per-stripe learning system optional; nolrn_pfc = pfc does not learn -- just copies input acts directly; da_mod_all = have da value modulate all the regular units in the network; lr_sched = make a learning rate schedule on BG learn cons
 
-  virtual void SetPFCStripes(Network* net, int n_stripes, int n_units=-1);
+  virtual void SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
 
   void 	Initialize();

@@ -16,12 +16,16 @@
 
 
 #include "leabra.h"
-#include "pdpshell.h"
-#include "enviro_extra.h"
+
+#include "pdplog.h"
 #include "netstru_extra.h"
-//#include "css_iv.h"
+
+#include <math.h>
 #include <limits.h>
 #include <float.h>
+
+// module initialization
+InitProcRegistrar mod_init_leabra(ta_Init_leabra);
 
 //////////////////////////
 //  	Con, Spec	//
@@ -244,27 +248,30 @@ void LeabraConSpec::CreateWtSigFun() {
 }
 
 void LeabraConSpec::GraphWtSigFun(GraphLog* graph_log) {
-  if(graph_log == NULL) {
-    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-    if(graph_log == NULL) return;
-  }
-  graph_log->name = name + ": Wt Sig Fun";
-  DataTable* dt = &(graph_log->data);
-  dt->Reset();
-  dt->NewColFloat("lin wt");
-  dt->NewColFloat("eff wt");
-  dt->AddColDispOpt("MIN=0", 1);
-  dt->AddColDispOpt("MAX=1", 1);
+  // todo:
+  taMisc::Error("Graphing not yet supported");
+  return;
+//   if(graph_log == NULL) {
+//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
+//     if(graph_log == NULL) return;
+//   }
+//   graph_log->name = name + ": Wt Sig Fun";
+//   DataTable* dt = &(graph_log->data);
+//   dt->Reset();
+//   dt->NewColFloat("lin wt");
+//   dt->NewColFloat("eff wt");
+//   dt->AddColDispOpt("MIN=0", 1);
+//   dt->AddColDispOpt("MAX=1", 1);
 
-  float x;
-  for(x = 0.0; x <= 1.0; x += .01) {
-    float y = WtSigSpec::SigFun(x, wt_sig.gain, wt_sig.off);
-    dt->AddBlankRow();
-    dt->SetLastFloatVal(x, 0);
-    dt->SetLastFloatVal(y, 1);
-  }
-  dt->UpdateAllRanges();
-  graph_log->ViewAllData();
+//   float x;
+//   for(x = 0.0; x <= 1.0; x += .01) {
+//     float y = WtSigSpec::SigFun(x, wt_sig.gain, wt_sig.off);
+//     dt->AddBlankRow();
+//     dt->SetLastFloatVal(x, 0);
+//     dt->SetLastFloatVal(y, 1);
+//   }
+//   dt->UpdateAllRanges();
+//   graph_log->ViewAllData();
 }
 
 void LeabraCon_Group::Initialize() {
@@ -501,7 +508,7 @@ void LeabraUnitSpec::UpdateAfterEdit() {
     act_range.max = depress.max_amp;
 }
 
-bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, LeabraNetwork* net, bool quiet) {
+bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
   Con_Group* recv_gp;
   int g;
   FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
@@ -516,9 +523,12 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, LeabraNetwork* net, bool 
     for(int j=1; j<send_gp->size; j++) {
       float sc = ((LeabraCon_Group*)ru->recv.FastGp(send_gp->other_idx))->scale_eff;
       if(sc != first_sc) {
-	if(!quiet) taMisc::Error("Leabra CheckConfig Error: the effective weight scales for different sending connections within a group"
-				 "are not all the same!  Sending Layer:", lay->name, ", Rev Layer:", send_gp->prjn->layer->name,
-				 ", first_sc: ", String(first_sc), ", sc: ", String(sc), ", con:", String(j));
+	if(!quiet) taMisc::Error("Leabra CheckConfig Error: the effective weight scales for\
+ different sending connections within a group are not all the same!  Sending Layer:",
+				 lay->name, ", Rev Layer:", send_gp->prjn->layer->name,
+				 ", first_sc: ", (const char*)String(first_sc), ", sc: ",
+				 (const char*)String(sc));
+				 //				 ", con:", String(j));
 	return false;
       }
     }
@@ -1193,26 +1203,29 @@ void LeabraUnitSpec::UpdateWeights(Unit* u) {
 }
 
 void LeabraUnitSpec::GraphVmFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
-  if(graph_log == NULL) {
-    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-    if(graph_log == NULL) return;
-  }
-  graph_log->name = name + ": Vm Fun";
-  DataTable* dt = &(graph_log->data);
-  dt->Reset();
-  dt->NewColFloat("net");
-  dt->NewColFloat("v_m");
+  // todo:
+  taMisc::Error("Graphing not yet supported");
+  return;
+//   if(graph_log == NULL) {
+//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
+//     if(graph_log == NULL) return;
+//   }
+//   graph_log->name = name + ": Vm Fun";
+//   DataTable* dt = &(graph_log->data);
+//   dt->Reset();
+//   dt->NewColFloat("net");
+//   dt->NewColFloat("v_m");
 
-  float x;
-  for(x = min; x <= max; x += incr) {
-    float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
-      ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-    dt->AddBlankRow();
-    dt->SetLastFloatVal(x, 0);
-    dt->SetLastFloatVal(y, 1);
-  }
-  dt->UpdateAllRanges();
-  graph_log->ViewAllData();
+//   float x;
+//   for(x = min; x <= max; x += incr) {
+//     float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
+//       ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
+//     dt->AddBlankRow();
+//     dt->SetLastFloatVal(x, 0);
+//     dt->SetLastFloatVal(y, 1);
+//   }
+//   dt->UpdateAllRanges();
+//   graph_log->ViewAllData();
 }
 
 void LeabraUnitSpec::GraphActFmVmFun(GraphLog* graph_log, float min, float max, float incr) {
@@ -2864,6 +2877,7 @@ void LeabraNetwork::Initialize() {
   netin_mod = 1;
   send_delta = false;
   phase_order = MINUS_PLUS;
+  no_plus_test = true;
   phase = MINUS_PHASE;
   phase_no = 0;
   phase_max = 2;
@@ -2972,7 +2986,7 @@ void LeabraNetwork::Compute_Act() {
   }
 }
 
-void LeabraNetwork::Compute_Cycle() {
+void LeabraNetwork::Cycle_Run() {
   if((cycle % netin_mod) == 0) {
     Compute_Net();
     Compute_Clamp_NetAvg();
@@ -3088,31 +3102,27 @@ void LeabraNetwork::Send_ClampNet() {
 
 void LeabraNetwork::PostSettle() {
   bool set_both = false;
-  if((this != NULL) && (this->epoch_proc != NULL)) {
-    if((leabra_trial->phase_order == LeabraNetwork::PLUS_ONLY) ||
-       (leabra_trial->no_plus_test && (leabra_trial->epoch_proc->wt_update == EpochProcess::TEST)))
-      set_both = true;
+  if((phase_order == PLUS_ONLY) || (no_plus_test && (context == TEST))) {
+    set_both = true;
   }
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(!lay->lesion)
-      lay->PostSettle(leabra_trial, set_both);
+      lay->PostSettle(this, set_both);
   }
 }
 
 void LeabraNetwork::PostSettle_NStdLay() {
   bool set_both = false;
-  if((leabra_trial != NULL) && (leabra_trial->epoch_proc != NULL)) {
-    if((leabra_trial->phase_order == LeabraNetwork::PLUS_ONLY) ||
-       (leabra_trial->no_plus_test && (leabra_trial->epoch_proc->wt_update == EpochProcess::TEST)))
-      set_both = true;
+  if((phase_order == PLUS_ONLY) || (no_plus_test && (context == TEST))) {
+    set_both = true;
   }
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(!lay->lesion && (lay->spec.spec->GetTypeDef() != &TA_LeabraLayerSpec))
-      lay->PostSettle(leabra_trial, set_both);
+      lay->PostSettle(this, set_both);
   }
 }
 
@@ -3324,7 +3334,7 @@ void LeabraNetwork::Trial_UpdatePhase() {
 }
 
 void LeabraNetwork::Trial_Final() {
-  if(context != TEST)) {
+  if(context != TEST) {
     if((phase_order == MINUS_PLUS_PLUS) && (first_plus_dwt == ONLY_FIRST_DWT))
       Compute_dWt_NStdLay();	// only update the non-standard layers, which will have checks
     else if(phase_order == MINUS_PLUS_2)
@@ -3345,7 +3355,8 @@ bool LeabraNetwork::CheckNetwork() {
 
 // todo: do this!
 bool LeabraNetwork::CheckUnit(Unit* ck) {
-  bool rval = Network::CheckUnit(ck);
+//   bool rval = Network::CheckUnit(ck);
+  bool rval = true;
   if(!rval) return rval;
   LeabraUnitSpec* us = (LeabraUnitSpec*)ck->spec.spec;
   us->act.send_delta = send_delta;
@@ -3527,544 +3538,10 @@ TypeDefault .projects[0].defaults[6] {\n\
 
 void LeabraProject::Initialize() {
   networks.SetBaseType(&TA_LeabraNetwork);
-  wizards.SetBaseType(&TA_LeabraWizard);
+  wizards.SetBaseType(&TA_LeabraWiz);
   defaults_str = leabra_defaults;
   defaults_file = "leabra.def";
 }
-
-// todo: replace with comparable progs
-
-// //////////////////////////
-// // 	Max Da Stat	//
-// //////////////////////////
-
-// void LeabraMaxDa::Initialize() {
-//   settle_proc = NULL;
-//   min_layer = &TA_LeabraLayer;
-//   min_unit = &TA_LeabraUnit;
-//   net_agg.op = Aggregate::MAX;
-//   has_stop_crit = true;
-//   loop_init = INIT_START_ONLY;
-
-//   da_type = INET_DA;
-//   inet_scale = 1.0f;
-//   lay_avg_thr = .01f;
-
-//   da.stopcrit.flag = true;	// defaults
-//   da.stopcrit.val = .005f;
-//   da.stopcrit.cnt = 1;
-//   da.stopcrit.rel = CritParam::LESSTHANOREQUAL;
-
-//   trg_max_act.stopcrit.flag = false;	// defaults
-//   trg_max_act.stopcrit.val = .85f;
-//   trg_max_act.stopcrit.cnt = 1;
-//   trg_max_act.stopcrit.rel = CritParam::GREATERTHANOREQUAL;
-// }
-
-// void LeabraMaxDa::UpdateAfterEdit() {
-//   Stat::UpdateAfterEdit();
-//   if(own_proc == NULL) return;
-//   settle_proc = (LeabraSettle*)own_proc->FindProcOfType(&TA_LeabraSettle);
-// }
-
-// void LeabraMaxDa::CutLinks() {
-//   settle_proc = NULL;
-//   Stat::CutLinks();
-// }
-
-// void LeabraMaxDa::InitStat() {
-//   da.InitStat(InitStatVal());
-//   trg_max_act.InitStat(InitStatVal());
-//   InitStat_impl();
-// }
-
-// void LeabraMaxDa::Init() {
-//   da.Init();
-//   trg_max_act.Init();
-//   Init_impl();
-// }
-
-// bool LeabraMaxDa::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   if(da.stopcrit.flag && trg_max_act.stopcrit.flag)
-//     return da.Crit() && trg_max_act.Crit();
-//   else if(da.stopcrit.flag)
-//     return da.Crit();
-//   else if(trg_max_act.stopcrit.flag)
-//     return trg_max_act.Crit();
-//   return false;
-// }
-
-// void LeabraMaxDa::Network_Init() {
-//   InitStat();
-// }
-
-// void LeabraMaxDa::Unit_Stat(Unit* unit) {
-//   LeabraUnit* lu = (LeabraUnit*)unit;
-//   float fda;
-//   if(da_type == DA_ONLY)
-//     fda = fabsf(lu->da);
-//   else if(da_type == INET_ONLY)
-//     fda = fabsf(inet_scale * lu->I_net);
-//   else {
-//     LeabraLayer* blay = (LeabraLayer*)((Unit_Group*)unit->owner)->own_lay;
-//     if(blay->acts.avg <= lay_avg_thr)
-//       fda = fabsf(inet_scale * lu->I_net);
-//     else
-//       fda = fabsf(lu->da);
-//   }
-//   net_agg.ComputeAgg(&da, fda);
-// }
-
-// void LeabraMaxDa::Layer_Stat(Layer* lay) {
-//   if(!(lay->ext_flag & Unit::TARG)) return;
-//   LeabraLayer* llay = (LeabraLayer*)lay;
-//   net_agg.ComputeAgg(&trg_max_act, llay->acts.max);
-// }
-
-// void LeabraMaxDa::Network_Stat() {
-//   if(settle_proc == NULL) return;
-//   int mincyc = settle_proc->min_cycles;
-//   if(settle_proc->leabra_trial != NULL) {
-//     if(settle_proc->leabra_trial->phase_no > 1)
-//       mincyc = settle_proc->min_cycles_phase2;
-//   }
-//   if(settle_proc->cycle.val < mincyc) {
-//     da.val = MAX(da.val, da.stopcrit.val + .01); // keep above thresh!
-//   }
-// }
-
-
-// //////////////////////////
-// //  	Ae Stat		//
-// //////////////////////////
-
-// void LeabraSE_Stat::Initialize() {
-//   targ_or_comp = Unit::COMP_TARG;
-//   trial_proc = NULL;
-//   tolerance = .5;
-//   no_off_err = false;
-// }
-
-// void LeabraSE_Stat::UpdateAfterEdit() {
-//   SE_Stat::UpdateAfterEdit();
-//   if(own_proc == NULL) return;
-//   trial_proc = (LeabraNetwork*)own_proc->FindProcOfType(&TA_LeabraNetwork);
-//   if(time_agg.real_stat == NULL)
-//     return;
-//   LeabraSE_Stat* rstat = (LeabraSE_Stat*)time_agg.real_stat;
-//   // don't rename unless one or the other
-//   if((rstat->targ_or_comp != Unit::TARG) && (rstat->targ_or_comp != Unit::COMP))
-//     return;
-//   MemberDef* md = GetTypeDef()->members.FindName("targ_or_comp");
-//   name += String("_") + md->type->GetValStr(md->GetOff((void*)rstat), (void*)rstat, md);
-// }
-
-// void LeabraSE_Stat::NameStatVals() {
-//   Stat::NameStatVals();
-//   se.AddDispOption("MIN=0");
-//   se.AddDispOption("TEXT");
-//   if(time_agg.real_stat == NULL)
-//     return;
-//   LeabraSE_Stat* rstat = (LeabraSE_Stat*)time_agg.real_stat;
-//   // don't rename unless one or the other
-//   if((rstat->targ_or_comp != Unit::TARG) && (rstat->targ_or_comp != Unit::COMP))
-//     return;
-//   MemberDef* md = GetTypeDef()->members.FindName("targ_or_comp");
-//   String vlnm = md->type->GetValStr(md->GetOff((void*)rstat), (void*)rstat, md);
-//   vlnm.downcase();
-//   se.name += String("_") + vlnm.at(0,4);
-// }
-
-// void LeabraSE_Stat::CutLinks() {
-//   trial_proc = NULL;
-//   SE_Stat::CutLinks();
-// }
-
-// void LeabraSE_Stat::Init() {
-//   // don't init if it's not the right time!
-//   if((time_agg.from == NULL) && (trial_proc != NULL)) {
-//     // run targ-only comparisons in the first minus phase only
-//     if((targ_or_comp == Unit::TARG) && (trial_proc->phase_no != 1))
-//       return;
-//     // run comp-only comparisons in the last minus phase only
-//     if((targ_or_comp == Unit::COMP) && (trial_proc->phase_no != 3))
-//       return;
-//   }
-//   SE_Stat::Init();
-// }
-
-// void LeabraSE_Stat::Network_Run() {
-//   if(trial_proc != NULL) {
-//     // run targ-only comparisons in the first minus phase only
-//     if((targ_or_comp == Unit::TARG) && (trial_proc->phase_no != 1))
-//       return;
-//     // run comp-only comparisons in the last minus phase only
-//     if((targ_or_comp == Unit::COMP) && (trial_proc->phase_no != 3))
-//       return;
-//   }
-//   SE_Stat::Network_Run();
-// }
-
-// void LeabraSE_Stat::Unit_Stat(Unit* unit) {
-//   if(!(unit->ext_flag & targ_or_comp))
-//     return;
-//   float act = ((LeabraUnit*)unit)->act_eq;
-//   float tmp = 0.0f;
-//   if(no_off_err) {
-//     if(act > tolerance) {	// was active
-//       if(unit->targ < tolerance) // shouldn't have been
-// 	tmp = 1.0f;
-//     }
-//   }
-//   else {
-//     tmp = fabsf(act - unit->targ);
-//     if(tmp >= tolerance)
-//       tmp *= tmp;
-//     else
-//       tmp = 0.0f;
-//   }
-//   net_agg.ComputeAgg(&se, tmp);
-// }
-
-// ////////////////////////////////
-// // 	LeabraGoodStat        //
-// ////////////////////////////////
-
-// void LeabraGoodStat::Initialize() {
-//   min_layer = &TA_LeabraLayer;
-//   min_unit = &TA_LeabraUnit;
-//   net_agg.op = Aggregate::AVG;
-//   subtr_inhib = false;
-// }
-
-// void LeabraGoodStat::Destroy() {
-// }
-
-// void LeabraGoodStat::Copy_(const LeabraGoodStat& cp) {
-//   subtr_inhib = cp.subtr_inhib;
-//   hrmny = cp.hrmny;
-//   strss = cp.strss;
-//   gdnss = cp.gdnss;
-// }
-
-// void LeabraGoodStat::InitStat() {
-//   hrmny.InitStat(InitStatVal());
-//   strss.InitStat(InitStatVal());
-//   gdnss.InitStat(InitStatVal());
-//   InitStat_impl();
-// }
-
-// void LeabraGoodStat::Init() {
-//   hrmny.Init();
-//   strss.Init();
-//   gdnss.Init();
-//   Init_impl();
-// }
-
-// bool LeabraGoodStat::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   if(hrmny.Crit())	return true;
-//   if(strss.Crit())	return true;
-//   if(gdnss.Crit())	return true;
-//   return false;
-// }
-
-// void LeabraGoodStat::Network_Init() {
-//   InitStat();
-// }
-
-// void LeabraGoodStat::Unit_Stat(Unit* un) {
-//   LeabraUnit* lun = (LeabraUnit*) un;
-
-//   float harm = lun->net;
-//   if(subtr_inhib)
-//     harm -= lun->gc.i;
-
-//   net_agg.ComputeAggNoUpdt(hrmny.val, lun->act * harm);
-
-//   float act_c = 1.0f - lun->act_eq;
-//   float stress = 0.0f;
-//   if(lun->act_eq > 0.0f) stress += lun->act_eq * logf(lun->act_eq);
-//   if(act_c > 0.0f) stress += act_c * logf(act_c);
-//   net_agg.ComputeAgg(strss.val, -stress);
-// }
-
-// void LeabraGoodStat::Network_Stat() {
-//   // this is not aggregated, because it is the difference of two sum terms..
-//   gdnss.val = hrmny.val - strss.val;
-// }
-
-// ////////////////////////////////
-// // 	LeabraSharpStat        //
-// ////////////////////////////////
-
-// void LeabraSharpStat::Initialize() {
-//   min_layer = &TA_LeabraLayer;
-//   net_agg.op = Aggregate::AVG;
-// }
-
-// void LeabraSharpStat::Destroy() {
-// }
-
-// void LeabraSharpStat::Copy_(const LeabraSharpStat& cp) {
-//   sharp = cp.sharp;
-// }
-
-// void LeabraSharpStat::InitStat() {
-//   sharp.InitStat(InitStatVal());
-//   InitStat_impl();
-// }
-
-// void LeabraSharpStat::Init() {
-//   sharp.Init();
-//   Init_impl();
-// }
-
-// bool LeabraSharpStat::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   if(sharp.Crit())	return true;
-//   return false;
-// }
-
-// void LeabraSharpStat::Network_Init() {
-//   InitStat();
-// }
-
-// void LeabraSharpStat::Layer_Stat(Layer* lay) {
-//   LeabraLayer* llay = (LeabraLayer*)lay;
-
-//   float val = 0.0f;
-//   if(llay->acts.avg > 0.0f)
-//     val = llay->acts.max / llay->acts.avg;
-
-//   net_agg.ComputeAgg(sharp.val, val);
-// }
-
-// //////////////////////////
-// // 	WrongOnStat	//
-// //////////////////////////
-
-// void WrongOnStat::Initialize() {
-//   threshold = .5f;
-//   trg_lay = NULL;
-// }
-
-// void WrongOnStat::InitLinks() {
-//   Stat::InitLinks();
-// }
-
-// void WrongOnStat::CutLinks() {
-//   Stat::CutLinks();
-//   taBase::DelPointer((TAPtr*)&trg_lay);
-// }
-
-// void WrongOnStat::NameStatVals() {
-//   Stat::NameStatVals();
-//   wrng.AddDispOption("MIN=0");
-//   wrng.AddDispOption("TEXT");
-// }
-
-// void WrongOnStat::InitStat() {
-//   float init_val = InitStatVal();
-//   wrng.InitStat(init_val);
-//   InitStat_impl();
-// }
-
-// void WrongOnStat::Init() {
-//   wrng.Init();
-//   Init_impl();
-// }
-
-// bool WrongOnStat::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   return wrng.Crit();
-// }
-
-// bool WrongOnStat::CheckLayerInNet() {
-//   bool ok = Stat::CheckLayerInNet();
-//   if(!ok)
-//     return false;
-//   if(trg_lay == NULL) return true;
-//   if(trg_lay->own_net == network)
-//     return true;
-
-//   taMisc::Error("*** WrongOnStat:", name, "layer:", trg_lay->name,
-// 		 "is not in current network, finding one of same name...");
-//   Layer* nw_lay = (Layer*)network->layers.FindName(trg_lay->name);
-//   if(nw_lay == NULL) {
-//     taMisc::Error("==> could not find layer with same name in current network, aborting");
-//     return false;
-//   }
-//   taBase::SetPointer((TAPtr*)&trg_lay, nw_lay);
-//   return true;
-// }
- 
-// void WrongOnStat::Network_Init() {
-//   InitStat();
-// }
-
-// void WrongOnStat::Layer_Run() {
-//   if(layer != NULL) {
-//     if(!CheckLayerInNet()) return;
-//     if(layer->lesion)      return;
-//     if(trg_lay == NULL) {
-//       taMisc::Error("*** WrongOnStat:", name, "trg_lay must be set!");
-//       return;
-//     }
-//     Layer_Init(layer);
-//     Unit_Run(layer);
-//     Layer_Stat(layer);
-//     return;
-//   }
-//   taMisc::Error("*** WrongOnStat:", name, "layer must be set!");
-//   return;
-// }
-
-// void WrongOnStat::Unit_Run(Layer* lay) {
-//   Unit* unit, *tu;
-//   taLeafItr i, ti;
-//   bool no_above_thr = true;
-//   for(unit = (Unit*)lay->units.FirstEl(i), tu = (Unit*)trg_lay->units.FirstEl(ti);
-//       (unit != NULL) && (tu != NULL);
-//       unit = (Unit*)lay->units.NextEl(i), tu = (Unit*)trg_lay->units.NextEl(ti)) {
-//     Unit_Init(unit);
-//     float err = 0.0f;
-//     if(unit->act > threshold) {
-//       no_above_thr = false;
-//       if(tu->act < threshold)
-// 	err = 1.0f;
-//     }
-//     net_agg.ComputeAgg(&wrng, err);
-//   }
-//   if(no_above_thr)		// get a point off if nobody above threshold!
-//     net_agg.ComputeAgg(&wrng, 1.0f);
-// }
-
-// ////////////////////////////////////////
-// // 	LeabraPrjnRelNetinStat        //
-// ////////////////////////////////////////
-
-// void LeabraPrjnRelNetinStat::Initialize() {
-//   min_layer = &TA_LeabraLayer;
-//   min_con_group = &TA_LeabraCon_Group;
-//   net_agg.op = Aggregate::LAST;
-//   recv_act_thr = .1f;
-// }
-
-// void LeabraPrjnRelNetinStat::Destroy() {
-// }
-
-// void LeabraPrjnRelNetinStat::InitLinks() {
-//   Stat::InitLinks();
-//   taBase::Own(relnet, this);
-// }
-
-// void LeabraPrjnRelNetinStat::Copy_(const LeabraPrjnRelNetinStat& cp) {
-//   relnet = cp.relnet;
-// }
-
-// void LeabraPrjnRelNetinStat::UpdateAfterEdit() {
-//   Stat::UpdateAfterEdit();
-// }
-
-// void LeabraPrjnRelNetinStat::InitStat() {
-//   relnet.InitStat(InitStatVal());
-//   InitStat_impl();
-// }
-
-// void LeabraPrjnRelNetinStat::Init() {
-//   if(loop_init == NO_INIT) return;
-//   relnet.Init();
-//   Init_impl();
-// }
-
-// bool LeabraPrjnRelNetinStat::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   if(relnet.Crit())	return true;
-//   return false;
-// }
-
-// String LeabraPrjnRelNetinStat::GetPrjnNm(const char* prjn_nm) {
-//   String nm = prjn_nm;
-//   if(nm.contains("Fm_"))
-//     nm = nm.after("Fm_");
-//   if(nm.length() > 4)
-//     nm = nm.before(4);
-//   return nm;
-// }
-
-// void LeabraPrjnRelNetinStat::NameStatVals() {
-//   if(time_agg.from == NULL) {
-//     if(layer == NULL) return;
-//     String lnm = layer->name;
-//     if(lnm.length() > 3) lnm = lnm.before(3);
-//     lnm = String("rlnt_") + lnm + "_";
-//     relnet.EnforceSize(layer->projections.size);
-//     for(int i=0;i<layer->projections.size;i++) {
-//       Projection* prjn = (Projection*)layer->projections[i];
-//       String snm = lnm + GetPrjnNm(prjn->name);
-//       if(i==0)
-// 	((StatVal*)relnet[i])->SetFloatVecNm(snm, layer->projections.size);
-//       else
-// 	((StatVal*)relnet[i])->SetName(snm);
-//     }
-//   }
-//   else {
-//     Stat::NameStatVals();
-//   }
-// }
-
-// void LeabraPrjnRelNetinStat::Network_Init() {
-//   InitStat();
-//   if(layer == NULL) {
-//     taMisc::Error("LeabraPrjnRelNetinStat: Error -- you must set the layer to record from!");
-//   }
-// }
-
-// void LeabraPrjnRelNetinStat::Layer_Stat(Layer* lay) {
-//   LeabraLayer* llay = (LeabraLayer*)lay;
-
-//   float_RArray net_avg;
-//   float_RArray net_cnt;
-//   net_avg.EnforceSize(layer->projections.size);
-//   net_cnt.EnforceSize(layer->projections.size);
-
-//   for(int i=0;i<layer->projections.size;i++) {
-//     Projection* prjn = (Projection*)layer->projections[i];
-    
-//     LeabraUnit* u;
-//     taLeafItr ui;
-//     FOR_ITR_EL(LeabraUnit, u, llay->units., ui) {
-//       if(u->act_eq < recv_act_thr) continue;
-//       LeabraCon_Group* cg = (LeabraCon_Group*)u->recv.gp.SafeEl(prjn->recv_idx);
-//       if(cg == NULL) continue;
-//       float net = cg->Compute_Net(u);
-//       cg->net = net;
-//       net_avg[i] += net;
-//       net_cnt[i] += 1.0f;
-//     }
-//   }
-
-//   float sum_net = 0.0f;
-//   for(int i=0;i<net_avg.size;i++) {
-//     if(net_cnt[i] > 0)
-//       net_avg[i] /= net_cnt[i];
-//     sum_net += net_avg[i];
-//   }
-//   for(int i=0;i<net_avg.size;i++) {
-//     if(sum_net > 0)
-//       net_avg[i] /= sum_net;
-//     StatVal* sv = (StatVal*)relnet[i];
-//     net_agg.ComputeAggNoUpdt(sv->val, net_avg[i]);
-//   }
-//   net_agg.IncUpdt();
-// }
 
 //////////////////////////////////
 //  	ContextLayerSpec	//
@@ -4141,18 +3618,6 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
     Compute_Context(lay, u, net);
   }
   Compute_ActAvg(lay, net);
-}
-
-//////////////////////////////////////////
-// 	Phase-Order Environment		//
-//////////////////////////////////////////
-
-void PhaseOrderEventSpec::Initialize() {
-  phase_order = MINUS_PLUS;
-}
-
-void PhaseOrderEventSpec::Copy_(const PhaseOrderEventSpec& cp) {
-  phase_order = cp.phase_order;
 }
 
 //////////////////////////////////////////
@@ -5646,8 +5111,8 @@ void DaModUnitSpec::Defaults() {
   Initialize();
 }
 
-bool DaModUnitSpec::CheckConfig(Unit* un, Layer* lay, LeabraNetwork* net, bool quiet) {
-  LeabraUnitSpec::CheckConfig(un, lay, tp, quiet);
+bool DaModUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
+  LeabraUnitSpec::CheckConfig(un, lay, net, quiet);
   return true;
 }
 
@@ -5733,11 +5198,11 @@ void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net)
   DaModUnit* lu = (DaModUnit*)u;
   if(da_mod.p_dwt) {
     // just save phase activation states
-    if(net->phase_no.max >= 3)
+    if(net->phase_max >= 3)
       lu->p_act_p = lu->act_p2;
     else
       lu->p_act_p = lu->act_p;
-    if(net->phase_no.max >= 4)
+    if(net->phase_max >= 4)
       lu->p_act_m = lu->act_m2;
     else
       lu->p_act_m = lu->act_m;
@@ -6061,31 +5526,34 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   float er = 0.0f;
   if(out_err.seq_all_cor) {
-    bool old_graded = out_err.graded;
-    out_err.graded = false;		// prevent graded sig here!
-    float itm_er = GetOutErrRew(lay, net);
-    out_err.graded = old_graded;
+    taMisc::Error("ExtRewLayerSpec Error: out_err.seq_all_cor is not yet supported!");
+    return;
+    // todo!  not supported
+//     bool old_graded = out_err.graded;
+//     out_err.graded = false;		// prevent graded sig here!
+//     float itm_er = GetOutErrRew(lay, net);
+//     out_err.graded = old_graded;
 
-    lay->misc_iar.EnforceSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
-    Event_MGroup* eg = net->GetMyCurEventGp();
-    int eg_addr = (int)eg;
-    if(lay->misc_iar[0] != eg_addr) { // new seq
-      lay->misc_iar[0] = eg_addr;
-      lay->misc_iar[1] = 1;
-      lay->misc_iar[2] = (int)itm_er;
-    }
-    else {
-      lay->misc_iar[1]++;
-      lay->misc_iar[2] += (int)itm_er;
-    }
-    Event* ev = net->GetMyCurEvent();
-    int idx = eg->Find(ev);
-    if(idx < eg->size-1) {	// not last event: no reward!
-      Compute_NoRewAct(lay, net);
-      return;
-    }
-    er = (float)lay->misc_iar[2] / (float)lay->misc_iar[1];
-    if(!out_err.graded && (er < 1.0f)) er = 0.0f; // didn't make it!
+//     lay->misc_iar.EnforceSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
+//     Event_MGroup* eg = net->GetMyCurEventGp();
+//     int eg_addr = (int)eg;
+//     if(lay->misc_iar[0] != eg_addr) { // new seq
+//       lay->misc_iar[0] = eg_addr;
+//       lay->misc_iar[1] = 1;
+//       lay->misc_iar[2] = (int)itm_er;
+//     }
+//     else {
+//       lay->misc_iar[1]++;
+//       lay->misc_iar[2] += (int)itm_er;
+//     }
+//     Event* ev = net->GetMyCurEvent();
+//     int idx = eg->Find(ev);
+//     if(idx < eg->size-1) {	// not last event: no reward!
+//       Compute_NoRewAct(lay, net);
+//       return;
+//     }
+//     er = (float)lay->misc_iar[2] / (float)lay->misc_iar[1];
+//     if(!out_err.graded && (er < 1.0f)) er = 0.0f; // didn't make it!
   }
   else {
     er = GetOutErrRew(lay, net);
@@ -6171,72 +5639,6 @@ void ExtRewLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
   return;			// never compute dwts!
 }
 
-
-// todo: need this somewhere!
-
-// //////////////////////////////////
-// // 	ExtRew_Stat		//
-// //////////////////////////////////
-
-// void ExtRew_Stat::Initialize() {
-// }
-
-// void ExtRew_Stat::NameStatVals() {
-//   Stat::NameStatVals();
-//   rew.AddDispOption("MIN=0");
-//   rew.AddDispOption("TEXT");
-// }
-
-// void ExtRew_Stat::InitStat() {
-//   float init_val = InitStatVal();
-//   rew.InitStat(init_val);
-//   InitStat_impl();
-// }
-
-// void ExtRew_Stat::Init() {
-//   if(loop_init == NO_INIT) return;
-//   if(time_agg.from != NULL) {	// no init for real stats!!
-//     rew.Init();
-//     Init_impl();
-//   }
-// }
-
-// bool ExtRew_Stat::Crit() {
-//   if(!has_stop_crit)    return false;
-//   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   return rew.Crit();
-// }
-
-// void ExtRew_Stat::Network_Run() {
-//   if(network == NULL) return;
-//   LeabraLayer* er_lay = NULL;
-//   LeabraLayer* lay;
-//   taLeafItr i;
-//   FOR_ITR_EL(LeabraLayer, lay, network->layers., i) {
-//     if(lay->lesion || !lay->spec.spec->InheritsFrom(&TA_ExtRewLayerSpec))
-//       continue;
-//     er_lay = lay;
-//     break;
-//   }
-//   if(er_lay == NULL) return;
-//   LeabraUnit* eru = (LeabraUnit*)er_lay->units.Leaf(0);
-//   if(eru->misc_1 == 0.0f) { // indication of no reward available
-//     rew.val = -1.1f;
-//   }
-//   else {
-//     rew.val = eru->act_eq;	// just set it!
-//   }
-// }
-
-// void ExtRew_Stat::ComputeAggregates() {
-//   if(time_agg.from == NULL)
-//     return;
-
-//   ExtRew_Stat* fms = (ExtRew_Stat*)time_agg.from;
-//   if(fms->rew.val == -1.1f) return; // don't agg no reward cases!!
-//   time_agg.ComputeAggNoUpdt(&rew, &(fms->rew));
-//   time_agg.IncUpdt();
-// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -6412,7 +5814,7 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* ne
 
 void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
   ScalarValLayerSpec::PostSettle(lay, net, set_both); 
-  if(net->phase_no.val < net->phase_no.max-1)
+  if(net->phase_no < net->phase_max-1)
     return; // only at very last phase, do this!  see note on Compute_dWt as to why..
   Compute_TdPlusPhase(lay, net);
 }
@@ -6433,7 +5835,7 @@ void TDRewPredLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
   // and then continuing with settling..
-  if(net->phase_no.val < net->phase_no.max-1)
+  if(net->phase_no < net->phase_max-1)
     return; // only do FINAL dwt!
   ScalarValLayerSpec::Compute_dWt(lay, net);
 }
@@ -7017,7 +6419,7 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 }
 
 void PViLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no.val < net->phase_no.max-1)
+  if(net->phase_no < net->phase_max-1)
     return; // only do FINAL dwt!
   Compute_PVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
@@ -7235,7 +6637,7 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
   // and then continuing with settling..
-  if(net->phase_no.val < net->phase_no.max-1)
+  if(net->phase_no < net->phase_max-1)
     return;
   Compute_LVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
@@ -8327,11 +7729,11 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
 
 void MatrixLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   if(bg_type == MatrixLayerSpec::OUTPUT) {
-    if((net->phase_no.max > 2) && (net->phase_no != 1))
+    if((net->phase_max > 2) && (net->phase_no != 1))
       return;
   }
   else {
-    if(net->phase_no.val < net->phase_no.max-1)	// only final dwt!
+    if(net->phase_no < net->phase_max-1)	// only final dwt!
       return;
   }
   LeabraLayerSpec::Compute_dWt(lay, net);
@@ -8826,7 +8228,7 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_bot
 }
 
 void PFCLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->phase_no.max > 2) && (net->phase_no != 1))
+  if((net->phase_max > 2) && (net->phase_no != 1))
     return; // only do first dwt!
   LeabraLayerSpec::Compute_dWt(lay, net);
 }
@@ -9039,15 +8441,16 @@ void LeabraWiz::Initialize() {
 
 void LeabraWiz::StdNetwork(Network* net) {
   if(net == NULL)
-    net = pdpMisc::GetNewNetwork(GET_MY_OWNER(Project));
+    net = pdpMisc::GetNewNetwork(GET_MY_OWNER(LeabraProject));
   if(net == NULL) return;
-  Wizard::StdNetwork(net);
-  StdLayerSpecs(net);
+  // todo: !!!
+//   Wizard::StdNetwork(net);
+  StdLayerSpecs((LeabraNetwork*)net);
 }
 
-void LeabraWiz::StdLayerSpecs(Network* net) {
+void LeabraWiz::StdLayerSpecs(LeabraNetwork* net) {
   if(net == NULL) return;
-  Project* proj = GET_MY_OWNER(Project);
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   LeabraLayerSpec* hid = (LeabraLayerSpec*)pdpMisc::FindMakeSpec(proj, NULL, &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
@@ -9059,7 +8462,8 @@ void LeabraWiz::StdLayerSpecs(Network* net) {
   inout->compute_i = LeabraLayerSpec::KWTA_INHIB;
   inout->i_kwta_pt = .25f;
   inout->kwta.k_from = KWTASpec::USE_PAT_K;
-  winbMisc::DelayedMenuUpdate(hid);
+  // todo: !!!
+//   winbMisc::DelayedMenuUpdate(hid);
 
   int i;
   if(net->layers.size == layer_cfg.size) {	// likely to be using specs
@@ -9096,7 +8500,8 @@ void LeabraWiz::StdLayerSpecs(Network* net) {
     ps = (LeabraConSpec*)proj->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
     if(ps != NULL) {
       ps->children.Transfer(bs);
-      winbMisc::DelayedMenuUpdate(ps);
+      // todo: !!!
+//       winbMisc::DelayedMenuUpdate(ps);
     }
   }
 }
@@ -9105,12 +8510,12 @@ void LeabraWiz::StdLayerSpecs(Network* net) {
 //			SRN Context
 ///////////////////////////////////////////////////////////////
 
-void LeabraWiz::SRNContext(Network* net) {
+void LeabraWiz::SRNContext(LeabraNetwork* net) {
   if(net == NULL) {
     taMisc::Error("SRNContext: must have basic constructed network first");
     return;
   }
-  Project* proj = GET_MY_OWNER(Project);
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)pdpMisc::FindMakeSpec(proj, "CtxtPrjn", &TA_OneToOnePrjnSpec);
   LeabraContextLayerSpec* ctxts = (LeabraContextLayerSpec*)pdpMisc::FindMakeSpec(proj, "CtxtLayerSpec", &TA_LeabraContextLayerSpec);
 
@@ -9138,8 +8543,8 @@ void LeabraWiz::SRNContext(Network* net) {
 //			Unit Inhib
 ///////////////////////////////////////////////////////////////
 
-void LeabraWiz::UnitInhib(Network* net, int n_inhib_units) {
-  Project* proj = GET_MY_OWNER(Project);
+void LeabraWiz::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)pdpMisc::FindSpecType(proj, &TA_LeabraUnitSpec);
@@ -9255,10 +8660,12 @@ void LeabraWiz::UnitInhib(Network* net, int n_inhib_units) {
   }
 
   net->UpdateAfterEdit();
-  net->InitAllViews();
+  // todo:
+//   net->InitAllViews();
 
-  winbMisc::DelayedMenuUpdate(net);
-  winbMisc::DelayedMenuUpdate(proj);
+  // todo: !!!
+//   winbMisc::DelayedMenuUpdate(net);
+//   winbMisc::DelayedMenuUpdate(proj);
 
   // set settle cycles to 300
   net->cycle_max = 300;
@@ -9285,7 +8692,7 @@ void LeabraWiz::UnitInhib(Network* net, int n_inhib_units) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWiz::TD(Network* net, bool bio_labels, bool td_mod_all) {
+void LeabraWiz::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   String msg = "Configuring TD Temporal Differences Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -9303,7 +8710,7 @@ void LeabraWiz::TD(Network* net, bool bio_labels, bool td_mod_all) {
  can be sure everything is ok.";
   taMisc::Choice(msg,"Ok");
 
-  Project* proj = GET_MY_OWNER(Project);
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -9415,7 +8822,7 @@ void LeabraWiz::TD(Network* net, bool bio_labels, bool td_mod_all) {
   // set default spec parameters
 
   learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
-  learn_cons->not_used_ok = true;
+//   learn_cons->not_used_ok = true;
   learn_cons->UpdateAfterEdit();
   bg_bias->SetUnique("lrate", true);
   bg_bias->lrate = 0.0f;
@@ -9526,8 +8933,9 @@ void LeabraWiz::TD(Network* net, bool bio_labels, bool td_mod_all) {
     sp->UpdateAfterEdit();
   }
 
-  winbMisc::DelayedMenuUpdate(net);
-  winbMisc::DelayedMenuUpdate(proj);
+  // todo: !!!
+//   winbMisc::DelayedMenuUpdate(net);
+//   winbMisc::DelayedMenuUpdate(proj);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
@@ -9547,7 +8955,7 @@ void LeabraWiz::TD(Network* net, bool bio_labels, bool td_mod_all) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWiz::PVLV(Network* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all) {
+void LeabraWiz::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all) {
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -9565,7 +8973,7 @@ void LeabraWiz::PVLV(Network* net, bool bio_labels, bool localist_val, bool fm_h
  can be sure everything is ok.";
   taMisc::Choice(msg,"Ok");
 
-  Project* proj = GET_MY_OWNER(Project);
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -9685,7 +9093,7 @@ void LeabraWiz::PVLV(Network* net, bool bio_labels, bool localist_val, bool fm_h
   // set default spec parameters
 
   //  learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
-  learn_cons->not_used_ok = true;
+//   learn_cons->not_used_ok = true;
   learn_cons->UpdateAfterEdit();
   bg_bias->SetUnique("lrate", true);
   bg_bias->lrate = 0.0f;
@@ -9989,8 +9397,9 @@ void LeabraWiz::PVLV(Network* net, bool bio_labels, bool localist_val, bool fm_h
     sp->UpdateAfterEdit();
   }
 
-  winbMisc::DelayedMenuUpdate(net);
-  winbMisc::DelayedMenuUpdate(proj);
+  // todo: !!!
+//   winbMisc::DelayedMenuUpdate(net);
+//   winbMisc::DelayedMenuUpdate(proj);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
@@ -10017,7 +9426,7 @@ void LeabraWiz::PVLV(Network* net, bool bio_labels, bool localist_val, bool fm_h
 //			BgPFC
 ///////////////////////////////////////////////////////////////
 
-static void set_n_stripes(Network* net, char* nm, int n_stripes, int n_units, bool sp) {
+static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_units, bool sp) {
   LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
   if(lay == NULL) return;
   lay->geom.z = n_stripes;
@@ -10048,7 +9457,7 @@ static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
   lay->UpdateAfterEdit();
 }
 
-void LeabraWiz::SetPFCStripes(Network* net, int n_stripes, int n_units) {
+void LeabraWiz::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
   set_n_stripes(net, "PFC", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
@@ -10065,7 +9474,7 @@ void LeabraWiz::SetPFCStripes(Network* net, int n_stripes, int n_units) {
   net->Connect();
 }
 
-void LeabraWiz::BgPFC(Network* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {
+void LeabraWiz::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {
   PVLV(net, bio_labels, localist_val, fm_hid_cons, fm_out_cons, da_mod_all); // first configure PVLV system..
 
   String msg = "Configuring BG PFC (Basal Ganglia Prefrontal Cortex) Layers:\n\n\
@@ -10088,7 +9497,7 @@ void LeabraWiz::BgPFC(Network* net, bool bio_labels, bool localist_val, bool fm_
   half_stripes = MAX(1, half_stripes);
   n_stripes = half_stripes * 2;	// make it even
 
-  Project* proj = GET_MY_OWNER(Project);
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";
@@ -10687,8 +10096,9 @@ void LeabraWiz::BgPFC(Network* net, bool bio_labels, bool localist_val, bool fm_
     sp->UpdateAfterEdit();
   }
 
-  winbMisc::DelayedMenuUpdate(net);
-  winbMisc::DelayedMenuUpdate(proj);
+  // todo: !!!
+//   winbMisc::DelayedMenuUpdate(net);
+//   winbMisc::DelayedMenuUpdate(proj);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit

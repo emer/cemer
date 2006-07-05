@@ -9,29 +9,47 @@ TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
-	@abs_srcdir@/leabra.h
+	@abs_srcdir@/../leabra/leabra.h \
+	@abs_srcdir@/../leabra/leabra_v3_compat.h
+
+HEADS=\
+	leabra.h \
+	leabra_v3_compat.h
+
+SRCS=\
+	leabra.cpp \
+	leabra_v3_compat.cpp
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
-pdp_TA_type.h:
-	cd ../pdp && ${MAKE} pdp_TA_type.h
+noinst_LTLIBRARIES =\
+	libleabra_TypeAccess@PDP_SUFFIX@.la \
+	libleabra@PDP_SUFFIX@.la
 
-noinst_lib_LTLIBRARIES = libleabra@PDP_SUFFIX@.la
+libleabra@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
 
-libleabra@PDP_SUFFIX@_la_SOURCES =\
+libleabra@PDP_SUFFIX@_la_CPPFLAGS =\
+	-I@srcdir@/.. \
+	-I@abs_top_builddir@ \
+	-I@abs_srcdir@ \
+	-I@srcdir@/../ta \
+	-I@srcdir@/../pdp \
+	-I@srcdir@/../tamisc \
+	-I@srcdir@/../css \
+	-I@srcdir@/../taiqtso
+
+libleabra@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+
+libleabra@PDP_SUFFIX@_la_LIBADD = libleabra_TypeAccess@PDP_SUFFIX@.la
+
+libleabra@PDP_SUFFIX@_la_DEPENDENCIES = libleabra_TypeAccess@PDP_SUFFIX@.la
+
+libleabra_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	leabra_TA.cpp \
 	leabra_TA_type.h \
 	leabra_TA_inst.h
 
-libleabra@PDP_SUFFIX@_la_CPPFLAGS =\
-	-I@srcdir@/../ \
-	-I@abs_top_builddir@ \
-	-I@srcdir@ \
-	-I@srcdir@/../ta \
-	-I@srcdir@/../css \
-	-I@srcdir@/../tamisc \
-	-I@srcdir@/../taiqtso \
-	-I@srcdir@/../pdp_lib
+libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@_la_CPPFLAGS)
 
-libleabra@PDP_SUFFIX@_la_CXXFLAGS = -O0
+libleabra_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0

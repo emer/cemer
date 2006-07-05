@@ -233,6 +233,9 @@ public:
 
   bool	CheckObjectType_impl(TAPtr obj); // don't do checking on 1st con group in units
 
+  virtual bool  	CheckConfig(Con_Group*, Layer*, Unit*, Network*, bool =false) { return true; }
+  // check for for misc configuration settings required by different algorithms
+
   virtual int		UseCount(); // return number of times this spec is used
   void	ReplacePointersHook(TAPtr old);
 
@@ -380,6 +383,9 @@ public:
   void 	UpdateWeights(Unit* ru)	 	{ spec->UpdateWeights(this,ru); }
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
 
+  bool  CheckConfig(Layer* lay, Unit* ru, Network* net, bool quiet=false)
+  { return spec->CheckConfig(this, lay, ru, net, quiet); }
+
   int 	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -428,6 +434,9 @@ public:
 
   virtual void	BuildBiasCons();
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE build the bias connections according to specified type
+
+  virtual bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);
+  // check for for misc configuration settings required by different algorithms
 
   virtual int	UseCount(); // return number of times this spec is used
   void	ReplacePointersHook(TAPtr old);
@@ -529,8 +538,11 @@ public: //
   void 	UpdateWeights()		{ spec->UpdateWeights(this); }
   void 	Compute_dWt()		{ spec->Compute_dWt(this); }
 
+  bool  CheckConfig(Layer* lay, Network* net, bool quiet=false)
+  { return spec->CheckConfig(this, lay, net, quiet); }
+
   void 		ApplyValue(float val, ExtType act_ext_flags, Random* ran = NULL);
-    // called by layer to apply input or target pattern
+  // called by layer to apply input or target pattern
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
   virtual bool	CheckBuild();
@@ -1071,6 +1083,8 @@ public:
   // #MENU set for all unit's connections in layer
   virtual bool	CheckTypes();
   // #MENU #USE_RVAL check that the object and spec types are all ok
+  virtual bool 	CheckConfig(Network* net, bool quiet=false);
+  // check for for misc configuration settings required by different algorithms
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
 
@@ -1283,7 +1297,7 @@ public:
   // update network after any network modification (calls appropriate functions)
   virtual void	SyncSendPrjns();
   // synchronize sending projections with the recv projections so everyone's happy
-  virtual void CountRecvCons();
+  virtual void 	CountRecvCons();
   // count recv connections for all units in network
 
   virtual void	ConnectUnits(Unit* u_to, Unit* u_from=NULL, bool record=true,
@@ -1304,6 +1318,8 @@ public:
 
   virtual bool	CheckTypes();
   // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
+  virtual bool	CheckConfig(bool quiet=false);
+  // check for for misc configuration settings required by different algorithms
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
 

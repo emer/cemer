@@ -215,8 +215,11 @@ public:
   void  Destroy();
   void 	Copy(const taGroup_impl& cp);
   TA_BASEFUNS(taGroup_impl);
-  
-protected:
+
+  // ROR: when this is protected, it prevents multiple inheritance from
+  // UnitGroup and LeabraInhib in LeabraUnit_Group
+  // seems to otherwise compile fine without it..
+  //protected:
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 };
 

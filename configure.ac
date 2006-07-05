@@ -194,6 +194,7 @@ AC_CONFIG_FILES([Makefile
 		src/tamisc/Makefile
 		src/ta_lib/Makefile
 		src/bp/Makefile
+		src/leabra/Makefile
 		src/pdp/Makefile
 		src/pdp_lib/Makefile
 		src/pdp_bin/Makefile
