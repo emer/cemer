@@ -4337,6 +4337,9 @@ void Network::Initialize() {
   layers.SetBaseType(&TA_Layer);
 
   context = TEST;
+  wt_update = ON_LINE;
+  batch_n = 10;
+  batch_n_eff = 10;
   batch = 0;
   epoch = 0;
   trial = 0;
@@ -4378,6 +4381,9 @@ void Network::InitLinks() {
 void Network::Copy_(const Network& cp) {
   layers = cp.layers;
   max_size = cp.max_size;
+  wt_update = cp.wt_update;
+  batch_n = cp.batch_n;
+  batch_n_eff = cp.batch_n_eff;
   context = cp.context;
   batch = cp.batch;
   epoch = cp.epoch;

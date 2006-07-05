@@ -1202,13 +1202,22 @@ public:
     BINARY_IDX 			// binary format plus unit indexes (useful for partially-connected networks where connections might change)
   };
   
-  enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
-    TEST	= 0,	// indicates outputs are not clamped, net being tested or run
-    TRAIN	= 1	// usually indicates patterns are being clamped on outs etc.
+  enum WtUpdate {
+    ON_LINE,			// update weights on-line (after every event) -- this is not viable for dmem processing and is automatically switched to small_batch
+    SMALL_BATCH, 		// update weights every batch_n events 
+    BATCH			// update weights in batch (after every epoch)
   };
 
+ enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
+   TEST	= 0,	 		// indicates outputs are not clamped, net being tested or run
+   TRAIN = 1	  		// usually indicates patterns are being clamped on outs etc.
+ };
+
   Layer_MGroup	layers;		// Layers or Groups of Layers
-  int		context;	// #READ_ONLY_IV used by programs to provide context modality to cycling algorithms
+  int		context;	// #READ_ONLY_IV used by programs to provide context modality to algorithms
+  WtUpdate	wt_update;	// #READ_ONLY_IV determines weight update mode
+  int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
+  int		batch_n_eff;	// #READ_ONLY #NO_SAVE effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   int		batch;		// #READ_ONLY_IV batch counter (updated by program)
   int		epoch;		// #READ_ONLY_IV epoch counter (updated by program)
   int		trial;		// #READ_ONLY_IV trial counter (updated by program)

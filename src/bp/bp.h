@@ -605,7 +605,7 @@ public:
   
   virtual void		BpTrial_Loop(); // one loop of BpTrial
   
-  override void		Compute_Act() {BpCompute_Act();}
+  override void		Compute_Act() { BpCompute_Act(); }
   
   void	Initialize();
   void 	Destroy()		{}

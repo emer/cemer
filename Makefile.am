@@ -16,6 +16,7 @@ DIST_SUBDIRS =\
 	src/ta_lib \
 	src/pdp \
 	src/bp \
+	src/leabra \
 	src/pdp_lib \
 	src/pdp_bin \
 	manual
@@ -29,6 +30,7 @@ SUBDIRS =\
 	src/ta_lib \
 	src/pdp \
 	src/bp \
+	src/leabra \
 	src/pdp_lib \
 	src/pdp_bin \
 	manual
@@ -61,6 +63,7 @@ DISTCLEANFILES =\
 	src/pdp/do-mfstamp \
 	src/leabra/do-mfstamp \
 	src/bp/do-mfstamp \
+	src/leabra/do-mfstamp \
 	src/maketa/mfstamp \
 	src/maketa/do-mfstamp \
 	src/ta/ta_TA.ccx
@@ -96,12 +99,13 @@ force_ta:
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 
 do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log
