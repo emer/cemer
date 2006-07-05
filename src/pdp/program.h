@@ -460,7 +460,9 @@ public:
     RV_COMPILE_ERR, 	// script couldn't be compiled
     RV_INIT_ERR, 	// initialization failed (note: user prog may use its own value)
     RV_RUNTIME_ERR,	// misc runtime error (ex, null pointer ref, etc.)
-    RV_PROG_CALL_FAILED // a program call failed (probably an error in that program)
+    RV_PROG_CALL_FAILED, // a program call failed (probably an error in that program)
+    RV_ALREADY_RUNNING, // attempt to run a new program chain when a program chain is already running
+    RV_NO_PROGRAM // no program was available to run
   };
   
   enum RunMode { // current run state, is global to all active programs
@@ -472,7 +474,7 @@ public:
   };
   
   static RunMode	run_mode; // the one and only global run mode for current running prog
-//temp//temp   static ProgramRef	step_prog; // the top level step prog
+  static ProgramRef	step_prog; // the top level step prog
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program
@@ -498,6 +500,7 @@ public:
     // run the program, 0=success
   virtual bool		SetGlobalVar(const String& nm, const Variant& value);
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
+  bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user
@@ -580,14 +583,26 @@ class PDP_API Controller: public taNBase {
   // #TOKENS #INSTANCE the data representation of a control panel for running programs
 INHERITED(taNBase)
 public:
+  static bool		running; // true when executing code, incl init, and while running a step
+  
   Program_List		progs; // #LINK_GROUP the programs that will be listed in the cp
+  ProgramRef		step_prog; // the top level step prog
+  
+  Program*		rootProg(); // the top level program; NULL if none
+  void			setRunning(bool val); // sets and updates gui
+  
   
   void			AddProgram(Program* prog); // #MENU #MENU_CONTEXT add a program
   
-#ifdef TA_GUI
-  virtual void		InitGui(); // #LABEL_Run #MENU #MENU_ON_Run #MENU_CONTEXT #BUTTON initialize the top-level program
-  virtual void		RunGui(); // #LABEL_Run #MENU #MENU_ON_Run #MENU_CONTEXT #BUTTON run the top-level program
-#endif
+  virtual void  Init();
+  // #BUTTON #GHOST_OFF_running set the program states back to the beginning
+  virtual void  Run();
+  // #BUTTON #GHOST_OFF_running run the programs
+  virtual void	Step();
+  // #BUTTON #GHOST_OFF_running step the program, at the selected step level
+  virtual void	Stop();
+  // #BUTTON #GHOST_ON_running stop the running programs
+
 
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -596,6 +611,9 @@ public:
   COPY_FUNS(Controller, taNBase);
   TA_BASEFUNS(Controller);
 
+protected:
+  virtual int		Run_impl(Program::RunMode rm); 
+    // does all checks, then dispatches, return ReturnVal
 private:
   void	Initialize();
   void	Destroy();

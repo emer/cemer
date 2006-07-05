@@ -240,8 +240,10 @@ public:
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
   virtual void*	FindName_(const String& it, int& idx=Idx) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
+  void*		First_() const
+  { if (size > 0) return el[0]; else return NULL; }  // #IGNORE
   void*		Peek_() const
-  { void* rval=NULL; if(size > 0) rval = el[size-1]; return rval; }  // #IGNORE
+  { if(size > 0) return el[size-1]; else return NULL; }  // #IGNORE
 
   virtual void*	AddUniqNameOld_(void* it);
   // #IGNORE add so that name is unique, old used if dupl, returns one used

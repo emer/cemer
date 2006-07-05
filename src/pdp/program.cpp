@@ -20,6 +20,7 @@
 #include "css_c_ptr_types.h"
 #include "ta_css.h"
 
+#include <QCoreApplication>
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtdialog.h"
@@ -882,16 +883,21 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   String nm;
   ProgArg* ths_arg;
   ProgVar* prg_var;
+  bool set_one = false;
   for (int i = 0; i < global_args.size; ++i) {
     ths_arg = global_args.FastEl(i);
     nm = ths_arg->name;
     prg_var = target->global_vars.FindName(nm);
     if (!prg_var || ths_arg->value.empty()) continue;
+    set_one = true;
     rval += cssMisc::Indent(indent_level);
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
       + ths_arg->value + ");\n";
   }
-  
+  if (set_one) {
+    rval += cssMisc::Indent(indent_level);
+    rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
+  }
   rval += cssMisc::Indent(indent_level);
   rval += "call_result = target->Run();\n";
   --indent_level;
@@ -920,7 +926,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //////////////////////////
 
 Program::RunMode Program::run_mode = Program::STOP; 
-//temp ProgramRef 	Program::step_prog;
+ProgramRef 	Program::step_prog;
 
 void Program::Initialize() {
   flags = PF_NONE;
@@ -1060,21 +1066,32 @@ const String Program::scriptString() {
       m_scriptCache += "}\n\n";
     }
     
-    m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-    m_scriptCache += "if (run_mode == Program::INIT) {\n";
-    if (init_els.size > 0) {
-    m_scriptCache += "  __Init();\n";
-    }
-    m_scriptCache += "  return;\n";
+    m_scriptCache += "void __Prog();\n";
+    m_scriptCache += prog_els.GenCss(1);
     m_scriptCache += "}\n\n";
-    
-    m_scriptCache += prog_els.GenCss(0);
     m_scriptCache += "\n";
     m_dirty = false;
+    
+    m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
+    m_scriptCache += "if (run_mode == Program::RUN) {\n";
+    m_scriptCache += "  __Prog();\n";
+    if (init_els.size > 0) {
+    m_scriptCache += "} else if (run_mode == Program::INIT) {\n";
+    m_scriptCache += "  __Init();\n";
+    } else {
+    m_scriptCache += "// note: no Init() in this script; INIT does nothing\n";
+    }
+    m_scriptCache += "}\n";
   }
   return m_scriptCache;
 }
 
+bool Program::StopCheck() {
+  //NOTE: we call event loop even in non-gui compile, since we can presumably
+  // have other ways of stopping, such as something from a socket etc.
+  QCoreApplication::processEvents();
+  return (run_mode == STOP);
+}
 
 void  Program::UpdateProgVars() {
   //NOTE: if we have to nuke any or change any types then we have to recompile!
@@ -1226,8 +1243,10 @@ void Program_List::Initialize() {
 
 
 //////////////////////////
-//  Controller	//
+//  Controller		//
 //////////////////////////
+
+bool Controller::running = false;
 
 void Controller::Initialize() {
 }
@@ -1259,19 +1278,69 @@ void Controller::AddProgram(Program* prog) {
 }
 
 
-#ifdef TA_GUI
-void Controller::InitGui() {
-  Program* prog = progs.SafeEl(0);
-  if (prog)
-    prog->InitGui();
+void Controller::Init() {
+  Run_impl(Program::INIT);
 }
 
-void Controller::RunGui() {
-  Program* prog = progs.SafeEl(0);
-  if (prog)
-    prog->RunGui();
+Program* Controller::rootProg() {
+  return progs.First();
 }
-#endif // TA_GUI
+
+void Controller::Run() {
+  Run_impl(Program::RUN);
+}
+
+int Controller::Run_impl(Program::RunMode rm) {
+  if (running) return Program::RV_ALREADY_RUNNING; // shouldn't normally happen
+  int rval = Program::RV_OK;
+  Program* prog = NULL;
+  if (rm == Program::STEP)
+    prog = step_prog;
+  else
+    prog = rootProg();
+  if (!prog) return Program::RV_NO_PROGRAM;
+  
+  setRunning(true);
+  switch (rm) {
+  case Program::INIT: 
+    prog->Init();
+    break;
+  case Program::RUN: 
+    prog->Run();
+    break;
+  case Program::STEP: 
+    //TODO
+    break;
+  default: //TODO
+    break;
+  }
+  running = false;
+  DataChanged(DCR_ITEM_UPDATED);
+  return rval;
+}
+
+void Controller::setRunning(bool val) {
+  if (running == val) return;
+  running = val;
+  //note: running is static, but its gui effects are instance
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void Controller::Step() {
+  Run_impl(Program::STEP);
+}
+
+void Controller::Stop() {
+  Programm::run_mode = Program::STOP;
+  if (!running) return;
+  //TODO: need to add better support so we can restart -- this just kicks out
+  Program* prog = rootProg();
+  if (prog) {
+    prog->script->Stop();
+  }
+  setRunning(false);
+}
+
 
 
 //////////////////////////

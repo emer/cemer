@@ -1089,10 +1089,12 @@ public:
   virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
   // find given type element (NULL = not here), sets idx
 
+  T*		First() const			{ return (T*)First_(); }
+  // look at the first element; NULL if none
   virtual T*	Pop()				{ return (T*)Pop_(); }
   // pop the last element off the stack
   virtual T*	Peek() const			{ return (T*)Peek_(); }
-  // peek at the last element on the stack
+  // peek at the last element on the stack, if any
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }
   // add so that name is unique, old used if dupl, returns one used
