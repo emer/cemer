@@ -78,11 +78,12 @@ bool AbstractScriptBase::CompileScript(bool force) {
   }
   InitScriptObj_impl();
 
-  if (script->in_readline) {
-    Script::recompile_scripts.AddUnique(this);
-    script->ExitShell();
-    return false;
-  }
+  // todo: this should no longer be relevant
+//   if (script->in_readline) {
+//     Script::recompile_scripts.AddUnique(this);
+//     script->ExitShell();
+//     return false;
+//   }
   
   return DoCompileScript();
 }

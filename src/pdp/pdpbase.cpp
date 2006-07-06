@@ -300,7 +300,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	cssMisc::Top->StartupShellInit(cin, cout);
+	cssMisc::TopShell->StartupShellInit(cin, cout);
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
@@ -341,7 +341,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   MPI_Finalize();
 
 #else
-  cssMisc::Top->StartupShellInit(cin, cout);
+  cssMisc::TopShell->StartupShellInit(cin, cout);
   qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();

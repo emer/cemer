@@ -1091,7 +1091,7 @@ void PDPRoot::Destroy() {
 #endif
     {
       projects.RemoveAll();
-      cssMisc::Top->ExitShell();	// just exit from top-level shell
+      cssMisc::TopShell->ExitShell();	// just exit from top-level shell
     }
   } else {
     projects.RemoveAll();

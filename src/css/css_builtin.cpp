@@ -277,13 +277,13 @@ static cssEl* cssElCFun_scoper_stub(int, cssEl* arg[]) {
   return (arg[1])->GetScoped(*arg[2]);
 }
 static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
-#ifdef HAVE_VOLATILE
-  volatile cssProg* cp = arg[0]->prog; // volatile because of setjmp
-  volatile cssEl* tmp;
-#else
+// #ifdef HAVE_VOLATILE
+//   volatile cssProg* cp = arg[0]->prog; // volatile because of setjmp
+//   volatile cssEl* tmp;
+// #else
   cssProg* cp = arg[0]->prog;
   cssEl* tmp;
-#endif
+// #endif
   if(arg[2]->GetType() == cssEl::T_String)
     tmp = (arg[1])->GetMemberFun((const char*)*arg[2]);
   else
@@ -323,11 +323,11 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
   cp->top->state = old_state;
   cp->top->step_mode = old_step;
 
-  if(!((cp->top->run==cssEl::Stopping) || (cp->top->run==cssEl::Running)))
+  if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
     return &cssMisc::Void;
 
-  setjmp(cssMisc::begin);		// need to set the break to here for mbr_fun do
-  if(cp->top->run != cssEl::ExecError) {
+//   setjmp(cssMisc::begin);		// need to set the break to here for mbr_fun do
+  if(cp->top->run_stat != cssEl::ExecError) {
     tmp->Do((cssProg*)cp);
   }
 //  arg[0]->prog = cp;		// reset this, see above ^^^^
@@ -467,7 +467,7 @@ static cssEl* cssElCFun_ifcd_stub(int, cssEl* arg[]) {
     cp->SetPC(savepc);
     cp->EndRunPop();		// get rid of cond..
     cp->top->Cont();		// then part
-    if((cp->top->run == cssEl::Stopping) || (cp->top->run == cssEl::Running))
+    if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running))
       cp->insts[savepc + 2]->Do(); // reset pc to the end
   }
   else {
@@ -476,10 +476,10 @@ static cssEl* cssElCFun_ifcd_stub(int, cssEl* arg[]) {
     cp->top->Cont();
   }
   cp->EndRunPop();
-  if((cp->top->run == cssEl::Stopping) || (cp->top->run == cssEl::Running))
+  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running))
     ((cssElFun*)arg[0])->dostat = cssEl::Running;
   else
-    ((cssElFun*)arg[0])->dostat = cp->top->run;
+    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
   return &cssMisc::Void;
 }
 
@@ -519,8 +519,8 @@ static cssEl* cssElCFun_switch_stub(int, cssEl* arg[]) {
   cp->top->Cont();		// run the switch
   cp->EndRunPop();		// get rid of junk
 
-  if(cp->top->run == cssEl::Breaking)
-    cp->top->run = cssEl::Running;	// clear the break
+  if(cp->top->run_stat == cssEl::Breaking)
+    cp->top->run_stat = cssEl::Running;	// clear the break
   return &cssMisc::Void;
 }
 
@@ -541,25 +541,25 @@ static cssEl* cssElCFun_while_stub(int, cssEl* arg[]) {
     cp->SetPC(savepc);
     cp->EndRunPop();		// get rid of cond..
     cp->top->Cont();		// body
-    if(cp->top->run == cssEl::Breaking) {
-      cp->top->run = cssEl::Stopping;
+    if(cp->top->run_stat == cssEl::Breaking) {
+      cp->top->run_stat = cssEl::Stopping;
       break;
     }
-    else if(cp->top->run == cssEl::Continuing) {
-      cp->top->run = cssEl::Stopping;
+    else if(cp->top->run_stat == cssEl::Continuing) {
+      cp->top->run_stat = cssEl::Stopping;
     }
-    else if(!((cp->top->run==cssEl::Stopping) || (cp->top->run==cssEl::Running)))
+    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
       break;
     cp->SetPC(savepc + 2);
     cond = cp->top->Cont();
   }
   cp->EndRunPop();		// get rid of cond..
-  if((cp->top->run == cssEl::Stopping) || (cp->top->run == cssEl::Running)) {
+  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
     cp->insts[savepc + 1]->Do(); // resets pc
     ((cssElFun*)arg[0])->dostat = cssEl::Running;
   }
   else
-    ((cssElFun*)arg[0])->dostat = cp->top->run;
+    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
   return &cssMisc::Void;
 }
 
@@ -576,14 +576,14 @@ static cssEl* cssElCFun_do_stub(int, cssEl* arg[]) {
   do {
     cp->SetPC(savepc+2);
     cp->top->Cont();		// body
-    if(cp->top->run == cssEl::Breaking) {
-      cp->top->run = cssEl::Stopping;
+    if(cp->top->run_stat == cssEl::Breaking) {
+      cp->top->run_stat = cssEl::Stopping;
       break;
     }
-    else if(cp->top->run == cssEl::Continuing) {
-      cp->top->run = cssEl::Stopping;
+    else if(cp->top->run_stat == cssEl::Continuing) {
+      cp->top->run_stat = cssEl::Stopping;
     }
-    else if(!((cp->top->run==cssEl::Stopping) || (cp->top->run==cssEl::Running)))
+    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
       break;
     cp->SetPC(savepc + 0);
     cssEl* cond_el = cp->top->Cont();
@@ -591,12 +591,12 @@ static cssEl* cssElCFun_do_stub(int, cssEl* arg[]) {
     cp->EndRunPop();		// get rid of cond..
   } while(cond);
 
-  if((cp->top->run == cssEl::Stopping) || (cp->top->run == cssEl::Running)) {
+  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
     cp->insts[savepc + 1]->Do(); // resets pc
     ((cssElFun*)arg[0])->dostat = cssEl::Running;
   }
   else
-    ((cssElFun*)arg[0])->dostat = cp->top->run;
+    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
   return &cssMisc::Void;
 }
 
@@ -624,14 +624,14 @@ static cssEl* cssElCFun_for_stub(int, cssEl* arg[]) {
     cp->SetPC(savepc + 2);
     cp->EndRunPop();		// get rid of cond..
     cp->top->Cont();		// body
-    if(cp->top->run == cssEl::Breaking) {
-      cp->top->run = cssEl::Stopping;
+    if(cp->top->run_stat == cssEl::Breaking) {
+      cp->top->run_stat = cssEl::Stopping;
       break;
     }
-    else if(cp->top->run == cssEl::Continuing) {
-      cp->top->run = cssEl::Stopping;
+    else if(cp->top->run_stat == cssEl::Continuing) {
+      cp->top->run_stat = cssEl::Stopping;
     }
-    else if(!((cp->top->run==cssEl::Stopping) || (cp->top->run==cssEl::Running)))
+    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
       break;
 
     cp->SetPC(savepc + 1);
@@ -642,12 +642,12 @@ static cssEl* cssElCFun_for_stub(int, cssEl* arg[]) {
     cond = cp->top->Cont();
   }
   cp->EndRunPop();		// get rid of cond..
-  if((cp->top->run == cssEl::Stopping) || (cp->top->run == cssEl::Running)) {
+  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
     cp->insts[savepc + 3]->Do(); // resets pc to end
     ((cssElFun*)arg[0])->dostat = cssEl::Running;
   }
   else
-    ((cssElFun*)arg[0])->dostat = cp->top->run;
+    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
   return &cssMisc::Void;
 }
 
@@ -847,69 +847,89 @@ static cssEl* cssElCFun_alias_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  if(na > 0) {
-    if(arg[1]->GetType() == cssEl::T_SubShell) {
-      cp->top->SetShell(&(((cssSubShell*)arg[1])->prog_space));
-      return &cssMisc::Void;
-    }
-    if(arg[1]->GetType() != cssEl::T_TA) {
-      cssMisc::Error(cp, "chsh argument is not a pointer to a cssProgSpace");
-      return &cssMisc::Void;
-    }
-    cssTA* ta = (cssTA*)arg[1];
-    if(ta->type_def->InheritsFrom("cssProgSpace") && (ta->ptr != NULL)) {
-      cssProgSpace* ps = (cssProgSpace*)ta->GetVoidPtr();
-      cp->top->SetShell(ps);
-    }
-    else {
-      cssMisc::Error(cp, "chsh argument is not a valid pointer to a cssProgSpace");
-    }
-  }
-  else
-    cp->top->SetShell(cp->top);	// shell itself
+  // todo:
+//   if(na > 0) {
+//     if(arg[1]->GetType() == cssEl::T_SubShell) {
+//       cp->top->SetShell(&(((cssSubShell*)arg[1])->prog_space));
+//       return &cssMisc::Void;
+//     }
+//     if(arg[1]->GetType() != cssEl::T_TA) {
+//       cssMisc::Error(cp, "chsh argument is not a pointer to a cssProgSpace");
+//       return &cssMisc::Void;
+//     }
+//     cssTA* ta = (cssTA*)arg[1];
+//     if(ta->type_def->InheritsFrom("cssProgSpace") && (ta->ptr != NULL)) {
+//       cssProgSpace* ps = (cssProgSpace*)ta->GetVoidPtr();
+//       cp->top->SetShell(ps);
+//     }
+//     else {
+//       cssMisc::Error(cp, "chsh argument is not a valid pointer to a cssProgSpace");
+//     }
+//   }
+//   else
+//     cp->top->SetShell(cp->top);	// shell itself
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_clearall_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetClearAll();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->ClearAll();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_cont_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0)
-    cp->top->SetCont((int)*(arg[1]));
+    csh->src_prog->Cont((int)*(arg[1]));
   else
-    cp->top->SetCont(-1);
+    csh->src_prog->Cont();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_goto_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetCont((int)*(arg[1]));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Cont((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_commands_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssMisc::Commands.NameList(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  cssMisc::Commands.NameList(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_constants_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssMisc::Constants.List(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  cssMisc::Constants.List(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_debug_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetDebug((int)*(arg[1]));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->SetDebug((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_define_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetDefn();
+  // todo: this needs to switch the state of the shell to take input into src instead of cmd
+//   cp->top->SetDefn();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_defines_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssMisc::Defines.List(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  cssMisc::Defines.List(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_edit_stub(int na, cssEl* arg[]) {
@@ -924,49 +944,63 @@ static cssEl* cssElCFun_edit_stub(int na, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_enums_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssMisc::Enums.NameList(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  cssMisc::Enums.NameList(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_frame_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
     int back = (int)*arg[1];
-    if(back >= cp->top->size) {
+    if(back >= csh->src_prog->size) {
       cssMisc::Error(cp, "Not that many frames:",String(back),"in program, has only:",
-		      String((int)(cp->top->size-1)));
+		      String((int)(csh->src_prog->size-1)));
       return &cssMisc::Void;
     }
-    if(back == cp->top->size-1)
-      cp->top->statics.List(*(cp->top->fout));
+    if(back == csh->src_prog->size-1)
+      csh->src_prog->statics.List(*(csh->fout));
     else
-      cp->top->Prog(cp->top->size-1-back)->ListSpace();
+      csh->src_prog->Prog(csh->src_prog->size-1-back)->ListSpace();
   }
   else {
     cp->ListSpace();
-    cp->top->statics.List(*(cp->top->fout));
+    csh->src_prog->statics.List(*(csh->fout));
   }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_functions_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssMisc::Functions.NameList(*(cp->top->fout));
-  cp->top->hard_funs.NameList(*(cp->top->fout));
-  cssMisc::HardFuns.NameList(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  cssMisc::Functions.NameList(*(csh->fout));
+  csh->src_prog->hard_funs.NameList(*(csh->fout));
+  cssMisc::HardFuns.NameList(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_globals_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->hard_vars.List(*(cp->top->fout));
-  cssMisc::HardVars.List(*(cp->top->fout));
-  cssMisc::Externs.List(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->hard_vars.List(*(csh->fout));
+  cssMisc::HardVars.List(*(csh->fout));
+  cssMisc::Externs.List(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
     if(arg[1]->GetType() == cssEl::T_ElCFun) {
       cssElCFun* fun = (cssElCFun*)arg[1];
-      *(cp->top->fout) << "\nHelp for function: " << fun->name << "\n" << fun->name << " ";
+      *(csh->fout) << "\nHelp for function: " << fun->name << "\n" << fun->name << " ";
       String str = fun->help_str;
       int wdth = 0;
       while(!str.empty()) {
@@ -980,19 +1014,19 @@ static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {
 	  str = "";
 	}
 	if(wdth + (int)wrd.length() > taMisc::display_width) {
-	  *(cp->top->fout) << endl;
+	  *(csh->fout) << endl;
 	  wdth = 0;
 	}
-	*(cp->top->fout) << wrd << " ";
+	*(csh->fout) << wrd << " ";
 	wdth += wrd.length() + 1;
       }
-      *(cp->top->fout) << endl;
-      cp->top->fout->flush();
+      *(csh->fout) << endl;
+      csh->fout->flush();
     }
     else {
-      arg[1]->TypeInfo(*(cp->top->fout));
-      *(cp->top->fout) << "\n";
-      cp->top->fout->flush();
+      arg[1]->TypeInfo(*(csh->fout));
+      *(csh->fout) << "\n";
+      csh->fout->flush();
     }
   }
   else
@@ -1001,67 +1035,84 @@ static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_inherit_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  arg[1]->InheritInfo(*(cp->top->fout));
-  *(cp->top->fout) << "\n";
-  cp->top->fout->flush();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  arg[1]->InheritInfo(*(csh->fout));
+  *(csh->fout) << "\n";
+  csh->fout->flush();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
     if((arg[1]->GetType() == cssEl::T_ScriptFun) ||
        (arg[1]->GetType() == cssEl::T_MbrScriptFun))
     {
       cssScriptFun* fe = (cssScriptFun*)arg[1];
       if(na > 1)
-	fe->fun->List(*(cp->top->fout), fe->fun->CurSrcLn(0), *arg[2]);
+	fe->fun->List(*(csh->fout), fe->fun->CurSrcLn(0), *arg[2]);
       else
-	fe->fun->List(*(cp->top->fout), fe->fun->CurSrcLn(0), 100);	// give it the whole thing..
+	fe->fun->List(*(csh->fout), fe->fun->CurSrcLn(0), 100);	// give it the whole thing..
     }
     else {
       if(na > 1)
-	cp->top->List(*arg[1], *arg[2]);
+	csh->src_prog->List(*arg[1], *arg[2]);
       else
-	cp->top->List(*arg[1]);
+	csh->src_prog->List(*arg[1]);
     }
   }
   else
-    cp->top->List();
+    csh->src_prog->List();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetCompile((const char*)*(arg[1]));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Compile((const char*)*(arg[1]));
   return &cssMisc::Void;
 }
 
 static cssEl* cssElCFun_mallinfo_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  taMisc::MallocInfo(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  taMisc::MallocInfo(*(csh->fout));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_print_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  arg[1]->Print(*(cp->top->fout));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  arg[1]->Print(*(csh->fout));
   if(cp->top->debug > 1)
-    *(cp->top->fout) << "\trefn: " << arg[1]->refn;
-  *(cp->top->fout) << "\n";
-  cp->top->fout->flush();
+    *(csh->fout) << "\trefn: " << arg[1]->refn;
+  *(csh->fout) << "\n";
+  csh->fout->flush();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_printr_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  arg[1]->PrintR(*(cp->top->fout));
-  *(cp->top->fout) << "\n";
-  cp->top->fout->flush();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  arg[1]->PrintR(*(csh->fout));
+  *(csh->fout) << "\n";
+  csh->fout->flush();
   return &cssMisc::Void;
 }
 
 static cssEl* cssElCFun_remove_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  if(!cp->top->types.Replace(arg[1], &cssMisc::Void)) {
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  if(!csh->src_prog->types.Replace(arg[1], &cssMisc::Void)) {
     if(!cssMisc::TypesSpace.Replace(arg[1], &cssMisc::Void)) {
-      if(!cp->top->DelVar(arg[1]))
+      if(!csh->src_prog->DelVar(arg[1]))
 	cssMisc::Error(cp, "Could not delete type/variable:", (char*)arg[1]->GetName());
     }
   }
@@ -1069,56 +1120,83 @@ static cssEl* cssElCFun_remove_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_reload_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetReCompile();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->reCompile();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_reset_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetReset();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Reset();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_restart_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetRestart();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Restart();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_run_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetRun();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Run();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_setbp_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetBreak((int)*(arg[1]));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->SetBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_setout_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
   ostream* strm = (ostream*)*(arg[1]);
-  cp->top->fout = strm;
+  csh->fout = strm;
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_settings_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
   int i;
-  *(cp->top->fout) << "Include Paths:\n";
-  taMisc::include_paths.List(*(cp->top->fout));
-  *(cp->top->fout) << "\n";
+  *(csh->fout) << "Include Paths:\n";
+  taMisc::include_paths.List(*(csh->fout));
+  *(csh->fout) << "\n";
   for(i=1; i<cssMisc::Settings.size; i++) {
-    cssMisc::Settings.FastEl(i)->Print(*(cp->top->fout));
-    *(cp->top->fout) << "\n";
+    cssMisc::Settings.FastEl(i)->Print(*(csh->fout));
+    *(csh->fout) << "\n";
   }
-  cp->top->fout->flush();
+  csh->fout->flush();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_showbp_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->ShowBreaks();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->ShowBreaks();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_source_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetSource((const char*)*(arg[1]));
+  // todo: not clear what to do about this one!  it requires self-modification.  the one
+  // case of a do-after flag required..
+//   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+//   cssCmdShell* csh = cp->top->cmd_shell;
+//   if(csh->src_prog == NULL) return &cssMisc::Void;
+//   csh->src_prog->Source((const char*)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_stack_stub(int, cssEl* arg[]) {
@@ -1129,12 +1207,18 @@ static cssEl* cssElCFun_stack_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_status_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->Status();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->Status();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_step_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->step_mode = (int)*(arg[1]);
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->step_mode = (int)*(arg[1]);
   return &cssMisc::Void;
 }
 
@@ -1145,54 +1229,66 @@ static cssEl* cssElCFun_system_stub(int, cssEl* arg[]) {
 
 static cssEl* cssElCFun_tokens_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  arg[1]->TokenInfo(*(cp->top->fout));
-  *(cp->top->fout) << "\n";
-  cp->top->fout->flush();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  arg[1]->TokenInfo(*(csh->fout));
+  *(csh->fout) << "\n";
+  csh->fout->flush();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_trace_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
     int tr_lev = (int)*arg[1];
     if(tr_lev > 2)
-      cp->top->ListSpace();
+      csh->src_prog->ListSpace();
     else
-      cp->top->Trace(tr_lev);
+      csh->src_prog->Trace(tr_lev);
   }
   else
-    cp->top->Trace();
+    csh->src_prog->Trace();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
-    arg[1]->TypeInfo(*(cp->top->fout));
-    *(cp->top->fout) << endl;
+    arg[1]->TypeInfo(*(csh->fout));
+    *(csh->fout) << endl;
   }
   else {
-    *(cp->top->fout) << "Types local to current top-level program space (" << cp->top->name << "):" << endl;
-    cp->top->types.NameList(*(cp->top->fout));
-    *(cp->top->fout) << "\n==========================" << endl <<
+    *(csh->fout) << "Types local to current top-level program space (" << cp->top->name << "):" << endl;
+    csh->src_prog->types.NameList(*(csh->fout));
+    *(csh->fout) << "\n==========================" << endl <<
       "Global types: " << endl;
-    cssMisc::TypesSpace.NameList(*(cp->top->fout));
+    cssMisc::TypesSpace.NameList(*(csh->fout));
   }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_unsetbp_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->unSetBreak((int)*(arg[1]));
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->unSetBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_undo_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0)
-    cp->top->SetUndo((Int)*(arg[1]));
+    csh->src_prog->Undo((Int)*(arg[1]));
   else
-    cp->top->SetUndo(-1);
+    csh->src_prog->Undo();
   return &cssMisc::Void;
 }
-
-
 
 //////////////////////////////////
 //	Install_Commands	//
@@ -1805,11 +1901,14 @@ static cssEl* cssElCFun_fprintf_stub(int na, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
+  ostream* fh = &cout;
+  if(cp->top->cmd_shell != NULL) 
+    fh = cp->top->cmd_shell->fout;
   int i;
   for(i=1; i <= na; i++) {
-    (arg[i])->PrintF(*(cp->top->fout));
+    (arg[i])->PrintF(*(fh));
   }
-  cp->top->fout->flush();
+  fh->flush();
   return &cssMisc::Void;
 }
 
@@ -2677,6 +2776,9 @@ int cssMisc::Initialize() {
   cssProg::Ref(cssMisc::CDtorProg);
   cssProg::Ref(cssMisc::CallFunProg);
   cssMisc::cur_top = cssMisc::Top;
+
+  cssMisc::TopShell = new cssCmdShell("C^c Top Shell");
+  cssMisc::TopShell->src_prog = cssMisc::Top;
 
   Install_Internals();
   Install_Commands();

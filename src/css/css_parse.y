@@ -228,63 +228,65 @@ ppdef:    CSS_PP_DEF		{
         ;
 */
 
+/* todo: get rid of all the immediate Do functions here -- kinda strange and unnec. */
+
 command:  CSS_COMMAND cmd_args		{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
             Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD cmd_args		{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD argstop CSS_TYPE	{
-	    if(!cssMisc::cur_top->InShell()) {
+	    if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
         | CSS_CONT			{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->SetCont(-1); }
+	    Code1($1); $$ = cssProg::YY_Ok; }
 	| CSS_LIST 			{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	   cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
 	   cssMisc::cur_top->List(); $$ = cssProg::YY_NoSrc; }
         | CSS_LIST argstop exprlist	{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_Ok;
 	    cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_LIST '(' argstop exprlist	')'	{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_Ok;
 	    cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE cmd_args		{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE argstop CSS_TYPE	{
-	    if(!cssMisc::cur_top->InShell()) {
+	    if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
         | CSS_STATUS			{
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
-	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
+	    Code1($1); }
         | CSS_ALIAS anycmd name 	{
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef($2));
@@ -292,48 +294,48 @@ command:  CSS_COMMAND cmd_args		{
         | CSS_ALIAS anycmd anycmd	{
 	    $$ = cssProg::YY_NoSrc; }
         | CSS_HELP {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP anycmd {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP CSS_FUN {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP CSS_ALIAS {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP CSS_HELP {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP CSS_PTRTYPE {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog());}
         | CSS_HELP CSS_TYPE {
-            if(!cssMisc::cur_top->InShell()) {
+            if(!cssMisc::cur_top->AmCmdProg()) {
 	      yyerror("commands are only available from the shell");
 	      return cssProg::YY_Err; }
 	    $$ = cssProg::YY_NoSrc;
@@ -393,7 +395,7 @@ vardefin: type name '=' argstop expr end term 	{
  	    extyp->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    $$ = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
-	    if(!cssMisc::cur_top->InShell()) {
+	    if(!cssMisc::cur_top->AmCmdProg()) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(),
 			       "Warning: created implicit variable:",
 			       tmp->ptr.El()->name,
@@ -1466,19 +1468,23 @@ end:	  /* nothing */		{ Code1(cssInst::Stop); $$ = cssMisc::cur_top->Prog()->siz
 void yyerror(char* s) { 	/* called for yacc syntax error */
   int i;
 
+  ostream* fh = &cerr;
+  if(cssMisc::cur_top->cmd_shell != NULL)
+    fh = cssMisc::cur_top->cmd_shell->ferr;
+
   if(strcmp(s, "parse error") == 0) {
     String src = cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
     src.gsub('\t',' ');		// replace tabs
-    *(cssMisc::cur_top->ferr) << "Syntax Error, line " << cssMisc::cur_top->src_ln << ":\t"
+    *(fh) << "Syntax Error, line " << cssMisc::cur_top->src_ln << ":\t"
       << src;
-    *(cssMisc::cur_top->ferr) << "\t\t\t";
+    *(fh) << "\t\t\t";
     for(i=0; i < cssMisc::cur_top->Prog()->tok_col; i++)
-      *(cssMisc::cur_top->ferr) << " ";
-    *(cssMisc::cur_top->ferr) << "^\n";
+      *(fh) << " ";
+    *(fh) << "^\n";
   }
   else {
-    *(cssMisc::cur_top->ferr) << s << " line " << cssMisc::cur_top->src_ln << ":\t"
+    *(fh) << s << " line " << cssMisc::cur_top->src_ln << ":\t"
       << cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
   }
-  cssMisc::cur_top->ferr->flush();
+  fh->flush();
 }

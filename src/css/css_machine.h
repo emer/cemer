@@ -43,7 +43,7 @@
 #endif
 
 #include <signal.h>
-#include <setjmp.h>
+// #include <setjmp.h>
 
 // externals
 class cssConsole;
@@ -103,11 +103,12 @@ class cssInst;
 class cssIJump;
 class cssProg;
 class cssProgSpace;
+class cssCmdShell;
 
 class CSS_API cssMisc { // misc stuff for css
 public:
 
-  static jmp_buf 	begin;
+//   static jmp_buf 	begin;
 
   static cssSpace 	Internal;	// for use in internal, not searched
   static cssSpace	Parse;		// just for parsing stuff
@@ -143,6 +144,9 @@ public:
   static cssProgSpace*	cur_top;	// current top-level (set for parsing, running)
   static cssProgSpace*	code_cur_top;	// cur_top for coding (e.g. if top switched for ConstExpr)
   static cssProgSpace*	delete_me;	// delete this space, couldn't be done earlier
+
+  static cssCmdShell* 	TopShell;	// top level command shell
+  static cssCmdShell*	delete_shell;	// delete this shell, couldn't be done eariler
 
   static cssArray*	s_argv;		// args passed by shell to scripts
   static cssInt*	s_argc;		// number of args passed by shell to scripts
@@ -1088,12 +1092,11 @@ protected:
 public:
   // flag state values
   enum State_Flags {
-    State_Shell		= 1,
-    State_Run		= 2,
-    State_Cont		= 4,
-    State_Defn		= 8, 	// defn = defining, else shelling if in shell
-    State_RunLast	= 16, 	// currently executing a runlast
-    State_WasBurped	= 32  	// last line was burped, (delete src if necc)
+    State_Shell		= 0x0001,
+    State_Run		= 0x0002,
+    State_Cont		= 0x0004,
+    State_Defn		= 0x0008, 	// defn = defining, else shelling if in shell
+    State_WasBurped	= 0x0010,  	// last line was burped, (delete src if necc)
   };
 
   enum YY_Flags {
@@ -1113,8 +1116,6 @@ public:
   css_progdx 	size;			// number of instructions
   css_progdx	parse_st_size;		// starting size for parsing
   int		parse_st_src_size;	// source starting size for parsing
-  css_progdx	run_st_size;		// starting size for runlast
-  int		run_st_src_size;	// source starting size for runlast
 
   cssFrame** 	frame;			// anything dynamic goes here
   int		fr_size;		// how deep is your frame?
@@ -1209,12 +1210,9 @@ public:
   int 		AddSrc(const char* line);
   void		MarkParseStart()
   { parse_st_size = size; parse_st_src_size = src_size; }
-  void		MarkRunStart()
-  { run_st_size = size; run_st_src_size = src_size; }
   void		ZapFrom(int zp_size, int zp_src_size); // zap from
   void          ZapFromSrc(int zp_src_size); // zap only source, not inst
   void		ZapLastParse()		{ ZapFrom(parse_st_size, parse_st_src_size); }
-  void		ZapLastRun()		{ ZapFrom(run_st_size, run_st_src_size); }
   int 		Getc();
   void 		unGetc()		{ col--; }
 
@@ -1242,7 +1240,6 @@ public:
   cssEl*	Cont(css_progdx st)	{ SetPC(st); return Cont(); }
   cssEl*	ContSrc(int srcln);	// continue with rest of program
   cssEl*	Run()	 		{ Restart(); return Cont(); }
-  cssEl*	RunLast();
   void 		Restart();		// restart execution
   void		EndRunPop()		{ Stack()->DelPop(); }
   void		SaveStack();		// save current stack
@@ -1258,7 +1255,7 @@ public:
   bool		unSetBreak(int srcln);
 protected:
 //  int 		ReadLn();		// read the line in from filein
-  int 		ReadLn_File();		// read the line in from filein
+  int 		ReadLn_File(istream& fh);	// read the line in from filein
 };
 
 class CSS_API cssProgStack {
@@ -1275,20 +1272,6 @@ INHERITED(QObject)
 friend class cssProg;
   Q_OBJECT
 protected:
-  enum ShellCmds {	// these flag that the given command was requested to run
-    SC_None,
-    SC_Compile,			// file name is in sc_compile_this
-    SC_reCompile,
-    SC_Source,			// file name is in sc_compile_this
-    SC_Defn,
-    SC_Shell,			// shell object is in sc_shell_this
-    SC_Run,
-    SC_Restart,
-    SC_Reset,
-    SC_ClearAll,
-    SC_Undo
-  };
-
   enum CompileCtrl {		// compiling control state (delayed compile actions)
     CC_None,
     CC_Push,			// prog to push in cc_push_this
@@ -1303,8 +1286,6 @@ protected:
 
 public:
   String 	name;
-  String	prompt;
-  String	act_prompt;		// the actual prompt
 
   int 		size;			// size of progs, in els
   cssProgStack** progs;
@@ -1318,16 +1299,11 @@ public:
   cssSpace	statics;		// global variables (in space)
   cssSpace	types;			// types defined in space
 
-  istream*	fin;			// input file (current)
-  ostream*	fout;			// output file
-  ostream*	ferr;			// error file
-  istream*	fshell;			// shell input file
   int		step_mode;		// step mode
-  cssEl::RunStat run;			// flag to tell if running
+  cssEl::RunStat run_stat; 		// flag to tell if running: set to Stopping to stop, or BreakPoint
   int 		debug;			// debug level
-  bool		external_exit;		// set to true to break out of a shell...
-  bool		in_readline;		// currently reading input from shell
 
+  istream*	src_fin;		// source input stream
   int 		src_ln;			// present source line no (parsing)
   int		st_src_ln;		// starting source line no
   int		list_ln;		// present source line no (listing)
@@ -1336,26 +1312,20 @@ public:
   int		lstop_ln;		// stopping line
   int	 	prev_ln;		// previous line no (listing)
 
-  int		old_src_ln;		// for shell, previous source line
-  int		init_depth;		// for shell, initial depth
-  int		old_state;		// for shell, previous state
-  cssProgSpace* old_top;		// for shell, previous top
-  istream*	old_fh;			// for shell, previous fin
-  cssProg* 	old_prog;		// for shell, previous prog
-
   bool		parsing_command; 	// true if we are presently parsing a command
 
-
-  InputMode 	GetInputMode() const;
+  cssCmdShell*	cmd_shell;		// controlling command shell
 
   void Constr();
   cssProgSpace();
   cssProgSpace(const char* nm);
   virtual ~cssProgSpace();
 
+  bool		AmCmdProg();		// am I a cmd shell cmd_prog?
+
+  // todo: look into need for following:
   bool		DeleteOk();		// checks if its ok to delete this one
   void		DeferredDelete();	// call this if not ok to delete now..
-  void		ExitShell();		// cause shell to exit
 
   cssProgStack* ProgStack()		{ return progs[size-1]; }
   cssProgStack* ProgStack(int prdx)	{ return progs[prdx]; }
@@ -1428,37 +1398,11 @@ public:
   cssEl* 	ContSrc(int srcln);
   cssEl*	Run();
   void		Stop(); // can be called from inside or outside a program to cause it to stop
-  void		SetCont(int it=-1)	{ cont_pending = true; cont_here = it; }
   void		EndRunPop()		{ Prog()->EndRunPop(); }
-
-  // shell execution and commands
-  bool		InShell() const;
-  void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
-  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
-  void 		PushNewShell(istream& fh);
-  void 		PopShell();
-  void 		Source(const char* fname);	// run a file as if in a shell
-
-  bool		ShellCmdPending()	{ return (shell_cmds != SC_None); }
-  void		SetSC(ShellCmds sc)	{ shell_cmds = sc; run = cssEl::Bailing; }
-  void		ClearShellCmds()	{ SetSC(SC_None); }
-  void		SetCompile(const char* it) { SetSC(SC_Compile); sc_compile_this = it; }
-  void		SetReCompile()		{ SetSC(SC_reCompile); }
-  void		SetSource(const char* it)  { SetSC(SC_Source); sc_compile_this = it; }
-  void		SetDefn()		{ SetSC(SC_Defn); }
-  void		SetShell(cssProgSpace* it) { SetSC(SC_Shell); sc_shell_this = it; }
-  void		SetRun()		{ SetSC(SC_Run); }
-  void		SetRestart()		{ SetSC(SC_Restart); }
-  void		SetReset()		{ SetSC(SC_Reset); }
-  void		SetClearAll()		{ SetSC(SC_ClearAll); }
-  void		SetUndo(int it)		{ SetSC(SC_Undo); sc_undo_this = it; }
-  bool		DoShellCmd();		// execute shell command based on flag
 
   // display, status
   int		ListDebug()
-  { int rval=debug;
-    if((debug >= 2) || ((state & cssProg::State_RunLast) && (old_debug >= 2))) rval=2;
-    return rval; }
+  { int rval=debug; if(debug >= 2) rval=2; return rval; }
   void		SetDebug(int dblev);
   void		SetListStop();
   void 		List();
@@ -1474,33 +1418,90 @@ public:
   void		ShowBreaks();
   void		unSetBreak(int srcln);
 
-public slots:
-  void		AcceptNewLine(QString ln, bool eof); 
-    // called when a new line of text becomes available, usually from console
-    
 protected:
   int 		alloc_size;		// allocated number of prog_stacks
   int		old_debug;		// saved version
   cssElPtr	el_retv;		// return value for getel
 
-  bool		cont_pending;		// a continue is pending
-  css_progdx	cont_here;		// continue at this point
-
   CompileCtrl	compile_ctrl;		// control flags for delayed compile actions
   cssProg*	cc_push_this;		// push this object
   String	cc_include_this;	// filename to be included
-
-  ShellCmds	shell_cmds;		// shell command to run next
-  int		sc_undo_this;		// undo this program index
-  String	sc_compile_this;	// filename to be compiled
-  cssProgSpace* sc_shell_this;		// shell to shell
-  
-  bool		in_shell;		// new 4.0 indicates we are wired to console
 };
 
 inline cssInst* cssProg::Next_Peek() {
-  cssInst* rval = NULL; if(PC() >= size) top->run = cssEl::Stopping;
+  cssInst* rval = NULL; if(PC() >= size) top->run_stat = cssEl::Stopping;
   else rval = insts[PC()]; return rval;
 }
+
+class CSS_API cssCmdShell : public QObject {
+  // a command shell that controls a program space
+  INHERITED(QObject);
+  friend class cssProg;
+  friend class cssProgSpace;
+  Q_OBJECT
+protected:
+  enum InputMode { // current input mode, either file (fin) or interactive from console
+    IM_File,
+    IM_Console
+  };
+
+public:
+  String 	name;
+  String	prompt;
+  String	act_prompt;		// the actual prompt
+
+  istream*	fin;			// input file (current)
+  ostream*	fout;			// output file
+  ostream*	ferr;			// error file
+
+  bool		external_exit;		// set to true to break out of a shell...
+  bool		in_readline;		// currently reading input from shell
+
+  cssProgSpace*	src_prog;		// program with source code for commands to operate on (I do not own this!)
+  cssProgSpace*	cmd_prog;		// program for commands, etc (I own this one!)
+
+  void Constr();
+  cssCmdShell();
+  cssCmdShell(const char* nm);
+  virtual ~cssCmdShell();
+
+  bool		DeleteOk();		// checks if its ok to delete this one
+  void		DeferredDelete();	// call this if not ok to delete now..
+  void		ExitShell();		// cause shell to exit
+
+  // execution (wrappers on progspace)
+//   void 		Restart();
+//   cssEl* 	Cont();
+//   cssEl* 	Cont(css_progdx st);
+//   cssEl* 	ContSrc(int srcln);
+//   cssEl*	Run();
+//   void		Stop(); // can be called from inside or outside a program to cause it to stop
+
+  // shell execution and commands
+  void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
+  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
+  void 		Source(const char* fname);	// run a file as if in a shell
+
+  // display, status (wrappers on progspace)
+//   void		SetDebug(int dblev);
+//   void		SetListStop();
+//   void 		List();
+//   void 		List(int st);
+//   void 		List(int st, int nlines);
+//   void		ListSpace();
+//   void		Status();
+//   void		Trace(int level=0);
+//   void		Help();
+
+  // breakpoints
+//   void 		SetBreak(int srcln);
+//   void		ShowBreaks();
+//   void		unSetBreak(int srcln);
+
+public slots:
+  void		AcceptNewLine(QString ln, bool eof); 
+    // called when a new line of text becomes available, usually from console
+protected:
+};
 
 #endif // machine_h
