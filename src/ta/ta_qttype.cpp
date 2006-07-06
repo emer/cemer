@@ -1394,6 +1394,79 @@ taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   return rval;
 }
 
+bool taiType::CheckProcessCondMembMeth(const String condkey,
+    TypeItem* memb_meth, const void* base, bool& is_on, bool& val_is_eq) 
+{
+  // format: [CONDEDIT|GHOST]_[ON|OFF]_member[:value{,value}]
+  String optedit = memb_meth->OptionAfter(condkey + "_");
+  if (optedit.empty()) return false;
+  
+  String onoff = optedit.before('_');
+  is_on = (onoff == "ON"); //NOTE: should probably verify if OFF, otherwise it is an error
+
+  optedit = optedit.after('_');
+  String val = optedit.after(':');
+  
+  // find the member name -- depends on mode, see below
+  String mbr;
+  if (val.empty())
+    mbr = optedit; // entire thing is the member, implied boolean
+  else
+    mbr = optedit.before(':');
+  
+  TAPtr tab = (TAPtr)base;
+  MemberDef* md = NULL;
+  void* mbr_base = NULL;	// base for conditionalizing member itself
+  void* mbr_par_base = (void*)base;	// base for parent of member
+  if (mbr.contains('.')) {
+    String par_path = mbr.before('.', -1);
+    MemberDef* par_md = NULL;
+    TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
+    if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
+      taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
+      return false;
+    }
+    String subpth = mbr.after('.', -1);
+    md = par_par->FindMembeR(subpth, mbr_base);
+    mbr_par_base = (void*)par_par;
+  } else {
+    md = tab->FindMembeR(mbr, mbr_base);
+  }
+  if ((md == NULL) || (mbr_base == NULL)) {
+    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
+    return false;
+  }
+  
+  if (val.empty()) {
+    // implied boolean member mode (note: legacy for GHOST, new for CONDEDIT
+    // for GHOST, it is new to support dotted submembers
+    // just get it as a Variant and interpret as boolean
+    Variant mbr_val(md->type->GetValVar(mbr_base, mbr_par_base, md));
+    val_is_eq = mbr_val.toBool();
+  } else {
+    // explicit value mode (note: legacy for CONDEDIT, new for GHOST
+
+    String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
+    val_is_eq = false;
+    while (true) {
+      String nxtval;
+      if (val.contains(',')) {
+        nxtval = val.after(',');
+        val = val.before(',');
+      }
+      if (val == mbr_val) {
+        val_is_eq = true;
+        break;
+      }
+      if (!nxtval.empty())
+        val = nxtval;
+      else
+        break;
+    }
+  }
+  return true;
+}
+
 void taiCondEditMember::GetImage_impl(taiData* dat, const void* base){
   taiDataDeck* rval = (taiDataDeck*)dat;
   if(m_sub_types) {
@@ -1406,67 +1479,22 @@ void taiCondEditMember::GetImage_impl(taiData* dat, const void* base){
 //    ro_im->GetImage(rval->data_el.FastEl(1), base);
     taiMember::GetImage_impl(rval->data_el.FastEl(1), base);
 
-    // format: CONDEDIT_ON_member:value
-    String optedit = mbr->OptionAfter("CONDEDIT_");
-    if (optedit.empty()) return;
-    String onoff = optedit.before('_');
-    optedit = optedit.after('_');
-    String mbr = optedit.before(':');
-    String val = optedit.after(':');
-
-    TAPtr tab = (TAPtr)base;
-    MemberDef* md = NULL;
-    void* mbr_base = NULL;	// base for member itself
-    void* mbr_par_base = (void*)base;	// base for parent of member
-    if (mbr.contains('.')) {
-      String par_path = mbr.before('.', -1);
-      MemberDef* par_md = NULL;
-      TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
-      if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
-	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
-	return;
-      }
-      String subpth = mbr.after('.', -1);
-      md = par_par->FindMembeR(subpth, mbr_base);
-      mbr_par_base = (void*)par_par;
-    }
-    else {
-      md = tab->FindMembeR(mbr, mbr_base);
-    }
-    if ((md == NULL) || (mbr_base == NULL)) {
-      taMisc::Error("*** CONDEDIT: conditionalizing member",mbr,"not found!");
-      return;
-    }
-    String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
+    bool is_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
-    while (true) {
-      String nxtval;
-      if (val.contains(',')) {
-	nxtval = val.after(',');
-	val = val.before(',');
-      }
-      if (val == mbr_val) {
-	val_is_eq = true;
-	break;
-      }
-      if (!nxtval.empty())
-	val = nxtval;
-      else
-	break;
-    }
-    if (onoff == "ON") {
+    //note: we don't care if processed or not -- flag defaults make it editable
+    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
+    if (is_on) {
       if (val_is_eq)
 	rval->GetImage(0);	// editable
       else
 	rval->GetImage(1);	// not editable
     } else {
-      if(val_is_eq)
+      if (val_is_eq)
 	rval->GetImage(1);	// not editable
       else
 	rval->GetImage(0);	// editable
     }
-  }
-  else {
+  } else {
     rval->GetImage(0);		// always editable
   }
   GetOrigVal(dat, base);

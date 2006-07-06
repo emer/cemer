@@ -30,8 +30,6 @@ class Program;
 class ProgramRef;
 class Program_MGroup;
 class Program_List;
-class Controller;
-class Controller_MGroup;
 
 class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
@@ -451,8 +449,7 @@ INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS mode flags
     PF_NONE		= 0, // #NO_BIT
-    SHOW_IN_CP		= 0x0001, // show in control panel
-    CP_ROOT_OK		= 0x0002 // allowed to be a root in a control panel
+    ROOT_OK		= 0x0001 // allowed to be a root program (can be called by user)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -464,17 +461,19 @@ public:
     RV_ALREADY_RUNNING, // attempt to run a new program chain when a program chain is already running
     RV_NO_PROGRAM // no program was available to run
   };
-  
-  enum RunMode { // current run state, is global to all active programs
-    STOP,
-    INIT,	// the enables every prog to reset its state to the beginning
-    RUN,
-    STEP,
-    STEP_WAIT,
+   
+  // TODO: need to clarify difference between current state and requested state, ex RUN but user wants to STOP, while running, still not stopped -- may need a separate var for requests to stop -- but if split between two vars, makes gui state control a lot more complicated (custom code vs. baked in gui enabling)
+  enum RunState { // current run state, is global to all active programs
+    DONE = 0, 	// there is no program running or stopped
+    INIT,	// tells the prog to reset its state to the beginning
+    STOP,	// the program is stopped (note: NOT the same as "DONE")
+    RUN,	// normal running state
+    STEP	// state when we are executing a Step
   };
   
-  static RunMode	run_mode; // the one and only global run mode for current running prog
-  static ProgramRef	step_prog; // the top level step prog
+  static RunState	run_state; // the one and only global run mode for current running prog
+  static ProgramRef	top_prog; // the top level program that was run
+  static ProgramRef	step_prog; // the step prog (NULL if not stepping)
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program
@@ -485,32 +484,31 @@ public:
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   
-  inline bool		cpRootOk() {return (flags & CP_ROOT_OK);}
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
+  inline bool		rootOk() {return (flags & ROOT_OK);}
+  void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
-  inline bool		showInCp() {return (flags & SHOW_IN_CP);}
   
-  virtual int		RunEx(RunMode rm); 
-    // run in the given mode, returning the ReturnVal (0=success); stacks/restores global run_mode
-  int			Init() {return RunEx(INIT);} 
-    // run the program's Init() procedure, 0=success
-  int			Run() {return RunEx(RUN);} 
-    // run the program, 0=success
+  virtual void  Init();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP set the program state back to the beginning
+  virtual void  Run();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP run the programs
+  virtual void	Step();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the selected step level
+  virtual void	Stop();
+  // #BUTTON #GHOST_ON_run_state:RUN,INIT stop the running programs
+  
+  
+  int			Call(Program* caller); 
+    // runs the program as a subprogram called from another running program, 0=success
   virtual bool		SetGlobalVar(const String& nm, const Variant& value);
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user
-  void			AddToController(Controller* cont);
-    // #MENU #MENU_CONTEXT add the program to the indicated controller
-   
-  virtual void		InitGui();
-    // #MENU #LABEL_Init #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
-  virtual void		RunGui();
-    // #MENU #LABEL_Run #MENU_ON_Actions #MENU_CONTEXT #BUTTON run the script
   void			ViewScript();
     // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON view the script
 #endif
@@ -534,6 +532,8 @@ protected:
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
+  virtual int		Run_impl(RunState rm); 
+    // run in the given mode, returning the ReturnVal (0=success); stacks/restores global run_state
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
@@ -575,10 +575,10 @@ public:
 
 private:
   void	Initialize();
-  void 	Destroy()		{Reset(); };
-};
+  void 	Destroy()		{Reset(); }; //
+}; //
 
-
+/*nn
 class PDP_API Controller: public taNBase {
   // #TOKENS #INSTANCE the data representation of a control panel for running programs
 INHERITED(taNBase)
@@ -589,7 +589,6 @@ public:
   ProgramRef		step_prog; // the top level step prog
   
   Program*		rootProg(); // the top level program; NULL if none
-  void			setRunning(bool val); // sets and updates gui
   
   
   void			AddProgram(Program* prog); // #MENU #MENU_CONTEXT add a program
@@ -612,7 +611,7 @@ public:
   TA_BASEFUNS(Controller);
 
 protected:
-  virtual int		Run_impl(Program::RunMode rm); 
+  virtual int		Run_impl(Program::RunState rm); 
     // does all checks, then dispatches, return ReturnVal
 private:
   void	Initialize();
@@ -631,5 +630,5 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-
+*/
 #endif

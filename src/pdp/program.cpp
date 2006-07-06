@@ -899,7 +899,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
   }
   rval += cssMisc::Indent(indent_level);
-  rval += "call_result = target->Run();\n";
+  rval += "call_result = target->Call(this);\n";
   --indent_level;
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
@@ -925,8 +925,9 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //  Program		//
 //////////////////////////
 
-Program::RunMode Program::run_mode = Program::STOP; 
-ProgramRef 	Program::step_prog;
+Program::RunState 	Program::run_state = Program::DONE; 
+ProgramRef 		Program::top_prog;
+ProgramRef 		Program::step_prog;
 
 void Program::Initialize() {
   flags = PF_NONE;
@@ -983,10 +984,19 @@ void Program::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void Program::AddToController(Controller* cont) {
-  if (!cont) return;
-  cont->AddProgram(this);
-}
+int Program::Call(Program* caller) {
+//TODO: need to implement a caller intrinsic obj
+// we save current one here, then set param
+// this will support recursive/reentrant calls to Call
+//TODO: revise
+//NOTE: we *should* be compiled already, unless user put this manually in script
+  return Run_impl(RUN);
+} 
+
+void Program::Init() {
+//TODO: user feedback!
+  Run_impl(INIT);
+} 
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl();
@@ -998,7 +1008,12 @@ void Program::PreCompileScript_impl() {
   UpdateProgVars();
 }
 
-int Program::RunEx(RunMode rm) {
+void Program::Run() {
+//TODO: user feedback!
+  Run_impl(RUN);
+} 
+
+int Program::Run_impl(RunState rs) {
   ret_val = RV_OK;
   if (!script_compiled) {
     if (!CompileScript()) {
@@ -1007,16 +1022,38 @@ int Program::RunEx(RunMode rm) {
     }
   }
   
-  RunMode last = run_mode;
-  run_mode = rm;
+  RunState last = run_state;
+  run_state = rs;
   bool ran_ok = RunScript();
-  if (!ran_ok) { //still need to check for init etc.
+  if (!ran_ok) { //could have runtime error, etc.
     ret_val = RV_RUNTIME_ERR;
   }
-  run_mode = last;
+  run_state = last;
   //note: shared var state likely changed, so update gui
   DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
+}
+
+void Program::setRunState(RunState value) {
+  //note: run_state is static/global, but its gui effects are instance
+  if (run_state == value) return;
+  run_state = value;
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void Program::Step() {
+//TODO: no intrinsic support yet, so acts just like Run
+  Run_impl(Program::STEP);
+}
+
+void Program::Stop() {
+//TODO: may need to add a separate STOP_REQ state to handle between the time
+// we are running and when we actually Stop
+  Program::run_state = Program::STOP;
+//  if (!running) return;
+  //TODO: need to add better support so we can restart -- this just kicks out
+  script->Stop();
+  setRunState(STOP);
 }
 
 void Program::ScriptCompiled() {
@@ -1048,7 +1085,7 @@ const String Program::scriptString() {
     m_scriptCache = "// ";
     m_scriptCache += GetName();
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
-    m_scriptCache += "Program::RunMode run_mode; //note: global static\n";
+    m_scriptCache += "Program::RunState run_state; //note: global static\n";
     m_scriptCache += "int ret_val;\n";
     if (param_vars.size > 0) {
       m_scriptCache += "// global script parameters\n";
@@ -1066,17 +1103,17 @@ const String Program::scriptString() {
       m_scriptCache += "}\n\n";
     }
     
-    m_scriptCache += "void __Prog();\n";
+    m_scriptCache += "void __Prog() {\n";
     m_scriptCache += prog_els.GenCss(1);
     m_scriptCache += "}\n\n";
     m_scriptCache += "\n";
     m_dirty = false;
     
     m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-    m_scriptCache += "if (run_mode == Program::RUN) {\n";
+    m_scriptCache += "if (run_state == Program::RUN) {\n";
     m_scriptCache += "  __Prog();\n";
     if (init_els.size > 0) {
-    m_scriptCache += "} else if (run_mode == Program::INIT) {\n";
+    m_scriptCache += "} else if (run_state == Program::INIT) {\n";
     m_scriptCache += "  __Init();\n";
     } else {
     m_scriptCache += "// note: no Init() in this script; INIT does nothing\n";
@@ -1090,7 +1127,8 @@ bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
   QCoreApplication::processEvents();
-  return (run_mode == STOP);
+  //TODO: may need to have the STOP_REQ state
+  return (run_state == STOP);
 }
 
 void  Program::UpdateProgVars() {
@@ -1102,14 +1140,16 @@ void  Program::UpdateProgVars() {
   
   // add the ones in the object -- note, we use *pointers* to these
   cssEl* el = NULL;
-//buggy??  el = new cssCPtr_enum(&run_mode, 1, "run_mode"); //note: static
-  el = new cssCPtr_int(&run_mode, 1, "run_mode"); //note: static
+//buggy??  el = new cssCPtr_enum(&run_state, 1, "run_state"); //note: static
+//BA 7/5/06, prob not buggy, issue before was caused by Init() same name 
+  el = new cssCPtr_int(&run_state, 1, "run_state"); //note: static
   script->prog_vars.Push(el); //refs
   el = new cssCPtr_int(&ret_val, 1, "ret_val");
   script->prog_vars.Push(el); //refs
   el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
   script->prog_vars.Push(el); //refs
   
+//TODO: these should probably be refs, not values
   // add new in the program
   for (int i = 0; i < param_vars.size; ++i) {
     ProgVar* sv = param_vars.FastEl(i);
@@ -1160,6 +1200,7 @@ void  Program::UpdateProgVars() {
 }
 
 #ifdef TA_GUI
+/* needed???
 void Program::InitGui() {
   //TODO: maybe need to put up a progress/cancel dialog
   // TODO: actually need to provide a global strategy for running!!!!!
@@ -1188,7 +1229,7 @@ void Program::RunGui() {
  ; 
   
 }
-
+*/
 void Program::ViewScript() {
   ViewScript_impl();
 }
@@ -1241,7 +1282,7 @@ void Program_List::Initialize() {
   SetBaseType(&TA_Program);
 }
 
-
+/* nn
 //////////////////////////
 //  Controller		//
 //////////////////////////
@@ -1290,56 +1331,6 @@ void Controller::Run() {
   Run_impl(Program::RUN);
 }
 
-int Controller::Run_impl(Program::RunMode rm) {
-  if (running) return Program::RV_ALREADY_RUNNING; // shouldn't normally happen
-  int rval = Program::RV_OK;
-  Program* prog = NULL;
-  if (rm == Program::STEP)
-    prog = step_prog;
-  else
-    prog = rootProg();
-  if (!prog) return Program::RV_NO_PROGRAM;
-  
-  setRunning(true);
-  switch (rm) {
-  case Program::INIT: 
-    prog->Init();
-    break;
-  case Program::RUN: 
-    prog->Run();
-    break;
-  case Program::STEP: 
-    //TODO
-    break;
-  default: //TODO
-    break;
-  }
-  running = false;
-  DataChanged(DCR_ITEM_UPDATED);
-  return rval;
-}
-
-void Controller::setRunning(bool val) {
-  if (running == val) return;
-  running = val;
-  //note: running is static, but its gui effects are instance
-  DataChanged(DCR_ITEM_UPDATED);
-}
-
-void Controller::Step() {
-  Run_impl(Program::STEP);
-}
-
-void Controller::Stop() {
-  Programm::run_mode = Program::STOP;
-  if (!running) return;
-  //TODO: need to add better support so we can restart -- this just kicks out
-  Program* prog = rootProg();
-  if (prog) {
-    prog->script->Stop();
-  }
-  setRunning(false);
-}
 
 
 
@@ -1351,3 +1342,4 @@ void Controller_MGroup::Initialize() {
   SetBaseType(&TA_Controller);
 }
 
+*/

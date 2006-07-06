@@ -92,6 +92,8 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* abstract out the CONDEDIT processing code and enable the same capabilities for
+  GHOST (for buttons); you can look for ":" to enable a backwards-compatability mode
 * just adding ex. a UserScriptEl to init_els doesn't dirty the Program
 * trying to compile a program that hit the following error line:
 yyparse(): css_parse.y line 797

@@ -84,6 +84,9 @@ TypeDef*	GetTypeDef() const {return &TA_##x; }
 class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
+  static bool		CheckProcessCondMembMeth(const String condkey,
+    TypeItem* memb_meth, const void* base,  bool& is_on, bool& val_is_eq);
+    // return true if memb/meth has the condkey (CONDEDIT or GHOST), and if so if ON (else OFF) and if the match value was in the list
   virtual bool		allowsInline() const {return false;} // the type allows inline reps, obtained GetDataRepInline
   virtual bool		requiresInline() const {return false;} // only inline reps allowed, no member-by-member reps
   virtual bool		handlesReadOnly() { return false; } // for types like taiString and taiInt whose editors handle readOnly

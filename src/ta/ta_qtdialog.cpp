@@ -1536,27 +1536,19 @@ void taiEditDataHost::GetButtonImage() {
   
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethMenu* mth_rep = (taiMethMenu*)meth_el.SafeEl(i);
-    if ( !(mth_rep->hasButtonRep()) //note: construction forced creation of all buttons
-       || (mth_rep->meth->OptionAfter("GHOST_") == "") )
+//TEMP    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
-    String mbnm = mth_rep->meth->OptionAfter("GHOST_");
-    String on_off = mbnm.before("_");
-    mbnm = mbnm.after("_");
-    MemberDef* mbrd = typ->members.FindName(mbnm);
-    if((mbrd == NULL) || !(mbrd->type->InheritsFrom(TA_bool)
-	|| mbrd->type->InheritsFrom(TA_int)))
+      
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, cur_base, is_on, val_is_eq))
       continue;
-
     QPushButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    bool but_state;
-    if (mbrd->type->InheritsFrom(TA_bool))
-      but_state = *((bool*)mbrd->GetOff(cur_base));
-    else
-      but_state = *((int*)mbrd->GetOff(cur_base));
-    if (on_off == "ON")
-      but->setEnabled(but_state);
-    else
-      but->setEnabled(!but_state);
+    if (is_on) {
+      but->setEnabled(val_is_eq);
+    } else {
+      but->setEnabled(!val_is_eq);
+    }
   }
 }
 

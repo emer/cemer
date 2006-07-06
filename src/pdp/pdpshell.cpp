@@ -670,7 +670,6 @@ void ProjectBase::InitLinks() {
   taBase::Own(data, this);
   taBase::Own(logs, this);
   taBase::Own(programs, this);
-  taBase::Own(controllers, this);
   taBase::Own(scripts, this);
 #ifdef TA_GUI
   taBase::Own(edits, this);
@@ -718,7 +717,6 @@ void ProjectBase::CutLinks() {
   edits.CutLinks();
 #endif
   scripts.CutLinks();
-  controllers.CutLinks();
   programs.CutLinks();
   logs.CutLinks();
   data.CutLinks();
@@ -733,7 +731,6 @@ void ProjectBase::CutLinks() {
 void ProjectBase::Copy_(const ProjectBase& cp) {
   // delete things first, to avoid dangling refs etc.
   scripts.Reset();
-  controllers.Reset();
   
   defaults = cp.defaults;
   specs = cp.specs;
@@ -741,7 +738,6 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
   data = cp.data;
   logs = cp.logs;
   programs = cp.programs;
-  controllers = cp.controllers;
   scripts = cp.scripts;
 #ifdef TA_GUI
   edits = cp.edits;

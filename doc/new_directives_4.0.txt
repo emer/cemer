@@ -35,6 +35,7 @@ MEMBER DIRECTIVES
 #ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from xxx) in the interface;
   should still include a TYPE_xxx directive to anchor type
 #EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
+#CONDEDIT -- added implicit bool semantics (including dotted submembers), as for Method GHOST
 
 
 METHOD DIRECTIVES
@@ -58,7 +59,7 @@ METHOD DIRECTIVES
 
 #TYPE_ -- added this; same semantics as for members
 #TYPE_ON_ -- added this; same semantics as for members
-
+#GHOST_ -- added full value semantics, as for member CONDEDIT; implicit bool now also supports submembers (.); implicit bool supports any type: its Variant form is converted to bool
 
 DEPRECATED DIRECTIVES
 ---------------------
