@@ -2787,6 +2787,7 @@ int cssMisc::Initialize() {
 
   cssMisc::TopShell = new cssCmdShell("C^c Top Shell");
   cssMisc::TopShell->src_prog = cssMisc::Top;
+  cssMisc::Top->cmd_shell = cssMisc::TopShell; // todo: this linkage should be done by code..
 
   Install_Internals();
   Install_Commands();
