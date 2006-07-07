@@ -284,7 +284,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
   root->LoadConfig();
 
-  cssMisc::Top->CompileRunClear(".pdpinitrc");
+  cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
 
   if((proj_to_load.size > 0) && !cssMisc::gui)
     pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
@@ -301,10 +301,12 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
 	cssMisc::TopShell->StartupShellInit(cin, cout);
+	cssMisc::TopShell->Shell_Gui_Console("pdp++");
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
-      } else { // slave dmems
+      }
+      else { // slave dmems
 	cssMisc::gui = false;	// not for subguys
 	if(proj_to_load.size > 0) {
 	  if(taMisc::dmem_debug)
@@ -328,11 +330,13 @@ int pdpMisc::Main(int argc, char *argv[]) {
     }
     else {
       cssMisc::Top->StartupShellInit(cin, cout);
-      qApp->exec();
-   }
+      cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+      qApp->exec(); // todo: ??
+    }
   }
   else {
-    cssMisc::Top->StartupShellInit(cin, cout);
+    cssMisc::TopShell->StartupShellInit(cin, cout);
+    cssMisc::TopShell->Shell_Gui_Console("pdp++");
     qApp->exec();
 #ifdef TA_USE_INVENTOR
     SoQt::done();
@@ -340,13 +344,15 @@ int pdpMisc::Main(int argc, char *argv[]) {
   }
   MPI_Finalize();
 
-#else
+#else // NOT DMEM_COMPILE
+  // todo: deal with nogi case -- call Shell_NoGui_Rl ??
   cssMisc::TopShell->StartupShellInit(cin, cout);
+  cssMisc::TopShell->Shell_Gui_Console("pdp++");
   qApp->exec();
 #ifdef TA_USE_INVENTOR
   SoQt::done();
 #endif
-#endif
+#endif // DMEM_COMPILE
 
   //note: new 4.0 behavior is for root deletion to be the app end, so following is probably redundant
   if (tabMisc::root) {

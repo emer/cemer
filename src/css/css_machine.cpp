@@ -3543,6 +3543,8 @@ cssElPtr& cssProgSpace::ParseName(const char* nm) {
   int i = 0;
   cssSpace* spc=NULL;
   while((spc = GetParseSpace(i++)) != NULL) {
+    if((spc == &(cssMisc::Commands) && !AmCmdProg())) // don't process commands unless I'm a command prog!
+      continue;
     if((el_retv = spc->FindName(nm)) != 0) {
       if(spc == &(cssMisc::Commands))
 	parsing_command = true;
@@ -3994,9 +3996,18 @@ cssCmdShell::~cssCmdShell() {
 
 void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
   int rval = cmd_prog->CompileCode(ln);
+  if((cmd_prog->debug >= 2) || ((src_prog != NULL) && (src_prog->debug >= 2))) {
+    cmd_prog->List(0);
+  }
   cmd_prog->Run();
   cmd_prog->Reset();
-  // todo: make this sensitive to all the right conditions, etc..
+
+  if(input_mode == IM_Gui_Console) {
+    cssMisc::console->setPrompt(prompt);
+  }
+}
+
+// todo: make this sensitive to all the right conditions, etc..
 
 //   int rval = CompileLn(*fshell);
 
@@ -4025,30 +4036,6 @@ void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
     // if continue is pending, exit shell (and continue)
 //    if(cont_pending)
 //      break;
-}
-
-bool cssCmdShell::DeleteOk() {
-  if(in_readline)	return false; // don't delete when in readline..
-  return true;
-}
-
-void cssCmdShell::DeferredDelete() {
-  ExitShell();
-  cssMisc::delete_shell = this;
-}
-
-void cssCmdShell::ExitShell() {
-  if(in_readline) {
-    cssMisc::Warning(NULL /* Prog() */, "Exiting shell by external command");
-  }
-  rl_done = true;		// finish readline..
-  rl_stuff_char('\n');
-  rl_stuff_char(EOF);
-  rl_stuff_char('\n');
-  external_exit = true;		// force exit
-//   SetRestart();			// set the restart flag to occur as we bail
-//   run = cssEl::Bailing;		// bail
-}
 
 // void cssCmdShell::PushNewShell(istream& fh) {
 //   old_fh = fin;
@@ -4079,65 +4066,6 @@ void cssCmdShell::ExitShell() {
 // }
 
 
-// this is the top-level control point for a shell
-void cssCmdShell::CtrlShell(istream& fhi, ostream& fho, const char* prmpt) {
-  // process delayed deletes upon entering new shell
-
-  return; // not doing this now..
-
-//   if((cssMisc::delete_me != NULL) && (cssMisc::delete_me != this)) {
-//     delete cssMisc::delete_me;
-//     cssMisc::delete_me = NULL;
-//   }
-
-//   fshell = &fhi;
-//   fout = &fho;
-//   external_exit = false;	// don't exit yet!
-
-//   cssCmdShell* old_top = cssMisc::SetCurTop(this);
-
-//   if(cssMisc::init_debug >= 0) {
-//     SetDebug(cssMisc::init_debug);
-//   }
-
-//   if(prmpt != NULL)
-//     prompt = prmpt;
-//   else
-//     prompt = cssMisc::prompt;
-
-//   if(prompt.contains('/'))
-//     prompt = prompt.after('/', -1);
-//   if(prompt.contains('\\')) //windows
-//     prompt = prompt.after('\\', -1);
-//   if(prompt.contains(".css"))
-//     prompt = prompt.before(".css");
-
-//   while(!external_exit) {
-// //TODO: no longer exists    Shell(*fshell);
-//     if(DoShellCmd())		// we just popped out to do a command, continue
-//       continue;
-//     if(external_exit)
-//       break;
-//     if(cont_pending) {		// we did a continue when not running!
-//       cssMisc::Warning(NULL, "continue executed while not running, resuming shell");
-//       cont_pending = false;
-//       continue;
-//     }
-//     if(step_mode > 0)
-//       continue;
-// //obs: bad ui to ask confirmation for exit
-// //    char* surep;
-// //    if(!(surep = rl_readline("Quit, Are You Sure (y/n)? ")) || (*surep == 'y') ||
-// //       (*surep == 'Y'))
-// //      qApp->quit();
-//       break;
-//   }
-
-//   external_exit = false;
-//   in_readline = false;
-//   cssMisc::PopCurTop(old_top);
-}
-
 void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
   fin = &fhi;
   fout = &fho;
@@ -4146,12 +4074,12 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
 #ifndef __GNUG__
   fout->sync_with_stdio();
 #endif
-//   if(cssMisc::init_debug >= 0) {
-//     SetDebug(cssMisc::init_debug);
-//   }
+  if(src_prog && (cssMisc::init_debug >= 0)) {
+    src_prog->SetDebug(cssMisc::init_debug);
+  }
 
   // startup file
-//   CompileRunClear(".cssinitrc");
+  cmd_prog->CompileRunClear(".cssinitrc");
 
 //   SetName(cssMisc::prompt);
 #if (!defined(TA_OS_WIN))
@@ -4161,138 +4089,121 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
 #endif
   bool run_flag = false;
 
-//   if(cssMisc::startup_file != "") {
-//     Reset();
-//     Compile((const char*)cssMisc::startup_file);
-//     run_flag = true;
-//   }
-//   if(cssMisc::init_bpoint >= 0) {
-//     SetBreak(cssMisc::init_bpoint);
-//   }
+  if(cssMisc::startup_file != "") {
+    cmd_prog->Reset();
+    cmd_prog->Compile((const char*)cssMisc::startup_file);
+    run_flag = true;
+  }
+  if(src_prog && (cssMisc::init_bpoint >= 0)) {
+    src_prog->SetBreak(cssMisc::init_bpoint);
+  }
 
-  prompt = cssMisc::prompt;
-
-//   if(run_flag) {
-//     state |= cssProg::State_Shell;
-//     Run();
-//     EndRunPop();
-//     state &= ~cssProg::State_Shell;
-//   }
+  if(run_flag) {
+    cmd_prog->Run();
+    cmd_prog->EndRunPop();
+  }
 
   // allow both startup_file and startup_code to co-exist..
-//   if (cssMisc::startup_code != "") {
-//     Reset();
-//     CompileCode(cssMisc::startup_code);
-//     state |= cssProg::State_Shell;
-//     Run();
-//     EndRunPop();
-//     state &= ~cssProg::State_Shell;
-//     run_flag = true;
-//   }
-
-/*  if(!run_flag || cssMisc::init_interactive)
-    CtrlShell(*fshell, *fout);
-
-  cssMisc::PopCurTop(old_top);*/
-
-//   PushNewShell(*fshell);
-  // todo: this shell is never popped!  needs to be added to quit routine
-  // also, this is not the ctrl shell that is being pushed, just a plain shell
-  
-//TODO: stuff taken from CrtlShell that is probably important...
-  prompt = cssMisc::prompt;
-//end stuff taken  
-  
-  // connect us to the console
-  if (cssMisc::console) {
-    cssMisc::console->setPrompt(prompt);
-    //NB: we must use queued connection, because console lives in our thread,
-    // but signal may be raised in another thread
-    connect(cssMisc::console, SIGNAL(NewLine(QString, bool)),
-      this, SLOT(AcceptNewLine(QString, bool)), Qt::QueuedConnection);
-    cssMisc::console->Start();
-  } 
-#ifdef DEBUG
-  //TODO: should warn that console was expected
-#endif
-
-/*TODO: More things to do:
-  *now that input is async, the prompt will be wrong when it changes (since it will
-    already have been output as the old value)
-*/
+  if (cssMisc::startup_code != "") {
+    cmd_prog->Reset();
+    cmd_prog->CompileCode(cssMisc::startup_code);
+    cmd_prog->Run();
+    cmd_prog->EndRunPop();
+    run_flag = true;
+  }
 }
 
-void cssCmdShell::Source(const char* fname) {
-  cerr << "cssCmdShell::Source is currently not implemented\n";
-  return;
-// //TODO: need to fix to get Shell back again
-//   String fnm = fname;
-//   if (fnm == "-") {
-// //    Shell(*fin);
-//   } else {
-//     fstream fh;
-//     if(!GetFile(fh, fname)) {
-//       cssMisc::Warning(Prog(), "File Not Found:",fname);
-//       return;
-//     }
-//     // make sure directory is in include path
-//     String dir = fnm.before('/', -1);
-//     if(!dir.empty())
-//       taMisc::include_paths.AddUnique(dir);
-// //    Shell(fh);
-//     fh.close(); fh.clear();
-//   }
+void cssCmdShell::SetPrompt(const char* prmpt) {
+  if(prmpt != NULL)
+    prompt = prmpt;
+  else
+    prompt = cssMisc::prompt;
+
+  if(prompt.contains('/'))
+    prompt = prompt.after('/', -1);
+  if(prompt.contains('\\')) //windows
+    prompt = prompt.after('\\', -1);
+  if(prompt.contains(".css"))
+    prompt = prompt.before(".css");
+  UpdatePrompt();
 }
 
-// bool cssCmdShell::DoShellCmd() {
-//   switch(shell_cmds) {
-//   case SC_None:
-//     return false;
-//   case SC_Compile:
-//     ClearShellCmds();
-//     ClearAll();
-//     Compile((const char*)sc_compile_this);
-//     break;
-//   case SC_reCompile:
-//     ClearShellCmds();
-//     reCompile();
-//     break;
-//   case SC_Source:
-//     ClearShellCmds();
-//     Source(sc_compile_this);
-//     break;
-//   case SC_Defn:
-//     ClearShellCmds();
-//     state |= cssProg::State_Defn;
-//     state |= cssProg::State_Shell;
-//     Compile(*fshell);
-//     state &= ~cssProg::State_Defn;
-//     state &= ~cssProg::State_Shell;
-//     break;
-//   case SC_Shell:
-//     ClearShellCmds();
-//     if(sc_shell_this->name != "")
-//       sc_shell_this->CtrlShell(*fin, *fout, sc_shell_this->name);
-//     else
-//       sc_shell_this->CtrlShell(*fin, *fout);
-//     break;
-//   case SC_Run:
-//     ClearShellCmds();
-//     Run();
-//     EndRunPop();
-//     break;
-//   case SC_Restart:
-//     ClearShellCmds();
-//     Restart();
-//     break;
-//   case SC_Reset:
-//     ClearShellCmds();
-//     Reset();
-//     break;
-//   case SC_Undo:
-//     ClearShellCmds();
-//     Undo(sc_undo_this);
-//     break;
-//   }
-//   return true;
-// }
+void cssCmdShell::UpdatePrompt() {
+  if(src_prog == NULL) {
+    act_prompt = "no src_prog> ";
+    return;
+  }
+  const char* pt;
+  pt = (src_prog->state & cssProg::State_Defn) ? "#" : ">";
+  if(src_prog->depth > 0)
+    act_prompt = String(src_prog->depth) + " " + prompt + pt + " ";
+  else
+    act_prompt = prompt + pt + " ";
+  if(input_mode == IM_Gui_Console)
+    cssMisc::console->setPrompt(act_prompt);
+}
+
+void cssCmdShell::Shell_Gui_Console(const char* prmpt) {
+  if(!cssMisc::console) {
+    taMisc::Error("cssCmdShell::Shell_Gui -- no console found!");
+    return;
+  }
+
+  input_mode = IM_Gui_Console;
+  SetPrompt(prmpt);
+  external_exit = false;
+
+  //NB: we must use queued connection, because console lives in our thread,
+  // but signal may be raised in another thread
+  connect(cssMisc::console, SIGNAL(NewLine(QString, bool)),
+	  this, SLOT(AcceptNewLine(QString, bool)), Qt::QueuedConnection);
+  cssMisc::console->Start();
+}
+
+extern "C" {
+  extern char* rl_readline(char*);
+  extern void add_history(char*);
+  extern int rl_done;		// readline done reading
+  extern int rl_pending_input;
+  extern int rl_stuff_char(int);
+  extern int readline_waitproc(void);
+  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
+}
+
+void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
+  input_mode = IM_NoGui_Rl;
+  SetPrompt(prmpt);
+  external_exit = false;
+
+  while(!external_exit) {
+    in_readline = true;
+    char* curln = rl_readline((char*)act_prompt);
+    in_readline = false;
+    if(curln == (char*)0) {
+      char* surep;
+      if(!(surep = rl_readline("Quit, Are You Sure (y/n)? ")) || (*surep == 'y') ||
+	 (*surep == 'Y'))
+	break;
+    }
+    QString str = curln;
+    AcceptNewLine(str, false);
+  }
+}
+
+bool cssCmdShell::DeleteOk() {
+  if(in_readline)	return false; // don't delete when in readline..
+  return true;
+}
+
+void cssCmdShell::DeferredDelete() {
+  ExitShell();
+  cssMisc::delete_shell = this;
+}
+
+void cssCmdShell::ExitShell() {
+  rl_done = true;		// finish readline..
+  rl_stuff_char('\n');
+  rl_stuff_char(EOF);
+  rl_stuff_char('\n');
+  external_exit = true;		// force exit
+}

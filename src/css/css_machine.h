@@ -1440,9 +1440,9 @@ class CSS_API cssCmdShell : public QObject {
   friend class cssProgSpace;
   Q_OBJECT
 protected:
-  enum InputMode { // current input mode, either file (fin) or interactive from console
-    IM_File,
-    IM_Console
+  enum InputMode { // current input mode (shell type)
+    IM_Gui_Console,
+    IM_NoGui_Rl
   };
 
 public:
@@ -1455,7 +1455,6 @@ public:
   ostream*	ferr;			// error file
 
   bool		external_exit;		// set to true to break out of a shell...
-  bool		in_readline;		// currently reading input from shell
 
   cssProgSpace*	src_prog;		// program with source code for commands to operate on (I do not own this!)
   cssProgSpace*	cmd_prog;		// program for commands, etc (I own this one!)
@@ -1465,43 +1464,27 @@ public:
   cssCmdShell(const char* nm);
   virtual ~cssCmdShell();
 
+  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
+  // do all the initialization stuff for a shell, but don't actually start a specific shell
+  void		Shell_Gui_Console(const char* prmpt);
+  // configure a gui-based shell that links with cssMisc::console mechanism
+  void		Shell_NoGui_Rl(const char* prmpt);
+  // run a nogui readline-based shell
+
+  void		SetPrompt(const char* prmpt);
+  void		UpdatePrompt();
+  //  void 		Source(const char* fname);	// run a file as if in a shell
+
   bool		DeleteOk();		// checks if its ok to delete this one
   void		DeferredDelete();	// call this if not ok to delete now..
   void		ExitShell();		// cause shell to exit
 
-  // execution (wrappers on progspace)
-//   void 		Restart();
-//   cssEl* 	Cont();
-//   cssEl* 	Cont(css_progdx st);
-//   cssEl* 	ContSrc(int srcln);
-//   cssEl*	Run();
-//   void		Stop(); // can be called from inside or outside a program to cause it to stop
-
-  // shell execution and commands
-  void		CtrlShell(istream& fhi = cin, ostream& fho = cout, const char* prmpt = NULL);
-  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
-  void 		Source(const char* fname);	// run a file as if in a shell
-
-  // display, status (wrappers on progspace)
-//   void		SetDebug(int dblev);
-//   void		SetListStop();
-//   void 		List();
-//   void 		List(int st);
-//   void 		List(int st, int nlines);
-//   void		ListSpace();
-//   void		Status();
-//   void		Trace(int level=0);
-//   void		Help();
-
-  // breakpoints
-//   void 		SetBreak(int srcln);
-//   void		ShowBreaks();
-//   void		unSetBreak(int srcln);
-
 public slots:
   void		AcceptNewLine(QString ln, bool eof); 
-    // called when a new line of text becomes available, usually from console
+  // called when a new line of text becomes available -- all outer shells/consoles call this interface
 protected:
+  InputMode	input_mode;		// what kind of shell input mode are we running?
+  bool 		in_readline;		// I'm in readline function waiting for input
 };
 
 #endif // machine_h

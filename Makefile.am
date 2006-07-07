@@ -11,9 +11,9 @@ DIST_SUBDIRS =\
 	src/taiqtso \
 	src/ta \
 	src/css \
-        src/css_bin \
 	src/tamisc \
 	src/ta_lib \
+        src/css_bin \
 	src/pdp \
 	src/bp \
 	src/leabra \
@@ -28,6 +28,7 @@ SUBDIRS =\
 	src/css \
 	src/tamisc \
 	src/ta_lib \
+	src/css_bin \
 	src/pdp \
 	src/bp \
 	src/leabra \
@@ -60,6 +61,7 @@ DISTCLEANFILES =\
 	src/ta/do-mfstamp \
 	src/css/do-mfstamp \
 	src/tamisc/do-mfstamp \
+	src/css_bin/do-mfstamp \
 	src/pdp/do-mfstamp \
 	src/leabra/do-mfstamp \
 	src/bp/do-mfstamp \

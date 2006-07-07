@@ -231,62 +231,25 @@ ppdef:    CSS_PP_DEF		{
 /* todo: get rid of all the immediate Do functions here -- kinda strange and unnec. */
 
 command:  CSS_COMMAND cmd_args		{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
             Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD cmd_args		{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD argstop CSS_TYPE	{
-	    if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
         | CSS_CONT			{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
 	    Code1($1); $$ = cssProg::YY_Ok; }
 	| CSS_LIST 			{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	   cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
-	   cssMisc::cur_top->List(); $$ = cssProg::YY_NoSrc; }
+	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_LIST argstop exprlist	{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_Ok;
-	    cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_LIST '(' argstop exprlist	')'	{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_Ok;
-	    cssMisc::cur_top->src_ln = cssMisc::cur_top->st_src_ln;
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE cmd_args		{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE argstop CSS_TYPE	{
-	    if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
         | CSS_STATUS			{
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    Code1($1); }
+	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_ALIAS anycmd name 	{
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef($2));
@@ -294,53 +257,19 @@ command:  CSS_COMMAND cmd_args		{
         | CSS_ALIAS anycmd anycmd	{
 	    $$ = cssProg::YY_NoSrc; }
         | CSS_HELP {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP anycmd {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP CSS_FUN {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP CSS_ALIAS {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP CSS_HELP {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP CSS_PTRTYPE {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
-        | CSS_HELP CSS_TYPE {
-            if(!cssMisc::cur_top->AmCmdProg()) {
-	      yyerror("commands are only available from the shell");
-	      return cssProg::YY_Err; }
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($2.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog());}
+	    Code1($1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop anycmd {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop CSS_FUN {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop CSS_ALIAS {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop CSS_HELP {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop CSS_PTRTYPE {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+        | CSS_HELP argstop CSS_TYPE {
+	    Code2($3, $1); $$ = cssProg::YY_Ok; }
         ;
 
 cmd_args: /* nothing */			{ $$ = 0; }
