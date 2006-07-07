@@ -29,6 +29,7 @@ Serious/Fatal:
 * in Scripts, once you have a script file set, you can't seem to get it to 
   reload the file (make changes to the file, select Open again, but it 
   still retains the first contents.)
+* pdp is leaving the launch shell in half-duplex output mode (it is not echoing what you type)
   
 Medium Important:
 
@@ -52,6 +53,8 @@ Medium Important:
   Init() and there is also a Program::Init() ) -- see the fixed log below for more
   details -- it seems to cause some horrible corruption that is then difficult to
   diagnose what is happening
+* if you choose a non-gz proj file to save to, it warns about overwriting, but then
+  it just writes to a .gz file, leaving your non-gz file as it was
   
 Cosmetic/Usability/etc. (lower priority):
 

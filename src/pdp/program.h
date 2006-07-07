@@ -419,7 +419,7 @@ class PDP_API ProgramCallEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   Program*		target; // the program to be called
-  ProgArg_List		global_args; // arguments to the global program--copied to prog before call
+  ProgArg_List		prog_args; // arguments to the program--copied to prog before call
   UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
   
   virtual void		UpdateGlobalArgs(); 

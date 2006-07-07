@@ -827,7 +827,7 @@ void ProgramCallEl::Initialize() {
 void ProgramCallEl::InitLinks() {
   static String _def_user_script("cerr << \"Program Call failed--Stopping\\n\";\nret_val = Program::RV_PROG_CALL_FAILED;\nthis->StopScript();\n");
   inherited::InitLinks();
-  taBase::Own(global_args, this);
+  taBase::Own(prog_args, this);
   taBase::Own(fail_el, this);
   if (!taMisc::is_loading) {
     fail_el.user_script = _def_user_script;
@@ -836,14 +836,14 @@ void ProgramCallEl::InitLinks() {
 
 void ProgramCallEl::CutLinks() {
   taBase::DelPointer((taBase**)&target);
-  global_args.CutLinks();
+  prog_args.CutLinks();
   old_target = NULL;
   inherited::CutLinks();
 }
 
 void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
   taBase::SetPointer((taBase**)&target, cp.target);
-  global_args = cp.global_args;
+  prog_args = cp.prog_args;
   fail_el = cp.fail_el;
 }
 
@@ -879,14 +879,14 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   ++indent_level;
   
   rval += cssMisc::Indent(indent_level);
-  if (global_args.size > 0)
+  if (prog_args.size > 0)
     rval += "// set global vars of target\n";
   String nm;
   bool set_one = false;
-  for (int i = 0; i < global_args.size; ++i) {
-    ProgArg* ths_arg = global_args.FastEl(i);
+  for (int i = 0; i < prog_args.size; ++i) {
+    ProgArg* ths_arg = prog_args.FastEl(i);
     nm = ths_arg->name;
-    ProgVar* prg_var = target->global_vars.FindName(nm);
+    ProgVar* prg_var = target->param_vars.FindName(nm);
     if (!prg_var || ths_arg->value.empty()) continue;
     set_one = true;
     rval += cssMisc::Indent(indent_level);
@@ -917,7 +917,7 @@ const String ProgramCallEl::GenCssPost_impl(int indent_level) {
 
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
-  global_args.ConformToTarget(target->param_vars);
+  prog_args.ConformToTarget(target->param_vars);
 }
 
 //////////////////////////
@@ -1002,6 +1002,7 @@ void Program::Init() {
       String(
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
+  run_state = DONE;
 } 
 
 void Program::InitScriptObj_impl() {
@@ -1024,6 +1025,9 @@ void Program::Run() {
       String(
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
+  // unless we were stopped, we are done
+  if (run_state != STOP)
+    run_state = DONE;
 } 
 
 int Program::Run_impl(RunState rs) {
@@ -1035,24 +1039,14 @@ int Program::Run_impl(RunState rs) {
     }
   }
   
-  run_state = rs;
+  RunState last = run_state;
+  setRunState(rs);
   bool ran_ok = RunScript();
   if (!ran_ok) { //could have runtime error, etc.
     ret_val = RV_RUNTIME_ERR;
   }
-  // new state depends on what we were doing, and if we were stopped
-  switch (run_state) {
-  case INIT: // always DONE, and cancels any stepping
-    run_state = DONE; 
-    break; // leave as is
-  case STOP: // we were stopped, so leave as is
-    break; 
-  case RUN: // we weren't stopped, so must be done!
-    run_state = DONE; 
-    break; // leave as is
-  case STEP: break; // leave as is
-  default: run_state = DONE; break;
-  }
+  run_state = last; // don't call setXx because we do Changed anyway
+  
   //note: shared var state likely changed, so update gui
   DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
@@ -1076,6 +1070,7 @@ void Program::Step() {
       String(
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
+  //TODO: after the last iteration of the topdog, we have to set DONE
 }
 
 void Program::Stop() {

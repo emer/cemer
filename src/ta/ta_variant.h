@@ -70,7 +70,7 @@ public:
   bool			isNumericStrict() const; // 'true' if an int-ish, float, or char type
   bool			isStringType() const {return ((m_type == T_String) || (m_type == T_Char));}
    // 'true' if a char or String
-  bool			isPtrType() const {return ((m_type >= T_Ptr) || (m_type <= T_Matrix));} 
+  bool			isPtrType() const {return ((m_type >= T_Ptr) && (m_type <= T_Matrix));} 
     // 'true' if the value is a void*, taBase*, or taMatrix*
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase* or taMatrix*
