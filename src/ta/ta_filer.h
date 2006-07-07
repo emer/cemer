@@ -44,6 +44,12 @@ public:
     WRITE,
     APPEND
   };
+  
+  enum FilerFlags { // #BITS flags to control operations
+    NO_FLAGS	= 0,	// #NO_BIT
+    CONFIRM_OVERWRITE		= 0x001, // for Save/Append, warn if file already exists
+    FILE_MUST_EXIST		= 0x002 // for Save/Append, warn if file already exists
+  };
 
   static int	buf_size;	// size of the buffer for input operations
   static String	last_fname;	// last file name processed
@@ -85,7 +91,8 @@ public:
   virtual void		AutoOpen();		// auto-open a file based on mode
   virtual bool		IsOpen();		// check if file is open
 
-  virtual bool		GetFileName(String& fname, FilerOperation filerOperation); // gui-dependent routine to get filename from user
+  virtual bool		GetFileName(String& fname, FilerOperation filerOperation,
+    int filer_flags = 0); // gui-dependent routine to get filename from user
   virtual void		FixFileName(); // make sure suffix is right
   virtual void		GetDir();      // get directory from file name
 

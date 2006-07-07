@@ -465,10 +465,10 @@ public:
   // TODO: need to clarify difference between current state and requested state, ex RUN but user wants to STOP, while running, still not stopped -- may need a separate var for requests to stop -- but if split between two vars, makes gui state control a lot more complicated (custom code vs. baked in gui enabling)
   enum RunState { // current run state, is global to all active programs
     DONE = 0, 	// there is no program running or stopped
-    INIT,	// tells the prog to reset its state to the beginning
+    INIT,	// tells the prog to reset its state to the beginning; this is a "running" state
     STOP,	// the program is stopped (note: NOT the same as "DONE")
-    RUN,	// normal running state
-    STEP	// state when we are executing a Step
+    RUN,	// normal running state; this is a "running" state
+    STEP	// state when we are executing a Step; this is a "running" state
   };
   
   static RunState	run_state; // the one and only global run mode for current running prog
@@ -498,8 +498,10 @@ public:
   virtual void	Step();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the selected step level
   virtual void	Stop();
-  // #BUTTON #GHOST_ON_run_state:RUN,INIT stop the running programs
+  // #BUTTON #GHOST_OFF_run_state:INIT,RUN,STEP stop the running programs
   
+ //TODO: the button functions are gui functions, with failure dialogs, etc
+ // need purely nongui ones for scripted calls
   
   int			Call(Program* caller); 
     // runs the program as a subprogram called from another running program, 0=success
@@ -508,7 +510,7 @@ public:
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
 #ifdef TA_GUI
-public: // XxxGui versions provide feedback to the user
+public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   void			ViewScript();
     // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON view the script
 #endif

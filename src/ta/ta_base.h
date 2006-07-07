@@ -260,13 +260,21 @@ public:
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
   static void  		Ref(taBase& it)	{ it.refn++; }	     // #IGNORE
   static void  		Ref(TAPtr it) 	{ it->refn++; }	     // #IGNORE
+#ifdef DEBUG
+  static void		UnRef(TAPtr it);// #IGNORE
+#else
   static void		UnRef(TAPtr it) { if (--(it->refn) == 0) delete it;}// #IGNORE
+#endif
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(TAPtr it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
 protected: // legacy ref counting routines, for compatability -- do not use for new code
   static void   	unRef(TAPtr it) { it->refn--; }	     // #IGNORE
+#ifdef DEBUG
+  static void   	Done(TAPtr it); // #IGNORE
+#else
   static void   	Done(TAPtr it) 	{ if (it->refn == 0) delete it;} // #IGNORE
+#endif
   static void		unRefDone(TAPtr it) 	{unRef(it); Done(it);}	 // #IGNORE
 
 public:

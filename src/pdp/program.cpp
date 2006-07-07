@@ -879,15 +879,14 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   ++indent_level;
   
   rval += cssMisc::Indent(indent_level);
-  rval += "// set global vars of target\n";
+  if (global_args.size > 0)
+    rval += "// set global vars of target\n";
   String nm;
-  ProgArg* ths_arg;
-  ProgVar* prg_var;
   bool set_one = false;
   for (int i = 0; i < global_args.size; ++i) {
-    ths_arg = global_args.FastEl(i);
+    ProgArg* ths_arg = global_args.FastEl(i);
     nm = ths_arg->name;
-    prg_var = target->global_vars.FindName(nm);
+    ProgVar* prg_var = target->global_vars.FindName(nm);
     if (!prg_var || ths_arg->value.empty()) continue;
     set_one = true;
     rval += cssMisc::Indent(indent_level);
@@ -990,12 +989,19 @@ int Program::Call(Program* caller) {
 // this will support recursive/reentrant calls to Call
 //TODO: revise
 //NOTE: we *should* be compiled already, unless user put this manually in script
-  return Run_impl(RUN);
+  return Run_impl(run_state);
 } 
 
 void Program::Init() {
-//TODO: user feedback!
+  top_prog = this;
+  taMisc::Busy();
   Run_impl(INIT);
+  taMisc::DoneBusy();
+  if (ret_val != 0) //TODO: use enums and sensible output string
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      String(
+      "The Program did not run -- ret_val=").cat(String(ret_val)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
 } 
 
 void Program::InitScriptObj_impl() {
@@ -1009,8 +1015,15 @@ void Program::PreCompileScript_impl() {
 }
 
 void Program::Run() {
-//TODO: user feedback!
+  top_prog = this;
+  taMisc::Busy();
   Run_impl(RUN);
+  taMisc::DoneBusy();
+  if (ret_val != 0) //TODO: use enums and sensible output string
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      String(
+      "The Program did not run -- ret_val=").cat(String(ret_val)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
 } 
 
 int Program::Run_impl(RunState rs) {
@@ -1022,13 +1035,24 @@ int Program::Run_impl(RunState rs) {
     }
   }
   
-  RunState last = run_state;
   run_state = rs;
   bool ran_ok = RunScript();
   if (!ran_ok) { //could have runtime error, etc.
     ret_val = RV_RUNTIME_ERR;
   }
-  run_state = last;
+  // new state depends on what we were doing, and if we were stopped
+  switch (run_state) {
+  case INIT: // always DONE, and cancels any stepping
+    run_state = DONE; 
+    break; // leave as is
+  case STOP: // we were stopped, so leave as is
+    break; 
+  case RUN: // we weren't stopped, so must be done!
+    run_state = DONE; 
+    break; // leave as is
+  case STEP: break; // leave as is
+  default: run_state = DONE; break;
+  }
   //note: shared var state likely changed, so update gui
   DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
@@ -1043,17 +1067,26 @@ void Program::setRunState(RunState value) {
 
 void Program::Step() {
 //TODO: no intrinsic support yet, so acts just like Run
+  top_prog = this;
+  taMisc::Busy();
   Run_impl(Program::STEP);
+  taMisc::DoneBusy();
+  if (ret_val != 0) //TODO: use enums and sensible output string
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      String(
+      "The Program did not run -- ret_val=").cat(String(ret_val)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
 }
 
 void Program::Stop() {
 //TODO: may need to add a separate STOP_REQ state to handle between the time
 // we are running and when we actually Stop
-  Program::run_state = Program::STOP;
-//  if (!running) return;
   //TODO: need to add better support so we can restart -- this just kicks out
   script->Stop();
-  setRunState(STOP);
+  // WARNING: stopping Init may leave in incomplete state -- should only be
+  // needed if something loops improperly in an Init
+  if (run_state != INIT)
+   setRunState(STOP);
 }
 
 void Program::ScriptCompiled() {
@@ -1110,7 +1143,9 @@ const String Program::scriptString() {
     m_dirty = false;
     
     m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-    m_scriptCache += "if (run_state == Program::RUN) {\n";
+    m_scriptCache += "if ((run_state == Program::RUN) || \n";
+    m_scriptCache += "    (run_state == Program::STEP))\n";
+    m_scriptCache += "{\n";
     m_scriptCache += "  __Prog();\n";
     if (init_els.size > 0) {
     m_scriptCache += "} else if (run_state == Program::INIT) {\n";

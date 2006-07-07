@@ -475,13 +475,14 @@ istream* taFiler::Open(const char* nm, bool no_dlg) {
     return NULL;
 #endif
   }
-
-  bool wasFileChosen = GetFileName(fname, foOpen);
+  
+  int filer_flags = FILE_MUST_EXIST;
+  bool wasFileChosen = GetFileName(fname, foOpen, filer_flags);
 
   istream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
-    if(open_read() != NULL) {
+    if (open_read() != NULL) {
       if(!select_only && (istrm->bad() || (istrm->peek() == EOF)))
 	taMisc::Error("File:",fname,"could not be opened for reading or is empty");
       else if(select_only)
@@ -530,17 +531,13 @@ ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
     return NULL;
 #endif
   }
-
-  bool wasFileChosen = GetFileName(fname, foSaveAs);
+  int filer_flags = CONFIRM_OVERWRITE;
+  bool wasFileChosen = GetFileName(fname, foSaveAs, filer_flags);
 
   ostream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
     bool no_go = false;
-    if(!select_only && open_write_exist_check()) {
-      int chs = taMisc::Choice("File: "+fname+" exists, overwrite?", "Ok", "Cancel");
-      if(chs == 1) no_go = true;
-    }
     if(!no_go && (open_write() != NULL)) {
       if(ostrm->bad())
 	taMisc::Error("File:",fname,"could not be opened for SaveAs");
@@ -569,7 +566,8 @@ ostream* taFiler::Append(const char* nm, bool no_dlg) {
 #endif
   }
 
-  bool wasFileChosen = GetFileName(fname, foAppend);
+  int filer_flags = NO_FLAGS;
+  bool wasFileChosen = GetFileName(fname, foAppend, filer_flags);
 
   ostream* rstrm = NULL;
   if (wasFileChosen) {
@@ -645,7 +643,8 @@ void taFiler::Close() {
 //   taFiler		//
 //////////////////////////
 
-bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
+bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
+    int filer_flags) {
   bool result = false;
  /*  TODO: implement, except maybe it isn't even called in TA_NO_GUI version!!!
   chooser->style()->attribute("filter", "on");

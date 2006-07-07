@@ -2068,6 +2068,11 @@ static cssEl* cssElCFun_sleep_stub(int, cssEl* arg[]) {
   rval->val = (int)sleep((int)*arg[1]);
   return rval;
 }
+static cssEl* cssElCFun_sleepms_stub(int, cssEl* arg[]) {
+  cssInt* rval = new cssInt();
+  rval->val = (int)usleep((int)*arg[1] * 1000);
+  return rval;
+}
 static cssEl* cssElCFun_tcgetpgrp_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
   rval->val = (int)tcgetpgrp((int)*arg[1]);
@@ -2339,7 +2344,10 @@ static void Install_MiscFun() {
  super-user can in general do this.  Returns success and sets errno flag\
  on failure.");
   cssElCFun_inst(cssMisc::Functions, sleep, 1, CSS_FUN,
-"(Int seconds) Causes the process to wait for given number of seconds.  Returns success\
+"(Int seconds) Causes the process to wait for given number of seconds.  Returns success=0\
+ and sets errno flag on failure.");
+  cssElCFun_inst(cssMisc::Functions, sleepms, 1, CSS_FUN,
+"(Int milliseconds) Causes the process to wait for given number of milliseconds.  Returns success=0\
  and sets errno flag on failure.");
   cssElCFun_inst(cssMisc::Functions, tcgetpgrp, 1, CSS_FUN,
 "(Int file_no) Gets the process group associated with the given file descriptor.\

@@ -674,6 +674,7 @@ void taiDataHost::AddMultiColName(iEditGrid* multi_body, int col, const String& 
 void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data) {
   SetMultiSize(row - 1, col - 1);
   QHBoxLayout* hbl = new QHBoxLayout();
+  hbl->setMargin(0);
   hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
   hbl->addStretch();
   multi_body->setDataLayout(row, col, hbl);
@@ -1536,18 +1537,18 @@ void taiEditDataHost::GetButtonImage() {
   
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethMenu* mth_rep = (taiMethMenu*)meth_el.SafeEl(i);
-//TEMP    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
+    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
       
-    bool is_on = false; // defaults here make it editable in test chain below
+    bool ghost_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
-    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, cur_base, is_on, val_is_eq))
+    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, cur_base, ghost_on, val_is_eq))
       continue;
     QPushButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    if (is_on) {
-      but->setEnabled(val_is_eq);
-    } else {
+    if (ghost_on) {
       but->setEnabled(!val_is_eq);
+    } else {
+      but->setEnabled(val_is_eq);
     }
   }
 }
@@ -1997,7 +1998,9 @@ int taiEnumDialog::GetEnum(TypeDef* td, const char* prompt, int init_vl,
 //////////////////////////////////
 
 
-bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
+bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
+    int filer_flags) 
+{
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
@@ -2010,7 +2013,10 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
   switch (filerOperation) {
   case foOpen:
     fd->setAcceptMode(QFileDialog::AcceptOpen);
-    fd->setMode(QFileDialog::ExistingFile);
+    if (filer_flags & FILE_MUST_EXIST)
+      fd->setMode(QFileDialog::AnyFile);
+    else
+      fd->setMode(QFileDialog::ExistingFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Open for Reading");
     caption = String("Open: ") + filter;
     break;
@@ -2018,12 +2024,14 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation) {
     // TODO: will this ever be called???
     goto exit;
   case foSaveAs:
+    fd->setConfirmOverwrite((filer_flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
     caption = String("Save: ") + filter;
     break;
   case foAppend:
+    fd->setConfirmOverwrite((filer_flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");

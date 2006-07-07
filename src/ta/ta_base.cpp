@@ -296,6 +296,18 @@ String 	taBase::no_name;
 int	taBase::no_idx = -1;
 MemberDef* taBase::no_mdef = NULL;
 
+#ifdef DEBUG
+void taBase::UnRef(TAPtr it) {
+  if (--(it->refn) == 0) 
+    delete it;
+}
+
+void taBase::Done(TAPtr it) {
+  if (it->refn == 0)
+    delete it;
+}
+#endif // DEBUG
+
 #define REF_SENT 0x7fffff0
 
 void taBase::DelPointer(TAPtr* ptr) {
