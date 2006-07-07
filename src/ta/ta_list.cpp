@@ -351,12 +351,11 @@ bool taPtrList_impl::Replace_(int ol, void* nw, bool no_notify_insert) {
 }
 
 bool taPtrList_impl::Transfer_(void* it) {
-  if(El_GetOwner_(it) == this)
+  taPtrList_impl* old_own = El_GetOwner_(it);
+  if (old_own == this)
     return false;
   El_Ref_(it);			// extra ref so no delete on remove
-  taPtrList_impl* old_own = El_GetOwner_(it);
-  El_SetOwner_(it);		// change owner to us so it doesn't call CutLinks with Remove..
-  if(old_own != NULL)
+  if (old_own)
     old_own->Remove_(it);
   Add_(it);
   El_unRef_(it);
