@@ -473,7 +473,7 @@ public:
   
   static RunState	run_state; // the one and only global run mode for current running prog
   static ProgramRef	top_prog; // the top level program that was run
-  static ProgramRef	step_prog; // the step prog (NULL if not stepping)
+  static ProgramRef	step_prog; // #SHOW the step prog (NULL if not stepping)
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program
@@ -539,8 +539,8 @@ protected:
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
-  virtual int		Run_impl(RunState rm); 
-    // run in the given mode, returning the ReturnVal (0=success); stacks/restores global run_state
+  virtual int		Run_impl(); 
+    // run in the current mode, returning the ReturnVal (0=success); 
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
@@ -585,57 +585,4 @@ private:
   void 	Destroy()		{Reset(); }; //
 }; //
 
-/*nn
-class PDP_API Controller: public taNBase {
-  // #TOKENS #INSTANCE the data representation of a control panel for running programs
-INHERITED(taNBase)
-public:
-  static bool		running; // true when executing code, incl init, and while running a step
-  
-  Program_List		progs; // #LINK_GROUP the programs that will be listed in the cp
-  ProgramRef		step_prog; // the top level step prog
-  
-  Program*		rootProg(); // the top level program; NULL if none
-  
-  
-  void			AddProgram(Program* prog); // #MENU #MENU_CONTEXT add a program
-  
-  virtual void  Init();
-  // #BUTTON #GHOST_OFF_running set the program states back to the beginning
-  virtual void  Run();
-  // #BUTTON #GHOST_OFF_running run the programs
-  virtual void	Step();
-  // #BUTTON #GHOST_OFF_running step the program, at the selected step level
-  virtual void	Stop();
-  // #BUTTON #GHOST_ON_running stop the running programs
-
-
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const Controller& cp);
-  COPY_FUNS(Controller, taNBase);
-  TA_BASEFUNS(Controller);
-
-protected:
-  virtual int		Run_impl(Program::RunState rm); 
-    // does all checks, then dispatches, return ReturnVal
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-
-class PDP_API Controller_MGroup : public taGroup<Controller> {
-INHERITED(taGroup<Controller>)
-public:
-  
-  TA_BASEFUNS(Controller_MGroup);
-
-private:
-  void	Initialize();
-  void 	Destroy()		{Reset(); };
-};
-
-*/
 #endif

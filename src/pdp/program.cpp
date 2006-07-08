@@ -984,25 +984,22 @@ void Program::UpdateAfterEdit() {
 }
 
 int Program::Call(Program* caller) {
-//TODO: need to implement a caller intrinsic obj
-// we save current one here, then set param
-// this will support recursive/reentrant calls to Call
-//TODO: revise
-//NOTE: we *should* be compiled already, unless user put this manually in script
-  return Run_impl(run_state);
+//TODO: need to implement a css intrinsic call, which maintains css stack, etc.
+  return Run_impl();
 } 
 
 void Program::Init() {
   top_prog = this;
   taMisc::Busy();
-  Run_impl(INIT);
+  setRunState(INIT);
+  Run_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) //TODO: use enums and sensible output string
     QMessageBox::warning(NULL, QString("Operation Failed"),
       String(
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
-  run_state = DONE;
+  setRunState(DONE);
 } 
 
 void Program::InitScriptObj_impl() {
@@ -1018,7 +1015,8 @@ void Program::PreCompileScript_impl() {
 void Program::Run() {
   top_prog = this;
   taMisc::Busy();
-  Run_impl(RUN);
+  setRunState(RUN);
+  Run_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) //TODO: use enums and sensible output string
     QMessageBox::warning(NULL, QString("Operation Failed"),
@@ -1027,10 +1025,10 @@ void Program::Run() {
       QMessageBox::Ok, QMessageBox::NoButton);
   // unless we were stopped, we are done
   if (run_state != STOP)
-    run_state = DONE;
+    setRunState(DONE);
 } 
 
-int Program::Run_impl(RunState rs) {
+int Program::Run_impl() {
   ret_val = RV_OK;
   if (!script_compiled) {
     if (!CompileScript()) {
@@ -1039,13 +1037,10 @@ int Program::Run_impl(RunState rs) {
     }
   }
   
-  RunState last = run_state;
-  setRunState(rs);
   bool ran_ok = RunScript();
   if (!ran_ok) { //could have runtime error, etc.
     ret_val = RV_RUNTIME_ERR;
   }
-  run_state = last; // don't call setXx because we do Changed anyway
   
   //note: shared var state likely changed, so update gui
   DataChanged(DCR_ITEM_UPDATED);
@@ -1060,10 +1055,11 @@ void Program::setRunState(RunState value) {
 }
 
 void Program::Step() {
-//TODO: no intrinsic support yet, so acts just like Run
+//TODO: no correct intrinsic support yet, so acts just like Run
   top_prog = this;
   taMisc::Busy();
-  Run_impl(Program::STEP);
+  setRunState(STEP);
+  Run_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) //TODO: use enums and sensible output string
     QMessageBox::warning(NULL, QString("Operation Failed"),
@@ -1071,6 +1067,8 @@ void Program::Step() {
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
   //TODO: after the last iteration of the topdog, we have to set DONE
+  if (run_state != STOP)
+    setRunState(DONE);
 }
 
 void Program::Stop() {
@@ -1081,7 +1079,9 @@ void Program::Stop() {
   // WARNING: stopping Init may leave in incomplete state -- should only be
   // needed if something loops improperly in an Init
   if (run_state != INIT)
-   setRunState(STOP);
+    setRunState(STOP);
+  else
+    setRunState(DONE);
 }
 
 void Program::CmdShell() {

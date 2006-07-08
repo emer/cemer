@@ -30,6 +30,15 @@ Serious/Fatal:
   reload the file (make changes to the file, select Open again, but it 
   still retains the first contents.)
 * pdp is leaving the launch shell in half-duplex output mode (it is not echoing what you type)
+* this seems to happen after one or more load errors have occurred, and you deleted
+  the project and tried again:
+  load fails with segfault in MemberDef::Dump_Load -- ex. was "epoch" (a var on net);
+  debugger indicates it has invalid data in its owner (MemberSpace); seems likes some
+  kind of memory corruption
+* on load of xor_2006-07-07_3.proj.gz --
+  "Attempt to create type of "Program" in list of type "Program_MGroup" -- most of the
+  programs seem to load, but the first, Train prog doesn't have its correct name, only
+  the generic name -- progs in the subgroup seem to load fine
   
 Medium Important:
 
@@ -55,6 +64,8 @@ Medium Important:
   diagnose what is happening
 * if you choose a non-gz proj file to save to, it warns about overwriting, but then
   it just writes to a .gz file, leaving your non-gz file as it was
+* if you rename a panel object, its name is correct in panel and tree, but you still have
+  the old name showing in the description are at the top of the panel
   
 Cosmetic/Usability/etc. (lower priority):
 
@@ -76,7 +87,6 @@ TODO
   2-option to even show all the group items; off by default
 * Color Bar controls
 * browser view state (cf Project View State, member of .project)
-* overall application: Expert Mode vs. Novice (to control complexity/visibility)
 
 * reordery dialog (ex for SelectEdit order)
 iEditGrid:
@@ -92,9 +102,11 @@ CLIP/DRAGDROP
 * prob have to own item before loading OR PREFERABLY maybe call load on parent instead
 * default support for #LINKGROUP
 
+
 DONE (shown in reverse order, top=most recent)
 ----
 
+* overall application: Expert Mode vs. Novice (to control complexity/visibility)
 * created a new program subgroup from menu;
   went to its property sheet, renamed it;
   the group disappeared from the tree; but opening in a new tree the renamed group is there
