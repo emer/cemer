@@ -55,9 +55,6 @@ Medium Important:
   diagnose what is happening
 * if you choose a non-gz proj file to save to, it warns about overwriting, but then
   it just writes to a .gz file, leaving your non-gz file as it was
-* created a new program subgroup from menu;
-  went to its property sheet, renamed it;
-  the group disappeared from the tree; but opening in a new tree the renamed group is there
   
 Cosmetic/Usability/etc. (lower priority):
 
@@ -98,6 +95,9 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* created a new program subgroup from menu;
+  went to its property sheet, renamed it;
+  the group disappeared from the tree; but opening in a new tree the renamed group is there
 * abstract out the CONDEDIT processing code and enable the same capabilities for
   GHOST (for buttons); you can look for ":" to enable a backwards-compatability mode
 * just adding ex. a UserScriptEl to init_els doesn't dirty the Program

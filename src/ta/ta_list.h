@@ -121,6 +121,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_LIST_SORTED,	// after sorting; ops not used
 
   DCR_GROUP_INSERT,	// op1=group, op2=group_after, null=at beginning
+  DCR_GROUP_UPDATE,	// op1=group, typically called for group name change
   DCR_GROUP_REMOVE,	// op1=group -- note, item not DisOwned yet, but has been removed from list
   DCR_GROUP_MOVED,	// op1=group, op2=group_after, null=at beginning
   DCR_GROUPS_SWAP,	// op1=group1, op2=group2
@@ -161,7 +162,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
 */
 #define DCR_LIST_ITEM_MIN 	DCR_LIST_ITEM_INSERT
 #define DCR_LIST_ITEM_MAX 	DCR_LIST_ITEMS_SWAP
-#define DCR_List_Group_Offset	(DCR_GROUP_INSERT - DCR_LIST_ITEM_INSERT)
+#define DCR_ListItem_Group_Offset	(DCR_GROUP_INSERT - DCR_LIST_ITEM_INSERT)
 
 typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
 

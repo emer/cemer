@@ -40,7 +40,7 @@ void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
   if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX))
-    ((TAGPtr)owner)->DataChanged(dcr + DCR_List_Group_Offset, op1, op2);
+    ((TAGPtr)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
 }
 
 bool taSubGroup::Transfer(taBase* it) {
