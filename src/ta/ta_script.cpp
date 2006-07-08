@@ -62,10 +62,7 @@ AbstractScriptBase::AbstractScriptBase() {
 AbstractScriptBase::~AbstractScriptBase() {
   ths = NULL;
   if (script) {
-    if (script->DeleteOk())
-      delete script;
-    else
-      script->DeferredDelete();
+    ExitShellScript();
     script = NULL;
   }
 }
@@ -104,6 +101,7 @@ bool AbstractScriptBase::CompileScript_impl() {
   if (rval) {
     script_compiled = true;
     ScriptCompiled();
+    script->name = ((taBase*)GetThisPtr())->GetName();
   }
   return rval;
 }
@@ -128,8 +126,18 @@ bool AbstractScriptBase::RunScript() {
 }
 
 void AbstractScriptBase::StopScript() {
-  if (script)
+  if(script)
     script->Stop();
+}
+
+void AbstractScriptBase::CmdShellScript() {
+  if(script == NULL) return;
+  cssMisc::TopShell->PushSrcProg(script);
+}
+
+void AbstractScriptBase::ExitShellScript() {
+  if(script == NULL) return;
+  cssMisc::TopShell->PopSrcProg(script);
 }
 
 
@@ -309,6 +317,14 @@ void Script::Clear() {
 
 void Script::Compile() {
   CompileScript();
+}
+
+void Script::CmdShell() {
+  CmdShellScript();
+}
+
+void Script::ExitShell() {
+  ExitShellScript();
 }
 
 void Script::AutoRun() {

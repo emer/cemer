@@ -65,6 +65,10 @@ public:
   // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
   virtual void  	StopScript();
   // stops the running script
+  virtual void		CmdShellScript();
+  // #MENU #LABEL_CmdShell #MENU_ON_Actions set the css command shell to operate on this script, so that you can interact with (run, debug, etc) this script
+  virtual void		ExitShellScript();
+  // #MENU #LABEL_ExitShell #MENU_ON_Actions if this script is currently being operated on by the command shell (via CmdShell function), exit from that shell (shell returns to previous script it was operating on)
 
   virtual TypeDef* GetThisTypeDef() const = 0;
   // #IGNORE overload this function to get the typedef of 'this' object, which must be taBase
@@ -132,6 +136,10 @@ public:
   // #BUTTON #CONFIRM clear script file
   virtual void	Compile();
   // #BUTTON #GHOST_OFF_recording compile script from script file into internal runnable format
+  virtual void	CmdShell();
+  // #BUTTON #GHOST_OFF_recording set css command shell to operate on this script, so you can run, debug, etc this script from the command line
+  virtual void	ExitShell();
+  // #BUTTON #GHOST_OFF_recording exit the command shell for this script (shell returns to previous script)
 
   virtual void	ScriptAllWinPos();
   // #MENU #MENU_ON_Actions #NO_SCRIPT record script code to set window positions, iconified

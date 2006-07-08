@@ -919,12 +919,19 @@ static cssEl* cssElCFun_debug_stub(int, cssEl* arg[]) {
   csh->src_prog->SetDebug((int)*(arg[1]));
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_define_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_cmdebug_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  // todo: this needs to switch the state of the shell to take input into src instead of cmd
-//   cp->top->SetDefn();
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  csh->cmd_prog->SetDebug((int)*(arg[1]));
   return &cssMisc::Void;
 }
+// static cssEl* cssElCFun_define_stub(int, cssEl* arg[]) {
+//   cssProg* cp = arg[0]->prog;
+//   // todo: this needs to switch the state of the shell to take input into src instead of cmd
+// //   cp->top->SetDefn();
+//   return &cssMisc::Void;
+// }
 static cssEl* cssElCFun_defines_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -1306,6 +1313,13 @@ static void Install_Commands() {
 "Clears out everything from the current program space.  This is like\
  restarting the CSS shell, compared to reset which does not remove\
  any variables defined at the top-level.");
+  cssElCFun_inst(cssMisc::Commands, cmdebug,   		1, CSS_COMMAND,
+"<level> Sets the debug level for the command shell.  Level 1 provides a trace of the source lines\
+ executed.  Level 2 provides a more detailed, machine-level trace, and\
+ causes list to show the program at the machine level instead of\
+ at the usual source level. Levels greater than 2 provide increasing\
+ amounts of detail about the inner workings of CSS, which should not be\
+ relevant to most users.");
   cssElCFun_inst(cssMisc::Commands, commands,		0, CSS_COMMAND,
 "Shows a list of the currently available commands (including any aliases\
  that have been defined, which will appear at the end of the list).");
@@ -1325,11 +1339,11 @@ static void Install_Commands() {
  at the usual source level. Levels greater than 2 provide increasing\
  amounts of detail about the inner workings of CSS, which should not be\
  relevant to most users.");
-  cssElCFun_inst(cssMisc::Commands, define, 		0, CSS_COMMAND,
-"Toggles the mode where statements that are typed in become part of the\
- current program to be executed later (define mode), as opposed the\
- default (run mode) where statements are executed immediately after entering\
- them.");
+//   cssElCFun_inst(cssMisc::Commands, define, 		0, CSS_COMMAND,
+// "Toggles the mode where statements that are typed in become part of the\
+//  current program to be executed later (define mode), as opposed the\
+//  default (run mode) where statements are executed immediately after entering\
+//  them.");
   cssElCFun_inst(cssMisc::Commands, defines, 		0, CSS_COMMAND,
 "Shows a list of all of the current #define pre-processor macros.");
   cssElCFun_inst(cssMisc::Commands, edit,   		cssEl::VarArg, CSS_COMMAND,
@@ -2776,7 +2790,7 @@ int cssMisc::Initialize() {
   // functions
   cssEl::Ref(&cssMisc::Void);		// reference this to keep it around
 
-  cssMisc::Top = new cssProgSpace("C^c Top Level");	// top level
+  cssMisc::Top = new cssProgSpace("css");	// top level
   cssMisc::ConstExprTop = new cssProgSpace("Constant Expression Top Level");
   cssMisc::ConstExpr = cssMisc::ConstExprTop->Prog(); // this guy is child of top
   cssMisc::CDtorProg = new cssProg("Constructor/Destructor Prog");
@@ -2785,9 +2799,8 @@ int cssMisc::Initialize() {
   cssProg::Ref(cssMisc::CallFunProg);
   cssMisc::cur_top = cssMisc::Top;
 
-  cssMisc::TopShell = new cssCmdShell("C^c Top Shell");
-  cssMisc::TopShell->src_prog = cssMisc::Top;
-  cssMisc::Top->cmd_shell = cssMisc::TopShell; // todo: this linkage should be done by code..
+  cssMisc::TopShell = new cssCmdShell("css shell");
+  cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 
   Install_Internals();
   Install_Commands();

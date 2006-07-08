@@ -500,6 +500,11 @@ public:
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:INIT,RUN,STEP stop the running programs
   
+  virtual void	CmdShell();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP set css command shell to operate on this program, so you can run, debug, etc this script from the command line
+  virtual void	ExitShell();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP exit the command shell for this program (shell returns to previous script)
+
  //TODO: the button functions are gui functions, with failure dialogs, etc
  // need purely nongui ones for scripted calls
   

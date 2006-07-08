@@ -202,6 +202,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   // cssMisc stuff
   cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(root, 1, &TA_PDPRoot,"root"));
   cssMisc::Initialize();
+  cssMisc::Top->name = "pdp++";	// changes prompt
 
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
   // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.

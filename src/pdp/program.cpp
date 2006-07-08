@@ -1084,6 +1084,14 @@ void Program::Stop() {
    setRunState(STOP);
 }
 
+void Program::CmdShell() {
+  CmdShellScript();
+}
+
+void Program::ExitShell() {
+  ExitShellScript();
+}
+
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   m_dirty = false;

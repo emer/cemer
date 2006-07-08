@@ -1,3 +1,4 @@
+/* -*- C++ -*- */
 // Copyright, 1995-2005, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -143,10 +144,7 @@ public:
   static cssProgSpace* 	Top;		// top level space
   static cssProgSpace*	cur_top;	// current top-level (set for parsing, running)
   static cssProgSpace*	code_cur_top;	// cur_top for coding (e.g. if top switched for ConstExpr)
-  static cssProgSpace*	delete_me;	// delete this space, couldn't be done earlier
-
   static cssCmdShell* 	TopShell;	// top level command shell
-  static cssCmdShell*	delete_shell;	// delete this shell, couldn't be done eariler
 
   static cssArray*	s_argv;		// args passed by shell to scripts
   static cssInt*	s_argc;		// number of args passed by shell to scripts
@@ -1092,11 +1090,10 @@ protected:
 public:
   // flag state values
   enum State_Flags {
-    State_Shell		= 0x0001,
+    State_Wait		= 0x0001,
     State_Run		= 0x0002,
     State_Cont		= 0x0004,
-    State_Defn		= 0x0008, 	// defn = defining, else shelling if in shell
-    State_WasBurped	= 0x0010,  	// last line was burped, (delete src if necc)
+    State_WasBurped	= 0x0008,  	// last line was burped, (delete src if necc)
   };
 
   enum YY_Flags {
@@ -1322,10 +1319,7 @@ public:
   virtual ~cssProgSpace();
 
   bool		AmCmdProg();		// am I a cmd shell cmd_prog?
-
-  // todo: look into need for following:
-  bool		DeleteOk();		// checks if its ok to delete this one
-  void		DeferredDelete();	// call this if not ok to delete now..
+  bool		HaveCmdShell();		// check if cmd_shell is set, issue warning if not
 
   cssProgStack* ProgStack()		{ return progs[size-1]; }
   cssProgStack* ProgStack(int prdx)	{ return progs[prdx]; }
@@ -1456,13 +1450,22 @@ public:
 
   bool		external_exit;		// set to true to break out of a shell...
 
-  cssProgSpace*	src_prog;		// program with source code for commands to operate on (I do not own this!)
+  cssProgSpace*	src_prog;		// current program with source code for commands to operate on (I do not own this, nor is there refcounting!) DO NOT SET DIRECTLY: USE Push/Pop to manage
   cssProgSpace*	cmd_prog;		// program for commands, etc (I own this one!)
+
+  cssProgSpace** src_prog_stack; 	// stack of src_prog's
+  int 		stack_size;		// size of prog_stack
 
   void Constr();
   cssCmdShell();
   cssCmdShell(const char* nm);
   virtual ~cssCmdShell();
+
+  // manage the src_prog_stack
+  void		AllocSrcProg(int sz);
+  void		PushSrcProg(cssProgSpace* ps); 	// push onto stack, set src_prog = ps
+  cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
+  void		PopAllSrcProg(); // pop off all of the src progs
 
   void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
   // do all the initialization stuff for a shell, but don't actually start a specific shell
@@ -1475,16 +1478,12 @@ public:
   void		UpdatePrompt();
   //  void 		Source(const char* fname);	// run a file as if in a shell
 
-  bool		DeleteOk();		// checks if its ok to delete this one
-  void		DeferredDelete();	// call this if not ok to delete now..
-  void		ExitShell();		// cause shell to exit
-
 public slots:
   void		AcceptNewLine(QString ln, bool eof); 
   // called when a new line of text becomes available -- all outer shells/consoles call this interface
 protected:
+  int		stack_alloc_size;	// allocated size of src_prog stack
   InputMode	input_mode;		// what kind of shell input mode are we running?
-  bool 		in_readline;		// I'm in readline function waiting for input
 };
 
 #endif // machine_h
