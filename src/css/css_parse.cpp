@@ -1,87 +1,211 @@
+/* A Bison parser, made by GNU Bison 2.0.  */
 
-/*  A Bison parser, made from css_parse.y
-    by GNU Bison version 1.28  */
+/* Skeleton parser for Yacc-like parsing with Bison,
+   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
-#define YYBISON 1  /* Identify Bison output.  */
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-#define	CSS_PP_INCLUDE	257
-#define	CSS_PP_DEFINE	258
-#define	CSS_PP_UNDEF	259
-#define	CSS_PP_IFDEF	260
-#define	CSS_PP_IFNDEF	261
-#define	CSS_PP_ELSE	262
-#define	CSS_PP_ENDIF	263
-#define	CSS_NUMBER	264
-#define	CSS_STRING	265
-#define	CSS_VAR	266
-#define	CSS_FUN	267
-#define	CSS_PTR	268
-#define	CSS_PP_DEF	269
-#define	CSS_NAME	270
-#define	CSS_COMMENT	271
-#define	CSS_TYPE	272
-#define	CSS_PTRTYPE	273
-#define	CSS_CLASS	274
-#define	CSS_ENUM	275
-#define	CSS_SCPTYPE	276
-#define	CSS_WHILE	277
-#define	CSS_DO	278
-#define	CSS_IF	279
-#define	CSS_ELSE	280
-#define	CSS_SWITCH	281
-#define	CSS_CASE	282
-#define	CSS_DEFAULT	283
-#define	CSS_RETURN	284
-#define	CSS_BREAK	285
-#define	CSS_CONTINUE	286
-#define	CSS_FOR	287
-#define	CSS_NEW	288
-#define	CSS_DELETE	289
-#define	CSS_COMMAND	290
-#define	CSS_LIST	291
-#define	CSS_EXIT	292
-#define	CSS_ALIAS	293
-#define	CSS_REMOVE	294
-#define	CSS_STATUS	295
-#define	CSS_TYPECMD	296
-#define	CSS_CONT	297
-#define	CSS_HELP	298
-#define	CSS_EXTERN	299
-#define	CSS_STATIC	300
-#define	CSS_CONST	301
-#define	CSS_PRIVATE	302
-#define	CSS_PUBLIC	303
-#define	CSS_PROTECTED	304
-#define	CSS_VIRTUAL	305
-#define	CSS_INLINE	306
-#define	CSS_ASGN_ADD	307
-#define	CSS_ASGN_SUB	308
-#define	CSS_ASGN_MULT	309
-#define	CSS_ASGN_DIV	310
-#define	CSS_ASGN_MOD	311
-#define	CSS_ASGN_LSHIFT	312
-#define	CSS_ASGN_RSHIFT	313
-#define	CSS_ASGN_AND	314
-#define	CSS_ASGN_XOR	315
-#define	CSS_ASGN_OR	316
-#define	CSS_OR	317
-#define	CSS_AND	318
-#define	CSS_GT	319
-#define	CSS_GE	320
-#define	CSS_LT	321
-#define	CSS_LE	322
-#define	CSS_EQ	323
-#define	CSS_NE	324
-#define	CSS_LSHIFT	325
-#define	CSS_RSHIFT	326
-#define	CSS_UNARY	327
-#define	CSS_PLUSPLUS	328
-#define	CSS_MINMIN	329
-#define	CSS_UNARYMINUS	330
-#define	CSS_NOT	331
-#define	CSS_POINTSAT	332
-#define	CSS_SCOPER	333
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
+
+/* As a special exception, when this file is copied by Bison into a
+   Bison output file, you may use that output file without restriction.
+   This special exception was added by the Free Software Foundation
+   in version 1.24 of Bison.  */
+
+/* Written by Richard Stallman by simplifying the original so called
+   ``semantic'' parser.  */
+
+/* All symbols defined below should begin with yy or YY, to avoid
+   infringing on user name space.  This should be done even for local
+   variables, as they might otherwise be expanded by user macros.
+   There are some unavoidable exceptions within include files to
+   define necessary library symbols; they are noted "INFRINGES ON
+   USER NAME SPACE" below.  */
+
+/* Identify Bison output.  */
+#define YYBISON 1
+
+/* Skeleton name.  */
+#define YYSKELETON_NAME "yacc.c"
+
+/* Pure parsers.  */
+#define YYPURE 0
+
+/* Using locations.  */
+#define YYLSP_NEEDED 0
+
+
+
+/* Tokens.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     CSS_PP_INCLUDE = 258,
+     CSS_PP_DEFINE = 259,
+     CSS_PP_UNDEF = 260,
+     CSS_PP_IFDEF = 261,
+     CSS_PP_IFNDEF = 262,
+     CSS_PP_ELSE = 263,
+     CSS_PP_ENDIF = 264,
+     CSS_NUMBER = 265,
+     CSS_STRING = 266,
+     CSS_VAR = 267,
+     CSS_FUN = 268,
+     CSS_PTR = 269,
+     CSS_PP_DEF = 270,
+     CSS_NAME = 271,
+     CSS_COMMENT = 272,
+     CSS_TYPE = 273,
+     CSS_PTRTYPE = 274,
+     CSS_CLASS = 275,
+     CSS_ENUM = 276,
+     CSS_SCPTYPE = 277,
+     CSS_WHILE = 278,
+     CSS_DO = 279,
+     CSS_IF = 280,
+     CSS_ELSE = 281,
+     CSS_SWITCH = 282,
+     CSS_CASE = 283,
+     CSS_DEFAULT = 284,
+     CSS_RETURN = 285,
+     CSS_BREAK = 286,
+     CSS_CONTINUE = 287,
+     CSS_FOR = 288,
+     CSS_NEW = 289,
+     CSS_DELETE = 290,
+     CSS_COMMAND = 291,
+     CSS_ALIAS = 292,
+     CSS_REMOVE = 293,
+     CSS_TYPECMD = 294,
+     CSS_HELP = 295,
+     CSS_EXTERN = 296,
+     CSS_STATIC = 297,
+     CSS_CONST = 298,
+     CSS_PRIVATE = 299,
+     CSS_PUBLIC = 300,
+     CSS_PROTECTED = 301,
+     CSS_VIRTUAL = 302,
+     CSS_INLINE = 303,
+     CSS_ASGN_OR = 304,
+     CSS_ASGN_XOR = 305,
+     CSS_ASGN_AND = 306,
+     CSS_ASGN_RSHIFT = 307,
+     CSS_ASGN_LSHIFT = 308,
+     CSS_ASGN_MOD = 309,
+     CSS_ASGN_DIV = 310,
+     CSS_ASGN_MULT = 311,
+     CSS_ASGN_SUB = 312,
+     CSS_ASGN_ADD = 313,
+     CSS_OR = 314,
+     CSS_AND = 315,
+     CSS_NE = 316,
+     CSS_EQ = 317,
+     CSS_LE = 318,
+     CSS_LT = 319,
+     CSS_GE = 320,
+     CSS_GT = 321,
+     CSS_RSHIFT = 322,
+     CSS_LSHIFT = 323,
+     CSS_MINMIN = 324,
+     CSS_PLUSPLUS = 325,
+     CSS_UNARY = 326,
+     CSS_NOT = 327,
+     CSS_UNARYMINUS = 328,
+     CSS_SCOPER = 329,
+     CSS_POINTSAT = 330
+   };
+#endif
+#define CSS_PP_INCLUDE 258
+#define CSS_PP_DEFINE 259
+#define CSS_PP_UNDEF 260
+#define CSS_PP_IFDEF 261
+#define CSS_PP_IFNDEF 262
+#define CSS_PP_ELSE 263
+#define CSS_PP_ENDIF 264
+#define CSS_NUMBER 265
+#define CSS_STRING 266
+#define CSS_VAR 267
+#define CSS_FUN 268
+#define CSS_PTR 269
+#define CSS_PP_DEF 270
+#define CSS_NAME 271
+#define CSS_COMMENT 272
+#define CSS_TYPE 273
+#define CSS_PTRTYPE 274
+#define CSS_CLASS 275
+#define CSS_ENUM 276
+#define CSS_SCPTYPE 277
+#define CSS_WHILE 278
+#define CSS_DO 279
+#define CSS_IF 280
+#define CSS_ELSE 281
+#define CSS_SWITCH 282
+#define CSS_CASE 283
+#define CSS_DEFAULT 284
+#define CSS_RETURN 285
+#define CSS_BREAK 286
+#define CSS_CONTINUE 287
+#define CSS_FOR 288
+#define CSS_NEW 289
+#define CSS_DELETE 290
+#define CSS_COMMAND 291
+#define CSS_ALIAS 292
+#define CSS_REMOVE 293
+#define CSS_TYPECMD 294
+#define CSS_HELP 295
+#define CSS_EXTERN 296
+#define CSS_STATIC 297
+#define CSS_CONST 298
+#define CSS_PRIVATE 299
+#define CSS_PUBLIC 300
+#define CSS_PROTECTED 301
+#define CSS_VIRTUAL 302
+#define CSS_INLINE 303
+#define CSS_ASGN_OR 304
+#define CSS_ASGN_XOR 305
+#define CSS_ASGN_AND 306
+#define CSS_ASGN_RSHIFT 307
+#define CSS_ASGN_LSHIFT 308
+#define CSS_ASGN_MOD 309
+#define CSS_ASGN_DIV 310
+#define CSS_ASGN_MULT 311
+#define CSS_ASGN_SUB 312
+#define CSS_ASGN_ADD 313
+#define CSS_OR 314
+#define CSS_AND 315
+#define CSS_NE 316
+#define CSS_EQ 317
+#define CSS_LE 318
+#define CSS_LT 319
+#define CSS_GE 320
+#define CSS_GT 321
+#define CSS_RSHIFT 322
+#define CSS_LSHIFT 323
+#define CSS_MINMIN 324
+#define CSS_PLUSPLUS 325
+#define CSS_UNARY 326
+#define CSS_NOT 327
+#define CSS_UNARYMINUS 328
+#define CSS_SCOPER 329
+#define CSS_POINTSAT 330
+
+
+
+
+/* Copy the first part of user declarations.  */
 #line 18 "css_parse.y"
 
 
@@ -119,1147 +243,1500 @@ int yylex();
 #define Code4(w,x,y,z) 	cssMisc::cur_top->Prog()->Code(w); cssMisc::cur_top->Prog()->Code(x); cssMisc::cur_top->Prog()->Code(y); cssMisc::cur_top->Prog()->Code(z);
 
 
+
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 1
+#endif
+
+/* Enabling verbose error messages.  */
+#ifdef YYERROR_VERBOSE
+# undef YYERROR_VERBOSE
+# define YYERROR_VERBOSE 1
+#else
+# define YYERROR_VERBOSE 0
+#endif
+
+#if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
 #line 58 "css_parse.y"
-typedef struct {
+typedef struct YYSTYPE {
   cssElPlusIVal el_ival;
   cssElPtr     	el;		/* for coding */
   int		ival;		/* for program indexes (progdx) and other ints */
   char*        	nm;
 } YYSTYPE;
-#ifndef YYDEBUG
-#define YYDEBUG 1
-#endif
-
-#include <stdio.h>
-
-#ifndef __cplusplus
-#ifndef __STDC__
-#define const
-#endif
+/* Line 190 of yacc.c.  */
+#line 270 "y.tab.c"
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
+# define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
 #endif
 
 
 
-#define	YYFINAL		530
-#define	YYFLAG		-32768
-#define	YYNTBASE	102
+/* Copy the second part of user declarations.  */
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 333 ? yytranslate[x] : 197)
 
-static const char yytranslate[] = {     0,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    96,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,    85,    72,     2,    94,
-    98,    83,    81,    54,    82,    92,    84,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,    67,    97,     2,
-    55,     2,    66,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-    95,     2,    99,    71,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,    53,    70,   100,   101,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     1,     3,     4,     5,     6,
-     7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
-    17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-    27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
-    37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
-    47,    48,    49,    50,    51,    52,    56,    57,    58,    59,
-    60,    61,    62,    63,    64,    65,    68,    69,    73,    74,
-    75,    76,    77,    78,    79,    80,    86,    87,    88,    89,
-    90,    91,    93
-};
+/* Line 213 of yacc.c.  */
+#line 282 "y.tab.c"
 
-#if YYDEBUG != 0
-static const short yyprhs[] = {     0,
-     0,     1,     4,     8,    12,    15,    18,    21,    25,    29,
-    31,    33,    35,    37,    39,    41,    43,    45,    48,    51,
-    54,    57,    60,    63,    66,    69,    71,    73,    76,    79,
-    83,    85,    87,    91,    97,   100,   104,   106,   110,   114,
-   116,   120,   124,   128,   132,   136,   140,   141,   144,   149,
-   151,   153,   155,   157,   159,   161,   166,   174,   181,   188,
-   190,   193,   197,   204,   207,   210,   212,   214,   217,   219,
-   222,   224,   226,   230,   239,   247,   252,   254,   258,   260,
-   262,   264,   266,   268,   272,   274,   276,   279,   281,   284,
-   286,   288,   290,   292,   295,   297,   299,   302,   305,   308,
-   311,   313,   318,   325,   326,   328,   331,   335,   340,   345,
-   351,   358,   361,   362,   364,   367,   372,   377,   382,   388,
-   393,   396,   400,   403,   407,   410,   414,   418,   423,   425,
-   429,   431,   435,   438,   441,   443,   447,   449,   451,   454,
-   457,   460,   463,   466,   470,   474,   476,   479,   482,   486,
-   488,   490,   493,   496,   499,   501,   503,   505,   508,   510,
-   512,   514,   516,   519,   521,   523,   527,   532,   535,   538,
-   540,   542,   544,   548,   551,   553,   555,   557,   564,   566,
-   576,   587,   598,   610,   612,   615,   617,   622,   627,   629,
-   634,   639,   643,   647,   649,   651,   655,   657,   659,   661,
-   663,   665,   667,   671,   675,   679,   683,   687,   691,   695,
-   699,   703,   707,   711,   715,   719,   725,   730,   734,   740,
-   744,   748,   751,   754,   758,   762,   766,   770,   774,   778,
-   784,   788,   792,   796,   800,   804,   808,   812,   816,   820,
-   824,   827,   830,   833,   836,   839,   842,   847,   852,   857,
-   859,   863,   865,   867,   869,   871,   873,   875,   877,   879,
-   881,   883,   885,   888,   892,   895,   899,   903,   906,   909,
-   913,   918,   923,   928,   932,   934,   936,   938,   940,   942,
-   944,   946,   948,   950,   952,   954,   956,   958,   960,   962,
-   964,   966,   968,   972,   974,   976,   977,   979,   983,   985,
-   987
-};
+#if ! defined (yyoverflow) || YYERROR_VERBOSE
 
-static const short yyrhs[] = {    -1,
-   102,    96,     0,   102,   105,   104,     0,   102,   111,   104,
-     0,   102,   176,     0,   102,   113,     0,   102,   157,     0,
-   102,     1,   104,     0,   102,    38,   104,     0,    97,     0,
-    97,     0,    96,     0,   106,     0,   107,     0,   108,     0,
-   109,     0,   110,     0,     3,    11,     0,     4,    16,     0,
-     4,    15,     0,     5,    15,     0,     6,    16,     0,     6,
-    15,     0,     7,    15,     0,     7,    16,     0,     8,     0,
-     9,     0,    36,   112,     0,    42,   112,     0,    42,   192,
-    18,     0,    43,     0,    37,     0,    37,   192,   190,     0,
-    37,    94,   192,   190,    98,     0,    40,   112,     0,    40,
-   192,    18,     0,    41,     0,    39,   180,   186,     0,    39,
-   180,   180,     0,    44,     0,    44,   192,   180,     0,    44,
-   192,    13,     0,    44,   192,    39,     0,    44,   192,    44,
-     0,    44,   192,    19,     0,    44,   192,    18,     0,     0,
-   192,   190,     0,    94,   192,   190,    98,     0,   114,     0,
-   115,     0,   116,     0,   119,     0,   124,     0,   142,     0,
-   151,   149,   196,   103,     0,   151,   186,    55,   192,   177,
-   196,   103,     0,   185,    55,   192,   177,   196,   103,     0,
-   151,   186,   192,   117,   196,   103,     0,   118,     0,   117,
-   118,     0,    95,   177,    99,     0,   120,    53,   121,   100,
-   196,   103,     0,    21,   186,     0,    21,    18,     0,    21,
-     0,   122,     0,   121,   122,     0,   123,     0,   123,    54,
-     0,     1,     0,   186,     0,   186,    55,    10,     0,    20,
-   125,    53,   141,   133,   100,   196,   103,     0,    20,   125,
-    53,   141,   100,   196,   103,     0,    20,   127,   196,   103,
-     0,   126,     0,   126,    67,   128,     0,   186,     0,    18,
-     0,   186,     0,    18,     0,   129,     0,   128,    54,   129,
-     0,   130,     0,   152,     0,   131,   152,     0,   132,     0,
-   131,   132,     0,    49,     0,    51,     0,    48,     0,   134,
-     0,   133,   134,     0,   135,     0,   139,     0,   119,   141,
-     0,    49,    67,     0,    48,    67,     0,    50,    67,     0,
-     1,     0,   151,   186,   103,   141,     0,   151,   186,   136,
-   137,   103,   141,     0,     0,   138,     0,   137,   138,     0,
-    95,    10,    99,     0,   140,   145,   103,   141,     0,    18,
-   145,   103,   141,     0,   101,    18,   145,   103,   141,     0,
-    51,   101,    18,   145,   103,   141,     0,   151,   186,     0,
-     0,    17,     0,   141,    17,     0,   143,   145,   196,   103,
-     0,   143,   145,   196,   174,     0,   151,    13,   145,   103,
-     0,   151,    13,   145,   196,   174,     0,   144,   145,   196,
-   175,     0,   151,   186,     0,   151,   154,   186,     0,   154,
-    18,     0,   154,   101,    18,     0,    94,    98,     0,    94,
-   146,    98,     0,    94,    98,    47,     0,    94,   146,    98,
-    47,     0,   147,     0,   146,    54,   147,     0,   148,     0,
-   148,    55,   179,     0,   151,    16,     0,   151,    12,     0,
-   150,     0,   149,    54,   150,     0,   186,     0,   152,     0,
-    45,   152,     0,    46,   152,     0,    47,   152,     0,    51,
-   152,     0,    52,   152,     0,    52,    51,   152,     0,    51,
-    52,   152,     0,   153,     0,   153,   156,     0,   153,    72,
-     0,   153,   156,    72,     0,    18,     0,    19,     0,   154,
-    22,     0,    18,    93,     0,    19,    93,     0,    18,     0,
-    19,     0,    83,     0,   156,    83,     0,   158,     0,   170,
-     0,   159,     0,   166,     0,   177,   103,     0,   164,     0,
-   168,     0,    30,   192,   103,     0,    30,   192,   177,   103,
-     0,    31,   103,     0,    32,   103,     0,   162,     0,   160,
-     0,   174,     0,    28,   161,    67,     0,    29,    67,     0,
-    10,     0,    11,     0,    12,     0,   163,    94,   192,   177,
-    98,   174,     0,    27,     0,   165,    94,   195,   177,   195,
-   196,    98,   157,   196,     0,   165,    94,   195,   177,   195,
-   193,   196,    98,   157,   196,     0,   165,    94,   193,   195,
-   177,   195,   196,    98,   157,   196,     0,   165,    94,   193,
-   195,   177,   195,   193,   196,    98,   157,   196,     0,    33,
-     0,   167,   157,     0,    24,     0,   169,   173,   103,   196,
-     0,   169,   173,   157,   196,     0,    23,     0,   171,   173,
-   158,   196,     0,   171,   173,   170,   196,     0,   172,   158,
-   196,     0,   172,   170,   196,     0,    25,     0,    26,     0,
-    94,   177,    98,     0,    53,     0,    53,     0,   100,     0,
-   179,     0,   178,     0,   183,     0,   177,    55,   177,     0,
-   177,    55,    53,     0,   177,    56,   177,     0,   177,    57,
-   177,     0,   177,    58,   177,     0,   177,    59,   177,     0,
-   177,    60,   177,     0,   177,    61,   177,     0,   177,    62,
-   177,     0,   177,    63,   177,     0,   177,    64,   177,     0,
-   177,    65,   177,     0,    34,   192,   155,     0,    34,   192,
-   155,    94,    98,     0,    34,   192,   155,   118,     0,    35,
-   192,   177,     0,    35,    95,    99,   192,   177,     0,   177,
-    68,   177,     0,   177,    69,   177,     0,    72,   177,     0,
-    83,   177,     0,   177,    73,   177,     0,   177,    74,   177,
-     0,   177,    75,   177,     0,   177,    76,   177,     0,   177,
-    77,   177,     0,   177,    78,   177,     0,   177,    66,   177,
-    67,   177,     0,   177,    81,   177,     0,   177,    82,   177,
-     0,   177,    83,   177,     0,   177,    84,   177,     0,   177,
-    85,   177,     0,   177,    79,   177,     0,   177,    80,   177,
-     0,   177,    72,   177,     0,   177,    71,   177,     0,   177,
-    70,   177,     0,   177,    87,     0,    87,   177,     0,   177,
-    88,     0,    88,   177,     0,    82,   177,     0,    90,   177,
-     0,   177,    95,   177,    99,     0,    94,   151,    98,   177,
-     0,   151,    94,   177,    98,     0,   181,     0,    94,   177,
-    98,     0,    10,     0,    11,     0,    12,     0,    14,     0,
-    36,     0,    37,     0,    40,     0,    41,     0,    38,     0,
-    42,     0,    13,     0,   182,    98,     0,   182,   190,    98,
-     0,    13,    94,     0,   178,   187,   188,     0,   179,   187,
-   188,     0,    92,   188,     0,   154,   188,     0,   184,    98,
-   196,     0,   184,   190,    98,   196,     0,   178,   187,   188,
-    94,     0,   179,   187,   188,    94,     0,   154,   188,    94,
-     0,    16,     0,    16,     0,    10,     0,    11,     0,    12,
-     0,    14,     0,    13,     0,    92,     0,    91,     0,    16,
-     0,    11,     0,   189,     0,    12,     0,    14,     0,    13,
-     0,    19,     0,   180,     0,   191,     0,   190,    54,   191,
-     0,   177,     0,    19,     0,     0,   194,     0,   193,    54,
-   193,     0,   177,     0,    97,     0,     0
-};
+# ifndef YYFREE
+#  define YYFREE free
+# endif
+# ifndef YYMALLOC
+#  define YYMALLOC malloc
+# endif
+
+/* The parser invokes alloca or malloc; define the necessary symbols.  */
+
+# ifdef YYSTACK_USE_ALLOCA
+#  if YYSTACK_USE_ALLOCA
+#   ifdef __GNUC__
+#    define YYSTACK_ALLOC __builtin_alloca
+#   else
+#    define YYSTACK_ALLOC alloca
+#   endif
+#  endif
+# endif
+
+# ifdef YYSTACK_ALLOC
+   /* Pacify GCC's `empty if-body' warning. */
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
+# else
+#  if defined (__STDC__) || defined (__cplusplus)
+#   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
+#   define YYSIZE_T size_t
+#  endif
+#  define YYSTACK_ALLOC YYMALLOC
+#  define YYSTACK_FREE YYFREE
+# endif
+#endif /* ! defined (yyoverflow) || YYERROR_VERBOSE */
+
+
+#if (! defined (yyoverflow) \
+     && (! defined (__cplusplus) \
+	 || (defined (YYSTYPE_IS_TRIVIAL) && YYSTYPE_IS_TRIVIAL)))
+
+/* A type that is properly aligned for any stack member.  */
+struct yyalloc
+{
+  short int yyss;
+  YYSTYPE yyvs;
+  };
+
+/* The size of the maximum gap between one aligned stack and the next.  */
+# define YYSTACK_GAP_MAXIMUM (sizeof (struct yyalloc) - 1)
+
+/* The size of an array large to enough to hold all stacks, each with
+   N elements.  */
+# define YYSTACK_BYTES(N) \
+     ((N) * (sizeof (short int) + sizeof (YYSTYPE))			\
+      + YYSTACK_GAP_MAXIMUM)
+
+/* Copy COUNT objects from FROM to TO.  The source and destination do
+   not overlap.  */
+# ifndef YYCOPY
+#  if defined (__GNUC__) && 1 < __GNUC__
+#   define YYCOPY(To, From, Count) \
+      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+#  else
+#   define YYCOPY(To, From, Count)		\
+      do					\
+	{					\
+	  register YYSIZE_T yyi;		\
+	  for (yyi = 0; yyi < (Count); yyi++)	\
+	    (To)[yyi] = (From)[yyi];		\
+	}					\
+      while (0)
+#  endif
+# endif
+
+/* Relocate STACK from its old location to the new one.  The
+   local variables YYSIZE and YYSTACKSIZE give the old and new number of
+   elements in the stack, and YYPTR gives the new location of the
+   stack.  Advance YYPTR to a properly aligned location for the next
+   stack.  */
+# define YYSTACK_RELOCATE(Stack)					\
+    do									\
+      {									\
+	YYSIZE_T yynewbytes;						\
+	YYCOPY (&yyptr->Stack, Stack, yysize);				\
+	Stack = &yyptr->Stack;						\
+	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+	yyptr += yynewbytes / sizeof (*yyptr);				\
+      }									\
+    while (0)
 
 #endif
 
-#if YYDEBUG != 0
-static const short yyrline[] = { 0,
-   163,   164,   165,   166,   167,   170,   173,   174,   175,   178,
-   181,   182,   185,   186,   187,   188,   189,   193,   200,   202,
-   203,   206,   209,   210,   213,   216,   220,   233,   235,   237,
-   239,   242,   244,   246,   249,   251,   253,   255,   259,   261,
-   263,   265,   267,   269,   271,   273,   277,   278,   279,   283,
-   284,   285,   286,   287,   288,   291,   301,   319,   338,   354,
-   356,   359,   363,   370,   377,   384,   392,   393,   396,   397,
-   398,   401,   418,   437,   442,   446,   451,   453,   456,   463,
-   485,   491,   499,   500,   503,   513,   514,   517,   518,   521,
-   522,   523,   526,   527,   530,   531,   532,   533,   534,   535,
-   536,   539,   551,   567,   574,   576,   579,   584,   590,   606,
-   623,   643,   664,   665,   666,   669,   675,   687,   695,   713,
-   727,   740,   766,   787,   809,   810,   811,   812,   815,   816,
-   819,   820,   825,   834,   844,   845,   852,   861,   862,   863,
-   864,   866,   867,   868,   869,   872,   873,   879,   881,   889,
-   890,   891,   902,   907,   911,   912,   915,   916,   919,   920,
-   923,   924,   927,   928,   929,   930,   931,   932,   933,   934,
-   935,   936,   939,   948,   959,   961,   962,   965,   991,   995,
-  1002,  1009,  1016,  1023,  1029,  1032,  1037,  1048,  1053,  1061,
-  1066,  1070,  1079,  1091,  1097,  1102,  1105,  1112,  1115,  1124,
-  1125,  1128,  1130,  1131,  1141,  1142,  1143,  1144,  1145,  1146,
-  1147,  1148,  1149,  1150,  1151,  1152,  1153,  1155,  1156,  1157,
-  1158,  1159,  1160,  1161,  1162,  1163,  1164,  1165,  1166,  1167,
-  1168,  1169,  1170,  1171,  1172,  1173,  1174,  1175,  1176,  1177,
-  1178,  1179,  1180,  1181,  1182,  1183,  1184,  1185,  1191,  1197,
-  1198,  1201,  1203,  1204,  1205,  1208,  1209,  1210,  1211,  1212,
-  1213,  1216,  1218,  1219,  1234,  1249,  1251,  1259,  1260,  1265,
-  1266,  1281,  1283,  1301,  1324,  1329,  1331,  1333,  1335,  1339,
-  1343,  1349,  1350,  1353,  1356,  1357,  1362,  1363,  1364,  1365,
-  1366,  1369,  1370,  1373,  1374,  1377,  1380,  1381,  1384,  1387,
-  1390
-};
-#endif
-
-
-#if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
-
-static const char * const yytname[] = {   "$","error","$undefined.","CSS_PP_INCLUDE",
-"CSS_PP_DEFINE","CSS_PP_UNDEF","CSS_PP_IFDEF","CSS_PP_IFNDEF","CSS_PP_ELSE",
-"CSS_PP_ENDIF","CSS_NUMBER","CSS_STRING","CSS_VAR","CSS_FUN","CSS_PTR","CSS_PP_DEF",
-"CSS_NAME","CSS_COMMENT","CSS_TYPE","CSS_PTRTYPE","CSS_CLASS","CSS_ENUM","CSS_SCPTYPE",
-"CSS_WHILE","CSS_DO","CSS_IF","CSS_ELSE","CSS_SWITCH","CSS_CASE","CSS_DEFAULT",
-"CSS_RETURN","CSS_BREAK","CSS_CONTINUE","CSS_FOR","CSS_NEW","CSS_DELETE","CSS_COMMAND",
-"CSS_LIST","CSS_EXIT","CSS_ALIAS","CSS_REMOVE","CSS_STATUS","CSS_TYPECMD","CSS_CONT",
-"CSS_HELP","CSS_EXTERN","CSS_STATIC","CSS_CONST","CSS_PRIVATE","CSS_PUBLIC",
-"CSS_PROTECTED","CSS_VIRTUAL","CSS_INLINE","'{'","','","'='","CSS_ASGN_ADD",
-"CSS_ASGN_SUB","CSS_ASGN_MULT","CSS_ASGN_DIV","CSS_ASGN_MOD","CSS_ASGN_LSHIFT",
-"CSS_ASGN_RSHIFT","CSS_ASGN_AND","CSS_ASGN_XOR","CSS_ASGN_OR","'?'","':'","CSS_OR",
-"CSS_AND","'|'","'^'","'&'","CSS_GT","CSS_GE","CSS_LT","CSS_LE","CSS_EQ","CSS_NE",
-"CSS_LSHIFT","CSS_RSHIFT","'+'","'-'","'*'","'/'","'%'","CSS_UNARY","CSS_PLUSPLUS",
-"CSS_MINMIN","CSS_UNARYMINUS","CSS_NOT","CSS_POINTSAT","'.'","CSS_SCOPER","'('",
-"'['","'\\n'","';'","')'","']'","'}'","'~'","toplev","term","crterm","pproc",
-"ppinclude","ppdefine","ppifdef","ppelse","ppendif","command","cmd_args","defn",
-"vardefn","vardefin","arraydefn","arraydims","arraydim","enumdefn","enumname",
-"enums","enumline","enumitms","classdefn","classhead","classnm","classfwd","classinh",
-"classpar","classtyp","inh_mods","inh_mod","membs","membline","membdefn","membardimstop",
-"membardims","membardim","methdefn","methname","classcmt","fundefn","fundname",
-"methdname","funargs","arglist","argdefn","subargdefn","tynames","tyname","type",
-"type_el","typeorscp","scopetype","typeonly","ptrs","stmt","noifstmt","nodostmt",
-"caseitem","caseexpr","switchblock","switch","forloop","for","doloop","do","whiloop",
-"while","ifstmt","if","else","cond","bra","mbr_bra","ket","expr","comb_expr",
-"primitive","anycmd","normfuncall","normfun","memb_expr","membfun","undefname",
-"name","getmemb","membname","membnms","exprlist","exprlsel","argstop","stmtlist",
-"stmtel","scend","end", NULL
-};
-#endif
-
-static const short yyr1[] = {     0,
-   102,   102,   102,   102,   102,   102,   102,   102,   102,   103,
-   104,   104,   105,   105,   105,   105,   105,   106,   107,   107,
-   107,   108,   108,   108,   108,   109,   110,   111,   111,   111,
-   111,   111,   111,   111,   111,   111,   111,   111,   111,   111,
-   111,   111,   111,   111,   111,   111,   112,   112,   112,   113,
-   113,   113,   113,   113,   113,   114,   115,   115,   116,   117,
-   117,   118,   119,   120,   120,   120,   121,   121,   122,   122,
-   122,   123,   123,   124,   124,   124,   125,   125,   126,   126,
-   127,   127,   128,   128,   129,   130,   130,   131,   131,   132,
-   132,   132,   133,   133,   134,   134,   134,   134,   134,   134,
-   134,   135,   135,   136,   137,   137,   138,   139,   139,   139,
-   139,   140,   141,   141,   141,   142,   142,   142,   142,   142,
-   143,   144,   144,   144,   145,   145,   145,   145,   146,   146,
-   147,   147,   148,   148,   149,   149,   150,   151,   151,   151,
-   151,   151,   151,   151,   151,   152,   152,   152,   152,   153,
-   153,   153,   154,   154,   155,   155,   156,   156,   157,   157,
-   158,   158,   159,   159,   159,   159,   159,   159,   159,   159,
-   159,   159,   160,   160,   161,   161,   161,   162,   163,   164,
-   164,   164,   164,   165,   166,   167,   168,   168,   169,   170,
-   170,   170,   170,   171,   172,   173,   174,   175,   176,   177,
-   177,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-   178,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-   178,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-   178,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-   178,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-   178,   179,   179,   179,   179,   180,   180,   180,   180,   180,
-   180,   181,   181,   181,   182,   183,   183,   183,   183,   183,
-   183,   184,   184,   184,   185,   186,   186,   186,   186,   186,
-   186,   187,   187,   188,   188,   188,   189,   189,   189,   189,
-   189,   190,   190,   191,   191,   192,   193,   193,   194,   195,
-   196
-};
-
-static const short yyr2[] = {     0,
-     0,     2,     3,     3,     2,     2,     2,     3,     3,     1,
-     1,     1,     1,     1,     1,     1,     1,     2,     2,     2,
-     2,     2,     2,     2,     2,     1,     1,     2,     2,     3,
-     1,     1,     3,     5,     2,     3,     1,     3,     3,     1,
-     3,     3,     3,     3,     3,     3,     0,     2,     4,     1,
-     1,     1,     1,     1,     1,     4,     7,     6,     6,     1,
-     2,     3,     6,     2,     2,     1,     1,     2,     1,     2,
-     1,     1,     3,     8,     7,     4,     1,     3,     1,     1,
-     1,     1,     1,     3,     1,     1,     2,     1,     2,     1,
-     1,     1,     1,     2,     1,     1,     2,     2,     2,     2,
-     1,     4,     6,     0,     1,     2,     3,     4,     4,     5,
-     6,     2,     0,     1,     2,     4,     4,     4,     5,     4,
-     2,     3,     2,     3,     2,     3,     3,     4,     1,     3,
-     1,     3,     2,     2,     1,     3,     1,     1,     2,     2,
-     2,     2,     2,     3,     3,     1,     2,     2,     3,     1,
-     1,     2,     2,     2,     1,     1,     1,     2,     1,     1,
-     1,     1,     2,     1,     1,     3,     4,     2,     2,     1,
-     1,     1,     3,     2,     1,     1,     1,     6,     1,     9,
-    10,    10,    11,     1,     2,     1,     4,     4,     1,     4,
-     4,     3,     3,     1,     1,     3,     1,     1,     1,     1,
-     1,     1,     3,     3,     3,     3,     3,     3,     3,     3,
-     3,     3,     3,     3,     3,     5,     4,     3,     5,     3,
-     3,     2,     2,     3,     3,     3,     3,     3,     3,     5,
-     3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-     2,     2,     2,     2,     2,     2,     4,     4,     4,     1,
-     3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-     1,     1,     2,     3,     2,     3,     3,     2,     2,     3,
-     4,     4,     4,     3,     1,     1,     1,     1,     1,     1,
-     1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-     1,     1,     3,     1,     1,     0,     1,     3,     1,     1,
-     0
-};
-
-static const short yydefact[] = {     1,
-     0,     0,     0,     0,     0,     0,     0,    26,    27,   252,
-   253,   254,   262,   255,   275,   150,   151,     0,    66,   189,
-   186,   194,   195,   179,     0,     0,   296,     0,     0,   184,
-   296,   296,   296,   296,     0,     0,   296,    37,   296,    31,
-   296,     0,     0,     0,     0,     0,   197,     0,     0,     0,
-     0,     0,     0,     0,     0,     2,   199,     0,    13,    14,
-    15,    16,    17,     0,     6,    50,    51,    52,    53,     0,
-    54,    55,     0,     0,     0,   138,   146,     0,     7,   159,
-   161,   171,   170,     0,   164,     0,   162,     0,   165,     0,
-   160,     0,     0,   172,     5,     0,   201,   200,   250,     0,
-   202,     0,     0,    12,    11,     8,    18,    20,    19,    21,
-    23,    22,    24,    25,   265,   153,   154,   277,   278,   279,
-   281,   280,   276,    80,     0,    77,   301,    79,    65,    64,
-   175,   176,   177,     0,   174,     0,    10,   168,   169,     0,
-     0,     0,   296,    28,     0,   296,     0,     9,   256,   257,
-   260,   258,   259,   261,     0,    35,     0,    29,     0,     0,
-   139,     0,   140,   141,     0,   142,     0,   143,     0,     0,
-   222,   245,   223,   242,   244,   246,   285,   287,   289,   288,
-   284,   290,   291,   268,   286,     0,     0,     3,     4,     0,
-     0,   301,   301,   281,     0,     0,     0,   301,   135,     0,
-   137,   148,   157,   147,   123,   152,     0,   269,   296,     0,
-   185,     0,     0,     0,   301,   301,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,   241,   243,     0,   163,
-   283,   282,     0,     0,   295,   263,   294,     0,   292,   301,
-     0,   296,   113,     0,     0,   173,   166,     0,   155,   156,
-   215,   296,   218,     0,    48,     0,    33,    39,    38,   150,
-   150,    42,    46,    45,    43,    44,    41,   145,   144,     0,
-   251,    71,     0,    67,    69,    72,   125,     0,   129,   131,
-     0,     0,     0,   301,     0,     0,     0,   122,   296,     0,
-   149,   158,   124,   274,     0,   300,   299,     0,   297,     0,
-     0,   301,   301,   301,   301,   192,   193,   204,   203,   205,
-   206,   207,   208,   209,   210,   211,   212,   213,   214,     0,
-   220,   221,   240,   239,   238,   224,   225,   226,   227,   228,
-   229,   236,   237,   231,   232,   233,   234,   235,     0,   266,
-   267,     0,   264,   270,   301,     0,   114,     0,    92,    90,
-    91,    78,    83,    85,     0,    88,    86,    76,   167,     0,
-     0,   217,     0,     0,     0,   248,   301,    68,    70,     0,
-   127,     0,   126,     0,   134,   133,   116,   117,   198,   120,
-   118,     0,   249,   136,   137,    56,     0,   301,    60,     0,
-     0,     0,     0,   196,   187,   188,   190,   191,     0,   247,
-   272,   273,   293,   271,   301,   101,   115,   150,     0,     0,
-     0,     0,   301,     0,   113,     0,    93,    95,    96,     0,
-     0,     0,    89,    87,   216,     0,   219,    49,    34,     0,
-    73,   130,   128,   132,   119,   301,    61,     0,     0,   298,
-     0,   301,   230,     0,     0,    99,    98,   100,     0,     0,
-     0,    97,   301,    94,     0,   104,    84,    62,    63,     0,
-    59,   178,   301,   301,     0,    58,   113,     0,    75,     0,
-     0,   113,   113,     0,    57,   301,     0,     0,     0,   109,
-     0,   113,    74,   108,   102,     0,     0,   105,     0,     0,
-     0,   301,   113,   110,     0,   113,   106,     0,   301,   301,
-   180,   111,   107,   103,   301,   182,   181,   183,     0,     0
-};
-
-static const short yydefgoto[] = {     1,
-   138,   106,    58,    59,    60,    61,    62,    63,    64,   144,
-    65,    66,    67,    68,   408,   382,   435,    70,   293,   294,
-   295,    71,   125,   126,   127,   372,   373,   374,   375,   376,
-   436,   437,   438,   494,   507,   508,   439,   440,   368,    72,
-    73,    74,   192,   298,   299,   300,   198,   199,   169,    76,
-    77,   170,   271,   204,    79,    80,    81,    82,   134,    83,
-    84,    85,    86,    87,    88,    89,    90,    91,    92,    93,
-   213,    94,   400,    95,    96,    97,    98,   183,    99,   100,
-   101,   102,   103,   296,   253,   208,   185,   275,   259,   136,
-   318,   319,   320,   265
-};
-
-static const short yypact[] = {-32768,
-   563,    85,    31,   264,    76,   287,   289,-32768,-32768,-32768,
--32768,-32768,   -39,-32768,-32768,    16,    60,   861,   927,-32768,
--32768,-32768,-32768,-32768,     7,    77,-32768,    62,    62,-32768,
--32768,    72,   149,   180,    85,   938,   149,-32768,   149,-32768,
-   199,   298,   298,   298,    21,     5,-32768,  1089,  1089,  1089,
-  1089,  1089,  1089,   492,  1089,-32768,-32768,    85,-32768,-32768,
--32768,-32768,-32768,    85,-32768,-32768,-32768,-32768,-32768,    63,
--32768,-32768,    79,    79,    70,-32768,    23,   272,-32768,-32768,
--32768,-32768,-32768,    89,-32768,    92,-32768,   989,-32768,    94,
--32768,    94,   989,-32768,-32768,  1545,   232,   232,-32768,   630,
--32768,   680,   115,-32768,-32768,-32768,-32768,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,
--32768,-32768,-32768,   128,   138,   164,-32768,   147,-32768,-32768,
--32768,-32768,-32768,   183,-32768,   835,-32768,-32768,-32768,   315,
-   155,  1089,-32768,-32768,  1139,-32768,  1139,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,   443,-32768,  1189,-32768,  1239,   667,
--32768,   239,-32768,-32768,   298,-32768,   298,-32768,   170,   478,
-    67,   171,    67,    67,    67,   171,-32768,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,-32768,   -40,  1369,-32768,-32768,   657,
-   300,-32768,-32768,    79,    16,    60,  1089,   215,-32768,   955,
-    -2,-32768,-32768,    38,-32768,-32768,   254,   188,-32768,   901,
--32768,  1089,   769,   989,-32768,-32768,  1039,  1089,  1089,  1089,
-  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,
-  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,  1089,
-  1089,  1089,  1089,  1089,  1089,  1089,-32768,-32768,  1089,-32768,
--32768,-32768,   492,   492,    78,-32768,  1672,   -34,-32768,-32768,
-   -20,-32768,   270,   109,    62,-32768,-32768,  1545,-32768,-32768,
-   243,-32768,    67,  1139,   235,  1139,   235,-32768,-32768,   131,
-   144,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,  1089,
--32768,-32768,    49,-32768,   252,   238,   273,   -13,-32768,   256,
-    99,   -22,   282,    62,  1413,   955,    62,-32768,-32768,   258,
--32768,-32768,-32768,-32768,  1089,-32768,  1672,    36,-32768,  1089,
-  1457,-32768,-32768,-32768,-32768,-32768,-32768,-32768,  1672,  1672,
-  1672,  1672,  1672,  1672,  1672,  1672,  1672,  1672,  1672,  1631,
-   666,   755,   466,   821,   544,   875,   875,   875,   875,   875,
-   875,   724,   724,   175,   175,    67,    67,    67,  1279,   262,
-   263,  1139,-32768,-32768,-32768,  1089,-32768,    51,-32768,-32768,
--32768,   307,-32768,-32768,   109,-32768,-32768,-32768,-32768,   268,
-  1089,-32768,  1089,    20,    50,    67,-32768,-32768,-32768,   357,
--32768,   303,   325,   165,-32768,-32768,-32768,-32768,-32768,-32768,
--32768,   321,-32768,-32768,-32768,-32768,  1089,   258,-32768,  1501,
-  1089,  1089,  1588,-32768,-32768,-32768,-32768,-32768,  1089,-32768,
--32768,-32768,-32768,-32768,  1672,-32768,-32768,   248,   308,   310,
-   312,    19,-32768,   364,   270,   280,-32768,-32768,-32768,    79,
-   955,   109,-32768,-32768,-32768,  1324,    67,-32768,-32768,    62,
--32768,-32768,-32768,-32768,-32768,  1672,-32768,    62,   321,-32768,
-  1588,  1089,  1700,    62,    62,-32768,-32768,-32768,   365,    62,
-    79,   368,-32768,-32768,    62,   -61,-32768,-32768,-32768,    62,
--32768,-32768,  1089,   332,   292,-32768,   270,    79,-32768,    62,
-    62,   270,   270,   296,-32768,   332,   294,   297,   989,   368,
-    62,   270,-32768,   368,   368,   377,    34,-32768,   301,   989,
-   989,-32768,   270,   368,   302,   270,-32768,   989,-32768,-32768,
--32768,   368,-32768,   368,-32768,-32768,-32768,-32768,   400,-32768
-};
-
-static const short yypgoto[] = {-32768,
-   -29,    59,-32768,-32768,-32768,-32768,-32768,-32768,-32768,   126,
--32768,-32768,-32768,-32768,-32768,  -294,   402,-32768,-32768,   111,
--32768,-32768,-32768,-32768,-32768,-32768,   -36,-32768,-32768,    33,
--32768,   -27,-32768,-32768,-32768,   -97,-32768,-32768,  -245,-32768,
--32768,-32768,   -69,-32768,    22,-32768,-32768,   105,     2,   -35,
--32768,     1,-32768,-32768,   -87,   -79,-32768,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,-32768,-32768,-32768,   -72,-32768,-32768,
-   324,  -290,-32768,-32768,   -23,-32768,    24,   -14,-32768,-32768,
--32768,-32768,-32768,    30,   319,   -19,-32768,   -96,    58,   106,
-  -396,-32768,  -305,    40
-};
-
-
-#define	YYLAST		1795
-
-
-static const short yytable[] = {   139,
-   211,    78,    75,   258,   193,   261,   161,   163,   164,   166,
-   168,   398,   412,   215,   460,   409,   131,   132,   133,   362,
-   216,   155,    16,    17,   171,   172,   173,   174,   175,   176,
-    47,   187,  -112,   362,   184,   137,    16,    17,    16,    17,
-   392,   107,   162,   162,   162,   162,   162,   128,   130,   292,
-   277,   426,   309,   197,   115,   167,   186,   290,   118,   119,
-   120,   121,   122,   363,   123,   484,   250,   427,   428,    17,
-   165,    19,   165,   362,   137,   200,   257,   365,   257,   118,
-   119,   120,   194,   122,   393,   123,   496,   195,   196,   411,
-   110,  -121,  -296,   148,   202,    42,    43,    44,   429,   430,
-   431,   432,    46,   362,   201,   203,   267,   462,   116,   311,
-   395,   455,   268,   457,   396,   190,   188,   448,   273,   469,
-   312,   257,   189,   257,   304,   323,    16,    17,   506,   288,
-   137,   289,   316,   257,   324,   257,   140,   142,   145,   147,
-   278,   325,   157,   135,   159,   287,   160,   449,   387,  -151,
-   433,   434,   117,   247,   248,   483,   369,   370,   137,   371,
-  -151,   249,   156,   197,   158,   162,   141,   162,   482,   262,
-   117,  -151,   191,   305,    10,    11,    12,   384,    14,   385,
-   104,   105,   209,   322,   279,   210,   317,   212,   321,   472,
-   263,   162,   301,   329,   330,   331,   332,   333,   334,   335,
-   336,   337,   338,   339,   340,   341,   342,   343,   344,   345,
-   346,   347,   348,   349,   350,   351,   352,   353,   354,   355,
-   356,   357,   358,   116,   -82,   359,   -36,   -36,   377,   308,
-   264,   302,   303,   360,   361,   378,   116,   307,   379,   -30,
-   -30,   500,   143,   -81,   -47,   -47,   504,   505,   274,   266,
-   257,   276,   257,   272,   326,   327,   514,   244,   245,   246,
-   206,   247,   248,   197,   162,   249,   386,   522,   306,   249,
-   524,   313,   397,   146,   401,   -32,   -32,   406,   108,   109,
-   426,   314,   177,   178,   179,   180,   367,   181,   362,   205,
-   182,   410,   390,   206,   -40,   -40,   413,   428,    17,   364,
-    19,   111,   112,   113,   114,   389,   310,   149,   150,   151,
-   394,   152,   153,   154,   315,    16,    17,    16,    17,   391,
-    16,    17,   251,   252,    42,    43,    44,   429,   430,   431,
-   432,    46,   269,   270,   399,   405,   380,   381,   257,   444,
-   116,   191,   425,   402,    42,    43,    44,    42,    43,    44,
-    45,    46,   381,    45,    46,   421,   422,   446,   465,   447,
-   442,   415,   416,   417,   418,   445,   451,   366,   162,   441,
-   475,   453,   207,    47,   466,   162,   467,   383,   468,   473,
-   434,   471,   488,   456,   427,   411,   515,   317,   461,   499,
-   506,   510,   162,   301,   511,   463,   166,   297,   518,   530,
-   523,   490,    69,   388,   424,   477,   377,   443,   474,   517,
-   404,   512,     0,   452,   407,   214,   254,   454,   501,   423,
-   479,     0,   519,   520,     0,     0,   450,     0,   481,     0,
-   525,     0,   162,     0,   486,   487,   162,   441,   317,     0,
-   489,     0,   162,     0,     0,   492,   493,   458,     0,     0,
-   495,     0,   118,   119,   120,   121,   122,     0,   123,   317,
-   502,   503,     0,     0,   464,     0,     0,     0,     0,     0,
-   476,   513,   470,     0,     0,     0,     0,   516,   149,   150,
-   151,     0,   152,   153,   154,     0,     0,     0,   177,   178,
-   179,   180,     0,   181,     0,   480,   182,     0,     0,   206,
-     0,   485,   177,   178,   179,   180,     0,   181,     0,     0,
-   182,     0,   491,   149,   150,   151,     0,   152,   153,   154,
-     0,     0,   497,   498,     0,     0,     0,   149,   150,   151,
-     0,   152,   153,   154,     0,   509,   232,   233,   234,   235,
-   236,   237,   238,   239,   240,   241,   242,   243,   244,   245,
-   246,   521,   247,   248,     0,     0,     0,     0,   526,   527,
-   249,     0,   529,     2,   528,     3,     4,     5,     6,     7,
-     8,     9,    10,    11,    12,    13,    14,     0,    15,     0,
-    16,    17,    18,    19,     0,    20,    21,    22,    23,    24,
-    25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-    35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-     0,     0,     0,    45,    46,    47,   234,   235,   236,   237,
-   238,   239,   240,   241,   242,   243,   244,   245,   246,     0,
-   247,   248,     0,     0,    48,     0,     0,     0,   249,    10,
-    11,    12,    13,    14,    49,    50,     0,    16,   255,    51,
-    52,     0,    53,     0,    54,     0,    55,   292,    56,     0,
-     0,     0,    57,    31,    32,     0,   118,   119,   120,   121,
-   122,     0,   123,     0,    42,    43,    44,     0,     0,   282,
-    45,    46,     0,     0,   283,   284,     0,     0,     0,    10,
-    11,    12,    13,    14,     0,     0,     0,    16,   255,     0,
-     0,    48,   149,   150,   151,   285,   152,   153,   154,     0,
-   286,    49,    50,    31,    32,     0,    51,    52,     0,    53,
-     0,    54,     0,    55,    42,    43,    44,   256,     0,     0,
-    45,    46,     0,     0,   230,   231,   232,   233,   234,   235,
-   236,   237,   238,   239,   240,   241,   242,   243,   244,   245,
-   246,    48,   247,   248,     0,     0,     0,     0,     0,     0,
-   249,    49,    50,     0,     0,     0,    51,    52,     0,    53,
-     0,    54,     0,    55,     0,     0,     0,   260,    10,    11,
-    12,    13,    14,     0,     0,     0,    16,    17,     0,     0,
-     0,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-    29,    30,    31,    32,   242,   243,   244,   245,   246,     0,
-   247,   248,     0,    42,    43,    44,     0,     0,   249,    45,
-    46,    47,     0,     0,   231,   232,   233,   234,   235,   236,
-   237,   238,   239,   240,   241,   242,   243,   244,   245,   246,
-    48,   247,   248,     0,    10,    11,    12,    13,    14,   249,
-    49,    50,    16,    17,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,     0,     0,   137,     0,     0,    31,    32,
-   118,   119,   120,   121,   122,     0,   123,     0,   124,    42,
-    43,    44,     0,     0,     0,    45,    46,     0,     0,     0,
-     0,     0,   233,   234,   235,   236,   237,   238,   239,   240,
-   241,   242,   243,   244,   245,   246,    48,   247,   248,     0,
-    10,    11,    12,    13,    14,   249,    49,    50,    16,    17,
-     0,    51,    52,     0,    53,     0,    54,     0,    55,     0,
-     0,   137,     0,     0,    31,    32,   118,   119,   120,   121,
-   122,     0,   123,     0,   129,    42,    43,    44,     0,     0,
-     0,    45,    46,   240,   241,   242,   243,   244,   245,   246,
-     0,   247,   248,     0,   118,   119,   120,   121,   122,   249,
-   123,     0,    48,   149,   150,   151,     0,   152,   153,   154,
-     0,     0,    49,    50,     0,     0,     0,    51,    52,     0,
-    53,     0,    54,     0,    55,     0,     0,   316,    10,    11,
-    12,    13,    14,     0,     0,     0,    16,    17,     0,     0,
-     0,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-    29,    30,    31,    32,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,    42,    43,    44,     0,     0,     0,    45,
-    46,    47,     0,     0,     0,     0,     0,     0,    10,    11,
-    12,    13,    14,     0,     0,     0,    16,    17,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,    31,    32,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,    42,    43,    44,     0,     0,     0,    45,
-    46,   328,     0,     0,     0,     0,     0,     0,    10,    11,
-    12,    13,    14,     0,     0,     0,    16,    17,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,    31,    32,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,    42,    43,    44,     0,     0,     0,    45,
-    46,     0,     0,     0,     0,     0,     0,     0,    10,    11,
-    12,    13,    14,     0,     0,     0,    16,   255,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,    31,    32,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,    42,    43,    44,     0,     0,     0,    45,
-    46,     0,     0,     0,     0,     0,     0,     0,    10,    11,
-    12,    13,    14,     0,     0,     0,   280,   255,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,    31,    32,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,    42,    43,    44,     0,     0,     0,    45,
-    46,     0,     0,     0,     0,     0,     0,     0,    10,    11,
-    12,    13,    14,     0,     0,     0,   281,   255,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,    31,    32,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,    42,    43,    44,     0,     0,     0,    45,
-    46,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    48,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-    49,    50,     0,     0,     0,    51,    52,     0,    53,     0,
-    54,     0,    55,   217,   218,   219,   220,   221,   222,   223,
-   224,   225,   226,   227,   228,     0,   229,   230,   231,   232,
-   233,   234,   235,   236,   237,   238,   239,   240,   241,   242,
-   243,   244,   245,   246,     0,   247,   248,     0,     0,     0,
-     0,     0,     0,   249,     0,     0,     0,   420,   217,   218,
-   219,   220,   221,   222,   223,   224,   225,   226,   227,   228,
-     0,   229,   230,   231,   232,   233,   234,   235,   236,   237,
-   238,   239,   240,   241,   242,   243,   244,   245,   246,     0,
-   247,   248,     0,     0,     0,     0,     0,     0,   249,     0,
-     0,     0,   478,   217,   218,   219,   220,   221,   222,   223,
-   224,   225,   226,   227,   228,     0,   229,   230,   231,   232,
-   233,   234,   235,   236,   237,   238,   239,   240,   241,   242,
-   243,   244,   245,   246,     0,   247,   248,     0,     0,     0,
-     0,     0,     0,   249,     0,     0,   291,   217,   218,   219,
-   220,   221,   222,   223,   224,   225,   226,   227,   228,     0,
-   229,   230,   231,   232,   233,   234,   235,   236,   237,   238,
-   239,   240,   241,   242,   243,   244,   245,   246,     0,   247,
-   248,     0,     0,     0,     0,     0,     0,   249,     0,     0,
-   403,   217,   218,   219,   220,   221,   222,   223,   224,   225,
-   226,   227,   228,     0,   229,   230,   231,   232,   233,   234,
-   235,   236,   237,   238,   239,   240,   241,   242,   243,   244,
-   245,   246,     0,   247,   248,     0,     0,     0,     0,     0,
-     0,   249,     0,     0,   414,   217,   218,   219,   220,   221,
-   222,   223,   224,   225,   226,   227,   228,     0,   229,   230,
-   231,   232,   233,   234,   235,   236,   237,   238,   239,   240,
-   241,   242,   243,   244,   245,   246,     0,   247,   248,     0,
-     0,     0,     0,     0,     0,   249,     0,     0,   459,   217,
-   218,   219,   220,   221,   222,   223,   224,   225,   226,   227,
-   228,     0,   229,   230,   231,   232,   233,   234,   235,   236,
-   237,   238,   239,   240,   241,   242,   243,   244,   245,   246,
-     0,   247,   248,     0,     0,     0,     0,     0,     0,   249,
-     0,   137,   217,   218,   219,   220,   221,   222,   223,   224,
-   225,   226,   227,   228,     0,   229,   230,   231,   232,   233,
-   234,   235,   236,   237,   238,   239,   240,   241,   242,   243,
-   244,   245,   246,     0,   247,   248,     0,     0,     0,     0,
-     0,     0,   249,     0,   316,   217,   218,   219,   220,   221,
-   222,   223,   224,   225,   226,   227,   228,   419,   229,   230,
-   231,   232,   233,   234,   235,   236,   237,   238,   239,   240,
-   241,   242,   243,   244,   245,   246,     0,   247,   248,     0,
-     0,     0,     0,     0,     0,   249,   217,   218,   219,   220,
-   221,   222,   223,   224,   225,   226,   227,   228,     0,   229,
-   230,   231,   232,   233,   234,   235,   236,   237,   238,   239,
-   240,   241,   242,   243,   244,   245,   246,     0,   247,   248,
-     0,     0,     0,     0,     0,   228,   249,   229,   230,   231,
-   232,   233,   234,   235,   236,   237,   238,   239,   240,   241,
-   242,   243,   244,   245,   246,     0,   247,   248,     0,     0,
-     0,     0,     0,     0,   249
-};
-
-static const short yycheck[] = {    29,
-    88,     1,     1,   100,    74,   102,    42,    43,    44,    45,
-    46,   302,   318,    93,   411,   310,    10,    11,    12,    54,
-    93,    36,    18,    19,    48,    49,    50,    51,    52,    53,
-    53,    55,    94,    54,    54,    97,    18,    19,    18,    19,
-    54,    11,    42,    43,    44,    45,    46,    18,    19,     1,
-   147,     1,    55,    94,    94,    51,    55,    98,    10,    11,
-    12,    13,    14,    98,    16,   462,    96,    17,    18,    19,
-    52,    21,    52,    54,    97,    75,   100,    98,   102,    10,
-    11,    12,    13,    14,    98,    16,   483,    18,    19,    54,
-    15,    94,    95,    35,    72,    45,    46,    47,    48,    49,
-    50,    51,    52,    54,    75,    83,   136,   413,    93,    72,
-    12,   402,   136,   408,    16,    53,    58,    98,   142,   101,
-    83,   145,    64,   147,   194,   213,    18,    19,    95,   165,
-    97,   167,    97,   157,   214,   159,    31,    32,    33,    34,
-   155,   214,    37,    67,    39,   160,    41,    98,   100,    72,
-   100,   101,    93,    87,    88,   461,    48,    49,    97,    51,
-    83,    95,    37,    94,    39,   165,    95,   167,   459,    55,
-    93,    94,    94,   197,    10,    11,    12,   274,    14,   276,
-    96,    97,    94,   213,   155,    94,   210,    94,   212,   435,
-    53,   191,   191,   217,   218,   219,   220,   221,   222,   223,
-   224,   225,   226,   227,   228,   229,   230,   231,   232,   233,
-   234,   235,   236,   237,   238,   239,   240,   241,   242,   243,
-   244,   245,   246,    93,    97,   249,    96,    97,   264,   200,
-    67,   192,   193,   253,   254,   265,    93,   198,   268,    96,
-    97,   487,    94,    97,    96,    97,   492,   493,   143,    67,
-   274,   146,   276,    99,   215,   216,   502,    83,    84,    85,
-    22,    87,    88,    94,   264,    95,   290,   513,    54,    95,
-   516,    18,   302,    94,   304,    96,    97,   307,    15,    16,
-     1,    94,    11,    12,    13,    14,    17,    16,    54,    18,
-    19,   315,    55,    22,    96,    97,   320,    18,    19,   260,
-    21,    15,    16,    15,    16,    54,   201,    36,    37,    38,
-    55,    40,    41,    42,   209,    18,    19,    18,    19,    47,
-    18,    19,    91,    92,    45,    46,    47,    48,    49,    50,
-    51,    52,    18,    19,    53,   306,    94,    95,   362,   375,
-    93,    94,   366,   304,    45,    46,    47,    45,    46,    47,
-    51,    52,    95,    51,    52,    94,    94,   381,   428,   383,
-    54,   322,   323,   324,   325,    98,    10,   262,   368,   368,
-   440,    47,   101,    53,    67,   375,    67,   272,    67,   100,
-   101,    18,    18,   407,    17,    54,    10,   411,   412,    98,
-    95,    98,   392,   392,    98,   419,   432,    98,    98,     0,
-    99,   471,     1,   293,   365,   442,   442,   375,   436,   507,
-   306,   499,    -1,   392,   309,    92,    98,   394,   488,   362,
-   450,    -1,   510,   511,    -1,    -1,   387,    -1,   458,    -1,
-   518,    -1,   432,    -1,   464,   465,   436,   436,   462,    -1,
-   470,    -1,   442,    -1,    -1,   475,   476,   408,    -1,    -1,
-   480,    -1,    10,    11,    12,    13,    14,    -1,    16,   483,
-   490,   491,    -1,    -1,   425,    -1,    -1,    -1,    -1,    -1,
-   441,   501,   433,    -1,    -1,    -1,    -1,   507,    36,    37,
-    38,    -1,    40,    41,    42,    -1,    -1,    -1,    11,    12,
-    13,    14,    -1,    16,    -1,   456,    19,    -1,    -1,    22,
-    -1,   462,    11,    12,    13,    14,    -1,    16,    -1,    -1,
-    19,    -1,   473,    36,    37,    38,    -1,    40,    41,    42,
-    -1,    -1,   483,   484,    -1,    -1,    -1,    36,    37,    38,
-    -1,    40,    41,    42,    -1,   496,    71,    72,    73,    74,
-    75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
-    85,   512,    87,    88,    -1,    -1,    -1,    -1,   519,   520,
-    95,    -1,     0,     1,   525,     3,     4,     5,     6,     7,
-     8,     9,    10,    11,    12,    13,    14,    -1,    16,    -1,
-    18,    19,    20,    21,    -1,    23,    24,    25,    26,    27,
-    28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
-    38,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-    -1,    -1,    -1,    51,    52,    53,    73,    74,    75,    76,
-    77,    78,    79,    80,    81,    82,    83,    84,    85,    -1,
-    87,    88,    -1,    -1,    72,    -1,    -1,    -1,    95,    10,
-    11,    12,    13,    14,    82,    83,    -1,    18,    19,    87,
-    88,    -1,    90,    -1,    92,    -1,    94,     1,    96,    -1,
-    -1,    -1,   100,    34,    35,    -1,    10,    11,    12,    13,
-    14,    -1,    16,    -1,    45,    46,    47,    -1,    -1,    13,
-    51,    52,    -1,    -1,    18,    19,    -1,    -1,    -1,    10,
-    11,    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,
-    -1,    72,    36,    37,    38,    39,    40,    41,    42,    -1,
-    44,    82,    83,    34,    35,    -1,    87,    88,    -1,    90,
-    -1,    92,    -1,    94,    45,    46,    47,    98,    -1,    -1,
-    51,    52,    -1,    -1,    69,    70,    71,    72,    73,    74,
-    75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
-    85,    72,    87,    88,    -1,    -1,    -1,    -1,    -1,    -1,
-    95,    82,    83,    -1,    -1,    -1,    87,    88,    -1,    90,
-    -1,    92,    -1,    94,    -1,    -1,    -1,    98,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    -1,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-    32,    33,    34,    35,    81,    82,    83,    84,    85,    -1,
-    87,    88,    -1,    45,    46,    47,    -1,    -1,    95,    51,
-    52,    53,    -1,    -1,    70,    71,    72,    73,    74,    75,
-    76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
-    72,    87,    88,    -1,    10,    11,    12,    13,    14,    95,
-    82,    83,    18,    19,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    -1,    -1,    97,    -1,    -1,    34,    35,
-    10,    11,    12,    13,    14,    -1,    16,    -1,    18,    45,
-    46,    47,    -1,    -1,    -1,    51,    52,    -1,    -1,    -1,
-    -1,    -1,    72,    73,    74,    75,    76,    77,    78,    79,
-    80,    81,    82,    83,    84,    85,    72,    87,    88,    -1,
-    10,    11,    12,    13,    14,    95,    82,    83,    18,    19,
-    -1,    87,    88,    -1,    90,    -1,    92,    -1,    94,    -1,
-    -1,    97,    -1,    -1,    34,    35,    10,    11,    12,    13,
-    14,    -1,    16,    -1,    18,    45,    46,    47,    -1,    -1,
-    -1,    51,    52,    79,    80,    81,    82,    83,    84,    85,
-    -1,    87,    88,    -1,    10,    11,    12,    13,    14,    95,
-    16,    -1,    72,    36,    37,    38,    -1,    40,    41,    42,
-    -1,    -1,    82,    83,    -1,    -1,    -1,    87,    88,    -1,
-    90,    -1,    92,    -1,    94,    -1,    -1,    97,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    -1,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-    32,    33,    34,    35,    -1,    -1,    -1,    -1,    -1,    -1,
-    -1,    -1,    -1,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    53,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    34,    35,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    53,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    34,    35,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    34,    35,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    34,    35,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
-    12,    13,    14,    -1,    -1,    -1,    18,    19,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    34,    35,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    45,    46,    47,    -1,    -1,    -1,    51,
-    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    72,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-    82,    83,    -1,    -1,    -1,    87,    88,    -1,    90,    -1,
-    92,    -1,    94,    55,    56,    57,    58,    59,    60,    61,
-    62,    63,    64,    65,    66,    -1,    68,    69,    70,    71,
-    72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
-    82,    83,    84,    85,    -1,    87,    88,    -1,    -1,    -1,
-    -1,    -1,    -1,    95,    -1,    -1,    -1,    99,    55,    56,
-    57,    58,    59,    60,    61,    62,    63,    64,    65,    66,
-    -1,    68,    69,    70,    71,    72,    73,    74,    75,    76,
-    77,    78,    79,    80,    81,    82,    83,    84,    85,    -1,
-    87,    88,    -1,    -1,    -1,    -1,    -1,    -1,    95,    -1,
-    -1,    -1,    99,    55,    56,    57,    58,    59,    60,    61,
-    62,    63,    64,    65,    66,    -1,    68,    69,    70,    71,
-    72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
-    82,    83,    84,    85,    -1,    87,    88,    -1,    -1,    -1,
-    -1,    -1,    -1,    95,    -1,    -1,    98,    55,    56,    57,
-    58,    59,    60,    61,    62,    63,    64,    65,    66,    -1,
-    68,    69,    70,    71,    72,    73,    74,    75,    76,    77,
-    78,    79,    80,    81,    82,    83,    84,    85,    -1,    87,
-    88,    -1,    -1,    -1,    -1,    -1,    -1,    95,    -1,    -1,
-    98,    55,    56,    57,    58,    59,    60,    61,    62,    63,
-    64,    65,    66,    -1,    68,    69,    70,    71,    72,    73,
-    74,    75,    76,    77,    78,    79,    80,    81,    82,    83,
-    84,    85,    -1,    87,    88,    -1,    -1,    -1,    -1,    -1,
-    -1,    95,    -1,    -1,    98,    55,    56,    57,    58,    59,
-    60,    61,    62,    63,    64,    65,    66,    -1,    68,    69,
-    70,    71,    72,    73,    74,    75,    76,    77,    78,    79,
-    80,    81,    82,    83,    84,    85,    -1,    87,    88,    -1,
-    -1,    -1,    -1,    -1,    -1,    95,    -1,    -1,    98,    55,
-    56,    57,    58,    59,    60,    61,    62,    63,    64,    65,
-    66,    -1,    68,    69,    70,    71,    72,    73,    74,    75,
-    76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
-    -1,    87,    88,    -1,    -1,    -1,    -1,    -1,    -1,    95,
-    -1,    97,    55,    56,    57,    58,    59,    60,    61,    62,
-    63,    64,    65,    66,    -1,    68,    69,    70,    71,    72,
-    73,    74,    75,    76,    77,    78,    79,    80,    81,    82,
-    83,    84,    85,    -1,    87,    88,    -1,    -1,    -1,    -1,
-    -1,    -1,    95,    -1,    97,    55,    56,    57,    58,    59,
-    60,    61,    62,    63,    64,    65,    66,    67,    68,    69,
-    70,    71,    72,    73,    74,    75,    76,    77,    78,    79,
-    80,    81,    82,    83,    84,    85,    -1,    87,    88,    -1,
-    -1,    -1,    -1,    -1,    -1,    95,    55,    56,    57,    58,
-    59,    60,    61,    62,    63,    64,    65,    66,    -1,    68,
-    69,    70,    71,    72,    73,    74,    75,    76,    77,    78,
-    79,    80,    81,    82,    83,    84,    85,    -1,    87,    88,
-    -1,    -1,    -1,    -1,    -1,    66,    95,    68,    69,    70,
-    71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
-    81,    82,    83,    84,    85,    -1,    87,    88,    -1,    -1,
-    -1,    -1,    -1,    -1,    95
-};
-/* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/share/bison.simple"
-/* This file comes from bison-1.28.  */
-
-/* Skeleton output parser for bison,
-   Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
-
-/* As a special exception, when this file is copied by Bison into a
-   Bison output file, you may use that output file without restriction.
-   This special exception was added by the Free Software Foundation
-   in version 1.24 of Bison.  */
-
-/* This is the parser code that is written into each bison parser
-  when the %semantic_parser declaration is not specified in the grammar.
-  It was written by Richard Stallman by simplifying the hairy parser
-  used when %semantic_parser is specified.  */
-
-#ifndef YYSTACK_USE_ALLOCA
-#ifdef alloca
-#define YYSTACK_USE_ALLOCA
-#else /* alloca not defined */
-#ifdef __GNUC__
-#define YYSTACK_USE_ALLOCA
-#define alloca __builtin_alloca
-#else /* not GNU C.  */
-#if (!defined (__STDC__) && defined (sparc)) || defined (__sparc__) || defined (__sparc) || defined (__sgi) || (defined (__sun) && defined (__i386))
-#define YYSTACK_USE_ALLOCA
-#include <alloca.h>
-#else /* not sparc */
-/* We think this test detects Watcom and Microsoft C.  */
-/* This used to test MSDOS, but that is a bad idea
-   since that symbol is in the user namespace.  */
-#if (defined (_MSDOS) || defined (_MSDOS_)) && !defined (__TURBOC__)
-#if 0 /* No need for malloc.h, which pollutes the namespace;
-	 instead, just don't use alloca.  */
-#include <malloc.h>
-#endif
-#else /* not MSDOS, or __TURBOC__ */
-#if defined(_AIX)
-/* I don't know what this was needed for, but it pollutes the namespace.
-   So I turned it off.   rms, 2 May 1997.  */
-/* #include <malloc.h>  */
- #pragma alloca
-#define YYSTACK_USE_ALLOCA
-#else /* not MSDOS, or __TURBOC__, or _AIX */
-#if 0
-#ifdef __hpux /* haible@ilog.fr says this works for HPUX 9.05 and up,
-		 and on HPUX 10.  Eventually we can turn this on.  */
-#define YYSTACK_USE_ALLOCA
-#define alloca __builtin_alloca
-#endif /* __hpux */
-#endif
-#endif /* not _AIX */
-#endif /* not MSDOS, or __TURBOC__ */
-#endif /* not sparc */
-#endif /* not GNU C */
-#endif /* alloca not defined */
-#endif /* YYSTACK_USE_ALLOCA not defined */
-
-#ifdef YYSTACK_USE_ALLOCA
-#define YYSTACK_ALLOC alloca
+#if defined (__STDC__) || defined (__cplusplus)
+   typedef signed char yysigned_char;
 #else
-#define YYSTACK_ALLOC malloc
+   typedef short int yysigned_char;
 #endif
 
-/* Note: there must be only one dollar sign in this file.
-   It is replaced by the list of actions, each action
-   as one case of the switch.  */
+/* YYFINAL -- State number of the termination state. */
+#define YYFINAL  2
+/* YYLAST -- Last index in YYTABLE.  */
+#define YYLAST   1709
+
+/* YYNTOKENS -- Number of terminals. */
+#define YYNTOKENS  98
+/* YYNNTS -- Number of nonterminals. */
+#define YYNNTS  96
+/* YYNRULES -- Number of rules. */
+#define YYNRULES  293
+/* YYNRULES -- Number of states. */
+#define YYNSTATES  516
+
+/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
+#define YYUNDEFTOK  2
+#define YYMAXUTOK   330
+
+#define YYTRANSLATE(YYX) 						\
+  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+
+/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
+static const unsigned char yytranslate[] =
+{
+       0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      92,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,    81,    68,     2,
+      88,    94,    79,    77,    50,    78,    87,    80,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    63,    93,
+       2,    51,     2,    62,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    89,     2,    95,    67,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    49,    66,    96,    97,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    52,    53,    54,    55,    56,    57,
+      58,    59,    60,    61,    64,    65,    69,    70,    71,    72,
+      73,    74,    75,    76,    82,    83,    84,    85,    86,    90,
+      91
+};
+
+#if YYDEBUG
+/* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
+   YYRHS.  */
+static const unsigned short int yyprhs[] =
+{
+       0,     0,     3,     4,     7,    11,    15,    18,    21,    24,
+      28,    30,    32,    34,    36,    38,    40,    42,    44,    47,
+      50,    53,    56,    59,    62,    65,    68,    70,    72,    75,
+      78,    82,    85,    89,    93,    97,    99,   103,   107,   111,
+     115,   119,   123,   124,   127,   132,   134,   136,   138,   140,
+     142,   144,   149,   157,   164,   171,   173,   176,   180,   187,
+     190,   193,   195,   197,   200,   202,   205,   207,   209,   213,
+     222,   230,   235,   237,   241,   243,   245,   247,   249,   251,
+     255,   257,   259,   262,   264,   267,   269,   271,   273,   275,
+     278,   280,   282,   285,   288,   291,   294,   296,   301,   308,
+     309,   311,   314,   318,   323,   328,   334,   341,   344,   345,
+     347,   350,   355,   360,   365,   371,   376,   379,   383,   386,
+     390,   393,   397,   401,   406,   408,   412,   414,   418,   421,
+     424,   426,   430,   432,   434,   437,   440,   443,   446,   449,
+     453,   457,   459,   462,   465,   469,   471,   473,   476,   479,
+     482,   484,   486,   488,   491,   493,   495,   497,   499,   502,
+     504,   506,   510,   515,   518,   521,   523,   525,   527,   531,
+     534,   536,   538,   540,   547,   549,   559,   570,   581,   593,
+     595,   598,   600,   605,   610,   612,   617,   622,   626,   630,
+     632,   634,   638,   640,   642,   644,   646,   648,   650,   654,
+     658,   662,   666,   670,   674,   678,   682,   686,   690,   694,
+     698,   702,   708,   713,   717,   723,   727,   731,   734,   737,
+     741,   745,   749,   753,   757,   761,   767,   771,   775,   779,
+     783,   787,   791,   795,   799,   803,   807,   810,   813,   816,
+     819,   822,   825,   830,   835,   840,   842,   846,   848,   850,
+     852,   854,   856,   858,   860,   862,   865,   869,   872,   876,
+     880,   883,   886,   890,   895,   900,   905,   909,   911,   913,
+     915,   917,   919,   921,   923,   925,   927,   929,   931,   933,
+     935,   937,   939,   941,   943,   945,   949,   951,   953,   954,
+     956,   960,   962,   964
+};
+
+/* YYRHS -- A `-1'-separated list of the rules' RHS. */
+static const short int yyrhs[] =
+{
+      99,     0,    -1,    -1,    99,    92,    -1,    99,   102,   101,
+      -1,    99,   108,   101,    -1,    99,   173,    -1,    99,   110,
+      -1,    99,   154,    -1,    99,     1,   101,    -1,    93,    -1,
+      93,    -1,    92,    -1,   103,    -1,   104,    -1,   105,    -1,
+     106,    -1,   107,    -1,     3,    11,    -1,     4,    16,    -1,
+       4,    15,    -1,     5,    15,    -1,     6,    16,    -1,     6,
+      15,    -1,     7,    15,    -1,     7,    16,    -1,     8,    -1,
+       9,    -1,    36,   109,    -1,    39,   109,    -1,    39,   189,
+      18,    -1,    38,   109,    -1,    38,   189,    18,    -1,    37,
+     177,   183,    -1,    37,   177,   177,    -1,    40,    -1,    40,
+     189,   177,    -1,    40,   189,    13,    -1,    40,   189,    37,
+      -1,    40,   189,    40,    -1,    40,   189,    19,    -1,    40,
+     189,    18,    -1,    -1,   189,   187,    -1,    88,   189,   187,
+      94,    -1,   111,    -1,   112,    -1,   113,    -1,   116,    -1,
+     121,    -1,   139,    -1,   148,   146,   193,   100,    -1,   148,
+     183,    51,   189,   174,   193,   100,    -1,   182,    51,   189,
+     174,   193,   100,    -1,   148,   183,   189,   114,   193,   100,
+      -1,   115,    -1,   114,   115,    -1,    89,   174,    95,    -1,
+     117,    49,   118,    96,   193,   100,    -1,    21,   183,    -1,
+      21,    18,    -1,    21,    -1,   119,    -1,   118,   119,    -1,
+     120,    -1,   120,    50,    -1,     1,    -1,   183,    -1,   183,
+      51,    10,    -1,    20,   122,    49,   138,   130,    96,   193,
+     100,    -1,    20,   122,    49,   138,    96,   193,   100,    -1,
+      20,   124,   193,   100,    -1,   123,    -1,   123,    63,   125,
+      -1,   183,    -1,    18,    -1,   183,    -1,    18,    -1,   126,
+      -1,   125,    50,   126,    -1,   127,    -1,   149,    -1,   128,
+     149,    -1,   129,    -1,   128,   129,    -1,    45,    -1,    47,
+      -1,    44,    -1,   131,    -1,   130,   131,    -1,   132,    -1,
+     136,    -1,   116,   138,    -1,    45,    63,    -1,    44,    63,
+      -1,    46,    63,    -1,     1,    -1,   148,   183,   100,   138,
+      -1,   148,   183,   133,   134,   100,   138,    -1,    -1,   135,
+      -1,   134,   135,    -1,    89,    10,    95,    -1,   137,   142,
+     100,   138,    -1,    18,   142,   100,   138,    -1,    97,    18,
+     142,   100,   138,    -1,    47,    97,    18,   142,   100,   138,
+      -1,   148,   183,    -1,    -1,    17,    -1,   138,    17,    -1,
+     140,   142,   193,   100,    -1,   140,   142,   193,   171,    -1,
+     148,    13,   142,   100,    -1,   148,    13,   142,   193,   171,
+      -1,   141,   142,   193,   172,    -1,   148,   183,    -1,   148,
+     151,   183,    -1,   151,    18,    -1,   151,    97,    18,    -1,
+      88,    94,    -1,    88,   143,    94,    -1,    88,    94,    43,
+      -1,    88,   143,    94,    43,    -1,   144,    -1,   143,    50,
+     144,    -1,   145,    -1,   145,    51,   176,    -1,   148,    16,
+      -1,   148,    12,    -1,   147,    -1,   146,    50,   147,    -1,
+     183,    -1,   149,    -1,    41,   149,    -1,    42,   149,    -1,
+      43,   149,    -1,    47,   149,    -1,    48,   149,    -1,    48,
+      47,   149,    -1,    47,    48,   149,    -1,   150,    -1,   150,
+     153,    -1,   150,    68,    -1,   150,   153,    68,    -1,    18,
+      -1,    19,    -1,   151,    22,    -1,    18,    90,    -1,    19,
+      90,    -1,    18,    -1,    19,    -1,    79,    -1,   153,    79,
+      -1,   155,    -1,   167,    -1,   156,    -1,   163,    -1,   174,
+     100,    -1,   161,    -1,   165,    -1,    30,   189,   100,    -1,
+      30,   189,   174,   100,    -1,    31,   100,    -1,    32,   100,
+      -1,   159,    -1,   157,    -1,   171,    -1,    28,   158,    63,
+      -1,    29,    63,    -1,    10,    -1,    11,    -1,    12,    -1,
+     160,    88,   189,   174,    94,   171,    -1,    27,    -1,   162,
+      88,   192,   174,   192,   193,    94,   154,   193,    -1,   162,
+      88,   192,   174,   192,   190,   193,    94,   154,   193,    -1,
+     162,    88,   190,   192,   174,   192,   193,    94,   154,   193,
+      -1,   162,    88,   190,   192,   174,   192,   190,   193,    94,
+     154,   193,    -1,    33,    -1,   164,   154,    -1,    24,    -1,
+     166,   170,   100,   193,    -1,   166,   170,   154,   193,    -1,
+      23,    -1,   168,   170,   155,   193,    -1,   168,   170,   167,
+     193,    -1,   169,   155,   193,    -1,   169,   167,   193,    -1,
+      25,    -1,    26,    -1,    88,   174,    94,    -1,    49,    -1,
+      49,    -1,    96,    -1,   176,    -1,   175,    -1,   180,    -1,
+     174,    51,   174,    -1,   174,    51,    49,    -1,   174,    61,
+     174,    -1,   174,    60,   174,    -1,   174,    59,   174,    -1,
+     174,    58,   174,    -1,   174,    57,   174,    -1,   174,    56,
+     174,    -1,   174,    55,   174,    -1,   174,    54,   174,    -1,
+     174,    53,   174,    -1,   174,    52,   174,    -1,    34,   189,
+     152,    -1,    34,   189,   152,    88,    94,    -1,    34,   189,
+     152,   115,    -1,    35,   189,   174,    -1,    35,    89,    95,
+     189,   174,    -1,   174,    64,   174,    -1,   174,    65,   174,
+      -1,    68,   174,    -1,    79,   174,    -1,   174,    74,   174,
+      -1,   174,    73,   174,    -1,   174,    72,   174,    -1,   174,
+      71,   174,    -1,   174,    70,   174,    -1,   174,    69,   174,
+      -1,   174,    62,   174,    63,   174,    -1,   174,    77,   174,
+      -1,   174,    78,   174,    -1,   174,    79,   174,    -1,   174,
+      80,   174,    -1,   174,    81,   174,    -1,   174,    76,   174,
+      -1,   174,    75,   174,    -1,   174,    68,   174,    -1,   174,
+      67,   174,    -1,   174,    66,   174,    -1,   174,    83,    -1,
+      83,   174,    -1,   174,    82,    -1,    82,   174,    -1,    78,
+     174,    -1,    85,   174,    -1,   174,    89,   174,    95,    -1,
+      88,   148,    94,   174,    -1,   148,    88,   174,    94,    -1,
+     178,    -1,    88,   174,    94,    -1,    10,    -1,    11,    -1,
+      12,    -1,    14,    -1,    36,    -1,    38,    -1,    39,    -1,
+      13,    -1,   179,    94,    -1,   179,   187,    94,    -1,    13,
+      88,    -1,   175,   184,   185,    -1,   176,   184,   185,    -1,
+      87,   185,    -1,   151,   185,    -1,   181,    94,   193,    -1,
+     181,   187,    94,   193,    -1,   175,   184,   185,    88,    -1,
+     176,   184,   185,    88,    -1,   151,   185,    88,    -1,    16,
+      -1,    16,    -1,    10,    -1,    11,    -1,    12,    -1,    14,
+      -1,    13,    -1,    87,    -1,    91,    -1,    16,    -1,    11,
+      -1,   186,    -1,    12,    -1,    14,    -1,    13,    -1,    19,
+      -1,   177,    -1,   188,    -1,   187,    50,   188,    -1,   174,
+      -1,    19,    -1,    -1,   191,    -1,   190,    50,   190,    -1,
+     174,    -1,    93,    -1,    -1
+};
+
+/* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
+static const unsigned short int yyrline[] =
+{
+       0,   163,   163,   164,   165,   166,   167,   170,   173,   174,
+     177,   180,   181,   184,   185,   186,   187,   188,   193,   199,
+     201,   202,   205,   208,   209,   212,   215,   219,   232,   234,
+     236,   238,   240,   242,   246,   248,   250,   252,   254,   256,
+     258,   260,   264,   265,   266,   270,   271,   272,   273,   274,
+     275,   278,   288,   306,   326,   342,   343,   347,   350,   357,
+     364,   371,   379,   380,   383,   384,   385,   388,   405,   425,
+     429,   433,   439,   440,   443,   450,   472,   478,   486,   487,
+     490,   500,   501,   504,   505,   508,   509,   510,   513,   514,
+     517,   518,   519,   520,   521,   522,   523,   526,   538,   554,
+     562,   563,   567,   571,   577,   593,   610,   630,   651,   652,
+     653,   656,   662,   674,   682,   700,   714,   727,   753,   774,
+     796,   797,   798,   799,   802,   803,   806,   807,   813,   821,
+     831,   832,   839,   848,   849,   850,   851,   853,   854,   855,
+     856,   859,   860,   866,   868,   876,   877,   878,   889,   894,
+     898,   899,   902,   903,   906,   907,   910,   911,   914,   915,
+     916,   917,   918,   919,   920,   921,   922,   923,   926,   935,
+     947,   948,   949,   953,   978,   982,   989,   996,  1003,  1010,
+    1016,  1019,  1024,  1035,  1040,  1048,  1053,  1057,  1066,  1078,
+    1084,  1089,  1092,  1099,  1102,  1111,  1112,  1116,  1117,  1118,
+    1128,  1129,  1130,  1131,  1132,  1133,  1134,  1135,  1136,  1137,
+    1138,  1139,  1140,  1142,  1143,  1144,  1145,  1146,  1147,  1148,
+    1149,  1150,  1151,  1152,  1153,  1154,  1155,  1156,  1157,  1158,
+    1159,  1160,  1161,  1162,  1163,  1164,  1165,  1166,  1167,  1168,
+    1169,  1170,  1171,  1172,  1178,  1184,  1185,  1189,  1190,  1191,
+    1192,  1195,  1196,  1197,  1201,  1202,  1203,  1218,  1234,  1235,
+    1243,  1244,  1249,  1250,  1265,  1267,  1285,  1309,  1313,  1315,
+    1317,  1319,  1323,  1327,  1333,  1334,  1337,  1340,  1341,  1346,
+    1347,  1348,  1349,  1350,  1353,  1354,  1357,  1358,  1361,  1364,
+    1365,  1368,  1371,  1374
+};
+#endif
+
+#if YYDEBUG || YYERROR_VERBOSE
+/* YYTNME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
+   First, the terminals, then, starting at YYNTOKENS, nonterminals. */
+static const char *const yytname[] =
+{
+  "$end", "error", "$undefined", "CSS_PP_INCLUDE", "CSS_PP_DEFINE",
+  "CSS_PP_UNDEF", "CSS_PP_IFDEF", "CSS_PP_IFNDEF", "CSS_PP_ELSE",
+  "CSS_PP_ENDIF", "CSS_NUMBER", "CSS_STRING", "CSS_VAR", "CSS_FUN",
+  "CSS_PTR", "CSS_PP_DEF", "CSS_NAME", "CSS_COMMENT", "CSS_TYPE",
+  "CSS_PTRTYPE", "CSS_CLASS", "CSS_ENUM", "CSS_SCPTYPE", "CSS_WHILE",
+  "CSS_DO", "CSS_IF", "CSS_ELSE", "CSS_SWITCH", "CSS_CASE", "CSS_DEFAULT",
+  "CSS_RETURN", "CSS_BREAK", "CSS_CONTINUE", "CSS_FOR", "CSS_NEW",
+  "CSS_DELETE", "CSS_COMMAND", "CSS_ALIAS", "CSS_REMOVE", "CSS_TYPECMD",
+  "CSS_HELP", "CSS_EXTERN", "CSS_STATIC", "CSS_CONST", "CSS_PRIVATE",
+  "CSS_PUBLIC", "CSS_PROTECTED", "CSS_VIRTUAL", "CSS_INLINE", "'{'", "','",
+  "'='", "CSS_ASGN_OR", "CSS_ASGN_XOR", "CSS_ASGN_AND", "CSS_ASGN_RSHIFT",
+  "CSS_ASGN_LSHIFT", "CSS_ASGN_MOD", "CSS_ASGN_DIV", "CSS_ASGN_MULT",
+  "CSS_ASGN_SUB", "CSS_ASGN_ADD", "'?'", "':'", "CSS_OR", "CSS_AND", "'|'",
+  "'^'", "'&'", "CSS_NE", "CSS_EQ", "CSS_LE", "CSS_LT", "CSS_GE", "CSS_GT",
+  "CSS_RSHIFT", "CSS_LSHIFT", "'+'", "'-'", "'*'", "'/'", "'%'",
+  "CSS_MINMIN", "CSS_PLUSPLUS", "CSS_UNARY", "CSS_NOT", "CSS_UNARYMINUS",
+  "'.'", "'('", "'['", "CSS_SCOPER", "CSS_POINTSAT", "'\\n'", "';'", "')'",
+  "']'", "'}'", "'~'", "$accept", "toplev", "term", "crterm", "pproc",
+  "ppinclude", "ppdefine", "ppifdef", "ppelse", "ppendif", "command",
+  "cmd_args", "defn", "vardefn", "vardefin", "arraydefn", "arraydims",
+  "arraydim", "enumdefn", "enumname", "enums", "enumline", "enumitms",
+  "classdefn", "classhead", "classnm", "classfwd", "classinh", "classpar",
+  "classtyp", "inh_mods", "inh_mod", "membs", "membline", "membdefn",
+  "membardimstop", "membardims", "membardim", "methdefn", "methname",
+  "classcmt", "fundefn", "fundname", "methdname", "funargs", "arglist",
+  "argdefn", "subargdefn", "tynames", "tyname", "type", "type_el",
+  "typeorscp", "scopetype", "typeonly", "ptrs", "stmt", "noifstmt",
+  "nodostmt", "caseitem", "caseexpr", "switchblock", "switch", "forloop",
+  "for", "doloop", "do", "whiloop", "while", "ifstmt", "if", "else",
+  "cond", "bra", "mbr_bra", "ket", "expr", "comb_expr", "primitive",
+  "anycmd", "normfuncall", "normfun", "memb_expr", "membfun", "undefname",
+  "name", "getmemb", "membname", "membnms", "exprlist", "exprlsel",
+  "argstop", "stmtlist", "stmtel", "scend", "end", 0
+};
+#endif
+
+# ifdef YYPRINT
+/* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
+   token YYLEX-NUM.  */
+static const unsigned short int yytoknum[] =
+{
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295,   296,   297,   298,   299,   300,   301,   302,   303,   123,
+      44,    61,   304,   305,   306,   307,   308,   309,   310,   311,
+     312,   313,    63,    58,   314,   315,   124,    94,    38,   316,
+     317,   318,   319,   320,   321,   322,   323,    43,    45,    42,
+      47,    37,   324,   325,   326,   327,   328,    46,    40,    91,
+     329,   330,    10,    59,    41,    93,   125,   126
+};
+# endif
+
+/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
+static const unsigned char yyr1[] =
+{
+       0,    98,    99,    99,    99,    99,    99,    99,    99,    99,
+     100,   101,   101,   102,   102,   102,   102,   102,   103,   104,
+     104,   104,   105,   105,   105,   105,   106,   107,   108,   108,
+     108,   108,   108,   108,   108,   108,   108,   108,   108,   108,
+     108,   108,   109,   109,   109,   110,   110,   110,   110,   110,
+     110,   111,   112,   112,   113,   114,   114,   115,   116,   117,
+     117,   117,   118,   118,   119,   119,   119,   120,   120,   121,
+     121,   121,   122,   122,   123,   123,   124,   124,   125,   125,
+     126,   127,   127,   128,   128,   129,   129,   129,   130,   130,
+     131,   131,   131,   131,   131,   131,   131,   132,   132,   133,
+     134,   134,   135,   136,   136,   136,   136,   137,   138,   138,
+     138,   139,   139,   139,   139,   139,   140,   141,   141,   141,
+     142,   142,   142,   142,   143,   143,   144,   144,   145,   145,
+     146,   146,   147,   148,   148,   148,   148,   148,   148,   148,
+     148,   149,   149,   149,   149,   150,   150,   150,   151,   151,
+     152,   152,   153,   153,   154,   154,   155,   155,   156,   156,
+     156,   156,   156,   156,   156,   156,   156,   156,   157,   157,
+     158,   158,   158,   159,   160,   161,   161,   161,   161,   162,
+     163,   164,   165,   165,   166,   167,   167,   167,   167,   168,
+     169,   170,   171,   172,   173,   174,   174,   175,   175,   175,
+     175,   175,   175,   175,   175,   175,   175,   175,   175,   175,
+     175,   175,   175,   175,   175,   175,   175,   175,   175,   175,
+     175,   175,   175,   175,   175,   175,   175,   175,   175,   175,
+     175,   175,   175,   175,   175,   175,   175,   175,   175,   175,
+     175,   175,   175,   175,   175,   175,   175,   176,   176,   176,
+     176,   177,   177,   177,   178,   178,   178,   179,   180,   180,
+     180,   180,   180,   180,   181,   181,   181,   182,   183,   183,
+     183,   183,   183,   183,   184,   184,   185,   185,   185,   186,
+     186,   186,   186,   186,   187,   187,   188,   188,   189,   190,
+     190,   191,   192,   193
+};
+
+/* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
+static const unsigned char yyr2[] =
+{
+       0,     2,     0,     2,     3,     3,     2,     2,     2,     3,
+       1,     1,     1,     1,     1,     1,     1,     1,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     1,     2,     2,
+       3,     2,     3,     3,     3,     1,     3,     3,     3,     3,
+       3,     3,     0,     2,     4,     1,     1,     1,     1,     1,
+       1,     4,     7,     6,     6,     1,     2,     3,     6,     2,
+       2,     1,     1,     2,     1,     2,     1,     1,     3,     8,
+       7,     4,     1,     3,     1,     1,     1,     1,     1,     3,
+       1,     1,     2,     1,     2,     1,     1,     1,     1,     2,
+       1,     1,     2,     2,     2,     2,     1,     4,     6,     0,
+       1,     2,     3,     4,     4,     5,     6,     2,     0,     1,
+       2,     4,     4,     4,     5,     4,     2,     3,     2,     3,
+       2,     3,     3,     4,     1,     3,     1,     3,     2,     2,
+       1,     3,     1,     1,     2,     2,     2,     2,     2,     3,
+       3,     1,     2,     2,     3,     1,     1,     2,     2,     2,
+       1,     1,     1,     2,     1,     1,     1,     1,     2,     1,
+       1,     3,     4,     2,     2,     1,     1,     1,     3,     2,
+       1,     1,     1,     6,     1,     9,    10,    10,    11,     1,
+       2,     1,     4,     4,     1,     4,     4,     3,     3,     1,
+       1,     3,     1,     1,     1,     1,     1,     1,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     5,     4,     3,     5,     3,     3,     2,     2,     3,
+       3,     3,     3,     3,     3,     5,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     2,     2,     2,     2,
+       2,     2,     4,     4,     4,     1,     3,     1,     1,     1,
+       1,     1,     1,     1,     1,     2,     3,     2,     3,     3,
+       2,     2,     3,     4,     4,     4,     3,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     3,     1,     1,     0,     1,
+       3,     1,     1,     0
+};
+
+/* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
+   STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
+   means the default is an error.  */
+static const unsigned short int yydefact[] =
+{
+       2,     0,     1,     0,     0,     0,     0,     0,     0,    26,
+      27,   247,   248,   249,   254,   250,   267,   145,   146,     0,
+      61,   184,   181,   189,   190,   174,     0,     0,   288,     0,
+       0,   179,   288,   288,   288,     0,   288,   288,   288,     0,
+       0,     0,     0,     0,   192,     0,     0,     0,     0,     0,
+       0,     0,     0,     3,   194,     0,    13,    14,    15,    16,
+      17,     0,     7,    45,    46,    47,    48,     0,    49,    50,
+       0,     0,     0,   133,   141,     0,     8,   154,   156,   166,
+     165,     0,   159,     0,   157,     0,   160,     0,   155,     0,
+       0,   167,     6,     0,   196,   195,   245,     0,   197,     0,
+       0,    12,    11,     9,    18,    20,    19,    21,    23,    22,
+      24,    25,   257,   148,   149,   269,   270,   271,   273,   272,
+     268,    75,     0,    72,   293,    74,    60,    59,   170,   171,
+     172,     0,   169,     0,    10,   163,   164,     0,     0,     0,
+     288,    28,     0,   251,   252,   253,     0,    31,     0,    29,
+       0,     0,   134,     0,   135,   136,     0,   137,     0,   138,
+       0,     0,   217,   240,   218,   239,   237,   241,   277,   279,
+     281,   280,   276,   282,   283,   260,   278,     0,     0,     4,
+       5,     0,     0,   293,   293,   273,     0,     0,     0,   293,
+     130,     0,   132,   143,   152,   142,   118,   147,     0,   261,
+     288,     0,   180,     0,     0,     0,   293,   293,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,   238,   236,
+       0,   158,   274,   275,     0,     0,   287,   255,   286,     0,
+     284,   293,     0,   288,   108,     0,     0,   168,   161,     0,
+     150,   151,   210,   288,   213,     0,    43,    34,    33,   145,
+     145,    37,    41,    40,    38,    39,    36,   140,   139,     0,
+     246,    66,     0,    62,    64,    67,   120,     0,   124,   126,
+       0,     0,     0,   293,     0,     0,     0,   117,   288,     0,
+     144,   153,   119,   266,     0,   292,   291,     0,   289,     0,
+       0,   293,   293,   293,   293,   187,   188,   199,   198,   209,
+     208,   207,   206,   205,   204,   203,   202,   201,   200,     0,
+     215,   216,   235,   234,   233,   224,   223,   222,   221,   220,
+     219,   232,   231,   226,   227,   228,   229,   230,     0,   258,
+     259,     0,   256,   262,   293,     0,   109,     0,    87,    85,
+      86,    73,    78,    80,     0,    83,    81,    71,   162,     0,
+       0,   212,     0,     0,   243,   293,    63,    65,     0,   122,
+       0,   121,     0,   129,   128,   111,   112,   193,   115,   113,
+       0,   244,   131,   132,    51,     0,   293,    55,     0,     0,
+       0,     0,   191,   182,   183,   185,   186,     0,   242,   264,
+     265,   285,   263,   293,    96,   110,   145,     0,     0,     0,
+       0,   293,     0,   108,     0,    88,    90,    91,     0,     0,
+       0,    84,    82,   211,     0,   214,    44,     0,    68,   125,
+     123,   127,   114,   293,    56,     0,     0,   290,     0,   293,
+     225,     0,     0,    94,    93,    95,     0,     0,     0,    92,
+     293,    89,     0,    99,    79,    57,    58,     0,    54,   173,
+     293,   293,     0,    53,   108,     0,    70,     0,     0,   108,
+     108,     0,    52,   293,     0,     0,     0,   104,     0,   108,
+      69,   103,    97,     0,     0,   100,     0,     0,     0,   293,
+     108,   105,     0,   108,   101,     0,   293,   293,   175,   106,
+     102,    98,   293,   177,   176,   178
+};
+
+/* YYDEFGOTO[NTERM-NUM]. */
+static const short int yydefgoto[] =
+{
+      -1,     1,   135,   103,    55,    56,    57,    58,    59,    60,
+      61,   141,    62,    63,    64,    65,   396,   371,   423,    67,
+     282,   283,   284,    68,   122,   123,   124,   361,   362,   363,
+     364,   365,   424,   425,   426,   481,   494,   495,   427,   428,
+     357,    69,    70,    71,   183,   287,   288,   289,   189,   190,
+     160,    73,    74,   161,   262,   195,    76,    77,    78,    79,
+     131,    80,    81,    82,    83,    84,    85,    86,    87,    88,
+      89,    90,   204,    91,   388,    92,    93,    94,    95,   174,
+      96,    97,    98,    99,   100,   285,   244,   199,   176,   266,
+     250,   133,   307,   308,   309,   256
+};
+
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
+#define YYPACT_NINF -376
+static const short int yypact[] =
+{
+    -376,   648,  -376,   -73,    40,   187,     6,   209,   215,  -376,
+    -376,  -376,  -376,  -376,   -15,  -376,  -376,   -14,    54,   400,
+     578,  -376,  -376,  -376,  -376,  -376,    25,    83,  -376,    66,
+      66,  -376,  -376,    84,    92,   181,    92,    92,    61,   249,
+     249,   249,    89,    91,  -376,  1023,  1023,  1023,  1023,  1023,
+    1023,   340,  1023,  -376,  -376,   -73,  -376,  -376,  -376,  -376,
+    -376,   -73,  -376,  -376,  -376,  -376,  -376,   132,  -376,  -376,
+     102,   102,   230,  -376,    32,   150,  -376,  -376,  -376,  -376,
+    -376,   104,  -376,   110,  -376,   943,  -376,   118,  -376,   118,
+     943,  -376,  -376,  1469,    45,    45,  -376,   443,  -376,   535,
+     158,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,
+    -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,
+    -376,   122,   162,   165,  -376,   128,  -376,  -376,  -376,  -376,
+    -376,   172,  -376,   797,  -376,  -376,  -376,   296,   169,  1023,
+    -376,  -376,  1085,  -376,  -376,  -376,   355,  -376,  1103,  -376,
+    1165,   214,  -376,   223,  -376,  -376,   249,  -376,   249,  -376,
+     186,   460,    58,   168,    58,    58,    58,   168,  -376,  -376,
+    -376,  -376,  -376,  -376,  -376,  -376,  -376,   -17,  1293,  -376,
+    -376,   389,   294,  -376,  -376,   102,   -14,    54,  1023,   257,
+    -376,   614,    17,  -376,  -376,    60,  -376,  -376,   293,   228,
+    -376,   859,  -376,  1023,   735,   943,  -376,  -376,  1005,  1023,
+    1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,
+    1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,
+    1023,  1023,  1023,  1023,  1023,  1023,  1023,  1023,  -376,  -376,
+    1023,  -376,  -376,  -376,   340,   340,   238,  -376,  1594,   -32,
+    -376,  -376,   -19,  -376,   308,   131,    66,  -376,  -376,  1469,
+    -376,  -376,   231,  -376,    58,  1085,   279,  -376,  -376,   146,
+     180,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  1023,
+    -376,  -376,    16,  -376,   280,   281,   291,     2,  -376,   288,
+     139,     8,   289,    66,  1337,   614,    66,  -376,  -376,   251,
+    -376,  -376,  -376,  -376,  1023,  -376,  1594,   -27,  -376,  1023,
+    1381,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  1594,  1594,
+    1594,  1594,  1594,  1594,  1594,  1594,  1594,  1594,  1594,  1555,
+     843,   632,   779,   717,   924,   425,   425,   425,   425,   425,
+     425,   483,   483,   461,   461,    58,    58,    58,  1203,   255,
+     258,  1085,  -376,  -376,  -376,  1023,  -376,    37,  -376,  -376,
+    -376,   298,  -376,  -376,   131,  -376,  -376,  -376,  -376,   261,
+    1023,  -376,  1023,    10,    58,  -376,  -376,  -376,   339,  -376,
+     152,   317,   248,  -376,  -376,  -376,  -376,  -376,  -376,  -376,
+     312,  -376,  -376,  -376,  -376,  1023,   251,  -376,  1425,  1023,
+    1023,  1512,  -376,  -376,  -376,  -376,  -376,  1023,  -376,  -376,
+    -376,  -376,  -376,  1594,  -376,  -376,   -29,   300,   307,   310,
+      51,  -376,   356,   308,    46,  -376,  -376,  -376,   102,   614,
+     131,  -376,  -376,  -376,  1248,    58,  -376,    66,  -376,  -376,
+    -376,  -376,  -376,  1594,  -376,    66,   312,  -376,  1512,  1023,
+    1620,    66,    66,  -376,  -376,  -376,   357,    66,   102,   365,
+    -376,  -376,    66,     9,  -376,  -376,  -376,    66,  -376,  -376,
+    1023,   333,   290,  -376,   308,   102,  -376,    66,    66,   308,
+     308,   297,  -376,   333,   301,   302,   943,   365,    66,   308,
+    -376,   365,   365,   375,    98,  -376,   304,   943,   943,  -376,
+     308,   365,   309,   308,  -376,   943,  -376,  -376,  -376,   365,
+    -376,   365,  -376,  -376,  -376,  -376
+};
+
+/* YYPGOTO[NTERM-NUM].  */
+static const short int yypgoto[] =
+{
+    -376,  -376,   -30,    69,  -376,  -376,  -376,  -376,  -376,  -376,
+    -376,   287,  -376,  -376,  -376,  -376,  -376,  -274,   405,  -376,
+    -376,   126,  -376,  -376,  -376,  -376,  -376,  -376,    -4,  -376,
+    -376,    70,  -376,    11,  -376,  -376,  -376,   -55,  -376,  -376,
+    -266,  -376,  -376,  -376,   -66,  -376,    62,  -376,  -376,   149,
+       1,   -33,  -376,     0,  -376,  -376,   -69,   -78,  -376,  -376,
+    -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,  -376,   -76,
+    -376,  -376,   352,  -269,  -376,  -376,    68,  -376,    63,   -20,
+    -376,  -376,  -376,  -376,  -376,    14,   351,   -48,  -376,   -86,
+     108,    12,  -375,  -376,  -303,   138
+};
+
+/* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule which
+   number is the opposite.  If zero, do what YYDEFACT says.
+   If YYTABLE_NINF, syntax error.  */
+#define YYTABLE_NINF -289
+static const short int yytable[] =
+{
+     136,    75,    72,   175,   400,   184,   152,   154,   155,   157,
+     159,   249,   206,   252,   207,   146,   202,   281,   351,   101,
+     102,   107,   386,   399,   447,   397,   115,   116,   117,   118,
+     119,   351,   120,   125,   127,   128,   129,   130,   414,   153,
+     153,   153,   153,   153,   137,   139,   142,   414,   148,   150,
+     151,   104,   380,   177,   415,   416,    18,    44,    20,   182,
+     351,   113,   352,   241,   416,    18,   305,    20,   298,    17,
+      18,   188,   191,   112,   471,   354,   113,   279,    39,    40,
+      41,   417,   418,   419,   420,    43,   192,    39,    40,    41,
+     417,   418,   419,   420,    43,   483,   381,  -107,   449,   156,
+     193,   134,   134,   258,   436,  -116,  -288,    17,    18,    17,
+      18,   194,   375,   162,   163,   164,   165,   166,   167,   293,
+     178,   442,   444,   277,   179,   278,   267,   313,   300,   314,
+     180,   276,   242,   421,   422,   312,   243,   156,   158,   301,
+     238,   239,   460,   422,   114,   470,   132,   240,   456,    17,
+      18,   383,   265,   -35,   -35,   384,   153,   459,   153,   134,
+     268,   168,   169,   170,   171,   248,   172,   248,   196,   173,
+      17,    18,   197,   138,   311,   358,   359,   469,   360,   373,
+     140,   181,   153,   290,   -42,   -42,   143,   493,   144,   145,
+     182,   134,   200,    39,    40,    41,   349,   350,   201,    42,
+      43,   259,   105,   106,   299,   297,   203,   264,   487,   253,
+     248,   254,   304,   491,   492,   -77,   248,   143,   248,   144,
+     145,   -76,   366,   501,   108,   109,   367,   271,   255,   368,
+     110,   111,   272,   273,   509,   257,   113,   511,   -32,   -32,
+     115,   116,   117,   185,   119,   197,   120,   198,   186,   187,
+     143,   274,   144,   145,   275,   153,   294,   240,    11,    12,
+      13,   385,    15,   389,   263,   355,   394,    17,    18,   306,
+     113,   310,   -30,   -30,   188,   372,   318,   319,   320,   321,
+     322,   323,   324,   325,   326,   327,   328,   329,   330,   331,
+     332,   333,   334,   335,   336,   337,   338,   339,   340,   341,
+     342,   343,   344,   345,   346,   347,  -146,   295,   348,   393,
+     395,   302,    17,    18,   260,   261,   303,  -146,   188,   369,
+     370,   291,   292,   147,   149,   356,  -146,   296,   114,   351,
+     377,   432,   378,   248,   379,    39,    40,    41,   387,   382,
+     370,    42,    43,   409,   315,   316,   410,   374,   430,   438,
+     452,   168,   169,   170,   171,   433,   172,   153,   429,   173,
+     440,    44,   462,   453,   153,   115,   116,   117,   118,   119,
+     454,   120,   398,   455,   458,   475,   143,   401,   144,   145,
+     153,   290,   415,   399,   486,   502,   493,   157,   286,   353,
+     281,   143,   477,   144,   145,   497,   498,   366,   505,   115,
+     116,   117,   118,   119,   510,   120,    66,   466,   376,   488,
+     115,   116,   117,   118,   119,   468,   120,   499,   121,   248,
+     153,   473,   474,   413,   153,   429,   464,   476,   506,   507,
+     153,   390,   479,   480,   431,   461,   512,   482,   434,   504,
+     435,   205,   439,   463,   392,   441,   245,   489,   490,   403,
+     404,   405,   406,    11,    12,    13,    14,    15,   500,   411,
+       0,    17,   246,   443,   503,     0,     0,   306,   448,     0,
+       0,   168,   169,   170,   171,   450,   172,    32,    33,   173,
+       0,     0,   197,     0,    39,    40,    41,     0,     0,     0,
+      42,    43,   412,     0,     0,     0,   143,     0,   144,   145,
+     231,   232,   233,   234,   235,   236,   237,   238,   239,     0,
+       0,    45,     0,   437,   240,     0,     0,   306,     0,     0,
+       0,    46,    47,     0,     0,    48,    49,     0,    50,     0,
+      51,    52,     0,     0,   445,     0,     0,   247,   306,     0,
+     235,   236,   237,   238,   239,    11,    12,    13,    14,    15,
+     240,   451,     0,    17,   246,     0,     0,     0,     0,   457,
+     233,   234,   235,   236,   237,   238,   239,     0,     0,    32,
+      33,     0,   240,     0,     0,     0,    39,    40,    41,     0,
+       0,   467,    42,    43,     0,     0,     0,   472,   115,   116,
+     117,   118,   119,     0,   120,     0,   126,     0,   478,     0,
+       0,     0,     0,    45,     0,     0,     0,     0,   484,   485,
+       0,     0,     0,    46,    47,     0,     0,    48,    49,     0,
+      50,   496,    51,    52,   115,   116,   117,   118,   119,   251,
+     120,     0,     0,     0,     0,     0,     0,   508,     0,     0,
+       0,     0,     0,     0,   513,   514,     0,     0,     2,     3,
+     515,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,     0,    16,     0,    17,    18,    19,    20,
+       0,    21,    22,    23,    24,    25,    26,    27,    28,    29,
+      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
+      40,    41,     0,     0,     0,    42,    43,    44,   222,   223,
+     224,   225,   226,   227,   228,   229,   230,   231,   232,   233,
+     234,   235,   236,   237,   238,   239,    45,     0,     0,     0,
+       0,   240,     0,     0,     0,     0,    46,    47,     0,     0,
+      48,    49,     0,    50,     0,    51,    52,     0,     0,     0,
+      53,     0,     0,     0,    54,    11,    12,    13,    14,    15,
+       0,     0,     0,    17,    18,     0,     0,     0,    21,    22,
+      23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
+      33,     0,     0,     0,     0,     0,    39,    40,    41,     0,
+       0,     0,    42,    43,    44,   224,   225,   226,   227,   228,
+     229,   230,   231,   232,   233,   234,   235,   236,   237,   238,
+     239,     0,     0,    45,     0,     0,   240,    11,    12,    13,
+      14,    15,     0,    46,    47,    17,    18,    48,    49,     0,
+      50,     0,    51,    52,     0,     0,     0,     0,   134,     0,
+       0,    32,    33,     0,     0,     0,     0,     0,    39,    40,
+      41,     0,     0,     0,    42,    43,   223,   224,   225,   226,
+     227,   228,   229,   230,   231,   232,   233,   234,   235,   236,
+     237,   238,   239,     0,     0,    45,     0,     0,   240,    11,
+      12,    13,    14,    15,     0,    46,    47,    17,    18,    48,
+      49,     0,    50,     0,    51,    52,     0,     0,     0,     0,
+     134,     0,     0,    32,    33,     0,     0,     0,     0,     0,
+      39,    40,    41,     0,     0,     0,    42,    43,   221,   222,
+     223,   224,   225,   226,   227,   228,   229,   230,   231,   232,
+     233,   234,   235,   236,   237,   238,   239,    45,     0,     0,
+       0,     0,   240,     0,     0,     0,     0,    46,    47,     0,
+       0,    48,    49,     0,    50,     0,    51,    52,     0,     0,
+       0,     0,   305,    11,    12,    13,    14,    15,     0,     0,
+       0,    17,    18,     0,     0,     0,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,     0,
+       0,     0,     0,     0,    39,    40,    41,     0,     0,     0,
+      42,    43,    44,   225,   226,   227,   228,   229,   230,   231,
+     232,   233,   234,   235,   236,   237,   238,   239,     0,     0,
+       0,    45,     0,   240,     0,    11,    12,    13,    14,    15,
+       0,    46,    47,    17,    18,    48,    49,     0,    50,     0,
+      51,    52,     0,    11,    12,    13,    14,    15,     0,    32,
+      33,    17,    18,     0,     0,     0,    39,    40,    41,     0,
+       0,     0,    42,    43,   317,     0,     0,    32,    33,     0,
+       0,     0,     0,     0,    39,    40,    41,     0,     0,     0,
+      42,    43,     0,    45,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    46,    47,     0,     0,    48,    49,     0,
+      50,    45,    51,    52,     0,    11,    12,    13,    14,    15,
+       0,    46,    47,    17,   246,    48,    49,     0,    50,     0,
+      51,    52,     0,    11,    12,    13,    14,    15,     0,    32,
+      33,   269,   246,     0,     0,     0,    39,    40,    41,     0,
+       0,     0,    42,    43,     0,     0,     0,    32,    33,     0,
+       0,     0,     0,     0,    39,    40,    41,     0,     0,     0,
+      42,    43,     0,    45,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    46,    47,     0,     0,    48,    49,     0,
+      50,    45,    51,    52,     0,    11,    12,    13,    14,    15,
+       0,    46,    47,   270,   246,    48,    49,     0,    50,     0,
+      51,    52,     0,     0,     0,     0,     0,     0,     0,    32,
+      33,     0,     0,     0,     0,     0,    39,    40,    41,     0,
+       0,     0,    42,    43,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    45,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    46,    47,     0,     0,    48,    49,     0,
+      50,     0,    51,    52,   208,   209,   210,   211,   212,   213,
+     214,   215,   216,   217,   218,   219,     0,   220,   221,   222,
+     223,   224,   225,   226,   227,   228,   229,   230,   231,   232,
+     233,   234,   235,   236,   237,   238,   239,     0,     0,     0,
+       0,     0,   240,     0,     0,     0,     0,     0,   408,   208,
+     209,   210,   211,   212,   213,   214,   215,   216,   217,   218,
+     219,     0,   220,   221,   222,   223,   224,   225,   226,   227,
+     228,   229,   230,   231,   232,   233,   234,   235,   236,   237,
+     238,   239,     0,     0,     0,     0,     0,   240,     0,     0,
+       0,     0,     0,   465,   208,   209,   210,   211,   212,   213,
+     214,   215,   216,   217,   218,   219,     0,   220,   221,   222,
+     223,   224,   225,   226,   227,   228,   229,   230,   231,   232,
+     233,   234,   235,   236,   237,   238,   239,     0,     0,     0,
+       0,     0,   240,     0,     0,     0,     0,   280,   208,   209,
+     210,   211,   212,   213,   214,   215,   216,   217,   218,   219,
+       0,   220,   221,   222,   223,   224,   225,   226,   227,   228,
+     229,   230,   231,   232,   233,   234,   235,   236,   237,   238,
+     239,     0,     0,     0,     0,     0,   240,     0,     0,     0,
+       0,   391,   208,   209,   210,   211,   212,   213,   214,   215,
+     216,   217,   218,   219,     0,   220,   221,   222,   223,   224,
+     225,   226,   227,   228,   229,   230,   231,   232,   233,   234,
+     235,   236,   237,   238,   239,     0,     0,     0,     0,     0,
+     240,     0,     0,     0,     0,   402,   208,   209,   210,   211,
+     212,   213,   214,   215,   216,   217,   218,   219,     0,   220,
+     221,   222,   223,   224,   225,   226,   227,   228,   229,   230,
+     231,   232,   233,   234,   235,   236,   237,   238,   239,     0,
+       0,     0,     0,     0,   240,     0,     0,     0,     0,   446,
+     208,   209,   210,   211,   212,   213,   214,   215,   216,   217,
+     218,   219,     0,   220,   221,   222,   223,   224,   225,   226,
+     227,   228,   229,   230,   231,   232,   233,   234,   235,   236,
+     237,   238,   239,     0,     0,     0,     0,     0,   240,     0,
+       0,     0,   134,   208,   209,   210,   211,   212,   213,   214,
+     215,   216,   217,   218,   219,     0,   220,   221,   222,   223,
+     224,   225,   226,   227,   228,   229,   230,   231,   232,   233,
+     234,   235,   236,   237,   238,   239,     0,     0,     0,     0,
+       0,   240,     0,     0,     0,   305,   208,   209,   210,   211,
+     212,   213,   214,   215,   216,   217,   218,   219,   407,   220,
+     221,   222,   223,   224,   225,   226,   227,   228,   229,   230,
+     231,   232,   233,   234,   235,   236,   237,   238,   239,     0,
+       0,     0,     0,     0,   240,   208,   209,   210,   211,   212,
+     213,   214,   215,   216,   217,   218,   219,     0,   220,   221,
+     222,   223,   224,   225,   226,   227,   228,   229,   230,   231,
+     232,   233,   234,   235,   236,   237,   238,   239,     0,     0,
+       0,     0,   219,   240,   220,   221,   222,   223,   224,   225,
+     226,   227,   228,   229,   230,   231,   232,   233,   234,   235,
+     236,   237,   238,   239,     0,     0,     0,     0,     0,   240
+};
+
+static const short int yycheck[] =
+{
+      30,     1,     1,    51,   307,    71,    39,    40,    41,    42,
+      43,    97,    90,    99,    90,    35,    85,     1,    50,    92,
+      93,    15,   291,    50,   399,   299,    10,    11,    12,    13,
+      14,    50,    16,    19,    20,    10,    11,    12,     1,    39,
+      40,    41,    42,    43,    32,    33,    34,     1,    36,    37,
+      38,    11,    50,    52,    17,    18,    19,    49,    21,    88,
+      50,    90,    94,    93,    18,    19,    93,    21,    51,    18,
+      19,    88,    72,    88,   449,    94,    90,    94,    41,    42,
+      43,    44,    45,    46,    47,    48,    72,    41,    42,    43,
+      44,    45,    46,    47,    48,   470,    94,    88,   401,    48,
+      68,    93,    93,   133,    94,    88,    89,    18,    19,    18,
+      19,    79,    96,    45,    46,    47,    48,    49,    50,   185,
+      52,   390,   396,   156,    55,   158,   146,   205,    68,   205,
+      61,   151,    87,    96,    97,   204,    91,    48,    47,    79,
+      82,    83,    96,    97,    90,   448,    63,    89,    97,    18,
+      19,    12,   140,    92,    93,    16,   156,   423,   158,    93,
+     146,    11,    12,    13,    14,    97,    16,    99,    18,    19,
+      18,    19,    22,    89,   204,    44,    45,   446,    47,   265,
+      88,    49,   182,   182,    92,    93,    36,    89,    38,    39,
+      88,    93,    88,    41,    42,    43,   244,   245,    88,    47,
+      48,   133,    15,    16,   192,   191,    88,   139,   474,    51,
+     142,    49,   200,   479,   480,    93,   148,    36,   150,    38,
+      39,    93,   255,   489,    15,    16,   256,    13,    63,   259,
+      15,    16,    18,    19,   500,    63,    90,   503,    92,    93,
+      10,    11,    12,    13,    14,    22,    16,    97,    18,    19,
+      36,    37,    38,    39,    40,   255,   188,    89,    10,    11,
+      12,   291,    14,   293,    95,   253,   296,    18,    19,   201,
+      90,   203,    92,    93,    88,   263,   208,   209,   210,   211,
+     212,   213,   214,   215,   216,   217,   218,   219,   220,   221,
+     222,   223,   224,   225,   226,   227,   228,   229,   230,   231,
+     232,   233,   234,   235,   236,   237,    68,    50,   240,   295,
+     298,    18,    18,    19,    18,    19,    88,    79,    88,    88,
+      89,   183,   184,    36,    37,    17,    88,   189,    90,    50,
+      50,   364,    51,   265,    43,    41,    42,    43,    49,    51,
+      89,    47,    48,    88,   206,   207,    88,   279,    50,    10,
+     416,    11,    12,    13,    14,    94,    16,   357,   357,    19,
+      43,    49,   428,    63,   364,    10,    11,    12,    13,    14,
+      63,    16,   304,    63,    18,    18,    36,   309,    38,    39,
+     380,   380,    17,    50,    94,    10,    89,   420,    94,   251,
+       1,    36,   458,    38,    39,    94,    94,   430,    94,    10,
+      11,    12,    13,    14,    95,    16,     1,   437,   282,   475,
+      10,    11,    12,    13,    14,   445,    16,   486,    18,   351,
+     420,   451,   452,   355,   424,   424,   430,   457,   497,   498,
+     430,   293,   462,   463,   364,   424,   505,   467,   370,   494,
+     372,    89,   380,   429,   295,   382,    95,   477,   478,   311,
+     312,   313,   314,    10,    11,    12,    13,    14,   488,   351,
+      -1,    18,    19,   395,   494,    -1,    -1,   399,   400,    -1,
+      -1,    11,    12,    13,    14,   407,    16,    34,    35,    19,
+      -1,    -1,    22,    -1,    41,    42,    43,    -1,    -1,    -1,
+      47,    48,   354,    -1,    -1,    -1,    36,    -1,    38,    39,
+      75,    76,    77,    78,    79,    80,    81,    82,    83,    -1,
+      -1,    68,    -1,   375,    89,    -1,    -1,   449,    -1,    -1,
+      -1,    78,    79,    -1,    -1,    82,    83,    -1,    85,    -1,
+      87,    88,    -1,    -1,   396,    -1,    -1,    94,   470,    -1,
+      79,    80,    81,    82,    83,    10,    11,    12,    13,    14,
+      89,   413,    -1,    18,    19,    -1,    -1,    -1,    -1,   421,
+      77,    78,    79,    80,    81,    82,    83,    -1,    -1,    34,
+      35,    -1,    89,    -1,    -1,    -1,    41,    42,    43,    -1,
+      -1,   443,    47,    48,    -1,    -1,    -1,   449,    10,    11,
+      12,    13,    14,    -1,    16,    -1,    18,    -1,   460,    -1,
+      -1,    -1,    -1,    68,    -1,    -1,    -1,    -1,   470,   471,
+      -1,    -1,    -1,    78,    79,    -1,    -1,    82,    83,    -1,
+      85,   483,    87,    88,    10,    11,    12,    13,    14,    94,
+      16,    -1,    -1,    -1,    -1,    -1,    -1,   499,    -1,    -1,
+      -1,    -1,    -1,    -1,   506,   507,    -1,    -1,     0,     1,
+     512,     3,     4,     5,     6,     7,     8,     9,    10,    11,
+      12,    13,    14,    -1,    16,    -1,    18,    19,    20,    21,
+      -1,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    -1,    -1,    -1,    47,    48,    49,    66,    67,
+      68,    69,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    68,    -1,    -1,    -1,
+      -1,    89,    -1,    -1,    -1,    -1,    78,    79,    -1,    -1,
+      82,    83,    -1,    85,    -1,    87,    88,    -1,    -1,    -1,
+      92,    -1,    -1,    -1,    96,    10,    11,    12,    13,    14,
+      -1,    -1,    -1,    18,    19,    -1,    -1,    -1,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    -1,    -1,    -1,    -1,    -1,    41,    42,    43,    -1,
+      -1,    -1,    47,    48,    49,    68,    69,    70,    71,    72,
+      73,    74,    75,    76,    77,    78,    79,    80,    81,    82,
+      83,    -1,    -1,    68,    -1,    -1,    89,    10,    11,    12,
+      13,    14,    -1,    78,    79,    18,    19,    82,    83,    -1,
+      85,    -1,    87,    88,    -1,    -1,    -1,    -1,    93,    -1,
+      -1,    34,    35,    -1,    -1,    -1,    -1,    -1,    41,    42,
+      43,    -1,    -1,    -1,    47,    48,    67,    68,    69,    70,
+      71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
+      81,    82,    83,    -1,    -1,    68,    -1,    -1,    89,    10,
+      11,    12,    13,    14,    -1,    78,    79,    18,    19,    82,
+      83,    -1,    85,    -1,    87,    88,    -1,    -1,    -1,    -1,
+      93,    -1,    -1,    34,    35,    -1,    -1,    -1,    -1,    -1,
+      41,    42,    43,    -1,    -1,    -1,    47,    48,    65,    66,
+      67,    68,    69,    70,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    81,    82,    83,    68,    -1,    -1,
+      -1,    -1,    89,    -1,    -1,    -1,    -1,    78,    79,    -1,
+      -1,    82,    83,    -1,    85,    -1,    87,    88,    -1,    -1,
+      -1,    -1,    93,    10,    11,    12,    13,    14,    -1,    -1,
+      -1,    18,    19,    -1,    -1,    -1,    23,    24,    25,    26,
+      27,    28,    29,    30,    31,    32,    33,    34,    35,    -1,
+      -1,    -1,    -1,    -1,    41,    42,    43,    -1,    -1,    -1,
+      47,    48,    49,    69,    70,    71,    72,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    -1,    -1,
+      -1,    68,    -1,    89,    -1,    10,    11,    12,    13,    14,
+      -1,    78,    79,    18,    19,    82,    83,    -1,    85,    -1,
+      87,    88,    -1,    10,    11,    12,    13,    14,    -1,    34,
+      35,    18,    19,    -1,    -1,    -1,    41,    42,    43,    -1,
+      -1,    -1,    47,    48,    49,    -1,    -1,    34,    35,    -1,
+      -1,    -1,    -1,    -1,    41,    42,    43,    -1,    -1,    -1,
+      47,    48,    -1,    68,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    78,    79,    -1,    -1,    82,    83,    -1,
+      85,    68,    87,    88,    -1,    10,    11,    12,    13,    14,
+      -1,    78,    79,    18,    19,    82,    83,    -1,    85,    -1,
+      87,    88,    -1,    10,    11,    12,    13,    14,    -1,    34,
+      35,    18,    19,    -1,    -1,    -1,    41,    42,    43,    -1,
+      -1,    -1,    47,    48,    -1,    -1,    -1,    34,    35,    -1,
+      -1,    -1,    -1,    -1,    41,    42,    43,    -1,    -1,    -1,
+      47,    48,    -1,    68,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    78,    79,    -1,    -1,    82,    83,    -1,
+      85,    68,    87,    88,    -1,    10,    11,    12,    13,    14,
+      -1,    78,    79,    18,    19,    82,    83,    -1,    85,    -1,
+      87,    88,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    34,
+      35,    -1,    -1,    -1,    -1,    -1,    41,    42,    43,    -1,
+      -1,    -1,    47,    48,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    68,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    78,    79,    -1,    -1,    82,    83,    -1,
+      85,    -1,    87,    88,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,    62,    -1,    64,    65,    66,
+      67,    68,    69,    70,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    81,    82,    83,    -1,    -1,    -1,
+      -1,    -1,    89,    -1,    -1,    -1,    -1,    -1,    95,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+      62,    -1,    64,    65,    66,    67,    68,    69,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,    -1,    -1,    -1,    -1,    -1,    89,    -1,    -1,
+      -1,    -1,    -1,    95,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,    62,    -1,    64,    65,    66,
+      67,    68,    69,    70,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    81,    82,    83,    -1,    -1,    -1,
+      -1,    -1,    89,    -1,    -1,    -1,    -1,    94,    51,    52,
+      53,    54,    55,    56,    57,    58,    59,    60,    61,    62,
+      -1,    64,    65,    66,    67,    68,    69,    70,    71,    72,
+      73,    74,    75,    76,    77,    78,    79,    80,    81,    82,
+      83,    -1,    -1,    -1,    -1,    -1,    89,    -1,    -1,    -1,
+      -1,    94,    51,    52,    53,    54,    55,    56,    57,    58,
+      59,    60,    61,    62,    -1,    64,    65,    66,    67,    68,
+      69,    70,    71,    72,    73,    74,    75,    76,    77,    78,
+      79,    80,    81,    82,    83,    -1,    -1,    -1,    -1,    -1,
+      89,    -1,    -1,    -1,    -1,    94,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,    60,    61,    62,    -1,    64,
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    81,    82,    83,    -1,
+      -1,    -1,    -1,    -1,    89,    -1,    -1,    -1,    -1,    94,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+      61,    62,    -1,    64,    65,    66,    67,    68,    69,    70,
+      71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
+      81,    82,    83,    -1,    -1,    -1,    -1,    -1,    89,    -1,
+      -1,    -1,    93,    51,    52,    53,    54,    55,    56,    57,
+      58,    59,    60,    61,    62,    -1,    64,    65,    66,    67,
+      68,    69,    70,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    -1,    -1,    -1,    -1,
+      -1,    89,    -1,    -1,    -1,    93,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    81,    82,    83,    -1,
+      -1,    -1,    -1,    -1,    89,    51,    52,    53,    54,    55,
+      56,    57,    58,    59,    60,    61,    62,    -1,    64,    65,
+      66,    67,    68,    69,    70,    71,    72,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    -1,    -1,
+      -1,    -1,    62,    89,    64,    65,    66,    67,    68,    69,
+      70,    71,    72,    73,    74,    75,    76,    77,    78,    79,
+      80,    81,    82,    83,    -1,    -1,    -1,    -1,    -1,    89
+};
+
+/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
+   symbol of state STATE-NUM.  */
+static const unsigned char yystos[] =
+{
+       0,    99,     0,     1,     3,     4,     5,     6,     7,     8,
+       9,    10,    11,    12,    13,    14,    16,    18,    19,    20,
+      21,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    47,    48,    49,    68,    78,    79,    82,    83,
+      85,    87,    88,    92,    96,   102,   103,   104,   105,   106,
+     107,   108,   110,   111,   112,   113,   116,   117,   121,   139,
+     140,   141,   148,   149,   150,   151,   154,   155,   156,   157,
+     159,   160,   161,   162,   163,   164,   165,   166,   167,   168,
+     169,   171,   173,   174,   175,   176,   178,   179,   180,   181,
+     182,    92,    93,   101,    11,    15,    16,    15,    15,    16,
+      15,    16,    88,    90,    90,    10,    11,    12,    13,    14,
+      16,    18,   122,   123,   124,   183,    18,   183,    10,    11,
+      12,   158,    63,   189,    93,   100,   100,   189,    89,   189,
+      88,   109,   189,    36,    38,    39,   177,   109,   189,   109,
+     189,   189,   149,   151,   149,   149,    48,   149,    47,   149,
+     148,   151,   174,   174,   174,   174,   174,   174,    11,    12,
+      13,    14,    16,    19,   177,   185,   186,   148,   174,   101,
+     101,    49,    88,   142,   142,    13,    18,    19,    88,   146,
+     147,   151,   183,    68,    79,   153,    18,    22,    97,   185,
+      88,    88,   154,    88,   170,   170,   155,   167,    51,    52,
+      53,    54,    55,    56,    57,    58,    59,    60,    61,    62,
+      64,    65,    66,    67,    68,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    80,    81,    82,    83,
+      89,   100,    87,    91,   184,   184,    19,    94,   174,   187,
+     188,    94,   187,    51,    49,    63,   193,    63,   100,   174,
+      18,    19,   152,    95,   174,   189,   187,   177,   183,    18,
+      18,    13,    18,    19,    37,    40,   177,   149,   149,    94,
+      94,     1,   118,   119,   120,   183,    94,   143,   144,   145,
+     148,   193,   193,   142,   174,    50,   193,   183,    51,   189,
+      68,    79,    18,    88,   189,    93,   174,   190,   191,   192,
+     174,   100,   154,   155,   167,   193,   193,    49,   174,   174,
+     174,   174,   174,   174,   174,   174,   174,   174,   174,   174,
+     174,   174,   174,   174,   174,   174,   174,   174,   174,   174,
+     174,   174,   174,   174,   174,   174,   174,   174,   174,   185,
+     185,    50,    94,   193,    94,   189,    17,   138,    44,    45,
+      47,   125,   126,   127,   128,   129,   149,   100,   100,    88,
+      89,   115,   189,   187,   174,    96,   119,    50,    51,    43,
+      50,    94,    51,    12,    16,   100,   171,    49,   172,   100,
+     193,    94,   147,   183,   100,   189,   114,   115,   174,    50,
+     192,   174,    94,   193,   193,   193,   193,    63,    95,    88,
+      88,   188,   193,   174,     1,    17,    18,    44,    45,    46,
+      47,    96,    97,   116,   130,   131,   132,   136,   137,   148,
+      50,   129,   149,    94,   174,   174,    94,   193,    10,   144,
+      43,   176,   171,   174,   115,   193,    94,   190,   174,   192,
+     174,   193,   142,    63,    63,    63,    97,   193,    18,   138,
+      96,   131,   142,   183,   126,    95,   100,   193,   100,   171,
+     192,   190,   193,   100,   100,    18,   100,   142,   193,   100,
+     100,   133,   100,   190,   193,   193,    94,   138,   142,   100,
+     100,   138,   138,    89,   134,   135,   193,    94,    94,   154,
+     100,   138,    10,   100,   135,    94,   154,   154,   193,   138,
+      95,   138,   154,   193,   193,   193
+};
+
+#if ! defined (YYSIZE_T) && defined (__SIZE_TYPE__)
+# define YYSIZE_T __SIZE_TYPE__
+#endif
+#if ! defined (YYSIZE_T) && defined (size_t)
+# define YYSIZE_T size_t
+#endif
+#if ! defined (YYSIZE_T)
+# if defined (__STDC__) || defined (__cplusplus)
+#  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYSIZE_T size_t
+# endif
+#endif
+#if ! defined (YYSIZE_T)
+# define YYSIZE_T unsigned int
+#endif
 
 #define yyerrok		(yyerrstatus = 0)
 #define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		-2
+#define YYEMPTY		(-2)
 #define YYEOF		0
+
 #define YYACCEPT	goto yyacceptlab
-#define YYABORT 	goto yyabortlab
-#define YYERROR		goto yyerrlab1
-/* Like YYERROR except do call yyerror.
-   This remains here temporarily to ease the
-   transition to the new meaning of YYERROR, for GCC.
+#define YYABORT		goto yyabortlab
+#define YYERROR		goto yyerrorlab
+
+
+/* Like YYERROR except do call yyerror.  This remains here temporarily
+   to ease the transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
+
 #define YYFAIL		goto yyerrlab
+
 #define YYRECOVERING()  (!!yyerrstatus)
-#define YYBACKUP(token, value) \
+
+#define YYBACKUP(Token, Value)					\
 do								\
   if (yychar == YYEMPTY && yylen == 1)				\
-    { yychar = (token), yylval = (value);			\
-      yychar1 = YYTRANSLATE (yychar);				\
+    {								\
+      yychar = (Token);						\
+      yylval = (Value);						\
+      yytoken = YYTRANSLATE (yychar);				\
       YYPOPSTACK;						\
       goto yybackup;						\
     }								\
   else								\
-    { yyerror ("syntax error: cannot back up"); YYERROR; }	\
+    { 								\
+      yyerror ("syntax error: cannot back up");\
+      YYERROR;							\
+    }								\
 while (0)
+
 
 #define YYTERROR	1
 #define YYERRCODE	256
 
-#ifndef YYPURE
-#define YYLEX		yylex()
+
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)				\
+    do									\
+      if (N)								\
+	{								\
+	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
+	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
+	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
+	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
+	}								\
+      else								\
+	{								\
+	  (Current).first_line   = (Current).last_line   =		\
+	    YYRHSLOC (Rhs, 0).last_line;				\
+	  (Current).first_column = (Current).last_column =		\
+	    YYRHSLOC (Rhs, 0).last_column;				\
+	}								\
+    while (0)
 #endif
 
-#ifdef YYPURE
-#ifdef YYLSP_NEEDED
+
+/* YY_LOCATION_PRINT -- Print the location on the stream.
+   This macro was not mandated originally: define only if we know
+   we won't break user code: when these are the locations we know.  */
+
+#ifndef YY_LOCATION_PRINT
+# if YYLTYPE_IS_TRIVIAL
+#  define YY_LOCATION_PRINT(File, Loc)			\
+     fprintf (File, "%d.%d-%d.%d",			\
+              (Loc).first_line, (Loc).first_column,	\
+              (Loc).last_line,  (Loc).last_column)
+# else
+#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
+# endif
+#endif
+
+
+/* YYLEX -- calling `yylex' with the right arguments.  */
+
 #ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
+# define YYLEX yylex (YYLEX_PARAM)
 #else
-#define YYLEX		yylex(&yylval, &yylloc)
+# define YYLEX yylex ()
 #endif
-#else /* not YYLSP_NEEDED */
-#ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, YYLEX_PARAM)
+
+/* Enable debugging if requested.  */
+#if YYDEBUG
+
+# ifndef YYFPRINTF
+#  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYFPRINTF fprintf
+# endif
+
+# define YYDPRINTF(Args)			\
+do {						\
+  if (yydebug)					\
+    YYFPRINTF Args;				\
+} while (0)
+
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location)		\
+do {								\
+  if (yydebug)							\
+    {								\
+      YYFPRINTF (stderr, "%s ", Title);				\
+      yysymprint (stderr, 					\
+                  Type, Value);	\
+      YYFPRINTF (stderr, "\n");					\
+    }								\
+} while (0)
+
+/*------------------------------------------------------------------.
+| yy_stack_print -- Print the state stack from its BOTTOM up to its |
+| TOP (included).                                                   |
+`------------------------------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yy_stack_print (short int *bottom, short int *top)
 #else
-#define YYLEX		yylex(&yylval)
+static void
+yy_stack_print (bottom, top)
+    short int *bottom;
+    short int *top;
 #endif
-#endif /* not YYLSP_NEEDED */
+{
+  YYFPRINTF (stderr, "Stack now");
+  for (/* Nothing. */; bottom <= top; ++bottom)
+    YYFPRINTF (stderr, " %d", *bottom);
+  YYFPRINTF (stderr, "\n");
+}
+
+# define YY_STACK_PRINT(Bottom, Top)				\
+do {								\
+  if (yydebug)							\
+    yy_stack_print ((Bottom), (Top));				\
+} while (0)
+
+
+/*------------------------------------------------.
+| Report that the YYRULE is going to be reduced.  |
+`------------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yy_reduce_print (int yyrule)
+#else
+static void
+yy_reduce_print (yyrule)
+    int yyrule;
 #endif
+{
+  int yyi;
+  unsigned int yylno = yyrline[yyrule];
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %u), ",
+             yyrule - 1, yylno);
+  /* Print the symbols being reduced, and their result.  */
+  for (yyi = yyprhs[yyrule]; 0 <= yyrhs[yyi]; yyi++)
+    YYFPRINTF (stderr, "%s ", yytname [yyrhs[yyi]]);
+  YYFPRINTF (stderr, "-> %s\n", yytname [yyr1[yyrule]]);
+}
 
-/* If nonreentrant, generate the variables here */
+# define YY_REDUCE_PRINT(Rule)		\
+do {					\
+  if (yydebug)				\
+    yy_reduce_print (Rule);		\
+} while (0)
 
-#ifndef YYPURE
+/* Nonzero means print parse trace.  It is left uninitialized so that
+   multiple parsers can coexist.  */
+int yydebug;
+#else /* !YYDEBUG */
+# define YYDPRINTF(Args)
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
+# define YY_STACK_PRINT(Bottom, Top)
+# define YY_REDUCE_PRINT(Rule)
+#endif /* !YYDEBUG */
 
-int	yychar;			/*  the lookahead symbol		*/
-YYSTYPE	yylval;			/*  the semantic value of the		*/
-				/*  lookahead symbol			*/
 
-#ifdef YYLSP_NEEDED
-YYLTYPE yylloc;			/*  location data for the lookahead	*/
-				/*  symbol				*/
-#endif
-
-int yynerrs;			/*  number of parse errors so far       */
-#endif  /* not YYPURE */
-
-#if YYDEBUG != 0
-int yydebug;			/*  nonzero means print parse trace	*/
-/* Since this is uninitialized, it does not stop multiple parsers
-   from coexisting.  */
-#endif
-
-/*  YYINITDEPTH indicates the initial size of the parser's stacks	*/
-
+/* YYINITDEPTH -- initial size of the parser's stacks.  */
 #ifndef	YYINITDEPTH
-#define YYINITDEPTH 200
+# define YYINITDEPTH 200
 #endif
 
-/*  YYMAXDEPTH is the maximum size the stacks can grow to
-    (effective only if the built-in stack extension method is used).  */
+/* YYMAXDEPTH -- maximum size the stacks can grow to (effective only
+   if the built-in stack extension method is used).
 
-#if YYMAXDEPTH == 0
-#undef YYMAXDEPTH
-#endif
+   Do not make this value too large; the results are undefined if
+   SIZE_MAX < YYSTACK_BYTES (YYMAXDEPTH)
+   evaluated with infinite-precision integer arithmetic.  */
 
 #ifndef YYMAXDEPTH
-#define YYMAXDEPTH 10000
+# define YYMAXDEPTH 10000
 #endif
+
 
-/* Define __yy_memcpy.  Note that the size argument
-   should be passed with type unsigned int, because that is what the non-GCC
-   definitions require.  With GCC, __builtin_memcpy takes an arg
-   of type size_t, but it can handle unsigned int.  */
 
-#if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
-#else				/* not GNU C or C++ */
-#ifndef __cplusplus
+#if YYERROR_VERBOSE
 
-/* This is the most reliable way to avoid incompatibilities
-   in available built-in functions on various systems.  */
-static void
-__yy_memcpy (to, from, count)
-     char *to;
-     char *from;
-     unsigned int count;
+# ifndef yystrlen
+#  if defined (__GLIBC__) && defined (_STRING_H)
+#   define yystrlen strlen
+#  else
+/* Return the length of YYSTR.  */
+static YYSIZE_T
+#   if defined (__STDC__) || defined (__cplusplus)
+yystrlen (const char *yystr)
+#   else
+yystrlen (yystr)
+     const char *yystr;
+#   endif
 {
-  register char *f = from;
-  register char *t = to;
-  register int i = count;
+  register const char *yys = yystr;
 
-  while (i-- > 0)
-    *t++ = *f++;
+  while (*yys++ != '\0')
+    continue;
+
+  return yys - yystr - 1;
 }
+#  endif
+# endif
 
-#else /* __cplusplus */
-
-/* This is the most reliable way to avoid incompatibilities
-   in available built-in functions on various systems.  */
-static void
-__yy_memcpy (char *to, char *from, unsigned int count)
+# ifndef yystpcpy
+#  if defined (__GLIBC__) && defined (_STRING_H) && defined (_GNU_SOURCE)
+#   define yystpcpy stpcpy
+#  else
+/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
+   YYDEST.  */
+static char *
+#   if defined (__STDC__) || defined (__cplusplus)
+yystpcpy (char *yydest, const char *yysrc)
+#   else
+yystpcpy (yydest, yysrc)
+     char *yydest;
+     const char *yysrc;
+#   endif
 {
-  register char *t = to;
-  register char *f = from;
-  register int i = count;
+  register char *yyd = yydest;
+  register const char *yys = yysrc;
 
-  while (i-- > 0)
-    *t++ = *f++;
+  while ((*yyd++ = *yys++) != '\0')
+    continue;
+
+  return yyd - 1;
 }
+#  endif
+# endif
 
-#endif
-#endif
+#endif /* !YYERROR_VERBOSE */
+
 
-#line 217 "/usr/share/bison.simple"
 
-/* The user can define YYPARSE_PARAM as the name of an argument to be passed
-   into yyparse.  The argument should have type void *.
-   It should actually point to an object.
-   Grammar actions can access the variable by casting it
-   to the proper pointer type.  */
+#if YYDEBUG
+/*--------------------------------.
+| Print this symbol on YYOUTPUT.  |
+`--------------------------------*/
 
-#ifdef YYPARSE_PARAM
-#ifdef __cplusplus
-#define YYPARSE_PARAM_ARG void *YYPARSE_PARAM
-#define YYPARSE_PARAM_DECL
-#else /* not __cplusplus */
-#define YYPARSE_PARAM_ARG YYPARSE_PARAM
-#define YYPARSE_PARAM_DECL void *YYPARSE_PARAM;
-#endif /* not __cplusplus */
-#else /* not YYPARSE_PARAM */
-#define YYPARSE_PARAM_ARG
-#define YYPARSE_PARAM_DECL
-#endif /* not YYPARSE_PARAM */
-
-/* Prevent warning if -Wstrict-prototypes.  */
-#ifdef __GNUC__
-#ifdef YYPARSE_PARAM
-int yyparse (void *);
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yysymprint (FILE *yyoutput, int yytype, YYSTYPE *yyvaluep)
 #else
-int yyparse (void);
+static void
+yysymprint (yyoutput, yytype, yyvaluep)
+    FILE *yyoutput;
+    int yytype;
+    YYSTYPE *yyvaluep;
 #endif
-#endif
-
-int
-yyparse(YYPARSE_PARAM_ARG)
-     YYPARSE_PARAM_DECL
 {
+  /* Pacify ``unused variable'' warnings.  */
+  (void) yyvaluep;
+
+  if (yytype < YYNTOKENS)
+    YYFPRINTF (yyoutput, "token %s (", yytname[yytype]);
+  else
+    YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
+
+
+# ifdef YYPRINT
+  if (yytype < YYNTOKENS)
+    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
+# endif
+  switch (yytype)
+    {
+      default:
+        break;
+    }
+  YYFPRINTF (yyoutput, ")");
+}
+
+#endif /* ! YYDEBUG */
+/*-----------------------------------------------.
+| Release the memory associated to this symbol.  |
+`-----------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
+#else
+static void
+yydestruct (yymsg, yytype, yyvaluep)
+    const char *yymsg;
+    int yytype;
+    YYSTYPE *yyvaluep;
+#endif
+{
+  /* Pacify ``unused variable'' warnings.  */
+  (void) yyvaluep;
+
+  if (!yymsg)
+    yymsg = "Deleting";
+  YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+
+  switch (yytype)
+    {
+
+      default:
+        break;
+    }
+}
+
+
+/* Prevent warnings from -Wmissing-prototypes.  */
+
+#ifdef YYPARSE_PARAM
+# if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void *YYPARSE_PARAM);
+# else
+int yyparse ();
+# endif
+#else /* ! YYPARSE_PARAM */
+#if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
+
+
+
+/* The look-ahead symbol.  */
+int yychar;
+
+/* The semantic value of the look-ahead symbol.  */
+YYSTYPE yylval;
+
+/* Number of syntax errors so far.  */
+int yynerrs;
+
+
+
+/*----------.
+| yyparse.  |
+`----------*/
+
+#ifdef YYPARSE_PARAM
+# if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void *YYPARSE_PARAM)
+# else
+int yyparse (YYPARSE_PARAM)
+  void *YYPARSE_PARAM;
+# endif
+#else /* ! YYPARSE_PARAM */
+#if defined (__STDC__) || defined (__cplusplus)
+int
+yyparse (void)
+#else
+int
+yyparse ()
+
+#endif
+#endif
+{
+  
   register int yystate;
   register int yyn;
-  register short *yyssp;
+  int yyresult;
+  /* Number of tokens to shift before error messages enabled.  */
+  int yyerrstatus;
+  /* Look-ahead token as an internal (translated) token number.  */
+  int yytoken = 0;
+
+  /* Three stacks and their tools:
+     `yyss': related to states,
+     `yyvs': related to semantic values,
+     `yyls': related to locations.
+
+     Refer to the stacks thru separate pointers, to allow yyoverflow
+     to reallocate them elsewhere.  */
+
+  /* The state stack.  */
+  short int yyssa[YYINITDEPTH];
+  short int *yyss = yyssa;
+  register short int *yyssp;
+
+  /* The semantic value stack.  */
+  YYSTYPE yyvsa[YYINITDEPTH];
+  YYSTYPE *yyvs = yyvsa;
   register YYSTYPE *yyvsp;
-  int yyerrstatus;	/*  number of tokens to shift before error messages enabled */
-  int yychar1 = 0;		/*  lookahead token as an internal (translated) token number */
 
-  short	yyssa[YYINITDEPTH];	/*  the state stack			*/
-  YYSTYPE yyvsa[YYINITDEPTH];	/*  the semantic value stack		*/
 
-  short *yyss = yyssa;		/*  refer to the stacks thru separate pointers */
-  YYSTYPE *yyvs = yyvsa;	/*  to allow yyoverflow to reallocate them elsewhere */
 
-#ifdef YYLSP_NEEDED
-  YYLTYPE yylsa[YYINITDEPTH];	/*  the location stack			*/
-  YYLTYPE *yyls = yylsa;
-  YYLTYPE *yylsp;
-
-#define YYPOPSTACK   (yyvsp--, yyssp--, yylsp--)
-#else
 #define YYPOPSTACK   (yyvsp--, yyssp--)
-#endif
 
-  int yystacksize = YYINITDEPTH;
-  int yyfree_stacks = 0;
+  YYSIZE_T yystacksize = YYINITDEPTH;
 
-#ifdef YYPURE
-  int yychar;
-  YYSTYPE yylval;
-  int yynerrs;
-#ifdef YYLSP_NEEDED
-  YYLTYPE yylloc;
-#endif
-#endif
+  /* The variables used to return semantic value and location from the
+     action routines.  */
+  YYSTYPE yyval;
 
-  YYSTYPE yyval;		/*  the variable used to return		*/
-				/*  semantic values from the action	*/
-				/*  routines				*/
 
+  /* When reducing, the number of symbols on the RHS of the reduced
+     rule.  */
   int yylen;
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Starting parse\n");
-#endif
+  YYDPRINTF ((stderr, "Starting parse\n"));
 
   yystate = 0;
   yyerrstatus = 0;
@@ -1271,447 +1748,402 @@ yyparse(YYPARSE_PARAM_ARG)
      so that they stay on the same level as the state stack.
      The wasted elements are never initialized.  */
 
-  yyssp = yyss - 1;
+  yyssp = yyss;
   yyvsp = yyvs;
-#ifdef YYLSP_NEEDED
-  yylsp = yyls;
-#endif
 
-/* Push a new state, which is found in  yystate  .  */
-/* In all cases, when you get here, the value and location stacks
-   have just been pushed. so pushing a state here evens the stacks.  */
-yynewstate:
 
-  *++yyssp = yystate;
+  yyvsp[0] = yylval;
 
-  if (yyssp >= yyss + yystacksize - 1)
+  goto yysetstate;
+
+/*------------------------------------------------------------.
+| yynewstate -- Push a new state, which is found in yystate.  |
+`------------------------------------------------------------*/
+ yynewstate:
+  /* In all cases, when you get here, the value and location stacks
+     have just been pushed. so pushing a state here evens the stacks.
+     */
+  yyssp++;
+
+ yysetstate:
+  *yyssp = yystate;
+
+  if (yyss + yystacksize - 1 <= yyssp)
     {
-      /* Give user a chance to reallocate the stack */
-      /* Use copies of these so that the &'s don't force the real ones into memory. */
-      YYSTYPE *yyvs1 = yyvs;
-      short *yyss1 = yyss;
-#ifdef YYLSP_NEEDED
-      YYLTYPE *yyls1 = yyls;
-#endif
-
       /* Get the current used size of the three stacks, in elements.  */
-      int size = yyssp - yyss + 1;
+      YYSIZE_T yysize = yyssp - yyss + 1;
 
 #ifdef yyoverflow
-      /* Each stack pointer address is followed by the size of
-	 the data in use in that stack, in bytes.  */
-#ifdef YYLSP_NEEDED
-      /* This used to be a conditional around just the two extra args,
-	 but that might be undefined if yyoverflow is a macro.  */
-      yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yyls1, size * sizeof (*yylsp),
-		 &yystacksize);
-#else
-      yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yystacksize);
-#endif
+      {
+	/* Give user a chance to reallocate the stack. Use copies of
+	   these so that the &'s don't force the real ones into
+	   memory.  */
+	YYSTYPE *yyvs1 = yyvs;
+	short int *yyss1 = yyss;
 
-      yyss = yyss1; yyvs = yyvs1;
-#ifdef YYLSP_NEEDED
-      yyls = yyls1;
-#endif
+
+	/* Each stack pointer address is followed by the size of the
+	   data in use in that stack, in bytes.  This used to be a
+	   conditional around just the two extra args, but that might
+	   be undefined if yyoverflow is a macro.  */
+	yyoverflow ("parser stack overflow",
+		    &yyss1, yysize * sizeof (*yyssp),
+		    &yyvs1, yysize * sizeof (*yyvsp),
+
+		    &yystacksize);
+
+	yyss = yyss1;
+	yyvs = yyvs1;
+      }
 #else /* no yyoverflow */
+# ifndef YYSTACK_RELOCATE
+      goto yyoverflowlab;
+# else
       /* Extend the stack our own way.  */
-      if (yystacksize >= YYMAXDEPTH)
-	{
-	  yyerror("parser stack overflow");
-	  if (yyfree_stacks)
-	    {
-	      free (yyss);
-	      free (yyvs);
-#ifdef YYLSP_NEEDED
-	      free (yyls);
-#endif
-	    }
-	  return 2;
-	}
+      if (YYMAXDEPTH <= yystacksize)
+	goto yyoverflowlab;
       yystacksize *= 2;
-      if (yystacksize > YYMAXDEPTH)
+      if (YYMAXDEPTH < yystacksize)
 	yystacksize = YYMAXDEPTH;
-#ifndef YYSTACK_USE_ALLOCA
-      yyfree_stacks = 1;
-#endif
-      yyss = (short *) YYSTACK_ALLOC (yystacksize * sizeof (*yyssp));
-      __yy_memcpy ((char *)yyss, (char *)yyss1,
-		   size * (unsigned int) sizeof (*yyssp));
-      yyvs = (YYSTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yyvsp));
-      __yy_memcpy ((char *)yyvs, (char *)yyvs1,
-		   size * (unsigned int) sizeof (*yyvsp));
-#ifdef YYLSP_NEEDED
-      yyls = (YYLTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yylsp));
-      __yy_memcpy ((char *)yyls, (char *)yyls1,
-		   size * (unsigned int) sizeof (*yylsp));
-#endif
+
+      {
+	short int *yyss1 = yyss;
+	struct yyalloc *yyptr =
+	  (struct yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+	if (! yyptr)
+	  goto yyoverflowlab;
+	YYSTACK_RELOCATE (yyss);
+	YYSTACK_RELOCATE (yyvs);
+
+#  undef YYSTACK_RELOCATE
+	if (yyss1 != yyssa)
+	  YYSTACK_FREE (yyss1);
+      }
+# endif
 #endif /* no yyoverflow */
 
-      yyssp = yyss + size - 1;
-      yyvsp = yyvs + size - 1;
-#ifdef YYLSP_NEEDED
-      yylsp = yyls + size - 1;
-#endif
+      yyssp = yyss + yysize - 1;
+      yyvsp = yyvs + yysize - 1;
 
-#if YYDEBUG != 0
-      if (yydebug)
-	fprintf(stderr, "Stack size increased to %d\n", yystacksize);
-#endif
 
-      if (yyssp >= yyss + yystacksize - 1)
+      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
+		  (unsigned long int) yystacksize));
+
+      if (yyss + yystacksize - 1 <= yyssp)
 	YYABORT;
     }
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Entering state %d\n", yystate);
-#endif
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
 
   goto yybackup;
- yybackup:
+
+/*-----------.
+| yybackup.  |
+`-----------*/
+yybackup:
 
 /* Do appropriate processing given the current state.  */
-/* Read a lookahead token if we need one and don't already have one.  */
+/* Read a look-ahead token if we need one and don't already have one.  */
 /* yyresume: */
 
-  /* First try to decide what to do without reference to lookahead token.  */
+  /* First try to decide what to do without reference to look-ahead token.  */
 
   yyn = yypact[yystate];
-  if (yyn == YYFLAG)
+  if (yyn == YYPACT_NINF)
     goto yydefault;
 
-  /* Not known => get a lookahead token if don't already have one.  */
+  /* Not known => get a look-ahead token if don't already have one.  */
 
-  /* yychar is either YYEMPTY or YYEOF
-     or a valid token in external form.  */
-
+  /* YYCHAR is either YYEMPTY or YYEOF or a valid look-ahead symbol.  */
   if (yychar == YYEMPTY)
     {
-#if YYDEBUG != 0
-      if (yydebug)
-	fprintf(stderr, "Reading a token: ");
-#endif
+      YYDPRINTF ((stderr, "Reading a token: "));
       yychar = YYLEX;
     }
 
-  /* Convert token to internal form (in yychar1) for indexing tables with */
-
-  if (yychar <= 0)		/* This means end of input. */
+  if (yychar <= YYEOF)
     {
-      yychar1 = 0;
-      yychar = YYEOF;		/* Don't call YYLEX any more */
-
-#if YYDEBUG != 0
-      if (yydebug)
-	fprintf(stderr, "Now at end of input.\n");
-#endif
+      yychar = yytoken = YYEOF;
+      YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
   else
     {
-      yychar1 = YYTRANSLATE(yychar);
-
-#if YYDEBUG != 0
-      if (yydebug)
-	{
-	  fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
-	  /* Give the individual parser a way to print the precise meaning
-	     of a token, for further debugging info.  */
-#ifdef YYPRINT
-	  YYPRINT (stderr, yychar, yylval);
-#endif
-	  fprintf (stderr, ")\n");
-	}
-#endif
+      yytoken = YYTRANSLATE (yychar);
+      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
     }
 
-  yyn += yychar1;
-  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != yychar1)
+  /* If the proper action on seeing token YYTOKEN is to reduce or to
+     detect an error, take that action.  */
+  yyn += yytoken;
+  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
     goto yydefault;
-
   yyn = yytable[yyn];
-
-  /* yyn is what to do for this token type in this state.
-     Negative => reduce, -yyn is rule number.
-     Positive => shift, yyn is new state.
-       New state is final state => don't bother to shift,
-       just return success.
-     0, or most negative number => error.  */
-
-  if (yyn < 0)
+  if (yyn <= 0)
     {
-      if (yyn == YYFLAG)
+      if (yyn == 0 || yyn == YYTABLE_NINF)
 	goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
-  else if (yyn == 0)
-    goto yyerrlab;
 
   if (yyn == YYFINAL)
     YYACCEPT;
 
-  /* Shift the lookahead token.  */
-
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Shifting token %d (%s), ", yychar, yytname[yychar1]);
-#endif
+  /* Shift the look-ahead token.  */
+  YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
 
   /* Discard the token being shifted unless it is eof.  */
   if (yychar != YYEOF)
     yychar = YYEMPTY;
 
   *++yyvsp = yylval;
-#ifdef YYLSP_NEEDED
-  *++yylsp = yylloc;
-#endif
 
-  /* count tokens shifted since error; after three, turn off error status.  */
-  if (yyerrstatus) yyerrstatus--;
+
+  /* Count tokens shifted since error; after three, turn off error
+     status.  */
+  if (yyerrstatus)
+    yyerrstatus--;
 
   yystate = yyn;
   goto yynewstate;
 
-/* Do the default action for the current state.  */
-yydefault:
 
+/*-----------------------------------------------------------.
+| yydefault -- do the default action for the current state.  |
+`-----------------------------------------------------------*/
+yydefault:
   yyn = yydefact[yystate];
   if (yyn == 0)
     goto yyerrlab;
+  goto yyreduce;
 
-/* Do a reduction.  yyn is the number of a rule to reduce with.  */
+
+/*-----------------------------.
+| yyreduce -- Do a reduction.  |
+`-----------------------------*/
 yyreduce:
+  /* yyn is the number of a rule to reduce with.  */
   yylen = yyr2[yyn];
-  if (yylen > 0)
-    yyval = yyvsp[1-yylen]; /* implement default value of the action */
 
-#if YYDEBUG != 0
-  if (yydebug)
+  /* If YYLEN is nonzero, implement the default value of the action:
+     `$$ = $1'.
+
+     Otherwise, the following line sets YYVAL to garbage.
+     This behavior is undocumented and Bison
+     users should not rely upon it.  Assigning to YYVAL
+     unconditionally makes the parser a bit smaller, and it avoids a
+     GCC warning that YYVAL may be used uninitialized.  */
+  yyval = yyvsp[1-yylen];
+
+
+  YY_REDUCE_PRINT (yyn);
+  switch (yyn)
     {
-      int i;
-
-      fprintf (stderr, "Reducing via rule %d (line %d), ",
-	       yyn, yyrline[yyn]);
-
-      /* Print the symbols being reduced, and their result.  */
-      for (i = yyprhs[yyn]; yyrhs[i] > 0; i++)
-	fprintf (stderr, "%s ", yytname[yyrhs[i]]);
-      fprintf (stderr, " -> %s\n", yytname[yyr1[yyn]]);
-    }
-#endif
-
-
-  switch (yyn) {
-
-case 2:
+        case 3:
 #line 164 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Blank; ;
-    break;}
-case 3:
+    { cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Blank; }
+    break;
+
+  case 4:
 #line 165 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Ok; ;
-    break;}
-case 4:
+    { cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Ok; }
+    break;
+
+  case 5:
 #line 166 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return yyvsp[-1].ival; ;
-    break;}
-case 5:
+    { cssMisc::cur_top->ResetParseFlags(); return (yyvsp[-1].ival); }
+    break;
+
+  case 6:
 #line 167 "css_parse.y"
-{ cssMisc::cur_top->Prog()->ResetLasts();
+    { cssMisc::cur_top->Prog()->ResetLasts();
 				  cssMisc::cur_top->ResetParseFlags();
-				  return cssProg::YY_Ok; ;
-    break;}
-case 6:
+				  return cssProg::YY_Ok; }
+    break;
+
+  case 7:
 #line 170 "css_parse.y"
-{ cssMisc::cur_top->Prog()->ResetLasts();
+    { cssMisc::cur_top->Prog()->ResetLasts();
 				  cssMisc::cur_top->ResetParseFlags();
-				  return cssProg::YY_Ok; ;
-    break;}
-case 7:
+				  return cssProg::YY_Ok; }
+    break;
+
+  case 8:
 #line 173 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Ok; ;
-    break;}
-case 8:
+    { cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Ok; }
+    break;
+
+  case 9:
 #line 174 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Err; ;
-    break;}
-case 9:
-#line 175 "css_parse.y"
-{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Exit; ;
-    break;}
-case 10:
-#line 178 "css_parse.y"
-{ yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-case 11:
+    { cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Err; }
+    break;
+
+  case 10:
+#line 177 "css_parse.y"
+    { (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+  case 11:
+#line 180 "css_parse.y"
+    { (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+  case 12:
 #line 181 "css_parse.y"
-{ yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-case 12:
-#line 182 "css_parse.y"
-{ yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-case 18:
-#line 194 "css_parse.y"
-{
-            cssEl* tmp = yyvsp[0].el.El();
+    { (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+  case 18:
+#line 193 "css_parse.y"
+    {
+            cssEl* tmp = (yyvsp[0].el).El();
 	    cssMisc::cur_top->SetInclude((const char*)*tmp);
-	    cssEl::Done(yyvsp[0].el.El()); ;
-    break;}
-case 19:
-#line 200 "css_parse.y"
-{
-            cssMisc::Defines.Push(new cssDef(0, yyvsp[0].nm)); ;
-    break;}
-case 21:
-#line 203 "css_parse.y"
-{ cssMisc::Defines.Remove(yyvsp[0].el.El()); ;
-    break;}
-case 22:
-#line 206 "css_parse.y"
-{ /* if its a name, its not defined.. */
+	    cssEl::Done((yyvsp[0].el).El()); }
+    break;
+
+  case 19:
+#line 199 "css_parse.y"
+    {
+            cssMisc::Defines.Push(new cssDef(0, (yyvsp[0].nm))); }
+    break;
+
+  case 21:
+#line 202 "css_parse.y"
+    { cssMisc::Defines.Remove((yyvsp[0].el).El()); }
+    break;
+
+  case 22:
+#line 205 "css_parse.y"
+    { /* if its a name, its not defined.. */
             cssDef::Skip_To_Endif(cssMisc::cur_top->Prog());
-	    return cssProg::YY_Ok; ;
-    break;}
-case 24:
-#line 210 "css_parse.y"
-{ /* if its a def, its defined.. */
+	    return cssProg::YY_Ok; }
+    break;
+
+  case 24:
+#line 209 "css_parse.y"
+    { /* if its a def, its defined.. */
             cssDef::Skip_To_Endif(cssMisc::cur_top->Prog());
-	    return cssProg::YY_Ok; ;
-    break;}
-case 26:
-#line 216 "css_parse.y"
-{ /* if you see it, it applies to u*/
-            cssDef::Skip_To_Endif(cssMisc::cur_top->Prog()); ;
-    break;}
-case 28:
-#line 233 "css_parse.y"
-{
-            Code1(yyvsp[-1].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 29:
-#line 235 "css_parse.y"
-{
-	    Code1(yyvsp[-1].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 30:
-#line 237 "css_parse.y"
-{
-	    Code2(yyvsp[0].el,yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 31:
-#line 239 "css_parse.y"
-{
-	    yyval.ival = cssProg::YY_NoSrc;
-	    Code1(yyvsp[0].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 32:
+	    return cssProg::YY_Ok; }
+    break;
+
+  case 26:
+#line 215 "css_parse.y"
+    { /* if you see it, it applies to u*/
+            cssDef::Skip_To_Endif(cssMisc::cur_top->Prog()); }
+    break;
+
+  case 28:
+#line 232 "css_parse.y"
+    {
+            Code1((yyvsp[-1].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 29:
+#line 234 "css_parse.y"
+    {
+	    Code1((yyvsp[-1].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 30:
+#line 236 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el),(yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 31:
+#line 238 "css_parse.y"
+    {
+	    Code1((yyvsp[-1].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 32:
+#line 240 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el),(yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 33:
 #line 242 "css_parse.y"
-{
-	    Code1(yyvsp[0].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 33:
-#line 244 "css_parse.y"
-{
-	    Code1(yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 34:
+    {
+	    (yyval.ival) = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef((yyvsp[-1].el)));
+	    ((yyvsp[-2].el).El())->Do(cssMisc::cur_top->Prog()); }
+    break;
+
+  case 34:
 #line 246 "css_parse.y"
-{
-	    yyval.ival = cssProg::YY_Ok;
-	    Code1(yyvsp[-4].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 35:
-#line 249 "css_parse.y"
-{
-	    Code1(yyvsp[-1].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 36:
-#line 251 "css_parse.y"
-{
-	    Code2(yyvsp[0].el,yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 37:
-#line 253 "css_parse.y"
-{
-	    Code1(yyvsp[0].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 38:
-#line 255 "css_parse.y"
-{
-	    yyval.ival = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef(yyvsp[-1].el));
-	    (yyvsp[-2].el.El())->Do(cssMisc::cur_top->Prog()); ;
-    break;}
-case 39:
-#line 259 "css_parse.y"
-{
-	    yyval.ival = cssProg::YY_NoSrc; ;
-    break;}
-case 40:
-#line 261 "css_parse.y"
-{
-	    Code1(yyvsp[0].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 41:
-#line 263 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 42:
-#line 265 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 43:
-#line 267 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 44:
-#line 269 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 45:
-#line 271 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 46:
-#line 273 "css_parse.y"
-{
-	    Code2(yyvsp[0].el, yyvsp[-2].el); yyval.ival = cssProg::YY_Ok; ;
-    break;}
-case 47:
-#line 277 "css_parse.y"
-{ yyval.ival = 0; ;
-    break;}
-case 49:
-#line 279 "css_parse.y"
-{ yyval.ival = yyvsp[-2].ival; ;
-    break;}
-case 56:
-#line 291 "css_parse.y"
-{
+    {
+	    (yyval.ival) = cssProg::YY_NoSrc; }
+    break;
+
+  case 35:
+#line 248 "css_parse.y"
+    {
+	    Code1((yyvsp[0].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 36:
+#line 250 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 37:
+#line 252 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 38:
+#line 254 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 39:
+#line 256 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 40:
+#line 258 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 41:
+#line 260 "css_parse.y"
+    {
+	    Code2((yyvsp[0].el), (yyvsp[-2].el)); (yyval.ival) = cssProg::YY_Ok; }
+    break;
+
+  case 42:
+#line 264 "css_parse.y"
+    { (yyval.ival) = 0; }
+    break;
+
+  case 44:
+#line 266 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].ival); }
+    break;
+
+  case 51:
+#line 278 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-3].el.El()->tmp_str == "const") {
+	    if((yyvsp[-3].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival);
-	    if(yyvsp[-2].ival < 0) yyval.ival = yyvsp[-1].ival-1; /* if no coding, its the end, else not */
-	    else yyval.ival = yyvsp[-2].ival; ;
-    break;}
-case 57:
-#line 301 "css_parse.y"
-{
- 	    (yyvsp[-6].el.El())->MakeToken(cssMisc::cur_top->Prog());
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival));
+	    if((yyvsp[-2].ival) < 0) (yyval.ival) = (yyvsp[-1].ival)-1; /* if no coding, its the end, else not */
+	    else (yyval.ival) = (yyvsp[-2].ival); }
+    break;
+
+  case 52:
+#line 288 "css_parse.y"
+    {
+ 	    ((yyvsp[-6].el).El())->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    /* constants get dealt with differently */
 	    if(tmp->ptr.ptr == (void*)&(cssMisc::Constants)) {
@@ -1720,105 +2152,116 @@ case 57:
 	      Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
 	      cssMisc::ConstExprTop->Run(); /* run the const expr assigning val */
 	      cssMisc::CodeTop(); /* revert to coding using top */
-	      yyval.ival = Code1(cssMisc::cur_top->Prog()->size+1); /* need to have an rval */
+	      (yyval.ival) = Code1(cssMisc::cur_top->Prog()->size+1); /* need to have an rval */
 	    }
 	    else {
 	      cssMisc::cur_top->Prog()->UnCode();	/* undo the end jump coding */
-	      yyval.ival = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
+	      (yyval.ival) = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
 	    }
-	    cssEl::Done(tmp); ;
-    break;}
-case 58:
-#line 319 "css_parse.y"
-{	/* no type information, get from last expr */
+	    cssEl::Done(tmp); }
+    break;
+
+  case 53:
+#line 306 "css_parse.y"
+    {	/* no type information, get from last expr */
 	    cssMisc::cur_top->Prog()->UnCode();	/* undo the end jump coding */
-	    css_progdx actln = yyvsp[-1].ival-2;
+	    css_progdx actln = (yyvsp[-1].ival)-2;
 	    if(cssMisc::cur_top->Prog()->insts[actln]->IsJump()) { /* if jmp, get before */
-	      actln = yyvsp[-3].ival+1;	/* go for the first thing if the last is no good */
+	      actln = (yyvsp[-3].ival)+1;	/* go for the first thing if the last is no good */
 	    }
 	    cssEl* extyp = cssMisc::cur_top->Prog()->insts[actln]->inst.El();
  	    extyp->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
-	    yyval.ival = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
+	    (yyval.ival) = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
 	    if(!cssMisc::cur_top->AmCmdProg()) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(),
 			       "Warning: created implicit variable:",
 			       tmp->ptr.El()->name,
 			       "of type: ", extyp->GetTypeName()); }
-	    cssEl::Done(tmp); ;
-    break;}
-case 59:
-#line 339 "css_parse.y"
-{
+	    cssEl::Done(tmp); }
+    break;
+
+  case 54:
+#line 326 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-5].el.El()->tmp_str == "const") {
+	    if((yyvsp[-5].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssMisc::cur_top->Prog()->UnCode();	/* undo the end jump coding */
-	    cssMisc::cur_top->Prog()->Stack()->Push(yyvsp[-5].el.El()); /* type is an arg */
-	    cssMisc::cur_top->Prog()->Stack()->Push(new cssInt(yyvsp[-2].ival)); /* num of dims */
-	    cssMisc::VoidArray.tmp_str = (yyvsp[-5].el.El())->tmp_str;
+	    cssMisc::cur_top->Prog()->Stack()->Push((yyvsp[-5].el).El()); /* type is an arg */
+	    cssMisc::cur_top->Prog()->Stack()->Push(new cssInt((yyvsp[-2].ival))); /* num of dims */
+	    cssMisc::VoidArray.tmp_str = ((yyvsp[-5].el).El())->tmp_str;
 	    cssMisc::VoidArray.MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
-	    yyval.ival = Code3(tmp->ptr, cssBI::array_alloc, cssBI::pop);
-	    cssEl::Done(tmp); ;
-    break;}
-case 60:
-#line 355 "css_parse.y"
-{ yyval.ival = 1; ;
-    break;}
-case 61:
-#line 356 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival + 1; ;
-    break;}
-case 62:
-#line 360 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; ;
-    break;}
-case 63:
-#line 363 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival); yyval.ival = yyvsp[-1].ival-1;
+	    (yyval.ival) = Code3(tmp->ptr, cssBI::array_alloc, cssBI::pop);
+	    cssEl::Done(tmp); }
+    break;
+
+  case 55:
+#line 342 "css_parse.y"
+    { (yyval.ival) = 1; }
+    break;
+
+  case 56:
+#line 343 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival) + 1; }
+    break;
+
+  case 57:
+#line 347 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival); }
+    break;
+
+  case 58:
+#line 350 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival)); (yyval.ival) = (yyvsp[-1].ival)-1;
 	    if(cssMisc::cur_enum->name.before(5) == "enum_") /* don't keep anon enums around */
 	      delete cssMisc::cur_enum;
-	    cssMisc::cur_enum = NULL; ;
-    break;}
-case 64:
-#line 370 "css_parse.y"
-{
+	    cssMisc::cur_enum = NULL; }
+    break;
+
+  case 59:
+#line 357 "css_parse.y"
+    {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
             cssMisc::cur_enum = new cssEnumType((const char*)*nm);
 	    if(cssMisc::cur_class != NULL) cssMisc::cur_class->types->Push(cssMisc::cur_enum);
 	    /* todo: global keyword?? else cssMisc::TypesSpace.Push(cssMisc::cur_enum); */
 	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum);
-	    cssEl::Done(nm); ;
-    break;}
-case 65:
-#line 377 "css_parse.y"
-{ /* redefining */
-	    if(yyvsp[0].el.El()->GetType() != cssEl::T_EnumType) {
+	    cssEl::Done(nm); }
+    break;
+
+  case 60:
+#line 364 "css_parse.y"
+    { /* redefining */
+	    if((yyvsp[0].el).El()->GetType() != cssEl::T_EnumType) {
 	      yyerror("Attempt to redefine non-enum type as an enum");
 	      return cssProg::YY_Err; }
-   	    cssMisc::cur_enum = (cssEnumType*)yyvsp[0].el.El();
+   	    cssMisc::cur_enum = (cssEnumType*)(yyvsp[0].el).El();
  	    cssMisc::cur_enum->enums->Reset(); /* prepare for new enums.. */
-	    cssMisc::cur_enum->enum_cnt = 0; ;
-    break;}
-case 66:
-#line 384 "css_parse.y"
-{ /* anonymous  */
+	    cssMisc::cur_enum->enum_cnt = 0; }
+    break;
+
+  case 61:
+#line 371 "css_parse.y"
+    { /* anonymous  */
 	    String nm = "anonenum_"; nm += String(cssMisc::anon_type_cnt++); nm += "_";
             cssMisc::cur_enum = new cssEnumType((const char*)nm);
 	    if(cssMisc::cur_class != NULL) cssMisc::cur_class->types->Push(cssMisc::cur_enum);
 	    /* todo: global keyword?? else cssMisc::TypesSpace.Push(cssMisc::cur_enum); */
-	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum); ;
-    break;}
-case 71:
-#line 398 "css_parse.y"
-{ yyval.el = cssMisc::VoidElPtr; ;
-    break;}
-case 72:
-#line 401 "css_parse.y"
-{
+	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum); }
+    break;
+
+  case 66:
+#line 385 "css_parse.y"
+    { (yyval.el) = cssMisc::VoidElPtr; }
+    break;
+
+  case 67:
+#line 388 "css_parse.y"
+    {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
@@ -1834,11 +2277,12 @@ case 72:
 	      en_own->Push(itm);
 	    }
 	    cssMisc::cur_enum->enum_cnt = itm->val + 1;
-	    cssMisc::cur_enum->enums->Push(itm); cssEl::Done(nm); ;
-    break;}
-case 73:
-#line 418 "css_parse.y"
-{
+	    cssMisc::cur_enum->enums->Push(itm); cssEl::Done(nm); }
+    break;
+
+  case 68:
+#line 405 "css_parse.y"
+    {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
@@ -1846,54 +2290,59 @@ case 73:
 	    cssElPtr itm_ptr = en_own->FindName((const char*)*nm);	cssEnum* itm;
 	    if(itm_ptr != 0) { /* redef */
 	      itm = (cssEnum*)itm_ptr.El();
-	      itm->val = (int)*(yyvsp[0].el.El());
+	      itm->val = (int)*((yyvsp[0].el).El());
 	      itm->SetEnumType(cssMisc::cur_enum);
 	    }
 	    else {
-	      itm = new cssEnum(cssMisc::cur_enum, (int)*(yyvsp[0].el.El()), (const char*)*nm);
+	      itm = new cssEnum(cssMisc::cur_enum, (int)*((yyvsp[0].el).El()), (const char*)*nm);
 	      en_own->Push(itm);
 	    }
 	    cssMisc::cur_enum->enum_cnt = itm->val + 1;
-	    cssMisc::cur_enum->enums->Push(itm); cssEl::Done(nm); ;
-    break;}
-case 74:
-#line 438 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival); yyval.ival = yyvsp[-1].ival-1;
-            cssMisc::cur_class->GetComments(cssMisc::cur_class, yyvsp[-4].el);
-            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; ;
-    break;}
-case 75:
-#line 442 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival); yyval.ival = yyvsp[-1].ival-1;
-            cssMisc::cur_class->GetComments(cssMisc::cur_class, yyvsp[-3].el);
-            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; ;
-    break;}
-case 76:
-#line 446 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival); yyval.ival = yyvsp[-1].ival-1;
-            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; ;
-    break;}
-case 79:
-#line 456 "css_parse.y"
-{
+	    cssMisc::cur_enum->enums->Push(itm); cssEl::Done(nm); }
+    break;
+
+  case 69:
+#line 425 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival)); (yyval.ival) = (yyvsp[-1].ival)-1;
+            cssMisc::cur_class->GetComments(cssMisc::cur_class, (yyvsp[-4].el));
+            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
+    break;
+
+  case 70:
+#line 429 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival)); (yyval.ival) = (yyvsp[-1].ival)-1;
+            cssMisc::cur_class->GetComments(cssMisc::cur_class, (yyvsp[-3].el));
+            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
+    break;
+
+  case 71:
+#line 433 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival)); (yyval.ival) = (yyvsp[-1].ival)-1;
+            cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
+    break;
+
+  case 74:
+#line 443 "css_parse.y"
+    {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssMisc::cur_class = new cssClassType((const char*)*nm);
 	    cssMisc::cur_class->last_top = cssMisc::cur_top;
 	    /*	todo: keyword for global??    cssMisc::TypesSpace.Push(cssMisc::cur_class); */
 	    cssMisc::cur_top->types.Push(cssMisc::cur_class);
-	    cssEl::Done(nm); ;
-    break;}
-case 80:
-#line 463 "css_parse.y"
-{ /* redefining */
-	    if(yyvsp[0].el.El()->GetType() != cssEl::T_ClassType) {
+	    cssEl::Done(nm); }
+    break;
+
+  case 75:
+#line 450 "css_parse.y"
+    { /* redefining */
+	    if((yyvsp[0].el).El()->GetType() != cssEl::T_ClassType) {
 	      yyerror("Attempt to redefine non-class type as a class");
 	      return cssProg::YY_Err;
 	    }
-	    cssMisc::cur_class = (cssClassType*)yyvsp[0].el.El();
+	    cssMisc::cur_class = (cssClassType*)(yyvsp[0].el).El();
 #ifdef GUI_IV
 	    cssivSession::CancelClassEdits(cssMisc::cur_class);
 #endif // GUI_IV
@@ -1907,119 +2356,134 @@ case 80:
             cssMisc::cur_class->member_opts.Reset();
             cssMisc::cur_class->types->Reset();
 	    cssMisc::cur_class->parents->Reset();
-	    cssMisc::cur_class->AddBuiltins();  ;
-    break;}
-case 81:
-#line 485 "css_parse.y"
-{
+	    cssMisc::cur_class->AddBuiltins();  }
+    break;
+
+  case 76:
+#line 472 "css_parse.y"
+    {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
             cssMisc::cur_class = new cssClassType((const char*)*nm);
 	    /*	todo: keyword for global??    cssMisc::TypesSpace.Push(cssMisc::cur_class); */
 	    cssMisc::cur_top->types.Push(cssMisc::cur_class);
-            cssEl::Done(nm); ;
-    break;}
-case 82:
-#line 491 "css_parse.y"
-{
-            if(yyvsp[0].el.El()->GetType() != cssEl::T_ClassType) {
+            cssEl::Done(nm); }
+    break;
+
+  case 77:
+#line 478 "css_parse.y"
+    {
+            if((yyvsp[0].el).El()->GetType() != cssEl::T_ClassType) {
               yyerror("Attempt to redefine non-class type as a class");
               return cssProg::YY_Err;
             }
-            cssMisc::cur_class = (cssClassType*)yyvsp[0].el.El(); ;
-    break;}
-case 85:
-#line 503 "css_parse.y"
-{
-            if(yyvsp[0].el.El()->GetType() != cssEl::T_ClassType) {
+            cssMisc::cur_class = (cssClassType*)(yyvsp[0].el).El(); }
+    break;
+
+  case 80:
+#line 490 "css_parse.y"
+    {
+            if((yyvsp[0].el).El()->GetType() != cssEl::T_ClassType) {
 	      yyerror("Cannot inherit from non-class type");
 	      /* cssMisc::TypesSpace.Remove(cssMisc::cur_class); */
 	      cssMisc::cur_top->types.Remove(cssMisc::cur_class);
 	      return cssProg::YY_Err;
 	    }
-	    cssMisc::cur_class->AddParent((cssClassType*)(yyvsp[0].el.El())); ;
-    break;}
-case 87:
-#line 514 "css_parse.y"
-{ yyval.el = yyvsp[0].el; ;
-    break;}
-case 96:
-#line 531 "css_parse.y"
-{ yyval.el = cssMisc::VoidElPtr; ;
-    break;}
-case 97:
-#line 532 "css_parse.y"
-{ yyval.el = cssMisc::VoidElPtr; ;
-    break;}
-case 101:
-#line 536 "css_parse.y"
-{ yyval.el = cssMisc::VoidElPtr; ;
-    break;}
-case 102:
-#line 539 "css_parse.y"
-{
+	    cssMisc::cur_class->AddParent((cssClassType*)((yyvsp[0].el).El())); }
+    break;
+
+  case 82:
+#line 501 "css_parse.y"
+    { (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 91:
+#line 518 "css_parse.y"
+    { (yyval.el) = cssMisc::VoidElPtr; }
+    break;
+
+  case 92:
+#line 519 "css_parse.y"
+    { (yyval.el) = cssMisc::VoidElPtr; }
+    break;
+
+  case 96:
+#line 523 "css_parse.y"
+    { (yyval.el) = cssMisc::VoidElPtr; }
+    break;
+
+  case 97:
+#line 526 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-3].el.El()->tmp_str == "const") {
+	    if((yyvsp[-3].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
             cssMisc::parsing_membdefn = true;
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
-	    cssClassMember* mbr = new cssClassMember(yyvsp[-3].el.El(), (const char*)*nm);
+	    cssClassMember* mbr = new cssClassMember((yyvsp[-3].el).El(), (const char*)*nm);
             cssMisc::cur_class->members->Push(mbr);
-            cssMisc::cur_class->GetComments(mbr, yyvsp[0].el);
+            cssMisc::cur_class->GetComments(mbr, (yyvsp[0].el));
             cssMisc::parsing_membdefn = false;
-            cssEl::Done(nm); ;
-    break;}
-case 103:
-#line 551 "css_parse.y"
-{
+            cssEl::Done(nm); }
+    break;
+
+  case 98:
+#line 538 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-5].el.El()->tmp_str == "const") {
+	    if((yyvsp[-5].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
             cssMisc::parsing_membdefn = true;
-            cssMisc::cur_top->Prog()->Stack()->Push(new cssInt(yyvsp[-2].ival)); /* num of dims */
-            cssMisc::cur_top->Prog()->Stack()->Push(yyvsp[-5].el.El()); /* type is an arg */
+            cssMisc::cur_top->Prog()->Stack()->Push(new cssInt((yyvsp[-2].ival))); /* num of dims */
+            cssMisc::cur_top->Prog()->Stack()->Push((yyvsp[-5].el).El()); /* type is an arg */
             cssMisc::VoidArrayType.MakeTempToken(cssMisc::cur_top->Prog());
             cssArrayType* tmp = (cssArrayType*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssClassMember* mbr = new cssClassMember(tmp, tmp->name);
             cssMisc::cur_class->members->Push(mbr);
-            cssMisc::cur_class->GetComments(mbr, yyvsp[0].el);
-            cssMisc::parsing_membdefn = false; ;
-    break;}
-case 104:
-#line 567 "css_parse.y"
-{
+            cssMisc::cur_class->GetComments(mbr, (yyvsp[0].el));
+            cssMisc::parsing_membdefn = false; }
+    break;
+
+  case 99:
+#line 554 "css_parse.y"
+    {
             /* swap places with void marker */
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
             cssMisc::cur_top->Prog()->Stack()->Push(&cssMisc::Void);
-            cssMisc::cur_top->Prog()->Stack()->Push(nm); ;
-    break;}
-case 105:
-#line 575 "css_parse.y"
-{ yyval.ival = 1; ;
-    break;}
-case 106:
-#line 576 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival + 1; ;
-    break;}
-case 107:
-#line 580 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->Stack()->Push(new cssInt((int)*yyvsp[-1].el.El())); ;
-    break;}
-case 108:
-#line 584 "css_parse.y"
-{       /* pre-declare function */
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)yyvsp[-3].el.El();
-            cssMisc::cur_class->GetComments(fun, yyvsp[0].el);
+            cssMisc::cur_top->Prog()->Stack()->Push(nm); }
+    break;
+
+  case 100:
+#line 562 "css_parse.y"
+    { (yyval.ival) = 1; }
+    break;
+
+  case 101:
+#line 563 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival) + 1; }
+    break;
+
+  case 102:
+#line 567 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->Stack()->Push(new cssInt((int)*(yyvsp[-1].el).El())); }
+    break;
+
+  case 103:
+#line 571 "css_parse.y"
+    {       /* pre-declare function */
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)(yyvsp[-3].el).El();
+            cssMisc::cur_class->GetComments(fun, (yyvsp[0].el));
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
-	    fun->Define(cssMisc::ConstExpr, true); ;
-    break;}
-case 109:
-#line 590 "css_parse.y"
-{       /* constructor */
-	    if(yyvsp[-3].el.El() != cssMisc::cur_class) {
+	    fun->Define(cssMisc::ConstExpr, true); }
+    break;
+
+  case 104:
+#line 577 "css_parse.y"
+    {       /* constructor */
+	    if((yyvsp[-3].el).El() != cssMisc::cur_class) {
 	      yyerror("constructor-like method does not match current class type");
 	      return cssProg::YY_Err; }
 	    cssElPtr fun_ptr = cssMisc::cur_class->methods->FindName((const char*)cssMisc::cur_class->name);
@@ -2032,13 +2496,14 @@ case 109:
 	      cssMisc::cur_class->methods->Push(fun);
 	    }
 	    fun->is_tor = true;
-	    fun->argc = yyvsp[-2].ival + 1;	      	fun->GetArgDefs();
-            cssMisc::cur_class->GetComments(fun, yyvsp[0].el); ;
-    break;}
-case 110:
-#line 606 "css_parse.y"
-{       /* destructor */
-	    if(yyvsp[-3].el.El() != cssMisc::cur_class) {
+	    fun->argc = (yyvsp[-2].ival) + 1;	      	fun->GetArgDefs();
+            cssMisc::cur_class->GetComments(fun, (yyvsp[0].el)); }
+    break;
+
+  case 105:
+#line 593 "css_parse.y"
+    {       /* destructor */
+	    if((yyvsp[-3].el).El() != cssMisc::cur_class) {
 	      yyerror("destructor-like method does not match current class type");
 	      return cssProg::YY_Err; }
 	    String nm = "~";
@@ -2052,13 +2517,14 @@ case 110:
 	      cssMisc::cur_class->methods->Push(fun);
 	    }
 	    fun->is_tor = true;
-	    fun->argc = yyvsp[-2].ival + 1;		fun->GetArgDefs();
-            cssMisc::cur_class->GetComments(fun, yyvsp[0].el);;
-    break;}
-case 111:
-#line 623 "css_parse.y"
-{       /* destructor */
-	    if(yyvsp[-3].el.El() != cssMisc::cur_class) {
+	    fun->argc = (yyvsp[-2].ival) + 1;		fun->GetArgDefs();
+            cssMisc::cur_class->GetComments(fun, (yyvsp[0].el));}
+    break;
+
+  case 106:
+#line 610 "css_parse.y"
+    {       /* destructor */
+	    if((yyvsp[-3].el).El() != cssMisc::cur_class) {
 	      yyerror("destructor-like method does not match current class type");
 	      return cssProg::YY_Err; }
 	    String nm = "~";
@@ -2073,14 +2539,15 @@ case 111:
 	    }
 	    fun->is_tor = true;
 	    fun->is_virtual = true;
-	    fun->argc = yyvsp[-2].ival + 1;		fun->GetArgDefs();
-            cssMisc::cur_class->GetComments(fun, yyvsp[0].el);;
-    break;}
-case 112:
-#line 643 "css_parse.y"
-{
+	    fun->argc = (yyvsp[-2].ival) + 1;		fun->GetArgDefs();
+            cssMisc::cur_class->GetComments(fun, (yyvsp[0].el));}
+    break;
+
+  case 107:
+#line 630 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-1].el.El()->tmp_str == "const") {
+	    if((yyvsp[-1].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
@@ -2088,80 +2555,88 @@ case 112:
 	    cssMbrScriptFun* fun;
 	    if(fun_ptr != 0) {
 	      fun = (cssMbrScriptFun*)fun_ptr.El();
-	      yyval.el = fun_ptr;
+	      (yyval.el) = fun_ptr;
 	    }
 	    else {
 	      fun = new cssMbrScriptFun((const char*)*nm, cssMisc::cur_class);
-	      yyval.el = cssMisc::cur_class->methods->Push(fun);
+	      (yyval.el) = cssMisc::cur_class->methods->Push(fun);
 	    }
-	    if(yyvsp[-1].el.El()->tmp_str == "virtual") fun->is_virtual = true;
-	    fun->SetRetvType(yyvsp[-1].el.El()); /* preserve type info for later if nec */
-            cssEl::Done(nm); ;
-    break;}
-case 113:
-#line 664 "css_parse.y"
-{ yyval.el.Reset(); ;
-    break;}
-case 114:
-#line 665 "css_parse.y"
-{ yyval.el = yyvsp[0].el; ;
-    break;}
-case 115:
-#line 666 "css_parse.y"
-{ yyval.el = yyvsp[-1].el; ;
-    break;}
-case 116:
-#line 669 "css_parse.y"
-{	/* pre-declare function */
-            cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[-1].ival);	yyval.ival = yyvsp[-1].ival-1;
-	    cssScriptFun* fun = (cssScriptFun*)yyvsp[-3].el.El();
-	    fun->argc = yyvsp[-2].ival; fun->GetArgDefs(); ;
-    break;}
-case 117:
-#line 675 "css_parse.y"
-{
-	    cssScriptFun* fun = (cssScriptFun*)yyvsp[-3].el.El();
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[0].ival+1); yyval.ival = yyvsp[-1].ival-1;
+	    if((yyvsp[-1].el).El()->tmp_str == "virtual") fun->is_virtual = true;
+	    fun->SetRetvType((yyvsp[-1].el).El()); /* preserve type info for later if nec */
+            cssEl::Done(nm); }
+    break;
+
+  case 108:
+#line 651 "css_parse.y"
+    { (yyval.el).Reset(); }
+    break;
+
+  case 109:
+#line 652 "css_parse.y"
+    { (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 110:
+#line 653 "css_parse.y"
+    { (yyval.el) = (yyvsp[-1].el); }
+    break;
+
+  case 111:
+#line 656 "css_parse.y"
+    {	/* pre-declare function */
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[-1].ival));	(yyval.ival) = (yyvsp[-1].ival)-1;
+	    cssScriptFun* fun = (cssScriptFun*)(yyvsp[-3].el).El();
+	    fun->argc = (yyvsp[-2].ival); fun->GetArgDefs(); }
+    break;
+
+  case 112:
+#line 662 "css_parse.y"
+    {
+	    cssScriptFun* fun = (cssScriptFun*)(yyvsp[-3].el).El();
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[0].ival)+1); (yyval.ival) = (yyvsp[-1].ival)-1;
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
-	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[yyvsp[0].ival]->inst.El());
-	    cssMisc::cur_top->Prog()->insts[yyvsp[0].ival]->SetInst(yyvsp[-3].el); /* replace bra with fun */
+	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[(yyvsp[0].ival)]->inst.El());
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[0].ival)]->SetInst((yyvsp[-3].el)); /* replace bra with fun */
 	    cssMisc::cur_top->RemoveVar(bra_fun);	/* get rid of the bra */
 	    cssMisc::cur_top->SetPush(fun->fun); /* this is the one we want to push */
-	    fun->Define(cssMisc::ConstExpr); ;
-    break;}
-case 118:
-#line 687 "css_parse.y"
-{
+	    fun->Define(cssMisc::ConstExpr); }
+    break;
+
+  case 113:
+#line 674 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-3].el.El()->tmp_str == "const") {
+	    if((yyvsp[-3].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-case 119:
-#line 695 "css_parse.y"
-{
+	    (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+  case 114:
+#line 682 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-4].el.El()->tmp_str == "const") {
+	    if((yyvsp[-4].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(yyvsp[0].ival+1);	yyval.ival = yyvsp[-1].ival-1;
-	    cssScriptFun* fun = (cssScriptFun*)yyvsp[-3].el.El();
-	    fun->SetRetvType(yyvsp[-4].el.El());
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine((yyvsp[0].ival)+1);	(yyval.ival) = (yyvsp[-1].ival)-1;
+	    cssScriptFun* fun = (cssScriptFun*)(yyvsp[-3].el).El();
+	    fun->SetRetvType((yyvsp[-4].el).El());
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
-	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[yyvsp[0].ival]->inst.El());
-	    cssMisc::cur_top->Prog()->insts[yyvsp[0].ival]->SetInst(yyvsp[-3].el); /* replace bra with existing one */
+	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[(yyvsp[0].ival)]->inst.El());
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[0].ival)]->SetInst((yyvsp[-3].el)); /* replace bra with existing one */
 	    cssMisc::cur_top->RemoveVar(bra_fun);	/* get rid of the bra */
 	    fun->fun->Reset();	/* reset it for new defn */
 	    cssMisc::cur_top->SetPush(fun->fun); /* push this one */
-	    fun->Define(cssMisc::ConstExpr); ;
-    break;}
-case 120:
-#line 713 "css_parse.y"
-{
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)yyvsp[-3].el.El();
+	    fun->Define(cssMisc::ConstExpr); }
+    break;
+
+  case 115:
+#line 700 "css_parse.y"
+    {
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)(yyvsp[-3].el).El();
 	    cssClassType* cls = cssMisc::cur_class;
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
@@ -2171,34 +2646,36 @@ case 120:
 	    css_progdx nxt_ln = Code1(fun_ptr); /* code it so it shows up in a listing.. */
 	    cssMisc::cur_top->Prog()->insts[ nxt_ln ]->SetDefn();
 	    cssMisc::cur_top->SetPush(fun->fun); /* put it on the stack.. */
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival-1]->SetLine(nxt_ln+1); yyval.ival = yyvsp[-1].ival-1; ;
-    break;}
-case 121:
-#line 727 "css_parse.y"
-{
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)-1]->SetLine(nxt_ln+1); (yyval.ival) = (yyvsp[-1].ival)-1; }
+    break;
+
+  case 116:
+#line 714 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-1].el.El()->tmp_str == "const") {
+	    if((yyvsp[-1].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
 	    cssScriptFun* fun = new cssScriptFun((const char*)*nm);
-	    fun->SetRetvType(yyvsp[-1].el.El()); /* preserve type info for later if nec */
-	    if(yyvsp[-1].el.El()->tmp_str == "extern") yyval.el = cssMisc::Externs.PushUniqNameOld(fun);
-	    else yyval.el = cssMisc::cur_top->AddStatic(fun);
-            cssEl::Done(nm); ;
-    break;}
-case 122:
-#line 740 "css_parse.y"
-{
+	    fun->SetRetvType((yyvsp[-1].el).El()); /* preserve type info for later if nec */
+	    if((yyvsp[-1].el).El()->tmp_str == "extern") (yyval.el) = cssMisc::Externs.PushUniqNameOld(fun);
+	    else (yyval.el) = cssMisc::cur_top->AddStatic(fun);
+            cssEl::Done(nm); }
+    break;
+
+  case 117:
+#line 727 "css_parse.y"
+    {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-2].el.El()->tmp_str == "const") {
+	    if((yyvsp[-2].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    if((yyvsp[-1].el.El())->GetType() != cssEl::T_ClassType) {
+	    if(((yyvsp[-1].el).El())->GetType() != cssEl::T_ClassType) {
 	      yyerror("attempt to define member function in non-class type");
 	      return cssProg::YY_Err; }
-	    cssClassType* cls = (cssClassType*)yyvsp[-1].el.El();
+	    cssClassType* cls = (cssClassType*)(yyvsp[-1].el).El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
 	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)*nm);
@@ -2208,24 +2685,25 @@ case 122:
             if(fun->GetType() == cssEl::T_MbrCFun) {
               yyerror("member function is hardcoded");
               return cssProg::YY_Err; }
-	    if((fun->retv_type != yyvsp[-2].el.El())
+	    if((fun->retv_type != (yyvsp[-2].el).El())
 	       && !(fun->retv_type->IsRef() || fun->retv_type->GetType() == cssEl::T_Ptr))
 	      cssMisc::Warning(NULL, "return type does not match that of declaration");
-	    fun->SetRetvType(yyvsp[-2].el.El());
-	    yyval.el.SetDirect(fun);  cssEl::Done(nm); ;
-    break;}
-case 123:
-#line 766 "css_parse.y"
-{
+	    fun->SetRetvType((yyvsp[-2].el).El());
+	    (yyval.el).SetDirect(fun);  cssEl::Done(nm); }
+    break;
+
+  case 118:
+#line 753 "css_parse.y"
+    {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-1].el.El()->tmp_str == "const") {
+	    if((yyvsp[-1].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    if((yyvsp[-1].el.El())->GetType() != cssEl::T_ClassType) {
+	    if(((yyvsp[-1].el).El())->GetType() != cssEl::T_ClassType) {
 	      yyerror("attempt to define constructor member function in non-class type");
 	      return cssProg::YY_Err; }
-	    cssClassType* cls = (cssClassType*)yyvsp[-1].el.El();
+	    cssClassType* cls = (cssClassType*)(yyvsp[-1].el).El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)cls->name);
 	    if(fun == &cssMisc::Void) {
@@ -2234,20 +2712,21 @@ case 123:
             if(fun->GetType() == cssEl::T_MbrCFun) {
               yyerror("member function is hardcoded");
               return cssProg::YY_Err; }
-	    yyval.el.SetDirect(fun); ;
-    break;}
-case 124:
-#line 787 "css_parse.y"
-{
+	    (yyval.el).SetDirect(fun); }
+    break;
+
+  case 119:
+#line 774 "css_parse.y"
+    {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-2].el.El()->tmp_str == "const") {
+	    if((yyvsp[-2].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    if((yyvsp[-2].el.El())->GetType() != cssEl::T_ClassType) {
+	    if(((yyvsp[-2].el).El())->GetType() != cssEl::T_ClassType) {
 	      yyerror("attempt to define destructor member function in non-class type");
 	      return cssProg::YY_Err; }
-	    cssClassType* cls = (cssClassType*)yyvsp[-2].el.El();
+	    cssClassType* cls = (cssClassType*)(yyvsp[-2].el).El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    String nm = "~"; nm += cls->name;
 	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)nm);
@@ -2257,238 +2736,277 @@ case 124:
             if(fun->GetType() == cssEl::T_MbrCFun) {
               yyerror("member function is hardcoded");
 	      return cssProg::YY_Err; }
-	    yyval.el.SetDirect(fun); ;
-    break;}
-case 125:
-#line 809 "css_parse.y"
-{ yyval.ival = 0; ;
-    break;}
-case 126:
-#line 810 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; ;
-    break;}
-case 127:
-#line 811 "css_parse.y"
-{ yyval.ival = 0; ;
-    break;}
-case 128:
-#line 812 "css_parse.y"
-{ yyval.ival = yyvsp[-2].ival; ;
-    break;}
-case 129:
-#line 815 "css_parse.y"
-{ yyval.ival = 1; ;
-    break;}
-case 130:
-#line 816 "css_parse.y"
-{ yyval.ival = yyvsp[-2].ival + 1; ;
-    break;}
-case 131:
-#line 819 "css_parse.y"
-{ cssMisc::parsing_args = false; ;
-    break;}
-case 132:
-#line 820 "css_parse.y"
-{
+	    (yyval.el).SetDirect(fun); }
+    break;
+
+  case 120:
+#line 796 "css_parse.y"
+    { (yyval.ival) = 0; }
+    break;
+
+  case 121:
+#line 797 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival); }
+    break;
+
+  case 122:
+#line 798 "css_parse.y"
+    { (yyval.ival) = 0; }
+    break;
+
+  case 123:
+#line 799 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].ival); }
+    break;
+
+  case 124:
+#line 802 "css_parse.y"
+    { (yyval.ival) = 1; }
+    break;
+
+  case 125:
+#line 803 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].ival) + 1; }
+    break;
+
+  case 126:
+#line 806 "css_parse.y"
+    { cssMisc::parsing_args = false; }
+    break;
+
+  case 127:
+#line 807 "css_parse.y"
+    {
 	    cssMisc::parsing_args = false;
-	    cssMisc::default_args.Push(yyvsp[0].el.El()); ;
-    break;}
-case 133:
-#line 826 "css_parse.y"
-{
+	    cssMisc::default_args.Push((yyvsp[0].el).El()); }
+    break;
+
+  case 128:
+#line 813 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-1].el.El()->tmp_str == "const") {
+	    if((yyvsp[-1].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssMisc::parsing_args = true;
-	    yyval.el = cssMisc::ConstExpr->Stack()->Push(new cssString(yyvsp[0].nm));
-	    (yyvsp[-1].el.El())->MakeToken(cssMisc::ConstExpr); ;
-    break;}
-case 134:
-#line 834 "css_parse.y"
-{
+	    (yyval.el) = cssMisc::ConstExpr->Stack()->Push(new cssString((yyvsp[0].nm)));
+	    ((yyvsp[-1].el).El())->MakeToken(cssMisc::ConstExpr); }
+    break;
+
+  case 129:
+#line 821 "css_parse.y"
+    {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-1].el.El()->tmp_str == "const") {
+	    if((yyvsp[-1].el).El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssMisc::parsing_args = true;
-	    yyval.el = cssMisc::ConstExpr->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName()));
-	    (yyvsp[-1].el.El())->MakeToken(cssMisc::ConstExpr); ;
-    break;}
-case 136:
-#line 845 "css_parse.y"
-{
-	    if((yyvsp[-2].ival < 0) && (yyvsp[0].ival < 0)) yyval.ival = -1;
-	    else if((yyvsp[-2].ival >= 0) && (yyvsp[0].ival < 0)) yyval.ival = yyvsp[-2].ival;
-	    else if((yyvsp[-2].ival < 0) && (yyvsp[0].ival >= 0)) yyval.ival = yyvsp[0].ival;
-	    else yyval.ival = -1; ;
-    break;}
-case 137:
-#line 852 "css_parse.y"
-{
+	    (yyval.el) = cssMisc::ConstExpr->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName()));
+	    ((yyvsp[-1].el).El())->MakeToken(cssMisc::ConstExpr); }
+    break;
+
+  case 131:
+#line 832 "css_parse.y"
+    {
+	    if(((yyvsp[-2].ival) < 0) && ((yyvsp[0].ival) < 0)) (yyval.ival) = -1;
+	    else if(((yyvsp[-2].ival) >= 0) && ((yyvsp[0].ival) < 0)) (yyval.ival) = (yyvsp[-2].ival);
+	    else if(((yyvsp[-2].ival) < 0) && ((yyvsp[0].ival) >= 0)) (yyval.ival) = (yyvsp[0].ival);
+	    else (yyval.ival) = -1; }
+    break;
+
+  case 132:
+#line 839 "css_parse.y"
+    {
             (cssMisc::cur_type.El())->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    if(tmp->ptr.El()->GetType() == cssEl::T_Class) {
-	      yyval.ival = Code2(tmp->ptr, cssBI::constr); }
-	    else yyval.ival = -1;
-	    cssEl::Done(tmp); ;
-    break;}
-case 138:
-#line 861 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = ""; ;
-    break;}
-case 139:
-#line 862 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = "extern"; yyval.el = yyvsp[0].el; ;
-    break;}
-case 140:
-#line 863 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = "static"; yyval.el = yyvsp[0].el; ;
-    break;}
-case 141:
-#line 864 "css_parse.y"
-{ /* use const expr prog to code stuff */
-	  yyvsp[0].el.El()->tmp_str = "const"; yyval.el = yyvsp[0].el; cssMisc::CodeConstExpr(); ;
-    break;}
-case 142:
-#line 866 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = "virtual"; yyval.el = yyvsp[0].el; ;
-    break;}
-case 143:
-#line 867 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = ""; yyval.el = yyvsp[0].el; ;
-    break;}
-case 144:
-#line 868 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = "virtual"; yyval.el = yyvsp[0].el; ;
-    break;}
-case 145:
-#line 869 "css_parse.y"
-{ yyvsp[0].el.El()->tmp_str = "virtual"; yyval.el = yyvsp[0].el; ;
-    break;}
-case 146:
-#line 872 "css_parse.y"
-{ yyval.el = yyvsp[0].el; cssMisc::cur_type = yyval.el; ;
-    break;}
-case 147:
-#line 873 "css_parse.y"
-{
-	  if((yyvsp[-1].el.El()->GetParse() != CSS_PTR) || (yyvsp[0].ival >= 2)) {
-	    yyval.el = cssMisc::cur_top->AddPtrType(yyvsp[-1].el.El()); cssMisc::cur_type = yyval.el;
+	      (yyval.ival) = Code2(tmp->ptr, cssBI::constr); }
+	    else (yyval.ival) = -1;
+	    cssEl::Done(tmp); }
+    break;
+
+  case 133:
+#line 848 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = ""; }
+    break;
+
+  case 134:
+#line 849 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = "extern"; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 135:
+#line 850 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = "static"; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 136:
+#line 851 "css_parse.y"
+    { /* use const expr prog to code stuff */
+	  (yyvsp[0].el).El()->tmp_str = "const"; (yyval.el) = (yyvsp[0].el); cssMisc::CodeConstExpr(); }
+    break;
+
+  case 137:
+#line 853 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 138:
+#line 854 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = ""; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 139:
+#line 855 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 140:
+#line 856 "css_parse.y"
+    { (yyvsp[0].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[0].el); }
+    break;
+
+  case 141:
+#line 859 "css_parse.y"
+    { (yyval.el) = (yyvsp[0].el); cssMisc::cur_type = (yyval.el); }
+    break;
+
+  case 142:
+#line 860 "css_parse.y"
+    {
+	  if(((yyvsp[-1].el).El()->GetParse() != CSS_PTR) || ((yyvsp[0].ival) >= 2)) {
+	    (yyval.el) = cssMisc::cur_top->AddPtrType((yyvsp[-1].el).El()); cssMisc::cur_type = (yyval.el);
 	  }
 	  else {
-	    yyval.el = yyvsp[-1].el; cssMisc::cur_type = yyval.el; } ;
-    break;}
-case 148:
-#line 879 "css_parse.y"
-{
-	  yyval.el = cssMisc::cur_top->AddRefType(yyvsp[-1].el.El()); cssMisc::cur_type = yyval.el; ;
-    break;}
-case 149:
-#line 881 "css_parse.y"
-{
-	  if((yyvsp[-2].el.El()->GetParse() != CSS_PTR) || (yyvsp[-1].ival >= 2)) {
-            cssElPtr npt = cssMisc::cur_top->AddPtrType(yyvsp[-2].el.El());
-            yyval.el = cssMisc::cur_top->AddRefType(npt.El()); cssMisc::cur_type = yyval.el; }
+	    (yyval.el) = (yyvsp[-1].el); cssMisc::cur_type = (yyval.el); } }
+    break;
+
+  case 143:
+#line 866 "css_parse.y"
+    {
+	  (yyval.el) = cssMisc::cur_top->AddRefType((yyvsp[-1].el).El()); cssMisc::cur_type = (yyval.el); }
+    break;
+
+  case 144:
+#line 868 "css_parse.y"
+    {
+	  if(((yyvsp[-2].el).El()->GetParse() != CSS_PTR) || ((yyvsp[-1].ival) >= 2)) {
+            cssElPtr npt = cssMisc::cur_top->AddPtrType((yyvsp[-2].el).El());
+            (yyval.el) = cssMisc::cur_top->AddRefType(npt.El()); cssMisc::cur_type = (yyval.el); }
 	  else {
-	    yyval.el = cssMisc::cur_top->AddRefType(yyvsp[-2].el.El()); cssMisc::cur_type = yyval.el; } ;
-    break;}
-case 152:
-#line 891 "css_parse.y"
-{
+	    (yyval.el) = cssMisc::cur_top->AddRefType((yyvsp[-2].el).El()); cssMisc::cur_type = (yyval.el); } }
+    break;
+
+  case 147:
+#line 878 "css_parse.y"
+    {
           cssEl* itm;
-          if(yyvsp[-1].el.El()->GetParse() != CSS_PTR)
-	    itm = yyvsp[-1].el.El()->GetScoped((const char*)yyvsp[0].el.El()->name);
+          if((yyvsp[-1].el).El()->GetParse() != CSS_PTR)
+	    itm = (yyvsp[-1].el).El()->GetScoped((const char*)(yyvsp[0].el).El()->name);
 	  else
-	    itm = yyvsp[0].el.El();
-	  if(itm != &cssMisc::Void)  yyval.el.SetDirect(itm);
-	  else			yyval.el.Reset();
-	  cssMisc::cur_type = yyval.el; cssMisc::cur_scope = NULL; ;
-    break;}
-case 153:
-#line 902 "css_parse.y"
-{
-           if(yyvsp[-1].el.El()->GetType() != cssEl::T_ClassType) {
+	    itm = (yyvsp[0].el).El();
+	  if(itm != &cssMisc::Void)  (yyval.el).SetDirect(itm);
+	  else			(yyval.el).Reset();
+	  cssMisc::cur_type = (yyval.el); cssMisc::cur_scope = NULL; }
+    break;
+
+  case 148:
+#line 889 "css_parse.y"
+    {
+           if((yyvsp[-1].el).El()->GetType() != cssEl::T_ClassType) {
 	     yyerror("scoping of non-class type");
 	     return cssProg::YY_Err; }
-           cssMisc::cur_scope = yyvsp[-1].el.El(); ;
-    break;}
-case 154:
-#line 907 "css_parse.y"
-{
-           cssMisc::cur_scope = yyvsp[-1].el.El(); ;
-    break;}
-case 157:
-#line 915 "css_parse.y"
-{ yyval.ival = 1; ;
-    break;}
-case 158:
-#line 916 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival + 1; ;
-    break;}
-case 159:
+           cssMisc::cur_scope = (yyvsp[-1].el).El(); }
+    break;
+
+  case 149:
+#line 894 "css_parse.y"
+    {
+           cssMisc::cur_scope = (yyvsp[-1].el).El(); }
+    break;
+
+  case 152:
+#line 902 "css_parse.y"
+    { (yyval.ival) = 1; }
+    break;
+
+  case 153:
+#line 903 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival) + 1; }
+    break;
+
+  case 154:
+#line 906 "css_parse.y"
+    { cssMisc::cur_top->Prog()->lastif = -1; }
+    break;
+
+  case 156:
+#line 910 "css_parse.y"
+    { cssMisc::cur_top->Prog()->lastdo = -1; }
+    break;
+
+  case 158:
+#line 914 "css_parse.y"
+    { Code1(cssBI::pop); }
+    break;
+
+  case 161:
+#line 917 "css_parse.y"
+    { Code1((yyvsp[-2].el)); (yyval.ival) = (yyvsp[-1].ival); }
+    break;
+
+  case 162:
+#line 918 "css_parse.y"
+    { Code1((yyvsp[-3].el)); (yyval.ival) = (yyvsp[-2].ival); }
+    break;
+
+  case 163:
 #line 919 "css_parse.y"
-{ cssMisc::cur_top->Prog()->lastif = -1; ;
-    break;}
-case 161:
-#line 923 "css_parse.y"
-{ cssMisc::cur_top->Prog()->lastdo = -1; ;
-    break;}
-case 163:
-#line 927 "css_parse.y"
-{ Code1(cssBI::pop); ;
-    break;}
-case 166:
-#line 930 "css_parse.y"
-{ Code1(yyvsp[-2].el); yyval.ival = yyvsp[-1].ival; ;
-    break;}
-case 167:
-#line 931 "css_parse.y"
-{ Code1(yyvsp[-3].el); yyval.ival = yyvsp[-2].ival; ;
-    break;}
-case 168:
-#line 932 "css_parse.y"
-{ yyval.ival = Code1(yyvsp[-1].el); ;
-    break;}
-case 169:
-#line 933 "css_parse.y"
-{ yyval.ival = Code1(yyvsp[-1].el); ;
-    break;}
-case 173:
-#line 939 "css_parse.y"
-{
-	    yyval.ival = cssMisc::cur_top->Prog()->size; // next instr is 'it'
+    { (yyval.ival) = Code1((yyvsp[-1].el)); }
+    break;
+
+  case 164:
+#line 920 "css_parse.y"
+    { (yyval.ival) = Code1((yyvsp[-1].el)); }
+    break;
+
+  case 168:
+#line 926 "css_parse.y"
+    {
+	    (yyval.ival) = cssMisc::cur_top->Prog()->size; // next instr is 'it'
   	    if(cssMisc::cur_top->Prog()->name != cssSwitchBlock_Name) {
 	      yyerror("case statement not in a switch block");
 	      return cssProg::YY_Err;
 	    }
 	    cssElPtr aryptr = cssMisc::cur_top->Prog()->literals.FindName(cssSwitchJump_Name);
 	    cssArray* val_ary = (cssArray*)aryptr.El();
-	    val_ary->items->Push(new cssInt(yyval.ival, (const char*)*(yyvsp[-1].el.El()))); ;
-    break;}
-case 174:
-#line 948 "css_parse.y"
-{
-	    yyval.ival = cssMisc::cur_top->Prog()->size; // next instr is 'it'
+	    val_ary->items->Push(new cssInt((yyval.ival), (const char*)*((yyvsp[-1].el).El()))); }
+    break;
+
+  case 169:
+#line 935 "css_parse.y"
+    {
+	    (yyval.ival) = cssMisc::cur_top->Prog()->size; // next instr is 'it'
   	    if(cssMisc::cur_top->Prog()->name != cssSwitchBlock_Name) {
 	      yyerror("case statement not in a switch block");
 	      return cssProg::YY_Err;
 	    }
 	    cssElPtr aryptr = cssMisc::cur_top->Prog()->literals.FindName(cssSwitchJump_Name);
 	    cssArray* val_ary = (cssArray*)aryptr.El();
-	    val_ary->items->Push(new cssInt(yyval.ival, cssSwitchDefault_Name)); ;
-    break;}
-case 178:
-#line 966 "css_parse.y"
-{
-            yyval.ival = yyvsp[-5].ival;
+	    val_ary->items->Push(new cssInt((yyval.ival), cssSwitchDefault_Name)); }
+    break;
+
+  case 173:
+#line 953 "css_parse.y"
+    {
+            (yyval.ival) = (yyvsp[-5].ival);
 	    /* value to switch on */
 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push
 							  (new cssString(0,cssSwitchVar_Name))));
 	    /* bogus return value */
 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push
 							  (new cssInt(0,cssRetv_Name))));
-            cssScriptFun* tmp = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[yyvsp[0].ival]->inst.El());
+            cssScriptFun* tmp = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[(yyvsp[0].ival)]->inst.El());
 	    tmp->Define(cssMisc::ConstExpr, false, cssSwitchBlock_Name);
 	    tmp->is_block = true; /* this is actually a block.. */
 	    /* make the jump-table address array: ints whose name is val, val is adr */
@@ -2501,175 +3019,199 @@ case 178:
 	    cssRef* aryptr = (cssRef*) tmp->fun->Stack()->Pop();
 	    ((cssArray*)aryptr->ptr.El())->items->DelPop(); /* get rid of first el */
 	    tmp->fun->Code(cssBI::switch_jump);
-	    cssEl::Done(aryptr); ;
-    break;}
-case 179:
-#line 991 "css_parse.y"
-{ yyval.ival = Code1(yyvsp[0].el); ;
-    break;}
-case 180:
-#line 995 "css_parse.y"
-{
-            cssMisc::cur_top->Prog()->insts[yyvsp[-8].ival + 1]->SetLine(yyvsp[-5].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-8].ival + 2]->SetLine(yyvsp[-3].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-8].ival + 3]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-8].ival + 4]->SetLine(yyvsp[0].ival); ;
-    break;}
-case 181:
-#line 1002 "css_parse.y"
-{
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 1]->SetLine(yyvsp[-6].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 2]->SetLine(yyvsp[-4].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 3]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 4]->SetLine(yyvsp[0].ival); ;
-    break;}
-case 182:
-#line 1009 "css_parse.y"
-{
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 1]->SetLine(yyvsp[-5].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 2]->SetLine(yyvsp[-4].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 3]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-9].ival + 4]->SetLine(yyvsp[0].ival); ;
-    break;}
-case 183:
+	    cssEl::Done(aryptr); }
+    break;
+
+  case 174:
+#line 978 "css_parse.y"
+    { (yyval.ival) = Code1((yyvsp[0].el)); }
+    break;
+
+  case 175:
+#line 982 "css_parse.y"
+    {
+            cssMisc::cur_top->Prog()->insts[(yyvsp[-8].ival) + 1]->SetLine((yyvsp[-5].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-8].ival) + 2]->SetLine((yyvsp[-3].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-8].ival) + 3]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-8].ival) + 4]->SetLine((yyvsp[0].ival)); }
+    break;
+
+  case 176:
+#line 989 "css_parse.y"
+    {
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 1]->SetLine((yyvsp[-6].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 2]->SetLine((yyvsp[-4].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 3]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 4]->SetLine((yyvsp[0].ival)); }
+    break;
+
+  case 177:
+#line 996 "css_parse.y"
+    {
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 1]->SetLine((yyvsp[-5].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 2]->SetLine((yyvsp[-4].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 3]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-9].ival) + 4]->SetLine((yyvsp[0].ival)); }
+    break;
+
+  case 178:
+#line 1003 "css_parse.y"
+    {
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-10].ival) + 1]->SetLine((yyvsp[-6].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-10].ival) + 2]->SetLine((yyvsp[-4].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-10].ival) + 3]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-10].ival) + 4]->SetLine((yyvsp[0].ival)); }
+    break;
+
+  case 179:
+#line 1010 "css_parse.y"
+    {
+            (yyval.ival) = Code2((yyvsp[0].el),cssInst::Stop);
+	    Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop); }
+    break;
+
+  case 180:
 #line 1016 "css_parse.y"
-{
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-10].ival + 1]->SetLine(yyvsp[-6].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-10].ival + 2]->SetLine(yyvsp[-4].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-10].ival + 3]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-10].ival + 4]->SetLine(yyvsp[0].ival); ;
-    break;}
-case 184:
-#line 1023 "css_parse.y"
-{
-            yyval.ival = Code2(yyvsp[0].el,cssInst::Stop);
-	    Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop); ;
-    break;}
-case 185:
-#line 1029 "css_parse.y"
-{ cssMisc::cur_top->Prog()->lastdo = yyvsp[-1].ival; ;
-    break;}
-case 186:
-#line 1032 "css_parse.y"
-{ yyval.ival = Code3(yyvsp[0].el, cssInst::Stop, cssInst::Stop);
-                                  cssMisc::cur_top->Prog()->lastdo = yyval.ival; ;
-    break;}
-case 187:
-#line 1037 "css_parse.y"
-{
+    { cssMisc::cur_top->Prog()->lastdo = (yyvsp[-1].ival); }
+    break;
+
+  case 181:
+#line 1019 "css_parse.y"
+    { (yyval.ival) = Code3((yyvsp[0].el), cssInst::Stop, cssInst::Stop);
+                                  cssMisc::cur_top->Prog()->lastdo = (yyval.ival); }
+    break;
+
+  case 182:
+#line 1024 "css_parse.y"
+    {
 	    if(cssMisc::cur_top->Prog()->lastdo >= 0) {
- 	      cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 1]->SetLine(yyvsp[-2].ival);
-	      cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 2]->SetLine(yyvsp[0].ival);
+ 	      cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 1]->SetLine((yyvsp[-2].ival));
+	      cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 2]->SetLine((yyvsp[0].ival));
 	    }
 	    else {
-	      cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 1]->SetLine(yyvsp[0].ival-1); /* do nothing */
-	      cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 2]->SetLine(yyvsp[0].ival);
+	      cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 1]->SetLine((yyvsp[0].ival)-1); /* do nothing */
+	      cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 2]->SetLine((yyvsp[0].ival));
 	    }
-	    cssMisc::cur_top->Prog()->lastdo = -1;	;
-    break;}
-case 188:
-#line 1048 "css_parse.y"
-{
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 1]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 2]->SetLine(yyvsp[0].ival); ;
-    break;}
-case 189:
-#line 1053 "css_parse.y"
-{
+	    cssMisc::cur_top->Prog()->lastdo = -1;	}
+    break;
+
+  case 183:
+#line 1035 "css_parse.y"
+    {
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 1]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 2]->SetLine((yyvsp[0].ival)); }
+    break;
+
+  case 184:
+#line 1040 "css_parse.y"
+    {
             if(cssMisc::cur_top->Prog()->lastdo < 0) {
-	      yyval.ival = Code3(yyvsp[0].el, cssInst::Stop, cssInst::Stop); }
-            else { yyval.ival = cssMisc::cur_top->Prog()->lastdo;} ;
-    break;}
-case 190:
-#line 1061 "css_parse.y"
-{
+	      (yyval.ival) = Code3((yyvsp[0].el), cssInst::Stop, cssInst::Stop); }
+            else { (yyval.ival) = cssMisc::cur_top->Prog()->lastdo;} }
+    break;
+
+  case 185:
+#line 1048 "css_parse.y"
+    {
             if(cssMisc::cur_top->debug > 3)
-	      cerr << "\nvalue of then is: " << yyvsp[-1].ival << "\n";
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 1]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival]->EndIf(yyvsp[0].ival); ;
-    break;}
-case 191:
+	      cerr << "\nvalue of then is: " << (yyvsp[-1].ival) << "\n";
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 1]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival)]->EndIf((yyvsp[0].ival)); }
+    break;
+
+  case 186:
+#line 1053 "css_parse.y"
+    {
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-3].ival) + 1]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)]->previf = (yyvsp[-3].ival);
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)]->EndIf(); }
+    break;
+
+  case 187:
+#line 1057 "css_parse.y"
+    {
+	    css_progdx tmp = cssMisc::cur_top->Prog()->elseif;
+	    if(tmp < 0) {
+	      yyerror("else without matching if");
+	      return cssProg::YY_Err;
+	    }
+	    cssMisc::cur_top->Prog()->elseif = -1;	/* reset the else */
+	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[tmp]->EndIf((yyvsp[0].ival)); (yyval.ival) = tmp; }
+    break;
+
+  case 188:
 #line 1066 "css_parse.y"
-{
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-3].ival + 1]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival]->previf = yyvsp[-3].ival;
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival]->EndIf(); ;
-    break;}
-case 192:
-#line 1070 "css_parse.y"
-{
+    {
 	    css_progdx tmp = cssMisc::cur_top->Prog()->elseif;
 	    if(tmp < 0) {
 	      yyerror("else without matching if");
 	      return cssProg::YY_Err;
 	    }
 	    cssMisc::cur_top->Prog()->elseif = -1;	/* reset the else */
-	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[tmp]->EndIf(yyvsp[0].ival); yyval.ival = tmp; ;
-    break;}
-case 193:
-#line 1079 "css_parse.y"
-{
-	    css_progdx tmp = cssMisc::cur_top->Prog()->elseif;
-	    if(tmp < 0) {
-	      yyerror("else without matching if");
-	      return cssProg::YY_Err;
-	    }
-	    cssMisc::cur_top->Prog()->elseif = -1;	/* reset the else */
-	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine(yyvsp[-1].ival);
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival]->previf = tmp;
-	    cssMisc::cur_top->Prog()->insts[yyvsp[-1].ival]->EndIf(); yyval.ival = tmp; ;
-    break;}
-case 194:
-#line 1091 "css_parse.y"
-{
-            yyval.ival = Code1(yyvsp[0].el); Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop);
+	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine((yyvsp[-1].ival));
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)]->previf = tmp;
+	    cssMisc::cur_top->Prog()->insts[(yyvsp[-1].ival)]->EndIf(); (yyval.ival) = tmp; }
+    break;
+
+  case 189:
+#line 1078 "css_parse.y"
+    {
+            (yyval.ival) = Code1((yyvsp[0].el)); Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop);
 	    cssMisc::cur_top->Prog()->ResetLasts();
-	    cssMisc::cur_top->Prog()->lastif = yyval.ival; ;
-    break;}
-case 195:
-#line 1097 "css_parse.y"
-{
+	    cssMisc::cur_top->Prog()->lastif = (yyval.ival); }
+    break;
+
+  case 190:
+#line 1084 "css_parse.y"
+    {
             cssMisc::cur_top->Prog()->elseif = cssMisc::cur_top->Prog()->lastif;
-	    cssMisc::cur_top->Prog()->ResetLasts(); ;
-    break;}
-case 196:
-#line 1102 "css_parse.y"
-{ Code1(cssInst::Stop); yyval.ival = yyvsp[-1].ival; ;
-    break;}
-case 197:
-#line 1105 "css_parse.y"
-{
+	    cssMisc::cur_top->Prog()->ResetLasts(); }
+    break;
+
+  case 191:
+#line 1089 "css_parse.y"
+    { Code1(cssInst::Stop); (yyval.ival) = (yyvsp[-1].ival); }
+    break;
+
+  case 192:
+#line 1092 "css_parse.y"
+    {
             cssScriptFun* b = new cssScriptFun(cssBlock_Name);
 	    cssMisc::cur_top->AddStatic(b);
-	    yyval.ival = Code1(b);  cssMisc::cur_top->Prog()->insts[ yyval.ival ]->SetDefn();
-	    cssMisc::cur_top->SetPush(b->fun); ;
-    break;}
-case 198:
-#line 1112 "css_parse.y"
-{  ;
-    break;}
-case 199:
-#line 1115 "css_parse.y"
-{
-            yyval.ival = Code1(cssInst::Stop); cssMisc::cur_top->SetPop();
+	    (yyval.ival) = Code1(b);  cssMisc::cur_top->Prog()->insts[ (yyval.ival) ]->SetDefn();
+	    cssMisc::cur_top->SetPush(b->fun); }
+    break;
+
+  case 193:
+#line 1099 "css_parse.y"
+    {  }
+    break;
+
+  case 194:
+#line 1102 "css_parse.y"
+    {
+            (yyval.ival) = Code1(cssInst::Stop); cssMisc::cur_top->SetPop();
 	    cssScriptFun* sfun = cssMisc::cur_top->Prog()->owner;
 	    if((sfun != NULL) && (sfun->GetType() == cssEl::T_MbrScriptFun)) {
 	      cssMisc::cur_class = NULL; /* get rid of current class pointer.. */
 	      cssMisc::cur_method = NULL; } /* and current method pointer */
-	  ;
-    break;}
-case 200:
-#line 1124 "css_parse.y"
-{ yyval.ival = Code1(yyvsp[0].el); ;
-    break;}
-case 203:
-#line 1130 "css_parse.y"
-{ Code1(cssBI::asgn); ;
-    break;}
-case 204:
-#line 1131 "css_parse.y"
-{
+	  }
+    break;
+
+  case 195:
+#line 1111 "css_parse.y"
+    { (yyval.ival) = Code1((yyvsp[0].el)); }
+    break;
+
+  case 198:
+#line 1117 "css_parse.y"
+    { Code1(cssBI::asgn); }
+    break;
+
+  case 199:
+#line 1118 "css_parse.y"
+    {
 	    int c; String inp;
 	    while(((c = cssMisc::cur_top->Prog()->Getc()) != '}') && (c != EOF)) inp += (char)c;
 	    cssSStream* ss = new cssSStream();
@@ -2678,639 +3220,725 @@ case 204:
 	    *sss << inp;
 	    sss->seekg(0, ios::beg);
 	    Code3(ss, cssBI::arg_swap, cssBI::rshift);
- 	    Code1(cssBI::sstream_rewind); /* rewind stream for next use.. */ ;
-    break;}
-case 205:
-#line 1141 "css_parse.y"
-{ Code1(cssBI::asgn_add); ;
-    break;}
-case 206:
+ 	    Code1(cssBI::sstream_rewind); /* rewind stream for next use.. */ }
+    break;
+
+  case 200:
+#line 1128 "css_parse.y"
+    { Code1(cssBI::asgn_add); }
+    break;
+
+  case 201:
+#line 1129 "css_parse.y"
+    { Code1(cssBI::asgn_sub); }
+    break;
+
+  case 202:
+#line 1130 "css_parse.y"
+    { Code1(cssBI::asgn_mult); }
+    break;
+
+  case 203:
+#line 1131 "css_parse.y"
+    { Code1(cssBI::asgn_div); }
+    break;
+
+  case 204:
+#line 1132 "css_parse.y"
+    { Code1(cssBI::asgn_mod); }
+    break;
+
+  case 205:
+#line 1133 "css_parse.y"
+    { Code1(cssBI::asgn_lshift); }
+    break;
+
+  case 206:
+#line 1134 "css_parse.y"
+    { Code1(cssBI::asgn_rshift); }
+    break;
+
+  case 207:
+#line 1135 "css_parse.y"
+    { Code1(cssBI::asgn_and); }
+    break;
+
+  case 208:
+#line 1136 "css_parse.y"
+    { Code1(cssBI::asgn_xor); }
+    break;
+
+  case 209:
+#line 1137 "css_parse.y"
+    { Code1(cssBI::asgn_or); }
+    break;
+
+  case 210:
+#line 1138 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].ival); Code2((yyvsp[0].el),(yyvsp[-2].el)); }
+    break;
+
+  case 211:
+#line 1139 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-3].ival); Code2((yyvsp[-2].el),(yyvsp[-4].el)); }
+    break;
+
+  case 212:
+#line 1140 "css_parse.y"
+    {
+	  (yyval.ival) = (yyvsp[-2].ival); Code2((yyvsp[-1].el),(yyvsp[-3].el)); }
+    break;
+
+  case 213:
 #line 1142 "css_parse.y"
-{ Code1(cssBI::asgn_sub); ;
-    break;}
-case 207:
+    { (yyval.ival) = (yyvsp[-1].ival); Code1((yyvsp[-2].el)); }
+    break;
+
+  case 214:
 #line 1143 "css_parse.y"
-{ Code1(cssBI::asgn_mult); ;
-    break;}
-case 208:
+    { (yyval.ival) = (yyvsp[-1].ival); Code1((yyvsp[-4].el)); }
+    break;
+
+  case 215:
 #line 1144 "css_parse.y"
-{ Code1(cssBI::asgn_div); ;
-    break;}
-case 209:
+    { Code1(cssBI::lor); }
+    break;
+
+  case 216:
 #line 1145 "css_parse.y"
-{ Code1(cssBI::asgn_mod); ;
-    break;}
-case 210:
+    { Code1(cssBI::land); }
+    break;
+
+  case 217:
 #line 1146 "css_parse.y"
-{ Code1(cssBI::asgn_lshift); ;
-    break;}
-case 211:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::addr_of); }
+    break;
+
+  case 218:
 #line 1147 "css_parse.y"
-{ Code1(cssBI::asgn_rshift); ;
-    break;}
-case 212:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::de_ptr); }
+    break;
+
+  case 219:
 #line 1148 "css_parse.y"
-{ Code1(cssBI::asgn_and); ;
-    break;}
-case 213:
+    { Code1(cssBI::gt); }
+    break;
+
+  case 220:
 #line 1149 "css_parse.y"
-{ Code1(cssBI::asgn_xor); ;
-    break;}
-case 214:
+    { Code1(cssBI::ge); }
+    break;
+
+  case 221:
 #line 1150 "css_parse.y"
-{ Code1(cssBI::asgn_or); ;
-    break;}
-case 215:
+    { Code1(cssBI::lt); }
+    break;
+
+  case 222:
 #line 1151 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; Code2(yyvsp[0].el,yyvsp[-2].el); ;
-    break;}
-case 216:
+    { Code1(cssBI::le); }
+    break;
+
+  case 223:
 #line 1152 "css_parse.y"
-{ yyval.ival = yyvsp[-3].ival; Code2(yyvsp[-2].el,yyvsp[-4].el); ;
-    break;}
-case 217:
+    { Code1(cssBI::eq); }
+    break;
+
+  case 224:
 #line 1153 "css_parse.y"
-{
-	  yyval.ival = yyvsp[-2].ival; Code2(yyvsp[-1].el,yyvsp[-3].el); ;
-    break;}
-case 218:
+    { Code1(cssBI::ne); }
+    break;
+
+  case 225:
+#line 1154 "css_parse.y"
+    { Code1(cssBI::cond); }
+    break;
+
+  case 226:
 #line 1155 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; Code1(yyvsp[-2].el); ;
-    break;}
-case 219:
+    { Code1(cssBI::add); }
+    break;
+
+  case 227:
 #line 1156 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; Code1(yyvsp[-4].el); ;
-    break;}
-case 220:
+    { Code1(cssBI::sub); }
+    break;
+
+  case 228:
 #line 1157 "css_parse.y"
-{ Code1(cssBI::lor); ;
-    break;}
-case 221:
+    { Code1(cssBI::mul); }
+    break;
+
+  case 229:
 #line 1158 "css_parse.y"
-{ Code1(cssBI::land); ;
-    break;}
-case 222:
+    { Code1(cssBI::div); }
+    break;
+
+  case 230:
 #line 1159 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::addr_of); ;
-    break;}
-case 223:
+    { Code1(cssBI::modulo); }
+    break;
+
+  case 231:
 #line 1160 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::de_ptr); ;
-    break;}
-case 224:
+    { Code1(cssBI::lshift); }
+    break;
+
+  case 232:
 #line 1161 "css_parse.y"
-{ Code1(cssBI::gt); ;
-    break;}
-case 225:
+    { Code1(cssBI::rshift); }
+    break;
+
+  case 233:
 #line 1162 "css_parse.y"
-{ Code1(cssBI::ge); ;
-    break;}
-case 226:
+    { Code1(cssBI::bit_and); }
+    break;
+
+  case 234:
 #line 1163 "css_parse.y"
-{ Code1(cssBI::lt); ;
-    break;}
-case 227:
+    { Code1(cssBI::bit_xor); }
+    break;
+
+  case 235:
 #line 1164 "css_parse.y"
-{ Code1(cssBI::le); ;
-    break;}
-case 228:
+    { Code1(cssBI::bit_or); }
+    break;
+
+  case 236:
 #line 1165 "css_parse.y"
-{ Code1(cssBI::eq); ;
-    break;}
-case 229:
+    { Code1(cssBI::asgn_post_pp); }
+    break;
+
+  case 237:
 #line 1166 "css_parse.y"
-{ Code1(cssBI::ne); ;
-    break;}
-case 230:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::asgn_pre_pp); }
+    break;
+
+  case 238:
 #line 1167 "css_parse.y"
-{ Code1(cssBI::cond); ;
-    break;}
-case 231:
+    { Code1(cssBI::asgn_post_mm); }
+    break;
+
+  case 239:
 #line 1168 "css_parse.y"
-{ Code1(cssBI::add); ;
-    break;}
-case 232:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::asgn_pre_mm); }
+    break;
+
+  case 240:
 #line 1169 "css_parse.y"
-{ Code1(cssBI::sub); ;
-    break;}
-case 233:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::neg); }
+    break;
+
+  case 241:
 #line 1170 "css_parse.y"
-{ Code1(cssBI::mul); ;
-    break;}
-case 234:
+    { (yyval.ival) = (yyvsp[0].ival); Code1(cssBI::lnot); }
+    break;
+
+  case 242:
 #line 1171 "css_parse.y"
-{ Code1(cssBI::div); ;
-    break;}
-case 235:
+    { Code1(cssBI::de_array); }
+    break;
+
+  case 243:
 #line 1172 "css_parse.y"
-{ Code1(cssBI::modulo); ;
-    break;}
-case 236:
-#line 1173 "css_parse.y"
-{ Code1(cssBI::lshift); ;
-    break;}
-case 237:
-#line 1174 "css_parse.y"
-{ Code1(cssBI::rshift); ;
-    break;}
-case 238:
-#line 1175 "css_parse.y"
-{ Code1(cssBI::bit_and); ;
-    break;}
-case 239:
-#line 1176 "css_parse.y"
-{ Code1(cssBI::bit_xor); ;
-    break;}
-case 240:
-#line 1177 "css_parse.y"
-{ Code1(cssBI::bit_or); ;
-    break;}
-case 241:
+    {
+  	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
+	    if((yyvsp[-2].el).El()->tmp_str == "const") {
+	      yyerror("const type not accepted in this context");
+	      return cssProg::YY_Err; }
+	    (yyval.ival) = (yyvsp[0].ival); Code2((yyvsp[-2].el), cssBI::cast); }
+    break;
+
+  case 244:
 #line 1178 "css_parse.y"
-{ Code1(cssBI::asgn_post_pp); ;
-    break;}
-case 242:
-#line 1179 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::asgn_pre_pp); ;
-    break;}
-case 243:
-#line 1180 "css_parse.y"
-{ Code1(cssBI::asgn_post_mm); ;
-    break;}
-case 244:
-#line 1181 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::asgn_pre_mm); ;
-    break;}
-case 245:
-#line 1182 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::neg); ;
-    break;}
-case 246:
-#line 1183 "css_parse.y"
-{ yyval.ival = yyvsp[0].ival; Code1(cssBI::lnot); ;
-    break;}
-case 247:
-#line 1184 "css_parse.y"
-{ Code1(cssBI::de_array); ;
-    break;}
-case 248:
+    {
+  	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
+	    if((yyvsp[-3].el).El()->tmp_str == "const") {
+	      yyerror("const type not accepted in this context");
+	      return cssProg::YY_Err; }
+  	    (yyval.ival) = (yyvsp[-1].ival); Code2((yyvsp[-3].el), cssBI::cast); }
+    break;
+
+  case 246:
 #line 1185 "css_parse.y"
-{
-  	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-2].el.El()->tmp_str == "const") {
-	      yyerror("const type not accepted in this context");
-	      return cssProg::YY_Err; }
-	    yyval.ival = yyvsp[0].ival; Code2(yyvsp[-2].el, cssBI::cast); ;
-    break;}
-case 249:
-#line 1191 "css_parse.y"
-{
-  	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
-	    if(yyvsp[-3].el.El()->tmp_str == "const") {
-	      yyerror("const type not accepted in this context");
-	      return cssProg::YY_Err; }
-  	    yyval.ival = yyvsp[-1].ival; Code2(yyvsp[-3].el, cssBI::cast); ;
-    break;}
-case 251:
-#line 1198 "css_parse.y"
-{ yyval.ival = yyvsp[-1].ival; ;
-    break;}
-case 262:
-#line 1217 "css_parse.y"
-{ yyval.ival = Code2(cssBI::push_next, yyvsp[0].el); ;
-    break;}
-case 263:
-#line 1218 "css_parse.y"
-{ yyval.ival = yyvsp[-1].el_ival.ival; Code1(yyvsp[-1].el_ival.el); ;
-    break;}
-case 264:
-#line 1219 "css_parse.y"
-{ yyval.ival = yyvsp[-2].el_ival.ival; Code1(yyvsp[-2].el_ival.el);
-	  if((yyvsp[-2].el_ival.el.El()->GetType() == cssEl::T_ElCFun) ||
+    { (yyval.ival) = (yyvsp[-1].ival); }
+    break;
+
+  case 254:
+#line 1201 "css_parse.y"
+    { (yyval.ival) = Code2(cssBI::push_next, (yyvsp[0].el)); }
+    break;
+
+  case 255:
+#line 1202 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-1].el_ival).ival; Code1((yyvsp[-1].el_ival).el); }
+    break;
+
+  case 256:
+#line 1203 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].el_ival).ival; Code1((yyvsp[-2].el_ival).el);
+	  if(((yyvsp[-2].el_ival).el.El()->GetType() == cssEl::T_ElCFun) ||
 	     /*	     ($1.el.El()->GetType() == cssEl::T_MbrCFun) || */
-	     (yyvsp[-2].el_ival.el.El()->GetType() == cssEl::T_ScriptFun) ||
-	     (yyvsp[-2].el_ival.el.El()->GetType() == cssEl::T_MbrScriptFun)) {
-	    cssElFun* fun = (cssElFun*)yyvsp[-2].el_ival.el.El();
+	     ((yyvsp[-2].el_ival).el.El()->GetType() == cssEl::T_ScriptFun) ||
+	     ((yyvsp[-2].el_ival).el.El()->GetType() == cssEl::T_MbrScriptFun)) {
+	    cssElFun* fun = (cssElFun*)(yyvsp[-2].el_ival).el.El();
 	    int max_args = fun->argc;  int min_args = (fun->argc - fun->arg_defs.size);
-	    int act_args = yyvsp[-1].ival;
+	    int act_args = (yyvsp[-1].ival);
 	    if(fun->GetType() == cssEl::T_MbrScriptFun) { max_args--; min_args--; }
 	    if((fun->argc >= 0) && (act_args > max_args)) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(), "Too many arguments for function:",fun->name,", should have at most:", String(max_args), "got:",String(act_args)); }
 	    if((fun->argc >= 0) && (act_args < min_args)) {
-              cssMisc::Warning(cssMisc::cur_top->Prog(), "Too few arguments for function:",fun->name,", should have at least:",String(min_args),"got:",String(act_args)); } } ;
-    break;}
-case 265:
-#line 1234 "css_parse.y"
-{
-            yyval.el_ival.ival = Code1(cssMisc::VoidElPtr); /* an arg stop */
-	    yyval.el_ival.el = yyvsp[-1].el;	/* save this pointer for later.. */
-            if(yyvsp[-1].el.El()->GetType() == cssEl::T_MbrScriptFun)
+              cssMisc::Warning(cssMisc::cur_top->Prog(), "Too few arguments for function:",fun->name,", should have at least:",String(min_args),"got:",String(act_args)); } } }
+    break;
+
+  case 257:
+#line 1218 "css_parse.y"
+    {
+            (yyval.el_ival).ival = Code1(cssMisc::VoidElPtr); /* an arg stop */
+	    (yyval.el_ival).el = (yyvsp[-1].el);	/* save this pointer for later.. */
+            if((yyvsp[-1].el).El()->GetType() == cssEl::T_MbrScriptFun)
 	      Code1(cssBI::push_cur_this); /* push this as first arg.. */
-	    else if(yyvsp[-1].el.El()->GetType() == cssEl::T_MbrCFun) {
+	    else if((yyvsp[-1].el).El()->GetType() == cssEl::T_MbrCFun) {
 	      /* only push this for MbrCFun that are builtins (Load, Save, or InheritsFrom) on a script class! */
-	      cssMbrCFun* mbrfun = (cssMbrCFun*)yyvsp[-1].el.El();
+	      cssMbrCFun* mbrfun = (cssMbrCFun*)(yyvsp[-1].el).El();
 	      if((mbrfun->funp == &cssClassType::InheritsFrom_stub) ||
 		 (mbrfun->funp == &cssClassType::Load_stub) ||
 		 (mbrfun->funp == &cssClassType::Save_stub))
 		Code1(cssBI::push_cur_this); /* push this as first arg.. */
-	    } ;
-    break;}
-case 266:
-#line 1250 "css_parse.y"
-{ Code2(yyvsp[0].el, cssBI::points_at);;
-    break;}
-case 267:
-#line 1251 "css_parse.y"
-{
-	    int mbno = yyvsp[-2].el.El()->GetMemberNo((const char*)*(yyvsp[0].el.El()));
-	    if(mbno < 0) { yyval.ival = Code3(yyvsp[-2].el, yyvsp[0].el, cssBI::points_at); }
+	    } }
+    break;
+
+  case 258:
+#line 1234 "css_parse.y"
+    { Code2((yyvsp[0].el), cssBI::points_at);}
+    break;
+
+  case 259:
+#line 1235 "css_parse.y"
+    {
+	    int mbno = (yyvsp[-2].el).El()->GetMemberNo((const char*)*((yyvsp[0].el).El()));
+	    if(mbno < 0) { (yyval.ival) = Code3((yyvsp[-2].el), (yyvsp[0].el), cssBI::points_at); }
 	    else { cssElPtr tmpint = cssMisc::cur_top->AddLiteral(mbno);
-		   yyval.ival = Code3(yyvsp[-2].el, tmpint, cssBI::points_at); } ;
-    break;}
-case 268:
-#line 1259 "css_parse.y"
-{ yyval.ival = Code3(cssBI::push_root, yyvsp[0].el, cssBI::points_at); ;
-    break;}
-case 269:
-#line 1260 "css_parse.y"
-{
+		   (yyval.ival) = Code3((yyvsp[-2].el), tmpint, cssBI::points_at); } }
+    break;
+
+  case 260:
+#line 1243 "css_parse.y"
+    { (yyval.ival) = Code3(cssBI::push_root, (yyvsp[0].el), cssBI::points_at); }
+    break;
+
+  case 261:
+#line 1244 "css_parse.y"
+    {
 	  cssMisc::cur_scope = NULL;
-	    cssEl* scp = yyvsp[-1].el.El()->GetScoped((const char*)*(yyvsp[0].el.El()));
-	    if(scp != &cssMisc::Void) {  yyval.ival = Code1(scp); }
-	    else { yyval.ival = Code3(yyvsp[-1].el, yyvsp[0].el, cssBI::scoper); } ;
-    break;}
-case 270:
-#line 1265 "css_parse.y"
-{ yyval.ival = yyvsp[-2].el_ival.ival; ;
-    break;}
-case 271:
-#line 1266 "css_parse.y"
-{ yyval.ival = yyvsp[-3].el_ival.ival;
-	  if((yyvsp[-3].el_ival.el.El()->GetType() == cssEl::T_ElCFun) ||
-	     (yyvsp[-3].el_ival.el.El()->GetType() == cssEl::T_MbrCFun) ||
-	     (yyvsp[-3].el_ival.el.El()->GetType() == cssEl::T_ScriptFun) ||
-	     (yyvsp[-3].el_ival.el.El()->GetType() == cssEl::T_MbrScriptFun)) {
-	    cssElFun* fun = (cssElFun*)yyvsp[-3].el_ival.el.El();
+	    cssEl* scp = (yyvsp[-1].el).El()->GetScoped((const char*)*((yyvsp[0].el).El()));
+	    if(scp != &cssMisc::Void) {  (yyval.ival) = Code1(scp); }
+	    else { (yyval.ival) = Code3((yyvsp[-1].el), (yyvsp[0].el), cssBI::scoper); } }
+    break;
+
+  case 262:
+#line 1249 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].el_ival).ival; }
+    break;
+
+  case 263:
+#line 1250 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-3].el_ival).ival;
+	  if(((yyvsp[-3].el_ival).el.El()->GetType() == cssEl::T_ElCFun) ||
+	     ((yyvsp[-3].el_ival).el.El()->GetType() == cssEl::T_MbrCFun) ||
+	     ((yyvsp[-3].el_ival).el.El()->GetType() == cssEl::T_ScriptFun) ||
+	     ((yyvsp[-3].el_ival).el.El()->GetType() == cssEl::T_MbrScriptFun)) {
+	    cssElFun* fun = (cssElFun*)(yyvsp[-3].el_ival).el.El();
 	    int max_args = fun->argc;  int min_args = (fun->argc - fun->arg_defs.size);
-	    int act_args = yyvsp[-2].ival;
+	    int act_args = (yyvsp[-2].ival);
 	    if(fun->GetType() == cssEl::T_MbrScriptFun) { max_args--; min_args--; }
 	    if((fun->argc >= 0) && (act_args > max_args)) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(), "Too many arguments for function:",fun->name,", should have at most:", String(max_args), "got:",String(act_args)); }
 	    if((fun->argc >= 0) && (act_args < min_args)) {
-              cssMisc::Warning(cssMisc::cur_top->Prog(), "Too few arguments for function:",fun->name,", should have at least:",String(min_args),"got:",String(act_args)); } } ;
-    break;}
-case 272:
-#line 1281 "css_parse.y"
-{ Code2(yyvsp[-1].el, cssBI::member_fun);
-                                                  yyval.el_ival.ival = yyvsp[-3].ival; yyval.el_ival.el.Reset(); ;
-    break;}
-case 273:
-#line 1283 "css_parse.y"
-{ yyval.el_ival.el.Reset();
-	    int mbno = yyvsp[-3].el.El()->GetMemberFunNo((const char*)*(yyvsp[-1].el.El()));
+              cssMisc::Warning(cssMisc::cur_top->Prog(), "Too few arguments for function:",fun->name,", should have at least:",String(min_args),"got:",String(act_args)); } } }
+    break;
+
+  case 264:
+#line 1265 "css_parse.y"
+    { Code2((yyvsp[-1].el), cssBI::member_fun);
+                                                  (yyval.el_ival).ival = (yyvsp[-3].ival); (yyval.el_ival).el.Reset(); }
+    break;
+
+  case 265:
+#line 1267 "css_parse.y"
+    { (yyval.el_ival).el.Reset();
+	    int mbno = (yyvsp[-3].el).El()->GetMemberFunNo((const char*)*((yyvsp[-1].el).El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!yyvsp[-3].el.El()->IsRef() && (yyvsp[-3].el.El()->GetType() != cssEl::T_Ptr))
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*(yyvsp[-1].el.El()),
+	      if(!(yyvsp[-3].el).El()->IsRef() && ((yyvsp[-3].el).El()->GetType() != cssEl::T_Ptr))
+		cssMisc::Warning(NULL, "Member Function:",(const char*)*((yyvsp[-1].el).El()),
 				 "not found in parent object, will be resolved dynamically");
-	      yyval.el_ival.ival = Code3(yyvsp[-3].el, yyvsp[-1].el, cssBI::member_fun); }
+	      (yyval.el_ival).ival = Code3((yyvsp[-3].el), (yyvsp[-1].el), cssBI::member_fun); }
 	    else {
 	      cssElPtr tmpint = cssMisc::cur_top->AddLiteral(mbno);
-	      yyval.el_ival.ival = Code3(yyvsp[-3].el, tmpint, cssBI::member_fun);
-	      cssEl* ths = yyvsp[-3].el.El();
+	      (yyval.el_ival).ival = Code3((yyvsp[-3].el), tmpint, cssBI::member_fun);
+	      cssEl* ths = (yyvsp[-3].el).El();
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMemberFun((const char*)*(yyvsp[-1].el.El()));
+		cssEl* fun = ths->GetMemberFun((const char*)*((yyvsp[-1].el).El()));
 		if(fun->GetType() != cssEl::T_MbrCFun)
-		  yyval.el_ival.el.SetDirect(fun);
-	      } } ;
-    break;}
-case 274:
-#line 1301 "css_parse.y"
-{
-	    cssMisc::cur_scope = NULL; yyval.el_ival.el.Reset();
-	    int mbno = yyvsp[-2].el.El()->GetMemberFunNo((const char*)*(yyvsp[-1].el.El()));
+		  (yyval.el_ival).el.SetDirect(fun);
+	      } } }
+    break;
+
+  case 266:
+#line 1285 "css_parse.y"
+    {
+	    cssMisc::cur_scope = NULL; (yyval.el_ival).el.Reset();
+	    int mbno = (yyvsp[-2].el).El()->GetMemberFunNo((const char*)*((yyvsp[-1].el).El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!yyvsp[-2].el.El()->IsRef() && (yyvsp[-2].el.El()->GetType() != cssEl::T_Ptr))
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*(yyvsp[-1].el.El()),
+	      if(!(yyvsp[-2].el).El()->IsRef() && ((yyvsp[-2].el).El()->GetType() != cssEl::T_Ptr))
+		cssMisc::Warning(NULL, "Member Function:",(const char*)*((yyvsp[-1].el).El()),
 				 "not found in parent object, will be resolved dynamically");
-	      yyval.el_ival.ival = Code3(yyvsp[-2].el, yyvsp[-1].el, cssBI::member_fun); }
+	      (yyval.el_ival).ival = Code3((yyvsp[-2].el), (yyvsp[-1].el), cssBI::member_fun); }
 	    else {
 	      cssElPtr tmpint = cssMisc::cur_top->AddLiteral(mbno);
-	      yyval.el_ival.ival = Code3(yyvsp[-2].el, tmpint, cssBI::member_fun);
-	      cssEl* ths = yyvsp[-2].el.El();
+	      (yyval.el_ival).ival = Code3((yyvsp[-2].el), tmpint, cssBI::member_fun);
+	      cssEl* ths = (yyvsp[-2].el).El();
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMemberFun((const char*)*(yyvsp[-1].el.El()));
+		cssEl* fun = ths->GetMemberFun((const char*)*((yyvsp[-1].el).El()));
 		if(fun->GetType() != cssEl::T_MbrCFun)
-		  yyval.el_ival.el.SetDirect(fun);
-	      } } ;
-    break;}
-case 275:
-#line 1325 "css_parse.y"
-{
-            yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].nm)); ;
-    break;}
-case 276:
-#line 1329 "css_parse.y"
-{
-            yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].nm)); ;
-    break;}
-case 277:
-#line 1331 "css_parse.y"
-{
-	    yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName())); ;
-    break;}
-case 278:
-#line 1333 "css_parse.y"
-{
-	    yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName())); ;
-    break;}
-case 279:
-#line 1335 "css_parse.y"
-{
-	    yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName()));
+		  (yyval.el_ival).el.SetDirect(fun);
+	      } } }
+    break;
+
+  case 267:
+#line 1309 "css_parse.y"
+    {
+            (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].nm))); }
+    break;
+
+  case 268:
+#line 1313 "css_parse.y"
+    {
+            (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].nm))); }
+    break;
+
+  case 269:
+#line 1315 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName())); }
+    break;
+
+  case 270:
+#line 1317 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName())); }
+    break;
+
+  case 271:
+#line 1319 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
-	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding variable:", yyvsp[0].el.El()->PrintStr()); ;
-    break;}
-case 280:
-#line 1339 "css_parse.y"
-{
-	    yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName()));
+	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding variable:", (yyvsp[0].el).El()->PrintStr()); }
+    break;
+
+  case 272:
+#line 1323 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
-	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding variable:", yyvsp[0].el.El()->PrintStr()); ;
-    break;}
-case 281:
-#line 1343 "css_parse.y"
-{
-	    yyval.el = cssMisc::cur_top->Prog()->Stack()->Push(new cssString(yyvsp[0].el.El()->GetName()));
+	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding variable:", (yyvsp[0].el).El()->PrintStr()); }
+    break;
+
+  case 273:
+#line 1327 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[0].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
-	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding function:", yyvsp[0].el.El()->PrintStr()); ;
-    break;}
-case 284:
+	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding function:", (yyvsp[0].el).El()->PrintStr()); }
+    break;
+
+  case 276:
+#line 1337 "css_parse.y"
+    {
+   	    String tmpstr = String((yyvsp[0].nm));
+            (yyval.el) = cssMisc::cur_top->AddLiteral(tmpstr); }
+    break;
+
+  case 278:
+#line 1341 "css_parse.y"
+    { /* this is source of shift-reduce problems */
+	    String tmpstr = String((yyvsp[0].el).El()->GetName());
+	    (yyval.el) = cssMisc::cur_top->AddLiteral(tmpstr); }
+    break;
+
+  case 284:
 #line 1353 "css_parse.y"
-{
-   	    String tmpstr = String(yyvsp[0].nm);
-            yyval.el = cssMisc::cur_top->AddLiteral(tmpstr); ;
-    break;}
-case 286:
-#line 1357 "css_parse.y"
-{ /* this is source of shift-reduce problems */
-	    String tmpstr = String(yyvsp[0].el.El()->GetName());
-	    yyval.el = cssMisc::cur_top->AddLiteral(tmpstr); ;
-    break;}
-case 292:
-#line 1369 "css_parse.y"
-{ yyval.ival = 1; ;
-    break;}
-case 293:
-#line 1370 "css_parse.y"
-{ yyval.ival = yyvsp[-2].ival + 1; ;
-    break;}
-case 295:
+    { (yyval.ival) = 1; }
+    break;
+
+  case 285:
+#line 1354 "css_parse.y"
+    { (yyval.ival) = (yyvsp[-2].ival) + 1; }
+    break;
+
+  case 287:
+#line 1358 "css_parse.y"
+    { (yyval.ival) = Code1((yyvsp[0].el)); }
+    break;
+
+  case 288:
+#line 1361 "css_parse.y"
+    { (yyval.ival) = Code1(cssMisc::VoidElPtr); }
+    break;
+
+  case 291:
+#line 1368 "css_parse.y"
+    { Code1(cssBI::pop); }
+    break;
+
+  case 292:
+#line 1371 "css_parse.y"
+    { Code1(cssInst::Stop); (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+  case 293:
 #line 1374 "css_parse.y"
-{ yyval.ival = Code1(yyvsp[0].el); ;
-    break;}
-case 296:
-#line 1377 "css_parse.y"
-{ yyval.ival = Code1(cssMisc::VoidElPtr); ;
-    break;}
-case 299:
-#line 1384 "css_parse.y"
-{ Code1(cssBI::pop); ;
-    break;}
-case 300:
-#line 1387 "css_parse.y"
-{ Code1(cssInst::Stop); yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-case 301:
-#line 1390 "css_parse.y"
-{ Code1(cssInst::Stop); yyval.ival = cssMisc::cur_top->Prog()->size; ;
-    break;}
-}
-   /* the action file gets copied in in place of this dollarsign */
-#line 543 "/usr/share/bison.simple"
+    { Code1(cssInst::Stop); (yyval.ival) = cssMisc::cur_top->Prog()->size; }
+    break;
+
+
+    }
+
+/* Line 1037 of yacc.c.  */
+#line 3714 "y.tab.c"
 
   yyvsp -= yylen;
   yyssp -= yylen;
-#ifdef YYLSP_NEEDED
-  yylsp -= yylen;
-#endif
 
-#if YYDEBUG != 0
-  if (yydebug)
-    {
-      short *ssp1 = yyss - 1;
-      fprintf (stderr, "state stack now");
-      while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
-      fprintf (stderr, "\n");
-    }
-#endif
+
+  YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
 
-#ifdef YYLSP_NEEDED
-  yylsp++;
-  if (yylen == 0)
-    {
-      yylsp->first_line = yylloc.first_line;
-      yylsp->first_column = yylloc.first_column;
-      yylsp->last_line = (yylsp-1)->last_line;
-      yylsp->last_column = (yylsp-1)->last_column;
-      yylsp->text = 0;
-    }
-  else
-    {
-      yylsp->last_line = (yylsp+yylen-1)->last_line;
-      yylsp->last_column = (yylsp+yylen-1)->last_column;
-    }
-#endif
 
-  /* Now "shift" the result of the reduction.
-     Determine what state that goes to,
-     based on the state we popped back to
-     and the rule number reduced by.  */
+  /* Now `shift' the result of the reduction.  Determine what state
+     that goes to, based on the state we popped back to and the rule
+     number reduced by.  */
 
   yyn = yyr1[yyn];
 
-  yystate = yypgoto[yyn - YYNTBASE] + *yyssp;
-  if (yystate >= 0 && yystate <= YYLAST && yycheck[yystate] == *yyssp)
+  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
+  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
     yystate = yytable[yystate];
   else
-    yystate = yydefgoto[yyn - YYNTBASE];
+    yystate = yydefgoto[yyn - YYNTOKENS];
 
   goto yynewstate;
 
-yyerrlab:   /* here on detecting error */
 
-  if (! yyerrstatus)
-    /* If not already recovering from an error, report this error.  */
+/*------------------------------------.
+| yyerrlab -- here on detecting error |
+`------------------------------------*/
+yyerrlab:
+  /* If not already recovering from an error, report this error.  */
+  if (!yyerrstatus)
     {
       ++yynerrs;
-
-#ifdef YYERROR_VERBOSE
+#if YYERROR_VERBOSE
       yyn = yypact[yystate];
 
-      if (yyn > YYFLAG && yyn < YYLAST)
+      if (YYPACT_NINF < yyn && yyn < YYLAST)
 	{
-	  int size = 0;
-	  char *msg;
-	  int x, count;
+	  YYSIZE_T yysize = 0;
+	  int yytype = YYTRANSLATE (yychar);
+	  const char* yyprefix;
+	  char *yymsg;
+	  int yyx;
 
-	  count = 0;
-	  /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
-	  for (x = (yyn < 0 ? -yyn : 0);
-	       x < (sizeof(yytname) / sizeof(char *)); x++)
-	    if (yycheck[x + yyn] == x)
-	      size += strlen(yytname[x]) + 15, count++;
-	  msg = (char *) malloc(size + 15);
-	  if (msg != 0)
+	  /* Start YYX at -YYN if negative to avoid negative indexes in
+	     YYCHECK.  */
+	  int yyxbegin = yyn < 0 ? -yyn : 0;
+
+	  /* Stay within bounds of both yycheck and yytname.  */
+	  int yychecklim = YYLAST - yyn;
+	  int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+	  int yycount = 0;
+
+	  yyprefix = ", expecting ";
+	  for (yyx = yyxbegin; yyx < yyxend; ++yyx)
+	    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+	      {
+		yysize += yystrlen (yyprefix) + yystrlen (yytname [yyx]);
+		yycount += 1;
+		if (yycount == 5)
+		  {
+		    yysize = 0;
+		    break;
+		  }
+	      }
+	  yysize += (sizeof ("syntax error, unexpected ")
+		     + yystrlen (yytname[yytype]));
+	  yymsg = (char *) YYSTACK_ALLOC (yysize);
+	  if (yymsg != 0)
 	    {
-	      strcpy(msg, "parse error");
+	      char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
+	      yyp = yystpcpy (yyp, yytname[yytype]);
 
-	      if (count < 5)
+	      if (yycount < 5)
 		{
-		  count = 0;
-		  for (x = (yyn < 0 ? -yyn : 0);
-		       x < (sizeof(yytname) / sizeof(char *)); x++)
-		    if (yycheck[x + yyn] == x)
+		  yyprefix = ", expecting ";
+		  for (yyx = yyxbegin; yyx < yyxend; ++yyx)
+		    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
 		      {
-			strcat(msg, count == 0 ? ", expecting `" : " or `");
-			strcat(msg, yytname[x]);
-			strcat(msg, "'");
-			count++;
+			yyp = yystpcpy (yyp, yyprefix);
+			yyp = yystpcpy (yyp, yytname[yyx]);
+			yyprefix = " or ";
 		      }
 		}
-	      yyerror(msg);
-	      free(msg);
+	      yyerror (yymsg);
+	      YYSTACK_FREE (yymsg);
 	    }
 	  else
-	    yyerror ("parse error; also virtual memory exceeded");
+	    yyerror ("syntax error; also virtual memory exhausted");
 	}
       else
 #endif /* YYERROR_VERBOSE */
-	yyerror("parse error");
+	yyerror ("syntax error");
     }
 
-  goto yyerrlab1;
-yyerrlab1:   /* here on error raised explicitly by an action */
+
 
   if (yyerrstatus == 3)
     {
-      /* if just tried and failed to reuse lookahead token after an error, discard it.  */
+      /* If just tried and failed to reuse look-ahead token after an
+	 error, discard it.  */
 
-      /* return failure if at end of input */
-      if (yychar == YYEOF)
+      if (yychar <= YYEOF)
+        {
+          /* If at end of input, pop the error token,
+	     then the rest of the stack, then return failure.  */
+	  if (yychar == YYEOF)
+	     for (;;)
+	       {
+
+		 YYPOPSTACK;
+		 if (yyssp == yyss)
+		   YYABORT;
+		 yydestruct ("Error: popping",
+                             yystos[*yyssp], yyvsp);
+	       }
+        }
+      else
+	{
+	  yydestruct ("Error: discarding", yytoken, &yylval);
+	  yychar = YYEMPTY;
+	}
+    }
+
+  /* Else will try to reuse look-ahead token after shifting the error
+     token.  */
+  goto yyerrlab1;
+
+
+/*---------------------------------------------------.
+| yyerrorlab -- error raised explicitly by YYERROR.  |
+`---------------------------------------------------*/
+yyerrorlab:
+
+#ifdef __GNUC__
+  /* Pacify GCC when the user code never invokes YYERROR and the label
+     yyerrorlab therefore never appears in user code.  */
+  if (0)
+     goto yyerrorlab;
+#endif
+
+yyvsp -= yylen;
+  yyssp -= yylen;
+  yystate = *yyssp;
+  goto yyerrlab1;
+
+
+/*-------------------------------------------------------------.
+| yyerrlab1 -- common code for both syntax error and YYERROR.  |
+`-------------------------------------------------------------*/
+yyerrlab1:
+  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+
+  for (;;)
+    {
+      yyn = yypact[yystate];
+      if (yyn != YYPACT_NINF)
+	{
+	  yyn += YYTERROR;
+	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+	    {
+	      yyn = yytable[yyn];
+	      if (0 < yyn)
+		break;
+	    }
+	}
+
+      /* Pop the current state because it cannot handle the error token.  */
+      if (yyssp == yyss)
 	YYABORT;
 
-#if YYDEBUG != 0
-      if (yydebug)
-	fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
-#endif
 
-      yychar = YYEMPTY;
+      yydestruct ("Error: popping", yystos[yystate], yyvsp);
+      YYPOPSTACK;
+      yystate = *yyssp;
+      YY_STACK_PRINT (yyss, yyssp);
     }
-
-  /* Else will try to reuse lookahead token
-     after shifting the error token.  */
-
-  yyerrstatus = 3;		/* Each real token shifted decrements this */
-
-  goto yyerrhandle;
-
-yyerrdefault:  /* current state does not do anything special for the error token. */
-
-#if 0
-  /* This is wrong; only states that explicitly want error tokens
-     should shift them.  */
-  yyn = yydefact[yystate];  /* If its default is to accept any token, ok.  Otherwise pop it.*/
-  if (yyn) goto yydefault;
-#endif
-
-yyerrpop:   /* pop the current state because it cannot handle the error token */
-
-  if (yyssp == yyss) YYABORT;
-  yyvsp--;
-  yystate = *--yyssp;
-#ifdef YYLSP_NEEDED
-  yylsp--;
-#endif
-
-#if YYDEBUG != 0
-  if (yydebug)
-    {
-      short *ssp1 = yyss - 1;
-      fprintf (stderr, "Error: state stack now");
-      while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
-      fprintf (stderr, "\n");
-    }
-#endif
-
-yyerrhandle:
-
-  yyn = yypact[yystate];
-  if (yyn == YYFLAG)
-    goto yyerrdefault;
-
-  yyn += YYTERROR;
-  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != YYTERROR)
-    goto yyerrdefault;
-
-  yyn = yytable[yyn];
-  if (yyn < 0)
-    {
-      if (yyn == YYFLAG)
-	goto yyerrpop;
-      yyn = -yyn;
-      goto yyreduce;
-    }
-  else if (yyn == 0)
-    goto yyerrpop;
 
   if (yyn == YYFINAL)
     YYACCEPT;
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Shifting error token, ");
-#endif
-
   *++yyvsp = yylval;
-#ifdef YYLSP_NEEDED
-  *++yylsp = yylloc;
-#endif
+
+
+  /* Shift the error token. */
+  YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
 
- yyacceptlab:
-  /* YYACCEPT comes here.  */
-  if (yyfree_stacks)
-    {
-      free (yyss);
-      free (yyvs);
-#ifdef YYLSP_NEEDED
-      free (yyls);
-#endif
-    }
-  return 0;
 
- yyabortlab:
-  /* YYABORT comes here.  */
-  if (yyfree_stacks)
-    {
-      free (yyss);
-      free (yyvs);
-#ifdef YYLSP_NEEDED
-      free (yyls);
+/*-------------------------------------.
+| yyacceptlab -- YYACCEPT comes here.  |
+`-------------------------------------*/
+yyacceptlab:
+  yyresult = 0;
+  goto yyreturn;
+
+/*-----------------------------------.
+| yyabortlab -- YYABORT comes here.  |
+`-----------------------------------*/
+yyabortlab:
+  yydestruct ("Error: discarding lookahead",
+              yytoken, &yylval);
+  yychar = YYEMPTY;
+  yyresult = 1;
+  goto yyreturn;
+
+#ifndef yyoverflow
+/*----------------------------------------------.
+| yyoverflowlab -- parser overflow comes here.  |
+`----------------------------------------------*/
+yyoverflowlab:
+  yyerror ("parser stack overflow");
+  yyresult = 2;
+  /* Fall through.  */
 #endif
-    }
-  return 1;
+
+yyreturn:
+#ifndef yyoverflow
+  if (yyss != yyssa)
+    YYSTACK_FREE (yyss);
+#endif
+  return yyresult;
 }
-#line 1394 "css_parse.y"
+
+
+#line 1378 "css_parse.y"
 
 
 	/* end of grammar */
@@ -3339,3 +3967,4 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
   }
   fh->flush();
 }
+

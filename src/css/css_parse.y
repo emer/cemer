@@ -52,8 +52,8 @@ int yylex();
 
 %}
 
-/* eighteen expected shift-reduce conflicts.. */
-%expect 18
+/* seventeen expected shift-reduce conflicts.. */
+%expect 17
 
 %union {
   cssElPlusIVal el_ival;
@@ -81,8 +81,8 @@ int yylex();
 %token	<el>	CSS_NEW CSS_DELETE
 
 /* commands */
-%token  <el> 	CSS_COMMAND CSS_LIST CSS_EXIT CSS_ALIAS CSS_REMOVE
-%token 	<el>	CSS_STATUS CSS_TYPECMD CSS_CONT CSS_HELP
+%token  <el> 	CSS_COMMAND CSS_ALIAS CSS_REMOVE
+%token 	<el>	CSS_TYPECMD CSS_HELP
 
 /* storage */
 %token	<el>	CSS_EXTERN CSS_STATIC CSS_CONST
@@ -172,7 +172,6 @@ toplev:	/* nothing */
 				  return cssProg::YY_Ok; }
         | toplev stmt 		{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Ok; }
 	| toplev error crterm	{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Err; }
-	| toplev CSS_EXIT crterm	{ cssMisc::cur_top->ResetParseFlags(); return cssProg::YY_Exit; }
 	;
 
 term:	  ';'			{ $$ = cssMisc::cur_top->Prog()->size; }
@@ -236,20 +235,10 @@ command:  CSS_COMMAND cmd_args		{
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD argstop CSS_TYPE	{
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
-        | CSS_CONT			{
-	    Code1($1); $$ = cssProg::YY_Ok; }
-	| CSS_LIST 			{
-	    Code1($1); $$ = cssProg::YY_Ok; }
-        | CSS_LIST argstop exprlist	{
-	    Code1($1); $$ = cssProg::YY_Ok; }
-        | CSS_LIST '(' argstop exprlist	')'	{
-	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE cmd_args		{
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_REMOVE argstop CSS_TYPE	{
 	    Code2($3,$1); $$ = cssProg::YY_Ok; }
-        | CSS_STATUS			{
-	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_ALIAS anycmd name 	{
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef($2));
@@ -1204,10 +1193,7 @@ primitive:
         ;
 
 anycmd:   CSS_COMMAND
-        | CSS_LIST
         | CSS_REMOVE
-        | CSS_STATUS
-        | CSS_EXIT
         | CSS_TYPECMD
         ;
 

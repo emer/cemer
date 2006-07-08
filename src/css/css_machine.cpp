@@ -2937,7 +2937,7 @@ cssEl* cssProg::Cont() {
       stc = source[nxt->line]->ln;
       lim = stc + top->step_mode;
     }
-    while(!(stc < lim) && (top->run_stat == cssEl::Running) && (nxt = Next())) {
+    while((stc < lim) && (top->run_stat == cssEl::Running) && (nxt = Next())) {
       if(top->cmd_shell != NULL) {
 	Print(nxt->idx, *(top->cmd_shell->fout));
       }
@@ -2956,6 +2956,7 @@ cssEl* cssProg::Cont() {
       else
 	stc++;
     }
+    top->step_mode = 0;		// always temporary
     return Stack()->Peek();
   }
   else {
@@ -3580,18 +3581,11 @@ int cssProgSpace::GetFile(fstream& fh, const char* fname) {
 int cssProgSpace::CompileLn(istream& fh, bool* err) {
   Prog()->MarkParseStart();
   int old_src_ln = MarkListStart();
-  if(step_mode > 0)		// this is needed to get blank lines
-    parsing_command = true;
-
-  // todo: see about parsing_command thing -- needed?
-
   int retval = cssProg::YY_Ok;
   do {
     ResetParseFlags();
     retval = yyparse();		// parse current line
   } while(retval == cssProg::YY_Parse);
-
-  parsing_command = false;
 
   if (retval == cssProg::YY_Err) { // remove source code associated with errors
     if (err) *err = true;
@@ -3983,7 +3977,7 @@ void cssCmdShell::PushSrcProg(cssProgSpace* ps) {
 }
 
 cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
-  if(stack_size <= 0)
+  if(stack_size <= 1)		// always keep the top guy
     return NULL;
   if((ps != NULL) && (src_prog != ps)) return NULL;
   cssProgSpace* tmp = src_prog;
@@ -4002,11 +3996,6 @@ void cssCmdShell::PopAllSrcProg() {
 // outer-loop, and it is processed (compiled, etc).
 void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
   int rval = cmd_prog->CompileCode(ln);
-  // todo: seems not to work: bails too frequently
-//   if(rval == cssProg::YY_Exit) {
-//     external_exit = true;	// bail!
-//     return;
-//   }
   if(cmd_prog->debug >= 2) {
     cmd_prog->List(0);
   }
@@ -4028,14 +4017,6 @@ void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
   }
   UpdatePrompt();
 }
-
-// todo: make this sensitive to all the right conditions, etc..
-
-//   if(external_exit || ShellCmdPending() || (rval == cssProg::YY_Exit)) {
-//     step_mode = 0;
-//     return;
-//   }
-
 
 void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
   fin = &fhi;

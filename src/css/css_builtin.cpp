@@ -847,27 +847,29 @@ static cssEl* cssElCFun_alias_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  // todo:
-//   if(na > 0) {
-//     if(arg[1]->GetType() == cssEl::T_SubShell) {
-//       cp->top->SetShell(&(((cssSubShell*)arg[1])->prog_space));
-//       return &cssMisc::Void;
-//     }
-//     if(arg[1]->GetType() != cssEl::T_TA) {
-//       cssMisc::Error(cp, "chsh argument is not a pointer to a cssProgSpace");
-//       return &cssMisc::Void;
-//     }
-//     cssTA* ta = (cssTA*)arg[1];
-//     if(ta->type_def->InheritsFrom("cssProgSpace") && (ta->ptr != NULL)) {
-//       cssProgSpace* ps = (cssProgSpace*)ta->GetVoidPtr();
-//       cp->top->SetShell(ps);
-//     }
-//     else {
-//       cssMisc::Error(cp, "chsh argument is not a valid pointer to a cssProgSpace");
-//     }
-//   }
-//   else
-//     cp->top->SetShell(cp->top);	// shell itself
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(na > 0) {
+    if(arg[1]->GetType() == cssEl::T_SubShell) {
+      csh->PushSrcProg(&(((cssSubShell*)arg[1])->prog_space));
+      return &cssMisc::Void;
+    }
+    if(arg[1]->GetType() != cssEl::T_TA) {
+      cssMisc::Error(cp, "chsh argument is not a pointer to a cssProgSpace");
+      return &cssMisc::Void;
+    }
+    cssTA* ta = (cssTA*)arg[1];
+    if(ta->type_def->InheritsFrom("cssProgSpace") && (ta->ptr != NULL)) {
+      cssProgSpace* ps = (cssProgSpace*)ta->GetVoidPtr();
+      csh->PushSrcProg(ps);
+    }
+    else {
+      cssMisc::Error(cp, "chsh argument is not a valid pointer to a cssProgSpace");
+    }
+  }
+  else {
+    csh->PushSrcProg(cp->top);	// shell itself (probably a no-op but anyway)
+  }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_clearall_stub(int, cssEl* arg[]) {
@@ -954,6 +956,15 @@ static cssEl* cssElCFun_enums_stub(int, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   cssMisc::Enums.NameList(*(csh->fout));
+  return &cssMisc::Void;
+}
+static cssEl* cssElCFun_exit_stub(int, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->PopSrcProg() == NULL) {
+    csh->external_exit = true;
+  }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_frame_stub(int na, cssEl* arg[]) {
@@ -1220,12 +1231,16 @@ static cssEl* cssElCFun_status_stub(int, cssEl* arg[]) {
   csh->src_prog->Status();
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_step_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->step_mode = (int)*(arg[1]);
+  if(na > 0)
+    csh->src_prog->step_mode = (int)*(arg[1]);
+  else
+    csh->src_prog->step_mode = 1;
+  csh->src_prog->Cont();
   return &cssMisc::Void;
 }
 
@@ -1328,7 +1343,7 @@ static void Install_Commands() {
  These are just like globally-defined Int and Real values,\
  and thus they can be assigned to different values (though this is\
  obviously not recommended).");
-  cssElCFun_inst(cssMisc::Commands, cont, 		0, CSS_CONT,
+  cssElCFun_inst(cssMisc::Commands, cont, 		0, CSS_COMMAND,
 "Continues the execution of a program that was stopped either by a\
  breakpoint or by single-stepping.  To continue at a particular line in\
  the code, use the goto command.");
@@ -1357,7 +1372,7 @@ static void Install_Commands() {
 "Shows a list of all the current enum types.  Note that most\
  enum types are defined within a class scope, and can be\
  found there by using the type command on the class type.");
-  cssElCFun_inst_nm(cssMisc::Commands, nop, 		0, "exit", CSS_EXIT,
+  cssElCFun_inst_nm(cssMisc::Commands, exit, 		0, "exit", CSS_COMMAND,
 "Exits from the program (CSS), or from another program space if\
  chsh (or its TA_GUI equivalent) was called.");
   cssElCFun_inst(cssMisc::Commands, frame,		cssEl::VarArg, CSS_COMMAND,
@@ -1379,7 +1394,7 @@ static void Install_Commands() {
  provides help information for it.");
   cssElCFun_inst(cssMisc::Commands, inherit, 		1, CSS_TYPECMD,
 "<object_type> Shows the inheritance path for the given object type.");
-  cssElCFun_inst(cssMisc::Commands, list, 		cssEl::VarArg, CSS_LIST,
+  cssElCFun_inst(cssMisc::Commands, list, 		cssEl::VarArg, CSS_COMMAND,
 "[<start_ln> [<n_lns>]] [<function>] Lists the program source (or\
  machine code, if debug is 2 or greater), optionally starting at the\
  given source line number, and continuing for either 20 lines (the\
@@ -1447,10 +1462,10 @@ static void Install_Commands() {
   cssElCFun_inst(cssMisc::Commands, stack, 		0, CSS_COMMAND,
 "Displays the current contents of the stack.  This can be useful for\
  debugging.");
-  cssElCFun_inst(cssMisc::Commands, status, 		0, CSS_STATUS,
+  cssElCFun_inst(cssMisc::Commands, status, 		0, CSS_COMMAND,
 "Displays a brief listing of various status parameters, such as current\
  source line, depth, etc.");
-  cssElCFun_inst(cssMisc::Commands, step, 		1, CSS_COMMAND,
+  cssElCFun_inst(cssMisc::Commands, step, 		cssEl::VarArg, CSS_COMMAND,
 "<step_n> Sets the single-step mode for program execution.  The parameter is the\
  number of lines to step through before pausing.  A value of 0 turns off\
  single stepping.");
