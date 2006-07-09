@@ -2940,7 +2940,7 @@ void LeabraNetwork::Compute_Inhib() {
   if(layers.gp.size == 0) do_lay_gp = false; // now override anything
   if(do_lay_gp) {
     for(int lgi = 0; lgi < layers.gp.size; lgi++) {
-      Layer_MGroup* lg = (Layer_MGroup*)layers.gp[lgi];
+      Layer_Group* lg = (Layer_Group*)layers.gp[lgi];
       float lay_gp_g_i = 0.0f;
       for(int li = 0; li < lg->size; li++) {
 	lay = (LeabraLayer*)lg->FastEl(li);
@@ -3365,7 +3365,7 @@ bool LeabraNetwork::CheckUnit(Unit* ck) {
 
 static char* leabra_defaults =
 "// ta_Dump File v1.0\n\
-TypeDefault_MGroup .projects[0].defaults { \n\
+TypeDefault_Group .projects[0].defaults { \n\
  TypeDefault .projects[0].defaults[0] { \n\
   NameValue @.active_membs[0] { };\n\
   NameValue @.active_membs[1] { };\n\
@@ -3398,7 +3398,7 @@ TypeDefault_MGroup .projects[0].defaults { \n\
   NameValue @.active_membs[3] { };\n\
  };\n\
 };\n\
-TypeDefault_MGroup .projects[0].defaults {\n\
+TypeDefault_Group .projects[0].defaults {\n\
  el_typ = TypeDefault;\n\
  el_def = 0;\n\
  name = \"\";\n\
@@ -5535,7 +5535,7 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 //     out_err.graded = old_graded;
 
 //     lay->misc_iar.EnforceSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
-//     Event_MGroup* eg = net->GetMyCurEventGp();
+//     Event_Group* eg = net->GetMyCurEventGp();
 //     int eg_addr = (int)eg;
 //     if(lay->misc_iar[0] != eg_addr) { // new seq
 //       lay->misc_iar[0] = eg_addr;
@@ -8749,10 +8749,10 @@ void LeabraWiz::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
 
-  Layer_MGroup other_lays;
-  Layer_MGroup hidden_lays;
-  Layer_MGroup output_lays;
-  Layer_MGroup input_lays;
+  Layer_Group other_lays;
+  Layer_Group hidden_lays;
+  Layer_Group output_lays;
+  Layer_Group input_lays;
   int i;
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
@@ -8786,10 +8786,10 @@ void LeabraWiz::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   if(!bio_labels)
     gpprfx = "TD_";
 
-  BaseSpec_MGroup* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
-  BaseSpec_MGroup* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
-  BaseSpec_MGroup* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
-  BaseSpec_MGroup* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
+  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
+  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
+  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
+  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
   LeabraUnitSpec* rewpred_units = (LeabraUnitSpec*)units->FindMakeSpec("TDRewPredUnits", &TA_DaModUnitSpec);
@@ -9016,10 +9016,10 @@ void LeabraWiz::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, boo
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
 
-  Layer_MGroup other_lays;
-  Layer_MGroup hidden_lays;
-  Layer_MGroup output_lays;
-  Layer_MGroup input_lays;
+  Layer_Group other_lays;
+  Layer_Group hidden_lays;
+  Layer_Group output_lays;
+  Layer_Group input_lays;
   int i;
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
@@ -9053,10 +9053,10 @@ void LeabraWiz::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, boo
 //   if(!bio_labels)
 //     gpprfx = "DA_";
 
-  BaseSpec_MGroup* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
-  BaseSpec_MGroup* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
-  BaseSpec_MGroup* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
-  BaseSpec_MGroup* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
+  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
+  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
+  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
+  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_DaModUnitSpec);
@@ -9600,8 +9600,8 @@ void LeabraWiz::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bo
 
   int mx_z1 = 0;		// max x coordinate on layer z=1
   int mx_z2 = 0;		// z=2
-  Layer_MGroup other_lays;  Layer_MGroup hidden_lays;
-  Layer_MGroup output_lays;  Layer_MGroup input_lays;
+  Layer_Group other_lays;  Layer_Group hidden_lays;
+  Layer_Group output_lays;  Layer_Group input_lays;
   int i;
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
@@ -9631,10 +9631,10 @@ void LeabraWiz::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bo
   //////////////////////////////////////////////////////////////////////////////////
   // make specs
 
-  BaseSpec_MGroup* units = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Units");
-  BaseSpec_MGroup* cons = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Cons");
-  BaseSpec_MGroup* layers = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Layers");
-  BaseSpec_MGroup* prjns = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Prjns");
+  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Units");
+  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Cons");
+  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Layers");
+  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
 //   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_DaModUnitSpec);

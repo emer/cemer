@@ -35,7 +35,7 @@ class RGBA_List;
 class TAColor;
 class TAColor_List;
 class ColorScaleSpec;
-class ColorScaleSpec_MGroup;
+class ColorScaleSpec_Group;
 class ScaleRange;
 class ScaleRange_List;
 class ColorScale;
@@ -120,8 +120,7 @@ public:
   TA_BASEFUNS(ColorScaleSpec);
 };
 
-// note: _MGroup name is for v3.2 compatability
-class TAMISC_API ColorScaleSpec_MGroup : public taGroup<ColorScaleSpec> {
+class TAMISC_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
 public:
   virtual void 		NewDefaults(); 	// create a set of default colors
   virtual void		SetDefaultColor();// set the default color based on gui
@@ -133,7 +132,7 @@ public:
   void 	Initialize()	{SetBaseType(&TA_ColorScaleSpec);};
   void 	Destroy()	{ };
 
-  TA_BASEFUNS(ColorScaleSpec_MGroup);
+  TA_BASEFUNS(ColorScaleSpec_Group);
 };
 
 //////////////////////////

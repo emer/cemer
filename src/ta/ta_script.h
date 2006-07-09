@@ -162,15 +162,15 @@ private:
 };
 
 
-// note: Script_MGroup name is for compatiblity with v3.2 files
-class TA_API Script_MGroup : public taGroup<Script> {
+// note: Script_Group name is for compatiblity with v3.2 files
+class TA_API Script_Group : public taGroup<Script> {
 public:
   virtual void	StopRecording();
   virtual void	AutoRun();
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(Script_MGroup);
+  TA_BASEFUNS(Script_Group);
 
 public:
   // more callbacks

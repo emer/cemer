@@ -28,7 +28,7 @@
 
 class Program;
 class ProgramRef;
-class Program_MGroup;
+class Program_Group;
 class Program_List;
 
 class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
@@ -173,6 +173,7 @@ public:
   
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
+  override String 	GetColText(int col, int itm_idx);
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
   TA_ABSTRACT_BASEFUNS(ProgEl);
@@ -193,6 +194,8 @@ INHERITED(taList<ProgEl>)
 public:
   virtual const String    GenCss(int indent_level = 0); // generate the Css code for this object
   
+  override int		NumListCols() const {return 2;} // number of columns in a list view for this item type
+  override String	GetColHeading(int col); // header text for the indicated column
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgEl_List);
 
@@ -206,8 +209,9 @@ class PDP_API ProgList: public ProgEl {
   // list of ProgEl's, each executed in sequence
 INHERITED(ProgEl)
 public:
-  ProgEl_List	    prog_els; // list of ProgEl's
+  ProgEl_List	    	prog_els; // list of ProgEl's
   
+  override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgList& cp);
@@ -228,6 +232,7 @@ INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
   
+  override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(ProgVars);
@@ -247,6 +252,7 @@ INHERITED(ProgEl)
 public:
   String	    user_script; // #EDIT_DIALOG content of the user scriptlet
   
+  override String	GetDisplayName() const;
   void	Copy_(const UserScriptEl& cp);
   COPY_FUNS(UserScriptEl, ProgEl);
   TA_BASEFUNS(UserScriptEl);
@@ -261,7 +267,7 @@ private:
 
 
 class PDP_API LoopEl: public ProgEl { 
-  // #VIRT_BASE #EDIT_INLINE #NO_TOKENS ProgEl base for loops
+  // #VIRT_BASE #EDIT_INLINE #NO_INSTANCE ProgEl base for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_els; // #BROWSE the items to execute in the loop
@@ -269,6 +275,7 @@ public:
   String	    	loop_var; // the loop variable
   String	    	init_val; // initial value of loop variable. blank if default or none
   
+  override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const LoopEl& cp);
@@ -276,6 +283,8 @@ public:
   TA_ABSTRACT_BASEFUNS(LoopEl);
 
 protected:
+  virtual const String 	loopHeader(bool display = false) const = 0; 
+    // common subcode, we use it as the DisplayName
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -298,6 +307,7 @@ public:
   TA_BASEFUNS(ForLoopEl);
 
 protected:
+  override const String loopHeader(bool display = false) const;
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -307,14 +317,15 @@ private:
 };
 
 
-class PDP_API WhileLoopEl: public LoopEl { 
+class PDP_API PreTestLoopEl: public LoopEl { 
   // #EDIT_INLINE #TOKENS LoopEl for a 'while' (pre-test) iteration over the elements
 INHERITED(LoopEl)
 public:
   
-  TA_BASEFUNS(WhileLoopEl);
+  TA_BASEFUNS(PreTestLoopEl);
 
 protected:
+  override const String loopHeader(bool display = false) const;
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -324,14 +335,15 @@ private:
 };
 
 
-class PDP_API UntilLoopEl: public LoopEl { 
+class PDP_API PostTestLoopEl: public LoopEl { 
   // #EDIT_INLINE LoopEl for a 'while' (pre-test) iteration over the elements
 INHERITED(LoopEl)
 public:
   
-  TA_BASEFUNS(UntilLoopEl);
+  TA_BASEFUNS(PostTestLoopEl);
 
 protected:
+  override const String loopHeader(bool display = false) const;
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -342,13 +354,14 @@ private:
 
 
 class PDP_API CondEl: public ProgEl { 
-  // ProgEl for a user scriptlet
+  // ProgEl for a conditional test element
 INHERITED(ProgEl)
 public:
   String	    cond_test; // condition test
   ProgEl_List	    true_els; // #BROWSE items to execute if condition true
   ProgEl_List	    false_els; // #BROWSE items to execute if condition false
   
+  override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const CondEl& cp);
@@ -394,6 +407,7 @@ public:
   MethodSpec		method_spec; //  the method to call
   SArg_Array		args; // arguments to the method
   
+  override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
@@ -425,6 +439,7 @@ public:
   virtual void		UpdateGlobalArgs(); 
     // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
   
+  override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
@@ -555,7 +570,7 @@ private:
 SmartRef_Of(Program); // ProgramRef
 
 
-class PDP_API Program_MGroup : public taGroup<Program> {
+class PDP_API Program_Group : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
@@ -564,9 +579,9 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const Program_MGroup& cp);
-  COPY_FUNS(Program_MGroup, taGroup<Program>)
-  TA_BASEFUNS(Program_MGroup);
+  void	Copy_(const Program_Group& cp);
+  COPY_FUNS(Program_Group, taGroup<Program>)
+  TA_BASEFUNS(Program_Group);
 
 private:
   void	Initialize();

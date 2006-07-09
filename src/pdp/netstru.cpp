@@ -4498,8 +4498,8 @@ void Network::UpdateMonitors() {
 enum NetSection {NS_NONE, NS_DEFINITIONS, NS_CONSTRAINTS,
 		   NS_NETWORK, NS_BIASES};
 
-ConSpec* GetNSConSpec(char name,BaseSpec_MGroup * bsmg,
-		      BaseSpec_MGroup* master, TypeDef* conspec_type,
+ConSpec* GetNSConSpec(char name,BaseSpec_Group * bsmg,
+		      BaseSpec_Group* master, TypeDef* conspec_type,
 		      bool skip_dots=true){
   if((skip_dots == true) && (name == '.')) return NULL;
   int i;
@@ -4545,7 +4545,7 @@ void Network::ReadOldPDPNet(istream& strm, bool skip_dots){
   int nhiddens = 0;
   int noutputs= 0;
   Unit_Group flat_units;
-  BaseSpec_MGroup conspec_group;
+  BaseSpec_Group conspec_group;
   int send_start = 0;
   int send_end = 0;
   int recv_start = 0;
@@ -5018,6 +5018,17 @@ bool Network::CheckConfig(bool quiet) {
     if(!l->CheckConfig(this, quiet)) return false;
   }
   return true;
+}
+
+void Network::ClearCounters(NetCounter down_from) {
+  // one of the few contexts where fall-thru switch is good...
+  switch (down_from) {
+  case NC_BATCH: batch = 0;
+  case NC_EPOCH: epoch = 0;
+  case NC_TRIAL: trial = 0;
+  case NC_PHASE: phase = 0;
+  case NC_CYCLE: cycle = 0;
+  }
 }
 
 void Network::SyncSendPrjns() {

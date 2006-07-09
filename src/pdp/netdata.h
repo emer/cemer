@@ -28,17 +28,17 @@
 #include "pdp_TA_type.h"
 
 // forwards this file
-class DataTable_MGroup;
+class DataTable_Group;
 
 
 
-class PDP_API DataTable_MGroup : public taGroup<DataTable> {
+class PDP_API DataTable_Group : public taGroup<DataTable> {
   // group of data objects
 INHERITED(taGroup<DataTable>)
 public:
 //  virtual void	AutoEdit();
 
-  TA_BASEFUNS(DataTable_MGroup);
+  TA_BASEFUNS(DataTable_Group);
   
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataTable); }
@@ -286,7 +286,7 @@ public:
 
 class DataSetSpec_SPtr : public SpecPtr<DataSetSpec> {
 public:
-  BaseSpec_MGroup*	GetSpecGroup();	// event specs go in environment
+  BaseSpec_Group*	GetSpecGroup();	// event specs go in environment
   void 	Initialize() 		{ };
   void	Destroy()		{ };
   TA_BASEFUNS(DataSetSpec_SPtr);
@@ -361,7 +361,7 @@ public:
 // other models are definable, but the standard EpochProcess will not
 // understand them.
 
-class DataSet_MGroup : public taGroup<DataSet> {
+class DataSet_Group : public taGroup<DataSet> {
   // ##SCOPE_Environment Group of events
 protected:
   void	El_SetIndex_(void* base, int idx) { ((DataSet*)base)->index = idx; }
@@ -392,7 +392,7 @@ public:
   void 	Destroy()		{ };
   void	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(DataSet_MGroup);
+  TA_BASEFUNS(DataSet_Group);
 }; //
 
 ////////////////////////
@@ -416,8 +416,8 @@ public:
     GRID_LOG			// grid log format for importing into a grid log
   };
 
-  BaseSpec_MGroup 	event_specs;	// specs for events: controls the layout and configuration of events
-  DataSet_MGroup 		events;		// the events, contain patterns that map onto layers of the network
+  BaseSpec_Group 	event_specs;	// specs for events: controls the layout and configuration of events
+  DataSet_Group 		events;		// the events, contain patterns that map onto layers of the network
   int			event_ctr; 	// #READ_ONLY #SHOW counter for interactive interface with environment: number of events processed since last InitDataSets()
 
   virtual void	InitDataSets()	{ event_ctr = 0; }
@@ -446,7 +446,7 @@ public:
   // the leaf-group model of the environment
   virtual int	GroupCount();
   // #MENU #USE_RVAL number of event groups in environment
-  virtual DataSet_MGroup* GetGroup(int gp_index);
+  virtual DataSet_Group* GetGroup(int gp_index);
   // get the event group (collection of events) at the specified index of all groups in the environment
 
   // the interactive model of the environment: just GetNextDataSet() until it returns NULL
@@ -506,7 +506,7 @@ public:
 			       float_RArray::DistMetric metric=float_RArray::HAMMING,
 			       bool norm=false, float tol=0.0f);
   // returns min and max distance between last (n th) pattern and all previous
-  virtual float GpWithinMinMaxDist(DataSet_MGroup* gp, int n, int pat_no, float& max_dist,
+  virtual float GpWithinMinMaxDist(DataSet_Group* gp, int n, int pat_no, float& max_dist,
 				   float_RArray::DistMetric metric=float_RArray::HAMMING,
 				   bool norm=false, float tol=0.0f);
   // returns min and max distance between last (n th) pattern and all previous within group
@@ -514,7 +514,7 @@ public:
 				 float_RArray::DistMetric metric=float_RArray::HAMMING,
 				 bool norm=false, float tol=0.0f, int st_gp=0);
   // returns min and max distance between patterns in all groups up to gp_no for pattern pat
-  virtual float GpMinMaxDist(DataSet_MGroup* gp, DataItem* trg_pat, int pat_no, float& max_dist,
+  virtual float GpMinMaxDist(DataSet_Group* gp, DataItem* trg_pat, int pat_no, float& max_dist,
 			     float_RArray::DistMetric metric=float_RArray::HAMMING,
 			     bool norm=false, float tol=0.0f);
   // returns min and max distance between probe pattern and all in group
@@ -651,15 +651,15 @@ protected: // support routines for added 4.0 interfaces
   virtual void		SetCurrentDataSet(DataSet* ev); // called by GoToItem and NextItem
 };
 
-// note: Environment_MGroup name is for compatiblity with v3.2 files
-class Environment_MGroup : public taGroup<Environment> {
+// note: Environment_Group name is for compatiblity with v3.2 files
+class Environment_Group : public taGroup<Environment> {
   // group of environments
 public:
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(Project),&TA_Environment); }
 
   void  Initialize()            { SetBaseType(&TA_Environment); }
   void  Destroy()               { };
-  TA_BASEFUNS(Environment_MGroup);
+  TA_BASEFUNS(Environment_Group);
 };
 
 class Environment_List : public taList<Environment> {

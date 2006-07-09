@@ -40,7 +40,7 @@
 class CtrlPanelData;
 class Process;
 class Process_Group;
-class Process_MGroup; //
+class Process_Group; //
 
 // from stats.h
 class DataItem;
@@ -72,7 +72,7 @@ class PatternSpec;
 class EventSpec;
 class Pattern;
 class Event;
-class Event_MGroup;
+class Event_Group;
 class Environment; //
 
 // from enviro_extra.h
@@ -142,18 +142,7 @@ public:
   TA_BASEFUNS(Process);
 };
 
-class PDP_API Process_Group : public taBase_Group {
-  // ##NO_TOKENS a regular group of processes
-public:
-  bool		Close_Child(TAPtr obj);
-
-  void	Initialize() 		{ SetBaseType(&TA_Process); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Process_Group);
-};
-
-
-class PDP_API Process_MGroup : public taGroup<Process> {
+class PDP_API Process_Group : public taGroup<Process> {
   // ##NO_TOKENS a menu group for processes
 public:
 
@@ -162,7 +151,7 @@ public:
   bool		DuplicateEl(TAPtr obj);
   void	Initialize() {SetBaseType(&TA_Process);}
   void 	Destroy()		{ };
-  TA_BASEFUNS(Process_MGroup);
+  TA_BASEFUNS(Process_Group);
 };
 
 
@@ -587,7 +576,7 @@ public:
   // #FROM_GROUP_enviro_group the current event (copied from the EpochProc)
   EpochProcess* epoch_proc;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent epoch_proc
-  Event_MGroup*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
+  Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
   void 		Init_impl();
 
@@ -629,7 +618,7 @@ public:
   int		batch_n_eff;	// #READ_ONLY #NO_SAVE effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
   int_Array	event_list;	// #HIDDEN list of events
-  Event_MGroup*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
+  Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
   int		dmem_nprocs;	// maximum number of processors to use for distributed memory computation of events within the epoch (actual = MIN(dmem_nprocs, nprocs / net dmem_nprocs_actual); may be less)
   
@@ -662,14 +651,14 @@ public:
 
   Counter	tick;		// one unit of time in a sequence
   Event*	cur_event;	// #FROM_GROUP_cur_event_gp current event
-  Event_MGroup*	cur_event_gp;	// #FROM_GROUP_enviro_group event group
+  Event_Group*	cur_event_gp;	// #FROM_GROUP_enviro_group event group
   Order		order;		// order to present events in
   StateInit	sequence_init;	// how to initialize network stat at start of sequence
 
   SequenceEpoch* sequence_epoch;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent epoch process
   int_Array	event_list;	// #HIDDEN list of events
-  Event_MGroup*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
+  Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
   void		Init_impl();
 
@@ -695,7 +684,7 @@ public:
 
   SmallBatchType small_batch;	// #CONDEDIT_ON_wt_update:SMALL_BATCH how to apply SMALL_BATCH wt_update when using sequences
 
-  Event_MGroup*	cur_event_gp;	// #FROM_GROUP_enviro_group current event group
+  Event_Group*	cur_event_gp;	// #FROM_GROUP_enviro_group current event group
 
   void		Init_impl();
 
@@ -923,7 +912,7 @@ public:
 
 class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec> {
 public:
-  BaseSpec_MGroup*	GetSpecGroup();	// event specs go in environment
+  BaseSpec_Group*	GetSpecGroup();	// event specs go in environment
   void 	Initialize() 		{ };
   void	Destroy()		{ };
   TA_BASEFUNS(EventSpec_SPtr);
@@ -975,7 +964,7 @@ public:
 // other models are definable, but the standard EpochProcess will not
 // understand them.
 
-class PDP_API Event_MGroup : public taGroup<Event> {
+class PDP_API Event_Group : public taGroup<Event> {
   // ##SCOPE_Environment Group of events
 protected:
   void	El_SetIndex_(void* base, int idx) { ((Event*)base)->index = idx; }
@@ -983,7 +972,7 @@ public:
 
   void	Initialize() {SetBaseType(&TA_Event);}
   void 	Destroy()		{ };
-  TA_BASEFUNS(Event_MGroup);
+  TA_BASEFUNS(Event_Group);
 }; //
 
 ////////////////////////
@@ -1006,8 +995,8 @@ public:
     GRID_LOG			// grid log format for importing into a grid log
   };
 
-  BaseSpec_MGroup 	event_specs;	// specs for events: controls the layout and configuration of events
-  Event_MGroup 		events;		// the events, contain patterns that map onto layers of the network
+  BaseSpec_Group 	event_specs;	// specs for events: controls the layout and configuration of events
+  Event_Group 		events;		// the events, contain patterns that map onto layers of the network
   int			event_ctr; 	// #READ_ONLY #SHOW counter for interactive interface with environment: number of events processed since last InitEvents()
 
   // the flat event list model of the environment
@@ -1019,7 +1008,7 @@ public:
   // the leaf-group model of the environment
   virtual int	GroupCount();
   // #MENU #USE_RVAL number of event groups in environment, including root
-  virtual Event_MGroup* GetGroup(int gp_index);
+  virtual Event_Group* GetGroup(int gp_index);
   // get the event group (collection of events) at the specified index of all groups in the environment
 
   void	UpdateAfterEdit();
@@ -1033,13 +1022,13 @@ public:
 
 };
 
-// note: Environment_MGroup name is for compatiblity with v3.2 files
-class PDP_API Environment_MGroup : public taGroup<Environment> {
+// note: Environment_Group name is for compatiblity with v3.2 files
+class PDP_API Environment_Group : public taGroup<Environment> {
   // group of environments
 public:
   void  Initialize()            { SetBaseType(&TA_Environment); }
   void  Destroy()               { };
-  TA_BASEFUNS(Environment_MGroup);
+  TA_BASEFUNS(Environment_Group);
 };
 
 
@@ -1089,7 +1078,7 @@ public:
 
 class FreqEnv;
 
-class PDP_API FreqEvent_Group : public Event_MGroup {
+class PDP_API FreqEvent_Group : public Event_Group {
   // an event group that has a frequency associated with it
 public:
   FreqEnv*	fenv;		// #READ_ONLY #NO_SAVE parent frequency environment
@@ -1101,7 +1090,7 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const FreqEvent_Group& cp);
-  COPY_FUNS(FreqEvent_Group, Event_MGroup);
+  COPY_FUNS(FreqEvent_Group, Event_Group);
   TA_BASEFUNS(FreqEvent_Group);
 };
 
@@ -1132,7 +1121,7 @@ public:
 
   // the group model of the environment
   int	 	GroupCount();		// number of groups in the environment
-  Event_MGroup* GetGroup(int i); 	// return the ith event group
+  Event_Group* GetGroup(int i); 	// return the ith event group
 
   void	Initialize();
   void 	Destroy()		{ CutLinks();};
@@ -1160,7 +1149,7 @@ public:
   TA_BASEFUNS(TimeEvent);
 };
 
-class PDP_API TimeEvent_MGroup : public Event_MGroup {
+class PDP_API TimeEvent_Group : public Event_Group {
   // a group of time-based events
 public:
   enum Interpolate {
@@ -1176,9 +1165,9 @@ public:
   void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
-  void	Copy_(const TimeEvent_MGroup& cp);
-  COPY_FUNS(TimeEvent_MGroup, Event_MGroup);
-  TA_BASEFUNS(TimeEvent_MGroup);
+  void	Copy_(const TimeEvent_Group& cp);
+  COPY_FUNS(TimeEvent_Group, Event_Group);
+  TA_BASEFUNS(TimeEvent_Group);
 };
 
 class PDP_API TimeEnvironment : public Environment {
@@ -1216,7 +1205,7 @@ public:
   TA_BASEFUNS(FreqTimeEvent);
 };
 
-class PDP_API FreqTimeEvent_Group : public TimeEvent_MGroup {
+class PDP_API FreqTimeEvent_Group : public TimeEvent_Group {
   // a time event group that has a frequency associated with it
 public:
   float		frequency;	// frequency of occurance for this group of events
@@ -1224,7 +1213,7 @@ public:
   void	Initialize(){frequency = 0.0f;}
   void 	Destroy()		{ };
   void	Copy_(const FreqTimeEvent_Group& cp){frequency = cp.frequency;}
-  COPY_FUNS(FreqTimeEvent_Group, TimeEvent_MGroup);
+  COPY_FUNS(FreqTimeEvent_Group, TimeEvent_Group);
   TA_BASEFUNS(FreqTimeEvent_Group);
 };
 
@@ -1254,7 +1243,7 @@ public:
 
   // the group model of the environment
   int	 	GroupCount();		// number of groups in the environment
-  Event_MGroup* GetGroup(int i); 	// return the ith event group
+  Event_Group* GetGroup(int i); 	// return the ith event group
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -1458,8 +1447,8 @@ class PDP_API Project : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
-  Environment_MGroup	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
-  Process_MGroup	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
+  Environment_Group	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
+  Process_Group	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
 
 #ifdef TA_GUI
   void			ConvertToVersion4(); 

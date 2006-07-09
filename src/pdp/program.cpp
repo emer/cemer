@@ -279,7 +279,7 @@ void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
     prog->setDirty(true);
   } else {
   // if we are in a group, dirty all progs
-    Program_MGroup* grp = GET_MY_OWNER(Program_MGroup);
+    Program_Group* grp = GET_MY_OWNER(Program_Group);
     if (grp)
       grp->SetProgsDirty();
   }
@@ -433,6 +433,14 @@ const String ProgEl::GenCss(int indent_level) {
   return rval;
 }
 
+String ProgEl::GetColText(int col, int /*itm_idx*/) {
+  switch (col) {
+  case 0: return GetTypeDef()->name;
+  case 1: return GetDisplayName();
+  default: return String("");
+  }
+}
+
 
 //////////////////////////
 //  ProgEl_List	//
@@ -444,6 +452,26 @@ void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
     prog->setDirty(true);
+  }
+}
+
+const String ProgEl_List::GenCss(int indent_level) {
+  String rval;
+  ProgEl* el;
+  for (int i = 0; i < size; ++i) {
+    el = FastEl(i);
+    rval += el->GenCss(indent_level); 
+  }
+  return rval;;
+}
+
+String ProgEl_List::GetColHeading(int col) {
+  static String col0("El Type");
+  static String col1("El Description");
+  switch (col) {
+  case 0: return col0;
+  case 1: return col1;
+  default: return _nilString;
   }
 }
 
@@ -470,19 +498,17 @@ const String UserScriptEl::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
-
-//////////////////////////
-//  ProgEl_List		//
-//////////////////////////
-
-const String ProgEl_List::GenCss(int indent_level) {
-  String rval;
-  ProgEl* el;
-  for (int i = 0; i < size; ++i) {
-    el = FastEl(i);
-    rval += el->GenCss(indent_level); 
-  }
-  return rval;;
+String UserScriptEl::GetDisplayName() const {
+  if (desc.empty()) {
+    // use first line, if any
+    String rval = user_script.before('\n');
+    if (rval.empty()) {
+      rval = user_script;
+      if (rval.empty())
+        rval = "(empty)";
+    }
+    return rval;
+  } else return desc;
 }
 
 
@@ -511,6 +537,13 @@ const String ProgVars::GenCssBody_impl(int indent_level) {
   return script_vars.GenCss(indent_level);
 }
 
+String ProgVars::GetDisplayName() const {
+  STRING_BUF(rval, 30);
+  rval += "ProgVars (";
+  rval += String(script_vars.size);
+  rval += " vars)";
+  return rval;
+}
 
 //////////////////////////
 //  ProgList		//
@@ -535,6 +568,10 @@ void ProgList::Copy_(const ProgList& cp) {
 
 const String ProgList::GenCssBody_impl(int indent_level) {
   return prog_els.GenCss(indent_level);
+}
+
+String ProgList::GetDisplayName() const {
+  return "ProgList (" + String(prog_els.size) + " items)";
 }
 
 
@@ -580,6 +617,11 @@ const String LoopEl::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "}\n";
 }
 
+String LoopEl::GetDisplayName() const {
+  return loopHeader(true);
+}
+
+
 //////////////////////////
 //  ForLoopEl		//
 //////////////////////////
@@ -606,9 +648,8 @@ const String ForLoopEl::GenCssPre_impl(int indent_level) {
     rval += "{" + loop_var_type + " " + loop_var + ";\n";
   }
   rval += cssMisc::Indent(indent_level);
-  rval += "for (" + loop_var + " = " + init_val + "; "
-    + loop_test + "; " 
-    + loop_iter + ") {\n";
+  rval += loopHeader();
+  rval += " {\n";
   return rval; 
 }
 
@@ -618,40 +659,64 @@ const String ForLoopEl::GenCssPost_impl(int indent_level) {
   return rval;
 }
 
+const String ForLoopEl::loopHeader(bool) const {
+  STRING_BUF(rval, 60);
+  rval += "for (" + loop_var + " = " + init_val + "; "
+    + loop_test + "; " 
+    + loop_iter + ")";
+  return rval;
+}
 
 //////////////////////////
-//  WhileLoopEl		//
+//  PreTestLoopEl		//
 //////////////////////////
 
-const String WhileLoopEl::GenCssPre_impl(int indent_level) {
+const String PreTestLoopEl::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
-  rval += "while (" + loop_var + ") {\n";
+  rval += loopHeader();
+  rval += " {\n";
   return rval; 
 }
 
-const String WhileLoopEl::GenCssPost_impl(int indent_level) {
+const String PreTestLoopEl::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "}\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
+const String PreTestLoopEl::loopHeader(bool) const {
+  STRING_BUF(rval, 60);
+  rval += "while (";
+  rval += loop_var;
+  rval += + ")";
+  return rval;
+}
 
 //////////////////////////
-//  UntilLoopEl		//
+//  PostTestLoopEl		//
 //////////////////////////
 
-const String UntilLoopEl::GenCssPre_impl(int indent_level) {
+const String PostTestLoopEl::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
   rval += "do {\n";
   return rval; 
 }
 
-const String UntilLoopEl::GenCssPost_impl(int indent_level) {
+const String PostTestLoopEl::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
   rval += "} while (" + loop_var + ");\n";
   rval += inherited::GenCssPost_impl(indent_level);
+  return rval;
+}
+
+const String PostTestLoopEl::loopHeader(bool display) const {
+  STRING_BUF(rval, 60);
+  if (display)
+    rval += "do ... while (" + loop_var + ")";
+  else
+    rval += "while (" + loop_var + ")";
   return rval;
 }
 
@@ -700,6 +765,10 @@ const String CondEl::GenCssBody_impl(int indent_level) {
 
 const String CondEl::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "}\n";
+}
+
+String CondEl::GetDisplayName() const {
+  return "if (" + cond_test + ")";
 }
 
 
@@ -793,6 +862,19 @@ const String MethodCallEl::GenCssBody_impl(int indent_level) {
     }
   rval += ");\n";
   
+  return rval;
+}
+
+String MethodCallEl::GetDisplayName() const {
+  if (!method_spec.script_obj && !method_spec.method) 
+    return "(no object or no method selected)";
+  
+  STRING_BUF(rval, 40); // more allocated if needed
+  rval += method_spec.script_obj->name;
+  rval += "->";
+  rval += method_spec.method->name;
+  //TODO: nicer if this descriptor had the param names and/or types
+  rval += "()";
   return rval;
 }
 
@@ -913,6 +995,15 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
 
 const String ProgramCallEl::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "} // call program\n";
+}
+
+String ProgramCallEl::GetDisplayName() const {
+  String rval = "Call ";
+  if (target)
+    rval += target->GetName();
+  else
+    rval += "(no program set)";
+  return rval;
 }
 
 void ProgramCallEl::UpdateGlobalArgs() {
@@ -1202,7 +1293,7 @@ void  Program::UpdateProgVars() {
   
   
   // add new (with unique names) from our groups, starting at most inner
-  Program_MGroup* grp = GET_MY_OWNER(Program_MGroup);
+  Program_Group* grp = GET_MY_OWNER(Program_Group);
   while (grp) {
     for (int i = 0; i < grp->global_vars.size; ++i) {
       ProgVar* sv = grp->global_vars.FastEl(i);
@@ -1211,7 +1302,7 @@ void  Program::UpdateProgVars() {
       el = sv->NewCssEl();
       script->prog_vars.Push(el); //refs
     } 
-    grp = (Program_MGroup*)grp->GetOwner(&TA_Program_MGroup);
+    grp = (Program_Group*)grp->GetOwner(&TA_Program_Group);
   }
 /*old  int i = 0;
   ProgVar* sv;
@@ -1282,28 +1373,28 @@ void Program::ViewScript_impl() {
 
 
 //////////////////////////
-//  Program_MGroup	//
+//  Program_Group	//
 //////////////////////////
 
-void Program_MGroup::Initialize() {
+void Program_Group::Initialize() {
   SetBaseType(&TA_Program);
 }
 
-void Program_MGroup::InitLinks() {
+void Program_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(global_vars, this);
 }
 
-void Program_MGroup::CutLinks() {
+void Program_Group::CutLinks() {
   global_vars.CutLinks();
   inherited::CutLinks();
 }
 
-void Program_MGroup::Copy_(const Program_MGroup& cp) {
+void Program_Group::Copy_(const Program_Group& cp) {
   global_vars = cp.global_vars;
 }
 
-void Program_MGroup::SetProgsDirty() {
+void Program_Group::SetProgsDirty() {
   taLeafItr itr;
   Program* prog;
   FOR_ITR_EL(Program, prog, this->, itr) {
@@ -1320,64 +1411,4 @@ void Program_List::Initialize() {
   SetBaseType(&TA_Program);
 }
 
-/* nn
-//////////////////////////
-//  Controller		//
-//////////////////////////
 
-bool Controller::running = false;
-
-void Controller::Initialize() {
-}
-
-void Controller::Destroy() {
-  CutLinks();
-}
-
-void Controller::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
-void Controller::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(progs, this);
-}
-
-void Controller::CutLinks() {
-  progs.CutLinks();
-  inherited::CutLinks();
-}
-
-void Controller::Copy_(const Controller& cp) {
-  progs = cp.progs;
-}
-
-void Controller::AddProgram(Program* prog) {
-  progs.LinkUnique(prog);
-}
-
-
-void Controller::Init() {
-  Run_impl(Program::INIT);
-}
-
-Program* Controller::rootProg() {
-  return progs.First();
-}
-
-void Controller::Run() {
-  Run_impl(Program::RUN);
-}
-
-
-
-
-//////////////////////////
-//  Controller_MGroup	//
-//////////////////////////
-
-void Controller_MGroup::Initialize() {
-  SetBaseType(&TA_Controller);
-}
-
-*/

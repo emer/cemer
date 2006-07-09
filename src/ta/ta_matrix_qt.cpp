@@ -29,38 +29,36 @@
 
 */
 
-MatrixTableModel::MatrixTableModel(QObject* parent) 
-:inherited(parent)
+MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
+:inherited(NULL)
 {
-  m_matrix = NULL;
+  m_mat = mat_;
 }
 
 MatrixTableModel::~MatrixTableModel() {
-  setMatrix(NULL);
+  m_mat = NULL;
 }
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
-  if (!m_matrix) return 0;
-  if (m_matrix->dims() < 1)
+  if (!m_mat) return 0;
+  if (m_mat->dims() < 1)
     return 0;
-  else if (m_matrix->dims() == 1)
-    return m_matrix->dim(0);
-  else return m_matrix->dim(m_matrix->dims() - 2);
+  else return m_mat->dim(0);
 }
 
 QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
-  if (!m_matrix) return QVariant();
+  if (!m_mat) return QVariant();
   //TEMP
   return "test";
 }
 
 Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
-  if (!m_matrix) return 0;
+  if (!m_mat) return 0;
   Qt::ItemFlags rval = 0;
   if (ValidateIndex(index)) {
     rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     //only editable if 2-d or less
-    if (m_matrix->dims() <= 2)  
+    if (m_mat->dims() <= 2)  
       rval |= Qt::ItemIsEditable;
   }
   return rval;
@@ -76,17 +74,23 @@ QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, 
     return QString("R%1").arg(section);
 }
 
+void MatrixTableModel::MatrixDestroying() {
+  if (!m_mat) return;
+  m_mat = NULL;
+  //maybe update things? really is only called instants before we get deleted anyway
+}
+
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
-  if (!m_matrix) return 0;
-  if (m_matrix->dims() < 1)
+  if (!m_mat) return 0;
+  if (m_mat->dims() < 1)
     return 0;
-  else if (m_matrix->dims() == 1)
+  else if (m_mat->dims() == 1)
     return 1;
-  else return m_matrix->dim(m_matrix->dims() - 1);
+  else return m_mat->dim(1);
 }
 
 bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
-  if (!m_matrix) return false;
+  if (!m_mat) return false;
   if (index.isValid() && role == Qt::EditRole) {
   //TODO:
 
@@ -95,13 +99,6 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
       return true;
   }
   return false;
-}
-
-
-void MatrixTableModel::setMatrix(taMatrix* value) {
-  if (m_matrix == value) return;
-  taBase::SetPointer((TAPtr*)&m_matrix, value);
-  //TODO: update things
 }
 
 bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {

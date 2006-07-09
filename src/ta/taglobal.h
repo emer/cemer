@@ -200,6 +200,7 @@
 
 #define override virtual  // makes override situation more clear -- use for all descendants
 
+#include <stdint.h>
 
 // define useful types -- these will be defined by QT, so don't define them if using QT
 #if ((defined TA_GUI) && (!defined __MAKETA__))
@@ -232,7 +233,7 @@ typedef unsigned char   byte;
     typedef unsigned __int64	uintptr_t;
 # else
     typedef int			intptr_t;
-    typedef unsigned int		uintptr_t;
+    typedef unsigned int	uintptr_t;
 # endif
   //note: prob should inline these, rather than macros, but don't want naggling little
   // type differences to cause compile issues
@@ -313,11 +314,17 @@ typedef int pid_t; //
 // when about to malloc/calloc etc. a number of bytes, call tweak_alloc to optimally tweak the
 //  allocation request size -- especially useful where the allocator use 2^n blocks, or 16n blocks
 
+// Platform	bits	Overhead	Min/Gran Size		Allocator
+// Linux	32	8 bytes		16/8 bytes	Doug Lea's malloc
+// Linux	64	16 bytes	24/8 bytes	Doug Lea's malloc
+// Mac OS       32	0		16/16 bytes
+
 #if (defined(TA_OS_LINUX))
-// Linux uses Doug Lea's malloc, which has a 1-pointer overhead, and 16-byte granularity
+// Linux uses Doug Lea's malloc, which has:
+// a 2-int(32/64) overhead; 2-int + 1-ptr min, and 8-byte granularity
 // strategy: round up to the amount that we will get allocated regardless
 inline size_t tweak_alloc(size_t n) {
-  return  (((n + sizeof(void*)) + 15) & ~((size_t)0xF)) - sizeof(void*);
+  return  (((n + (2 * sizeof(intptr_t))) + 7) & ~((size_t)0x7)) - (2 * sizeof(intptr_t));
 }
 
 #elif (defined(TA_OS_WIN))
@@ -330,7 +337,8 @@ inline size_t tweak_alloc(size_t n) {
 }
 
 #elif defined(TA_OS_MAC)
-// Mac OS seemingly uses an overhead-less allocator (alloc address determines size, based on maps)
+// Mac OS uses an overhead-less allocator (alloc address determines size, based on maps)
+// Mac OS has 16-byte granularity
 inline size_t tweak_alloc(size_t n) {
   return  (((n + 0) + 15) & ~((size_t)0xF)) - 0;
 }

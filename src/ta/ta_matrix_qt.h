@@ -27,15 +27,14 @@
 #endif
 
 
-class MatrixTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
+class MatrixTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
+friend class taMatrix;
 INHERITED(QAbstractTableModel)
-
 public:
 
-  taMatrix*		matrix() const {return m_matrix;}
-  void			setMatrix(taMatrix* value);
+  taMatrix*		mat() const {return m_mat;}
   
-  MatrixTableModel(QObject* parent);
+  MatrixTableModel(taMatrix* mat_);
   ~MatrixTableModel(); //
   
 public: // required implementations
@@ -50,10 +49,11 @@ public: // required implementations
     int role = Qt::EditRole); // override, for editing
 
 protected:
+  void			MatrixDestroying(); // clears our instance
   bool			ValidateIndex(const QModelIndex& index) const;
   bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
     // translates index into matrix coords; true if the index is valid
-  taMatrix*		m_matrix;
+  taMatrix*		m_mat;
 #endif
 };
 

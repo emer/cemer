@@ -1182,7 +1182,7 @@ protected:
     // #IGNORE grouped layer, 4d data
 };
 
-PosMGroup_of(Layer);
+PosGroup_of(Layer);
 SmartRef_Of(Layer); // LayerRef
 
 //class Network : public WinMgr {
@@ -1226,8 +1226,16 @@ public:
    TEST	= 0,	 		// indicates outputs are not clamped, net being tested or run
    TRAIN = 1	  		// usually indicates patterns are being clamped on outs etc.
  };
+ 
+ enum NetCounter { // the hierarchical counters, used to specify from where to clear
+   NC_CYCLE,
+   NC_PHASE,
+   NC_TRIAL,
+   NC_EPOCH,
+   NC_BATCH
+ };
 
-  Layer_MGroup	layers;		// Layers or Groups of Layers
+  Layer_Group	layers;		// Layers or Groups of Layers
   int		context;	// #READ_ONLY_IV used by programs to provide context modality to algorithms
   WtUpdate	wt_update;	// #READ_ONLY_IV determines weight update mode
   int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
@@ -1274,6 +1282,7 @@ public:
   virtual void	OpenViewer();
   // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network
 #endif
+  void		ClearCounters(NetCounter down_from = NC_BATCH); // clear the network counters down from indicate point, default clears all
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, WtSaveFormat fmt = TEXT);
@@ -1420,15 +1429,15 @@ protected:
 #endif
 };
 
-//note: Network_MGroup name is for compatability with v3.2 files
-class PDP_API Network_MGroup : public taGroup<Network> {
+//note: Network_Group name is for compatability with v3.2 files
+class PDP_API Network_Group : public taGroup<Network> {
 public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
-  TA_BASEFUNS(Network_MGroup); //
+  TA_BASEFUNS(Network_Group); //
 };
 
 class PDP_API LayerRWBase: public taOBase  {

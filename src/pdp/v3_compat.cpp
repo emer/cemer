@@ -133,19 +133,19 @@ bool Process::RunScript() {
 }
 
 
-bool Process_Group::Close_Child(TAPtr obj) {
+/*obs bool Process_Group::Close_Child(TAPtr obj) {
   SchedProcess* sp = GET_MY_OWNER(SchedProcess);
   if (sp != NULL) {
 //obs    winbMisc::DelayedMenuUpdate(sp);
   }
   return Remove(obj);		// otherwise just nuke it
-}
+} */
 
 //////////////////////////
-//   Process_MGroup	//
+//   Process_Group	//
 //////////////////////////
 
-bool Process_MGroup::Close_Child(TAPtr obj) {
+bool Process_Group::Close_Child(TAPtr obj) {
   if(!obj->InheritsFrom(&TA_SchedProcess)) {
     return taGroup<Process>::Close_Child(obj);
   }
@@ -164,7 +164,7 @@ bool Process_MGroup::Close_Child(TAPtr obj) {
   return rval;
 }
 
-bool Process_MGroup::DuplicateEl(TAPtr obj) {
+bool Process_Group::DuplicateEl(TAPtr obj) {
 return taGroup<Process>::DuplicateEl(obj);/*obs  if(!obj->InheritsFrom(&TA_SchedProcess)) {
     return taGroup<Process>::DuplicateEl(obj);
   }
@@ -1343,7 +1343,7 @@ void SchedProcess::CutLinks() {
   cntr = NULL;
   step.CutLinks();
   if(sub_proc != NULL) {
-    Process_MGroup* gp = GET_MY_OWNER(Process_MGroup);
+    Process_Group* gp = GET_MY_OWNER(Process_Group);
     if(gp != NULL)
       gp->RemoveLeaf(sub_proc);
   }
@@ -1510,7 +1510,7 @@ void SchedProcess::CreateSubProcs(bool update) {
     return;
 
   if((sub_proc == NULL) || (sub_proc->GetTypeDef() != sub_proc_type)) {
-    Process_MGroup* gp = GET_MY_OWNER(Process_MGroup);
+    Process_Group* gp = GET_MY_OWNER(Process_Group);
     if(gp == NULL)
       return;
 
@@ -1546,7 +1546,7 @@ void SchedProcess::CreateSubProcs(bool update) {
 }
 
 void SchedProcess::RemoveSuperProc() {
-  Process_MGroup* gp = GET_MY_OWNER(Process_MGroup);
+  Process_Group* gp = GET_MY_OWNER(Process_Group);
   if((gp == NULL) || (super_proc == NULL))
     return;
 
@@ -1562,7 +1562,7 @@ void SchedProcess::RemoveSuperProc() {
 }
 
 void SchedProcess::RemoveSubProc() {
-  Process_MGroup* gp = GET_MY_OWNER(Process_MGroup);
+  Process_Group* gp = GET_MY_OWNER(Process_Group);
   if((gp == NULL) || (sub_proc == NULL))
     return;
 
@@ -2185,7 +2185,7 @@ void EventSpec::Copy(const EventSpec& cp) {
 }
 
 
-BaseSpec_MGroup* EventSpec_SPtr::GetSpecGroup() {
+BaseSpec_Group* EventSpec_SPtr::GetSpecGroup() {
   Environment* env = GET_OWNER(owner,Environment);
   if(env == NULL)
     return NULL;
@@ -2293,8 +2293,8 @@ int Environment::GroupCount() {
   return events.LeafGpCount();
 }
 
-Event_MGroup* Environment::GetGroup(int i) {
-  return (Event_MGroup*)events.SafeLeafGp(i);
+Event_Group* Environment::GetGroup(int i) {
+  return (Event_Group*)events.SafeLeafGp(i);
 }
 
 
@@ -2340,14 +2340,14 @@ void FreqEvent_Group::Initialize() {
 }
 
 void FreqEvent_Group::InitLinks() {
-  Event_MGroup::InitLinks();
+  Event_Group::InitLinks();
   taBase::Own(list, this);
   fenv = GET_MY_OWNER(FreqEnv);
 }
 
 void FreqEvent_Group::CutLinks() {
   fenv = NULL;
-  Event_MGroup::CutLinks();
+  Event_Group::CutLinks();
 }
 
 void FreqEvent_Group::Copy_(const FreqEvent_Group& cp) {
@@ -2409,31 +2409,31 @@ int FreqEnv::GroupCount() {
   return Environment::GroupCount();
 }
 
-Event_MGroup* FreqEnv::GetGroup(int i) {
+Event_Group* FreqEnv::GetGroup(int i) {
   if((freq_level == GROUP) || (freq_level == GROUP_EVENT)) {
-    return (Event_MGroup*)events.SafeLeafGp(list.SafeEl(i));
+    return (Event_Group*)events.SafeLeafGp(list.SafeEl(i));
   }
   return Environment::GetGroup(i);
 }
 
 
 //////////////////////////
-//  TimeEvent_MGroup 	//
+//  TimeEvent_Group 	//
 //////////////////////////
 
-void TimeEvent_MGroup::Initialize() {
+void TimeEvent_Group::Initialize() {
   end_time = 1.0f;
   interpolate = USE_ENVIRO;
   SetBaseType(&TA_TimeEvent);
 }
 
-void TimeEvent_MGroup::Copy_(const TimeEvent_MGroup& cp) {
+void TimeEvent_Group::Copy_(const TimeEvent_Group& cp) {
   interpolate = cp.interpolate;
   end_time = cp.end_time;
 }
 
-void TimeEvent_MGroup::UpdateAfterEdit() {
-  Event_MGroup::UpdateAfterEdit();
+void TimeEvent_Group::UpdateAfterEdit() {
+  Event_Group::UpdateAfterEdit();
   if(leaves == 0)
     return;
   TimeEvent* ev = (TimeEvent*)Leaf(leaves-1);
@@ -2445,13 +2445,13 @@ void TimeEvent_MGroup::UpdateAfterEdit() {
 
 void TimeEnvironment::Initialize() {
   events.SetBaseType(&TA_TimeEvent);
-  events.gp.SetBaseType(&TA_TimeEvent_MGroup);
+  events.gp.SetBaseType(&TA_TimeEvent_Group);
   interpolate = CONSTANT;
 }
 
 void TimeEnvironment::InitLinks() {
   Environment::InitLinks();
-  events.gp.SetBaseType(&TA_TimeEvent_MGroup);
+  events.gp.SetBaseType(&TA_TimeEvent_Group);
 }
 
 void TimeEnvironment::Copy_(const TimeEnvironment& cp) {
@@ -2505,9 +2505,9 @@ int FreqTimeEnv::GroupCount() {
   return TimeEnvironment::GroupCount();
 }
 
-Event_MGroup* FreqTimeEnv::GetGroup(int i) {
+Event_Group* FreqTimeEnv::GetGroup(int i) {
   if(freq_level == GROUP) {
-    return (Event_MGroup*)events.SafeLeafGp(list.SafeEl(i));
+    return (Event_Group*)events.SafeLeafGp(list.SafeEl(i));
   }
   return TimeEnvironment::GetGroup(i);
 }

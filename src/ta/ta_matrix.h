@@ -29,6 +29,10 @@
 
 // externals
 class TypeDef;
+#ifdef TA_GUI
+  class QAbstractItemModel;
+  class MatrixTableModel;
+#endif  
 
 // forwards this file
 class byte_Matrix; //
@@ -265,6 +269,10 @@ public:
   virtual taMatrix*	GetFrameSlice_(int frame);
     // return a slice, of exactly one frame; will have dim-1 of us
   
+#ifdef TA_GUI
+  QAbstractItemModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
+#endif
+  
   virtual void 		List(ostream& strm=cout) const; 	// List the items
   
   ostream& 		Output(ostream& strm, int indent = 0) const;
@@ -298,7 +306,9 @@ protected:
   int			alloc_size; // -1 means fixed (external data)
   int			slice_cnt; // number of extant slices -- slices force no reallocs
   taMatrix*		slice_par; // slice parent -- we ref/unref it
-  
+#ifdef TA_GUI
+  MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
+#endif  
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 

@@ -24,22 +24,22 @@
 #endif
 
 //////////////////////////////////
-//	BaseSpec_MGroup		//
+//	BaseSpec_Group		//
 //////////////////////////////////
 
-bool BaseSpec_MGroup::nw_itm_def_arg = false;
+bool BaseSpec_Group::nw_itm_def_arg = false;
 
 
-void BaseSpec_MGroup::Initialize() {
+void BaseSpec_Group::Initialize() {
   SetBaseType(&TA_BaseSpec);
-//  SetAdapter(new BaseSpec_MGroupAdapter(this));
+//  SetAdapter(new BaseSpec_GroupAdapter(this));
 }
 
-const iColor* BaseSpec_MGroup::GetEditColor() {
+const iColor* BaseSpec_Group::GetEditColor() {
   return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase), el_base);
 }
 
-BaseSpec* BaseSpec_MGroup::FindSpecType(TypeDef* td) {
+BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -58,7 +58,7 @@ BaseSpec* BaseSpec_MGroup::FindSpecType(TypeDef* td) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_MGroup::FindSpecInherits(TypeDef* td, TAPtr for_obj) {
+BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, TAPtr for_obj) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -79,7 +79,7 @@ BaseSpec* BaseSpec_MGroup::FindSpecInherits(TypeDef* td, TAPtr for_obj) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_MGroup::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
+BaseSpec* BaseSpec_Group::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -98,7 +98,7 @@ BaseSpec* BaseSpec_MGroup::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_MGroup::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, TAPtr for_obj) {
+BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, TAPtr for_obj) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -120,7 +120,7 @@ BaseSpec* BaseSpec_MGroup::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, 
 }
 
 
-BaseSpec* BaseSpec_MGroup::FindSpecName(const char* nm) {
+BaseSpec* BaseSpec_Group::FindSpecName(const char* nm) {
   int idx;
   BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm, idx);
   if(rval != NULL)
@@ -135,11 +135,11 @@ BaseSpec* BaseSpec_MGroup::FindSpecName(const char* nm) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_MGroup::FindParent() {
+BaseSpec* BaseSpec_Group::FindParent() {
   return GET_MY_OWNER(BaseSpec);
 }
 
-/*obs void BaseSpec_MGroup::GenMenu_impl(taiMenu* menu) {
+/*obs void BaseSpec_Group::GenMenu_impl(taiMenu* menu) {
   PDPMGroup::GenMenu_impl(menu);
 
   menu->AddSep();
@@ -149,7 +149,7 @@ BaseSpec* BaseSpec_MGroup::FindParent() {
   itm_list->GetMenu(sub, &mc);
 } */
 #ifdef TA_GUI
-void BaseSpec_MGroup::NewChildSpec_mc(taiAction* sel) {
+void BaseSpec_Group::NewChildSpec_mc(taiAction* sel) {
 /*TODO  if(win_owner == NULL) return;
   if((sel != NULL) && (sel->usr_data != NULL)) {
     TAPtr itm = (TAPtr)sel->usr_data;
@@ -164,7 +164,7 @@ void BaseSpec_MGroup::NewChildSpec_mc(taiAction* sel) {
   } */
 }
 #endif
-BaseSpec* BaseSpec_MGroup::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm, const char* alt_nm) {
+BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm, const char* alt_nm) {
   nw_itm = false;
   BaseSpec* sp = NULL;
   if(nm != NULL) {
@@ -193,7 +193,7 @@ BaseSpec* BaseSpec_MGroup::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_it
   return sp;
 }
 
-bool BaseSpec_MGroup::RemoveSpec(const char* nm, TypeDef* tp) {
+bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
   if(nm != NULL)
     return RemoveName(nm);
 
@@ -766,7 +766,7 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
 
   // this is just like GetSpecOfType(), except it uses inherits!
   // thus, this won't create a new object unless absolutely necessary
-  BaseSpec_MGroup* spgp = GetSpecGroup();
+  BaseSpec_Group* spgp = GetSpecGroup();
   if(spgp == NULL)
     return;
   // pass the ownr to this, so that min_obj_type can be checked
@@ -783,7 +783,7 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
   }
 }
 
-BaseSpec_MGroup* SpecPtr_impl::GetSpecGroup() {
+BaseSpec_Group* SpecPtr_impl::GetSpecGroup() {
   ProjectBase* prj = GET_OWNER(owner,ProjectBase);
   if(prj == NULL)
     return NULL;
@@ -791,7 +791,7 @@ BaseSpec_MGroup* SpecPtr_impl::GetSpecGroup() {
 }
 
 void SpecPtr_impl::GetSpecOfType() {
-  BaseSpec_MGroup* spgp = GetSpecGroup();
+  BaseSpec_Group* spgp = GetSpecGroup();
   if(spgp == NULL)
     return;
   BaseSpec* sp = spgp->FindSpecType(type);

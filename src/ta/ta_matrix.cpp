@@ -17,6 +17,10 @@
 #include "ta_matrix.h"
 #include "ta_thread.h"
 
+#ifdef TA_GUI
+# include "ta_matrix_qt.h"
+#endif
+
 //////////////////////////
 //  MatrixGeom		//
 //////////////////////////
@@ -189,6 +193,9 @@ void taMatrix::Initialize()
   alloc_size = 0;
   slice_cnt = 0;
   slice_par = NULL;
+#ifdef TA_GUI
+  m_dm = NULL;
+#endif
 }
  
 void taMatrix::Destroy() {
@@ -202,6 +209,13 @@ void taMatrix::Destroy() {
 #ifdef DEBUG 
   if (slice_cnt != 0) {
     taMisc::Error("taMatrix being destroyed with slice_cnt=", String(slice_cnt));
+  }
+#endif
+#ifdef TA_GUI
+  if (m_dm) {
+    m_dm->MatrixDestroying();
+    delete m_dm;
+    m_dm = NULL;
   }
 #endif
 }
@@ -448,6 +462,16 @@ int taMatrix::frameSize() const {
     rval *= geom[i];
   return rval;
 }
+
+#ifdef TA_GUI
+QAbstractItemModel* taMatrix::GetDataModel() {
+  if (!m_dm) {
+    //shared by all views; persists now till we die; no affect on refcnt
+    m_dm = new MatrixTableModel(this);
+  }
+  return m_dm;
+}
+#endif // TA_GUI
 
 taMatrix* taMatrix::GetFrameSlice_(int frame) {
   int dims_m1 = dims() - 1; //cache

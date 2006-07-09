@@ -34,7 +34,7 @@
 #include "program.h"
 
 
-class PDP_API TypeDefault_MGroup : public taGroup<TypeDefault> {
+class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
 INHERITED(taGroup<TypeDefault>)
 public:
@@ -43,18 +43,18 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_MGroup);
+  TA_BASEFUNS(TypeDefault_Group);
 };
 #ifdef TA_GUI
-// note: _MGroup name is for compatiblity with v3.2 files
-class PDP_API SelectEdit_MGroup : public taGroup<SelectEdit> {
+// note: _Group name is for compatiblity with v3.2 files
+class PDP_API SelectEdit_Group : public taGroup<SelectEdit> {
   // group of select edit dialog objects
 public:
   virtual void	AutoEdit();
 
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(SelectEdit_MGroup);
+  TA_BASEFUNS(SelectEdit_Group);
 };
 #endif
 //////////////////////////////////////////////////
@@ -174,15 +174,15 @@ public:
   TA_BASEFUNS(Wizard);
 };
 
-// note: _MGroup name is for compatiblity with v3.2 files
-class PDP_API Wizard_MGroup : public taGroup<Wizard> {
+// note: _Group name is for compatiblity with v3.2 files
+class PDP_API Wizard_Group : public taGroup<Wizard> {
   // group of wizard objects
 public:
   virtual void	AutoEdit();
 
   void	Initialize() 		{ SetBaseType(&TA_Wizard); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(Wizard_MGroup);
+  TA_BASEFUNS(Wizard_Group);
 };
 
 
@@ -218,16 +218,16 @@ public:
   };
 
 
-  TypeDefault_MGroup	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
-  Wizard_MGroup    	wizards;	// Wizards for automatically configuring simulation objects
-  BaseSpec_MGroup     	specs;		// Specifications for network parameters
-  Network_MGroup	networks;	// Networks of interconnected units
-  DataTable_MGroup	data;		// Misc data, such as patterns for network input
-  PDPLog_MGroup		logs;		// Logs to display statistics in processes
-  Program_MGroup	programs;	// Gui-based programs to run simulations and other processing
-  Script_MGroup		scripts;	// Scripts to control arbitrary actions
+  TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
+  Wizard_Group    	wizards;	// Wizards for automatically configuring simulation objects
+  BaseSpec_Group     	specs;		// Specifications for network parameters
+  Network_Group		networks;	// Networks of interconnected units
+  DataTable_Group	data;		// Misc data, such as patterns for network input
+  PDPLog_Group		logs;		// Logs to display statistics in processes
+  Program_Group	programs;	// Gui-based programs to run simulations and other processing
+  Script_Group		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
-  SelectEdit_MGroup	edits;		// special edit dialogs for selected elements
+  SelectEdit_Group	edits;		// special edit dialogs for selected elements
   DataViewer_List	viewers;	// any open viewers TODO: make HIDDEN in release version
 #ifdef DEBUG
   taBase_List		test_objs;	// just for testing, for any kind of objs
@@ -263,7 +263,7 @@ public:
 
   // wizard construction functions:
   virtual void MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
-  virtual BaseSpec_MGroup* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg); // find a given spec group and if not found, make it
+  virtual BaseSpec_Group* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg); // find a given spec group and if not found, make it
 
   int	Load(istream& strm, TAPtr par=NULL);
   int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -288,16 +288,16 @@ public:
 };
 
 
-// note: _MGroup name is for compatiblity with v3.2 files
-class PDP_API Project_MGroup : public taGroup<ProjectBase> {
+// note: _Group name is for compatiblity with v3.2 files
+class PDP_API Project_Group : public taGroup<ProjectBase> {
 public:
-  ColorScaleSpec_MGroup*	colorspecs;	// #HIDDEN #NO_SAVE -- aliased from projects
+  ColorScaleSpec_Group*	colorspecs;	// #HIDDEN #NO_SAVE -- aliased from projects
 
   int		Load(istream& strm, TAPtr par=NULL); // call reconnect on nets afterwards
 
   void	Initialize() 		{SetBaseType(&TA_ProjectBase);}
   void 	Destroy()		{ };
-  TA_BASEFUNS(Project_MGroup);
+  TA_BASEFUNS(Project_Group);
 };
 
 
@@ -305,8 +305,8 @@ class PDP_API PDPRoot : public taNBase, IApp {
   // structural root of object hierarchy
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
-  Project_MGroup	projects; 	// The projects
-  ColorScaleSpec_MGroup colorspecs;	// Color Specs -- aliased in projects (for browser)
+  Project_Group	projects; 	// The projects
+  ColorScaleSpec_Group colorspecs;	// Color Specs -- aliased in projects (for browser)
 
 //nn  bool	ThisMenuFilter(MethodDef* md); // don't include saving and loading..
 //obs  void	SetWinName();

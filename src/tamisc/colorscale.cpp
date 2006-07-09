@@ -190,10 +190,10 @@ void ColorScaleSpec::GenRanges(TAColor_List* cl, int chunks) {
 
 
 //////////////////////////////////
-// 	ColorScaleSpec_MGroup	//
+// 	ColorScaleSpec_Group	//
 //////////////////////////////////
 
-void ColorScaleSpec_MGroup::NewDefaults() {
+void ColorScaleSpec_Group::NewDefaults() {
   if(size != 0)
     return;
 
@@ -361,11 +361,11 @@ void ColorScaleSpec_MGroup::NewDefaults() {
 
 #define CSSMG_COLS 5
 
-int ColorScaleSpec_MGroup::NumListCols() const {
+int ColorScaleSpec_Group::NumListCols() const {
   return taList_impl::NumListCols() + CSSMG_COLS;
 }
 
-String ColorScaleSpec_MGroup::GetColHeading(int col) {
+String ColorScaleSpec_Group::GetColHeading(int col) {
   switch (col - taList_impl::NumListCols()) {
   case 0: return String("BkClr");
   case 1: return String("clr0");
@@ -377,7 +377,7 @@ String ColorScaleSpec_MGroup::GetColHeading(int col) {
   }
 }
 
-String ColorScaleSpec_MGroup::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
+String ColorScaleSpec_Group::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
   if (child->GetTypeDef()->InheritsFrom(&TA_ColorScaleSpec)) {
     ColorScaleSpec* css = (ColorScaleSpec*)child;
     int i = col - taList_impl::NumListCols();
@@ -393,7 +393,7 @@ String ColorScaleSpec_MGroup::ChildGetColText_impl(taBase* child, int col, int i
   return taList_impl::ChildGetColText_impl(child, col, itm_idx);
 }
 
-void ColorScaleSpec_MGroup::SetDefaultColor() {
+void ColorScaleSpec_Group::SetDefaultColor() {
   NewDefaults();
   if(!taMisc::gui_active) return;
 /*2004...  ivWidgetKit* wkit = ivWidgetKit::instance();
@@ -557,11 +557,11 @@ int ColorScale::GetIdx(float val) {
 
 void ColorScale::NewDefaults() {
   MemberDef* md;
-  String tmpath = ".ColorScaleSpec_MGroup";
-  ColorScaleSpec_MGroup* gp =
-    (ColorScaleSpec_MGroup*)tabMisc::root->FindFromPath(tmpath, md);
+  String tmpath = ".ColorScaleSpec_Group";
+  ColorScaleSpec_Group* gp =
+    (ColorScaleSpec_Group*)tabMisc::root->FindFromPath(tmpath, md);
   if((gp == NULL) || (md == NULL)) {
-    taMisc::Error("ColorScaleSpec_MGroup not found from root in NewDefaults");
+    taMisc::Error("ColorScaleSpec_Group not found from root in NewDefaults");
     return;
   }
   gp->NewDefaults();

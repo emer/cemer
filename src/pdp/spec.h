@@ -33,7 +33,7 @@ class taiAction; //
 
 class BaseSpec;
 
-class PDP_API BaseSpec_MGroup: public taBase_Group {
+class PDP_API BaseSpec_Group: public taBase_Group {
 #ifndef __MAKETA__
   typedef taBase_Group inherited;
 #endif
@@ -68,7 +68,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ }
-  TA_BASEFUNS(BaseSpec_MGroup);
+  TA_BASEFUNS(BaseSpec_Group);
 
 #ifdef TA_GUI
 public:
@@ -86,7 +86,7 @@ public:
   unsigned long unique[MAX_SPEC_LONGS]; // #HIDDEN bits representing members unique
   TypeDef*		min_obj_type;
   // #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
-  BaseSpec_MGroup 	children;
+  BaseSpec_Group 	children;
   // #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
 
   virtual BaseSpec*	FindParent();
@@ -182,7 +182,7 @@ public:
 
   virtual void	SetDefaultSpec(TAPtr ownr, TypeDef* td); // for class that owns ptr
   virtual void	SetBaseType(TypeDef* td);		 // for overloaded classes
-  virtual BaseSpec_MGroup* GetSpecGroup();		 // get the group where specs go
+  virtual BaseSpec_Group* GetSpecGroup();		 // get the group where specs go
   virtual void	GetSpecOfType();			 // get a spec of type type
 
   void	UpdateAfterEdit();	// check, update the spec type

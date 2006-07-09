@@ -109,7 +109,7 @@ public:
   static Network* GetDefNetwork(ProjectBase* prj);
   // get default network from project
 
-  static BaseSpec_MGroup* FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm = nw_itm_def_arg);
+  static BaseSpec_Group* FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm = nw_itm_def_arg);
   // find a given spec group and if not found, make it
   static BaseSpec* FindMakeSpec(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // find a given spec and if not found, make it
@@ -142,40 +142,8 @@ protected:
 
 int get_unique_file_number(int st_no, const char* prefix, const char* suffix);
 
-//////////////////////////////////////////////////
-//	PosGroup/MGroup: groups with positions	//
-//////////////////////////////////////////////////
 
-/*nn
-#ifdef USE_TEMPLATE_GROUPS
-
-#define PosGroup_of(T)							      \
-class T ## _Group : public taGroup<T> {				      \
-public:									      \
-  TDCoord	pos;		 	     		      \
-  void	Initialize() 		{ };					      \
-  void 	Destroy()		{ };					      \
-  void	InitLinks()		{ taGroup<T>::InitLinks(); taBase::Own(pos,this); }\
-  void  Copy_(const T ## _Group& cp)		{ pos = cp.pos; }		      \
-  void  Copy(const T ## _Group& cp)		{ taGroup<T>::Copy(cp); Copy_(cp); } \
-  TA_BASEFUNS(T ## _Group);						      \
-}
-
-#define PosMGroup_of(T)							      	\
-class T ## _MGroup : public MenuGroup<T> {				      	\
-public:									      	\
-  TDCoord	pos;			     			\
-  void	Initialize() 		{ };					      	\
-  void 	Destroy()		{ };					      	\
-  void	InitLinks()		{ MenuGroup<T>::InitLinks(); taBase::Own(pos,this); }\
-  void  Copy_(const T ## _MGroup& cp)	{ pos = cp.pos; }		        	\
-  void  Copy(const T ## _MGroup& cp)	{ MenuGroup<T>::Copy(cp); Copy_(cp); } 		\
-  TA_BASEFUNS(T ## _MGroup);						      	\
-}
-
-#else // USE_TEMPLATE_GROUPS
-*/
-class PDP_API PosGroup : public taBase_Group { // ##NO_TOKENS
+class PDP_API PosGroup : public taBase_Group { // ##NO_TOKENS base class for groups with positions in parent
 public:
   TDCoord	pos;		// Position of Group
 
@@ -187,26 +155,28 @@ public:
   TA_BASEFUNS(PosGroup);
 };
 
-#define PosGroup_of(T)							      \
-class PDP_API T ## _Group : public PosGroup {					      \
-public:									      \
-  void	Initialize() 		{ SetBaseType(&TA_ ## T); }		      \
-  void 	Destroy()		{ };					      \
-  TA_BASEFUNS(T ## _Group);						      \
+#define PosGroup_of(T)\
+class PDP_API T ## _Group : public PosGroup {\
+public: \
+  inline T* FastEl(int i) {return (T*)el[i];}\
+  inline T* SafeEl(int i) {return (T*)SafeEl_(i);}\
+  void	Initialize() 		{ SetBaseType(&TA_ ## T); }\
+  void 	Destroy()		{ };\
+  TA_BASEFUNS(T ## _Group);\
 }
-
+/*obs
 #define PosMGroup_of(T)							      	\
-class PDP_API T ## _MGroup : public taGroup<T> {				      	\
+class PDP_API T ## _Group : public taGroup<T> {				      	\
 public:									      	\
   TDCoord	pos;			     			\
   void	Initialize() 		{ }					      	\
   void 	Destroy()		{ }					      	\
   void	InitLinks()		{ taGroup<T>::InitLinks(); taBase::Own(pos,this); }\
-  void  Copy_(const T ## _MGroup& cp)	{ pos = cp.pos; }		        	\
-  void  Copy(const T ## _MGroup& cp)	{ taGroup<T>::Copy(cp); Copy_(cp); } 		\
-  TA_BASEFUNS(T ## _MGroup);						      	\
+  void  Copy_(const T ## _Group& cp)	{ pos = cp.pos; }		        	\
+  void  Copy(const T ## _Group& cp)	{ taGroup<T>::Copy(cp); Copy_(cp); } 		\
+  TA_BASEFUNS(T ## _Group);						      	\
 }
-
+*/
 
 //#endif // USE_TEMPLATE_GROUPS
 

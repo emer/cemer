@@ -33,7 +33,7 @@ class ColorScaleSpec;
 
 class BaseSpec;
 //class BaseSpec_List;
-class BaseSpec_MGroup; //
+class BaseSpec_Group; //
 
 // program.h
 class ProgVar;

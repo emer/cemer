@@ -264,7 +264,7 @@ void Script::Record(const char* file_nm) {
     return;
   }
 #endif
-  Script_MGroup* mg = GET_MY_OWNER(Script_MGroup);
+  Script_Group* mg = GET_MY_OWNER(Script_Group);
   if(mg != NULL)
     mg->StopRecording();
   if (file_nm != NULL)
@@ -346,22 +346,22 @@ void Script::ScriptAllWinPos() {
 
 
 //////////////////////////
-// 	Script_MGroup	//
+// 	Script_Group	//
 //////////////////////////
 
-void Script_MGroup::Initialize() {
+void Script_Group::Initialize() {
   SetBaseType(&TA_Script);
-//  SetAdapter(new Script_MGroupAdapter(this));
+//  SetAdapter(new Script_GroupAdapter(this));
 }
 
-void Script_MGroup::StopRecording() {
+void Script_Group::StopRecording() {
   taLeafItr i;
   Script* sb;
   FOR_ITR_EL(Script, sb, this->, i)
     sb->StopRecording();
 }
 
-void Script_MGroup::AutoRun() {
+void Script_Group::AutoRun() {
   taLeafItr i;
   Script* sb;
   FOR_ITR_EL(Script, sb, this->, i)
@@ -369,7 +369,7 @@ void Script_MGroup::AutoRun() {
 }
 
 #ifdef TA_GUI
-void Script_MGroup::Run_mc(taiAction* sel) {
+void Script_Group::Run_mc(taiAction* sel) {
 //TODO  if(win_owner == NULL) return;
 //TODO Qt4: verify that usr_data gets set to a taBase obj
   if((sel != NULL)) {
@@ -384,7 +384,7 @@ void Script_MGroup::Run_mc(taiAction* sel) {
 }
 #endif
 /*
-void Script_MGroup::GenMenu_impl(taiMenu* menu) {
+void Script_Group::GenMenu_impl(taiMenu* menu) {
   MenuGroup_impl::GenMenu_impl(menu);
 
   // don't put in the groups or the stats processes within menu

@@ -187,10 +187,9 @@ protected:
   override void		DataViewRemoving(taDataView* dv); //  removes fromviews list if a logview
 };
 
-BaseGroup_of(PDPLog);
+//nnBaseGroup_of(PDPLog);
 
-// note: PDPLog_MGroup name is for compatiblity with v3.2 files
-class PDP_API PDPLog_MGroup : public taGroup<PDPLog> {
+class PDP_API PDPLog_Group : public taGroup<PDPLog> {
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -200,7 +199,7 @@ public:
 #endif
   void	Initialize() 		{SetBaseType(&TA_PDPLog);}
   void 	Destroy()		{ }
-  TA_BASEFUNS(PDPLog_MGroup);
+  TA_BASEFUNS(PDPLog_Group);
 };
 
 class PDP_API TextLog : public PDPLog {

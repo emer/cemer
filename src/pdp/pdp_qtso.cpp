@@ -77,7 +77,7 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   if((host_ == NULL) || (base == NULL) || (typ == NULL))
     return true;
 
-  if(typ->InheritsFrom(TA_BaseSpec_MGroup))
+  if(typ->InheritsFrom(TA_BaseSpec_Group))
     return false;		// always use a check box for these..
 
   if(typ->InheritsFrom(TA_BaseSpec)) {
@@ -1895,7 +1895,7 @@ ivGlyph* GroupObj_G::clone() const {
 void GroupObj_G::draw_label(ivCanvas* c, Graphic*) {
   String nm = obj->GetName();
   if(nm.empty()) {
-    if(group->InheritsFrom(TA_BaseSpec_MGroup)) {
+    if(group->InheritsFrom(TA_BaseSpec_Group)) {
       if(group->owner == &(projg->proj->specs.gp))
 	nm = "Group:";
       else
@@ -2605,7 +2605,7 @@ void ProjEditor::FixEditorButtons(){
   if((sproccount == 0) && (statcount == 0) && (proccount == 0) && (objcount == 0) &&
      (sprocgcount == 0) && (statgcount == 0) && (gengcount == 1) && (speccount == 0)) {
     // specgroup? new child
-    if(frstgeng->InheritsFrom(&TA_BaseSpec_MGroup)) {
+    if(frstgeng->InheritsFrom(&TA_BaseSpec_Group)) {
       if(frstgeng->owner == &(owner->specs.gp))
 	agg_action = NEW_SPEC_GP2;
       else
@@ -2773,10 +2773,10 @@ void ProjEditor::EditSelections() {
 
 void ProjEditor::UpdateSelections() {
   taBase_List& selectgroup = projg->selectgroup;
-  Process_MGroup pg;
-  Network_MGroup ng;
-  Environment_MGroup eg;
-  PDPLog_MGroup lg;
+  Process_Group pg;
+  Network_Group ng;
+  Environment_Group eg;
+  PDPLog_Group lg;
   TAPtr o;  int i;
   for(i=0; i<selectgroup.size; i++) {
     o = selectgroup.FastEl(i);
@@ -2869,7 +2869,7 @@ void ProjEditor::AggStats() {
   taBase_List& selectgroup = projg->selectgroup;
   Process_Group pg;
   Stat_Group sg;
-  BaseSpec_MGroup spg;
+  BaseSpec_Group spg;
   taBase_Group spgg;
   TAPtr o;  int i;
   for(i=0; i<selectgroup.size; i++) {
@@ -2877,7 +2877,7 @@ void ProjEditor::AggStats() {
     if(o->InheritsFrom(&TA_SchedProcess)) pg.Link((SchedProcess*)o);
     if(o->InheritsFrom(&TA_Stat)) sg.Link((Stat*)o);
     if(o->InheritsFrom(&TA_BaseSpec)) spg.Link((BaseSpec*)o);
-    if(o->InheritsFrom(&TA_BaseSpec_MGroup)) spgg.Link((BaseSpec_MGroup*)o);
+    if(o->InheritsFrom(&TA_BaseSpec_Group)) spgg.Link((BaseSpec_Group*)o);
   }
   if(sg.size == 1) {	// one stat = set aggregator opr
     Stat* sp = (Stat*)sg.FastEl(0);
@@ -2931,7 +2931,7 @@ void ProjEditor::AggStats() {
     }
   }
   else if(spgg.size == 1) {
-    BaseSpec_MGroup* sp = (BaseSpec_MGroup*)spgg.FastEl(0);
+    BaseSpec_Group* sp = (BaseSpec_Group*)spgg.FastEl(0);
     TAPtr rval = sp->New(0); // causes menu to come up
     if(rval != NULL) {
       winbMisc::DelayedMenuUpdate(sp);
@@ -3064,7 +3064,7 @@ void ProjEditor::NewProcs() {
   taBase_Group stg;
   taBase_Group prg;
   taBase_Group geng;
-  BaseSpec_MGroup specg;
+  BaseSpec_Group specg;
   taBase_Group objg;		// generic objs
   TAPtr o;  int i;
   for(i=0; i<selectgroup.size; i++) {
@@ -3240,9 +3240,9 @@ void ProjEditor::NewObjects() {
   taBase_List& selectgroup = projg->selectgroup;
   Process_Group pg;
   Process_Group spg;
-  Network_MGroup ng;
-  Environment_MGroup eg;
-  PDPLog_MGroup lg;
+  Network_Group ng;
+  Environment_Group eg;
+  PDPLog_Group lg;
   TALOG proc_gps;
   TALOG stat_gps;
   TALOG proc_mgps;
@@ -3254,7 +3254,7 @@ void ProjEditor::NewObjects() {
     if(o->InheritsFrom(&TA_Network)) ng.Link((Network*)o);
     if(o->InheritsFrom(&TA_Environment)) eg.Link((Environment*)o);
     if(o->InheritsFrom(&TA_PDPLog)) lg.Link((PDPLog*)o);
-    if(o->InheritsFrom(&TA_Process_MGroup)) proc_mgps.Link((Process_MGroup*)o);
+    if(o->InheritsFrom(&TA_Process_Group)) proc_mgps.Link((Process_Group*)o);
     if(o->InheritsFrom(&TA_Process_Group)) proc_gps.Link((Process_Group*)o);
     if(o->InheritsFrom(&TA_Stat_Group)) stat_gps.Link((Stat_Group*)o);
   }
@@ -3355,7 +3355,7 @@ void ProjEditor::NewObjects() {
   }
   else if(proc_mgps.size > 0) { // new sub-process in this group
     for(i=0; i<proc_mgps.size; i++) {
-      Process_MGroup* prog = (Process_MGroup*)proc_mgps.FastEl(i);
+      Process_Group* prog = (Process_Group*)proc_mgps.FastEl(i);
       gpivGroupNew::New(prog);
     }
   }
@@ -3396,8 +3396,8 @@ void ProjEditor::RemoveSelections() {
   projg->safe_damage_me(viewer->canvas());
   taBase_List& selectgroup = projg->selectgroup;
   Process_Group pg;
-  Network_MGroup ng;
-  Environment_MGroup eg;
+  Network_Group ng;
+  Environment_Group eg;
   TALOG proc_gps;
   TALOG stat_gps;
   TAPtr o;  int i;

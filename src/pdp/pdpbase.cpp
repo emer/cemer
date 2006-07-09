@@ -367,7 +367,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   return 0;
 }
 
-BaseSpec_MGroup* pdpMisc::FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm) {
+BaseSpec_Group* pdpMisc::FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm) {
   return prj->FindMakeSpecGp(nm, nw_itm);
 }
 
@@ -494,16 +494,16 @@ void pdpMisc::WaitProc_PostLoadOpr() {
   int i;
   for(i=0;i<post_load_opr.size;i++) {
     TAPtr obj = post_load_opr[i];
-    if(obj->InheritsFrom(TA_Script_MGroup)) {
-      ((Script_MGroup*)obj)->AutoRun();
+    if(obj->InheritsFrom(TA_Script_Group)) {
+      ((Script_Group*)obj)->AutoRun();
     }
 #ifdef TA_GUI
-    else if(obj->InheritsFrom(TA_SelectEdit_MGroup)) {
-      ((SelectEdit_MGroup*)obj)->AutoEdit();
+    else if(obj->InheritsFrom(TA_SelectEdit_Group)) {
+      ((SelectEdit_Group*)obj)->AutoEdit();
     }
 #endif
-    else if(obj->InheritsFrom(TA_Wizard_MGroup)) {
-      ((Wizard_MGroup*)obj)->AutoEdit();
+    else if(obj->InheritsFrom(TA_Wizard_Group)) {
+      ((Wizard_Group*)obj)->AutoEdit();
     }
   }
   post_load_opr.Reset();

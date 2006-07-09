@@ -43,20 +43,20 @@
 
 
 //////////////////////////////////
-//	TypeDefault_MGroup	//
+//	TypeDefault_Group	//
 //////////////////////////////////
 
-int TypeDefault_MGroup::Dump_Load_Value(istream& strm, TAPtr par) {
+int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
   Reset();			// get rid of any existing defaults before loading
   return inherited::Dump_Load_Value(strm, par);
 }
 
 #ifdef TA_GUI
 //////////////////////////////////
-//	SelectEdit_MGroup	//
+//	SelectEdit_Group	//
 //////////////////////////////////
 
-void SelectEdit_MGroup::AutoEdit() {
+void SelectEdit_Group::AutoEdit() {
   taLeafItr i;
   SelectEdit* se;
   FOR_ITR_EL(SelectEdit, se, this->, i) {
@@ -298,7 +298,7 @@ void Wizard::SequenceEvents(Environment* env, int n_seqs, int events_per_seq) {
   env->events.gp.EnforceSize(n_seqs);
   int i;
   for(i=0;i<n_seqs;i++) {
-    Event_MGroup* egp = (Event_MGroup*)env->events.gp[i];
+    Event_Group* egp = (Event_Group*)env->events.gp[i];
     egp->el_typ = event_type;
     egp->EnforceSize(events_per_seq);
   }
@@ -318,9 +318,9 @@ void Wizard::TimeSeqEvents(TimeEnvironment* env, int n_seqs, int events_per_seq,
   env->events.gp.EnforceSize(n_seqs);
   int i;
   for(i=0;i<n_seqs;i++) {
-    TimeEvent_MGroup* egp = (TimeEvent_MGroup*)env->events.gp[i];
+    TimeEvent_Group* egp = (TimeEvent_Group*)env->events.gp[i];
     egp->EnforceSize(events_per_seq);
-    if(!egp->InheritsFrom(TA_TimeEvent_MGroup)) continue;
+    if(!egp->InheritsFrom(TA_TimeEvent_Group)) continue;
     egp->RegularlySpacedTimes(start_time, time_inc);
   }
   taMisc::DelayedMenuUpdate(env);
@@ -604,10 +604,10 @@ void Wizard::StdLogs(SchedProcess* proc) {
 }
 */
 //////////////////////////////////
-// 	Wizard_MGroup		//
+// 	Wizard_Group		//
 //////////////////////////////////
 
-void Wizard_MGroup::AutoEdit() {
+void Wizard_Group::AutoEdit() {
   Wizard* wz;
   taLeafItr i;
   FOR_ITR_EL(Wizard, wz, this->, i) {
@@ -753,11 +753,11 @@ void ProjectBase::UpdateAfterEdit() {
   UpdateColors();
 }
 
-BaseSpec_MGroup* ProjectBase::FindMakeSpecGp(const char* nm, bool& nw_itm) {
-  BaseSpec_MGroup* gp = (BaseSpec_MGroup*)specs.gp.FindName(nm);
+BaseSpec_Group* ProjectBase::FindMakeSpecGp(const char* nm, bool& nw_itm) {
+  BaseSpec_Group* gp = (BaseSpec_Group*)specs.gp.FindName(nm);
   nw_itm = false;
   if(gp == NULL) {
-    gp = (BaseSpec_MGroup*)specs.gp.New(1);
+    gp = (BaseSpec_Group*)specs.gp.New(1);
     gp->name = nm;
     nw_itm = true;
   }
@@ -1030,10 +1030,10 @@ void ProjectBase::UpdateSimLog() {
 }
 #endif
 //////////////////////////
-//   Project_MGroup	//
+//   Project_Group	//
 //////////////////////////
 
-int Project_MGroup::Load(istream& strm, TAPtr par) {
+int Project_Group::Load(istream& strm, TAPtr par) {
 /*obs  if ((ta_file != NULL) && !ta_file->dir.empty() && (ta_file->dir != ".")) {
     // change directories to where the project was loaded!
     ta_file->GetDir();

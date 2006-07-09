@@ -947,12 +947,12 @@ void PDPLog::ViewAllData() {
 
 
 //////////////////////////
-// 	PDPLog_MGroup 	//
+// 	PDPLog_Group 	//
 //////////////////////////
 
-bool PDPLog_MGroup::nw_itm_def_arg = false;
+bool PDPLog_Group::nw_itm_def_arg = false;
 
-PDPLog* PDPLog_MGroup::FindMakeLog(const char* nm, TypeDef* td, bool& nw_itm) {
+PDPLog* PDPLog_Group::FindMakeLog(const char* nm, TypeDef* td, bool& nw_itm) {
   PDPLog* log = NULL;
   nw_itm = false;
   if (nm != NULL)
