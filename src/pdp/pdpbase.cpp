@@ -142,6 +142,9 @@ int pdpMisc::Main(int argc, char *argv[]) {
    must get created first, and are needed even if we don't open a gui
    Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
 */
+  //TODO: need a coherent way to establish path names etc.
+  String app_root = "pdp4.0";
+  
   cssMisc::PreInitialize(argc, argv);
 
 #ifdef DMEM_COMPILE
@@ -176,7 +179,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
   // load plugin system
   // TODO: Check if directory exists and allow for /usr/local/pdp++/plugins
-  const QString& localdir = QDir::homeDirPath() + "/pdp++/plugins" ;
+  const QString& localdir = String(QDir::homeDirPath()).cat("/").cat(app_root).cat("/plugins") ;
   taPlugins::AddPluginFolder(localdir);
   taPlugins::LoadPlugins();
 
@@ -202,7 +205,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   // cssMisc stuff
   cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(root, 1, &TA_PDPRoot,"root"));
   cssMisc::Initialize();
-  cssMisc::Top->name = "pdp++";	// changes prompt
+  cssMisc::Top->name = app_root;	// changes prompt
 
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
   // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.
@@ -249,12 +252,20 @@ int pdpMisc::Main(int argc, char *argv[]) {
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
 #endif
 
+//TODO: these need to be fixed!!!!!
 #if (defined(TA_OS_WIN))
-  String pdp_dir = "C:/PDP++"; // default pdp home directory
+  String pdp_dir("C:/").cat(app_root); // default pdp home directory
 #else
-  String pdp_dir = "/usr/local/pdp++"; // default pdp home directory
+//TODO: this is ALL HORRIBLE!!!!!! MUST FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifdef DEBUG
+  String pdp_dir = String("~/").cat(app_root).cat("/trunk"); // default pdp home directory
+#else
+  String pdp_dir = String("/usr/local/").cat(app_root); // default pdp home directory
 #endif
-  char* pdp_dir_env = getenv("PDPDIR");
+#endif
+  char* pdp_dir_env = getenv("PDP4DIR");
   if(pdp_dir_env != NULL)
     pdp_dir = pdp_dir_env;
 
@@ -266,12 +277,13 @@ int pdpMisc::Main(int argc, char *argv[]) {
   taMisc::include_paths.AddUnique(pdp_dir);
   taMisc::include_paths.AddUnique(pdp_dir+"/css/include");
   taMisc::include_paths.AddUnique(pdp_dir+"/defaults");
-  if(!home_dir.empty()) {
+//TODO: NO!! can't have these during devel
+/*  if(!home_dir.empty()) {
     taMisc::include_paths.AddUnique(home_dir+"/mypdp++");
     taMisc::include_paths.AddUnique(home_dir+"/pdp++");
     taMisc::include_paths.AddUnique(home_dir+"/mypdp++/defaults");
     taMisc::include_paths.AddUnique(home_dir+"/pdp++/defaults");
-  }
+  } */
 
   String prognm = argv[0];
 

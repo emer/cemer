@@ -39,6 +39,7 @@ Serious/Fatal:
   "Attempt to create type of "Program" in list of type "Program_MGroup" -- most of the
   programs seem to load, but the first, Train prog doesn't have its correct name, only
   the generic name -- progs in the subgroup seem to load fine
+* HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
   
 Medium Important:
 
