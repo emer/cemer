@@ -7060,7 +7060,10 @@ void NetMonItem::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 void NetMonItem::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_) 
 {
-  ScanObject();
+//NOTE: we get these here when script running and any member vars are updated --
+// don't update objects -- instead, we may want to use a RefList for the objects,
+// and thus detect deletion there.
+ // ScanObject();
 }
 
 void NetMonItem::UpdateMonVals(DataBlock* db) {

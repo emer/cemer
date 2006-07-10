@@ -1777,6 +1777,9 @@ void DataTable::ResetData() {
   }
   rows = 0;
   DataUpdate(false);
+  // also update itrs in case using simple itr mode
+  ReadItrInit();
+  WriteItrInit();
 }
 
 void DataTable::RowsAdding() {

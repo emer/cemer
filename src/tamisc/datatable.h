@@ -458,7 +458,7 @@ public:
     // #MENU Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  void			AddBlankRow() {AddRow(1);}
+  void			AddBlankRow() {if (AddRow(1)) wr_itr = rows - 1;}
   // #MENU add a new row to the data table
   bool			AddRow(int n); // add n rows, 'true' if added
   void			AllocRows(int n); // allocate space for at least n rows
