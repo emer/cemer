@@ -1462,7 +1462,7 @@ void iDataViewer::emit_SetActionsEnabled() {
 
 void iDataViewer::fileCloseWindow() {
   if (is_root) {
-    if (taMisc::app) taMisc::app->Quit();
+    if (tabMisc::root) tabMisc::root->Quit();
   } else close();
 }
 
@@ -2500,7 +2500,7 @@ void DataViewer::WindowClosing(bool& cancel) {
     int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
     switch (chs) {
     case 1:
-      if (taMisc::app) taMisc::app->SaveAll();
+      if (tabMisc::root) tabMisc::root->SaveAll();
       //fall through
     case 0:
       taMisc::quitting = true;

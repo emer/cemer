@@ -162,7 +162,6 @@ void taiMiscCore::timer_timeout() {
 // give the main typespace a big hash table..
 TypeSpace taMisc::types("taMisc::types", 2000);
 
-IApp*	taMisc::app = NULL;
 String	taMisc::version_no = "3.5";
 
 String 	taMisc::LexBuf;

@@ -64,13 +64,14 @@ class taSmartRef;
 class taOBase;
 class taDataView;
 class taNBase;
+class taRootBase;
 class taBase_List;
 class taBase_PtrList;
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
 public:
-  static TAPtr		root;
+  static taRootBase*	root;
   // root of the structural object hierarchy
   static taBase_PtrList	delayed_remove;
   // list of objs to be removed in the wait process (e.g. when objs delete themselves)
@@ -1403,5 +1404,25 @@ class TA_API SelectEdit {
   bool	do_nothing;
 };
 #endif // def TA_NO_GUI
+
+class TA_API taRootBase: public taNBase {
+  // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS basic methods that the root/app object must support
+INHERITED(taNBase)
+public:
+  virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
+  virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!
+  virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
+  virtual void	Info() = 0;			// #MENU get information/copyright notice
+  // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
+  virtual void	Quit() = 0;
+  // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
+  virtual void	SaveAll() = 0; // saves all the contents of the app object
+  
+  TA_ABSTRACT_BASEFUNS(taRootBase)
+private:
+  void	Initialize() {}
+  void	Destroy() {if (tabMisc::root == this) tabMisc::root = NULL;}
+};
+
 
 #endif // ta_base_h

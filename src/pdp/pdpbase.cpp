@@ -195,11 +195,9 @@ int pdpMisc::Main(int argc, char *argv[]) {
   root = new PDPRoot();
   taBase::Ref(root); // ref=1
   root->InitLinks();	// normally the owner would do this, but..
-  root->SetName("root");
 
   // tabMisc stuff
-  tabMisc::root = (TAPtr)root;
-  taMisc::app = (IApp*)root;
+  tabMisc::root = root;
   taMisc::default_scope = &TA_Project;
 
   // cssMisc stuff

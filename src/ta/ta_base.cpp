@@ -117,7 +117,7 @@ const QPixmap* folder_open_pixmap() {
 // 		tabMisc			//
 //////////////////////////////////////////
 
-TAPtr tabMisc::root = NULL;
+taRootBase* tabMisc::root = NULL;
 
 taBase_PtrList tabMisc::delayed_remove;
 taBase_PtrList tabMisc::delayed_updateafteredit;

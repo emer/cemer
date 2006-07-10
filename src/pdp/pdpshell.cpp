@@ -1081,7 +1081,6 @@ void PDPRoot::Initialize() {
 
 void PDPRoot::Destroy() {
   bool we_are_root = (tabMisc::root == this); // 'true' if we are the one and only root app object
-  if (taMisc::app == (IApp*)this) taMisc::app = NULL;
   if (we_are_root) {
     tabMisc::root = NULL; //TODO: maybe for cleanness we should do a SetPointer thingy, since we set it that way...
 #ifdef DMEM_COMPILE

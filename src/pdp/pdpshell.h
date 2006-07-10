@@ -301,12 +301,13 @@ public:
 };
 
 
-class PDP_API PDPRoot : public taNBase, IApp {
-  // structural root of object hierarchy
+class PDP_API PDPRoot : public taRootBase {
+  // #NO_INSTANCE structural root of object hierarchy
+INHERITED(taRootBase);
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
-  Project_Group	projects; 	// The projects
-  ColorScaleSpec_Group colorspecs;	// Color Specs -- aliased in projects (for browser)
+  Project_Group		projects; 	// The projects
+  ColorScaleSpec_Group 	colorspecs;	// Color Specs -- aliased in projects (for browser)
 
 //nn  bool	ThisMenuFilter(MethodDef* md); // don't include saving and loading..
 //obs  void	SetWinName();

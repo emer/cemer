@@ -810,7 +810,7 @@ int iDataBrowserBase::GetEditActions() { // after a change in selection, update 
 } */
 
 void iDataBrowserBase::helpAbout() {
-  if (taMisc::app) taMisc::app->Info();
+  if (tabMisc::root) tabMisc::root->Info();
 }
 
 void iDataBrowserBase::lvwDataTree_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col ) {
