@@ -1287,107 +1287,6 @@ bool DataTable::AddSinkChannel(ChannelSpec* cs) {
   return (da);
 }
 
-bool DataTable::AssertSinkChannel(ChannelSpec* cs) {
-  if (!cs) return false;
-  DataArray_impl* da = GetColForChannelSpec_impl(cs);
-  return (da);
-}
-
-bool DataTable::ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs) {
-  if (!da && !cs) return false;
-//NOTE: make sure the algorithm in this routine matches NewColFromChannelSpec_impl
-  // match matrix-ness
-  if (da->is_matrix != cs->isMatrix()) return false;
-  if (da->valType() != cs->val_type) return false;
-  
-  if (cs->isMatrix()) {
-    // geoms the same is only remaining criteria
-    return da->cell_geom.Equal(cs->cellGeom());
-  }
-  return true;
-}
-
-DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
-  DataArray_impl* rval;
-  taLeafItr itr;
-  cs->chan_num = -1; // we incr at beginning of loop
-  FOR_ITR_EL(DataArray_impl, rval, data., itr) {
-    ++(cs->chan_num);
-    if (rval->name != cs->name) continue;
-    // if name matches, but not contents, we need to remake it...
-    if (ColMatchesChannelSpec(rval, cs)) {
-      rval->mark = false; // reset mark for orphan tracking
-      return rval;
-    } else {
-      rval->Close();
-    }
-  }
-  rval = NewColFromChannelSpec_impl(cs);
-  return rval;
-}
-
-void DataTable::MarkCols() {
-  DataArray_impl* da;
-  taLeafItr itr;
-  FOR_ITR_EL(DataArray_impl, da, data., itr) {
-    da->mark = true;
-  }
-}
-
-DataArray_impl* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
-  DataArray_impl* rval = NULL;
-  if (cs->isMatrix()) {
-    rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom());
-  } else {
-    rval = NewCol(cs->val_type, cs->name); 
-  }
-  if (rval) cs->chan_num = cols() - 1;
-  return rval;
-}
-
-/*obs void DataTable::AddRow(LogData& ld) {
-  int cur_i = 0;		// current item at top level
-  int subgp_gpi = 0;		// current subgroup index (of the group)
-  int subgp_i = 0;		// current subgroup index (of the items in the group)
-  int subgp_max = 0;		// max for current subgroup
-  DataTable* subgp = NULL;	// the subgroup
-
-  RowsAdding();
-  int ldi;
-  for (ldi=0; ldi < ld.items.size; ldi++) {
-    ChannelSpec* ditem = ld.items.FastEl(ldi);
-    if (ld.IsVec(ldi)) {
-      if (data.gp.size > subgp_gpi)
-	subgp = (DataTable*)data.gp[subgp_gpi];
-      else {
-	return;			// should not happen!
-      }
-      subgp_gpi++;
-      subgp_max = ld.GetVecN(ldi);
-      if (subgp_max <= 0)
-	subgp_max = 1;		// need at least one in group (this one!)
-      subgp_i = 0;
-
-      SetFieldData(ld, ldi, ditem_i);
-    } else {
-      if (subgp != NULL) {	// in a subgroup
-	subgp_i++;		// increment the index
-	if (subgp_i >= subgp_max) { // done with this group
-	  subgp = NULL;
-	  SetFieldData(ld, ldi, ditem, this, cur_i);
-	  cur_i++;
-	} else {			// get item from this group
-	  SetFieldData(ld, ldi, ditem_i);
-	}
-      } else {			// in top-level group
-	SetFieldData(ld, ldi, ditem, this, cur_i);
-	cur_i++;
-      }
-    }
-  }
-  RowsAdded();
-} */
-
 void DataTable::AddRowToArray(float_RArray& tar, int row_num) const {
   taLeafItr i;
   DataArray_impl* ar;
@@ -1454,6 +1353,26 @@ void DataTable::AllocRows(int n) {
   }
 }
 
+bool DataTable::AssertSinkChannel(ChannelSpec* cs) {
+  if (!cs) return false;
+  DataArray_impl* da = GetColForChannelSpec_impl(cs);
+  return (da);
+}
+
+bool DataTable::ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs) {
+  if (!da && !cs) return false;
+//NOTE: make sure the algorithm in this routine matches NewColFromChannelSpec_impl
+  // match matrix-ness
+  if (da->is_matrix != cs->isMatrix()) return false;
+  if (da->valType() != cs->val_type) return false;
+  
+  if (cs->isMatrix()) {
+    // geoms the same is only remaining criteria
+    return da->cell_geom.Equal(cs->cellGeom());
+  }
+  return true;
+}
+
 int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = inherited::Dump_Load_Value(strm, par);
   if (c == EOF) return EOF;
@@ -1486,6 +1405,25 @@ DataArray_impl* DataTable::GetColData(int col) const {
   DataTable* tbl = NULL;
   if (col >= cols()) return NULL;
   else return data.Leaf(col);
+}
+
+DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
+  DataArray_impl* rval;
+  taLeafItr itr;
+  cs->chan_num = -1; // we incr at beginning of loop
+  FOR_ITR_EL(DataArray_impl, rval, data., itr) {
+    ++(cs->chan_num);
+    if (rval->name != cs->name) continue;
+    // if name matches, but not contents, we need to remake it...
+    if (ColMatchesChannelSpec(rval, cs)) {
+      rval->mark = false; // reset mark for orphan tracking
+      return rval;
+    } else {
+      rval->Close();
+    }
+  }
+  rval = NewColFromChannelSpec_impl(cs);
+  return rval;
 }
 
 taMatrix* DataTable::GetColMatrix(int col) const {
@@ -1551,6 +1489,14 @@ bool DataTable::hasData(int col, int row) {
   return (da && idx(row, da->rows(), i));
 }
 
+
+void DataTable::MarkCols() {
+  DataArray_impl* da;
+  taLeafItr itr;
+  FOR_ITR_EL(DataArray_impl, da, data., itr) {
+    da->mark = true;
+  }
+}
 
 int DataTable::MaxLength() {
   return rows;
@@ -1620,6 +1566,17 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
 
 float_Data* DataTable::NewColFloat(const String& col_nm) {
   return (float_Data*)NewCol(VT_FLOAT, col_nm);
+}
+
+DataArray_impl* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
+  DataArray_impl* rval = NULL;
+  if (cs->isMatrix()) {
+    rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom());
+  } else {
+    rval = NewCol(cs->val_type, cs->name); 
+  }
+  if (rval) cs->chan_num = cols() - 1;
+  return rval;
 }
 
 int_Data* DataTable::NewColInt(const String& col_nm) {

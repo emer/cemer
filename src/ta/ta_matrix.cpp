@@ -664,6 +664,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   // assign storage if not fixed
   if (isFixedData()) {
     geom[dims_-1] = geom_[dims_-1];
+    size = geom.Product();
   } else {
     // if flex case, we skip this step -- it will stay zero on new, or retain value if data exists
     if (geom_[dims_-1] != 0) {

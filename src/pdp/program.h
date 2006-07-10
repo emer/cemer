@@ -169,8 +169,10 @@ class PDP_API ProgEl: public taOBase {
 INHERITED(taOBase)
 public:
   String		desc; // optional brief description of element's function; included as comment in script
-  virtual ProgEl*   parent() {return GET_MY_OWNER(ProgEl);}
+  virtual ProgEl*   	parent() {return GET_MY_OWNER(ProgEl);}
+  Program*		program() {return GET_MY_OWNER(Program);} 
   
+  void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
   override String 	GetColText(int col, int itm_idx);
@@ -179,9 +181,11 @@ public:
   TA_ABSTRACT_BASEFUNS(ProgEl);
 
 protected:
-  virtual const String    GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String    GenCssBody_impl(int indent_level) = 0; // #IGNORE generate the Css body code for this object
-  virtual const String    GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
+  virtual void		PreGenMe_impl(int item_id) {}
+  virtual void		PreGenChildren_impl(int& item_id) {}
+  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
+  virtual const String	GenCssBody_impl(int indent_level) = 0; // #IGNORE generate the Css body code for this object
+  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
 private:
   void	Initialize();
@@ -192,7 +196,8 @@ private:
 class PDP_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
-  virtual const String    GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual void		PreGen(int& item_id); // iterates over all items
+  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
   
   override int		NumListCols() const {return 2;} // number of columns in a list view for this item type
   override String	GetColHeading(int col); // header text for the indicated column
@@ -219,7 +224,8 @@ public:
   TA_BASEFUNS(ProgList);
 
 protected:
-  override const String    GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
   void	Initialize();
@@ -285,6 +291,7 @@ public:
 protected:
   virtual const String 	loopHeader(bool display = false) const = 0; 
     // common subcode, we use it as the DisplayName
+  override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -369,6 +376,7 @@ public:
   TA_BASEFUNS(CondEl);
 
 protected:
+  override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -449,6 +457,7 @@ public:
 
 protected:
   Program*		old_target; // the last target, used to detect changes
+  override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -456,6 +465,18 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
+
+
+class PDP_API Program_List : public taList<Program> {
+INHERITED(taList<Program>)
+public:
+  
+  TA_BASEFUNS(Program_List);
+
+private:
+  void	Initialize();
+  void 	Destroy()		{Reset(); }; //
+}; //
 
 
 class PDP_API Program: public taNBase, public AbstractScriptBase {
@@ -498,6 +519,7 @@ public:
   ProgEl_List		prog_els; // the prog els for the main program
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
+  Program_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
@@ -525,6 +547,8 @@ public:
   
   int			Call(Program* caller); 
     // runs the program as a subprogram called from another running program, 0=success
+  int			CallInit(Program* caller); 
+    // runs the program's Init from a superProg Init, 0=success
   virtual bool		SetGlobalVar(const String& nm, const Variant& value);
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
@@ -588,16 +612,5 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-
-class PDP_API Program_List : public taList<Program> {
-INHERITED(taList<Program>)
-public:
-  
-  TA_BASEFUNS(Program_List);
-
-private:
-  void	Initialize();
-  void 	Destroy()		{Reset(); }; //
-}; //
 
 #endif

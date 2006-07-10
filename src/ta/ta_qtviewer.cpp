@@ -3837,7 +3837,8 @@ int iListDataPanel::GetEditActions() {
 void iListDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
   Q3ListViewItemIterator it(list, Q3ListViewItemIterator::Selected);
   while (it.current()) {
-    lst.Add((taiListDataNode*)it.current());
+    ISelectable* si = (ISelectable*)((taiListDataNode*)it.current());
+    lst.Add(si);
     ++it;
   }
 }

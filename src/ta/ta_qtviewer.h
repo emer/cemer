@@ -376,8 +376,8 @@ public:
   TypeDef*		CommonSubtype1N(); // greatest common data subtype of items 1-N
   TypeDef*		CommonSubtype2N(); // greatest common data subtype of items 2-N
 protected:
-  override void*	El_Ref_(void* it) {((ISelectable*)it)->RefUnref(true); return it;}
-  override void* 	El_unRef_(void* it) {((ISelectable*)it)->RefUnref(false);  return it;}
+//TEMP nn??  override void*	El_Ref_(void* it) {((ISelectable*)it)->RefUnref(true); return it;}
+//TEMP nn??  override void* 	El_unRef_(void* it) {((ISelectable*)it)->RefUnref(false);  return it;}
 
 };
 

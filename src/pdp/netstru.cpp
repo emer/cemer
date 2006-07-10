@@ -3355,21 +3355,16 @@ void Layer::UpdateAfterEdit() {
   }*/
 }
 
-void Layer::ApplyData(taMatrix* data, int frame, Unit::ExtType ext_flags,
+void Layer::ApplyData(taMatrix* data, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
+  //note: when use LayerWriters, we typically always just get a single frame of \
+  // the exact dimensions, and so ignore 'frame'
   if (!data) return;
   // check correct geom of data
-  if ((data->dims() != 3) && (data->dims() != 5)) {
-    taMisc::Error("Layer::ApplyData: data->dims must be 3 (2-d) or 5 (4-d); is: ",
+  if ((data->dims() != 2) && (data->dims() != 4)) {
+    taMisc::Error("Layer::ApplyData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
       String(data->dims()));
-    return;
-  }
-  // adjust frame if -eve, and check frame in bounds
-  if (frame < 0) frame = data->frames() + frame;
-  if ((frame < 0) || (frame >= data->frames())) {
-    taMisc::Error("Layer::ApplyData: frame index out of bounds; frame=", String(frame),
-      " data->frames()=", String(data->frames()));
     return;
   }
   // determine non-default unit and layer flags  
@@ -3380,7 +3375,7 @@ void Layer::ApplyData(taMatrix* data, int frame, Unit::ExtType ext_flags,
       ext_flags = (Unit::ExtType)(ext_flags | Unit::TARG);
   }
   
-  TxferDataStruct ads(data, frame, ext_flags, ran, offset);
+  TxferDataStruct ads(data, ext_flags, ran, offset);
   // TODO determine effective offset
   
   // apply flags if we are the controller (zero offset)
@@ -3390,13 +3385,13 @@ void Layer::ApplyData(taMatrix* data, int frame, Unit::ExtType ext_flags,
   // apply data according to the applicable model
   DataUpdate(true);
   if (uses_groups()) {
-    if (data->dims() == 5) {
+    if (data->dims() == 4) {
       ApplyData_Gp4d(ads);
     } else {
       ApplyData_Gp2d(ads);
     }
   } else {
-    if (data->dims() == 5) {
+    if (data->dims() == 4) {
       ApplyData_Flat4d(ads);
     } else {
       ApplyData_Flat2d(ads);
@@ -3419,7 +3414,7 @@ void Layer::ApplyData_Flat2d(const TxferDataStruct& ads) {
       un = ug->FindUnitFmCoord(u_x, u_y);
       // if we run out of units, there will be no more, period
       if (un == NULL) goto break1;
-      val = ads.data->SafeElAsVar(d_x, d_y, ads.frame).toFloat();
+      val = ads.data->SafeElAsVar(d_x, d_y).toFloat();
       un->ApplyValue(val, ads.ext_flags, ads.ran);
       ++d_x;
       ++u_x;
@@ -5029,6 +5024,7 @@ void Network::ClearCounters(NetCounter down_from) {
   case NC_PHASE: phase = 0;
   case NC_CYCLE: cycle = 0;
   }
+  UpdateAfterEdit();
 }
 
 void Network::SyncSendPrjns() {
@@ -6197,7 +6193,7 @@ void LayerWriter::ApplyData(int context) {
   // get the data as a slice -- therefore, frame is always 0
   taMatrixPtr mat(data_block->GetMatrixData(GetChanIdx())); //note: refs mat
   if (!mat) return; //TODO: maybe we should warn?
-  layer->ApplyData(mat, 0, ext_flags, &noise, &offset);
+  layer->ApplyData(mat, ext_flags, &noise, &offset);
   // mat unrefs at this point, or on exit from routine
   
 }
@@ -6579,6 +6575,7 @@ exit:
 void NetMonItem::Initialize() {
   object.Init(this);
   variable = "act";
+  cell_num  = 0;
 }
 
 void NetMonItem::InitLinks() {

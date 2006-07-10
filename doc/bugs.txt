@@ -40,7 +40,8 @@ Serious/Fatal:
   programs seem to load, but the first, Train prog doesn't have its correct name, only
   the generic name -- progs in the subgroup seem to load fine
 * HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
-  
+* if you specify a project on the cmd line, it keeps reopening the same proj repeatedly
+
 Medium Important:
 
 * in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
@@ -67,7 +68,25 @@ Medium Important:
   it just writes to a .gz file, leaving your non-gz file as it was
 * if you rename a panel object, its name is correct in panel and tree, but you still have
   the old name showing in the description are at the top of the panel
-  
+* selected several items in list view in .defaults (XOR proj) and selected Delete from menu;
+  program just hung, CPU indicated idle, but kdbg didn't include "Break" option to stop prog;
+  hit Run (?), and then kdbg indicated Segfault, Stack indicated inside rl_getc then sys calls;
+  note that recover file indicated that the last default selected had been deleted;
+  ADDENDUM: was able to reproduce by just loading test-prog_06-07-07_1 and deleting the two
+  defaults, segfaulting in the iListDataPanel::EditAction routine, enumerating (backwards)
+  the second item, ie item 0 of 2 items; segfaulted on the ISelectable::EditAction call;
+  note: single item delete works ok; and previous notes here indicate that the first item
+  iterated works ok (ie last item of selection is deleted), so it is subsequent item that
+  is failing;
+  note: other ops, like Copy multiple work ok (you can verify using clipview)
+* closed project w/ net viewer open; got series of Coin resource error msgs in output;
+  Coin raised an Abort 
+* there needs to be appropriate scoping for selecting objects in MethodCallEl -- right
+  now, it is just global, so you can grab vars not in scope
+* had netviewer open, had opened several tabs on it to view layers, and XOR net itself 
+  (the visibile tab); had another viewer open rooted on XOR net; closed it, mysterious
+  seg fault in taPtrList_impl::Remove (but nothing else indicated on Stack)
+
 Cosmetic/Usability/etc. (lower priority):
 
 * font for iAction-created taiMenuEl items is not being inherited from the parent taiMenu item
@@ -76,6 +95,8 @@ Cosmetic/Usability/etc. (lower priority):
 * should be bigger gap from labels to data in editpanels
 * right or middle click to create a new tab in browser
 * may want to add auto-line splitting to object descriptions
+* change default name in NetMonItem to just NetMonItem (no _#) because we qualify every name anyway
+  and the numbers will just get out of sync with list position anyway
 
 TODO
 ----
@@ -97,6 +118,8 @@ iEditGrid:
 * accommodate more than one edit panel viewed side-by-side (ex in a splitter)
 * save/load configuration of browser (with proj)
 * AND/OR (maybe for new) create a default view of tabs used for projects, ex. specs, networks, etc. (project view stuff)
+* HIPRI: any moving of Programs around pretty much needs to dirty ALL Progs, since they use
+  pathing to do calls and inits, and thus those paths will now have changed
 
 CLIP/DRAGDROP
 

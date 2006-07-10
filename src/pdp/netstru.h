@@ -1106,8 +1106,7 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyData(taMatrix* data, int frame = -1, 
-    Unit::ExtType ext_flags = Unit::DEFAULT,
+  virtual void	ApplyData(taMatrix* data, Unit::ExtType ext_flags = Unit::DEFAULT,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
     // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
@@ -1152,20 +1151,18 @@ protected:
   class TxferDataStruct { // #
   public:
     taMatrix*		data;
-    int			frame;
     Unit::ExtType	ext_flags;
     Random* 		ran;
     int			offs_x;
     int			offs_y;
     TxferDataStruct(
       taMatrix*		data_,
-      int		frame_,
       Unit::ExtType	ext_flags_,
       Random* 		ran_,
       const PosTwoDCoord* offs
     ) 
 #ifndef __MAKETA__
-    :data(data_), frame(frame_), ext_flags(ext_flags_), ran(ran_)
+    :data(data_), ext_flags(ext_flags_), ran(ran_)
 #endif
     {if (offs) {offs_x=offs->x; offs_y=offs->y;} else {offs_x=0; offs_y=0;}} // maketa can't parse :syntax
   };

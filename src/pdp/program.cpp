@@ -441,6 +441,11 @@ String ProgEl::GetColText(int col, int /*itm_idx*/) {
   }
 }
 
+void ProgEl::PreGen(int& item_id) {
+  PreGenMe_impl(item_id);
+  ++item_id;
+  PreGenChildren_impl(item_id);
+}
 
 //////////////////////////
 //  ProgEl_List	//
@@ -457,9 +462,8 @@ void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
 
 const String ProgEl_List::GenCss(int indent_level) {
   String rval;
-  ProgEl* el;
   for (int i = 0; i < size; ++i) {
-    el = FastEl(i);
+    ProgEl* el = FastEl(i);
     rval += el->GenCss(indent_level); 
   }
   return rval;;
@@ -475,6 +479,12 @@ String ProgEl_List::GetColHeading(int col) {
   }
 }
 
+void ProgEl_List::PreGen(int& item_id) {
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    el->PreGen(item_id);
+  }
+}
 
 //////////////////////////
 //  UserScriptEl	//
@@ -574,6 +584,9 @@ String ProgList::GetDisplayName() const {
   return "ProgList (" + String(prog_els.size) + " items)";
 }
 
+void ProgList::PreGenChildren_impl(int& item_id) {
+  prog_els.PreGen(item_id);
+}
 
 //////////////////////////
 //  LoopEl		//
@@ -619,6 +632,10 @@ const String LoopEl::GenCssPost_impl(int indent_level) {
 
 String LoopEl::GetDisplayName() const {
   return loopHeader(true);
+}
+
+void LoopEl::PreGenChildren_impl(int& item_id) {
+  loop_els.PreGen(item_id);
 }
 
 
@@ -771,6 +788,11 @@ String CondEl::GetDisplayName() const {
   return "if (" + cond_test + ")";
 }
 
+void CondEl::PreGenChildren_impl(int& item_id) {
+  true_els.PreGen(item_id);
+  false_els.PreGen(item_id);
+}
+
 
 //////////////////////////
 //  MethodSpec	//
@@ -846,10 +868,13 @@ inh:
 }
 
 const String MethodCallEl::GenCssBody_impl(int indent_level) {
-  if (!method_spec.script_obj && !method_spec.method) return _nilString;
-  
   STRING_BUF(rval, 80); // more allocated if needed
   rval += cssMisc::Indent(indent_level);
+  if (!(method_spec.script_obj && method_spec.method)) {
+    rval += "//WARNING: MethodCallEl not generated here -- obj or method not specified\n";
+   return rval;
+  }
+  
   if (!result_var.empty())
     rval += result_var + " = ";
   rval += method_spec.script_obj->name;
@@ -866,8 +891,8 @@ const String MethodCallEl::GenCssBody_impl(int indent_level) {
 }
 
 String MethodCallEl::GetDisplayName() const {
-  if (!method_spec.script_obj && !method_spec.method) 
-    return "(no object or no method selected)";
+  if (!(method_spec.script_obj && method_spec.method))
+    return "(object or method not selected)";
   
   STRING_BUF(rval, 40); // more allocated if needed
   rval += method_spec.script_obj->name;
@@ -953,7 +978,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   rval += cssMisc::Indent(indent_level);
   rval += "Int call_result = Program::RV_COMPILE_ERR;\n";
   rval += cssMisc::Indent(indent_level);
-  rval += "Program target = ";
+  rval += "Program* target = ";
   rval += target->GetPath();
   rval += ";\n";
   rval += cssMisc::Indent(indent_level);
@@ -1006,6 +1031,14 @@ String ProgramCallEl::GetDisplayName() const {
   return rval;
 }
 
+void ProgramCallEl::PreGenMe_impl(int item_id) {
+  // register as a subproc, but only if not a recursive call (which is bad anyway!)
+  if (!target) return; // not target (yet), nothing to register
+  Program* prog = program();
+  if (!prog) return; // shouldn't normally happen
+  prog->sub_progs.LinkUnique(target);
+}
+
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
   prog_args.ConformToTarget(target->param_vars);
@@ -1037,9 +1070,11 @@ void Program::InitLinks() {
   taBase::Own(global_vars, this);
   taBase::Own(init_els, this);
   taBase::Own(prog_els, this);
+  taBase::Own(sub_progs, this);
 }
 
 void Program::CutLinks() {
+  sub_progs.CutLinks();
   prog_els.CutLinks();
   init_els.CutLinks();
   global_vars.CutLinks();
@@ -1058,6 +1093,7 @@ void Program::Copy_(const Program& cp) {
   ret_val = 0; // redo
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
+  sub_progs.RemoveAll();
   if (script)
     script->ClearAll();
 }
@@ -1078,6 +1114,12 @@ int Program::Call(Program* caller) {
 //TODO: need to implement a css intrinsic call, which maintains css stack, etc.
   return Run_impl();
 } 
+
+int Program::CallInit(Program* caller){
+//TODO: need to implement a css intrinsic call, which maintains css stack, etc.
+  return Run_impl();
+} 
+
 
 void Program::Init() {
   top_prog = this;
@@ -1121,16 +1163,9 @@ void Program::Run() {
 
 int Program::Run_impl() {
   ret_val = RV_OK;
-  if (!script_compiled) {
-    if (!CompileScript()) {
-      ret_val = RV_COMPILE_ERR; 
-      return ret_val; // deferred or error
-    }
-  }
-  
   bool ran_ok = RunScript();
-  if (!ran_ok) { //could have runtime error, etc.
-    ret_val = RV_RUNTIME_ERR;
+  if (!ran_ok) { // false means a compile error
+    ret_val = RV_COMPILE_ERR;
   }
   
   //note: shared var state likely changed, so update gui
@@ -1195,6 +1230,7 @@ void Program::setDirty(bool value) {
   if (m_dirty == value) return;
   m_dirty = value;
   script_compiled = false; // have to assume user changed something
+  sub_progs.RemoveAll(); // will need to re-enumerate
   DirtyChanged_impl();
   DataChanged(DCR_ITEM_UPDATED);
 }
@@ -1209,6 +1245,11 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
 
 const String Program::scriptString() {
   if (m_dirty) {
+    // enumerate all the progels, esp. to get subprocs registered
+    int item_id = 0;
+    prog_els.PreGen(item_id);
+    
+    // now, build the new script code
     m_scriptCache = "// ";
     m_scriptCache += GetName();
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
@@ -1224,11 +1265,22 @@ const String Program::scriptString() {
     }
     m_scriptCache += "*/\n\n";
     
-    if (init_els.size > 0) {
-      m_scriptCache += "void __Init() {\n";
-      m_scriptCache += init_els.GenCss(1); // ok if empty, returns nothing
-      m_scriptCache += "}\n\n";
+    // __Init() routine, for our own els, and calls to subprog Init()
+    m_scriptCache += "void __Init() {\n";
+    m_scriptCache += init_els.GenCss(1); // ok if empty, returns nothing
+    if (sub_progs.size > 0) {
+      if (init_els.size >0) m_scriptCache += "\n";
+      m_scriptCache += "  // init any subprogs that could be called from this one\n";
+      m_scriptCache += "  {Program* target;\n";
+      for (int i = 0; i < sub_progs.size; ++i) {
+        Program* target = sub_progs.FastEl(i);
+        m_scriptCache += "  if (ret_val != 0) return; // checks previous\n"; 
+        m_scriptCache += "  target = " + target->GetPath() + ";\n";
+        m_scriptCache += "  ret_val = target->CallInit(this);\n"; 
+      }
+      m_scriptCache += "  }\n";
     }
+    m_scriptCache += "}\n\n";
     
     m_scriptCache += "void __Prog() {\n";
     m_scriptCache += prog_els.GenCss(1);
@@ -1241,12 +1293,8 @@ const String Program::scriptString() {
     m_scriptCache += "    (run_state == Program::STEP))\n";
     m_scriptCache += "{\n";
     m_scriptCache += "  __Prog();\n";
-    if (init_els.size > 0) {
     m_scriptCache += "} else if (run_state == Program::INIT) {\n";
     m_scriptCache += "  __Init();\n";
-    } else {
-    m_scriptCache += "// note: no Init() in this script; INIT does nothing\n";
-    }
     m_scriptCache += "}\n";
   }
   return m_scriptCache;

@@ -153,8 +153,8 @@ public: // DataSource i/f
      if (ch_nm == sourceChannelName(i)) return i;   return -1;}
     // get the channel number for the name; -1 if none
     
-  bool			ReadOpen() {bool ok = true; ReadOpen_impl(ok); 
-    return ok;}
+  bool			ReadOpen() {bool ok = true; 
+    ReadOpen_impl(ok); if (ok) ReadItrInit();  return ok;}
     // opens the block for read operation -- must be called after changing params
   void			ReadClose() {ReadClose_impl();}
     // closes the block for read operation -- call when done
@@ -223,8 +223,8 @@ public: // DataSink i/f
   void			DeleteSinkChannelByName(const String& ch_nm)
     {DeleteSinkChannel(GetSinkChannelIndexByName(ch_nm));}
   
-  bool			WriteOpen() {bool ok = true; WriteOpen_impl(ok); 
-    return ok;}
+  bool			WriteOpen() {bool ok = true; 
+    WriteOpen_impl(ok); if (ok) WriteItrInit(); return ok;}
     // opens the block for write operation -- must be called after changing params
   void			WriteClose() {WriteClose_impl();}
     // closes the block for write operation -- call when done
@@ -332,7 +332,7 @@ protected:
   override void		WriteItrInit() {wr_itr = -1;}
     // initializes sequential write iteration
 private:
-  void			Initialize() {rd_itr = -2;}
+  void			Initialize() {rd_itr = -2; wr_itr = -2;}
   void			Destroy() {}
 };
 
