@@ -644,6 +644,7 @@ protected:
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 
   virtual void		Closing(bool forced, bool& cancel) {} // called to notify window in closeEvent, when certain to close
+  virtual void		Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images
   virtual void		Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
   virtual void		Constr_Body_impl() {} // #IGNORE replace to construct body (and set in centralWidget)
   virtual void 		SetActionsEnabled_impl(); // invoked when selection changes

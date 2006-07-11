@@ -303,7 +303,7 @@ public:
 
 class PDP_API PDPRoot : public taRootBase {
   // #NO_INSTANCE structural root of object hierarchy
-INHERITED(taRootBase);
+INHERITED(taRootBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
   Project_Group		projects; 	// The projects

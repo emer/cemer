@@ -63,6 +63,18 @@ public:
 	int dummy; // #IGNORE
 };
 
+class QAbstractItemDelegate: public QObject {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
+class QItemDelegate: public QAbstractItemDelegate {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
 class QAbstractTableModel: public QObject {
 //  
 public:

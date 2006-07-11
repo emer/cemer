@@ -18,7 +18,7 @@
 #include <colorbar_qt.h>
 
 #include <qlayout.h>
-#include <qpainter.h>
+#include <QPainter>
 #include <qpushbutton.h>
 #include <qstring.h>
 
@@ -714,6 +714,38 @@ void VCScaleBar::init(ColorScale* c) {
   initLayout();
   UpdateScaleValues();
 }
+
+
+//////////////////////////
+//    ColorMatrixGrid	//
+//////////////////////////
+
+ColorMatrixGrid::ColorMatrixGrid(QWidget* parent)
+:inherited(parent)
+{
+  init();
+}
+
+void ColorMatrixGrid::init() {
+  m_cellSize = 3;
+}
+
+void ColorMatrixGrid::paintEvent(QPaintEvent* event) {
+  QPainter painter(this);
+//TEMP
+  painter.setPen(Qt::blue);
+  painter.setFont(QFont("Arial", 10));
+  painter.drawText(rect(), Qt::AlignCenter, "(Colorgrid TBD)");
+//</TEMP>
+}
+
+void ColorMatrixGrid::setCellSize(int value) {
+  if (value < 0) value = 0;
+  if (m_cellSize == value) return;
+  m_cellSize = value;
+  update();
+}
+
 
 
 /*

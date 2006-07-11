@@ -25,6 +25,7 @@
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
+#include "ta_qtbrowse.h"
 //#include "array_qt.h"
 #include "t3viewer.h"
 #include "pdp_TA_type.h"
@@ -32,6 +33,8 @@
 
 // forwards this file
 class pdpDataViewer;
+class iPdpDataBrowser;
+class PdpDataBrowser;
 
 class PDP_API taiProgVarType : public taiClassType { 
 INHERITED(taiClassType)
@@ -152,6 +155,51 @@ protected:
 };
 
 
+class PDP_API iPdpDataBrowser: public iDataBrowser { // viewer window used for class browsing of taBase objects
+friend class PdpDataBrowser;
+    Q_OBJECT
+INHERITED(iDataBrowser)
+public:
+  taiAction* 		fileNewProjectAction;
+  taiAction* 		fileOpenProjectAction;
+  taiAction* 		fileSaveProjectAction;
+  taiAction* 		fileSaveProjectAsAction;
+  taiAction* 		fileCloseProjectAction;
+  
+  ~iPdpDataBrowser();
+
+public slots:
+  virtual void 		fileNewProject();
+  virtual void 		fileOpenProject();
+  virtual void 		fileSaveProject();
+  virtual void 		fileSaveProjectAs();
+  virtual void 		fileCloseProject();
+  
+protected:
+  iPdpDataBrowser(taBase* root_, MemberDef* md_, TypeDef* typ_, PdpDataBrowser* browser_,
+    QWidget* parent = 0);
+  void 			Constr_Menu_impl(); // override
+};
+
+
+class TA_API PdpDataBrowser : public DataBrowser {
+  // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
+INHERITED(DataBrowser)
+friend class iPdpDataBrowser;
+public:
+
+  iPdpDataBrowser*		browser_win() {return (iPdpDataBrowser*)m_window;}
+  
+  PdpDataBrowser(taBase* root_, MemberDef* md_, bool is_root = false); 
+    // use this one
+  TA_BASEFUNS(PdpDataBrowser)
+protected:
+  override void		Constr_Window_impl(); // #IGNORE
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
 //////////////////////////
 //   ipdpDataViewer	//
 //////////////////////////
@@ -164,8 +212,6 @@ public:
 
   ipdpDataViewer(void* root_, TypeDef* typ_, pdpDataViewer* viewer_,
       QWidget* parent = NULL);
-  ~ipdpDataViewer();
-
 protected:
 //  override void 	SetActionsEnabled_impl();
 };

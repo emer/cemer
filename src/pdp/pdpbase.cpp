@@ -29,13 +29,14 @@
 #include "pdpshell.h"
 
 #ifdef TA_GUI
-#include "ta_qt.h"
-#include "css_qt.h"
-#include "ta_qtdata.h" // for taiObjChooser
-#include "ta_qtviewer.h"
-#include "ta_qtbrowse.h"
-#include <qbitmap.h>
-#include <QApplication>
+# include "ta_qt.h"
+# include "css_qt.h"
+# include "ta_qtdata.h" // for taiObjChooser
+# include "ta_qtviewer.h"
+# include "ta_qtbrowse.h"
+# include "pdp_qtso.h"
+# include <qbitmap.h>
+# include <QApplication>
 #endif
 
 #ifdef TA_USE_INVENTOR
@@ -220,8 +221,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiMisc::SetMainWindow(root->window); */
     //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
     // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
-    DataBrowser* db = DataBrowser::New(&root->projects, root->GetTypeDef()->members.FindName("projects"),
-      root->projects.GetTypeDef(), true);
+    PdpDataBrowser* db = new PdpDataBrowser(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);
     db->InitLinks(); // no one else to do it!
     db->ViewWindow();
 //nn    bw->browser->setRoot(root, root->GetTypeDef());

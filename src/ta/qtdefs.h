@@ -61,6 +61,7 @@ class	QHBox;			// #IGNORE
 class	QHBoxLayout;		// #IGNORE 
 class	Q3HButtonGroup;		// #IGNORE 
 class	Q3Header;		// #IGNORE 
+class	QItemDelegate;		// #IGNORE
 class	QLabel;			// #IGNORE 
 class	QLayout;		// #IGNORE 
 class	QLineEdit;		// #IGNORE 

@@ -19,20 +19,20 @@
 #define colorbar_qt_h
 
 #include "colorscale.h"
+#include "ta_matrix.h"
 #include "ta_qt.h"
 
 
 #ifndef __MAKETA__
-#include <qwidget.h>
+# include <QWidget>
 #else
 // following for msvc
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
 #endif
 
 // forwards this file
@@ -274,6 +274,25 @@ public:
     QWidget* parent = NULL);
 private:
   void		init(ColorScale* c);
+};
+
+class TAMISC_API ColorMatrixGrid: QWidget {
+  // a grid for visually depicting and/or editing grid data (usually 2d)
+INHERITED(QWidget)
+  Q_OBJECT
+public:
+  int		cellSize() const {return m_cellSize;} // h/w of each grid square; 0=auto
+  void		setCellSize(int value);
+
+  ColorMatrixGrid(QWidget* parent = NULL);
+
+protected:
+  int		m_cellSize;
+  
+  void 		paintEvent(QPaintEvent* event); // override
+  
+private:
+  void		init();
 };
 
 /*TODO

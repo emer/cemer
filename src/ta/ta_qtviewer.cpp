@@ -1271,6 +1271,7 @@ void iDataViewer::closeEvent (QCloseEvent* e) {
 }
 
 void iDataViewer::Constr() {
+  Constr_MainMenu_impl();
   Constr_Menu_impl();
   // we always put the fileclose action at bottom of menu
   fileMenu->insertSeparator();
@@ -1283,11 +1284,10 @@ void iDataViewer::Constr() {
   taiMisc::viewer_wins.AddUnique(this);
 }
 
-void iDataViewer::Constr_Menu_impl() {
+void iDataViewer::Constr_MainMenu_impl() {
   if (menu) return;
   // create a taiMenu wrapper around the window's provided menubar
   menu = new taiMenuBar(this, taiMisc::fonBig, menuBar());
-
   QImage img;
   img.loadFromData( image0_data, sizeof( image0_data ), "PNG" );
   image0 = img;
@@ -1307,6 +1307,16 @@ void iDataViewer::Constr_Menu_impl() {
   image7 = img;
   img.loadFromData( image8_data, sizeof( image8_data ), "PNG" );
   image8 = img;
+
+  fileMenu = menu->AddSubMenu("&File");
+  editMenu = menu->AddSubMenu("&Edit");
+  viewMenu = menu->AddSubMenu("&View");
+  actionsMenu = menu->AddSubMenu("&Actions");
+  toolsMenu = menu->AddSubMenu("&Tools");
+  helpMenu = menu->AddSubMenu("&Help");;
+}
+
+void iDataViewer::Constr_Menu_impl() {
 
   // default actions
   fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
@@ -1344,7 +1354,6 @@ void iDataViewer::Constr_Menu_impl() {
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
-  fileMenu = menu->AddSubMenu("&File");
   fileNewAction->AddTo(fileMenu);
   fileOpenAction->AddTo(fileMenu );
   fileSaveAction->AddTo(fileMenu );
@@ -1354,7 +1363,6 @@ void iDataViewer::Constr_Menu_impl() {
   fileMenu->insertSeparator();
   filePrintAction->AddTo( fileMenu );
 
-  editMenu = menu->AddSubMenu("&Edit");
   editUndoAction->AddTo( editMenu );
   editRedoAction->AddTo( editMenu );
   editMenu->insertSeparator();
@@ -1364,17 +1372,11 @@ void iDataViewer::Constr_Menu_impl() {
   editLinkAction->AddTo( editMenu );
   editDeleteAction->AddTo( editMenu );
 
-  viewMenu = menu->AddSubMenu("&View");
   viewRefreshAction->AddTo(viewMenu);
   viewMenu->insertSeparator();
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
   viewMenu->insertSeparator();
 
-  actionsMenu = menu->AddSubMenu("&Actions");
-
-  toolsMenu = menu->AddSubMenu("&Tools");
-  
-  helpMenu = menu->AddSubMenu("&Help");;
   helpHelpAction->AddTo(helpMenu );
   helpMenu->insertSeparator();
   helpAboutAction->AddTo(helpMenu );
