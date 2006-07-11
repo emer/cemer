@@ -1182,9 +1182,8 @@ protected:
 PosGroup_of(Layer);
 SmartRef_Of(Layer); // LayerRef
 
-//class Network : public WinMgr {
 class PDP_API Network : public taNBase {
-  // ##EXT_net ##COMPRESS A network, containing layers, units, etc..
+  // ##FILETYPE_Networks ##EXT_net ##COMPRESS A network, containing layers, units, etc..
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif

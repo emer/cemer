@@ -274,11 +274,12 @@ protected:
   iDataBrowserBase(void* root_, DataViewer* browser_,  QWidget* parent = 0);
 
 public: // overridden slots
-  void 		fileNew();
-  void 		fileOpen();
-  void 		fileSave();
-  void 		fileSaveAs();
-  void 		fileClose();
+//  void 		fileNew();
+//  void 		fileOpen();
+//  void 		fileSave();
+//  void 		fileSaveAs();
+//  void 		fileSaveAll();
+//  void 		fileClose();
 //  virtual void filePrint();
 //  virtual void editUndo();
 //  virtual void editRedo();

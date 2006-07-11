@@ -676,19 +676,59 @@ taFiler* taBase::GetFileDlg() {
     return NULL;
 
   TypeDef* td = GetTypeDef();
-  String fltr;
-  int opt;
-  if((opt = td->opts.FindContains("EXT_")) >= 0) {
-    fltr = td->opts.FastEl(opt).after("EXT_");
-    fltr = "*." + fltr + "*";
-  }
-  else
-    fltr = "*";
   bool cmprs = false;
-  if(td->HasOption("COMPRESS"))
+  if (td->HasOption("COMPRESS"))
     cmprs = true;
+  String filetype = td->OptionAfter("FILETYPE");
+  if (filetype.empty())
+    filetype = td->name + " files"; // avoid plural problems by using word 'files'
+  // create a filter for non-compressed versions
+  String fltr = filetype + " (";
+  String ext = td->OptionAfter("EXT_");
+  if (ext.empty()) fltr += "*.*)";
+  else             fltr += "*." + ext + ")";
+  // if allows compression, create a filter for compressed version
+  if (cmprs) {
+    fltr += ";;" + filetype + " (";
+    if (ext.empty()) fltr += "*." + taMisc::compress_sfx + ")";
+    else             fltr += "*." + ext + "." + taMisc::compress_sfx +  ")";
+  }
+  fltr += ";;All files (*)";
   taFiler* result = taFiler_CreateInstance(".", fltr, cmprs);
   return result;
+}
+
+int taBase::Save_File() {
+  String fname = GetFileName();
+  return SaveAs_File(fname);
+}
+
+int taBase::SaveAs_File(const String& fname) {
+  int rval = false;
+  taFiler* flr = GetFileDlg(); 
+  taRefN::Ref(flr);
+  ostream* strm = NULL;
+   
+  if (fname.empty()) {
+    // Save mode
+    flr->fname = fname;
+    strm = flr->Save();
+    if (strm)
+      rval = Save(*strm);
+  } else { 
+    // SaveAs mode
+    strm = flr->SaveAs();
+    if (strm)
+      rval = SaveAs(*strm);
+  }
+  
+  if (rval) {
+    SetFileName(flr->fname);
+  }
+  
+  taRefN::unRefDone(flr);
+  return rval;
+  
 }
 
 TAPtr taBase::GetOwner(TypeDef* td) const {

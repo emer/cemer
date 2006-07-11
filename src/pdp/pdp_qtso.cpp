@@ -442,48 +442,51 @@ iPdpDataBrowser::~iPdpDataBrowser() {
 }
 
 void iPdpDataBrowser::Constr_Menu_impl() {
-  // we do our own menus first, to put them at top of the menus  
-  fileNewProjectAction = AddAction(new taiAction(0, "New Project", QKeySequence(), "fileNewProjectAction"));
-  connect( fileNewProjectAction, SIGNAL( activated() ), 
-    this, SLOT( fileNewProject() ) );
-  fileOpenProjectAction = AddAction(new taiAction(0, "Open Project...", QKeySequence(), "fileOpenProjectAction"));
-  connect( fileOpenProjectAction, SIGNAL( activated() ), 
-    this, SLOT( fileOpenProject() ) );
-  fileSaveProjectAction = AddAction(new taiAction(0, "Save Project", QKeySequence(), "fileSaveProjectAction"));
-  connect( fileSaveProjectAction, SIGNAL( activated() ), 
-    this, SLOT( fileSaveProject() ) );
-  fileSaveProjectAsAction = AddAction(new taiAction(0, "Save Project As...", QKeySequence(), "fileSaveProjectAsAction"));
-  connect( fileSaveProjectAsAction, SIGNAL( activated() ), 
-    this, SLOT( fileSaveProjectAs() ) );
-  fileCloseProjectAction = AddAction(new taiAction(0, "Close Project", QKeySequence(), "fileCloseProjectAction"));
-  connect( fileCloseProjectAction, SIGNAL( activated() ), 
-    this, SLOT( fileCloseProject() ) );
-  
-  fileNewProjectAction->AddTo(fileMenu);
-  fileOpenProjectAction->AddTo(fileMenu );
-  fileSaveProjectAction->AddTo(fileMenu );
-  fileSaveProjectAsAction->AddTo(fileMenu);
-  fileCloseProjectAction->AddTo(fileMenu);
-  fileSaveProjectAsAction->AddTo(fileMenu);
-  
   inherited::Constr_Menu_impl();
+  // customize the menu text
+//TODO: add custom hints to the file items
 }
 
-void iPdpDataBrowser::fileNewProject() {
+ProjectBase* iPdpDataBrowser::curProject() {
+  ProjectBase* rval = NULL;
+/*  ISelectable* ci = curItem();
+  if (ci) {
+    TypeDef* td = ci->DataTypeDef();
+    if (td && td->InheritsFrom(&TA_taBase)
+  } */
+  return rval;
+}
+
+
+void iPdpDataBrowser::fileNew() {
   if (!pdpMisc::root) return;
   pdpMisc::root->projects.New(); // let user choose type
 }
 
-void iPdpDataBrowser::fileOpenProject() {
+void iPdpDataBrowser::fileOpen() {
 }
 
-void iPdpDataBrowser::fileSaveProject() {
+void iPdpDataBrowser::fileSave() {
+  ProjectBase* proj = curProject();
+  if (!proj) return;
+  proj->Save_File();
 }
 
-void iPdpDataBrowser::fileSaveProjectAs() {
+void iPdpDataBrowser::fileSaveAs() {
+  ProjectBase* proj = curProject();
+  if (!proj) return;
+  proj->SaveAs_File(proj->GetFileName());
 }
 
-void iPdpDataBrowser::fileCloseProject() {
+void iPdpDataBrowser::fileSaveAll() {
+//TODO
+}
+
+void iPdpDataBrowser::fileClose() {
+  ProjectBase* proj = curProject();
+  if (!proj) return;
+//TODO: shouldn't we save, or confirm???
+  proj->Close();
 }
 
 

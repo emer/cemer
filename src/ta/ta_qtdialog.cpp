@@ -2021,7 +2021,8 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
     caption = String("Open: ") + filter;
     break;
   case foSave:
-    // TODO: will this ever be called???
+    // we already have filename!
+    result = true;
     goto exit;
   case foSaveAs:
     fd->setConfirmOverwrite((filer_flags & CONFIRM_OVERWRITE));
@@ -2048,7 +2049,7 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
   }
 
 exit:
-  if (fd != NULL) {
+  if (fd) {
     delete fd;
     fd = NULL;
   }

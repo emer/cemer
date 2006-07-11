@@ -1206,6 +1206,13 @@ void iDataViewer::init() {
 
   (void)statusBar(); // creates the status bar
   
+  // these are modal, so NULL them for when unused
+  fileNewAction = NULL;
+  fileOpenAction = NULL;
+  fileSaveAction = NULL;
+  fileSaveAsAction = NULL;
+  fileSaveAllAction = NULL;
+  fileCloseAction = NULL;
 }
 
 void iDataViewer::actionsMenu_aboutToShow() {
@@ -1319,14 +1326,30 @@ void iDataViewer::Constr_MainMenu_impl() {
 void iDataViewer::Constr_Menu_impl() {
 
   // default actions
-  fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
-  fileNewAction->setIconSet( QIconSet( image0 ) );
-  fileOpenAction = AddAction(new taiAction("&Open...", QKeySequence("Ctrl+O"), _fileOpenAction ));
-  fileOpenAction->setIconSet( QIconSet( image1 ) );
-  fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
-  fileSaveAction->setIconSet( QIconSet( image2 ) );
-  fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
-  fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
+  if (showFileObjectOps()) {
+    fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
+    fileNewAction->setIconSet( QIconSet( image0 ) );
+    fileOpenAction = AddAction(new taiAction("&Open...", QKeySequence("Ctrl+O"), _fileOpenAction ));
+    fileOpenAction->setIconSet( QIconSet( image1 ) );
+    fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
+    fileSaveAction->setIconSet( QIconSet( image2 ) );
+    fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
+    fileSaveAllAction = AddAction(new taiAction("Save A&ll...", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
+    fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
+    
+    fileNewAction->AddTo(fileMenu);
+    fileOpenAction->AddTo(fileMenu );
+    fileSaveAction->AddTo(fileMenu );
+    fileSaveAsAction->AddTo(fileMenu);
+    fileMenu->insertSeparator();
+    
+    connect( fileNewAction, SIGNAL( activated() ), this, SLOT( fileNew() ) );
+    connect( fileOpenAction, SIGNAL( activated() ), this, SLOT( fileOpen() ) );
+    connect( fileSaveAction, SIGNAL( activated() ), this, SLOT( fileSave() ) );
+    connect( fileSaveAsAction, SIGNAL( activated() ), this, SLOT( fileSaveAs() ) );
+    connect( fileSaveAllAction, SIGNAL( activated() ), this, SLOT( fileSaveAll() ) );
+    connect( fileCloseAction, SIGNAL( activated() ), this, SLOT( fileClose() ) );
+  }
   fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
   
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
@@ -1354,10 +1377,6 @@ void iDataViewer::Constr_Menu_impl() {
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
-  fileNewAction->AddTo(fileMenu);
-  fileOpenAction->AddTo(fileMenu );
-  fileSaveAction->AddTo(fileMenu );
-  fileSaveAsAction->AddTo(fileMenu);
   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
   fileOptionsAction->AddTo( fileMenu );
   fileMenu->insertSeparator();
@@ -1382,11 +1401,6 @@ void iDataViewer::Constr_Menu_impl() {
   helpAboutAction->AddTo(helpMenu );
 
     // signals and slots connections
-  connect( fileNewAction, SIGNAL( activated() ), this, SLOT( fileNew() ) );
-  connect( fileOpenAction, SIGNAL( activated() ), this, SLOT( fileOpen() ) );
-  connect( fileSaveAction, SIGNAL( activated() ), this, SLOT( fileSave() ) );
-  connect( fileSaveAsAction, SIGNAL( activated() ), this, SLOT( fileSaveAs() ) );
-  connect( fileCloseAction, SIGNAL( activated() ), this, SLOT( fileClose() ) );
   connect( fileOptionsAction, SIGNAL( activated() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
     connect( fileCloseWindowAction, SIGNAL( activated() ), this, SLOT( fileCloseWindow() ) );

@@ -761,7 +761,7 @@ void iDataBrowserBase::DataPanelDestroying(iDataPanel* panel) {
   }
 */
 }
-
+/* no: we only use these on tree items themselves -- too confusing for user
 void iDataBrowserBase::fileNew() {
   ISelectable* ci = curItem();
   if (ci) ci->link()->fileNew();
@@ -786,7 +786,7 @@ void iDataBrowserBase::fileClose() {
   ISelectable* ci = curItem();
   if (ci) ci->link()->fileClose();
 }
-
+*/
 taiClipData* iDataBrowserBase::GetClipData(int src_edit_action, bool for_drag) {
   ISelectable* ci = curItem();
   if (ci) return ci->GetClipData(sel_items(), src_edit_action, for_drag);

@@ -521,6 +521,7 @@ public:
   taiAction* 		fileOpenAction;
   taiAction* 		fileSaveAction;
   taiAction* 		fileSaveAsAction;
+  taiAction* 		fileSaveAllAction;
   taiAction* 		fileCloseAction;
   taiAction* 		fileOptionsAction;
   taiAction* 		filePrintAction;
@@ -542,6 +543,7 @@ public:
   virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
   ISelectable_PtrList&	sel_items() {return m_sel_items;}
   QObject* 		clipHandler() {return last_enabler;} // obj (if any) controlling clipboard handling
+  virtual bool		showFileObjectOps() {return false;} // usually only show the file ops for the root project window
 
   //TODO: provide a list of multi-selects
   DataViewer*		viewer() {return m_viewer;} // usually replaced by strongly typed version
@@ -596,6 +598,7 @@ public slots:
   virtual void 		fileOpen(){}
   virtual void 		fileSave(){}
   virtual void 		fileSaveAs(){}
+  virtual void 		fileSaveAll(){}
   virtual void 		fileClose(){}
   virtual void 		fileOptions(); // edits taMisc
   virtual void 		filePrint(){}
@@ -811,11 +814,8 @@ public:
   taiDataLink*  GetDataLink(void* el, TypeDef* el_typ, int param = 0);
   virtual void	Changed(bool value = true); // default sets changes; call with 'false' to clear changes
   virtual bool	Save(); // call to save the object to current file, or new file if new; 'true' if saved
-  int		Save(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // Save object to a file
-  int		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return Save(strm,par,indent); }
-  // Save object to file
   int  		Load(istream& strm, TAPtr par=NULL);
   // load object from a file
   int		Edit(bool wait=false);

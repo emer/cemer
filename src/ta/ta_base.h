@@ -366,7 +366,6 @@ public:
   virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
-  bool			SetFileName(const char* val)    {return SetFileName((String)val);} // #IGNORE
   virtual bool		SetFileName(const String& val)  {return false;} // #IGNORE
   virtual String	GetFileName() const 	{ return _nilString; } // #IGNORE
   virtual void 		SetDefaultName();			    // #IGNORE
@@ -502,6 +501,9 @@ public:
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
   // #MENU #ARGC_1 Save object data to a new file
     { return Save(strm,par,indent); }
+  virtual int		Save_File(); // uses the internal filename, gets one if empty
+  virtual int		SaveAs_File(const String& fname); // also updates the internal filename
+  
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)

@@ -160,20 +160,18 @@ friend class PdpDataBrowser;
     Q_OBJECT
 INHERITED(iDataBrowser)
 public:
-  taiAction* 		fileNewProjectAction;
-  taiAction* 		fileOpenProjectAction;
-  taiAction* 		fileSaveProjectAction;
-  taiAction* 		fileSaveProjectAsAction;
-  taiAction* 		fileCloseProjectAction;
+  ProjectBase*		curProject(); // the Project at root of what user has selected; Null if n/a
+  bool		showFileObjectOps() {return true;} // override
   
-  ~iPdpDataBrowser();
+  ~iPdpDataBrowser(); //
 
-public slots:
-  virtual void 		fileNewProject();
-  virtual void 		fileOpenProject();
-  virtual void 		fileSaveProject();
-  virtual void 		fileSaveProjectAs();
-  virtual void 		fileCloseProject();
+public: // slot overrrides
+  void 		fileNew(); //override
+  void 		fileOpen(); //override
+  void 		fileSave(); //override
+  void 		fileSaveAs(); //override
+  void 		fileSaveAll(); //override
+  void 		fileClose(); //override
   
 protected:
   iPdpDataBrowser(taBase* root_, MemberDef* md_, TypeDef* typ_, PdpDataBrowser* browser_,
