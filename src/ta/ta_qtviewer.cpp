@@ -1050,6 +1050,12 @@ taiMimeItem* ISelectable::GetMimeItem() const {
   return link()->GetMimeItem();
 }
 
+taBase* ISelectable::taData() const {
+  if (link()->isBase())
+    return (taBase*)(link()->data());
+  else return NULL;
+}
+
 QWidget* ISelectable::widget() const {
   return host()->This();
 }

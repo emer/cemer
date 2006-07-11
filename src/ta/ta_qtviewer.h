@@ -165,7 +165,8 @@ typedef taiDataLink inherited;
 public:
   taBase*		data() {return (taBase*)m_data;}
   taBase*		data() const {return (taBase*)m_data;}
-
+  override bool		isBase() const {return true;} 
+  
   override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
@@ -330,6 +331,7 @@ public: // Interface Properties and Methods
   virtual MemberDef* 	par_md() const = 0;// parent item's (if any) md
   virtual IDataViewHost* host() const = 0; //
 //  IDataViewHost*	host() const {return viewer_win_();} // non-virtual, can be replaced/retyped
+  taBase*		taData() const; // if the data is taBase, this returns it
   virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
   QWidget*		widget() const;
 

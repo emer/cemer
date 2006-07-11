@@ -449,11 +449,13 @@ void iPdpDataBrowser::Constr_Menu_impl() {
 
 ProjectBase* iPdpDataBrowser::curProject() {
   ProjectBase* rval = NULL;
-/*  ISelectable* ci = curItem();
+  ISelectable* ci = curItem();
   if (ci) {
-    TypeDef* td = ci->DataTypeDef();
-    if (td && td->InheritsFrom(&TA_taBase)
-  } */
+    taBase* ta = ci->taData(); // null if not tabase, but probably must be
+    if (ta) {
+      rval = (ProjectBase*)ta->GetOwner(&TA_ProjectBase);
+    }
+  }
   return rval;
 }
 
