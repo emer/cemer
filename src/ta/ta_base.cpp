@@ -671,31 +671,59 @@ const iColor* taBase::GetEditColorInherit() {
   return bgclr;
 }
 
-taFiler* taBase::GetFileDlg() {
+taFiler* taBase::GetFileDlg(TypeDef* td) {
   if (!taMisc::gui_active)
     return NULL;
 
-  TypeDef* td = GetTypeDef();
-  bool cmprs = false;
-  if (td->HasOption("COMPRESS"))
-    cmprs = true;
-  String filetype = td->OptionAfter("FILETYPE");
-  if (filetype.empty())
-    filetype = td->name + " files"; // avoid plural problems by using word 'files'
-  // create a filter for non-compressed versions
-  String fltr = filetype + " (";
+  if (!td) td = GetTypeDef();
+  bool cmprs = (td->HasOption("COMPRESS"));
+  String fltr = td->OptionAfter("FILETYPE_");
+  if (fltr.empty())
+    fltr = td->name;
+  fltr += " files ("; 
   String ext = td->OptionAfter("EXT_");
-  if (ext.empty()) fltr += "*.*)";
-  else             fltr += "*." + ext + ")";
-  // if allows compression, create a filter for compressed version
+  if (ext.empty()) fltr += "*.*";
+  else             fltr += "*." + ext;
+  // if allows compression, add a filter for compressed version
+  // note: comp sfx already has . baked in
   if (cmprs) {
-    fltr += ";;" + filetype + " (";
-    if (ext.empty()) fltr += "*." + taMisc::compress_sfx + ")";
-    else             fltr += "*." + ext + "." + taMisc::compress_sfx +  ")";
+    if (ext.empty()) fltr += " *" + taMisc::compress_sfx;
+    else             fltr += " *." + ext + taMisc::compress_sfx;
   }
-  fltr += ";;All files (*)";
+  fltr += ");;All files (*)";
   taFiler* result = taFiler_CreateInstance(".", fltr, cmprs);
   return result;
+}
+
+int taBase::Load_File(TypeDef* td) {
+  int rval = false;
+  taFiler* flr = GetFileDlg(td); 
+  taRefN::Ref(flr);
+  istream* strm = flr->Open();
+  if (strm)
+    rval = Load(*strm);
+  
+  if (rval) {
+    SetFileName(flr->fname);
+  }
+  
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
+int taBase::LoadAs_File(const String& fname, TypeDef* td) {
+  int rval = false;
+  taFiler* flr = GetFileDlg(td); 
+  taRefN::Ref(flr);
+  istream* strm = flr->Open(fname, true);
+  if (strm)
+    rval = Load(*strm);
+  
+  if (rval) {
+    SetFileName(flr->fname);
+  }
+  taRefN::unRefDone(flr);
+  return rval;
 }
 
 int taBase::Save_File() {
@@ -728,7 +756,6 @@ int taBase::SaveAs_File(const String& fname) {
   
   taRefN::unRefDone(flr);
   return rval;
-  
 }
 
 TAPtr taBase::GetOwner(TypeDef* td) const {

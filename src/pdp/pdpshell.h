@@ -187,7 +187,7 @@ public:
 
 
 class PDP_API ProjectBase : public taFBase {
-  // ##FILETYPE_Projects ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
 INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..

@@ -1347,6 +1347,7 @@ void iDataViewer::Constr_Menu_impl() {
     fileOpenAction->AddTo(fileMenu );
     fileSaveAction->AddTo(fileMenu );
     fileSaveAsAction->AddTo(fileMenu);
+    fileCloseAction->AddTo(fileMenu);
     fileMenu->insertSeparator();
     
     connect( fileNewAction, SIGNAL( activated() ), this, SLOT( fileNew() ) );

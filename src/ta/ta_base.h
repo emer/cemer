@@ -485,7 +485,7 @@ public:
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
-  virtual taFiler*	GetFileDlg();	// #IGNORE gets file dialog for this object -- clients must ref/unrefdone
+  virtual taFiler*	GetFileDlg(TypeDef* td = NULL);	// #IGNORE gets file dialog for this object (or the TypeDef)-- clients must ref/unrefdone
 
   virtual int	 	Load(istream& strm, TAPtr par=NULL)
   // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
@@ -503,6 +503,10 @@ public:
     { return Save(strm,par,indent); }
   virtual int		Save_File(); // uses the internal filename, gets one if empty
   virtual int		SaveAs_File(const String& fname); // also updates the internal filename
+  virtual int	 	Load_File(TypeDef* td = NULL);
+  // load object data from a file -- gets the filename
+  virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL);
+  // load object data from a file
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE

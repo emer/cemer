@@ -1183,7 +1183,7 @@ PosGroup_of(Layer);
 SmartRef_Of(Layer); // LayerRef
 
 class PDP_API Network : public taNBase {
-  // ##FILETYPE_Networks ##EXT_net ##COMPRESS A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS A network, containing layers, units, etc..
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif

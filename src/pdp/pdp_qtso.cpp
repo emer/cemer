@@ -453,7 +453,10 @@ ProjectBase* iPdpDataBrowser::curProject() {
   if (ci) {
     taBase* ta = ci->taData(); // null if not tabase, but probably must be
     if (ta) {
-      rval = (ProjectBase*)ta->GetOwner(&TA_ProjectBase);
+      if (ta->InheritsFrom(&TA_ProjectBase))
+        rval = (ProjectBase*)ta;
+      else
+        rval = (ProjectBase*)ta->GetOwner(&TA_ProjectBase);
     }
   }
   return rval;
@@ -466,6 +469,8 @@ void iPdpDataBrowser::fileNew() {
 }
 
 void iPdpDataBrowser::fileOpen() {
+  if (!pdpMisc::root) return;
+  pdpMisc::root->projects.Load_File(&TA_ProjectBase);
 }
 
 void iPdpDataBrowser::fileSave() {
