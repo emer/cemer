@@ -36,6 +36,7 @@
 #include <qdialog.h>
 #include <qevent.h>
 #include <qfiledialog.h>
+#include <QFileInfo>
 //#include <qhbox.h>
 #include <Q3ButtonGroup>
 #include <qlabel.h>
@@ -1997,23 +1998,61 @@ int taiEnumDialog::GetEnum(TypeDef* td, const char* prompt, int init_vl,
 // 	taFiler		//
 //////////////////////////////////
 
+class taiFileDialogExtension: public QWidget {
+INHERITED(QWidget)
+public:
+  QVBoxLayout* lay1; // outer
+  QHBoxLayout* lay2; // for check boxes 
+  QCheckBox* 	cbCompress;
+  taiFileDialogExtension(QWidget* parent = NULL);
+  
+private:
+  void	init();
 
-bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
-    int filer_flags) 
+};
+
+taiFileDialogExtension::taiFileDialogExtension(QWidget* parent)
+:inherited(parent)
+{
+  init();
+}
+
+void taiFileDialogExtension::init() {
+  lay1 = new QVBoxLayout(this); // def margin=2
+  QFrame* sep = new QFrame(this);
+  sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+  lay1->addWidget(sep);
+  
+  lay2 = new QHBoxLayout(); // def margin=2
+  lay1->addLayout(lay2);
+  cbCompress = new QCheckBox("compress", this);
+  lay2->addWidget(cbCompress);
+  lay2->addStretch();
+}
+
+bool taFiler::GetFileName(String& fname, FileOperation filerOperation) 
 {
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
   if (dir.empty())
     dir = last_dir;
-  QFileDialog* fd = new QFileDialog(NULL, "", fname, filter); // no parent, no name, modal
-  fd->setDir(dir);
+  // gack! only way to use semi-sep filters is in constructor...
+  // note: actual caption set later
+  QFileDialog* fd = new QFileDialog(NULL, "", dir, filterText());
+  fd->selectFile(fname);
+  // we always make and set the extension, but don't always show it
+  taiFileDialogExtension* fde = new taiFileDialogExtension();
+  fde->cbCompress->setEnabled(compressEnabled());
+  fde->cbCompress->setChecked(compressEnabled() && compressReq());
+  fd->setExtension(fde);
+  fd->setOrientation(Qt::Vertical);
 
   String caption;
   switch (filerOperation) {
   case foOpen:
     fd->setAcceptMode(QFileDialog::AcceptOpen);
-    if (filer_flags & FILE_MUST_EXIST)
+    if (flags & FILE_MUST_EXIST)
       fd->setMode(QFileDialog::AnyFile);
     else
       fd->setMode(QFileDialog::ExistingFile);
@@ -2024,15 +2063,17 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
     // we already have filename!
     result = true;
     goto exit;
-  case foSaveAs:
-    fd->setConfirmOverwrite((filer_flags & CONFIRM_OVERWRITE));
+  case foSaveAs: {
+    fd->showExtension(true);
+    fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
     caption = String("Save: ") + filter;
-    break;
+    
+    } break;
   case foAppend:
-    fd->setConfirmOverwrite((filer_flags & CONFIRM_OVERWRITE));
+    fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
     fd->setMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");
@@ -2043,9 +2084,22 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
   fd->setCaption(caption);
 
   if (fd->exec() == QDialog::Accepted) {
-        fname = fd->selectedFile();
-        dir = fd->directory().absolutePath();
-        result = true;
+    fname = fd->selectedFile();
+    // note: if we further fixup partial filenames, then compress could be true
+    if (fd->fileMode() & QFileDialog::ExistingFile)
+      file_exists = true;
+    else {
+      QFileInfo fi(fname);
+      file_exists = fi.exists();
+    }
+    // compressed 'true' is absolutely based  on filename
+    compressed = fname.endsWith(taMisc::compress_sfx);
+    // but if file doesn't exist, we could fix it up, so we set based on checkbox
+    if (!file_exists && !compressed) {
+      compressed = fde->cbCompress->isChecked();
+    } 
+    dir = fd->directory().absolutePath();
+    result = true;
   }
 
 exit:

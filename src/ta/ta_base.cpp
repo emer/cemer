@@ -366,6 +366,20 @@ void taBase::SetPointer(TAPtr* ptr, TAPtr new_val) {
   *ptr = new_val;
 }
 
+taFiler* taBase::StatGetFiler(TypeItem* td) {
+  if (!taMisc::gui_active) //TODO: shouldn't we always get it???
+    return NULL;
+
+  bool cmprs = (td->HasOption("COMPRESS"));
+  String filetype = td->OptionAfter("FILETYPE_");
+  if (filetype.empty()) filetype = td->name;
+  String ext = td->OptionAfter("EXT_");
+  if (ext.nonempty()) ext = "." + ext;
+  taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS :  taFiler::DEF_FLAGS;
+  taFiler* result = taFiler::New(filetype, ext, ff);
+  return result;
+}
+
 TypeDef* taBase::StatTypeDef(int) {
   return &TA_taBase;
 }
@@ -671,33 +685,14 @@ const iColor* taBase::GetEditColorInherit() {
   return bgclr;
 }
 
-taFiler* taBase::GetFileDlg(TypeDef* td) {
-  if (!taMisc::gui_active)
-    return NULL;
-
+taFiler* taBase::GetFiler(TypeItem* td) {
   if (!td) td = GetTypeDef();
-  bool cmprs = (td->HasOption("COMPRESS"));
-  String fltr = td->OptionAfter("FILETYPE_");
-  if (fltr.empty())
-    fltr = td->name;
-  fltr += " files ("; 
-  String ext = td->OptionAfter("EXT_");
-  if (ext.empty()) fltr += "*.*";
-  else             fltr += "*." + ext;
-  // if allows compression, add a filter for compressed version
-  // note: comp sfx already has . baked in
-  if (cmprs) {
-    if (ext.empty()) fltr += " *" + taMisc::compress_sfx;
-    else             fltr += " *." + ext + taMisc::compress_sfx;
-  }
-  fltr += ");;All files (*)";
-  taFiler* result = taFiler_CreateInstance(".", fltr, cmprs);
-  return result;
+  return StatGetFiler(td);
 }
 
 int taBase::Load_File(TypeDef* td) {
   int rval = false;
-  taFiler* flr = GetFileDlg(td); 
+  taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
   istream* strm = flr->Open();
   if (strm)
@@ -713,9 +708,10 @@ int taBase::Load_File(TypeDef* td) {
 
 int taBase::LoadAs_File(const String& fname, TypeDef* td) {
   int rval = false;
-  taFiler* flr = GetFileDlg(td); 
+  taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
-  istream* strm = flr->Open(fname, true);
+  flr->fname = fname;
+  istream* strm = flr->Open();
   if (strm)
     rval = Load(*strm);
   
@@ -726,18 +722,18 @@ int taBase::LoadAs_File(const String& fname, TypeDef* td) {
   return rval;
 }
 
-int taBase::Save_File() {
-  String fname = GetFileName();
+int taBase::Save_File() { 
+  String fname = GetFileName(); // empty if 1st or not supported
   return SaveAs_File(fname);
 }
 
 int taBase::SaveAs_File(const String& fname) {
   int rval = false;
-  taFiler* flr = GetFileDlg(); 
+  taFiler* flr = GetFiler(); 
   taRefN::Ref(flr);
   ostream* strm = NULL;
    
-  if (fname.empty()) {
+  if (fname.nonempty()) {
     // Save mode
     flr->fname = fname;
     strm = flr->Save();
@@ -745,6 +741,7 @@ int taBase::SaveAs_File(const String& fname) {
       rval = Save(*strm);
   } else { 
     // SaveAs mode
+    flr->fname = GetName(); // filer etc. does auto extension
     strm = flr->SaveAs();
     if (strm)
       rval = SaveAs(*strm);

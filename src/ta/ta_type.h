@@ -377,6 +377,7 @@ public:
   static TypeInfo	type_info;	// #SAVE what to show when displaying type information
   static KeepTokens	keep_tokens;	// #SAVE default for keeping tokens
   static SaveFormat	save_format;	// #SAVE format to use when saving things (dump files)
+  static bool		save_compress;	// #SAVE #DEF_false compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
   static LoadVerbosity	verbose_load;	// #SAVE report the names of things during loading
   static LoadVerbosity  gui_verbose_load; // #SAVE what to report in the load dialog
   static bool		dmem_debug; 	// #SAVE turn on debug messages for distributed memory processing
@@ -394,6 +395,7 @@ public:
   static String		compress_sfx;	// #SAVE suffix to use for compressing files
   static String		help_file_tmplt; // #SAVE template for converting type name into a help file (%t = type name)
   static String		help_cmd;	// #SAVE how to run html browser to get help, %s is entire path to help file
+  static String		edit_cmd;	// #SAVE how to run editor
   static ostream*	record_script;// #IGNORE 
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
   // stream to use for recording a script of interface activity (NULL if no record)

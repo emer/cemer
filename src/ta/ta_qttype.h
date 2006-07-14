@@ -587,9 +587,6 @@ class TA_API taiStreamArgType : public taiArgType {
   // for ios derived args (uses a file-requestor)
 public:
   taFiler*	gf;
-  String	filter; 	// our filter if any
-  String	old_filter; 	// previous filter
-  bool		old_compress;	// previous value of compress flag
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);

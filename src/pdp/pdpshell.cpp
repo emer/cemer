@@ -1272,7 +1272,8 @@ void PDPRoot::SaveAll() {
   taLeafItr i;
   ProjectBase* pr;
   FOR_ITR_EL(ProjectBase, pr, projects., i) {
-    taFiler* taf = pr->GetFileDlg();
+    pr->Save_File(); // does SaveAs if no filename
+/*    taFiler* taf = pr->GetFileDlg();
     if (taf) {
       taRefN::Ref(taf);
       ostream* strm = taf->Save();
@@ -1285,6 +1286,7 @@ void PDPRoot::SaveAll() {
       }
       taRefN::unRef(taf); //don't do Done in case supplier isn't using refcounts to manage lifetime
     } // taf
+  */
   }
 //#endif
 }

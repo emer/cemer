@@ -1340,13 +1340,14 @@ void iDataViewer::Constr_Menu_impl() {
     fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
     fileSaveAction->setIconSet( QIconSet( image2 ) );
     fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
-    fileSaveAllAction = AddAction(new taiAction("Save A&ll...", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
+    fileSaveAllAction = AddAction(new taiAction("Save A&ll", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
     fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
     
     fileNewAction->AddTo(fileMenu);
     fileOpenAction->AddTo(fileMenu );
     fileSaveAction->AddTo(fileMenu );
     fileSaveAsAction->AddTo(fileMenu);
+    fileSaveAllAction->AddTo(fileMenu);
     fileCloseAction->AddTo(fileMenu);
     fileMenu->insertSeparator();
     
@@ -2013,7 +2014,8 @@ void DataViewer::InitLinks() {
     //note: in v3.2 we opened the window here for interactive, but this leads to complexity
     // so we now require caller to do it after everything is built
   }
-  GetFileDlg();
+//TODO: why was this here? no side effects... BA 2006-07-12
+//  GetFiler();
 
   // add toolbars
   ToolBar* tb = new ToolBar();
@@ -2229,9 +2231,8 @@ void DataViewer::GetPrintFileDlg(PrintFmt fmt) {
   }
 
   String ext = GetPrintFileExt(fmt);
-  String filter = "*" + ext + "*";
 
-  print_file = taFiler_CreateInstance(".", filter, false);
+  print_file = taFiler::New("Print", ext);
   taRefN::Ref(print_file);
   last_fmt = fmt;
 }

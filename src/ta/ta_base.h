@@ -269,6 +269,9 @@ public:
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(TAPtr it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
+  static taFiler*	StatGetFiler(TypeItem* td);
+    // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone
+
 protected: // legacy ref counting routines, for compatability -- do not use for new code
   static void   	unRef(TAPtr it) { it->refn--; }	     // #IGNORE
 #ifdef DEBUG
@@ -368,6 +371,8 @@ public:
   virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
   virtual bool		SetFileName(const String& val)  {return false;} // #IGNORE
   virtual String	GetFileName() const 	{ return _nilString; } // #IGNORE
+  taFiler*		GetFiler(TypeItem* td = NULL);
+    // #IGNORE gets filer for the TypeItem if specified, or this object-- clients must ref/unrefdone
   virtual void 		SetDefaultName();			    // #IGNORE
   virtual void		SetTypeDefaults();			    // #IGNORE
   virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
@@ -485,8 +490,6 @@ public:
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
-  virtual taFiler*	GetFileDlg(TypeDef* td = NULL);	// #IGNORE gets file dialog for this object (or the TypeDef)-- clients must ref/unrefdone
-
   virtual int	 	Load(istream& strm, TAPtr par=NULL)
   // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
     { return GetTypeDef()->Dump_Load(strm, (void*)this, par); }
@@ -502,7 +505,7 @@ public:
   // #MENU #ARGC_1 Save object data to a new file
     { return Save(strm,par,indent); }
   virtual int		Save_File(); // uses the internal filename, gets one if empty
-  virtual int		SaveAs_File(const String& fname); // also updates the internal filename
+  virtual int		SaveAs_File(const String& fname = ""); // also updates the internal filename
   virtual int	 	Load_File(TypeDef* td = NULL);
   // load object data from a file -- gets the filename
   virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL);

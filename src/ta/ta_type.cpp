@@ -198,6 +198,7 @@ taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
   //note: PRETTY is barely more expensive, since we compress files
+bool 			taMisc::save_compress = false; // compression not the default in v4
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 bool	taMisc::dmem_debug = false;
@@ -221,13 +222,19 @@ void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbu
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 void (*taMisc::DelayedMenuUpdate_Hook)(taBase*) = NULL; // gui callback -- avoids zillions of gui ifdefs everywhere
 
-#ifdef WINDOWS
-String	taMisc::help_cmd = "\"C:/Program Files/Internet Explorer/iexplore.exe\" file:%s &";
+// NOTE: we quote all filenames in case they have spaces
+#ifdef TA_OS_WIN
+//NOTE: Notepad could possibly really screw up files, because of crlf
+String	taMisc::help_cmd = "\"C:/Program Files/Internet Explorer/iexplore.exe\" file:\"%s\"";
+String	taMisc::edit_cmd = "Notepad.exe \"%s\"";
 #else
-#ifdef DARWIN
-String	taMisc::help_cmd = "open -a \"Internet Explorer\" %s &";
-#else
-String	taMisc::help_cmd = "netscape file:%s &";
+#ifdef TA_OS_MAC
+//TODO: set default to be Safari
+String	taMisc::help_cmd = "open -a \"Internet Explorer\" \"%s\" &";
+String	taMisc::edit_cmd = "emacs \"%s\" &";
+#else // prob Linux, or some Unix for sure
+String	taMisc::help_cmd = "firefox file:\"%s\" &";
+String	taMisc::edit_cmd = "emacs \"%s\" &";
 #endif
 #endif
 

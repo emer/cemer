@@ -25,9 +25,9 @@
 
 #ifndef __MAKETA__
   #include <ilabel.h>
-  #include <qdialog.h>
-  #include <qobject.h>
-  #include <qpushbutton.h>
+  #include <QDialog>
+  #include <QObject>
+  #include <QPushButton>
 #endif
 
 // externals

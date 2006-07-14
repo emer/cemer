@@ -102,16 +102,16 @@ public:
 
   virtual void 	GetHeaders(bool keep_display_settings = true);
   // #MENU #MENU_ON_Actions Get header information (list of data to display) from processes and clear out all current data (except save display info if checked)
-  virtual void	SetSaveFile(const char* nm = NULL, bool no_dlg = false);
-  // #MENU #MENU_ON_LogFile #ARGC_0 open file to save log data to (overwrite existing file)
-  virtual void	SetAppendFile(const char* nm = NULL, bool no_dlg = false);
-  // #MENU #ARGC_0 open file to append log data to
-  virtual void	LoadFile(const char* nm = NULL, bool no_dlg = false);
-  // #MENU #ARGC_0 read in existing log file data
+  virtual void	SetSaveFile();
+  // #MENU #MENU_ON_LogFile open file to save log data to (overwrite existing file)
+  virtual void	SetAppendFile();
+  // #MENU open file to append log data to
+  virtual void	LoadFile();
+  // #MENU read in existing log file data
   virtual void	CloseFile();
   // #MENU #MENU_SEP_AFTER close any open files being logged to
-  virtual void	BufferToFile(const char* nm = NULL, bool no_dlg = false);
-  // #MENU #ARGC_0 send current buffer of data to file: if null args and already open, to it, else opens a new file sends header and closes after
+  virtual void	BufferToFile();
+  // #MENU send current buffer of data to file: if null args and already open, to it, else opens a new file sends header and closes after
 
   virtual void	HeadToFile();
   // send current header to currently open log file -- if not already open, quietly fails

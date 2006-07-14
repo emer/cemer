@@ -2482,15 +2482,15 @@ void taiFileButton::GetImage() {
 	taiAction::action, this, SLOT(Edit()) );
   }
 
-  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || (gf->fname == ""))
+  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->fname.empty() )
     setLabel("------No File-----");
   else
     setLabel(gf->fname);
 }
 
 void taiFileButton::GetGetFile() {
-  if (gf ==  NULL) {
-    SetFiler(taFiler_CreateInstance(".","",false));
+  if (!gf) {
+    SetFiler(taFiler::New());
   }
 }
 
@@ -2503,7 +2503,7 @@ void taiFileButton::Open() {
 
 void taiFileButton::Append() {
   GetGetFile();
-  if(gf->Append() != NULL) {
+  if(gf->Append()) {
     GetImage();
   }
 }
@@ -2517,7 +2517,7 @@ void taiFileButton::Save() {
 
 void taiFileButton::SaveAs() {
   GetGetFile();
-  if (gf->SaveAs() != NULL) {
+  if (gf->SaveAs()) {
     GetImage();
   }
 }
@@ -2532,11 +2532,9 @@ void taiFileButton::Close() {
 
 void taiFileButton::Edit() {
   GetGetFile();
-  char* edtr_c = getenv("EDITOR");
-  String edtr = "emacs";
-  if (edtr_c != NULL)
-    edtr = edtr_c;
-  edtr += String(" ") + gf->fname + " &";
+//  char* edtr_c = getenv("EDITOR");
+  String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
+  edtr.gsub("%s", gf->fname);
   system(edtr);
 }
 

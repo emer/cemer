@@ -153,13 +153,14 @@ public:
   ~String() {mrep->unRef();}
   void			setRep(StrRep* rep_); // for replacing rep (non-constructor) -- rep_ must be non-null
 
-  int			length() const {return mrep->len;} // how many characters in the string
-  bool			empty() const {return mrep->len == 0;}  // true if the string is empty
+  inline int		length() const {return mrep->len;} // how many characters in the string
+  inline bool		empty() const {return (mrep->len == 0);}  // true if the string is empty
+  inline bool		nonempty() const {return (mrep->len > 0);}  // true if the string is nonempty
   bool			isInt() const;  // true if the string contains a value that can be interpreted as an integer [+-]dd*
 
   int			allocation() const {return mrep->sz;}
   int			assertLength(); // call after manual buffer operations, to set length from null term -- **WARNING** only use on ref==1, and where there is a null term in the buff, and sz is not overflowed
-  const char*		chars() const {return mrep->s;} // returns null-terminated string DO NOT MODIFY
+  inline const char*	chars() const {return mrep->s;} // returns null-terminated string DO NOT MODIFY
   char*			chars_ptr() {makeUnique(); return mrep->s;} // returns point to the string, for in-place mods -- **this makeUnique() first, so you have a unique instance to overwrite**
 
   void			makeUnique(); // make sure we are only owner of mrep
@@ -250,6 +251,11 @@ public:
   bool               matches(const String& y, int pos = 0) const;
   bool               matches(const char* t, int pos = 0) const;
     // return 'true' if target appears at position pos in String
+
+  bool               endsWith(char c) const;
+  bool               endsWith(const String& y) const;
+  bool               endsWith(const char* t) const;
+    // return 'true' if target is at end of String
 
   int               freq(char        c) const;
   int               freq(const String&     y) const;

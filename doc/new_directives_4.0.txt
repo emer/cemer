@@ -10,6 +10,7 @@ OBJECT DIRECTIVES
 #HIDDEN -- prevents type from showing in TypeHier lists
 #CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
 #NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
+#FILETYPE -- word used to describe files when saving/loading this type; should be a single noun, ex 'Project' (this directive is always used with the EXT directive)
 
 
 ENUM DIRECTIVES (note: this is new)
@@ -49,8 +50,6 @@ METHOD DIRECTIVES
 
 #MENU_2N_1 -- method that can be applied on selected items 2:N with 1st item as a parameter; 1st parameter must be a pointer or reference to type of object 1 (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
 
-
-
 #MENU_CONTEXT -- puts the menu item directly on the context menu (instead of a submenu) -- ignored in edit dialogs and main menus.
 
 #NO_MENU_CONTEXT -- does not put the item anywhere in a context menu.
@@ -60,6 +59,8 @@ METHOD DIRECTIVES
 #TYPE_ -- added this; same semantics as for members
 #TYPE_ON_ -- added this; same semantics as for members
 #GHOST_ -- added full value semantics, as for member CONDEDIT; implicit bool now also supports submembers (.); implicit bool supports any type: its Variant form is converted to bool
+#EXT -- (3.x undocumented) as for Object directive, used for a stream (file) argument
+#FILETYPE -- companion to EXT, see Object directive 
 
 DEPRECATED DIRECTIVES
 ---------------------

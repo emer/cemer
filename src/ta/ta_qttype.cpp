@@ -1804,19 +1804,14 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
 
 void taiStreamArgType::Initialize() {
   gf = NULL;
-  filter = "";
-  old_filter = "";
-  old_compress = false;
 }
 
 void taiStreamArgType::Destroy() {
-  if(gf != NULL) {
+  if (gf) {
     gf->Close();
-    gf->filter = old_filter;
-    gf->compress = old_compress;
     taRefN::unRefDone(gf);
+    gf = NULL;
   }
-  gf = NULL;
 }
 
 int taiStreamArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
@@ -1833,15 +1828,10 @@ cssEl* taiStreamArgType::GetElFromArg(const char* nm, void*) {
 }
 
 taiData* taiStreamArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  String varext = meth->OptionAfter("EXT_");
-  if (varext != "") {
-    String myname = meth->arg_names[meth->arg_types.Find(arg_typ)];
-    if (varext.before("_",-1) == myname) {
-      if (meth->HasOption("COMPRESS"))
-	filter = "*." + varext.after("_",-1) + taMisc::compress_sfx;
-      else
-	filter = "*." + varext.after("_",-1) + "*";
-    }
+  if (!gf) {
+    // we get and initialize the filer once
+    gf = taBase::StatGetFiler(meth);
+    taRefN::Ref(gf);
   }
   if (arg_typ->InheritsFrom(TA_istream))
     return new taiFileButton(NULL, host_, par, gui_parent_, true);
@@ -1856,23 +1846,6 @@ void taiStreamArgType::GetImage_impl(taiData* dat, const void* base){
   taiFileButton* fbut = (taiFileButton*) dat;
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr it = (TAPtr)base;
-    if (gf != NULL)
-      taRefN::unRefDone(gf);
-    gf = it->GetFileDlg();
-    if (gf != NULL)
-      taRefN::Ref(gf);
-    old_filter = gf->filter;
-    old_compress = gf->compress;
-    if (filter != "") {
-      if (filter.contains(taMisc::compress_sfx)) {
-	gf->filter = filter.before(taMisc::compress_sfx) + "*";
-	gf->compress = true;
-      }
-      else {
-	gf->filter = filter;
-	gf->compress = false;	// don't compress if we got a new filter..
-      }
-    }
   }
   fbut->SetFiler(gf);
   fbut->GetImage();
@@ -1882,15 +1855,6 @@ void taiStreamArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
   taiFileButton* rval = (taiFileButton*)dat;
-  if (gf == NULL) {
-    gf = (taFiler*)rval->GetFiler();
-    taRefN::Ref(gf);
-  }
-  if (gf == NULL) {
-    *((void**)arg_base) = NULL;
-    err_flag = true;		// error-value not set..
-    return;
-  }
   GetValueFromGF();
 }
 

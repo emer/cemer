@@ -680,6 +680,19 @@ void String::error(const char* msg) const {
   cerr << "String:" <<  msg << "\n";
 }
 
+bool String::endsWith(char c) const {
+  return matches(c, length() - 1);
+}
+
+bool String::endsWith(const String& y) const {
+  return matches(y, length() - y.length());
+}
+
+bool String::endsWith(const char* t) const {
+  return matches(String(t));
+}
+
+
 void String::init(const char* s, int slen) {
   if (slen < 0)  slen = s ? (int)strlen(s) : 0;
   if (slen == 0) newRep(&_nilStrRep);

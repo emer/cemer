@@ -51,9 +51,8 @@
 //////////////////////////
 
 void PDPLog::Initialize() {
-  log_file = taFiler::New(".","*log*",false);
+  log_file = taFiler::New("PDP Log", ".log");
   taRefN::Ref(log_file);
-  log_file->mode = taFiler::NO_AUTO;
   log_lines = 0;
 
 //no: don't force type  data.el_typ = &TA_float_Data;
@@ -141,11 +140,13 @@ void PDPLog::UpdateAfterEdit() {
   //NOTE: in 4.0, UAE logic for viewers has been moved to the change handler in the viewer
   if(log_proc.size > 1)		// always record proc name if more than one..
     record_proc_name = true;
+/*TODO: AutoOpen, whatever it was, was deprecated, so replace this...
   if(log_file != NULL) {
     log_file->AutoOpen();
     log_file->mode = taFiler::NO_AUTO; // prevent this from happening again..
   }
-  if(log_file->IsOpen()) {
+*/
+  if(log_file->isOpen()) {
     if(log_lines == 0) {
       GetFileLength();
       if(log_file->ostrm != NULL) {
@@ -225,10 +226,12 @@ void PDPLog::SyncLogViewUpdaters() {
 }
 
 int PDPLog::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  if(log_file->IsOpen())
+/*TODO: need to do something new for old autoopen 
+  if(log_file->isOpen())
     log_file->mode = taFiler::APPEND; // auto-open in append mode..
   else
     log_file->mode = taFiler::NO_AUTO;
+  */
   return inherited::Dump_Save_Value(strm, par, indent);
 }
 
@@ -275,25 +278,25 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
   }
 }
 #endif
-void PDPLog::SetSaveFile(const char* nm, bool no_dlg) {
-  log_file->SaveAs(nm, no_dlg);
+void PDPLog::SetSaveFile() {
+  log_file->SaveAs();//todo: better if it is select_only
   GetFileLength();
   HeadToFile();
 //obs  if(taMisc::gui_active)
 //    SetWinName();
 }
 
-void PDPLog::SetAppendFile(const char* nm, bool no_dlg) {
-  log_file->Append(nm, no_dlg);
+void PDPLog::SetAppendFile() {
+  log_file->Append(); //todo: better if it is select_only
   GetFileLength();
   HeadToFile();
 //obs  if(taMisc::gui_active)
 //    SetWinName();
 }
 
-void PDPLog::LoadFile(const char* nm, bool no_dlg) {
+void PDPLog::LoadFile() {
   StructUpdate(true);
-  log_file->Open(nm, no_dlg);
+  log_file->Open();
   GetFileLength();
   ReadNewLogFile();
   StructUpdate(false);
@@ -355,7 +358,7 @@ void PDPLog::UpdateViewHeaders() {
 }
 
 void PDPLog::HeadToLogFile(LogData& ld) { // this function is deprecated in favor of HeadToFile
-  if(!log_file->IsOpen() || (log_file->ostrm == NULL))
+  if(!log_file->isOpen() || (log_file->ostrm == NULL))
     return;
 
   ostream& strm = *(log_file->ostrm);
@@ -422,7 +425,7 @@ void PDPLog::LogDataFromBuffer() {
   NewHead(ld, sproc);		// see if header info is new..
 
   // buffer always reflects latest contents (views can scroll within)
-  if(log_file->IsOpen() && (data_range.max < log_lines -1))
+  if(log_file->isOpen() && (data_range.max < log_lines -1))
     Buffer_FF();
 
   DataToBuffer(ld);
@@ -440,7 +443,7 @@ void PDPLog::LogDataFromBuffer() {
 
   int max_lns = data.MaxLength() -1; // get new size
   if (max_lns < data_range.Range()) { // must have shifted buffers..
-    if (log_file->IsOpen()) {
+    if (log_file->isOpen()) {
       data_range.max++;
       data_range.min = data_range.max - max_lns;
       data_range.MinGT(0);
@@ -482,7 +485,7 @@ void PDPLog::DataToBuffer(LogData& ld) {
 } */
 /* obs
 void PDPLog::DataToLogFile(LogData&) {
-  if(!log_file->IsOpen() || (log_file->ostrm == NULL))
+  if(!log_file->isOpen() || (log_file->ostrm == NULL))
     return;
 
   ostream& strm = *(log_file->ostrm);
@@ -631,7 +634,7 @@ int PDPLog::FileScanTo(istream& strm, int log_ln) {
 int PDPLog::GetFileLength() {
   int rval = 0;
   taFiler* gf = NULL;		// use a getfile for compressed reads..
-  if(!log_file->IsOpen()) return 0;
+  if(!log_file->isOpen()) return 0;
 
   gf = taFiler::New();		// use a getfile for compressed reads..
   taRefN::Ref(gf);
@@ -725,7 +728,7 @@ void PDPLog::LogFileToBuffer() {
   String templn;
   int rval;
   taFiler* gf = NULL;
-  if(!log_file->IsOpen()) return;
+  if(!log_file->isOpen()) return;
 
   data.ResetData();		// clear out the arrays for new data
   data_range.MinGT(0);		// min must be greater than 0
@@ -774,7 +777,7 @@ exit:
 
 void PDPLog::HeadToFile() {	// based on buffer
 /*todo
-  if(!log_file->IsOpen() || (log_file->ostrm == NULL))
+  if(!log_file->isOpen() || (log_file->ostrm == NULL))
     return;
 
   ostream& strm = *(log_file->ostrm);
@@ -799,10 +802,10 @@ void PDPLog::HeadToFile() {	// based on buffer
 */
 }
 
-void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
+void PDPLog::BufferToFile() {
 /*todo
   bool new_open = false;
-  if(!log_file->IsOpen() || (log_file->ostrm == NULL) || (nm != NULL)) {
+  if(!log_file->isOpen() || (log_file->ostrm == NULL) || (nm != NULL)) {
     SetSaveFile(nm, no_dlg);
     if(log_file->ostrm == NULL) return;
     new_open = true;
@@ -862,7 +865,7 @@ void PDPLog::BufferToFile(const char* nm, bool no_dlg) {
 }
 
 void PDPLog::Buffer_F() {
-  if(!log_file->IsOpen()) return;
+  if(!log_file->isOpen()) return;
   int shft = (int)((float)data_bufsz * data_shift);
   data_range.max += shft;
   data_range.MaxLT(log_lines - 1);
@@ -872,7 +875,7 @@ void PDPLog::Buffer_F() {
 }
 
 void PDPLog::Buffer_FF() {
-  if(!log_file->IsOpen()) return;
+  if(!log_file->isOpen()) return;
   data_range.max = log_lines - 1;
   data_range.min = data_range.max - data_bufsz + 1;
   data_range.MinGT(0);
@@ -880,7 +883,7 @@ void PDPLog::Buffer_FF() {
 }
 
 void PDPLog::Buffer_R() {
-  if(!log_file->IsOpen()) return;
+  if(!log_file->isOpen()) return;
   int shft = (int)((float)data_bufsz * data_shift);
   data_range.min -= shft;
   data_range.MinGT(0);
@@ -890,7 +893,7 @@ void PDPLog::Buffer_R() {
 }
 
 void PDPLog::Buffer_FR() {
-  if(!log_file->IsOpen()) return;
+  if(!log_file->isOpen()) return;
   data_range.min = 0;
   data_range.max = data_range.min + data_bufsz -1;
   data_range.MaxLT(log_lines - 1);
@@ -898,7 +901,7 @@ void PDPLog::Buffer_FR() {
 }
 
 void PDPLog::Buffer_SeekForView(const MinMaxInt& view_range) {
-  if (!log_file->IsOpen()) return;
+  if (!log_file->isOpen()) return;
   if (data_range.RangeTestEq(view_range.min) && data_range.RangeTestEq(view_range.max))
     return; // view range is entirely contained in data_range, so no change needed
   data_range.min = view_range.min;

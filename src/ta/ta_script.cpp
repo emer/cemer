@@ -146,9 +146,7 @@ void AbstractScriptBase::ExitShellScript() {
 //////////////////////////
 
 ScriptBase::ScriptBase() {
-  script_file = taFiler_CreateInstance(".","*.css*",false);
-  script_file->compress = false;	// don't compress
-  script_file->mode = taFiler::NO_AUTO;
+  script_file = taFiler::New("Script", ".css");
   taRefN::Ref(script_file);
 }
 

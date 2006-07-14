@@ -458,6 +458,9 @@ ProjectBase* iPdpDataBrowser::curProject() {
       else
         rval = (ProjectBase*)ta->GetOwner(&TA_ProjectBase);
     }
+    // last resort is first project, if any
+    if (!rval && pdpMisc::root)
+      rval = pdpMisc::root->projects.SafeEl(0);
   }
   return rval;
 }
@@ -482,11 +485,12 @@ void iPdpDataBrowser::fileSave() {
 void iPdpDataBrowser::fileSaveAs() {
   ProjectBase* proj = curProject();
   if (!proj) return;
-  proj->SaveAs_File(proj->GetFileName());
+  proj->SaveAs_File();
 }
 
 void iPdpDataBrowser::fileSaveAll() {
-//TODO
+  if (!pdpMisc::root) return;
+  pdpMisc::root->SaveAll();
 }
 
 void iPdpDataBrowser::fileClose() {

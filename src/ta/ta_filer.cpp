@@ -18,6 +18,8 @@
 
 #include "ta_filer.h"
 
+#include <QFileInfo>
+
 #ifdef TA_GUI
 #  include "css_qt.h"
 #endif // TA_GUI
@@ -278,32 +280,39 @@ void gzstreambase::close() {
 #endif
 
 int taFiler::buf_size = 1016;
-String taFiler::last_fname;
 String taFiler::last_dir;
+String taFiler::last_fname;
 
-taFiler* taFiler::New(const String& dir, const String& filter, bool compress) {
-  return new taFiler(dir, filter, compress);
+taFiler* taFiler::New(const String& filetype_, 
+  const String& ext_, FilerFlags flags_) 
+{
+  taFiler* rval = new taFiler(flags_);
+  rval->dir = ".";
+  rval->filetype = filetype_;
+  rval->ext = ext_;
+  return rval;
 }
 
-taFiler::taFiler(const String& dir_, const String& filter_, bool compress_) {
-  Init(dir_, filter_, compress_);
+taFiler::taFiler(FilerFlags flags_) {
+  Init(flags_);
 }
 
-void taFiler::Init(const String& dir_, const String& filter_, bool compress_) {
-  dir = dir_;
-  filter = filter_;
-  compress = compress_;
-  ifstrm = NULL;
-  iofbuf = NULL;
-//obs  compress_pid = 0;
-  ofstrm = NULL;
+void taFiler::Init(FilerFlags flags_) {
+  if (flags_ && COMPRESS_REQ_DEF) {
+    if (taMisc::save_compress)
+      flags_ = (FilerFlags)(flags_ | COMPRESS_REQ);
+    else
+      flags_ = (FilerFlags)(flags_ & ~COMPRESS_REQ);
+  }
+  flags = flags_;
   fstrm = NULL;
   istrm = NULL;
   ostrm = NULL;
   open_file = false;
   select_only = false;
   file_selected = false;
-  mode = NO_AUTO;
+  compressed = false;
+  file_exists = false;
 }
 
 taFiler::~taFiler() {
@@ -311,65 +320,97 @@ taFiler::~taFiler() {
 }
 
 taFiler& taFiler::operator=(const taFiler& cp) {
+  // can't copy an open one!
+  Close();
+  filter = cp.filter;
+  ext = cp.ext;
+  dir = cp.dir;
   fname = cp.fname;
-  mode = cp.mode;
-  compress = cp.compress;
+  flags = cp.flags;
+  select_only = cp.select_only;
+  file_selected = cp.file_selected;
   return *this;
 }
 
-
-void taFiler::AutoOpen() {
-  if(open_file)
-    return;
-  if(mode == NO_AUTO)
-    return;
-  if(mode == READ)
-    Open(fname);
-  if(mode == WRITE)
-    Save(fname);
-  if(mode == APPEND)
-    Append(fname);
+void taFiler::Close() {
+  compressed = false;
+  file_exists = false; // exists now, but could be deleted etc.
+  if (fstrm) {
+    fstrm->close();
+    delete fstrm;
+    fstrm = NULL;
+    istrm = NULL;		// these are ptrs to fstrm
+    ostrm = NULL;
+  }
+  if (istrm) {
+    delete istrm;
+    istrm = NULL;
+  }
+  if (ostrm) {
+    delete ostrm;
+    ostrm = NULL;
+  }
+  open_file = false;
+  file_selected = true;		// closing a file is as good as opening one
 }
 
-bool taFiler::IsOpen() {
-  return open_file;
+const String taFiler::filterText(bool incl_allfiles) const {
+  STRING_BUF(rval, 80);
+  if (!filetype.empty()) {
+    rval.cat(filetype).cat(" files (");
+    //note: ok if ext empty
+    rval.cat("*").cat(ext);
+    if (compressEnabled()) {
+      rval.cat(" *").cat(ext).cat(taMisc::compress_sfx);
+    }
+    rval.cat(")");
+  }
+  if (incl_allfiles) {
+    if (rval.nonempty()) rval.cat(";;");
+    rval.cat("All files (*)");
+  }
+  return rval;
 }
 
 void taFiler::FixFileName() {
-  String ext;
-  if(filter != "") {
-    ext = filter.from('.');
-    if(ext.contains('*'))
-      ext = ext.before('*');
+  //ONLY call this on saves, not when user has already specified a name
+  // General approach:
+  // if fname is an actual existing file, we don't touch it
+  if (file_exists) return;
+  // otherwise, if no ext was supplied and we have one, we apply it
+  String act_ext; // the actual extension
+  if (ext.nonempty()) act_ext = ext;
+  if (compressed) act_ext += taMisc::compress_sfx;
+  
+  if (fname.endsWith(act_ext)) return; // done!
+  
+  // if user already has an extension, don't change it
+  //note: because paths can have . we have to look at file only
+  QFileInfo fi(fname);
+  String f_only = fi.baseName();
+  if (!f_only.contains('.') && ext.nonempty()) {
+    // otherwise add standard extension
+    fname += ext;
   }
-  if(!compress) {
-    bool has_ext = (fname.from((int)(fname.length() - ext.length())) == ext);
-    if(!has_ext)
-      fname += ext;
-  }
-  else {
-    String sfx = taMisc::compress_sfx;
-    bool has_sfx = (fname.from((int)(fname.length() - sfx.length())) == sfx);
-    if(!has_sfx) {
-      bool has_ext = (fname.from((int)(fname.length() - ext.length())) == ext);
-      if(!has_ext)
-	fname += ext;
-      fname += sfx;
-    }
-    else {
-      String raw_fn = fname.before(sfx,-1);
-      bool has_ext = (raw_fn.from((int)(raw_fn.length() - ext.length())) == ext);
-      if(!has_ext)
-	fname = raw_fn + ext + sfx;
-    }
+  // if compressed, and don't have compr ext, add it
+  if (compressed) {
+    bool has_ext = fname.endsWith(taMisc::compress_sfx);
+    if (!has_ext)
+      fname += taMisc::compress_sfx;
   }
 }
 
 void taFiler::GetDir() {
-  dir = fname.before('/', -1);
-  if(!dir.empty() && (dir != "."))
+  QFileInfo fi(fname);
+  dir = fi.absolutePath(); // note: doesn't deref symlinks, which is probably what we want
+  if (!dir.empty() && (dir != "."))
     taMisc::include_paths.AddUnique(dir); // make sure its on the include path..
 }
+
+bool taFiler::isCompressed() const {
+  if (isOpen()) return compressed;
+  else return fname.endsWith(taMisc::compress_sfx);
+} 
 
 istream* taFiler::open_read() {
   Close();
@@ -379,14 +420,14 @@ istream* taFiler::open_read() {
     taMisc::Error("File:", fname, "could not be opened for reading");
     return NULL;
   }
-  if((acc != 0) && select_only)		// fix the file name for new files..
+  if ((acc != 0) && select_only)	// fix the file name for new files..
     FixFileName();
   open_file = true;
-  last_fname = fname;
   last_dir = dir;
-  String sfx = taMisc::compress_sfx;
-  if(fname.from((int)(fname.length() - sfx.length())) == sfx) {
-    compress = true;		// set for compressed files..
+  last_fname = fname;
+  // note: it is the filename that determines compress, not the flag
+  if (fname.endsWith(taMisc::compress_sfx)) {
+    compressed = true;
     istrm = new igzstream(fname, ios::in);
     return istrm;
   }
@@ -399,7 +440,7 @@ bool taFiler::open_write_exist_check() {
   Close();
   GetDir();
   int acc = access(fname, F_OK);
-  if(acc == 0)
+  if (acc == 0)
     return true;
   return false;
 }
@@ -408,26 +449,20 @@ ostream* taFiler::open_write() {
   Close();
   GetDir();
   int acc = access(fname, W_OK);
-  if((acc != 0) && (errno != ENOENT)) {
+  if ((acc != 0) && (errno != ENOENT)) {
     perror("open_write: ");
     taMisc::Error("File:", fname, "could not be opened for writing");
     return NULL;
   }
   open_file = true;
   last_dir = dir;
-  String sfx = taMisc::compress_sfx;
-  bool hasfx = (fname.from((int)(fname.length() - sfx.length())) == sfx);
-  if(compress || hasfx) {
-    compress = true;		// set for compressed files..
-    FixFileName();
-    last_fname = fname;
+  last_fname = fname;
+  bool hasfx = fname.endsWith(taMisc::compress_sfx);
+  if (hasfx) {
+    compressed = true;
     ostrm = new ogzstream(fname, ios::out);
     return ostrm;
   }
-  else {
-    FixFileName();
-  }
-  last_fname = fname;
   fstrm = new fstream(fname, ios::out);
   ostrm = (ostream*)fstrm;
   return ostrm;
@@ -444,48 +479,32 @@ ostream* taFiler::open_append() {
   }
   open_file = true;
   last_dir = dir;
-  String sfx = taMisc::compress_sfx;
-  bool hasfx = (fname.from((int)(fname.length() - sfx.length())) == sfx);
-  if(compress || hasfx) {
-    compress = true;		// set for compressed files..
-    if(!hasfx)
-      fname += sfx;
-    last_fname = fname;
+  last_fname = fname;
+  bool hasfx = (fname.endsWith(taMisc::compress_sfx));
+  if (hasfx) {
+    compressed = true;
     ostrm = new ogzstream(fname, ios::out | ios::app);
     return ostrm;
   }
-  last_fname = fname;
   fstrm = new fstream(fname, ios::out | ios::app);
   ostrm = (ostream*)fstrm;
   return ostrm;
 }
 
 
-istream* taFiler::Open(const char* nm, bool no_dlg) {
+istream* taFiler::Open() {
   file_selected = false;
-  if (nm != NULL) {
-    fname = nm;
-    file_selected = true;
-  }
-  if (no_dlg) {
-    return open_read();
-#ifdef TA_NO_GUI
-  } else {
-    taMisc::Error("FileOpen: dialog not allowed in no-gui version of this program.");
-    return NULL;
-#endif
-  }
-  
-  int filer_flags = FILE_MUST_EXIST;
-  bool wasFileChosen = GetFileName(fname, foOpen, filer_flags);
+  bool wasFileChosen = GetFileName(fname, foOpen);
 
   istream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
     if (open_read() != NULL) {
-      if(!select_only && (istrm->bad() || (istrm->peek() == EOF)))
-	taMisc::Error("File:",fname,"could not be opened for reading or is empty");
-      else if(select_only)
+//      if (!select_only && (istrm->bad() || (istrm->peek() == EOF)))
+//NOTE: not up to us to forbid opening an empty file!
+      if (istrm->bad())
+	taMisc::Error("File:",fname,"could not be opened for reading");
+      else if (select_only)
 	Close();
       else
 	rstrm = istrm;
@@ -494,54 +513,27 @@ istream* taFiler::Open(const char* nm, bool no_dlg) {
   return rstrm;
 }
 
-ostream* taFiler::Save(const char* nm, bool no_dlg) {
-  if(nm != NULL) {
-    fname = nm;
-    file_selected = true;
-  }
-  if (no_dlg) {
-    return open_write();
-#ifdef TA_NO_GUI
-  } else {
-    taMisc::Error("FileSave: dialog not allowed in no-gui version of this program.");
-    return NULL;
-#endif
-  }
-
-  if(fname == "")
+ostream* taFiler::Save() {
+  if (fname.empty())
     return SaveAs();
 
-  if(open_write() == NULL) {
+  if (open_write() == NULL) {
     return SaveAs();
   }
   return ostrm;
 }
 
-ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
-  file_selected = false;
-  if (nm != NULL) {
-    fname = nm;
-    file_selected = true;
-  }
-  if (no_dlg) {
-    return open_write();
-#ifdef TA_NO_GUI
-  } else {
-    taMisc::Error("FileSaveAs: dialog not allowed in no-gui version of this program.");
-    return NULL;
-#endif
-  }
-  int filer_flags = CONFIRM_OVERWRITE;
-  bool wasFileChosen = GetFileName(fname, foSaveAs, filer_flags);
+ostream* taFiler::SaveAs() {
+  bool wasFileChosen = GetFileName(fname, foSaveAs);
 
   ostream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
-    bool no_go = false;
-    if(!no_go && (open_write() != NULL)) {
-      if(ostrm->bad())
-	taMisc::Error("File:",fname,"could not be opened for SaveAs");
-      else if(select_only)
+    FixFileName();
+    if (open_write() != NULL) {
+      if (ostrm->bad())
+	taMisc::Error("File:",fname,"could not be opened for writing");
+      else if (select_only)
 	Close();
       else {
 	rstrm = ostrm;
@@ -551,89 +543,22 @@ ostream* taFiler::SaveAs(const char* nm, bool no_dlg) {
   return rstrm;
 }
 
-ostream* taFiler::Append(const char* nm, bool no_dlg) {
-  file_selected = false;
-  if(nm != NULL) {
-    fname = nm;
-    file_selected = true;
-  }
-  if (no_dlg) {
-    return open_append();
-#ifdef TA_NO_GUI
-  } else {
-    taMisc::Error("FileAppend: dialog not allowed in no-gui version of this program.");
-    return NULL;
-#endif
-  }
-
-  int filer_flags = NO_FLAGS;
-  bool wasFileChosen = GetFileName(fname, foAppend, filer_flags);
+ostream* taFiler::Append() {
+  bool wasFileChosen = GetFileName(fname, foAppend);
 
   ostream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
     if(open_append() != NULL) {
-      if(ostrm->bad())
+      if (ostrm->bad())
 	taMisc::Error("File",fname,"could not be opened for append");
-      else if(select_only)
+      else if (select_only)
 	Close();
       else
 	rstrm = ostrm;
     }
   }
   return rstrm;
-}
-
-void taFiler::Close() {
-  if(fstrm != NULL) {
-    fstrm->close();
-    delete fstrm;
-    fstrm = NULL;
-    istrm = NULL;		// these are ptrs to fstrm
-    ostrm = NULL;
-  }
-  if(ifstrm != NULL) {
-    ifstrm->close();
-    delete ifstrm;
-    ifstrm = NULL;
-    istrm = NULL;
-  }
-  if(ofstrm != NULL) {
-#ifdef SOLARIS
-    int fd = ofstrm->rdbuf()->fd();
-#endif
-    ofstrm->close();
-#ifdef SOLARIS
-    close(fd);			// just in case -- doesn't get closed on solaris.
-#endif
-    delete ofstrm;
-    ofstrm = NULL;
-    ostrm = NULL;
-  }
-  if(istrm != NULL) {
-    delete istrm;
-    istrm = NULL;
-  }
-  if(ostrm != NULL) {
-    delete ostrm;
-    ostrm = NULL;
-  }
-  if(iofbuf != NULL) {
-    delete [] iofbuf;
-    iofbuf = NULL;
-  }
-/* note: 99.99% sure obsolete
-  if(compress_pid > 0) {	// must wait around for child to die..
-    pid_t wait_pid;
-    int wstatus;
-    do {
-      wait_pid = waitpid(compress_pid, &wstatus, 0);
-    } while((wait_pid == -1) && (errno == EINTR));
-    compress_pid = 0;
-  }
-*/
-  open_file = false;
-  file_selected = true;		// closing a file is as good as opening one
 }
 
 
@@ -643,8 +568,7 @@ void taFiler::Close() {
 //   taFiler		//
 //////////////////////////
 
-bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
-    int filer_flags) {
+bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   bool result = false;
  /*  TODO: implement, except maybe it isn't even called in TA_NO_GUI version!!!
   chooser->style()->attribute("filter", "on");
@@ -691,10 +615,6 @@ bool taFiler::GetFileName(String& fname, FilerOperation filerOperation,
   }
  */
   return result;
-}
-
-taFiler* taFiler_CreateInstance(const String& dir, const String& filter, bool compress) {
-  return new taFiler_impl(dir, filter, compress);
 }
 
 
