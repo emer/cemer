@@ -107,6 +107,7 @@ do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
 
 ifnames:

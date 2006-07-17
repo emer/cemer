@@ -1178,23 +1178,29 @@ void cssClassType::DestructToken(cssClassInst* tok) {
   }
 }
 
-void cssClassType::ConstructToken_impl(cssClassInst* tok) {
-  String nm = type_name;
+void cssClassType::CallVoidMethod(cssClassInst* tok, const char* meth_nm) {
+  String nm = meth_nm;
   if(nm.contains(')')) {
     nm = nm.before(')');
     nm = nm.after('(');
   }
   cssElPtr ptr = methods->FindName((const char*)nm); // find name of this type..
   if(ptr == 0) return;				       // didn't find it..
-  cssMbrScriptFun* ctor = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
+  cssMbrScriptFun* meth = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
+  if(meth->GetSubProg() != NULL) {
+    meth->GetSubProg()->state |= cssProg::State_NoBreak; // do not break this guy
+  }
 
-  // get the appropriate context to run constructor in: either token top
+  // get the appropriate context to run in: either token top
   // or the generic top-level
   cssProg* prg = cssMisc::CDtorProg;
+  prg->state |= cssProg::State_IsTmpProg; // flag to cssProgSpace::Cont to not run past this guy
+  prg->state |= cssProg::State_NoBreak;
   cssProgSpace* old_top = NULL;
   cssProgSpace* old_tok_top = NULL;
   cssProgSpace* old_prg_top = NULL;
   if((tok->prog != NULL) && (tok->prog->top != NULL)) {
+    // todo: this should not be needed anymore
     old_top = cssMisc::SetCurTop(tok->prog->top);    // reparent to current top
     old_prg_top = prg->SetTop(cssMisc::cur_top);
   }
@@ -1204,15 +1210,37 @@ void cssClassType::ConstructToken_impl(cssClassInst* tok) {
     tok->prog = prg;
   }
 
+  cssEl::Ref(tok);		// make sure it doesn't get to 0 refcount in arg del..
+  cssEl::Ref(meth);
+
+  prg->Reset();
+  // not using prog::code function because it might go to another top..
+  cssElPtr elp;  elp.SetDirect(meth);		// code the meth
+  cssInst* tmp = new cssInst(prg, elp);
+  tmp->idx = prg->AddCode(tmp);
+
+  prg->Restart();
+  prg->top->Shove(prg);
   prg->Stack()->Push(&cssMisc::Void); // argstop
   prg->Stack()->Push(tok);
-  cssEl::Ref(tok);		// make sure it doesn't get to 0 refcount in arg del..
-  ctor->Do(prg);
+  prg->top->Cont();		// runs it
+  prg->top->Pull();		// pull the meth/dtor off of stack!
+  prg->Reset();
+
+  if(meth->GetSubProg() != NULL) {
+    meth->GetSubProg()->state &= ~cssProg::State_NoBreak; // do not break this guy
+  }
+
   cssEl::unRef(tok);		// undo that
+  cssEl::unRef(meth);		// undo that
 
   if(old_prg_top != NULL)	prg->PopTop(old_prg_top);
   if(old_tok_top != NULL)	tok->prog->PopTop(old_prg_top);
   if(old_top != NULL)		cssMisc::PopCurTop(old_top);
+}
+
+void cssClassType::ConstructToken_impl(cssClassInst* tok) {
+  CallVoidMethod(tok, type_name);
 }
 
 void cssClassType::DestructToken_impl(cssClassInst* tok) {
@@ -1222,56 +1250,11 @@ void cssClassType::DestructToken_impl(cssClassInst* tok) {
     nm = nm.after('(');
   }
   nm = "~" + nm;
-  cssElPtr ptr = methods->FindName((const char*)nm); // find name of this type..
-  if(ptr == 0) return;				       // didn't find it..
-  cssMbrScriptFun* dtor = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
-
-  cssProg* prg = cssMisc::CDtorProg;
-  cssProgSpace* old_top = cssMisc::SetCurTop(cssMisc::Top);
-  cssProgSpace* old_prg_top = prg->SetTop(cssMisc::cur_top);
-  tok->prog = prg;
-
-  prg->Stack()->Push(&cssMisc::Void); // argstop
-  prg->Stack()->Push(tok);
-  cssEl::Ref(tok);		// make sure it doesn't get to 0 refcount in arg del..
-  dtor->Do(prg);
-  cssEl::unRef(tok);		// undo that
-
-  prg->PopTop(old_prg_top);
-  tok->prog->PopTop(old_prg_top);
-  cssMisc::PopCurTop(old_top);
+  CallVoidMethod(tok, nm);
 }
 
 void cssClassType::UpdateAfterEdit_impl(cssClassInst* tok) {
-  cssElPtr ptr = methods->FindName("UpdateAfterEdit");
-  if(ptr == 0) return;				       // didn't find it..
-  cssMbrScriptFun* ctor = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
-
-  // get the appropriate context to run constructor in: either token top
-  // or the generic top-level
-  cssProg* prg = cssMisc::CDtorProg;
-  cssProgSpace* old_top = NULL;
-  cssProgSpace* old_tok_top = NULL;
-  cssProgSpace* old_prg_top = NULL;
-  if((tok->prog != NULL) && (tok->prog->top != NULL)) {
-    old_top = cssMisc::SetCurTop(tok->prog->top);    // reparent to current top
-    old_prg_top = prg->SetTop(cssMisc::cur_top);
-  }
-  else {
-    old_top = cssMisc::SetCurTop(cssMisc::Top);
-    old_prg_top = prg->SetTop(cssMisc::cur_top);
-    tok->prog = prg;
-  }
-
-  prg->Stack()->Push(&cssMisc::Void); // argstop
-  prg->Stack()->Push(tok);
-  cssEl::Ref(tok);		// make sure it doesn't get to 0 refcount in arg del..
-  ctor->Do(prg);
-  cssEl::unRef(tok);		// undo that
-
-  if(old_prg_top != NULL)	prg->PopTop(old_prg_top);
-  if(old_tok_top != NULL)	tok->prog->PopTop(old_prg_top);
-  if(old_top != NULL)		cssMisc::PopCurTop(old_top);
+  CallVoidMethod(tok, "UpdateAfterEdit");
 }
 
 void cssClassType::SetTypeName(const char* nm) {

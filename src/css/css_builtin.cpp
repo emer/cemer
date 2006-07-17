@@ -100,17 +100,19 @@ cssElCFun*	cssBI::de_ptr=NULL;
 cssElCFun*	cssBI::de_array=NULL;
 cssElCFun*	cssBI::points_at=NULL;
 cssElCFun*	cssBI::member_fun=NULL;
+cssElCFun*	cssBI::member_call=NULL;
 cssElCFun*	cssBI::scoper=NULL;
 cssElCFun*	cssBI::pop=NULL;
 cssElCFun*	cssBI::cast=NULL;
 cssElCFun*	cssBI::cond=NULL;
-cssElCFun*	cssBI::ifcd=NULL;
+cssElCFun*	cssBI::doloop=NULL;
 cssElCFun*	cssBI::switch_jump=NULL;
 
 cssElCFun*	cssBI::push_root=NULL;	// pushes a root value on stack
 cssElCFun*	cssBI::push_next=NULL; // pushes next program item on stack
 cssElCFun*	cssBI::push_cur_this=NULL; // push current this pointer on stack
 cssElCFun*	cssBI::arg_swap=NULL; // swaps args
+cssElCFun*	cssBI::fun_done=NULL; // swaps args
 cssElCFun*	cssBI::array_alloc=NULL;
 cssElCFun*	cssBI::sstream_rewind=NULL;
 
@@ -276,30 +278,41 @@ static cssEl* cssElCFun_points_at_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_scoper_stub(int, cssEl* arg[]) {
   return (arg[1])->GetScoped(*arg[2]);
 }
+
 static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
-// #ifdef HAVE_VOLATILE
-//   volatile cssProg* cp = arg[0]->prog; // volatile because of setjmp
-//   volatile cssEl* tmp;
-// #else
   cssProg* cp = arg[0]->prog;
-  cssEl* tmp;
-// #endif
+  cssEl* mbfun;
   if(arg[2]->GetType() == cssEl::T_String)
-    tmp = (arg[1])->GetMemberFun((const char*)*arg[2]);
+    mbfun = (arg[1])->GetMemberFun((const char*)*arg[2]);
   else
-    tmp = (arg[1])->GetMemberFun((int)*arg[2]);
-  if((tmp->GetType() != cssEl::T_MbrCFun) && (tmp->GetType() != cssEl::T_MbrScriptFun)) {
-    if(tmp != &cssMisc::Void)
-      cssEl::Done((cssEl*)tmp);
-    cssMisc::Error(cp, "Member is not a function", tmp->name);
+    mbfun = (arg[1])->GetMemberFun((int)*arg[2]);
+  if((mbfun->GetType() != cssEl::T_MbrCFun) && (mbfun->GetType() != cssEl::T_MbrScriptFun)) {
+    if(mbfun != &cssMisc::Void)
+      cssEl::Done((cssEl*)mbfun);
+    cssMisc::Error(cp, "Member is not a function", mbfun->name);
     return &cssMisc::Void;
   }
-  int old_state = cp->top->state;
-  int old_step = cp->top->step_mode;
-  cp->top->step_mode = 0;
+  // find the member_call, pointed to by the jump statement just after this guy.
+  cssInst* mbr_jmp = cp->insts[cp->PC()];
+  if(!mbr_jmp->IsJump()) {
+    cssMisc::Error(cp, "Internal error: member_fun didn't find jump stmt to find member_call");
+    return &cssMisc::Void;
+  }
+  css_progdx mbr_call_dx = mbr_jmp->GetJump();
+  if(cp->size <= mbr_call_dx) {
+    cssMisc::Error(cp, "Internal error: member_fun didn't find member_call instruction");
+    return &cssMisc::Void;
+  }
+
+  // code the new instruction
+  cp->ReplaceCode(mbr_call_dx, mbfun);
+
+  cp->Frame()->pc++;		// skip over jump!
+
+  // now deal with args
   cp->Stack()->Push(&cssMisc::Void); // push the arg stop
   cssEl* ths = arg[1]->GetActualObj(); // get past references and pointers
-  if(tmp->GetType() == cssEl::T_MbrScriptFun) {	// push the 'this' pointer
+  if(mbfun->GetType() == cssEl::T_MbrScriptFun) {	// push the 'this' pointer
     if(ths->GetType() == cssEl::T_Class)
       cp->Stack()->Push(ths);
     else {
@@ -311,28 +324,20 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
     }
   }
   // push the 'this' pointer for builtin functions
-  else if(tmp->GetType() == cssEl::T_MbrCFun) {
+  else if(mbfun->GetType() == cssEl::T_MbrCFun) {
     if(ths->GetType() == cssEl::T_Class)
       cp->Stack()->Push(ths);
   }
   if(cp->top->debug >= 2) {
-    cerr << "\nCalling member function: " << tmp->name << endl;
+    cerr << "\nCalling member function: " << mbfun->name << endl;
   }
+  return &cssMisc::Void;
+}
 
-  cp->top->Cont();		// run rest of args
-  cp->top->state = old_state;
-  cp->top->step_mode = old_step;
-
-  if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
-    return &cssMisc::Void;
-
-//   setjmp(cssMisc::begin);		// need to set the break to here for mbr_fun do
-  if(cp->top->run_stat != cssEl::ExecError) {
-    tmp->Do((cssProg*)cp);
-  }
-//  arg[0]->prog = cp;		// reset this, see above ^^^^
-  cssEl::Done((cssEl*)tmp);	// get rid of the memberfun
-  return &cssMisc::Void;	// retv pushed by the previous do
+static cssEl* cssElCFun_member_call_stub(int, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  cssMisc::Error(cp, "member_call: This function should have been replaced by actual member function!");
+  return &cssMisc::Void;
 }
 
 // arg[1]..[na-1] = sizes,   arg[na] = array
@@ -449,38 +454,12 @@ static cssEl* cssElCFun_arg_swap_stub(int na, cssEl* arg[]) {
   cp->Stack()->Push(arg[2]);	// push this on the stack
   return arg[1];		// and this goes after it
 }
-
-// inc after savepc & what happens there
-// 0	then
-// +1	else
-// +2	end
-// +3	condition
-
-static cssEl* cssElCFun_ifcd_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_fun_done_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  css_progdx savepc = cp->PC();
-  cssEl* cond;
-
-  cp->SetPC(savepc + 3);
-  cond = cp->top->Cont();
-  if((int) *cond) {
-    cp->SetPC(savepc);
-    cp->EndRunPop();		// get rid of cond..
-    cp->top->Cont();		// then part
-    if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running))
-      cp->insts[savepc + 2]->Do(); // reset pc to the end
-  }
-  else {
-    cp->SetPC(savepc + 1);
-    cp->EndRunPop();		// get rid of cond..
-    cp->top->Cont();
-  }
-  cp->EndRunPop();
-  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running))
-    ((cssElFun*)arg[0])->dostat = cssEl::Running;
-  else
-    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
-  return &cssMisc::Void;
+  cssEl* fun_el = cp->insts[cp->PC()-2]->inst.El(); // 
+  cerr << "fun_done: pc: " << cp->PC()-2 << " el: " << fun_el->name << endl;
+  fun_el->FunDone(cp);		// call the fun done
+  return &cssMisc::Void;	// todo: not sure if this is correct
 }
 
 static cssEl* cssElCFun_switch_jump_stub(int, cssEl* arg[]) {
@@ -489,8 +468,7 @@ static cssEl* cssElCFun_switch_jump_stub(int, cssEl* arg[]) {
   cssElPtr ptr = cp->literals.FindName(cssSwitchJump_Name);
   cssArray* val_ary = (cssArray*)ptr.El();
 
-  ptr = cp->FindAutoName(cssSwitchVar_Name);
-  cssEl* sval = ptr.El();
+  cssEl* sval = arg[1];		// first arg
 
   if((val_ary == &cssMisc::Void) || (sval == &cssMisc::Void)) {
     cssMisc::Error(cp, "case statement not in a valid switch block");
@@ -513,141 +491,11 @@ static cssEl* cssElCFun_switch_jump_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-
-static cssEl* cssElCFun_switch_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_doloop_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->Cont();		// run the switch
-  cp->EndRunPop();		// get rid of junk
-
-  if(cp->top->run_stat == cssEl::Breaking)
-    cp->top->run_stat = cssEl::Running;	// clear the break
-  return &cssMisc::Void;
-}
-
-// while loop: inc after savepc & what happens there
-// 0	body
-// +1	end
-// +2	condition
-
-static cssEl* cssElCFun_while_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  css_progdx savepc = cp->PC();
-  cssEl* cond;
-
-  cp->SetPC(savepc + 2);
-  cond = cp->top->Cont();
-
-  while((int) *cond) {
-    cp->SetPC(savepc);
-    cp->EndRunPop();		// get rid of cond..
-    cp->top->Cont();		// body
-    if(cp->top->run_stat == cssEl::Breaking) {
-      cp->top->run_stat = cssEl::Stopping;
-      break;
-    }
-    else if(cp->top->run_stat == cssEl::Continuing) {
-      cp->top->run_stat = cssEl::Stopping;
-    }
-    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
-      break;
-    cp->SetPC(savepc + 2);
-    cond = cp->top->Cont();
-  }
-  cp->EndRunPop();		// get rid of cond..
-  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
-    cp->insts[savepc + 1]->Do(); // resets pc
-    ((cssElFun*)arg[0])->dostat = cssEl::Running;
-  }
-  else
-    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
-  return &cssMisc::Void;
-}
-
-// do loop: inc after savepc & what happens there
-// +0	condition
-// +1	end
-// +2	body
-
-static cssEl* cssElCFun_do_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  css_progdx savepc = cp->PC();
-  bool cond;
-
-  do {
-    cp->SetPC(savepc+2);
-    cp->top->Cont();		// body
-    if(cp->top->run_stat == cssEl::Breaking) {
-      cp->top->run_stat = cssEl::Stopping;
-      break;
-    }
-    else if(cp->top->run_stat == cssEl::Continuing) {
-      cp->top->run_stat = cssEl::Stopping;
-    }
-    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
-      break;
-    cp->SetPC(savepc + 0);
-    cssEl* cond_el = cp->top->Cont();
-    cond = (bool)((int)*cond_el);
-    cp->EndRunPop();		// get rid of cond..
-  } while(cond);
-
-  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
-    cp->insts[savepc + 1]->Do(); // resets pc
-    ((cssElFun*)arg[0])->dostat = cssEl::Running;
-  }
-  else
-    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
-  return &cssMisc::Void;
-}
-
-
-// inc after savepc & what happens there
-// 0	condition
-// +1	increments
-// +2	body
-// +3	end
-// +4	inits
-
-static cssEl* cssElCFun_for_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  css_progdx savepc = cp->PC();
-  cssEl* cond;
-
-  cp->SetPC(savepc + 4);
-  cp->top->Cont();		// run initializers
-  cp->EndRunPop();
-
-  cp->SetPC(savepc);
-  cond = cp->top->Cont();	// condition
-
-  while((int) *cond) {
-    cp->SetPC(savepc + 2);
-    cp->EndRunPop();		// get rid of cond..
-    cp->top->Cont();		// body
-    if(cp->top->run_stat == cssEl::Breaking) {
-      cp->top->run_stat = cssEl::Stopping;
-      break;
-    }
-    else if(cp->top->run_stat == cssEl::Continuing) {
-      cp->top->run_stat = cssEl::Stopping;
-    }
-    else if(!((cp->top->run_stat==cssEl::Stopping) || (cp->top->run_stat==cssEl::Running)))
-      break;
-
-    cp->SetPC(savepc + 1);
-    cp->top->Cont();		// increments
-    cp->EndRunPop();
-
-    cp->SetPC(savepc);
-    cond = cp->top->Cont();
-  }
-  cp->EndRunPop();		// get rid of cond..
-  if((cp->top->run_stat == cssEl::Stopping) || (cp->top->run_stat == cssEl::Running)) {
-    cp->insts[savepc + 3]->Do(); // resets pc to end
-    ((cssElFun*)arg[0])->dostat = cssEl::Running;
-  }
-  else
-    ((cssElFun*)arg[0])->dostat = cp->top->run_stat;
+  cssEl* cond = cp->top->Prog()->Stack()->Pop();
+  if((int)*cond != 0)
+    cp->SetPC(0);			// restart at top
   return &cssMisc::Void;
 }
 
@@ -773,14 +621,16 @@ static void Install_Internals() {
   cssElInCFun_inst_ptr(cssMisc::Internal, points_at, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, scoper, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, member_fun, 2, CSS_FUN);
+  cssElInCFun_inst_ptr(cssMisc::Internal, member_call, 0, CSS_FUN);
   cssElCFun_inst_ptr(cssMisc::Internal, pop, cssEl::VarArg, CSS_FUN, " ");
   cssElCFun_inst_ptr(cssMisc::Internal, array_alloc, cssEl::VarArg, CSS_FUN, " ");
   cssElInCFun_inst_ptr(cssMisc::Internal, push_root, cssEl::NoArg, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, push_next, cssEl::NoArg, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, push_cur_this, cssEl::NoArg, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, arg_swap, 2, CSS_FUN);
+  cssElInCFun_inst_ptr(cssMisc::Internal, fun_done, cssEl::NoArg, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, sstream_rewind, 1, CSS_FUN);
-  cssElInCFun_inst_ptr(cssMisc::Internal, switch_jump, cssEl::NoArg, CSS_FUN);
+  cssElInCFun_inst_ptr(cssMisc::Internal, switch_jump, 1, CSS_FUN);
 
   cssElInCFun_inst_ptr(cssMisc::Internal, gt, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, lt, 2, CSS_FUN);
@@ -793,20 +643,23 @@ static void Install_Internals() {
   cssElInCFun_inst_ptr_nm(cssMisc::Internal, lnot, 1, "not", CSS_FUN);
 
   // internal functions
-  cssElInCFun_inst	(cssMisc::Functions, for, cssEl::NoArg, CSS_FOR);
-  cssElInCFun_inst	(cssMisc::Functions, while, cssEl::NoArg, CSS_WHILE);
-  cssElInCFun_inst	(cssMisc::Functions, do, cssEl::NoArg, CSS_DO);
-  cssElInCFun_inst_ptr_nm (cssMisc::Functions, ifcd, cssEl::NoArg, "if", CSS_IF);
-  cssElInCFun_inst_nm	(cssMisc::Functions, ifcd, cssEl::NoArg, "else", CSS_ELSE);
-  cssElInCFun_inst	(cssMisc::Functions, switch, cssEl::NoArg, CSS_SWITCH);
-  cssElCFun_inst	(cssMisc::Functions, return, cssEl::VarArg, CSS_RETURN, " ");
-  cssElInCFun_inst	(cssMisc::Functions, break, cssEl::NoArg, CSS_BREAK);
-  cssElInCFun_inst	(cssMisc::Functions, continue, cssEl::NoArg, CSS_CONTINUE);
-  cssElCFun_inst_nm     (cssMisc::Functions, new_opr, cssEl::VarArg, "new", CSS_NEW, " ");
-  cssElCFun_inst_nm     (cssMisc::Functions, del_opr, 1, "delete", CSS_DELETE, " ");
-  cssElInCFun_inst_ptr	(cssMisc::Internal, constr, 1, CSS_FUN);
+  cssElCFun_inst	(cssMisc::Parse, return, cssEl::VarArg, CSS_RETURN, " ");
+  cssElInCFun_inst	(cssMisc::Parse, break, cssEl::NoArg, CSS_BREAK);
+  cssElInCFun_inst	(cssMisc::Parse, continue, cssEl::NoArg, CSS_CONTINUE);
+  cssElCFun_inst_nm     (cssMisc::Parse, new_opr, cssEl::VarArg, "new", CSS_NEW, " ");
+  cssElCFun_inst_nm     (cssMisc::Parse, del_opr, 1, "delete", CSS_DELETE, " ");
+  cssElInCFun_inst_ptr	(cssMisc::Parse, constr, 1, CSS_FUN);
+
+  cssElInCFun_inst_ptr	(cssMisc::Internal, doloop, cssEl::NoArg, CSS_FUN);
 
   // stuff just for parsing
+  cssElCFun_inst_nm	(cssMisc::Parse, nop,   cssEl::NoArg, "switch", CSS_SWITCH, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "if", CSS_IF, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "else", CSS_ELSE, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "while", CSS_WHILE, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "do", CSS_DO, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "for", CSS_FOR, " ");
+
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "class", CSS_CLASS, " ");
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "struct", CSS_CLASS, " ");
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "union", CSS_CLASS, " ");
@@ -972,6 +825,7 @@ static cssEl* cssElCFun_frame_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  pager_ostream& fh = csh->pgout;
   if(na > 0) {
     int back = (int)*arg[1];
     if(back >= csh->src_prog->size) {
@@ -980,13 +834,13 @@ static cssEl* cssElCFun_frame_stub(int na, cssEl* arg[]) {
       return &cssMisc::Void;
     }
     if(back == csh->src_prog->size-1)
-      csh->src_prog->statics.List(*(csh->fout));
+      csh->src_prog->statics.List(fh);
     else
-      csh->src_prog->Prog(csh->src_prog->size-1-back)->ListSpace();
+      csh->src_prog->Prog(csh->src_prog->size-1-back)->ListSpace(fh);
   }
   else {
-    cp->ListSpace();
-    csh->src_prog->statics.List(*(csh->fout));
+    cp->ListSpace(fh);
+    csh->src_prog->statics.List(fh);
   }
   return &cssMisc::Void;
 }
@@ -1070,20 +924,18 @@ static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
        (arg[1]->GetType() == cssEl::T_MbrScriptFun))
     {
       cssScriptFun* fe = (cssScriptFun*)arg[1];
-      if(na > 1)
-	fe->fun->List(*(csh->fout), fe->fun->CurSrcLn(0), *arg[2]);
+      if(cp->top->ListDebug() >= 2)
+	fe->fun->ListImpl(csh->pgout);
       else
-	fe->fun->List(*(csh->fout), fe->fun->CurSrcLn(0), 100);	// give it the whole thing..
+	fe->fun->ListSrc(csh->pgout);
     }
     else {
-      if(na > 1)
-	csh->src_prog->List(*arg[1], *arg[2]);
-      else
-	csh->src_prog->List(*arg[1]);
+      csh->src_prog->List(*arg[1]);
     }
   }
-  else
+  else {
     csh->src_prog->List();
+  }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
@@ -1091,6 +943,7 @@ static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->ClearAll();
   csh->src_prog->Compile((const char*)*(arg[1]));
   return &cssMisc::Void;
 }
@@ -1284,11 +1137,12 @@ static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
     *(csh->fout) << endl;
   }
   else {
-    *(csh->fout) << "Types local to current top-level program space (" << cp->top->name << "):" << endl;
-    csh->src_prog->types.NameList(*(csh->fout));
-    *(csh->fout) << "\n==========================" << endl <<
-      "Global types: " << endl;
-    cssMisc::TypesSpace.NameList(*(csh->fout));
+    csh->pgout.start();
+    csh->pgout << "Types local to current top-level program space (" << cp->top->name << "):" << "\n";
+    csh->src_prog->types.NameList(csh->pgout);
+    csh->pgout << "\n==========================" << "\n"<<
+      "Global types: " << "\n";
+    cssMisc::TypesSpace.NameList(csh->pgout);
   }
   return &cssMisc::Void;
 }
@@ -2809,7 +2663,9 @@ int cssMisc::Initialize() {
   cssMisc::ConstExprTop = new cssProgSpace("Constant Expression Top Level");
   cssMisc::ConstExpr = cssMisc::ConstExprTop->Prog(); // this guy is child of top
   cssMisc::CDtorProg = new cssProg("Constructor/Destructor Prog");
+  cssMisc::CDtorProg->state |= cssProg::State_IsTmpProg;
   cssMisc::CallFunProg = new cssProg("CallFun Prog");
+  cssMisc::CallFunProg->state |= cssProg::State_IsTmpProg;
   cssProg::Ref(cssMisc::CDtorProg);
   cssProg::Ref(cssMisc::CallFunProg);
   cssMisc::cur_top = cssMisc::Top;

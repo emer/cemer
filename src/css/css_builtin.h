@@ -56,19 +56,21 @@ public:
   static cssElCFun*	de_array;
   static cssElCFun*	points_at;
   static cssElCFun*	member_fun;
+  static cssElCFun*	member_call;
   static cssElCFun*	rshift;
   static cssElCFun*	lshift;
   static cssElCFun*	scoper;
   static cssElCFun*	pop;
   static cssElCFun*	cast;
   static cssElCFun*	cond;
-  static cssElCFun*	ifcd;
   static cssElCFun*	switch_jump;
+  static cssElCFun*	doloop;
 
   static cssElCFun*	push_root;	// pushes a root value on stack
   static cssElCFun*	push_next; 	// pushes next program item on stack
   static cssElCFun*	push_cur_this;	// push current this pointer on stack
   static cssElCFun*	arg_swap;	// flips the args on the stack
+  static cssElCFun*	fun_done;	// call the FunDone function on obj before me (function cleanup)
   static cssElCFun*	array_alloc;
   static cssElCFun*	sstream_rewind;
 

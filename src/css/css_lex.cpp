@@ -111,8 +111,11 @@ int yylex()
     cssMisc::cur_top->Prog()->st_line = cssMisc::cur_top->Prog()->line;
 
     // filter out cr's only when not parsing commands
-    if(cssMisc::cur_top->parsing_command || (cssMisc::cur_top->Prog()->col <= 1))
+    if(cssMisc::cur_top->parsing_command) {
+      if(cssMisc::cur_top->debug >= 4)
+	cerr << "    parsing command = true!" << endl;
       c = skip_white_nocr();
+    }
     else
       c = skip_white();
 

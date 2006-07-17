@@ -49,6 +49,7 @@ int yylex();
 #define Code2(x,y) 	cssMisc::cur_top->Prog()->Code(x); cssMisc::cur_top->Prog()->Code(y)
 #define Code3(x,y,z) 	cssMisc::cur_top->Prog()->Code(x); cssMisc::cur_top->Prog()->Code(y); cssMisc::cur_top->Prog()->Code(z)
 #define Code4(w,x,y,z) 	cssMisc::cur_top->Prog()->Code(w); cssMisc::cur_top->Prog()->Code(x); cssMisc::cur_top->Prog()->Code(y); cssMisc::cur_top->Prog()->Code(z);
+#define Code5(w,x,y,z,zz) 	cssMisc::cur_top->Prog()->Code(w); cssMisc::cur_top->Prog()->Code(x); cssMisc::cur_top->Prog()->Code(y); cssMisc::cur_top->Prog()->Code(z); cssMisc::cur_top->Prog()->Code(zz);
 
 %}
 
@@ -107,11 +108,10 @@ int yylex();
 
 /* stmt elements */
 %type	<ival>  noifstmt ifstmt do doloop nodostmt
-%type 	<ival>	forloop whiloop
-%type   <ival>  cond for while if bra mbr_bra ket
+%type 	<ival>	forloop whiloop for_cond for_cond_sc for_incr for_incr_sc for_end_paren
+%type   <ival>  cond for while if else bra cond_paren cond_end_paren mbr_bra ket
 %type	<ival>	switchblock caseitem switch
-%type	<ival>  scend stmtlist stmtel
-%type	<el>	else
+%type	<ival>  stmtlist stmtel
 %type	<el>	caseexpr
 
 /* defn elements */
@@ -227,8 +227,6 @@ ppdef:    CSS_PP_DEF		{
         ;
 */
 
-/* todo: get rid of all the immediate Do functions here -- kinda strange and unnec. */
-
 command:  CSS_COMMAND cmd_args		{
             Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_TYPECMD cmd_args		{
@@ -248,17 +246,29 @@ command:  CSS_COMMAND cmd_args		{
         | CSS_HELP {
 	    Code1($1); $$ = cssProg::YY_Ok; }
         | CSS_HELP argstop anycmd {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         | CSS_HELP argstop CSS_FUN {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         | CSS_HELP argstop CSS_ALIAS {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         | CSS_HELP argstop CSS_HELP {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         | CSS_HELP argstop CSS_PTRTYPE {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         | CSS_HELP argstop CSS_TYPE {
-	    Code2($3, $1); $$ = cssProg::YY_Ok; }
+	    $$ = cssProg::YY_NoSrc;
+	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
+	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         ;
 
 cmd_args: /* nothing */			{ $$ = 0; }
@@ -268,7 +278,7 @@ cmd_args: /* nothing */			{ $$ = 0; }
 
 /* defn's are skipped over when running, so are replaced by jumps */
 defn:	  vardefn		/* define variable(s) */
-        | vardefin		/* define and initialize */
+        | vardefin term		/* define and initialize */
         | arraydefn
         | enumdefn
         | classdefn
@@ -285,7 +295,7 @@ vardefn:  type tynames end term		{
 	    else $$ = $2; }
         ;
 
-vardefin: type name '=' argstop expr end term 	{
+vardefin: type name '=' argstop expr end 	{
  	    ($1.El())->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    /* constants get dealt with differently */
@@ -658,15 +668,15 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    cssScriptFun* fun = (cssScriptFun*)$1.El();
 	    fun->argc = $2; fun->GetArgDefs(); }
 
-          /* define for the first time (bra creates a cssScriptFun) */
+          /* define for the first time (bra creates a cssCodeBlock) */
         | fundname funargs end bra	{
 	    cssScriptFun* fun = (cssScriptFun*)$1.El();
 	    cssMisc::cur_top->Prog()->insts[$3-1]->SetLine($4+1); $$ = $3-1;
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
-	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[$4]->inst.El());
-	    cssMisc::cur_top->Prog()->insts[$4]->SetInst($1); /* replace bra with fun */
-	    cssMisc::cur_top->RemoveVar(bra_fun);	/* get rid of the bra */
+	    cssCodeBlock* bra_blk = (cssCodeBlock*)(cssMisc::cur_top->Prog()->insts[$4]->inst.El());
+	    cssMisc::cur_top->Prog()->insts[$4]->SetInst($1); /* replace bra_blk with fun */
+	    cssMisc::cur_top->RemoveVar(bra_blk);	/* get rid of the bra_blk */
 	    cssMisc::cur_top->SetPush(fun->fun); /* this is the one we want to push */
 	    fun->Define(cssMisc::ConstExpr); } /* define vars */
 
@@ -689,9 +699,9 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    fun->SetRetvType($1.El());
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
-	    cssScriptFun* bra_fun = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[$5]->inst.El());
+	    cssCodeBlock* bra_blk = (cssCodeBlock*)(cssMisc::cur_top->Prog()->insts[$5]->inst.El());
 	    cssMisc::cur_top->Prog()->insts[$5]->SetInst($2); /* replace bra with existing one */
-	    cssMisc::cur_top->RemoveVar(bra_fun);	/* get rid of the bra */
+	    cssMisc::cur_top->RemoveVar(bra_blk);	/* get rid of the bra_blk */
 	    fun->fun->Reset();	/* reset it for new defn */
 	    cssMisc::cur_top->SetPush(fun->fun); /* push this one */
 	    fun->Define(cssMisc::ConstExpr); } /* define vars */
@@ -706,7 +716,6 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    cssMisc::cur_method = fun; /* this is now the current method */
 	    cssElPtr fun_ptr;  fun_ptr.SetNVirtMethod(cls, cls->methods->GetIndex(fun));
 	    css_progdx nxt_ln = Code1(fun_ptr); /* code it so it shows up in a listing.. */
-	    cssMisc::cur_top->Prog()->insts[ nxt_ln ]->SetDefn();
 	    cssMisc::cur_top->SetPush(fun->fun); /* put it on the stack.. */
 	    cssMisc::cur_top->Prog()->insts[$3-1]->SetLine(nxt_ln+1); $$ = $3-1; }
         ;
@@ -907,7 +916,7 @@ stmt: 	  noifstmt		{ cssMisc::cur_top->Prog()->lastif = -1; }
         | ifstmt
         ;
 
-noifstmt: nodostmt		{ cssMisc::cur_top->Prog()->lastdo = -1; }
+noifstmt: nodostmt
         | doloop
         ;
 
@@ -950,158 +959,243 @@ caseexpr:
 	;
 
 switchblock:            /* switch is like a little function with one arg */
-          switch '(' argstop expr ')' bra 	{
+          switch '(' argstop expr ')' '{' 	{
             $$ = $1;
 	    /* value to switch on */
-	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push
-							  (new cssString(0,cssSwitchVar_Name))));
-	    /* bogus return value */
-	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push
-							  (new cssInt(0,cssRetv_Name))));
-            cssScriptFun* tmp = (cssScriptFun*)(cssMisc::cur_top->Prog()->insts[$6]->inst.El());
-	    tmp->Define(cssMisc::ConstExpr, false, cssSwitchBlock_Name);
-	    tmp->is_block = true; /* this is actually a block.. */
+/* 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push */
+/* 							  (new cssString(0,cssSwitchVar_Name)))); */
+/* 	    /\* bogus return value *\/ */
+/* 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push */
+/* 							  (new cssInt(0,cssRetv_Name)))); */
+            cssCodeBlock* jmp_blk = (cssCodeBlock*)(cssMisc::cur_top->Prog()->owner_blk);
 	    /* make the jump-table address array: ints whose name is val, val is adr */
-	    tmp->fun->Stack()->Push(new cssString(cssSwitchJump_Name));
-	    tmp->fun->Stack()->Push(new cssInt(1)); /* type of ary element */
-	    tmp->fun->Stack()->Push(new cssInt(1)); /* number of dimensions */
+	    jmp_blk->code->Stack()->Push(new cssString(cssSwitchJump_Name));
+	    jmp_blk->code->Stack()->Push(new cssInt(1)); /* type of ary element */
+	    jmp_blk->code->Stack()->Push(new cssInt(1)); /* number of dimensions */
   	    cssMisc::VoidArray.tmp_str = "literal";
-	    cssMisc::VoidArray.MakeToken(tmp->fun); /* make the array */
+	    cssMisc::VoidArray.MakeToken(jmp_blk->code); /* make the array */
 	    cssMisc::VoidArray.tmp_str = "";
-	    cssRef* aryptr = (cssRef*) tmp->fun->Stack()->Pop();
+	    cssRef* aryptr = (cssRef*) jmp_blk->code->Stack()->Pop();
 	    ((cssArray*)aryptr->ptr.El())->items->DelPop(); /* get rid of first el */
-	    tmp->fun->Code(cssBI::switch_jump);
+	    Code1(cssBI::switch_jump); /* this gets expr as arg! */
 	    cssEl::Done(aryptr); } /* switch jump is first instr */
         ;
 
-	  /* need to have the CSS_SWITCH code to trap the break statements */
-switch:   CSS_SWITCH 			{ $$ = Code1($1); }
+switch:   CSS_SWITCH 			{ 
+            cssCodeBlock* blk = new cssCodeBlock(cssSwitchBlock_Name);
+	    blk->loop_type = cssCodeBlock::SWITCH;
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
         ;
 
           /* only an expr condition */
-forloop:  for '(' scend expr scend end ')' stmt end {
-            cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($4);
-	    cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($6);
-	    cssMisc::cur_top->Prog()->insts[$1 + 3]->SetLine($8);
-	    cssMisc::cur_top->Prog()->insts[$1 + 4]->SetLine($9); }
-
-          /* no initializer condition */
-        | for '(' scend expr scend stmtlist end ')' stmt end {
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($4);
-	    cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($6);
-	    cssMisc::cur_top->Prog()->insts[$1 + 3]->SetLine($9);
-	    cssMisc::cur_top->Prog()->insts[$1 + 4]->SetLine($10); }
-
-          /* no incrementer condition */
-        | for '(' stmtlist scend expr scend end ')' stmt end {
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($5);
-	    cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($6);
-	    cssMisc::cur_top->Prog()->insts[$1 + 3]->SetLine($9);
-	    cssMisc::cur_top->Prog()->insts[$1 + 4]->SetLine($10); }
-
-          /* all three conditions */
-        | for '(' stmtlist scend expr scend stmtlist end ')' stmt end {
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($5);
-	    cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($7);
-	    cssMisc::cur_top->Prog()->insts[$1 + 3]->SetLine($10);
-	    cssMisc::cur_top->Prog()->insts[$1 + 4]->SetLine($11); }
+forloop: for '(' for_cond for_incr for_end_paren stmt {
+	   cssProg* cp = cssMisc::cur_top->Prog();
+	   if(cp->owner_blk == NULL) {
+	     yyerror("for loop current prog should have owner_blk, doesnt!");
+	   }
+	   cssMisc::cur_top->Pop(); /* pop the for_incr block */
+	   Code1(cssBI::pop);	/* and code for getting rid of cond val */
+	   cp = cssMisc::cur_top->Prog(); /* current guy */
+	   cssInst* for_incr = cp->insts[$4];
+	   cssInst* for_loop_stmt = cp->insts[$5];
+	   /* swap */
+	   cp->insts[$4] = for_loop_stmt;
+	   cp->insts[$5] = for_incr;
+	   cssMisc::cur_top->Pop(); /* pop the whole for loop! */
+	   $$ = $1; }
+         | for '(' stmtlist for_cond for_incr for_end_paren stmt {
+	   cssProg* cp = cssMisc::cur_top->Prog();
+	   if(cp->owner_blk == NULL) {
+	     yyerror("for loop current prog should have owner_blk, doesnt!");
+	   }
+	   cssMisc::cur_top->Pop(); /* pop the for_incr block */
+	   Code1(cssBI::pop);	/* and code for getting rid of cond val */
+	   /* swap the order of these: $6 = for_end_paren = stmt block,  $5 = for_incr = incr block */
+	   cp = cssMisc::cur_top->Prog(); /* current guy */
+	   cssInst* for_incr = cp->insts[$5];
+	   cssInst* for_loop_stmt = cp->insts[$6];
+	   /* swap */
+	   cp->insts[$5] = for_loop_stmt;
+	   cp->insts[$6] = for_incr;
+	   /* check if stmt is a new block: if so, then don't pop this guy */
+	   
+	   cssMisc::cur_top->Pop(); /* pop the whole for loop! */
+	   $$ = $1; }
+        
         ;
 
-for:   	  CSS_FOR		{
-            $$ = Code2($1,cssInst::Stop);
-	    Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop); }
+/* todo: manage missing things in these sub-cases, not above */
+
+for:   	  CSS_FOR		{ /* for loop contained within own block */
+            cssCodeBlock* blk = new cssCodeBlock(cssForLoop_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+for_cond: 
+            for_cond_sc
+          | for_cond_sc expr
+        ;
+
+for_cond_sc:	  ';'			{
+            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+for_incr:   for_incr_sc
+          | for_incr_sc stmtlist
+        ;
+
+for_incr_sc: ';' {
+              cssMisc::cur_top->Pop(); /* get rid of cond, push incr */
+	      cssMisc::cur_top->ResetParseFlags();
+	      cssCodeBlock* blk = new cssCodeBlock(cssForIncr_Name);
+	      blk->owner_prog = cssMisc::cur_top->Prog();
+  	      blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
+	      blk->loop_back = 3; /* go back 3 to the cond */
+	      cssMisc::cur_top->AddStatic(blk);
+	      $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+for_end_paren: ')' {
+              cssMisc::cur_top->Pop(); /* get rid of incr */
+	      cssCodeBlock* blk = new cssCodeBlock(cssForLoopStmt_Name);
+	      blk->owner_prog = cssMisc::cur_top->Prog();
+  	      blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
+	      blk->loop_type = cssCodeBlock::FOR;
+	      cssMisc::cur_top->AddStatic(blk);
+	      $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
         ;
 
 
-doloop:   do stmt 		{ cssMisc::cur_top->Prog()->lastdo = $1; } /* could get clobbered by stmt */
+doloop:   do stmt
         ;
 
-do:   	 CSS_DO 	 	{ $$ = Code3($1, cssInst::Stop, cssInst::Stop);
-                                  cssMisc::cur_top->Prog()->lastdo = $$; }
+do:   	 CSS_DO 	 	{ 
+            cssCodeBlock* blk = new cssCodeBlock(cssDoLoop_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    blk->loop_type = cssCodeBlock::DO;
+	    cssMisc::cur_top->AddStatic(blk); /* while is all inside this do! */
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+
         ;
 
 
-whiloop:  while cond term end  	{
-	    if(cssMisc::cur_top->Prog()->lastdo >= 0) {
- 	      cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($2);
-	      cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($4);
+whiloop:  while cond term  	{
+            cssProg* prv_prg = cssMisc::cur_top->PrvProg();
+	    if((prv_prg != NULL) && (prv_prg->owner_blk != NULL)
+	       && (prv_prg->owner_blk->loop_type == cssCodeBlock::DO)) {
+	      cssMisc::cur_top->Pop(); /* pop the if_true block from cond
+					  null and should be removed (todo:!) */	      
+	      $$ = Code1(cssBI::doloop); /* this is inside of the do block */
+	      cssMisc::cur_top->Pop(); /* pop the do_loop from do */
+	      
 	    }
 	    else {
-	      cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($4-1); /* do nothing */
-	      cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($4);
-	    }
-	    cssMisc::cur_top->Prog()->lastdo = -1;	}
-
-        | while cond stmt end  	{
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($3);
-	    cssMisc::cur_top->Prog()->insts[$1 + 2]->SetLine($4); }
+	      cssProg* cp = cssMisc::cur_top->Prog();
+	      if(cp->owner_blk == NULL) {
+		yyerror("while loop current prog should have owner_blk, doesnt!");
+	      }
+	      else {
+		cp->owner_blk->loop_back = 2; /* jump back 2 steps to cond if loop was run! */
+		cp->owner_blk->loop_type = cssCodeBlock::WHILE;
+	      }	    
+	      cssMisc::cur_top->Pop(); /* pop the if_true block */
+	      Code1(cssBI::pop);	/* and code for getting rid of cond val */
+	      $$ = $2;
+	    } }
+        | while cond stmt  	{
+	  cssProg* cp = cssMisc::cur_top->Prog();
+	  if(cp->owner_blk == NULL) {
+	    yyerror("while loop current prog should have owner_blk, doesnt!");
+	  }
+	  else {
+	    cp->owner_blk->loop_back = 2; /* jump back 2 steps to cond if loop was run! */
+	    cp->owner_blk->loop_type = cssCodeBlock::WHILE;
+	  }	    
+	  cssMisc::cur_top->Pop(); /* pop the if_true block */
+	  Code1(cssBI::pop);	/* and code for getting rid of cond val */
+	  $$ = $2; }
         ;
 
-while:    CSS_WHILE 		{
-            if(cssMisc::cur_top->Prog()->lastdo < 0) {
-	      $$ = Code3($1, cssInst::Stop, cssInst::Stop); }
-            else { $$ = cssMisc::cur_top->Prog()->lastdo;} }
-
+while:    CSS_WHILE 		{ }
         ;
 
-
-ifstmt:   if cond noifstmt end 	{
-            if(cssMisc::cur_top->debug > 3)
-	      cerr << "\nvalue of then is: " << $3 << "\n";
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($3);
-	    cssMisc::cur_top->Prog()->insts[$1]->EndIf($4); } /* actual end */
-        | if cond ifstmt end 	{
-	    cssMisc::cur_top->Prog()->insts[$1 + 1]->SetLine($3);
-	    cssMisc::cur_top->Prog()->insts[$3]->previf = $1;
-	    cssMisc::cur_top->Prog()->insts[$3]->EndIf(); }
-        | else noifstmt end         {
-	    css_progdx tmp = cssMisc::cur_top->Prog()->elseif;
-	    if(tmp < 0) {
-	      yyerror("else without matching if");
-	      return cssProg::YY_Err;
-	    }
-	    cssMisc::cur_top->Prog()->elseif = -1;	/* reset the else */
-	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine($2);
-	    cssMisc::cur_top->Prog()->insts[tmp]->EndIf($3); $$ = tmp; }
-        | else ifstmt end         {
-	    css_progdx tmp = cssMisc::cur_top->Prog()->elseif;
-	    if(tmp < 0) {
-	      yyerror("else without matching if");
-	      return cssProg::YY_Err;
-	    }
-	    cssMisc::cur_top->Prog()->elseif = -1;	/* reset the else */
-	    cssMisc::cur_top->Prog()->insts[tmp + 2]->SetLine($2);
-	    cssMisc::cur_top->Prog()->insts[$2]->previf = tmp;
-	    cssMisc::cur_top->Prog()->insts[$2]->EndIf(); $$ = tmp; }
+ifstmt:   if cond noifstmt 	{
+          cssMisc::cur_top->Pop(); /* pop the if_true block */
+          $$ = $2; }
+        | if cond ifstmt 	{
+	  cssMisc::cur_top->Pop(); /* pop the if_true block */
+	  $$ = $2; }
+        | else noifstmt         {
+	  cssMisc::cur_top->Pop(); /* pop the if_false block */
+	  /* now check for other else blocks that need popping! */
+	  while((cssMisc::cur_top->Prog()->owner_blk != NULL) &&
+		(cssMisc::cur_top->Prog()->owner_blk->action == cssCodeBlock::ELSE)) {
+	    cssMisc::cur_top->Pop(); } /* pop residual elses! */
+	  $$ = $1;  }
+        | else ifstmt           { /* do not pop the ifstmt here!! */
+	  $$ = $1; }
         ;
 
 if:   	  CSS_IF 			{
-            $$ = Code1($1); Code3(cssInst::Stop, cssInst::Stop, cssInst::Stop);
-	    cssMisc::cur_top->Prog()->ResetLasts();
-	    cssMisc::cur_top->Prog()->lastif = $$; }
+          cssMisc::cur_top->Prog()->lastif = cssMisc::cur_top->Prog()->size; } /* nxt stmt */
         ;
 
 else:	  CSS_ELSE			{
-            cssMisc::cur_top->Prog()->elseif = cssMisc::cur_top->Prog()->lastif;
-	    cssMisc::cur_top->Prog()->ResetLasts(); }
+  	    css_progdx tmp = cssMisc::cur_top->Prog()->lastif;
+  	    if(tmp < 0) {
+	      yyerror("else without matching if");
+	      return cssProg::YY_Err;
+	    }
+	    cssMisc::cur_top->Prog()->lastif = -1; /* reset it */
+            cssCodeBlock* blk = new cssCodeBlock(cssElseBlock_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    blk->action = cssCodeBlock::ELSE; /* start block of else */
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code2(blk, cssBI::pop); /* pop after else to get rid of prev if cond */
+	    cssMisc::cur_top->Push(blk->code); }
         ;
 
-cond: 	  '(' expr ')'		{ Code1(cssInst::Stop); $$ = $2; }
+cond: 	  cond_paren expr cond_end_paren		{ 
+            cssCodeBlock* blk = new cssCodeBlock(cssIfTrueBlock_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
+	    cssMisc::cur_top->AddStatic(blk);
+	    Code1(blk); cssMisc::cur_top->Push(blk->code); $$ = $1; }
+        ;
+
+cond_paren:	  '('			{
+            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+cond_end_paren: ')' {
+            cssMisc::cur_top->Pop(); }
         ;
 
 bra:	  '{'			{
-            cssScriptFun* b = new cssScriptFun(cssBlock_Name);
-	    cssMisc::cur_top->AddStatic(b);
-	    $$ = Code1(b);  cssMisc::cur_top->Prog()->insts[ $$ ]->SetDefn();
-	    cssMisc::cur_top->SetPush(b->fun); }
+            cssCodeBlock* blk = new cssCodeBlock(cssBlock_Name);
+	    blk->owner_prog = cssMisc::cur_top->Prog();
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->SetPush(blk->code); }
         ;
 
 mbr_bra:  '{'			{  } /* do nothing? */
         ;
 
 ket:	  '}'			{
-            $$ = Code1(cssInst::Stop); cssMisc::cur_top->SetPop();
-	    cssScriptFun* sfun = cssMisc::cur_top->Prog()->owner;
+            cssMisc::cur_top->SetPop();
+	    cssScriptFun* sfun = cssMisc::cur_top->Prog()->owner_fun;
 	    if((sfun != NULL) && (sfun->GetType() == cssEl::T_MbrScriptFun)) {
 	      cssMisc::cur_class = NULL; /* get rid of current class pointer.. */
 	      cssMisc::cur_method = NULL; } /* and current method pointer */
@@ -1198,8 +1292,8 @@ anycmd:   CSS_COMMAND
         ;
 
 normfuncall:
-          CSS_FUN 			{ $$ = Code2(cssBI::push_next, $1); }
-	| normfun ')'			{ $$ = $1.ival; Code1($1.el); }
+          CSS_FUN 		        { $$ = Code2(cssBI::push_next, $1); }
+        | normfun ')'			{ $$ = $1.ival; Code1($1.el); }
 	| normfun exprlist ')'		{ $$ = $1.ival; Code1($1.el);
 	  if(($1.el.El()->GetType() == cssEl::T_ElCFun) ||
 	     /*	     ($1.el.El()->GetType() == cssEl::T_MbrCFun) || */
@@ -1246,15 +1340,22 @@ memb_expr:
 	    cssEl* scp = $1.El()->GetScoped((const char*)*($2.El()));
 	    if(scp != &cssMisc::Void) {  $$ = Code1(scp); }
 	    else { $$ = Code3($1, $2, cssBI::scoper); } }
-        | membfun ')' end		{ $$ = $1.ival; } /* argstop is put in by member_fun.. */
-        | membfun exprlist ')' end 	{ $$ = $1.ival;
+
+        | membfun end ')'		{
+	  /* argstop is put in by member_fun; member_fun skips over end jump, 
+	     uses it to find member_call*/
+	  $$ = $1.ival;
+	  cssMisc::cur_top->Prog()->insts[$2-1]->SetLine(Code1(cssBI::member_call)); }
+        | membfun end exprlist ')'  	{
+	  $$ = $1.ival;
+	  cssMisc::cur_top->Prog()->insts[$2-1]->SetLine(Code1(cssBI::member_call));
 	  if(($1.el.El()->GetType() == cssEl::T_ElCFun) ||
 	     ($1.el.El()->GetType() == cssEl::T_MbrCFun) ||
 	     ($1.el.El()->GetType() == cssEl::T_ScriptFun) ||
 	     ($1.el.El()->GetType() == cssEl::T_MbrScriptFun)) {
 	    cssElFun* fun = (cssElFun*)$1.el.El();
 	    int max_args = fun->argc;  int min_args = (fun->argc - fun->arg_defs.size);
-	    int act_args = $2;
+	    int act_args = $3;
 	    if(fun->GetType() == cssEl::T_MbrScriptFun) { max_args--; min_args--; }
 	    if((fun->argc >= 0) && (act_args > max_args)) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(), "Too many arguments for function:",fun->name,", should have at most:", String(max_args), "got:",String(act_args)); }
@@ -1362,13 +1463,11 @@ argstop:  /* nothing */		{ $$ = Code1(cssMisc::VoidElPtr); }
         ;
 
 stmtlist: stmtel
+        | vardefin
         | stmtlist ',' stmtlist
         ;
 
 stmtel:	  expr			{ Code1(cssBI::pop); }
-        ;
-
-scend:	  ';'			{ Code1(cssInst::Stop); $$ = cssMisc::cur_top->Prog()->size; }
         ;
 
 end:	  /* nothing */		{ Code1(cssInst::Stop); $$ = cssMisc::cur_top->Prog()->size; }

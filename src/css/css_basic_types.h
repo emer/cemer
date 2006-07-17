@@ -710,7 +710,6 @@ public:
 
   String	PrintStr() const;
   String	PrintFStr() const;
-  void 		List(ostream& fh = cout) const	{ TypeInfo(fh); }
   void		TypeInfo(ostream& fh = cout) const;
 
   void		Save(ostream& fh = cout);
@@ -774,7 +773,6 @@ public:
 
   String        PrintStr() const;
   String        PrintFStr() const;
-  void          List(ostream& fh = cout) const  { TypeInfo(fh); }
   void          TypeInfo(ostream& fh = cout) const;
 
   void          Constr();
@@ -851,7 +849,6 @@ public:
   void		PrintR(ostream& fh = cout) const	{ ptr.El()->PrintR(fh); }
   int		Edit(bool wait=false)			{ return ptr.El()->Edit(wait); }
 
-  void 		List(ostream& fh = cout) const		{ ptr.El()->List(fh); }
   void  	TypeInfo(ostream& fh = cout) const	{ ptr.El()->TypeInfo(fh); }
   void		InheritInfo(ostream& fh = cout) const	{ ptr.El()->InheritInfo(fh); }
 
@@ -1014,7 +1011,6 @@ public:
 
   virtual void	SetTypeName(const char* nm);
 
-  void 		List(ostream& fh = cout) const	{ TypeInfo(fh); }
   void		TypeInfo(ostream& fh = cout) const;
 
   // constructors
@@ -1147,7 +1143,6 @@ public:
   String 	PrintStr() const;
   String	PrintFStr() const;
 
-  void 		List(ostream& fh = cout) const	{ TypeInfo(fh); }
   void		TypeInfo(ostream& fh = cout) const;
   void		InheritInfo(ostream& fh = cout) const;
 
@@ -1171,6 +1166,8 @@ public:
   cssCloneOnly(cssClassType);
 
   cssEl* 	MakeToken_stub(int, cssEl* arg[]); // make an instance instead
+
+  void	CallVoidMethod(cssClassInst* tok, const char* meth_nm);	// call a method taking no args & returning nothing..
 
   void	ConstructToken(cssClassInst* tok);	// call all constructors on this class
   void	DestructToken(cssClassInst* tok);	// call all destructors on this class
@@ -1235,7 +1232,6 @@ public:
   String 	PrintStr() const;
   String	PrintFStr() const;
 
-  void 		List(ostream& fh = cout) const	{ TypeInfo(fh); }
   void		TypeInfo(ostream& fh = cout) const;
   void		InheritInfo(ostream& fh = cout) const;
 

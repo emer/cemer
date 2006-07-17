@@ -45,6 +45,83 @@
 int yyparse(void);
 void yyerror(char* s);
 
+pager_ostream::pager_ostream() {
+  fout = &cout;
+  fin = &cin;
+  n_lines = 40;
+  cur_line = 0;
+  quitting = false;
+  no_page = false;
+}
+
+pager_ostream::pager_ostream(ostream* fo, istream* fi, int n_ln) {
+  fout = fo;
+  fin = fi;
+  n_lines = n_ln;
+  cur_line = 0;
+  quitting = false;
+  no_page = false;
+}
+
+void pager_ostream::start() {
+  cur_line = 0;
+  quitting = false;
+  no_page = false;
+}
+
+pager_ostream& pager_ostream::operator<<(const char* str) {
+  *this << (String)str;
+  return *this;
+}
+
+pager_ostream& pager_ostream::operator<<(const String& str) {
+  if(quitting) return *this;
+  if(no_page) {
+    *fout << str;
+    fout->flush();
+    return *this;
+  }
+  int n_nl = str.freq('\n');
+  if(cur_line + n_nl < n_lines) {
+    cur_line += n_nl;
+    *fout << str;
+    fout->flush();
+    return *this;
+  }
+
+  int n_out = n_lines - cur_line;
+
+  String cur_str = str;
+  for(int i=0;i<n_out;i++) {
+    String cur_ln = cur_str.through('\n');
+    cur_str = cur_str.after('\n');
+    *fout << cur_ln;
+  }
+  fout->flush();
+
+  *fout << "---Press Return for More, q=quit, c=continue without paging ---";
+  String resp;
+  *fin >> resp;
+  if(resp == "q" || resp == "Q") {
+    quitting = true;
+    return *this;
+  }
+  if(resp == "c" || resp == "C") {
+    no_page = true;
+    if(!cur_str.empty()) {
+      *this << cur_str;
+    }
+    return *this;
+  }
+  cur_line = 0;
+
+  if(!cur_str.empty()) {
+    *this << cur_str;
+  }
+
+  return *this;
+}
+
 
 //////////////////////////
 // 	cssMisc    	//
@@ -175,14 +252,13 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
     *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
 		 << g << " " << h << " " << i << " " << j << " " << k << " " << l;
   }
-  if(top->state & (cssProg::State_Run | cssProg::State_Cont)) {
+  if(top->state & (cssProg::State_Run)) {
     if(taMisc::dmem_proc == 0) {
       *(fh) << "\n" << top->name << "\n>" << top->Prog()->CurSrcLn() << "\t"
 		   << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
       fh->flush();
     }
     top->run_stat = cssEl::ExecError;
-    //    longjmp(cssMisc::begin, 1);
   }
   else {
     if(taMisc::dmem_proc == 0) {
@@ -194,9 +270,9 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
   }
 }
 
-String cssMisc::Indent(int indent_level) {
+String cssMisc::Indent(int indent_level, int indent_spc) {
   if (indent_level == 0) return _nilString;
-  else return String(indent_level * 2, 0, ' ');
+  else return String(indent_level * indent_spc, 0, ' ');
 }
 
 String cssMisc::IndentLines(const String& lines, int indent_level) {
@@ -249,9 +325,9 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
 
   *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
 	       << g << " " << h << " " << i << " " << j << " " << k << " " << l;
-  if(top->state & (cssProg::State_Run | cssProg::State_Cont)) {
+  if(top->state & (cssProg::State_Run)) {
     *(fh) << "\n" << top->name << "\n>" << top->Prog()->CurSrcLn() << "\t"
-      << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
+      << top->Prog()->GetCurSrcLC() << "\n";
   }
   else {
     *(fh) << "\n" << top->name << "\n>" << top->src_ln << "\t"
@@ -306,10 +382,9 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 void cssMisc::fpecatch(int) {
   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   cssProgSpace* top = cssMisc::cur_top;
-  if(top->state & (cssProg::State_Run | cssProg::State_Cont)) {
+  if(top->state & (cssProg::State_Run)) {
     cssMisc::Warning(NULL, "Floating point exception");
     top->run_stat = cssEl::ExecError;
-    //    longjmp(cssMisc::begin,1);
   }
 }
 
@@ -317,9 +392,7 @@ void cssMisc::intrcatch(int) {
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
   cssMisc::Warning(NULL, "User Interrupt");
   cssProgSpace* top = cssMisc::cur_top;
-  top->run_stat = cssEl::ExecError;
-//   if(top->state & (cssProg::State_Run | cssProg::State_Cont))
-//     longjmp(cssMisc::begin,1);
+  top->external_stop = true;
 }
 #endif
 //////////////////////////
@@ -363,30 +436,36 @@ cssEl* cssElPtr::El() const {
   }
 }
 
-void cssElPtr::Print(ostream& fh) const {
+String cssElPtr::PrintStr() const {
+  String rval;
   switch(ptr_type) {
   case DIRECT:
-    fh << "Direct\t";
+    rval = "Direct";
     break;
   case CLASS_MEMBER:
-    fh << "Cls Mbr " << ((cssClassType*)ptr)->type_name << "\t";
+    rval = "Cls Mbr " + ((cssClassType*)ptr)->type_name;
     break;
   case NVIRT_METHOD:
-    fh << "NV Mth " << ((cssClassType*)ptr)->type_name << "\t";
+    rval = "NV Mth " + ((cssClassType*)ptr)->type_name;
     break;
   case VIRT_METHOD:
-    fh << "V Mth " << ((cssClassType*)ptr)->type_name << "\t";
+    rval = "V Mth " + ((cssClassType*)ptr)->type_name;
     break;
   case PROG_AUTO:
-    fh << "Prg Auto " << ((cssProg*)ptr)->name << "\t";
+    rval = "Prg Auto " + ((cssProg*)ptr)->name;
     break;
   case SPACE:
-    fh << "Spc " << ((cssSpace*)ptr)->name << "\t";
+    rval = "Spc " + ((cssSpace*)ptr)->name;
     break;
   case NULL_PTR:
   default:
-    fh << "Void Ptr\t";
+    rval = "Void Ptr";
   }
+  return rval;
+}
+
+void cssElPtr::Print(ostream& fh) const {
+  fh << PrintStr() << "\t";
 }
 
 void cssElPtr::operator+=(int indx) {
@@ -470,7 +549,7 @@ void cssEl::unRefDone(cssEl* it) {
   --(it->refn);
   if (it->refn < 0) {
     cerr << "**WARNING** ";
-    print_cssEl(it, true);
+    print_cssEl(it, false);
     cerr << "::unRefDone: it->refn <= 0 -- **WILL NOT BE MULTI-DELETED**\n";
     return;
   }
@@ -479,7 +558,7 @@ void cssEl::unRefDone(cssEl* it) {
     cerr << "::unRefDone()\n";
   }
 
-  if (it->refn < 0) 
+  if (it->refn <= 0) 
     delete it; 
 }
 
@@ -553,6 +632,11 @@ void cssEl::SetAddr(const cssElPtr& cp) {
 cssEl::RunStat cssEl::Do(cssProg* prg) {
   prog = prg;
   prog->Stack()->Push(this);
+  return cssEl::Running;
+}
+
+cssEl::RunStat cssEl::FunDone(cssProg*) {
+  cssMisc::Warning(NULL, "Internal error: Function or code block ended without finding proper start of block!");
   return cssEl::Running;
 }
 
@@ -874,9 +958,9 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
     return 0;
 
   cssSpace* stack = prog->Stack();
-  if(prog->top->debug > 2) {
-    cerr << "\nStack at time of function call to: " << name;
-    stack->List(cerr);
+  if(prog->top->debug >= 3) {
+    cerr << "\n" << cssMisc::Indent(1) << "Stack at time of function call to: " << name;
+    stack->List(cerr, 1);
     cerr << endl;
   }
   if(argc == 0) {
@@ -1118,6 +1202,136 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   return dostat;
 }
 
+//////////////////////////////////////////////////
+// 	cssCodeBlock: Block of css code		//
+//////////////////////////////////////////////////
+
+void cssCodeBlock::Constr() {
+  code = new cssProg(name);
+  action = JUST_CODE;
+  loop_back = 0;
+  loop_type = NOT_LOOP;
+  argc = 0;
+  cssProg::Ref(code);
+  code->owner_blk = this;
+  owner_prog = NULL;
+}
+
+void cssCodeBlock::Copy(const cssCodeBlock& cp) {
+  cssElFun::Copy(cp);
+  if(code != NULL)
+    cssProg::unRefDone(code);
+  // note that this means that you could lose derived classes..
+  code = cp.code;
+  cssProg::Ref(code);
+  code->owner_blk = this;
+  owner_prog = cp.owner_prog;
+  action = cp.action;
+  loop_back = cp.loop_back;
+  loop_type = cp.loop_type;
+}
+
+cssCodeBlock::cssCodeBlock() {
+  Constr();
+}
+
+cssCodeBlock::cssCodeBlock(const char* nm) {
+  Constr();
+  name = nm;
+  code->name = name;
+}
+cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp) {
+  code = NULL;
+  //  Constr();
+  Copy(cp);
+}
+cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp, const char* nm) {
+  //  Constr();
+  code = NULL;
+  Copy(cp);
+  name = nm;
+  code->name = name;
+}
+cssCodeBlock::~cssCodeBlock() {
+  if(code != NULL)
+    cssProg::unRefDone(code);
+}
+
+// todo: need to call this in a post-processing optimization step
+bool cssCodeBlock::CleanDoubleBlock() {
+  if(code->size > 1) return false;
+  cssEl* el = code->insts[0]->inst.El();
+  if(el->GetType() != T_CodeBlock) return false;
+  cssCodeBlock* sub_guy = (cssCodeBlock*)el;
+  if(sub_guy->action != JUST_CODE) return false;
+
+  cssProg* old_code = code;
+  code = sub_guy->code;		// get his
+  cssProg::Ref(code);
+  code->owner_blk = this;	// reparent
+
+  cssProg::unRefDone(old_code);	// get rid of mine
+}
+
+cssEl::RunStat cssCodeBlock::Do(cssProg* prg) {
+  prog = prg;
+  if(action == IF_TRUE) {
+    cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
+    if((int)*cond == 0) return cssEl::Running;	// do not run!
+  }
+  else if(action == ELSE) {
+    cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
+    if((int)*cond != 0) return cssEl::Running;	// do not run!
+  }
+
+  code->AddFrame();		// need to add the new frame first
+  code->SetTop(prg->top);	// propagate top to fun
+  prg->top->AddProg(code);	// push new state (not Shove, needed to add frame before)
+
+  code->SetCurThis(prg->CurThis());	// carry this pointer down for blocks..
+  // don't do this: we need to be able to tell where the fun is or not..
+//   code->owner_fun = prg->owner_fun; // carry pointer down..
+
+  return cssEl::NewProgShoved;	// new program shoved onto stack
+}
+
+cssEl::RunStat cssCodeBlock::FunDone(cssProg* prg) {
+  prog = prg;			// restore if recursive things happened
+  cssEl* rval = NULL;
+  if(action == PUSH_RVAL) {
+    cssEl* tmp = prg->top->Prog()->Stack()->Peek();
+    rval = tmp->AnonClone();
+  }
+  prg->top->EndRunPop();
+  prg->top->Pull();		// pop up to next level on stack
+
+  if(rval != NULL)
+    prg->top->Prog()->Stack()->Push(rval);
+
+  if(loop_back > 0) {
+    prg->top->Prog()->Frame()->pc -= loop_back;
+    prg->top->EndRunPop();	// if looping back, always pop last off stack
+  }
+
+  if(prg->top->run_stat == cssEl::Stopping)
+    return cssEl::Running;	// stopped naturally
+
+  return prg->top->run_stat;	// some other kind of stopping
+}
+
+cssEl* cssCodeBlock::MakeToken_stub(int na, cssEl* arg[]) {
+  return new cssInt(0);		// default retv is int, not void
+}
+
+String cssCodeBlock::PrintStr() const {
+  String str = name;
+  if(action == PUSH_RVAL) str += "(push_rval)";	
+  else if(action == IF_TRUE) str += "(if true)";	
+  else if(action == ELSE) str += "(else)";
+  if(loop_back > 0)
+    str += ", loop_back: " + String(loop_back);
+  return str;
+}
 
 //////////////////////////////////////////////////
 // cssScriptFun: Script-defined functions	//
@@ -1127,7 +1341,7 @@ void cssScriptFun::Constr() {
   argv = new cssElPtr[ArgMax + 1];
   fun = new cssProg(name);
   cssProg::Ref(fun);
-  fun->owner = this;
+  fun->owner_fun = this;
 }
 
 void cssScriptFun::Copy(const cssScriptFun& cp) {
@@ -1136,8 +1350,8 @@ void cssScriptFun::Copy(const cssScriptFun& cp) {
     cssProg::unRefDone(fun);
   // note that this means that you could lose derived classes..
   fun = cp.fun;
+  fun->owner_fun = this;
   cssProg::Ref(fun);
-  is_block = cp.is_block;
   int i;
   for(i=0; i<= ArgMax; i++)
     argv[i] = cp.argv[i];
@@ -1145,24 +1359,24 @@ void cssScriptFun::Copy(const cssScriptFun& cp) {
 
 cssScriptFun::cssScriptFun() {
   Constr();
-  is_block = true;
   argc = 0;
 }
 
 cssScriptFun::cssScriptFun(const char* nm) {
   Constr();
-  is_block = true;
   argc = 0;
   name = nm;
   fun->name = name;
 }
 cssScriptFun::cssScriptFun(const cssScriptFun& cp) {
   argv = new cssElPtr[ArgMax + 1];
+  fun = NULL;
   //  Constr();
   Copy(cp);
 }
 cssScriptFun::cssScriptFun(const cssScriptFun& cp, const char* nm) {
   argv = new cssElPtr[ArgMax + 1];
+  fun = NULL;
   //  Constr();
   Copy(cp);
   name = nm;
@@ -1174,14 +1388,9 @@ cssScriptFun::~cssScriptFun() {
     cssProg::unRefDone(fun);
 }
 
-void cssScriptFun::List(ostream& fh) const {
-  fun->List(fh);
-}
-
 void cssScriptFun::Define(cssProg* prg, bool, const char* nm) {
   if(nm != NULL)
     name = nm;
-  is_block = false;		// not a block if it is defined..
   cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top
   fun->name = name;
 
@@ -1210,49 +1419,39 @@ void cssScriptFun::Define(cssProg* prg, bool, const char* nm) {
 
 cssEl::RunStat cssScriptFun::Do(cssProg* prg) {
   prog = prg;
-  cssEl* args[cssElFun::ArgMax + 1];
-  int act_argc;
-  BindArgs(args, act_argc);   // get arguments from previous space
+  fun->AddFrame();		// need to add the new frame first
+  fun->Frame()->AllocArgs();	// explicitly allocate the args
+  cssEl** args = fun->Args();	// 
+  int& act_argc = fun->ActArgc();
+  BindArgs(args, act_argc);	// get arguments from previous space
 
-  cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top to fun, get old
-  prg->top->Shove(fun);		// push new state
-  if(is_block)
-    fun->SetCurThis(prg->CurThis());	// carry this pointer down for blocks..
+  fun->SetTop(prg->top);	// propagate top to fun
+  prg->top->AddProg(fun);	// push new state (not Shove, needed to add frame before)
 
-  int i;
-  for(i=1; i <= act_argc; i++) { // copy into args for current space
+  for(int i=1; i <= act_argc; i++) { // copy into args for current space
     (argv[i].El())->InitAssign(*args[i]);
   }
+  return cssEl::NewProgShoved;	// new program shoved onto stack
+}
 
-  prg->top->Cont();		// run the fun
-  prg->top->EndRunPop();	// pop the results
-
+cssEl::RunStat cssScriptFun::FunDone(cssProg* prg) {
   prog = prg;			// restore if recursive things happened
+  prg->top->EndRunPop();
 
-  if(is_block) {
-    prg->top->Pull();		// jump down
-    fun->PopTop(old_top);		// restore fun to previous top
-    DoneArgs(args, act_argc);
-    if(prg->top->run_stat == cssEl::Stopping)
-      return cssEl::Running;	// stopped naturally
-    else
-      return prg->top->run_stat;	// some other kind of stopping
-  }
+  cssEl** args = fun->Args();
+  int& act_argc = fun->ActArgc();
 
   cssEl* tmp = (argv[0].El())->AnonClone(); // create clone of retval
   tmp->prog = prg;
-  prg->top->Pull();		// jump down
-  fun->PopTop(old_top);		// restore fun to previous top
+  prg->top->PopProg();	// note -- cannot run Pull (DelFrame + Pop) cuz need frame for args!
   prg->Stack()->Push(tmp);
   DoneArgs(args, act_argc);
+  fun->DelFrame(); // now it is safe to delete the frame, after done args!
   return cssEl::Running;	// returning from a running program
 }
 
 cssEl* cssScriptFun::MakeToken_stub(int na, cssEl* arg[]) {
-  if(!is_block) {		// only named programs return
-    return (argv[0].El())->MakeToken_stub(na, arg);
-  }
-  return new cssInt(0);		// default retv is int, not void
+  return (argv[0].El())->MakeToken_stub(na, arg);
 }
 
 String cssScriptFun::PrintStr() const {
@@ -1277,7 +1476,6 @@ String cssScriptFun::PrintStr() const {
 //////////////////////////////////////////////////////////////////
 
 void cssMbrScriptFun::Constr() {
-  is_block = false;
 }
 
 void cssMbrScriptFun::Copy(const cssMbrScriptFun& cp) {
@@ -1330,7 +1528,7 @@ void cssMbrScriptFun::Define(cssProg* prg, bool decl, const char* nm) {
     cssProg* old_fun = fun;
     fun = new cssProg(old_fun->name);
     cssProg::Ref(fun);
-    fun->owner = this;
+    fun->owner_fun = this;
     cssProg::unRefDone(old_fun);
   }
   cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top
@@ -1413,12 +1611,15 @@ void cssMbrScriptFun::Define(cssProg* prg, bool decl, const char* nm) {
 
 cssEl::RunStat cssMbrScriptFun::Do(cssProg* prg) {
   prog = prg;
-  cssEl* args[cssElFun::ArgMax + 1];
-  int act_argc;
+  fun->AddFrame();		// need to add the new frame first
+  fun->Frame()->AllocArgs();	// explicitly allocate the args
+  cssEl** args = fun->Args();	// 
+  int& act_argc = fun->ActArgc();
   BindArgs(args, act_argc);   // get arguments from previous space
 
-  cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top
-  prg->top->Shove(fun);	// push new state
+  fun->SetTop(prg->top);	// propagate top to fun
+  prg->top->AddProg(fun);	// push new state (not Shove, needed to add frame before)
+
   fun->SetCurThis(prg->CurThis()); // first use previous..
 
   // first argument is the this pointer..
@@ -1440,36 +1641,42 @@ cssEl::RunStat cssMbrScriptFun::Do(cssProg* prg) {
   // only set new cur_this after copying the args..
   fun->SetCurThis(cur_ths);
 
-  cssClassType* old_cls = cssMisc::cur_class;
-  cssMbrScriptFun* old_meth = cssMisc::cur_method;
+  // todo: hopefully this is not critical! if so, add to Frame
+//   cssClassType* old_cls = cssMisc::cur_class;
+//   cssMbrScriptFun* old_meth = cssMisc::cur_method;
 
   cssMisc::cur_class = type_def;	// set the current class while in here..
   cssMisc::cur_method = this;
 
-  prg->top->Cont();
+  return cssEl::NewProgShoved;	// new program shoved onto stack
+}
+
+cssEl::RunStat cssMbrScriptFun::FunDone(cssProg* prg) {
+  prog = prg;			// restore if recursive things happened
   prg->top->EndRunPop();
+
+  cssEl** args = fun->Args();
+  int& act_argc = fun->ActArgc();
+  cssPtr* ths_ptr = (cssPtr*)(argv[1].El());
 
   ths_ptr->DelOpr();		// get rid of pointer to this object
 
-  cssMisc::cur_class = old_cls;	// no longer in class..
-  cssMisc::cur_method = old_meth;
-
-  prog = prg;			// restore if recursive
+  // again, hopefully not needed
+//   cssMisc::cur_class = old_cls;	// no longer in class..
+//   cssMisc::cur_method = old_meth;
 
   cssEl* tmp = (argv[0].El())->AnonClone(); // create clone of retval
   tmp->prog = prg;
-  prg->top->Pull();		       // jump down
-  fun->PopTop(old_top);		       // restore previous top
+  // prg->top->PopTop(old_top);		       // restore previous top todo: not doing!
+  prg->top->PopProg();	// note -- cannot run Pull (DelFrame + Pop) cuz need frame for args!
   prg->Stack()->Push(tmp);
   DoneArgs(args, act_argc);
+  fun->DelFrame(); // now it is safe to delete the frame, after done args!
   return cssEl::Running;		// returning from a running program
 }
 
 cssEl* cssMbrScriptFun::MakeToken_stub(int na, cssEl* arg[]) {
-  if(!is_block) {		// only named programs return
-    return (argv[0].El())->MakeToken_stub(na, arg);
-  }
-  return new cssInt(0);		// default retv is int, not void
+  return (argv[0].El())->MakeToken_stub(na, arg);
 }
 
 String cssMbrScriptFun::PrintStr() const {
@@ -1773,35 +1980,6 @@ cssEl::RunStat cssDef::Do(cssProg*) {
 
 // copy actually clones the elements of a space, so that the new space has fresh data
 
-ostream& cssSpace::fancy_list(ostream& fh, const String& itm, int no, int prln, int tabs) {
-  fh << itm << " ";
-  if((no+1) % prln == 0) {
-    fh << "\n";
-    return fh;
-  }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      fh << "\t";
-  }
-  return fh;
-}
-String& cssSpace::fancy_list(String& fh, const String& itm, int no, int prln, int tabs) {
-  fh += itm + " ";
-  if((no+1) % prln == 0) {
-    fh += "\n";
-    return fh;
-  }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      fh += "\t";
-  }
-  return fh;
-}
-
 void cssSpace::Alloc(int sz) {
   if(alloc_size >= sz)	return;	// no need to increase..
   sz = MAX(16,sz);		// once allocating, use a minimum of 16
@@ -1960,17 +2138,48 @@ int cssSpace::GetIndex(cssEl* it) {
   return -1;
 }
 
-void cssSpace::List(ostream& fh) const {
-  fh << "\nElements of Space: " << name << " (" << size << ")\n";
-  fh << PrintStr() << "\n";
+ostream& cssSpace::fancy_list(ostream& fh, const String& itm, int no, int prln, int tabs, int indent) {
+  fh << itm << " ";
+  if((no+1) % prln == 0) {
+    fh << "\n";
+    fh << cssMisc::Indent(indent);
+    return fh;
+  }
+  int len = itm.length() + 1;
+  int spc_ln = tabs * 8 - len;
+  spc_ln = MAX(1, spc_ln);
+  fh << String(spc_ln , 0, ' ');
+  return fh;
+}
+String& cssSpace::fancy_list(String& fh, const String& itm, int no, int prln, int tabs, int indent) {
+  fh += itm + " ";
+  if((no+1) % prln == 0) {
+    fh += "\n";
+    fh += cssMisc::Indent(indent);
+    return fh;
+  }
+  int len = itm.length() + 1;
+  int spc_ln = tabs * 8 - len;
+  spc_ln = MAX(1, spc_ln);
+  fh += String(spc_ln , 0, ' ');
+  return fh;
+}
+
+void cssSpace::List(ostream& fh, int indent) const {
+  fh << "\n" << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
+  fh << PrintStr(indent) << "\n";
   fh.flush();
 }
-void cssSpace::ValList(ostream& fh) const {
-  fh << "\nElement Values of Space: " << name << " (" << size << ")\n";
-  fh << PrintFStr() << "\n";
+void cssSpace::List(pager_ostream& fh, int indent) const {
+  fh << "\n" << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
+  fh << PrintStr(indent) << "\n";
+}
+void cssSpace::ValList(ostream& fh, int indent) const {
+  fh << "\n" << cssMisc::Indent(indent) << "Element Values of Space: " << name << " (" << size << ")\n";
+  fh << PrintFStr(indent) << "\n";
   fh.flush();
 }
-void cssSpace::NameList(ostream& fh) const {
+void cssSpace::NameList(pager_ostream& fh, int indent) const {
   int i;
   fh << "\nElement Names of Space: " << name << " (" << size << ")\n";
   int names_width = 0;
@@ -1980,13 +2189,21 @@ void cssSpace::NameList(ostream& fh) const {
   int tabs = (names_width / 8) + 1;
   int prln = taMisc::display_width / (tabs * 8);
   if(prln <= 0) prln = 1;
+  String fl = cssMisc::Indent(indent);
   for(i=0; i<size; i++) {
-    cssSpace::fancy_list(fh, els[i]->name, i, prln, tabs);
+    cssSpace::fancy_list(fl, els[i]->name, i, prln, tabs, indent);
   }
+  fh << fl;
   fh << "\n";
-  fh.flush();
 }
-void cssSpace::TypeNameList(ostream& fh) const {
+void cssSpace::NameList(ostream& fh, int indent) const {
+  pager_ostream pgos;
+  pgos.fout = &fh; pgos.no_page = true;
+  NameList(pgos, indent);
+}
+
+void cssSpace::TypeNameList(ostream& fh, int indent) const {
+  fh << cssMisc::Indent(indent);
   int i;
   for(i=0; i<size; i++) {
     cssEl* mbr = els[i];
@@ -2015,10 +2232,12 @@ void cssSpace::TypeNameList(ostream& fh) const {
       fh << '[' << ar->size << ']';
     }
     fh << "\n";
+    fh << cssMisc::Indent(indent);
   }
 }
 
-void cssSpace::TypeNameValList(ostream& fh) const {
+void cssSpace::TypeNameValList(ostream& fh, int indent) const {
+  fh << cssMisc::Indent(indent);
   int i;
   cssEl* mbr;
   String tmp;
@@ -2040,10 +2259,11 @@ void cssSpace::TypeNameValList(ostream& fh) const {
     else
       fh << "\t\t\t";
     fh << mbr->name << " = " << mbr->PrintFStr() << "\n";
+    fh << cssMisc::Indent(indent);
   }
 }
 
-String cssSpace::PrintStr() const {
+String cssSpace::PrintStr(int indent) const {
   int i;
   int vars_width = 0;
   for(i=0; i<size; i++) {
@@ -2051,16 +2271,16 @@ String cssSpace::PrintStr() const {
     vars_width = MAX(vars_width, (int)tmp.length());
   }
   int tabs = (vars_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8);
+  int prln = taMisc::display_width / (tabs * 8) - indent;
   if(prln <= 0) prln = 1;
-  String rval;
+  String rval = cssMisc::Indent(indent);
   for(i=0; i<size; i++) {
     String tmp = els[i]->PrintStr();
     cssSpace::fancy_list(rval, tmp, i, prln, tabs);
   }
   return rval;
 }
-String cssSpace::PrintFStr() const {
+String cssSpace::PrintFStr(int indent) const {
   int i;
   int vals_width = 0;
   for(i=0; i<size; i++) {
@@ -2070,7 +2290,7 @@ String cssSpace::PrintFStr() const {
   int tabs = (vals_width / 8) + 1;
   int prln = taMisc::display_width / (tabs * 8);
   if(prln <= 0) prln = 1;
-  String rval;
+  String rval = cssMisc::Indent(indent);
   for(i=0; i<size; i++) {
     String tmp = els[i]->PrintFStr();
     cssSpace::fancy_list(rval, tmp, i, prln, tabs);
@@ -2118,58 +2338,62 @@ void cssSpace::Sort() {
 // 	cssInst: Instructions	//
 //////////////////////////////////
 
-int cssInst::Print(ostream& fh) const {
+String cssInst::PrintStr() const {
+  if(line > prog->src_size-1) return "";
   cssListEl* src = prog->source[line];
-  if((prog->top->ListDebug() >= 2)) {
-    fh << src->ln << "\t" << idx << "\t";
-    inst.Print(fh);
-    (inst.El())->Print(fh);
-    fh << "\t> " << prog->GetSrcLC(line, 0);
-  }
-  else
-    fh << src->ln << "\t" << src->src;
-  return 1;
+  String rval = String(src->ln) + "\t" + src->src;
+  return rval;
 }
-int cssInst::List(ostream& fh) const {
-  if(isdefn)
-    (inst.El())->List(fh);
-  else
-    Print(fh);
-  return 1;
+
+void cssInst::ListSrc(pager_ostream& fh, int indent) const {
+  if(line > prog->src_size-1) return;
+  cssListEl* src = prog->source[line];
+  fh << String(src->ln) << "   " << src->full_src;
+}
+
+void cssInst::ListImpl(pager_ostream& fh, int indent) const {
+  String src_ln = "0000";
+  String src_full = "n/a\n";
+  if(line < prog->src_size) {
+    cssListEl* src = prog->source[line];
+    src_ln = taMisc::LeadingZeros(src->ln, 4);
+    src_full = src->full_src;
+  }
+  fh << cssMisc::Indent(indent) << src_ln << "   "
+     << taMisc::LeadingZeros(idx,4) << "   "
+     << inst.PrintStr() << "   " << inst.El()->PrintStr()
+     << "   #>> " << src_full;
 }
 
 void cssInst::Constr() {
   prog = NULL;
   idx = 0;
   line = 0;  col = 0;
-  isdefn = false;
-  previf = -1;
 }
 
 void cssInst::Copy(const cssInst& cp) {
   line = cp.line;
   col = cp.col;
   inst = cp.inst;
-  isdefn = cp.isdefn;
-  previf = cp.previf;
 }
 
 cssInst::cssInst() {
   Constr();
 }
-cssInst::cssInst(const cssProg& prg, const cssElPtr& it) {
+cssInst::cssInst(const cssProg* prg, const cssElPtr& it) {
   Constr();
-  prog = (cssProg*)&prg;
+  prog = (cssProg*)prg;
   SetInst(it);
-  idx = prog->AddCode(this);
+  idx = -1;
 }
-cssInst::cssInst(const cssProg& prg, const cssElPtr& it, int lno, int clno) {
+cssInst::cssInst(const cssProg* prg, const cssElPtr& it, int lno, int clno) {
   Constr();
-  prog = (cssProg*)&prg;
+  prog = (cssProg*)prg;
   line = lno;	col = clno;
   SetInst(it);
-  idx = prog->AddCode(this);
+  idx = -1;
 }
+
 cssInst::cssInst(const cssInst& cp) {
   Constr();
   Copy(cp);
@@ -2234,55 +2458,35 @@ void cssInst::SetInst(const cssElPtr& it) {
 }
 
 cssEl::RunStat cssInst::Do() {	// any "do" must be surrounded by a break catcher
-// #ifdef HAVE_VOLATILE
-//   volatile cssInst* ths = this;
-// #else
   cssInst* ths = this;
-// #endif
-//   setjmp(cssMisc::begin);
   if(ths->prog->top->run_stat != cssEl::ExecError) {
     return (ths->inst.El())->Do(ths->prog);
   }
   return cssEl::ExecError;
 }
 
-void cssInst::SetDefn() {
-  if((inst.El()->GetType() == cssEl::T_ScriptFun) ||
-     (inst.El()->GetType() == cssEl::T_MbrScriptFun))
-  {
-    isdefn = true;
-  }
-  else {
-    cssMisc::Warning(prog, "Attempt to flag non-script fun as isdefn");
-  }
-}
+//////////////////////////////
+// IJump
 
-void cssInst::EndIf(css_progdx end) {
-  if(end > 0) {
-    // this fixes the problem that if a stack of else-ifs is not terminated with
-    // a final else, there are two stop jumps at the end, and it needs fixed...
-    if((end < prog->size) && prog->insts[end]->IsJump() &&
-       (prog->insts[end]->GetJump() < 0))
-      end++;
-    prog->insts[idx + 3]->SetLine(end); // set my own end
-  }
-  else
-    end = prog->insts[idx + 3]->GetJump();
-  if((previf < 0) || (previf == idx))
-    return;
-  prog->insts[previf]->EndIf(end); // set the previous one's end
-}
-
-int cssIJump::Print(ostream& fh) const {
+String cssIJump::PrintStr() const {
   cssListEl* src = prog->source[line];
-  if(prog->top->ListDebug() >= 2) {
-    fh << src->ln << "\t" << idx << "\t Jump->\t\t" << jumpto << "\t\t";
-    fh << "> " << prog->GetSrcLC(line, 0);
-  }
-  else
-    fh << src->ln << "\t" << prog->GetSrcLC(line, 0);
-  return 1;
+  String rval = String(src->ln) + "   " + src->src + " // Jump-> " + String(jumpto);
+  return rval;
 }
+
+void cssIJump::ListSrc(pager_ostream& fh, int indent) const {
+  cssListEl* src = prog->source[line];
+  fh << String(src->ln) << "   " << prog->GetSrcLC(line);
+}
+
+void cssIJump::ListImpl(pager_ostream& fh, int indent) const {
+  cssListEl* src = prog->source[line];
+  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(src->ln, 4) << "   "
+     << taMisc::LeadingZeros(idx,4) << "  Jump-> "
+     << taMisc::LeadingZeros(jumpto,4) << "   "
+     << "#>> " << prog->GetSrcLC(line);
+}
+
 cssEl::RunStat cssIJump::Do() {
   if(jumpto < 0)
     return cssEl::Stopping;			// the "STOP" condition
@@ -2295,19 +2499,21 @@ void cssIJump::Copy(const cssIJump& cp) {
   jumpto = cp.jumpto;
 }
 
-cssIJump::cssIJump(const cssProg &prg, css_progdx jmp) {
+cssIJump::cssIJump(const cssProg* prg, css_progdx jmp) {
   Constr();
-  prog = (cssProg*)&prg;
+  prog = (cssProg*)prg;
   jumpto = jmp;
-  idx = prog->AddCode(this);
+  idx = -1;
 }
-cssIJump::cssIJump(const cssProg &prg, css_progdx jmp, int lno, int clno) {
+
+cssIJump::cssIJump(const cssProg* prg, css_progdx jmp, int lno, int clno) {
   Constr();
-  prog = (cssProg*)&prg;
+  prog = (cssProg*)prg;
   jumpto = jmp;
   line = lno;	col = clno;
-  idx = prog->AddCode(this);
+  idx = -1;
 }
+
 cssIJump::cssIJump(const cssIJump& cp) {
   Constr();
   Copy(cp);
@@ -2320,7 +2526,21 @@ cssFrame::cssFrame(cssProg* prg) {
   stack.name = "Stack";
   autos.name = "Autos";
   autos.el_retv.SetProgAuto(prg);
+  args = NULL;
+  act_argc = 0;
   cur_this = NULL;
+}
+
+void cssFrame::AllocArgs() {
+  args = new cssEl*[cssElFun::ArgMax + 1];
+}
+
+cssFrame::~cssFrame() {
+  if(args != NULL)
+    delete [] args;
+  args = NULL;
+  stack.Reset();
+  autos.Reset();
 }
 
 //////////////////////////////////
@@ -2333,7 +2553,8 @@ void cssProg::Constr() {
   src_alloc_size = 2;
   el_retv.SetProgAuto(this);
   refn = 0;
-  owner = NULL;
+  owner_fun = NULL;
+  owner_blk = NULL;
   top = cssMisc::Top;
 
   insts = (cssInst**)malloc(alloc_size * sizeof(cssInst*));
@@ -2353,7 +2574,7 @@ void cssProg::Constr() {
   st_line = 0; st_col = 0;
   tok_line = 0; tok_col = 0;
   state = 0;
-  lastif = -1;	elseif = -1; lastdo = -1;
+  lastif = -1;
   AddFrame();			// always start off with one
 }
 
@@ -2390,8 +2611,6 @@ void cssProg::Copy(const cssProg& cp) {
   tok_col = cp.tok_col;
   state = cp.state;
   lastif = cp.lastif;
-  elseif = cp.elseif;
-  lastdo = cp.lastdo;
 }
 
 cssProg::cssProg() {
@@ -2486,6 +2705,26 @@ void cssProg::ResetCode() {
 //	cssProg: Source, Debugging	//
 //////////////////////////////////////////
 
+String cssProg::GetSrc() const {
+  String rval;
+  if(line < src_size) {
+    rval = source[line]->src;
+    if(col > 0)
+      rval = rval.from(col);
+  }
+  return rval;
+}
+
+String cssProg::GetSrcLC(int ln, int cl) const {
+  String rval;
+  if(ln < src_size) {
+    rval = source[ln]->src;
+    if(cl > 0)
+      rval = rval.from(cl);
+  }
+  return rval;
+}
+
 int cssProg::CurSrcLn(css_progdx pcval) {
   if(pcval > size-1)
     return 0;
@@ -2530,135 +2769,56 @@ int cssProg::CurSrcCharsLeft() {
   return 0;
 }
 
-// print any subroutines starting from sln
-int cssProg::SubList(int sln, int eln, ostream& fh) {
-  css_progdx ln = source[sln]->stpc;
-  while((ln < size) && (source[insts[ln]->line]->ln < eln)) {
-    if(insts[ln]->isdefn) {
-      cssScriptFun* tmp = (cssScriptFun*)(insts[ln]->inst.El());
-      cssProgSpace* old_top = tmp->fun->SetTop(top);
-      int rval = tmp->fun->List(fh);
-      tmp->fun->PopTop(old_top);
-      if(rval) return 1;
-      break;
+void cssProg::ListSrc(pager_ostream& fh, int indent, int stln) {
+  if(owner_fun != NULL)
+    top->list_ln = -1;		// reset for functions
+  int st = 0;
+  if(stln >= 0) {
+    st = ClosestSrcLn(stln);
+    if(st < 0) return;
+  }
+  for(int i=st; i<src_size; i++) {
+    cssListEl* src = source[i];
+    if(src->ln > top->list_ln) {
+      top->list_ln = src->ln;
+      fh << String(src->ln) << "\t" << src->full_src;
     }
-    ln++;
-  }
-  return 0;
-}
-
-int cssProg::List(ostream& fh, int st, int nlines) {
-  top->list_ln = st;
-  int cur_list_n = top->list_n;	// cache this..
-  top->list_n = nlines;
-  top->SetListStop();
-  if(owner != NULL) {
-    fh << owner->PrintStr() << " {\n";
-  }
-  else {
-    fh << name << ":\n";
-  }
-  int retv = List(fh);
-  top->list_n = cur_list_n;
-  return retv;
-}
-
-int cssProg::List(ostream& fh) {
-  int sln, i;
-
-  if((sln = HasSrcLn(top->list_ln, top->lstop_ln)) < 0) {
-    for(i=0; i < size; i++) {
-      if(insts[i]->isdefn) {
-	cssScriptFun* tmp = (cssScriptFun*)(insts[i]->inst.El());
-	cssProgSpace* old_top = tmp->fun->SetTop(top);
-	int rval = tmp->fun->List(fh);
-	tmp->fun->PopTop(old_top);
-	if(rval) return 1;
+    if(size > src->stpc) {
+      cssEl* el = insts[src->stpc]->inst.El();
+      if(el->GetType() == cssEl::T_CodeBlock) {
+	el->GetSubProg()->ListSrc(fh, indent + 1);
       }
     }
-    return 0;
   }
-  sln = ClosestSrcLn(top->list_ln);
-  if((sln > 0) && (source[sln]->ln > top->list_ln)) {// print previous
-    if(SubList(sln-1, source[sln]->ln, fh))
-      return 1;
-  }
-
-  if(top->ListDebug() >= 2) {
-    css_progdx ln = source[sln]->stpc;	// start at starting pc
-    fh << "\nListing of Elements of Program: " << name << "\n";
-
-    while((ln < size) && ((top->list_ln = Print(ln, fh)) <= top->lstop_ln)) {
-      ln++;
-    }
-    fh << "\n";
-  }
-  else {
-    while(sln < src_size) {
-      if((source[sln]->src != "") && (source[sln]->ln != top->prev_ln))
-	fh << source[sln]->ln << "\t" << source[sln]->src;
-      top->list_ln = top->prev_ln = source[sln]->ln;
-      if((sln >= src_size-1) || (top->list_ln > top->lstop_ln))
-	break;
-      if((source[sln+1]->ln - source[sln]->ln) > 1) { // must be something in there
-	if(SubList(sln, source[sln+1]->ln, fh))
-	  return 1;
-      }
-      sln++;
-    }
-  }
-  if(top->list_ln >= top->lstop_ln)
-    return 1;			// tell calling program to stop
-  return 0;
 }
 
-void cssProg::ListSpace(ostream& fh, int frdx) {
+void cssProg::ListImpl(pager_ostream& fh, int indent, int stln) {
+  int st = 0;
+  if(stln >= 0) {
+    int st_src = ClosestSrcLn(stln);
+    if(st_src < 0) return;
+    st = source[st_src]->stpc;
+  }
+  for(int i=st; i < size; i++) {
+    insts[i]->ListImpl(fh, indent);
+    cssEl* el = insts[i]->inst.El();
+    if(el->GetType() == cssEl::T_CodeBlock) {
+      el->GetSubProg()->ListImpl(fh, indent + 1);
+    }
+  }
+}
+
+void cssProg::ListSpace(pager_ostream& fh, int frdx, int indent) {
   if(frdx < 0)
     frdx = fr_size-1;
-  fh << "\nElements of Spaces For Program: " << name << " (frame = " << frdx  << ")\n";
-  Autos(frdx)->List(fh);
-  statics.List(fh);
-  Stack(frdx)->List(fh);
+  fh << "\n" << cssMisc::Indent(indent) << "Elements of Spaces For Program: "
+     << name << " (frame = " << frdx  << ")\n";
+  Autos(frdx)->List(fh, indent);
+  statics.List(fh, indent);
+  Stack(frdx)->List(fh, indent);
   if(top->ListDebug() > 1)
-    literals.List(fh);
+    literals.List(fh, indent);
 }
-
-void cssProg::SubPrint(css_progdx pcdx, ostream& fh) {
-  if(top->run_stat == cssEl::Running)
-    insts[pcdx]->Print(fh);
-  else
-    insts[pcdx]->List(fh);
-}
-
-
-int cssProg::Print(css_progdx pcdx, ostream& fh) {
-  int i, l_prev;
-  pcdx = MIN(pcdx, size-1);
-  cssListEl* src = source[insts[pcdx]->line];
-
-  if((top->run_stat == cssEl::Running) && (src->ln < top->list_ln))
-    return top->list_ln;
-
-  top->list_ln = src->ln;
-  if(top->ListDebug() < 2) {
-    if(!(insts[pcdx]->isdefn) && (top->prev_ln == top->list_ln))
-      return top->list_ln;
-    if(top->run_stat != cssEl::Running) {
-      for(i=top->prev_ln + 1; i < top->list_ln; i++) {
-	if((l_prev = FindSrcLn(i)) >= 0)
-	  fh << i << "\t" << GetSrcLC(l_prev);
-      }
-    }
-    SubPrint(pcdx, fh);
-  }
-  else
-    SubPrint(pcdx, fh);
-
-  top->prev_ln = top->list_ln;
-  fh.flush();
-  return top->list_ln;
-}
-
 
 //////////////////////////////////////////
 //	cssProg: Coding			//
@@ -2709,36 +2869,6 @@ int cssProg::Getc() {
   return Getc();
 }
 
-/*obs
-int cssProg::ReadLn() {
-  if(top->external_exit)	// bail if external exit flag was set
-    return EOF;
-  if((top->InShell() || (top->state & cssProg::State_Defn)) &&
-     (top->fin == top->fshell))
-  {
-    const char* pt;
-    pt = (top->state & cssProg::State_Defn) ? "#" : ">";
-    if(top->depth > 0)
-      top->act_prompt = String(top->depth) + " " + top->prompt + pt + " ";
-    else
-      top->act_prompt = top->prompt + pt + " ";
-    top->in_readline = true;
-//obs    curln = rl_readline((char*)top->act_prompt);
-    //NOTE: according to rl spec, we must call free() on the string returned
-    char* curln_ = readline((char*)top->act_prompt);
-    if (!curln_)
-      return EOF;
-    String curln(curln_);
-    free(curln_); 
-    curln_ = NULL;
-
-    top->in_readline = false;
-
-    if(top->external_exit) 	// bail if external exit flag was set during readline
-      return EOF;
-  }
-}*/
-
 int cssProg::ReadLn_File(istream& fh) {
 //   if(top->external_exit)	// bail if external exit flag was set
 //     return EOF;
@@ -2748,7 +2878,8 @@ int cssProg::ReadLn_File(istream& fh) {
   while (((c = fh.get()) != EOF) && (c != '\n')) {
     source[line]->src += (char)c;	// add
   }
-  //TODO: note: seems wrong to exit here with EOF, without doing rest of routine...
+  source[line]->full_src = source[line]->src + "\n";
+  //todo: note: seems wrong to exit here with EOF, without doing rest of routine...
   if (c == EOF)
     return EOF;
   
@@ -2769,14 +2900,16 @@ int cssProg::Code(cssEl* it) {
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssElPtr elp;
   elp.SetDirect(it);
-  cssInst* tmp = new cssInst(*this, elp, line, col);
+  cssInst* tmp = new cssInst(this, elp, line, col);
+  tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
 int cssProg::Code(cssElPtr& it) {
   if((cssMisc::code_cur_top != NULL) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
-  cssInst* tmp = new cssInst(*this, it, line, col);
+  cssInst* tmp = new cssInst(this, it, line, col);
+  tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
 int cssProg::Code(const char* nm) {
@@ -2792,7 +2925,24 @@ int cssProg::Code(css_progdx it) {
     return cssMisc::code_cur_top->Prog()->Code(it);
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssIJump* tmp;
-  tmp = new cssIJump(*this, it, line, col);
+  tmp = new cssIJump(this, it, line, col);
+  tmp->idx = AddCode(tmp);
+  return tmp->idx;
+}
+int cssProg::Code(cssIJump* it) {
+  it->idx = AddCode(it);
+  return it->idx;
+}
+int cssProg::ReplaceCode(int idx, cssEl* it) {
+  if(idx >= size) return -1;
+  cssInst* old_code = insts[idx];
+  cssElPtr elp;  elp.SetDirect(it);
+  cssInst* tmp = new cssInst(this, elp);
+  tmp->line = old_code->line;
+  tmp->col = old_code->col;
+  insts[idx] = tmp;
+  tmp->idx = idx;
+  delete old_code;		// get rid of prev one
   return tmp->idx;
 }
 
@@ -2824,13 +2974,10 @@ int cssProg::Undo(int srcln) {
   css_progdx bppc;
 
   if((srcdx = FindSrcLn(srcln)) < 0) {
-    int i;
-    cssScriptFun* tmp;
-
-    for(i=0; i < size; i++) {
-      if(insts[i]->isdefn) {
-	tmp = (cssScriptFun*)(insts[i]->inst.El());
-	if((rval = tmp->fun->Undo(srcln)) >= 0)
+    for(int i=0; i < size; i++) {
+      cssEl* tmp = insts[i]->inst.El();
+      if(tmp->GetType() == cssEl::T_CodeBlock) {
+	if((rval = tmp->GetSubProg()->Undo(srcln)) >= 0)
 	  return rval;
       }
     }
@@ -2879,14 +3026,11 @@ cssProg* cssProg::SetSrcPC(int srcln) {
   int srcdx;
 
   if((srcdx = FindSrcLn(srcln)) < 0) {
-    int i;
-    cssScriptFun* tmp;
     cssProg* rval;
-
-    for(i=0; i < size; i++) {
-      if(insts[i]->isdefn) {
-	tmp = (cssScriptFun*)(insts[i]->inst.El());
-	if((rval = tmp->fun->SetSrcPC(srcln)) != NULL)
+    for(int i=0; i < size; i++) {
+      cssEl* tmp = insts[i]->inst.El();
+      if(tmp->GetType() == cssEl::T_CodeBlock) {
+	if((rval = tmp->GetSubProg()->SetSrcPC(srcln)) != NULL)
 	  return rval;
       }
     }
@@ -2902,14 +3046,34 @@ cssInst* cssProg::Next() {
     top->run_stat = cssEl::Stopping;
   else if(IsBreak(PC()))
     top->run_stat = cssEl::BreakPoint;
+  else if((top->external_stop) && !(state & State_NoBreak))
+    top->run_stat = cssEl::BreakPoint;
   else
     rval = insts[Frame()->pc++];
   return rval;
 }
 
+void cssProg::RunDebugInfo(cssInst* nxt) {
+  static int last_src_ln = -1;
+  if((top->debug == 0) || (top->cmd_shell == NULL)) return;
+
+  pager_ostream& fh = top->cmd_shell->pgout;
+  if(top->debug <= 1) {
+    cssListEl* src = source[nxt->line];
+    if(src->ln != last_src_ln)
+      nxt->ListSrc(fh);
+    last_src_ln = src->ln;
+  }
+  else {
+    nxt->ListImpl(fh, top->size-1); // indent
+    if(top->debug >= 3) {
+      Stack()->List(fh, top->size); // indent
+    }
+  }
+}
+
 // run and set status, returning value
 cssEl* cssProg::Cont() {
-  if(top->debug) top->prev_ln = -1;
   top->run_stat = cssEl::Running;
 
   cssInst* nxt;
@@ -2921,9 +3085,7 @@ cssEl* cssProg::Cont() {
 
   if(IsBreak(PC())) {			// step over bp
     Frame()->pc++;			// make the _peek a real next()
-    if(top->debug && (top->cmd_shell != NULL)) {
-      Print(nxt->idx, *(top->cmd_shell->fout));
-    }
+    RunDebugInfo(nxt);
     top->run_stat = nxt->Do();
   }
 
@@ -2938,9 +3100,7 @@ cssEl* cssProg::Cont() {
       lim = stc + top->step_mode;
     }
     while((stc < lim) && (top->run_stat == cssEl::Running) && (nxt = Next())) {
-      if(top->cmd_shell != NULL) {
-	Print(nxt->idx, *(top->cmd_shell->fout));
-      }
+      RunDebugInfo(nxt);
       top->run_stat = nxt->Do();
       if(top->debug < 2) {
 	if(PC() >= size) {
@@ -2961,9 +3121,7 @@ cssEl* cssProg::Cont() {
   }
   else {
     while((top->run_stat == cssEl::Running) && (nxt = Next())) {
-      if(top->debug && (top->cmd_shell != NULL)) {
-	Print(nxt->idx, *(top->cmd_shell->fout));
-      }
+      RunDebugInfo(nxt);
       top->run_stat = nxt->Do();
     }
   }
@@ -2977,24 +3135,6 @@ cssEl* cssProg::ContSrc(int srcln) {
 
   return cp->Cont();
 }
-
-// cssEl* cssProg::RunLast() {
-//   css_progdx oldpc = PC();
-//   top->old_debug = top->debug;
-//   if(top->debug > 0)
-//     top->debug = 1;
-//   else
-//     top->debug = 0;
-//   int old_state = top->state;
-//   top->run_stat = cssEl::Waiting;
-//   top->state |= cssProg::State_RunLast;
-//   cssEl* rval;
-//   rval = top->Cont(run_st_size);
-//   SetPC(oldpc);			// save previous pc
-//   top->debug = top->old_debug;
-//   top->state = old_state;
-//   return rval;
-// }
 
 void cssProg::Restart() {
   SetPC(0);
@@ -3026,24 +3166,23 @@ void cssProg::ReloadStack() {
 //////////////////////////////////////////
 
 // scans through subroutines embedded within
-int cssProg::SetBreak(int srcln) {
+bool cssProg::SetBreak(int srcln) {
   int srcdx;
   if((srcdx = FindSrcLn(srcln)) < 0) {
-    int i, rval;
-    for(i=0; i < size; i++) {
-      if(insts[i]->isdefn) {
-	cssScriptFun* tmp = (cssScriptFun*)(insts[i]->inst.El());
-	if((rval = tmp->fun->SetBreak(srcln)) >= 0)
-	  return rval;
+    for(int i=0; i < size; i++) {
+      cssEl* tmp = insts[i]->inst.El();
+      if(tmp->GetType() == cssEl::T_CodeBlock) {
+	if(tmp->GetSubProg()->SetBreak(srcln))
+	  return true;
       }
     }
-    return -1;
+    return false;
   }
-  if(source[srcdx]->stpc == 0)
-    breaks.Add(source[srcdx]->stpc + 1); // avoid the "1st instr" problem
-  else
-    breaks.Add(source[srcdx]->stpc);
-  return breaks.Peek();
+//   if(source[srcdx]->stpc == 0)
+//     breaks.Add(source[srcdx]->stpc + 1); // avoid the "1st instr" problem
+//   else
+  breaks.Add(source[srcdx]->stpc);
+  return true;
 }
 
 void cssProg::ShowBreaks(ostream& fh) {
@@ -3051,13 +3190,12 @@ void cssProg::ShowBreaks(ostream& fh) {
   cssScriptFun* tmp;
 
   for(i=0; i<breaks.size; i++) {
-    fh << name << "\t";
-    insts[breaks[i]]->Print(fh);
+    fh << name << "\t" << insts[breaks[i]]->PrintStr() << endl;
   }
   for(i=0; i < size; i++) {
-    if(insts[i]->isdefn) {
-      tmp = (cssScriptFun*)(insts[i]->inst.El());
-      tmp->fun->ShowBreaks(fh);
+    cssEl* tmp = insts[i]->inst.El();
+    if(tmp->GetType() == cssEl::T_CodeBlock) {
+      tmp->GetSubProg()->ShowBreaks(fh);
     }
   }
 }
@@ -3067,16 +3205,16 @@ bool cssProg::unSetBreak(int srcln) {
   if((srcdx = FindSrcLn(srcln)) < 0) {
     int i;
     for(i=0; i < size; i++) {
-      if(insts[i]->isdefn) {
-	cssScriptFun* tmp = (cssScriptFun*)(insts[i]->inst.El());
-	if(tmp->fun->unSetBreak(srcln))
+      cssEl* tmp = insts[i]->inst.El();
+      if(tmp->GetType() == cssEl::T_CodeBlock) {
+	if(tmp->GetSubProg()->unSetBreak(srcln))
 	  return true;
       }
     }
     return false;
   }
   css_progdx bppc = source[srcdx]->stpc;
-  return breaks.Remove(bppc);
+  return breaks.RemoveEl(bppc);
 }
 
 
@@ -3092,7 +3230,7 @@ void cssProgSpace::Constr() {
   size = 0;
   progs = (cssProgStack**)calloc(alloc_size, sizeof(cssProgStack*));
   state = 0;
-  depth = 0;
+  parse_depth = 0;
   step_mode = 0;
   run_stat = cssEl::Waiting;
   if(cssMisc::Top != NULL)
@@ -3102,11 +3240,10 @@ void cssProgSpace::Constr() {
 
   src_fin = NULL;
   src_ln = 0; st_src_ln = 0;
-  list_ln = 0; list_n = 20;
-  st_list_ln = 0;
-  lstop_ln = 0; prev_ln = 0;
+  list_ln = 0;
 
   parsing_command = false;
+  external_stop = false;
 
   cmd_shell = NULL;
 
@@ -3162,14 +3299,14 @@ void cssProgSpace::Reset() {
 #ifdef TA_GUI
   cssiSession::CancelProgEdits(this);
 #endif // TA_GUI
+  parse_depth = 0;
   Restart();
   Prog()->Reset();		// reset our top-level guy
   Prog()->top = this;		// this one gets us as a top for sure
   src_ln = 0;   st_src_ln = 0;
-  list_ln = 0; list_n = 20;
-  st_list_ln = 0;
-  lstop_ln = 0; prev_ln = 0;
+  list_ln = 0;
   parsing_command = false;
+  external_stop = false;
   run_stat = cssEl::Waiting;
 }
 
@@ -3224,10 +3361,12 @@ cssProg* cssProgSpace::PopProg() {
 void cssProgSpace::Push(cssProg* it) {
   cssProg* prv = Prog();
   AddProg(it);
+  cssProg* cur = Prog();
   it->top = this;		// set top to be this
   src_ln--;			// isn't really a new line..
-  Prog()->line = Prog()->AddSrc(prv->GetSrc());
-  Prog()->col = 0;
+  cur->line = cur->AddSrc(prv->GetSrc());
+  cur->col = 0;
+  cur->source[cur->line]->full_src = prv->GetSrcLC(prv->line);
   if(prv->state & cssProg::State_WasBurped) {
     if(prv->col == 0) {			// new line here
       prv->src_size--;			// undo last add
@@ -3237,7 +3376,7 @@ void cssProgSpace::Push(cssProg* it) {
     prv->state &= ~cssProg::State_WasBurped;
   }
   prv->col = strlen(prv->GetSrcLC(prv->line)); // put col at end of cur line
-  depth++;
+  parse_depth++;
 }
 
 // this is for running, setting of top occurs in calling context
@@ -3257,7 +3396,7 @@ cssProg* cssProgSpace::Pop() {
       Prog()->col = 0;
       prv->col = strlen(prv->GetSrcLC(prv->line));
     }
-    depth--;
+    parse_depth--;
     return prv;
   }
   cssMisc::Warning(Prog(), "Attempt to end Top Level definition with } ");
@@ -3277,9 +3416,9 @@ cssScriptFun* cssProgSpace::GetCurrentFun() {
   int i;
   for(i = size-1; i>=0; i--) {
     cssProg* pg = Prog(i);
-    if((pg->owner == NULL) || (pg->owner->is_block))
+    if(pg->owner_fun == NULL)
       continue;
-    return pg->owner;
+    return pg->owner_fun;
   }
   return NULL;
 }
@@ -3444,12 +3583,16 @@ cssElPtr& cssProgSpace::FindName(const char* nm) {	// lookup by name
 // idx is an arbitrary number, returns NULL when no more values
 cssSpace* cssProgSpace::GetParseSpace(int idx) {
   static int max_prog;		// highest prog to search back to
-  int dynamics = (2 * size) + 2; // number of "dynamic" spaces (changes based on size)
+  static int n_above;		// number of guys above me
+
   int after_class = 2;
+  int dynamics = after_class + (2 * n_above) + 2; // number of "dynamic" spaces (changes based on size)
   if(cssMisc::cur_class != NULL) { // two more spaces to check..
     dynamics += 2;
     after_class += 2;
   }
+
+//   cerr << "idx: " << idx << " dynamics: " << dynamics << " after class: " << after_class << endl;
 
   if(idx == 0)
     return &cssMisc::Defines; 	// #define is uber alles
@@ -3460,28 +3603,34 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
   else if((cssMisc::cur_class != NULL) && (idx == 3))
     return cssMisc::cur_class->methods;
   else if(idx == after_class) {		// first auto block, also set max_prog
-    int i;
-    for(i=size-1; i>0; i--) {
-      max_prog = i;
-      // go up through the blocks, but stop once we get to non-blocks..
-      if(!((Prog(i)->owner != NULL) && (Prog(i)->owner->is_block)))
-	break;
+    n_above = 0;
+    cssProg* cp = Prog();
+    while((cp->owner_blk != NULL) && (cp->owner_blk->owner_prog != NULL)) {
+      n_above++;
+      cp = cp->owner_blk->owner_prog;
     }
-    return Prog(size-1)->Autos();
+    if((n_above > 0) && (cp->owner_fun != NULL))
+      n_above++;
+    return Prog()->Autos();
   }
   else if(idx == after_class+1)
-    return &(Prog(size-1)->statics);
+    return &(Prog()->statics);
   else if((idx >= after_class+2) && (idx < dynamics)) {	// 0 - size-1 for progs, 2 per
     int stat_auto = (idx - (after_class+2)) % 2;		// 0 is auto, 1 is stat
-    int prog_idx = size - 1 - ((idx - (after_class+2)) / 2);	// index of prog (from end)
-    if(prog_idx < max_prog)
-      return &cssMisc::VoidSpace; 		// don't search in these spaces..
+    int prog_idx = ((idx - (after_class+2)) / 2) + 1;	// index of prog (from end)
+    int cur_idx = 0;
+    cssProg* cp = Prog();
+    while((cp->owner_blk != NULL) && (cp->owner_blk->owner_prog != NULL)) {
+      cur_idx++;
+      cp = cp->owner_blk->owner_prog;
+      if(cur_idx == prog_idx) break;
+    }
     if(stat_auto)
-      return Prog(prog_idx)->Autos();
+      return cp->Autos();
     else
-      return &(Prog(prog_idx)->statics);
+      return &(cp->statics);
   }
-  else if(idx == dynamics)	// local to prog space
+  else if(idx == dynamics)
     return &statics;
   else if(idx == dynamics+1)
     return &hard_funs;
@@ -3510,6 +3659,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
 }
 
 cssElPtr& cssProgSpace::ParseName(const char* nm) {
+//   cerr << "searching for: " << nm << endl;
   int i = 0;
   cssSpace* spc=NULL;
   while((spc = GetParseSpace(i++)) != NULL) {
@@ -3580,7 +3730,7 @@ int cssProgSpace::GetFile(fstream& fh, const char* fname) {
 // this compiles one line of code, does not allow for run-last type shell execution
 int cssProgSpace::CompileLn(istream& fh, bool* err) {
   Prog()->MarkParseStart();
-  int old_src_ln = MarkListStart();
+  int old_src_ln = src_ln;
   int retval = cssProg::YY_Ok;
   do {
     ResetParseFlags();
@@ -3589,7 +3739,7 @@ int cssProgSpace::CompileLn(istream& fh, bool* err) {
 
   if (retval == cssProg::YY_Err) { // remove source code associated with errors
     if (err) *err = true;
-    RestoreListStart(old_src_ln);
+    src_ln = old_src_ln;
     Prog()->ZapLastParse();
   }
   else
@@ -3660,9 +3810,11 @@ void cssProgSpace::Include(const char* fname) {
 }
 
 void cssProgSpace::CompileRunClear(const char* fname) {
+  String old_nm = name;
   Compile(fname);
   Run();
   ClearAll();
+  SetName(old_nm);
 }
 
 void cssProgSpace::reCompile() {
@@ -3709,22 +3861,131 @@ bool cssProgSpace::DoCompileCtrl() {
 
 void cssProgSpace::Restart() {
   while(size > 1) DelProg();
-  list_ln = 0;  prev_ln = -1;
-  depth = 0;
+  list_ln = 0;
   Prog()->Restart();
+}
+
+bool cssProgSpace::ContinueLoop() {
+  while(size > 1) {
+    cssProg* prg = Prog();
+    if(prg->owner_fun != NULL)
+      return false;
+    if(prg->owner_blk == NULL) {
+      Pull();
+      continue;
+    }
+    cssCodeBlock* blk = prg->owner_blk;
+    if(blk->loop_type == cssCodeBlock::NOT_LOOP) {
+      Pull();
+      continue;
+    }
+    if(blk->loop_type == cssCodeBlock::WHILE) {
+      Prog()->SetPC(Prog()->size);
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::DO) {
+      Prog()->SetPC(0);
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::FOR) {
+      Prog()->SetPC(Prog()->size);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool cssProgSpace::BreakLoop() {
+  while(size > 1) {
+    cssProg* prg = Prog();
+    if(prg->owner_fun != NULL)
+      return false;
+    if(prg->owner_blk == NULL) {
+      Pull();
+      continue;
+    }
+    cssCodeBlock* blk = prg->owner_blk;
+    if(blk->loop_type == cssCodeBlock::NOT_LOOP) {
+      Pull();
+      continue;
+    }
+    if(blk->loop_type == cssCodeBlock::WHILE) {
+      Pull();			// pull out of this level
+      EndRunPop();		// need to do this??
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::DO) {
+      Pull();			// pull out of entire surrounding do-loop 
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::FOR) {
+      Pull();
+      Pull();			// pull all the way out of entire for loop
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::SWITCH) {
+      Pull();			// pull out of entire surrounding switch block
+      return true;
+    }
+  }
+  return false;
 }
 
 cssEl* cssProgSpace::Cont() {
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
 
-  run_stat = cssEl::Running;
-  state |= cssProg::State_Cont;
-  depth++;
+  state |= cssProg::State_Run;
+  external_stop = false;
 
-  cssEl* rval = Prog()->Cont();
+  cssEl* rval;
+  do {
+    run_stat = cssEl::Running;
+    rval = Prog()->Cont();
+    if(((run_stat == cssEl::Stopping) || (run_stat == cssEl::Returning)) && (size > 1)) {
+      cssProg* prv_prg = Prog(size-2);
+      // should be fun or code block that shoved current prog
+      cssEl* fun_el = prv_prg->insts[prv_prg->PC()-1]->inst.El();
+      if(!fun_el->HasSubProg()) {
+	cssMisc::Warning(NULL, "Internal error: Function or code block ended without finding proper start of block!");
+	Pull();
+	run_stat = cssEl::BreakPoint; // todo: should have error code instead?
+      }
+      else {
+	if((debug >= 2) && (cmd_shell != NULL)) {
+	  cmd_shell->pgout << cssMisc::Indent(size-1) << "FunDone  at "
+			   << taMisc::LeadingZeros(prv_prg->PC()-1,4)
+			   << " el: " << fun_el->PrintStr() << "\n";
+	}
+	fun_el->FunDone(prv_prg);	// note passing prg from higher level
+	if(prv_prg->state & cssProg::State_IsTmpProg) {
+	  break;
+	}
+	else {
+	  run_stat = cssEl::NewProgShoved;
+	}
+      }
+    }
+    if(run_stat == cssEl::Continuing) {
+      if(ContinueLoop()) {
+	run_stat = cssEl::NewProgShoved;
+      }
+      else {
+	cssMisc::Warning(NULL, "Error: continue without surrounding loop!");
+	run_stat = cssEl::BreakPoint;
+      }
+    }
+    if(run_stat == cssEl::Breaking) {
+      if(BreakLoop()) {
+	run_stat = cssEl::NewProgShoved;
+      }
+      else {
+	cssMisc::Warning(NULL, "Error: break without surrounding loop!");
+	run_stat = cssEl::BreakPoint;
+      }
+    }
+  } while(run_stat == cssEl::NewProgShoved);
 
-  state &= ~cssProg::State_Cont;
-  depth--;
+  state &= ~cssProg::State_Run;
   cssMisc::PopCurTop(old_top);
   return rval;
 }
@@ -3754,7 +4015,7 @@ cssEl* cssProgSpace::Run() {
 }
 
 void cssProgSpace::Stop() {
-  run_stat = cssEl::Stopping;
+  external_stop = true;
 }
 
 //////////////////////////////////////////////////
@@ -3775,50 +4036,104 @@ void cssProgSpace::SetDebug(int dblev) {
   yydebug = (dblev > 3);
 }
 
-void cssProgSpace::SetListStop() {
-  if(debug >= 2)
-    lstop_ln = list_ln + (list_n / 6); // each line = ~6 machine instr..
-  else
-    lstop_ln = list_ln + list_n;
-}
-
-void cssProgSpace::List(int st) {
-  list_ln = st;
-  List();
-}
-
-void cssProgSpace::List(int st, int nlines) {
-  list_ln = st;
-  list_n = nlines;
-  List();
-}
-
-void cssProgSpace::List() {
+void cssProgSpace::ListSrc(int stln) {
   if(!HaveCmdShell()) return;
-  lstop_ln = MIN(lstop_ln, src_ln);
-  list_ln = MIN(list_ln, src_ln);
-  prev_ln = -1;			// reset
-  SetListStop();
-  *(cmd_shell->fout) << "\nListing of Program: " << name << "\n";
-  Prog(0)->List(*(cmd_shell->fout));
-  st_list_ln = list_ln;		// reset saved list_ln
-  cmd_shell->fout->flush();
+  pager_ostream& fh = cmd_shell->pgout;
+  fh.start();
+  list_ln = -1;
+  fh << "\nListing of Program: " << name << "\n";
+  // only output functions upon first functions print..
+  bool first_type = true;
+  bool first_fun = true;
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(first_type) {
+      fh << "\nTypes:\n\n";
+      first_type = false;
+    }
+    el->TypeInfo(*fh.fout);	// todo: pager
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el;
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun != NULL) fun->ListSrc(fh);
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg()) {
+      if(first_fun) {
+	fh << "\nFunctions:\n\n";
+	first_fun = false;
+      }
+      fh << el->PrintStr() << "\n";
+      el->GetSubProg()->ListSrc(fh);
+    }
+  }
+  Prog(0)->ListSrc(fh, 0, stln);
+  fh << "\n";
+}
+
+void cssProgSpace::ListImpl(int stln) {
+  if(!HaveCmdShell()) return;
+  pager_ostream& fh = cmd_shell->pgout;
+  fh.start();
+  list_ln = -1;
+  fh << "\nListing of Program: " << name << "\n";
+  // only output functions upon first functions print..
+  bool first_type = true;
+  bool first_fun = true;
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(first_type) {
+      fh << "\nTypes:\n\n";
+      first_type = false;
+    }
+    el->TypeInfo(*fh.fout);	// todo: pager
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el;
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun != NULL) fun->ListImpl(fh, 1);
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg()) {
+      if(first_fun) {
+	fh << "\nFunctions:\n\n";
+	first_fun = false;
+      }
+      fh << el->PrintStr() << "\n";
+      el->GetSubProg()->ListImpl(fh, 1);
+    }
+  }
+  Prog(0)->ListImpl(fh, 0, stln);
+  fh << "\n";
+}
+
+void cssProgSpace::List(int stln) {
+  if(!HaveCmdShell()) return;
+  if(ListDebug() >= 2)
+    ListImpl(stln);
+  else
+    ListSrc(stln);
 }
 
 void cssProgSpace::ListSpace() {
   if(!HaveCmdShell()) return;
-  int i;
-  *(cmd_shell->fout) << "\nListing of Elements of: " << name << "\n";
+  pager_ostream& fh = cmd_shell->pgout;
+  fh << "\nListing of Elements of: " << name << "\n";
   statics.List(*cmd_shell->fout);
-  for(i=0; i<size; i++) {
-    Prog(i)->ListSpace(*cmd_shell->fout, Prog_Fr(i));
-    *cmd_shell->fout << "\n";
+  for(int i=0; i<size; i++) {
+    Prog(i)->ListSpace(fh, Prog_Fr(i), i);
   }
-  cmd_shell->fout->flush();
 }
 
-static char* rs_vals[9] = {"Waiting", "Running", "Stopping", "Returning",
-			   "Breaking", "Continuing", "BreakPoint",
+static char* rs_vals[10] = {"Waiting", "Running", "Stopping", "NewProgShoved",
+			   "Returning", "Breaking", "Continuing", "BreakPoint",
 			   "ExecError", "Bailing"};
 
 void cssProgSpace::Status() {
@@ -3828,12 +4143,11 @@ void cssProgSpace::Status() {
   *cmd_shell->fout << "curnt:\t" << Prog()->name << "\tsrc_ln:\t" << Prog()->CurSrcLn()
     << "\tpc:\t" << Prog()->PC() << "\n";
   *cmd_shell->fout << "debug:\t" << debug << "\tstep:\t" << step_mode
-    << "\tdepth:\t" << size << "\tconts:\t" << depth << "\n";
+    << "\trun_depth:\t" << size-1 << "\tparse_depth:\t" << parse_depth << "\n";
   *cmd_shell->fout << "lines:\t" << src_ln << "\tlist:\t" << list_ln << "\n";
 
   int rstat = (state & cssProg::State_Run) ? 1 : 0;
-  int cstat = (state & cssProg::State_Cont) ? 1 : 0;
-  *cmd_shell->fout << "State: run:\t" << rstat << "\tcont:\t" << cstat << endl;
+  *cmd_shell->fout << "State: run:\t" << rstat << endl;
 
   *cmd_shell->fout << "run status:\t" << rs_vals[run_stat] << "\n";
 
@@ -3842,33 +4156,33 @@ void cssProgSpace::Status() {
 
 void cssProgSpace::Trace(int level) {
   if(!HaveCmdShell()) return;
-  int i;
-  *cmd_shell->fout << "\n\tTrace of Program: " << name << "\n";
+  pager_ostream& fh = cmd_shell->pgout;
+  fh << "\n\tTrace of Program: " << name << "\n";
 
-  for(i=0; i<size; i++) {
-    *cmd_shell->fout << i << ":\t" << Prog(i)->name << "\t";
+  for(int i=0; i<size; i++) {
+    fh << cssMisc::Indent(i) << i << ":\t" << Prog(i)->name << "\t";
     if(Prog(i)->Inst(Prog(i)->PC(Prog_Fr(i))))
-      Prog(i)->Inst(Prog(i)->PC(Prog_Fr(i)))->Print(*cmd_shell->fout);
+      fh << Prog(i)->Inst(Prog(i)->PC(Prog_Fr(i)))->PrintStr();
     else
-      *cmd_shell->fout << "\n";
+      fh << "\n";
     if(level > 0) {
-      Prog(i)->Stack(Prog_Fr(i))->List(*cmd_shell->fout);
+      Prog(i)->Stack(Prog_Fr(i))->List(fh, i);
       if(level > 1) {
-	Prog(i)->Autos(Prog_Fr(i))->List(*cmd_shell->fout);
+	Prog(i)->Autos(Prog_Fr(i))->List(fh, i);
       }
     }
   }
-  cmd_shell->fout->flush();
 }
 
 void cssProgSpace::Help() {
   if(!HaveCmdShell()) return;
-  *cmd_shell->fout << "\nC^c syntax is a subset of C++, with standard C math and stdio functions.\n\
+  cmd_shell->pgout.start();
+  cmd_shell->pgout << "\nC^c syntax is a subset of C++, with standard C math and stdio functions.\n\
  Except: The (f)printf functions take arguments which print themselves\n\
  \tprintf(\"varname:\\t\",avar,\"\\tvar2:\\t\",var2,\"\\n\"\n\
  and a special String type is available for strings (ala C++)\n";
 
-  *cmd_shell->fout << "\nArguments interpreted by C^c are:\n\
+  cmd_shell->pgout << "\nArguments interpreted by C^c are:\n\
  [-f|-file] <file>\tcompile and execute given file upon startup, exit (unless -i)\n\
  [-e|-exec] <code>\tcompile and execute given code upon startup, exit (unless -i)\n\
  [-i|-interactive]\tif using -f or -e, go into interactive (prompt) mode after\n\
@@ -3877,20 +4191,20 @@ void cssProgSpace::Help() {
  Any other arguments can be accessed by user script programs by the global\n\
  variables argv (an array of strings) and argc (an int)\n";
 
-  *cmd_shell->fout << "\nDo help <expr> to obtain more detailed help on functions, objects, etc.\n";
+  cmd_shell->pgout << "\nDo help <expr> to obtain more detailed help on functions, objects, etc.\n";
 
-  *cmd_shell->fout << "\nThe following functions and debugging & control commands are available\n";
-  cssMisc::Functions.NameList(*cmd_shell->fout);
-  cssMisc::Commands.NameList(*cmd_shell->fout);
-  *cmd_shell->fout << "\n ...and the following hard-coded functions are available\n";
-  hard_funs.NameList(*cmd_shell->fout);
-  cssMisc::HardFuns.NameList(*cmd_shell->fout);
-  *cmd_shell->fout << "\n ...and the following Program variables are available\n";
-  prog_vars.NameList(*cmd_shell->fout);
-  *cmd_shell->fout << "\n ...and the following hard-coded variables are available\n";
-  hard_vars.NameList(*cmd_shell->fout);
-  cssMisc::HardVars.NameList(*cmd_shell->fout);
-  *cmd_shell->fout << "\n";
+  cmd_shell->pgout << "\nThe following functions and debugging & control commands are available\n";
+  cssMisc::Functions.NameList(cmd_shell->pgout, 1);
+  cssMisc::Commands.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\n ...and the following hard-coded functions are available\n";
+  hard_funs.NameList(cmd_shell->pgout, 1);
+  cssMisc::HardFuns.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\n ...and the following Program variables are available\n";
+  prog_vars.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\n ...and the following hard-coded variables are available\n";
+  hard_vars.NameList(cmd_shell->pgout, 1);
+  cssMisc::HardVars.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\n";
   cmd_shell->fout->flush();
 }
 
@@ -3898,28 +4212,85 @@ void cssProgSpace::Help() {
 // 	cssProgSpace:    Breakpoints 		//
 //////////////////////////////////////////////////
 
-void cssProgSpace::SetBreak(int srcln) {
+bool cssProgSpace::SetBreak(int srcln) {
   if(srcln > src_ln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
-    return;
+    return false;
   }
 
-  if(Prog(0)->SetBreak(srcln) < 0)
-    cssMisc::Warning(Prog(), "Source line not found");
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el;
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun != NULL) {
+	  if(fun->SetBreak(srcln)) return true;
+	}
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg()) {
+      if(el->GetSubProg()->SetBreak(srcln)) return true;
+    }
+  }
+  if(Prog(0)->SetBreak(srcln))
+    return true;
+  cssMisc::Warning(Prog(), "Source line not found");
+  return false;
 }
 
 void cssProgSpace::ShowBreaks() {
   if(!HaveCmdShell()) return;
+
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el;
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun != NULL) fun->ShowBreaks();
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg()) {
+      el->GetSubProg()->ShowBreaks(*cmd_shell->fout);
+    }
+  }
   Prog(0)->ShowBreaks(*cmd_shell->fout);
 }
 
-void cssProgSpace::unSetBreak(int srcln) {
+bool cssProgSpace::unSetBreak(int srcln) {
   if(srcln > src_ln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
-    return;
+    return false;
   }
-  if(!Prog(0)->unSetBreak(srcln))
-    cssMisc::Warning(Prog(), "Breakpoint not found");
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el;
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun != NULL) {
+	  if(fun->unSetBreak(srcln)) return true;
+	}
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg()) {
+      if(el->GetSubProg()->unSetBreak(srcln)) return true;
+    }
+  }
+  if(Prog(0)->unSetBreak(srcln))
+    return true;
+  cssMisc::Warning(Prog(), "Breakpoint not found");
+  return false;
 }
 
 ///////////////////////////////////
@@ -3928,6 +4299,7 @@ void cssProgSpace::unSetBreak(int srcln) {
 
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
+  pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
 
   external_exit = false;
 //   sc_shell_this = NULL;
@@ -3997,10 +4369,10 @@ void cssCmdShell::PopAllSrcProg() {
 void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
   int rval = cmd_prog->CompileCode(ln);
   if(cmd_prog->debug >= 2) {
-    cmd_prog->List(0);
+    cmd_prog->ListImpl();
   }
   bool run_cmd = true;
-  if(cmd_prog->depth > 0) { // user entered a { so don't run yet
+  if(cmd_prog->parse_depth > 0) { // user entered a { so don't run yet
     if(cmd_prog->debug > 0)
       cerr << "<cmdshell: parsing more (depth)>\n";
     run_cmd = false;
@@ -4021,6 +4393,7 @@ void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
 void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
   fin = &fhi;
   fout = &fho;
+  pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
 //   cssCmdShell* old_top = cssMisc::SetCurTop(this);
 
 #ifndef __GNUG__
@@ -4087,10 +4460,12 @@ void cssCmdShell::UpdatePrompt() {
   }
   const char* pt = ">";
   //  pt = (src_prog->state & cssProg::State_Defn) ? "#" : ">";
-  if(src_prog->depth > 0)
-    act_prompt = String(src_prog->depth) + " " + prompt + pt + " ";
-  else if(cmd_prog->depth > 0)
-    act_prompt = String(cmd_prog->depth) + " " + prompt + pt + " ";
+  if(src_prog->size > 1)
+    act_prompt = String(src_prog->size-1) + " " + prompt + pt + " ";
+  else if(src_prog->parse_depth > 0)
+    act_prompt = String(src_prog->parse_depth) + " " + prompt + pt + " ";
+  else if(cmd_prog->parse_depth > 0)
+    act_prompt = String(cmd_prog->parse_depth) + " " + prompt + pt + " ";
   else
     act_prompt = prompt + pt + " ";
   if(input_mode == IM_Gui_Console)

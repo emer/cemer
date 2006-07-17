@@ -83,6 +83,7 @@ class cssFStream;
 class cssElFun;
 class cssElCFun;
 class cssMbrCFun;
+class cssCodeBlock;
 class cssScriptFun;
 class cssMbrScriptFun;
 
@@ -105,6 +106,30 @@ class cssIJump;
 class cssProg;
 class cssProgSpace;
 class cssCmdShell;
+
+// todo: move this somewhere else
+// todo: cannot inherit from ostream because ostream << methods are not virtual!!
+class pager_ostream {
+  // class that provides one page at a time output of streamed inputs
+public:
+  int		n_lines;	// number of lines to output on a page
+  bool		no_page;	// do not run the pager: just acts like a regular output stream
+  ostream*	fout;		// output stream
+  istream*	fin;		// input stream for prompting
+
+  void	start();		// call this when starting new output to the screen; inits counter
+  
+  virtual pager_ostream& operator<<(const char* str); 
+  virtual pager_ostream& operator<<(const String& str);  // this is the main call
+
+  pager_ostream();
+  pager_ostream(ostream* fo, istream* fi, int n_ln);
+
+protected:
+  int 	cur_line;
+  bool	quitting;
+};
+
 
 class CSS_API cssMisc { // misc stuff for css
 public:
@@ -182,7 +207,7 @@ public:
   static bool		HasCmdLineSwitch(const String& sw_name, int& index, bool starts_with = false); // looks for the switch value (include the '-' if applicable) starting from index; index advanced
   static bool		CmdLineSwitchValue(const String& sw_name, int& index, 
     String& sw_value, bool starts_with = false); // looks for the switch value from index and returns following string; advances index
-  static String	    	Indent(int indent_level); // generally 2 spaces per level
+  static String	    	Indent(int indent_level, int indent_spc = 2);
   static String	    	IndentLines(const String& lines, int indent_level); 
     // indent every line by the indent amount
   static bool		IsNameValid(const String& nm); // validates a css name
@@ -227,6 +252,7 @@ public:
   void*		ptr;		// the pointer itself
 
   cssEl* El() const;		// gets the el
+  String PrintStr() const;
   void 	Print(ostream& fh) const;
 
   bool	IsNull() const	{
@@ -303,6 +329,7 @@ public:
     T_ClassMbr,			// class member definition
     T_ElCFun,                	// C function returning *cssEl
     T_MbrCFun,			// C member function
+    T_CodeBlock,                // Block of script code
     T_ScriptFun,                // Script function returning *cssEl
     T_MbrScriptFun,		// Script member function
     T_C_Ptr,			// a pointer to a C object
@@ -317,6 +344,7 @@ public:
     Waiting,		// waiting for input
     Running,		// running normally
     Stopping,		// got to end of program
+    NewProgShoved,	// a new prog was shoved onto stack 
     Returning,		// received a return
     Breaking,		// received a break
     Continuing,		// received a continue
@@ -376,6 +404,10 @@ public:
   virtual bool		IsNumericTypeStrict() const   { return false; }
     // true for number types, including cssReal, cssInt, cssChar,  a Variant of those types
     // NOTE: Char is true for both, so know your context before assuming...
+  virtual bool		HasSubProg() const	{ return false; }
+  // does this object have a sub-program that gets put on the stack and run (e.g., code block, script fun)
+  virtual cssProg*	GetSubProg() const	{ return NULL; }
+  // get the sub-program inside this guy
   virtual cssEl*	GetActualObj() 		{ return this; }
   // get non-reference, non-pointer object
 
@@ -393,7 +425,6 @@ public:
   virtual String	PrintFStr() const 		 { return "void"; }
   virtual void 		PrintF(ostream& fh = cout) const { fh << PrintFStr(); }
 
-  virtual void 		List(ostream& fh = cout) const	{ Print(fh); }
   virtual void  	TypeInfo(ostream& fh = cout) const
   { fh << GetTypeName() << " " << name; }
   virtual void		InheritInfo(ostream& fh = cout) const { TypeInfo(fh); }
@@ -406,7 +437,9 @@ public:
   virtual void		TokenInfo(ostream&) const	{ }; // show tokens of arg type
   virtual cssEl*	GetToken(int) const		{ return (cssEl*)this; }
 
-  virtual cssEl::RunStat 	Do(cssProg* prg);
+  virtual cssEl::RunStat 	Do(cssProg* prg);  // run this object
+  virtual cssEl::RunStat 	FunDone(cssProg* prg);
+  // after function has been run, do final stuff
 
   // constructors
   void 			Constr();
@@ -620,8 +653,10 @@ public:
   int 		size;			// number of actual elements
   cssEl**	els;			// the elements themselves
 
-  static ostream& fancy_list(ostream& fh, const String& itm, int no, int prln, int tabs);
-  static String& fancy_list(String& fh, const String& itm, int no, int prln, int tabs);
+  static ostream& fancy_list(ostream& fh, const String& itm, int no, int prln,
+			     int tabs, int indent = 0);
+  static String& fancy_list(String& fh, const String& itm, int no, int prln,
+			    int tabs, int indent = 0);
 
   void 		Constr();
   cssSpace()				{ alloc_size = 2;  Constr(); }
@@ -641,13 +676,15 @@ public:
   int		GetIndex(cssEl* it);	// find it, return index
   int		IndexOfName(const String& nm) const; // return index of name, -1 if not found
 
-  void 		List(ostream& fh = cout) const; 	// (elaborate print format)
-  void 		NameList(ostream& fh = cout) const;   // just the names
-  void		ValList(ostream& fh = cout) const;    // just the values (printf format)
-  void		TypeNameList(ostream& fh = cout) const; // "fancy" type/name output
-  void		TypeNameValList(ostream& fh = cout) const; // "fancy" type/name/val output
-  String	PrintStr() const;
-  String	PrintFStr() const;
+  void 		List(ostream& fh = cout, int indent = 0) const;	// (elaborate print format)
+  void 		List(pager_ostream& fh, int indent = 0) const;	// (elaborate print format)
+  void 		NameList(ostream& fh = cout, int indent = 0) const;   // just the names
+  void 		NameList(pager_ostream& fh, int indent = 0) const;   // just the names
+  void		ValList(ostream& fh = cout, int indent = 0) const;    // just the values (printf format)
+  void		TypeNameList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name output
+  void		TypeNameValList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name/val output
+  String	PrintStr(int indent = 0) const;
+  String	PrintFStr(int indent = 0) const;
 
   void		Alloc(int sz);		// allocate space on the list..
   void 		Reset();		// clear list
@@ -785,11 +822,24 @@ public:
   cssEl*	MakeToken_stub(int na, cssEl* arg[]);
 };
 
-
 // return variable name
 #define cssRetv_Name "_retv_this"
 // block function name
 #define cssBlock_Name "_block"
+// block conditional variable
+#define cssCondBlock_Name "_cond"
+// if_true block
+#define cssIfTrueBlock_Name "_if_true"
+// if_false block
+#define cssElseBlock_Name "_else"
+// for loop
+#define cssForLoop_Name "_for_loop"
+// for incr
+#define cssForIncr_Name "_for_incr"
+// for loop stmts
+#define cssForLoopStmt_Name "_for_loop_stmt"
+// do loop
+#define cssDoLoop_Name "_do_loop"
 // switch block cond variable
 #define cssSwitchVar_Name "_switch_this"
 // switch block name
@@ -799,23 +849,77 @@ public:
 // switch default case name
 #define cssSwitchDefault_Name "_switch_default"
 
+class CSS_API cssCodeBlock : public cssElFun {
+  // a block of code between { }
+public:
+  enum Actions {
+    JUST_CODE,			// don't do anything special; just a regular code block
+    PUSH_RVAL,			// push return value on stack (for conditional expression)
+    IF_TRUE,			// only run if stack value evaluates to non-0
+    ELSE			// only run if stack value evaluates to 0 (else)
+  };
+
+  enum LoopType {
+    NOT_LOOP,			// not a loop block
+    WHILE,
+    DO,
+    FOR,
+    SWITCH			// not a loop technically, but processes break
+  };
+
+  cssProg*	owner_prog;	// next higher prog that I belong to
+  cssProg*	code;		// sub prog containing the actual code
+  Actions	action;		// special action to perform
+  int		loop_back;	// if run, set the PC() of the calling prog back this number after running
+  LoopType	loop_type;	// type of loop function
+  
+  uint		GetSize() const		{ return sizeof(*this); }
+  cssTypes 	GetType() const 	{ return T_CodeBlock; }
+  const char*	GetTypeName() const 	{ return "(CodeBlock)"; }
+  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  bool		HasSubProg() const    	{ return true; }
+  cssProg*	GetSubProg() const 	{ return code; }
+
+  cssEl::RunStat Do(cssProg* prg);
+  cssEl::RunStat FunDone(cssProg* prg);
+
+  bool		CleanDoubleBlock(); // if block just contains an embedded block, move it up
+
+  String	PrintStr() const;
+  String	PrintFStr() const		{ return PrintStr(); }
+
+  // constructors
+  void		Constr();
+  void		Copy(const cssCodeBlock& cp);
+  cssCodeBlock();
+  cssCodeBlock(const char* nm);
+  cssCodeBlock(const cssCodeBlock& cp);
+  cssCodeBlock(const cssCodeBlock& cp, const char* nm);
+  ~cssCodeBlock();
+
+  cssCloneOnly(cssCodeBlock);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  // return retv_type token, else cssInt
+};
+
 class CSS_API cssScriptFun : public cssElFun {
   // a function defined in the script language
 public:
   cssElPtr* 	argv;		// the actual argument holders (0 is retv)
-  cssProg*	fun;
-  bool		is_block;	// true if this is actually just a block
+  cssProg*	fun;		// sub prog containing function code
 
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const 	{ return T_ScriptFun; }
   const char*	GetTypeName() const 	{ return "(ScriptFun)"; }
   cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  bool		HasSubProg() const      { return true; }
+  cssProg*	GetSubProg() const 	{ return fun; }
 
   cssEl::RunStat Do(cssProg* prg);
+  cssEl::RunStat FunDone(cssProg* prg);
 
   String	PrintStr() const;
   String	PrintFStr() const		{ return PrintStr(); }
-  void 		List(ostream& fh = cout) const;
 
   virtual void	Define(cssProg* prg, bool decl = false, const char* nm = NULL);
   // initialize the function (decl = true if in declaration, not definition)
@@ -848,6 +952,7 @@ public:
   const char*	GetTypeName() const 	{ return "(MbrScriptFun)"; }
 
   cssEl::RunStat Do(cssProg* prg);
+  cssEl::RunStat FunDone(cssProg* prg);
 
   String	PrintStr() const;
 
@@ -1002,26 +1107,24 @@ public:
   int 		line;			// points to source code line number
   int 		col;			// column in line
   cssElPtr	inst;			// instruction this points to
-  bool 		isdefn;			// is this the definition of the object?
-  css_progdx	previf;			// previous if instr
 
-  virtual int 		Print(ostream& fh = cout) const;
-  virtual int 		List(ostream& fh = cout) const;
+  virtual String	PrintStr() const;
+  virtual void 		ListSrc(pager_ostream& fh, int indent = 0) const; // source code
+  virtual void		ListImpl(pager_ostream& fh, int indent = 0) const; // machine impl
+
   virtual cssEl::RunStat 	Do();
   virtual void 		SetLine(css_progdx it) 	{ line = it; }
   virtual css_progdx	GetJump()		{ return -1; }
   virtual bool		IsJump()		{ return false; }
 
   void 			SetInst(const cssElPtr& it);
-  void			EndIf(css_progdx end = -1);	// end an if statement (and set end of previf)
-  void			SetDefn();	// This instruction is a definition (ptr is a fun..)
 
   // constructors
   void 		Constr();
   void		Copy(const cssInst& cp);
   cssInst();
-  cssInst(const cssProg& prg, const cssElPtr& it);
-  cssInst(const cssProg& prg, const cssElPtr& it, int lno, int clno);
+  cssInst(const cssProg* prg, const cssElPtr& it);
+  cssInst(const cssProg* prg, const cssElPtr& it, int lno, int clno);
   cssInst(const cssInst& cp);
   virtual ~cssInst();
 
@@ -1032,27 +1135,28 @@ class CSS_API cssIJump : public cssInst {
 public:
   css_progdx    jumpto;			// idx to jump to
 
-  int 		Print(ostream& fh = cout) const;
-  int 		List(ostream& fh = cout) const	{ return Print(fh); }
+  String	PrintStr() const;
+  void 		ListSrc(pager_ostream& fh, int = 0) const;
+  void		ListImpl(pager_ostream& fh, int = 0) const;
   cssEl::RunStat 	Do();
   void 		SetLine(css_progdx it) 		{ jumpto = it; }
   css_progdx	GetJump()			{ return jumpto; }
   bool		IsJump()			{ return true; }
 
   void		Copy(const cssIJump& cp);
-  cssIJump(const cssProg &prg, css_progdx jmp);
-  cssIJump(const cssProg &prg, css_progdx jmp, int lno, int clno);
+  cssIJump(const cssProg* prg, css_progdx jmp);
+  cssIJump(const cssProg* prg, css_progdx jmp, int lno, int clno);
   cssIJump(const cssIJump& cp);
 
   virtual cssInst* Clone() { return new cssIJump(*this); }
 };
 
-
 class CSS_API cssListEl {
 public:
   css_progdx    stpc;		// starting pc for this line
   int		ln;		// line no in source code
-  String	src;		// source code for line
+  String	src;		// source code for line, specifically for 
+  String	full_src;	// full source code 
 
   void		Copy(const cssListEl& cp)
   { stpc = cp.stpc; ln = cp.ln; src = cp.src; }
@@ -1073,9 +1177,15 @@ public:
   css_progdx 	pc;			// program counter
   cssSpace	stack;			// current stack
   cssSpace	autos;			// current autos
+  cssEl**	args; 			// args for function ([size = cssElFun::ArgMax + 1])
+  int 		act_argc;		// actual number of args received
   cssClassInst*	cur_this;		// current this pointer
 
   cssFrame(cssProg* prg);
+  
+  void	AllocArgs();		// allocate args
+
+  virtual ~cssFrame();
 };
 
 class CSS_API cssProg {
@@ -1090,12 +1200,12 @@ protected:
 public:
   // flag state values
   enum State_Flags {
-    State_Wait		= 0x0001,
-    State_Run		= 0x0002,
-    State_Cont		= 0x0004,
-    State_WasBurped	= 0x0008,  	// last line was burped, (delete src if necc)
+    State_Run		= 0x0001,
+    State_WasBurped	= 0x0002,  	// last line was burped, (delete src if necc)
+    State_IsTmpProg	= 0x0004, 	// is a temporary program, not part of main progs
+    State_NoBreak	= 0x0008, 	// do not break while running this guy
   };
-
+ 
   enum YY_Flags {
     YY_Exit		= 0,	// #IGNORE script is done being parsed
     YY_Ok		= 1,	// #IGNORE everything is fine
@@ -1106,7 +1216,8 @@ public:
   };
 
   String 	name;			// name of program
-  cssScriptFun*	owner;			// if owned by a cssScriptFun
+  cssScriptFun*	owner_fun;		// if owned by a cssScriptFun
+  cssCodeBlock*	owner_blk;		// if owned by a cssCodeBlock
   cssProgSpace* top;			// top-level space holding this one
 
   cssInst**	insts;			// the instructions themselves
@@ -1133,8 +1244,6 @@ public:
 
   int_Array	breaks;			// breakpoints
   css_progdx	lastif;			// last if statment index (for else)
-  css_progdx	elseif;			// last if for the else-if construct
-  css_progdx	lastdo;			// last do statment index (for while)
 
   void 		Constr();
   void		Copy(const cssProg& cp);
@@ -1165,6 +1274,10 @@ public:
   cssSpace*	Stack(int frdx) const 	{ return &(Frame(frdx)->stack); }
   css_progdx 	PC() const	     	{ return Frame()->pc; }
   css_progdx	PC(int frdx) const     	{ return Frame(frdx)->pc; }
+  cssEl**	Args() const		{ return Frame()->args; }
+  cssEl**	Args(int frdx) const	{ return Frame(frdx)->args; }
+  int&		ActArgc() const		{ return Frame()->act_argc; }
+  int&		ActArgc(int frdx) const	{ return Frame(frdx)->act_argc; }
   cssClassInst* CurThis() const		{ return Frame()->cur_this; }
   cssClassInst* CurThis(int frdx) const	{ return Frame(frdx)->cur_this; }
   void		SetCurThis(cssClassInst* ths)	{ Frame()->cur_this = ths; }
@@ -1181,24 +1294,22 @@ public:
   // pop the top pointer, set to value returned by SetTop upon exit of scope
 
   // source, debugging
-  char*		GetSrc() const
-  { char* rval=""; if(line < src_size) rval = (char*)(source[line]->src) + col; return rval; }
-  char*		GetSrcLC(int ln, int cl=0) const
-  { char* rval=""; if(ln < src_size) rval = (char*)(source[ln]->src) + cl; return rval; }
+  String	GetSrc() const;
+  String	GetSrcLC(int ln, int cl=0) const;
   int		CurSrcLn(css_progdx pcval); 	// extrnl srcln
   int		CurSrcLn()			{ return CurSrcLn(PC()); }
+  String	GetCurSrcLn()			{ return GetSrcLC(CurSrcLn()); }
   int		CurSrcLC(css_progdx pcval); 	// internal ln cnt
   int		CurSrcLC()			{ return CurSrcLC(PC()); }
+  String	GetCurSrcLC()			{ return GetSrcLC(CurSrcLC()); }
   int		FindSrcLn(int ln);		// find the particular one
   int		ClosestSrcLn(int ln);		// find closest to ln
   int		HasSrcLn(int st, int ed);	// find one in the given range
   int           CurSrcCharsLeft();              // number of chars remaining in cur src ln
-  int 		SubList(int sln, int eln, ostream& fh = cout);
-  int 		List(ostream& fh = cout);
-  int 		List(ostream& fh, int st, int nlines);
-  void		ListSpace(ostream& fh = cout, int frdx = -1);
-  void		SubPrint(css_progdx pcdx, ostream& fh = cout); // elaborate print
-  int 		Print(css_progdx pcdx, ostream& fh = cout); // returns source cd line
+
+  void		ListSrc(pager_ostream& fh, int indent = 0, int stln = -1); // source code
+  void 		ListImpl(pager_ostream& fh, int indent = 0, int stinst = -1); // machine impl
+  void		ListSpace(pager_ostream& fh, int frdx = -1, int indent = 0);
 
   // coding
   int 		AddCode(cssInst* it);
@@ -1217,9 +1328,10 @@ public:
   int 		Code(cssElPtr &it);
   int 		Code(const char* nm);
   int 		Code(css_progdx it);
-  int 		Code(cssIJump* it)	{ return AddCode(it); }
+  int 		Code(cssIJump* it);
+  int		ReplaceCode(int idx, cssEl* it);
   void		UnCode()		{ if(size > 0) delete insts[--size]; }
-  void		ResetLasts() 		{ lastif = -1; lastdo = -1; }
+  void		ResetLasts() 		{ lastif = -1; }
   void		BurpSrc(); 		// source was read in advance, burp it
   int		Undo(int srcln);
 
@@ -1241,9 +1353,10 @@ public:
   void		EndRunPop()		{ Stack()->DelPop(); }
   void		SaveStack();		// save current stack
   void		ReloadStack();		// reload current stack from saved
+  void		RunDebugInfo(cssInst* nxt); // output debugging info while running
 
   // breakpoints
-  int 		SetBreak(int srcln);
+  bool 		SetBreak(int srcln);
   bool		IsBreak(css_progdx pcval)
   { bool rval = false; if(breaks.Find(pcval) >= 0) rval = true; return rval; }
 
@@ -1285,10 +1398,10 @@ public:
   String 	name;
 
   int 		size;			// size of progs, in els
-  cssProgStack** progs;
+  cssProgStack** progs;			// stack of sub programs, used for both parsing and running
 
-  int		state;
-  int		depth;			// number of levels in shells, etc.
+  int		state;			// current run state information
+  int		parse_depth;		// depth of progs for current parsing run
 
   cssSpace	prog_vars;		// external Program vars, only used by pdp Programs, act like hard_vars
   cssSpace	hard_vars;		// space-specific extern vars
@@ -1296,20 +1409,17 @@ public:
   cssSpace	statics;		// global variables (in space)
   cssSpace	types;			// types defined in space
 
-  int		step_mode;		// step mode
+  int		step_mode;		// step mode: if > 0, next Cont will run this # of lines
   cssEl::RunStat run_stat; 		// flag to tell if running: set to Stopping to stop, or BreakPoint
-  int 		debug;			// debug level
+  int 		debug;			// debug level: 1 = src trace, 2 = machine code trace, 3 = + stack trace
 
   istream*	src_fin;		// source input stream
   int 		src_ln;			// present source line no (parsing)
   int		st_src_ln;		// starting source line no
   int		list_ln;		// present source line no (listing)
-  int		list_n;			// number of lines to list (default 20)
-  int		st_list_ln;		// saved list ln
-  int		lstop_ln;		// stopping line
-  int	 	prev_ln;		// previous line no (listing)
 
   bool		parsing_command; 	// true if we are presently parsing a command
+  bool		external_stop;		// to stop execution externally, set this
 
   cssCmdShell*	cmd_shell;		// controlling command shell
 
@@ -1327,6 +1437,7 @@ public:
   cssProg*	Prog(int prdx)		{ return ProgStack(prdx)->prog; }
   int		Prog_Fr()		{ return ProgStack()->fr_no; }
   int		Prog_Fr(int prdx)	{ return ProgStack(prdx)->fr_no; }
+  cssProg*	PrvProg()		{ if(size <= 1) return NULL; return ProgStack(size-2)->prog; }
 
   // internal coding, programs
   void		SetName(const char* nm); 		// updates all names
@@ -1363,10 +1474,7 @@ public:
 
   // compiling
   static  int	GetFile(fstream& fh, const char* fname); // get the file
-  int		MarkListStart()			// where to start listing
-  { st_list_ln = list_ln; st_src_ln = src_ln; return src_ln; }
-  void		RestoreListStart(int old_src_ln)
-  { src_ln = old_src_ln; list_ln = st_list_ln; }
+
   int		CompileLn(istream& fh = cin, bool* err = NULL);	// parse next line of stream, set optional err if error
   bool 		Compile(istream& fh = cin);	// parse a stream and produce a program, 'true' if successful
   bool 		Compile(const char* fname);	// parse a file and produce a program, 'true' if successful
@@ -1393,24 +1501,26 @@ public:
   cssEl*	Run();
   void		Stop(); // can be called from inside or outside a program to cause it to stop
   void		EndRunPop()		{ Prog()->EndRunPop(); }
+  
+  bool		ContinueLoop();	// process continue command for loops
+  bool		BreakLoop();	// process break command for loops
 
   // display, status
   int		ListDebug()
   { int rval=debug; if(debug >= 2) rval=2; return rval; }
   void		SetDebug(int dblev);
-  void		SetListStop();
-  void 		List();
-  void 		List(int st);
-  void 		List(int st, int nlines);
+  void 		ListSrc(int stln = -1);	// source code
+  void 		ListImpl(int stln = -1); // machine code implementation
+  void		List(int stln = -1);
   void		ListSpace();
   void		Status();
   void		Trace(int level=0);
   void		Help();
 
   // breakpoints
-  void 		SetBreak(int srcln);
+  bool 		SetBreak(int srcln);
   void		ShowBreaks();
-  void		unSetBreak(int srcln);
+  bool		unSetBreak(int srcln);
 
 protected:
   int 		alloc_size;		// allocated number of prog_stacks
@@ -1447,7 +1557,8 @@ public:
   istream*	fin;			// input file (current)
   ostream*	fout;			// output file
   ostream*	ferr;			// error file
-
+  pager_ostream	pgout;			// pager outstream
+  
   bool		external_exit;		// set to true to break out of a shell...
 
   cssProgSpace*	src_prog;		// current program with source code for commands to operate on (I do not own this, nor is there refcounting!) DO NOT SET DIRECTLY: USE Push/Pop to manage
