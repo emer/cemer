@@ -225,7 +225,7 @@ void taMatrix::Add_(const void* it) {
   Check((dims() == 1), "Add() only allowed when dims=1");
   int idx = frames();
   EnforceFrames(idx + 1);
-  El_Copy_(FastEl_(idx), it);
+  El_Copy_(FastEl_Flat_(idx), it);
 }
 
 void taMatrix::AddFrames(int n) {
@@ -242,7 +242,7 @@ void taMatrix::Alloc_(int new_alloc) {
   if (alloc_size < new_alloc)	{
     char* nw = (char*)MakeArray_(new_alloc);
     for (int i = 0; i < size; ++i) {
-      El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
+      El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
     }
     SetArray_(nw);
     alloc_size = new_alloc;
@@ -274,7 +274,7 @@ void taMatrix::Copy_(const taMatrix& cp) {
     SetGeomN(cp.geom);
     SetArray_(const_cast<void*>(cp.data()));
     for (int i = 0; i < size; ++i) {
-      El_Copy_(FastEl_(i), cp.FastEl_(i));
+      El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }
   }
 }
@@ -288,14 +288,18 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   // note that "Inherits" should imply same data type
   if (GetTypeDef()->InheritsFrom(src.GetTypeDef())) {
     for (int i = 0; i < n; ++i) {
-      El_Copy_(FastEl_(base + i), src.FastEl_(i));
+      El_Copy_(FastEl_Flat_(base + i), src.FastEl_Flat_(i));
     }
   } else {
     for (int i = 0; i < n; ++i) {
-      El_SetFmVar_(FastEl_(base + i), src.El_GetVar_(src.FastEl_(i)));
+      El_SetFmVar_(FastEl_Flat_(base + i), src.El_GetVar_(src.FastEl_Flat_(i)));
     }
   }
   return true;
+}
+
+int taMatrix::defAlignment() const {
+  return Qt::AlignRight; // most mats are numeric, so this is the default
 }
 
 void taMatrix::List(ostream& strm) const {
@@ -307,7 +311,7 @@ void taMatrix::List(ostream& strm) const {
   strm << "] {";
   int i;
   for(i=0;i<size;i++) {
-    strm << " " << El_GetStr_(FastEl_(i)) << ",";
+    strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
   }
   strm << "}";
 }
@@ -397,7 +401,7 @@ void taMatrix::EnforceFrames(int n) {
   if (new_size > size) {
     const void* blank = El_GetBlank_();
     for (int i = size; i < new_size; ++i) {
-      El_Copy_(FastEl_(i), blank);
+      El_Copy_(FastEl_Flat_(i), blank);
     }
   } else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
@@ -463,15 +467,13 @@ int taMatrix::frameSize() const {
   return rval;
 }
 
-#ifdef TA_GUI
-QAbstractItemModel* taMatrix::GetDataModel() {
+MatrixTableModel* taMatrix::GetDataModel() {
   if (!m_dm) {
     //shared by all views; persists now till we die; no affect on refcnt
     m_dm = new MatrixTableModel(this);
   }
   return m_dm;
 }
-#endif // TA_GUI
 
 taMatrix* taMatrix::GetFrameSlice_(int frame) {
   int dims_m1 = dims() - 1; //cache
@@ -489,7 +491,7 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   for (int i = 0; i < dims_m1; ++i)
     slice_geom.Set(i, dim(i));
   int sl_i = BaseIndexOfFrame(frame); //note: must be valid because of prior checks
-  rval->SetFixedData_(FastEl_(sl_i), slice_geom);
+  rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
@@ -526,7 +528,7 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
   Check((rval), "could not make token of matrix");
   
-  rval->SetFixedData_(FastEl_(sl_i), slice_geom);
+  rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
@@ -573,7 +575,7 @@ void taMatrix::RemoveFrame(int n) {
     int fm = n * frameSize();
     int to = fm - frameSize();
     while (fm < size) {
-      El_Copy_(FastEl_(to), FastEl_(fm));
+      El_Copy_(FastEl_Flat_(to), FastEl_Flat_(fm));
       ++fm;
       ++to;
     }
@@ -709,6 +711,10 @@ void taMatrix::UpdateGeom() {
 //////////////////////////
 //   String_Matrix	//
 //////////////////////////
+
+int String_Matrix::defAlignment() const {
+  return Qt::AlignLeft;
+}
 
 int String_Matrix::Dump_Load_Item(istream& strm, int idx) {
   int c = taMisc::skip_till_start_quote_or_semi(strm);
@@ -883,5 +889,169 @@ void Variant_Matrix::ReclaimOrphans_(int from, int to) {
   for (int i = from; i <= to; ++i) {
     el[i] = _nilVariant;
   }
+}
+
+
+//////////////////////////
+//   rgb_Matrix	//
+//////////////////////////
+
+bool rgb_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+  ushort val = 0;
+#ifdef TA_USE_QT
+  val = str.toUShort(&rval, 0); //auto-base sensing
+#endif
+  // check for overflow
+  if (rval && (val > 255)) rval = false;
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid byte value (0-255)";
+  return rval;
+}
+
+
+/** \class MatrixTableModel
+
+  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
+  
+  We map indexes in a hierarchy of tables, by grouping the dimensions starting
+  from the least, ex:
+  group: 2   1    0      
+   dims: 4  3 2  1 0
+
+  Many functions pass in a parent index, which will be Invalid for the top level.
+  So these functions are iterative/quasi-recursive
+*/
+
+MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
+:inherited(NULL)
+{
+  m_mat = mat_;
+}
+
+MatrixTableModel::~MatrixTableModel() {
+  if (m_mat) {
+    m_mat->m_dm = NULL;
+  }
+  m_mat = NULL;
+}
+
+int MatrixTableModel::columnCount(const QModelIndex& parent) const {
+  if (!m_mat) return 0;
+  if (m_mat->dims() < 1)
+    return 0;
+  else return m_mat->dim(0);
+}
+
+QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
+  if (!m_mat) return QVariant();
+  switch (role) {
+  case Qt::DisplayRole: 
+  case Qt::EditRole:
+    return m_mat->SafeElAsVar(index.column(), index.row());
+//Qt::DecorationRole
+//Qt::ToolTipRole
+//Qt::StatusTipRole
+//Qt::WhatsThisRole
+//Qt::SizeHintRole -- QSizw
+//Qt::FontRole--  QFont: font for the text
+  case Qt::TextAlignmentRole:
+    return m_mat->defAlignment();
+/*Qt::BackgroundColorRole
+  QColor
+  but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
+Qt::TextColorRole
+  QColor: color of text
+Qt::CheckStateRole*/
+  default: return QVariant();
+  }
+}
+
+Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
+  if (!m_mat) return 0;
+  Qt::ItemFlags rval = 0;
+  if (ValidateIndex(index)) {
+    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    //only editable if 2-d or less
+    if (m_mat->dims() <= 2)  
+      rval |= Qt::ItemIsEditable;
+  }
+  return rval;
+}
+
+QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role != Qt::DisplayRole)
+    return QVariant();
+//TODO: make the headers show the dimenion # when > 2
+  if (orientation == Qt::Horizontal)
+    return QString("C%1").arg(section);
+  else
+    return QString("R%1").arg(section);
+}
+
+/*QModelIndex MatrixTableModel::index(int row, int column, const QModelIndex &parent) const
+{
+  // client passes invalid parent to request top-level index, otherwise it is nested
+  if (parent.isValid())
+  else { // returning top-level index
+    // we only 
+    return hasIndex(row, column, parent) ? createIndex(row, column, 0) : QModelIndex();
+  }
+}*/
+
+int MatrixTableModel::matIndex(const QModelIndex& idx) {
+  //TENT
+  return m_mat->SafeElIndex(idx.column(), idx.row());
+}
+
+/*QModelIndex MatrixTableModel::parent(const QModelIndex& mi) const
+{
+    return QModelIndex();
+}
+
+bool QAbstractTableModel::hasChildren(const QModelIndex &parent) const
+{
+    if (parent.isValid())
+        return false;
+    return rowCount() > 0 && columnCount() > 0;
+}*/
+
+
+void MatrixTableModel::MatrixDestroying() {
+  if (!m_mat) return;
+  m_mat = NULL;
+  //maybe update things? really is only called instants before we get deleted anyway
+}
+
+int MatrixTableModel::rowCount(const QModelIndex& parent) const {
+  if (!m_mat) return 0;
+  if (m_mat->dims() < 1)
+    return 0;
+  else if (m_mat->dims() == 1)
+    return 1;
+  else return m_mat->dim(1);
+}
+
+bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
+  if (!m_mat) return false;
+  if (index.isValid() && role == Qt::EditRole) {
+    m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
+    emit dataChanged(index, index);
+    return true;
+  }
+  return false;
+}
+
+bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
+  // TODO:
+  return false;
+}
+
+bool MatrixTableModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {
+  bool rval = ValidateIndex(index);
+  if (rval) {
+    // TODO:
+  }
+  return rval;
 }
 

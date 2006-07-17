@@ -26,48 +26,11 @@
 #include "datatable.h"
 //#include "fontspec.h"
 
-#ifndef __MAKETA__
-#include <QAbstractTableModel> 
-#endif
 
 // forwards
-class DataTableModel;
 class tabDataTableViewType;
 class iDataTablePanel;
 
-
-class TAMISC_API DataTableModel: public QAbstractTableModel, public IDataLinkClient { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
-INHERITED(QAbstractTableModel)
-public:
-
-  DataTable*		dataTable() const {return m_dt;}
-  void			setDataTable(DataTable* value, bool notify = true);
-  
-  DataTableModel(QObject* parent = NULL);
-  ~DataTableModel(); //
-  
-public: // IDataLinkClient i/f
-  void*		This() {return this;} // reference to the 'this' pointer of the client object
-  TypeDef*	GetTypeDef() const {return &TA_DataTableModel;} // typedef of the dlc
-  void		DataLinkDestroying(taDataLink* dl); // override
-  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); // override
-
-public: // required implementations
-#ifndef __MAKETA__
-  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
-  QVariant 		headerData(int section, Qt::Orientation orientation, 
-    int role = Qt::DisplayRole) const; // override
-  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool 			setData(const QModelIndex& index, const QVariant& value, 
-    int role = Qt::EditRole); // override, for editing
-
-protected:
-  bool			ValidateIndex(const QModelIndex& index) const;
-  DataTable*		m_dt;
-#endif
-};
 
 
 class TAMISC_API tabDataTableViewType: public tabOViewType {

@@ -21,40 +21,67 @@
 
 #include "ta_stdef.h"
 #include "ta_matrix.h"
-
-#ifndef __MAKETA__
-#  include <QAbstractTableModel>
-#endif
+#include "ta_qttype.h"
+#include "ta_qtviewer.h"
 
 
-class MatrixTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
-friend class taMatrix;
-INHERITED(QAbstractTableModel)
+class TA_API tabMatrixViewType: public tabOViewType {
+INHERITED(tabOViewType)
 public:
-
-  taMatrix*		mat() const {return m_mat;}
-  
-  MatrixTableModel(taMatrix* mat_);
-  ~MatrixTableModel(); //
-  
-public: // required implementations
-#ifndef __MAKETA__
-  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
-  QVariant 		headerData(int section, Qt::Orientation orientation, 
-    int role = Qt::DisplayRole) const; // override
-  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool 			setData(const QModelIndex& index, const QVariant& value, 
-    int role = Qt::EditRole); // override, for editing
-
+  override int		BidForView(TypeDef*);
+  void			Initialize() {}
+  void			Destroy() {}
+  TA_VIEW_TYPE_FUNS(tabMatrixViewType, tabOViewType) //
 protected:
-  void			MatrixDestroying(); // clears our instance
-  bool			ValidateIndex(const QModelIndex& index) const;
-  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
-    // translates index into matrix coords; true if the index is valid
-  taMatrix*		m_mat;
-#endif
+//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
+  override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
+
+class TA_API iMatrixEditor: public QWidget {
+  // widget that includes a table editor plus higher dimension selectors
+INHERITED(QWidget)
+  Q_OBJECT
+public:
+  QVBoxLayout*		layOuter;
+  QHBoxLayout*		  layDims;
+  QTableView*		  tv;
+
+  void			setModel(MatrixTableModel* mod);
+  iMatrixEditor(QWidget* parent = NULL);
+  
+private:
+  void		init();
+};
+
+
+class TA_API iMatrixPanel: public iDataPanelFrame {
+  Q_OBJECT
+#ifndef __MAKETA__
+typedef iDataPanelFrame inherited;
+#endif
+public:
+  iMatrixEditor*	me;
+  
+  taMatrix*		mat() {return (m_link) ? (taMatrix*)(link()->data()) : NULL;}
+  override String	panel_type() const; // this string is on the subpanel button for this panel
+
+  override int 		EditAction(int ea);
+  void			FillList();
+  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
+
+  iMatrixPanel(taiDataLink* dl_);
+  ~iMatrixPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iMatrixPanel;}
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+
+/*protected slots: */
+};
+
 
 #endif

@@ -25,9 +25,11 @@
 #include "ta_data.h"
 #include "tamisc_TA_type.h"
 
+#ifndef __MAKETA__
+# include <QAbstractTableModel> 
+#endif
 #ifdef TA_GUI
 #include "fontspec.h"
-class DataTableModel;
 #endif
 
 
@@ -39,6 +41,7 @@ class Variant_Data;
 class float_Data;
 class int_Data;
 class byte_Data;
+class DataTableModel;
 
 class ClustNode; //
 
@@ -563,9 +566,7 @@ public:
   override int		NumListCols() const {return 3;} // Name, data type (float, etc.), disp options
   override String	GetColHeading(int col); // header text for the indicated column
 
-#ifdef TA_GUI
-  QAbstractItemModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
-#endif
+  DataTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
@@ -618,9 +619,8 @@ protected: // DataSink i/f
     {return SetValAsMatrix(data, chan, wr_itr);}
 
 protected:
-#ifdef TA_GUI
   DataTableModel*	m_dtm; // #IGNORE note: once we create, always exists
-#endif
+  
   DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
     const String& col_nm, DataTableCols* col_gp = NULL);
    // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
@@ -999,6 +999,39 @@ public:
   void	Copy_(const DT_GridViewSpec& cp);
   COPY_FUNS(DT_GridViewSpec, DT_ViewSpec);
   TA_BASEFUNS(DT_GridViewSpec);
+};
+
+
+class TAMISC_API DataTableModel: public QAbstractTableModel, public IDataLinkClient { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
+INHERITED(QAbstractTableModel)
+public:
+
+  DataTable*		dataTable() const {return m_dt;}
+  void			setDataTable(DataTable* value, bool notify = true);
+  
+  DataTableModel(QObject* parent = NULL);
+  ~DataTableModel(); //
+  
+public: // IDataLinkClient i/f
+  void*		This() {return this;} // reference to the 'this' pointer of the client object
+  TypeDef*	GetTypeDef() const {return &TA_DataTableModel;} // typedef of the dlc
+  void		DataLinkDestroying(taDataLink* dl); // override
+  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); // override
+
+public: // required implementations
+#ifndef __MAKETA__
+  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
+  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
+  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
+  QVariant 		headerData(int section, Qt::Orientation orientation, 
+    int role = Qt::DisplayRole) const; // override
+  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
+  bool 			setData(const QModelIndex& index, const QVariant& value, 
+    int role = Qt::EditRole); // override, for editing
+protected:
+  bool			ValidateIndex(const QModelIndex& index) const;
+  DataTable*		m_dt;
+#endif
 };
 
 

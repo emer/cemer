@@ -1371,7 +1371,7 @@ public:
   int 		Dump_Save_PathR(ostream& strm, void* base, void* par=NULL, int indent=0);
   // if there are sub-elements, save the path to them (return false if not)
 
-  int		Dump_Load(istream& strm, void* base, void* par=NULL);
+  int		Dump_Load(istream& strm, void* base, void* par=NULL, void** el = NULL);
   // called by the user to load an object
   int		Dump_Load_impl(istream& strm, void* base, void* par=NULL,
 			       const char* typnm=NULL);

@@ -2261,9 +2261,9 @@ bool DataViewer::IsMapped() {
   return (taMisc::gui_active && m_window);
 }
 
-int DataViewer::Load(istream& strm, TAPtr par) {
+int DataViewer::Load(istream& strm, TAPtr par, void** el) {
   if(taMisc::gui_active)  taMisc::Busy();
-  int rval = taDataView::Load(strm, par);
+  int rval = inherited::Load(strm, par, el);
   // updating of menus done by calling function..
   taMisc::DoneBusy();
   Changed(false);

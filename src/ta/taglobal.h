@@ -68,8 +68,8 @@
 #  define TA_OS_CYGWIN
 #  error "Cygwin is not supported for TA/PDP"
 #elif defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
-#  error "Win64 is not yet supported for TA/PDP (but should be soon...)"
 #  define TA_OS_WIN64
+#  error "Win64 is not yet supported for TA/PDP"
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #  define TA_OS_WIN32
 #elif defined(__MWERKS__) && defined(__INTEL__)
@@ -152,6 +152,14 @@
 # else
 #   define _WORDSIZE 32
 # endif
+#endif
+
+// byte order -- note, rarely used, primarily to optimize placement of rgb
+// not needed for MAKETA
+#ifdef TA_USE_QT
+#  define TA_BIG_ENDIAN Q_BIG_ENDIAN
+#  define TA_LITTLE_ENDIAN Q_LITTLE_ENDIAN
+#  define TA_BYTE_ORDER Q_BYTE_ORDER
 #endif
 
 // misc stuff

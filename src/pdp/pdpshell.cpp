@@ -864,8 +864,8 @@ const iColor* ProjectBase::GetObjColor(ViewColors vc) {
   return NULL;
 }
 
-int ProjectBase::Load(istream& strm, TAPtr par) {
-  int rval = inherited::Load(strm, par); // load-em-up
+int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
+  int rval = inherited::Load(strm, par, el); // load-em-up
   if (rval) {	 // don't do this as a dump_load_value cuz we need an updateafteredit..
     if (taMisc::gui_active) {
       pdpMisc::post_load_opr.Link(&wizards);

@@ -4537,7 +4537,7 @@ int TypeDef::Dump_Load_impl(istream&, void*, void*, const char*) {
   return true;
 }
 
-int TypeDef::Dump_Load(istream&, void*, void*) {
+int TypeDef::Dump_Load(istream&, void*, void*, void**) {
   return true;
 }
 

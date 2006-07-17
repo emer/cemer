@@ -87,16 +87,14 @@ Medium Important:
   (the visibile tab); had another viewer open rooted on XOR net; closed it, mysterious
   seg fault in taPtrList_impl::Remove (but nothing else indicated on Stack)
 * filer and related:
-  * saved a proj to name.proj and it actually saved to name.proj.gz
-  * made a new proj; selected file/save and it saved it without prompt
-    to BpProject_1.proj.gz (should have prompted, using that name)
-  * SaveAll menu missing
   * when clicking on Network->SaveAs menu, no default file in dialog
     (prob because still using the stream-based api, not the file-based)
 * in Script, when I load a script file, the Run button is not enabled
   (check the other buttons as well, enabling does not seem correct -- might
    be related to new enabling semantics for ghost)
 * in Script, when you compile, the "script compiled" check does not get checked
+* create a new matrix; choose SetGeomN from menu and change; panel is not updated;
+  only when you click to something else and return does panel show correct values
 
 Cosmetic/Usability/etc. (lower priority):
 
@@ -142,6 +140,12 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* Project::file_name (taFNBase) should prob not show, and def not save filename
+* filer and related:
+  * saved a proj to name.proj and it actually saved to name.proj.gz
+  * made a new proj; selected file/save and it saved it without prompt
+    to BpProject_1.proj.gz (should have prompted, using that name)
+  * SaveAll menu missing
 * overall application: Expert Mode vs. Novice (to control complexity/visibility)
 * created a new program subgroup from menu;
   went to its property sheet, renamed it;

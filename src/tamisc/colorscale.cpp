@@ -475,14 +475,7 @@ void ColorScale::MapColors() {
 
   maxout.SetColor(new iColor(*GetColor(colors.size-1),.25), &spec->background);
   minout.SetColor(new iColor(*GetColor(0),.25), &spec->background);
-#ifdef CYGWIN
-  // do not set alpha level on colors because it behaves differently than solid
-  // colors -- does not appear to be reset or something, causing wrong units to
-  // be highlighted in network viewer.
-  nocolor.SetColor(new iColor(*GetColor((colors.size+1)/2)),&spec->background);
-#else
   nocolor.SetColor(new iColor(*GetColor((colors.size+1)/2),.25),&spec->background);
-#endif
 }
 
 void ColorScale::DefaultChunks(){

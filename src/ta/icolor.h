@@ -21,6 +21,7 @@
 
 #include "ta_def.h"
 #include "taglobal.h"
+#include "ta_string.h"
 
 #ifdef TA_GUI
 class QColor; // 
@@ -30,11 +31,23 @@ class QColor; //
 class SoMFColor; // #IGNORE
 #endif
 
-//NOTE: floating point operations are provided to simplify the Iv->Qt port
-// forwards
-//class iBrush;
+class TA_API rgb_t { // very low-level class, esp provided for rgb_Matrix and raw image ops;\nwe use default copy constructor and assignment operator;\nDO NOT CHANGE BYTE ORDER -- these are compatible (on all endians) with the jpeg decode library, and enable superfast copying to our matrixes
+public:
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+  
+  int		toInt() const {return (r << 16) | (g << 8) | b;} // returns in RRGGBB web format
+  void		setInt(int i); // set from RRGGBB web format
+  const String	toString() const; // returns in hex RRGGBB web format
+  void		setString(const String& s); // set from hex RRGGBB web format
+  
+  inline operator String() const {return toString();}
+  
+  rgb_t() {r = 0; g = 0; b = 0;}
+};
 
-class TA_API iColor {
+class TA_API iColor { // value-type class used for specifying color values in a Qt and So-compatible way
 public:
   static const iColor	black_; // convenience -- can take its address to pass an iColor* for black
 
@@ -45,13 +58,13 @@ public:
   static bool  		find (const char* name, float& r, float& g, float& b); // for Iv compat
 
   iColor() {setRgb(0,0,0,1.0);} // black
-//use implicit  iColor(const iColor& src) {c = src;} // copy constructor
-  iColor(const iColor* src) {set(src);} // NULL converted to black
+//def  iColor(const iColor& src) {c = src;} // copy constructor
+  explicit iColor(const iColor* src) {set(src);} // NULL converted to black
   iColor(int r_, int g_, int b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
   iColor(float r_, float g_, float b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
-  iColor(float x) {setRgb(x, x, x, 1.0f);}
-  iColor(int rgb_) {setRgb(rgb_);} // hex Internet color value, b is lowest byte
-  iColor(const iColor& src, float a_) {setRgb(src.r, src.g, src.b, a_);} // for Iv compat
+  explicit iColor(float x) {setRgb(x, x, x, 1.0f);}
+  explicit iColor(int rgb_) {setRgb(rgb_);} // hex Internet color value, b is lowest byte
+  iColor(const iColor& src, float a_ = 1.0f) {setRgb(src.r, src.g, src.b, a_);} // for Iv compat
 
   void		getRgb(float& r_, float& g_, float& b_) const {
     r_ = ic2fc(r); g_ = ic2fc(g); b_ = ic2fc(b); }
@@ -90,11 +103,19 @@ public:
   void		copyTo(SoMFColor& col) const; //
 #endif
 
-protected:
-  unsigned char r;
-  unsigned char g;
-  unsigned char b;
-  unsigned char a; // for Iv/Qt porting
+#if (TA_BYTE_ORDER == TA_BIG_ENDIAN)
+  uint8_t	a; 
+  uint8_t 	r;
+  uint8_t 	g;
+  uint8_t 	b;
+#elif (TA_BYTE_ORDER == TA_LITTLE_ENDIAN)
+  uint8_t 	b;
+  uint8_t 	g;
+  uint8_t 	r;
+  uint8_t	a; 
+#else
+# error "Undefined byte order"
+#endif
 };
 
 

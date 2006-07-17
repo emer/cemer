@@ -695,11 +695,12 @@ int taBase::Load_File(TypeDef* td) {
   taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
   istream* strm = flr->Open();
+  taBase* el = NULL;
   if (strm)
-    rval = Load(*strm);
+    rval = Load(*strm, NULL, (void**)&el);
   
-  if (rval) {
-    SetFileName(flr->fname);
+  if (rval && el) {
+    el->SetFileName(flr->fname);
   }
   
   taRefN::unRefDone(flr);
@@ -712,11 +713,13 @@ int taBase::LoadAs_File(const String& fname, TypeDef* td) {
   taRefN::Ref(flr);
   flr->fname = fname;
   istream* strm = flr->Open();
+  taBase* el = NULL;
   if (strm)
-    rval = Load(*strm);
+    rval = Load(*strm, NULL, (void**)&el);
   
-  if (rval) {
-    SetFileName(flr->fname);
+  if (rval && el) {
+    
+    el->SetFileName(flr->fname);
   }
   taRefN::unRefDone(flr);
   return rval;

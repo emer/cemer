@@ -1,1 +1,67 @@
+Data Views
+
+The existence of N-D matrixes and reusing DataTable for Environment data motivates the need for various data views.
+
+Issues
+
+* geometry
+* meta data
+  
  
+Data Types
+
+int
+float
+string
+variant
+byte
+rgb/rgba (???)
+
+Display Types
+text
+color blocks
+submatrix
+
+Options
+
+l/r/s -- ex. int should be r, string l
+
+matrix display:
+  text
+  
+
+Role data the DataModel must provide:
+
+Qt::DisplayRole
+  QString, normal: using the text, for display (ex, might have formatting)
+Qt::DecorationRole
+(complicated: gets QPixMap from decoration() function)
+Qt::EditRole
+  QString, normal: using the text, for editing (ex. raw data, no formatting)
+{Qt::ToolTipRole
+Qt::StatusTipRole
+Qt::WhatsThisRole}
+  QString: app defined, might be data itself, or description
+Qt::SizeHintRole
+  QSize: size hint
+
+Qt::FontRole
+  QFont: font for the text
+Qt::TextAlignmentRole
+  int: TextAlignment flag
+Qt::BackgroundColorRole
+  QColor
+  but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
+Qt::TextColorRole
+  QColor: color of text
+Qt::CheckStateRole
+  Qt::CheckState int, in conjunction with check() function
+
+
+Low Level Support
+
+Put these in taDatatable_qt:
+
+* draw a float mat into a widget:
+  options: gridlines (width)
+* draw a rgb mat into a widget:

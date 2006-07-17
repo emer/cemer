@@ -818,7 +818,7 @@ public:
   virtual bool	Save(); // call to save the object to current file, or new file if new; 'true' if saved
   override int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // Save object to a file
-  int  		Load(istream& strm, TAPtr par=NULL);
+  int  		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
   // load object from a file
   int		Edit(bool wait=false);
   virtual void	Print(PrintFmt format, const char* fname = NULL);

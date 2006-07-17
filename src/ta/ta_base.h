@@ -490,9 +490,9 @@ public:
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
-  virtual int	 	Load(istream& strm, TAPtr par=NULL)
+  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL)
   // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
-    { return GetTypeDef()->Dump_Load(strm, (void*)this, par); }
+    { return GetTypeDef()->Dump_Load(strm, (void*)this, par, el); }
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
@@ -901,7 +901,7 @@ class TA_API taFBase: public taNBase {
 typedef taNBase inherited;
 #endif
 public:
-  String		file_name;
+  String		file_name; // #READ_ONLY #NO_SAVE
 
   override bool		SetFileName(const String& val)  {file_name = val; return true;} // #IGNORE
   override String	GetFileName() const { return file_name; } // #IGNORE

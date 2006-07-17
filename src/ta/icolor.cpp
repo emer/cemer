@@ -308,6 +308,31 @@ bool name2rgb(const char* name, int& value) {
   return false;
 }
 
+  
+//////////////////////////
+//  rgb_t		//
+//////////////////////////
+
+void rgb_t::setInt(int i) {
+  b = (uint8_t)(i & 0xFF);
+  i = i >> 8;
+  g = (uint8_t)(i & 0xFF);
+  i = i >> 8;
+  r = (uint8_t)(i & 0xFF);
+}
+
+void rgb_t::setString(const String& s) {
+  setInt(s.HexToInt());
+}
+
+const String rgb_t::toString() const {
+  return String(toInt(), "%x");
+}
+
+//////////////////////////
+//  iColor		//
+//////////////////////////
+
 const iColor	iColor::black_;
 
 bool iColor::find (const char* name, float& r, float& g, float& b) {

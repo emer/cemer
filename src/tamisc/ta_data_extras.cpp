@@ -94,6 +94,7 @@ void ImageReader::Initialize() {
   img_format = IF_AUTO;
   cur_img_format = img_format;
   m_mat = NULL;
+  m_rgb_mat = NULL;
 }
 
 void ImageReader::Destroy() {
@@ -125,7 +126,8 @@ taMatrix* ImageReader::GetDataMatrix_impl(int chan) {
   if (chan == chan_img)
     return m_mat;
     
-  switch (color_mode) {
+  //TODO: rgb_Matrix channel
+/*obs  switch (color_mode) {
   case CM_GRAYSCALE:
     switch (chan) {
     case chan_bw: return m_mat->GetFrameSlice_(0);
@@ -138,7 +140,7 @@ taMatrix* ImageReader::GetDataMatrix_impl(int chan) {
     case chan_b: return m_mat->GetFrameSlice_(2);
     default: return NULL;
     }
-  }
+  }*/
 }
 
 void ImageReader::ReadClose_impl() {
@@ -180,15 +182,18 @@ bool ImageReader::ReadImage_Jpeg() {
   
   // note: out size should = image size, since we aren't scaling
   //   comps should be 1 for gray and 3 for color
-  int components = cinfo.output_components; 
-  byte_Matrix* bmat = new byte_Matrix(3, cinfo.output_width, cinfo.output_height, components);
+  int comps = cinfo.output_components; 
+  byte_Matrix* bmat = new byte_Matrix(3, comps, cinfo.output_width, cinfo.output_height);
   SetMat(bmat);
 
-  int row_stride = cinfo.output_width;	/* JSAMPLEs per row in image_buffer */;
-  JSAMPLE* scanline = new JSAMPLE[row_stride * cinfo.rec_outbuf_height * components];
-
+//  int row_stride = cinfo.output_width;	/* JSAMPLEs per row in image_buffer */;
+//  JSAMPLE* scanline = new JSAMPLE[row_stride * cinfo.rec_outbuf_height * components];
+  int y =0;
   while (cinfo.output_scanline < cinfo.output_height) {
+    JSAMPLE* scanline = (JSAMPLE*)bmat->FastEl_(0, 0, y);
     int lread = jpeg_read_scanlines(&cinfo, &scanline, cinfo.rec_outbuf_height);
+    y += lread; // should be 1
+/*done inplace    int lread = jpeg_read_scanlines(&cinfo, &scanline, cinfo.rec_outbuf_height);
     int ctr = 0;
     int srow; 
     for (int y = 0; y < lread; y++) {
@@ -198,7 +203,7 @@ bool ImageReader::ReadImage_Jpeg() {
           bmat->FastEl(x, srow, comp) = (byte)(scanline[ctr++]);
         }
       }
-    }
+    }*/
   }
 
   jpeg_finish_decompress(&cinfo);
@@ -206,7 +211,7 @@ bool ImageReader::ReadImage_Jpeg() {
 
   fclose(infile);
  
-  delete [] scanline;
+//  delete [] scanline;
   return true;
 }
 
@@ -252,14 +257,13 @@ int ImageReader::sourceChannelCount() const {
 const String ImageReader::sourceChannelName(int chan) const {
 //note: it is safe to not care what current channel count is, because access by name checks
   static String nm_img("img");
-  static String nm_bw("bw");
-  static String nm_r("r");
-  static String nm_g("g");
-  static String nm_b("b");
+  
   if (chan == chan_img)
     return nm_img;
+  else return _nilString;
+  //TODO: rgb format
   
-  switch (color_mode) {
+/*obs  switch (color_mode) {
   case CM_GRAYSCALE:
     switch (chan) {
     case chan_bw: return nm_bw;
@@ -272,5 +276,5 @@ const String ImageReader::sourceChannelName(int chan) const {
     case chan_b: return nm_b;
     default: return _nilString;
     }
-  }
+  }*/
 }

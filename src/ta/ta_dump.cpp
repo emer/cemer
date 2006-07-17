@@ -1350,7 +1350,8 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
   return rval;
 }
 
-int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
+int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
+  if (el_) *el_ = NULL; //default if error
   if(base == NULL) {
     taMisc::Warning("*** Cannot load into NULL");
     return false;
@@ -1439,6 +1440,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par) {
   dumpMisc::path_subs.Reset();
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
+  if (el_) *el_ = (void*)el;
   return true;
 }
 

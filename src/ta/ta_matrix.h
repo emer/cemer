@@ -27,16 +27,18 @@
 #include "ta_group.h"
 #include "ta_TA_type.h"
 
+#ifndef __MAKETA__
+#  include <QAbstractTableModel>
+#endif
+
+
 // externals
 class TypeDef;
-#ifdef TA_GUI
-  class QAbstractItemModel;
-  class MatrixTableModel;
-#endif  
 
 // forwards this file
 class byte_Matrix; //
 class float_Matrix; //
+class MatrixTableModel;
 
 /* Matrix -- a specialized, richer implementation of Array
 
@@ -140,6 +142,7 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 
 class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS ref counted multi-dimensional data array
 INHERITED(taOBase)
+friend class MatrixTableModel;
 
 public: // ITypedObject i/f
 // TypeDef*		GetTypeDef() const; // in taBase
@@ -161,11 +164,11 @@ public: // IMatrix i/f
     {return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
     // (safely) returns the element as a string
   const String		SafeElAsStr_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_(idx)); else return _nilString; } 
+    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_Flat_(idx)); else return _nilString; } 
     // treats the matrix like a flat array, returns the element as a string
   
   void			SetFmStr_Flat(const String& str, int idx) 	
-    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_(idx), str); } 
+    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); } 
     // treats the matrix like a flat array, sets the element as a string
   
   const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
@@ -175,19 +178,19 @@ public: // IMatrix i/f
     {return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
     // (safely) returns the element as a variant
   const Variant		SafeElAsVar_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_(idx)); else return _nilVariant; } 
+    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_Flat_(idx)); else return _nilVariant; } 
     // treats the matrix like a flat array, returns the element as a variant
     
   void			SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0) 	
     {int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
-       El_SetFmVar_(FastEl_(idx), var); } 
+       El_SetFmVar_(FastEl_Flat_(idx), var); } 
     // (safely) sets the element as a variant
   void			SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
     {int idx; if ((idx = SafeElIndexN(indices)) >= 0)
-       El_SetFmVar_(FastEl_(idx), var); } 
+       El_SetFmVar_(FastEl_Flat_(idx), var); } 
     // (safely) sets the element as a variant
   void			SetFmVar_Flat(const Variant& var, int idx) 	
-    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_(idx), var); } 
+    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_Flat_(idx), var); } 
     // treats the matrix like a flat array, (safely) sets the element as a variant
    	
 public:
@@ -204,25 +207,25 @@ public:
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
   
   bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
-  
+  virtual int		defAlignment() const; // default Qt alignment, left for text, right for nums	
   int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
     // returns the flat base index of the specified frame
   
   // universal string access/set, for flat array
-  const String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_(idx)); } 
+  const String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_Flat_(idx)); } 
     // treats the matrix like a flat array, returns the element as a string
     
   // universal Variant access/set, for flat array
-  const Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_(idx)); } 
+  const Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_Flat_(idx)); } 
     // treats the matrix like a flat array, returns the element as a variant
     
   // universal numeric access -- primarily to make numeric ops efficient
   float			FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-    const {return El_GetFloat_(FastEl_(FastElIndex(d0, d1, d2, d3, d4))); }
+    const {return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
   float			FastElAsFloatN(const MatrixGeom& indices) const	
-    {return El_GetFloat_(FastEl_(FastElIndexN(indices))); }   
+    {return El_GetFloat_(FastEl_Flat_(FastElIndexN(indices))); }   
   float			FastElAsFloat_Flat(int idx) const 
-    {return El_GetFloat_(FastEl_(idx)); } 
+    {return El_GetFloat_(FastEl_Flat_(idx)); } 
   float			SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
     const {return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
     // (safely) returns the element as a variant
@@ -230,7 +233,7 @@ public:
     {return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
     // (safely) returns the element as a variant
   float			SafeElAsFloat_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_(idx)); else return 0.0f; } 
+    { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_Flat_(idx)); else return 0.0f; } 
     
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
     {return true;}
@@ -270,7 +273,7 @@ public:
     // return a slice, of exactly one frame; will have dim-1 of us
   
 #ifdef TA_GUI
-  QAbstractItemModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
+  MatrixTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
 #endif
   
   virtual void 		List(ostream& strm=cout) const; 	// List the items
@@ -284,12 +287,18 @@ public:
   void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
-public: // don't use these, internal use only
+public: // low-level, try not to use these, internal use only
   virtual void*		data() const = 0;  // #IGNORE
-  virtual void*		FastEl_(int i) = 0;   // #IGNORE the raw element in the flat space
-  virtual const void*	FastEl_(int i) const = 0;   // #IGNORE
+  virtual void*		FastEl_Flat_(int i) = 0;   // #IGNORE the raw element in the flat space _
+  virtual const void*	FastEl_Flat_(int i) const = 0;   // #IGNORE
+  const void*		FastEl_(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 
+    {return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4));} 
+    // the raw element in index space -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  const void*		FastElN_(const MatrixGeom& indices) const 
+    {return FastEl_Flat_(FastElIndexN(indices));} 
+  
   virtual const void*	SafeEl_(int i) const 
-    {if ((i > 0) && (i < size)) return FastEl_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
+    {if ((i > 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
   // every subclass should implement these:
   virtual float		El_GetFloat_(const void*) const	{ return 0.0f; } // #IGNORE
   virtual const String	El_GetStr_(const void*) const	{ return _nilString; } // #IGNORE
@@ -306,9 +315,8 @@ protected:
   int			alloc_size; // -1 means fixed (external data)
   int			slice_cnt; // number of extant slices -- slices force no reallocs
   taMatrix*		slice_par; // slice parent -- we ref/unref it
-#ifdef TA_GUI
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
-#endif  
+  
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
@@ -422,8 +430,8 @@ public:
   void	CutLinks() 	{SetArray_(NULL); taMatrix::CutLinks();}
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrixT, T)
 public:
-  override void*	FastEl_(int idx)	{ return &(el[idx]); } 
-  override const void*	FastEl_(int idx) const { return &(el[idx]); } 
+  override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
+  override const void*	FastEl_Flat_(int idx) const { return &(el[idx]); } 
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if ((el != NULL) && (alloc_size > 0)) delete [] el; el = (T*)nw;}
@@ -510,7 +518,7 @@ public:
   STATIC_CONST taMatrixPtr blank; // #HIDDEN #READ_ONLY 
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_taMatrixPtr; return FastEl_(i); }
+  { eltd = &TA_taMatrixPtr; return FastEl_Flat_(i); }
   void Initialize()	{};
   void Destroy()	{ };
   TA_BASEFUNS(MatrixPtr_Array);
@@ -546,6 +554,7 @@ protected: \
 
 class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE
 public:
+  override int		defAlignment() const; // default Qt alignment, left for text, right for nums	
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   
   void			Copy_(const String_Matrix& cp) {}
@@ -684,5 +693,65 @@ private:
 };
 
 //nn? SmartPtr_Of(Variant_Matrix) //
+
+class TA_API rgb_Matrix: public taMatrixT<rgb_t> { // #INSTANCE
+public:
+  override TypeDef*	GetDataTypeDef() const {return &TA_rgb_t;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+    // accepts in form: "r g b" or RRGGBB in hex
+  
+  void			Copy_(const rgb_Matrix& cp) {}
+  COPY_FUNS(rgb_Matrix, taMatrixT<rgb_t>)
+  TA_MATRIX_FUNS(rgb_Matrix, rgb_t)
+  
+public: //
+  //note: for streaming, we use web RGB hex value
+  override const String	El_GetStr_(const void* it) const { return *((rgb_t*)it); } // #IGNORE implicit, to hex web format
+  override void		El_SetFmStr_(void* it, const String& str) {((rgb_t*)it)->setString(str);}       // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(((rgb_t*)it)->toInt());} // #IGNORE we use the int rep for variants
+  override void		El_SetFmVar_(void* it, const Variant& var) {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
+protected:
+  STATIC_CONST rgb_t	blank; // #IGNORE
+private:
+  void		Initialize() {}
+  void		Destroy() {} //
+};
+
+//nn? SmartPtr_Of(byte_Matrix)
+
+class TA_API MatrixTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
+friend class taMatrix;
+INHERITED(QAbstractTableModel)
+public:
+#ifndef __MAKETA__
+  int			matIndex(const QModelIndex& idx); // #IGNORE flat matrix data index
+#endif //note: bugs in maketa necessitated these sections
+  taMatrix*		mat() const {return m_mat;}
+  
+  MatrixTableModel(taMatrix* mat_); // note: mat is always valid, we destroy this on mat dest
+  ~MatrixTableModel(); //
+  
+public: // required implementations
+#ifndef __MAKETA__
+  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
+  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
+  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
+  QVariant 		headerData(int section, Qt::Orientation orientation, 
+    int role = Qt::DisplayRole) const; // override
+  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
+  bool 			setData(const QModelIndex& index, const QVariant& value, 
+    int role = Qt::EditRole); // override, for editing
+
+protected:
+  void			MatrixDestroying(); // clears our instance
+  bool			ValidateIndex(const QModelIndex& index) const;
+  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
+    // translates index into matrix coords; true if the index is valid
+  taMatrix*		m_mat;
+#endif
+};
+
+
 
 #endif

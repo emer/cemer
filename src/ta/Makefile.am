@@ -10,7 +10,6 @@ if TA_GUI
 TAHEADS_GUI =\
 	@abs_srcdir@/ta_plugin.h \
 	@abs_srcdir@/ta_qt.h \
-	@abs_srcdir@/ta_matrix_qt.h \
 	@abs_srcdir@/ta_qtdata_def.h \
 	@abs_srcdir@/ta_qtdata.h \
 	@abs_srcdir@/ta_qtdialog.h \
@@ -19,6 +18,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtclipdata.h \
 	@abs_srcdir@/ta_qtbrowse_def.h \
 	@abs_srcdir@/ta_qtviewer.h \
+	@abs_srcdir@/ta_matrix_qt.h \
 	@abs_srcdir@/ta_qtbrowse.h \
 	@abs_srcdir@/ta_classbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
@@ -28,7 +28,6 @@ TAHEADS_GUI =\
 HEADS_GUI =\
 	ta_plugin.h \
 	ta_qt.h \
-	ta_matrix_qt.h \
 	ta_qtdata_def.h \
 	ta_qtdata.h \
 	ta_qtdialog.h \
@@ -37,6 +36,7 @@ HEADS_GUI =\
 	ta_qtbrowse_def.h \
 	ta_qtgroup.h \
 	ta_qtviewer.h \
+	ta_matrix_qt.h \
 	ta_qtbrowse.h \
 	ta_classbrowse.h \
 	ta_qtcursors.h \
@@ -49,7 +49,6 @@ SRCS_GUI =\
 	ta_qt.cpp \
 	ta_qt.moc.cpp \
 	ta_type_qt.cpp \
-	ta_matrix_qt.cpp \
 	ta_qtdata.cpp \
 	ta_qtdata_def.moc.cpp \
 	ta_qtdata.moc.cpp \
@@ -59,6 +58,8 @@ SRCS_GUI =\
 	ta_qtgroup.moc.cpp \
 	ta_qtviewer.cpp \
 	ta_qtviewer.moc.cpp \
+	ta_matrix_qt.cpp \
+	ta_matrix_qt.moc.cpp \
 	ta_qtbrowse.cpp \
 	ta_qtbrowse.moc.cpp \
 	ta_classbrowse.cpp \

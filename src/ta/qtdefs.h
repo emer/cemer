@@ -75,6 +75,7 @@ class	QMenuBar;		// #IGNORE
 class	QMenuItem;		// #IGNORE 
 class	QMessageBox;		// #IGNORE 
 class	QMimeSource;		// #IGNORE 
+class	QModelIndex;		// #IGNORE
 class	QPainter;		// #IGNORE 
 class	QPixmap;		// #IGNORE 
 class	QPoint;			// #IGNORE 

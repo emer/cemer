@@ -265,7 +265,7 @@ public:
   virtual void MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
   virtual BaseSpec_Group* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg); // find a given spec group and if not found, make it
 
-  int	Load(istream& strm, TAPtr par=NULL);
+  override int	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
   int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
   int 	SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 

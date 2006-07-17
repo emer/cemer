@@ -16,100 +16,155 @@
 
 #include "ta_matrix_qt.h"
 
-/** \class MatrixTableModel
+#include <QTableView>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
-  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
-  
-  We can only map the inner 2-most of the N dimensions as follows:
-    0: column
-    1: row
-    
-  If there are more than 2 dimensions, then table cells will refer to a submatrix of the remaining
-  dimensions.
+//////////////////////////
+// tabMatrixViewType	//
+//////////////////////////
 
-*/
+int tabMatrixViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taMatrix))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
 
-MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
-:inherited(NULL)
+/*taiDataLink* tabDataTableViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabListDataLink((taList_impl*)data_);
+} */
+
+void tabMatrixViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
-  m_mat = mat_;
+  inherited::CreateDataPanel_impl(dl_);
+  iMatrixPanel* dp = new iMatrixPanel(dl_);
+  DataPanelCreated(dp);
 }
 
-MatrixTableModel::~MatrixTableModel() {
-  m_mat = NULL;
+//////////////////////////
+//    iMatrixEditor 	//
+//////////////////////////
+
+iMatrixEditor::iMatrixEditor(QWidget* parent)
+:inherited(parent)
+{
+  init();
 }
 
-int MatrixTableModel::columnCount(const QModelIndex& parent) const {
-  if (!m_mat) return 0;
-  if (m_mat->dims() < 1)
-    return 0;
-  else return m_mat->dim(0);
+void iMatrixEditor::init() {
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(2);
+  //TODO: dim box enabling
+  layDims = new QHBoxLayout(layOuter);
+  tv = new QTableView(this);
+  layOuter->addWidget(tv);
 }
 
-QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
-  if (!m_mat) return QVariant();
-  //TEMP
-  return "test";
+void iMatrixEditor::setModel(MatrixTableModel* mod) {
+// todo: set dims
+  tv->setModel(mod);
 }
 
-Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
-  if (!m_mat) return 0;
-  Qt::ItemFlags rval = 0;
-  if (ValidateIndex(index)) {
-    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    //only editable if 2-d or less
-    if (m_mat->dims() <= 2)  
-      rval |= Qt::ItemIsEditable;
+
+//////////////////////////
+//    iMatrixPanel 	//
+//////////////////////////
+
+iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  me = new iMatrixEditor();
+  setCentralWidget(me); //sets parent
+  taMatrix* mat_ = mat();
+  if (mat_) {
+    me->setModel(mat_->GetDataModel());
+  }
+/*  list->setSelectionMode(QListView::Extended);
+  list->setShowSortIndicator(true);
+  // set up number of cols, based on link
+  list->addColumn("#");
+  for (int i = 0; i < link()->NumListCols(); ++i) {
+    list->addColumn(link()->GetColHeading(i));
+  }
+  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
+      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
+  connect(list, SIGNAL(selectionChanged()),
+      this, SLOT(list_selectionChanged()) );
+  FillList(); */
+}
+
+iMatrixPanel::~iMatrixPanel() {
+}
+
+void iMatrixPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+//TODO: maybe we should do something less crude???
+//  idt->updateConfig();
+}
+
+int iMatrixPanel::EditAction(int ea) {
+  int rval = 0;
+
+  ISelectable_PtrList sel_list;
+  GetSelectedItems(sel_list);
+  ISelectable* ci = sel_list.SafeEl(0);
+  if (ci)  {
+    rval = ci->EditAction_(sel_list, ea);
   }
   return rval;
 }
 
-QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  if (role != Qt::DisplayRole)
-    return QVariant();
-//TODO: make the headers show the dimenion # when > 2
-  if (orientation == Qt::Horizontal)
-    return QString("C%1").arg(section);
-  else
-    return QString("R%1").arg(section);
-}
+int iMatrixPanel::GetEditActions() {
+  int rval = 0;
 
-void MatrixTableModel::MatrixDestroying() {
-  if (!m_mat) return;
-  m_mat = NULL;
-  //maybe update things? really is only called instants before we get deleted anyway
-}
-
-int MatrixTableModel::rowCount(const QModelIndex& parent) const {
-  if (!m_mat) return 0;
-  if (m_mat->dims() < 1)
-    return 0;
-  else if (m_mat->dims() == 1)
-    return 1;
-  else return m_mat->dim(1);
-}
-
-bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
-  if (!m_mat) return false;
-  if (index.isValid() && role == Qt::EditRole) {
-  //TODO:
-
-//ex      stringList.replace(index.row(), value.toString());
-      emit dataChanged(index, index);
-      return true;
-  }
-  return false;
-}
-
-bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
-  // TODO:
-  return false;
-}
-
-bool MatrixTableModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {
-  bool rval = ValidateIndex(index);
-  if (rval) {
-    // TODO:
+  ISelectable_PtrList sel_list;
+  GetSelectedItems(sel_list);
+  ISelectable* ci = sel_list.SafeEl(0);
+  if (ci)  {
+    rval = ci->GetEditActions_(sel_list);
+    // certain things disallowed if more than one item selected
+    if (sel_list.size > 1) {
+      rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
+    }
   }
   return rval;
 }
+
+void iMatrixPanel::GetSelectedItems(ISelectable_PtrList& lst) {
+/*TODO  QListViewItemIterator it(list, QListViewItemIterator::Selected);
+  while (it.current()) {
+    lst.Add((taiListDataNode*)it.current());
+    ++it;
+  } */
+}
+
+/*void iMatrixPanel::idt_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
+  //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
+  taiListDataNode* nd = (taiListDataNode*)item;
+  if (nd == NULL) return; //TODO: could possibly be multi select
+
+  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
+  //TODO: any for us first (ex. delete)
+
+  ISelectable_PtrList sel_list;
+  GetSelectedItems(sel_list);
+  nd->FillContextMenu(sel_list, menu); // also calls link menu filler
+
+  //TODO: any for us last (ex. delete)
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
+}
+
+void iMatrixPanel::list_selectionChanged() {
+  viewer_win()->UpdateUi();
+}*/
+
+
+String iMatrixPanel::panel_type() const {
+  static String str("Edit Matrix");
+  return str;
+}
+

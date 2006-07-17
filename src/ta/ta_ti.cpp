@@ -79,6 +79,8 @@ template class TA_API taMatrixT<int>;
   const int int_Matrix::blank = 0;
 template class TA_API taMatrixT<unsigned char>;
   const unsigned char byte_Matrix::blank = '\0';
+template class TA_API taMatrixT<rgb_t>;
+  const rgb_t rgb_Matrix::blank;
 
 template class TA_API taList<taGroup_impl>;
 template class TA_API taGroup<taBase>;

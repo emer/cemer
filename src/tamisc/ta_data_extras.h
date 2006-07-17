@@ -60,16 +60,12 @@ class TAMISC_API ImageReader: public DataBlock {// #INSTANCE provides ability to
 INHERITED(DataBlock)
 public:
   enum Channels {
-    chan_img		= 0, // the entire image matrix, [w+bord, h+bord, comps]
-    chan_bw		= 1, // GRAY: the b&w channel [w+bord, h+bord], 
-    chan_r		= 1, // RGB: the red channel [w+bord, h+bord]
-    chan_g		= 2, // RGB: the b&w channel [w+bord, h+bord]
-    chan_b		= 3  // RGB: the b&w channel [w+bord, h+bord]
+    chan_img		= 0 // the entire image matrix, [h, w, comps]
   };
   
   enum ColorMode { // the color mode to use for reading
     CM_GRAYSCALE,	// read images in b&w only, 1 channel: bw (HxW byte array)
-    CM_RGB		// RGB mode, 3 channels: r, g, b (HxW byte arrays)
+    CM_RGB		// RGB mode, 3 channels: r, g, b (H x W x r=0,g=1,b=2 byte array)
   };
   
   enum ImageFormat { // the type of image encoding
@@ -92,7 +88,8 @@ public:
   TA_BASEFUNS(ImageReader)
   
 protected:
-  taMatrix*		m_mat; // we dynamically allocate each time, dims: [w h ch]
+  taMatrix*		m_mat; // we dynamically allocate each time, dims: [w h ch] 0=r,1=g,2=b
+  rgb_Matrix*		m_rgb_mat; // we do this by just slicing the m_mat and fudging the dims
   
   bool 			ReadImage_Jpeg();
   void			SetMat(taMatrix* new_mat);
