@@ -2,6 +2,8 @@ TODO list for CSS:
 
 Immediate:
 
+- Breakpoints at pc = 0 don't work: why??
+
 - 2 prompts at start: why?
 
 - fpe test

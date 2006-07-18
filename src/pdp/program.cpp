@@ -1111,15 +1111,18 @@ void Program::UpdateAfterEdit() {
 }
 
 int Program::Call(Program* caller) {
-//TODO: need to implement a css intrinsic call, which maintains css stack, etc.
-  return Run_impl();
+  int rval = Cont_impl();
+  if(run_state != STOP)
+    script->Restart();		// restart script at beginning if run again	
+  return rval;
 } 
 
-int Program::CallInit(Program* caller){
-//TODO: need to implement a css intrinsic call, which maintains css stack, etc.
-  return Run_impl();
+int Program::CallInit(Program* caller) {
+  setRunState(INIT); // this is redundant if called from an existing INIT but otherwise needed
+  int rval = Run_impl();
+  script->Restart();		// for init, always restart script at beginning if run again	
+  return rval;
 } 
-
 
 void Program::Init() {
   top_prog = this;
@@ -1133,6 +1136,7 @@ void Program::Init() {
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
   setRunState(DONE);
+  script->Restart();		// restart script at beginning if run again
 } 
 
 void Program::InitScriptObj_impl() {
@@ -1145,34 +1149,6 @@ void Program::PreCompileScript_impl() {
   UpdateProgVars();
 }
 
-void Program::Run() {
-  top_prog = this;
-  taMisc::Busy();
-  setRunState(RUN);
-  Run_impl();
-  taMisc::DoneBusy();
-  if (ret_val != 0) //TODO: use enums and sensible output string
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(ret_val)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
-  // unless we were stopped, we are done
-  if (run_state != STOP)
-    setRunState(DONE);
-} 
-
-int Program::Run_impl() {
-  ret_val = RV_OK;
-  bool ran_ok = RunScript();
-  if (!ran_ok) { // false means a compile error
-    ret_val = RV_COMPILE_ERR;
-  }
-  
-  //note: shared var state likely changed, so update gui
-  DataChanged(DCR_ITEM_UPDATED);
-  return ret_val;
-}
-
 void Program::setRunState(RunState value) {
   //note: run_state is static/global, but its gui effects are instance
   if (run_state == value) return;
@@ -1180,34 +1156,69 @@ void Program::setRunState(RunState value) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
-void Program::Step() {
-//TODO: no correct intrinsic support yet, so acts just like Run
+int Program::Run_impl() {
+  ret_val = RV_OK;
+  if(!CompileScript())
+    ret_val = RV_COMPILE_ERR;
+  else
+    script->Run();
+  //note: shared var state likely changed, so update gui
+  DataChanged(DCR_ITEM_UPDATED);
+  return ret_val;
+}
+
+int Program::Cont_impl() {
+  ret_val = RV_OK;
+  if(!CompileScript())
+    ret_val = RV_COMPILE_ERR;
+  else
+    script->Cont();
+  //note: shared var state likely changed, so update gui
+  DataChanged(DCR_ITEM_UPDATED);
+  return ret_val;
+}
+
+void Program::Run() {
   top_prog = this;
   taMisc::Busy();
-  setRunState(STEP);
-  Run_impl();
+  setRunState(RUN);
+  Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) //TODO: use enums and sensible output string
     QMessageBox::warning(NULL, QString("Operation Failed"),
       String(
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
-  //TODO: after the last iteration of the topdog, we have to set DONE
-  if (run_state != STOP)
+  // unless we were stopped, we are done
+  if (run_state != STOP) {
+    script->Restart();
     setRunState(DONE);
+  }
+} 
+
+void Program::Step() {
+  top_prog = this;
+  taMisc::Busy();
+  setRunState(STEP);
+  Cont_impl();
+  taMisc::DoneBusy();
+  if (ret_val != 0) {//TODO: use enums and sensible output string
+    QMessageBox::warning(NULL, QString("Operation Failed"),
+      String(
+      "The Program did not run -- ret_val=").cat(String(ret_val)), 
+      QMessageBox::Ok, QMessageBox::NoButton);
+  }
+  if (run_state != STOP) {	// if not stopped (stepping causes a stop)
+    script->Restart();
+    setRunState(DONE);
+  }
 }
 
 void Program::Stop() {
-//TODO: may need to add a separate STOP_REQ state to handle between the time
-// we are running and when we actually Stop
-  //TODO: need to add better support so we can restart -- this just kicks out
+  //TODO: may need to add a separate STOP_REQ state to handle between the time
+  // we are running and when we actually Stop (not for css..)
   script->Stop();
-  // WARNING: stopping Init may leave in incomplete state -- should only be
-  // needed if something loops improperly in an Init
-  if (run_state != INIT)
-    setRunState(STOP);
-  else
-    setRunState(DONE);
+  setRunState(STOP);
 }
 
 void Program::CmdShell() {
@@ -1271,12 +1282,12 @@ const String Program::scriptString() {
     if (sub_progs.size > 0) {
       if (init_els.size >0) m_scriptCache += "\n";
       m_scriptCache += "  // init any subprogs that could be called from this one\n";
-      m_scriptCache += "  {Program* target;\n";
+      m_scriptCache += "  { Program* target;\n";
       for (int i = 0; i < sub_progs.size; ++i) {
         Program* target = sub_progs.FastEl(i);
-        m_scriptCache += "  if (ret_val != 0) return; // checks previous\n"; 
-        m_scriptCache += "  target = " + target->GetPath() + ";\n";
-        m_scriptCache += "  ret_val = target->CallInit(this);\n"; 
+        m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
+        m_scriptCache += "    target = " + target->GetPath() + ";\n";
+        m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
       }
       m_scriptCache += "  }\n";
     }
@@ -1284,17 +1295,16 @@ const String Program::scriptString() {
     
     m_scriptCache += "void __Prog() {\n";
     m_scriptCache += prog_els.GenCss(1);
+    m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
     m_scriptCache += "}\n\n";
     m_scriptCache += "\n";
     m_dirty = false;
     
     m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-    m_scriptCache += "if ((run_state == Program::RUN) || \n";
-    m_scriptCache += "    (run_state == Program::STEP))\n";
-    m_scriptCache += "{\n";
-    m_scriptCache += "  __Prog();\n";
-    m_scriptCache += "} else if (run_state == Program::INIT) {\n";
+    m_scriptCache += "if (run_state == Program::INIT) {\n";
     m_scriptCache += "  __Init();\n";
+    m_scriptCache += "} else {\n";
+    m_scriptCache += "  __Prog();\n";
     m_scriptCache += "}\n";
   }
   return m_scriptCache;
@@ -1304,8 +1314,16 @@ bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
   QCoreApplication::processEvents();
-  //TODO: may need to have the STOP_REQ state
-  return (run_state == STOP);
+  // NOTE: the return value of this function is not actually what determines stopping
+  // the above processEvents will process any Stop events and this will directly cause
+  // css to stop in its tracks.
+  if(run_state == STOP) return true;
+  if((run_state == STEP) && (step_prog.ptr() == this)) {
+    script->Stop();
+    run_state = STOP;
+//     Stop();			// time for us to stop
+  }
+  return false;
 }
 
 void  Program::UpdateProgVars() {

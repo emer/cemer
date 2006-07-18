@@ -1,1439 +1,1438 @@
 // ta_Dump File v2.0
 BpProject .projects[0] {
 TypeDefault_Group .projects[0].defaults { 
-    TypeDefault_Group .projects[0].defaults = [2] {
-      TypeDefault @[0] { 
-	taBase_List @.active_membs = [4] {
-	  NameValue @[0] { };
-	  NameValue @[1] { };
-	  NameValue @[2] { };
-	  NameValue @[3] { };
-	};
-      };
-      TypeDefault @[1] { 
-	taBase_List @.active_membs = [2] {
-	  NameValue @[0] { };
-	  NameValue @[1] { };
-	};
-      };
-    };
-   };
- TypeDefault_Group .projects[0].defaults {
-  name=;
-  el_typ=TypeDefault;
-  el_def=0;
-  TypeDefault @[0] {
-   name="Projection";
-   default_type=Projection;
-   active_membs {
-    name="taBase_Group_6";
-    el_typ=NameValue;
-    el_def=0;
-    NameValue @[0] {
-     name="spec";
-     value="{type=FullPrjnSpec: spec=NULL: }";
-    };
-    NameValue @[1] {
-     name="con_type";
-     value="BpCon";
-    };
-    NameValue @[2] {
-     name="con_gp_type";
-     value="BpCon_Group";
-    };
-    NameValue @[3] {
-     name="con_spec";
-     value="{type=BpConSpec: spec=NULL: }";
-    };
-   };
-  };
-  TypeDefault @[1] {
-   name="Layer";
-   default_type=Layer;
-   active_membs {
-    name="taBase_Group_1";
-    el_typ=NameValue;
-    el_def=0;
-    NameValue @[0] {
-     name="units";
-     value="Size: 0 (BpUnit)";
-    };
-    NameValue @[1] {
-     name="unit_spec";
-     value="{type=BpUnitSpec: spec=NULL: }";
-    };
-   };
-  };
- };
-
-  Wizard_Group @.wizards = [1] {
-    BpWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
-	LayerWizEl @[0] { };
-	LayerWizEl @[1] { };
-	LayerWizEl @[2] { };
-      };
-    };
-  };
-
-  BaseSpec_Group @.specs = [3] {
-    BpUnitSpec @[0] { };
-    BpConSpec @[1] { };
-    FullPrjnSpec @[2] { };
-  };
-
-  Network_Group @.networks = [1] {
-    BpNetwork @[0] { 
-      Layer_Group @.layers = [3] {
-	Layer @[0] { };
-	Layer @[1] { 
-	  Projection_Group @.projections = [1] {
-	    Projection @[0] { };
-	  };
-	};
-	Layer @[2] { 
-	  Projection_Group @.projections = [1] {
-	    Projection @[0] { };
-	  };
-	};
-      };
-    };
-  };
-
-  DataTable_Group @.data = [3] {
-    DataTable @[0] { 
-      DataTableCols @.data = [2] {
-	float_Data @[0] { };
-	float_Data @[1] { };
-      };
-    };
-    DataTable @[1] { 
-      DataTableCols @.data = [13] {
-	int_Data @[0] { };
-	int_Data @[1] { };
-	float_Data @[2] { };
-	float_Data @[3] { };
-	float_Data @[4] { };
-	float_Data @[5] { };
-	float_Data @[6] { };
-	float_Data @[7] { };
-	float_Data @[8] { };
-	float_Data @[9] { };
-	float_Data @[10] { };
-	float_Data @[11] { };
-	int_Data @[12] { };
-      };
-    };
-    DataTable @[2] { 
-      DataTableCols @.data = [6] {
-	int_Data @[0] { };
-	float_Data @[1] { };
-	float_Data @[2] { };
-	String_Data @[3] { };
-	String_Data @[4] { };
-	int_Data @[5] { };
-      };
-    };
-  };
-
-  ProgVar_List @.global_vars = [3] {
-    ObjectProgVar @[0] {    value 11 0;
+TypeDefault_Group .projects[0].defaults = [2] {
+TypeDefault @[0] { 
+taBase_List @.active_membs = [4] {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
 };
-    EnumProgVar @[1] { };
-    ObjectProgVar @[2] {    value 11 0;
+};
+TypeDefault @[1] { 
+taBase_List @.active_membs = [2] {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
 };
   };
-
-  Program_Group @.programs = [6] {
-    Program @[0] { 
-      ProgVar_List @.global_vars = [1] {
-	ProgVar @[0] { };
-      };
-
-      ProgEl_List @.init_els = [2] {
-	MethodCallEl @[0] { };
-	MethodCallEl @[1] { };
-      };
-
-      ProgEl_List @.prog_els = [3] {
-	MethodCallEl @[0] { };
-	PreTestLoopEl @[1] { 
-	  ProgEl_List @.loop_els = [1] {
-	    ProgramCallEl @[0] { };
-	  };
-	};
-	MethodCallEl @[2] { };
-      };
-    };
-    Program @[1] { 
-      ProgVar_List @.global_vars = [2] {
-	ObjectProgVar @[0] {      value 11 0;
+TypeDefault_Group .projects[0].defaults {
+name=;
+el_typ=TypeDefault;
+el_def=0;
+TypeDefault @[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+name="taBase_Group_6";
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
 };
-	ProgVar @[1] { };
-      };
-
-      ProgEl_List @.prog_els = [5] {
-	MethodCallEl @[0] { };
-	MethodCallEl @[1] { };
-	PreTestLoopEl @[2] { 
-	  ProgEl_List @.loop_els = [5] {
-	    ProgramCallEl @[0] { };
-	    ProgramCallEl @[1] { };
-	    ProgramCallEl @[2] { };
-	    MethodCallEl @[3] { };
-	    UserScriptEl @[4] { };
-	  };
-	};
-	MethodCallEl @[3] { };
-	UserScriptEl @[4] { };
-      };
-    };
-    Program @[2] { 
-      ProgEl_List @.prog_els = [5] {
-	MethodCallEl @[0] { };
-	MethodCallEl @[1] { };
-	MethodCallEl @[2] { };
-	MethodCallEl @[3] { };
-	UserScriptEl @[4] { };
-      };
-    };
-    Program @[3] { 
-      taBase_List @.prog_objs = [1] {
-	LayerWriter_List @[0] = [2] { 
-	  LayerWriter @[0] { };
-	  LayerWriter @[1] { };
-	};
-      };
-
-      ProgVar_List @.global_vars = [1] {
-	ObjectProgVar @[0] { };
-      };
-
-      ProgEl_List @.prog_els = [2] {
-	UserScriptEl @[0] { };
-	MethodCallEl @[1] { };
-      };
-    };
-    Program @[4] { 
-      taBase_List @.prog_objs = [1] {
-	NetMonitor @[0] { 
-	  NetMonItem_List @.items = [6] {
-	    NetMonItem @[0] { };
-	    NetMonItem @[1] { };
-	    NetMonItem @[2] { };
-	    NetMonItem @[3] { };
-	    NetMonItem @[4] { };
-	    NetMonItem @[5] { };
-	  };
-	};
-      };
-
-      ProgVar_List @.global_vars = [1] {
-	ObjectProgVar @[0] {      value 11 0;
+NameValue @[1] {
+name="con_type";
+value="BpCon";
 };
-      };
-
-      ProgEl_List @.init_els = [1] {
-	MethodCallEl @[0] { };
-      };
-
-      ProgEl_List @.prog_els = [3] {
-	MethodCallEl @[0] { };
-	MethodCallEl @[1] { };
-	MethodCallEl @[2] { };
-      };
-    };
-    Program @[5] { 
-      ProgVar_List @.global_vars = [1] {
-	ObjectProgVar @[0] {      value 11 0;
+NameValue @[2] {
+name="con_gp_type";
+value="BpCon_Group";
 };
-      };
+NameValue @[3] {
+name="con_spec";
+value="{type=BpConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[1] {
+name="Layer";
+default_type=Layer;
+active_membs {
+name="taBase_Group_1";
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="units";
+value="Size: 0 (BpUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=BpUnitSpec: spec=NULL: }";
+};
+};
+};
+};
 
-      ProgEl_List @.prog_els = [2] {
-	MethodCallEl @[0] { };
-	MethodCallEl @[1] { };
-      };
-    };
-  };
+Wizard_Group @.wizards = [1] {
+BpWizard @[0] { 
+taBase_List @.layer_cfg = [3] {
+LayerWizEl @[0] { };
+LayerWizEl @[1] { };
+LayerWizEl @[2] { };
+};
+};
+};
 
-  Script_Group @.scripts = [3] {
-    Script @[0] { };
-    Script @[1] { };
-    Script @[2] { };
-  };
+BaseSpec_Group @.specs = [3] {
+BpUnitSpec @[0] { };
+BpConSpec @[1] { };
+FullPrjnSpec @[2] { };
+};
 
-  taBase_List @.test_objs = [1] {
-    ImageReader @[0] { };
-  };
+Network_Group @.networks = [1] {
+BpNetwork @[0] { 
+Layer_Group @.layers = [3] {
+Layer @[0] { };
+Layer @[1] { 
+Projection_Group @.projections = [1] {
+Projection @[0] { };
+};
+};
+Layer @[2] { 
+Projection_Group @.projections = [1] {
+Projection @[0] { };
+};
+};
+};
+};
+};
 
-  RGBA_List @.view_colors = [20] {
-    RGBA @[0] { };
-    RGBA @[1] { };
-    RGBA @[2] { };
-    RGBA @[3] { };
-    RGBA @[4] { };
-    RGBA @[5] { };
-    RGBA @[6] { };
-    RGBA @[7] { };
-    RGBA @[8] { };
-    RGBA @[9] { };
-    RGBA @[10] { };
-    RGBA @[11] { };
-    RGBA @[12] { };
-    RGBA @[13] { };
-    RGBA @[14] { };
-    RGBA @[15] { };
-    RGBA @[16] { };
-    RGBA @[17] { };
-    RGBA @[18] { };
-    RGBA @[19] { };
-  };
+DataTable_Group @.data = [3] {
+DataTable @[0] { 
+DataTableCols @.data = [2] {
+float_Data @[0] { };
+float_Data @[1] { };
+};
+};
+DataTable @[1] { 
+DataTableCols @.data = [13] {
+int_Data @[0] { };
+int_Data @[1] { };
+float_Data @[2] { };
+float_Data @[3] { };
+float_Data @[4] { };
+float_Data @[5] { };
+float_Data @[6] { };
+float_Data @[7] { };
+float_Data @[8] { };
+float_Data @[9] { };
+float_Data @[10] { };
+float_Data @[11] { };
+int_Data @[12] { };
+};
+};
+DataTable @[2] { 
+DataTableCols @.data = [6] {
+int_Data @[0] { };
+float_Data @[1] { };
+float_Data @[2] { };
+String_Data @[3] { };
+String_Data @[4] { };
+int_Data @[5] { };
+};
+};
+};
+
+ProgVar_List @.global_vars = [3] {
+ObjectProgVar @[0] { value 11 0;
+};
+EnumProgVar @[1] { };
+ObjectProgVar @[2] { value 11 0;
+};
+};
+
+Program_Group @.programs = [6] {
+Program @[0] { 
+ProgVar_List @.global_vars = [1] {
+ProgVar @[0] { };
+};
+
+ProgEl_List @.init_els = [2] {
+MethodCallEl @[0] { };
+MethodCallEl @[1] { };
+};
+
+ProgEl_List @.prog_els = [3] {
+MethodCallEl @[0] { };
+PreTestLoopEl @[1] { 
+ProgEl_List @.loop_els = [1] {
+ProgramCallEl @[0] { };
+};
+};
+MethodCallEl @[2] { };
+};
+};
+Program @[1] { 
+ProgVar_List @.global_vars = [2] {
+ObjectProgVar @[0] { value 11 0;
+};
+ProgVar @[1] { };
+};
+
+ProgEl_List @.prog_els = [5] {
+MethodCallEl @[0] { };
+MethodCallEl @[1] { };
+PreTestLoopEl @[2] { 
+ProgEl_List @.loop_els = [5] {
+ProgramCallEl @[0] { };
+ProgramCallEl @[1] { };
+ProgramCallEl @[2] { };
+MethodCallEl @[3] { };
+UserScriptEl @[4] { };
+};
+};
+MethodCallEl @[3] { };
+UserScriptEl @[4] { };
+};
+};
+Program @[2] { 
+ProgEl_List @.prog_els = [5] {
+MethodCallEl @[0] { };
+MethodCallEl @[1] { };
+MethodCallEl @[2] { };
+MethodCallEl @[3] { };
+UserScriptEl @[4] { };
+};
+};
+Program @[3] { 
+taBase_List @.prog_objs = [1] {
+LayerWriter_List @[0] = [2] { 
+LayerWriter @[0] { };
+LayerWriter @[1] { };
+};
+};
+
+ProgVar_List @.global_vars = [1] {
+ObjectProgVar @[0] { };
+};
+
+ProgEl_List @.prog_els = [2] {
+UserScriptEl @[0] { };
+MethodCallEl @[1] { };
+};
+};
+Program @[4] { 
+taBase_List @.prog_objs = [1] {
+NetMonitor @[0] { 
+NetMonItem_List @.items = [6] {
+NetMonItem @[0] { };
+NetMonItem @[1] { };
+NetMonItem @[2] { };
+NetMonItem @[3] { };
+NetMonItem @[4] { };
+NetMonItem @[5] { };
+};
+};
+};
+
+ProgVar_List @.global_vars = [1] {
+ObjectProgVar @[0] { value 11 0;
+};
+};
+
+ProgEl_List @.init_els = [1] {
+MethodCallEl @[0] { };
+};
+
+ProgEl_List @.prog_els = [3] {
+MethodCallEl @[0] { };
+MethodCallEl @[1] { };
+MethodCallEl @[2] { };
+};
+};
+Program @[5] { 
+ProgVar_List @.global_vars = [1] {
+ObjectProgVar @[0] { value 11 0;
+};
+};
+
+ProgEl_List @.prog_els = [2] {
+MethodCallEl @[0] { };
+MethodCallEl @[1] { };
+};
+};
+};
+
+Script_Group @.scripts = [3] {
+Script @[0] { };
+Script @[1] { };
+Script @[2] { };
+};
+
+taBase_List @.test_objs = [1] {
+ImageReader @[0] { };
+};
+
+RGBA_List @.view_colors = [20] {
+RGBA @[0] { };
+RGBA @[1] { };
+RGBA @[2] { };
+RGBA @[3] { };
+RGBA @[4] { };
+RGBA @[5] { };
+RGBA @[6] { };
+RGBA @[7] { };
+RGBA @[8] { };
+RGBA @[9] { };
+RGBA @[10] { };
+RGBA @[11] { };
+RGBA @[12] { };
+RGBA @[13] { };
+RGBA @[14] { };
+RGBA @[15] { };
+RGBA @[16] { };
+RGBA @[17] { };
+RGBA @[18] { };
+RGBA @[19] { };
+};
 };
 BpProject .projects[0] {
- name="ViewTest_xor";
- file_name="xor.proj";
- wizards {
-  name=;
-  el_typ=BpWizard;
-  el_def=0;
-  BpWizard @[0] {
-   name="BpWizard_0";
-   auto_open=0;
-   n_layers=3;
-   layer_cfg {
-    name=;
-    el_typ=LayerWizEl;
-    el_def=0;
-    LayerWizEl @[0] {
-     name=;
-     n_units=10;
-     io_type=213;
-    };
-    LayerWizEl @[1] {
-     name=;
-     n_units=10;
-     io_type=144807888;
-    };
-    LayerWizEl @[2] {
-     name=;
-     n_units=10;
-     io_type=325;
-    };
-   };
-   connectivity=FEEDFORWARD;
-   event_type=Event;
-  };
- };
- specs {
-  name=;
-  el_typ=BaseSpec;
-  el_def=0;
-  BpUnitSpec @[0] {
+name="ViewTest_xor";
+wizards {
+name=;
+el_typ=BpWizard;
+el_def=0;
+BpWizard @[0] {
+name="BpWizard_0";
+auto_open=0;
+n_layers=3;
+layer_cfg {
+name=;
+el_typ=LayerWizEl;
+el_def=0;
+LayerWizEl @[0] {
+name=;
+n_units=10;
+io_type=213;
+};
+LayerWizEl @[1] {
+name=;
+n_units=10;
+io_type=144807888;
+};
+LayerWizEl @[2] {
+name=;
+n_units=10;
+io_type=325;
+};
+};
+connectivity=FEEDFORWARD;
+event_type=Event;
+};
+};
+specs {
+name=;
+el_typ=BaseSpec;
+el_def=0;
+BpUnitSpec @[0] {
    unique 	    = {};
-   name="XORUnitSpec";
-   unique=unsigned_long_ary;
-   children {
-    name=;
-    el_typ=BpUnitSpec;
-    el_def=0;
-   };
-   act_range {min=0: max=1: range=1: scale=1: };
-   bias_con_type=BpCon;
-   bias_spec {type=BpConSpec: spec=.projects[0].specs[1]$0$: };
-   sig {off=0: gain=1: };
-   err_tol=0;
-   err_fun=Bp_Squared_Error;
-  };
-  BpConSpec @[1] {
+name="XORUnitSpec";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=BpUnitSpec;
+el_def=0;
+};
+act_range {min=0: max=1: range=1: scale=1: };
+bias_con_type=BpCon;
+bias_spec {type=BpConSpec: spec=.projects[0].specs[1]$0$: };
+sig {off=0: gain=1: };
+err_tol=0;
+err_fun=Bp_Squared_Error;
+};
+BpConSpec @[1] {
    unique 	    = {};
-   name="XORConSpec";
-   unique=unsigned_long_ary;
-   children {
-    name=;
-    el_typ=BpConSpec;
-    el_def=0;
-   };
-   rnd {type=UNIFORM: mean=0: var=0.5: par=1: };
-   wt_limits {type=NONE: min=-1: max=1: sym=0: };
-   lrate=0.5;
-   cur_lrate=0.5;
-   lrate_sched {
-    name=;
-    el_typ=SchedItem;
-    el_def=0;
-    last_ctr=-1;
-    default_val=1;
-    interpolate=0;
-    cur_val=0;
-   };
-   momentum=0.89999998;
-   momentum_type=AFTER_LRATE;
-   momentum_c=0.10000002;
-   decay=0;
-   decay_fun=NULL;
-  };
-  FullPrjnSpec @[2] {
+name="XORConSpec";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=BpConSpec;
+el_def=0;
+};
+rnd {type=UNIFORM: mean=0: var=0.5: par=1: };
+wt_limits {type=NONE: min=-1: max=1: sym=0: };
+lrate=0.5;
+cur_lrate=0.5;
+lrate_sched {
+name=;
+el_typ=SchedItem;
+el_def=0;
+last_ctr=-1;
+default_val=1;
+interpolate=0;
+cur_val=0;
+};
+momentum=0.89999998;
+momentum_type=AFTER_LRATE;
+momentum_c=0.10000002;
+decay=0;
+decay_fun=NULL;
+};
+FullPrjnSpec @[2] {
    unique 	    = {};
-   name="XORPrjnSpec";
-   unique=unsigned_long_ary;
-   children {
-    name=;
-    el_typ=FullPrjnSpec;
-    el_def=0;
-   };
-   self_con=0;
-   init_wts=0;
-  };
- };
- networks {
-  name=;
-  el_typ=Network;
-  el_def=0;
-  BpNetwork @[0] {
-   name="XOR";
-   layers {
-    name=;
-    el_typ=Layer;
-    el_def=0;
-    pos {x=0: y=0: z=0: };
-    Layer @[0] {
-     name="input";
-     layer_type=INPUT;
-     n_units=2;
-     geom {x=2: y=1: z=1: };
-     pos {x=2: y=0: z=0: };
-     gp_geom {x=0: y=0: z=0: };
-     gp_spc {x=0: y=0: z=0: };
-     act_geom {x=2: y=1: z=1: };
-     projections {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-     };
-     send_prjns {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
-     };
-     unit_spec {type=BpUnitSpec: spec=.projects[0].specs[0]$1$: };
-     lesion=0;
-     ext_flag=EXT;
-     dmem_dist=DMEM_DIST_DEFAULT;
-    };
-    Layer @[1] {
-     name="hidden";
-     layer_type=HIDDEN;
-     n_units=2;
-     geom {x=2: y=1: z=1: };
-     pos {x=2: y=0: z=1: };
-     gp_geom {x=0: y=0: z=0: };
-     gp_spc {x=0: y=0: z=0: };
-     act_geom {x=2: y=1: z=1: };
-     projections {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-      Projection @[0] {
-       name="Fm_input";
-       from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$2$;
-       spec {type=FullPrjnSpec: spec=.projects[0].specs[2]$3$: };
-       con_type=BpCon;
-       con_gp_type=BpCon_Group;
-       con_spec {type=BpConSpec: spec=$0$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-      };
-     };
-     send_prjns {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
-     };
-     unit_spec {type=BpUnitSpec: spec=$1$: };
-     lesion=0;
-     ext_flag=DEFAULT;
-     dmem_dist=DMEM_DIST_DEFAULT;
-    };
-    Layer @[2] {
-     name="output";
-     layer_type=6;
-     n_units=1;
-     geom {x=1: y=1: z=1: };
-     pos {x=2: y=0: z=2: };
-     gp_geom {x=0: y=0: z=0: };
-     gp_spc {x=0: y=0: z=0: };
-     act_geom {x=1: y=1: z=1: };
-     projections {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-      Projection @[0] {
-       name="Fm_hidden";
-       from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$4$;
-       spec {type=FullPrjnSpec: spec=$3$: };
-       con_type=BpCon;
-       con_gp_type=BpCon_Group;
-       con_spec {type=BpConSpec: spec=$0$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-      };
-     };
-     send_prjns {
-      name=;
-      el_typ=Projection;
-      el_def=0;
-     };
-     unit_spec {type=BpUnitSpec: spec=$1$: };
-     lesion=0;
-     ext_flag=TARG_EXT;
-     dmem_dist=DMEM_DIST_DEFAULT;
-    };
-   };
-   context=0;
-   wt_update=ON_LINE;
-   batch_n=10;
-   batch=0;
-   epoch=10;
-   trial=40;
-   phase=0;
-   cycle=40;
-   re_init=0;
-   dmem_sync_level=DMEM_SYNC_NETWORK;
-   dmem_nprocs=1;
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   lay_layout=THREE_D;
-   n_units=0;
-   n_cons=0;
-   max_size {x=4: y=2: z=3: };
-   bp_to_inputs=0;
-  };
- };
- data {
-  name=;
-  el_typ=DataTable;
-  el_def=0;
-  DataTable @[0] {
-   name="train_data";
-   save_data=1;
-   data {
-    name=;
-    el_typ=float_Data;
-    el_def=0;
-    float_Data @[0] {
-     name="input";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;1;     };
-     ar{ [2 1 4] 0;0;0;1;1;0;1;1;     };
-    };
-    float_Data @[1] {
-     name="output";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 1;1;     };
-     ar{ [1 1 4] 0;1;1;0;     };
-    };
-   };
-  };
-  DataTable @[1] {
-   name="mon_data.0";
-   save_data=1;
-   data {
-    name=;
-    el_typ=int_Data;
-    el_def=0;
-    int_Data @[0] {
-     name="XOR.epoch";
-     disp_opts=" NARROW,";
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-    int_Data @[1] {
-     name="XOR.n_units";
-     disp_opts=" NARROW,";
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-    float_Data @[2] {
-     name="input.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;1;     };
-     ar{ [2 1 0]      };
-    };
-    float_Data @[3] {
-     name="hidden.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;1;     };
-     ar{ [2 1 0]      };
-    };
-    float_Data @[4] {
-     name="output.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 1;1;     };
-     ar{ [1 1 0]      };
-    };
-    float_Data @[5] {
-     name="input.[0].send.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    float_Data @[6] {
-     name="input.[1].send.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    float_Data @[7] {
-     name="hidden.[0].send.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 1;     };
-     ar{ [1 0]      };
-    };
-    float_Data @[8] {
-     name="hidden.[1].send.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 1;     };
-     ar{ [1 0]      };
-    };
-    float_Data @[9] {
-     name="hidden.[0].recv.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    float_Data @[10] {
-     name="hidden.[1].recv.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    float_Data @[11] {
-     name="output.[0].recv.wt";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    int_Data @[12] {
-     name="XOR.trial";
-     disp_opts=" NARROW,";
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-   };
-  };
-  DataTable @[2] {
-   name="view_test";
-   save_data=1;
-   data {
-    name=;
-    el_typ=int_Data;
-    el_def=0;
-    int_Data @[0] {
-     name="rec_num";
-     disp_opts=" NARROW,";
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-    float_Data @[1] {
-     name="fl_scalar";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-    float_Data @[2] {
-     name="fl_mat_2x3";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 3;2;     };
-     ar{ [3 2 0]      };
-    };
-    String_Data @[3] {
-     name="str_scalar";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     ar{ [0]      };
-    };
-    String_Data @[4] {
-     name="str_mat_2";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 2;     };
-     ar{ [2 0]      };
-    };
-    int_Data @[5] {
-     name="int_mat_4x3";
-     disp_opts=" NARROW,";
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 3;4;     };
-     ar{ [3 4 0]      };
-    };
-   };
-  };
- };
- logs {
-  name=;
-  el_typ=PDPLog;
-  el_def=0;
- };
- programs {
-  name=;
-  el_typ=Program;
-  el_def=0;
-  global_vars {
-   name=;
-   el_typ=ObjectProgVar;
-   el_def=0;
-   ObjectProgVar @[0] {
-    name="net";
-    value 11 0;
-    value 11 0=.projects[0].networks[0]$5$;
-    val_type=BpNetwork;
-   };
-   EnumProgVar @[1] {
-    name="context";
-    value 2 0=1;
-    enum_type=Network::NetContext;
-    init=1;
-   };
-   ObjectProgVar @[2] {
-    name="mon_data";
-    value 11 0;
-    value 11 0=.projects[0].data[1]$6$;
-    val_type=DataTable;
-   };
-  };
-  Program @[0] {
-   name="Train";
-   flags=ROOT_OK;
-   prog_objs {
-    name=;
-    el_typ=taOBase;
-    el_def=0;
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @[0] {
-     name="max_epoch";
-     value 2 0=10;
-    };
-   };
-   init_els {
-    name=;
-    el_typ=UserScriptEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs.global_vars[0]$7$;
-      method=Network::ClearCounters;
-     };
-     args{ Network::NC_EPOCH;};
-{ Network::NetCounter down_from;     };
-    };
-    MethodCallEl @[1] {
-     desc="clear the monitor data";
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs.global_vars[2]$8$;
-      method=DataTable::ResetData;
-     };
-     args{ };
-{      };
-    };
-   };
-   prog_els {
-    name=;
-    el_typ=PreTestLoopEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc="move the mon data iteration back to first item";
-     result_var=;
-     method_spec {
-      script_obj=$8$;
-      method=DataBlock::WriteOpen;
-     };
-     args{ };
-{      };
-    };
-    PreTestLoopEl @[1] {
-     desc=;
-     loop_els {
-      name=;
-      el_typ=ProgramCallEl;
-      el_def=0;
-      ProgramCallEl @[0] {
-       desc=;
-       target=.projects[0].programs[1]$9$;
-       prog_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
+name="XORPrjnSpec";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=FullPrjnSpec;
+el_def=0;
+};
+self_con=0;
+init_wts=0;
+};
+};
+networks {
+name=;
+el_typ=Network;
+el_def=0;
+BpNetwork @[0] {
+name="XOR";
+layers {
+name=;
+el_typ=Layer;
+el_def=0;
+pos {x=0: y=0: z=0: };
+Layer @[0] {
+name="input";
+layer_type=INPUT;
+n_units=2;
+geom {x=2: y=1: z=1: };
+pos {x=2: y=0: z=0: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=2: y=1: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
+};
+unit_spec {type=BpUnitSpec: spec=.projects[0].specs[0]$1$: };
+lesion=0;
+ext_flag=EXT;
+dmem_dist=DMEM_DIST_DEFAULT;
+};
+Layer @[1] {
+name="hidden";
+layer_type=HIDDEN;
+n_units=2;
+geom {x=2: y=1: z=1: };
+pos {x=2: y=0: z=1: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=2: y=1: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection @[0] {
+name="Fm_input";
+from_type=CUSTOM;
+from=.projects[0].networks[0].layers[0]$2$;
+spec {type=FullPrjnSpec: spec=.projects[0].specs[2]$3$: };
+con_type=BpCon;
+con_gp_type=BpCon_Group;
+con_spec {type=BpConSpec: spec=$0$: };
+recv_idx=0;
+send_idx=0;
+recv_n=1;
+send_n=1;
+projected=1;
+};
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+};
+unit_spec {type=BpUnitSpec: spec=$1$: };
+lesion=0;
+ext_flag=DEFAULT;
+dmem_dist=DMEM_DIST_DEFAULT;
+};
+Layer @[2] {
+name="output";
+layer_type=6;
+n_units=1;
+geom {x=1: y=1: z=1: };
+pos {x=2: y=0: z=2: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=1: y=1: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection @[0] {
+name="Fm_hidden";
+from_type=CUSTOM;
+from=.projects[0].networks[0].layers[1]$4$;
+spec {type=FullPrjnSpec: spec=$3$: };
+con_type=BpCon;
+con_gp_type=BpCon_Group;
+con_spec {type=BpConSpec: spec=$0$: };
+recv_idx=0;
+send_idx=0;
+recv_n=1;
+send_n=1;
+projected=1;
+};
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+};
+unit_spec {type=BpUnitSpec: spec=$1$: };
+lesion=0;
+ext_flag=TARG_EXT;
+dmem_dist=DMEM_DIST_DEFAULT;
+};
+};
+context=0;
+wt_update=ON_LINE;
+batch_n=10;
+batch=0;
+epoch=10;
+trial=40;
+phase=0;
+cycle=40;
+re_init=0;
+dmem_sync_level=DMEM_SYNC_NETWORK;
+dmem_nprocs=1;
+usr1_save_fmt=FULL_NET;
+wt_save_fmt=TEXT;
+lay_layout=THREE_D;
+n_units=0;
+n_cons=0;
+max_size {x=4: y=2: z=3: };
+bp_to_inputs=0;
+};
+};
+data {
+name=;
+el_typ=DataTable;
+el_def=0;
+DataTable @[0] {
+name="train_data";
+save_data=1;
+data {
+name=;
+el_typ=float_Data;
+el_def=0;
+float_Data @[0] {
+name="input";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;1;};
+ar{ [2 1 4] 0;0;0;1;1;0;1;1;};
+};
+float_Data @[1] {
+name="output";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 1;1;};
+ar{ [1 1 4] 0;1;1;0;};
+};
+};
+};
+DataTable @[1] {
+name="mon_data.0";
+save_data=1;
+data {
+name=;
+el_typ=int_Data;
+el_def=0;
+int_Data @[0] {
+name="XOR.epoch";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+int_Data @[1] {
+name="XOR.n_units";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+float_Data @[2] {
+name="input.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;1;};
+ar{ [2 1 0] };
+};
+float_Data @[3] {
+name="hidden.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;1;};
+ar{ [2 1 0] };
+};
+float_Data @[4] {
+name="output.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 1;1;};
+ar{ [1 1 0] };
+};
+float_Data @[5] {
+name="input.[0].send.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+float_Data @[6] {
+name="input.[1].send.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+float_Data @[7] {
+name="hidden.[0].send.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 1;};
+ar{ [1 0] };
+};
+float_Data @[8] {
+name="hidden.[1].send.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 1;};
+ar{ [1 0] };
+};
+float_Data @[9] {
+name="hidden.[0].recv.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+float_Data @[10] {
+name="hidden.[1].recv.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+float_Data @[11] {
+name="output.[0].recv.wt";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+int_Data @[12] {
+name="XOR.trial";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+};
+};
+DataTable @[2] {
+name="view_test";
+save_data=1;
+data {
+name=;
+el_typ=int_Data;
+el_def=0;
+int_Data @[0] {
+name="rec_num";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+float_Data @[1] {
+name="fl_scalar";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+float_Data @[2] {
+name="fl_mat_2x3";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 3;2;};
+ar{ [3 2 0] };
+};
+String_Data @[3] {
+name="str_scalar";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [0] };
+};
+String_Data @[4] {
+name="str_mat_2";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 2;};
+ar{ [2 0] };
+};
+int_Data @[5] {
+name="int_mat_4x3";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 3;4;};
+ar{ [3 4 0] };
+};
+};
+};
+};
+logs {
+name=;
+el_typ=PDPLog;
+el_def=0;
+};
+programs {
+name=;
+el_typ=Program;
+el_def=0;
+global_vars {
+name=;
+el_typ=ObjectProgVar;
+el_def=0;
+ObjectProgVar @[0] {
+name="net";
+value 11 0;
+value 11 0=.projects[0].networks[0]$5$;
+val_type=BpNetwork;
+};
+EnumProgVar @[1] {
+name="context";
+value 2 0=1;
+enum_type=Network::NetContext;
+init=1;
+};
+ObjectProgVar @[2] {
+name="mon_data";
+value 11 0;
+value 11 0=.projects[0].data[1]$6$;
+val_type=DataTable;
+};
+};
+Program @[0] {
+name="Train";
+flags=ROOT_OK;
+prog_objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="max_epoch";
+value 2 0=1000;
+};
+};
+init_els {
+name=;
+el_typ=UserScriptEl;
+el_def=0;
+MethodCallEl @[0] {
+desc=;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.global_vars[0]$7$;
+method=Network::ClearCounters;
+};
+args{ Network::NC_EPOCH;};
+{ Network::NetCounter down_from;};
+};
+MethodCallEl @[1] {
+desc="clear the monitor data";
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.global_vars[2]$8$;
+method=DataTable::ResetData;
+};
+args{ };
+{ };
+};
+};
+prog_els {
+name=;
+el_typ=PreTestLoopEl;
+el_def=0;
+MethodCallEl @[0] {
+desc="move the mon data iteration back to first item";
+result_var=;
+method_spec {
+script_obj=$8$;
+method=DataBlock::WriteOpen;
+};
+args{ };
+{ };
+};
+PreTestLoopEl @[1] {
+desc=;
+loop_els {
+name=;
+el_typ=ProgramCallEl;
+el_def=0;
+ProgramCallEl @[0] {
+desc=;
+target=.projects[0].programs[1]$9$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+fail_el {
+desc=;
+user_script="cerr << \"Program Call failed--Stopping\\n\";
 ret_val = Program::RV_PROG_CALL_FAILED;
 this->StopScript();
 ";
-       };
-      };
-     };
-     loop_var_type=;
-     loop_var="(net->epoch < max_epoch) && (!StopCheck())";
-     init_val=;
-    };
-    MethodCallEl @[2] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$8$;
-      method=DataBlock::WriteClose;
-     };
-     args{ };
-{      };
-    };
-   };
-  };
-  Program @[1] {
-   name="TrainEpoch";
-   flags=ROOT_OK;
-   prog_objs {
-    name=;
-    el_typ=taOBase;
-    el_def=0;
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ObjectProgVar;
-    el_def=0;
-    ObjectProgVar @[0] {
-     name="train_data";
-     value 11 0;
-     value 11 0=.projects[0].data[0]$10$;
-     val_type=DataTable;
-    };
-    ProgVar @[1] {
-     name="has_data";
-     value 1 0=0;
-    };
-   };
-   init_els {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_els {
-    name=;
-    el_typ=MethodCallEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc="initialize the data pointer";
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs[1].global_vars[0]$11$;
-      method=DataBlock::ReadOpen;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[1] {
-     desc=;
-     result_var="has_data";
-     method_spec {
-      script_obj=$11$;
-      method=DataBlock::ReadFirst;
-     };
-     args{ };
-{      };
-    };
-    PreTestLoopEl @[2] {
-     desc=;
-     loop_els {
-      name=;
-      el_typ=ProgramCallEl;
-      el_def=0;
-      ProgramCallEl @[0] {
-       desc="apply the data";
-       target=.projects[0].programs[3]$12$;
-       prog_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
+};
+};
+};
+loop_var_type=;
+loop_var="(net->epoch < max_epoch)";
+init_val=;
+};
+MethodCallEl @[2] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$8$;
+method=DataBlock::WriteClose;
+};
+args{ };
+{ };
+};
+};
+};
+Program @[1] {
+name="TrainEpoch";
+flags=ROOT_OK;
+prog_objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ObjectProgVar;
+el_def=0;
+ObjectProgVar @[0] {
+name="train_data";
+value 11 0;
+value 11 0=.projects[0].data[0]$10$;
+val_type=DataTable;
+};
+ProgVar @[1] {
+name="has_data";
+value 1 0=0;
+};
+};
+init_els {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_els {
+name=;
+el_typ=MethodCallEl;
+el_def=0;
+MethodCallEl @[0] {
+desc="initialize the data pointer";
+result_var=;
+method_spec {
+script_obj=.projects[0].programs[1].global_vars[0]$11$;
+method=DataBlock::ReadOpen;
+};
+args{ };
+{ };
+};
+MethodCallEl @[1] {
+desc=;
+result_var="has_data";
+method_spec {
+script_obj=$11$;
+method=DataBlock::ReadFirst;
+};
+args{ };
+{ };
+};
+PreTestLoopEl @[2] {
+desc=;
+loop_els {
+name=;
+el_typ=ProgramCallEl;
+el_def=0;
+ProgramCallEl @[0] {
+desc="apply the data";
+target=.projects[0].programs[3]$12$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+fail_el {
+desc=;
+user_script="cerr << \"Program Call failed--Stopping\\n\";
 ret_val = Program::RV_PROG_CALL_FAILED;
 this->StopScript();
 ";
-       };
-      };
-      ProgramCallEl @[1] {
-       desc="cycle the net";
-       target=.projects[0].programs[2]$13$;
-       prog_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
+};
+};
+ProgramCallEl @[1] {
+desc="cycle the net";
+target=.projects[0].programs[2]$13$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+fail_el {
+desc=;
+user_script="cerr << \"Program Call failed--Stopping\\n\";
 ret_val = Program::RV_PROG_CALL_FAILED;
 this->StopScript();
 ";
-       };
-      };
-      ProgramCallEl @[2] {
-       desc="get the monitor data and store in table";
-       target=.projects[0].programs[4]$14$;
-       prog_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
+};
+};
+ProgramCallEl @[2] {
+desc="get the monitor data and store in table";
+target=.projects[0].programs[4]$14$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+fail_el {
+desc=;
+user_script="cerr << \"Program Call failed--Stopping\\n\";
 ret_val = Program::RV_PROG_CALL_FAILED;
 this->StopScript();
 ";
-       };
-      };
-      MethodCallEl @[3] {
-       desc=;
-       result_var="has_data";
-       method_spec {
-	script_obj=$11$;
-	method=DataBlock::ReadNext;
-       };
-       args{ };
-{        };
-      };
-      UserScriptEl @[4] {
-       desc=;
-       user_script="net->trial++;";
-      };
-     };
-     loop_var_type=;
-     loop_var="has_data && (!StopCheck())";
-     init_val=;
-    };
-    MethodCallEl @[3] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$11$;
-      method=DataBlock::ReadClose;
-     };
-     args{ };
-{      };
-    };
-    UserScriptEl @[4] {
-     desc=;
-     user_script="net->epoch++;";
-    };
-   };
-  };
-  Program @[2] {
-   name="Trial";
-   flags=PF_NONE;
-   prog_objs {
-    name=;
-    el_typ=taOBase;
-    el_def=0;
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   init_els {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_els {
-    name=;
-    el_typ=MethodCallEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$7$;
-      method=taBase::DataUpdate;
-     };
-     args{ true;};
-{ bool begin;     };
-    };
-    MethodCallEl @[1] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$7$;
-      method=BpNetwork::BpTrial_Loop;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[2] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$7$;
-      method=BpNetwork::BpCompute_Error;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[3] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$7$;
-      method=taBase::DataUpdate;
-     };
-     args{ false;};
-{ bool begin;     };
-    };
-    UserScriptEl @[4] {
-     desc=;
-     user_script="net->cycle++;";
-    };
-   };
-  };
-  Program @[3] {
-   name="data_src_prog";
-   flags=PF_NONE;
-   prog_objs {
-    name=;
-    el_typ=LayerWriter_List;
-    el_def=0;
-    LayerWriter_List @[0] {
-     name="lw_list";
-     el_typ=LayerWriter;
-     el_def=0;
-     LayerWriter @[0] {
-      data_block=$10$;
-      chan_name="input";
-      layer=$2$;
-      offset {x=0: y=0: };
-      ext_flags=EXT;
-      noise {type=NONE: mean=0: var=0.5: par=1: };
-      value_names{       };
-     };
-     LayerWriter @[1] {
-      data_block=$10$;
-      chan_name="output";
-      layer=.projects[0].networks[0].layers[2]$15$;
-      offset {x=0: y=0: };
-      ext_flags=TARG_EXT;
-      noise {type=NONE: mean=0: var=0.5: par=1: };
-      value_names{       };
-     };
-    };
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ObjectProgVar;
-    el_def=0;
-    ObjectProgVar @[0] {
-     name="lw_list";
-     value 11 1;
-     value 11 1=NULL;
-     val_type=LayerWriter_List;
-    };
-   };
-   init_els {
-    name=;
-    el_typ=UserScriptEl;
-    el_def=0;
-   };
-   prog_els {
-    name=;
-    el_typ=MethodCallEl;
-    el_def=0;
-    UserScriptEl @[0] {
-     desc="temp, to init lw_list because there are no tokens";
-     user_script="// note: this is hack until we can set token in lw_list global var
+};
+};
+MethodCallEl @[3] {
+desc=;
+result_var="has_data";
+method_spec {
+script_obj=$11$;
+method=DataBlock::ReadNext;
+};
+args{ };
+{ };
+};
+UserScriptEl @[4] {
+desc=;
+user_script="net->trial++;";
+};
+};
+loop_var_type=;
+loop_var="has_data";
+init_val=;
+};
+MethodCallEl @[3] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$11$;
+method=DataBlock::ReadClose;
+};
+args{ };
+{ };
+};
+UserScriptEl @[4] {
+desc=;
+user_script="net->epoch++;";
+};
+};
+};
+Program @[2] {
+name="Trial";
+flags=PF_NONE;
+prog_objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_els {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_els {
+name=;
+el_typ=MethodCallEl;
+el_def=0;
+MethodCallEl @[0] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$7$;
+method=taBase::DataUpdate;
+};
+args{ true;};
+{ bool begin;};
+};
+MethodCallEl @[1] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$7$;
+method=BpNetwork::BpTrial_Loop;
+};
+args{ };
+{ };
+};
+MethodCallEl @[2] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$7$;
+method=BpNetwork::BpCompute_Error;
+};
+args{ };
+{ };
+};
+MethodCallEl @[3] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$7$;
+method=taBase::DataUpdate;
+};
+args{ false;};
+{ bool begin;};
+};
+UserScriptEl @[4] {
+desc=;
+user_script="net->trial++; cerr << net->epoch << \", \" << net->trial << endl;";
+};
+};
+};
+Program @[3] {
+name="data_src_prog";
+flags=PF_NONE;
+prog_objs {
+name=;
+el_typ=LayerWriter_List;
+el_def=0;
+LayerWriter_List @[0] {
+name="lw_list";
+el_typ=LayerWriter;
+el_def=0;
+LayerWriter @[0] {
+data_block=$10$;
+chan_name="input";
+layer=$2$;
+offset {x=0: y=0: };
+ext_flags=EXT;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+LayerWriter @[1] {
+data_block=$10$;
+chan_name="output";
+layer=.projects[0].networks[0].layers[2]$15$;
+offset {x=0: y=0: };
+ext_flags=TARG_EXT;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+};
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ObjectProgVar;
+el_def=0;
+ObjectProgVar @[0] {
+name="lw_list";
+value 11 1;
+value 11 1=NULL;
+val_type=LayerWriter_List;
+};
+};
+init_els {
+name=;
+el_typ=UserScriptEl;
+el_def=0;
+};
+prog_els {
+name=;
+el_typ=MethodCallEl;
+el_def=0;
+UserScriptEl @[0] {
+desc="temp, to init lw_list because there are no tokens";
+user_script="// note: this is hack until we can set token in lw_list global var
 lw_list = (LayerWriter_List*)prog_objs->FindName(\"lw_list\");
 
 ";
-    };
-    MethodCallEl @[1] {
-     desc="apply the data to the layers";
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs[3].global_vars[0]$16$;
-      method=LayerWriter_List::ApplyData;
-     };
-     args{ context;};
-{ int context;     };
-    };
-   };
-  };
-  Program @[4] {
-   name="data_mon_prog";
-   flags=PF_NONE;
-   prog_objs {
-    name=;
-    el_typ=NetMonitor;
-    el_def=0;
-    NetMonitor @[0] {
-     name="NetMonitor_0";
-     items {
-      name=;
-      el_typ=NetMonItem;
-      el_def=0;
-      NetMonItem @[0] {
-       name="NetMonItem.XOR_epoch";
-       object=$5$;
-       variable="epoch";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-      NetMonItem @[1] {
-       name="NetMonItem.XOR_trial";
-       object=$5$;
-       variable="trial";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-      NetMonItem @[2] {
-       name="NetMonItem.XOR_n_units";
-       object=$5$;
-       variable="n_units";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-      NetMonItem @[3] {
-       name="NetMonItem.XOR_act";
-       object=$5$;
-       variable="act";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-      NetMonItem @[4] {
-       name="NetMonItem.XOR_s.wt";
-       object=$5$;
-       variable="s.wt";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-      NetMonItem @[5] {
-       name="NetMonItem.XOR_r.wt";
-       object=$5$;
-       variable="r.wt";
-       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-      };
-     };
-     data=$6$;
-     rmv_orphan_cols=1;
-    };
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ObjectProgVar;
-    el_def=0;
-    ObjectProgVar @[0] {
-     name="mon";
-     value 11 0;
-     value 11 0=.projects[0].programs[4].prog_objs[0]$17$;
-     val_type=NetMonitor;
-    };
-   };
-   init_els {
-    name=;
-    el_typ=UserScriptEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc="update the monitor items and data schema";
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs[4].global_vars[0]$18$;
-      method=NetMonitor::UpdateMonitors;
-     };
-     args{ };
-{      };
-    };
-   };
-   prog_els {
-    name=;
-    el_typ=MethodCallEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc="add a new row to the table";
-     result_var=;
-     method_spec {
-      script_obj=$8$;
-      method=DataTable::AddBlankRow;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[1] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$18$;
-      method=NetMonitor::UpdateMonVals;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[2] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$8$;
-      method=DataBlock::WriteDone;
-     };
-     args{ };
-{      };
-    };
-   };
-  };
-  Program @[5] {
-   name="TestImageReader";
-   flags=PF_NONE;
-   prog_objs {
-    name=;
-    el_typ=taOBase;
-    el_def=0;
-   };
-   param_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   global_vars {
-    name=;
-    el_typ=ObjectProgVar;
-    el_def=0;
-    ObjectProgVar @[0] {
-     name="reader";
-     value 11 0;
-     value 11 0=.projects[0].test_objs[0]$19$;
-     val_type=ImageReader;
-    };
-   };
-   init_els {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_els {
-    name=;
-    el_typ=MethodCallEl;
-    el_def=0;
-    MethodCallEl @[0] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=.projects[0].programs[5].global_vars[0]$20$;
-      method=DataBlock::ReadOpen;
-     };
-     args{ };
-{      };
-    };
-    MethodCallEl @[1] {
-     desc=;
-     result_var=;
-     method_spec {
-      script_obj=$20$;
-      method=DataBlock::ReadFirst;
-     };
-     args{ };
-{      };
-    };
-   };
-  };
- };
- scripts {
-  name=;
-  el_typ=Script;
-  el_def=0;
-  Script @[0] {
-   name="Script_0";
-   script_file=taFiler_ptr;
-   script_string=;
-   auto_run=0;
-   s_args{ };
-{    };
-  };
-  Script @[1] {
-   name="Script_1";
-   script_file=taFiler_ptr;
-   script_string=;
-   auto_run=0;
-   s_args{ };
-{    };
-  };
-  Script @[2] {
-   name="Script_2";
-   script_file=taFiler_ptr;
-   script_string=;
-   auto_run=0;
-   s_args{ };
-{    };
-  };
- };
- edits {
-  name=;
-  el_typ=SelectEdit;
-  el_def=0;
- };
- viewers {
-  name=;
-  el_typ=DataViewer;
-  el_def=0;
- };
- test_objs {
-  name=;
-  el_typ=ImageReader;
-  el_def=0;
-  ImageReader @[0] {
-   name="ImageReader_0";
-   color_mode=CM_RGB;
-   img_format=IF_AUTO;
-  };
- };
- save_rmv_units=1;
- use_sim_log=1;
- prev_file_nm=;
- desc1=;
- desc2=;
- desc3=;
- desc4=;
- view_colors {
-  name=;
-  el_typ=RGBA;
-  el_def=0;
-  RGBA @[0] {name="black": r=0: g=0: b=0: a=1: desc="Text": };
-  RGBA @[1] {name="": r=0.75294101: g=0.76862699: b=0.82745099: a=1: desc="Background": };
-  RGBA @[2] {name="VioletRed1": r=1: g=0.24313726: b=0.58823532: a=1: desc="Network": };
-  RGBA @[3] {name="DarkOliveGreen3": r=0.63529414: g=0.80392158: b=0.35294119: a=1: desc="Env": };
-  RGBA @[4] {name="yellow": r=1: g=1: b=0: a=1: desc="SchedProc": };
-  RGBA @[5] {name="LightSteelBlue2": r=0.73725492: g=0.82352942: b=0.93333334: a=1: desc="StatGroup": };
-  RGBA @[6] {name="wheat": r=0.96078432: g=0.87058824: b=0.7019608: a=1: desc="SubProcGroup": };
-  RGBA @[7] {name="SlateBlue1": r=0.51372552: g=0.43529412: b=1: a=1: desc="Stat": };
-  RGBA @[8] {name="gold": r=1: g=0.84313726: b=0: a=1: desc="Process": };
-  RGBA @[9] {name="burlywood2": r=0.93333334: g=0.77254903: b=0.56862748: a=1: desc="Log": };
-  RGBA @[10] {name="aquamarine": r=0.49803922: g=1: b=0.83137256: a=1: desc="Agg Highlite": };
-  RGBA @[11] {name="grey64": r=0.63921571: g=0.63921571: b=0.63921571: a=1: desc="Group": };
-  RGBA @[12] {name="grey75": r=0.74901962: g=0.74901962: b=0.74901962: a=1: desc="Inactive": };
-  RGBA @[13] {name="red": r=1: g=0: b=0: a=1: desc="Stopping Stat": };
-  RGBA @[14] {name="SlateBlue3": r=0.41176471: g=0.34901962: b=0.80392158: a=1: desc="Agging Stat": };
-  RGBA @[15] {name="SpringGreen": r=0: g=1: b=0.49803922: a=1: desc="ConSpec": };
-  RGBA @[16] {name="violet": r=0.93333334: g=0.50980395: b=0.93333334: a=1: desc="UnitSpec": };
-  RGBA @[17] {name="orange": r=1: g=0.64705884: b=0: a=1: desc="PrjnSpec": };
-  RGBA @[18] {name="MediumPurple1": r=0.67058825: g=0.50980395: b=1: a=1: desc="LayerSpec": };
-  RGBA @[19] {name="azure": r=0.94117647: g=1: b=1: a=1: desc="Wizard": };
- };
+};
+MethodCallEl @[1] {
+desc="apply the data to the layers";
+result_var=;
+method_spec {
+script_obj=.projects[0].programs[3].global_vars[0]$16$;
+method=LayerWriter_List::ApplyData;
+};
+args{ context;};
+{ int context;};
+};
+};
+};
+Program @[4] {
+name="data_mon_prog";
+flags=PF_NONE;
+prog_objs {
+name=;
+el_typ=NetMonitor;
+el_def=0;
+NetMonitor @[0] {
+name="NetMonitor_0";
+items {
+name=;
+el_typ=NetMonItem;
+el_def=0;
+NetMonItem @[0] {
+name="NetMonItem.XOR_epoch";
+object=$5$;
+variable="epoch";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[1] {
+name="NetMonItem.XOR_trial";
+object=$5$;
+variable="trial";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[2] {
+name="NetMonItem.XOR_n_units";
+object=$5$;
+variable="n_units";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[3] {
+name="NetMonItem.XOR_act";
+object=$5$;
+variable="act";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[4] {
+name="NetMonItem.XOR_s.wt";
+object=$5$;
+variable="s.wt";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[5] {
+name="NetMonItem.XOR_r.wt";
+object=$5$;
+variable="r.wt";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+};
+data=$6$;
+rmv_orphan_cols=1;
+};
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ObjectProgVar;
+el_def=0;
+ObjectProgVar @[0] {
+name="mon";
+value 11 0;
+value 11 0=.projects[0].programs[4].prog_objs[0]$17$;
+val_type=NetMonitor;
+};
+};
+init_els {
+name=;
+el_typ=UserScriptEl;
+el_def=0;
+MethodCallEl @[0] {
+desc="update the monitor items and data schema";
+result_var=;
+method_spec {
+script_obj=.projects[0].programs[4].global_vars[0]$18$;
+method=NetMonitor::UpdateMonitors;
+};
+args{ };
+{ };
+};
+};
+prog_els {
+name=;
+el_typ=MethodCallEl;
+el_def=0;
+MethodCallEl @[0] {
+desc="add a new row to the table";
+result_var=;
+method_spec {
+script_obj=$8$;
+method=DataTable::AddBlankRow;
+};
+args{ };
+{ };
+};
+MethodCallEl @[1] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$18$;
+method=NetMonitor::UpdateMonVals;
+};
+args{ };
+{ };
+};
+MethodCallEl @[2] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$8$;
+method=DataBlock::WriteDone;
+};
+args{ };
+{ };
+};
+};
+};
+Program @[5] {
+name="TestImageReader";
+flags=PF_NONE;
+prog_objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+param_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+global_vars {
+name=;
+el_typ=ObjectProgVar;
+el_def=0;
+ObjectProgVar @[0] {
+name="reader";
+value 11 0;
+value 11 0=.projects[0].test_objs[0]$19$;
+val_type=ImageReader;
+};
+};
+init_els {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_els {
+name=;
+el_typ=MethodCallEl;
+el_def=0;
+MethodCallEl @[0] {
+desc=;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs[5].global_vars[0]$20$;
+method=DataBlock::ReadOpen;
+};
+args{ };
+{ };
+};
+MethodCallEl @[1] {
+desc=;
+result_var=;
+method_spec {
+script_obj=$20$;
+method=DataBlock::ReadFirst;
+};
+args{ };
+{ };
+};
+};
+};
+};
+scripts {
+name=;
+el_typ=Script;
+el_def=0;
+Script @[0] {
+name="Script_0";
+script_file=taFiler_ptr;
+script_string=;
+auto_run=0;
+s_args{ };
+{ };
+};
+Script @[1] {
+name="Script_1";
+script_file=taFiler_ptr;
+script_string=;
+auto_run=0;
+s_args{ };
+{ };
+};
+Script @[2] {
+name="Script_2";
+script_file=taFiler_ptr;
+script_string=;
+auto_run=0;
+s_args{ };
+{ };
+};
+};
+edits {
+name=;
+el_typ=SelectEdit;
+el_def=0;
+};
+viewers {
+name=;
+el_typ=DataViewer;
+el_def=0;
+};
+test_objs {
+name=;
+el_typ=ImageReader;
+el_def=0;
+ImageReader @[0] {
+name="ImageReader_0";
+color_mode=CM_RGB;
+img_format=IF_AUTO;
+};
+};
+save_rmv_units=1;
+use_sim_log=0;
+prev_file_nm="/home/shadow/oreilly/pdp4.0/trunk/test/xor.proj";
+desc1=;
+desc2=;
+desc3=;
+desc4=;
+view_colors {
+name=;
+el_typ=RGBA;
+el_def=0;
+RGBA @[0] {name="black": r=0: g=0: b=0: a=1: desc="Text": };
+RGBA @[1] {name="": r=0.75294101: g=0.76862699: b=0.82745099: a=1: desc="Background": };
+RGBA @[2] {name="VioletRed1": r=1: g=0.24313726: b=0.58823532: a=1: desc="Network": };
+RGBA @[3] {name="DarkOliveGreen3": r=0.63529414: g=0.80392158: b=0.35294119: a=1: desc="Env": };
+RGBA @[4] {name="yellow": r=1: g=1: b=0: a=1: desc="SchedProc": };
+RGBA @[5] {name="LightSteelBlue2": r=0.73725492: g=0.82352942: b=0.93333334: a=1: desc="StatGroup": };
+RGBA @[6] {name="wheat": r=0.96078432: g=0.87058824: b=0.7019608: a=1: desc="SubProcGroup": };
+RGBA @[7] {name="SlateBlue1": r=0.51372552: g=0.43529412: b=1: a=1: desc="Stat": };
+RGBA @[8] {name="gold": r=1: g=0.84313726: b=0: a=1: desc="Process": };
+RGBA @[9] {name="burlywood2": r=0.93333334: g=0.77254903: b=0.56862748: a=1: desc="Log": };
+RGBA @[10] {name="aquamarine": r=0.49803922: g=1: b=0.83137256: a=1: desc="Agg Highlite": };
+RGBA @[11] {name="grey64": r=0.63921571: g=0.63921571: b=0.63921571: a=1: desc="Group": };
+RGBA @[12] {name="grey75": r=0.74901962: g=0.74901962: b=0.74901962: a=1: desc="Inactive": };
+RGBA @[13] {name="red": r=1: g=0: b=0: a=1: desc="Stopping Stat": };
+RGBA @[14] {name="SlateBlue3": r=0.41176471: g=0.34901962: b=0.80392158: a=1: desc="Agging Stat": };
+RGBA @[15] {name="SpringGreen": r=0: g=1: b=0.49803922: a=1: desc="ConSpec": };
+RGBA @[16] {name="violet": r=0.93333334: g=0.50980395: b=0.93333334: a=1: desc="UnitSpec": };
+RGBA @[17] {name="orange": r=1: g=0.64705884: b=0: a=1: desc="PrjnSpec": };
+RGBA @[18] {name="MediumPurple1": r=0.67058825: g=0.50980395: b=1: a=1: desc="LayerSpec": };
+RGBA @[19] {name="azure": r=0.94117647: g=1: b=1: a=1: desc="Wizard": };
+};
 };

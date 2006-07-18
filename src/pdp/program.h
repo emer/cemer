@@ -579,6 +579,7 @@ protected:
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
   virtual int		Run_impl(); 
+  virtual int		Cont_impl(); 
     // run in the current mode, returning the ReturnVal (0=success); 
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values

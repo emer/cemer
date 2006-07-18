@@ -103,7 +103,7 @@ Cosmetic/Usability/etc. (lower priority):
 * boxes in edit panels don't shrink as much as they could
 * should be bigger gap from labels to data in editpanels
 * right or middle click to create a new tab in browser
-* may want to add auto-line splitting to object descriptions
+* may want to add auto-line splitting to object descriptions <- YES! this is particularly important for SimLog dialog upon saving, which has a very long title, and occludes the buttons, etc
 * change default name in NetMonItem to just NetMonItem (no _#) because we qualify every name anyway
   and the numbers will just get out of sync with list position anyway
 

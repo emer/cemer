@@ -4062,7 +4062,7 @@ void cssProgSpace::ListSrc(int stln) {
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
-    if(el->HasSubProg()) {
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
       if(first_fun) {
 	fh << "\nFunctions:\n\n";
 	first_fun = false;
@@ -4101,7 +4101,7 @@ void cssProgSpace::ListImpl(int stln) {
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
-    if(el->HasSubProg()) {
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
       if(first_fun) {
 	fh << "\nFunctions:\n\n";
 	first_fun = false;
@@ -4232,7 +4232,7 @@ bool cssProgSpace::SetBreak(int srcln) {
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
-    if(el->HasSubProg()) {
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
       if(el->GetSubProg()->SetBreak(srcln)) return true;
     }
   }
@@ -4257,7 +4257,7 @@ void cssProgSpace::ShowBreaks() {
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
-    if(el->HasSubProg()) {
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
       el->GetSubProg()->ShowBreaks(*cmd_shell->fout);
     }
   }
@@ -4283,7 +4283,7 @@ bool cssProgSpace::unSetBreak(int srcln) {
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
-    if(el->HasSubProg()) {
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
       if(el->GetSubProg()->unSetBreak(srcln)) return true;
     }
   }
