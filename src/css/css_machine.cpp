@@ -549,7 +549,7 @@ void cssEl::unRefDone(cssEl* it) {
   --(it->refn);
   if (it->refn < 0) {
     cerr << "**WARNING** ";
-    print_cssEl(it, false);
+    print_cssEl(it, true);
     cerr << "::unRefDone: it->refn <= 0 -- **WILL NOT BE MULTI-DELETED**\n";
     return;
   }
@@ -2862,17 +2862,14 @@ int cssProg::Getc() {
   if ((line < src_size) && (col < (int)source[line]->src.length()))
     return (int) (source[line]->src[col++]);
     
-  if(ReadLn_File(*(top->src_fin)) == EOF)
+  if(ReadLn(*(top->src_fin)) == EOF)
     return EOF;
     
   // ok, presumably we got more text, so are now recursively calling ourself again
   return Getc();
 }
 
-int cssProg::ReadLn_File(istream& fh) {
-//   if(top->external_exit)	// bail if external exit flag was set
-//     return EOF;
-    
+int cssProg::ReadLn(istream& fh) {
   int c;
   line = AddSrc("");			// new line
   while (((c = fh.get()) != EOF) && (c != '\n')) {
@@ -3040,19 +3037,6 @@ cssProg* cssProg::SetSrcPC(int srcln) {
   return this;
 }
 
-cssInst* cssProg::Next() {
-  cssInst* rval = NULL;
-  if(PC() >= size)
-    top->run_stat = cssEl::Stopping;
-  else if(IsBreak(PC()))
-    top->run_stat = cssEl::BreakPoint;
-  else if((top->external_stop) && !(state & State_NoBreak))
-    top->run_stat = cssEl::BreakPoint;
-  else
-    rval = insts[Frame()->pc++];
-  return rval;
-}
-
 void cssProg::RunDebugInfo(cssInst* nxt) {
   static int last_src_ln = -1;
   if((top->debug == 0) || (top->cmd_shell == NULL)) return;
@@ -3072,59 +3056,77 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
   }
 }
 
+bool cssProg::IsBreak(css_progdx pcval) {
+  if(breaks.Find(pcval) >= 0) {
+    if((top->last_bp_prog == this) && (top->last_bp_pc == pcval)) {
+      top->last_bp_prog = NULL;
+      top->last_bp_pc = -1;
+      return false;		// don't break again!
+    }
+    return true;
+  }
+  return false;
+}
+
 // run and set status, returning value
 cssEl* cssProg::Cont() {
   top->run_stat = cssEl::Running;
 
-  cssInst* nxt;
-  if(PC() >= size) {
-    top->run_stat = cssEl::Stopping;
-    return Stack()->Peek();
+  if(top->step_mode == 0){
+    while((PC() < size) && (top->run_stat == cssEl::Running)) {
+      if(IsBreak(PC())) {
+	top->last_bp_prog = this;
+	top->last_bp_pc = PC();
+	top->run_stat = cssEl::BreakPoint;
+      }
+      else if(top->external_stop && !(state & State_NoBreak)) {
+// 	cerr << top->name << " ext stop: " << name << " at pc: " << PC()
+// 	     << " inst: " << insts[PC()]->inst.El()->name << endl;
+	top->run_stat = cssEl::BreakPoint;
+      }
+      else {
+	cssInst* nxt = insts[Frame()->pc++];
+	RunDebugInfo(nxt);
+	top->run_stat = nxt->Do();
+      }
+    }
   }
-  else nxt = insts[PC()];
-
-  if(IsBreak(PC())) {			// step over bp
-    Frame()->pc++;			// make the _peek a real next()
-    RunDebugInfo(nxt);
-    top->run_stat = nxt->Do();
-  }
-
-  if(top->step_mode) {
+  else {
     int stc, lim;
     if(top->debug >= 2) {
       stc = 0;
       lim = top->step_mode;
     }
     else {
-      stc = source[nxt->line]->ln;
+      if(PC() < size)
+	stc = source[insts[PC()]->line]->ln;
+      else
+	stc = -1;
       lim = stc + top->step_mode;
     }
-    while((stc < lim) && (top->run_stat == cssEl::Running) && (nxt = Next())) {
-      RunDebugInfo(nxt);
-      top->run_stat = nxt->Do();
-      if(top->debug < 2) {
-	if(PC() >= size) {
-	  top->run_stat = cssEl::Stopping;
-	  break;
-	}
-	nxt = insts[PC()];
-	if(nxt == NULL)
-	  stc = lim;
-	else
-	  stc = source[nxt->line]->ln;
+    while((stc < lim) && (PC() < size) && (top->run_stat == cssEl::Running)) {
+      if(IsBreak(PC())) {
+	top->last_bp_prog = this;
+	top->last_bp_pc = PC();
+	top->run_stat = cssEl::BreakPoint;
       }
-      else
-	stc++;
+      else if(top->external_stop && !(state & State_NoBreak)) {
+	top->run_stat = cssEl::BreakPoint;
+      }
+      else {
+	cssInst* nxt = insts[Frame()->pc++];
+	RunDebugInfo(nxt);
+	top->run_stat = nxt->Do();
+	if(top->debug < 2)
+	  stc = source[nxt->line]->ln;
+	else
+	  stc++;
+      }
     }
     top->step_mode = 0;		// always temporary
-    return Stack()->Peek();
   }
-  else {
-    while((top->run_stat == cssEl::Running) && (nxt = Next())) {
-      RunDebugInfo(nxt);
-      top->run_stat = nxt->Do();
-    }
-  }
+  if(top->run_stat == cssEl::Running)
+    top->run_stat = cssEl::Stopping;
   return Stack()->Peek();
 }
 
@@ -3937,6 +3939,12 @@ cssEl* cssProgSpace::Cont() {
   state |= cssProg::State_Run;
   external_stop = false;
 
+//   if(Prog()->PC() < Prog()->size) {
+//     cssInst* nxt = Prog()->insts[Prog()->PC()];
+//     cerr << name << " starting at: " << Prog()->name << " pc: " << Prog()->PC()
+// 	 << " nxt: " << nxt->inst.El()->name << endl;
+//   }
+
   cssEl* rval;
   do {
     run_stat = cssEl::Running;
@@ -3971,7 +3979,7 @@ cssEl* cssProgSpace::Cont() {
       }
       else {
 	cssMisc::Warning(NULL, "Error: continue without surrounding loop!");
-	run_stat = cssEl::BreakPoint;
+	run_stat = cssEl::ExecError;
       }
     }
     if(run_stat == cssEl::Breaking) {
@@ -3980,7 +3988,7 @@ cssEl* cssProgSpace::Cont() {
       }
       else {
 	cssMisc::Warning(NULL, "Error: break without surrounding loop!");
-	run_stat = cssEl::BreakPoint;
+	run_stat = cssEl::ExecError;
       }
     }
   } while(run_stat == cssEl::NewProgShoved);
@@ -4138,18 +4146,24 @@ static char* rs_vals[10] = {"Waiting", "Running", "Stopping", "NewProgShoved",
 
 void cssProgSpace::Status() {
   if(!HaveCmdShell()) return;
-  *cmd_shell->fout << "\n\tStatus of Program: " << name << "\n";
+  ostream& fh = *cmd_shell->fout;
 
-  *cmd_shell->fout << "curnt:\t" << Prog()->name << "\tsrc_ln:\t" << Prog()->CurSrcLn()
+  fh << "\n\tStatus of Program: " << name << "\n";
+
+  fh << "curnt:\t" << Prog()->name << "\tsrc_ln:\t" << Prog()->CurSrcLn()
     << "\tpc:\t" << Prog()->PC() << "\n";
-  *cmd_shell->fout << "debug:\t" << debug << "\tstep:\t" << step_mode
+  fh << "debug:\t" << debug << "\tstep:\t" << step_mode
     << "\trun_depth:\t" << size-1 << "\tparse_depth:\t" << parse_depth << "\n";
-  *cmd_shell->fout << "lines:\t" << src_ln << "\tlist:\t" << list_ln << "\n";
+  fh << "lines:\t" << src_ln << "\tlist:\t" << list_ln << "\n";
 
   int rstat = (state & cssProg::State_Run) ? 1 : 0;
-  *cmd_shell->fout << "State: run:\t" << rstat << endl;
+  int nobreak = (Prog()->state & cssProg::State_NoBreak) ? 1 : 0;
+  fh << "State: run:\t" << rstat
+     << "\tnobrk: " << nobreak << endl;
 
-  *cmd_shell->fout << "run status:\t" << rs_vals[run_stat] << "\n";
+  fh << "run status:\t" << rs_vals[run_stat] << "\n";
+  
+  fh << "external_stop:\t" << external_stop << "\n";
 
   cmd_shell->fout->flush();
 }

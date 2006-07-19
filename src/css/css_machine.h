@@ -1343,8 +1343,6 @@ public:
   // execution
   void 		SetPC(css_progdx npc);
   cssProg*	SetSrcPC(int srcln); 	// this one goes by src ln
-  cssInst* 	Next();
-  inline cssInst* Next_Peek();
   cssEl*	Cont();	 		// continue with rest of program
   cssEl*	Cont(css_progdx st)	{ SetPC(st); return Cont(); }
   cssEl*	ContSrc(int srcln);	// continue with rest of program
@@ -1357,15 +1355,12 @@ public:
 
   // breakpoints
   bool 		SetBreak(int srcln);
-  bool		IsBreak(css_progdx pcval)
-  { bool rval = false; if(breaks.Find(pcval) >= 0) rval = true; return rval; }
-
+  bool		IsBreak(css_progdx pcval);
   bool		IsBreak()		{ return IsBreak(PC()); }
   void		ShowBreaks(ostream& fh = cout);
   bool		unSetBreak(int srcln);
 protected:
-//  int 		ReadLn();		// read the line in from filein
-  int 		ReadLn_File(istream& fh);	// read the line in from filein
+  int 		ReadLn(istream& fh);	// read the line in from filein
 };
 
 class CSS_API cssProgStack {
@@ -1412,6 +1407,8 @@ public:
   int		step_mode;		// step mode: if > 0, next Cont will run this # of lines
   cssEl::RunStat run_stat; 		// flag to tell if running: set to Stopping to stop, or BreakPoint
   int 		debug;			// debug level: 1 = src trace, 2 = machine code trace, 3 = + stack trace
+  cssProg*	last_bp_prog;		// last breakpoint prog
+  css_progdx	last_bp_pc;		// last breakpoint pc
 
   istream*	src_fin;		// source input stream
   int 		src_ln;			// present source line no (parsing)
@@ -1531,11 +1528,6 @@ protected:
   cssProg*	cc_push_this;		// push this object
   String	cc_include_this;	// filename to be included
 };
-
-inline cssInst* cssProg::Next_Peek() {
-  cssInst* rval = NULL; if(PC() >= size) top->run_stat = cssEl::Stopping;
-  else rval = insts[PC()]; return rval;
-}
 
 class CSS_API cssCmdShell : public QObject {
   // a command shell that controls a program space

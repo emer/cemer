@@ -108,20 +108,10 @@ float_Data @[1] { };
 };
 };
 DataTable @[1] { 
-DataTableCols @.data = [13] {
+DataTableCols @.data = [3] {
 int_Data @[0] { };
 int_Data @[1] { };
-float_Data @[2] { };
-float_Data @[3] { };
-float_Data @[4] { };
-float_Data @[5] { };
-float_Data @[6] { };
-float_Data @[7] { };
-float_Data @[8] { };
-float_Data @[9] { };
-float_Data @[10] { };
-float_Data @[11] { };
-int_Data @[12] { };
+int_Data @[2] { };
 };
 };
 DataTable @[2] { 
@@ -172,10 +162,11 @@ ObjectProgVar @[0] { value 11 0;
 ProgVar @[1] { };
 };
 
-ProgEl_List @.prog_els = [5] {
-MethodCallEl @[0] { };
+ProgEl_List @.prog_els = [6] {
+UserScriptEl @[0] { };
 MethodCallEl @[1] { };
-PreTestLoopEl @[2] { 
+MethodCallEl @[2] { };
+PreTestLoopEl @[3] { 
 ProgEl_List @.loop_els = [5] {
 ProgramCallEl @[0] { };
 ProgramCallEl @[1] { };
@@ -184,17 +175,18 @@ MethodCallEl @[3] { };
 UserScriptEl @[4] { };
 };
 };
-MethodCallEl @[3] { };
-UserScriptEl @[4] { };
+MethodCallEl @[4] { };
+UserScriptEl @[5] { };
 };
 };
 Program @[2] { 
-ProgEl_List @.prog_els = [5] {
+ProgEl_List @.prog_els = [6] {
 MethodCallEl @[0] { };
 MethodCallEl @[1] { };
 MethodCallEl @[2] { };
 MethodCallEl @[3] { };
 UserScriptEl @[4] { };
+UserScriptEl @[5] { };
 };
 };
 Program @[3] { 
@@ -502,10 +494,10 @@ context=0;
 wt_update=ON_LINE;
 batch_n=10;
 batch=0;
-epoch=10;
-trial=40;
+epoch=8;
+trial=32;
 phase=0;
-cycle=40;
+cycle=0;
 re_init=0;
 dmem_sync_level=DMEM_SYNC_NETWORK;
 dmem_nprocs=1;
@@ -563,7 +555,7 @@ pin=0;
 save_to_file=1;
 is_matrix=0;
 cell_geom{ 1;};
-ar{ [0] };
+ar{ [32] 0;0;0;0;1;1;1;1;2;2;2;2;3;3;3;3;4;4;4;4;5;5;5;5;6;6;6;6;7;7;7;7;};
 };
 int_Data @[1] {
 name="XOR.n_units";
@@ -572,106 +564,16 @@ pin=0;
 save_to_file=1;
 is_matrix=0;
 cell_geom{ 1;};
-ar{ [0] };
+ar{ [32] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;};
 };
-float_Data @[2] {
-name="input.act";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;1;};
-ar{ [2 1 0] };
-};
-float_Data @[3] {
-name="hidden.act";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;1;};
-ar{ [2 1 0] };
-};
-float_Data @[4] {
-name="output.act";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 1;1;};
-ar{ [1 1 0] };
-};
-float_Data @[5] {
-name="input.[0].send.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;};
-ar{ [2 0] };
-};
-float_Data @[6] {
-name="input.[1].send.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;};
-ar{ [2 0] };
-};
-float_Data @[7] {
-name="hidden.[0].send.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 1;};
-ar{ [1 0] };
-};
-float_Data @[8] {
-name="hidden.[1].send.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 1;};
-ar{ [1 0] };
-};
-float_Data @[9] {
-name="hidden.[0].recv.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;};
-ar{ [2 0] };
-};
-float_Data @[10] {
-name="hidden.[1].recv.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;};
-ar{ [2 0] };
-};
-float_Data @[11] {
-name="output.[0].recv.wt";
-disp_opts=;
-pin=0;
-save_to_file=1;
-is_matrix=1;
-cell_geom{ 2;};
-ar{ [2 0] };
-};
-int_Data @[12] {
+int_Data @[2] {
 name="XOR.trial";
 disp_opts=" NARROW,";
 pin=0;
 save_to_file=1;
 is_matrix=0;
 cell_geom{ 1;};
-ar{ [0] };
+ar{ [32] 0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;};
 };
 };
 };
@@ -908,7 +810,11 @@ prog_els {
 name=;
 el_typ=MethodCallEl;
 el_def=0;
-MethodCallEl @[0] {
+UserScriptEl @[0] {
+desc="initialize trial counter";
+user_script="net->trial = 0;";
+};
+MethodCallEl @[1] {
 desc="initialize the data pointer";
 result_var=;
 method_spec {
@@ -918,7 +824,7 @@ method=DataBlock::ReadOpen;
 args{ };
 { };
 };
-MethodCallEl @[1] {
+MethodCallEl @[2] {
 desc=;
 result_var="has_data";
 method_spec {
@@ -928,7 +834,7 @@ method=DataBlock::ReadFirst;
 args{ };
 { };
 };
-PreTestLoopEl @[2] {
+PreTestLoopEl @[3] {
 desc=;
 loop_els {
 name=;
@@ -1001,7 +907,7 @@ loop_var_type=;
 loop_var="has_data";
 init_val=;
 };
-MethodCallEl @[3] {
+MethodCallEl @[4] {
 desc=;
 result_var=;
 method_spec {
@@ -1011,7 +917,7 @@ method=DataBlock::ReadClose;
 args{ };
 { };
 };
-UserScriptEl @[4] {
+UserScriptEl @[5] {
 desc=;
 user_script="net->epoch++;";
 };
@@ -1086,13 +992,17 @@ args{ false;};
 };
 UserScriptEl @[4] {
 desc=;
-user_script="net->trial++; cerr << net->epoch << \", \" << net->trial << endl;";
+user_script="cerr << net->epoch << \", \" << net->trial << endl;";
+};
+UserScriptEl @[5] {
+desc="busy loop to make things go slower for debugging";
+user_script="for(int j=0;j<10000;j++) { j; }";
 };
 };
 };
 Program @[3] {
 name="data_src_prog";
-flags=PF_NONE;
+flags=NO_STOP;
 prog_objs {
 name=;
 el_typ=LayerWriter_List;
@@ -1167,7 +1077,7 @@ args{ context;};
 };
 Program @[4] {
 name="data_mon_prog";
-flags=PF_NONE;
+flags=NO_STOP;
 prog_objs {
 name=;
 el_typ=NetMonitor;
@@ -1405,7 +1315,7 @@ img_format=IF_AUTO;
 };
 save_rmv_units=1;
 use_sim_log=0;
-prev_file_nm="/home/shadow/oreilly/pdp4.0/trunk/test/xor.proj";
+prev_file_nm=;
 desc1=;
 desc2=;
 desc3=;

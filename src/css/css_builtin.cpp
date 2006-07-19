@@ -249,12 +249,11 @@ static cssEl* cssElCFun_cast_stub(int, cssEl* arg[]) {
 }
 
 // push_next
-
 static cssEl* cssElCFun_push_next_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cssInst* nxt = cp->Next();
-  if(nxt != NULL)
-    return nxt->inst.El();
+  cp->Frame()->pc++;
+  if(cp->PC() < cp->size)
+    return cp->insts[cp->PC()]->inst.El();
   else
     return &cssMisc::Void;
 }

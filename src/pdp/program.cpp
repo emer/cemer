@@ -1048,7 +1048,7 @@ void ProgramCallEl::UpdateGlobalArgs() {
 //  Program		//
 //////////////////////////
 
-Program::RunState 	Program::run_state = Program::DONE; 
+Program::RunState 	Program::run_state = Program::NOT_INIT; 
 ProgramRef 		Program::top_prog;
 ProgramRef 		Program::step_prog;
 
@@ -1112,8 +1112,16 @@ void Program::UpdateAfterEdit() {
 
 int Program::Call(Program* caller) {
   int rval = Cont_impl();
-  if(run_state != STOP)
+  if(run_state == STOP) {
+    script->Stop();		// stop us
+    caller->script->Stop();	// stop caller!
+    caller->script->Prog()->Frame()->pc = 0;
+    // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
+    // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..
+  }
+  else {
     script->Restart();		// restart script at beginning if run again	
+  }
   return rval;
 } 
 
@@ -1197,6 +1205,11 @@ void Program::Run() {
 } 
 
 void Program::Step() {
+  if(step_prog.ptr() == NULL) {
+    if(sub_progs.size > 0) {	// set to last guy as a default!
+      step_prog = sub_progs.Peek();
+    }
+  }
   top_prog = this;
   taMisc::Busy();
   setRunState(STEP);
@@ -1215,10 +1228,31 @@ void Program::Step() {
 }
 
 void Program::Stop() {
-  //TODO: may need to add a separate STOP_REQ state to handle between the time
-  // we are running and when we actually Stop (not for css..)
+  run_state = STOP_REQ;
+}
+
+void Program::Stop_impl() {
   script->Stop();
   setRunState(STOP);
+}
+
+bool Program::StopCheck() {
+  //NOTE: we call event loop even in non-gui compile, since we can presumably
+  // have other ways of stopping, such as something from a socket etc.
+  QCoreApplication::processEvents();
+  // NOTE: the return value of this function is not actually what determines stopping
+  // the above processEvents will process any Stop events and this will directly cause
+  // css to stop in its tracks.
+  if(run_state == STOP) return true;
+  if(run_state == STOP_REQ) {
+    Stop_impl();
+    return true;
+  }
+  if((run_state == STEP) && (step_prog.ptr() == this)) {
+    Stop_impl();			// time for us to stop
+    return true;
+  }
+  return false;
 }
 
 void Program::CmdShell() {
@@ -1295,7 +1329,9 @@ const String Program::scriptString() {
     
     m_scriptCache += "void __Prog() {\n";
     m_scriptCache += prog_els.GenCss(1);
-    m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
+    if(!(flags & NO_STOP)) {
+      m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
+    }
     m_scriptCache += "}\n\n";
     m_scriptCache += "\n";
     m_dirty = false;
@@ -1308,22 +1344,6 @@ const String Program::scriptString() {
     m_scriptCache += "}\n";
   }
   return m_scriptCache;
-}
-
-bool Program::StopCheck() {
-  //NOTE: we call event loop even in non-gui compile, since we can presumably
-  // have other ways of stopping, such as something from a socket etc.
-  QCoreApplication::processEvents();
-  // NOTE: the return value of this function is not actually what determines stopping
-  // the above processEvents will process any Stop events and this will directly cause
-  // css to stop in its tracks.
-  if(run_state == STOP) return true;
-  if((run_state == STEP) && (step_prog.ptr() == this)) {
-    script->Stop();
-    run_state = STOP;
-//     Stop();			// time for us to stop
-  }
-  return false;
 }
 
 void  Program::UpdateProgVars() {

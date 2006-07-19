@@ -485,7 +485,8 @@ INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS mode flags
     PF_NONE		= 0, // #NO_BIT
-    ROOT_OK		= 0x0001 // allowed to be a root program (can be called by user)
+    ROOT_OK		= 0x0001, // allowed to be a root program (can be called by user)
+    NO_STOP		= 0x0002 // this program cannot be stopped by Stop or Step buttons
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -500,11 +501,13 @@ public:
    
   // TODO: need to clarify difference between current state and requested state, ex RUN but user wants to STOP, while running, still not stopped -- may need a separate var for requests to stop -- but if split between two vars, makes gui state control a lot more complicated (custom code vs. baked in gui enabling)
   enum RunState { // current run state, is global to all active programs
-    DONE = 0, 	// there is no program running or stopped
+    DONE = 0, 	// there is no program running or stopped; any previous run completed
     INIT,	// tells the prog to reset its state to the beginning; this is a "running" state
     STOP,	// the program is stopped (note: NOT the same as "DONE")
     RUN,	// normal running state; this is a "running" state
-    STEP	// state when we are executing a Step; this is a "running" state
+    STEP,	// state when we are executing a Step; this is a "running" state
+    STOP_REQ,	// a stopping request has been issued -- next StopCheck should find and stop!
+    NOT_INIT	// init has not yet been run
   };
   
   static RunState	run_state; // the one and only global run mode for current running prog
@@ -529,13 +532,13 @@ public:
   override const String	scriptString();
   
   virtual void  Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP set the program state back to the beginning
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT set the program state back to the beginning
   virtual void  Run();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP run the programs
   virtual void	Step();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the selected step level
   virtual void	Stop();
-  // #BUTTON #GHOST_OFF_run_state:INIT,RUN,STEP stop the running programs
+  // #BUTTON #GHOST_OFF_run_state:RUN,STEP stop the running programs
   
   virtual void	CmdShell();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP set css command shell to operate on this program, so you can run, debug, etc this script from the command line
@@ -578,9 +581,9 @@ protected:
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();
   override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
+  virtual void		Stop_impl(); 
   virtual int		Run_impl(); 
   virtual int		Cont_impl(); 
-    // run in the current mode, returning the ReturnVal (0=success); 
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
