@@ -18,6 +18,7 @@
 
 #include "css_machine.h"
 #include "css_builtin.h"
+#include "css_console.h"
 #include "ta_css.h"
 
 #ifdef TA_GUI
@@ -152,38 +153,38 @@ int main(int argc, char *argv[]) {
 
 // TODO: should raise an error if NO_GUI and gui=true
 #ifdef TA_GUI
-  // todo: needs to be done later -- this code is from pdpbase.cpp
   if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
     taiM_ = taiMisc::New(cssMisc::gui);
     taiMC_ = taiM_;
-//     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
-//     	pdp_bitmap_height, pdp_bitmap_bits);
-//    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
-/*    root->WinInit();
-    root->OpenNewWindow();
-    taiMisc::SetMainWindow(root->window); */
-    //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
-    // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
-    //    DataBrowser* db = DataBrowser::New(&taMisc::types, NULL, taMisc::types.GetTypeDef(), true);
-    //    db->InitLinks(); // no one else to do it!
-    //    db->ViewWindow();
-//    bw->browser->setRoot(root, root->GetTypeDef());
-//    taiMisc::SetMainWindow(db->browser_win());
+//   QApplication a( argc, argv );
+
+    //Create and show the main window
+    QMainWindow* mw = new QMainWindow(0, "Application window");
+    mw->setMinimumSize(640, 480);
+    QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
+    mw->setFocusProxy((QWidget*)console);
+    mw->setCentralWidget((QWidget*)console);
+    qApp->setMainWidget(mw);	// todo: deprecated version
+    mw->show();
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
   }
+  
 #else  // NO TA_GUI
-  if (gui) {
+  if(cssMisc::gui) {
     cerr << "Cannot specify 'gui' flag when not compiled for gui.\n ";
     return 1;
   }
   taiMC_ = taiMiscCore::New();
 #endif  // TA_GUI
+  if(!cssMisc::gui || (taMisc::dmem_proc > 0)) {
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+  }
+
   yydebug = 0;
 
-  cssMisc::TopShell->StartupShellInit(cin, cout);
-
 #ifdef TA_GUI
-  if(cssMisc::gui) {
-    cssMisc::TopShell->Shell_Gui_Console("css");
+  if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
+    cssMisc::TopShell->Shell_Qt_Console("css");
     qApp->exec();
   }
   else

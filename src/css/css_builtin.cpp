@@ -2670,7 +2670,8 @@ int cssMisc::Initialize() {
   cssMisc::cur_top = cssMisc::Top;
 
   cssMisc::TopShell = new cssCmdShell("css shell");
-  cssMisc::TopShell->PushSrcProg(cssMisc::Top);
+  //   cssMisc::TopShell->PushSrcProg(cssMisc::Top); // this happens when specific
+  // shell is constructed, in css_machine cmdshell code
 
   Install_Internals();
   Install_Commands();

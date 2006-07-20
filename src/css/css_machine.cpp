@@ -19,6 +19,7 @@
 #include "css_machine.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
+#include "css_console.h"
 #ifndef CSS_NUMBER
 # include "css_parse.h"
 #endif
@@ -172,7 +173,6 @@ int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
 int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
-cssConsole*	cssMisc::console = NULL;
 
 cssEl 		cssMisc::Void("Void"); 	
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr
@@ -366,17 +366,7 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 #else
   new QCoreApplication(argc, (char**)argv); // accessed as qApp
 #endif
-
-// create the system console
-//TODO: may need to move somewhere if we are using a gui console
-  if (!console) {
-    console = cssConsole::Get_SysConsole();
-  
-//TODO: modalize
-    rl_done = false;
-  }
 }
-
 
 #if (!defined(TA_OS_WIN))
 void cssMisc::fpecatch(int) {
@@ -4311,6 +4301,9 @@ bool cssProgSpace::unSetBreak(int srcln) {
 //   CmdShell
 ///////////////////////////////////
 
+static cssQandDConsole* qand_console = NULL;
+static QcssConsole* qcss_console = NULL;
+
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
   pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
@@ -4321,6 +4314,8 @@ void cssCmdShell::Constr() {
   src_prog = NULL;
   cmd_prog = new cssProgSpace("Cmd Shell Prog Space");
   cmd_prog->cmd_shell = this;	// link it up
+
+  prompt = "css> ";
 
   stack_size = 0;
   stack_alloc_size = 2;
@@ -4404,7 +4399,9 @@ void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
   UpdatePrompt();
 }
 
-void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
+void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_typ) {
+  console_type = cons_typ;
+
   fin = &fhi;
   fout = &fho;
   pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
@@ -4467,6 +4464,19 @@ void cssCmdShell::SetPrompt(const char* prmpt) {
   UpdatePrompt();
 }
 
+//////////////////////////////////////////////////////
+//  Specific console details
+
+extern "C" {
+  extern char* rl_readline(char*);
+  extern void add_history(char*);
+  extern int rl_done;		// readline done reading
+  extern int rl_pending_input;
+  extern int rl_stuff_char(int);
+  extern int readline_waitproc(void);
+  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
+}
+
 void cssCmdShell::UpdatePrompt() {
   if(src_prog == NULL) {
     act_prompt = "no src_prog> ";
@@ -4482,41 +4492,53 @@ void cssCmdShell::UpdatePrompt() {
     act_prompt = String(cmd_prog->parse_depth) + " " + prompt + pt + " ";
   else
     act_prompt = prompt + pt + " ";
-  if(input_mode == IM_Gui_Console)
-    cssMisc::console->setPrompt(act_prompt);
+  if(console_type == CT_QandD_Console)
+    qand_console->setPrompt(act_prompt);
+  else if(console_type == CT_Qt_Console)
+    qcss_console->setPrompt(act_prompt);
 }
 
-void cssCmdShell::Shell_Gui_Console(const char* prmpt) {
-  if(!cssMisc::console) {
-    taMisc::Error("cssCmdShell::Shell_Gui -- no console found!");
-    return;
-  }
+void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
+  if(!qand_console)
+    qand_console = cssQandDConsole::Get_SysConsole();
 
-  input_mode = IM_Gui_Console;
+  rl_done = false;
+  console_type = CT_QandD_Console;
   SetPrompt(prmpt);
   external_exit = false;
+
+  cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 
   //NB: we must use queued connection, because console lives in our thread,
   // but signal may be raised in another thread
-  connect(cssMisc::console, SIGNAL(NewLine(QString, bool)),
+  connect(qand_console, SIGNAL(NewLine(QString, bool)),
 	  this, SLOT(AcceptNewLine(QString, bool)), Qt::QueuedConnection);
-  cssMisc::console->Start();
+  qand_console->Start();
 }
 
-extern "C" {
-  extern char* rl_readline(char*);
-  extern void add_history(char*);
-  extern int rl_done;		// readline done reading
-  extern int rl_pending_input;
-  extern int rl_stuff_char(int);
-  extern int readline_waitproc(void);
-  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
+void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
+  qcss_console = QcssConsole::getInstance();
+
+  if(qcss_console == NULL) {
+    taMisc::Error("cssCmdShell::Shell_Qt -- no console found!");
+    return;
+  }
+
+  rl_done = false;
+  console_type = CT_Qt_Console;
+  qcss_console->setPrompt(prmpt);
+  external_exit = false;
+
+  cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 }
 
 void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
-  input_mode = IM_NoGui_Rl;
+  rl_done = false;
+  console_type = CT_NoGui_Rl;
   SetPrompt(prmpt);
   external_exit = false;
+
+  cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 
   while(!external_exit) {
     char* curln = rl_readline((char*)act_prompt);

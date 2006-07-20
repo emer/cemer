@@ -21,6 +21,7 @@
 #include "ta_filer.h"
 #include "ta_css.h"
 #include "css_builtin.h"
+#include "css_console.h"
 
 #include "datatable.h"
 
@@ -227,6 +228,14 @@ int pdpMisc::Main(int argc, char *argv[]) {
 //nn    bw->browser->setRoot(root, root->GetTypeDef());
     taiMisc::SetMainWindow(db->browser_win());
 
+    // gui console! TODO!
+//     QMainWindow* mw = new QMainWindow(0, "Application window");
+//     mw->setMinimumSize(640, 480);
+//     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
+//     mw->setFocusProxy((QWidget*)console);
+//     mw->setCentralWidget((QWidget*)console);
+    // todo: this needs to be linked into something somewhere.. 
+
     // set the update action (taken after Ok or Apply in the Edit dialog)
 //temp    taiMisc::Update_Hook = taMisc::DelayedMenuUpdate;
 //obs    winbMisc::group_leader = root->window;
@@ -311,8 +320,8 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	cssMisc::TopShell->StartupShellInit(cin, cout);
-	cssMisc::TopShell->Shell_Gui_Console("pdp++");
+	cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+	cssMisc::TopShell->Shell_Qt_Console("pdp++");
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
@@ -331,24 +340,28 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	// get rid of wait proc for rl -- we call it ourselves
 	extern int (*rl_event_hook)(void);
  	rl_event_hook = NULL;
-//TODO: need to determine how to change shell usage for slaves dmems
- 	cssMisc::Top->StartupShellInit(cin, cout);
-	qApp->exec();
+ 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
 	//	cssMisc::Top->debug = 2;
-	DMem_SubEventLoop();
+	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
 	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
       }
     }
-    else {
-      cssMisc::Top->StartupShellInit(cin, cout);
+    else {			// nogui 
+      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
       cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
-      qApp->exec(); // todo: ??
+//       qApp->exec(); // todo: ??
     }
   }
   else {
-    cssMisc::TopShell->StartupShellInit(cin, cout);
-    cssMisc::TopShell->Shell_Gui_Console("pdp++");
-    qApp->exec();
+    if(cssMisc::gui) {
+      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+      cssMisc::TopShell->Shell_Qt_Console("pdp++");
+      qApp->exec();
+    }
+    else {
+      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+      cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+    }
 #ifdef TA_USE_INVENTOR
     SoQt::done();
 #endif
@@ -356,10 +369,17 @@ int pdpMisc::Main(int argc, char *argv[]) {
   MPI_Finalize();
 
 #else // NOT DMEM_COMPILE
-  // todo: deal with nogi case -- call Shell_NoGui_Rl ??
-  cssMisc::TopShell->StartupShellInit(cin, cout);
-  cssMisc::TopShell->Shell_Gui_Console("pdp++");
-  qApp->exec();
+  if(cssMisc::gui) {
+//     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+//     cssMisc::TopShell->Shell_Qt_Console("pdp++");
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
+    cssMisc::TopShell->Shell_QandD_Console("pdp++");
+    qApp->exec();
+  }
+  else {
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+    cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+  }
 #ifdef TA_USE_INVENTOR
   SoQt::done();
 #endif

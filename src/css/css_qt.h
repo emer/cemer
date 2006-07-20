@@ -43,42 +43,4 @@ private:
   ~cssiSession();
 };
 
-/*obs
-class cssProgSpace;
-class cssClassType;
-class cssClassInst;
-
-class CSS_API cssiSession  { // this handles events for css/qt
-public:
-  static bool	block_stdin;	// block the processing of stdin input
-  static bool	done_busy;	// true if done being busy after all events proc'd
-  static bool	in_session;	// if we are in this session or not
-  static bool	quitting; // #IGNORE set when user chooses Quit command in gui or shell
-
-  static int	readline_waitproc(); // note: nongui version in cssMisc
-  static void	CancelProgEdits(cssProgSpace* prsp);
-  // cancel any active edit dialogs for given prog space
-  static void	CancelClassEdits(cssClassType* cltyp);
-  // cancel any active edit dialogs for given class type
-  static void	CancelObjEdits(cssClassInst* clobj);
-  // cancel any active edit dialogs for given class object
-  static void	RaiseObjEdits();
-  // bring all object edit dialogs to the front (e.g., after loading)
-
-  static void 	Init();		// call this to initialize the handler
-  static void 	Stop();		// tell the processing loop to stop
-  static void	Quit();		// tell the Qt session to quit
-
-  static int	Run();		// process events, etc.
-  static int	RunPending();	// run any pending events (don't wait..)
-
-  static int	(*WaitProc)();
-  // set this to a work process for idle time processing.  return true if something
-  // happend that might create new window system events..
-
-private:
-  cssiSession() {}
-  ~cssiSession() {}
-};
-*/
 #endif // CSS_QT_H

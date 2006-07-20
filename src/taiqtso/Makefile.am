@@ -22,6 +22,8 @@ HEADS =\
 	imisc_so.h \
 	irenderarea.h \
 	idimedit.h \
+	interceptor.h \
+	qconsole.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -48,6 +50,10 @@ SRCS =\
 	ieditgrid.moc.cpp \
 	idimedit.cpp \
 	idimedit.moc.cpp \
+	interceptor.cpp \
+	interceptor.moc.cpp \
+	qconsole.cpp \
+	qconsole.moc.cpp \
 	safeptr_so.cpp \
 	imisc_so.cpp \
 	irenderarea.cpp \

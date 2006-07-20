@@ -18,21 +18,31 @@
 
 #include <QThread>
 
-cssConsole*	cssConsole::m_sys_instance = NULL;
+extern "C" {
+  extern char* rl_readline(char*);
+  extern void add_history(char*);
+  extern int rl_done;		// readline done reading
+  extern int rl_pending_input;
+  extern int rl_stuff_char(int);
+  extern int readline_waitproc(void);
+  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
+}
 
-cssConsole* cssConsole::Get_SysConsole(QObject* parent) {
+cssQandDConsole*	cssQandDConsole::m_sys_instance = NULL;
+
+cssQandDConsole* cssQandDConsole::Get_SysConsole(QObject* parent) {
  if (!m_sys_instance) {
    m_sys_instance = New_SysConsole(parent);
  }
  return m_sys_instance;
 }
 
-cssConsole::cssConsole(QObject* parent)
+cssQandDConsole::cssQandDConsole(QObject* parent)
 :inherited(parent)
 {
 }
 
-cssConsole::~cssConsole() {
+cssQandDConsole::~cssQandDConsole() {
   if (this == m_sys_instance)
     m_sys_instance = NULL;
 }
@@ -56,8 +66,8 @@ protected:
 
 };
 
-class cssUnixConsole: public cssConsole {
-INHERITED(cssConsole)
+class cssUnixConsole: public cssQandDConsole {
+INHERITED(cssQandDConsole)
 friend class ConThread;
 public:
   ConThread*		thread;
@@ -88,7 +98,7 @@ public:
   ~cssUnixConsole();
 };
 
-cssConsole* cssConsole::New_SysConsole(QObject* parent) {
+cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
  cssUnixConsole* rval = new cssUnixConsole(parent);
  return rval;
 }
@@ -107,7 +117,7 @@ void ConThread::run() {
   while (con) { // con null'ed can indicate stop needed
     lprompt = prompt;
     //NOTE: according to rl spec, we must call free() on the string returned
-    curln_ = readline((char*)lprompt.chars());
+    curln_ = rl_readline((char*)lprompt.chars());
     eof = (!curln_);
     if (eof) {
       curln = _nilString;
@@ -140,5 +150,24 @@ cssUnixConsole::~cssUnixConsole() {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+
+QcssConsole* QcssConsole::theInstance = NULL;
+
+QcssConsole::~QcssConsole() {
+}
+
+QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
+  QConsole((QWidget*)parent, "css> ", true)
+{
+  cmd_shell = cs;
+}
+
+QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
+  if(theInstance != NULL) return theInstance;
+  theInstance = new QcssConsole(parent, cs);
+  return theInstance;
+}
 
 #endif // TA_OS_UNIX

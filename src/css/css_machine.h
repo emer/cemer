@@ -30,7 +30,6 @@
 #include "ta_string.h"
 #include "ta_variant.h"
 #include "css_extern_support.h"
-#include "css_console.h"
 
 // support for ta_type is neccessary to get file and string member funcs
 // TYPEA is an internal type access library
@@ -45,9 +44,6 @@
 
 #include <signal.h>
 // #include <setjmp.h>
-
-// externals
-class cssConsole;
 
 typedef int Int;
 typedef double Real;
@@ -180,7 +176,6 @@ public:
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
   static int		refcnt_trace; // user wants refcnt tracing (-rct from arg)
-  static cssConsole*	console;	// the console, IF CREATED
 
   static cssEl 		Void; 		// a void element
   static cssElPtr 	VoidElPtr;	// a void el pointer (to a void element)
@@ -1535,16 +1530,17 @@ class CSS_API cssCmdShell : public QObject {
   friend class cssProg;
   friend class cssProgSpace;
   Q_OBJECT
-protected:
-  enum InputMode { // current input mode (shell type)
-    IM_Gui_Console,
-    IM_NoGui_Rl
+public:
+  enum ConsoleType { // type of console to use
+    CT_Qt_Console,		// Qt-based console
+    CT_NoGui_Rl,		// -nogui readline based console
+    CT_QandD_Console,		// quick-and-dirty console (compatible with qt, but uses stdin/out
   };
 
-public:
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
+  ConsoleType	console_type;		// what kind of console are we running?
 
   istream*	fin;			// input file (current)
   ostream*	fout;			// output file
@@ -1570,10 +1566,12 @@ public:
   cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
   void		PopAllSrcProg(); // pop off all of the src progs
 
-  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout);
+  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout, ConsoleType cons_typ = CT_NoGui_Rl);
   // do all the initialization stuff for a shell, but don't actually start a specific shell
-  void		Shell_Gui_Console(const char* prmpt);
-  // configure a gui-based shell that links with cssMisc::console mechanism
+  void		Shell_QandD_Console(const char* prmpt);
+  // deprecated: configure a quick-and-dirty shell 
+  void		Shell_Qt_Console(const char* prmpt);
+  // configure qt gui-based shell that links with QcssConsole
   void		Shell_NoGui_Rl(const char* prmpt);
   // run a nogui readline-based shell
 
@@ -1586,7 +1584,6 @@ public slots:
   // called when a new line of text becomes available -- all outer shells/consoles call this interface
 protected:
   int		stack_alloc_size;	// allocated size of src_prog stack
-  InputMode	input_mode;		// what kind of shell input mode are we running?
 };
 
 #endif // machine_h

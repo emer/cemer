@@ -20,28 +20,16 @@
 // css_console.h -- abstraction of console (and readline)
 
 #include "ta_string.h"
-
-#include "css_def.h"
+#include "css_machine.h"
 
 #include <QObject>
 
-extern "C" { // basic readline interface -- either refers to readline, or we fake it
-  extern int rl_done;		// readline done reading
-  extern int rl_pending_input;
-  extern int (*rl_event_hook)(void); // note: we don't hook anymore...
-  extern char* readline(char*);
-  extern void add_history(char*);
-  extern int rl_stuff_char(int);
-}
-
-
-
-class CSS_API cssConsole: public QObject {
-  // abstract base definition of a console
+class CSS_API cssQandDConsole: public QObject {
+  // quick-and-dirty console
 INHERITED(QObject)
   Q_OBJECT
 public:
-  static cssConsole*	Get_SysConsole(QObject* parent = NULL);
+  static cssQandDConsole*	Get_SysConsole(QObject* parent = NULL);
     // get the system console instance, instantiating if necessary
 
   virtual const String	prompt() = 0;
@@ -49,18 +37,36 @@ public:
   
   virtual void		Start() {} // call when prompt set, and ready to receive input
   
-  cssConsole(QObject* parent = NULL);
-  ~cssConsole();
+  cssQandDConsole(QObject* parent = NULL);
+  ~cssQandDConsole();
   
 signals:
   void			NewLine(QString ln, bool eof); 
     // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
   
 protected:
-  static cssConsole*	m_sys_instance;
+  static cssQandDConsole*	m_sys_instance;
   
-  static cssConsole*	New_SysConsole(QObject* parent = NULL);
+  static cssQandDConsole*	New_SysConsole(QObject* parent = NULL);
 };
+
+#include "qconsole.h"
+
+class CSS_API QcssConsole : public QConsole {
+  INHERITED(QConsole);
+  Q_OBJECT;
+ public:
+
+  static QcssConsole *getInstance(QObject *parent = NULL, cssCmdShell* cs = NULL);
+
+  ~QcssConsole();
+  QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
+
+ protected:
+  cssCmdShell* 	cmd_shell; // the command shell
+  static QcssConsole *theInstance;
+};
+
 
 
 #endif
