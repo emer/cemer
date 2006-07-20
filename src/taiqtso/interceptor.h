@@ -2,10 +2,10 @@
 // Author: Kuba Ober <kuba@mareimbrium.org>
 // Downloaded from: http://www.ibib.waw.pl/~winnie
 //
-// License:  Public domain
+// License: Public domain
 //
 
-#if ! defined(INLUDED_INTERCEPTOR_H)
+#if ! defined(INCLUDED_INTERCEPTOR_H)
 #define INCLUDED_INTERCEPTOR_H
 
 #include <qobject.h>
