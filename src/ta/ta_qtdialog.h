@@ -404,7 +404,8 @@ public:
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
   taiActions*		cur_menu;	// current menu to add to (if not otherwise spec'd)
   taiActions*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
-  taiMenuBar*		menu;		// menu bar
+//temp  taiMenuBar*		menu;		// menu bar
+  taiActions*		menu;		// menu bar
   taiActions*		show_menu;	// Show menu bar
   Member_List		memb_el;	// member elements (1:1 with data_el), empty in inline mode
   taiDataList 		data_el;	// data elements (1:1 with memb_el), except in inline mode

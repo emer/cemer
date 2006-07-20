@@ -1810,9 +1810,14 @@ bool taiEditDataHost::ShowMember(MemberDef* md) const {
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
   if (menu == NULL) {
-    menu = new taiMenuBar(taiMisc::fonSmall,
-      NULL, this, NULL, widget());
-    vblDialog->setMenuBar(menu->rep_bar());
+/*temp    menu = new taiMenuBar(taiMisc::fonSmall,
+      NULL, this, NULL, widget()); */
+/*    menu = new taiMenu(taiActions::normal, taiMisc::fonSmall,
+      NULL, this, NULL, widget());*/
+    menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
+//temp    vblDialog->setMenuBar(menu->rep_bar());
+    vblDialog->setMenuBar(menu->GetRep());
+//    menu->GetRep()->show();
   }
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {
