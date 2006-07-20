@@ -420,6 +420,8 @@ private:
 class TAMISC_API DataTableCols: public taGroup<DataArray_impl> {
 INHERITED(taGroup<DataArray_impl>)
 public:
+  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  
   TA_BASEFUNS(DataTableCols); //
 private:
   void	Initialize();
@@ -444,6 +446,7 @@ private:
 class TAMISC_API DataTable : public DataBlock_Idx {
   // #NO_UPDATE_AFTER ##TOKENS table of data
 INHERITED(DataBlock_Idx)
+friend class DataTableCols;
 friend class DataTableModel;
 public:
   int 			rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
@@ -577,9 +580,8 @@ public:
   COPY_FUNS(DataTable, DataBlock_Idx);
   TA_BASEFUNS(DataTable); //
 
-public: // DO NOT USE THE FOLLOWING IN NEW CODE -- preferred method is to add a new row, then set values
-  void			RowsAdding(); // indicate beginning of column-at-a-time data adding NOT NESTABLE
-  void			RowsAdded(int n = 1); // indicates end of column at-a-time adding (triggers row added notification) -- this routine also gets called by the AddRow and similar functions (w/o calling RowsAdding)
+protected: 
+  void			RowsAdding(int n, bool begin); // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable
 
 public: // DataBlock i/f and common routines
   override DBOptions	dbOptions() const // options the instance type support
@@ -620,7 +622,7 @@ protected: // DataSink i/f
     {return SetValAsMatrix(data, chan, wr_itr);}
 
 protected:
-  DataTableModel*	m_dtm; // #IGNORE note: once we create, always exists
+  DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
   
   DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
     const String& col_nm, DataTableCols* col_gp = NULL);
@@ -1005,6 +1007,7 @@ public:
 
 class TAMISC_API DataTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
+friend class DataTableCols;
 friend class DataTable;
 public:
 
@@ -1027,6 +1030,7 @@ public: // required implementations
 protected:
   bool			ValidateIndex(const QModelIndex& index) const;
 #endif
+  void			emit_layoutChanged(); // we call this for most schema changes
 protected:
   DataTable*		dt;
 };

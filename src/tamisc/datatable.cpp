@@ -1208,6 +1208,29 @@ void DataTableCols::Initialize() {
   SetBaseType(&TA_DataArray);
 }
 
+void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  // we only do the notifies in the context of the root group, so we exit if we aren't root
+  if (!IsRoot()) return;
+
+  // for most schema changes, we just call the datamodel layoutChanged
+  // note that groups themselves don't show in the datatable editor
+  if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_GROUP_ITEM_MAX)) {
+    DataTable* dt = GET_MY_OWNER(DataTable);
+    if (!dt || !dt->m_dm) return;
+/*wrong    // it seems to handle Adds and Moves ok, but Deletes leave it
+    // with the same number of cols, unless we also send a removeColumn notify
+    if (dcr == DCR_GROUP_ITEM_REMOVE) {
+      // we just tell it the last col is being deleted, since it will refresh all
+      // in the layoutChanged notify
+      int col = dt->cols() - 1;
+      dt->m_dm->beginRemoveColumns(QModelIndex(), col, col);
+      dt->m_dm->endRemoveColumns();
+    }*/
+    dt->m_dm->emit_layoutChanged();
+  }
+  
+}
 
 //////////////////////////
 //	DataTable	//
@@ -1216,13 +1239,13 @@ void DataTableCols::Initialize() {
 void DataTable::Initialize() {
   rows = 0;
   save_data = true;
-  m_dtm = NULL; // returns new if none exists, or existing -- enables views to be shared
+  m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
 }
 
 void DataTable::Destroy() {
-  if (m_dtm) {
-   delete m_dtm;
-   m_dtm = NULL;
+  if (m_dm) {
+   delete m_dm;
+   m_dm = NULL;
   }
   CutLinks();
 }
@@ -1250,7 +1273,8 @@ void DataTable::AddColDispOpt(const String& dsp_opt, int col) {
 
 void DataTable::AddArrayToRow(float_RArray& tar) {
   if(tar.size == 0)	return;
-  RowsAdding();
+  int n = 1;
+  RowsAdding(n, true);
   int cnt = 0;
   taLeafItr i;
   DataArray_impl* ar;
@@ -1260,12 +1284,12 @@ void DataTable::AddArrayToRow(float_RArray& tar) {
     cnt++;
     if(cnt >= tar.size)	break;
   }
-  RowsAdded();
+  RowsAdding(n, false);
 }
 
 bool DataTable::AddRow(int n) {
   if ((cols() == 0) || (n < 1)) return false;
-  RowsAdding();
+  RowsAdding(n, true);
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, data., i) {
@@ -1273,7 +1297,7 @@ bool DataTable::AddRow(int n) {
     if (!mat) continue;
     mat->EnforceFrames(mat->frames() + n);
   }
-  RowsAdded();
+  RowsAdding(n, false);
   return true;
 }
 
@@ -1429,10 +1453,10 @@ taMatrix* DataTable::GetColMatrix(int col) const {
 }
 
 DataTableModel* DataTable::GetDataModel() {
-  if (!m_dtm) {
-    m_dtm = new DataTableModel(this);
+  if (!m_dm) {
+    m_dm = new DataTableModel(this);
   }
-  return m_dtm;
+  return m_dm;
 }
 
 taMatrix* DataTable::GetMatrixData_impl(int chan) {
@@ -1761,27 +1785,40 @@ void DataTable::Reset() {
 }
 
 void DataTable::ResetData() {
+  if (rows == 0) return; // prevent erroneous m_dm calls
   DataUpdate(true);
+  if (m_dm) m_dm->beginRemoveRows(QModelIndex(), 0, rows - 1);
+  
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, data., i) {
     ar->AR()->Reset();
   }
   rows = 0;
+  
+  if (m_dm) m_dm->endRemoveRows();
   DataUpdate(false);
   // also update itrs in case using simple itr mode
   ReadItrInit();
   WriteItrInit();
 }
 
-void DataTable::RowsAdding() {
-  DataUpdate(true);
+void DataTable::RowsAdding(int n, bool begin) {
+  if (begin) {
+    DataUpdate(true);
+    if (m_dm) {
+      m_dm->beginInsertRows(QModelIndex(), rows, rows + n);
+    }
+  } else { // end
+    rows += n;
+    
+    if (m_dm) {
+      m_dm->endInsertRows();
+    }
+    DataUpdate(false);
+  }
 }
 
-void DataTable::RowsAdded(int n) {
-  rows += n;
-  DataUpdate(false);
-}
 
 /*
   Header format: 
@@ -2978,7 +3015,7 @@ DataTableModel::DataTableModel(DataTable* owner)
 
 DataTableModel::~DataTableModel() {
   if (dt) {
-    dt->m_dtm = NULL;
+    dt->m_dm = NULL;
     dt = NULL;
   }
 }
@@ -3005,6 +3042,10 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   default: break;
   }
   return QVariant();
+}
+
+void DataTableModel::emit_layoutChanged() {
+  emit layoutChanged();
 }
 
 Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {

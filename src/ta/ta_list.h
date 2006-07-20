@@ -372,6 +372,8 @@ public:
 
   // output
   virtual void 	List(ostream& strm=cout) const; 	// List the group items
+protected:
+  virtual void		ItemRemoved_() {} // we overload this in groups to update the leaf counts
 };
 
 

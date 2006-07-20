@@ -158,9 +158,8 @@ public:
   virtual void	InitLeafGp() const;		// Initialize the leaf group iter list, always ok to call
   virtual void	InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
   virtual void	AddEl_(void* it); 		// #IGNORE update leaf count
-  virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
-  virtual bool	Remove(TAPtr item)		{ return taList_impl::Remove(item); }
-  virtual bool	Remove(int idx);
+//  virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
+//  virtual bool	Remove(TAPtr item)		{ return taList_impl::Remove(item); }
 
   virtual bool 	RemoveLeaf(TAPtr item); 	// remove given leaf element
   virtual bool	RemoveLeaf(const char* item_nm);
@@ -221,6 +220,8 @@ public:
   // seems to otherwise compile fine without it..
   //protected:
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
+protected:
+  override void		ItemRemoved_(); // update the leaf counts (supercursively)
 };
 
 #ifdef DMEM_COMPILE

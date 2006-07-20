@@ -254,6 +254,7 @@ void* taPtrList_impl::AddUniqNameOld_(void* it) {
   Add_(it);
   return it;
 }
+
 bool taPtrList_impl::Remove(int i) {
   if((size == 0) || (i >= size))
     return false;
@@ -268,12 +269,14 @@ bool taPtrList_impl::Remove(int i) {
     el[j] = el[j+1];
     UpdateIndex_(j);
   }
-  size--;
+  --size;
+  ItemRemoved_(); //NOTE: for Groups, we update leaf counts (supercursively) at this point
   DataChanged(DCR_LIST_ITEM_REMOVE, tel);
   if (tel) El_disOwn_(tel);
   //WARNING: other modules depends on no more code after this point! (ex. using El_Done to self-delete)
   return true;
 }
+
 bool taPtrList_impl::Remove_(void* it) {
   int i;
   if((i = Find_(it)) < 0)

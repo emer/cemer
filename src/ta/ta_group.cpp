@@ -509,12 +509,9 @@ ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
   return strm;
 }
 
-bool taGroup_impl::Remove(int i) {
-  if(taList_impl::Remove(i)) {
-    UpdateLeafCount_(-1);
-    return true;
-  }
-  return false;
+void taGroup_impl::ItemRemoved_() {
+  inherited::ItemRemoved_();
+  UpdateLeafCount_(-1);
 }
 
 void taGroup_impl::RemoveAll() {
