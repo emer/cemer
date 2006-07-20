@@ -65,6 +65,7 @@ Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
   #include <iostream>
   #ifdef TA_USE_QT
     #include <QString>
+    #include <QVariant>
   #endif
 #endif // __MAKETA__
 
@@ -148,6 +149,7 @@ public:
   String(const QString& val);
   String&           operator = (const QString& y);
   operator QString() const; //
+  operator QVariant() const; //
 #endif
 
   ~String() {mrep->unRef();}
@@ -432,6 +434,11 @@ inline String::String(const QString& y) {
 
 inline String::operator QString() const {
   QString result(chars());
+  return result;
+}
+
+inline String::operator QVariant() const {
+  QVariant result(chars());
   return result;
 }
 

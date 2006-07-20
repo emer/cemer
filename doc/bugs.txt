@@ -95,6 +95,14 @@ Medium Important:
 * in Script, when you compile, the "script compiled" check does not get checked
 * create a new matrix; choose SetGeomN from menu and change; panel is not updated;
   only when you click to something else and return does panel show correct values
+* in a Matrix, select Remove Frame(n) for some n inside the matrix; the core
+  works correctly, but the Gui seems to lob off all the frames from n on
+* using standard QTableView when values are numeric-ish seems to insert an up/down
+  edit control, which is limited to 2 decimal digits maximum
+
+Lower Priority (but perhaps still needed)
+
+* if you change the Geom on a Matrix, the Edit display is not correct
 
 Cosmetic/Usability/etc. (lower priority):
 
@@ -106,6 +114,7 @@ Cosmetic/Usability/etc. (lower priority):
 * may want to add auto-line splitting to object descriptions <- YES! this is particularly important for SimLog dialog upon saving, which has a very long title, and occludes the buttons, etc
 * change default name in NetMonItem to just NetMonItem (no _#) because we qualify every name anyway
   and the numbers will just get out of sync with list position anyway
+* need to add clipboard/drag/drop awareness to TableViews
 
 TODO
 ----
@@ -140,6 +149,8 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* create a new (string) Matrix; set some dims; switch to Edit panel, it ABORTS
+* byte_Matrix data entry, seems to accept as if Hex, then display in Decimal
 * Project::file_name (taFNBase) should prob not show, and def not save filename
 * filer and related:
   * saved a proj to name.proj and it actually saved to name.proj.gz

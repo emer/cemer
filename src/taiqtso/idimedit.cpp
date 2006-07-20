@@ -163,4 +163,6 @@ void iDimEdit::setReadOnly(bool value) {
     spn->setReadOnly(value);
   }
   m_readOnly = value;
+  setDimsReadOnly(value);
+  
 }

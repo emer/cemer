@@ -111,7 +111,6 @@ public:
   void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
     
   void			Reset() {EnforceSize(0);}
-  int			operator [](int i) const {if (InRange(i)) return el[i]; else return 0;}  
   
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -130,6 +129,8 @@ public: // functions for internal/trusted use only
 protected:
   int			el[TA_MATRIX_DIMS_MAX];
   
+  inline int		operator [](int i) const {return el[i];}  
+
 private:
   void			Initialize();
   void			Destroy();
@@ -149,12 +150,15 @@ public: // ITypedObject i/f
   void*			This() {return (void*)this;}
   
 public: // IMatrix i/f
-  int			count() const {return size;}
-  int			dims() const {return geom.size;}
-  int			dim(int d) const {return geom.FastEl(d);}
+  inline int		count() const {return size;} // the number of items
+  inline int		dims() const {return geom.size;} // the number of dimensions
+  inline int		dim(int d) const {return geom.el[d];} // the value of dimenion d -- MUST BE IN_RANGE
   int 			frames() const;	// number of frames currently in use (value of highest dimension) 
   int 			frameSize() const;	// number of elements in each frame (product of inner dimensions) 
+  int			rowCount(); // flat row count, for 2-d grid operations, only 0 if empty
    	
+  int			FrameToRow(int f) const; // convert frame number to row number
+  
   virtual TypeDef*	GetDataTypeDef() const = 0; // type of data, ex TA_int, TA_float, etc.
    	
   const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
@@ -202,7 +206,7 @@ public:
   static String		GeomToString(const MatrixGeom& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
   
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
-  MatrixGeom		geom; // #SHOW dimensions array
+  MatrixGeom		geom; // #SHOW #READ_ONLY dimensions array -- you cannot change this directly, you have to use API functions to change size
   
   bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
   
@@ -240,10 +244,12 @@ public:
     // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
      
 
-  virtual void		AddFrames(int n); // add n new blank frames
+  void			AddFrame() {AddFrames(1);} // #MENU #MENU_ON_Matrix #MENU_CONTEXT  add 1 new blank frame
+  virtual void		AddFrames(int n); // #MENU #MENU_ON_Matrix #MENU_CONTEXT add n new blank frames
   virtual void		AllocFrames(int n); // make sure space exists for n frames
-  virtual void		EnforceFrames(int n); // set size to n frames, blanking new elements if added
-  virtual void		RemoveFrame(int n); // remove the given frame, copying data backwards if needed
+  virtual void		EnforceFrames(int n, bool notify = true); 
+    // #MENU #MENU_ON_Object #ARGC_1 set size to n frames, blanking new elements if added
+  virtual void		RemoveFrame(int n); // #MENU #MENU_ON_Matrix remove the given frame, copying data backwards if needed
   virtual bool		CopyFrame(const taMatrix& src, int frame); // copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
   
   virtual void		Reset() {EnforceFrames(0);}
@@ -257,7 +263,7 @@ public:
     {int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
     // set geom for matrix
   void			SetGeomN(const MatrixGeom& geom_) 
-    {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix set geom for any sized array
+    {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE set geom for any sized array
   
   // Slicing -- NOTES: 
   // 1. outstanding slices make the parent non-extensible
@@ -316,6 +322,7 @@ protected:
   int			slice_cnt; // number of extant slices -- slices force no reallocs
   taMatrix*		slice_par; // slice parent -- we ref/unref it
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
+  
   
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
@@ -649,10 +656,9 @@ public:
   TA_MATRIX_FUNS(byte_Matrix, byte)
   
 public: //
-  //note: for streaming, we convert to hex, rather than char
   override float	El_GetFloat_(const void* it) const { return (float)*((byte*)it); } // #IGNORE
-  override const String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it)), "x"); } // #IGNORE
-  override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.HexToInt();}       // #IGNORE
+  override const String	El_GetStr_(const void* it) const { return String(((int)*((byte*)it))); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.toInt();}       // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
   override void		El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
 protected:
@@ -725,9 +731,11 @@ friend class taMatrix;
 INHERITED(QAbstractTableModel)
 public:
 #ifndef __MAKETA__
-  int			matIndex(const QModelIndex& idx); // #IGNORE flat matrix data index
+  int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*		mat() const {return m_mat;}
+  
+  void			emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to);
   
   MatrixTableModel(taMatrix* mat_); // note: mat is always valid, we destroy this on mat dest
   ~MatrixTableModel(); //
@@ -744,6 +752,8 @@ public: // required implementations
     int role = Qt::EditRole); // override, for editing
 
 protected:
+  static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
+ 
   void			MatrixDestroying(); // clears our instance
   bool			ValidateIndex(const QModelIndex& index) const;
   bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;

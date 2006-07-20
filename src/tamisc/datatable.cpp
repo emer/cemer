@@ -1430,8 +1430,7 @@ taMatrix* DataTable::GetColMatrix(int col) const {
 
 DataTableModel* DataTable::GetDataModel() {
   if (!m_dtm) {
-    m_dtm = new DataTableModel();
-    m_dtm->setDataTable(this);
+    m_dtm = new DataTableModel(this);
   }
   return m_dtm;
 }
@@ -2971,27 +2970,29 @@ void DT_GridViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
 //   DataTableModel		//
 //////////////////////////////////
 
-DataTableModel::DataTableModel(QObject* parent) 
-:inherited(parent)
+DataTableModel::DataTableModel(DataTable* owner) 
+:inherited(NULL)
 {
-  m_dt = NULL;
+  dt = owner;
 }
 
 DataTableModel::~DataTableModel() {
-  setDataTable(NULL, false);
+  if (dt) {
+    dt->m_dtm = NULL;
+    dt = NULL;
+  }
 }
 
 int DataTableModel::columnCount(const QModelIndex& parent) const {
-  if (!m_dt) return 0;
-  else       return m_dt->cols();
+  return dt->cols();
 }
 
 QVariant DataTableModel::data(const QModelIndex& index, int role) const {
-  if (!m_dt || !index.isValid()) return QVariant();
+  if (!dt || !index.isValid()) return QVariant();
   
   switch (role) {
   case Qt::TextAlignmentRole: {
-    DataArray_impl* col = m_dt->GetColData(index.column());
+    DataArray_impl* col = dt->GetColData(index.column());
     if (col) {
       if (col->is_numeric())
         return QVariant(Qt::AlignRight | Qt::AlignVCenter);
@@ -3000,31 +3001,21 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
     } 
     } break;
   case Qt::DisplayRole:
-    return m_dt->GetValAsVar(index.column(), index.row());
+    return dt->GetValAsVar(index.column(), index.row());
   default: break;
   }
   return QVariant();
 }
 
-void DataTableModel::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-  //TODO: change notification more particular????
-  emit layoutChanged();
-}
-
-void DataTableModel::DataLinkDestroying(taDataLink* dl) {
-  setDataTable(NULL);
-  //TODO: change notification
-}
-
 Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
-  if (!m_dt || !index.isValid()) return 0;
+  if (!dt || !index.isValid()) return 0;
   Qt::ItemFlags rval = 0;
   if (ValidateIndex(index)) {
     // don't enable null cells
-    if (m_dt->hasData(index.column(), index.row() )) {
+    if (dt->hasData(index.column(), index.row() )) {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       //TODO: determine if not editable, ex. maybe for matrix types
-      DataArray_impl* col = m_dt->GetColData(index.column());
+      DataArray_impl* col = dt->GetColData(index.column());
       if (col && !col->is_matrix)  
         rval |= Qt::ItemIsEditable;
     }
@@ -3036,7 +3027,7 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, in
   if (role != Qt::DisplayRole)
     return QVariant();
   if (orientation == Qt::Horizontal) {
-    DataArray_impl* col = m_dt->GetColData(section);
+    DataArray_impl* col = dt->GetColData(section);
     if (col)  
       return QString(col->GetDisplayName().chars());
     else 
@@ -3047,41 +3038,26 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, in
 }
 
 int DataTableModel::rowCount(const QModelIndex& parent) const {
-  if (!m_dt) return 0;
-  else       return m_dt->rows;
+  return dt->rows;
 }
 
 bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
-  if (!m_dt || !index.isValid()) return false;
+  if (!dt || !index.isValid()) return false;
   bool rval = false;
+  //TODO: need to restrict setData for scalars only -- use delegate for matrix
   switch (role) {
   case Qt::EditRole:
-    m_dt->SetValAsVar(value, index.column(), index.row());
+    dt->SetValAsVar(value, index.column(), index.row());
+    //TODO: maybe should emit in DataTable??? then it happens for all sources
     emit dataChanged(index, index);
     return rval;
   default: return false;
   }
 }
 
-
-void DataTableModel::setDataTable(DataTable* value, bool notify) {
-  if (m_dt == value) return;
-  if (m_dt) { // disconnect
-    m_dt->RemoveDataClient(this);
-  }
-  m_dt = value;
-  if (m_dt) { // connect
-    m_dt->AddDataClient(this);
-  }
-  //TODO: make sure this is the right signal
-  if (notify) {
-    emit layoutChanged();
-  }
-}
-
 bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
-  if (!m_dt) return false;
-  return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->cols()));
+  if (!dt) return false;
+  return (index.isValid() && (index.row() < dt->rows) && (index.column() < dt->cols()));
 }
 
 

@@ -26,6 +26,9 @@
 #include "datatable.h"
 //#include "fontspec.h"
 
+#ifndef __MAKETA__
+# include <QItemDelegate>
+#endif
 
 // forwards
 class tabDataTableViewType;
@@ -46,16 +49,30 @@ protected:
 };
 
 
+class TAMISC_API DataTableDelegate: public QItemDelegate {
+  Q_OBJECT
+INHERITED(QItemDelegate)
+public:
+  DataTableRef		dt; // we maintain a ref to get modal information
+  
+  DataTableDelegate(DataTable* dt);
+  ~DataTableDelegate();
+};
+
 class TAMISC_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iDataPanelFrame inherited;
-#endif
+INHERITED(iDataPanelFrame)
 public:
-  QTableView*		tv;
+  QWidget*		cw; 
+  QVBoxLayout*		layOuter;
+  QTableView*		  tv;
+  ScaleBar*		  sb; // shown if needed
+  
+  ColorScale*		scale;
   
   DataTable*		dt() {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
+  void			setScaleBarVisible(bool value);
 
   override int 		EditAction(int ea);
   void			FillList();

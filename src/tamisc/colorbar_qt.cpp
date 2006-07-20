@@ -687,7 +687,7 @@ void ScaleBar::UpdateScaleValues(){
 //////////////////////////
 
 HCScaleBar::HCScaleBar(ColorScale* c, SpanMode sm, bool adj, bool ed, QWidget* parent)
-:ScaleBar(false, sm, adj, ed, parent)
+:ScaleBar(true, sm, adj, ed, parent)
 {
   init(c);
 }

@@ -789,7 +789,11 @@ taiDimEdit::taiDimEdit(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* g
 
 void taiDimEdit::Initialize(QWidget* gui_parent_) {
   SetRep(new iDimEdit(gui_parent_));
-  connect(m_rep, SIGNAL(changed(iDimEdit*)), this, SLOT(repChanged()) );
+  if (readOnly()) {
+    rep()->setReadOnly(true);
+  } else {
+    connect(m_rep, SIGNAL(changed(iDimEdit*)), this, SLOT(repChanged()) );
+  }
 }
 
 void taiDimEdit::GetImage(const MatrixGeom* arr) {

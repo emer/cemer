@@ -444,6 +444,7 @@ private:
 class TAMISC_API DataTable : public DataBlock_Idx {
   // #NO_UPDATE_AFTER ##TOKENS table of data
 INHERITED(DataBlock_Idx)
+friend class DataTableModel;
 public:
   int 			rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
   bool			save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
@@ -1002,22 +1003,17 @@ public:
 };
 
 
-class TAMISC_API DataTableModel: public QAbstractTableModel, public IDataLinkClient { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables
+class TAMISC_API DataTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
+friend class DataTable;
 public:
 
-  DataTable*		dataTable() const {return m_dt;}
+  DataTable*		dataTable() const {return dt;}
   void			setDataTable(DataTable* value, bool notify = true);
   
-  DataTableModel(QObject* parent = NULL);
+  DataTableModel(DataTable* owner);
   ~DataTableModel(); //
   
-public: // IDataLinkClient i/f
-  void*		This() {return this;} // reference to the 'this' pointer of the client object
-  TypeDef*	GetTypeDef() const {return &TA_DataTableModel;} // typedef of the dlc
-  void		DataLinkDestroying(taDataLink* dl); // override
-  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); // override
-
 public: // required implementations
 #ifndef __MAKETA__
   int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
@@ -1030,8 +1026,9 @@ public: // required implementations
     int role = Qt::EditRole); // override, for editing
 protected:
   bool			ValidateIndex(const QModelIndex& index) const;
-  DataTable*		m_dt;
 #endif
+protected:
+  DataTable*		dt;
 };
 
 

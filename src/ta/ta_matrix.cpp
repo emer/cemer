@@ -36,7 +36,10 @@ MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
 }
 
 void MatrixGeom::Initialize() {
+  // default minimum geometry is 2d
   size = 0;
+  // set all the dim values valid -- other code may use shortcuts to read these
+  memset(el, 0, sizeof(el));
 }
 
 void MatrixGeom::Destroy() {
@@ -142,18 +145,28 @@ void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
 //////////////////////////
 
 bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
-  if (dims_ <= 0) { 
+  if ((dims_ < 1) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
     if (err_msg != NULL)
-      *err_msg = "dims must be > 0";
+      *err_msg = "dims must be: 1 <= dims <= " + String(TA_MATRIX_DIMS_MAX) + 
+        " was: " + String(dims_);
     return false;
   }
   
+  // note: for loading and initialization, we accept zero dim values,
+  // provided all above that dim are also zero
   int i;
+  bool found_zero = false;
   for (i = 0; i < (dims_ - 1) ; ++i) {
-    if (geom_[i] <= 0) {
-      if (err_msg != NULL)
-        *err_msg = "geoms[0..N-2] must be > 0";
+    if (geom_[i] < 0) {
+      *err_msg = "geoms must be >= 0";
       return false;
+    } else if (geom_[i] <= 0) {
+      found_zero = true;
+    } else {
+      if (found_zero) {
+        *err_msg = "highest-most geoms must all be >0 or 0";
+        return false;
+      }
     }
   }
   
@@ -211,13 +224,11 @@ void taMatrix::Destroy() {
     taMisc::Error("taMatrix being destroyed with slice_cnt=", String(slice_cnt));
   }
 #endif
-#ifdef TA_GUI
   if (m_dm) {
     m_dm->MatrixDestroying();
     delete m_dm;
     m_dm = NULL;
   }
-#endif
 }
 
 void taMatrix::Add_(const void* it) {
@@ -277,6 +288,10 @@ void taMatrix::Copy_(const taMatrix& cp) {
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }
   }
+  // notifies
+  if (m_dm) {
+    m_dm->emit_dataChanged(0, 0, rowCount() - 1, dim(0) - 1);
+  }
 }
 
 bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
@@ -295,32 +310,15 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
       El_SetFmVar_(FastEl_Flat_(base + i), src.El_GetVar_(src.FastEl_Flat_(i)));
     }
   }
+  // notifies
+  if (m_dm) {
+    m_dm->emit_dataChanged(FrameToRow(frame), 0, FrameToRow(frame + 1) - 1, dim(0) - 1);
+  }
   return true;
 }
 
 int taMatrix::defAlignment() const {
   return Qt::AlignRight; // most mats are numeric, so this is the default
-}
-
-void taMatrix::List(ostream& strm) const {
-  strm << "["; 
-  for (int d = 0; d < dims(); ++d) {
-    if (d > 0) strm << ",";
-    strm << dim(d);
-  }
-  strm << "] {";
-  int i;
-  for(i=0;i<size;i++) {
-    strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
-  }
-  strm << "}";
-}
-
-ostream& taMatrix::Output(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent);
-  List(strm);
-  strm << ";\n";
-  return strm;
 }
 
 int taMatrix::Dump_Load_Item(istream& strm, int idx) {
@@ -390,7 +388,9 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
-void taMatrix::EnforceFrames(int n) {
+// This is *the* routine for resizing, so all data change ops/tracking
+// can go through this
+void taMatrix::EnforceFrames(int n, bool notify) {
   Check(canResize(), "resizing not allowed");
   
   // note: we enforce the size in terms of underlying cells, for when
@@ -398,16 +398,76 @@ void taMatrix::EnforceFrames(int n) {
   int new_size = n * frameSize();
   Alloc_(new_size); // makes sure we have enough raw space
   // blank new or reclaim old
+  bool is_1d = (dims() <= 1); // 1d makes the row ops into col ops for notify
   if (new_size > size) {
+    // Qt data model notification begin
+    bool was_zero = (size == 0);
+    bool in_row = false;
+    bool in_col = false;
+    if (m_dm && notify) {
+      if (is_1d) {
+        if (was_zero) { 
+          m_dm->beginInsertRows(QModelIndex(), 0, 1); 
+          in_row = true;
+        }
+        m_dm->beginInsertColumns(QModelIndex(), size, new_size - 1);
+        in_col = true;
+      } else { //Nd
+        m_dm->beginInsertRows(QModelIndex(), rowCount(), FrameToRow(n) - 1); 
+        in_row = true;
+        if (was_zero) { 
+          m_dm->beginInsertColumns(QModelIndex(), 0, dim(0) - 1);
+          in_col = true;
+        }
+      }
+    }
+    
+    // data change
     const void* blank = El_GetBlank_();
     for (int i = size; i < new_size; ++i) {
       El_Copy_(FastEl_Flat_(i), blank);
     }
+    size = new_size;
+    geom.Set(geom.size-1, n);
+    	
+    // notify end
+    if (m_dm && notify) {
+      if (in_col) m_dm->endInsertColumns();
+      if (in_row) m_dm->endInsertRows();
+    }
+    
   } else if (new_size < size) {
+    bool to_zero = (new_size == 0);
+    bool rm_row = false;
+    bool rm_col = false;
+    if (m_dm && notify) {
+      if (is_1d) {
+        if (to_zero) {
+          m_dm->beginRemoveRows(QModelIndex(), 0, 1); 
+          rm_row = true;
+        }
+        m_dm->beginRemoveColumns(QModelIndex(), 0, dim(0) - 1);
+        rm_col = true;
+      } else { // Nd
+        m_dm->beginRemoveRows(QModelIndex(), FrameToRow(n), rowCount() - 1); 
+        rm_row = true;
+        if (to_zero) {
+          m_dm->beginRemoveColumns(QModelIndex(), 0, dim(0) - 1);
+          rm_col = true;
+        }
+      }
+    }
+    
     ReclaimOrphans_(new_size, size - 1);
+    size = new_size;
+    geom.Set(geom.size-1, n);	
+    
+    if (m_dm && notify) {
+      if (rm_col) m_dm->endRemoveColumns();
+      if (rm_row) m_dm->endRemoveRows();
+    }
   }
-  size = new_size;
-  geom.Set(geom.size-1, n);	
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
@@ -429,27 +489,27 @@ int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
   }
     
   
-  Assert((rval < size), "matrix element is out of bounds");
-  if (rval < 0) rval = 0; // 0 is probably the "safest" unsafe value
+//  Assert((rval < size), "matrix element is out of bounds");
+//  if (rval < 0) rval = 0; // 0 is probably the "safest" unsafe value
   return rval;
 }
  
 int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
-  Assert((geom.size >= 1), "matrix geometry has not been initialized");
+/*  Assert((geom.size >= 1), "matrix geometry has not been initialized");
   Assert((indices.size >= 1), "at least 1 index must be specified");
-  Assert((indices.size <= geom.size), "too many indices for matrix");
+  Assert((indices.size <= geom.size), "too many indices for matrix");*/
   int d0 = indices[0];
-  Assert(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
+//  Assert(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
   
   int rval = 0;
   for (int i = indices.size - 1 ; i > 0; --i) {
     int di = indices[i];
-    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
+//    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
     rval += di;
     rval *= geom[i-1];
   }
   rval += d0;
-  Assert((rval < size), "matrix element is out of bounds");
+//  Assert((rval < size), "matrix element is out of bounds");
   return rval;
 }
  
@@ -465,6 +525,15 @@ int taMatrix::frameSize() const {
   for (int i = 1; i < (geom.size - 1); ++i) 
     rval *= geom[i];
   return rval;
+}
+
+int taMatrix::FrameToRow(int f) const {
+  // this needs to work even when dims<=1, so we just return f
+  if (dims() <= 1) return f;
+  // for dims==2, we just return f, else we multiple by higher dims
+  for (int i = dims() - 2; i >= 1; --i)
+    f *= dim(i);
+  return f;
 }
 
 MatrixTableModel* taMatrix::GetDataModel() {
@@ -566,13 +635,34 @@ bool taMatrix::InRangeN(const MatrixGeom& indices) const {
   return true;
 }
  
+void taMatrix::List(ostream& strm) const {
+  strm << "["; 
+  for (int d = 0; d < dims(); ++d) {
+    if (d > 0) strm << ",";
+    strm << dim(d);
+  }
+  strm << "] {";
+  int i;
+  for(i=0;i<size;i++) {
+    strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
+  }
+  strm << "}";
+}
+
+ostream& taMatrix::Output(ostream& strm, int indent) const {
+  taMisc::indent(strm, indent);
+  List(strm);
+  strm << ";\n";
+  return strm;
+}
+
 void taMatrix::RemoveFrame(int n) {
   Check(canResize(), "matrix is not resizable");
   int frames_ = frames(); // cache
   Check(((n >= 0) && (n < frames_)), "frame number out of bounds");
   // check if we have to copy data
   if (n != (frames_ - 1)) {
-    int fm = n * frameSize();
+    int fm = (n + 1) * frameSize();
     int to = fm - frameSize();
     while (fm < size) {
       El_Copy_(FastEl_Flat_(to), FastEl_Flat_(fm));
@@ -580,7 +670,37 @@ void taMatrix::RemoveFrame(int n) {
       ++to;
     }
   }
-  EnforceFrames(frames_ - 1); // this properly resizes, and reclaims orphans
+  // notifies
+  bool is_1d = (dims() <= 1);
+  if (m_dm) {
+    if (is_1d)
+      m_dm->beginRemoveColumns(QModelIndex(), n, n); 
+    else
+      m_dm->beginRemoveRows(QModelIndex(), FrameToRow(n), FrameToRow(n + 1) - 1); 
+  }
+  
+  // don't notify, because we are doing it (it can't boggle excisions)
+  EnforceFrames(frames_ - 1, false); // this properly resizes, and reclaims orphans
+  
+  if (m_dm) {
+    if (is_1d)
+      m_dm->endRemoveColumns(); 
+    else
+      m_dm->endRemoveRows();
+  }
+}
+
+int taMatrix::rowCount() {
+  if (dims() <= 1)
+    return 1;
+  else if (dims() == 2)
+    return dim(1);
+  else { // more than 2d, return # flat rows
+    int rval = dim(1);
+    for (int i = dims() - 1; i > 1; --i)
+      rval *= dim(i);
+    return rval;
+  }
 }
 
 int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
@@ -675,6 +795,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
       EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
     }
   }
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 void taMatrix::UpdateAfterEdit() {
@@ -914,14 +1035,10 @@ bool rgb_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 
   The MatrixTableModel provides a 2-d table model for TA Matrix objects.
   
-  We map indexes in a hierarchy of tables, by grouping the dimensions starting
-  from the least, ex:
-  group: 2   1    0      
-   dims: 4  3 2  1 0
-
-  Many functions pass in a parent index, which will be Invalid for the top level.
-  So these functions are iterative/quasi-recursive
+  For Gui editing, we map indexes in 2d flat table.
 */
+
+MatrixGeom MatrixTableModel::tgeom; 
 
 MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
 :inherited(NULL)
@@ -938,9 +1055,7 @@ MatrixTableModel::~MatrixTableModel() {
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
   if (!m_mat) return 0;
-  if (m_mat->dims() < 1)
-    return 0;
-  else return m_mat->dim(0);
+  return m_mat->geom.FastEl(0);
 }
 
 QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
@@ -948,7 +1063,7 @@ QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
   switch (role) {
   case Qt::DisplayRole: 
   case Qt::EditRole:
-    return m_mat->SafeElAsVar(index.column(), index.row());
+    return m_mat->SafeElAsVar_Flat(matIndex(index));
 //Qt::DecorationRole
 //Qt::ToolTipRole
 //Qt::StatusTipRole
@@ -967,26 +1082,49 @@ Qt::CheckStateRole*/
   }
 }
 
-Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
-  if (!m_mat) return 0;
-  Qt::ItemFlags rval = 0;
-  if (ValidateIndex(index)) {
-    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    //only editable if 2-d or less
-    if (m_mat->dims() <= 2)  
-      rval |= Qt::ItemIsEditable;
-  }
-  return rval;
+void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
+  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 
+Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
+  if (!m_mat) return 0;
+  //TODO: maybe need to qualify!, plus drag-drop handling, etc.
+  Qt::ItemFlags rval = 0;
+  
+  if (ValidateIndex(index)) {
+    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+  }
+  return rval; 
+}
+/*
+  index = i0 + ((i1*d0) + i2)*d1 etc.
+to find i1,i2... from index:
+1. divide by d0 gives rowframe -- remainder is i1
+2. divide by d1 gives 2d-frame
+*/
 QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
   if (role != Qt::DisplayRole)
     return QVariant();
 //TODO: make the headers show the dimenion # when > 2
   if (orientation == Qt::Horizontal)
-    return QString("C%1").arg(section);
-  else
-    return QString("R%1").arg(section);
+    return QString::number(section); //QString("%1").arg(section);
+  else {// in form: d1[[:d2]:d3]
+    if (m_mat->dims() <= 2)
+      return QString::number(section);
+    else {
+      div_t r;
+      String rval;
+      // find each nextmost dim n by doing modulo remaining dim[n-1]
+      for (int i = 1; i < (m_mat->dims() - 1); ++i) {
+        r = div(section, m_mat->dim(i)); 
+        section = r.quot;
+        if (i > 1) rval = ":" + rval;
+        rval = String(r.rem) + rval; 
+      }
+      rval = String(section) + ":"  + rval; 
+      return rval;
+    }
+  }
 }
 
 /*QModelIndex MatrixTableModel::index(int row, int column, const QModelIndex &parent) const
@@ -999,9 +1137,11 @@ QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, 
   }
 }*/
 
-int MatrixTableModel::matIndex(const QModelIndex& idx) {
+int MatrixTableModel::matIndex(const QModelIndex& idx) const {
   //TENT
-  return m_mat->SafeElIndex(idx.column(), idx.row());
+  //note: we dimensionally reduce all dims >1 to 1
+  return (idx.row() * m_mat->dim(0)) + idx.column();
+//  return m_mat->SafeElIndex(idx.column(), idx.row());
 }
 
 /*QModelIndex MatrixTableModel::parent(const QModelIndex& mi) const
@@ -1024,12 +1164,8 @@ void MatrixTableModel::MatrixDestroying() {
 }
 
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
-  if (!m_mat) return 0;
-  if (m_mat->dims() < 1)
-    return 0;
-  else if (m_mat->dims() == 1)
-    return 1;
-  else return m_mat->dim(1);
+  return m_mat->rowCount();
+  //note: for visual stuff, there is always at least one row
 }
 
 bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
@@ -1043,8 +1179,8 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
 }
 
 bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
-  // TODO:
-  return false;
+  // TODO: maybe need to check bounds???
+  return (m_mat);
 }
 
 bool MatrixTableModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {

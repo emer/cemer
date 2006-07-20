@@ -499,17 +499,20 @@ public:
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0)
-  // #MENU #MENU_ON_Object #ARGC_1 #QUICK_SAVE Save object data to a file
+  // # MENU # MENU_ON_Object #ARGC_1 #QUICK_SAVE Save object data to a file
     { return GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); }
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
-  // #MENU #ARGC_1 Save object data to a new file
+  // # MENU #ARGC_1 Save object data to a new file
     { return Save(strm,par,indent); }
-  virtual int		Save_File(); // uses the internal filename, gets one if empty
-  virtual int		SaveAs_File(const String& fname = ""); // also updates the internal filename
+  virtual int		Save_File(); 
+    // #MENU #MENU_ON_Object #LABEL_Save saves the object to a file
+  virtual int		SaveAs_File(const String& fname = ""); 
+    // #MENU #ARGC_0 #LABEL_Save_As Saves object data to a new file
   virtual int	 	Load_File(TypeDef* td = NULL);
   // load object data from a file -- gets the filename
   virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL);
-  // load object data from a file
+  //  Load object data from a file
+
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
@@ -636,7 +639,10 @@ public:
   T* 		operator=(const taSmartPtrT<T>& src) 
     {set((T*)src.m_ptr); return (T*)m_ptr;} 
     //NOTE: copy only implies ptr, NOT the owner!
-  T* 		operator=(T* src) {set(src); return (T*)m_ptr;} 
+  T* 		operator=(T* src) {set(src); return (T*)m_ptr;}
+   
+  friend bool	operator==(const taSmartPtrT<T>& a, const taSmartPtrT<T>& b)
+    {return (a.m_ptr == b.m_ptr);} 
   
   taSmartPtrT(T* val): taSmartPtr(val) {}
   taSmartPtrT() {} 
@@ -719,6 +725,8 @@ public: \
   T* operator=(const T ## Ref& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
   T* operator=(T* src) {set(src); return (T*)m_ptr;} \
   TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_ ## T;} \
+  friend bool	operator==(const T ## Ref& a, const T ## Ref& b) \
+    {return (a.m_ptr == b.m_ptr);}  \
   T ## Ref() {} \
 private:\
   T ## Ref(const T ## Ref& src); \
@@ -981,7 +989,8 @@ public:
   override void	Close();
   override bool	Close_Child(TAPtr obj);
   override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
-  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // called when list has changed 
+  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
+    // called when list has changed 
 
   // IO
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
