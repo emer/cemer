@@ -1810,14 +1810,17 @@ bool taiEditDataHost::ShowMember(MemberDef* md) const {
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
   if (menu == NULL) {
-/*temp    menu = new taiMenuBar(taiMisc::fonSmall,
-      NULL, this, NULL, widget()); */
-/*    menu = new taiMenu(taiActions::normal, taiMisc::fonSmall,
-      NULL, this, NULL, widget());*/
+    // we can't use QMainMenu on Mac, and QMenu doesn't work for some
+    // reason (doesn't become visible, no matter what); but a toolbar works
+//TODO: it looks slightly funny, but maybe we should do it the same on
+// all platforms, to give the same look (ex. for screenshots)???
+#ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
-//temp    vblDialog->setMenuBar(menu->rep_bar());
+#else
+    menu = new taiMenuBar(taiMisc::fonSmall,
+      NULL, this, NULL, widget());
+#endif
     vblDialog->setMenuBar(menu->GetRep());
-//    menu->GetRep()->show();
   }
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {
