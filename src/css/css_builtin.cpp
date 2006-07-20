@@ -2644,10 +2644,6 @@ char* css_scoped_generator(char* text, int state) {
 //	Initialize		//
 //////////////////////////////////
 
-extern "C" {
-  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
-}
-
 int cssMisc::Initialize() {
   taMisc::InitializeTypes();
   setlocale(LC_ALL, "");

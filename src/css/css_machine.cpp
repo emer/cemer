@@ -4471,10 +4471,6 @@ extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
   extern int rl_done;		// readline done reading
-  extern int rl_pending_input;
-  extern int rl_stuff_char(int);
-  extern int readline_waitproc(void);
-  extern int (*rl_event_hook)(void);	// this points to the waitproc if running IV
 }
 
 void cssCmdShell::UpdatePrompt() {
@@ -4502,7 +4498,6 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
   if(!qand_console)
     qand_console = cssQandDConsole::Get_SysConsole();
 
-  rl_done = false;
   console_type = CT_QandD_Console;
   SetPrompt(prmpt);
   external_exit = false;
@@ -4524,7 +4519,6 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
     return;
   }
 
-  rl_done = false;
   console_type = CT_Qt_Console;
   qcss_console->setPrompt(prmpt);
   external_exit = false;

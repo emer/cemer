@@ -61,7 +61,7 @@ public:
     void setCompletionColor(QColor c) {completionColor = c;};
     void setFont(QFont f) {setCurrentFont(f);};
 
-private:
+protected:
     // Redefined virtual methods
     void contentsMouseReleaseEvent(QMouseEvent *e);
     void contentsMousePressEvent(QMouseEvent *e);

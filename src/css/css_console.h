@@ -63,7 +63,14 @@ class CSS_API QcssConsole : public QConsole {
   QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
 
  protected:
+  static int autocompletePath(String cmd_b4, String cmd, QStringList& lst);
+  static int autocompleteScoped(String cmd_b4, String cmd, QStringList& lst);
+  static int autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst);
+
   override QString interpretCommand(QString command, int* res);
+  override QStringList autocompleteCommand(QString cmd);
+
+  override void keyPressEvent(QKeyEvent * e);
 
   cssCmdShell* 	cmd_shell; // the command shell
   static QcssConsole *theInstance;
