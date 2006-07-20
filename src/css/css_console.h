@@ -63,6 +63,8 @@ class CSS_API QcssConsole : public QConsole {
   QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
 
  protected:
+  override QString interpretCommand(QString command, int* res);
+
   cssCmdShell* 	cmd_shell; // the command shell
   static QcssConsole *theInstance;
 };

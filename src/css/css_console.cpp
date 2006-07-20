@@ -159,7 +159,7 @@ QcssConsole::~QcssConsole() {
 }
 
 QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
-  QConsole((QWidget*)parent, "css> ", true)
+  inherited((QWidget*)parent, "css> ", true)
 {
   cmd_shell = cs;
 }
@@ -169,5 +169,13 @@ QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
   theInstance = new QcssConsole(parent, cs);
   return theInstance;
 }
+
+QString QcssConsole::interpretCommand(QString command, int* res) {
+  cmd_shell->AcceptNewLine(command, false);
+  *res = 0;
+  inherited::interpretCommand(command, res);
+  return "";
+}
+
 
 #endif // TA_OS_UNIX

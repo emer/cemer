@@ -1415,36 +1415,7 @@ void  Program::UpdateProgVars() {
 }
 
 #ifdef TA_GUI
-/* needed???
-void Program::InitGui() {
-  //TODO: maybe need to put up a progress/cancel dialog
-  // TODO: actually need to provide a global strategy for running!!!!!
-  int rval = Init();
-  //note: init should be quick, so we don't confirm
-  if (rval != 0) 
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(rval)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
- ; 
-}
 
-void Program::RunGui() {
-  //TODO: need to put up a progress/cancel dialog
-  // TODO: actually need to provide a global strategy for running!!!!!
-  int rval = Run();
-  if (rval == 0) 
-    QMessageBox::information(NULL, QString("Operation Succeeded"),
-      QString("The Program finished"), QMessageBox::Ok);
-  else 
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(rval)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
- ; 
-  
-}
-*/
 void Program::ViewScript() {
   ViewScript_impl();
 }
