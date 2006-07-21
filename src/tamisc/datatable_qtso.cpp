@@ -81,14 +81,6 @@ iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
   layOuter = new QVBoxLayout(cw);
   tv = new QTableView(cw);
   layOuter->addWidget(tv);
-//  sb = NULL; // made later if needed
-  scale = new ColorScale();
-  taBase::Ref(scale);
-  scale->InitLinks(); // someone has to do this
-  scale->auto_scale = true;
-  scale->SetMinMax(0, 1.0f);
-  sb = new HCScaleBar(scale, ScaleBar::RANGE, false, true, cw);
-  layOuter->addWidget(sb);
   
   DataTable* dt_ = dt();
   if (dt_) {
@@ -110,7 +102,6 @@ iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 }
 
 iDataTablePanel::~iDataTablePanel() {
-  taBase::DelPointer((TAPtr*)&scale);
 }
 
 void iDataTablePanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -185,7 +176,3 @@ String iDataTablePanel::panel_type() const {
   return str;
 }
 
-void iDataTablePanel::setScaleBarVisible(bool value) {
-  if (!sb) return;
-  sb->setVisible(value);
-}

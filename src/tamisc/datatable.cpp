@@ -3026,19 +3026,43 @@ int DataTableModel::columnCount(const QModelIndex& parent) const {
 
 QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   if (!dt || !index.isValid()) return QVariant();
+  //NOTES:
+  // * it would be nice to just italicize the "matrix" text, but we have no
+  //   no access to the font being used, and cannot only pass modifiers
+  
+  DataArray_impl* col = dt->GetColData(index.column());
+  // if no col, we really don't care about anything else...
+  if (!col) return QVariant(); // nil
   
   switch (role) {
+  case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
+  case Qt::EditRole:
+    if (col->is_matrix) 
+      return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
+    else
+      return dt->GetValAsVar(index.column(), index.row());
+// Qt::FontRole: //  QFont: font for the text
+//Qt::DecorationRole
+//Qt::ToolTipRole
+//Qt::StatusTipRole
+//Qt::WhatsThisRole
+//Qt::SizeHintRole -- QSize
+//Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole: {
-    DataArray_impl* col = dt->GetColData(index.column());
-    if (col) {
-      if (col->is_numeric())
-        return QVariant(Qt::AlignRight | Qt::AlignVCenter);
-      else
-        return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
-    } 
+    if (col->is_matrix)
+      return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
+    else if (col->is_numeric())
+      return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+    else
+      return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
     } break;
-  case Qt::DisplayRole:
-    return dt->GetValAsVar(index.column(), index.row());
+//Qt::BackgroundColorRole -- QColor
+//  but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
+  case Qt::TextColorRole: { // QColor: color of text
+    if (col->is_matrix)
+      return QColor(Qt::blue);
+    } break;
+//Qt::CheckStateRole
   default: break;
   }
   return QVariant();
@@ -3084,16 +3108,22 @@ int DataTableModel::rowCount(const QModelIndex& parent) const {
 
 bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!dt || !index.isValid()) return false;
+  
+  DataArray_impl* col = dt->GetColData(index.column());
+  // if no col, we really don't care about anything else...
+  if (!col) return false; 
+  //we restrict setData for scalars only -- use delegate for matrix
+  if (col->is_matrix) return false;
+  
   bool rval = false;
-  //TODO: need to restrict setData for scalars only -- use delegate for matrix
   switch (role) {
   case Qt::EditRole:
     dt->SetValAsVar(value, index.column(), index.row());
-    //TODO: maybe should emit in DataTable??? then it happens for all sources
     emit dataChanged(index, index);
-    return rval;
-  default: return false;
+    rval = true;
+  default: break;
   }
+  return rval;
 }
 
 bool DataTableModel::ValidateIndex(const QModelIndex& index) const {

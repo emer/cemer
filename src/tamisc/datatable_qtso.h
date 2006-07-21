@@ -21,8 +21,8 @@
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
-#include "colorscale.h"
-#include "colorbar_qt.h"
+//#include "colorscale.h"
+//#include "colorbar_qt.h"
 #include "datatable.h"
 //#include "fontspec.h"
 
@@ -66,13 +66,9 @@ public:
   QWidget*		cw; 
   QVBoxLayout*		layOuter;
   QTableView*		  tv;
-  ScaleBar*		  sb; // shown if needed
-  
-  ColorScale*		scale;
   
   DataTable*		dt() {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  void			setScaleBarVisible(bool value);
 
   override int 		EditAction(int ea);
   void			FillList();

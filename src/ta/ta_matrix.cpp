@@ -1068,12 +1068,11 @@ QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
 //Qt::ToolTipRole
 //Qt::StatusTipRole
 //Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSizw
+//Qt::SizeHintRole -- QSize
 //Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole:
     return m_mat->defAlignment();
-/*Qt::BackgroundColorRole
-  QColor
+/*Qt::BackgroundColorRole -- QColor
   but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
 Qt::TextColorRole
   QColor: color of text
