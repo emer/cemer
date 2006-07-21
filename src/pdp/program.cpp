@@ -685,10 +685,10 @@ const String ForLoopEl::loopHeader(bool) const {
 }
 
 //////////////////////////
-//  PreTestLoopEl		//
+//  WhileLoopEl		//
 //////////////////////////
 
-const String PreTestLoopEl::GenCssPre_impl(int indent_level) {
+const String WhileLoopEl::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
   rval += loopHeader();
@@ -696,13 +696,13 @@ const String PreTestLoopEl::GenCssPre_impl(int indent_level) {
   return rval; 
 }
 
-const String PreTestLoopEl::GenCssPost_impl(int indent_level) {
+const String WhileLoopEl::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "}\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
-const String PreTestLoopEl::loopHeader(bool) const {
+const String WhileLoopEl::loopHeader(bool) const {
   STRING_BUF(rval, 60);
   rval += "while (";
   rval += loop_var;
@@ -711,24 +711,24 @@ const String PreTestLoopEl::loopHeader(bool) const {
 }
 
 //////////////////////////
-//  PostTestLoopEl		//
+//  DoLoopEl		//
 //////////////////////////
 
-const String PostTestLoopEl::GenCssPre_impl(int indent_level) {
+const String DoLoopEl::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
   rval += "do {\n";
   return rval; 
 }
 
-const String PostTestLoopEl::GenCssPost_impl(int indent_level) {
+const String DoLoopEl::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
   rval += "} while (" + loop_var + ");\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
-const String PostTestLoopEl::loopHeader(bool display) const {
+const String DoLoopEl::loopHeader(bool display) const {
   STRING_BUF(rval, 60);
   if (display)
     rval += "do ... while (" + loop_var + ")";

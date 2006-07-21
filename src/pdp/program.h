@@ -324,12 +324,12 @@ private:
 };
 
 
-class PDP_API PreTestLoopEl: public LoopEl { 
+class PDP_API WhileLoopEl: public LoopEl { 
   // #EDIT_INLINE #TOKENS LoopEl for a 'while' (pre-test) iteration over the elements
 INHERITED(LoopEl)
 public:
   
-  TA_BASEFUNS(PreTestLoopEl);
+  TA_BASEFUNS(WhileLoopEl);
 
 protected:
   override const String loopHeader(bool display = false) const;
@@ -342,12 +342,12 @@ private:
 };
 
 
-class PDP_API PostTestLoopEl: public LoopEl { 
-  // #EDIT_INLINE LoopEl for a 'while' (pre-test) iteration over the elements
+class PDP_API DoLoopEl: public LoopEl { 
+  // #EDIT_INLINE LoopEl for a 'do' (post-test) iteration over the elements
 INHERITED(LoopEl)
 public:
   
-  TA_BASEFUNS(PostTestLoopEl);
+  TA_BASEFUNS(DoLoopEl);
 
 protected:
   override const String loopHeader(bool display = false) const;
@@ -485,8 +485,7 @@ INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS mode flags
     PF_NONE		= 0, // #NO_BIT
-    ROOT_OK		= 0x0001, // allowed to be a root program (can be called by user)
-    NO_STOP		= 0x0002 // this program cannot be stopped by Stop or Step buttons
+    NO_STOP		= 0x0001 // this program cannot be stopped by Stop or Step buttons
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -526,7 +525,6 @@ public:
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
-  inline bool		rootOk() {return (flags & ROOT_OK);}
   void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();

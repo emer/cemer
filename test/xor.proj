@@ -147,7 +147,7 @@ MethodCallEl @[1] { };
 
 ProgEl_List @.prog_els = [3] {
 MethodCallEl @[0] { };
-PreTestLoopEl @[1] { 
+WhileLoopEl @[1] { 
 ProgEl_List @.loop_els = [1] {
 ProgramCallEl @[0] { };
 };
@@ -166,7 +166,7 @@ ProgEl_List @.prog_els = [6] {
 UserScriptEl @[0] { };
 MethodCallEl @[1] { };
 MethodCallEl @[2] { };
-PreTestLoopEl @[3] { 
+WhileLoopEl @[3] { 
 ProgEl_List @.loop_els = [5] {
 ProgramCallEl @[0] { };
 ProgramCallEl @[1] { };
@@ -722,7 +722,7 @@ args{ };
 };
 prog_els {
 name=;
-el_typ=PreTestLoopEl;
+el_typ=WhileLoopEl;
 el_def=0;
 MethodCallEl @[0] {
 desc="move the mon data iteration back to first item";
@@ -734,7 +734,7 @@ method=DataBlock::WriteOpen;
 args{ };
 { };
 };
-PreTestLoopEl @[1] {
+WhileLoopEl @[1] {
 desc=;
 loop_els {
 name=;
@@ -834,7 +834,7 @@ method=DataBlock::ReadFirst;
 args{ };
 { };
 };
-PreTestLoopEl @[3] {
+WhileLoopEl @[3] {
 desc=;
 loop_els {
 name=;
