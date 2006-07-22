@@ -157,7 +157,7 @@ TypeDefault_Group .projects[0].defaults {
 
       ProgEl_List @.prog_els = [3] {
 	MethodCallEl @[0] { };
-	PreTestLoopEl @[1] { 
+	WhileLoopEl @[1] { 
 	  ProgEl_List @.loop_els = [1] {
 	    ProgramCallEl @[0] { };
 	  };
@@ -175,7 +175,7 @@ TypeDefault_Group .projects[0].defaults {
       ProgEl_List @.prog_els = [5] {
 	MethodCallEl @[0] { };
 	MethodCallEl @[1] { };
-	PreTestLoopEl @[2] { 
+	WhileLoopEl @[2] { 
 	  ProgEl_List @.loop_els = [5] {
 	    ProgramCallEl @[0] { };
 	    ProgramCallEl @[1] { };
@@ -822,7 +822,7 @@ BpProject .projects[0] {
    };
    prog_els {
     name=;
-    el_typ=PreTestLoopEl;
+    el_typ=WhileLoopEl;
     el_def=0;
     MethodCallEl @[0] {
      desc="move the mon data iteration back to first item";
@@ -834,7 +834,7 @@ BpProject .projects[0] {
      args{ };
 {      };
     };
-    PreTestLoopEl @[1] {
+    WhileLoopEl @[1] {
      desc=;
      loop_els {
       name=;
@@ -930,7 +930,7 @@ this->StopScript();
      args{ };
 {      };
     };
-    PreTestLoopEl @[2] {
+    WhileLoopEl @[2] {
      desc=;
      loop_els {
       name=;
