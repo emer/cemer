@@ -142,10 +142,12 @@ if test x"$gui" = x"true"; then
                            LIBS="$LIBS $sim_ac_soqt_libs"],
                           [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])
  
-  SIM_AC_HAVE_LIBJPEG_IFELSE([CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
-                              LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
-                              LIBS="$LIBS $sim_ac_libjpeg_libs"],
-                             [SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
+#  SIM_AC_HAVE_LIBJPEG_IFELSE([CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+#                              LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+#                              LIBS="$LIBS $sim_ac_libjpeg_libs"],
+#                             [SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
+
+AC_CHECK_LIB([jpeg],[jpeg_read_header],[LIBS="$LIBS -ljpeg"],[SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
 
   AC_DEFINE([TA_GUI],,[Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],,[This switch is set when linking with Qt.])

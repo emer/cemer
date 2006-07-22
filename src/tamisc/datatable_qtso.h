@@ -59,19 +59,41 @@ public:
   ~DataTableDelegate();
 };
 
+class TAMISC_API iDataTableEditor: public QWidget {
+  Q_OBJECT
+INHERITED(QWidget)
+public:
+  QVBoxLayout*		layOuter;
+  QSplitter*		splMain;
+  QTableView*		  tvTable; // the main table
+  QTableView*		  tvCell; // a matrix cell in the table
+
+  DataTable*		dt() const {return m_dt;}
+  void			setDataTable(DataTable* dt);
+  DataTableModel*	dtm() const {return (m_dt.ptr()) ? m_dt->GetDataModel() : NULL;}
+  
+  iDataTableEditor(QWidget* parent = NULL);
+  ~iDataTableEditor();
+  
+public slots:
+  void			tvTable_activated(const QModelIndex& index); // #IGNORE
+  
+protected:
+  DataTableRef		m_dt;
+  taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
+};
+
+
 class TAMISC_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)
 public:
-  QWidget*		cw; 
-  QVBoxLayout*		layOuter;
-  QTableView*		  tv;
+  iDataTableEditor*	dte; 
   
   DataTable*		dt() {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
   override int 		EditAction(int ea);
-  void			FillList();
   override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 

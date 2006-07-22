@@ -24,6 +24,7 @@
 
 #include <qlayout.h>
 #include <qpalette.h>
+#include <QSplitter>
 #include <QTableView>
 
 #include <limits.h>
@@ -56,7 +57,7 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 
 
 //////////////////////////
-//    iDataTablePanel 	//
+//    DataTableDelegate 	//
 //////////////////////////
 
 DataTableDelegate::DataTableDelegate(DataTable* dt_) 
@@ -70,23 +71,69 @@ DataTableDelegate::~DataTableDelegate() {
 
 
 //////////////////////////
+//    iDataTableEditor 	//
+//////////////////////////
+
+iDataTableEditor::iDataTableEditor(QWidget* parent) 
+:inherited(parent)
+{
+  layOuter = new QVBoxLayout(this);
+  splMain = new QSplitter(this);
+  splMain->setOrientation(Qt::Vertical);
+  layOuter->addWidget(splMain);
+  tvTable = new QTableView();
+  tvCell = new QTableView();
+  splMain->addWidget(tvTable);
+  splMain->addWidget(tvCell);
+  
+  connect(tvTable, SIGNAL(activated(const QModelIndex&)),
+    this, SLOT(tvTable_activated(const QModelIndex&)));
+}
+
+iDataTableEditor::~iDataTableEditor() {
+}
+
+void iDataTableEditor::setDataTable(DataTable* dt_) {
+  if (dt_ == m_dt) return;
+  if (dt_) {
+//nn    tv->setItemDelegate(new DataTableDelegate(dt_));
+    tvTable->setModel(dt_->GetDataModel());
+  }
+  m_dt = dt_;
+}
+
+void iDataTableEditor::tvTable_activated(const QModelIndex& index) {
+  DataTable* dt_ = dt(); // cache
+  DataArray_impl* col = dt_->GetColData(index.column());
+  if (!col) return;
+  // note: we return from following if, otherwise fall through to do the contra
+  if (col->is_matrix) {
+    m_cell = dt_->GetValAsMatrix(index.column(), index.row());
+    //TODO: the ref above will prevent the col from growing, and also
+    // screw up things like deleting the col -- we need to be able to "unlock"
+    // this defacto lock on the col!!!!
+    if (m_cell.ptr()) {
+      tvCell->setModel(m_cell->GetDataModel());
+      return;
+    } 
+  }   
+  tvCell->setModel(NULL);
+  m_cell = NULL; // good to at least release this asap!!!
+
+}
+
+
+//////////////////////////
 //    iDataTablePanel 	//
 //////////////////////////
 
 iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  cw = new QWidget();
-  setCentralWidget(cw);
-  layOuter = new QVBoxLayout(cw);
-  tv = new QTableView(cw);
-  layOuter->addWidget(tv);
+  dte = new iDataTableEditor();
+  setCentralWidget(dte);
   
-  DataTable* dt_ = dt();
-  if (dt_) {
-    tv->setItemDelegate(new DataTableDelegate(dt_));
-    tv->setModel(dt_->GetDataModel());
-  }
+  dte->setDataTable(dt());
 /*  list->setSelectionMode(QListView::Extended);
   list->setShowSortIndicator(true);
   // set up number of cols, based on link
