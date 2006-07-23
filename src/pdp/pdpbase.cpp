@@ -320,7 +320,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
 	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
 	cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-	cssMisc::TopShell->Shell_Qt_Console("pdp++");
+	cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
 	qApp->exec();
 	DMemShare::CloseCmdStream();
 	cerr << "proc: 0 quitting!" << endl;
@@ -347,19 +347,19 @@ int pdpMisc::Main(int argc, char *argv[]) {
     }
     else {			// nogui 
       cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-      cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+      cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
 //       qApp->exec(); // todo: ??
     }
   }
   else {
     if(cssMisc::gui) {
       cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-      cssMisc::TopShell->Shell_Qt_Console("pdp++");
+      cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
       qApp->exec();
     }
     else {
       cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-      cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+      cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
     }
 #ifdef TA_USE_INVENTOR
     SoQt::done();
@@ -370,14 +370,14 @@ int pdpMisc::Main(int argc, char *argv[]) {
 #else // NOT DMEM_COMPILE
   if(cssMisc::gui) {
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    cssMisc::TopShell->Shell_Qt_Console("pdp++");
+    cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
 //     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
 //     cssMisc::TopShell->Shell_QandD_Console("pdp++");
     qApp->exec();
   }
   else {
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-    cssMisc::TopShell->Shell_NoGui_Rl("pdp++");
+    cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
   }
 #ifdef TA_USE_INVENTOR
   SoQt::done();

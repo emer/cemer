@@ -100,7 +100,7 @@ void QConsole::flushOutput() {
 }
 
 void QConsole::stdReceived() {
-  displayPrompt(false);
+  flushOutput();
 }
 
 // Displays the prompt and move the cursor to the end of the line.
@@ -129,9 +129,8 @@ void QConsole::gotoEnd(QTextCursor& cursor, bool select) {
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor); // not selects
 }
 
-//displays redirected stdout/stderr
-void QConsole::stdDisplay(QTextStream *s) {
-  //  while(!s->atEnd() && (curOutputLn < maxLines)) {
+// displays redirected stdout/stderr
+void QConsole::stdDisplay(QTextStream* s) {
   while(curOutputLn < maxLines) {
     QString line = s->readLine(maxCols);
     if(line.isNull()) break;
@@ -206,7 +205,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
 	execCommand(command, false);
     }
     else {
-      displayPrompt();
+      displayPrompt(true);
     }
   }
   else if((e->key() == Qt::Key_L) && (e->modifiers() == Qt::ControlModifier)) {
@@ -280,11 +279,7 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
     setTextColor(errColor);
   if(!strRes.isEmpty())
     append(strRes);
-  if(command.isEmpty()) {
-    append("\n");
-    displayPrompt(true);
-  }
-  //Display the prompt again
+  // Display the prompt again
   if(showPrompt)
     displayPrompt(true);
 }
@@ -341,7 +336,7 @@ QString QConsole::interpretCommand(QString command, int *res) {
   history.append(command);
   historyIndex = history.size();
   //emit the commandExecuted signal
-  emit commandExecuted(command);
+//   emit commandExecuted(command);
   return "";
 }
 

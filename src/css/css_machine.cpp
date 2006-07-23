@@ -165,7 +165,7 @@ cssCmdShell*	cssMisc::TopShell = NULL;
 
 cssArray*	cssMisc::s_argv;
 cssInt*		cssMisc::s_argc;
-String		cssMisc::prompt = "css";
+String		cssMisc::prompt = "css> ";
 String		cssMisc::startup_file;
 String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
@@ -4490,7 +4490,7 @@ void cssCmdShell::UpdatePrompt() {
   if(console_type == CT_QandD_Console)
     qand_console->setPrompt(act_prompt);
   else if(console_type == CT_Qt_Console)
-    qcss_console->setPrompt(act_prompt);
+    qcss_console->setPrompt(act_prompt, false);	// do not display new prompt
 }
 
 void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
