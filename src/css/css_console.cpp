@@ -170,8 +170,8 @@ QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
 }
 
 QString QcssConsole::interpretCommand(QString command, int* res) {
-  cmd_shell->AcceptNewLine(command, false);
   *res = 0;
+  cmd_shell->AcceptNewLine(command, false);
   inherited::interpretCommand(command, res);
   return "";
 }

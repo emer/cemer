@@ -67,7 +67,6 @@ pager_ostream::pager_ostream(ostream* fo, istream* fi, int n_ln) {
 void pager_ostream::start() {
   cur_line = 0;
   quitting = false;
-  no_page = false;
 }
 
 pager_ostream& pager_ostream::operator<<(const char* str) {
@@ -4522,6 +4521,7 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   console_type = CT_Qt_Console;
   qcss_console->setPrompt(prmpt);
   external_exit = false;
+  pgout.no_page = true;		// console has its own pager!
 
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 }
