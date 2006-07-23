@@ -100,15 +100,15 @@ void QConsole::flushOutput() {
 }
 
 // Displays the prompt and move the cursor to the end of the line.
-void QConsole::displayPrompt() {
+void QConsole::displayPrompt(bool force) {
   // flush the stdout/stderr before displaying the prompt
   flushOutput();
-  if(promptDisp) return;
+  if(!force && promptDisp) return;
   QTextCursor cursor = textCursor();
   // displays the prompt
   setTextColor(cmdColor);
   gotoEnd(cursor, false);		// todo: maybe a newline?
-  cursor.insertText(prompt);
+  append(prompt);
   curPromptPos = cursor.position(); // save this position for future reference
   quitPager = false;		// reset this flag whenver prompt returns
   contPager = false;
@@ -186,7 +186,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     else if(sl.count() > 1) {
       setTextColor(completionColor);
       append(sl.join(" "));
-      displayPrompt();
+      displayPrompt(true);	// force!
       cursor.insertText(command);
     }
   }
@@ -210,6 +210,7 @@ QString QConsole::getCurrentCommand() {
   gotoPrompt(cursor);
   gotoEnd(cursor, true);
   QString command = cursor.selectedText();
+  if(command.isNull() || command.isEmpty()) command = "\n";
   cursor.clearSelection();
   return command;
 }
@@ -234,7 +235,7 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
   //Display the prompt with the command first
   if (writeCommand) {
     if(getCurrentCommand() != "")
-      displayPrompt();
+      displayPrompt(true);	// force
     append(command);
   }
   //execute the command and get back its text result and its return value
@@ -249,11 +250,11 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
     append(strRes);
   if(command.isEmpty()) {
     append("\n");
-    displayPrompt();
+    displayPrompt(true);
   }
   //Display the prompt again
   if(showPrompt)
-    displayPrompt();
+    displayPrompt(true);
 }
 
 //saves a file script

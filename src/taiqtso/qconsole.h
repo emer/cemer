@@ -101,7 +101,7 @@ protected:
 
   // Redefined virtual slots
 private slots:
-  virtual void displayPrompt(); // displays the prompt
+  virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
 
 signals:
   // Signal emitted after that a command is executed
