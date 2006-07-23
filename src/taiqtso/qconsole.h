@@ -71,12 +71,13 @@ protected:
   void resizeEvent(QResizeEvent* e);
   void paste();
 
+  virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
   virtual void	gotoPrompt(QTextCursor& cursor);		// set position to just after prompt (moves anchor)
   virtual void	gotoEnd(QTextCursor& cursor, bool select=true); // set position to end (and select text or not)
   virtual QString getCurrentCommand();			     // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
   virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
-  virtual void stdReceived(QTextStream *s);	// displays redirected stdout/stderr
+  virtual void stdDisplay(QTextStream *s);	// displays redirected stdout/stderr
 
   //protected attributes
 protected:
@@ -95,13 +96,13 @@ protected:
   QString prompt;		// The prompt string
   QStringList history;	// The commands history
   QStringList recordedScript; // commands that have succeeded
-  uint historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
+  int historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
   Interceptor *stdoutInterceptor; // Stdout interceptor
   Interceptor *stderrInterceptor; // Stderr interceptor
 
   // Redefined virtual slots
 private slots:
-  virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
+  virtual void stdReceived(); 	// standard output/err received: display and flush
 
 signals:
   // Signal emitted after that a command is executed

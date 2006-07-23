@@ -101,6 +101,8 @@ int main(int argc, char *argv[]) {
     //Create and show the main window
     QMainWindow* mw = new QMainWindow(0, "Application window");
     mw->setMinimumSize(640, 720);
+    // todo: I don't see any way to set a preferred size different from min size..
+//     mw->setBaseSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
     mw->setFocusProxy((QWidget*)console);
     mw->setCentralWidget((QWidget*)console);

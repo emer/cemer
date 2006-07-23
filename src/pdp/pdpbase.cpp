@@ -229,7 +229,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiMisc::SetMainWindow(db->browser_win());
 
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
-    mw->setMinimumSize(640, 480);
+    mw->setMinimumSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
     mw->setFocusProxy((QWidget*)console);
     mw->setCentralWidget((QWidget*)console);

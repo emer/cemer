@@ -71,11 +71,11 @@ QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor)
     //Initialize the interceptors
     stdoutInterceptor = new Interceptor(this);
     stdoutInterceptor->initialize(1);
-    connect(stdoutInterceptor, SIGNAL(received(QTextStream *)), SLOT(displayPrompt()));
+    connect(stdoutInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
 
     stderrInterceptor = new Interceptor(this);
     stderrInterceptor->initialize(2);
-    connect(stderrInterceptor, SIGNAL(received(QTextStream *)), SLOT(displayPrompt()));
+    connect(stderrInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
   }
 }
 
@@ -91,17 +91,20 @@ void QConsole::setPrompt(QString newPrompt, bool display) {
 void QConsole::flushOutput() {
   if(stdoutInterceptor) {
     setTextColor(outColor);
-    stdReceived(stdoutInterceptor->textIStream());
+    stdDisplay(stdoutInterceptor->textIStream());
   }
   if(stderrInterceptor) {
     setTextColor(errColor);
-    stdReceived(stderrInterceptor->textIStream());
+    stdDisplay(stderrInterceptor->textIStream());
   }
+}
+
+void QConsole::stdReceived() {
+  displayPrompt(false);
 }
 
 // Displays the prompt and move the cursor to the end of the line.
 void QConsole::displayPrompt(bool force) {
-  // flush the stdout/stderr before displaying the prompt
   flushOutput();
   if(!force && promptDisp) return;
   QTextCursor cursor = textCursor();
@@ -127,7 +130,7 @@ void QConsole::gotoEnd(QTextCursor& cursor, bool select) {
 }
 
 //displays redirected stdout/stderr
-void QConsole::stdReceived(QTextStream *s) {
+void QConsole::stdDisplay(QTextStream *s) {
   //  while(!s->atEnd() && (curOutputLn < maxLines)) {
   while(curOutputLn < maxLines) {
     QString line = s->readLine(maxCols);
@@ -138,7 +141,7 @@ void QConsole::stdReceived(QTextStream *s) {
       if(!contPager && !noPager) {
 	curOutputLn++;
 	if(curOutputLn >= maxLines) {
-	  append("---Press Return for More, q=quit, c=continue without paging ---\n");
+	  append("---Press Return for More, q=quit displaying, c=continue without paging ---");
 	  break;
 	}
       }
@@ -170,6 +173,8 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
       curOutputLn = 0;
       contPager = true;
     }
+    flushOutput();
+    promptDisp = false;
     return;
   }
 
@@ -195,9 +200,36 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
       QTextEdit::keyPressEvent( e );
   }
   else if(e->key() == Qt::Key_Return) {
-    QString command = getCurrentCommand();
-    if(isCommandComplete(command))
-      execCommand(command, false);
+    if(promptDisp) {
+      QString command = getCurrentCommand();
+      if(isCommandComplete(command))
+	execCommand(command, false);
+    }
+    else {
+      displayPrompt();
+    }
+  }
+  else if((e->key() == Qt::Key_L) && (e->modifiers() == Qt::ControlModifier)) {
+    clear();
+  }
+  else if((e->key() == Qt::Key_Up) || ((e->key() == Qt::Key_P) && (e->modifiers() == Qt::ControlModifier))) {
+    if(history.size() > 0) {
+      historyIndex--; if(historyIndex < 0) historyIndex = 0;
+      QString cmd = history[historyIndex];
+      if(!cmd.isEmpty())
+	replaceCurrentCommand(cmd);
+    }
+  }
+  else if((e->key() == Qt::Key_Down) || ((e->key() == Qt::Key_N) && (e->modifiers() == Qt::ControlModifier))) {
+    if(history.size() > 0) {
+      historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;
+      QString cmd = history[historyIndex];
+      if(!cmd.isEmpty())
+	replaceCurrentCommand(cmd);
+    }
+  }
+  else if((e->key() == Qt::Key_A) && (e->modifiers() == Qt::ControlModifier)) {
+    gotoPrompt(cursor);		// todo: need to actually move the real cursor somehow..
   }
   else {
     QTextEdit::keyPressEvent( e );
@@ -302,10 +334,11 @@ void QConsole::paste() {
 //And emits a signal (should be called by reimplementations)
 QString QConsole::interpretCommand(QString command, int *res) {
   //Add the command to the recordedScript list
+  if(command.isEmpty() || (command == "\n")) return "";
   if (*res)
     recordedScript.append(command);
   //update the history and its index
-  history.append(command.replace("\n", "\\n"));
+  history.append(command);
   historyIndex = history.size();
   //emit the commandExecuted signal
   emit commandExecuted(command);
