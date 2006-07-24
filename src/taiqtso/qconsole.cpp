@@ -22,11 +22,11 @@
 #include <QTextStream>
 #include <QKeyEvent>
 #include <QTextCursor>
+#include <QApplication>
 
+// for debugging:
 using namespace std;
-
 #include <iostream>
-#include <fstream>
 
 //Clear the console
 void QConsole::clear() {
@@ -37,7 +37,11 @@ void QConsole::clear() {
 //Reset the console
 void QConsole::reset() {
   clear();
+#ifdef __APPLE__
+  QFont font("Andale Mono", 10);
+#else
   QFont font("LucidaTypewriter", 8);
+#endif
   setCurrentFont(font);
   QFontMetrics fm(font);
   fontHeight = fm.height();
@@ -50,6 +54,7 @@ void QConsole::reset() {
   historyIndex = 0;
   history.clear();
   recordedScript.clear();
+  setAcceptRichText(false);	// just plain
   noPager = false;
   quitPager = false;
   contPager = false;
@@ -58,6 +63,9 @@ void QConsole::reset() {
 }
 // todo: get height,width,font, etc from styles and actual screen size..
 
+void QConsole::exit() {
+  qApp->exit();
+}
 
 //QConsole constructor (init the QTextEdit & the attributes)
 QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor) 
@@ -107,11 +115,14 @@ void QConsole::stdReceived() {
 void QConsole::displayPrompt(bool force) {
   flushOutput();
   if(!force && promptDisp) return;
-  QTextCursor cursor = textCursor();
+  QTextCursor cursor(textCursor());
   // displays the prompt
   setTextColor(cmdColor);
-  gotoEnd(cursor, false);		// todo: maybe a newline?
+  gotoEnd(cursor, false);
+  setTextCursor(cursor);
   append(prompt);
+  gotoEnd(cursor, false);
+  setTextCursor(cursor);
   curPromptPos = cursor.position(); // save this position for future reference
   quitPager = false;		// reset this flag whenver prompt returns
   contPager = false;
@@ -158,7 +169,16 @@ void QConsole::resizeEvent(QResizeEvent* e) {
 
 // Reimplemented key press event
 void QConsole::keyPressEvent(QKeyEvent* e) {
-  QTextCursor cursor = textCursor();
+  QTextCursor cursor(textCursor());
+
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef __APPLE__
+  // ctrl = meta on apple; except it doesnt' work!
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
 
   if(curOutputLn >= maxLines) {
     if(e->key() == Qt::Key_Return) {
@@ -174,14 +194,20 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     }
     flushOutput();
     promptDisp = false;
+    e->accept();
     return;
   }
 
+  // ctrl key on mac is screwed up: a p is not a p when the ctrl key is pressed
+//   cerr << hex << e->key() << " p: " << Qt::Key_P << endl;
+
   //If Ctrl + C pressed, then undo the current command
-  if((e->key() == Qt::Key_C) && (e->modifiers() == Qt::ControlModifier)) {
+  if((e->key() == Qt::Key_C) && ctrl_pressed) {
+    e->accept();
     displayPrompt();
   }
   else if(e->key() == Qt::Key_Tab) {   //Treat the tab key & autocomplete the current command
+    e->accept();
     QString command = getCurrentCommand();
     QStringList sl = autocompleteCommand(command);
     QString str = sl.join(" ");
@@ -197,8 +223,11 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   else if(e->key() == Qt::Key_Backspace) { // todo: trap other cases..
     if(cursorInCurrentCommand()) // don't backup into prompt
       QTextEdit::keyPressEvent( e );
+    else
+      e->accept();
   }
   else if(e->key() == Qt::Key_Return) {
+    e->accept();
     if(promptDisp) {
       QString command = getCurrentCommand();
       if(isCommandComplete(command))
@@ -208,10 +237,12 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
       displayPrompt(true);
     }
   }
-  else if((e->key() == Qt::Key_L) && (e->modifiers() == Qt::ControlModifier)) {
+  else if((e->key() == Qt::Key_L) && ctrl_pressed) {
+    e->accept();
     clear();
   }
-  else if((e->key() == Qt::Key_Up) || ((e->key() == Qt::Key_P) && (e->modifiers() == Qt::ControlModifier))) {
+  else if((e->key() == Qt::Key_Up) || ((e->key() == Qt::Key_P) && ctrl_pressed)) {
+    e->accept();
     if(history.size() > 0) {
       historyIndex--; if(historyIndex < 0) historyIndex = 0;
       QString cmd = history[historyIndex];
@@ -219,7 +250,8 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
 	replaceCurrentCommand(cmd);
     }
   }
-  else if((e->key() == Qt::Key_Down) || ((e->key() == Qt::Key_N) && (e->modifiers() == Qt::ControlModifier))) {
+  else if((e->key() == Qt::Key_Down) || ((e->key() == Qt::Key_N) && ctrl_pressed)) {
+    e->accept();
     if(history.size() > 0) {
       historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;
       QString cmd = history[historyIndex];
@@ -227,8 +259,25 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
 	replaceCurrentCommand(cmd);
     }
   }
-  else if((e->key() == Qt::Key_A) && (e->modifiers() == Qt::ControlModifier)) {
-    gotoPrompt(cursor);		// todo: need to actually move the real cursor somehow..
+  else if((e->key() == Qt::Key_A) && ctrl_pressed) {
+    e->accept();
+    gotoPrompt(cursor);
+    setTextCursor(cursor);
+  }
+  else if((e->key() == Qt::Key_E) && ctrl_pressed) {
+    e->accept();
+    gotoEnd(cursor, false);
+    setTextCursor(cursor);
+  }
+  else if((e->key() == Qt::Key_F) && ctrl_pressed) {
+    e->accept();
+    cursor.setPosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+    setTextCursor(cursor);
+  }
+  else if((e->key() == Qt::Key_B) && ctrl_pressed) {
+    e->accept();
+    cursor.setPosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+    setTextCursor(cursor);
   }
   else {
     QTextEdit::keyPressEvent( e );
@@ -317,8 +366,9 @@ int QConsole::loadScript(QString fileName) {
 //Allows pasting with middle mouse button (x window)
 //when clicking outside of the edition zone
 void QConsole::paste() {
-  QTextCursor cursor = textCursor();
+  QTextCursor cursor(textCursor());
   gotoEnd(cursor, false);		// goto end but don't select
+  setTextCursor(cursor);
   QTextEdit::paste();
 }
 

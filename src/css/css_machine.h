@@ -1579,6 +1579,8 @@ public:
   void		UpdatePrompt();
   //  void 		Source(const char* fname);	// run a file as if in a shell
 
+  void		Exit();		// exit from the shell
+
 public slots:
   void		AcceptNewLine(QString ln, bool eof); 
   // called when a new line of text becomes available -- all outer shells/consoles call this interface

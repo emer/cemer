@@ -815,7 +815,7 @@ static cssEl* cssElCFun_exit_stub(int, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->PopSrcProg() == NULL) {
-    csh->external_exit = true;
+    csh->Exit();
   }
   return &cssMisc::Void;
 }

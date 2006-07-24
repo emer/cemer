@@ -41,9 +41,9 @@ public:
   virtual int saveScript(QString fileName);
   // loads a file script
   virtual int loadScript(QString fileName);
-  // clear & reset the console (useful sometimes)
-  virtual void clear();
+  virtual void clear();	       // clear & reset the console (useful sometimes)
   virtual void reset();
+  virtual void exit();		// exit shell
   virtual void flushOutput();
   // cosmetic methods !
   virtual void setCmdColor(QColor c) {cmdColor = c;};

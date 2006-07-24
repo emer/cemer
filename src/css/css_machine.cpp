@@ -4551,3 +4551,9 @@ void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
   }
 }
 
+void cssCmdShell::Exit() {
+  external_exit = true;
+  if(console_type == CT_Qt_Console) {
+    qcss_console->exit();
+  }
+}

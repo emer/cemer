@@ -126,13 +126,13 @@ int main(int argc, char *argv[]) {
 
 #ifdef TA_GUI
   if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
-    cssMisc::TopShell->Shell_Qt_Console("css");
+    cssMisc::TopShell->Shell_Qt_Console("css> ");
     qApp->exec();
   }
   else
 #endif
     {
-      cssMisc::TopShell->Shell_NoGui_Rl("css");
+      cssMisc::TopShell->Shell_NoGui_Rl("css> ");
     }
 
   // after this point, we have dropped out of the main event loop and are quitting!
