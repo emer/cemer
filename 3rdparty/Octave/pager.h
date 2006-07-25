@@ -32,8 +32,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <sys/types.h>
 #endif
 
-class
-octave_pager_buf : public strstreambuf
+class octave_pager_buf : public strstreambuf
 {
 public:
 
@@ -44,8 +43,7 @@ protected:
   int sync (void);
 };
 
-class
-octave_pager_stream : public ostream
+class octave_pager_stream : public ostream
 {
 protected:
 
@@ -70,8 +68,7 @@ private:
   octave_pager_stream& operator = (const octave_pager_stream&);
 };
 
-class
-octave_diary_buf : public strstreambuf
+class octave_diary_buf : public strstreambuf
 {
 public:
 
@@ -82,8 +79,7 @@ protected:
   int sync (void);
 };
 
-class
-octave_diary_stream : public ostream
+class octave_diary_stream : public ostream
 {
 protected:
 

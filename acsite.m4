@@ -1388,7 +1388,7 @@ if $sim_ac_with_qt; then
   SIM_AC_HAVE_QT_FRAMEWORK
 
   if $sim_ac_have_qt_framework; then 
-    sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -I$sim_ac_qt_framework_dir/Qt3Support.framework/Headers -F$sim_ac_qt_framework_dir"
+    sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -I$sim_ac_qt_framework_dir/Qt3Support.framework/Headers -I$sim_ac_qt_framework_dir/QtNetwork.framework/Headers -F$sim_ac_qt_framework_dir"
     sim_ac_qt_libs="-Wl,-F$sim_ac_qt_framework_dir -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql"
 
   else
@@ -1429,7 +1429,7 @@ if $sim_ac_with_qt; then
     CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_save_cppflags"
     SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
                                [sim_ac_qglobal=true
-                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtCore $sim_ac_qt_incpath/QtGui $sim_ac_qt_incpath/QtNetwork $sim_ac_qt_incpath/QtXml $sim_ac_qt_incpath/QtTest $sim_ac_qt_incpath/Qt3Support"
+                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtCore $sim_ac_qt_incpath/QtGui $sim_ac_qt_incpath/QtNetwork4 $sim_ac_qt_incpath/QtXml $sim_ac_qt_incpath/QtTest $sim_ac_qt_incpath/Qt3Support"
                                 ])
     AC_MSG_RESULT($sim_ac_qglobal)
   fi

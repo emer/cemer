@@ -20,6 +20,13 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+// class octave_pager_buf : public strstreambuf
+// class octave_pager_stream : public ostream
+// class octave_diary_buf : public strstreambuf
+// class octave_diary_stream : public ostream
+// extern void flush_octave_stdout (void);
+// extern void symbols_of_pager (void);
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -81,8 +88,7 @@ static int really_flush_to_pager = 0;
 
 static int flushing_output_to_pager = 0;
 
-static void
-clear_external_pager (void)
+static void clear_external_pager (void)
 {
   octave_child_list::remove (octave_pager_pid);
 
@@ -98,8 +104,7 @@ clear_external_pager (void)
     }
 }
 
-static void
-pager_death_handler (pid_t pid, int status)
+static void pager_death_handler (pid_t pid, int status)
 {
   if (pid > 0)
     {
@@ -115,8 +120,7 @@ pager_death_handler (pid_t pid, int status)
     }
 }
 
-static void
-do_sync (const char *msg, int len, bool bypass_pager)
+static void do_sync (const char *msg, int len, bool bypass_pager)
 {
   if (msg && len > 0)
     {
@@ -187,8 +191,7 @@ do_sync (const char *msg, int len, bool bypass_pager)
 
 // Assume our terminal wraps long lines.
 
-static bool
-more_than_a_screenful (const char *s, int len)
+static bool more_than_a_screenful (const char *s, int len)
 {
   if (s)
     {
@@ -218,8 +221,7 @@ more_than_a_screenful (const char *s, int len)
   return false;
 }
 
-int
-octave_pager_buf::sync (void)
+int octave_pager_buf::sync (void)
 {
   if (! interactive
       || really_flush_to_pager
@@ -250,8 +252,7 @@ octave_pager_buf::sync (void)
   return 0;
 }
 
-int
-octave_diary_buf::sync (void)
+int octave_diary_buf::sync (void)
 {
   if (write_to_diary_file && external_diary_file)
     {
@@ -314,8 +315,7 @@ octave_diary_stream::stream (void)
   return *instance;
 }
 
-void
-flush_octave_stdout (void)
+void flush_octave_stdout (void)
 {
   if (! flushing_output_to_pager)
     {
@@ -336,8 +336,7 @@ flush_octave_stdout (void)
     }
 }
 
-static void
-close_diary_file (void)
+static void close_diary_file (void)
 {
   if (external_diary_file.is_open ())
     {
@@ -346,8 +345,7 @@ close_diary_file (void)
     }
 }
 
-static void
-open_diary_file (void)
+static void open_diary_file (void)
 {
   close_diary_file ();
 
@@ -445,8 +443,7 @@ Turn output pagination on or off.")
   return retval;
 }
 
-static string
-default_pager (void)
+static string default_pager (void)
 {
   string pager_binary;
 
@@ -473,8 +470,7 @@ default_pager (void)
   return pager_binary;
 }
 
-static int
-pager_binary (void)
+static int pager_binary (void)
 {
   int status = 0;
 
@@ -491,24 +487,21 @@ pager_binary (void)
   return status;
 }
 
-static int
-page_output_immediately (void)
+static int page_output_immediately (void)
 {
   Vpage_output_immediately = check_preference ("page_output_immediately");
 
   return 0;
 }
 
-static int
-page_screen_output (void)
+static int page_screen_output (void)
 {
   Vpage_screen_output = check_preference ("page_screen_output");
 
   return 0;
 }
 
-void
-symbols_of_pager (void)
+void symbols_of_pager (void)
 {
   DEFVAR (PAGER, default_pager (), 0, pager_binary,
     "path to pager binary");

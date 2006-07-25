@@ -29,7 +29,8 @@ AC_DISABLE_STATIC                                      # Disable shared librarie
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
-AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc])
+# If using OSX, use DarwinPorts to get most recent automake verison
+AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.5])
 PDP_CANONICAL_HOST                                     # Do a few host checks, mostly for MSVC stuff
 PDP_PROG_CXX                                           # Modify compiler optimization
 PDP_SET_BUILD_MODE                                     # Set up our build modes
@@ -121,7 +122,7 @@ dnl                    fi
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-                   sim_ac_qt_version="`echo $sim_ac_qt_version | sed -r 's/./&./g;s/.$//'`"
+                   sim_ac_qt_version="`echo $sim_ac_qt_version | sed 's/./&./g;s/.$//'`"
                    SIM_AC_CONFIGURATION_SETTING([Qt],[v.$sim_ac_qt_version $sim_ac_qt_libs]),
                    [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
 
