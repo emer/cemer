@@ -927,39 +927,46 @@ void MethodCallEl::CheckUpdateArgs(bool force) {
 
 
 void ProgramCallEl::Initialize() {
-  target = NULL;
+//   target = NULL;
   old_target = NULL;
 }
 
 void ProgramCallEl::InitLinks() {
-  static String _def_user_script("cerr << \"Program Call failed--Stopping\\n\";\nret_val = Program::RV_PROG_CALL_FAILED;\nthis->StopScript();\n");
   inherited::InitLinks();
   taBase::Own(prog_args, this);
-  taBase::Own(fail_el, this);
-  if (!taMisc::is_loading) {
-    fail_el.user_script = _def_user_script;
-  }
 }
 
 void ProgramCallEl::CutLinks() {
-  taBase::DelPointer((taBase**)&target);
+//   taBase::DelPointer((taBase**)&target);
   prog_args.CutLinks();
   old_target = NULL;
   inherited::CutLinks();
 }
 
 void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
-  taBase::SetPointer((taBase**)&target, cp.target);
+  //  taBase::SetPointer((taBase**)&target, cp.target);
+  target = cp.target;
   prog_args = cp.prog_args;
-  fail_el = cp.fail_el;
 }
 
 void ProgramCallEl::UpdateAfterEdit() {
-  if (target != old_target) {
-    old_target = target; // note: we don't ref, because we just need to check ptr addr
+  if (target.ptr() != old_target) {
+    old_target = target.ptr(); // note: we don't ref, because we just need to check ptr addr
     UpdateGlobalArgs();
   }
   inherited::UpdateAfterEdit();
+}
+
+Program* ProgramCallEl::GetTarget() {
+  if(!target) {
+    taMisc::Error("Program target is NULL in ProgramCallEl:",
+		  desc, "in program:", program()->name);
+  }
+  if(!target->CompileScript()) {
+    taMisc::Error("Program target script did not compile correctly in ProgramCallEl:",
+		  desc, "in program:", program()->name);
+  }
+  return target.ptr();
 }
 
 const String ProgramCallEl::GenCssPre_impl(int indent_level) {
@@ -975,19 +982,16 @@ const String ProgramCallEl::GenCssPre_impl(int indent_level) {
 const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
   STRING_BUF(rval, 250);
+  indent_level++;		// everything is indented from outer block
+  String mypath = GetPath();
   rval += cssMisc::Indent(indent_level);
-  rval += "Int call_result = Program::RV_COMPILE_ERR;\n";
+  rval += "Program* target = " + mypath + "->GetTarget();\n";
   rval += cssMisc::Indent(indent_level);
-  rval += "Program* target = ";
-  rval += target->GetPath();
-  rval += ";\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "if (target->CompileScript()) {\n"; 
-  ++indent_level;
-  
-  rval += cssMisc::Indent(indent_level);
-  if (prog_args.size > 0)
+  rval += "if(target != NULL) {\n";
+  if (prog_args.size > 0) {
+    rval += cssMisc::Indent(indent_level+1);
     rval += "// set global vars of target\n";
+  }
   String nm;
   bool set_one = false;
   for (int i = 0; i < prog_args.size; ++i) {
@@ -996,22 +1000,16 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
     ProgVar* prg_var = target->param_vars.FindName(nm);
     if (!prg_var || ths_arg->value.empty()) continue;
     set_one = true;
-    rval += cssMisc::Indent(indent_level);
+    rval += cssMisc::Indent(indent_level+1);
     rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
       + ths_arg->value + ");\n";
   }
   if (set_one) {
-    rval += cssMisc::Indent(indent_level);
+    rval += cssMisc::Indent(indent_level+1);
     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
   }
-  rval += cssMisc::Indent(indent_level);
-  rval += "call_result = target->Call(this);\n";
-  --indent_level;
-  rval += cssMisc::Indent(indent_level);
-  rval += "}\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "if (call_result != 0) {\n";
-  rval += fail_el.GenCss(indent_level + 1);
+  rval += cssMisc::Indent(indent_level+1);
+  rval += "{ target->Call(this); }\n";
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
   
@@ -1036,7 +1034,7 @@ void ProgramCallEl::PreGenMe_impl(int item_id) {
   if (!target) return; // not target (yet), nothing to register
   Program* prog = program();
   if (!prog) return; // shouldn't normally happen
-  prog->sub_progs.LinkUnique(target);
+  prog->sub_progs.LinkUnique(this);
 }
 
 void ProgramCallEl::UpdateGlobalArgs() {
@@ -1207,7 +1205,8 @@ void Program::Run() {
 void Program::Step() {
   if(step_prog.ptr() == NULL) {
     if(sub_progs.size > 0) {	// set to last guy as a default!
-      step_prog = sub_progs.Peek();
+      ProgramCallEl* prg = (ProgramCallEl*)sub_progs.Peek();
+      step_prog = prg->target.ptr();
     }
   }
   top_prog = this;
@@ -1317,10 +1316,11 @@ const String Program::scriptString() {
       if (init_els.size >0) m_scriptCache += "\n";
       m_scriptCache += "  // init any subprogs that could be called from this one\n";
       m_scriptCache += "  { Program* target;\n";
+      // todo: this needs to be a list of ProgramCallEl's, not the actual prog itself!
       for (int i = 0; i < sub_progs.size; ++i) {
-        Program* target = sub_progs.FastEl(i);
+        ProgramCallEl* sp = (ProgramCallEl*)sub_progs.FastEl(i);
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
-        m_scriptCache += "    target = " + target->GetPath() + ";\n";
+        m_scriptCache += "    target = " + sp->GetPath() + "->GetTarget();\n";
         m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
       }
       m_scriptCache += "  }\n";

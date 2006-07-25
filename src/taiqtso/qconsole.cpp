@@ -117,9 +117,9 @@ void QConsole::displayPrompt(bool force) {
   if(!force && promptDisp) return;
   QTextCursor cursor(textCursor());
   // displays the prompt
-  setTextColor(cmdColor);
   gotoEnd(cursor, false);
   setTextCursor(cursor);
+  setTextColor(cmdColor);
   append(prompt);
   gotoEnd(cursor, false);
   setTextCursor(cursor);
@@ -271,12 +271,17 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   }
   else if((e->key() == Qt::Key_F) && ctrl_pressed) {
     e->accept();
-    cursor.setPosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
     setTextCursor(cursor);
   }
   else if((e->key() == Qt::Key_B) && ctrl_pressed) {
     e->accept();
-    cursor.setPosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+    setTextCursor(cursor);
+  }
+  else if((e->key() == Qt::Key_D) && ctrl_pressed) {
+    e->accept();
+    cursor.deleteChar();
     setTextCursor(cursor);
   }
   else {

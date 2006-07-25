@@ -435,38 +435,6 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-
-class PDP_API ProgramCallEl: public ProgEl { 
-  // ProgEl to invoke another program
-INHERITED(ProgEl)
-public:
-  Program*		target; // the program to be called
-  ProgArg_List		prog_args; // arguments to the program--copied to prog before call
-  UserScriptEl		fail_el; // #EDIT_INLINE what to do if can't compile or run--default is cerr and Stop
-  
-  virtual void		UpdateGlobalArgs(); 
-    // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
-  
-  override String	GetDisplayName() const;
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const ProgramCallEl& cp);
-  COPY_FUNS(ProgramCallEl, ProgEl);
-  TA_BASEFUNS(ProgramCallEl);
-
-protected:
-  Program*		old_target; // the last target, used to detect changes
-  override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
-
 class PDP_API Program_List : public taList<Program> {
 INHERITED(taList<Program>)
 public:
@@ -521,7 +489,7 @@ public:
   ProgEl_List		prog_els; // the prog els for the main program
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
-  Program_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase
+  ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCallEl's, not the actual Program's)
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
@@ -595,7 +563,6 @@ private:
 
 SmartRef_Of(Program); // ProgramRef
 
-
 class PDP_API Program_Group : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
@@ -613,6 +580,40 @@ private:
   void	Initialize();
   void 	Destroy()		{Reset(); };
 };
+
+class PDP_API ProgramCallEl: public ProgEl { 
+  // ProgEl to invoke another program
+  INHERITED(ProgEl)
+public:
+  ProgramRef		target; // the program to be called
+  ProgArg_List		prog_args; // arguments to the program--copied to prog before call
+
+  virtual void		UpdateGlobalArgs(); 
+  // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
+
+  virtual Program*	GetTarget(); // 
+
+
+  override String	GetDisplayName() const;
+
+  void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const ProgramCallEl& cp);
+  COPY_FUNS(ProgramCallEl, ProgEl);
+  TA_BASEFUNS(ProgramCallEl);
+
+protected:
+  Program*		old_target; // the last target, used to detect changes
+  override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
 
 
 #endif

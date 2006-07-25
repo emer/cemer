@@ -675,7 +675,7 @@ val_type=DataTable;
 };
 Program @[0] {
 name="Train";
-flags=ROOT_OK;
+flags=PF_NONE;
 prog_objs {
 name=;
 el_typ=taOBase;
@@ -748,13 +748,6 @@ name=;
 el_typ=ProgArg;
 el_def=0;
 };
-fail_el {
-desc=;
-user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-};
 };
 };
 loop_var_type=;
@@ -775,7 +768,7 @@ args{ };
 };
 Program @[1] {
 name="TrainEpoch";
-flags=ROOT_OK;
+flags=PF_NONE;
 prog_objs {
 name=;
 el_typ=taOBase;
@@ -848,13 +841,6 @@ name=;
 el_typ=ProgArg;
 el_def=0;
 };
-fail_el {
-desc=;
-user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-};
 };
 ProgramCallEl @[1] {
 desc="cycle the net";
@@ -864,13 +850,6 @@ name=;
 el_typ=ProgArg;
 el_def=0;
 };
-fail_el {
-desc=;
-user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-};
 };
 ProgramCallEl @[2] {
 desc="get the monitor data and store in table";
@@ -879,13 +858,6 @@ prog_args {
 name=;
 el_typ=ProgArg;
 el_def=0;
-};
-fail_el {
-desc=;
-user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
 };
 };
 MethodCallEl @[3] {

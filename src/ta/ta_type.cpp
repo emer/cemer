@@ -20,12 +20,14 @@
 #include "ta_platform.h"
 #include "ta_variant.h"
 
+
 #ifndef NO_TA_BASE
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_TA_type.h"
 # include  <QCoreApplication>
 # include  <QTimer>
+#include "css_machine.h"	// for setting error code in taMisc::Error
 # ifdef TA_GUI
 #  include "ta_qtdata.h"
 #  include "ta_qttype.h"
@@ -296,6 +298,10 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   if (beep_on_error) cerr << '\a'; // BEL character
   cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
     " " << g << " " << h << " " << i  << "\n";
+  // todo: following needs tested!
+#if !defined(NO_TA_BASE) 
+  cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+#endif
 }
 
 int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,

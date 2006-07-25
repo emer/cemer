@@ -36,6 +36,8 @@
 #include "ta_qtdialog.h"
 #include "css_qt.h"
 
+#include "css_machine.h"	// for setting error code in taMisc::Error
+
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
@@ -47,6 +49,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   if (beep_on_error) cerr << '\a'; // BEL character
   cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f << 
     " " << g << " " << h << " " << i << "\n";
+  // todo: following needs tested!
+  cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     String errmsg = String(a) + " "  + b + " " + c + " " + d + " " + e + " " + f

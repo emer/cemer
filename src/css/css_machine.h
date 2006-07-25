@@ -671,15 +671,15 @@ public:
   int		GetIndex(cssEl* it);	// find it, return index
   int		IndexOfName(const String& nm) const; // return index of name, -1 if not found
 
-  void 		List(ostream& fh = cout, int indent = 0) const;	// (elaborate print format)
-  void 		List(pager_ostream& fh, int indent = 0) const;	// (elaborate print format)
-  void 		NameList(ostream& fh = cout, int indent = 0) const;   // just the names
-  void 		NameList(pager_ostream& fh, int indent = 0) const;   // just the names
-  void		ValList(ostream& fh = cout, int indent = 0) const;    // just the values (printf format)
+  void 		List(ostream& fh = cout, int indent = 0, int per_line = -1) const;	// (elaborate print format)
+  void 		List(pager_ostream& fh, int indent = 0, int per_line = -1) const;	// (elaborate print format)
+  void 		NameList(ostream& fh = cout, int indent = 0, int per_line = -1) const;   // just the names
+  void 		NameList(pager_ostream& fh, int indent = 0, int per_line = -1) const;   // just the names
+  void		ValList(ostream& fh = cout, int indent = 0, int per_line = -1) const;    // just the values (printf format)
   void		TypeNameList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name output
   void		TypeNameValList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name/val output
-  String	PrintStr(int indent = 0) const;
-  String	PrintFStr(int indent = 0) const;
+  String	PrintStr(int indent = 0, int per_line = -1) const;
+  String	PrintFStr(int indent = 0, int per_line = -1) const;
 
   void		Alloc(int sz);		// allocate space on the list..
   void 		Reset();		// clear list
@@ -1282,6 +1282,8 @@ public:
   void 		Reset();		// reset code, autos, frames, etc
   void		ResetCode();		// get rid of all insts and source
 
+  cssScriptFun*	GetCurrentFun();	// find current function (or null if not in one)
+
   cssProgSpace*	SetTop(cssProgSpace* pspc)
   { cssProgSpace* rval = top; top = pspc; return rval; }
   // set the top pointer, returning current one, which should be saved and used to pop
@@ -1304,7 +1306,7 @@ public:
 
   void		ListSrc(pager_ostream& fh, int indent = 0, int stln = -1); // source code
   void 		ListImpl(pager_ostream& fh, int indent = 0, int stinst = -1); // machine impl
-  void		ListSpace(pager_ostream& fh, int frdx = -1, int indent = 0);
+  void		ListLocals(pager_ostream& fh, int frdx = -1, int indent = 0);
 
   // coding
   int 		AddCode(cssInst* it);
@@ -1504,9 +1506,9 @@ public:
   void 		ListSrc(int stln = -1);	// source code
   void 		ListImpl(int stln = -1); // machine code implementation
   void		List(int stln = -1);
-  void		ListSpace();
   void		Status();
-  void		Trace(int level=0);
+  void		BackTrace(int levels_back=-1);
+  void		ListLocals(int levels_back=0);
   void		Help();
 
   // breakpoints

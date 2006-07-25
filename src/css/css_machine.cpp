@@ -369,12 +369,12 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 
 #if (!defined(TA_OS_WIN))
 void cssMisc::fpecatch(int) {
-  signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
+//   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   cssProgSpace* top = cssMisc::cur_top;
-  if(top->state & (cssProg::State_Run)) {
+//   if(top->state & (cssProg::State_Run)) {
     cssMisc::Warning(NULL, "Floating point exception");
     top->run_stat = cssEl::ExecError;
-  }
+//   }
 }
 
 void cssMisc::intrcatch(int) {
@@ -2154,41 +2154,44 @@ String& cssSpace::fancy_list(String& fh, const String& itm, int no, int prln, in
   return fh;
 }
 
-void cssSpace::List(ostream& fh, int indent) const {
-  fh << "\n" << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
-  fh << PrintStr(indent) << "\n";
+void cssSpace::List(ostream& fh, int indent, int per_line) const {
+  fh << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
+  fh << PrintStr(indent, per_line) << "\n";
   fh.flush();
 }
-void cssSpace::List(pager_ostream& fh, int indent) const {
-  fh << "\n" << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
-  fh << PrintStr(indent) << "\n";
+void cssSpace::List(pager_ostream& fh, int indent, int per_line) const {
+  fh << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
+  fh << PrintStr(indent, per_line) << "\n";
 }
-void cssSpace::ValList(ostream& fh, int indent) const {
-  fh << "\n" << cssMisc::Indent(indent) << "Element Values of Space: " << name << " (" << size << ")\n";
-  fh << PrintFStr(indent) << "\n";
+void cssSpace::ValList(ostream& fh, int indent, int per_line) const {
+  fh << cssMisc::Indent(indent) << "Element Values of Space: " << name << " (" << size << ")\n";
+  fh << PrintFStr(indent, per_line) << "\n";
   fh.flush();
 }
-void cssSpace::NameList(pager_ostream& fh, int indent) const {
-  int i;
-  fh << "\nElement Names of Space: " << name << " (" << size << ")\n";
-  int names_width = 0;
-  for(i=0; i<size; i++) {
-    names_width = MAX(names_width, (int)els[i]->name.length());
+void cssSpace::NameList(pager_ostream& fh, int indent, int per_line) const {
+  fh << "Element Names of Space: " << name << " (" << size << ")\n";
+  int tabs = 0;
+  int prln = 1;
+  if(per_line < 1) {
+    int names_width = 0;
+    for(int i=0; i<size; i++) {
+      names_width = MAX(names_width, (int)els[i]->name.length());
+    }
+    tabs = (names_width / 8) + 1;
+    prln = taMisc::display_width / (tabs * 8);
+    if(prln <= 0) prln = 1;
   }
-  int tabs = (names_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8);
-  if(prln <= 0) prln = 1;
   String fl = cssMisc::Indent(indent);
-  for(i=0; i<size; i++) {
+  for(int i=0; i<size; i++) {
     cssSpace::fancy_list(fl, els[i]->name, i, prln, tabs, indent);
   }
   fh << fl;
   fh << "\n";
 }
-void cssSpace::NameList(ostream& fh, int indent) const {
+void cssSpace::NameList(ostream& fh, int indent, int per_line) const {
   pager_ostream pgos;
   pgos.fout = &fh; pgos.no_page = true;
-  NameList(pgos, indent);
+  NameList(pgos, indent, per_line);
 }
 
 void cssSpace::TypeNameList(ostream& fh, int indent) const {
@@ -2252,37 +2255,44 @@ void cssSpace::TypeNameValList(ostream& fh, int indent) const {
   }
 }
 
-String cssSpace::PrintStr(int indent) const {
-  int i;
-  int vars_width = 0;
-  for(i=0; i<size; i++) {
-    String tmp = els[i]->PrintStr();
-    vars_width = MAX(vars_width, (int)tmp.length());
+String cssSpace::PrintStr(int indent, int per_line) const {
+  int tabs = 0;
+  int prln = 1;
+  if(per_line < 1) {
+    int vars_width = 0;
+    for(int i=0; i<size; i++) {
+      String tmp = els[i]->PrintStr();
+      vars_width = MAX(vars_width, (int)tmp.length());
+    }
+    tabs = (vars_width / 8) + 1;
+    prln = taMisc::display_width / (tabs * 8) - indent;
+    if(prln <= 0) prln = 1;
   }
-  int tabs = (vars_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8) - indent;
-  if(prln <= 0) prln = 1;
   String rval = cssMisc::Indent(indent);
-  for(i=0; i<size; i++) {
+  for(int i=0; i<size; i++) {
     String tmp = els[i]->PrintStr();
-    cssSpace::fancy_list(rval, tmp, i, prln, tabs);
+    cssSpace::fancy_list(rval, tmp, i, prln, tabs, indent);
   }
   return rval;
 }
-String cssSpace::PrintFStr(int indent) const {
-  int i;
-  int vals_width = 0;
-  for(i=0; i<size; i++) {
-    String tmp = els[i]->PrintFStr();
-    vals_width = MAX(vals_width, (int)tmp.length());
+
+String cssSpace::PrintFStr(int indent, int per_line) const {
+  int tabs = 0;
+  int prln = 1;
+  if(per_line < 1) {
+    int vals_width = 0;
+    for(int i=0; i<size; i++) {
+      String tmp = els[i]->PrintFStr();
+      vals_width = MAX(vals_width, (int)tmp.length());
+    }
+    tabs = (vals_width / 8) + 1;
+    prln = taMisc::display_width / (tabs * 8);
+    if(prln <= 0) prln = 1;
   }
-  int tabs = (vals_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8);
-  if(prln <= 0) prln = 1;
   String rval = cssMisc::Indent(indent);
-  for(i=0; i<size; i++) {
+  for(int i=0; i<size; i++) {
     String tmp = els[i]->PrintFStr();
-    cssSpace::fancy_list(rval, tmp, i, prln, tabs);
+    cssSpace::fancy_list(rval, tmp, i, prln, tabs, indent);
   }
   return rval;
 }
@@ -2690,6 +2700,16 @@ void cssProg::ResetCode() {
   src_size = 0;
 }
 
+cssScriptFun* cssProg::GetCurrentFun() {
+  cssProg* cp = this;
+  while(cp != NULL) {
+    if(cp->owner_fun != NULL) return cp->owner_fun;
+    if(cp->owner_blk == NULL) return NULL;
+    cp = cp->owner_blk->owner_prog;
+  }
+  return NULL;
+}
+
 //////////////////////////////////////////
 //	cssProg: Source, Debugging	//
 //////////////////////////////////////////
@@ -2797,16 +2817,30 @@ void cssProg::ListImpl(pager_ostream& fh, int indent, int stln) {
   }
 }
 
-void cssProg::ListSpace(pager_ostream& fh, int frdx, int indent) {
+void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
   if(frdx < 0)
     frdx = fr_size-1;
-  fh << "\n" << cssMisc::Indent(indent) << "Elements of Spaces For Program: "
-     << name << " (frame = " << frdx  << ")\n";
-  Autos(frdx)->List(fh, indent);
-  statics.List(fh, indent);
-  Stack(frdx)->List(fh, indent);
-  if(top->ListDebug() > 1)
-    literals.List(fh, indent);
+
+  String nm = name;
+  cssScriptFun* cur_fun = GetCurrentFun();
+  if(cur_fun != NULL) {
+    nm = cur_fun->PrintStr();
+    if(top->debug >= 1)
+      nm += " (" + name + ")";
+  }
+
+  fh << cssMisc::Indent(indent) << "Local Variables For Program: "
+     << nm << " (frame = " << frdx  << ")\n";
+  int curpc = PC(frdx);
+  cssInst* inst = Inst(curpc);
+  if(inst != NULL) {
+    fh << cssMisc::Indent(indent + 1) << inst->PrintStr() << "\n";
+  }
+  Autos(frdx)->List(fh, indent+1, 1);
+  statics.List(fh, indent+1, 1);
+  Stack(frdx)->List(fh, indent+1, 1);
+  if(top->debug >= 1)
+    literals.List(fh, indent+1, 1);
 }
 
 //////////////////////////////////////////
@@ -3076,7 +3110,9 @@ cssEl* cssProg::Cont() {
       else {
 	cssInst* nxt = insts[Frame()->pc++];
 	RunDebugInfo(nxt);
-	top->run_stat = nxt->Do();
+	cssEl::RunStat rval = nxt->Do();
+	if(top->run_stat != cssEl::ExecError) // do could have triggered an exec error
+	  top->run_stat = rval;
       }
     }
   }
@@ -3105,7 +3141,9 @@ cssEl* cssProg::Cont() {
       else {
 	cssInst* nxt = insts[Frame()->pc++];
 	RunDebugInfo(nxt);
-	top->run_stat = nxt->Do();
+	cssEl::RunStat rval = nxt->Do();
+	if(top->run_stat != cssEl::ExecError) // do could have triggered an exec error
+	  top->run_stat = rval;
 	if(top->debug < 2)
 	  stc = source[nxt->line]->ln;
 	else
@@ -4119,14 +4157,18 @@ void cssProgSpace::List(int stln) {
     ListSrc(stln);
 }
 
-void cssProgSpace::ListSpace() {
+void cssProgSpace::ListLocals(int levels_back) {
   if(!HaveCmdShell()) return;
   pager_ostream& fh = cmd_shell->pgout;
-  fh << "\nListing of Elements of: " << name << "\n";
-  statics.List(*cmd_shell->fout);
-  for(int i=0; i<size; i++) {
-    Prog(i)->ListSpace(fh, Prog_Fr(i), i);
-  }
+  
+  if(levels_back < 0) levels_back = size - 1;
+  int lev = size - 1 - levels_back;
+  if(lev < 0) lev = 0;
+
+  fh << "Local vars for stack frame: " << lev << "\n";
+  Prog(lev)->ListLocals(fh, -1, 0);
+  if(lev == 0)
+    statics.List(fh, 0, 1);
 }
 
 static char* rs_vals[10] = {"Waiting", "Running", "Stopping", "NewProgShoved",
@@ -4157,22 +4199,34 @@ void cssProgSpace::Status() {
   cmd_shell->fout->flush();
 }
 
-void cssProgSpace::Trace(int level) {
+void cssProgSpace::BackTrace(int levels_back) {
   if(!HaveCmdShell()) return;
   pager_ostream& fh = cmd_shell->pgout;
-  fh << "\n\tTrace of Program: " << name << "\n";
+  fh << "\nBackTrace of Program: " << name << "\n";
 
-  for(int i=0; i<size; i++) {
-    fh << cssMisc::Indent(i) << i << ":\t" << Prog(i)->name << "\t";
-    if(Prog(i)->Inst(Prog(i)->PC(Prog_Fr(i))))
-      fh << Prog(i)->Inst(Prog(i)->PC(Prog_Fr(i)))->PrintStr();
-    else
-      fh << "\n";
-    if(level > 0) {
-      Prog(i)->Stack(Prog_Fr(i))->List(fh, i);
-      if(level > 1) {
-	Prog(i)->Autos(Prog_Fr(i))->List(fh, i);
-      }
+  if(levels_back < 0) levels_back = size - 1;
+  int stop_lev = size - 1 - levels_back;
+  if(stop_lev < 0) stop_lev = 0;
+
+  for(int i=size-1; i>=stop_lev; i--) {
+    int cnt = size-1 - i;
+    cssProg* cp = Prog(i);
+    String nm = cp->name;
+    cssScriptFun* cur_fun = cp->GetCurrentFun();
+    if(cur_fun != NULL) {
+      nm = cur_fun->PrintStr();
+      if(debug >= 1)
+	nm += " (" + cp->name + ")";
+    }
+    fh << "#" << cnt << "  " << nm << "\n";
+    int curpc = cp->PC(Prog_Fr(i));
+    cssInst* inst = cp->Inst(curpc);
+    if(inst != NULL) {
+      fh << cssMisc::Indent(1) << inst->PrintStr() << "\n";
+    }
+    if(debug >= 2) {
+      cp->Stack(Prog_Fr(i))->List(fh, 2, 1);
+      cp->Autos(Prog_Fr(i))->List(fh, 2, 1);
     }
   }
 }

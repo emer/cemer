@@ -819,27 +819,17 @@ static cssEl* cssElCFun_exit_stub(int, cssEl* arg[]) {
   }
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_frame_stub(int na, cssEl* arg[]) {
+static cssEl* cssElCFun_locals_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   pager_ostream& fh = csh->pgout;
   if(na > 0) {
-    int back = (int)*arg[1];
-    if(back >= csh->src_prog->size) {
-      cssMisc::Error(cp, "Not that many frames:",String(back),"in program, has only:",
-		      String((int)(csh->src_prog->size-1)));
-      return &cssMisc::Void;
-    }
-    if(back == csh->src_prog->size-1)
-      csh->src_prog->statics.List(fh);
-    else
-      csh->src_prog->Prog(csh->src_prog->size-1-back)->ListSpace(fh);
+    csh->src_prog->ListLocals((int)*arg[1]);
   }
   else {
-    cp->ListSpace(fh);
-    csh->src_prog->statics.List(fh);
+    csh->src_prog->ListLocals();
   }
   return &cssMisc::Void;
 }
@@ -1110,20 +1100,16 @@ static cssEl* cssElCFun_tokens_stub(int, cssEl* arg[]) {
   csh->fout->flush();
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_trace_stub(int na, cssEl* arg[]) {
+// todo: up/down, etc?
+static cssEl* cssElCFun_backtrace_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
-  if(na > 0) {
-    int tr_lev = (int)*arg[1];
-    if(tr_lev > 2)
-      csh->src_prog->ListSpace();
-    else
-      csh->src_prog->Trace(tr_lev);
-  }
+  if(na > 0)
+    csh->src_prog->BackTrace((int)*arg[1]);
   else
-    csh->src_prog->Trace();
+    csh->src_prog->BackTrace();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
@@ -1173,6 +1159,14 @@ static void Install_Commands() {
   cssElCFun_inst(cssMisc::Commands, alias, 		2, CSS_ALIAS,
 "<cmd> <new_nm> Gives a new name to an existing command.  This is useful for defining\
  shortcuts (e.g., alias list ls)");
+  cssElCFun_inst(cssMisc::Commands, backtrace, 		cssEl::VarArg, CSS_COMMAND,
+"[<levels_back>] Displays a backtrace of the functions called up to the current one (i.e., as\
+ called from within a breakpoint). Optional arg specifies the number of levels back to\
+ go.  Level of detail displayed depends on the debug level.");
+  cssElCFun_inst_nm(cssMisc::Commands, backtrace,   cssEl::VarArg, "bt", CSS_COMMAND,
+"[<levels_back>] Displays a backtrace of the functions called up to the current one (i.e., as\
+ called from within a breakpoint). Optional arg specifies the number of levels back to\
+ go.  Level of detail displayed depends on the debug level.");
   cssElCFun_inst(cssMisc::Commands, chsh, 		cssEl::VarArg, CSS_COMMAND,
 "<script_path> Switches the CSS interface to access the CSS script object pointed to by\
  the given path.  This is for hard-coded objects that have CSS script\
@@ -1228,12 +1222,6 @@ static void Install_Commands() {
   cssElCFun_inst_nm(cssMisc::Commands, exit, 		0, "exit", CSS_COMMAND,
 "Exits from the program (CSS), or from another program space if\
  chsh (or its TA_GUI equivalent) was called.");
-  cssElCFun_inst(cssMisc::Commands, frame,		cssEl::VarArg, CSS_COMMAND,
-"[<back>] Shows the variables and their values associated with the current block\
- or frame of processing.  The optional argument gives the number of\
- frames back from the current one to display.  This is most relevant for\
- debugging at a breakpoint, since otherwise there will only be a single,\
- top-level frame to display.");
   cssElCFun_inst(cssMisc::Commands, functions,		0, CSS_COMMAND,
 "Shows a list of all of the currently defined functions.");
   cssElCFun_inst(cssMisc::Commands, globals,		0, CSS_COMMAND,
@@ -1259,6 +1247,12 @@ static void Install_Commands() {
  last one left off.");
   cssElCFun_inst(cssMisc::Commands, load, 		1, CSS_COMMAND,
 "<prog_file> Loads and compiles a new program from the given file."); //
+  cssElCFun_inst(cssMisc::Commands, locals,		cssEl::VarArg, CSS_COMMAND,
+"[<back>] Shows the local variables and their values associated with the current block\
+ or frame of processing.  The optional argument gives the number of\
+ frames back from the current one to display.  This is most relevant for\
+ debugging at a breakpoint, since otherwise there will only be a single,\
+ top-level frame to display.");
   cssElCFun_inst(cssMisc::Commands, mallinfo, 		0, CSS_COMMAND,
 "Generates a listing of the current malloc memory allocation\
  statistics, including changes from the last time the command was called.");
@@ -1329,13 +1323,6 @@ static void Install_Commands() {
  to refer to the objects by their position in this list with the\
  Token function, which can be a useful shortcut to using the\
  objects path.");
-  cssElCFun_inst(cssMisc::Commands, trace, 		cssEl::VarArg, CSS_COMMAND,
-"[<level>] Displays a trace of the functions called up to the current one (i.e., as\
- called from within a breakpoint). A trace level of 0 (the default) just\
- gives function names, line numbers, and the source code for the\
- function call, while level 1 adds stack information, level 2 adds\
- stack and auto variable state information, and level 3 gives a complete\
- dump of all available information.");
   cssElCFun_inst(cssMisc::Commands, type, 		cssEl::VarArg, CSS_TYPECMD,
 "<type_name> Gives type information about the given type.  This includes full\
  information about classes (both hard-coded and script-defined),\
