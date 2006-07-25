@@ -983,9 +983,8 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
   STRING_BUF(rval, 250);
   indent_level++;		// everything is indented from outer block
-  String mypath = GetPath();
   rval += cssMisc::Indent(indent_level);
-  rval += "Program* target = " + mypath + "->GetTarget();\n";
+  rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
   rval += cssMisc::Indent(indent_level);
   rval += "if(target != NULL) {\n";
   if (prog_args.size > 0) {
@@ -1320,7 +1319,7 @@ const String Program::scriptString() {
       for (int i = 0; i < sub_progs.size; ++i) {
         ProgramCallEl* sp = (ProgramCallEl*)sub_progs.FastEl(i);
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
-        m_scriptCache += "    target = " + sp->GetPath() + "->GetTarget();\n";
+        m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
         m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
       }
       m_scriptCache += "  }\n";
