@@ -61,6 +61,7 @@ class	QHBox;			// #IGNORE
 class	QHBoxLayout;		// #IGNORE 
 class	Q3HButtonGroup;		// #IGNORE 
 class	Q3Header;		// #IGNORE 
+class	QHostAddress;		// #IGNORE
 class	QItemDelegate;		// #IGNORE
 class	QLabel;			// #IGNORE 
 class	QLayout;		// #IGNORE 
@@ -96,6 +97,8 @@ class	QTableView;		// #IGNORE
 class	Q3TableItem;			// #IGNORE 
 class	QTabBar;		// #IGNORE 
 class	QTabWidget;		// #IGNORE 
+class	QTcpServer;		// #IGNORE 
+class	QTcpSocket;		// #IGNORE
 class	QTextBrowser;		// #IGNORE 
 class	QTextEdit;		// #IGNORE 
 class	QToolBar;		// #IGNORE 

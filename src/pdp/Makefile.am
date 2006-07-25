@@ -9,6 +9,7 @@ if TA_GUI
 
 TAHEADS_GUI =\
 	@abs_srcdir@/pdpview_qt.h \
+	@abs_srcdir@/pdpserver_qt.h \
 	@abs_srcdir@/netstru_so.h \
 	@abs_srcdir@/netstru_qtso.h \
 	@abs_srcdir@/pdp_qtso.h \
@@ -17,6 +18,7 @@ TAHEADS_GUI =\
 
 HEADS_GUI =\
 	pdpview_qt.h \
+	pdpserver_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	pdp_qtso.h \
@@ -25,6 +27,8 @@ HEADS_GUI =\
 
 SRCS_GUI =\
 	pdpview_qt.cpp \
+	pdpserver_qt.cpp \
+	pdpserver_qt.moc.cpp \
 	netstru_so.cpp \
 	pdp_qtso.cpp \
 	pdp_qtso.moc.cpp \
@@ -49,6 +53,7 @@ TAHEADS =\
 	@abs_srcdir@/program.h \
 	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
+	@abs_srcdir@/pdpserver.h \
 	$(TAHEADS_GUI) \
 	@abs_srcdir@/v3_compat.h
 
@@ -62,6 +67,7 @@ HEADS =\
 	program.h \
 	pdplog.h \
 	pdpshell.h \
+	pdpserver.h \
 	v3_compat.h \
 	$(HEADS_GUI)
 
@@ -75,6 +81,8 @@ SRCS =\
 	program.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
+	pdpserver.cpp \
+	pdpserver.moc.cpp \
 	$(SRCS_GUI) \
 	pdp_ti.cpp \
 	v3_compat.cpp

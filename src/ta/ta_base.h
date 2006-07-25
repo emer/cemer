@@ -732,7 +732,7 @@ private:\
   T ## Ref(const T ## Ref& src); \
 };
 
-#ifdef TA_GUI
+#ifdef TA_USE_QT
 
 /*
  * taBaseAdapter enables a taOBase object to handle Qt events, via a
@@ -760,7 +760,7 @@ public:
 protected:
   taOBase* owner; // #IGNORE
 };
-#endif // TA_GUI
+#endif // TA_USE_QT
 
 
 class TA_API taOBase : public taBase {
@@ -769,7 +769,7 @@ INHERITED(taBase)
 friend class taBaseAdapter;
 public:
   TAPtr		owner;		// #READ_ONLY #NO_SAVE pointer to owner
-#ifdef TA_GUI
+#ifdef TA_USE_QT
   taBaseAdapter* 	adapter; // #IGNORE
   void			SetAdapter(taBaseAdapter* adapter_);
 #endif
@@ -782,7 +782,7 @@ public:
   TAPtr		GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
   TAPtr 	SetOwner(TAPtr ta)	{ owner = ta; return ta; }
 
-#ifdef TA_GUI
+#ifdef TA_USE_QT
   void 	Initialize()			{ owner = NULL; adapter = NULL; m_data_link = NULL;}
 #else
   void 	Initialize()			{ owner = NULL; m_data_link = NULL;}

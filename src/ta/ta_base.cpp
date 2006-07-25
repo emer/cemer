@@ -1128,7 +1128,7 @@ void taSmartRef::DataLinkDestroying(taDataLink* dl) {
 //	taOBase		//
 //////////////////////////
 
-#ifdef TA_GUI
+#ifdef TA_USE_QT
 
 taBaseAdapter::~taBaseAdapter() {
   if (owner && (owner->adapter == this)) owner->adapter = NULL;
@@ -1139,7 +1139,6 @@ void taOBase::SetAdapter(taBaseAdapter* adapter_) {
   if (adapter == adapter_) return;
   if (adapter_) { // setting adapter
     if (adapter) { // chaining
-//Qt3      adapter_->insertChild(adapter);
       adapter->setParent(adapter_);
     }
     adapter = adapter_;
