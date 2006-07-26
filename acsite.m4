@@ -1429,7 +1429,7 @@ if $sim_ac_with_qt; then
     CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_save_cppflags"
     SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
                                [sim_ac_qglobal=true
-                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtCore $sim_ac_qt_incpath/QtGui $sim_ac_qt_incpath/QtNetwork4 $sim_ac_qt_incpath/QtXml $sim_ac_qt_incpath/QtTest $sim_ac_qt_incpath/Qt3Support"
+                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtCore $sim_ac_qt_incpath/QtGui $sim_ac_qt_incpath/QtNetwork $sim_ac_qt_incpath/QtXml $sim_ac_qt_incpath/QtTest $sim_ac_qt_incpath/Qt3Support"
                                 ])
     AC_MSG_RESULT($sim_ac_qglobal)
   fi
