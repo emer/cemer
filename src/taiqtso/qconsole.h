@@ -62,8 +62,12 @@ protected:
   // give suggestions to autocomplete a command (should be reimplemented)
   // the return value of the function is the string list of all suggestions
   virtual QStringList autocompleteCommand(QString cmd);
+  // do completion of string as a possible file name: must be called by a specific implementation!
+  virtual QStringList autocompleteFilename(QString cmd);
   // check if current command is complete (no hanging brackets, etc)
   virtual bool isCommandComplete(QString command);
+  virtual void ctrlCPressed();	// the user pressed ctrl-C -- do something (e.g., stop program)
+
 
 protected:
   // Redefined virtual methods

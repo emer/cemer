@@ -228,12 +228,14 @@ int pdpMisc::Main(int argc, char *argv[]) {
 //nn    bw->browser->setRoot(root, root->GetTypeDef());
     taiMisc::SetMainWindow(db->browser_win());
 
+#if 0				// todo just off for debugging
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
     mw->setMinimumSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
     mw->setFocusProxy((QWidget*)console);
     mw->setCentralWidget((QWidget*)console);
     mw->show();
+#endif
 
     // set the update action (taken after Ok or Apply in the Edit dialog)
 //temp    taiMisc::Update_Hook = taMisc::DelayedMenuUpdate;
@@ -369,10 +371,11 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
 #else // NOT DMEM_COMPILE
   if(cssMisc::gui) {
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-//     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-//     cssMisc::TopShell->Shell_QandD_Console("pdp++");
+//     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+//     cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
+    // todo: only for debugging: remove later!
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
+    cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
     qApp->exec();
   }
   else {

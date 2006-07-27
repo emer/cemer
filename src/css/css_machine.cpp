@@ -368,14 +368,15 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 }
 
 #if (!defined(TA_OS_WIN))
-void cssMisc::fpecatch(int) {
-//   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
-  cssProgSpace* top = cssMisc::cur_top;
-//   if(top->state & (cssProg::State_Run)) {
-    cssMisc::Warning(NULL, "Floating point exception");
-    top->run_stat = cssEl::ExecError;
-//   }
-}
+// no longer trapping -- doesn't work!  now trapping proactively in div operation!
+// void cssMisc::fpecatch(int) {
+// //   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
+//   cssProgSpace* top = cssMisc::cur_top;
+// //   if(top->state & (cssProg::State_Run)) {
+//     cssMisc::Warning(NULL, "Floating point exception");
+//     top->run_stat = cssEl::ExecError;
+// //   }
+// }
 
 void cssMisc::intrcatch(int) {
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
@@ -3114,6 +3115,8 @@ cssEl* cssProg::Cont() {
 	if(top->run_stat != cssEl::ExecError) // do could have triggered an exec error
 	  top->run_stat = rval;
       }
+      if(top->cmd_shell != NULL)
+	top->cmd_shell->ProcessEvents();
     }
   }
   else {
@@ -3229,14 +3232,14 @@ void cssProg::ShowBreaks(ostream& fh) {
   }
 }
 
-bool cssProg::unSetBreak(int srcln) {
+bool cssProg::DelBreak(int srcln) {
   int srcdx;
   if((srcdx = FindSrcLn(srcln)) < 0) {
     int i;
     for(i=0; i < size; i++) {
       cssEl* tmp = insts[i]->inst.El();
       if(tmp->GetType() == cssEl::T_CodeBlock) {
-	if(tmp->GetSubProg()->unSetBreak(srcln))
+	if(tmp->GetSubProg()->DelBreak(srcln))
 	  return true;
       }
     }
@@ -3345,6 +3348,7 @@ void cssProgSpace::ClearAll() {
 #endif // TA_GUI
   Reset();
   statics.Reset();
+  types.Reset();
 }
 
 void cssProgSpace::AllocProg(int sz) {
@@ -4076,6 +4080,9 @@ void cssProgSpace::ListSrc(int stln) {
   pager_ostream& fh = cmd_shell->pgout;
   fh.start();
   list_ln = -1;
+  if(stln < 0 && size > 1) {	// prog currently running; start list from there
+    stln = Prog()->CurSrcLn();
+  }
   fh << "\nListing of Program: " << name << "\n";
   // only output functions upon first functions print..
   bool first_type = true;
@@ -4091,7 +4098,7 @@ void cssProgSpace::ListSrc(int stln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) fun->ListSrc(fh);
+	if(fun != NULL) fun->ListSrc(fh, 0, stln);
       }
     }
   }
@@ -4103,7 +4110,7 @@ void cssProgSpace::ListSrc(int stln) {
 	first_fun = false;
       }
       fh << el->PrintStr() << "\n";
-      el->GetSubProg()->ListSrc(fh);
+      el->GetSubProg()->ListSrc(fh, 0, stln);
     }
   }
   Prog(0)->ListSrc(fh, 0, stln);
@@ -4115,6 +4122,9 @@ void cssProgSpace::ListImpl(int stln) {
   pager_ostream& fh = cmd_shell->pgout;
   fh.start();
   list_ln = -1;
+  if(stln < 0 && size > 1) {	// prog currently running; start list from there
+    stln = Prog()->CurSrcLn();
+  }
   fh << "\nListing of Program: " << name << "\n";
   // only output functions upon first functions print..
   bool first_type = true;
@@ -4130,7 +4140,7 @@ void cssProgSpace::ListImpl(int stln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) fun->ListImpl(fh, 1);
+	if(fun != NULL) fun->ListImpl(fh, 1, stln);
       }
     }
   }
@@ -4142,7 +4152,7 @@ void cssProgSpace::ListImpl(int stln) {
 	first_fun = false;
       }
       fh << el->PrintStr() << "\n";
-      el->GetSubProg()->ListImpl(fh, 1);
+      el->GetSubProg()->ListImpl(fh, 1, stln);
     }
   }
   Prog(0)->ListImpl(fh, 0, stln);
@@ -4321,7 +4331,7 @@ void cssProgSpace::ShowBreaks() {
   Prog(0)->ShowBreaks(*cmd_shell->fout);
 }
 
-bool cssProgSpace::unSetBreak(int srcln) {
+bool cssProgSpace::DelBreak(int srcln) {
   if(srcln > src_ln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
     return false;
@@ -4333,7 +4343,7 @@ bool cssProgSpace::unSetBreak(int srcln) {
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun != NULL) {
-	  if(fun->unSetBreak(srcln)) return true;
+	  if(fun->DelBreak(srcln)) return true;
 	}
       }
     }
@@ -4341,10 +4351,10 @@ bool cssProgSpace::unSetBreak(int srcln) {
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
     if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
-      if(el->GetSubProg()->unSetBreak(srcln)) return true;
+      if(el->GetSubProg()->DelBreak(srcln)) return true;
     }
   }
-  if(Prog(0)->unSetBreak(srcln))
+  if(Prog(0)->DelBreak(srcln))
     return true;
   cssMisc::Warning(Prog(), "Breakpoint not found");
   return false;
@@ -4360,6 +4370,8 @@ static QcssConsole* qcss_console = NULL;
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
   pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
+
+  console_type = CT_NoGui_Rl;
 
   external_exit = false;
 //   sc_shell_this = NULL;
@@ -4426,9 +4438,13 @@ void cssCmdShell::PopAllSrcProg() {
   while(PopSrcProg() != NULL);
 }
 
+void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
+  AcceptNewLine(ln, eof);
+}
+
 // this is the work-horse of the shell: a new string line is sent to it by some
 // outer-loop, and it is processed (compiled, etc).
-void cssCmdShell::AcceptNewLine(QString ln, bool eof) {
+void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
   int rval = cmd_prog->CompileCode(ln);
   if(cmd_prog->debug >= 2) {
     cmd_prog->ListImpl();
@@ -4472,8 +4488,9 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
 
 //   SetName(cssMisc::prompt);
 #if (!defined(TA_OS_WIN))
-  signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
-  signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
+  // no longer trapping FPE -- now checking proactively in css!
+//   signal(SIGFPE, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
+//   signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
   bool run_flag = false;
@@ -4560,7 +4577,7 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
   //NB: we must use queued connection, because console lives in our thread,
   // but signal may be raised in another thread
   connect(qand_console, SIGNAL(NewLine(QString, bool)),
-	  this, SLOT(AcceptNewLine(QString, bool)), Qt::QueuedConnection);
+	  this, SLOT(AcceptNewLine_Qt(QString, bool)), Qt::QueuedConnection);
   qand_console->Start();
 }
 
@@ -4609,5 +4626,11 @@ void cssCmdShell::Exit() {
   external_exit = true;
   if(console_type == CT_Qt_Console) {
     qcss_console->exit();
+  }
+}
+
+void cssCmdShell::ProcessEvents() {
+  if(console_type == CT_Qt_Console) {
+    QCoreApplication::processEvents();
   }
 }

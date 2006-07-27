@@ -223,7 +223,6 @@ public:
 				const char* i="", const char* j="", const char* k="", const char* l="");
 public:
 #if (!defined(TA_OS_WIN32))
-  static void 		fpecatch(int);	// floating point exception handling
   static void 		intrcatch(int);	// interrupt exception handling
 #endif
 };
@@ -1352,10 +1351,10 @@ public:
 
   // breakpoints
   bool 		SetBreak(int srcln);
+  bool		DelBreak(int srcln);
   bool		IsBreak(css_progdx pcval);
   bool		IsBreak()		{ return IsBreak(PC()); }
   void		ShowBreaks(ostream& fh = cout);
-  bool		unSetBreak(int srcln);
 protected:
   int 		ReadLn(istream& fh);	// read the line in from filein
 };
@@ -1513,8 +1512,8 @@ public:
 
   // breakpoints
   bool 		SetBreak(int srcln);
+  bool		DelBreak(int srcln);
   void		ShowBreaks();
-  bool		unSetBreak(int srcln);
 
 protected:
   int 		alloc_size;		// allocated number of prog_stacks
@@ -1583,9 +1582,13 @@ public:
 
   void		Exit();		// exit from the shell
 
+  void		ProcessEvents(); // process any pending events while running
+
 public slots:
-  void		AcceptNewLine(QString ln, bool eof); 
+  void		AcceptNewLine(const String& ln, bool eof); 
   // called when a new line of text becomes available -- all outer shells/consoles call this interface
+  void		AcceptNewLine_Qt(QString ln, bool eof); 
+  // called when a new line of text becomes available -- all outer shells/consoles call this interface (qt version)
 protected:
   int		stack_alloc_size;	// allocated size of src_prog stack
 };

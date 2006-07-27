@@ -158,7 +158,14 @@ static cssEl* cssElCFun_asgn_mult_stub(int, cssEl* arg[]) {
   return arg[1];
 }
 static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
-  *(arg[1]) /= *(arg[2]);
+  if((double)*(arg[2]) == 0.0) {
+    cssProg* cp = arg[0]->prog;
+    cssMisc::Error(cp, "Floating Point Exception: Division by Zero");
+    cp->top->run_stat = cssEl::ExecError;
+  }
+  else {
+    *(arg[1]) /= *(arg[2]);
+  }
   return arg[1];
 }
 static cssEl* cssElCFun_asgn_mod_stub(int, cssEl* arg[]) {
@@ -363,7 +370,15 @@ static cssEl* cssElCFun_mul_stub(int, cssEl* arg[]) {
   return *(arg[1]) * *(arg[2]);
 }
 static cssEl* cssElCFun_div_stub(int, cssEl* arg[]) {
-  return *(arg[1]) / *(arg[2]);
+  if((double)*(arg[2]) == 0.0) {
+    cssProg* cp = arg[0]->prog;
+    cssMisc::Error(cp, "Floating Point Exception: Division by Zero");
+    cp->top->run_stat = cssEl::ExecError;
+    return arg[2];
+  }
+  else {
+    return *(arg[1]) / *(arg[2]);
+  }
 }
 static cssEl* cssElCFun_modulo_stub(int, cssEl* arg[]) {
   return *(arg[1]) % *(arg[2]);
@@ -1131,12 +1146,12 @@ static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
   }
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_unsetbp_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_delbp_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->unSetBreak((int)*(arg[1]));
+  csh->src_prog->DelBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_undo_stub(int na, cssEl* arg[]) {
@@ -1329,8 +1344,8 @@ static void Install_Commands() {
  including members, functions, scoped types (enums), etc.");
   cssElCFun_inst(cssMisc::Commands, undo, 		cssEl::VarArg, CSS_COMMAND,
 "This undoes the previous statement, when in define mode.");
-  cssElCFun_inst(cssMisc::Commands, unsetbp, 		1, CSS_COMMAND,
-"<src_ln> Removes a breakpoint associated with the given source-code line number.");
+  cssElCFun_inst(cssMisc::Commands, delbp, 		1, CSS_COMMAND,
+"<src_ln> Deletes a breakpoint associated with the given source-code line number.");
 }
 
 

@@ -602,9 +602,10 @@ inline istream& operator>>(istream &strm, taBase &obj)
 inline ostream& operator<<(ostream &strm, taBase &obj)
 { obj.Save(strm); return strm; }
 
-class TA_API taSmartPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*
+class TA_API taSmartPtr { // ##NO_INSTANCE ##NO_TOKENS "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*
 public:
   inline taBase*	ptr() const {return m_ptr;}
+  inline void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
   
   inline		operator bool() const {return (m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators
@@ -621,7 +622,6 @@ public:
   ~taSmartPtr() {set(NULL);} //note: DO NOT change to be virtual!
 protected:
   mutable taBase*	m_ptr;
-  inline void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
 private:
   taSmartPtr(const taSmartPtr& src); // not defined 
 };
@@ -659,12 +659,15 @@ private:
 #define taPtr_Of(T)  SmartPtr_Of(T)
 
 
-class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" reference for taBase objects -- does not ref count, but is a dlc so it tracks changes etc.
+class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taBase objects -- does not ref count, but is a dlc so it tracks changes etc.
 friend class taBase;
 friend class TypeDef; // for various
 friend class MemberDef; // for streaming
 public:
   inline taBase*	ptr() const {return m_ptr;}
+  void			set(taBase* src) {if (src == m_ptr) return;
+    if (m_ptr) {m_ptr->RemoveDataClient(this);}
+    if (src) {src->AddDataClient(this);}  m_ptr = src;}
   
   inline		operator bool() const {return (m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators
@@ -683,10 +686,6 @@ public:
 protected:
   taBase*		m_own; 
   mutable taBase*	m_ptr;
-  
-  void			set(taBase* src) {if (src == m_ptr) return;
-    if (m_ptr) {m_ptr->RemoveDataClient(this);}
-    if (src) {src->AddDataClient(this);}  m_ptr = src;}
   
 private:
   taSmartRef(const taSmartRef& src); // not defined 

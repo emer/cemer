@@ -42,7 +42,7 @@ public:
   
 signals:
   void			NewLine(QString ln, bool eof); 
-    // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
+  // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
   
 protected:
   static cssQandDConsole*	m_sys_instance;
@@ -69,6 +69,7 @@ class CSS_API QcssConsole : public QConsole {
 
   override QString interpretCommand(QString command, int* res);
   override QStringList autocompleteCommand(QString cmd);
+  override void ctrlCPressed();
 
   override void keyPressEvent(QKeyEvent * e);
 

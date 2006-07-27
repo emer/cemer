@@ -927,24 +927,23 @@ void MethodCallEl::CheckUpdateArgs(bool force) {
 
 
 void ProgramCallEl::Initialize() {
-//   target = NULL;
   old_target = NULL;
 }
 
 void ProgramCallEl::InitLinks() {
   inherited::InitLinks();
   taBase::Own(prog_args, this);
+  taBase::Own(target, this);
 }
 
 void ProgramCallEl::CutLinks() {
-//   taBase::DelPointer((taBase**)&target);
+  target.CutLinks();
   prog_args.CutLinks();
   old_target = NULL;
   inherited::CutLinks();
 }
 
 void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
-  //  taBase::SetPointer((taBase**)&target, cp.target);
   target = cp.target;
   prog_args = cp.prog_args;
 }

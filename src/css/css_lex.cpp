@@ -292,6 +292,24 @@ int yylex()
 	}
 	return s.El()->GetParse();
       }
+      // also look in the current src_prog if I'm a cmd_shell
+      if(cssMisc::cur_top->AmCmdProg() && (cssMisc::cur_top->cmd_shell->src_prog != NULL)) {
+	if((s = cssMisc::cur_top->cmd_shell->src_prog->ParseName((char*)cssLex::Buf)) != 0) {
+	  yylval.el = s;
+	  if(s.ptr == (void*)&(cssMisc::Constants)) {
+	    cssEl::cssTypes typ = s.El()->GetType();
+	    if((typ == cssEl::T_Int) || (typ == cssEl::T_Real) ||
+	       (typ == cssEl::T_Bool) || (typ == cssEl::T_Enum))
+	      {
+		return CSS_NUMBER;
+	      }
+	    else if(typ == cssEl::T_String) {
+	      return CSS_STRING;
+	    }
+	  }
+	  return s.El()->GetParse();
+	}
+      }
       yylval.nm = cssLex::Buf;
       return CSS_NAME;
     }

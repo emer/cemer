@@ -2,7 +2,7 @@
                           qconsole.cpp  -  description
                              -------------------
     begin                : mar mar 15 2005
-    copyright            : (C) 2005 by Houssem BDIOUI
+    copyright            : (C) 2005 by Houssem BDIOUI and Randall C. O'Reilly
     email                : houssem.bdioui@gmail.com
  ***************************************************************************/
 
@@ -23,10 +23,9 @@
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QApplication>
+#include <QDir>
 
-// for debugging:
-using namespace std;
-#include <iostream>
+//#include <QDebug>
 
 //Clear the console
 void QConsole::clear() {
@@ -203,6 +202,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
 
   //If Ctrl + C pressed, then undo the current command
   if((e->key() == Qt::Key_C) && ctrl_pressed) {
+    ctrlCPressed();
     e->accept();
     displayPrompt();
   }
@@ -400,6 +400,32 @@ QString QConsole::interpretCommand(QString command, int *res) {
 QStringList QConsole::autocompleteCommand(QString) {
   return QStringList();
 }
+
+// note: implementations need to explicitly call this   
+QStringList QConsole::autocompleteFilename(QString cmd) {
+  QString path;
+  QString fnm = cmd;
+  if(cmd.contains('/')) {
+    int pos = cmd.lastIndexOf('/');
+    path = cmd.left(pos+1);
+    fnm = cmd.right(cmd.size()-1 - pos);
+  }
+  else if(cmd.contains('\\')) {
+    int pos = cmd.lastIndexOf('\\');
+    path = cmd.left(pos+1);
+    fnm = cmd.right(cmd.size()-1 - pos);
+  }
+  int fnmlen = fnm.length();
+  QStringList lst;
+  QDir dir(path);
+  QStringList files = dir.entryList();
+  for(int i=0;i<files.size();i++) {
+    QString fl = files[i];
+    if(fl.left(fnmlen) == fnm)
+      lst.append(path + fl);
+  }
+  return lst;
+}
   
 //default implementation: command always complete
 bool QConsole::isCommandComplete(QString cmd) {
@@ -407,3 +433,6 @@ bool QConsole::isCommandComplete(QString cmd) {
   return true;
 }
 
+// implementation should do something here..
+void QConsole::ctrlCPressed() {
+}

@@ -310,6 +310,13 @@ QStringList QcssConsole::autocompleteCommand(QString q_cmd) {
   if(cmd[0] == '.') {		// path
     autocompletePath(cmd_b4, cmd, lst);
   }
+  else if(cmd[0] == '"') {		// filename
+    lst = autocompleteFilename(cmd.after(0));
+    for(int i=0;i<lst.size();i++) {
+      String tmp = lst[i];
+      lst[i] = (const char*)(cmd_b4 + '"' + tmp);
+    }
+  }
   else if(cmd.contains("::")) { // scoped type
     autocompleteScoped(cmd_b4, cmd, lst);
   }
@@ -317,6 +324,10 @@ QStringList QcssConsole::autocompleteCommand(QString q_cmd) {
     autocompleteKeyword(cmd_b4, cmd, lst);
   }
   return lst;
+}
+
+void QcssConsole::ctrlCPressed() {
+  cssMisc::cur_top->Stop();
 }
 
 

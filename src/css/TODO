@@ -4,8 +4,6 @@ Immediate:
 
 - filename completion in qconsole
 
-- fpe test: why does it keep going!?
-
 - gdbify: breakpoint setting and clearing
 
 - suppress redundant { } block within a IF_TRUE or IF_FALSE block: just replace code in upper
