@@ -143,11 +143,11 @@ class MatrixTableModel;
 #define IMatrix taMatrix
 
 class TA_API MatrixGeom: public taBase  { 
-  // matrix geometry, similar to an array of int, defaults to 1-d
+  // matrix geometry, similar to an array of int
 INHERITED(taBase)
 friend class taMatrix;
 public:
-  int			size;
+  int			size; // DO NOT SET DIRECTLY, use EnforceSize
   
   bool			Equal(const MatrixGeom& other) const;
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
@@ -155,7 +155,7 @@ public:
     // 'true' if this is a proper frame of other
   int 			Product() const; // returns product of all elements
   
-  void			EnforceSize(int sz);
+  void			EnforceSize(int sz); // sets to size, zeroing orphaned or new dims
   int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
     // the element at the given index
   
@@ -164,11 +164,12 @@ public:
     {if (InRange(i)) el[i] = value;}
   void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
     
-  void			Reset() {EnforceSize(0);}
+  inline void		Reset() {EnforceSize(0);} // set size to 0, and clear all dims
   
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
+  void	UpdateAfterEdit(); // paranoically set unused vals to 0
   explicit MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
   COPY_FUNS(MatrixGeom, taBase);
@@ -373,7 +374,7 @@ public: // low-level, try not to use these, internal use only
 protected:
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
    // called after slice created -- static for consistency
-  static void		SliceDestroying(taMatrix* par_slice, const taMatrix* child_slice); 
+  static void		SliceDestroying(taMatrix* par_slice, taMatrix* child_slice); 
    //called by child slice on destroy -- static because it can cause destruction
   
   int			alloc_size; // -1 means fixed (external data)
@@ -418,12 +419,14 @@ protected:
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
     
+  void 			Slice_Collapse();
+  void			Slice_Realloc(ta_intptr_t base_delta);
+  
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
   void			UpdateSlices_Collapse(); // collapses all the slices to []
   void			UpdateSlices_FramesDeleted(void* deletion_base, int num); // called when deleting a frame -- for each slice: update base addr if after delete base, or collapse if doesn't exist any more
-  void			UpdateSlices_Realloc(void* new_base); // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
-  void 			Slice_Collapse();
-  
+  void			UpdateSlices_Realloc(ta_intptr_t base_delta); // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
+    
   virtual void		Dump_Save_Item(ostream& strm, int idx); 
     // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
   virtual int		Dump_Load_Item(istream& strm, int idx); 

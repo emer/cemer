@@ -1737,10 +1737,12 @@ void DataTable::RemoveOrphanCols() {
     StructUpdate(false);
   }
 }
-
+  
 void DataTable::RemoveRow(int row) {
   if (!RowInRangeNormalize(row)) return;
   DataUpdate(true);
+  if (m_dm) m_dm->beginRemoveRows(QModelIndex(), row, row);
+  
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, data., i) {
@@ -1749,6 +1751,8 @@ void DataTable::RemoveRow(int row) {
       ar->AR()->RemoveFrame(act_row);
   }
   --rows;
+  
+  if (m_dm) m_dm->endRemoveRows();
   DataUpdate(false);
 }
 

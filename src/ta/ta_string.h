@@ -134,7 +134,7 @@ public:
 
 
 // conversion constructors
-  String(bool b);
+  explicit String(bool b); //note: implicit causes evil problems, esp. by converting pointers to strings
   String(char c) {if (c == '\0') newRep(&_nilStrRep); else init(&c, 1);}
   String(int i, const char* format = "%d");
   String(uint u, const char* format = "%u");

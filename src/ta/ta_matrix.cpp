@@ -57,6 +57,14 @@ void MatrixGeom::Copy_(const MatrixGeom& cp) {
   }
 } 
 
+void MatrixGeom::UpdateAfterEdit() {
+  // we paranoically set unused vals to 0, in case optimized code elsewhere 
+  // is somewhat sleazily directly accessing el values w/o checking size
+  for (int i = size; i < TA_MATRIX_DIMS_MAX; ++i) 
+    el[i] = 0;
+  inherited::UpdateAfterEdit();
+}
+
 void MatrixGeom::Add(int value) {
   if (size >= TA_MATRIX_DIMS_MAX) return;
   el[size++] = value;
@@ -99,6 +107,9 @@ int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
 
 void MatrixGeom::EnforceSize(int new_sz) {
   if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return;
+  // zero out orphaned old elements
+  for (int i = size - 1; i >= new_sz; --i)
+    el[i] = 0;
   // zero out new elements
   for (int i = size; i < new_sz; ++i)
     el[i] = 0;
@@ -183,7 +194,7 @@ String taMatrix::GeomToString(const MatrixGeom& geom) {
   return rval;
 }
 
-void taMatrix::SliceDestroying(taMatrix* par_slice, const taMatrix* child_slice) {
+void taMatrix::SliceDestroying(taMatrix* par_slice, taMatrix* child_slice) {
   par_slice->slices->Remove(child_slice);
   // note: having already sliced, we leave the list now in place
   taBase::UnRef(par_slice);
@@ -257,7 +268,10 @@ void taMatrix::Alloc_(int new_alloc) {
     for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
     }
-    UpdateSlices_Realloc(nw);
+    // calculate delta, in bytes, of the new address and update slices
+    ta_intptr_t delta = nw - (char*)data();
+    UpdateSlices_Realloc(delta);
+    // we can now update ourself
     SetArray_(nw);
     alloc_size = new_alloc;
   }
@@ -814,6 +828,23 @@ void taMatrix::Slice_Collapse() {
   // called when our referent has become invalid, for whatever reason
   SetArray_(NULL);
   geom.Reset();
+  size = 0;
+  // if we have collapsed, so have any of our slices...
+  UpdateSlices_Collapse();
+  DataChanged(DCR_ITEM_UPDATED);
+  if (m_dm) 
+    m_dm->emit_layoutChanged();
+}
+
+void taMatrix::Slice_Realloc(ta_intptr_t base_delta) {
+  // called when the base address of our slice has been moved, for whatever reason
+  void* mat_el = data(); // cache
+  if (mat_el) { // note already collapsed
+    SetArray_((void*) (((char*)mat_el) + base_delta));
+    // do it recursively
+    UpdateSlices_Realloc(base_delta);
+  }
+  // note: we recursively updated other slices before doing our own notify
   DataChanged(DCR_ITEM_UPDATED);
   if (m_dm) 
     m_dm->emit_layoutChanged();
@@ -881,20 +912,17 @@ void taMatrix::UpdateSlices_FramesDeleted(void* deletion_base, int num) {
     else if ((mat_el >= deletion_base) && (mat_el < post_deletion))
       mat->Slice_Collapse(); // dude, you so don't exist anymore!
     else { // after the delete point, so fix up
-      mat->SetArray_((void*)((char*)mat_el - ((char*)post_deletion - (char*)deletion_base)));
+      ta_intptr_t base_delta = (char*)deletion_base - (char*)post_deletion;
+      mat->Slice_Realloc(base_delta);
     }
   }
 }
 
-void taMatrix::UpdateSlices_Realloc(void* new_base) {
+void taMatrix::UpdateSlices_Realloc(ta_intptr_t base_delta) {
   if (!slices) return;
-  // calculate delta, in bytes, of the new address
-  ta_intptr_t delta = (char*)new_base - (char*)data();
   for (int i = 0; i < slices->size; ++i) {
     taMatrix* mat = slices->FastEl(i);
-    void* mat_el = mat->data(); // cache
-    if (!mat_el) continue; // collapsed
-    mat->SetArray_((void*) (((char*)mat->data()) + delta));
+    mat->Slice_Realloc(base_delta); // note, recursively calls realloc
   }
 }
  
