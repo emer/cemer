@@ -292,7 +292,6 @@ TypeDefault_Group .projects[0].defaults {
 };
 BpProject .projects[0] {
  name="ViewTest_xor";
- file_name="/home/baisa/pdp4.0/trunk/test/ViewTest_xor.proj";
  wizards {
   name=;
   el_typ=BpWizard;
@@ -775,7 +774,7 @@ BpProject .projects[0] {
   };
   Program @[0] {
    name="Train";
-   flags=ROOT_OK;
+   flags=PF_NONE;
    prog_objs {
     name=;
     el_typ=taOBase;
@@ -848,13 +847,6 @@ BpProject .projects[0] {
 	el_typ=ProgArg;
 	el_def=0;
        };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-       };
       };
      };
      loop_var_type=;
@@ -875,7 +867,7 @@ this->StopScript();
   };
   Program @[1] {
    name="TrainEpoch";
-   flags=ROOT_OK;
+   flags=PF_NONE;
    prog_objs {
     name=;
     el_typ=taOBase;
@@ -944,13 +936,6 @@ this->StopScript();
 	el_typ=ProgArg;
 	el_def=0;
        };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-       };
       };
       ProgramCallEl @[1] {
        desc="cycle the net";
@@ -960,13 +945,6 @@ this->StopScript();
 	el_typ=ProgArg;
 	el_def=0;
        };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
-       };
       };
       ProgramCallEl @[2] {
        desc="get the monitor data and store in table";
@@ -975,13 +953,6 @@ this->StopScript();
 	name=;
 	el_typ=ProgArg;
 	el_def=0;
-       };
-       fail_el {
-	desc=;
-	user_script="cerr << \"Program Call failed--Stopping\\n\";
-ret_val = Program::RV_PROG_CALL_FAILED;
-this->StopScript();
-";
        };
       };
       MethodCallEl @[3] {
@@ -1404,11 +1375,11 @@ lw_list = (LayerWriter_List*)prog_objs->FindName(\"lw_list\");
    color_mode=CM_RGB;
    img_format=IF_AUTO;
   };
-  float_Matrix @[1]{ [2 3 4 5] 1.0;1.1;1.2;1.3;1.4;1.5;2.0;2.1;2.2;2.3;2.4;2.5;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;  };
+  float_Matrix @[1]{ [2 3 4 5] 1;1.1;1.2;1.3;1.4;1.5;2;2.0999999;2.2;2.3;2.4000001;2.5;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;  };
  };
  save_rmv_units=1;
  use_sim_log=1;
- prev_file_nm="xor.proj";
+ prev_file_nm=;
  desc1=;
  desc2=;
  desc3=;

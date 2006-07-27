@@ -6573,7 +6573,6 @@ exit:
 }
 
 void NetMonItem::Initialize() {
-  object.Init(this);
   variable = "act";
   cell_num  = 0;
 }
@@ -6586,6 +6585,7 @@ void NetMonItem::InitLinks() {
   taBase::Own(pre_proc_1,this);
   taBase::Own(pre_proc_2,this);
   taBase::Own(pre_proc_3,this);
+  taBase::Own(object, this);
 }
 
 void NetMonItem::CutLinks() {
@@ -6594,7 +6594,7 @@ void NetMonItem::CutLinks() {
   pre_proc_1.CutLinks();
   ResetMonVals();
   val_specs.CutLinks();
-  object = NULL;
+  object.CutLinks();
   inherited::CutLinks();
 }
 
