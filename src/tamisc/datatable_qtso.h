@@ -28,10 +28,12 @@
 
 #ifndef __MAKETA__
 # include <QItemDelegate>
+# include <QTableView>
 #endif
 
 // forwards
 class tabDataTableViewType;
+class iDataTableView;
 class iDataTablePanel;
 
 
@@ -59,13 +61,30 @@ public:
   ~DataTableDelegate();
 };
 
+#ifndef __MAKETA__ // too much crud to parse
+class TAMISC_API iDataTableView: public QTableView {
+  // widget with some customizations to display submatrix views
+INHERITED(QTableView)
+  Q_OBJECT
+public:
+  iDataTableView(QWidget* parent = NULL);
+
+signals:
+  void 			currentChanged(const QModelIndex& current);
+  
+protected:
+  void 			currentChanged(const QModelIndex& current,
+    const QModelIndex& previous); // override
+};
+#endif // MAKETA
+
 class TAMISC_API iDataTableEditor: public QWidget {
   Q_OBJECT
 INHERITED(QWidget)
 public:
   QVBoxLayout*		layOuter;
   QSplitter*		splMain;
-  QTableView*		  tvTable; // the main table
+  iDataTableView*	  tvTable; // the main table
   QTableView*		  tvCell; // a matrix cell in the table
 
   DataTable*		dt() const {return m_dt;}
@@ -76,7 +95,7 @@ public:
   ~iDataTableEditor();
   
 public slots:
-  void			tvTable_activated(const QModelIndex& index); // #IGNORE
+  void			tvTable_currentChanged(const QModelIndex& index); // #IGNORE
   
 protected:
   DataTableRef		m_dt;

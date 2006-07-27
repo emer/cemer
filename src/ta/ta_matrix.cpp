@@ -184,19 +184,17 @@ String taMatrix::GeomToString(const MatrixGeom& geom) {
 }
 
 void taMatrix::SliceDestroying(taMatrix* par_slice, const taMatrix* child_slice) {
-  taAtomic::Decrement(par_slice->slice_cnt);
-#ifdef DEBUG 
-  if (par_slice->slice_cnt < 0) {
-    taMisc::Error("taMatrix::SliceDestroying slice_cnt < 0, is: ",
-      String(par_slice->slice_cnt));
-  }
-#endif
+  par_slice->slices->Remove(child_slice);
+  // note: having already sliced, we leave the list now in place
   taBase::UnRef(par_slice);
 }
 
 void taMatrix::SliceInitialize(taMatrix* par_slice, taMatrix* child_slice) {
   taBase::Ref(par_slice);
-  taAtomic::Increment(par_slice->slice_cnt);
+  if (!par_slice->slices) {
+    par_slice->slices = new taMatrix_PList;
+  }
+  par_slice->slices->Add(child_slice);
   child_slice->slice_par = par_slice;
 }
 
@@ -204,7 +202,7 @@ void taMatrix::Initialize()
 {
   size = 0;
   alloc_size = 0;
-  slice_cnt = 0;
+  slices = NULL;
   slice_par = NULL;
 #ifdef TA_GUI
   m_dm = NULL;
@@ -220,10 +218,14 @@ void taMatrix::Destroy() {
     slice_par = NULL; 
   }
 #ifdef DEBUG 
-  if (slice_cnt != 0) {
-    taMisc::Error("taMatrix being destroyed with slice_cnt=", String(slice_cnt));
+  if (sliceCount() > 0) {
+    taMisc::Error("taMatrix being destroyed with slice_cnt=", String(sliceCount()));
   }
 #endif
+  if (slices) {
+    delete slices;
+    slices = NULL;
+  }
   if (m_dm) {
     m_dm->MatrixDestroying();
     delete m_dm;
@@ -247,7 +249,7 @@ void taMatrix::AddFrames(int n) {
 
 void taMatrix::Alloc_(int new_alloc) {
   Check((alloc_size >= 0), "cannot alloc a fixed data matrix");
-  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
+//TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
   
 //NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
@@ -255,6 +257,7 @@ void taMatrix::Alloc_(int new_alloc) {
     for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
     }
+    UpdateSlices_Realloc(nw);
     SetArray_(nw);
     alloc_size = new_alloc;
   }
@@ -265,7 +268,7 @@ void taMatrix::AllocFrames(int n) {
 }
 
 bool taMatrix::canResize() const {
-  return ((alloc_size >= 0) && (slice_cnt == 0));
+  return (alloc_size >= 0);
 }
 
 
@@ -670,6 +673,8 @@ void taMatrix::RemoveFrame(int n) {
       ++to;
     }
   }
+  // slice updating
+  UpdateSlices_FramesDeleted(FastEl_Flat_(n * frameSize()), 1);
   // notifies
   bool is_1d = (dims() <= 1);
   if (m_dm) {
@@ -688,6 +693,11 @@ void taMatrix::RemoveFrame(int n) {
     else
       m_dm->endRemoveRows();
   }
+}
+
+void taMatrix::Reset() {
+  EnforceFrames(0);
+  UpdateSlices_Collapse();
 }
 
 int taMatrix::rowCount() {
@@ -778,6 +788,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   
   //NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
+  int old_framesize = frameSize(); // used for slice invalidating
   geom.EnforceSize(dims_);
   for (int i = 0; i < (dims_ - 1) ; ++i) {
     geom[i] = geom_[i];
@@ -785,6 +796,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
 
   // assign storage if not fixed
   if (isFixedData()) {
+    UpdateSlices_Collapse();
     geom[dims_-1] = geom_[dims_-1];
     size = geom.Product();
   } else {
@@ -798,12 +810,31 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
+void taMatrix::Slice_Collapse() {
+  // called when our referent has become invalid, for whatever reason
+  SetArray_(NULL);
+  geom.Reset();
+  DataChanged(DCR_ITEM_UPDATED);
+  if (m_dm) 
+    m_dm->emit_layoutChanged();
+}
+
+int taMatrix::sliceCount() const {
+  if (slices) return slices->size; // note: allowed to be zero
+  else        return 0; // hasn't been needed yet
+}
+
 void taMatrix::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  UpdateGeom();
+  //NOTE: you are NOT allowed to change geom this way -- must use the SetGeom api call
+  if (taMisc::is_loading) {
+    UpdateGeom();
+  }
 }
 
 void taMatrix::UpdateGeom() {
+  // NOTE: this routine is ONLY intended for the case of updating after loading
+  // from a stream -- no slice checking because there can't really be any yet!
   // handle legacy/graceful case wherein size is non-zero, but no dims -- 
   // set dims to 1, and dim[0] to the size
   if ((size != 0) && (geom.size == 0)) {
@@ -828,6 +859,45 @@ void taMatrix::UpdateGeom() {
     EnforceFrames(geom[dims_-1]); // does nothing if outer dim==0
   }
 }
+
+void taMatrix::UpdateSlices_Collapse() {
+  if (!slices) return;
+  for (int i = 0; i < slices->size; ++i) {
+    taMatrix* mat = slices->FastEl(i);
+    mat->Slice_Collapse();
+  }
+}
+
+void taMatrix::UpdateSlices_FramesDeleted(void* deletion_base, int num) {
+  if (!slices) return;
+  // get address of first (old) address beyond the deleted frames
+  void* post_deletion = (char*)deletion_base + (num * frameSize() * El_SizeOf_());
+  for (int i = 0; i < slices->size; ++i) {
+    taMatrix* mat = slices->FastEl(i);
+    void* mat_el = mat->data(); // cache
+    if (!mat_el) continue; // collapsed
+    if (mat_el < deletion_base)
+      continue; // earlier than deleted frame, nothing to do
+    else if ((mat_el >= deletion_base) && (mat_el < post_deletion))
+      mat->Slice_Collapse(); // dude, you so don't exist anymore!
+    else { // after the delete point, so fix up
+      mat->SetArray_((void*)((char*)mat_el - ((char*)post_deletion - (char*)deletion_base)));
+    }
+  }
+}
+
+void taMatrix::UpdateSlices_Realloc(void* new_base) {
+  if (!slices) return;
+  // calculate delta, in bytes, of the new address
+  ta_intptr_t delta = (char*)new_base - (char*)data();
+  for (int i = 0; i < slices->size; ++i) {
+    taMatrix* mat = slices->FastEl(i);
+    void* mat_el = mat->data(); // cache
+    if (!mat_el) continue; // collapsed
+    mat->SetArray_((void*) (((char*)mat->data()) + delta));
+  }
+}
+ 
 
 //////////////////////////
 //   String_Matrix	//
@@ -1083,6 +1153,10 @@ Qt::CheckStateRole*/
 
 void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
   emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
+}
+
+void MatrixTableModel::emit_layoutChanged() {
+  emit layoutChanged();
 }
 
 Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {

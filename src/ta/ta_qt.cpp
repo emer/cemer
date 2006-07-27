@@ -339,8 +339,6 @@ void taiMisc::InitMetrics() {
   int primaryScreen = d->primaryScreen();
   QRect scrn_geom = d->availableGeometry(primaryScreen);
   scrn_s = scrn_geom.size();
-//TEMP: TODO: comment out this line
-  scrn_s = iSize(1280, 1024); // temp
   if (scrn_s.height() <= 768)
     base_height = 21;
   else if (scrn_s.height() <= 1024)

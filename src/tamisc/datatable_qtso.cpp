@@ -57,7 +57,21 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 
 
 //////////////////////////
-//    DataTableDelegate 	//
+//   iDataTableView	//
+//////////////////////////
+
+iDataTableView::iDataTableView(QWidget* parent)
+:inherited(parent)
+{
+}
+  
+void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
+  inherited::currentChanged(current, previous);
+  emit currentChanged(current);
+}
+
+//////////////////////////
+//    DataTableDelegate	//
 //////////////////////////
 
 DataTableDelegate::DataTableDelegate(DataTable* dt_) 
@@ -81,13 +95,13 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   splMain = new QSplitter(this);
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);
-  tvTable = new QTableView();
+  tvTable = new iDataTableView();
   tvCell = new QTableView();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
   
-  connect(tvTable, SIGNAL(activated(const QModelIndex&)),
-    this, SLOT(tvTable_activated(const QModelIndex&)));
+  connect(tvTable, SIGNAL(currentChanged(const QModelIndex&)),
+    this, SLOT(tvTable_currentChanged(const QModelIndex&)));
 }
 
 iDataTableEditor::~iDataTableEditor() {
@@ -102,7 +116,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   m_dt = dt_;
 }
 
-void iDataTableEditor::tvTable_activated(const QModelIndex& index) {
+void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
   DataArray_impl* col = dt_->GetColData(index.column());
   if (!col) return;

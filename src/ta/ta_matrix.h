@@ -36,13 +36,12 @@
 class TypeDef;
 
 // forwards this file
+class taMatrix_PList;
 class byte_Matrix; //
 class float_Matrix; //
 class MatrixTableModel;
 
 /* Matrix -- a specialized, richer implementation of Array
-
-   WARNING: taMatrix CANNOT be used 
 
    Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS.
    
@@ -56,32 +55,87 @@ class MatrixTableModel;
      if geom[N-1]!=0, then data is allocated at creation -- note
        that the allocated data is uninitialized
    Space is allocated in full units of the highest dimension, called a *Frame*;
-     for example, for a 2-d matrix, each frame is on row (for 1-d, a frame
-     is the same as a cell.)
    
-   The object supports partially filled arrays, but not ragged arrays.
+   The object does NOT supports partially filled arrays.
    Strongly-typed instances support external fixed data, via setFixedData() call.
+   If fixed data is used, the matrix is NOT resizable.
    
    Frames
      a "frame" is a set of data comprising the outermost dimension;
-     ex. a 3-d array has a 2-d frame
+     for example, for a 2-d matrix, each frame is one row (for 1-d, a frame
+     is the same as a cell.)
      
    Accessors
-     most routines provide two accessor variants:
-     Xxx(d0, d1, d2, d3, d4, int d4) for use in up to a 4-d matrix -- d's higher than
-       the actual dimension of the matrix are ignored and not checked
-     XxxN(MatrixGeom&) -- for any dimensionality -- it is unspecified whether
+     most routines provide three accessor variants:
+     
+     Xxx(d0, d1, d2, d3, d4) this is the most common way to access the data --
+       d's higher than the actual dimension of the matrix are ignored
+       
+     XxxN(const MatrixGeom&) -- for any dimensionality -- it is unspecified whether
        the dims may be higher, but there must be at least the correct amount
        
-   Dimensions
-     if you cannot be happy with 5-dimensional matrices, 
-       you will never be happy in life
+     Xxx_Flat(int idx) -- treats the elements as a flat 1-d array -- storage is
+       in *row-major order*, i.e., the innermost dimension changes most rapidly
+       
+     "Safe" accessors do bounds checks on the individual indices, as well
+        as the final flat index -- a blank value is returned for out-of-bound
+        values -- it is acceptable (and expected) for out-of-bounds indexes
+        to occur
+     "Fast" accessors do not check bounds and may not check flat indexes -- they
+        must only be used in "guaranteed" index-safe code (i.e., where
+        index values are being driven directly from the matrix itself.) 
 
+   Slicing
+     A "slice" is a reference to one frame of a matrix. Slices are used for 
+     things like viewing the cell content of a Matrix Column in a DataTable, 
+     passing a single data pattern as an event to a network, and so on. A slice
+     is created by making a new instance of the parent matrix type, and initializing
+     it with a fixed data pointer to the parent data, and the appropriate
+     geometry (which is always 1-d less than the parent.) Each slice adds one
+     to the ref count of its parent, so as long as correct ref semantics are
+     used, it is not possible to delete a parent prior to its slice children.
+     
+     Slices are updated when a parent matrix is resized or redimensioned. 
+     HOWEVER it is important that slice clients are aware of when parent 
+     resizing may occur, and insure they are not in the process of iterating
+     the data that is being replaced.
+     
+   Resizing
+     A matrix can be expanded or shrunk in units of frames.
+     
+     A matrix object can be redimensioned, however this is discouraged -- the 
+     supported paradigm is that a matrix should retain a specific geometry for
+     its lifetime. If a matrix is redimensioned, all slices will be "collapsed",
+     meaning the will be set to 0 size.
+     
+   Generic vs. Strongly Typed Access
+     Matrix objects are always strongly typed, and can be accessed using 
+     strongly typed accessor functions -- the "Fast" versions of these are
+     particularly fast, and "_Flat" can be extremely efficient.
+     
+     All matrix objects can also use Variant and String accessors to access
+     values generically, or polymorphically. Variant values will use the 
+     underlying type, where possible (ex int_Matrix::GetVar return int Variant).
+     
+     The String value is used for streaming and file save/load.
+     
+   Notifications
+     Matrix objects maintain two parallel notification mechanisms:
+       * the standard taBase datalink-based notification
+       * Qt AbstractItemModel notifications
+       
+     Changes to data do *not* automatically cause data notifications (this would
+     add an unacceptable penalty to most code.) However, data changes that
+     are mediated by the Qt model do, so other grid views will automatically stay
+     updated.
+     
    Matrix vs. Array
-   'Array' classes are typically 1-d vectors or interpreted as 2-d arrays.
-   Array supports dynamic operations, like inserting, sorting, etc.
-   Matrix is ref-counted, and intended for sharing/moving raw data around.
-   Matrix explicitly supports dimensionality and dimensional access.
+     'Array' classes are typically 1-d vectors or interpreted as 2-d arrays.
+     Array supports dynamic operations, like inserting, sorting, etc.
+     Matrix is ref-counted, and intended for sharing/moving raw data around.
+     Matrix explicitly supports dimensionality and dimensional access.
+     Matrix supports advanced tabular editing operations.
+     Matrix forms the basis for most pdp4 data processing constructs.
    
 */
 
@@ -208,10 +262,13 @@ public:
   int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
   MatrixGeom		geom; // #SHOW #READ_ONLY dimensions array -- you cannot change this directly, you have to use API functions to change size
   
-  bool			canResize() const; // true only if not fixed NOTE: may also include additional constraints, tbd
-  
-  bool			isFixedData() const {return alloc_size < 0;} // true if using fixed (externally managed) data storage
-  virtual int		defAlignment() const; // default Qt alignment, left for text, right for nums	
+  bool			canResize() const; 
+    // true only if not fixed NOTE: may also include additional constraints, tbd
+  virtual int		defAlignment() const; // default Qt alignment, left for text, right for nums
+  bool			isFixedData() const {return alloc_size < 0;} 
+    // true if using fixed (externally managed) data storage
+  int			sliceCount() const; // number of extant slices
+  	
   int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
     // returns the flat base index of the specified frame
   
@@ -252,7 +309,7 @@ public:
   virtual void		RemoveFrame(int n); // #MENU #MENU_ON_Matrix remove the given frame, copying data backwards if needed
   virtual bool		CopyFrame(const taMatrix& src, int frame); // copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
   
-  virtual void		Reset() {EnforceFrames(0);}
+  virtual void		Reset();
   
   bool			InRange(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
     // 'true' if indices in range; ignores irrelevant dims
@@ -266,11 +323,12 @@ public:
     {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE set geom for any sized array
   
   // Slicing -- NOTES: 
-  // 1. outstanding slices make the parent non-extensible
+  // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]
   // 2. slices are not guaranteed to be unique (i.e. same spec may return same slice ref)
   // 3a. you *must* ref/unref the slice
   // 3b. a slice refs its parent; unrefs it on destroy
   // 4. you may only request "proper slices", i.e., full dimensional subsets
+  // 5. if parent is redimensioned, all slices are collapsed to [0]
   
   virtual taMatrix*	GetSlice_(const MatrixGeom& base, 
     int slice_frame_dims = -1, int num_slice_frames = 1);
@@ -289,7 +347,7 @@ public:
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  void			UpdateAfterEdit(); // esp important to call after changing geom -- note that geom gets fixed if invalid
+  void			UpdateAfterEdit(); 
   void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
@@ -319,7 +377,7 @@ protected:
    //called by child slice on destroy -- static because it can cause destruction
   
   int			alloc_size; // -1 means fixed (external data)
-  int			slice_cnt; // number of extant slices -- slices force no reallocs
+  taMatrix_PList*	slices; // list of extant slices -- created on first slice
   taMatrix*		slice_par; // slice parent -- we ref/unref it
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   
@@ -361,6 +419,11 @@ protected:
     // 'true' if same size and els
     
   virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
+  void			UpdateSlices_Collapse(); // collapses all the slices to []
+  void			UpdateSlices_FramesDeleted(void* deletion_base, int num); // called when deleting a frame -- for each slice: update base addr if after delete base, or collapse if doesn't exist any more
+  void			UpdateSlices_Realloc(void* new_base); // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
+  void 			Slice_Collapse();
+  
   virtual void		Dump_Save_Item(ostream& strm, int idx); 
     // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
   virtual int		Dump_Load_Item(istream& strm, int idx); 
@@ -372,6 +435,15 @@ private:
 
 typedef taMatrix* ptaMatrix_impl;
 SmartPtr_Of(taMatrix); // taMatrixPtr
+
+
+class TA_API taMatrix_PList: public taPtrList<taMatrix> { // simple list for keeping track of slices
+INHERITED(taPtrList<taMatrix>)
+public:
+
+  taMatrix_PList() {}
+};
+
 
 class TA_API taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)
@@ -736,6 +808,7 @@ public:
   taMatrix*		mat() const {return m_mat;}
   
   void			emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to);
+  void			emit_layoutChanged();
   
   MatrixTableModel(taMatrix* mat_); // note: mat is always valid, we destroy this on mat dest
   ~MatrixTableModel(); //
