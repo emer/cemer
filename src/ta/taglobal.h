@@ -32,6 +32,23 @@
 
 
 
+//NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
+// no Qt-dependencies
+//TODO: (short term) need to add this path to makea
+//TODO: longer-term, we should push these into our config.h
+#include </usr/local/Trolltech/Qt-4.1/src/corelib/global/qconfig.h>
+// define our own versions of stuff we need from qconfig.h, so remainder
+// of the file is independent of that stuff
+#define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
+#define TA_POINTER_SIZE QT_POINTER_SIZE // 4 or 8, all use MUST error if not 4/8
+// byte order -- note, rarely used, primarily to optimize placement of rgb
+// 
+#define TA_BIG_ENDIAN Q_BIG_ENDIAN
+#define TA_LITTLE_ENDIAN Q_LITTLE_ENDIAN
+// BYTE_ORDER is one of TA_BIG or LITTLE -- tests must fail if neither
+#define TA_BYTE_ORDER Q_BYTE_ORDER
+
+
 // when building maketa we want to make sure to turn off qt
 #ifdef NO_TA_BASE
 // configure should handle these, but we make sure we don't include Qt at all, or Inventor for maketa
@@ -139,28 +156,10 @@
 #  define TA_OS_UNIX
 #endif
 
-//TODO: we
+/* prob not needed
 #if defined(TA_OS_DARWIN) && !defined(QT_LARGEFILE_SUPPORT)
 # define TA_LARGEFILE_SUPPORT 64
-#endif
-
-// word size -- we use this occassionally
-// known to be defined on gcc; prob not on Windows
-#ifndef _WORDSIZE
-# if (QT_POINTER_SIZE == 8)
-#   define _WORDSIZE 64
-# else
-#   define _WORDSIZE 32
-# endif
-#endif
-
-// byte order -- note, rarely used, primarily to optimize placement of rgb
-// not needed for MAKETA
-#ifdef TA_USE_QT
-#  define TA_BIG_ENDIAN Q_BIG_ENDIAN
-#  define TA_LITTLE_ENDIAN Q_LITTLE_ENDIAN
-#  define TA_BYTE_ORDER Q_BYTE_ORDER
-#endif
+#endif */
 
 // misc stuff
 
@@ -250,16 +249,16 @@ typedef unsigned char   byte;
 
 #elif (defined(TA_OS_MAC))
 // and god bless Trolltech and Mac OS...
-# if (QT_POINTER_SIZE == 4)
+# if (TA_POINTER_SIZE == 4)
 #   define ta_intptr_t int
 #   define ta_uintptr_t unsigned int
-# else
+# elif (TA_POINTER_SIZE == 8)
 #   define ta_intptr_t qint64
 #   define ta_uintptr_t quint64
+# else
+#   error "TA_POINTER_SIZE should be 4 or 8"
 # endif
 #endif // intptr_t hacks
-
-
 
 // defaults for our Trolltech hack:
 #ifndef ta_intptr_t
