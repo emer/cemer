@@ -81,7 +81,7 @@ public:
 protected:
   bool			DoCompileScript(); // called directly, or in WaitProc
   virtual void		InitScriptObj_impl(); // #IGNORE called to initialize script object prior to compiling, create 'script' and 'ths'; can be extended to add more to script etc. 
-  virtual void 		PreCompileScript_impl() {} // #IGNORE called before compile
+  virtual void 		PreCompileScript_impl(); // #IGNORE called before compile: base impl clears existing script: MUST CALL THIS BEFORE CHANGING ANY VARIABLE SPACES (e.g.,hard_vars, prog_vars)
   virtual bool		CompileScript_impl(); // #IGNORE
   virtual void 		ScriptCompiled() {} // #IGNORE called when script is recompiled
 private:

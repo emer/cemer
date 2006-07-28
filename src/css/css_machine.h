@@ -627,8 +627,8 @@ protected:
     MemberDef* md = NULL) const; // helper for getting members and array elements
 };
 
-inline void cssEl::Ref(cssEl* it) { ++(it->refn); }
 #ifndef DEBUG
+inline void cssEl::Ref(cssEl* it) { ++(it->refn); }
 inline void cssEl::unRef(cssEl* it) { --(it->refn); }
 inline void cssEl::unRefDone(cssEl* it) { if (--(it->refn) <= 0) delete it;}
 inline void cssEl::Done(cssEl* it) { if (it->refn <= 0) delete it;}
@@ -1508,6 +1508,7 @@ public:
   void		Status();
   void		BackTrace(int levels_back=-1);
   void		ListLocals(int levels_back=0);
+  void		ListGlobals();
   void		Help();
 
   // breakpoints

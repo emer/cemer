@@ -57,7 +57,7 @@ class CSS_API QcssConsole : public QConsole {
   Q_OBJECT;
  public:
 
-  static QcssConsole *getInstance(QObject *parent = NULL, cssCmdShell* cs = NULL);
+  static QcssConsole* getInstance(QObject *parent = NULL, cssCmdShell* cs = NULL);
 
   ~QcssConsole();
   QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);

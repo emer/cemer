@@ -144,7 +144,10 @@ cssEl* ProgVar::NewCssEl() {
 }
 
 cssEl* ProgVar::NewCssEl_impl() {
-  cssVariant* rval = new cssVariant(value, name);
+  // this needs to be a pointer to the variant, not the variant itself!
+//   cssVariant* rval = new cssVariant(value, name);
+//   return rval;
+  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
   return rval;
 }
 
@@ -196,8 +199,10 @@ const String EnumProgVar::GenCssVar_impl() {
 }
 
 cssEl* EnumProgVar::NewCssEl_impl() {
-  cssEnum* rval = new cssEnum(value.toInt(), name);
+  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
   return rval;
+//   cssEnum* rval = new cssEnum(value.toInt(), name);
+//   return rval;
 }
 
 const String EnumProgVar::ValToId(int val) {
@@ -250,11 +255,12 @@ const String ObjectProgVar::GenCssVar_impl() {
 }
 
 cssEl* ObjectProgVar::NewCssEl_impl() {
-  // note: use the val_type, not the actual type, in case user
-  // wanted the var to be more generic than current instance
-  taBase* tab = value.toBase();
-  cssTA* rval = new cssTA(tab, 1, val_type, name);
+  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
   return rval;
+//   // note: this must return the variant, not 
+//   taBase* tab = value.toBase();
+//   cssTA* rval = new cssTA(tab, 1, val_type, name);
+//   return rval;
 }
 
 
@@ -1149,6 +1155,11 @@ void Program::InitScriptObj_impl() {
 }
 
 void Program::PreCompileScript_impl() {
+  // as noted in abstractscriptbase: you must call this first to reset the script
+  // because if you mess with the existing variables in prog_vars prior to 
+  // resetting the script, it will get all messed up.  vars on this space are referred
+  // to by a pointer to the space and an index off of it, which is important for autos
+  // but actually not for these guys (but they are/were that way anyway).
   AbstractScriptBase::PreCompileScript_impl();
   UpdateProgVars();
 }
@@ -1353,16 +1364,16 @@ void  Program::UpdateProgVars() {
   
   // add the ones in the object -- note, we use *pointers* to these
   cssEl* el = NULL;
-//buggy??  el = new cssCPtr_enum(&run_state, 1, "run_state"); //note: static
+  el = new cssCPtr_enum(&run_state, 1, "run_state"); //note: static
 //BA 7/5/06, prob not buggy, issue before was caused by Init() same name 
-  el = new cssCPtr_int(&run_state, 1, "run_state"); //note: static
+//   el = new cssCPtr_int(&run_state, 1, "run_state"); //note: static
   script->prog_vars.Push(el); //refs
   el = new cssCPtr_int(&ret_val, 1, "ret_val");
   script->prog_vars.Push(el); //refs
   el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
   script->prog_vars.Push(el); //refs
   
-//TODO: these should probably be refs, not values
+  
   // add new in the program
   for (int i = 0; i < param_vars.size; ++i) {
     ProgVar* sv = param_vars.FastEl(i);
@@ -1374,7 +1385,6 @@ void  Program::UpdateProgVars() {
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
-  
   
   // add new (with unique names) from our groups, starting at most inner
   Program_Group* grp = GET_MY_OWNER(Program_Group);
@@ -1388,28 +1398,6 @@ void  Program::UpdateProgVars() {
     } 
     grp = (Program_Group*)grp->GetOwner(&TA_Program_Group);
   }
-/*old  int i = 0;
-  ProgVar* sv;
-  cssEl* el;
-  // update names and values of existing (if any)
-  while ((m_our_hardvar_base_index + i) < script->hard_vars.size) {
-    sv = global_vars.FastEl(i);
-    if (sv->ignore) continue;
-    el = script->hard_vars.FastEl(m_our_hardvar_base_index + i);
-    // easiest (harmless) is to just update, even if not changed 
-    el->name = sv->name;
-    *el = sv->value;
-    ++i;
-  }
-  
-  // add new
-  while (i < global_vars.size) {
-    sv = global_vars.FastEl(i);
-    if (sv->ignore) continue;
-    el = sv->NewCssEl();
-    script->hard_vars.Push(el); //refs
-    ++i;
-  } */
 }
 
 #ifdef TA_GUI

@@ -77,9 +77,13 @@ bool AbstractScriptBase::CompileScript(bool force) {
   return DoCompileScript();
 }
 
+void AbstractScriptBase::PreCompileScript_impl() {
+  // new impls must call this first!!
+  script->ClearAll();
+}
+
 bool AbstractScriptBase::CompileScript_impl() {
   bool rval = false;
-  script->ClearAll();
   switch (scriptSource()) {
   case NoScript: return false; //nothing to do
   case ScriptString:

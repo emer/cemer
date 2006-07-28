@@ -37,9 +37,8 @@ public:
   virtual void setPrompt(QString prompt, bool display = true);
   // executes the command and displays back its result
   virtual void execCommand(QString command, bool writeCommand = true, bool showPrompt = true);
-  // saves a file script
-  virtual int saveScript(QString fileName);
-  // loads a file script
+  virtual int saveContents(QString fileName); // save the entire contents of console window
+  virtual int saveScript(QString fileName); // loads a file script
   virtual int loadScript(QString fileName);
   virtual void clear();	       // clear & reset the console (useful sometimes)
   virtual void reset();
@@ -63,8 +62,11 @@ protected:
   // the return value of the function is the string list of all suggestions
   virtual QStringList autocompleteCommand(QString cmd);
   // do completion of string as a possible file name: must be called by a specific implementation!
-  virtual QStringList autocompleteFilename(QString cmd);
+  virtual QStringList autocompleteFilename(QString fnm, QString pre_fnm);
   // check if current command is complete (no hanging brackets, etc)
+  virtual QString findIntersection(const QStringList& lst);
+  // find substring that is is common to all strings in the list (i.e., the intersection)
+
   virtual bool isCommandComplete(QString command);
   virtual void ctrlCPressed();	// the user pressed ctrl-C -- do something (e.g., stop program)
 

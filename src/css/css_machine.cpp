@@ -507,6 +507,14 @@ void print_cssEl(cssEl* it, bool addr_only = false) {
   }
 }
 
+void cssEl::Ref(cssEl* it) {
+  ++(it->refn);
+  if (cssMisc::refcnt_trace > 0) {
+    print_cssEl(it);
+    cerr << "::Ref()" << endl;
+  }
+}
+
 void cssEl::Done(cssEl* it) {
   if (it->refn < 0) {
     cerr << "**WARNING** ";
@@ -531,7 +539,7 @@ void cssEl::unRef(cssEl* it) {
   }
   else if (cssMisc::refcnt_trace > 0) {
     print_cssEl(it);
-    cerr << "::unRef()\n";
+    cerr << "::unRef()" << endl;;
   }
 }
 
@@ -545,7 +553,7 @@ void cssEl::unRefDone(cssEl* it) {
   }
   else if (cssMisc::refcnt_trace > 0) {
     print_cssEl(it);
-    cerr << "::unRefDone()\n";
+    cerr << "::unRefDone()" << endl;
   }
 
   if (it->refn <= 0) 
@@ -2445,6 +2453,12 @@ void cssInst::SetInst(const cssElPtr& it) {
       cssEl::SetRefElPtr(inst, nw_ptr);
       return;
     }
+    else {			// otherwise just set direct for efficiency!!
+      cssElPtr nw_ptr;
+      nw_ptr.SetDirect(it.El());
+      cssEl::SetRefElPtr(inst, nw_ptr);
+      return;
+    }
   } else if ((it.ptr_type == cssElPtr::PROG_AUTO) ||
 	  (it.ptr_type == cssElPtr::CLASS_MEMBER) ||
 	  (it.ptr_type == cssElPtr::NVIRT_METHOD) ||
@@ -4179,6 +4193,17 @@ void cssProgSpace::ListLocals(int levels_back) {
   Prog(lev)->ListLocals(fh, -1, 0);
   if(lev == 0)
     statics.List(fh, 0, 1);
+}
+
+void cssProgSpace::ListGlobals() {
+  if(!HaveCmdShell()) return;
+  pager_ostream& fh = cmd_shell->pgout;
+  
+  fh << "Global vars:\n";
+  hard_vars.List(fh);
+  prog_vars.List(fh);
+  cssMisc::HardVars.List(fh);
+  cssMisc::Externs.List(fh);
 }
 
 static char* rs_vals[10] = {"Waiting", "Running", "Stopping", "NewProgShoved",

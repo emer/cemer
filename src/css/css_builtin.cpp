@@ -863,9 +863,7 @@ static cssEl* cssElCFun_globals_stub(int, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->hard_vars.List(*(csh->fout));
-  cssMisc::HardVars.List(*(csh->fout));
-  cssMisc::Externs.List(*(csh->fout));
+  csh->src_prog->ListGlobals();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {

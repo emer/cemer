@@ -20,6 +20,8 @@
 
 #ifdef TA_GUI
 #include "ta_qt.h"
+#include "css_console.h"
+#include <QTextDocument>
 #endif
 
 #include "pdpshell.h"
@@ -66,54 +68,68 @@ void pdpMisc::SaveRecoverFile(int err) {
       Network* net;
       taLeafItr ni;
       FOR_ITR_EL(Network, net, p->networks., ni) {
-	      String use_sfx = net_sfx;
-	      if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
-	        use_sfx = wts_sfx;
-	      cnt = get_unique_file_number(cnt, "PDP++NetSave.", use_sfx);
-	      gf->fname = "PDP++NetSave." + String(cnt) + use_sfx;
-	      ostream* strm = gf->open_write();
-	      if(((strm == NULL) || strm->bad()) && !home_dir.empty()) {
-	        // try it with the home diretory
-	        cerr << "Error saving in current directory, trying home directory";
-	        gf->Close();
-	        gf->fname = home_dir + "/" + gf->fname;
-	        strm = gf->open_write();
-	      }
-	      if((strm == NULL) || strm->bad())
-	        cerr << "SaveNetwork: could not open file: " << gf->fname << "\n";
-	      else {
-	        if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
-	          net->WriteWeights(*strm, net->wt_save_fmt);
-	        else
-	          net->Save(*strm);
-	      }
-	      gf->Close();
-	      cnt++;
+	String use_sfx = net_sfx;
+	if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
+	  use_sfx = wts_sfx;
+	cnt = get_unique_file_number(cnt, "PDP++NetSave.", use_sfx);
+	gf->fname = "PDP++NetSave." + String(cnt) + use_sfx;
+	ostream* strm = gf->open_write();
+	if(((strm == NULL) || strm->bad()) && !home_dir.empty()) {
+	  // try it with the home diretory
+	  cerr << "Error saving in current directory, trying home directory";
+	  gf->Close();
+	  gf->fname = home_dir + "/" + gf->fname;
+	  strm = gf->open_write();
+	}
+	if((strm == NULL) || strm->bad())
+	  cerr << "SaveNetwork: could not open file: " << gf->fname << "\n";
+	else {
+	  if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
+	    net->WriteWeights(*strm, net->wt_save_fmt);
+	  else
+	    net->Save(*strm);
+	}
+	gf->Close();
+	cnt++;
       }
     } else { // save project
       String prfx;
       if ((err == SIGUSR2) || (err == SIGALRM))
-	      prfx = "PDP++Project.";
+	prfx = "PDP++Project.";
       else
-	      prfx = "PDP++Recover.";
+	prfx = "PDP++Recover.";
       cnt = get_unique_file_number(cnt, prfx, proj_sfx);
       gf->fname = prfx + String(cnt) + proj_sfx;
       ostream* strm = gf->open_write();
       if(((strm == NULL) || strm->bad()) && !home_dir.empty()) {
-	      // try it with the home diretory
-	      cerr << "Error saving in current directory, trying home directory";
-	      gf->Close();
-	      gf->fname = home_dir + "/" + gf->fname;
-	      strm = gf->open_write();
+	// try it with the home diretory
+	cerr << "Error saving in current directory, trying home directory";
+	gf->Close();
+	gf->fname = home_dir + "/" + gf->fname;
+	strm = gf->open_write();
       }
       if((strm == NULL) || strm->bad())
-	      cerr << "SaveRecoverFile: could not open file: " << gf->fname << "\n";
+	cerr << "SaveRecoverFile: could not open file: " << gf->fname << "\n";
       else
-	      p->Save(*strm);
+	p->Save(*strm);
       gf->Close();
       cnt++;
     }
   }
+
+#ifdef TA_GUI
+  if(err != SIGUSR1) {	// usr1 is to save network at that point
+    if(cssMisc::TopShell->console_type == cssCmdShell::CT_Qt_Console) {
+      String prfx = "PDP++Console.";
+      // use previous cnt
+//       cnt = get_unique_file_number(0, prfx, ".txt");
+      String fname = prfx + String(cnt) + ".txt";
+
+      QcssConsole* qcons = QcssConsole::getInstance();
+      qcons->saveContents(fname);
+    }
+  }
+#endif
 
   if (gf) taRefN::unRefDone(gf);
   if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {

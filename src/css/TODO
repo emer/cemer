@@ -2,18 +2,11 @@ TODO list for CSS:
 
 Immediate:
 
-- filename completion in qconsole
-
-- gdbify: breakpoint setting and clearing
-
 - suppress redundant { } block within a IF_TRUE or IF_FALSE block: just replace code in upper
   with code in lower.  CleanDoubleBlock is written: need to figure out when to call it!
   seems like we need a post-processing optimization step..
 
 - run optimizer!: clearly addframe and addprog are big.
-
-- top propagation etc should be unnec.  everything should be in space!
-  - flag to warn, but keep functionality just in case.
 
 -----------------------
 Longer-term:

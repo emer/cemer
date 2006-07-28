@@ -30,7 +30,8 @@
 //Clear the console
 void QConsole::clear() {
   QTextEdit::clear();
-  displayPrompt();
+  curPromptPos = 0;
+  displayPrompt(true);		// force
 }
 
 //Reset the console
@@ -210,6 +211,11 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     e->accept();
     QString command = getCurrentCommand();
     QStringList sl = autocompleteCommand(command);
+    QString intersect = findIntersection(sl);
+    if(!intersect.isEmpty()) {
+      command = intersect;
+      replaceCurrentCommand(command);
+    }
     QString str = sl.join(" ");
     if(sl.count() == 1)
       replaceCurrentCommand(sl[0] + " ");
@@ -338,6 +344,19 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
     displayPrompt(true);
 }
 
+int QConsole::saveContents(QString fileName) {
+  quitPager = true;
+  flushOutput();		// get anything pending
+  quitPager = false;
+  QFile f(fileName);
+  if (!f.open(QIODevice::WriteOnly))
+    return -1;
+  QTextStream ts(&f);
+  ts << document()->toPlainText();
+  f.close();
+  return 0;
+}
+
 //saves a file script
 int QConsole::saveScript(QString fileName) {
   QFile f(fileName);
@@ -402,7 +421,7 @@ QStringList QConsole::autocompleteCommand(QString) {
 }
 
 // note: implementations need to explicitly call this   
-QStringList QConsole::autocompleteFilename(QString cmd) {
+QStringList QConsole::autocompleteFilename(QString cmd, QString pre_fnm) {
   QString path;
   QString fnm = cmd;
   if(cmd.contains('/')) {
@@ -422,9 +441,30 @@ QStringList QConsole::autocompleteFilename(QString cmd) {
   for(int i=0;i<files.size();i++) {
     QString fl = files[i];
     if(fl.left(fnmlen) == fnm)
-      lst.append(path + fl);
+      lst.append(pre_fnm + path + fl);
   }
   return lst;
+}
+
+static QString StringIntersect(QString str1, QString str2) {
+  int mxlen = qMin(str1.length(), str2.length());
+  int i;
+  for(i=0;i<mxlen;i++) {
+    if(str1[i] != str2[i]) break;
+  }
+  if(i > 0)
+    return str1.left(i);
+  return "";
+}
+
+QString QConsole::findIntersection(const QStringList& lst) {
+  if(lst.size() == 0) return "";
+  if(lst.size() == 1) return lst[0];
+  QString isect = lst[0];
+  for(int i=1;i<lst.size();i++) {
+    isect = StringIntersect(isect, lst[i]);
+  }
+  return isect;
 }
   
 //default implementation: command always complete
