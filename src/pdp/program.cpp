@@ -145,10 +145,11 @@ cssEl* ProgVar::NewCssEl() {
 
 cssEl* ProgVar::NewCssEl_impl() {
   // this needs to be a pointer to the variant, not the variant itself!
-//   cssVariant* rval = new cssVariant(value, name);
-//   return rval;
-  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
+  cssVariant* rval = new cssVariant(value, name);
   return rval;
+  // todo: new version
+//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
+//   return rval;
 }
 
 
@@ -199,10 +200,11 @@ const String EnumProgVar::GenCssVar_impl() {
 }
 
 cssEl* EnumProgVar::NewCssEl_impl() {
-  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
-  return rval;
-//   cssEnum* rval = new cssEnum(value.toInt(), name);
+  // todo: new version
+//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
 //   return rval;
+  cssEnum* rval = new cssEnum(value.toInt(), name);
+  return rval;
 }
 
 const String EnumProgVar::ValToId(int val) {
@@ -255,12 +257,13 @@ const String ObjectProgVar::GenCssVar_impl() {
 }
 
 cssEl* ObjectProgVar::NewCssEl_impl() {
-  cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
-  return rval;
-//   // note: this must return the variant, not 
-//   taBase* tab = value.toBase();
-//   cssTA* rval = new cssTA(tab, 1, val_type, name);
+  // todo: new version
+//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
 //   return rval;
+//   // note: this must return the variant, not 
+  taBase* tab = value.toBase();
+  cssTA* rval = new cssTA(tab, 1, val_type, name);
+  return rval;
 }
 
 
