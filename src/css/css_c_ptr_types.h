@@ -26,6 +26,7 @@
 class CSS_API cssCPtr_int : public cssCPtr {
   // Points to a C integer
 public:
+  cssTypes	GetPtrType() 		{ return T_Int; }
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const 	{ return "(c_int)"; }
   String 	PrintStr() const;
@@ -114,6 +115,7 @@ public:
 
 class CSS_API cssCPtr_short : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_Short; }
   uint		GetSize() const 	{ return sizeof(short); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_short)"; }
 
@@ -158,6 +160,7 @@ public:
 
 class CSS_API cssCPtr_bool : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_Bool; }
   uint		GetSize() const 	{ return sizeof(bool); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_bool)"; }
 
@@ -195,6 +198,7 @@ public:
 
 class CSS_API cssCPtr_long : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_Long; }
   uint		GetSize() const 	{ return sizeof(long); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_long)"; }
 
@@ -240,6 +244,7 @@ public:
 
 class CSS_API cssCPtr_long_long : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_LongLong; }
   uint		GetSize() const 	{ return sizeof(long long); }
   const char*	GetTypeName() const  	{ return "(c_long_long)"; }
 
@@ -285,6 +290,7 @@ public:
 
 class CSS_API cssCPtr_char : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_Char; }
   uint		GetSize() const 	{ return sizeof(char); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_char)"; }
 
@@ -330,6 +336,7 @@ public:
 
 class CSS_API cssCPtr_enum : public cssCPtr_int {
 public:
+  cssTypes	GetPtrType() 		{ return T_Enum; }
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_enum)"; }
 
@@ -362,6 +369,7 @@ public:
 
 class CSS_API cssCPtr_double : public cssCPtr {
 public:
+  cssTypes	GetPtrType() 		{ return T_Real; }
   uint		GetSize() const 	{ return sizeof(double); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_double)"; }
 
@@ -432,6 +440,7 @@ public:
 
 class CSS_API cssCPtr_float : public cssCPtr_double {
 public:
+  cssTypes	GetPtrType() 		{ return T_Float; }
   uint		GetSize() const 	{ return sizeof(float); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_float)"; }
 
@@ -470,6 +479,7 @@ public:
 
 class CSS_API cssCPtr_String : public cssCPtr {
 public:
+  cssTypes	GetPtrType() 		{ return T_String; }
   uint		GetSize() const 	{ return sizeof(String); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_String)"; }
 
@@ -537,6 +547,7 @@ public:
 
 class CSS_API cssCPtr_Variant : public cssCPtr {
 public:
+  cssTypes	GetPtrType() 		{ return T_Variant; }
   uint		GetSize() const 	{ return sizeof(Variant); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_Variant)"; }
 
@@ -557,6 +568,7 @@ public:
   // converters
   String GetStr() const	{ return (*((Variant*)GetNonNullVoidPtr())).toString(); }
   Variant GetVar() const	{ return *((Variant*)GetNonNullVoidPtr()); }
+  Variant& GetVarRef() const	{ return *((Variant*)GetNonNullVoidPtr()); }
   operator Real() const 	{ return GetVar().toDouble(); }
   operator Int() const		{ return GetVar().toInt(); }
   //operator String*() const	{ return (String*)GetNonNullVoidPtr(); }
@@ -567,6 +579,7 @@ public:
   void operator=(const String& cp) { *((Variant*)GetNonNullVoidPtr()) = cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  void operator=(const Variant& val); 
 
   // operators
   void operator=(const cssEl& t);
@@ -599,13 +612,13 @@ public:
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
-  cssEl* GetMemberFun_impl(MethodDef* md) const;
+  int	 GetMemberNo(const char* memb) const;
+  cssEl* GetMember(const char* memb) const;
+  cssEl* GetMember(int memb) const;
   int	 GetMemberFunNo(const char*) const;
   cssEl* GetMemberFun(const char* memb) const;
   cssEl* GetMemberFun(int memb) const;
   cssEl* GetScoped(const char*) const;
-protected:
-  Variant& GetVar() { return *((Variant*)GetNonNullVoidPtr()); } //convenience
 };
 
 

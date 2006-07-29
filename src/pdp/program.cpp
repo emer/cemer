@@ -71,57 +71,6 @@ const String ProgVar::GenCssArg_impl() {
   }
   return rval;
 }
-/*new???
-const String ProgVar::GenCssVar_impl(bool make_new, TypeDef* val_type) {
-  String rval(0, 80, '\0'); //note: buffer will extend if needed
-  rval += "Variant ";
-  rval += name;
-  if (make_new && val_type) { //note: val_type should always be supplied if make_new true
-    rval += " = new ";
-    rval += val_type->name + "()";
-  } else { 
-    bool init = !value.isDefault();
-    if (init) {
-      rval += " = ";
-      rval += value.toCssLiteral();
-    } else if (!value.isInvalid()) {
-      rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
-    }
-  }
-  rval += ";\n";
-  return rval;
-}
-
-cssEl* ProgVar::NewCssEl_impl() {
-  cssEl* rval;
-  switch (value.type()) {
-  //case T_Invalid: 
-  case T_Bool:
-    rval = new cssBool(value.toBool(), name);
-    break;
-  case T_Int:
-  case T_UInt:
-    rval = new cssInt(value.toInt(), name);
-    break;
-  case T_Int64: 
-  case T_UInt64:
-    rval = new cssInt64(value.toInt64(), name);
-    break;
-  case T_Double:
-    rval = new cssReal(value.toDouble(), name);
-    break;
-  case T_Char:
-    rval = new cssChar(value.toChar(), name);
-    break;
-  case T_String: 
-    rval = new cssString(value.toString(), name);
-    break;
-  default: 
-    taMisc::Warning("ProgVar: unexpected can't create cssEl for VarType: ", String(value.type()));
-    rval = &cssMisc::Void ;
-  }
-  return rval;
-} */
 
 const String ProgVar::GenCssVar_impl() {
   STRING_BUF(rval, 80); //note: buffer will extend if needed
@@ -139,17 +88,12 @@ const String ProgVar::GenCssVar_impl() {
 }
 
 cssEl* ProgVar::NewCssEl() {
- //TODO: maybe we should cache???
   return NewCssEl_impl();
 }
 
 cssEl* ProgVar::NewCssEl_impl() {
-  // this needs to be a pointer to the variant, not the variant itself!
-  cssVariant* rval = new cssVariant(value, name);
-  return rval;
-  // todo: new version
-//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
-//   return rval;
+  // using the cptr_variant means that the actual user-visible variable is always updated!
+  return new cssCPtr_Variant((void*)&value, 1, name); 
 }
 
 
@@ -200,11 +144,8 @@ const String EnumProgVar::GenCssVar_impl() {
 }
 
 cssEl* EnumProgVar::NewCssEl_impl() {
-  // todo: new version
-//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
-//   return rval;
-  cssEnum* rval = new cssEnum(value.toInt(), name);
-  return rval;
+  // todo: make a enum cptr!
+  return new cssCPtr_Variant((void*)&value, 1, name);
 }
 
 const String EnumProgVar::ValToId(int val) {
@@ -255,17 +196,6 @@ const String ObjectProgVar::GenCssVar_impl() {
   rval += ";\n";
   return rval;
 }
-
-cssEl* ObjectProgVar::NewCssEl_impl() {
-  // todo: new version
-//   cssTA* rval = new cssTA((void*)&value, 1, &TA_Variant, name);
-//   return rval;
-//   // note: this must return the variant, not 
-  taBase* tab = value.toBase();
-  cssTA* rval = new cssTA(tab, 1, val_type, name);
-  return rval;
-}
-
 
 //////////////////////////
 //   ProgVar_List	//
@@ -337,8 +267,8 @@ void ProgArg::Copy_(const ProgArg& cp) {
 }
 
 void ProgArg::Freshen(const ProgVar& cp) {
-//TODO: need to look at both the ProgVar type, as well as value type, to get right value
-  value = cp.value.toCssLiteral();
+  //TODO: need to look at both the ProgVar type, as well as value type, to get right value
+//   value = cp.value.toCssLiteral();
 } 
 /*
 void ProgVar::Freshen(const ProgVar& cp) {
@@ -1004,7 +934,7 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   for (int i = 0; i < prog_args.size; ++i) {
     ProgArg* ths_arg = prog_args.FastEl(i);
     nm = ths_arg->name;
-    ProgVar* prg_var = target->param_vars.FindName(nm);
+    ProgVar* prg_var = target->args.FindName(nm);
     if (!prg_var || ths_arg->value.empty()) continue;
     set_one = true;
     rval += cssMisc::Indent(indent_level+1);
@@ -1046,7 +976,7 @@ void ProgramCallEl::PreGenMe_impl(int item_id) {
 
 void ProgramCallEl::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
-  prog_args.ConformToTarget(target->param_vars);
+  prog_args.ConformToTarget(target->args);
 }
 
 //////////////////////////
@@ -1071,8 +1001,8 @@ void Program::Destroy()	{
 void Program::InitLinks() {
   inherited::InitLinks();
   taBase::Own(prog_objs, this);
-  taBase::Own(param_vars, this);
-  taBase::Own(global_vars, this);
+  taBase::Own(args, this);
+  taBase::Own(vars, this);
   taBase::Own(init_els, this);
   taBase::Own(prog_els, this);
   taBase::Own(sub_progs, this);
@@ -1082,25 +1012,27 @@ void Program::CutLinks() {
   sub_progs.CutLinks();
   prog_els.CutLinks();
   init_els.CutLinks();
-  global_vars.CutLinks();
-  param_vars.CutLinks();
+  vars.CutLinks();
+  args.CutLinks();
   prog_objs.CutLinks();
   inherited::CutLinks();
 }
 
 
 void Program::Copy_(const Program& cp) {
+  if(script) {			// clear first, before trashing anything!
+    script->ClearAll();
+    script->prog_vars.Reset();
+  }
   prog_objs = cp.prog_objs;
-  param_vars = cp.param_vars;
-  global_vars = cp.global_vars; //TODO: prob should do fixups for refs to prog_objs
+  args = cp.args;
+  vars = cp.vars;
   init_els = cp.init_els;
   prog_els = cp.prog_els;
   ret_val = 0; // redo
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
   sub_progs.RemoveAll();
-  if (script)
-    script->ClearAll();
 }
 
 void Program::UpdateAfterEdit() {
@@ -1295,7 +1227,15 @@ bool Program::SetGlobalVar(const String& nm, const Variant& value) {
   cssElPtr& el_ptr = script->prog_vars.FindName(nm);
   if (el_ptr == cssMisc::VoidElPtr) return false;
   cssEl* el = el_ptr.El();
-  *el = value;
+//   if(el->GetType() == cssEl::T_Variant) {
+//     ((cssVariant*)el)->val.setVariantData(value); // only copy data, preserve type!
+//   }
+  if((el->GetType() == cssEl::T_C_Ptr) && (el->GetPtrType() == cssEl::T_Variant)) {
+    ((Variant*)((cssCPtr_Variant*)el)->GetNonNullVoidPtr())->setVariantData(value);
+  }
+  else {
+    *el = value;
+  }
   return true;
 }
 
@@ -1311,13 +1251,13 @@ const String Program::scriptString() {
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
     m_scriptCache += "Program::RunState run_state; //note: global static\n";
     m_scriptCache += "int ret_val;\n";
-    if (param_vars.size > 0) {
+    if (args.size > 0) {
       m_scriptCache += "// global script parameters\n";
-      m_scriptCache += param_vars.GenCss(0);
+      m_scriptCache += args.GenCss(0);
     }
-    if (global_vars.size > 0) {
+    if (vars.size > 0) {
       m_scriptCache += "// global (non-param) variables\n";
-      m_scriptCache += global_vars.GenCss(0);
+      m_scriptCache += vars.GenCss(0);
     }
     m_scriptCache += "*/\n\n";
     
@@ -1375,16 +1315,15 @@ void  Program::UpdateProgVars() {
   script->prog_vars.Push(el); //refs
   el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
   script->prog_vars.Push(el); //refs
-  
-  
+
   // add new in the program
-  for (int i = 0; i < param_vars.size; ++i) {
-    ProgVar* sv = param_vars.FastEl(i);
+  for (int i = 0; i < args.size; ++i) {
+    ProgVar* sv = args.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
-  for (int i = 0; i < global_vars.size; ++i) {
-    ProgVar* sv = global_vars.FastEl(i);
+  for (int i = 0; i < vars.size; ++i) {
+    ProgVar* sv = vars.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 

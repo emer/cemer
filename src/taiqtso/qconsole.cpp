@@ -23,9 +23,13 @@
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QApplication>
+#include <QCoreApplication>
 #include <QDir>
 
 //#include <QDebug>
+
+using namespace std;
+#include <iostream>
 
 //Clear the console
 void QConsole::clear() {
@@ -165,6 +169,8 @@ void QConsole::resizeEvent(QResizeEvent* e) {
   if(maxLines < 10) maxLines = 10;
   if(maxCols < 10) maxCols = 10;
   QTextEdit::resizeEvent(e);
+  cerr << "console resize: font height: " << fontHeight << ", wd: " << fontWidth
+       << ", lines: " << maxLines << ", cols: " << maxCols << endl;
 }
 
 // Reimplemented key press event
@@ -346,7 +352,10 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
 
 int QConsole::saveContents(QString fileName) {
   quitPager = true;
+  cout.flush();
+  cerr.flush();
   flushOutput();		// get anything pending
+  QCoreApplication::processEvents();
   quitPager = false;
   QFile f(fileName);
   if (!f.open(QIODevice::WriteOnly))

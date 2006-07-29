@@ -201,6 +201,12 @@ cssVariant::operator TAPtr() const {
   else return inherited::operator TAPtr();
 }
 
+String cssVariant::PrintStr() const {
+  return String(GetTypeName())+" "+ name + " = ("
+    + val.getTypeAsString() + ") " + val.toString();
+}
+
+
 cssEl* cssVariant::operator+(cssEl& t) { 
 // string concatenation takes precedence over numeric addition
  if (val.isStringType()) {

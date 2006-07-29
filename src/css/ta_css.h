@@ -31,6 +31,7 @@ public:
   const char*	GetTypeName() const	{ return type_def->name; }
   cssEl*	GetTypeObject() const;
   cssTypes	GetType() const		{ return T_TA; }
+  cssTypes	GetPtrType() 		{ return T_TA; }
 
   String	PrintStr() const;
   String	PrintFStr() const;
@@ -111,7 +112,6 @@ public:
   cssEl* operator<<(cssEl& s);	// for iostreams..
   cssEl* operator>>(cssEl& s);
 
-  virtual cssEl* 	GetMemberFun_impl(MethodDef* md, void* pt) const;
   virtual cssEl*	GetElement_impl(TAPtr ths, int i) const;
 
   cssEl* operator[](int) const;

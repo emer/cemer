@@ -306,6 +306,7 @@ public:
 
 
 class CSS_API cssEl {
+  // the basic css program element
 public:
   enum cssTypes {
     T_Void,			// No Type
@@ -331,7 +332,13 @@ public:
     T_PP_Def, 			// pre-processor define
     T_SubShell,			// sub-shell prog space
     T_Variant,			// Variant
-    T_Int64			// 64-bit integer
+    T_Int64,			// 64-bit integer
+    // used for CPtr-types
+    T_Short,
+    T_Long,
+    T_LongLong,
+    T_Char,
+    T_Float,
   };
 
   enum RunStat {	// css running status
@@ -388,6 +395,8 @@ public:
   virtual cssElPtr	GetAddr() const;
   virtual void		SetAddr(const cssElPtr& adr);
   virtual cssTypes 	GetType() const   	{ return T_Void; }
+  virtual cssTypes 	GetPtrType() const   	{ return GetType(); }
+  // get the type of the object pointed/referred to by this, if a this is a pointer/ref type
   virtual const char*	GetTypeName() const 	{ return "(void)"; }
   virtual cssEl*	GetTypeObject() const; // gets type object corresponding to this
   virtual int		GetParse() const	{ return CSS_VAR; }
@@ -620,7 +629,7 @@ protected:
   cssEl* GetMember_impl(const TypeDef& typ, void* base, int memb) const;
   cssEl* GetMember_impl(MemberDef* md, void* mbr) const;
   cssEl* GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const;
-  cssEl* GetMemberFun_impl(void* base, MethodDef* md) const;
+  cssEl* GetMemberFun_impl(void* base, MethodDef* md, const TypeDef* td) const;
   cssEl* GetScoped_impl(const TypeDef& typ, void* base, const char*) const;
   cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
   virtual cssEl* GetFromTA_impl(TypeDef* td, void* itm, const char* nm, 
@@ -988,6 +997,7 @@ public:
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return 0; } // use for ptrs
   cssTypes 	GetType() const		{ return T_C_Ptr; }
+  cssTypes	GetPtrType() 		{ return T_C_Ptr; } // still just a c ptr
   const char*	GetTypeName() const 	{ return "(C_Ptr)"; }
 
   String 	PrintStr() const

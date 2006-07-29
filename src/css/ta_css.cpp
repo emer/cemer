@@ -835,7 +835,7 @@ cssEl* cssTA::GetMemberFun(const char* memb) const {
     return &cssMisc::Void;
   }
 
-  return GetMemberFun_impl(md, pt);
+  return GetMemberFun_impl(pt, md, type_def);
 }
 cssEl* cssTA::GetMemberFun(int memb) const {
   void* pt = GetVoidPtr();
@@ -851,21 +851,7 @@ cssEl* cssTA::GetMemberFun(int memb) const {
     return &cssMisc::Void;
   }
 
-  return GetMemberFun_impl(md, pt);
-}
-
-cssEl* cssTA::GetMemberFun_impl(MethodDef* md, void* pt) const {
-  if(md->stubp != NULL) {
-    if(md->fun_argd >= 0)
-      return new cssMbrCFun(VarArg, pt, md->stubp, md->name);
-    else
-      return new cssMbrCFun(md->fun_argc, pt, md->stubp, md->name);
-  }
-  else {
-    cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
-	      "in class of type:", type_def->name);
-    return &cssMisc::Void;
-  }
+  return GetMemberFun_impl(pt, md, type_def);
 }
 
 cssEl* cssTA::GetScoped(const char* memb) const {
@@ -889,7 +875,7 @@ cssEl* cssTA::GetScoped(const char* memb) const {
 
   MethodDef* meth = type_def->methods.FindName(memb);
   if(meth != NULL) {
-    return GetMemberFun_impl(meth, pt);
+    return GetMemberFun_impl(pt, meth, type_def);
   }
 
   void* mbr;
@@ -1067,7 +1053,7 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
   }
   for(i=0; i<type_def->methods.size; i++) {
     MethodDef* md = type_def->methods.FastEl(i);
-    tmp = GetMemberFun_impl(md, (void*)ths);
+    tmp = GetMemberFun_impl((void*)ths, md, type_def);
     ps->hard_funs.PushUniqNameNew(tmp);
   }
 }

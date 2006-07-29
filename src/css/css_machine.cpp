@@ -855,10 +855,11 @@ cssEl* cssEl::GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const 
     cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type: ", typ.name);
     return &cssMisc::Void;
   }
-  return GetMemberFun_impl(base, md);
+  return GetMemberFun_impl(base, md, &typ);
 }
 
-cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md) const {
+cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md, const TypeDef* td) const {
+  if(td == NULL) td = md->GetOwnerType();
   if(md->stubp != NULL) {
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);
@@ -867,7 +868,7 @@ cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md) const {
   }
   else {
     cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
-	      "in class of type: ", md->GetOwnerType()->name);
+	      "in class of type: ", td->name);
     return &cssMisc::Void;
   }
 }
@@ -884,7 +885,7 @@ cssEl* cssEl::GetScoped_impl(const TypeDef& typ, void* base, const char* memb) c
     return &cssMisc::Void;
   }
 
-  return GetMemberFun_impl(base, md);
+  return GetMemberFun_impl(base, md, (TypeDef*)&typ);
 }
 
 
@@ -1192,6 +1193,10 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
   BindArgs(args, act_argc);
+  // for debugging:
+//   for(int i=0;i<=act_argc;i++) {
+//     cerr << "arg: " << i << ": " << args[i]->PrintStr() << endl;
+//   }
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
@@ -1812,15 +1817,15 @@ bool cssCPtr::ROCheck() {
 }
 
 void cssCPtr::PtrAssignPtr(cssCPtr* s) {
-  String tpnm = GetTypeName();
-  String s_tpnm = s->GetTypeName();
+  cssTypes tp = GetPtrType();
+  cssTypes s_tp = s->GetPtrType();
   if(ptr_cnt == s->ptr_cnt) {
     if((ptr_cnt == 1) && (class_parent != NULL) && (ptr != NULL) && (s->ptr != NULL)) {
-      if ((tpnm == "(c_long_long)"))
+      if(tp == T_LongLong)
 	*this = (int64_t)*s;
-      else if((tpnm == "(c_double)") || (tpnm == "(c_float)"))
+      else if((tp == T_Real) || (tp == T_Float))
 	*this = (Real)*s;
-      else if(tpnm == "(c_String)")
+      else if(tp == T_String)
 	*this = s->GetStr();
       else
 	*this = (Int)*s;
@@ -1829,7 +1834,7 @@ void cssCPtr::PtrAssignPtr(cssCPtr* s) {
     }
     ptr = s->ptr;
     SetClassParent(s->class_parent);
-    if((prog != NULL) && (prog->top->debug) && (tpnm != s_tpnm))
+    if((prog != NULL) && (prog->top->debug) && (tp != s_tp))
 	 cssMisc::Warning(prog, "Warning: assigning different ptr types");
   }
   else if(ptr_cnt == s->ptr_cnt + 1) {
@@ -1837,7 +1842,7 @@ void cssCPtr::PtrAssignPtr(cssCPtr* s) {
     if(ptr != NULL)
       *((void**)ptr) = s->ptr;
     if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-    if((prog != NULL) && (prog->top->debug) && (tpnm != s_tpnm))
+    if((prog != NULL) && (prog->top->debug) && (tp != s_tp))
       cssMisc::Warning(prog, "Warning: assigning different ptr types");
   }
   else {
@@ -4206,7 +4211,7 @@ void cssProgSpace::ListGlobals() {
   cssMisc::Externs.List(fh);
 }
 
-static char* rs_vals[10] = {"Waiting", "Running", "Stopping", "NewProgShoved",
+static char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
 			   "Returning", "Breaking", "Continuing", "BreakPoint",
 			   "ExecError", "Bailing"};
 

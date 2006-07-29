@@ -40,7 +40,8 @@ public:
   
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
-  cssEl*		NewCssEl(); // get a new cssEl of an appropriate type, name/value initialized
+  cssEl*		NewCssEl();
+  // get a new cssEl of an appropriate type, name/value initialized
   
   void 	SetDefaultName() {} // make it local to list, set by list
   void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
@@ -50,7 +51,8 @@ public:
 protected:
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
-  virtual cssEl*	NewCssEl_impl(); // make a new cssEl of an appropriate type, name/value initialized
+  virtual cssEl*	NewCssEl_impl();
+  // make a new cssEl of an appropriate type, name/value initialized
 private:
   void	Initialize();
   void	Destroy();
@@ -74,13 +76,14 @@ public:
 protected:
   override const String	GenCssArg_impl();
   override const String	GenCssVar_impl();
-  override cssEl*	NewCssEl_impl(); 
+  override cssEl*	NewCssEl_impl();
 private:
   void	Initialize();
   void	Destroy();
 };
 
-class PDP_API ObjectProgVar: public ProgVar { // ##SCOPE_ProgElProgram a program variable to hold taBase objects
+class PDP_API ObjectProgVar: public ProgVar {
+  // ##SCOPE_ProgElProgram a program variable to hold taBase objects
 INHERITED(ProgVar)
 public:
   TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
@@ -94,7 +97,6 @@ public:
 protected:
   override const String	GenCssArg_impl();
   override const String	GenCssVar_impl();
-  override cssEl*	NewCssEl_impl(); 
   
 private:
   void	Initialize();
@@ -128,14 +130,15 @@ private:
 };
 
 
-class PDP_API ProgArg: public taOBase { // ##NO_TOKENS ##INSTANCE a program or method argument (NOTE: v3.9 preliminary version)
+class PDP_API ProgArg: public taOBase {
+  // ##NO_TOKENS ##INSTANCE a program or method argument
 INHERITED(taOBase)
 public:
   String		name; // #SHOW #READ_ONLY the name of the argument (always same as the target)
   String		value; // the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
   
   virtual void		Freshen(const ProgVar& cp); 
-    // updates our value/type information and commensurable fields from compatible type (but not name)
+  // updates our value/type information and commensurable fields from compatible type (but not name)
   
   void 	SetDefaultName() {} // name is always the same as the referent
   void	Copy_(const ProgArg& cp);
@@ -483,8 +486,8 @@ public:
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		prog_objs; // sundry objects that are used in this program
-  ProgVar_List		param_vars; // global variables that are parameters for callers
-  ProgVar_List		global_vars; // global variables accessible outside and inside script
+  ProgVar_List		args; // global variables that are parameters (arguments) for callers
+  ProgVar_List		vars; // global variables accessible outside and inside script
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_els; // the prog els for the main program
   

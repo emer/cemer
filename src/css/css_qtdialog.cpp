@@ -260,58 +260,58 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
     return new cssiEnumType(orig_obj, ((cssEnum*)el)->type_def,
 			     (void*)&(((cssEnum*)el)->val));
   case cssEl::T_C_Ptr: {
-    String sb_typ = el->GetTypeName();
-    if(sb_typ == "(c_int)") {
+    cssEl::cssTypes sb_typ = el->GetPtrType();
+    if(sb_typ == cssEl::T_Int) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_int, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_int, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_bool)") {
+    if(sb_typ == cssEl::T_Bool) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_bool, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_bool, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_short)") {
+    if(sb_typ == cssEl::T_Short) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_short, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_short, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_long)") {
+    if(sb_typ == cssEl::T_Long) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_long, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_long, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_long_long)") {
+    if(sb_typ == cssEl::T_LongLong) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_int64_t, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_int64_t, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_char)") {
+    if(sb_typ == cssEl::T_Char) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_char, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_char, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_double)") {
+    if(sb_typ == cssEl::T_Real) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_double, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_double, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_float)") {
+    if(sb_typ == cssEl::T_Float) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_float, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_float, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_String)") {
+    if(sb_typ == cssEl::T_String) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_taString, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_taString, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_Variant)") {
+    if(sb_typ == cssEl::T_Variant) {
       if(read_only)
 	return new cssiROType(orig_obj, &TA_Variant, (void*)(((cssCPtr*)el)->ptr));
       return new cssiType(orig_obj, &TA_Variant, (void*)(((cssCPtr*)el)->ptr));
     }
-    if(sb_typ == "(c_enum)") {
+    if(sb_typ == cssEl::T_Enum) {
       cssCPtr_enum* enm = (cssCPtr_enum*)el;
       MemberDef* md = enm->GetEnumType();
       if(md != NULL)

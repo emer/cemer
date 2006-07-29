@@ -78,6 +78,7 @@ public:
     // 'true' if the value is a taMatrix*, BUT could be NULL
   VarType		type() const {return (VarType)m_type;} //
   void			setType(VarType value); // force it to be given type, if changed, set to default value
+  String		getTypeAsString() const; // for debugging, get variant type as a string
 
   void			save(ostream& s) const; // streams out using << for the type
   void			load(istream& s); // streams in as a string, use toXxx if it is of another type
@@ -85,6 +86,7 @@ public:
 // following are ops to set to a specific type of value  
   void 			setInvalid(); // invalid/null
   void 			setVariant(const Variant& cp); // basically a copy
+  void			setVariantData(const Variant& cp); // preserve target type, only copy data
   void 			setBool(bool val, bool null = false);
   void 			setByte(byte val, bool null = false) {setUInt(val, null);}
   void 			setInt(int val, bool null = false);

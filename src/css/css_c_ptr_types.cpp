@@ -586,8 +586,10 @@ cssEl* cssCPtr_String::GetScoped(const char* memb) const {
 
 String cssCPtr_Variant::PrintStr() const {
   String rval = String(GetTypeName())+" "+name+" --> ";
-  if(GetVoidPtr() != NULL)
-    rval += (*((Variant*)GetVoidPtr())).toString();
+  if(GetVoidPtr() != NULL) {
+    Variant& vl = *((Variant*)GetVoidPtr());
+    rval += "(" + vl.getTypeAsString() + ") " + vl.toString();
+  }
   else
     rval += "NULL";
   return rval;
@@ -600,6 +602,10 @@ void cssCPtr_Variant::operator=(const cssEl& t) {
     if(class_parent != NULL)	class_parent->UpdateAfterEdit();
   }
 }
+void cssCPtr_Variant::operator=(const Variant& val) {
+  *((Variant*)GetNonNullVoidPtr()) = val;
+}
+
 void cssCPtr_Variant::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
   *((Variant*)GetNonNullVoidPtr()) += t.GetVar();
@@ -613,6 +619,152 @@ cssEl* cssCPtr_Variant::operator[](int idx) const {
   return GetVariantEl_impl(val, idx);
 }
 
+///////////////////////////////////////////////
+// these only work for String and taBase/Matrix types!
+
+// todo: add method support for string/variant?
+
+inline static bool css_var_has_mbrs(const Variant& var) {
+  if((var.type() == Variant::T_Base) || (var.type() == Variant::T_Matrix)) return true;
+  return false;
+}
+
+int cssCPtr_Variant::GetMemberNo(const char* memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMemberNo(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return -1;
+  }
+  return GetMemberNo_impl(*tab->GetTypeDef(), memb);
+}
+
+cssEl* cssCPtr_Variant::GetMember(const char* memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMember(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return &cssMisc::Void;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+  void* mbr;
+  MemberDef* md = type_def->members.FindNameAddrR(memb, tab, mbr);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member not found:", memb, "in class of type:", (char*)type_def->name);
+    return &cssMisc::Void;
+  }
+  return GetMember_impl(md, mbr);
+}
+
+cssEl* cssCPtr_Variant::GetMember(int memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMember(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return &cssMisc::Void;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+  MemberDef* md = type_def->members.SafeEl(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type:",
+		    (const char*)type_def->name);
+    return &cssMisc::Void;
+  }
+  void* mbr = md->GetOff(tab);
+  return GetMember_impl(md, mbr);
+}
+
+int cssCPtr_Variant::GetMemberFunNo(const char* memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMemberFunNo(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMemberFunNo: NULL pointer");
+    return -1;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+  int md;
+  type_def->methods.FindName(memb, md);
+  return md;
+}
+
+cssEl* cssCPtr_Variant::GetMemberFun(const char* memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMemberFun(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return &cssMisc::Void;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+  MethodDef* md = type_def->methods.FindName(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", memb, "in class of type:",
+	      type_def->name);
+    return &cssMisc::Void;
+  }
+  return GetMemberFun_impl(tab, md, type_def);
+}
+
+cssEl* cssCPtr_Variant::GetMemberFun(int memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMemberFun(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return &cssMisc::Void;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+  MethodDef* md = type_def->methods.SafeEl(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type:",
+	      type_def->name);
+    return &cssMisc::Void;
+  }
+  return GetMemberFun_impl(tab, md, type_def);
+}
+
+cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
+  Variant& var = GetVarRef();
+  if(!css_var_has_mbrs(var)) return cssEl::GetMember(memb);
+  taBase* tab = var.toBase();
+  if(tab == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer");
+    return &cssMisc::Void;
+  }
+  TypeDef* type_def = tab->GetTypeDef();
+
+  EnumDef* ed = type_def->FindEnum(memb);
+  if(ed != NULL) {
+    return new cssInt(ed->enum_no, memb);
+  }
+
+  TypeDef* td = type_def->sub_types.FindName(memb);
+  if(td != NULL) {
+    if(td->DerivesFormal(TA_enum))
+      return new cssTAEnum(td);
+    return new cssTA(NULL, 1, td);
+  }
+
+  MethodDef* meth = type_def->methods.FindName(memb);
+  if(meth != NULL) {
+    return GetMemberFun_impl(tab, meth, type_def);
+  }
+
+  void* mbr;
+  MemberDef* md = type_def->members.FindNameAddr(memb, tab, mbr);
+  if(md != NULL) {
+    return GetMember_impl(md, mbr);
+  }
+
+  cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type:", type_def->name);
+  return &cssMisc::Void;
+}
+
+/* the variant is transparent!!!
 int cssCPtr_Variant::GetMemberFunNo(const char* memb) const {
   int md;
   TA_Variant.methods.FindName(memb, md);
@@ -664,3 +816,4 @@ cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
 
   return GetMemberFun_impl(md);
 }
+*/

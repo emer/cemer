@@ -507,8 +507,7 @@ public:
   cssTypes 	GetType() const		{ return T_Variant; }
   const char*	GetTypeName() const 	{ return "(Variant)"; }
 
-  String 	PrintStr() const
-  { return String(GetTypeName())+" "+ name + " = " + val.toString(); }
+  String 	PrintStr() const;
   String	PrintFStr() const { return val.toString(); }
 
   // constructors
@@ -541,7 +540,7 @@ public:
   void operator=(int64_t cp)		{ val = cp; }
   void operator=(uint64_t cp)		{ val = cp; }
   void operator=(const String& cp)	{ val = cp; }
-  void operator=(const Variant& cp) { val = cp;}
+  void operator=(const Variant& cp)	{ val = cp;}
 
   void operator=(void* ptr)	 	{ val = ptr; }
   void operator=(void**)	{ CvtErr("(void**)"); }
@@ -600,6 +599,7 @@ public:
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return T_Ptr; }
+  cssTypes	GetPtrType() 		{ return el_type->GetType(); }
   const char*	GetTypeName() const	{ return el_type->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return el_type; }
   bool		IsStringType() const   	{ cssEl* el = ((cssPtr*)this)->GetActualObj();
@@ -833,6 +833,8 @@ public:
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return ptr.El()->GetType(); }
+  // todo: is this what we want? probably ok..
+  cssTypes	GetPtrType() 		{ return ptr.El()->GetPtrType(); }
   const char*	GetTypeName() const	{ return ptr.El()->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return ptr.El()->GetTypeObject(); }
   int		IsRef()	const		{ return true; }

@@ -1,5 +1,15 @@
 TODO list for CSS:
 
+------------------
+Program todo:
+
+- add quit confirm prompt taChoice
+- prog_args -> args
+- new variant assign that preserves target type
+- convert enums to c_ptr_enum
+- fix CPtr_String cvt to bool/enum!
+
+------------------
 Immediate:
 
 - suppress redundant { } block within a IF_TRUE or IF_FALSE block: just replace code in upper

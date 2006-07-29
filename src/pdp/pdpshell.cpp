@@ -1005,7 +1005,9 @@ void ProjectBase::UpdateColors() {
 #ifdef TA_GUI
 void ProjectBase::UpdateSimLog() {
   SimLogEditDialog* dlg = new SimLogEditDialog(this, GetTypeDef(), false, true);
-  dlg->Constr("Update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  Click off use_sim_log if you are not using this feature");
+  dlg->Constr("Update simulation log (SimLog) for this project,\n\
+ storing the name of the project and the description as entered here.\n\
+ Click off use_sim_log if you are not using this feature");
   if(dlg->Edit(true) && use_sim_log) {
     time_t tmp = time(NULL);
     String tstamp = ctime(&tmp);

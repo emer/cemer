@@ -1463,6 +1463,50 @@ void Variant::setVariant(const Variant &cp) {
   m_is_null = cp.m_is_null;
 }
 
+
+void Variant::setVariantData(const Variant& cp) {
+  switch (m_type) {
+  case T_Invalid:
+    break; 
+  case T_Bool:
+    setBool(cp.toBool());
+    break;
+  case T_Int:
+    setInt(cp.toInt());
+    break;
+  case T_UInt:
+    setUInt(cp.toUInt());
+    break;
+  case T_Int64:
+    setInt64(cp.toInt64());
+    break;
+  case T_UInt64:
+    setUInt64(cp.toUInt64());
+    break;
+  case T_Double:
+    setDouble(cp.toDouble());
+    break;
+  case T_Char:
+    setChar(cp.toChar());
+    break;
+  case T_String:
+    setString(cp.toString());
+    break;
+  case T_Ptr: 
+    setPtr(cp.toPtr());
+    break;
+#ifndef NO_TA_BASE
+  case T_Base: 
+    setBase(cp.toBase());
+    break;
+  case T_Matrix:
+    setMatrix(cp.toMatrix());
+    break;
+#endif
+  default: break ;
+  }
+}
+
 void Variant::setBool(bool val, bool null) {
   releaseType();
   d.b = val;
@@ -1586,6 +1630,14 @@ void Variant::setType(VarType value) {
 #endif
   default: return ;
   }
+}
+
+static char* var_types_as_str[] = {
+  "T_Invalid", "T_Bool", "T_Int", "T_UInt", "T_Int64", "T_UInt64", "T_Double",
+  "T_Char", "T_String", "T_Ptr", "T_Base", "T_Matrix"};
+
+String Variant::getTypeAsString() const {
+  return var_types_as_str[m_type];
 }
 
 bool Variant::toBool() const {
