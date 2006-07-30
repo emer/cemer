@@ -307,6 +307,9 @@ bool  Variant::eqBool(bool val) const {
 }
 
 bool  Variant::eqInt(int val) const {
+  // handle the Ptr == or != NULL case -- only matches on NULL
+  if (isPtrType())
+    return ((!d.ptr) && (val == 0));
   if (isNull()) return false;
   switch (m_type) {
   case T_Bool: return (d.b == val);
