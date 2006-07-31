@@ -39,9 +39,6 @@ class LogView; //
 class T3DataViewer; //
 
 #ifdef TA_GUI
-//////////////////////////
-//   LogView_PtrList	//
-//////////////////////////
 
 class PDP_API LogView_PtrList : public taPtrList<LogView> { // link list of associated logviews
 #ifndef __MAKETA__
@@ -49,7 +46,7 @@ typedef taPtrList<LogView> inherited;
 #endif
 public:
   TypeDef*	el_typ; // actual type set by subclass of owner
-  LogView_PtrList() {el_typ = &TA_LogView;}
+  LogView_PtrList() {el_typ = &TA_LogView;} //
 };
 #endif
 /* NOTES:
@@ -82,7 +79,7 @@ public:
   int		log_lines;	// #READ_ONLY #NO_SAVE number of lines in the log
 //obs  LogData	log_data;	// #NO_SAVE #HIDDEN our own log data for reading fm file
 
-  DataTable	data;		// data for the log
+  DataTable	data;		// #BROWSE data for the log
   int		data_bufsz;	// #DETAIL how big a data buffer size to keep
   float		data_shift;	// #DETAIL percentage to shift buffer upon overflow
   MinMaxInt	data_range;	// #READ_ONLY #NO_SAVE #SHOW range of lines in the data buffer (in log lines)

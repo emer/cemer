@@ -23,6 +23,12 @@ constructs in the viewer, such as Network. (this paradigm is a bit flawed)
 Issues
 
 * ex. the Network 3-d viewer panel is a bit confusing
+* if there are multiple configurable objects, they each get a pinned panel;
+  this could be quite confusing, except if the panel activates when selecting
+  the item
+  
+* NOTE: the panel tab is not properly showing items selected in the viewer,
+  but it is supposed to
 
 Ideas
 

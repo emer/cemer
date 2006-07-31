@@ -55,7 +55,7 @@ void PDPLog::Initialize() {
   taRefN::Ref(log_file);
   log_lines = 0;
 
-//no: don't force type  data.el_typ = &TA_float_Data;
+  data.name = "data"; // override the default one
   data_bufsz = 10000;		// default bufsz is 5000 lines
   data_shift = .20f;		// shift 20 percent
   record_proc_name = false;	// don't by default..
