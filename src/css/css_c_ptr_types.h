@@ -26,11 +26,14 @@
 class CSS_API cssCPtr_int : public cssCPtr {
   // Points to a C integer
 public:
-  cssTypes	GetPtrType() 		{ return T_Int; }
+  static int	null_int;	// safe rval
+
+  int&		GetIntRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return null_int; return *(int*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Int; }
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const 	{ return "(c_int)"; }
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return GetStr(); }
 
   // constructors
   cssCPtr_int() 				: cssCPtr(){};
@@ -44,16 +47,16 @@ public:
   cssCPtr_CloneFuns(cssCPtr_int, (void*)NULL);
 
   // converters
-  String GetStr() const	{ return String((Int)*this); }
-  Variant GetVar() const {return Variant((Int)*this); }
-  operator Int() const		{ return *((int*)GetNonNullVoidPtr()); }
-  operator Real() const		{ return (Real)((Int)*this); }
+  String GetStr() const		{ return String(GetIntRef()); }
+  Variant GetVar() const	{ return Variant(GetIntRef()); }
+  operator Int() const		{ return GetIntRef(); }
+  operator Real() const		{ return (Real)(GetIntRef()); }
   operator int*() const		{ return (int*)GetNonNullVoidPtr(); }
   operator int**() const	{ return (int**)GetNonNullVoidPtr(2); }
 
-  void operator=(Real cp) 	{ *((int*)GetNonNullVoidPtr()) = (int)cp; }
-  void operator=(Int cp)	{ *((int*)GetNonNullVoidPtr()) = cp; }
-  void operator=(const String& cp) { *((int*)GetNonNullVoidPtr()) = (int)cp; }
+  void operator=(Real cp) 	{ GetIntRef() = (int)cp; }
+  void operator=(Int cp)	{ GetIntRef() = cp; }
+  void operator=(const String& cp) { GetIntRef() = (int)cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -61,29 +64,29 @@ public:
   void operator=(const cssEl& t);
 
   cssEl* operator+(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val += (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val += (Int)t; return r; }
   cssEl* operator-(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val -= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val -= (Int)t; return r; }
   cssEl* operator*()		{ return cssCPtr::operator*(); }
   cssEl* operator*(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val *= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val *= (Int)t; return r; }
   cssEl* operator/(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val /= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val /= (Int)t; return r; }
   cssEl* operator%(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val %= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val <<= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val <<= (Int)t; return r; }
   cssEl* operator>>(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val >>= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val >>= (Int)t; return r; }
   cssEl* operator&(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val &= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val &= (Int)t; return r; }
   cssEl* operator^(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val ^= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val ^= (Int)t; return r; }
   cssEl* operator|(cssEl &t)
-  { cssInt *r = new cssInt((Int)*this); r->val |= (Int)t; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val |= (Int)t; return r; }
 
   cssEl* operator-()
-  { cssInt *r = new cssInt((Int)*this); r->val = -r->val; return r; }
+  { cssInt *r = new cssInt(GetIntRef()); r->val = -r->val; return r; }
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);
@@ -96,15 +99,15 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return ((Int)*this < (Int)s); }
-  bool operator> (cssEl& s) 	{ return ((Int)*this > (Int)s); }
-  bool operator! () 	    	{ return ( ! (Int)*this); }
-  bool operator<=(cssEl& s) 	{ return ((Int)*this <= (Int)s); }
-  bool operator>=(cssEl& s) 	{ return ((Int)*this >= (Int)s); }
-  bool operator==(cssEl& s) 	{ return ((Int)*this == (Int)s); }
-  bool operator!=(cssEl& s) 	{ return ((Int)*this != (Int)s); }
-  bool operator&&(cssEl& s) 	{ return ((Int)*this && (Int)s); }
-  bool operator||(cssEl& s) 	{ return ((Int)*this || (Int)s); }
+  bool operator< (cssEl& s) 	{ return (GetIntRef() < (Int)s); }
+  bool operator> (cssEl& s) 	{ return (GetIntRef() > (Int)s); }
+  bool operator! () 	    	{ return ( ! GetIntRef()); }
+  bool operator<=(cssEl& s) 	{ return (GetIntRef() <= (Int)s); }
+  bool operator>=(cssEl& s) 	{ return (GetIntRef() >= (Int)s); }
+  bool operator==(cssEl& s) 	{ return (GetIntRef() == (Int)s); }
+  bool operator!=(cssEl& s) 	{ return (GetIntRef() != (Int)s); }
+  bool operator&&(cssEl& s) 	{ return (GetIntRef() && (Int)s); }
+  bool operator||(cssEl& s) 	{ return (GetIntRef() || (Int)s); }
 };
 
 #define cssCPtr_int_inst(l,n)		l .Push(new cssCPtr_int(&n,1,#n))
@@ -115,7 +118,10 @@ public:
 
 class CSS_API cssCPtr_short : public cssCPtr_int {
 public:
-  cssTypes	GetPtrType() 		{ return T_Short; }
+  short&		GetShortRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (short&)null_int; return *(short*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Short; }
   uint		GetSize() const 	{ return sizeof(short); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_short)"; }
 
@@ -131,15 +137,15 @@ public:
   cssCPtr_CloneFuns(cssCPtr_short, (void*)NULL);
 
   // converters
-  operator Int() const		{ return *((short*)GetNonNullVoidPtr()); }
+  operator Int() const		{ return GetShortRef(); }
   operator short*() const	{ return (short*)GetNonNullVoidPtr(); }
   operator short**() const	{ return (short**)GetNonNullVoidPtr(2); }
   operator int*() const		{ CvtErr("(int*)"); return NULL; }
   operator int**() const	{ CvtErr("(int**)"); return NULL; }
 
-  void operator=(Real cp) 	{ *((short*)GetNonNullVoidPtr()) = (short)cp; }
-  void operator=(Int cp)	{ *((short*)GetNonNullVoidPtr()) = (short)cp; }
-  void operator=(const String& cp) { *((short*)GetNonNullVoidPtr()) = (short)(int)cp; }
+  void operator=(Real cp) 	{ GetShortRef() = (short)cp; }
+  void operator=(Int cp)	{ GetShortRef() = (short)cp; }
+  void operator=(const String& cp) { GetShortRef() = (short)(int)cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -160,7 +166,10 @@ public:
 
 class CSS_API cssCPtr_bool : public cssCPtr_int {
 public:
-  cssTypes	GetPtrType() 		{ return T_Bool; }
+  bool&		GetBoolRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (bool&)null_int; return *(bool*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Bool; }
   uint		GetSize() const 	{ return sizeof(bool); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_bool)"; }
 
@@ -177,8 +186,8 @@ public:
 
   // converters
   String GetStr() const;
-  Variant GetVar() const {return Variant(((Int)*this) != 0); } // make a bool Variant
-  operator Int() const		{ return *((bool*)GetNonNullVoidPtr()); }
+  Variant GetVar() const 	{ return Variant(GetBoolRef()); } // make a bool Variant
+  operator Int() const		{ return GetBoolRef(); }
 #ifndef NO_BUILTIN_BOOL
   operator bool*() const	{ return (bool*)GetNonNullVoidPtr(); }
   operator bool**() const	{ return (bool**)GetNonNullVoidPtr(2); }
@@ -186,8 +195,8 @@ public:
   operator int**() const	{ CvtErr("(int**)"); return NULL; }
 #endif
 
-  void operator=(Real cp) 	{ *((bool*)GetNonNullVoidPtr()) = (bool)cp; }
-  void operator=(Int cp)	{ *((bool*)GetNonNullVoidPtr()) = (bool)cp; }
+  void operator=(Real cp) 	{ GetBoolRef() = (bool)cp; }
+  void operator=(Int cp)	{ GetBoolRef() = (bool)cp; }
   void operator=(const String& cp);
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
@@ -196,37 +205,68 @@ public:
   void operator=(const cssEl& t);
 };
 
-class CSS_API cssCPtr_long : public cssCPtr_int {
+class CSS_API cssCPtr_long : public cssCPtr {
+  // points to a C long
 public:
-  cssTypes	GetPtrType() 		{ return T_Long; }
+  static long null_long;
+
+  long&		GetLongRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (long&)null_long; return *(long*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Long; }
   uint		GetSize() const 	{ return sizeof(long); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_long)"; }
 
   // constructors
-  cssCPtr_long() 				: cssCPtr_int(){};
-  cssCPtr_long(void* it, int pc) 		: cssCPtr_int(it,pc){};
-  cssCPtr_long(void* it, int pc, const char* nm)	: cssCPtr_int(it,pc,nm){};
+  cssCPtr_long() 				: cssCPtr(){};
+  cssCPtr_long(void* it, int pc) 		: cssCPtr(it,pc){};
+  cssCPtr_long(void* it, int pc, const char* nm)	: cssCPtr(it,pc,nm){};
   cssCPtr_long(void* it, int pc, const char* nm, cssEl* cp, bool ro)
-  : cssCPtr_int(it,pc,nm,cp,ro){};
-  cssCPtr_long(const cssCPtr_long& cp) 		: cssCPtr_int(cp){};
-  cssCPtr_long(const cssCPtr_long& cp, const char* nm) 	: cssCPtr_int(cp,nm){};
+  : cssCPtr(it,pc,nm,cp,ro){};
+  cssCPtr_long(const cssCPtr_long& cp) 		: cssCPtr(cp){};
+  cssCPtr_long(const cssCPtr_long& cp, const char* nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_long, (void*)NULL);
 
   // converters
-  Variant GetVar() const	{ return Variant(*((long*)GetNonNullVoidPtr())); }
-  operator Int() const		{ return *((long*)GetNonNullVoidPtr()); }
-  operator long() const		{ return *((long*)GetNonNullVoidPtr()); }
+  String GetStr() const		{ return String(GetLongRef()); }
+  Variant GetVar() const	{ return Variant(GetLongRef()); }
+  operator Int() const		{ return GetLongRef(); }
+  operator Real() const		{ return (Real)(GetLongRef()); }
+  operator long() const		{ return GetLongRef(); }
   operator long*() const	{ return (long*)GetNonNullVoidPtr(); }
   operator long**() const	{ return (long**)GetNonNullVoidPtr(2); }
-  operator int*() const		{ CvtErr("(int*)"); return NULL; }
-  operator int**() const	{ CvtErr("(int**)"); return NULL; }
 
-  void operator=(Real cp) 	{ *((long*)GetNonNullVoidPtr()) = (long)cp; }
-  void operator=(Int cp)	{ *((long*)GetNonNullVoidPtr()) = (long)cp; }
-  void operator=(const String& cp) { *((long*)GetNonNullVoidPtr()) = (long)(int)cp; }
+  void operator=(Real cp) 	{ GetLongRef() = (long)cp; }
+  void operator=(Int cp)	{ GetLongRef() = (long)cp; }
+  void operator=(const String& cp) { GetLongRef() = (long)(int)cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+
+  cssEl* operator+(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val += (Int)t; return r; }
+  cssEl* operator-(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val -= (Int)t; return r; }
+  cssEl* operator*()		{ return cssCPtr::operator*(); }
+  cssEl* operator*(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val *= (Int)t; return r; }
+  cssEl* operator/(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val /= (Int)t; return r; }
+  cssEl* operator%(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val %= (Int)t; return r; }
+  cssEl* operator<<(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val <<= (Int)t; return r; }
+  cssEl* operator>>(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val >>= (Int)t; return r; }
+  cssEl* operator&(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val &= (Int)t; return r; }
+  cssEl* operator^(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val ^= (Int)t; return r; }
+  cssEl* operator|(cssEl &t)
+  { cssInt *r = new cssInt(GetLongRef()); r->val |= (Int)t; return r; }
+
+  cssEl* operator-()
+  { cssInt *r = new cssInt(GetLongRef()); r->val = -r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -242,37 +282,64 @@ public:
   void operator|=(cssEl& t);
 };
 
-class CSS_API cssCPtr_long_long : public cssCPtr_int {
+class CSS_API cssCPtr_long_long : public cssCPtr {
 public:
-  cssTypes	GetPtrType() 		{ return T_LongLong; }
+  static int64_t null_long_long;
+
+  int64_t&		GetLongLongRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (int64_t&)null_long_long; return *(int64_t*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_LongLong; }
   uint		GetSize() const 	{ return sizeof(long long); }
   const char*	GetTypeName() const  	{ return "(c_long_long)"; }
 
   // constructors
-  cssCPtr_long_long() 				: cssCPtr_int(){};
-  cssCPtr_long_long(void* it, int pc) 		: cssCPtr_int(it,pc){};
-  cssCPtr_long_long(void* it, int pc, const char* nm)	: cssCPtr_int(it,pc,nm){};
+  cssCPtr_long_long() 				: cssCPtr(){};
+  cssCPtr_long_long(void* it, int pc) 		: cssCPtr(it,pc){};
+  cssCPtr_long_long(void* it, int pc, const char* nm)	: cssCPtr(it,pc,nm){};
   cssCPtr_long_long(void* it, int pc, const char* nm, cssEl* cp, bool ro)
-  : cssCPtr_int(it,pc,nm,cp,ro){};
-  cssCPtr_long_long(const cssCPtr_long_long& cp) 		: cssCPtr_int(cp){};
-  cssCPtr_long_long(const cssCPtr_long_long& cp, const char* nm) 	: cssCPtr_int(cp,nm){};
+  : cssCPtr(it,pc,nm,cp,ro){};
+  cssCPtr_long_long(const cssCPtr_long_long& cp) 		: cssCPtr(cp){};
+  cssCPtr_long_long(const cssCPtr_long_long& cp, const char* nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_long_long, (void*)NULL);
 
   // converters
-  Variant GetVar() const	{ return Variant(*((int64_t*)GetNonNullVoidPtr())); }
-  operator Int() const		{ return *((int64_t*)GetNonNullVoidPtr()); }
-  operator long() const		{ return *((int64_t*)GetNonNullVoidPtr()); }
-  operator long*() const	{ CvtErr("(long*)"); return NULL; }
-  operator long**() const	{ CvtErr("(long**)"); return NULL; }
-  operator int*() const		{ CvtErr("(int*)"); return NULL; }
-  operator int**() const	{ CvtErr("(int**)"); return NULL; }
+  String GetStr() const		{ return String(GetLongLongRef()); }
+  Variant GetVar() const	{ return Variant(GetLongLongRef()); }
+  operator Int() const		{ return GetLongLongRef(); }
+  operator long() const		{ return GetLongLongRef(); }
 
-  void operator=(Real cp) 	{ *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
-  void operator=(Int cp)	{ *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
-  void operator=(const String& cp) { *((int64_t*)GetNonNullVoidPtr()) = (int64_t)cp; }
+  void operator=(Real cp) 	{ GetLongLongRef() = (int64_t)cp; }
+  void operator=(Int cp)	{ GetLongLongRef() = (int64_t)cp; }
+  void operator=(const String& cp) { GetLongLongRef() = (int64_t)cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+
+  cssEl* operator+(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val += (Int)t; return r; }
+  cssEl* operator-(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val -= (Int)t; return r; }
+  cssEl* operator*()		{ return cssCPtr::operator*(); }
+  cssEl* operator*(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val *= (Int)t; return r; }
+  cssEl* operator/(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val /= (Int)t; return r; }
+  cssEl* operator%(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val %= (Int)t; return r; }
+  cssEl* operator<<(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val <<= (Int)t; return r; }
+  cssEl* operator>>(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val >>= (Int)t; return r; }
+  cssEl* operator&(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val &= (Int)t; return r; }
+  cssEl* operator^(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val ^= (Int)t; return r; }
+  cssEl* operator|(cssEl &t)
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val |= (Int)t; return r; }
+
+  cssEl* operator-()
+  { cssInt *r = new cssInt(GetLongLongRef()); r->val = -r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -290,7 +357,10 @@ public:
 
 class CSS_API cssCPtr_char : public cssCPtr_int {
 public:
-  cssTypes	GetPtrType() 		{ return T_Char; }
+  char&		GetCharRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (char&)null_int; return *(char*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Char; }
   uint		GetSize() const 	{ return sizeof(char); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_char)"; }
 
@@ -306,17 +376,16 @@ public:
   cssCPtr_CloneFuns(cssCPtr_char, (void*)NULL);
 
   // converters
-  String GetStr() const	{ return (const char*)GetNonNullVoidPtr(); }
-  Variant GetVar() const {return Variant((const char*)GetNonNullVoidPtr()); }
-  operator Int() const		{ return *((char*)GetNonNullVoidPtr()); }
+  String GetStr() const		{ return GetCharRef(); }
+  Variant GetVar() const 	{ return Variant(GetCharRef()); }
+  operator Int() const		{ return GetCharRef(); }
   operator const char*() const	{ return (const char*)GetNonNullVoidPtr(); }
   operator int*() const		{ CvtErr("(int*)"); return NULL; }
   operator int**() const	{ CvtErr("(int**)"); return NULL; }
 
-  void operator=(Real cp) 	{ *((char*)GetNonNullVoidPtr()) = (char)cp; }
-  void operator=(Int cp)	{ *((char*)GetNonNullVoidPtr()) = (char)cp; }
-  void operator=(const String& cp)
-  { if(!cp.empty()) *((char*)GetNonNullVoidPtr()) = cp[0]; }
+  void operator=(Real cp) 	{ GetCharRef() = (char)cp; }
+  void operator=(Int cp)	{ GetCharRef() = (char)cp; }
+  void operator=(const String& cp) { if(!cp.empty()) GetCharRef() = cp[0]; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -336,7 +405,7 @@ public:
 
 class CSS_API cssCPtr_enum : public cssCPtr_int {
 public:
-  cssTypes	GetPtrType() 		{ return T_Enum; }
+  cssTypes	GetPtrType() const	{ return T_Enum; }
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_enum)"; }
 
@@ -357,8 +426,8 @@ public:
   // converters
   String 	GetStr() const;
 
-  void operator=(Real cp) 	{ *((int*)GetNonNullVoidPtr()) = (int)cp; }
-  void operator=(Int cp)	{ *((int*)GetNonNullVoidPtr()) = cp; }
+  void operator=(Real cp) 	{ GetIntRef() = (int)cp; }
+  void operator=(Int cp)	{ GetIntRef() = cp; }
   void operator=(const String& cp);
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
@@ -369,12 +438,14 @@ public:
 
 class CSS_API cssCPtr_double : public cssCPtr {
 public:
-  cssTypes	GetPtrType() 		{ return T_Real; }
+  static double null_double;
+
+  double&	GetDoubleRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return null_double; return *(double*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Real; }
   uint		GetSize() const 	{ return sizeof(double); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_double)"; }
-
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return String((Real)*this); }
 
   // constructors
   cssCPtr_double() 				: cssCPtr(){};
@@ -388,16 +459,16 @@ public:
   cssCPtr_CloneFuns(cssCPtr_double, (void*)NULL);
 
   // converters
-  String GetStr() const	  { return String((Real)*this); }
-  Variant GetVar() const	{ return Variant((Real)*this); }
-  operator Real() const		{ return *((double*)GetNonNullVoidPtr()); }
-  operator Int() const		{ return (Int)(Real)*this; }
+  String GetStr() const	  	{ return String(GetDoubleRef()); }
+  Variant GetVar() const	{ return Variant(GetDoubleRef()); }
+  operator Real() const		{ return GetDoubleRef(); }
+  operator Int() const		{ return (Int)GetDoubleRef(); }
   operator double*() const	{ return (double*)GetNonNullVoidPtr(); }
   operator double**() const	{ return (double**)GetNonNullVoidPtr(2); }
 
-  void operator=(Real cp) 	{ *((double*)GetNonNullVoidPtr()) = (double)cp; }
-  void operator=(Int cp)	{ *((double*)GetNonNullVoidPtr()) = (double)cp; }
-  void operator=(const String& cp) { *((double*)GetNonNullVoidPtr()) = atof((const char*)cp); }
+  void operator=(Real cp) 	{ GetDoubleRef() = (double)cp; }
+  void operator=(Int cp)	{ GetDoubleRef() = (double)cp; }
+  void operator=(const String& cp) { GetDoubleRef() = atof((const char*)cp); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -405,42 +476,45 @@ public:
   void operator=(const cssEl& t);
 
   cssEl* operator+(cssEl &t)
-  { cssReal *r = new cssReal((Real)*this,""); r->val += (Real)t; return r; }
+  { cssReal *r = new cssReal(GetDoubleRef(),""); r->val += (Real)t; return r; }
   cssEl* operator-(cssEl &t)
-  { cssReal *r = new cssReal((Real)*this,""); r->val -= (Real)t; return r; }
+  { cssReal *r = new cssReal(GetDoubleRef(),""); r->val -= (Real)t; return r; }
   cssEl* operator*()		{ return cssCPtr::operator*(); }
   cssEl* operator*(cssEl &t)
-  { cssReal *r = new cssReal((Real)*this,""); r->val *= (Real)t; return r; }
+  { cssReal *r = new cssReal(GetDoubleRef(),""); r->val *= (Real)t; return r; }
   cssEl* operator/(cssEl &t)
-  { cssReal *r = new cssReal((Real)*this,""); r->val /= (Real)t; return r; }
+  { cssReal *r = new cssReal(GetDoubleRef(),""); r->val /= (Real)t; return r; }
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl &t)
-  { cssReal *r = new cssReal(); r->val = pow((Real)*this, (Real)t); return r; }
+  { cssReal *r = new cssReal(); r->val = pow(GetDoubleRef(), (Real)t); return r; }
 
   cssEl* operator-()
-  { cssReal *r = new cssReal((Real)*this,""); r->val = -r->val; return r; }
+  { cssReal *r = new cssReal(GetDoubleRef(),""); r->val = -r->val; return r; }
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);
   void operator*=(cssEl& t);
   void operator/=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return ((Real)*this < (Real)s); }
-  bool operator> (cssEl& s) 	{ return ((Real)*this > (Real)s); }
-  bool operator! () 	    	{ return ( ! (Real)*this); }
-  bool operator<=(cssEl& s) 	{ return ((Real)*this <= (Real)s); }
-  bool operator>=(cssEl& s) 	{ return ((Real)*this >= (Real)s); }
-  bool operator==(cssEl& s) 	{ return ((Real)*this == (Real)s); }
-  bool operator!=(cssEl& s) 	{ return ((Real)*this != (Real)s); }
-  bool operator&&(cssEl& s) 	{ return ((Real)*this && (Real)s); }
-  bool operator||(cssEl& s) 	{ return ((Real)*this || (Real)s); }
+  bool operator< (cssEl& s) 	{ return (GetDoubleRef() < (Real)s); }
+  bool operator> (cssEl& s) 	{ return (GetDoubleRef() > (Real)s); }
+  bool operator! () 	    	{ return ( ! GetDoubleRef()); }
+  bool operator<=(cssEl& s) 	{ return (GetDoubleRef() <= (Real)s); }
+  bool operator>=(cssEl& s) 	{ return (GetDoubleRef() >= (Real)s); }
+  bool operator==(cssEl& s) 	{ return (GetDoubleRef() == (Real)s); }
+  bool operator!=(cssEl& s) 	{ return (GetDoubleRef() != (Real)s); }
+  bool operator&&(cssEl& s) 	{ return (GetDoubleRef() && (Real)s); }
+  bool operator||(cssEl& s) 	{ return (GetDoubleRef() || (Real)s); }
 };
 
 
 class CSS_API cssCPtr_float : public cssCPtr_double {
 public:
-  cssTypes	GetPtrType() 		{ return T_Float; }
+  float&	GetFloatRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return (float&)null_double; return *(float*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_Float; }
   uint		GetSize() const 	{ return sizeof(float); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_float)"; }
 
@@ -456,15 +530,15 @@ public:
   cssCPtr_CloneFuns(cssCPtr_float, (void*)NULL);
 
   // converters
-  operator Real() const		{ return *((float*)GetNonNullVoidPtr()); }
+  operator Real() const		{ return GetFloatRef(); }
   operator float*() const	{ return (float*)GetNonNullVoidPtr(); }
   operator float**() const	{ return (float**)GetNonNullVoidPtr(2); }
   operator double*() const	{ CvtErr("(double*)"); return NULL; }
   operator double**() const	{ CvtErr("(double**)"); return NULL; }
 
-  void operator=(Real cp) 	{ *((float*)GetNonNullVoidPtr()) = (float)cp; }
-  void operator=(Int cp)	{ *((float*)GetNonNullVoidPtr()) = (float)cp; }
-  void operator=(const String& cp) { *((float*)GetNonNullVoidPtr()) = (float)atof((const char*)cp); }
+  void operator=(Real cp) 	{ GetFloatRef() = (float)cp; }
+  void operator=(Int cp)	{ GetFloatRef() = (float)cp; }
+  void operator=(const String& cp) { GetFloatRef() = (float)atof((const char*)cp); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -479,12 +553,14 @@ public:
 
 class CSS_API cssCPtr_String : public cssCPtr {
 public:
-  cssTypes	GetPtrType() 		{ return T_String; }
+  static String	null_string;	// for null pointers
+
+  String&	GetStringRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return null_string; return *(String*)nnp; }
+
+  cssTypes	GetPtrType() const	{ return T_String; }
   uint		GetSize() const 	{ return sizeof(String); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_String)"; }
-
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return String(*((String*)ptr)); }
 
   // constructors
   cssCPtr_String() 				: cssCPtr(){};
@@ -498,16 +574,17 @@ public:
   cssCPtr_CloneFuns(cssCPtr_String, (void*)NULL);
 
   // converters
-  String GetStr() const	{ return *((String*)GetNonNullVoidPtr()); }
+  String GetStr() const		{ return GetStringRef(); }
   Variant GetVar() const	{ return Variant(GetStr()); }
-  operator Real() const 	{ Real r = atof((const char*)GetStr()); return r; }
-  operator Int() const		{ Int r = (int)GetStr(); return r; }
+  operator Real() const 	{ return atof((const char*)GetStringRef()); }
+  operator Int() const		{ return (int)GetStringRef(); }
+  operator bool() const;
   operator String*() const	{ return (String*)GetNonNullVoidPtr(); }
   operator String**() const	{ return (String**)GetNonNullVoidPtr(2); }
 
-  void operator=(Real cp) 	{ *((String*)GetNonNullVoidPtr()) = String(cp); }
-  void operator=(Int cp)	{ *((String*)GetNonNullVoidPtr()) = String(cp); }
-  void operator=(const String& cp) { *((String*)GetNonNullVoidPtr()) = cp; }
+  void operator=(Real cp) 	{ GetStringRef() = String(cp); }
+  void operator=(Int cp)	{ GetStringRef() = String(cp); }
+  void operator=(const String& cp) { GetStringRef() = cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
@@ -525,34 +602,36 @@ public:
 
   void operator+=(cssEl& t);
 
-  bool operator< (cssEl& s) { return (*((String*)GetNonNullVoidPtr()) < s.GetStr()); }
-  bool operator> (cssEl& s) { return (*((String*)GetNonNullVoidPtr()) > s.GetStr()); }
+  bool operator< (cssEl& s) { return (GetStringRef() < s.GetStr()); }
+  bool operator> (cssEl& s) { return (GetStringRef() > s.GetStr()); }
   bool operator! () 	    { return ((String*)GetNonNullVoidPtr())->length(); }
-  bool operator<=(cssEl& s) { return (*((String*)GetNonNullVoidPtr()) <= s.GetStr()); }
-  bool operator>=(cssEl& s) { return (*((String*)GetNonNullVoidPtr()) >= s.GetStr()); }
-  bool operator==(cssEl& s) { return (*((String*)GetNonNullVoidPtr()) == s.GetStr()); }
-  bool operator!=(cssEl& s) { return (*((String*)GetNonNullVoidPtr()) != s.GetStr()); }
-  bool operator&&(cssEl& s) { return (((String*)GetNonNullVoidPtr())->length() && (Int)s); }
-  bool operator||(cssEl& s) { return (((String*)GetNonNullVoidPtr())->length() || (Int)s); }
+  bool operator<=(cssEl& s) { return (GetStringRef() <= s.GetStr()); }
+  bool operator>=(cssEl& s) { return (GetStringRef() >= s.GetStr()); }
+  bool operator==(cssEl& s) { return (GetStringRef() == s.GetStr()); }
+  bool operator!=(cssEl& s) { return (GetStringRef() != s.GetStr()); }
+  bool operator&&(cssEl& s) { return (GetStringRef().length() && (Int)s); }
+  bool operator||(cssEl& s) { return (GetStringRef().length() || (Int)s); }
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
-  cssEl* GetMemberFun_impl(MethodDef* md) const;
-  int	 GetMemberFunNo(const char*) const;
-  cssEl* GetMemberFun(const char* memb) const;
-  cssEl* GetMemberFun(int memb) const;
-  cssEl* GetScoped(const char*) const;
+  int	 GetMethodNo(const char*) const;
+  cssEl* GetMethodFmName(const char* memb) const;
+  cssEl* GetMethodFmNo(int memb) const;
+  cssEl* GetScoped(const char* nm) const;
 };
 
 
 class CSS_API cssCPtr_Variant : public cssCPtr {
 public:
-  cssTypes	GetPtrType() 		{ return T_Variant; }
+  static Variant null_var;
+
+  Variant&	GetVarRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return null_var; return *(Variant*)nnp; }
+
+  cssTypes	GetPtrType() const;
   uint		GetSize() const 	{ return sizeof(Variant); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_Variant)"; }
-
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return (*((Variant*)ptr)).toString(); }
+  String	PrintStr() const;
 
   // constructors
   cssCPtr_Variant() 				: cssCPtr(){};
@@ -566,17 +645,14 @@ public:
   cssCPtr_CloneFuns(cssCPtr_Variant, (void*)NULL);
 
   // converters
-  String GetStr() const	{ return (*((Variant*)GetNonNullVoidPtr())).toString(); }
-  Variant GetVar() const	{ return *((Variant*)GetNonNullVoidPtr()); }
-  Variant& GetVarRef() const	{ return *((Variant*)GetNonNullVoidPtr()); }
-  operator Real() const 	{ return GetVar().toDouble(); }
-  operator Int() const		{ return GetVar().toInt(); }
-  //operator String*() const	{ return (String*)GetNonNullVoidPtr(); }
-  //operator String**() const	{ return (String**)GetNonNullVoidPtr(2); }
+  String GetStr() const	{ return (GetVarRef()).toString(); }
+  Variant GetVar() const	{ return GetVarRef(); }
+  operator Real() const 	{ return GetVarRef().toDouble(); }
+  operator Int() const		{ return GetVarRef().toInt(); }
 
-  void operator=(Real cp) 	{ *((Variant*)GetNonNullVoidPtr()) = cp; }
-  void operator=(Int cp)	{ *((Variant*)GetNonNullVoidPtr()) = cp; }
-  void operator=(const String& cp) { *((Variant*)GetNonNullVoidPtr()) = cp; }
+  void operator=(Real cp) 	{ GetVarRef() = cp; }
+  void operator=(Int cp)	{ GetVarRef() = cp; }
+  void operator=(const String& cp) { GetVarRef() = cp; }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
   void operator=(const Variant& val); 
@@ -584,41 +660,42 @@ public:
   // operators
   void operator=(const cssEl& t);
 
+  // todo: look at more of these..
   cssEl* operator+(cssEl &t)
-    { cssVariant *r = new cssVariant(GetVar(),""); r->val += t.GetVar(); return r; }
+    { cssVariant *r = new cssVariant(GetVarRef(),""); r->val += t.GetVar(); return r; }
   cssEl* operator-(cssEl& t)
-    { cssVariant *r = new cssVariant(GetVar(),""); r->val -= t.GetVar(); return r; }
+    { cssVariant *r = new cssVariant(GetVarRef(),""); r->val -= t.GetVar(); return r; }
   cssEl* operator*()			{ return cssCPtr::operator*(); }
   cssEl* operator*(cssEl& t)
-  { cssVariant *r = new cssVariant(GetVar(),""); r->val *= t.GetVar(); return r; }
+  { cssVariant *r = new cssVariant(GetVarRef(),""); r->val *= t.GetVar(); return r; }
   cssEl* operator/(cssEl& t)
-  { cssVariant *r = new cssVariant(GetVar(),""); r->val /= t.GetVar(); return r; }
+  { cssVariant *r = new cssVariant(GetVarRef(),""); r->val /= t.GetVar(); return r; }
   cssEl* operator%(cssEl& t)
-  { cssVariant *r = new cssVariant(GetVar(),""); r->val %= t.GetVar(); return r; }
+  { cssVariant *r = new cssVariant(GetVarRef(),""); r->val %= t.GetVar(); return r; }
   cssEl* operator-()
-  { cssVariant *r = new cssVariant(-GetVar(),""); return r; }
+  { cssVariant *r = new cssVariant(-GetVarRef(),""); return r; }
 
   void operator+=(cssEl& t);
 
-  bool operator< (cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) < s.GetVar()); }
-  bool operator> (cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) > s.GetVar()); }
+  bool operator< (cssEl& s) { return (GetVarRef() < s.GetVar()); }
+  bool operator> (cssEl& s) { return (GetVarRef() > s.GetVar()); }
   bool operator! () 	    { return !((Variant*)GetNonNullVoidPtr())->toBool(); }
-  bool operator<=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) <= s.GetVar()); }
-  bool operator>=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) >= s.GetVar()); }
-  bool operator==(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) == s.GetVar()); }
-  bool operator!=(cssEl& s) { return (*((Variant*)GetNonNullVoidPtr()) != s.GetVar()); }
-  bool operator&&(cssEl& s) { return (((Variant*)GetNonNullVoidPtr())->toBool() && (Int)s); }
-  bool operator||(cssEl& s) { return (((Variant*)GetNonNullVoidPtr())->toBool() || (Int)s); }
+  bool operator<=(cssEl& s) { return (GetVarRef() <= s.GetVar()); }
+  bool operator>=(cssEl& s) { return (GetVarRef() >= s.GetVar()); }
+  bool operator==(cssEl& s) { return (GetVarRef() == s.GetVar()); }
+  bool operator!=(cssEl& s) { return (GetVarRef() != s.GetVar()); }
+  bool operator&&(cssEl& s) { return (GetVarRef().toBool() && (Int)s); }
+  bool operator||(cssEl& s) { return (GetVarRef().toBool() || (Int)s); }
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
-  int	 GetMemberNo(const char* memb) const;
-  cssEl* GetMember(const char* memb) const;
-  cssEl* GetMember(int memb) const;
-  int	 GetMemberFunNo(const char*) const;
-  cssEl* GetMemberFun(const char* memb) const;
-  cssEl* GetMemberFun(int memb) const;
-  cssEl* GetScoped(const char*) const;
+  int	 GetMemberNo(const char* memb) const { return -1; } // never do static lookup!
+  cssEl* GetMemberFmNo(int memb) const;
+  cssEl* GetMemberFmName(const char* memb) const;
+  int	 GetMethodNo(const char*) const { return -1; }
+  cssEl* GetMethodFmNo(int memb) const;
+  cssEl* GetMethodFmName(const char* memb) const;
+  cssEl* GetScoped(const char* nm) const;
 };
 
 

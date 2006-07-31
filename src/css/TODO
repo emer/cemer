@@ -3,6 +3,10 @@ TODO list for CSS:
 ------------------
 Program todo:
 
+- type <css class> doesn't work
+- scoper not working
+
+- figure out PtrAssignPtr in Cptr type operator= funs
 - add quit confirm prompt taChoice
 - prog_args -> args
 - new variant assign that preserves target type
@@ -31,8 +35,6 @@ different things instead of the current lots of commands.
 - document issues about progspaces and class objects refering
 to extern objects, etc.
 
-- script errors in auto-run code cause mutiple-loads of a project!
-
 - extern class objects -- when to call constructor?
 
 - fix gui for: inline's
@@ -52,14 +54,10 @@ to extern objects, etc.
 
 - multi_space has some bugs on exit (dtor).
 
-- register the endl, flush, bin, hex, etc widgets from the stream library
-	in css.  what type are they?  what do they do?
 - also register the taLeafItr too.
 
 - initializers for css arrays do not convert variable names into corresponding
 	 values, its a pain in the ass..
-
-- bug when you press C-c after having done a cont several times..
 
 - static member elements (functions and members) 
 	add static_methods and static_members to class type object
@@ -76,9 +74,6 @@ to extern objects, etc.
 	which reads until ')' as text, performs substitution, 
 	replaces text buffer with substituted text, which is then
 	parsed..
-
-- do loop does not allow break, continue (write from scratch a do loop
-	instead of using the while)
 
 - initializer values for classes: just "read" in data
 	and not assumed order like C inits

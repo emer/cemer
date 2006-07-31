@@ -745,7 +745,7 @@ methdname: type scopetype name	{
 	    cssClassType* cls = (cssClassType*)$2.El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)*nm);
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMethodFmName((const char*)*nm);
 	    if(fun == &cssMisc::Void) {
 	      yyerror("member function not declared in class type");
 	      return cssProg::YY_Err; }
@@ -770,7 +770,7 @@ methdname: type scopetype name	{
 	      return cssProg::YY_Err; }
 	    cssClassType* cls = (cssClassType*)$1.El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)cls->name);
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMethodFmName((const char*)cls->name);
 	    if(fun == &cssMisc::Void) {
 	      yyerror("constructor member function not declared in class type");
 	      return cssProg::YY_Err; }
@@ -792,7 +792,7 @@ methdname: type scopetype name	{
 	    cssClassType* cls = (cssClassType*)$1.El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    String nm = "~"; nm += cls->name;
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMemberFun((const char*)nm);
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMethodFmName((const char*)nm);
 	    if(fun == &cssMisc::Void) {
 	      yyerror("destructor member function not declared in class type");
               return cssProg::YY_Err; }
@@ -1366,7 +1366,7 @@ memb_expr:
 membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
                                                   $$.ival = $1; $$.el.Reset(); }
         | primitive getmemb membname '('	{ $$.el.Reset();
-	    int mbno = $1.El()->GetMemberFunNo((const char*)*($3.El()));
+	    int mbno = $1.El()->GetMethodNo((const char*)*($3.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr))
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($3.El()),
@@ -1379,13 +1379,13 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMemberFun((const char*)*($3.El()));
+		cssEl* fun = ths->GetMethodFmName((const char*)*($3.El()));
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  $$.el.SetDirect(fun);
 	      } } }
         | scopetype membname '(' 		{
 	    cssMisc::cur_scope = NULL; $$.el.Reset();
-	    int mbno = $1.El()->GetMemberFunNo((const char*)*($2.El()));
+	    int mbno = $1.El()->GetMethodNo((const char*)*($2.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr))
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($2.El()),
@@ -1398,7 +1398,7 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMemberFun((const char*)*($2.El()));
+		cssEl* fun = ths->GetMethodFmName((const char*)*($2.El()));
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  $$.el.SetDirect(fun);
 	      } } }

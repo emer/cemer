@@ -421,7 +421,7 @@ cssEl* cssTA::operator<<(cssEl& s) {
 	*strm << (Real) s;
       else
 	*strm << (const char*)s;
-      strm->flush();		// always flush in css!
+//       strm->flush();		// always flush in css!
     }
     return this;
   }
@@ -683,7 +683,7 @@ void cssTA::operator=(const cssEl& s) {
     }
     else if(s.GetType() == T_C_Ptr)
       cssMisc::Error(prog, "Assigning typed pointer to non-typed ptr value");
-    else if((s.GetType() == T_String) && (ptr != NULL)) {
+    else if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr != NULL)) {
       *this = s.GetStr();	// use string converter
       if(class_parent != NULL)	class_parent->UpdateAfterEdit();
     }
@@ -776,116 +776,31 @@ cssEl* cssTA::GetElement_impl(TAPtr ths, int i) const {
 }
 
 int cssTA::GetMemberNo(const char* memb) const {
-  if (type_def)
-    return GetMemberNo_impl(*type_def, memb);
-  else return -1;
+  return GetMemberNo_impl(type_def, memb);
 }
 
-cssEl* cssTA::GetMember(const char* memb) const {
-  void* pt = GetVoidPtr();
-  if(pt == NULL) {
-    cssMisc::Error(prog, "GetMember: NULL pointer");
-    return &cssMisc::Void;
-  }
-
-  void* mbr;
-  MemberDef* md = type_def->members.FindNameAddrR(memb, pt, mbr);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member not found:", memb, "in class of type:", (char*)type_def->name);
-    return &cssMisc::Void;
-  }
-
-  return GetMember_impl(md, mbr);
+cssEl* cssTA::GetMemberFmName(const char* memb) const {
+  return GetMemberFmName_impl(type_def, GetVoidPtr(), memb);
 }
 
-cssEl* cssTA::GetMember(int memb) const {
-  void* pt = GetVoidPtr();
-  if(pt == NULL) {
-    cssMisc::Error(prog, "GetMember: NULL pointer");
-    return &cssMisc::Void;
-  }
-
-  MemberDef* md = type_def->members.SafeEl(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type:",
-		    (const char*)type_def->name);
-    return &cssMisc::Void;
-  }
-  void* mbr = md->GetOff(pt);
-  return GetMember_impl(md, mbr);
+cssEl* cssTA::GetMemberFmNo(int memb) const {
+  return GetMemberFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
-int cssTA::GetMemberFunNo(const char* memb) const {
-  int md;
-  type_def->methods.FindName(memb, md);
-  return md;
+int cssTA::GetMethodNo(const char* memb) const {
+  return GetMethodNo_impl(type_def, memb);
 }
 
-cssEl* cssTA::GetMemberFun(const char* memb) const {
-  void* pt = GetVoidPtr();
-  if(pt == NULL) {
-    cssMisc::Error(prog, "GetMemberFun: NULL pointer");
-    return &cssMisc::Void;
-  }
-
-  MethodDef* md = type_def->methods.FindName(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member function not found:", memb, "in class of type:",
-	      type_def->name);
-    return &cssMisc::Void;
-  }
-
-  return GetMemberFun_impl(pt, md, type_def);
+cssEl* cssTA::GetMethodFmName(const char* memb) const {
+  return GetMethodFmName_impl(type_def, GetVoidPtr(), memb);
 }
-cssEl* cssTA::GetMemberFun(int memb) const {
-  void* pt = GetVoidPtr();
-  if(pt == NULL) {
-    cssMisc::Error(prog, "GetMemberFun: NULL pointer");
-    return &cssMisc::Void;
-  }
 
-  MethodDef* md = type_def->methods.SafeEl(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type:",
-	      type_def->name);
-    return &cssMisc::Void;
-  }
-
-  return GetMemberFun_impl(pt, md, type_def);
+cssEl* cssTA::GetMethodFmNo(int memb) const {
+  return GetMethodFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
 cssEl* cssTA::GetScoped(const char* memb) const {
-  EnumDef* ed = type_def->FindEnum(memb);
-  if(ed != NULL) {
-    return new cssInt(ed->enum_no, memb);
-  }
-
-  TypeDef* td = type_def->sub_types.FindName(memb);
-  if(td != NULL) {
-    if(td->DerivesFormal(TA_enum))
-      return new cssTAEnum(td);
-    return new cssTA(NULL, 1, td);
-  }
-
-  void* pt = GetVoidPtr();
-  if(pt == NULL) {
-    cssMisc::Error(prog, "GetScoped: NULL pointer");
-    return &cssMisc::Void;
-  }
-
-  MethodDef* meth = type_def->methods.FindName(memb);
-  if(meth != NULL) {
-    return GetMemberFun_impl(pt, meth, type_def);
-  }
-
-  void* mbr;
-  MemberDef* md = type_def->members.FindNameAddr(memb, pt, mbr);
-  if(md != NULL) {
-    return GetMember_impl(md, mbr);
-  }
-
-  cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type:", type_def->name);
-  return &cssMisc::Void;
+  return GetScoped_impl(type_def, GetVoidPtr(), memb);
 }
 
 // cssTA_Base Functions (do the TAPtr version of the original command)
@@ -998,9 +913,8 @@ cssEl* cssTA_Base::operator[](int i) const {
   return &cssMisc::Void;
 }
 
-cssEl* cssTA_Base::GetMember(const char* memb) const {
+cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
   TAPtr ths = GetTAPtr();
-
   if(ths == NULL) {
     cssMisc::Error(prog, "GetMember: NULL pointer");
     return &cssMisc::Void;
@@ -1008,17 +922,17 @@ cssEl* cssTA_Base::GetMember(const char* memb) const {
 
   void* mbr;
   MemberDef* md = ths->FindMembeR(memb, mbr);
-  if(md == 0) {
+  if(!md) {
     cssMisc::Error(prog, "Member not found:", memb, "in class of type:", (char*)type_def->name);
     return &cssMisc::Void;
   }
 
-  return GetMember_impl(md, mbr);
+  return GetFromTA_impl(md->type, mbr, md->name, md);
 }
 
 cssEl* cssTA_Base::NewOpr() {
   TAPtr nw = taBase::MakeToken(type_def);
-  if(nw == NULL) {
+  if(!nw) {
     cssMisc::Error(prog, "New token of type:", type_def->name, "could not be made");
     return &cssMisc::Void;
   }
@@ -1036,7 +950,6 @@ void cssTA_Base::DelOpr() {
   ptr = NULL;			// no longer point to this..
 }
 
-
 void cssTA_Base::InstallThis(cssProgSpace* ps) {
   TAPtr ths = GetTAPtr();
   if(ths == NULL)
@@ -1044,16 +957,14 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
 
   ps->hard_vars.PushUniqNameNew(this);
 
-  int i;
-  cssEl* tmp;
-  for(i=0; i<type_def->members.size; i++) {
+  for(int i=0; i<type_def->members.size; i++) {
     MemberDef* md = type_def->members.FastEl(i);
-    tmp = GetMember_impl(md, md->GetOff((void*)ths));
+    cssEl* tmp = GetMemberEl_impl(type_def, (void*)ths, md);
     ps->hard_vars.PushUniqNameNew(tmp);
   }
-  for(i=0; i<type_def->methods.size; i++) {
+  for(int i=0; i<type_def->methods.size; i++) {
     MethodDef* md = type_def->methods.FastEl(i);
-    tmp = GetMemberFun_impl((void*)ths, md, type_def);
+    cssEl* tmp = GetMethodEl_impl(type_def, (void*)ths, md);
     ps->hard_funs.PushUniqNameNew(tmp);
   }
 }
@@ -1112,7 +1023,7 @@ void cssTAEnum::operator=(const String& cp) {
 }
 
 void cssTAEnum::operator=(const cssEl& s) {
-  if(s.GetType() == T_String)
+  if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
     *this = s.GetStr();		// use string converter
   else
     val = (Int)s;

@@ -398,21 +398,21 @@ cssEl* cssElPtr::El() const {
     if(dx < 0)	return &cssMisc::Void;
     cssClassInst* cur_th = cssMisc::cur_top->Prog()->CurThis();
     if(cur_th == NULL)
-      return ((cssClassType*)ptr)->GetMember((int)dx);
+      return ((cssClassType*)ptr)->GetMemberFmNo((int)dx);
     else
-      return cur_th->GetMember((int)dx);
+      return cur_th->GetMemberFmNo((int)dx);
   }
   case NVIRT_METHOD: {
     if(dx < 0)	return &cssMisc::Void;
-    return ((cssClassType*)ptr)->GetMemberFun((int)dx);
+    return ((cssClassType*)ptr)->GetMethodFmNo((int)dx);
   }
   case VIRT_METHOD: {
     if(dx < 0)	return &cssMisc::Void; // try for virtual first
     cssClassInst* cur_th = cssMisc::cur_top->Prog()->CurThis();
     if(cur_th == NULL)
-      return ((cssClassType*)ptr)->GetMemberFun((int)dx);
+      return ((cssClassType*)ptr)->GetMethodFmNo((int)dx);
     else
-      return cur_th->GetMemberFun((int)dx);
+      return cur_th->GetMethodFmNo((int)dx);
   }
   case PROG_AUTO:
     if(dx < 0)	return &cssMisc::Void;
@@ -818,48 +818,92 @@ cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
     return new cssVariant(var);
     }
   default:
+    // todo: pass on to tabase
     NopErr("[] on Variant that is not a String or Matrix"); 
   }
   return &cssMisc::Void;
 }
 
-int cssEl::GetMemberNo_impl(const TypeDef& typ, const char* memb) const {
-  int md;
-  typ.members.FindName(memb, md);	// just 1st order search
-  return md;
+int cssEl::GetMemberNo_impl(TypeDef* typ, const char* memb) const {
+  if(typ == NULL) return -1;
+  int mdx;
+  typ->members.FindName(memb, mdx);	// just 1st order search
+  return mdx;
 }
 
-int cssEl::GetMemberFunNo_impl(const TypeDef& typ, const char* memb) const {
-  int md;
-  typ.methods.FindName(memb, md);
-  return md;
+cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
+  if(typ == NULL) {
+    cssMisc::Error(prog, "Type information is NULL in:", name);
+    return &cssMisc::Void;
+  }
+  MemberDef* md = typ->members.SafeEl(memb);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
+    return &cssMisc::Void;
+  }
+  return GetMemberEl_impl(typ, base, md);
 }
 
-cssEl* cssEl::GetMember_impl(const TypeDef& typ, void* base, int memb) const {
-  MemberDef* md = typ.members.SafeEl(memb);
-  if (md == NULL) {
-    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ.name);
+cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) const {
+  if(typ == NULL) {
+    cssMisc::Error(prog, "Type information is NULL in:", name);
+    return &cssMisc::Void;
+  }
+  int mdx;
+  MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
+    return &cssMisc::Void;
+  }
+  return GetMemberEl_impl(typ, base, md);
+}
+
+cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
+  if(base == NULL) {
+    cssMisc::Error(prog, "GetMember: NULL pointer in: ", name);
     return &cssMisc::Void;
   }
   void* mbr = md->GetOff(base);
-  return GetMember_impl(md, mbr);
-}
-
-cssEl* cssEl::GetMember_impl(MemberDef* md, void* mbr) const {
   return GetFromTA_impl(md->type, mbr, md->name, md);
 }
 
-cssEl* cssEl::GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const {
-  MethodDef* md = typ.methods.SafeEl(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member function not found:", String(memb), "in class of type: ", typ.name);
-    return &cssMisc::Void;
-  }
-  return GetMemberFun_impl(base, md, &typ);
+////////////////
+
+int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
+  if(typ == NULL) return -1;
+  int mdx;
+  typ->methods.FindName(meth, mdx);
+  return mdx;
 }
 
-cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md, const TypeDef* td) const {
-  if(td == NULL) td = md->GetOwnerType();
+cssEl* cssEl::GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const {
+  if(typ == NULL) {
+    cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
+    return &cssMisc::Void;
+  }
+  MethodDef* md = typ->methods.SafeEl(meth);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", String(meth), "in class of type: ", typ->name);
+    return &cssMisc::Void;
+  }
+  return GetMethodEl_impl(typ, base, md);
+}
+
+cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) const {
+  if(typ == NULL) {
+    cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
+    return &cssMisc::Void;
+  }
+  int mdx;
+  MethodDef* md = typ->methods.FindName(meth, mdx);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Member function not found:", String(meth), "in class of type: ", typ->name);
+    return &cssMisc::Void;
+  }
+  return GetMethodEl_impl(typ, base, md);
+}
+
+cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
   if(md->stubp != NULL) {
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);
@@ -868,24 +912,38 @@ cssEl* cssEl::GetMemberFun_impl(void* base, MethodDef* md, const TypeDef* td) co
   }
   else {
     cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
-	      "in class of type: ", td->name);
+	      "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
 }
 
-cssEl* cssEl::GetScoped_impl(const TypeDef& typ, void* base, const char* memb) const {
-  EnumDef* ed = typ.FindEnum(memb);
-  if (ed != NULL) {
-    return new cssInt(ed->enum_no);
-  }
-
-  MethodDef* md = typ.methods.FindName(memb);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type: ", typ.name);
+cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
+  if(typ == NULL) {
+    cssMisc::Error(prog, "GetScoped: Type information is NULL in:", name);
     return &cssMisc::Void;
   }
+  EnumDef* ed = typ->FindEnum(memb);
+  if(ed != NULL) {
+    return new cssInt(ed->enum_no, memb); // todo: should be cssCPtr_Enum, right?
+  }
+  TypeDef* td = typ->sub_types.FindName(memb);
+  if(td != NULL) {
+    if(td->DerivesFormal(TA_enum))
+      return new cssTAEnum(td);
+    return new cssTA(NULL, 1, td);
+  }
 
-  return GetMemberFun_impl(base, md, (TypeDef*)&typ);
+  MethodDef* meth = typ->methods.FindName(memb);
+  if(meth != NULL) {
+    return GetMethodEl_impl(typ, base, meth);
+  }
+
+  MemberDef* md = typ->members.FindName(memb);
+  if(md != NULL) {
+    return GetMemberEl_impl(typ, base, md);
+  }
+  cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type:", typ->name);
+  return &cssMisc::Void;
 }
 
 
@@ -1280,11 +1338,11 @@ cssEl::RunStat cssCodeBlock::Do(cssProg* prg) {
   prog = prg;
   if(action == IF_TRUE) {
     cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
-    if((int)*cond == 0) return cssEl::Running;	// do not run!
+    if(!(bool)*cond) return cssEl::Running;	// do not run!
   }
   else if(action == ELSE) {
     cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
-    if((int)*cond != 0) return cssEl::Running;	// do not run!
+    if(((bool)*cond)) return cssEl::Running;	// do not run!
   }
 
   code->AddFrame();		// need to add the new frame first
@@ -1796,6 +1854,15 @@ void* cssCPtr::GetNonNullVoidPtr(int cnt) const {
   return rval;
 }
 
+String cssCPtr::PrintStr() const {
+  String rval = String(GetTypeName())+" "+ name+" --> ";
+  if(GetVoidPtr() != NULL)
+    rval += GetStr();
+  else
+    rval += "NULL";
+  return rval;
+}
+
 void cssCPtr::operator=(const cssEl& s) {
   if(s.GetType() == T_C_Ptr) 		PtrAssignPtr((cssCPtr*)&s);
   else {
@@ -1835,7 +1902,7 @@ void cssCPtr::PtrAssignPtr(cssCPtr* s) {
     ptr = s->ptr;
     SetClassParent(s->class_parent);
     if((prog != NULL) && (prog->top->debug) && (tp != s_tp))
-	 cssMisc::Warning(prog, "Warning: assigning different ptr types");
+      cssMisc::Warning(prog, "Warning: assigning different ptr types");
   }
   else if(ptr_cnt == s->ptr_cnt + 1) {
     if(!ROCheck()) return;
@@ -2458,12 +2525,12 @@ void cssInst::SetInst(const cssElPtr& it) {
       cssEl::SetRefElPtr(inst, nw_ptr);
       return;
     }
-    else {			// otherwise just set direct for efficiency!!
-      cssElPtr nw_ptr;
-      nw_ptr.SetDirect(it.El());
-      cssEl::SetRefElPtr(inst, nw_ptr);
-      return;
-    }
+//     else {			// otherwise just set direct for efficiency!!
+//       cssElPtr nw_ptr;
+//       nw_ptr.SetDirect(it.El());
+//       cssEl::SetRefElPtr(inst, nw_ptr);
+//       return;
+//     }
   } else if ((it.ptr_type == cssElPtr::PROG_AUTO) ||
 	  (it.ptr_type == cssElPtr::CLASS_MEMBER) ||
 	  (it.ptr_type == cssElPtr::NVIRT_METHOD) ||

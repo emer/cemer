@@ -35,12 +35,6 @@ using namespace std;
 void QConsole::clear() {
   QTextEdit::clear();
   curPromptPos = 0;
-  displayPrompt(true);		// force
-}
-
-//Reset the console
-void QConsole::reset() {
-  clear();
 #ifdef __APPLE__
   QFont font("Andale Mono", 10);
 #else
@@ -52,17 +46,25 @@ void QConsole::reset() {
   fontWidth = fm.charWidth("m",0);
   if(fontHeight < 5) fontHeight = 5;
   if(fontWidth < 5) fontWidth = 5;
-  maxLines = 40;
-  maxCols = 80;
-  //init attributes
-  historyIndex = 0;
-  history.clear();
-  recordedScript.clear();
+  maxLines = (height() / fontHeight) - 1;
+  maxCols = (width() / fontWidth) - 1;
+  if(maxLines < 10) maxLines = 10;
+  if(maxCols < 10) maxCols = 10;
   setAcceptRichText(false);	// just plain
   noPager = false;
   quitPager = false;
   contPager = false;
   curOutputLn = 0;
+  displayPrompt(true);		// force
+}
+
+//Reset the console
+void QConsole::reset() {
+  clear();
+  //init attributes
+  historyIndex = 0;
+  history.clear();
+  recordedScript.clear();
   promptDisp = false;
 }
 // todo: get height,width,font, etc from styles and actual screen size..
@@ -102,10 +104,12 @@ void QConsole::setPrompt(QString newPrompt, bool display) {
 
 void QConsole::flushOutput() {
   if(stdoutInterceptor) {
+    cout.flush();
     setTextColor(outColor);
     stdDisplay(stdoutInterceptor->textIStream());
   }
   if(stderrInterceptor) {
+    cerr.flush();
     setTextColor(errColor);
     stdDisplay(stderrInterceptor->textIStream());
   }
@@ -164,12 +168,12 @@ void QConsole::stdDisplay(QTextStream* s) {
 }
 
 void QConsole::resizeEvent(QResizeEvent* e) {
-  maxLines = (width() / fontHeight) - 1;
-  maxCols = (height() / fontWidth) - 1;
+  maxLines = (height() / fontHeight) - 1;
+  maxCols = (width() / fontWidth) - 1;
   if(maxLines < 10) maxLines = 10;
   if(maxCols < 10) maxCols = 10;
   QTextEdit::resizeEvent(e);
-  cerr << "console resize: font height: " << fontHeight << ", wd: " << fontWidth
+  cerr << "console; font height: " << fontHeight << ", wd: " << fontWidth
        << ", lines: " << maxLines << ", cols: " << maxCols << endl;
 }
 
@@ -352,8 +356,6 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
 
 int QConsole::saveContents(QString fileName) {
   quitPager = true;
-  cout.flush();
-  cerr.flush();
   flushOutput();		// get anything pending
   QCoreApplication::processEvents();
   quitPager = false;

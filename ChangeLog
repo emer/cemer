@@ -1,3 +1,17 @@
+2006-07-30  Randall O'Reilly  <oreilly@duo.local>
+
+	* src/css/css_machine.h: added GetPtrType() call to pass the type
+	of the object pointed to by pointer-types.  This should allow
+	special T_String conversions to work for all versions of Strings -- just check GetPtrType().
+
+	* src/css/css_basic_types.h, .cpp, c_ptr_types: fixed variant GetMember/Method functions
+	to pass through to the taBase and String types where appropriate, otherwise the variant
+	funs are called.  Never uses the caching No calls.
+
+	* src/css/css_machine, all other css .h: cleaned up GetMemberXX funs and GetMemberFun->
+	GetMethodXX.  All code should just find the TypeDef and base and call the associated
+	_impl functions.
+
 2005-12-17 01:33  baisa
 
 	* pdp4.0/trunk/aminclude.am,

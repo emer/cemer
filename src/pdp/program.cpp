@@ -989,7 +989,7 @@ ProgramRef 		Program::step_prog;
 
 void Program::Initialize() {
   flags = PF_NONE;
-  prog_objs.SetBaseType(&TA_taOBase);
+  objs.SetBaseType(&TA_taOBase);
   ret_val = 0;
   m_dirty = true; 
 }
@@ -1000,7 +1000,7 @@ void Program::Destroy()	{
 
 void Program::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(prog_objs, this);
+  taBase::Own(objs, this);
   taBase::Own(args, this);
   taBase::Own(vars, this);
   taBase::Own(init_els, this);
@@ -1014,7 +1014,7 @@ void Program::CutLinks() {
   init_els.CutLinks();
   vars.CutLinks();
   args.CutLinks();
-  prog_objs.CutLinks();
+  objs.CutLinks();
   inherited::CutLinks();
 }
 
@@ -1024,7 +1024,7 @@ void Program::Copy_(const Program& cp) {
     script->ClearAll();
     script->prog_vars.Reset();
   }
-  prog_objs = cp.prog_objs;
+  objs = cp.objs;
   args = cp.args;
   vars = cp.vars;
   init_els = cp.init_els;
@@ -1313,7 +1313,7 @@ void  Program::UpdateProgVars() {
   script->prog_vars.Push(el); //refs
   el = new cssCPtr_int(&ret_val, 1, "ret_val");
   script->prog_vars.Push(el); //refs
-  el = new cssTA_Base(&prog_objs, 1, prog_objs.GetTypeDef(), "prog_objs");
+  el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
   script->prog_vars.Push(el); //refs
 
   // add new in the program

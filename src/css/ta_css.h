@@ -31,7 +31,7 @@ public:
   const char*	GetTypeName() const	{ return type_def->name; }
   cssEl*	GetTypeObject() const;
   cssTypes	GetType() const		{ return T_TA; }
-  cssTypes	GetPtrType() 		{ return T_TA; }
+  cssTypes	GetPtrType() const	{ return T_TA; }
 
   String	PrintStr() const;
   String	PrintFStr() const;
@@ -116,11 +116,11 @@ public:
 
   cssEl* operator[](int) const;
   int	 GetMemberNo(const char* memb) const;
-  cssEl* GetMember(const char* memb) const;
-  cssEl* GetMember(int memb) const;
-  int	 GetMemberFunNo(const char* memb) const;
-  cssEl* GetMemberFun(const char* memb) const;
-  cssEl* GetMemberFun(int memb) const;
+  cssEl* GetMemberFmName(const char* memb) const;
+  cssEl* GetMemberFmNo(int memb) const;
+  int	 GetMethodNo(const char* memb) const;
+  cssEl* GetMethodFmName(const char* memb) const;
+  cssEl* GetMethodFmNo(int memb) const;
   cssEl* GetScoped(const char*) const;
 };
 
@@ -182,8 +182,7 @@ public:
   void UpdateAfterEdit();
 
   cssEl* operator[](int) const;
-  cssEl* GetMember(const char* memb) const;
-  cssEl* GetMember(int memb) const 	{ return cssTA::GetMember(memb); }
+  cssEl* GetMemberFmName(const char* memb) const; // use recursive path!
   cssEl* NewOpr();		// only ta_base get a new operator..
   void 	 DelOpr();		// and a del operator
 

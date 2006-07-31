@@ -49,7 +49,7 @@ cssInt::operator void**() const {
 //////////////////////////
 
 void cssChar::operator=(const cssEl& t) {
-  if(t.GetType() == T_String) {
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
     *this = t.GetStr();		// use string converter
   }
   else {
@@ -85,16 +85,29 @@ cssEl* cssString::operator[](int idx) const {
   return new cssString(nw_val);
 }
 
-int cssString::GetMemberFunNo(const char* memb) const {
-  return GetMemberFunNo_impl(TA_taString, memb);
+cssString::operator bool() const {
+  if(val == "true")
+    return true;
+  else if(val == "false")
+    return false;
+  else
+    return (Int)*this;
 }
 
-cssEl* cssString::GetMemberFun(int memb) const {
-  return GetMemberFun_impl(TA_taString, (void*)&val, memb);
+int cssString::GetMethodNo(const char* memb) const {
+  return GetMethodNo_impl(&TA_taString, memb);
+}
+
+cssEl* cssString::GetMethodFmNo(int memb) const {
+  return GetMethodFmNo_impl(&TA_taString, (void*)&val, memb);
+}
+
+cssEl* cssString::GetMethodFmName(const char* memb) const {
+  return GetMethodFmName_impl(&TA_taString, (void*)&val, memb);
 }
 
 cssEl* cssString::GetScoped(const char* memb) const {
-  return GetScoped_impl(TA_taString, (void*)&val, memb);
+  return GetScoped_impl(&TA_taString, (void*)&val, memb);
 }
 
 cssString::operator ostream*() const {
@@ -175,7 +188,7 @@ String cssBool::GetStr() const {
 }
 
 void cssBool::operator=(const cssEl& s) {
-  if(s.GetType() == T_String)
+  if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
     *this = s.GetStr();		// use string converter
   else
     val = (Int)s;
@@ -194,6 +207,35 @@ void cssBool::operator=(const String& cp) {
 /////////////////////////
 //  cssVariant	       //
 /////////////////////////
+
+cssEl::cssTypes cssVariant::GetPtrType() const {
+  switch(val.type()) {
+  case Variant::T_Invalid:
+    return T_Variant;
+  case Variant::T_Bool:
+    return T_Bool;
+  case Variant::T_Int:
+    return T_Int;
+  case Variant::T_UInt:
+    return T_Int;
+  case Variant::T_Int64:
+    return T_LongLong;
+  case Variant::T_UInt64:
+    return T_LongLong;
+  case Variant::T_Double:
+    return T_Real;
+  case Variant::T_Char:
+    return T_Char;
+  case Variant::T_String:
+    return T_String;
+  case Variant::T_Ptr:
+    return T_C_Ptr;
+  case Variant::T_Base:
+  case Variant::T_Matrix:
+    return T_TA;
+  }
+  return T_Variant;
+}
 
 cssVariant::operator TAPtr() const {
   if (val.isBaseType()) 
@@ -271,74 +313,54 @@ bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
 bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && (s.GetVar()).toBool()); }
 bool cssVariant::operator||(cssEl& s) { return (val.toBool() || (s.GetVar()).toBool()); }
 
-int cssVariant::GetMemberFunNo(const char* memb) const {
-  // note: only intrinsic Variant functions can be accessed by num
-  return GetMemberFunNo_impl(TA_Variant, memb);
+cssEl* cssVariant::GetMemberFmNo(int memb) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if((val.type() == Variant::T_String) || val.isBaseType()) {
+    return GetMemberFmNo_impl(typ, base, memb);
+  }
+  return GetMemberFmNo_impl(&TA_Variant, base, memb);
 }
 
-cssEl* cssVariant::GetMemberFun(int memb) const {
-  // note: only intrinsic Variant functions can be accessed by num
-  void* base = (void*)&val; // unconstify
-  return GetMemberFun_impl(TA_Variant, base, memb);
+cssEl* cssVariant::GetMemberFmName(const char* memb) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if((val.type() == Variant::T_String) || val.isBaseType()) {
+    return GetMemberFmName_impl(typ, base, memb);
+  }
+  return GetMemberFmName_impl(&TA_Variant, base, memb);
 }
 
-cssEl* cssVariant::GetMemberFun(const char* nm) const {
-  // note: if dynamic, then probably not an intrinsic, so only look to types
-  TypeDef* td = NULL;
-  void* base = (void*)val.addrData(); // unconstify
-  switch (val.type()) {
-  case Variant::T_String:
-    td = &TA_taString;
-    break;
-  case Variant::T_Base:
-  case Variant::T_Matrix: {
-    taBase* tab = val.toBase();
-    if (tab) {
-      td = tab->GetTypeDef();
-      base = tab; // base is content, not addr of content
-    } else {
-      cssMisc::Error(prog, "GetMemberFun: NULL pointer");
-      return &cssMisc::Void;
-    }
-    } break;
-  default: break;
+cssEl* cssVariant::GetMethodFmNo(int memb) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if((val.type() == Variant::T_String) || val.isBaseType()) {
+    return GetMethodFmNo_impl(typ, base, memb);
   }
-  if (td)
-    return GetMemberFun_impl(*td, (void*)base, GetMemberFunNo_impl(*td, nm));
-  else {
-    NopErr(".,->"); 
-    return &cssMisc::Void;
-  }
+  return GetMethodFmNo_impl(&TA_Variant, base, memb);
 }
 
-cssEl* cssVariant::GetMember(const char* memb) const {
-  // note: if dynamic, then probably not an intrinsic, so only look to types
-  TypeDef* td = NULL;
-  void* base = (void*)val.addrData(); // unconstify
-  switch (val.type()) {
-  case Variant::T_Base:
-  case Variant::T_Matrix: {
-    taBase* tab = val.toBase();
-    if (tab) {
-      td = tab->GetTypeDef();
-      base = tab; // base is content, not addr of content
-    } else {
-      cssMisc::Error(prog, "GetMember: NULL pointer");
-      return &cssMisc::Void;
-    }
-    } break;
-  default: break;
+cssEl* cssVariant::GetMethodFmName(const char* memb) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if((val.type() == Variant::T_String) || val.isBaseType()) {
+    return GetMethodFmName_impl(typ, base, memb);
   }
-  if (td)
-    return GetMember_impl(*td, (void*)base, GetMemberNo_impl(*td, memb));
-  else {
-    NopErr(".,->"); 
-    return &cssMisc::Void;
-  }
+  return GetMethodFmName_impl(&TA_Variant, base, memb);
 }
 
 cssEl* cssVariant::GetScoped(const char* memb) const {
-  return GetScoped_impl(TA_Variant, (void*)&val, memb);
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if((val.type() == Variant::T_String) || val.isBaseType()) {
+    return GetScoped_impl(typ, base, memb);
+  }
+  return GetScoped_impl(&TA_Variant, base, memb);
 }
 
 cssEl* cssVariant::operator[](int idx) const {
@@ -469,6 +491,7 @@ cssElPtr& cssPtr::GetOprPtr() const {
 }
 
 int cssPtr::GetMemberNo(const char* memb) const {
+  // even if ptr is null, check type
   if(ptr.El() == &cssMisc::Void) {
     if(el_type->GetType() == T_ClassType)
       return el_type->GetMemberNo(memb);
@@ -477,41 +500,42 @@ int cssPtr::GetMemberNo(const char* memb) const {
   return ptr.El()->GetMemberNo(memb);
 }
 
-int cssPtr::GetMemberFunNo(const char* memb) const {
+int cssPtr::GetMethodNo(const char* memb) const {
+  // even if ptr is null, check type
   if(ptr.El() == &cssMisc::Void) {
     if(el_type->GetType() == T_ClassType)
-      return el_type->GetMemberFunNo(memb);
+      return el_type->GetMethodNo(memb);
     return -1;
   }
-  return ptr.El()->GetMemberFunNo(memb);
+  return ptr.El()->GetMethodNo(memb);
 }
 
-cssEl* cssPtr::GetMemberFun(const char* memb) const {
+cssEl* cssPtr::GetMethodFmName(const char* memb) const {
   if(el_type->GetType() == T_ClassType) {
-    cssEl* rval = el_type->GetMemberFun(memb);
+    cssEl* rval = el_type->GetMethodFmName(memb);
     if(rval->GetType() == T_MbrScriptFun) {
       cssMbrScriptFun* mbrf = (cssMbrScriptFun*)rval;
       if(mbrf->is_virtual)
-	return ptr.El()->GetMemberFun(memb); // get from the pointer itself
+	return ptr.El()->GetMethodFmName(memb); // get from the pointer itself
       else
 	return rval;		// get from the declared class of the ptr
     }
   }
-  return ptr.El()->GetMemberFun(memb);
+  return ptr.El()->GetMethodFmName(memb);
 }
 
-cssEl* cssPtr::GetMemberFun(int memb) const {
+cssEl* cssPtr::GetMethodFmNo(int memb) const {
   if(el_type->GetType() == T_ClassType) {
-    cssEl* rval = el_type->GetMemberFun(memb);
+    cssEl* rval = el_type->GetMethodFmNo(memb);
     if(rval->GetType() == T_MbrScriptFun) {
       cssMbrScriptFun* mbrf = (cssMbrScriptFun*)rval;
       if(mbrf->is_virtual)
-	return ptr.El()->GetMemberFun(memb); // get from the pointer itself
+	return ptr.El()->GetMethodFmNo(memb); // get from the pointer itself
       else
 	return rval;		// get from the declared class of the ptr
     }
   }
-  return ptr.El()->GetMemberFun(memb);
+  return ptr.El()->GetMethodFmNo(memb);
 }
 
 //////////////////////////
@@ -865,11 +889,11 @@ int cssRef::GetMemberNo(const char* memb) const {
   return ptr.El()->GetMemberNo(memb);
 }
 
-int cssRef::GetMemberFunNo(const char* memb) const {
+int cssRef::GetMethodNo(const char* memb) const {
   if(ptr.El() == &cssMisc::Void) {
     return -1;
   }
-  return ptr.El()->GetMemberFunNo(memb);
+  return ptr.El()->GetMethodNo(memb);
 }
 
 //////////////////////////
@@ -1010,7 +1034,7 @@ void cssEnum::operator=(const String& cp) {
 }
 
 void cssEnum::operator=(const cssEl& s) {
-  if(s.GetType() == T_String)
+  if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
     *this = s.GetStr();		// use string converter
   else
     val = (Int)s;
@@ -1506,10 +1530,11 @@ String cssClassType::OptionAfter_impl(const String& optns, const char* opt) cons
 }
 
 void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
-  if (cmt == cssMisc::VoidElPtr)
-    return;
   member_desc.EnforceSize(members->size);
   member_opts.EnforceSize(members->size);
+
+  if (cmt == cssMisc::VoidElPtr)
+    return;
 
   int mbridx;
 
@@ -1532,7 +1557,7 @@ int cssClassType::GetMemberNo(const char* memb) const {
     return -1;
   return rval.dx;
 }
-cssEl* cssClassType::GetMember(const char* memb) const {
+cssEl* cssClassType::GetMemberFmName(const char* memb) const {
   cssMisc::Warning(prog, "Getting member:",memb,"from class type (not inst)", GetTypeName());
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
@@ -1542,7 +1567,7 @@ cssEl* cssClassType::GetMember(const char* memb) const {
   }
   return rval.El();
 }
-cssEl* cssClassType::GetMember(int memb) const {
+cssEl* cssClassType::GetMemberFmNo(int memb) const {
   cssEl* rval = members->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class:", name, "of type:",
@@ -1552,13 +1577,13 @@ cssEl* cssClassType::GetMember(int memb) const {
   return rval;
 }
 
-int cssClassType::GetMemberFunNo(const char* memb) const {
+int cssClassType::GetMethodNo(const char* memb) const {
   cssElPtr rval = methods->FindName(memb);
   if(rval == 0)
     return -1;
   return rval.dx;
 }
-cssEl* cssClassType::GetMemberFun(const char* memb) const {
+cssEl* cssClassType::GetMethodFmName(const char* memb) const {
   cssElPtr rval = methods->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
@@ -1573,7 +1598,7 @@ cssEl* cssClassType::GetMemberFun(const char* memb) const {
   }
   return rval.El();
 }
-cssEl* cssClassType::GetMemberFun(int memb) const {
+cssEl* cssClassType::GetMethodFmNo(int memb) const {
   cssEl* rval = methods->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member function not found:", String(memb), "in class:", name, "of type:",
@@ -1728,7 +1753,7 @@ int cssClassInst::GetMemberNo(const char* memb) const {
     return -1;
   return rval.dx;
 }
-cssEl* cssClassInst::GetMember(const char* memb) const {
+cssEl* cssClassInst::GetMemberFmName(const char* memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member not found:", memb, "in class:", name, "of type:",
@@ -1737,7 +1762,7 @@ cssEl* cssClassInst::GetMember(const char* memb) const {
   }
   return rval.El();
 }
-cssEl* cssClassInst::GetMember(int memb) const {
+cssEl* cssClassInst::GetMemberFmNo(int memb) const {
   cssEl* rval = members->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class:", name, "of type:",
@@ -1747,21 +1772,21 @@ cssEl* cssClassInst::GetMember(int memb) const {
   return rval;
 }
 
-int cssClassInst::GetMemberFunNo(const char* memb) const {
+int cssClassInst::GetMethodNo(const char* memb) const {
   if(type_def != &cssMisc::VoidClassType)
-    return type_def->GetMemberFunNo(memb);
+    return type_def->GetMethodNo(memb);
   return -1;
 }
-cssEl* cssClassInst::GetMemberFun(const char* memb) const {
+cssEl* cssClassInst::GetMethodFmName(const char* memb) const {
   if(type_def != &cssMisc::VoidClassType)
-    return type_def->GetMemberFun(memb);
+    return type_def->GetMethodFmName(memb);
   cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
 		 GetTypeName());
   return &cssMisc::Void;
 }
-cssEl* cssClassInst::GetMemberFun(int memb) const {
+cssEl* cssClassInst::GetMethodFmNo(int memb) const {
   if(type_def != &cssMisc::VoidClassType)
-    return type_def->GetMemberFun(memb);
+    return type_def->GetMethodFmNo(memb);
   cssMisc::Error(prog, "Member function not found:", String(memb), "in class:", name, "of type:",
 		 GetTypeName());
   return &cssMisc::Void;

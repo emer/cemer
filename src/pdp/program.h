@@ -485,7 +485,7 @@ public:
   static ProgramRef	step_prog; // #SHOW the step prog (NULL if not stepping)
   
   ProgFlags		flags;  // control flags, for display and execution control
-  taBase_List		prog_objs; // sundry objects that are used in this program
+  taBase_List		objs; // #AKA_prog_objs sundry objects that are used in this program
   ProgVar_List		args; // global variables that are parameters (arguments) for callers
   ProgVar_List		vars; // global variables accessible outside and inside script
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 

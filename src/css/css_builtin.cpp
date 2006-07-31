@@ -277,9 +277,9 @@ static cssEl* cssElCFun_de_array_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_points_at_stub(int, cssEl* arg[]) {
   if(arg[2]->GetType() == cssEl::T_String)
-    return (arg[1])->GetMember((const char*)*arg[2]);
+    return (arg[1])->GetMemberFmName((const char*)*arg[2]);
   else
-    return (arg[1])->GetMember((int)*arg[2]);
+    return (arg[1])->GetMemberFmNo((int)*arg[2]);
 }
 static cssEl* cssElCFun_scoper_stub(int, cssEl* arg[]) {
   return (arg[1])->GetScoped(*arg[2]);
@@ -289,9 +289,9 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   cssEl* mbfun;
   if(arg[2]->GetType() == cssEl::T_String)
-    mbfun = (arg[1])->GetMemberFun((const char*)*arg[2]);
+    mbfun = (arg[1])->GetMethodFmName((const char*)*arg[2]);
   else
-    mbfun = (arg[1])->GetMemberFun((int)*arg[2]);
+    mbfun = (arg[1])->GetMethodFmNo((int)*arg[2]);
   if((mbfun->GetType() != cssEl::T_MbrCFun) && (mbfun->GetType() != cssEl::T_MbrScriptFun)) {
     if(mbfun != &cssMisc::Void)
       cssEl::Done((cssEl*)mbfun);

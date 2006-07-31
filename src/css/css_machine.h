@@ -593,13 +593,22 @@ public:
   virtual cssEl* operator-()       { NopErr("-"); return &cssMisc::Void; } // unary minus
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator[](int) const { NopErr("[]"); return &cssMisc::Void; }
+
   virtual int	 GetMemberNo(const char*) const { NopErr(".,->"); return -1; }
-  virtual cssEl* GetMember(const char* nm) const  { return GetMember(GetMemberNo(nm));  }
-  virtual cssEl* GetMember(int) const  { NopErr(".,->"); return &cssMisc::Void; }
-  virtual int	 GetMemberFunNo(const char*) const { NopErr(".,->()"); return -1; }
-  virtual cssEl* GetMemberFun(const char* nm) const { return GetMemberFun(GetMemberFunNo(nm)); }
-  virtual cssEl* GetMemberFun(int) const { NopErr(".,->()"); return &cssMisc::Void; }
-  virtual cssEl* GetScoped(const char*) const { NopErr("::"); return &cssMisc::Void; }
+  // this is called during parsing to compile in an index for the member, instead of looking up by name -- return -1 if member lookup should be dynamic (e.g., if a pointer and type might change later)
+  virtual cssEl* GetMemberFmNo(int) const  { NopErr(".,->"); return &cssMisc::Void; }
+  // subsequent function to actually get the member el from the number
+  virtual cssEl* GetMemberFmName(const char* nm) const  { NopErr(".,->"); return &cssMisc::Void; }
+  // dynamic version that takes the name and gets the el
+
+  virtual int	 GetMethodNo(const char*) const { NopErr(".,->()"); return -1; }
+  // see above for members: get index to method for strong types
+  virtual cssEl* GetMethodFmNo(int) const { NopErr(".,->()"); return &cssMisc::Void; }
+  virtual cssEl* GetMethodFmName (const char* nm) const { NopErr(".,->()"); return &cssMisc::Void; }
+
+  virtual cssEl* GetScoped(const char* nm) const { NopErr("::"); return &cssMisc::Void; }
+  // get  a scoped type element (type::thing)
+
   virtual cssEl* NewOpr();
   virtual void 	 DelOpr()	{ NopErr("delete"); } // delete operator
 
@@ -624,13 +633,18 @@ public:
   virtual void operator^=(cssEl&) { NopErr("^="); }
   virtual void operator|=(cssEl&) { NopErr("|="); }
 protected:
-  int	 GetMemberNo_impl(const TypeDef& typ, const char*) const;
-  int	 GetMemberFunNo_impl(const TypeDef& typ, const char*) const;
-  cssEl* GetMember_impl(const TypeDef& typ, void* base, int memb) const;
-  cssEl* GetMember_impl(MemberDef* md, void* mbr) const;
-  cssEl* GetMemberFun_impl(const TypeDef& typ, void* base, int memb) const;
-  cssEl* GetMemberFun_impl(void* base, MethodDef* md, const TypeDef* td) const;
-  cssEl* GetScoped_impl(const TypeDef& typ, void* base, const char*) const;
+  int	 GetMemberNo_impl(TypeDef* typ, const char*) const;
+  cssEl* GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const;
+  cssEl* GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) const;
+  cssEl* GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const;
+
+  int	 GetMethodNo_impl(TypeDef* typ, const char* meth) const;
+  cssEl* GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const;
+  cssEl* GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) const;
+  cssEl* GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const;
+
+  cssEl* GetScoped_impl(TypeDef* typ, void* base, const char* nm) const;
+
   cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
   virtual cssEl* GetFromTA_impl(TypeDef* td, void* itm, const char* nm, 
     MemberDef* md = NULL) const; // helper for getting members and array elements
@@ -997,12 +1011,10 @@ public:
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return 0; } // use for ptrs
   cssTypes 	GetType() const		{ return T_C_Ptr; }
-  cssTypes	GetPtrType() 		{ return T_C_Ptr; } // still just a c ptr
+  cssTypes	GetPtrType() const	{ return T_C_Ptr; } // still just a c ptr
   const char*	GetTypeName() const 	{ return "(C_Ptr)"; }
-
-  String 	PrintStr() const
-  { return String(GetTypeName())+" "+name + " --> " + String((long)ptr); }
-  String	PrintFStr() const { return String((long)ptr); }
+  String 	PrintStr() const;
+  String	PrintFStr() const 	{ return GetStr(); }
 
   // constructors
   void		Constr();
