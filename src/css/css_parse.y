@@ -1368,7 +1368,9 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
         | primitive getmemb membname '('	{ $$.el.Reset();
 	    int mbno = $1.El()->GetMethodNo((const char*)*($3.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr))
+	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr) &&
+		 ($1.El()->GetType() != cssEl::T_Variant) &&
+		 (String($1.El()->GetTypeName()) != String("(c_Variant)")))
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($3.El()),
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $3, cssBI::member_fun); }
@@ -1387,7 +1389,9 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	    cssMisc::cur_scope = NULL; $$.el.Reset();
 	    int mbno = $1.El()->GetMethodNo((const char*)*($2.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr))
+	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr) &&
+		 ($1.El()->GetType() != cssEl::T_Variant) &&
+		 (String($1.El()->GetTypeName()) != String("(c_Variant)")))
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($2.El()),
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $2, cssBI::member_fun); }

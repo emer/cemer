@@ -317,50 +317,65 @@ cssEl* cssVariant::GetMemberFmNo(int memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
-  if((val.type() == Variant::T_String) || val.isBaseType()) {
-    return GetMemberFmNo_impl(typ, base, memb);
+  if(val_r.type() == Variant::T_String) {
+    return GetMemberFmNo_impl(typ, &val_r.getString(), memb);
   }
-  return GetMemberFmNo_impl(&TA_Variant, base, memb);
+  else if(val_r.isBaseType()) {
+    return GetMemberFmNo_impl(typ, val_r.toBase(), memb);
+  }
+  return GetMemberFmNo_impl(&TA_Variant, &val_r, memb);
 }
 
 cssEl* cssVariant::GetMemberFmName(const char* memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
-  if((val.type() == Variant::T_String) || val.isBaseType()) {
-    return GetMemberFmName_impl(typ, base, memb);
+  if(val_r.type() == Variant::T_String) {
+    return GetMemberFmName_impl(typ, &val_r.getString(), memb);
   }
-  return GetMemberFmName_impl(&TA_Variant, base, memb);
+  else if(val_r.isBaseType()) {
+    return GetMemberFmName_impl(typ, val_r.toBase(), memb);
+  }
+  return GetMemberFmName_impl(&TA_Variant, &val_r, memb);
 }
 
 cssEl* cssVariant::GetMethodFmNo(int memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
-  if((val.type() == Variant::T_String) || val.isBaseType()) {
-    return GetMethodFmNo_impl(typ, base, memb);
+  if(val_r.type() == Variant::T_String) {
+    return GetMethodFmNo_impl(typ, &val_r.getString(), memb);
   }
-  return GetMethodFmNo_impl(&TA_Variant, base, memb);
+  else if(val_r.isBaseType()) {
+    return GetMethodFmNo_impl(typ, val_r.toBase(), memb);
+  }
+  return GetMethodFmNo_impl(&TA_Variant, &val_r, memb);
 }
 
 cssEl* cssVariant::GetMethodFmName(const char* memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
-  if((val.type() == Variant::T_String) || val.isBaseType()) {
-    return GetMethodFmName_impl(typ, base, memb);
+  if(val_r.type() == Variant::T_String) {
+    return GetMethodFmName_impl(typ, &val_r.getString(), memb);
   }
-  return GetMethodFmName_impl(&TA_Variant, base, memb);
+  else if(val_r.isBaseType()) {
+    return GetMethodFmName_impl(typ, val_r.toBase(), memb);
+  }
+  return GetMethodFmName_impl(&TA_Variant, &val_r, memb);
 }
 
 cssEl* cssVariant::GetScoped(const char* memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
-  if((val.type() == Variant::T_String) || val.isBaseType()) {
-    return GetScoped_impl(typ, base, memb);
+  if(val_r.type() == Variant::T_String) {
+    return GetScoped_impl(typ, &val_r.getString(), memb);
   }
-  return GetScoped_impl(&TA_Variant, base, memb);
+  else if(val_r.isBaseType()) {
+    return GetScoped_impl(typ, val_r.toBase(), memb);
+  }
+  return GetScoped_impl(&TA_Variant, &val_r, memb);
 }
 
 cssEl* cssVariant::operator[](int idx) const {

@@ -1,3 +1,8 @@
+2006-07-30  Randall C. O'Reilly  <oreilly@shadow.colorado.edu>
+
+	* src/ta/ta_variant.h: moved String& getString() to public -- needed to actually
+	modify the string itself inside a variant using string member functions!!
+
 2006-07-30  Randall O'Reilly  <oreilly@duo.local>
 
 	* src/css/css_machine.h: added GetPtrType() call to pass the type

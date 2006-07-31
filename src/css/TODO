@@ -3,15 +3,21 @@ TODO list for CSS:
 ------------------
 Program todo:
 
+- variants are too malleable: my_net = "true" changes type to string!
+  (related to getString ref fun need): need a type locked guy?
+
+- cmd type variant needs to hand off to appropriate thing
 - type <css class> doesn't work
-- scoper not working
+
+- lots of enum stuff: getscoped returns wrong type, etc
+
+- cmdshell should print out the prompt! displayPrompt(true);
 
 - figure out PtrAssignPtr in Cptr type operator= funs
 - add quit confirm prompt taChoice
 - prog_args -> args
 - new variant assign that preserves target type
 - convert enums to c_ptr_enum
-- fix CPtr_String cvt to bool/enum!
 
 ------------------
 Immediate:

@@ -46,7 +46,7 @@ void QConsole::clear() {
   fontWidth = fm.charWidth("m",0);
   if(fontHeight < 5) fontHeight = 5;
   if(fontWidth < 5) fontWidth = 5;
-  maxLines = (height() / fontHeight) - 1;
+  maxLines = (height() / fontHeight) - 4;
   maxCols = (width() / fontWidth) - 1;
   if(maxLines < 10) maxLines = 10;
   if(maxCols < 10) maxCols = 10;
@@ -168,13 +168,13 @@ void QConsole::stdDisplay(QTextStream* s) {
 }
 
 void QConsole::resizeEvent(QResizeEvent* e) {
-  maxLines = (height() / fontHeight) - 1;
+  maxLines = (height() / fontHeight) - 4;
   maxCols = (width() / fontWidth) - 1;
   if(maxLines < 10) maxLines = 10;
   if(maxCols < 10) maxCols = 10;
   QTextEdit::resizeEvent(e);
-  cerr << "console; font height: " << fontHeight << ", wd: " << fontWidth
-       << ", lines: " << maxLines << ", cols: " << maxCols << endl;
+//   cerr << "console; font height: " << fontHeight << ", wd: " << fontWidth
+//        << ", lines: " << maxLines << ", cols: " << maxCols << endl;
 }
 
 // Reimplemented key press event

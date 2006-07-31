@@ -121,6 +121,7 @@ public:
   char 			toChar() const;
   void* 		toPtr() const; // must be a void*, Base, or Matrix, otherwise returns NULL
   String 		toString() const;
+  String& 		getString() { return *((String*)(&d.str));} // #IGNORE
 #ifndef NO_TA_BASE
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
@@ -387,7 +388,6 @@ protected:
   
   //note: following gets ONLY valid when m_type is known to be of correct type
   const String& 	getString() const { return *((String*)(&d.str));} // #IGNORE
-  String& 		getString() { return *((String*)(&d.str));} // #IGNORE
 #ifndef NO_TA_BASE
   taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
