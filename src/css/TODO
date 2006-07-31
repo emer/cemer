@@ -6,8 +6,11 @@ Program todo:
 - variants are too malleable: my_net = "true" changes type to string!
   (related to getString ref fun need): need a type locked guy?
 
+- add "MembersAlwaysDynamic()" flag -- replace with gory code in css_parse.
+
 - cmd type variant needs to hand off to appropriate thing
 - type <css class> doesn't work
+
 
 - lots of enum stuff: getscoped returns wrong type, etc
 

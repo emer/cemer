@@ -635,7 +635,16 @@ cssEl* cssCPtr_Variant::operator[](int idx) const {
 }
 
 cssEl* cssCPtr_Variant::GetMemberFmNo(int memb) const {
-  return -1;			// always go dynamic!
+  Variant& val = GetVarRef();
+  TypeDef* typ = NULL;  void* base = NULL;
+  val.GetRepInfo(typ, base);
+  if(val.type() == Variant::T_String) {
+    return GetMemberFmNo_impl(typ, &val.getString(), memb);
+  }
+  else if(val.isBaseType()) {
+    return GetMemberFmNo_impl(typ, val.toBase(), memb);
+  }
+  return GetMemberFmNo_impl(&TA_Variant, &val, memb);
 }
 
 cssEl* cssCPtr_Variant::GetMemberFmName(const char* memb) const {
