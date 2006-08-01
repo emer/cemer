@@ -44,11 +44,11 @@ taiData* taiProgVarType::GetDataRepInline_impl(IDataHost* host_, taiData* par, Q
 {
   //note: we use a static New function because of funky construction-time virtual functions
   taiProgVarBase* rval;
-  if (typ->InheritsFrom(TA_ObjectProgVar))
-    rval = taiObjectProgVar::New(typ, host_, par, gui_parent_, flags_);
-  else if (typ->InheritsFrom(TA_EnumProgVar))
-    rval = taiEnumProgVar::New(typ, host_, par, gui_parent_, flags_);
-  else 
+//   if (typ->InheritsFrom(TA_ObjectProgVar))
+//     rval = taiObjectProgVar::New(typ, host_, par, gui_parent_, flags_);
+//   else if (typ->InheritsFrom(TA_EnumProgVar))
+//     rval = taiEnumProgVar::New(typ, host_, par, gui_parent_, flags_);
+//   else 
     rval = taiProgVar::New(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -289,12 +289,14 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 
 void taiProgVar::GetImage(const ProgVar* var) {
   inherited::GetImage(var);
-  vfVariant->GetImage(var->value);
+  // todo!
+//   vfVariant->GetImage(var->value);
 }
 
 void taiProgVar::GetValue(ProgVar* var) const {
   inherited::GetValue(var);
-  vfVariant->GetValue(var->value);
+  // todo!
+//   vfVariant->GetValue(var->value);
 }
   
 
@@ -346,19 +348,21 @@ void taiEnumProgVar::DataChanged_impl(taiData* chld) {
 
 void taiEnumProgVar::GetImage(const ProgVar* var_) {
   inherited::GetImage(var_);
-  const EnumProgVar* var = (const EnumProgVar*)var_;
-  thEnumType->GetImage(var->enum_type);
-  cboEnumValue->SetEnumType(var->enum_type);
-  cboEnumValue->GetEnumImage(var->value.toInt());
+  // todo
+//   const EnumProgVar* var = (const EnumProgVar*)var_;
+//   thEnumType->GetImage(var->enum_type);
+//   cboEnumValue->SetEnumType(var->enum_type);
+//   cboEnumValue->GetEnumImage(var->value.toInt());
 }
 
 void taiEnumProgVar::GetValue(ProgVar* var_) const {
   inherited::GetValue(var_);
-  EnumProgVar* var = (EnumProgVar*)var_;
-  var->enum_type = thEnumType->GetValue();
-  int val;
-  cboEnumValue->GetEnumValue(val); // 0 if no valid type
-  var->value = val;
+  // todo
+//   EnumProgVar* var = (EnumProgVar*)var_;
+//   var->enum_type = thEnumType->GetValue();
+//   int val;
+//   cboEnumValue->GetEnumValue(val); // 0 if no valid type
+//   var->value = val;
 }
   
 
@@ -414,16 +418,17 @@ void taiObjectProgVar::DataChanged_impl(taiData* chld) {
 
 void taiObjectProgVar::GetImage(const ProgVar* var_) {
   inherited::GetImage(var_);
-  const ObjectProgVar* var = (const ObjectProgVar*)var_;
-  thValType->GetImage(var->val_type);
-  tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
+  // todo!
+//   const ObjectProgVar* var = (const ObjectProgVar*)var_;
+//   thValType->GetImage(var->val_type);
+//   tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
 }
 
 void taiObjectProgVar::GetValue(ProgVar* var_) const {
   inherited::GetValue(var_);
-  ObjectProgVar* var = (ObjectProgVar*)var_;
-  var->val_type = thValType->GetValue(); 
-  var->value.setBase(tkObjectValue->GetValue());
+//   ObjectProgVar* var = (ObjectProgVar*)var_;
+//   var->val_type = thValType->GetValue(); 
+//   var->value.setBase(tkObjectValue->GetValue());
 }
   
 

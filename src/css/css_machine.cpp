@@ -4546,7 +4546,8 @@ void cssProgSpace::Info_Generic() {
   cmd_shell->pgout << "\nThe following types of detailed info are available:\n\
   (only unique letters required to be specified)\n";
 
-  cmd_shell->pgout << "  args\t\tArgument variables for current stack frame\n\
+  cmd_shell->pgout << "\
+  args           Argument variables for current stack frame\n\
   breakpoints    Current breakpoints\n\
   constants      List of defined constants\n\
   defines        List of #define pre-processor macros\n\

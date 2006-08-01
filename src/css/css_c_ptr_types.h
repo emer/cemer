@@ -405,21 +405,26 @@ public:
 
 class CSS_API cssCPtr_enum : public cssCPtr_int {
 public:
+  TypeDef*	enum_type;	// typedef of the enum if available
+
   cssTypes	GetPtrType() const	{ return T_Enum; }
   uint		GetSize() const 	{ return sizeof(int); } // use for ptrs
   const char*	GetTypeName() const  	{ return "(c_enum)"; }
 
-  MemberDef*	GetEnumType() const;
-  // attempts to get member def info from class_parent (use md to get type def)
+  TypeDef*	GetEnumType() const;
+  // if enum_type not present, attempts to get member def info from class_parent (use md to get type def)
 
   // constructors
-  cssCPtr_enum() 				: cssCPtr_int(){};
-  cssCPtr_enum(void* it, int pc) 		: cssCPtr_int(it,pc){};
-  cssCPtr_enum(void* it, int pc, const char* nm)	: cssCPtr_int(it,pc,nm){};
+  cssCPtr_enum() 				: cssCPtr_int() { enum_type = NULL; }
+  cssCPtr_enum(void* it, int pc) 		: cssCPtr_int(it,pc) { enum_type = NULL; }
+  cssCPtr_enum(void* it, int pc, const char* nm): cssCPtr_int(it,pc,nm) { enum_type = NULL; }
+  cssCPtr_enum(void* it, int pc, const char* nm, TypeDef* et)
+    : cssCPtr_int(it,pc,nm) { enum_type = et; }
   cssCPtr_enum(void* it, int pc, const char* nm, cssEl* cp, bool ro)
-  : cssCPtr_int(it,pc,nm,cp,ro){};
-  cssCPtr_enum(const cssCPtr_enum& cp) 		: cssCPtr_int(cp){};
-  cssCPtr_enum(const cssCPtr_enum& cp, const char* nm) 	: cssCPtr_int(cp,nm){};
+    : cssCPtr_int(it,pc,nm,cp,ro) { enum_type = NULL; }
+  cssCPtr_enum(const cssCPtr_enum& cp) 		: cssCPtr_int(cp) { enum_type = cp.enum_type; }
+  cssCPtr_enum(const cssCPtr_enum& cp, const char* nm)
+    : cssCPtr_int(cp,nm) { enum_type = cp.enum_type; }
 
   cssCPtr_CloneFuns(cssCPtr_enum, (void*)NULL);
 

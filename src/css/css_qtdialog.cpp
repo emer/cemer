@@ -313,9 +313,9 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
     }
     if(sb_typ == cssEl::T_Enum) {
       cssCPtr_enum* enm = (cssCPtr_enum*)el;
-      MemberDef* md = enm->GetEnumType();
-      if(md != NULL)
-	return new cssiType(orig_obj, md->type, (void*)(((cssCPtr*)el)->ptr));
+      TypeDef* et = enm->GetEnumType();
+      if(et != NULL)
+	return new cssiType(orig_obj, et, (void*)(((cssCPtr*)el)->ptr));
       else
 	return new cssiType(orig_obj, &TA_int, (void*)(((cssCPtr*)el)->ptr));
     }

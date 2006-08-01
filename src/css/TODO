@@ -5,9 +5,6 @@ Program todo:
 
 - String should have only relevant stuff visible for css (more protected??) type String
 
-- variants are too malleable: my_net = "true" changes type to string!
-  (related to getString ref fun need): need a type locked guy?
-
 - type <css class> doesn't work
 
 - lots of enum stuff: getscoped returns wrong type, etc
@@ -16,8 +13,6 @@ Program todo:
 
 - figure out PtrAssignPtr in Cptr type operator= funs
 - add quit confirm prompt taChoice
-- prog_args -> args
-- new variant assign that preserves target type
 - convert enums to c_ptr_enum
 
 ------------------
@@ -34,10 +29,6 @@ Longer-term:
 
 - has a problem with: var-num types of exprs -- gobbles the - into the
 num, sees var num (need to fix parser somehow)
-
-- have one command ("info") that gives info on lots of
-different things instead of the current lots of commands.
-	info "literals"  info "functions"  info "globals", etc.
 
 - document issues about progspaces and class objects refering
 to extern objects, etc.

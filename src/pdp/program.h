@@ -31,13 +31,31 @@ class ProgramRef;
 class Program_Group;
 class Program_List;
 
-class PDP_API ProgVar: public taNBase { // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .prog_vars;\n This class handles simple atomic values like Ints and Strings
+class PDP_API ProgVar: public taNBase {
+  // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .vars and args;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
 public:
-  Variant		value; // the actual variable
+  enum VarType {
+    T_Int,			// integer
+    T_Real,			// real-valued number (double precision)
+    T_String,			// string of characters
+    T_Object,			// pointer to a C++ object 
+    T_HardEnum,			// enumerated list of options (existing C++ hard-coded one)
+    T_DynoEnum,			// enumerated list of options (from my dynamically created list)
+  };
+
+  VarType	var_type;	// type of variable 
+  int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum,T_DynoEnum integer value (also for enum types)
+  double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
+  String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
+  TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
+  taBase*	object_val;	// #CONDEDIT_ON_var_type:T_Object object pointer value
+  TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum type information for hard enum (value goes in int_val)
+  // todo: add dyno enum class and css wrapper for it..
   
-  virtual int		cssType(); // int value of cssEl::Type generated
-  
+  virtual const String	GenCssType(); // type name
+  virtual const String	GenCssInitVal(); // intial value
+
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
   cssEl*		NewCssEl();
@@ -51,53 +69,6 @@ public:
 protected:
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
-  virtual cssEl*	NewCssEl_impl();
-  // make a new cssEl of an appropriate type, name/value initialized
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-
-class PDP_API EnumProgVar: public ProgVar { // a program variable to hold enums
-INHERITED(ProgVar)
-public:
-  TypeDef*		enum_type; // #ENUM_TYPE #TYPE_taBase the type of the enum
-  bool			init; // when true, initialize the enum value
-  
-  override int		cssType(); // int value of cssEl::Type generated
-  const String		enumName(); // ex, taBase::Orientation
-  
-  const String		ValToId(int val);
-  
-  void	Copy_(const EnumProgVar& cp);
-  COPY_FUNS(EnumProgVar, ProgVar);
-  TA_BASEFUNS(EnumProgVar);
-protected:
-  override const String	GenCssArg_impl();
-  override const String	GenCssVar_impl();
-  override cssEl*	NewCssEl_impl();
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-class PDP_API ObjectProgVar: public ProgVar {
-  // ##SCOPE_ProgElProgram a program variable to hold taBase objects
-INHERITED(ProgVar)
-public:
-  TypeDef*		val_type; // #NO_NULL #TYPE_taBase the minimum acceptable type of the value 
-  
-  override int		cssType(); // int value of cssEl::Type generated
-  
-  void	Copy_(const ObjectProgVar& cp);
-  COPY_FUNS(ObjectProgVar, ProgVar);
-  TA_BASEFUNS(ObjectProgVar);
-  
-protected:
-  override const String	GenCssArg_impl();
-  override const String	GenCssVar_impl();
-  
 private:
   void	Initialize();
   void	Destroy();
@@ -394,9 +365,9 @@ class PDP_API MethodSpec: public taOBase {
   // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCallEl; has custom taiData
 INHERITED(taOBase)
 public:
-  ObjectProgVar*	script_obj; // #SCOPE_ProgElProgram the previously defined script object that has the method
-  TypeDef*		var_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.var_type
-  MethodDef*		method; //  #TYPE_ON_var_type the method to call
+  ProgVar*	script_obj; // #SCOPE_ProgElProgram the previously defined script object that has the method
+  TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
+  MethodDef*		method; //  #TYPE_ON_object_type the method to call
   
   void	UpdateAfterEdit();
   void	CutLinks();
@@ -427,7 +398,7 @@ public:
   TA_BASEFUNS(MethodCallEl);
 
 protected:
-  ObjectProgVar*	lst_script_obj; 
+  ProgVar*		lst_script_obj; 
   MethodDef*		lst_method; 
   
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object

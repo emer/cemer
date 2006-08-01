@@ -392,28 +392,32 @@ void cssCPtr_char::operator|=(cssEl& t)	{
 //     enum      //
 ///////////////////
 
-MemberDef* cssCPtr_enum::GetEnumType() const {
+TypeDef* cssCPtr_enum::GetEnumType() const {
+  if(enum_type != NULL) return enum_type;
   if((class_parent != NULL) && (class_parent->GetType() == T_TA)) {
     cssTA* clp = (cssTA*)class_parent;
-    if(clp->type_def != NULL)
-      return clp->type_def->members.FindName(name); // find me..
+    if(clp->type_def != NULL) {
+      MemberDef* md = clp->type_def->members.FindName(name); // find me..
+      if(md != NULL)
+	return md->type;
+    }
   }
   return NULL;
 }
 
 String cssCPtr_enum::GetStr() const {
-  MemberDef* md = GetEnumType();
-  if(md != NULL) {
-    return md->type->GetValStr(GetNonNullVoidPtr(), NULL, md);
+  TypeDef* et = GetEnumType();
+  if(et != NULL) {
+    return et->GetValStr(GetNonNullVoidPtr(), NULL);
   }
   return String((Int)*this);
 }
 
 void cssCPtr_enum::operator=(const String& cp) {
-  MemberDef* md = GetEnumType();
-  if(md != NULL) {
+  TypeDef* et = GetEnumType();
+  if(et != NULL) {
     cssTA* clp = (cssTA*)class_parent;
-    md->type->SetValStr(cp, GetNonNullVoidPtr(), clp->GetNonNullVoidPtr(), md);
+    et->SetValStr(cp, GetNonNullVoidPtr(), clp->GetNonNullVoidPtr());
     class_parent->UpdateAfterEdit();
     return;
   }

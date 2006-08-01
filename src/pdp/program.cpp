@@ -34,13 +34,25 @@
 //////////////////////////
 
 void ProgVar::Initialize() {
+  var_type = T_Int;
+  int_val = 0;
+  real_val = 0.0;
+  object_type = &TA_taOBase;
+  object_val = NULL;
+  hard_enum_type = NULL;
 }
 
 void ProgVar::Destroy() {
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
-  value = cp.value;
+  var_type = cp.var_type;
+  int_val = cp.int_val;
+  real_val = cp.real_val;
+  string_val = cp.string_val;
+  object_type = cp.object_type;
+  taBase::SetPointer((taBase**)&object_val, cp.object_val);
+  hard_enum_type = cp.hard_enum_type;
 }
 
 void ProgVar::UpdateAfterEdit() {
@@ -51,151 +63,121 @@ void ProgVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-int ProgVar::cssType() {
-  return cssEl::T_Variant;
-}
-
 const String ProgVar::GenCss(bool is_arg) {
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
 } 
 
+const String ProgVar::GenCssType() {
+  switch(var_type) {
+  case T_Int:
+    return "int";
+  case T_Real:
+    return "double";
+  case T_String:
+    return "String";
+  case T_Object:
+    if(object_val)
+      return object_val->GetTypeDef()->name + "*";
+    else
+      return object_type->name + "*";
+  case T_HardEnum:
+    if(hard_enum_type)
+      return hard_enum_type->name;
+    else
+      return "int";
+  case T_DynoEnum:
+    return "int";		// todo!
+  }
+}
 
+const String ProgVar::GenCssInitVal() {
+  switch(var_type) {
+  case T_Int:
+    return int_val;
+  case T_Real:
+    return real_val;
+  case T_String:
+    return string_val;
+  case T_Object:
+    if(object_val)
+      return object_val->GetPath();
+    else
+      return "NULL";
+  case T_HardEnum:
+    if(hard_enum_type)
+      return hard_enum_type->GetValStr(&int_val);
+    else
+      return int_val;
+  case T_DynoEnum:
+    return int_val;
+  }
+}
+
+// note: *never* initialize variables because they are cptrs to actual current
+// value in object..
 const String ProgVar::GenCssArg_impl() {
   String rval(0, 80, '\0'); //note: buffer will extend if needed
-  rval += "Variant ";
+  rval += GenCssType() + " ";
   rval += name;
-  bool init = !value.isDefault();
-  if (init) {
-    rval += " = ";
-    rval += value.toCssLiteral();
-  }
   return rval;
 }
 
 const String ProgVar::GenCssVar_impl() {
   STRING_BUF(rval, 80); //note: buffer will extend if needed
-  rval += "Variant ";
+  rval += GenCssType() + " ";
   rval += name;
-  bool init = !value.isDefault();
-  if (init) {
-    rval += " = ";
-    rval += value.toCssLiteral();
-  } else if (!value.isInvalid()) {
-    rval += ";  " + name + ".setType(" + String((int)value.type()) + ")";
-  }
   rval += ";\n";
   return rval;
 }
 
 cssEl* ProgVar::NewCssEl() {
-  return NewCssEl_impl();
-}
-
-cssEl* ProgVar::NewCssEl_impl() {
-  // using the cptr_variant means that the actual user-visible variable is always updated!
-  return new cssCPtr_Variant((void*)&value, 1, name); 
-}
-
-
-//////////////////////////
-//   EnumProgVar	//
-//////////////////////////
-
-void EnumProgVar::Initialize() {
-  value.setType(Variant::T_Int);
-  enum_type = NULL;
-  init = true;
-}
-
-void EnumProgVar::Destroy() {
-}
-
-void EnumProgVar::Copy_(const EnumProgVar& cp) {
-  enum_type = cp.enum_type;
-  init = cp.init;
-}
-
-int EnumProgVar::cssType() {
-  return cssEl::T_Enum;
-}
-
-const String EnumProgVar::enumName() {
-  if (enum_type) {
-    //TODO: need to make sure it is type::enum
-    return enum_type->Get_C_Name();
-  } else return _nilString;
-}
-
-const String EnumProgVar::GenCssArg_impl() {
-  STRING_BUF(rval, 80); //note: buffer will extend if needed
-  rval += enumName() + " ";
-  rval += name;
-  if (init) {
-    rval += " = ";
-    rval += ValToId(value.toInt());
+  switch(var_type) {
+  case T_Int:
+    return new cssCPtr_int(&int_val, 1, name);
+  case T_Real:
+    return new cssCPtr_double(&real_val, 1, name);
+  case T_String:
+    return new cssCPtr_String(&string_val, 1, name);
+  case T_Object: 
+    if(object_val)
+      return new cssTA_Base(&object_val, 2, object_val->GetTypeDef(), name);
+    else
+      return new cssTA_Base(&object_val, 2, object_type, name);
+  case T_HardEnum:
+    return new cssCPtr_enum(&int_val, 1, name, hard_enum_type);
+  case T_DynoEnum:
+    return new cssCPtr_int(&int_val, 1, name); // todo!
   }
-  return rval;
 }
 
-const String EnumProgVar::GenCssVar_impl() {
-  String rval = GenCssArg_impl();
-  rval += ";\n";
-  return rval;
-}
+// const String EnumProgVar::ValToId(int val) {
+//   if (enum_type) {
+//     return enum_type->Get_C_EnumString(val);
+//   } else return _nilString;
+// }
 
-cssEl* EnumProgVar::NewCssEl_impl() {
-  // todo: make a enum cptr!
-  return new cssCPtr_Variant((void*)&value, 1, name);
-}
+// const String ObjectProgVar::GenCssArg_impl() {
+//   if (!val_type) return _nilString; // shouldn't happen...
+//   STRING_BUF(rval, 80); //note: buffer will extend if needed
+//   rval += val_type->GetPathName() + "* ";
+//   rval += name;
+//   //NOTE: make_new not supported
+//   return rval;
+// }
 
-const String EnumProgVar::ValToId(int val) {
-  if (enum_type) {
-    return enum_type->Get_C_EnumString(val);
-  } else return _nilString;
-}
-
-
-//////////////////////////
-//   ObjectProgVar	//
-//////////////////////////
-
-void ObjectProgVar::Initialize() {
-  val_type = &TA_taOBase; //note: < taOBase generally not interesting
-}
-
-void ObjectProgVar::Destroy() {
-}
-
-void ObjectProgVar::Copy_(const ObjectProgVar& cp) {
-  val_type = cp.val_type;
-}
-
-int ObjectProgVar::cssType() {
-  return cssEl::T_TA;
-}
-
-const String ObjectProgVar::GenCssArg_impl() {
-  if (!val_type) return _nilString; // shouldn't happen...
-  STRING_BUF(rval, 80); //note: buffer will extend if needed
-  rval += val_type->GetPathName() + "* ";
-  rval += name;
-  //NOTE: make_new not supported
-  return rval;
-}
-
-const String ObjectProgVar::GenCssVar_impl() {
-  if (!val_type) return _nilString; // shouldn't happen...
-  STRING_BUF(rval, 80); //note: buffer will extend if needed
-  rval += val_type->GetPathName() + "* ";
-  rval += name;
-  bool init = !value.isDefault();
-  if (init) {
-    rval += " = ";
-    rval += value.toCssLiteral();
-  }
-  rval += ";\n";
-  return rval;
-}
+// const String ObjectProgVar::GenCssVar_impl() {
+//   if (!val_type) return _nilString; // shouldn't happen...
+//   STRING_BUF(rval, 80); //note: buffer will extend if needed
+//   rval += val_type->GetPathName() + "* ";
+//   rval += name;
+//   bool init = !value.isDefault();
+//   if (init) {
+//     rval += " = ";
+//     rval += value.toCssLiteral();
+//   }
+//   rval += ";\n";
+//   return rval;
+// }
 
 //////////////////////////
 //   ProgVar_List	//
@@ -740,7 +722,7 @@ void CondEl::PreGenChildren_impl(int& item_id) {
 void MethodSpec::Initialize() {
   script_obj = NULL;
   method = NULL;
-  var_type = &TA_taBase; // placeholder
+  object_type = &TA_taBase; // placeholder
 }
 
 void MethodSpec::CutLinks() {
@@ -756,9 +738,9 @@ void MethodSpec::Copy_(const MethodSpec& cp) {
 
 void MethodSpec::UpdateAfterEdit() {
 //TODO: maybe update owner MethodCallEl
-  if (script_obj && script_obj->val_type)
-    var_type = script_obj->val_type;
-  else var_type = &TA_taBase; // placeholder
+  if(script_obj && script_obj->object_type)
+    object_type = script_obj->object_type;
+  else object_type = &TA_taBase; // placeholder
   inherited::UpdateAfterEdit();
   if (taMisc::is_loading) return;
   MethodCallEl* own = GET_MY_OWNER(MethodCallEl);
