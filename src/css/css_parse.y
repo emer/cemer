@@ -53,8 +53,8 @@ int yylex();
 
 %}
 
-/* seventeen expected shift-reduce conflicts.. */
-%expect 17
+/* fifteen expected shift-reduce conflicts.. */
+%expect 15
 
 %union {
   cssElPlusIVal el_ival;
@@ -82,8 +82,7 @@ int yylex();
 %token	<el>	CSS_NEW CSS_DELETE
 
 /* commands */
-%token  <el> 	CSS_COMMAND CSS_ALIAS CSS_REMOVE
-%token 	<el>	CSS_TYPECMD CSS_HELP
+%token  <el> 	CSS_COMMAND CSS_ALIAS CSS_HELP
 
 /* storage */
 %token	<el>	CSS_EXTERN CSS_STATIC CSS_CONST
@@ -121,7 +120,7 @@ int yylex();
 %type 	<el>	fundname methdname
 
 /* expr elements */
-%type   <ival>	comb_expr exprlist exprlsel argstop memb_expr
+%type   <ival>	comb_expr exprlist exprlsel cmd_exprlist cmd_exprlsel argstop memb_expr
 %type	<ival>	normfuncall
 %type   <el_ival> normfun membfun
 %type	<el>    primitive type type_el typeonly typeorscp scopetype
@@ -229,14 +228,6 @@ ppdef:    CSS_PP_DEF		{
 
 command:  CSS_COMMAND cmd_args		{
             Code1($1); $$ = cssProg::YY_Ok; }
-        | CSS_TYPECMD cmd_args		{
-	    Code1($1); $$ = cssProg::YY_Ok; }
-        | CSS_TYPECMD argstop CSS_TYPE	{
-	    Code2($3,$1); $$ = cssProg::YY_Ok; }
-        | CSS_REMOVE cmd_args		{
-	    Code1($1); $$ = cssProg::YY_Ok; }
-        | CSS_REMOVE argstop CSS_TYPE	{
-	    Code2($3,$1); $$ = cssProg::YY_Ok; }
         | CSS_ALIAS anycmd name 	{
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push(new cssRef($2));
@@ -265,15 +256,11 @@ command:  CSS_COMMAND cmd_args		{
 	    $$ = cssProg::YY_NoSrc;
 	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
 	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
-        | CSS_HELP argstop CSS_TYPE {
-	    $$ = cssProg::YY_NoSrc;
-	    cssMisc::cur_top->Prog()->Stack()->Push($3.El());
-	    ($1.El())->Do(cssMisc::cur_top->Prog()); }
         ;
 
 cmd_args: /* nothing */			{ $$ = 0; }
-        | argstop exprlist
-        | '(' argstop exprlist ')'	{ $$ = $2; }
+        | argstop cmd_exprlist
+        | '(' argstop cmd_exprlist ')'	{ $$ = $2; }
         ;
 
 /* defn's are skipped over when running, so are replaced by jumps */
@@ -961,12 +948,7 @@ caseexpr:
 switchblock:            /* switch is like a little function with one arg */
           switch '(' argstop expr ')' '{' 	{
             $$ = $1;
-	    /* value to switch on */
-/* 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push */
-/* 							  (new cssString(0,cssSwitchVar_Name)))); */
-/* 	    /\* bogus return value *\/ */
-/* 	    cssMisc::ConstExpr->Stack()->Push(new cssRef(cssMisc::ConstExpr->Autos()->Push */
-/* 							  (new cssInt(0,cssRetv_Name)))); */
+	    /* value to switch on is already on stack */
             cssCodeBlock* jmp_blk = (cssCodeBlock*)(cssMisc::cur_top->Prog()->owner_blk);
 	    /* make the jump-table address array: ints whose name is val, val is adr */
 	    jmp_blk->code->Stack()->Push(new cssString(cssSwitchJump_Name));
@@ -1287,8 +1269,6 @@ primitive:
         ;
 
 anycmd:   CSS_COMMAND
-        | CSS_REMOVE
-        | CSS_TYPECMD
         ;
 
 normfuncall:
@@ -1368,9 +1348,7 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
         | primitive getmemb membname '('	{ $$.el.Reset();
 	    int mbno = $1.El()->GetMethodNo((const char*)*($3.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr) &&
-		 ($1.El()->GetType() != cssEl::T_Variant) &&
-		 (String($1.El()->GetTypeName()) != String("(c_Variant)")))
+	      if(!$1.El()->MembersDynamic())
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($3.El()),
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $3, cssBI::member_fun); }
@@ -1389,9 +1367,7 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	    cssMisc::cur_scope = NULL; $$.el.Reset();
 	    int mbno = $1.El()->GetMethodNo((const char*)*($2.El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
-	      if(!$1.El()->IsRef() && ($1.El()->GetType() != cssEl::T_Ptr) &&
-		 ($1.El()->GetType() != cssEl::T_Variant) &&
-		 (String($1.El()->GetTypeName()) != String("(c_Variant)")))
+	      if(!$1.El()->MembersDynamic())
 		cssMisc::Warning(NULL, "Member Function:",(const char*)*($2.El()),
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $2, cssBI::member_fun); }
@@ -1461,6 +1437,18 @@ exprlist: exprlsel		{ $$ = 1; } /* the argstop points to where the arguments sto
 
 exprlsel: expr
         | CSS_PTRTYPE		{ $$ = Code1($1); }/* allow ta_types to be passed */
+        ;
+
+cmd_exprlist: cmd_exprlsel	{ $$ = 1; } /* the argstop points to where the arguments stop on the stack (begin) */
+        | cmd_exprlist ',' cmd_exprlsel { $$ = $1 + 1; }
+        ;
+
+cmd_exprlsel: expr
+        | CSS_PTRTYPE		{ $$ = Code1($1); } /* allow ta_types to be passed */
+        | CSS_NAME		{ 
+	  String tmpstr = String($1);
+	  $$ = Code1(cssMisc::cur_top->AddLiteral(tmpstr)); }
+        | CSS_TYPE		{ $$ = Code1($1); }
         ;
 
 argstop:  /* nothing */		{ $$ = Code1(cssMisc::VoidElPtr); }

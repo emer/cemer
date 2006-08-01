@@ -712,6 +712,17 @@ static cssEl* cssElCFun_alias_stub(int, cssEl* arg[]) {
 				 tmp->parse));
   return &cssMisc::Void;
 }
+static cssEl* cssElCFun_backtrace_stub(int na, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  if(na > 0)
+    csh->src_prog->BackTrace((int)*arg[1]);
+  else
+    csh->src_prog->BackTrace();
+  return &cssMisc::Void;
+}
 static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -766,20 +777,6 @@ static cssEl* cssElCFun_goto_stub(int, cssEl* arg[]) {
   csh->src_prog->Cont((int)*(arg[1]));
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_commands_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  cssMisc::Commands.NameList(*(csh->fout));
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_constants_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  cssMisc::Constants.List(*(csh->fout));
-  return &cssMisc::Void;
-}
 static cssEl* cssElCFun_debug_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -801,11 +798,12 @@ static cssEl* cssElCFun_cmdebug_stub(int, cssEl* arg[]) {
 // //   cp->top->SetDefn();
 //   return &cssMisc::Void;
 // }
-static cssEl* cssElCFun_defines_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_delbp_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
-  cssMisc::Defines.List(*(csh->fout));
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->DelBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_edit_stub(int na, cssEl* arg[]) {
@@ -818,13 +816,7 @@ static cssEl* cssElCFun_edit_stub(int na, cssEl* arg[]) {
     cssMisc::Error(arg[0]->prog, "Edit requires an argument of the object to be edited");
   return rval;
 }
-static cssEl* cssElCFun_enums_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  cssMisc::Enums.NameList(*(csh->fout));
-  return &cssMisc::Void;
-}
+
 static cssEl* cssElCFun_exit_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -834,88 +826,38 @@ static cssEl* cssElCFun_exit_stub(int, cssEl* arg[]) {
   }
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_locals_stub(int na, cssEl* arg[]) {
+
+static cssEl* cssElCFun_info_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
-  pager_ostream& fh = csh->pgout;
-  if(na > 0) {
-    csh->src_prog->ListLocals((int)*arg[1]);
+  if(na >= 2) {
+    csh->src_prog->Info((const char*)*arg[1], arg[2]);
+  }
+  else if(na == 1) {
+    csh->src_prog->Info((const char*)*arg[1]);
   }
   else {
-    csh->src_prog->ListLocals();
+    csh->src_prog->Info();
   }
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_functions_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  cssMisc::Functions.NameList(*(csh->fout));
-  csh->src_prog->hard_funs.NameList(*(csh->fout));
-  cssMisc::HardFuns.NameList(*(csh->fout));
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_globals_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->ListGlobals();
-  return &cssMisc::Void;
-}
+
 static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
-    if(arg[1]->GetType() == cssEl::T_ElCFun) {
-      cssElCFun* fun = (cssElCFun*)arg[1];
-      *(csh->fout) << "\nHelp for function: " << fun->name << "\n" << fun->name << " ";
-      String str = fun->help_str;
-      int wdth = 0;
-      while(!str.empty()) {
-	String wrd;
-	if(str.contains(' ')) {
-	  wrd = str.before(' ');
-	  str = str.after(' ');
-	}
-	else {
-	  wrd = str;
-	  str = "";
-	}
-	if(wdth + (int)wrd.length() > taMisc::display_width) {
-	  *(csh->fout) << endl;
-	  wdth = 0;
-	}
-	*(csh->fout) << wrd << " ";
-	wdth += wrd.length() + 1;
-      }
-      *(csh->fout) << endl;
-      csh->fout->flush();
-    }
-    else {
-      arg[1]->TypeInfo(*(csh->fout));
-      *(csh->fout) << "\n";
-      csh->fout->flush();
-    }
+    cp->top->Help(arg[1]);
   }
-  else
+  else {
     cp->top->Help();
+  }
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_inherit_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  arg[1]->InheritInfo(*(csh->fout));
-  *(csh->fout) << "\n";
-  csh->fout->flush();
-  return &cssMisc::Void;
-}
+
 static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -950,13 +892,6 @@ static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-static cssEl* cssElCFun_mallinfo_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  taMisc::MallocInfo(*(csh->fout));
-  return &cssMisc::Void;
-}
 static cssEl* cssElCFun_print_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -1039,29 +974,6 @@ static cssEl* cssElCFun_setout_stub(int, cssEl* arg[]) {
   csh->fout = strm;
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_settings_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  int i;
-  *(csh->fout) << "Include Paths:\n";
-  taMisc::include_paths.List(*(csh->fout));
-  *(csh->fout) << "\n";
-  for(i=1; i<cssMisc::Settings.size; i++) {
-    cssMisc::Settings.FastEl(i)->Print(*(csh->fout));
-    *(csh->fout) << "\n";
-  }
-  csh->fout->flush();
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_showbp_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->ShowBreaks();
-  return &cssMisc::Void;
-}
 static cssEl* cssElCFun_source_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   // todo: not clear what to do about this one!  it requires self-modification.  the one
@@ -1070,20 +982,6 @@ static cssEl* cssElCFun_source_stub(int, cssEl* arg[]) {
 //   cssCmdShell* csh = cp->top->cmd_shell;
 //   if(csh->src_prog == NULL) return &cssMisc::Void;
 //   csh->src_prog->Source((const char*)*(arg[1]));
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_stack_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  cp->Stack()->List();
-  cp->saved_stack.List();
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_status_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->Status();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
@@ -1098,31 +996,8 @@ static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
   csh->src_prog->Cont();
   return &cssMisc::Void;
 }
-
 static cssEl* cssElCFun_system_stub(int, cssEl* arg[]) {
   system((const char*)*arg[1]);
-  return &cssMisc::Void;
-}
-
-static cssEl* cssElCFun_tokens_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  arg[1]->TokenInfo(*(csh->fout));
-  *(csh->fout) << "\n";
-  csh->fout->flush();
-  return &cssMisc::Void;
-}
-// todo: up/down, etc?
-static cssEl* cssElCFun_backtrace_stub(int na, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  if(na > 0)
-    csh->src_prog->BackTrace((int)*arg[1]);
-  else
-    csh->src_prog->BackTrace();
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
@@ -1135,21 +1010,8 @@ static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
     *(csh->fout) << endl;
   }
   else {
-    csh->pgout.start();
-    csh->pgout << "Types local to current top-level program space (" << cp->top->name << "):" << "\n";
-    csh->src_prog->types.NameList(csh->pgout);
-    csh->pgout << "\n==========================" << "\n"<<
-      "Global types: " << "\n";
-    cssMisc::TypesSpace.NameList(csh->pgout);
+    csh->src_prog->ListTypes();
   }
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_delbp_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  if(csh->src_prog == NULL) return &cssMisc::Void;
-  csh->src_prog->DelBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_undo_stub(int na, cssEl* arg[]) {
@@ -1195,14 +1057,6 @@ static void Install_Commands() {
  at the usual source level. Levels greater than 2 provide increasing\
  amounts of detail about the inner workings of CSS, which should not be\
  relevant to most users.");
-  cssElCFun_inst(cssMisc::Commands, commands,		0, CSS_COMMAND,
-"Shows a list of the currently available commands (including any aliases\
- that have been defined, which will appear at the end of the list).");
-  cssElCFun_inst(cssMisc::Commands, constants,		0, CSS_COMMAND,
-"Shows a list of the pre-defined constants that have been defined in CSS.\
- These are just like globally-defined Int and Real values,\
- and thus they can be assigned to different values (though this is\
- obviously not recommended).");
   cssElCFun_inst(cssMisc::Commands, cont, 		0, CSS_COMMAND,
 "Continues the execution of a program that was stopped either by a\
  breakpoint or by single-stepping.  To continue at a particular line in\
@@ -1219,8 +1073,6 @@ static void Install_Commands() {
 //  current program to be executed later (define mode), as opposed the\
 //  default (run mode) where statements are executed immediately after entering\
 //  them.");
-  cssElCFun_inst(cssMisc::Commands, defines, 		0, CSS_COMMAND,
-"Shows a list of all of the current #define pre-processor macros.");
   cssElCFun_inst(cssMisc::Commands, edit,   		cssEl::VarArg, CSS_COMMAND,
 "If the TA_GUI (graphical user interface) is active (i.e., by using\
  -gui to start up CSS), edit will bring up a graphical edit\
@@ -1228,26 +1080,18 @@ static void Install_Commands() {
  hard-coded class object.  The optional second argument, if\
  true, will cause the system to wait for the user to close the\
  edit dialog before continuing execution of the script.");
-  cssElCFun_inst(cssMisc::Commands, enums,		0, CSS_COMMAND,
-"Shows a list of all the current enum types.  Note that most\
- enum types are defined within a class scope, and can be\
- found there by using the type command on the class type.");
   cssElCFun_inst_nm(cssMisc::Commands, exit, 		0, "exit", CSS_COMMAND,
 "Exits from the program (CSS), or from another program space if\
  chsh (or its TA_GUI equivalent) was called.");
-  cssElCFun_inst(cssMisc::Commands, functions,		0, CSS_COMMAND,
-"Shows a list of all of the currently defined functions.");
-  cssElCFun_inst(cssMisc::Commands, globals,		0, CSS_COMMAND,
-"Shows a list of all of the currently defined global variables, including\
- those in the script and hard-coded ones.");
   cssElCFun_inst(cssMisc::Commands, goto, 		1, CSS_COMMAND,
 "<src_ln> Continues execution at the given source line.  ");
   cssElCFun_inst(cssMisc::Commands, help, 		cssEl::VarArg, CSS_HELP,
 "[<expr>] Shows a short help message, including lists of commands and functions\
  available.    When passed argument (command, function, class, etc),\
  provides help information for it.");
-  cssElCFun_inst(cssMisc::Commands, inherit, 		1, CSS_TYPECMD,
-"<object_type> Shows the inheritance path for the given object type.");
+  cssElCFun_inst(cssMisc::Commands, info, 		cssEl::VarArg, CSS_COMMAND,
+"topic [<arg>] Provides info on a number of different topics -- type info without\
+ any args to get a detailed list of the info topics available.");
   cssElCFun_inst(cssMisc::Commands, list, 		cssEl::VarArg, CSS_COMMAND,
 "[<start_ln> [<n_lns>]] [<function>] Lists the program source (or\
  machine code, if debug is 2 or greater), optionally starting at the\
@@ -1260,15 +1104,6 @@ static void Install_Commands() {
  last one left off.");
   cssElCFun_inst(cssMisc::Commands, load, 		1, CSS_COMMAND,
 "<prog_file> Loads and compiles a new program from the given file."); //
-  cssElCFun_inst(cssMisc::Commands, locals,		cssEl::VarArg, CSS_COMMAND,
-"[<back>] Shows the local variables and their values associated with the current block\
- or frame of processing.  The optional argument gives the number of\
- frames back from the current one to display.  This is most relevant for\
- debugging at a breakpoint, since otherwise there will only be a single,\
- top-level frame to display.");
-  cssElCFun_inst(cssMisc::Commands, mallinfo, 		0, CSS_COMMAND,
-"Generates a listing of the current malloc memory allocation\
- statistics, including changes from the last time the command was called.");
   cssElCFun_inst(cssMisc::Commands, print, 		1, CSS_COMMAND, // "
 "<expr> Prints the results of the given expression (which can be any valid CSS\
  expression), giving some type information and following with a new line\
@@ -1282,7 +1117,7 @@ static void Install_Commands() {
 "Reloads the current program from the last file that was load-ed.\
  This is useful because you do not have to specify the program file when\
  making a series of changes to a program.");
-  cssElCFun_inst(cssMisc::Commands, remove,		1, CSS_REMOVE,
+  cssElCFun_inst(cssMisc::Commands, remove,		1, CSS_COMMAND,
 "<var_name> Removes given variable from whatever space it was defined in.  This can\
  be useful if a variable was defined accidentally or given the wrong name\
  during interactive use.");
@@ -1303,40 +1138,19 @@ static void Install_Commands() {
   cssElCFun_inst(cssMisc::Commands, setout, 		1, CSS_COMMAND,
 "<ostream> Sets the default output of CSS commands to the given stream.  This can\
  be used to redirect listings or program tracing output to a file.");
-  cssElCFun_inst(cssMisc::Commands, settings,		0, CSS_COMMAND,
-"Shows the current values of various system-level settings or parameters.\
- These settings are all static members of the class ta_Misc, and\
- can be set by using the scoped member name, for example:\
- ta_Misc::display_width = 90;");
   cssElCFun_inst_nm(cssMisc::Commands, system, 		1, "shell", CSS_COMMAND,
 "<shell_cmd> Executes the given Unix shell command (i.e., shell \"ls -lt\").");
-  cssElCFun_inst(cssMisc::Commands, showbp,  		0, CSS_COMMAND,
-"Shows a list of all currently defined breakpoints, and the source code\
- line they point to.");
   cssElCFun_inst(cssMisc::Commands, source, 		1, CSS_COMMAND,
 "<cmd_file> Loads a file which contains a series of commands or statements, which\
  are executed exactly as if they were entered from the keyboard.  Note\
  that this is different than load-ing a program, which merely\
  compiles the program but does not execute it immediately thereafter.\
  source uses run mode, while load uses define mode.");
-  cssElCFun_inst(cssMisc::Commands, stack, 		0, CSS_COMMAND,
-"Displays the current contents of the stack.  This can be useful for\
- debugging.");
-  cssElCFun_inst(cssMisc::Commands, status, 		0, CSS_COMMAND,
-"Displays a brief listing of various status parameters, such as current\
- source line, depth, etc.");
   cssElCFun_inst(cssMisc::Commands, step, 		cssEl::VarArg, CSS_COMMAND,
 "<step_n> Sets the single-step mode for program execution.  The parameter is the\
  number of lines to step through before pausing.  A value of 0 turns off\
  single stepping.");
-  cssElCFun_inst(cssMisc::Commands, tokens, 		1, CSS_TYPECMD,
-"<obj_type> Lists the instances of the given object type which are known to have\
- been created.  Many object types do not register tokens, which will be\
- indicated in the results of this command if applicable.  It is possible\
- to refer to the objects by their position in this list with the\
- Token function, which can be a useful shortcut to using the\
- objects path.");
-  cssElCFun_inst(cssMisc::Commands, type, 		cssEl::VarArg, CSS_TYPECMD,
+  cssElCFun_inst(cssMisc::Commands, type, 		cssEl::VarArg, CSS_COMMAND,
 "<type_name> Gives type information about the given type.  This includes full\
  information about classes (both hard-coded and script-defined),\
  including members, functions, scoped types (enums), etc.");

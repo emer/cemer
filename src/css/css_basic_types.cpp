@@ -248,6 +248,36 @@ String cssVariant::PrintStr() const {
     + val.getTypeAsString() + ") " + val.toString();
 }
 
+void cssVariant::TypeInfo(ostream& fh) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  fh << GetTypeName() << " (" << val_r.getTypeAsString() << ") " << name << ": ";
+  if(val_r.type() == Variant::T_String) {
+    typ->OutputType(fh);
+  }
+  else if(val_r.isBaseType()) {
+    typ->OutputType(fh);
+  }
+  else {
+    TA_Variant.OutputType(fh);
+  }
+}
+
+void cssVariant::InheritInfo(ostream& fh) const {
+  TypeDef* typ = NULL;  void* base = NULL;
+  Variant& val_r = (Variant&)val;
+  val_r.GetRepInfo(typ, base);
+  if(val_r.type() == Variant::T_String) {
+    typ->OutputInherit(fh);
+  }
+  else if(val_r.isBaseType()) {
+    typ->OutputInherit(fh);
+  }
+  else {
+    TA_Variant.OutputInherit(fh);
+  }
+}
 
 cssEl* cssVariant::operator+(cssEl& t) { 
 // string concatenation takes precedence over numeric addition
@@ -318,7 +348,7 @@ cssEl* cssVariant::GetMemberFmNo(int memb) const {
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    return GetMemberFmNo_impl(typ, &val_r.getString(), memb);
+    return GetMemberFmNo_impl(typ, (String*)&val_r, memb);
   }
   else if(val_r.isBaseType()) {
     return GetMemberFmNo_impl(typ, val_r.toBase(), memb);
@@ -331,7 +361,7 @@ cssEl* cssVariant::GetMemberFmName(const char* memb) const {
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    return GetMemberFmName_impl(typ, &val_r.getString(), memb);
+    return GetMemberFmName_impl(typ, (String*)&val_r, memb);
   }
   else if(val_r.isBaseType()) {
     return GetMemberFmName_impl(typ, val_r.toBase(), memb);
@@ -344,7 +374,7 @@ cssEl* cssVariant::GetMethodFmNo(int memb) const {
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    return GetMethodFmNo_impl(typ, &val_r.getString(), memb);
+    return GetMethodFmNo_impl(typ, (String*)&val_r, memb);
   }
   else if(val_r.isBaseType()) {
     return GetMethodFmNo_impl(typ, val_r.toBase(), memb);
@@ -357,7 +387,7 @@ cssEl* cssVariant::GetMethodFmName(const char* memb) const {
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    return GetMethodFmName_impl(typ, &val_r.getString(), memb);
+    return GetMethodFmName_impl(typ, (String*)&val_r, memb);
   }
   else if(val_r.isBaseType()) {
     return GetMethodFmName_impl(typ, val_r.toBase(), memb);
@@ -370,7 +400,7 @@ cssEl* cssVariant::GetScoped(const char* memb) const {
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    return GetScoped_impl(typ, &val_r.getString(), memb);
+    return GetScoped_impl(typ, (String*)&val_r, memb);
   }
   else if(val_r.isBaseType()) {
     return GetScoped_impl(typ, val_r.toBase(), memb);

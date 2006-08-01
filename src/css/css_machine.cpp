@@ -4253,18 +4253,36 @@ void cssProgSpace::List(int stln) {
     ListSrc(stln);
 }
 
-void cssProgSpace::ListLocals(int levels_back) {
+void cssProgSpace::ListConstants() {
   if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-  
-  if(levels_back < 0) levels_back = size - 1;
-  int lev = size - 1 - levels_back;
-  if(lev < 0) lev = 0;
+  cssMisc::Constants.List(cmd_shell->pgout);
+}
 
-  fh << "Local vars for stack frame: " << lev << "\n";
-  Prog(lev)->ListLocals(fh, -1, 0);
-  if(lev == 0)
-    statics.List(fh, 0, 1);
+void cssProgSpace::ListDefines() {
+  if(!HaveCmdShell()) return;
+  cssMisc::Defines.NameList(cmd_shell->pgout);
+}
+
+void cssProgSpace::ListEnums() {
+  if(!HaveCmdShell()) return;
+  cssMisc::Enums.NameList(cmd_shell->pgout);
+}
+
+void cssProgSpace::ListFunctions() {
+  if(!HaveCmdShell()) return;
+  cmd_shell->pgout << "\nGlobal builtin functions\n";
+  cssMisc::Functions.NameList(cmd_shell->pgout, 1);
+  cssMisc::HardFuns.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\nHard-coded functions from parent object\n";
+  hard_funs.NameList(cmd_shell->pgout, 1);
+
+  cmd_shell->pgout << "\nCss-coded functions\n";
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
+      cmd_shell->pgout << el->PrintStr() << "\n";
+    }
+  }
 }
 
 void cssProgSpace::ListGlobals() {
@@ -4276,6 +4294,53 @@ void cssProgSpace::ListGlobals() {
   prog_vars.List(fh);
   cssMisc::HardVars.List(fh);
   cssMisc::Externs.List(fh);
+}
+
+void cssProgSpace::ListLocals(int levels_back) {
+  if(!HaveCmdShell()) return;
+  pager_ostream& fh = cmd_shell->pgout;
+  
+  if(levels_back < 0) levels_back = 0;
+  int lev = size - 1 - levels_back;
+  if(lev < 0) lev = 0;
+
+  fh << "Local vars for stack frame: " << levels_back << " (levels from top: " << lev << ")\n";
+  Prog(lev)->ListLocals(fh, -1, 0);
+  if(lev == 0)
+    statics.List(fh, 0, 1);
+}
+
+void cssProgSpace::ListObjHards() {
+  if(!HaveCmdShell()) return;
+  pager_ostream& fh = cmd_shell->pgout;
+  
+  fh << "Containing object (Script or Program) vars:\n";
+  hard_vars.List(fh);
+  prog_vars.List(fh);
+  hard_funs.List(fh);
+}
+
+void cssProgSpace::ListSettings() {
+  if(!HaveCmdShell()) return;
+  ostream& fh = *cmd_shell->fout;
+
+  fh << "Include Paths:\n";
+  taMisc::include_paths.List(fh);
+  fh << "\n";
+  for(int i=1; i<cssMisc::Settings.size; i++) {
+    cssMisc::Settings.FastEl(i)->Print(fh);
+    fh << "\n";
+  }
+}
+
+void cssProgSpace::ListTypes() {
+  if(!HaveCmdShell()) return;
+  cmd_shell->pgout.start();
+  cmd_shell->pgout << "Types local to current top-level program space (" << name << "):" << "\n";
+  cmd_shell->src_prog->types.NameList(cmd_shell->pgout);
+  cmd_shell->pgout << "\n==========================" << "\n"<<
+    "Global types: " << "\n";
+  cssMisc::TypesSpace.NameList(cmd_shell->pgout);
 }
 
 static char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
@@ -4338,9 +4403,47 @@ void cssProgSpace::BackTrace(int levels_back) {
   }
 }
 
-void cssProgSpace::Help() {
+void cssProgSpace::Help(cssEl* help_on) {
   if(!HaveCmdShell()) return;
   cmd_shell->pgout.start();
+
+  if(help_on) {
+    ostream& fh = *cmd_shell->fout;
+    if(help_on->GetType() == cssEl::T_ElCFun) {
+      cssElCFun* fun = (cssElCFun*)help_on;
+      fh << "\nHelp for function: " << fun->name << "\n" << fun->name << " ";
+      String str = fun->help_str;
+      int wdth = 0;
+      while(!str.empty()) {
+	String wrd;
+	if(str.contains(' ')) {
+	  wrd = str.before(' ');
+	  str = str.after(' ');
+	}
+	else {
+	  wrd = str;
+	  str = "";
+	}
+	if(wdth + (int)wrd.length() > taMisc::display_width) {
+	  fh << "\n";
+	  wdth = 0;
+	}
+	fh << wrd << " ";
+	wdth += wrd.length() + 1;
+      }
+      fh << "\n";
+    }
+    else {
+      help_on->TypeInfo(fh);
+      fh << "\n";
+    }
+  }
+  else {
+    Help_Generic(); 
+  }
+}
+
+void cssProgSpace::Help_Generic() {
   cmd_shell->pgout << "\nC^c syntax is a subset of C++, with standard C math and stdio functions.\n\
  Except: The (f)printf functions take arguments which print themselves\n\
  \tprintf(\"varname:\\t\",avar,\"\\tvar2:\\t\",var2,\"\\n\"\n\
@@ -4357,20 +4460,113 @@ void cssProgSpace::Help() {
 
   cmd_shell->pgout << "\nDo help <expr> to obtain more detailed help on functions, objects, etc.\n";
 
-  cmd_shell->pgout << "\nThe following functions and debugging & control commands are available\n";
-  cssMisc::Functions.NameList(cmd_shell->pgout, 1);
+  cmd_shell->pgout << "\nThe following debugging & control commands are available\n";
   cssMisc::Commands.NameList(cmd_shell->pgout, 1);
-  cmd_shell->pgout << "\n ...and the following hard-coded functions are available\n";
-  hard_funs.NameList(cmd_shell->pgout, 1);
-  cssMisc::HardFuns.NameList(cmd_shell->pgout, 1);
-  cmd_shell->pgout << "\n ...and the following Program variables are available\n";
-  prog_vars.NameList(cmd_shell->pgout, 1);
-  cmd_shell->pgout << "\n ...and the following hard-coded variables are available\n";
-  hard_vars.NameList(cmd_shell->pgout, 1);
-  cssMisc::HardVars.NameList(cmd_shell->pgout, 1);
-  cmd_shell->pgout << "\n";
-  cmd_shell->fout->flush();
+  Info_Generic();
 }
+
+void cssProgSpace::Info(const String& inf_type, cssEl* arg) {
+  cmd_shell->pgout.start();
+  String it = inf_type;
+  it.downcase();
+  if(it.empty()) {
+    Info_Generic();
+    return;
+  }
+  if(it.startsWith("b")) {
+    ShowBreaks();
+  }
+  else if(it.startsWith("c")) {
+    ListConstants();
+  }
+  else if(it.startsWith("d")) {
+    ListDefines();
+  }
+  else if(it.startsWith("e")) {
+    ListEnums();
+  }
+  else if(it.startsWith("fr")) {
+    ListLocals(0);		// todo: what else?
+  }
+  else if(it.startsWith("fu")) {
+    ListFunctions();
+  }
+  else if(it.startsWith("g")) {
+    ListGlobals();
+  }
+  else if(it.startsWith("i")) {
+    if(arg != NULL) {
+      arg->InheritInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+    }
+  }
+  else if(it.startsWith("l")) {
+    if(arg != NULL)
+      ListLocals((int)*arg);
+    else
+      ListLocals();
+  }
+  else if(it.startsWith("m")) {
+    taMisc::MallocInfo(*cmd_shell->fout);
+  }
+  else if(it.startsWith("o")) {
+    ListObjHards();
+  }
+  else if(it.startsWith("se")) {
+    ListSettings();
+  }
+  else if(it == "status") {
+    Status();
+  }
+  else if(it == "stack") {
+    if(arg != NULL)
+      BackTrace((int)*arg);
+    else
+      BackTrace();
+  }
+  else if(it.startsWith("to")) {
+    if(arg != NULL) {
+      arg->TokenInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+    }
+  }
+  else if(it.startsWith("ty")) {
+    if(arg != NULL) {
+      arg->TypeInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+    }
+    else {
+      ListTypes();
+    }
+  }
+  else if(it.startsWith("v")) {
+    ListGlobals();
+    ListLocals(0);
+  }
+}
+
+void cssProgSpace::Info_Generic() {
+  cmd_shell->pgout << "\nThe following types of detailed info are available:\n\
+  (only unique letters required to be specified)\n";
+
+  cmd_shell->pgout << "  args\t\tArgument variables for current stack frame\n\
+  breakpoints    Current breakpoints\n\
+  constants      List of defined constants\n\
+  defines        List of #define pre-processor macros\n\
+  enums          List of enums (see also type info for specific classes containing enums)\n\
+  frame, [#]     All about the stack frame (# levels back)\n\
+  functions      List of all available functions\n\
+  globals        Global variables\n\
+  inherit, <typ> Inheritance info for given type\n\
+  locals, [#]    Local variables in stack frame (# levels back)\n\
+  malloc         Memory allocation info\n\
+  obj            Hard-coded variables and functions from owner Script or Program object\n\
+  settings       List of current settings (static members of class taMisc \n\
+                  -- can be set e.g., taMisc::display_width = 90;\n\
+  stack, [#]     Backtrace of the stack (# levels back) (same as 'backtrace' command)\n\
+  status         General status & current state of the program\n\
+  tokens, <typ>  List of tokens (instances) for given type of object\n\
+  types,[<typ>]  List of all types (or type information for given type of object)\n\
+  variables      List all variables\n";
+}
+
 
 //////////////////////////////////////////////////
 // 	cssProgSpace:    Breakpoints 		//
@@ -4516,7 +4712,7 @@ void cssCmdShell::PushSrcProg(cssProgSpace* ps) {
   src_prog_stack[stack_size++] = ps;
   src_prog = ps;
   ps->cmd_shell = this;		// link to this shell
-  SetPrompt(ps->name);		// name is the prompt..
+  SetPrompt(ps->name, true);		// name is the prompt..
 }
 
 cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
@@ -4527,7 +4723,7 @@ cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
   tmp->cmd_shell = NULL;	// unlink from this shell
   stack_size--;
   src_prog = src_prog_stack[stack_size-1];
-  SetPrompt(src_prog->name);	// restore previous prompt
+  SetPrompt(src_prog->name, true);	// restore previous prompt
   return tmp;
 }
 
@@ -4616,7 +4812,7 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
   }
 }
 
-void cssCmdShell::SetPrompt(const char* prmpt) {
+void cssCmdShell::SetPrompt(const char* prmpt, bool disp_prompt) {
   if(prmpt != NULL)
     prompt = prmpt;
   else
@@ -4628,7 +4824,7 @@ void cssCmdShell::SetPrompt(const char* prmpt) {
     prompt = prompt.after('\\', -1);
   if(prompt.contains(".css"))
     prompt = prompt.before(".css");
-  UpdatePrompt();
+  UpdatePrompt(disp_prompt);
 }
 
 //////////////////////////////////////////////////////
@@ -4640,7 +4836,7 @@ extern "C" {
   extern int rl_done;		// readline done reading
 }
 
-void cssCmdShell::UpdatePrompt() {
+void cssCmdShell::UpdatePrompt(bool disp_prompt) {
   if(src_prog == NULL) {
     act_prompt = "no src_prog> ";
     return;
@@ -4658,7 +4854,7 @@ void cssCmdShell::UpdatePrompt() {
   if(console_type == CT_QandD_Console)
     qand_console->setPrompt(act_prompt);
   else if(console_type == CT_Qt_Console)
-    qcss_console->setPrompt(act_prompt, false);	// do not display new prompt
+    qcss_console->setPrompt(act_prompt, disp_prompt);	// do not display new prompt
 }
 
 void cssCmdShell::Shell_QandD_Console(const char* prmpt) {

@@ -500,6 +500,7 @@ public:
 
 
 class CSS_API cssVariant: public cssEl {
+  // css wrapper for a variant object
 INHERITED(cssEl)
 public:
   Variant	val;
@@ -512,6 +513,9 @@ public:
 
   String 	PrintStr() const;
   String	PrintFStr() const { return val.toString(); }
+
+  void 		TypeInfo(ostream& fh = cout) const;
+  void		InheritInfo(ostream& fh = cout) const;
 
   // constructors
   void 		Constr()		{ Register(); } // default is Invalid
@@ -579,6 +583,7 @@ public:
   
   // these delegate to the string, base or variant
   cssEl* operator[](int idx) const; // only valid for Matrixes, gets flat el
+  bool	 MembersDynamic()	{ return true; }
   int	 GetMemberNo(const char* memb) const { return -1; } // don't do any advance lookup: always dynamic
   cssEl* GetMemberFmNo(int memb) const;
   cssEl* GetMemberFmName(const char* memb) const;
@@ -640,6 +645,7 @@ public:
   cssEl*	MakeToken_stub(int, cssEl* arg[])
   { return new cssPtr(el_type, (const char*)*(arg[1])); }
 
+  bool	 MembersDynamic()	{ return true; }
   int    GetMemberNo(const char* s) const; // check type even if ptr is null
   cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
   cssEl* GetMemberFmName(const char* s) const  	{ return ptr.El()->GetMemberFmName(s); }
@@ -965,6 +971,8 @@ public:
   cssEl* operator-()       	{ return ptr.El()->operator-(); }
   cssEl* operator*()	   	{ return ptr.El()->operator*(); }
   cssEl* operator[](int i) const		{ return ptr.El()->operator[](i); }
+
+  bool	 MembersDynamic()	{ return true; }
   int    GetMemberNo(const char* s) const; // emit errorless -1 for void
   cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
   cssEl* GetMemberFmName(const char* s) const  	{ return ptr.El()->GetMemberFmName(s); }

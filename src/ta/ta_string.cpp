@@ -689,7 +689,19 @@ bool String::endsWith(const String& y) const {
 }
 
 bool String::endsWith(const char* t) const {
-  return matches(String(t));
+  return endsWith(String(t));
+}
+
+bool String::startsWith(char c) const {
+  return matches(c, 0);
+}
+
+bool String::startsWith(const String& y) const {
+  return matches(y, 0);
+}
+
+bool String::startsWith(const char* t) const {
+  return startsWith(String(t));
 }
 
 

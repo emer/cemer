@@ -633,6 +633,9 @@ public:
   const char*	GetTypeName() const  	{ return "(c_Variant)"; }
   String	PrintStr() const;
 
+  void 		TypeInfo(ostream& fh = cout) const;
+  void		InheritInfo(ostream& fh = cout) const;
+
   // constructors
   cssCPtr_Variant() 				: cssCPtr(){};
   cssCPtr_Variant(void* it, int pc) 		: cssCPtr(it,pc){};
@@ -689,6 +692,7 @@ public:
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
+  bool	 MembersDynamic()	{ return true; }
   int	 GetMemberNo(const char* memb) const { return -1; } // never do static lookup!
   cssEl* GetMemberFmNo(int memb) const;
   cssEl* GetMemberFmName(const char* memb) const;

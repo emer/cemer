@@ -1,3 +1,13 @@
+2006-07-31  Randall O'Reilly  <oreilly@duo.local>
+
+	* src/css/css_machine.h: added 'info' command and moved lots of other basic commands
+	under this one umbrella command.  fixed up some of those commands, etc.  all the stuff
+	runs off the cssProgSpace, so css_builtin does not have any substantial code -- just
+	stubs.
+
+	* src/ta/ta_string.cpp: added startsWith and fixed endsWith(const char*) which didn't 
+	call the right thing.
+
 2006-07-30  Randall C. O'Reilly  <oreilly@shadow.colorado.edu>
 
 	* src/ta/ta_variant.h: moved String& getString() to public -- needed to actually

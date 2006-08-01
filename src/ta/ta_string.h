@@ -259,6 +259,11 @@ public:
   bool               endsWith(const char* t) const;
     // return 'true' if target is at end of String
 
+  bool               startsWith(char c) const;
+  bool               startsWith(const String& y) const;
+  bool               startsWith(const char* t) const;
+    // return 'true' if target is at start of String
+
   int               freq(char        c) const;
   int               freq(const String&     y) const;
   int               freq(const char* t) const;

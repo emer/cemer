@@ -594,7 +594,9 @@ public:
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator[](int) const { NopErr("[]"); return &cssMisc::Void; }
 
-  virtual int	 GetMemberNo(const char*) const { NopErr(".,->"); return -1; }
+  virtual bool	MembersDynamic()	{ return false; }
+  // are members always dynamically looked up?  if so, don't issue warnings about this
+  virtual int	GetMemberNo(const char*) const { NopErr(".,->"); return -1; }
   // this is called during parsing to compile in an index for the member, instead of looking up by name -- return -1 if member lookup should be dynamic (e.g., if a pointer and type might change later)
   virtual cssEl* GetMemberFmNo(int) const  { NopErr(".,->"); return &cssMisc::Void; }
   // subsequent function to actually get the member el from the number
@@ -1529,9 +1531,21 @@ public:
   void		List(int stln = -1);
   void		Status();
   void		BackTrace(int levels_back=-1);
-  void		ListLocals(int levels_back=0);
+
+  void		ListConstants();
+  void		ListDefines();
+  void		ListEnums();
+  void		ListFunctions();
   void		ListGlobals();
-  void		Help();
+  void		ListLocals(int levels_back=0);
+  void		ListObjHards();
+  void		ListSettings();
+  void		ListTypes();
+
+  void		Info(const String& inf_type = "", cssEl* arg = NULL);
+  void		Info_Generic();
+  void		Help(cssEl* on_el = NULL);
+  void		Help_Generic();
 
   // breakpoints
   bool 		SetBreak(int srcln);
@@ -1599,8 +1613,8 @@ public:
   void		Shell_NoGui_Rl(const char* prmpt);
   // run a nogui readline-based shell
 
-  void		SetPrompt(const char* prmpt);
-  void		UpdatePrompt();
+  void		SetPrompt(const char* prmpt, bool disp_prompt = false);
+  void		UpdatePrompt(bool disp_prompt = false);
   //  void 		Source(const char* fname);	// run a file as if in a shell
 
   void		Exit();		// exit from the shell
