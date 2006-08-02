@@ -270,7 +270,7 @@ int QcssConsole::autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst
   int st_len = lst.size();
   int len = cmd.length();
   int spc_idx = 0;
-  int extra_spcs = 2;
+  int extra_spcs = 3;
   if(cssMisc::cur_class != NULL)
     extra_spcs++;
   cssSpace* spc = NULL;
@@ -278,8 +278,10 @@ int QcssConsole::autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst
     if(spc_idx == 0)
       spc = &(cssMisc::cur_top->types);
     else if(spc_idx == 1)
+      spc = &(cssMisc::cur_top->prog_types);
+    else if(spc_idx == 2)
       spc = &cssMisc::TypesSpace;
-    else if((cssMisc::cur_class != NULL) && (spc_idx == 2))
+    else if((cssMisc::cur_class != NULL) && (spc_idx == 3))
       spc = cssMisc::cur_class->types;
     else
       spc = cssMisc::cur_top->GetParseSpace(spc_idx-extra_spcs);

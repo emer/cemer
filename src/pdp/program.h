@@ -40,6 +40,7 @@ public:
     T_Int,			// integer
     T_Real,			// real-valued number (double precision)
     T_String,			// string of characters
+    T_Bool,			// boolean true/false 
     T_Object,			// pointer to a C++ object 
     T_HardEnum,			// enumerated list of options (existing C++ hard-coded one)
     T_DynEnum,			// enumerated list of options (from my dynamically created list)
@@ -49,6 +50,7 @@ public:
   int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
   String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
+  bool		bool_val;	// #CONDEDIT_ON_var_type:T_Bool boolean value
   TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
   taBase*	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
@@ -60,8 +62,10 @@ public:
 
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
-  cssEl*		NewCssEl();
+  virtual cssEl*	NewCssEl();
   // get a new cssEl of an appropriate type, name/value initialized
+  virtual cssEl*	NewCssType();
+  // if object defines new type information (dyn_enum), generate a type object
   
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   void 	SetDefaultName() {} // make it local to list, set by list
@@ -471,6 +475,7 @@ public:
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCallEl's, not the actual Program's)
+  bool		    	m_dirty; // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
   bool			isDirty() {return m_dirty;}
   void			setDirty(bool value); // indicates a component has changed
@@ -487,6 +492,8 @@ public:
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN,STEP stop the running programs
   
+  virtual void  Compile();
+  // #BUTTON #GHOST_OFF_m_dirty:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void	CmdShell();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void	ExitShell();
@@ -523,7 +530,6 @@ public: // ScriptBase i/f
   // #IGNORE
 
 protected:
-  bool		    	m_dirty;
   String		m_scriptCache; // cache of script, managed by implementation
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override void		InitScriptObj_impl();

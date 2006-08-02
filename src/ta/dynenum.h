@@ -50,13 +50,10 @@ public:
   { int rval=0; FindName(nm, rval); return rval;}
   // find index of given name value
 
-  virtual bool	SetNumVal(int val)
-  // set current enum value by numerical value; false if not found
-  { value_idx = FindNumIdx(val); }
-
-  virtual bool	SetNameVal(const String& nm)
-  // set current enum value by name; false if not found
-  { value_idx = FindNameIdx(nm); }
+  virtual bool	SetNumVal(int val);
+  // set current enum value by numerical value; false (and error msg) if not found
+  virtual bool	SetNameVal(const String& nm);
+  // set current enum value by name; false (and error msg) if not found
 
   virtual ostream& OutputType(ostream& fh, int indent = 0) const;
   // output type information

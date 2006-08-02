@@ -37,6 +37,7 @@ void ProgVar::Initialize() {
   var_type = T_Int;
   int_val = 0;
   real_val = 0.0;
+  bool_val = false;
   object_type = &TA_taOBase;
   object_val = NULL;
   hard_enum_type = NULL;
@@ -63,6 +64,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   int_val = cp.int_val;
   real_val = cp.real_val;
   string_val = cp.string_val;
+  bool_val = cp.bool_val;
   object_type = cp.object_type;
   taBase::SetPointer((taBase**)&object_val, cp.object_val);
   hard_enum_type = cp.hard_enum_type;
@@ -82,6 +84,7 @@ void ProgVar::Cleanup() {
     int_val = 0;
   if (var_type != T_Real)  real_val = 0.0;
   if (var_type != T_String)  string_val = _nilString;
+  if (var_type != T_Bool)  bool_val = false;
   if (var_type != T_Object) {
     //note: its ok to leave whatever type is there
     taBase::DelPointer((taBase**)&object_val);
@@ -99,6 +102,8 @@ bool ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     return (var_type == T_Real);
   else if (md->name == "string_val")
     return (var_type == T_String);
+  else if (md->name == "bool_val")
+    return (var_type == T_Bool);
   else if ((md->name == "object_type") || (md->name == "object_val"))
     return (var_type == T_Object);
   else if (md->name == "hard_enum_type")
@@ -121,6 +126,8 @@ const String ProgVar::GenCssType() {
     return "double";
   case T_String:
     return "String";
+  case T_Bool:
+    return "bool";
   case T_Object:
     if(object_val)
       return object_val->GetTypeDef()->name + "*";
@@ -144,6 +151,8 @@ const String ProgVar::GenCssInitVal() {
     return real_val;
   case T_String:
     return string_val;
+  case T_Bool:
+    return bool_val;
   case T_Object:
     if(object_val)
       return object_val->GetPath();
@@ -184,6 +193,8 @@ cssEl* ProgVar::NewCssEl() {
     return new cssCPtr_double(&real_val, 1, name);
   case T_String:
     return new cssCPtr_String(&string_val, 1, name);
+  case T_Bool:
+    return new cssCPtr_bool(&bool_val, 1, name);
   case T_Object: 
     if(object_val)
       return new cssTA_Base(&object_val, 2, object_val->GetTypeDef(), name);
@@ -192,9 +203,21 @@ cssEl* ProgVar::NewCssEl() {
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 1, name, hard_enum_type);
   case T_DynEnum:
-    return new cssCPtr_DynEnum(&dyn_enum_val, 1, name); // todo!
+    return new cssCPtr_DynEnum(&dyn_enum_val, 1, name);
   }
 }
+
+cssEl* ProgVar::NewCssType() {
+  if(var_type != T_DynEnum)
+    return NULL;
+  cssEnumType* et = new cssEnumType(dyn_enum_val.name);
+  for(int i=0;i<dyn_enum_val.size;i++) {
+    DynEnumItem* ev = dyn_enum_val.FastEl(i);
+    et->enums->Push(new cssEnum(et, ev->value, ev->name));
+  }
+  return et;
+}
+
 
 //////////////////////////
 //   ProgVar_List	//
@@ -1200,6 +1223,10 @@ bool Program::StopCheck() {
   return false;
 }
 
+void Program::Compile() {
+  CompileScript();
+}
+
 void Program::CmdShell() {
   CmdShellScript();
 }
@@ -1301,33 +1328,36 @@ const String Program::scriptString() {
 }
 
 void  Program::UpdateProgVars() {
-  //NOTE: if we have to nuke any or change any types then we have to recompile!
-  // but currently, we only do this before recompiling anyway, so no worries!
-// easiest is just to nuke and recreate...
-  // nuke existing
+  // note: this assumes that script has been ClearAll'd
   script->prog_vars.Reset(); // removes/unref-deletes
+  script->prog_types.Reset(); // removes/unref-deletes
   
   // add the ones in the object -- note, we use *pointers* to these
   cssEl* el = NULL;
-  el = new cssCPtr_enum(&run_state, 1, "run_state"); //note: static
-//BA 7/5/06, prob not buggy, issue before was caused by Init() same name 
-//   el = new cssCPtr_int(&run_state, 1, "run_state"); //note: static
-  script->prog_vars.Push(el); //refs
+  el = new cssCPtr_enum(&run_state, 1, "run_state",
+			TA_Program.sub_types.FindName("RunState"));
+  script->prog_vars.Push(el);
   el = new cssCPtr_int(&ret_val, 1, "ret_val");
-  script->prog_vars.Push(el); //refs
+  script->prog_vars.Push(el);
   el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
-  script->prog_vars.Push(el); //refs
+  script->prog_vars.Push(el);
 
   // add new in the program
   for (int i = 0; i < args.size; ++i) {
     ProgVar* sv = args.FastEl(i);
     el = sv->NewCssEl();
-    script->prog_vars.Push(el); //refs
+    script->prog_vars.Push(el);
+    el = sv->NewCssType();	// for dynenums
+    if(el != NULL)
+      script->prog_types.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
+    el = sv->NewCssType();	// for dynenums
+    if(el != NULL)
+      script->prog_types.Push(el);
   } 
   
   // add new (with unique names) from our groups, starting at most inner
@@ -1339,6 +1369,9 @@ void  Program::UpdateProgVars() {
       if (script->prog_vars.IndexOfName(sv->GetName()) >= 0) continue;
       el = sv->NewCssEl();
       script->prog_vars.Push(el); //refs
+      el = sv->NewCssType();	// for dynenums
+      if(el != NULL)
+	script->prog_types.Push(el);
     } 
     grp = (Program_Group*)grp->GetOwner(&TA_Program_Group);
   }

@@ -230,6 +230,13 @@ int yylex()
 	else
 	  return CSS_TYPE;
       }
+      if((s = cssMisc::cur_top->prog_types.FindName((char*)cssLex::Buf)) != 0) {
+	yylval.el = s;
+	if((s.El())->GetParse() == CSS_PTR)
+	  return CSS_PTRTYPE;
+	else
+	  return CSS_TYPE;
+      }
       if((s = cssMisc::TypesSpace.FindName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
 	if((s.El())->GetParse() == CSS_PTR)

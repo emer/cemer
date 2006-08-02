@@ -603,9 +603,13 @@ cssEl* cssEl::GetTypeObject() const {
   if((prog != NULL) && (prog->top != NULL)) {
     if((s = prog->top->types.FindName((char*)tp_nm)) != 0)
       return s.El();
+    if((s = prog->top->prog_types.FindName((char*)tp_nm)) != 0)
+      return s.El();
   }
   if(cssMisc::cur_top != NULL) {
     if((s = cssMisc::cur_top->types.FindName((char*)tp_nm)) != 0)
+      return s.El();
+    if((s = cssMisc::cur_top->prog_types.FindName((char*)tp_nm)) != 0)
       return s.El();
   }
   if((s = cssMisc::TypesSpace.FindName((char*)tp_nm)) != 0)
@@ -924,7 +928,8 @@ cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
   }
   EnumDef* ed = typ->FindEnum(memb);
   if(ed != NULL) {
-    return new cssInt(ed->enum_no, memb); // todo: should be cssCPtr_Enum, right?
+    return new cssInt(ed->enum_no, memb); // this is not an Enum because it is just a value
+    // and there is no object to point to that contains the enum value
   }
   TypeDef* td = typ->sub_types.FindName(memb);
   if(td != NULL) {
@@ -3411,6 +3416,7 @@ void cssProgSpace::SetName(const char* nm) {
   hard_funs.name = name + ".hard_funs";
   statics.name = name + ".statics";
   types.name = name + ".types";
+  prog_types.name = name + ".prog_types";
 }
 
 void cssProgSpace::Reset() {
@@ -3807,6 +3813,9 @@ cssElPtr& cssProgSpace::ParseName(const char* nm) {
 
 cssElPtr& cssProgSpace::FindTypeName(const char* nm) {
   cssElPtr& tp_ptr = types.FindName(nm);
+  if(tp_ptr != 0)
+    return tp_ptr;
+  tp_ptr = prog_types.FindName(nm);
   if(tp_ptr != 0)
     return tp_ptr;
   return cssMisc::TypesSpace.FindName(nm);
@@ -4338,6 +4347,7 @@ void cssProgSpace::ListTypes() {
   cmd_shell->pgout.start();
   cmd_shell->pgout << "Types local to current top-level program space (" << name << "):" << "\n";
   cmd_shell->src_prog->types.NameList(cmd_shell->pgout);
+  cmd_shell->src_prog->prog_types.NameList(cmd_shell->pgout);
   cmd_shell->pgout << "\n==========================" << "\n"<<
     "Global types: " << "\n";
   cssMisc::TypesSpace.NameList(cmd_shell->pgout);
@@ -4564,7 +4574,7 @@ void cssProgSpace::Info_Generic() {
   stack, [#]     Backtrace of the stack (# levels back) (same as 'backtrace' command)\n\
   status         General status & current state of the program\n\
   tokens, <typ>  List of tokens (instances) for given type of object\n\
-  types,[<typ>]  List of all types (or type information for given type of object)\n\
+  types, [<typ>] List of all types (or type information for given type of object)\n\
   variables      List all variables\n";
 }
 

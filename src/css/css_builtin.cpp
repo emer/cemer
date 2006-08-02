@@ -2271,15 +2271,17 @@ char* css_keyword_generator(char* text, int state) {
   }
 
   cssSpace* spc = NULL;
-  int extra_spcs = 2;		// both type spaces
+  int extra_spcs = 3;		// both type spaces
   if(cssMisc::cur_class != NULL)
     extra_spcs++;
 
   if(spc_idx == 0)
     spc = &(cssMisc::cur_top->types);
   else if(spc_idx == 1)
+    spc = &(cssMisc::cur_top->prog_types);
+  else if(spc_idx == 2)
     spc = &cssMisc::TypesSpace;
-  else if((cssMisc::cur_class != NULL) && (spc_idx == 2))
+  else if((cssMisc::cur_class != NULL) && (spc_idx == 3))
     spc = cssMisc::cur_class->types;
   else
     spc = cssMisc::cur_top->GetParseSpace(spc_idx-extra_spcs);

@@ -18,6 +18,7 @@
 #include "dynenum.h"
 
 void DynEnum::Initialize() {
+  SetDefaultName();
   value_idx = -1;
   SetBaseType(&TA_DynEnumItem);
 }
@@ -27,7 +28,7 @@ void DynEnum::Copy_(const DynEnum& cp) {
 }
 
 void DynEnum::DataChanged(int dcr, void*, void*) {
-  cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
+//   cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
   value_idx = -1;
   OrderItems();
 }
@@ -47,6 +48,25 @@ int DynEnum::FindNumIdx(int val) const {
     if(FastEl(i)->value == val) return i;
   return -1;
 }
+
+bool DynEnum::SetNumVal(int val) {
+  value_idx = FindNumIdx(val);
+  if(value_idx < 0) {
+    taMisc::Error("DynEnum", name, "value:", (String)val, "not found!");
+    return false;
+  }
+  return true;
+}
+
+bool DynEnum::SetNameVal(const String& nm) {
+  value_idx = FindNameIdx(nm);
+  if(value_idx < 0) {
+    taMisc::Error("DynEnum", name, "name:", nm, "not found!");
+    return false;
+  }
+  return true;
+}
+
 
 void DynEnum::OrderItems() {
   if(size == 0) return;

@@ -1419,11 +1419,12 @@ public:
   int		state;			// current run state information
   int		parse_depth;		// depth of progs for current parsing run
 
-  cssSpace	prog_vars;		// external Program vars, only used by pdp Programs, act like hard_vars
+  cssSpace	prog_vars;		// external Program or Script vars (just like hard_vars, but in a special space to make it easier to update)
   cssSpace	hard_vars;		// space-specific extern vars
   cssSpace	hard_funs;		// space-specific extern funs
   cssSpace	statics;		// global variables (in space)
   cssSpace	types;			// types defined in space
+  cssSpace	prog_types;		// external Program or Script types (just like types, but in a special space to make it easier to update)
 
   int		step_mode;		// step mode: if > 0, next Cont will run this # of lines
   cssEl::RunStat run_stat; 		// flag to tell if running: set to Stopping to stop, or BreakPoint

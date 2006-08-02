@@ -7,9 +7,13 @@ Program todo:
 
 - type <css class> doesn't work
 
-- lots of enum stuff: getscoped returns wrong type, etc
+- new enum type for dynenum is not working
 
-- register DynEnum obj in types (Programs)?
+- switchcase progel
+
+- dirty bit from progvar edits
+
+- when are program arg css generated?  is this necessary??  always just a comment?
 
 - cmdshell should print out the prompt! displayPrompt(true);
 
