@@ -420,6 +420,7 @@ void taiProgVar::GetValue(ProgVar* var) const {
 }
   
 void taiProgVar::SetStack(int vt) {
+  ++m_updating;
   switch (vt) {
   case ProgVar::T_Int:
     stack->setCurrentIndex(scInt);
@@ -441,6 +442,7 @@ void taiProgVar::SetStack(int vt) {
     break;
   default: break ;
   }
+  --m_updating;
 }
 
 
