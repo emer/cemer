@@ -417,8 +417,12 @@ void cssCPtr_enum::operator=(const String& cp) {
   TypeDef* et = GetEnumType();
   if(et != NULL) {
     cssTA* clp = (cssTA*)class_parent;
-    et->SetValStr(cp, GetNonNullVoidPtr(), clp->GetNonNullVoidPtr());
-    class_parent->UpdateAfterEdit();
+    if(clp != NULL) {
+      et->SetValStr(cp, GetNonNullVoidPtr(), clp->GetNonNullVoidPtr());
+      class_parent->UpdateAfterEdit();
+    }
+    else
+      et->SetValStr(cp, GetNonNullVoidPtr());
     return;
   }
   GetIntRef() = (int)cp;
@@ -435,6 +439,21 @@ void cssCPtr_enum::operator=(const cssEl& t) {
     if(class_parent != NULL)     class_parent->UpdateAfterEdit();
   }
 }
+bool cssCPtr_enum::operator==(cssEl& t) {
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
+    return GetStr() == t.GetStr();
+  }
+  return GetIntRef() == (Int)t;
+}
+bool cssCPtr_enum::operator!=(cssEl& t) {
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
+    return GetStr() != t.GetStr();
+  }
+  return GetIntRef() != (Int)t;
+}
+
+  
+
 
 ///////////////////
 //     double    //
@@ -733,5 +752,50 @@ cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
     return GetScoped_impl(typ, val.toBase(), memb);
   }
   return GetScoped_impl(&TA_Variant, &val, memb);
+}
+
+/////////////////////
+//     dynenum     //
+/////////////////////
+
+DynEnum cssCPtr_DynEnum::null_enum;
+
+void cssCPtr_DynEnum::TypeInfo(ostream& fh) const {
+  fh << GetTypeName() << name << ": ";
+  if(GetVoidPtr() == NULL) {
+    fh << "NULL";
+  }
+  else {
+    fh << "\n";
+    GetEnumRef().OutputType(fh);
+  }
+}
+
+void cssCPtr_DynEnum::operator=(const String& cp) {
+  GetEnumRef().SetNameVal(cp);
+}
+void cssCPtr_DynEnum::operator=(const cssEl& t) {
+  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_DynEnum))
+    PtrAssignPtr((cssCPtr*)&t);
+  else {
+    if(!ROCheck()) return;
+    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+      *this = t.GetStr();	// use string converter
+    else
+      GetEnumRef().SetNumVal((Int)t);
+    if(class_parent != NULL)     class_parent->UpdateAfterEdit();
+  }
+}
+bool cssCPtr_DynEnum::operator==(cssEl& t) {
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
+    return GetEnumRef().NameVal() == t.GetStr();
+  }
+  return GetEnumRef().NumVal() == (Int)t;
+}
+bool cssCPtr_DynEnum::operator!=(cssEl& t) {
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
+    return GetEnumRef().NameVal() != t.GetStr();
+  }
+  return GetEnumRef().NumVal() != (Int)t;
 }
 

@@ -2145,6 +2145,7 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssCPtr_float(NULL, 1, "c_float"));
   cssMisc::TypesSpace.Push(new cssCPtr_String(NULL, 1, "c_String"));
   cssMisc::TypesSpace.Push(new cssCPtr_Variant(NULL, 1, "c_Variant"));
+  cssMisc::TypesSpace.Push(new cssCPtr_DynEnum(NULL, 1, "c_DynEnum"));
 
   // ta types
   cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_void, "TA");

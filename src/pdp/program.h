@@ -20,6 +20,7 @@
 
 #include "ta_group.h"
 #include "ta_script.h"
+#include "dynenum.h"
 
 #include "pdp_def.h"
 #include "pdp_TA_type.h"
@@ -32,7 +33,7 @@ class Program_Group;
 class Program_List;
 
 class PDP_API ProgVar: public taNBase {
-  // ##INSTANCE a program variable, accessible from the outer system, and inside the script in .vars and args;\n This class handles simple atomic values like Ints and Strings
+  // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args;\n This class handles simple atomic values like Ints and Strings
 INHERITED(taNBase)
 public:
   enum VarType {
@@ -41,17 +42,17 @@ public:
     T_String,			// string of characters
     T_Object,			// pointer to a C++ object 
     T_HardEnum,			// enumerated list of options (existing C++ hard-coded one)
-    T_DynoEnum,			// enumerated list of options (from my dynamically created list)
+    T_DynEnum,			// enumerated list of options (from my dynamically created list)
   };
 
   VarType	var_type;	// type of variable 
-  int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum,T_DynoEnum integer value (also for enum types)
+  int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
   String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
   TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
-  taBase*	object_val;	// #CONDEDIT_ON_var_type:T_Object object pointer value
-  TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum type information for hard enum (value goes in int_val)
-  // todo: add dyno enum class and css wrapper for it..
+  taBase*	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
+  TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
+  DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum type information for dynamic enum (value goes in int_val)
   
   virtual const String	GenCssType(); // type name
   virtual const String	GenCssInitVal(); // intial value
@@ -83,7 +84,7 @@ public:
     VC_FuncArgs  //  #LABEL_FunctionArguments function arguments
   };
   
-  VarContext	    	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
+  VarContext	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
   
@@ -143,6 +144,8 @@ class PDP_API ProgEl: public taOBase {
 INHERITED(taOBase)
 public:
   String		desc; // optional brief description of element's function; included as comment in script
+  bool			off;	// #DEF_false turn off this program element
+
   virtual ProgEl*   	parent() {return GET_MY_OWNER(ProgEl);}
   Program*		program() {return GET_MY_OWNER(Program);} 
   
@@ -457,8 +460,8 @@ public:
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		objs; // #AKA_prog_objs sundry objects that are used in this program
-  ProgVar_List		args; // global variables that are parameters (arguments) for callers
-  ProgVar_List		vars; // global variables accessible outside and inside script
+  ProgVar_List		args; // #AKA_prog_args global variables that are parameters (arguments) for callers
+  ProgVar_List		vars; // #AKA_prog_vars global variables accessible outside and inside script
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_els; // the prog els for the main program
   

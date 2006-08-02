@@ -66,6 +66,7 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../ta \
+	-I@srcdir@/../tamisc \
 	-I@srcdir@/../taiqtso
 
 libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@

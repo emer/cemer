@@ -35,9 +35,11 @@
 //////////////////////////
 
 int taiProgVarType::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_ProgVar)) 
-    return (inherited::BidForType(td) +1);
-  else  return 0;
+  // todo: disable temporarily
+//   if (td->InheritsFrom(TA_ProgVar)) 
+//     return (inherited::BidForType(td) +1);
+//   else  return 0;
+  return 0;
 }
 
 taiData* taiProgVarType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) 

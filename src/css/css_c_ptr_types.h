@@ -21,7 +21,7 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
-
+#include "dynenum.h"
 
 class CSS_API cssCPtr_int : public cssCPtr {
   // Points to a C integer
@@ -439,6 +439,8 @@ public:
 
   // operators
   void operator=(const cssEl& t);
+  bool operator==(cssEl& s);
+  bool operator!=(cssEl& s);
 };
 
 class CSS_API cssCPtr_double : public cssCPtr {
@@ -707,5 +709,78 @@ public:
   cssEl* GetScoped(const char* nm) const;
 };
 
+class CSS_API cssCPtr_DynEnum : public cssCPtr {
+  // Points to a C++ dynamic enum type
+public:
+  static DynEnum null_enum;	// safe rval
+
+  DynEnum&	GetEnumRef() const
+  { void* nnp = GetNonNullVoidPtr(); if(nnp == NULL) return null_enum; return *(DynEnum*)nnp; }
+  void 		TypeInfo(ostream& fh = cout) const;
+  cssTypes	GetPtrType() const	{ return T_DynEnum; }
+  uint		GetSize() const 	{ return sizeof(DynEnum); } // use for ptrs
+  const char*	GetTypeName() const 	{ return "(c_DynEnum)"; }
+
+  // constructors
+  cssCPtr_DynEnum() 				: cssCPtr(){};
+  cssCPtr_DynEnum(void* it, int pc) 		: cssCPtr(it,pc){};
+  cssCPtr_DynEnum(void* it, int pc, const char* nm)	: cssCPtr(it,pc,nm){};
+  cssCPtr_DynEnum(void* it, int pc, const char* nm, cssEl* cp, bool ro)
+  : cssCPtr(it,pc,nm,cp,ro){};
+  cssCPtr_DynEnum(const cssCPtr_DynEnum& cp) 		: cssCPtr(cp){};
+  cssCPtr_DynEnum(const cssCPtr_DynEnum& cp, const char* nm) 	: cssCPtr(cp,nm){};
+
+  cssCPtr_CloneFuns(cssCPtr_DynEnum, (void*)NULL);
+
+  // converters
+  String GetStr() const		{ return String(GetEnumRef().NameVal()); }
+  Variant GetVar() const	{ return Variant(GetEnumRef().NumVal()); }
+  operator Int() const		{ return GetEnumRef().NumVal(); }
+  operator Real() const		{ return (Real)(GetEnumRef().NumVal()); }
+
+  void operator=(Real cp) 	{ GetEnumRef().SetNumVal((int)cp); }
+  void operator=(Int cp)	{ GetEnumRef().SetNumVal(cp); }
+  void operator=(const String& cp);
+  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+
+  // operators
+  void operator=(const cssEl& t);
+
+  cssEl* operator+(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val += (Int)t; return r; }
+  cssEl* operator-(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val -= (Int)t; return r; }
+  cssEl* operator*()		{ return cssCPtr::operator*(); }
+  cssEl* operator*(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val *= (Int)t; return r; }
+  cssEl* operator/(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val /= (Int)t; return r; }
+  cssEl* operator%(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val %= (Int)t; return r; }
+  cssEl* operator<<(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val <<= (Int)t; return r; }
+  cssEl* operator>>(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val >>= (Int)t; return r; }
+  cssEl* operator&(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val &= (Int)t; return r; }
+  cssEl* operator^(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val ^= (Int)t; return r; }
+  cssEl* operator|(cssEl &t)
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val |= (Int)t; return r; }
+
+  cssEl* operator-()
+  { cssInt *r = new cssInt(GetEnumRef().NumVal()); r->val = -r->val; return r; }
+
+  bool operator< (cssEl& s) 	{ return (GetEnumRef().NumVal() < (Int)s); }
+  bool operator> (cssEl& s) 	{ return (GetEnumRef().NumVal() > (Int)s); }
+  bool operator! () 	    	{ return ( ! GetEnumRef().NumVal()); }
+  bool operator<=(cssEl& s) 	{ return (GetEnumRef().NumVal() <= (Int)s); }
+  bool operator>=(cssEl& s) 	{ return (GetEnumRef().NumVal() >= (Int)s); }
+  bool operator==(cssEl& s);
+  bool operator!=(cssEl& s);
+  bool operator&&(cssEl& s) 	{ return (GetEnumRef().NumVal() && (Int)s); }
+  bool operator||(cssEl& s) 	{ return (GetEnumRef().NumVal() || (Int)s); }
+};
 
 #endif // css_ptr_i_h

@@ -43,6 +43,7 @@ void ProgVar::Initialize() {
 }
 
 void ProgVar::Destroy() {
+  dyn_enum_val.Reset();
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
@@ -53,6 +54,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   object_type = cp.object_type;
   taBase::SetPointer((taBase**)&object_val, cp.object_val);
   hard_enum_type = cp.hard_enum_type;
+  dyn_enum_val = cp.dyn_enum_val;
 }
 
 void ProgVar::UpdateAfterEdit() {
@@ -85,8 +87,8 @@ const String ProgVar::GenCssType() {
       return hard_enum_type->name;
     else
       return "int";
-  case T_DynoEnum:
-    return "int";		// todo!
+  case T_DynEnum:
+    return "c_DynEnum";
   }
 }
 
@@ -108,8 +110,8 @@ const String ProgVar::GenCssInitVal() {
       return hard_enum_type->GetValStr(&int_val);
     else
       return int_val;
-  case T_DynoEnum:
-    return int_val;
+  case T_DynEnum:
+    return dyn_enum_val.NameVal();
   }
 }
 
@@ -145,39 +147,10 @@ cssEl* ProgVar::NewCssEl() {
       return new cssTA_Base(&object_val, 2, object_type, name);
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 1, name, hard_enum_type);
-  case T_DynoEnum:
-    return new cssCPtr_int(&int_val, 1, name); // todo!
+  case T_DynEnum:
+    return new cssCPtr_DynEnum(&dyn_enum_val, 1, name); // todo!
   }
 }
-
-// const String EnumProgVar::ValToId(int val) {
-//   if (enum_type) {
-//     return enum_type->Get_C_EnumString(val);
-//   } else return _nilString;
-// }
-
-// const String ObjectProgVar::GenCssArg_impl() {
-//   if (!val_type) return _nilString; // shouldn't happen...
-//   STRING_BUF(rval, 80); //note: buffer will extend if needed
-//   rval += val_type->GetPathName() + "* ";
-//   rval += name;
-//   //NOTE: make_new not supported
-//   return rval;
-// }
-
-// const String ObjectProgVar::GenCssVar_impl() {
-//   if (!val_type) return _nilString; // shouldn't happen...
-//   STRING_BUF(rval, 80); //note: buffer will extend if needed
-//   rval += val_type->GetPathName() + "* ";
-//   rval += name;
-//   bool init = !value.isDefault();
-//   if (init) {
-//     rval += " = ";
-//     rval += value.toCssLiteral();
-//   }
-//   rval += ";\n";
-//   return rval;
-// }
 
 //////////////////////////
 //   ProgVar_List	//
@@ -325,6 +298,7 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
 //////////////////////////
 
 void ProgEl::Initialize() {
+  off = false;
 }
 
 void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
@@ -345,6 +319,7 @@ void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
 }
 
 const String ProgEl::GenCss(int indent_level) {
+  if(off) return "";
   STRING_BUF(rval, 120); // grows if needed, but may be good for many cases
   if (!desc.empty())
     rval.cat(cssMisc::Indent(indent_level)).cat("//").cat(desc).cat("\n");
@@ -363,6 +338,7 @@ String ProgEl::GetColText(int col, int /*itm_idx*/) {
 }
 
 void ProgEl::PreGen(int& item_id) {
+  if(off) return;
   PreGenMe_impl(item_id);
   ++item_id;
   PreGenChildren_impl(item_id);

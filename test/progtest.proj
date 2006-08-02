@@ -83,8 +83,19 @@ BpNetwork @[1] { };
 
 Program_Group @.programs = [2] {
 Program @[0] { 
-ProgVar_List @.vars = [1] {
+ProgVar_List @.vars = [5] {
 ProgVar @[0] { };
+ProgVar @[1] { };
+ProgVar @[2] { 
+DynEnum NULL = [4] {
+DynEnumItem @[0] { };
+DynEnumItem @[1] { };
+DynEnumItem @[2] { };
+DynEnumItem @[3] { };
+};
+};
+ProgVar @[3] { };
+ProgVar @[4] { };
 };
 
 ProgEl_List @.prog_els = [1] {
@@ -274,12 +285,102 @@ el_def=0;
 ProgVar @[0] {
 name="trial_no";
 var_type=T_Int;
+int_val=3;
+real_val=0;
+string_val=;
+object_type=taOBase;
+object_val=NULL;
+hard_enum_type=NULL;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
+};
+ProgVar @[1] {
+name="string";
+var_type=T_String;
 int_val=0;
 real_val=0;
 string_val=;
 object_type=taOBase;
 object_val=NULL;
 hard_enum_type=NULL;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
+};
+ProgVar @[2] {
+name="my_enum";
+var_type=T_DynEnum;
+int_val=0;
+real_val=0;
+string_val=;
+object_type=taOBase;
+object_val=NULL;
+hard_enum_type=NULL;
+dyn_enum_val {
+name="my_options";
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=0;
+DynEnumItem @[0] {
+name="DO_FIRST";
+value=0;
+desc="this is what you do first";
+};
+DynEnumItem @[1] {
+name="DO_SECOND";
+value=1;
+desc=;
+};
+DynEnumItem @[2] {
+name="DO_THIRD";
+value=2;
+desc=;
+};
+DynEnumItem @[3] {
+name="DO_FOURTH";
+value=3;
+desc=;
+};
+};
+};
+ProgVar @[3] {
+name="my_net";
+var_type=T_Object;
+int_val=0;
+real_val=0;
+string_val=;
+object_type=Network;
+object_val=NULL;
+hard_enum_type=NULL;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
+};
+ProgVar @[4] {
+name="wt_update";
+var_type=T_HardEnum;
+int_val=1;
+real_val=0;
+string_val=;
+object_type=taOBase;
+object_val=NULL;
+hard_enum_type=Network::WtUpdate;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
 };
 };
 init_els {
@@ -293,12 +394,14 @@ el_typ=ForLoopEl;
 el_def=0;
 ForLoopEl @[0] {
 desc="iterate over trials";
+off=0;
 loop_els {
 name=;
 el_typ=ProgramCallEl;
 el_def=0;
 ProgramCallEl @[0] {
 desc=;
+off=0;
 target=.projects[0].programs[1]$0$;
 prog_args {
 name=;
@@ -338,12 +441,18 @@ el_def=0;
 ProgVar @[0] {
 name="trial_no";
 var_type=T_Int;
-int_val=0;
+int_val=3;
 real_val=0;
 string_val=;
 object_type=taOBase;
 object_val=NULL;
 hard_enum_type=NULL;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
 };
 ProgVar @[1] {
 name="name_str";
@@ -354,6 +463,12 @@ string_val=;
 object_type=taOBase;
 object_val=NULL;
 hard_enum_type=NULL;
+dyn_enum_val {
+name=;
+el_typ=DynEnumItem;
+el_def=0;
+value_idx=-1;
+};
 };
 };
 vars {
@@ -372,14 +487,17 @@ el_typ=UserScriptEl;
 el_def=0;
 UserScriptEl @[0] {
 desc="output trial";
+off=0;
 user_script="cerr << trial_no << endl;";
 };
 UserScriptEl @[1] {
 desc="output network";
+off=0;
 user_script="// if(network != NULL) cerr << network->name << endl; else cerr << \"network = NULL!\" << endl;";
 };
 UserScriptEl @[2] {
 desc="output wt_update";
+off=0;
 user_script="// cerr << wt_update << endl;";
 };
 };

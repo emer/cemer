@@ -339,6 +339,7 @@ public:
     T_LongLong,
     T_Char,
     T_Float,
+    T_DynEnum,
   };
 
   enum RunStat {	// css running status

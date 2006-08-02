@@ -9,6 +9,8 @@ Program todo:
 
 - lots of enum stuff: getscoped returns wrong type, etc
 
+- register DynEnum obj in types (Programs)?
+
 - cmdshell should print out the prompt! displayPrompt(true);
 
 - figure out PtrAssignPtr in Cptr type operator= funs
