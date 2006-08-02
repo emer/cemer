@@ -43,7 +43,19 @@ void ProgVar::Initialize() {
 }
 
 void ProgVar::Destroy() {
+  CutLinks();
+}
+
+void ProgVar::InitLinks() {
+  taBase::Own(&dyn_enum_val, this);
+  inherited::InitLinks();
+}
+
+void ProgVar::CutLinks() {
+  taBase::DelPointer((taBase**)&object_val);
   dyn_enum_val.Reset();
+  dyn_enum_val.CutLinks();
+  inherited::CutLinks();
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
@@ -63,6 +75,38 @@ void ProgVar::UpdateAfterEdit() {
 //TODO: should revert
   }
   inherited::UpdateAfterEdit();
+}
+
+void ProgVar::Cleanup() {
+  if (!((var_type == T_Int) || (var_type == T_HardEnum)))
+    int_val = 0;
+  if (var_type != T_Real)  real_val = 0.0;
+  if (var_type != T_String)  string_val = _nilString;
+  if (var_type != T_Object) {
+    //note: its ok to leave whatever type is there
+    taBase::DelPointer((taBase**)&object_val);
+  }
+  if (var_type != T_HardEnum) {
+    hard_enum_type = NULL;
+  }
+  //TODO: anything about DynEnums???
+}
+
+bool ProgVar::Dump_QuerySaveMember(MemberDef* md) {
+  if (md->name == "int_val")
+    return ((var_type == T_Int) || (var_type == T_HardEnum));
+  else if (md->name == "real_val")
+    return (var_type == T_Real);
+  else if (md->name == "string_val")
+    return (var_type == T_String);
+  else if ((md->name == "object_type") || (md->name == "object_val"))
+    return (var_type == T_Object);
+  else if (md->name == "hard_enum_type")
+    return (var_type == T_HardEnum);
+  else if (md->name == "dyn_enum_val")
+    return (var_type == T_DynEnum);
+  else 
+    return inherited::Dump_QuerySaveMember(md);
 }
 
 const String ProgVar::GenCss(bool is_arg) {

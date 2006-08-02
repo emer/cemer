@@ -33,7 +33,7 @@ class Program_Group;
 class Program_List;
 
 class PDP_API ProgVar: public taNBase {
-  // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args;\n This class handles simple atomic values like Ints and Strings
+  // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
   enum VarType {
@@ -45,7 +45,7 @@ public:
     T_DynEnum,			// enumerated list of options (from my dynamically created list)
   };
 
-  VarType	var_type;	// type of variable 
+  VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
   String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
@@ -54,6 +54,7 @@ public:
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
   DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum type information for dynamic enum (value goes in int_val)
   
+  void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
   virtual const String	GenCssType(); // type name
   virtual const String	GenCssInitVal(); // intial value
 
@@ -62,8 +63,11 @@ public:
   cssEl*		NewCssEl();
   // get a new cssEl of an appropriate type, name/value initialized
   
+  override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   void 	SetDefaultName() {} // make it local to list, set by list
   void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
+  void	InitLinks();
+  void	CutLinks();
   void	Copy_(const ProgVar& cp);
   COPY_FUNS(ProgVar, taNBase);
   TA_BASEFUNS(ProgVar);

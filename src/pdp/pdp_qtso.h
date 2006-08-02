@@ -66,92 +66,58 @@ protected:
 };
 
 
-class PDP_API taiProgVarBase: public taiCompData { 
+class PDP_API taiProgVar: public taiCompData { 
   //note: this set of classes uses a static New instead of new because of funky virtual Constr
 INHERITED(taiCompData)
   Q_OBJECT
 public:
+  static taiProgVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+  
   QWidget*	rep() const { return (QWidget*)m_rep; } 
   bool		fillHor() {return true;} // override 
-  ~taiProgVarBase();
+  ~taiProgVar();
 
   void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
   virtual void  	GetImage(const ProgVar* var);
   virtual void	 	GetValue(ProgVar* var) const;
 
 protected:
-  int			m_changing; // used to prevent recursions
+  enum StackControls { // #IGNORE indexes of controls in the stack
+    scInt,
+    scField, // string and most numbers
+    scBase, // taBase
+    scEnum, // regular Enum
+    scDynEnum
+  };
+  mutable int		m_updating; // used to prevent recursions
+  
   taiField*		fldName;
+  taiComboBox*		cmbVarType;
+  QStackedWidget*	stack; // holds the subfields for different types
   
-  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
-  override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 
-  taiProgVarBase(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-};
-
-
-class PDP_API taiProgVar: public taiProgVarBase { 
-  //note: this set of classes uses a static New instead of new because of funky virtual Constr
-INHERITED(taiProgVarBase)
-  Q_OBJECT
-public:
-  static taiProgVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
+  taiIncrField*		incVal; // for: ints
+  taiField*		fldVal; // for: char, string, most numbers
   
-  ~taiProgVar();
-
-  void  		GetImage(const ProgVar* var);
-  void	 		GetValue(ProgVar* var) const;
-
-protected: 
-  taiVariant*		vfVariant;
-  
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  taiProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-};
-
-
-class PDP_API taiEnumProgVar: public taiProgVarBase {
-INHERITED(taiProgVarBase)
-  Q_OBJECT
-public:
-  static taiEnumProgVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-  ~taiEnumProgVar();
-
-  void  		GetImage(const ProgVar* var); // override
-  void	 		GetValue(ProgVar* var) const; // override
-
-protected:
+  // for standard enums:
   taiTypeHier*		thEnumType;
   taiComboBox*		cboEnumValue;
-  
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
-  void			DataChanged_impl(taiData* chld); // override
-  taiEnumProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-};
-
-
-class PDP_API taiObjectProgVar: public taiProgVarBase {
-INHERITED(taiProgVarBase)
-  Q_OBJECT
-public:
-  static taiObjectProgVar* New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-
-  void  		GetImage(const ProgVar* var); // override
-  void	 		GetValue(ProgVar* var) const; // override
-  ~taiObjectProgVar();
-
-protected:
+  //for objects:
   taiTypeHier*		thValType;
   QLabel*		lblObjectValue;
   taiToken*		tkObjectValue;
+  // for DynEnums:
   
-  void			Constr_impl(QWidget* gui_parent_, bool read_only_); 
-  void			DataChanged_impl(taiData* chld); // override
-  taiObjectProgVar(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  void			SetStack(int vt); // ProgVar::ValType
+  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  void			DataChanged_impl(taiData* chld); // override -- used for Enum and Object
+  override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
+  override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 
+  taiProgVar(TypeDef* typ_, IDataHost* host, taiData* par, 
+    QWidget* gui_parent_, int flags = 0);
+    
+protected slots:
+  void			cmbVarType_itemChanged(int itm);
 };
 
 

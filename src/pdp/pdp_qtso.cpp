@@ -23,8 +23,14 @@
 #include "netstru_qtso.h"
 #include "program.h"
 
+#include "icombobox.h"
+#include "ilineedit.h"
+#include "ispinbox.h"
+
 #include <QAction>
+#include <QHBoxLayout>
 #include <QMenu>
+#include <QStackedWidget>
 
 #include <Inventor/SoPath.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -35,23 +41,16 @@
 //////////////////////////
 
 int taiProgVarType::BidForType(TypeDef* td) {
-  // todo: disable temporarily
-//   if (td->InheritsFrom(TA_ProgVar)) 
-//     return (inherited::BidForType(td) +1);
-//   else  return 0;
+   if (td->InheritsFrom(TA_ProgVar)) 
+     return (inherited::BidForType(td) +1);
+   else  return 0;
   return 0;
 }
 
 taiData* taiProgVarType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) 
 {
   //note: we use a static New function because of funky construction-time virtual functions
-  taiProgVarBase* rval;
-//   if (typ->InheritsFrom(TA_ObjectProgVar))
-//     rval = taiObjectProgVar::New(typ, host_, par, gui_parent_, flags_);
-//   else if (typ->InheritsFrom(TA_EnumProgVar))
-//     rval = taiEnumProgVar::New(typ, host_, par, gui_parent_, flags_);
-//   else 
-    rval = taiProgVar::New(typ, host_, par, gui_parent_, flags_);
+  taiProgVar* rval = taiProgVar::New(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -218,50 +217,6 @@ void taiSpecMember::CmpOrigVal(taiData* dat, void* base, bool& first_diff) {
 
 
 //////////////////////////////////
-//   taiProgVarBase		//
-//////////////////////////////////
-
-taiProgVarBase::taiProgVarBase(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags)
-{
-  m_changing = 0;
-}
-
-taiProgVarBase::~taiProgVarBase() {
-}
-
-void taiProgVarBase::Constr(QWidget* gui_parent_) { 
-  QWidget* rep_ = new QWidget(gui_parent_);
-  SetRep(rep_);
-  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
-  if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
-  }
-  InitLayout();
-  Constr_impl(gui_parent_, (mflags & flgReadOnly));
-  EndLayout();
-}
-
-void taiProgVarBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  QWidget* rep_ = GetRep();
-  QLabel* lbl = new QLabel("name", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-
-  fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
-  AddChildWidget(fldName->GetRep(), taiM->hsep_c);
-}
-
-void taiProgVarBase::GetImage(const ProgVar* var) {
-  fldName->GetImage(var->name);
-}
-
-void taiProgVarBase::GetValue(ProgVar* var) const {
-  var->name = fldName->GetValue();
-}
-  
-
-//////////////////////////////////
 //   taiProgVar		//
 //////////////////////////////////
 
@@ -273,166 +228,222 @@ taiProgVar* taiProgVar::New(TypeDef* typ_, IDataHost* host_, taiData* par,
   return rval;
 }
 
-taiProgVar::taiProgVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiProgVar::taiProgVar(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {
+  m_updating = 0;
 }
 
 taiProgVar::~taiProgVar() {
 }
 
+void taiProgVar::Constr(QWidget* gui_parent_) { 
+  QWidget* rep_ = new QWidget(gui_parent_);
+  SetRep(rep_);
+  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
+  }
+  InitLayout();
+  Constr_impl(gui_parent_, (mflags & flgReadOnly));
+  EndLayout();
+}
+
 void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  inherited::Constr_impl(gui_parent_, read_only_);
   QWidget* rep_ = GetRep();
-  vfVariant = new taiVariant(host, this, rep_, 
-    (mflags & flgReadOnly) | taiVariantBase::flgNoPtr | taiVariantBase:: flgNoBase);
-  AddChildWidget(vfVariant->GetRep(), taiM->hsep_c);
-}
-
-void taiProgVar::GetImage(const ProgVar* var) {
-  inherited::GetImage(var);
-  // todo!
-//   vfVariant->GetImage(var->value);
-}
-
-void taiProgVar::GetValue(ProgVar* var) const {
-  inherited::GetValue(var);
-  // todo!
-//   vfVariant->GetValue(var->value);
-}
-  
-
-//////////////////////////////////
-//   taiEnumProgVar		//
-//////////////////////////////////
-
-taiEnumProgVar* taiEnumProgVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-{
-  taiEnumProgVar* rval = new taiEnumProgVar(typ_, host_, par, gui_parent_, flags);
-  rval->Constr(gui_parent_);
-  return rval;
-}
-
-taiEnumProgVar::taiEnumProgVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags)
-{
-}
-
-taiEnumProgVar::~taiEnumProgVar() {
-}
-
-void taiEnumProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  inherited::Constr_impl(gui_parent_, read_only_);
-  QWidget* rep_ =  GetRep();
-  QLabel* lbl = new QLabel("enum type",rep_);
+  QLabel* lbl = new QLabel("name", rep_);
   AddChildWidget(lbl, taiM->hsep_c);
+
+  fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
+  AddChildWidget(fldName->GetRep(), taiM->hsep_c);
+  
+  lbl = new QLabel("var type",rep_);
+  AddChildWidget(lbl, taiM->hsep_c);
+  
+  TypeDef* typ_var_enum = TA_ProgVar.sub_types.FindName("VarType");
+  cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
+  
+  AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
+  lbl->setBuddy(cmbVarType->rep());
+  if (read_only_) {
+    cmbVarType->rep()->setEnabled(false);
+  } else {
+    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+  }
+  
+  stack = new QStackedWidget(rep_);
+  AddChildWidget(stack); // fill rest of space
+  
+  QWidget* sub_rep = NULL; //note: var reused in various sections below
+  QHBoxLayout* hl = NULL; //note: var reused in various sections below
+  
+  // created in order of StackControls:
+  // int
+  incVal = new taiIncrField(typ, host, this, NULL, mflags & flgEditDialog);
+  incVal->setMinimum(INT_MIN); //note: must be int
+  incVal->setMaximum(INT_MAX); //note: must be int
+  stack->addWidget(incVal->rep());
+  
+  // field
+  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
+  stack->addWidget(fldVal->rep());
+  
+  // object, complicated!
+  sub_rep = new QWidget();
+  hl = new QHBoxLayout(sub_rep);
+  hl->setMargin(0);
+  lbl = new QLabel("min type", sub_rep);
+  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+  thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
+    &TA_taBase, host, this, sub_rep, (mflags & flgReadOnly));
+  thValType->GetMenu();
+  hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
+  lblObjectValue = new QLabel("value", sub_rep);
+  hl->addWidget(lblObjectValue);  hl->addSpacing(taiM->hsep_c);
+  tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
+     thValType->typ, host, this, sub_rep, ((mflags & flgReadOnly) | flgNullOk));
+  hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+  
+  stack->addWidget(sub_rep);
+  
+  // enum -- very complicated!
+  sub_rep =  new QWidget();
+  hl = new QHBoxLayout(sub_rep);
+  hl->setMargin(0);
+  
+  lbl = new QLabel("enum type", sub_rep);
+  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
   thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-    &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
+    &TA_taBase, host, this, sub_rep, (mflags & flgReadOnly));
   thEnumType->enum_mode = true;
   thEnumType->GetMenu();
-  AddChildWidget(thEnumType->GetRep(), taiM->hsep_c);
-  lbl = new QLabel("enum value",rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-  cboEnumValue = new taiComboBox(true, NULL, host, this, rep_, (mflags & flgReadOnly));
-  AddChildWidget(cboEnumValue->GetRep(), taiM->hsep_c);
+  hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
+  
+  lbl = new QLabel("enum value", sub_rep);
+  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+  
+  cboEnumValue = new taiComboBox(true, NULL, host, this, sub_rep, (mflags & flgReadOnly));
+  hl->addWidget(cboEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+  
+  stack->addWidget(sub_rep);
+  
+  //TODO: DynEnum
+  lbl = new QLabel("DynEnum coming soon!!!");
+  stack->addWidget(lbl);
 }
 
-void taiEnumProgVar::DataChanged_impl(taiData* chld) {
+void taiProgVar::cmbVarType_itemChanged(int itm) {
+  if (m_updating != 0) return;
+  ++m_updating;
+  int vt; //ProgVar::VarType
+  // set combo box to right type
+  cmbVarType->GetEnumValue(vt);
+  SetStack(vt);
+  --m_updating;
+}
+
+void taiProgVar::DataChanged_impl(taiData* chld) {
   inherited::DataChanged_impl(chld);
-  if (m_changing > 0) return;
-  ++m_changing;
+  if (m_updating > 0) return;
+  ++m_updating;
   if (chld == thEnumType) {
     cboEnumValue->SetEnumType(thEnumType->GetValue());
     //note: prev value of value may no longer be a valid enum value!
-  }
-  --m_changing;
-}
-
-void taiEnumProgVar::GetImage(const ProgVar* var_) {
-  inherited::GetImage(var_);
-  // todo
-//   const EnumProgVar* var = (const EnumProgVar*)var_;
-//   thEnumType->GetImage(var->enum_type);
-//   cboEnumValue->SetEnumType(var->enum_type);
-//   cboEnumValue->GetEnumImage(var->value.toInt());
-}
-
-void taiEnumProgVar::GetValue(ProgVar* var_) const {
-  inherited::GetValue(var_);
-  // todo
-//   EnumProgVar* var = (EnumProgVar*)var_;
-//   var->enum_type = thEnumType->GetValue();
-//   int val;
-//   cboEnumValue->GetEnumValue(val); // 0 if no valid type
-//   var->value = val;
-}
-  
-
-//////////////////////////////////
-//   taiObjectProgVar		//
-//////////////////////////////////
-
-taiObjectProgVar* taiObjectProgVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
-{
-  taiObjectProgVar* rval = new taiObjectProgVar(typ_, host_, par, gui_parent_, flags);
-  rval->Constr(gui_parent_);
-  return rval;
-}
-
-taiObjectProgVar::taiObjectProgVar(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags)
-{
-}
-
-taiObjectProgVar::~taiObjectProgVar() {
-}
-
-void taiObjectProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  inherited::Constr_impl(gui_parent_, read_only_);
-  QWidget* rep_ =  GetRep();
-  
-  QLabel* lbl = new QLabel("val_type",rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-  thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-    &TA_taBase, host, this, rep_, (mflags & flgReadOnly));
-  thValType->GetMenu();
-  AddChildWidget(thValType->GetRep(), taiM->hsep_c);
-  lblObjectValue = new QLabel("value",rep_);
-  AddChildWidget(lblObjectValue, taiM->hsep_c);
-  tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
-     thValType->typ, host, this, rep_, ((mflags & flgReadOnly) | flgNullOk));
-  AddChildWidget(tkObjectValue->GetRep(), taiM->hsep_c);
-}
-
-void taiObjectProgVar::DataChanged_impl(taiData* chld) {
-  inherited::DataChanged_impl(chld);
-  if (m_changing > 0) return;
-  ++m_changing;
-  if (chld == thValType) {
+  } else  if (chld == thValType) {
     // previous token may no longer be in scope!
     tkObjectValue->typ = thValType->GetValue();
     tkObjectValue->GetUpdateMenu();
 //    tkObjectValue->SetTypeScope(thValType->GetValue());
   }
-  --m_changing;
+  --m_updating;
 }
 
-void taiObjectProgVar::GetImage(const ProgVar* var_) {
-  inherited::GetImage(var_);
-  // todo!
-//   const ObjectProgVar* var = (const ObjectProgVar*)var_;
-//   thValType->GetImage(var->val_type);
-//   tkObjectValue->GetImage(var->value.toBase(), var->val_type, NULL);// no scope
+void taiProgVar::GetImage(const ProgVar* var) {
+  fldName->GetImage(var->name);
+  cmbVarType->GetEnumImage(var->var_type);
+  // we only transfer the value in use
+  switch (var->var_type) {
+  case ProgVar::T_Int:
+    incVal->GetImage(var->int_val);
+    break;
+  case ProgVar::T_Real:
+    fldVal->GetImageVar_(Variant(var->real_val)); 
+    break;
+  case ProgVar::T_String:
+    fldVal->GetImage(var->string_val); 
+    break;
+  case ProgVar::T_Object:
+    thValType->GetImage(var->object_type);
+    tkObjectValue->GetImage(var->object_val, var->object_type, NULL);// no scope
+    break;
+  case ProgVar::T_HardEnum:
+    thEnumType->GetImage(var->hard_enum_type);
+    cboEnumValue->SetEnumType(var->hard_enum_type);
+    cboEnumValue->GetEnumImage(var->int_val);
+    break;
+  case ProgVar::T_DynEnum:
+    //TODO;
+    break;
+  }
+  SetStack(var->var_type);
 }
 
-void taiObjectProgVar::GetValue(ProgVar* var_) const {
-  inherited::GetValue(var_);
-//   ObjectProgVar* var = (ObjectProgVar*)var_;
-//   var->val_type = thValType->GetValue(); 
-//   var->value.setBase(tkObjectValue->GetValue());
+void taiProgVar::GetValue(ProgVar* var) const {
+  var->name = fldName->GetValue();
+  cmbVarType->GetEnumValue((int&)var->var_type);
+  // we only set the value for the type the user chose, and cleanup the rest
+  switch (var->var_type) {
+  case ProgVar::T_Int:
+    var->int_val = incVal->GetValue();
+    break;
+  case ProgVar::T_Real:
+    var->real_val = fldVal->GetValue().toDouble(); // note: we could check if ok...
+    break;
+  case ProgVar::T_String:
+    var->string_val = fldVal->GetValue(); 
+    break;
+  case ProgVar::T_Object:
+    var->object_type = thValType->GetValue();
+    taBase::SetPointer(&var->object_val, tkObjectValue->GetValue());
+    break;
+  case ProgVar::T_HardEnum:
+    var->hard_enum_type = thEnumType->GetValue();
+    cboEnumValue->GetEnumValue(var->int_val);
+    break;
+  case ProgVar::T_DynEnum:
+    //TODO;
+    break;
+  }
+  // set all the unused values to blanks
+  var->Cleanup();
 }
   
+void taiProgVar::SetStack(int vt) {
+  switch (vt) {
+  case ProgVar::T_Int:
+    stack->setCurrentIndex(scInt);
+    break;
+  case ProgVar::T_Real:
+  case ProgVar::T_String: 
+    stack->setCurrentIndex(scField);
+    break;
+  case ProgVar::T_Object: 
+    stack->setCurrentIndex(scBase);
+//TODO    tabVal->GetImage(NULL); // obj, no scope
+    break;
+  case ProgVar::T_HardEnum: 
+    stack->setCurrentIndex(scEnum);
+    break;
+  case ProgVar::T_DynEnum:
+    stack->setCurrentIndex(scDynEnum);
+//TODO    matVal->GetImage(NULL); // obj, no scope
+    break;
+  default: break ;
+  }
+}
+
+
 
 
 //////////////////////////
