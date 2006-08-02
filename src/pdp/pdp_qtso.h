@@ -74,8 +74,9 @@ public:
   static taiProgVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags = 0);
   
-  QWidget*	rep() const { return (QWidget*)m_rep; } 
-  bool		fillHor() {return true;} // override 
+  QWidget*		rep() const { return (QWidget*)m_rep; } 
+  inline int		varType() const {return vt;} // current vartype selected by control
+  bool			fillHor() {return true;} // override 
   ~taiProgVar();
 
   void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
@@ -86,11 +87,13 @@ protected:
   enum StackControls { // #IGNORE indexes of controls in the stack
     scInt,
     scField, // string and most numbers
+    scToggle, // bool
     scBase, // taBase
     scEnum, // regular Enum
     scDynEnum
   };
   mutable int		m_updating; // used to prevent recursions
+  int 			vt; //ProgVar::VarType
   
   taiField*		fldName;
   taiComboBox*		cmbVarType;
@@ -98,6 +101,7 @@ protected:
   
   taiIncrField*		incVal; // for: ints
   taiField*		fldVal; // for: char, string, most numbers
+  taiToggle*		tglVal; // for: bool
   
   // for standard enums:
   taiTypeHier*		thEnumType;
@@ -108,7 +112,7 @@ protected:
   taiToken*		tkObjectValue;
   // for DynEnums:
   
-  void			SetStack(int vt); // ProgVar::ValType
+  void			SetVarType(int value); // ProgVar::VarType
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
   void			DataChanged_impl(taiData* chld); // override -- used for Enum and Object
   override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}

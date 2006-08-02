@@ -289,6 +289,10 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
   stack->addWidget(fldVal->rep());
   
+  // toggle
+  tglVal = new taiToggle(typ, host, this, NULL, mflags & flgEditDialog);
+  stack->addWidget(tglVal->rep());
+  
   // object, complicated!
   sub_rep = new QWidget();
   hl = new QHBoxLayout(sub_rep);
@@ -336,10 +340,10 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 void taiProgVar::cmbVarType_itemChanged(int itm) {
   if (m_updating != 0) return;
   ++m_updating;
-  int vt; //ProgVar::VarType
   // set combo box to right type
-  cmbVarType->GetEnumValue(vt);
-  SetStack(vt);
+  int new_vt;
+  cmbVarType->GetEnumValue(new_vt);
+  SetVarType(new_vt);
   --m_updating;
 }
 
@@ -360,15 +364,19 @@ void taiProgVar::DataChanged_impl(taiData* chld) {
 }
 
 void taiProgVar::GetImage(const ProgVar* var) {
+  ++m_updating;
   fldName->GetImage(var->name);
-  cmbVarType->GetEnumImage(var->var_type);
+  SetVarType(var->var_type);
   // we only transfer the value in use
-  switch (var->var_type) {
+  switch (varType()) {
   case ProgVar::T_Int:
     incVal->GetImage(var->int_val);
     break;
   case ProgVar::T_Real:
     fldVal->GetImageVar_(Variant(var->real_val)); 
+    break;
+  case ProgVar::T_Bool:
+    tglVal->GetImage(var->bool_val); 
     break;
   case ProgVar::T_String:
     fldVal->GetImage(var->string_val); 
@@ -386,19 +394,23 @@ void taiProgVar::GetImage(const ProgVar* var) {
     //TODO;
     break;
   }
-  SetStack(var->var_type);
+  SetVarType(var->var_type);
+  --m_updating;
 }
 
 void taiProgVar::GetValue(ProgVar* var) const {
   var->name = fldName->GetValue();
-  cmbVarType->GetEnumValue((int&)var->var_type);
+  var->var_type = (ProgVar::VarType)varType();
   // we only set the value for the type the user chose, and cleanup the rest
-  switch (var->var_type) {
+  switch (varType()) {
   case ProgVar::T_Int:
     var->int_val = incVal->GetValue();
     break;
   case ProgVar::T_Real:
     var->real_val = fldVal->GetValue().toDouble(); // note: we could check if ok...
+    break;
+  case ProgVar::T_Bool:
+    var->bool_val = tglVal->GetValue(); 
     break;
   case ProgVar::T_String:
     var->string_val = fldVal->GetValue(); 
@@ -419,8 +431,10 @@ void taiProgVar::GetValue(ProgVar* var) const {
   var->Cleanup();
 }
   
-void taiProgVar::SetStack(int vt) {
+void taiProgVar::SetVarType(int value) {
   ++m_updating;
+  vt = value;
+  cmbVarType->GetEnumImage(vt);
   switch (vt) {
   case ProgVar::T_Int:
     stack->setCurrentIndex(scInt);
@@ -429,16 +443,19 @@ void taiProgVar::SetStack(int vt) {
   case ProgVar::T_String: 
     stack->setCurrentIndex(scField);
     break;
+  case ProgVar::T_Bool:
+    stack->setCurrentIndex(scToggle);
+    break;
   case ProgVar::T_Object: 
     stack->setCurrentIndex(scBase);
-//TODO    tabVal->GetImage(NULL); // obj, no scope
+//TODO ??   tabVal->GetImage(NULL); // obj, no scope
     break;
   case ProgVar::T_HardEnum: 
     stack->setCurrentIndex(scEnum);
     break;
   case ProgVar::T_DynEnum:
     stack->setCurrentIndex(scDynEnum);
-//TODO    matVal->GetImage(NULL); // obj, no scope
+//TODO ??   matVal->GetImage(NULL); // obj, no scope
     break;
   default: break ;
   }
