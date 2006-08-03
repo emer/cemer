@@ -2316,8 +2316,8 @@ case 141:
 case 142:
 #line 885 "css_parse.y"
 {
-           if(yyvsp[-1].el.El()->GetType() != cssEl::T_ClassType) {
-	     yyerror("scoping of non-class type");
+          if((yyvsp[-1].el.El()->GetType() != cssEl::T_ClassType) && (yyvsp[-1].el.El()->GetType() != cssEl::T_EnumType)) {
+	     yyerror("scoping of non-class or enum type");
 	     return cssProg::YY_Err; }
            cssMisc::cur_scope = yyvsp[-1].el.El(); ;
     break;}

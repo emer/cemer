@@ -213,6 +213,8 @@ int yylex()
 
       cssLex::readword(cssMisc::cur_top->Prog(), c);
 
+      cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg(); // also check in src_prog if cmd shell
+
       if(cssLex::Buf.before(3) == "TA_") {
 	// parse as a type name
 	String nm = cssLex::Buf.after("TA_");
@@ -230,12 +232,30 @@ int yylex()
 	else
 	  return CSS_TYPE;
       }
+      if(src_prog) {
+	if((s = src_prog->types.FindName((char*)cssLex::Buf)) != 0) {
+	  yylval.el = s;
+	  if((s.El())->GetParse() == CSS_PTR)
+	    return CSS_PTRTYPE;
+	  else
+	    return CSS_TYPE;
+	}
+      }
       if((s = cssMisc::cur_top->prog_types.FindName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
 	if((s.El())->GetParse() == CSS_PTR)
 	  return CSS_PTRTYPE;
 	else
 	  return CSS_TYPE;
+      }
+      if(src_prog) {
+	if((s = src_prog->prog_types.FindName((char*)cssLex::Buf)) != 0) {
+	  yylval.el = s;
+	  if((s.El())->GetParse() == CSS_PTR)
+	    return CSS_PTRTYPE;
+	  else
+	    return CSS_TYPE;
+	}
       }
       if((s = cssMisc::TypesSpace.FindName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
@@ -299,9 +319,8 @@ int yylex()
 	}
 	return s.El()->GetParse();
       }
-      // also look in the current src_prog if I'm a cmd_shell
-      if(cssMisc::cur_top->AmCmdProg() && (cssMisc::cur_top->cmd_shell->src_prog != NULL)) {
-	if((s = cssMisc::cur_top->cmd_shell->src_prog->ParseName((char*)cssLex::Buf)) != 0) {
+      if(src_prog) {
+	if((s = src_prog->ParseName((char*)cssLex::Buf)) != 0) {
 	  yylval.el = s;
 	  if(s.ptr == (void*)&(cssMisc::Constants)) {
 	    cssEl::cssTypes typ = s.El()->GetType();

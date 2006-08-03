@@ -250,9 +250,11 @@ public:
   void 	Print(ostream& fh) const;
 
   bool	IsNull() const	{
-    bool nul = false; if(ptr_type == DIRECT) nul = (ptr == NULL);
-    else nul = ((ptr == NULL) || (dx < 0)); return nul; }
+    bool nul = false; if(ptr_type == DIRECT) nul = !(bool)ptr;
+    else nul = (!((bool)ptr) || (dx < 0)); return nul; }
   bool	NotNull() const	{ return !IsNull(); }
+
+  operator bool() const { return NotNull(); }
 
   bool 	operator!=(int cv) const
   { return (cv == 0) ? !IsNull() : IsNull(); }
@@ -1039,6 +1041,7 @@ public:
 
   String	GetStr() const	{ return String((long)ptr);}
   Variant	GetVar() const { return Variant(ptr); }
+  operator 	bool() const	{ return (bool)ptr; }
   operator	Real() const	{ CvtErr("(Real)"); return 0.0; }
   operator 	Int() const	{ return (Int)(long)(ptr); }
   operator 	void*()	const	{ return GetVoidPtr(1); }
@@ -1449,6 +1452,7 @@ public:
 
   bool		AmCmdProg();		// am I a cmd shell cmd_prog?
   bool		HaveCmdShell();		// check if cmd_shell is set, issue warning if not
+  cssProgSpace*	GetSrcProg();		// if I am a cmd prog, then return my corresponding src_prog, else NULL
 
   cssProgStack* ProgStack()		{ return progs[size-1]; }
   cssProgStack* ProgStack(int prdx)	{ return progs[prdx]; }

@@ -3405,6 +3405,11 @@ bool cssProgSpace::HaveCmdShell() {
   return false;
 }
 
+cssProgSpace* cssProgSpace::GetSrcProg() {
+  if(!AmCmdProg()) return NULL;
+  return cmd_shell->src_prog;
+}
+
 //////////////////////////////////////////////////
 // 	cssProgSpace: Internal, Programs	//
 //////////////////////////////////////////////////
@@ -4299,10 +4304,10 @@ void cssProgSpace::ListGlobals() {
   pager_ostream& fh = cmd_shell->pgout;
   
   fh << "Global vars:\n";
-  hard_vars.List(fh);
-  prog_vars.List(fh);
   cssMisc::HardVars.List(fh);
   cssMisc::Externs.List(fh);
+  hard_vars.List(fh);
+  prog_vars.List(fh);
 }
 
 void cssProgSpace::ListLocals(int levels_back) {
@@ -4344,13 +4349,14 @@ void cssProgSpace::ListSettings() {
 
 void cssProgSpace::ListTypes() {
   if(!HaveCmdShell()) return;
-  cmd_shell->pgout.start();
-  cmd_shell->pgout << "Types local to current top-level program space (" << name << "):" << "\n";
-  cmd_shell->src_prog->types.NameList(cmd_shell->pgout);
-  cmd_shell->src_prog->prog_types.NameList(cmd_shell->pgout);
-  cmd_shell->pgout << "\n==========================" << "\n"<<
-    "Global types: " << "\n";
-  cssMisc::TypesSpace.NameList(cmd_shell->pgout);
+  pager_ostream& fh = cmd_shell->pgout;
+  fh.start();
+  fh << "Global types: " << "\n";
+  cssMisc::TypesSpace.NameList(fh);
+  fh << "\n==========================\n";
+  fh << "Types local to current top-level program space (" << name << "):" << "\n";
+  cmd_shell->src_prog->types.NameList(fh);
+  cmd_shell->src_prog->prog_types.NameList(fh);
 }
 
 static char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",

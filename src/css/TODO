@@ -7,19 +7,16 @@ Program todo:
 
 - type <css class> doesn't work
 
-- new enum type for dynenum is not working
+- autocompletion for scoped on my_options::DO_ not working..
 
 - switchcase progel
 
-- dirty bit from progvar edits
-
 - when are program arg css generated?  is this necessary??  always just a comment?
 
-- cmdshell should print out the prompt! displayPrompt(true);
+- cmdshell should print out the prompt! displayPrompt(true);  sometimes works..
 
-- figure out PtrAssignPtr in Cptr type operator= funs
+- figure out PtrAssignPtr in Cptr type operator= funs (c_int = .path_to_int...)..
 - add quit confirm prompt taChoice
-- convert enums to c_ptr_enum
 
 ------------------
 Immediate:

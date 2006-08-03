@@ -883,8 +883,8 @@ typeorscp: CSS_TYPE
         ;
 
 scopetype: CSS_TYPE CSS_SCOPER			{
-           if($1.El()->GetType() != cssEl::T_ClassType) {
-	     yyerror("scoping of non-class type");
+          if(($1.El()->GetType() != cssEl::T_ClassType) && ($1.El()->GetType() != cssEl::T_EnumType)) {
+	     yyerror("scoping of non-class or enum type");
 	     return cssProg::YY_Err; }
            cssMisc::cur_scope = $1.El(); }
         | CSS_PTRTYPE CSS_SCOPER			{
