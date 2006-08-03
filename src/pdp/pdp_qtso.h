@@ -111,9 +111,12 @@ protected:
   QLabel*		lblObjectValue;
   taiToken*		tkObjectValue;
   // for DynEnums:
+  taiEditButton*	edDynEnum; // for invoking editor for values
+  taiComboBox*		cboDynEnumValue;
   
   void			SetVarType(int value); // ProgVar::VarType
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
+  void			UpdateDynEnumCombo(const ProgVar* var); 
   void			DataChanged_impl(taiData* chld); // override -- used for Enum and Object
   override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
   override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 

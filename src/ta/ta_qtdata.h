@@ -648,7 +648,7 @@ private:
 //  taiButtonMenu		//
 //////////////////////////////////
 
-class TA_API taiButtonMenu: public taiActions { // a button, in which the actions appear as a popup menu
+class TA_API taiButtonMenu: public taiActions { // a button, in which the actions appear as a popup menu; can also just be an Edit button, with no menu (pass flgEditOnly)
   Q_OBJECT
 #ifndef __MAKETA__
 typedef taiActions inherited;
@@ -779,23 +779,25 @@ class TA_API taiEditButton : public taiButtonMenu {
   // actually an edit menu... -- flgReadOnly creates menu which only allows for #EDIT_READ_ONLY members
   Q_OBJECT
 public:
-  void*		cur_base;
-  taiEdit*	ie;
-  taiDataList 	meth_el;	// method elements
-
-  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
+  static taiEditButton*	New(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgReadOnly, flgEditOnly -- internally sets flgEditOnly if appropriate
+        
   ~taiEditButton();
-
-  virtual void	GetMethMenus();
-
-  virtual void	SetLabel();
 
 public slots:
   virtual void	Edit();		// edit callback
   void setRepLabel(const char* label);
 protected:
+  void*		cur_base;
+  taiEdit*	ie;
+  taiDataList 	meth_el;	// method elements
+
   override void		GetImage_impl(const void* base); 
+  virtual void		GetMethMenus();
+  virtual void		SetLabel();
+  
+  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
+      QWidget* gui_parent_, int flags_ = 0); 
 };
 
 

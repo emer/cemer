@@ -239,6 +239,7 @@ taiProgVar::~taiProgVar() {
 }
 
 void taiProgVar::Constr(QWidget* gui_parent_) { 
+  vt = 0;
   QWidget* rep_ = new QWidget(gui_parent_);
   SetRep(rep_);
   rep_->setMaximumHeight(taiM->max_control_height(defSize()));
@@ -332,9 +333,23 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   
   stack->addWidget(sub_rep);
   
-  //TODO: DynEnum
-  lbl = new QLabel("DynEnum coming soon!!!");
-  stack->addWidget(lbl);
+  // DynEnum
+  sub_rep =  new QWidget();
+  hl = new QHBoxLayout(sub_rep);
+  hl->setMargin(0);
+  
+  edDynEnum = taiEditButton::New(NULL, TA_DynEnum.ie, &TA_DynEnum, host, this,
+      sub_rep, ((mflags & flgReadOnly) | flgEditOnly));
+  hl->addWidget(edDynEnum->GetRep()); hl->addSpacing(taiM->hsep_c);
+  
+  lbl = new QLabel("enum value", sub_rep);
+  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+  
+  cboDynEnumValue = new taiComboBox(true, NULL, host, this, sub_rep, (mflags & flgReadOnly));
+  hl->addWidget(cboDynEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+  
+  stack->addWidget(sub_rep);
+  
 }
 
 void taiProgVar::cmbVarType_itemChanged(int itm) {
@@ -391,7 +406,13 @@ void taiProgVar::GetImage(const ProgVar* var) {
     cboEnumValue->GetEnumImage(var->int_val);
     break;
   case ProgVar::T_DynEnum:
-    //TODO;
+    edDynEnum->GetImage_(&(var->dyn_enum_val));
+    UpdateDynEnumCombo(var);
+    //note: dynenums use the index as the "value" here, but we don't care, and
+    // treat that index as a "value"
+    int dei = var->dyn_enum_val.value_idx;
+    if (dei < 0) dei = 0;
+    cboDynEnumValue->GetEnumImage(dei);
     break;
   }
   SetVarType(var->var_type);
@@ -423,8 +444,8 @@ void taiProgVar::GetValue(ProgVar* var) const {
     var->hard_enum_type = thEnumType->GetValue();
     cboEnumValue->GetEnumValue(var->int_val);
     break;
-  case ProgVar::T_DynEnum:
-    //TODO;
+  case ProgVar::T_DynEnum: // see notes in GetImage about what "value" is
+    cboDynEnumValue->GetEnumValue(var->dyn_enum_val.value_idx);
     break;
   }
   // set all the unused values to blanks
@@ -455,13 +476,23 @@ void taiProgVar::SetVarType(int value) {
     break;
   case ProgVar::T_DynEnum:
     stack->setCurrentIndex(scDynEnum);
-//TODO ??   matVal->GetImage(NULL); // obj, no scope
     break;
   default: break ;
   }
   --m_updating;
 }
 
+void taiProgVar::UpdateDynEnumCombo(const ProgVar* var) {
+  ++m_updating;
+  cboDynEnumValue->Clear();
+  const DynEnum& de = var->dyn_enum_val; // convenience
+  for (int i = 0; i < de.size; ++i) {
+    const DynEnumItem* dei = de.FastEl(i);
+    //note: dynenums store the index of the value, not the value
+    cboDynEnumValue->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
+  }
+  --m_updating;
+}
 
 
 

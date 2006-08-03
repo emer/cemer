@@ -41,6 +41,8 @@ Serious/Fatal:
   the generic name -- progs in the subgroup seem to load fine
 * HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
 * if you specify a project on the cmd line, it keeps reopening the same proj repeatedly
+* when you have the CompactEdit panel, and add items from its menu, they don't show up
+  in the item area at the bottom (ex. ProgVar, edit the DynEnum items, try adding items)
 
 Medium Important:
 

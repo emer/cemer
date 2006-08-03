@@ -1899,7 +1899,11 @@ taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, ta
 void taiButtonMenu::init()
 {
   QPushButton* button = new QPushButton(gui_parent);
-  button->setMenu(menu());
+  //note: for taiEditButton, we don't add the menu to ourself if it is in EditOnly mode
+  //  because that seems to interfere with normal pushbutton ability
+  if (!HasFlag(flgEditOnly)) {
+    button->setMenu(menu());
+  }
   button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
   button->setFixedHeight(taiM->button_height(font_spec));
   SetRep(button);
@@ -1976,13 +1980,21 @@ void taiToolBar::init(QToolBar* exist_bar) {
 //////////////////////////////////
 
 
+taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
+  IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+{
+  if (typ_ && !typ_->InheritsFrom(TA_taBase) || typ_->HasOption("EDIT_ONLY"))
+    flags_ |= flgEditOnly;
+  taiEditButton* rval = new taiEditButton(base, taie, typ_,
+    host_, par, gui_parent_, flags_);
+  return rval;
+}
+
 taiEditButton::taiEditButton(void* base, taiEdit *taie, TypeDef* typ_,
 	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiButtonMenu(taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   cur_base = base;
-  if (!typ->InheritsFrom(TA_taBase) || typ->HasOption("EDIT_ONLY"))
-    SetFlag(flgEditOnly, true);
   ie = taie;	// note: if null, it uses type's ie
   // if true edit-only button, we just wire the action right to the button, and don't make any menu items
   // otherwise,  we create a menu

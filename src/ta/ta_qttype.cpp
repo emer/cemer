@@ -516,7 +516,7 @@ taiData* taiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_p
 }
 
 taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiEditButton* rval = new taiEditButton(NULL, NULL, typ, host_, par, gui_parent_, flags_);
+  taiEditButton* rval = taiEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -623,7 +623,7 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
   bool ro = isReadOnly(par, host_) || (flags_ & taiData::flgReadOnly);
   if (ro || !npt->tokens.keep) {
     if (ro) flags_ |= taiData::flgEditOnly; // we just want the plain edit button
-    taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
+    taiEditButton* ebrval = taiEditButton::New(NULL, NULL, npt, host_, par, gui_parent_, flags_);
     return ebrval;
   }
   else {
@@ -1022,7 +1022,7 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   case MD_BASE: {
     npt = mbr->type->GetNonPtrType();
     if (!npt->tokens.keep) {
-      taiEditButton* ebrval = new taiEditButton(NULL, NULL, npt, host_, par, gui_parent_, flags_);
+      taiEditButton* ebrval = taiEditButton::New(NULL, NULL, npt, host_, par, gui_parent_, flags_);
       return ebrval;
     } 
     if (!mbr->HasOption("NO_EDIT"))
@@ -1139,7 +1139,7 @@ int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
 
 taiData* taiDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   taiDefaultEdit* tde = new taiDefaultEdit(mbr->type->GetNonPtrType());
-  taiEditButton *rval =	new taiEditButton(NULL,	tde, mbr->type->GetNonPtrType(),
+  taiEditButton *rval =	taiEditButton::New(NULL,	tde, mbr->type->GetNonPtrType(),
      host_, par, gui_parent_, flags_);
   return rval;
 }
