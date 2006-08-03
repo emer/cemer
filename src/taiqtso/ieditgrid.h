@@ -66,6 +66,7 @@ public:
   void		setDataWidget(int row, int col, QWidget* data);
   int		cols() {return mcols;}
   QWidget*	dataGridWidget() {return (QWidget*)body;} //returns data grid widget, for parentage of its children
+  inline bool	hasHeader() {return (mhead > 0);} 
   void 		setPaletteBackgroundColor3 (const QColor& color); //override
   void 		setHiLightColor (const QColor& color);
   int		rows() {return mrows;}
@@ -79,22 +80,25 @@ public:
   void		resizeNames() {/*resizeNames_impl();*/} // TODO: this should get called automatically inside this widget
 
 
-  iEditGrid (QWidget* parent = 0);
-  iEditGrid (int hmargin_, int vmargin_, QWidget* parent = 0);
-  iEditGrid (int hmargin_, int vmargin_, int rows_, int cols_, QWidget* parent = 0);
+  iEditGrid (bool header_, QWidget* parent = 0);
+  iEditGrid (bool header_, int hmargin_, int vmargin_, QWidget* parent = 0);
+  iEditGrid (bool header_, int hmargin_, int vmargin_, 
+    int rows_, int cols_, QWidget* parent = 0);
   ~iEditGrid() {}
 
 protected:
-  void		init(int hmargin_, int vmargin_, int rows_, int cols_);
+  void		init(bool header_, int hmargin_, int vmargin_, int rows_, int cols_);
   int mhmargin; // h margin inside cells
   int mvmargin; // v margin inside cells
   int mcols;
   int mrows;
+  int mhead; // 1 if using header row, 0 if not
 //  int mvisibleCols;  // num of cols to make visible in the data area
   int mrow_height; // row heights
   void		resizeRows_impl(); // resize the name heights, after the data heights have been established
 //  virtual void		setVisibleCols_impl(int num);
   void			checkSetParent(QWidget* widget, QWidget* parent); // sets parent, if necessary
+  void		updateDimensions(int row, int col); // if row or col is > current, update us, alo
 };
 
 

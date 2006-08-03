@@ -27,10 +27,11 @@ void DynEnum::Copy_(const DynEnum& cp) {
   value_idx = cp.value_idx;
 }
 
-void DynEnum::DataChanged(int dcr, void*, void*) {
+void DynEnum::DataChanged(int dcr, void* op1, void* op2) {
 //   cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
   value_idx = -1;
   OrderItems();
+  inherited::DataChanged(dcr, op1, op2);
 }
 
 int DynEnum::NumVal() const {
@@ -75,6 +76,7 @@ void DynEnum::OrderItems() {
     DynEnumItem* it = FastEl(i);
     if(it->value <= prval) {
       it->value = prval + 1;
+      it->DataChanged(DCR_ITEM_UPDATED);
     }
     prval = it->value;
   }

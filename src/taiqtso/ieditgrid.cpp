@@ -95,25 +95,27 @@ void iStripeWidget::paintEvent(QPaintEvent* pev)
   have one extra empty dummy name slot at the end -- this pushes the entire structure down, and
   therefore the last actual data line doesn't get clipped */
 
-iEditGrid::iEditGrid (QWidget* parent)
+iEditGrid::iEditGrid (bool header_, QWidget* parent)
 : QWidget(parent)
 {
-  init(2, 1, 1, 1);
+  init(header_, 2, 1, 1, 1);
 }
 
-iEditGrid::iEditGrid (int hmargin_, int vmargin_, QWidget* parent)
+iEditGrid::iEditGrid (bool header_, int hmargin_, int vmargin_, QWidget* parent)
 : QWidget(parent)
 {
-  init(hmargin_, vmargin_, 1, 1);
+  init(header_, hmargin_, vmargin_, 1, 1);
 }
 
-iEditGrid::iEditGrid (int hmargin_, int vmargin_, int rows_, int cols_, QWidget* parent)
+iEditGrid::iEditGrid (bool header_, int hmargin_, int vmargin_, int rows_, 
+  int cols_, QWidget* parent)
 : QWidget(parent)
 {
-  init(hmargin_, vmargin_, rows_, cols_);
+  init(header_, hmargin_, vmargin_, rows_, cols_);
 }
 
-void iEditGrid::init(int hmargin_, int vmargin_, int rows_, int cols_) {
+void iEditGrid::init(bool header_, int hmargin_, int vmargin_, int rows_, int cols_) {
+  mhead = (header_) ? 1 : 0;
   if (hmargin_ < 0) hmargin_ = 0;
   if (vmargin_ < 0) vmargin_ = 0;
   mhmargin = hmargin_;
@@ -124,6 +126,8 @@ void iEditGrid::init(int hmargin_, int vmargin_, int rows_, int cols_) {
   mcols = cols_;
   mrow_height = 1; //must set later
   layOuter = new QHBoxLayout(this);
+  layOuter->setMargin(0);
+  layOuter->setSpacing(0);
 //  layNamesOuter = new QVBoxLayout();
 //  layOuter->addLayout(layNamesOuter);
   bodyNames = new iStripeWidget(this);
@@ -182,10 +186,34 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
 }
 
 void iEditGrid::resizeRows_impl() {
-  for (int i = 0; i < (mrows + 1); ++i) {
+  for (int i = 0; i < (mrows + mhead); ++i) {
     layNames->setRowMinimumHeight(i, mrow_height + (2 * mvmargin));
     layBody->setRowMinimumHeight(i,  mrow_height + (2 * mvmargin));
   }
+}
+
+void iEditGrid::setColNameWidget(int col, QWidget* name) {
+  checkSetParent(name, (QWidget*)body);
+  layBody->addWidget(name, 0, col, (Qt::AlignCenter | Qt::AlignVCenter));
+  updateDimensions(-1, col);
+}
+
+void iEditGrid::setDataWidget(int row, int col, QWidget* data) {
+  checkSetParent(data, (QWidget*)body);
+  QHBoxLayout* layH = new QHBoxLayout();
+  layH->addSpacing(mhmargin);
+  layH->addWidget(data);
+  layH->addSpacing(mhmargin);
+  layBody->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
+  layBody->addLayout(layH, row + mhead, col, (Qt::AlignLeft | Qt::AlignVCenter));
+  updateDimensions(row, col);
+//  resizeRows_impl();
+}
+
+void iEditGrid::setDataLayout(int row, int col, QLayout* data) {
+  layBody->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
+  layBody->addLayout(data, row + mhead, col);
+//  resizeRows_impl();
 }
 
 void iEditGrid::setDimensions(int rows_, int cols_) {
@@ -196,28 +224,6 @@ void iEditGrid::setDimensions(int rows_, int cols_) {
   resizeRows_impl();
 }
 
-void iEditGrid::setColNameWidget(int col, QWidget* name) {
-  checkSetParent(name, (QWidget*)body);
-  layBody->addWidget(name, 0, col, (Qt::AlignCenter | Qt::AlignVCenter));
-}
-
-void iEditGrid::setDataWidget(int row, int col, QWidget* data) {
-  checkSetParent(data, (QWidget*)body);
-  QHBoxLayout* layH = new QHBoxLayout();
-  layH->addSpacing(mhmargin);
-  layH->addWidget(data);
-  layH->addSpacing(mhmargin);
-  layBody->setRowMinimumHeight(row + 1,  mrow_height + (2 * mvmargin));
-  layBody->addLayout(layH, row + 1, col, (Qt::AlignLeft | Qt::AlignVCenter));
-//  resizeRows_impl();
-}
-
-void iEditGrid::setDataLayout(int row, int col, QLayout* data) {
-  layBody->setRowMinimumHeight(row + 1,  mrow_height + (2 * mvmargin));
-  layBody->addLayout(data, row + 1, col);
-//  resizeRows_impl();
-}
-
 void iEditGrid::setHiLightColor(const QColor& val) {
   bodyNames->setHiLightColor(val);
   body->setHiLightColor(val);
@@ -226,10 +232,13 @@ void iEditGrid::setHiLightColor(const QColor& val) {
 void iEditGrid::setRowHeight(int value, bool force) {
   if ((mrow_height == value) && (!force)) return;
   mrow_height = value;
-  bodyNames->setStripeHeight(value + (2 * mvmargin));
-  bodyNames->setTopMargin(value + (2 * mvmargin) + GROUP_FRAME_SIZE); //+ for frame border of group items
-  body->setStripeHeight(value + (2 * mvmargin));
-  body->setTopMargin(value + (2 * mvmargin));
+  int sh = value + (2 * mvmargin);
+  bodyNames->setStripeHeight(sh);
+  // if using headers, we set a top margin for stripe same as header line
+  int tm = (hasHeader()) ? sh : 0;
+  bodyNames->setTopMargin(tm + GROUP_FRAME_SIZE); //+ for frame border of group items
+  body->setStripeHeight(sh);
+  body->setTopMargin(tm);
   resizeRows_impl();
 }
 
@@ -247,35 +256,26 @@ void iEditGrid::setPaletteBackgroundColor3 (const QColor& c) {
 
 void iEditGrid::setRowNameWidget(int row, QWidget* name) {
   checkSetParent(name, (QWidget*)bodyNames);
-  //TODO: seems to be a bug in Qt 4.1.0 that does not actually force the rows
-  // to the correct minimum height -- very puzzling...
-//this didn't help:
-//  name->setMinimumHeight(mrow_height + (2 * mvmargin)); 
   QHBoxLayout* layH = new QHBoxLayout();
   layH->addSpacing(mhmargin);
   layH->addWidget(name);
   layH->addSpacing(mhmargin);
-//  layNames->setRowMinimumHeight(row + 1,  mrow_height + (2 * mvmargin));
-// this is just crazy, but seems to workaround the bug!!!
-  layNames->setRowMinimumHeight(row + 1,  mrow_height + 3 + (2 * mvmargin));
-  layNames->addLayout(layH, row + 1, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  layNames->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
+  layNames->addLayout(layH, row + mhead, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  // we can dynamically expand
+  updateDimensions(row, -1);
 //  resizeRows_impl();
 }
 
-/*nn void iEditGrid::setSpacing(int hor, int ver) {
-  if ((mhmargin == hor) && (mvmargin == ver)) return;
-  mhmargin = hor;
-  mvmargin = ver;
-  setRowHeight(mrow_height, true);
-} */
-
-/*nn void iEditGrid::setVisibleCols(int num) {
-  if (mvisibleCols == num) return;
-  setVisibleCols_impl(num);
+void iEditGrid::updateDimensions(int row, int col) {
+  // note: we get passed ordinals, not counts, -1 ignores that dim
+  if (row >= mrows) {
+    mrows = row - 1;
+    // make sure the n+1 row is valid so we have room for the bottom scroll bar
+    // need to do both, otherwise one will try to squish
+//TODO: when added, then all the rows get squished , when not, then no room for the scrollbar!
+/*    layNames->setRowMinimumHeight(row + mhead + 1,  mrow_height + (2 * mvmargin));
+    layBody->setRowMinimumHeight(row + mhead + 1,  mrow_height + (2 * mvmargin)); */
+  }
+  if (col >= mcols) mcols = col - 1;
 }
-
-void iEditGrid::setVisibleCols_impl(int num) {
-  // TODO: sets widths of columns
-  mvisibleCols = num;
-} */
-

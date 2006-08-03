@@ -966,6 +966,7 @@ gpiMultiEditDataHost::gpiMultiEditDataHost(void* base, TypeDef* typ_, bool read_
   lay_multi = NULL;
   multi_rows = 1;
   multi_cols = 1;
+  header_row = true; // most compatible choice
 }
 
 void gpiMultiEditDataHost::SetMultiSize(int rows, int cols) {
@@ -1006,7 +1007,8 @@ void gpiMultiEditDataHost::Constr_Box() {
   scrMulti->setWidget(multi);
 
   lay_multi = new QHBoxLayout(multi);
-  multi_body = new iEditGrid(2, 1, 1, 1, multi);  // , hmargins, vmargins, rows, cols, par
+  lay_multi->setMargin(0);
+  multi_body = new iEditGrid(header_row, 2, 1, 1, 1, multi);  // , hmargins, vmargins, rows, cols, par
   multi_body->setPaletteBackgroundColor(*bg_color);
   if (bg_color_dark)
    multi_body->setHiLightColor(*bg_color_dark);
@@ -1215,6 +1217,7 @@ gpiCompactListDataHost::gpiCompactListDataHost(void* base, TypeDef* typ_, bool r
   	bool modal_, QObject* parent)
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
+  header_row = false; 
   cur_lst = (TABLPtr)cur_base;
 }
 

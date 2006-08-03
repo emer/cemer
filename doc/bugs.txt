@@ -5,7 +5,6 @@ Serious/Fatal:
 
 * new bug: external dest of a cut/paste has segment fault when it tries to do the remdatataken (but the source
   call of this functionality works fine)
-* need to do GetImage on other panels when the data changed or reverted
 * when deleting an open tree item, prompts "Apply Changes" -- cancel then crashes
 * ex. in Networks, delete the network -- moves up to .networks node, but still shows the deleted network in the group portion of the Networks edit panel (if you make a new browser, the .networks edit panel correctly shows no child networks in its group)
 * (??? maybe fixed) "wrong sizing behavior on group items in group edits" (bug text transcribed from written sheet -- may not be applicable any more)
@@ -29,7 +28,6 @@ Serious/Fatal:
 * in Scripts, once you have a script file set, you can't seem to get it to 
   reload the file (make changes to the file, select Open again, but it 
   still retains the first contents.)
-* pdp is leaving the launch shell in half-duplex output mode (it is not echoing what you type)
 * this seems to happen after one or more load errors have occurred, and you deleted
   the project and tried again:
   load fails with segfault in MemberDef::Dump_Load -- ex. was "epoch" (a var on net);
@@ -41,13 +39,10 @@ Serious/Fatal:
   the generic name -- progs in the subgroup seem to load fine
 * HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
 * if you specify a project on the cmd line, it keeps reopening the same proj repeatedly
-* when you have the CompactEdit panel, and add items from its menu, they don't show up
-  in the item area at the bottom (ex. ProgVar, edit the DynEnum items, try adding items)
 
 Medium Important:
 
 * in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
-* secondary view windows, "File/Close Browser" doesn't work
 * can't seem to drag 3 items from listview -- only first 2 items seem to get dragged
 * don't repeatedly create new tabs for changed items if one such tab already exists
 * SelEdit: when you change the Mbr labels from the menu item, the Accept/Cancel gets lit up on the seledit dialog
@@ -94,11 +89,8 @@ Medium Important:
 * in Script, when I load a script file, the Run button is not enabled
   (check the other buttons as well, enabling does not seem correct -- might
    be related to new enabling semantics for ghost)
-* in Script, when you compile, the "script compiled" check does not get checked
 * create a new matrix; choose SetGeomN from menu and change; panel is not updated;
   only when you click to something else and return does panel show correct values
-* in a Matrix, select Remove Frame(n) for some n inside the matrix; the core
-  works correctly, but the Gui seems to lob off all the frames from n on
 * using standard QTableView when values are numeric-ish seems to insert an up/down
   edit control, which is limited to 2 decimal digits maximum
 
@@ -109,7 +101,6 @@ Lower Priority (but perhaps still needed)
 Cosmetic/Usability/etc. (lower priority):
 
 * font for iAction-created taiMenuEl items is not being inherited from the parent taiMenu item
-* stripes continue in body but not names in iEditGrid
 * boxes in edit panels don't shrink as much as they could
 * should be bigger gap from labels to data in editpanels
 * right or middle click to create a new tab in browser
@@ -151,6 +142,18 @@ CLIP/DRAGDROP
 DONE (shown in reverse order, top=most recent)
 ----
 
+* fixed all the registration issues in iEditGrid, including those introduced with
+  the addition of CompactEdit -- also cleaned up some longstanding minor layout issues
+* in a Matrix, select Remove Frame(n) for some n inside the matrix; the core
+  works correctly, but the Gui seems to lob off all the frames from n on
+* in Script, when you compile, the "script compiled" check does not get checked
+* when you have the CompactEdit panel, and add items from its menu, they don't show up
+  in the item area at the bottom (ex. ProgVar, edit the DynEnum items, try adding items)
+  NOTE: this was just a DynEnum class problem, because of DataChanged not forwarding; fixed
+* pdp is leaving the launch shell in half-duplex output mode (it is not echoing what you type)
+* need to do GetImage on other panels when the data changed or reverted
+* secondary view windows, "File/Close Browser" doesn't work
+* stripes continue in body but not names in iEditGrid
 * create a new (string) Matrix; set some dims; switch to Edit panel, it ABORTS
 * byte_Matrix data entry, seems to accept as if Hex, then display in Decimal
 * Project::file_name (taFNBase) should prob not show, and def not save filename
