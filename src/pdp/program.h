@@ -68,6 +68,7 @@ public:
   // if object defines new type information (dyn_enum), generate a type object
   
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
+  override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void 	SetDefaultName() {} // make it local to list, set by list
   void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
   void	InitLinks();

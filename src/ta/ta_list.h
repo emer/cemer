@@ -110,7 +110,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_ITEM_UPDATED = 0, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
   DCR_ITEM_REBUILT, // for complex items that support the STRUCT updates
 
-  DCR_CHILD_ITEM_UPDATED, // invoked for owned member objects (but not list/group items)
+  DCR_CHILD_ITEM_UPDATED, // op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
   
   DCR_LIST_INIT,
   DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning

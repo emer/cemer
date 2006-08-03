@@ -95,6 +95,16 @@ void ProgVar::Cleanup() {
   //TODO: anything about DynEnums???
 }
 
+void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
+  // dynenum is programmed to send us notifies, we trap those and 
+  // turn them into changes of us, to force gui to update (esp enum list)
+  if ((dcr == DCR_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
+    DataChanged(DCR_ITEM_UPDATED);
+    return; // don't send and further
+  }
+  inherited::DataChanged(dcr, op1, op2);
+}
+
 bool ProgVar::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "int_val")
     return ((var_type == T_Int) || (var_type == T_HardEnum));

@@ -31,6 +31,11 @@ void DynEnum::DataChanged(int dcr, void* op1, void* op2) {
 //   cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
   value_idx = -1;
   OrderItems();
+  // we notify owner, so editing items causes related things to update,
+  // typically used by ProgVar to make sure the enum list gets updated in gui
+  taBase* own = GetOwner();
+  if (own)
+    own->DataChanged(DCR_CHILD_ITEM_UPDATED, (void*)this);
   inherited::DataChanged(dcr, op1, op2);
 }
 
