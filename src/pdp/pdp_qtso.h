@@ -84,7 +84,8 @@ public:
   virtual void	 	GetValue(ProgVar* var) const;
 
 protected:
-  enum StackControls { // #IGNORE indexes of controls in the stack
+  enum StackControls { // #IGNORE current control
+    scNone, // used at the beginning
     scInt,
     scField, // string and most numbers
     scToggle, // bool
@@ -93,11 +94,12 @@ protected:
     scDynEnum
   };
   mutable int		m_updating; // used to prevent recursions
+  int			sc; // current stack control 
   int 			vt; //ProgVar::VarType
   
   taiField*		fldName;
   taiComboBox*		cmbVarType;
-  QStackedWidget*	stack; // holds the subfields for different types
+  QWidget*		stack; // holds subfields for different types, gets deleted/recreated
   
   taiIncrField*		incVal; // for: ints
   taiField*		fldVal; // for: char, string, most numbers
@@ -108,12 +110,12 @@ protected:
   taiComboBox*		cboEnumValue;
   //for objects:
   taiTypeHier*		thValType;
-  QLabel*		lblObjectValue;
   taiToken*		tkObjectValue;
   // for DynEnums:
   taiEditButton*	edDynEnum; // for invoking editor for values
   taiComboBox*		cboDynEnumValue;
   
+  void			AssertControls(int value); // uncreates existing, creates new
   void			SetVarType(int value); // ProgVar::VarType
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
   void			UpdateDynEnumCombo(const ProgVar* var); 
@@ -125,6 +127,8 @@ protected:
     
 protected slots:
   void			cmbVarType_itemChanged(int itm);
+private:
+  void			init();
 };
 
 

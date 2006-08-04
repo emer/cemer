@@ -137,6 +137,20 @@ int taiData::defSize() {
   else return taiM->ctrl_size;
 }
 
+void taiData::Delete() {
+//NOTE: to extend this method, delete your own additional Qt gui thingies, then call us
+//DO NOT CALL INHERITED THEN DO MORE STUFF YOURSELF
+  if (m_rep) {
+    delete m_rep;
+    m_rep = NULL;
+  }
+  if (mparent)
+    setParent(NULL); // parent deletes us
+  else
+    delete this;
+  //NO MORE CODE, WE ARE DELETED!!!
+}
+
 void taiData::emit_UpdateUi() {
   emit UpdateUi();
 }
@@ -1907,6 +1921,18 @@ void taiButtonMenu::init()
   button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
   button->setFixedHeight(taiM->button_height(font_spec));
   SetRep(button);
+}
+
+void taiButtonMenu::Delete() {
+  if (!HasFlag(flgEditOnly)) {
+    if (m_menu) {
+      delete m_menu;
+      m_menu = NULL;
+    }
+  }
+
+  inherited::Delete();
+  //WE ARE DELETE HERE
 }
 
 

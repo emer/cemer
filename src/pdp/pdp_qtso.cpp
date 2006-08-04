@@ -232,14 +232,31 @@ taiProgVar::taiProgVar(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {
-  m_updating = 0;
+  init();
 }
 
 taiProgVar::~taiProgVar() {
 }
 
-void taiProgVar::Constr(QWidget* gui_parent_) { 
+void taiProgVar::init() {
+  m_updating = 0;
+  sc = scNone;
   vt = 0;
+  stack = NULL;
+  fldName = NULL;
+  cmbVarType = NULL;
+  incVal = NULL; // for: ints
+  fldVal = NULL; // for: char, string, most numbers
+  tglVal = NULL; // for: bool
+  thEnumType = NULL;
+  cboEnumValue = NULL;
+  thValType = NULL;
+  tkObjectValue = NULL;
+  edDynEnum = NULL; // for invoking editor for values
+  cboDynEnumValue = NULL;
+}
+
+void taiProgVar::Constr(QWidget* gui_parent_) { 
   QWidget* rep_ = new QWidget(gui_parent_);
   SetRep(rep_);
   rep_->setMaximumHeight(taiM->max_control_height(defSize()));
@@ -273,83 +290,127 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
   }
   
-  stack = new QStackedWidget(rep_);
-  AddChildWidget(stack); // fill rest of space
+}
+
+void taiProgVar::AssertControls(int value) {
+  if (value == sc) return;
+  // delete old
+  switch (sc) {
+//case scNone: // nothing 
+  case scInt:
+    incVal->Delete();
+    incVal = NULL; 
+    break;
+  case scField:
+    fldVal->Delete();
+    fldVal = NULL; // for: char, string, most numbers
+    break;
+  case scToggle:
+    tglVal->Delete();
+    tglVal = NULL; // for: bool
+    break;
+  case scBase:
+    thValType->Delete();
+    tkObjectValue->Delete();
+    thValType = NULL;
+    tkObjectValue = NULL;
+    break;
+  case scEnum:
+    thEnumType->Delete();
+    cboEnumValue->Delete();
+    thEnumType = NULL;
+    cboEnumValue = NULL;
+    break;
+  case scDynEnum:
+    edDynEnum->Delete();
+    cboDynEnumValue->Delete();
+    edDynEnum = NULL; // for invoking editor for values
+    cboDynEnumValue = NULL;
+    break;
+  default: break; // compiler food
+  }
+  if (stack) {
+    delete stack;
+    stack = NULL;
+  }
   
-  QWidget* sub_rep = NULL; //note: var reused in various sections below
-  QHBoxLayout* hl = NULL; //note: var reused in various sections below
-  
-  // created in order of StackControls:
-  // int
-  incVal = new taiIncrField(typ, host, this, NULL, mflags & flgEditDialog);
-  incVal->setMinimum(INT_MIN); //note: must be int
-  incVal->setMaximum(INT_MAX); //note: must be int
-  stack->addWidget(incVal->rep());
-  
-  // field
-  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
-  stack->addWidget(fldVal->rep());
-  
-  // toggle
-  tglVal = new taiToggle(typ, host, this, NULL, mflags & flgEditDialog);
-  stack->addWidget(tglVal->rep());
-  
-  // object, complicated!
-  sub_rep = new QWidget();
-  hl = new QHBoxLayout(sub_rep);
-  hl->setMargin(0);
-  lbl = new QLabel("min type", sub_rep);
-  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-  thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-    &TA_taBase, host, this, sub_rep, (mflags & flgReadOnly));
-  thValType->GetMenu();
-  hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
-  lblObjectValue = new QLabel("value", sub_rep);
-  hl->addWidget(lblObjectValue);  hl->addSpacing(taiM->hsep_c);
-  tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
-     thValType->typ, host, this, sub_rep, ((mflags & flgReadOnly) | flgNullOk));
-  hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-  
-  stack->addWidget(sub_rep);
-  
-  // enum -- very complicated!
-  sub_rep =  new QWidget();
-  hl = new QHBoxLayout(sub_rep);
-  hl->setMargin(0);
-  
-  lbl = new QLabel("enum type", sub_rep);
-  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-  thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-    &TA_taBase, host, this, sub_rep, (mflags & flgReadOnly));
-  thEnumType->enum_mode = true;
-  thEnumType->GetMenu();
-  hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
-  
-  lbl = new QLabel("enum value", sub_rep);
-  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-  
-  cboEnumValue = new taiComboBox(true, NULL, host, this, sub_rep, (mflags & flgReadOnly));
-  hl->addWidget(cboEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-  
-  stack->addWidget(sub_rep);
-  
-  // DynEnum
-  sub_rep =  new QWidget();
-  hl = new QHBoxLayout(sub_rep);
-  hl->setMargin(0);
-  
-  edDynEnum = taiEditButton::New(NULL, TA_DynEnum.ie, &TA_DynEnum, host, this,
-      sub_rep, ((mflags & flgReadOnly) | flgEditOnly));
-  hl->addWidget(edDynEnum->GetRep()); hl->addSpacing(taiM->hsep_c);
-  
-  lbl = new QLabel("enum value", sub_rep);
-  hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-  
-  cboDynEnumValue = new taiComboBox(true, NULL, host, this, sub_rep, (mflags & flgReadOnly));
-  hl->addWidget(cboDynEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-  
-  stack->addWidget(sub_rep);
-  
+  QLabel* lbl = NULL; // used by many
+  QHBoxLayout* hl = NULL;
+  switch (value) {
+//case scNone: // nothing
+  case scInt: {
+    incVal = new taiIncrField(typ, host, this, NULL, mflags & flgReadOnly);
+    incVal->setMinimum(INT_MIN); //note: must be int
+    incVal->setMaximum(INT_MAX); //note: must be int
+    AddChildWidget(incVal->rep());
+    } break;
+  case scField: {
+    fldVal = new taiField(typ, host, this, NULL, mflags & (flgReadOnly | flgEditDialog));
+    AddChildWidget(fldVal->rep());
+    } break;
+  case scToggle: {
+    tglVal = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
+    AddChildWidget(tglVal->rep());
+    } break;
+  case scBase: {
+    stack = new QWidget();
+    hl = new QHBoxLayout(stack);
+    hl->setMargin(0);
+    lbl = new QLabel("min type", stack);
+    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+    thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
+      &TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    thValType->GetMenu();
+    hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
+    lbl = new QLabel("value", stack);
+    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+    tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
+      thValType->typ, host, this, stack, ((mflags & flgReadOnly) | flgNullOk));
+    hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+    
+    AddChildWidget(stack);
+    } break;
+  case scEnum: {
+    stack =  new QWidget();
+    hl = new QHBoxLayout(stack);
+    hl->setMargin(0);
+    
+    lbl = new QLabel("enum type", stack);
+    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+    thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
+      &TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    thEnumType->enum_mode = true;
+    thEnumType->GetMenu();
+    hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
+    
+    lbl = new QLabel("enum value", stack);
+    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+    
+    cboEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
+    hl->addWidget(cboEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+    
+    AddChildWidget(stack);
+    } break;
+  case scDynEnum: {
+    stack =  new QWidget();
+    hl = new QHBoxLayout(stack);
+    hl->setMargin(0);
+    
+    edDynEnum = taiEditButton::New(NULL, TA_DynEnum.ie, &TA_DynEnum, host, this,
+        stack, ((mflags & flgReadOnly) | flgEditOnly));
+    hl->addWidget(edDynEnum->GetRep()); hl->addSpacing(taiM->hsep_c);
+    
+    lbl = new QLabel("enum value", stack);
+    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
+    
+    cboDynEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
+    hl->addWidget(cboDynEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
+    
+    AddChildWidget(stack);
+    } break;
+  default: break; // compiler food
+  }
+  sc = value;
 }
 
 void taiProgVar::cmbVarType_itemChanged(int itm) {
@@ -381,7 +442,7 @@ void taiProgVar::DataChanged_impl(taiData* chld) {
 void taiProgVar::GetImage(const ProgVar* var) {
   ++m_updating;
   fldName->GetImage(var->name);
-  SetVarType(var->var_type);
+  SetVarType(var->var_type); //asserts correct control type
   // we only transfer the value in use
   switch (varType()) {
   case ProgVar::T_Int:
@@ -415,7 +476,6 @@ void taiProgVar::GetImage(const ProgVar* var) {
     cboDynEnumValue->GetEnumImage(dei);
     break;
   }
-  SetVarType(var->var_type);
   --m_updating;
 }
 
@@ -458,24 +518,24 @@ void taiProgVar::SetVarType(int value) {
   cmbVarType->GetEnumImage(vt);
   switch (vt) {
   case ProgVar::T_Int:
-    stack->setCurrentIndex(scInt);
+    AssertControls(scInt);
     break;
   case ProgVar::T_Real:
   case ProgVar::T_String: 
-    stack->setCurrentIndex(scField);
+    AssertControls(scField);
     break;
   case ProgVar::T_Bool:
-    stack->setCurrentIndex(scToggle);
+    AssertControls(scToggle);
     break;
   case ProgVar::T_Object: 
-    stack->setCurrentIndex(scBase);
+    AssertControls(scBase);
 //TODO ??   tabVal->GetImage(NULL); // obj, no scope
     break;
   case ProgVar::T_HardEnum: 
-    stack->setCurrentIndex(scEnum);
+    AssertControls(scEnum);
     break;
   case ProgVar::T_DynEnum:
-    stack->setCurrentIndex(scDynEnum);
+    AssertControls(scDynEnum);
     break;
   default: break ;
   }
@@ -483,6 +543,7 @@ void taiProgVar::SetVarType(int value) {
 }
 
 void taiProgVar::UpdateDynEnumCombo(const ProgVar* var) {
+  if (sc != scDynEnum) return;
   ++m_updating;
   cboDynEnumValue->Clear();
   const DynEnum& de = var->dyn_enum_val; // convenience

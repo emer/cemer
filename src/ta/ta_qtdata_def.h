@@ -129,6 +129,7 @@ public:
   String		orig_val;	// text of original data value
   taiData*		parent() {return mparent;} // #GET_Parent if data is contained within data, this the parent container
   void			setParent(taiData* value); // #SET_Parent
+  virtual void		Delete(); // use this to dynamically delete this, including the rep
   taiData(); // for ta_TA.cc only
   taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
   virtual ~taiData();
