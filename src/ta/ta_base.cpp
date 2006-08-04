@@ -138,21 +138,19 @@ void tabMisc::WaitProc() {
 #ifdef TA_GUI
   taiMisc::PurgeDialogs();
 #endif
-  if (delayed_remove.size > 0) {
-    int i;
-    for(i=0; i<delayed_remove.size; i++) {
-      TAPtr it = delayed_remove.FastEl(i);
-      TAPtr ownr = it->GetOwner();
-      if (ownr) {
-	if(!ownr->Close_Child(it)) { // didn't work
-	  if(it->InheritsFrom(TA_taList_impl))
-	    ((taList_impl*)it)->RemoveAll(); // remove all might have been called
-	}
-      } else {
-        taBase::UnRef(it);
-      }
+  for (int i = delayed_remove.size - 1; i >= 0; --i) {
+    // if there is only 1 ref count left, we must be it, so just remove,
+    // otherwise, try its owner, otherwise, prob an error (too many refs)
+    TAPtr it = delayed_remove.FastEl(i);
+    // we need to grab count, because we always remove, and it could delete
+    int refn = taBase::GetRefn(it); 
+    delayed_remove.Remove(i);
+    //TODO: maybe should warn if refn>2, since that will mean refs remain
+    if (refn > 1) {
+      it->Close(); // tries owner if any, else just unrefs, which should delete
+    } else if (refn < 1) { // VERY BAD! ref s/nb < 1!
+      taMisc::Error("tabMisc::delayed_remove: item had refn<1!");
     }
-    delayed_remove.RemoveAll();
   }
   if (delayed_updateafteredit.size > 0) {
     int i;

@@ -39,6 +39,12 @@ Serious/Fatal:
   the generic name -- progs in the subgroup seem to load fine
 * HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
 * if you specify a project on the cmd line, it keeps reopening the same proj repeatedly
+* last data item missing in .projects group view (view_colors) --
+  the label is there, but  not the data control (perhaps this is why the names don't line up)
+  -- when you just look at the property panel directly (the project itself) it does show
+  the view_colors control properly
+  NOTE: if you view .defaults though, there are 4 props that show correctly, although
+  the labels still don't line up properly
 
 Medium Important:
 
@@ -93,6 +99,10 @@ Medium Important:
   only when you click to something else and return does panel show correct values
 * using standard QTableView when values are numeric-ish seems to insert an up/down
   edit control, which is limited to 2 decimal digits maximum
+* in EditPanel view of lists (with multi-grid), names not lining up to values 
+* if you close a project, the panel you are on remains open until you click on the
+  empty .projects item (this may presumably also apply to lesser items, although
+  usually you have to click on the item to action it, so it may be masked)
 
 Lower Priority (but perhaps still needed)
 
@@ -108,6 +118,7 @@ Cosmetic/Usability/etc. (lower priority):
 * change default name in NetMonItem to just NetMonItem (no _#) because we qualify every name anyway
   and the numbers will just get out of sync with list position anyway
 * need to add clipboard/drag/drop awareness to TableViews
+* Project Open dialog doesn't reopen using your previous directory
 
 TODO
 ----
@@ -141,7 +152,8 @@ CLIP/DRAGDROP
 
 DONE (shown in reverse order, top=most recent)
 ----
-
+* closing secondary browser windows was crashing -- was caused by incorrect delayed 
+  close logic; fixed
 * fixed all the registration issues in iEditGrid, including those introduced with
   the addition of CompactEdit -- also cleaned up some longstanding minor layout issues
 * in a Matrix, select Remove Frame(n) for some n inside the matrix; the core

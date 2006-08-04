@@ -921,29 +921,18 @@ public:
 
 
 
-class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects, ex. in win_base.h
+class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects
 
 protected:
-  taBase	par; // dummy item to enable parentage
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
-  TALPtr		El_GetOwner_(void* it) const
-    { if(((TAPtr)it)->GetOwner() == &par) return (const TALPtr)this; else return NULL; }
-  void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(&par); return it; }
-//  bool		El_FindCheck_(void* it, const char* nm) const
-//  { return (((TAPtr)it)->FindCheck(nm) &&
-//	    ((El_GetOwner_(it) != NULL) || (El_GetOwner_(it) == (TALPtr) this))); }
 
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
   void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
   void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
-  void*		El_Own_(void* it)	{ taBase::Own((TAPtr)it,&par); return it; }
-  void		El_disOwn_(void* it)
-  { if(((TAPtr)it)->GetOwner() == &par) ((TAPtr)it)->CutLinks(); El_Done_(El_unRef_(it)); }
-  // cut links to other objects when removed from owner group
 
-  void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
+/*nuke  void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
   void*		El_Copy_(void* trg, void* src)
-  { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; }
+  { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; } */
 };
 
 typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
