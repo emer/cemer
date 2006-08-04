@@ -125,6 +125,11 @@ void iEditGrid::init(bool header_, int hmargin_, int vmargin_, int rows_, int co
   mrows = rows_;
   mcols = cols_;
   mrow_height = 1; //must set later
+  createContent();
+}
+
+void iEditGrid::createContent() {
+
   layOuter = new QHBoxLayout(this);
   layOuter->setMargin(0);
   layOuter->setSpacing(0);
@@ -168,6 +173,20 @@ void iEditGrid::checkSetParent(QWidget* widget, QWidget* parent) {
 }
 
 void iEditGrid::clearLater() { // clears all contained items, but does it via deleteLater, not delete
+  mrows = 1;
+  mcols = 1;
+  scrBody->setParent(NULL);
+  scrBody->deleteLater();
+  bodyNames->setParent(NULL);
+  bodyNames->deleteLater();
+//  layOuter->setParent((QObject*)NULL);
+//  layOuter->deleteLater();
+  delete layOuter;
+  createContent();
+  setHiLightColor(mhilightColor);
+  setRowHeight(mrow_height, true);
+
+/*  
   {const QObjectList& ol = bodyNames->children(); //unconstify it
   for (int i = ol.count() - 1; i > 0; --i) { //Note: we presume item 0 is layNames
     QObject* chobj = ol.at(i);
@@ -182,7 +201,7 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
     if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
     else  chobj->setParent((QObject*)NULL);
     chobj->deleteLater(); // deleted in event loop
-  }}
+  }} */
 }
 
 void iEditGrid::resizeRows_impl() {
@@ -200,14 +219,13 @@ void iEditGrid::setColNameWidget(int col, QWidget* name) {
 
 void iEditGrid::setDataWidget(int row, int col, QWidget* data) {
   checkSetParent(data, (QWidget*)body);
-  QHBoxLayout* layH = new QHBoxLayout();
-  layH->addSpacing(mhmargin);
-  layH->addWidget(data);
-  layH->addSpacing(mhmargin);
   layBody->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
-  layBody->addLayout(layH, row + mhead, col, (Qt::AlignLeft | Qt::AlignVCenter));
+  layBody->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
+    QSizePolicy::Minimum), row + mhead, col);
+  layBody->addWidget(data, row + mhead, col, (Qt::AlignLeft | Qt::AlignVCenter));
+  layBody->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
+    QSizePolicy::Minimum), row + mhead, col);
   updateDimensions(row, col);
-//  resizeRows_impl();
 }
 
 void iEditGrid::setDataLayout(int row, int col, QLayout* data) {
@@ -225,6 +243,7 @@ void iEditGrid::setDimensions(int rows_, int cols_) {
 }
 
 void iEditGrid::setHiLightColor(const QColor& val) {
+  mhilightColor = val; // cached for rebuild
   bodyNames->setHiLightColor(val);
   body->setHiLightColor(val);
 }
@@ -256,15 +275,13 @@ void iEditGrid::setPaletteBackgroundColor3 (const QColor& c) {
 
 void iEditGrid::setRowNameWidget(int row, QWidget* name) {
   checkSetParent(name, (QWidget*)bodyNames);
-  QHBoxLayout* layH = new QHBoxLayout();
-  layH->addSpacing(mhmargin);
-  layH->addWidget(name);
-  layH->addSpacing(mhmargin);
   layNames->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
-  layNames->addLayout(layH, row + mhead, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  // we can dynamically expand
+  layNames->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
+    QSizePolicy::Minimum), row + mhead, 0);
+  layNames->addWidget(name, row + mhead, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  layNames->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
+    QSizePolicy::Minimum), row + mhead, 0);
   updateDimensions(row, -1);
-//  resizeRows_impl();
 }
 
 void iEditGrid::updateDimensions(int row, int col) {

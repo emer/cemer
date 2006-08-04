@@ -53,12 +53,11 @@ class TAIQTSO_API iEditGrid: public QWidget {
   Q_OBJECT
 public:
   QHBoxLayout*		layOuter;
-//    QVBoxLayout*	layNamesOuter;
-    iStripeWidget*	bodyNames;	// parent for the name items
-    QGridLayout*	layNames;
-    QScrollArea*	scrBody;	// scrollbars for the body items
-      iStripeWidget*	body;		// parent for the data items
-      QGridLayout* 	layBody;	// layout for the body
+  iStripeWidget*	  bodyNames;	// parent for the name items
+  QGridLayout*		  layNames;
+  QScrollArea*		  scrBody;	// scrollbars for the body items
+  iStripeWidget*	    body;	// parent for the data items
+  QGridLayout*		    layBody;	// layout for the body
 
   void		setDimensions(int rows_, int cols_);
   void		setColNameWidget(int col, QWidget* name);
@@ -87,7 +86,9 @@ public:
   ~iEditGrid() {}
 
 protected:
+  QColor  mhilightColor;
   void		init(bool header_, int hmargin_, int vmargin_, int rows_, int cols_);
+  void		createContent(); // we call in init, and after clearLater
   int mhmargin; // h margin inside cells
   int mvmargin; // v margin inside cells
   int mcols;
