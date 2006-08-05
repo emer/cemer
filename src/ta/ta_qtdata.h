@@ -721,56 +721,6 @@ public:
   virtual String El_GetName_(void* it) const { return (((taiActions*)it)->mlabel); }
 };
 
-//////////////////////////////////
-// 	iAction		//
-//////////////////////////////////
-
-/*
-  An iAction encapsulates a menu, toolbar, accelerator, etc. user action. We don't
-  use Actions in Edit Dialogs, but we do use them in DataViewers; they work with
-  taiMenu, which is why we define it here. iAction inherits Qt's QAction.
-*/
-/*obs
-
-class iAction: public QAction {
-  Q_OBJECT
-friend class taiMenu;
-public:
-  iAction(int param_, QObject* parent)
-      :QAction(parent) {init(param_);}
-  iAction(int param_, const QString& menuText, const QKeySequence& accel, QObject* parent)
-      :QAction(menuText, parent) {setShortcut(accel), init(param_);}
-  iAction(int param_, const QIcon& icon, const QString& menuText, const QKeySequence& accel, QObject* parent)
-      :QAction(icon, menuText, parent) {setShortcut(accel), init(param_);}
-
-  iAction(QObject* parent)
-      :QAction(parent) {init();}
-  iAction(const QString& menuText, const QKeySequence& accel, QObject* parent)
-      :QAction(menuText, parent) {setShortcut(accel), init();}
-  iAction(const QIcon& icon, const QString& menuText, const QKeySequence& accel, QObject* parent)
-      :QAction(icon, menuText, parent) {setShortcut(accel), init();}
-
-  void		AddTo(taiMenu* menu); // adds to a taiMenu, using the text, accel key, respects toggle, sets the param in the usr_data
-
-#ifndef __MAKETA__
-signals:
-  void activated(int param);
-#endif
-protected:
-  QAction*	m_action;
-  int 		param;
-  void 		init(int param_ = -1); // -1 generally indicates none
-
-protected slots:
-  void this_activated();
-};
-
-class iAction_List: public QList<iAction*> {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS corresponds to a menu item and/or toolbar button -- items are stickily created as needed (browsewin creates the common set)
-
-  override String 	El_GetName_(void*) const; // name is Q object name
-};
-*/
 
 //////////////////////////////////
 // 	taiEditButton		//
@@ -983,8 +933,8 @@ public slots:
   virtual void	Edit();		// for edit callback
 };
 
-class TA_API taiMembMethDefMenuBase : public taiData {
-// common base for MemberDefs and MethodDefs of a typedef in the object with a MDTYPE_xxx option
+class TA_API taiTypeInfoBase : public taiData {
+// common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option
 public:
   MemberDef*	memb_md; // MemberDef of the member that will get the target pointer
   TypeDef*	targ_typ;	// target type from which to get list of items -- may be same as typ, but could differ
@@ -997,10 +947,10 @@ public:
   virtual void		GetMenu() = 0;
   virtual void 		GetImage(const void* base, bool get_menu = true, void* cur_sel = NULL);
 
-  taiMembMethDefMenuBase(taiActions::RepType rt, int ft, MemberDef* memb_md_, 
+  taiTypeInfoBase(taiActions::RepType rt, int ft, MemberDef* memb_md_, 
     TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
-  ~taiMembMethDefMenuBase();
+  ~taiTypeInfoBase();
 protected:
   virtual void 		GetTarget(); // determines the target type for the lookup menu
 };
@@ -1010,9 +960,9 @@ protected:
 // 	taiMemberDef		//
 //////////////////////////////////
 
-class TA_API taiMemberDefMenu : public taiMembMethDefMenuBase {
+class TA_API taiMemberDefMenu : public taiTypeInfoBase {
 // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
-INHERITED(taiMembMethDefMenuBase)
+INHERITED(taiTypeInfoBase)
 public:
   MemberDef*	md;
 
@@ -1028,9 +978,9 @@ public:
 // 	taiMethodDef		//
 //////////////////////////////////
 
-class TA_API taiMethodDefMenu : public taiMembMethDefMenuBase {
+class TA_API taiMethodDefMenu : public taiTypeInfoBase {
 // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
-INHERITED(taiMembMethDefMenuBase)
+INHERITED(taiTypeInfoBase)
 public:
   MethodDef*	md;
   MethodSpace*  sp;

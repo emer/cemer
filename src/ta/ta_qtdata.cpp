@@ -2929,10 +2929,10 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
 
 
 //////////////////////////////////
-//   taiMembMethDefMenuBase	//
+//   taiTypeInfoBase	//
 //////////////////////////////////
 
-taiMembMethDefMenuBase::taiMembMethDefMenuBase(taiActions::RepType rt, int ft, 
+taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft, 
   MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
@@ -2943,14 +2943,14 @@ taiMembMethDefMenuBase::taiMembMethDefMenuBase(taiActions::RepType rt, int ft,
   ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
 }
 
-taiMembMethDefMenuBase::~taiMembMethDefMenuBase() {
+taiTypeInfoBase::~taiTypeInfoBase() {
   if (ta_actions != NULL) {
     delete ta_actions;
     ta_actions = NULL;
   }
 }
 
-void taiMembMethDefMenuBase::GetImage(const void* base, bool get_menu, void* cur_sel){
+void taiTypeInfoBase::GetImage(const void* base, bool get_menu, void* cur_sel){
   menubase = (void*)base; // ok
 //??  if (!typ)  return;
   if (get_menu)
@@ -2960,12 +2960,12 @@ void taiMembMethDefMenuBase::GetImage(const void* base, bool get_menu, void* cur
 }
 
 
-QWidget* taiMembMethDefMenuBase::GetRep() {
+QWidget* taiTypeInfoBase::GetRep() {
   if (ta_actions) return ta_actions->GetRep();
   else return NULL;
 }
 
-void taiMembMethDefMenuBase::GetTarget() {
+void taiTypeInfoBase::GetTarget() {
   targ_typ = typ; // may get overridden by comment directives
   if (!memb_md)  return;
   // a XxxDef* can have one of three options to specify the
