@@ -931,73 +931,37 @@ void taiMember::AddMember(MemberDef* md) {
   *ptr_to_im = this;
 }
 
-////////////////////////
-//  taiMembers      //
-////////////////////////
+TypeDef* taiMember::GetTargetType(const void* base) {
+  TypeDef* targ_typ = typ; // may get overridden by comment directives
+  if (!mbr)  return targ_typ;
+  // a XxxDef* can have one of three options to specify the
+  // target type for its XxxDef menu.
+  // 1) a TYPE_xxxx in its comment directives
+  // 2) a TYPE_ON_xxx in is comment directives, specifying the name
+  //    of the member in the same object which is a TypeDef*
+  // 3) Nothing, which defaults to the type of the object the memberdef
+  //      is in.
 
-////////////////////////
-//  taiROMember     //
-////////////////////////
-/*
-TA_QTTYPE_IMPL(taiROMember)
-
-int taiROMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY"))
-    return (taiMember::BidForMember(md,td) + 1);
-  return 0;
-}
-
-taiData* taiROMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiData* rval;
-  taiType* it = mbr->type->it;
-  if (it->handlesReadOnly()) {
-    rval = it->GetDataRep_impl(host_, par, gui_parent_, flags_);
-    rval->setReadOnly(true);
-  } else {
-    rval = new taiField(typ, host_, par, gui_parent_, true);
-  }
-  return rval;
-}
-
-static String taiROMember_get_str(MemberDef* mbr, void* new_base, void* base) {
-  String strval;
-  if (mbr->type->InheritsFrom(TA_taString)) {
-    strval = mbr->type->GetValStr(new_base, base, mbr);
-  } else if (mbr->type->InheritsFormal(TA_class)) {
-    for (int i = 0; i < mbr->type->members.size; ++i) {
-      MemberDef* md = mbr->type->members.FastEl(i);
-      if (md->HasOption("HIDDEN_INLINE") || !md->ShowMember(taMisc::show_gui))
-	continue;
-      strval += md->name + "=" + taiROMember_get_str(md, md->GetOff(new_base), new_base) + ": ";
+  String mb_nm = mbr->OptionAfter("TYPE_ON_");
+  if (!mb_nm.empty()) {
+//    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
+    if (base) {
+      void* adr; // discarded
+      MemberDef* tdmd = ((taBase*)base)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
+      if (tdmd != NULL)
+        targ_typ = *((TypeDef **) tdmd->GetOff(base));
     }
-  } else if (mbr->type->InheritsFormal(TA_enum)) {
-    EnumDef* ed = mbr->type->enum_vals.FindNo(*((int*)new_base));
-    if (ed != NULL) {
-      strval = ed->GetLabel();
-    }
-    else
-      strval = String(*((int*)new_base));
-  } else {
-    strval = mbr->type->GetValStr(new_base, base, mbr);
+    return targ_typ;
+  } 
+  
+  mb_nm = mbr->OptionAfter("TYPE_");
+  if (!mb_nm.empty()) {
+    targ_typ = taMisc::types.FindName(mb_nm);
+    return targ_typ;
   }
-  return strval;
-}
+  return targ_typ;
+};
 
-void taiROMember::GetImage_impl(taiData* dat, const void* base){
-  if (mbr->type->it->handlesReadOnly()) {
-    taiMember::GetImage_impl(dat, base);
-  } else {
-    void* new_base = mbr->GetOff(base);
-    taiField* rval = (taiField*)dat;
-    String strval = taiROMember_get_str(mbr, new_base, base);
-    rval->GetImage_impl(strval);
-  }
-}
-
-void taiROMember::GetMbrValue(taiData*, void*, bool&) {
-}
-
-*/
 
 //////////////////////////////////
 //  	taiTokenPtrMember  	//
@@ -1331,16 +1295,19 @@ int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_) 
 {
-  taiMethodDefMenu* rval =  new taiMethodDefMenu(taiMenu::buttonmenu, 
-    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);
+/*obs  taiMethodDefMenu* rval =  new taiMethodDefMenu(taiMenu::buttonmenu, 
+    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);*/
+  taiMethodDefButton* rval = new taiMethodDefButton(typ, host_, 
+    par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMethodDefPtrMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  taiMethodDefButton* rval = (taiMethodDefButton*)dat;
+  rval->targ_typ = GetTargetType(base);
   MethodDef* cur_sel = *((MethodDef**)(new_base));
-  rval->GetImage(base, true, (void*)cur_sel);
+  rval->GetImage(cur_sel);
 //  rval->GetImage_impl(*((MemberDef**)new_base));
 //  rval->GetImage_impl(base,*((void **)new_base));
 /*
@@ -1359,8 +1326,8 @@ void taiMethodDefPtrMember::GetImage_impl(taiData* dat, const void* base){
 
 void taiMethodDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   void* new_base = mbr->GetOff(base);
-  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
-  *((void**)new_base) = rval->GetValue();
+  taiMethodDefButton* rval = (taiMethodDefButton*)dat;
+  *((MethodDef**)new_base) = rval->GetValue();
   CmpOrigVal(dat, base, first_diff);
 }
 

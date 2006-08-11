@@ -46,7 +46,8 @@ class taiToken;
 class taiTypeHier;
 class taiActions;
 class taiMenu;
-class taiAction; //
+class taiAction;
+class taiItemChooser; //
 
 
 /* //TODO: re-evaluate
@@ -821,6 +822,117 @@ protected slots:
 };
 
 //////////////////////////////////
+// 	taiItemChooser		//
+//////////////////////////////////
+
+class TA_API taiItemChooser: QDialog {
+// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list
+INHERITED(QDialog)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjDataRole = Qt::UserRole + 1
+  };
+#endif
+
+  static taiItemChooser* New(const String& caption, 
+    int cols, QWidget* par_window_ = NULL);
+
+  String		caption; 	// current caption at top of chooser
+
+  void*			sel_obj() const {return msel_obj;} // current selected object
+  void			setSel_obj(void* value);	// 
+
+  QGridLayout*		layOuter;
+  QTreeWidget* 		items; 	// list of items
+  QHBoxLayout*		layButtons;
+  QPushButton*		btnOk;
+  QPushButton*		btnCancel;
+
+
+  virtual bool	Choose();
+  // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
+
+  virtual void 	Clear();	// reset data
+ 
+  virtual QTreeWidgetItem* AddItem(const String& itm, const void* data_,
+    QTreeWidgetItem* parent = NULL); // add one item to dialog
+
+protected:
+  void*			msel_obj;	// current selected object
+  
+  bool 			SetCurrentItemByData(void* value, 
+    QTreeWidgetItem* top = NULL);
+  virtual void		Constr(int cols); // does constr, called in static, so can extend
+
+  taiItemChooser(const String& caption, QWidget* par_window_);
+protected slots:
+  void accept(); // override
+  void reject(); // override
+  // callbacks
+  void 		items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
+private:
+  void 		init(const String& captn); // called by constructors
+};
+
+
+class TA_API taiItemPtrBase : public taiData {
+// common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
+  Q_OBJECT
+public:
+  TypeDef*		targ_typ; // target type from which to get list of items -- may be same as typ, but could differ
+  
+  const String		labelText(); // "tag: name" for button
+  inline QPushButton*	rep() {return (QPushButton*)m_rep;}
+
+  virtual void 		GetImage(void* cur_sel);
+  
+  virtual void		BuildChooser(taiItemChooser* ic) {}
+    // builds the tree
+
+  ~taiItemPtrBase();
+  
+public slots:
+  void			OpenChooser(); // make and then open chooser dialog
+
+protected:
+  void*			m_sel; // current value
+  
+  virtual const String	itemTag() = 0; // for "N: label" on button, is "N: "
+  virtual const String	labelNameNonNull() = 0; // name part of label, when obj non-null
+  
+  taiItemPtrBase(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0); // typ_ 
+};
+
+
+//////////////////////////////////
+//   taiMethodDefDefButton	//
+//////////////////////////////////
+
+class TA_API taiMethodDefButton : public taiItemPtrBase {
+// for memberdefs
+INHERITED(taiItemPtrBase)
+public:
+  inline MethodDef*	md() {return (MethodDef*)m_sel;}
+
+  void			GetImage(MethodDef* cur_sel) 
+    {taiItemPtrBase::GetImage((void*)cur_sel);}
+  MethodDef*		GetValue() {return md();}
+
+  void			BuildChooser(taiItemChooser* ic); // override
+
+  taiMethodDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  const String		itemTag() {return "Method: ";}
+  const String		labelNameNonNull();
+
+};
+
+
+//////////////////////////////////
 // 	taiFileButton		//
 //////////////////////////////////
 
@@ -1021,14 +1133,14 @@ public:
     QWidget* gui_parent_, int flags_ = 0);
   taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags_ = 0);
-  ~taiTypeHier();
+  ~taiTypeHier(); //
 protected:
   bool		AddType_Enum(TypeDef* typ_); 
   bool		AddType_Class(TypeDef* typ_); 
   int		CountChildren(TypeDef* typ_);
   int		CountEnums(TypeDef* typ_);
   virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); 
-  void	GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); 
+  void	GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); //
 };
 
 //////////////////////////////////

@@ -259,6 +259,8 @@ public:
   // generate the gui representation of the data -- same rules as GetDataRep
   override void		GetValue(taiData* dat, void* base);
   // get the value from the representation -- same rules as GetDataRep
+  
+  virtual TypeDef*	GetTargetType(const void* base); // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
 
   virtual void	GetMbrValue(taiData* dat, void* base, bool& first_diff);
         // this is the one to call to get a member value
@@ -302,20 +304,7 @@ TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
 // these have BidforMember() functions which may depend on the opts
 // of a member
-/*
-class TA_API taiROMember : public taiMember {
-  // read-only member -- delegates to types that handle readOnly, otherwise defaults to readonly string
-public:
-  override bool	handlesReadOnly() {return true;}
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
-  TAQT_MEMBER_INSTANCE(taiROMember, taiMember);
-};
-
-*/
 class TA_API taiTokenPtrMember : public taiMember {
   // for taBase pointer members (allows scoping by owner obj)
 INHERITED(taiMember)
@@ -656,46 +645,6 @@ public:
 };
 
 
-//////////////////////////////////////////////////////////
-// 		taiMembers: 	 Groups			//
-//////////////////////////////////////////////////////////
-/* All these are subsumed under EditButton's ability to handle read_only
-
-class TA_API taiROListMember: public taiROMember {
-// allows one to view a listing of the members of a ReadOnly object that is a list or array
-public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
-
-  TAQT_MEMBER_INSTANCE(taiROListMember, taiROMember);
-};
-
-
-class TA_API taiROGroupMember: public taiROMember {
-// allows one to view a listing of the members of a ReadOnly object that is a Group or array
-public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
-
-  TAQT_MEMBER_INSTANCE(taiROGroupMember, taiROMember);
-};
-
-
-class TA_API taiROArrayMember: public taiROMember {
-// allows one to view a listing of the members of a ReadOnly object that is a array or array
-public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
-
-  TAQT_MEMBER_INSTANCE(taiROArrayMember, taiROMember);
-};
-*/
 
 class TA_API gpiDefaultEl : public taiMember {
 public:

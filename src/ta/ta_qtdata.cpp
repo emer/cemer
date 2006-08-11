@@ -58,6 +58,8 @@
 #include <QTextEdit>
 #include <QToolButton>
 #include <qtooltip.h>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <Q3WidgetStack>
 
 #include <errno.h>
@@ -2477,6 +2479,191 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 }
 
 
+//////////////////////////////////
+//   taiItemChooser		//
+//////////////////////////////////
+
+taiItemChooser* taiItemChooser::New(const String& caption_, 
+  int cols, QWidget* par_window_) 
+{
+/*no, let qt choose  if (par_window_ == NULL)
+    par_window_ = taiMisc::main_window;*/
+  if (cols < 1) cols = 1; // minimum
+  taiItemChooser* rval = new taiItemChooser(caption_, par_window_);
+  rval->Constr(cols);
+  return rval;
+}
+
+taiItemChooser::taiItemChooser(const String& caption_, QWidget* par_window_)
+:inherited(par_window_)
+{
+  init(caption_);
+}
+
+void taiItemChooser::init(const String& caption_) {
+  caption = caption_;
+  msel_obj = NULL;
+  setModal(true);
+  setCaption(caption);
+  setFont(taiM->dialogFont(taiMisc::fonSmall));
+  resize(taiM->dialogSize(taiMisc::hdlg_s));
+}
+
+bool taiItemChooser::Choose() {
+  return (exec() == QDialog::Accepted);
+}
+
+void taiItemChooser::Constr(int cols) {
+  layOuter = new QGridLayout(this);
+  layOuter->setMargin(taiM->vsep_c);
+  layOuter->setSpacing(taiM->vspc_c); 
+  items = new QTreeWidget(this);
+  items->setColumnCount(cols);
+  layOuter->addWidget(items, 1, 0);
+  layOuter->setRowStretch(1, 1); // list is item to expand in host
+  layOuter->setRowMinimumHeight(1, 100); // don't shrink to nothing
+
+  layButtons = new QHBoxLayout();
+  layButtons->addStretch();
+  btnOk = new QPushButton("&Ok", this);
+  btnOk->setDefault(true);
+  layButtons->addWidget(btnOk);
+  layButtons->addSpacing(taiM->vsep_c);
+  btnCancel = new QPushButton("&Cancel", this);
+  layButtons->addWidget(btnCancel);
+  layOuter->addLayout(layButtons, 2, 0);
+
+  connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+  connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+      this, SLOT(items_itemDoubleClicked(QTreeWidgetItem*, int)) );
+}
+
+void taiItemChooser::accept() {
+  QTreeWidgetItem* itm = items->currentItem();
+  if (itm) {
+    msel_obj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+  }
+  inherited::accept();
+}
+
+QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, const void* data_,
+    QTreeWidgetItem* parent)
+{
+  QTreeWidgetItem* rval;
+  if (parent)
+    rval = new QTreeWidgetItem(parent);
+  else
+    rval = new QTreeWidgetItem(items);
+  // set standard item text
+  rval->setText(0, itm);
+  // set the object, which is an extended attribute
+  //note: use the ta version because Qt uses longs on some plats
+  rval->setData(0, ObjDataRole, QVariant((ta_intptr_t)data_));
+}
+
+void taiItemChooser::Clear() {
+  items->clear();
+  msel_obj = NULL;
+}
+
+/*move to taithingy
+void taiItemChooser::AddObjects(TAPtr obj) {
+  TypeDef* td = obj->GetTypeDef();
+  for (int i = 0; i < td->members.size; ++i) {
+    MemberDef* md = td->members.FastEl(i);
+    if(!md->type->InheritsFrom(&TA_taBase)) continue;
+    TAPtr mb = (TAPtr)md->GetOff((void*)obj);
+    if(mb->GetOwner() == NULL) continue; // not going to be a good selection item
+    AddItem((const char*)md->name, md);
+  }
+}
+
+void taiItemChooser::AddTokens(TypeDef* td) {
+  int i;
+  for(i=0; i<td->tokens.size; i++) {
+    void* tmp = td->tokens.FastEl(i);
+    String adrnm = String((long)tmp);
+    if(td->InheritsFrom(TA_taBase)) {
+      TAPtr btmp = (TAPtr)tmp;
+      if((scope_ref != NULL) && !btmp->SameScope(scope_ref))
+	continue;
+      if(!btmp->GetName().empty()) {
+	AddItem(btmp->GetName(), tmp);
+	items[items.size - 1] = adrnm;	// always store the actual address in the string!
+      }
+      else {
+	AddItem(adrnm, tmp);
+      }
+    }
+    else {
+      AddItem(adrnm, tmp);
+    }
+  }
+
+  for(i=0; i<td->children.size; i++) {
+    TypeDef* chld = td->children[i];
+    if(chld->ptr != 0)
+      continue;
+    if((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
+      continue;
+    if((chld->tokens.size > 0) || (chld->children.size > 0))
+      AddTokens(chld);
+  }
+}
+
+void taiItemChooser::AddItem(const char* itm, const void* data_) {
+  items.Add(itm);
+  browser->insertItem(new ocListBoxItem(QString(itm), data_)); 
+  if (msel_obj == data_)
+    browser->setCurrentItem(browser->count() - 1);
+}
+*/
+
+void taiItemChooser::items_itemDoubleClicked(QTreeWidgetItem* itm, int col) {
+  accept();
+}
+
+void taiItemChooser::reject() {
+//TODO: maybe shouldn't nuke sel, caller should check true/false
+  msel_obj = NULL;
+  inherited::reject();
+}
+
+bool taiItemChooser::SetCurrentItemByData(void* value, QTreeWidgetItem* top) {
+  QTreeWidgetItem* cur = NULL;
+  if (top) {
+    void* data = (void*)QVARIANT_TO_INTPTR(top->data(0, ObjDataRole));
+    if (value == data) {
+      items->setCurrentItem(top);
+      return true;
+    }
+    for (int i = 0; i < top->childCount(); ++i ) {
+      cur = top->child(i);
+      if (SetCurrentItemByData(value, cur)) return true;
+    }
+     
+  } else { // top-level
+    for (int i = 0; i < items->topLevelItemCount(); ++i ) {
+      cur = items->topLevelItem(i);
+      if (SetCurrentItemByData(value, cur)) return true;
+    }
+  }
+  // not found
+  items->setCurrentItem(NULL);
+  return false;
+}
+
+void taiItemChooser::setSel_obj(void* value) {
+  if (msel_obj == value) return;
+  msel_obj = value;
+  if (value)
+    SetCurrentItemByData(value);
+  else 
+    items->setCurrentItem(NULL);
+}
+
+
 //////////////////////////////////////////
 // 		taiFileButton		//
 //////////////////////////////////////////
@@ -2926,6 +3113,86 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
     }
   }
 }
+
+
+//////////////////////////////////
+//   taiItemPtrBase		//
+//////////////////////////////////
+
+taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
+  IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_)
+: taiData(typ_, host_, par, gui_parent_, flags_)
+{
+  targ_typ = NULL; // gets set later
+  QPushButton* rep_ = new QPushButton(gui_parent_);
+  SetRep(rep_);
+  connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
+}
+
+taiItemPtrBase::~taiItemPtrBase() {
+}
+
+void taiItemPtrBase::GetImage(void* cur_sel){
+  // note: don't optimize this if same msel, since we use it to set label
+  m_sel = cur_sel;
+  rep()->setText(labelText());
+}
+
+const String taiItemPtrBase::labelText() {
+  String nm;
+  if (m_sel) nm = labelNameNonNull();
+  else       nm = "NULL";
+  return itemTag() + nm + "...";
+}
+
+void taiItemPtrBase::OpenChooser() {
+//TODO: cache etc., but for now, just create/build
+//TODO: more cols
+taiItemChooser* ic = taiItemChooser::New("Choose " + itemTag(), 1);
+  BuildChooser(ic);
+  ic->setSel_obj(m_sel);
+  if (ic->Choose()) {
+    if (m_sel != ic->sel_obj()) {
+      GetImage(ic->sel_obj());
+      DataChanged();
+    }
+  }
+delete ic;
+}
+
+
+//////////////////////////////////
+//   taiMethodDefButton		//
+//////////////////////////////////
+
+taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+}
+
+const String taiMethodDefButton::labelNameNonNull() {
+  return md()->name;
+}
+
+void taiMethodDefButton::BuildChooser(taiItemChooser* ic) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiMemberDefButton::BuildChooser: targ_type needed");
+    return;
+  }
+//TEMP -- flat list
+//TODO: add extra data, and support different views
+  MethodSpace* mbs = &targ_typ->methods;
+  for (int i = 0; i < mbs->size; ++i){
+    MethodDef* mth = mbs->FastEl(i);
+    ic->AddItem(mth->GetLabel(), (void*)mth);
+  }
+}
+
+
 
 
 //////////////////////////////////

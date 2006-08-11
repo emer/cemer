@@ -10,7 +10,6 @@ if TA_GUI
 TAHEADS_GUI =\
 	@abs_srcdir@/ta_plugin.h \
 	@abs_srcdir@/ta_qt.h \
-	@abs_srcdir@/ta_qtmodel.h \
 	@abs_srcdir@/ta_qtdata_def.h \
 	@abs_srcdir@/ta_qtdata.h \
 	@abs_srcdir@/ta_qtdialog.h \
@@ -29,7 +28,6 @@ TAHEADS_GUI =\
 HEADS_GUI =\
 	ta_plugin.h \
 	ta_qt.h \
-	ta_qtmodel.h \
 	ta_qtdata_def.h \
 	ta_qtdata.h \
 	ta_qtdialog.h \
@@ -50,7 +48,6 @@ SRCS_GUI =\
 	ta_plugin.moc.cpp \
 	ta_qt.cpp \
 	ta_qt.moc.cpp \
-	ta_qtmodel.cpp \
 	ta_type_qt.cpp \
 	ta_qtdata.cpp \
 	ta_qtdata_def.moc.cpp \

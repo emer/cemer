@@ -104,6 +104,8 @@ class	QTextEdit;		// #IGNORE
 class	QToolBar;		// #IGNORE 
 class	QToolButton;		// #IGNORE 
 class	QToolTip;		// #IGNORE 
+class	QTreeWidget;		// #IGNORE
+class	QTreeWidgetItem;	// #IGNORE
 class	QValidator;		// #IGNORE 
 class	Q3VBox;			// #IGNORE 
 class	QVBoxLayout;		// #IGNORE 

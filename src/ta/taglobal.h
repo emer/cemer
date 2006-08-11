@@ -252,9 +252,11 @@ typedef unsigned char   byte;
 # if (TA_POINTER_SIZE == 4)
 #   define ta_intptr_t int
 #   define ta_uintptr_t unsigned int
+#   define QVARIANT_TO_INTPTR(qv) (qv.toInt())
 # elif (TA_POINTER_SIZE == 8)
 #   define ta_intptr_t qint64
 #   define ta_uintptr_t quint64
+#   define QVARIANT_TO_INTPTR(qv) (qv.toLongLong())
 # else
 #   error "TA_POINTER_SIZE should be 4 or 8"
 # endif
