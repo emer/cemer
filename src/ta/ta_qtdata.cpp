@@ -2483,14 +2483,13 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 //   taiItemChooser		//
 //////////////////////////////////
 
-taiItemChooser* taiItemChooser::New(const String& caption_, 
-  int cols, QWidget* par_window_) 
+taiItemChooser* taiItemChooser::New(const String& caption_, taiItemPtrBase* client_, 
+  QWidget* par_window_) 
 {
 /*no, let qt choose  if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;*/
-  if (cols < 1) cols = 1; // minimum
   taiItemChooser* rval = new taiItemChooser(caption_, par_window_);
-  rval->Constr(cols);
+  rval->Constr(client_);
   return rval;
 }
 
@@ -2501,54 +2500,28 @@ taiItemChooser::taiItemChooser(const String& caption_, QWidget* par_window_)
 }
 
 void taiItemChooser::init(const String& caption_) {
+  m_changing = 0;
   caption = caption_;
-  msel_obj = NULL;
+  m_selObj = NULL;
+  m_client = NULL;
+  m_view = -1; // until set to valid value
   setModal(true);
   setCaption(caption);
   setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_s));
 }
 
-bool taiItemChooser::Choose() {
-  return (exec() == QDialog::Accepted);
-}
-
-void taiItemChooser::Constr(int cols) {
-  layOuter = new QGridLayout(this);
-  layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
-  items = new QTreeWidget(this);
-  items->setColumnCount(cols);
-  layOuter->addWidget(items, 1, 0);
-  layOuter->setRowStretch(1, 1); // list is item to expand in host
-  layOuter->setRowMinimumHeight(1, 100); // don't shrink to nothing
-
-  layButtons = new QHBoxLayout();
-  layButtons->addStretch();
-  btnOk = new QPushButton("&Ok", this);
-  btnOk->setDefault(true);
-  layButtons->addWidget(btnOk);
-  layButtons->addSpacing(taiM->vsep_c);
-  btnCancel = new QPushButton("&Cancel", this);
-  layButtons->addWidget(btnCancel);
-  layOuter->addLayout(layButtons, 2, 0);
-
-  connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
-  connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-      this, SLOT(items_itemDoubleClicked(QTreeWidgetItem*, int)) );
-}
-
 void taiItemChooser::accept() {
   QTreeWidgetItem* itm = items->currentItem();
   if (itm) {
-    msel_obj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+    m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
   }
+  m_client = NULL;
   inherited::accept();
 }
 
-QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, const void* data_,
-    QTreeWidgetItem* parent)
+QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, QTreeWidgetItem* parent,
+  const void* data_)
 {
   QTreeWidgetItem* rval;
   if (parent)
@@ -2559,12 +2532,138 @@ QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, const void* data_,
   rval->setText(0, itm);
   // set the object, which is an extended attribute
   //note: use the ta version because Qt uses longs on some plats
-  rval->setData(0, ObjDataRole, QVariant((ta_intptr_t)data_));
+  if (data_)
+    rval->setData(0, ObjDataRole, QVariant((ta_intptr_t)data_));
+  return rval;
+}
+
+bool taiItemChooser::Choose(taiItemPtrBase* client_) {
+//NOTE: current semantics is simple: always rebuild each show
+// more complex caching would require flags etc. to track whether the
+// inputs to the item changed -- cpus are so fast now, this may not be worth it
+  m_client = client_;
+  if (view() < 0) {
+    setView(0); // triggers build, and sets sel
+  } else {
+    Refresh(); // input data could have changed since last view
+    setSelObj(m_client->sel());
+  }
+  return (exec() == QDialog::Accepted);
 }
 
 void taiItemChooser::Clear() {
   items->clear();
-  msel_obj = NULL;
+  m_selObj = NULL;
+}
+
+void taiItemChooser::cmbView_currentIndexChanged(int index) {
+  if (m_changing > 0) return;
+  setView(index);
+}
+
+void taiItemChooser::Constr(taiItemPtrBase* client_) {
+  m_client = client_; // revoked at end
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(taiM->vsep_c);
+  layOuter->setSpacing(taiM->vspc_c); 
+  // we only put up a view selector if more than 1 view supported
+  if (client_ && client_->viewCount() > 1) {
+    cmbView = new QComboBox(this);
+    for (int i = 0; i < client_->viewCount(); ++i) {
+      cmbView->addItem(client_->viewText(i));
+    }
+    layOuter->addWidget(cmbView);
+    connect(cmbView, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(cmbView_currentIndexChanged(int)) );
+  } else cmbView = NULL;
+  items = new QTreeWidget(this);
+  items->setSortingEnabled(true);
+  layOuter->addWidget(items, 1); // list is item to expand in host
+
+  QHBoxLayout* layButtons = new QHBoxLayout();
+  layButtons->addStretch();
+  btnOk = new QPushButton("&Ok", this);
+  btnOk->setDefault(true);
+  layButtons->addWidget(btnOk);
+  layButtons->addSpacing(taiM->vsep_c);
+  btnCancel = new QPushButton("&Cancel", this);
+  layButtons->addWidget(btnCancel);
+  layOuter->addLayout(layButtons);
+
+  connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+  connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+      this, SLOT(items_itemDoubleClicked(QTreeWidgetItem*, int)) );
+  m_client = NULL;
+}
+
+void taiItemChooser::items_itemDoubleClicked(QTreeWidgetItem* itm, int col) {
+  accept();
+}
+
+void taiItemChooser::Refresh() {
+  ++m_changing;
+  // delete items
+  Clear();
+  if (m_client) { // note: should be valid
+    // redo header
+    int cols = m_client->columnCount(m_view); // cache
+    items->setColumnCount(cols);
+    QTreeWidgetItem* hi = items->headerItem();
+    for (int i = 0; i < cols; ++i) {
+      hi->setData(i, Qt::DisplayRole, m_client->headerText(i, m_view));
+    }
+    // call client to fill items
+    m_client->BuildChooser(this, m_view);
+    setSelObj(m_client->sel());
+  }
+  --m_changing;
+}
+
+void taiItemChooser::reject() {
+//TODO: maybe shouldn't nuke sel, caller should check true/false
+  m_selObj = NULL;
+  m_client = NULL;
+  inherited::reject();
+}
+
+bool taiItemChooser::SetCurrentItemByData(void* value, QTreeWidgetItem* top) {
+  QTreeWidgetItem* cur = NULL;
+  if (top) {
+    void* data = (void*)QVARIANT_TO_INTPTR(top->data(0, ObjDataRole));
+    if (value == data) {
+      items->setCurrentItem(top);
+      return true;
+    }
+    for (int i = 0; i < top->childCount(); ++i ) {
+      cur = top->child(i);
+      if (SetCurrentItemByData(value, cur)) return true;
+    }
+     
+  } else { // top-level
+    for (int i = 0; i < items->topLevelItemCount(); ++i ) {
+      cur = items->topLevelItem(i);
+      if (SetCurrentItemByData(value, cur)) return true;
+    }
+  }
+  // not found
+  items->setCurrentItem(NULL);
+  return false;
+}
+
+void taiItemChooser::setSelObj(void* value) {
+  if (m_selObj == value) return;
+  m_selObj = value;
+  if (value)
+    SetCurrentItemByData(value);
+  else 
+    items->setCurrentItem(NULL);
+}
+
+void taiItemChooser::setView(int value, bool force) {
+  if ((m_view == value) && !force) return;
+  m_view = value; //so its valid for any subcalls, etc.
+  Refresh();
 }
 
 /*move to taithingy
@@ -2615,53 +2714,134 @@ void taiItemChooser::AddTokens(TypeDef* td) {
 void taiItemChooser::AddItem(const char* itm, const void* data_) {
   items.Add(itm);
   browser->insertItem(new ocListBoxItem(QString(itm), data_)); 
-  if (msel_obj == data_)
+  if (mselObj == data_)
     browser->setCurrentItem(browser->count() - 1);
 }
 */
 
-void taiItemChooser::items_itemDoubleClicked(QTreeWidgetItem* itm, int col) {
-  accept();
+
+//////////////////////////////////
+//   taiItemPtrBase		//
+//////////////////////////////////
+
+taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
+  IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_)
+: taiData(typ_, host_, par, gui_parent_, flags_)
+{
+  targ_typ = NULL; // gets set later
+  QPushButton* rep_ = new QPushButton(gui_parent_);
+  SetRep(rep_);
+  connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
 }
 
-void taiItemChooser::reject() {
-//TODO: maybe shouldn't nuke sel, caller should check true/false
-  msel_obj = NULL;
-  inherited::reject();
+taiItemPtrBase::~taiItemPtrBase() {
 }
 
-bool taiItemChooser::SetCurrentItemByData(void* value, QTreeWidgetItem* top) {
-  QTreeWidgetItem* cur = NULL;
-  if (top) {
-    void* data = (void*)QVARIANT_TO_INTPTR(top->data(0, ObjDataRole));
-    if (value == data) {
-      items->setCurrentItem(top);
-      return true;
-    }
-    for (int i = 0; i < top->childCount(); ++i ) {
-      cur = top->child(i);
-      if (SetCurrentItemByData(value, cur)) return true;
-    }
-     
-  } else { // top-level
-    for (int i = 0; i < items->topLevelItemCount(); ++i ) {
-      cur = items->topLevelItem(i);
-      if (SetCurrentItemByData(value, cur)) return true;
+void taiItemPtrBase::GetImage(void* cur_sel){
+  // note: don't optimize this if same msel, since we use it to set label
+  m_sel = cur_sel;
+  rep()->setText(labelText());
+}
+
+const String taiItemPtrBase::labelText() {
+  String nm;
+  if (m_sel) nm = labelNameNonNull();
+  else       nm = "NULL";
+  return itemTag() + nm + "...";
+}
+
+void taiItemPtrBase::OpenChooser() {
+//TODO: cache etc., but for now, just create/build
+  taiItemChooser* ic = taiItemChooser::New("Choose " + itemTag(), this);
+  if (ic->Choose(this)) {
+    if (m_sel != ic->selObj()) {
+      GetImage(ic->selObj());
+      DataChanged();
     }
   }
-  // not found
-  items->setCurrentItem(NULL);
-  return false;
+delete ic;
 }
 
-void taiItemChooser::setSel_obj(void* value) {
-  if (msel_obj == value) return;
-  msel_obj = value;
-  if (value)
-    SetCurrentItemByData(value);
-  else 
-    items->setCurrentItem(NULL);
+
+//////////////////////////////////
+//   taiMethodDefButton		//
+//////////////////////////////////
+
+taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
 }
+
+const String taiMethodDefButton::labelNameNonNull() {
+  return md()->name;
+}
+
+void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiMemberDefButton::BuildChooser: targ_type needed");
+    return;
+  }
+  switch (view) {
+  case 0: BuildChooser_0(ic); break; 
+  case 1: BuildChooser_1(ic); break; 
+  default: break; // shouldn't happen
+  }
+}
+
+void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
+  MethodSpace* mbs = &targ_typ->methods;
+  for (int i = 0; i < mbs->size; ++i) {
+    MethodDef* mth = mbs->FastEl(i);
+    QTreeWidgetItem* item = ic->AddItem(mth->GetLabel(), NULL, (void*)mth);
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
+void taiMethodDefButton::BuildChooser_1(taiItemChooser* ic) {
+  MethodSpace* mbs = &targ_typ->methods;
+/*TODO
+  for (int i = 0; i < mbs->size; ++i){
+    MethodDef* mth = mbs->FastEl(i);
+    QTreeWidgetItem* item = ic->AddItem(mth->GetLabel(), NULL, (void*)mth);
+    item->setData(1, Qt::DisplayRole, mth->desc));
+  } */
+}
+
+int taiMethodDefButton::columnCount(int view) const {
+  switch (view) {
+  case 0: return 2;
+  case 1: return 3;
+  default: return 0; // not supposed to happen
+  }
+}
+
+const String taiMethodDefButton::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Method"; 
+    case 1: return "Description"; 
+    } break; 
+  case 1: switch (index) {
+    case 0: return "1st Class"; 
+    case 1: return "Method"; 
+    case 2: return "Description"; 
+    } break; 
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiMethodDefButton::viewText(int index) const {
+  switch (index) {
+  case 0: return "Default Order"; 
+  case 1: return "Grouped By Class"; 
+  default: return _nilString;
+  }
+}
+
 
 
 //////////////////////////////////////////
@@ -3113,85 +3293,6 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
     }
   }
 }
-
-
-//////////////////////////////////
-//   taiItemPtrBase		//
-//////////////////////////////////
-
-taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
-  IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags_)
-: taiData(typ_, host_, par, gui_parent_, flags_)
-{
-  targ_typ = NULL; // gets set later
-  QPushButton* rep_ = new QPushButton(gui_parent_);
-  SetRep(rep_);
-  connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
-}
-
-taiItemPtrBase::~taiItemPtrBase() {
-}
-
-void taiItemPtrBase::GetImage(void* cur_sel){
-  // note: don't optimize this if same msel, since we use it to set label
-  m_sel = cur_sel;
-  rep()->setText(labelText());
-}
-
-const String taiItemPtrBase::labelText() {
-  String nm;
-  if (m_sel) nm = labelNameNonNull();
-  else       nm = "NULL";
-  return itemTag() + nm + "...";
-}
-
-void taiItemPtrBase::OpenChooser() {
-//TODO: cache etc., but for now, just create/build
-//TODO: more cols
-taiItemChooser* ic = taiItemChooser::New("Choose " + itemTag(), 1);
-  BuildChooser(ic);
-  ic->setSel_obj(m_sel);
-  if (ic->Choose()) {
-    if (m_sel != ic->sel_obj()) {
-      GetImage(ic->sel_obj());
-      DataChanged();
-    }
-  }
-delete ic;
-}
-
-
-//////////////////////////////////
-//   taiMethodDefButton		//
-//////////////////////////////////
-
-taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
-{
-}
-
-const String taiMethodDefButton::labelNameNonNull() {
-  return md()->name;
-}
-
-void taiMethodDefButton::BuildChooser(taiItemChooser* ic) {
-  //assume only called if needed
-  
-  if (!targ_typ) {
-    taMisc::Error("taiMemberDefButton::BuildChooser: targ_type needed");
-    return;
-  }
-//TEMP -- flat list
-//TODO: add extra data, and support different views
-  MethodSpace* mbs = &targ_typ->methods;
-  for (int i = 0; i < mbs->size; ++i){
-    MethodDef* mth = mbs->FastEl(i);
-    ic->AddItem(mth->GetLabel(), (void*)mth);
-  }
-}
-
 
 
 

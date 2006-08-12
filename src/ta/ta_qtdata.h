@@ -47,7 +47,8 @@ class taiTypeHier;
 class taiActions;
 class taiMenu;
 class taiAction;
-class taiItemChooser; //
+class taiItemChooser; 
+class taiItemPtrBase; //
 
 
 /* //TODO: re-evaluate
@@ -836,44 +837,56 @@ public:
   };
 #endif
 
-  static taiItemChooser* New(const String& caption, 
-    int cols, QWidget* par_window_ = NULL);
+  static taiItemChooser* New(const String& caption, taiItemPtrBase* client = NULL, 
+    QWidget* par_window_ = NULL);
 
   String		caption; 	// current caption at top of chooser
 
-  void*			sel_obj() const {return msel_obj;} // current selected object
-  void			setSel_obj(void* value);	// 
+  inline taiItemPtrBase* client() {return m_client;} // only valid in Constr and between Choose...accept/reject
+  void*			selObj() const {return m_selObj;} // current selected object
+  void			setSelObj(void* value);	// 
 
-  QGridLayout*		layOuter;
-  QTreeWidget* 		items; 	// list of items
-  QHBoxLayout*		layButtons;
-  QPushButton*		btnOk;
-  QPushButton*		btnCancel;
+  int			view() const {return m_view;}
+  void			setView(int value, bool force = false);
+  
+  QVBoxLayout*		layOuter;
+  QComboBox*		  cmbView;
+  QTreeWidget* 		  items; 	// list of items
+//QHBoxLayout*		  layButtons;
+  QPushButton*		    btnOk;
+  QPushButton*		    btnCancel;
 
 
-  virtual bool	Choose();
+  virtual bool		Choose(taiItemPtrBase* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
 
-  virtual void 	Clear();	// reset data
- 
-  virtual QTreeWidgetItem* AddItem(const String& itm, const void* data_,
-    QTreeWidgetItem* parent = NULL); // add one item to dialog
+  virtual void 		Clear();	// reset data
+  
+  virtual QTreeWidgetItem* AddItem(const String& itm, QTreeWidgetItem* parent = NULL,
+    const void* data_ = NULL); // add one item to dialog, optionally with data
 
 protected:
-  void*			msel_obj;	// current selected object
+  int			m_changing;
+  void*			m_selObj;	// current selected object
+  int			m_view;
+  taiItemPtrBase* 	m_client; // NOTE: only valid in Constr and between Choose...accept/reject
   
+  virtual void 		Refresh();	// rebuild current view
   bool 			SetCurrentItemByData(void* value, 
     QTreeWidgetItem* top = NULL);
-  virtual void		Constr(int cols); // does constr, called in static, so can extend
+  virtual void		Constr(taiItemPtrBase* client_); 
+   // does constr, called in static, so can extend
 
   taiItemChooser(const String& caption, QWidget* par_window_);
 protected slots:
   void accept(); // override
   void reject(); // override
-  // callbacks
   void 		items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
+  void 		cmbView_currentIndexChanged(int index);
 private:
   void 		init(const String& captn); // called by constructors
+  taiItemChooser(const taiItemChooser&); //no
+  taiItemChooser& operator=(const taiItemChooser&); //no
 };
 
 
@@ -881,14 +894,22 @@ class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT
 public:
-  TypeDef*		targ_typ; // target type from which to get list of items -- may be same as typ, but could differ
+  TypeDef*		targ_typ; 
   
   const String		labelText(); // "tag: name" for button
   inline QPushButton*	rep() {return (QPushButton*)m_rep;}
-
+  virtual int		columnCount(int view) const = 0; 
+    // number of header columns in the view
+  virtual const String	headerText(int index, int view) const = 0;
+  inline void*		sel() const {return m_sel;}
+  virtual int		viewCount() const = 0; 
+    // number of different kinds of views, ex flat vs. tree
+  virtual const String	viewText(int index) const = 0; 
+    // number of different kinds of views, ex flat vs. 
+  
   virtual void 		GetImage(void* cur_sel);
   
-  virtual void		BuildChooser(taiItemChooser* ic) {}
+  virtual void		BuildChooser(taiItemChooser* ic, int view = 0) {}
     // builds the tree
 
   ~taiItemPtrBase();
@@ -907,21 +928,21 @@ protected:
 };
 
 
-//////////////////////////////////
-//   taiMethodDefDefButton	//
-//////////////////////////////////
-
 class TA_API taiMethodDefButton : public taiItemPtrBase {
 // for memberdefs
 INHERITED(taiItemPtrBase)
 public:
   inline MethodDef*	md() {return (MethodDef*)m_sel;}
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 2;} // override
+  const String		viewText(int index) const; // override
 
   void			GetImage(MethodDef* cur_sel) 
     {taiItemPtrBase::GetImage((void*)cur_sel);}
   MethodDef*		GetValue() {return md();}
 
-  void			BuildChooser(taiItemChooser* ic); // override
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiMethodDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
@@ -929,6 +950,8 @@ protected:
   const String		itemTag() {return "Method: ";}
   const String		labelNameNonNull();
 
+  void 			BuildChooser_0(taiItemChooser* ic);
+  void 			BuildChooser_1(taiItemChooser* ic);
 };
 
 
