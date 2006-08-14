@@ -1098,6 +1098,7 @@ public:
 
   css_fun_stub_ptr stubp;	// css function stup pointer
 
+  const String		prototype() const; // text depiction of fun, ex "void MyFun(int p)"
   void		Initialize();
   void		Copy(const MethodDef& cp);
   MethodDef();

@@ -499,10 +499,10 @@ public:
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0)
-  // # MENU # MENU_ON_Object #ARGC_1 #QUICK_SAVE Save object data to a file
+  // Save object data to a file
     { return GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); }
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
-  // # MENU #ARGC_1 Save object data to a new file
+  // #ARGC_1 Save object data to a new file
     { return Save(strm,par,indent); }
   virtual int		Save_File(); 
     // #MENU #MENU_ON_Object #LABEL_Save saves the object to a file

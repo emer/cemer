@@ -2484,11 +2484,12 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 //////////////////////////////////
 
 taiItemChooser* taiItemChooser::New(const String& caption_, taiItemPtrBase* client_, 
-  QWidget* par_window_) 
+  int ft, QWidget* par_window_) 
 {
 /*no, let qt choose  if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;*/
   taiItemChooser* rval = new taiItemChooser(caption_, par_window_);
+  rval->setFont(taiM->dialogFont(ft));
   rval->Constr(client_);
   return rval;
 }
@@ -2796,9 +2797,12 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   MethodSpace* mbs = &targ_typ->methods;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    QTreeWidgetItem* item = ic->AddItem(mth->GetLabel(), NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
+  // do initial sort
+  ic->items->sortItems(0, Qt::Ascending);
 }
 
 void taiMethodDefButton::BuildChooser_1(taiItemChooser* ic) {

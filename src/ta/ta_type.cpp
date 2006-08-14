@@ -2309,6 +2309,21 @@ const String MethodDef::ParamsAsString() const {
   return rval;
 }
 
+const String MethodDef::prototype() const {
+  STRING_BUF(rval, 80); // expands if necessary
+  rval.cat(type->name).cat(' ').cat(name).cat('(');
+  for (int i = 0; i < arg_names.size; ++i) {
+    if (i > 0) rval.cat(", ");
+    rval.cat(arg_types[i]->Get_C_Name()).cat(' ');
+    rval.cat(arg_names[i]);
+    String def = arg_defs[i];
+    if (def.nonempty())
+      rval.cat(" = ").cat(def);
+  }
+  rval.cat(')');
+  return rval;
+}
+
 
 //////////////////////////
 //    TypeDef		//

@@ -838,7 +838,7 @@ public:
 #endif
 
   static taiItemChooser* New(const String& caption, taiItemPtrBase* client = NULL, 
-    QWidget* par_window_ = NULL);
+    int ft = 0, QWidget* par_window_ = NULL);
 
   String		caption; 	// current caption at top of chooser
 
