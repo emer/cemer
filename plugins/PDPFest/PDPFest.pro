@@ -10,7 +10,6 @@ INCLUDEPATH +=\
 	. \
 	$\${PDP4DIR} \
 	$\${PDP4DIR}/src/ta \
-	$\${PDP4DIR}/src/ta/ios-g++-3.1 \
 	$\${PDP4DIR}/src/pdp \
 	$\${PDP4DIR}/src/ta \
 	$\${PDP4DIR}/src/css \
