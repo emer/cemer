@@ -12,7 +12,7 @@ HEADERS += hw.h hw_TA_inst.h hw_TA_type.h
 SOURCES += hw.cpp hw_TA.cpp
 DESTDIR = ../../../plugins
 #PRECOMPILED_HEADER = hw_TA_inst.h hw_TA_type.h hw_TA.cpp
-unix:LIBS += -lta4 ~/lib
+unix:LIBS += ${PDP4DIR}/src/ta_lib/.libs/libta4.so ${PDP4DIR}/src/pdp_lib/.libs/libpdp4.so
 
 
 contains(TEMPLATE,lib) {

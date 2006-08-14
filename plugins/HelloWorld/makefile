@@ -4,7 +4,7 @@ all: clean qmake
 	${MAKE} -f Makefile
 
 clean:
-	rm -f *~ \#* *TA* moc_hw.cpp Makefile
+	rm -f *~ \#* *TA* moc_hw.cpp Makefile *.o
 
 ta:
 	~/bin/maketa -D__MAKETA__ -css -cpp="g++ -E" $(INCLUDES) hw hw.h
