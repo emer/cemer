@@ -1083,14 +1083,16 @@ public:
 
   TypeDef*	type;		// of the return value
   bool		is_static;	// true if this method is static
+  bool		is_virtual;	// true if this method is virtual
   ta_void_fun   addr;		// address (only for static or reg_fun functions)
   String_PArray	inh_opts;	// inherited options ##xxx
 #ifdef TA_GUI
   taiMethod*	im;		// gui structure for edit representation
 #endif // def TA_GUI
-  int		fun_overld;	// number of times function is overloaded
-  int		fun_argc;	// nofun, or # of parameters to the function
-  int		fun_argd;	// indx for start of the default args (-1 if none)
+  short		fun_overld;	// number of times function is overloaded (i.e., diff args)
+  short		fun_overrd;	// number of times a virtual function is overridden (0=base class)
+  short		fun_argc;	// nofun, or # of parameters to the function
+  short		fun_argd;	// indx for start of the default args (-1 if none)
   TypeSpace	arg_types;	// argument types
   String_PArray	arg_names;	// argument names
   String_PArray	arg_defs;	// argument default values

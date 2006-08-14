@@ -862,7 +862,7 @@ public:
 
   virtual void 		Clear();	// reset data
   
-  virtual QTreeWidgetItem* AddItem(const String& itm, QTreeWidgetItem* parent = NULL,
+  virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent = NULL,
     const void* data_ = NULL); // add one item to dialog, optionally with data
 
 protected:
@@ -951,7 +951,8 @@ protected:
   const String		labelNameNonNull();
 
   void 			BuildChooser_0(taiItemChooser* ic);
-  void 			BuildChooser_1(taiItemChooser* ic);
+  int 			BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
+    QTreeWidgetItem* top_item); // we use this recursively
 };
 
 

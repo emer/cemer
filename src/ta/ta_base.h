@@ -1127,7 +1127,7 @@ public:
   void	Destroy()			{ };
 
   taList() 				{ Register(); Initialize(); }
-  taList(const taList<T>& cp)		{ Register(); Initialize(); Copy(cp); }
+  taList(const taList<T>& cp):taList_impl() { Register(); Initialize(); Copy(cp); }
   ~taList() 				{ unRegister(); Destroy(); }
   TAPtr Clone() 			{ return new taList<T>(*this); }
   void  UnSafeCopy(TAPtr cp) 		{ if(cp->InheritsFrom(taList::StatTypeDef(0))) Copy(*((taList<T>*)cp));

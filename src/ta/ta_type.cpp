@@ -1853,7 +1853,7 @@ MethodSpace::~MethodSpace() {
 bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   MethodDef* rval = NULL;
   int idx;
-  if((rval = FindName(it->name, idx)) != NULL) {
+  if((rval = FindName(it->name, idx))) {
     if(it == rval)		// could be the same one..
       return false;
     it->fun_overld = rval->fun_overld;
@@ -2173,11 +2173,13 @@ void MethodDef::Initialize() {
   owner = NULL;
   type = NULL;
   is_static = false;
+  is_virtual = false;
   addr = NULL;
 #ifdef TA_GUI
   im = NULL;
 #endif
   fun_overld = 0;
+  fun_overrd = 0;
   fun_argc = 0;
   fun_argd = -1;
   stubp = NULL;

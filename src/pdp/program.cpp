@@ -79,6 +79,14 @@ void ProgVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+TypeDef* ProgVar::act_object_type() const {
+  TypeDef* rval = &TA_taBase; // the min return value
+  if (object_type)
+    if (object_val) rval = object_val->GetTypeDef();
+    else rval = object_type;
+  return rval;
+}
+
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
     int_val = 0;
@@ -791,8 +799,8 @@ void MethodSpec::Copy_(const MethodSpec& cp) {
 
 void MethodSpec::UpdateAfterEdit() {
 //TODO: maybe update owner MethodCallEl
-  if(script_obj && script_obj->object_type)
-    object_type = script_obj->object_type;
+  if (script_obj)
+    object_type = script_obj->act_object_type();
   else object_type = &TA_taBase; // placeholder
   inherited::UpdateAfterEdit();
   if (taMisc::is_loading) return;

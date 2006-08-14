@@ -500,6 +500,9 @@ basicmemb:
         | STATIC nostatmemb		{
 	  $$ = $2; if($2 != NULL) $2->is_static = true;
 	  else if(mta->cur_memb != NULL) mta->cur_memb->is_static = true; }
+        | VIRTUAL nostatmemb		{
+	  $$ = $2; if($2 != NULL) $2->is_virtual = true;
+	  else if(mta->cur_memb != NULL) mta->cur_memb->is_virtual = true; }
         ;
 
 nostatmemb:

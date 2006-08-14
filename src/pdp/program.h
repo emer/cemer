@@ -56,6 +56,8 @@ public:
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
   DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum type information for dynamic enum (value goes in int_val)
   
+  TypeDef*		act_object_type() const; // the actual object type; never NULL (taBase min)
+  
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
   virtual const String	GenCssType(); // type name
   virtual const String	GenCssInitVal(); // intial value

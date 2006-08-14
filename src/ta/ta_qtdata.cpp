@@ -2521,7 +2521,7 @@ void taiItemChooser::accept() {
   inherited::accept();
 }
 
-QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, QTreeWidgetItem* parent,
+QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem* parent,
   const void* data_)
 {
   QTreeWidgetItem* rval;
@@ -2530,7 +2530,7 @@ QTreeWidgetItem* taiItemChooser::AddItem(const String& itm, QTreeWidgetItem* par
   else
     rval = new QTreeWidgetItem(items);
   // set standard item text
-  rval->setText(0, itm);
+  rval->setText(0, itm_txt);
   // set the object, which is an extended attribute
   //note: use the ta version because Qt uses longs on some plats
   if (data_)
@@ -2788,7 +2788,7 @@ void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
   }
   switch (view) {
   case 0: BuildChooser_0(ic); break; 
-  case 1: BuildChooser_1(ic); break; 
+  case 1: BuildChooser_1(ic, targ_typ, NULL); break; 
   default: break; // shouldn't happen
   }
 }
@@ -2805,14 +2805,39 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   ic->items->sortItems(0, Qt::Ascending);
 }
 
-void taiMethodDefButton::BuildChooser_1(taiItemChooser* ic) {
-  MethodSpace* mbs = &targ_typ->methods;
-/*TODO
-  for (int i = 0; i < mbs->size; ++i){
+int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
+  QTreeWidgetItem* top_item) 
+{
+  int rval = 0;
+  MethodSpace* mbs = &top_typ->methods;
+  QString typ_nm = top_typ->name; // let Qt share the rep
+  // do methods at this level
+  for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    QTreeWidgetItem* item = ic->AddItem(mth->GetLabel(), NULL, (void*)mth);
-    item->setData(1, Qt::DisplayRole, mth->desc));
-  } */
+    if (mth->fun_overld > 0) continue;
+    ++rval;
+    QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
+    QVariant proto = mth->prototype(); // share
+    item->setData(0, Qt::ToolTipRole, proto);
+    item->setData(1, Qt::DisplayRole, mth->name);
+    item->setData(1, Qt::ToolTipRole, proto);
+    item->setData(2, Qt::DisplayRole, mth->desc);
+  }
+  // do parent type(s) as non-selectable folders
+  for (int i = 0; i < top_typ->parents.size; ++i) {
+    TypeDef* par_typ = top_typ->parents.FastEl(i);
+    
+    QTreeWidgetItem* item = ic->AddItem(par_typ->name, top_item, (void*)NULL);
+    item->setFlags(Qt::ItemIsEnabled); // but not selectable
+    //NOTE: no other column data, to keep the display clean
+    // render the methods for this item -- if none, we'll just delete it
+    int num = BuildChooser_1(ic, par_typ, item);
+    //TODO: delete this item if num==0
+    rval += num; // the result needs to include deeply nested methods
+  }
+  // do initial sort
+  ic->items->sortItems(1, Qt::Ascending);
+  return rval;
 }
 
 int taiMethodDefButton::columnCount(int view) const {
@@ -2830,7 +2855,7 @@ const String taiMethodDefButton::headerText(int index, int view) const {
     case 1: return "Description"; 
     } break; 
   case 1: switch (index) {
-    case 0: return "1st Class"; 
+    case 0: return "Class"; 
     case 1: return "Method"; 
     case 2: return "Description"; 
     } break; 
@@ -2840,7 +2865,7 @@ const String taiMethodDefButton::headerText(int index, int view) const {
 
 const String taiMethodDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Default Order"; 
+  case 0: return "Flat List"; 
   case 1: return "Grouped By Class"; 
   default: return _nilString;
   }
