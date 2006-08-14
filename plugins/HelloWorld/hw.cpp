@@ -11,7 +11,7 @@ int HelloPlugin::InitializePlugin() {
   return 0;
 }
 
-Q_EXPORT_PLUGIN2(HelloPlugin)
+Q_EXPORT_PLUGIN2(hw, HelloPlugin)
 
 
 void HelloBase::Hello() {

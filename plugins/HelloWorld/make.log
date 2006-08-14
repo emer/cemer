@@ -1,55 +1,20 @@
 rm -f *~ \#* *TA* moc_hw.cpp Makefile
-/home/mingus/bin/maketa -css -cpp="g++ -E" -I/home/mingus/pdp4.0/trunk/src/ta/../../. -I/home/mingus/pdp4.0/trunk/src/ta -I/home/mingus/pdp4.0/trunk/src/ta/../ta/ios-g++-3.1 -I/home/mingus/pdp4.0/trunk/src/ta/../pdp -I/home/mingus/pdp4.0/trunk/src/ta/../ta -I/home/mingus/pdp4.0/trunk/src/ta/../css -I/home/mingus/pdp4.0/trunk/src/ta/../leabra -I/home/mingus/pdp4.0/trunk/src/ta/../tamisc -I/home/mingus/pdp4.0/trunk/src/ta/../taiqtso -I/home/mingus/pdp4.0/trunk/src/ta/../bp -I/home/mingus/pdp4.0/trunk/src/ta/../tamisc hw hw.h
+~/bin/maketa -D__MAKETA__ -css -cpp="g++ -E" -I/home/mingus/pdp4.0/trunk/src/ta/../../. -I/home/mingus/pdp4.0/trunk/src/ta -I/home/mingus/pdp4.0/trunk/src/ta/../ta/ios-g++-3.1 -I/home/mingus/pdp4.0/trunk/src/ta/../pdp -I/home/mingus/pdp4.0/trunk/src/ta/../ta -I/home/mingus/pdp4.0/trunk/src/ta/../css -I/home/mingus/pdp4.0/trunk/src/ta/../leabra -I/home/mingus/pdp4.0/trunk/src/ta/../tamisc -I/home/mingus/pdp4.0/trunk/src/ta/../taiqtso -I/home/mingus/pdp4.0/trunk/src/ta/../bp -I/home/mingus/pdp4.0/trunk/src/ta/../tamisc hw hw.h
 Processing: hw.h
 List of pre-parsed files processed:
-[0] {}
+[1] { /home/mingus/pdp4.0/trunk/src/ta/ta_TA_type.h,}
 /usr/local/Trolltech/Qt-4.1.0/bin/qmake -o Makefile hw.pro
 make -f Makefile
 make[1]: Entering directory `/mnt/sdb1/home/dream/mingus/pdp4.0/trunk/plugins/HelloWorld'
 g++ -c -pipe -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_PLUGIN -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/mnt/sdb1/local/Trolltech/Qt-4.1.0/mkspecs/linux-g++ -I. -I/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore -I/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui -I/mnt/sdb1/local/Trolltech/Qt-4.1.0/include -I. -I/home/mingus/pdp4.0/trunk -I../../src/ta -I/home/mingus/pdp4.0/trunk/src/ta/ios-g++-3.1 -I/home/mingus/pdp4.0/trunk/src/pdp -I/home/mingus/pdp4.0/trunk/src/ta -I/home/mingus/pdp4.0/trunk/src/css -I/home/mingus/pdp4.0/trunk/src/leabra -I/home/mingus/pdp4.0/trunk/src/tamisc -I/home/mingus/pdp4.0/trunk/src/taiqtso -I/home/mingus/pdp4.0/trunk/src/bp -I/home/mingus/pdp4.0/trunk/src/tamisc -I. -I. -o hw.o hw.cpp
-distcc[3423] ERROR: compile /home/mingus/.ccache/hw.tmp.dream.3419.ii on @node2 failed
+distcc[4950] ERROR: compile /home/mingus/.ccache/hw.tmp.dream.4946.ii on @node2 failed
 In file included from ../../src/ta/taglobal.h:19,
                  from ../../src/ta/ta_stdef.h:22,
                  from ../../src/ta/ta_plugin.h:23,
-                 from hw.h:8,
+                 from hw.h:4,
                  from hw.cpp:1:
 /home/mingus/pdp4.0/trunk/config.h:189:1: warning: "QT_SHARED" redefined
 <command line>:1:1: warning: this is the location of the previous definition
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/painting/qregion.h:52: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/kernel/qcoreevent.h:260: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:183: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:184: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:185: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:186: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:188: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:189: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:199: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:200: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:202: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:203: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:204: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:205: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:206: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:207: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:208: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:209: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:210: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/io/qiodevice.h:211: error: expected initializer before 'const'
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtCore/../../src/corelib/kernel/qvariant.h:261: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:73: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:74: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:76: error: 'ButtonState' in namespace 'Qt' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:78: error: 'ButtonState' in namespace 'Qt' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:124: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:126: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:128: error: 'ButtonState' in namespace 'Qt' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:201: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:212: error: 'ButtonState' in namespace 'Qt' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:213: error: 'ButtonState' in namespace 'Qt' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:257: error: 'QT_COMPAT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:364: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:365: error: 'QT3_SUPPORT_CONSTRUCTOR' does not name a type
-/mnt/sdb1/local/Trolltech/Qt-4.1.0/include/QtGui/../../src/gui/kernel/qevent.h:367: error: 'ButtonState' in namespace 'Qt' does not name a type
 ../../src/ta/taglobal.h: In function 'void Assert(bool)':
 ../../src/ta/taglobal.h:467: warning: unused variable 'k'
 ../../src/ta/taglobal.h: In function 'void Assert(bool, const char*)':
@@ -96,8 +61,84 @@ In file included from ../../src/ta/taglobal.h:19,
 ../../src/ta/ta_type.h:890: warning: base class 'class taPtrList<MethodDef>' should be explicitly initialized in the copy constructor
 ../../src/ta/ta_type.h: In copy constructor 'TypeSpace::TypeSpace(const TypeSpace&)':
 ../../src/ta/ta_type.h:938: warning: base class 'class taPtrList<TypeDef>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: At global scope:
+../../src/ta/ta_base.h:318: warning: unused parameter 'md'
+../../src/ta/ta_base.h:318: warning: unused parameter 'child'
+../../src/ta/ta_base.h:318: warning: unused parameter 'ea'
+../../src/ta/ta_base.h:320: warning: unused parameter 'md'
+../../src/ta/ta_base.h:320: warning: unused parameter 'child'
+../../src/ta/ta_base.h:320: warning: unused parameter 'ms'
+../../src/ta/ta_base.h:320: warning: unused parameter 'ea'
+../../src/ta/ta_base.h:328: warning: unused parameter 'child'
+../../src/ta/ta_base.h:328: warning: unused parameter 'col'
+../../src/ta/ta_base.h:328: warning: unused parameter 'itm_idx'
+../../src/ta/ta_base.h:369: warning: unused parameter 'nm'
+../../src/ta/ta_base.h:372: warning: unused parameter 'val'
+../../src/ta/ta_base.h:422: warning: unused parameter 'dv'
+../../src/ta/ta_base.h:425: warning: unused parameter 'ref'
+../../src/ta/ta_base.h:425: warning: unused parameter 'obj'
+../../src/ta/ta_base.h:428: warning: unused parameter 'ref'
+../../src/ta/ta_base.h:428: warning: unused parameter 'obj'
+../../src/ta/ta_base.h:428: warning: unused parameter 'dcr'
+../../src/ta/ta_base.h:428: warning: unused parameter 'op1_'
+../../src/ta/ta_base.h:428: warning: unused parameter 'op2_'
+../../src/ta/ta_base.h:542: warning: unused parameter 'flags_supported'
+../../src/ta/ta_base.h: In copy constructor 'taOBase::taOBase(const taOBase&)':
+../../src/ta/ta_base.h:791: warning: base class 'class taBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: At global scope:
+../../src/ta/ta_base.h:828: warning: unused parameter 'child'
+../../src/ta/ta_base.h:829: warning: unused parameter 'child'
+../../src/ta/ta_base.h:831: warning: unused parameter 'child'
+../../src/ta/ta_base.h:835: warning: unused parameter 'item'
+../../src/ta/ta_base.h: In copy constructor 'taDataView::taDataView(const taDataView&)':
+../../src/ta/ta_base.h:840: warning: base class 'class ITypedObject' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h:840: warning: base class 'class IDataLinkClient' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h:840: warning: base class 'class taOBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: At global scope:
+../../src/ta/ta_base.h:858: warning: unused parameter 'dcr'
+../../src/ta/ta_base.h:858: warning: unused parameter 'op1'
+../../src/ta/ta_base.h:858: warning: unused parameter 'op2'
+../../src/ta/ta_base.h:864: warning: unused parameter 'par'
+../../src/ta/ta_base.h:865: warning: unused parameter 'par'
+../../src/ta/ta_base.h: In copy constructor 'taNBase::taNBase(const taNBase&)':
+../../src/ta/ta_base.h:899: warning: base class 'class taOBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'taFBase::taFBase(const taFBase&)':
+../../src/ta/ta_base.h:919: warning: base class 'class taNBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'taList_impl::taList_impl(const taList_impl&)':
+../../src/ta/ta_base.h:1047: warning: base class 'class taOBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h:1047: warning: base class 'class taPtrList_base<taBase>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'taBase_List::taBase_List(const taBase_List&)':
+../../src/ta/ta_base.h:1161: warning: base class 'class taList<taBase>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'taArray_base::taArray_base(const taArray_base&)':
+../../src/ta/ta_base.h:1180: warning: base class 'class taOBase' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h:1180: warning: base class 'class taArray_impl' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: At global scope:
+../../src/ta/ta_base.h:1285: warning: unused parameter 'num'
+../../src/ta/ta_base.h:1286: warning: unused parameter 'num'
+../../src/ta/ta_base.h:1287: warning: unused parameter 'num'
+../../src/ta/ta_base.h:1289: warning: unused parameter 'num'
+../../src/ta/ta_base.h: In copy constructor 'int_Array::int_Array(const int_Array&)':
+../../src/ta/ta_base.h:1291: warning: base class 'class taArray<int>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'float_Array::float_Array(const float_Array&)':
+../../src/ta/ta_base.h:1313: warning: base class 'class taArray<float>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'double_Array::double_Array(const double_Array&)':
+../../src/ta/ta_base.h:1335: warning: base class 'class taArray<double>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'String_Array::String_Array(const String_Array&)':
+../../src/ta/ta_base.h:1357: warning: base class 'class taArray<taString>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'SArg_Array::SArg_Array(const SArg_Array&)':
+../../src/ta/ta_base.h:1386: warning: base class 'class String_Array' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'voidptr_Array::voidptr_Array(const voidptr_Array&)':
+../../src/ta/ta_base.h:1400: warning: base class 'class taArray<void*>' should be explicitly initialized in the copy constructor
+../../src/ta/ta_base.h: In copy constructor 'taRootBase::taRootBase(const taRootBase&)':
+../../src/ta/ta_base.h:1427: warning: base class 'class taNBase' should be explicitly initialized in the copy constructor
+hw.h: In copy constructor 'HelloBase::HelloBase(const HelloBase&)':
+hw.h:35: warning: base class 'class taNBase' should be explicitly initialized in the copy constructor
 hw.cpp: At global scope:
-hw.cpp:20: error: expected constructor, destructor, or type conversion at end of input
+hw.cpp:14: error: expected constructor, destructor, or type conversion before '(' token
+../../src/ta/ta_base.h: In copy constructor 'taList<T>::taList(const taList<T>&) [with T = taBase]':
+../../src/ta/ta_base.h:1132:   instantiated from 'taBase* taList<T>::Clone() [with T = taBase]'
+hw.cpp:18:   instantiated from here
+../../src/ta/ta_base.h:1130: warning: base class 'class taList_impl' should be explicitly initialized in the copy constructor
 make[1]: *** [hw.o] Error 1
 make[1]: Leaving directory `/mnt/sdb1/home/dream/mingus/pdp4.0/trunk/plugins/HelloWorld'
 make: *** [all] Error 2
