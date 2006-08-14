@@ -1,4 +1,5 @@
 #include "hw.h"
+#include <QtPlugin>
 
 HelloPlugin::HelloPlugin(QObject*){}
 
@@ -12,7 +13,6 @@ int HelloPlugin::InitializePlugin() {
 }
 
 Q_EXPORT_PLUGIN2(hw, HelloPlugin)
-
 
 void HelloBase::Hello() {
   taMisc::Error("Hello World!");

@@ -6,13 +6,13 @@
 TEMPLATE = lib
 TARGET = hw
 DEPENDPATH += .
-INCLUDEPATH += . /home/mingus/pdp4.0/trunk/src/ta/../../. /home/mingus/pdp4.0/trunk/src/ta /home/mingus/pdp4.0/trunk/src/ta/../ta/ios-g++-3.1 /home/mingus/pdp4.0/trunk/src/ta/../pdp /home/mingus/pdp4.0/trunk/src/ta/../ta /home/mingus/pdp4.0/trunk/src/ta/../css /home/mingus/pdp4.0/trunk/src/ta/../leabra /home/mingus/pdp4.0/trunk/src/ta/../tamisc /home/mingus/pdp4.0/trunk/src/ta/../taiqtso /home/mingus/pdp4.0/trunk/src/ta/../bp /home/mingus/pdp4.0/trunk/src/ta/../tamisc
+INCLUDEPATH += . ${PDP4DIR}/src/ta/../../. ${PDP4DIR}/src/ta ${PDP4DIR}/src/ta/../ta/ios-g++-3.1 ${PDP4DIR}/src/ta/../pdp ${PDP4DIR}/src/ta/../ta ${PDP4DIR}/src/ta/../css ${PDP4DIR}/src/ta/../leabra ${PDP4DIR}/src/ta/../tamisc ${PDP4DIR}/src/ta/../taiqtso ${PDP4DIR}/src/ta/../bp ${PDP4DIR}/src/ta/../tamisc
 CONFIG += plugin
 HEADERS += hw.h hw_TA_inst.h hw_TA_type.h
 SOURCES += hw.cpp hw_TA.cpp
 DESTDIR = ../../../plugins
 #PRECOMPILED_HEADER = hw_TA_inst.h hw_TA_type.h hw_TA.cpp
-unix:LIBS += -lta4 /home/mingus/lib
+unix:LIBS += -lta4 ~/lib
 
 
 contains(TEMPLATE,lib) {
