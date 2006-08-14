@@ -2254,8 +2254,8 @@ yyreduce:
 
   case 123:
 #line 573 "mta_parse.y"
-    { (yyval.meth) = (yyvsp[0].meth);  if((yyvsp[0].meth) != NULL) (yyvsp[0].meth)->is_static = true;
-	  else if(mta->cur_meth) mta->cur_meth->is_static = true; }
+    { (yyval.meth) = (yyvsp[0].meth);  if((yyvsp[0].meth) != NULL) (yyvsp[0].meth)->is_virtual = true;
+	  else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
     break;
 
   case 124:
