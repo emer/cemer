@@ -570,7 +570,8 @@ methdefn: basicmeth
 basicmeth:
           nostatmeth
         | STATIC nostatmeth		{ $$ = $2; $2->is_static = true; }
-        | VIRTUAL nostatmeth		{ $$ = $2; $2->is_virtual = true; }
+        | VIRTUAL nostatmeth	{ $$ = $2;  if($2 != NULL) $2->is_static = true;
+	  else if(mta->cur_meth) mta->cur_meth->is_static = true; }
         ;
 
 nostatmeth:
