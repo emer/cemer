@@ -32,6 +32,13 @@ SRCS =\
 
 include $(top_srcdir)/mfstamp.am
 
+mta_parse.cpp: mta_parse.y
+	bison -dtvy mta_parse.y;
+	sed -e "s/union/struct/g" y.tab.c >mta_parse.cpp;
+	sed -e "s/union/struct/g" y.tab.h >mta_parse.hx;
+	cmp -s mta_parse.hx mta_parse.h || (cp mta_parse.hx mta_parse.h);
+
+
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
 	then touch -t 0412312359 ta_TA_type.h ta_TA_inst.h;fi
