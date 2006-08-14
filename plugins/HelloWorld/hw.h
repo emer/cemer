@@ -1,6 +1,8 @@
 #ifndef HW_H
 #define HW_H
 
+// already def'd in config.h
+#undef QT_SHARED
 #include "ta_plugin.h"
 #include "ta_base.h"
 #include "hw_TA_type.h"
