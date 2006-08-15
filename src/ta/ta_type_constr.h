@@ -60,9 +60,10 @@ public:
   char*		desc;
   char*		opts;
   char*		lists;
-  int		fun_overld;	// number of times overloaded
-  int		fun_argc;	// nofun, or # of parameters to the function
-  int		fun_argd;	// indx for start of the default args (-1 if none)
+  short		fun_overld;	// number of times overloaded
+  short		fun_argc;	// nofun, or # of parameters to the function
+  short		fun_argd;	// indx for start of the default args (-1 if none)
+  bool		is_virtual;	// note: only true when 'virtual' keyword was present
   bool		is_static;
   ta_void_fun 	addr;		// address (static or reg_fun only)
   css_fun_stub_ptr stubp; 	// css function pointer

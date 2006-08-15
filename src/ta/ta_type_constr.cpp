@@ -90,7 +90,7 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
       MethodDef* md;
       md = new MethodDef(dt->type, dt->name, dt->desc, dt->opts, dt->lists,
 			 dt->fun_overld, dt->fun_argc, dt->fun_argd,
-			 dt->is_static, dt->addr, dt->stubp);
+			 dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
       MethodArgs_data* fa = dt->fun_args;
       while((fa != NULL) && ((fa->type != NULL) || (fa->type_nm != NULL))) {
 	if(fa->type == NULL)

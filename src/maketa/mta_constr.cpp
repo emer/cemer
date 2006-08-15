@@ -416,6 +416,7 @@ void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
 
 void MethodSpace_Generate_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
   int i;
+  int idx;
   for(i=0; i<ths->size; i++) {
     MethodDef* md = ths->FastEl(i);
     if(!MethodSpace_Filter_Method(ths, md))
@@ -1051,6 +1052,7 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
     strm << md->fun_overld << "," << md->fun_argc
 	 << "," << md->fun_argd;
 
+    if (md->is_virtual) strm << ",1"; else strm << ",0";
     if(md->is_static) {				// only static gets addr
       strm << ",1,(ta_void_fun)(";
       if(ownr->InheritsFrom(TA_taRegFun))

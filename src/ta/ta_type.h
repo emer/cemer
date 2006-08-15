@@ -894,12 +894,14 @@ public:
 
   bool		AddUniqNameNew(MethodDef* it);
 
-  virtual MethodDef*	FindAddr(ta_void_fun funa, int& idx) const;
+  MethodDef*	FindAddr(ta_void_fun funa, int& idx) const;
   // find fun by addr, idx is actual index in method space
-  virtual MethodDef*	FindOnListAddr(ta_void_fun funa, const String_PArray& lst, int& lidx) const;
+  MethodDef*	FindOnListAddr(ta_void_fun funa, const String_PArray& lst, int& lidx) const;
   // find fun on given list by addr, lidx is 'index' of funs on same list
-  virtual MethodDef*	FindOnListIdx(int lidx, const String_PArray& lst) const;
+  MethodDef*	FindOnListIdx(int lidx, const String_PArray& lst) const;
   // find fun on given list by index, as given by FindOnListAddr()
+  MethodDef*	FindVirtualBase(MethodDef* it, int& idx);
+    // find the virtual method with same name and signature
 
   // IO
   virtual ostream&   	OutputType(ostream& strm, int indent = 0) const;
@@ -1083,14 +1085,15 @@ public:
 
   TypeDef*	type;		// of the return value
   bool		is_static;	// true if this method is static
-  bool		is_virtual;	// true if this method is virtual
+  bool		is_virtual;	// true if virtual (1st or subsequent overrides)
+  bool		is_override;	// true if (virtual) override of a base
+  bool		is_lexhide;	// true if lexically hides a non-virtual base -- could be an error
   ta_void_fun   addr;		// address (only for static or reg_fun functions)
   String_PArray	inh_opts;	// inherited options ##xxx
 #ifdef TA_GUI
   taiMethod*	im;		// gui structure for edit representation
 #endif // def TA_GUI
   short		fun_overld;	// number of times function is overloaded (i.e., diff args)
-  short		fun_overrd;	// number of times a virtual function is overridden (0=base class)
   short		fun_argc;	// nofun, or # of parameters to the function
   short		fun_argd;	// indx for start of the default args (-1 if none)
   TypeSpace	arg_types;	// argument types
@@ -1107,7 +1110,7 @@ public:
   MethodDef(const char* nm);
   MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
 	    int fover, int farc, int fard, bool is_stat = false, ta_void_fun funa = NULL,
-	    css_fun_stub_ptr stb = NULL);
+	    css_fun_stub_ptr stb = NULL, bool is_virt = false);
   MethodDef(const MethodDef& md);	// copy constructor
 
   MethodDef*		Clone()		{ return new MethodDef(*this); }

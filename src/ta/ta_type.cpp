@@ -1851,26 +1851,58 @@ MethodSpace::~MethodSpace() {
 }
 
 bool MethodSpace::AddUniqNameNew(MethodDef *it) {
+/*NOTE:
+  At present, typea is only able to manage a single method per name.
+  We only retain the last one scanned (so we always replace previously
+    encountered ones with new ones.)
+  It is HIGHLY recommended to write source with unique names, and use
+  variants on names or default parameters to achieve overloading.
+*/
   MethodDef* rval = NULL;
+  bool replace = false; // we set true if we should replace the one we find 
   int idx;
-  if((rval = FindName(it->name, idx))) {
-    if(it == rval)		// could be the same one..
-      return false;
+  // we first see if it is an override of a virtual base...
+  if (!it->is_static) // of course statics can't be virtual
+    rval = FindVirtualBase(it, idx); //note: only finds virtuals, not non-virtuals
+  if (rval) {
+    if (it == rval) return false; // could be the same one..
+    it->is_virtual = true; // may not have been set for implicit override
+    it->is_override = true; // this is our job to set
+    // the overload count will be same for an override
     it->fun_overld = rval->fun_overld;
-    if(!it->CompareArgs(rval))
-      it->fun_overld++;
-    // never overloaded, not adding any new options
-    if(!it->is_static && (it->fun_overld == 0) && (it->opts.size == 0) && (it->lists.size == 0))
-      return false;
+    // because we are the same method as the one encounters, we inherit its opts
     it->lists.DupeUnique(rval->lists);
 // automatically inherit regular options
     it->opts.DupeUnique(rval->opts);
 // but not comments or inherited options (which would be redundant)
 //    it->opts.DupeUnique(rval->inh_opts);
 //    it->inh_opts.DupeUnique(rval->inh_opts);
-    if((it->desc.empty()) || (it->desc == " "))
+    if ((it->desc.empty()) || (it->desc == " "))
       it->desc = rval->desc;	// get the comment if we don't actually have one now..
-    Replace(idx, it);		// new one replaces old if overloaded
+    replace = true; // always replace
+  } else {
+    // ok, we are not a virtual override, but check if we are an overload or lexical hide
+    // since we aren't an override, we are a new entity, so will replace
+    rval = FindName(it->name, idx);
+    if (rval) {
+      replace = true; 
+      if (it == rval) return false; // could be the same one..
+      it->fun_overld = rval->fun_overld;
+      // if the args are identical, then we are lexically hiding the previous
+      // one -- we will therefore replace it, but of course not set "override"
+      if (it->CompareArgs(rval)) {
+        it->is_lexhide = true; // note: this is not often done, and could be an error
+      } else {
+        it->fun_overld++; // normal overload
+      }
+/*NOTE: in v3.2, this would seem to have applied mostly for virtual overrides
+      // never overloaded, not adding any new options
+      if (!it->is_static && (it->fun_overld == 0) && (it->opts.size == 0) && (it->lists.size == 0))
+      return false; */
+    }
+  }
+  if (replace) {
+    Replace(idx, it);		// new one replaces old if overloaded or overridden
     return false;
   }
   taPtrList<MethodDef>::Add(it);
@@ -1913,6 +1945,19 @@ MethodDef* MethodSpace::FindOnListIdx(int lidx, const String_PArray& lst) const 
       chk++;
     }
   }
+  return NULL;
+}
+
+MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
+  for (int i = 0; i < size; ++i) {
+    MethodDef* rval = FastEl(i);
+    if (!rval->is_virtual) continue;
+    if (rval->name != it->name) continue;
+    if(!rval->CompareArgs(it)) continue;
+    idx = i;
+    return rval;
+  }
+  idx = -1;
   return NULL;
 }
 
@@ -2174,12 +2219,13 @@ void MethodDef::Initialize() {
   type = NULL;
   is_static = false;
   is_virtual = false;
+  is_override = false;
+  is_lexhide = false;
   addr = NULL;
 #ifdef TA_GUI
   im = NULL;
 #endif
   fun_overld = 0;
-  fun_overrd = 0;
   fun_argc = 0;
   fun_argd = -1;
   stubp = NULL;
@@ -2203,7 +2249,7 @@ MethodDef::MethodDef(const char* nm)
 
 MethodDef::MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
 		     int fover, int farc, int fard, bool is_stat, ta_void_fun funa,
-		     css_fun_stub_ptr stb)
+		     css_fun_stub_ptr stb, bool is_virt)
 :inherited()
 {
   Initialize();
@@ -2212,6 +2258,8 @@ MethodDef::MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* o
   taMisc::CharToStrArray(lists,lis);
   fun_overld = fover; fun_argc = farc; fun_argd = fard;
   is_static = is_stat; addr = funa; stubp = stb;
+  is_virtual = is_virt; // note: gets further processed, will get set if this is an override
+  // without explicit virtual keyword
 }
 
 MethodDef::MethodDef(const MethodDef& cp)
@@ -2225,6 +2273,9 @@ void MethodDef::Copy(const MethodDef& cp) {
   inherited::Copy(cp);
   type = cp.type;
   is_static = cp.is_static;
+  is_virtual = cp.is_virtual;
+  is_override = cp.is_override;
+  is_lexhide = cp.is_lexhide;
   addr = cp.addr;
   inh_opts = cp.inh_opts;
   // don't delete because delete is not ref counted (todo:)

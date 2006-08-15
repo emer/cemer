@@ -2811,10 +2811,10 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   int rval = 0;
   MethodSpace* mbs = &top_typ->methods;
   QString typ_nm = top_typ->name; // let Qt share the rep
-  // do methods at this level
+  // do methods at this level -- basically, anything living here, or not a virt override
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    if (mth->fun_overld > 0) continue;
+    if ((mth->owner != mbs) || mth->is_override) continue;
     ++rval;
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
     QVariant proto = mth->prototype(); // share
