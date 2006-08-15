@@ -110,6 +110,30 @@ do_ta:
 	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
 
+# Stops at the css++ executeable
+css_bin:
+	cd ${abs_top_builddir}/src/maketa && ${MAKE}
+	cd ${abs_top_builddir}/src/taiqtso && ${MAKE}
+	cd ${abs_top_builddir}/src/ta && ${MAKE}
+	cd ${abs_top_builddir}/src/css && ${MAKE}
+	cd ${abs_top_builddir}/src/tamisc && ${MAKE}
+	cd ${abs_top_builddir}/src/ta_lib && ${MAKE}
+	cd ${abs_top_builddir}/src/css_bin && ${MAKE}
+
+# Creates the pdp++ executeable w/o creating css++
+pdp_bin:
+	cd ${abs_top_builddir}/src/maketa && ${MAKE}
+	cd ${abs_top_builddir}/src/taiqtso && ${MAKE}
+	cd ${abs_top_builddir}/src/ta && ${MAKE}
+	cd ${abs_top_builddir}/src/css && ${MAKE}
+	cd ${abs_top_builddir}/src/tamisc && ${MAKE}
+	cd ${abs_top_builddir}/src/ta_lib && ${MAKE}
+	cd ${abs_top_builddir}/src/pdp && ${MAKE}
+	cd ${abs_top_builddir}/src/bp && ${MAKE}
+	cd ${abs_top_builddir}/src/leabra && ${MAKE}
+	cd ${abs_top_builddir}/src/pdp_lib && ${MAKE}
+	cd ${abs_top_builddir}/src/pdp_bin && ${MAKE}
+
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log
 	echo "Defines printed to ifnames.log"
