@@ -3015,6 +3015,13 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
   return false;
 }
 
+bool TypeDef::is_class() const {
+  return InheritsFormal(TA_class);
+}
+
+bool TypeDef::is_enum() const {
+  return (enum_vals.size > 0);
+}
 
 EnumDef* TypeDef::FindEnum(const String& nm) const {
   EnumDef* rval;

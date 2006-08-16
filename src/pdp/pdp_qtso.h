@@ -106,10 +106,10 @@ protected:
   taiToggle*		tglVal; // for: bool
   
   // for standard enums:
-  taiTypeHier*		thEnumType;
+  taiEnumTypeDefButton*	thEnumType;
   taiComboBox*		cboEnumValue;
   //for objects:
-  taiTypeHier*		thValType;
+  taiTypeDefButton*	thValType;
   taiToken*		tkObjectValue;
   // for DynEnums:
   taiEditButton*	edDynEnum; // for invoking editor for values

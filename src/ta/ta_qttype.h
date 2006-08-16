@@ -362,6 +362,17 @@ protected:
    void		GetImage_impl(taiData* dat, const void* base);
 };
 
+class TA_API taiEnumTypePtrMember : public taiTypePtrMember {
+  // typedef ptrs that have member-comment directives, Enums
+INHERITED(taiTypePtrMember)
+public:
+  int		BidForMember(MemberDef* md, TypeDef* td);
+
+  TAQT_MEMBER_INSTANCE(taiEnumTypePtrMember, taiTypePtrMember);
+protected:
+   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+};
+
 class TA_API taiMemberDefPtrMember : public taiMember {
   // pointer to a member-def
 INHERITED(taiMember)

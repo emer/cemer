@@ -1187,6 +1187,9 @@ public:
   TypeSpace	templ_pars;	// template parameters
   String	c_name;		// C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
 
+  bool		is_enum() const; // true if an enum 
+  bool		is_class() const; // true if it is a class
+  
   void 		Initialize();
   void		Copy(const TypeDef& cp);
   TypeDef();

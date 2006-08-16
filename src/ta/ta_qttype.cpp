@@ -1178,26 +1178,25 @@ void taiSubTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_dif
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) &&
      ((md->OptionAfter("TYPE_") != "") || (md->OptionAfter("TYPE_ON_") != "")
-      || (md->OptionAfter("ENUM_TYPE_") != "") || (md->HasOption("NULL_OK")))
+      || (md->HasOption("NULL_OK")))
      && md->type->DerivesFrom(TA_TypeDef))
     return (taiMember::BidForMember(md,td) + 1);
   return 0;
 }
 
-taiData* taiTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  int flags_) 
+{
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiData::flgNullOk;
-  taiTypeHier* rval =
-    new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall, mbr->type, host_, par, gui_parent_, flags_);
-  rval->enum_mode = (mbr->HasOption("ENUM_TYPE"));
-  //NOTE: shouldn't get menu yet, do in Impl 
-  //rval->GetMenu();
+  taiTypeDefButton* rval =
+    new taiTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiTypeHier* rval = (taiTypeHier*)dat;
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
   TypeDef* td = NULL;
   String mb_nm = mbr->OptionAfter("TYPE_ON_");
   if (mb_nm != "") {
@@ -1213,26 +1212,47 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
       td = taMisc::types.FindName((char*)mb_nm);
   }
   if (td != NULL)
-    rval->typ = td;
+    rval->targ_typ = td;
   else
-    rval->typ = mbr->type;
-  rval->UpdateMenu();
+    rval->targ_typ = mbr->type;
   rval->GetImage((TypeDef*)*((void**)new_base));
   GetOrigVal(dat, base);
 }
 
 void taiTypePtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   void* new_base = mbr->GetOff(base);
-  taiTypeHier* rval = (taiTypeHier*)dat;
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
   TypeDef* nw_typ = (TypeDef*)rval->GetValue();
   if (mbr->HasOption("NULL_OK"))
     *((void**)new_base) = nw_typ;
   else {
-    if(nw_typ != NULL)
+    if (nw_typ)
       *((void**)new_base) = nw_typ;
   }
   CmpOrigVal(dat, base, first_diff);
 }
+
+
+//////////////////////////////////
+//	taiEnumTypePtrMember	//
+//////////////////////////////////
+
+int taiEnumTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->HasOption("ENUM_TYPE"))
+    return (inherited::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiEnumTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, 
+  int flags_) 
+{
+  if (mbr->HasOption("NULL_OK"))
+    flags_ |= taiData::flgNullOk;
+  taiEnumTypeDefButton* rval =
+    new taiEnumTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
 
 
 //////////////////////////////////////////
@@ -1295,8 +1315,6 @@ int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_) 
 {
-/*obs  taiMethodDefMenu* rval =  new taiMethodDefMenu(taiMenu::buttonmenu, 
-    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);*/
   taiMethodDefButton* rval = new taiMethodDefButton(typ, host_, 
     par, gui_parent_, flags_);
   return rval;

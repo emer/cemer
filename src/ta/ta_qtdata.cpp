@@ -60,6 +60,7 @@
 #include <qtooltip.h>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QTreeWidgetItemIterator>
 #include <Q3WidgetStack>
 
 #include <errno.h>
@@ -2581,25 +2582,48 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   items->setSortingEnabled(true);
   layOuter->addWidget(items, 1); // list is item to expand in host
 
-  QHBoxLayout* layButtons = new QHBoxLayout();
-  layButtons->addStretch();
+  QHBoxLayout* lay = new QHBoxLayout();
+  lay->addStretch();
   btnOk = new QPushButton("&Ok", this);
   btnOk->setDefault(true);
-  layButtons->addWidget(btnOk);
-  layButtons->addSpacing(taiM->vsep_c);
+  lay->addWidget(btnOk);
+  lay->addSpacing(taiM->vsep_c);
   btnCancel = new QPushButton("&Cancel", this);
-  layButtons->addWidget(btnCancel);
-  layOuter->addLayout(layButtons);
+  lay->addWidget(btnCancel);
+  layOuter->addLayout(lay);
 
+  lay = new QHBoxLayout();
+  lay->addSpacing(taiM->hspc_c); 
+  QLabel* lbl = new QLabel("filter", this);
+  lbl->setToolTip("Enter text that must appear in an item to keep it visible");
+  lay->addWidget(lbl);
+  lay->addSpacing(taiM->vsep_c);
+  filter = new QLineEdit(this);
+  filter->setToolTip(lbl->toolTip());
+  lay->addWidget(filter, 1);
+  lay->addSpacing(taiM->hspc_c); 
+  layOuter->addLayout(lay);
+  
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
       this, SLOT(items_itemDoubleClicked(QTreeWidgetItem*, int)) );
+  connect(filter, SIGNAL(textChanged(const QString&)),
+    this, SLOT(filter_textChanged(const QString&)) );
+
   m_client = NULL;
 }
 
 void taiItemChooser::items_itemDoubleClicked(QTreeWidgetItem* itm, int col) {
   accept();
+}
+
+void taiItemChooser::filter_textChanged(const QString& text) {
+//NOTE: maybe we need to add a delay/timer, and wait for user
+// or, maybe there should be a button
+  //TODO: apply the new filter
+  if (text.isEmpty()) ClearFilter();
+  else SetFilter(text);
 }
 
 void taiItemChooser::Refresh() {
@@ -2651,6 +2675,34 @@ bool taiItemChooser::SetCurrentItemByData(void* value, QTreeWidgetItem* top) {
   items->setCurrentItem(NULL);
   return false;
 }
+
+void taiItemChooser::SetFilter(const QString& filt) {
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item;
+  QString s;
+  int cols = items->columnCount(); // cache
+  while ((item = *it)) { 
+    bool hide = true;
+    for (int i = 0; i < cols; ++i) {
+      s = item->text(i);
+      if (s.contains(filt, Qt::CaseInsensitive)) {
+        hide = false;
+        break;
+      }  
+    }
+    items->setItemHidden(item, hide);
+    ++it;
+  }
+}
+
+void taiItemChooser::ClearFilter() {
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Hidden);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    items->setItemHidden(item, false);
+    ++it;
+  }
+} 
 
 void taiItemChooser::setSelObj(void* value) {
   if (m_selObj == value) return;
@@ -2731,6 +2783,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   targ_typ = NULL; // gets set later
+  m_sel = NULL;
   QPushButton* rep_ = new QPushButton(gui_parent_);
   SetRep(rep_);
   connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
@@ -2775,20 +2828,23 @@ taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
 {
 }
 
-const String taiMethodDefButton::labelNameNonNull() {
-  return md()->name;
-}
-
 void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
   if (!targ_typ) {
-    taMisc::Error("taiMemberDefButton::BuildChooser: targ_type needed");
+    taMisc::Error("taiMethodDefButton::BuildChooser: targ_type needed");
     return;
   }
   switch (view) {
-  case 0: BuildChooser_0(ic); break; 
-  case 1: BuildChooser_1(ic, targ_typ, NULL); break; 
+  case 0: 
+    BuildChooser_0(ic); 
+    ic->items->sortItems(0, Qt::Ascending);
+    break; 
+  case 1: 
+    ic->items->sortItems(1, Qt::Ascending); // so items aren't sorted by 0
+    BuildChooser_1(ic, targ_typ, NULL); 
+    ic->items->sortItems(1, Qt::Ascending); 
+    break; 
   default: break; // shouldn't happen
   }
 }
@@ -2801,8 +2857,6 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
     item->setData(0, Qt::ToolTipRole, mth->prototype());
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
-  // do initial sort
-  ic->items->sortItems(0, Qt::Ascending);
 }
 
 int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
@@ -2835,8 +2889,6 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
     //TODO: delete this item if num==0
     rval += num; // the result needs to include deeply nested methods
   }
-  // do initial sort
-  ic->items->sortItems(1, Qt::Ascending);
   return rval;
 }
 
@@ -2859,8 +2911,13 @@ const String taiMethodDefButton::headerText(int index, int view) const {
     case 1: return "Method"; 
     case 2: return "Description"; 
     } break; 
+  default: break; // compiler food
   }
   return _nilString; // shouldn't happen
+}
+
+const String taiMethodDefButton::labelNameNonNull() const {
+  return md()->name;
 }
 
 const String taiMethodDefButton::viewText(int index) const {
@@ -2871,6 +2928,269 @@ const String taiMethodDefButton::viewText(int index) const {
   }
 }
 
+
+
+//////////////////////////////////
+//   taiTypeDefButton		//
+//////////////////////////////////
+
+taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+}
+
+taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
+  if ((typ_->ptr > 0) || (typ_->HasOption("HIDDEN"))) return TC_NoAdd;
+  if (!typ_->InheritsFormal(TA_class)) // only type classes please..
+    return TC_NoAdd;
+  // no nested typedefs TODO: find a better way to identify nested typedefs
+  if (typ_->name == "inherited") return TC_NoAdd;
+  
+  // we don't add templates, but we do add their children
+  if (typ_->InheritsFormal(TA_templ_inst))
+    return TC_NoAddCheckChildren;
+  
+
+
+  // don't clutter list with these..
+  if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
+    return TC_NoAdd;		
+  return TC_Add;
+}
+
+void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiTypeDefButton::BuildChooser: targ_type needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    BuildChooser_0(ic, targ_typ, NULL); 
+    ic->items->sortItems(0, Qt::Ascending);
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+  QTreeWidgetItem* top_item)
+{
+  int rval = 0;
+  // for top level, we need to add NULL choice
+  if (!top_item) {
+    if (HasFlag(flgNullOk)) {
+      ic->AddItem("NULL", top_item, (void*)NULL); //note: no desc
+      ++rval;
+    }
+  }
+  TypeCat tc = AddType_Class(top_typ);
+  switch (tc) {
+  case TC_NoAdd : return rval;
+  case TC_NoAddCheckChildren: break;
+  //TODO: maybe we should create a node for these, since they are typically templates
+  // but then again, usually there will be a _impl just prior that will get a node
+  case TC_Add:
+    top_item = ic->AddItem(top_typ->name, top_item, (void*)top_typ);
+    top_item->setData(1, Qt::DisplayRole, top_typ->desc);
+    ++rval;
+    break;
+  }
+  for (int i = 0; i < top_typ->children.size; ++i) {
+    TypeDef* chld = top_typ->children.FastEl(i);
+    rval += BuildChooser_0(ic, chld, top_item);
+  }
+  //TODO: if a NoAddCheckChildren didn't have items, delete it
+  // do initial sort
+  return rval;
+}
+
+int taiTypeDefButton::columnCount(int view) const {
+  switch (view) {
+  case 0: return 2;
+  default: return 0; // not supposed to happen
+  }
+}
+
+int taiTypeDefButton::CountChildren(TypeDef* td) {
+  int rval = 0;
+  TypeDef* chld;
+  for (int i = 0; i < td->children.size; ++i) {
+    chld = td->children[i];
+    if (chld->ptr != 0)
+      continue;
+    ++rval;
+  }
+  return rval;
+}
+
+const String taiTypeDefButton::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Type"; 
+    case 1: return "Description"; 
+    } break; 
+  default: break; // compiler food
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiTypeDefButton::labelNameNonNull() const {
+  return td()->name;
+}
+
+const String taiTypeDefButton::viewText(int index) const {
+  switch (index) {
+  case 0: return "By Class Hierarcy"; 
+  default: return _nilString;
+  }
+}
+
+
+//////////////////////////////////
+//   taiEnumTypeDefButton		//
+//////////////////////////////////
+
+taiEnumTypeDefButton::taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+}
+
+bool taiEnumTypeDefButton::AddType_Enum(TypeDef* typ_, TypeDef* par_typ) {
+//TODO: doesn't seem to work for eliminating ex taBase::Orientation
+//from showing up in template types
+  //note: we already determined typ_ is an enum
+  if (typ_->HasOption("HIDDEN")) return false;
+  // because enums are inherited, only show in the type itself
+  // we will show all base and inherited from top, but then only
+  // base for all inherited from top
+  
+  // easiest to determine is when this is directly in parent
+  TypeDef* ot = typ_->GetOwnerType(); //cache
+  if (ot == par_typ) return true;
+  // ok, so not in parent, only other case we allow is when it
+  // is inherited in the top type, then we only show in that type
+  if ((par_typ == targ_typ) && (ot == targ_typ)) return true;
+  return false;
+}
+
+void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiEnumTypeDefButton::BuildChooser: targ_type needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    BuildChooser_0(ic, targ_typ, NULL); 
+    ic->items->sortItems(0, Qt::Ascending);
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+  QTreeWidgetItem* top_item)
+{
+  int rval = 0;
+  // for top level, we need to add NULL choice
+  if (!top_item) {
+    if (HasFlag(flgNullOk)) {
+      // note: ' ' makes it sort to the top
+      QTreeWidgetItem* item = ic->AddItem(" ", top_item, (void*)NULL); //note: no desc
+      item->setData(1, Qt::DisplayRole, " NULL");
+      ++rval;
+    }
+  }
+  
+  // add Enums of this type
+  for (int i = 0; i < top_typ->sub_types.size; ++i) {
+    TypeDef* chld = top_typ->sub_types.FastEl(i);
+    if (!chld->is_enum()) continue;
+    if (AddType_Enum(chld, top_typ)) {
+      QTreeWidgetItem* item = ic->AddItem(top_typ->name, top_item, (void*)chld);
+      item->setData(1, Qt::DisplayRole, chld->name);
+      item->setData(2, Qt::DisplayRole, chld->desc);
+      ++rval;
+    }
+  }
+  // add entries for the subclasses (but only full class types)
+  for (int i = 0; i < top_typ->children.size; ++i) {
+    TypeDef* chld = top_typ->children.FastEl(i);
+    if ((chld->ptr != 0) || !chld->is_class())
+      continue;
+    //note: we are recursive, but aren't making a tree  
+    int num = BuildChooser_0(ic, chld, top_item);
+    rval += num;
+  }
+  return rval;
+}
+
+/*
+int taiEnumTypeDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
+  QTreeWidgetItem* top_item)
+{
+  int rval = 0;
+  // for top level, we need to add NULL choice
+  if (!top_item) {
+    if (HasFlag(flgNullOk)) {
+      ic->AddItem("NULL", top_item, (void*)NULL); //note: no desc
+      ++rval;
+    }
+  }
+  
+  // add Enums of this type
+  for (int i = 0; i < top_typ->sub_types.size; ++i) {
+    TypeDef* chld = top_typ->sub_types.FastEl(i);
+    if (AddType_Enum(chld)) {
+      QTreeWidgetItem* item = ic->AddItem(top_typ->name + "::" + chld->name, top_item, (void*)chld);
+      item->setData(1, Qt::DisplayRole, chld->desc);
+      ++rval;
+    }
+  }
+  // add entries for the subclasses
+  for (int i = 0; i < top_typ->children.size; ++i) {
+    TypeDef* chld = top_typ->children.FastEl(i);
+    if (chld->ptr != 0)
+      continue;
+
+    if ((CountChildren(chld) > 0) || (CountEnums(chld) > 0))
+    {
+      QTreeWidgetItem* item = ic->AddItem((char*)chld->name, top_item);
+      item->setFlags(Qt::ItemIsEnabled); // but not selectable
+      int num = BuildChooser_1(ic, chld, item);
+      // if no items were actually generated, then we just delete this one
+      if (num ==0) {
+        delete item;
+      } else rval += num;
+      
+    }
+  }
+  return rval;
+}*/
+
+int taiEnumTypeDefButton::columnCount(int view) const {
+  switch (view) {
+  case 0: return 3;
+  default: return 0; // not supposed to happen
+  }
+}
+
+const String taiEnumTypeDefButton::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Type"; 
+    case 1: return "Enum"; 
+    case 2: return "Description"; 
+    } break; 
+  default: break; // compiler food
+  }
+  return _nilString; // shouldn't happen
+}
 
 
 //////////////////////////////////////////

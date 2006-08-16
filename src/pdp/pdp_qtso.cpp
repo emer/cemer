@@ -358,9 +358,8 @@ void taiProgVar::AssertControls(int value) {
     hl->setMargin(0);
     lbl = new QLabel("min type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    thValType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-      &TA_taBase, host, this, stack, (mflags & flgReadOnly));
-    thValType->GetMenu();
+    thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    thValType->targ_typ = &TA_taBase;
     hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
     lbl = new QLabel("value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
@@ -377,10 +376,8 @@ void taiProgVar::AssertControls(int value) {
     
     lbl = new QLabel("enum type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    thEnumType = new taiTypeHier(taiActions::popupmenu, taiMisc::defFontSize, 
-      &TA_taBase, host, this, stack, (mflags & flgReadOnly));
-    thEnumType->enum_mode = true;
-    thEnumType->GetMenu();
+    thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    thEnumType->targ_typ = &TA_taBase;
     hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
     
     lbl = new QLabel("enum value", stack);

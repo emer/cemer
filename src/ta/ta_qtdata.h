@@ -855,14 +855,17 @@ public:
 //QHBoxLayout*		  layButtons;
   QPushButton*		    btnOk;
   QPushButton*		    btnCancel;
-
+//QHBoxLayout*		  layFilter;
+  QLineEdit*		  filter;
 
   virtual bool		Choose(taiItemPtrBase* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
 
   virtual void 		Clear();	// reset data
+  void			SetFilter(const QString& filt); // apply a filter
+  void			ClearFilter(); // remove filtering
   
-  virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent = NULL,
+  virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent, 
     const void* data_ = NULL); // add one item to dialog, optionally with data
 
 protected:
@@ -883,6 +886,7 @@ protected slots:
   void reject(); // override
   void 		items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
   void 		cmbView_currentIndexChanged(int index);
+  void 		filter_textChanged(const QString& text);
 private:
   void 		init(const String& captn); // called by constructors
   taiItemChooser(const taiItemChooser&); //no
@@ -902,7 +906,7 @@ public:
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;
   inline void*		sel() const {return m_sel;}
-  virtual int		viewCount() const = 0; 
+  virtual int		viewCount() const {return 1;} 
     // number of different kinds of views, ex flat vs. tree
   virtual const String	viewText(int index) const = 0; 
     // number of different kinds of views, ex flat vs. 
@@ -921,7 +925,7 @@ protected:
   void*			m_sel; // current value
   
   virtual const String	itemTag() = 0; // for "N: label" on button, is "N: "
-  virtual const String	labelNameNonNull() = 0; // name part of label, when obj non-null
+  virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
   
   taiItemPtrBase(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0); // typ_ 
@@ -929,10 +933,10 @@ protected:
 
 
 class TA_API taiMethodDefButton : public taiItemPtrBase {
-// for memberdefs
+// for MethodDefs
 INHERITED(taiItemPtrBase)
 public:
-  inline MethodDef*	md() {return (MethodDef*)m_sel;}
+  inline MethodDef*	md() const {return (MethodDef*)m_sel;}
   int			columnCount(int view) const; // override
   const String		headerText(int index, int view) const; // override
   int			viewCount() const {return 2;} // override
@@ -948,10 +952,63 @@ public:
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:
   const String		itemTag() {return "Method: ";}
-  const String		labelNameNonNull();
+  const String		labelNameNonNull() const;
 
   void 			BuildChooser_0(taiItemChooser* ic);
   int 			BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
+    QTreeWidgetItem* top_item); // we use this recursively
+};
+
+
+class TA_API taiTypeDefButton : public taiItemPtrBase {
+// for TypeDefs
+INHERITED(taiItemPtrBase)
+public:
+  inline TypeDef*	td() const {return (TypeDef*)m_sel;}
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  const String		viewText(int index) const; // override
+
+  void			GetImage(TypeDef* cur_sel) 
+    {taiItemPtrBase::GetImage((void*)cur_sel);}
+  TypeDef*		GetValue() {return td();}
+
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiTypeDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  enum TypeCat {
+    TC_NoAdd, // for ptrs, non classes, etc.
+    TC_NoAddCheckChildren, // typically for templates
+    TC_Add // "normal" class types
+  };
+  const String		itemTag() {return "Type: ";}
+  const String		labelNameNonNull() const;
+
+  TypeCat		AddType_Class(TypeDef* typ); // true if should be shown to user
+  int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+    QTreeWidgetItem* top_item); // we use this recursively
+  int 			CountChildren(TypeDef* td);
+};
+
+
+class TA_API taiEnumTypeDefButton : public taiTypeDefButton {
+// for TypeDefs that are enums
+INHERITED(taiTypeDefButton)
+public:
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  const String		itemTag() {return "Enum Type: ";}
+
+  bool			AddType_Enum(TypeDef* typ_, TypeDef* par_typ); // true if should be shown to user
+  int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
 };
 
