@@ -110,10 +110,12 @@ protected:
   taiComboBox*		cboEnumValue;
   //for objects:
   taiTypeDefButton*	thValType;
-  taiToken*		tkObjectValue;
+  taiTokenPtrButton*	tkObjectValue;
   // for DynEnums:
   taiEditButton*	edDynEnum; // for invoking editor for values
   taiComboBox*		cboDynEnumValue;
+  
+  QSpacerItem*		spc; // end spacer, we delete/recreate it
   
   void			AssertControls(int value); // uncreates existing, creates new
   void			SetVarType(int value); // ProgVar::VarType

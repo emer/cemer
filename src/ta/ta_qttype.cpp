@@ -628,7 +628,7 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
   }
   else {
     flags_ |= (taiData::flgNullOk | taiData::flgEditOk);
-    taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_, flags_);
+    taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
 //nn here, do in getimage    rval->GetMenu();
     return rval;
   }
@@ -642,8 +642,8 @@ void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
     ebrval->GetImage_(*((void**) base));
   }
   else {
-    taiToken* rval = (taiToken*)dat;
-    rval->GetImage(*((TAPtr*)base)); // default typ, no scope
+    taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+    rval->GetImage(*((TAPtr*)base), npt); // default typ, no scope
   }
 }
 
@@ -655,7 +655,7 @@ void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
     //   taiEditButton *ebrval = (taiEditButton*) dat;
   }
   else {
-    taiToken* rval = (taiToken*)dat;
+    taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
     if(!no_setpointer)
       taBase::SetPointer((TAPtr*)base, (TAPtr)rval->GetValue());
     else
@@ -690,8 +690,8 @@ taiData* taiTypePtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
   if (orig_typ == NULL)
     return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_);
 
-  taiTypeHier* rval =
-    new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall, typ, host_, par, gui_parent_, flags_);
+  taiTypeDefButton* rval =
+    new taiTypeDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -701,10 +701,9 @@ void taiTypePtr::GetImage_impl(taiData* dat, const void* base) {
     return;
   }
 
-  taiTypeHier* rval = (taiTypeHier*)dat;
-  rval->typ = (TypeDef*)*((void**)base);
-  rval->UpdateMenu();
-  rval->GetImage((TypeDef*)*((void**)base));
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  TypeDef* typ_ = (TypeDef*)*((void**)base);
+  rval->GetImage((TypeDef*)*((void**)base), typ_);
 }
 
 void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
@@ -713,7 +712,7 @@ void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
     return;
   }
 
-  taiTypeHier* rval = (taiTypeHier*)dat;
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
   *((void**)base) = rval->GetValue();
 }
 
@@ -1001,7 +1000,7 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   if (!mbr->HasOption("NO_NULL"))
     token_flags |= taiData::flgNullOk;
 
-  taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
+  taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
 	token_flags);
   return rval;
 }
@@ -1037,7 +1036,7 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
     }
   }
 
-  taiToken* rval = (taiToken*)dat;
+  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   TAPtr scope = NULL;
   if (!mbr->HasOption("NO_SCOPE")) {
     if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
@@ -1072,7 +1071,7 @@ void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) 
   default: break;
   }
     
-  taiToken* rval = (taiToken*)dat;
+  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   switch (mode) {
   case MD_BASE:
     if (!no_setpointer)
@@ -1211,11 +1210,8 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
     else if(mb_nm != "")
       td = taMisc::types.FindName((char*)mb_nm);
   }
-  if (td != NULL)
-    rval->targ_typ = td;
-  else
-    rval->targ_typ = mbr->type;
-  rval->GetImage((TypeDef*)*((void**)new_base));
+  TypeDef* targ_typ = (td) ? td : mbr->type;
+  rval->GetImage((TypeDef*)*((void**)new_base), targ_typ);
   GetOrigVal(dat, base);
 }
 
@@ -1268,36 +1264,22 @@ int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_) 
 {
-  taiMemberDefMenu* rval =  new taiMemberDefMenu(taiMenu::buttonmenu, 
-    taiMisc::fonSmall, NULL, mbr, typ, host_, par, gui_parent_, flags_);
+  taiMemberDefButton* rval =  new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberDefPtrMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
   MemberDef* cur_sel = *((MemberDef**)(new_base));
-  rval->GetImage(base, true, cur_sel);
-//  rval->GetImage_impl(*((MemberDef**)new_base));
-//  rval->GetImage_impl(base,*((void **)new_base));
-/*
-  taiEditDialog* host_ = taiM->FindEdit(base, typ);
-  if (host_ != NULL) {
-    rval->ta_actions->ResetMenu();
-    MemberSpace* mbs = &(typ->members);
-    for (int i = 0; i < mbs->size; ++i){
-      MemberDef* mbd = mbs->FastEl(i);
-      if (!mbd->ShowMember(host_->show)) continue;
-      rval->ta_actions->AddItem(mbd->name, mbd);
-    }
-  } */
+  rval->GetImage(cur_sel, GetTargetType(base));
   GetOrigVal(dat, base);
 }
 
 void taiMemberDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   void* new_base = mbr->GetOff(base);
-  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
-  *((void**)new_base) = rval->GetValue();
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  *((MemberDef**)new_base) = rval->GetValue();
   CmpOrigVal(dat, base, first_diff);
 }
 
@@ -1323,22 +1305,8 @@ taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
 void taiMethodDefPtrMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
   taiMethodDefButton* rval = (taiMethodDefButton*)dat;
-  rval->targ_typ = GetTargetType(base);
   MethodDef* cur_sel = *((MethodDef**)(new_base));
-  rval->GetImage(cur_sel);
-//  rval->GetImage_impl(*((MemberDef**)new_base));
-//  rval->GetImage_impl(base,*((void **)new_base));
-/*
-  taiEditDialog* host_ = taiM->FindEdit(base, typ);
-  if (host_ != NULL) {
-    rval->ta_actions->ResetMenu();
-    MemberSpace* mbs = &(typ->members);
-    for (int i = 0; i < mbs->size; ++i){
-      MemberDef* mbd = mbs->FastEl(i);
-      if (!mbd->ShowMember(host_->show)) continue;
-      rval->ta_actions->AddItem(mbd->name, mbd);
-    }
-  } */
+  rval->GetImage(cur_sel, GetTargetType(base));
   GetOrigVal(dat, base);
 }
 
@@ -1996,25 +1964,22 @@ taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   TypeDef* init_typ = &TA_taBase;
   if (*((TypeDef**)arg_base) != NULL)
     init_typ = *((TypeDef**)arg_base);
-  taiTypeHier* rval = new taiTypeHier(taiMenu::buttonmenu, taiMisc::fonSmall,
-	init_typ, host_, par, gui_parent_, nul_ok);
-  rval->GetMenu();
+  taiTypeDefButton* rval = new taiTypeDefButton(init_typ, host_, par, gui_parent_, nul_ok);
   return rval;
 }
 
 void taiTypePtrArgType::GetImage_impl(taiData* dat, const void*) {
   if (arg_base == NULL)
     return;
-  taiTypeHier* rval = (taiTypeHier*)dat;
-  rval->typ = (TypeDef*)*((void**)arg_base);
-  rval->UpdateMenu();
-  rval->GetImage((TypeDef*)*((void**)arg_base));
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  TypeDef* typ_ = (TypeDef*)*((void**)arg_base);
+  rval->GetImage((TypeDef*)*((void**)arg_base), typ_);
 }
 
 void taiTypePtrArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiTypeHier* rval = (taiTypeHier*)dat;
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
   *((void**)arg_base) = rval->GetValue();
 }
 
@@ -2036,50 +2001,26 @@ cssEl* taiMemberPtrArgType::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiMemberPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-//  MemberDef* init_md;
-/*  if (*((MemberDef**)arg_base) != NULL)
-    init_md = *((MemberDef**)arg_base);
-  else
-    init_md = typ->members.SafeEl(0);*/
-  taiMemberDefMenu* rval = new taiMemberDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
-	NULL, NULL, typ, host_, par, gui_parent_, flags_);
-//  rval->GetMenu();
+taiData* taiMemberPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_) 
+{
+  taiMemberDefButton* rval = new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberPtrArgType::GetImage_impl(taiData* dat, const void* base) {
   if(arg_base == NULL)
     return;
-  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
-  rval->md = (MemberDef*)*((void**)arg_base);
-  rval->menubase = (void*)base; //ok
-  rval->GetMenu();
-/* obs???
-  taiEditDialog* host_ = taiM->FindEdit(base, typ);
-  if (host_ != NULL) {
-    rval->menubase = typ;
-    rval->ta_actions->ResetMenu();
-    MemberSpace* mbs = &(typ->members);
-    for (int i = 0; i < mbs->size; ++i){
-      MemberDef* mbd = mbs->FastEl(i);
-      if (!mbd->ShowMember(host_->show)) continue;
-      rval->ta_actions->AddItem(mbd->GetLabel(), mbd);
-    }
-  } */
-  MemberDef* initmd = (MemberDef*)*((void**)arg_base);
-  if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
-    //rval->ta_actions->GetImage_impl(initmd);
-    rval->GetImage(initmd, false); //don't reget menu
-  else
-    rval->ta_actions->GetImageByIndex(0);	// just get first on list
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  MemberDef* md = (MemberDef*)*((void**)arg_base);
+  rval->GetImage(md, typ); 
 }
 
 void taiMemberPtrArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiMemberDefMenu* rval = (taiMemberDefMenu*)dat;
-  *((void**)arg_base) = rval->GetValue();
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  *((MemberDef**)arg_base) = rval->GetValue();
 }
 
 

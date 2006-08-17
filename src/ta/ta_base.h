@@ -369,6 +369,7 @@ public:
   virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
+  const String		GetNameNonEmpty() const; // #IGNORE for contexts that must display something
   virtual bool		SetFileName(const String& val)  {return false;} // #IGNORE
   virtual String	GetFileName() const 	{ return _nilString; } // #IGNORE
   taFiler*		GetFiler(TypeItem* td = NULL);

@@ -254,6 +254,7 @@ void taiProgVar::init() {
   tkObjectValue = NULL;
   edDynEnum = NULL; // for invoking editor for values
   cboDynEnumValue = NULL;
+  spc = NULL;
 }
 
 void taiProgVar::Constr(QWidget* gui_parent_) { 
@@ -294,6 +295,10 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 
 void taiProgVar::AssertControls(int value) {
   if (value == sc) return;
+  if (spc) {
+    delete spc;
+    spc = NULL;
+  }
   // delete old
   switch (sc) {
 //case scNone: // nothing 
@@ -359,12 +364,11 @@ void taiProgVar::AssertControls(int value) {
     lbl = new QLabel("min type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
-    thValType->targ_typ = &TA_taBase;
     hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
     lbl = new QLabel("value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    tkObjectValue = new taiToken(taiActions::popupmenu, taiMisc::defFontSize, 
-      thValType->typ, host, this, stack, ((mflags & flgReadOnly) | flgNullOk));
+    tkObjectValue = new taiTokenPtrButton(thValType->typ, host, this, stack, 
+      ((mflags & flgReadOnly) | flgNullOk));
     hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
     
     AddChildWidget(stack);
@@ -377,7 +381,6 @@ void taiProgVar::AssertControls(int value) {
     lbl = new QLabel("enum type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
-    thEnumType->targ_typ = &TA_taBase;
     hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
     
     lbl = new QLabel("enum value", stack);
@@ -407,6 +410,9 @@ void taiProgVar::AssertControls(int value) {
     } break;
   default: break; // compiler food
   }
+  // create a stretchable spacer item that we can delete
+  spc = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum); 
+  lay->addItem(spc);
   sc = value;
 }
 
@@ -429,8 +435,7 @@ void taiProgVar::DataChanged_impl(taiData* chld) {
     //note: prev value of value may no longer be a valid enum value!
   } else  if (chld == thValType) {
     // previous token may no longer be in scope!
-    tkObjectValue->typ = thValType->GetValue();
-    tkObjectValue->GetUpdateMenu();
+    tkObjectValue->GetImage(tkObjectValue->token(), thValType->GetValue());
 //    tkObjectValue->SetTypeScope(thValType->GetValue());
   }
   --m_updating;
@@ -455,11 +460,11 @@ void taiProgVar::GetImage(const ProgVar* var) {
     fldVal->GetImage(var->string_val); 
     break;
   case ProgVar::T_Object:
-    thValType->GetImage(var->object_type);
+    thValType->GetImage(var->object_type, &TA_taBase);
     tkObjectValue->GetImage(var->object_val, var->object_type, NULL);// no scope
     break;
   case ProgVar::T_HardEnum:
-    thEnumType->GetImage(var->hard_enum_type);
+    thEnumType->GetImage(var->hard_enum_type, &TA_taBase);
     cboEnumValue->SetEnumType(var->hard_enum_type);
     cboEnumValue->GetEnumImage(var->int_val);
     break;

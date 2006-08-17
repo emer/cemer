@@ -688,6 +688,16 @@ taFiler* taBase::GetFiler(TypeItem* td) {
   return StatGetFiler(td);
 }
 
+const String taBase::GetNameNonEmpty() const {
+  String rval(GetDisplayName());
+  if (rval.empty()) {
+    // (TypeName@HexAddr)
+    rval = "(" + GetTypeDef()->name + "@" 
+      + String(QString::number((intptr_t)this, 16)) + ")";
+  }
+  return rval;
+}
+
 int taBase::Load_File(TypeDef* td) {
   int rval = false;
   taFiler* flr = GetFiler(td); 

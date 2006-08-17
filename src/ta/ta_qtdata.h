@@ -42,33 +42,12 @@ class MatrixGeom;
 
 // forwards
 class taiToggle;
-class taiToken;
-class taiTypeHier;
 class taiActions;
 class taiMenu;
 class taiAction;
 class taiItemChooser; 
-class taiItemPtrBase; //
-
-
-/* //TODO: re-evaluate
-class IconGlyph : public QWidget {
-  // #IGNORE a special glyph to put as the first thing in a window, sets pointers..
-public:
-  ivManagedWindow*	window;		// this is the window
-  void*			obj;		// this is the object that owns the window
-  int			(*SetIconify)(void*, int on_off);
-  // set iconify function: -1 get value, 0 = set off, 1 = set on
-  void			(*ScriptIconify)(void* , int on_off);
-  // script record iconify: 0 = set off, 1 = set on
-
-  void	SetWindow(ivManagedWindow* w);
-
-  void  draw(ivCanvas*, const ivAllocation&) const;
-  void  undraw();
-
-  IconGlyph(QWidget* g, ivManagedWindow* w=NULL,void* o=NULL);
-}; */
+class taiItemPtrBase; 
+class taiTokenPtrButton; //
 
 
 class TA_API taiCompData : public taiData {
@@ -378,8 +357,7 @@ protected:
     scInt,
     scField, // includes string and char
     scPtr,
-    scBase,
-    scMatrix
+    scBase
   };
   
   mutable int		m_updating;
@@ -390,8 +368,7 @@ protected:
   taiToggle*		togVal; // for: bool
   taiIncrField*		incVal; // for: ints
   taiField*		fldVal; // for: char, string, most numbers
-  taiToken*		tabVal; // for taBase token (note: browsing could be hairy!!!)
-  taiToken*		matVal; // for Matrix token
+  taiTokenPtrButton*	tabVal; // for taBase & Matrix token
   
   void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); 
@@ -836,6 +813,7 @@ public:
     ObjDataRole = Qt::UserRole + 1
   };
 #endif
+  static int		filt_delay; // delay, in msec, to invoke filter after typing
 
   static taiItemChooser* New(const String& caption, taiItemPtrBase* client = NULL, 
     int ft = 0, QWidget* par_window_ = NULL);
@@ -873,6 +851,8 @@ protected:
   void*			m_selObj;	// current selected object
   int			m_view;
   taiItemPtrBase* 	m_client; // NOTE: only valid in Constr and between Choose...accept/reject
+  QString		last_filter; // for checking if anything changed
+  QTimer*		timFilter; // timer for filter changes
   
   virtual void 		Refresh();	// rebuild current view
   bool 			SetCurrentItemByData(void* value, 
@@ -887,6 +867,7 @@ protected slots:
   void 		items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
   void 		cmbView_currentIndexChanged(int index);
   void 		filter_textChanged(const QString& text);
+  void 		timFilter_timeout();
 private:
   void 		init(const String& captn); // called by constructors
   taiItemChooser(const taiItemChooser&); //no
@@ -898,7 +879,6 @@ class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT
 public:
-  TypeDef*		targ_typ; 
   
   const String		labelText(); // "tag: name" for button
   inline QPushButton*	rep() {return (QPushButton*)m_rep;}
@@ -911,7 +891,7 @@ public:
   virtual const String	viewText(int index) const = 0; 
     // number of different kinds of views, ex flat vs. 
   
-  virtual void 		GetImage(void* cur_sel);
+  virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
   virtual void		BuildChooser(taiItemChooser* ic, int view = 0) {}
     // builds the tree
@@ -923,12 +903,41 @@ public slots:
 
 protected:
   void*			m_sel; // current value
+  TypeDef*		targ_typ; 
   
   virtual const String	itemTag() = 0; // for "N: label" on button, is "N: "
   virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
   
+  virtual void 		UpdateImage(void* cur_sel);
+  
   taiItemPtrBase(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0); // typ_ 
+};
+
+
+class TA_API taiMemberDefButton : public taiItemPtrBase {
+// for MemberDefs
+INHERITED(taiItemPtrBase)
+public:
+  inline MemberDef*	md() const {return (MemberDef*)m_sel;}
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 1;} // override
+  const String		viewText(int index) const; // override
+
+  void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
+    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
+  MemberDef*		GetValue() {return md();}
+
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiMemberDefButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  const String		itemTag() {return "Member: ";}
+  const String		labelNameNonNull() const;
+
+  void 			BuildChooser_0(taiItemChooser* ic);
 };
 
 
@@ -942,8 +951,8 @@ public:
   int			viewCount() const {return 2;} // override
   const String		viewText(int index) const; // override
 
-  void			GetImage(MethodDef* cur_sel) 
-    {taiItemPtrBase::GetImage((void*)cur_sel);}
+  void			GetImage(MethodDef* cur_sel, TypeDef* targ_typ) 
+    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   MethodDef*		GetValue() {return md();}
 
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
@@ -969,8 +978,8 @@ public:
   const String		headerText(int index, int view) const; // override
   const String		viewText(int index) const; // override
 
-  void			GetImage(TypeDef* cur_sel) 
-    {taiItemPtrBase::GetImage((void*)cur_sel);}
+  void			GetImage(TypeDef* cur_sel, TypeDef* targ_typ) 
+    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   TypeDef*		GetValue() {return td();}
 
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
@@ -1008,6 +1017,35 @@ protected:
   const String		itemTag() {return "Enum Type: ";}
 
   bool			AddType_Enum(TypeDef* typ_, TypeDef* par_typ); // true if should be shown to user
+  int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+    QTreeWidgetItem* top_item); // we use this recursively
+};
+
+
+class TA_API taiTokenPtrButton : public taiItemPtrBase {
+// for MethodDefs
+INHERITED(taiItemPtrBase)
+public:
+  inline TAPtr		token() const {return (TAPtr)m_sel;}
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 1;} // override
+  const String		viewText(int index) const; // override
+
+  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL);
+    // get image, using the new type and scope supplied
+  virtual TAPtr		GetValue() {return token();}
+  
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  taSmartRef		scope_ref;	// reference object for scoping, default is none
+  
+  const String		itemTag() {return "Token: ";}
+  const String		labelNameNonNull() const;
+
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
 };
@@ -1126,6 +1164,7 @@ public slots:
   virtual void	Edit();		// for edit callback
 };
 
+
 class TA_API taiTypeInfoBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option
 public:
@@ -1148,7 +1187,7 @@ protected:
   virtual void 		GetTarget(); // determines the target type for the lookup menu
 };
 
-
+/*nuke
 //////////////////////////////////
 // 	taiMemberDef		//
 //////////////////////////////////
@@ -1166,7 +1205,7 @@ public:
     MemberDef* memb_md_, TypeDef* typ_, IDataHost* host, 
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 };
-
+*/
 //////////////////////////////////
 // 	taiMethodDef		//
 //////////////////////////////////
