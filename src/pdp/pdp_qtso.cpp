@@ -254,7 +254,6 @@ void taiProgVar::init() {
   tkObjectValue = NULL;
   edDynEnum = NULL; // for invoking editor for values
   cboDynEnumValue = NULL;
-  spc = NULL;
 }
 
 void taiProgVar::Constr(QWidget* gui_parent_) { 
@@ -295,10 +294,6 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
 
 void taiProgVar::AssertControls(int value) {
   if (value == sc) return;
-  if (spc) {
-    delete spc;
-    spc = NULL;
-  }
   // delete old
   switch (sc) {
 //case scNone: // nothing 
@@ -410,9 +405,6 @@ void taiProgVar::AssertControls(int value) {
     } break;
   default: break; // compiler food
   }
-  // create a stretchable spacer item that we can delete
-//TEMP  spc = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum); 
-//  lay->addItem(spc);
   sc = value;
 }
 

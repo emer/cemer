@@ -849,14 +849,16 @@ public:
 protected:
   int			m_changing;
   void*			m_selObj;	// current selected object
+  QTreeWidgetItem*	m_selItem; // cached for showEvent
   int			m_view;
   taiItemPtrBase* 	m_client; // NOTE: only valid in Constr and between Choose...accept/reject
   QString		last_filter; // for checking if anything changed
   QTimer*		timFilter; // timer for filter changes
   
+  void 			showEvent(QShowEvent* event); //override
+  
   virtual void 		Refresh();	// rebuild current view
-  bool 			SetCurrentItemByData(void* value, 
-    QTreeWidgetItem* top = NULL);
+  bool 			SetCurrentItemByData(void* value); 
   virtual void		Constr(taiItemPtrBase* client_); 
    // does constr, called in static, so can extend
 

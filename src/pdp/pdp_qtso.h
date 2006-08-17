@@ -115,8 +115,6 @@ protected:
   taiEditButton*	edDynEnum; // for invoking editor for values
   taiComboBox*		cboDynEnumValue;
   
-  QSpacerItem*		spc; // end spacer, we delete/recreate it
-  
   void			AssertControls(int value); // uncreates existing, creates new
   void			SetVarType(int value); // ProgVar::VarType
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override

@@ -2503,12 +2503,13 @@ void taiItemChooser::init(const String& caption_) {
   m_changing = 0;
   caption = caption_;
   m_selObj = NULL;
+  m_selItem = NULL;
   m_client = NULL;
   m_view = -1; // until set to valid value
   setModal(true);
   setCaption(caption);
-  setFont(taiM->dialogFont(taiMisc::fonSmall));
-  resize(taiM->dialogSize(taiMisc::hdlg_s));
+//  setFont(taiM->dialogFont(taiMisc::fonSmall));
+  resize(taiM->dialogSize(taiMisc::hdlg_m));
 }
 
 void taiItemChooser::accept() {
@@ -2555,7 +2556,22 @@ void taiItemChooser::Clear() {
   timFilter->stop();
   items->clear();
   m_selObj = NULL;
+  m_selItem = NULL;
 }
+
+void taiItemChooser::ClearFilter() {
+  ++m_changing;
+  taMisc::Busy();
+  last_filter.clear();
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Hidden);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    items->setItemHidden(item, false);
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
+} 
 
 void taiItemChooser::cmbView_currentIndexChanged(int index) {
   if (m_changing > 0) return;
@@ -2593,7 +2609,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
 
   lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c); 
-  QLabel* lbl = new QLabel("filter", this);
+  QLabel* lbl = new QLabel("search", this);
   lbl->setToolTip("Enter text that must appear in an item to keep it visible");
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
@@ -2641,6 +2657,10 @@ void taiItemChooser::Refresh() {
     }
     // call client to fill items
     m_client->BuildChooser(this, m_view);
+    // make columns nice sizes (not last)
+    for (int i = 0; i < (cols - 1); ++i) {
+      items->resizeColumnToContents(i);
+    }
     setSelObj(m_client->sel());
   }
   --m_changing;
@@ -2653,27 +2673,24 @@ void taiItemChooser::reject() {
   inherited::reject();
 }
 
-bool taiItemChooser::SetCurrentItemByData(void* value, QTreeWidgetItem* top) {
-  QTreeWidgetItem* cur = NULL;
-  if (top) {
-    void* data = (void*)QVARIANT_TO_INTPTR(top->data(0, ObjDataRole));
+bool taiItemChooser::SetCurrentItemByData(void* value) {
+  // note: assumes at most 1 selectable item for NULL
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    void* data = (void*)QVARIANT_TO_INTPTR(item->data(0, ObjDataRole));
     if (value == data) {
-      items->setCurrentItem(top);
+      items->setCurrentItem(item);
+      m_selItem = item; // cache for showEvent
+//doesn't seem to work here
+//      items->scrollToItem(item);
       return true;
     }
-    for (int i = 0; i < top->childCount(); ++i ) {
-      cur = top->child(i);
-      if (SetCurrentItemByData(value, cur)) return true;
-    }
-     
-  } else { // top-level
-    for (int i = 0; i < items->topLevelItemCount(); ++i ) {
-      cur = items->topLevelItem(i);
-      if (SetCurrentItemByData(value, cur)) return true;
-    }
+    ++it;
   }
   // not found
   items->setCurrentItem(NULL);
+  m_selItem = NULL;
   return false;
 }
 
@@ -2702,27 +2719,10 @@ void taiItemChooser::SetFilter(const QString& filt) {
   --m_changing;
 }
 
-void taiItemChooser::ClearFilter() {
-  ++m_changing;
-  taMisc::Busy();
-  last_filter.clear();
-  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Hidden);
-  QTreeWidgetItem* item;
-  while ((item = *it)) { 
-    items->setItemHidden(item, false);
-    ++it;
-  }
-  taMisc::DoneBusy();
-  --m_changing;
-} 
-
 void taiItemChooser::setSelObj(void* value) {
   if (m_selObj == value) return;
   m_selObj = value;
-  if (value)
-    SetCurrentItemByData(value);
-  else 
-    items->setCurrentItem(NULL);
+  SetCurrentItemByData(value);
 }
 
 void taiItemChooser::setView(int value, bool force) {
@@ -2731,6 +2731,11 @@ void taiItemChooser::setView(int value, bool force) {
   Refresh();
   QString text = filter->text();
   if (!text.isEmpty()) SetFilter(text);
+}
+
+void taiItemChooser::showEvent(QShowEvent* event) {
+  inherited::showEvent(event);
+  items->scrollToItem(m_selItem);
 }
 
 void taiItemChooser::timFilter_timeout() {
@@ -3014,8 +3019,8 @@ void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   switch (view) {
   case 0: 
     if (HasFlag(flgNullOk)) {
-      QTreeWidgetItem* item = ic->AddItem(" ", NULL, (void*)NULL); 
-      item->setData(1, Qt::DisplayRole, " NULL"); //note: no desc
+      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); 
+      item->setData(1, Qt::DisplayRole, " "); //note: no desc
     }
     BuildChooser_0(ic, targ_typ, NULL); 
     ic->items->sortItems(0, Qt::Ascending);
@@ -3039,8 +3044,8 @@ int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
     TypeDef* par = top_typ->parents.SafeEl(0); // NULL for root types, ex. taBase
     String par_name;
     if (par) par_name = par->name;
-    item = ic->AddItem(par_name, top_item, (void*)top_typ);
-    item->setData(1, Qt::DisplayRole, top_typ->name);
+    item = ic->AddItem(top_typ->name, top_item, (void*)top_typ);
+    item->setData(1, Qt::DisplayRole, par_name);
     item->setData(2, Qt::DisplayRole, top_typ->desc);
     ++rval;
     } break;
@@ -3076,8 +3081,8 @@ int taiTypeDefButton::CountChildren(TypeDef* td) {
 const String taiTypeDefButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Par Type"; 
-    case 1: return "Type"; 
+    case 0: return "Type"; 
+    case 1: return "Par Type"; 
     case 2: return "Description"; 
     } break; 
   default: break; // compiler food
@@ -3259,8 +3264,8 @@ void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
   case 0: 
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
-      QTreeWidgetItem* item = ic->AddItem(" ", NULL, (void*)NULL); //note: no desc
-      item->setData(1, Qt::DisplayRole, " NULL");
+      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); //note: no desc
+      item->setData(1, Qt::DisplayRole, " ");
     }
     BuildChooser_0(ic, targ_typ, NULL); 
     ic->items->sortItems(0, Qt::Ascending); 
@@ -3284,12 +3289,12 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
     if ((scope_ref) && !btmp->SameScope(scope_ref))
       continue;
-    QTreeWidgetItem* item = ic->AddItem(btmp->GetTypeDef()->name, top_item, (void*)btmp); 
-    item->setData(1, Qt::DisplayRole, btmp->GetNameNonEmpty());
+    QTreeWidgetItem* item = ic->AddItem(btmp->GetNameNonEmpty(), top_item, (void*)btmp); 
+    item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     TAPtr own = btmp->GetOwner();
     if (own) {
-      item->setData(2, Qt::DisplayRole, own->GetTypeDef()->name);
-      item->setData(3, Qt::DisplayRole, own->GetNameNonEmpty());
+      item->setData(2, Qt::DisplayRole, own->GetNameNonEmpty());
+      item->setData(3, Qt::DisplayRole, own->GetTypeDef()->name);
     }
     ++rval;
   }
@@ -3316,10 +3321,10 @@ void taiTokenPtrButton::GetImage(TAPtr ths, TypeDef* targ_typ_, TAPtr scope_) {
 const String taiTokenPtrButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Type"; 
-    case 1: return "Name"; 
-    case 2: return "Owner Type"; 
-    case 3: return "Owner Name"; 
+    case 0: return "Name"; 
+    case 1: return "Type"; 
+    case 2: return "Owner Name"; 
+    case 3: return "Owner Type"; 
     } break; 
   default: break; // compiler food
   }
@@ -3327,11 +3332,7 @@ const String taiTokenPtrButton::headerText(int index, int view) const {
 }
 
 const String taiTokenPtrButton::labelNameNonNull() const {
-  TAPtr tk = token(); // cache
-  String nm = tk->GetDisplayName();
-  if (nm.empty())
-    nm = "(" + tk->GetTypeDef()->name + " obj)";
-  return nm;
+  return token()->GetNameNonEmpty();
 }
 
 const String taiTokenPtrButton::viewText(int index) const {
