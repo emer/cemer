@@ -103,7 +103,8 @@ public:
   // IO routines
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
-  int		Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//
@@ -215,11 +216,6 @@ public:
   void 	Copy(const taGroup_impl& cp);
   TA_BASEFUNS(taGroup_impl);
 
-  // ROR: when this is protected, it prevents multiple inheritance from
-  // UnitGroup and LeabraInhib in LeabraUnit_Group
-  // seems to otherwise compile fine without it..
-  //protected:
-  override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 protected:
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
 };

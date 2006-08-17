@@ -127,16 +127,16 @@ int_Data @[5] { };
 };
 
 ProgVar_List @.global_vars = [3] {
-ObjectProgVar @[0] { value 11 0;
+ProgVar @[0] { value 11 0;
 };
-EnumProgVar @[1] { };
-ObjectProgVar @[2] { value 11 0;
+ProgVar @[1] { };
+ProgVar @[2] { value 11 0;
 };
 };
 
 Program_Group @.programs = [6] {
 Program @[0] { 
-ProgVar_List @.global_vars = [1] {
+ProgVar_List @.vars = [1] {
 ProgVar @[0] { };
 };
 
@@ -156,8 +156,8 @@ MethodCallEl @[2] { };
 };
 };
 Program @[1] { 
-ProgVar_List @.global_vars = [2] {
-ObjectProgVar @[0] { value 11 0;
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { value 11 0;
 };
 ProgVar @[1] { };
 };
@@ -190,15 +190,15 @@ UserScriptEl @[5] { };
 };
 };
 Program @[3] { 
-taBase_List @.prog_objs = [1] {
+taBase_List @.objs = [1] {
 LayerWriter_List @[0] = [2] { 
 LayerWriter @[0] { };
 LayerWriter @[1] { };
 };
 };
 
-ProgVar_List @.global_vars = [1] {
-ObjectProgVar @[0] { };
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { };
 };
 
 ProgEl_List @.prog_els = [2] {
@@ -207,7 +207,7 @@ MethodCallEl @[1] { };
 };
 };
 Program @[4] { 
-taBase_List @.prog_objs = [1] {
+taBase_List @.objs = [1] {
 NetMonitor @[0] { 
 NetMonItem_List @.items = [6] {
 NetMonItem @[0] { };
@@ -220,8 +220,8 @@ NetMonItem @[5] { };
 };
 };
 
-ProgVar_List @.global_vars = [1] {
-ObjectProgVar @[0] { value 11 0;
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { value 11 0;
 };
 };
 
@@ -236,8 +236,8 @@ MethodCallEl @[2] { };
 };
 };
 Program @[5] { 
-ProgVar_List @.global_vars = [1] {
-ObjectProgVar @[0] { value 11 0;
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { value 11 0;
 };
 };
 
@@ -652,21 +652,21 @@ el_typ=Program;
 el_def=0;
 global_vars {
 name=;
-el_typ=ObjectProgVar;
+el_typ=ProgVar;
 el_def=0;
-ObjectProgVar @[0] {
+ProgVar @[0] {
 name="net";
 value 11 0;
 value 11 0=.projects[0].networks[0]$5$;
 val_type=BpNetwork;
 };
-EnumProgVar @[1] {
+ProgVar @[1] {
 name="context";
 value 2 0=1;
 enum_type=Network::NetContext;
 init=1;
 };
-ObjectProgVar @[2] {
+ProgVar @[2] {
 name="mon_data";
 value 11 0;
 value 11 0=.projects[0].data[1]$6$;
@@ -676,17 +676,17 @@ val_type=DataTable;
 Program @[0] {
 name="Train";
 flags=PF_NONE;
-prog_objs {
+objs {
 name=;
 el_typ=taOBase;
 el_def=0;
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
 el_typ=ProgVar;
 el_def=0;
@@ -769,21 +769,21 @@ args{ };
 Program @[1] {
 name="TrainEpoch";
 flags=PF_NONE;
-prog_objs {
+objs {
 name=;
 el_typ=taOBase;
 el_def=0;
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
-el_typ=ObjectProgVar;
+el_typ=ProgVar;
 el_def=0;
-ObjectProgVar @[0] {
+ProgVar @[0] {
 name="train_data";
 value 11 0;
 value 11 0=.projects[0].data[0]$10$;
@@ -811,7 +811,7 @@ MethodCallEl @[1] {
 desc="initialize the data pointer";
 result_var=;
 method_spec {
-script_obj=.projects[0].programs[1].global_vars[0]$11$;
+script_obj=.projects[0].programs[1].vars[0]$11$;
 method=DataBlock::ReadOpen;
 };
 args{ };
@@ -898,17 +898,17 @@ user_script="net->epoch++;";
 Program @[2] {
 name="Trial";
 flags=PF_NONE;
-prog_objs {
+objs {
 name=;
 el_typ=taOBase;
 el_def=0;
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
 el_typ=ProgVar;
 el_def=0;
@@ -975,7 +975,7 @@ user_script="for(int j=0;j<10000;j++) { j; }";
 Program @[3] {
 name="data_src_prog";
 flags=NO_STOP;
-prog_objs {
+objs {
 name=;
 el_typ=LayerWriter_List;
 el_def=0;
@@ -1003,16 +1003,16 @@ value_names{ };
 };
 };
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
-el_typ=ObjectProgVar;
+el_typ=ProgVar;
 el_def=0;
-ObjectProgVar @[0] {
+ProgVar @[0] {
 name="lw_list";
 value 11 1;
 value 11 1=NULL;
@@ -1031,7 +1031,7 @@ el_def=0;
 UserScriptEl @[0] {
 desc="temp, to init lw_list because there are no tokens";
 user_script="// note: this is hack until we can set token in lw_list global var
-lw_list = (LayerWriter_List*)prog_objs->FindName(\"lw_list\");
+lw_list = (LayerWriter_List*)objs->FindName(\"lw_list\");
 
 ";
 };
@@ -1039,7 +1039,7 @@ MethodCallEl @[1] {
 desc="apply the data to the layers";
 result_var=;
 method_spec {
-script_obj=.projects[0].programs[3].global_vars[0]$16$;
+script_obj=.projects[0].programs[3].vars[0]$16$;
 method=LayerWriter_List::ApplyData;
 };
 args{ context;};
@@ -1050,7 +1050,7 @@ args{ context;};
 Program @[4] {
 name="data_mon_prog";
 flags=NO_STOP;
-prog_objs {
+objs {
 name=;
 el_typ=NetMonitor;
 el_def=0;
@@ -1113,19 +1113,19 @@ data=$6$;
 rmv_orphan_cols=1;
 };
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
-el_typ=ObjectProgVar;
+el_typ=ProgVar;
 el_def=0;
-ObjectProgVar @[0] {
+ProgVar @[0] {
 name="mon";
 value 11 0;
-value 11 0=.projects[0].programs[4].prog_objs[0]$17$;
+value 11 0=.projects[0].programs[4].objs[0]$17$;
 val_type=NetMonitor;
 };
 };
@@ -1137,7 +1137,7 @@ MethodCallEl @[0] {
 desc="update the monitor items and data schema";
 result_var=;
 method_spec {
-script_obj=.projects[0].programs[4].global_vars[0]$18$;
+script_obj=.projects[0].programs[4].vars[0]$18$;
 method=NetMonitor::UpdateMonitors;
 };
 args{ };
@@ -1183,21 +1183,21 @@ args{ };
 Program @[5] {
 name="TestImageReader";
 flags=PF_NONE;
-prog_objs {
+objs {
 name=;
 el_typ=taOBase;
 el_def=0;
 };
-param_vars {
+args {
 name=;
 el_typ=ProgVar;
 el_def=0;
 };
-global_vars {
+vars {
 name=;
-el_typ=ObjectProgVar;
+el_typ=ProgVar;
 el_def=0;
-ObjectProgVar @[0] {
+ProgVar @[0] {
 name="reader";
 value 11 0;
 value 11 0=.projects[0].test_objs[0]$19$;
@@ -1217,7 +1217,7 @@ MethodCallEl @[0] {
 desc=;
 result_var=;
 method_spec {
-script_obj=.projects[0].programs[5].global_vars[0]$20$;
+script_obj=.projects[0].programs[5].vars[0]$20$;
 method=DataBlock::ReadOpen;
 };
 args{ };

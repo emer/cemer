@@ -189,15 +189,15 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
 int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
   int rval = inherited::Dump_Save_PathR_impl(strm, par, indent); // save first-level
   if(rval == false)
-    rval = gp.Dump_Save_PathR_impl(strm, this, indent);
+    rval = gp.Dump_Save_PathR_impl(strm, par, indent); // note that it must be relative to parent, not this
   else
-    gp.Dump_Save_PathR_impl(strm, this, indent);
+    gp.Dump_Save_PathR_impl(strm, par, indent);
   return rval;
 }
 
 int taGroup_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
   inherited::Dump_SaveR(strm, par, indent);
-  gp.Dump_SaveR(strm, this, indent); // subgroups get saved
+  gp.Dump_SaveR(strm, par, indent); // subgroups get saved -- relative to parent, not this
   return true;
 }
 

@@ -471,7 +471,7 @@ public:
   
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		objs; // #AKA_prog_objs sundry objects that are used in this program
-  ProgVar_List		args; // #AKA_prog_args global variables that are parameters (arguments) for callers
+  ProgVar_List		args; // #AKA_param_vars global variables that are parameters (arguments) for callers
   ProgVar_List		vars; // #AKA_prog_vars global variables accessible outside and inside script
   ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_els; // the prog els for the main program

@@ -230,7 +230,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 //nn    bw->browser->setRoot(root, root->GetTypeDef());
     taiMisc::SetMainWindow(db->browser_win());
 
-#if 1				// toggled for debugging
+#if 0				// toggled for debugging
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
     mw->setMinimumSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
@@ -373,11 +373,14 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
 #else // NOT DMEM_COMPILE
   if(cssMisc::gui) {
+#if 0
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
     cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-//     // todo: only for debugging: remove later!
-//     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-//     cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
+#else
+    // todo: only for debugging: remove later!
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
+    cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
+#endif
     qApp->exec();
   }
   else {

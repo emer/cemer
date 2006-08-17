@@ -1493,7 +1493,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent)
     ++indent; // bump up 
   }
   // note: we bumped indent if it is truly nested...
-  Dump_Save_PathR_impl(strm, par, indent);
+  Dump_Save_PathR_impl(strm, this, indent);
   
   if (dump_my_path) {
     --indent;
@@ -1518,7 +1518,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
       continue;
     }
     taMisc::indent(strm, indent);
-    itm->Dump_Save_Path(strm, this, indent);
+    itm->Dump_Save_Path(strm, par, indent); // must be relative to parent!  not this!
     // can't put this in dump_save_path cuz don't want it during non PathR times..
     if (itm->InheritsFrom(TA_taList_impl)) {
       taList_impl* litm = (taList_impl*)itm;
@@ -1558,7 +1558,7 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
     if(el[i] == NULL) continue;
     TAPtr itm = (TAPtr)el[i];
     if(El_GetOwner_((TAPtr)el[i]) == this) {
-      itm->Dump_Save_impl(strm, this, indent);
+      itm->Dump_Save_impl(strm, par, indent);
     }
     else if(El_GetOwner_(itm) != NULL) {	// a link
       taMisc::indent(strm, indent) << GetTypeDef()->name << " ";
