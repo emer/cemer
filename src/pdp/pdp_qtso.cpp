@@ -411,8 +411,8 @@ void taiProgVar::AssertControls(int value) {
   default: break; // compiler food
   }
   // create a stretchable spacer item that we can delete
-  spc = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum); 
-  lay->addItem(spc);
+//TEMP  spc = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum); 
+//  lay->addItem(spc);
   sc = value;
 }
 
