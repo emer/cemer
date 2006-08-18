@@ -864,12 +864,13 @@ protected:
 
   taiItemChooser(const String& caption, QWidget* par_window_);
 protected slots:
-  void accept(); // override
-  void reject(); // override
-  void 		items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
-  void 		cmbView_currentIndexChanged(int index);
-  void 		filter_textChanged(const QString& text);
-  void 		timFilter_timeout();
+  void 			accept(); // override
+  void 			reject(); // override
+  void 			items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
+  void 			cmbView_currentIndexChanged(int index);
+  void 			filter_textChanged(const QString& text);
+  void 			timFilter_timeout();
+  void			show_timeout(); // for scrolling to item
 private:
   void 		init(const String& captn); // called by constructors
   taiItemChooser(const taiItemChooser&); //no

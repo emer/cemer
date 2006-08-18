@@ -2682,8 +2682,7 @@ bool taiItemChooser::SetCurrentItemByData(void* value) {
     if (value == data) {
       items->setCurrentItem(item);
       m_selItem = item; // cache for showEvent
-//doesn't seem to work here
-//      items->scrollToItem(item);
+      items->scrollToItem(item); //note: this only works when we are visible
       return true;
     }
     ++it;
@@ -2735,7 +2734,12 @@ void taiItemChooser::setView(int value, bool force) {
 
 void taiItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
-  items->scrollToItem(m_selItem);
+  QTimer::singleShot(50, this, SLOT(show_timeout()) );
+}
+
+void taiItemChooser::show_timeout() {
+  if (m_selItem)
+    items->scrollToItem(m_selItem);
 }
 
 void taiItemChooser::timFilter_timeout() {

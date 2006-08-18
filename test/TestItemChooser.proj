@@ -78,6 +78,10 @@ TypeDefault_Group .projects[0].defaults {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
+      ProgVar_List @.vars = [1] {
+	ProgVar @[0] { };
+      };
+
       ProgEl_List @.prog_els = [1] {
 	MethodCallEl @[0] { };
       };
@@ -187,6 +191,12 @@ BpProject .projects[0] {
     name=;
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @[0] {
+     name="Var_0";
+     var_type=T_Object;
+     object_type=taBase;
+     object_val=NULL;
+    };
    };
    init_els {
     name=;
