@@ -15,3 +15,6 @@ if TA_GUI
 libta4@PDP_SUFFIX@_la_LIBADD +=\
 	@abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@.la
 endif
+
+
+

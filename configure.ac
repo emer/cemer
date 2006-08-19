@@ -66,14 +66,23 @@ if test x"$rpm" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
+# --disable-libta
+# note that this substitution occurs by default
+if test x"$libta" = x"true"; then
+   AC_SUBST([WANT_LIBTA],[src/ta_lib])
+fi
+
+# --disable-css-bin
+# note that this substitution occurs by default
+if test x"$css_bin" = x"true"; then
+   AC_SUBST([WANT_CSS_BIN],[src/css_bin])
+fi
+
 # --enable-debug
 if test x"$debug" = x"true"; then
 
   # Link with any debug-configurated libraries on the system
   export CONFIG=debug
-
-  # Create css++ in debug mode
-  AC_SUBST([WANT_CSS_BIN],[src/css_bin])
 
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])

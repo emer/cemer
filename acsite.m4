@@ -38,6 +38,16 @@ AC_ARG_ENABLE([mpi],
 			     [Enable the Message Passing Interface.  @<:@default=disabled@:>@]),
 			     [mpi=true],
 			     [mpi=false])
+AC_ARG_ENABLE([libta],
+	      AC_HELP_STRING([--disable-libta],
+			     [Disable creation of TypeAccess library.  @<:@default=enabled@:>@]),
+			     [libta=false],
+			     [libta=true])
+AC_ARG_ENABLE([css_bin],
+	      AC_HELP_STRING([--disable-css-bin],
+			     [Disable creation of the css (C^c) executeable.  @<:@default=enabled@:>@]),
+			     [css_bin=false],
+			     [css_bin=true])
 AC_ARG_ENABLE([debug],
 	      AC_HELP_STRING([--enable-debug],
 			     [Enable debugging.  @<:@default=disabled@:>@]),
@@ -54,6 +64,8 @@ AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 AM_CONDITIONAL([MPI],[test $mpi = true])
 AM_CONDITIONAL([DEBUG],[test $debug = true])
+AM_CONDITIONAL([LIBTA],[test $libta = true])
+AM_CONDITIONAL([CSS_BIN],[test $css_bin = true])
 ])
 
 
