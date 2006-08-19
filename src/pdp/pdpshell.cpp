@@ -655,7 +655,6 @@ void ProjectBase::Initialize() {
   save_rmv_units = false;
   use_sim_log = true;
 
-//TODO  editor = NULL;
   view_colors.SetBaseType(&TA_RGBA);
   the_colors.SetBaseType(&TA_TAColor);
   mnu_updating = false;
@@ -949,9 +948,7 @@ int ProjectBase::SaveAs(ostream& strm, TAPtr par, int indent) {
 }
 
 int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
-  if (taMisc::gui_active) {
-    taMisc::Busy();
-  }
+  taMisc::Busy();
   ++taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
@@ -979,7 +976,7 @@ int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
 exit:
   --taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
-  if (taMisc::gui_active)  taMisc::DoneBusy();
+  taMisc::DoneBusy();
   return rval;
 }
 
@@ -1078,7 +1075,6 @@ void PDPRoot::Initialize() {
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
   projects.SetName("projects");
   colorspecs.SetBaseType(&TA_ColorScaleSpec);
-  projects.colorspecs = &colorspecs;
 }
 
 void PDPRoot::Destroy() {
@@ -1138,9 +1134,11 @@ TAPtr PDPRoot::Browse(const char* init_path) {
 }
 #endif
 void PDPRoot::Info() {
-  String info = "PDP Info\n";
+  STRING_BUF(info, 2048);
+  info += "PDP Info\n";
   info += "This is the PDP++ software package, version: ";
-  info += version_no + "\n\n";
+  info += version_no;
+  info += "\n\n";
   info += "Mailing List:       http://www.cnbc.cmu.edu/PDP++/pdp-discuss.html\n";
   info += "Bug Reports:        pdp++bugreport@cnbc.cmu.edu\n";
   info += "WWW Page:           http://www.cnbc.cmu.edu/PDP++/PDP++.html\n";
@@ -1148,38 +1146,22 @@ void PDPRoot::Info() {
   info += "                    or ftp://cnbc.cmu.edu/pub/pdp++/\n";
   info += "\n\n";
 
-  info += "Copyright (C) 1995-2004 Randall C. O'Reilly, Chadley K. Dawson,\n\
-                    James L. McClelland, and Carnegie Mellon University\n\
+  info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
+Carnegie Mellon University, Princeton University.\n\
  \n\
-Permission to use, copy, and modify this software and its documentation\n\
-for any purpose other than distribution-for-profit is hereby granted\n\
-without fee, provided that the above copyright notice and this permission\n\
-notice appear in all copies of the software and related documentation\n\
+TA/PDP++ is free software; you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation; either version 2 of the License, or\n\
+(at your option) any later version.\n\
  \n\
-Permission to distribute the software or modified or extended versions\n\
-thereof on a not-for-profit basis is explicitly granted, under the\n\
-above conditions. HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE\n\
-OR MODIFIED OR EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED\n\
-EXCEPT BY PRIOR ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS\n\
+TA/PDP++ is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+GNU General Public License for more details.\n\
  \n\
-Note that the taString class, which is derived from the GNU String class\n\
-is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
-is covered by the GNU General Public License, see ta_string.h\n\
-The iv_graphic library and some iv_misc classes were derived from the\n\
-InterViews morpher example and other InterViews code, which is\n\
-Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University\n\
-Copyright (C) 1991 Silicon Graphics, Inc\n\
- \n\
-THE SOFTWARE IS PROVIDED 'AS-IS' AND WITHOUT WARRANTY OF ANY KIND\n\
-EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY\n\
-WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE\n\
-\n\
-IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY\n\
-SPECIAL INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,\n\
-OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,\n\
-WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY\n\
-OF LIABILITY ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE\n\
-OF THIS SOFTWARE";
+Note that the taString class was derived from the GNU String class\n\
+Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
+is covered by the GNU General Public License, see ta_string.h\n";
 
   taMisc::Choice(info, "Ok");
 }

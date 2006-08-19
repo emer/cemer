@@ -571,6 +571,13 @@ void iPdpDataBrowser::Constr_Menu_impl() {
 }
 
 ProjectBase* iPdpDataBrowser::curProject() {
+  DataBrowser* db = browser();
+  if (!db) return NULL;
+  if (!db->root) return NULL; //shouldn't happen
+  if (!db->root->GetTypeDef()->InheritsFrom(&TA_ProjectBase)) return NULL; // we aren't a project
+  
+  return (ProjectBase*)db->root.ptr();
+/* obs
   ProjectBase* rval = NULL;
   ISelectable* ci = curItem();
   if (ci) {
@@ -585,18 +592,29 @@ ProjectBase* iPdpDataBrowser::curProject() {
     if (!rval && pdpMisc::root)
       rval = pdpMisc::root->projects.SafeEl(0);
   }
-  return rval;
+  return rval; */
+}
+
+void iPdpDataBrowser::NewBrowser(ProjectBase* proj) {
+  if (!proj) return;
+  PdpDataBrowser* db = PdpDataBrowser::New(proj,NULL, false, true);
+  db->InitLinks(); // no one else to do it!
+  db->ViewWindow();
 }
 
 
 void iPdpDataBrowser::fileNew() {
   if (!pdpMisc::root) return;
-  pdpMisc::root->projects.New(); // let user choose type
+  ProjectBase* proj = (ProjectBase*)pdpMisc::root->projects.New(); // let user choose type
+  NewBrowser(proj);
 }
 
 void iPdpDataBrowser::fileOpen() {
   if (!pdpMisc::root) return;
-  pdpMisc::root->projects.Load_File(&TA_ProjectBase);
+  void* el = NULL;
+  pdpMisc::root->projects.Load_File(&TA_ProjectBase, &el);
+  ProjectBase* proj = (ProjectBase*)el;
+  NewBrowser(proj);
 }
 
 void iPdpDataBrowser::fileSave() {
@@ -628,10 +646,13 @@ void iPdpDataBrowser::fileClose() {
 //   PdpDataBrowser	//
 //////////////////////////
 
-PdpDataBrowser::PdpDataBrowser(taBase* root_, MemberDef* md_, bool is_root_) {
-  m_is_root = is_root_;
-  root = root_;
-  md = md_;
+PdpDataBrowser* PdpDataBrowser::New(taBase* root, MemberDef* md, bool is_root
+  ,bool del_on_close) 
+{
+  PdpDataBrowser* rval = new PdpDataBrowser();
+  rval->Constr(root, md, is_root);
+  rval->del_root_on_close = del_on_close;
+  return rval;
 }
 
 void PdpDataBrowser::Constr_Window_impl() {

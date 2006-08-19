@@ -1,0 +1,67 @@
+Main Menu Redesign
+ 
+Goals
+
+* main menus and toolbars should be dynamic and primarily directive driven
+
+
+Issues
+
+* ordering: sometimes you want things inserted in certain locations
+  we need to be able to specify the following:
+    bottom: the item should always stay at the bottom (ex File/Quit)
+    top: the item should always stay at the top
+    "before X": item/group should go before X item/group
+    "after X": item/group should go after X item/group
+  
+* grouping: sometimes you want things in groups, which will be set off 
+  from other items with separators
+  
+* visible/invisible
+* enabled/disabled
+* check menus: some items are for checkmarks
+* radio menus: group with mutually exclusive check items
+* shortcuts (underline character)
+* accelerators (control keys)
+* menu icons
+* toolbar icons
+* menus and toolbars are distinct: need to have parallel set of directives
+* what about modal or dynamic menus??? items that will appear or not
+  depending on what user is doing, or what exists, etc.
+* programmatic (script) access -- should be able to specify the action
+  in gui-centric way, not requiring detailed knowledge of the object
+* ellipses (...) for things invoking dialogs
+Simplifying Assumptions or Restrictions
+
+* groups should be intrinsic, and so apply to both menus and toolbars;
+  this makes sense, particularly if grouping gets used for things like
+  radio items, and for controlling insertion points
+  
+* some subitems are dynamic groups:
+  ex. Windows list, Export To (different formats) etc.
+  need a way to provide the entry for the dynamics, and then a way
+  for the dynamic entries to be added/removed
+  
+
+Notes
+
+* you only need to specify the shortcut for menu bar items once;
+  maybe it should try to autocreate shortcuts where none specified
+
+
+Comment Directives
+
+The following directives are only for main menus and tool bars.
+Note that unlike edit menu directives, all items on a main menu or toolbar
+must be explicitly specified (there is no implicit placement.)
+
+
+MMENU -- specified a main menu entry, use | to separate hierarchy
+  ex. MMENU|File|New_Project
+      MMENU|Tools|File_type|None
+      
+
+  
+Location Directives
+
+These directives provide hints on *where* to insert the item.

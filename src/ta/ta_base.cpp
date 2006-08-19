@@ -698,7 +698,7 @@ const String taBase::GetNameNonEmpty() const {
   return rval;
 }
 
-int taBase::Load_File(TypeDef* td) {
+int taBase::Load_File(TypeDef* td, void** el_) {
   int rval = false;
   taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
@@ -712,10 +712,12 @@ int taBase::Load_File(TypeDef* td) {
   }
   
   taRefN::unRefDone(flr);
+  if (el_)
+    *el_ = (void*)el;
   return rval;
 }
 
-int taBase::LoadAs_File(const String& fname, TypeDef* td) {
+int taBase::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
   int rval = false;
   taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
@@ -730,6 +732,8 @@ int taBase::LoadAs_File(const String& fname, TypeDef* td) {
     el->SetFileName(flr->fname);
   }
   taRefN::unRefDone(flr);
+  if (el_)
+    *el_ = (void*)el;
   return rval;
 }
 

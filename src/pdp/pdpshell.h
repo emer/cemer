@@ -233,16 +233,13 @@ public:
   taBase_List		test_objs;	// just for testing, for any kind of objs
 #endif
 #endif
-  bool			save_rmv_units; // remove units from network before saving (makes project file much smaller!)
+  bool			save_rmv_units; // don't include units in network when saving (makes project file much smaller!)
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
   String		desc1;		// description of the project
   String		desc2;
   String		desc3;
   String		desc4;
-
-  // parameters for controlling the view
-//TODO  ProjEditor*		editor;		// #IGNORE controls display of project information
 
   TAColor_List		the_colors; 	// #IGNORE actual colors
   RGBA_List		view_colors; 	// colors to use in the project view
@@ -291,8 +288,6 @@ public:
 // note: _Group name is for compatiblity with v3.2 files
 class PDP_API Project_Group : public taGroup<ProjectBase> {
 public:
-  ColorScaleSpec_Group*	colorspecs;	// #HIDDEN #NO_SAVE -- aliased from projects
-
   int		Load(istream& strm, TAPtr par=NULL); // call reconnect on nets afterwards
 
   void	Initialize() 		{SetBaseType(&TA_ProjectBase);}
@@ -306,12 +301,9 @@ class PDP_API PDPRoot : public taRootBase {
 INHERITED(taRootBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
-  Project_Group		projects; 	// The projects
-  ColorScaleSpec_Group 	colorspecs;	// Color Specs -- aliased in projects (for browser)
+  Project_Group		projects; 	// #NO_SHOW #NO_SAVE The projects
+  ColorScaleSpec_Group 	colorspecs;	// Color Specs
 
-//nn  bool	ThisMenuFilter(MethodDef* md); // don't include saving and loading..
-//obs  void	SetWinName();
-//obs?  void	GetWindow();		// make an app-window
   override void  Settings();		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
   override void	SaveConfig();		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!
   override void	LoadConfig();		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
@@ -323,9 +315,6 @@ public:
   override void	Quit();
   // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
   override void	SaveAll(); // saves all the projects
-  // following use project to store position info!
-//obs  void	SetWinPos(float left=-1.0f, float bottom=-1.0f, float width=-1.0f, float height=-1.0f);
-//obs  void	GetWinPos();
 
   void	UpdateAfterEdit(); // keep projects alias fields in sync
   void 	Initialize();
@@ -333,9 +322,6 @@ public:
   void	CutLinks();
   void 	Destroy();
   TA_BASEFUNS(PDPRoot);
-
-/*obs protected:
-  override void WindowClosing(bool& cancel); */
 };
 
 #ifdef DEBUG

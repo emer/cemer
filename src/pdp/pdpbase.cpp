@@ -224,10 +224,15 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiMisc::SetMainWindow(root->window); */
     //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
     // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
-    PdpDataBrowser* db = new PdpDataBrowser(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);
+/*obs    PdpDataBrowser* db = PdpDataBrowser::New(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);*/
+    PdpDataBrowser* db = PdpDataBrowser::New(root, NULL, true);
     db->InitLinks(); // no one else to do it!
     db->ViewWindow();
-//nn    bw->browser->setRoot(root, root->GetTypeDef());
+    iDataBrowser* bw = db->browser_win();
+    // the main app window only needs to be small...
+    if (bw) {
+      bw->resize(taiM->dialogSize(taiMisc::hdlg_s));
+    }
     taiMisc::SetMainWindow(db->browser_win());
 
 #if 0				// toggled for debugging

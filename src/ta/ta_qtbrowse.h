@@ -336,26 +336,33 @@ protected:
 
 class TA_API DataBrowser : public DataViewer {
   // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
+INHERITED(DataViewer)
 friend class iDataBrowser;
 public:
-  //NOTE: "theoretically", browsing supports non-taBase classes, but this version only supports taBase
-  static DataBrowser*	New(void* root_, MemberDef* md_, TypeDef* typ_, bool is_root = false);
+  //NOTE: this version only supports taBase browsing
+  static DataBrowser*	New(TAPtr root, MemberDef* md = NULL, bool is_root = false);
+    // md is for browsing a member
 
-  taBase*		root;
+  taSmartRef		root;
   MemberDef* 		md;
+  bool			del_root_on_close; // #READ_ONLY delete the root object when closing window (warn user)
 
   iDataBrowser*		browser_win() {return (iDataBrowser*)m_window;}
 
-//nn  void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
-
+  virtual void		Constr(TAPtr root, MemberDef* md = NULL, bool is_root = false);
+    // call this after making new instance, to initialize everything
+  void	UpdateAfterEdit(); // if root deletes, our window must die
+  void	InitLinks();
+  void	CutLinks();
   TA_BASEFUNS(DataBrowser)
 protected:
   override void		Constr_Window_impl(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Clear_impl(); // #IGNORE
+  override void 	WindowClosing(bool& cancel);
 private:
   void			Initialize();
-  void			Destroy() {}
+  void			Destroy() {CutLinks();}
 };
 
 

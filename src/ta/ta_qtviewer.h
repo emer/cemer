@@ -799,7 +799,6 @@ public:
   taiMenuBar*		menu;		// menu bar -- note: partially managed by the window
   String		win_name;	// #HIDDEN #NO_SAVE name field for the window
   String		file_name;	// #HIDDEN file name used in loading/saving
-//  DataViewer*		win_owner;	// #READ_ONLY #NO_SAVE owner that has a window
   WinGeometry		win_pos;  	// #HIDDEN position/size of the window on the screen
 
   taFiler*		ta_file;	// #NO_SAVE #HIDDEN file manager for this -- always use refcount semantics

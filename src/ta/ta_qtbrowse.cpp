@@ -946,7 +946,9 @@ taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, Member
 void iDataBrowser::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taiDataLink* dl = node->link();
-  DataBrowser* brows = DataBrowser::New(dl->data(), node->md(), dl->GetDataTypeDef());
+  TypeDef* td = dl->GetDataTypeDef();
+  if (!td->InheritsFrom(&TA_taBase)) return;
+  DataBrowser* brows = DataBrowser::New((taBase*)dl->data(), node->md());
   if (!brows) return;
   brows->ViewWindow();
   // move selection up to parent of cloned item, to reduce issues of changed data, confusion, etc.
@@ -960,22 +962,42 @@ void iDataBrowser::mnuNewBrowser(taiAction* mel) {
 // 	DataBrowser	 	//
 //////////////////////////////////
 
-DataBrowser* DataBrowser::New(void* root_, MemberDef* md_, TypeDef* typ_, bool is_root_) {
-  if (!typ_->InheritsFrom(&TA_taBase)) {
-    taMisc::Error("DataBrowser::New", "Browser only supports taBase objects at this time.");
+DataBrowser* DataBrowser::New(TAPtr root, MemberDef* md, bool is_root) {
+  if (!root) //sanity, but shouldn't happen
     return NULL;
-  }
   DataBrowser* rval = new DataBrowser();
-  rval->m_is_root = is_root_;
-  rval->root = (taBase*)root_;
-  rval->md = md_;
-  //TODO: need to register in the project
+  rval->Constr(root, md, is_root);
   return rval;
 }
 
 
 void DataBrowser::Initialize() {
+  md = NULL;
+  del_root_on_close = false; 
   link_type = &TA_taiDataLink;
+}
+
+void DataBrowser::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(root, this);
+}
+
+void DataBrowser::CutLinks() {
+  inherited::CutLinks();
+}
+
+void DataBrowser::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  // if root has vanished, window must die
+  if (!root && m_window) {
+    CloseWindow();
+  }
+}
+
+void DataBrowser::Constr(TAPtr root_, MemberDef* md_, bool is_root_) {
+  m_is_root = is_root_;
+  root = root_;
+  md = md_;
 }
 
 void DataBrowser::Constr_Window_impl() {
@@ -998,4 +1020,22 @@ void DataBrowser::Render_impl() {
   browser_win()->TreeNodeDestroying(item);
 } */
 
-
+void DataBrowser::WindowClosing(bool& cancel) {
+  if (del_root_on_close && root) {
+    int chs = taMisc::Choice("Closing this window will also close the object being viewed?", "Close", "&Cancel");
+    switch (chs) {
+    case 0:
+      break; // proceed to inherited
+    case 1:
+      cancel = true;
+      return;
+    }
+  }
+  inherited::WindowClosing(cancel);
+  // now, if *still* closing, and del, then do the del!
+  if (cancel || !del_root_on_close) return;
+  
+  if (root)
+    root->Close();
+  
+}

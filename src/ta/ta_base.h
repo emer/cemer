@@ -509,9 +509,10 @@ public:
     // #MENU #MENU_ON_Object #LABEL_Save saves the object to a file
   virtual int		SaveAs_File(const String& fname = ""); 
     // #MENU #ARGC_0 #LABEL_Save_As Saves object data to a new file
-  virtual int	 	Load_File(TypeDef* td = NULL);
+  virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
   // load object data from a file -- gets the filename
-  virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL);
+  virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL
+    , void** el = NULL);
   //  Load object data from a file
 
   

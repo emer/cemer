@@ -132,7 +132,7 @@ private:
 };
 
 
-class PDP_API iPdpDataBrowser: public iDataBrowser { // viewer window used for class browsing of taBase objects
+class PDP_API iPdpDataBrowser: public iDataBrowser { // viewer window for the pdp application
 friend class PdpDataBrowser;
     Q_OBJECT
 INHERITED(iDataBrowser)
@@ -154,6 +154,7 @@ protected:
   iPdpDataBrowser(taBase* root_, MemberDef* md_, TypeDef* typ_, PdpDataBrowser* browser_,
     QWidget* parent = 0);
   void 			Constr_Menu_impl(); // override
+  void		NewBrowser(ProjectBase* proj); // temp, until rework finished, makes browser
 };
 
 
@@ -162,11 +163,12 @@ class TA_API PdpDataBrowser : public DataBrowser {
 INHERITED(DataBrowser)
 friend class iPdpDataBrowser;
 public:
+  static PdpDataBrowser*		New(TAPtr root, MemberDef* md = NULL, 
+    bool is_root = false, bool del_on_close = false); 
+    // use this one
 
   iPdpDataBrowser*		browser_win() {return (iPdpDataBrowser*)m_window;}
   
-  PdpDataBrowser(taBase* root_, MemberDef* md_, bool is_root = false); 
-    // use this one
   TA_BASEFUNS(PdpDataBrowser)
 protected:
   override void		Constr_Window_impl(); // #IGNORE
