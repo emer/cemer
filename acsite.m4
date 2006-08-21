@@ -102,6 +102,30 @@ CXXFLAGS=${save_user_CXXFLAGS}
 SIM_AC_COMPILER_OPTIMIZATION
 ])
 
+dnl 					             PDP_PROG_PDP
+dnl *************************************************************
+dnl This macro checks for the existence of the pdp and css
+dnl executeables in the chosen installation path. E.g., we will
+dnl refuse to overwrite the executeables, instead preferring that
+dnl the user renames them using configure name mangling options.
+dnl ************************************************************
+AC_DEFUN([PDP_PROG_PDP],[
+# Did the user specify an installation path?
+check_path=$ac_default_prefix/bin
+test x"$prefix" != xNONE && check_path=$prefix/bin
+test x"$exec_prefix" != xNONE && check_path=$exec_prefix/bin
+
+AC_CHECK_PROG([pdpexists],[pdp++],[true],[false],[${check_path}])
+if test x"${pdpexists}" = x"true"; then
+   SIM_AC_CONFIGURATION_WARNING([pdp++ is already installed in ${check_path}. Consider renaming with --program-suffix=SUFFIX])
+fi
+
+AC_CHECK_PROG([cssexists],[css++],[true],[false],[${check_path}])
+if test x"${cssexists}" = x"true"; then
+   SIM_AC_CONFIGURATION_WARNING([css++ is already installed in ${check_path}. Consider renaming with --program-suffix=SUFFIX])
+fi
+])
+
 
 dnl 					     PDP_DETERMINE_OSTYPE
 dnl *************************************************************
@@ -168,7 +192,6 @@ AC_DEFUN([PDP_DETERMINE_SUFFIX],[
 AC_MSG_CHECKING([whether we are infixing bin and lib names])
 
 # Version of pdp++
-#PDP_SUFFIX=4
 
 if test "$gui" = "false" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
@@ -4286,3 +4309,30 @@ AC_DEFUN([VL_LIB_READLINE], [
     SIM_AC_CONFIGURATION_SETTING([Readline],[$vl_cv_lib_readline])
   fi
 ])dnl
+
+dnl @synopsis AX_SPLIT_VERSION
+dnl
+dnl Splits a version number in the format MAJOR.MINOR.POINT into it's
+dnl separeate components.
+dnl
+dnl Sets the variables.
+dnl
+dnl @category Automake
+dnl @author Tom Howard <tomhoward@users.sf.net>
+dnl @version 2005-01-14
+dnl @license AllPermissive
+
+AC_DEFUN([AX_SPLIT_VERSION],[
+    AX_MAJOR_VERSION=`echo "$VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+    AX_MINOR_VERSION=`echo "$VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
+    AC_SUBST([AX_MAJOR_VERSION])
+    AC_SUBST([AX_MINOR_VERSION])
+
+    AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+    AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
+    AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
+    AC_SUBST([AX_LIB_MAJOR_VERSION])
+    AC_SUBST([AX_LIB_MINOR_VERSION])
+    AC_SUBST([AX_LIB_POINT_VERSION])
+])
+

@@ -15,7 +15,7 @@ css@PDP_SUFFIX@___SOURCES = main.cpp
 
 if LIBTA
 css@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/ta_lib/libta4@PDP_SUFFIX@.la
+	@abs_top_builddir@/src/ta_lib/libta@PDP_SUFFIX@.la
 else
 css@PDP_SUFFIX@___LDADD =\
 	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@.la \

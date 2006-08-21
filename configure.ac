@@ -4,7 +4,32 @@
 #*************************************************************
 #
 
-AC_INIT([PDP],[4.0.0],[pdp-discuss@psych-srv3.Colorado.EDU],[PDP++])
+# Notes on library and package versioning:
+#
+# Package:
+# * The package consists of a major and a minor version, set
+#   arbitrarily in AC_INIT. It is broken up into two components,
+#   which are AX_MAJOR_VERSION and AX_MINOR_VERSION for use elsewhere.
+#   Set the package version here. autoconf will append it to the package name
+AC_INIT([PDP],[3.5],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++])
+
+# Library:
+# * The libta and libpdp libraries are versioned according to Libtool's
+#   recommendations. See [1] for full details. Briefly, it is broken into 
+#   three components, which are current.revision.age, and this information 
+#   should only be updated immediately before a public release.
+#   * Increment current, set revision to 0 if interfaces have been added, 
+#     removed, or changed
+#   * Increment revision if the library source code has changed at all
+#   * Increment age if interfaces have been added
+#   * Set age to 0 if interfaces have been removed
+#
+# [1] http://www.gnu.org/software/libtool/manual.html#Versioning
+# Set library version here. Libtool will append it to library names.
+LIB_VERSION="0.0.0"
+
+# Split up our package/library version number into components
+AX_SPLIT_VERSION 
 
 AC_PREREQ([2.59]) # Autoconf 2.59 required
 
@@ -24,6 +49,8 @@ This file is part of TA/PDP++
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 ])
+
+
 
 AC_DISABLE_STATIC                                      # Disable shared libraries
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
@@ -48,6 +75,15 @@ AC_PROG_YACC
 AC_PROG_LEX
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
+
+
+# Check to see if a conflicting version of pdp++ or css++ is installed
+if test x"$prefix" = x"NONE"; then
+  prefix=/usr/local
+fi
+if test x"$debug" = x"false"; then
+  PDP_PROG_PDP
+fi
 
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
@@ -80,6 +116,8 @@ fi
 
 # --enable-debug
 if test x"$debug" = x"true"; then
+
+  PDP_DETERMINE_SUFFIX                                # Infixing
 
   # Link with any debug-configurated libraries on the system
   export CONFIG=debug
@@ -189,6 +227,9 @@ if test x"$debug" = x"true"; then
 #  SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
 fi
 
+
+SIM_AC_CONFIGURATION_SETTING([Installation prefix],[$prefix])
+
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
@@ -196,7 +237,6 @@ AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
 
-PDP_DETERMINE_SUFFIX                                # Infixing
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile
 		src/taiqtso/Makefile
