@@ -386,6 +386,11 @@ void ProgEl::Initialize() {
   off = false;
 }
 
+void ProgEl::Copy_(const ProgEl& cp) {
+  desc = cp.desc;
+  off = cp.off;
+}
+
 void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   inherited::ChildUpdateAfterEdit(child, handled);
   Program* prog = GET_MY_OWNER(Program);
@@ -1449,4 +1454,100 @@ void Program_List::Initialize() {
   SetBaseType(&TA_Program);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//  	misc extra ProgEl's: should be in pdp proper and not ta/css, which is where all above belongs
+
+//////////////////////////
+//  Network Counters	//
+//////////////////////////
+
+void NetCounterInitEl::Initialize() {
+  network_var = NULL;
+  local_ctr_var = NULL;
+}
+
+void NetCounterInitEl::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetLocalCtrVar();
+  if(counter.empty() && local_ctr_var) {
+    counter = local_ctr_var->name;
+  }
+}
+
+String NetCounterInitEl::GetDisplayName() const {
+  return "Net Counter Init: " + counter;
+}
+
+void NetCounterInitEl::GetLocalCtrVar() {
+  if(counter.empty()) return;
+  if(local_ctr_var) return;
+  Program* my_prog = GET_MY_OWNER(Program);
+  if(!my_prog) return;
+  if(!(local_ctr_var = my_prog->vars.FindName(counter))) {
+    local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    local_ctr_var->name = counter;
+  }
+  local_ctr_var->var_type = ProgVar::T_Int;
+}
+
+const String NetCounterInitEl::GenCssBody_impl(int indent_level) {
+  if(network_var == NULL) {
+    taMisc::Warning("NetCounterInitEl: network_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterInitEl: Error, network_var = NULL!\n";
+  }
+  if(local_ctr_var == NULL) {
+    taMisc::Warning("NetCounterInitEl: local_ctr_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterInitEl: Error, local_ctr_var = NULL!\n";
+  }
+  String rval = cssMisc::Indent(indent_level) + counter + " = 0;\n";
+  rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";
+  return rval;
+}
+
+//////////////////////////////////////
+// incr
+
+void NetCounterIncrEl::Initialize() {
+  network_var = NULL;
+  local_ctr_var = NULL;
+}
+
+void NetCounterIncrEl::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetLocalCtrVar();
+  if(counter.empty() && local_ctr_var) {
+    counter = local_ctr_var->name;
+  }
+}
+
+String NetCounterIncrEl::GetDisplayName() const {
+  return "Net Counter Incr: " + counter;
+}
+
+void NetCounterIncrEl::GetLocalCtrVar() {
+  if(counter.empty()) return;
+  if(local_ctr_var) return;
+  Program* my_prog = GET_MY_OWNER(Program);
+  if(!my_prog) return;
+  if(!(local_ctr_var = my_prog->vars.FindName(counter))) {
+    local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    local_ctr_var->name = counter;
+  }
+  local_ctr_var->var_type = ProgVar::T_Int;
+}
+
+const String NetCounterIncrEl::GenCssBody_impl(int indent_level) {
+  if(network_var == NULL) {
+    taMisc::Warning("NetCounterIncrEl: network_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterIncrEl: Error, network_var = NULL!\n";
+  }
+  if(local_ctr_var == NULL) {
+    taMisc::Warning("NetCounterIncrEl: local_ctr_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterIncrEl: Error, local_ctr_var = NULL!\n";
+  }
+  String rval = cssMisc::Indent(indent_level) + counter + "++;\n";
+  rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";
+  return rval;
+}
 

@@ -598,14 +598,12 @@ INHERITED(Network)
 public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
-  virtual void		BpSetCurLrate();
-  virtual void		BpCompute_Error();
-  virtual void		BpCompute_dEdA_dEdNet();
-  virtual void 		BpCompute_Act();
+  virtual void		SetCurLrate(); // set current learning rate, based on network epoch counter
+  override void 	Compute_Act(); // compute activations, based on external input data that has already been applied
+  virtual void		Compute_dEdA_dEdNet(); // compute derivatives of error with respect to activations & net inputs (backpropagate)
+  virtual void		Compute_Error(); // compute local error values, for display purposes only (only call when testing, not training)
   
-  virtual void		BpTrial_Loop(); // one loop of BpTrial
-  
-  override void		Compute_Act() { BpCompute_Act(); }
+  virtual void		Trial_Run(); // run one trial of Bp: calls SetCurLrate, Compute_Act and Compute_dEdA_dEdNet.  If you want to save some speed just for testing, you can just call Compute_Act and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   
   void	Initialize();
   void 	Destroy()		{}

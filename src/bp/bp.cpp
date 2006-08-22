@@ -541,7 +541,19 @@ void BpNetwork::Initialize() {
   bp_to_inputs = false;
 }
 
-void BpNetwork::BpCompute_Act() {
+void BpNetwork::SetCurLrate() {
+  Layer* layer;
+  taLeafItr l_itr;
+  FOR_ITR_EL(Layer, layer, layers., l_itr) {
+    if (layer->lesion)	continue;
+    BpUnit* u;
+    taLeafItr u_itr;
+    FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
+      u->SetCurLrate(epoch);
+  }
+}
+
+void BpNetwork::Compute_Act() {
   // compute activations; replaces generic
   Layer* lay;
   taLeafItr l_itr;
@@ -557,7 +569,7 @@ void BpNetwork::BpCompute_Act() {
   }
 }
 
-void BpNetwork::BpCompute_dEdA_dEdNet() {
+void BpNetwork::Compute_dEdA_dEdNet() {
   // send the error back
   Layer* lay;
   int i;
@@ -586,7 +598,7 @@ void BpNetwork::BpCompute_dEdA_dEdNet() {
   }
 }
 
-void BpNetwork::BpCompute_Error() {
+void BpNetwork::Compute_Error() {
   // compute errors
   Layer* lay;
   taLeafItr l_itr;
@@ -603,27 +615,12 @@ void BpNetwork::BpCompute_Error() {
   }
 }
 
-void BpNetwork::BpSetCurLrate() {
-  Layer* layer;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, layer, layers., l_itr) {
-    if (layer->lesion)	continue;
-    BpUnit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
-      u->SetCurLrate(epoch);
-  }
-}
-
-void BpNetwork::BpTrial_Loop() {
+void BpNetwork::Trial_Run() {
   DataUpdate(true);
-  BpSetCurLrate();
-
-//NOTE: from 3.x, needed to pull this to outer
-//  InitExterns();
+  SetCurLrate();
 
   Compute_Act();
-  BpCompute_dEdA_dEdNet();
+  Compute_dEdA_dEdNet();
 
 /*NOTE: from 3.x, we put this in the program
   // compute the weight err derivatives (only if not testing...)

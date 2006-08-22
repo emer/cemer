@@ -6085,6 +6085,7 @@ void LayerRWBase::Destroy() {
 
 void LayerRWBase::Copy_(const LayerRWBase& cp) {
   data_block = cp.data_block;
+  chan_name = cp.chan_name;
   layer = cp.layer;
   offset = cp.offset;
 }

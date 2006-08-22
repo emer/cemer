@@ -155,7 +155,7 @@ class PDP_API ProgEl: public taOBase {
 INHERITED(taOBase)
 public:
   String		desc; // optional brief description of element's function; included as comment in script
-  bool			off;	// #DEF_false turn off this program element
+  bool			off;	// #DEF_false turn off this program element: do not include in script
 
   virtual ProgEl*   	parent() {return GET_MY_OWNER(ProgEl);}
   Program*		program() {return GET_MY_OWNER(Program);} 
@@ -166,13 +166,16 @@ public:
   override String 	GetColText(int col, int itm_idx);
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
-  TA_ABSTRACT_BASEFUNS(ProgEl);
+
+  void	Copy_(const ProgEl& cp);
+  COPY_FUNS(ProgEl, taOBase);
+  TA_BASEFUNS(ProgEl);
 
 protected:
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String	GenCssBody_impl(int indent_level) = 0; // #IGNORE generate the Css body code for this object
+  virtual const String	GenCssBody_impl(int indent_level) {} // #IGNORE generate the Css body code for this object
   virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
 private:
@@ -379,7 +382,7 @@ class PDP_API MethodSpec: public taOBase {
   // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCallEl; has custom taiData
 INHERITED(taOBase)
 public:
-  ProgVar*	script_obj; // #SCOPE_ProgElProgram the previously defined script object that has the method
+  ProgVar*		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
   TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   
@@ -604,6 +607,59 @@ private:
   void	Destroy()	{}
 };
 
+//////////////////////////////////////////////////////////////////////////
+//  	misc extra ProgEl's: should be in pdp proper and not ta/css, which is where all above belongs
 
+// todo: also make one for iterating over a datatable?
+
+class PDP_API NetCounterInitEl: public ProgEl { 
+  // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
+INHERITED(ProgEl)
+public:
+  ProgVar*	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVar* 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
+  
+  override String	GetDisplayName() const;
+
+  void	UpdateAfterEdit();
+  void	Copy_(const NetCounterInitEl& cp);
+  COPY_FUNS(NetCounterInitEl, ProgEl);
+  TA_BASEFUNS(NetCounterInitEl);
+
+protected:
+  virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
+
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+class PDP_API NetCounterIncrEl: public ProgEl { 
+  // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
+INHERITED(ProgEl)
+public:
+  ProgVar*	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVar* 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
+  
+  override String	GetDisplayName() const;
+
+  void	UpdateAfterEdit();
+  void	Copy_(const NetCounterIncrEl& cp);
+  COPY_FUNS(NetCounterIncrEl, ProgEl);
+  TA_BASEFUNS(NetCounterIncrEl);
+
+protected:
+  virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
+
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
 
 #endif
