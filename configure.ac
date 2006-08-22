@@ -28,9 +28,6 @@ AC_INIT([PDP],[3.5],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++])
 # Set library version here. Libtool will append it to library names.
 LIB_VERSION="0.0.0"
 
-# Split up our package/library version number into components
-AX_SPLIT_VERSION 
-
 AC_PREREQ([2.59]) # Autoconf 2.59 required
 
 AC_COPYRIGHT([
@@ -52,11 +49,11 @@ This file is part of TA/PDP++
 
 
 
-AC_DISABLE_STATIC                                      # Disable shared libraries
-AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /misc
+AC_DISABLE_STATIC                                      # Disable static libraries
+AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /cfg
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
-# If using OSX, use DarwinPorts to get most recent automake verison
+# NOTE: If using OSX, use DarwinPorts to get most recent automake verison
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.5])
 PDP_CANONICAL_HOST                                     # Do a few host checks, mostly for MSVC stuff
 PDP_PROG_CXX                                           # Modify compiler optimization
@@ -75,7 +72,6 @@ AC_PROG_YACC
 AC_PROG_LEX
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
-
 
 # Check to see if a conflicting version of pdp++ or css++ is installed
 if test x"$prefix" = x"NONE"; then
@@ -230,6 +226,21 @@ fi
 
 SIM_AC_CONFIGURATION_SETTING([Installation prefix],[$prefix])
 
+# Adds package information verison to libs
+AX_MAJOR_VERSION=`echo "$VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+AX_MINOR_VERSION=`echo "$VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
+PDP_VERSION=-$AX_MAJOR_VERSION.$AX_MINOR_VERSION
+AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
+AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
+
+AC_SUBST([AX_MAJOR_VERSION])
+AC_SUBST([AX_MINOR_VERSION])
+AC_SUBST([AX_LIB_MAJOR_VERSION])
+AC_SUBST([AX_LIB_MINOR_VERSION])
+AC_SUBST([AX_LIB_POINT_VERSION])
+AC_SUBST([PDP_SUFFIX])
+AC_SUBST([PDP_VERSION])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])

@@ -29,11 +29,11 @@ include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
 	libbp_TypeAccess@PDP_SUFFIX@.la \
-	libbp@PDP_SUFFIX@.la
+	libbp@PDP_SUFFIX@@PDP_VERSION@.la
 
-libbp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libbp@PDP_SUFFIX@_la_CPPFLAGS =\
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@srcdir@/.. \
 	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
@@ -43,17 +43,17 @@ libbp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
 
-libbp@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libbp@PDP_SUFFIX@_la_LIBADD = libbp_TypeAccess@PDP_SUFFIX@.la
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD = libbp_TypeAccess@PDP_SUFFIX@.la
 
-libbp@PDP_SUFFIX@_la_DEPENDENCIES = libbp_TypeAccess@PDP_SUFFIX@.la
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_DEPENDENCIES = libbp_TypeAccess@PDP_SUFFIX@.la
 
 libbp_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	bp_TA.cpp \
 	bp_TA_type.h \
 	bp_TA_inst.h
 
-libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libbp@PDP_SUFFIX@_la_CPPFLAGS)
+libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libbp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
 libbp_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0

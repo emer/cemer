@@ -43,6 +43,8 @@ Q_DECLARE_INTERFACE(HelloPlugin, "pdp.HelloPlugin/1.0")
 
 class HW_API HelloBase : public taNBase
 {
+  INHERITED(taNBase)
+
 public:
 
   // Comment directives such as the one below are explained in section

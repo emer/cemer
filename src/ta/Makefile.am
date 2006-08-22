@@ -146,32 +146,32 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libta@PDP_SUFFIX@.la \
-	libtaTypeAccess@PDP_SUFFIX@.la
+	libta@PDP_SUFFIX@@PDP_VERSION@.la \
+	libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
-libta@PDP_SUFFIX@_la_DEPENDENCIES =\
-	libtaTypeAccess@PDP_SUFFIX@.la
+libta@PDP_SUFFIX@@PDP_VERSION@_la_DEPENDENCIES =\
+	libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
-libta@PDP_SUFFIX@_la_SOURCES = $(SRCS) $(HEADS)
+libta@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
 
-libta@PDP_SUFFIX@_la_CPPFLAGS =\
+libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
 
-libta@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+libta@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libta@PDP_SUFFIX@_la_LIBADD =\
-	libtaTypeAccess@PDP_SUFFIX@.la
+libta@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
+	libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
-libtaTypeAccess@PDP_SUFFIX@_la_SOURCES =\
+libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES =\
 	ta_TA.cpp \
 	ta_TA_type.h \
 	ta_TA_inst.h
 
-libtaTypeAccess@PDP_SUFFIX@_la_CPPFLAGS =\
-	$(libta@PDP_SUFFIX@_la_CPPFLAGS)
+libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
+	$(libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
-libtaTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
+libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = -g -O0

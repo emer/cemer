@@ -25,11 +25,11 @@ include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
 	libleabra_TypeAccess@PDP_SUFFIX@.la \
-	libleabra@PDP_SUFFIX@.la
+	libleabra@PDP_SUFFIX@@PDP_VERSION@.la
 
-libleabra@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+libleabra@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libleabra@PDP_SUFFIX@_la_CPPFLAGS =\
+libleabra@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@srcdir@/.. \
 	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
@@ -39,17 +39,17 @@ libleabra@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../css \
 	-I@srcdir@/../taiqtso
 
-libleabra@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+libleabra@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libleabra@PDP_SUFFIX@_la_LIBADD = libleabra_TypeAccess@PDP_SUFFIX@.la
+libleabra@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD = libleabra_TypeAccess@PDP_SUFFIX@.la
 
-libleabra@PDP_SUFFIX@_la_DEPENDENCIES = libleabra_TypeAccess@PDP_SUFFIX@.la
+libleabra@PDP_SUFFIX@@PDP_VERSION@_la_DEPENDENCIES = libleabra_TypeAccess@PDP_SUFFIX@.la
 
 libleabra_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
 	leabra_TA.cpp \
 	leabra_TA_type.h \
 	leabra_TA_inst.h
 
-libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@_la_CPPFLAGS)
+libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
 libleabra_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0

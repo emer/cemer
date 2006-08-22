@@ -170,7 +170,9 @@ SIM_AC_CONFIGURATION_SETTING([Host],[$host])
 
 dnl 					     PDP_DETERMINE_SUFFIX
 dnl *************************************************************
-dnl  Adds configure flag dependent suffixes. E.g. bp4_nogui_debug_mpi++
+dnl  * Adds program version to libraries
+dnl  * In debug mode, adds configure flag dependent suffixes. 
+dnl    E.g. bp4_nogui_debug_mpi++
 dnl *************************************************************
 dnl Copyright, 1995-2005, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
@@ -188,11 +190,6 @@ dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_DETERMINE_SUFFIX],[
-
-AC_MSG_CHECKING([whether we are infixing bin and lib names])
-
-# Version of pdp++
-
 if test "$gui" = "false" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
 fi
@@ -202,9 +199,6 @@ fi
 if test "$mpi" = "true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
 fi
-AC_MSG_RESULT([yes])
-AC_SUBST([PDP_SUFFIX])
-SIM_AC_CONFIGURATION_SETTING([Infixing],[Prototype of programs is pdp${PDP_SUFFIX}++, libraries libpdp${PDP_SUFFIX}])
 ]) dnl PDP_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
@@ -4309,30 +4303,3 @@ AC_DEFUN([VL_LIB_READLINE], [
     SIM_AC_CONFIGURATION_SETTING([Readline],[$vl_cv_lib_readline])
   fi
 ])dnl
-
-dnl @synopsis AX_SPLIT_VERSION
-dnl
-dnl Splits a version number in the format MAJOR.MINOR.POINT into it's
-dnl separeate components.
-dnl
-dnl Sets the variables.
-dnl
-dnl @category Automake
-dnl @author Tom Howard <tomhoward@users.sf.net>
-dnl @version 2005-01-14
-dnl @license AllPermissive
-
-AC_DEFUN([AX_SPLIT_VERSION],[
-    AX_MAJOR_VERSION=`echo "$VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
-    AX_MINOR_VERSION=`echo "$VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
-    AC_SUBST([AX_MAJOR_VERSION])
-    AC_SUBST([AX_MINOR_VERSION])
-
-    AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
-    AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
-    AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
-    AC_SUBST([AX_LIB_MAJOR_VERSION])
-    AC_SUBST([AX_LIB_MINOR_VERSION])
-    AC_SUBST([AX_LIB_POINT_VERSION])
-])
-

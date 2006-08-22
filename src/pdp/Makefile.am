@@ -92,12 +92,12 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libpdp@PDP_SUFFIX@.la \
-	libpdpTypeAccess@PDP_SUFFIX@.la
+	libpdp@PDP_SUFFIX@@PDP_VERSION@.la \
+	libpdpTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
-libpdp@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+libpdp@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
+libpdp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
@@ -108,16 +108,16 @@ libpdp@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../taiqtso
 
-libpdp@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+libpdp@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libpdp@PDP_SUFFIX@_la_LIBADD =\
-	libpdpTypeAccess@PDP_SUFFIX@.la
+libpdp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
+	libpdpTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
-libpdpTypeAccess@PDP_SUFFIX@_la_SOURCES =\
+libpdpTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES =\
 	pdp_TA.cpp \
 	pdp_TA_type.h \
 	pdp_TA_inst.h
 
-libpdpTypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libpdp@PDP_SUFFIX@_la_CPPFLAGS)
+libpdpTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = $(libpdp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
-libpdpTypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -g -O0
+libpdpTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = -g -O0

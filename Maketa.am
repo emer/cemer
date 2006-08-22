@@ -1,12 +1,14 @@
 # Rules for running maketa
-${PROJNAME}_TA_type.h:	${TAHEADS}
+# Only one header is listed so as not to create a race condition
+# On parallel builds
+
+${PROJNAME}_TA_type.h: ${TAHEADS}
 	${MAKE} force_ta
 
 force_ta:
-	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
-
-do_ta:
 	../maketa/./maketa ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
+
+do_ta: force_ta
 
 # Instruct automake to clean these files on make clean
 CLEANFILES =\

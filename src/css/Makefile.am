@@ -64,11 +64,11 @@ css_parse.cpp: css_parse.y
 	cmp -s css_parse.hx css_parse.h || (cp css_parse.hx css_parse.h);
 
 
-noinst_LTLIBRARIES = libcss@PDP_SUFFIX@.la
+noinst_LTLIBRARIES = libcss@PDP_SUFFIX@@PDP_VERSION@.la
 
-libcss@PDP_SUFFIX@_la_SOURCES = $(HEADS) $(SRCS)
+libcss@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libcss@PDP_SUFFIX@_la_CPPFLAGS =\
+libcss@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@srcdir@/../ \
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
@@ -76,4 +76,4 @@ libcss@PDP_SUFFIX@_la_CPPFLAGS =\
 	-I@srcdir@/../tamisc \
 	-I@srcdir@/../taiqtso
 
-libcss@PDP_SUFFIX@_la_CXXFLAGS = @OPT_LEVEL@
+libcss@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
