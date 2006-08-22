@@ -634,7 +634,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy();
 };
 
 class PDP_API NetCounterIncrEl: public ProgEl { 
@@ -659,7 +659,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy();
 };
 
 #endif

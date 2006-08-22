@@ -1467,6 +1467,17 @@ void NetCounterInitEl::Initialize() {
   local_ctr_var = NULL;
 }
 
+void NetCounterInitEl::Destroy() {
+  taBase::DelPointer((taBase**)&network_var);
+  taBase::DelPointer((taBase**)&local_ctr_var);
+}
+
+void NetCounterInitEl::Copy_(const NetCounterInitEl& cp) {
+  taBase::SetPointer((taBase**)&network_var, cp.network_var);
+  taBase::SetPointer((taBase**)&local_ctr_var, cp.local_ctr_var);
+  counter = cp.counter;
+} 
+
 void NetCounterInitEl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   GetLocalCtrVar();
@@ -1512,6 +1523,17 @@ void NetCounterIncrEl::Initialize() {
   network_var = NULL;
   local_ctr_var = NULL;
 }
+
+void NetCounterIncrEl::Destroy() {
+  taBase::DelPointer((taBase**)&network_var);
+  taBase::DelPointer((taBase**)&local_ctr_var);
+}
+
+void NetCounterIncrEl::Copy_(const NetCounterIncrEl& cp) {
+  taBase::SetPointer((taBase**)&network_var, cp.network_var);
+  taBase::SetPointer((taBase**)&local_ctr_var, cp.local_ctr_var);
+  counter = cp.counter;
+} 
 
 void NetCounterIncrEl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
