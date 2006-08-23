@@ -13,7 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
+// for debugging the qconsole, uncomment this define and it will revert to qandd console
+// #define QANDD_CONSOLE 1
 
 #include "pdpbase.h"
 
@@ -235,7 +236,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
     }
     taiMisc::SetMainWindow(db->browser_win());
 
-#if 0				// toggled for debugging
+#ifndef QANDD_CONSOLE
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
     mw->setMinimumSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
@@ -378,7 +379,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
 #else // NOT DMEM_COMPILE
   if(cssMisc::gui) {
-#if 0
+#ifndef QANDD_CONSOLE
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
     cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
 #else
