@@ -1982,6 +1982,21 @@ void WinGeometry::UpdateAfterEdit() {
 //   DataViewer		//
 //////////////////////////
 
+// TEMP
+
+void DataViewer:: 	FileOptionsAction(){} // 
+void DataViewer:: 	FileCloseAction(){} // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
+void DataViewer::	EditUndoAction(){} // #ACT 
+void DataViewer::	EditRedoAction(){} // #ACT 
+void DataViewer::	EditCutAction(){} // #ACT 
+void DataViewer::	EditCopyAction(){} // #ACT 
+void DataViewer::	EditPasteAction(){} // #ACT 
+void DataViewer::	EditFindAction(){} // #ACT 
+void DataViewer::	HelpIndexAction(){} // #ACT 
+void DataViewer::	HelpContentsAction(){} // #ACT 
+
+// /TEMP
+
 void DataViewer::Initialize() {
   m_window = NULL;
   iconified = false;
@@ -3427,6 +3442,7 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   buttons->insert(but);
   layButtons->addWidget(but);
   but->show();
+  pn->AddedToPanelSet();
 }
 void iDataPanelSet::AllSubPanelsAdded() {
   layButtons->addStretch();

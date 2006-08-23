@@ -1547,13 +1547,11 @@ void taiMethod::AddMethod(MethodDef* md) {
   *ptr_to_im = this;
 }
 
-taiMethodData* taiMethod::GetMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_) {
+taiMethodData* taiMethod::GetMethodRep(void* base, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_) 
+{
   return GetMethodRep_impl(base, host_, par, gui_parent_, 0); //TODO: may need to do more with the flags
 }
-
-/////////////////////////////
-//       taiMethods      //
-/////////////////////////////
 
 
 /////////////////////////////
@@ -1586,21 +1584,6 @@ taiMethodData* taiMenuMethod::GetMethodRep_impl(void* base, IDataHost* host_, ta
   taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
-/*NN
-////////////////////////////////
-//   taiMenuButtonMethod     //
-////////////////////////////////
-
-int taiMenuButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
-  if(md->HasOption("MENU_BUTTON"))
-    return (taiMethod::BidForMethod(md,td) + 1);
-  return 0;
-}
-
-taiMethodData* taiMenuButtonMethod::GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
-  return rval;
-} */
 
 //////////////////////////
 // 	taiArgType	//

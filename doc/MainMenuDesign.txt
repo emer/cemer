@@ -4,6 +4,16 @@ Goals
 
 * main menus and toolbars should be dynamic and primarily directive driven
 
+Action Hierarchy
+
+Here is the hiearchy of actions:
+
+  * viewer -- intrinsic to the actual viewer gui itself
+  * app -- these are global actions, on the root object -- they
+    will appear on every top-level window (ex Help/About)
+  * view -- these are created by the DataViewer class/subclass
+  * root -- these are created by the root object type being shown
+  * dynamic -- these are created dynamically, based on context
 
 Issues
 
@@ -17,7 +27,7 @@ Issues
 * grouping: sometimes you want things in groups, which will be set off 
   from other items with separators
   
-* visible/invisible
+* visible/invisible (???)
 * enabled/disabled
 * check menus: some items are for checkmarks
 * radio menus: group with mutually exclusive check items
@@ -31,7 +41,11 @@ Issues
 * programmatic (script) access -- should be able to specify the action
   in gui-centric way, not requiring detailed knowledge of the object
 * ellipses (...) for things invoking dialogs
+
 Simplifying Assumptions or Restrictions
+
+* there are no explicit separator directives (these were complicated)
+  instead, separators are automatically inserted between groups
 
 * groups should be intrinsic, and so apply to both menus and toolbars;
   this makes sense, particularly if grouping gets used for things like
@@ -41,12 +55,37 @@ Simplifying Assumptions or Restrictions
   ex. Windows list, Export To (different formats) etc.
   need a way to provide the entry for the dynamics, and then a way
   for the dynamic entries to be added/removed
-  
+
+* when a new item gets added to a group, it is always added at the end;
+  i.e. there is no way to place items inside a group 
+
+* dynamic submenus (ex window list) are only available on menus, not
+  tool bar items? (maybe ok if they are on toolbuttons);
+  these get populated in the "aboutToShow()" so there need not be any
+  global mechanism to maintain the lists, increasing encapsulation
+  and separation
+
+* radio item groups maybe cannot be extensible (but maybe they could
+  be if the method was virtual, and you added the inherited directives
+
+Can't Do First Pass
+
+* radio items in mainline menu items
+  (but we should still be able to do them as submenus, that are 
+  created in code)
+
+* check items -- hard to define how to keep the check correct
 
 Notes
 
 * you only need to specify the shortcut for menu bar items once;
   maybe it should try to autocreate shortcuts where none specified
+
+* might be possible to do radio groups by smushing all the items
+  onto a single routine -- an attr indicates a radio item, and then
+  the constr code has to manually scan the directives and grab
+  all the items -- the grouping would be automatic, but you'd still
+  need to add a grp directive to make sure you had the seps etc.
 
 
 Comment Directives
@@ -54,14 +93,97 @@ Comment Directives
 The following directives are only for main menus and tool bars.
 Note that unlike edit menu directives, all items on a main menu or toolbar
 must be explicitly specified (there is no implicit placement.)
+The "MM" root was chosen because menu items typically have numerous comment
+directives, so something short is better than something descriptive.
+
+MM -- specifies a main menu entry:
+  use | to separate hierarchy
+  use & prefix to specify shorcuts
+  ex. MM_&File|New_Project
+      MM_Tools|File_type|None
+
+ACT -- specifies an action, for use on a main menu or toolbar -- the 
+  method name in the action designator -- designators should be unique 
+ACT_xxx -- specifies an action, for use on a menu or toolbar --xxx is 
+  the action designator -- designators should be unique
+
+MENU_GP_xxx -- specifies menu group; add to every entry that should be together
+  ex. MENU_GP_FileProjActs -- groups have separators before/after
+
+TB -- specifies a toolbar entry
+  ex. TB_Default -- puts the action on the Default toolbar
+
+Menu/Toolbar modifiers
+
+IMG_xxx -- get a menu/toolbar icon from image called xxx, either a file or
+   Qt resource uri
+   ex. IMG_:/images/editcopy.png -- resource uri
+       IMG_:images/myicon.png -- file uri, relative to app root
+
+MENU_SUB -- the item is a submenu (probably dynamically populated)
+  the menu method is called in the aboutToShow() routine, which can then
+  populate the menu -- submenus that merely contain other action items
+  do not need to be explicitly associated with a menu method
+
+MENU_BEFORE_Xxx -- put this menu item before the indicated item OR group;
+MENU_AFTER_Xxx -- put this menu item after the indicated item OR group;
+
+MENU_FIRST -- always put this item first in its submenu or toolbar;
+  if used more than once, the last item encountered is always first-most
+MENU_LAST -- always put this item first in its submenu or toolbar;
+  if used more than once, the last item encountered is always last-most
+
+MENUGP_FIRST -- always put this group first in its submenu or toolbar;
+  if used more than once, the last group encountered is always first-most;
+  directive should be added to the first item in the group
+MENUGP_LAST -- always put this group first in its submenu or toolbar;
+  if used more than once, the last group encountered is always last-most;
+  directive should be added to the first item in the group
+
+ACT_ENABLE
+ACT_CHECK -- is a checkable bool menu item
+ACT_RADIO_0 -- is radio item, index 0 (0..N)
+
+Menu Method Signatures
+
+It is suggested that action methods should be created specifically for
+this purpose, and not be combined with general application methods -- 
+use an inline forward call if necessary.
+
+It is suggested to name action methods as follows:
+  ex. void EditCopyAction() -- does the "Edit/Copy" action
 
 
-MMENU -- specified a main menu entry, use | to separate hierarchy
-  ex. MMENU|File|New_Project
-      MMENU|Tools|File_type|None
+
+
+
+void MenuMethod_Simple() -- a simple action-based menu
+void MenuMethod_DynSubMenu(taiSubMenu* submenu) -- a method that must populate a submenu 
+
+int MenuMethod_Bool(bool checked) -- called with the *new* value of 'checked'
+int MenuMethod_Radio(int radio) -- called with newly selected radio item
       
 
   
 Location Directives
 
 These directives provide hints on *where* to insert the item.
+
+IMPLEMENTATION
+
+First, the viewer will create a full list of actions.
+Then, it will make the menus and toolbars.
+
+MainMenuSpec:
+  value type that holds all the relevant data for a mm item:
+  name
+  path -- the | name, with all pathing
+  
+DataViewer:
+
+void Constr_MainMenu() -- main menu construction
+void Constr_MainMenu_Base() -- for the base object (ourself)
+void Constr_MainMenu_Root() -- for the root object
+void Constr_MainMenu_Dynamic() -- for when the root state changes, ex. additional object,
+  window lists, etc.
+

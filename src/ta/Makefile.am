@@ -139,6 +139,7 @@ SRCS =\
 	ta_script.cpp \
 	dynenum.cpp \
 	$(SRCS_GUI) \
+	ta_qrc.cpp \
 	ta_ti.cpp
 
 include $(top_srcdir)/Maketa.am

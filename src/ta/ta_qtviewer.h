@@ -870,7 +870,28 @@ public:
   void	CutLinks();
   void	Copy_(const DataViewer& cp);
   COPY_FUNS(DataViewer, taDataView)
-  TA_DATAVIEWFUNS(DataViewer)
+  TA_DATAVIEWFUNS(DataViewer) //
+
+public: // Action methods
+/*  virtual void 	FileNewAction(){}
+  virtual void 	FileOpenAction(){}
+  virtual void 	FileSaveAction(){}
+  virtual void 	FileSaveAsAction(){}
+  virtual void 	FileSaveAllAction(){}
+  virtual void 	FileCloseAction(){} */
+  virtual void 	FileOptionsAction(); // 
+  virtual void 	FilePrintAction(){}
+  virtual void 	FileCloseAction(); // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
+  virtual void	EditUndoAction(); // #ACT 
+  virtual void	EditRedoAction(); // #ACT 
+  virtual void	EditCutAction(); // #ACT 
+  virtual void	EditCopyAction(); // #ACT 
+  virtual void	EditPasteAction(); // #ACT 
+  virtual void	EditFindAction(); // #ACT 
+  virtual void	ViewRefreshAction() {}  // #ACT rebuild/refresh the current view
+  virtual void	HelpIndexAction(); // #ACT 
+  virtual void	HelpContentsAction(); // #ACT 
+  virtual void	HelpAboutAction() {} // #ACT 
 
 protected:
   bool			m_is_root; // #IGNORE
@@ -1136,6 +1157,8 @@ public:
   override void		GetImage(); // called when reshowing a panel, to insure latest data
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node
 
+  virtual void		AddedToPanelSet() {} // called when fully added to DataPanelSet
+  
   iDataPanelFrame(taiDataLink* dl_);
   ~iDataPanelFrame();
 

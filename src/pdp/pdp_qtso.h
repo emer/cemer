@@ -36,19 +36,6 @@ class pdpDataViewer;
 class iPdpDataBrowser;
 class PdpDataBrowser;
 
-class PDP_API taiProgVarType : public taiClassType { 
-INHERITED(taiClassType)
-public:
-  bool		requiresInline() const {return true;}
-  bool		handlesReadOnly() { return true; } 
-  int		BidForType(TypeDef* td);
-
-  TAQT_TYPE_INSTANCE(taiProgVarType, taiClassType);
-protected:
-  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-};
-
-
 class PDP_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
 public:
@@ -63,72 +50,6 @@ public:
 protected:
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void		GetImage_impl(taiData* dat, const void* base);
-};
-
-
-class PDP_API taiProgVar: public taiCompData { 
-  //note: this set of classes uses a static New instead of new because of funky virtual Constr
-INHERITED(taiCompData)
-  Q_OBJECT
-public:
-  static taiProgVar*	New(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-  
-  QWidget*		rep() const { return (QWidget*)m_rep; } 
-  inline int		varType() const {return vt;} // current vartype selected by control
-  bool			fillHor() {return true;} // override 
-  ~taiProgVar();
-
-  void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
-  virtual void  	GetImage(const ProgVar* var);
-  virtual void	 	GetValue(ProgVar* var) const;
-
-protected:
-  enum StackControls { // #IGNORE current control
-    scNone, // used at the beginning
-    scInt,
-    scField, // string and most numbers
-    scToggle, // bool
-    scBase, // taBase
-    scEnum, // regular Enum
-    scDynEnum
-  };
-  mutable int		m_updating; // used to prevent recursions
-  int			sc; // current stack control 
-  int 			vt; //ProgVar::VarType
-  
-  taiField*		fldName;
-  taiComboBox*		cmbVarType;
-  QWidget*		stack; // holds subfields for different types, gets deleted/recreated
-  
-  taiIncrField*		incVal; // for: ints
-  taiField*		fldVal; // for: char, string, most numbers
-  taiToggle*		tglVal; // for: bool
-  
-  // for standard enums:
-  taiEnumTypeDefButton*	thEnumType;
-  taiComboBox*		cboEnumValue;
-  //for objects:
-  taiTypeDefButton*	thValType;
-  taiTokenPtrButton*	tkObjectValue;
-  // for DynEnums:
-  taiEditButton*	edDynEnum; // for invoking editor for values
-  taiComboBox*		cboDynEnumValue;
-  
-  void			AssertControls(int value); // uncreates existing, creates new
-  void			SetVarType(int value); // ProgVar::VarType
-  virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); //override
-  void			UpdateDynEnumCombo(const ProgVar* var); 
-  void			DataChanged_impl(taiData* chld); // override -- used for Enum and Object
-  override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
-  override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 
-  taiProgVar(TypeDef* typ_, IDataHost* host, taiData* par, 
-    QWidget* gui_parent_, int flags = 0);
-    
-protected slots:
-  void			cmbVarType_itemChanged(int itm);
-private:
-  void			init();
 };
 
 
