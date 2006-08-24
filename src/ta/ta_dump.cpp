@@ -704,7 +704,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
     cerr << "Entering MemberSpace::Dump_Load, type: " << owner->name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", prv_read_nm = " << nm
-	 << ", prv_c = " << prv_c << endl;
+	 << ", prv_c = " << prv_c << "\n"; // endl;
   }
 
   int rval = 2;			// default assumption is that no members are loaded
@@ -728,10 +728,10 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
       if(strm.peek() == ';') strm.get(); // skip past ending semi
       if(taMisc::verbose_load >= taMisc::TRACE) {
 	const char* nm = (prv_read_nm != NULL) ? prv_read_nm : "NULL";
-	cerr << "}, Leaving MemberSpace::Dump_Load, type: " << owner->name
+	cout << "}, Leaving MemberSpace::Dump_Load, type: " << owner->name
 	     << ", par = " << String((int)par) << ", base = " << String((int)base)
 	     << ", prv_read_nm = " << nm
-	     << ", prv_c = " << prv_c << endl;
+	     << ", prv_c = " << prv_c << "\n"; // endl;
       }
       return rval;
     }
@@ -807,7 +807,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	taMisc::verbose_load = taMisc::SOURCE;
 	taMisc::skip_past_err(strm);
 	taMisc::verbose_load = (taMisc::LoadVerbosity)sv_vld;
-	cerr << endl << endl << flush;
+	cerr << "\n\n"; // endl << endl << flush;
       }
       rval = true;		// member was loaded, do update after edit
     }
@@ -817,7 +817,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
     cerr << "Leaving MemberSpace::Dump_Load, type: " << owner->name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", prv_read_nm = " << nm
-	 << ", prv_c = " << prv_c << endl;
+	 << ", prv_c = " << prv_c << "\n"; // endl;
   }
   return rval;
 }
@@ -833,7 +833,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Entering MemberDef::Dump_Load, member: " << name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
+	 << "\n"; // endl;
   }
   void* new_base = GetOff(base);
   int rval;
@@ -849,7 +849,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     if (taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "Leaving MemberDef::Dump_Load, member: " << name
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
-	   << endl;
+	   << "\n"; // endl;
     }
     return rval;
   }
@@ -881,7 +881,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
         if(taMisc::verbose_load >= taMisc::TRACE) {
           cerr << "Leaving MemberDef::Dump_Load, member: " << name
               << ", par = " << String((int)par) << ", base = " << String((int)base)
-              << endl;
+              << "\n"; // endl;
         }
         //TODO: if we allow Variant taBase pointers, need to detect and do FixNull
         // if (type->InheritsFormal(TA_Variant) ... do FixNull
@@ -937,7 +937,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     if(taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "Leaving MemberDef::Dump_Load, member: " << name
           << ", par = " << String((int)par) << ", base = " << String((int)base)
-          << endl;
+          << "\n"; // endl;
     }
     return true;
   }
@@ -952,7 +952,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
 	 << ", path = " << path
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", typnm = " << nm
-	 << endl;
+	 << "\n"; // endl;
   }
   td = NULL;
   int c;
@@ -1016,7 +1016,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
 	   << ", path = " << path
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
 	   << ", typnm = " << nm
-	   << endl;
+	   << "\n"; // endl;
     }
     return true;		// nothing left to do here, actually
   }
@@ -1029,7 +1029,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", typnm = " << nm
 	 << ", rval = " << rval
-	 << endl;
+	 << "\n"; // endl;
   }
   return rval;
 }
@@ -1042,7 +1042,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     cerr << "Entering TypeDef::Dump_Load_Path_impl, type: " << name
 	 << ", path = " << path
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
+	 << "\n"; // endl;
   }
 
   if(path.firstchar() == '@') {		// relative to current parent..
@@ -1075,7 +1075,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
       cerr << "root Leaving TypeDef::Dump_Load_Path_impl, type: " << name
 	   << ", path = " << path
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
-	   << endl;
+	   << "\n"; // endl;
     }
     return true;
   }
@@ -1130,7 +1130,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
       cerr << "el=NULL Leaving TypeDef::Dump_Load_Path_impl, type: " << name
 	   << ", path = " << path
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
-	   << endl;
+	   << "\n"; // endl;
     }
     return true;
   }
@@ -1150,7 +1150,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
 	cerr << "ptr_flag Leaving TypeDef::Dump_Load_Path_impl, type: " << name
 	     << ", path = " << path
 	     << ", par = " << String((int)par) << ", base = " << String((int)base)
-	     << endl;
+	     << "\n"; // endl;
       }
       return true;
     }
@@ -1184,7 +1184,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     cerr << "Leaving TypeDef::Dump_Load_Path_impl, type: " << name
 	 << ", path = " << path
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
+	 << "\n"; // endl;
   }
   return true;
 }
@@ -1194,7 +1194,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Entering TypeDef::Dump_Load_Value, type: " << owner->name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
+	 << "\n"; // endl;
   }
   int c = taMisc::skip_white(strm);
   if(c == EOF) {
@@ -1208,7 +1208,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     if(taMisc::verbose_load >= taMisc::TRACE) {
       cerr << "} Leaving TypeDef::Dump_Load_Value, type: " << owner->name
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
-	   << endl;
+	   << "\n"; // endl;
     }
     return 2;
   }
@@ -1257,7 +1257,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Leaving TypeDef::Dump_Load_Value, type: " << owner->name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
-	 << endl;
+	 << "\n"; // endl;
   }
   return true;
 }
@@ -1268,7 +1268,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     cerr << "Entering TypeDef::Dump_Load_impl, type: " << owner->name
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", typnm = " << nm
-	 << endl;
+	 << "\n"; // endl;
   }
   TypeDef* td = NULL;
   String path;
@@ -1310,7 +1310,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
 	cerr << "err Leaving TypeDef::Dump_Load_impl, type: " << owner->name
 	     << ", par = " << String((int)par) << ", base = " << String((int)base)
 	     << ", typnm = " << nm
-	     << endl;
+	     << "\n"; // endl;
       }
       return true;		// we already scanned past error
     }
@@ -1335,7 +1335,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
       cerr << "err rb Leaving TypeDef::Dump_Load_impl, type: " << owner->name
 	   << ", par = " << String((int)par) << ", base = " << String((int)base)
 	   << ", typnm = " << nm
-	   << endl;
+	   << "\n"; // endl;
     }
     return true;		// already scanned past error
   }
@@ -1345,7 +1345,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
 	 << ", par = " << String((int)par) << ", base = " << String((int)base)
 	 << ", typnm = " << nm
 	 << ", rval = " << rval
-	 << endl;
+	 << "\n"; // endl;
   }
   return rval;
 }

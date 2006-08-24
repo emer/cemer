@@ -4905,6 +4905,7 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   pgout.no_page = true;		// console has its own pager!
 
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
+  qcss_console->flushOutput();	// get it flushed to start up
 }
 
 void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
