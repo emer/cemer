@@ -4933,10 +4933,19 @@ void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
   }
 }
 
+void cssCmdShell::FlushConsole() {
+  if(console_type == CT_Qt_Console) {
+    if(qcss_console)
+      qcss_console->flushOutput();
+  }
+  ProcessEvents();
+}
+
 void cssCmdShell::Exit() {
   external_exit = true;
   if(console_type == CT_Qt_Console) {
-    qcss_console->exit();
+    if(qcss_console)
+      qcss_console->exit();
   }
 }
 

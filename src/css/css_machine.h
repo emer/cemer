@@ -1619,6 +1619,7 @@ public:
   void		Shell_NoGui_Rl(const char* prmpt);
   // run a nogui readline-based shell
 
+  void		FlushConsole();	// flush the console output
   void		SetPrompt(const char* prmpt, bool disp_prompt = false);
   void		UpdatePrompt(bool disp_prompt = false);
   //  void 		Source(const char* fname);	// run a file as if in a shell

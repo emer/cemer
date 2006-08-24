@@ -408,6 +408,9 @@ public:
   void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
   void	LoadConfig();		// #BUTTON #CONFIRM load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
 
+  static void	FlushConsole();
+  // flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
+
   static void 	Error(const char* a, const char* b="", const char* c="",
 		      const char* d="", const char* e="", const char* f="",
 		      const char* g="", const char* h="", const char* i="");

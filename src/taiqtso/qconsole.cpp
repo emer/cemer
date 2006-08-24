@@ -103,6 +103,7 @@ void QConsole::setPrompt(QString newPrompt, bool display) {
 }
 
 void QConsole::flushOutput() {
+  //  noPager = true;		// debugging!!
   if(stdoutInterceptor) {
     cout.flush();
     setTextColor(outColor);

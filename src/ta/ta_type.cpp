@@ -272,6 +272,13 @@ void taMisc::LoadConfig() {
 #endif
 }
 
+void taMisc::FlushConsole() {
+#ifndef NO_TA_BASE
+  if(!cssMisc::TopShell) return;
+  cssMisc::TopShell->FlushConsole();
+#endif
+}
+
 void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
@@ -281,6 +288,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #endif
   cerr << "***WARNING: " << a << " " << b << " " << c << " " << d << " " << e << " " << f << 
     " " << g << " " << h << " " << i  << "\n";
+  FlushConsole();
 }
 
 #ifdef TA_NO_GUI
@@ -298,7 +306,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   if (beep_on_error) cerr << '\a'; // BEL character
   cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
     " " << g << " " << h << " " << i  << "\n";
-  // todo: following needs tested!
+  FlushConsole();
 #if !defined(NO_TA_BASE) 
   cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
 #endif
