@@ -421,7 +421,8 @@ cssEl* cssTA::operator<<(cssEl& s) {
 	*strm << (Real) s;
       else
 	*strm << (const char*)s;
-      taMisc::FlushConsole();
+      // this makes too many linebreaks:
+//       taMisc::FlushConsole();
     }
     return this;
   }
