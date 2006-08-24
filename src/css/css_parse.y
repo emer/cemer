@@ -1492,5 +1492,5 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
     *(fh) << s << " line " << cssMisc::cur_top->src_ln << ":\t"
       << cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
   }
-  fh->flush();
+  taMisc::FlushConsole();
 }

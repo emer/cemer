@@ -1024,6 +1024,7 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
     cerr << "\n" << cssMisc::Indent(1) << "Stack at time of function call to: " << name;
     stack->List(cerr, 1);
     cerr << endl;
+    taMisc::FlushConsole();
   }
   if(argc == 0) {
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
@@ -2996,8 +2997,10 @@ int cssProg::ReadLn(istream& fh) {
     return EOF;
   
   source[line]->src += '\n';	// always end with a newline
-  if (top->debug >= 3)
+  if (top->debug >= 3) {
     cerr << "\nsrc ===> " << source[line]->src;	// get a source code trace here..
+    taMisc::FlushConsole();
+  }
   col = 0;
 
   st_col = col;			// reset the st_lines..
@@ -3169,6 +3172,7 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
       Stack()->List(fh, top->size); // indent
     }
   }
+  taMisc::FlushConsole();
 }
 
 bool cssProg::IsBreak(css_progdx pcval) {
@@ -4936,7 +4940,7 @@ void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
 void cssCmdShell::FlushConsole() {
   if(console_type == CT_Qt_Console) {
     if(qcss_console)
-      qcss_console->flushOutput();
+      qcss_console->flushOutput(true); // wait for pager!
   }
   ProcessEvents();
 }

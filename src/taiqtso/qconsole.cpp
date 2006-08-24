@@ -102,18 +102,25 @@ void QConsole::setPrompt(QString newPrompt, bool display) {
     displayPrompt();
 }
 
-void QConsole::flushOutput() {
+void QConsole::flushOutput(bool wait_for_pager) {
   //  noPager = true;		// debugging!!
-  if(stdoutInterceptor) {
-    cout.flush();
-    setTextColor(outColor);
-    stdDisplay(stdoutInterceptor->textIStream());
-  }
-  if(stderrInterceptor) {
-    cerr.flush();
-    setTextColor(errColor);
-    stdDisplay(stderrInterceptor->textIStream());
-  }
+  cout.flush();
+  cerr.flush();
+  bool waiting = false;
+  do {
+    if(stdoutInterceptor) {
+      setTextColor(outColor);
+      waiting = stdDisplay(stdoutInterceptor->textIStream());
+    }
+    if(stderrInterceptor) {
+      setTextColor(errColor);
+      waiting = (stdDisplay(stderrInterceptor->textIStream()) || waiting);
+    }
+    if(wait_for_pager && waiting) {
+      QCoreApplication::processEvents();
+      sleep(1);
+    }
+  } while(wait_for_pager && waiting);
 }
 
 void QConsole::stdReceived() {
@@ -150,8 +157,10 @@ void QConsole::gotoEnd(QTextCursor& cursor, bool select) {
 }
 
 // displays redirected stdout/stderr
-void QConsole::stdDisplay(QTextStream* s) {
-  while(curOutputLn < maxLines) {
+bool QConsole::stdDisplay(QTextStream* s) {
+  if((curOutputLn >= maxLines) && !contPager && !noPager)
+    return true;
+  while((curOutputLn < maxLines) || contPager || noPager || quitPager) {
     QString line = s->readLine(maxCols);
     if(line.isNull()) break;
     if(!quitPager) {
@@ -161,11 +170,12 @@ void QConsole::stdDisplay(QTextStream* s) {
 	curOutputLn++;
 	if(curOutputLn >= maxLines) {
 	  append("---Press Return for More, q=quit displaying, c=continue without paging ---");
-	  break;
+	  return true;
 	}
       }
     }
   }
+  return false;
 }
 
 void QConsole::resizeEvent(QResizeEvent* e) {

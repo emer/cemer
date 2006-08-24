@@ -421,7 +421,7 @@ cssEl* cssTA::operator<<(cssEl& s) {
 	*strm << (Real) s;
       else
 	*strm << (const char*)s;
-//       strm->flush();		// always flush in css!
+      taMisc::FlushConsole();
     }
     return this;
   }

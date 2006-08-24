@@ -725,6 +725,7 @@ int taMisc::skip_white(istream& strm, bool peek) {
       cerr << (char)c;
     }
     if(!peek && (c != EOF)) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\n') || (c == '\r'))
@@ -743,6 +744,7 @@ int taMisc::skip_white_noeol(istream& strm, bool peek) {
       cerr << (char)c;
     }
     if(!peek && (c != EOF)) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\r'))
@@ -762,6 +764,7 @@ int taMisc::read_word(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && (isalnum(c) || (c == '_'))) {
@@ -782,6 +785,7 @@ int taMisc::read_alnum(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
@@ -802,6 +806,7 @@ int taMisc::read_alnum_noeol(istream& strm, bool peek) {
       taMisc::LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
@@ -823,6 +828,7 @@ int taMisc::read_till_eol(istream& strm, bool peek) {
       strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '\n'))) {
@@ -844,6 +850,7 @@ int taMisc::read_till_semi(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == ';'))) {
@@ -864,6 +871,7 @@ int taMisc::read_till_lbracket(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '{'))) {
@@ -884,6 +892,7 @@ int taMisc::read_till_lb_or_semi(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '{') || (c == ';') || (c == '='))) {
@@ -908,6 +917,7 @@ int taMisc::read_till_rbracket(istream& strm, bool peek) {
       strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
@@ -935,6 +945,7 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
       strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
@@ -966,6 +977,7 @@ int taMisc::read_till_quote(istream& strm, bool peek) {
       LexBuf += (char)c; strm.get();
     }
     if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) {  // "
@@ -1007,6 +1019,7 @@ int taMisc::read_till_quote_semi(istream& strm, bool peek) {
 	LexBuf += '\"';		// add the quote..
       }
     }
+    taMisc::FlushConsole();
   }
   else {
     while(true) {
@@ -1043,6 +1056,7 @@ int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
       cerr << strm.get(); // consume it
+    taMisc::FlushConsole();
   } else {
     while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
       strm.get(); // consume it
@@ -1074,6 +1088,7 @@ int taMisc::read_till_end_quote(istream& strm, bool peek) {
       } else // if (c == '\"')
         break;
     }
+    taMisc::FlushConsole();
   } else {
     while (true) {
       while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')))) {  // "
@@ -1117,6 +1132,7 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
       strm.get();
     }
     if(c != EOF) cerr << (char)c << "<<- err_skp>>";
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
@@ -1144,6 +1160,7 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
       strm.get();
     }
     if(c != EOF) cerr << (char)c << "<<- err_skp>>";
+    taMisc::FlushConsole();
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {

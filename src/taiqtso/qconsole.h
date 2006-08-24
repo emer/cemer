@@ -43,8 +43,11 @@ public:
   virtual void clear();	       // clear & reset the console (useful sometimes)
   virtual void reset();
   virtual void exit();		// exit shell
-  virtual void flushOutput();
-  // cosmetic methods !
+  virtual void flushOutput(bool wait_for_pager = false);
+  // flush cout & cerr output.  if wait_for_pager, then wait until user has paged through
+  // everything in the buffer
+
+  // cosmetic methods
   virtual void setCmdColor(QColor c) {cmdColor = c;};
   virtual void setErrColor(QColor c) {errColor = c;};
   virtual void setOutColor(QColor c) {outColor = c;};
@@ -83,7 +86,8 @@ protected:
   virtual QString getCurrentCommand();			     // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
   virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
-  virtual void stdDisplay(QTextStream *s);	// displays redirected stdout/stderr
+  virtual bool stdDisplay(QTextStream *s);
+  // displays redirected stdout/stderr: return true if waiting for pager
 
   //protected attributes
 protected:
