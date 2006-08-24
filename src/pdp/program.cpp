@@ -26,6 +26,7 @@
 # include "ta_qtdialog.h"
 
 # include <QMessageBox>
+# include <QTreeWidgetItem>
 #endif
 
 
@@ -384,6 +385,21 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
 
 void ProgEl::Initialize() {
   off = false;
+#ifdef TA_GUI
+  m_twi = NULL;
+#endif
+}
+
+void ProgEl::Destroy() {
+#ifdef TA_GUI
+//NOTE: children always destroy before parents, so the child twi's should
+// already be deleted; i.e. the forced delete should always occur before 
+// the implicit delete caused by deleting a twi that has children...
+  if (m_twi) {
+    delete m_twi;
+    m_twi = NULL;
+  }
+#endif
 }
 
 void ProgEl::Copy_(const ProgEl& cp) {
@@ -434,9 +450,55 @@ void ProgEl::PreGen(int& item_id) {
   PreGenChildren_impl(item_id);
 }
 
+#ifdef TA_GUI
+QTreeWidgetItem* ProgEl::CreateAuxTwi(QTreeWidgetItem* par_item,
+    const String& col0, const String& col1)
+{
+  QTreeWidgetItem* item;
+  if (par_item) item = new QTreeWidgetItem(par_item);
+  else          item = new QTreeWidgetItem;
+  item->setFlags(Qt::ItemIsEnabled); // but not selectable
+  item->setData(0, Qt::DisplayRole, col0);
+  if (col1.nonempty())  
+    item->setData(1, Qt::DisplayRole, col1);
+  return item;
+}
+
+void ProgEl::InitUpdateTwi() {
+  if (!m_twi) return; // shouldn't happen
+//TODO: should set flags
+  m_twi->setData(0, Qt::DisplayRole, GetColText(0));
+  m_twi->setData(1, Qt::DisplayRole, GetColText(1));
+}
+
+void ProgEl::CreateTwi(QTreeWidgetItem* par_item) {
+  if (par_item) m_twi = new QTreeWidgetItem(par_item);
+  else          m_twi = new QTreeWidgetItem; //only for a root going into treewidget
+  //note: we only ever need to set our data self once
+  m_twi->setData(0, ObjDataRole, QVariant((ta_intptr_t)this));
+  InitUpdateTwi();
+}
+#endif
+
+
 //////////////////////////
 //  ProgEl_List	//
 //////////////////////////
+
+void ProgEl_List::Initialize() {
+  SetBaseType(&TA_ProgEl);
+#ifdef TA_GUI
+  m_twi = NULL;
+#endif
+}
+
+void ProgEl_List::Destroy() {
+  Reset();
+#ifdef TA_GUI
+  //note: we don't own, so we don't delete -- our parent will 
+  m_twi = NULL;
+#endif
+}
 
 void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
@@ -472,6 +534,17 @@ void ProgEl_List::PreGen(int& item_id) {
     el->PreGen(item_id);
   }
 }
+
+#ifdef TA_GUI
+void ProgEl_List::CreateItems(QTreeWidgetItem* par_item) {
+  m_twi = par_item;
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    QTreeWidgetItem* item = el->twi(m_twi);
+  }
+}
+#endif
+
 
 //////////////////////////
 //  UserScriptEl	//
@@ -575,6 +648,15 @@ void ProgList::PreGenChildren_impl(int& item_id) {
   prog_els.PreGen(item_id);
 }
 
+#ifdef TA_GUI
+void ProgList::CreateTwi(QTreeWidgetItem* par_item) {
+  inherited::CreateTwi(par_item);
+  prog_els.CreateItems(m_twi);
+}
+#endif
+
+
+
 //////////////////////////
 //  LoopEl		//
 //////////////////////////
@@ -624,6 +706,13 @@ String LoopEl::GetDisplayName() const {
 void LoopEl::PreGenChildren_impl(int& item_id) {
   loop_els.PreGen(item_id);
 }
+
+#ifdef TA_GUI
+void LoopEl::CreateTwi(QTreeWidgetItem* par_item) {
+  inherited::CreateTwi(par_item);
+  loop_els.CreateItems(m_twi);
+}
+#endif
 
 
 //////////////////////////
@@ -779,6 +868,16 @@ void CondEl::PreGenChildren_impl(int& item_id) {
   true_els.PreGen(item_id);
   false_els.PreGen(item_id);
 }
+
+#ifdef TA_GUI
+void CondEl::CreateTwi(QTreeWidgetItem* par_item) {
+  inherited::CreateTwi(par_item);
+  QTreeWidgetItem* item = ProgEl::CreateAuxTwi(m_twi, "true_els");
+  true_els.CreateItems(item);
+  item = ProgEl::CreateAuxTwi(m_twi, "false_els");
+  false_els.CreateItems(item);
+}
+#endif
 
 
 //////////////////////////
@@ -1040,10 +1139,25 @@ void Program::Initialize() {
   objs.SetBaseType(&TA_taOBase);
   ret_val = 0;
   m_dirty = true; 
+#ifdef TA_GUI
+  init_els_twi = NULL;
+  prog_els_twi = NULL;
+#endif
 }
 
 void Program::Destroy()	{ 
   CutLinks();
+#ifdef TA_GUI
+//TODO: other items, plus, key off first item
+//NOTE: items are all/none created, so if one exists, we delete all
+  if (init_els_twi) { 
+    //NOTE; we delete in reverse order
+    delete prog_els_twi;
+    prog_els_twi = NULL;
+    delete init_els_twi;
+    init_els_twi = NULL;
+  }
+#endif
 }
 
 void Program::InitLinks() {
@@ -1401,6 +1515,32 @@ void  Program::UpdateProgVars() {
 }
 
 #ifdef TA_GUI
+void Program::CreateItems(QTreeWidget* par_item) {
+//  CreateItems_impl();
+  init_els_twi = ProgEl::CreateAuxTwi(NULL, "init_els");
+  par_item->addTopLevelItem(init_els_twi);
+  init_els.CreateItems(init_els_twi);
+  prog_els_twi = ProgEl::CreateAuxTwi(NULL, "prog_els");
+  par_item->addTopLevelItem(prog_els_twi);
+  prog_els.CreateItems(prog_els_twi);
+
+//TODO: other items
+}
+
+void Program::CreateItems(QTreeWidgetItem* par_item) {
+  CreateItems_impl();
+//TODO: other items
+  par_item->addChild(init_els_twi);
+  par_item->addChild(prog_els_twi);
+}
+
+void Program::CreateItems_impl() {
+//TODO: other items
+  init_els_twi = ProgEl::CreateAuxTwi(NULL, "init_els");
+  init_els.CreateItems(init_els_twi);
+  prog_els_twi = ProgEl::CreateAuxTwi(NULL, "prog_els");
+  prog_els.CreateItems(prog_els_twi);
+}
 
 void Program::ViewScript() {
   ViewScript_impl();
@@ -1411,7 +1551,6 @@ void Program::ViewScript_impl() {
   dlg->setText(scriptString());
   dlg->exec();
 }
-
 #endif  // TA_GUI
 
 

@@ -134,7 +134,7 @@ public:
   QWidget*		    widEdit; // container for the actual taiEdit
   HiLightButton*	    btnSave;
   HiLightButton*	    btnRevert;
-  QTreeWidget*		  tw;
+  QTreeWidget*		  items;
   
   bool			read_only; // set true if we are
   
@@ -142,6 +142,10 @@ public:
 
   iProgramEditor(QWidget* parent = NULL); //
 
+public slots:
+
+  void			ExpandAll(); // expands all, and resizes columns
+  
 public: // ITypedObject i/f
   void*			This() {return this;} 
   TypeDef*		GetTypeDef() const {return &TA_iProgramEditor;}
@@ -164,11 +168,14 @@ protected:
   taSmartRef		m_edit_node; // the current node being edited; its it is in widEdit
   bool			modified;
   
+  
   void			InternalSetModified(bool value); // does all the gui config
   
 protected slots:
   void			btnSave_clicked();
   void			btnRevert_clicked();
+  void 			items_currentItemChanged(QTreeWidgetItem* curr, 
+    QTreeWidgetItem* prev);
   
 private:
   void			init();

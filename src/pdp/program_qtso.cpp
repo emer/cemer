@@ -427,7 +427,7 @@ void iProgramEditor::init() {
   layEdit->addSpacing(taiM->hsep_c);
   
   widEdit = new QWidget(this);
-  layEdit->addWidget(widEdit);
+  layEdit->addWidget(widEdit, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->hspc_c);
   
   btnSave = new HiLightButton("Save", this);
@@ -438,11 +438,19 @@ void iProgramEditor::init() {
   layEdit->addWidget(btnRevert);
   layEdit->addSpacing(taiM->hsep_c);
   
-  tw = new QTreeWidget(this);
-  layOuter->addWidget(tw);
+  items = new QTreeWidget(this);
+  layOuter->addWidget(items);
+  items->setColumnCount(2);
+  items->setSortingEnabled(false);// only 1 order possible
+  QTreeWidgetItem* hi = items->headerItem();
+  hi->setData(0, Qt::DisplayRole,"El Type");
+  hi->setData(1, Qt::DisplayRole,"El Description");
   
   connect(btnSave, SIGNAL(clicked()), this, SLOT(btnSave_clicked()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
+  connect(items, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+    this, SLOT(items_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+
   InternalSetModified(false);
 }
 
@@ -479,12 +487,30 @@ void iProgramEditor::GetImage() {
 //TODO
 }
 
+void iProgramEditor::ExpandAll() {
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::HasChildren);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    items->setItemExpanded(item, true);
+    ++it;
+  }
+  // size first N-1 cols
+  int cols = items->columnCount(); // cache
+  // make columns nice sizes (not last)
+  for (int i = 0; i < (cols - 1); ++i) {
+    items->resizeColumnToContents(i);
+  }
+}
+
 void iProgramEditor::InternalSetModified(bool value) {
   btnSave->setEnabled(value);
   btnRevert->setEnabled(value);
   modified = value;
 }
 
+void iProgramEditor::items_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+//TODO
+}
 
 void iProgramEditor::setEditNode(TAPtr value) {
 //TODO
@@ -500,10 +526,13 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
 {
   pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
-/*todo  Program* prog_ = prog();
+  Program* prog_ = prog();
   if (prog_) {
-    pe->setModel(prog_->GetDataModel());
-  }*/
+    prog_->CreateItems(pe->items);
+  //TODO: might need to be put into a one-shot after showEvent
+    pe->ExpandAll();
+  }
+  
 /*  list->setSelectionMode(QListView::Extended);
   list->setShowSortIndicator(true);
   // set up number of cols, based on link

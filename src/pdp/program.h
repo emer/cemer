@@ -25,6 +25,10 @@
 #include "pdp_def.h"
 #include "pdp_TA_type.h"
 
+#if !defined(__MAKETA__) && defined(TA_GUI)
+# include <Qt>
+#endif
+
 // forwards
 
 class Program;
@@ -163,7 +167,7 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  override String 	GetColText(int col, int itm_idx);
+  override String 	GetColText(int col, int itm_idx = -1);
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
@@ -178,9 +182,29 @@ protected:
   virtual const String	GenCssBody_impl(int indent_level) {} // #IGNORE generate the Css body code for this object
   virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
+
+#if !defined(__MAKETA__) && defined(TA_GUI)
+public:
+  enum Roles { // extra roles, for additional data, etc.
+    ObjDataRole = Qt::UserRole + 1
+  };
+  
+  static QTreeWidgetItem* CreateAuxTwi(QTreeWidgetItem* par_item,
+    const String& col0, const String& col1 = _nilString); 
+    // helper method for making list/member subitems
+  
+  QTreeWidgetItem*	twi(QTreeWidgetItem* par_item = NULL) // generated if needed, and then maintained
+    {if (!m_twi) CreateTwi(par_item); return m_twi;} 
+  
+protected:
+  QTreeWidgetItem*	m_twi; // cached
+  virtual void		InitUpdateTwi(); // sets desc, etc.
+  virtual void		CreateTwi(QTreeWidgetItem* par_item); // creates and inits
+#endif
+
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy();
 };
 
 
@@ -195,9 +219,18 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgEl_List);
 
+#if !defined(__MAKETA__) && defined(TA_GUI)
+public:
+  virtual void		CreateItems(QTreeWidgetItem* par_item);
+  QTreeWidgetItem*	twi() // created and owned by our owner
+    {return m_twi;} 
+protected:
+  QTreeWidgetItem*	m_twi; // set in CreateItems, not owned by us)
+#endif
+
 private:
-  void	Initialize() {SetBaseType(&TA_ProgEl);}
-  void	Destroy()	{Reset();}
+  void	Initialize();
+  void	Destroy();
 };
 
 
@@ -217,6 +250,11 @@ public:
 protected:
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+
+#if !defined(__MAKETA__) && defined(TA_GUI)
+protected:
+  override void		CreateTwi(QTreeWidgetItem* par_item);
+#endif
 
 private:
   void	Initialize();
@@ -286,6 +324,11 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+
+#if !defined(__MAKETA__) && defined(TA_GUI)
+protected:
+  override void		CreateTwi(QTreeWidgetItem* par_item);
+#endif
 
 private:
   void	Initialize() {}
@@ -371,6 +414,11 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+
+#if !defined(__MAKETA__) && defined(TA_GUI)
+protected:
+  override void		CreateTwi(QTreeWidgetItem* par_item);
+#endif
 
 private:
   void	Initialize();
@@ -547,6 +595,17 @@ protected:
   virtual void		UpdateProgVars(); // put global vars in script, set values
 #ifdef TA_GUI
   virtual void		ViewScript_impl();
+#endif
+
+#if !defined(__MAKETA__) && defined(TA_GUI)
+public:
+  virtual void		CreateItems(QTreeWidget* par_item); // create items, rooted in a tree
+  virtual void		CreateItems(QTreeWidgetItem* par_item); // create items, rooted in an item
+protected:
+//TODO: var els, etc.
+  QTreeWidgetItem*	init_els_twi;
+  QTreeWidgetItem*	prog_els_twi;
+  virtual void		CreateItems_impl(); // creates the items, regardless of parent type
 #endif
 
 private:
