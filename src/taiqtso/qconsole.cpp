@@ -118,7 +118,7 @@ void QConsole::flushOutput(bool wait_for_pager) {
     }
     if(wait_for_pager && waiting) {
       QCoreApplication::processEvents();
-      sleep(1);
+      usleep(100);
     }
   } while(wait_for_pager && waiting);
 }
