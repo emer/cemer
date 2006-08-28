@@ -66,6 +66,9 @@
 
 //#include "minmax.h" // for height_field
 
+//externals
+class Q3ListView; // #IGNORE
+
 // forwards
 
 class UnitGroupView; //

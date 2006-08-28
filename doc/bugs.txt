@@ -45,6 +45,12 @@ Serious/Fatal:
   the view_colors control properly
   NOTE: if you view .defaults though, there are 4 props that show correctly, although
   the labels still don't line up properly
+-- post qt4 browser:
+* in xor.proj, try using Move from edit panel item menu for the Train subgroup;
+  causes segfault -- stack indicates that Move is being called with NULL item pointers,
+  so somehow, between the arg dialog, and the css_stub call, the chosen items are
+  not being passed
+  
 
 Medium Important:
 
@@ -103,6 +109,10 @@ Medium Important:
 * if you close a project, the panel you are on remains open until you click on the
   empty .projects item (this may presumably also apply to lesser items, although
   usually you have to click on the item to action it, so it may be masked)
+-- post qt4 browse:
+* open xor.proj; click on "specs" to open; XORUnitSpec edit panel has some kind of
+  context menu open (looks like one of the data control TypeDef Menu thingies);l
+  note: does not happen for the Con or Prjn spec items
 
 Lower Priority (but perhaps still needed)
 
@@ -119,6 +129,11 @@ Cosmetic/Usability/etc. (lower priority):
   and the numbers will just get out of sync with list position anyway
 * need to add clipboard/drag/drop awareness to TableViews
 * Project Open dialog doesn't reopen using your previous directory
+* "Create New Object" dialog opens parented to root window, so it changes focus
+* browsers don't really have proper title, i.e. now they all say "root()" or "root() <N>" etc
+-- post qt4 browse:
+* 
+
 
 TODO
 ----

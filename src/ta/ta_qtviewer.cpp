@@ -309,7 +309,7 @@ static const unsigned char image8_data[] = {
       EditPanel -- property list -- based on the v3.2 EditDialog
 
 
-  (Q3ListViewItem, IDataLinkClient)
+  (QTreeWidgetItem, IDataLinkClient)
     BrListViewItem  -- (abstract) nodes in either the tree view (left side), or list views (right panel)
       taiTreeDataNode -- (abstract) nodes in the tree view (left side)
         tabTreeDataNode -- nodes for taBase data items
@@ -317,7 +317,7 @@ static const unsigned char image8_data[] = {
             tabGroupTreeDataNode -- nodes for taGroup data items
       taiListDataNode -- nodes in the list views (right panel)
 
-  (Q3ListView)
+  (QTreeWidget)
     iListView [implementation class, ta_qtbrowse.cc] -- light subclass of the Qt ListView
 
   (QWidget)
@@ -695,8 +695,13 @@ TypeDef* tabDataLink::GetDataTypeDef() const {
   return data()->GetTypeDef();
 }
 
-const QPixmap* tabDataLink::GetIcon(int bmf, int& flags_supported) {
-  return data()->GetDataNodeBitmap(bmf, flags_supported);
+bool tabDataLink::GetIcon(int bmf, int& flags_supported, QIcon& ic) {
+  const QPixmap* pm = data()->GetDataNodeBitmap(bmf, flags_supported);
+  if (pm) {
+    QIcon tmp(*pm);
+    ic = tmp;
+    return true;
+  } else return false;
 }
 
 MemberDef* tabODataLink::GetDataMemberDef() const {
@@ -902,12 +907,12 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
     if ((ea & (taiClipData::EA_CUT | taiClipData::EA_COPY)) && (rval == 1)) { // copy-like op, get item data
       cd = GetClipData(sel_items, taiClipData::ClipOpToSrcCode(ea), false);
       // note that a Cut is a Copy, possibly followed later by a xxx_data_taken command, if client pastes it
-      QApplication::clipboard()->setData(cd, QClipboard::Clipboard);
+      QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
     }
   } else { // paste-like op, get item data
     //TODO: maybe we should confirm only 1 item selected???
-    ms = taiMimeSource::New(QApplication::clipboard()->data(QClipboard::Clipboard));
+    ms = taiMimeSource::New(QApplication::clipboard()->mimeData(QClipboard::Clipboard));
     rval = EditActionD_impl_(ms, ea);
   }
   if (ms) delete ms;
@@ -989,19 +994,26 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int 
   bool for_drag) const
 {
   taiClipData* rval = NULL;
-  QWidget* par = (for_drag) ?  widget() : NULL; // must have parent for drag, and must not for clipboard
+//obs  QWidget* par = (for_drag) ?  widget() : NULL; // must have parent for drag, and must not for clipboard
 
   if (sel_items.size <= 1) { // single
-    taiMimeItem* mi = this->GetMimeItem();
-    rval = new taiSingleClipData(mi, src_edit_action, par);
+    rval = GetClipDataSingle(src_edit_action, for_drag);
   } else { // multi select
     taiMimeItem_List* mil = new taiMimeItem_List(); // note: mimeitem takes ownership of list
     for (int i = 0; i < sel_items.size; ++i) {
       ISelectable* dn = sel_items.FastEl(i);
       mil->Add(dn->GetMimeItem());
     }
-    rval = new taiMultiClipData(mil, src_edit_action, par);
+//obs    rval = new taiMultiClipData(mil, src_edit_action, par);
+    rval = new taiMultiClipData(mil, src_edit_action);
   }
+  return rval;
+}
+
+taiClipData* ISelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
+  taiMimeItem* mi = this->GetMimeItem();
+//obs  rval = new taiSingleClipData(mi, src_edit_action, par);
+  taiClipData* rval = new taiSingleClipData(mi, src_edit_action);
   return rval;
 }
 
@@ -1017,7 +1029,8 @@ int ISelectable::GetEditActions_(const ISelectable_PtrList& sel_items) const {
   int forbidden = 0;
   if (sel_items.size <= 1) { // single select
     GetEditActionsS_impl_(allowed, forbidden);
-    taiMimeSource* ms = taiMimeSource::New(QApplication::clipboard()->data(QClipboard::Clipboard));
+    taiMimeSource* ms = taiMimeSource::New(
+      QApplication::clipboard()->mimeData(QClipboard::Clipboard));
     GetEditActionsD_impl_(ms, allowed, forbidden);
     delete ms;
   } else { // multi select
@@ -1351,12 +1364,12 @@ void iDataViewer::Constr_Menu_impl() {
     fileCloseAction->AddTo(fileMenu);
     fileMenu->insertSeparator();
     
-    connect( fileNewAction, SIGNAL( activated() ), this, SLOT( fileNew() ) );
-    connect( fileOpenAction, SIGNAL( activated() ), this, SLOT( fileOpen() ) );
-    connect( fileSaveAction, SIGNAL( activated() ), this, SLOT( fileSave() ) );
-    connect( fileSaveAsAction, SIGNAL( activated() ), this, SLOT( fileSaveAs() ) );
-    connect( fileSaveAllAction, SIGNAL( activated() ), this, SLOT( fileSaveAll() ) );
-    connect( fileCloseAction, SIGNAL( activated() ), this, SLOT( fileClose() ) );
+    connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
+    connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
+    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
+    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
+    connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
+    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
   }
   fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
   
@@ -1409,20 +1422,20 @@ void iDataViewer::Constr_Menu_impl() {
   helpAboutAction->AddTo(helpMenu );
 
     // signals and slots connections
-  connect( fileOptionsAction, SIGNAL( activated() ), this, SLOT( fileOptions() ) );
+  connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
-    connect( fileCloseWindowAction, SIGNAL( activated() ), this, SLOT( fileCloseWindow() ) );
+    connect( fileCloseWindowAction, SIGNAL( Action() ), this, SLOT( fileCloseWindow() ) );
 //    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
 //   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
-    connect( editCutAction, SIGNAL( activated(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editCopyAction, SIGNAL( activated(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editPasteAction, SIGNAL( activated(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editLinkAction, SIGNAL( activated(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editDeleteAction, SIGNAL( activated(int) ), this, SIGNAL(EditAction(int)) );
-    connect( viewRefreshAction, SIGNAL( activated() ), this, SLOT(viewRefresh()) );
+    connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+    connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+    connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+    connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+    connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+    connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
     connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
 //    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
-    connect( helpAboutAction, SIGNAL( activated() ), this, SLOT( helpAbout() ) );
+    connect( helpAboutAction, SIGNAL( Action() ), this, SLOT( helpAbout() ) );
 
 }
 
@@ -3519,31 +3532,37 @@ public:
 };
 
 iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* node,
-  iListViewItem* last_child_, const String& tree_name, int flags_)
-:inherited(node, last_child_, tree_name)
+  iListViewItem* after, const String& tree_name, int dn_flags_)
+:inherited(node, after)
 {
-  init(link_, md_, flags_);
+  init(tree_name, link_, md_, dn_flags_);
 }
 
-iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, Q3ListView* parent,
-  iListViewItem* last_child_, const String& tree_name, int flags_)
-:inherited(parent, last_child_, tree_name)
+iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent,
+  iListViewItem* after, const String& tree_name, int dn_flags_)
+:inherited(parent, after)
 {
-  init(link_, md_, flags_);
+  init(tree_name, link_, md_, dn_flags_);
 }
 
-void iListViewItem::init(taiDataLink* link_, MemberDef* md_, int flags_) {
+void iListViewItem::init(const String& tree_name, taiDataLink* link_, 
+  MemberDef* md_, int dn_flags_) 
+{
+  setText(0, tree_name);
   link_->AddDataClient(this); // sets link
   m_md = md_;
-  flags = flags_;
-  setDragEnabled(flags & DNF_CAN_DRAG);
-  setDropEnabled(!(flags & DNF_NO_CAN_DROP));
+  dn_flags = dn_flags_;
+  setDragEnabled(dn_flags & DNF_CAN_DRAG);
+  setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
+  if (dn_flags_ & DNF_LAZY_CHILDREN) {
+    enableLazyChildren();
+  }
 }
 
 iListViewItem::~iListViewItem() {
 }
 
-bool iListViewItem::acceptDrop (const QMimeSource* mime) const {
+bool iListViewItem::acceptDrop(const QMimeData* mime) const {
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = GetEditActions_(ms);
 //  bool rval = (ea & taiClipData::EA_DROP_OPS);
@@ -3552,7 +3571,7 @@ bool iListViewItem::acceptDrop (const QMimeSource* mime) const {
   return rval;
 }
 
-/* nnint iListViewItem::compare (Q3ListViewItem* item, int col, bool ascending) const {
+/* nnint iListViewItem::compare (QTreeWidgetItem* item, int col, bool ascending) const {
   // if we have a visual parent, delegate to its data link, otherwise just do the default
   iListViewItem* par = parent();
   if (par)  {
@@ -3560,27 +3579,33 @@ bool iListViewItem::acceptDrop (const QMimeSource* mime) const {
     if (ascending) return rval;
     else return rval * -1;
   } else
-    return Q3ListViewItem::compare(item, col, ascending);
+    return QTreeWidgetItem::compare(item, col, ascending);
 } */
+
+void iListViewItem::CreateChildren() {
+  inherited::CreateChildren();
+  DecorateDataNode();
+}
 
 void iListViewItem::DataLinkDestroying(taDataLink*) {
   delete this;
 }
 
 void iListViewItem::DecorateDataNode() {
-  // set a + expansion handle if we (potentially) have child items
+//TODO: fixup
   int bmf = 0;
-  int flags_supported = 0;
-//  if (node->flags & iListViewItem::DNF_IS_FOLDER) bmi = node->isOpen() ? NBI_FOLDER_OPEN : NBI_FOLDER_CLOSED;
-  if (isOpen()) bmf |= NBF_FOLDER_OPEN;
-  const QPixmap* pm = link()->GetIcon(bmf, flags_supported);
+  int dn_flags_supported = 0;
+//  if (node->dn_flags & iListViewItem::DNF_IS_FOLDER) bmi = node->isOpen() ? NBI_FOLDER_OPEN : NBI_FOLDER_CLOSED;
+  QIcon ic;
+  if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
+  bool has_ic = link()->GetIcon(bmf, dn_flags_supported, ic);
   //TODO (or in GetIcon somewhere) add link iconlet and any other appropriate mods
-  if (pm != NULL)
-    setPixmap(0, *pm);
+  if (has_ic)
+    setIcon(0, ic);
 }
 
 /*void iListViewItem::dragEntered() {
-  Q3ListViewItem::dragEntered();
+  QTreeWidgetItem::dragEntered();
     if ( type() != Dir ||
 	 type() == Dir && !QDir( itemFileName ).isReadable() )
 	return;
@@ -3591,7 +3616,7 @@ void iListViewItem::DecorateDataNode() {
 }
 
 void iListViewItem::dragLeft() {
-  Q3ListViewItem::dragLeft();
+  QTreeWidgetItem::dragLeft();
     if ( type() != Dir ||
 	 type() == Dir && !QDir( itemFileName ).isReadable() )
 	return;
@@ -3602,8 +3627,9 @@ void iListViewItem::dragLeft() {
     }
 }*/
 
-void iListViewItem::dropped(QDropEvent* ev) {
-  taiMimeSource* ms = taiMimeSource::New(ev);
+
+void iListViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
+  taiMimeSource* ms = taiMimeSource::New(mime);
 /*Qt3  int ea = 0;
   //NOTE: ev->action() was always observed to be Copy, whether the + was shown or not in the UI
   // NOTE: we always force clip ops to be MOVE in this version of the app
@@ -3622,7 +3648,7 @@ void iListViewItem::dropped(QDropEvent* ev) {
   // only show a menu if any actions possible (note: shouldn't have dropped otherwise!)
   if (ea != 0) {
     // create an aux object to handle the signal (because we are not a QObject)
-    QMenu* menu = new QMenu(listView());
+    QMenu* menu = new QMenu(treeWidget());
     QAction* act;
   
     act = menu->addAction("&Move Here");
@@ -3654,9 +3680,11 @@ void iListViewItem::dropped(QDropEvent* ev) {
     act->setShortcut(QKeySequence("Esc"));
   
     //TODO: any for us last (ex. delete)
-    QPoint pos = listView()->mapToGlobal(ev->pos() );
+    // get current mouse position
+//obs    QPoint pos = treeWidget()->mapToGlobal(ev->pos() );
+    QPoint men_pos = treeWidget()->mapToGlobal(pos);
     
-    act = menu->exec(pos);
+    act = menu->exec(men_pos);
     int ea = -1;
     if (act)
       ea = act->data().toInt();
@@ -3669,39 +3697,74 @@ void iListViewItem::dropped(QDropEvent* ev) {
 }
 
 void iListViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
-  if (flags & DNF_IS_MEMBER) {
+  if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
   ISelectable::GetEditActionsS_impl_(allowed, forbidden);
+}
+
+void iListViewItem::itemExpanded(bool value) {
+  inherited::itemExpanded(value); // creates children
+  DecorateDataNode();
+}
+
+QMimeData* iListViewItem::mimeData() const {
+//NOTE: for qt4 we no longer know whether it is for drag or not
+  return GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
+}
+
+
+void iListViewItem::moveChild(int fm_idx, int to_idx) {
+  if (fm_idx == to_idx) return; // DOH!
+  // if the fm is prior to to, we need to adjust index (for removal)
+  if (fm_idx < to_idx) --to_idx;
+  QTreeWidgetItem* tak = takeChild(fm_idx);
+  insertChild(to_idx, tak); 
+}
+
+void iListViewItem::swapChildren(int n1_idx, int n2_idx) {
+  // we move higher to lower, then lower is next after, and moved to higher
+  if (n1_idx > n2_idx) {int t = n1_idx; n1_idx = n2_idx; n2_idx = t;}
+  moveChild(n2_idx, n1_idx);
+  moveChild(n1_idx + 1, n2_idx);
 }
 
 String iListViewItem::view_name() const {
   return text(0);
 }
 
+
+
 //////////////////////////////////
 // 	taiListDataNode 	//
 //////////////////////////////////
 
 taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
-   taiDataLink* link_, Q3ListView* parent_, taiListDataNode* last_child_,int flags_)
-:inherited(link_, NULL, parent_, last_child_, "", (flags_ | DNF_IS_LIST_NODE))
+   taiDataLink* link_, iTreeWidget* parent_, taiListDataNode* after, int dn_flags_)
+:inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
 {
   num = num_;
   panel = panel_;
+  setData(0, Qt::TextAlignmentRole, Qt::AlignRight);
 }
 
 taiListDataNode::~taiListDataNode() {
 }
 
-int taiListDataNode::compare(Q3ListViewItem *i, int col, bool asc) const {
+
+bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
+{ //NOTE: it was tried to set display data as an int QVariant, but sorting was still lexographic
+  QTreeWidget* tw = treeWidget();
+  if (!tw) return false; // shouldn't happen
+  int col = tw->sortColumn();
   if (col > 0)
-    return Q3ListViewItem::compare(i, col, asc);
+    return inherited::operator<(item);
   else {
-    taiListDataNode* ldn = (taiListDataNode*)i;
-    return num - ldn->num;
-  }
+    taiListDataNode* ldn = (taiListDataNode*)&item;
+    return (num < ldn->num);
+  } 
 }
+
 
 taiDataLink* taiListDataNode::par_link() const {
   return (panel) ? panel->par_link() : NULL;
@@ -3713,7 +3776,7 @@ MemberDef* taiListDataNode::par_md() const {
 
 QString taiListDataNode::text(int col) const {
   if (col > 0)
-    return Q3ListViewItem::text(col);
+    return inherited::text(col);
   else
     return QString::number(num);
 }
@@ -3727,17 +3790,16 @@ IDataViewHost* taiListDataNode::host() const {
 //    iLDPListView 	//
 //////////////////////////
 
-class iLDPListView: public Q3ListView {
-typedef Q3ListView inherited;
+class iLDPListView: public iTreeWidget {
+typedef iTreeWidget inherited;
 public:
   iListDataPanel* panel;
-  iLDPListView(iListDataPanel* parent = NULL, const char* name = NULL);
+  iLDPListView(iListDataPanel* parent = NULL);
 
 protected:
 
 //  iListViewItem*	focus_item;
 
-  Q3DragObject*  	dragObject(); // override
   void 			focusInEvent(QFocusEvent* ev); // override
 //  void 			focusOutEvent(QFocusEvent* ev); // override
 
@@ -3748,16 +3810,16 @@ protected:
   void		setDropFocus(iListViewItem* item); // draws a focus rec around the target (qt doesn't do this by default) */
 };
 
-iLDPListView::iLDPListView(iListDataPanel* parent, const char* name)
-: Q3ListView(parent, name)
+iLDPListView::iLDPListView(iListDataPanel* parent)
+: iTreeWidget(parent)
 {
   panel = parent;
 //  focus_item = NULL;
   setAcceptDrops(true);
-  viewport()->setAcceptDrops(true);
 }
 
-Q3DragObject* iLDPListView::dragObject () {
+/*nn
+QMimeData* iLDPListView::mimeData(const QList<QTreeWidgetItem*> items) const {
   ISelectable_PtrList sel_items;
   panel->GetSelectedItems(sel_items);
   ISelectable* ci = sel_items.SafeEl(0);
@@ -3766,7 +3828,7 @@ Q3DragObject* iLDPListView::dragObject () {
   } else {
     return NULL;
   }
-}
+}*/
 
 void iLDPListView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
@@ -3782,15 +3844,16 @@ void iLDPListView::focusInEvent(QFocusEvent* ev) {
 iListDataPanel::iListDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  list = new iLDPListView(this, "list");
+  list = new iLDPListView(this);
+  list->setName("list"); // nn???
   setCentralWidget(list);
-  list->setSelectionMode(Q3ListView::Extended);
-  list->setShowSortIndicator(true);
+  list->setSelectionMode(QTreeWidget::ExtendedSelection);
+  list->setSortingEnabled(true);
   ConfigHeader();
-  connect(list, SIGNAL(contextMenuRequested(Q3ListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(Q3ListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
+  connect(list, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)),
+      this, SLOT(list_contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)) );
+  connect(list, SIGNAL(itemSelectionChanged()),
+      this, SLOT(list_itemSelectionChanged()) );
   FillList();
 }
 
@@ -3802,23 +3865,14 @@ void iListDataPanel::ClearList() {
 }
 
 void iListDataPanel::ConfigHeader() {
-  // set up number of cols, based on link
-  int cnt = list->columns();
-  if (cnt == 0) {
-    list->addColumn("#");
-    ++cnt;
-  }
+  // set up number of cols, based on link, ok to repeat this
+  list->setColumnCount(link()->NumListCols() + 1);
+  QTreeWidgetItem* hdr = list->headerItem();
+  hdr->setText(0, "#");
   for (int i = 0; i < link()->NumListCols(); ++i) {
     int hdr_idx = i + 1;
-    if (hdr_idx >= cnt) {
-      list->addColumn(link()->GetColHeading(i));
-      ++cnt;
-    } else
-      list->setColumnText(hdr_idx, link()->GetColHeading(i));
+    hdr->setText(hdr_idx, link()->GetColHeading(i));
   }
-  // only if structural changes, delete unnecessary columns
-  for (int i = cnt - 1; i > link()->NumListCols(); --i)
-    list->removeColumn(i);
 }
 
 void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -3875,15 +3929,15 @@ int iListDataPanel::GetEditActions() {
 }
 
 void iListDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  Q3ListViewItemIterator it(list, Q3ListViewItemIterator::Selected);
-  while (it.current()) {
-    ISelectable* si = (ISelectable*)((taiListDataNode*)it.current());
+  QTreeWidgetItemIterator it(list, QTreeWidgetItemIterator::Selected);
+  ISelectable* si;
+  while ( (si = (ISelectable*)((taiListDataNode*)*it)) ) {
     lst.Add(si);
     ++it;
   }
 }
 
-void iListDataPanel::list_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col ) {
+void iListDataPanel::list_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
   //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
   taiListDataNode* nd = (taiListDataNode*)item;
   if (nd == NULL) return; //TODO: could possibly be multi select
@@ -3902,7 +3956,7 @@ void iListDataPanel::list_contextMenuRequested(Q3ListViewItem* item, const QPoin
   delete menu;
 }
 
-void iListDataPanel::list_selectionChanged() {
+void iListDataPanel::list_itemSelectionChanged() {
   viewer_win()->UpdateUi();
 }
 

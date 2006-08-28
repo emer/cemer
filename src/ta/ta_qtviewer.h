@@ -46,14 +46,16 @@
 #ifndef __MAKETA__
   #include <qaction.h>
   #include <qframe.h>
-  #include <Q3ListView>
   #include <qmainwindow.h>
   #include <qobject.h>
   #include <qpalette.h>
-  #include <qpixmap.h>
+  #include <QIcon>
   #include <QList>
   #include <qsplitter.h>
   #include <qtabbar.h>
+  #include <QTreeWidget>
+  #include <QTreeWidgetItem>
+  #include "itreewidget.h"
   #include <qtoolbar.h>
 #endif
 
@@ -112,15 +114,13 @@ public:
 */
 
 class TA_API taiDataLink: public taDataLink { // interface for viewing system
-#ifndef __MAKETA__
-  typedef taDataLink inherited;
-#endif
+INHERITED(taDataLink)
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
 
   virtual void		FillContextMenu(taiActions* menu); // only override to prepend to menu
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
-  virtual const QPixmap* GetIcon(int bmf, int& flags_supported) {return NULL;}
+  virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
   virtual bool		ShowMember(MemberDef* md) {return false;} // asks this type if we should show the md member
@@ -159,15 +159,13 @@ public: // DO NOT CALL
 //////////////////////////
 
 class TA_API tabDataLink: public taiDataLink { // DataLink for taBase objects
-#ifndef __MAKETA__
-typedef taiDataLink inherited;
-#endif
+INHERITED(taiDataLink)
 public:
   taBase*		data() {return (taBase*)m_data;}
   taBase*		data() const {return (taBase*)m_data;}
   override bool		isBase() const {return true;} 
   
-  override const QPixmap* GetIcon(int bmf, int& flags_supported);
+  override bool		GetIcon(int bmf, int& flags_supported, QIcon& ic);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
@@ -200,9 +198,7 @@ protected:
 //////////////////////////
 
 class TA_API tabODataLink: public tabDataLink { // DataLink for taOBase objects
-#ifndef __MAKETA__
-typedef tabDataLink inherited;
-#endif
+INHERITED(tabDataLink)
 public:
   taOBase*		data() {return (taOBase*)m_data;}
   taOBase*		data() const {return (taOBase*)m_data;}
@@ -220,9 +216,7 @@ public:
 
 class TA_API tabListDataLink: public tabODataLink {
   // DataLink for taList objects -- note that it also manages the ListView nodes
-#ifndef __MAKETA__
-typedef tabODataLink inherited;
-#endif
+INHERITED(tabODataLink)
 public:
   taList_impl*		data() {return (taList_impl*)m_data;}
   taList_impl*		data() const {return (taList_impl*)m_data;}
@@ -247,9 +241,7 @@ public: // this section for all the delegated menu commands
 
 class TA_API tabGroupDataLink: public tabListDataLink {
   // DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups
-#ifndef __MAKETA__
-typedef tabListDataLink inherited;
-#endif
+INHERITED(tabListDataLink)
 public:
   taGroup_impl*		data() {return (taGroup_impl*)m_data;}
   const taGroup_impl*	data() const {return (taGroup_impl*)m_data;}
@@ -340,7 +332,8 @@ public: // Interface Properties and Methods
   virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
    // normally implement the _impl
   virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
-    bool for_drag) const; // delegates to the link; normally not overridden
+    bool for_drag) const; // works for single or multi; normally not overridden
+  virtual taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const; // normally not overridden
   virtual int		GetEditActions_(taiMimeSource* ms) const; // typically called on single item for acceptDrop
   int			GetEditActions_(const ISelectable_PtrList& sel_items) const;
     // called to get edit items available on clipboard for the sel_items
@@ -1265,20 +1258,19 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-class TA_API iListViewItem: public Q3ListViewItem, public ISelectable {
+class TA_API iListViewItem: public iTreeWidgetItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
-INHERITED(Q3ListViewItem)
+INHERITED(iTreeWidgetItem)
 public:
   enum DataNodeFlags {
     DNF_IS_FOLDER 	= 0x001, // true for list/group folder nodes (note: does *not* indicate whether item can contain other things or not)
-    DNF_IS_ALIAS 	= 0x002, // true after children have been created (after clicking on node)
+    DNF_LAZY_CHILDREN 	= 0x002, // start w/ dummy child; create real children when expanded
     DNF_UPDATE_NAME	= 0x004, // typically for list items, update the visual name (tree, tab, etc.) after item edited
     DNF_CAN_BROWSE	= 0x008, // can be a new browser root
     DNF_CAN_DRAG	= 0x010, // 16 can allow drags
     DNF_NO_CAN_DROP	= 0x020, // 32 cannot accept drops
     DNF_IS_MEMBER 	= 0x040, // 64 true for members (and root), not for list/group items -- helps node configure edit ops
-    DNF_IS_LIST_NODE 	= 0x080, // true for nodes in a list view (in panel, not on tree)
-    DNF_SORT_CHILDREN	= 0x100	// true if we are to sort children after creating
+    DNF_IS_LIST_NODE 	= 0x080 // true for nodes in a list view (in panel, not on tree)
   };
 
 /*nn  enum BrowseDropAction {
@@ -1289,20 +1281,32 @@ public:
     BDA_MOVE_AS_SUBITEM // moves item as a subitem, ex a sub spec, or subprocess
   }; */
 
-  int			flags; // any of DataNodeFlags
+  int			dn_flags; // any of DataNodeFlags
 
   void* 		data() {return m_link->data();} //
 
-  iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* parent_,
-    iListViewItem* last_child_, const String& tree_name, int flags_ = 0);
-  iListViewItem(taiDataLink* link_, MemberDef* md_, Q3ListView* parent_,
-    iListViewItem* last_child_, const String& tree_name, int flags_ = 0);
-  ~iListViewItem();
-
-  override bool 	acceptDrop (const QMimeSource* mime) const;
-//  int			compare (Q3ListViewItem* item, int col, bool ascending) const; // override
+  override bool 	acceptDrop(const QMimeData* mime) const;
+  override void 	CreateChildren(); 
+  override QMimeData*	mimeData() const;
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 
+  iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* parent_,
+    iListViewItem* after, const String& tree_name, int dn_flags_ = 0);
+  iListViewItem(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+    iListViewItem* after, const String& tree_name, int dn_flags_ = 0);
+  ~iListViewItem();
+  
+public: // qt3 compatability functions, for convenience
+  bool			dragEnabled() const {return flags() & Qt::ItemIsDragEnabled;}
+  void			setDragEnabled(bool value) {Qt::ItemFlags f = flags(); if (value) 
+    setFlags(f | Qt::ItemIsDragEnabled); else setFlags(f & ~Qt::ItemIsDragEnabled);}
+    
+  bool			dropEnabled() const {return flags() & Qt::ItemIsDropEnabled;}
+  void			setDropEnabled(bool value) {Qt::ItemFlags f = flags(); if (value) 
+    setFlags(f | Qt::ItemIsDropEnabled); else setFlags(f & ~Qt::ItemIsDropEnabled);}
+    
+  void			moveChild(int fm_idx, int to_idx); //note: to_idx is based on before
+  void			swapChildren(int n1_idx, int n2_idx);
 
 public: // ITypedObject interface
   override void*	This() {return (void*)this;}
@@ -1329,9 +1333,12 @@ protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
 //nn  void 			dragEntered(); // override
 //nn  void 			dragLeft(); // override
-  void			dropped(QDropEvent* e); // override
+  override void		dropped(const QMimeData* mime, const QPoint& pos);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2) {} // called for each node when the data item has changed, esp. ex lists and groups
-  void			init(taiDataLink* link_, MemberDef* md_, int flags_); // #IGNORE
+  override void 	itemExpanded(bool value);
+private:
+  void			init(const String& tree_name, taiDataLink* link_, 
+    MemberDef* md_, int dn_flags_); // #IGNORE
 };
 
 
@@ -1340,21 +1347,20 @@ protected:
 //////////////////////////
 
 class TA_API taiListDataNode: public iListViewItem {
-#ifndef __MAKETA__
-typedef iListViewItem inherited;
-#endif
+INHERITED(iListViewItem)
 public:
   int			num; // item number, starting from 1
   iListDataPanel*	panel; // logical parent node of the list items
 
-  int 			compare (Q3ListViewItem *i, int col, bool ascending ) const; // override
-
   QString		text(int col) const; // override
 
+  bool 			operator<(const QTreeWidgetItem& item) const; // override
+
   taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
-    Q3ListView* parent_, taiListDataNode* last_child_, int flags_ = 0);
+    iTreeWidget* parent_, taiListDataNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
-  ~taiListDataNode();
+  ~taiListDataNode(); //
+  
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
@@ -1376,7 +1382,7 @@ class TA_API iListDataPanel: public iDataPanelFrame {
 typedef iDataPanelFrame inherited;
 #endif
 public:
-  Q3ListView*		list; //actually an iLDPListView
+  iTreeWidget*		list; //actually an iLDPListView
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
@@ -1399,8 +1405,8 @@ protected:
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
 protected slots:
-  void			list_contextMenuRequested(Q3ListViewItem* item, const QPoint & pos, int col);
-  void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
+  void			list_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col);
+  void			list_itemSelectionChanged(); //note: must use this parameterless version in Multi mode
 };
 
 class TA_API iTextDataPanel: public iDataPanelFrame {

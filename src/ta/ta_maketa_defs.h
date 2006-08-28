@@ -52,9 +52,10 @@ public:
   int dummy; // #IGNORE
 };
 
-class Q3ListViewItem {
+class QStringList {
+//  
 public:
-  int dummy; // #IGNORE
+	int dummy; // #IGNORE
 };
 
 class QObject {

@@ -44,7 +44,8 @@
 #include "ispinbox.h"
 
 #include <qlayout.h>
-#include <Q3ListView>
+#include <QTreeWidget>
+#include "itreewidget.h"
 #include <qpushbutton.h>
 #include <qsplitter.h>
 //#include <qtable.h>
@@ -311,7 +312,7 @@ taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_,  taiTr
   init(link_, flags_);
 }
 
-taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, Q3ListView* parent_, 
+taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, iTreeWidget* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, NULL, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
@@ -388,7 +389,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
       taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(
         ClassBrowser::StatGetDataLink(st, TIK_TYPESPACE));
       last_child_node = browser_win()->CreateTreeDataNode(tsdl, 
-          NULL, this, last_child_node, "sub types", flags | iListViewItem::DNF_SORT_CHILDREN);
+          NULL, this, last_child_node, "sub types", flags);
       tsdl->dm = taTypeSpaceDataLink::DM_DefaultSubTypes;
     }
     // members -- note: don't sort, since they are in a programmer order already
@@ -402,7 +403,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     if (td->methods.size > 0) {
       dl = ClassBrowser::StatGetDataLink(&td->methods, TIK_METHODSPACE);
       last_child_node = browser_win()->CreateTreeDataNode(static_cast<taMethodSpaceDataLink*>(dl), 
-        NULL, this, last_child_node, "methods", flags | iListViewItem::DNF_SORT_CHILDREN); 
+        NULL, this, last_child_node, "methods", flags); 
     }
    
     // child types
@@ -411,7 +412,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
       taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(
         ClassBrowser::StatGetDataLink(ct, TIK_TYPESPACE));
       last_child_node = browser_win()->CreateTreeDataNode(tsdl, 
-        NULL, this, last_child_node, "child types", flags | iListViewItem::DNF_SORT_CHILDREN); 
+        NULL, this, last_child_node, "child types", flags); 
       tsdl->dm = taTypeSpaceDataLink::DM_DefaultChildren;
     }
    
@@ -436,7 +437,7 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
 }
 
 taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, 
-  Q3ListView* parent_, 
+  iTreeWidget* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, NULL, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
@@ -579,7 +580,7 @@ void iClassBrowser::ApplyRoot() {
   // always show the first items under the root
   node->CreateChildren();
   setCurItem(node);
-  lvwDataTree->setOpen(node, true); // always open root node
+  lvwDataTree->setItemExpanded(node, true); // always open root node
 }
 
 taiTreeDataNode* iClassBrowser::CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,

@@ -24,7 +24,8 @@
 #include "ta_base.h" // for list template
 
 #ifndef __MAKETA__
-#  include <Q3DragObject>
+# include <QMimeData>
+# include <QStringList>
 #endif
 
 // external declarations
@@ -116,7 +117,7 @@ class taBase; //
 taiClipData -- sender
 
   taiClipData is the class used by senders to supply tacss data to the clipboard system.
-  This class is derived from Q3DragObject, and so inherently supports Drap/Drop, and clipboard
+  This class is derived from QMimeData, and so inherently supports Drap/Drop, and clipboard
   operations.
 
   This class uses taiClipSrc
@@ -124,7 +125,7 @@ taiClipData -- sender
 
 To Extend taiMimeSource:
 
-  (1) add a new  format() override, check for your own indexes, else delegate to baseclass
+  (1) extend formats_impl() override, check for your own indexes, else delegate to baseclass
 
 COMMAND FORMATS
 
@@ -143,9 +144,9 @@ COMMAND FORMATS
 
 /* taiMimeSource
 
-   This class is used for receive or query-type operations. It wraps an existing QMimeSource,
+   This class is used for receive or query-type operations. It wraps an existing QMimeData,
    and if that mime source is a tacss mime source, it decodes the object path information.
-   But this new class delegates the QMimeSource virtuals to the source it wrapped, so it
+   But this new class delegates the QMimeData virtuals to the source it wrapped, so it
    behaves essentially identically to that source. Therefore, we pass nothing but taiMimeSource
    objects around, so that we only need one version of every function, yet can have ready access
    to the extra tacss information, that will constitute 95%+ of the actual use cases.
@@ -163,24 +164,22 @@ COMMAND FORMATS
 #define IDX_MD_VISIBLE_MAX		1
 
 // mime-type strings
-extern const char* text_plain;
-extern const char* tacss_objectdesc;
-extern const char* tacss_objectdata;
+extern QString text_plain;
+extern QString tacss_objectdesc;
+extern QString tacss_objectdata;
 //extern const char* tacss_remdatataken; // "hidden" mime type used by remote Paste-after-Cut and similar, to force deletion of source
 //extern const char* tacss_locdatataken; // "hidden" mime type used by local Paste-after-Cut and similar, to force clipboard cleanup
 
-extern const char* mime_types[IDX_MD_MAX + 1];
+extern QString mime_types[IDX_MD_MAX + 1];
 
 // forwards
 class taiMimeItem;
 class taiMimeItem_List;
 
 
-//////////////////////////////////
-// 	taiClipData		//
-//////////////////////////////////
-
-class TA_API taiClipData: public Q3DragObject {
+class TA_API taiClipData: public QMimeData {
+INHERITED(QMimeData)
+  Q_OBJECT
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
@@ -233,31 +232,29 @@ public:
 
   int			src_edit_action;
 
-  taiClipData(int src_edit_action_, QWidget* dragSource = NULL, const char* name = NULL);
+  taiClipData(int src_edit_action_);
 
-  const char* 		format(int i = 0) const; // override
-//  virtual void*		GetObject() {return NULL;}
-//  virtual taBase*	GettabObject() {return NULL;}
-  QByteArray 		encodedData(const char* mimeType) const; // #IGNORE override - queries for proper index and calls teh _impl function
+  QStringList 		formats() const; // overrride
 protected:
-  bool			DecodeFormat(const char* mimeType, int& fmt_num, int& index) const; // returns true if valid,
-  virtual QByteArray 	encodedData_impl(int fmt_num, int index = 0) = 0; // gets the data of the type -- can be replaced or extended -- note we cheat a bit by being non-const, but Qt requires encodedData to be const
+  bool			DecodeFormat(const QString& mimeType, int& fmt_num, int& index) const; // returns true if valid,
+  virtual QByteArray 	encodedData_impl(int fmt_num, int index = 0) = 0; // gets the data of the type -- can be replaced or extended -- note we cheat a bit by being non-const, but Qt requires retrieveData to be const
+  virtual void 		formats_impl(QStringList& list) const; // overrride
+#ifndef __MAKETA__
+  QVariant 		retrieveData(const QString& mimeType, QVariant::Type type) const; // #IGNORE override - queries for proper index and calls the _impl function
+#endif
 private:
-  String		fmt_cache; // #IGNORE caches latest decorated format() value, because we need to return a const char*
 };
 
 
-//////////////////////////////////
-// 	taiSingleClipData	//
-//////////////////////////////////
-
 class TA_API taiSingleClipData: public taiClipData { // ClipData for a single object -- simplest, most common case
+INHERITED(taiClipData)
+  Q_OBJECT
 public:
   int			count() const {return 1;} // override
   bool			is_multi() const {return false;} // override
   taiMimeItem*		items(int i) const {return (i == 0) ? item : NULL;}
 
-  taiSingleClipData(taiMimeItem* item_, int src_edit_action_, QWidget* dragSource = NULL, const char* name = NULL);
+  taiSingleClipData(taiMimeItem* item_, int src_edit_action_);
     // NOTE: we take over ownership of the item
   ~taiSingleClipData();
 
@@ -267,19 +264,15 @@ protected:
 };
 
 
-//////////////////////////////////
-// 	taiMultiClipData	//
-//////////////////////////////////
-
-
 class TA_API taiMultiClipData: public taiClipData { // ClipData for multi selection of objects
+INHERITED(taiClipData)
   Q_OBJECT
 public:
   int			count() const; // override
   bool			is_multi() const {return true;} // override
   taiMimeItem*		items(int i) const;
 
-  taiMultiClipData(taiMimeItem_List* list_, int src_edit_action_, QWidget* dragSource = NULL, const char* name = NULL);
+  taiMultiClipData(taiMimeItem_List* list_, int src_edit_action_);
     // NOTE: we take over ownership of the list
   ~taiMultiClipData();
 
@@ -295,6 +288,7 @@ protected:
 //////////////////////////////////
 
 class TA_API taiMimeItem: public QObject { // we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)
+INHERITED(QObject)
   Q_OBJECT
 friend class taiMimeSource;
 friend class taiSingleClipData;
@@ -327,7 +321,10 @@ public:
   void			El_Done_(void*);	// override, when "done" (delete)
 };
 
+
 class TA_API tabSndMimeItem: public taiMimeItem { // specialized for taBase sending
+INHERITED(taiMimeItem)
+  Q_OBJECT
 friend class taiMimeItem;
 public:
   void*			obj() const {return mobj;}
@@ -347,6 +344,8 @@ protected:
 
 
 class TA_API taiRcvMimeItem: public taiMimeItem { // specialized for tacss receiving
+INHERITED(taiMimeItem)
+  Q_OBJECT
 friend class taiExtMimeSource;
 public:
   void*			obj() const; // override -- NOTE: only called by taiExtMimeSource if we are InProcess
@@ -365,13 +364,6 @@ protected:
 };
 
 
-
-
-
-//////////////////////////////////
-// 	taiMimeSource		//
-//////////////////////////////////
-
 /*
   taiMimeSource works like an iterator:
     count: the number of items (0 if not tacss items), 1 if 'is_multi' is false
@@ -379,14 +371,16 @@ protected:
     xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
 
 */
-class TA_API taiMimeSource: public QMimeSource { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
+class TA_API taiMimeSource: public QMimeData { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
+INHERITED(QMimeData)
+  Q_OBJECT
 public:
-  static taiMimeSource*	New(const QMimeSource* ms); // we use a static method for extensibility -- creates correct subtype
+  static taiMimeSource*	New(const QMimeData* ms); // we use a static method for extensibility -- creates correct subtype
   static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
 
   virtual int		src_action() const = 0; // any (or none) of the EA_SRC_xxx flags
   virtual bool		is_multi() const = 0; // true if the source is multiple individual objects (multi-select)
-  virtual bool		is_tacss() const = 0; // true if the mime source is a taiClipData source, otherwise false (generic QMimeSource)
+  virtual bool		is_tacss() const = 0; // true if the mime source is a taiClipData source, otherwise false (generic QMimeData)
 
   virtual int		count() const = 0; // number of items
   int			index() const; // current index value; -1 if none
@@ -406,31 +400,36 @@ public:
     // ITER if a taBase object, its full path; if not taBase, or not tacss, then NULL;
   bool			is_tab() const {return in_range() ? item()->is_tab() : false;};
     // ITER true if the object is derived from taBase
-  const char* 		format(int i = 0) const; // override
-  QByteArray 		encodedData(const char * fmt) const; // #IGNORE override - queries for proper index and calls teh _impl function
-  bool			provides(const char * mimeType) const; // override delegates
-  int			encodedData(const char* mimeType, taString& result) const; // provides data to a String; returns # bytes
-  int			encodedData(const char* mimeType, istringstream& result) const; // provides data to an istrstream; returns # bytes
+  QStringList 		formats() const; // override
+  bool			hasFormat(const QString& mimeType) const; // override
+  int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
+  int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
   void			loc_data_taken() const; // sends a loc_data_taken for the current index; only call if consumer didn't move/consume the item
   void			rem_data_taken() const; // sends a rem_data_taken for the current index, called by consumer when CUT-like item is accepted
 
-
+#ifndef __MAKETA__
+  using QMimeData::data; // lets us access the inherited version
+#endif
 
   virtual bool		IsThisProcess() const = 0; // true if object originates in this process (ie, we can do low-level object-based ops)
 
   ~taiMimeSource();
 protected:
-  const QMimeSource* 	ms;
+  const QMimeData* 	ms;
   int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
   bool			in_range() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
   virtual taiMimeItem*	item() const = 0; // current item -- must always be checked with in_range before access
 
   void			AssertList(); // makes sure list is constructed
-
-  taiMimeSource(const QMimeSource* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
+#ifndef __MAKETA__
+  QVariant 		retrieveData(const QString& mimetype, QVariant::Type type) const; //overrride
+#endif
+  taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
 
 class TA_API taiIntMimeSource: public taiMimeSource { // a taiMimeSource that wraps our own in-process taiClipData
+INHERITED(taiMimeSource)
+  Q_OBJECT
 friend class taiMimeSource;
 public:
   int			src_action() const {return cd->src_edit_action;} // override
@@ -449,6 +448,8 @@ protected:
 };
 
 class TA_API taiExtMimeSource: public taiMimeSource { // a taiMime that wraps data from the clipboard etc.
+INHERITED(taiMimeSource)
+  Q_OBJECT
 friend class taiMimeSource;
 public:
   int			src_action() const {return msrc_action;} // override
@@ -466,7 +467,7 @@ protected:
   taiMimeItem*		item() const {return list.SafeEl(iter_idx);} // override
   bool			DecodeDesc(String arg); // decode the full description, return 'true' if valid, build list from desc
 
-  taiExtMimeSource(const QMimeSource* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
+  taiExtMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
 
 typedef taiMimeSource* taiMimeSourcePtr;

@@ -62,20 +62,22 @@ class	QHBoxLayout;		// #IGNORE
 class	Q3HButtonGroup;		// #IGNORE 
 class	Q3Header;		// #IGNORE 
 class	QHostAddress;		// #IGNORE
+class	QIcon;			// #IGNORE
 class	QItemDelegate;		// #IGNORE
 class	QLabel;			// #IGNORE 
 class	QLayout;		// #IGNORE 
 class	QLineEdit;		// #IGNORE 
 class	Q3ListBox;		// #IGNORE 
 class	Q3ListBoxItem;		// #IGNORE 
-class	Q3ListView;		// #IGNORE 
-class	Q3ListViewItem;		// #IGNORE 
+//class	Q3ListView;		// #IGNORE 
+//class	Q3ListViewItem;		// #IGNORE 
 class	QMainWindow;		// #IGNORE 
 class	QMenu;			// #IGNORE  Qt4
 class	QMenuBar;		// #IGNORE 
 class	QMenuItem;		// #IGNORE 
 class	QMessageBox;		// #IGNORE 
-class	QMimeSource;		// #IGNORE 
+//class	QMimeSource;		// #IGNORE 
+class	QMimeData;		// #IGNORE 
 class	QModelIndex;		// #IGNORE
 class	QPainter;		// #IGNORE 
 class	QPixmap;		// #IGNORE 
@@ -169,8 +171,7 @@ class	iSize;			//
 class	iSpinBox;		// #IGNORE 
 class	iStripeWidget;		// #IGNORE  -- in ieditgrid.h/.cc
 class	iTransformer;		// #IGNORE 
-class	iTreeView;		// #IGNORE 
-class	iTreeViewItem;		// #IGNORE 
+class	iTreeWidget;		// #IGNORE 
 
 #define COLOR_BLACK Qt::black
 

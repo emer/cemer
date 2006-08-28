@@ -181,6 +181,12 @@ MainMenuSpec:
   
 DataViewer:
 
+void Constr_Actions() -- enumerates all (static) actions, from all sources
+void Constr_Actions_this() -- static actions, from ourself (viewer), ex. clip actions
+void Constr_Actions_app_root() -- static actions, from the application root
+void Constr_Actions_root() -- static actions, from the root object Type
+void Constr_Actions_DataView() -- static actions, from our DataView
+
 void Constr_MainMenu() -- main menu construction
 void Constr_MainMenu_Base() -- for the base object (ourself)
 void Constr_MainMenu_Root() -- for the root object
