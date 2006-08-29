@@ -15,6 +15,9 @@
 
 #include "itreewidget.h"
 
+#include <iostream>
+using namespace std;
+
 iTreeWidget::iTreeWidget(QWidget* parent)
 :inherited(parent)
 {
@@ -58,6 +61,16 @@ void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
   }
 }
 
+/*void iTreeWidget::customEvent(QEvent* e_) {
+  switch (e_->type()) {
+  case iTWDropEvent: {
+    iTWDropEvent e = ((iTWDropEvent*)e_;
+    if (e->item)
+  } break;
+  default: inherited::customEvent(e_);
+  }
+}*/
+
 void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
   // safe cast, null if not of type
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(item_);
@@ -73,17 +86,22 @@ void iTreeWidget::dropEvent(QDropEvent* e) {
 bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index, 
   const QMimeData* data, Qt::DropAction action) 
 {
-  iTreeWidgetItem* item = NULL;
-  if (parent) 
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(parent);
+if (index > 0) {
+  cerr << "iTreeWidget::dropMimeData: warning: index=0 expected, was " <<
+    index << "\n";
+}
+/*wrong  if (parent) 
     item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
   else // presumably then it is root item on us...
-    item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index));
+    item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index)); */
   if (!item) return false;
   item->dropped(data, drop_pos);
   return false;
 }
 
 QMimeData* iTreeWidget::mimeData(const QList<QTreeWidgetItem *> items) const {
+return inherited::mimeData(items);
   if (items.count() == 0) return NULL; // presumably shouldn't happen
   else if (items.count() == 1) {
       iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(items.at(0));

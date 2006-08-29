@@ -23,12 +23,17 @@
 #include <QPoint>
 #include <QTreeWidget>
 
-class iTreeWidgetItem;
+class iTreeWidgetItem; //
+//class iTWDropEvent;
 
 class TAIQTSO_API iTreeWidget: public QTreeWidget { 
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:
+/*  enum CustomEventType {
+    TWDrop		= QEvent::User + 1
+  };*/
+  
   bool			allColumnsShowFocus() const; // qt3 compat
   
   iTreeWidget(QWidget* parent = 0);
@@ -38,6 +43,8 @@ signals:
   
 protected:
   QPoint		drop_pos; // we capture this from the drop event
+  
+//  void			customEvent(QEvent* e); // override
   
   void			dropEvent(QDropEvent* e); // override
   bool 			dropMimeData(QTreeWidgetItem* parent, int index, 
@@ -55,6 +62,16 @@ protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);
   void			this_itemCollapsed(QTreeWidgetItem* item);
 };
+
+/*class TAIQTSO_API iTWDropEvent: public QEvent {
+INHERITED(QTreeWidget)
+public:
+  QEvent::Type		type() {return (QEvent::Type)iTreeWidget::iTWDrop;}
+  QPoint		pos;
+  iTreeWidgetItem*	item;
+  
+  iTWDropEvent(const QPoint& pos_, iTreeWidgetItem* item_): pos(pos_), item(item_) {}
+};*/
 
 
 class TAIQTSO_API iTreeWidgetItem: public QTreeWidgetItem { 
