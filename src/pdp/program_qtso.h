@@ -134,7 +134,7 @@ public:
   QWidget*		    widEdit; // container for the actual taiEdit
   HiLightButton*	    btnSave;
   HiLightButton*	    btnRevert;
-  QTreeWidget*		  items;
+  iTreeWidget*		  items;
   
   bool			read_only; // set true if we are
   

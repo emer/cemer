@@ -19,14 +19,15 @@
 #include "ta_qtdialog.h" // for Hilight button
 #include "pdp_TA_inst.h"
 
-#include "icombobox.h"
-#include "ilineedit.h"
-#include "ispinbox.h"
-
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTreeWidget>
 #include <QVBoxLayout>
+
+#include "icombobox.h"
+#include "ilineedit.h"
+#include "ispinbox.h"
+#include "itreewidget.h"
 
 //////////////////////////
 //   taiProgVar		//
@@ -438,7 +439,7 @@ void iProgramEditor::init() {
   layEdit->addWidget(btnRevert);
   layEdit->addSpacing(taiM->hsep_c);
   
-  items = new QTreeWidget(this);
+  items = new iTreeWidget(this);
   layOuter->addWidget(items);
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
@@ -528,9 +529,9 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
   setCentralWidget(pe); //sets parent
   Program* prog_ = prog();
   if (prog_) {
-    prog_->CreateItems(pe->items);
+//    prog_->CreateItems(pe->items);
   //TODO: might need to be put into a one-shot after showEvent
-    pe->ExpandAll();
+//    pe->ExpandAll();
   }
   
 /*  list->setSelectionMode(QListView::Extended);
