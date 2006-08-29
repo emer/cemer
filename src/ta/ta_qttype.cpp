@@ -2664,6 +2664,28 @@ taiEditDataHost* gpiSelectEdit::CreateDataHost(void* base, bool readonly) {
 //   taiViewType	//
 //////////////////////////
 
+taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
+  if (!el || !el_typ) return NULL; // subclass will have to grok
+
+  // handle ptrs by derefing the type and the el
+  if (el_typ->ptr > 0) {
+    int ptr = el_typ->ptr; // need to deref this many times
+    el_typ = el_typ->GetNonPtrType(); // gets base type in one step
+    while (el && ptr) {
+      el = *((void**)el);
+      --ptr;
+    }
+  }
+
+  if (!el || !el_typ) return NULL;
+  if (!el_typ->iv) return NULL;
+  taiDataLink* rval = NULL;
+  taiViewType* tiv = el_typ->iv;
+  rval = tiv->GetDataLink(el, el_typ);
+  return rval; //NULL if not taBase
+}
+
+
 void taiViewType::Initialize() {
 }
 
@@ -2733,7 +2755,7 @@ void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
   DataPanelCreated(dp);
 }
 
-taiDataLink* tabViewType::GetDataLink(void* data_) {
+taiDataLink* tabViewType::GetDataLink(void* data_, TypeDef* el_typ) {
   //NOTE: replaced in tabOViewType with an optimized version
   taBase* data = (taBase*)data_;
   taDataLink* dl = data->data_link();
@@ -2760,7 +2782,7 @@ taiDataLink* tabOViewType::CreateDataLink_impl(taBase* data_) {
   return new tabODataLink((taOBase*)data_);
 }
 
-taiDataLink* tabOViewType::GetDataLink(void* data_) {
+taiDataLink* tabOViewType::GetDataLink(void* data_, TypeDef* el_typ) {
   taOBase* data = (taOBase*)data_;
   taDataLink* dl = *(data->addr_data_link());
   if (dl) return (taiDataLink*)dl;

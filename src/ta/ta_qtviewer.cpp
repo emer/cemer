@@ -16,7 +16,7 @@
 
 #include "ta_qtviewer.h"
 
-#include "ta_qtbrowse_def.h"
+#include "ta_qtbrowse.h"
 #include "ta_qt.h"
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
@@ -415,6 +415,33 @@ void taiDataLink::Assert_QObj() {
   }
 }
 
+taiTreeDataNode* taiDataLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
+  taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  return CreateTreeDataNode(md, parent, NULL, after, node_name, dn_flags);
+}
+
+taiTreeDataNode* taiDataLink::CreateTreeDataNode(MemberDef* md, iTreeView* parent,
+  taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  return CreateTreeDataNode(md, NULL, parent, after, node_name, dn_flags);
+}
+
+taiTreeDataNode* taiDataLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  if (HasChildItems()) {
+    //note: the list item automatically enables lazy children
+    dn_flags |= iTreeViewItem::DNF_LAZY_CHILDREN;
+  }
+  taiTreeDataNode* rval = CreateTreeDataNode_impl(md, nodePar, tvPar, after, node_name, dn_flags);
+  if (rval) {
+    rval->DecorateDataNode();
+  }
+  return rval;
+}
+
+
 void taiDataLink::FillContextMenu(taiActions* menu) {
   FillContextMenu_impl(menu);
 }
@@ -558,6 +585,17 @@ int tabDataLink::ChildEditAction_impl(const MemberDef* par_md, taiDataLink* chil
     }
   } else
     rval = data()->ChildEditAction(par_md, NULL, ms, ea);
+  return rval;
+}
+
+taiTreeDataNode* tabDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 
@@ -767,6 +805,17 @@ String tabListDataLink::ChildGetColText(taDataLink* child, int col, int itm_idx)
   return data()->ChildGetColText(child->data(), child->GetDataTypeDef(), col, itm_idx);
 }
 
+taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabListTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabListTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
+
 void tabListDataLink::fileNew() {
   data()->New();
 }
@@ -786,10 +835,8 @@ taiDataLink* tabListDataLink::GetListChild(int itm_idx) {
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
-  // get the ui type object, and get a link
-  taiViewType* tiv = typ->iv;
-
-  taiDataLink* dl = tiv->GetDataLink(el);
+  // get the link
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   return dl;
 }
 
@@ -805,6 +852,17 @@ int tabListDataLink::NumListCols() {
 tabGroupDataLink::tabGroupDataLink(taGroup_impl* data_)
 :inherited((taList_impl*)data_)
 {
+}
+
+taiTreeDataNode* tabGroupDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabGroupTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabGroupTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
 }
 
 //void tabListDataLink::InitDataNode(BrListViewItem* node);
@@ -1070,8 +1128,10 @@ taBase* ISelectable::taData() const {
 }
 
 QWidget* ISelectable::widget() const {
-  return host()->This();
+  IDataViewHost* host_ = host();
+  return (host_) ? host_->This() : NULL;
 }
+
 
 //////////////////////////
 //   ISelectable_PtrList//
@@ -1614,11 +1674,6 @@ void iDataViewer::mnuDynAction(int idx) {
 void iDataViewer::mnuEditAction(taiAction* mel) {
    // called from context; cast obj to an taiClipData::EditAction
   emit_EditAction(mel->usr_data.toInt());
-}
-
-bool iDataViewer::ObjectRemoving(ISelectable* item) {
-  // just blindly try removing it from sel list
-  return RemoveSelectedItem(item);
 }
 
 bool iDataViewer::RemoveSelectedItem(ISelectable* item,  bool forced) {
@@ -2207,33 +2262,6 @@ int DataViewer::Edit(bool) { //TODO: remove wait param
   return ta_file;
 }*/
 
-taDataLink* DataViewer::GetDataLink_(void* el, TypeDef* el_typ, int param) {
-  if (!el || !el_typ) return NULL; // subclass will have to grok
-
-//<ADDED> 06/09/05 to handle pointers to base types
-  // handle ptrs by derefing the type and the el
-  if (el_typ->ptr > 0) {
-    int ptr = el_typ->ptr; // need to deref this many times
-    el_typ = el_typ->GetNonPtrType(); // gets base type in one step
-    while (el && ptr) {
-      el = *((void**)el);
-      --ptr;
-    }
-  }
-//</ADDED>
-
-  if (!el || !el_typ) return NULL;
-  if (!el_typ->iv) return NULL;
-  taDataLink* rval = NULL;
-  taiViewType* tiv = el_typ->iv;
-  rval = tiv->GetDataLink(el);
-  return rval; //NULL if not taBase
-}
-
-taiDataLink* DataViewer::GetDataLink(void* el, TypeDef* el_type, int param) {
-  return (taiDataLink*)GetDataLink_(el, el_type, param);
-}
-
 // called once upon initialization of the wineve
 // allocates a getfile structure for the wineve + all of its menugroups..
 void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
@@ -2717,6 +2745,11 @@ iDataPanel* iTabDataViewer::MakeNewDataPanel_(taiDataLink* link) {
   taiViewType* tiv = typ->iv;
   rval = tiv->CreateDataPanel(link);
   return rval;
+}
+
+bool iTabDataViewer::ObjectRemoving(ISelectable* item) {
+  // just blindly try removing it from sel list
+  return RemoveSelectedItem(item);
 }
 
 void iTabDataViewer::selectionChangedEvent(QEvent* ev) {
@@ -3521,31 +3554,67 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 
 
 //////////////////////////
-//    iListViewItem 	//
+//    iTreeView 	//
+//////////////////////////
+
+iTreeView::iTreeView(IDataViewHost* host_, QWidget* parent)
+:inherited(parent)
+{
+  host = host_;
+}
+
+void iTreeView::focusInEvent(QFocusEvent* ev) {
+  inherited::focusInEvent(ev); // prob does nothing
+  emit focusIn(this);
+}
+
+void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
+  if (host) host->ObjectRemoving(item);
+  emit ItemDestroying(item);
+}
+
+void iTreeView::mnuNewBrowser(taiAction* mel) {
+  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
+  taiDataLink* dl = node->link();
+  TypeDef* td = dl->GetDataTypeDef();
+  //TODO: browse system should be fully typesafe and support all types, so this should work
+  // for any type, not just taBase
+  if (!td->InheritsFrom(&TA_taBase)) return;
+  DataBrowser* brows = DataBrowser::New((taBase*)dl->data(), node->md());
+  if (!brows) return;
+  brows->ViewWindow();
+  // move selection up to parent of cloned item, to reduce issues of changed data, confusion, etc.
+//TODO  setCurItem(node->parent(), true);
+
+  //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
+}
+
+//////////////////////////
+//    iTreeViewItem 	//
 //////////////////////////
 
 class DataNodeDeleter: public QObject { // enables nodes to be put on deferredDelete list
 public:
-  iListViewItem* node;
-  DataNodeDeleter(iListViewItem* node_): QObject() {node = node_;}
+  iTreeViewItem* node;
+  DataNodeDeleter(iTreeViewItem* node_): QObject() {node = node_;}
   ~DataNodeDeleter() {delete node;}
 };
 
-iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* node,
-  iListViewItem* after, const String& tree_name, int dn_flags_)
+iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* node,
+  iTreeViewItem* after, const String& tree_name, int dn_flags_)
 :inherited(node, after)
 {
   init(tree_name, link_, md_, dn_flags_);
 }
 
-iListViewItem::iListViewItem(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent,
-  iListViewItem* after, const String& tree_name, int dn_flags_)
+iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* parent,
+  iTreeViewItem* after, const String& tree_name, int dn_flags_)
 :inherited(parent, after)
 {
   init(tree_name, link_, md_, dn_flags_);
 }
 
-void iListViewItem::init(const String& tree_name, taiDataLink* link_, 
+void iTreeViewItem::init(const String& tree_name, taiDataLink* link_, 
   MemberDef* md_, int dn_flags_) 
 {
   setText(0, tree_name);
@@ -3559,10 +3628,14 @@ void iListViewItem::init(const String& tree_name, taiDataLink* link_,
   }
 }
 
-iListViewItem::~iListViewItem() {
+iTreeViewItem::~iTreeViewItem() {
+  iTreeView* tv = treeView();
+  if (tv) {
+    tv->ItemDestroyingCb(this);
+  }
 }
 
-bool iListViewItem::acceptDrop(const QMimeData* mime) const {
+bool iTreeViewItem::acceptDrop(const QMimeData* mime) const {
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = GetEditActions_(ms);
 //  bool rval = (ea & taiClipData::EA_DROP_OPS);
@@ -3571,31 +3644,31 @@ bool iListViewItem::acceptDrop(const QMimeData* mime) const {
   return rval;
 }
 
-/* nnint iListViewItem::compare (QTreeWidgetItem* item, int col, bool ascending) const {
+/* nnint iTreeViewItem::compare (QTreeWidgetItem* item, int col, bool ascending) const {
   // if we have a visual parent, delegate to its data link, otherwise just do the default
-  iListViewItem* par = parent();
+  iTreeViewItem* par = parent();
   if (par)  {
-    int rval = par->link->CompareChildItems(this, (iListViewItem*)item);
+    int rval = par->link->CompareChildItems(this, (iTreeViewItem*)item);
     if (ascending) return rval;
     else return rval * -1;
   } else
     return QTreeWidgetItem::compare(item, col, ascending);
 } */
 
-void iListViewItem::CreateChildren() {
+void iTreeViewItem::CreateChildren() {
   inherited::CreateChildren();
   DecorateDataNode();
 }
 
-void iListViewItem::DataLinkDestroying(taDataLink*) {
+void iTreeViewItem::DataLinkDestroying(taDataLink*) {
   delete this;
 }
 
-void iListViewItem::DecorateDataNode() {
+void iTreeViewItem::DecorateDataNode() {
 //TODO: fixup
   int bmf = 0;
   int dn_flags_supported = 0;
-//  if (node->dn_flags & iListViewItem::DNF_IS_FOLDER) bmi = node->isOpen() ? NBI_FOLDER_OPEN : NBI_FOLDER_CLOSED;
+//  if (node->dn_flags & iTreeViewItem::DNF_IS_FOLDER) bmi = node->isOpen() ? NBI_FOLDER_OPEN : NBI_FOLDER_CLOSED;
   QIcon ic;
   if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
   bool has_ic = link()->GetIcon(bmf, dn_flags_supported, ic);
@@ -3604,7 +3677,7 @@ void iListViewItem::DecorateDataNode() {
     setIcon(0, ic);
 }
 
-/*void iListViewItem::dragEntered() {
+/*void iTreeViewItem::dragEntered() {
   QTreeWidgetItem::dragEntered();
     if ( type() != Dir ||
 	 type() == Dir && !QDir( itemFileName ).isReadable() )
@@ -3615,7 +3688,7 @@ void iListViewItem::DecorateDataNode() {
 //    timer->start( 1500 );
 }
 
-void iListViewItem::dragLeft() {
+void iTreeViewItem::dragLeft() {
   QTreeWidgetItem::dragLeft();
     if ( type() != Dir ||
 	 type() == Dir && !QDir( itemFileName ).isReadable() )
@@ -3628,7 +3701,7 @@ void iListViewItem::dragLeft() {
 }*/
 
 
-void iListViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
+void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
   taiMimeSource* ms = taiMimeSource::New(mime);
 /*Qt3  int ea = 0;
   //NOTE: ev->action() was always observed to be Copy, whether the + was shown or not in the UI
@@ -3696,25 +3769,30 @@ void iListViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
   delete ms;
 }
 
-void iListViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
+void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
   ISelectable::GetEditActionsS_impl_(allowed, forbidden);
 }
 
-void iListViewItem::itemExpanded(bool value) {
+IDataViewHost* iTreeViewItem::host() const {
+  iTreeView* tv = treeView();
+  return (tv) ? tv->host : NULL;
+}
+
+void iTreeViewItem::itemExpanded(bool value) {
   inherited::itemExpanded(value); // creates children
   DecorateDataNode();
 }
 
-QMimeData* iListViewItem::mimeData() const {
+QMimeData* iTreeViewItem::mimeData() const {
 //NOTE: for qt4 we no longer know whether it is for drag or not
   return GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
 }
 
 
-void iListViewItem::moveChild(int fm_idx, int to_idx) {
+void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx == to_idx) return; // DOH!
   // if the fm is prior to to, we need to adjust index (for removal)
   if (fm_idx < to_idx) --to_idx;
@@ -3722,17 +3800,145 @@ void iListViewItem::moveChild(int fm_idx, int to_idx) {
   insertChild(to_idx, tak); 
 }
 
-void iListViewItem::swapChildren(int n1_idx, int n2_idx) {
+void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {
   // we move higher to lower, then lower is next after, and moved to higher
   if (n1_idx > n2_idx) {int t = n1_idx; n1_idx = n2_idx; n2_idx = t;}
   moveChild(n2_idx, n1_idx);
   moveChild(n1_idx + 1, n2_idx);
 }
 
-String iListViewItem::view_name() const {
+iTreeView* iTreeViewItem::treeView() const {
+  iTreeView* rval = dynamic_cast<iTreeView*>(treeWidget());
+  return rval;
+}
+
+String iTreeViewItem::view_name() const {
   return text(0);
 }
 
+QWidget* iTreeViewItem::widget() const {
+  return treeView();
+}
+
+
+//////////////////////////////////
+// 	taiTreeDataNode 	//
+//////////////////////////////////
+
+int taiTreeDataNode::no_idx; // dummy parameter
+
+taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
+:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void taiTreeDataNode::init(taiDataLink* link_, int dn_flags_) {
+  last_child_node = NULL;
+  last_member_node = NULL;
+}
+
+
+taiTreeDataNode::~taiTreeDataNode() {
+}
+
+void taiTreeDataNode::CreateChildren_impl() {
+  MemberSpace* ms = &(link()->GetDataTypeDef()->members);
+  for (int i = 0; i < ms->size; ++ i) {
+    MemberDef* md = ms->FastEl(i);
+    if (!link()->ShowMember(md)) continue;
+    TypeDef* typ = md->type;
+    void* el = md->GetOff(data()); //note: GetDataLink automatically derefs typ and el if pointers
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    String tree_nm = md->GetLabel();
+    last_child_node = dl->CreateTreeDataNode(md, this, last_child_node, tree_nm,
+      (iTreeViewItem::DNF_IS_MEMBER));
+  }
+  last_member_node = last_child_node; //note: will be NULL if no members issued
+}
+
+void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
+  if (dn_flags & DNF_CAN_BROWSE) {
+     //taiAction* mel =
+     menu->AddItem("New Browser from here", taiMenu::use_default,
+       taiAction::men_act, treeView(), SLOT(mnuNewBrowser(taiAction*)), this);
+  }
+  inherited::FillContextMenu_impl(menu);
+}
+
+taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
+  for (int i = 0; i < childCount(); ++i) {
+      taiTreeDataNode* rval = (taiTreeDataNode*)child(i);
+      if (rval->link()->data() == data) {
+        idx = i;
+        return rval;
+      }
+  }
+  idx = -1;
+  return NULL;
+}
+
+taiDataLink* taiTreeDataNode::par_link() const {
+  taiTreeDataNode* par = parent();
+  return (par) ? par->link() : NULL;
+}
+
+MemberDef* taiTreeDataNode::par_md() const {
+  taiTreeDataNode* par = parent();
+  return (par) ? par->md() : NULL;
+}
+
+
+//////////////////////////////////
+//   tabTreeDataNode 		//
+//////////////////////////////////
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
+}
+
+tabTreeDataNode::~tabTreeDataNode()
+{
+}
+
+void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (dcr != DCR_ITEM_UPDATED) return;
+  if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
+    taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
+    if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...
+      String nm = link()->GetName();
+      if (nm.empty())
+        nm = "(" + link()->GetDataTypeDef()->name + ")";
+      this->setText(0, nm);
+      return;
+    }
+    taiDataLink* dl = par_nd->link();
+    if (dl == NULL) return; // shouldn't happen...
+    par_nd->UpdateChildNames();
+  }
+}
 
 
 //////////////////////////////////
@@ -3740,7 +3946,7 @@ String iListViewItem::view_name() const {
 //////////////////////////////////
 
 taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
-   taiDataLink* link_, iTreeWidget* parent_, taiListDataNode* after, int dn_flags_)
+   taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
 :inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
 {
   num = num_;
@@ -3786,56 +3992,6 @@ IDataViewHost* taiListDataNode::host() const {
 }
 
 
-//////////////////////////
-//    iLDPListView 	//
-//////////////////////////
-
-class iLDPListView: public iTreeWidget {
-typedef iTreeWidget inherited;
-public:
-  iListDataPanel* panel;
-  iLDPListView(iListDataPanel* parent = NULL);
-
-protected:
-
-//  iListViewItem*	focus_item;
-
-  void 			focusInEvent(QFocusEvent* ev); // override
-//  void 			focusOutEvent(QFocusEvent* ev); // override
-
-/*  void		doDragFocusEvent(QDropEvent* ev); // code is the same for all enter/move/leave events for focus
-  void		contentsDragEnterEvent(QDragEnterEvent* ev); // override
-  void 		contentsDragMoveEvent(QDragMoveEvent * ev); // override
-  void 		contentsDragLeaveEvent(QDragLeaveEvent * ev); // override
-  void		setDropFocus(iListViewItem* item); // draws a focus rec around the target (qt doesn't do this by default) */
-};
-
-iLDPListView::iLDPListView(iListDataPanel* parent)
-: iTreeWidget(parent)
-{
-  panel = parent;
-//  focus_item = NULL;
-  setAcceptDrops(true);
-}
-
-/*nn
-QMimeData* iLDPListView::mimeData(const QList<QTreeWidgetItem*> items) const {
-  ISelectable_PtrList sel_items;
-  panel->GetSelectedItems(sel_items);
-  ISelectable* ci = sel_items.SafeEl(0);
-  if (ci) {
-    return ci->GetClipData(sel_items, taiClipData::EA_SRC_DRAG, true);
-  } else {
-    return NULL;
-  }
-}*/
-
-void iLDPListView::focusInEvent(QFocusEvent* ev) {
-  inherited::focusInEvent(ev);
-  panel->ctrl_focusInEvent(ev);
-}
-
-
 
 //////////////////////////
 //    iListDataPanel 	//
@@ -3844,7 +4000,7 @@ void iLDPListView::focusInEvent(QFocusEvent* ev) {
 iListDataPanel::iListDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  list = new iLDPListView(this);
+  list = new iTreeView(viewer_win(), this);
   list->setName("list"); // nn???
   setCentralWidget(list);
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
@@ -3903,7 +4059,7 @@ void iListDataPanel::FillList() {
   taiListDataNode* last_child = NULL;
   int i = 0;
   for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
-    taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iListViewItem::DNF_CAN_DRAG));
+    taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
     // set remaining col texts -- note that we subtract 1 from col, because we use a numbering column
     for (int col = 0; col < link()->NumListCols(); ++col) {
       dn->setText(col + 1, link()->ChildGetColText(child, col, i));

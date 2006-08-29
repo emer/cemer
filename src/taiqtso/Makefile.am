@@ -12,7 +12,6 @@ HEADS =\
 	ilabel.h \
 	ispinbox.h \
 	iwidgetlist.h \
-	itreeview.h \
 	itreewidget.h \
 	ilineedit.h \
 	icheckbox.h \
@@ -38,8 +37,6 @@ SRCS =\
 	ispinbox.cpp \
 	ispinbox.moc.cpp \
 	iwidgetlist.cpp \
-	itreeview.cpp \
-	itreeview.moc.cpp \
 	itreewidget.cpp \
 	itreewidget.moc.cpp \
 	ilineedit.cpp \

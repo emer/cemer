@@ -59,7 +59,6 @@ class taiAction;
 class taiMenu; //
 
 // forwards this file
-class taiTreeDataNode;
 class tabTreeDataNode;
 class tabListTreeDataNode;
 class tabGroupTreeDataNode;
@@ -73,50 +72,16 @@ class taiListItemsDataLink: public taiDataLink {
   // DataLink for taPtrList item objects -- handles any type of item content -- this is only the node handler for the 'items' node, not the node representing the list object itself
 public:
   taPtrList_impl*	data() const {return (taPtrList_impl*)m_data;}
-  void 			CreateChild(iListViewItem* par_node, iListViewItem* after_node, void* el);
+  void 			CreateChild(iTreeViewItem* par_node, iTreeViewItem* after_node, void* el);
   // used for items inserted after populating
-  override void		CreateChildren(iListViewItem* par_node); // parent node will be the list object data link
+  override void		CreateChildren(iTreeViewItem* par_node); // parent node will be the list object data link
   override bool		HasChildItems(); // true if has any items in list
   override String 	GetName() const;
   taiListItemsDataLink(taPtrList_impl* data_, iDataBrowser* browser_);
 protected:
   override iDataPanel* CreateDataPanel(); // show a list panel
-  override void		DataChanged_impl(iListViewItem* nd, int dcr, void* op1, void* op2);
+  override void		DataChanged_impl(iTreeViewItem* nd, int dcr, void* op1, void* op2);
 }; */
-
-
-class TA_API taiTreeDataNode: public iListViewItem {
-INHERITED(iListViewItem)
-public:
-  taiTreeDataNode*	parent() const {return (taiTreeDataNode*) QTreeWidgetItem::parent();} //note: NULL for root item
-//obs  iDataBrowser*		browser_win() const {return (iDataBrowser*)viewer_win();}
-  DataViewer*		browser() const;
-  iDataBrowserBase* 	browser_win() const;
-
-  taiTreeDataNode*	FindChildForData(void* data, int& idx = no_idx); // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
-  virtual void		UpdateChildNames() {} // #IGNORE update child names of this node
-
-  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  ~taiTreeDataNode();
-public: // ITypedObject interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_taiTreeDataNode;}
-public: // ISelectable interface
-  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
-  override MemberDef* 	par_md() const; // as for par_link
-  override IDataViewHost* host() const;
-protected:
-  taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
-  taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
-  override void 	CreateChildren_impl();
-  override void		FillContextMenu_impl(taiActions* menu);
-private:
-  static int		no_idx; // dummy parameter
-  void			init(taiDataLink* link_, int dn_flags_); // #IGNORE
-};
 
 
 class TA_API tabTreeDataNode: public taiTreeDataNode {
@@ -128,7 +93,7 @@ public:
 
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabTreeDataNode();
 public: // IDataLinkClient interface
@@ -152,7 +117,7 @@ public:
 
   tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabListTreeDataNode();
 public: // IDataLinkClient interface
@@ -181,7 +146,7 @@ public:
 
   tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabGroupTreeDataNode();
 public: // IDataLinkClient interface
@@ -227,27 +192,21 @@ friend class DataBrowser;
 public:
 
   QSplitter*		splMain; // main splitter
-  iTreeWidget*		lvwDataTree; // actually an iListView
+  iTreeView*		lvwDataTree; // actually an iListView
 
 //  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
   void*			root() { return m_root;}
 
   iTabView*		AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL);// override
-  virtual taiTreeDataNode* CreateTreeDataNode(taiDataLink* link, MemberDef* md_, 
-    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, 
-    const String& tree_name, int dn_flags_);
   void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
-  void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
 //nn  void		RemovePanel(iDataPanel* panel); // removes and deletes the indicated panel
   taiClipData*		GetClipData(int src_edit_action, bool for_drag = false); // gets clipboard data (called on Cut/Copy or Drag)
 //nn  int			GetEditActions(); // override
-  void			lvwDataTree_focusInEvent(QFocusEvent* ev);
   void			Reset();
   override void 	SelectionChanged(bool forced = false); // invoked when selection changes; builtin clipboard
   ~iDataBrowserBase();
 
 public slots:
-  virtual void		mnuNewBrowser(taiAction* mel){} // called from context 'New Browse from here'; cast obj to taiNode*
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
 
 protected slots:
@@ -255,12 +214,10 @@ protected slots:
   virtual void		lvwDataTree_currentItemChanged(QTreeWidgetItem* curr, 
     QTreeWidgetItem* prev);
 //  void btnRecurse_toggled(bool on);
-
+  void			lvwDataTree_focusIn(QWidget* sender);
+  void			lvwDataTree_ItemDestroying(iTreeViewItem* item); // #IGNORE check if curItem
 
 protected:
-  virtual taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_, 
-    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name,
-    int dn_flags_) {return NULL;}
   iDataBrowserBase(void* root_, DataViewer* browser_,  QWidget* parent = 0);
 
 public: // overridden slots
@@ -301,7 +258,6 @@ public:
   ~iDataBrowser();
 
 public slots:
-  virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
   virtual void		toolsClassBrowser();
   
 protected:
@@ -314,9 +270,6 @@ protected:
   TypeDef*		m_typ;
 
   void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
-  override taiTreeDataNode* CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,
-    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, 
-    const String& tree_name, int dn_flags_); // pass parent=null if this is a root item
 };
 
 //////////////////////////////////

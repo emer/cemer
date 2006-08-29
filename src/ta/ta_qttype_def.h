@@ -144,13 +144,15 @@ class TA_API taiViewType: public taiTypeBase {
 typedef taiTypeBase inherited; // #IGNORE
 #endif
 public:
+  static taiDataLink*	StatGetDataLink(void* el, TypeDef* el_typ); // get correct one
+  
   taiViewType* 		sub_types() {return (taiViewType*)m_sub_types;}
   taiViewType** 	addr_sub_types() {return (taiViewType**)&m_sub_types;}
 
   void 			AddView(TypeDef* td);	// add an instance to a type
   virtual int		BidForView(TypeDef*) {return 1;}
   virtual iDataPanel*	CreateDataPanel(taiDataLink* dl_); // creates a new data panel; normally override _impl
-  virtual taiDataLink*	GetDataLink(void* data_) {return NULL;}
+  virtual taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ) {return NULL;}
     // get an existing, or create new if needed
   virtual const iColor* GetEditColorInherit(taiDataLink* dl) const {return NULL;} // #IGNORE background color for edit dialog, include inherited colors from parents
 

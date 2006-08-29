@@ -91,7 +91,9 @@ class DynMethod_PtrList; // #IGNORE
 class IDataViewHost;
 class iDataViewer;
 
-class iListViewItem; //
+class iTreeView;
+class iTreeViewItem;
+class taiTreeDataNode;
 class taiListDataNode;
 class iListDataPanel; //
 
@@ -125,6 +127,13 @@ public:
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
   virtual bool		ShowMember(MemberDef* md) {return false;} // asks this type if we should show the md member
 
+  taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
+    taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
+    // create the proper tree node, with a tree node as a parent
+  taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md, iTreeView* parent,
+    taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
+    // create the proper tree node, with a iTreeView as a parent
+
   taiDataLink(void* data_, taDataLink* &link_ref_);
   DL_FUNS(taiDataLink) //
 
@@ -140,6 +149,12 @@ protected:
 
   virtual void		Assert_QObj(); // makes sure the qobj is created
   virtual void		FillContextMenu_impl(taiActions* menu) {} // this is usually the one to override
+  taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md,
+    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+    const String& node_name, int dn_flags); // combined version, only 1 xxPar is set
+  virtual taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+    const String& node_name, int dn_flags) = 0; // NOTE: only 1 of the parents is non-null -- use that version of the taiTreeNode constructor
 
   virtual ~taiDataLink(); // we only ever implicitly destroy, when 0 clients
 
@@ -183,6 +198,8 @@ public:// this section for all the delegated menu commands
 
 protected:
   tabDataLink(taBase* data_, taDataLink* &link_ref_); //TODO: implementation for non taOBase-derived types
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
   override void		QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);
   override int		EditAction_impl(taiMimeSource* ms, int ea);
   override void		ChildQueryEditActions_impl(const MemberDef* par_md, taiDataLink* child,
@@ -232,6 +249,9 @@ public:
 
 public: // this section for all the delegated menu commands
   override void		fileNew();
+protected:
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 };
 
 
@@ -250,6 +270,9 @@ public:
 
   tabGroupDataLink(taGroup_impl* data_);
   DL_FUNS(tabGroupDataLink)
+protected:
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 };
 
 
@@ -322,10 +345,9 @@ public: // Interface Properties and Methods
   virtual taiDataLink*	par_link() const = 0; // parent item's (if any) link
   virtual MemberDef* 	par_md() const = 0;// parent item's (if any) md
   virtual IDataViewHost* host() const = 0; //
-//  IDataViewHost*	host() const {return viewer_win_();} // non-virtual, can be replaced/retyped
   taBase*		taData() const; // if the data is taBase, this returns it
   virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
-  QWidget*		widget() const;
+  QWidget*		widget() const; // default gets from host, but you can override
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
@@ -487,7 +509,7 @@ public:
     true (indicating the object must reconfigure the gui to match the sel list)
 
 */
-class TA_API iDataViewer: public QMainWindow, public IDataViewHost {
+class TA_API iDataViewer: public QMainWindow {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
 #ifndef __MAKETA__
@@ -566,7 +588,6 @@ public:
   // Viewer Selection Management functions (only concerns selections in viewer itself, not other handlers)
   virtual void 		SelectionChanging(bool begin, bool forced = false); // if used, must be called in pairs, with true then false
   virtual void 		AddSelectedItem(ISelectable* item,  bool forced = false);
-  virtual bool 		RemoveSelectedItem(ISelectable* item,  bool forced = false); // 'true' if item was actually removed from (i.e. was in) list
 
   virtual void 		SelectionChanged(bool forced = false); // invoked when selection of current clipboard/focus handler changes
   void 			SetThisAsHandler(); // call when the viewer gets focus, to make it the handler
@@ -613,11 +634,8 @@ public slots:
   virtual void		mnuDynAction(int idx); // a dynamic action
 
   void			actionsMenu_aboutToShow(); // populates dynamic items
+  virtual bool 		RemoveSelectedItem(ISelectable* item,  bool forced = false); // 'true' if item was actually removed from (i.e. was in) list
   virtual void		UpdateUi(); // called after major events, to refresh menus, toolbars, etc.
-
-public: // IDataViewHost interface
-  override QWidget*	This() {return this;}
-  override bool 	ObjectRemoving(ISelectable* item);
 
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
@@ -805,7 +823,6 @@ public:
   bool 			SetName(const String& nm) {name = nm; return true;}
   String		GetName() const {return name; }
   virtual bool	HasChanges() {return m_has_changes;} // 'true' when something needs to be saved
-  taiDataLink*  GetDataLink(void* el, TypeDef* el_typ, int param = 0);
   virtual void	Changed(bool value = true); // default sets changes; call with 'false' to clear changes
   virtual bool	Save(); // call to save the object to current file, or new file if new; 'true' if saved
   override int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -895,7 +912,6 @@ protected:
   virtual void		Constr_Window_impl() {} // #IGNORE implement this to set the m_window instance
 //  virtual void		Constr_Menu_impl(); // #IGNORE constructs the view menu
   virtual void		Constr_Toolbars_impl(); // #IGNORE constructs the toolbars
-  taDataLink*		GetDataLink_(void* el, TypeDef* typ, int param = 0); // gets the data link, gets existing or makes new; param can be used where el's have no typedefs (ex. class browsing)
   virtual void		OpenNewWindow_impl(); // #IGNORE
   virtual void 		WindowClosing(bool& cancel);
 private:
@@ -922,7 +938,7 @@ private:
 //////////////////////////
 
 //Note: used by Browser and 3D Viewers
-class TA_API iTabDataViewer : public iDataViewer { // viewer window used for class browsing
+class TA_API iTabDataViewer : public iDataViewer, public IDataViewHost { // viewer window used for class browsing
     Q_OBJECT
 INHERITED(iDataViewer)
 friend class iTabView;
@@ -954,6 +970,10 @@ public slots:
   virtual void 		viewCloseCurrentView();
   virtual void 		viewSplitVertical();
   virtual void 		viewSplitHorizontal();
+
+public: // IDataViewHost interface
+  override QWidget*	This() {return this;}
+  override bool 	ObjectRemoving(ISelectable* item);
 
 protected:
   iTabView_PtrList*	m_tabViews; // all created tab views
@@ -1258,9 +1278,37 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-class TA_API iListViewItem: public iTreeWidgetItem, public ISelectable {
+class TA_API iTreeView: public iTreeWidget {
+  //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems
+INHERITED(iTreeWidget)
+  Q_OBJECT
+friend class iTreeViewItem;
+public:
+  IDataViewHost*	host; // sb set by owner
+  
+  iTreeView(IDataViewHost* host, QWidget* parent = 0);
+   
+#ifndef __MAKETA__
+signals:
+  void			ItemDestroying(iTreeViewItem* item);
+  void			focusIn(QWidget* sender);
+#endif
+  
+public slots:
+  virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiTreeDataNode*
+
+protected:
+  void 			focusInEvent(QFocusEvent* ev); // override
+  virtual void		ItemDestroyingCb(iTreeViewItem* item); 
+  
+protected slots:
+};
+
+
+class TA_API iTreeViewItem: public iTreeWidgetItem, public ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
+friend class iTreeView;
 public:
   enum DataNodeFlags {
     DNF_IS_FOLDER 	= 0x001, // true for list/group folder nodes (note: does *not* indicate whether item can contain other things or not)
@@ -1284,17 +1332,18 @@ public:
   int			dn_flags; // any of DataNodeFlags
 
   void* 		data() {return m_link->data();} //
+  iTreeView*		treeView() const;
 
   override bool 	acceptDrop(const QMimeData* mime) const;
   override void 	CreateChildren(); 
   override QMimeData*	mimeData() const;
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 
-  iListViewItem(taiDataLink* link_, MemberDef* md_, iListViewItem* parent_,
-    iListViewItem* after, const String& tree_name, int dn_flags_ = 0);
-  iListViewItem(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
-    iListViewItem* after, const String& tree_name, int dn_flags_ = 0);
-  ~iListViewItem();
+  iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
+    iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
+  iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
+  ~iTreeViewItem();
   
 public: // qt3 compatability functions, for convenience
   bool			dragEnabled() const {return flags() & Qt::ItemIsDragEnabled;}
@@ -1310,7 +1359,7 @@ public: // qt3 compatability functions, for convenience
 
 public: // ITypedObject interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iListViewItem;}
+  override TypeDef*	GetTypeDef() const {return &TA_iTreeViewItem;}
 
 public: // IDataLinkClient interface
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
@@ -1320,6 +1369,8 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override MemberDef*	md() const {return m_md;}
   override String	view_name() const; // for members, the member name; for list items, the name if
+  override IDataViewHost* host() const;
+  override QWidget* 	widget() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 //  override taiMimeItem*	GetMimeItem();
@@ -1342,12 +1393,39 @@ private:
 };
 
 
-//////////////////////////
-//   taiListDataNode 	//
-//////////////////////////
+class TA_API taiTreeDataNode: public iTreeViewItem {
+INHERITED(iTreeViewItem)
+public:
+  taiTreeDataNode*	parent() const {return (taiTreeDataNode*) QTreeWidgetItem::parent();} //note: NULL for root item
 
-class TA_API taiListDataNode: public iListViewItem {
-INHERITED(iListViewItem)
+  taiTreeDataNode*	FindChildForData(void* data, int& idx = no_idx); // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
+  virtual void		UpdateChildNames() {} // #IGNORE update child names of this node
+
+  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~taiTreeDataNode();
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_taiTreeDataNode;}
+public: // ISelectable interface
+  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
+  override MemberDef* 	par_md() const; // as for par_link
+//  override IDataViewHost* host() const;
+protected:
+  taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
+  taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
+  override void 	CreateChildren_impl();
+  override void		FillContextMenu_impl(taiActions* menu);
+private:
+  static int		no_idx; // dummy parameter
+  void			init(taiDataLink* link_, int dn_flags_); // #IGNORE
+};
+
+
+class TA_API taiListDataNode: public iTreeViewItem {
+INHERITED(iTreeViewItem)
 public:
   int			num; // item number, starting from 1
   iListDataPanel*	panel; // logical parent node of the list items
@@ -1357,7 +1435,7 @@ public:
   bool 			operator<(const QTreeWidgetItem& item) const; // override
 
   taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
-    iTreeWidget* parent_, taiListDataNode* after, int dn_flags_ = 0);
+    iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListDataNode(); //
   
@@ -1382,7 +1460,7 @@ class TA_API iListDataPanel: public iDataPanelFrame {
 typedef iDataPanelFrame inherited;
 #endif
 public:
-  iTreeWidget*		list; //actually an iLDPListView
+  iTreeView*		list; //actually an iLDPListView
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
@@ -1399,7 +1477,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iListDataPanel;}
 protected:
-  iListViewItem* 	mparentItem;
+  iTreeViewItem* 	mparentItem;
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);

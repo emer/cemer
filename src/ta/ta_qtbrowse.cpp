@@ -74,217 +74,6 @@
 // the creation/teardown sequences.
 
 
-//////////////////////////
-//    iListView 	//
-//////////////////////////
-
-class iListView: public iTreeWidget {
-INHERITED(iTreeWidget)
-public:
-  iDataBrowserBase* browser_win;
-  iListView(iDataBrowserBase* browser_win_, QWidget*  parent = NULL);
-
-protected:
-
-//  iListViewItem*	focus_item;
-
-  void 			focusInEvent(QFocusEvent* ev); // override
-//  void 			focusOutEvent(QFocusEvent* ev); // override
-
-/*  void		doDragFocusEvent(QDropEvent* ev); // code is the same for all enter/move/leave events for focus
-  void		contentsDragEnterEvent(QDragEnterEvent* ev); // override
-  void 		contentsDragMoveEvent(QDragMoveEvent * ev); // override
-  void 		contentsDragLeaveEvent(QDragLeaveEvent * ev); // override
-  void		setDropFocus(iListViewItem* item); // draws a focus rec around the target (qt doesn't do this by default) */
-};
-
-
-iListView::iListView(iDataBrowserBase* browser_win_, QWidget* parent)
-: inherited(parent)
-{
-  browser_win = browser_win_;
-//  focus_item = NULL;
-  setAcceptDrops(true);
-}
-
-void iListView::focusInEvent(QFocusEvent* ev) {
-  browser_win->lvwDataTree_focusInEvent(ev);
-}
-/*NOTE: causes enabling to shut off for any out event, even clicking on the main menu!!!
-void iListView::focusOutEvent(QFocusEvent* ev) {
-  browser->emit_SetEditActionsEnabled(0);
-} */
-
-/* TODO (maybe): drag item feedback (ex. focus rect)
-void iListView::contentsDragEnterEvent(QDragEnterEvent* ev) {
-  doDragFocusEvent(ev);
-}
-
-void iListView::contentsDragMoveEvent(QDragMoveEvent * ev) {
-  doDragFocusEvent(ev);
-}
-void iListView::contentsDragLeaveEvent(QDragLeaveEvent * ev) {
-  doDragFocusEvent(ev);
-}
-
-void iListView::doDragFocusEvent(QDropEvent* ev) {
-  QPoint pos = ev->pos();
-  iListViewItem* item = (iListViewItem*)itemAt(pos);
-  setFocusDrop(item);
-}
-
-void iListView::setDropFocus(iListViewItem* item) {
-  if (item == focus_item) return;
-  // restore old item
-  if (focus_item) {
-    redrawItem(focus_item);
-  }
-  item = focus_item;
-  if (item) {
-
-  }
-
-} */
-
-
-
-//////////////////////////////////
-// 	taiTreeDataNode 	//
-//////////////////////////////////
-
-int taiTreeDataNode::no_idx; // dummy parameter
-
-taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
-  taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
-:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-void taiTreeDataNode::init(taiDataLink* link_, int dn_flags_) {
-  last_child_node = NULL;
-  last_member_node = NULL;
-}
-
-
-taiTreeDataNode::~taiTreeDataNode() {
-  iDataBrowserBase* db = browser_win();
-  if (db)
-    db->TreeNodeDestroying(this);
-}
-
-DataViewer* taiTreeDataNode::browser() const {
-  iListView* lv = (iListView*)treeWidget();
-  iDataBrowserBase* bw = (lv) ? lv->browser_win : NULL;
-  return (bw) ? bw->viewer() : NULL;
-}
-
-iDataBrowserBase* taiTreeDataNode::browser_win() const {
-  iListView* lv = (iListView*)treeWidget();
-  return (lv) ? lv->browser_win : NULL;
-}
-
-void taiTreeDataNode::CreateChildren_impl() {
-  MemberSpace* ms = &(link()->GetDataTypeDef()->members);
-  for (int i = 0; i < ms->size; ++ i) {
-    MemberDef* md = ms->FastEl(i);
-    if (!link()->ShowMember(md)) continue;
-    TypeDef* typ = md->type;
-    void* el = md->GetOff(data()); //note: GetDataLink automatically derefs typ and el if pointers
-    taiDataLink* dl = browser()->GetDataLink(el, typ);
-    String tree_nm = md->GetLabel();
-    last_child_node = browser_win()->CreateTreeDataNode(dl, md, this, last_child_node, tree_nm, (iListViewItem::DNF_IS_MEMBER));
-  }
-  last_member_node = last_child_node; //note: will be NULL if no members issued
-}
-
-void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
-  if (dn_flags & DNF_CAN_BROWSE) {
-     //taiAction* mel =
-     menu->AddItem("New Browser from here", taiMenu::use_default,
-       taiAction::men_act, browser_win(), SLOT(mnuNewBrowser(taiAction*)), this);
-  }
-  inherited::FillContextMenu_impl(menu);
-}
-
-taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
-  for (int i = 0; i < childCount(); ++i) {
-      taiTreeDataNode* rval = (taiTreeDataNode*)child(i);
-      if (rval->link()->data() == data) {
-        idx = i;
-        return rval;
-      }
-  }
-  idx = -1;
-  return NULL;
-}
-
-IDataViewHost*  taiTreeDataNode::host() const {
-  iListView* lv = (iListView*)treeWidget();
-  return (lv) ? lv->browser_win : NULL;
-}
-
-taiDataLink* taiTreeDataNode::par_link() const {
-  taiTreeDataNode* par = parent();
-  return (par) ? par->link() : NULL;
-}
-
-MemberDef* taiTreeDataNode::par_md() const {
-  taiTreeDataNode* par = parent();
-  return (par) ? par->md() : NULL;
-}
-
-
-//////////////////////////////////
-//   tabTreeDataNode 		//
-//////////////////////////////////
-
-tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
-}
-
-tabTreeDataNode::~tabTreeDataNode()
-{
-}
-
-void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr != DCR_ITEM_UPDATED) return;
-  if (this->dn_flags & iListViewItem::DNF_UPDATE_NAME) {
-    taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
-    if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...
-      String nm = link()->GetName();
-      if (nm.empty())
-        nm = "(" + link()->GetDataTypeDef()->name + ")";
-      this->setText(0, nm);
-      return;
-    }
-    taiDataLink* dl = par_nd->link();
-    if (dl == NULL) return; // shouldn't happen...
-    par_nd->UpdateChildNames();
-  }
-}
-
 
 //////////////////////////////////
 //   taiListTreeDataNode 	//
@@ -298,7 +87,7 @@ tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   init(link_, dn_flags_);
 }
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
@@ -338,15 +127,15 @@ void tabListTreeDataNode::CreateChildren_impl() {
       typ = ((taBase*)el)->GetTypeDef();
     }
 
-    taiDataLink* dl = browser()->GetDataLink(el, typ);
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (dl == NULL) continue; // shouldn't happen...
 
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
       tree_nm = link()->AnonymousItemName(typ->name, i);
     }
-    int dn_flags_tmp = iListViewItem::DNF_UPDATE_NAME | iListViewItem::DNF_CAN_BROWSE| iListViewItem::DNF_CAN_DRAG;
-    last_child_node = browser_win()->CreateTreeDataNode(dl, (MemberDef*)NULL, this, last_child_node, tree_nm, dn_flags_tmp);
+    int dn_flags_tmp = iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE| iTreeViewItem::DNF_CAN_DRAG;
+    last_child_node = dl->CreateTreeDataNode((MemberDef*)NULL, this, last_child_node, tree_nm, dn_flags_tmp);
   }
 
   last_list_items_node = last_child_node;
@@ -363,12 +152,12 @@ void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node, taiTreeDataN
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
-  taiDataLink* dl = browser()->GetDataLink(el, typ);
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (dl == NULL) return; // shouldn't happen...
   //note: we don't make name because it is updated anyway
   //taiTreeDataNode* dn =
-  browser_win()->CreateTreeDataNode(dl, (MemberDef*)NULL, par_node, after, "",
-    (iListViewItem::DNF_UPDATE_NAME | iListViewItem::DNF_CAN_BROWSE | iListViewItem::DNF_CAN_DRAG));
+  dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after, "",
+    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE | iTreeViewItem::DNF_CAN_DRAG));
 }
 
 void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -414,7 +203,6 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   default: return; // don't update names
   }
   UpdateListNames();
-  browser_win()->UpdateTabNames();
 }
 
 void tabListTreeDataNode::UpdateChildNames() {
@@ -434,7 +222,7 @@ void tabListTreeDataNode::UpdateListNames() {
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
-    taiDataLink* dl = browser()->GetDataLink(el, typ);
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (dl == NULL) continue; // shouldn't happen...
 
     tree_nm = dl->GetDisplayName();
@@ -459,7 +247,7 @@ tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* m
   init(link_, dn_flags_);
 }
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeWidget* parent_,
+tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
@@ -486,7 +274,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
-    taiDataLink* dl = browser()->GetDataLink(el, typ);
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (dl == NULL) continue; // shouldn't happen...
 
     tree_nm = dl->GetDisplayName();
@@ -495,8 +283,8 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     } else {
       tree_nm = tree_nm + " subgroup";
     }
-    last_child_node = browser_win()->CreateTreeDataNode(dl, NULL, this, last_child_node, tree_nm,
-      (iListViewItem::DNF_UPDATE_NAME | iListViewItem::DNF_CAN_DRAG));
+    last_child_node = dl->CreateTreeDataNode(NULL, this, last_child_node, tree_nm,
+      (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));
     //TODO: maybe this isn't right -- we really want the root group's md, because that is the only
           // one that has the defs
   }
@@ -512,12 +300,12 @@ void tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node, void* el)
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
-  taiDataLink* dl = browser()->GetDataLink(el, typ);
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (dl == NULL) return; // shouldn't happen...
 
 //  taiTreeDataNode* dn =
-  browser_win()->CreateTreeDataNode(dl, NULL, this, after_node, "",
-    (iListViewItem::DNF_UPDATE_NAME | iListViewItem::DNF_CAN_DRAG)); //gets its name in rename
+  dl->CreateTreeDataNode(NULL, this, after_node, "",
+    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG)); //gets its name in rename
 }
 
 void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -558,7 +346,6 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   default: return; // don't update names
   }
   UpdateGroupNames();
-  browser_win()->UpdateTabNames();
 }
 
 void tabGroupTreeDataNode::UpdateChildNames() {
@@ -578,7 +365,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
-    taiDataLink* dl = browser()->GetDataLink(el, typ);
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (dl == NULL) continue; // shouldn't happen...
 
     tree_nm = dl->GetDisplayName();
@@ -587,7 +374,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     } else {
       tree_nm = tree_nm + " subgroup";
     }
-    iListViewItem* node1 = this->FindChildForData(el); //null if not found
+    iTreeViewItem* node1 = this->FindChildForData(el); //null if not found
     if (node1 != NULL)
       node1->setText(0, tree_nm);
   }
@@ -664,14 +451,14 @@ void iDataBrowserBase::Constr_Menu_impl() {
 void iDataBrowserBase::Constr_Body_impl() {
   splMain = new QSplitter(this);
   splMain->setName("splMain");
-  lvwDataTree = new iListView(this, splMain);
+  lvwDataTree = new iTreeView(this, splMain);
   lvwDataTree->setName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setColumnCount(1);
   lvwDataTree->header()->hide();
-  lvwDataTree->setDragEnabled(true);
-  lvwDataTree->setAcceptDrops(true);
-  lvwDataTree->setDropIndicatorShown(true);
+//TEMP  lvwDataTree->setDragEnabled(true);
+//TEMP  lvwDataTree->setAcceptDrops(true);
+//TEMP  lvwDataTree->setDropIndicatorShown(true);
   int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree
@@ -684,25 +471,14 @@ void iDataBrowserBase::Constr_Body_impl() {
       this, SLOT(lvwDataTree_contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)) );
   connect(lvwDataTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
       this, SLOT(lvwDataTree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+  connect(lvwDataTree, SIGNAL(focusIn(QWidget*)),
+      this, SLOT(lvwDataTree_focusIn(QWidget*)) );
+  connect(lvwDataTree, SIGNAL(ItemDestroying(iTreeViewItem*)),
+      this, SLOT(lvwDataTree_ItemDestroying(iTreeViewItem*)) );
 
   m_body = splMain;
   splMain->show();
   setCentralWidget(splMain);
-}
-
-taiTreeDataNode* iDataBrowserBase::CreateTreeDataNode(taiDataLink* link, MemberDef* md_,
-  taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
-{
-  if (link->HasChildItems()) {
-    //note: the list item automatically enables lazy children
-    dn_flags_ |= iListViewItem::DNF_LAZY_CHILDREN;
-  }
-  taiTreeDataNode* rval = CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
-      tree_name, dn_flags_);
-  if (rval) {
-    rval->DecorateDataNode();
-  }
-  return rval;
 }
 
 void iDataBrowserBase::DataPanelDestroying(iDataPanel* panel) {
@@ -777,7 +553,7 @@ void iDataBrowserBase::helpAbout() {
 }
 
 void iDataBrowserBase::lvwDataTree_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
-  iListViewItem* nd = (iListViewItem*)item;
+  iTreeViewItem* nd = (iTreeViewItem*)item;
   if (nd == NULL) return; //TODO: could possibly be multi select
 
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
@@ -793,7 +569,7 @@ void iDataBrowserBase::lvwDataTree_contextMenuRequested(QTreeWidgetItem* item, c
   delete menu;
 }
 
-void iDataBrowserBase::lvwDataTree_focusInEvent(QFocusEvent* ev) {
+void iDataBrowserBase::lvwDataTree_focusIn(QWidget*) {
   SetThisAsHandler();
 }
 
@@ -817,7 +593,7 @@ void iDataBrowserBase::SelectionChanged(bool forced) {
   inherited::SelectionChanged(forced);
 }
 
-void iDataBrowserBase::TreeNodeDestroying(taiTreeDataNode* item) {
+void iDataBrowserBase::lvwDataTree_ItemDestroying(iTreeViewItem* item) {
   RemoveSelectedItem(item); // noop if not selected
 }
 
@@ -839,21 +615,21 @@ iDataBrowser::~iDataBrowser()
 
 void iDataBrowser::ApplyRoot() {
   if (!m_root) return;
-  taiDataLink* dl = browser()->GetDataLink(m_root, m_typ);
+  taiDataLink* dl = taiViewType::StatGetDataLink(m_root, m_typ);
   if (dl == NULL) return; // shouldn't happen...
 
   // by definition, we should always be able to create a new browser on root of a browser
-  int dn_flags_ = iListViewItem::DNF_CAN_BROWSE;
+  int dn_flags_ = iTreeViewItem::DNF_CAN_BROWSE;
   
   // we treat root slightly different if it is true root, or is just a subsidiary named item
   taiTreeDataNode* node;
   //TODO: should add memberdef to constructor
   if (m_root == tabMisc::root)
-    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, "root",
-      dn_flags_ | iListViewItem::DNF_IS_MEMBER);
+    node = dl->CreateTreeDataNode((MemberDef*)NULL, lvwDataTree, NULL, "root",
+      dn_flags_ | iTreeViewItem::DNF_IS_MEMBER);
   else //TODO: should really have a better scheme for root name -- what if it is unnamed???
-    node = CreateTreeDataNode(dl, (MemberDef*)NULL, NULL, NULL, dl->GetName(), 
-      dn_flags_ | iListViewItem::DNF_UPDATE_NAME);
+    node = dl->CreateTreeDataNode((MemberDef*)NULL, lvwDataTree, NULL, dl->GetName(), 
+      dn_flags_ | iTreeViewItem::DNF_UPDATE_NAME);
   // always show the first items under the root
   node->CreateChildren();
   setCurItem(node);
@@ -869,62 +645,12 @@ void iDataBrowser::Constr_Menu_impl() {
 }
 
 void iDataBrowser::toolsClassBrowser() {
-  ClassBrowser* brows = ClassBrowser::New(&taMisc::types, TIK_TYPESPACE);
+  ClassBrowser* brows = ClassBrowser::New(&taMisc::types, &TA_TypeSpace);
   if (brows == NULL) return;
   brows->ViewWindow();
 }
 
 
-taiTreeDataNode* iDataBrowser::CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,
-  taiTreeDataNode* parent_, taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
-{
-  taiTreeDataNode* rval = NULL;
-  TypeDef* typ = link->GetTypeDef();
-  // slightly different constructor depending on if root item or not
-  if (parent_ == NULL) {
-    if (typ->InheritsFrom(&TA_tabGroupDataLink))
-      rval = new tabGroupTreeDataNode((tabGroupDataLink*)link, md_, lvwDataTree, last_child_,
-        tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_tabListDataLink))
-      rval = new tabListTreeDataNode((tabListDataLink*)link, md_, lvwDataTree, last_child_,
-        tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_tabDataLink))
-      rval = new tabTreeDataNode((tabDataLink*)link, md_, lvwDataTree, last_child_, tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_taiDataLink))
-      rval = new taiTreeDataNode(link, md_, lvwDataTree, last_child_, tree_name, dn_flags_);
-   // else not supported yet
-  } else {
-    if (typ->InheritsFrom(&TA_tabGroupDataLink))
-      rval = new tabGroupTreeDataNode((tabGroupDataLink*)link, md_, parent_, last_child_,
-        tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_tabListDataLink))
-      rval = new tabListTreeDataNode((tabListDataLink*)link, md_, parent_, last_child_, tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_tabDataLink))
-      rval = new tabTreeDataNode((tabDataLink*)link, md_, parent_, last_child_, tree_name, dn_flags_);
-    else if (typ->InheritsFrom(&TA_taiDataLink))
-      rval = new taiTreeDataNode(link, md_, parent_, last_child_, tree_name, dn_flags_);
-   // else not supported yet
-  }
-  if (!rval) {
-    rval = inherited::CreateTreeDataNode_impl(link, md_,parent_, last_child_, 
-      tree_name, dn_flags_);
-  }
-  return rval;
-}
-
-void iDataBrowser::mnuNewBrowser(taiAction* mel) {
-  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
-  taiDataLink* dl = node->link();
-  TypeDef* td = dl->GetDataTypeDef();
-  if (!td->InheritsFrom(&TA_taBase)) return;
-  DataBrowser* brows = DataBrowser::New((taBase*)dl->data(), node->md());
-  if (!brows) return;
-  brows->ViewWindow();
-  // move selection up to parent of cloned item, to reduce issues of changed data, confusion, etc.
-  setCurItem(node->parent(), true);
-
-  //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
-}
 
 
 //////////////////////////////////

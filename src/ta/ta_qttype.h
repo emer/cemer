@@ -793,13 +793,11 @@ protected:
 //////////////////////////
 
 class TA_API tabViewType: public taiViewType { // for taBase and descendants
-#ifndef __MAKETA__
-typedef taiViewType inherited;
-#endif
+INHERITED(taiViewType)
 public:
   override int		BidForView(TypeDef*);
   override const iColor* GetEditColorInherit(taiDataLink* dl) const;// #IGNORE background color for edit
-  override taiDataLink*	GetDataLink(void* data_);
+  override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ);
   void			Initialize() {}
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(tabViewType, taiViewType)
@@ -814,7 +812,7 @@ typedef tabViewType inherited;
 #endif
 public:
   override int		BidForView(TypeDef*);
-  override taiDataLink*	GetDataLink(void* data_); // optimized version of tabViewType
+  override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ); // optimized version of tabViewType
   void			Initialize() {}
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(tabOViewType, tabViewType)

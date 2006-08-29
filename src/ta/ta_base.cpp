@@ -664,7 +664,7 @@ taDataLink* taBase::GetDataLink() {
   if (!data_link()) {
     taiViewType* iv;
     if ((iv = GetTypeDef()->iv) != NULL) {
-      iv->GetDataLink(this); // sets data_link
+      iv->GetDataLink(this, GetTypeDef()); // sets data_link
     }
   }
 #endif

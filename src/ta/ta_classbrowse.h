@@ -58,10 +58,11 @@ enum TypeInfoKind { // used in switch statements to particularize instances
   TIK_MEMBER,
   TIK_METHOD,
   TIK_TYPE,
+  TIK_ENUMSPACE,
+  TIK_TOKENSPACE,
   TIK_MEMBERSPACE,
   TIK_METHODSPACE,
-  TIK_TYPESPACE,
-  TIK_TOKENSPACE
+  TIK_TYPESPACE
 };
 
 //////////////////////////
@@ -72,10 +73,12 @@ class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo obje
 INHERITED(taiDataLink)
 public:
   const TypeInfoKind 	tik;
+  TypeDef*		type() const {return m_type;}
   
   DL_FUNS(taClassDataLink); //
 
 protected:
+  TypeDef*		m_type;
   taClassDataLink(TypeInfoKind tik_, void* data_, taDataLink* &link_ref_);  //
 };
 
@@ -99,6 +102,8 @@ public:
   DL_FUNS(taTypeInfoDataLink); //
 
 protected:
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 /*  override void		QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);
   override int		EditAction_impl(taiMimeSource* ms, int ea);
   override void		ChildQueryEditActions_impl(const MemberDef* par_md, taiDataLink* child,
@@ -123,6 +128,9 @@ public:
   taTypeSpaceDataLink_Base(TypeInfoKind tik_, taPtrList_impl* data_, 
     taDataLink* &link_ref_);
   DL_FUNS(taTypeSpaceDataLink_Base) //
+protected:
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 };
 
 class TA_API taTypeSpaceDataLink: public taTypeSpaceDataLink_Base {
@@ -198,9 +206,9 @@ public:
   taTypeInfoDataLink* 	link() const {return (taTypeInfoDataLink*)m_link;}
 
   
-  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, taiTreeDataNode* parent_,
+  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, iTreeWidget* parent_,
+  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md, iTreeView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeInfoTreeDataNode();
 public: // IDataLinkClient interface
@@ -218,7 +226,8 @@ class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for space
 INHERITED(taiTreeDataNode)
 public:
   const TypeInfoKind	tik;
-  TypeInfoKind		child_tik(){return m_child_tik;}
+  TypeInfoKind		child_tik() const {return m_child_tik;}
+  TypeDef*		child_type() const {return m_child_type;}
   
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
   taTypeInfoDataLink* 	child_link(int idx);
@@ -234,9 +243,9 @@ public:
 
 //  override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, taiTreeDataNode* parent_,
+  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, iTreeWidget* parent_,
+  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, iTreeView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeSpaceTreeDataNode();
 public: // IDataLinkClient interface
@@ -244,6 +253,7 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_taTypeSpaceTreeDataNode;}
 protected:
   TypeInfoKind		m_child_tik;
+  TypeDef*		m_child_type;
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
@@ -267,14 +277,11 @@ public slots:
   virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
 
 protected:
-  iClassBrowser(void* root_, TypeInfoKind tik, ClassBrowser* browser_,
+  iClassBrowser(void* root_, TypeDef* root_typ_, ClassBrowser* browser_,
     QWidget* parent = 0);
-  override taiTreeDataNode* 	CreateTreeDataNode_impl(taiDataLink* link, MemberDef* md_,
-    taiTreeDataNode* parent_, taiTreeDataNode* last_child_, 
-    const String& tree_name, int flags_); // pass parent=null if this is a root item
 
 protected:
-  TypeInfoKind		m_tik;
+  TypeDef* 		m_root_typ;
 
   void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
   override iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); 
@@ -290,24 +297,18 @@ class TA_API ClassBrowser : public DataViewer {
   // #NO_TOKENS represents a class browser instance
 friend class iClassBrowser;
 public:
-  static ClassBrowser*	New(void* root_, TypeInfoKind tik);
-  static taiDataLink*  	StatGetDataLink(void* el, TypeInfoKind tik);
-    // anyone can call this to get an object's datalink -- fetches existing or makes new
+  static ClassBrowser*	New(void* root_, TypeDef* root_typ);
 
   void* 		root;
-  TypeInfoKind 		tik;
+  TypeDef* 		root_typ;
 
   iClassBrowser*	browser_win() {return (iClassBrowser*)m_window;}
-
-  void			TreeNodeDestroying(taiTreeDataNode* item); // #IGNORE check if curItem
 
   TA_BASEFUNS(ClassBrowser)
 protected:
   override void		Constr_Window_impl(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Clear_impl(); // #IGNORE
-  override taDataLink*	GetDataLink_(void* el, TypeDef* el_typ, int param = 0); 
-    // param is tik of item
 private:
   void			Initialize();
   void			Destroy() {}
@@ -326,5 +327,16 @@ protected:
   override void 	Constr_Data();
   override void 	Constr_Labels();
 };
+
+class TA_API taTypeInfoViewType: public taiViewType { // for TypeItem types and their spaces
+INHERITED(taiViewType)
+public:
+  override int		BidForView(TypeDef*);
+  override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ);
+  void			Initialize() {}
+  void			Destroy() {}
+  TA_VIEW_TYPE_FUNS(taTypeInfoViewType, taiViewType)
+};
+
 
 #endif
