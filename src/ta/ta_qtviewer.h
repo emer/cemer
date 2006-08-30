@@ -88,7 +88,7 @@ class ISelectable;
 class ISelectable_PtrList;
 class DynMethodDesc; // #IGNORE
 class DynMethod_PtrList; // #IGNORE
-class IDataViewHost;
+class ISelectableHost;
 class iDataViewer;
 
 class iTreeView;
@@ -335,7 +335,7 @@ protected:
  In the multi-select case, the first selected item is the root (controlling) item. It must be
    passed a list of all the items (including itself, in position 0).
 
- NOTE: you must call viewer_win()->ObjectRemoving(item) in the implementation when an object is
+ NOTE: you must call viewer_win()->ItemRemoving(item) in the implementation when an object is
  deleted or being removed from the viewing hierarchy.
 */
 
@@ -344,7 +344,7 @@ public: // Interface Properties and Methods
   virtual MemberDef*	md() const = 0; // memberdef in parent, if any, of the selected item
   virtual taiDataLink*	par_link() const = 0; // parent item's (if any) link
   virtual MemberDef* 	par_md() const = 0;// parent item's (if any) md
-  virtual IDataViewHost* host() const = 0; //
+  virtual ISelectableHost* host() const = 0; //
   taBase*		taData() const; // if the data is taBase, this returns it
   virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
   QWidget*		widget() const; // default gets from host, but you can override
@@ -399,6 +399,15 @@ protected:
 };
 
 
+class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
+public:
+  virtual QWidget*	widget() = 0; // provides a gui parent for things like context menus
+  virtual bool 		ItemRemoving(ISelectable* item) = 0; // call from item when deleting or removing -- makes sure it is removed from sel lists, etc.
+
+  virtual ~ISelectableHost() {}
+};
+
+
 //////////////////////////
 //   DynMethodDesc	//
 //////////////////////////
@@ -438,20 +447,6 @@ protected:
   // sets the element's self-index
 };
 
-
-//////////////////////////
-//   IDataViewHost	//
-//////////////////////////
-
-// Interface exposed by the GUI widget hosting the dataview
-
-class TA_API IDataViewHost {
-public:
-  virtual QWidget*	This() = 0;
-  virtual bool 		ObjectRemoving(ISelectable* item) = 0; // call from item when deleting or removing -- makes sure it is removed from sel lists, etc.
-
-  virtual ~IDataViewHost() {}
-};
 
 //////////////////////////
 //   iDataViewer	//
@@ -938,7 +933,7 @@ private:
 //////////////////////////
 
 //Note: used by Browser and 3D Viewers
-class TA_API iTabDataViewer : public iDataViewer, public IDataViewHost { // viewer window used for class browsing
+class TA_API iTabDataViewer : public iDataViewer, public ISelectableHost { // viewer window used for class browsing
     Q_OBJECT
 INHERITED(iDataViewer)
 friend class iTabView;
@@ -971,9 +966,9 @@ public slots:
   virtual void 		viewSplitVertical();
   virtual void 		viewSplitHorizontal();
 
-public: // IDataViewHost interface
-  override QWidget*	This() {return this;}
-  override bool 	ObjectRemoving(ISelectable* item);
+public: // ISelectableHost interface
+  override QWidget*	widget() {return this;}
+  override bool 	ItemRemoving(ISelectable* item);
 
 protected:
   iTabView_PtrList*	m_tabViews; // all created tab views
@@ -1284,9 +1279,9 @@ INHERITED(iTreeWidget)
   Q_OBJECT
 friend class iTreeViewItem;
 public:
-  IDataViewHost*	host; // sb set by owner
+  ISelectableHost*	host; // sb set by owner
   
-  iTreeView(IDataViewHost* host, QWidget* parent = 0);
+  iTreeView(ISelectableHost* host, QWidget* parent = 0);
    
 #ifndef __MAKETA__
 signals:
@@ -1369,7 +1364,7 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override MemberDef*	md() const {return m_md;}
   override String	view_name() const; // for members, the member name; for list items, the name if
-  override IDataViewHost* host() const;
+  override ISelectableHost* host() const;
   override QWidget* 	widget() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
@@ -1412,7 +1407,7 @@ public: // ITypedObject interface
 public: // ISelectable interface
   override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
   override MemberDef* 	par_md() const; // as for par_link
-//  override IDataViewHost* host() const;
+//  override ISelectableHost* host() const;
 protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
   taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
@@ -1446,7 +1441,7 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
   override MemberDef* 	par_md() const; // as for par_link
-  override IDataViewHost* host() const;
+  override ISelectableHost* host() const;
 };
 
 

@@ -416,6 +416,7 @@ iProgramEditor::iProgramEditor(QWidget* parent)
 
 void iProgramEditor::init() {
   outer_host = NULL; // MUST be set at some point!!!
+  edh = NULL;
   read_only = false;
   modified = false;
   bg_color.set(TAI_Program->GetEditColor()); // always the same
@@ -423,6 +424,14 @@ void iProgramEditor::init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   
+  splMain = new QSplitter(Qt::Vertical, this);
+  layOuter->addWidget(splMain);
+  
+  widEdit = new QWidget;
+  splMain->addWidget(widEdit);
+  
+
+/*obs  
   layEdit = new QHBoxLayout(layOuter);
   layEdit->setMargin(0);
   layEdit->addSpacing(taiM->hsep_c);
@@ -437,39 +446,23 @@ void iProgramEditor::init() {
   
   btnRevert = new HiLightButton("Revert", this);
   layEdit->addWidget(btnRevert);
-  layEdit->addSpacing(taiM->hsep_c);
+  layEdit->addSpacing(taiM->hsep_c); */
   
-  items = new iTreeWidget(this);
-  layOuter->addWidget(items);
+  items = new iTreeView(this, NULL);
+  splMain->addWidget(items);
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
   QTreeWidgetItem* hi = items->headerItem();
   hi->setData(0, Qt::DisplayRole,"El Type");
   hi->setData(1, Qt::DisplayRole,"El Description");
   
-  connect(btnSave, SIGNAL(clicked()), this, SLOT(btnSave_clicked()) );
-  connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
   connect(items, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(items_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
 
   InternalSetModified(false);
 }
 
-void* iProgramEditor::Base() {
-//NOTE: prob ok to just return NULL, only used my methods, and they check for null
-  return NULL;
-//  return cur_base;
-}
-
-void iProgramEditor::btnSave_clicked() {
-//TODO
-}
-
-void iProgramEditor::btnRevert_clicked() {
-//TODO
-}
-
-void iProgramEditor::Changed() {
+/*obs void iProgramEditor::Changed() {
   InternalSetModified(true);
   outer_host->Changed();
 }
@@ -486,7 +479,7 @@ void iProgramEditor::GetValue() {
 
 void iProgramEditor::GetImage() {
 //TODO
-}
+}*/
 
 void iProgramEditor::ExpandAll() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::HasChildren);
@@ -504,9 +497,14 @@ void iProgramEditor::ExpandAll() {
 }
 
 void iProgramEditor::InternalSetModified(bool value) {
-  btnSave->setEnabled(value);
-  btnRevert->setEnabled(value);
+/*todo  btnSave->setEnabled(value);
+  btnRevert->setEnabled(value); */
   modified = value;
+}
+
+bool iProgramEditor::ItemRemoving(ISelectable* /*item*/) {
+// TODO: maybe don't need to do anything??? itemChanged probably enough
+  return false;
 }
 
 void iProgramEditor::items_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
@@ -529,7 +527,10 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
   setCentralWidget(pe); //sets parent
   Program* prog_ = prog();
   if (prog_) {
-//    prog_->CreateItems(pe->items);
+    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    if (dl) {
+      dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
+    }
   //TODO: might need to be put into a one-shot after showEvent
 //    pe->ExpandAll();
   }

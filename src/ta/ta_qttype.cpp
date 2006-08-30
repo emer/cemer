@@ -791,7 +791,7 @@ EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base, bool readonly, 
 //TODO: should we try to find????  host_ = taiMisc::FindEdit(base, typ);
   if (host_ == NULL) {
     host_ = CreateDataHost(base, readonly);
-    host_->Constr("", "", bgclr, true);
+    host_->Constr("", "", bgclr, taiDataHost::HT_PANEL);
     return host_->EditPanel(link); //TODO: verify this conversion is always valid!!!
   } else { //TODO: this logic needs to be verified and probably revised
     host_->Raise();

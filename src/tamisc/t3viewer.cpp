@@ -146,9 +146,9 @@ void T3DataView::Destroy() {
 
 void T3DataView::CutLinks() {
   Reset();
-  IDataViewHost* dvh = this->host();
+  ISelectableHost* dvh = this->host();
   if (dvh)
-    dvh->ObjectRemoving(this);
+    dvh->ItemRemoving(this);
   if (m_transform) {
     m_transform->CutLinks();
     delete m_transform;
@@ -215,9 +215,9 @@ void T3DataView::Clear_impl(taDataView* par) { // note: no absolute guarantee pa
 
 
 void T3DataView::Close() {
-  IDataViewHost* host = this->host();
+  ISelectableHost* host = this->host();
   if (host) {
-    host->ObjectRemoving(this); // removes from sel list, etc.
+    host->ItemRemoving(this); // removes from sel list, etc.
   }
   if (m_parent) {
     m_parent->CloseChild(this);
@@ -268,7 +268,7 @@ void T3DataView::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
   ISelectable::GetEditActionsS_impl_(allowed, forbidden);
 }
 
-IDataViewHost* T3DataView::host() const {
+ISelectableHost* T3DataView::host() const {
   T3DataViewRoot* root = ((T3DataView*)this)->root(); // safely cast away constness
   return (root) ? root->host : NULL;
 }

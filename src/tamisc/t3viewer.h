@@ -158,7 +158,7 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override taiDataLink* par_link() const; // from parent data
   override MemberDef* 	par_md() const; // as for par_link
   override String	view_name() const;
-  override IDataViewHost* host() const;
+  override ISelectableHost* host() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 //  override taiMimeItem*	GetMimeItem();
@@ -285,7 +285,7 @@ typedef T3DataViewPar inherited;
 friend class iT3DataViewer;
 friend class T3DataViewer;
 public:
-  IDataViewHost*	host; // ss/b set by owner
+  ISelectableHost*	host; // ss/b set by owner
 
   override T3DataViewRoot* root() {return this;}
 

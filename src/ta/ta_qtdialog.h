@@ -237,6 +237,13 @@ public:
     CANCELED		= 0x05,
     SHOW_CHANGED	= 0x80	// flag to indicate what to show was changed, reconstruct!
   };
+  
+  enum HostType {
+    HT_DIALOG,		// host/owner is an iDialog (legacy "Edit" behavior)
+    HT_PANEL,		// host/owner is an EditPanel ("properties" panel)
+    HT_CONTROL		// host/owner is a control -- we won't show menus or obj buttons
+  };
+  
 
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
 
@@ -273,9 +280,13 @@ public:
       HiLightButton*	revert_but;
 
 
-  iColor* 	bg_color;	// background color of host -- only set via setBgColor
-  virtual bool	isDialog() {return dialog;} // 'true' when we will be been posted as a dialog
-  virtual bool	isPanel() {return is_panel;} // 'true' when we will be shown in a panel
+  iColor* 		bg_color;	// background color of host -- only set via setBgColor
+  inline bool		isDialog() {return (host_type == HT_DIALOG);} 
+    // 'true' when we will be been posted as a dialog
+  inline bool		isPanel() {return (host_type == HT_PANEL);} 
+    // 'true' when we will be shown in a panel
+  inline bool		isControl() {return (host_type == HT_CONTROL);} 
+    // 'true' when shown in a control
   virtual void	setBgColor(const iColor* new_bg); // #SET_bg_color
   virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
   QWidget* 	widget() {return mwidget;}
@@ -285,7 +296,8 @@ public:
 
   void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
-  void  Constr(const char* prompt = "", const char* win_title = "", const iColor* bgcol = NULL, bool as_panel = false);
+  void  Constr(const char* prompt = "", const char* win_title = "",
+    const iColor* bgcol = NULL, HostType host_type = HT_DIALOG);
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
@@ -331,7 +343,7 @@ protected:
   bool			showMethButtons; // true if any are created
   QWidget*		mwidget;	// outer container for all widgets
   iDialog*		dialog; // dialog, when using Edit, NULL otherwise
-  bool			is_panel; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
+  HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   int 			sel_item_index; // only used during handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
   DataChangeHelper 	dch; // helps track the state of datachanges
@@ -423,6 +435,8 @@ public:
 
   override int 		Edit(bool modal_); // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
+  void		 	ConstrEditControl(QWidget* gui_parent, const iColor* bgcol = NULL); 
+    // for controls -- construct then edit 
   void			GetImage(); //override
   void			GetValue(); //override
   virtual bool		ShowMember(MemberDef* md) const;

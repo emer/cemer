@@ -121,20 +121,19 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class TA_API iProgramEditor: public QWidget, public IDataHost {
+class TA_API iProgramEditor: public QWidget, public ISelectableHost {
   // widget for editing entire programs
 INHERITED(QWidget)
   Q_OBJECT
 public:
   
   IDataHost* 		outer_host; // YOU MUST SET THIS OR THE UNIVERSE WILL COLLAPSE
+  taiEditDataHost*	edh; // the edh we use for editing items -- created dynamically
   
   QVBoxLayout*		layOuter;
-  QHBoxLayout*		  layEdit;
-  QWidget*		    widEdit; // container for the actual taiEdit
-  HiLightButton*	    btnSave;
-  HiLightButton*	    btnRevert;
-  iTreeWidget*		  items;
+  QSplitter*		  splMain;
+  QWidget*		    widEdit; // container for the actual taiEditDataHost
+  iTreeView*		    items;
   
   bool			read_only; // set true if we are
   
@@ -146,7 +145,11 @@ public slots:
 
   void			ExpandAll(); // expands all, and resizes columns
   
-public: // ITypedObject i/f
+public: // ISelectableHost i/f
+  override QWidget*	widget() {return this;} 
+  override bool 	ItemRemoving(ISelectable* item);
+  
+/*nnpublic: // ITypedObject i/f
   void*			This() {return this;} 
   TypeDef*		GetTypeDef() const {return &TA_iProgramEditor;}
 public: // IDataHost i/f -- some delegate up to mommy
@@ -160,7 +163,7 @@ public: // IDataHost i/f -- some delegate up to mommy
   void			GetValue();
   void			GetImage();
   void			Changed(); // called by embedded item to indicate contents have changed
-  void			SetItemAsHandler(taiData* item, bool set_it = true) {} 
+  void			SetItemAsHandler(taiData* item, bool set_it = true) {} */
 
 
 protected:
@@ -172,8 +175,6 @@ protected:
   void			InternalSetModified(bool value); // does all the gui config
   
 protected slots:
-  void			btnSave_clicked();
-  void			btnRevert_clicked();
   void 			items_currentItemChanged(QTreeWidgetItem* curr, 
     QTreeWidgetItem* prev);
   

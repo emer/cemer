@@ -643,7 +643,7 @@ iDataPanel* iClassBrowser::MakeNewDataPanel_(taiDataLink* link) {
   taTypeInfoDataLink* dl = static_cast<taTypeInfoDataLink*>(link);
   taiTypeItemDataHost* tidh = 
     new taiTypeItemDataHost(dl->data(), dl->tik, true, false);
-  tidh->Constr("", "", NULL, true);
+  tidh->Constr("", "", NULL, taiDataHost::HT_PANEL);
   EditDataPanel* dp = tidh->EditPanel(link);
   return dp;
 } 

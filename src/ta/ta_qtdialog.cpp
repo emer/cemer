@@ -554,7 +554,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   else              ctrl_size = taiM->ctrl_size; // for early type system instance when no taiM yet
   row_height = 1; // actual value set in Constr
   mouse_button = 0;
-  cur_base = NULL;
   cur_row = 0;
   no_revert_hilight = false;
   modal = modal_;
@@ -564,6 +563,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   sel_item_index = -1;
   rebuild_body = false;
   warn_clobber = false;
+  host_type = HT_DIALOG; // default, set later
 }
 
 taiDataHost::~taiDataHost() {
@@ -740,8 +740,10 @@ void taiDataHost::ClearBody_impl() {
 }
 
 /* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
-void taiDataHost::Constr(const char* aprompt, const char* win_title, const iColor* bgclr, bool as_panel) {
-  is_panel = as_panel;
+void taiDataHost::Constr(const char* aprompt, const char* win_title,
+  const iColor* bgclr, HostType host_type_) 
+{
+  host_type = host_type_;
   setBgColor(bgclr);
   row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   Constr_Strings(aprompt, win_title);
@@ -862,7 +864,7 @@ void taiDataHost::Constr_Methods() { //note: conditional constructions used by S
 void taiDataHost::Constr_Buttons() {
   QWidget* par = widget();
   hblButtons->addStretch();
-  if (!is_panel) { // add dialog-like buttons
+  if (isDialog()) { // add dialog-like buttons
     if(!modal && no_ok_but) {
       okbut = NULL;
     }
@@ -1487,6 +1489,13 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
   return panel;
+}
+
+void taiEditDataHost::ConstrEditControl(QWidget* gui_parent, const iColor* bgcol) {
+  mwidget = gui_parent; // thus, we won't create our own outer widget
+  Constr("", "", bgcol, HT_CONTROL);
+  taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
+  state = ACTIVE;
 }
 
 void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {

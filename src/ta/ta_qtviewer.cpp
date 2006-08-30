@@ -1128,8 +1128,8 @@ taBase* ISelectable::taData() const {
 }
 
 QWidget* ISelectable::widget() const {
-  IDataViewHost* host_ = host();
-  return (host_) ? host_->This() : NULL;
+  ISelectableHost* host_ = host();
+  return (host_) ? host_->widget() : NULL;
 }
 
 
@@ -2747,7 +2747,7 @@ iDataPanel* iTabDataViewer::MakeNewDataPanel_(taiDataLink* link) {
   return rval;
 }
 
-bool iTabDataViewer::ObjectRemoving(ISelectable* item) {
+bool iTabDataViewer::ItemRemoving(ISelectable* item) {
   // just blindly try removing it from sel list
   return RemoveSelectedItem(item);
 }
@@ -3557,7 +3557,7 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 //    iTreeView 	//
 //////////////////////////
 
-iTreeView::iTreeView(IDataViewHost* host_, QWidget* parent)
+iTreeView::iTreeView(ISelectableHost* host_, QWidget* parent)
 :inherited(parent)
 {
   host = host_;
@@ -3569,7 +3569,7 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
 }
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
-  if (host) host->ObjectRemoving(item);
+  if (host) host->ItemRemoving(item);
   emit ItemDestroying(item);
 }
 
@@ -3776,7 +3776,7 @@ void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
   ISelectable::GetEditActionsS_impl_(allowed, forbidden);
 }
 
-IDataViewHost* iTreeViewItem::host() const {
+ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
   return (tv) ? tv->host : NULL;
 }
@@ -3987,7 +3987,7 @@ QString taiListDataNode::text(int col) const {
     return QString::number(num);
 }
 
-IDataViewHost* taiListDataNode::host() const {
+ISelectableHost* taiListDataNode::host() const {
   return (panel) ? panel->viewer_win() : NULL;
 }
 
