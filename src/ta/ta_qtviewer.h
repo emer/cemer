@@ -187,6 +187,7 @@ public:
   override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
+  override String	GetColText(const KeyString& key, int itm_idx = -1) const;
 
   DL_FUNS(tabDataLink); //
 
@@ -239,9 +240,11 @@ public:
   taList_impl*		data() const {return (taList_impl*)m_data;}
   
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols(); // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
+  override int		NumListCols() const; // number of columns in a list view for this item type
+  override const KeyString GetListColKey(int col) const; 
+  override String	GetColHeading(const KeyString& key) const;
+  override String	ChildGetColText(taDataLink* child, const KeyString& key, 
+    int itm_idx = -1) const;
   override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
 
   tabListDataLink(taList_impl* data_);
@@ -1279,13 +1282,26 @@ INHERITED(iTreeWidget)
   Q_OBJECT
 friend class iTreeViewItem;
 public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjDataRole = Qt::UserRole + 1, // for additional data
+    ColKeyRole,	// store a string in header to indicate the col key to use for data
+  };
+#endif
+  
   ISelectableHost*	host; // sb set by owner
+  
+  const KeyString	colKey(int col) const; // the key we set for data lookup
+  void			setColKey(int col, const KeyString& key); 
+    // sets in ColKeyRole -- you can do it yourself if you want	
+  void			setHeaderText(int col, const String& value); // convenience
   
   iTreeView(ISelectableHost* host, QWidget* parent = 0);
    
 #ifndef __MAKETA__
 signals:
   void			ItemDestroying(iTreeViewItem* item);
+  void			ItemSelected(iTreeViewItem* item); // note: NULL if none
   void			focusIn(QWidget* sender);
 #endif
   
@@ -1297,6 +1313,7 @@ protected:
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
   
 protected slots:
+  void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
 };
 
 

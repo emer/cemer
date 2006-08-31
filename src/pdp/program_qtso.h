@@ -121,7 +121,8 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class TA_API iProgramEditor: public QWidget, public ISelectableHost {
+class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
+  public virtual IDataLinkClient, public virtual ISelectableHost {
   // widget for editing entire programs
 INHERITED(QWidget)
   Q_OBJECT
@@ -131,52 +132,67 @@ public:
   taiEditDataHost*	edh; // the edh we use for editing items -- created dynamically
   
   QVBoxLayout*		layOuter;
-  QSplitter*		  splMain;
-  QWidget*		    widEdit; // container for the actual taiEditDataHost
-  iTreeView*		    items;
+  QHBoxLayout*		  layEdit;
+  iStripeWidget*	    body; // container for the actual taiData items
+  QGridLayout*		    layBody; // this gets recreated each time
+//QVBoxLayout*		    layButtons;
+  HiLightButton*	      btnSave;
+  HiLightButton*	      btnRevert;
+  iTreeView*		  items;
   
   bool			read_only; // set true if we are
   
-  void			setEditNode(TAPtr value); // sets the object to show editor for
+  void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
 
   iProgramEditor(QWidget* parent = NULL); //
 
 public slots:
-
   void			ExpandAll(); // expands all, and resizes columns
   
 public: // ISelectableHost i/f
   override QWidget*	widget() {return this;} 
   override bool 	ItemRemoving(ISelectable* item);
   
-/*nnpublic: // ITypedObject i/f
+public: // ITypedObject i/f
   void*			This() {return this;} 
   TypeDef*		GetTypeDef() const {return &TA_iProgramEditor;}
+  
+public: // IDataLinkClient i/f 
+  void			DataLinkDestroying(taDataLink* dl); 
+  void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+
 public: // IDataHost i/f -- some delegate up to mommy
   const iColor* 	colorOfCurRow() const {return &bg_color;} // only need one
   bool  		HasChanged() {return modified;}	
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us
   bool			isReadOnly() {return read_only;}
-  void*			Base(); // base of the object
+  void*			Base() {return (void*)base;} // base of the object
   TypeDef*		GetBaseTypeDef(); // TypeDef on the base, for casting
   void			GetValue();
   void			GetImage();
   void			Changed(); // called by embedded item to indicate contents have changed
-  void			SetItemAsHandler(taiData* item, bool set_it = true) {} */
+  void			SetItemAsHandler(taiData* item, bool set_it = true) {}
 
 
 protected:
   iColor		bg_color; // for edit area; only need one, because doesn't change
   taSmartRef		m_edit_node; // the current node being edited; its it is in widEdit
   bool			modified;
-  
+  Member_List		memb_el; // members that will be shown for this base
+  taiDataList 		data_el; // data elements, usually only 2: an inline, and a desc
+  TAPtr			base; // no need for smartref, because we are a dlc
+ 
+  void 			AddData(int row, QWidget* data); // add the data widget to the row
+  virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
+  virtual void		Base_Add(); // adds controls etc for base
   
   void			InternalSetModified(bool value); // does all the gui config
   
 protected slots:
-  void 			items_currentItemChanged(QTreeWidgetItem* curr, 
-    QTreeWidgetItem* prev);
+  void			btnSave_clicked();
+  void			btnRevert_clicked();
+  void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
   
 private:
   void			init();

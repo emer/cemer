@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 
 #include "icombobox.h"
+#include "ieditgrid.h"
 #include "ilineedit.h"
 #include "ispinbox.h"
 #include "itreewidget.h"
@@ -420,57 +421,84 @@ void iProgramEditor::init() {
   read_only = false;
   modified = false;
   bg_color.set(TAI_Program->GetEditColor()); // always the same
+  base = NULL;
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   
-  splMain = new QSplitter(Qt::Vertical, this);
-  layOuter->addWidget(splMain);
-  
-  widEdit = new QWidget;
-  splMain->addWidget(widEdit);
-  
-
-/*obs  
   layEdit = new QHBoxLayout(layOuter);
   layEdit->setMargin(0);
   layEdit->addSpacing(taiM->hsep_c);
   
-  widEdit = new QWidget(this);
-  layEdit->addWidget(widEdit, 1); // give all the space to this guy
+  body = new iStripeWidget(this); //note: intrinsically sizes to 2 rows minimum
+  layBody = NULL; // dynamically created
+  layEdit->addWidget(body, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->hspc_c);
   
+  QVBoxLayout* layButtons = new QVBoxLayout();
+  layButtons->setMargin(0);
+  layButtons->setSpacing(0);
+  layButtons->addStretch();
   btnSave = new HiLightButton("Save", this);
-  layEdit->addWidget(btnSave);
-  layEdit->addSpacing(taiM->hsep_c);
+  layButtons->addWidget(btnSave);
+  layButtons->addStretch();
   
   btnRevert = new HiLightButton("Revert", this);
-  layEdit->addWidget(btnRevert);
-  layEdit->addSpacing(taiM->hsep_c); */
+  layButtons->addWidget(btnRevert);
+  layButtons->addStretch();
+  layEdit->addLayout(layButtons);
   
-  items = new iTreeView(this, NULL);
-  splMain->addWidget(items);
+  items = new iTreeView(this, this);
+  layOuter->addWidget(items, 1); // it gets the room
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
-  QTreeWidgetItem* hi = items->headerItem();
-  hi->setData(0, Qt::DisplayRole,"El Type");
-  hi->setData(1, Qt::DisplayRole,"El Description");
+  items->setHeaderText(0, "Program Item");
+  items->setHeaderText(1, "Item Description");
+  items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   
-  connect(items, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-    this, SLOT(items_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+  
+  connect(btnSave, SIGNAL(clicked()), this, SLOT(btnSave_clicked()) );
+  connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
+  connect(items, SIGNAL(ItemSelected(iTreeViewItem*)),
+    this, SLOT(items_ItemSelected(iTreeViewItem*)) );
 
   InternalSetModified(false);
 }
 
-/*obs void iProgramEditor::Changed() {
+void iProgramEditor::AddData(int row, QWidget* data) {
+  // just get the height right from the strip widget
+  layBody->setRowMinimumHeight(row, body->stripeHeight()); 
+//  QHBoxLayout* hbl = new QHBoxLayout();
+//  layBody->addLayout(hbl, row, 1);
+//  hbl->addWidget(data, 0);
+  layBody->addWidget(data, row, 0);
+  data->show(); // needed for rebuilds, to make the widget show
+}
+
+void iProgramEditor::btnSave_clicked() {
+//TODO
+}
+
+void iProgramEditor::btnRevert_clicked() {
+//TODO
+}
+
+void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
+  setEditNode(NULL, false);
+}
+ 
+void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//TODO: do we need to do anything???
+}
+
+void iProgramEditor::Changed() {
   InternalSetModified(true);
   outer_host->Changed();
 }
 
 TypeDef* iProgramEditor::GetBaseTypeDef() {
-//NOTE: prob ok to just return NULL, only used my methods, and they check for null
-  return NULL;
-//  return typ;
+  if (base) return base->GetTypeDef();
+  else return &TA_void; // avoids null issues
 }
 
 void iProgramEditor::GetValue() {
@@ -478,8 +506,45 @@ void iProgramEditor::GetValue() {
 }
 
 void iProgramEditor::GetImage() {
-//TODO
-}*/
+/* TODO
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetValue(mb_dat, base);*/
+}
+
+void iProgramEditor::Base_Remove() {
+  base->RemoveDataClient(this);
+  data_el.Reset(); // deletes the items
+  memb_el.Reset();
+  // delete widgets in iStripe
+  const QObjectList& ch = body->children();
+  while (ch.count() > 0) {
+    QObject* obj = ch.last();
+    delete obj;
+  }
+  base = NULL;
+}
+
+void iProgramEditor::Base_Add() {
+  base->AddDataClient(this);
+  layBody = new QGridLayout(body); //note: vmargin passed for "spacing", applies to both dims
+  layBody->setSpacing(0);
+  layBody->setMargin(0);
+  // set row heights now, so only one row shows ok
+  layBody->setRowMinimumHeight(0, body->stripeHeight()); 
+  layBody->setRowMinimumHeight(1, body->stripeHeight()); 
+
+  // add desc controls for ProgEls
+//TEST:
+  TypeDef* typ = GetBaseTypeDef();
+  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
+  data_el.Add(mb_dat);
+  QWidget* rep = mb_dat->GetRep();
+  AddData(0, rep);
+  
+  // ok, get er!
+  GetValue();
+}
 
 void iProgramEditor::ExpandAll() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::HasChildren);
@@ -497,8 +562,8 @@ void iProgramEditor::ExpandAll() {
 }
 
 void iProgramEditor::InternalSetModified(bool value) {
-/*todo  btnSave->setEnabled(value);
-  btnRevert->setEnabled(value); */
+  btnSave->setEnabled(value);
+  btnRevert->setEnabled(value); 
   modified = value;
 }
 
@@ -507,12 +572,24 @@ bool iProgramEditor::ItemRemoving(ISelectable* /*item*/) {
   return false;
 }
 
-void iProgramEditor::items_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
-//TODO
+void iProgramEditor::items_ItemSelected(iTreeViewItem* item) {
+  TAPtr new_base = NULL;
+  if (item) {
+    new_base = item->taData(); // NULL if not a taBase
+  }
+  setEditNode(new_base);
 }
 
-void iProgramEditor::setEditNode(TAPtr value) {
-//TODO
+void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
+  if (base == value) return;
+  if (base) {
+    if (autosave) {
+      //todo: check if dirty, and do a save
+    }
+    Base_Remove();
+  }
+  base = value;
+  if (base) Base_Add();
 }
 
 

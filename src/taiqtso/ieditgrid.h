@@ -31,6 +31,7 @@ class TAIQTSO_API iStripeWidget: public QWidget { // #IGNORE provides a horizont
 public:
   QSize 		minimumSizeHint () const; // override
   void			setHiLightColor(const QColor& val);
+  inline int		stripeHeight() const {return mstripeHeight;}
   void			setStripeHeight(int val);
   void			setTopMargin(int val);
 

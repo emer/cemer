@@ -599,6 +599,10 @@ taiTreeDataNode* tabDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeData
   return rval;
 }
 
+String tabDataLink::GetColText(const KeyString& key, int itm_idx) const {
+  return data()->GetColText(key, itm_idx);
+}
+
 void tabDataLink::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) {
   data()->QueryEditActions(ms, allowed, forbidden);
 }
@@ -800,9 +804,9 @@ tabListDataLink::tabListDataLink(taList_impl* data_)
 {
 }
 
-String tabListDataLink::ChildGetColText(taDataLink* child, int col, int itm_idx)
+String tabListDataLink::ChildGetColText(taDataLink* child, const KeyString& key, int itm_idx) const
 {
-  return data()->ChildGetColText(child->data(), child->GetDataTypeDef(), col, itm_idx);
+  return data()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
 }
 
 taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
@@ -820,8 +824,12 @@ void tabListDataLink::fileNew() {
   data()->New();
 }
 
-String tabListDataLink::GetColHeading(int col) {
-  return data()->GetColHeading(col);
+String tabListDataLink::GetColHeading(const KeyString& key) const {
+  return data()->GetColHeading(key);
+}
+
+const KeyString tabListDataLink::GetListColKey(int col) const {
+  return data()->GetListColKey(col);
 }
 
 taiDataLink* tabListDataLink::GetListChild(int itm_idx) {
@@ -840,7 +848,7 @@ taiDataLink* tabListDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int tabListDataLink::NumListCols() {
+int tabListDataLink::NumListCols() const {
   return data()->NumListCols();
 }
 
@@ -3561,6 +3569,14 @@ iTreeView::iTreeView(ISelectableHost* host_, QWidget* parent)
 :inherited(parent)
 {
   host = host_;
+  connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+    this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+}
+
+const KeyString iTreeView::colKey(int col) const {
+  if ((col < 0) || (col >= columnCount())) return _nilKeyString;
+  KeyString rval = (headerItem()->data(col, ColKeyRole)).toString();
+  return rval;
 }
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
@@ -3587,6 +3603,21 @@ void iTreeView::mnuNewBrowser(taiAction* mel) {
 //TODO  setCurItem(node->parent(), true);
 
   //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
+}
+
+void iTreeView::setColKey(int col, const KeyString& key) { 
+  if ((col < 0) || (col >= columnCount())) return;
+  headerItem()->setData(col, ColKeyRole, key);
+}
+
+void iTreeView::setHeaderText(int col, const String& value) { 
+  headerItem()->setText(col, value);
+}
+
+
+void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+  iTreeViewItem* it = dynamic_cast<iTreeViewItem*>(curr); //note: we want null if curr is not itvi
+  emit ItemSelected(it);
 }
 
 //////////////////////////
@@ -3675,6 +3706,15 @@ void iTreeViewItem::DecorateDataNode() {
   //TODO (or in GetIcon somewhere) add link iconlet and any other appropriate mods
   if (has_ic)
     setIcon(0, ic);
+  // fill out remainging col text according to key
+  iTreeView* tv = treeView();
+  if (!tv) return; //shouldn't happen
+  for (int i = 1; i < tv->columnCount(); ++i) {
+    KeyString key = tv->colKey(i);
+    if (key.length() > 0) { // no point if no key
+      setText(i, link()->GetColText(key));
+    }
+  }
 }
 
 /*void iTreeViewItem::dragEntered() {
@@ -4024,10 +4064,12 @@ void iListDataPanel::ConfigHeader() {
   // set up number of cols, based on link, ok to repeat this
   list->setColumnCount(link()->NumListCols() + 1);
   QTreeWidgetItem* hdr = list->headerItem();
-  hdr->setText(0, "#");
+  hdr->setText(0, "#"); //note: we don't need a key, because we manage the text ourself
   for (int i = 0; i < link()->NumListCols(); ++i) {
     int hdr_idx = i + 1;
-    hdr->setText(hdr_idx, link()->GetColHeading(i));
+    KeyString key = link()->GetListColKey(i);
+    hdr->setText(hdr_idx, link()->GetColHeading(key));
+    hdr->setData(hdr_idx, iTreeView::ColKeyRole, key);
   }
 }
 
@@ -4060,10 +4102,7 @@ void iListDataPanel::FillList() {
   int i = 0;
   for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
     taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
-    // set remaining col texts -- note that we subtract 1 from col, because we use a numbering column
-    for (int col = 0; col < link()->NumListCols(); ++col) {
-      dn->setText(col + 1, link()->ChildGetColText(child, col, i));
-    }
+    dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
   }
 }

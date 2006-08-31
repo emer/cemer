@@ -1594,7 +1594,10 @@ public:
   virtual void 		UpdateMonVals(DataBlock* db); // get all the values!
   void			ResetMonVals(); // deletes the cached vars
   
-  String GetColText(int col, int itm_idx = -1);
+  static const KeyString key_obj_name;
+  static const KeyString key_obj_type;
+  static const KeyString key_obj_var;
+  String GetColText(const KeyString& key, int itm_idx = -1) const;
   void  InitLinks();
   void	CutLinks();
   void	UpdateAfterEdit();
@@ -1649,7 +1652,8 @@ INHERITED(taList<NetMonItem>)
 public:
 
   int	NumListCols() const {return 3;} 
-  String GetColHeading(int col); // header text for the indicated column
+  const KeyString GetListColKey(int col) const;
+  String GetColHeading(const KeyString&) const; // header text for the indicated column
   TA_BASEFUNS(NetMonItem_List);
   
 private:

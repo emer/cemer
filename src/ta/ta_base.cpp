@@ -648,15 +648,18 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
   return NULL;
 }
 
+const KeyString taBase::key_name("name");
+const KeyString taBase::key_type("type");
+const KeyString taBase::key_desc("desc"); 
+const KeyString taBase::key_disp_name("disp_name"); 
 
-String taBase::GetColText(int col, int /*itm_idx*/) {
-   // text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention,
-   // 0=name, 1=type; itm_idx is usually ignored by items
-  switch (col) {
-  case 0: return GetName();
-  case 1: return GetTypeDef()->name;
-  default: return String("");
-  }
+String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
+       if (key == key_name) return GetName();
+  else if (key == key_type) return GetTypeDef()->name;
+// note: some classes override desc with dynamic desc's
+  else if (key == key_desc) return GetTypeDef()->desc; 
+  else if (key == key_disp_name) return GetDisplayName(); 
+  else return _nilString;
 }
 
 taDataLink* taBase::GetDataLink() {
@@ -1387,27 +1390,38 @@ void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   }
 }
 
-String taList_impl::ChildGetColText(void* child, TypeDef* typ, int col, int itm_idx) {
+String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
+  int itm_idx) const
+{
   if (child && typ && typ->InheritsFrom(&TA_taBase))
-    return ChildGetColText_impl((taBase*)child, col, itm_idx);
-  else return inherited_taPtrList::ChildGetColText(child, typ, col, itm_idx);
+    return ChildGetColText_impl((taBase*)child, key, itm_idx);
+  else return inherited_taPtrList::ChildGetColText(child, typ, key, itm_idx);
 }
 
-String taList_impl::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
-  return child->GetColText(col, itm_idx);
+String taList_impl::ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx) const {
+  return child->GetColText(key, itm_idx);
 }
 
 void taList_impl::DataChanged(int dcr, void* op1, void* op2) {
   inherited_taBase::DataChanged(dcr, op1, op2);
 }
 
-String taList_impl::GetColHeading(int col) {
+String taList_impl::GetColHeading(const KeyString& key) const {
+  if (key == key_name) return String("Item");
+  else if (key == key_type) return String("Type");
+  else if (key == key_desc) return String("Description");
+  else return _nilString;
+}
+
+const KeyString taList_impl::GetListColKey(int col) const {
   switch (col) {
-  case 0: return String("Item");
-  case 1: return String("Type");
-  default: return String("");
+  case 0: return key_name;
+  case 1: return key_type;
+  case 2: return key_desc; 
+  default: return _nilKeyString;
   }
 }
+
 
 bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   if(new_type == NULL) return false;

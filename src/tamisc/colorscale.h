@@ -43,9 +43,7 @@ class ColorScale;
 
 class TAMISC_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS Red Green Blue Alpha color specification
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
 
   float	r;			// red
@@ -56,7 +54,7 @@ public:
 
   const iColor*		color() const; //note: always correct -- updated on call
 
-  String ToString_RGBA();
+  String ToString_RGBA() const;
   void 	Copy_(const RGBA& cp);
   void  UpdateAfterEdit();
   COPY_FUNS(RGBA, taNBase);
@@ -106,12 +104,20 @@ public:
 };
 
 class TAMISC_API ColorScaleSpec : public taNBase { // Color Spectrum Data
+INHERITED(taNBase)
 public:
   RGBA		background;	// background color
   RGBA_List	clr;		// #NO_BROWSE group of colors
 
   virtual void	GenRanges(TAColor_List* cl, int chunks);
 
+  static const KeyString key_bkclr;
+  static const KeyString key_clr0;
+  static const KeyString key_clr1;
+  static const KeyString key_clr2;
+  static const KeyString key_clr3;
+  static const KeyString key_clr4;
+  override String GetColText(const KeyString& key, int itm_idx) const;
   void 	Initialize();
   void 	Destroy()		{ };
   void 	InitLinks();
@@ -121,14 +127,14 @@ public:
 };
 
 class TAMISC_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
+INHERITED(taGroup<ColorScaleSpec>)
 public:
   virtual void 		NewDefaults(); 	// create a set of default colors
   virtual void		SetDefaultColor();// set the default color based on gui
 
   override int		NumListCols() const;
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText_impl(taBase* child, int col, int itm_idx = -1);
-
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
   void 	Initialize()	{SetBaseType(&TA_ColorScaleSpec);};
   void 	Destroy()	{ };
 

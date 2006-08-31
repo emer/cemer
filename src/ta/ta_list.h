@@ -45,6 +45,15 @@
 // routines, which allocate a power of two minus this amount
 #define TA_ALLOC_OVERHEAD 2
 
+// since keys are mostly used in Qt trees, it is much more efficient to use QString
+#ifdef TA_USE_QT
+# define KeyString QString
+# define _nilKeyString QString()
+#else
+# define KeyString taString
+# define _nilKeyString _nilString
+#endif
+
 
 // externals
 class TypeDef; //
@@ -366,8 +375,12 @@ public:
 
   // browsing -- browse client lists must override
   virtual int		NumListCols() const {return 0;} // number of columns in a list view for this item type
-  virtual String	GetColHeading(int col) const {return String("");} // header text for the indicated column
-  virtual String	ChildGetColText(void* child, TypeDef* typ, int col, int itm_idx = -1) const {return String("");}
+  virtual const KeyString GetListColKey(int col) const {return _nilKeyString;}
+    // col key for the default list column
+  virtual String	GetColHeading(const KeyString& key) const {return _nilKeyString;} 
+   // header text for the given key
+  virtual String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
+    int itm_idx = -1) const {return _nilKeyString;}
     // itm_idx is a hint from source, -1 means not specified or ignore
 
   // output

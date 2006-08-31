@@ -67,6 +67,7 @@ class taNBase;
 class taRootBase;
 class taBase_List;
 class taBase_PtrList;
+class String_Array;
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
@@ -243,7 +244,7 @@ public:
     VT_BYTE,		// an unsigned 8-bit integer; used mostly for image components (rgb)
     VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
   };
-
+  
   static const String 	ValTypeToStr(ValType vt);
   static ValType	ValTypeForType(TypeDef* td); // return the appropriate ValType
   static  TypeDef*	StatTypeDef(int);	// #IGNORE
@@ -298,7 +299,13 @@ public:
   // #IGNORE get the last delimiter ('.' or '[') position in the path
 
 public:
-  virtual String	GetColText(int col, int itm_idx = -1); // text for the indicated column in browse lists (may be ignored and controlled by parent list; by convention, 0=name, 1=type; itm_idx is usually ignored by items
+  static const KeyString key_name; // "name"
+  static const KeyString key_type; // "type"
+  static const KeyString key_desc; // "desc"
+  static const KeyString key_disp_name; // "disp_name" -- DisplayName
+  
+  virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
+    //default keys are: name, type, desc
 #ifdef TA_GUI
 public:
 //friend class tabDataLink;
@@ -325,7 +332,9 @@ protected:
   virtual void		QueryEditActions_impl(const taiMimeSource* ms, int& allowed, int& forbidden);
 #endif
 protected:
-  virtual String 	ChildGetColText_impl(taBase* child, int col, int itm_idx = -1) const {return _nilString;}
+  virtual String 	ChildGetColText_impl(taBase* child, const KeyString& key, 
+    int itm_idx = -1) const {return _nilKeyString;}
+  
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   
@@ -1037,9 +1046,11 @@ public:
 #ifdef TA_GUI
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
-  override int		NumListCols() const {return 2;} // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(void* child, TypeDef* typ, int col, int itm_idx = -1);
+  override int		NumListCols() const {return 3;} // number of columns in a default list view for this list type
+  override const KeyString GetListColKey(int col) const; // get the key for the default list view
+  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+  override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
+    int itm_idx = -1) const;
 
   void 	Initialize();
   void	Destroy();
@@ -1083,7 +1094,7 @@ protected:
   virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, int item_idx, taBase* lst_itm, taiMimeSource* ms, int ea);
 #endif
 protected:
-  override String ChildGetColText_impl(taBase* child, int col, int itm_idx = -1);
+  override String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const;
 };
 
 template<class T> 

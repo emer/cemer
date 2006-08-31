@@ -50,6 +50,7 @@
 # endif
 #endif
 
+
 // comment directives which are parsed 'internally' (add a # sign before each)
 // "NO_TOKENS"
 // "IGNORE"
@@ -655,10 +656,15 @@ public:
 //na  virtual void		FillContextMenu_EditItems(BrListViewItem* sender, taiMenu* menu, int allowed) {}
   virtual bool		HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
 
-  virtual int		NumListCols() {return 1;} // number of columns in a list view for this item type
-  virtual String	GetColHeading(int col) {return String("Item");} // header text for the indicated column
-  virtual String	GetColText(int col, int itm_idx = -1) {return GetName();} // text for the indicated column
-  virtual String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1) {return child->GetColText(col, itm_idx);}
+  virtual int		NumListCols() const {return 1;} // number of columns in a list view for this item type
+  static const KeyString key_name; // "name" note: also on taBase 
+  virtual const KeyString GetListColKey(int col) const {return key_name;} // key of default list view
+  virtual String	GetColHeading(const KeyString& key) const {return KeyString("Item");} 
+    // header text for the indicated column
+  virtual String	GetColText(const KeyString& key, int itm_idx = -1) const 
+    {return GetName();} // text for the indicated column
+  virtual String	ChildGetColText(taDataLink* child, const KeyString& key, 
+    int itm_idx = -1) const  {return child->GetColText(key, itm_idx);}
     // default delegates to child; lists can override to control this
 
   virtual TypeDef* 	GetTypeDef() const;

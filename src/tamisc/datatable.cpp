@@ -1143,13 +1143,14 @@ bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
-String DataArray_impl::GetColText(int col, int itm_idx) {
-  switch (col) {
-  case 0: return GetDisplayName();
-  case 1: return ValTypeToStr(valType());
-  case 2: return disp_opts;
-  default: return _nilString;
-  }
+const KeyString DataArray_impl::key_val_type("val_type");
+const KeyString DataArray_impl::key_disp_opts("disp_opts");
+
+String DataArray_impl::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_name) return GetDisplayName(); // override
+  if (key == key_val_type) return ValTypeToStr(valType());
+  if (key == key_disp_opts) return disp_opts;
+  else return inherited::GetColText(key, itm_idx);
 }
 
 String DataArray_impl::GetDisplayName() const {
@@ -1231,6 +1232,23 @@ void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   }
   
 }
+
+String DataTableCols::GetColHeading(const KeyString& key) const {
+  if (key == key_name) return "Col Name"; // override
+  else if (key == DataArray_impl::key_val_type) return "Data Type";
+  else if (key == DataArray_impl::key_disp_opts) return "Disp Opts";
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString DataTableCols::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return key_name;
+  case 1: return DataArray_impl::key_val_type;
+  case 2: return DataArray_impl::key_disp_opts;
+  default: return _nilKeyString;
+  }
+}
+
 
 //////////////////////////
 //	DataTable	//
@@ -1410,15 +1428,6 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
     }
   }
   return c;
-}
-
-String DataTable::GetColHeading(int col) {
-  switch (col) {
-  case 0: return "Col Name";
-  case 1: return "Data Type";
-  case 2: return "Disp Opts";
-  default: return _nilString;
-  }
 }
 
 DataArray_impl* DataTable::GetColData(int col) const {

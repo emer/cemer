@@ -76,7 +76,7 @@ const iColor* RGBA::color() const {
   return &color_;
 }
 
-String RGBA::ToString_RGBA() {
+String RGBA::ToString_RGBA() const {
   return String("R:") + String(r) +
     String("; G:") + String(g) +
     String("; B:") + String(b) +
@@ -186,6 +186,30 @@ void ColorScaleSpec::GenRanges(TAColor_List* cl, int chunks) {
   TAColor* pc = (TAColor*)cl->New(1,&TA_TAColor);
   RGBA* hi_color = clr.Peek();
   pc->SetColor(hi_color, &background);
+}
+
+const KeyString ColorScaleSpec::key_bkclr("bkclr");
+const KeyString ColorScaleSpec::key_clr0("clr0");
+const KeyString ColorScaleSpec::key_clr1("clr1");
+const KeyString ColorScaleSpec::key_clr2("clr2");
+const KeyString ColorScaleSpec::key_clr3("clr3");
+const KeyString ColorScaleSpec::key_clr4("clr4");
+
+String ColorScaleSpec::GetColText(const KeyString& key, int itm_idx) const
+{
+  if (key == key_bkclr) return background.ToString_RGBA();
+  int i = -1;
+  if (key == key_clr0) i = 0;
+  else if (key == key_clr1) i = 1;
+  else if (key == key_clr2) i = 2;
+  else if (key == key_clr3) i = 3;
+  else if (key == key_clr4) i = 4;
+  if (i >= 0) {
+    if (i < clr.size)
+      return clr[i]->ToString_RGBA();
+    else return _nilString; // nothing for this item
+  }
+  return inherited::GetColText(key, itm_idx);
 }
 
 
@@ -362,35 +386,31 @@ void ColorScaleSpec_Group::NewDefaults() {
 #define CSSMG_COLS 5
 
 int ColorScaleSpec_Group::NumListCols() const {
-  return taList_impl::NumListCols() + CSSMG_COLS;
+  return inherited::NumListCols() + CSSMG_COLS;
 }
 
-String ColorScaleSpec_Group::GetColHeading(int col) {
-  switch (col - taList_impl::NumListCols()) {
-  case 0: return String("BkClr");
-  case 1: return String("clr0");
-  case 2: return String("clr1");
-  case 3: return String("clr2");
-  case 4: return String("clr3");
-  case 5: return String("clr4");
-  default: return taList_impl::GetColHeading(col);
-  }
+String ColorScaleSpec_Group::GetColHeading(const KeyString& key) const {
+  if (key == ColorScaleSpec::key_bkclr) return String("BkClr");
+  else if (key == ColorScaleSpec::key_clr0) return String("clr0");
+  else if (key == ColorScaleSpec::key_clr1) return String("clr1");
+  else if (key == ColorScaleSpec::key_clr2) return String("clr2");
+  else if (key == ColorScaleSpec::key_clr3) return String("clr3");
+  else if (key == ColorScaleSpec::key_clr4) return String("clr4");
+  else return inherited::GetColHeading(key);
 }
 
-String ColorScaleSpec_Group::ChildGetColText_impl(taBase* child, int col, int itm_idx) {
-  if (child->GetTypeDef()->InheritsFrom(&TA_ColorScaleSpec)) {
-    ColorScaleSpec* css = (ColorScaleSpec*)child;
-    int i = col - taList_impl::NumListCols();
-    if (i == 0) {
-      return css->background.ToString_RGBA();
-    } else  if ((i >= 1) && (i <= 4)) {
-      i = i - 1;
-      if (i < css->clr.size)
-        return css->clr[i]->ToString_RGBA();
-      else return String(); // nothing for this item
-    }
+const KeyString ColorScaleSpec_Group::GetListColKey(int col) const {
+  int i = col - inherited::NumListCols();
+  if (i >= 0) switch (i) {
+  case 0: return ColorScaleSpec::key_bkclr;
+  case 1: return ColorScaleSpec::key_clr0;
+  case 2: return ColorScaleSpec::key_clr1;
+  case 3: return ColorScaleSpec::key_clr2;
+  case 4: return ColorScaleSpec::key_clr3;
+  case 5: return ColorScaleSpec::key_clr4;
+  default: return _nilKeyString;
   }
-  return taList_impl::ChildGetColText_impl(child, col, itm_idx);
+  return inherited::GetListColKey(col);
 }
 
 void ColorScaleSpec_Group::SetDefaultColor() {

@@ -486,11 +486,11 @@ var_type=T_Int;
 int_val=0;
 };
 };
-init_els {
+init_code {
 name=;
-el_typ=NetCounterInitEl;
+el_typ=NetCounterInit;
 el_def=0;
-NetCounterInitEl @[0] {
+NetCounterInit @[0] {
 desc="initialize epoch counter";
 off=0;
 network_var=.projects[0].programs.gp[0].global_vars[0]$6$;
@@ -498,18 +498,18 @@ local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$7$;
 counter="epoch";
 };
 };
-prog_els {
+prog_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-WhileLoopEl @[0] {
+WhileLoop @[0] {
 desc=;
 off=0;
-loop_els {
+loop_code {
 name=;
-el_typ=ProgramCallEl;
+el_typ=ProgramCall;
 el_def=0;
-ProgramCallEl @[0] {
+ProgramCall @[0] {
 desc=;
 off=0;
 target=.projects[0].programs.gp[0][1]$8$;
@@ -567,11 +567,11 @@ var_type=T_Int;
 int_val=0;
 };
 };
-init_els {
+init_code {
 name=;
-el_typ=NetCounterInitEl;
+el_typ=NetCounterInit;
 el_def=0;
-NetCounterInitEl @[0] {
+NetCounterInit @[0] {
 desc="initialize trial counter: note also needs to do this in regular running program";
 off=0;
 network_var=$6$;
@@ -579,18 +579,18 @@ local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$10$;
 counter="trial";
 };
 };
-prog_els {
+prog_code {
 name=;
-el_typ=NetCounterInitEl;
+el_typ=NetCounterInit;
 el_def=0;
-NetCounterInitEl @[0] {
+NetCounterInit @[0] {
 desc="initialize trial counter";
 off=0;
 network_var=$6$;
 local_ctr_var=$10$;
 counter="trial";
 };
-MethodCallEl @[1] {
+MethodCall @[1] {
 desc="read the first training data item";
 off=0;
 result_var="has_data";
@@ -601,14 +601,14 @@ method=DataBlock::ReadFirst;
 args{ };
 { };
 };
-WhileLoopEl @[2] {
+WhileLoop @[2] {
 desc=;
 off=0;
-loop_els {
+loop_code {
 name=;
-el_typ=ProgramCallEl;
+el_typ=ProgramCall;
 el_def=0;
-ProgramCallEl @[0] {
+ProgramCall @[0] {
 desc=;
 off=0;
 target=.projects[0].programs.gp[0][3]$12$;
@@ -618,7 +618,7 @@ el_typ=ProgArg;
 el_def=0;
 };
 };
-ProgramCallEl @[1] {
+ProgramCall @[1] {
 desc=;
 off=0;
 target=.projects[0].programs.gp[0][2]$13$;
@@ -628,7 +628,7 @@ el_typ=ProgArg;
 el_def=0;
 };
 };
-ProgramCallEl @[2] {
+ProgramCall @[2] {
 desc=;
 off=0;
 target=.projects[0].programs.gp[0][4]$14$;
@@ -638,7 +638,7 @@ el_typ=ProgArg;
 el_def=0;
 };
 };
-MethodCallEl @[3] {
+MethodCall @[3] {
 desc="read the next training data item";
 off=0;
 result_var="has_data";
@@ -681,16 +681,16 @@ name=;
 el_typ=ProgVar;
 el_def=0;
 };
-init_els {
+init_code {
 name=;
 el_typ=ProgEl;
 el_def=0;
 };
-prog_els {
+prog_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-MethodCallEl @[0] {
+MethodCall @[0] {
 desc="Brad: What is this??  comment on fun is not helpful";
 off=0;
 result_var=;
@@ -701,7 +701,7 @@ method=taBase::DataUpdate;
 args{ true;};
 { bool begin;};
 };
-MethodCallEl @[1] {
+MethodCall @[1] {
 desc="updates all the activations";
 off=0;
 result_var=;
@@ -712,15 +712,15 @@ method=BpNetwork::Trial_Run;
 args{ };
 { };
 };
-CondEl @[2] {
+IfElse @[2] {
 desc="compute weight changes or error, depending on testing vs. training";
 off=0;
 cond_test="context == Network::TRAIN";
-true_els {
+true_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-MethodCallEl @[0] {
+MethodCall @[0] {
 desc="compute weight changes, for training";
 off=0;
 result_var=;
@@ -732,11 +732,11 @@ args{ };
 { };
 };
 };
-false_els {
+false_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-MethodCallEl @[0] {
+MethodCall @[0] {
 desc="compute the error for display purposes only, during testing";
 off=0;
 result_var=;
@@ -749,7 +749,7 @@ args{ };
 };
 };
 };
-MethodCallEl @[3] {
+MethodCall @[3] {
 desc="Do we really need this??";
 off=0;
 result_var=;
@@ -760,12 +760,12 @@ method=taBase::DataUpdate;
 args{ false;};
 { bool begin;};
 };
-UserScriptEl @[4] {
+UserScript @[4] {
 desc=;
 off=0;
 user_script="cerr << net->epoch << \", \" << net->trial << endl;";
 };
-UserScriptEl @[5] {
+UserScript @[5] {
 desc="busy loop!";
 off=0;
 user_script="for(int j=0;j<10000;j++) { j; }";
@@ -813,25 +813,25 @@ name=;
 el_typ=ProgVar;
 el_def=0;
 };
-init_els {
+init_code {
 name=;
-el_typ=UserScriptEl;
+el_typ=UserScript;
 el_def=0;
 };
-prog_els {
+prog_code {
 name=;
-el_typ=UserScriptEl;
+el_typ=UserScript;
 el_def=0;
-UserScriptEl @[0] {
-desc="this is hack until we can pick objects (objs) for the MethodCallEl function!
+UserScript @[0] {
+desc="this is hack until we can pick objects (objs) for the MethodCall function!
 ";
 off=0;
 user_script="objs.lw_list.ApplyData(context);
 
 ";
 };
-MethodCallEl @[1] {
-desc="this should be activated when MethodCallEl can pick an obj directly to call a method on, instead of going through vars";
+MethodCall @[1] {
+desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
 off=1;
 result_var=;
 method_spec {
@@ -925,11 +925,11 @@ object_type=DataTable;
 object_val=$16$;
 };
 };
-init_els {
+init_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-MethodCallEl @[0] {
+MethodCall @[0] {
 desc="Initialize monitoring data (get rid of any existing)";
 off=1;
 result_var=;
@@ -940,7 +940,7 @@ method=DataTable::ResetData;
 args{ };
 { };
 };
-MethodCallEl @[1] {
+MethodCall @[1] {
 desc="update the monitor items and data schema: again, not doing until MethodCall can work on objs.";
 off=1;
 result_var=;
@@ -951,17 +951,17 @@ method=NetMonitor::UpdateMonitors;
 args{ };
 { };
 };
-UserScriptEl @[2] {
-desc="temporary until MethodCallEl works on objs..";
+UserScript @[2] {
+desc="temporary until MethodCall works on objs..";
 off=0;
 user_script="objs.Monitor1.UpdateMonitors();";
 };
 };
-prog_els {
+prog_code {
 name=;
-el_typ=MethodCallEl;
+el_typ=MethodCall;
 el_def=0;
-MethodCallEl @[0] {
+MethodCall @[0] {
 desc="add a new blank row to the data";
 off=0;
 result_var=;
@@ -976,8 +976,8 @@ method=DataTable::AddBlankRow;
 args{ };
 { };
 };
-MethodCallEl @[1] {
-desc="get the new monitor data.  Note this is inactive until MethodCallEl can work on objs";
+MethodCall @[1] {
+desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
 off=1;
 result_var=;
 method_spec {
@@ -987,12 +987,12 @@ method=NetMonitor::UpdateMonVals;
 args{ };
 { };
 };
-UserScriptEl @[2] {
-desc="This is a hack until MethodCallEl can operate directly on objs.";
+UserScript @[2] {
+desc="This is a hack until MethodCall can operate directly on objs.";
 off=0;
 user_script="objs.Monitor1.UpdateMonVals();";
 };
-MethodCallEl @[3] {
+MethodCall @[3] {
 desc="todo: what is this again??";
 off=0;
 result_var=;

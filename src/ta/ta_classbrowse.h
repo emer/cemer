@@ -156,9 +156,11 @@ public:
   DisplayMode		dm;
   TypeSpace*		data() {return (TypeSpace*)m_data;}
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols(); // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
+  override int		NumListCols() const;
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+  override String	ChildGetColText(taDataLink* child, const KeyString& key,
+    int itm_idx = -1) const;
   
   bool			ShowChild(TypeDef* td) const; // determine whether to show, based on dm
 
@@ -173,9 +175,13 @@ INHERITED(taTypeSpaceDataLink_Base)
 public:
   MethodSpace*		data() {return (MethodSpace*)m_data;}
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols(); // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
+  override int		NumListCols() const;
+  static const KeyString key_rval;
+  static const KeyString key_params;
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+  override String	ChildGetColText(taDataLink* child, const KeyString& key,
+    int itm_idx = -1) const;
 
   taMethodSpaceDataLink(MethodSpace* data_);
   DL_FUNS(taMethodSpaceDataLink) //
@@ -188,9 +194,11 @@ INHERITED(taTypeSpaceDataLink_Base)
 public:
   MemberSpace*		data() {return (MemberSpace*)m_data;}
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols(); // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
+  override int		NumListCols() const;
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+  override String	ChildGetColText(taDataLink* child, const KeyString& key,
+    int itm_idx = -1) const;
 
   taMemberSpaceDataLink(MemberSpace* data_);
   DL_FUNS(taMemberSpaceDataLink) //

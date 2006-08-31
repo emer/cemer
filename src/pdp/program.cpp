@@ -422,14 +422,6 @@ const String ProgEl::GenCss(int indent_level) {
   return rval;
 }
 
-String ProgEl::GetColText(int col, int /*itm_idx*/) {
-  switch (col) {
-  case 0: return GetTypeDef()->name;
-  case 1: return GetDisplayName();
-  default: return String("");
-  }
-}
-
 void ProgEl::PreGen(int& item_id) {
   if(off) return;
   PreGenMe_impl(item_id);
@@ -469,15 +461,22 @@ const String ProgEl_List::GenCss(int indent_level) {
   return rval;;
 }
 
-String ProgEl_List::GetColHeading(int col) {
+String ProgEl_List::GetColHeading(const KeyString& key) const {
   static String col0("El Type");
   static String col1("El Description");
+  if (key == key_type)  return col0;
+  else if (key == key_disp_name) return col1;
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString ProgEl_List::GetListColKey(int col) const {
   switch (col) {
-  case 0: return col0;
-  case 1: return col1;
-  default: return _nilString;
+  case 0: return key_type;
+  case 1: return key_disp_name;
+  default: return _nilKeyString;
   }
 }
+
 
 void ProgEl_List::PreGen(int& item_id) {
   for (int i = 0; i < size; ++i) {
@@ -488,19 +487,19 @@ void ProgEl_List::PreGen(int& item_id) {
 
 
 //////////////////////////
-//  UserScriptEl	//
+//  UserScript	//
 //////////////////////////
 
-void UserScriptEl::Initialize() {
+void UserScript::Initialize() {
   static String _def_user_script("// TODO: Add your CSS script code here.\n");
   user_script = _def_user_script;
 }
 
-void UserScriptEl::Copy_(const UserScriptEl& cp) {
+void UserScript::Copy_(const UserScript& cp) {
   user_script = cp.user_script;
 }
 
-const String UserScriptEl::GenCssBody_impl(int indent_level) {
+const String UserScript::GenCssBody_impl(int indent_level) {
   String rval(cssMisc::IndentLines(user_script, indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
 //TEMP  rval = trimr(rval);
@@ -509,7 +508,7 @@ const String UserScriptEl::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
-String UserScriptEl::GetDisplayName() const {
+String UserScript::GetDisplayName() const {
   if (desc.empty()) {
     // use first line, if any
     String rval = user_script.before('\n');
@@ -565,54 +564,54 @@ void ProgList::Initialize() {
 
 void ProgList::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(prog_els, this);
+  taBase::Own(prog_code, this);
 }
 
 void ProgList::CutLinks() {
-  prog_els.CutLinks();
+  prog_code.CutLinks();
   inherited::CutLinks();
 }
 
 void ProgList::Copy_(const ProgList& cp) {
-  prog_els = cp.prog_els; //TODO: need to make sure this is a value copy
+  prog_code = cp.prog_code; //TODO: need to make sure this is a value copy
 }
 
 const String ProgList::GenCssBody_impl(int indent_level) {
-  return prog_els.GenCss(indent_level);
+  return prog_code.GenCss(indent_level);
 }
 
 String ProgList::GetDisplayName() const {
-  return "ProgList (" + String(prog_els.size) + " items)";
+  return "ProgList (" + String(prog_code.size) + " items)";
 }
 
 void ProgList::PreGenChildren_impl(int& item_id) {
-  prog_els.PreGen(item_id);
+  prog_code.PreGen(item_id);
 }
 
 
 //////////////////////////
-//  LoopEl		//
+//  Loop		//
 //////////////////////////
 
-void LoopEl::InitLinks() {
+void Loop::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(loop_els, this);
+  taBase::Own(loop_code, this);
 }
 
-void LoopEl::CutLinks() {
-  loop_els.CutLinks();
+void Loop::CutLinks() {
+  loop_code.CutLinks();
   inherited::CutLinks();
 }
 
-void LoopEl::Copy_(const LoopEl& cp) {
-  loop_els = cp.loop_els;
+void Loop::Copy_(const Loop& cp) {
+  loop_code = cp.loop_code;
   loop_var_type = cp.loop_var_type;
   loop_var = cp.loop_var;
   init_val = cp.init_val;
 }
 
-const String LoopEl::GenCssPre_impl(int indent_level) {
-  //NOTE: ForLoopEl replaces this, since it inits its var in the for()
+const String Loop::GenCssPre_impl(int indent_level) {
+  //NOTE: ForLoop replaces this, since it inits its var in the for()
   if (loop_var_type.empty()) return _nilString;
   String rval = cssMisc::Indent(indent_level);
   rval += "{" + loop_var_type + " " + loop_var;
@@ -622,30 +621,30 @@ const String LoopEl::GenCssPre_impl(int indent_level) {
   return rval; 
 }
 
-const String LoopEl::GenCssBody_impl(int indent_level) {
-  return loop_els.GenCss(indent_level + 1);
+const String Loop::GenCssBody_impl(int indent_level) {
+  return loop_code.GenCss(indent_level + 1);
 }
 
-const String LoopEl::GenCssPost_impl(int indent_level) {
+const String Loop::GenCssPost_impl(int indent_level) {
   if (loop_var_type.empty()) return _nilString;
   
   return cssMisc::Indent(indent_level) + "}\n";
 }
 
-String LoopEl::GetDisplayName() const {
+String Loop::GetDisplayName() const {
   return loopHeader(true);
 }
 
-void LoopEl::PreGenChildren_impl(int& item_id) {
-  loop_els.PreGen(item_id);
+void Loop::PreGenChildren_impl(int& item_id) {
+  loop_code.PreGen(item_id);
 }
 
 
 //////////////////////////
-//  ForLoopEl		//
+//  ForLoop		//
 //////////////////////////
 
-void ForLoopEl::Initialize() {
+void ForLoop::Initialize() {
   // the following are just default examples for the user
   loop_var_type = "int";
   loop_var = "i";
@@ -654,13 +653,13 @@ void ForLoopEl::Initialize() {
   loop_iter = "i += 1";
 }
 
-void ForLoopEl::Copy_(const ForLoopEl& cp) {
+void ForLoop::Copy_(const ForLoop& cp) {
   loop_test = cp.loop_test;
   loop_iter = cp.loop_iter;
 }
 
-const String ForLoopEl::GenCssPre_impl(int indent_level) {
-//NOTE: we replace the default LoopEl routine
+const String ForLoop::GenCssPre_impl(int indent_level) {
+//NOTE: we replace the default Loop routine
   String rval;
   if (!loop_var_type.empty()) {
     rval += cssMisc::Indent(indent_level);
@@ -672,13 +671,13 @@ const String ForLoopEl::GenCssPre_impl(int indent_level) {
   return rval; 
 }
 
-const String ForLoopEl::GenCssPost_impl(int indent_level) {
+const String ForLoop::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "}\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
-const String ForLoopEl::loopHeader(bool) const {
+const String ForLoop::loopHeader(bool) const {
   STRING_BUF(rval, 60);
   rval += "for (" + loop_var + " = " + init_val + "; "
     + loop_test + "; " 
@@ -687,10 +686,10 @@ const String ForLoopEl::loopHeader(bool) const {
 }
 
 //////////////////////////
-//  WhileLoopEl		//
+//  WhileLoop		//
 //////////////////////////
 
-const String WhileLoopEl::GenCssPre_impl(int indent_level) {
+const String WhileLoop::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
   rval += loopHeader();
@@ -698,13 +697,13 @@ const String WhileLoopEl::GenCssPre_impl(int indent_level) {
   return rval; 
 }
 
-const String WhileLoopEl::GenCssPost_impl(int indent_level) {
+const String WhileLoop::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "}\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
-const String WhileLoopEl::loopHeader(bool) const {
+const String WhileLoop::loopHeader(bool) const {
   STRING_BUF(rval, 60);
   rval += "while (";
   rval += loop_var;
@@ -713,24 +712,24 @@ const String WhileLoopEl::loopHeader(bool) const {
 }
 
 //////////////////////////
-//  DoLoopEl		//
+//  DoLoop		//
 //////////////////////////
 
-const String DoLoopEl::GenCssPre_impl(int indent_level) {
+const String DoLoop::GenCssPre_impl(int indent_level) {
   String rval = inherited::GenCssPre_impl(indent_level);
   rval += cssMisc::Indent(indent_level);
   rval += "do {\n";
   return rval; 
 }
 
-const String DoLoopEl::GenCssPost_impl(int indent_level) {
+const String DoLoop::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
   rval += "} while (" + loop_var + ");\n";
   rval += inherited::GenCssPost_impl(indent_level);
   return rval;
 }
 
-const String DoLoopEl::loopHeader(bool display) const {
+const String DoLoop::loopHeader(bool display) const {
   STRING_BUF(rval, 60);
   if (display)
     rval += "do ... while (" + loop_var + ")";
@@ -741,58 +740,58 @@ const String DoLoopEl::loopHeader(bool display) const {
 
 
 //////////////////////////
-//  CondEl		//
+//  IfElse		//
 //////////////////////////
 
-void CondEl::Initialize() {
+void IfElse::Initialize() {
   cond_test = "true";
 }
 
-void CondEl::InitLinks() {
+void IfElse::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(true_els, this);
-  taBase::Own(false_els, this);
+  taBase::Own(true_code, this);
+  taBase::Own(false_code, this);
 }
 
-void CondEl::CutLinks() {
-  false_els.CutLinks();
-  true_els.CutLinks();
+void IfElse::CutLinks() {
+  false_code.CutLinks();
+  true_code.CutLinks();
   inherited::CutLinks();
 }
 
-void CondEl::Copy_(const CondEl& cp) {
+void IfElse::Copy_(const IfElse& cp) {
   cond_test = cp.cond_test;
-  true_els = cp.true_els; //TODO: need to make sure this is a value copy
-  false_els = cp.false_els; //TODO: need to make sure this is a value copy
+  true_code = cp.true_code; //TODO: need to make sure this is a value copy
+  false_code = cp.false_code; //TODO: need to make sure this is a value copy
 }
 
-const String CondEl::GenCssPre_impl(int indent_level) {
+const String IfElse::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
   rval += "if (" + cond_test + ") {\n";
   return rval; 
 }
 
-const String CondEl::GenCssBody_impl(int indent_level) {
-  String rval = true_els.GenCss(indent_level + 1);
+const String IfElse::GenCssBody_impl(int indent_level) {
+  String rval = true_code.GenCss(indent_level + 1);
   // don't gen 'else' portion unless there are els
-  if (false_els.size > 0) {
+  if (false_code.size > 0) {
     rval += cssMisc::Indent(indent_level) + "} else {\n";
-    rval += false_els.GenCss(indent_level + 1);
+    rval += false_code.GenCss(indent_level + 1);
   }
   return rval;
 }
 
-const String CondEl::GenCssPost_impl(int indent_level) {
+const String IfElse::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "}\n";
 }
 
-String CondEl::GetDisplayName() const {
+String IfElse::GetDisplayName() const {
   return "if (" + cond_test + ")";
 }
 
-void CondEl::PreGenChildren_impl(int& item_id) {
-  true_els.PreGen(item_id);
-  false_els.PreGen(item_id);
+void IfElse::PreGenChildren_impl(int& item_id) {
+  true_code.PreGen(item_id);
+  false_code.PreGen(item_id);
 }
 
 //////////////////////////
@@ -817,33 +816,33 @@ void MethodSpec::Copy_(const MethodSpec& cp) {
 }
 
 void MethodSpec::UpdateAfterEdit() {
-//TODO: maybe update owner MethodCallEl
+//TODO: maybe update owner MethodCall
   if (script_obj)
     object_type = script_obj->act_object_type();
   else object_type = &TA_taBase; // placeholder
   inherited::UpdateAfterEdit();
   if (taMisc::is_loading) return;
-  MethodCallEl* own = GET_MY_OWNER(MethodCallEl);
+  MethodCall* own = GET_MY_OWNER(MethodCall);
   if (own) own->UpdateAfterEdit();
 }
 
 
 //////////////////////////
-//  MethodCallEl	//
+//  MethodCall	//
 //////////////////////////
 
-void MethodCallEl::Initialize() {
+void MethodCall::Initialize() {
   lst_script_obj = NULL;
   lst_method = NULL;
 }
 
-void MethodCallEl::InitLinks() {
+void MethodCall::InitLinks() {
   inherited::InitLinks();
   taBase::Own(method_spec, this);
   taBase::Own(args, this);
 }
 
-void MethodCallEl::CutLinks() {
+void MethodCall::CutLinks() {
   args.CutLinks();
   method_spec.CutLinks();
   lst_script_obj = NULL;
@@ -851,14 +850,14 @@ void MethodCallEl::CutLinks() {
   inherited::CutLinks();
 }
 
-void MethodCallEl::Copy_(const MethodCallEl& cp) {
+void MethodCall::Copy_(const MethodCall& cp) {
   args = cp.args;
   method_spec = cp.method_spec;
   lst_script_obj = cp.lst_script_obj;
   lst_method = cp.lst_method;
 }
 
-void MethodCallEl::UpdateAfterEdit() {
+void MethodCall::UpdateAfterEdit() {
   if (taMisc::is_loading) goto inh;
   CheckUpdateArgs();
   
@@ -868,11 +867,11 @@ inh:
   inherited::UpdateAfterEdit();
 }
 
-const String MethodCallEl::GenCssBody_impl(int indent_level) {
+const String MethodCall::GenCssBody_impl(int indent_level) {
   STRING_BUF(rval, 80); // more allocated if needed
   rval += cssMisc::Indent(indent_level);
   if (!(method_spec.script_obj && method_spec.method)) {
-    rval += "//WARNING: MethodCallEl not generated here -- obj or method not specified\n";
+    rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
    return rval;
   }
   
@@ -891,7 +890,7 @@ const String MethodCallEl::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
-String MethodCallEl::GetDisplayName() const {
+String MethodCall::GetDisplayName() const {
   if (!(method_spec.script_obj && method_spec.method))
     return "(object or method not selected)";
   
@@ -904,7 +903,7 @@ String MethodCallEl::GetDisplayName() const {
   return rval;
 }
 
-void MethodCallEl::CheckUpdateArgs(bool force) {
+void MethodCall::CheckUpdateArgs(bool force) {
   if ((method_spec.method == lst_method) && (!force)) return;
   args.Reset(); args.labels.Reset();
   if (!method_spec.method) return;
@@ -923,33 +922,33 @@ void MethodCallEl::CheckUpdateArgs(bool force) {
 
 
 //////////////////////////
-//  ProgramCallEl	//
+//  ProgramCall	//
 //////////////////////////
 
 
-void ProgramCallEl::Initialize() {
+void ProgramCall::Initialize() {
   old_target = NULL;
 }
 
-void ProgramCallEl::InitLinks() {
+void ProgramCall::InitLinks() {
   inherited::InitLinks();
   taBase::Own(prog_args, this);
   taBase::Own(target, this);
 }
 
-void ProgramCallEl::CutLinks() {
+void ProgramCall::CutLinks() {
   target.CutLinks();
   prog_args.CutLinks();
   old_target = NULL;
   inherited::CutLinks();
 }
 
-void ProgramCallEl::Copy_(const ProgramCallEl& cp) {
+void ProgramCall::Copy_(const ProgramCall& cp) {
   target = cp.target;
   prog_args = cp.prog_args;
 }
 
-void ProgramCallEl::UpdateAfterEdit() {
+void ProgramCall::UpdateAfterEdit() {
   if (target.ptr() != old_target) {
     old_target = target.ptr(); // note: we don't ref, because we just need to check ptr addr
     UpdateGlobalArgs();
@@ -957,19 +956,19 @@ void ProgramCallEl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-Program* ProgramCallEl::GetTarget() {
+Program* ProgramCall::GetTarget() {
   if(!target) {
-    taMisc::Error("Program target is NULL in ProgramCallEl:",
+    taMisc::Error("Program target is NULL in ProgramCall:",
 		  desc, "in program:", program()->name);
   }
   if(!target->CompileScript()) {
-    taMisc::Error("Program target script did not compile correctly in ProgramCallEl:",
+    taMisc::Error("Program target script did not compile correctly in ProgramCall:",
 		  desc, "in program:", program()->name);
   }
   return target.ptr();
 }
 
-const String ProgramCallEl::GenCssPre_impl(int indent_level) {
+const String ProgramCall::GenCssPre_impl(int indent_level) {
   STRING_BUF(rval, 50);
   rval = cssMisc::Indent(indent_level);
   rval += "{ // call program: "; 
@@ -979,7 +978,7 @@ const String ProgramCallEl::GenCssPre_impl(int indent_level) {
   return rval;
 }
 
-const String ProgramCallEl::GenCssBody_impl(int indent_level) {
+const String ProgramCall::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
   STRING_BUF(rval, 250);
   indent_level++;		// everything is indented from outer block
@@ -1015,11 +1014,11 @@ const String ProgramCallEl::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
-const String ProgramCallEl::GenCssPost_impl(int indent_level) {
+const String ProgramCall::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "} // call program\n";
 }
 
-String ProgramCallEl::GetDisplayName() const {
+String ProgramCall::GetDisplayName() const {
   String rval = "Call ";
   if (target)
     rval += target->GetName();
@@ -1028,7 +1027,7 @@ String ProgramCallEl::GetDisplayName() const {
   return rval;
 }
 
-void ProgramCallEl::PreGenMe_impl(int item_id) {
+void ProgramCall::PreGenMe_impl(int item_id) {
   // register as a subproc, but only if not a recursive call (which is bad anyway!)
   if (!target) return; // not target (yet), nothing to register
   Program* prog = program();
@@ -1036,7 +1035,7 @@ void ProgramCallEl::PreGenMe_impl(int item_id) {
   prog->sub_progs.LinkUnique(this);
 }
 
-void ProgramCallEl::UpdateGlobalArgs() {
+void ProgramCall::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
   prog_args.ConformToTarget(target->args);
 }
@@ -1065,15 +1064,15 @@ void Program::InitLinks() {
   taBase::Own(objs, this);
   taBase::Own(args, this);
   taBase::Own(vars, this);
-  taBase::Own(init_els, this);
-  taBase::Own(prog_els, this);
+  taBase::Own(init_code, this);
+  taBase::Own(prog_code, this);
   taBase::Own(sub_progs, this);
 }
 
 void Program::CutLinks() {
   sub_progs.CutLinks();
-  prog_els.CutLinks();
-  init_els.CutLinks();
+  prog_code.CutLinks();
+  init_code.CutLinks();
   vars.CutLinks();
   args.CutLinks();
   objs.CutLinks();
@@ -1089,8 +1088,8 @@ void Program::Copy_(const Program& cp) {
   objs = cp.objs;
   args = cp.args;
   vars = cp.vars;
-  init_els = cp.init_els;
-  prog_els = cp.prog_els;
+  init_code = cp.init_code;
+  prog_code = cp.prog_code;
   ret_val = 0; // redo
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
@@ -1211,7 +1210,7 @@ void Program::Run() {
 void Program::Step() {
   if(step_prog.ptr() == NULL) {
     if(sub_progs.size > 0) {	// set to last guy as a default!
-      ProgramCallEl* prg = (ProgramCallEl*)sub_progs.Peek();
+      ProgramCall* prg = (ProgramCall*)sub_progs.Peek();
       step_prog = prg->target.ptr();
     }
   }
@@ -1309,7 +1308,7 @@ const String Program::scriptString() {
   if (m_dirty) {
     // enumerate all the progels, esp. to get subprocs registered
     int item_id = 0;
-    prog_els.PreGen(item_id);
+    prog_code.PreGen(item_id);
     
     // now, build the new script code
     m_scriptCache = "// ";
@@ -1329,14 +1328,14 @@ const String Program::scriptString() {
     
     // __Init() routine, for our own els, and calls to subprog Init()
     m_scriptCache += "void __Init() {\n";
-    m_scriptCache += init_els.GenCss(1); // ok if empty, returns nothing
+    m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
     if (sub_progs.size > 0) {
-      if (init_els.size >0) m_scriptCache += "\n";
+      if (init_code.size >0) m_scriptCache += "\n";
       m_scriptCache += "  // init any subprogs that could be called from this one\n";
       m_scriptCache += "  { Program* target;\n";
-      // todo: this needs to be a list of ProgramCallEl's, not the actual prog itself!
+      // todo: this needs to be a list of ProgramCall's, not the actual prog itself!
       for (int i = 0; i < sub_progs.size; ++i) {
-        ProgramCallEl* sp = (ProgramCallEl*)sub_progs.FastEl(i);
+        ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
         m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
         m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
@@ -1346,7 +1345,7 @@ const String Program::scriptString() {
     m_scriptCache += "}\n\n";
     
     m_scriptCache += "void __Prog() {\n";
-    m_scriptCache += prog_els.GenCss(1);
+    m_scriptCache += prog_code.GenCss(1);
     if(!(flags & NO_STOP)) {
       m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
     }
@@ -1474,23 +1473,23 @@ void Program_List::Initialize() {
 //  Network Counters	//
 //////////////////////////
 
-void NetCounterInitEl::Initialize() {
+void NetCounterInit::Initialize() {
   network_var = NULL;
   local_ctr_var = NULL;
 }
 
-void NetCounterInitEl::Destroy() {
+void NetCounterInit::Destroy() {
   taBase::DelPointer((taBase**)&network_var);
   taBase::DelPointer((taBase**)&local_ctr_var);
 }
 
-void NetCounterInitEl::Copy_(const NetCounterInitEl& cp) {
+void NetCounterInit::Copy_(const NetCounterInit& cp) {
   taBase::SetPointer((taBase**)&network_var, cp.network_var);
   taBase::SetPointer((taBase**)&local_ctr_var, cp.local_ctr_var);
   counter = cp.counter;
 } 
 
-void NetCounterInitEl::UpdateAfterEdit() {
+void NetCounterInit::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   GetLocalCtrVar();
   if(counter.empty() && local_ctr_var) {
@@ -1498,11 +1497,11 @@ void NetCounterInitEl::UpdateAfterEdit() {
   }
 }
 
-String NetCounterInitEl::GetDisplayName() const {
+String NetCounterInit::GetDisplayName() const {
   return "Net Counter Init: " + counter;
 }
 
-void NetCounterInitEl::GetLocalCtrVar() {
+void NetCounterInit::GetLocalCtrVar() {
   if(counter.empty()) return;
   if(local_ctr_var) return;
   Program* my_prog = GET_MY_OWNER(Program);
@@ -1514,14 +1513,14 @@ void NetCounterInitEl::GetLocalCtrVar() {
   local_ctr_var->var_type = ProgVar::T_Int;
 }
 
-const String NetCounterInitEl::GenCssBody_impl(int indent_level) {
+const String NetCounterInit::GenCssBody_impl(int indent_level) {
   if(network_var == NULL) {
-    taMisc::Warning("NetCounterInitEl: network_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterInitEl: Error, network_var = NULL!\n";
+    taMisc::Warning("NetCounterInit: network_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, network_var = NULL!\n";
   }
   if(local_ctr_var == NULL) {
-    taMisc::Warning("NetCounterInitEl: local_ctr_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterInitEl: Error, local_ctr_var = NULL!\n";
+    taMisc::Warning("NetCounterInit: local_ctr_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, local_ctr_var = NULL!\n";
   }
   String rval = cssMisc::Indent(indent_level) + counter + " = 0;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";

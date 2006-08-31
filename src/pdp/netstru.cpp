@@ -6677,13 +6677,15 @@ ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType val_type) 
   return cs;
 }
 
-String NetMonItem::GetColText(int col, int itm_idx) {
-  switch (col) {
-  case 0: return (object) ? object->GetName() : _nilString;
-  case 1: return (object) ? object->GetTypeDef()->name : _nilString;
-  case 2: return variable;
-  default: return _nilString;
-  } 
+const KeyString  NetMonItem::key_obj_name("obj_name");
+const KeyString  NetMonItem::key_obj_type("obj_type");
+const KeyString  NetMonItem::key_obj_var("obj_var");
+
+String NetMonItem::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_obj_name) return (object) ? object->GetName() : _nilString;
+  else if (key == key_obj_type) return (object) ? object->GetTypeDef()->name : _nilString;
+  else if (key == key_obj_var) return variable;
+  else return inherited::GetColText(key, itm_idx); 
 }
 
 bool NetMonItem::GetMonVal(int i, Variant& rval) {
@@ -7098,19 +7100,26 @@ void NetMonItem::UpdateMonVals(DataBlock* db) {
 //  NetMonItem_List	//
 //////////////////////////
 
-String NetMonItem_List::GetColHeading(int col) {
+String NetMonItem_List::GetColHeading(const KeyString& key) const {
   static String col_obj("Object Name");
   static String col_typ("Object Type");
   static String col_var("Variable");
   
-  switch (col) {
-  case 0: return col_obj;
-  case 1: return col_typ;
-  case 2: return col_var;
-  default: return _nilString;
-  } 
+  if (key == NetMonItem::key_obj_name) return col_obj;
+  else if (key == NetMonItem::key_obj_type) return col_typ;
+  else if (key == NetMonItem::key_obj_var) return col_var;
+  else return inherited::GetColHeading(key); 
 }
 
+
+const KeyString NetMonItem_List::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return NetMonItem::key_obj_name;
+  case 1: return NetMonItem::key_obj_type;
+  case 2: return NetMonItem::key_obj_var;
+  default: return _nilKeyString;
+  }
+}
 
 //////////////////////////
 //  NetMonitor		//

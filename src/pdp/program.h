@@ -163,7 +163,6 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  override String 	GetColText(int col, int itm_idx = -1);
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
@@ -190,8 +189,9 @@ public:
   virtual void		PreGen(int& item_id); // iterates over all items
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
   
-  override int		NumListCols() const {return 2;} // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
+  override int		NumListCols() const {return 2;} 
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgEl_List);
 
@@ -205,7 +205,7 @@ class PDP_API ProgList: public ProgEl {
   // list of ProgEl's, each executed in sequence
 INHERITED(ProgEl)
 public:
-  ProgEl_List	    	prog_els; // list of ProgEl's
+  ProgEl_List	    	prog_code; // list of ProgEl's
   
   override String	GetDisplayName() const;
   void	InitLinks();
@@ -243,16 +243,16 @@ private:
 };
 
 
-class PDP_API UserScriptEl: public ProgEl { 
+class PDP_API UserScript: public ProgEl { 
   // ProgEl for a user scriptlet
 INHERITED(ProgEl)
 public:
   String	    user_script; // #EDIT_DIALOG content of the user scriptlet
   
   override String	GetDisplayName() const;
-  void	Copy_(const UserScriptEl& cp);
-  COPY_FUNS(UserScriptEl, ProgEl);
-  TA_BASEFUNS(UserScriptEl);
+  void	Copy_(const UserScript& cp);
+  COPY_FUNS(UserScript, ProgEl);
+  TA_BASEFUNS(UserScript);
 
 protected:
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
@@ -263,11 +263,11 @@ private:
 };
 
 
-class PDP_API LoopEl: public ProgEl { 
+class PDP_API Loop: public ProgEl { 
   // #VIRT_BASE #EDIT_INLINE #NO_INSTANCE ProgEl base for loops
 INHERITED(ProgEl)
 public:
-  ProgEl_List		loop_els; // #BROWSE the items to execute in the loop
+  ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
   String	    	loop_var_type; // the loop variable CSS type to create, or blank if exists
   String	    	loop_var; // the loop variable
   String	    	init_val; // initial value of loop variable. blank if default or none
@@ -275,9 +275,9 @@ public:
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const LoopEl& cp);
-  COPY_FUNS(LoopEl, ProgEl);
-  TA_ABSTRACT_BASEFUNS(LoopEl);
+  void	Copy_(const Loop& cp);
+  COPY_FUNS(Loop, ProgEl);
+  TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
   virtual const String 	loopHeader(bool display = false) const = 0; 
@@ -293,16 +293,16 @@ private:
 };
 
 
-class PDP_API ForLoopEl: public LoopEl { 
-  // #EDIT_INLINE #TOKENS LoopEl for an iteration over the elements
-INHERITED(LoopEl)
+class PDP_API ForLoop: public Loop { 
+  // #EDIT_INLINE #TOKENS Loop for an iteration over the elements
+INHERITED(Loop)
 public:
   String	    	loop_test; // the test each time
   String	    	loop_iter; // the iteration operation
   
-  void	Copy_(const ForLoopEl& cp);
-  COPY_FUNS(ForLoopEl, LoopEl);
-  TA_BASEFUNS(ForLoopEl);
+  void	Copy_(const ForLoop& cp);
+  COPY_FUNS(ForLoop, Loop);
+  TA_BASEFUNS(ForLoop);
 
 protected:
   override const String loopHeader(bool display = false) const;
@@ -315,12 +315,12 @@ private:
 };
 
 
-class PDP_API WhileLoopEl: public LoopEl { 
-  // #EDIT_INLINE #TOKENS LoopEl for a 'while' (pre-test) iteration over the elements
-INHERITED(LoopEl)
+class PDP_API WhileLoop: public Loop { 
+  // #EDIT_INLINE #TOKENS Loop for a 'while' (pre-test) iteration over the elements
+INHERITED(Loop)
 public:
   
-  TA_BASEFUNS(WhileLoopEl);
+  TA_BASEFUNS(WhileLoop);
 
 protected:
   override const String loopHeader(bool display = false) const;
@@ -333,12 +333,12 @@ private:
 };
 
 
-class PDP_API DoLoopEl: public LoopEl { 
-  // #EDIT_INLINE LoopEl for a 'do' (post-test) iteration over the elements
-INHERITED(LoopEl)
+class PDP_API DoLoop: public Loop { 
+  // #EDIT_INLINE Loop for a 'do' (post-test) iteration over the elements
+INHERITED(Loop)
 public:
   
-  TA_BASEFUNS(DoLoopEl);
+  TA_BASEFUNS(DoLoop);
 
 protected:
   override const String loopHeader(bool display = false) const;
@@ -351,20 +351,20 @@ private:
 };
 
 
-class PDP_API CondEl: public ProgEl { 
+class PDP_API IfElse: public ProgEl { 
   // ProgEl for a conditional test element
 INHERITED(ProgEl)
 public:
   String	    cond_test; // condition test
-  ProgEl_List	    true_els; // #BROWSE items to execute if condition true
-  ProgEl_List	    false_els; // #BROWSE items to execute if condition false
+  ProgEl_List	    true_code; // #BROWSE items to execute if condition true
+  ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const CondEl& cp);
-  COPY_FUNS(CondEl, ProgEl);
-  TA_BASEFUNS(CondEl);
+  void	Copy_(const IfElse& cp);
+  COPY_FUNS(IfElse, ProgEl);
+  TA_BASEFUNS(IfElse);
 
 protected:
   override void		PreGenChildren_impl(int& item_id);
@@ -379,7 +379,7 @@ private:
 
 
 class PDP_API MethodSpec: public taOBase { 
-  // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCallEl; has custom taiData
+  // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCall; has custom taiData
 INHERITED(taOBase)
 public:
   ProgVar*		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
@@ -397,7 +397,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class PDP_API MethodCallEl: public ProgEl { 
+class PDP_API MethodCall: public ProgEl { 
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
 friend class MethodSpec;
@@ -410,9 +410,9 @@ public:
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const MethodCallEl& cp);
-  COPY_FUNS(MethodCallEl, ProgEl);
-  TA_BASEFUNS(MethodCallEl);
+  void	Copy_(const MethodCall& cp);
+  COPY_FUNS(MethodCall, ProgEl);
+  TA_BASEFUNS(MethodCall);
 
 protected:
   ProgVar*		lst_script_obj; 
@@ -476,11 +476,11 @@ public:
   taBase_List		objs; // #AKA_prog_objs sundry objects that are used in this program
   ProgVar_List		args; // #AKA_param_vars global variables that are parameters (arguments) for callers
   ProgVar_List		vars; // #AKA_prog_vars global variables accessible outside and inside script
-  ProgEl_List		init_els; // the prog els for initialization (done once); use a "return" if an error occurs 
-  ProgEl_List		prog_els; // the prog els for the main program
+  ProgEl_List		init_code; // the prog els for initialization (done once); use a "return" if an error occurs 
+  ProgEl_List		prog_code; // the prog els for the main program
   
   int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
-  ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCallEl's, not the actual Program's)
+  ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
   bool		    	m_dirty; // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
   bool			isDirty() {return m_dirty;}
@@ -574,7 +574,7 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-class PDP_API ProgramCallEl: public ProgEl { 
+class PDP_API ProgramCall: public ProgEl { 
   // ProgEl to invoke another program
   INHERITED(ProgEl)
 public:
@@ -592,9 +592,9 @@ public:
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const ProgramCallEl& cp);
-  COPY_FUNS(ProgramCallEl, ProgEl);
-  TA_BASEFUNS(ProgramCallEl);
+  void	Copy_(const ProgramCall& cp);
+  COPY_FUNS(ProgramCall, ProgEl);
+  TA_BASEFUNS(ProgramCall);
 
 protected:
   Program*		old_target; // the last target, used to detect changes
@@ -612,7 +612,7 @@ private:
 
 // todo: also make one for iterating over a datatable?
 
-class PDP_API NetCounterInitEl: public ProgEl { 
+class PDP_API NetCounterInit: public ProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
@@ -623,9 +623,9 @@ public:
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
-  void	Copy_(const NetCounterInitEl& cp);
-  COPY_FUNS(NetCounterInitEl, ProgEl);
-  TA_BASEFUNS(NetCounterInitEl);
+  void	Copy_(const NetCounterInit& cp);
+  COPY_FUNS(NetCounterInit, ProgEl);
+  TA_BASEFUNS(NetCounterInit);
 
 protected:
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it

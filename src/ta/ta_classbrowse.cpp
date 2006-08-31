@@ -189,29 +189,35 @@ taiDataLink* taTypeSpaceDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int taTypeSpaceDataLink::NumListCols() {
-  return 1;
+int taTypeSpaceDataLink::NumListCols() const {
+  return 2;
 }
 
-String taTypeSpaceDataLink::GetColHeading(int col) {
+String taTypeSpaceDataLink::GetColHeading(const KeyString& key) const {
   static String typ_name_("Type Name");
-  switch (col) {
-  case 0: return typ_name_;
-  default: return _nilString;
-  }
-  
+  static String typ_desc_("Type Name");
+  if (key == taBase::key_name) return typ_name_;
+  else if (key == taBase::key_desc) return typ_desc_;
+  else return inherited::GetColHeading(key);
 }
 
-String taTypeSpaceDataLink::ChildGetColText(taDataLink* child, int col, int itm_idx) {
-  String rval;
+const KeyString taTypeSpaceDataLink::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return taBase::key_name;
+  case 1: return taBase::key_desc;
+  default: return _nilKeyString;
+  }
+}
+
+String taTypeSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& key,
+  int itm_idx) const 
+{
   if (child != NULL) {
     TypeDef* el = static_cast<TypeDef*>(static_cast<taTypeInfoDataLink*>(child)->data());
-    switch (col) {
-    case 0: rval = el->GetPathName(); break;
-    default: break;
-    }
+    if (key == taBase::key_name) return el->GetPathName();
+    else if (key == taBase::key_desc) return el->desc;
   }
-  return rval;
+  return inherited::ChildGetColText(child, key, itm_idx);
 }
 
 bool taTypeSpaceDataLink::ShowChild(TypeDef* td) const {
@@ -252,36 +258,44 @@ taiDataLink* taMethodSpaceDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int taMethodSpaceDataLink::NumListCols() {
+int taMethodSpaceDataLink::NumListCols() const {
   return 3;
 }
 
-String taMethodSpaceDataLink::GetColHeading(int col) {
+const KeyString taMethodSpaceDataLink::key_rval("rval");
+const KeyString taMethodSpaceDataLink::key_params("params");
+
+String taMethodSpaceDataLink::GetColHeading(const KeyString& key) const {
   static String meth_name_("Method Name");
   static String rval_("rval");
   static String params_("Params");
-  switch (col) {
-  case 0: return meth_name_;
-  case 1: return rval_;
-  case 2: return params_;
-  default: return _nilString;
-  }
-  
+  if (key == taBase::key_name) return meth_name_;
+  else if (key == key_rval) return rval_;
+  else if (key == key_params) return params_;
+  else return inherited::GetColHeading(key);
 }
 
-String taMethodSpaceDataLink::ChildGetColText(taDataLink* child, int col, int itm_idx) {
+const KeyString taMethodSpaceDataLink::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return taBase::key_name;
+  case 1: return key_rval;
+  case 2: return key_params;
+  default: return _nilKeyString;
+  }
+}
+
+String taMethodSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& key,
+  int itm_idx) const 
+{
   String rval;
   if (child != NULL) {
     MethodDef* el = static_cast<MethodDef*>(static_cast<taTypeInfoDataLink*>(child)->data());
-    switch (col) {
-    case 0:
+    if (key == taBase::key_name) {
       if (el->is_static) rval = " static "; //note: sleazy leading space to sort before non-static
       rval += el->name; 
-      break;
-    case 1: rval = el->type->Get_C_Name(); break;
-    case 2: rval = el->ParamsAsString(); break;
-    default: break;
-    }
+    } else if (key == key_rval) rval = el->type->Get_C_Name();
+    else if (key == key_params) rval = el->ParamsAsString();
+    else return inherited::ChildGetColText(child, key, itm_idx);
   }
   return rval;
 }
@@ -304,33 +318,37 @@ taiDataLink* taMemberSpaceDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int taMemberSpaceDataLink::NumListCols() {
+int taMemberSpaceDataLink::NumListCols() const {
   return 2;
 }
 
-String taMemberSpaceDataLink::GetColHeading(int col) {
+String taMemberSpaceDataLink::GetColHeading(const KeyString& key) const {
   static String memb_name_("Memb Name");
   static String memb_typ_("Memb Type");
-  switch (col) {
-  case 0: return memb_name_;
-  case 1: return memb_typ_;
-  default: return _nilString;
-  }
-  
+  if (key == taBase::key_name) return memb_name_;
+  else if (key == taBase::key_type) return memb_typ_;
+  else return inherited::GetColHeading(key);
 }
 
-String taMemberSpaceDataLink::ChildGetColText(taDataLink* child, int col, int itm_idx) {
+const KeyString taMemberSpaceDataLink::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return taBase::key_name;
+  case 1: return taBase::key_type;
+  default: return _nilKeyString;
+  }
+}
+
+String taMemberSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& key,
+  int itm_idx) const
+{
   String rval;
   if (child != NULL) {
     MemberDef* el = static_cast<MemberDef*>(static_cast<taTypeInfoDataLink*>(child)->data());
-    switch (col) {
-    case 0: 
+    if (key == taBase::key_name) { 
       if (el->is_static) rval = " static "; //note: sleazy leading space to sort before non-static
       rval += el->name; 
-      break;
-    case 1: rval = el->type->Get_C_Name(); break;
-    default: rval = el->name; break;
-    }
+    } else if (key == taBase::key_type)  rval = el->type->Get_C_Name();
+    else return inherited::ChildGetColText(child, key, itm_idx);
   }
   return rval;
 }

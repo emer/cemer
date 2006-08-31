@@ -309,7 +309,9 @@ public:
   virtual int		maxColWidth() const {return -1;} // aprox max number of columns, in characters, -1 if variable or unknown
   virtual ValType 	valType() const = 0; // the type of data in each element
 
-  override String 	GetColText(int col, int itm_idx = -1);
+  static const KeyString key_val_type; // "val_type"
+  static const KeyString key_disp_opts; // "disp_opts"
+  override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
   
   // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
@@ -421,6 +423,10 @@ class TAMISC_API DataTableCols: public taGroup<DataArray_impl> {
 INHERITED(taGroup<DataArray_impl>)
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  
+  override int		NumListCols() const {return 3;} // name, val_type (float, etc.), disp_opts
+  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+  override const KeyString GetListColKey(int col) const;
   
   TA_BASEFUNS(DataTableCols); //
 private:
@@ -566,9 +572,6 @@ public:
   
   int  			MinLength();		// #IGNORE
   int  			MaxLength();		// #IGNORE
-
-  override int		NumListCols() const {return 3;} // Name, data type (float, etc.), disp options
-  override String	GetColHeading(int col); // header text for the indicated column
 
   DataTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
 

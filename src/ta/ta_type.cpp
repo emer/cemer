@@ -1282,6 +1282,8 @@ TypeDef* IDataLinkClient::GetDataTypeDef() const {
 //   taDataLink 	//
 //////////////////////////
 
+const KeyString taDataLink::key_name("name");
+
 taDataLink::taDataLink(void* data_, taDataLink* &link_ref_)
 {
   // save data items reference, and set us in it
