@@ -52,30 +52,32 @@ class taiTokenPtrButton; //
 
 class TA_API taiCompData : public taiData {
   //  #NO_INSTANCE base class for composite data elements
+INHERITED(taiData)
+  Q_OBJECT
 public:
 
   taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
   override ~taiCompData();
 
+  taiDataList		data_el;
+
   virtual QLayout*	GetLayout() {return (QLayout*)lay;}
-  taiDataList  data_el;
+  QWidget*		widgets(int index);
+  int			widgetCount();
 
-  QWidget*	widgets(int index);
-  int		widgetCount();
-
-  virtual void	InitLayout(); // default creates a QHBoxLayout in the Rep
-  void		AddChildWidget(QWidget* child_widget, int space_after = -1);
+  virtual void		InitLayout(); // default creates a QHBoxLayout in the Rep
+  void			AddChildWidget(QWidget* child_widget, int space_after = -1);
     // s_a=-1 for default taiM->hspc_c
-  void 		AddChildMember(MemberDef* md); // adds label and control for the member
-  virtual void	EndLayout(); // default adds a stretch
+  virtual void 		AddChildMember(MemberDef* md); // adds label and control for the member
+  virtual void		EndLayout(); // default adds a stretch
 protected:
-  QHBoxLayout*	lay;	// may be ignored/unused by subclasses
-  int		last_spc;	// space after last widget, -1 = none
+  QHBoxLayout*		lay;	// may be ignored/unused by subclasses
+  int			last_spc;	// space after last widget, -1 = none
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
   virtual void	AddChildWidget_impl(QWidget* child_widget, int spacing);// default does an add to layout
 private:
-  QObjectList*	mwidgets; // list of child widgets
+  QObjectList*		mwidgets; // list of child widgets
 };
 
 class TA_API taiField : public taiData {
@@ -295,19 +297,28 @@ private:
 // its default behavior is to put everything in an hbox with labels
 
 class TA_API taiPolyData : public taiCompData {
+INHERITED(taiCompData)
+  Q_OBJECT
 public:
-  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  static taiPolyData*	New(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0); // polymorphic Constr routine, so have to call static news
+  
+  Member_List		memb_el;	// member elements (1:1 with data_el)
+  int			show;
+  
+  QWidget*		rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   bool			fillHor() {return true;} // override 
-  int		show;
 
-  taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  override void 	AddChildMember(MemberDef* md);
+  
   ~taiPolyData();
 
 protected:
   virtual void		Constr(QWidget* gui_parent_);
+  override void		ChildRemove(taiData* child); // remove from memb_el too
   override void		GetImage_impl(const void* base);
   override void		GetValue_impl(void* base) const; 
   virtual bool		ShowMember(MemberDef* md) const;
+  taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
 //////////////////////////

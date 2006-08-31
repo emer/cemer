@@ -396,15 +396,6 @@ public:
   ~taiDialog_List()            { Reset(); }
 };
 
-class TA_API Member_List : public taPtrList<MemberDef> {
-  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS list of members -- simpler than MemberSpace, no ownership
-public:
-  ~Member_List()            { Reset(); }
-};
-
-//////////////////////////////////
-// 	taiEditDataHost		//
-//////////////////////////////////
 
 class TA_API taiEditDataHost : public taiDataHost {
   // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that

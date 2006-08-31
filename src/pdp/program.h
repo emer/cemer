@@ -154,7 +154,7 @@ class PDP_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
 public:
-  String		desc; // optional brief description of element's function; included as comment in script
+  String		desc; // #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   bool			off;	// #DEF_false turn off this program element: do not include in script
 
   virtual ProgEl*   	parent() {return GET_MY_OWNER(ProgEl);}

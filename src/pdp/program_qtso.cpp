@@ -416,12 +416,13 @@ iProgramEditor::iProgramEditor(QWidget* parent)
 }
 
 void iProgramEditor::init() {
-  outer_host = NULL; // MUST be set at some point!!!
-  edh = NULL;
+  m_changing = 0;
   read_only = false;
-  modified = false;
+  m_modified = false;
+  warn_clobber = false;
   bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
+  md_desc = NULL;
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
@@ -439,11 +440,11 @@ void iProgramEditor::init() {
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   layButtons->addStretch();
-  btnSave = new HiLightButton("Save", this);
-  layButtons->addWidget(btnSave);
+  btnApply = new HiLightButton("&Apply", this);
+  layButtons->addWidget(btnApply);
   layButtons->addStretch();
   
-  btnRevert = new HiLightButton("Revert", this);
+  btnRevert = new HiLightButton("&Revert", this);
   layButtons->addWidget(btnRevert);
   layButtons->addStretch();
   layEdit->addLayout(layButtons);
@@ -457,8 +458,8 @@ void iProgramEditor::init() {
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   
   
-  connect(btnSave, SIGNAL(clicked()), this, SLOT(btnSave_clicked()) );
-  connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
+  connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
+  connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
   connect(items, SIGNAL(ItemSelected(iTreeViewItem*)),
     this, SLOT(items_ItemSelected(iTreeViewItem*)) );
 
@@ -475,56 +476,6 @@ void iProgramEditor::AddData(int row, QWidget* data) {
   data->show(); // needed for rebuilds, to make the widget show
 }
 
-void iProgramEditor::btnSave_clicked() {
-//TODO
-}
-
-void iProgramEditor::btnRevert_clicked() {
-//TODO
-}
-
-void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
-  setEditNode(NULL, false);
-}
- 
-void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-//TODO: do we need to do anything???
-}
-
-void iProgramEditor::Changed() {
-  InternalSetModified(true);
-  outer_host->Changed();
-}
-
-TypeDef* iProgramEditor::GetBaseTypeDef() {
-  if (base) return base->GetTypeDef();
-  else return &TA_void; // avoids null issues
-}
-
-void iProgramEditor::GetValue() {
-//TODO
-}
-
-void iProgramEditor::GetImage() {
-/* TODO
-  taiData* mb_dat = data_el.SafeEl(0);
-  if (mb_dat) 
-    typ->it->GetValue(mb_dat, base);*/
-}
-
-void iProgramEditor::Base_Remove() {
-  base->RemoveDataClient(this);
-  data_el.Reset(); // deletes the items
-  memb_el.Reset();
-  // delete widgets in iStripe
-  const QObjectList& ch = body->children();
-  while (ch.count() > 0) {
-    QObject* obj = ch.last();
-    delete obj;
-  }
-  base = NULL;
-}
-
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   layBody = new QGridLayout(body); //note: vmargin passed for "spacing", applies to both dims
@@ -534,16 +485,125 @@ void iProgramEditor::Base_Add() {
   layBody->setRowMinimumHeight(0, body->stripeHeight()); 
   layBody->setRowMinimumHeight(1, body->stripeHeight()); 
 
-  // add desc controls for ProgEls
-//TEST:
+  int flags = taiData::flgInline;
+  if (read_only) flags |= taiData::flgReadOnly;
+  
+  // add main inline controls in line 0, for whatever type
   TypeDef* typ = GetBaseTypeDef();
-  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
+  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, flags);
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   AddData(0, rep);
   
+  // add desc control in line 1 for ProgEls (and any other type with a "desc" member
+  md_desc = typ->members.FindName("desc");
+  if (md_desc) {
+    // in order to get the 'desc' label, we need to indirect, and get a type
+//    mb_dat = md_desc->im->GetDataRep(this, NULL, body, NULL, flags);
+    mb_dat = md_desc->type->it->GetDataRep(this, NULL, body, NULL, flags);
+    rep = mb_dat->GetRep();
+    AddData(1, rep);
+  }
+  
   // ok, get er!
+  GetImage();
+}
+
+void iProgramEditor::Base_Remove() {
+  base->RemoveDataClient(this);
+  data_el.Reset(); // deletes the items
+  md_desc = NULL; // for tidiness
+  // delete widgets in iStripe
+  const QObjectList& ch = body->children();
+  while (ch.count() > 0) {
+    QObject* obj = ch.last();
+    delete obj;
+  }
+  base = NULL;
+}
+
+void iProgramEditor::Apply() {
+  if (warn_clobber) {
+    int chs = taiChoiceDialog::ChoiceDialog
+      (NULL, "Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?!Apply!Revert!Cancel!");
+    if(chs == 1) {
+      Revert();
+      return;
+    }
+    if(chs == 2)
+      return;
+  }
+//  no_revert_hilight = true;
   GetValue();
+  GetImage();
+  InternalSetModified(false); // superfulous??
+//  no_revert_hilight = false;
+}
+
+void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
+  setEditNode(NULL, false);
+}
+ 
+void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  if (dcr == DCR_ITEM_UPDATED) {
+    // if it has been edited, (maybe??) warn user, else just silently update it
+    if (m_modified) {
+      warn_clobber = true; // no other visible sign, warned if save
+    } else {
+      GetImage();
+      return;
+    }
+  }
+}
+
+void iProgramEditor::Changed() {
+  if (m_changing > 0) return;
+  InternalSetModified(true);
+}
+
+TypeDef* iProgramEditor::GetBaseTypeDef() {
+  if (base) return base->GetTypeDef();
+  else return &TA_void; // avoids null issues
+}
+
+void iProgramEditor::GetValue() {
+  TypeDef* typ = GetBaseTypeDef();
+  if (!typ) return; // shouldn't happen
+  
+  ++m_changing;
+  InternalSetModified(false); // do it first, so signals/updates etc. see us nonmodified
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetValue(mb_dat, base);
+  mb_dat = data_el.SafeEl(1);
+  if (mb_dat && md_desc) {
+    // we'll need to get a new base, because we actually got the type, not the member
+    void* new_base = md_desc->GetOff(base);
+    md_desc->type->it->GetValue(mb_dat, new_base);
+  }
+  if (typ->InheritsFrom(TA_taBase)) {
+    base->UpdateAfterEdit();	// hook to update the contents after an edit..
+//shouldn't be necessary    taiMisc::Update(base);
+  }
+  --m_changing;
+}
+
+void iProgramEditor::GetImage() {
+  TypeDef* typ = GetBaseTypeDef();
+  if (!typ) return; // shouldn't happen
+  
+  ++m_changing;
+  taiData* mb_dat = data_el.SafeEl(0);
+  if (mb_dat) 
+    typ->it->GetImage(mb_dat, base);
+  mb_dat = data_el.SafeEl(1);
+  if (mb_dat && md_desc) {
+    // we'll need to get a new base, because we actually got the type, not the member
+    void* new_base = md_desc->GetOff(base);
+    md_desc->type->it->GetImage(mb_dat, new_base);
+  }
+  InternalSetModified(false);
+  --m_changing;
 }
 
 void iProgramEditor::ExpandAll() {
@@ -562,9 +622,9 @@ void iProgramEditor::ExpandAll() {
 }
 
 void iProgramEditor::InternalSetModified(bool value) {
-  btnSave->setEnabled(value);
-  btnRevert->setEnabled(value); 
-  modified = value;
+  m_modified = value;
+  if (!value) warn_clobber = false;
+  UpdateButtons();
 }
 
 bool iProgramEditor::ItemRemoving(ISelectable* /*item*/) {
@@ -580,11 +640,16 @@ void iProgramEditor::items_ItemSelected(iTreeViewItem* item) {
   setEditNode(new_base);
 }
 
+void iProgramEditor::Revert() {
+  GetImage();
+  InternalSetModified(false);
+}
+
 void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
   if (base == value) return;
   if (base) {
-    if (autosave) {
-      //todo: check if dirty, and do a save
+    if (m_modified && autosave) {
+      Apply();
     }
     Base_Remove();
   }
@@ -592,6 +657,15 @@ void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
   if (base) Base_Add();
 }
 
+void iProgramEditor::UpdateButtons() {
+  if (base && m_modified) {
+    btnApply->setEnabled(true);
+    btnRevert->setEnabled(true);
+  } else {
+    btnApply->setEnabled(false);
+    btnRevert->setEnabled(false);
+  }
+}
 
 //////////////////////////
 //    iProgramPanel 	//
@@ -631,7 +705,6 @@ iProgramPanel::~iProgramPanel() {
 
 void iProgramPanel::AddedToPanelSet() {
   inherited::AddedToPanelSet();
-  pe->outer_host = (IDataHost*)viewer_win(); //note: only valid now, not earlier
 }
 
 void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -700,6 +773,9 @@ void iProgramPanel::list_selectionChanged() {
   viewer_win()->UpdateUi();
 }*/
 
+bool iProgramPanel::HasChanged() {
+  return pe->HasChanged();
+}
 
 String iProgramPanel::panel_type() const {
   static String str("Edit Program");

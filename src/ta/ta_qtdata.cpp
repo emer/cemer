@@ -835,15 +835,23 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
 // 	taiPolyData		//
 //////////////////////////////////
 
-taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags)
+taiPolyData* taiPolyData::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
+{
+  taiPolyData*  rval = new taiPolyData(typ_, host_, par, gui_parent_, flags);
+  rval->Constr(gui_parent_);
+  return rval;
+}
+
+taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags)
+: inherited(typ_, host_, par, gui_parent_, flags)
 {
   if (host_ && (host_->GetTypeDef()->InheritsFrom(TA_taiEditDataHost))) {
     show = (dynamic_cast<taiEditDataHost*>(host_))->show;
   } else {
     show = taMisc::show_gui;
   }
-  Constr(gui_parent_);
 }
 
 taiPolyData::~taiPolyData() {
@@ -851,10 +859,17 @@ taiPolyData::~taiPolyData() {
 }
 
 bool taiPolyData::ShowMember(MemberDef* md) const {
-  if (md->HasOption("HIDDEN_INLINE"))
+  if (md->HasOption("HIDDEN_INLINE") ||
+    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE")) 
+    )
     return false;
   else
     return md->ShowMember((taMisc::ShowMembs)show);
+}
+
+void taiPolyData::AddChildMember(MemberDef* md) {
+  memb_el.Add(md);
+  inherited::AddChildMember(md);
 }
 
 void taiPolyData::Constr(QWidget* gui_parent_) {
@@ -873,14 +888,18 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
   EndLayout();
 }
 
+void taiPolyData::ChildRemove(taiData* child) {
+  int i = data_el.Find(child);
+  if (i > 0)
+    memb_el.Remove(i);
+  inherited::ChildRemove(child);
+}
+
 void taiPolyData::GetImage_impl(const void* base) {
 //NN??  cur_base = base;
-  int cnt = 0;
-  for (int i = 0; i < typ->members.size; ++i) {
-    MemberDef* md = typ->members.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-    taiData* mb_dat = data_el.FastEl(cnt++);
+  for (int i = 0; i < memb_el.size; ++i) {
+    MemberDef* md = memb_el.FastEl(i);
+    taiData* mb_dat = data_el.FastEl(i);
     md->im->GetImage(mb_dat, base);
   }
 }
@@ -890,11 +909,9 @@ void taiPolyData::GetValue_impl(void* base) const {
   taMisc::record_script = NULL;
   bool first_diff = true;
   int cnt = 0;
-  for (int i = 0; i < typ->members.size; ++i) {
-    MemberDef* md = typ->members.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-    taiData* mb_dat = data_el.FastEl(cnt++);
+  for (int i = 0; i < memb_el.size; ++i) {
+    MemberDef* md = memb_el.FastEl(i);
+    taiData* mb_dat = data_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base, first_diff);
   }
   if (typ->InheritsFrom(TA_taBase)) {

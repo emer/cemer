@@ -160,6 +160,7 @@ class	iDimEdit;		// #IGNORE  for editing dimensions of a Matrix
 class	iEditGrid;		// #IGNORE 
 class	iFlowLayout;		// #IGNORE 
 class	iFont;			//
+class	HiLightButton;		//
 class	iLabel;			// #IGNORE  -- label w/ highlighting
 class	iLineEdit;		// #IGNORE 
 class	iDataViewer;		// #IGNORE  -- in ta_qtviewer.h

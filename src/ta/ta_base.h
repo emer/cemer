@@ -952,7 +952,7 @@ class taList_impl;
 typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 
 class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
-  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER implementation for a taBase list class
+  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 typedef taBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;

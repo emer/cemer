@@ -24,7 +24,6 @@
 #include "program.h"
 
 #include "ta_qtdata.h"
-#include "ta_qtdialog.h"
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
@@ -86,6 +85,7 @@ protected:
   void			DataChanged_impl(taiData* chld); // override -- used for Enum and Object
   override void		GetImage_impl(const void* base) {GetImage((const ProgVar*)base);}
   override void		GetValue_impl(void* base) const {GetValue((ProgVar*)base);} 
+  void			UpdateButtons(); // updates enabling of buttons depending on state
   taiProgVar(TypeDef* typ_, IDataHost* host, taiData* par, 
     QWidget* gui_parent_, int flags = 0);
     
@@ -127,16 +127,12 @@ class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
 INHERITED(QWidget)
   Q_OBJECT
 public:
-  
-  IDataHost* 		outer_host; // YOU MUST SET THIS OR THE UNIVERSE WILL COLLAPSE
-  taiEditDataHost*	edh; // the edh we use for editing items -- created dynamically
-  
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layEdit;
   iStripeWidget*	    body; // container for the actual taiData items
   QGridLayout*		    layBody; // this gets recreated each time
 //QVBoxLayout*		    layButtons;
-  HiLightButton*	      btnSave;
+  HiLightButton*	      btnApply;
   HiLightButton*	      btnRevert;
   iTreeView*		  items;
   
@@ -147,6 +143,8 @@ public:
   iProgramEditor(QWidget* parent = NULL); //
 
 public slots:
+  void			Apply();
+  void			Revert();
   void			ExpandAll(); // expands all, and resizes columns
   
 public: // ISelectableHost i/f
@@ -163,7 +161,7 @@ public: // IDataLinkClient i/f
 
 public: // IDataHost i/f -- some delegate up to mommy
   const iColor* 	colorOfCurRow() const {return &bg_color;} // only need one
-  bool  		HasChanged() {return modified;}	
+  bool  		HasChanged() {return m_modified;}	
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us
   bool			isReadOnly() {return read_only;}
@@ -176,22 +174,22 @@ public: // IDataHost i/f -- some delegate up to mommy
 
 
 protected:
+  int			m_changing; // for suppressing spurious notifies
   iColor		bg_color; // for edit area; only need one, because doesn't change
-  taSmartRef		m_edit_node; // the current node being edited; its it is in widEdit
-  bool			modified;
-  Member_List		memb_el; // members that will be shown for this base
-  taiDataList 		data_el; // data elements, usually only 2: an inline, and a desc
+  bool			m_modified;
+  bool			warn_clobber; // set if we get a notify and are already modified
+  taiDataList 		data_el; // data elements, usually only 1 or 2: an inline, and a desc
   TAPtr			base; // no need for smartref, because we are a dlc
+  MemberDef*		md_desc; // if we manually added a data item in line 2 (ie for desc)
  
   void 			AddData(int row, QWidget* data); // add the data widget to the row
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
   
   void			InternalSetModified(bool value); // does all the gui config
+  void 			UpdateButtons();
   
 protected slots:
-  void			btnSave_clicked();
-  void			btnRevert_clicked();
   void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
   
 private:
@@ -205,6 +203,7 @@ INHERITED(iDataPanelFrame)
 public:
   iProgramEditor*	pe;
   
+  override bool		HasChanged(); // 'true' if user has unsaved changes
   Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
 

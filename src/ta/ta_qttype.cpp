@@ -521,7 +521,7 @@ taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* 
 }
 
 taiData* taiClassType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiPolyData* rval = new taiPolyData(typ, host_, par, gui_parent_, flags_);
+  taiPolyData* rval = taiPolyData::New(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 

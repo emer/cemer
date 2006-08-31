@@ -2,65 +2,67 @@ OBJECT DIRECTIVES
 -----------------
 
 //TODO: revert this meaning, since we always had the EDIT_INLINE
-#INLINE -- (existing directive) this now only controls inlining in the gui, not in dumping
+INLINE -- (existing directive) this now only controls inlining in the gui, not in dumping
 //TODO: change this to DUMP_INLINE or SAVE_INLINE to be consistent with EDIT_INLINE
-#INLINE_DUMP -- replaces INLINE for dump/load
-#LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
-#UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
-#HIDDEN -- prevents type from showing in TypeHier lists
-#CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
-#NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
-#FILETYPE -- word used to describe files when saving/loading this type; should be a single noun, ex 'Project' (this directive is always used with the EXT directive)
+INLINE_DUMP -- replaces INLINE for dump/load
+LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
+UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
+HIDDEN -- prevents type from showing in TypeHier lists
+CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
+NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
+FILETYPE -- word used to describe files when saving/loading this type; should be a single noun, ex 'Project' (this directive is always used with the EXT directive)
+HIDDEN_INLINE -- (new for Objects) -- don't show this type inline by default for members
 
 
 ENUM DIRECTIVES (note: this is new)
 ---------------
 
-#BITS -- indicates that the enum values are or'able bit fields -- gui will show series of check boxes, not a drop-down
+BITS -- indicates that the enum values are or'able bit fields -- gui will show series of check boxes, not a drop-down
 
 ENUM ITEM DIRECTIVES (note: this is new)
 ---------------
 
-#NO_BIT -- this is not a bit (typically used for OR'ed enums) -- usable in CSS, but doesn't show in gui
+NO_BIT -- this is not a bit (typically used for OR'ed enums) -- usable in CSS, but doesn't show in gui
 
 
 MEMBER DIRECTIVES
 -----------------
 
-#EXPERT -- show directive, like DETAIL etc.; especially for advanced parameters in net sims
-#BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
-#NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
-#INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
-#VARTYPE_READ_ONLY -- user can only change value, not the type, of a Variant
-#NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
-#ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from xxx) in the interface;
+EXPERT -- show directive, like DETAIL etc.; especially for advanced parameters in net sims
+BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
+NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
+INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
+VARTYPE_READ_ONLY -- user can only change value, not the type, of a Variant
+NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
+ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from xxx) in the interface;
   should still include a TYPE_xxx directive to anchor type
-#EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
-#CONDEDIT -- added implicit bool semantics (including dotted submembers), as for Method GHOST
+EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
+CONDEDIT -- added implicit bool semantics (including dotted submembers), as for Method GHOST
+SHOW_INLINE -- can be used to override a type that has HIDDEN_INLINE
 
 
 METHOD DIRECTIVES
 -----------------
 
-#ACTION_xxx -- marks the object as corresponding the indicated "well known" action, ex "editDelete" -- actions can have things like icons and accelerator keys.
+ACTION_xxx -- marks the object as corresponding the indicated "well known" action, ex "editDelete" -- actions can have things like icons and accelerator keys.
 
-#MENU_1N -- menu method that can be applied to 1 or more selected items; (note: method can have parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+MENU_1N -- menu method that can be applied to 1 or more selected items; (note: method can have parameters, if so, then they are supplied in the usual fashion by a popup dialog)
 
-#MENU_1_2N -- method that can be applied on 1st selected item, with items 2:N as a parameter; 1st parameter is the type of the object taken as a parameter (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+MENU_1_2N -- method that can be applied on 1st selected item, with items 2:N as a parameter; 1st parameter is the type of the object taken as a parameter (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
 
-#MENU_2N_1 -- method that can be applied on selected items 2:N with 1st item as a parameter; 1st parameter must be a pointer or reference to type of object 1 (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
+MENU_2N_1 -- method that can be applied on selected items 2:N with 1st item as a parameter; 1st parameter must be a pointer or reference to type of object 1 (note: method can have more parameters, if so, then they are supplied in the usual fashion by a popup dialog)
 
-#MENU_CONTEXT -- puts the menu item directly on the context menu (instead of a submenu) -- ignored in edit dialogs and main menus.
+MENU_CONTEXT -- puts the menu item directly on the context menu (instead of a submenu) -- ignored in edit dialogs and main menus.
 
-#NO_MENU_CONTEXT -- does not put the item anywhere in a context menu.
+NO_MENU_CONTEXT -- does not put the item anywhere in a context menu.
 
-#VMENU -- similar to MENU, but specifies a view item (for DataView classes) -- only VMENU items get put in View window menus. (Note: View items should generally not be edited as data items -- they are usually hidden in the browser hierarchy.)
+VMENU -- similar to MENU, but specifies a view item (for DataView classes) -- only VMENU items get put in View window menus. (Note: View items should generally not be edited as data items -- they are usually hidden in the browser hierarchy.)
 
-#TYPE_ -- added this; same semantics as for members
-#TYPE_ON_ -- added this; same semantics as for members
-#GHOST_ -- added full value semantics, as for member CONDEDIT; implicit bool now also supports submembers (.); implicit bool supports any type: its Variant form is converted to bool
-#EXT -- (3.x undocumented) as for Object directive, used for a stream (file) argument
-#FILETYPE -- companion to EXT, see Object directive 
+TYPE_ -- added this; same semantics as for members
+TYPE_ON_ -- added this; same semantics as for members
+GHOST_ -- added full value semantics, as for member CONDEDIT; implicit bool now also supports submembers (.); implicit bool supports any type: its Variant form is converted to bool
+EXT -- (3.x undocumented) as for Object directive, used for a stream (file) argument
+FILETYPE -- companion to EXT, see Object directive 
 
 DEPRECATED DIRECTIVES
 ---------------------
@@ -68,7 +70,7 @@ DEPRECATED DIRECTIVES
 OBJECT DIRECTIVES (DEPRECATED )
 -----------------
 
-#ARRAY_ALLOC -- wasn't used anywhere, and seemed unnecessary and possibly dangerous
+ARRAY_ALLOC -- wasn't used anywhere, and seemed unnecessary and possibly dangerous
 
 DISPLAY DIRECTIVES
 
