@@ -36,6 +36,8 @@ public:
   
   bool			allColumnsShowFocus() const; // qt3 compat
   
+  void 			resizeColumnsToContents(); // convenience: resizes all but last col
+  
   iTreeWidget(QWidget* parent = 0);
   
 signals:

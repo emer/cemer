@@ -1288,18 +1288,35 @@ public:
     ColKeyRole,	// store a string in header to indicate the col key to use for data
   };
 #endif
+  enum TreeViewFlags { // #BITS
+    TV_NONE		= 0, // #NO_BIT
+    TV_AUTO_EXPAND	= 0x0001 // expands all automatically on open
+  };
+  enum ContextMenuPosition {
+    CM_START,		// called before filling of menu -- use to add items to start
+    CM_END		// called after filling menu -- use to add items to end
+  };
   
   ISelectableHost*	host; // sb set by owner
+  
   
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
   void			setHeaderText(int col, const String& value); // convenience
+  inline TreeViewFlags	tvFlags() const {return (TreeViewFlags)tv_flags;}
+  void			setTvFlags(int value);
   
-  iTreeView(ISelectableHost* host, QWidget* parent = 0);
+  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+
+  iTreeView(ISelectableHost* host, QWidget* parent = 0, int tv_flags = 0);
    
 #ifndef __MAKETA__
 signals:
+  void			FillContextMenuHookPre(ISelectable_PtrList& sel_items, taiMenu* menu);
+    // hook to allow client to add items to start of context menu before it shows
+  void			FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiMenu* menu);
+    // hook to allow client to add items to end of context menu before it shows
   void			ItemDestroying(iTreeViewItem* item);
   void			ItemSelected(iTreeViewItem* item); // note: NULL if none
   void			focusIn(QWidget* sender);
@@ -1307,13 +1324,26 @@ signals:
   
 public slots:
   virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiTreeDataNode*
+  void			ExpandAll(int max_levels = 6); 
+    // expand all nodes, ml=-1 for "infinite" levels (there better not be any loops!!!)
+  void			CollapseAll(); // collapse all nodes
+  void			ExpandAllUnder(iTreeViewItem* item, int max_levels = 6); 
+    // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
+  void			CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
 protected:
+  int			tv_flags;
   void 			focusInEvent(QFocusEvent* ev); // override
+  void			showEvent(QShowEvent* ev); // override, for expand all
+  void 			ExpandAllUnder_impl(iTreeViewItem* item, int max_levels); // inner code
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
   
 protected slots:
+  void 			this_contextMenuRequested(QTreeWidgetItem* item,
+    const QPoint & pos, int col ); //note: should probably rejig to use a virtual method
   void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  void			ExpandAllUnderInt(void* item); 
+  void			CollapseAllUnderInt(void* item); 
 };
 
 
@@ -1495,7 +1525,6 @@ protected:
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
 protected slots:
-  void			list_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col);
   void			list_itemSelectionChanged(); //note: must use this parameterless version in Multi mode
 };
 

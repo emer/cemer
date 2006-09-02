@@ -123,6 +123,12 @@ QMimeData* iTreeWidget::mimeDataSingle(iTreeWidgetItem* item) const {
   return item->mimeData();
 }
 
+void iTreeWidget::resizeColumnsToContents() {
+  for (int i = 0; i < (columnCount() - 1); ++i) {
+    resizeColumnToContents(i);
+  }
+}
+
 void iTreeWidget::this_itemCollapsed(QTreeWidgetItem* item) {
   doItemExpanded(item, false);
 }

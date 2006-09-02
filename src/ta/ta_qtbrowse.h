@@ -210,7 +210,8 @@ public slots:
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
 
 protected slots:
-  virtual void		lvwDataTree_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col);
+  virtual void		lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& sel_items,
+    taiMenu* menu);
   virtual void		lvwDataTree_currentItemChanged(QTreeWidgetItem* curr, 
     QTreeWidgetItem* prev);
 //  void btnRecurse_toggled(bool on);

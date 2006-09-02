@@ -121,7 +121,8 @@ public:
     flgNoInGroup	= 0x020,  // used by gpiGroupEls
     flgEditOnly		= 0x040,  // used by EditButton
     flgInline		= 0x080,   // used by types and members that support INLINE directive, esp. Array
-    flgEditDialog	= 0x100   // for taiField, enables dialog for EDIT_DIALOG directive
+    flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive
+    flgNoUAE		= 0x200  // for things like polydata, don't issue an UpdateAfterEdit
   };
 
   TypeDef* 		typ;		// type for the gui object
@@ -137,13 +138,14 @@ public:
   int			defSize();		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
   void			emit_UpdateUi();
   virtual bool		isConstructed();	// true if our parents (ex dialog) are fully constructed
-  bool			highlight() { return mhighlight; }	// #GET_highlight  changed highlight
+  bool			highlight() const { return mhighlight; }	// #GET_highlight  changed highlight
   virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
+  virtual int		repStretch() const {return 0;} // used to let some controls stretch in layouts
   virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
   virtual QWidget*	GetRep()	{ return m_rep; }
-  bool			HasFlag(int flag_) {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
+  bool			HasFlag(int flag_) const {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
   void			SetFlag(int flags_, bool value = true) {if (value) mflags |= flags_; else mflags &= ~flags_;} // sets or clears a flag or set of flags
 
   void			SetThisAsHandler(bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)

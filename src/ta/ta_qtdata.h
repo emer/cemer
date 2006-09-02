@@ -66,7 +66,8 @@ public:
   int			widgetCount();
 
   virtual void		InitLayout(); // default creates a QHBoxLayout in the Rep
-  void			AddChildWidget(QWidget* child_widget, int space_after = -1);
+  void			AddChildWidget(QWidget* child_widget, int space_after = -1,
+    int stretch = 0);
     // s_a=-1 for default taiM->hspc_c
   virtual void 		AddChildMember(MemberDef* md); // adds label and control for the member
   virtual void		EndLayout(); // default adds a stretch
@@ -75,7 +76,8 @@ protected:
   int			last_spc;	// space after last widget, -1 = none
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
-  virtual void	AddChildWidget_impl(QWidget* child_widget, int spacing);// default does an add to layout
+  virtual void		AddChildWidget_impl(QWidget* child_widget, int spacing,
+    int stretch);// default does an add to layout
 private:
   QObjectList*		mwidgets; // list of child widgets
 };
@@ -84,6 +86,7 @@ class TA_API taiField : public taiData {
   Q_OBJECT
 public:
   iLineEdit*		rep() const { return leText; }
+  int			repStretch() const {return 1;} // override
   bool			fillHor() {return true;} // override 
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
@@ -300,7 +303,8 @@ class TA_API taiPolyData : public taiCompData {
 INHERITED(taiCompData)
   Q_OBJECT
 public:
-  static taiPolyData*	New(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0); // polymorphic Constr routine, so have to call static news
+  static taiPolyData*	New(bool add_members, TypeDef* typ_, IDataHost* host, taiData* par,
+    QWidget* gui_parent_, int flags = 0); // set add_members false to manually add members, otherwise all eligible typ members added
   
   Member_List		memb_el;	// member elements (1:1 with data_el)
   int			show;
@@ -313,7 +317,8 @@ public:
   ~taiPolyData();
 
 protected:
-  virtual void		Constr(QWidget* gui_parent_);
+  void			Constr(QWidget* gui_parent_);
+  void			AddTypeMembers(); // called to add all typ members
   override void		ChildRemove(taiData* child); // remove from memb_el too
   override void		GetImage_impl(const void* base);
   override void		GetValue_impl(void* base) const; 
@@ -340,7 +345,7 @@ public:
 
   virtual void  GetImage(int i);
 protected:
-  override void AddChildWidget_impl(QWidget* child_widget, int spacing); //
+  override void AddChildWidget_impl(QWidget* child_widget, int spacing, int stretch); //
 };
 
 

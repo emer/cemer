@@ -43,6 +43,7 @@
 #include <QList>
 #include <QScrollArea>
 #include <QTextEdit>
+#include <QTimer>
 #include <qtooltip.h>
 #include <qvariant.h>
 #include <QVBoxLayout>
@@ -3297,6 +3298,8 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
   QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->setMargin(0);
+  lay->setSpacing(0);
   lay->addWidget(scr);
 
   dl_->AddDataClient(this); // sets our m_link variable
@@ -3460,7 +3463,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 {
   cur_panel_id = -1;
   QWidget* widg = new QWidget();
-  layDetail = new QVBoxLayout(widg);
+  layDetail = new QVBoxLayout(widg); // default margins/spacing ok
   buttons = new Q3HButtonGroup(); // used invisibly
   buttons->setExclusive(true);
   buttons->setFont(taiM->buttonFont(taiMisc::sizSmall));
@@ -3565,13 +3568,41 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 //    iTreeView 	//
 //////////////////////////
 
-iTreeView::iTreeView(ISelectableHost* host_, QWidget* parent)
+iTreeView::iTreeView(ISelectableHost* host_, QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
+  tv_flags = tv_flags_;
   host = host_;
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+  connect(this, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)),
+    this, SLOT(this_contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)) );
 }
+
+void iTreeView::CollapseAll() {
+  for (int i = topLevelItemCount() - 1; i >= 0; --i) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
+    if (node) 
+      CollapseAllUnder(node);
+  }
+}
+
+void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
+  //note: iterator didn't work, because it collapsed the siblings too!
+  if (!item) return;
+  // first, the children (if any)...
+  for (int i = item->childCount() - 1; i >=0 ; --i) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(item->child(i));
+    if (node)
+      CollapseAllUnder(node);
+  }
+  // then ourself
+  setItemExpanded(item, false); 
+} 
+
+void iTreeView::CollapseAllUnderInt(void* item) {
+  CollapseAllUnder((iTreeViewItem*)item);
+} 
 
 const KeyString iTreeView::colKey(int col) const {
   if ((col < 0) || (col >= columnCount())) return _nilKeyString;
@@ -3579,9 +3610,60 @@ const KeyString iTreeView::colKey(int col) const {
   return rval;
 }
 
+void iTreeView::ExpandAll(int max_levels) {
+  //NOTE: we can't user iterators for expanding, because we add/remove items which 
+  // crashes the iterator
+  for (int i = 0; i < topLevelItemCount(); ++i) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
+    if (node) 
+      ExpandAllUnder_impl(node, max_levels - 1);
+  }
+  resizeColumnsToContents();
+}
+
+void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
+  if (!item) return;
+  ExpandAllUnder_impl(item, max_levels);
+  resizeColumnsToContents();
+} 
+
+void iTreeView::ExpandAllUnder_impl(iTreeViewItem* item, int max_levels) {
+  // first expand the guy...
+  if (!isItemExpanded(item)) { // ok, eligible...
+    if (item->lazyChildren() || (item->childCount() > 0)) {
+      setItemExpanded(item, true); // should trigger CreateChildren for lazy
+    }
+  }
+  
+  // check if we've expanded deeply enough (works for finite (>=1) and infinite (<0) cases)
+  if (max_levels == 0) return;
+  
+  // and expand item's children -- lazy children should be created by now
+  for (int i = 0; i < item->childCount(); ++i) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(item->child(i));
+    if (node)
+      ExpandAllUnder_impl(node, max_levels - 1);
+  }
+} 
+
+void iTreeView::ExpandAllUnderInt(void* item) {
+  ExpandAllUnder((iTreeViewItem*)item);
+}
+
 void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
   emit focusIn(this);
+}
+
+void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
+  QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
+  QTreeWidgetItem* item;
+  while ( (item = *it) ) {
+  ISelectable* si = dynamic_cast<ISelectable*>(item);
+    if (si)
+      lst.Add(si);
+    ++it;
+  }
 }
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
@@ -3612,6 +3694,58 @@ void iTreeView::setColKey(int col, const KeyString& key) {
 
 void iTreeView::setHeaderText(int col, const String& value) { 
   headerItem()->setText(col, value);
+}
+
+void iTreeView::setTvFlags(int value) {
+  if (tv_flags == value) return;
+  tv_flags = value;
+  //nothing to do yet
+}
+
+
+void iTreeView::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  if (tv_flags && TV_AUTO_EXPAND) {
+    QTimer::singleShot(150, this, SLOT(ExpandAll()) );
+  }
+  
+}
+
+void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
+  iTreeViewItem* nd = dynamic_cast<iTreeViewItem*>(item);
+  //note: could be NULL if on tree area itself, or invalid node type
+
+  // get list of the selected items, could be 0, 1 (normal case) or N (multi select)
+  ISelectable_PtrList lst;
+  GetSelectedItems(lst);
+  
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  //TODO: any for us first (ex. delete)
+  
+  emit FillContextMenuHookPre(lst, menu);
+  
+  if (nd)
+    nd->FillContextMenu(lst, menu); // also calls link menu filler
+    
+  menu->AddSep();
+  taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
+  men_exp->AddItem("Expand All", taiMenu::normal, taiAction::action,
+    this, SLOT(ExpandAll()) );
+  men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
+    this, SLOT(CollapseAll()) );
+  if (nd && lst.size == 1) {
+    men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
+      this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
+    men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
+      this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+  }
+  
+  emit FillContextMenuHookPost(lst, menu);
+
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
 }
 
 
@@ -4046,8 +4180,6 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
   list->setSortingEnabled(true);
   ConfigHeader();
-  connect(list, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)) );
   connect(list, SIGNAL(itemSelectionChanged()),
       this, SLOT(list_itemSelectionChanged()) );
   FillList();
@@ -4124,31 +4256,7 @@ int iListDataPanel::GetEditActions() {
 }
 
 void iListDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  QTreeWidgetItemIterator it(list, QTreeWidgetItemIterator::Selected);
-  ISelectable* si;
-  while ( (si = (ISelectable*)((taiListDataNode*)*it)) ) {
-    lst.Add(si);
-    ++it;
-  }
-}
-
-void iListDataPanel::list_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
-  //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
-  taiListDataNode* nd = (taiListDataNode*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  nd->FillContextMenu(sel_list, menu); // also calls link menu filler
-
-  //TODO: any for us last (ex. delete)
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
+  list->GetSelectedItems(lst);
 }
 
 void iListDataPanel::list_itemSelectionChanged() {

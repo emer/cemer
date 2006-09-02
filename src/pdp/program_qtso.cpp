@@ -415,6 +415,10 @@ iProgramEditor::iProgramEditor(QWidget* parent)
   init();
 }
 
+iProgramEditor::~iProgramEditor() {
+  setEditNode(NULL); // autosave here too
+}
+
 void iProgramEditor::init() {
   m_changing = 0;
   read_only = false;
@@ -449,7 +453,7 @@ void iProgramEditor::init() {
   layButtons->addStretch();
   layEdit->addLayout(layButtons);
   
-  items = new iTreeView(this, this);
+  items = new iTreeView(this, this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
@@ -469,23 +473,25 @@ void iProgramEditor::init() {
 void iProgramEditor::AddData(int row, QWidget* data) {
   // just get the height right from the strip widget
   layBody->setRowMinimumHeight(row, body->stripeHeight()); 
-//  QHBoxLayout* hbl = new QHBoxLayout();
-//  layBody->addLayout(hbl, row, 1);
-//  hbl->addWidget(data, 0);
   layBody->addWidget(data, row, 0);
   data->show(); // needed for rebuilds, to make the widget show
 }
 
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
-  layBody = new QGridLayout(body); //note: vmargin passed for "spacing", applies to both dims
+  // we put the grid in a box so its rows don't expand
+  QVBoxLayout* layGrid = new QVBoxLayout(body);
+  layGrid->setSpacing(0);
+  layGrid->setMargin(0);
+  layBody = new QGridLayout(layGrid); 
   layBody->setSpacing(0);
   layBody->setMargin(0);
   // set row heights now, so only one row shows ok
-  layBody->setRowMinimumHeight(0, body->stripeHeight()); 
-  layBody->setRowMinimumHeight(1, body->stripeHeight()); 
+//  layBody->setRowMinimumHeight(0, body->stripeHeight()); 
+//  layBody->setRowMinimumHeight(1, body->stripeHeight()); 
+  layGrid->addStretch();
 
-  int flags = taiData::flgInline;
+  int flags = taiData::flgInline | taiData::flgNoUAE;
   if (read_only) flags |= taiData::flgReadOnly;
   
   // add main inline controls in line 0, for whatever type
@@ -498,10 +504,16 @@ void iProgramEditor::Base_Add() {
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   md_desc = typ->members.FindName("desc");
   if (md_desc) {
-    // in order to get the 'desc' label, we need to indirect, and get a type
-//    mb_dat = md_desc->im->GetDataRep(this, NULL, body, NULL, flags);
-    mb_dat = md_desc->type->it->GetDataRep(this, NULL, body, NULL, flags);
-    rep = mb_dat->GetRep();
+    // in order to get the 'desc' label, we need to indirect, and get a poly guy
+    //note: the "type" is that of the member's parent, not the member itself
+    taiPolyData* pd = taiPolyData::New (false, typ, this, NULL, body, flags);
+    // now, add the member to the poly guy -- this will also render the label
+    pd->InitLayout();
+    pd->AddChildMember(md_desc);
+    pd->EndLayout();
+    
+    data_el.Add(pd);
+    rep = pd->GetRep();
     AddData(1, rep);
   }
   
@@ -545,6 +557,7 @@ void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
 }
  
 void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  if (m_changing > 0) return; // gets triggered when we do the GetValue on ctrl0
   if (dcr == DCR_ITEM_UPDATED) {
     // if it has been edited, (maybe??) warn user, else just silently update it
     if (m_modified) {
@@ -577,9 +590,7 @@ void iProgramEditor::GetValue() {
     typ->it->GetValue(mb_dat, base);
   mb_dat = data_el.SafeEl(1);
   if (mb_dat && md_desc) {
-    // we'll need to get a new base, because we actually got the type, not the member
-    void* new_base = md_desc->GetOff(base);
-    md_desc->type->it->GetValue(mb_dat, new_base);
+    mb_dat->GetValue_(base);
   }
   if (typ->InheritsFrom(TA_taBase)) {
     base->UpdateAfterEdit();	// hook to update the contents after an edit..
@@ -598,9 +609,7 @@ void iProgramEditor::GetImage() {
     typ->it->GetImage(mb_dat, base);
   mb_dat = data_el.SafeEl(1);
   if (mb_dat && md_desc) {
-    // we'll need to get a new base, because we actually got the type, not the member
-    void* new_base = md_desc->GetOff(base);
-    md_desc->type->it->GetImage(mb_dat, new_base);
+    mb_dat->GetImage_(base);
   }
   InternalSetModified(false);
   --m_changing;

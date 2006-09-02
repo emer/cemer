@@ -280,7 +280,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
-  AddChildWidget(ctrl, taiM->hspc_c);
+  AddChildWidget(ctrl, taiM->hspc_c, mb_dat->repStretch());
 
   // add description text tooltips
   if (!desc.empty()) {
@@ -294,17 +294,21 @@ void taiCompData::EndLayout() { //virtual/overridable
     lay->addStretch();
 }
 
-void taiCompData::AddChildWidget(QWidget* child_widget, int space_after) { 
+void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
+  int stretch) 
+{ 
   if (space_after == -1) space_after = taiM->hspc_c;
   mwidgets->append(child_widget);
-  AddChildWidget_impl(child_widget, last_spc);
+  AddChildWidget_impl(child_widget, last_spc, stretch);
   last_spc = space_after;
 }
 
-void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing) { //virtual/overridable
+void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing,
+  int stretch) 
+{ 
   if (spacing != -1)
     lay->addSpacing(last_spc);
-  lay->addWidget(child_widget, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  lay->addWidget(child_widget, stretch, (Qt::AlignLeft | Qt::AlignVCenter));
   child_widget->show();
 }
 
@@ -835,11 +839,13 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
 // 	taiPolyData		//
 //////////////////////////////////
 
-taiPolyData* taiPolyData::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
+taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
+  taiData* par, QWidget* gui_parent_, int flags)
 {
   taiPolyData*  rval = new taiPolyData(typ_, host_, par, gui_parent_, flags);
   rval->Constr(gui_parent_);
+  if (add_members) 
+    rval->AddTypeMembers();
   return rval;
 }
 
@@ -872,12 +878,7 @@ void taiPolyData::AddChildMember(MemberDef* md) {
   inherited::AddChildMember(md);
 }
 
-void taiPolyData::Constr(QWidget* gui_parent_) {
-  SetRep(new QWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
-  if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
-  }
+void taiPolyData::AddTypeMembers() {
   InitLayout();
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
@@ -886,6 +887,14 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
     AddChildMember(md);
   }
   EndLayout();
+}
+
+void taiPolyData::Constr(QWidget* gui_parent_) {
+  SetRep(new QWidget(gui_parent_));
+  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  if (host != NULL) {
+    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
+  }
 }
 
 void taiPolyData::ChildRemove(taiData* child) {
@@ -914,7 +923,7 @@ void taiPolyData::GetValue_impl(void* base) const {
     taiData* mb_dat = data_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base, first_diff);
   }
-  if (typ->InheritsFrom(TA_taBase)) {
+  if (typ->InheritsFrom(TA_taBase) && !HasFlag(flgNoUAE)) {
     TAPtr rbase = (TAPtr)base;
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
   }
@@ -947,7 +956,9 @@ void taiDataDeck::GetImage(int i) {
   }
 }
 
-void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing) {
+void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing,
+  int /*stretch*/)
+{//note: stretch not needed/used
   (rep()->addWidget(child_widget, cur_deck));
 }
 

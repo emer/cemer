@@ -281,7 +281,8 @@ public:
   	{ return new taiMember(md, td);}
   TypeDef*	GetTypeDef() const {return &TA_taiMember;}
 protected:
-  override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_);
   override void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   override void		GetValue_impl(taiData* dat, void* base)

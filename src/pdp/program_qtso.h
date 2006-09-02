@@ -141,6 +141,7 @@ public:
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
 
   iProgramEditor(QWidget* parent = NULL); //
+  ~iProgramEditor();
 
 public slots:
   void			Apply();

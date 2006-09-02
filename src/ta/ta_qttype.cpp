@@ -194,13 +194,19 @@ taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent
   }
 }
 
-taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_) 
+{
+  // taiField: your friend when all else fails...
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
-  return GetDataRepInline_impl(host_, par, gui_parent, flags_);
+taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent, int flags_) 
+{
+  // base type doesn't know what to do for inline, so just returns the basic guy
+  return GetDataRep_impl(host_, par, gui_parent, flags_);
 }
 
 void taiType::GetImage(taiData* dat, const void* base) {
@@ -521,7 +527,7 @@ taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* 
 }
 
 taiData* taiClassType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiPolyData* rval = taiPolyData::New(typ, host_, par, gui_parent_, flags_);
+  taiPolyData* rval = taiPolyData::New(true, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -844,7 +850,13 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
     flags |= taiData::flgEditDialog;
     
+    
   taiData* dat = GetDataRep_impl(host_, par, gui_parent_, flags);
+  return dat;
+}
+
+taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_);
   return dat;
 }
 
@@ -852,15 +864,6 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
 // calling the non-impl version of their functions
 void taiMember::GetImage(taiData* dat, const void* base) {
   GetImage_impl(dat, base);
-}
-
-void taiMember::GetValue(taiData* dat, void* base) {
-  GetValue_impl(dat, base);
-}
-
-taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_);
-  return dat;
 }
 
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
@@ -885,6 +888,10 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
         dat->setHighlight(false);
     }
   }
+}
+
+void taiMember::GetValue(taiData* dat, void* base) {
+  GetValue_impl(dat, base);
 }
 
 void taiMember::StartScript(const void* base) {

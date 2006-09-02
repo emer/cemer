@@ -467,8 +467,8 @@ void iDataBrowserBase::Constr_Body_impl() {
 
   splMain->setResizeMode(lvwDataTree, QSplitter::KeepSize); // when user enlarges, it is the data pane that will resize
 
-  connect(lvwDataTree, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)),
-      this, SLOT(lvwDataTree_contextMenuRequested(QTreeWidgetItem*, const QPoint &, int)) );
+  connect(lvwDataTree, SIGNAL(FillContextMenuHook(ISelectable_PtrList&, taiMenu*)),
+      this, SLOT(lvwDataTree_FillContextMenuHook(ISelectable_PtrList&, taiMenu*)) );
   connect(lvwDataTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
       this, SLOT(lvwDataTree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
   connect(lvwDataTree, SIGNAL(focusIn(QWidget*)),
@@ -552,21 +552,10 @@ void iDataBrowserBase::helpAbout() {
   if (tabMisc::root) tabMisc::root->Info();
 }
 
-void iDataBrowserBase::lvwDataTree_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
-  iTreeViewItem* nd = (iTreeViewItem*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  nd->FillContextMenu(sel_items(), menu); // also calls link menu filler
-
+void iDataBrowserBase::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
+   taiMenu* menu) 
+{
   FillContextMenu(menu);
-
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
 }
 
 void iDataBrowserBase::lvwDataTree_focusIn(QWidget*) {
