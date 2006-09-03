@@ -110,6 +110,15 @@ if test x"$css_bin" = x"true"; then
    AC_SUBST([WANT_CSS_BIN],[src/css_bin])
 fi
 
+# --disable-maketa-opt
+# controls optimization of maketa executeable
+if test x"$maketa_opt" = x"false"; then
+  AC_SUBST([MAKETA_OPT],["-g -O0"])
+else
+  AC_SUBST([MAKETA_OPT],["-g -O2"])
+  AC_SUBST([NOOP_MAKETA],["-UDEBUG"])
+fi
+
 # --enable-debug
 if test x"$debug" = x"true"; then
 

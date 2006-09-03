@@ -2,7 +2,7 @@
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 LIBS=
-DEFS=
+DEFS= @NOOP_MAKETA@
 
 PROJNAME = maketa
 
@@ -54,7 +54,7 @@ maketa_CPPFLAGS =\
 	-I@abs_srcdir@/.. \
 	-I@abs_top_builddir@ \
 	-I@abs_srcdir@ \
-	-DNO_TA_BASE -g -O0
+	-DNO_TA_BASE @MAKETA_OPT@
 
 BUILT_SOURCES = ta_TA_type.h
 

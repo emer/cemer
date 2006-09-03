@@ -58,6 +58,13 @@ AC_ARG_ENABLE([plugins],
 			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
 			     [plugins=true],
 			     [plugins=false])
+AC_ARG_ENABLE([maketa_opt],
+	      AC_HELP_STRING([--disable-maketa-opt],
+			     [Disable optimization of the maketa executeable. @<:@default=enabled@:>@]),
+			     [maketa_opt=false],
+			     [maketa_opt=true])
+
+
 AM_CONDITIONAL([PLUGINS],[test $plugins = true])
 AM_CONDITIONAL([RPM],[test $rpm = true])
 AM_CONDITIONAL([TA_GUI],[test $gui = true])
