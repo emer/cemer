@@ -1,3 +1,20 @@
+WORK PRIORITY
+-------------
+
+* dynamic main menus
+* integrated viewers
+* graph log
+* logging in general
+* clean up gui interface to logging -- should be easier for user to choose stuff to log
+* clean up Data iterator specification 
+  -- need another sample impl (apart from ImageReader)
+* revamp the 3D display of net objects
+* dnd icon bar for:
+  progedit
+  netview/designer
+* 4-panel view of network, to enable rational moving/sizing of objects
+  - the moving/sizing
+
 BUGS
 ----
 
@@ -113,6 +130,10 @@ Medium Important:
 * open xor.proj; click on "specs" to open; XORUnitSpec edit panel has some kind of
   context menu open (looks like one of the data control TypeDef Menu thingies);l
   note: does not happen for the Con or Prjn spec items
+* progedit -- needs scrollview for the edit frame, because it just renders out into
+  the hidden area of the window, so you have to size window big enough to see it
+* DRAG AND DROP!
+  
 
 Lower Priority (but perhaps still needed)
 
@@ -132,7 +153,9 @@ Cosmetic/Usability/etc. (lower priority):
 * "Create New Object" dialog opens parented to root window, so it changes focus
 * browsers don't really have proper title, i.e. now they all say "root()" or "root() <N>" etc
 -- post qt4 browse:
-* 
+* fix the damned desc control so it sizes out to the end of the panel
+* add the buttons to the bottom (same as on the edit properties)
+* add a script panel to Programs so user just needs to click button to view script
 
 
 TODO

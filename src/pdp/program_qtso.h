@@ -122,11 +122,13 @@ protected:
 };
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
-  public virtual IDataLinkClient, public virtual ISelectableHost {
+  public virtual IDataLinkClient {
   // widget for editing entire programs
 INHERITED(QWidget)
   Q_OBJECT
 public:
+  ISelectableHost* 	host; // must be set in constructor
+  
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layEdit;
   iStripeWidget*	    body; // container for the actual taiData items
@@ -140,17 +142,13 @@ public:
   
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
 
-  iProgramEditor(QWidget* parent = NULL); //
+  iProgramEditor(ISelectableHost* host, QWidget* parent = NULL); //
   ~iProgramEditor();
 
 public slots:
   void			Apply();
   void			Revert();
   void			ExpandAll(); // expands all, and resizes columns
-  
-public: // ISelectableHost i/f
-  override QWidget*	widget() {return this;} 
-  override bool 	ItemRemoving(ISelectable* item);
   
 public: // ITypedObject i/f
   void*			This() {return this;} 
@@ -192,13 +190,16 @@ protected:
   
 protected slots:
   void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
+  void			mnuEditAction(taiAction* mel);
   
 private:
   void			init();
 };
 
 
-class TA_API iProgramPanel: public iDataPanelFrame {
+class TA_API iProgramPanel: public iDataPanelFrame,
+  public virtual ISelectableHost 
+{
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
@@ -218,6 +219,13 @@ public:
   iProgramPanel(taiDataLink* dl_);
   ~iProgramPanel();
 
+
+public: // ISelectableHost i/f
+  override QWidget*	widget() {return this;} 
+  override bool 	ItemRemoving(ISelectable* item);
+public slots:
+  void			mnuEditAction(taiAction* mel); // required for ISelectableHost
+  
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}

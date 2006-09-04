@@ -350,7 +350,7 @@ public: // Interface Properties and Methods
   virtual ISelectableHost* host() const = 0; //
   taBase*		taData() const; // if the data is taBase, this returns it
   virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
-  QWidget*		widget() const; // default gets from host, but you can override
+  QWidget*		widget() const; // gets from host
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
@@ -1412,7 +1412,6 @@ public: // ISelectable interface
   override MemberDef*	md() const {return m_md;}
   override String	view_name() const; // for members, the member name; for list items, the name if
   override ISelectableHost* host() const;
-  override QWidget* 	widget() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 //  override taiMimeItem*	GetMimeItem();

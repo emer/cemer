@@ -409,9 +409,10 @@ void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 //    iProgramEditor 	//
 //////////////////////////
 
-iProgramEditor::iProgramEditor(QWidget* parent)
+iProgramEditor::iProgramEditor(ISelectableHost* host_, QWidget* parent)
 :inherited(parent)
 {
+  host = host_;
   init();
 }
 
@@ -453,7 +454,7 @@ void iProgramEditor::init() {
   layButtons->addStretch();
   layEdit->addLayout(layButtons);
   
-  items = new iTreeView(this, this, iTreeView::TV_AUTO_EXPAND);
+  items = new iTreeView(host, this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
@@ -636,11 +637,6 @@ void iProgramEditor::InternalSetModified(bool value) {
   UpdateButtons();
 }
 
-bool iProgramEditor::ItemRemoving(ISelectable* /*item*/) {
-// TODO: maybe don't need to do anything??? itemChanged probably enough
-  return false;
-}
-
 void iProgramEditor::items_ItemSelected(iTreeViewItem* item) {
   TAPtr new_base = NULL;
   if (item) {
@@ -683,7 +679,7 @@ void iProgramEditor::UpdateButtons() {
 iProgramPanel::iProgramPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  pe = new iProgramEditor();
+  pe = new iProgramEditor((ISelectableHost*)this);
   setCentralWidget(pe); //sets parent
   Program* prog_ = prog();
   if (prog_) {
@@ -782,8 +778,17 @@ void iProgramPanel::list_selectionChanged() {
   viewer_win()->UpdateUi();
 }*/
 
+void iProgramPanel::mnuEditAction(taiAction* mel) {
+  EditAction(mel->usr_data.toInt());
+}
+
 bool iProgramPanel::HasChanged() {
   return pe->HasChanged();
+}
+
+bool iProgramPanel::ItemRemoving(ISelectable* /*item*/) {
+// TODO: maybe don't need to do anything??? itemChanged probably enough
+  return false;
 }
 
 String iProgramPanel::panel_type() const {

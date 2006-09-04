@@ -467,8 +467,8 @@ void iDataBrowserBase::Constr_Body_impl() {
 
   splMain->setResizeMode(lvwDataTree, QSplitter::KeepSize); // when user enlarges, it is the data pane that will resize
 
-  connect(lvwDataTree, SIGNAL(FillContextMenuHook(ISelectable_PtrList&, taiMenu*)),
-      this, SLOT(lvwDataTree_FillContextMenuHook(ISelectable_PtrList&, taiMenu*)) );
+  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)),
+      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)) );
   connect(lvwDataTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
       this, SLOT(lvwDataTree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
   connect(lvwDataTree, SIGNAL(focusIn(QWidget*)),

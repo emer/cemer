@@ -3990,10 +3990,6 @@ String iTreeViewItem::view_name() const {
   return text(0);
 }
 
-QWidget* iTreeViewItem::widget() const {
-  return treeView();
-}
-
 
 //////////////////////////////////
 // 	taiTreeDataNode 	//
