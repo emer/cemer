@@ -923,8 +923,9 @@ cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
 
   void* mbr;
   MemberDef* md = ths->FindMembeR(memb, mbr);
+//   MemberDef* md = type_def->members.FindNameAddrR(memb, ths, mbr);
   if(!md) {
-    cssMisc::Error(prog, "Member not found:", memb, "in class of type:", (char*)type_def->name);
+    cssMisc::Error(prog, "MembeR not found:", memb, "in class of type:", (char*)type_def->name);
     return &cssMisc::Void;
   }
 

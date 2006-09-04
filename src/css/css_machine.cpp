@@ -841,7 +841,7 @@ cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
     return &cssMisc::Void;
   }
   MemberDef* md = typ->members.SafeEl(memb);
-  if(md == NULL) {
+  if(!md) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
@@ -853,13 +853,16 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) c
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
   }
-  int mdx;
-  MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
-  if(md == NULL) {
-    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
+//   int mdx;
+//   MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
+  void* mbr = NULL;
+  MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);	// skips paths!
+  if(!md) {
+    cssMisc::Error(prog, "MembeR not found:", String(memb), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
-  return GetMemberEl_impl(typ, base, md);
+  // return GetMemberEl_impl(typ, base, md); // for just 1st order search
+  return GetFromTA_impl(md->type, mbr, md->name, md);
 }
 
 cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
@@ -873,7 +876,7 @@ cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
 
 ////////////////
 
-int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
+Int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
   if(typ == NULL) return -1;
   int mdx;
   typ->methods.FindName(meth, mdx);

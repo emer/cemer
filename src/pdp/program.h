@@ -112,6 +112,7 @@ private:
   void	Destroy() {Reset();}
 };
 
+SmartRef_Of(ProgVar); // ProgVarRef
 
 class PDP_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE a program or method argument
@@ -348,6 +349,35 @@ protected:
 private:
   void	Initialize() {}
   void	Destroy()	{}
+};
+
+// todo: how to handle sub-sequences?
+
+class PDP_API BasicDataLoop: public Loop { 
+  // #EDIT_INLINE #TOKENS loops over items in a DataTable, in different basic orderings
+INHERITED(Loop)
+public:
+  enum Order {
+    SEQUENTIAL,			// present events in sequential order
+    PERMUTED,			// permute the order of event presentation
+    RANDOM 			// pick an event at random (with replacement)
+  };
+
+  ProgVarRef	data_var;	// program variable pointing to the data table to use
+  Order		order;		// order to process data items in
+  int		cur_item_idx;	// index of current item in the data table
+  int_Array	item_idx_list;	// #HIDDEN list of item indicies 
+
+  TA_SIMPLE_BASEFUNS(BasicDataLoop);
+
+protected:
+  override const String loopHeader(bool display = false) const;
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy();
 };
 
 
@@ -610,20 +640,20 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //  	misc extra ProgEl's: should be in pdp proper and not ta/css, which is where all above belongs
 
-// todo: also make one for iterating over a datatable?
-
 class PDP_API NetCounterInit: public ProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVar*	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
-  ProgVar* 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
   
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
-  void	Copy_(const NetCounterInit& cp);
+  void	InitLinks();
+  void	CutLinks();
+  SIMPLE_COPY(NetCounterInit);
   COPY_FUNS(NetCounterInit, ProgEl);
   TA_BASEFUNS(NetCounterInit);
 
@@ -637,20 +667,22 @@ private:
   void	Destroy();
 };
 
-class PDP_API NetCounterIncrEl: public ProgEl { 
+class PDP_API NetCounterIncr: public ProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVar*	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
-  ProgVar* 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
   
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
-  void	Copy_(const NetCounterIncrEl& cp);
-  COPY_FUNS(NetCounterIncrEl, ProgEl);
-  TA_BASEFUNS(NetCounterIncrEl);
+  void	InitLinks();
+  void	CutLinks();
+  SIMPLE_COPY(NetCounterIncr);
+  COPY_FUNS(NetCounterIncr, ProgEl);
+  TA_BASEFUNS(NetCounterIncr);
 
 protected:
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it

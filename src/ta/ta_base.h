@@ -195,6 +195,11 @@ public:
 
 #define SIMPLE_COPY(T)	  void Copy_(const T& cp)	{T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
 
+#define	SIMPLE_INITLINKS() void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(); }
+#define	SIMPLE_CUTLINKS()  void CutLinks() { CutLinks_taAuto(); inherited::CutLinks(); }
+
+#define TA_SIMPLE_BASEFUNS(T)  SIMPLE_COPY(T); SIMPLE_INITLINKS(); SIMPLE_CUTLINKS(); TA_BASEFUNS(T)
+
 // simplified Get owner functions B = ta_base object, T = class name
 #define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)
 #define GET_OWNER(B,T)  (T *) B ->GetOwner(T::StatTypeDef(0))
@@ -352,6 +357,11 @@ public:
   // #IGNORE cut any links to other objs, called upon removal from a group or owner
   void			Copy(const taBase&)	{ };
   // #IGNORE the copy (=) operator, call parent
+
+  virtual void		InitLinks_taAuto();
+  // #IGNORE automatic TA-based initlinks: calls inherited and goes through only my members & owns them
+  virtual void		CutLinks_taAuto();
+  // #IGNORE automatic TA-based cutlinks: goes through only my members & calls cutlinks and calls inherited
 
   void 			Register()			// #IGNORE non-virtual, called in constructors
   { if(!taMisc::not_constr) GetTypeDef()->Register((void*)this); }

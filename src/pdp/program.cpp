@@ -738,6 +738,66 @@ const String DoLoop::loopHeader(bool display) const {
   return rval;
 }
 
+//////////////////////////
+//  BasicDataLoop	//
+//////////////////////////
+
+// todo: Init/CutLinks_taAuto _impl (inherited::Init/CutLinks(); impl = iterate over my members..
+// TA_BASEFUNS_AUTO( -- full auto routines incl copy, etc
+
+void BasicDataLoop::Initialize() {
+  order = SEQUENTIAL;
+  cur_item_idx = -1;
+  loop_var_type = "int";
+  loop_var = "count";
+  init_val = "0";
+}
+
+void BasicDataLoop::Destroy() {
+}
+
+const String BasicDataLoop::GenCssPre_impl(int indent_level) {
+  if(!data_var) {
+    taMisc::Warning("BasicDataLoop: data_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// BasicDataLoop: Error, data_var = NULL!\n";
+  }
+  String id1 = cssMisc::Indent(indent_level+1);
+  String id2 = cssMisc::Indent(indent_level+2);
+
+  String rval = cssMisc::Indent(indent_level) + "{\n";
+  rval += id1 + "BasicDataLoop* loop = *(this" + GetPath(NULL,program()) + ");\n";
+  rval += id1 + "loop->item_idx_list.EnforceSize(" + data_var->name + "->itemCount());\n";
+  rval += id1 + "loop->item_idx_list.FillSeq();\n";
+  rval += id1 + "if(loop->order == BasicDataLoop::PERMUTED) loop->item_idx_list.Permute();\n";
+  rval += id1 + data_var->name + "->ReadOpen();\n";
+  if (!loop_var_type.empty()) {
+    rval += id1 + loop_var_type + " " + loop_var + ";\n";
+  }
+  rval += id1 + loopHeader() + " {\n";
+  rval += id2 + "if(loop->order == BasicDataLoop::RANDOM) loop->cur_item_idx = Random::IntZeroN(loop->item_idx_list.size);\n";
+  rval += id2 + "else loop->cur_item_idx = loop->item_idx_list[" + loop_var + "];\n";
+  rval += id2 + "if(!" + data_var->name + "->ReadItem(loop->cur_item_idx)) break;\n";
+  return rval;
+}
+
+const String BasicDataLoop::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "}\n";
+  rval += inherited::GenCssPost_impl(indent_level);
+  return rval;
+}
+
+const String BasicDataLoop::loopHeader(bool display) const {
+  STRING_BUF(rval, 60);
+  if (display)
+    rval += "data table loop (" + loop_var + ")";
+  else {
+    rval += "for (" + loop_var + " = 0; "
+      + loop_var + " < loop->item_idx_list.size; " 
+      + loop_var + "++)";
+  }
+  return rval;
+}
+
 
 //////////////////////////
 //  IfElse		//
@@ -1478,16 +1538,20 @@ void NetCounterInit::Initialize() {
   local_ctr_var = NULL;
 }
 
-void NetCounterInit::Destroy() {
-  taBase::DelPointer((taBase**)&network_var);
-  taBase::DelPointer((taBase**)&local_ctr_var);
+void NetCounterInit::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(network_var, this);
+  taBase::Own(local_ctr_var, this);
 }
 
-void NetCounterInit::Copy_(const NetCounterInit& cp) {
-  taBase::SetPointer((taBase**)&network_var, cp.network_var);
-  taBase::SetPointer((taBase**)&local_ctr_var, cp.local_ctr_var);
-  counter = cp.counter;
-} 
+void NetCounterInit::CutLinks() {
+  network_var.CutLinks();
+  local_ctr_var.CutLinks();
+  inherited::CutLinks();
+}
+
+void NetCounterInit::Destroy() {
+}
 
 void NetCounterInit::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
@@ -1514,11 +1578,11 @@ void NetCounterInit::GetLocalCtrVar() {
 }
 
 const String NetCounterInit::GenCssBody_impl(int indent_level) {
-  if(network_var == NULL) {
+  if(!network_var) {
     taMisc::Warning("NetCounterInit: network_var = NULL -- no code generated!");
     return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, network_var = NULL!\n";
   }
-  if(local_ctr_var == NULL) {
+  if(!local_ctr_var) {
     taMisc::Warning("NetCounterInit: local_ctr_var = NULL -- no code generated!");
     return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, local_ctr_var = NULL!\n";
   }
@@ -1530,23 +1594,27 @@ const String NetCounterInit::GenCssBody_impl(int indent_level) {
 //////////////////////////////////////
 // incr
 
-void NetCounterIncrEl::Initialize() {
+void NetCounterIncr::Initialize() {
   network_var = NULL;
   local_ctr_var = NULL;
 }
 
-void NetCounterIncrEl::Destroy() {
-  taBase::DelPointer((taBase**)&network_var);
-  taBase::DelPointer((taBase**)&local_ctr_var);
+void NetCounterIncr::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(network_var, this);
+  taBase::Own(local_ctr_var, this);
 }
 
-void NetCounterIncrEl::Copy_(const NetCounterIncrEl& cp) {
-  taBase::SetPointer((taBase**)&network_var, cp.network_var);
-  taBase::SetPointer((taBase**)&local_ctr_var, cp.local_ctr_var);
-  counter = cp.counter;
-} 
+void NetCounterIncr::CutLinks() {
+  network_var.CutLinks();
+  local_ctr_var.CutLinks();
+  inherited::CutLinks();
+}
 
-void NetCounterIncrEl::UpdateAfterEdit() {
+void NetCounterIncr::Destroy() {
+}
+
+void NetCounterIncr::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   GetLocalCtrVar();
   if(counter.empty() && local_ctr_var) {
@@ -1554,11 +1622,11 @@ void NetCounterIncrEl::UpdateAfterEdit() {
   }
 }
 
-String NetCounterIncrEl::GetDisplayName() const {
+String NetCounterIncr::GetDisplayName() const {
   return "Net Counter Incr: " + counter;
 }
 
-void NetCounterIncrEl::GetLocalCtrVar() {
+void NetCounterIncr::GetLocalCtrVar() {
   if(counter.empty()) return;
   if(local_ctr_var) return;
   Program* my_prog = GET_MY_OWNER(Program);
@@ -1570,14 +1638,14 @@ void NetCounterIncrEl::GetLocalCtrVar() {
   local_ctr_var->var_type = ProgVar::T_Int;
 }
 
-const String NetCounterIncrEl::GenCssBody_impl(int indent_level) {
-  if(network_var == NULL) {
-    taMisc::Warning("NetCounterIncrEl: network_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterIncrEl: Error, network_var = NULL!\n";
+const String NetCounterIncr::GenCssBody_impl(int indent_level) {
+  if(!network_var) {
+    taMisc::Warning("NetCounterIncr: network_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterIncr: Error, network_var = NULL!\n";
   }
-  if(local_ctr_var == NULL) {
-    taMisc::Warning("NetCounterIncrEl: local_ctr_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterIncrEl: Error, local_ctr_var = NULL!\n";
+  if(!local_ctr_var) {
+    taMisc::Warning("NetCounterIncr: local_ctr_var = NULL -- no code generated!");
+    return cssMisc::Indent(indent_level) + "// NetCounterIncr: Error, local_ctr_var = NULL!\n";
   }
   String rval = cssMisc::Indent(indent_level) + counter + "++;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";

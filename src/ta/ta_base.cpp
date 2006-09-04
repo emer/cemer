@@ -468,6 +468,27 @@ void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
 void taBase::CutLinks() {
 }
 
+
+void taBase::InitLinks_taAuto() {
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;
+    taBase* mb = (taBase*)md->GetOff(this);
+    taBase::Own(*mb, this);
+  }
+}
+
+void taBase::CutLinks_taAuto() {
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;
+    taBase* mb = (taBase*)md->GetOff(this);
+    mb->CutLinks();
+  }
+}
+
 void taBase::AddDataView(taDataView* dv) {
 #ifdef TA_GUI
   if (dv) dv->SetData(this);
