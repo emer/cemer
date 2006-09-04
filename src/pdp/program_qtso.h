@@ -190,7 +190,6 @@ protected:
   
 protected slots:
   void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
-  void			mnuEditAction(taiAction* mel);
   
 private:
   void			init();
