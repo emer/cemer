@@ -49,6 +49,12 @@
 #define TA_BYTE_ORDER Q_BYTE_ORDER
 
 
+// misc optional debugging extras
+#ifdef DEBUG
+//#define TA_PROFILE // enable for profiling
+#endif
+
+
 // when building maketa we want to make sure to turn off qt
 #ifdef NO_TA_BASE
 // configure should handle these, but we make sure we don't include Qt at all, or Inventor for maketa
@@ -64,6 +70,9 @@
 #  ifdef TA_USE_INVENTOR
 #    undef TA_USE_INVENTOR
 #  endif
+#  ifdef TA_PROFILE
+#    undef TA_PROFILE
+#  endif
 // we don't try scanning Qt's header files when running maketa
 #elif defined(__MAKETA__)
 #  include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
@@ -74,7 +83,6 @@
 #    include "qtdefs.h" // declares common qt and related classes often used by pointer
 #  endif
 #endif
-
 
 // Operating System and Environment codes -- generally mirror those of Qt
 // NOTE: many of these are untested for TA/PDP, and are just included to mirror Qt

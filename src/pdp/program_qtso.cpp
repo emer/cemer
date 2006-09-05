@@ -687,22 +687,12 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
     if (dl) {
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
-  //TODO: might need to be put into a one-shot after showEvent
-//    pe->ExpandAll();
   }
-  
-/*  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of cols, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
+  connect(pe->items, SIGNAL(focusIn(QFocusEvent*)),
+    this, SLOT(ctrl_focusInEvent(QFocusEvent*)) );
+  // forward the signal used to update main menu when we have focus
+  connect(pe->items, SIGNAL(itemSelectionChanged()),
+    this, SIGNAL(view_UpdateUI()) );
 }
 
 iProgramPanel::~iProgramPanel() {
@@ -715,8 +705,6 @@ void iProgramPanel::AddedToPanelSet() {
 void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
-//TODO: maybe we should do something less crude???
-//  idt->updateConfig();
 }
 
 int iProgramPanel::EditAction(int ea) {
@@ -748,35 +736,8 @@ int iProgramPanel::GetEditActions() {
 }
 
 void iProgramPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-/*TODO  QListViewItemIterator it(list, QListViewItemIterator::Selected);
-  while (it.current()) {
-    lst.Add((taiListDataNode*)it.current());
-    ++it;
-  } */
+  pe->items->GetSelectedItems(lst);
 }
-
-/*void iProgramPanel::idt_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
-  //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
-  taiListDataNode* nd = (taiListDataNode*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  nd->FillContextMenu(sel_list, menu); // also calls link menu filler
-
-  //TODO: any for us last (ex. delete)
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
-}
-
-void iProgramPanel::list_selectionChanged() {
-  viewer_win()->UpdateUi();
-}*/
 
 void iProgramPanel::mnuEditAction(taiAction* mel) {
   EditAction(mel->usr_data.toInt());
@@ -787,7 +748,7 @@ bool iProgramPanel::HasChanged() {
 }
 
 bool iProgramPanel::ItemRemoving(ISelectable* /*item*/) {
-// TODO: maybe don't need to do anything??? itemChanged probably enough
+// note: don't need to do anything -- itemChanged is enough
   return false;
 }
 

@@ -130,7 +130,6 @@ if test x"$debug" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
   AC_DEFINE([DEBUG],,[Used when debugging])
-  AC_DEFINE([TA_PROFILE],,[Used when debugging])
   AC_SUBST([OPT_LEVEL],["-g -O0"])                       # No optimization in debug mode
   # Checks for headers
   AC_FUNC_ALLOCA

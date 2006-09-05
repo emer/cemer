@@ -1,4 +1,32 @@
+---------------------
+Main Viewing Redesign
+---------------------
+
+New Classes
+
+(A) indicates Abstract base
+
+DataViewer (A) -- anything common to all viewer types
+    can only assume its gui class is a QWidget
+  MainDataViewer -- for the main window; has stuff only applicable to the main win;
+     can contain subordinate viewers; widget is iMainDataViewer
+  FrameDataViewer (A) -- for principal contained views in main, such as browser, edit,
+     and T3 (in taMisc)
+    BrowseDataViewer -- for the tree browser
+    PanelDataViewer -- for the edit panels (can also be split)
+
+QMainWindow
+  iMainDataViewer -- the widget for a MainDataViewer
+
+QWidget (or QFrame)
+  iFrameDataViewer (A) -- widget that can be managed by a iMainDataViewer
+    iBrowseDataViewer -- for the tree browser
+    iPanelDataViewer -- for the edit panels
+
+
+------------------
 Main Menu Redesign
+------------------
  
 Goals
 

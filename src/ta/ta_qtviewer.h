@@ -1118,7 +1118,6 @@ public:
 
   virtual void		Closing(bool forced, bool& cancel) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
-  void 			ctrl_focusInEvent(QFocusEvent* ev); // can be called by a subcontrol when it gets focus; sets us as the clipboard handler
   virtual int		EditAction(int ea) {return 0;} //
   virtual int		GetEditActions() {return 0;} // after a change in selection, update the available edit actions (cut, copy, etc.)
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
@@ -1128,6 +1127,9 @@ public:
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
+
+public slots:
+  void 			ctrl_focusInEvent(QFocusEvent* ev); // can be called by a subcontrol when it gets focus; sets us as the clipboard handler
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
@@ -1139,6 +1141,11 @@ public: // IDataLinkClient interface
 protected slots:
   virtual void 		this_GetEditActionsEnabled(int& ea); // for when panel is clipboard handler
   virtual void 		this_EditAction(int param); // for when panel is clipboard handler
+
+#ifndef __MAKETA__
+signals:
+  void			view_UpdateUI(); // for when clipboard handler; forward a change slot to this to update main menu
+#endif
 
 protected:
   iTabView*		m_tabView; // tab view in which we are shown
@@ -1319,7 +1326,7 @@ signals:
     // hook to allow client to add items to end of context menu before it shows
   void			ItemDestroying(iTreeViewItem* item);
   void			ItemSelected(iTreeViewItem* item); // note: NULL if none
-  void			focusIn(QWidget* sender);
+  void			focusIn(QFocusEvent* ev);
 #endif
   
 public slots:

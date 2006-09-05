@@ -215,7 +215,7 @@ protected slots:
   virtual void		lvwDataTree_currentItemChanged(QTreeWidgetItem* curr, 
     QTreeWidgetItem* prev);
 //  void btnRecurse_toggled(bool on);
-  void			lvwDataTree_focusIn(QWidget* sender);
+  void			lvwDataTree_focusIn(QFocusEvent* ev);
   void			lvwDataTree_ItemDestroying(iTreeViewItem* item); // #IGNORE check if curItem
 
 protected:

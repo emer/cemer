@@ -3311,8 +3311,12 @@ iDataPanel::~iDataPanel() {
 }
 
 void iDataPanel::ctrl_focusInEvent(QFocusEvent* ev) {
-  viewer_win()->SetClipboardHandler(this, SLOT(this_GetEditActionsEnabled(int&)),
-      SLOT(this_EditAction(int)) );
+  viewer_win()->SetClipboardHandler(this, 
+    SLOT(this_GetEditActionsEnabled(int&)),
+    SLOT(this_EditAction(int)),
+    NULL,
+    SIGNAL(view_UpdateUI())
+  );
 }
 
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
@@ -3652,7 +3656,7 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
-  emit focusIn(this);
+  emit focusIn(ev);
 }
 
 void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {

@@ -471,8 +471,8 @@ void iDataBrowserBase::Constr_Body_impl() {
       this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)) );
   connect(lvwDataTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
       this, SLOT(lvwDataTree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
-  connect(lvwDataTree, SIGNAL(focusIn(QWidget*)),
-      this, SLOT(lvwDataTree_focusIn(QWidget*)) );
+  connect(lvwDataTree, SIGNAL(focusIn(QFocusEvent*)),
+      this, SLOT(lvwDataTree_focusIn(QFocusEvent*)) );
   connect(lvwDataTree, SIGNAL(ItemDestroying(iTreeViewItem*)),
       this, SLOT(lvwDataTree_ItemDestroying(iTreeViewItem*)) );
 
@@ -558,7 +558,7 @@ void iDataBrowserBase::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& 
   FillContextMenu(menu);
 }
 
-void iDataBrowserBase::lvwDataTree_focusIn(QWidget*) {
+void iDataBrowserBase::lvwDataTree_focusIn(QFocusEvent*) {
   SetThisAsHandler();
 }
 
