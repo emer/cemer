@@ -1246,6 +1246,7 @@ int Program::Cont_impl() {
     script->Cont();
   //note: shared var state likely changed, so update gui
   DataChanged(DCR_ITEM_UPDATED);
+  script_compiled = true; // override any run-generated changes!!
   return ret_val;
 }
 
