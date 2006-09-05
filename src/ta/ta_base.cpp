@@ -2163,7 +2163,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
     new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     int new_idx;
-    if (itm_idx <= 0) 
+    if (itm_idx < 0) 
       new_idx = 0; // if dest is list, then insert at beginning
     else if (itm_idx == (size - 1)) 
       new_idx = -1; // if clicked on last, then insert at end
