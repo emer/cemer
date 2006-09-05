@@ -326,7 +326,8 @@ void taBase::Own(TAPtr it, TAPtr onr) {
 }
 
 void taBase::Own(taBase& it, TAPtr onr) {
-  if (it.GetOwner() == onr) return; // same owner, redundant
+//was causing list transfers to break
+//  if (it.GetOwner() == onr) return; // same owner, redundant
   
   Ref(it);
   bool prv_own = (it.GetOwner() != NULL);
