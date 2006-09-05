@@ -304,13 +304,13 @@ public:
   // #IGNORE get the last delimiter ('.' or '[') position in the path
 
 public:
-  static const KeyString key_name; // "name"
-  static const KeyString key_type; // "type"
-  static const KeyString key_desc; // "desc"
-  static const KeyString key_disp_name; // "disp_name" -- DisplayName
+  static const KeyString key_name; // #IGNORE "name"
+  static const KeyString key_type; // #IGNORE "type"
+  static const KeyString key_desc; // #IGNORE "desc"
+  static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName
   
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
-    //default keys are: name, type, desc
+  // #IGNORE default keys are: name, type, desc
 #ifdef TA_GUI
 public:
 //friend class tabDataLink;
@@ -1057,10 +1057,10 @@ public:
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
   override int		NumListCols() const {return 3;} // number of columns in a default list view for this list type
-  override const KeyString GetListColKey(int col) const; // get the key for the default list view
-  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+  override const KeyString GetListColKey(int col) const; // #IGNORE get the key for the default list view
+  override String	GetColHeading(const KeyString& key) const; // #IGNORE header text for the indicated column
   override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
-    int itm_idx = -1) const;
+    int itm_idx = -1) const;	// #IGNORE
 
   void 	Initialize();
   void	Destroy();
@@ -1186,7 +1186,7 @@ public:
 
 
 class TA_API taArray_base : public taOBase, public taArray_impl {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
+  // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
 public:
   ostream& 	Output(ostream& strm, int indent = 0) const;
   ostream& 	OutputR(ostream& strm, int indent = 0) const

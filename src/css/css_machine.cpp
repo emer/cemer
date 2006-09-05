@@ -853,16 +853,16 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) c
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
   }
-//   int mdx;
-//   MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
-  void* mbr = NULL;
-  MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);	// skips paths!
+  int mdx;
+  MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
+//   void* mbr = NULL;
+//   MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);	// skips paths!
   if(!md) {
     cssMisc::Error(prog, "MembeR not found:", String(memb), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
-  // return GetMemberEl_impl(typ, base, md); // for just 1st order search
-  return GetFromTA_impl(md->type, mbr, md->name, md);
+  return GetMemberEl_impl(typ, base, md); // for just 1st order search
+//   return GetFromTA_impl(md->type, mbr, md->name, md);
 }
 
 cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {

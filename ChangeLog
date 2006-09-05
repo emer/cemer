@@ -1,3 +1,13 @@
+2006-09-04  Randall C. O'Reilly  <oreilly@shadow.colorado.edu>
+
+	* src/ta/ta_base.h (TA_SIMPLE_BASEFUNS): added this macro +
+	SIMPLE_INITLINKS and SIMPLE_CUTLINKS, which call
+	Init/CutLinks_taAuto, which just do own (init) and cutlinks on taBase members..
+
+	* src/ta/ta_group.cpp: fixed arg signature of FindMembeR in
+	taGroup_impl to match others -- wasn't being called properly,
+	causing shortcut paths to not work anymore in css..
+
 2006-07-31  Randall O'Reilly  <oreilly@duo.local>
 
 	* src/css/css_machine.h: added 'info' command and moved lots of other basic commands

@@ -376,12 +376,12 @@ public:
   // browsing -- browse client lists must override
   virtual int		NumListCols() const {return 0;} // number of columns in a list view for this item type
   virtual const KeyString GetListColKey(int col) const {return _nilKeyString;}
-    // col key for the default list column
+    // #IGNORE col key for the default list column
   virtual String	GetColHeading(const KeyString& key) const {return _nilKeyString;} 
-   // header text for the given key
+   // #IGNORE header text for the given key
   virtual String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
     int itm_idx = -1) const {return _nilKeyString;}
-    // itm_idx is a hint from source, -1 means not specified or ignore
+    // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
 
   // output
   virtual void 	List(ostream& strm=cout) const; 	// List the group items
@@ -541,7 +541,7 @@ public:
 
   virtual const void*		SafeEl_(int) const;
   // #IGNORE element at posn
-  virtual void*		FastEl_(int) = 0;//		{ return NULL; }
+  virtual void*		FastEl_(int)	{ return NULL; }
   // #IGNORE element at posn
 // compulsory element accessor and manip functions 
   virtual const void*	FastEl_(int i) const 

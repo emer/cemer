@@ -764,7 +764,7 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
   String id1 = cssMisc::Indent(indent_level+1);
   String id2 = cssMisc::Indent(indent_level+2);
 
-  String rval = cssMisc::Indent(indent_level) + "{\n";
+  String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_var->name + "\n";
   rval += id1 + "BasicDataLoop* loop = *(this" + GetPath(NULL,program()) + ");\n";
   rval += id1 + "loop->item_idx_list.EnforceSize(" + data_var->name + "->itemCount());\n";
   rval += id1 + "loop->item_idx_list.FillSeq();\n";
@@ -781,8 +781,8 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
 }
 
 const String BasicDataLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "}\n";
-  rval += inherited::GenCssPost_impl(indent_level);
+  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
+  rval += cssMisc::Indent(indent_level) + "} // BasicDataLoop " + data_var->name + "\n";
   return rval;
 }
 
@@ -1268,7 +1268,7 @@ void Program::Run() {
 } 
 
 void Program::Step() {
-  if(step_prog.ptr() == NULL) {
+  if(!step_prog) {
     if(sub_progs.size > 0) {	// set to last guy as a default!
       ProgramCall* prg = (ProgramCall*)sub_progs.Peek();
       step_prog = prg->target.ptr();

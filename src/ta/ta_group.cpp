@@ -293,7 +293,7 @@ TAPtr taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
   return NULL;
 }
 
-MemberDef* taGroup_impl::FindMembeR(const char* nm, void*& ptr) const {
+MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
   String idx_str = nm;
   idx_str = idx_str.before(']');
   if(idx_str != "") {

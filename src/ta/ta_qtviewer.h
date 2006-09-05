@@ -187,7 +187,7 @@ public:
   override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
-  override String	GetColText(const KeyString& key, int itm_idx = -1) const;
+  override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
 
   DL_FUNS(tabDataLink); //
 
@@ -241,10 +241,10 @@ public:
   
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const; // number of columns in a list view for this item type
-  override const KeyString GetListColKey(int col) const; 
-  override String	GetColHeading(const KeyString& key) const;
+  override const KeyString GetListColKey(int col) const; // #IGNORE
+  override String	GetColHeading(const KeyString& key) const; // #IGNORE
   override String	ChildGetColText(taDataLink* child, const KeyString& key, 
-    int itm_idx = -1) const;
+    int itm_idx = -1) const;	// #IGNORE
   override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
 
   tabListDataLink(taList_impl* data_);

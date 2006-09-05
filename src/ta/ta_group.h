@@ -97,7 +97,7 @@ public:
 
   TAPtr 	New(int no=0, TypeDef* typ = NULL);
 
-  MemberDef* 	FindMembeR(const char* nm, void*& ptr) const;    // extended to search in the group
+  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;    // extended to search in the group
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const; // extended to search in the group
 
   // IO routines
