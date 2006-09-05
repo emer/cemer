@@ -163,7 +163,8 @@ void taPtrList_impl::UpdateIndex_(int idx) {
 }
 
 bool taPtrList_impl::Move(int fm, int to) {
-  if((size == 0) || (fm >= size) || (to >= size)) return false;
+  if (fm == to) return true; // nop
+  if ((fm < 0) || (fm >= size) || (to < 0) || (to >= size)) return false;
 
   void* itm = el[fm];
   int j;
