@@ -1433,7 +1433,7 @@ protected:
 //nn  void 			dragEntered(); // override
 //nn  void 			dragLeft(); // override
   override void		dropped(const QMimeData* mime, const QPoint& pos);
-  virtual void		DataChanged_impl(int dcr, void* op1, void* op2) {} // called for each node when the data item has changed, esp. ex lists and groups
+  virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
 private:
   void			init(const String& tree_name, taiDataLink* link_, 

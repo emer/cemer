@@ -3829,6 +3829,24 @@ void iTreeViewItem::CreateChildren() {
   DecorateDataNode();
 }
 
+void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  if (dcr != DCR_ITEM_UPDATED) return;
+  if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
+    taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
+    if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...
+      String nm = link()->GetName();
+      if (nm.empty())
+        nm = "(" + link()->GetDataTypeDef()->name + ")";
+      this->setText(0, nm);
+      return;
+    }
+    taiDataLink* dl = par_nd->link();
+    if (dl == NULL) return; // shouldn't happen...
+    par_nd->UpdateChildNames();
+  }
+  DecorateDataNode();
+}
+
 void iTreeViewItem::DataLinkDestroying(taDataLink*) {
   delete this;
 }
@@ -4070,49 +4088,6 @@ MemberDef* taiTreeDataNode::par_md() const {
   return (par) ? par->md() : NULL;
 }
 
-
-//////////////////////////////////
-//   tabTreeDataNode 		//
-//////////////////////////////////
-
-tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
-{
-  init(link_, dn_flags_);
-}
-
-void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
-}
-
-tabTreeDataNode::~tabTreeDataNode()
-{
-}
-
-void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr != DCR_ITEM_UPDATED) return;
-  if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
-    taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
-    if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...
-      String nm = link()->GetName();
-      if (nm.empty())
-        nm = "(" + link()->GetDataTypeDef()->name + ")";
-      this->setText(0, nm);
-      return;
-    }
-    taiDataLink* dl = par_nd->link();
-    if (dl == NULL) return; // shouldn't happen...
-    par_nd->UpdateChildNames();
-  }
-}
 
 
 //////////////////////////////////

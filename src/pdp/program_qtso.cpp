@@ -456,11 +456,13 @@ void iProgramEditor::init() {
   
   items = new iTreeView(host, this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
-  items->setColumnCount(2);
+  items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
   items->setHeaderText(0, "Program Item");
-  items->setHeaderText(1, "Item Description");
+  items->setHeaderText(1, "Item Detail");
+  items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
+  items->setColKey(2, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
   
   
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );

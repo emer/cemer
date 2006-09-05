@@ -74,6 +74,32 @@
 // the creation/teardown sequences.
 
 
+//////////////////////////////////
+//   tabTreeDataNode 		//
+//////////////////////////////////
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
+}
+
+tabTreeDataNode::~tabTreeDataNode()
+{
+}
+
+
 
 //////////////////////////////////
 //   taiListTreeDataNode 	//
