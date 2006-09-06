@@ -303,14 +303,15 @@ public:
   static int		GetLastPathDelimPos(const String& path);
   // #IGNORE get the last delimiter ('.' or '[') position in the path
 
-public:
-  static const KeyString key_name; // #IGNORE "name"
-  static const KeyString key_type; // #IGNORE "type"
-  static const KeyString key_desc; // #IGNORE "desc"
-  static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName
+public: // standard keys for standard gui descriptions, mostly for list columns
+  static const KeyString key_name; // #IGNORE "name" -- Name, note: can easily be empty
+  static const KeyString key_type; // #IGNORE "type" -- def to typename, but some like progvar append their own subtype
+  static const KeyString key_type_desc; // #IGNORE "type_desc" -- static type description
+  static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
+  static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
   
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
-  // #IGNORE default keys are: name, type, desc
+  // #IGNORE default keys are: name, type, desc, disp_name
 #ifdef TA_GUI
 public:
 //friend class tabDataLink;
@@ -387,8 +388,8 @@ public:
 
   virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
-  virtual String	GetDisplayName() const 	{ return GetName(); } // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names)
-  const String		GetNameNonEmpty() const; // #IGNORE for contexts that must display something
+  virtual String	GetDisplayName() const; // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names) -- will/must never be empty
+  virtual String	GetDesc() const {return _nilString;} // a type-specific "description" of the instance
   virtual bool		SetFileName(const String& val)  {return false;} // #IGNORE
   virtual String	GetFileName() const 	{ return _nilString; } // #IGNORE
   taFiler*		GetFiler(TypeItem* td = NULL);
@@ -962,7 +963,7 @@ class taList_impl;
 typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 
 class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
-  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##HIDDEN_INLINE implementation for a taBase list class
+  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 typedef taBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;

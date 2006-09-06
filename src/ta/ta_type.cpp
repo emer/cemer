@@ -2004,6 +2004,22 @@ TypeSpace::~TypeSpace() {
 //   TypeItem		//
 //////////////////////////
 
+const String TypeItem::opt_show("SHOW");
+const String TypeItem::opt_no_show("NO_SHOW");
+const String TypeItem::opt_hidden("HIDDEN");
+const String TypeItem::opt_read_only("READ_ONLY");
+const String TypeItem::opt_detail("DETAIL");
+const String TypeItem::opt_expert("EXPERT");
+const String TypeItem::opt_edit_show("EDIT_SHOW");
+const String TypeItem::opt_edit_no_show("EDIT_NO_SHOW");
+const String TypeItem::opt_edit_hidden("EDIT_HIDDEN");
+const String TypeItem::opt_edit_read_only("EDIT_READ_ONLY");
+const String TypeItem::opt_edit_detail("EDIT_DETAIL");
+const String TypeItem::opt_edit_expert("EDIT_EXPERT");
+
+const String TypeItem::opt_bits("BITS");
+const String TypeItem::opt_instance("INSTANCE");
+
 TypeItem::TypeItem()
 :inherited()
 {
@@ -2037,7 +2053,7 @@ void TypeItem::Copy(const TypeItem& cp) {
   lists		= cp.lists;
 }
 
-String TypeItem::OptionAfter(const char* op) const {
+String TypeItem::OptionAfter(const String& op) const {
   int opt;
   String tmp_label;
   if((opt = opts.FindContains(op,-1)) >= 0) { // search bckwrds for overrides..
@@ -2127,6 +2143,9 @@ void MemberDef::Initialize() {
 #ifdef TA_GUI
   im = NULL;
 #endif
+  show_any = 0; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  show_edit = 0;
+  show_tree = 0;
 }
 
 MemberDef::MemberDef()
@@ -2171,6 +2190,10 @@ void MemberDef::Copy(const MemberDef& cp) {
   fun_ptr = cp.fun_ptr;
 // don't copy because delete is not ref counted (todo:)
 //  im = cp.im;
+// always invalidate show bits, so they get redone in our new context
+  show_any = 0; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  show_edit = 0;
+  show_tree = 0;
 }
 
 #ifdef TA_NO_GUI // Qt version is in ta_type_qt.cc
@@ -2209,31 +2232,85 @@ const Variant MemberDef::GetValVar(const void* base, void* par) const {
   return type->GetValVar(GetOff(base), par, this); //TODO: no par???
 }
 
-bool MemberDef::ShowMember(taMisc::ShowMembs show) const {
-  // check for always show or always not
-  if (HasOption("SHOW"))
-    return true;			// always show
-  if (HasOption("NO_SHOW"))
-    return false;			// never show
-  // note: show uses ==, show_gui just needs flag -- done for 3.x compatibility
+bool MemberDef::ShowMember(taMisc::ShowMembs show,
+  TypeItem::ShowContext show_context) const 
+{
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
   else if (show == taMisc::USE_SHOW_DEF)
     show = taMisc::show;
-  if ((show & taMisc::NO_HIDDEN) && (HasOption("HIDDEN")))
-    return false;
-  if ((show & taMisc::NO_READ_ONLY) && (HasOption("READ_ONLY")))
-    return false;
-  if ((show & taMisc::NO_DETAIL) && (HasOption("DETAIL")))
-    return false;
-  if ((show & taMisc::NO_EXPERT) && (HasOption("EXPERT")))
-    return false;
-
-  if (show & taMisc::NO_NORMAL)
-    return false;
   
-  return true;
+  // check if cache has been done yet
+  if (show_any == 0) ShowMember_CalcCache();
+  byte show_eff = 0;
+  // default viewability for edit is "any OR edit"
+  // default viewability for tree is "tree", ie, any not good enough
+//TODO: this is not quite right, ex. "READ_ONLY" is a functional desig, not viewability
+// SO we prob need to finesse each one in the Calc, then just drive on the single guy
+  switch (show_context) {
+  case SC_ANY: show_eff = show_any; break;
+  case SC_EDIT: show_eff = show_any | show_edit; break;
+  case SC_TREE: show_eff = show_tree; break;
+  //note: should be no default, let compiler complain if any added
+  }
+  // our show_eff is the positives (what it is) so if there is nothing there, then
+  // we clearly can't show
+  // if there is something (a positive) then bit-AND with the
+  // show, which is negatives (what not to show), and if anything remains, don't show!
+  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
+  return (show_eff) && !(show_eff & (byte)show);
 }
+  
+void MemberDef::ShowMember_CalcCache() const {
+  // note that "normal" is a special case, which depends both on context and
+  // on whether other bits are set, so we calc those individually
+  ShowMember_CalcCache_impl(show_any, _nilString);
+  if (!(show_any & (byte)taMisc::NORM_MEMBS)) // in "any" context, default is "normal"
+    show_any |= taMisc::NO_NORMAL;
+  
+  ShowMember_CalcCache_impl(show_edit, "_EDIT");
+  if (!(show_edit & (byte)taMisc::NORM_MEMBS)) // ditto in "edit" context, default is "normal"
+    show_edit |= taMisc::NO_NORMAL;
+  
+  ShowMember_CalcCache_impl(show_tree, "_TREE");
+  //NOTE: lists/groups, we only show by default in lists/groups, embedded lists/groups
+#ifndef NO_TA_BASE
+  if ((!(show_tree & (byte)taMisc::NORM_MEMBS)) && 
+    type->DerivesFrom(&TA_taList_impl)) // in "any" context, default is "normal"
+    show_tree |= taMisc::NO_NORMAL;
+#endif
+  
+//TODO: replace memb #BROWSE directives with #SHOW_TREE, and then remove this:
+  if (HasOption("BROWSE"))
+    show_tree |= (byte)taMisc::SHOW_CHECK_MASK;
+}
+
+void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
+  show = 0x80; // set the "done" flag
+  
+  //note: keep in mind that these show bits are the opposite of the show flags,
+  // i.e show flags are all negative, whereas these are all positive (bit = is that type)
+  
+  // if NO_SHOW, all bits zero, never shows
+  if (HasOption("NO_SHOW" + suff) || type->HasOption("MEMB_NO_SHOW" + suff))
+    return; 
+    
+  // check for always show -- if so, mark all dudes
+  if (HasOption("SHOW" + suff) || type->HasOption("MEMB_SHOW" + suff)) {
+    show |= (byte)taMisc::SHOW_CHECK_MASK;
+    return;
+  }
+  // the following are all cumulative, not mutually exclusive
+  if (HasOption("HIDDEN" + suff) || type->HasOption("MEMB_HIDDEN" + suff))
+    show |= (byte)taMisc::NO_HIDDEN;
+  if (HasOption("READ_ONLY" + suff) || type->HasOption("MEMB_READ_ONLY" + suff))
+    show |= (byte)taMisc::NO_READ_ONLY;
+  if (HasOption("DETAIL" + suff) || type->HasOption("MEMB_DETAIL" + suff))
+    show |= (byte)taMisc::NO_DETAIL;
+  if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
+    show |= (byte)taMisc::NO_EXPERT;
+}
+
 
 
 
@@ -2802,7 +2879,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   inh_opts.Duplicate(it->inh_opts);	// and so on
 
   if(InheritsFrom(TA_taBase))
-    opts.AddUnique("INSTANCE");	// ta_bases always have an instance
+    opts.AddUnique(opt_instance);	// ta_bases always have an instance
 
   // no need to get all this junk for internals
   if(internal && !InheritsFormal(&TA_template)) return it;
@@ -3110,7 +3187,7 @@ const String TypeDef::Get_C_EnumString(int enum_val) const {
   STRING_BUF(rval, 80); // extends if needed
   
   bool made = false; // indicates we succeeded
-  if (HasOption("BITS")) {
+  if (HasOption(opt_bits)) {
     // compose the result from bits
 //TODO:
   } else { // no bits
@@ -3296,14 +3373,14 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     if(fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
-      return "NULL";
+      return String::con_NULL;
     return String((intptr_t)*((void**)base));
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
       bool b = *((bool*)base);
       switch (sc) {
-      case SC_STREAMING: return (b) ? String::one() : String::zero();
+      case SC_STREAMING: return (b) ? String::con_1 : String::con_0;
       default:
         return String(b);
       }
@@ -3376,7 +3453,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       if (var.type() == Variant::T_Invalid)
         return _nilString;
         //NOTE: maybe we should indirect, rather than return NULL directly...
-      if (var.isNull()) return "NULL";
+      if (var.isNull()) return String::con_NULL;
       var.GetRepInfo(typ, var_base);
       return typ->GetValStr(var_base, NULL, memb_def, sc);
     }
@@ -3466,7 +3543,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
           }
         } else
           return String((intptr_t)rbase);
-      } else  return "NULL";
+      } else  return String::con_NULL;
     }
 #endif
     else if(DerivesFormal(TA_struct))
@@ -3494,7 +3571,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 	if(rbase != NULL)
 	  return String((intptr_t)rbase);
 	else
-	  return "NULL";
+	  return String::con_NULL;
       }
     }
     else
@@ -3506,7 +3583,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       if (td) {
         return td->GetPathName();
       } else
-	return "NULL";
+	return String::con_NULL;
     }
     else if (DerivesFrom(TA_MemberDef)) {
       MemberDef* md = *((MemberDef**)base);
@@ -3516,7 +3593,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       if (md) {
         return md->GetPathName();
       } else
-	return "NULL";
+	return String::con_NULL;
     }
     else if (DerivesFrom(TA_MethodDef)) {
       MethodDef* md = *((MethodDef**)base);
@@ -3526,7 +3603,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       if (md) {
         return md->GetPathName();
       } else
-	return "NULL";
+	return String::con_NULL;
     }
 //    else
 //      return String((int)*((void**)base));
@@ -3549,7 +3626,7 @@ const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb
     if (fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
-      return Variant((void*)NULL);//"NULL";
+      return Variant((void*)NULL);//String::con_NULL;
     else 
       return String((intptr_t)*((void**)base)); //TODO: is this the best??
   }
@@ -3735,7 +3812,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {
       taList_impl* tl = (taList_impl*)base;
-      if(val != "NULL") {
+      if(val != String::con_NULL) {
 	String tmp = val;
 	if(tmp.contains('(')) {
 	  tmp = tmp.after('(');
@@ -3764,7 +3841,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
     else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
       TAPtr bs = NULL;
-      if ((val != "NULL") && (val != "Null")) {
+      if ((val != String::con_NULL) && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
 	if (sc == SC_STREAMING) {
 	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
@@ -3853,7 +3930,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 #ifndef NO_TA_BASE
     if(DerivesFrom(TA_taBase) && (tabMisc::root)) {
       TAPtr bs = NULL;
-      if((val != "NULL") && (val != "Null")) {
+      if((val != String::con_NULL) && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
 	if (sc == SC_STREAMING) {
 	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);

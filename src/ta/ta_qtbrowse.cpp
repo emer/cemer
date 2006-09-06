@@ -146,7 +146,7 @@ void tabListTreeDataNode::CreateChildren_impl() {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
     void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (typ == NULL) continue; //TODO: maybe we should put a marker item in list???
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
     if (typ->InheritsFrom(&TA_taBase)) {
@@ -154,7 +154,7 @@ void tabListTreeDataNode::CreateChildren_impl() {
     }
 
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-    if (dl == NULL) continue; // shouldn't happen...
+    if (!dl) continue; // shouldn't happen... unless null
 
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
@@ -172,14 +172,14 @@ void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node, taiTreeDataN
 {
   taPtrList_impl* list = data();
   TypeDef* typ = list->GetElType();
-  if (typ == NULL) return; //TODO: maybe we should put a marker item in list???
+  if (!typ) return; //TODO: maybe we should put a marker item in list???
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-  if (dl == NULL) return; // shouldn't happen...
+  if (!dl) return; // shouldn't happen unless null...
   //note: we don't make name because it is updated anyway
   //taiTreeDataNode* dn =
   dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after, "",
@@ -250,14 +250,14 @@ void tabListTreeDataNode::UpdateListNames() {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
     void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (typ == NULL) continue; //TODO: maybe we should put a marker item in list???
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-    if (dl == NULL) continue; // shouldn't happen...
+    if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
@@ -302,14 +302,14 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
     void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (typ == NULL) continue; //TODO: maybe we should put a marker item in list???
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-    if (dl == NULL) continue; // shouldn't happen...
+    if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
@@ -328,14 +328,14 @@ void tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node, void* el)
   taSubGroup* gp = &data()->gp;
   TypeDef* typ = gp->GetElType();
   // the subgroups are themselves taGroup items
-  if (typ == NULL) return; //TODO: maybe we should put a marker item in list???
+  if (!typ) return; //TODO: maybe we should put a marker item in list???
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-  if (dl == NULL) return; // shouldn't happen...
+  if (!dl) return; // shouldn't happen unless null...
 
 //  taiTreeDataNode* dn =
   dl->CreateTreeDataNode(NULL, this, after_node, "",
@@ -393,14 +393,14 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
     void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (typ == NULL) continue; //TODO: maybe we should put a marker item in list???
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
     if (typ->InheritsFrom(&TA_taBase)) {
         typ = ((taBase*)el)->GetTypeDef();
     }
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-    if (dl == NULL) continue; // shouldn't happen...
+    if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
@@ -639,7 +639,7 @@ iDataBrowser::~iDataBrowser()
 void iDataBrowser::ApplyRoot() {
   if (!m_root) return;
   taiDataLink* dl = taiViewType::StatGetDataLink(m_root, m_typ);
-  if (dl == NULL) return; // shouldn't happen...
+  if (!dl) return; // shouldn't happen...
 
   // by definition, we should always be able to create a new browser on root of a browser
   int dn_flags_ = iTreeViewItem::DNF_CAN_BROWSE;

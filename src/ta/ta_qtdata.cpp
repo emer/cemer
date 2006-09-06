@@ -1683,7 +1683,7 @@ bool taiActions::GetImage_impl(const Variant& usr) {
     if (!itm->canSelect()) continue;
     if (itm->usr_data == usr) {
 //TODO Qt4: make sure this case is automatically handled now
-//      if (usr.isPtrType() && (usr.toPtr() == NULL) && (itm->text() != "NULL"))
+//      if (usr.isPtrType() && (usr.toPtr() == NULL) && (itm->text() != String::con_NULL))
 //	continue;
       setCurSel(itm);
       return true;
@@ -1742,7 +1742,7 @@ void taiActions::setCurSel(taiAction* value) {
       cur_sel->setChecked(true);
       setLabel(cur_sel->text());
     } else { //NOTE: special case of going from legal radio item to no item -- set label to NULL
-      setLabel("NULL");
+      setLabel(String::con_NULL);
     }
   }
 }
@@ -1913,7 +1913,7 @@ void taiMenu::Update() {
     if ((cur_sel != NULL) && ((cur_sel->sel_type & radio) && (cur_sel->radio_grp != -1)))
       setLabel(cur_sel->label);
 //    else if (cur_sel == NULL)
-//      setLabel("NULL");
+//      setLabel(String::con_NULL);
   }
 }*/
 /* OBS
@@ -1921,7 +1921,7 @@ void taiMenu::Update() {
   if ((cur_sel != NULL) && ((sel_type == radio_update) || (sel_type == normal_update)))
     SetMLabel(cur_sel->label);
   else if(cur_sel == NULL)
-    SetMLabel("NULL");
+    SetMLabel(String::con_NULL);
   return;
 }
 */
@@ -2811,7 +2811,7 @@ void taiItemPtrBase::GetImage(void* cur_sel, TypeDef* targ_typ_) {
 const String taiItemPtrBase::labelText() {
   String nm;
   if (m_sel) nm = labelNameNonNull();
-  else       nm = "NULL";
+  else       nm = String::con_NULL;
   return itemTag() + nm + "...";
 }
 
@@ -3220,7 +3220,7 @@ int taiEnumTypeDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   // for top level, we need to add NULL choice
   if (!top_item) {
     if (HasFlag(flgNullOk)) {
-      ic->AddItem("NULL", top_item, (void*)NULL); //note: no desc
+      ic->AddItem(String::con_NULL, top_item, (void*)NULL); //note: no desc
       ++rval;
     }
   }
@@ -3321,12 +3321,13 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
     if ((scope_ref) && !btmp->SameScope(scope_ref))
       continue;
-    QTreeWidgetItem* item = ic->AddItem(btmp->GetNameNonEmpty(), top_item, (void*)btmp); 
+    QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
+      top_item, (void*)btmp); 
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     TAPtr own = btmp->GetOwner();
     if (own) {
-      item->setData(2, Qt::DisplayRole, own->GetNameNonEmpty());
-      item->setData(3, Qt::DisplayRole, own->GetTypeDef()->name);
+      item->setData(2, Qt::DisplayRole, own->GetColText(taBase::key_disp_name));
+      item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
     }
     ++rval;
   }
@@ -3364,7 +3365,7 @@ const String taiTokenPtrButton::headerText(int index, int view) const {
 }
 
 const String taiTokenPtrButton::labelNameNonNull() const {
-  return token()->GetNameNonEmpty();
+  return token()->GetDisplayName();
 }
 
 const String taiTokenPtrButton::viewText(int index) const {
@@ -3499,7 +3500,7 @@ void taiElBase::setCur_obj(TAPtr value, bool do_chng) {
   ta_actions->GetImageByData(Variant(value));
 /*TODO Qt4 -- this should happen automatically...
   if (value == NULL)
-    ta_actions->setLabel("NULL");
+    ta_actions->setLabel(String::con_NULL);
   else
     ta_actions->setLabel(value->GetName()); */
   if (do_chng)
@@ -3575,7 +3576,7 @@ void taiToken::GetUpdateMenu(const taiMenuAction* actn) {
       ta_actions->AddItem("Edit...", taiMenu::normal, taiAction::action, this, SLOT(Edit()) );
     ta_actions->AddSep();
     if (HasFlag(flgNullOk)) {
-      taiAction* mel = ta_actions->AddItem("NULL", taiMenu::radio, actn, (void*)NULL);
+      taiAction* mel = ta_actions->AddItem(String::con_NULL, taiMenu::radio, actn, (void*)NULL);
       mel->connect(taiAction::men_act, this, SLOT(ItemChosen(taiAction*)));
     }
   }
@@ -3790,7 +3791,7 @@ void taiSubToken::UpdateMenu(taiMenuAction* actn){
 
 void taiSubToken::GetMenu(taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
-    ta_actions->AddItem("NULL", taiMenu::use_default, actn, (void*)NULL);
+    ta_actions->AddItem(String::con_NULL, taiMenu::use_default, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
     ta_actions->AddItem("Edit", taiMenu::normal,
       taiAction::action, this, SLOT(Edit()) );
@@ -4070,7 +4071,7 @@ void taiTypeHier::GetImage(TypeDef* ths) {
 
 void taiTypeHier::GetMenu(const taiMenuAction* acn) {
   if (HasFlag(flgNullOk))
-    ta_actions->AddItem("NULL", taiMenu::use_default, acn, (void*)NULL);
+    ta_actions->AddItem(String::con_NULL, taiMenu::use_default, acn, (void*)NULL);
   if (enum_mode)
     GetMenu_Enum_impl(ta_actions, typ, acn);
   else

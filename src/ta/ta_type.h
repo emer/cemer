@@ -308,6 +308,8 @@ public:
     NO_RO_DET 		= 0x06, // #NO_BIT
     NO_HID_RO_DET 	= 0x07, // #NO_BIT
     NORM_MEMBS 		= 0x17, // #NO_BIT
+    
+    SHOW_CHECK_MASK	= 0x1F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
     USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
     USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
@@ -349,14 +351,14 @@ public:
   static String		version_no; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
 
-  static bool		in_init;	// #READ_ONLY #NO_SAVE true if in ta initialization function
-  static bool		quitting;	// #READ_ONLY #NO_SAVE true once we are quitting
-  static bool		not_constr;	// #READ_ONLY true if ta types are not yet constructed (or are destructed)
+  static bool		in_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
+  static bool		quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true once we are quitting
+  static bool		not_constr;	// #READ_ONLY #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
-  static bool		gui_active;	// #READ_ONLY #NO_SAVE if gui has been started up or not
-  static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE true if currently loading an object
-  static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE true if currently saving an object
-  static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE true if currently duplicating an object
+  static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
+  static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
+  static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
+  static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
 
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
@@ -971,6 +973,28 @@ class TA_API TypeItem: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
 INHERITED(taRefN)
 public:
+  enum ShowContext {
+    SC_ANY,		// any context -- directives like "SHOW"
+    SC_EDIT,		// for in edit dialogs -- directives like "SHOW_EDIT"
+    SC_TREE		// in tree views (browsing) -- directives like "SHOW_TREE"
+  };
+  
+  static const String opt_show; // "SHOW"
+  static const String opt_no_show; // "NO_SHOW"
+  static const String opt_hidden; // "HIDDEN"
+  static const String opt_read_only; // "READ_ONLY"
+  static const String opt_detail; // "DETAIL"
+  static const String opt_expert; // "EXPERT"
+  static const String opt_edit_show; // "EDIT_SHOW"
+  static const String opt_edit_no_show; // "EDIT_NO_SHOW"
+  static const String opt_edit_hidden; // "EDIT_HIDDEN"
+  static const String opt_edit_read_only; // "EDIT_READ_ONLY"
+  static const String opt_edit_detail; // "EDIT_DETAIL"
+  static const String opt_edit_expert; // "EDIT_EXPERT"
+  
+  static const String opt_bits; // "BITS"
+  static const String opt_instance; // "INSTANCE"
+  
   int		idx;		// the index number for this type
   String	name;
   String	desc;		// a description
@@ -983,9 +1007,9 @@ public:
     // name used for saving a reference in stream files, can be used to lookup again
     
   void		Copy(const TypeItem& cp);
-  bool		HasOption(const char* op) const { return (opts.Find(op) >= 0); }
+  bool		HasOption(const String& op) const { return (opts.Find(op) >= 0); }
     // check if option is set
-  virtual String	OptionAfter(const char* op) const;
+  virtual String	OptionAfter(const String& op) const;
   // return portion of option after given option header
   virtual String	GetLabel() const;
   // checks for option of LABEL_xxx and returns it or name
@@ -1063,7 +1087,8 @@ public:
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool		ShowMember(taMisc::ShowMembs show = taMisc::USE_SHOW_DEF) const;
+  bool		ShowMember(taMisc::ShowMembs show = taMisc::USE_SHOW_DEF,
+    TypeItem::ShowContext show_context = TypeItem::SC_ANY) const;
   // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
   void		CopyFromSameType(void* trg_base, void* src_base);
@@ -1082,7 +1107,15 @@ public:
   int	 	Dump_SaveR(ostream& strm, void* base, void* par, int indent);
   int	 	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
-  int	 	Dump_Load(istream& strm, void* base, void* par);
+  int	 	Dump_Load(istream& strm, void* base, void* par); //
+protected:
+  // note: bits in the show* vars are set to indicate the value, ie READ_ONLY has that bit set
+  mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  mutable byte	show_edit;
+  mutable byte	show_tree;
+
+  void		ShowMember_CalcCache() const; // called when show_any=0, ie, not configured yet
+  void		ShowMember_CalcCache_impl(byte& show, const String& suff) const;
 };
 
 class TA_API MethodDef : public TypeItem {// defines a class method

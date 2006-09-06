@@ -87,9 +87,9 @@ public:
 
 public:
   int 		leaves;		// #READ_ONLY #NO_SAVE total number of leaves
-  taSubGroup	gp; 		// #HIDDEN #NO_FIND #NO_SAVE sub-groups within this one
-  TAGPtr	super_gp;	// #READ_ONLY #NO_SAVE super-group above this
-  TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE the root group, 'this' for root group itself; never NULL
+  taSubGroup	gp; 		// #HIDDEN #HIDDEN_TREE #NO_FIND #NO_SAVE sub-groups within this one
+  TAGPtr	super_gp;	// #READ_ONLY #NO_SAVE #HIDDEN_TREE super-group above this
+  TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE #HIDDEN_TREE the root group, 'this' for root group itself; never NULL
 
   bool		IsEmpty() const	{ return (leaves == 0) ? true : false; }
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root

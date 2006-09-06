@@ -229,8 +229,8 @@ int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_ls
   for (int i = 0; i < top_lst->size; ++i) {
     TAPtr tab = (TAPtr)top_lst->FastEl_(i);
     if (!tab)  continue;
-    QTreeWidgetItem* item = ic->AddItem(tab->GetNameNonEmpty(), top_item, (void*)tab); 
-    item->setText(1, tab->GetTypeDef()->name);
+    QTreeWidgetItem* item = ic->AddItem(tab->GetColText(taBase::key_disp_name), top_item, (void*)tab); 
+    item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
     ++rval;
   }
@@ -256,7 +256,7 @@ const String taiListElsButtonBase::headerText(int index, int view) const {
 }
 
 const String taiListElsButtonBase::labelNameNonNull() const {
-  return item()->GetNameNonEmpty();
+  return item()->GetDisplayName();
 }
 
 const String taiListElsButtonBase::viewText(int index) const {
@@ -343,7 +343,7 @@ int taiGroupElsButton::BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp,
   for (int i = 0; i < top_grp->gp.size; ++i) {
     taGroup_impl* tag = (taGroup_impl*)top_grp->gp.FastEl_(i);
     if (!tag)  continue;
-    QTreeWidgetItem* item = ic->AddItem(tag->GetNameNonEmpty(), top_item, (void*)tag); 
+    QTreeWidgetItem* item = ic->AddItem(tag->GetDisplayName(), top_item, (void*)tag); 
     item->setFlags(Qt::ItemIsEnabled); // not selectable
     //note: don't put text in the other columns, to keep items clean
     //TODO: put folder icon

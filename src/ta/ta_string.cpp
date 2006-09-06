@@ -313,6 +313,10 @@ void StrRep::upcase() {//note: should only be called on cnt<=1
 //	String		//
 //////////////////////////
 
+const String String::con_0("0");
+const String String::con_1("1");
+const String String::con_NULL("NULL");
+
 void trimr_(String& rval, char c) {
   do {
     rval.truncate(rval.length() - 1);
@@ -369,16 +373,6 @@ const String String::StringToCppLiteral(const String& str) {
     AppendCharToCppStringLiteral(rval, str.elem(i), false);
   rval += '"';
   return rval;
-}
-
-const String& String::one() {
-  static String o("1");
-  return o;
-}
-
-const String& String::zero() {
-  static String z("0");
-  return z;
 }
 
 String::String(uint slen, uint sz, char fill) {

@@ -125,7 +125,8 @@ public:
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
-  virtual bool		ShowMember(MemberDef* md) {return false;} // asks this type if we should show the md member
+  virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
+    {return false;} // asks this type if we should show the md member
 
   taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
     taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
@@ -186,7 +187,7 @@ public:
   override TypeDef*	GetDataTypeDef() const;
   override taiMimeItem* GetMimeItem();
   override String	GetName() const;
-  override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
+  override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
 
   DL_FUNS(tabDataLink); //
@@ -269,8 +270,6 @@ public:
   taGroup_impl*		data() {return (taGroup_impl*)m_data;}
   const taGroup_impl*	data() const {return (taGroup_impl*)m_data;}
   
-  override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
-
   tabGroupDataLink(taGroup_impl* data_);
   DL_FUNS(tabGroupDataLink)
 protected:

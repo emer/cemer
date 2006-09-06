@@ -118,8 +118,9 @@ TA_API StrRep*		Sreverse(const StrRep* x);
 class TA_API String { // reference counted string
 friend class StrRep;
 public:
-  static const String&		zero(); // "0" occurs so often, we optimize it with a global inst
-  static const String&		one(); // "1" occurs so often, we optimize it with a global inst
+  static const String con_0; // "0" occurs so often, we optimize it with a const
+  static const String con_1; // "1" occurs so often, we optimize it with a const
+  static const String con_NULL; // "NULL" occurs so often, we optimize it with a const
   
   static const String	CharToCppLiteral(char c); // converts a character to a C++ valid literal; can be embedded in a C++ string
   static const String	StringToCppLiteral(const String& str); // converts a string to a C++ valid literal

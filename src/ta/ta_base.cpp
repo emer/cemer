@@ -672,14 +672,16 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
 
 const KeyString taBase::key_name("name");
 const KeyString taBase::key_type("type");
+const KeyString taBase::key_type_desc("type_desc");
 const KeyString taBase::key_desc("desc"); 
 const KeyString taBase::key_disp_name("disp_name"); 
 
 String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
        if (key == key_name) return GetName();
   else if (key == key_type) return GetTypeDef()->name;
+  else if (key == key_type_desc) return GetTypeDef()->desc;
 // note: some classes override desc with dynamic desc's
-  else if (key == key_desc) return GetTypeDef()->desc; 
+  else if (key == key_desc) return GetDesc(); 
   else if (key == key_disp_name) return GetDisplayName(); 
   else return _nilString;
 }
@@ -713,13 +715,18 @@ taFiler* taBase::GetFiler(TypeItem* td) {
   return StatGetFiler(td);
 }
 
-const String taBase::GetNameNonEmpty() const {
-  String rval(GetDisplayName());
-  if (rval.empty()) {
-    // (TypeName@HexAddr)
-    rval = "(" + GetTypeDef()->name + "@" 
-      + String(QString::number((intptr_t)this, 16)) + ")";
+String taBase::GetDisplayName() const { 
+  String rval = GetName(); 
+  if (rval.nonempty()) return rval;
+  // no name, so try the Owner.path name
+  taBase* own = GetOwner();
+  if (own) {
+    rval.cat(own->GetName()).cat(GetPath(NULL, own));
+    if (rval.nonempty()) return rval; // shouldn't be empty!
   }
+  // last resort: (TypeName@HexAddr)
+  rval = "(" + GetTypeDef()->name + "@" 
+      + String(QString::number((intptr_t)this, 16)) + ")";
   return rval;
 }
 

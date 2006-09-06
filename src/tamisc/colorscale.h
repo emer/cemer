@@ -107,7 +107,7 @@ class TAMISC_API ColorScaleSpec : public taNBase { // Color Spectrum Data
 INHERITED(taNBase)
 public:
   RGBA		background;	// background color
-  RGBA_List	clr;		// #NO_BROWSE group of colors
+  RGBA_List	clr;		// #HIDDEN_TREE group of colors
 
   virtual void	GenRanges(TAColor_List* cl, int chunks);
 

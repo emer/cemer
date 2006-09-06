@@ -167,6 +167,7 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
+  override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, taOBase);
   TA_BASEFUNS(ProgEl);

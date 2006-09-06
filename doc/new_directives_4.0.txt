@@ -7,11 +7,12 @@ INLINE -- (existing directive) this now only controls inlining in the gui, not i
 INLINE_DUMP -- replaces INLINE for dump/load
 LABEL_ -- (same as item labels) -- can be used to rename types for the view system labels
 UAE_OWNER -- for taOBase-derivatives, causes UpdateAfterEdit to get sent to owner->ChildUpdateAfterEdit
-HIDDEN -- prevents type from showing in TypeHier lists
 CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit panel
 NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
 FILETYPE -- word used to describe files when saving/loading this type; should be a single noun, ex 'Project' (this directive is always used with the EXT directive)
 HIDDEN_INLINE -- (new for Objects) -- don't show this type inline by default for members
+New: all the Member Show directives have counterparts that can be applied to types, and will affect all members of that type in edit dialogs (but not tree views):
+EDIT_SHOW, EDIT_NO_SHOW, EDIT_HIDDEN, EDIT_READ_ONLY, EDIT_DETAIL, EDIT_EXPERT
 
 
 ENUM DIRECTIVES (note: this is new)
@@ -29,8 +30,6 @@ MEMBER DIRECTIVES
 -----------------
 
 EXPERT -- show directive, like DETAIL etc.; especially for advanced parameters in net sims
-BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
-NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
 INLINE -- puts an otherwise non-inline member class editor inline, esp. for Array
 VARTYPE_READ_ONLY -- user can only change value, not the type, of a Variant
 NO_VARTYPE_READ_ONLY -- user can change the type of a Variant
@@ -39,6 +38,13 @@ ENUM_TYPE -- for TypeDef* members, indicates to show Enum types (deriving from x
 EDIT_DIALOG -- for String types, adds a button for an editor dialog (for long strings)
 CONDEDIT -- added implicit bool semantics (including dotted submembers), as for Method GHOST
 SHOW_INLINE -- can be used to override a type that has HIDDEN_INLINE
+
+Deprecated (within v4)
+
+BROWSE -- shows the member in the browse view, particularly when it would otherwise be hidden.
+  use: SHOW_TREE
+NO_BROWSE -- don't show the member in the browse view, particularly when it would otherwise be shown.
+  use (typically): HIDDEN_TREE
 
 
 METHOD DIRECTIVES

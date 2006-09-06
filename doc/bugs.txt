@@ -1,16 +1,21 @@
 WORK PRIORITY
 -------------
 
-* dynamic main menus
 * integrated viewers
+* dynamic main menus
+* dnd
+* dnd icon bar for:
+  progedit
 * graph log
+* matrix view of datatable (in 3d/inventor)
+
 * logging in general
 * clean up gui interface to logging -- should be easier for user to choose stuff to log
 * clean up Data iterator specification 
   -- need another sample impl (apart from ImageReader)
 * revamp the 3D display of net objects
+* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys.
 * dnd icon bar for:
-  progedit
   netview/designer
 * 4-panel view of network, to enable rational moving/sizing of objects
   - the moving/sizing

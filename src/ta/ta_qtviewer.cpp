@@ -770,18 +770,22 @@ bool tabDataLink::HasChildItems() {
   MemberSpace* ms = &GetDataTypeDef()->members;
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
-    if (ShowMember(md)) return true;
+    if (ShowMember(md, TypeItem::SC_TREE)) return true;
   }
   return false;
 }
 
-bool tabDataLink::ShowMember(MemberDef* md) {
+bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
   TypeDef* td = md->type;
   if (td == NULL) return false; // shouldn't happen...
+  // should just be able to completely delegate to the memberdef...
+  
+  return md->ShowMember(taMisc::USE_SHOW_GUI_DEF, show_context);
+/*obs
   // show: normally visible lists; items marked BROWSE
   if (md->HasOption("NO_BROWSE")) return false;
   return ((td->InheritsFrom(&TA_taList_impl) && md->ShowMember(taMisc::NORM_MEMBS))
-    || md->HasOption("BROWSE"));
+    || md->HasOption("BROWSE")); */
 }
 
 
@@ -876,11 +880,6 @@ taiTreeDataNode* tabGroupDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTre
 
 //void tabListDataLink::InitDataNode(BrListViewItem* node);
 
-bool tabGroupDataLink::ShowMember(MemberDef* md) {
-  if ((md->name == "gp") || (md->name == "super_gp") || (md->name == "leaf_gp"))
-    return false;
-  else return tabListDataLink::ShowMember(md);
-}
 
 /* maybe need this:
 String tabListItemsDataLink::GetText(DataLinkText dlt) const {
@@ -4046,13 +4045,16 @@ void taiTreeDataNode::CreateChildren_impl() {
   MemberSpace* ms = &(link()->GetDataTypeDef()->members);
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
-    if (!link()->ShowMember(md)) continue;
+    if (!link()->ShowMember(md, TypeItem::SC_TREE)) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(data()); //note: GetDataLink automatically derefs typ and el if pointers
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-    String tree_nm = md->GetLabel();
-    last_child_node = dl->CreateTreeDataNode(md, this, last_child_node, tree_nm,
-      (iTreeViewItem::DNF_IS_MEMBER));
+    //note: we still can't get links for some types, ex. ptrs to NULL
+    if (dl) {
+      String tree_nm = md->GetLabel();
+      last_child_node = dl->CreateTreeDataNode(md, this, last_child_node, tree_nm,
+        (iTreeViewItem::DNF_IS_MEMBER));
+    }
   }
   last_member_node = last_child_node; //note: will be NULL if no members issued
 }
@@ -4208,6 +4210,7 @@ void iListDataPanel::FillList() {
   taiListDataNode* last_child = NULL;
   int i = 0;
   for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
+    if (!child) continue;
     taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
