@@ -417,6 +417,7 @@ public:
   // #TYPE_Connection #NULL_OK type of bias connection to make
   ConSpec_SPtr 	bias_spec;
   // con spec that controls the bias connection on the unit
+  float		sse_tol;	// tolerance for computing sum-squared error on a per-unit basis
 
   virtual void 	InitState(Unit* u);	// initialize unit state variables
   virtual void 	ModifyState(Unit*) { };// modify unit state variables
@@ -431,6 +432,8 @@ public:
 
   virtual void 	Compute_dWt(Unit* u); 	// compute change in weights
   virtual void 	UpdateWeights(Unit* u);	// update weights from deltas
+
+  virtual float	Compute_SSE(Unit* u);	// compute sum squared error for this unit
 
   virtual void	BuildBiasCons();
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE build the bias connections according to specified type
@@ -468,10 +471,9 @@ protected:
   static Con_Group*	scg_rval; // return value for connecting
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
-    DEFAULT 		= 0x00,	// #NO_BIT (Layer ctrl param only) set default layer flags based on parameter in data
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
     TARG 		= 0x01,	// #LABEL_Target as a target value
-    EXT 		= 0x02,	// #LABEL_External as an external input value
+    EXT 		= 0x02,	// as an external input value (todo: this is a terrible name: should be INPUT)
     COMP		= 0x04,	// #LABEL_Comparison as a comparison value
     TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
     COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
@@ -481,8 +483,8 @@ public: //
       // #LABEL_no_Unit_flags (Layer + Layer ctrl param) don't set unit flags at all
     NO_LAYER_FLAGS	= 0x20, 
       // #LABEL_no_Layer_flags (Layer ctrl param only) don't set layer flags at all
-    EXT_FLAGS_MASK	= 0x0F, // #NO_BIT mask for setting layer/unit flags
-    LAYER_FLAGS_MASK	= 0x1F // #NO_BIT mask for setting layer flags
+    EXT_FLAGS_MASK	= 0x0F, // #NO_BIT #HIDDEN mask for setting layer/unit flags
+    LAYER_FLAGS_MASK	= 0x1F // #NO_BIT #HIDDEN mask for setting layer flags
   };
 
   UnitSpec_SPtr spec;		// unit specification
@@ -537,6 +539,8 @@ public: //
   void 	Compute_Act()		{ spec->Compute_Act(this); }
   void 	UpdateWeights()		{ spec->UpdateWeights(this); }
   void 	Compute_dWt()		{ spec->Compute_dWt(this); }
+
+  float	Compute_SSE()		{ return spec->Compute_SSE(this); }
 
   bool  CheckConfig(Layer* lay, Network* net, bool quiet=false)
   { return spec->CheckConfig(this, lay, net, quiet); }
@@ -1058,6 +1062,8 @@ public:
   virtual void	UpdateWeights(); // update weights for whole layer
   virtual void	Compute_dWt();	 // update weights for whole layer
 
+  virtual float	Compute_SSE();	// compute sum squared error over the entire network
+
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec);
@@ -1106,7 +1112,7 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyData(taMatrix* data, Unit::ExtType ext_flags = Unit::DEFAULT,
+  virtual void	ApplyData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
     // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
@@ -1239,9 +1245,12 @@ public:
   int		batch;		// #READ_ONLY_IV batch counter (updated by program)
   int		epoch;		// #READ_ONLY_IV epoch counter (updated by program)
   int		trial;		// #READ_ONLY_IV trial counter (updated by program)
-  int		phase;		// #READ_ONLY_IV phase counter, used by some algos (updated by program)
+
   int		cycle;		// #READ_ONLY_IV cycle counter, used by some algos (updated by program)	
-  bool		re_init;	// should net be initialized (InitWtState) by process?
+
+  float		sse;		// total sum squared error over the network
+
+  bool		re_init;	// todo: remove this! should net be initialized (InitWtState) by process?
   DMem_SyncLevel dmem_sync_level; // at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
   int		dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
@@ -1351,6 +1360,8 @@ public:
   virtual void	UpdateWeights(); // update weights for whole net
   virtual void	Compute_dWt(); // update weights for whole net
 
+  virtual void	Compute_SSE();	// compute sum squared error over the entire network
+
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec);
@@ -1443,9 +1454,9 @@ friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
   DataBlockRef		data_block; // source or sink of the data (as appropriate)
-  String		chan_name; // name of the chan/col to use (we'll cache its col_idx for efficiency)
+  String		chan_name; // name of the chanel/column to use 
   LayerRef 		layer;	// the Layer that will get read or written
-  PosTwoDCoord		offset;	// offset in layer or unit group at which to start reading/writing
+  PosTwoDCoord		offset;	// #EXPERT offset in layer or unit group at which to start reading/writing
   
   void  UpdateAfterEdit();
   void  InitLinks();
@@ -1492,13 +1503,16 @@ class PDP_API LayerWriter: public LayerRWBase {
   // object that writes data from a DataSource to a layer
 INHERITED(LayerRWBase)
 public: 
-  Unit::ExtType	ext_flags;	// how to flag the unit/layer's external input status
-  Random	noise;		// noise optionally added to values when applied
-  String_Array  value_names;	// display names of the individual pattern values
+  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set 
+  Unit::ExtType	ext_flags;	// #EXPERT #CONDEDIT_OFF_use_layer_type:true how to flag the unit/layer's external input status
+  Random	noise;		// #EXPERT noise optionally added to values when applied
+  String_Array  value_names;	// #EXPERT display names of the individual pattern values
+  // todo: not sure if above belongs here..
 
   virtual void 		ApplyData(int context);
-    // convenience method for applying data in indicated context
-  
+  // convenience method for applying data in indicated context
+
+  void	UpdateAfterEdit();
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerWriter& cp);

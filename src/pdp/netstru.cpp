@@ -1233,6 +1233,7 @@ void UnitSpec::Initialize() {
   act_range.max = 1.0f; act_range.min = 0.0f;
   act_range.UpdateAfterEdit();
   bias_con_type = NULL;
+  sse_tol = 0.0f;
 }
 
 void UnitSpec::InitLinks() {
@@ -1252,6 +1253,7 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
   act_range = cp.act_range;
   bias_con_type = cp.bias_con_type;
   bias_spec = cp.bias_spec;
+  sse_tol = cp.sse_tol;
 }
 
 bool UnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
@@ -1475,6 +1477,17 @@ void UnitSpec::UpdateWeights(Unit* u) {
   // NOTE: derived classes must supply bias->UpdateWeights call because C_UpdateWeights
   // is not virtual, so if called here, only ConSpec version would be called.
   // This is not true of InitWtState and InitWtDelta, which are virtual.
+}
+
+float UnitSpec::Compute_SSE(Unit* u) {
+  if(u->ext_flag & Unit::TARG) {
+    float uerr = u->targ - u->act;
+    if(fabs(uerr) < sse_tol)
+      return 0.0f;
+    return uerr * uerr;
+  }
+  else
+    return 0.0f;
 }
 
 
@@ -3368,7 +3381,7 @@ void Layer::ApplyData(taMatrix* data, Unit::ExtType ext_flags,
     return;
   }
   // determine non-default unit and layer flags  
-  if ((ext_flags & Unit::EXT_FLAGS_MASK) == Unit::DEFAULT) {
+  if ((ext_flags & Unit::EXT_FLAGS_MASK) == Unit::NO_EXTERNAL) {
     if (layer_type & INPUT)
       ext_flags = (Unit::ExtType)(ext_flags | Unit::EXT);
     if (layer_type & TARGET)
@@ -4094,6 +4107,15 @@ void Layer::Compute_dWt() {
   FOR_ITR_EL(Unit, u, units., i)
     u->Compute_dWt();
 }
+float Layer::Compute_SSE() {
+  if(!(ext_flag & Unit::TARG)) return 0.0f;
+  float sse = 0.0f;
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    sse += u->Compute_SSE();
+  return sse;
+}
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
@@ -4357,7 +4379,6 @@ void Network::Initialize() {
   batch = 0;
   epoch = 0;
   trial = 0;
-  phase = 0;
   cycle = 0;
   re_init = false;
   dmem_sync_level = DMEM_SYNC_NETWORK;
@@ -4402,7 +4423,6 @@ void Network::Copy_(const Network& cp) {
   batch = cp.batch;
   epoch = cp.epoch;
   trial = cp.trial;
-  phase = cp.phase;
   cycle = cp.cycle;
   re_init = cp.re_init;
   lay_layout = cp.lay_layout;
@@ -5015,18 +5035,6 @@ bool Network::CheckConfig(bool quiet) {
   return true;
 }
 
-void Network::ClearCounters(NetCounter down_from) {
-  // one of the few contexts where fall-thru switch is good...
-  switch (down_from) {
-  case NC_BATCH: batch = 0;
-  case NC_EPOCH: epoch = 0;
-  case NC_TRIAL: trial = 0;
-  case NC_PHASE: phase = 0;
-  case NC_CYCLE: cycle = 0;
-  }
-  UpdateAfterEdit();
-}
-
 void Network::SyncSendPrjns() {
   Layer* l;
   taLeafItr i;
@@ -5621,6 +5629,16 @@ void Network::Compute_dWt() {
   }
 }
 
+void Network::Compute_SSE() {
+  sse = 0.0f;
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesion)
+      sse += l->Compute_SSE();
+  }
+}
+
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();
   Layer* l, *sl;
@@ -6156,7 +6174,8 @@ LayerRWBase* LayerRWBase_List::FindByDataBlockLayer(DataBlock* db, Layer* lay) {
 //////////////////////
 
 void LayerWriter::Initialize() {
-  ext_flags = Unit::DEFAULT;
+  use_layer_type = true;
+  ext_flags = Unit::NO_EXTERNAL;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
@@ -6180,10 +6199,27 @@ void LayerWriter::CutLinks() {
 }
 
 void LayerWriter::Copy_(const LayerWriter& cp) {
+  use_layer_type = cp.use_layer_type;
   ext_flags = cp.ext_flags;
   noise = cp.noise;
   value_names = cp.value_names;
   chan_idx = -1; // redo lookup
+}
+
+void LayerWriter::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  if(use_layer_type && layer) {
+    if(layer->layer_type == Layer::INPUT) {
+      ext_flags = Unit::EXT;
+    }
+    else if((layer->layer_type == Layer::OUTPUT) || (layer->layer_type == Layer::TARGET)) {
+      ext_flags = Unit::TARG;
+    }
+    else {
+      taMisc::Warning("Warning: LayerwWriter:", chan_name, "for layer", layer->name,
+		      "layer_type is HIDDEN -- not appropriate for writing to (by default).  Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
+    }
+  }
 }
 
 void LayerWriter::ApplyData(int context) {
