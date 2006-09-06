@@ -27,9 +27,9 @@
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
-#include "pdp_TA_type.h"
+#include "tamisc_TA_type.h"
 
-class PDP_API taiProgVar: public taiCompData { 
+class TAMISC_API taiProgVar: public taiCompData { 
   //note: this set of classes uses a static New instead of new because of funky virtual Constr
 INHERITED(taiCompData)
   Q_OBJECT
@@ -96,7 +96,7 @@ private:
 };
 
 
-class PDP_API taiProgVarType : public taiClassType { 
+class TAMISC_API taiProgVarType : public taiClassType { 
 INHERITED(taiClassType)
 public:
   bool		requiresInline() const {return true;}

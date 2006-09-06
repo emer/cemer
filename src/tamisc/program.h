@@ -22,8 +22,8 @@
 #include "ta_script.h"
 #include "dynenum.h"
 
-#include "pdp_def.h"
-#include "pdp_TA_type.h"
+#include "tamisc_def.h"
+#include "tamisc_TA_type.h"
 
 // forwards
 
@@ -32,7 +32,7 @@ class ProgramRef;
 class Program_Group;
 class Program_List;
 
-class PDP_API ProgVar: public taNBase {
+class TAMISC_API ProgVar: public taNBase {
   // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
@@ -86,7 +86,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API ProgVar_List : public taList<ProgVar> {
+class TAMISC_API ProgVar_List : public taList<ProgVar> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
 INHERITED(taList<ProgVar>)
 public:
@@ -114,7 +114,7 @@ private:
 
 SmartRef_Of(ProgVar); // ProgVarRef
 
-class PDP_API ProgArg: public taOBase {
+class TAMISC_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE a program or method argument
 INHERITED(taOBase)
 public:
@@ -136,7 +136,7 @@ private:
 };
 
 
-class PDP_API ProgArg_List : public taList<ProgArg> {
+class TAMISC_API ProgArg_List : public taList<ProgArg> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of arguments
 INHERITED(taList<ProgArg>)
 public:
@@ -151,7 +151,7 @@ private:
 };
 
 
-class PDP_API ProgEl: public taOBase {
+class TAMISC_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
 public:
@@ -184,7 +184,7 @@ private:
 };
 
 
-class PDP_API ProgEl_List: public taList<ProgEl> {
+class TAMISC_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
@@ -202,7 +202,7 @@ private:
 };
 
 
-class PDP_API ProgList: public ProgEl { 
+class TAMISC_API ProgList: public ProgEl { 
   // list of ProgEl's, each executed in sequence
 INHERITED(ProgEl)
 public:
@@ -225,7 +225,7 @@ private:
 };
 
 
-class PDP_API ProgVars: public ProgEl {
+class TAMISC_API ProgVars: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
@@ -244,7 +244,7 @@ private:
 };
 
 
-class PDP_API UserScript: public ProgEl { 
+class TAMISC_API UserScript: public ProgEl { 
   // ProgEl for a user scriptlet
 INHERITED(ProgEl)
 public:
@@ -264,7 +264,7 @@ private:
 };
 
 
-class PDP_API Loop: public ProgEl { 
+class TAMISC_API Loop: public ProgEl { 
   // #VIRT_BASE #EDIT_INLINE #NO_INSTANCE ProgEl base for loops
 INHERITED(ProgEl)
 public:
@@ -294,7 +294,7 @@ private:
 };
 
 
-class PDP_API ForLoop: public Loop { 
+class TAMISC_API ForLoop: public Loop { 
   // #EDIT_INLINE #TOKENS Loop for an iteration over the elements
 INHERITED(Loop)
 public:
@@ -316,7 +316,7 @@ private:
 };
 
 
-class PDP_API WhileLoop: public Loop { 
+class TAMISC_API WhileLoop: public Loop { 
   // #EDIT_INLINE #TOKENS Loop for a 'while' (pre-test) iteration over the elements
 INHERITED(Loop)
 public:
@@ -334,7 +334,7 @@ private:
 };
 
 
-class PDP_API DoLoop: public Loop { 
+class TAMISC_API DoLoop: public Loop { 
   // #EDIT_INLINE Loop for a 'do' (post-test) iteration over the elements
 INHERITED(Loop)
 public:
@@ -353,7 +353,7 @@ private:
 
 // todo: how to handle sub-sequences?
 
-class PDP_API BasicDataLoop: public Loop { 
+class TAMISC_API BasicDataLoop: public Loop { 
   // #EDIT_INLINE #TOKENS loops over items in a DataTable, in different basic orderings
 INHERITED(Loop)
 public:
@@ -381,7 +381,7 @@ private:
 };
 
 
-class PDP_API IfElse: public ProgEl { 
+class TAMISC_API IfElse: public ProgEl { 
   // ProgEl for a conditional test element
 INHERITED(ProgEl)
 public:
@@ -408,7 +408,7 @@ private:
 };
 
 
-class PDP_API MethodSpec: public taOBase { 
+class TAMISC_API MethodSpec: public taOBase { 
   // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCall; has custom taiData
 INHERITED(taOBase)
 public:
@@ -427,7 +427,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class PDP_API MethodCall: public ProgEl { 
+class TAMISC_API MethodCall: public ProgEl { 
   // ProgEl for a call to an object method
 INHERITED(ProgEl)
 friend class MethodSpec;
@@ -456,7 +456,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class PDP_API Program_List : public taList<Program> {
+class TAMISC_API Program_List : public taList<Program> {
 INHERITED(taList<Program>)
 public:
   
@@ -468,7 +468,7 @@ private:
 }; //
 
 
-class PDP_API Program: public taNBase, public AbstractScriptBase {
+class TAMISC_API Program: public taNBase, public AbstractScriptBase {
   // #TOKENS #INSTANCE a program, with global vars and its own program run space
 INHERITED(taNBase)
 public:
@@ -586,7 +586,7 @@ private:
 
 SmartRef_Of(Program); // ProgramRef
 
-class PDP_API Program_Group : public taGroup<Program> {
+class TAMISC_API Program_Group : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
@@ -604,7 +604,7 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-class PDP_API ProgramCall: public ProgEl { 
+class TAMISC_API ProgramCall: public ProgEl { 
   // ProgEl to invoke another program
   INHERITED(ProgEl)
 public:
@@ -635,63 +635,6 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{}
-};
-
-//////////////////////////////////////////////////////////////////////////
-//  	misc extra ProgEl's: should be in pdp proper and not ta/css, which is where all above belongs
-
-class PDP_API NetCounterInit: public ProgEl { 
-  // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
-INHERITED(ProgEl)
-public:
-  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
-  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
-  String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
-  
-  override String	GetDisplayName() const;
-
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(NetCounterInit);
-  COPY_FUNS(NetCounterInit, ProgEl);
-  TA_BASEFUNS(NetCounterInit);
-
-protected:
-  virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
-
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-class PDP_API NetCounterIncr: public ProgEl { 
-  // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
-INHERITED(ProgEl)
-public:
-  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
-  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
-  String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
-  
-  override String	GetDisplayName() const;
-
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(NetCounterIncr);
-  COPY_FUNS(NetCounterIncr, ProgEl);
-  TA_BASEFUNS(NetCounterIncr);
-
-protected:
-  virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
-
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-
-private:
-  void	Initialize();
-  void	Destroy();
 };
 
 #endif

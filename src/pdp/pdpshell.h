@@ -224,7 +224,7 @@ public:
   Network_Group		networks;	// Networks of interconnected units
   DataTable_Group	data;		// Misc data, such as patterns for network input
   PDPLog_Group		logs;		// Logs to display statistics in processes
-  Program_Group	programs;	// Gui-based programs to run simulations and other processing
+  Program_Group		programs;	// Gui-based programs to run simulations and other processing
   Script_Group		scripts;	// Scripts to control arbitrary actions
 #ifdef TA_GUI
   SelectEdit_Group	edits;		// special edit dialogs for selected elements

@@ -17,7 +17,7 @@
 
 #include "ta_qt.h"
 #include "ta_qtdialog.h" // for Hilight button
-#include "pdp_TA_inst.h"
+#include "tamisc_TA_inst.h"
 
 #include <QHBoxLayout>
 #include <QLabel>

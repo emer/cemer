@@ -14,7 +14,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/netstru_qtso.h \
 	@abs_srcdir@/pdp_qtso.h \
 	@abs_srcdir@/pdplog_qtso.h \
-	@abs_srcdir@/program_qtso.h 
+	@abs_srcdir@/pdp_program_qtso.h 
 
 HEADS_GUI =\
 	pdpview_qt.h \
@@ -23,7 +23,7 @@ HEADS_GUI =\
 	netstru_qtso.h \
 	pdp_qtso.h \
 	pdplog_qtso.h \
-	program_qtso.h 
+	pdp_program_qtso.h 
 
 SRCS_GUI =\
 	pdpview_qt.cpp \
@@ -36,8 +36,8 @@ SRCS_GUI =\
 	netstru_qtso.moc.cpp \
 	pdplog_qtso.cpp \
 	pdplog_qtso.moc.cpp \
-	program_qtso.cpp  \
-	program_qtso.moc.cpp 
+	pdp_program_qtso.cpp  \
+	pdp_program_qtso.moc.cpp 
 
 endif
 
@@ -50,7 +50,7 @@ TAHEADS =\
 	@abs_srcdir@/netstru.h \
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/netdata.h \
-	@abs_srcdir@/program.h \
+	@abs_srcdir@/pdp_program.h \
 	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
 	@abs_srcdir@/pdpserver.h \
@@ -64,7 +64,7 @@ HEADS =\
 	netstru.h \
 	netstru_extra.h \
 	netdata.h \
-	program.h \
+	pdp_program.h \
 	pdplog.h \
 	pdpshell.h \
 	pdpserver.h \
@@ -78,7 +78,7 @@ SRCS =\
 	netstru.cpp \
 	netstru_extra.cpp \
 	netdata.cpp \
-	program.cpp \
+	pdp_program.cpp \
 	pdplog.cpp \
 	pdpshell.cpp \
 	pdpserver.cpp \
