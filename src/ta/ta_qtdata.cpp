@@ -2762,7 +2762,7 @@ void taiItemChooser::setView(int value, bool force) {
 
 void taiItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
-  QTimer::singleShot(50, this, SLOT(show_timeout()) );
+  QTimer::singleShot(150, this, SLOT(show_timeout()) );
 }
 
 void taiItemChooser::show_timeout() {

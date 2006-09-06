@@ -24,6 +24,11 @@ QWidget (or QFrame)
     iPanelDataViewer -- for the edit panels
 
 
+Issues
+
+* the legacy iViewer maintained selection, and changed panels accordingly;
+  we will now have two different selectable thingies
+
 ------------------
 Main Menu Redesign
 ------------------

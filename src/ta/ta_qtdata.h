@@ -924,7 +924,7 @@ protected:
   void*			m_sel; // current value
   TypeDef*		targ_typ; 
   
-  virtual const String	itemTag() = 0; // for "N: label" on button, is "N: "
+  virtual const String	itemTag() const {return _nilString;} // for "N: label" on button, is "N: "
   virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
   
   virtual void 		UpdateImage(void* cur_sel);
@@ -953,7 +953,7 @@ public:
   taiMemberDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:
-  const String		itemTag() {return "Member: ";}
+  const String		itemTag() const {return "Member: ";}
   const String		labelNameNonNull() const;
 
   void 			BuildChooser_0(taiItemChooser* ic);
@@ -979,7 +979,7 @@ public:
   taiMethodDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:
-  const String		itemTag() {return "Method: ";}
+  const String		itemTag() const {return "Method: ";}
   const String		labelNameNonNull() const;
 
   void 			BuildChooser_0(taiItemChooser* ic);
@@ -1011,7 +1011,7 @@ protected:
     TC_NoAddCheckChildren, // typically for templates
     TC_Add // "normal" class types
   };
-  const String		itemTag() {return "Type: ";}
+  const String		itemTag() const {return "Type: ";}
   const String		labelNameNonNull() const;
 
   TypeCat		AddType_Class(TypeDef* typ); // true if should be shown to user
@@ -1033,7 +1033,7 @@ public:
   taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:
-  const String		itemTag() {return "Enum Type: ";}
+  const String		itemTag() const {return "Enum Type: ";}
 
   bool			AddType_Enum(TypeDef* typ_, TypeDef* par_typ); // true if should be shown to user
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
@@ -1042,7 +1042,7 @@ protected:
 
 
 class TA_API taiTokenPtrButton : public taiItemPtrBase {
-// for MethodDefs
+// for tokens of taBase objects
 INHERITED(taiItemPtrBase)
 public:
   inline TAPtr		token() const {return (TAPtr)m_sel;}
@@ -1062,7 +1062,7 @@ public:
 protected:
   taSmartRef		scope_ref;	// reference object for scoping, default is none
   
-  const String		itemTag() {return "Token: ";}
+  const String		itemTag() const {return "Token: ";}
   const String		labelNameNonNull() const;
 
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 

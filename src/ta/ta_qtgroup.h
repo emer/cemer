@@ -84,8 +84,64 @@ public:
 //     Element Menus 	//
 //////////////////////////
 
+class TA_API taiListElsButtonBase : public taiItemPtrBase {
+// for items in a list
+INHERITED(taiItemPtrBase)
+public:
+  inline TAPtr		item() const {return (TAPtr)m_sel;}
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 1;} // override
+  const String		viewText(int index) const; // override
+
+  TAPtr			GetValue() {return item();}
+  
+  taiListElsButtonBase(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+protected:
+  
+//nn  const String		itemTag() {return "Token: ";}
+  const String		labelNameNonNull() const;
+
+  int 			BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
+    QTreeWidgetItem* top_item); // we use this recursively, and also in gpi guy
+};
+
+class TA_API taiListElsButton : public taiListElsButtonBase {
+// for items in a list
+INHERITED(taiListElsButtonBase)
+public:
+  TABLPtr		list;
+  
+  void			GetImage(TABLPtr base_lst, TAPtr it);
+  
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiListElsButton(TypeDef* typ, IDataHost* host, taiData* par,
+    QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+};
+
+
+class TA_API taiGroupElsButton : public taiListElsButtonBase {
+// for items in a list
+INHERITED(taiListElsButtonBase)
+public:
+  taGroup_impl* 	grp;
+  
+  void			GetImage(taGroup_impl* base_grp, TAPtr it);
+  
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  taiGroupElsButton(TypeDef* typ, IDataHost* host, taiData* par,
+    QWidget* gui_parent_, int flags_ = 0); //note: typ is type of grp
+protected:
+  int 			BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp, 
+    QTreeWidgetItem* top_item); // we use this recursively, and also in gpi guy
+};
+
+
 class TA_API gpiListEls : public taiElBase {
-  // menu of elements in the list
+  // #OBSOLETE menu of elements in the list 
   Q_OBJECT
 public:
   bool		over_max;	// if over max_menu

@@ -224,6 +224,14 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_LIST_SORTED: {	// no ops
     //TODO: we will probably need to delete all the children and start again,
     // OR, maybe we can just reshuffle ourselves!
+    int nd_idx; // index of the node
+    taList_impl* list = data(); // cache
+    for (int i = 0; i < list->size; ++i) {
+      TAPtr tab = (TAPtr)list->FastEl_(i);
+      FindChildForData(tab, nd_idx);
+      if (i == nd_idx) continue; // in right place already
+      moveChild(nd_idx, i);
+    }
   }
     break;
   default: return; // don't update names

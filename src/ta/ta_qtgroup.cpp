@@ -210,6 +210,157 @@ void gpiArrayEditButton::SetLabel() {
 //     Element Menus 	//
 //////////////////////////
 
+
+//////////////////////////////////
+//   taiListElsButtonBase		//
+//////////////////////////////////
+
+taiListElsButtonBase::taiListElsButtonBase(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+}
+
+int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
+  QTreeWidgetItem* top_item) 
+{
+  int rval = 0;
+  
+  for (int i = 0; i < top_lst->size; ++i) {
+    TAPtr tab = (TAPtr)top_lst->FastEl_(i);
+    if (!tab)  continue;
+    QTreeWidgetItem* item = ic->AddItem(tab->GetNameNonEmpty(), top_item, (void*)tab); 
+    item->setText(1, tab->GetTypeDef()->name);
+    item->setText(2, tab->GetColText(taBase::key_desc));
+    ++rval;
+  }
+}
+
+int taiListElsButtonBase::columnCount(int view) const {
+  switch (view) {
+  case 0: return 3;
+  default: return 0; // not supposed to happen
+  }
+}
+
+const String taiListElsButtonBase::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Name"; 
+    case 1: return "Type"; 
+    case 2: return "Description"; 
+    } break; 
+  default: break; // compiler food
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiListElsButtonBase::labelNameNonNull() const {
+  return item()->GetNameNonEmpty();
+}
+
+const String taiListElsButtonBase::viewText(int index) const {
+  switch (index) {
+  case 0: return "Flat List"; 
+  default: return _nilString;
+  }
+}
+
+
+//////////////////////////////////
+//   taiListElsButton		//
+//////////////////////////////////
+
+taiListElsButton::taiListElsButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+  list = NULL;
+}
+
+void taiListElsButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!list) {
+    taMisc::Error("taiListElsButtonBase::BuildChooser: list needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    if (HasFlag(flgNullOk)) {
+      // note: ' ' makes it sort to the top
+      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); //note: no desc
+      item->setData(1, Qt::DisplayRole, " ");
+    }
+    BuildChooser_0(ic, list, NULL); 
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+void taiListElsButton::GetImage(taList_impl* base_lst, TAPtr it) {
+  list = base_lst;
+  inherited::GetImage((void*)it, NULL); // don't need a targ_typ
+}
+
+
+//////////////////////////////////
+//   taiGroupElsButton		//
+//////////////////////////////////
+
+taiGroupElsButton::taiGroupElsButton(TypeDef* typ_, IDataHost* host,
+    taiData* par, QWidget* gui_parent_, int flags_)
+:inherited(typ_, host, par, gui_parent_, flags_)
+{
+  grp = NULL;
+}
+
+void taiGroupElsButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!grp) {
+    taMisc::Error("taiGroupElsButtonBase::BuildChooser: group needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    if (HasFlag(flgNullOk)) {
+      // note: ' ' makes it sort to the top
+      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); //note: no desc
+      item->setData(1, Qt::DisplayRole, " ");
+    }
+    BuildChooser_1(ic, grp, NULL); 
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+int taiGroupElsButton::BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp, 
+  QTreeWidgetItem* top_item) 
+{
+  int rval = 0;
+  
+  for (int i = 0; i < top_grp->gp.size; ++i) {
+    taGroup_impl* tag = (taGroup_impl*)top_grp->gp.FastEl_(i);
+    if (!tag)  continue;
+    QTreeWidgetItem* item = ic->AddItem(tag->GetNameNonEmpty(), top_item, (void*)tag); 
+    item->setFlags(Qt::ItemIsEnabled); // not selectable
+    //note: don't put text in the other columns, to keep items clean
+    //TODO: put folder icon
+    rval += BuildChooser_1(ic, tag, item);
+    ++rval;
+  }
+  
+  rval += BuildChooser_0(ic, top_grp, top_item); 
+  return rval;
+}
+
+void taiGroupElsButton::GetImage(taGroup_impl* base_grp, TAPtr it) {
+  grp = base_grp;
+  inherited::GetImage((void*)it, NULL); // don't need a targ_typ
+}
+
+
 //////////////////////////
 // 	gpiListEls	//
 //////////////////////////
