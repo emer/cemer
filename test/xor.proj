@@ -85,15 +85,57 @@ FullPrjnSpec @[2] { };
 Network_Group @.networks = [1] {
 BpNetwork @[0] { 
 Layer_Group @.layers = [3] {
-Layer @[0] { };
+Layer @[0] { 
+Unit_Group @.units = [2] {
+BpUnit @[0] { 
+taSubGroup @.send.gp = [1] {
+BpCon_Group @[0] = [2] { };
+};
+};
+BpUnit @[1] { 
+taSubGroup @.send.gp = [1] {
+BpCon_Group @[0] = [2] { };
+};
+};
+};
+};
 Layer @[1] { 
 Projection_Group @.projections = [1] {
 Projection @[0] { };
+};
+
+Unit_Group @.units = [2] {
+BpUnit @[0] { 
+taSubGroup @.recv.gp = [1] {
+BpCon_Group @[0] = [2] { };
+};
+
+taSubGroup @.send.gp = [1] {
+BpCon_Group @[0] = [1] { };
+};
+};
+BpUnit @[1] { 
+taSubGroup @.recv.gp = [1] {
+BpCon_Group @[0] = [2] { };
+};
+
+taSubGroup @.send.gp = [1] {
+BpCon_Group @[0] = [1] { };
+};
+};
 };
 };
 Layer @[2] { 
 Projection_Group @.projections = [1] {
 Projection @[0] { };
+};
+
+Unit_Group @.units = [1] {
+BpUnit @[0] { 
+taSubGroup @.recv.gp = [1] {
+BpCon_Group @[0] = [2] { };
+};
+};
 };
 };
 };
@@ -149,11 +191,14 @@ PrjnView @[3] { };
 PrjnView @[4] { };
 };
 
-ScaleRange_List @.scale_ranges = [4] {
+ScaleRange_List @.scale_ranges = [7] {
 ScaleRange @[0] { };
 ScaleRange @[1] { };
 ScaleRange @[2] { };
 ScaleRange @[3] { };
+ScaleRange @[4] { };
+ScaleRange @[5] { };
+ScaleRange @[6] { };
 };
 };
 };
@@ -238,7 +283,7 @@ act_range {min=0: max=1: range=1: scale=1: };
 bias_con_type=BpCon;
 bias_spec {type=BpConSpec: spec=.projects[0].specs[1]$0$: };
 sig {off=0: gain=1: };
-err_tol=0;
+err_tol=0.1;
 err_fun=Bp_Squared_Error;
 };
 BpConSpec @[1] {
@@ -252,8 +297,8 @@ el_def=0;
 };
 rnd {type=UNIFORM: mean=0: var=0.5: par=1: };
 wt_limits {type=NONE: min=-1: max=1: sym=0: };
-lrate=0.5;
-cur_lrate=0.5;
+lrate=0.0099999998;
+cur_lrate=0.0099999998;
 lrate_sched {
 name=;
 el_typ=SchedItem;
@@ -261,11 +306,11 @@ el_def=0;
 last_ctr=-1;
 default_val=1;
 interpolate=0;
-cur_val=1;
+cur_val=0;
 };
-momentum=0.89999998;
+momentum=0;
 momentum_type=AFTER_LRATE;
-momentum_c=0.10000002;
+momentum_c=1;
 decay=0;
 decay_fun=NULL;
 };
@@ -313,7 +358,104 @@ el_typ=Projection;
 el_def=0;
 Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
 };
-unit_spec {type=BpUnitSpec: spec=.projects[0].specs[0]$1$: };
+units {
+name=;
+el_typ=BpUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=2: y=1: z=1: };
+units_lesioned=0;
+BpUnit @[0] {
+name=;
+spec {type=BpUnitSpec: spec=.projects[0].specs[0]$1$: };
+ext_flag=EXT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=.projects[0].networks[0].layers[1].projections[0]$2$;
+other_idx=0;
+own_cons=0;
+};
+};
+BpCon @*(.bias) {
+wt=-0.40285346;
+};
+n_recv_cons=0;
+pos {x=0: y=0: z=0: };
+err=0;
+dEdA=0;
+dEdNet=0;
+};
+BpUnit @[1] {
+name=;
+spec {type=BpUnitSpec: spec=$1$: };
+ext_flag=EXT;
+targ=0;
+ext=1;
+act=1;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=$2$;
+other_idx=0;
+own_cons=0;
+};
+};
+BpCon @*(.bias) {
+wt=-0.47938275;
+};
+n_recv_cons=0;
+pos {x=1: y=0: z=0: };
+err=0;
+dEdA=0;
+dEdNet=0;
+};
+};
+unit_spec {type=BpUnitSpec: spec=$1$: };
 lesion=0;
 ext_flag=TARG_EXT;
 dmem_dist=DMEM_DIST_DEFAULT;
@@ -334,8 +476,8 @@ el_def=0;
 Projection @[0] {
 name="Fm_input";
 from_type=CUSTOM;
-from=.projects[0].networks[0].layers[0]$2$;
-spec {type=FullPrjnSpec: spec=.projects[0].specs[2]$3$: };
+from=.projects[0].networks[0].layers[0]$3$;
+spec {type=FullPrjnSpec: spec=.projects[0].specs[2]$4$: };
 con_type=BpCon;
 con_gp_type=BpCon_Group;
 con_spec {type=BpConSpec: spec=$0$: };
@@ -351,6 +493,127 @@ name=;
 el_typ=Projection;
 el_def=0;
 Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+};
+units {
+name=;
+el_typ=BpUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=2: y=1: z=1: };
+units_lesioned=0;
+BpUnit @[0] {
+name=;
+spec {type=BpUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0.42043173;
+net=-0.32100135;
+recv {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=$2$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; };
+wt = {-0.17697567; -0.21266285; };
+};
+};
+send {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=.projects[0].networks[0].layers[2].projections[0]$5$;
+other_idx=0;
+own_cons=0;
+};
+};
+BpCon @*(.bias) {
+wt=-0.10851045;
+};
+n_recv_cons=2;
+pos {x=0: y=0: z=0: };
+err=0;
+dEdA=-0.035278279;
+dEdNet=-0.0085962191;
+};
+BpUnit @[1] {
+name=;
+spec {type=BpUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0.58356667;
+net=0.33743221;
+recv {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=$2$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; };
+wt = {-0.37089026; 0.4788073; };
+};
+};
+send {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=$5$;
+other_idx=0;
+own_cons=0;
+};
+};
+BpCon @*(.bias) {
+wt=-0.14125814;
+};
+n_recv_cons=2;
+pos {x=1: y=0: z=0: };
+err=0;
+dEdA=0.024062421;
+dEdNet=0.0058475682;
+};
 };
 unit_spec {type=BpUnitSpec: spec=$1$: };
 lesion=0;
@@ -373,8 +636,8 @@ el_def=0;
 Projection @[0] {
 name="Fm_hidden";
 from_type=CUSTOM;
-from=.projects[0].networks[0].layers[1]$4$;
-spec {type=FullPrjnSpec: spec=$3$: };
+from=.projects[0].networks[0].layers[1]$6$;
+spec {type=FullPrjnSpec: spec=$4$: };
 con_type=BpCon;
 con_gp_type=BpCon_Group;
 con_spec {type=BpConSpec: spec=$0$: };
@@ -390,6 +653,62 @@ name=;
 el_typ=Projection;
 el_def=0;
 };
+units {
+name=;
+el_typ=BpUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=1: y=1: z=1: };
+units_lesioned=0;
+BpUnit @[0] {
+name=;
+spec {type=BpUnitSpec: spec=$1$: };
+ext_flag=TARG;
+targ=1;
+ext=0;
+act=0.49028844;
+net=-0.03885119;
+recv {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+BpCon_Group @.gp[0] {
+name=;
+el_typ=BpCon;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=$5$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; };
+wt = {-0.27641788; 0.18964627; };
+};
+};
+send {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=BpConSpec: spec=$0$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+BpCon @*(.bias) {
+wt=-0.031374831;
+};
+n_recv_cons=2;
+pos {x=0: y=0: z=0: };
+err=0.25980589;
+dEdA=0.50971156;
+dEdNet=0.12737982;
+};
+};
 unit_spec {type=BpUnitSpec: spec=$1$: };
 lesion=0;
 ext_flag=TARG;
@@ -400,7 +719,7 @@ context=0;
 wt_update=ON_LINE;
 batch_n=10;
 batch=0;
-epoch=50;
+epoch=500;
 trial=4;
 phase=0;
 cycle=0;
@@ -596,7 +915,7 @@ ProgVar @[0] {
 name="net";
 var_type=T_Object;
 object_type=BpNetwork;
-object_val=.projects[0].networks[0]$5$;
+object_val=.projects[0].networks[0]$7$;
 };
 ProgVar @[1] {
 name="context";
@@ -625,12 +944,12 @@ el_def=0;
 ProgVar @[0] {
 name="max_epoch";
 var_type=T_Int;
-int_val=50;
+int_val=500;
 };
 ProgVar @[1] {
 name="epoch";
 var_type=T_Int;
-int_val=50;
+int_val=500;
 };
 };
 init_code {
@@ -640,9 +959,20 @@ el_def=0;
 NetCounterInit @[0] {
 desc="initialize epoch counter";
 off=0;
-network_var=.projects[0].programs.gp[0].global_vars[0]$6$;
-local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$7$;
+network_var=.projects[0].programs.gp[0].global_vars[0]$8$;
+local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$9$;
 counter="epoch";
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$8$;
+method=Network::InitWtState;
+};
+args{ };
+{ };
 };
 };
 prog_code {
@@ -659,7 +989,7 @@ el_def=0;
 ProgramCall @[0] {
 desc=;
 off=0;
-target=.projects[0].programs.gp[0][1]$8$;
+target=.projects[0].programs.gp[0][1]$10$;
 prog_args {
 name=;
 el_typ=ProgArg;
@@ -669,8 +999,8 @@ el_def=0;
 NetCounterIncr @[1] {
 desc="increment the epoch counter";
 off=0;
-network_var=$6$;
-local_ctr_var=$7$;
+network_var=$8$;
+local_ctr_var=$9$;
 counter="epoch";
 };
 };
@@ -706,12 +1036,7 @@ ProgVar @[1] {
 name="train_data";
 var_type=T_Object;
 object_type=DataTable;
-object_val=.projects[0].data[0]$9$;
-};
-ProgVar @[2] {
-name="has_data";
-var_type=T_Int;
-int_val=1;
+object_val=.projects[0].data[0]$11$;
 };
 };
 init_code {
@@ -721,8 +1046,8 @@ el_def=0;
 NetCounterInit @[0] {
 desc="initialize trial counter: note also needs to do this in regular running program";
 off=0;
-network_var=$6$;
-local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$10$;
+network_var=$8$;
+local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$12$;
 counter="trial";
 };
 };
@@ -733,8 +1058,8 @@ el_def=0;
 NetCounterInit @[0] {
 desc="initialize trial counter";
 off=0;
-network_var=$6$;
-local_ctr_var=$10$;
+network_var=$8$;
+local_ctr_var=$12$;
 counter="trial";
 };
 BasicDataLoop @[1] {
@@ -747,7 +1072,7 @@ el_def=0;
 ProgramCall @[0] {
 desc=;
 off=0;
-target=.projects[0].programs.gp[0][2]$11$;
+target=.projects[0].programs.gp[0][2]$13$;
 prog_args {
 name=;
 el_typ=ProgArg;
@@ -757,18 +1082,18 @@ el_def=0;
 NetCounterIncr @[1] {
 desc="increment trial counter";
 off=0;
-network_var=$6$;
-local_ctr_var=$10$;
+network_var=$8$;
+local_ctr_var=$12$;
 counter="trial";
 };
 };
 loop_var_type="int";
 loop_var="counter";
 init_val="0";
-data_var=.projects[0].programs.gp[0][1].vars[1]$12$;
+data_var=.projects[0].programs.gp[0][1].vars[1]$14$;
 order=PERMUTED;
 cur_item_idx=1;
-item_idx_list{ 3;0;2;1;};
+item_idx_list{ 0;2;3;1;};
 };
 };
 };
@@ -804,7 +1129,7 @@ desc="Brad: What is this??  comment on fun is not helpful";
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=taBase::DataUpdate;
 };
 args{ true;};
@@ -815,7 +1140,7 @@ desc=;
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=Network::InitExterns;
 };
 args{ };
@@ -824,7 +1149,7 @@ args{ };
 ProgramCall @[2] {
 desc=;
 off=0;
-target=.projects[0].programs.gp[0][3]$13$;
+target=.projects[0].programs.gp[0][3]$15$;
 prog_args {
 name=;
 el_typ=ProgArg;
@@ -836,7 +1161,7 @@ desc="updates all the activations";
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=BpNetwork::Trial_Run;
 };
 args{ };
@@ -855,8 +1180,19 @@ desc="compute weight changes, for training";
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=Network::Compute_dWt;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="actually apply weight changes to current wieghts";
+off=0;
+result_var=;
+method_spec {
+script_obj=$8$;
+method=Network::UpdateWeights;
 };
 args{ };
 { };
@@ -871,7 +1207,7 @@ desc="compute the error for display purposes only, during testing";
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=BpNetwork::Compute_Error;
 };
 args{ };
@@ -882,7 +1218,7 @@ args{ };
 ProgramCall @[5] {
 desc=;
 off=0;
-target=.projects[0].programs.gp[0][4]$14$;
+target=.projects[0].programs.gp[0][4]$16$;
 prog_args {
 name=;
 el_typ=ProgArg;
@@ -894,7 +1230,7 @@ desc="Do we really need this??";
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=taBase::DataUpdate;
 };
 args{ false;};
@@ -905,7 +1241,7 @@ desc=;
 off=0;
 result_var=;
 method_spec {
-script_obj=$6$;
+script_obj=$8$;
 method=taBase::UpdateAllViews;
 };
 args{ };
@@ -913,7 +1249,7 @@ args{ };
 };
 UserScript @[8] {
 desc=;
-off=0;
+off=1;
 user_script="cerr << net->epoch << \", \" << net->trial << endl;";
 };
 UserScript @[9] {
@@ -935,18 +1271,18 @@ name="lw_list";
 el_typ=LayerWriter;
 el_def=0;
 LayerWriter @[0] {
-data_block=$9$;
+data_block=$11$;
 chan_name="input";
-layer=$2$;
+layer=$3$;
 offset {x=0: y=0: };
 ext_flags=TARG_EXT;
 noise {type=NONE: mean=0: var=0.5: par=1: };
 value_names{ };
 };
 LayerWriter @[1] {
-data_block=$9$;
+data_block=$11$;
 chan_name="output";
-layer=.projects[0].networks[0].layers[2]$15$;
+layer=.projects[0].networks[0].layers[2]$17$;
 offset {x=0: y=0: };
 ext_flags=TARG;
 noise {type=NONE: mean=0: var=0.5: par=1: };
@@ -1009,7 +1345,7 @@ el_typ=NetMonItem;
 el_def=0;
 NetMonItem @[0] {
 name="NetMonItem.XOR_epoch";
-object=$5$;
+object=$7$;
 variable="epoch";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1017,7 +1353,7 @@ pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 NetMonItem @[1] {
 name="NetMonItem.XOR_trial";
-object=$5$;
+object=$7$;
 variable="trial";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1025,7 +1361,7 @@ pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 NetMonItem @[2] {
 name="NetMonItem.XOR_n_units";
-object=$5$;
+object=$7$;
 variable="n_units";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1033,7 +1369,7 @@ pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 NetMonItem @[3] {
 name="NetMonItem.XOR_act";
-object=$5$;
+object=$7$;
 variable="act";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1041,7 +1377,7 @@ pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 NetMonItem @[4] {
 name="NetMonItem.XOR_s.wt";
-object=$5$;
+object=$7$;
 variable="s.wt";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1049,14 +1385,14 @@ pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 NetMonItem @[5] {
 name="NetMonItem.XOR_r.wt";
-object=$5$;
+object=$7$;
 variable="r.wt";
 pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
 };
 };
-data=.projects[0].data[1]$16$;
+data=.projects[0].data[1]$18$;
 rmv_orphan_cols=1;
 };
 };
@@ -1073,7 +1409,7 @@ ProgVar @[0] {
 name="mon_data";
 var_type=T_Object;
 object_type=DataTable;
-object_val=$16$;
+object_val=$18$;
 };
 };
 init_code {
@@ -1085,7 +1421,7 @@ desc="Initialize monitoring data (get rid of any existing)";
 off=1;
 result_var=;
 method_spec {
-script_obj=.projects[0].programs.gp[0][4].vars[0]$17$;
+script_obj=.projects[0].programs.gp[0][4].vars[0]$19$;
 method=DataTable::ResetData;
 };
 args{ };
@@ -1096,7 +1432,7 @@ desc="update the monitor items and data schema: again, not doing until MethodCal
 off=1;
 result_var=;
 method_spec {
-script_obj=$17$;
+script_obj=$19$;
 method=NetMonitor::UpdateMonitors;
 };
 args{ };
@@ -1201,7 +1537,7 @@ name=;
 el_typ=DataViewer;
 el_def=0;
 pdpDataViewer @[0] {
-m_data=.projects[0]$18$;
+m_data=.projects[0]$20$;
 name="pdpDataViewer_0";
 ta_menus {
 };
@@ -1230,26 +1566,26 @@ name=;
 el_typ=T3DataView;
 el_def=0;
 NetView @[0] {
-m_data=$5$;
+m_data=$7$;
 m_transform=NULL;
 children {
 name=;
 el_typ=T3DataView;
 el_def=0;
 LayerView @[0] {
-m_data=$2$;
+m_data=$3$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2: y=0.5: z=0: }: };
 };
 LayerView @[1] {
-m_data=$4$;
+m_data=$6$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2: y=1.5: z=0: }: };
 };
 LayerView @[2] {
-m_data=$15$;
+m_data=$17$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2: y=2.5: z=0: }: };
 };
 PrjnView @[3] {
-m_data=.projects[0].networks[0].layers[1].projections[0]$19$;
+m_data=$2$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2: y=0.5: z=-0: }: };
 children {
 name=;
@@ -1258,7 +1594,7 @@ el_def=0;
 };
 };
 PrjnView @[4] {
-m_data=.projects[0].networks[0].layers[2].projections[0]$20$;
+m_data=$5$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2: y=1.5: z=-0: }: };
 children {
 name=;
@@ -1275,7 +1611,7 @@ max=1;
 range=0.5;
 zero=0.5;
 spec=.colorspecs[0]$21$;
-auto_scale=1;
+auto_scale=0;
 };
 scale_ranges {
 name=;
@@ -1283,7 +1619,7 @@ el_typ=ScaleRange;
 el_def=0;
 ScaleRange @[0] {
 name="act";
-auto_scale=1;
+auto_scale=0;
 min=0;
 max=1;
 };
@@ -1301,6 +1637,24 @@ max=1;
 };
 ScaleRange @[3] {
 name="net";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[4] {
+name="dEdA";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[5] {
+name="dEdNet";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[6] {
+name="bias.wt";
 auto_scale=0;
 min=-1;
 max=1;
@@ -1326,9 +1680,9 @@ color_mode=CM_RGB;
 img_format=IF_AUTO;
 };
 };
-save_rmv_units=1;
+save_rmv_units=0;
 use_sim_log=0;
-prev_file_nm="/home/shadow/oreilly/pdp4.0/trunk/test/xor_new.proj";
+prev_file_nm=;
 desc1=;
 desc2=;
 desc3=;

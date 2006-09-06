@@ -1,0 +1,715 @@
+// ta_Dump File v2.0
+Program_Group .projects[0].programs.gp[0] { 
+ProgVar_List @.global_vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+Program_Group .projects[0].programs.gp[0] = [5] {
+Program @[0] { 
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+ProgEl_List @.init_code = [2] {
+NetCounterInit @[0] { };
+MethodCall @[1] { };
+};
+
+ProgEl_List @.prog_code = [1] {
+WhileLoop @[0] { 
+ProgEl_List @.loop_code = [2] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+};
+};
+};
+};
+Program @[1] { 
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [2] {
+NetCounterInit @[0] { };
+BasicDataLoop @[1] { 
+ProgEl_List @.loop_code = [2] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+};
+};
+};
+};
+Program @[2] { 
+ProgEl_List @.prog_code = [10] {
+MethodCall @[0] { };
+MethodCall @[1] { };
+ProgramCall @[2] { };
+MethodCall @[3] { };
+IfElse @[4] { 
+ProgEl_List @.true_code = [2] {
+MethodCall @[0] { };
+MethodCall @[1] { };
+};
+
+ProgEl_List @.false_code = [1] {
+MethodCall @[0] { };
+};
+};
+ProgramCall @[5] { };
+MethodCall @[6] { };
+MethodCall @[7] { };
+UserScript @[8] { };
+UserScript @[9] { };
+};
+};
+Program @[3] { 
+taBase_List @.objs = [1] {
+LayerWriter_List @[0] = [2] { 
+LayerWriter @[0] { };
+LayerWriter @[1] { };
+};
+};
+
+ProgEl_List @.prog_code = [2] {
+UserScript @[0] { };
+MethodCall @[1] { };
+};
+};
+Program @[4] { 
+taBase_List @.objs = [1] {
+NetMonitor @[0] { 
+NetMonItem_List @.items = [6] {
+NetMonItem @[0] { };
+NetMonItem @[1] { };
+NetMonItem @[2] { };
+NetMonItem @[3] { };
+NetMonItem @[4] { };
+NetMonItem @[5] { };
+};
+};
+};
+
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { };
+};
+
+ProgEl_List @.init_code = [3] {
+MethodCall @[0] { };
+MethodCall @[1] { };
+UserScript @[2] { };
+};
+
+ProgEl_List @.prog_code = [4] {
+MethodCall @[0] { 
+ProgVar @*(.script_obj) { };
+};
+MethodCall @[1] { };
+UserScript @[2] { };
+MethodCall @[3] { 
+ProgVar @*(.script_obj) { };
+};
+};
+};
+};
+};
+Program_Group .projects[0].programs.gp[0] {
+name="StdBpTrain";
+el_typ=Program;
+el_def=0;
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="net";
+var_type=T_Object;
+object_type=BpNetwork;
+object_val=.projects[0].networks[0]$0$;
+};
+ProgVar @[1] {
+name="context";
+var_type=T_HardEnum;
+int_val=1;
+hard_enum_type=Network::NetContext;
+};
+};
+Program @[0] {
+name="BpTrain";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="max_epoch";
+var_type=T_Int;
+int_val=500;
+};
+ProgVar @[1] {
+name="epoch";
+var_type=T_Int;
+int_val=500;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize epoch counter";
+off=0;
+network_var=.projects[0].programs.gp[0].global_vars[0]$1$;
+local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$2$;
+counter="epoch";
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::InitWtState;
+};
+args{ };
+{ };
+};
+};
+prog_code {
+name=;
+el_typ=WhileLoop;
+el_def=0;
+WhileLoop @[0] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][1]$3$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment the epoch counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$2$;
+counter="epoch";
+};
+};
+loop_var_type=;
+loop_var="(epoch < max_epoch)";
+init_val=;
+};
+};
+};
+Program @[1] {
+name="BpEpoch";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="trial";
+var_type=T_Int;
+int_val=4;
+};
+ProgVar @[1] {
+name="train_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=.projects[0].data[0]$4$;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter: note also needs to do this in regular running program";
+off=0;
+network_var=$1$;
+local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$5$;
+counter="trial";
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$5$;
+counter="trial";
+};
+BasicDataLoop @[1] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][2]$6$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment trial counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$5$;
+counter="trial";
+};
+};
+loop_var_type="int";
+loop_var="counter";
+init_val="0";
+data_var=.projects[0].programs.gp[0][1].vars[1]$7$;
+order=PERMUTED;
+cur_item_idx=1;
+item_idx_list{ 0;2;3;1;};
+};
+};
+};
+Program @[2] {
+name="BpTrial";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="Brad: What is this??  comment on fun is not helpful";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=taBase::DataUpdate;
+};
+args{ true;};
+{ bool begin;};
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::InitExterns;
+};
+args{ };
+{ };
+};
+ProgramCall @[2] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][3]$8$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[3] {
+desc="updates all the activations";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=BpNetwork::Trial_Run;
+};
+args{ };
+{ };
+};
+IfElse @[4] {
+desc="compute weight changes or error, depending on testing vs. training";
+off=0;
+cond_test="context == Network::TRAIN";
+true_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="compute weight changes, for training";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::Compute_dWt;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="actually apply weight changes to current wieghts";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::UpdateWeights;
+};
+args{ };
+{ };
+};
+};
+false_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="compute the error for display purposes only, during testing";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=BpNetwork::Compute_Error;
+};
+args{ };
+{ };
+};
+};
+};
+ProgramCall @[5] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][4]$9$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[6] {
+desc="Do we really need this??";
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=taBase::DataUpdate;
+};
+args{ false;};
+{ bool begin;};
+};
+MethodCall @[7] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=taBase::UpdateAllViews;
+};
+args{ };
+{ };
+};
+UserScript @[8] {
+desc=;
+off=1;
+user_script="cerr << net->epoch << \", \" << net->trial << endl;";
+};
+UserScript @[9] {
+desc="busy loop!";
+off=1;
+user_script="for(int j=0;j<1000;j++) { j; }";
+};
+};
+};
+Program @[3] {
+name="ApplyInputs";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=LayerWriter_List;
+el_def=0;
+LayerWriter_List @[0] {
+name="lw_list";
+el_typ=LayerWriter;
+el_def=0;
+LayerWriter @[0] {
+data_block=$4$;
+chan_name="input";
+layer=.projects[0].networks[0].layers[0]$10$;
+offset {x=0: y=0: };
+ext_flags=TARG_EXT;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+LayerWriter @[1] {
+data_block=$4$;
+chan_name="output";
+layer=.projects[0].networks[0].layers[2]$11$;
+offset {x=0: y=0: };
+ext_flags=TARG;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+UserScript @[0] {
+desc="this is hack until we can pick objects (objs) for the MethodCall function!
+";
+off=0;
+user_script="objs.lw_list.ApplyData(context);
+
+";
+};
+MethodCall @[1] {
+desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=LayerWriter_List::ApplyData;
+};
+args{ context;};
+{ int context;};
+};
+};
+};
+Program @[4] {
+name="MonitorNet";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=NetMonitor;
+el_def=0;
+NetMonitor @[0] {
+name="Monitor1";
+items {
+name=;
+el_typ=NetMonItem;
+el_def=0;
+NetMonItem @[0] {
+name="NetMonItem.XOR_epoch";
+object=$0$;
+variable="epoch";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[1] {
+name="NetMonItem.XOR_trial";
+object=$0$;
+variable="trial";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[2] {
+name="NetMonItem.XOR_n_units";
+object=$0$;
+variable="n_units";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[3] {
+name="NetMonItem.XOR_act";
+object=$0$;
+variable="act";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[4] {
+name="NetMonItem.XOR_s.wt";
+object=$0$;
+variable="s.wt";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[5] {
+name="NetMonItem.XOR_r.wt";
+object=$0$;
+variable="r.wt";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+};
+data=.projects[0].data[1]$12$;
+rmv_orphan_cols=1;
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="mon_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=$12$;
+};
+};
+init_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="Initialize monitoring data (get rid of any existing)";
+off=1;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0][4].vars[0]$13$;
+method=DataTable::ResetData;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="update the monitor items and data schema: again, not doing until MethodCall can work on objs.";
+off=1;
+result_var=;
+method_spec {
+script_obj=$13$;
+method=NetMonitor::UpdateMonitors;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="temporary until MethodCall works on objs..";
+off=0;
+user_script="objs.Monitor1.UpdateMonitors();";
+};
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="add a new blank row to the data";
+off=0;
+result_var=;
+method_spec {
+ProgVar @*(.script_obj) {
+name="mon_data";
+var_type=T_Int;
+int_val=0;
+};
+method=DataTable::AddBlankRow;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=NetMonitor::UpdateMonVals;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="This is a hack until MethodCall can operate directly on objs.";
+off=0;
+user_script="objs.Monitor1.UpdateMonVals();";
+};
+MethodCall @[3] {
+desc="todo: what is this again??";
+off=0;
+result_var=;
+method_spec {
+ProgVar @*(.script_obj) {
+name="mon_data";
+var_type=T_Int;
+int_val=0;
+};
+method=DataBlock::WriteDone;
+};
+args{ };
+{ };
+};
+};
+};
+};

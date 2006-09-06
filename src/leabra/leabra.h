@@ -27,10 +27,6 @@
 #include "leabra_def.h"
 #include "leabra_TA_type.h"
 
-/* #include <math.h> */
-/* #include <limits.h> */
-/* #include <float.h> */
-
 // pre-declare
 
 class LeabraCon;
@@ -1587,6 +1583,7 @@ public:
   bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
+  Phase		phase;		// #READ_ONLY #SHOW type of settling phase
   int		phase_no;	// phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// maximum number of phases to run
 
@@ -1597,46 +1594,46 @@ public:
   bool		send_delta;	// #DEF_false send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
   // single cycle-level functions
-  virtual void	Compute_Net();
-  virtual void	Compute_Clamp_NetAvg();
-  virtual void	Compute_Inhib();
-  virtual void	Compute_InhibAvg();
-  virtual void	Compute_Act();
+  virtual void	Compute_Net();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
+  virtual void	Compute_Clamp_NetAvg();	// #CAT_Cycle add in clamped netinput values (computed once at start of settle) and average netinput values
+  virtual void	Compute_Inhib(); // #CAT_Cycle compute inhibitory conductances (kwta)
+  virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances
+  virtual void	Compute_Act();	// #CAT_Cycle compute activations
 
-  // todo: not sure if we want these wrapper funs or just put their contents in the prog itself
-  virtual void	Cycle_Run();	// compute one cycle of updating
+  virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
 
   // settling-phase level functions
-  virtual void	Compute_Active_K();
-  virtual void	DecayEvent();
-  virtual void	DecayPhase();
-  virtual void	DecayPhase2();
-  virtual void	PhaseInit();
-  virtual void	ExtToComp();
-  virtual void	TargExtToComp();
-  virtual void	Compute_HardClamp();
-  virtual void	Compute_NetScale();
-  virtual void	Send_ClampNet();
-  virtual void	PostSettle();
-  virtual void	PostSettle_NStdLay();
+  virtual void	Compute_Active_K(); // #CAT_SettleInit determine the active k values for each layer based on pcts, etc (called by Settle_Init)
+  virtual void	DecayPhase();	// #CAT_SettleInit decay activations and other state between minus-plus phases (called by Settle_Init)
+  virtual void	DecayPhase2();	// #CAT_SettleInit decay activations and other state between second and third phase (if applicable) (called by Settle_Init)
+  virtual void	PhaseInit();	// #CAT_SettleInit initialize at start of settling phase (called by Settle_Init)
+  virtual void	ExtToComp();	// #CAT_SettleInit move external input values to comparison values (not currently used)
+  virtual void	TargExtToComp(); // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
+  virtual void	Compute_HardClamp(); // #CAT_SettleInit compute hard clamping from external inputs (called by Settle_Init)
+  virtual void	Compute_NetScale(); // #CAT_SettleInit compute netinput scaling values by projection (called by Settle_Init)
+  virtual void	Send_ClampNet(); // #CAT_SettleInit send clamped activation netinputs to other layers -- only needs to be computed once (called by Settle_Init)
 
-  // todo: not sure if we want these wrapper funs or just put their contents in the prog itself
-  virtual void  Settle_Init();	  // initialize network for settle-level processing
-  virtual void	Settle_Final();	  // do final processing after settling
+  virtual void  Settle_Init();	  // #CAT_SettleInit initialize network for settle-level processing (decay, active k, hard clamp, netscale, clampnet)
+
+  virtual void	PostSettle();	// #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
+  virtual void	PostSettle_NStdLay(); // #CAT_SettleFinal perform post-settle computations in layers for non-standard layers (called by Settle_Init)
+
+  virtual void	Settle_Final();	  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed
 
   // trial-level functions
-  virtual void	SetCurLrate();
-  virtual void	DecayState();
-  virtual void	EncodeState();
-  virtual void	Compute_dWt_NStdLay(); // on non-nstandard layers
-  virtual void	Compute_dWt();
+  virtual void	SetCurLrate();	// #CAT_TrialInit set the current learning rate according to the LeabraConSpec parameters
+  virtual void	DecayEvent();	// decay activations and other state between events (trial-level)
+  virtual void	DecayState();	// decay the state in between trials (params in LayerSpec)
+  virtual void	EncodeState();	// encode final state information for subsequent use
+  virtual void	Compute_dWt_NStdLay(); // compute weight change on non-nstandard layers (depends on which phase is being run)
+  virtual void	Compute_dWt();	// compute weight change on all layers
 
   // todo: not sure if we want these wrapper funs or just put their contents in the prog itself
   virtual void 	Trial_Init();	// initialize at start of trial
-  virtual void	Trial_UpdatePhase(); // update phase based on phase_no
+  virtual void	Trial_UpdatePhase(); // update phase based on phase_no -- return false if no more phases need to be run
   virtual void	Trial_Final();	// do final processing after trial
 
-  virtual bool	CheckNetwork();
+  virtual bool	CheckNetwork();	// check the configuration of the network -- if not good, errors will be emitted.
   virtual bool	CheckUnit(Unit* ck);
  
   void	Initialize();

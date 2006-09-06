@@ -469,7 +469,7 @@ private:
 
 
 class TAMISC_API Program: public taNBase, public AbstractScriptBase {
-  // #TOKENS #INSTANCE a program, with global vars and its own program run space
+  // ##TOKENS ##INSTANCE ##EXT_prog a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS mode flags
@@ -498,14 +498,15 @@ public:
     NOT_INIT	// init has not yet been run
   };
   
-  static RunState	run_state; // the one and only global run mode for current running prog
-  static ProgramRef	top_prog; // the top level program that was run
-  static ProgramRef	step_prog; // #SHOW the step prog (NULL if not stepping)
+  static RunState	run_state; // #READ_ONLY the one and only global run mode for current running prog
+  static ProgramRef	top_prog; // #READ_ONLY the top level program that was run
+  static ProgramRef	step_prog; // #SHOW the program that will be stepped when the Step button is pressed
   
+  String		desc; // description of what this program does and when it should be used
   ProgFlags		flags;  // control flags, for display and execution control
-  taBase_List		objs; // #AKA_prog_objs sundry objects that are used in this program
-  ProgVar_List		args; // #AKA_param_vars global variables that are parameters (arguments) for callers
-  ProgVar_List		vars; // #AKA_prog_vars global variables accessible outside and inside script
+  taBase_List		objs; // sundry objects that are used in this program
+  ProgVar_List		args; // global variables that are parameters (arguments) for callers
+  ProgVar_List		vars; // global variables accessible outside and inside script
   ProgEl_List		init_code; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_code; // the prog els for the main program
   
@@ -587,8 +588,10 @@ private:
 SmartRef_Of(Program); // ProgramRef
 
 class TAMISC_API Program_Group : public taGroup<Program> {
+  // ##EXT_progp a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
+  String		desc; // description of what this program group does and when it should be used
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty

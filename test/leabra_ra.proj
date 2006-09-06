@@ -1,0 +1,7455 @@
+// ta_Dump File v2.0
+LeabraProject .projects[0] {
+TypeDefault_Group .projects[0].defaults { 
+TypeDefault_Group .projects[0].defaults = [7] {
+TypeDefault @[0] { 
+taBase_List @.active_membs = [4] {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[1] { 
+taBase_List @.active_membs = [2] {
+NameValue @[0] { };
+NameValue @[1] { };
+};
+};
+TypeDefault @[2] { 
+taBase_List @.active_membs = [1] {
+NameValue @[0] { };
+};
+};
+TypeDefault @[3] { 
+taBase_List @.active_membs = [4] {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+TypeDefault @[4] { 
+taBase_List @.active_membs = [1] {
+NameValue @[0] { };
+};
+};
+TypeDefault @[5] { 
+taBase_List @.active_membs = [1] {
+NameValue @[0] { };
+};
+};
+TypeDefault @[6] { 
+taBase_List @.active_membs = [4] {
+NameValue @[0] { };
+NameValue @[1] { };
+NameValue @[2] { };
+NameValue @[3] { };
+};
+};
+};
+  };
+TypeDefault_Group .projects[0].defaults {
+name=;
+el_typ=TypeDefault;
+el_def=0;
+TypeDefault @[0] {
+name="Projection";
+default_type=Projection;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="spec";
+value="{type=FullPrjnSpec: spec=NULL: }";
+};
+NameValue @[1] {
+name="con_type";
+value="LeabraCon";
+};
+NameValue @[2] {
+name="con_gp_type";
+value="LeabraCon_Group";
+};
+NameValue @[3] {
+name="con_spec";
+value="{type=LeabraConSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[1] {
+name="LeabraLayer";
+default_type=LeabraLayer;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="units";
+value="Size: 0 (LeabraUnit)";
+};
+NameValue @[1] {
+name="unit_spec";
+value="{type=LeabraUnitSpec: spec=NULL: }";
+};
+};
+};
+TypeDefault @[2] {
+name="Network";
+default_type=Network;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="layers";
+value="LeabraLayer";
+};
+};
+};
+TypeDefault @[3] {
+name="EpochProcess";
+default_type=EpochProcess;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="sub_proc_type";
+value="LeabraTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="wt_update";
+value="ON_LINE";
+};
+NameValue @[3] {
+name="between_events";
+value="INIT_STATE";
+};
+};
+};
+TypeDefault @[4] {
+name="SequenceProcess";
+default_type=SequenceProcess;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="sub_proc_type";
+value="LeabraTrial";
+};
+};
+};
+TypeDefault @[5] {
+name="SE_Stat";
+default_type=SE_Stat;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="tolerance";
+value="0.5";
+};
+};
+};
+TypeDefault @[6] {
+name="taBase";
+default_type=taBase;
+active_membs {
+name=;
+el_typ=NameValue;
+el_def=0;
+NameValue @[0] {
+name="sub_proc_type";
+value="LeabraTrial";
+};
+NameValue @[1] {
+name="order";
+value="PERMUTED";
+};
+NameValue @[2] {
+name="wt_update";
+value="ON_LINE";
+};
+NameValue @[3] {
+name="second_proc_type";
+value="LeabraTrial";
+};
+};
+};
+};
+
+Wizard_Group @.wizards = [1] {
+LeabraWiz @[0] { 
+taBase_List @.layer_cfg = [3] {
+LayerWizEl @[0] { };
+LayerWizEl @[1] { };
+LayerWizEl @[2] { };
+};
+};
+};
+
+BaseSpec_Group @.specs = [5] {
+LeabraUnitSpec @[0] { };
+LeabraBiasSpec @[1] { };
+LeabraLayerSpec @[2] { };
+LeabraConSpec @[3] { };
+FullPrjnSpec @[4] { };
+};
+
+Network_Group @.networks = [1] {
+LeabraNetwork @[0] { 
+Layer_Group @.layers = [3] {
+LeabraLayer @[0] { 
+Unit_Group @.units = [25] {
+LeabraUnit @[0] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[1] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[2] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[3] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[4] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[5] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[6] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[7] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[8] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[9] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[10] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[11] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[12] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[13] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[14] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[15] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[16] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[17] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[18] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[19] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[20] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[21] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[22] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[23] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[24] { 
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+};
+};
+LeabraLayer @[1] { 
+Projection_Group @.projections = [2] {
+Projection @[0] { };
+Projection @[1] { };
+};
+
+Unit_Group @.units = [25] {
+LeabraUnit @[0] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[1] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[2] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[3] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[4] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[5] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[6] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[7] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[8] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[9] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[10] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[11] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[12] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[13] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[14] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[15] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[16] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[17] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[18] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[19] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[20] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[21] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[22] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[23] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[24] { 
+taSubGroup @.recv.gp = [2] {
+LeabraCon_Group @[0] = [25] { };
+LeabraCon_Group @[1] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+};
+};
+LeabraLayer @[2] { 
+Projection_Group @.projections = [1] {
+Projection @[0] { };
+};
+
+Unit_Group @.units = [25] {
+LeabraUnit @[0] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[1] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[2] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[3] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[4] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[5] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[6] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[7] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[8] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[9] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[10] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[11] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[12] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[13] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[14] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[15] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[16] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[17] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[18] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[19] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[20] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[21] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[22] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[23] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+LeabraUnit @[24] { 
+taSubGroup @.recv.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+
+taSubGroup @.send.gp = [1] {
+LeabraCon_Group @[0] = [25] { };
+};
+};
+};
+};
+};
+};
+};
+
+DataTable_Group @.data = [2] {
+DataTable @[0] { 
+DataTableCols @.data = [3] {
+String_Data @[0] { };
+float_Data @[1] { };
+float_Data @[2] { };
+};
+};
+DataTable @[1] { 
+DataTableCols @.data = [7] {
+int_Data @[0] { };
+int_Data @[1] { };
+int_Data @[2] { };
+int_Data @[3] { };
+float_Data @[4] { };
+float_Data @[5] { };
+float_Data @[6] { };
+};
+};
+};
+
+DataViewer_List @.viewers = [1] {
+pdpDataViewer @[0] { 
+ToolBar_List @.toolbars = [1] {
+ToolBar @[0] { };
+};
+
+T3DataView_List @.children = [1] {
+NetView @[0] { 
+T3DataView_List @.children = [6] {
+LayerView @[0] { };
+LayerView @[1] { };
+LayerView @[2] { };
+PrjnView @[3] { };
+PrjnView @[4] { };
+PrjnView @[5] { };
+};
+
+ScaleRange_List @.scale_ranges = [19] {
+ScaleRange @[0] { };
+ScaleRange @[1] { };
+ScaleRange @[2] { };
+ScaleRange @[3] { };
+ScaleRange @[4] { };
+ScaleRange @[5] { };
+ScaleRange @[6] { };
+ScaleRange @[7] { };
+ScaleRange @[8] { };
+ScaleRange @[9] { };
+ScaleRange @[10] { };
+ScaleRange @[11] { };
+ScaleRange @[12] { };
+ScaleRange @[13] { };
+ScaleRange @[14] { };
+ScaleRange @[15] { };
+ScaleRange @[16] { };
+ScaleRange @[17] { };
+ScaleRange @[18] { };
+};
+};
+};
+};
+};
+
+RGBA_List @.view_colors = [20] {
+RGBA @[0] { };
+RGBA @[1] { };
+RGBA @[2] { };
+RGBA @[3] { };
+RGBA @[4] { };
+RGBA @[5] { };
+RGBA @[6] { };
+RGBA @[7] { };
+RGBA @[8] { };
+RGBA @[9] { };
+RGBA @[10] { };
+RGBA @[11] { };
+RGBA @[12] { };
+RGBA @[13] { };
+RGBA @[14] { };
+RGBA @[15] { };
+RGBA @[16] { };
+RGBA @[17] { };
+RGBA @[18] { };
+RGBA @[19] { };
+};
+};
+LeabraProject .projects[0] {
+name="LeabraProject_0";
+wizards {
+name=;
+el_typ=LeabraWiz;
+el_def=0;
+LeabraWiz @[0] {
+name="LeabraWiz_0";
+auto_open=0;
+n_layers=3;
+layer_cfg {
+name=;
+el_typ=LayerWizEl;
+el_def=0;
+LayerWizEl @[0] {
+name=;
+n_units=10;
+io_type=3014768;
+};
+LayerWizEl @[1] {
+name=;
+n_units=10;
+io_type=1836017711;
+};
+LayerWizEl @[2] {
+name=;
+n_units=10;
+io_type=295;
+};
+};
+connectivity=BIDIRECTIONAL;
+event_type=Event;
+};
+};
+specs {
+name=;
+el_typ=LeabraUnitSpec;
+el_def=0;
+LeabraUnitSpec @[0] {
+   unique 	    = {};
+name="LeabraUnitSpec_0";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=LeabraUnitSpec;
+el_def=0;
+};
+act_range {min=0: max=1: range=1: scale=1: };
+bias_con_type=LeabraCon;
+bias_spec {type=LeabraBiasSpec: spec=.projects[0].specs[1]$0$: };
+act_fun=NOISY_XX1;
+act {thr=0.25: gain=600: nvar=0.0049999999: avg_dt=0.0049999999: send_delta=0: i_thr=STD: };
+spike {decay=0.050000001: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.40000001: };
+depress {p_spike=P_NXX1: rec=0.2: asymp_act=0.5: depl=0.21052632: max_amp=2: };
+opt_thresh {send=0.1: delta=0.0049999999: learn=0.0099999998: updt_wts=1: phase_dif=0: };
+clamp_range {min=0: max=0.94999999: range=0.94999999: scale=1.0526316: };
+vm_range {min=0: max=1: range=1: scale=1: };
+v_m_init {type=UNIFORM: mean=0.15000001: var=0: par=1: };
+dt {vm=0.30000001: net=0.69999999: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+g_bar {e=1: l=0.1: i=1: h=0.0099999998: a=0.029999999: };
+e_rev {e=1: l=0.15000001: i=0.15000001: h=1: a=0: };
+hyst {on=0: b_dt=0.050000001: a_thr=0.80000001: d_thr=0.69999999: g_dt=0.1: init=0: };
+acc {on=0: b_dt=0.0099999998: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: };
+act_reg {on=0: min=0: max=0.34999999: wt_dt=0.2: };
+noise_type=NO_NOISE;
+noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+noise_sched {
+name=;
+el_typ=SchedItem;
+el_def=0;
+last_ctr=-1;
+default_val=1;
+interpolate=1;
+cur_val=0;
+};
+};
+LeabraBiasSpec @[1] {
+   unique 	    = {};
+name="LeabraBiasSpec_0";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=LeabraBiasSpec;
+el_def=0;
+};
+rnd {type=UNIFORM: mean=0: var=0: par=1: };
+wt_limits {type=NONE: min=-1: max=5: sym=0: };
+inhib=0;
+wt_scale {abs=1: rel=1: };
+wt_sig {gain=6: off=1.25: };
+lrate=0.0099999998;
+cur_lrate=0.0099999998;
+lrs_value=EPOCH;
+lrate_sched {
+name=;
+el_typ=SchedItem;
+el_def=0;
+last_ctr=-1;
+default_val=1;
+interpolate=0;
+cur_val=1;
+};
+lmix {hebb=0.001: err=0.99900001: err_sb=1: };
+savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
+dwt_thresh=0.1;
+};
+LeabraLayerSpec @[2] {
+   unique 	    = {};
+name="LeabraLayerSpec_0";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=LeabraLayerSpec;
+el_def=0;
+};
+kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+inhib_group=ENTIRE_LAYER;
+compute_i=KWTA_INHIB;
+i_kwta_pt=0.25;
+gp_i_pt=0.2;
+tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.89999998: l=0.2: a_dt=0.0049999999: };
+clamp {hard=0: gain=0.5: d_gain=0: };
+decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+net_rescale {on=0: max_net=0.60000002: net_extra=0.2: };
+};
+LeabraConSpec @[3] {
+   unique 	    = {};
+name="LeabraConSpec_0";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=LeabraConSpec;
+el_def=0;
+};
+rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: };
+wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+inhib=0;
+wt_scale {abs=1: rel=1: };
+wt_sig {gain=6: off=1.25: };
+lrate=0.0099999998;
+cur_lrate=0.0099999998;
+lrs_value=EPOCH;
+lrate_sched {
+name=;
+el_typ=SchedItem;
+el_def=0;
+last_ctr=-1;
+default_val=1;
+interpolate=0;
+cur_val=1;
+};
+lmix {hebb=0.001: err=0.99900001: err_sb=1: };
+savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
+};
+FullPrjnSpec @[4] {
+   unique 	    = {};
+name="FullPrjnSpec_0";
+unique=unsigned_long_ary;
+children {
+name=;
+el_typ=FullPrjnSpec;
+el_def=0;
+};
+self_con=0;
+init_wts=0;
+};
+};
+networks {
+name=;
+el_typ=LeabraNetwork;
+el_def=0;
+LeabraNetwork @[0] {
+name="LeabraNetwork_0";
+layers {
+name=;
+el_typ=LeabraLayer;
+el_def=0;
+pos {x=0: y=0: z=0: };
+LeabraLayer @[0] {
+name="Input";
+layer_type=INPUT;
+n_units=25;
+geom {x=5: y=5: z=1: };
+pos {x=0: y=0: z=0: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=5: y=5: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
+};
+units {
+name=;
+el_typ=LeabraUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=5: y=5: z=1: };
+units_lesioned=0;
+LeabraUnit @[0] {
+name=;
+spec {type=LeabraUnitSpec: spec=.projects[0].specs[0]$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=.projects[0].specs[3]$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=.projects[0].networks[0].layers[1].projections[0]$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=0: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[1] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=1: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[2] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=2: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[3] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=3: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[4] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=4: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[5] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=0: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[6] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=1: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[7] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=2: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[8] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=3: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[9] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=4: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[10] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=0: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[11] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=1: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[12] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=2: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[13] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=3: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[14] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=4: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[15] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=0: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[16] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=1: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[17] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=2: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[18] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=3: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[19] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=4: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[20] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=0: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[21] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=1: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[22] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=2: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[23] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=3: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[24] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=Connection;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=0;
+pos {x=4: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+};
+unit_spec {type=LeabraUnitSpec: spec=$1$: };
+lesion=0;
+ext_flag=DEFAULT;
+dmem_dist=DMEM_DIST_DEFAULT;
+netin {avg=0: max=0: max_i=-1: };
+i_thrs {avg=0: max=0: max_i=-1: };
+acts {avg=0: max=0: max_i=-1: };
+acts_p {avg=0.19945356: max=0.99726778: max_i=4: };
+acts_m {avg=0.19945356: max=0.99726778: max_i=0: };
+phase_dif_ratio=1;
+kwta {k=6: pct=0.23999999: pct_c=0.75999999: adth_k=1: k_ithr=-0.1: k1_ithr=-0.1: ithr_r=0: ithr_diff=-0: tie_brk=0: };
+i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+un_g_i {avg=0: max=0: max_i=-1: };
+adapt_i {avg_avg=0.23999999: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+spec {type=LeabraLayerSpec: spec=.projects[0].specs[2]$4$: };
+stm_gain=0.5;
+hard_clamped=0;
+prv_phase=0;
+dav=0;
+net_rescale=1;
+da_updt=0;
+misc_iar{ };
+};
+LeabraLayer @[1] {
+name="Hidden";
+layer_type=HIDDEN;
+n_units=25;
+geom {x=5: y=5: z=1: };
+pos {x=0: y=0: z=1: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=5: y=5: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection @[0] {
+name="Fm_Input";
+from_type=CUSTOM;
+from=.projects[0].networks[0].layers[0]$5$;
+spec {type=FullPrjnSpec: spec=.projects[0].specs[4]$6$: };
+con_type=LeabraCon;
+con_gp_type=LeabraCon_Group;
+con_spec {type=LeabraConSpec: spec=$2$: };
+recv_idx=0;
+send_idx=0;
+recv_n=1;
+send_n=1;
+projected=1;
+};
+Projection @[1] {
+name="Fm_Output";
+from_type=CUSTOM;
+from=.projects[0].networks[0].layers[2]$7$;
+spec {type=FullPrjnSpec: spec=$6$: };
+con_type=LeabraCon;
+con_gp_type=LeabraCon_Group;
+con_spec {type=LeabraConSpec: spec=$2$: };
+recv_idx=1;
+send_idx=0;
+recv_n=1;
+send_n=1;
+projected=1;
+};
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+};
+units {
+name=;
+el_typ=LeabraUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=5: y=5: z=1: };
+units_lesioned=0;
+LeabraUnit @[0] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00036239735;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.63555717; 0.40521985; 0.71801436; 0.254509; 0.35591525; 0.40156418; 0.65312731; 0.40701547; 
+0.25843924; 0.47199255; 0.49462223; 0.46446615; 0.38047677; 0.6203894; 0.58563048; 0.49972111; 
+0.43699381; 0.25203344; 0.69858116; 0.32668427; 0.32960048; 0.62556231; 0.28846392; 0.64000177; 
+0.65204215; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=.projects[0].networks[0].layers[1].projections[1]$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.63026762; 0.64317667; 0.66386533; 0.65201163; 0.5372439; 0.36571562; 0.72103286; 0.72419089; 
+0.68430448; 0.67818177; 0.54488277; 0.70791268; 0.47891602; 0.4456954; 0.59777224; 0.53974128; 
+0.33591586; 0.70740318; 0.61904693; 0.37923688; 0.34601691; 0.34373146; 0.25275508; 0.59021115; 
+0.34462935; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=.projects[0].networks[0].layers[2].projections[0]$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=0: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[1] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=4.4772423e-06;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.71306562; 0.3938508; 0.56407183; 0.61796689; 0.65784168; 0.64899391; 0.61290789; 0.71461684; 
+0.59759724; 0.44896314; 0.51462018; 0.61444163; 0.5060733; 0.50963616; 0.58624709; 0.48419029; 
+0.6069262; 0.33619583; 0.58251166; 0.67081141; 0.65051866; 0.42979974; 0.62366879; 0.6194334; 
+0.52447546; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.56931853; 0.48292175; 0.30855152; 0.31763574; 0.64445317; 0.35515645; 0.3930338; 0.66710138; 
+0.57703388; 0.74923015; 0.26721182; 0.26759908; 0.47603038; 0.71264672; 0.55761659; 0.41407081; 
+0.37839854; 0.69298935; 0.5857361; 0.44012636; 0.46522319; 0.56718862; 0.63660651; 0.72636819; 
+0.58248419; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=1: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[2] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=3.4279808e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.60477394; 0.3192884; 0.74481517; 0.61507601; 0.28870052; 0.2544069; 0.31843951; 0.53378034; 
+0.65807658; 0.6685468; 0.31778124; 0.40200692; 0.54957932; 0.60052919; 0.54566103; 0.64737386; 
+0.3159169; 0.28753379; 0.32173723; 0.59194529; 0.44935361; 0.52424014; 0.44980526; 0.68203163; 
+0.33829245; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.47038561; 0.32649866; 0.55040407; 0.36054882; 0.73978186; 0.47235113; 0.47388601; 0.46073949; 
+0.58379602; 0.48079365; 0.49558318; 0.38305327; 0.43100315; 0.49527729; 0.72182721; 0.65593541; 
+0.63732505; 0.46909881; 0.70265257; 0.5727157; 0.71151888; 0.32897013; 0.6377452; 0.71124738; 
+0.5180974; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=2: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[3] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-8.8212066e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.74323469; 0.68541873; 0.36441699; 0.33710867; 0.40571758; 0.69404793; 0.36165717; 0.69512224; 
+0.44701886; 0.60031015; 0.69115323; 0.29866794; 0.59807628; 0.63852316; 0.29733834; 0.4820013; 
+0.63490421; 0.30319849; 0.38818085; 0.62678981; 0.45549473; 0.50964558; 0.29193234; 0.29162818; 
+0.32462671; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.62862742; 0.56909084; 0.29716107; 0.30220568; 0.70508116; 0.3352406; 0.44238007; 0.30003479; 
+0.73320317; 0.37724161; 0.49501687; 0.46784338; 0.68224704; 0.33166221; 0.50541472; 0.43955433; 
+0.54483783; 0.68963969; 0.51270121; 0.31848711; 0.74471986; 0.32016286; 0.38735527; 0.58582067; 
+0.68558824; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=3: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[4] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=2.8669936e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.426498; 0.56306779; 0.45697916; 0.63685679; 0.7426641; 0.74279225; 0.50550389; 0.54780102; 
+0.56041545; 0.45116079; 0.58897948; 0.28082767; 0.47218537; 0.65945721; 0.73406136; 0.43919235; 
+0.32426929; 0.52811098; 0.35709548; 0.7140578; 0.72071338; 0.53960538; 0.5074861; 0.37335297; 
+0.63182724; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.61515546; 0.69173849; 0.57171381; 0.4432354; 0.558743; 0.57913017; 0.25204208; 0.74657571; 
+0.35269919; 0.5415287; 0.26398757; 0.47290277; 0.44152176; 0.68120408; 0.35895395; 0.30395615; 
+0.47416002; 0.44793057; 0.25663027; 0.73178184; 0.74025869; 0.36129418; 0.65850675; 0.27962279; 
+0.68179035; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=4: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[5] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-2.9708792e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.69954228; 0.4306004; 0.26849172; 0.40382597; 0.34026051; 0.69840539; 0.46171117; 0.62298852; 
+0.62338984; 0.27771193; 0.63679051; 0.4063949; 0.67151594; 0.3153311; 0.31883505; 0.6800108; 
+0.68516797; 0.47075412; 0.31047583; 0.56445312; 0.54316616; 0.55290192; 0.26015535; 0.29219562; 
+0.46592742; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.4813751; 0.42612931; 0.37841544; 0.36220247; 0.26497468; 0.31507397; 0.32173043; 0.31960413; 
+0.47342718; 0.43077087; 0.62388146; 0.27391618; 0.43471277; 0.59968257; 0.26866707; 0.50192189; 
+0.50499654; 0.53082436; 0.45210665; 0.74360502; 0.29377866; 0.63400137; 0.49644446; 0.56744266; 
+0.54887104; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=0: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[6] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00012570922;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.5892294; 0.36290607; 0.44124401; 0.48958844; 0.28363523; 0.64189196; 0.56418788; 0.390562; 
+0.28108102; 0.61217129; 0.34046012; 0.33470178; 0.50749081; 0.66485989; 0.48600805; 0.49555784; 
+0.7251308; 0.28930324; 0.34749454; 0.29506308; 0.43011251; 0.28184187; 0.26947963; 0.48298895; 
+0.47936565; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.60905927; 0.59122348; 0.31502819; 0.46673542; 0.53148544; 0.57587409; 0.48385161; 0.57329166; 
+0.62641239; 0.28958315; 0.45349187; 0.3016718; 0.38408971; 0.42964023; 0.59061158; 0.28379691; 
+0.62330222; 0.33775088; 0.6311512; 0.6486237; 0.73028964; 0.74330688; 0.2748642; 0.57560068; 
+0.34846532; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=1: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[7] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00085314293;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.58284461; 0.48340517; 0.54813755; 0.37340975; 0.53185248; 0.51840276; 0.38915509; 0.67633367; 
+0.61970186; 0.61466002; 0.29382527; 0.46825433; 0.62321645; 0.57920468; 0.37737197; 0.46964517; 
+0.68580496; 0.28347847; 0.60499299; 0.50405687; 0.55036604; 0.45522314; 0.5273596; 0.43367803; 
+0.49513376; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.66939229; 0.26987413; 0.38775286; 0.35289419; 0.61786324; 0.70868605; 0.4982388; 0.44407976; 
+0.52446997; 0.44137162; 0.46841538; 0.36488762; 0.64581013; 0.65233928; 0.59095383; 0.62005621; 
+0.62994403; 0.51075089; 0.48947677; 0.35401464; 0.64123082; 0.67476153; 0.29590848; 0.70457983; 
+0.33341882; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=2: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[8] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00038931789;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.55899763; 0.5258646; 0.25831452; 0.67503881; 0.50302124; 0.29933843; 0.40242872; 0.60699761; 
+0.39645422; 0.35087591; 0.38258842; 0.38032642; 0.64152348; 0.34017667; 0.50739551; 0.58908165; 
+0.48017877; 0.51841962; 0.63025486; 0.27084309; 0.60489762; 0.29442289; 0.2629801; 0.60210204; 
+0.65355951; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.44434339; 0.30732197; 0.64427626; 0.73420745; 0.44263399; 0.55035239; 0.37837017; 0.47107077; 
+0.41649875; 0.25785527; 0.26673388; 0.52132118; 0.66567385; 0.3394804; 0.49979818; 0.45368361; 
+0.63941616; 0.31908786; 0.73037815; 0.69320935; 0.37266186; 0.43973157; 0.27063322; 0.29781866; 
+0.49680284; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=3: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[9] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.5564298; 0.42641082; 0.25462979; 0.66688251; 0.39094713; 0.47143304; 0.52616525; 0.31753269; 
+0.25359428; 0.69254774; 0.69464397; 0.53919137; 0.63285094; 0.35766074; 0.61532402; 0.51829123; 
+0.42066467; 0.59113228; 0.73961496; 0.7188971; 0.57584393; 0.52109724; 0.74652487; 0.48926204; 
+0.49717337; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.50235611; 0.65039432; 0.34762105; 0.678455; 0.31830341; 0.29938665; 0.56614029; 0.49505901; 
+0.59175324; 0.72210813; 0.37277535; 0.39690363; 0.41468638; 0.65411299; 0.32473591; 0.50568271; 
+0.49281433; 0.74536514; 0.28574204; 0.6139158; 0.50998455; 0.26881537; 0.5839889; 0.5625205; 
+0.63624215; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=4: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[10] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00013835035;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.69736159; 0.71696025; 0.47114351; 0.6346879; 0.30935907; 0.36824998; 0.31101605; 0.68349564; 
+0.52376449; 0.71830058; 0.40572268; 0.37403896; 0.72812605; 0.69428504; 0.44217676; 0.27108195; 
+0.33393127; 0.35264862; 0.67078859; 0.54190123; 0.54423136; 0.63753146; 0.3429344; 0.46742535; 
+0.69004011; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.5527302; 0.29508531; 0.72375536; 0.27441019; 0.65400988; 0.65185964; 0.29294491; 0.68864059; 
+0.54710501; 0.69751871; 0.46199727; 0.7068181; 0.34741417; 0.60293329; 0.29181713; 0.52443492; 
+0.62206745; 0.68052608; 0.30778846; 0.47291246; 0.42392206; 0.69527668; 0.32503405; 0.5101974; 
+0.28813457; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=0: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[11] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00029023763;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.35668659; 0.28312862; 0.58305573; 0.47061417; 0.71142679; 0.62596399; 0.66449845; 0.4376142; 
+0.45890635; 0.47317982; 0.60870159; 0.28687793; 0.67861092; 0.719522; 0.53131258; 0.6529364; 
+0.31477314; 0.39301234; 0.32836398; 0.60104144; 0.46541512; 0.28725809; 0.41281173; 0.56685561; 
+0.59504747; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.36456725; 0.5477258; 0.50470734; 0.66092604; 0.43188971; 0.53956687; 0.46143621; 0.60765588; 
+0.30968532; 0.6676991; 0.50163901; 0.44051903; 0.38154161; 0.2504521; 0.62394965; 0.70353979; 
+0.33874816; 0.74792826; 0.33364278; 0.65457153; 0.28153765; 0.44478461; 0.49485523; 0.3106882; 
+0.67266536; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=1: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[12] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=3.050852e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.65876728; 0.27309221; 0.73224586; 0.40954292; 0.74118471; 0.47861186; 0.59645343; 0.38720179; 
+0.50634098; 0.43169904; 0.68885726; 0.58292353; 0.26783225; 0.32407868; 0.66003859; 0.70262289; 
+0.42298275; 0.71638209; 0.3975265; 0.50587112; 0.38299781; 0.67584151; 0.58842552; 0.64545918; 
+0.26314363; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.35145015; 0.40226448; 0.60973752; 0.53711212; 0.6696859; 0.36503822; 0.53571379; 0.5780549; 
+0.56834215; 0.61535347; 0.7464329; 0.31326658; 0.40504193; 0.47065002; 0.48425773; 0.62912643; 
+0.51620829; 0.32293683; 0.55699265; 0.35282949; 0.27132627; 0.43373817; 0.43998313; 0.27305698; 
+0.68778545; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=2: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[13] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00016431991;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.72151363; 0.73492473; 0.35170448; 0.37607467; 0.50458598; 0.33878493; 0.2542111; 0.7436769; 
+0.52199602; 0.6919319; 0.43265617; 0.69068468; 0.58265126; 0.7308526; 0.33982629; 0.73754823; 
+0.50956917; 0.32496339; 0.25348172; 0.50396729; 0.27235004; 0.6864363; 0.25075147; 0.25032195; 
+0.38230523; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.52981174; 0.73223937; 0.55198562; 0.41181564; 0.32266816; 0.31296346; 0.59045756; 0.31769142; 
+0.72999823; 0.42660445; 0.47972935; 0.50628424; 0.53499329; 0.25171494; 0.44779626; 0.56491828; 
+0.41560972; 0.26783133; 0.40216702; 0.65762901; 0.67082739; 0.54814517; 0.74669462; 0.69255817; 
+0.48129439; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=3: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[14] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00029327814;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.33784467; 0.60208094; 0.44319439; 0.58464062; 0.74594522; 0.73621821; 0.33412111; 0.26724049; 
+0.74628317; 0.51919889; 0.69091982; 0.73776346; 0.52644193; 0.50736439; 0.70857906; 0.42205513; 
+0.31209198; 0.57666647; 0.6999445; 0.45172077; 0.33668065; 0.72834593; 0.52335024; 0.50606465; 
+0.43234783; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.63690132; 0.33520573; 0.49556446; 0.63718188; 0.56839877; 0.35634688; 0.35858399; 0.41002992; 
+0.59854674; 0.6565035; 0.60642409; 0.3877905; 0.73763549; 0.70305365; 0.74963123; 0.38913614; 
+0.65192485; 0.39307857; 0.46737611; 0.36911288; 0.58107245; 0.70792162; 0.44103783; 0.71342504; 
+0.44244683; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=4: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[15] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00013219754;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.73893499; 0.5026691; 0.51208091; 0.51844227; 0.31098729; 0.42814595; 0.31709331; 0.53268361; 
+0.5009591; 0.5932461; 0.32747036; 0.49806267; 0.65704536; 0.53980529; 0.74836063; 0.581236; 
+0.34893933; 0.7164458; 0.56858695; 0.67735273; 0.32186133; 0.62901711; 0.45904195; 0.28056118; 
+0.60802108; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.26343307; 0.38156343; 0.66911191; 0.31208277; 0.63767272; 0.51605576; 0.39127937; 0.63228619; 
+0.59921002; 0.74808127; 0.32571942; 0.58215332; 0.46404383; 0.35166633; 0.34977457; 0.63815784; 
+0.25938901; 0.49068165; 0.40356725; 0.46225995; 0.61284095; 0.52126336; 0.35352403; 0.30443347; 
+0.67849135; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=0: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[16] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00018671305;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.46783185; 0.63307214; 0.59412861; 0.45020917; 0.67357177; 0.41415107; 0.47729421; 0.74448407; 
+0.50637913; 0.35658759; 0.62765133; 0.74014902; 0.558599; 0.25181824; 0.5703764; 0.28973213; 
+0.60156727; 0.69609249; 0.42180002; 0.43646047; 0.45581418; 0.53114009; 0.4655017; 0.60360771; 
+0.26267418; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.7400791; 0.27384946; 0.53928781; 0.52873379; 0.28221828; 0.54555047; 0.54303277; 0.69349515; 
+0.45500809; 0.42684585; 0.71345615; 0.3186031; 0.42178369; 0.60596013; 0.49491835; 0.54121608; 
+0.71886593; 0.30348685; 0.3143701; 0.72162014; 0.44133204; 0.66036582; 0.60752028; 0.53394616; 
+0.49163932; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=1: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[17] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00033537342;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.25155562; 0.25976288; 0.5523836; 0.63279438; 0.45033628; 0.47578639; 0.49841189; 0.67905909; 
+0.55793399; 0.51530188; 0.70514661; 0.50381434; 0.64436263; 0.42335355; 0.73223603; 0.26736918; 
+0.7465598; 0.43520284; 0.27872035; 0.70164371; 0.33103037; 0.3665053; 0.46487743; 0.49753171; 
+0.54358298; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.54061061; 0.48243135; 0.72483635; 0.56474435; 0.27963048; 0.30071488; 0.62008309; 0.61086094; 
+0.56115949; 0.51561737; 0.26622021; 0.50934947; 0.61082172; 0.73295283; 0.68603295; 0.31400543; 
+0.6513238; 0.44496915; 0.71032381; 0.50212348; 0.4671025; 0.46576938; 0.40563619; 0.38616288; 
+0.58192492; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=2: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[18] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00030630032;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.54674381; 0.40737417; 0.67173606; 0.3592892; 0.34398049; 0.57458091; 0.60242283; 0.34836006; 
+0.60761803; 0.46439362; 0.748034; 0.64857316; 0.49485987; 0.35810336; 0.60105282; 0.46883988; 
+0.72658575; 0.47143218; 0.34466466; 0.58151871; 0.49583256; 0.38982156; 0.47085911; 0.50921649; 
+0.56192142; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.62200725; 0.67902219; 0.72075558; 0.53352594; 0.31413758; 0.72116804; 0.36027032; 0.64153361; 
+0.59299612; 0.48554605; 0.50258994; 0.25351587; 0.42566526; 0.4483611; 0.51987517; 0.43229461; 
+0.66201985; 0.5636999; 0.37300971; 0.66433215; 0.44347119; 0.35912627; 0.63510537; 0.38267314; 
+0.67989087; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=3: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[19] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00028069312;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.50382686; 0.71089971; 0.5369997; 0.48538446; 0.33674282; 0.57297814; 0.26130503; 0.47897112; 
+0.38735881; 0.68458045; 0.49517533; 0.60619307; 0.48616552; 0.66595995; 0.48649007; 0.61507392; 
+0.57742888; 0.61131507; 0.52701056; 0.33304679; 0.60639161; 0.47751808; 0.64008129; 0.42354089; 
+0.56254351; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.72763789; 0.38337249; 0.44413501; 0.4295606; 0.4846983; 0.54404378; 0.56453049; 0.52599525; 
+0.50155604; 0.29918194; 0.53873944; 0.542436; 0.49964494; 0.52312875; 0.40578735; 0.57157528; 
+0.50095499; 0.6529873; 0.36022645; 0.31942433; 0.32648245; 0.47169; 0.44467121; 0.33696094; 
+0.26188806; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=4: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[20] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00028219484;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.48677716; 0.60705823; 0.30788597; 0.44770205; 0.26573595; 0.27338979; 0.59304905; 0.53454405; 
+0.63300002; 0.58392978; 0.68426019; 0.42154795; 0.6865744; 0.4811933; 0.68247277; 0.62743539; 
+0.58941633; 0.60580146; 0.25500938; 0.68573779; 0.26103932; 0.51692414; 0.50261527; 0.74496913; 
+0.42150098; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.66505289; 0.49112728; 0.56877214; 0.57030439; 0.40470448; 0.29644647; 0.56623948; 0.74694967; 
+0.3391133; 0.30795354; 0.56785244; 0.60317433; 0.65535533; 0.53559828; 0.27658278; 0.67297995; 
+0.28182295; 0.44747788; 0.30319849; 0.61779904; 0.41475338; 0.33653253; 0.73554707; 0.3158941; 
+0.52924275; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=0: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[21] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00017268394;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.65077949; 0.62220705; 0.64863133; 0.31544122; 0.38122517; 0.25223768; 0.54183555; 0.37126166; 
+0.54177177; 0.27782056; 0.53063428; 0.5257318; 0.26166028; 0.64133877; 0.36880222; 0.50320423; 
+0.39903557; 0.5582782; 0.26277003; 0.72141683; 0.58188283; 0.30007273; 0.34685645; 0.33135933; 
+0.56437671; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.6651001; 0.30035964; 0.35118574; 0.28734657; 0.49966168; 0.28966492; 0.50249612; 0.49307197; 
+0.49617118; 0.31852013; 0.4611879; 0.61962163; 0.64180106; 0.72700089; 0.53439379; 0.486673; 
+0.35373348; 0.65602314; 0.70125896; 0.56902343; 0.64233124; 0.46955764; 0.45640725; 0.70918041; 
+0.74594563; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=1: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[22] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00015474863;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.66866148; 0.48497432; 0.52080166; 0.63501787; 0.51481187; 0.2972571; 0.5314455; 0.41550922; 
+0.53114045; 0.61571306; 0.39774016; 0.66348267; 0.67824769; 0.59498245; 0.34809497; 0.42655665; 
+0.56630206; 0.30932197; 0.40763444; 0.35691935; 0.46563107; 0.34854931; 0.56398022; 0.40314299; 
+0.25425491; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.65595722; 0.67655516; 0.57435262; 0.54678142; 0.54989064; 0.69644547; 0.62335801; 0.35626274; 
+0.2741231; 0.52413845; 0.31778014; 0.51571101; 0.54962277; 0.51355541; 0.53005421; 0.61781788; 
+0.74114537; 0.26279569; 0.48779017; 0.5872435; 0.28801629; 0.67676294; 0.25403643; 0.3541041; 
+0.42323869; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=2: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[23] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-9.3922108e-06;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.4995451; 0.6213643; 0.49653399; 0.35615689; 0.55398452; 0.728423; 0.56697744; 0.25566608; 
+0.30375436; 0.27170894; 0.31026542; 0.56019139; 0.52188599; 0.26794043; 0.29256424; 0.2852459; 
+0.59917212; 0.71924454; 0.65643966; 0.67281151; 0.6646111; 0.43699792; 0.74025452; 0.42301571; 
+0.38459113; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.49012047; 0.28275728; 0.51160699; 0.42924365; 0.37080193; 0.63832229; 0.3139368; 0.34005558; 
+0.46310389; 0.29905277; 0.34059805; 0.73059142; 0.7168889; 0.65427047; 0.41207516; 0.5674749; 
+0.42571321; 0.51381576; 0.65238845; 0.37472108; 0.67368788; 0.70707446; 0.35356691; 0.42069742; 
+0.27126294; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=3: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[24] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00034781167;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$3$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.74398774; 0.71017438; 0.52717435; 0.37546492; 0.34057495; 0.27627638; 0.53807366; 0.25455436; 
+0.73353082; 0.46471041; 0.72106594; 0.63190985; 0.55768311; 0.66654468; 0.70369416; 0.56565809; 
+0.38912365; 0.26964188; 0.62485838; 0.37765068; 0.45945188; 0.37428063; 0.26120746; 0.71436322; 
+0.63350552; };
+};
+LeabraCon_Group @.gp[1] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.43450272; 0.504915; 0.30174682; 0.58853567; 0.5206027; 0.69867885; 0.71383977; 0.43505919; 
+0.58343577; 0.55376911; 0.65743995; 0.30600882; 0.41195685; 0.40947992; 0.34668154; 0.57490683; 
+0.64681828; 0.26643968; 0.2673583; 0.32888496; 0.37627357; 0.41967946; 0.53040922; 0.63991964; 
+0.7259804; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=50;
+pos {x=4: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+};
+unit_spec {type=LeabraUnitSpec: spec=$1$: };
+lesion=0;
+ext_flag=DEFAULT;
+dmem_dist=DMEM_DIST_DEFAULT;
+netin {avg=0: max=0: max_i=-1: };
+i_thrs {avg=0: max=0: max_i=-1: };
+acts {avg=0: max=0: max_i=-1: };
+acts_p {avg=0.1679721: max=0.89363563: max_i=8: };
+acts_m {avg=0.20497361: max=0.89146936: max_i=8: };
+phase_dif_ratio=1.2202836;
+kwta {k=6: pct=0.23999999: pct_c=0.75999999: adth_k=1: k_ithr=3.4118092: k1_ithr=3.3714294: ithr_r=0.011905919: ithr_diff=0.011835293: tie_brk=0: };
+i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+un_g_i {avg=0: max=0: max_i=-1: };
+adapt_i {avg_avg=0.23999999: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+spec {type=LeabraLayerSpec: spec=$4$: };
+stm_gain=0.5;
+hard_clamped=0;
+prv_phase=0;
+dav=0;
+net_rescale=1;
+da_updt=0;
+misc_iar{ };
+};
+LeabraLayer @[2] {
+name="Output";
+layer_type=OUTPUT;
+n_units=25;
+geom {x=5: y=5: z=1: };
+pos {x=0: y=0: z=2: };
+gp_geom {x=0: y=0: z=0: };
+gp_spc {x=0: y=0: z=0: };
+act_geom {x=5: y=5: z=1: };
+projections {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection @[0] {
+name="Fm_Hidden";
+from_type=CUSTOM;
+from=.projects[0].networks[0].layers[1]$10$;
+spec {type=FullPrjnSpec: spec=$6$: };
+con_type=LeabraCon;
+con_gp_type=LeabraCon_Group;
+con_spec {type=LeabraConSpec: spec=$2$: };
+recv_idx=0;
+send_idx=0;
+recv_n=1;
+send_n=1;
+projected=1;
+};
+};
+send_prjns {
+name=;
+el_typ=Projection;
+el_def=0;
+Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[1];
+};
+units {
+name=;
+el_typ=LeabraUnit;
+el_def=0;
+n_units=0;
+pos {x=0: y=0: z=0: };
+geom {x=5: y=5: z=1: };
+units_lesioned=0;
+LeabraUnit @[0] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0020018988;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.63026762; 0.56931853; 0.47038561; 0.62862742; 0.61515546; 0.4813751; 0.60905927; 0.66939229; 
+0.44434339; 0.50235611; 0.5527302; 0.36456725; 0.35145015; 0.52981174; 0.63690132; 0.26343307; 
+0.7400791; 0.54061061; 0.62200725; 0.72763789; 0.66505289; 0.6651001; 0.65595722; 0.49012047; 
+0.43450272; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=0: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[1] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00083763665;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.64317667; 0.48292175; 0.32649866; 0.56909084; 0.69173849; 0.42612931; 0.59122348; 0.26987413; 
+0.30732197; 0.65039432; 0.29508531; 0.5477258; 0.40226448; 0.73223937; 0.33520573; 0.38156343; 
+0.27384946; 0.48243135; 0.67902219; 0.38337249; 0.49112728; 0.30035964; 0.67655516; 0.28275728; 
+0.504915; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=1: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[2] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0013423645;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.66386533; 0.30855152; 0.55040407; 0.29716107; 0.57171381; 0.37841544; 0.31502819; 0.38775286; 
+0.64427626; 0.34762105; 0.72375536; 0.50470734; 0.60973752; 0.55198562; 0.49556446; 0.66911191; 
+0.53928781; 0.72483635; 0.72075558; 0.44413501; 0.56877214; 0.35118574; 0.57435262; 0.51160699; 
+0.30174682; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=2: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[3] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.0021926812;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.65201163; 0.31763574; 0.36054882; 0.30220568; 0.4432354; 0.36220247; 0.46673542; 0.35289419; 
+0.73420745; 0.678455; 0.27441019; 0.66092604; 0.53711212; 0.41181564; 0.63718188; 0.31208277; 
+0.52873379; 0.56474435; 0.53352594; 0.4295606; 0.57030439; 0.28734657; 0.54678142; 0.42924365; 
+0.58853567; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=3: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[4] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0016365565;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.5372439; 0.64445317; 0.73978186; 0.70508116; 0.558743; 0.26497468; 0.53148544; 0.61786324; 
+0.44263399; 0.31830341; 0.65400988; 0.43188971; 0.6696859; 0.32266816; 0.56839877; 0.63767272; 
+0.28221828; 0.27963048; 0.31413758; 0.4846983; 0.40470448; 0.49966168; 0.54989064; 0.37080193; 
+0.5206027; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=4: y=0: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[5] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.36571562; 0.35515645; 0.47235113; 0.3352406; 0.57913017; 0.31507397; 0.57587409; 0.70868605; 
+0.55035239; 0.29938665; 0.65185964; 0.53956687; 0.36503822; 0.31296346; 0.35634688; 0.51605576; 
+0.54555047; 0.30071488; 0.72116804; 0.54404378; 0.29644647; 0.28966492; 0.69644547; 0.63832229; 
+0.69867885; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=0: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[6] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00022230255;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.72103286; 0.3930338; 0.47388601; 0.44238007; 0.25204208; 0.32173043; 0.48385161; 0.4982388; 
+0.37837017; 0.56614029; 0.29294491; 0.46143621; 0.53571379; 0.59045756; 0.35858399; 0.39127937; 
+0.54303277; 0.62008309; 0.36027032; 0.56453049; 0.56623948; 0.50249612; 0.62335801; 0.3139368; 
+0.71383977; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=1: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[7] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00044099556;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.72419089; 0.66710138; 0.46073949; 0.30003479; 0.74657571; 0.31960413; 0.57329166; 0.44407976; 
+0.47107077; 0.49505901; 0.68864059; 0.60765588; 0.5780549; 0.31769142; 0.41002992; 0.63228619; 
+0.69349515; 0.61086094; 0.64153361; 0.52599525; 0.74694967; 0.49307197; 0.35626274; 0.34005558; 
+0.43505919; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=2: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[8] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0022142858;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.68430448; 0.57703388; 0.58379602; 0.73320317; 0.35269919; 0.47342718; 0.62641239; 0.52446997; 
+0.41649875; 0.59175324; 0.54710501; 0.30968532; 0.56834215; 0.72999823; 0.59854674; 0.59921002; 
+0.45500809; 0.56115949; 0.59299612; 0.50155604; 0.3391133; 0.49617118; 0.2741231; 0.46310389; 
+0.58343577; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=3: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[9] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00028617348;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.67818177; 0.74923015; 0.48079365; 0.37724161; 0.5415287; 0.43077087; 0.28958315; 0.44137162; 
+0.25785527; 0.72210813; 0.69751871; 0.6676991; 0.61535347; 0.42660445; 0.6565035; 0.74808127; 
+0.42684585; 0.51561737; 0.48554605; 0.29918194; 0.30795354; 0.31852013; 0.52413845; 0.29905277; 
+0.55376911; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=4: y=1: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[10] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0013049926;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.54488277; 0.26721182; 0.49558318; 0.49501687; 0.26398757; 0.62388146; 0.45349187; 0.46841538; 
+0.26673388; 0.37277535; 0.46199727; 0.50163901; 0.7464329; 0.47972935; 0.60642409; 0.32571942; 
+0.71345615; 0.26622021; 0.50258994; 0.53873944; 0.56785244; 0.4611879; 0.31778014; 0.34059805; 
+0.65743995; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=0: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[11] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0010380187;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.70791268; 0.26759908; 0.38305327; 0.46784338; 0.47290277; 0.27391618; 0.3016718; 0.36488762; 
+0.52132118; 0.39690363; 0.7068181; 0.44051903; 0.31326658; 0.50628424; 0.3877905; 0.58215332; 
+0.3186031; 0.50934947; 0.25351587; 0.542436; 0.60317433; 0.61962163; 0.51571101; 0.73059142; 
+0.30600882; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=1: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[12] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0042755273;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.47891602; 0.47603038; 0.43100315; 0.68224704; 0.44152176; 0.43471277; 0.38408971; 0.64581013; 
+0.66567385; 0.41468638; 0.34741417; 0.38154161; 0.40504193; 0.53499329; 0.73763549; 0.46404383; 
+0.42178369; 0.61082172; 0.42566526; 0.49964494; 0.65535533; 0.64180106; 0.54962277; 0.7168889; 
+0.41195685; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=2: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[13] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.001092869;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.4456954; 0.71264672; 0.49527729; 0.33166221; 0.68120408; 0.59968257; 0.42964023; 0.65233928; 
+0.3394804; 0.65411299; 0.60293329; 0.2504521; 0.47065002; 0.25171494; 0.70305365; 0.35166633; 
+0.60596013; 0.73295283; 0.4483611; 0.52312875; 0.53559828; 0.72700089; 0.51355541; 0.65427047; 
+0.40947992; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=3: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[14] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0027476125;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.59777224; 0.55761659; 0.72182721; 0.50541472; 0.35895395; 0.26866707; 0.59061158; 0.59095383; 
+0.49979818; 0.32473591; 0.29181713; 0.62394965; 0.48425773; 0.44779626; 0.74963123; 0.34977457; 
+0.49491835; 0.68603295; 0.51987517; 0.40578735; 0.27658278; 0.53439379; 0.53005421; 0.41207516; 
+0.34668154; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=4: y=2: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[15] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.0013206723;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.53974128; 0.41407081; 0.65593541; 0.43955433; 0.30395615; 0.50192189; 0.28379691; 0.62005621; 
+0.45368361; 0.50568271; 0.52443492; 0.70353979; 0.62912643; 0.56491828; 0.38913614; 0.63815784; 
+0.54121608; 0.31400543; 0.43229461; 0.57157528; 0.67297995; 0.486673; 0.61781788; 0.5674749; 
+0.57490683; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=0: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[16] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.001899417;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.33591586; 0.37839854; 0.63732505; 0.54483783; 0.47416002; 0.50499654; 0.62330222; 0.62994403; 
+0.63941616; 0.49281433; 0.62206745; 0.33874816; 0.51620829; 0.41560972; 0.65192485; 0.25938901; 
+0.71886593; 0.6513238; 0.66201985; 0.50095499; 0.28182295; 0.35373348; 0.74114537; 0.42571321; 
+0.64681828; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=1: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[17] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=5.4199914e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.70740318; 0.69298935; 0.46909881; 0.68963969; 0.44793057; 0.53082436; 0.33775088; 0.51075089; 
+0.31908786; 0.74536514; 0.68052608; 0.74792826; 0.32293683; 0.26783133; 0.39307857; 0.49068165; 
+0.30348685; 0.44496915; 0.5636999; 0.6529873; 0.44747788; 0.65602314; 0.26279569; 0.51381576; 
+0.26643968; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=2: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[18] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0019694522;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.61904693; 0.5857361; 0.70265257; 0.51270121; 0.25663027; 0.45210665; 0.6311512; 0.48947677; 
+0.73037815; 0.28574204; 0.30778846; 0.33364278; 0.55699265; 0.40216702; 0.46737611; 0.40356725; 
+0.3143701; 0.71032381; 0.37300971; 0.36022645; 0.30319849; 0.70125896; 0.48779017; 0.65238845; 
+0.2673583; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=3: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[19] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-9.6958269e-05;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.37923688; 0.44012636; 0.5727157; 0.31848711; 0.73178184; 0.74360502; 0.6486237; 0.35401464; 
+0.69320935; 0.6139158; 0.47291246; 0.65457153; 0.35282949; 0.65762901; 0.36911288; 0.46225995; 
+0.72162014; 0.50212348; 0.66433215; 0.31942433; 0.61779904; 0.56902343; 0.5872435; 0.37472108; 
+0.32888496; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=4: y=3: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[20] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0019571721;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.34601691; 0.46522319; 0.71151888; 0.74471986; 0.74025869; 0.29377866; 0.73028964; 0.64123082; 
+0.37266186; 0.50998455; 0.42392206; 0.28153765; 0.27132627; 0.67082739; 0.58107245; 0.61284095; 
+0.44133204; 0.4671025; 0.44347119; 0.32648245; 0.41475338; 0.64233124; 0.28801629; 0.67368788; 
+0.37627357; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=0: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[21] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.34373146; 0.56718862; 0.32897013; 0.32016286; 0.36129418; 0.63400137; 0.74330688; 0.67476153; 
+0.43973157; 0.26881537; 0.69527668; 0.44478461; 0.43373817; 0.54814517; 0.70792162; 0.52126336; 
+0.66036582; 0.46576938; 0.35912627; 0.47169; 0.33653253; 0.46955764; 0.67676294; 0.70707446; 
+0.41967946; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=1: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[22] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.00013504885;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.25275508; 0.63660651; 0.6377452; 0.38735527; 0.65850675; 0.49644446; 0.2748642; 0.29590848; 
+0.27063322; 0.5839889; 0.32503405; 0.49485523; 0.43998313; 0.74669462; 0.44103783; 0.35352403; 
+0.60752028; 0.40563619; 0.63510537; 0.44467121; 0.73554707; 0.45640725; 0.25403643; 0.35356691; 
+0.53040922; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=2: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[23] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=-0.00039685389;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.59021115; 0.72636819; 0.71124738; 0.58582067; 0.27962279; 0.56744266; 0.57560068; 0.70457983; 
+0.29781866; 0.5625205; 0.5101974; 0.3106882; 0.27305698; 0.69255817; 0.71342504; 0.30443347; 
+0.53394616; 0.38616288; 0.38267314; 0.33696094; 0.3158941; 0.70918041; 0.3541041; 0.42069742; 
+0.63991964; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=3: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+LeabraUnit @[24] {
+name=;
+spec {type=LeabraUnitSpec: spec=$1$: };
+ext_flag=DEFAULT;
+targ=0;
+ext=0;
+act=0;
+net=0.0023930513;
+recv {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$9$;
+other_idx=0;
+own_cons=1;
+};
+{ units = {[0]; [1]; [2]; [3]; [4]; [5]; [6]; [7]; 
+[8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
+[16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
+[24]; };
+wt = {0.34462935; 0.58248419; 0.5180974; 0.68558824; 0.68179035; 0.54887104; 0.34846532; 0.33341882; 
+0.49680284; 0.63624215; 0.28813457; 0.67266536; 0.68778545; 0.48129439; 0.44244683; 0.67849135; 
+0.49163932; 0.58192492; 0.67989087; 0.26188806; 0.52924275; 0.74594563; 0.42323869; 0.27126294; 
+0.7259804; };
+};
+};
+send {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=NULL;
+other_idx=-1;
+own_cons=0;
+LeabraCon_Group @.gp[0] {
+name=;
+el_typ=LeabraCon;
+el_def=0;
+spec {type=LeabraConSpec: spec=$2$: };
+prjn=$8$;
+other_idx=1;
+own_cons=0;
+};
+};
+LeabraCon @*(.bias) {
+wt=0;
+};
+n_recv_cons=25;
+pos {x=4: y=4: z=0: };
+act_avg=0.175;
+act_m=0;
+act_p=0;
+act_dif=0;
+vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
+spk_amp=0;
+misc_1=0;
+};
+};
+unit_spec {type=LeabraUnitSpec: spec=$1$: };
+lesion=0;
+ext_flag=DEFAULT;
+dmem_dist=DMEM_DIST_DEFAULT;
+netin {avg=0: max=0: max_i=-1: };
+i_thrs {avg=0: max=0: max_i=-1: };
+acts {avg=0: max=0: max_i=-1: };
+acts_p {avg=0.23063947: max=0.98543489: max_i=20: };
+acts_m {avg=0.1975314: max=0.87526447: max_i=12: };
+phase_dif_ratio=0.85645097;
+kwta {k=6: pct=0.23999999: pct_c=0.75999999: adth_k=1: k_ithr=3.4943635: k1_ithr=3.2952273: ithr_r=0.058676109: ithr_diff=0.056987848: tie_brk=0: };
+i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+un_g_i {avg=0: max=0: max_i=-1: };
+adapt_i {avg_avg=0.23999999: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+spec {type=LeabraLayerSpec: spec=$4$: };
+stm_gain=0.5;
+hard_clamped=0;
+prv_phase=0;
+dav=0;
+net_rescale=1;
+da_updt=0;
+misc_iar{ };
+};
+};
+context=1;
+wt_update=ON_LINE;
+batch_n=10;
+batch=0;
+epoch=0;
+trial=0;
+phase=PLUS_PHASE;
+cycle=0;
+re_init=0;
+dmem_sync_level=DMEM_SYNC_NETWORK;
+dmem_nprocs=1;
+usr1_save_fmt=FULL_NET;
+wt_save_fmt=TEXT;
+lay_layout=THREE_D;
+n_units=75;
+n_cons=1875;
+max_size {x=5: y=6: z=3: };
+phase_order=MINUS_PLUS;
+no_plus_test=1;
+trial_init=DECAY_STATE;
+first_plus_dwt=ONLY_FIRST_DWT;
+phase_no=0;
+phase_max=2;
+cycle_max=60;
+min_cycles=15;
+min_cycles_phase2=15;
+netin_mod=1;
+send_delta=0;
+};
+};
+data {
+name=;
+el_typ=DataTable;
+el_def=0;
+DataTable @[0] {
+name="Random25_train";
+save_data=1;
+data {
+name=;
+el_typ=String_Data;
+el_def=0;
+String_Data @[0] {
+name="name";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+ar{ [5] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";};
+};
+float_Data @[1] {
+name="input";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 5;5;};
+ar{ [5 5 5] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;};
+};
+float_Data @[2] {
+name="output";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 5;5;};
+ar{ [5 5 5] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;};
+};
+};
+};
+DataTable @[1] {
+name="MonData";
+save_data=0;
+data {
+name=;
+el_typ=int_Data;
+el_def=0;
+int_Data @[0] {
+name="LeabraNetwork_0.epoch";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+};
+int_Data @[1] {
+name="LeabraNetwork_0.trial";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+};
+int_Data @[2] {
+name="LeabraNetwork_0.phase_no";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+};
+int_Data @[3] {
+name="LeabraNetwork_0.cycle";
+disp_opts=" NARROW,";
+pin=0;
+save_to_file=1;
+is_matrix=0;
+cell_geom{ 1;};
+};
+float_Data @[4] {
+name="Input.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 5;5;};
+};
+float_Data @[5] {
+name="Hidden.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 5;5;};
+};
+float_Data @[6] {
+name="Output.act";
+disp_opts=;
+pin=0;
+save_to_file=1;
+is_matrix=1;
+cell_geom{ 5;5;};
+};
+};
+};
+};
+logs {
+name=;
+el_typ=PDPLog;
+el_def=0;
+};
+programs {
+name="StdBpTrain";
+el_typ=Program;
+el_def=0;
+desc=;
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+Program_Group @.gp[0] {
+name="StdLeabraTrain";
+el_typ=Program;
+el_def=0;
+desc=;
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="net";
+var_type=T_Object;
+object_type=LeabraNetwork;
+object_val=.projects[0].networks[0]$11$;
+};
+ProgVar @[1] {
+name="context";
+var_type=T_HardEnum;
+int_val=1;
+hard_enum_type=Network::NetContext;
+};
+};
+Program @[0] {
+name="LeabraTrain";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="max_epoch";
+var_type=T_Int;
+int_val=500;
+};
+ProgVar @[1] {
+name="epoch";
+var_type=T_Int;
+int_val=0;
+};
+};
+init_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0].global_vars[0]$12$;
+method=LeabraNetwork::CheckNetwork;
+};
+args{ };
+{ };
+};
+NetCounterInit @[1] {
+desc="initialize epoch counter";
+off=0;
+network_var=$12$;
+local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$13$;
+counter="epoch";
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=Network::InitWtState;
+};
+args{ };
+{ };
+};
+};
+prog_code {
+name=;
+el_typ=WhileLoop;
+el_def=0;
+WhileLoop @[0] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][1]$14$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment the epoch counter";
+off=0;
+network_var=$12$;
+local_ctr_var=$13$;
+counter="epoch";
+};
+};
+loop_var_type=;
+loop_var="(epoch < max_epoch)";
+init_val=;
+};
+};
+};
+Program @[1] {
+name="LeabraEpoch";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="trial";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="train_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=.projects[0].data[0]$15$;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter: note also needs to do this in regular running program";
+off=0;
+network_var=$12$;
+local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$16$;
+counter="trial";
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter";
+off=0;
+network_var=$12$;
+local_ctr_var=$16$;
+counter="trial";
+};
+BasicDataLoop @[1] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][2]$17$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment trial counter";
+off=0;
+network_var=$12$;
+local_ctr_var=$16$;
+counter="trial";
+};
+};
+loop_var_type="int";
+loop_var="counter";
+init_val="0";
+data_var=.projects[0].programs.gp[0][1].vars[1]$18$;
+order=PERMUTED;
+cur_item_idx=4;
+item_idx_list{ 1;0;3;4;2;};
+};
+};
+};
+Program @[2] {
+name="LeabraTrial";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="phase_no";
+var_type=T_Int;
+int_val=0;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$19$;
+counter="phase_no";
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=$19$;
+counter="phase_no";
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Trial_Init;
+};
+args{ };
+{ };
+};
+WhileLoop @[2] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][3]$20$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=$19$;
+counter="phase_no";
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Trial_UpdatePhase;
+};
+args{ };
+{ };
+};
+};
+loop_var_type=;
+loop_var="net->phase_no < net->phase_max";
+init_val=;
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Trial_Final;
+};
+args{ };
+{ };
+};
+MethodCall @[4] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=Network::UpdateWeights;
+};
+args{ };
+{ };
+};
+ProgramCall @[5] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][6]$21$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[6] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=taBase::UpdateAllViews;
+};
+args{ };
+{ };
+};
+};
+};
+Program @[3] {
+name="LeabraSettle";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="cycle";
+var_type=T_Int;
+int_val=0;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$22$;
+counter="cycle";
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=$22$;
+counter="cycle";
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=Network::InitExterns;
+};
+args{ };
+{ };
+};
+ProgramCall @[2] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][5]$23$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Settle_Init;
+};
+args{ };
+{ };
+};
+WhileLoop @[4] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][4]$24$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$12$;
+local_ctr_var=$22$;
+counter="cycle";
+};
+};
+loop_var_type=;
+loop_var="net->cycle < net->cycle_max";
+init_val=;
+};
+MethodCall @[5] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Settle_Final;
+};
+args{ };
+{ };
+};
+MethodCall @[6] {
+desc="todo: make conditional on variable";
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=taBase::UpdateAllViews;
+};
+args{ };
+{ };
+};
+};
+};
+Program @[4] {
+name="LeabraCycle";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=taBase::DataUpdate;
+};
+args{ true;};
+{ bool begin;};
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=LeabraNetwork::Cycle_Run;
+};
+args{ };
+{ };
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=taBase::DataUpdate;
+};
+args{ false;};
+{ bool begin;};
+};
+MethodCall @[3] {
+desc="todo: make this a special call with a controlling int variable to determine how frequently to do..";
+off=1;
+result_var=;
+method_spec {
+script_obj=$12$;
+method=taBase::UpdateAllViews;
+};
+args{ };
+{ };
+};
+UserScript @[4] {
+desc=;
+off=1;
+user_script="cerr << net->epoch << \", \" << net->trial << \", \" << net->phase_no << \", \" << net->phase << \", \" << net->cycle << endl;";
+};
+};
+};
+Program @[5] {
+name="ApplyInputs";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=LayerWriter_List;
+el_def=0;
+LayerWriter_List @[0] {
+name="lw_list";
+el_typ=LayerWriter;
+el_def=0;
+LayerWriter @[0] {
+data_block=$15$;
+chan_name="input";
+layer=$5$;
+offset {x=0: y=0: };
+ext_flags=EXT;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+LayerWriter @[1] {
+data_block=$15$;
+chan_name="output";
+layer=$7$;
+offset {x=0: y=0: };
+ext_flags=TARG;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+UserScript @[0] {
+desc="this is hack until we can pick objects (objs) for the MethodCall function!
+";
+off=0;
+user_script="objs.lw_list.ApplyData(context);
+
+";
+};
+MethodCall @[1] {
+desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=LayerWriter_List::ApplyData;
+};
+args{ context;};
+{ int context;};
+};
+};
+};
+Program @[6] {
+name="MonitorNet";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=NetMonitor;
+el_def=0;
+NetMonitor @[0] {
+name="Monitor1";
+items {
+name=;
+el_typ=NetMonItem;
+el_def=0;
+NetMonItem @[0] {
+name="epoch";
+object=$11$;
+variable="epoch";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[1] {
+name="trial";
+object=$11$;
+variable="trial";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[2] {
+name="phase_no";
+object=$11$;
+variable="phase_no";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[3] {
+name="cycle";
+object=$11$;
+variable="cycle";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[4] {
+name="act";
+object=$11$;
+variable="act";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+};
+data=.projects[0].data[1]$25$;
+rmv_orphan_cols=1;
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="mon_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=$25$;
+};
+};
+init_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="Initialize monitoring data (get rid of any existing)";
+off=1;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0][6].vars[0]$26$;
+method=DataTable::ResetData;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="update the monitor items and data schema: again, not doing until MethodCall can work on objs.";
+off=1;
+result_var=;
+method_spec {
+script_obj=$26$;
+method=NetMonitor::UpdateMonitors;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="temporary until MethodCall works on objs..";
+off=0;
+user_script="objs.Monitor1.UpdateMonitors();";
+};
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="add a new blank row to the data";
+off=0;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=DataTable::AddBlankRow;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=NetMonitor::UpdateMonVals;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="This is a hack until MethodCall can operate directly on objs.";
+off=0;
+user_script="objs.Monitor1.UpdateMonVals();";
+};
+MethodCall @[3] {
+desc="todo: what is this again??";
+off=0;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=DataBlock::WriteDone;
+};
+args{ };
+{ };
+};
+};
+};
+};
+};
+scripts {
+name=;
+el_typ=Script;
+el_def=0;
+};
+edits {
+name=;
+el_typ=SelectEdit;
+el_def=0;
+};
+viewers {
+name=;
+el_typ=DataViewer;
+el_def=0;
+pdpDataViewer @[0] {
+m_data=.projects[0]$27$;
+name="pdpDataViewer_0";
+ta_menus {
+};
+menu=taiMenuBar_ptr;
+file_name=;
+win_pos {lft=0: top=0: wd=0.75: ht=0.80000001: };
+iconified=0;
+display_toggle=1;
+toolbars {
+name=;
+el_typ=taBase;
+el_def=0;
+ToolBar @[0] {
+name="Application";
+lft=0;
+top=0;
+o=Horizontal;
+mapped=0;
+};
+};
+root_view {
+m_data=NULL;
+m_transform=NULL;
+children {
+name=;
+el_typ=T3DataView;
+el_def=0;
+NetView @[0] {
+m_data=$11$;
+m_transform=NULL;
+children {
+name=;
+el_typ=T3DataView;
+el_def=0;
+LayerView @[0] {
+m_data=$5$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+};
+LayerView @[1] {
+m_data=$10$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=1.5: z=0: }: };
+};
+LayerView @[2] {
+m_data=$7$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
+};
+PrjnView @[3] {
+m_data=$3$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+children {
+name=;
+el_typ=T3DataView;
+el_def=0;
+};
+};
+PrjnView @[4] {
+m_data=$8$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
+children {
+name=;
+el_typ=T3DataView;
+el_def=0;
+};
+};
+PrjnView @[5] {
+m_data=$9$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=1.5: z=-0: }: };
+children {
+name=;
+el_typ=T3DataView;
+el_def=0;
+};
+};
+};
+scale {
+name=;
+chunks=133;
+min=-1;
+max=1;
+range=1;
+zero=0;
+spec=.colorspecs[0]$28$;
+auto_scale=0;
+};
+scale_ranges {
+name=;
+el_typ=ScaleRange;
+el_def=0;
+ScaleRange @[0] {
+name="act";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[1] {
+name="ext";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[2] {
+name="r.pdw";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[3] {
+name="net";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[4] {
+name="targ";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[5] {
+name="act_eq";
+auto_scale=0;
+min=0;
+max=0.88972515;
+};
+ScaleRange @[6] {
+name="act_avg";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[7] {
+name="act_m";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[8] {
+name="act_p";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[9] {
+name="bias.wt";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[10] {
+name="bias.pdw";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[11] {
+name="gc.l";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[12] {
+name="gc.i";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[13] {
+name="gc.h";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[14] {
+name="gc.a";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[15] {
+name="I_net";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[16] {
+name="v_m";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[17] {
+name="i_thr";
+auto_scale=0;
+min=-1;
+max=1;
+};
+ScaleRange @[18] {
+name="spk_amp";
+auto_scale=0;
+min=-1;
+max=1;
+};
+};
+display=0;
+ordered_uvg_list{ 6;};
+unit_disp_mode=UDM_BLOCK;
+unit_text_disp=UTD_NONE;
+};
+};
+host=ISelectableHost_ptr;
+};
+};
+};
+test_objs {
+name=;
+el_typ=taBase;
+el_def=0;
+};
+save_rmv_units=0;
+use_sim_log=0;
+prev_file_nm="/home/shadow/oreilly/pdp4.0/trunk/test/leabra_ra.proj";
+desc1=;
+desc2=;
+desc3=;
+desc4=;
+view_colors {
+name=;
+el_typ=RGBA;
+el_def=0;
+RGBA @[0] {name="black": r=0: g=0: b=0: a=1: desc="Text": };
+RGBA @[1] {name="": r=0.75294101: g=0.76862699: b=0.82745099: a=1: desc="Background": };
+RGBA @[2] {name="VioletRed1": r=1: g=0.24313726: b=0.58823532: a=1: desc="Network": };
+RGBA @[3] {name="DarkOliveGreen3": r=0.63529414: g=0.80392158: b=0.35294119: a=1: desc="Env": };
+RGBA @[4] {name="yellow": r=1: g=1: b=0: a=1: desc="SchedProc": };
+RGBA @[5] {name="LightSteelBlue2": r=0.73725492: g=0.82352942: b=0.93333334: a=1: desc="StatGroup": };
+RGBA @[6] {name="wheat": r=0.96078432: g=0.87058824: b=0.7019608: a=1: desc="SubProcGroup": };
+RGBA @[7] {name="SlateBlue1": r=0.51372552: g=0.43529412: b=1: a=1: desc="Stat": };
+RGBA @[8] {name="gold": r=1: g=0.84313726: b=0: a=1: desc="Process": };
+RGBA @[9] {name="burlywood2": r=0.93333334: g=0.77254903: b=0.56862748: a=1: desc="Log": };
+RGBA @[10] {name="aquamarine": r=0.49803922: g=1: b=0.83137256: a=1: desc="Agg Highlite": };
+RGBA @[11] {name="grey64": r=0.63921571: g=0.63921571: b=0.63921571: a=1: desc="Group": };
+RGBA @[12] {name="grey75": r=0.74901962: g=0.74901962: b=0.74901962: a=1: desc="Inactive": };
+RGBA @[13] {name="red": r=1: g=0: b=0: a=1: desc="Stopping Stat": };
+RGBA @[14] {name="SlateBlue3": r=0.41176471: g=0.34901962: b=0.80392158: a=1: desc="Agging Stat": };
+RGBA @[15] {name="SpringGreen": r=0: g=1: b=0.49803922: a=1: desc="ConSpec": };
+RGBA @[16] {name="violet": r=0.93333334: g=0.50980395: b=0.93333334: a=1: desc="UnitSpec": };
+RGBA @[17] {name="orange": r=1: g=0.64705884: b=0: a=1: desc="PrjnSpec": };
+RGBA @[18] {name="MediumPurple1": r=0.67058825: g=0.50980395: b=1: a=1: desc="LayerSpec": };
+RGBA @[19] {name="azure": r=0.94117647: g=1: b=1: a=1: desc="Wizard": };
+};
+};

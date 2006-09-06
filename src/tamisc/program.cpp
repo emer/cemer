@@ -1145,6 +1145,7 @@ void Program::Copy_(const Program& cp) {
     script->ClearAll();
     script->prog_vars.Reset();
   }
+  desc = cp.desc;
   objs = cp.objs;
   args = cp.args;
   vars = cp.vars;
@@ -1506,6 +1507,7 @@ void Program_Group::CutLinks() {
 }
 
 void Program_Group::Copy_(const Program_Group& cp) {
+  desc = cp.desc;
   global_vars = cp.global_vars;
 }
 
