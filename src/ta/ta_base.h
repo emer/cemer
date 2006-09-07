@@ -195,11 +195,11 @@ public:
 
 #define SIMPLE_COPY(T)	  void Copy_(const T& cp)	{T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
 
-#define	SIMPLE_INITLINKS() void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(); }
-#define	SIMPLE_CUTLINKS()  void CutLinks() { CutLinks_taAuto(); inherited::CutLinks(); }
-#define SIMPLE_LINKS()	  SIMPLE_INITLINKS(); SIMPLE_CUTLINKS();
+#define	SIMPLE_INITLINKS(T) void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(&TA_##T); }
+#define	SIMPLE_CUTLINKS(T)  void CutLinks() { CutLinks_taAuto(&TA_##T); inherited::CutLinks(); }
+#define SIMPLE_LINKS(T)	  SIMPLE_INITLINKS(T); SIMPLE_CUTLINKS(T)
 
-#define TA_SIMPLE_BASEFUNS(T)  SIMPLE_COPY(T); COPY_FUNS(T,inherited); SIMPLE_INITLINKS(); SIMPLE_CUTLINKS(); TA_BASEFUNS(T)
+#define TA_SIMPLE_BASEFUNS(T)  SIMPLE_COPY(T); COPY_FUNS(T,inherited); SIMPLE_LINKS(T); TA_BASEFUNS(T)
 
 // simplified Get owner functions B = ta_base object, T = class name
 #define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)
@@ -360,9 +360,9 @@ public:
   void			Copy(const taBase&)	{ };
   // #IGNORE the copy (=) operator, call parent
 
-  virtual void		InitLinks_taAuto();
+  virtual void		InitLinks_taAuto(TypeDef* td);
   // #IGNORE automatic TA-based initlinks: calls inherited and goes through only my members & owns them
-  virtual void		CutLinks_taAuto();
+  virtual void		CutLinks_taAuto(TypeDef* td);
   // #IGNORE automatic TA-based cutlinks: goes through only my members & calls cutlinks and calls inherited
 
   void 			Register()			// #IGNORE non-virtual, called in constructors

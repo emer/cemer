@@ -77,9 +77,10 @@ bool AbstractScriptBase::CompileScript(bool force) {
   return DoCompileScript();
 }
 
-void AbstractScriptBase::PreCompileScript_impl() {
+bool AbstractScriptBase::PreCompileScript_impl() {
   // new impls must call this first!!
   script->ClearAll();
+  return true;
 }
 
 bool AbstractScriptBase::CompileScript_impl() {
@@ -103,7 +104,7 @@ bool AbstractScriptBase::CompileScript_impl() {
 }
 
 bool AbstractScriptBase::DoCompileScript() {
-  PreCompileScript_impl();
+  if(!PreCompileScript_impl()) return false;
   return CompileScript_impl();
 }
 

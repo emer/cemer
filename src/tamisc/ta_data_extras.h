@@ -37,7 +37,7 @@ protected:
 public: // DataBlock i/f
   override DBOptions	dbOptions() const 
     {return (DBOptions)(DB_INDEXABLE | DB_SEQUENCABLE | DB_SOURCE);}
-  override int		itemCount() const; 
+  override int		ItemCount() const; 
   
 public: // DataSource i/f
   override int		sourceChannelCount() const;

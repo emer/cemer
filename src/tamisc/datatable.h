@@ -589,7 +589,7 @@ protected:
 public: // DataBlock i/f and common routines
   override DBOptions	dbOptions() const // options the instance type support
     {return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC);} 
-  override int		itemCount() const {return rows;} 
+  override int		ItemCount() const {return rows;} 
 protected: // DataBlock i/f and common routines
   inline int		channelCount() const {return data.leaves;} // #IGNORE
   inline const String	channelName(int chan) const  // #IGNORE

@@ -594,16 +594,14 @@ const String UserScript::GenCssBody_impl(int indent_level) {
 }
 
 String UserScript::GetDisplayName() const {
-  if (desc.empty()) {
-    // use first line, if any
-    String rval = user_script.before('\n');
-    if (rval.empty()) {
-      rval = user_script;
-      if (rval.empty())
-        rval = "(empty)";
-    }
-    return rval;
-  } else return desc;
+  // use first line, if any
+  String rval = user_script.before('\n');
+  if (rval.empty()) {
+    rval = user_script;
+    if (rval.empty())
+      rval = "(empty)";
+  }
+  return rval;
 }
 
 
@@ -612,15 +610,12 @@ String UserScript::GetDisplayName() const {
 //////////////////////////
 
 bool Loop::CheckConfig(bool quiet) {
+  if(off) return true;
   if(loop_test.empty()) {
     if(!quiet) taMisc::Error("Error in Loop in program:", program()->name, "loop_test expression is empty");
     return false;
   }
   return loop_code.CheckConfig(quiet);
-}
-
-const String Loop::GenCssPre_impl(int indent_level) {
-  return _nilString;
 }
 
 const String Loop::GenCssBody_impl(int indent_level) {
@@ -637,17 +632,15 @@ void Loop::PreGenChildren_impl(int& item_id) {
 //////////////////////////
 
 const String WhileLoop::GenCssPre_impl(int indent_level) {
-  rval = cssMisc::Indent(indent_level) + "while (" + loop_test + ") {\n";
-  return rval; 
+  return cssMisc::Indent(indent_level) + "while (" + loop_test + ") {\n";
 }
 
 const String WhileLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "}\n";
-  return rval;
+  return cssMisc::Indent(indent_level) + "}\n";
 }
 
 String WhileLoop::GetDisplayName() const {
-  rval = "while (" + loop_test + ") ...";
+  return "while (" + loop_test + ") ...";
 }
 
 //////////////////////////
@@ -665,8 +658,7 @@ const String DoLoop::GenCssPost_impl(int indent_level) {
 }
 
 String DoLoop::GetDisplayName() const {
-  rval += "do ... while (" + loop_test + ")";
-  return rval;
+  return "do ... while (" + loop_test + ")";
 }
 
 //////////////////////////
@@ -681,6 +673,7 @@ void ForLoop::Initialize() {
 }
 
 bool ForLoop::CheckConfig(bool quiet) {
+  if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
   if(loop_iter.empty()) {
     if(!quiet) taMisc::Error("Error in ForLoop in program:", program()->name, "loop_iter expression is empty");
@@ -702,10 +695,7 @@ const String ForLoop::GenCssPost_impl(int indent_level) {
 }
 
 String ForLoop::GetDisplayName() const {
-  rval = "for (" + init_expr + "; "
-    + loop_test + "; " 
-    + loop_iter + ")";
-  return rval;
+  return "for (" + init_expr + "; " + loop_test + "; " + loop_iter + ")";
 }
 
 
@@ -715,10 +705,7 @@ String ForLoop::GetDisplayName() const {
 
 void BasicDataLoop::Initialize() {
   order = SEQUENTIAL;
-  cur_item_idx = -1;
-  loop_var_type = "int";
-  loop_var = "count";
-  init_val = "0";
+  loop_test = "This is not used here!";
 }
 
 void BasicDataLoop::Destroy() {
@@ -726,6 +713,7 @@ void BasicDataLoop::Destroy() {
 }
 
 bool BasicDataLoop::CheckConfig(bool quiet) {
+  if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
   if(!data_var) {
     if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
@@ -741,11 +729,11 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
 
   String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
   rval += id1 + "BasicDataLoop* data_loop = *(this" + GetPath(NULL,program()) + ");\n";
-  rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->itemCount());\n";
+  rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->ItemCount());\n";
   rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
   rval += id1 + "if(data_loop->order == BasicDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
   rval += id1 + data_nm + "->ReadOpen();\n";
-  rval += id1 + "for(int list_idx = 0; list_idx < loop->item_idx_list.size; list_idx++) {\n";
+  rval += id1 + "for(int list_idx = 0; list_idx < data_loop->item_idx_list.size; list_idx++) {\n";
   rval += id2 + "int data_idx;\n";
   rval += id2 + "if(data_loop->order == BasicDataLoop::RANDOM) data_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
   rval += id2 + "else data_idx = data_loop->item_idx_list[list_idx];\n";
@@ -763,12 +751,11 @@ const String BasicDataLoop::GenCssPost_impl(int indent_level) {
   return rval;
 }
 
-String ForLoop::GetDisplayName() const {
+String BasicDataLoop::GetDisplayName() const {
   String ord_str = GetTypeDef()->GetEnumString("Order", order);
   String data_nm;
   if(data_var) data_nm = data_var->name;
   return "data table loop (" + ord_str + " over: " + data_nm + ")";
-  return rval;
 }
 
 
@@ -799,9 +786,10 @@ void IfElse::Copy_(const IfElse& cp) {
 }
 
 bool IfElse::CheckConfig(bool quiet) {
+  if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
   if(cond_test.empty()) {
-    if(!quiet) taMisc::Error("Error in ForLoop in program:", program()->name, "cond_test expression is empty");
+    if(!quiet) taMisc::Error("Error in IfElse in program:", program()->name, "cond_test expression is empty");
     return false;
   }
   return true;
@@ -923,6 +911,7 @@ inh:
 }
 
 bool MethodCall::CheckConfig(bool quiet) {
+  if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
   return method_spec.CheckConfig(quiet);
 }
@@ -1017,6 +1006,7 @@ void ProgramCall::UpdateAfterEdit() {
 }
 
 bool ProgramCall::CheckConfig(bool quiet) {
+  if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
   if(!target) {
     if(!quiet) taMisc::Error("Error in ProgramCall in program:", program()->name, "target is NULL");
@@ -1221,19 +1211,16 @@ void Program::Init() {
   script->Restart();		// restart script at beginning if run again
 } 
 
-void Program::InitScriptObj_impl() {
-  AbstractScriptBase::InitScriptObj_impl();
-  //NOTE: nothing else, could be eliminated
-}
-
-void Program::PreCompileScript_impl() {
+bool Program::PreCompileScript_impl() {
   // as noted in abstractscriptbase: you must call this first to reset the script
   // because if you mess with the existing variables in prog_vars prior to 
   // resetting the script, it will get all messed up.  vars on this space are referred
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
-  AbstractScriptBase::PreCompileScript_impl();
+  if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   UpdateProgVars();
+  if(!CheckConfig(false)) return false; // not quiet
+  return true;
 }
 
 void Program::setRunState(RunState value) {
@@ -1534,6 +1521,14 @@ void Program_Group::SetProgsDirty() {
   }
 }
 
+bool Program_Group::CheckConfig(bool quiet) {
+  taLeafItr itr;
+  Program* prog;
+  FOR_ITR_EL(Program, prog, this->, itr) {
+    if(!prog->CheckConfig(quiet)) return false;
+  }
+  return true;
+}
 
 //////////////////////////
 //  Program_List	//
@@ -1543,3 +1538,10 @@ void Program_List::Initialize() {
   SetBaseType(&TA_Program);
 }
 
+bool Program_List::CheckConfig(bool quiet) {
+  for(int i = 0; i < size; ++i) {
+    Program* pv = FastEl(i);
+    if(!pv->CheckConfig(quiet)) return false;
+  }
+  return true;
+}

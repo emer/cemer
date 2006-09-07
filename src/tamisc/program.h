@@ -78,7 +78,7 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgVar& cp);
-  COPY_FUNS(ProgVar, taNBase);
+  COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
   virtual const String	GenCssArg_impl();
@@ -105,7 +105,7 @@ public:
   
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
-  COPY_FUNS(ProgVar_List, taList<ProgVar>);
+  COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
   
 protected:
@@ -132,7 +132,7 @@ public:
   void	Copy_(const ProgArg& cp);
   bool 	SetName(const String& nm) {name = nm; return true;}
   String GetName() const{ return name; }
-  COPY_FUNS(ProgArg, taOBase);
+  COPY_FUNS(ProgArg, inherited);
   TA_BASEFUNS(ProgArg);
 private:
   void	Initialize();
@@ -175,7 +175,7 @@ public:
 
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
-  COPY_FUNS(ProgEl, taOBase);
+  COPY_FUNS(ProgEl, inherited);
   TA_BASEFUNS(ProgEl);
 
 protected:
@@ -217,13 +217,13 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of ProgEl's
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
 
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgList& cp);
-  COPY_FUNS(ProgList, ProgEl);
+  COPY_FUNS(ProgList, inherited);
   TA_BASEFUNS(ProgList);
 
 protected:
@@ -241,7 +241,7 @@ INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -264,7 +264,7 @@ public:
   
   override String	GetDisplayName() const;
   void	Copy_(const UserScript& cp);
-  COPY_FUNS(UserScript, ProgEl);
+  COPY_FUNS(UserScript, inherited);
   TA_BASEFUNS(UserScript);
 
 protected:
@@ -282,10 +282,10 @@ public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
   String	    	loop_test; // a test expression for whether to continue looping (e.g., 'i < max')
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-  SIMPLE_LINKS();
-  SIMPLE_COPY(Loop, inherited);
-  COPY_FUNS(Loop, ProgEl);
+  override bool		CheckConfig(bool quiet=false);
+  SIMPLE_LINKS(Loop);
+  SIMPLE_COPY(Loop);
+  COPY_FUNS(Loop, inherited);
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
@@ -340,7 +340,7 @@ public:
   String	    	loop_iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
   
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
@@ -368,7 +368,7 @@ public:
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
 
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(BasicDataLoop);
 
@@ -391,12 +391,12 @@ public:
   ProgEl_List	    true_code; // #BROWSE items to execute if condition true
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const IfElse& cp);
-  COPY_FUNS(IfElse, ProgEl);
+  COPY_FUNS(IfElse, inherited);
   TA_BASEFUNS(IfElse);
 
 protected:
@@ -424,7 +424,7 @@ public:
   void	UpdateAfterEdit();
   void	CutLinks();
   void	Copy_(const MethodSpec& cp);
-  COPY_FUNS(MethodSpec, taOBase);
+  COPY_FUNS(MethodSpec, inherited);
   TA_BASEFUNS(MethodSpec);
   
 private:
@@ -441,13 +441,13 @@ public:
   MethodSpec		method_spec; //  the method to call
   SArg_Array		args; // arguments to the method
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const MethodCall& cp);
-  COPY_FUNS(MethodCall, ProgEl);
+  COPY_FUNS(MethodCall, inherited);
   TA_BASEFUNS(MethodCall);
 
 protected:
@@ -566,7 +566,7 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Program& cp);
-  COPY_FUNS(Program, taNBase);
+  COPY_FUNS(Program, inherited);
   TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f
@@ -578,8 +578,7 @@ public: // ScriptBase i/f
 protected:
   String		m_scriptCache; // cache of script, managed by implementation
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
-  override void		InitScriptObj_impl();
-  override void		PreCompileScript_impl(); // #IGNORE add/update the global vars
+  override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
   virtual void		Stop_impl(); 
   virtual int		Run_impl(); 
   virtual int		Cont_impl(); 
@@ -610,7 +609,7 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Program_Group& cp);
-  COPY_FUNS(Program_Group, taGroup<Program>)
+  COPY_FUNS(Program_Group, inherited)
   TA_BASEFUNS(Program_Group);
 
 private:
@@ -630,14 +629,14 @@ public:
 
   virtual Program*	GetTarget(); // safe call to get target: emits error if target is null
 
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgramCall& cp);
-  COPY_FUNS(ProgramCall, ProgEl);
+  COPY_FUNS(ProgramCall, inherited);
   TA_BASEFUNS(ProgramCall);
 
 protected:

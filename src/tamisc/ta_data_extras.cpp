@@ -52,7 +52,7 @@ const Variant DirectoryCatalog::GetData_impl(int chan) {
   }
 }
 
-int DirectoryCatalog::itemCount() const {
+int DirectoryCatalog::ItemCount() const {
   return m_dir->count();
 }
   

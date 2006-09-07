@@ -31,14 +31,11 @@ public:
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
   
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(NetCounterInit);
-  COPY_FUNS(NetCounterInit, ProgEl);
-  TA_BASEFUNS(NetCounterInit);
+  TA_SIMPLE_BASEFUNS(NetCounterInit);
 
 protected:
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
@@ -58,14 +55,11 @@ public:
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   String	counter; 	// name of counter variable on network object (todo: should be a MemberDef*, based on network_var type)
   
+  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(NetCounterIncr);
-  COPY_FUNS(NetCounterIncr, ProgEl);
-  TA_BASEFUNS(NetCounterIncr);
+  TA_SIMPLE_BASEFUNS(NetCounterIncr);
 
 protected:
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it

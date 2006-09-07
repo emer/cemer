@@ -470,8 +470,7 @@ void taBase::CutLinks() {
 }
 
 
-void taBase::InitLinks_taAuto() {
-  TypeDef* td = GetTypeDef();
+void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;
@@ -480,8 +479,7 @@ void taBase::InitLinks_taAuto() {
   }
 }
 
-void taBase::CutLinks_taAuto() {
-  TypeDef* td = GetTypeDef();
+void taBase::CutLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;

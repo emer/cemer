@@ -29,19 +29,8 @@ void NetCounterInit::Initialize() {
   local_ctr_var = NULL;
 }
 
-void NetCounterInit::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(network_var, this);
-  taBase::Own(local_ctr_var, this);
-}
-
-void NetCounterInit::CutLinks() {
-  network_var.CutLinks();
-  local_ctr_var.CutLinks();
-  inherited::CutLinks();
-}
-
 void NetCounterInit::Destroy() {
+  CutLinks();
 }
 
 void NetCounterInit::UpdateAfterEdit() {
@@ -50,6 +39,23 @@ void NetCounterInit::UpdateAfterEdit() {
   if(counter.empty() && local_ctr_var) {
     counter = local_ctr_var->name;
   }
+}
+
+bool NetCounterInit::CheckConfig(bool quiet) {
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(counter.empty()) {
+    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "counter is empty");
+    return false;
+  }
+  if(!network_var) {
+    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "network_var = NULL");
+    return false;
+  }
+  if(!local_ctr_var) {
+    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "local_ctr_var = NULL");
+    return false;
+  }
+  return true;
 }
 
 String NetCounterInit::GetDisplayName() const {
@@ -69,14 +75,6 @@ void NetCounterInit::GetLocalCtrVar() {
 }
 
 const String NetCounterInit::GenCssBody_impl(int indent_level) {
-  if(!network_var) {
-    taMisc::Warning("NetCounterInit: network_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, network_var = NULL!\n";
-  }
-  if(!local_ctr_var) {
-    taMisc::Warning("NetCounterInit: local_ctr_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterInit: Error, local_ctr_var = NULL!\n";
-  }
   String rval = cssMisc::Indent(indent_level) + counter + " = 0;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";
   return rval;
@@ -90,19 +88,8 @@ void NetCounterIncr::Initialize() {
   local_ctr_var = NULL;
 }
 
-void NetCounterIncr::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(network_var, this);
-  taBase::Own(local_ctr_var, this);
-}
-
-void NetCounterIncr::CutLinks() {
-  network_var.CutLinks();
-  local_ctr_var.CutLinks();
-  inherited::CutLinks();
-}
-
 void NetCounterIncr::Destroy() {
+  CutLinks();
 }
 
 void NetCounterIncr::UpdateAfterEdit() {
@@ -111,6 +98,23 @@ void NetCounterIncr::UpdateAfterEdit() {
   if(counter.empty() && local_ctr_var) {
     counter = local_ctr_var->name;
   }
+}
+
+bool NetCounterIncr::CheckConfig(bool quiet) {
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(counter.empty()) {
+    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "counter is empty");
+    return false;
+  }
+  if(!network_var) {
+    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "network_var = NULL");
+    return false;
+  }
+  if(!local_ctr_var) {
+    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "local_ctr_var = NULL");
+    return false;
+  }
+  return true;
 }
 
 String NetCounterIncr::GetDisplayName() const {
@@ -130,14 +134,6 @@ void NetCounterIncr::GetLocalCtrVar() {
 }
 
 const String NetCounterIncr::GenCssBody_impl(int indent_level) {
-  if(!network_var) {
-    taMisc::Warning("NetCounterIncr: network_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterIncr: Error, network_var = NULL!\n";
-  }
-  if(!local_ctr_var) {
-    taMisc::Warning("NetCounterIncr: local_ctr_var = NULL -- no code generated!");
-    return cssMisc::Indent(indent_level) + "// NetCounterIncr: Error, local_ctr_var = NULL!\n";
-  }
   String rval = cssMisc::Indent(indent_level) + counter + "++;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter + " = " + counter + ";\n";
   return rval;

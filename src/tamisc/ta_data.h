@@ -128,7 +128,7 @@ public:
   inline bool		isSinkDynamic() const {return (dbOptions() & DB_SINK_DYNAMIC);} 
     // 'true' if sink schema can be modified
   
-  virtual int		itemCount() const {return 0;} 
+  virtual int		ItemCount() const {return 0;} 
     // number of items (if indexable)
   
   virtual void		ResetData() {} // for supported devices, clears all the data (but not the schema)
@@ -288,30 +288,30 @@ class TAMISC_API DataBlock_Idx: public DataBlock {
  // #VIRT_BASE #NO_INSTANCE partial implementation for an indexable data block
 public: 
   override bool		sourceItemAvailable() const
-    {return ((rd_itr >= 0) && (rd_itr < itemCount()));}
+    {return ((rd_itr >= 0) && (rd_itr < ItemCount()));}
   
   override bool		ReadNext() 
     {if (rd_itr < -1) return false;  ++rd_itr;
-     if (rd_itr >= itemCount()) {rd_itr = -2; return false;}
+     if (rd_itr >= ItemCount()) {rd_itr = -2; return false;}
      return ReadItem_impl();} 
     //  advance itr; read next item, 'true' if item available
   override bool		ReadItem(int idx) 
-    {if ((idx < 0) || (idx >= itemCount())) return false;
+    {if ((idx < 0) || (idx >= ItemCount())) return false;
      rd_itr = idx;  return ReadItem_impl();} 
     // if indexable, goes to item idx, 'true' if item exists and was read
     
   override bool		sinkItemAvailable() const
-    {return ((wr_itr >= 0) && (wr_itr < itemCount()));}
+    {return ((wr_itr >= 0) && (wr_itr < ItemCount()));}
   
   override bool		WriteNext() 
     {if (wr_itr < -1) return false;  ++wr_itr;
-     if ((wr_itr == itemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
-     if (wr_itr >= itemCount()) {wr_itr = -2; return false;}
+     if ((wr_itr == ItemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
+     if (wr_itr >= ItemCount()) {wr_itr = -2; return false;}
      return WriteItem_impl();} 
     //  advance itr; read next item, 'true' if item available
   override bool		WriteItem(int idx) 
-    {if ((idx == itemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
-     if ((idx < 0) || (idx >= itemCount())) return false;
+    {if ((idx == ItemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
+     if ((idx < 0) || (idx >= ItemCount())) return false;
      wr_itr = idx;  return WriteItem_impl();} 
     // if indexable, goes to item idx, 'true' if item exists and was read
   
