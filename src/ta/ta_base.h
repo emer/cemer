@@ -197,8 +197,9 @@ public:
 
 #define	SIMPLE_INITLINKS() void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(); }
 #define	SIMPLE_CUTLINKS()  void CutLinks() { CutLinks_taAuto(); inherited::CutLinks(); }
+#define SIMPLE_LINKS()	  SIMPLE_INITLINKS(); SIMPLE_CUTLINKS();
 
-#define TA_SIMPLE_BASEFUNS(T)  SIMPLE_COPY(T); SIMPLE_INITLINKS(); SIMPLE_CUTLINKS(); TA_BASEFUNS(T)
+#define TA_SIMPLE_BASEFUNS(T)  SIMPLE_COPY(T); COPY_FUNS(T,inherited); SIMPLE_INITLINKS(); SIMPLE_CUTLINKS(); TA_BASEFUNS(T)
 
 // simplified Get owner functions B = ta_base object, T = class name
 #define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)

@@ -68,6 +68,8 @@ public:
   // get a new cssEl of an appropriate type, name/value initialized
   virtual cssEl*	NewCssType();
   // if object defines new type information (dyn_enum), generate a type object
+
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -98,6 +100,8 @@ public:
   VarContext	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
@@ -164,6 +168,8 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
@@ -176,7 +182,7 @@ protected:
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String	GenCssBody_impl(int indent_level) {} // #IGNORE generate the Css body code for this object
+  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; } // #IGNORE generate the Css body code for this object
   virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
 private:
@@ -191,6 +197,8 @@ public:
   virtual void		PreGen(int& item_id); // iterates over all items
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
   
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
   override int		NumListCols() const {return 2;} 
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
@@ -209,6 +217,8 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of ProgEl's
   
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -231,6 +241,7 @@ INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
   
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -264,50 +275,75 @@ private:
   void	Destroy()	{}
 };
 
-
 class TAMISC_API Loop: public ProgEl { 
-  // #VIRT_BASE #EDIT_INLINE #NO_INSTANCE ProgEl base for loops
+  // #VIRT_BASE ##EDIT_INLINE base class for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
-  String	    	loop_var_type; // the loop variable CSS type to create, or blank if exists
-  String	    	loop_var; // the loop variable
-  String	    	init_val; // initial value of loop variable. blank if default or none
+  String	    	loop_test; // a test expression for whether to continue looping (e.g., 'i < max')
   
-  override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const Loop& cp);
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  SIMPLE_LINKS();
+  SIMPLE_COPY(Loop, inherited);
   COPY_FUNS(Loop, ProgEl);
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
-  virtual const String 	loopHeader(bool display = false) const = 0; 
-    // common subcode, we use it as the DisplayName
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
 
 private:
   void	Initialize() {}
   void	Destroy()	{CutLinks();}
 };
 
-
-class TAMISC_API ForLoop: public Loop { 
-  // #EDIT_INLINE #TOKENS Loop for an iteration over the elements
+class TAMISC_API WhileLoop: public Loop { 
+  // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
 INHERITED(Loop)
 public:
-  String	    	loop_test; // the test each time
-  String	    	loop_iter; // the iteration operation
   
-  void	Copy_(const ForLoop& cp);
-  COPY_FUNS(ForLoop, Loop);
-  TA_BASEFUNS(ForLoop);
+  override String	GetDisplayName() const;
+
+  TA_BASEFUNS(WhileLoop);
 
 protected:
-  override const String loopHeader(bool display = false) const;
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize() {}
+  void	Destroy()	{}
+};
+
+class TAMISC_API DoLoop: public Loop { 
+  // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
+INHERITED(Loop)
+public:
+  
+  override String	GetDisplayName() const;
+  TA_BASEFUNS(DoLoop);
+
+protected:
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize() {}
+  void	Destroy()	{}
+};
+
+class TAMISC_API ForLoop: public Loop { 
+  // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
+INHERITED(Loop)
+public:
+  String	    	init_expr; // initialization expression (e.g., declare the loop variable; 'int i')
+  String	    	loop_iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
+  
+  override String	GetDisplayName() const;
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
+  TA_SIMPLE_BASEFUNS(ForLoop);
+protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -317,45 +353,8 @@ private:
 };
 
 
-class TAMISC_API WhileLoop: public Loop { 
-  // #EDIT_INLINE #TOKENS Loop for a 'while' (pre-test) iteration over the elements
-INHERITED(Loop)
-public:
-  
-  TA_BASEFUNS(WhileLoop);
-
-protected:
-  override const String loopHeader(bool display = false) const;
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize() {}
-  void	Destroy()	{}
-};
-
-
-class TAMISC_API DoLoop: public Loop { 
-  // #EDIT_INLINE Loop for a 'do' (post-test) iteration over the elements
-INHERITED(Loop)
-public:
-  
-  TA_BASEFUNS(DoLoop);
-
-protected:
-  override const String loopHeader(bool display = false) const;
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize() {}
-  void	Destroy()	{}
-};
-
-// todo: how to handle sub-sequences?
-
 class TAMISC_API BasicDataLoop: public Loop { 
-  // #EDIT_INLINE #TOKENS loops over items in a DataTable, in different basic orderings
+  // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
 INHERITED(Loop)
 public:
   enum Order {
@@ -366,14 +365,16 @@ public:
 
   ProgVarRef	data_var;	// program variable pointing to the data table to use
   Order		order;		// order to process data items in
-  int		cur_item_idx;	// index of current item in the data table
-  int_Array	item_idx_list;	// #HIDDEN list of item indicies 
+  int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
+
+  override String	GetDisplayName() const;
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
 
   TA_SIMPLE_BASEFUNS(BasicDataLoop);
 
 protected:
-  override const String loopHeader(bool display = false) const;
   override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
 private:
@@ -383,13 +384,14 @@ private:
 
 
 class TAMISC_API IfElse: public ProgEl { 
-  // ProgEl for a conditional test element
+  // a conditional test element: if(cond_test) then true_code; else false_code
 INHERITED(ProgEl)
 public:
   String	    cond_test; // condition test
   ProgEl_List	    true_code; // #BROWSE items to execute if condition true
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -413,10 +415,12 @@ class TAMISC_API MethodSpec: public taOBase {
   // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCall; has custom taiData
 INHERITED(taOBase)
 public:
-  ProgVar*		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
+  ProgVarRef		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
   TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
   void	UpdateAfterEdit();
   void	CutLinks();
   void	Copy_(const MethodSpec& cp);
@@ -429,7 +433,7 @@ private:
 }; 
 
 class TAMISC_API MethodCall: public ProgEl { 
-  // ProgEl for a call to an object method
+  // call a method (member function) on an object
 INHERITED(ProgEl)
 friend class MethodSpec;
 public:
@@ -437,6 +441,7 @@ public:
   MethodSpec		method_spec; //  the method to call
   SArg_Array		args; // arguments to the method
   
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -461,6 +466,7 @@ class TAMISC_API Program_List : public taList<Program> {
 INHERITED(taList<Program>)
 public:
   
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   TA_BASEFUNS(Program_List);
 
 private:
@@ -548,6 +554,8 @@ public:
     // set the value of a global variable (in the cssProgSpace) prior to calling Run
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
+ virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   void			ViewScript();
@@ -595,6 +603,8 @@ public:
   String		desc; // description of what this program group does and when it should be used
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
+ virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
   
   void	InitLinks();
@@ -609,7 +619,7 @@ private:
 };
 
 class TAMISC_API ProgramCall: public ProgEl { 
-  // ProgEl to invoke another program
+  // call (run) another program, setting any arguments before hand
   INHERITED(ProgEl)
 public:
   ProgramRef		target; // the program to be called
@@ -618,9 +628,9 @@ public:
   virtual void		UpdateGlobalArgs(); 
   // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
 
-  virtual Program*	GetTarget(); // 
+  virtual Program*	GetTarget(); // safe call to get target: emits error if target is null
 
-
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
