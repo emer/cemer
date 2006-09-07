@@ -1,0 +1,69 @@
+---------------------
+ViewData Design
+---------------------
+
+ViewData is data associated with an object that is used to facilitate or modify how that object is visualized in a given context.
+
+ViewData can be:
+  general: when it is applicable to several contexts
+  contextual: when it is applicable to a specific context
+
+ViewData is often set implicitly by the user when interacting with a viewable rendition of the object.
+
+Goals:
+
+* provide a streamable, extensible set of view data for an instance
+* user should be able to interact directly with the view data in a guy
+* clients should be able to fetch specified view data from a guy
+
+* prob should be a mechanism of defaults, so clients can retrieve default
+  if nothing has been set 
+  rationale: prevent bloat; easy to change defaults;
+
+Questions:
+
+* can viewdata items be simple data values (ex Variant) or do they also
+  need to be able to be complex data items, such as geoms etc.
+
+Data Requirements
+
+ViewData Item
+  name: provides a unique id for retrieving/setting the value
+  value: the actual value
+
+Use Cases
+
+1. Window and Position data in DataView system
+  MainDataViewer: left, top, w, h of window
+  ChildViewers: visible, splitter pos
+
+2. Data Table 
+
+3. Data Table Columns
+   format string
+
+
+API Requirements
+
+Ideally, the client just wants to get the data as easily as possible.
+
+ex.
+
+Getting View Data:
+
+const Variant GetViewValue(key) const // for default or unnamed context
+const Variant GetViewValue(key, context) const // for the specified context
+  
+Setting View Data:
+
+SetViewValue(value, key) // for default context
+SetViewValue(value, key, context) // for specified context
+
+
+Contexts
+--------
+
+A "context" is a fuzzy concept that could be:
+* a general kind of usage, that might be used by several classes
+* a very specific usage, particularly by a specific class (some view class)
+
