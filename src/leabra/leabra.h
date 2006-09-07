@@ -1579,12 +1579,20 @@ public:
     ALL_DWT			// for three phase cases: change weights after *both* post-minus phases
   };
 
+  enum MaxdAType {
+    DA_ONLY,			// just use da
+    INET_ONLY,			// just use inet
+    INET_DA,			// use inet if no activity, then use da
+    NO_MAXDA			// don't use max da to stop network settling
+  };
+
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] number and order of phases to present
   bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
+
   Phase		phase;		// #READ_ONLY #SHOW type of settling phase
-  int		phase_no;	// phase as an ordinal number (regular phase is Phase enum)
+  int		phase_no;	// #READ_ONLY #SHOW phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// maximum number of phases to run
 
   int		cycle_max;	// #DEF_60 maximum number of cycles to settle for
@@ -1592,6 +1600,20 @@ public:
   int		min_cycles_phase2; // #DEF_15 minimum number of cycles to settle for in second phase
   int		netin_mod;	// #DEF_1 net input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_false send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
+
+  MaxdAType	maxda_type;	// #DEF_INET_DA type of delta-activation (change in activation over cycles of settling) measure to use
+  float		maxda_inet_scale;	// #DEF_1 how to scale the inet measure to be like da
+  float		maxda_lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
+  float		maxda_stopcrit;	// #DEF_0.005 stopping criterion for max da
+  float		max_da;		// #READ_ONLY #SHOW maximum change in activation (delta-activation) over network; used in stopping settling
+
+  float		trg_max_act_stopcrit;	// stopping criterion for target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act;	// #READ_ONLY #SHOW target-layer maximum activation (can be used for stopping settling)
+
+  float		ext_rew;	// #READ_ONLY #SHOW external reward value (on this trial)
+  float		avg_ext_rew;	// #READ_ONLY #SHOW average external reward value (computed over previous epoch)
+  float		avg_ext_rew_sum; // #READ_ONLY sum for computing current average external reward value in this epoch
+  float		avg_ext_rew_n;	// #READ_ONLY N for average external reward value computation for this epoch
 
   // single cycle-level functions
   virtual void	Compute_Net();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)

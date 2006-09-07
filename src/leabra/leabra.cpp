@@ -2871,27 +2871,38 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
 //////////////////////////
 
 void LeabraNetwork::Initialize() {
+  phase_order = MINUS_PLUS;
+  no_plus_test = true;
+  trial_init = DECAY_STATE;
+  first_plus_dwt = ONLY_FIRST_DWT;
+  phase = MINUS_PHASE;
+  phase_no = 0;
+  phase_max = 2;
+
   cycle_max = 60;
   min_cycles = 15;
   min_cycles_phase2 = 15;
   netin_mod = 1;
   send_delta = false;
-  phase_order = MINUS_PLUS;
-  no_plus_test = true;
-  phase = MINUS_PHASE;
-  phase_no = 0;
-  phase_max = 2;
-  trial_init = DECAY_STATE;
-  first_plus_dwt = ONLY_FIRST_DWT;
+
+  maxda_type = INET_DA;
+  maxda_inet_scale = 1.0f;
+  maxda_lay_avg_thr = .01f;
+  maxda_stopcrit = .005f;
+  max_da = 0.0f;
+  
+  trg_max_act_stopcrit = 1.0f;	// disabled
+  trg_max_act = 0.0f;
+
+  ext_rew = 0.0f;
+  avg_ext_rew = 0.0f;
+  avg_ext_rew_sum = 0.0f;
+  avg_ext_rew_n = 0.0f;
 }
 
-// void LeabraNetwork::Copy_(const LeabraNetwork& cp) {
-//   phase_no = cp.phase_no;
-//   phase = cp.phase;
-//   no_plus_stats = cp.no_plus_stats;
-//   no_plus_test = cp.no_plus_test;
-//   trial_init = cp.trial_init;
-// }
+// todo: implement new stats!  also clear values in initwtstate.
+// compute_ExtRew incs the sum & n, so epoch just needs to do Compute_AvgExtRew --
+// moves over computed value and clears counters..
 
 //////////////////////////////////
 // 	Cycle-Level Functions	//

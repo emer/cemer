@@ -1190,9 +1190,7 @@ SmartRef_Of(Layer); // LayerRef
 
 class PDP_API Network : public taNBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS A network, containing layers, units, etc..
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -1224,31 +1222,23 @@ public:
     BATCH			// update weights in batch (after every epoch)
   };
 
- enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
-   TEST	= 0,	 		// indicates outputs are not clamped, net being tested or run
-   TRAIN = 1	  		// usually indicates patterns are being clamped on outs etc.
- };
+  enum NetContext { // an extensible enum (ex. NetContext) used to control train/test contexts
+    TEST	= 0,	 		// indicates outputs are not clamped, net being tested or run
+    TRAIN = 1	  		// usually indicates patterns are being clamped on outs etc.
+  };
  
- enum NetCounter { // the hierarchical counters, used to specify from where to clear
-   NC_CYCLE,
-   NC_PHASE,
-   NC_TRIAL,
-   NC_EPOCH,
-   NC_BATCH
- };
-
   Layer_Group	layers;		// Layers or Groups of Layers
-  int		context;	// #READ_ONLY_IV used by programs to provide context modality to algorithms
-  WtUpdate	wt_update;	// #READ_ONLY_IV determines weight update mode
+  int		context;	// #READ_ONLY #SHOW used by programs to provide context modality to algorithms
+  WtUpdate	wt_update;	// #READ_ONLY #SHOW determines weight update mode
   int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		batch_n_eff;	// #READ_ONLY #NO_SAVE effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
-  int		batch;		// #READ_ONLY_IV batch counter (updated by program)
-  int		epoch;		// #READ_ONLY_IV epoch counter (updated by program)
-  int		trial;		// #READ_ONLY_IV trial counter (updated by program)
+  int		batch;		// #READ_ONLY #SHOW batch counter (updated by program)
+  int		epoch;		// #READ_ONLY #SHOW epoch counter (updated by program)
+  int		trial;		// #READ_ONLY #SHOW trial counter (updated by program)
 
-  int		cycle;		// #READ_ONLY_IV cycle counter, used by some algos (updated by program)	
+  int		cycle;		// #READ_ONLY #SHOW cycle counter, used by some algos (updated by program)	
 
-  float		sse;		// total sum squared error over the network
+  float		sse;		// #READ_ONLY #SHOW total sum squared error over the network
 
   bool		re_init;	// todo: remove this! should net be initialized (InitWtState) by process?
   DMem_SyncLevel dmem_sync_level; // at what level of network structure should information be synchronized across processes?
@@ -1264,7 +1254,6 @@ public:
   PosTDCoord	max_size;	// #READ_ONLY #SHOW maximum size in each dimension of the net
 
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
-//obs  bool		net_will_updt;	// #HIDDEN #NO_SAVE if true, network will do update of display so don't do at lower level
 
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
@@ -1287,7 +1276,6 @@ public:
   virtual void	OpenViewer();
   // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network
 #endif
-  void		ClearCounters(NetCounter down_from = NC_BATCH); // clear the network counters down from indicate point, default clears all
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, WtSaveFormat fmt = TEXT);
