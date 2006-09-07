@@ -1825,7 +1825,7 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
 // all platforms, to give the same look (ex. for screenshots)???
 #ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
-    vblDialog->addWidget(menu->GetRep());
+    vblDialog->insertWidget(0, menu->GetRep());
 #else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
