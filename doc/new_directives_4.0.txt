@@ -1,3 +1,35 @@
+SHOW DIRECTIVES
+---------------
+
+Show directives are used to mark types and members to provide the user control over
+the level of detail they see.
+
+SHOW -- makes the item always visible, often used to override things like READ_ONLY
+NO_SHOW -- hides something that otherwise would have been visible
+HIDDEN -- almost never needs to be seen, generally only for debugging the software
+DETAIL -- usually never needs to be seen, but can be helpful for advanced users
+EXPERT -- indicates parameters usually only needed in advanced simulations
+
+The directives by themselves are used in general contexts, and are used by default in 
+the editor. The directives can be modified to make them applicable to only edit or tree
+contexts.
+
+_EDIT -- directive only applies to Edit contexts (ex edit panels/dialogs)
+_TREE -- directive only applies to Tree browsing contexts
+
+Show directives can be applied in modified form to a type, in which case, all members
+of that type will automatically use the directive (unless overridden)
+
+MEMB_ -- prefix applied to directives on types, to automatically be applied to members.
+
+Notes:
+  * READ_ONLY can only be applied to a member, not a type
+  * member-level SHOW or NO_SHOW overrides the contrary explicit type-level directive
+  * if there is no READ_ONLY, HIDDEN, DETAIL, or EXPERT then the member is 
+    implicitly marked NORMAL (there is no actual NORMAL directive however)
+  * NO_SHOW w/o _EDIT or _TREE will apply to all contexts,
+     ie you can't go  #NO_SHOW #SHOW_TREE
+
 OBJECT DIRECTIVES
 -----------------
 
@@ -11,8 +43,8 @@ CHILDREN_INLINE -- for lists, displays a compact inline form of children in edit
 NO_CHILDREN_INLINE -- forces use of the verbose member-based list view
 FILETYPE -- word used to describe files when saving/loading this type; should be a single noun, ex 'Project' (this directive is always used with the EXT directive)
 HIDDEN_INLINE -- (new for Objects) -- don't show this type inline by default for members
-New: all the Member Show directives have counterparts that can be applied to types, and will affect all members of that type in edit dialogs (but not tree views):
-EDIT_SHOW, EDIT_NO_SHOW, EDIT_HIDDEN, EDIT_READ_ONLY, EDIT_DETAIL, EDIT_EXPERT
+New: most of the Member Show directives have counterparts that can be applied to types, and will affect all members of that type:
+MEMB_SHOW, MEMB_NO_SHOW, MEMB_HIDDEN, MEMB_DETAIL, MEMB_EXPERT -- general context
 
 
 ENUM DIRECTIVES (note: this is new)

@@ -296,11 +296,11 @@ class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
   enum ShowMembs { // #BITS
-    NO_HIDDEN 		= 0x01,
-    NO_READ_ONLY 	= 0x02,
-    NO_DETAIL 		= 0x04,
-    NO_NORMAL		= 0x08,
-    NO_EXPERT		= 0x10,
+    NO_HIDDEN 		= 0x01, // don't show items marked HIDDEN
+    NO_READ_ONLY 	= 0x02, // don't show items marked READ_ONLY
+    NO_DETAIL 		= 0x04, // don't show items marked DETAIL (usually not relevant)
+    NO_NORMAL		= 0x08, // don't show items normally shown (helps indicate, ex. EXPERT items)
+    NO_EXPERT		= 0x10, // don't show items marked EXPERT (often only for advanced sims)
 
     ALL_MEMBS		= 0x00, // #NO_BIT
     NO_HID_RO 		= 0x03, // #NO_BIT
@@ -309,7 +309,13 @@ public:
     NO_HID_RO_DET 	= 0x07, // #NO_BIT
     NORM_MEMBS 		= 0x17, // #NO_BIT
     
-    SHOW_CHECK_MASK	= 0x1F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
+    IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag HIDDEN guys
+    IS_READ_ONLY 	= 0x02, // #IGNORE used in MemberDef::ShowMember to flag RO guys
+    IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
+    IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
+    IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
+    IS_SHOW_ALWAYS	= 0x20, // #IGNORE used in MemberDef::ShowMember to flag SHOW guys
+    SHOW_CHECK_MASK	= 0x2F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
     USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
     USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show

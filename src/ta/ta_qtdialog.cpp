@@ -1613,7 +1613,7 @@ void taiEditDataHost::GetMembDesc(MemberDef* md, String& dsc_str, String indent)
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
       MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(show) || smd->HasOption("HIDDEN_INLINE"))
+      if (!smd->ShowMember(show, TypeItem::SC_EDIT) || smd->HasOption("HIDDEN_INLINE"))
 	continue;
       GetMembDesc(smd, dsc_str, indent);
     }
@@ -1814,7 +1814,7 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
 }
 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {
-  return (md->ShowMember(show) && (md->im != NULL));
+  return (md->ShowMember(show, TypeItem::SC_EDIT) && (md->im != NULL));
 }
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
@@ -1825,11 +1825,12 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
 // all platforms, to give the same look (ex. for screenshots)???
 #ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
+    vblDialog->addWidget(menu->GetRep());
 #else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
-#endif
     vblDialog->setMenuBar(menu->GetRep());
+#endif
   }
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {
