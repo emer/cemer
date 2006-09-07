@@ -189,8 +189,7 @@ public:
   enum	LRSValue {		// what value to drive the learning rate schedule with
     NO_LRS,			// don't use a learning rate schedule
     EPOCH,			// current epoch counter
-    SE_STAT,			// LeabraSE_Stat value at epoch-level (in process above epoch)
-    EXT_REW_STAT,		// ExtRew_Stat value at epoch-level (in process above epoch): value is * 100 (0..100) 
+    EXT_REW_STAT,		// avg_ext_rew value on network (computed over an "epoch" of training): value is * 100 (0..100) 
     EXT_REW_AVG			// uses average reward computed by ExtRew layer (if present): value is units[0].act_avg (avg_rew) * 100 (0..100) 
   };
 
@@ -619,6 +618,8 @@ public:
   virtual void 	Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // compute the final activation: calls following function steps
 
+  virtual void	Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+
   virtual void Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // compute input conductance values in the gc variables
   virtual void Compute_Vm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
@@ -793,6 +794,9 @@ public:
   void		Compute_Act()	{ Unit::Compute_Act(); }
   void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_Act(this, lay, athr, net); }
+
+  void 		Compute_MaxDa(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)spec.spec)->Compute_MaxDa(this, lay, athr, net); }
 
   void		PhaseInit(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->PhaseInit(this, lay, net); }
@@ -1589,6 +1593,7 @@ public:
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] number and order of phases to present
   bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
+  StateInit	sequence_init;	// #DEF_DO_NOTHING how to initialize network state at start of a sequence of trials
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
 
   Phase		phase;		// #READ_ONLY #SHOW type of settling phase
@@ -1613,14 +1618,16 @@ public:
   float		ext_rew;	// #READ_ONLY #SHOW external reward value (on this trial)
   float		avg_ext_rew;	// #READ_ONLY #SHOW average external reward value (computed over previous epoch)
   float		avg_ext_rew_sum; // #READ_ONLY sum for computing current average external reward value in this epoch
-  float		avg_ext_rew_n;	// #READ_ONLY N for average external reward value computation for this epoch
+  int		avg_ext_rew_n;	// #READ_ONLY N for average external reward value computation for this epoch
+
+  override void	InitWtState();
 
   // single cycle-level functions
   virtual void	Compute_Net();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
   virtual void	Compute_Clamp_NetAvg();	// #CAT_Cycle add in clamped netinput values (computed once at start of settle) and average netinput values
   virtual void	Compute_Inhib(); // #CAT_Cycle compute inhibitory conductances (kwta)
   virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances
-  virtual void	Compute_Act();	// #CAT_Cycle compute activations
+  virtual void	Compute_Act();	// #CAT_Cycle compute activations, and max delta activation
 
   virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
 
@@ -1644,16 +1651,21 @@ public:
 
   // trial-level functions
   virtual void	SetCurLrate();	// #CAT_TrialInit set the current learning rate according to the LeabraConSpec parameters
-  virtual void	DecayEvent();	// decay activations and other state between events (trial-level)
-  virtual void	DecayState();	// decay the state in between trials (params in LayerSpec)
-  virtual void	EncodeState();	// encode final state information for subsequent use
-  virtual void	Compute_dWt_NStdLay(); // compute weight change on non-nstandard layers (depends on which phase is being run)
-  virtual void	Compute_dWt();	// compute weight change on all layers
+  virtual void	DecayEvent();	// #CAT_TrialInit decay activations and other state between events (trial-level)
+  virtual void	DecayState();	// #CAT_TrialInit decay the state in between trials (params in LayerSpec)
 
-  // todo: not sure if we want these wrapper funs or just put their contents in the prog itself
-  virtual void 	Trial_Init();	// initialize at start of trial
+  virtual void 	Trial_Init();	// #CAT_TrialInit initialize at start of trial (SetCurLrate, set phase_max, Decay state)
+
   virtual void	Trial_UpdatePhase(); // update phase based on phase_no -- return false if no more phases need to be run
-  virtual void	Trial_Final();	// do final processing after trial
+
+  virtual void	EncodeState();	// #CAT_TrialFinal encode final state information for subsequent use
+  virtual void	Compute_dWt_NStdLay(); // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
+  virtual void	Compute_dWt();	// #CAT_TrialFinal compute weight change on all layers
+  virtual void	Compute_ExtRew(); // compute external reward information
+
+  virtual void	Trial_Final();	// #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState, ExtRew)
+
+  virtual void	Compute_AvgExtRew(); // compute average external reward information (at an epoch-level timescale)
 
   virtual bool	CheckNetwork();	// check the configuration of the network -- if not good, errors will be emitted.
   virtual bool	CheckUnit(Unit* ck);

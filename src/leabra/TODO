@@ -1,0 +1,10 @@
+leabra todo list:
+
+* fix hardclamp bug
+* max_da -> maxda
+* update context info from program to net
+* move maxda params to unitspec
+* add network updating progel
+* deal with sequences
+* deal with small-batch weight updates
+* deal with dmem

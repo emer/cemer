@@ -142,85 +142,28 @@ void LeabraConSpec::SetCurLrate(int epoch, LeabraNetwork* net) {
       UpdateAfterEdit();
     }
   }
-
   if(lrs_value == EXT_REW_STAT) {
-    // todo:
-    taMisc::Error("*** Warning: SetCurLrate according to EXT_REW_STAT is not yet supported!!");
-    return;
-//     int arval = 0;
-//     ExtRew_Stat* ars = NULL;
-//     if(epoch >= 1) {
-//       EpochProcess* epc = trl->GetMyEpochProc();
-//       if((epc != NULL) && (epc->super_proc != NULL)) {
-// 	SchedProcess* sp = epc->super_proc;
-// 	ars = (ExtRew_Stat*)sp->loop_stats.FindType(&TA_ExtRew_Stat);
-// 	if(ars != NULL) {
-// 	  if(ars->time_agg.op != Aggregate::LAST) {
-// 	    ars->time_agg.op = Aggregate::LAST;
-// 	  }
-// 	  arval = (int)(100.0f * ars->rew.val);
-// 	}
-//       }
-//       if((epc != NULL) && (ars == NULL) && (epc->wt_update == EpochProcess::TEST)) {
-// 	// do nothing; it is a test process and its ok.
-// 	arval = lrate_sched.last_ctr;
-//       }
-//       else {
-// 	if(ars == NULL) {
-// 	  if(epc == NULL) {
-// 	    taMisc::Error("*** Warning: LeabraConSpec::SetCurLrate(): appropriate EpochProc for ExtRew_Stat not found for EXT_REW_STAT, reverting to EPOCH!, for:",
-// 			  name);
-// 	  }
-// 	  else {
-// 	    taMisc::Error("*** Warning: LeabraConSpec::SetCurLrate(): appropriate ExtRew_Stat not found for EXT_REW_STAT, reverting to EPOCH!, for:",
-// 			  name);
-// 	  }
-// 	  SetUnique("lrs_value", true);
-// 	  lrs_value = EPOCH;
-// 	  UpdateAfterEdit();
-// 	}
-//       }
-//     }
-//     cur_lrate = lrate * lrate_sched.GetVal(arval);
+    int arval = 0;
+    if(net->epoch < 1) {
+      arval = lrate_sched.last_ctr;
+    }
+    else {
+      arval = (int)(100.0f * net->avg_ext_rew);
+    }
+    cur_lrate = lrate * lrate_sched.GetVal(arval);
   }
 
-  if(lrs_value == SE_STAT) {
-    // todo:
-    taMisc::Error("*** Warning: SetCurLrate according to SE_STAT not yet supported!!");
-    return;
+  // this is no longer relevant
+//   if(lrs_value == SE_STAT) {
 //     int seval = 0;
-//     LeabraSE_Stat* ses = NULL;
-//     if(lrate_sched.size > 0) {
-//       seval = ((SchedItem*)lrate_sched.Peek())->start_ctr + 1; // get the last one
+//     if(net->epoch < 1) {
+//       seval = lrate_sched.last_ctr;
 //     }
-//     if(epoch >= 1) {
-//       EpochProcess* epc = trl->GetMyEpochProc();
-//       if((epc != NULL) && (epc->super_proc != NULL)) {
-// 	SchedProcess* sp = epc->super_proc;
-// 	LeabraSE_Stat* ses = (LeabraSE_Stat*)sp->loop_stats.FindType(&TA_LeabraSE_Stat);
-// 	if(ses != NULL) {
-// 	  if(ses->time_agg.op != Aggregate::LAST) {
-// 	    ses->time_agg.op = Aggregate::LAST;
-// 	  }
-// 	  seval = (int)ses->se.val;
-// 	}
-//       }
-//       if((epc != NULL) && (ses == NULL) && (epc->wt_update == EpochProcess::TEST)) {
-// 	// do nothing; it is a test process and its ok.
-// 	seval = lrate_sched.last_ctr;
-//       }
-//       else {
-// 	if(ses == NULL) {
-// 	  taMisc::Error("*** Warning: LeabraConSpec::SetCurLrate(): appropriate LeabraSE_Stat not found for SE_STAT, reverting to EPOCH!, for:",
-// 			name);
-// 	  SetUnique("lrs_value", true);
-// 	  lrs_value = EPOCH;
-// 	  UpdateAfterEdit();
-// 	}
-//       }
+//     else {
+//       seval = (int);
 //     }
 //     cur_lrate = lrate * lrate_sched.GetVal(seval);
-  }
+//   }
 
   if(lrs_value == EPOCH) {
     cur_lrate = lrate * lrate_sched.GetVal(epoch);
@@ -534,16 +477,14 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet)
     }
   }
 
-  // todo: !!!
-//   if(opt_thresh.updt_wts &&
-//      ((tp->epoch_proc != NULL) &&
-//       (tp->epoch_proc->wt_update != EpochProcess::ON_LINE) &&
-//       (tp->epoch_proc->wt_update != EpochProcess::TEST))) {
-//     if(!quiet) taMisc::Error("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
-// 			     "I turned this flag off for you in LeabraUnitSpec:", name);
-//     SetUnique("opt_thresh", true);
-//     opt_thresh.updt_wts = false;
-//   }
+  if(opt_thresh.updt_wts &&
+      (net->wt_update != Network::ON_LINE) &&
+      (net->context != Network::TEST)) {
+    if(!quiet) taMisc::Error("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
+			     "I turned this flag off for you in LeabraUnitSpec:", name);
+    SetUnique("opt_thresh", true);
+    opt_thresh.updt_wts = false;
+  }
 
   if(opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)) {
     if(!quiet) taMisc::Error("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
@@ -1070,6 +1011,22 @@ void LeabraUnitSpec::Compute_SelfReg(LeabraUnit* u, LeabraLayer*, LeabraInhib*, 
   // fast-time scale updated during settling
   hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
   acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
+}
+
+void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
+  // todo: move these params to unitspec!!
+  float fda;
+  if(net->maxda_type == LeabraNetwork::DA_ONLY)
+    fda = fabsf(u->da);
+  else if(net->maxda_type == LeabraNetwork::INET_ONLY)
+    fda = fabsf(net->maxda_inet_scale * u->I_net);
+  else {
+    if(lay->acts.avg <= net->maxda_lay_avg_thr)
+      fda = fabsf(net->maxda_inet_scale * u->I_net);
+    else
+      fda = fabsf(u->da);
+  }
+  net->max_da = MAX(fda, net->max_da);
 }
 
 //////////////////////////////////////////
@@ -2276,7 +2233,7 @@ void LeabraLayerSpec::Compute_InhibAvg_impl(LeabraLayer* lay, Unit_Group* ug, Le
 //	Stage 4: the final activation 	//
 //////////////////////////////////////////
 
-void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
   thr->acts.avg = 0.0f;
   thr->acts.max = -FLT_MAX;
   thr->acts.max_i = -1;
@@ -2288,6 +2245,7 @@ void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInh
     if(u->act_eq > thr->acts.max) {
       thr->acts.max = u->act_eq;  thr->acts.max_i = lf;
     }
+    u->Compute_MaxDa(lay, thr, net);
     lf++;
   }
   if(ug->leaves > 0) thr->acts.avg /= (float)ug->leaves;
@@ -2407,6 +2365,9 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
 
   Compute_ActAvg(lay, net);
   Compute_NetRescale(lay, net);
+  if(lay->ext_flag & Unit::TARG) {
+    net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
+  }
 }
 
 void LeabraLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net)
@@ -2874,6 +2835,7 @@ void LeabraNetwork::Initialize() {
   phase_order = MINUS_PLUS;
   no_plus_test = true;
   trial_init = DECAY_STATE;
+  sequence_init = DO_NOTHING;
   first_plus_dwt = ONLY_FIRST_DWT;
   phase = MINUS_PHASE;
   phase_no = 0;
@@ -2897,12 +2859,24 @@ void LeabraNetwork::Initialize() {
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
-  avg_ext_rew_n = 0.0f;
+  avg_ext_rew_n = 0;
 }
 
 // todo: implement new stats!  also clear values in initwtstate.
 // compute_ExtRew incs the sum & n, so epoch just needs to do Compute_AvgExtRew --
 // moves over computed value and clears counters..
+
+void LeabraNetwork::InitWtState() {
+  phase = MINUS_PHASE;
+  phase_no = 0;
+  max_da = 0.0f;
+  trg_max_act = 0.0f;
+  ext_rew = 0.0f;
+  avg_ext_rew = 0.0f;
+  avg_ext_rew_sum = 0.0f;
+  avg_ext_rew_n = 0;
+  inherited::InitWtState();
+}
 
 //////////////////////////////////
 // 	Cycle-Level Functions	//
@@ -2989,6 +2963,8 @@ void LeabraNetwork::Compute_InhibAvg() {
 }
 
 void LeabraNetwork::Compute_Act() {
+  max_da = 0.0f;		// initialize
+  trg_max_act = 0.0f;
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
@@ -3205,7 +3181,8 @@ void LeabraNetwork::Settle_Final() {
 // 	Trial-Level Functions	//
 //////////////////////////////////
 
-// todo: someone needs to call this!!!
+// todo: currently called in Trial_Init -- could be in a more efficient location, but
+// cost is minimal, so not bothering for now..
 void LeabraNetwork::SetCurLrate() {
   LeabraLayer* lay;
   taLeafItr l;
@@ -3356,6 +3333,7 @@ void LeabraNetwork::Trial_Final() {
     }
   }
   EncodeState();
+  Compute_ExtRew();
 }
 
 // todo: this should be in here!
@@ -3372,6 +3350,32 @@ bool LeabraNetwork::CheckUnit(Unit* ck) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)ck->spec.spec;
   us->act.send_delta = send_delta;
   return rval;
+}
+
+void LeabraNetwork::Compute_ExtRew() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesion)	continue;
+    if(lay->spec.spec->GetTypeDef() != &TA_ExtRewLayerSpec) continue;
+    LeabraUnit* eru = (LeabraUnit*)lay->units.Leaf(0);
+    if(eru->misc_1 == 0.0f) { // indication of no reward available
+      ext_rew = -1.1f;
+    }
+    else {
+      ext_rew = eru->act_eq;	// just set it!
+      avg_ext_rew_sum += ext_rew;
+      avg_ext_rew_n++;
+    }
+  }
+}
+
+void LeabraNetwork::Compute_AvgExtRew() {
+  if(avg_ext_rew_n > 0) {
+    avg_ext_rew = avg_ext_rew_sum / (float)avg_ext_rew_n;
+    avg_ext_rew_sum = 0.0f;
+    avg_ext_rew_n = 0;
+  }
 }
 
 static char* leabra_defaults =
@@ -7319,23 +7323,9 @@ void MatrixLayerSpec::InitWtState(LeabraLayer* lay) {
 bool MatrixLayerSpec::Check_RndGoAvgRew(LeabraLayer* lay, LeabraNetwork* net) {
   float avg_rew = -1.0f;
 
-  // first try to use the stat value
-  // todo: !!!!
-//   EpochProcess* epc = net->GetMyEpochProc();
-//   if((epc != NULL) && (epc->super_proc != NULL)) {
-//     SchedProcess* sp = epc->super_proc;
-//     ExtRew_Stat* ars = (ExtRew_Stat*)sp->loop_stats.FindType(&TA_ExtRew_Stat);
-//     if(ars != NULL) {
-//       if(ars->time_agg.op != Aggregate::LAST) {
-// 	ars->time_agg.op = Aggregate::LAST;
-//       }
-//       avg_rew = ars->rew.val;
-//     }
-//   }
   // if in a test process, don't do random go's!
-  if((avg_rew == -1.0f) && (net->context == Network::TEST)) {
-    avg_rew = 1.0f;
-  }
+  if((net->epoch >= 1) && (net->context != Network::TEST))
+    avg_rew = net->avg_ext_rew;
 
   if(avg_rew == -1.0f) {	// didn't get from stat, use value on layer
     LeabraLayer* er_lay = FindLayerFmSpecNet(lay->own_net, &TA_ExtRewLayerSpec);
@@ -7993,30 +7983,15 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet)
     net->no_plus_test = false;
   }
 
-  // todo: !!!
-//   ExtRew_Stat* ers = (ExtRew_Stat*)net->final_stats.FindType(&TA_ExtRew_Stat);
-//   if(ers == NULL) {
-//     if(!quiet) taMisc::Error("PFCLayerSpec: ExtRew_Stat not found, I just made one for you in TrialProcess:", net->name);
-//     ers = (ExtRew_Stat*)net->final_stats.NewEl(1, &TA_ExtRew_Stat);
-//     ers->CreateAggregates(Aggregate::AVG);
-//     ers->UpdateAfterEdit();
-//     EpochProcess* epc = net->GetMyEpochProc();
-//     ExtRew_Stat* eers = (ExtRew_Stat*)epc->loop_stats.FindType(&TA_ExtRew_Stat);
-//     if(eers != NULL) eers->time_agg.op = Aggregate::AVG;
-//   }
-
   if(net->min_cycles_phase2 < 35) {
     if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork min_cycles_phase2 >= 35, I just set it for you");
     net->min_cycles_phase2 = 35;
   }
 
-  // todo: !!!
-//   if(seq != NULL) {
-//     if(seq->sequence_init != SequenceProcess::DO_NOTHING) {
-//       if(!quiet) taMisc::Error("PFCLayerSpec: requires SequenceProcess sequence_init = DO_NOTHING, I just set it for you");
-//       seq->sequence_init = SequenceProcess::DO_NOTHING;
-//     }
-//   }
+  if(net->sequence_init != LeabraNetwork::DO_NOTHING) {
+    if(!quiet) taMisc::Error("PFCLayerSpec: requires network sequence_init = DO_NOTHING, I just set it for you");
+    net->sequence_init = LeabraNetwork::DO_NOTHING;
+  }
 
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
     taMisc::Error("PFCLayerSpec: must have DaModUnits!");
@@ -9368,17 +9343,6 @@ void LeabraWiz::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, boo
 
   net->Build();
   net->Connect();
-
-  // todo: !!
-//   ExtRew_Stat* ers = (ExtRew_Stat*)trl->final_stats.FindType(&TA_ExtRew_Stat);
-//   if(ers == NULL) {
-//     ers = (ExtRew_Stat*)trl->final_stats.NewEl(1, &TA_ExtRew_Stat);
-//     ers->CreateAggregates(Aggregate::AVG);
-//     ers->UpdateAfterEdit();
-//     EpochProcess* epc = trl->GetMyEpochProc();
-//     ExtRew_Stat* eers = (ExtRew_Stat*)epc->loop_stats.FindType(&TA_ExtRew_Stat);
-//     if(eers != NULL) eers->time_agg.op = Aggregate::AVG;
-//   }
 
   bool ok = pvisp->CheckConfig(pvi, net, true) && lvesp->CheckConfig(lve, net, true)
     && lvisp->CheckConfig(lve, net, true)
