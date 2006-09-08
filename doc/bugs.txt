@@ -20,6 +20,15 @@ WORK PRIORITY
 * 4-panel view of network, to enable rational moving/sizing of objects
   - the moving/sizing
 
+To Be Prioritized:
+
+* import/export data tables and matrixes
+* Program ControlPanel
+* Function libraries + "IncludeCodeEl"
+* key shortcuts, particularly to invoke a string editor for string fields (all of them)
+* GNU Scientific library integration
+
+
 BUGS
 ----
 
