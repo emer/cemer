@@ -601,6 +601,7 @@ String UserScript::GetDisplayName() const {
     if (rval.empty())
       rval = "(empty)";
   }
+  if(rval.length() > 25) rval = rval.before(25) + "...";
   return rval;
 }
 
@@ -709,8 +710,8 @@ void IfContinue::Initialize() {
 bool IfContinue::CheckConfig(bool quiet) {
   if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
-  if(cond_expr.empty()) {
-    if(!quiet) taMisc::Error("Error in IfContinue in program:", program()->name, "cond_expr expression is empty");
+  if(condition.empty()) {
+    if(!quiet) taMisc::Error("Error in IfContinue in program:", program()->name, "condition expression is empty");
     return false;
   }
   return true;
@@ -719,12 +720,12 @@ bool IfContinue::CheckConfig(bool quiet) {
 const String IfContinue::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond_expr + ") continue;\n";
+    "if(" + condition + ") continue;\n";
   return rval; 
 }
 
 String IfContinue::GetDisplayName() const {
-  return "if(" + cond_expr + ") continue;";
+  return "if(" + condition + ") continue;";
 }
 
 
@@ -738,8 +739,8 @@ void IfBreak::Initialize() {
 bool IfBreak::CheckConfig(bool quiet) {
   if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
-  if(cond_expr.empty()) {
-    if(!quiet) taMisc::Error("Error in IfBreak in program:", program()->name, "cond_expr expression is empty");
+  if(condition.empty()) {
+    if(!quiet) taMisc::Error("Error in IfBreak in program:", program()->name, "condition expression is empty");
     return false;
   }
   return true;
@@ -748,12 +749,12 @@ bool IfBreak::CheckConfig(bool quiet) {
 const String IfBreak::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond_expr + ") break;\n";
+    "if(" + condition + ") break;\n";
   return rval; 
 }
 
 String IfBreak::GetDisplayName() const {
-  return "if(" + cond_expr + ") break;";
+  return "if(" + condition + ") break;";
 }
 
 
@@ -822,7 +823,7 @@ String BasicDataLoop::GetDisplayName() const {
 //////////////////////////
 
 void IfElse::Initialize() {
-  //  cond_test = "true";
+  //  condition = "true";
 }
 
 void IfElse::InitLinks() {
@@ -838,7 +839,7 @@ void IfElse::CutLinks() {
 }
 
 void IfElse::Copy_(const IfElse& cp) {
-  cond_test = cp.cond_test;
+  condition = cp.condition;
   true_code = cp.true_code;
   false_code = cp.false_code;
 }
@@ -846,8 +847,8 @@ void IfElse::Copy_(const IfElse& cp) {
 bool IfElse::CheckConfig(bool quiet) {
   if(off) return true;
   if(!inherited::CheckConfig(quiet)) return false;
-  if(cond_test.empty()) {
-    if(!quiet) taMisc::Error("Error in IfElse in program:", program()->name, "cond_test expression is empty");
+  if(condition.empty()) {
+    if(!quiet) taMisc::Error("Error in IfElse in program:", program()->name, "condition expression is empty");
     return false;
   }
   return true;
@@ -855,7 +856,7 @@ bool IfElse::CheckConfig(bool quiet) {
 
 const String IfElse::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
-  rval += "if (" + cond_test + ") {\n";
+  rval += "if (" + condition + ") {\n";
   return rval; 
 }
 
@@ -874,7 +875,7 @@ const String IfElse::GenCssPost_impl(int indent_level) {
 }
 
 String IfElse::GetDisplayName() const {
-  return "if (" + cond_test + ")";
+  return "if (" + condition + ")";
 }
 
 void IfElse::PreGenChildren_impl(int& item_id) {
@@ -1260,11 +1261,13 @@ void Program::Init() {
   setRunState(INIT);
   Run_impl();
   taMisc::DoneBusy();
-  if (ret_val != 0) //TODO: use enums and sensible output string
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(ret_val)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
+  if(ret_val != RV_OK) {
+    String err_str = GetTypeDef()->GetEnumString("ReturnVal", ret_val);
+    if(ret_val == RV_COMPILE_ERR) {
+      err_str += " a program did not compile correctly: check the console for error messages";
+    }
+    taMisc::Error("Error: The Program did not run -- ret_val=", err_str);
+  }
   setRunState(DONE);
   script->Restart();		// restart script at beginning if run again
 } 

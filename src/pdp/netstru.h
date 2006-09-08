@@ -1491,7 +1491,7 @@ class PDP_API LayerWriter: public LayerRWBase {
   // object that writes data from a DataSource to a layer
 INHERITED(LayerRWBase)
 public: 
-  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set 
+  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   Unit::ExtType	ext_flags;	// #EXPERT #CONDEDIT_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
   String_Array  value_names;	// #EXPERT display names of the individual pattern values

@@ -356,7 +356,7 @@ class TAMISC_API IfContinue: public ProgEl {
   // if condition is true, continue looping (skip any following code and loop back to top of loop)
 INHERITED(ProgEl)
 public:
-  String	    	cond_expr; // #EDIT_DIALOG conditionalizing expression for continuing loop
+  String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for continuing loop
   
   override String	GetDisplayName() const;
   override bool		CheckConfig(bool quiet=false);
@@ -374,7 +374,7 @@ class TAMISC_API IfBreak: public ProgEl {
   // if condition is true, break out of current loop
 INHERITED(ProgEl)
 public:
-  String	    	cond_expr; // #EDIT_DIALOG conditionalizing expression for breaking out of loop
+  String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for breaking out of loop
   
   override String	GetDisplayName() const;
   override bool		CheckConfig(bool quiet=false);
@@ -419,10 +419,10 @@ private:
 
 
 class TAMISC_API IfElse: public ProgEl { 
-  // a conditional test element: if(cond_test) then true_code; else false_code
+  // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
-  String	    cond_test; // #EDIT_DIALOG condition test
+  String	    condition; // #EDIT_DIALOG  #AKA_cond_test condition expression to test
   ProgEl_List	    true_code; // #BROWSE items to execute if condition true
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   

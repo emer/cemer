@@ -3119,16 +3119,8 @@ void LeabraNetwork::PostSettle_NStdLay() {
 }
 
 void LeabraNetwork::Settle_Init() {
-  cycle = -2;
-  // todo: !!!
-//   if(leabra_trial->cur_event->InheritsFrom(TA_DurEvent)) {
-//     cycle.SetMax((int)((DurEvent*)leabra_trial->cur_event)->duration);
-//   }
-
-  // should have already been done somehwere!
-//   InitExterns();
-//   if(leabra_trial->cur_event != NULL)
-//     leabra_trial->cur_event->ApplyPatterns(network);
+  int tmp_cycle = cycle;
+  cycle = -2;			// special signal for settle init
 
   if(phase_no >= 3) { // second plus phase or more: use phase2..
     DecayPhase2();
@@ -3154,6 +3146,7 @@ void LeabraNetwork::Settle_Init() {
   Compute_HardClamp();		// first clamp all hard-clamped input acts
   Compute_NetScale();		// and then compute net scaling
   Send_ClampNet();		// and send net from clamped inputs
+  cycle = tmp_cycle;
 }	
 
 void LeabraNetwork::Settle_Final() {
