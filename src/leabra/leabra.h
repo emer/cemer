@@ -508,6 +508,26 @@ public:
   TA_BASEFUNS(ActRegSpec);
 };
 
+class LEABRA_API MaxDaSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER how to compute the maxda value, which serves as a stopping criterion for settling
+public:
+  enum dAValue {
+    DA_ONLY,			// just use da
+    INET_ONLY,			// just use inet
+    INET_DA			// use inet if no activity, then use da
+  };
+
+  dAValue	val;		// #DEF_INET_DA value to use for computing delta-activation (change in activation over cycles of settling).
+  float		inet_scale;	// #DEF_1 how to scale the inet measure to be like da
+  float		lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
+
+  void	Initialize();
+  void	Destroy()	{ };
+  SIMPLE_COPY(MaxDaSpec);
+  COPY_FUNS(MaxDaSpec, taBase);
+  TA_BASEFUNS(MaxDaSpec);
+};
+
 class LEABRA_API LeabraUnitSpec : public UnitSpec {
   // Leabra unit specifications, point-neuron approximation
 public:
@@ -541,6 +561,7 @@ public:
   VChanSpec	hyst;		// [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   ActRegSpec	act_reg;	// activity regulation via global scaling of weight values
+  MaxDaSpec	maxda;		// maximum change in activation (da) computation -- regulates settling
   NoiseType	noise_type;	// where to add random noise in the processing (if at all)
   Random	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE distribution parameters for random added noise
   Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE schedule of noise variance over settling cycles
@@ -1583,13 +1604,6 @@ public:
     ALL_DWT			// for three phase cases: change weights after *both* post-minus phases
   };
 
-  enum MaxdAType {
-    DA_ONLY,			// just use da
-    INET_ONLY,			// just use inet
-    INET_DA,			// use inet if no activity, then use da
-    NO_MAXDA			// don't use max da to stop network settling
-  };
-
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] number and order of phases to present
   bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
@@ -1606,11 +1620,8 @@ public:
   int		netin_mod;	// #DEF_1 net input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_false send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
-  MaxdAType	maxda_type;	// #DEF_INET_DA type of delta-activation (change in activation over cycles of settling) measure to use
-  float		maxda_inet_scale;	// #DEF_1 how to scale the inet measure to be like da
-  float		maxda_lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
   float		maxda_stopcrit;	// #DEF_0.005 stopping criterion for max da
-  float		max_da;		// #READ_ONLY #SHOW maximum change in activation (delta-activation) over network; used in stopping settling
+  float		maxda;		// #READ_ONLY #SHOW maximum change in activation (delta-activation) over network; used in stopping settling
 
   float		trg_max_act_stopcrit;	// stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #READ_ONLY #SHOW target-layer maximum activation (can be used for stopping settling)

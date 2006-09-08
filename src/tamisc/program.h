@@ -268,7 +268,7 @@ public:
   TA_BASEFUNS(UserScript);
 
 protected:
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -280,7 +280,7 @@ class TAMISC_API Loop: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
-  String	    	loop_test; // a test expression for whether to continue looping (e.g., 'i < max')
+  String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
   override bool		CheckConfig(bool quiet=false);
   SIMPLE_LINKS(Loop);
@@ -336,8 +336,8 @@ class TAMISC_API ForLoop: public Loop {
   // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
 INHERITED(Loop)
 public:
-  String	    	init_expr; // initialization expression (e.g., declare the loop variable; 'int i')
-  String	    	loop_iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
+  String	    	init_expr; // #EDIT_DIALOG initialization expression (e.g., declare the loop variable; 'int i')
+  String	    	loop_iter; // #EDIT_DIALOG the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
   
   override String	GetDisplayName() const;
   override bool		CheckConfig(bool quiet=false);
@@ -352,6 +352,41 @@ private:
   void	Destroy()	{}
 };
 
+class TAMISC_API IfContinue: public ProgEl { 
+  // if condition is true, continue looping (skip any following code and loop back to top of loop)
+INHERITED(ProgEl)
+public:
+  String	    	cond_expr; // #EDIT_DIALOG conditionalizing expression for continuing loop
+  
+  override String	GetDisplayName() const;
+  override bool		CheckConfig(bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(IfContinue);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+class TAMISC_API IfBreak: public ProgEl { 
+  // if condition is true, break out of current loop
+INHERITED(ProgEl)
+public:
+  String	    	cond_expr; // #EDIT_DIALOG conditionalizing expression for breaking out of loop
+  
+  override String	GetDisplayName() const;
+  override bool		CheckConfig(bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(IfBreak);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
 
 class TAMISC_API BasicDataLoop: public Loop { 
   // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
@@ -387,7 +422,7 @@ class TAMISC_API IfElse: public ProgEl {
   // a conditional test element: if(cond_test) then true_code; else false_code
 INHERITED(ProgEl)
 public:
-  String	    cond_test; // condition test
+  String	    cond_test; // #EDIT_DIALOG condition test
   ProgEl_List	    true_code; // #BROWSE items to execute if condition true
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   

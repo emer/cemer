@@ -356,10 +356,18 @@ void ActRegSpec::Initialize() {
   wt_dt = 0.2f;
 }
 
+void MaxDaSpec::Initialize() {
+  val = INET_DA;
+  inet_scale = 1.0;
+  lay_avg_thr = 0.01f;
+}
+
 void LeabraUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraUnit;
   bias_con_type = &TA_LeabraCon;
   bias_spec.SetBaseType(&TA_LeabraConSpec);
+
+  sse_tol = .5f;
 
   act_fun = NOISY_XX1;
 
@@ -434,6 +442,7 @@ void LeabraUnitSpec::InitLinks() {
   taBase::Own(hyst, this);
   taBase::Own(acc, this);
   taBase::Own(act_reg, this);
+  taBase::Own(maxda, this);
   taBase::Own(noise, this);
   taBase::Own(noise_sched, this);
   taBase::Own(nxx1_fun, this);
@@ -1014,19 +1023,18 @@ void LeabraUnitSpec::Compute_SelfReg(LeabraUnit* u, LeabraLayer*, LeabraInhib*, 
 }
 
 void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
-  // todo: move these params to unitspec!!
   float fda;
-  if(net->maxda_type == LeabraNetwork::DA_ONLY)
+  if(maxda.val == MaxDaSpec::DA_ONLY)
     fda = fabsf(u->da);
-  else if(net->maxda_type == LeabraNetwork::INET_ONLY)
-    fda = fabsf(net->maxda_inet_scale * u->I_net);
+  else if(maxda.val == MaxDaSpec::INET_ONLY)
+    fda = fabsf(maxda.inet_scale * u->I_net);
   else {
-    if(lay->acts.avg <= net->maxda_lay_avg_thr)
-      fda = fabsf(net->maxda_inet_scale * u->I_net);
+    if(lay->acts.avg <= maxda.lay_avg_thr)
+      fda = fabsf(maxda.inet_scale * u->I_net);
     else
       fda = fabsf(u->da);
   }
-  net->max_da = MAX(fda, net->max_da);
+  net->maxda = MAX(fda, net->maxda);
 }
 
 //////////////////////////////////////////
@@ -2847,11 +2855,8 @@ void LeabraNetwork::Initialize() {
   netin_mod = 1;
   send_delta = false;
 
-  maxda_type = INET_DA;
-  maxda_inet_scale = 1.0f;
-  maxda_lay_avg_thr = .01f;
   maxda_stopcrit = .005f;
-  max_da = 0.0f;
+  maxda = 0.0f;
   
   trg_max_act_stopcrit = 1.0f;	// disabled
   trg_max_act = 0.0f;
@@ -2869,7 +2874,7 @@ void LeabraNetwork::Initialize() {
 void LeabraNetwork::InitWtState() {
   phase = MINUS_PHASE;
   phase_no = 0;
-  max_da = 0.0f;
+  maxda = 0.0f;
   trg_max_act = 0.0f;
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
@@ -2963,7 +2968,7 @@ void LeabraNetwork::Compute_InhibAvg() {
 }
 
 void LeabraNetwork::Compute_Act() {
-  max_da = 0.0f;		// initialize
+  maxda = 0.0f;		// initialize
   trg_max_act = 0.0f;
   LeabraLayer* lay;
   taLeafItr l;

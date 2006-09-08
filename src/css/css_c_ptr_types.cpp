@@ -92,6 +92,8 @@ void cssCPtr_int::operator|=(cssEl& t)	{
 //     short     //
 ///////////////////
 
+short cssCPtr_short::null_short = 0;
+
 void cssCPtr_short::operator=(const cssEl& t) {
   if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Short))
     PtrAssignPtr((cssCPtr*)&t);
@@ -325,6 +327,8 @@ void cssCPtr_long_long::operator|=(cssEl& t)	{
 //     char      //
 ///////////////////
 
+char cssCPtr_char::null_char = 0;
+
 void cssCPtr_char::operator=(const cssEl& t) {
   if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Char))
     PtrAssignPtr((cssCPtr*)&t);
@@ -494,6 +498,8 @@ void cssCPtr_double::operator/=(cssEl& t)	{
 ///////////////////
 //     float     //
 ///////////////////
+
+float cssCPtr_float::null_float = 0.0;
 
 void cssCPtr_float::operator=(const cssEl& t) {
   if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Float))

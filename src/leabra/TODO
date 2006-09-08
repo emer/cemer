@@ -1,9 +1,8 @@
 leabra todo list:
 
+* redo unitspec sse to use act_m!
 * fix hardclamp bug
-* max_da -> maxda
 * update context info from program to net
-* move maxda params to unitspec
 * add network updating progel
 * deal with sequences
 * deal with small-batch weight updates

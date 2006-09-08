@@ -700,6 +700,64 @@ String ForLoop::GetDisplayName() const {
 
 
 //////////////////////////
+//  IfContinue		//
+//////////////////////////
+
+void IfContinue::Initialize() {
+}
+
+bool IfContinue::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(cond_expr.empty()) {
+    if(!quiet) taMisc::Error("Error in IfContinue in program:", program()->name, "cond_expr expression is empty");
+    return false;
+  }
+  return true;
+}
+
+const String IfContinue::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval = cssMisc::Indent(indent_level) + 
+    "if(" + cond_expr + ") continue;\n";
+  return rval; 
+}
+
+String IfContinue::GetDisplayName() const {
+  return "if(" + cond_expr + ") continue;";
+}
+
+
+//////////////////////////
+//  IfBreak		//
+//////////////////////////
+
+void IfBreak::Initialize() {
+}
+
+bool IfBreak::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(cond_expr.empty()) {
+    if(!quiet) taMisc::Error("Error in IfBreak in program:", program()->name, "cond_expr expression is empty");
+    return false;
+  }
+  return true;
+}
+
+const String IfBreak::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval = cssMisc::Indent(indent_level) + 
+    "if(" + cond_expr + ") break;\n";
+  return rval; 
+}
+
+String IfBreak::GetDisplayName() const {
+  return "if(" + cond_expr + ") break;";
+}
+
+
+//////////////////////////
 //  BasicDataLoop	//
 //////////////////////////
 
