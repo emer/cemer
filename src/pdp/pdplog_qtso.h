@@ -327,8 +327,8 @@ public:
 
   // gui implementation
 //TODO  DTEditor* 	editor;		// #IGNORE
-  iButton*	auto_sc_but;	// #IGNORE toggle auto-scale button
-  iButton*	head_tog_but;	// #IGNORE header toggle button
+  QPushButton*	auto_sc_but;	// #IGNORE toggle auto-scale button
+  QPushButton*	head_tog_but;	// #IGNORE header toggle button
 
   iGridLogView_Panel*	lvp(){return (iGridLogView_Panel*)m_lvp;}
 
@@ -541,7 +541,7 @@ public:
   QCheckBox*		    chkDisplay;
   QCheckBox*		    chkAuto; // NOTE: only created in GridLogView
   QCheckBox*		    chkHeaders; // NOTE: only created in GridLogView
-  Q3ButtonGroup*		    bgpTopButtons; // NOTE: invisible/unparented
+  QButtonGroup*		    bgpTopButtons; // NOTE: not a widget
   QHBoxLayout*		    layVcrButtons;
   QHBoxLayout*		    layInitButtons;
   QHBoxLayout*		  layContents; // subclasses put their actual content here

@@ -19,6 +19,7 @@
 #include "ta_qtdialog.h" // for Hilight button
 #include "tamisc_TA_inst.h"
 
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTreeWidget>
@@ -400,9 +401,10 @@ int tabProgramViewType::BidForView(TypeDef* td) {
 
 void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
-  inherited::CreateDataPanel_impl(dl_);
+  // we create ours first, because it should be the default
   iProgramPanel* dp = new iProgramPanel(dl_);
   DataPanelCreated(dp);
+  inherited::CreateDataPanel_impl(dl_);
 }
 
 //////////////////////////
@@ -425,9 +427,11 @@ void iProgramEditor::init() {
   read_only = false;
   m_modified = false;
   warn_clobber = false;
-  bg_color.set(TAI_Program->GetEditColor()); // always the same
+//  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   md_desc = NULL;
+  row = 0;
+  
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
@@ -436,8 +440,9 @@ void iProgramEditor::init() {
   layEdit->setMargin(0);
   layEdit->addSpacing(taiM->hsep_c);
   
-  body = new iStripeWidget(this); //note: intrinsically sizes to 2 rows minimum
-  layBody = NULL; // dynamically created
+  body = new iEditGrid(false, false, 2, 1, 2, 1, this); //note: intrinsically sizes to 2 rows minimum
+  body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
+  setEditBgColor(NULL); // set defaults
   layEdit->addWidget(body, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->hspc_c);
   
@@ -473,17 +478,26 @@ void iProgramEditor::init() {
   InternalSetModified(false);
 }
 
-void iProgramEditor::AddData(int row, QWidget* data) {
+void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
   // just get the height right from the strip widget
-  layBody->setRowMinimumHeight(row, body->stripeHeight()); 
-  layBody->addWidget(data, row, 0);
+//  layBody->setRowMinimumHeight(row, body->stripeHeight()); 
+  row = row_;
+  if (lay)
+    body->setDataLayout(row, 0, lay);
+  else {
+    QHBoxLayout* hbl = new QHBoxLayout();
+    hbl->setMargin(0);
+    hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
+    hbl->addStretch();
+    body->setDataLayout(row, 0, hbl);
+  }
   data->show(); // needed for rebuilds, to make the widget show
 }
 
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   // we put the grid in a box so its rows don't expand
-  QVBoxLayout* layGrid = new QVBoxLayout(body);
+/*  QVBoxLayout* layGrid = new QVBoxLayout(body);
   layGrid->setSpacing(0);
   layGrid->setMargin(0);
   layBody = new QGridLayout(layGrid); 
@@ -492,32 +506,57 @@ void iProgramEditor::Base_Add() {
   // set row heights now, so only one row shows ok
 //  layBody->setRowMinimumHeight(0, body->stripeHeight()); 
 //  layBody->setRowMinimumHeight(1, body->stripeHeight()); 
-  layGrid->addStretch();
+  layGrid->addStretch(); */
+  
+  // get colors for type
+  const iColor* bgc = base->GetEditColorInherit(); 
+  setEditBgColor(bgc);
 
   int flags = taiData::flgInline | taiData::flgNoUAE;
   if (read_only) flags |= taiData::flgReadOnly;
   
   // add main inline controls in line 0, for whatever type
   TypeDef* typ = GetBaseTypeDef();
-  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, flags);
+  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
-  AddData(0, rep);
+  AddData(0, rep/*, mb_dat->GetLayout()*/);
   
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   md_desc = typ->members.FindName("desc");
   if (md_desc) {
-    // in order to get the 'desc' label, we need to indirect, and get a poly guy
+/*    // in order to get the 'desc' label, we need to indirect, and get a poly guy
     //note: the "type" is that of the member's parent, not the member itself
-    taiPolyData* pd = taiPolyData::New (false, typ, this, NULL, body, flags);
+    taiPolyData* pd = taiPolyData::New (false, typ, this, NULL, body->dataGridWidget(), flags);
     // now, add the member to the poly guy -- this will also render the label
     pd->InitLayout();
     pd->AddChildMember(md_desc);
-    pd->EndLayout();
+    //pd->EndLayout();
     
     data_el.Add(pd);
     rep = pd->GetRep();
-    AddData(1, rep);
+*/
+//    AddData(1, rep/*, pd->GetLayout()*/);
+    
+    //ok, we don't make a poly guy because it seemed impossible to get field to stretch,
+    // so we just get the field dude manually, and pack up in our own layout
+    QHBoxLayout* hbl = new QHBoxLayout();
+    hbl->setMargin(0);
+    hbl->setSpacing(taiM->hsep_c);
+    QLabel* lbl = new QLabel("desc", body->dataGridWidget());
+    hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
+    lbl->show();
+    if (!read_only)
+      flags |= taiData::flgEditDialog; // nice button for popup
+    mb_dat = md_desc->im->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
+    data_el.Add(mb_dat);
+    rep = mb_dat->GetRep();
+    hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
+//    hbl->addStretch();
+    AddData(1, rep, hbl);
+    
+    
+    
   }
   
   // ok, get er!
@@ -528,13 +567,15 @@ void iProgramEditor::Base_Remove() {
   base->RemoveDataClient(this);
   data_el.Reset(); // deletes the items
   md_desc = NULL; // for tidiness
-  // delete widgets in iStripe
+  body->clearLater();
+/*obs  // delete widgets in iStripe
   const QObjectList& ch = body->children();
   while (ch.count() > 0) {
     QObject* obj = ch.last();
     delete obj;
-  }
+  } */
   base = NULL;
+  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
 }
 
 void iProgramEditor::Apply() {
@@ -553,6 +594,14 @@ void iProgramEditor::Apply() {
   GetImage();
   InternalSetModified(false); // superfulous??
 //  no_revert_hilight = false;
+}
+
+const iColor* iProgramEditor::colorOfCurRow() const {
+  if ((row % 2) == 0) {
+    return &bg_color;
+  } else {
+    return &bg_color_dark;
+  }
 }
 
 void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
@@ -593,7 +642,7 @@ void iProgramEditor::GetValue() {
     typ->it->GetValue(mb_dat, base);
   mb_dat = data_el.SafeEl(1);
   if (mb_dat && md_desc) {
-    mb_dat->GetValue_(base);
+    md_desc->im->GetValue(mb_dat, base);
   }
   if (typ->InheritsFrom(TA_taBase)) {
     base->UpdateAfterEdit();	// hook to update the contents after an edit..
@@ -612,7 +661,7 @@ void iProgramEditor::GetImage() {
     typ->it->GetImage(mb_dat, base);
   mb_dat = data_el.SafeEl(1);
   if (mb_dat && md_desc) {
-    mb_dat->GetImage_(base);
+    md_desc->im->GetImage(mb_dat, base);
   }
   InternalSetModified(false);
   --m_changing;
@@ -650,6 +699,16 @@ void iProgramEditor::items_ItemSelected(iTreeViewItem* item) {
 void iProgramEditor::Revert() {
   GetImage();
   InternalSetModified(false);
+}
+
+void iProgramEditor::setEditBgColor(const iColor* value) {
+  // default colors, if not supplied
+  if (value) // defaults
+    bg_color = *value;
+  else
+    bg_color.set(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
+  taiDataHost::MakeDarkBgColor(bg_color, bg_color_dark);
+  body->setColors(bg_color, bg_color_dark);
 }
 
 void iProgramEditor::setEditNode(TAPtr value, bool autosave) {

@@ -131,8 +131,7 @@ public:
   
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layEdit;
-  iStripeWidget*	    body; // container for the actual taiData items
-  QGridLayout*		    layBody; // this gets recreated each time
+  iEditGrid*	    	  body; // container for the actual taiData items
 //QVBoxLayout*		    layButtons;
   HiLightButton*	      btnApply;
   HiLightButton*	      btnRevert;
@@ -141,6 +140,7 @@ public:
   bool			read_only; // set true if we are
   
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
+  void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
 
   iProgramEditor(ISelectableHost* host, QWidget* parent = NULL); //
   ~iProgramEditor();
@@ -159,7 +159,7 @@ public: // IDataLinkClient i/f
   void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
-  const iColor* 	colorOfCurRow() const {return &bg_color;} // only need one
+  const iColor* 	colorOfCurRow() const;
   bool  		HasChanged() {return m_modified;}	
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us
@@ -174,14 +174,17 @@ public: // IDataHost i/f -- some delegate up to mommy
 
 protected:
   int			m_changing; // for suppressing spurious notifies
-  iColor		bg_color; // for edit area; only need one, because doesn't change
+  iColor		bg_color; // for edit area
+  iColor		bg_color_dark; // for edit area
   bool			m_modified;
   bool			warn_clobber; // set if we get a notify and are already modified
   taiDataList 		data_el; // data elements, usually only 1 or 2: an inline, and a desc
   TAPtr			base; // no need for smartref, because we are a dlc
   MemberDef*		md_desc; // if we manually added a data item in line 2 (ie for desc)
+  int			row; // mostly for bg coloring
  
-  void 			AddData(int row, QWidget* data); // add the data widget to the row
+  void 			AddData(int row, QWidget* data, QLayout* lay = NULL); 
+   // add the data widget to the row; if lay specified, that is added instead
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
   

@@ -34,7 +34,7 @@
 #include <qclipboard.h>
 #include <qdialog.h>
 #include <qevent.h>
-#include <Q3HButtonGroup>
+#include <QButtonGroup>
 #include <qimage.h>
 #include <QLayout>
 #include <qmenubar.h>
@@ -3467,9 +3467,8 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   cur_panel_id = -1;
   QWidget* widg = new QWidget();
   layDetail = new QVBoxLayout(widg); // default margins/spacing ok
-  buttons = new Q3HButtonGroup(); // used invisibly
-  buttons->setExclusive(true);
-  buttons->setFont(taiM->buttonFont(taiMisc::sizSmall));
+  buttons = new QButtonGroup(widg); // note: not a widget, not visible
+  buttons->setExclusive(true); // this is the default anywh
   frmButtons = new QFrame(widg);
   frmButtons->setFrameShape(QFrame::Box);
   frmButtons->setFrameShadow(QFrame::Sunken);
@@ -3482,11 +3481,10 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   layDetail->addWidget(wsSubPanels, 1);
   setCentralWidget(widg);
 
-  connect(buttons, SIGNAL(pressed(int)), this, SLOT(btn_pressed(int)));
+  connect(buttons, SIGNAL(buttonClicked(int)), this, SLOT(btn_pressed(int)));
 }
 
 iDataPanelSet::~iDataPanelSet() {
-  delete buttons; // unowned
 }
 
 void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
@@ -3496,10 +3494,11 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   wsSubPanels->addWidget(pn, id);
   QPushButton* but = new QPushButton(frmButtons);
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
+  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   if (id == 0) but->setDown(true); // first button should be down
   but->setToggleButton(true);
   but->setText(pn->panel_type());
-  buttons->insert(but);
+  buttons->addButton(but, id);
   layButtons->addWidget(but);
   but->show();
   pn->AddedToPanelSet();
@@ -3562,7 +3561,10 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
   iDataPanel* pn = panels.SafeEl(cpi);
   if (!pn) return; //shouldn't happen
   wsSubPanels->raiseWidget(pn);
-  buttons->setButton(cpi); // for when called programmatically
+  QAbstractButton* but = buttons->button(cpi);
+  // for when called programmatically:
+  if (but) // should always have a value
+    but->setDown(true);
   //TODO: maybe something to change tab color
 }
 

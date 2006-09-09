@@ -38,7 +38,7 @@
 #include <qfiledialog.h>
 #include <QFileInfo>
 //#include <qhbox.h>
-#include <Q3ButtonGroup>
+#include <QButtonGroup>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QMenuBar>
@@ -222,10 +222,10 @@ taiChoiceDialog::taiChoiceDialog(QWidget* par, const char* prompt,
   hblButtons = new QHBoxLayout();
   hblButtons->setSpacing(5); // TODO: button spacing should be central constant
   vblMain->addLayout(hblButtons);
-  bgChoiceButtons = new Q3ButtonGroup(this);
-  bgChoiceButtons->hide(); // we just using it for organizing and signalling
-
-  connect(bgChoiceButtons, SIGNAL(clicked(int)),
+  bgChoiceButtons = new QButtonGroup(this); // note: not a widget, invisible
+  bgChoiceButtons->setExclusive(false); // not really applicable
+  
+  connect(bgChoiceButtons, SIGNAL(buttonClicked(int)),
       this, SLOT(done(int)) );
 
   setCaption(win_title);
@@ -262,7 +262,7 @@ bool taiChoiceDialog::Constr_OneBut(String& lbl, int curId) {
 
   QPushButton* but = new QPushButton(blab, this);
   hblButtons->add(but);
-  bgChoiceButtons->insert(but);
+  bgChoiceButtons->addButton(but, curId);
 //  but->show();
 
   // set first button to be default for dialog
@@ -289,7 +289,7 @@ void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
   int key_ascii = ev->ascii();
   if ((key_ascii >= '0') && (key_ascii <= '9')) {
     int but_index = key_ascii - '0';
-    QPushButton* but = (QPushButton*)bgChoiceButtons->find(but_index);
+    QPushButton* but = (QPushButton*)bgChoiceButtons->button(but_index);
     if (but != NULL) {
       // simulate effect of pressing the button
       done(but_index);
@@ -523,6 +523,11 @@ void taiDataHost::DeleteChildrenLater(QObject* obj) {
   }
 }
 
+void taiDataHost::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
+  dk_bg.set(taiMisc::ivBrightness_to_Qt_lightdark(bg, taiM->edit_darkbg_brightness));
+}
+
+
 taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
 :QObject(parent)
 {
@@ -585,8 +590,7 @@ void taiDataHost::setBgColor(const iColor* new_bg) {
   } else {
     bg_color->set(new_bg);
   }
-
-  bg_color_dark->set(taiMisc::ivBrightness_to_Qt_lightdark(*bg_color, taiM->edit_darkbg_brightness));
+  MakeDarkBgColor(*bg_color, *bg_color_dark);
 }
 
 const iColor* taiDataHost::colorOfRow(int row) const {

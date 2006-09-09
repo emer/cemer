@@ -29,15 +29,14 @@
 
 #include "icolor.h"
 
-//#include <Q3Button>
-#include <Q3ButtonGroup>
+#include <QButtonGroup>
 #include <qcheckbox.h>
 #include <qclipboard.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>
-#include <Q3Button>
+#include <QPushButton>
 #include <Q3ScrollView>
 #include <Q3VBox>
 
@@ -2114,32 +2113,33 @@ void iLogView_Panel::init(bool is_grid_log)
 
 
   layVcrButtons = new QHBoxLayout(layTopCtrls);
-  bgpTopButtons = new Q3ButtonGroup(); // NOTE: invisible/unparented
+  bgpTopButtons = new QButtonGroup(this); // NOTE: not a widget
+  bgpTopButtons->setExclusive(false); // not applicable
   int but_ht = taiM->button_height(taiMisc::sizSmall);
   for (int i = BUT_BEG_ID; i <= BUT_END_ID; ++i) {
-    Q3Button* pb = new Q3Button(this);
+    QPushButton* pb = new QPushButton(this);
     pb->setText(but_strs[i]);
     pb->setMaximumHeight(but_ht);
     pb->setMaximumWidth(20);
     layVcrButtons->addWidget(pb);
-    bgpTopButtons->insert(pb, i);
+    bgpTopButtons->addButton(pb, i);
   }
   layTopCtrls->addStretch();
 
   layInitButtons = new QHBoxLayout(layTopCtrls);
   for (int i = BUT_UPDATE; i <= BUT_CLEAR; ++i) {
-    Q3Button* pb = new Q3Button(this);
+    QPushButton* pb = new QPushButton(this);
     pb->setText(but_strs[i]);
     pb->setMaximumHeight(but_ht);
     layInitButtons->addWidget(pb);
-    bgpTopButtons->insert(pb, i);
+    bgpTopButtons->addButton(pb, i);
   }
 
   layContents = new QHBoxLayout(layOuter);
 
   setCentralWidget(widg);
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
-  connect(bgpTopButtons, SIGNAL(clicked(int)), this, SLOT(buttonClicked(int)) );
+  connect(bgpTopButtons, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)) );
 /*TODO  list = new iLDPListView(this, "list");
   layOuter->addWidget(list);
   list->setSelectionMode(QListView::Extended);

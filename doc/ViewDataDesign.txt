@@ -322,6 +322,16 @@ issues:
   maybe we can have a list in the client of the data
   * client deletes: goes through list and informs data owners
   * owner deletes (or item deletes): ref in client is removed
+
+* since our general api is generic, we have to be very careful
+  about having a routine like: 
+    ViewData* GetData(key) 
+  used like this:
+    SubViewData* = (SubViewData*) GetData(key)
+  * solutions:
+  1. provide a macro that does safe dynamic casting
+  2. require the client to supply the exact class
+
 TypeDef:
   ViewData_PList	schema
   

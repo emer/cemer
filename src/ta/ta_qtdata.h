@@ -61,7 +61,7 @@ public:
 
   taiDataList		data_el;
 
-  virtual QLayout*	GetLayout() {return (QLayout*)lay;}
+  QLayout*		GetLayout() {return (QLayout*)lay;} // override
   QWidget*		widgets(int index);
   int			widgetCount();
 
@@ -86,7 +86,6 @@ class TA_API taiField : public taiData {
   Q_OBJECT
 public:
   iLineEdit*		rep() const { return leText; }
-  int			repStretch() const {return 1;} // override
   bool			fillHor() {return true;} // override 
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 

@@ -280,7 +280,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
-  AddChildWidget(ctrl, taiM->hspc_c, mb_dat->repStretch());
+  AddChildWidget(ctrl, taiM->hspc_c);
 
   // add description text tooltips
   if (!desc.empty()) {

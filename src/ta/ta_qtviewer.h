@@ -1247,7 +1247,7 @@ public:
   QVBoxLayout*		layDetail;
     QFrame*		frmButtons;
       QHBoxLayout*	layButtons;
-      Q3ButtonGroup*	buttons; // one QPushButton for each
+      QButtonGroup*	buttons; // one QPushButton for each (note: not a widget)
     Q3WidgetStack*	wsSubPanels; // subpanels
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}

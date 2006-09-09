@@ -1,6 +1,6 @@
 
 
-class ViewDataBase: public taOBase {
+class UserData: public taOBase {
 public:
   void*		data; // for schema, this is the class (TypeDef) for which it is referring; for data, it is data object, or NULL if self (makes it easier to distinguish default/self vs. client items)
   String	key; // #READ_ONLY #SHOW
@@ -9,13 +9,13 @@ public:
   virtual bool IsSimple() const {return false;} // only overridden for Simple guy
 };
 
-class ViewData_PList: // ptrlist, for typedefs
+class UserData_PList: // ptrlist, for typedefs
 
-class ViewData_List; // tabse list, for tab
+class UserData_List; // tabse list, for tab
 
 // simple guy -- useful for all the standard scalar types, also used for "GetValue" apis
 
-class ViewData_Variant: public ViewDataBase {
+class UserData_Variant: public UserData {
 public:
   Variant	value;
   
@@ -26,7 +26,7 @@ public:
 
 // examples of higher-level guys:
 
-class ViewData_Label: public ViewDataBase {
+class UserData_Label: public UserData {
 public:
   coord3d_guy	coord;
   String	value;
@@ -40,11 +40,11 @@ public:
 
 
 TypeDef:
-  ViewItem_PList view_schema; // on demand-created list
+  UserData_PList view_schema; // on demand-created list
   
   void AddSchemaItem
   
-  void AddSchemaItem(ViewItem*, TypeDef* client = NULL) ; // adds the item, 
+  void AddSchemaItem(UserData*, TypeDef* client = NULL) ; // adds the item, 
   const SchemaItem* FindSchemaItem(key, TypeDef* client = NULL); // finds the item for the key, NULL if none
   
 functionality to add:
@@ -57,12 +57,12 @@ functionality to add:
 // Destructor changes:
 // * need to iterate view data, find 
 // virtual support:
-ViewItem_List* GetViewItemList(bool force_create); // generic
- // def: {return StatGetViewItemList(this, fc);}
+UserData_List* GetUserDataList(bool force_create); // generic
+ // def: {return StatGetUserDataList(this, fc);}
 // Generic class support:
-  class level list of ViewItem_Lists, hashed on object address
-//  generic GetViewItemList delegates to:
-ViewItem_List* StatGetViewItemList(taBase* instance, bool force_create); // generic
+  class level list of UserData_Lists, hashed on object address
+//  generic GetUserDataList delegates to:
+UserData_List* StatGetUserDataList(taBase* instance, bool force_create); // generic
   // ex.: {static VI_L* list = NULL; if (force_create && !list) make list; 
     // if (!list) return NULL; rval = list->Find(instance); if no, create and add, then return}
   
@@ -72,15 +72,15 @@ ViewItem_List* StatGetViewItemList(taBase* instance, bool force_create); // gene
 // Schema:
 
 // Instance:
-const Variant GetViewValue(key, data_item = NULL) const; // simple api for getting scalar data from simple vd
+const Variant GetUserValue(key, ref = NULL) const; // simple api for getting scalar data from simple vd
 // looks for instance, if none, looks for schema, if yes, return default value, else return nil
-
-void SetViewValue(const Variant&, key, data_item = NULL) const; // simple api for setting scalar data to simple vd
+bool HasUserValue(key, ref = NULL) const; // enables to check if data exists, ex to decide whether to display it or not -- only checks for instance, not for default
+void SetUserValue(const Variant&, key, ref = NULL) const; // simple api for setting scalar data to simple vd
 // looks for instance, if so, sets value, if not, creates instance w/ value and adds
 
-const SchemaItem* FindViewItem(key, data_item = NULL); // finds the item for the key, NULL if none
-void  AddViewItem(SchemaItem*, key, data_item = NULL); // adds the item, if di, also sets link there
-void LinkViewItem(ViewItem*); // for linking by a viewer/owner
+const UserData* FindUserData(key, ref = NULL); // finds the item for the key, NULL if none
+void  AddUserData(UserData*, key, ref = NULL); // adds the item, if di, also sets link there
+void LinkUserData(UserData*); // for linking by a viewer/owner
 
 VIEW_DATA() macro
   smartptr for list

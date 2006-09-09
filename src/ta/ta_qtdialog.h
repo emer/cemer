@@ -132,7 +132,7 @@ public:
   QVBoxLayout*	vblMain;
   QHBoxLayout*	hblButtons;
   QLabel*	txtMessage; // maybe should be a ro edit, so user can copy???
-  Q3ButtonGroup* bgChoiceButtons;
+  QButtonGroup* bgChoiceButtons; //note: not a widget
 
   ~taiChoiceDialog()		{ }
 
@@ -246,6 +246,7 @@ public:
   
 
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
+  static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
   bool          read_only;	// cannot change data
   bool		use_show; 	// true if can use the show menu/rebuild facility

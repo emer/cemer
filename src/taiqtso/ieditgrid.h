@@ -30,10 +30,13 @@
 class TAIQTSO_API iStripeWidget: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
 public:
   QSize 		minimumSizeHint () const; // override
+  void 			setColors(const QColor& hilight, const QColor& bg); 
+    // convenient way to set both
   void			setHiLightColor(const QColor& val);
   inline int		stripeHeight() const {return mstripeHeight;}
   void			setStripeHeight(int val);
   void			setTopMargin(int val);
+  void			setBottomMargin(int val); // helpful to insure room for scrollbars
 
   iStripeWidget(QWidget* parent = NULL);
   ~iStripeWidget();
@@ -41,6 +44,7 @@ protected:
   QColor		mhiLightColor;
   int			mstripeHeight; // default is 25;
   int			mtopMargin; // default is 0;
+  int			mbottomMargin; // default is 0, suggest: 15;
 
   void		paintEvent(QPaintEvent* pev); // override
 };
@@ -67,7 +71,9 @@ public:
   int		cols() {return mcols;}
   QWidget*	dataGridWidget() {return (QWidget*)body;} //returns data grid widget, for parentage of its children
   inline bool	hasHeader() {return (mhead > 0);} 
+  inline bool	hasNames() {return mnames;} 
   void 		setPaletteBackgroundColor3 (const QColor& color); //override
+  void 		setColors(const QColor& hilight, const QColor& bg); // convenient way to set both
   void 		setHiLightColor (const QColor& color);
   int		rows() {return mrows;}
   void		setRowNameWidget(int row, QWidget* name);
@@ -84,11 +90,14 @@ public:
   iEditGrid (bool header_, int hmargin_, int vmargin_, QWidget* parent = 0);
   iEditGrid (bool header_, int hmargin_, int vmargin_, 
     int rows_, int cols_, QWidget* parent = 0);
+  iEditGrid (bool names_, bool header_, int hmargin_, int vmargin_, 
+    int rows_, int cols_, QWidget* parent = 0); // only constructor that lets you not use names
   ~iEditGrid() {}
 
 protected:
   QColor  mhilightColor;
-  void		init(bool header_, int hmargin_, int vmargin_, int rows_, int cols_);
+  void		init(bool header_, int hmargin_, int vmargin_, int rows_, 
+    int cols_, bool names_ = true);
   void		createContent(); // we call in init, and after clearLater
   int mhmargin; // h margin inside cells
   int mvmargin; // v margin inside cells
@@ -97,6 +106,7 @@ protected:
   int mhead; // 1 if using header row, 0 if not
 //  int mvisibleCols;  // num of cols to make visible in the data area
   int mrow_height; // row heights
+  bool mnames; // if uses names on left
   void		resizeRows_impl(); // resize the name heights, after the data heights have been established
 //  virtual void		setVisibleCols_impl(int num);
   void			checkSetParent(QWidget* widget, QWidget* parent); // sets parent, if necessary

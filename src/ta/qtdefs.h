@@ -35,14 +35,13 @@ class	QVariant;		// #IGNORE
 // #IGNORE Qt Gui defines -- only when TA_GUI
 
 #ifdef TA_GUI
+class	QAbstractButton;	// #IGNORE  note: abstract base class for buttons
 class	QAbstractItemModel;	// #IGNORE 
 class	QAction;		// #IGNORE 
 class	QActionGroup;		// #IGNORE 
 class	QBitmap;		// #IGNORE 
 class	QBoxLayout;		// #IGNORE 
-class	QButton;		// #IGNORE  note: abstract parent class for buttons
-class	Q3Button;		// #IGNORE  note: abstract parent class for buttons
-class	Q3ButtonGroup;		// #IGNORE 
+class	QButtonGroup;		// #IGNORE note: not a widget
 class	QCanvas;		// #IGNORE 
 class	QCheckBox;		// #IGNORE 
 class	QColor;			// #IGNORE 
@@ -179,8 +178,6 @@ class	iTreeWidget;		// #IGNORE
 // #IGNORE aliases
 
 //TODO: get rid of these...
-#define	iButton 	Q3Button
-#define iWidget		QWidget
 #define iWindow 	QWidget  //DO NOT CHANGE (needed for WindowList)
 
 // #IGNORE some external systems, such as Coin3d, require this:

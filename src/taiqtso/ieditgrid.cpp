@@ -35,6 +35,7 @@ iStripeWidget::iStripeWidget(QWidget* parent)
 {
   mstripeHeight = 25;
   mtopMargin = 0;
+  mbottomMargin = 0;
 }
 
 iStripeWidget::~iStripeWidget()
@@ -44,19 +45,32 @@ iStripeWidget::~iStripeWidget()
 QSize iStripeWidget::minimumSizeHint() const {
   // get superclass's hint, and override the height
   QSize rval = QWidget::minimumSizeHint();
-  return rval.expandedTo(QSize(rval.width(), mtopMargin + 2 * mstripeHeight));
+  return rval.expandedTo(QSize(rval.width(), 
+    mtopMargin + (2 * mstripeHeight) + mbottomMargin));
+}
+
+void iStripeWidget::setColors(const QColor& hilight, const QColor& bg) {
+  mhiLightColor = hilight; // cached for rebuild
+  setPaletteBackgroundColor(bg);
+  update();
 }
 
 void iStripeWidget::setHiLightColor(const QColor& val) {
   mhiLightColor = val;
   update();
-
 }
 
 void iStripeWidget::setStripeHeight(int val) {
   if (val == mstripeHeight) return;
   if (val < 1) return; // must be +ve
   mstripeHeight = val;
+  update();
+}
+
+void iStripeWidget::setBottomMargin(int val) {
+  if (val == mbottomMargin) return;
+  if (val < 0) return; // must be +ve
+  mbottomMargin = val;
   update();
 }
 
@@ -114,7 +128,17 @@ iEditGrid::iEditGrid (bool header_, int hmargin_, int vmargin_, int rows_,
   init(header_, hmargin_, vmargin_, rows_, cols_);
 }
 
-void iEditGrid::init(bool header_, int hmargin_, int vmargin_, int rows_, int cols_) {
+iEditGrid::iEditGrid (bool names_, bool header_, int hmargin_, int vmargin_, int rows_, 
+  int cols_, QWidget* parent)
+: QWidget(parent)
+{
+  init(header_, hmargin_, vmargin_, rows_, cols_, names_);
+}
+
+void iEditGrid::init(bool header_, int hmargin_, int vmargin_,
+  int rows_, int cols_, bool names_) 
+{
+  mnames = names_;
   mhead = (header_) ? 1 : 0;
   if (hmargin_ < 0) hmargin_ = 0;
   if (vmargin_ < 0) vmargin_ = 0;
@@ -124,7 +148,11 @@ void iEditGrid::init(bool header_, int hmargin_, int vmargin_, int rows_, int co
   if (cols_ < 1) cols_ = 1;
   mrows = rows_;
   mcols = cols_;
-  mrow_height = 1; //must set later
+  mrow_height = 25; //should set later
+  if (!mnames) {
+    bodyNames = NULL;
+    layNames = NULL;
+  }
   createContent();
 }
 
@@ -135,17 +163,19 @@ void iEditGrid::createContent() {
   layOuter->setSpacing(0);
 //  layNamesOuter = new QVBoxLayout();
 //  layOuter->addLayout(layNamesOuter);
-  bodyNames = new iStripeWidget(this);
-  QVBoxLayout* vbl = new QVBoxLayout(bodyNames);
-  vbl->setMargin(0); // shift for scrollarea frame size
-  vbl->addSpacing(GROUP_FRAME_SIZE); // also added to stripe widget's top height
-  layNames = new QGridLayout(); //extra dummy row
-  layNames->setSpacing(0);
-  layNames->setMargin(0);
-  vbl->addLayout(layNames);
-  vbl->addStretch();
-  
-  layOuter->addWidget(bodyNames);
+  QVBoxLayout* vbl;
+  if (mnames) {
+    bodyNames = new iStripeWidget(this);
+    vbl = new QVBoxLayout(bodyNames);
+    vbl->setMargin(0); // shift for scrollarea frame size
+    vbl->addSpacing(GROUP_FRAME_SIZE); // also added to stripe widget's top height
+    layNames = new QGridLayout(); 
+    layNames->setSpacing(0);
+    layNames->setMargin(0);
+    vbl->addLayout(layNames);
+    vbl->addStretch();
+    layOuter->addWidget(bodyNames);
+  }
 //nn  layOuter->addSpacing(mhmargin);
   scrBody = new QScrollArea(this);
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // use outer container for scrolling, to keep names in sync
@@ -162,6 +192,7 @@ void iEditGrid::createContent() {
   vbl->addLayout(layBody);
   vbl->addStretch();
   layOuter->addWidget(scrBody); // anonymous outer layout in scroll view, so we can add stretch at bottom
+  setRowHeight(mrow_height, true); // force it
   resizeRows_impl();
 }
 
@@ -177,14 +208,15 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
   mcols = 1;
   scrBody->setParent(NULL);
   scrBody->deleteLater();
-  bodyNames->setParent(NULL);
-  bodyNames->deleteLater();
-//  layOuter->setParent((QObject*)NULL);
-//  layOuter->deleteLater();
+  if (mnames) {
+    bodyNames->setParent(NULL);
+    bodyNames->deleteLater();
+  //  layOuter->setParent((QObject*)NULL);
+  //  layOuter->deleteLater();
+  }
   delete layOuter;
   createContent();
-  setHiLightColor(mhilightColor);
-  setRowHeight(mrow_height, true);
+  setColors(mhilightColor, paletteBackgroundColor());
 
 /*  
   {const QObjectList& ol = bodyNames->children(); //unconstify it
@@ -206,7 +238,9 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
 
 void iEditGrid::resizeRows_impl() {
   for (int i = 0; i < (mrows + mhead); ++i) {
-    layNames->setRowMinimumHeight(i, mrow_height + (2 * mvmargin));
+    if (mnames) {
+      layNames->setRowMinimumHeight(i, mrow_height + (2 * mvmargin));
+    }
     layBody->setRowMinimumHeight(i,  mrow_height + (2 * mvmargin));
   }
 }
@@ -215,6 +249,15 @@ void iEditGrid::setColNameWidget(int col, QWidget* name) {
   checkSetParent(name, (QWidget*)body);
   layBody->addWidget(name, 0, col, (Qt::AlignCenter | Qt::AlignVCenter));
   updateDimensions(-1, col);
+}
+
+void iEditGrid::setColors(const QColor& hilight, const QColor& bg) {
+  setPaletteBackgroundColor(bg);
+  mhilightColor = hilight; // cached for rebuild
+  if (mnames) {
+    bodyNames->setColors(hilight, bg);
+  }
+  body->setColors(hilight, bg);
 }
 
 void iEditGrid::setDataWidget(int row, int col, QWidget* data) {
@@ -232,6 +275,7 @@ void iEditGrid::setDataLayout(int row, int col, QLayout* data) {
   layBody->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
   layBody->addLayout(data, row + mhead, col);
 //  resizeRows_impl();
+  updateDimensions(row, -1);
 }
 
 void iEditGrid::setDimensions(int rows_, int cols_) {
@@ -244,7 +288,9 @@ void iEditGrid::setDimensions(int rows_, int cols_) {
 
 void iEditGrid::setHiLightColor(const QColor& val) {
   mhilightColor = val; // cached for rebuild
-  bodyNames->setHiLightColor(val);
+  if (mnames) {
+    bodyNames->setHiLightColor(val);
+  }
   body->setHiLightColor(val);
 }
 
@@ -252,10 +298,12 @@ void iEditGrid::setRowHeight(int value, bool force) {
   if ((mrow_height == value) && (!force)) return;
   mrow_height = value;
   int sh = value + (2 * mvmargin);
-  bodyNames->setStripeHeight(sh);
   // if using headers, we set a top margin for stripe same as header line
   int tm = (hasHeader()) ? sh : 0;
-  bodyNames->setTopMargin(tm + GROUP_FRAME_SIZE); //+ for frame border of group items
+  if (mnames) {
+    bodyNames->setStripeHeight(sh);
+    bodyNames->setTopMargin(tm + GROUP_FRAME_SIZE); //+ for frame border of group items
+  }
   body->setStripeHeight(sh);
   body->setTopMargin(tm);
   resizeRows_impl();
@@ -274,6 +322,7 @@ void iEditGrid::setPaletteBackgroundColor3 (const QColor& c) {
 }
 
 void iEditGrid::setRowNameWidget(int row, QWidget* name) {
+  if (!mnames) return; // shouldn't be calling this!!!
   checkSetParent(name, (QWidget*)bodyNames);
   layNames->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
   layNames->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
@@ -290,6 +339,19 @@ void iEditGrid::updateDimensions(int row, int col) {
     mrows = row - 1;
     // make sure the n+1 row is valid so we have room for the bottom scroll bar
     // need to do both, otherwise one will try to squish
+    // setting rowMinimumHeight didn't work -- so what we do, is make an invisible
+    // layout item, 4/5 the row height, and add it in -- it is harmless later
+    // GD thing won't later size to larger!!! int strut = (mrow_height * 4) / 5;
+/*todo    int strut = mrow_height + (2 * mvmargin);
+    if (mnames) {
+      layNames->addItem(
+        new QSpacerItem(0, strut, QSizePolicy::Fixed, QSizePolicy::Minimum),
+        row + mhead + 1, 0); 
+    }
+    layBody->addItem(
+        new QSpacerItem(0, strut, QSizePolicy::Fixed, QSizePolicy::Minimum),
+        row + mhead + 1, 0); 
+  */
 //TODO: when added, then all the rows get squished , when not, then no room for the scrollbar!
 /*    layNames->setRowMinimumHeight(row + mhead + 1,  mrow_height + (2 * mvmargin));
     layBody->setRowMinimumHeight(row + mhead + 1,  mrow_height + (2 * mvmargin)); */

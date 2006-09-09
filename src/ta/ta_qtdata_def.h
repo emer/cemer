@@ -141,10 +141,10 @@ public:
   bool			highlight() const { return mhighlight; }	// #GET_highlight  changed highlight
   virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
-  virtual int		repStretch() const {return 0;} // used to let some controls stretch in layouts
   virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
   virtual QWidget*	GetRep()	{ return m_rep; }
+  virtual QLayout*	GetLayout() {return NULL;} // returns a top layout, if one is used
   bool			HasFlag(int flag_) const {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
   void			SetFlag(int flags_, bool value = true) {if (value) mflags |= flags_; else mflags &= ~flags_;} // sets or clears a flag or set of flags
 
