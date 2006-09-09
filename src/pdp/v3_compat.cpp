@@ -1005,7 +1005,7 @@ void MonitorStat::ScanConGroup(Con_Group* mcg, char* varname, Projection* p) {
     for(j=0; j<cg->size; j++) {
       Connection* c = (Connection *) cg->Cn(j);
       ptrs.Link(c);
-      members.Add(md);
+      members.Link(md);
       if(net_agg.op==Aggregate::COPY) {
 	String valname = unitname + "[" + String(j) + "]." + String(varname);
 	get_new_mon_val(this, valname);
@@ -1042,7 +1042,7 @@ void MonitorStat::ScanUnit(Unit* u, Projection* p) {
   if(ths == NULL) return;
   md = ths->FindMember((const char*)varname);
   if(md == NULL) return;
-  members.Add(md);
+  members.Link(md);
   ptrs.Link(ths);
   if(net_agg.op == Aggregate::COPY) {
     String valname = GetObjName(u) + String(".") + variable;
@@ -1059,7 +1059,7 @@ void MonitorStat::ScanProjection(Projection* p) {
       get_new_mon_val(this, valname);
     }
     ptrs.Link(p);
-    members.Add(md);
+    members.Link(md);
     return;
   }
   Layer* lay = NULL;
@@ -1102,7 +1102,7 @@ void MonitorStat::ScanLayer(Layer* lay) {
 	get_new_mon_val(this, valname);
       }
       ptrs.Link(ths);
-      members.Add(md);
+      members.Link(md);
       return;
     }
   }
@@ -1147,7 +1147,7 @@ void MonitorStat::ScanUnitGroup(Unit_Group* ug) {
 	get_new_mon_val(this, valname);
       }
       ptrs.Link(ths);
-      members.Add(md);
+      members.Link(md);
       return;
     }
   }
@@ -1194,7 +1194,7 @@ void MonitorStat::ScanObjects() {
 	  get_new_mon_val(this, valname);
 	}
 	ptrs.Link(obj);
-	members.Add(md);
+	members.Link(md);
       }
     }
   }

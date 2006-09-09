@@ -3,7 +3,9 @@ leabra todo list:
 * bug report: can't make child of LeabraLayerSpec
 * bug report: position of window on mac: need to iconify & de-iconfiy to get window bar
 * wishlist: view script = amodal (keep it around w/out blocking other things)
-* improve: MemberDef initial filter (and generally for all guys #SEARCH_xxx)
+* improve: #CAT_DEF_xx for default dat to use in chooser, once cats are implemented
+
+* memberdef owner.owner being trampled!
 
 * network display updates at start of trial with weird state info, despite wrap
   by DataUpdate guys, etc

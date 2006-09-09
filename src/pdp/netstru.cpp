@@ -1615,8 +1615,7 @@ void Unit::ReplacePointersHook(TAPtr old) {
   taNBase::ReplacePointersHook(old);
 }
 
-void Unit::ApplyValue(float val, ExtType act_ext_flags, Random* ran)
-{
+void Unit::ApplyExternal(float val, ExtType act_ext_flags, Random* ran) {
   // note: not all flag values are valid, so following is a fuzzy cascade
   // ext is the default place, so we check for 
   if (ran && (ran->type != Random::NONE)) {
@@ -3368,24 +3367,17 @@ void Layer::UpdateAfterEdit() {
   }*/
 }
 
-void Layer::ApplyData(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyExternal(taMatrix* data, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
-  //note: when use LayerWriters, we typically always just get a single frame of \
+  // note: when use LayerWriters, we typically always just get a single frame of \
   // the exact dimensions, and so ignore 'frame'
   if (!data) return;
   // check correct geom of data
   if ((data->dims() != 2) && (data->dims() != 4)) {
-    taMisc::Error("Layer::ApplyData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
+    taMisc::Error("Layer::ApplyExternal: data->dims must be 2 (2-d) or 4 (4-d); is: ",
       String(data->dims()));
     return;
-  }
-  // determine non-default unit and layer flags  
-  if ((ext_flags & Unit::EXT_FLAGS_MASK) == Unit::NO_EXTERNAL) {
-    if (layer_type & INPUT)
-      ext_flags = (Unit::ExtType)(ext_flags | Unit::EXT);
-    if (layer_type & TARGET)
-      ext_flags = (Unit::ExtType)(ext_flags | Unit::TARG);
   }
   
   TxferDataStruct ads(data, ext_flags, ran, offset);
@@ -3399,21 +3391,21 @@ void Layer::ApplyData(taMatrix* data, Unit::ExtType ext_flags,
   DataUpdate(true);
   if (uses_groups()) {
     if (data->dims() == 4) {
-      ApplyData_Gp4d(ads);
+      ApplyExternal_Gp4d(ads);
     } else {
-      ApplyData_Gp2d(ads);
+      ApplyExternal_Gp2d(ads);
     }
   } else {
     if (data->dims() == 4) {
-      ApplyData_Flat4d(ads);
+      ApplyExternal_Flat4d(ads);
     } else {
-      ApplyData_Flat2d(ads);
+      ApplyExternal_Flat2d(ads);
     }
   }
   DataUpdate(false);
 }
 
-void Layer::ApplyData_Flat2d(const TxferDataStruct& ads) {
+void Layer::ApplyExternal_Flat2d(const TxferDataStruct& ads) {
   Unit* un; 	// current unit
   int u_x = ads.offs_x;  int u_y = ads.offs_y; // current unit coord
   int d_x = 0;  int d_y = 0; // current data coord
@@ -3428,7 +3420,7 @@ void Layer::ApplyData_Flat2d(const TxferDataStruct& ads) {
       // if we run out of units, there will be no more, period
       if (un == NULL) goto break1;
       val = ads.data->SafeElAsVar(d_x, d_y).toFloat();
-      un->ApplyValue(val, ads.ext_flags, ads.ran);
+      un->ApplyExternal(val, ads.ext_flags, ads.ran);
       ++d_x;
       ++u_x;
     }
@@ -3442,23 +3434,21 @@ break1:
   ;
 }
 
-void Layer::ApplyData_Flat4d(const TxferDataStruct& ads) {
+void Layer::ApplyExternal_Flat4d(const TxferDataStruct& ads) {
   //TODO:
 }
 
-void Layer::ApplyData_Gp2d(const TxferDataStruct& ads) {
+void Layer::ApplyExternal_Gp2d(const TxferDataStruct& ads) {
   //TODO:
 }
 
-void Layer::ApplyData_Gp4d(const TxferDataStruct& ads) {
+void Layer::ApplyExternal_Gp4d(const TxferDataStruct& ads) {
   //TODO:
 }
 
 
 void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
-  if (act_ext_flags & Unit::NO_LAYER_FLAGS)
-    return;
-  SetExtFlag(act_ext_flags & Unit::EXT_FLAGS_MASK); // the bits are the same..
+  SetExtFlag(act_ext_flags);
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -6212,8 +6202,11 @@ void LayerWriter::UpdateAfterEdit() {
     if(layer->layer_type == Layer::INPUT) {
       ext_flags = Unit::EXT;
     }
-    else if((layer->layer_type == Layer::OUTPUT) || (layer->layer_type == Layer::TARGET)) {
+    else if(layer->layer_type == Layer::TARGET) {
       ext_flags = Unit::TARG;
+    }
+    else if(layer->layer_type == Layer::OUTPUT) {
+      ext_flags = Unit::COMP;
     }
     else {
       taMisc::Warning("Warning: LayerwWriter:", chan_name, "for layer", layer->name,
@@ -6222,7 +6215,7 @@ void LayerWriter::UpdateAfterEdit() {
   }
 }
 
-void LayerWriter::ApplyData(int context) {
+void LayerWriter::ApplyExternal(int context) {
   if (!data_block || !layer) return;
   // we only apply target data in TRAIN mode
   if ((context != Network::TRAIN) && (ext_flags & Unit::TARG))
@@ -6230,7 +6223,7 @@ void LayerWriter::ApplyData(int context) {
   // get the data as a slice -- therefore, frame is always 0
   taMatrixPtr mat(data_block->GetMatrixData(GetChanIdx())); //note: refs mat
   if (!mat) return; //TODO: maybe we should warn?
-  layer->ApplyData(mat, ext_flags, &noise, &offset);
+  layer->ApplyExternal(mat, ext_flags, &noise, &offset);
   // mat unrefs at this point, or on exit from routine
   
 }
@@ -6239,10 +6232,10 @@ void LayerWriter::ApplyData(int context) {
 //  LayerWriter_List	//
 //////////////////////////
 
-void LayerWriter_List::ApplyData(int context) {
+void LayerWriter_List::ApplyExternal(int context) {
   for (int i = 0; i < size; ++i) {
     LayerWriter* lrw = FastEl(i);
-    lrw->ApplyData(context);
+    lrw->ApplyExternal(context);
   }
 }
 
@@ -6879,7 +6872,7 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var,
         AddCellName(valname);
       }
       ptrs.Link(obj);
-      members.Add(md);
+      members.Link(md);
       return true;
     }
   }
@@ -6911,7 +6904,7 @@ void NetMonItem::ScanObject_ConGroup(Con_Group* mcg, String var,
     for (j=0; j<cg->size; ++j) {
       Connection* c = (Connection *) cg->Cn(j);
       ptrs.Link(c);
-      members.Add(md);
+      members.Link(md);
       valname = unitname.cat("[").cat(String(j)).cat("].").cat(var);
       AddCellName(valname);
     }
@@ -7253,7 +7246,7 @@ void NetMonItem::ScanObject_InObject(TAPtr obj, String var) {
     if (md) {
       AddScalarChan(valname, ValTypeForType(md->type));
       ptrs.Link(ths);
-      members.Add(md);
+      members.Link(md);
       return;
     }
     // ok, not in us, so do default iteration of object

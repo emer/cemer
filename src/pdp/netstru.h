@@ -472,19 +472,13 @@ protected:
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
-    TARG 		= 0x01,	// #LABEL_Target as a target value
-    EXT 		= 0x02,	// as an external input value (todo: this is a terrible name: should be INPUT)
-    COMP		= 0x04,	// #LABEL_Comparison as a comparison value
+    TARG 		= 0x01,	// a target value used to train the network (value goes in targ field of unit)
+    EXT 		= 0x02,	// an external input value that drives activations (value goes in ext field of unit)
+    COMP		= 0x04,	// a comparison value used for computing satistics but not training the network (value goes in targ field of unit)
     TARG_EXT	 	= 0x03,	// #NO_BIT as both external input and target value
     COMP_TARG		= 0x05,	// #NO_BIT as a comparision and target layer
     COMP_EXT		= 0x06,	// #NO_BIT as a comparison and external input layer
-    COMP_TARG_EXT	= 0x07,	// #NO_BIT as a comparison, target, and external input layer
-    NO_UNIT_FLAGS	= 0x10, 
-      // #LABEL_no_Unit_flags (Layer + Layer ctrl param) don't set unit flags at all
-    NO_LAYER_FLAGS	= 0x20, 
-      // #LABEL_no_Layer_flags (Layer ctrl param only) don't set layer flags at all
-    EXT_FLAGS_MASK	= 0x0F, // #NO_BIT #HIDDEN mask for setting layer/unit flags
-    LAYER_FLAGS_MASK	= 0x1F // #NO_BIT #HIDDEN mask for setting layer flags
+    COMP_TARG_EXT	= 0x07	// #NO_BIT as a comparison, target, and external input layer
   };
 
   UnitSpec_SPtr spec;		// unit specification
@@ -545,8 +539,8 @@ public: //
   bool  CheckConfig(Layer* lay, Network* net, bool quiet=false)
   { return spec->CheckConfig(this, lay, net, quiet); }
 
-  void 		ApplyValue(float val, ExtType act_ext_flags, Random* ran = NULL);
-  // called by layer to apply input or target pattern
+  virtual void 	ApplyExternal(float val, ExtType act_ext_flags, Random* ran = NULL);
+  // apply external input or target value to unit
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
   virtual bool	CheckBuild();
@@ -960,22 +954,21 @@ public:
     DMEM_DIST_UNITGP		// distribute units according to unit groups, which can be less even but allows for shared weights by unit group
   }; //
   
-  
-  //NOTE: LayerType bits are same as LayerWriter LayerFlags bits
-  enum LayerType { // #BITS design hint on layer usage (but input/output always allowed)
-    HIDDEN	= 0x00, 	// #NO_BIT layer probably won't be externally connected
-    INPUT 	= 0x01,		// layer will (or may) receive external input
-    OUTPUT 	= 0x02,		// layer will (or may) provide external output
-    TARGET 	= 0x04		// layer will (or may) be supplied with target (training) data
-  }; //
+  enum LayerType { // type of layer, used to determine various default settings
+    HIDDEN, 	// layer does not receive external input of any form
+    INPUT,	// layer receives external input (EXT) that drives activation states directly
+    TARGET,	// layer receives a target input (TARG) that determines correct activation states, used for training
+    OUTPUT	// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
+  };
   
   int			numUnits() const; // count of N units, regardless of geom
   bool			isSparse() const; // true if N units doesn't fit evenly into geom or 4-d geom
   
   Network*		own_net;	// #READ_ONLY #NO_SAVE Network this layer is in
-  LayerType		layer_type;	// design hint on layer usage (but input/output always allowed)
+  LayerType		layer_type;
+  // type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   int			n_units;
-  // no. of units to create with Build command (0=use geometry)
+  // number of units to create with Build command (0=use geometry)
   PosTDCoord		geom;
   // geometry (size) of units in layer (or of each subgroup if geom.z > 1)
   PosTDCoord		pos;		// position of layer
@@ -1112,9 +1105,9 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
+  virtual void	ApplyExternal(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
-    // apply the 2d, or 4d pattern to the network, optional random bias, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
+  // apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
   Unit*		FindUnitFmCoord(int x, int y);
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
@@ -1147,7 +1140,6 @@ public:
   COPY_FUNS(Layer, taNBase);
   TA_BASEFUNS(Layer); //
   
-
 #ifdef TA_GUI
 //protected:
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
@@ -1174,15 +1166,15 @@ protected:
   };
   
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
-    // #IGNORE set layer flag to reflect the kind of input received
-  virtual void		ApplyData_Flat2d(const TxferDataStruct& ads);
-    // #IGNORE flat layer, 2d data
-  virtual void		ApplyData_Flat4d(const TxferDataStruct& ads);
-    // #IGNORE flat layer, 4d data
-  virtual void		ApplyData_Gp2d(const TxferDataStruct& ads);
-    // #IGNORE grouped layer, 2d data
-  virtual void		ApplyData_Gp4d(const TxferDataStruct& ads);
-    // #IGNORE grouped layer, 4d data
+  // #IGNORE set layer flag to reflect the kind of input received
+  virtual void		ApplyExternal_Flat2d(const TxferDataStruct& ads);
+  // #IGNORE flat layer, 2d data
+  virtual void		ApplyExternal_Flat4d(const TxferDataStruct& ads);
+  // #IGNORE flat layer, 4d data
+  virtual void		ApplyExternal_Gp2d(const TxferDataStruct& ads);
+  // #IGNORE grouped layer, 2d data
+  virtual void		ApplyExternal_Gp4d(const TxferDataStruct& ads);
+  // #IGNORE grouped layer, 4d data
 };
 
 PosGroup_of(Layer);
@@ -1497,7 +1489,7 @@ public:
   String_Array  value_names;	// #EXPERT display names of the individual pattern values
   // todo: not sure if above belongs here..
 
-  virtual void 		ApplyData(int context);
+  virtual void 		ApplyExternal(int context);
   // convenience method for applying data in indicated context
 
   void	UpdateAfterEdit();
@@ -1518,8 +1510,8 @@ INHERITED(LayerRWBase_List)
 public:
   
   inline LayerWriter*	FastEl(int i) {return (LayerWriter*)FastEl_(i);}
-  void			ApplyData(int context);
-    // convenience method that iterates the writers and applies data
+  void			ApplyExternal(int context);
+  // convenience method that iterates the writers and applies data
     
   TA_BASEFUNS(LayerWriter_List); //
 
