@@ -172,6 +172,7 @@ int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
 int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
+bool		cssMisc::obey_read_only = false;
 
 cssEl 		cssMisc::Void("Void"); 	
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr
@@ -250,12 +251,13 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
   if(taMisc::dmem_proc == 0) {
     *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
 		 << g << " " << h << " " << i << " " << j << " " << k << " " << l;
+    taMisc::FlushConsole();
   }
   if(top->state & (cssProg::State_Run)) {
     if(taMisc::dmem_proc == 0) {
       *(fh) << "\n" << top->name << "\n>" << top->Prog()->CurSrcLn() << "\t"
 		   << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
-      fh->flush();
+      taMisc::FlushConsole();
     }
     top->run_stat = cssEl::ExecError;
   }
@@ -263,7 +265,7 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
     if(taMisc::dmem_proc == 0) {
       *(fh) << "\n" << top->name << "\n>" << top->src_ln << "\t"
 		   << top->Prog()->GetSrcLC(top->Prog()->tok_line) << "\n";
-      fh->flush();
+      taMisc::FlushConsole();
     }
     top->run_stat = cssEl::ExecError;
   }
@@ -1884,6 +1886,7 @@ void cssCPtr::operator=(const cssEl& s) {
 }
 
 bool cssCPtr::ROCheck() {
+  if(!cssMisc::obey_read_only) return true;
   if(read_only) {
     cssMisc::Error(prog, "Pointer:", name, "of type:",GetTypeName(),
 		   "points to a read-only object");

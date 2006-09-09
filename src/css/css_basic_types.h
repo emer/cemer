@@ -52,6 +52,7 @@ public:
   Variant GetVar() const	{ return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
+  operator bool() const	 	{ return val; }
 
   operator void*() const;
   operator void**() const;
@@ -181,6 +182,7 @@ public:
   Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return (Int)val; }
+  operator bool() const	 	{ return val; }
   operator float() const 		{ return (float)val; }
   operator unsigned int() const 	{ return (unsigned int)val; }
   operator unsigned char() const 	{ return (unsigned char)val; }
@@ -288,6 +290,7 @@ public:
   Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return val; }
   operator Int() const	 	{ return (int)val; }
+  operator bool() const	 	{ return val; }
 
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = (Real)cp; }
@@ -480,6 +483,7 @@ public:
   Variant GetVar() const { return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
+  operator bool() const	 	{ return val; }
 
   void operator=(Real cp) 		{ val = (bool)cp; }
   void operator=(Int cp)		{ val = (bool)cp; }
@@ -538,9 +542,7 @@ public:
   operator int64_t() const { return val.toInt64(); }
   operator uint64_t() const { return val.toUInt64(); }
   operator TAPtr() const;
-#ifndef NO_BUILTIN_BOOL
   operator bool() const	{ return val.toBool(); }
-#endif
   
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = cp; }
@@ -663,6 +665,7 @@ public:
   Variant	GetVar() const { return Variant((void*)ptr.El()); } // raw pointer
   operator 	Real() const	{ return (Real)GetIntVal(); }
   operator 	Int() const	{ return GetIntVal(); }
+  operator 	bool() const	{ return GetIntVal(); }
 
   void	DelOpr()		{ SetPtr(cssMisc::VoidElPtr); }
   // delete is done by unrefing thing we point to, seting ptr to null..
@@ -753,6 +756,7 @@ public:
   Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
   operator 	Real() const	{ CvtErr("(Real)"); return 0; }
   operator 	Int() const	{ CvtErr("(Int)"); return 0; }
+  operator 	bool() const	{ CvtErr("(bool)"); return 0; }
 
   void operator=(Real)	 	{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
@@ -892,6 +896,7 @@ public:
   Variant GetVar() const 	{ return ptr.El()->GetVar(); }
   operator Real() const	 	{ return (Real)*(ptr.El()); }
   operator Int() const	 	{ return (Int)*(ptr.El()); }
+  operator bool() const	 	{ return (bool)*(ptr.El()); }
   operator void*() const	{ return (void*)*(ptr.El()); }
   operator void**() const	{ return (void**)*(ptr.El()); }
 
@@ -906,9 +911,7 @@ public:
   operator double*() const	{ return (double*)*(ptr.El()); }
   operator float*() const	{ return (float*)*(ptr.El()); }
   operator String*() const	{ return (String*)*(ptr.El()); }
-#ifndef NO_BUILTIN_BOOL
   operator bool*() const	{ return (bool*)*(ptr.El()); }
-#endif
 
   operator int**() const	{ return (int**)*(ptr.El()); }
   operator short**() const	{ return (short**)*(ptr.El()); }
@@ -916,9 +919,7 @@ public:
   operator double**() const	{ return (double**)*(ptr.El()); }
   operator float**() const	{ return (float**)*(ptr.El()); }
   operator String**() const	{ return (String**)*(ptr.El()); }
-#ifndef NO_BUILTIN_BOOL
   operator bool**() const	{ return (bool**)*(ptr.El()); }
-#endif
 
   operator ostream*() const	{ return (ostream*)*(ptr.El()); }
   operator istream*() const	{ return (istream*)*(ptr.El()); }
@@ -1275,6 +1276,7 @@ public:
   Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
   operator 	Real() const		{ CvtErr("(Real)"); return 0; }
   operator 	Int() const		{ CvtErr("(Int)"); return 0; }
+  operator 	bool() const		{ CvtErr("(bool)"); return 0; }
 
   void operator=(Real) 	 	{ CvtErr("(Real)"); }
   void operator=(Int) 		{ CvtErr("(Int)"); }

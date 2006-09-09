@@ -1,9 +1,13 @@
 leabra todo list:
 
-* redo unitspec sse to use act_m!
-* fix hardclamp bug
-* update context info from program to net
-* add network updating progel
+* bug report: can't make child of LeabraLayerSpec
+* bug report: position of window on mac: need to iconify & de-iconfiy to get window bar
+* wishlist: view script = amodal (keep it around w/out blocking other things)
+* improve: MemberDef initial filter (and generally for all guys #SEARCH_xxx)
+
+* network display updates at start of trial with weird state info, despite wrap
+  by DataUpdate guys, etc
+* aggregates of sse, incl count correct in basic network
 * deal with sequences
 * deal with small-batch weight updates
 * deal with dmem

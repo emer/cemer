@@ -2221,9 +2221,9 @@ void* MemberDef::GetOff(const void* base) const {
 
 const String MemberDef::GetPathName() const {
   String rval; 
-  TypeDef* owner = GetOwnerType();
-  if (owner) 
-    rval = owner->GetPathName();
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) 
+    rval = owtp->GetPathName();
   rval += "::" + name;
   return rval;
 } 
@@ -2459,9 +2459,9 @@ void MethodDef::CallFun(void* base) const {
 
 const String MethodDef::GetPathName() const {
   String rval; 
-  TypeDef* owner = GetOwnerType();
-  if (owner) 
-    rval = owner->GetPathName();
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) 
+    rval = owtp->GetPathName();
   rval += "::" + name;
   return rval;
 } 
@@ -3076,9 +3076,9 @@ const String TypeDef::GetPathName() const {
   
 //TEMP: just try to dumb version, see if it works...
   String rval; 
-  TypeDef* owner = GetOwnerType();
-  if (owner) { 
-    rval = owner->GetPathName() + "::"; 
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) { 
+    rval = owtp->GetPathName() + "::"; 
   }
   rval += name; 
   return rval;
@@ -3992,7 +3992,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     if(DerivesFrom(TA_MemberDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mbnm = val.after("::", -1); // after final ::
-      if((fqtypnm != "") && (mbnm != "")) {
+      if(!fqtypnm.empty() && !mbnm.empty()) {
 	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
 	if(td != NULL) {
 	  MemberDef* md = td->members.FindName(mbnm);
@@ -4004,7 +4004,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     if(DerivesFrom(TA_MethodDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mthnm = val.after("::", -1);
-      if((fqtypnm != "") && (mthnm != "")) {
+      if(!fqtypnm.empty() && !mthnm.empty()) {
 	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
 	if(td != NULL) {
 	  MethodDef* md = td->methods.FindName(mthnm);

@@ -89,6 +89,96 @@ void cssCPtr_int::operator|=(cssEl& t)	{
 }
 
 ///////////////////
+//     bool      //
+///////////////////
+
+bool cssCPtr_bool::null_bool = 0;
+
+String cssCPtr_bool::GetStr() const {
+  bool myb = GetBoolRef();
+  if(myb == true)
+    return String("true");
+  else if(myb == false)
+    return String("false");
+  else
+    return String((int)myb);
+}
+
+void cssCPtr_bool::operator=(const String& cp) {
+  bool myb = GetBoolRef();
+  if(cp == "false")
+    myb = false;
+  else if(cp == "true")
+    myb = true;
+  else
+    myb = (bool)(int)cp;
+}
+
+void cssCPtr_bool::operator=(const cssEl& t) {
+  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Bool))
+    PtrAssignPtr((cssCPtr*)&t);
+  else {
+    if(!ROCheck()) return;
+    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+      *this = t.GetStr();	// use string converter
+    else
+      GetBoolRef() = (Int)t;
+    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  }
+}
+
+void cssCPtr_bool::operator+=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() += (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator-=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() -= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator*=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() *= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator/=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() /= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator%=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() %= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator<<=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() <<= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator>>=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() >>= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator&=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() &= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator^=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() ^= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_bool::operator|=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetBoolRef() |= (Int)t;
+  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+}
+
+///////////////////
 //     short     //
 ///////////////////
 
@@ -152,43 +242,6 @@ void cssCPtr_short::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
   GetShortRef() |= (Int)t;
   if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-
-///////////////////
-//     bool      //
-///////////////////
-
-String cssCPtr_bool::GetStr() const {
-  bool myb = GetBoolRef();
-  if(myb == true)
-    return String("true");
-  else if(myb == false)
-    return String("false");
-  else
-    return String((int)myb);
-}
-
-void cssCPtr_bool::operator=(const String& cp) {
-  bool myb = GetBoolRef();
-  if(cp == "false")
-    myb = false;
-  else if(cp == "true")
-    myb = true;
-  else
-    myb = (bool)(int)cp;
-}
-
-void cssCPtr_bool::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Bool))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
-      *this = t.GetStr();	// use string converter
-    else
-      GetBoolRef() = (Int)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-  }
 }
 
 ///////////////////

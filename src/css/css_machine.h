@@ -176,6 +176,7 @@ public:
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
   static int		refcnt_trace; // user wants refcnt tracing (-rct from arg)
+  static bool		obey_read_only; // #DEF_false actually pay attention to read-only comment directive information on pointers to C (taBase) objects
 
   static cssEl 		Void; 		// a void element
   static cssElPtr 	VoidElPtr;	// a void el pointer (to a void element)
@@ -494,9 +495,7 @@ public:
   virtual operator unsigned long() const	{ return (unsigned long)(Int)*this; }
   virtual operator int64_t() const	 	{ return 0LL; }
   virtual operator uint64_t() const	 	{ return 0ULL; }
-#ifndef NO_BUILTIN_BOOL
   virtual operator bool() const			{ return (Int)*this; }
-#endif
   virtual operator const char*() const 		{ return (const char*)GetStr(); }
   virtual operator String() const		{ return GetStr(); }
   virtual operator char*() const		{ return (char*)(const char*)GetStr(); }
@@ -523,9 +522,7 @@ public:
   virtual operator float*() const	{ CvtErr("(float*)"); return NULL; }
   virtual operator String*() const	{ CvtErr("(String*)"); return NULL; }
   virtual operator Variant*() const	{ CvtErr("(Variant*)"); return NULL; }
-#ifndef NO_BUILTIN_BOOL
   virtual operator bool*() const	{ CvtErr("(bool*)"); return NULL; }
-#endif
 
   virtual operator int**() const	{ CvtErr("(int**)"); return NULL; }
   virtual operator short**() const	{ CvtErr("(short**)"); return NULL; }
@@ -534,9 +531,7 @@ public:
   virtual operator float**() const	{ CvtErr("(float**)"); return NULL; }
   virtual operator String**() const	{ CvtErr("(String**)"); return NULL; }
   virtual operator Variant**() const	{ CvtErr("(Variant**)"); return NULL; }
-#ifndef NO_BUILTIN_BOOL
   virtual operator bool**() const	{ CvtErr("(bool**)"); return NULL; }
-#endif
 
   virtual operator ostream*() const	{ CvtErr("(ostream*)"); return NULL; }
   virtual operator istream*() const	{ CvtErr("(istream*)"); return NULL; }

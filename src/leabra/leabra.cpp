@@ -1167,6 +1167,22 @@ void LeabraUnitSpec::UpdateWeights(Unit* u) {
   UnitSpec::UpdateWeights(lu);
 }
 
+float LeabraUnitSpec::Compute_SSE(Unit* u) {
+  LeabraUnit* lu = (LeabraUnit*)u;
+  if(lu->ext_flag & Unit::TARG) {
+    float uerr = lu->targ - lu->act_m;
+    if(fabs(uerr) < sse_tol)
+      return 0.0f;
+    return uerr * uerr;
+  }
+  else
+    return 0.0f;
+}
+
+//////////////////////////////////////////
+//	 Misc Functions 		//
+//////////////////////////////////////////
+
 void LeabraUnitSpec::GraphVmFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
   // todo:
   taMisc::Error("Graphing not yet supported");

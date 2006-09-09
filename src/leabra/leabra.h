@@ -635,7 +635,7 @@ public:
   //	Stage 4: the final activation 	//
   ////////////////////////////////////////
 
-  void		Compute_Act(Unit* u)	{ UnitSpec::Compute_Act(u); }
+  override void	Compute_Act(Unit* u)	{ UnitSpec::Compute_Act(u); }
   virtual void 	Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // compute the final activation: calls following function steps
 
@@ -672,7 +672,7 @@ public:
   //	Stage 6: Learning 		//
   ////////////////////////////////////////
 
-  void		Compute_dWt(Unit*)	{ };
+  override void	Compute_dWt(Unit*)	{ };
   virtual void	Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   virtual void	Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // actually do wt change
@@ -680,10 +680,12 @@ public:
   virtual void	Compute_WtFmLin(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // if weights need to be updated from linear values without doing updatewts
 
-  void		UpdateWeights(Unit* u);
+  override void	UpdateWeights(Unit* u);
 
   virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*)	{ };
   // encode current state information (hook for time-based learning)
+
+  override float Compute_SSE(Unit* u);	// compute sum squared error for this unit
 
   virtual void	CreateNXX1Fun();  // create convolved gaussian and x/x+1 
 
