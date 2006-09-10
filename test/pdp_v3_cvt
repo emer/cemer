@@ -1,0 +1,32 @@
+#!/bin/csh
+# script to convert from pdp++ v.3 to v.4
+
+if ($#argv < 1) then
+    echo "Need arg of type of project (e.g., Leabra, Bp, etc.)"
+    exit 1
+endif
+
+set projtyp = $1
+set projnm = $projtyp
+
+foreach i (${argv[2-]})
+  echo $i
+  set ext=$i:e
+  set fl=$i
+  if($ext == "gz") then
+    set fl=$i:r
+    gunzip $i
+  endif
+  sed -e "s/_MGroup/_Group/g" -e "s/Project/$projtypLeabraSettle/g" \
+    -e "s/ReBelCycle/LeabraCycle/g" -e "s/ReBelSettle/LeabraSettle/g" \
+    -e "s/indep_sig/indiv_sig/g" -e "s/norm_sig/rel_sig/g" -e "s/indep_fun/indiv_fun/g"\
+    -e "s/act_i/act_ip/g" -e "s/act_e/act_i/g" -e "s/pre_lr_noise/netin_noise/g" \
+    -e "s/lr_c/nor_c/g" -e "s/lr=/nor_r=/g" \
+    $fl >tmp.xxx
+  if($ext == "gz") then
+    mv -f tmp.xxx $fl
+    gzip $fl
+  else
+    mv -f tmp.xxx $i
+  endif
+end
