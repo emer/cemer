@@ -1538,9 +1538,25 @@ void  Program::UpdateProgVars() {
   }
 }
 
+void Program::SaveScript(ostream& strm) {
+  strm << scriptString();
+}
+
 #ifdef TA_GUI
 void Program::ViewScript() {
   ViewScript_impl();
+}
+
+void Program::EditScript() {
+  String fnm = name + "_edit.css";
+  fstream strm;
+  strm.open(fnm, ios::out);
+  SaveScript(strm);
+  strm.close();
+
+  String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
+  edtr.gsub("%s", fnm);
+  system(edtr);
 }
 
 void Program::ViewScript_impl() {

@@ -1606,34 +1606,35 @@ public:
     ALL_DWT			// for three phase cases: change weights after *both* post-minus phases
   };
 
-  PhaseOrder	phase_order;	// [Default: MINUS_PLUS] number and order of phases to present
-  bool		no_plus_test;	// #DEF_true don't run the plus phase when testing
-  StateInit	trial_init;	// #DEF_DECAY_STATE how to initialize network state at start of trial
-  StateInit	sequence_init;	// #DEF_DO_NOTHING how to initialize network state at start of a sequence of trials
-  FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
+  PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
+  bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
+  StateInit	trial_init;	// #DEF_DECAY_STATE #CAT_Activation how to initialize network state at start of trial
+  StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
+  FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS #CAT_Learning how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
 
-  Phase		phase;		// #READ_ONLY #SHOW type of settling phase
-  int		phase_no;	// #READ_ONLY #SHOW phase as an ordinal number (regular phase is Phase enum)
-  int		phase_max;	// maximum number of phases to run
+  Phase		phase;		// #READ_ONLY #SHOW #CAT_Counter type of settling phase
+  int		phase_no;	// #READ_ONLY #SHOW #CAT_Counter phase as an ordinal number (regular phase is Phase enum)
+  int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
-  int		cycle_max;	// #DEF_60 maximum number of cycles to settle for
-  int		min_cycles;	// #DEF_15 minimum number of cycles to settle for
-  int		min_cycles_phase2; // #DEF_15 minimum number of cycles to settle for in second phase
-  int		netin_mod;	// #DEF_1 net input computation modulus: how often to compute netinput vs. activation update (2 = faster)
-  bool		send_delta;	// #DEF_false send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
+  int		cycle_max;	// #DEF_60 #CAT_Counter maximum number of cycles to settle for
+  int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
+  int		min_cycles_phase2; // #DEF_15 #CAT_Counter minimum number of cycles to settle for in second phase
+  int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
+  bool		send_delta;	// #DEF_false #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
-  float		maxda_stopcrit;	// #DEF_0.005 stopping criterion for max da
-  float		maxda;		// #READ_ONLY #SHOW maximum change in activation (delta-activation) over network; used in stopping settling
+  float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
+  float		maxda;		// #READ_ONLY #SHOW maximum #CAT_Statistic change in activation (delta-activation) over network; used in stopping settling
 
-  float		trg_max_act_stopcrit;	// stopping criterion for target-layer maximum activation (can be used for stopping settling)
-  float		trg_max_act;	// #READ_ONLY #SHOW target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act;	// #READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
 
-  float		ext_rew;	// #READ_ONLY #SHOW external reward value (on this trial)
-  float		avg_ext_rew;	// #READ_ONLY #SHOW average external reward value (computed over previous epoch)
-  float		avg_ext_rew_sum; // #READ_ONLY sum for computing current average external reward value in this epoch
-  int		avg_ext_rew_n;	// #READ_ONLY N for average external reward value computation for this epoch
+  float		ext_rew;	// #READ_ONLY #SHOW #CAT_Statistic external reward value (on this trial)
+  float		avg_ext_rew;	// #READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
+  float		avg_ext_rew_sum; // #READ_ONLY #CAT_Statistic sum for computing current average external reward value in this epoch
+  int		avg_ext_rew_n;	// #READ_ONLY #CAT_Statistic N for average external reward value computation for this epoch
 
-  override void	InitWtState();
+  override void	InitCounters();
+  override void	InitStats();
 
   // single cycle-level functions
   virtual void	Compute_Net();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
@@ -1674,13 +1675,14 @@ public:
   virtual void	EncodeState();	// #CAT_TrialFinal encode final state information for subsequent use
   virtual void	Compute_dWt_NStdLay(); // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
   virtual void	Compute_dWt();	// #CAT_TrialFinal compute weight change on all layers
-  virtual void	Compute_ExtRew(); // compute external reward information
+  virtual void	Compute_ExtRew(); // #CAT_Statistic compute external reward information
+  override void	Compute_SSE();	// #CAT_Statistic compute sum squared error AND also call Compute_ExtRew
+  virtual void	Trial_Final();	// #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
 
-  virtual void	Trial_Final();	// #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState, ExtRew)
+  virtual void	Compute_AvgExtRew(); // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
+  override void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics, INCLUDING AvgExtRew
 
-  virtual void	Compute_AvgExtRew(); // compute average external reward information (at an epoch-level timescale)
-
-  virtual bool	CheckNetwork();	// check the configuration of the network -- if not good, errors will be emitted.
+  virtual bool	CheckNetwork();	// #CAT_Configure check the configuration of the network -- if not good, errors will be emitted.
   virtual bool	CheckUnit(Unit* ck);
  
   void	Initialize();

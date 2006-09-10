@@ -2887,16 +2887,20 @@ void LeabraNetwork::Initialize() {
 // compute_ExtRew incs the sum & n, so epoch just needs to do Compute_AvgExtRew --
 // moves over computed value and clears counters..
 
-void LeabraNetwork::InitWtState() {
+void LeabraNetwork::InitCounters() {
+  inherited::InitCounters();
   phase = MINUS_PHASE;
   phase_no = 0;
+}
+
+void LeabraNetwork::InitStats() {
+  inherited::InitStats();
   maxda = 0.0f;
   trg_max_act = 0.0f;
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
-  inherited::InitWtState();
 }
 
 //////////////////////////////////
@@ -3347,7 +3351,6 @@ void LeabraNetwork::Trial_Final() {
     }
   }
   EncodeState();
-  Compute_ExtRew();
 }
 
 // todo: this should be in here!
@@ -3384,12 +3387,22 @@ void LeabraNetwork::Compute_ExtRew() {
   }
 }
 
+void LeabraNetwork::Compute_SSE() {
+  inherited::Compute_SSE();
+  Compute_ExtRew();
+}
+
 void LeabraNetwork::Compute_AvgExtRew() {
   if(avg_ext_rew_n > 0) {
     avg_ext_rew = avg_ext_rew_sum / (float)avg_ext_rew_n;
-    avg_ext_rew_sum = 0.0f;
-    avg_ext_rew_n = 0;
   }
+  avg_ext_rew_sum = 0.0f;
+  avg_ext_rew_n = 0;
+}
+
+void LeabraNetwork::Compute_EpochSSE() {
+  inherited::Compute_EpochSSE();
+  Compute_AvgExtRew();
 }
 
 static char* leabra_defaults =

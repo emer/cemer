@@ -1,15 +1,16 @@
 leabra todo list:
 
-* bug report: can't make child of LeabraLayerSpec
-* bug report: position of window on mac: need to iconify & de-iconfiy to get window bar
-* wishlist: view script = amodal (keep it around w/out blocking other things)
-* improve: #CAT_DEF_xx for default dat to use in chooser, once cats are implemented
-
-* memberdef owner.owner being trampled!
-
-* network display updates at start of trial with weird state info, despite wrap
-  by DataUpdate guys, etc
+* do view script export thing myself!
 * aggregates of sse, incl count correct in basic network
+
+
+* bugs: network display updates at start of trial with weird state info, despite wrap
+  by DataUpdate guys, etc
+
+* add CheckNetwork (from process code in 3.2)
+
 * deal with sequences
 * deal with small-batch weight updates
 * deal with dmem
+
+* add #CAT to everything in netstru and leabra.h, and fixup comments

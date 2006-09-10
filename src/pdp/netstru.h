@@ -1220,30 +1220,39 @@ public:
   };
  
   Layer_Group	layers;		// Layers or Groups of Layers
-  int		context;	// #READ_ONLY #SHOW used by programs to provide context modality to algorithms
-  WtUpdate	wt_update;	// #READ_ONLY #SHOW determines weight update mode
-  int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
-  int		batch_n_eff;	// #READ_ONLY #NO_SAVE effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
-  int		batch;		// #READ_ONLY #SHOW batch counter (updated by program)
-  int		epoch;		// #READ_ONLY #SHOW epoch counter (updated by program)
-  int		trial;		// #READ_ONLY #SHOW trial counter (updated by program)
+  int		context;	// #READ_ONLY #SHOW #CAT_Learning used by programs to provide context modality to algorithms
+  WtUpdate	wt_update;	// #READ_ONLY #SHOW #CAT_Learning determines weight update mode
+  int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
+  int		batch_n_eff;	// #READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
-  int		cycle;		// #READ_ONLY #SHOW cycle counter, used by some algos (updated by program)	
+  int		batch;		// #READ_ONLY #SHOW #CAT_Counter batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int		epoch;		// #READ_ONLY #SHOW #CAT_Counter epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int		trial;		// #READ_ONLY #SHOW #CAT_Counter trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int		cycle;		// #READ_ONLY #SHOW #CAT_Counter cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
+  float		time;		// #READ_ONLY #SHOW #CAT_Counter the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
 
-  float		sse;		// #READ_ONLY #SHOW total sum squared error over the network
+  float		sse;		// #READ_ONLY #SHOW #CAT_Statistic sum squared error over the network, for the current external input pattern
+  float		sum_sse;	// #READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
+  float		avg_sse;	// #READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
+  float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch
+  float		cnt_err;	// #READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
 
-  bool		re_init;	// todo: remove this! should net be initialized (InitWtState) by process?
-  DMem_SyncLevel dmem_sync_level; // at what level of network structure should information be synchronized across processes?
-  int		dmem_nprocs;	// number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
+  float	       	cur_sum_sse;	// #READ_ONLY current sum_sse -- used during computation of sum_sse
+  int	       	avg_sse_n;	// #READ_ONLY number of times cur_sum_sse updated: for computing avg_sse
+  float	       	cur_cnt_err;	// #READ_ONLY current cnt_err -- used for computing cnt_err
+
+  DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
+  int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
   int		dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
   int		dmem_gp;	// #IGNORE the group for the network communicator
-  Usr1SaveFmt	usr1_save_fmt;	// save network for -USR1 signal: full net or weights
-  WtSaveFormat	wt_save_fmt;	// format to save weights in if saving weights
+
+  Usr1SaveFmt	usr1_save_fmt;	// #CAT_Saving save network for -USR1 signal: full net or weights
+  WtSaveFormat	wt_save_fmt;	// #CAT_Saving format to save weights in if saving weights
   LayerLayout	lay_layout;	// Visual mode of layer position/view
 
-  int		n_units;	// #READ_ONLY #SHOW total number of units in the network
-  int		n_cons;		// #READ_ONLY #SHOW total number of connections in the network
-  PosTDCoord	max_size;	// #READ_ONLY #SHOW maximum size in each dimension of the net
+  int		n_units;	// #READ_ONLY #DETAIL total number of units in the network
+  int		n_cons;		// #READ_ONLY #DETAIL total number of connections in the network
+  PosTDCoord	max_size;	// #READ_ONLY #DETAIL maximum size in each dimension of the net
 
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 
@@ -1332,6 +1341,9 @@ public:
   // #MENU #CONFIRM Initialize the weights, reset the epoch ctr to 0
   virtual void	InitWtState_post(); // #IGNORE run after init wt state (ie. to scale wts..)
 
+  virtual void	InitCounters(); // #CAT_Counter initialize counter variables on network
+  virtual void	InitStats(); // #CAT_Statistic initialize statistic variables on network
+
   virtual void	Compute_Net();	// Compute NetInput
   virtual void	Send_Net();	// sender-based computation of net input
   virtual void	Compute_Act() {Compute_Act_default();}
@@ -1340,7 +1352,8 @@ public:
   virtual void	UpdateWeights(); // update weights for whole net
   virtual void	Compute_dWt(); // update weights for whole net
 
-  virtual void	Compute_SSE();	// compute sum squared error over the entire network
+  virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
+  virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights

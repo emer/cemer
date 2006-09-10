@@ -1480,14 +1480,13 @@ void UnitSpec::UpdateWeights(Unit* u) {
 }
 
 float UnitSpec::Compute_SSE(Unit* u) {
+  float sse = 0.0f;
   if(u->ext_flag & Unit::TARG) {
     float uerr = u->targ - u->act;
-    if(fabs(uerr) < sse_tol)
-      return 0.0f;
-    return uerr * uerr;
+    if(fabs(uerr) >= sse_tol)
+      sse = uerr * uerr;
   }
-  else
-    return 0.0f;
+  return sse;
 }
 
 
@@ -4366,11 +4365,24 @@ void Network::Initialize() {
   wt_update = ON_LINE;
   batch_n = 10;
   batch_n_eff = 10;
+
   batch = 0;
   epoch = 0;
   trial = 0;
   cycle = 0;
-  re_init = false;
+  time = 0.0f;
+
+  sse = 0.0f;
+  sum_sse = 0.0f;
+  avg_sse = 0.0f;
+  cnt_err = 0.0f;
+
+  cnt_err_tol = 0.0f;
+
+  cur_sum_sse = 0.0f;
+  avg_sse_n = 0;
+  cur_cnt_err = 0.0f;
+
   dmem_sync_level = DMEM_SYNC_NETWORK;
   dmem_nprocs = 1;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
@@ -4405,17 +4417,39 @@ void Network::InitLinks() {
 
 void Network::Copy_(const Network& cp) {
   layers = cp.layers;
-  max_size = cp.max_size;
+
+  context = cp.context;
   wt_update = cp.wt_update;
   batch_n = cp.batch_n;
   batch_n_eff = cp.batch_n_eff;
-  context = cp.context;
+
   batch = cp.batch;
   epoch = cp.epoch;
   trial = cp.trial;
   cycle = cp.cycle;
-  re_init = cp.re_init;
+  time = cp.time;
+
+  sse = cp.sse;
+  sum_sse = cp.sum_sse;
+  avg_sse = cp.avg_sse;
+  cnt_err_tol = cp.cnt_err_tol;
+  cnt_err = cp.cnt_err;
+  
+  cur_sum_sse = cp.cur_sum_sse;
+  avg_sse_n = cp.avg_sse_n;
+  cur_cnt_err = cp.cur_cnt_err;
+
+  dmem_sync_level = cp.dmem_sync_level;
+  dmem_nprocs = cp.dmem_nprocs;
+  dmem_nprocs_actual = cp.dmem_nprocs_actual;
+  dmem_gp = cp.dmem_gp;
+
+  usr1_save_fmt = cp.usr1_save_fmt;
+  wt_save_fmt = cp.wt_save_fmt;
   lay_layout = cp.lay_layout;
+
+  max_size = cp.max_size;
+
   CopyNetwork((Network*)&cp);
   ReConnect_Load();		// set the send cons
 #ifdef DMEM_COMPILE
@@ -4884,7 +4918,6 @@ int Network::Dump_Load_Value(istream& strm, TAPtr par) {
   int rval = inherited::Dump_Load_Value(strm, par);
   if(rval)
     ReConnect_Load();
-  re_init = false;		// never re-init a just-loaded network
 
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
@@ -5553,10 +5586,32 @@ void Network::InitWtState() {
 #endif
 
   InitState();			// also re-init state at this point..
-  epoch = 0;			// re-init epoch counter..
-  re_init = false;		// no need to re-reinit!
+
+  InitCounters();
+  InitStats();
+
+  sse = 0;
   UpdateAllViews();
   taMisc::DoneBusy();
+}
+
+void Network::InitCounters() {
+  batch = 0;
+  epoch = 0;
+  trial = 0;
+  cycle = 0;
+  time = 0.0f;
+}
+
+void Network::InitStats() {
+  sse = 0.0f;
+  sum_sse = 0.0f;
+  avg_sse = 0.0f;
+  cnt_err = 0.0f;
+
+  cur_sum_sse = 0.0f;
+  avg_sse_n = 0;
+  cur_cnt_err = 0.0f;
 }
 
 void Network::InitWtState_post() {
@@ -5627,6 +5682,21 @@ void Network::Compute_SSE() {
     if(!l->lesion)
       sse += l->Compute_SSE();
   }
+  cur_sum_sse += sse;
+  avg_sse_n++;
+  if(sse > cnt_err_tol)
+    cur_cnt_err += 1.0;
+}
+
+void Network::Compute_EpochSSE() {
+  sum_sse = cur_sum_sse;
+  if(avg_sse_n > 0)
+    avg_sse = cur_sum_sse / (float)avg_sse_n;
+  cnt_err = cur_cnt_err;
+
+  cur_sum_sse = 0.0f;
+  avg_sse_n = 0;
+  cur_cnt_err = 0.0f;
 }
 
 void Network::Copy_Weights(const Network* src) {
@@ -5649,7 +5719,7 @@ void Network::WriteWeights(ostream& strm, Network::WtSaveFormat fmt) {
   strm << "#Fmt " << fmt << "\n"
        << "#Name " << GetName() << "\n"
        << "#Epoch " << epoch << "\n"
-       << "#ReInit " << (int)re_init << "\n";
+       << "#ReInit " << 0 << "\n"; // todo: remove this!
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
@@ -5688,7 +5758,7 @@ void Network::ReadWeights(istream& strm) {
   epoch = (int)taMisc::LexBuf;
   c = taMisc::read_alnum_noeol(strm); // get #ReInit
   c = taMisc::read_till_eol(strm); // get re_init
-  re_init = (int)taMisc::LexBuf;
+  int re_init = (int)taMisc::LexBuf;
 
   Layer* l;
   taLeafItr i;
@@ -5697,7 +5767,6 @@ void Network::ReadWeights(istream& strm) {
       l->ReadWeights(strm, (Con_Group::WtSaveFormat)wt_save_fmt);
     if(strm.eof()) break;
   }
-  re_init = false;		// never re-init after loading weights
   UpdateAllViews();
   taMisc::DoneBusy();
 }
