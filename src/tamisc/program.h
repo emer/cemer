@@ -261,6 +261,8 @@ class TAMISC_API UserScript: public ProgEl {
 INHERITED(ProgEl)
 public:
   String	    user_script; // #EDIT_DIALOG content of the user scriptlet
+
+  virtual void	    ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON import script from file
   
   override String	GetDisplayName() const;
   void	Copy_(const UserScript& cp);

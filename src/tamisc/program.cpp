@@ -605,6 +605,10 @@ String UserScript::GetDisplayName() const {
   return rval;
 }
 
+void UserScript::ImportFromFile(istream& strm) {
+  // todo: do this
+}
+
 
 //////////////////////////
 //  Loop		//
