@@ -102,7 +102,7 @@ void Wizard::UpdateAfterEdit() {
   taNBase::UpdateAfterEdit();
   layer_cfg.EnforceSize(n_layers);
 }
-/*TEMP
+
 void Wizard::ThreeLayerNet() {
   n_layers = 3;
   layer_cfg.EnforceSize(n_layers);
@@ -226,7 +226,7 @@ void Wizard::StdNetwork(Network* net) {
   taMisc::DelayedMenuUpdate(net);
 }
 
-
+/* TEMP
 //////////////////////////////////
 // 	Enviro Wizard		//
 //////////////////////////////////
@@ -646,12 +646,11 @@ void ProjectBase::Initialize() {
   wizards.SetBaseType(&TA_Wizard);
   specs.SetBaseType(&TA_BaseSpec);
   networks.SetBaseType(&TA_Network);
-//nn  logs.SetBaseType(&TA_TextLog);
-  scripts.SetBaseType(&TA_Script);
 #ifdef TA_GUI
   edits.SetBaseType(&TA_SelectEdit);
   //TODO: viewer
 #endif
+
   save_rmv_units = false;
   use_sim_log = true;
 
@@ -667,16 +666,15 @@ void ProjectBase::InitLinks() {
   taBase::Own(specs, this);
   taBase::Own(networks, this);
   taBase::Own(data, this);
-  taBase::Own(logs, this);
   taBase::Own(programs, this);
-  taBase::Own(scripts, this);
-#ifdef TA_GUI
+  //#ifdef TA_GUI
   taBase::Own(edits, this);
   taBase::Own(viewers, this);
 #ifdef DEBUG
   taBase::Own(test_objs, this);	// just for testing, for any kind of objs
 #endif
-#endif
+  //#endif
+
   taBase::Own(the_colors, this);
   taBase::Own(view_colors, this);
 
@@ -708,16 +706,14 @@ void ProjectBase::CutLinks() {
   } */
 //TODO  if(editor != NULL) { delete editor; editor = NULL; }
   inherited::CutLinks();	// close windows, etc
-#ifdef TA_GUI
+  //#ifdef TA_GUI
 #ifdef DEBUG
   test_objs.CutLinks();	// just for testing, for any kind of objs
 #endif
   viewers.CutLinks();
   edits.CutLinks();
-#endif
-  scripts.CutLinks();
+  //#endif
   programs.CutLinks();
-  logs.CutLinks();
   data.CutLinks();
   networks.CutLinks();
   specs.CutLinks();
@@ -729,19 +725,18 @@ void ProjectBase::CutLinks() {
 
 void ProjectBase::Copy_(const ProjectBase& cp) {
   // delete things first, to avoid dangling refs etc.
-  scripts.Reset();
+//   scripts.Reset();
   
   defaults = cp.defaults;
   specs = cp.specs;
   networks = cp.networks;
   data = cp.data;
-  logs = cp.logs;
   programs = cp.programs;
-  scripts = cp.scripts;
-#ifdef TA_GUI
+  //#ifdef TA_GUI
   edits = cp.edits;
   viewers = cp.viewers;
-#endif
+  //#endif
+
   view_colors = cp.view_colors;
   the_colors = cp.the_colors;
 }
@@ -868,13 +863,13 @@ int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
   if (rval) {	 // don't do this as a dump_load_value cuz we need an updateafteredit..
     if (taMisc::gui_active) {
       pdpMisc::post_load_opr.Link(&wizards);
-      pdpMisc::post_load_opr.Link(&scripts);
+//       pdpMisc::post_load_opr.Link(&scripts);
 #ifdef TA_GUI
       pdpMisc::post_load_opr.Link(&edits);
 #endif
     } else {
       wizards.AutoEdit();
-      scripts.AutoRun();
+//       scripts.AutoRun();
 #ifdef TA_GUI
       edits.AutoEdit();
 #endif
@@ -1048,13 +1043,13 @@ int Project_Group::Load(istream& strm, TAPtr par) {
     FOR_ITR_EL(ProjectBase, p, this->, i) {
       if (taMisc::gui_active) {
 	pdpMisc::post_load_opr.Link(&(p->wizards));
-	pdpMisc::post_load_opr.Link(&(p->scripts));
+// 	pdpMisc::post_load_opr.Link(&(p->scripts));
 #ifdef TA_GUI
 	pdpMisc::post_load_opr.Link(&(p->edits));
 #endif
       } else {
 	p->wizards.AutoEdit();
-	p->scripts.AutoRun();
+// 	p->scripts.AutoRun();
 #ifdef TA_GUI
 	p->edits.AutoEdit();
 #endif

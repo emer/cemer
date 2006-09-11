@@ -3580,7 +3580,7 @@ TypeDefault .projects[0].defaults[6] {\n\
 
 void LeabraProject::Initialize() {
   networks.SetBaseType(&TA_LeabraNetwork);
-  wizards.SetBaseType(&TA_LeabraWiz);
+  wizards.SetBaseType(&TA_LeabraWizard);
   defaults_str = leabra_defaults;
   defaults_file = "leabra.def";
 }
@@ -8448,11 +8448,11 @@ void PFCOutLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 //		Wizard		//
 //////////////////////////////////
 
-void LeabraWiz::Initialize() {
+void LeabraWizard::Initialize() {
   connectivity = BIDIRECTIONAL;
 }
 
-void LeabraWiz::StdNetwork(Network* net) {
+void LeabraWizard::StdNetwork(Network* net) {
   if(net == NULL)
     net = pdpMisc::GetNewNetwork(GET_MY_OWNER(LeabraProject));
   if(net == NULL) return;
@@ -8461,7 +8461,7 @@ void LeabraWiz::StdNetwork(Network* net) {
   StdLayerSpecs((LeabraNetwork*)net);
 }
 
-void LeabraWiz::StdLayerSpecs(LeabraNetwork* net) {
+void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   if(net == NULL) return;
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   LeabraLayerSpec* hid = (LeabraLayerSpec*)pdpMisc::FindMakeSpec(proj, NULL, &TA_LeabraLayerSpec);
@@ -8523,7 +8523,7 @@ void LeabraWiz::StdLayerSpecs(LeabraNetwork* net) {
 //			SRN Context
 ///////////////////////////////////////////////////////////////
 
-void LeabraWiz::SRNContext(LeabraNetwork* net) {
+void LeabraWizard::SRNContext(LeabraNetwork* net) {
   if(net == NULL) {
     taMisc::Error("SRNContext: must have basic constructed network first");
     return;
@@ -8556,7 +8556,7 @@ void LeabraWiz::SRNContext(LeabraNetwork* net) {
 //			Unit Inhib
 ///////////////////////////////////////////////////////////////
 
-void LeabraWiz::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
+void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
   
@@ -8705,7 +8705,7 @@ void LeabraWiz::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWiz::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
+void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   String msg = "Configuring TD Temporal Differences Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -8968,7 +8968,7 @@ void LeabraWiz::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWiz::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all) {
+void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all) {
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -9459,7 +9459,7 @@ static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
   lay->UpdateAfterEdit();
 }
 
-void LeabraWiz::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
+void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
   set_n_stripes(net, "PFC", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
@@ -9476,7 +9476,7 @@ void LeabraWiz::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
   net->Connect();
 }
 
-void LeabraWiz::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {
+void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {
   PVLV(net, bio_labels, localist_val, fm_hid_cons, fm_out_cons, da_mod_all); // first configure PVLV system..
 
   String msg = "Configuring BG PFC (Basal Ganglia Prefrontal Cortex) Layers:\n\n\

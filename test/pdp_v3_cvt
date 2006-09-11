@@ -1,13 +1,21 @@
 #!/bin/csh
 # script to convert from pdp++ v.3 to v.4
 
-if ($#argv < 1) then
-    echo "Need arg of type of project (e.g., Leabra, Bp, etc.)"
+if ($#argv < 2) then
+    echo "Need first arg of type of project (e.g., Leabra, Bp, etc.)"
     exit 1
 endif
 
-set projtyp = $1
-set projnm = $projtyp
+set projtyp=$1
+set projnm=$projtyp"Project"
+set netnm=$projtyp"Network"
+set wiznm=$projtyp"Wizard"
+set projgp=$projnm"_Group"
+set netgp=$netnm"_Group"
+set wizgp=$wiznm"_Group"
+set projection=$projtyp"Projection"
+
+set cvttmp = "pdp_v3_cvt_tmp.xxx"
 
 foreach i (${argv[2-]})
   echo $i
@@ -17,16 +25,20 @@ foreach i (${argv[2-]})
     set fl=$i:r
     gunzip $i
   endif
-  sed -e "s/_MGroup/_Group/g" -e "s/Project/$projtypLeabraSettle/g" \
-    -e "s/ReBelCycle/LeabraCycle/g" -e "s/ReBelSettle/LeabraSettle/g" \
-    -e "s/indep_sig/indiv_sig/g" -e "s/norm_sig/rel_sig/g" -e "s/indep_fun/indiv_fun/g"\
-    -e "s/act_i/act_ip/g" -e "s/act_e/act_i/g" -e "s/pre_lr_noise/netin_noise/g" \
-    -e "s/lr_c/nor_c/g" -e "s/lr=/nor_r=/g" \
-    $fl >tmp.xxx
+  set newfl=$fl:r"_v4.proj"
+
+# note: not converting the project name -- old project name allows us to 
+# load it in a pre-converted state..
+#   -e "s/Project/$projnm/g" -e "s/$projgp/Project_Group/g" -e "s/$projection/Projection/g" \
+
+  sed -e "s/_MGroup/_Group/g" \
+    -e "s/Network/$netnm/g" -e "s/$netgp/Network_Group/g" \
+    -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \
+    -e "s/WinView_Group/taBase_Group/g" -e "s/ProjViewState_List/taBase_List/g" \
+    -e "s/NetView/taNBase/g" \
+    $fl >$cvttmp
+  mv -f $cvttmp $newfl
   if($ext == "gz") then
-    mv -f tmp.xxx $fl
-    gzip $fl
-  else
-    mv -f tmp.xxx $i
+    gzip $newfl
   endif
 end

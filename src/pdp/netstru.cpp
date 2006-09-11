@@ -4493,17 +4493,17 @@ void Network::CutLinks() {
 //OBS    proj->processes.ReplaceNetPtrs(this, replnet);
     // also replace pointers on any netlogviews..
 #ifdef TA_GUI
-    PDPLog* lg;
-    taLeafItr lgi;
-    FOR_ITR_EL(PDPLog, lg, proj->logs., lgi) {
-      taDataLinkItr dli;
-      LogView* vw;
-      FOR_DLC_EL_OF_TYPE(LogView, vw, lg->data_link(), dli) {
-	if(vw->GetTypeDef()->InheritsFrom(TA_NetLogView)) {
-	  taBase::SetPointer((TAPtr*)&(((NetLogView*)vw)->network), replnet);
-	}
-      }
-    }
+//     PDPLog* lg;
+//     taLeafItr lgi;
+//     FOR_ITR_EL(PDPLog, lg, proj->logs., lgi) {
+//       taDataLinkItr dli;
+//       LogView* vw;
+//       FOR_DLC_EL_OF_TYPE(LogView, vw, lg->data_link(), dli) {
+// 	if(vw->GetTypeDef()->InheritsFrom(TA_NetLogView)) {
+// 	  taBase::SetPointer((TAPtr*)&(((NetLogView*)vw)->network), replnet);
+// 	}
+//       }
+//     }
 #endif
     // un-set any other pointers to this object!
     in_repl = true;

@@ -3530,7 +3530,7 @@ public:
 //	Leabra Wizard		//
 //////////////////////////////////
 
-class LEABRA_API LeabraWiz : public Wizard {
+class LEABRA_API LeabraWizard : public Wizard {
   // Leabra-specific wizard for automating construction of simulation objects
 public:
   virtual void 	StdNetwork(Network* net = NULL);
@@ -3558,9 +3558,9 @@ public:
 
   void 	Initialize();
   void 	Destroy()	{ };
-//   SIMPLE_COPY(LeabraWiz);
-//   COPY_FUNS(LeabraWiz, Wizard);
-  TA_BASEFUNS(LeabraWiz);
+//   SIMPLE_COPY(LeabraWizard);
+//   COPY_FUNS(LeabraWizard, Wizard);
+  TA_BASEFUNS(LeabraWizard);
 };
 
 #endif // leabra_h

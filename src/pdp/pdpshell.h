@@ -33,7 +33,6 @@
 #include "pdplog.h"
 #include "program.h"
 
-
 class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
 INHERITED(taGroup<TypeDefault>)
@@ -93,7 +92,7 @@ public:
   taBase_List	layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
   TypeDef*	event_type;	// #TYPE_Event type of event to create by default
-/*TEMP
+
   virtual void	ThreeLayerNet();
   // #MENU_BUTTON #MENU_ON_Defaults set configuration to a standard three-layer network (input, hidden, output) -- DOESN'T MAKE NETWORK (use StdEnv!)
   virtual void	MultiLayerNet(int n_inputs = 1, int n_hiddens = 1, int n_outputs = 1);
@@ -102,6 +101,7 @@ public:
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
+  /* 
   virtual void	StdConduit(NetConduit* cond=NULL, Network* net = NULL);
   // #MENU_BUTTON #MENU_ON_Environment #NULL_OK make a standard network conduit according to the current settings (if cond == NULL, new environment is created)
   virtual void	StdEnv(Environment* env=NULL, int n_events = 0);
@@ -223,16 +223,17 @@ public:
   BaseSpec_Group     	specs;		// Specifications for network parameters
   Network_Group		networks;	// Networks of interconnected units
   DataTable_Group	data;		// Misc data, such as patterns for network input
-  PDPLog_Group		logs;		// Logs to display statistics in processes
   Program_Group		programs;	// Gui-based programs to run simulations and other processing
-  Script_Group		scripts;	// Scripts to control arbitrary actions
-#ifdef TA_GUI
+  // #ifdef TA_GUI 
+  // todo: note: ifdefing this for TA_GUI is not a good idea -- will cause loading to fail
+  // instead, need to include dummy equivalent classes with no functionality..
   SelectEdit_Group	edits;		// special edit dialogs for selected elements
   DataViewer_List	viewers;	// any open viewers TODO: make HIDDEN in release version
 #ifdef DEBUG
-  taBase_List		test_objs;	// just for testing, for any kind of objs
+  taBase_List		test_objs;	// todo: can we remove now!? just for testing, for any kind of objs
 #endif
-#endif
+  //#endif
+
   bool			save_rmv_units; // don't include units in network when saving (makes project file much smaller!)
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project

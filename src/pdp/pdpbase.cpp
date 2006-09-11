@@ -435,23 +435,26 @@ BaseSpec* pdpMisc::FindSpecType(ProjectBase* prj, TypeDef* td) {
 }
 
 PDPLog* pdpMisc::FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm) {
-  return (PDPLog*)prj->logs.FindMakeLog(nm, td, nw_itm);
+  //  return (PDPLog*)prj->logs.FindMakeLog(nm, td, nw_itm);
+  return NULL;
 }
 
 PDPLog* pdpMisc::FindLogName(ProjectBase* prj, const char* nm) {
-  PDPLog* rval = (PDPLog*)prj->logs.Find(nm);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find log named:", nm);
-  }
-  return rval;
+//   PDPLog* rval = (PDPLog*)prj->logs.Find(nm);
+//   if(rval == NULL) {
+//     taMisc::Error("Error: could not find log named:", nm);
+//   }
+//   return rval;
+  return NULL;
 }
 
 PDPLog* pdpMisc::FindLogType(ProjectBase* prj, TypeDef* td) {
-  PDPLog* rval = (PDPLog*)prj->logs.Find(td);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find log of type:", td->name);
-  }
-  return rval;
+//   PDPLog* rval = (PDPLog*)prj->logs.Find(td);
+//   if(rval == NULL) {
+//     taMisc::Error("Error: could not find log of type:", td->name);
+//   }
+//   return rval;
+  return NULL;
 }
 #ifdef TA_GUI
 SelectEdit* pdpMisc::FindSelectEdit(ProjectBase* prj) {
@@ -577,13 +580,14 @@ void pdpMisc::WaitProc() {
 }
 
 PDPLog* pdpMisc::GetNewLog(ProjectBase* prj, TypeDef* typ) {
-  if((prj == NULL) || (typ == NULL)) return NULL;
-  PDPLog* rval = (PDPLog*)prj->logs.New(1, typ);
-#ifdef TA_GUI
-  taiMisc::RunPending();
-  taMisc::DelayedMenuUpdate(prj);
-#endif
-  return rval;
+//   if((prj == NULL) || (typ == NULL)) return NULL;
+//   PDPLog* rval = (PDPLog*)prj->logs.New(1, typ);
+// #ifdef TA_GUI
+//   taiMisc::RunPending();
+//   taMisc::DelayedMenuUpdate(prj);
+// #endif
+//   return rval;
+  return NULL;
 }
 
 

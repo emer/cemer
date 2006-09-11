@@ -2649,18 +2649,24 @@ int GroupPatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
 void Project::Initialize() {
   environments.SetBaseType(&TA_Environment);
   processes.SetBaseType(&TA_SchedProcess);
+  //nn logs.SetBaseType(&TA_TextLog);
+  scripts.SetBaseType(&TA_Script);
 }
 
 void Project::InitLinks() {
   inherited::InitLinks();
   taBase::Own(environments, this);
   taBase::Own(processes, this);
+  taBase::Own(logs, this);
+  taBase::Own(scripts, this);
 }
 
 void Project::CutLinks() {
   deleting = true;
   processes.CutLinks();
   environments.CutLinks();
+  logs.CutLinks();
+  scripts.CutLinks();
   inherited::CutLinks();
 }
 

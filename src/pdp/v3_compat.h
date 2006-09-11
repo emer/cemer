@@ -40,7 +40,6 @@
 class CtrlPanelData;
 class Process;
 class Process_Group;
-class Process_Group; //
 
 // from stats.h
 class DataItem;
@@ -1449,6 +1448,8 @@ INHERITED(ProjectBase)
 public:
   Environment_Group	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
   Process_Group	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
+  PDPLog_Group		logs;		// #HIDDEN #NO_SAVE V3 compatibility only: Logs to display statistics in processes
+  Script_Group		scripts;	// #HIDDEN #NO_SAVE V3 compatibility only: Scripts to control arbitrary actions
 
 #ifdef TA_GUI
   void			ConvertToVersion4(); 
@@ -1465,7 +1466,6 @@ public:
   COPY_FUNS(Project, ProjectBase);
   TA_BASEFUNS(Project);
 };
-
 
 #endif
 
