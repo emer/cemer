@@ -2118,7 +2118,7 @@ taiDefaultEditDataHost::~taiDefaultEditDataHost(){
   data_el.Reset();
   for (int i = mspace.size - 1; i >= 0; --i) {
     MemberDef* md = mspace.FastEl(i);
-    if (md->im != NULL)
+    if (md->im)
       delete md->im;
     md->im = NULL;
   }
@@ -2136,7 +2136,7 @@ void taiDefaultEditDataHost::Constr_Data() {
 }
 
 void taiDefaultEditDataHost::GetValue() {
-  GetValue_impl(mspace, data_el, cur_base);
+  GetValue_impl(memb_el, data_el, cur_base);
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
@@ -2160,7 +2160,7 @@ void taiDefaultEditDataHost::GetValue() {
 }
 
 void taiDefaultEditDataHost::GetImage() {
-  GetImage_impl(mspace, data_el,cur_base);
+  GetImage_impl(memb_el, data_el,cur_base);
   Unchanged();
 }
 

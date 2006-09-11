@@ -21,7 +21,9 @@ QMainWindow
 QWidget (or QFrame)
   iFrameDataViewer (A) -- widget that can be managed by a iMainDataViewer
     iBrowseDataViewer -- for the tree browser
-    iPanelDataViewer -- for the edit panels
+    iTabbedDataViewer -- generic, tabbed
+      iPanelDataViewer -- for the edit panels
+      iT3DataViewer -- for T3 views
 
 
 Issues

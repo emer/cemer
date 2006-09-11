@@ -465,9 +465,9 @@ protected:
   override void		Constr_Final();
   override void		FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
-  virtual void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
+  virtual void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
   virtual void		GetImageInline_impl(const void* base);
-  virtual void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base) const;
+  virtual void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
   virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetButtonImage();
   void			AddMethButton(taiMethodData* mth_rep, const char* label = NULL);

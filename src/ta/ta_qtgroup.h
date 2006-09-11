@@ -336,7 +336,8 @@ class TA_API gpiList_ElData {
 public:
   TypeDef*	typ;
   TAPtr		cur_base;
-  taiDataList data_el;	// data elements
+  Member_List	memb_el; // members
+  taiDataList   data_el; // data elements for members
 
   gpiList_ElData(TypeDef* tp, TAPtr base);
   virtual ~gpiList_ElData();

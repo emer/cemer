@@ -1572,7 +1572,7 @@ void taiEditDataHost::GetImage() {
   if (typ->it->requiresInline()) {
     GetImageInline_impl(cur_base);
   } else {
-    GetImage_impl(typ->members, data_el, cur_base);
+    GetImage_impl(memb_el, data_el, cur_base);
   }
   GetButtonImage();
   Unchanged();
@@ -1584,17 +1584,14 @@ void taiEditDataHost::GetImageInline_impl(const void* base) {
     typ->it->GetImage(mb_dat, base);
 }
 
-void taiEditDataHost::GetImage_impl(const MemberSpace& ms, const taiDataList& dl,
+void taiEditDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
 	void* base)
 {
-  int cnt = 0;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-    taiData* mb_dat = dl.SafeEl(cnt++);
+    taiData* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
-      taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected dl=NULL at cnt ", String(cnt - 1), "\n");
+      taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected dl=NULL at i ", String(i), "\n");
     else
       md->im->GetImage(mb_dat, base);
   }
@@ -1644,7 +1641,7 @@ void taiEditDataHost::GetValue() {
   if (typ->it->requiresInline()) {
     GetValueInline_impl(cur_base);
   } else {
-    GetValue_impl(typ->members, data_el, cur_base);
+    GetValue_impl(memb_el, data_el, cur_base);
   }
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
@@ -1655,18 +1652,15 @@ void taiEditDataHost::GetValue() {
   Unchanged();
 }
 
-void taiEditDataHost::GetValue_impl(const MemberSpace& ms, const taiDataList& dl,
+void taiEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
   void* base) const
 {
   bool first_diff = true;
-  int cnt = 0;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-    taiData* mb_dat = dl.SafeEl(cnt++);
+    taiData* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
-      taMisc::Error("taiEditDataHost::GetValue_impl(): unexpected dl=NULL at cnt ", String(cnt - 1), "\n");
+      taMisc::Error("taiEditDataHost::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
     else
       md->im->GetMbrValue(mb_dat, base, first_diff);
   }

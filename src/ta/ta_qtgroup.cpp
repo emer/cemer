@@ -1256,6 +1256,7 @@ void gpiListDataHost::Constr_ListData() {
       if (lst_idx < 0) continue; //note: shouldn't happen!!!
       cur_row = lst_idx; 
       taiData* mb_dat = md->im->GetDataRep(this, NULL, multi_body->dataGridWidget());
+      lf_el->memb_el.Add(md);
       lf_el->data_el.Add(mb_dat);
       AddMultiData(cur_row, lf, mb_dat->GetRep());
     }
@@ -1289,11 +1290,11 @@ void gpiListDataHost::GetValue() {
   }
 
   // first for the List-structure members
-  GetValue_impl(typ->members, data_el, cur_base);
+  GetValue_impl(memb_el, data_el, cur_base);
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-    GetValue_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+    GetValue_impl(lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
     ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
@@ -1330,12 +1331,12 @@ void gpiListDataHost::GetImage() {
   } 
 
   // first for the List-structure members
-  GetImage_impl(typ->members, data_el, cur_base);
+  GetImage_impl(memb_el, data_el, cur_base);
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-GetImage_impl(lf_el->typ->members, lf_el->data_el, lf_el->cur_base);
+    GetImage_impl(lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
   }
   Unchanged();
 }
@@ -1451,7 +1452,7 @@ void gpiCompactListDataHost::GetValue() {
   }
 
   // first for the List-structure members
-  GetValue_impl(typ->members, data_el, cur_base);
+  GetValue_impl(memb_el, data_el, cur_base);
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
@@ -1482,7 +1483,7 @@ void gpiCompactListDataHost::GetImage() {
   } 
 
   // first for the List-structure members
-  GetImage_impl(typ->members, data_el, cur_base);
+  GetImage_impl(memb_el, data_el, cur_base);
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {

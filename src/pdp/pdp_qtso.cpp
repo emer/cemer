@@ -87,7 +87,8 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
 
 
 taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
-  if (NoCheckBox(host_)) {
+  no_check_box = NoCheckBox(host_);
+  if (no_check_box) {
     taiData* rdat;
     if (m_sub_types != NULL)
       rdat = sub_types()->GetDataRep(host_, par, gui_parent);
@@ -111,7 +112,7 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 
 void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
   IDataHost* host_ = dat->host;
-  if (NoCheckBox(host_)) {
+  if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetImage(dat,base);
     else
@@ -141,7 +142,7 @@ void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
 
 void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   IDataHost* host_ = dat->host;
-  if(NoCheckBox(host_)) {
+  if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetMbrValue(dat, base, first_diff);
     else
@@ -168,7 +169,7 @@ void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     taiMember::GetMbrValue(rval->data, base, first_diff);
 }
 
-void taiSpecMember::CmpOrigVal(taiData* dat, void* base, bool& first_diff) {
+void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
   if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
     return;
   String new_val;

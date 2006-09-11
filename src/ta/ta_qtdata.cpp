@@ -599,9 +599,7 @@ taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWid
 
 taiPlusToggle::~taiPlusToggle() {
 //  rep = NULL;
-  if (data != NULL)
-    delete data;
-  data = NULL;
+  data = NULL; //note: will be owned/parented elsewise, so it must delete that way
 }
 
 void taiPlusToggle::InitLayout() {
