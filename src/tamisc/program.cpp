@@ -1684,7 +1684,7 @@ bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
     return false;
   }
   taMisc::read_till_rb_or_semi(strm); // skips over entire path header!
-  while(!strm.eof()) {
+  while(!strm.eof() && !strm.bad()) {
     taMisc::read_till_eol(strm); // skip next line
     if(taMisc::LexBuf.contains("name=")) {
       name = taMisc::LexBuf.after("name=");
