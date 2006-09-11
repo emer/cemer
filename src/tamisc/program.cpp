@@ -606,7 +606,10 @@ String UserScript::GetDisplayName() const {
 }
 
 void UserScript::ImportFromFile(istream& strm) {
-  // todo: do this
+  user_script = "";
+  while(!strm.eof()) {
+    readline(strm, user_script, false);
+  }
 }
 
 
@@ -769,10 +772,6 @@ String IfBreak::GetDisplayName() const {
 void BasicDataLoop::Initialize() {
   order = SEQUENTIAL;
   loop_test = "This is not used here!";
-}
-
-void BasicDataLoop::Destroy() {
-  CutLinks();
 }
 
 bool BasicDataLoop::CheckConfig(bool quiet) {
@@ -1582,6 +1581,10 @@ void Program_Group::Initialize() {
 void Program_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(global_vars, this);
+  if(prog_lib.not_init) {
+    prog_lib.paths.Add("../../prog_lib"); // todo: hack for testing from pdp_lib location!
+    prog_lib.FindPrograms();
+  }
 }
 
 void Program_Group::CutLinks() {
@@ -1611,6 +1614,12 @@ bool Program_Group::CheckConfig(bool quiet) {
   return true;
 }
 
+ProgLib Program_Group::prog_lib;
+
+taBase* Program_Group::NewFromLib(ProgLibEl* prog_type) {
+  return prog_lib.NewProgram(prog_type, this);
+}
+
 //////////////////////////
 //  Program_List	//
 //////////////////////////
@@ -1625,4 +1634,101 @@ bool Program_List::CheckConfig(bool quiet) {
     if(!pv->CheckConfig(quiet)) return false;
   }
   return true;
+}
+
+
+//////////////////
+//  ProgLib	//
+//////////////////
+
+void ProgLibEl::Initialize() {
+  is_group = false;
+}
+
+taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
+  // todo: need to support full URL types -- assumed to be file right now
+  String path = URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  if(is_group) {
+    Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
+    fstream strm;
+    strm.open(path, ios::in);
+    pg->Load(strm);
+    strm.close();
+    return pg;
+  }
+
+  Program* pg = new_owner->NewEl(1, &TA_Program);
+  fstream strm;
+  strm.open(path, ios::in);
+  pg->Load(strm);
+  strm.close();
+  return pg;
+}
+
+#include "css_misc_funs.h"
+
+bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
+  filename = fnm;
+  if(filename.contains(".progp"))
+    is_group = true;
+  else
+    is_group = false;
+  URL = "file:" + path + "/" + filename;
+  String openfnm = path + "/" + filename;
+  fstream strm;
+  strm.open(openfnm, ios::in);
+  if(strm.bad() || strm.eof()) {
+    taMisc::Error("ProgLibEl::ParseProgFile: could not open file name:", openfnm);
+    return false;
+  }
+  taMisc::read_till_rb_or_semi(strm); // skips over entire path header!
+  while(!strm.eof()) {
+    taMisc::read_till_eol(strm); // skip next line
+    if(taMisc::LexBuf.contains("name=")) {
+      name = taMisc::LexBuf.after("name=");
+      name.gsub("\"", "");
+    }
+    if(taMisc::LexBuf.contains("desc=")) {
+      desc = taMisc::LexBuf.after("desc=");
+      desc.gsub("\"", "");
+      break;
+    }
+  }
+  strm.close();
+  return true;
+}
+
+void ProgLibEl_List::Initialize() {
+}
+
+void ProgLib::Initialize() {
+  not_init = true;
+}
+
+#include <QDir>
+
+void ProgLib::FindPrograms() {
+  Reset();			// clear existing
+  for(int pi=0; pi< paths.size; pi++) {
+    String path = paths[pi];
+    QDir dir(path);
+    QStringList files = dir.entryList();
+    for(int i=0;i<files.size();i++) {
+      String fl = files[i];
+      ProgLibEl* pe = (ProgLibEl*)New(1, &TA_ProgLibEl);
+      pe->ParseProgFile(fl, path);
+    }
+  }
+  not_init = false;
+}
+
+taBase* ProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
+  if(prog_type == NULL) return NULL;
+  return prog_type->NewProgram(new_owner);
+}
+
+taBase* ProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owner) {
+  return NewProgram(FindName(prog_nm), new_owner);
 }

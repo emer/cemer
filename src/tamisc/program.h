@@ -369,7 +369,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy()	{ CutLinks(); }
 };
 
 class TAMISC_API IfBreak: public ProgEl { 
@@ -387,7 +387,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{}
+  void	Destroy()	{ CutLinks(); }
 };
 
 class TAMISC_API BasicDataLoop: public Loop { 
@@ -416,7 +416,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy();
+  void	Destroy() { CutLinks(); }
 };
 
 
@@ -637,6 +637,66 @@ private:
 
 SmartRef_Of(Program); // ProgramRef
 
+//////////////////////////////////
+// 	Program Library 	//
+//////////////////////////////////
+
+class TAMISC_API ProgLibEl: public taNBase {
+  // #INSTANCE #INLINE an element in the program library
+INHERITED(taNBase)
+public:
+  bool		is_group;	// this is a group of related programs
+  String	desc; 		// description of what this program does and when it should be used
+  String	URL;		// full URL to find this program
+  String	filename;	// file name given to this program
+  
+  virtual taBase* NewProgram(Program_Group* new_owner);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program of this type (return value could be a Program or a Program_Group)
+
+  virtual bool ParseProgFile(const String& fnm, const String& path);
+  // get program information from program or program group file. is_group is set based on extension of file name (.prog or .progp)
+
+  TA_SIMPLE_BASEFUNS(ProgLibEl);
+protected:
+
+private:
+  void	Initialize();
+  void	Destroy() { CutLinks(); }
+};
+
+class TAMISC_API ProgLibEl_List : public taList<ProgLibEl> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of program library elements
+INHERITED(taList<ProgLibEl>)
+public:
+  TA_SIMPLE_BASEFUNS(ProgLibEl_List);
+protected:
+  
+private:
+  void	Initialize();
+  void	Destroy() { Reset(); CutLinks(); }
+};
+
+class TAMISC_API ProgLib: public ProgLibEl_List {
+  // #INSTANCE #INLINE the program library
+INHERITED(ProgLibEl_List)
+public:
+  String_Array		paths;	// list of paths to search for programs
+  bool			not_init; // list has not been initialized yet
+
+  void	FindPrograms();		// search paths to find all available programs
+  taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program in new_owner of given type (return value could be a Program or a Program_Group)
+  taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
+  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found)
+  
+  TA_SIMPLE_BASEFUNS(ProgLib);
+protected:
+
+private:
+  void	Initialize();
+  void	Destroy() { CutLinks(); }
+};
+
 class TAMISC_API Program_Group : public taGroup<Program> {
   // ##EXT_progp a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
@@ -644,7 +704,12 @@ public:
   String		desc; // description of what this program group does and when it should be used
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
- virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  static ProgLib	prog_lib; // library of available programs
+
+  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+
+  taBase* NewFromLib(ProgLibEl* prog_type);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib create a new program from a library of existing program types
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
   

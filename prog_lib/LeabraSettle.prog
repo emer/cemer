@@ -1,0 +1,215 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][3] { 
+ProgVar_List @.vars = [3] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+ProgVar @[2] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [9] {
+NetCounterInit @[0] { };
+MethodCall @[1] { };
+ProgramCall @[2] { };
+MethodCall @[3] { };
+UserScript @[4] { };
+WhileLoop @[5] { 
+ProgEl_List @.loop_code = [4] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+IfContinue @[2] { };
+IfBreak @[3] { };
+};
+};
+MethodCall @[6] { };
+IfElse @[7] { 
+ProgEl_List @.true_code = [1] {
+MethodCall @[0] { };
+};
+};
+NetUpdateView @[8] { };
+};
+};
+Program .projects[0].programs.gp[0][3] {
+name="LeabraSettle";
+desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="cycle";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="min_cycles";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[2] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=1;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=.projects[0].programs.gp[0].global_vars[0]$0$;
+local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$1$;
+counter=Network::cycle;
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$0$;
+local_ctr_var=$1$;
+counter=Network::cycle;
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=Network::InitExterns;
+};
+args{ };
+{ };
+};
+ProgramCall @[2] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][5]$2$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=LeabraNetwork::Settle_Init;
+};
+args{ };
+{ };
+};
+UserScript @[4] {
+desc="get min cycles";
+off=0;
+user_script="if(network->phase_no > 1) min_cycles = network->min_cycles;
+else min_cycles = network->min_cycles_phase2;
+
+";
+};
+WhileLoop @[5] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][4]$3$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$0$;
+local_ctr_var=$1$;
+counter=Network::cycle;
+};
+IfContinue @[2] {
+desc="avoid subsequent stopping criteria";
+off=0;
+condition="cycle < min_cycles";
+};
+IfBreak @[3] {
+desc=;
+off=0;
+condition="(network->maxda < network->maxda_stopcrit) ||
+ (network->trg_max_act > network->trg_max_act_stopcrit)";
+};
+};
+loop_test="cycle < network->cycle_max";
+};
+MethodCall @[6] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=LeabraNetwork::Settle_Final;
+};
+args{ };
+{ };
+};
+IfElse @[7] {
+desc="only run sse in minus phase";
+off=0;
+condition="network->phase == LeabraNetwork::MINUS_PHASE";
+true_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=Network::Compute_SSE;
+};
+args{ };
+{ };
+};
+};
+false_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+};
+NetUpdateView @[8] {
+desc=;
+off=0;
+network_var=$0$;
+update_var=.projects[0].programs.gp[0][3].vars[2]$4$;
+};
+};
+};

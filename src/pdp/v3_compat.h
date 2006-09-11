@@ -145,9 +145,6 @@ class PDP_API Process_Group : public taGroup<Process> {
   // ##NO_TOKENS a menu group for processes
 public:
 
-  // support special structure of sched procs here
-  bool		Close_Child(TAPtr obj);
-  bool		DuplicateEl(TAPtr obj);
   void	Initialize() {SetBaseType(&TA_Process);}
   void 	Destroy()		{ };
   TA_BASEFUNS(Process_Group);
@@ -198,9 +195,6 @@ public:
   String	str_val;	// #HIDDEN_INLINE value of statistic if its a string
   CritParam	stopcrit;	// Stopping Criteria Parameters
 
-  void		InitStat(float value=0.0)	{ val = value; }
-  void 		Init()		{ stopcrit.Init(); }
-
   void 	Initialize();
   void 	Destroy()		{ CutLinks();};
   void	InitLinks();
@@ -214,10 +208,6 @@ public:
 class PDP_API StatVal_List : public taBase_List {
   // ##NO_UPDATE_AFTER group of stat values
 public:
-  virtual bool	HasStopCrit();
-  virtual void 	Init();	  	 	  // initialize process (eg. n_met) (not value!)
-  virtual void	InitStat(float value=0.0); // initialize statistic value
-  virtual void	NameStatVals(const char* nm, const char* opts="", bool is_string=false);
   void	Initialize() 		{ SetBaseType(&TA_StatVal); }
   void 	Destroy()		{ };
   TA_BASEFUNS(StatVal_List);
@@ -227,29 +217,7 @@ public:
 class PDP_API StatValAgg : public Aggregate {
   // #INLINE #INLINE_DUMP Aggregation for StatVal-based values
 public:
-/*  void 		ComputeAgg(float& to, float fm)
-  { Aggregate::ComputeAgg(to, fm); }
-  bool		ComputeAggNoUpdt(float& to, float fm)
-  { return Aggregate::ComputeAggNoUpdt(to, fm); }
 
-  void		NewCopyAgg(StatVal* fm);
-  // make a new copy aggregate
-
-  void		ComputeAgg(StatVal* to, StatVal* fm);
-  // compute aggregation into `to' based on current op from `fm'
-  void		ComputeAgg(StatVal* to, float fm_val);
-  // compute aggregation into `to' based on current op from value fm_val
-  bool		ComputeAggNoUpdt(StatVal* to, StatVal* fm);
-  // compute aggregation but don't update the n_updt counter (for lists) (returns false if 0, else true)
-
-  virtual void	ComputeAggs(StatVal_List* to, StatVal_List* fm);
-  // compute aggregation for whole list of statvals (updt after list)
-  virtual bool	ComputeAggsNoUpdt(StatVal_List* to, StatVal_List* fm);
-  // compute aggregation for whole list of statvals (no updt at all) (returns false if all 0, else true)
-
-  virtual bool	AggFromCopy(StatVal_List* fm);
-  // from list is the copy_vals of another stat, goes to copy_vals in owner stat
-*/
   void 	Initialize() {}
   void	Destroy() {}
   TA_BASEFUNS(StatValAgg);
@@ -264,13 +232,6 @@ public:
   bool		type_safe;
   // #HIDDEN true if from ptr should be kept type-safe
 
-  virtual void	FindRealStat();	// find and set the real_stat
-
-  virtual void	SetFrom(Stat* frm); // set the from field (convenience)
-  String	AppendAggName(const char* nm) const;
-  String	PrependAggName(const char* nm) const;
-
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	CutLinks();
@@ -300,32 +261,6 @@ public:
   StatVal_List	copy_vals;	// the values of the stat if using COPY time agg
   Layer*	layer;		// restrict computation to this layer if non-null
 
-  virtual float	InitStatVal();	// value to pass to the InitStat() function
-  virtual void	InitStat_impl(); // #IGNORE inits generic stat vars (not member statvals)
-  virtual void 	InitStat();    	// initializes the stat vars, but not the stat process
-  virtual void	Init_impl();	// #IGNORE inits generic stats (not member statvals)
-  virtual void 	Init();		// initializes the process (including stopcrits), calls InitStat()
-
-
-  virtual void	DeleteAggregates();
-  // #MENU #UPDATE_MENUS delete aggregators of this stat
-  virtual void	UpdateAggregates();
-  // #MENU #UPDATE_MENUS update aggregators of this stat (i.e., so they get the layer name or other change)
-  virtual Stat*	FindAggregator();
-  // #MENU #MENU_SEP_BEFORE #USE_RVAL Find the aggregator for this stat in the next-highest level proc
-
-  virtual bool 	FindOwnAggFrom(const Stat& cp);
-  // set our time_agg.from to stat in same hierarch position as cp.time_agg.from (for copying/duplicating)
-
-  virtual void	NameStatVals();
-  // #IGNORE give default names to statvals (overload to set specific options, etc.)
-  virtual bool	HasStopCrit();
-  // #IGNORE check if any of the statvals have crit flags set, set has_stop_crit
-  virtual const char* AltTypeName() { return GetTypeDef()->name; }
-  // can substitute a shorter name if desired, for naming the objects
-
-  void 	UpdateAfterEdit();
-
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void 	InitLinks();
@@ -338,18 +273,7 @@ public:
 class PDP_API Stat_Group : public taBase_Group {
   // ##NO_TOKENS a group of statistics
 public:
-  static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
-
   bool		Close_Child(TAPtr obj);
-
-  virtual Stat*		FindMakeStat(TypeDef* td, const char* nm = NULL, bool& nw_itm = nw_itm_def_arg);
-  // find a stat of the given type and name (if non-null), and if not found, make it
-  virtual Stat*		FindAggregator(Stat* of_stat, Aggregate::Operator agg_op = Aggregate::DEFAULT);
-  // find a statistic that is aggregating a given statistic using specified agg_op (DEFAULT = don't care about agg_op)
-  virtual MonitorStat*	FindMonitor(TAPtr of_obj, const char* of_var = NULL);
-  // find a statistic that is monitoring given object and variable
-  virtual MonitorStat*	FindMakeMonitor(TAPtr of_obj, const char* of_var, bool& nw_itm = nw_itm_def_arg);
-  // find a statistic that is monitoring given object and variable, and if not found, make one
 
   void	Initialize() 		{ SetBaseType(&TA_Stat); }
   void 	Destroy()		{ };
@@ -364,11 +288,6 @@ public:
   StatVal	se;			// squared errors
   float		tolerance;		// if error is less than this, its 0
 
-  void		InitStat();
-  void		Init();
-
-  void		NameStatVals();
-
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(SE_Stat);
@@ -379,8 +298,6 @@ public:
 class PDP_API MonitorStat: public Stat {
   // ##COMPUTE_IN_TrialProcess Network Monitor Statistic
 public:
-  static String GetObjName(TAPtr obj); // get name of object for naming stats, etc
-  
   StatVal_List	mon_vals;	// the values of the stat as computed directly
   MemberSpace   members;	// #IGNORE memberdefs
   taBase_List	ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
@@ -389,28 +306,6 @@ public:
   SimpleMathSpec pre_proc_1;	// first step of pre-processing to perform
   SimpleMathSpec pre_proc_2;	// second step of pre-processing to perform
   SimpleMathSpec pre_proc_3;	// third step of pre-processing to perform
-
-  void		InitStat();
-  void		Init();
-
-  // these are for finding the members and building the stat
-  // out of the objects and the variable
-  void		ScanObjects();	// #IGNORE
-  void		ScanLayer(Layer* lay); // #IGNORE
-  void		ScanUnitGroup(Unit_Group* ug);	// #IGNORE
-  void		ScanUnit(Unit* u,Projection* p=NULL); // #IGNORE
-  void		ScanConGroup(Con_Group* cg,char* varname,Projection* p=NULL); // #IGNORE
-  void		ScanProjection(Projection* p); // #IGNORE
-
-  virtual void	SetVariable(const char* varnm); // set variable and update appropriately
-  virtual void	SetObject(TAPtr obj); // clear any existing objects and set to obj and update
-  virtual void	AddObject(TAPtr obj); // add obj and update
-
-
-  void	NameStatVals();
-  void	UpdateAfterEdit();
-
-  const char* AltTypeName() { return "Mon"; }
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -483,24 +378,19 @@ public:
   bool          re_init; 		// #HIDDEN Flag for re-initialization
 
   SchedProcess*	super_proc;		// #READ_ONLY #NO_SAVE #NO_SUBTYPE Process which calls this
-  TypeDef*	sub_proc_type;		// #DETAIL #TYPE_SchedProcess #NULL_OK type of sub-process to use
-  SchedProcess*	sub_proc;		// #DETAIL Sub-process called by this
+  TypeDef*	sub_proc_type;		// #TYPE_SchedProcess #NULL_OK type of sub-process to use
+  SchedProcess*	sub_proc;		// Sub-process called by this
   StepParams	step;			// #CONTROL_PANEL Which process to step and n_steps
 
-  Stat_Group	loop_stats;  		// #DETAIL #IN_GPMENU #BROWSE Statistics Computed in Loop
-  Stat_Group	final_stats;  		// #DETAIL #IN_GPMENU #BROWSE Statistics Computed after Loop
-  Process_Group	init_procs;		// #DETAIL #IN_GPMENU #BROWSE Misc procs run when process is initialized
-  Process_Group loop_procs;		// #DETAIL #IN_GPMENU #BROWSE Misc procs run in the loop, using mod based on loop counter
-  Process_Group	final_procs;		// #DETAIL #IN_GPMENU #BROWSE Misc procs run after process is finished
-//obs  WinView_Group	displays;		// #LINK_GROUP #HIDDEN  #BROWSE views to update
+  Stat_Group	loop_stats;  		// #IN_GPMENU #BROWSE Statistics Computed in Loop
+  Stat_Group	final_stats;  		// #IN_GPMENU #BROWSE Statistics Computed after Loop
+  Process_Group	init_procs;		// #IN_GPMENU #BROWSE Misc procs run when process is initialized
+  Process_Group loop_procs;		// #IN_GPMENU #BROWSE Misc procs run in the loop, using mod based on loop counter
+  Process_Group	final_procs;		// #IN_GPMENU #BROWSE Misc procs run after process is finished
+//obs  WinView_Group	displays;	// #LINK_GROUP #HIDDEN  #BROWSE views to update
   taBase_Group	logs;			// #LINK_GROUP #HIDDEN  #BROWSE Logs to log to NOTE: was PDPLog_Group in v3
   bool		log_loop;		// Log the loop state (instead of final state)
   bool		log_counter;		// Log the counter values for this process
-
-  virtual void	Init_impl();		// 
-
-  void 		GetCntrDataItems();
-  void 		UpdateLogUpdaters();
 
   // simple process manipulation subroutines to make life a little easier
   virtual SchedProcess* FindSubProc(TypeDef* td); // find of a given type
@@ -508,21 +398,7 @@ public:
   virtual SchedProcess* FindProcOfType(TypeDef* td);
   // find of a given type, including this proc, super and sub procs
   virtual SchedProcess* GetTopProc(); // #IGNORE get the highest-level process
-  virtual void	UnLinkSubProc(); // #IGNORE disconnect from sub process
-  virtual void	UnLinkFmSuperProc(); // #IGNORE disconnect me from super process
-  virtual void	LinkSubProc(SchedProcess* proc); // #IGNORE link proc object as new sub process (not deleting old one)
-  virtual void	LinkSuperProc(SchedProcess* proc); // #IGNORE link proc object as new super process (not deleting old one)
-  virtual void	GetAggsFmSuperProc(); // #IGNORE fill in my aggregators from aggs on my super proc
-  virtual void	SetAggsAfterRmvSubProc(); // #IGNORE set my aggs to point to my new sub proc stats after removing old one
-  virtual void	RemoveSuperProc();
-  //  remove super process above this one in hierarchy
-  virtual void	RemoveSubProc();
-  //  remove sub process below this one in hierarchy
-  virtual void	CreateSubProcs(bool update=true);
-  virtual void  RemoveFromLogs();//
   
-  void 		SetDefaultName();			    // #IGNORE
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy() {CutLinks();}
   void 	InitLinks();
@@ -577,9 +453,6 @@ public:
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent epoch_proc
   Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
-  void 		Init_impl();
-
-  void 	UpdateAfterEdit();	// modify to update the epoch_proc
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	CutLinks();
@@ -621,9 +494,6 @@ public:
 
   int		dmem_nprocs;	// maximum number of processors to use for distributed memory computation of events within the epoch (actual = MIN(dmem_nprocs, nprocs / net dmem_nprocs_actual); may be less)
   
-  void 		Init_impl();
-
-  void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -659,11 +529,6 @@ public:
   int_Array	event_list;	// #HIDDEN list of events
   Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
-  void		Init_impl();
-
-  virtual void	GetEventList();	// get list of events from environment
-  
-  void 	UpdateAfterEdit();	// update the sequence_epoch
   void 	Initialize();
   void 	Destroy();
   void	InitLinks();
@@ -685,11 +550,6 @@ public:
 
   Event_Group*	cur_event_gp;	// #FROM_GROUP_enviro_group current event group
 
-  void		Init_impl();
-
-  void		GetEventList();
-
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy();
   void	CutLinks();
@@ -721,10 +581,6 @@ public:
   EpochProcess* epoch_proc;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to epoch process
 
-  void		Init_impl();		// get epoch
-  void		GetCntrDataItems();
-
-  void	UpdateAfterEdit();		// get the epoch_proc
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -741,7 +597,6 @@ public:
   EpochProcess* epoch_proc;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to epoch process
 
-  void	UpdateAfterEdit();		// get the epoch_proc
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -861,7 +716,6 @@ public:
   virtual int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
   // return flag at given index from pattern (order can be changed, eg GroupPatternSpec)
 
-  void	UpdateAfterEdit();	// gets information off of the layer, etc
   void	Initialize();
   void 	Destroy();
   void  InitLinks();
@@ -1009,8 +863,6 @@ public:
   // #MENU #USE_RVAL number of event groups in environment, including root
   virtual Event_Group* GetGroup(int gp_index);
   // get the event group (collection of events) at the specified index of all groups in the environment
-
-  void	UpdateAfterEdit();
 
   void	Initialize();
   void 	Destroy();
@@ -1451,12 +1303,17 @@ public:
   PDPLog_Group		logs;		// #HIDDEN #NO_SAVE V3 compatibility only: Logs to display statistics in processes
   Script_Group		scripts;	// #HIDDEN #NO_SAVE V3 compatibility only: Scripts to control arbitrary actions
 
-#ifdef TA_GUI
-  void			ConvertToVersion4(); 
-    // #MENU #MENU_CONTEXT #MENU_BUTTON convert the project to v4.x format
-#endif
-  bool			ConvertToVersion4_impl(); 
-    // #HIDDEN non-gui implementation; returns 'true' if successful
+  void			ConvertToV4(); 
+  // #MENU #MENU_CONTEXT #MENU_BUTTON convert the project to v4.x format
+  bool			ConvertToV4_impl(); 
+  // #HIDDEN implementation; returns 'true' if successful
+
+  bool			ConvertToV4_Enviros(ProjectBase* nwproj); 
+  // #HIDDEN Convert environments
+
+  bool			ConvertToV4_Leabra(); 
+  // #HIDDEN Leabra implementation; returns 'true' if successful
+
   void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }

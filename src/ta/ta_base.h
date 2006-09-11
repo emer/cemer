@@ -1437,7 +1437,7 @@ class TA_API SelectEdit {
 #endif // def TA_NO_GUI
 
 class TA_API taRootBase: public taNBase {
-  // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS basic methods that the root/app object must support
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS basic methods that the root/app object must support
 INHERITED(taNBase)
 public:
   virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)

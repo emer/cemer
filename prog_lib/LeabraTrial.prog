@@ -1,0 +1,217 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][2] { 
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [10] {
+MethodCall @[0] { };
+UserScript @[1] { };
+NetCounterInit @[2] { };
+MethodCall @[3] { };
+WhileLoop @[4] { 
+ProgEl_List @.loop_code = [3] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+MethodCall @[2] { };
+};
+};
+MethodCall @[5] { };
+IfElse @[6] { 
+ProgEl_List @.true_code = [1] {
+MethodCall @[0] { };
+};
+};
+ProgramCall @[7] { };
+NetUpdateView @[8] { };
+MethodCall @[9] { };
+};
+};
+Program .projects[0].programs.gp[0][2] {
+name="LeabraTrial";
+desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="phase_no";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=1;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=.projects[0].programs.gp[0].global_vars[0]$0$;
+local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$1$;
+counter=LeabraNetwork::phase_no;
+};
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="prevent automatic updating of network displays during processing";
+off=1;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=taBase::DataUpdate;
+};
+args{ true;};
+{ bool begin;};
+};
+UserScript @[1] {
+desc="update network's context to be same as ours";
+off=0;
+user_script="network->context = context;";
+};
+NetCounterInit @[2] {
+desc=;
+off=0;
+network_var=$0$;
+local_ctr_var=$1$;
+counter=LeabraNetwork::phase_no;
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=LeabraNetwork::Trial_Init;
+};
+args{ };
+{ };
+};
+WhileLoop @[4] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][3]$2$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$0$;
+local_ctr_var=$1$;
+counter=LeabraNetwork::phase_no;
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=LeabraNetwork::Trial_UpdatePhase;
+};
+args{ };
+{ };
+};
+};
+loop_test="phase_no < network->phase_max";
+};
+MethodCall @[5] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=LeabraNetwork::Trial_Final;
+};
+args{ };
+{ };
+};
+IfElse @[6] {
+desc=;
+off=0;
+condition="context == Network::TRAIN";
+true_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=Network::UpdateWeights;
+};
+args{ };
+{ };
+};
+};
+false_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+};
+ProgramCall @[7] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][6]$3$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetUpdateView @[8] {
+desc=;
+off=0;
+network_var=$0$;
+update_var=.projects[0].programs.gp[0][2].vars[1]$4$;
+};
+MethodCall @[9] {
+desc="allow automatic updating";
+off=1;
+result_var=;
+method_spec {
+script_obj=$0$;
+method=taBase::DataUpdate;
+};
+args{ false;};
+{ bool begin;};
+};
+};
+};

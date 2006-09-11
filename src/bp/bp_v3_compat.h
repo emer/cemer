@@ -50,10 +50,6 @@ public:
   StatVal	ce;			// cross-entropy error
   float		tolerance;		// if error is less than this, its 0
 
-  void		InitStat();
-  void		Init();
-  void		NameStatVals();
-
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(CE_Stat);
@@ -65,10 +61,6 @@ class NormDotProd_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Dot Product of act and target values
 public:
   StatVal	ndp;		 // normalized dot product
-
-  void		InitStat();
-  void		Init();
-  void		NameStatVals();
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -85,10 +77,6 @@ public:
   float		l1;		 // #HIDDEN
   float		l2;		 // #HIDDEN
 
-  void		InitStat();
-  void		Init();
-  void		NameStatVals();
-
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(VecCor_Stat);
@@ -100,10 +88,6 @@ class NormVecLen_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Vector Length of act and target values
 public:
   StatVal	nvl;		 // normalized vector length
-
-  void		InitStat();
-  void		Init();
-  void		NameStatVals();
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -142,8 +126,6 @@ public:
   int		time_win_ticks;	// #READ_ONLY time window in ticks
   int		bp_gap_ticks;	// #READ_ONLY bp window in ticks
 
-  void		Init_impl();
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	InitLinks();
   void	Destroy()		{ };
@@ -182,7 +164,6 @@ public:
   APBpTrial* 	apbp_trial;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
 
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	CutLinks();
@@ -195,9 +176,6 @@ public:
   APBpTrial* 	apbp_trial;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
 
-  void		Init_impl();	// initialize start of settling
-
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -228,8 +206,6 @@ public:
   bool		no_bp_test; 	// don't run the bp phase when testing
 
 
-  void		Init_impl();
-
   void	Initialize();
   void	Destroy()		{ };
   void	InitLinks();
@@ -243,9 +219,6 @@ class APBpMaxDa_De : public Stat {
      when to stop settling in almeida-pineda algorithm */
 public:
   StatVal	da_de;		// max of delta-activation or delta-error
-
-  void		InitStat();
-  void		Init();
 
   void 	Initialize();		// set minimums
   void	Destroy()		{ };

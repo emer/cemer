@@ -1,0 +1,1051 @@
+// ta_Dump File v2.0
+Program_Group .projects[0].programs.gp[0] { 
+ProgVar_List @.global_vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+Program_Group .projects[0].programs.gp[0] = [7] {
+Program @[0] { 
+ProgVar_List @.vars = [3] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+ProgVar @[2] { };
+};
+
+ProgEl_List @.init_code = [3] {
+MethodCall @[0] { };
+NetCounterInit @[1] { };
+MethodCall @[2] { };
+};
+
+ProgEl_List @.prog_code = [2] {
+UserScript @[0] { };
+WhileLoop @[1] { 
+ProgEl_List @.loop_code = [3] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+IfBreak @[2] { };
+};
+};
+};
+};
+Program @[1] { 
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [3] {
+NetCounterInit @[0] { };
+BasicDataLoop @[1] { 
+ProgEl_List @.loop_code = [2] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+};
+};
+MethodCall @[2] { };
+};
+};
+Program @[2] { 
+ProgVar_List @.vars = [2] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [10] {
+MethodCall @[0] { };
+UserScript @[1] { };
+NetCounterInit @[2] { };
+MethodCall @[3] { };
+WhileLoop @[4] { 
+ProgEl_List @.loop_code = [3] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+MethodCall @[2] { };
+};
+};
+MethodCall @[5] { };
+IfElse @[6] { 
+ProgEl_List @.true_code = [1] {
+MethodCall @[0] { };
+};
+};
+ProgramCall @[7] { };
+NetUpdateView @[8] { };
+MethodCall @[9] { };
+};
+};
+Program @[3] { 
+ProgVar_List @.vars = [3] {
+ProgVar @[0] { };
+ProgVar @[1] { };
+ProgVar @[2] { };
+};
+
+ProgEl_List @.init_code = [1] {
+NetCounterInit @[0] { };
+};
+
+ProgEl_List @.prog_code = [9] {
+NetCounterInit @[0] { };
+MethodCall @[1] { };
+ProgramCall @[2] { };
+MethodCall @[3] { };
+UserScript @[4] { };
+WhileLoop @[5] { 
+ProgEl_List @.loop_code = [4] {
+ProgramCall @[0] { };
+NetCounterIncr @[1] { };
+IfContinue @[2] { };
+IfBreak @[3] { };
+};
+};
+MethodCall @[6] { };
+IfElse @[7] { 
+ProgEl_List @.true_code = [1] {
+MethodCall @[0] { };
+};
+};
+NetUpdateView @[8] { };
+};
+};
+Program @[4] { 
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { };
+};
+
+ProgEl_List @.prog_code = [2] {
+MethodCall @[0] { };
+NetUpdateView @[1] { };
+};
+};
+Program @[5] { 
+taBase_List @.objs = [1] {
+LayerWriter_List @[0] = [2] { 
+LayerWriter @[0] { };
+LayerWriter @[1] { };
+};
+};
+
+ProgEl_List @.prog_code = [2] {
+UserScript @[0] { };
+MethodCall @[1] { };
+};
+};
+Program @[6] { 
+taBase_List @.objs = [1] {
+NetMonitor @[0] { 
+NetMonItem_List @.items = [6] {
+NetMonItem @[0] { };
+NetMonItem @[1] { };
+NetMonItem @[2] { };
+NetMonItem @[3] { };
+NetMonItem @[4] { };
+NetMonItem @[5] { };
+};
+};
+};
+
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { };
+};
+
+ProgEl_List @.init_code = [3] {
+MethodCall @[0] { };
+MethodCall @[1] { };
+UserScript @[2] { };
+};
+
+ProgEl_List @.prog_code = [4] {
+MethodCall @[0] { };
+MethodCall @[1] { };
+UserScript @[2] { };
+MethodCall @[3] { };
+};
+};
+};
+};
+Program_Group .projects[0].programs.gp[0] {
+name="LeabraStdTrain";
+el_typ=Program;
+el_def=0;
+desc=;
+global_vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="network";
+var_type=T_Object;
+object_type=LeabraNetwork;
+object_val=.projects[0].networks[0]$0$;
+};
+ProgVar @[1] {
+name="context";
+var_type=T_HardEnum;
+int_val=1;
+hard_enum_type=Network::NetContext;
+};
+};
+Program @[0] {
+name="LeabraTrain";
+desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="max_epoch";
+var_type=T_Int;
+int_val=500;
+};
+ProgVar @[1] {
+name="epoch";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[2] {
+name="err_stopcrit";
+var_type=T_Real;
+real_val=0;
+};
+};
+init_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0].global_vars[0]$1$;
+method=Network::CheckConfig;
+};
+args{ false;};
+{ bool quiet;};
+};
+NetCounterInit @[1] {
+desc="initialize epoch counter ";
+off=0;
+network_var=$1$;
+local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$2$;
+counter=Network::epoch;
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::InitWtState;
+};
+args{ };
+{ };
+};
+};
+prog_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+UserScript @[0] {
+desc="update network's context to be same as ours";
+off=0;
+user_script="network->context = context;";
+};
+WhileLoop @[1] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][1]$3$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment the epoch counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$2$;
+counter=Network::epoch;
+};
+IfBreak @[2] {
+desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
+off=0;
+condition="network->cnt_err <= err_stopcrit";
+};
+};
+loop_test="epoch < max_epoch";
+};
+};
+};
+Program @[1] {
+name="LeabraEpoch";
+desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="trial";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="train_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=.projects[0].data[0]$4$;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter: note also needs to do this in regular running program";
+off=0;
+network_var=$1$;
+local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$5$;
+counter=Network::trial;
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc="initialize trial counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$5$;
+counter=Network::trial;
+};
+BasicDataLoop @[1] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][2]$6$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc="increment trial counter";
+off=0;
+network_var=$1$;
+local_ctr_var=$5$;
+counter=Network::trial;
+};
+};
+loop_test="This is not used here";
+data_var=.projects[0].programs.gp[0][1].vars[1]$7$;
+order=PERMUTED;
+item_idx_list{ 4;1;0;3;2;};
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Compute_EpochSSE;
+};
+args{ };
+{ };
+};
+};
+};
+Program @[2] {
+name="LeabraTrial";
+desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="phase_no";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=1;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$8$;
+counter=LeabraNetwork::phase_no;
+};
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="prevent automatic updating of network displays during processing";
+off=1;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=taBase::DataUpdate;
+};
+args{ true;};
+{ bool begin;};
+};
+UserScript @[1] {
+desc="update network's context to be same as ours";
+off=0;
+user_script="network->context = context;";
+};
+NetCounterInit @[2] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=$8$;
+counter=LeabraNetwork::phase_no;
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Trial_Init;
+};
+args{ };
+{ };
+};
+WhileLoop @[4] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][3]$9$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=$8$;
+counter=LeabraNetwork::phase_no;
+};
+MethodCall @[2] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Trial_UpdatePhase;
+};
+args{ };
+{ };
+};
+};
+loop_test="phase_no < network->phase_max";
+};
+MethodCall @[5] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Trial_Final;
+};
+args{ };
+{ };
+};
+IfElse @[6] {
+desc=;
+off=0;
+condition="context == Network::TRAIN";
+true_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::UpdateWeights;
+};
+args{ };
+{ };
+};
+};
+false_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+};
+ProgramCall @[7] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][6]$10$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetUpdateView @[8] {
+desc=;
+off=0;
+network_var=$1$;
+update_var=.projects[0].programs.gp[0][2].vars[1]$11$;
+};
+MethodCall @[9] {
+desc="allow automatic updating";
+off=1;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=taBase::DataUpdate;
+};
+args{ false;};
+{ bool begin;};
+};
+};
+};
+Program @[3] {
+name="LeabraSettle";
+desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="cycle";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[1] {
+name="min_cycles";
+var_type=T_Int;
+int_val=0;
+};
+ProgVar @[2] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=1;
+};
+};
+init_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$12$;
+counter=Network::cycle;
+};
+};
+prog_code {
+name=;
+el_typ=NetCounterInit;
+el_def=0;
+NetCounterInit @[0] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=$12$;
+counter=Network::cycle;
+};
+MethodCall @[1] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::InitExterns;
+};
+args{ };
+{ };
+};
+ProgramCall @[2] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][5]$13$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+MethodCall @[3] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Settle_Init;
+};
+args{ };
+{ };
+};
+UserScript @[4] {
+desc="get min cycles";
+off=0;
+user_script="if(network->phase_no > 1) min_cycles = network->min_cycles;
+else min_cycles = network->min_cycles_phase2;
+
+";
+};
+WhileLoop @[5] {
+desc=;
+off=0;
+loop_code {
+name=;
+el_typ=ProgramCall;
+el_def=0;
+ProgramCall @[0] {
+desc=;
+off=0;
+target=.projects[0].programs.gp[0][4]$14$;
+prog_args {
+name=;
+el_typ=ProgArg;
+el_def=0;
+};
+};
+NetCounterIncr @[1] {
+desc=;
+off=0;
+network_var=$1$;
+local_ctr_var=$12$;
+counter=Network::cycle;
+};
+IfContinue @[2] {
+desc="avoid subsequent stopping criteria";
+off=0;
+condition="cycle < min_cycles";
+};
+IfBreak @[3] {
+desc=;
+off=0;
+condition="(network->maxda < network->maxda_stopcrit) ||
+ (network->trg_max_act > network->trg_max_act_stopcrit)";
+};
+};
+loop_test="cycle < network->cycle_max";
+};
+MethodCall @[6] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Settle_Final;
+};
+args{ };
+{ };
+};
+IfElse @[7] {
+desc="only run sse in minus phase";
+off=0;
+condition="network->phase == LeabraNetwork::MINUS_PHASE";
+true_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=Network::Compute_SSE;
+};
+args{ };
+{ };
+};
+};
+false_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+};
+NetUpdateView @[8] {
+desc=;
+off=0;
+network_var=$1$;
+update_var=.projects[0].programs.gp[0][3].vars[2]$15$;
+};
+};
+};
+Program @[4] {
+name="LeabraCycle";
+desc="runs one cycle of leabra processing (updating net inputs and activations)";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=0;
+};
+};
+init_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=$1$;
+method=LeabraNetwork::Cycle_Run;
+};
+args{ };
+{ };
+};
+NetUpdateView @[1] {
+desc=;
+off=0;
+network_var=$1$;
+update_var=.projects[0].programs.gp[0][4].vars[0]$16$;
+};
+};
+};
+Program @[5] {
+name="ApplyInputs";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=LayerWriter_List;
+el_def=0;
+LayerWriter_List @[0] {
+name="lw_list";
+el_typ=LayerWriter;
+el_def=0;
+LayerWriter @[0] {
+data_block=$4$;
+chan_name="input";
+layer=.projects[0].networks[0].layers[0]$17$;
+offset {x=0: y=0: };
+use_layer_type=1;
+ext_flags=EXT;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+LayerWriter @[1] {
+data_block=$4$;
+chan_name="output";
+layer=.projects[0].networks[0].layers[2]$18$;
+offset {x=0: y=0: };
+use_layer_type=1;
+ext_flags=TARG;
+noise {type=NONE: mean=0: var=0.5: par=1: };
+value_names{ };
+};
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+init_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=UserScript;
+el_def=0;
+UserScript @[0] {
+desc="this is hack until we can pick objects (objs) for the MethodCall function!";
+off=0;
+user_script="objs.lw_list.ApplyExternal(context);";
+};
+MethodCall @[1] {
+desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=NULL;
+};
+args{ context;};
+{ int context;};
+};
+};
+};
+Program @[6] {
+name="MonitorNet";
+desc=;
+flags=PF_NONE;
+objs {
+name=;
+el_typ=NetMonitor;
+el_def=0;
+NetMonitor @[0] {
+name="Monitor1";
+items {
+name=;
+el_typ=NetMonItem;
+el_def=0;
+NetMonItem @[0] {
+name="epoch";
+object=$0$;
+variable="epoch";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[1] {
+name="trial";
+object=$0$;
+variable="trial";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[2] {
+name="phase_no";
+object=$0$;
+variable="phase_no";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[3] {
+name="cycle";
+object=$0$;
+variable="cycle";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[4] {
+name="sse";
+object=$0$;
+variable="sse";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+NetMonItem @[5] {
+name="act";
+object=$0$;
+variable="act";
+pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+};
+};
+data=.projects[0].data[1]$19$;
+rmv_orphan_cols=1;
+};
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="mon_data";
+var_type=T_Object;
+object_type=DataTable;
+object_val=$19$;
+};
+};
+init_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="Initialize monitoring data (get rid of any existing)";
+off=1;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0][6].vars[0]$20$;
+method=DataTable::ResetData;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="update the monitor items and data schema: again, not doing until MethodCall can work on objs.";
+off=1;
+result_var=;
+method_spec {
+script_obj=$20$;
+method=NetMonitor::UpdateMonitors;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="temporary until MethodCall works on objs..";
+off=0;
+user_script="objs.Monitor1.UpdateMonitors();";
+};
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc="add a new blank row to the data";
+off=0;
+result_var=;
+method_spec {
+script_obj=$20$;
+method=DataTable::AddBlankRow;
+};
+args{ };
+{ };
+};
+MethodCall @[1] {
+desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
+off=1;
+result_var=;
+method_spec {
+script_obj=NULL;
+method=NetMonitor::UpdateMonVals;
+};
+args{ };
+{ };
+};
+UserScript @[2] {
+desc="This is a hack until MethodCall can operate directly on objs.";
+off=0;
+user_script="objs.Monitor1.UpdateMonVals();";
+};
+MethodCall @[3] {
+desc="todo: what is this again??";
+off=1;
+result_var=;
+method_spec {
+script_obj=$20$;
+method=DataBlock::WriteDone;
+};
+args{ };
+{ };
+};
+};
+};
+};

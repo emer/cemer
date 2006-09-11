@@ -298,11 +298,11 @@ public:
 
 
 class PDP_API PDPRoot : public taRootBase {
-  // #NO_INSTANCE structural root of object hierarchy
+  // structural root of object hierarchy
 INHERITED(taRootBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
-  Project_Group		projects; 	// #NO_SHOW #NO_SAVE The projects
+  Project_Group		projects; 	// #NO_SAVE The projects
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
 
   override void  Settings();		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)

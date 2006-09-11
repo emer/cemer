@@ -1,0 +1,63 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][4] { 
+ProgVar_List @.vars = [1] {
+ProgVar @[0] { };
+};
+
+ProgEl_List @.prog_code = [2] {
+MethodCall @[0] { };
+NetUpdateView @[1] { };
+};
+};
+Program .projects[0].programs.gp[0][4] {
+name="LeabraCycle";
+desc="runs one cycle of leabra processing (updating net inputs and activations)";
+flags=PF_NONE;
+objs {
+name=;
+el_typ=taOBase;
+el_def=0;
+};
+args {
+name=;
+el_typ=ProgVar;
+el_def=0;
+};
+vars {
+name=;
+el_typ=ProgVar;
+el_def=0;
+ProgVar @[0] {
+name="update_net_view";
+var_type=T_Bool;
+bool_val=0;
+};
+};
+init_code {
+name=;
+el_typ=ProgEl;
+el_def=0;
+};
+prog_code {
+name=;
+el_typ=MethodCall;
+el_def=0;
+MethodCall @[0] {
+desc=;
+off=0;
+result_var=;
+method_spec {
+script_obj=.projects[0].programs.gp[0].global_vars[0]$0$;
+method=LeabraNetwork::Cycle_Run;
+};
+args{ };
+{ };
+};
+NetUpdateView @[1] {
+desc=;
+off=0;
+network_var=$0$;
+update_var=.projects[0].programs.gp[0][4].vars[0]$1$;
+};
+};
+};

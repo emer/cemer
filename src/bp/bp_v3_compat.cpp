@@ -36,23 +36,6 @@ void CE_Stat::Initialize() {
   tolerance = 0.0f;
 }
 
-void CE_Stat::NameStatVals() {
-  Stat::NameStatVals();
-  ce.AddDispOption("MIN=0");
-}
-
-void CE_Stat::InitStat() {
-  float init_val = InitStatVal();
-  ce.InitStat(init_val);
-  InitStat_impl();
-}
-
-void CE_Stat::Init() {
-  ce.Init();
-  Init_impl();
-}
-
-
 /////////////////////////////////
 //        NormDotProd_Stat     //
 /////////////////////////////////
@@ -60,23 +43,6 @@ void CE_Stat::Init() {
 void NormDotProd_Stat::Initialize(){
 //  ndp = 0.0f;
   net_agg.op = Aggregate::AVG;
-}
-
-
-void NormDotProd_Stat::NameStatVals() {
-  Stat::NameStatVals();
-  ndp.AddDispOption("MIN=0");
-}
-
-void NormDotProd_Stat::InitStat() {
-  float init_val = InitStatVal();
-  ndp.InitStat(init_val);
-  InitStat_impl();
-}
-
-void NormDotProd_Stat::Init() {
-  ndp.Init();
-  Init_impl();
 }
 
 
@@ -90,24 +56,6 @@ void VecCor_Stat::Initialize(){
 }
 
 
-void VecCor_Stat::NameStatVals() {
-  Stat::NameStatVals();
-  vcor.AddDispOption("MIN=0");
-}
-
-void VecCor_Stat::InitStat() {
-  float init_val = InitStatVal();
-  vcor.InitStat(init_val);
-  dp = l1 = l2 =  0.0f;
-  InitStat_impl();
-}
-
-void VecCor_Stat::Init() {
-  vcor.Init();
-  Init_impl();
-}
-
-
 ////////////////////////////////
 //        NormVecLen_Stat     //
 ////////////////////////////////
@@ -115,23 +63,6 @@ void VecCor_Stat::Init() {
 void NormVecLen_Stat::Initialize(){
 //nn  nvl = 0.0f;
   net_agg.op = Aggregate::AVG;
-}
-
-
-void NormVecLen_Stat::NameStatVals() {
-  Stat::NameStatVals();
-  nvl.AddDispOption("MIN=0");
-}
-
-void NormVecLen_Stat::InitStat() {
-  float init_val = InitStatVal();
-  nvl.InitStat(init_val);
-  InitStat_impl();
-}
-
-void NormVecLen_Stat::Init() {
-  nvl.Init();
-  Init_impl();
 }
 
 
@@ -158,20 +89,6 @@ void RBpTrial::Initialize() {
 void RBpTrial::InitLinks() {
   TrialProcess::InitLinks();
 }
-
-void RBpTrial::UpdateAfterEdit() {
-  BpTrial::UpdateAfterEdit();
-//  GetUnitBufSize(false);
-  time_win_ticks = (int)ceil((float)time_window / dt);
-  bp_gap_ticks = (int)ceil((float)bp_gap / dt);
-}
-
-void RBpTrial::Init_impl() {
-  BpTrial::Init_impl();
-  bp_performed = false;
-}
-
-
 
 //////////////////////////
 // 	RBpSE_Stat	//
@@ -207,13 +124,6 @@ void APBpCycle::CutLinks() {
   apbp_trial = NULL;
 }
 
-void APBpCycle::UpdateAfterEdit() {
-  CycleProcess::UpdateAfterEdit();
-  apbp_settle = (APBpSettle*)FindSuperProc(&TA_APBpSettle);
-  apbp_trial = (APBpTrial*)FindSuperProc(&TA_APBpTrial);
-}
-
-
 //////////////////////////
 // 	SettleProcess	//
 //////////////////////////
@@ -235,21 +145,6 @@ void APBpSettle::InitLinks() {
 void APBpSettle::CutLinks() {
   SettleProcess::CutLinks();
   apbp_trial = NULL;
-}
-
-void APBpSettle::UpdateAfterEdit() {
-  SettleProcess::UpdateAfterEdit();
-  apbp_trial = (APBpTrial*)FindSuperProc(&TA_APBpTrial);
-}
-
-void APBpSettle::Init_impl() {
-  SettleProcess::Init_impl();
-  if((apbp_trial == NULL) || (network == NULL))
-    return;
-
-  if((apbp_trial->cur_event != NULL) && apbp_trial->cur_event->InheritsFrom(TA_DurEvent))
-    cycle.SetMax((int)((DurEvent*)apbp_trial->cur_event)->duration);
-
 }
 
 //////////////////////////
@@ -282,22 +177,6 @@ void APBpTrial::Copy_(const APBpTrial& cp) {
   no_bp_test = cp.no_bp_test;
 }
 
-void APBpTrial::Init_impl() {
-  if(network == NULL)	return;
-  TrialProcess::Init_impl();
-  phase_no.SetMax(2);
-  bool is_testing = false;
-  if(no_bp_test && (epoch_proc != NULL) &&
-     (epoch_proc->wt_update == EpochProcess::TEST))
-  {
-    phase_no.SetMax(1);		// just do one loop (the minus phase)
-    is_testing = true;
-  }
-  phase = ACT_PHASE;
-
-}
-
-
 //////////////////////////
 // 	Stats		//
 //////////////////////////
@@ -313,15 +192,5 @@ void APBpMaxDa_De::Initialize() {
   loop_init = INIT_START_ONLY;
 
 //nn  min_unit = &TA_RBpUnit;
-}
-
-void APBpMaxDa_De::InitStat() {
-  da_de.InitStat(InitStatVal());
-  InitStat_impl();
-}
-
-void APBpMaxDa_De::Init() {
-  da_de.Init();
-  Init_impl();
 }
 
