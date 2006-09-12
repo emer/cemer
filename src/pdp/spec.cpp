@@ -784,10 +784,10 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
 }
 
 BaseSpec_Group* SpecPtr_impl::GetSpecGroup() {
-  ProjectBase* prj = GET_OWNER(owner,ProjectBase);
-  if(prj == NULL)
+  Network* net = GET_OWNER(owner,Network);
+  if(net == NULL)
     return NULL;
-  return &(prj->specs);
+  return &(net->specs);
 }
 
 void SpecPtr_impl::GetSpecOfType() {

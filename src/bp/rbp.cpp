@@ -442,8 +442,8 @@ void BpWizard::SRNContext(Network* net) {
     return;
   }
   BpProject* proj = GET_MY_OWNER(BpProject);
-  OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)pdpMisc::FindMakeSpec(proj, "CtxtPrjn", &TA_OneToOnePrjnSpec);
-  BpContextSpec* ctxts = (BpContextSpec*)pdpMisc::FindMakeSpec(proj, "CtxtUnits", &TA_BpContextSpec);
+  OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);
+  BpContextSpec* ctxts = (BpContextSpec*)net->FindMakeSpec("CtxtUnits", &TA_BpContextSpec);
 
   if((otop == NULL) || (ctxts == NULL)) {
     return;

@@ -208,19 +208,14 @@ void ConSpec::InitLinks() {
 }
 
 void ConSpec::CutLinks() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if((prj != NULL) && !prj->deleting) {
-    ConSpec* rsp = (ConSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if((net != NULL) && !net->deleting) {
+    ConSpec* rsp = (ConSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
-      rsp = (ConSpec*)prj->specs.FindSpecInheritsNotMe(&TA_ConSpec, this);
+      rsp = (ConSpec*)net->specs.FindSpecInheritsNotMe(&TA_ConSpec, this);
     }
     if(rsp != NULL) {
-      int cnt = 0;
-      Network* net;
-      taLeafItr ni;
-      FOR_ITR_EL(Network, net, prj->networks., ni) {
-	cnt += net->ReplaceConSpec(this, rsp);
-      }
+      int cnt = net->ReplaceConSpec(this, rsp);
       if(cnt > 0) {
 	taMisc::Error("Warning: ConSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
@@ -228,7 +223,7 @@ void ConSpec::CutLinks() {
       // now go through specs!
       BaseSpec* sp;
       taLeafItr si;
-      FOR_ITR_EL(BaseSpec, sp, prj->specs., si) {
+      FOR_ITR_EL(BaseSpec, sp, net->specs., si) {
 	if(!sp->InheritsFrom(TA_UnitSpec)) continue;
 	UnitSpec* us = (UnitSpec*)sp;
 	if(us->bias_spec.spec == this) {
@@ -253,19 +248,15 @@ void ConSpec::Copy_(const ConSpec& cp) {
 
 void ConSpec::ReplacePointersHook(TAPtr old) {
   ConSpec* spold = (ConSpec*)old;
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if (!net) return;
   taMisc::DelayedMenuUpdate(this);
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->ReplaceConSpec(spold, this);
-  }
+  net->ReplaceConSpec(spold, this);
 
   // now go through specs!
   BaseSpec* sp;
   taLeafItr si;
-  FOR_ITR_EL(BaseSpec, sp, prj->specs., si) {
+  FOR_ITR_EL(BaseSpec, sp, net->specs., si) {
     if(!sp->InheritsFrom(TA_UnitSpec)) continue;
     UnitSpec* us = (UnitSpec*)sp;
     if(us->bias_spec.spec == old) {
@@ -282,18 +273,14 @@ void ConSpec::ReplacePointersHook(TAPtr old) {
 }
 
 int ConSpec::UseCount() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if(prj->networks.size == 0) return -1; // no networks!
-  int cnt = 0;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni) {
-    cnt += net->ReplaceConSpec(this, this);
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(!net) return -1;
+  int cnt = net->ReplaceConSpec(this, this);
+
   // now go through specs!
   BaseSpec* sp;
   taLeafItr si;
-  FOR_ITR_EL(BaseSpec, sp, prj->specs., si) {
+  FOR_ITR_EL(BaseSpec, sp, net->specs., si) {
     if(!sp->InheritsFrom(TA_UnitSpec)) continue;
     UnitSpec* us = (UnitSpec*)sp;
     if(us->bias_spec.spec == this)
@@ -305,14 +292,10 @@ int ConSpec::UseCount() {
 }
 
 void ConSpec::InitWeights() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->InitWtState();
-    net->UpdateAllViews();
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if (!net) return;
+  net->InitWtState();
+  net->UpdateAllViews();
 }
 
 bool ConSpec::CheckObjectType_impl(TAPtr obj) {
@@ -1278,55 +1261,37 @@ void UnitSpec::UpdateAfterEdit() {
   if(taMisc::is_loading) return;
 
   if(!taMisc::gui_active) return;
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni) {
+//   Network* net = (Network *) GET_MY_OWNER(Network);
+//   if (!net) return;
 /*TODO    NetView* vw;
     taLeafItr vi;
     FOR_ITR_EL(NetView, vw, net->views., vi) {
       vw->UpdateButtons();	// update buttons to reflect need to build or not..
     } */
-  }
 }
 
 int UnitSpec::UseCount() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if(prj->networks.size == 0) return -1; // no networks!
-  int cnt = 0;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni) {
-    cnt += net->ReplaceUnitSpec(this, this);
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(!net) return -1;
+  int cnt = net->ReplaceUnitSpec(this, this);
   return cnt;
 }
 
 void UnitSpec::BuildBiasCons() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->Build();
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if (!net) return;
+  net->Build();
 }
 
 void UnitSpec::CutLinks() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if((prj != NULL) && !prj->deleting) {
-    UnitSpec* rsp = (UnitSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if((net != NULL) && !net->deleting) {
+    UnitSpec* rsp = (UnitSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
-      rsp = (UnitSpec*)prj->specs.FindSpecInheritsNotMe(&TA_UnitSpec, this);
+      rsp = (UnitSpec*)net->specs.FindSpecInheritsNotMe(&TA_UnitSpec, this);
     }
     if(rsp != NULL) {
-      int cnt = 0;
-      Network* net;
-      taLeafItr ni;
-      FOR_ITR_EL(Network, net, prj->networks., ni) {
-	cnt += net->ReplaceUnitSpec(this, rsp);
-      }
+      int cnt = net->ReplaceUnitSpec(this, rsp);
       if(cnt > 0) {
 	taMisc::Error("Warning: UnitSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
@@ -1341,14 +1306,10 @@ void UnitSpec::CutLinks() {
 
 void UnitSpec::ReplacePointersHook(TAPtr old) {
   UnitSpec* spold = (UnitSpec*)old;
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if (!net) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->ReplaceUnitSpec(spold, this);
-  }
+  net->ReplaceUnitSpec(spold, this);
   int i;
   for(i=0;i<spold->children.size && i<children.size;i++) {
     children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
@@ -2139,19 +2100,14 @@ void ProjectionSpec::InitLinks() {
 }
 
 void ProjectionSpec::CutLinks() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if((prj != NULL) && !prj->deleting) {
-    ProjectionSpec* rsp = (ProjectionSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if((net != NULL) && !net->deleting) {
+    ProjectionSpec* rsp = (ProjectionSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
-      rsp = (ProjectionSpec*)prj->specs.FindSpecInheritsNotMe(&TA_ProjectionSpec, this);
+      rsp = (ProjectionSpec*)net->specs.FindSpecInheritsNotMe(&TA_ProjectionSpec, this);
     }
     if(rsp != NULL) {
-      int cnt = 0;
-      Network* net;
-      taLeafItr ni;
-      FOR_ITR_EL(Network, net, prj->networks., ni) {
-	cnt += net->ReplacePrjnSpec(this, rsp);
-      }
+      int cnt = net->ReplacePrjnSpec(this, rsp);
       if(cnt > 0) {
 	taMisc::Error("Warning: ProjectionSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
@@ -2165,14 +2121,11 @@ void ProjectionSpec::CutLinks() {
 
 void ProjectionSpec::ReplacePointersHook(TAPtr old) {
   ProjectionSpec* spold = (ProjectionSpec*)old;
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(!net) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->ReplacePrjnSpec(spold, this);
-  }
+  net->ReplacePrjnSpec(spold, this);
+
   int i;
   for(i=0;i<spold->children.size && i<children.size;i++) {
     children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
@@ -2181,14 +2134,9 @@ void ProjectionSpec::ReplacePointersHook(TAPtr old) {
 }
 
 int ProjectionSpec::UseCount() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if(prj->networks.size == 0) return -1; // no networks!
-  int cnt = 0;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni) {
-    cnt += net->ReplacePrjnSpec(this, this);
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(!net) return -1;
+  int cnt = net->ReplacePrjnSpec(this, this);
   return cnt;
 }
 
@@ -2467,7 +2415,7 @@ void Projection::UpdateAfterEdit() {
   CheckTypes_impl();
   if(!taMisc::gui_active) return;
   Network* net = GET_MY_OWNER(Network);
-  if(net == NULL) return;
+  if(!net) return;
 /*TODO  NetView* view;
   taLeafItr i;
   FOR_ITR_EL(NetView, view, net->views., i) {
@@ -3208,19 +3156,14 @@ void LayerSpec::InitLinks() {
 }
 
 void LayerSpec::CutLinks() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if((prj != NULL) && !prj->deleting) {
-    LayerSpec* rsp = (LayerSpec*)prj->specs.FindSpecTypeNotMe(GetTypeDef(), this);
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(net && !net->deleting) {
+    LayerSpec* rsp = (LayerSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
-      rsp = (LayerSpec*)prj->specs.FindSpecInheritsNotMe(&TA_LayerSpec, this);
+      rsp = (LayerSpec*)net->specs.FindSpecInheritsNotMe(&TA_LayerSpec, this);
     }
     if(rsp != NULL) {
-      int cnt = 0;
-      Network* net;
-      taLeafItr ni;
-      FOR_ITR_EL(Network, net, prj->networks., ni) {
-	cnt += net->ReplaceLayerSpec(this, rsp);
-      }
+      int cnt = net->ReplaceLayerSpec(this, rsp);
       if(cnt > 0) {
 	taMisc::Error("Warning: LayerSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
@@ -3234,30 +3177,20 @@ void LayerSpec::CutLinks() {
 
 void LayerSpec::ReplacePointersHook(TAPtr old) {
   LayerSpec* spold = (LayerSpec*)old;
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if (prj == NULL) return;
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if (!net) return;
   taMisc::DelayedMenuUpdate(this); // this will reset flag
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni){
-    net->ReplaceLayerSpec(spold, this);
-  }
-  int i;
-  for(i=0;i<spold->children.size && i<children.size;i++) {
+  net->ReplaceLayerSpec(spold, this);
+  for(int i=0;i<spold->children.size && i<children.size;i++) {
     children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
   }
   BaseSpec::ReplacePointersHook(old);
 }
 
 int LayerSpec::UseCount() {
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  if(prj->networks.size == 0) return -1; // no networks!
-  int cnt = 0;
-  Network* net;
-  taLeafItr ni;
-  FOR_ITR_EL(Network, net, prj->networks., ni) {
-    cnt += net->ReplaceLayerSpec(this, this);
-  }
+  Network* net = (Network *) GET_MY_OWNER(Network);
+  if(!net) return -1; // no networks!
+  int cnt = net->ReplaceLayerSpec(this, this);
   return cnt;
 }
 
@@ -4359,6 +4292,7 @@ void Layer::DMem_SyncAct() {
 
 void Network::Initialize() {
 //TODO  views.SetBaseType(&TA_NetView);
+  specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
 
   context = TEST;
@@ -4396,6 +4330,7 @@ void Network::Initialize() {
   max_size.y = GetDefaultY();
   max_size.z = GetDefaultZ();
 
+  deleting = false;
   proj = NULL;
 #ifdef DMEM_COMPILE
   dmem_gp = -1;
@@ -4405,6 +4340,7 @@ void Network::Initialize() {
 
 void Network::InitLinks() {
   proj = GET_MY_OWNER(ProjectBase);
+  taBase::Own(specs, this);
   taBase::Own(layers, this);
   taBase::Own(max_size, this);
 #ifdef DMEM_COMPILE
@@ -4416,6 +4352,7 @@ void Network::InitLinks() {
 // cutlinks is in pdpshell.cc
 
 void Network::Copy_(const Network& cp) {
+  specs = cp.specs;
   layers = cp.layers;
 
   context = cp.context;
@@ -4450,6 +4387,7 @@ void Network::Copy_(const Network& cp) {
 
   max_size = cp.max_size;
 
+  ReplaceSpecs_Gp(cp.specs, specs);
   CopyNetwork((Network*)&cp);
   ReConnect_Load();		// set the send cons
 #ifdef DMEM_COMPILE
@@ -4467,6 +4405,7 @@ void Network::UpdateAfterEdit(){
 void Network::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
+  deleting = true;
 #ifdef DMEM_COMPILE
   if(dmem_share_units.comm != MPI_COMM_SELF) {
     DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),
@@ -4477,34 +4416,8 @@ void Network::CutLinks() {
 #endif
 //TODO  views.Reset();
   layers.CutLinks();
+  specs.CutLinks();
   if((proj != NULL) && !proj->deleting) {
-    Network* replnet = NULL;
-    Network* nt;
-    taLeafItr nl;
-    FOR_ITR_EL(Network, nt, proj->networks., nl) {
-      if (nt != this) {
-	replnet = nt;
-	break;
-      }
-    }
-    if(replnet == NULL) {
-      taMisc::Error("Warning: Deleting Network:",this->GetPath(),"and couldn't find replacement - processes will have NULL network pointers");
-    }
-//OBS    proj->processes.ReplaceNetPtrs(this, replnet);
-    // also replace pointers on any netlogviews..
-#ifdef TA_GUI
-//     PDPLog* lg;
-//     taLeafItr lgi;
-//     FOR_ITR_EL(PDPLog, lg, proj->logs., lgi) {
-//       taDataLinkItr dli;
-//       LogView* vw;
-//       FOR_DLC_EL_OF_TYPE(LogView, vw, lg->data_link(), dli) {
-// 	if(vw->GetTypeDef()->InheritsFrom(TA_NetLogView)) {
-// 	  taBase::SetPointer((TAPtr*)&(((NetLogView*)vw)->network), replnet);
-// 	}
-//       }
-//     }
-#endif
     // un-set any other pointers to this object!
     in_repl = true;
     taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
@@ -4574,335 +4487,6 @@ ConSpec* GetNSConSpec(char name,BaseSpec_Group * bsmg,
   }
   taMisc::Error("Connection Specification letter \"", String(name) , "\" not found");
   return NULL;
-}
-
-
-void Network::ReadOldPDPNet(istream& strm, bool skip_dots){
-  NetSection ns = NS_NONE;
-  int nunits= 0;
-  int ninputs = 0;
-  int nhiddens = 0;
-  int noutputs= 0;
-  Unit_Group flat_units;
-  BaseSpec_Group conspec_group;
-  int send_start = 0;
-  int send_end = 0;
-  int recv_start = 0;
-  int recv_end = 0;
-  int cur_send = 0;
-  int cur_recv = 0;
-  char con_char = '\0';
-  ProjectBase* prj = (ProjectBase *) GET_MY_OWNER(ProjectBase);
-  Layer* lay = (Layer *) layers.New(1);
-  Projection* prjn = (Projection *) lay->projections.New(1);
-  TypeDef* conspec_type = prjn->con_spec.type;
-  lay->projections.Remove(prjn);
-  layers.Remove(lay);
-
-  strm.seekg(0);
-  while(strm.good() && !strm.eof()){
-    int c = taMisc::read_alnum(strm);
-    if((c == EOF) || taMisc::LexBuf.empty())
-      continue;
-    int fc = taMisc::LexBuf.firstchar();
-    // skip comments
-    if((fc == '#') || (taMisc::LexBuf.before(2) == "//")) {
-      taMisc::read_till_eol(strm);
-      continue;
-    }
-    if(ns == NS_NONE){
-      if(taMisc::LexBuf == "") continue; // not a section line
-      taMisc::LexBuf.upcase();
-      if(taMisc::LexBuf == "DEFINITIONS:") { ns = NS_DEFINITIONS; continue;}
-      if(taMisc::LexBuf == "CONSTRAINTS:") { ns = NS_CONSTRAINTS; continue;}
-      if(taMisc::LexBuf == "NETWORK:") {
-	ns = NS_NETWORK;
-	// default fully-connected weight configuration
-	send_end = recv_end = nunits;
-	continue;
-      }
-      if(taMisc::LexBuf == "BIASES:") { ns = NS_BIASES; continue;}
-    }
-    else if( ns == NS_DEFINITIONS) {
-      if(upcase(taMisc::LexBuf) == "NUNITS") {
-	c = taMisc::read_alnum(strm);
-	if((c == EOF) || taMisc::LexBuf.empty()){
-	  taMisc::Error("Unspecified number of units in OldPDPNet file");
-	  return;
-	}
-
-	// this is how many units we should have
-
-	nunits = (int) taMisc::LexBuf;
-	continue;
-      }
-      if(upcase(taMisc::LexBuf) == "NINPUTS") {
-	c = taMisc::read_alnum(strm);
-	if((c == EOF) || taMisc::LexBuf.empty()){
-	  taMisc::Error("Unspecified number of inputs in OldPDPNet file");
-	  return;
-	}
-
-	// this is how many input units we should have
-
-	ninputs = (int) taMisc::LexBuf;
-	continue;
-      }
-      if(upcase(taMisc::LexBuf) == "NOUTPUTS") {
-	c = taMisc::read_alnum(strm);
-	if((c == EOF) || taMisc::LexBuf.empty()){
-	  taMisc::Error("Unspecified number of outputs in OldPDPNet file");
-	  return;
-	}
-
-	// this is how many output units we should have
-
-	noutputs = (int) taMisc::LexBuf;
-	continue;
-      }
-
-      if(taMisc::LexBuf == "end") {
-	ns = NS_NONE;
-	if((ninputs + noutputs) > nunits) {
-	  taMisc::Error("ninputs + noutputs > noutputs in OldPDPNet file");
-	  return;
-	}
-	Layer* tlay;
-	taLeafItr ti;
-	FOR_ITR_EL(Layer, tlay, layers., ti){
-	  flat_units.Borrow(tlay->units);
-	}
-	if(flat_units.leaves > 0) {
-	  if(flat_units.leaves != nunits){
-	    String nun = (int) nunits;
-	      taMisc::Error("Existing network structure does not have ",
-			    nun, " units");
-	    flat_units.Reset();
-	    return;
-	  }
-	  else { // use existing network;
-	    nhiddens = ninputs = noutputs = 0;
-	  }
-	}
-	else {
-	  if(ninputs + noutputs != 0)
-	    nhiddens = nunits - ninputs - noutputs;
-	}
-	Layer* input_layer;
-	Layer* output_layer;
-	Layer* hidden_layer;
-	if((ninputs + noutputs + nhiddens == 0) &&
-	   (flat_units.leaves == 0) && (nunits > 0)){
-	  // we need some units, all in the same layer
-	  input_layer = (Layer *) layers.New(1);
-	  input_layer->n_units = nunits;
-	  input_layer->Build();
-	  flat_units.Borrow(input_layer->units);
-	  continue;
-	}
-	if(ninputs > 0) { // user wants an inputs layer, make it the first
-	  if(layers.leaves > 0)
-	    input_layer = (Layer *) layers.Leaf(0);
-	  else {
-	    input_layer = (Layer *) layers.New(1);
-	    input_layer->name = "Input Layer";
-	  }
-	  input_layer->n_units = ninputs;
-	  input_layer->Build();
-	}
-	if(nhiddens > 0) { // user wants an hidden layer, make it the second
-			  // or first if no input layer
-	  if(layers.leaves > (1 - (ninputs == 0)))
-	    hidden_layer = (Layer *) layers.Leaf(1 - (ninputs ==0));
-	  else {
-	    hidden_layer = (Layer *) layers.New(1);
-	    hidden_layer->name = "Hidden Layer";
-	  }
-	  hidden_layer->n_units = nhiddens;
-	  hidden_layer->Build();
-	}
-	if(noutputs > 0) { // user wants an inputs layer, make it the last
-			  // but not the hidden layer!
-	  if(layers.leaves > ((ninputs != 0) + (nhiddens != 0)))
-	    output_layer = (Layer *) layers.Leaf(layers.leaves-1);
-	  else {
-	    output_layer = (Layer *) layers.New(1);
-	    output_layer->name = "Output Layer";
-	  }
-	  output_layer->n_units = noutputs;
-	  output_layer->Build();
-	}
-
-	Layer* lay; flat_units.Reset();
-	taLeafItr i;
-	FOR_ITR_EL(Layer, lay, layers., i){
-	  flat_units.Borrow(lay->units);
-	}
-      }
-    }
-    else if (ns == NS_NETWORK) {
-      if(taMisc::LexBuf == "end") {
-	ns = NS_NONE;
-	continue;
-      }
-      if (fc == '%') { // special case
-	if(taMisc::LexBuf.length() == 2) // same contype for whole range
-	  con_char = taMisc::LexBuf[1];
-	c = taMisc::read_alnum_noeol(strm);
-        if ((c == EOF) || taMisc::LexBuf.empty()) {
-	  taMisc::Error("Improper connection range specification in network file");
-	  return;
-	}
-	recv_start = (int)taMisc::LexBuf;
-	c = taMisc::read_alnum_noeol(strm);
-        if ((c == EOF) || taMisc::LexBuf.empty()) {
-	  taMisc::Error("Improper connection range specification in network file");
-	  return;
-	}
-	recv_end  = recv_start + ( (int) taMisc::LexBuf) -1;
-	c = taMisc::read_alnum_noeol(strm);
-        if ((c == EOF) ||  taMisc::LexBuf.empty()) {
-	  taMisc::Error("Improper connection range specification in network file");
-	  return;
-	}
-	send_start = (int)taMisc::LexBuf;
-	c = taMisc::read_alnum_noeol(strm);
-        if ((c == EOF) || taMisc::LexBuf.empty()) {
-	  taMisc::Error("Improper connection range specification in network file");
-	  return;
-	}
-	send_end  = send_start + ( (int) taMisc::LexBuf) -1;
-
-	if(con_char != '\0') { // same type on con for all of range
-	  ConSpec* conspec = GetNSConSpec(con_char,&conspec_group,
-					  &prj->specs,conspec_type,skip_dots);
-	  if (conspec != NULL)
-	    for(int j=recv_start;j<=recv_end;j++){
-	      for(int i =send_start;i<=send_end;i++){
-		ConnectUnits(flat_units.Leaf(j),flat_units.Leaf(i),
-			     false,conspec);
-	      }
-	    }
-	  con_char = '\0';
-	  continue;
-	}
-        // otherwise prepare to begin a block
-	cur_send = send_start;
-	cur_recv = recv_start;
-	continue;
-      }
-      // otherwise it must be a line of connections
-      // check to make sure that line is send_end - send_start chars in length
-      // step cur_send through line for each char
-
-      if((int)taMisc::LexBuf.length() != (send_end - send_start)) {
-	String curlen = (int) taMisc::LexBuf.length();
-	String expt = send_end - send_start;
-	taMisc::Error("Connection Line:", taMisc::LexBuf, " has ",
-		      curlen, "sending weights. (expected ", expt, ")");
-	return;
-      }
-      if(cur_recv > recv_end) {
-	String cur = cur_recv;
-	String expt = recv_end;
-	taMisc::Error("Too many connection lines:", cur,
-		      "than expected number:", expt);
-	return;
-      }
-      Unit* recv_unit = flat_units.Leaf(cur_recv);
-      Layer* recv_layer = GET_OWNER(recv_unit,Layer);
-      for(int i=0;i<(send_end-send_start);i++){
-	con_char = taMisc::LexBuf[i];
-	ConSpec* conspec = GetNSConSpec(con_char, &conspec_group,
-					&prj->specs,conspec_type);
-	if(conspec == NULL) continue;
-	Unit* send_unit = (Unit *) flat_units.Leaf(i);
-	Layer* send_layer = GET_OWNER(send_unit,Layer);
-	Projection* pjn = NULL;
-	taLeafItr p;
-	// check to see if a pjrn already exists
-	FOR_ITR_EL(Projection, pjn, recv_layer->projections., p) {
-	  if((pjn->from == send_layer) &&
-	     (pjn->spec->InheritsFrom(&TA_CustomPrjnSpec)) &&
-	     (pjn->con_spec == conspec))
-	    break; // ok found one
-	}
-	if(pjn==NULL) { // no projection
-	  pjn = (Projection *) recv_layer->projections.New(1);
-	  if(recv_layer == send_layer) // self con
-	    pjn->from_type = Projection::SELF;
-	  else
-	    pjn->from_type = Projection::CUSTOM;
-
-	  pjn->spec.type = &TA_CustomPrjnSpec;
-	  pjn->spec.UpdateAfterEdit();
-	  pjn->con_spec.SetSpec(conspec);
-	  taBase::SetPointer((TAPtr*)&(pjn->from), send_layer);
-	  pjn->projected = true;
-	  pjn->UpdateAfterEdit();
-	}
-	pjn->send_idx = pjn->recv_idx = -1; // clear idicies
-	// find the connection group on the units
-	Con_Group* rgrp = NULL;
-	Con_Group* sgrp = NULL;
-	int rg,sg;
-	FOR_ITR_GP(Con_Group,rgrp,recv_unit->recv.,rg){
-	  if(rgrp->prjn == pjn) { pjn->recv_idx = rg; break;}
-	}
-	FOR_ITR_GP(Con_Group,sgrp,send_unit->send.,sg){
-	  if(sgrp->prjn == pjn) { pjn->send_idx = sg; break;}
-	}
-	recv_unit->ConnectFrom(send_unit,pjn);
-	cur_send++;
-      }
-      con_char = '\0';
-      cur_send = send_start;
-      cur_recv++;
-      continue;
-    }
-    else if(ns == NS_BIASES) {
-      if(taMisc::LexBuf == "end") {ns = NS_NONE;continue;}
-    }
-    else if (ns == NS_CONSTRAINTS) {
-      if(taMisc::LexBuf == "end") {ns = NS_NONE;continue;}
-      if(taMisc::LexBuf.length() > 1) { // constriant variable is not a char
-	taMisc::Error("Constraint Character:", taMisc::LexBuf,
-		      "was not a character");
-	return;
-      }
-      ConSpec* nsc  = (ConSpec *) prj->specs.New(1,conspec_type);
-      conspec_group.Link(nsc);
-      nsc->name = taMisc::LexBuf;
-      nsc->rnd.type = Random::UNIFORM;
-      while((c!='\n') && (c != EOF) && !taMisc::LexBuf.empty()){
-	c = taMisc::read_alnum_noeol(strm);
-	taMisc::LexBuf.upcase();
-	if(taMisc::LexBuf == "POSITIVE") {
-	  nsc->wt_limits.type = WeightLimits::GT_MIN;
-	  nsc->wt_limits.min = 0.0f;
-	  continue;
-	}
-	if(taMisc::LexBuf == "NEGATIVE") {
-	  nsc->wt_limits.type = WeightLimits::LT_MAX;
-	  nsc->wt_limits.max = 0.0f;
-	  continue;
-	}
-	if(taMisc::LexBuf == "LINKED") {
-	  // todo linked
-	}
-	if(taMisc::LexBuf == "RANDOM") {
-	  nsc->rnd.mean = 0;
-	  nsc->rnd.var =  0.5;
-	  continue;
-	}
-	// otherwise it must be a number
-	nsc->rnd.var = 0.0;
-	nsc->rnd.mean = (float) taMisc::LexBuf;
-      }
-    }
-  }
-  flat_units.Reset();
-  UpdateAfterEdit();
 }
 
 void Network::UpdtAfterNetMod() {
@@ -5897,6 +5481,29 @@ void Network::TwoD_Or_ThreeD(LayerLayout lo){
   }*/
 }
 
+void Network::ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp) {
+  if(old_sp->InheritsFrom(&TA_UnitSpec))
+    ReplaceUnitSpec((UnitSpec*)old_sp, (UnitSpec*)new_sp);
+  else if(old_sp->InheritsFrom(&TA_ConSpec))
+    ReplaceConSpec((ConSpec*)old_sp, (ConSpec*)new_sp);
+  else if(old_sp->InheritsFrom(&TA_ProjectionSpec))
+    ReplacePrjnSpec((ProjectionSpec*)old_sp, (ProjectionSpec*)new_sp);
+  else if(old_sp->InheritsFrom(&TA_LayerSpec))
+    ReplaceLayerSpec((LayerSpec*)old_sp, (LayerSpec*)new_sp);
+  
+  ReplaceSpecs_Gp(old_sp->children, new_sp->children);
+}
+
+void Network::ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg) {
+  taLeafItr spo, spn;
+  BaseSpec* old_sp, *new_sp;
+  for(old_sp = (BaseSpec*)old_spg.FirstEl(spo), new_sp = (BaseSpec*)new_spg.FirstEl(spn);
+      old_sp && new_sp;
+      old_sp = (BaseSpec*)old_spg.NextEl(spo), new_sp = (BaseSpec*)new_spg.NextEl(spn)) {
+    ReplaceSpecs(old_sp, new_sp);
+  }
+}
+
 int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   int nchg = 0;
   Layer* l;
@@ -5962,6 +5569,37 @@ void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 ////////////////////////////////////////////
 
 bool Network::nw_itm_def_arg = false;
+
+BaseSpec_Group* Network::FindMakeSpecGp(const char* nm, bool& nw_itm) {
+  BaseSpec_Group* gp = (BaseSpec_Group*)specs.gp.FindName(nm);
+  nw_itm = false;
+  if(gp == NULL) {
+    gp = (BaseSpec_Group*)specs.gp.New(1);
+    gp->name = nm;
+    nw_itm = true;
+  }
+  return gp;
+}
+
+BaseSpec* Network::FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm) {
+  return (BaseSpec*)specs.FindMakeSpec(nm, td, nw_itm);
+}
+
+BaseSpec* Network::FindSpecName(const char* nm) {
+  BaseSpec* rval = (BaseSpec*)specs.FindSpecName(nm);
+  if(rval == NULL) {
+    taMisc::Error("Error: could not find spec named:", nm);
+  }
+  return rval;
+}
+
+BaseSpec* Network::FindSpecType(TypeDef* td) {
+  BaseSpec* rval = (BaseSpec*)specs.FindSpecType(td);
+  if(rval == NULL) {
+    taMisc::Error("Error: could not find spec of type:", td->name);
+  }
+  return rval;
+}
 
 Layer* Network::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
   nw_itm = false;

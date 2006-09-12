@@ -908,7 +908,7 @@ LeabraCon_Group @[0] = [25] { };
 Environment_Group @.environments = [1] {
 Environment @[0] { 
 taBase_Group @.views = [1] {
-EnviroView @[0] { };
+taNBase @[0] { };
 };
 
 BaseSpec_Group @.event_specs = [2] {
@@ -1094,7 +1094,7 @@ DA_TextViewSpec @[8] { };
 };
 };
 
-DataTable @.data = [9] {
+taNBase @.data = [9] {
 float_Data @[0] { };
 float_Data @[1] { };
 float_Data @[2] { };
@@ -1123,7 +1123,7 @@ DA_GraphViewSpec @[6] { };
 };
 };
 
-DataTable @.data = [7] {
+taNBase @.data = [7] {
 float_Data @[0] { };
 float_Data @[1] { };
 float_Data @[2] { };
@@ -1148,7 +1148,7 @@ DA_TextViewSpec @[4] { };
 };
 };
 
-DataTable @.data = [5] {
+taNBase @.data = [5] {
 float_Data @[0] { };
 float_Data @[1] { };
 float_Data @[2] { };
@@ -6690,10 +6690,10 @@ file_name="";
 win_pos {lft=559.68: bot=548.16: wd=500.16: ht=219.84: };
 iconified=false;
 views {
-el_typ=EnviroView;
+el_typ=taNBase;
 el_def=0;
 name="";
-EnviroView @[0] {
+taNBase @[0] {
 name="env_0";
 file_name="";
 win_pos {lft=563.52: bot=528: wd=500.16: ht=219.84: };

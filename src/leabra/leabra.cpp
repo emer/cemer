@@ -8463,8 +8463,7 @@ void LeabraWizard::StdNetwork(Network* net) {
 
 void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   if(net == NULL) return;
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  LeabraLayerSpec* hid = (LeabraLayerSpec*)pdpMisc::FindMakeSpec(proj, NULL, &TA_LeabraLayerSpec);
+  LeabraLayerSpec* hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
   hid->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB;
@@ -8506,11 +8505,11 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   }
 
   // move the bias spec under the con spec
-  LeabraBiasSpec* bs = (LeabraBiasSpec*)proj->specs.FindType(&TA_LeabraBiasSpec);
+  LeabraBiasSpec* bs = (LeabraBiasSpec*)net->specs.FindType(&TA_LeabraBiasSpec);
   if(bs != NULL) {
     LeabraConSpec* ps = (LeabraConSpec*)bs->FindParent();
     if(ps != NULL) return;
-    ps = (LeabraConSpec*)proj->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
+    ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
     if(ps != NULL) {
       ps->children.Transfer(bs);
       // todo: !!!
@@ -8528,9 +8527,8 @@ void LeabraWizard::SRNContext(LeabraNetwork* net) {
     taMisc::Error("SRNContext: must have basic constructed network first");
     return;
   }
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)pdpMisc::FindMakeSpec(proj, "CtxtPrjn", &TA_OneToOnePrjnSpec);
-  LeabraContextLayerSpec* ctxts = (LeabraContextLayerSpec*)pdpMisc::FindMakeSpec(proj, "CtxtLayerSpec", &TA_LeabraContextLayerSpec);
+  OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);
+  LeabraContextLayerSpec* ctxts = (LeabraContextLayerSpec*)net->FindMakeSpec("CtxtLayerSpec", &TA_LeabraContextLayerSpec);
 
   if((otop == NULL) || (ctxts == NULL)) {
     return;
@@ -8557,10 +8555,9 @@ void LeabraWizard::SRNContext(LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////
 
 void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
   
-  LeabraUnitSpec* basic_us = (LeabraUnitSpec*)pdpMisc::FindSpecType(proj, &TA_LeabraUnitSpec);
+  LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
   if(basic_us == NULL) {
     taMisc::Error("ConfigUnitInhib: basic LeabraUnitSpec not found, bailing!");
     return;
@@ -8568,7 +8565,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   LeabraUnitSpec* inhib_us = (LeabraUnitSpec*)basic_us->children.FindMakeSpec("InhibUnits", &TA_LeabraUnitSpec);
   if(inhib_us == NULL) return;
 
-  LeabraConSpec* basic_cs = (LeabraConSpec*)pdpMisc::FindSpecType(proj, &TA_LeabraConSpec);
+  LeabraConSpec* basic_cs = (LeabraConSpec*)net->FindSpecType(&TA_LeabraConSpec);
   if(basic_cs == NULL) {
     taMisc::Error("ConfigUnitInhib: basic LeabraConSpec not found, bailing!");
     return;
@@ -8581,7 +8578,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   LeabraConSpec* ff_inhib_cs = (LeabraConSpec*)fb_inhib_cs->children.FindMakeSpec("FFtoInhib", &TA_LeabraConSpec);
   if(ff_inhib_cs == NULL) return;
 
-  LeabraLayerSpec* basic_ls = (LeabraLayerSpec*)pdpMisc::FindSpecType(proj, &TA_LeabraLayerSpec);
+  LeabraLayerSpec* basic_ls = (LeabraLayerSpec*)net->FindSpecType(&TA_LeabraLayerSpec);
   if(basic_ls == NULL) {
     taMisc::Error("ConfigUnitInhib: basic LeabraLayerSpec not found, bailing!");
     return;
@@ -8589,7 +8586,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   LeabraLayerSpec* inhib_ls = (LeabraLayerSpec*)basic_ls->children.FindMakeSpec("InhibLayers", &TA_LeabraLayerSpec);
   if(inhib_ls == NULL) return;
 
-  FullPrjnSpec* fullprjn = (FullPrjnSpec*)pdpMisc::FindSpecType(proj, &TA_FullPrjnSpec);
+  FullPrjnSpec* fullprjn = (FullPrjnSpec*)net->FindSpecType(&TA_FullPrjnSpec);
   if(fullprjn == NULL) {
     taMisc::Error("ConfigUnitInhib: basic FullPrjnSpec not found, bailing!");
     return;
@@ -8678,12 +8675,12 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
   // todo: !!!
 //   winbMisc::DelayedMenuUpdate(net);
-//   winbMisc::DelayedMenuUpdate(proj);
 
   // set settle cycles to 300
   net->cycle_max = 300;
   net->min_cycles = 150;
 
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
   if(edit != NULL) {
     basic_us->SelectForEditNm("dt", edit, "excite");
@@ -8723,7 +8720,6 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
  can be sure everything is ok.";
   taMisc::Choice(msg,"Ok");
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -8799,10 +8795,10 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   if(!bio_labels)
     gpprfx = "TD_";
 
-  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
-  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
-  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
-  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
+  BaseSpec_Group* units = net->FindMakeSpecGp(gpprfx + "Units");
+  BaseSpec_Group* cons = net->FindMakeSpecGp(gpprfx + "Cons");
+  BaseSpec_Group* layers = net->FindMakeSpecGp(gpprfx + "Layers");
+  BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
   LeabraUnitSpec* rewpred_units = (LeabraUnitSpec*)units->FindMakeSpec("TDRewPredUnits", &TA_DaModUnitSpec);
@@ -8863,9 +8859,9 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 
   // optimization to speed up settling in phase 2: only the basic layers here
   int j;
-  for(j=0;j<proj->specs.size;j++) {
-    if(proj->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
-      LeabraLayerSpec* sp = (LeabraLayerSpec*)proj->specs[j];
+  for(j=0;j<net->specs.size;j++) {
+    if(net->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
+      LeabraLayerSpec* sp = (LeabraLayerSpec*)net->specs[j];
       sp->decay.clamp_phase2 = true;
       sp->UpdateAfterEdit();
     }
@@ -8941,18 +8937,18 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   ersp->UpdateAfterEdit();
   tdintsp->UpdateAfterEdit();
   
-  for(j=0;j<proj->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)proj->specs.Leaf(j);
+  for(j=0;j<net->specs.leaves;j++) {
+    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }
 
   // todo: !!!
 //   winbMisc::DelayedMenuUpdate(net);
-//   winbMisc::DelayedMenuUpdate(proj);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
 
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
   if(edit != NULL) {
     rewpred_cons->SelectForEditNm("lrate", edit, "rewpred");
@@ -8986,7 +8982,6 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
  can be sure everything is ok.";
   taMisc::Choice(msg,"Ok");
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -9066,10 +9061,10 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
 //   if(!bio_labels)
 //     gpprfx = "DA_";
 
-  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Units");
-  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Cons");
-  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Layers");
-  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, gpprfx + "Prjns");
+  BaseSpec_Group* units = net->FindMakeSpecGp(gpprfx + "Units");
+  BaseSpec_Group* cons = net->FindMakeSpecGp(gpprfx + "Cons");
+  BaseSpec_Group* layers = net->FindMakeSpecGp(gpprfx + "Layers");
+  BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_DaModUnitSpec);
@@ -9273,9 +9268,9 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
 
   // optimization to speed up settling in phase 2: only the basic layers here
   int j;
-  for(j=0;j<proj->specs.size;j++) {
-    if(proj->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
-      LeabraLayerSpec* sp = (LeabraLayerSpec*)proj->specs[j];
+  for(j=0;j<net->specs.size;j++) {
+    if(net->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
+      LeabraLayerSpec* sp = (LeabraLayerSpec*)net->specs[j];
       sp->decay.clamp_phase2 = true;
       sp->UpdateAfterEdit();
     }
@@ -9394,8 +9389,8 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   lvesp->UpdateAfterEdit();
   lvisp->UpdateAfterEdit();
   
-  for(j=0;j<proj->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)proj->specs.Leaf(j);
+  for(j=0;j<net->specs.leaves;j++) {
+    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }
 
@@ -9406,6 +9401,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
 
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
   if(edit != NULL) {
     pvi_cons->SelectForEditNm("lrate", edit, "pvi");
@@ -9499,7 +9495,6 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   half_stripes = MAX(1, half_stripes);
   n_stripes = half_stripes * 2;	// make it even
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   net->RemoveUnits();
 
   String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";
@@ -9633,10 +9628,10 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // make specs
 
-  BaseSpec_Group* units = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Units");
-  BaseSpec_Group* cons = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Cons");
-  BaseSpec_Group* layers = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Layers");
-  BaseSpec_Group* prjns = pdpMisc::FindMakeSpecGp(proj, "PFC_BG_Prjns");
+  BaseSpec_Group* units = net->FindMakeSpecGp("PFC_BG_Units");
+  BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
+  BaseSpec_Group* layers = net->FindMakeSpecGp("PFC_BG_Layers");
+  BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
 
 //   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_DaModUnitSpec);
@@ -10093,18 +10088,18 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   }
   taMisc::Choice(msg,"Ok");
 
-  for(int j=0;j<proj->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)proj->specs.Leaf(j);
+  for(int j=0;j<net->specs.leaves;j++) {
+    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }
 
   // todo: !!!
 //   winbMisc::DelayedMenuUpdate(net);
-//   winbMisc::DelayedMenuUpdate(proj);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
 
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
   if(edit != NULL) {
     pfc_units->SelectForEditNm("g_bar", edit, "pfc");

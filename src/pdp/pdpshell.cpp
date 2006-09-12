@@ -638,13 +638,10 @@ public:
   	bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
 };
 #endif
-bool ProjectBase::nw_itm_def_arg = false;
-
 
 void ProjectBase::Initialize() {
   defaults.SetBaseType(&TA_TypeDefault);
   wizards.SetBaseType(&TA_Wizard);
-  specs.SetBaseType(&TA_BaseSpec);
   networks.SetBaseType(&TA_Network);
 #ifdef TA_GUI
   edits.SetBaseType(&TA_SelectEdit);
@@ -663,7 +660,6 @@ void ProjectBase::Initialize() {
 void ProjectBase::InitLinks() {
   taBase::Own(defaults, this);
   taBase::Own(wizards, this);
-  taBase::Own(specs, this);
   taBase::Own(networks, this);
   taBase::Own(data, this);
   taBase::Own(programs, this);
@@ -716,7 +712,6 @@ void ProjectBase::CutLinks() {
   programs.CutLinks();
   data.CutLinks();
   networks.CutLinks();
-  specs.CutLinks();
   defaults.CutLinks();
 
   view_colors.CutLinks();
@@ -728,7 +723,6 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 //   scripts.Reset();
   
   defaults = cp.defaults;
-  specs = cp.specs;
   networks = cp.networks;
   data = cp.data;
   programs = cp.programs;
@@ -745,17 +739,6 @@ void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
   UpdateColors();
-}
-
-BaseSpec_Group* ProjectBase::FindMakeSpecGp(const char* nm, bool& nw_itm) {
-  BaseSpec_Group* gp = (BaseSpec_Group*)specs.gp.FindName(nm);
-  nw_itm = false;
-  if(gp == NULL) {
-    gp = (BaseSpec_Group*)specs.gp.New(1);
-    gp->name = nm;
-    nw_itm = true;
-  }
-  return gp;
 }
 
 void ProjectBase::GetDefaultColors() {

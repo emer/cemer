@@ -1219,6 +1219,7 @@ public:
     TRAIN = 1	  		// usually indicates patterns are being clamped on outs etc.
   };
  
+  BaseSpec_Group specs;		// Specifications for network parameters
   Layer_Group	layers;		// Layers or Groups of Layers
   int		context;	// #READ_ONLY #SHOW #CAT_Learning used by programs to provide context modality to algorithms
   WtUpdate	wt_update;	// #READ_ONLY #SHOW #CAT_Learning determines weight update mode
@@ -1254,6 +1255,7 @@ public:
   int		n_cons;		// #READ_ONLY #DETAIL total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #DETAIL maximum size in each dimension of the net
 
+  bool		deleting; 	// #READ_ONLY #NO_SAVE if object is currently being deleted
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 
 #ifdef DMEM_COMPILE
@@ -1283,10 +1285,6 @@ public:
   // #MENU #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm);
   // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file)
-  virtual void  ReadOldPDPNet(istream& strm,bool skip_dots=true);
-  /* #MENU #ARGC_2 #EXT_strm_net #UPDATE_MENUS
-     Read old style PDP .net file into network. If skip_dots then ignore
-     '.' values in network connectivity matrix, otherwise create a zero weight */
 
   virtual void  Build();
   // #MENU #MENU_ON_Actions Build the network according to geometry
@@ -1378,6 +1376,10 @@ public:
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #NULL_OK send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
+  virtual void	ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp);
+  // replace a spec of any kind, including iterating through any children of that spec
+  virtual void	ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg);
+  // replace a specs on two matching spec groups, including iterating through any children of each spec
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // switch any units/layers using old_sp to using new_sp
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
@@ -1388,6 +1390,15 @@ public:
   // switch any layers using old_sp to using new_sp
 
   // wizard construction functions:
+  virtual BaseSpec_Group* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg);
+  // find a given spec group and if not found, make it
+  virtual BaseSpec* FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
+  // find a given spec and if not found, make it
+  virtual BaseSpec* FindSpecName(const char* nm);
+  // find a given spec by name
+  virtual BaseSpec* FindSpecType(TypeDef* td);
+  // find a given spec by type
+
   virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
   virtual Layer* FindLayer(const char* nm) { return (Layer*)layers.FindName(nm); }

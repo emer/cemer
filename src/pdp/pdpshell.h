@@ -190,8 +190,6 @@ class PDP_API ProjectBase : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
 INHERITED(taFBase)
 public:
-  static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
-
   //note: this enum must be duplicated in pdpMisc
   enum ViewColors {		// indicies for view_colors
     TEXT,
@@ -220,7 +218,6 @@ public:
 
   TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
   Wizard_Group    	wizards;	// Wizards for automatically configuring simulation objects
-  BaseSpec_Group     	specs;		// Specifications for network parameters
   Network_Group		networks;	// Networks of interconnected units
   DataTable_Group	data;		// Misc data, such as patterns for network input
   Program_Group		programs;	// Gui-based programs to run simulations and other processing
@@ -261,7 +258,6 @@ public:
 
   // wizard construction functions:
   virtual void MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
-  virtual BaseSpec_Group* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg); // find a given spec group and if not found, make it
 
   override int	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
   int	Save(ostream& strm, TAPtr par=NULL, int indent=0);

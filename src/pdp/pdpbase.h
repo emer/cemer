@@ -109,15 +109,6 @@ public:
   static Network* GetDefNetwork(ProjectBase* prj);
   // get default network from project
 
-  static BaseSpec_Group* FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm = nw_itm_def_arg);
-  // find a given spec group and if not found, make it
-  static BaseSpec* FindMakeSpec(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
-  // find a given spec and if not found, make it
-  static BaseSpec* FindSpecName(ProjectBase* prj, const char* nm);
-  // find a given spec by name
-  static BaseSpec* FindSpecType(ProjectBase* prj, TypeDef* td);
-  // find a given spec by type
-
   static PDPLog* FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // find a given log and if not found, make it
   static PDPLog*  FindLogName(ProjectBase* prj, const char* nm);

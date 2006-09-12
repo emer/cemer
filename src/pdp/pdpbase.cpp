@@ -410,30 +410,6 @@ int pdpMisc::Main(int argc, char *argv[]) {
   return 0;
 }
 
-BaseSpec_Group* pdpMisc::FindMakeSpecGp(ProjectBase* prj, const char* nm, bool& nw_itm) {
-  return prj->FindMakeSpecGp(nm, nw_itm);
-}
-
-BaseSpec* pdpMisc::FindMakeSpec(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm) {
-  return (BaseSpec*)prj->specs.FindMakeSpec(nm, td, nw_itm);
-}
-
-BaseSpec* pdpMisc::FindSpecName(ProjectBase* prj, const char* nm) {
-  BaseSpec* rval = (BaseSpec*)prj->specs.FindSpecName(nm);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find spec named:", nm);
-  }
-  return rval;
-}
-
-BaseSpec* pdpMisc::FindSpecType(ProjectBase* prj, TypeDef* td) {
-  BaseSpec* rval = (BaseSpec*)prj->specs.FindSpecType(td);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find spec of type:", td->name);
-  }
-  return rval;
-}
-
 PDPLog* pdpMisc::FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm) {
   //  return (PDPLog*)prj->logs.FindMakeLog(nm, td, nw_itm);
   return NULL;

@@ -1298,20 +1298,19 @@ class PDP_API Project : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
-  Environment_Group	environments;	// #SHOW #NO_SAVE Environments of patterns to present to networks //TODO: legacy, make hidden
-  Process_Group	processes;	// #SHOW #NO_SAVE Processes to coordinate training/testing, etc//TODO: legacy, make hidden
-  PDPLog_Group		logs;		// #HIDDEN #NO_SAVE V3 compatibility only: Logs to display statistics in processes
-  Script_Group		scripts;	// #HIDDEN #NO_SAVE V3 compatibility only: Scripts to control arbitrary actions
+  BaseSpec_Group	specs;		// network specifications and parameters
+  Environment_Group	environments;	// Environments of patterns to present to networks
+  Process_Group		processes;	// Processes to coordinate training/testing, etc
+  PDPLog_Group		logs;		// V3 compatibility only: Logs to display statistics in processes
+  Script_Group		scripts;	// V3 compatibility only: Scripts to control arbitrary actions
 
-  void			ConvertToV4(); 
+  void	ConvertToV4(); 
   // #MENU #MENU_CONTEXT #MENU_BUTTON convert the project to v4.x format
-  bool			ConvertToV4_impl(); 
+  bool	ConvertToV4_impl(); 
   // #HIDDEN implementation; returns 'true' if successful
-
-  bool			ConvertToV4_Enviros(ProjectBase* nwproj); 
+  bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
   // #HIDDEN Convert environments
-
-  bool			ConvertToV4_Leabra(); 
+  bool	ConvertToV4_Leabra(); 
   // #HIDDEN Leabra implementation; returns 'true' if successful
 
   void	UpdateAfterEdit();

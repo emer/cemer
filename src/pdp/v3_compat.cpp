@@ -1348,6 +1348,7 @@ int GroupPatternSpec::Flag(PatUseFlags flag_type, Pattern* pat, int index) {
 //////////////////////////
 
 void Project::Initialize() {
+  specs.SetBaseType(&TA_BaseSpec);
   environments.SetBaseType(&TA_Environment);
   processes.SetBaseType(&TA_SchedProcess);
   //nn logs.SetBaseType(&TA_TextLog);
@@ -1356,6 +1357,7 @@ void Project::Initialize() {
 
 void Project::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(specs, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
   taBase::Own(logs, this);
@@ -1364,16 +1366,20 @@ void Project::InitLinks() {
 
 void Project::CutLinks() {
   deleting = true;
+  scripts.CutLinks();
+  logs.CutLinks();
   processes.CutLinks();
   environments.CutLinks();
-  logs.CutLinks();
-  scripts.CutLinks();
+  specs.CutLinks();
   inherited::CutLinks();
 }
 
 void Project::Copy_(const Project& cp) {
+  specs = cp.specs;
   environments = cp.environments;
   processes = cp.processes;
+  logs = cp.logs;
+  scripts = cp.scripts;
 }
 
 void Project::UpdateAfterEdit() {
@@ -1447,11 +1453,19 @@ bool Project::ConvertToV4_Enviros(ProjectBase* nwproj) {
 bool Project::ConvertToV4_Leabra() {
   PDPRoot* root = (PDPRoot*)tabMisc::root;
   LeabraProject* nwproj = (LeabraProject*)root->projects.NewEl(1, &TA_LeabraProject);
-  nwproj->specs = specs;
   nwproj->networks = networks;
-  // todo: re-base the specs in the new project!
+
+  taLeafItr ni;
+  Network* net;
+  FOR_ITR_EL(Network, net, nwproj->networks., ni) {
+    net->specs = specs;
+    net->ReplaceSpecs_Gp(specs, net->specs);
+  }
 
   ConvertToV4_Enviros(nwproj);
+
+  DataTable* mon_data = (DataTable*)nwproj->data.NewEl(1,&TA_DataTable);
+  mon_data->name = "mon_data";
 
   nwproj->programs.prog_lib.NewProgramFmName("LeabraStdTrain", &(nwproj->programs));
 
