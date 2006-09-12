@@ -1415,6 +1415,7 @@ bool Project::ConvertToV4_Enviros(ProjectBase* nwproj) {
   for(int ei=0; ei < environments.size; ei++) {
     Environment* env = environments[ei];
     DataTable* dt = nwproj->data.NewEl(1,&TA_DataTable);
+    dt->name = env->name;
     String_Data* nmcol = dt->NewColString("name");
     int st_pat_col = 1;		// starting pattern column
     String_Data* gpcol = NULL;
@@ -1453,14 +1454,29 @@ bool Project::ConvertToV4_Enviros(ProjectBase* nwproj) {
 bool Project::ConvertToV4_Leabra() {
   PDPRoot* root = (PDPRoot*)tabMisc::root;
   LeabraProject* nwproj = (LeabraProject*)root->projects.NewEl(1, &TA_LeabraProject);
-  nwproj->networks = networks;
 
   taLeafItr ni;
   Network* net;
-  FOR_ITR_EL(Network, net, nwproj->networks., ni) {
-    net->specs = specs;
-    net->ReplaceSpecs_Gp(specs, net->specs);
+  FOR_ITR_EL(Network, net, networks., ni) {
+    net->specs = specs;		// copy specs into network
+    net->ReplaceSpecs_Gp(specs, net->specs); // replace pointers
+
+    // convert layer types!
+    taLeafItr li;
+    Layer* lay;
+    FOR_ITR_EL(Layer, lay, net->layers., li) {
+      String lnm = lay->name;  lnm.downcase();
+      if(lnm.contains("in") || lnm.contains("stim"))
+	lay->layer_type = Layer::INPUT;
+      else if(lnm.contains("out") || lnm.contains("trg") || lnm.contains("targ")
+	      || lnm.contains("resp"))
+	lay->layer_type = Layer::TARGET;
+      else
+	lay->layer_type = Layer::HIDDEN;
+    }
   }
+
+  nwproj->networks = networks;	// this should the do spec updating automatically!
 
   ConvertToV4_Enviros(nwproj);
 
@@ -1471,6 +1487,11 @@ bool Project::ConvertToV4_Leabra() {
 
   // todo: copy network params from processes
   // todo: make a standard leabra process for each process group
+
+  FOR_ITR_EL(Network, net, networks., ni) {
+    net->Build();
+    net->Connect();
+  }
 
   // browse the new project:
   DataBrowser* brows = DataBrowser::New(nwproj, NULL);

@@ -1256,6 +1256,7 @@ public:
   PosTDCoord	max_size;	// #READ_ONLY #DETAIL maximum size in each dimension of the net
 
   bool		deleting; 	// #READ_ONLY #NO_SAVE if object is currently being deleted
+  bool		copying; 	// #READ_ONLY #NO_SAVE if object is currently being copied
   ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
 
 #ifdef DMEM_COMPILE
@@ -1457,11 +1458,13 @@ friend class LayerRWBase_List;
 friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
-  DataBlockRef		data_block; // source or sink of the data (as appropriate)
-  String		chan_name; // name of the chanel/column to use 
+  DataBlockRef		data; // #AKA_data_block source or sink of the data to apply to layer, or store layer output (as appropriate)
+  String		chan_name; // name of the channel/column in the data table use 
   LayerRef 		layer;	// the Layer that will get read or written
   PosTwoDCoord		offset;	// #EXPERT offset in layer or unit group at which to start reading/writing
   
+  virtual bool CheckConfig(bool quiet = false);
+
   void  UpdateAfterEdit();
   void  InitLinks();
   void	CutLinks();
@@ -1489,6 +1492,9 @@ public:
     // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
   void			FillFromTable(DataTable* dt, Network* net, bool freshen_only);
     // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+
+
+  virtual bool CheckConfig(bool quiet = false);
     
   
   TA_ABSTRACT_BASEFUNS(LayerRWBase_List); //

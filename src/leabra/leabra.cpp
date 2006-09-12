@@ -8493,14 +8493,10 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   else {
     for(i=0;i<net->layers.size;i++) {
       Layer* lay = (Layer*)net->layers[i];
-      String nm = lay->name;
-      nm.downcase();
-      if(nm.contains("hid"))
+      if(lay->layer_type == Layer::HIDDEN)
 	lay->SetLayerSpec(hid);
-      else if(nm.contains("in") || nm.contains("out") || nm.contains("resp"))
-	lay->SetLayerSpec(inout);
       else
-	lay->SetLayerSpec(hid);
+	lay->SetLayerSpec(inout);
     }
   }
 
@@ -8632,9 +8628,9 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   int i;
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
+    if(lay->layer_type == Layer::INPUT) continue;
     String nm = lay->name;
     nm.downcase();
-    if(nm.contains("input") || nm.contains("stimulus")) continue;
     if(nm.contains("_inhib")) continue;
 
     String inm = lay->name + "_Inhib";
@@ -8773,14 +8769,12 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
        && !laysp->InheritsFrom(&TA_PatchLayerSpec) 
        && !laysp->InheritsFrom(&TA_SNcLayerSpec) && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
-      String nm = lay->name;
-      nm.downcase();
-      if(nm.contains("hidden") || nm.contains("_hid"))
+      if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
-      if(nm.contains("output") || nm.contains("response") || nm.contains("_out") || nm.contains("_resp"))
-	output_lays.Link(lay);
-      if(nm.contains("input") || nm.contains("stimulus") || nm.contains("_in"))
+      else if(lay->layer_type == Layer::INPUT)
 	input_lays.Link(lay);
+      else 
+	output_lays.Link(lay);
       LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
       if(us == NULL || !us->InheritsFrom(TA_DaModUnitSpec)) {
 	us->ChangeMyType(&TA_DaModUnitSpec);
@@ -9039,14 +9033,12 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
        && !laysp->InheritsFrom(&TA_PatchLayerSpec) 
        && !laysp->InheritsFrom(&TA_SNcLayerSpec) && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
-      String nm = lay->name;
-      nm.downcase();
-      if(nm.contains("hidden") || nm.contains("_hid"))
+      if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
-      if(nm.contains("output") || nm.contains("response") || nm.contains("_out") || nm.contains("_resp"))
-	output_lays.Link(lay);
-      if(nm.contains("input") || nm.contains("stimulus") || nm.contains("_in"))
+      else if(lay->layer_type == Layer::INPUT)
 	input_lays.Link(lay);
+      else 
+	output_lays.Link(lay);
       LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
       if(us == NULL || !us->InheritsFrom(TA_DaModUnitSpec)) {
 	us->ChangeMyType(&TA_DaModUnitSpec);
@@ -9610,14 +9602,12 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
       int xm = lay->pos.x + lay->act_geom.x + 1;
       if(lay->pos.z == 1) mx_z1 = MAX(mx_z1, xm);
       if(lay->pos.z == 2) mx_z2 = MAX(mx_z2, xm);
-      String nm = lay->name;
-      nm.downcase();
-      if(nm.contains("hidden") || nm.contains("_hid"))
+      if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
-      if(nm.contains("output") || nm.contains("response") || nm.contains("_out") || nm.contains("_resp"))
-	output_lays.Link(lay);
-      if(nm.contains("input") || nm.contains("stimulus") || nm.contains("_in"))
+      else if(lay->layer_type == Layer::INPUT)
 	input_lays.Link(lay);
+      else 
+	output_lays.Link(lay);
       LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
       if(us == NULL || !us->InheritsFrom(TA_DaModUnitSpec)) {
 	us->ChangeMyType(&TA_DaModUnitSpec);

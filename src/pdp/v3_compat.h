@@ -1305,7 +1305,7 @@ public:
   Script_Group		scripts;	// V3 compatibility only: Scripts to control arbitrary actions
 
   void	ConvertToV4(); 
-  // #MENU #MENU_CONTEXT #MENU_BUTTON convert the project to v4.x format
+  // #BUTTON convert the project to v4.x format
   bool	ConvertToV4_impl(); 
   // #HIDDEN implementation; returns 'true' if successful
   bool	ConvertToV4_Enviros(ProjectBase* nwproj); 

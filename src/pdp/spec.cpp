@@ -23,6 +23,10 @@
   #include "ta_qtgroup.h"
 #endif
 
+#ifdef V3_COMPAT
+#include "v3_compat.h"
+#endif
+
 //////////////////////////////////
 //	BaseSpec_Group		//
 //////////////////////////////////
@@ -784,6 +788,12 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
 }
 
 BaseSpec_Group* SpecPtr_impl::GetSpecGroup() {
+#ifdef V3_COMPAT
+  ProjectBase* prj = GET_OWNER(owner,ProjectBase);
+  if(prj && prj->InheritsFrom(&TA_Project)) { // a v3 project
+    return &(((Project*)prj)->specs);
+  }
+#endif
   Network* net = GET_OWNER(owner,Network);
   if(net == NULL)
     return NULL;
