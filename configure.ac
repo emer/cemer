@@ -73,6 +73,9 @@ AC_PROG_LEX
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
+# non-modal, for now
+AC_DEFINE([V3_COMPAT],[turn on version 3.x compatability code])
+
 # Check to see if a conflicting version of pdp++ or css++ is installed
 if test x"$prefix" = x"NONE"; then
   prefix=/usr/local
