@@ -1683,21 +1683,26 @@ bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
     taMisc::Error("ProgLibEl::ParseProgFile: could not open file name:", openfnm);
     return false;
   }
-  taMisc::read_till_rb_or_semi(strm); // skips over entire path header!
-  while(!strm.eof() && !strm.bad()) {
-    taMisc::read_till_eol(strm); // skip next line
+  bool rval = false;
+  int c = taMisc::read_till_rb_or_semi(strm); // skips over entire path header!
+  while((c != EOF) && !strm.eof() && !strm.bad()) {
+    c = taMisc::read_till_eol(strm); // skip next line
+    if(c == EOF) break;
     if(taMisc::LexBuf.contains("name=")) {
       name = taMisc::LexBuf.after("name=");
       name.gsub("\"", "");
+      if(name.lastchar() == ';') name = name.before(';');
     }
     if(taMisc::LexBuf.contains("desc=")) {
       desc = taMisc::LexBuf.after("desc=");
       desc.gsub("\"", "");
+      if(desc.lastchar() == ';') desc = desc.before(';');
+      rval = true;
       break;
     }
   }
   strm.close();
-  return true;
+  return rval;
 }
 
 void ProgLibEl_List::Initialize() {
@@ -1717,8 +1722,12 @@ void ProgLib::FindPrograms() {
     QStringList files = dir.entryList();
     for(int i=0;i<files.size();i++) {
       String fl = files[i];
-      ProgLibEl* pe = (ProgLibEl*)New(1, &TA_ProgLibEl);
-      pe->ParseProgFile(fl, path);
+      if(!fl.contains(".prog")) continue;
+      ProgLibEl* pe = new ProgLibEl;
+      if(pe->ParseProgFile(fl, path))
+	Add(pe);
+      else
+	delete pe;
     }
   }
   not_init = false;

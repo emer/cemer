@@ -1420,7 +1420,7 @@ bool Project::ConvertToV4_Enviros(ProjectBase* nwproj) {
     EventSpec* es = (EventSpec*)env->event_specs[0];
     for(int pi=0; pi < es->patterns.size; pi++) {
       PatternSpec* ps = (PatternSpec*)es->patterns[pi];
-      dt->NewColMatrix(DataArray_impl::VT_FLOAT, ps->name, 2, ps->geom.x, ps->geom.y);
+      dt->NewColMatrix(DataArray_impl::VT_FLOAT, ps->name, 2, MAX(ps->geom.x,1), MAX(ps->geom.y,1));
     }
     taLeafItr evi;
     Event* ev;

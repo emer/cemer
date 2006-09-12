@@ -229,7 +229,7 @@ value="LeabraTrial";
 };
 
 Wizard_Group @.wizards = [2] {
-LeabraWiz @[0] { 
+LeabraWizard @[0] { 
 taBase_List @.layer_cfg = [3] {
 LayerWizEl @[0] { };
 LayerWizEl @[1] { };
@@ -1195,11 +1195,11 @@ win_pos {lft=9.6: bot=391.68: wd=677.76: ht=383.04: };
 iconified=false;
 root_win_pos {lft=9.6: bot=793.92: wd=225.6: ht=29.76: };
 wizards {
-el_typ=LeabraWiz;
+el_typ=LeabraWizard;
 el_def=0;
 name="";
-LeabraWiz @[0] {
-name="LeabraWiz_0";
+LeabraWizard @[0] {
+name="LeabraWizard_0";
 auto_open=false;
 n_layers=3;
 layer_cfg {

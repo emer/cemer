@@ -33,7 +33,7 @@ foreach i (${argv[2-]})
 
   sed -e "s/_MGroup/_Group/g" \
     -e "s/Network/$netnm/g" -e "s/$netgp/Network_Group/g" \
-    -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \
+    -e "s/LeabraWiz/Wizard/g" -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \
     -e "s/WinView_Group/taBase_Group/g" -e "s/ProjViewState_List/taBase_List/g" \
     -e "s/NetView/taNBase/g" \
     $fl >$cvttmp
