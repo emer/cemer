@@ -90,7 +90,7 @@ public:
 
   void Copy_(const AxisView& cp);
   COPY_FUNS(AxisView, T3DataView);
-  T3_DATAVIEWFUNS(AxisView)
+  T3_DATAVIEWFUNS(AxisView, T3DataView)
 protected:
   void 			UpdateAxis_X(T3Axis* t3ax, AxisSpec* as); //#IGNORE
   void 			UpdateAxis_Y(T3Axis* t3ax, AxisSpec* as); //#IGNORE
@@ -163,7 +163,7 @@ public:
 			    ivCoord,ivCoord,ivCoord,ivCoord) {return true;}
   bool 		effect_border(); */
 
-  T3_DATAVIEWFUNS(GraphLine)
+  T3_DATAVIEWFUNS(GraphLine, T3DataView)
 protected:
   bool			val_color_mode; // true whenever entire line/pointset might not be same color
 
@@ -233,7 +233,7 @@ public:
   void 			Redraw(); //  #MENU  #MENU_ON_Actions
   override void		InitLinks();
   override void		CutLinks();
-  T3_DATAVIEWFUNS(GraphView)
+  T3_DATAVIEWFUNS(GraphView, T3DataViewPar)
 protected:
   GraphSpec*	m_graph_spec; // cache
 
@@ -276,7 +276,7 @@ public:
 
   override void		InitLinks();
   override void		CutLinks();
-  T3_DATAVIEWFUNS(GraphViews)
+  T3_DATAVIEWFUNS(GraphViews, T3DataViewPar)
 protected:
   T3NodePtr		m_bar_so; // color bar, if used
 

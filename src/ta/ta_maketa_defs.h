@@ -30,6 +30,27 @@
 #ifndef TA_MAKETA_DEFS_H
 #define TA_MAKETA_DEFS_H
 
+// a couple of these are the actual guys when we have NO_GUI
+
+// dummy classes for the view system, when no TA_GUI
+#if defined(__MAKETA__) || !defined(TA_GUI)
+class QObject {
+public:
+  QObject() {} // #IGNORE
+};
+
+class QPaintDevice {
+public:
+  QPaintDevice() {} // #IGNORE
+};
+
+class QWidget : public QObject, public QPaintDevice {
+public:
+  QWidget() {} // #IGNORE
+};
+#endif
+
+
 #ifdef __MAKETA__
 
 // NOTE: we need the "dummy" member items because maketa chokes on empty class defs
@@ -53,12 +74,6 @@ public:
 };
 
 class QStringList {
-//  
-public:
-	int dummy; // #IGNORE
-};
-
-class QObject {
 //  
 public:
 	int dummy; // #IGNORE
@@ -113,12 +128,6 @@ public:
 	int dummy; // #IGNORE
 };
 
-
-class QWidget : public QObject, public QPaintDevice {
-//  
-public:
-	int dummy; // #IGNORE
-};
 
 class iRenderAreaWrapper: public QWidget  {
 //  
@@ -205,12 +214,6 @@ class QObjectList {
 //  
 public:
 	int dummy; // #IGNORE
-};
-
-class QPaintDevice {
-//  
-public:
-	int dummy2; // #IGNORE
 };
 
 class QPalette {

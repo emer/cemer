@@ -441,7 +441,7 @@ void taiMisc::LoadDialogDestroyed() {
   load_dlg = NULL;
 }
 
-void taiMisc::MainWindowClosing(bool& cancel) {
+void taiMisc::MainWindowClosing(CancelOp& cancel_op) {
    // called by main_window in close event -- we can cancel it
   //TODO: go through active wins, and close -- prompt user if any active ones found
   //TODO: we will need to figure out how to do this, because we need to pump the event loop!

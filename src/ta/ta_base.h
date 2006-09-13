@@ -538,9 +538,11 @@ public:
 
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
-    { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
+    { Dump_Save_pre(); 
+      return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)
-    { return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
+    { Dump_Save_pre(); 
+      return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_Path(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_Path(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent=0)
@@ -612,6 +614,7 @@ public:
   { }
 #endif
 protected:
+  virtual void 		Dump_Save_pre() {} // called before _impl, enables jit updating before save
   virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
 
   int			refn;		// number of references to this object; note: MAXINT is the max allowed value
@@ -841,6 +844,7 @@ public:
   taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
   void 			SetData(taBase* ta); // set the data to which this points -- must be subclass of data_base
   int			dbu_cnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
+  virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy
   virtual MemberDef*	md() const {return NULL;} // ISelectable property member stub
   virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
   taDataView*		parent() const;
@@ -850,10 +854,13 @@ public:
   virtual void		DataDestroying() {}
   virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
   virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
-  virtual void		Clear(taDataView* par = NULL) {Clear_impl(par);} // clears the view (but doesn't delete any components) (usually override _impl)
+  virtual void		Clear(taDataView* par = NULL) {if (isMapped()) Clear_impl(par);} // clears the view (but doesn't delete any components) (usually override _impl)
   virtual void		CloseChild(taDataView* child) {}
-  virtual void		Render() {Clear_impl(); Render_pre(); Render_impl(); Render_post();} // renders the visible contents (usually override the _impl)
-  virtual void		Reset() {Clear_impl(); Reset_impl();} // clears, and deletes any components (note: usually override _impl)
+  virtual void		Render() {if (isMapped()) Clear_impl(); 
+    Render_pre(); Render_impl(); Render_post();} 
+    // renders the visible contents (usually override the _impls)
+  virtual void		Reset() {if (isMapped()) Clear_impl(); Reset_impl();} 
+    // clears, and deletes any components (usually override _impls)
 
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
   
@@ -895,13 +902,13 @@ private:
 };
 
 // for explicit lifetime management
-#define TA_DATAVIEWFUNS(x) \
-  TA_BASEFUNS(x); \
+#define TA_DATAVIEWFUNS(b,i) \
+  TA_BASEFUNS(b); \
   void* This() {return (void*)this;}
 
 // for ref-counting lifetime management
-#define TA_REF_DATAVIEWFUNS(x) \
-  TA_REF_BASEFUNS(x); \
+#define TA_REF_DATAVIEWFUNS(b,i) \
+  TA_REF_BASEFUNS(b); \
   void* This() {return (void*)this;}
 
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase

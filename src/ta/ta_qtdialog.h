@@ -207,7 +207,7 @@ typedef iDataPanelFrame inherited;
 friend class taiEditDataHost;
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  override void		Closing(bool forced, bool& cancel);
+  override void		Closing(CancelOp& cancel_op);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
 

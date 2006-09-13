@@ -2,34 +2,255 @@
 Main Viewing Redesign
 ---------------------
 
+Old Classes
+
+non-Gui:
+
+taDataView
+  DataViewer -- all main window viewers
+    TabDataViewer -- adds a tabbed view/edit panel area
+    ClassBrowser -- for the special Class Browser
+    T3DataViewer -- for the 3D viewer
+        note: this handles a heterogenous set of items,
+        ex. a Network, logs, net output viewers, etc.
+
+taList<DataViewer>
+  DataViewer_List -- is .viewers in project
+
+taNBase
+  ToolBar
+
+taList<ToolBar>
+  ToolBar_List
+
+taBase
+  WinGeometry
+
+Containership:
+
+DataViewer
+  ToolBar[] toolbars (ToolBar_List)
+  -iDataViewer window
+
+
+Gui:
+
+QMainWindow
+  iDataViewer
+ISelectableHost
+    iTabDataViewer
+      iDataBrowserBase
+        iDataBrowser
+        iClassBrowser
+      iT3DataViewer
+
+QToolBar
+  iToolBar
+
+QList<iToolBar*>
+  iToolBar_List
+
+QTabBar
+  iTabBar -- manages one panel (iDataPanel)
+
+QWidget
+  iTabView -- manages iTabBar and multiple panels (iDataPanel)
+  
+
+QFrame
+IDataLinkClient
+  iDataPanel -- handles: having a client object; clipboard ops;
+      tab color/name; some virtual bases
+    iDataPanelFrame -- base for panels that are part of iDataPanelSet's
+      iListDataPanel -- subpanel to show the List View for a list/group
+          data is: taList/Group
+      iTextDataPanel -- shows text, ex. script program (note: not yet used)
+          data is: ???
+      EditDataPanel -- contains a property editor (taiEditData)
+          data is: taBase guy
+    iViewPanelFrame -- for Views, ex. the NetViewer controls
+    iDataPanelSet -- contains subpanels, with chooser button
+
+Containership:
+
+iDataViewer
+  iToolBar[] toolbars (iToolBar_List)
+  taiAction[] actions
+  -DataViewer viewer
+
+iTabDataViewer
+  :iDataViewer
+  iTabView[] tabViewer -- all the tab views (in splitters)
+
+iTabView
+  iTabBar
+    iTab[]
+  iDataPanel[] panels -- in a widget stack
+  
+  
+
+
+
 New Classes
 
 (A) indicates Abstract base
 
-DataViewer (A) -- anything common to all viewer types
+non-Gui Classes:
+
+(ta_base.h)
+taOBase
+IDataLinkClient
+  taDataView
+
+DataViewer:taDataView (A) -- anything common to all viewer types
     can only assume its gui class is a QWidget
-  MainDataViewer -- for the main window; has stuff only applicable to the main win;
-     can contain subordinate viewers; widget is iMainDataViewer
-  FrameDataViewer (A) -- for principal contained views in main, such as browser, edit,
-     and T3 (in taMisc)
-    BrowseDataViewer -- for the tree browser
-    PanelDataViewer -- for the edit panels (can also be split)
+    handles: can create a gui obj, either top level or in another window
+    has some virt methods for when its subclass is a top-level window
+  TopLevelViewer -- for anything that can have its own window
+    MainWindowViewer -- for the main window; has stuff only applicable to the main win;
+       can contain subordinate viewers; widget is iMainDataViewer
+       is a top-level window
+    DockWindowViewer -- for windows that are dockable
+      can be docked in a MainWindowViewer, or standalone (when undocked)
+      if standalone, then it can be a top-level window
+      when standalone, is in .viewers, else is in the .dockies of a MWV
+  FrameViewer (A) -- for principal contained views in main, such as browser, edit,
+     and T3 (in taMisc) -- these go in central area, in a splitter
+    BrowseViewer -- for the tree browser -- contains most of the logic
+      tabBrowseViewer -- for taBase root
+      ClassViewer -- for class item root
+    PanelViewer -- for the edit panels (can also be split)
+      T3PanelViewer -- specialized to show one or more T3 guys
+  T3DataViewer -- for the T3 guys
+
+taList<FrameViewer>
+  FrameViewer_List
+
+taNBase
+  ToolBar
+
+taList<ToolBar>
+  ToolBar_List
+
+Containership Hierarchy:
+
+MainWindowViewer
+  FrameDataViewer[] (FrameViewer_List) frames -- frames in the center splitter area
+  ToolBar[] (ToolBar_List) toolbars
+  DockWindowViewer[] dockies (can also be viewed independently when undocked)
+
+T3PanelViewer
+  T3DataViewer[] viewers
+    T3DataView[] views -- each view can hold multiple 3D objects
+  
+Gui Classes:
 
 QMainWindow
-  iMainDataViewer -- the widget for a MainDataViewer
+  iMainWindowViewer -- the widget for a MainWindowViewer
+    can handle toolbars, the compound central widget (thingies in splitter), 
+    and dock widgets
 
 QWidget (or QFrame)
-  iFrameDataViewer (A) -- widget that can be managed by a iMainDataViewer
-    iBrowseDataViewer -- for the tree browser
-    iTabbedDataViewer -- generic, tabbed
-      iPanelDataViewer -- for the edit panels
-      iT3DataViewer -- for T3 views
+ISelectableHost
+  iFrameViewer (A) -- widget that can be managed by a iMainDataViewer
+      in its central widget area (in a splitter)
+    iBrowseViewer -- for the tree browser (generic enough for taBase and Class browsing)
+//      iBrowser
+//      iClassBrowser
+    iTabViewer -- generic, tabbed, for viewing panels
 
+QTabBar
+  iTabBar -- manages one panel (iDataPanel)
+
+QWidget
+  iTabView -- manages iTabBar and multiple panels (iDataPanel)
+  
+
+QFrame
+IDataLinkClient
+  iDataPanel -- handles: having a client object; clipboard ops;
+      tab color/name; some virtual bases
+    iDataPanelFrame -- base for panels that are part of iDataPanelSet's
+      iListDataPanel -- subpanel to show the List View for a list/group
+          data is: taList/Group
+      iTextDataPanel -- shows text, ex. script program (note: not yet used)
+          data is: ???
+      EditDataPanel -- contains a property editor (taiEditData)
+          data is: taBase guy
+    iViewPanelFrame -- for Views, ex. the NetViewer controls
+      iT3DataPanel -- for the T3 viewing
+    iDataPanelSet -- contains subpanels, with chooser button
+
+QDockWidget
+  iDockWidget
+
+Gui Containership:
+
+iMainWindowViewer
+  iToolBar[] -- any toolbars
+  iFrameDataViewer[] -- any frames in the central area
+  iDockWidget[] dock_wins -- any docked windows
+
+iDataPanelSet
+  iDataPanelFrame[]
+  
 
 Issues
 
 * the legacy iViewer maintained selection, and changed panels accordingly;
   we will now have two different selectable thingies
+* will dockable windows be associated with a particular window or themselves?
+* should have the taBase and Qt stuff in different source files, and able to
+  conditionally compile out the Qt files (for !TA_GUI)
+  - implies we should delimit the routines that interact with the gui classes
+
+To Do's:
+
+* enable tab viewers to not show the first tab (could be easily done just
+   by making the tab bar hidden)
+* need to wire the cliphandlers to the main window when frame gets focus
+* make sure browser rooted in member shows the parent type.member as name in root
+  -- actually, for taBase, should be ObjName.member, for class, ParentType.member
+* need to dynamically enable Splitting, and forward to right sub frame
+* provide a "don't show single tab" option on tabview (primarily for 3D ones)
+
+Questions:
+
+* is it necessary for all the viewer guys to maintain all the gui state
+  dynamically, or is it enough to update it prior to streaming?
+  * if update once, then don't need to have a bunch of wiring/signals etc.
+  * we can still offer programmatic control, simply by forcing the commands
+    through to the gui
+  * one disadvantage is that it is harder to have programmatic state
+    HOWEVER we can define it all in terms of properties, and just have
+    the members for streaming
+  * gui stuff should probably be mediated by UserData anyway, so it makes
+    sense to have properties, which go through the gui item (or none)
+    and then have a "big bang" refresh of UserData view state prior to
+    streaming
+
+New Design
+
+The new design comprises 3 main gui elements:
+  * a main window manager
+  * a central browsing/viewing area that can contain:
+    * tree browser
+    * view panels
+    * 3D viewers
+  * dock windows -- these are general windows, such as the console
+
+ToolBars
+
+ToolBars can be associated with the following:
+  * main window, to hold global actions (ex file, clipboard, printing, help)
+  * a particular type of object, for the actions of that object
+  * a particular kind of designer or view, for the commonly used actions of that view
+
+
+Things That Are Nuked:
+
+* DataViews no longer have a "Changed" semantics (this wasn't really used anyway)
+* DataViews no longer have built in file/save support (again, wasn't used)
 
 ------------------
 Main Menu Redesign

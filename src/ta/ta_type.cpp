@@ -504,6 +504,26 @@ int taHandleXIOError(Display*) {
 */
 
 
+taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
+  if (!td) return TIK_UNKNOWN; 
+
+  TypeInfoKind tik;
+#ifndef NO_TA_BASE
+  if (td->InheritsFrom(&TA_TypeDef)) tik = TIK_TYPE;
+  else if (td->InheritsFrom(&TA_MemberDef)) tik = TIK_MEMBER;
+  else if (td->InheritsFrom(&TA_MethodDef)) tik = TIK_METHOD;
+  else if (td->InheritsFrom(&TA_MemberSpace)) tik = TIK_MEMBERSPACE;
+  else if (td->InheritsFrom(&TA_MethodSpace)) tik = TIK_METHODSPACE;
+  else if (td->InheritsFrom(&TA_TypeSpace)) tik = TIK_TYPESPACE;
+  else if (td->InheritsFrom(&TA_EnumDef)) tik = TIK_ENUM;
+  else if (td->InheritsFrom(&TA_EnumSpace)) tik = TIK_ENUMSPACE;
+  else if (td->InheritsFrom(&TA_TokenSpace)) tik = TIK_TOKENSPACE;
+  else 
+#endif
+    tik = TIK_UNKNOWN; // shouldn't happen
+  return tik;
+}
+
 #if ((defined(TA_OS_UNIX)))
 
 void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {

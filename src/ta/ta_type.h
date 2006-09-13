@@ -238,6 +238,13 @@ protected:
 };
 
 #ifndef NO_TA_BASE
+enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing 
+  CO_PROCEED,		// tells caller to proceed with operation (typical default)
+  CO_CANCEL,		// client can set this to tell caller to cancel the operation
+  CO_NOT_CANCELLABLE	// preset, to tell client that operation will go ahead unconditionally
+};
+
+
 class TA_API taiMiscCore: public QObject { 
   // ##NO_TOKENS ##NO_INSTANCE object for Qt Core event processing, etc. taiMisc inherits; taiM is always instance
 INHERITED(QObject)
@@ -354,6 +361,19 @@ public:
     CONFIRM_REVERT 		// put up a confirmatory message before reverting
   };
 
+  enum TypeInfoKind { // used in switch statements to particularize instances
+    TIK_ENUM,
+    TIK_MEMBER,
+    TIK_METHOD,
+    TIK_TYPE,
+    TIK_ENUMSPACE,
+    TIK_TOKENSPACE,
+    TIK_MEMBERSPACE,
+    TIK_METHODSPACE,
+    TIK_TYPESPACE,
+    TIK_UNKNOWN
+  };
+
   static String		version_no; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
 
@@ -454,7 +474,8 @@ public:
   // search through all tokens in all types and replace any pointer to object of type obj_typ address old_ptr with new_ptr
   static int 	ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr);
   // search through all tokens in all types and replace any pointer to old_ptr with first other token in same scope of same type
-
+  static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
+  
 #if ((defined(TA_OS_UNIX)))
 #ifndef __MAKETA__
   static void	Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));

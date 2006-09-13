@@ -151,7 +151,7 @@ public:
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
 
   override void		CutLinks();
-  TA_DATAVIEWFUNS(T3DataView);
+  TA_DATAVIEWFUNS(T3DataView, taDataView);
 
 public: // ISelectable interface (only not in IDataLinkClient)
   override MemberDef*	md() const {return m_md;} // memberdef of this item in its parent
@@ -218,8 +218,8 @@ private:
   void			Destroy();
 };
 
-#define T3_DATAVIEWFUNS(x) \
-  TA_BASEFUNS(x);
+#define T3_DATAVIEWFUNS(b,i) \
+  TA_DATAVIEWFUNS(b,i);
 
 
 //////////////////////////
@@ -258,7 +258,7 @@ public:
 
   override void		InitLinks();
   override void		CutLinks();
-  T3_DATAVIEWFUNS(T3DataViewPar)
+  T3_DATAVIEWFUNS(T3DataViewPar, T3DataView)
 
 protected:
   override void		Render_impl();
@@ -291,7 +291,7 @@ public:
 
   virtual T3DataView*	GetViewFromPath(const SoPath* path) const; // #IGNORE search path backwards to find the innermost T3DataView
 
-  T3_DATAVIEWFUNS(T3DataViewRoot)
+  T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
 
 protected:
   override void		Constr_Node_impl();
@@ -483,7 +483,7 @@ public:
 
   void			InitLinks();
   void			CutLinks();
-  TA_DATAVIEWFUNS(T3DataViewer)
+  TA_DATAVIEWFUNS(T3DataViewer, DataViewer)
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void		SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE

@@ -877,7 +877,7 @@ public:
   void	CutLinks();
   void	Copy_(const DataViewer& cp);
   COPY_FUNS(DataViewer, taDataView)
-  TA_DATAVIEWFUNS(DataViewer) //
+  TA_DATAVIEWFUNS(DataViewer, taDataView) //
 
 public: // Action methods
 /*  virtual void 	FileNewAction(){}

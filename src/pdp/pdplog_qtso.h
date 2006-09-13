@@ -145,7 +145,7 @@ public:
   void	CutLinks();
   void	Copy_(const LogView& cp);
   COPY_FUNS(LogView, T3DataViewPar);
-  T3_DATAVIEWFUNS(LogView) //
+  T3_DATAVIEWFUNS(LogView, T3DataViewPar) //
 
 public:
   // view control -- row
@@ -219,7 +219,7 @@ public:
   void	Destroy() {CutLinks();}
   void	Copy_(const GridLogViewBase& cp);
   COPY_FUNS(GridLogViewBase, LogView);
-  T3_DATAVIEWFUNS(GridLogViewBase)
+  T3_DATAVIEWFUNS(GridLogViewBase, LogView)
 
 protected:
   virtual void		AdjustColView() {} // sets visible last column, and colsizes, based on .min, and geom
@@ -262,7 +262,7 @@ public:
   void 	CutLinks();
   void	Initialize();
   void	Destroy() {CutLinks();}
-  T3_DATAVIEWFUNS(TextLogView)
+  T3_DATAVIEWFUNS(TextLogView, GridLogViewBase)
 
 protected:
   override void		OnWindowBind_impl(iT3DataViewer* vw);
@@ -301,7 +301,7 @@ public:
   void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
-  T3_DATAVIEWFUNS(NetLogView)
+  T3_DATAVIEWFUNS(NetLogView, LogView)
 
 protected:
   override void		OnWindowBind_impl(iT3DataViewer* vw);
@@ -372,7 +372,7 @@ public:
   void 	Destroy();
   void	Copy_(const GridLogView& cp);
   COPY_FUNS(GridLogView, LogView);
-  T3_DATAVIEWFUNS(GridLogView)
+  T3_DATAVIEWFUNS(GridLogView, LogView)
 
 public:
   void ColorBar_execute();
@@ -498,7 +498,7 @@ public:
   void 	InitLinks();
   void	Copy_(const GraphLogView& cp);
   COPY_FUNS(GraphLogView, LogView);
-  T3_DATAVIEWFUNS(GraphLogView)
+  T3_DATAVIEWFUNS(GraphLogView, LogtView)
 
 protected:
   override void 	ChildAdding(T3DataView* child);

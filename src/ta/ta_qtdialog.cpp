@@ -455,8 +455,9 @@ EditDataPanel::~EditDataPanel() {
   }
 }
 
-void EditDataPanel::Closing(bool forced, bool& cancel) {
+void EditDataPanel::Closing(CancelOp& cancel_op) {
   if (owner == NULL) return;
+  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
   if (owner->HasChanged()) {
     int chs;
     if (forced)
@@ -472,7 +473,7 @@ void EditDataPanel::Closing(bool forced, bool& cancel) {
       owner->state = taiDataHost::CANCELED;
       break;
     case  2: // Cancel (non-forced only)
-      cancel = true;
+      cancel_op = CO_CANCEL;
       return;
       break;
     }

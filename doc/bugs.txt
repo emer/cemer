@@ -28,6 +28,7 @@ To Be Prioritized:
 * key shortcuts, particularly to invoke a string editor for string fields (all of them)
 * GNU Scientific library integration
 * add "pin/unpin" capability to panels, and extend panel tab context menu 
+* Printing Analysis, Design, and Implementation -- MAJOR
 
 BUGS
 ----

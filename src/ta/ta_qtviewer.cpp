@@ -2372,7 +2372,11 @@ void DataViewer::OpenNewWindow_impl() {
   win_pos.SetWinPos();
 
   SetWinName();
+#ifdef QT_OS_MACX
+  m_window->showMaximized(); // makes sure the title bar is visible
+#else
   m_window->show();
+#endif
   m_window->SelectionChanged(true); // initializes selection system
 }
 
@@ -2590,15 +2594,16 @@ void DataViewer::WindowClosing(bool& cancel) {
     case 1:
       if (tabMisc::root) tabMisc::root->SaveAll();
       //fall through
-    case 0:
+    case 0: {
       taMisc::quitting = true;
-      taiM->MainWindowClosing(cancel);
-      if (cancel) {
+      CancelOp cancel_op = CO_PROCEED;
+      taiM->MainWindowClosing(cancel_op);
+      if (cancel_op == CO_CANCEL) {
        taMisc::quitting = false;
        return;
       }
       forced = taMisc::quitting;
-      break;
+      } break;
     case 2:
       cancel = true;
       return;

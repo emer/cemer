@@ -137,7 +137,7 @@ public:
   NetView*		nv();
 
   override void		CutLinks();
-  T3_DATAVIEWFUNS(UnitView)
+  T3_DATAVIEWFUNS(UnitView, T3DataView)
 protected:
   NetView*		m_nv; // cache
   override void 	Render_pre(taDataView* par); //
@@ -201,7 +201,7 @@ public:
   float 		GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags); // get val for unit at co
   void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u); // set the base for the given md; src_u only used for s./r. values
 
-  T3_DATAVIEWFUNS(UnitGroupView)
+  T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
   void 			UpdateUnitViewBase_Unit_impl(MemberDef* disp_md); // for unit members
   void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
@@ -231,7 +231,7 @@ public:
   override void		BuildAll(); // creates fully populated subviews
 
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
-  T3_DATAVIEWFUNS(LayerView)
+  T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
   override void 	ChildRemoving(T3DataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
@@ -257,7 +257,7 @@ public:
   Projection*		prjn() const {return (Projection*)m_data;}
   T3PrjnNode*		node_so() const {return (T3PrjnNode*)m_node_so.ptr();}
 
-  T3_DATAVIEWFUNS(PrjnView)
+  T3_DATAVIEWFUNS(PrjnView, nvDataView)
 protected:
   override void		Render_pre(taDataView* par = NULL); // #IGNORE
   override void		Render_impl(); // #IGNORE
@@ -368,7 +368,7 @@ public:
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);
-  T3_DATAVIEWFUNS(NetView)
+  T3_DATAVIEWFUNS(NetView, T3DataViewPar)
 
 protected:
   Unit*			m_unit_src; // #IGNORE unit last picked (if any) for display

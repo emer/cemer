@@ -274,7 +274,7 @@ static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrigh
   QBitmap*	icon_bitmap;	// icon bitmap
 
 //OBS  int GetButton(const ivEvent& e); // applies keyboard mods
-  void		MainWindowClosing(bool& cancel); // called by main_window in close event -- we can cancel it
+  void		MainWindowClosing(CancelOp& cancel_op); // called by main_window in close event -- we can cancel it if cancellable
 
 /*TODO: rewrite for Qt #if (!(defined(WINDOWS) || defined(CYGWIN)))
   static void DumpJpeg(_XDisplay* dpy, XWindow win, const char* fnm, int quality=85, int xstart=0, int ystart=0, int width=-1, int height=-1);

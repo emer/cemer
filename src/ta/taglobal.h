@@ -499,4 +499,11 @@ enum CustomEventType {
 };
 #endif
 
+#ifndef TA_GUI
+class VoidClass { // dummy class used as gui obj proxy in NO_GUI builds so all legal C++ class semantics apply
+public:
+  VoidClass() {} // #IGNORE
+};
+#endif
+
 #endif // STDEFS_H
