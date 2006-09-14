@@ -1,95 +1,54 @@
-/* -*- C++ -*- */
-/*=============================================================================
-//									      //
-// This file is part of the TypeAccess/C-Super-Script software package.	      //
-//									      //
-// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
-//		      James L. McClelland, and Carnegie Mellon University     //
-//     									      //
-// Permission to use, copy, modify, and distribute this software and its      //
-// documentation for any purpose is hereby granted without fee, provided that //
-// the above copyright notice and this permission notice appear in all copies //
-// of the software and related documentation.                                 //
-// 									      //
-// Note that the PDP++ software package, which contains this package, has a   //
-// more restrictive copyright, which applies only to the PDP++-specific       //
-// portions of the software, which are labeled as such.			      //
-//									      //
-// Note that the taString class, which is derived from the GNU String class,  //
-// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
-// is covered by the GNU General Public License, see ta_string.h.             //
-// The iv_graphic library and some iv_misc classes were derived from the      //
-// InterViews morpher example and other InterViews code, which is             //
-// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
-// Copyright (C) 1991 Silicon Graphics, Inc.				      //
-//									      //
-// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
-// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
-// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
-// 									      //
-// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
-// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
-// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
-// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
-// SOFTWARE. 								      //
-==============================================================================*/
+// Copyright, 1995-2005, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of TA/CSS
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//   
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
+// ta_qtviewer.h -- gui classes for main window viewing
 
 #ifndef TA_QTVIEWER_H
 #define TA_QTVIEWER_H
 
-#include "ta_base.h"
+#include "ta_viewer.h"
 #include "ta_qtdata.h"
-#include "ta_qtclipdata.h"
 
 
 #ifndef __MAKETA__
-  #include <qaction.h>
-  #include <qframe.h>
-  #include <qmainwindow.h>
-  #include <qobject.h>
-  #include <qpalette.h>
-  #include <QIcon>
-  #include <QList>
-  #include <qsplitter.h>
-  #include <qtabbar.h>
-  #include <QTreeWidget>
-  #include <QTreeWidgetItem>
-  #include "itreewidget.h"
-  #include <qtoolbar.h>
+# include <QAction>
+# include <QDockWidget>
+# include <QFrame>
+# include <QMainWindow>
+# include <QObject>
+# include <qpalette.h>
+# include <QIcon>
+# include <QList>
+# include <qtabbar.h>
+# include <QTreeWidget>
+# include <QTreeWidgetItem>
+# include "itreewidget.h"
+# include <qtoolbar.h>
 #endif
 
 
 // externals
 class taGroup_impl;
 
-// forwards this file:
+// (new) forwards this file:
+class DataLink_QObj;
 class taiDataLink;
 class tabDataLink;
 class tabListDataLink;
 class tabGroupDataLink; //
 
-//obsclass iPanelTab; // #IGNORE
-class iTabBar; // #IGNORE
-class iTabView; // #IGNORE
-class iDataPanel; //#IGNORE
-class iDataPanelSet; // #IGNORE
-class iDataPanel_PtrList;
-class iTabView_PtrList; // #IGNORE
-
-class iToolBar;
-class iToolBar_List;
-
-class WinGeometry;
-class ToolBar;
-class ToolBar_List;
-class DataViewer;
-class ISelectable;
-class ISelectable_PtrList;
-class DynMethodDesc; // #IGNORE
-class DynMethod_PtrList; // #IGNORE
-class ISelectableHost;
-class iDataViewer;
 
 class iTreeView;
 class iTreeViewItem;
@@ -97,10 +56,6 @@ class taiTreeDataNode;
 class taiListDataNode;
 class iListDataPanel; //
 
-
-//////////////////////////
-//   taiDataLink	//
-//////////////////////////
 
 class TA_API DataLink_QObj: public QObject {
 Q_OBJECT
@@ -286,10 +241,10 @@ protected:
 class TA_API iToolBar: public QToolBar {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 friend class ToolBar;
-friend class iDataViewer;
+friend class iMainWindowViewer;
 public:
   ToolBar*		toolBar() {return m_toolBar;}
-  iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win);
+  iToolBar(ToolBar* toolBar_, const QString& label, iMainWindowViewer* par_win);
    // constructor just does bare-bones create; Constr() does the actual work
   ~iToolBar();
 protected:
@@ -302,21 +257,17 @@ private:
 };
 
 
-//////////////////////////
-//   iToolBar_List	//
-//////////////////////////
-
-#ifdef __MAKETA__
-typedef iToolBar* iToolBar_ptr;
-class TA_API iToolBar_List: public QList<iToolBar_ptr> {
-#else
-class TA_API iToolBar_List: public QList<iToolBar*> {
-#endif
+//obs # ifdef __MAKETA__
+typedef iToolBar* iToolBar_Ptr; // needed for maketa
+class TA_API iToolBar_List: public QList<iToolBar_Ptr> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
+//obs # else
+//obs class TA_API iToolBar_List: public QList<iToolBar*> {
+//obs#endif
 friend class ToolBar;
 public:
   ~iToolBar_List();
-  iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
+  iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
 protected:
   ToolBar*		m_toolBar;
 };
@@ -401,15 +352,6 @@ protected:
 };
 
 
-class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
-public:
-  virtual QWidget*	widget() = 0; // provides a gui parent for things like context menus
-  virtual bool 		ItemRemoving(ISelectable* item) = 0; // call from item when deleting or removing -- makes sure it is removed from sel lists, etc.
-
-  virtual ~ISelectableHost() {}
-};
-
-
 //////////////////////////
 //   DynMethodDesc	//
 //////////////////////////
@@ -449,79 +391,231 @@ protected:
   // sets the element's self-index
 };
 
+class SelectableHostHelper;
+
+class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
+friend class SelectableHostHelper;
+public:
+  enum NotifyOp { // notify ops for the NotifySignal -- note, passed as int in the sig/slot
+    OP_GOT_FOCUS,
+    OP_SELECTION_CHANGED,
+    OP_DESTROYING
+  };
+  
+  static const char* edit_enabled_slot; // for the SetClipboardHandler call
+  static const char* edit_action_slot; // for the SetClipboardHandler call
+  static const char* actions_enabled_slot; // currently NULL
+  static const char* update_ui_signal; // currently NULL
+  
+  ISelectable*		curItem() {return selItems().SafeEl(0);} // convenience
+  virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
+  virtual taiAction_List& dynActions() {return dyn_actions;} 
+    // Action list, of current dynamic actions available
+  virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
+   // -- list of current dynamic methods available
+  QObject*		clipHandlerObj(); 
+    // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
+  virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
+  virtual bool		selectionChanging() {return (m_sel_chg_cnt != 0);}
+    // you can use this to escape from sundry gui notifies to yourself (to avoid recursion)
+  virtual ISelectable_PtrList&	selItems() {return sel_items;} // currently selected items
+  virtual QWidget*	widget() = 0; // provides a gui parent for things like context menus
+  
+  virtual void		FillContextMenu(taiActions* menu); 
+    // s/b called by desc class, to put dynaction items onto menu
+  virtual void		AddDynActions(taiActions* menu);
+   // add the dynamic guys to the given menu (note: FillContextMenu does this too)
+  
+  virtual void 		SelectionChanging(bool begin, bool forced = true); // if used, must be called in pairs, with true then false
+  virtual void 		ClearSelectedItems(bool forced = true);
+  virtual void 		AddSelectedItem(ISelectable* item,  bool forced = true);
+  virtual bool 		RemoveSelectedItem(ISelectable* item,  bool forced = true); 
+    // 'true' if item was actually removed from (i.e. was in) list
+
+  virtual void 		EditActionsEnabled(int&); // return enabled flags
+  virtual void 		EditAction(int); // perform the action
+  
+  void			Emit_GotFocusSignal() {Emit_NotifySignal(OP_GOT_FOCUS);} 
+    // only signal external guys should call (when we or a parent get focus)
+
+  void 			Connect_SelectableHostNotifySignal(QObject* sink_obj,
+    const char* sink_slot, bool discnct = false);  // connects (or disconnects) a sink (ex iFrame) to the notify signal raised when sel changes (or gets focus, etc.)
+  void 			Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
+    const char* src_signal, bool discnct = false); // connects (or disconnects) an optional ItemRemoving notification
+
+  ISelectableHost();
+  virtual ~ISelectableHost();
+  
+protected:
+  int			m_sel_chg_cnt; 
+   // counter to track batch selection changes; -ve means we are in Update (prog calls ignored) 
+  ISelectable_PtrList	sel_items;
+  DynMethod_PtrList	dyn_methods; // available dynamic methods
+  taiAction_List	dyn_actions; // actions corresponding to methods (always 1:1)
+  
+  virtual void		UpdateSelectedItems_impl() = 0; 
+    // called when force=true for changes, force gui to be selItems
+  void			Emit_NotifySignal(NotifyOp op);
+  virtual void		DoDynAction(int idx); // do the action in the list
+  virtual void 		SelectionChanged(bool forced);
+    // invoked when selection of current clipboard/focus handler changes
+  virtual void		UpdateMethodsActions(); 
+    // updates the dyn methods/actions
+
+private:
+  SelectableHostHelper* helper;
+};
+
+class TA_API SelectableHostHelper: public QObject { 
+ // #IGNORE this is a helper QObject that handles signals/slots
+  Q_OBJECT
+INHERITED(QObject)
+friend class ISelectableHost;
+public:
+
+public slots:
+  void		EditActionsEnabled(int& ea) {host->EditActionsEnabled(ea);} 
+    // callback for when we are ClipHandler
+  void		EditAction(int ea) {host->EditAction(ea);} //  callback for when we are ClipHandler
+
+#ifndef __MAKETA__
+signals:
+  void		NotifySignal(ISelectableHost* src, int op);
+#endif
+
+protected:
+  ISelectableHost* 	host;
+  
+  override void 	customEvent(QEvent* ev); // dispatch
+  virtual void 		selectionChangedEvent(QEvent* ev);
+  void			Emit_NotifySignal(ISelectableHost::NotifyOp op);
+  
+  SelectableHostHelper(ISelectableHost* host_) {host = host_;}
+
+protected slots:
+  void		DynAction(int i) {host->DoDynAction(i);}
+  void		ItemRemoving(ISelectable* item) {host->RemoveSelectedItem(item, false);}
+private:
+  SelectableHostHelper& operator=(const SelectableHostHelper&); // not allowed
+};
+
+
+class TA_API iFrameViewer: public QWidget {
+// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for things in the center splitter of main
+  Q_OBJECT
+INHERITED(QWidget)
+friend class FrameViewer;
+friend class MainWindowViewer;
+friend class iMainWindowViewer;
+public:
+  
+  inline FrameViewer*	viewer() {return m_viewer;} // usually lex overridden in subclass
+  inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
+  
+  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
+  
+  iFrameViewer(FrameViewer* viewer_, QWidget* parent = NULL);
+  ~iFrameViewer();
+  
+public slots:
+  void      	SelectableHostNotifySlot_Internal(ISelectableHost* src, int op);
+    // connects guys nested below us; lets us trap, and forward
+  void      	SelectableHostNotifySlot_External(ISelectableHost* src, int op);
+   // from external guys (forwarded from main window)
+
+#ifndef __MAKETA__
+signals:
+  void      	SelectableHostNotifySignal(ISelectableHost* src, int op);
+    // forwarder, from all internal guys
+#endif
+
+protected:
+  FrameViewer* 		m_viewer;
+  iMainWindowViewer*    m_window;
+  short int		shn_changing; // for marking forwarding, so we don't reflect back
+
+  virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
+  override void 	closeEvent(QCloseEvent* ev);
+  virtual void 		SetActionsEnabled_impl(); // invoked when selection changes
+  virtual void		SelectionChanged_impl(ISelectableHost* src_host) {}
+    // we call this when we receive a valid incoming change, or maybe new focus
+  
+private:
+  void			Init();
+};
+
+
+class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed window
+    Q_OBJECT
+INHERITED(iFrameViewer)
+friend class iTabView;
+public:
+  virtual taiDataLink*	sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
+  virtual MemberDef*	sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
+  iTabView*		tabView() {return m_curTabView;} // currently active
+  iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
+
+  virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
+  void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
+  virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
+  void			SetPanel(iDataPanel* panel); // sets the panel active in current tab
+  virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
+  virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
+  override void		UpdateTabNames(); // called by a datalink when a tab name might have changed
+  iTabViewer(TabViewer* viewer_, QWidget* parent = NULL); //
+  ~iTabViewer();
+
+public slots:
+  virtual void		AddTab(); // causes tab bar to open a new tab, on current panel
+  virtual void		CloseTab(); // causes current tab to close (unless only 1 tab)
+  void			Closing(CancelOp& cancel_op); // override
+  
+  virtual void 		viewCloseCurrentView();
+  virtual void 		viewSplitVertical();
+  virtual void 		viewSplitHorizontal();
+
+protected:
+  iTabView_PtrList*	m_tabViews; // all created tab views
+  iTabView*		m_curTabView; // tab view (split) that currently has the focus
+  ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
+  void			Constr_Menu_impl(); // override
+  override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
+  void 			viewSplit(int o);
+
+private:
+  void			Init();
+};
+
+class TA_API iDockViewer: public QDockWidget {
+// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DockViewer
+  Q_OBJECT
+INHERITED(QDockWidget)
+public:
+  inline DockViewer*	viewer() {return m_viewer;}
+  
+  iDockViewer(DockViewer* viewer_, QWidget* parent = NULL);
+  ~iDockViewer();
+protected:
+  DockViewer*		m_viewer;
+};
+
 
 //////////////////////////
-//   iDataViewer	//
+//   iMainWindowViewer	//
 //////////////////////////
 
-/* Clipboard Handling
-
-  A subcontrol that wants to control clipboard handling must provide a signal slot interface,
-  as follows; the slots/signals can have any names (* is optional):
-
-  slots:
-    void EditAction(int); // called when user requests the indicated edit action, ex. via menu or accel key
-    void GetEditActions(int&); // called to get current valid edit actions
-    *void SetActionsEnabled(TBD); // enables/disables any actions
-  signals:
-    void UpdateUi(); // control can call if something changed, to update the ui -- calls back its
-       GetEditAction and SetActionsEnabled slot functions
-
-  When a clipboard-enabled control (ex. the data browser tree) gets the focus, it should call:
-
-    SetClipboardHandler(QWidget* handler_obj, ...) [see object below for api details]
-
-  If a control knows that it is no longer active,  it should call.
-
-    SetClipboardHandler(NULL)
-
-  NOTE: however you can't call the above just because you lose focus, because this happens
-    normally. ex. an edit control has focus, then user clicks on a toolbar button -- the
-    edit control loses focus. Instead, the mechanism used is that basically unless something
-    actively grabs the handler, it is left with the previous value. The taiData objects
-    have a base mechanism built in so that when an implementation control gets focus, it
-    unregisters clipboard handling, by default. Therefore, only taiData controls that implement
-    it will actually get the focus, but simply clicking away on a toolbar button won't
-    dehandle.
-
-*/
-
-/* Selection Handling
-
-  Selectable items are maintained in the m_sel_items.
-  The *current item* (curItem) is defined as the first (or only) selected item.
-  The system does not make a distinction between "current" and "selected" (ex. as is made
-    by Qt in its ListView).
-
-  Items are managed as follows:
-
-  curItem() - returns the first (or only) selected item
-  setCurItem(i, forced) - clears selection list, and sets first item to i
-  SelectionChanging(bool, forced) - batch changes can be placed inside true/false calls to this,
-    so that only one SelectionChanged is issued
-  AddSelectedItem(i, forced) - adds it to the selection list (an item is only added once)
-  RemoveSelectedItem(i, forced) - removes the item, returning 'true' if item found and removed
-  SelectionChanged(forced) - after all list changes, this is called; if the change came
-    from the gui (ex., user picked something), then 'forced' will be false, otherwise
-    true (indicating the object must reconfigure the gui to match the sel list)
-
-*/
-class TA_API iDataViewer: public QMainWindow {
+class TA_API iMainWindowViewer: public QMainWindow {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
-#ifndef __MAKETA__
-typedef QMainWindow inherited;
-#endif
+INHERITED(QMainWindow)
 friend class taDataLink;
-friend class DataViewer;
+friend class MainWindowViewer;
 public:
-  iToolBar_List	toolbars; // list of all created toolbars
+  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
-  taiAction_List	dyn_actions; // list of all dynamic actions currently available, based on selection
-  DynMethod_PtrList	dyn_methods; // dynamic methods currently available, based on selection
 
   taiMenuBar*		menu;		// menu bar -- note: we use the window's built-in QMenu
-  QWidget*		m_body;		// #IGNORE body of the window -- supplied by a descendant class
+  QSplitter*		body;		// #IGNORE body of the window
 
   taiMenu* 		fileMenu;
   taiMenu* 		fileExportMenu; // submenu -- empty and disabled in base
@@ -547,122 +641,127 @@ public:
   taiAction* 		editPasteAction;
   taiAction* 		editDeleteAction;
   taiAction* 		editLinkAction;
+  
   taiAction* 		viewRefreshAction;
+  taiAction* 		viewSplitVerticalAction;
+  taiAction* 		viewSplitHorizontalAction;
+  taiAction* 		viewCloseCurrentViewAction;
+
+  taiAction*	        toolsClassBrowseAction;
+  
   taiAction* 		helpHelpAction;
   taiAction* 		helpAboutAction;
 
 //nn  iToolBar* 		applicationToolBar;
 
-  ISelectable*		curItem() const {return m_sel_items.SafeEl(0);}
-  virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
-  ISelectable_PtrList&	sel_items() {return m_sel_items;}
-  QObject* 		clipHandler() {return last_enabler;} // obj (if any) controlling clipboard handling
+//mv  ISelectable*		curItem() const {return m_sel_items.SafeEl(0);}
+//mv  virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
+//mv  ISelectable_PtrList&	sel_items() {return m_sel_items;}
+  
+  QObject* 		clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
   virtual bool		showFileObjectOps() {return false;} // usually only show the file ops for the root project window
 
   //TODO: provide a list of multi-selects
-  DataViewer*		viewer() {return m_viewer;} // usually replaced by strongly typed version
+  inline MainWindowViewer* viewer() {return m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
-  virtual void		AddPanel(iDataPanel* panel) {} //  called by DataLink on creation
+  void			AddPanelNewTab(iDataPanel* panel); 
+    // insures we have a iTabViewer; adds a new tab, sets panel active in it
   virtual iToolBar*	AddToolBar(iToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
+  virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
   virtual void		AddToolBarMenu(const String& name, int index);
-  virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl)
+  virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl) called by caller after making, so ok to be virtual
   iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
     // can be overriden to supply custom iToolBar
-  virtual void		FillContextMenu(taiActions* menu); // s/b called by desc class, to put dynaction items onto menu
   virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
-  void			emit_SetActionsEnabled();
-  void			emit_GetEditActionsEnabled(int& ea); // param is one of the taiClipData EditAction values
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void 			setFrameGeometry(const iRect& r);
   void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
-  void			SetClipboardHandler(QObject* handler_obj,
-    const char* edit_enabled_slot = NULL,
-    const char* edit_action_slot = NULL,
-    const char* actions_enabled_slot = NULL,
-    const char* update_ui_signal = NULL); // provides generic way for various subpanels to control the clipboard and object enabling; item typically calls this when it gets focus (multiple calls ok); can call with handler_obj NULL to disconnect
 
-  // Viewer Selection Management functions (only concerns selections in viewer itself, not other handlers)
-  virtual void 		SelectionChanging(bool begin, bool forced = false); // if used, must be called in pairs, with true then false
-  virtual void 		AddSelectedItem(ISelectable* item,  bool forced = false);
-
-  virtual void 		SelectionChanged(bool forced = false); // invoked when selection of current clipboard/focus handler changes
-  void 			SetThisAsHandler(); // call when the viewer gets focus, to make it the handler
-
-    // invoked when selection changes; replace _impl to implement
-  virtual void		UpdateTabNames() {} // called by a datalink when a tab name might have changed
-
-  iDataViewer(DataViewer* viewer_, QWidget* parent = NULL);
+  iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent = NULL);
     // uses: WFlags flags = (WType_TopLevel | WStyle_SysMenu | WStyle_MinMax | WDestructiveClose)
-//obs  iDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags); //note: only for completeness, usually use the one with implicit flags
-  ~iDataViewer();
-
-#ifndef __MAKETA__
-signals:
-  void 			EditAction(int ea); // param is one of the taiClipData editAction values
-  void			GetEditActionsEnabled(int& ea); // sent to Clipboard server; param is one of the taiClipData EditAction values
-  void			SetActionsEnabled(); // sent to Clipboard server -- enable/disable actions
-
-  void			selectionChanged(ISelectable_PtrList& sels); // emitted when selection changes
-#endif
+//obs  iMainWindowViewer(DataViewer* viewer_, QWidget* parent, WFlags flags); //note: only for completeness, usually use the one with implicit flags
+  ~iMainWindowViewer();
 
 public slots:
-  virtual void 		fileNew(){}
-  virtual void 		fileOpen(){}
-  virtual void 		fileSave(){}
-  virtual void 		fileSaveAs(){}
-  virtual void 		fileSaveAll(){}
-  virtual void 		fileClose(){}
-  virtual void 		fileOptions(); // edits taMisc
-  virtual void 		filePrint(){}
-  virtual void 		fileCloseWindow(); // Quit (root) or Close Window (non-root)
+  virtual void 	fileNew(){}
+  virtual void 	fileOpen(){}
+  virtual void 	fileSave(){}
+  virtual void 	fileSaveAs(){}
+  virtual void 	fileSaveAll(){}
+  virtual void 	fileClose(){}
+  virtual void 	fileOptions(); // edits taMisc
+  virtual void 	filePrint(){}
+  virtual void 	fileCloseWindow(); // Quit (root) or Close Window (non-root)
 /*  virtual void editUndo();
   virtual void editRedo();
   virtual void editCut();
   virtual void editCopy();
   virtual void editPaste();
   virtual void editFind(); */
-  virtual void		viewRefresh() {} // rebuild/refresh the current view
+  virtual void	viewRefresh() {} // rebuild/refresh the current view
+  virtual void 	viewCloseCurrentView();
+  virtual void 	viewSplitVertical();
+  virtual void 	viewSplitHorizontal();
+  
+  virtual void	toolsClassBrowser();
 /*  virtual void helpIndex();
   virtual void helpContents();*/
-  virtual void 		helpAbout() {}
+  virtual void 	helpAbout();
 
-  virtual void		mnuEditAction(taiAction* mel);
-  virtual void		mnuDynAction(int idx); // a dynamic action
+  virtual void	mnuEditAction(taiAction* mel);
+  void		actionsMenu_aboutToShow(); // populates dynamic items
+  
+  void		SetClipboardHandler(QObject* handler_obj,
+    const char* edit_enabled_slot = NULL,
+    const char* edit_action_slot = NULL,
+    const char* actions_enabled_slot = NULL,
+    const char* update_ui_signal = NULL); // see "Clipboard Handling" in .cpp
+    
+  void		SelectableHostNotifySlot(ISelectableHost* src_host, int op); 
+    // see "Selection Handling" in .cpp
+    
+  virtual void	UpdateUi(); 
+    // Clipboard server: called by cliphandler after major events, to refresh menus, toolbars, etc.
 
-  void			actionsMenu_aboutToShow(); // populates dynamic items
-  virtual bool 		RemoveSelectedItem(ISelectable* item,  bool forced = false); // 'true' if item was actually removed from (i.e. was in) list
-  virtual void		UpdateUi(); // called after major events, to refresh menus, toolbars, etc.
+#ifndef __MAKETA__
+signals:
+  void 		EditAction(int ea); 
+    // Clipboard server: param is one of the taiClipData editAction values
+  void		GetEditActionsEnabled(int& ea); 
+    // Clipboard server: param is one of the taiClipData EditAction values
+  void		SetActionsEnabled(); 
+    // Clipboard server: enable/disable actions
+    
+  void		SelectableHostNotifySignal(ISelectableHost* src_host, int op); 
+    // see "Selection Handling" in .cpp
+#endif
 
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
-  virtual void 		this_GetEditActionsEnabled(int& ea); // for when viewer itself is clipboard handler
-  virtual void 		this_EditAction(int param); // for when viewer itself is clipboard handler
-  virtual void 		this_SetActionsEnabled(); // for when viewer itself is clipboard handler
 
   virtual void 		this_ToolBarSelect(int param); // user has selected or unselected one of the toolbars
 
 
 
 protected:
-  DataViewer*		m_viewer;
+  MainWindowViewer*	m_viewer;
   bool			is_root; // true if this is a root window (has Quit menu)
-  int			m_sel_chg_cnt; // counter to track batch selection changes
-  ISelectable_PtrList	m_sel_items;
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
-  override void 	customEvent(QEvent* ev); // dispatch
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
-  virtual void 		selectionChangedEvent(QEvent* ev);
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 
-  virtual void		Closing(bool forced, bool& cancel) {} // called to notify window in closeEvent, when certain to close
+  virtual void		Closing(CancelOp& cancel_op) {} // called to notify window in closeEvent, when certain to close
   virtual void		Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images
   virtual void		Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
-  virtual void		Constr_Body_impl() {} // #IGNORE replace to construct body (and set in centralWidget)
-  virtual void 		SetActionsEnabled_impl(); // invoked when selection changes
+  virtual void		SelectableHostNotifying_impl(ISelectableHost* src_host, int op);
+    // called when we should handle this for sure
+  void 			UpdateActionsMenu(ISelectableHost* src_host, bool do_add);
+
 private:
-  QObject* last_enabler; //we need to remember this, because you can't anonymously disconnect signals from your own slots
+  QObject* last_clip_handler; //we need to remember this, because you can't anonymously disconnect signals from your own slots
+  ISelectableHost* last_sel_server; // last guy to get focus
   QPixmap image0;
   QPixmap image1;
   QPixmap image2;
@@ -672,317 +771,9 @@ private:
   QPixmap image6;
   QPixmap image7;
   QPixmap image8;
-  void			init();
+  void			Init();
 };
 
-
-//////////////////////////
-//   ToolBar		//
-//////////////////////////
-
-/*
-toolbars are not automatically created, so 'mapped' indicates whether
-user has opened that toolbar
-*/
-class TA_API ToolBar: public taNBase {// ##NO_INSTANCE ##NO_TOKENS proxy for Toolbars
-friend class iToolBar;
-friend class iDataViewer;
-friend class DataViewer;
-public:
-  int			index; // #SHOW #NO_SAVE #READ_ONLY
-  float			lft;  	// #HIDDEN when undocked, fractional position on screen
-  float			top;	// #HIDDEN when undocked, fractional position on screen
-  Orientation		o; // whether hor or vert
-  bool			mapped; // #HIDDEN whether toolbar window has been created
-
-  iToolBar*		toolBar() {return m_window;} // #IGNORE
-  DataViewer*		viewer();
-  iDataViewer*		viewer_win();
-
-  virtual void 	GetWinPos(); // copy state of toolbar to us
-  virtual void	SetWinPos();
-  virtual void  Show();		// called when user selects from menu
-  virtual void	Hide();		// called when user unselects from menu
-
-  virtual void 	CloseWindow();		// #IGNORE close the toolbar
-
-//  void	UpdateAfterEdit();
-//  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const ToolBar& cp);
-  COPY_FUNS(ToolBar, taNBase)
-  TA_BASEFUNS(ToolBar)
-
-protected:
-  DataViewer*		m_viewer;  // #IGNORE cached
-  iToolBar*		m_window;
-  virtual void		Constr_Window_impl(); // #IGNORE sets the m_window instance
-  virtual void		OpenNewWindow_impl(); // #IGNORE
-  virtual void 		WindowClosing(); // #IGNORE
-
-private:
-  typedef taNBase	inherited;
-  void 	Initialize();
-  void	Destroy();
-};
-
-//////////////////////////
-//   ToolBar_List	//
-//////////////////////////
-
-class TA_API ToolBar_List: public taList<ToolBar> {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
-public:
-  iToolBar* 		FindToolBar(const char* name) const; // looks for toolbar by widget name, returns NULL if not found
-  TA_BASEFUNS(ToolBar_List);
-protected:
-  void	El_SetIndex_(void* it, int index) 	{((ToolBar*)it)->index = index; }
-  // sets the element's self-index
-private:
-  typedef taList<ToolBar> inherited;
-  void			Initialize() {}
-  void			Destroy() {}
-};
-
-
-
-//////////////////////////
-//   WinGeometry	//
-//////////////////////////
-
-class TA_API WinGeometry : public taBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP Window geometry (position, size) saved in 1.0f-relative coordinates
-public:
-  static float	Offs(float cur, float by); // offset cur by 'by' amount (0 > by >= 1.0); wraps if >1
-
-  DataViewer* 	owner;   	// #READ_ONLY #NO_SAVE pointer to owner
-  float	 	lft; 		// left (horizontal)
-  float		top;  		// top (vertical) NOTE: was "bottom" in Iv version
-  float		wd;		// width
-  float		ht;		// height
-
-  virtual void		GetWinPos();	// get the window position from parent winbase
-  virtual void		SetWinPos();	// set the window position from parent winbase
-  virtual void 		ScriptWinPos(ostream& strm = cout);
-
-  TAPtr			GetOwner(TypeDef* tp) const	{ return taBase::GetOwner(tp); }
-  TAPtr 		GetOwner() const 		{ return (TAPtr)owner; }
-  TAPtr 		SetOwner(TAPtr ta)		{ owner = (DataViewer*)ta; return ta; }
-
-  void			UpdateAfterEdit();
-  void			CutLinks()		{owner = NULL;}
-  void 			Copy_(const WinGeometry& cp);
-  COPY_FUNS(WinGeometry, taBase)
-  TA_BASEFUNS(WinGeometry)
-private:
-  typedef taBase	inherited;
-  void 	Initialize();
-  void 	Destroy() {CutLinks();}
-};
-
-
-
-//////////////////////////
-//   	DataViewer	//
-//////////////////////////
-
-class TA_API DataViewer : public taDataView {
-  // #NO_TOKENS #VIRT_BASE the base type for objects with a top-level window or panel and a menu
-#ifndef __MAKETA__
-  typedef taDataView inherited;
-#endif
-friend class taDataLink;
-friend class iDataViewer;
-friend class WinGeometry;
-public:
-  enum PrintFmt {
-    POSTSCRIPT,
-    JPEG,
-    TIFF,
-    PDF //NOTE: new for Qt version
-  };
-
-  String		name;		// name of the object
-  taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
-  taiMenuBar*		menu;		// menu bar -- note: partially managed by the window
-  String		win_name;	// #HIDDEN #NO_SAVE name field for the window
-  String		file_name;	// #HIDDEN file name used in loading/saving
-  WinGeometry		win_pos;  	// #HIDDEN position/size of the window on the screen
-
-  taFiler*		ta_file;	// #NO_SAVE #HIDDEN file manager for this -- always use refcount semantics
-  taFiler*		print_file;	// #NO_SAVE #HIDDEN print file for this
-  bool			iconified;	// #HIDDEN whether window is iconified or not
-  bool			display_toggle;  // #DEF_true 'true' if display should be updated
-  ToolBar_List		toolbars;	// #HIDDEN
-
-  iDataViewer*	window() {return m_window;} // #IGNORE valid if in a window
-
-  bool 			SetName(const String& nm) {name = nm; return true;}
-  String		GetName() const {return name; }
-  virtual bool	HasChanges() {return m_has_changes;} // 'true' when something needs to be saved
-  virtual void	Changed(bool value = true); // default sets changes; call with 'false' to clear changes
-  virtual bool	Save(); // call to save the object to current file, or new file if new; 'true' if saved
-  override int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
-  // Save object to a file
-  int  		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  // load object from a file
-  int		Edit(bool wait=false);
-  virtual void	Print(PrintFmt format, const char* fname = NULL);
-  // #MENU #ARGC_1 #MENU_SEP_BEFORE #LABEL_Print_(Window) Print this object's entire window (including buttons, etc) to file (prompted next) in given format
-  virtual void	Print_Data(PrintFmt format, const char* fname = NULL);
-  // #MENU #ARGC_1 #LABEL_Print_Data_(Only) Print only specific data associated with this window (not control buttons, etc) to file (prompted next) in given format
-//nuke  virtual void  UpdateMenus(); // #MENU #MENU_SEP_BEFORE update all menus under me (inclusive)
-  virtual void 	ScriptWinPos() 		{ win_pos.ScriptWinPos(cout); }
-  // #NO_SCRIPT generate script code to position the window
-  virtual void  Iconify();		// #MENU iconify the window (saves iconified state)
-  virtual void	DeIconify();		// deiconify the window (saves deiconified state)
-  virtual bool	IsMapped();		// return the 'mapped' status of the window
-//  virtual void	ViewWindow(float left = -1.0f, float top = -1.0f, float width = -1.0f, float height = -1.0);
-  virtual void	ViewWindow();
-  // #MENU #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
-
-  virtual void 	OpenNewWindow();	// #IGNORE open a new window for this class
-  virtual void 	CloseWindow();		// #IGNORE close the window or panel
-  virtual void	Clear(); // checks to make sure we are mapped first
-  virtual void	Render(); // checks to make sure we are mapped first
-  virtual void	Reset(); // checks to make sure we are mapped first
-  virtual void	SetFileName(const char* fname);	// #IGNORE set new file name for object
-  virtual void	SetWinName();		// #IGNORE set the window name to object path/name
-
-//nuke  virtual void  UpdateMenus_impl(); 	// #IGNORE actually does the work
-  virtual bool	ThisMenuFilter(MethodDef* md); // #IGNORE filter this menu items
-//nuke  virtual void	GetThisMenus();		// #IGNORE get the 'this' menus
-//nuke  virtual void	GetThisMenus_impl(taiMenu* par_menu, taiMenu_List& ths_men, taiDataList& ths_meth, String prfx);
-  // #IGNORE actually gets the menus
-//nuke  virtual void 	GetMenu();		// #IGNORE get the menu items from MenuGroups
-
-  virtual void	GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
-  // #IGNORE get file properties for given type
-//obs  taFiler*	GetFileDlg();		// #IGNORE for this and its menugroups
-  virtual void	GetPrintFileDlg(PrintFmt fmt);	// #IGNORE for the printfile
-  virtual String GetPrintFileExt(PrintFmt fmt); // get string of file extension for given fmt
-
-  virtual void	Raise();	// raise window to front
-  virtual void	Lower();	// lower window to back
-
-  virtual void  Print_impl(PrintFmt format, QWidget*, const char* fname=NULL); // #IGNORE
-  virtual QWidget* GetPrintData(); // #IGNORE overload this
-
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  // process any pending iv events after loading..
-
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  virtual void	WinInit(); // called inside InitLinks, after our core InitLinks, but before window opened
-  void	CutLinks();
-  void	Copy_(const DataViewer& cp);
-  COPY_FUNS(DataViewer, taDataView)
-  TA_DATAVIEWFUNS(DataViewer, taDataView) //
-
-public: // Action methods
-/*  virtual void 	FileNewAction(){}
-  virtual void 	FileOpenAction(){}
-  virtual void 	FileSaveAction(){}
-  virtual void 	FileSaveAsAction(){}
-  virtual void 	FileSaveAllAction(){}
-  virtual void 	FileCloseAction(){} */
-  virtual void 	FileOptionsAction(); // 
-  virtual void 	FilePrintAction(){}
-  virtual void 	FileCloseAction(); // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
-  virtual void	EditUndoAction(); // #ACT 
-  virtual void	EditRedoAction(); // #ACT 
-  virtual void	EditCutAction(); // #ACT 
-  virtual void	EditCopyAction(); // #ACT 
-  virtual void	EditPasteAction(); // #ACT 
-  virtual void	EditFindAction(); // #ACT 
-  virtual void	ViewRefreshAction() {}  // #ACT rebuild/refresh the current view
-  virtual void	HelpIndexAction(); // #ACT 
-  virtual void	HelpContentsAction(); // #ACT 
-  virtual void	HelpAboutAction() {} // #ACT 
-
-protected:
-  bool			m_is_root; // #IGNORE
-  bool 			m_has_changes;
-  iDataViewer*		m_window;	// #IGNORE each project gets a window
-  taiActions*		cur_menu; // for building menu
-  TypeDef*		link_type; // base type for GetDataLink calls
-  virtual void		Constr_Window_impl() {} // #IGNORE implement this to set the m_window instance
-//  virtual void		Constr_Menu_impl(); // #IGNORE constructs the view menu
-  virtual void		Constr_Toolbars_impl(); // #IGNORE constructs the toolbars
-  virtual void		OpenNewWindow_impl(); // #IGNORE
-  virtual void 		WindowClosing(bool& cancel);
-private:
-  void 	Initialize();
-  void	Destroy();
-};
-
-
-//////////////////////////////////
-//	DataViewer_List		//
-//////////////////////////////////
-
-class TA_API DataViewer_List: public taList<DataViewer> { // #NO_TOKENS
-public:
-  TA_BASEFUNS(DataViewer_List)
-private:
-  void 	Initialize() { SetBaseType(&TA_DataViewer);}
-  void	Destroy() {}
-};
-
-
-//////////////////////////
-//   iTabDataViewer 	//
-//////////////////////////
-
-//Note: used by Browser and 3D Viewers
-class TA_API iTabDataViewer : public iDataViewer, public ISelectableHost { // viewer window used for class browsing
-    Q_OBJECT
-INHERITED(iDataViewer)
-friend class iTabView;
-public:
-  virtual taiDataLink*	sel_link() const {return (curItem()) ? curItem()->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
-  virtual MemberDef*	sel_md() const {return (curItem()) ? curItem()->md() : NULL;}; // as for sel_link
-  iTabView*		tabView() {return m_curTabView;} // currently active
-  iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
-
-  taiAction* 		viewSplitVerticalAction;
-  taiAction* 		viewSplitHorizontalAction;
-  taiAction* 		viewCloseCurrentViewAction;
-
-  override void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
-  void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
-  virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
-  void			SetPanel(iDataPanel* panel); // sets the panel active in current tab
-  virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
-  virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
-  override void		UpdateTabNames(); // called by a datalink when a tab name might have changed
-  iTabDataViewer(DataViewer* viewer_, QWidget* parent = NULL); //
-//obs  iTabDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags);// not normally used
-  ~iTabDataViewer();
-
-public slots:
-  virtual void		AddTab(); // causes tab bar to open a new tab, on current panel
-  virtual void		CloseTab(); // causes current tab to close (unless only 1 tab)
-  void			Closing(bool forced, bool& cancel); // override
-  virtual void 		viewCloseCurrentView();
-  virtual void 		viewSplitVertical();
-  virtual void 		viewSplitHorizontal();
-
-public: // ISelectableHost interface
-  override QWidget*	widget() {return this;}
-  override bool 	ItemRemoving(ISelectable* item);
-
-protected:
-  iTabView_PtrList*	m_tabViews; // all created tab views
-  iTabView*		m_curTabView; // tab view (split) that currently has the focus
-  void			Constr_Menu_impl(); // override
-  virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
-  override void 	selectionChangedEvent(QEvent* ev);
-  void 			viewSplit(int o);
-
-private:
-  void			init();
-};
 
 //////////////////////////
 // 	iTabBar 	//
@@ -1023,11 +814,6 @@ public:
 };
 
 
-//////////////////////////
-//   iTabView		//
-//////////////////////////
-
-//NOTE: maybe should inherit from QDockWindow -- then it would be dockable...
 class TA_API iTabView: public QWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS  control for managing tabbed data pages
   Q_OBJECT
@@ -1044,13 +830,14 @@ public:
   int			panel_count();
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*		par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
-  iTabDataViewer* 	viewer_win() {return m_viewer_win;}
+  iTabViewer* 		viewer_win() {return m_viewer_win;}
+  iMainWindowViewer* 	window() {return (m_viewer_win) ? m_viewer_win->window() : NULL;}
 
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool 			ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
   void			AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
-  void 			Closing(bool forced, bool& cancel);
+  void 			Closing(CancelOp& cancel_op);
   void 			DataPanelDestroying(iDataPanel* panel);
   virtual void		FillTabBarContextMenu(QMenu* contextMenu);
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
@@ -1059,7 +846,7 @@ public:
   void 			UpdateTabNames(); // called by a datalink when a tab name might have changed
 
   iTabView(QWidget* parent = NULL);
-  iTabView(iTabDataViewer* data_viewer_, QWidget* parent = NULL);
+  iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
   ~iTabView();
 
 public slots:
@@ -1068,7 +855,7 @@ public slots:
   virtual void		panelSelected(int idx);
 
 protected:
-  iTabDataViewer* 	m_viewer_win;
+  iTabViewer* 	m_viewer_win;
 
 private:
   iDataPanel_PtrList	panels; // no external hanky-panky with this puppie
@@ -1112,10 +899,11 @@ public:
   virtual MemberDef*	par_md() const = 0; // as for par_link
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
-  virtual iTabDataViewer* viewer_win() const = 0;
+  virtual iTabViewer* 	viewer_win() const = 0;
+  iMainWindowViewer* 	window() {return (m_tabView) ? m_tabView->window() : NULL;}
 
 
-  virtual void		Closing(bool forced, bool& cancel) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
+  virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
   virtual int		EditAction(int ea) {return 0;} //
   virtual int		GetEditActions() {return 0;} // after a change in selection, update the available edit actions (cut, copy, etc.)
@@ -1160,14 +948,12 @@ protected:
 class TA_API iDataPanelFrame: public iDataPanel {
   // interface for panel frames
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iDataPanel inherited;
-#endif
+INHERITED(iDataPanel)
 friend class iDataPanelSet;
 public:
   override taiDataLink*	par_link() const; // taken from dps if any, else from tabview
   override MemberDef*	par_md() const;
-  override iTabDataViewer* viewer_win() const;
+  override iTabViewer* viewer_win() const;
 
 
   override void		ClosePanel();
@@ -1195,17 +981,15 @@ protected:
 
 class TA_API iViewPanelFrame: public iDataPanel {
   // frame for gui interface to a view element -- usually posted by the view, and locked
-#ifndef __MAKETA__
-typedef iDataPanel inherited;
-#endif
   Q_OBJECT
+INHERITED(iDataPanel)
 public:
   taDataView*		dv() {return m_dv;} // can be statically replaced with subclass
   override bool		lockInPlace() {return true;}
     // true if panel should not be replaced, ex. if dirty, or viewpanel
   override taiDataLink*	par_link() const {return NULL;} // n/a
   override MemberDef*	par_md() const {return NULL;}
-  override iTabDataViewer* viewer_win() const;
+  override iTabViewer* viewer_win() const;
 
 
   virtual void		InitPanel(); // called on structural changes
@@ -1229,18 +1013,12 @@ protected:
   virtual void		InitPanel_impl() {} // called within +-updating pair on structural changes
 };
 
-//////////////////////////
-//   iDataPanelSet 	//
-//////////////////////////
-
 //NOTE: this class is only designed to handle a once-only adding of its subpanels; it cannot
 // handle dynamically adding and removing subpanels
 
 class TA_API iDataPanelSet: public iDataPanel { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iDataPanel inherited;
-#endif
+INHERITED(iDataPanel)
 public:
   int			cur_panel_id; // -1 if none
   iDataPanel_PtrList	panels;
@@ -1252,7 +1030,7 @@ public:
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
-  override iTabDataViewer* viewer_win() const {return (m_tabView) ? m_tabView->viewer_win() : NULL;}
+  override iTabViewer* viewer_win() const {return (m_tabView) ? m_tabView->viewer_win() : NULL;}
 
   iDataPanel*		cur_panel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
@@ -1260,7 +1038,7 @@ public:
   void			AddSubPanel(iDataPanelFrame* pn);
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
 
-  override void		Closing(bool forced, bool& cancel);
+  override void		Closing(CancelOp& cancel_op);
   override void		ClosePanel();
   override void		GetImage();
   override const iColor* GetTabColor(bool selected) const;
@@ -1282,7 +1060,7 @@ protected:
   void			removeChild(QObject* obj);
 };
 
-class TA_API iTreeView: public iTreeWidget {
+class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems
 INHERITED(iTreeWidget)
   Q_OBJECT
@@ -1303,9 +1081,6 @@ public:
     CM_END		// called after filling menu -- use to add items to end
   };
   
-  ISelectableHost*	host; // sb set by owner
-  
-  
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
@@ -1313,9 +1088,8 @@ public:
   inline TreeViewFlags	tvFlags() const {return (TreeViewFlags)tv_flags;}
   void			setTvFlags(int value);
   
-  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
 
-  iTreeView(ISelectableHost* host, QWidget* parent = 0, int tv_flags = 0);
+  iTreeView(QWidget* parent = 0, int tv_flags = 0);
    
 #ifndef __MAKETA__
 signals:
@@ -1323,9 +1097,8 @@ signals:
     // hook to allow client to add items to start of context menu before it shows
   void			FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiMenu* menu);
     // hook to allow client to add items to end of context menu before it shows
-  void			ItemDestroying(iTreeViewItem* item);
-  void			ItemSelected(iTreeViewItem* item); // note: NULL if none
-  void			focusIn(QFocusEvent* ev);
+  void			ItemSelected(iTreeViewItem* item); 
+    // NULL if none -- NOTE: the preferred way is to use ISelectableHost::Notify signal
 #endif
   
 public slots:
@@ -1337,17 +1110,25 @@ public slots:
     // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
   void			CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
+public: // ISelectableHost i/f
+  override bool 	hasMultiSelect() const;
+  override QWidget*	widget() {return this;} 
+protected:
+  override void		UpdateSelectedItems_impl(); 
+  
 protected:
   int			tv_flags;
   void 			focusInEvent(QFocusEvent* ev); // override
   void			showEvent(QShowEvent* ev); // override, for expand all
   void 			ExpandAllUnder_impl(iTreeViewItem* item, int max_levels); // inner code
+  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
   
 protected slots:
   void 			this_contextMenuRequested(QTreeWidgetItem* item,
     const QPoint & pos, int col ); //note: should probably rejig to use a virtual method
   void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  void 			this_itemSelectionChanged();
   void			ExpandAllUnderInt(void* item); 
   void			CollapseAllUnderInt(void* item); 
 };
@@ -1493,7 +1274,6 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
   override MemberDef* 	par_md() const; // as for par_link
-  override ISelectableHost* host() const;
 };
 
 
@@ -1515,7 +1295,7 @@ public:
   override int 		EditAction(int ea);
   void			FillList();
   override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+//nn  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
 
   iListDataPanel(taiDataLink* dl_);
   ~iListDataPanel();

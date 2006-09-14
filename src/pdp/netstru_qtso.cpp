@@ -796,7 +796,7 @@ void NetViewAdapter::viewWin_selectionChanged(ISelectable_PtrList& sels) {
   nv()->viewWin_selectionChanged(sels);
 }
 
-NetView* NetView::New(pdpDataViewer* viewer, Network* net) {
+NetView* NetView::New(T3DataViewer* viewer, Network* net) {
   // create NetView
   NetView* nv = new NetView();
   net->AddDataView(nv);
@@ -1144,7 +1144,7 @@ void NetView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
     nvp = new NetViewPanel(this);
-    vw->AddPanelNewTab(nvp);
+    vw->window()->AddPanelNewTab(nvp);
   }
   QObject::connect(vw, SIGNAL(selectionChanged(ISelectable_PtrList&)),
     adapter, SLOT(viewWin_selectionChanged(ISelectable_PtrList&)) );

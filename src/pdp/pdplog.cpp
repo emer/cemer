@@ -22,6 +22,8 @@
 //#include "ta_qtgroup.h"
 #include "ta_filer.h"
 
+#include "ta_viewer.h"
+
 #ifdef TA_GUI
 #include "t3viewer.h"
 #include "pdplog_qtso.h"
@@ -247,14 +249,14 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
   if (!vwr) { // show in a new viewer
     ProjectBase* prj = GET_MY_OWNER(ProjectBase);
     if (!prj) return;
-    vwr = prj->NewViewer();
-    if (!vwr) return;
+    MainWindowViewer* mwv = prj->NewViewer(true); // add T3 guy
+    vwr = (T3DataViewer*)mwv->FindFrameByType(&TA_T3DataViewer);
     LogView* lv = NewLogView();
     if (!lv) return;
     this->AddDataView(lv);
     vwr->AddView(lv);
     lv->BuildAll();
-    vwr->ViewWindow();
+    mwv->ViewWindow();
   } else { // show in an existing viewer
     // check if already viewing this log there, warn user
     T3DataView* dv;

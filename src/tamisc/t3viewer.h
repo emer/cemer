@@ -346,7 +346,7 @@ public:
     SoSeparator* items -- the actual items get rendered
 
 */
-class TAMISC_API iT3ViewspaceWidget: public QWidget { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
+class TAMISC_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
   Q_OBJECT
 #ifndef __MAKETA__
 typedef QWidget inherited;
@@ -387,6 +387,12 @@ signals:
   void			initScrollBar(QScrollBar* sb); // orientation will be in sb
 #endif
 
+public: // ISelectableHost i/f
+  override bool 	hasMultiSelect() const {return true;} // always
+  override QWidget*	widget() {return this;} 
+protected:
+  override void		UpdateSelectedItems_impl(); 
+
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void		SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
@@ -413,24 +419,24 @@ private:
 //   iT3DataViewer	//
 //////////////////////////
 
-class TAMISC_API iT3DataViewer : public iTabDataViewer {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS outer widget that contains 3D data views
+class TAMISC_API iT3DataViewer : public iFrameViewer {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
   Q_OBJECT
+INHERITED(iFrameViewer)
 friend class T3DataViewer;
 public:
-  taiMenu* 		fileExportInventorMenu;
+//  taiMenu* 		fileExportInventorMenu;
 
-  QSplitter*		splMain; // main splitter
   iT3ViewspaceWidget*	t3vs;
 
   SoQtViewer* 		ra() {return m_ra;} //TODO: maybe should not cache; should get from body()
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
-  T3DataViewer*		viewer() {return (T3DataViewer*)m_viewer;}
+  inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
 
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
 
-  iT3DataViewer(void* root_, TypeDef* typ_, T3DataViewer* viewer_, QWidget* parent = NULL);
+  iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
   ~iT3DataViewer(); //
 
 public: // menu and menu overrides
@@ -446,19 +452,13 @@ protected slots:
 
 protected:
   SoQtViewer* 		m_ra;
-  void*			m_root;
-  TypeDef*		m_typ;
-  void 			Constr_Menu_impl(); // override
-  void			Constr_Body_impl(); // override
   virtual void		Render_pre(); // #IGNORE
   virtual void		Render_impl();  // #IGNORE
   virtual void		Render_post(); // #IGNORE
   virtual void		Reset_impl(); // note: delegated from DataViewer::Clear_impl
 
 private:
-#ifndef __MAKETA__
-  typedef iTabDataViewer inherited; // #IGNORE
-#endif
+  void			Init();
 };
 
 
@@ -466,31 +466,31 @@ private:
 //   T3DataViewer	//
 //////////////////////////
 
-class TAMISC_API T3DataViewer : public DataViewer {
-  // top-level DataViewer object that contains 3D data views
-#ifndef __MAKETA__
-  typedef DataViewer	inherited;
-#endif
+class TAMISC_API T3DataViewer : public FrameViewer {
+  // top-level taDataViewer object that contains one 3D data view of multiple objects
+INHERITED(FrameViewer)
 friend class T3DataView;
-friend class iT3DataViewer;
 public:
   T3DataViewRoot	root_view; // #BROWSE placeholder item -- contains the actual root(s) DataView items as children
 
-  iT3DataViewer*	viewer_win() {return (iT3DataViewer*)m_window;}
+  inline iT3DataViewer*	widget() {return (iT3DataViewer*)m_widget;} // lex override
+//  iT3DataViewer*	viewer_win() {return (iT3DataViewer*)m_widget;}
 
   virtual void		AddView(T3DataView* view); // add a view
-  override void		OpenNewWindow();
 
-  void			InitLinks();
-  void			CutLinks();
-  TA_DATAVIEWFUNS(T3DataViewer, DataViewer)
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const T3DataViewer& cp);
+  COPY_FUNS(T3DataViewer, FrameViewer)
+  TA_DATAVIEWFUNS(T3DataViewer, FrameViewer)
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void		SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 
 
-  override void		OpenNewWindow_impl(); // #IGNORE
-  override void 	WindowClosing(bool& cancel); // #IGNORE
+  override void		Constr_impl(QWidget* gui_parent = NULL); // #IGNORE
+  override QWidget*	ConstrWidget_impl(QWidget* gui_parent = NULL); // #IGNORE
+  override void 	WindowClosing(CancelOp& cancel_op); // #IGNORE
   override void		Clear_impl(taDataView* par = NULL); // #IGNORE
   override void		Render_pre(taDataView* par = NULL); // #IGNORE
   override void		Render_impl();  // #IGNORE
@@ -501,7 +501,6 @@ private:
   void			Initialize();
   void			Destroy();
 };
-
 
 
 #endif

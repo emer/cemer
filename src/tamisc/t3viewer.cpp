@@ -146,9 +146,6 @@ void T3DataView::Destroy() {
 
 void T3DataView::CutLinks() {
   Reset();
-  ISelectableHost* dvh = this->host();
-  if (dvh)
-    dvh->ItemRemoving(this);
   if (m_transform) {
     m_transform->CutLinks();
     delete m_transform;
@@ -215,10 +212,6 @@ void T3DataView::Clear_impl(taDataView* par) { // note: no absolute guarantee pa
 
 
 void T3DataView::Close() {
-  ISelectableHost* host = this->host();
-  if (host) {
-    host->ItemRemoving(this); // removes from sel list, etc.
-  }
   if (m_parent) {
     m_parent->CloseChild(this);
   }
@@ -761,46 +754,39 @@ QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
   return m_verScrollBar;
 }
 
+void iT3ViewspaceWidget::UpdateSelectedItems_impl() {
+  //TODO
+}
+
 //////////////////////////
 //   iT3DataViewer	//
 //////////////////////////
 
-iT3DataViewer::iT3DataViewer(void* root_, TypeDef* typ_, T3DataViewer* viewer_, QWidget* parent)
-:iTabDataViewer((DataViewer*)viewer_, parent)
+iT3DataViewer::iT3DataViewer(T3DataViewer* viewer_, QWidget* parent)
+:inherited(viewer_, parent)
 {
-  splMain = NULL;
-  t3vs = NULL;
-  m_ra = NULL;
-  m_root = root_;
-  m_typ = typ_;
-  taiMisc::viewer_wins.Add(this);
+  Init();
 }
 
 iT3DataViewer::~iT3DataViewer() {
-  taiMisc::viewer_wins.Remove(this);
   Reset_impl();
 }
 
-void iT3DataViewer::Constr_Body_impl() {
-  inherited::Constr_Body_impl();
-  splMain = new QSplitter(this, "splMain");
+void iT3DataViewer::Init() {
+  QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->setSpacing(0);  lay->setMargin(0);
   //create the so viewer
-  t3vs = new iT3ViewspaceWidget(splMain);
-  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for 3d viewer
+  t3vs = new iT3ViewspaceWidget(this);
+  lay->addWidget(t3vs);
+/*obs  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for 3d viewer
   t3vs->resize(mw, t3vs->height());
-  t3vs->setMinimumWidth(mw);
+  t3vs->setMinimumWidth(mw);*/
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
 
   m_ra = new iRenderArea(t3vs);
   m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
   t3vs->setRenderArea(m_ra);
-
-  m_curTabView = AddTabView(splMain);
-
-  m_body = splMain;
-  splMain->show();
-  setCentralWidget(splMain);
 
   connect(t3vs, SIGNAL(contextMenuRequested(const QPoint&)),
       this, SLOT(vs_contextMenuRequested(const QPoint&)) );
@@ -811,14 +797,12 @@ void iT3DataViewer::Constr_Body_impl() {
       this, SLOT(lvwDataTree_selectionChanged(QListViewItem*)) ); */
 }
 
-void iT3DataViewer::Constr_Menu_impl() {
+/*void iT3DataViewer::Constr_Menu_impl() {
   inherited::Constr_Menu_impl();
-
   taiAction* act = AddAction(new taiAction("Inventor", QKeySequence(), "fileExportInventor" ));
   act->AddTo(fileExportMenu);
   act->connect(taiAction::action, this, SLOT( fileExportInventor() ) );
-
-}
+} */
 
 
 void iT3DataViewer::fileExportInventor() {
@@ -866,7 +850,7 @@ void iT3DataViewer::Render_post() {
 }
 
 void iT3DataViewer::Reset_impl() {
-  m_sel_items.Reset();
+//TODO  m_sel_items.Reset();
   setSceneTop(NULL);
 }
 
@@ -879,7 +863,7 @@ void iT3DataViewer::setSceneTop(SoNode* node) {
 }
 
 void iT3DataViewer::T3DataViewClosing(T3DataView* node) {
-  RemoveSelectedItem(node);
+//TODO  RemoveSelectedItem(node);
 }
 
 void iT3DataViewer::viewRefresh() {
@@ -888,7 +872,7 @@ void iT3DataViewer::viewRefresh() {
 }
 
 void iT3DataViewer::vs_contextMenuRequested(const QPoint& pos) {
-  ISelectable* ci = curItem();
+/*TODO  ISelectable* ci = curItem();
   //TODO: what to do if nothing selected, but user right clicks???
   //TODO: how to handle multi-select
   if (ci == NULL) return;
@@ -904,11 +888,11 @@ void iT3DataViewer::vs_contextMenuRequested(const QPoint& pos) {
   if (menu->count() > 0) { //only show if any items!
     menu->exec(pos);
   }
-  delete menu;
+  delete menu; */
 }
 
 void iT3DataViewer::vs_SoSelectionEvent(iSoSelectionEvent* ev) {
-  SetThisAsHandler(); // for sure we are clipboard/focus handler
+/*TODO  SetThisAsHandler(); // for sure we are clipboard/focus handler
   T3DataView* t3node = root()->GetViewFromPath(ev->path);
   if (!t3node) return;
 
@@ -916,7 +900,7 @@ void iT3DataViewer::vs_SoSelectionEvent(iSoSelectionEvent* ev) {
     AddSelectedItem(t3node);
   } else {
     RemoveSelectedItem(t3node);
-  }
+  } */
 }
 
 
@@ -943,51 +927,54 @@ void T3DataViewer::CutLinks() {
   inherited::CutLinks();
 }
 
-void T3DataViewer::AddView(T3DataView* view) {
-  root_view.children.Add(view);
-  if (m_window)
-    view->OnWindowBind(viewer_win());
+void T3DataViewer::Copy_(const T3DataViewer& cp) {
+  root_view = cp.root_view;
 }
 
-// note: dispatchers for these _impl always check for the window
+
+void T3DataViewer::AddView(T3DataView* view) {
+  root_view.children.Add(view);
+  if (m_widget)
+    view->OnWindowBind(widget());
+}
+
+// note: dispatchers for these _impl always check for the widget
 void T3DataViewer::Clear_impl(taDataView* par) {
   root_view.Clear_impl(this);
-  viewer_win()->Reset_impl();
+  widget()->Reset_impl();
   inherited::Clear_impl(par);
 }
 
-void T3DataViewer::OpenNewWindow() {
-  bool viewAll = (m_window == NULL);
-  inherited::OpenNewWindow();
-  // if first opening, do a viewall to center all geometry in viewer
-  if (viewAll && m_window) {
-    viewer_win()->ra()->viewAll();
-  }
+void T3DataViewer::Constr_impl(QWidget* gui_parent) {
+  inherited::Constr_impl(gui_parent);
+  root_view.host = widget()->t3vs; // TODO: prob should encapsulate this better
+  root_view.OnWindowBind(widget());
+  // on first opening, do a viewall to center all geometry in viewer
+  widget()->ra()->viewAll();
 }
 
-void T3DataViewer::OpenNewWindow_impl() {
-  inherited::OpenNewWindow_impl();
-  root_view.host = viewer_win();
-  root_view.OnWindowBind(viewer_win());
+QWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  iT3DataViewer* rval = new iT3DataViewer(this, gui_parent);
+  return rval;
 }
 
 void T3DataViewer::Render_pre(taDataView* par) {
   inherited::Render_pre(par);
-  viewer_win()->Render_pre();
+  widget()->Render_pre();
   root_view.Render_pre(this);
 }
 
 void T3DataViewer::Render_impl() {
   inherited::Render_impl();
   root_view.Render_impl();
-  viewer_win()->Render_impl();
+  widget()->Render_impl();
 }
 
 void T3DataViewer::Render_post() {
   inherited::Render_post();
   root_view.Render_post();
-  viewer_win()->setSceneTop(root_view.node_so());
-  viewer_win()->Render_post();
+  widget()->setSceneTop(root_view.node_so());
+  widget()->Render_post();
 }
 
 void T3DataViewer::Reset_impl() {
@@ -995,9 +982,11 @@ void T3DataViewer::Reset_impl() {
   root_view.Reset();
 }
 
-void T3DataViewer::WindowClosing(bool& cancel) {
-  inherited::WindowClosing(cancel);
-  if (!cancel) {
+void T3DataViewer::WindowClosing(CancelOp& cancel_op) {
+  inherited::WindowClosing(cancel_op);
+  if (cancel_op != CO_CANCEL) {
     root_view.host = NULL;
   }
 }
+
+

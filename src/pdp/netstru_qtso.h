@@ -317,7 +317,7 @@ public:
     UDM_CYLINDER	// #LABEL_3d_Cylinder
   };
 
-  static NetView*	New(pdpDataViewer* viewer, Network* net); // create a new instance and add to viewer
+  static NetView*	New(T3DataViewer* viewer, Network* net); // create a new instance and add to viewer
 
 
   T3DataView_PtrList	layers; // #NO_SAVE

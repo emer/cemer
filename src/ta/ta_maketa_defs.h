@@ -153,7 +153,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QDockWindow: public QWidget  {
+class QDockWidget: public QWidget  {
 //  
 public:
 	int dummy; // #IGNORE

@@ -856,7 +856,7 @@ void TextLogView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iTextLogView_Panel(this);
-    vw->AddPanelNewTab(m_lvp);
+    vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 
@@ -1211,7 +1211,7 @@ void NetLogView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iNetLogView_Panel(this);
-    vw->AddPanelNewTab(m_lvp);
+    vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 
@@ -1461,7 +1461,7 @@ void GridLogView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGridLogView_Panel(this);
-    vw->AddPanelNewTab(lvp());
+    vw->window()->AddPanelNewTab(lvp());
   }
 }
 
@@ -1795,7 +1795,7 @@ void GraphLogView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGraphLogView_Panel(this);
-    vw->AddPanelNewTab(m_lvp);
+    vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 

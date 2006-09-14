@@ -50,20 +50,7 @@ class taTypeSpaceDataLink;
 class taTypeInfoTreeDataNode;
 class taTypeSpaceTreeDataNode;
 
-class iClassBrowser;
-class ClassBrowser;
-
-enum TypeInfoKind { // used in switch statements to particularize instances
-  TIK_ENUM,
-  TIK_MEMBER,
-  TIK_METHOD,
-  TIK_TYPE,
-  TIK_ENUMSPACE,
-  TIK_TOKENSPACE,
-  TIK_MEMBERSPACE,
-  TIK_METHODSPACE,
-  TIK_TYPESPACE
-};
+class iClassBrowseViewer;
 
 //////////////////////////
 //   tabDataLink	//
@@ -72,14 +59,14 @@ enum TypeInfoKind { // used in switch statements to particularize instances
 class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
 INHERITED(taiDataLink)
 public:
-  const TypeInfoKind 	tik;
+  const taMisc::TypeInfoKind 	tik;
   TypeDef*		type() const {return m_type;}
   
   DL_FUNS(taClassDataLink); //
 
 protected:
   TypeDef*		m_type;
-  taClassDataLink(TypeInfoKind tik_, void* data_, taDataLink* &link_ref_);  //
+  taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataLink* &link_ref_);  //
 };
 
 
@@ -98,7 +85,7 @@ public:
   override String	GetDisplayName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
 
-  taTypeInfoDataLink(TypeInfoKind tik_, TypeItem* data_);  //
+  taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_);  //
   DL_FUNS(taTypeInfoDataLink); //
 
 protected:
@@ -125,7 +112,7 @@ public:
 //  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
   override bool		HasChildItems() {return true;} 
 
-  taTypeSpaceDataLink_Base(TypeInfoKind tik_, taPtrList_impl* data_, 
+  taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, taPtrList_impl* data_, 
     taDataLink* &link_ref_);
   DL_FUNS(taTypeSpaceDataLink_Base) //
 protected:
@@ -208,7 +195,7 @@ public:
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const TypeInfoKind	tik;
+  const taMisc::TypeInfoKind	tik;
   
   TypeItem* 		data() {return ((taTypeInfoDataLink*)m_link)->data();}
   taTypeInfoDataLink* 	link() const {return (taTypeInfoDataLink*)m_link;}
@@ -233,8 +220,8 @@ private:
 class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const TypeInfoKind	tik;
-  TypeInfoKind		child_tik() const {return m_child_tik;}
+  const taMisc::TypeInfoKind	tik;
+  taMisc::TypeInfoKind		child_tik() const {return m_child_tik;}
   TypeDef*		child_type() const {return m_child_type;}
   
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
@@ -260,7 +247,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taTypeSpaceTreeDataNode;}
 protected:
-  TypeInfoKind		m_child_tik;
+  taMisc::TypeInfoKind		m_child_tik;
   TypeDef*		m_child_type;
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
@@ -271,55 +258,20 @@ private:
 };
 
 
-class TA_API iClassBrowser: public iDataBrowserBase { // viewer window used for class browsing
+class TA_API iClassBrowseViewer: public iBrowseViewer { // viewer window used for class browsing
     Q_OBJECT
-INHERITED(iDataBrowserBase)
+INHERITED(iBrowseViewer)
 friend class ClassBrowser;
 public:
 
-  ClassBrowser*		browser() {return (ClassBrowser*)m_viewer;}
+  ClassBrowseViewer*		browser() {return (ClassBrowseViewer*)m_viewer;}
 
-  ~iClassBrowser();
+  iClassBrowseViewer(ClassBrowseViewer* browser_, QWidget* parent = 0);
+  ~iClassBrowseViewer();
 
 public slots:
   virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
-
-protected:
-  iClassBrowser(void* root_, TypeDef* root_typ_, ClassBrowser* browser_,
-    QWidget* parent = 0);
-
-protected:
-  TypeDef* 		m_root_typ;
-
-  void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
   override iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); 
-};
-
-
-
-//////////////////////////////////
-//	DataBrowser		//
-//////////////////////////////////
-
-class TA_API ClassBrowser : public DataViewer {
-  // #NO_TOKENS represents a class browser instance
-friend class iClassBrowser;
-public:
-  static ClassBrowser*	New(void* root_, TypeDef* root_typ);
-
-  void* 		root;
-  TypeDef* 		root_typ;
-
-  iClassBrowser*	browser_win() {return (iClassBrowser*)m_window;}
-
-  TA_BASEFUNS(ClassBrowser)
-protected:
-  override void		Constr_Window_impl(); // #IGNORE
-  override void		Render_impl(); // #IGNORE
-  override void		Clear_impl(); // #IGNORE
-private:
-  void			Initialize();
-  void			Destroy() {}
 };
 
 
@@ -327,9 +279,9 @@ class TA_API taiTypeItemDataHost: public taiEditDataHost { // #IGNORE displays d
 INHERITED(taiEditDataHost)
 public:
   TypeItem*		ti; // #IGNORE
-  TypeInfoKind		tik;
+  taMisc::TypeInfoKind		tik;
   
-  taiTypeItemDataHost(TypeItem* ti_, TypeInfoKind tik, bool read_only_ = false,
+  taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);
 protected:
   override void 	Constr_Data();

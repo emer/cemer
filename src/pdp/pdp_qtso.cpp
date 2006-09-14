@@ -199,31 +199,36 @@ void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff)
 
 
 //////////////////////////
-//   iPdpDataBrowser	//
+//   iPdpMainWindowViewer	//
 //////////////////////////
 
-iPdpDataBrowser::iPdpDataBrowser(taBase* root_, MemberDef* md_, TypeDef* typ_, 
-  PdpDataBrowser* browser_,  QWidget* parent)
-:iDataBrowser(root_, md_, typ_, browser_,  parent)
+
+iPdpMainWindowViewer::iPdpMainWindowViewer(PdpMainWindowViewer* browser_,  QWidget* parent)
+:inherited(browser_,  parent)
 {  
+  cur_project = NULL;
 }
 
-iPdpDataBrowser::~iPdpDataBrowser() {
+iPdpMainWindowViewer::~iPdpMainWindowViewer() {
 }
 
-void iPdpDataBrowser::Constr_Menu_impl() {
+void iPdpMainWindowViewer::Constr_Menu_impl() {
   inherited::Constr_Menu_impl();
   // customize the menu text
 //TODO: add custom hints to the file items
 }
 
-ProjectBase* iPdpDataBrowser::curProject() {
-  DataBrowser* db = browser();
-  if (!db) return NULL;
-  if (!db->root) return NULL; //shouldn't happen
-  if (!db->root->GetTypeDef()->InheritsFrom(&TA_ProjectBase)) return NULL; // we aren't a project
-  
-  return (ProjectBase*)db->root.ptr();
+ProjectBase* iPdpMainWindowViewer::curProject() {
+  if (!cur_project) {
+    MainWindowViewer* db = viewer();
+    if (!db) return NULL; // shouldn't happen
+    BrowseViewer* bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+    if (!bv) return NULL; // generally shouldn't happen (we usually have a browse tree)
+    if (!bv->root()) return NULL; //shouldn't happen
+    if (!bv->rootType()->InheritsFrom(&TA_ProjectBase)) return NULL; // we aren't a project
+    cur_project = (ProjectBase*)bv->root();
+  }
+  return cur_project;
 /* obs
   ProjectBase* rval = NULL;
   ISelectable* ci = curItem();
@@ -242,21 +247,14 @@ ProjectBase* iPdpDataBrowser::curProject() {
   return rval; */
 }
 
-void iPdpDataBrowser::NewBrowser(ProjectBase* proj) {
-  if (!proj) return;
-  PdpDataBrowser* db = PdpDataBrowser::New(proj,NULL, false, true);
-  db->InitLinks(); // no one else to do it!
-  db->ViewWindow();
-}
 
-
-void iPdpDataBrowser::fileNew() {
+void iPdpMainWindowViewer::fileNew() {
   if (!pdpMisc::root) return;
   ProjectBase* proj = (ProjectBase*)pdpMisc::root->projects.New(); // let user choose type
   NewBrowser(proj);
 }
 
-void iPdpDataBrowser::fileOpen() {
+void iPdpMainWindowViewer::fileOpen() {
   if (!pdpMisc::root) return;
   void* el = NULL;
   pdpMisc::root->projects.Load_File(&TA_ProjectBase, &el);
@@ -264,84 +262,43 @@ void iPdpDataBrowser::fileOpen() {
   NewBrowser(proj);
 }
 
-void iPdpDataBrowser::fileSave() {
+void iPdpMainWindowViewer::fileSave() {
   ProjectBase* proj = curProject();
   if (!proj) return;
   proj->Save_File();
 }
 
-void iPdpDataBrowser::fileSaveAs() {
+void iPdpMainWindowViewer::fileSaveAs() {
   ProjectBase* proj = curProject();
   if (!proj) return;
   proj->SaveAs_File();
 }
 
-void iPdpDataBrowser::fileSaveAll() {
+void iPdpMainWindowViewer::fileSaveAll() {
   if (!pdpMisc::root) return;
   pdpMisc::root->SaveAll();
 }
 
-void iPdpDataBrowser::fileClose() {
+void iPdpMainWindowViewer::fileClose() {
   ProjectBase* proj = curProject();
   if (!proj) return;
 //TODO: shouldn't we save, or confirm???
   proj->Close();
 }
 
+void iPdpMainWindowViewer::NewBrowser(ProjectBase* proj) {
+  if (!proj) return;
+  MainWindowViewer* db = MainWindowViewer::NewBrowser(proj, NULL);
+  db->InitLinks(); // no one else to do it!
+  db->ViewWindow();
+}
+
 
 //////////////////////////
-//   PdpDataBrowser	//
+//   PdpMainWindowViewer//
 //////////////////////////
 
-PdpDataBrowser* PdpDataBrowser::New(taBase* root, MemberDef* md, bool is_root
-  ,bool del_on_close) 
-{
-  PdpDataBrowser* rval = new PdpDataBrowser();
-  rval->Constr(root, md, is_root);
-  rval->del_root_on_close = del_on_close;
+QWidget* PdpMainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  iPdpMainWindowViewer* rval = new iPdpMainWindowViewer(this, gui_parent);
   return rval;
 }
-
-void PdpDataBrowser::Constr_Window_impl() {
-  if (!root) return;
-  m_window = new iPdpDataBrowser(root, md, root->GetTypeDef(), this);
-}
-
-
-//////////////////////////
-//   ipdpDataViewer	//
-//////////////////////////
-
-ipdpDataViewer::ipdpDataViewer(void* root_, TypeDef* typ_, pdpDataViewer* viewer_,
-  QWidget* parent)
-:iT3DataViewer(root_, typ_, (T3DataViewer*)viewer_, parent)
-{
-}
-
-/*void iNetworkViewer::SetActionsEnabled_impl() {
-  //todo
-} */
-
-
-//////////////////////////
-//	pdpDataViewer	//
-//////////////////////////
-
-pdpDataViewer* pdpDataViewer::New(ProjectBase* proj_) {
-  pdpDataViewer* rval = new pdpDataViewer();
-  proj_->AddDataView(rval);
-  return rval;
-}
-
-void pdpDataViewer::Initialize() {
-  data_base = &TA_ProjectBase;
-}
-
-void pdpDataViewer::Destroy() {
-}
-
-void pdpDataViewer::Constr_Window_impl() {
-  m_window = new ipdpDataViewer(proj(), proj()->GetTypeDef(), this);
-//note:multi is default  viewer_win()->sel_mode = iT3DataViewer::SM_MULTI;
-}
-

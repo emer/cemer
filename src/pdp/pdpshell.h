@@ -264,7 +264,8 @@ public:
   int 	SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 
 #ifdef TA_GUI
-  virtual pdpDataViewer* NewViewer(); // create a new, empty viewer -- note: window not opened yet
+  virtual MainWindowViewer* NewViewer(bool t3_frame = false); 
+    // create a new, empty viewer -- note: window not opened yet
   virtual void	OpenNetworkViewer(Network* net = NULL);
   // #MENU open a viewer on this indicated network
   virtual void	UpdateSimLog();

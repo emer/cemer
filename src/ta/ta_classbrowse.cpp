@@ -53,15 +53,15 @@
 
 /*
   switch(tik) {
-  case TIK_ENUM:
+  case taMisc::TIK_ENUM:
     break;
-  case TIK_MEMBER:
+  case taMisc::TIK_MEMBER:
     break;
-  case TIK_METHOD:
+  case taMisc::TIK_METHOD:
     break;
-  case TIK_TYPE:
+  case taMisc::TIK_TYPE:
     break;
-  case TIK_TOKEN:
+  case taMisc::TIK_TOKEN:
     break;
   }
   
@@ -71,19 +71,19 @@
 //  taClassDataLink	//
 //////////////////////////
 
-taClassDataLink::taClassDataLink(TypeInfoKind tik_, void* data_, taDataLink* &link_ref_)
+taClassDataLink::taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataLink* &link_ref_)
 :inherited(data_, link_ref_), tik(tik_)
 {
   switch (tik) {
-  case TIK_ENUM: m_type = &TA_EnumDef; break;
-  case TIK_MEMBER: m_type = &TA_MemberDef; break;
-  case TIK_METHOD: m_type = &TA_MethodDef; break;
-  case TIK_TYPE: m_type = &TA_TypeDef; break;
-  case TIK_ENUMSPACE: m_type = &TA_EnumSpace; break;
-  case TIK_TOKENSPACE: m_type = &TA_TokenSpace; break;
-  case TIK_MEMBERSPACE: m_type = &TA_MemberSpace; break;
-  case TIK_METHODSPACE: m_type = &TA_MethodSpace; break;
-  case TIK_TYPESPACE: m_type = &TA_TypeSpace; break;
+  case taMisc::TIK_ENUM: m_type = &TA_EnumDef; break;
+  case taMisc::TIK_MEMBER: m_type = &TA_MemberDef; break;
+  case taMisc::TIK_METHOD: m_type = &TA_MethodDef; break;
+  case taMisc::TIK_TYPE: m_type = &TA_TypeDef; break;
+  case taMisc::TIK_ENUMSPACE: m_type = &TA_EnumSpace; break;
+  case taMisc::TIK_TOKENSPACE: m_type = &TA_TokenSpace; break;
+  case taMisc::TIK_MEMBERSPACE: m_type = &TA_MemberSpace; break;
+  case taMisc::TIK_METHODSPACE: m_type = &TA_MethodSpace; break;
+  case taMisc::TIK_TYPESPACE: m_type = &TA_TypeSpace; break;
   default: m_type = NULL; // compiler food
   }
 }
@@ -92,7 +92,7 @@ taClassDataLink::taClassDataLink(TypeInfoKind tik_, void* data_, taDataLink* &li
 //  taTypeInfoDataLink	//
 //////////////////////////
 
-taTypeInfoDataLink::taTypeInfoDataLink(TypeInfoKind tik_, TypeItem* data_)
+taTypeInfoDataLink::taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_)
 :inherited(tik_, data_, data_->data_link)
 {
 }
@@ -111,10 +111,10 @@ taiTreeDataNode* taTypeInfoDataLink::CreateTreeDataNode_impl(MemberDef* md, taiT
 bool taTypeInfoDataLink::HasChildItems() {
   bool rval = false;
   switch(tik) {
-  case TIK_ENUM: break;
-  case TIK_MEMBER: break;
-  case TIK_METHOD: break;
-  case TIK_TYPE: {
+  case taMisc::TIK_ENUM: break;
+  case taMisc::TIK_MEMBER: break;
+  case taMisc::TIK_METHOD: break;
+  case taMisc::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
     if (td->internal) {
       break;
@@ -152,7 +152,7 @@ bool taTypeInfoDataLink::ShowMember(MemberDef* md) {
 //  taTypeSpaceDataLink_Base//
 //////////////////////////
 
-taTypeSpaceDataLink_Base::taTypeSpaceDataLink_Base(TypeInfoKind tik_, 
+taTypeSpaceDataLink_Base::taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, 
   taPtrList_impl* data_, taDataLink* &link_ref_)
 :inherited(tik_, data_, link_ref_)
 {
@@ -176,7 +176,7 @@ taiTreeDataNode* taTypeSpaceDataLink_Base::CreateTreeDataNode_impl(MemberDef* md
 //////////////////////////
 
 taTypeSpaceDataLink::taTypeSpaceDataLink(TypeSpace* data_)
-:inherited(TIK_TYPESPACE, data_, data_->data_link)
+:inherited(taMisc::TIK_TYPESPACE, data_, data_->data_link)
 {
   dm = DM_DefaultRoot; // default for root, generally we override for other cases
 }
@@ -246,7 +246,7 @@ bool taTypeSpaceDataLink::ShowChild(TypeDef* td) const {
 //////////////////////////
 
 taMethodSpaceDataLink::taMethodSpaceDataLink(MethodSpace* data_)
-:inherited(TIK_METHODSPACE, data_, data_->data_link)
+:inherited(taMisc::TIK_METHODSPACE, data_, data_->data_link)
 {
 }
 
@@ -306,7 +306,7 @@ String taMethodSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString
 //////////////////////////
 
 taMemberSpaceDataLink::taMemberSpaceDataLink(MemberSpace* data_)
-:inherited(TIK_MEMBERSPACE, data_, data_->data_link)
+:inherited(taMisc::TIK_MEMBERSPACE, data_, data_->data_link)
 {
 }
 
@@ -385,19 +385,19 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
   // following is default for most items
   int flags = iTreeViewItem::DNF_IS_FOLDER | iTreeViewItem::DNF_NO_CAN_DROP;
   switch (tik) {
-  case TIK_ENUM: {
+  case taMisc::TIK_ENUM: {
     }
     break;
-  case TIK_MEMBER: {
+  case taMisc::TIK_MEMBER: {
     }
     break;
-  case TIK_METHOD: {
+  case taMisc::TIK_METHOD: {
     MethodDef* md = static_cast<MethodDef*>(data());
     //TODO: enumerate params
     taiDataLink* dl = NULL;
     }
     break;
-  case TIK_TYPE: {
+  case taMisc::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
     if (td->internal) {
       break;
@@ -502,20 +502,20 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
 void taTypeSpaceTreeDataNode::init(taTypeSpaceDataLink_Base* link_, int flags_) {
   m_child_type = NULL; 
   switch (link_->tik) {
-  case TIK_ENUMSPACE: 
-    m_child_tik = TIK_ENUM; 
+  case taMisc::TIK_ENUMSPACE: 
+    m_child_tik = taMisc::TIK_ENUM; 
     m_child_type = &TA_EnumDef; 
     break;
-  case TIK_TYPESPACE: 
-    m_child_tik = TIK_TYPE; 
+  case taMisc::TIK_TYPESPACE: 
+    m_child_tik = taMisc::TIK_TYPE; 
     m_child_type = &TA_TypeDef; 
     break;
-  case TIK_METHODSPACE: 
-    m_child_tik = TIK_METHOD; 
+  case taMisc::TIK_METHODSPACE: 
+    m_child_tik = taMisc::TIK_METHOD; 
     m_child_type = &TA_MethodDef; 
     break;
-  case TIK_MEMBERSPACE: 
-    m_child_tik = TIK_MEMBER; 
+  case taMisc::TIK_MEMBERSPACE: 
+    m_child_tik = taMisc::TIK_MEMBER; 
     m_child_type = &TA_MemberDef; 
     break;
   default:  break;
@@ -541,13 +541,13 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
   taiTreeDataNode* last_child_node = NULL;
   int flags = 0;
     switch (tik) {
-    case TIK_MEMBERSPACE:
+    case taMisc::TIK_MEMBERSPACE:
       flags = iTreeViewItem::DNF_NO_CAN_DROP;
       break;
-    case TIK_METHODSPACE:
+    case taMisc::TIK_METHODSPACE:
       flags = iTreeViewItem::DNF_NO_CAN_DROP;
       break;
-    case TIK_TYPESPACE: 
+    case taMisc::TIK_TYPESPACE: 
       flags = iTreeViewItem::DNF_CAN_BROWSE | iTreeViewItem::DNF_NO_CAN_DROP;
       break;
     default: break;
@@ -557,15 +557,15 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
 //none    
     // do any modal type-specific processing for the item
     switch (tik) {
-    case TIK_MEMBERSPACE: {
+    case taMisc::TIK_MEMBERSPACE: {
       MemberDef* md = static_cast<MemberDef*>(data()->SafeEl_(i));
       if (!ShowMember(md)) continue;
     } break;
-    case TIK_METHODSPACE: {
+    case taMisc::TIK_METHODSPACE: {
       MethodDef* md = static_cast<MethodDef*>(data()->SafeEl_(i));
       if (!ShowMethod(md)) continue;
     } break;
-    case TIK_TYPESPACE: {
+    case taMisc::TIK_TYPESPACE: {
       TypeDef* td = static_cast<TypeDef*>(data()->SafeEl_(i));
       if (!ShowType(td)) continue;
     } break;
@@ -622,38 +622,19 @@ bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
 
 
 //////////////////////////
-//   iClassBrowser 	//
+//   iClassBrowseViewer 	//
 //////////////////////////
 
-iClassBrowser::iClassBrowser(void* root_, TypeDef* root_typ_, ClassBrowser* browser_,
-  QWidget* parent)
-: iDataBrowserBase(root_, (DataViewer*)browser_, parent)
-{
-  m_root_typ = root_typ_;
-}
-
-iClassBrowser::~iClassBrowser()
+iClassBrowseViewer::iClassBrowseViewer(ClassBrowseViewer* browser_, QWidget* parent)
+:inherited((BrowseViewer*)browser_, parent)
 {
 }
 
-void iClassBrowser::ApplyRoot() {
-  if (!m_root) return;
-  taiDataLink* dl = taiViewType::StatGetDataLink(m_root, m_root_typ);
-  if (dl == NULL) return; // shouldn't happen...
-
-  taiTreeDataNode* node;
-  String nm = dl->GetName();
-  if (nm.empty()) nm = "(root)";
-  node = dl->CreateTreeDataNode((MemberDef*)NULL, lvwDataTree, NULL, nm,
-    iTreeViewItem::DNF_UPDATE_NAME);
-    
-  // always show the first items under the root
-  node->CreateChildren();
-  setCurItem(node);
-  lvwDataTree->setItemExpanded(node, true); // always open root node
+iClassBrowseViewer::~iClassBrowseViewer()
+{
 }
 
-iDataPanel* iClassBrowser::MakeNewDataPanel_(taiDataLink* link) {
+iDataPanel* iClassBrowseViewer::MakeNewDataPanel_(taiDataLink* link) {
   TypeDef* typ = link->GetTypeDef();
   if (!typ->InheritsFrom(&TA_taTypeInfoDataLink)) {
     return inherited::MakeNewDataPanel_(link);
@@ -666,49 +647,13 @@ iDataPanel* iClassBrowser::MakeNewDataPanel_(taiDataLink* link) {
   return dp;
 } 
 
-void iClassBrowser::mnuNewBrowser(taiAction* mel) {
+void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
-  ClassBrowser* brows = ClassBrowser::New(dl->data(), dl->type());
+  MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(dl->data(),
+     dl->GetDataTypeDef(), dl->GetDataMemberDef());
   if (!brows) return;
   brows->ViewWindow();
-  // move selection up to parent of cloned item, to reduce issues of changed data, confusion, etc.
-  setCurItem(node->parent(), true);
-
-  //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
-}
-
-
-//////////////////////////////////
-// 	ClassBrowser	 	//
-//////////////////////////////////
-
-ClassBrowser* ClassBrowser::New(void* root, TypeDef* root_typ) {
-  ClassBrowser* rval = new ClassBrowser();
-  rval->m_is_root = false; // class browser can never be the root
-  rval->root = root;
-  rval->root_typ = root_typ;
-  return rval;
-}
-
-void ClassBrowser::Initialize() {
-  link_type = &TA_taiDataLink;
-}
-
-void ClassBrowser::Constr_Window_impl() {
-  if (!root) return;
-  m_window = new iClassBrowser(root, root_typ, this);
-}
-
-void ClassBrowser::Clear_impl() {
-  if (!m_window) return;
-  browser_win()->Reset();
-}
-
-
-void ClassBrowser::Render_impl() {
-  if (!m_window) return;
-  browser_win()->ApplyRoot();
 }
 
 
@@ -716,7 +661,7 @@ void ClassBrowser::Render_impl() {
 //   taiTypeItemDataHost	//
 //////////////////////////////////
 
-taiTypeItemDataHost::taiTypeItemDataHost(TypeItem* ti_, TypeInfoKind tik_, 
+taiTypeItemDataHost::taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik_, 
   bool read_only_, bool modal_, QObject* parent)
 :inherited(NULL, NULL, read_only, modal_, parent)
 {
@@ -759,7 +704,7 @@ void taiTypeItemDataHost::Constr_Labels() {
   AddData(row++, rep, true);
   
   switch (tik) {
-  case TIK_ENUM: {
+  case taMisc::TIK_ENUM: {
     EnumDef* ed = static_cast<EnumDef*>(ti);
     // value
     rep = new iLineEdit(String(ed->enum_no), body);
@@ -768,7 +713,7 @@ void taiTypeItemDataHost::Constr_Labels() {
     AddData(row++, rep, true);
     break;
     }
-  case TIK_MEMBER:  {
+  case taMisc::TIK_MEMBER:  {
     MemberDef* md = static_cast<MemberDef*>(ti);
     // type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
@@ -778,7 +723,7 @@ void taiTypeItemDataHost::Constr_Labels() {
     break;
     }
 
-  case TIK_METHOD:  {
+  case taMisc::TIK_METHOD:  {
     MethodDef* md = static_cast<MethodDef*>(ti);
     // return type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
@@ -794,7 +739,7 @@ void taiTypeItemDataHost::Constr_Labels() {
     break;
     }
 
-  case TIK_TYPE:  {
+  case taMisc::TIK_TYPE:  {
     TypeDef* td = static_cast<TypeDef*>(ti);
     // size
     iSpinBox* repi = new iSpinBox(body);
@@ -830,43 +775,33 @@ int taTypeInfoViewType::BidForView(TypeDef* td) {
 taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
   if (!el) return NULL; 
 
-  TypeInfoKind tik;
-  if (td->InheritsFrom(&TA_EnumDef)) tik = TIK_ENUM;
-  else if (td->InheritsFrom(&TA_MemberDef)) tik = TIK_MEMBER;
-  else if (td->InheritsFrom(&TA_MethodDef)) tik = TIK_METHOD;
-  else if (td->InheritsFrom(&TA_TypeDef)) tik = TIK_TYPE;
-  else if (td->InheritsFrom(&TA_EnumSpace))tik = TIK_ENUMSPACE;
-  else if (td->InheritsFrom(&TA_TokenSpace)) tik = TIK_TOKENSPACE;
-  else if (td->InheritsFrom(&TA_MemberSpace)) tik = TIK_MEMBERSPACE;
-  else if (td->InheritsFrom(&TA_MethodSpace)) tik = TIK_METHODSPACE;
-  else if (td->InheritsFrom(&TA_TypeSpace)) tik = TIK_TYPESPACE;
-  else return NULL; // shouldn't happen
+  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(td);
 
   switch (tik) {
-  case TIK_ENUM:
-  case TIK_MEMBER:
-  case TIK_METHOD:
-  case TIK_TYPE: {
+  case taMisc::TIK_ENUM:
+  case taMisc::TIK_MEMBER:
+  case taMisc::TIK_METHOD:
+  case taMisc::TIK_TYPE: {
     TypeItem* ti = static_cast<TypeItem*>(el);
     if (ti->data_link) return static_cast<taiDataLink*>(ti->data_link);
     else return new taTypeInfoDataLink(tik, ti);
     }
-  case TIK_MEMBERSPACE: {
+  case taMisc::TIK_MEMBERSPACE: {
     MemberSpace* s = static_cast<MemberSpace*>(el);
     if (s->data_link != NULL) return static_cast<taiDataLink*>(s->data_link);
     else return new taMemberSpaceDataLink(s);
     }
-  case TIK_METHODSPACE: {
+  case taMisc::TIK_METHODSPACE: {
     MethodSpace* s = static_cast<MethodSpace*>(el);
     if (s->data_link != NULL) return static_cast<taiDataLink*>(s->data_link);
     else return new taMethodSpaceDataLink(s);
     }
-  case TIK_TYPESPACE: {
+  case taMisc::TIK_TYPESPACE: {
     TypeSpace* s = static_cast<TypeSpace*>(el);
     if (s->data_link != NULL) return static_cast<taiDataLink*>(s->data_link);
     else return new taTypeSpaceDataLink(s);
     }
-  case TIK_TOKENSPACE:
+  case taMisc::TIK_TOKENSPACE:
   default:
     return NULL;
   }

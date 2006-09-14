@@ -897,10 +897,17 @@ void ProjectBase::MakeDefaultWiz(bool auto_opn) {
 }
 
 #ifdef TA_GUI
-pdpDataViewer* ProjectBase::NewViewer() {
-  pdpDataViewer* vwr = NULL;
-  vwr = pdpDataViewer::New(this);
-  viewers.Add(vwr);
+MainWindowViewer* ProjectBase::NewViewer(bool t3_frame) {
+  MainWindowViewer* vwr = NULL;
+  vwr = PdpMainWindowViewer::NewBrowser(this); // no md
+  if (t3_frame) {
+    int idx;
+    vwr->FindFrameByType(&TA_T3DataViewer, idx);
+    if (idx < 0) {
+      vwr->frames.Add(new T3DataViewer);
+    }
+  }
+  viewers.Add(vwr); // does InitLink
   return vwr;
 }
 #endif
@@ -909,8 +916,10 @@ void ProjectBase::OpenNetworkViewer(Network* net) {
   if (!net) return;
 
   // network objects
-  pdpDataViewer* vwr = NewViewer();
-  NetView* nv = NetView::New(vwr, net);
+  MainWindowViewer* vwr = NewViewer();
+  T3DataViewer* t3v = new T3DataViewer;
+  vwr->frames.Add(t3v);
+  NetView* nv = NetView::New(t3v, net);
   nv->BuildAll();
 
   vwr->ViewWindow();

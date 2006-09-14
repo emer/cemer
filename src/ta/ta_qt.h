@@ -24,25 +24,37 @@
 
 #include "ifont.h"
 #include "igeometry.h"
+#ifndef __MAKETA__
+# include <QRect>
+#endif
 
 //nn? #include <unistd.h>
 
 // external classes:
 class taiData;
 class taiEditDataHost;
-class iDataViewer;
+class iMainWindowViewer;
+class iDockViewer;
 
 typedef taPtrList<QWidget> 	Widget_List;  // #IGNORE list of widgets
 
 class taiDialog_List;		// #IGNORE
 typedef taPtrList<taiEditDataHost> taiEditDataHost_List; // #IGNORE
-typedef taPtrList<iDataViewer> 	iDataViewer_PtrList; // #IGNORE
 
 
 //////////////////////////////
 //       taiMisc          //
 //////////////////////////////
 
+class TA_API iTopLevelWindow_List: public Widget_List {
+public:
+  iMainWindowViewer*	FastElAsMainWindow(int i); 
+    // returns item cast as requested, or NULL if not of that type
+  iDockViewer*		FastElAsDockWindow(int i);
+    // returns item cast as requested, or NULL if not of that type
+  iMainWindowViewer*	Peek_MainWindow(); // finds the topmost main window, NULL if none
+  iDockViewer*		Peek_DockWindow(); // finds the topmost undocked dock win, NULL if none
+};
 
 class TA_API taiMisc: public taiMiscCore { 
 INHERITED(taiMiscCore)
@@ -117,7 +129,7 @@ public:
   static taiDialog_List		active_dialogs;	// #IGNORE list of active (NoBlock) dialogs
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
   static taiEditDataHost_List	css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
-  static iDataViewer_PtrList	viewer_wins; // #IGNORE currently open viewer windows
+  static iTopLevelWindow_List	viewer_wins; // #IGNORE currently open viewer windows
 
   static int			busy_count; // levels of busy
 
@@ -137,7 +149,7 @@ public:
   static void 	WaitProc();	// waiting process function
   // update menus relevant to the given object, which might have changed
   static void	ScriptIconify(void* obj, int onoff); // record iconify command for obj to script
-  static int	SetIconify(void* obj, int onoff); // set iconified field of winbase obj to onoff
+//obs  static int	SetIconify(void* obj, int onoff); // set iconified field of winbase obj to onoff
 
 
   static void	Update(TAPtr obj); // #IGNORE update stuff after modification (uses hook fun)
@@ -162,7 +174,7 @@ public:
   static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
 
-  static taiEditDataHost* FindEdit(void* obj, TypeDef* td, iDataViewer* not_in_win = NULL);
+  static taiEditDataHost* FindEdit(void* obj, TypeDef* td, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
 
   static void SetMainWindow(QWidget* win); // #IGNORE called by whomever creates the main window
@@ -213,6 +225,7 @@ public:
   int		vspc_c;
   int		dlgm_c;		// dialog margin (in pixels) -- empty space around dialog contents
   iSize		scrn_s;		// screen size, excluding task bars, etc. (use for maximum dialog size)
+  QRect		scrn_geom;	// #IGNORE available space on main screen (esp useful for evil Mac...)
   iSize		dialogSize(int dialogSpec); // return starting dialog size for given spec
 
   iFont		buttonFont(int fontSpec); // get a button font

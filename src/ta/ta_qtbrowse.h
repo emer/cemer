@@ -62,9 +62,8 @@ class taiMenu; //
 class tabTreeDataNode;
 class tabListTreeDataNode;
 class tabGroupTreeDataNode;
-class iDataBrowserBase;
-class iDataBrowser;
-class DataBrowser; //
+class iBrowseViewer;
+class BrowseViewer; //
 
 
 /* note used, for now (taList items placed directly below parent item, not in second level "items" folder )
@@ -172,7 +171,7 @@ private:
 
    The destruction sequence is as follows:
      Window starts destructing
-       DataBrowser starts destructing (splMain)
+       BrowseViewer starts destructing (splMain)
        *following happens in either order*
          Root DataNode starts destructing
            DataNode informs DataLink, which removes it --
@@ -183,26 +182,27 @@ private:
            DataPanel destructs -- if still connected to a link, it severs the link connection
 */
 
-class TA_API iDataBrowserBase : public iTabDataViewer { // base of viewer window used for class browsing
+class TA_API iBrowseViewer : public iFrameViewer { // base of viewer window used for object and class browsing
     Q_OBJECT
-INHERITED(iTabDataViewer)
-friend class DataBrowser;
+INHERITED(iFrameViewer)
+//friend class BrowseViewer;
 public:
 
-  QSplitter*		splMain; // main splitter
-  iTreeView*		lvwDataTree; // actually an iListView
+  iTreeView*		lvwDataTree; 
 
-//  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
-  void*			root() { return m_root;}
+  inline BrowseViewer*	browser() {return (BrowseViewer*)m_viewer;}
+  void*			root() {return (browser()) ? browser()->root() : NULL;}
+  TypeDef*		root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
+  MemberDef*		root_md() {return (browser()) ? browser()->root_md : NULL;}
 
-  iTabView*		AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL);// override
-  void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
+//nn  void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
 //nn  void		RemovePanel(iDataPanel* panel); // removes and deletes the indicated panel
-  taiClipData*		GetClipData(int src_edit_action, bool for_drag = false); // gets clipboard data (called on Cut/Copy or Drag)
 //nn  int			GetEditActions(); // override
   void			Reset();
-  override void 	SelectionChanged(bool forced = false); // invoked when selection changes; builtin clipboard
-  ~iDataBrowserBase();
+  virtual void 		ApplyRoot(); // #IGNORE actually applies the new root value
+  
+  iBrowseViewer(BrowseViewer* browser_, QWidget* parent = 0);
+  ~iBrowseViewer();
 
 public slots:
   virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} // called from within the node->dropped event
@@ -210,104 +210,12 @@ public slots:
 protected slots:
   virtual void		lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& sel_items,
     taiMenu* menu);
-  virtual void		lvwDataTree_currentItemChanged(QTreeWidgetItem* curr, 
-    QTreeWidgetItem* prev);
-//  void btnRecurse_toggled(bool on);
-  void			lvwDataTree_focusIn(QFocusEvent* ev);
-  void			lvwDataTree_ItemDestroying(iTreeViewItem* item); // #IGNORE check if curItem
 
 protected:
-  iDataBrowserBase(void* root_, DataViewer* browser_,  QWidget* parent = 0);
-
-public: // overridden slots
-//  void 		fileNew();
-//  void 		fileOpen();
-//  void 		fileSave();
-//  void 		fileSaveAs();
-//  void 		fileSaveAll();
-//  void 		fileClose();
-//  virtual void filePrint();
-//  virtual void editUndo();
-//  virtual void editRedo();
-//  virtual void editCut();
-//  virtual void editCopy();
-//  virtual void editPaste();
-//  virtual void editFind();
-//  virtual void helpIndex();
-//  virtual void helpContents();
-  void 		helpAbout();
-
-protected:
-  void*			m_root;
   int			mnuBrowseNodeDrop_param; // param from the mnuBrowseDrop slot -- called by a node, only valid for its call
-
-  void 			Constr_Menu_impl(); // override
-  void			Constr_Body_impl(); // replace to construct body
-};
-
-class TA_API iDataBrowser : public iDataBrowserBase { // viewer window used for class browsing of taBase objects
-    Q_OBJECT
-INHERITED(iDataBrowserBase)
-friend class DataBrowser;
-public:
-  taiAction*	        toolsClassBrowseAction;
-  
-  DataBrowser*		browser() {return (DataBrowser*)m_viewer;}
-
-  ~iDataBrowser();
-
-public slots:
-  virtual void		toolsClassBrowser();
-  
-protected:
-  iDataBrowser(void* root_, MemberDef* md_, TypeDef* typ_, DataBrowser* browser_,
-    QWidget* parent = 0);
-  void 			Constr_Menu_impl(); // override
-
-protected:
-  MemberDef*		m_md;
-  TypeDef*		m_typ;
-
-  void 			ApplyRoot(); // #IGNORE actually applies the new root value set in m_root/m_typ
-};
-
-//////////////////////////////////
-//////////////////////////////////
-//	DataBrowser		//
-//////////////////////////////////
-
-class TA_API DataBrowser : public DataViewer {
-  // #NO_TOKENS the base type for objects with a top-level window or panel and a menu
-INHERITED(DataViewer)
-friend class iDataBrowser;
-public:
-  //NOTE: this version only supports taBase browsing
-  static DataBrowser*	New(TAPtr root, MemberDef* md = NULL, bool is_root = false);
-    // md is for browsing a member
-
-  taSmartRef		root;
-  MemberDef* 		md;
-  bool			del_root_on_close; // #READ_ONLY delete the root object when closing window (warn user)
-
-  iDataBrowser*		browser_win() {return (iDataBrowser*)m_window;}
-
-  virtual void		Constr(TAPtr root, MemberDef* md = NULL, bool is_root = false);
-    // call this after making new instance, to initialize everything
-  void	UpdateAfterEdit(); // if root deletes, our window must die
-  void	InitLinks();
-  void	CutLinks();
-  TA_BASEFUNS(DataBrowser)
-protected:
-  override void		Constr_Window_impl(); // #IGNORE
-  override void		Render_impl(); // #IGNORE
-  override void		Clear_impl(); // #IGNORE
-  override void 	WindowClosing(bool& cancel);
 private:
-  void			Initialize();
-  void			Destroy() {CutLinks();}
+  void			Init();
 };
-
-
 
 
 #endif // TA_QTBROWSE_H

@@ -51,6 +51,7 @@
 #include <qpushbutton.h>
 #include <QScrollArea>
 #include <qsizepolicy.h>
+#include <QSplitter>
 #include <qstring.h>
 #include <Q3StyleSheet>
 //#include <qtable.h>
@@ -1697,8 +1698,8 @@ bool taiEditDataHost::ReShow(bool force) {
 }
 
 void taiEditDataHost::SetItemAsHandler(taiData* item, bool set_it) {
-  iDataViewer* dv; // cached
-  if (!panel || !(dv = panel->viewer_win())) return; // only used by panels
+  iMainWindowViewer* dv; // cached
+  if (!panel || !(dv = panel->window())) return; // only used by panels
   if (set_it) {
     dv->SetClipboardHandler(item,
       SLOT(this_GetEditActionsEnabled(int&)),

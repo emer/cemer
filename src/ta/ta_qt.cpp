@@ -18,6 +18,7 @@
 
 #include "ta_script.h"
 #include "ta_qt.h"
+#include "ta_viewer.h"
 #include "ta_qtdialog.h"
 #include "ta_qtviewer.h"
 #include "ta_qttype_def.h"
@@ -82,12 +83,37 @@ int tai_rl_hook_proc() {
 // 	taiMisc: miscellaneous useful stuff 		//
 //////////////////////////////////////////////////////////
 
+iMainWindowViewer* iTopLevelWindow_List::FastElAsMainWindow(int i) {
+  return dynamic_cast<iMainWindowViewer*>(FastEl(i));
+}
+
+iDockViewer* iTopLevelWindow_List::FastElAsDockWindow(int i) {
+  return dynamic_cast<iDockViewer*>(FastEl(i));
+}
+
+iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
+  for (int i = 0; i < size; ++i) {
+    iMainWindowViewer* rval = FastElAsMainWindow(i);
+    if (rval) return rval;
+  }
+  return NULL;
+}
+
+iDockViewer* iTopLevelWindow_List::Peek_DockWindow() {
+  for (int i = 0; i < size; ++i) {
+    iDockViewer* rval = FastElAsDockWindow(i);
+    if (rval) return rval;
+  }
+  return NULL;
+}
+
+
 TA_API taiMisc* taiM_ = NULL;
 
 taiDialog_List 		taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
-iDataViewer_PtrList 	taiMisc::viewer_wins;
+iTopLevelWindow_List	taiMisc::viewer_wins;
 TypeSpace		taiMisc::arg_types;
 QWidget*		taiMisc::main_window = NULL;
 taBase_PtrList		taiMisc::unopened_windows;
@@ -337,7 +363,7 @@ void taiMisc::InitMetrics() {
 // default dialog sizes
   QDesktopWidget *d = QApplication::desktop();
   int primaryScreen = d->primaryScreen();
-  QRect scrn_geom = d->availableGeometry(primaryScreen);
+  scrn_geom = d->availableGeometry(primaryScreen);
   scrn_s = scrn_geom.size();
   if (scrn_s.height() <= 768)
     base_height = 21;
@@ -627,7 +653,7 @@ bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
   return got_one;
 }
 
-taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iDataViewer* not_in_win) {
+taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iMainWindowViewer* not_in_win) {
   //NOTE: not_in_win works as follows:
   // NULL: ok to return any edit (typically used to get show value)
   // !NULL: must get other win that not; used to raise that edit panel to top, so
@@ -640,7 +666,7 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iDataViewer* not_in_win)
     if (host->isDialog() && !host->modal)
       return host;
     // is a EditPanel
-    if (host->dataPanel()->viewer_win() != not_in_win) // if niw NULL, then will always be true
+    if (host->dataPanel()->window() != not_in_win) // if niw NULL, then will always be true
       return host;
   }
   return NULL;
@@ -656,14 +682,15 @@ void taiMisc::OpenWindows(){
   ++taMisc::is_loading;
   int i;
   for(i=0;i < unopened_windows.size;i++){
-    DataViewer* win = (DataViewer*)unopened_windows.FastEl(i);
-    win->OpenNewWindow();
+    TopLevelViewer* win = dynamic_cast<TopLevelViewer*>(unopened_windows.FastEl(i));
+    if (!win) continue;
+    win->ViewWindow();
     win->UpdateAfterEdit();
   }
   taiMisc::RunPending();
   for(i=0;i < unopened_windows.size;i++){
-    DataViewer* win =   ((DataViewer *) unopened_windows.FastEl(i));
-    if (win->iconified) win->Iconify();
+    TopLevelViewer* win = dynamic_cast<TopLevelViewer*>(unopened_windows.FastEl(i));
+    if (win->isIconified()) win->Iconify();
   }
   unopened_windows.RemoveAll();
   --taMisc::is_loading;
@@ -799,17 +826,19 @@ void taiMisc::DelayedMenuUpdate_(TAPtr obj) {
   taMisc::DoneBusy();
 } */
 
-int taiMisc::SetIconify(void* obj, int onoff){
-  DataViewer* wb = (DataViewer *) obj;
-  if(onoff != -1) {
-    if(!onoff && !wb->IsMapped())
-      return wb->iconified;	// attempt to update iconified (non-mapped) window!
-    if(!onoff && wb->iconified)	// switching from iconfied to not, update menus
+/*obs, nuke int taiMisc::SetIconify(void* obj, int onoff){
+  TopLevelViewer* wb = dynamic_cast<TopLevelViewer*>(obj);
+  if (!wb) return;
+  if (onoff != -1) {
+    if(!onoff && !wb->isMapped())
+      return wb->isIconified();	// attempt to update iconified (non-mapped) window!
+    if (!onoff && wb->isIconified())	// switching from iconfied to not, update menus
       DelayedMenuUpdate_(wb);	// update menus when de-iconifying
-    wb->iconified = onoff;
+    if (onoff) wb->Iconify();
+    else       wb->DeIconify();
   }
-  return (int) wb->iconified;
-}
+  return (int) wb->isIconified();
+} */
 
 void taiMisc::ScriptIconify(void*, int) {
 // do nothing, use script win pos to record final iconify status

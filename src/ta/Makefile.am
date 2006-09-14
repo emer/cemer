@@ -93,6 +93,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_script.h \
+	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/dynenum.h \
 	$(TAHEADS_GUI)
 
@@ -115,6 +116,7 @@ HEADS =\
 	ta_dump.h \
 	ta_defaults.h \
 	ta_script.h \
+	ta_viewer.h \
 	dynenum.h \
 	$(HEADS_GUI)
 
@@ -137,6 +139,7 @@ SRCS =\
 	ta_dump.cpp \
 	ta_defaults.cpp \
 	ta_script.cpp \
+	ta_viewer.cpp \
 	dynenum.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \

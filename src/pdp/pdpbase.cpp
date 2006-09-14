@@ -225,18 +225,20 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiMisc::SetMainWindow(root->window); */
     //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
     // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
-/*obs    PdpDataBrowser* db = PdpDataBrowser::New(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);*/
-    PdpDataBrowser* db = PdpDataBrowser::New(root, NULL, true);
+/*obs    PdpMainWindowViewer* db = PdpMainWindowViewer::New(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);*/
+    MainWindowViewer::def_browser_type = &TA_PdpMainWindowViewer;
+    MainWindowViewer* db = MainWindowViewer::NewBrowser(root, NULL, true);
     db->InitLinks(); // no one else to do it!
     db->ViewWindow();
-    iDataBrowser* bw = db->browser_win();
+    iMainWindowViewer* bw = db->window();
     // the main app window only needs to be small...
     if (bw) {
       bw->resize(taiM->dialogSize(taiMisc::hdlg_s));
     }
-    taiMisc::SetMainWindow(db->browser_win());
+    taiMisc::SetMainWindow(bw);
 
 #ifndef QANDD_CONSOLE
+//TODO: this should be a dockable guy made with DockViewer
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
     mw->setMinimumSize(640, 720);
     QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);

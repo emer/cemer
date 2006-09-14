@@ -49,7 +49,7 @@ class	QColorGroup;		// #IGNORE
 class	QComboBox;		// #IGNORE 
 class	QCursor;		// #IGNORE 
 class	QDialog;		// #IGNORE 
-class	QDockWindow;		// #IGNORE 
+class	QDockWidget;		// #IGNORE 
 class	QDragObject;		// #IGNORE 
 class	QFileDialog;		// #IGNORE 
 class	QFont;			// #IGNORE 

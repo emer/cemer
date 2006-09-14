@@ -37,6 +37,7 @@
 #include <QMenu>
 #include <Q3VBox>
 #include <QScrollArea> // for gpiGroupDialog
+#include <QSplitter>
 #include <qtooltip.h>
 #include <Q3Table>
 

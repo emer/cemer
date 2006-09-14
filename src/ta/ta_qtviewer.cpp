@@ -17,6 +17,7 @@
 #include "ta_qtviewer.h"
 
 #include "ta_qtbrowse.h"
+#include "ta_classbrowse.h"
 #include "ta_qt.h"
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
@@ -42,6 +43,7 @@
 #include <QMenu>
 #include <QList>
 #include <QScrollArea>
+#include <QSplitter>
 #include <QTextEdit>
 #include <QTimer>
 #include <qtooltip.h>
@@ -296,9 +298,9 @@ static const unsigned char image8_data[] = {
       T3Viewer [t3viewer.h] --  controller for 3d-based data navigator
 
   (QMainWindow)
-    iDataViewer -- (abstract) main window class that can be used by DataViewer classes; manages menus,
+    iMainWindowViewer -- (abstract) main window class that can be used by DataViewer classes; manages menus,
           docking toolbars
-      iTabDataViewer -- (abstract) subclass that handles tabbed data panels
+      iTabViewer -- (abstract) subclass that handles tabbed data panels
         iDataBrowser -- window for tree-based browsing
         iT3Viewer -- window for Inventor-based browsing
 
@@ -322,7 +324,7 @@ static const unsigned char image8_data[] = {
     iListView [implementation class, ta_qtbrowse.cc] -- light subclass of the Qt ListView
 
   (QWidget)
-    iTabView -- pane with tabs, for showing panels; a iDataViewer can split-nest/unsplit-unnest these
+    iTabView -- pane with tabs, for showing panels; a iMainWindowViewer can split-nest/unsplit-unnest these
         ad infinitum
 
   (QTabBar)
@@ -336,7 +338,7 @@ static const unsigned char image8_data[] = {
   OWNERSHIP
 
   DataViewer (1)
-    iDataViewer (0:1)
+    iMainWindowViewer (0:1)
 
   DataBrowser (1)
     iDataBrowser (0:1)
@@ -354,7 +356,7 @@ static const unsigned char image8_data[] = {
 
     * create a DataViewer dv of the correct subclass
     * call dv->OpenWindow()
-    * creates the correct iDataViewer window class, and all its various subcomponents,
+    * creates the correct iMainWindowViewer window class, and all its various subcomponents,
       such as list views, toolbars, etc.
 
   2. Loading from file (ex. when loading a project)
@@ -382,6 +384,219 @@ static const unsigned char image8_data[] = {
 
 
 */
+
+/* Clipboard Handling
+
+  A subcontrol that wants to control clipboard handling must provide a signal slot interface,
+  as follows; the slots/signals can have any names (* is optional):
+
+  Slots:
+    void EditAction(int); // called when user requests the indicated edit action, 
+      ex. via menu or accel key
+    void GetEditActions(int&); // called to get current valid edit actions
+    *void SetActionsEnabled(TBD); // enables/disables any actions
+  Signals:
+    void UpdateUi(); // control can call if something changed, to update the ui -- calls back its
+       GetEditAction and SetActionsEnabled slot functions
+
+
+  When a clipboard-enabled control (ex. the data browser tree) gets the focus, it should call:
+
+    SetClipboardHandler(QWidget* handler_obj, ...) [see object below for api details]
+
+  If a control knows that it is no longer active,  it should call.
+
+    SetClipboardHandler(NULL)
+
+  NOTE: however you can't call the above just because you lose focus, because this happens
+    normally. ex. an edit control has focus, then user clicks on a toolbar button -- the
+    edit control loses focus. Instead, the mechanism used is that basically unless something
+    actively grabs the handler, it is left with the previous value. The taiData objects
+    have a base mechanism built in so that when an implementation control gets focus, it
+    unregisters clipboard handling, by default. Therefore, only taiData controls that implement
+    it will actually get the focus, but simply clicking away on a toolbar button won't
+    dehandle.
+
+*/
+
+/* Selection Handling
+
+  Selection handling is the system that handles user selection of items in the gui,
+  and the corresponding changes that take place. For example, the user selects an
+  item in the tree, which causes its corresponding panel to display. Or, the user
+  selects a 3D item in the T3 viewer. Some areas permit multiple items to be selected;
+  examples are T3 and ListViews.
+  The system does not make a distinction between "current" and "selected" (ex. as is made
+    by Qt in its ListView).
+    
+  A selection handler implies being a Clipboard Handler -- the ISelectableHost i/f
+  provides an implementation ("ActionsEnabled" and "UpdateUi" are not needed.)
+  
+  Selections affect:
+    gui -- things like panels change when selections change
+    clip -- legal clipboard operations change, depending on selection
+    actions -- selected items have actions, and multiple selections
+        have dynamic actions, such as adding a projection between layers
+    context menus -- these need access to selection
+    
+  Selection Sources/Sinks
+  
+  A gui item can be a selection source, sink, or both. A selection Source is something
+  the user can work in to make selections. 
+  Sources:
+    * tree nodes (browser, list views, specials, such as prog editor)
+    * T3 viewer
+  Sinks:
+    * panel tabs (note: modal)
+    * main window -- updates the Actions menu and actions
+  How/When things become sinks is modal -- if the user is in the tree browser, then
+  the panels should update; but if the user is in the prog editor, that containing
+  panel should NOT update as the user clicks around on the items; however, the user
+  still expects the clip menu items to be valid.
+  
+
+  Selection handling involves the following elements:
+  
+  Interfaces:
+    ISelectableHost -- interface implemented by an object that supports selectable items
+    ISelectable -- interface of an item that can be selected in the gui
+  
+  Main Menu:
+    Edit/clip menu -- enabling of clip items is based on selection
+    Actions menu -- contains the actions available, based on selection
+    
+    
+  ISelectableHost i/f -- for sources of selection
+    enum NotifyOp: GotFocus, SelectionChanged, Destroying
+    abstract public virtuals you must implement:
+      QWidget* widget() -- provides access to the implementers widget (for signals/slots etc.)
+      bool hasMultiSelect() -- true if supports multi select
+    abstract protected virtuals you must implement:
+      ApplySelectedItems_impl -- called when force=true for changes, force gui to be selItems
+      
+    implemented virtuals, possible (but not usual) to extend:
+      selItems() -- list of selected items
+      dynActions() -- Action list, of current dynamic actions available
+      dynMethods() -- list of current dynamic methods available
+      (the list accessors are virtual, which supports possible JustInTime filling
+       of the lists prior to returning them)
+      SelectionChanging(bool) -- bracketing batch changes, so only one notify
+      ClearSelectedItems() -- forced clearing
+      AddSelectedItem(item) -- add the item
+      RemoveSelectedItem(item) -- remove the item
+      FillContextMenu(taiActions* menu) -- fill the context menu; host can extend
+        to put items before or after as well
+    convenience members (non virtual)
+      handlerObj() -- this is provided so client can connect to us as ClipHandler
+      selItem() -- convenience, first selected guy (or NULL if none)
+      setSelItem(item, force) -- convenience, for prog setting of single select
+      AddDynMenuItems(taiMenu) -- add the dynamic guys to the given menu
+    ClipHandler methods:
+      EditEnabled(int&) -- return enabled flags
+      EditAction(int) -- perform the action
+    connection methods:
+      Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
+        const char* src_signal, bool disconnect = false) -- connects (or disconnects)
+         an optional ItemRemoving notification
+      Connect_SelectableHostNotifySignal(QObject* sink_obj,
+        const char* sink_signal, bool disconnect = false) -- connects (or disconnects)
+         a sink (ex iFrame) to the notify signal raised when sel changes (or 
+         gets focus, etc.)
+    protected:
+      handler -- the impl widget object for signals/slots
+      (list members)
+      Emit_NotifySignal(op) -- called internally, and also by imlementer when gets focus
+      DoDynAction(int) -- called by the slot on helper
+      ApplySelectedItems_impl -- called when force=true for changes, force gui to be selItems
+      UpdateActions() -- implementation function that updates the dyn methods/actions
+        (can be overridden/extended if necessary)
+      
+    SelectableHostHelper -- this is a helper QObject that handles signals/slots
+      ISelectableHost* host -- the owning host
+      Emit_NotifySignal(op) -- called to emit the signal
+    signals:
+      SelectableHostNotifySignal(ISelectableHost* src, op);
+    slots:
+      DynActionSlot(int) -- callback for dynamic actions
+      ItemRemovingSlot(item)
+      EditEnabled(int&) -- callback for when we are ClipHandler
+      EditAction(int) --  callback for when we are ClipHandler
+    
+    Client of ISelectableHost:
+      members:
+        ISelectableHost* cur_host -- the client should keep track of the host
+          with focus, so it can ignore other hosts; it should also check for the
+          Delete op, and delete this if so
+    
+      slots: 
+        SelectableHostNotify(ISelectableHost* src, op) (name can be anything)
+          this is the slot called by the ISelectableHost
+      
+  Notes:
+    * whenever the Actions guys gets cleared for any reason, the actions are deleted,
+      and any menu guys that have been created will also be deleted
+  Source Changes:
+    Source changes (the guy controlling the selectable clients) typically only happen
+    explicitly, when that guy gets focus. In that case, it raises a Notify signal
+    with GotFocus op, to enable clients to start tracking changes only from that
+    guy -- until an explicit focus change happens again, they will typically
+    ignore Notifies from other sources.
+
+      
+  What the implementing class must do:
+    * provide the implementations for the trivial abstract virtuals, like widget()
+    * provide an implementation for ApplySelectedItems_impl, which has to take
+      the list and then force the gui to reflect the selection in the list
+    * when you detect that selection changes in the gui, call the non-force
+      member funcs, ex. setSelItem (for one guy), 
+      or: SelChanging(t) ... changes .. SelChanging(f) (for multiple guys)
+      -- the non-force version won't callback your own ApplySel.. guy
+    * detect when your control *receives* focus, and call Emit_Notify(ReceivedFocus)
+      this will force the host/clients to configure themselves for our selections 
+  
+    
+  What the client class should do:
+    * it should connect its Notify slot to the ISelectableHost via
+      Connect_SelectableHostNotifySignal
+    * if it connects to more than one source, it should have a member
+      to keep track of the one with focus -- if so, it should ignore
+      signals from any non-focus guys, update the focus guy, and delete
+      it if the delete op is received
+    * if it is the main window, when it gets the GotFocus op, 
+      it should set the src as the cliphandler by calling:
+        SetClipboardHandler(src_host->handlerObj(), 
+          SLOT(EditEnabled(int&)), SLOT(EditAction(int)) )
+      Note: the cliphandler can disengage independently of ISH
+        still being the selection handler
+    * when it acts on a valid SelectionChanged, it can update
+      its action menus
+    * clients must NEVER keep references to the sellists etc. outside
+      the signal handler -- if they need to reference them, they must
+      do so through the instance pointer they cache (which gets a signal
+      on deletion, so client doesn't have to independently connect
+      a delete notify signal)
+  
+  iFrame:
+    
+    slots:
+      SelectableHostNotifySlot_Internal_ -- connects guys nested below us; lets us trap
+      SelectableHostNotifySlot_External -- from external guys (forwarded from main window)
+      
+    signals:
+      SelectableHostNotifySignal -- forwarder, from all internal guys
+      
+      
+    
+TODO:
+  * iFrames should not themselves be ISelectable hosts -- let the actual gui thingies
+    implement this, ex the TreeView -- the instance itself then needs to know it
+    is indeed a host, and it can call something to register or connect
+  * axiomatically, all ISHs should also be cliphandlers, since they get focus, have
+    selectable items, etc. Since most of the cliphandling code is actually in the 
+    ISelectable guy, it makes sense for ISH to also implement cliphandling.
+    
+*/
+
 
 /*
 //TODO:
@@ -899,7 +1114,7 @@ String tabListItemsDataLink::GetText(DataLinkText dlt) const {
 //   iToolBar 	//
 //////////////////////////
 
-iToolBar::iToolBar(ToolBar* toolBar_, const QString& label, iDataViewer* par_win)
+iToolBar::iToolBar(ToolBar* toolBar_, const QString& label, iMainWindowViewer* par_win)
 :QToolBar(par_win)
 {
   m_toolBar = toolBar_;
@@ -924,7 +1139,7 @@ void iToolBar::hideEvent(QHideEvent* e) {
 
 void iToolBar::Showing(bool showing) {
   if (!m_toolBar) return;
-  iDataViewer* dv = m_toolBar->viewer_win();
+  iMainWindowViewer* dv = m_toolBar->viewer_win();
   if (!dv) return;
   taiAction* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
   if (!me) return;
@@ -933,15 +1148,19 @@ void iToolBar::Showing(bool showing) {
 
 
 //////////////////////////////////
-// 	iToolBar_List 	//
+//  iToolBar_List 		//
 //////////////////////////////////
 
 iToolBar_List::~iToolBar_List() {}
 
-iToolBar* iToolBar_List::FindToolBar(const char* name) const {
-  iToolBar* rval = NULL;
-  //TODO
-  return rval;
+iToolBar* iToolBar_List::FindToolBar(const String& name_) const {
+  QString name = name_; // more efficient, and would be done implicitly anyway 
+  for (int i = 0; i < count(); ++i) {
+    const iToolBar* tb = at(i);
+    if (tb->name() == name) 
+      return (iToolBar*)tb; // ok to cast away const
+  }
+  return NULL;
 }
 
 
@@ -1141,9 +1360,9 @@ QWidget* ISelectable::widget() const {
 }
 
 
-//////////////////////////
-//   ISelectable_PtrList//
-//////////////////////////
+//////////////////////////////////
+//   ISelectable_PtrList	//
+//////////////////////////////////
 
 TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
   if (size == 0) return NULL;
@@ -1243,79 +1462,85 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
 }
 
 
+//////////////////////////////////
+//   ISelectableHost		//
+//////////////////////////////////
 
-//////////////////////////
-//	iDataViewer	//
-//////////////////////////
+const char* ISelectableHost::edit_enabled_slot = SLOT(EditActionsEnabled(int&));
+const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int)); 
+const char* ISelectableHost::actions_enabled_slot; // currently NULL
+const char* ISelectableHost::update_ui_signal; // currently NULL
 
-iDataViewer::iDataViewer(DataViewer* viewer_, QWidget* parent)
-: QMainWindow(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax | Qt::WDestructiveClose))
-{
-  m_viewer = viewer_;
-  init();
-}
-
-/*obs iDataViewer::iDataViewer(DataViewer* viewer_, QWidget* parent, WFlags flags)
-: QMainWindow(parent, NULL, flags)
-{
-  m_viewer = viewer_;
-  init();
-} */
-
-iDataViewer::~iDataViewer() {
-  m_sel_chg_cnt = -1000000; //effectively eliminates any selection-related activity
-  taiMisc::viewer_wins.Remove(this);
-  if (m_viewer) {
-    m_viewer->m_window = NULL;
-    m_viewer->menu = NULL;
-    m_viewer = NULL;
-  }
-//TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
-// has already deleted the menu items
-//  if (menu) delete menu;
-  menu = NULL;
-}
-
-void iDataViewer::init() {
-  menu = NULL;
-  m_body = NULL;
-  last_enabler = NULL;
-  is_root = false;
+ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
-  m_last_action_idx = -1;
-  // set maximum size
-  iSize ss = taiM->scrn_s;
-  setMaximumSize(ss.width(), ss.height());
-  // set default size as the big hor dialog
-  resize(taiM->dialogSize(taiMisc::hdlg_b));
-
-  setFont(taiM->dialogFont(taiM->ctrl_size));
-
-  (void)statusBar(); // creates the status bar
-  
-  // these are modal, so NULL them for when unused
-  fileNewAction = NULL;
-  fileOpenAction = NULL;
-  fileSaveAction = NULL;
-  fileSaveAsAction = NULL;
-  fileSaveAllAction = NULL;
-  fileCloseAction = NULL;
+  helper = new SelectableHostHelper(this);
 }
 
-void iDataViewer::actionsMenu_aboutToShow() {
-  // clear out the previous dynamic items
-  int i;
-  for (i = actionsMenu->count() - 1; i > m_last_action_idx; --i) {
-    actionsMenu->DeleteItem(i);
-  }
-  // add actions corresponding to dynamic list
-  for (i = 0; i < (int)dyn_actions.count(); ++i) {
-    taiAction* act = dyn_actions.FastEl(i);
-    act->AddTo(actionsMenu);
-  }
+ISelectableHost::~ISelectableHost() {
+  Emit_NotifySignal(OP_DESTROYING);
+  //note: we delete it right now, to force disconnect of all signals/slots
+  delete helper;
+  helper = NULL;
 }
 
-void iDataViewer::FillContextMenu(taiActions* menu) {
+void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
+  sel_items.AddUnique(item); //note: use raw list, because we are building it
+  if (m_sel_chg_cnt == 0) // also ignored if in Update
+    SelectionChanged(forced);
+}
+
+void ISelectableHost::ClearSelectedItems(bool forced) {
+  SelectionChanging(true, forced);
+  sel_items.Reset(); //note: use raw list, because we are building it
+  SelectionChanging(false, forced);
+}
+
+QObject* ISelectableHost::clipHandlerObj() {
+  return helper;
+} 
+
+void ISelectableHost::Connect_SelectableHostNotifySignal(QObject* sink_obj,
+    const char* sink_slot, bool discnct)
+{
+  static const char* sig_nm = SIGNAL(ItemRemoving(ISelectableItem*));
+  if (discnct)
+    QObject::disconnect(helper, sig_nm, sink_obj, sink_slot);
+  else
+    QObject::connect(helper, sig_nm, sink_obj, sink_slot);
+}
+
+void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
+    const char* src_signal, bool discnct)
+{
+  static const char* slot_nm = SLOT(NotifySignal(ISelectableHost*, int));
+  if (discnct)
+    QObject::disconnect(src_obj, src_signal, helper, slot_nm);
+  else
+    QObject::connect(src_obj, src_signal, helper, slot_nm);
+}
+
+void ISelectableHost::EditAction(int ea) {
+  ISelectable* ci = curItem();
+  if (!ci) return;
+  ci->EditAction_(selItems(), ea);
+}
+
+void ISelectableHost::EditActionsEnabled(int& ea) {
+  ISelectable* ci = curItem();
+  if (!ci) return;
+  ea = ci->GetEditActions_(selItems());
+}
+
+void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
+  helper->Emit_NotifySignal(op);
+}
+
+void ISelectableHost::FillContextMenu(taiActions* menu) {
+  // do the item-mediated portion
+  ISelectable* ci = curItem();
+  if (!ci) return;
+  ci->FillContextMenu(selItems(), menu);
+  // then add the dynamic actions
   if (dyn_actions.count() == 0) return; // prevents spurious separator
   menu->AddSep();
   // add actions corresponding to dynamic list
@@ -1325,267 +1550,8 @@ void iDataViewer::FillContextMenu(taiActions* menu) {
   }
 }
 
-taiAction* iDataViewer::AddAction(taiAction* act) {
-  actions.Add(act); // refs the act
-  return act;
-}
-
-void iDataViewer::AddSelectedItem(ISelectable* item,  bool forced) {
-  m_sel_items.AddUnique(item);
-  if (m_sel_chg_cnt == 0)
-    SelectionChanged(forced);
-}
-
-iToolBar* iDataViewer::AddToolBar(iToolBar* tb) {
-  toolbars.append(tb);
-  return tb;
-}
-
-void iDataViewer::AddToolBarMenu(const String& name, int index) {
-//taiAction* menu =
-  toolBarMenu->AddItem(name, taiMenu::toggle,
-    taiAction::int_act, this, SLOT(this_ToolBarSelect(int)), index);
-}
-
-void iDataViewer::ch_destroyed() {
-  last_enabler = NULL;
-  UpdateUi();
-}
-
-void iDataViewer::closeEvent (QCloseEvent* e) {
-  bool forced = taMisc::quitting || (m_viewer == NULL); // always closing if we no longer have our mummy
-  bool cancel = false; // falling through to end of routine is "proceed"
-
-  if (m_viewer && (forced || !cancel)) {
-    m_viewer->WindowClosing(cancel);
-  }
-  if (forced || !cancel) Closing(forced, cancel);
-  if (cancel) e->ignore();
-  else        e->accept();
-}
-
-void iDataViewer::Constr() {
-  Constr_MainMenu_impl();
-  Constr_Menu_impl();
-  // we always put the fileclose action at bottom of menu
-  fileMenu->insertSeparator();
-  fileCloseWindowAction->AddTo(fileMenu);
-
-  Constr_Body_impl();
-  actionsMenu->insertSeparator();
-  m_last_action_idx = actionsMenu->count() - 1;
-
-  taiMisc::viewer_wins.AddUnique(this);
-}
-
-void iDataViewer::Constr_MainMenu_impl() {
-  if (menu) return;
-  // create a taiMenu wrapper around the window's provided menubar
-  menu = new taiMenuBar(this, taiMisc::fonBig, menuBar());
-  QImage img;
-  img.loadFromData( image0_data, sizeof( image0_data ), "PNG" );
-  image0 = img;
-  img.loadFromData( image1_data, sizeof( image1_data ), "PNG" );
-  image1 = img;
-  img.loadFromData( image2_data, sizeof( image2_data ), "PNG" );
-  image2 = img;
-  img.loadFromData( image3_data, sizeof( image3_data ), "PNG" );
-  image3 = img;
-  img.loadFromData( image4_data, sizeof( image4_data ), "PNG" );
-  image4 = img;
-  img.loadFromData( image5_data, sizeof( image5_data ), "PNG" );
-  image5 = img;
-  img.loadFromData( image6_data, sizeof( image6_data ), "PNG" );
-  image6 = img;
-  img.loadFromData( image7_data, sizeof( image7_data ), "PNG" );
-  image7 = img;
-  img.loadFromData( image8_data, sizeof( image8_data ), "PNG" );
-  image8 = img;
-
-  fileMenu = menu->AddSubMenu("&File");
-  editMenu = menu->AddSubMenu("&Edit");
-  viewMenu = menu->AddSubMenu("&View");
-  actionsMenu = menu->AddSubMenu("&Actions");
-  toolsMenu = menu->AddSubMenu("&Tools");
-  helpMenu = menu->AddSubMenu("&Help");;
-}
-
-void iDataViewer::Constr_Menu_impl() {
-
-  // default actions
-  if (showFileObjectOps()) {
-    fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
-    fileNewAction->setIconSet( QIconSet( image0 ) );
-    fileOpenAction = AddAction(new taiAction("&Open...", QKeySequence("Ctrl+O"), _fileOpenAction ));
-    fileOpenAction->setIconSet( QIconSet( image1 ) );
-    fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
-    fileSaveAction->setIconSet( QIconSet( image2 ) );
-    fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
-    fileSaveAllAction = AddAction(new taiAction("Save A&ll", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
-    fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
-    
-    fileNewAction->AddTo(fileMenu);
-    fileOpenAction->AddTo(fileMenu );
-    fileSaveAction->AddTo(fileMenu );
-    fileSaveAsAction->AddTo(fileMenu);
-    fileSaveAllAction->AddTo(fileMenu);
-    fileCloseAction->AddTo(fileMenu);
-    fileMenu->insertSeparator();
-    
-    connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
-    connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
-    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
-    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
-    connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
-    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
-  }
-  fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
-  
-  filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
-  filePrintAction->setIconSet( QIconSet( image3 ) );
-  if (is_root)
-    fileCloseWindowAction = AddAction(new taiAction("&Quit", QKeySequence("Ctrl+Q"), _fileCloseWindowAction ));
-  else
-    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence("Ctrl+W"), _fileCloseWindowAction ));
-  editUndoAction = AddAction(new taiAction("&Undo", QKeySequence("Ctrl+Z"), _editUndoAction ));
-  editUndoAction->setEnabled( FALSE );
-  editUndoAction->setIconSet( QIconSet( image4 ) );
-  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence("Ctrl+Y"), _editRedoAction ));
-  editRedoAction->setEnabled( FALSE );
-  editRedoAction->setIconSet( QIconSet( image5 ) );
-  editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence("Ctrl+X"), _editCutAction ));
-  editCutAction->setIconSet( QIconSet( image6 ) );
-  editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence("Ctrl+C"), _editCopyAction ));
-  editCopyAction->setIconSet( QIconSet( image7 ) );
-  editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence("Ctrl+V"), _editPasteAction ));
-  editPasteAction->setIconSet( QIconSet( image8 ) );
-  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
-//  editDeleteAction->setIconSet( QIconSet( image8 ) );
-  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
-  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
-  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
-  helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
-
-  fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
-  fileOptionsAction->AddTo( fileMenu );
-  fileMenu->insertSeparator();
-  filePrintAction->AddTo( fileMenu );
-
-  editUndoAction->AddTo( editMenu );
-  editRedoAction->AddTo( editMenu );
-  editMenu->insertSeparator();
-  editCutAction->AddTo( editMenu );
-  editCopyAction->AddTo( editMenu );
-  editPasteAction->AddTo( editMenu );
-  editLinkAction->AddTo( editMenu );
-  editDeleteAction->AddTo( editMenu );
-
-  viewRefreshAction->AddTo(viewMenu);
-  viewMenu->insertSeparator();
-  toolBarMenu = viewMenu->AddSubMenu("Toolbars");
-  viewMenu->insertSeparator();
-
-  helpHelpAction->AddTo(helpMenu );
-  helpMenu->insertSeparator();
-  helpAboutAction->AddTo(helpMenu );
-
-    // signals and slots connections
-  connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
-//   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
-    connect( fileCloseWindowAction, SIGNAL( Action() ), this, SLOT( fileCloseWindow() ) );
-//    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
-//   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
-    connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-    connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-    connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
-    connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
-//    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
-    connect( helpAboutAction, SIGNAL( Action() ), this, SLOT( helpAbout() ) );
-
-}
-
-iToolBar* iDataViewer::Constr_ToolBar(ToolBar* tb, String name) {
-  iToolBar* rval = new iToolBar(tb, name, this);
-  return rval;
-}
-
-void iDataViewer::customEvent(QEvent* ev) {
-  switch ((int)ev->type()) {
-  case iDataViewer_SelectionChanged_EventType:
-    selectionChangedEvent(ev);
-    break;
-  default:
-    inherited::customEvent(ev);
-    break;
-  }
-}
-
-bool iDataViewer::InitToolBar(const String& name, iToolBar* tb) {
-  bool rval = false;
-  if (name == "Application") {
-    fileNewAction->addTo(tb);
-    fileOpenAction->addTo(tb);
-    fileSaveAction->addTo(tb);
-    fileSaveAsAction->addTo(tb);
-    fileCloseAction->addTo(tb);
-    filePrintAction->addTo(tb);
-    tb->addSeparator();
-    editUndoAction->addTo(tb);
-    editRedoAction->addTo(tb);
-    tb->addSeparator();
-    editCutAction->addTo(tb);
-    editCopyAction->addTo(tb);
-    editPasteAction->addTo(tb);
-    tb->addSeparator();
-    helpHelpAction->addTo(tb);
-    return true;
-  }
-  return rval;
-}
-
-void iDataViewer::emit_EditAction(int param) {
-  emit EditAction(param);
-  taiMisc::RunPending();
-  UpdateUi();
-}
-
-/*obs void iDataViewer::emit_selectionChanged()
-{
-  emit selectionChanged();
-} */
-
-void iDataViewer::emit_GetEditActionsEnabled(int& ea) {
-  emit GetEditActionsEnabled(ea);
-}
-
-void iDataViewer::emit_SetActionsEnabled() {
-  emit SetActionsEnabled();
-}
-
-void iDataViewer::fileCloseWindow() {
-  if (is_root) {
-    if (tabMisc::root) tabMisc::root->Quit();
-  } else close();
-}
-
-void iDataViewer::fileOptions() {
-  if (!taMisc::gui_active) return;
-  taiEdit* ie =  TA_taMisc.ie;
-  if (ie)
-    ie->Edit(TA_taMisc.GetInstance());
-}
-
-int iDataViewer::GetEditActions() {
-  int rval = 0;
-  emit_GetEditActionsEnabled(rval);
-  return rval;
-}
-
-void iDataViewer::mnuDynAction(int idx) {
-  if (idx >= dyn_methods.size) return; // shouldn't happen
+void ISelectableHost::DoDynAction(int idx) {
+  if ((idx < 0) || (idx >= dyn_methods.size)) return; // shouldn't happen
   DynMethodDesc* dmd = dyn_methods.FastEl(idx);
   // NOTE: this function is based on the ta_qtdata:taiMethod::CallFun function
   // NOTE: we can't show the return values from any of the functions
@@ -1606,7 +1572,7 @@ void iDataViewer::mnuDynAction(int idx) {
   use_argc = MIN(use_argc, meth->arg_names.size);
 
   // use a copy of selected items list, to avoid issues if items change during these operations
-  ISelectable_PtrList sel_items(m_sel_items);
+  ISelectable_PtrList sel_items_cp(sel_items);
 
   // if no params to prompt for, and no confirmation required, just do it
   if (((use_argc - hide_args) == 0) && !meth->HasOption("CONFIRM")) {
@@ -1621,8 +1587,8 @@ void iDataViewer::mnuDynAction(int idx) {
 
       switch(dmd->dmd_type) {
       case DynMethod_PtrList::Type_1N: { // same for all
-        for (i = 0; i < sel_items.size; ++i) {
-          itN = sel_items.FastEl(i);
+        for (i = 0; i < sel_items_cp.size; ++i) {
+          itN = sel_items_cp.FastEl(i);
           typ = itN->GetDataTypeDef();
           base = itN->link()->data();
           rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
@@ -1632,11 +1598,11 @@ void iDataViewer::mnuDynAction(int idx) {
         cssEl* param[2];
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
-        ISelectable* it1 = sel_items.FastEl(0);
+        ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetDataTypeDef();
         base = it1->link()->data();
-        for (i = 1; i < sel_items.size; ++i) {
-          itN = sel_items.FastEl(i);
+        for (i = 1; i < sel_items_cp.size; ++i) {
+          itN = sel_items_cp.FastEl(i);
           *param[1] = (void*)itN->link()->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
         }
@@ -1679,38 +1645,34 @@ void iDataViewer::mnuDynAction(int idx) {
 
 }
 
-void iDataViewer::mnuEditAction(taiAction* mel) {
-   // called from context; cast obj to an taiClipData::EditAction
-  emit_EditAction(mel->usr_data.toInt());
-}
-
-bool iDataViewer::RemoveSelectedItem(ISelectable* item,  bool forced) {
-  bool rval = m_sel_items.Remove(item);
+bool ISelectableHost::RemoveSelectedItem(ISelectable* item,  bool forced) {
+  bool rval = sel_items.Remove(item); // use raw list, because we are building
   if ((rval || forced) && (m_sel_chg_cnt == 0))
     SelectionChanged(forced);
   return rval;
 }
 
-void iDataViewer::SelectionChanged(bool forced) {
-  QEvent* ev = new QEvent((QEvent::Type)iDataViewer_SelectionChanged_EventType);
-  QCoreApplication::postEvent(this, ev); // returns immediately
+void ISelectableHost::SelectionChanged(bool forced) {
+  if (forced) {
+    m_sel_chg_cnt = -1;
+    UpdateSelectedItems_impl();
+    m_sel_chg_cnt = 0;
+  }
+  Emit_NotifySignal(OP_SELECTION_CHANGED); // note: sent through event loop first
 }
 
-void iDataViewer::selectionChangedEvent(QEvent* ev) {
-  emit selectionChanged(m_sel_items);
-  UpdateUi();
-}
-
-void iDataViewer::SelectionChanging(bool begin, bool forced) {
+void ISelectableHost::SelectionChanging(bool begin, bool forced) {
+  // if -ve, we are in the Update routine, so we basically ignore, by counting backwards
   if (begin)
-    ++m_sel_chg_cnt;
+    if (m_sel_chg_cnt < 0) --m_sel_chg_cnt; else ++m_sel_chg_cnt;
   else {
-    if (--m_sel_chg_cnt == 0)
+    if (m_sel_chg_cnt < 0) ++m_sel_chg_cnt; else --m_sel_chg_cnt;
+    if (m_sel_chg_cnt == 0)
       SelectionChanged(forced);
   }
 }
 
-void iDataViewer::SetActionsEnabled_impl() {
+void ISelectableHost::UpdateMethodsActions() {
 /*  cerr << m_sel_items.size << " items selected.\n";
   if (m_sel_items.size > 0) {
     TypeDef* typ = m_sel_items.CommonSubtype1N();
@@ -1729,7 +1691,7 @@ void iDataViewer::SetActionsEnabled_impl() {
 
   // enumerate dynamic methods
   dyn_methods.Reset();
-  dyn_methods.Fill(m_sel_items);
+  dyn_methods.Fill(selItems());
 
 
   // dynamically create actions
@@ -1737,978 +1699,157 @@ void iDataViewer::SetActionsEnabled_impl() {
   for (int i = 0; i < dyn_methods.size; ++i) {
     DynMethodDesc* dmd = dyn_methods.FastEl(i);
     taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
-    connect(act, SIGNAL(IntParamAction(int)), this, SLOT(mnuDynAction(int)));
+    QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
     dyn_actions.Add(act);
   }
 }
 
-void iDataViewer::setCurItem(ISelectable* item, bool forced) {
-  ISelectable* ci = m_sel_items.SafeEl(0);
-  if ((ci == item) && (m_sel_items.size <= 1) && (!forced)) return;
+void ISelectableHost::setCurItem(ISelectable* item, bool forced) {
+  ISelectable_PtrList& sel_items = selItems(); // in case overridden
+  ISelectable* ci = sel_items.SafeEl(0);
+  if ((ci == item) && (sel_items.size <= 1) && (!forced)) return;
 
   SelectionChanging(true, forced);
-    while (m_sel_items.size > 0) {
-      RemoveSelectedItem(m_sel_items.Peek(), forced);
-    }
+    ClearSelectedItems(forced);
     if (item)
       AddSelectedItem(item, forced);
   SelectionChanging(false, forced);
 }
 
 
-void iDataViewer::SetClipboardHandler(QObject* handler_obj,
-  const char* edit_enabled_slot,
-  const char* edit_action_slot,
-  const char* actions_enabled_slot,
-  const char* update_ui_signal)
+//////////////////////////////////
+//  SelectableHostHelper	//
+//////////////////////////////////
+
+
+void SelectableHostHelper::customEvent(QEvent* ev) {
+  switch ((int)ev->type()) {
+  case iDataViewer_SelectionChanged_EventType:
+    emit NotifySignal(host, ISelectableHost::OP_SELECTION_CHANGED);
+    break;
+  default:
+    inherited::customEvent(ev);
+    break;
+  }
+}
+
+void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
+  // selection ops need to go through the event loop or things get weird and nasty...
+  if (op == ISelectableHost::OP_SELECTION_CHANGED) {
+    QEvent* ev = new QEvent((QEvent::Type)iDataViewer_SelectionChanged_EventType);
+    QCoreApplication::postEvent(this, ev); // returns immediately
+  } else
+    emit NotifySignal(host, op);
+}
+
+
+
+//////////////////////////////////
+//  iFrameViewer		//
+//////////////////////////////////
+
+iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
+: inherited(parent, (Qt::WDestructiveClose))
 {
-  if (last_enabler == handler_obj) return; // nothing to do
-  // always disconnect first
-  if (last_enabler) {
-    disconnect(this, SIGNAL(GetEditActionsEnabled(int&)), last_enabler, NULL);
-    disconnect(this, SIGNAL(EditAction(int)), last_enabler, NULL);
-    disconnect(this, SIGNAL(SetActionsEnabled()), last_enabler, NULL);
-    disconnect(last_enabler, NULL, this, SLOT(UpdateUi()));
-    disconnect(last_enabler, SIGNAL(destroyed()), this, SLOT(ch_destroyed()));
+  m_viewer = viewer_;
+  Init();
+  // note: caller will still do a virtual Constr() on us after new
+}
+
+iFrameViewer::~iFrameViewer() {
+  if (m_viewer) {
+    m_viewer->WidgetDeleting();
+    m_viewer = NULL;
   }
-  // now connect, if supplied
-  if (handler_obj) {
-    connect(handler_obj, SIGNAL(destroyed()), this, SLOT(ch_destroyed()));
-    connect(this, SIGNAL(GetEditActionsEnabled(int&)), handler_obj, edit_enabled_slot);
-    connect(this, SIGNAL(EditAction(int)), handler_obj, edit_action_slot );
-    if (actions_enabled_slot)
-      connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
-    if (update_ui_signal)
-      connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
+}
+
+void iFrameViewer::Init() {
+  m_window = NULL; // set by main win when it adds us
+  shn_changing = 0;
+}
+
+void iFrameViewer::closeEvent(QCloseEvent* e) {
+  //note: we can't cancel these inner frames when closing -- just notify viewer
+  if (m_viewer) {
+    CancelOp cancel_op = CO_NOT_CANCELLABLE;
+    m_viewer->WindowClosing(cancel_op);
   }
-  last_enabler = handler_obj; // whether NULL or not
-  UpdateUi();
+  e->accept();
 }
 
-void iDataViewer::setFrameGeometry(const iRect& r) {
-  //NOTE: this may only work before calling show() on X
-    this->resize(r.size());   // set size
-    this->move(r.topLeft());  // set position
+iDataPanel* iFrameViewer::MakeNewDataPanel_(taiDataLink* link) {
+  iDataPanel* rval = NULL;
+  TypeDef* typ = link->GetDataTypeDef();
+  //typ can be null for non-taBase classes
+  if ((typ == NULL) || (typ->iv == NULL)) return NULL;
+  taiViewType* tiv = typ->iv;
+  rval = tiv->CreateDataPanel(link);
+  return rval;
 }
 
-void  iDataViewer::setFrameGeometry(int left, int top, int width, int height) {
-  setFrameGeometry(iRect(left, top, width, height));
+void iFrameViewer::SelectableHostNotifySlot_Internal(ISelectableHost* src, int op) {
+  ++shn_changing;
+    emit SelectableHostNotifySignal(src, op);
+  --shn_changing;
+}
+void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int op) {
+//TODO: maybe this should be forwarded to a virtual that can be overridden???
+//or maybe it should be virtual???
+  switch (op) {
+  case ISelectableHost::OP_GOT_FOCUS:
+  case ISelectableHost::OP_SELECTION_CHANGED:
+    SelectionChanged_impl(src);
+    break;
+  case ISelectableHost::OP_DESTROYING: break;
+  default: break; // shouldn't happen
+  }
+  
 }
 
-void iDataViewer::SetThisAsHandler() {
-  SetClipboardHandler(this,
-    SLOT(this_GetEditActionsEnabled(int&)),
-    SLOT(this_EditAction(int)),
-    SLOT(this_SetActionsEnabled()) );
-}
 
-/*was
-void iDataViewer::SetClipboardHandler(QWidget* handler_obj, const char* enabler_signal,
-      const char* handler_slot)
+
+
+//////////////////////////
+//   iTabViewer 	//
+//////////////////////////
+
+iTabViewer::iTabViewer(TabViewer* viewer_, QWidget* parent)
+: inherited(viewer_, parent)
 {
-  if (last_enabler == handler_obj) return; // nothing to do
-  // always disconnect first
-  if (last_enabler)
-    disconnect(last_enabler, NULL, this, SLOT(GetEditActionsEnabled(int&)) );
-  disconnect(this, SIGNAL(EditAction(int)), NULL, NULL );
-  // now connect, if supplied
-  if (handler_obj) {
-    connect(handler_obj, enabler_signal, this, SLOT(GetEditActionsEnabled(int&)) );
-    connect(this, SIGNAL(EditAction(int)), handler_obj, handler_slot );
-  }
-  last_enabler = handler_obj; // whether NULL or not
-  SelectionChanged(true);
-}*/
-
-void iDataViewer::this_EditAction(int ea) { // this is only used by the treeview
-  ISelectable* ci = curItem();
-  if (ci == NULL) return;
-  ci->EditAction_(sel_items(), ea);
-}
-
-void iDataViewer::this_GetEditActionsEnabled(int& ea) { // this is only used by the treeview
-  ISelectable* ci = curItem();
-  if (ci == NULL) return;
-  ea = ci->GetEditActions_(sel_items());
-}
-
-void iDataViewer::this_SetActionsEnabled() {
-  SetActionsEnabled_impl();
-}
-
-void iDataViewer::this_ToolBarSelect(int param) {
-  if (!m_viewer) return;
-  taiAction* me = toolBarMenu->items.SafeEl(param);
-  if (!me) return; // shouldn't happen
-  ToolBar* tb = m_viewer->toolbars.SafeEl(param);
-  if (!tb) return; // shouldn't happen
-  if (me->isChecked()) { //note: check has already been toggled
-    tb->Show();
-  } else { //need to show
-    tb->Hide();
-  }
-}
-
-void iDataViewer::UpdateUi() {
-  int ea = GetEditActions();
-  editCutAction->setEnabled(ea & taiClipData::EA_CUT);
-  editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
-  editPasteAction->setEnabled(ea & taiClipData::EA_PASTE);
-  editLinkAction->setEnabled(ea & taiClipData::EA_LINK);
-  editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
-/*todo  editCutAction->setEnabled(ea & taiClipData::EA_LINK);
-  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBGROUP);
-  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBITEM); */
-  emit_SetActionsEnabled();
-}
-
-void iDataViewer::windowActivationChange(bool oldActive) {
-  if (isActiveWindow()) {
-    int idx = taiMisc::viewer_wins.Find(this);
-    if (idx < 0) {
-      taMisc::Error("iDataViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
-    } else {
-      if (idx < (taiMisc::viewer_wins.size - 1)) {
-        // move us to the end
-        taiMisc::viewer_wins.Move(idx, taiMisc::viewer_wins.size - 1);
-      }
-    }
-  }
-  inherited::windowActivationChange(oldActive);
-}
-
-//////////////////////////
-//   ToolBar		//
-//////////////////////////
-
-void ToolBar::Initialize() {
-  index = -1; // assigned when added to list
-  lft = 0.0f;
-  top = 0.0f;
-  o = Horizontal;
-  mapped = false;
-  m_window = NULL;
-  m_viewer = NULL;
-}
-
-void ToolBar::Destroy() {
-  CutLinks();
-}
-
-void ToolBar::Copy_(const ToolBar& cp) {
-  lft = cp.lft;
-  top = cp.top;
-  o = cp.o;
-  mapped = cp.mapped;
-}
-
-void ToolBar::CutLinks() {
-//obs  taiMisc::CloseEdits((void*)this, GetTypeDef());
-  CloseWindow();
-//obs  win_owner = NULL;
-  inherited::CutLinks();
-}
-
-void ToolBar::CloseWindow() {
-  if (!m_window) return;
-  m_window->m_toolBar = NULL;
-  m_window->deleteLater();
-  m_window = NULL;
-}
-
-void ToolBar::Constr_Window_impl() {
-  if (m_window) return; // shouldn't happen
-  iDataViewer* vw = viewer_win();
-  if (!vw) return;
-
-  m_window = vw->Constr_ToolBar(this, this->GetName());
-  viewer_win()->AddToolBar(m_window);
-}
-
-void ToolBar::GetWinPos() {
-  if (!m_window) return;
-  iRect r = m_window->frameGeometry();
-  // convert from screen coords to relative (note, allowed to be >1.0)
-  lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
-  top = (float)r.top() / (float)(taiM->scrn_s.h);
-}
-
-void ToolBar::OpenNewWindow_impl() {
-  iDataViewer* vw = viewer_win();
-  if (!vw) return;
-  Constr_Window_impl();
-  if (!m_window) return; // shouldn't happen
-  vw->InitToolBar(GetName(), m_window);
-  SetWinPos();
-  m_window->show();
-  mapped = true;
-}
-
-void ToolBar::SetWinPos() {
-  if (!m_window) return;
-
-  //TODO: docked
-  m_window->setOrientation((Qt::Orientation)o);
-  iRect r = m_window->frameGeometry();
-  r.x = (int)(lft * taiM->scrn_s.w);
-  r.y = (int)(top * taiM->scrn_s.h);
-  m_window->move(r.topLeft());
-  m_window->resize(r.size());
-}
-
-void ToolBar::Show() {
-  if (m_window) m_window->show();
-  else OpenNewWindow_impl();
-}
-
-void ToolBar::Hide() {
-  if (!m_window) return;
-  m_window->hide();
-}
-
-DataViewer* ToolBar::viewer() {
-  if (!m_viewer) {
-    m_viewer = GET_MY_OWNER(DataViewer);
-  }
-  return m_viewer;
-}
-
-iDataViewer* ToolBar::viewer_win() {
-  return (viewer()) ? m_viewer->window() : NULL;
-}
-
-void ToolBar::WindowClosing() {
-  GetWinPos();
-  m_window = NULL;
-}
-
-
-//////////////////////////
-//	WinGeometry	//
-//////////////////////////
-
-float WinGeometry::Offs(float cur, float by) {
-  float rval = cur + by;
-  if (rval > 1.0f) rval -= 1.0f;
-  if (rval < 0.0f) rval = 0.0f;
-  return rval;
-}
-
-void WinGeometry::Initialize() {
-  owner = NULL;
-  lft = top = 0.0f;
-  wd = 0.75f;
-  ht = 0.8f; // default window size
-}
-
-void WinGeometry::Copy_(const WinGeometry& cp) {
-  lft = cp.lft;
-  top = cp.top;
-  wd = cp.wd;
-  ht = cp.ht;
-}
-
-void WinGeometry::GetWinPos() {
-  if ((owner == NULL) || (owner->m_window == NULL))
-    return;
-  iRect r = owner->m_window->frameGeometry();
-  // convert from screen coords to relative (note, allowed to be >1.0)
-  lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
-  top = (float)r.top() / (float)(taiM->scrn_s.h);
-  wd = (float)r.width() / (float)(taiM->scrn_s.w);
-  ht = (float)r.height() / (float)(taiM->scrn_s.h);
-}
-
-void WinGeometry::SetWinPos() {
-  if ((owner == NULL) || (owner->m_window == NULL))
-    return;
-
-  iRect tr = iRect(
-    (int)(lft * taiM->scrn_s.w),
-    (int)(top * taiM->scrn_s.h),
-    (int)(wd * taiM->scrn_s.w),
-    (int)(ht * taiM->scrn_s.h)
-  ); // converts to pixels
-
-  owner->m_window->setFrameGeometry(tr);
-}
-
-void WinGeometry::ScriptWinPos(ostream& strm) {
-  if (owner == NULL) return;
-  GetWinPos();
-  String temp = owner->GetPath();
-  if(owner->iconified) {
-    temp += ".Iconify();\n";
-  }
-  else {
-    temp += String(".SetWinPos(") + String(lft) + ", " +
-      String(top) + ", " + String(wd) + ", " + String(ht) + ");\n";
-  }
-  if(taMisc::record_script != NULL)  taMisc::RecordScript(temp);
-  else   strm << temp;
-}
-
-void WinGeometry::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
-  SetWinPos();
-}
-
-
-//////////////////////////
-//   DataViewer		//
-//////////////////////////
-
-// TEMP
-
-void DataViewer:: 	FileOptionsAction(){} // 
-void DataViewer:: 	FileCloseAction(){} // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
-void DataViewer::	EditUndoAction(){} // #ACT 
-void DataViewer::	EditRedoAction(){} // #ACT 
-void DataViewer::	EditCutAction(){} // #ACT 
-void DataViewer::	EditCopyAction(){} // #ACT 
-void DataViewer::	EditPasteAction(){} // #ACT 
-void DataViewer::	EditFindAction(){} // #ACT 
-void DataViewer::	HelpIndexAction(){} // #ACT 
-void DataViewer::	HelpContentsAction(){} // #ACT 
-
-// /TEMP
-
-void DataViewer::Initialize() {
-  m_window = NULL;
-  iconified = false;
-  m_is_root = false;
-  m_has_changes = false;
-
-  menu = NULL;
-  cur_menu = NULL;
-  ta_file= NULL;
-  print_file = NULL;
-  display_toggle = true;
-  // default window size --
-  link_type = &TA_taiDataLink; // specialized in descendant classes
-}
-
-void DataViewer::Destroy() {
-  CutLinks();
-  if(ta_file != NULL)    taRefN::unRefDone(ta_file);  ta_file = NULL;
-}
-
-void DataViewer::InitLinks() {
-  taDataView::InitLinks();
-  taBase::Own(win_pos, this);
-  taBase::Own(toolbars, this);
-  WinInit();			// initialize after linking, so that path is available
-  //TODO: fixup for panels
-  if(owner && (!owner->InheritsFrom(&TA_TypeDefault))) { // no windows for defaults
-    if(taMisc::is_loading)
-      taiMisc::unopened_windows.LinkUnique(this);
-    //note: in v3.2 we opened the window here for interactive, but this leads to complexity
-    // so we now require caller to do it after everything is built
-  }
-//TODO: why was this here? no side effects... BA 2006-07-12
-//  GetFiler();
-
-  // add toolbars
-  ToolBar* tb = new ToolBar();
-  tb->SetName("Application");
-  toolbars.Add(tb);
-}
-
-
-void DataViewer::Copy_(const DataViewer& cp) {
-  win_pos = cp.win_pos;
-  win_pos.lft = WinGeometry::Offs(win_pos.lft, 0.05f);
-  win_pos.top = WinGeometry::Offs(win_pos.top, 0.05f);
-  if(!GetName().empty())
-    SetName(GetName() + "_copy");		// only label winbases as copies
-
-  if (ta_file && cp.ta_file) *ta_file = *(cp.ta_file);
-}
-
-void DataViewer::WinInit() {
-  if(!taMisc::gui_active) return;
-}
-
-void DataViewer::CutLinks() {
-//obs  taiMisc::CloseEdits((void*)this, GetTypeDef());
-  CloseWindow();
-  win_pos.CutLinks();
-  toolbars.CutLinks();
-//obs  win_owner = NULL;
-  inherited::CutLinks();
-}
-
-void DataViewer::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  if (!IsMapped()) return;
-// this is a bad idea -- iconifies to quickly upon loading!
-// need to let window open then iconify it -- otherwise get zombies
-// and it breaks CYGWIN
-//  if(iconified) Iconify();
-  SetWinName();
-}
-
-void DataViewer::Changed(bool value) {
-  m_has_changes = value;
-}
-
-void DataViewer::Clear() {
-  if (!IsMapped()) return;
-  inherited::Clear();
-}
-
-void DataViewer::CloseWindow() {
-  if (!taMisc::gui_active) return;
-  if (print_file != NULL) {
-    taRefN::unRefDone(print_file);
-    print_file = NULL;
-  }
-  ta_menus.Reset();
-  cur_menu = NULL;
-  menu = NULL; // window deletes
-  if (!m_window) return;
-  window()->m_viewer = NULL;
-
-  m_window->m_viewer = NULL;
-  m_window->deleteLater();
-  m_window = NULL;
-}
-
-void DataViewer::Constr_Toolbars_impl() {
-  for (int i = 0; i < toolbars.size; ++i) {
-    ToolBar* tb = toolbars.FastEl(i);
-    if (!tb->mapped) continue;
-    tb->Show();
-  }
-}
-
-/*TODO: somehow need to merge this concept with existing more hardwired menus on iDataViewer
-void DataViewer::Constr_Menu_impl() {
-  TypeDef* typ = GetTypeDef();
-
-  for (int i = 0; i < typ->methods.size; ++i) {
-    MethodDef* md = typ->methods.FastEl(i);
-    if ((!md->HasOption("VMENU")) || (md->im == NULL))
-      continue;
-
-    taiMethodData* mth_rep = md->im->GetMethodRep(NULL, NULL, NULL, NULL); // no buttons;
-    if (mth_rep == NULL) continue;
-
-//    this_meths.Add(mth_rep);
-
-    // find or make current menu
-    String men_nm = md->OptionAfter("MENU_ON_");
-    if (men_nm != "") {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu != NULL)  goto cont;
-    }
-    if (cur_menu != NULL) goto cont;
-
-    if (men_nm == "")
-      men_nm = "File";
-    cur_menu = menu->AddSubMenu(men_nm);
-    ta_menus.Add(cur_menu);
-
-cont:
-    mth_rep->AddToMenu(cur_menu);
-  }
-} */
-
-void DataViewer::DeIconify() {
-  if(!taMisc::gui_active || (m_window == NULL)) return;
-  iconified = false;
-  if (m_window->isMinimized())
-    m_window->showNormal();
-}
-
-int DataViewer::Dump_Load_Value(istream& strm, TAPtr par) {
-  int rval = taDataView::Dump_Load_Value(strm, par);
-//woah, this really screws things up when loading!!!!
-// whyever it was here, its eveil and cannot be done!
-//evil:  taiMisc::RunPending();
-  return rval;
-}
-
-int DataViewer::Edit(bool) { //TODO: remove wait param
-  win_pos.GetWinPos();
-  taiEdit* ie = GetTypeDef()->ie;
-  if (ie != NULL) {
-    const iColor* bgclr = GetEditColorInherit();
-    return ie->Edit((void*)this, false, bgclr);
-  }
-  return false;
-}
-
-/*obs??? taFiler* DataViewer::GetFileDlg() {
-  if(!taMisc::gui_active)
-    return NULL;
-  if(ta_file != NULL)
-    return ta_file;
-
-  ta_file = taDataView::GetFileDlg();
-  taRefN::Ref(ta_file);
-  MenuGroup_impl* mg_own = GET_MY_OWNER(MenuGroup_impl);
-  if((mg_own != NULL) && (mg_own->ta_file != NULL)) {
-    ta_file->fname = mg_own->ta_file->fname; // get file name from menugroup
-  }
-
-  TypeDef* td = GetTypeDef();
-  String fltr;
-  bool cmprs;
-  int i;
-  for(i=TA_DataViewer.members.size; i<td->members.size; i++) {
-    MemberDef* md = td->members.FastEl(i);
-    if(md->type->InheritsFrom(&TA_MenuGroup_impl)) {
-      MenuGroup_impl* mg = (MenuGroup_impl*)md->GetOff((void*)this);
-      GetFileProps(mg->el_typ, fltr, cmprs);
-      if(mg->ta_file != NULL)
-	taRefN::unRefDone(mg->ta_file);
-      mg->ta_file = taFiler_CreateInstance(".", fltr, cmprs);
-      taRefN::Ref(mg->ta_file);
-    }
-  }
-  return ta_file;
-}*/
-
-// called once upon initialization of the wineve
-// allocates a getfile structure for the wineve + all of its menugroups..
-void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
-  int opt;
-  if((opt = td->opts.FindContains("EXT_")) >= 0) {
-    fltr = td->opts.FastEl(opt).after("EXT_");
-    fltr = "*." + fltr + "*";
-  }
-  else
-    fltr = "*";
-  cmprs = false;
-  if(td->HasOption("COMPRESS"))
-    cmprs = true;
-}
-
-void DataViewer::GetPrintFileDlg(PrintFmt fmt) {
-  static PrintFmt last_fmt = POSTSCRIPT;
-  if(!taMisc::gui_active) return;
-  if((print_file != NULL) && (last_fmt == fmt))  return;
-  if(print_file != NULL) {
-    taRefN::unRefDone(print_file);
-    print_file = NULL;
-  }
-
-  String ext = GetPrintFileExt(fmt);
-
-  print_file = taFiler::New("Print", ext);
-  taRefN::Ref(print_file);
-  last_fmt = fmt;
-}
-
-String DataViewer::GetPrintFileExt(PrintFmt fmt) {
-  String ext;
-  if(fmt == POSTSCRIPT)
-    ext = ".ps";
-  else if(fmt == JPEG)
-    ext = ".jpg";
-  else if(fmt == TIFF)
-    ext = ".tiff";
-  else if(fmt == PDF)
-    ext = ".pdf";
-  return ext;
-}
-
-void DataViewer::Iconify() {
-  if(!taMisc::gui_active || (m_window == NULL)) return;
-  if (!m_window->isMinimized())
-    m_window->showMinimized();
-  iconified = true;
-}
-
-bool DataViewer::IsMapped() {
-  return (taMisc::gui_active && m_window);
-}
-
-int DataViewer::Load(istream& strm, TAPtr par, void** el) {
-  if(taMisc::gui_active)  taMisc::Busy();
-  int rval = inherited::Load(strm, par, el);
-  // updating of menus done by calling function..
-  taMisc::DoneBusy();
-  Changed(false);
-  return rval;
-}
-
-void DataViewer::Lower() {
-  if (!taMisc::gui_active || (m_window == NULL)) return;
-  if (m_window)
-    m_window->lower();
-}
-
-/*obs void DataViewer::Move(float dx, float dy) {
-  // move = place with delta
-  //TODO: Qt version reverses sign of dy -- verify in callers
-  Place(win_pos.lft + dx, win_pos.top + dy);
-} */
-
-void DataViewer::OpenNewWindow() {
-  if (!taMisc::gui_active) return;
-
-  if (m_window != NULL) {
-    SetWinName();
-    return;
-  }
-  OpenNewWindow_impl();
-  Render();
-}
-
-void DataViewer::OpenNewWindow_impl() {
-  Constr_Window_impl();
-  if (!m_window) return; // shouldn't happen
-  m_window->is_root = m_is_root;
-  m_window->Constr();
-//  Constr_Menu_impl();
-  menu = m_window->menu;
-  // populate the toolbar list
-  for (int i = 0; i < toolbars.size; ++i) {
-    ToolBar* tb = toolbars.FastEl(i);
-    m_window->AddToolBarMenu(tb->GetName(), i);
-  }
-  win_pos.SetWinPos();
-
-  SetWinName();
-#ifdef QT_OS_MACX
-  m_window->showMaximized(); // makes sure the title bar is visible
-#else
-  m_window->show();
-#endif
-  m_window->SelectionChanged(true); // initializes selection system
-}
-
-/*obs void DataViewer::Place(float left, float top){ // 0 defaults
-  if (!taMisc::gui_active || (m_window == NULL)) return;
-  // check to make sure that its not off the screen
-  iCoord newleft, newtop;
-//  ivDisplay* dsp = ivSession::instance()->default_display();
-  iSize dsp = taiM->scrn_s; //note: excludes task bar
-  newleft =    MIN(left, dsp.width()-win_pos.wd);
-  newtop =  MIN(top ,dsp.height()-win_pos.ht - 20.0f);
-  newleft = MAX((float)newleft, -win_pos.wd + 20.0f);
-  newtop = MAX((float)newtop, -win_pos.ht + 20.0f);
-  m_window->move(newleft.asPixel(), newtop.asPixel());
-  win_pos.lft = newleft;
-  win_pos.top = newtop;
-} */
-
-void DataViewer::Print(PrintFmt format, const char* fname) {
-//TODO:  if(win_box != NULL) Print_impl(format, win_box, fname);
-}
-
-//TODO: Qt port
-// *** warning GetPrintData() must return a Patch;
-QWidget* DataViewer::GetPrintData(){
-return NULL;
-//TODO:  return win_box;
-}
-
-void DataViewer::Print_Data(PrintFmt format, const char* fname) {
-  //TODO: verify
-  QWidget* obj = this->GetPrintData();
-  if (obj == NULL) return;
-  Print_impl(format, obj, fname);
-}
-
-void DataViewer::Print_impl(PrintFmt format, QWidget* obj, const char* fname) {
-  //NOTE: Iv version exited immediately if not gui_active, but also had the
-  // sundry gui_active tests sprinkled throughout -- they are retained
-  // (pending further analysis as regards this anomoly) even though they are useless
-
-  // obj is really a patch
-  if(!taMisc::gui_active) return;
-/* TODO
-  taMisc::Busy();
-  GetWinPos();
-  GetPrintFileDlg(format);
-  if(print_file == NULL) {
-    if(taMisc::gui_active)  taMisc::DoneBusy();
-    return;
-  }
-  ostream* strm = NULL;
-  if(fname == NULL)
-    strm = print_file->SaveAs(fname);
-  else {
-    print_file->fname = fname;
-    strm = print_file->open_write();
-  }
-  if(strm == NULL) {
-    if (taMisc::gui_active)  taMisc::DoneBusy();
-    return;
-  }
-  if (!((format == POSTSCRIPT) || (format == PDF))) {
-#ifdef CYGWIN
-    taMisc::Error("MS Windows version does not support JPEG or TIFF window saving formats -- POSTSCRIPT/PDF only!");
-#else
-    const ivAllocation& alloc = ((ivPatch*)obj)->allocation();
-    ivCanvas* c = window->canvas();
-    int xstart = c->to_pixels(alloc.left(), Dimension_X);
-    int xend = c->to_pixels(alloc.right(), Dimension_X);
-    int ystart = c->pheight() - c->to_pixels(alloc.top(), Dimension_Y);
-    int yend = c->pheight() - c->to_pixels(alloc.bottom(), Dimension_Y);
-    if(format == JPEG) {
-      taiMisc::DumpJpegIv(window, print_file->fname, taMisc::jpeg_quality, xstart, ystart, xend-xstart, yend-ystart);
-    }
-    else if(format == TIFF) {
-      taiMisc::DumpTiffIv(window, print_file->fname, xstart, ystart, xend-xstart, yend-ystart);
-    }
-#endif
-  }
-  else {			// POSTSCRIPT 0r PDF
-//TODO: PDF support
-    if (format == PDF) { {taMisc::Error("PDF not yet supported!"); return; }
-    ivPrinter* p = new ivPrinter(strm);
-    String myname = String(ivSession::instance()->classname()) +
-      ": " + GetPath();
-    p->prolog(myname);
-    const ivAllocation& a = ((ivPatch*) obj)->allocation();
-    p->resize(a.left(), a.bottom(), a.right(), a.top());
-    p->page("1");
-    obj->print(p, a);
-    p->epilog();
-    obj->undraw();
-    print_file->Close();
-    delete p;
-
-    window->repair();
-    ReSize(win_pos.wd, win_pos.ht); // updates everything
-    //    if(InheritsFrom(TA_WinView)) {
-    //      ((WinView*)this)->InitDisplay();
-    //    }
-  }
-  if (taMisc::gui_active)  taMisc::DoneBusy(); */
-}
-
-void DataViewer::Raise() {
-  if (!taMisc::gui_active || (m_window == NULL)) return;
-  if (m_window)
-    m_window->raise();
-}
-
-void DataViewer::Render() {
-  if (!IsMapped()) return;
-  inherited::Render();
-}
-
-void DataViewer::Reset() {
-  if (!IsMapped()) return;
-  inherited::Reset();
-}
-
-/*obs void DataViewer::ReSize(float width, float height) {
-  if (!taMisc::gui_active || (m_window == NULL)) return;
-  if ((width > 0.0f) && (height > 0.0f)) {
-    win_pos.wd = width;
-    win_pos.ht = height;
-    win_pos.SetWinPos();
-  } else {
-    GetWinPos();
-  }
-} */
-
-bool DataViewer::Save() {
-  //TODO
-  return false;
-}
-
-int DataViewer::Save(ostream& strm, TAPtr par, int indent) {
-  taMisc::Busy();
-    win_pos.GetWinPos();		// get window position *before* saving!
-    SetWinName();			// this also gets file_name
-    int rval = taDataView::Save(strm, par, indent);
-  taMisc::DoneBusy();
-  Changed(false);
-  return rval;
-}
-
-void DataViewer::SetFileName(const char* fname) {
-  if(fname == NULL) return;
-  file_name = fname;
-}
-
-void DataViewer::SetWinName() {
-  if(!taMisc::gui_active) return;
-  if (m_window == NULL) return;
-
-  String prog_nm = taiM->classname();
-  String name;
-  if (data()) name = data()->GetName();
-  String nw_name = prog_nm + ": " + GetPath() + "(" + name + ")";
-  if((ta_file != NULL) && (!ta_file->fname.empty())) {
-    nw_name += String(" Fn: ") + ta_file->fname;
-    SetFileName(ta_file->fname);
-  }
-  if(nw_name == win_name) return; // no need to set, same name!
-  win_name = nw_name;
-  m_window->setCaption(win_name);
-}
-
-bool DataViewer::ThisMenuFilter(MethodDef* md) {
-  if((md->name == "GetAllWinPos") || (md->name == "ScriptAllWinPos") ||
-     (md->name == "SetWinPos") || (md->name == "SelectForEdit") ||
-     (md->name == "SelectFunForEdit")) return false;
-  return true;
-}
-
-//void DataViewer::ViewWindow(float left, float top, float width, float height) {
-void DataViewer::ViewWindow() {
-  if (!taMisc::gui_active) return;
-  if (!m_window) {
-    OpenNewWindow();
-//    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
-//      SetWinPos(left, top, width, height);
-  } else {
-    DeIconify();
-    Raise();
-  }
-}
-
-void DataViewer::WindowClosing(bool& cancel) {
-  bool forced = taMisc::quitting;
-  cancel = false; // falling through to end of routine is "proceed"
-
-  if (HasChanges()) {
-    int chs = taMisc::Choice("You have unsaved changes -- do you want to save before closing?", "&Save", "&Discard Changes", "&Cancel");
-    switch (chs) {
-    case 0:
-      if (Save()) {
-        cancel = false;
-        break;
-      } else return;
-    case 1:
-      cancel = false;
-      break;
-    case 2:
-      cancel = true;
-      return;
-    }
-  }
-
-  //following done only for a root win
-  if (!forced && m_window->is_root) {
-    int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
-    switch (chs) {
-    case 1:
-      if (tabMisc::root) tabMisc::root->SaveAll();
-      //fall through
-    case 0: {
-      taMisc::quitting = true;
-      CancelOp cancel_op = CO_PROCEED;
-      taiM->MainWindowClosing(cancel_op);
-      if (cancel_op == CO_CANCEL) {
-       taMisc::quitting = false;
-       return;
-      }
-      forced = taMisc::quitting;
-      } break;
-    case 2:
-      cancel = true;
-      return;
-    }
-  }
-
-  //note: should have exited if cancel, but we check just in case
-  if (!cancel)  tabMisc::Close_Obj(this);
-
-/*was TODO  cancel = true; // falling through to end of routine is "proceed"
-  if (InheritsFrom(TA_WinView) && (((WinView*)this)->mgr != NULL)) {
-    WinMgr* mgr = ((WinView*)this)->mgr;
-    int chs = taMisc::Choice("Close (PERMANENTLY Destroy) this VIEW of the object, or destroy the ENTIRE object including all views, losing all unsaved changes?", "Close View", "Close Obj", "Save Then Close Obj", "Cancel");
-    if (chs == 3)
-      return; //cancel
-    else if(chs == 2) {
-      taFiler* taf = mgr->GetFileDlg();
-      taRefN::Ref(taf);
-      ostream* strm = taf->Save();
-      if((strm != NULL) && strm->good()) {
-	taiMisc::RecordScript(mgr->GetPath() + ".Save(" + taf->fname + ");\n");
-	mgr->SetFileName(taf->fname);
-	DMEM_GUI_RUN_IF {
-	  mgr->Save(*strm);
-	}
-      }
-      taRefN::unRef(taf); //no Done, in case supplier isn't using ref counting
-    } else if(chs == 0) {
-      taiMisc::RecordScript(GetPath() + ".Close();\n");
-      DMEM_GUI_RUN_IF {
-	tabMisc::Close_Obj(this);
-      }
-      cancel = false;
-      return;
-    }
-    taiMisc::RecordScript(mgr->GetPath() + ".Close();\n");
-    DMEM_GUI_RUN_IF {
-      tabMisc::Close_Obj(mgr);
-    }
-  } else {
-    int chs = taMisc::Choice("Ok to Close (PERMANENTLY Destroy) this object, losing all unsaved changes?", "Close", "Save Then Close", "Cancel");
-    if(chs == 2)
-      return; //cancel
-    else if (chs == 1) {
-      taFiler* taf = GetFileDlg();
-      taRefN::Ref(taf);
-      ostream* strm = taf->Save();
-      if((strm != NULL) && strm->good()) {
-	taiMisc::RecordScript(GetPath() + ".Save(" + taf->fname + ");\n");
-	SetFileName(taf->fname);
-	DMEM_GUI_RUN_IF {
-	  Save(*strm);
-	}
-      }
-      taRefN::unRefDone(taf);
-    }
-    taiMisc::RecordScript(GetPath() + ".Close();\n");
-    DMEM_GUI_RUN_IF {
-      tabMisc::Close_Obj(this);
-    }
-  }
-  cancel = false; */
-}
-
-
-//////////////////////////
-//   iTabDataViewer 	//
-//////////////////////////
-
-iTabDataViewer::iTabDataViewer(DataViewer* viewer_, QWidget* parent)
-: iDataViewer(viewer_, parent)
-{
-  init();
+  Init();
 }
 
-/* iTabDataViewer::iTabDataViewer(DataViewer* viewer_, QWidget* parent, WFlags fl)
-: iDataViewer(viewer_, parent, fl)
+/* iTabViewer::iTabViewer(DataViewer* viewer_, QWidget* parent, WFlags fl)
+: iMainWindowViewer(viewer_, parent, fl)
 {
   init();
 } */
 
-iTabDataViewer::~iTabDataViewer()
+iTabViewer::~iTabViewer()
 {
   delete m_tabViews;
   m_tabViews = NULL;
 }
 
-void iTabDataViewer::init() {
+void iTabViewer::Init() {
   m_tabViews = new  iTabView_PtrList();
   m_curTabView = NULL;
+  cur_item = NULL;
 }
 
-void iTabDataViewer::AddPanel(iDataPanel* panel) {
+void iTabViewer::AddPanel(iDataPanel* panel) {
   tabView()->AddPanel(panel);
 }
 
-void iTabDataViewer::AddPanelNewTab(iDataPanel* panel) {
+void iTabViewer::AddPanelNewTab(iDataPanel* panel) {
   tabView()->AddPanelNewTab(panel);
 }
 
-void iTabDataViewer::AddTab() {
+void iTabViewer::AddTab() {
   tabView()->AddTab();
 }
 
-iTabView* iTabDataViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
+iTabView* iTabViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
   iTabView* rval;
   if (splitBuddy) { // split
     rval = new iTabView(this, parCtrl);
@@ -2722,72 +1863,37 @@ iTabView* iTabDataViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
   return rval;
 }
 
-void iTabDataViewer::CloseTab() {
+void iTabViewer::CloseTab() {
   tabView()->CloseTab();
 }
 
-void iTabDataViewer::Closing(bool forced, bool& cancel) {
-  tabView()->Closing(forced, cancel);
+void iTabViewer::Closing(CancelOp& cancel_op) {
+  tabView()->Closing(cancel_op);
 }
 
-void iTabDataViewer::Constr_Menu_impl() {
-  iDataViewer::Constr_Menu_impl();
-  viewSplitVerticalAction = AddAction(new taiAction(this, "Split &Vertical", QKeySequence("Ctrl+Shift+L"),
-     "viewSplitVerticalAction"));
-  viewSplitVerticalAction->AddTo(viewMenu);
-  connect( viewSplitVerticalAction, SIGNAL( activated() ), this, SLOT( viewSplitVertical() ) );
-
-  viewSplitHorizontalAction = AddAction(new taiAction(this, "Split &Horizontal", QKeySequence("Ctrl+Shift+T"),
-     "viewSplitHorizontalAction"));
-  viewSplitHorizontalAction->AddTo(viewMenu);
-  connect(viewSplitHorizontalAction, SIGNAL( activated() ), this, SLOT(viewSplitHorizontal() ) );
-
-  viewCloseCurrentViewAction = AddAction(new taiAction(this, "Close &Current View", QKeySequence("Ctrl+Shift+R"),
-     "viewCloseCurrentViewAction"));
-  viewCloseCurrentViewAction->setEnabled(false); // only enabled for multi tabs
-  viewCloseCurrentViewAction->AddTo(viewMenu);
-  connect(viewCloseCurrentViewAction, SIGNAL( activated() ), this, SLOT(viewCloseCurrentView() ) );
-
-}
-
-iDataPanel* iTabDataViewer::MakeNewDataPanel_(taiDataLink* link) {
-  iDataPanel* rval = NULL;
-  TypeDef* typ = link->GetDataTypeDef();
-  //typ can be null for non-taBase classes
-  if ((typ == NULL) || (typ->iv == NULL)) return NULL;
-  taiViewType* tiv = typ->iv;
-  rval = tiv->CreateDataPanel(link);
-  return rval;
-}
-
-bool iTabDataViewer::ItemRemoving(ISelectable* item) {
-  // just blindly try removing it from sel list
-  return RemoveSelectedItem(item);
-}
-
-void iTabDataViewer::selectionChangedEvent(QEvent* ev) {
+void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   //TODO: should actually check if old panel=new panel, since theoretically, two different
   // gui items can have the same datalink (i.e., underlying data)
   iDataPanel* pn = NULL;
   iDataPanel* new_pn = NULL;
+  cur_item = src_host->curItem(); // note: could be NULL
   bool done;
   if (m_curTabView) {
     pn = m_curTabView->cur_panel();
-    ISelectable* ci = curItem();
     // first, check for the trivial cases (esp. when multi-selections are made), no change
-    if (!ci) goto end; // no selected item, so no change
+    if (!cur_item) goto end; // no selected item, so no change
     if (!pn) {
-      new_pn = m_curTabView->GetDataPanel(ci->link());
+      new_pn = m_curTabView->GetDataPanel(cur_item->link());
     } else {
       if (pn->lockInPlace()) goto end; // locked, user must create one and change
-      if (pn->link() == ci->link()) goto end; //this is panel for item,
+      if (pn->link() == cur_item->link()) goto end; //this is panel for item,
 
 
-      new_pn = m_curTabView->GetDataPanel(ci->link());
+      new_pn = m_curTabView->GetDataPanel(cur_item->link());
       //if not exists, or is dirty, make a new one, else just switch
       if (!pn || pn->dirty()) {
         // first try activating an existing panel -- don't keep creating new ones
-        done = m_curTabView->ActivatePanel(ci->link());
+        done = m_curTabView->ActivatePanel(cur_item->link());
         if (done) goto end;
         // ok, no panel for that link, so need to create a new one
         m_curTabView->AddPanelNewTab(new_pn);
@@ -2796,10 +1902,10 @@ void iTabDataViewer::selectionChangedEvent(QEvent* ev) {
     m_curTabView->SetPanel(new_pn);
   }
 end:
-  inherited::selectionChangedEvent(ev);
+  inherited::SelectionChanged_impl(src_host); // prob does nothing
 }
 
-void iTabDataViewer::TabView_Destroying(iTabView* tv) {
+void iTabViewer::TabView_Destroying(iTabView* tv) {
   int idx = m_tabViews->Find(tv);
   m_tabViews->Remove(idx);
   if (m_curTabView != tv) return;
@@ -2808,7 +1914,7 @@ void iTabDataViewer::TabView_Destroying(iTabView* tv) {
   TabView_Selected(m_tabViews->SafeEl(idx)); // NULL if no more
 }
 
-void iTabDataViewer::TabView_Selected(iTabView* tv) {
+void iTabViewer::TabView_Selected(iTabView* tv) {
   if (m_curTabView == tv) return;
   if (m_curTabView) {
     m_curTabView->Activated(false);
@@ -2819,16 +1925,16 @@ void iTabDataViewer::TabView_Selected(iTabView* tv) {
   }
 }
 
-void iTabDataViewer::SetPanel(iDataPanel* panel) {
+void iTabViewer::SetPanel(iDataPanel* panel) {
   tabView()->SetPanel(panel);
 }
 
-void iTabDataViewer::UpdateTabNames() { // called by a datalink when a tab name might have changed
+void iTabViewer::UpdateTabNames() { // called by a datalink when a tab name might have changed
   tabView()->UpdateTabNames();
 }
 
-void iTabDataViewer::viewCloseCurrentView() { // closes split, unless it is last
-  // We are going to delete the current splitter and the current tabview.
+void iTabViewer::viewCloseCurrentView() { // closes split, unless it is last
+/*TODO  // We are going to delete the current splitter and the current tabview.
   // We will reparent the current tabview's buddy to the grandparent splitter.
 
   if (m_tabViews->size < 2) return; //shouldn't happen, because should be disabled
@@ -2897,10 +2003,10 @@ void iTabDataViewer::viewCloseCurrentView() { // closes split, unless it is last
     if (move_first) gpar_spl->moveToFirst(buddy);
     else  gpar_spl->moveToLast(buddy);
     gpar_spl->setSizes(gpar_spl_sizes);
-  }
+  }*/
 }
 
-void iTabDataViewer::viewSplit(int o) {
+void iTabViewer::viewSplit(int o) {
   //NOTE: 'o' is opposite from type of split we are doing, since it represents the splitter type
 
   // We are going to take the current tab view, replace it (visually) with a splitter, then
@@ -2962,34 +2068,529 @@ void iTabDataViewer::viewSplit(int o) {
     old_par_spl->setSizes(par_spl_sizes);
   }
   // divide the space evenly
-  viewCloseCurrentViewAction->setEnabled(true); // only enabled for multi tabs
+//TODO:  viewCloseCurrentViewAction->setEnabled(true); // only enabled for multi tabs
 }
 
-void iTabDataViewer::viewSplitVertical() {
+void iTabViewer::viewSplitVertical() {
   viewSplit(Qt::Horizontal); //note: Hor is the orientation of the splitter, which is opposite to how we split window
 }
 
-void iTabDataViewer::viewSplitHorizontal() {
+void iTabViewer::viewSplitHorizontal() {
   viewSplit(Qt::Vertical); //note: Ver is the orientation of the splitter, which is opposite to how we split window
 }
 
-/*obs
+
 //////////////////////////
-//    iPanelTab 	//
+//  iDockViewer		//
 //////////////////////////
 
-iPanelTab::iPanelTab(iDataPanel* panel_)
-: QTab()
+iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
+:inherited(parent, Qt::WDestructiveClose)
 {
-  m_panel = NULL;
-  SetPanel(panel_, true);
+  m_viewer = viewer_;
 }
 
-iPanelTab::~iPanelTab() {
-  if (m_panel) {
-    m_panel = NULL;
+iDockViewer::~iDockViewer() {
+  if (m_viewer) {
+    m_viewer->WidgetDeleting();
+    m_viewer = NULL;
   }
+}
+
+
+//////////////////////////
+//  iMainWindowViewer	//
+//////////////////////////
+
+iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
+: QMainWindow(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax | Qt::WDestructiveClose))
+{
+  m_viewer = viewer_;
+  Init();
+  // note: caller will still do a virtual Constr() on us after new
+}
+
+/*obs iMainWindowViewer::iMainWindowViewer(DataViewer* viewer_, QWidget* parent, WFlags flags)
+: QMainWindow(parent, NULL, flags)
+{
+  m_viewer = viewer_;
+  init();
 } */
+
+iMainWindowViewer::~iMainWindowViewer() {
+  taiMisc::viewer_wins.Remove(this);
+  if (m_viewer) {
+    m_viewer->WidgetDeleting();
+    m_viewer = NULL;
+  }
+//TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
+// has already deleted the menu items
+//  if (menu) delete menu;
+  menu = NULL;
+}
+
+void iMainWindowViewer::Init() {
+  //note: only a bare init -- most stuff done in virtual Constr() called after new
+  menu = NULL;
+  body = NULL;
+  last_clip_handler = NULL;
+  last_sel_server = NULL;
+  is_root = false;
+  m_last_action_idx = -1;
+  // set maximum size
+  iSize ss = taiM->scrn_s;
+  setMaximumSize(ss.width(), ss.height());
+  // set default size as the big hor dialog
+  resize(taiM->dialogSize(taiMisc::hdlg_b));
+
+  setFont(taiM->dialogFont(taiM->ctrl_size));
+
+  (void)statusBar(); // creates the status bar
+  
+  // these are modal, so NULL them for when unused
+  fileNewAction = NULL;
+  fileOpenAction = NULL;
+  fileSaveAction = NULL;
+  fileSaveAsAction = NULL;
+  fileSaveAllAction = NULL;
+  fileCloseAction = NULL;
+}
+
+taiAction* iMainWindowViewer::AddAction(taiAction* act) {
+  actions.Add(act); // refs the act
+  return act;
+}
+
+void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
+  if (at_index < 0)
+    body->addWidget(fv);
+  else
+    body->insertWidget(at_index, fv);
+  fv->m_window = this;
+  
+  connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
+    fv, SLOT(SelectableHostNotifySlot_External(ISelectableHost*, int)) );
+  connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)), 
+    this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
+    
+  //TODO: forward the viewSplit guys, if the guy has compatible slots
+}
+
+// this guy exists because we must always be able to add a panel,
+// so if there isn't already a panel viewer, we have to add one
+void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
+  iTabViewer* itv = NULL;
+  TabViewer* tv = (TabViewer*)viewer()->FindFrameByType(&TA_TabViewer);
+  if (!tv) {
+    tv = (TabViewer*)viewer()->AddFrameByType(&TA_TabViewer);
+    tv->Constr(); // parented when added
+    AddFrameViewer(tv->widget(), 1); // usually in middle
+  }
+  itv = tv->viewer_win();
+  itv->AddPanelNewTab(panel);
+} 
+
+iToolBar* iMainWindowViewer::AddToolBar(iToolBar* tb) {
+  toolbars.append(tb);
+  return tb;
+}
+
+void iMainWindowViewer::AddToolBarMenu(const String& name, int index) {
+//taiAction* menu =
+  toolBarMenu->AddItem(name, taiMenu::toggle,
+    taiAction::int_act, this, SLOT(this_ToolBarSelect(int)), index);
+}
+
+void iMainWindowViewer::ch_destroyed() {
+  last_clip_handler = NULL;
+  UpdateUi();
+}
+
+void iMainWindowViewer::closeEvent (QCloseEvent* e) {
+   // always closing if quitting or we no longer have our mummy
+  CancelOp cancel_op = (taMisc::quitting || (!m_viewer)) ? CO_NOT_CANCELLABLE : CO_PROCEED; 
+
+//  if (m_viewer && (forced || (cancel_op != CO_CANCEL))) {
+  if (m_viewer) {
+    m_viewer->WindowClosing(cancel_op);
+  }
+  if (cancel_op != CO_CANCEL) Closing(cancel_op);
+  if (cancel_op == CO_CANCEL) e->ignore();
+  else        e->accept();
+}
+
+void iMainWindowViewer::Constr() {
+  Constr_MainMenu_impl();
+  Constr_Menu_impl();
+  // we always put the fileclose action at bottom of menu
+  fileMenu->insertSeparator();
+  fileCloseWindowAction->AddTo(fileMenu);
+
+  body = new QSplitter(); // def is hor
+  setCentralWidget(body);
+
+  actionsMenu->insertSeparator();
+  m_last_action_idx = actionsMenu->count() - 1;
+
+  taiMisc::viewer_wins.AddUnique(this);
+}
+
+void iMainWindowViewer::Constr_MainMenu_impl() {
+  if (menu) return;
+  // create a taiMenu wrapper around the window's provided menubar
+  menu = new taiMenuBar(this, taiMisc::fonBig, menuBar());
+  QImage img;
+  img.loadFromData( image0_data, sizeof( image0_data ), "PNG" );
+  image0 = img;
+  img.loadFromData( image1_data, sizeof( image1_data ), "PNG" );
+  image1 = img;
+  img.loadFromData( image2_data, sizeof( image2_data ), "PNG" );
+  image2 = img;
+  img.loadFromData( image3_data, sizeof( image3_data ), "PNG" );
+  image3 = img;
+  img.loadFromData( image4_data, sizeof( image4_data ), "PNG" );
+  image4 = img;
+  img.loadFromData( image5_data, sizeof( image5_data ), "PNG" );
+  image5 = img;
+  img.loadFromData( image6_data, sizeof( image6_data ), "PNG" );
+  image6 = img;
+  img.loadFromData( image7_data, sizeof( image7_data ), "PNG" );
+  image7 = img;
+  img.loadFromData( image8_data, sizeof( image8_data ), "PNG" );
+  image8 = img;
+
+  fileMenu = menu->AddSubMenu("&File");
+  editMenu = menu->AddSubMenu("&Edit");
+  viewMenu = menu->AddSubMenu("&View");
+  actionsMenu = menu->AddSubMenu("&Actions");
+  toolsMenu = menu->AddSubMenu("&Tools");
+  helpMenu = menu->AddSubMenu("&Help");;
+}
+
+void iMainWindowViewer::Constr_Menu_impl() {
+
+  // default actions
+  if (showFileObjectOps()) {
+    fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
+    fileNewAction->setIconSet( QIconSet( image0 ) );
+    fileOpenAction = AddAction(new taiAction("&Open...", QKeySequence("Ctrl+O"), _fileOpenAction ));
+    fileOpenAction->setIconSet( QIconSet( image1 ) );
+    fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
+    fileSaveAction->setIconSet( QIconSet( image2 ) );
+    fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
+    fileSaveAllAction = AddAction(new taiAction("Save A&ll", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
+    fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
+    
+    fileNewAction->AddTo(fileMenu);
+    fileOpenAction->AddTo(fileMenu );
+    fileSaveAction->AddTo(fileMenu );
+    fileSaveAsAction->AddTo(fileMenu);
+    fileSaveAllAction->AddTo(fileMenu);
+    fileCloseAction->AddTo(fileMenu);
+    fileMenu->insertSeparator();
+    
+    connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
+    connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
+    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
+    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
+    connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
+    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
+  }
+  fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
+  
+  filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
+  filePrintAction->setIconSet( QIconSet( image3 ) );
+  if (is_root)
+    fileCloseWindowAction = AddAction(new taiAction("&Quit", QKeySequence("Ctrl+Q"), _fileCloseWindowAction ));
+  else
+    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence("Ctrl+W"), _fileCloseWindowAction ));
+  editUndoAction = AddAction(new taiAction("&Undo", QKeySequence("Ctrl+Z"), _editUndoAction ));
+  editUndoAction->setEnabled( FALSE );
+  editUndoAction->setIconSet( QIconSet( image4 ) );
+  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence("Ctrl+Y"), _editRedoAction ));
+  editRedoAction->setEnabled( FALSE );
+  editRedoAction->setIconSet( QIconSet( image5 ) );
+  editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence("Ctrl+X"), _editCutAction ));
+  editCutAction->setIconSet( QIconSet( image6 ) );
+  editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence("Ctrl+C"), _editCopyAction ));
+  editCopyAction->setIconSet( QIconSet( image7 ) );
+  editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence("Ctrl+V"), _editPasteAction ));
+  editPasteAction->setIconSet( QIconSet( image8 ) );
+  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
+//  editDeleteAction->setIconSet( QIconSet( image8 ) );
+  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
+  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
+  toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
+  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
+  helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
+
+  fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
+  fileOptionsAction->AddTo( fileMenu );
+  fileMenu->insertSeparator();
+  filePrintAction->AddTo( fileMenu );
+
+  editUndoAction->AddTo( editMenu );
+  editRedoAction->AddTo( editMenu );
+  editMenu->insertSeparator();
+  editCutAction->AddTo( editMenu );
+  editCopyAction->AddTo( editMenu );
+  editPasteAction->AddTo( editMenu );
+  editLinkAction->AddTo( editMenu );
+  editDeleteAction->AddTo( editMenu );
+
+  viewRefreshAction->AddTo(viewMenu);
+  viewMenu->insertSeparator();
+  toolBarMenu = viewMenu->AddSubMenu("Toolbars");
+  viewMenu->insertSeparator();
+
+  toolsClassBrowseAction->AddTo(toolsMenu );
+  helpHelpAction->AddTo(helpMenu );
+  helpMenu->insertSeparator();
+  helpAboutAction->AddTo(helpMenu );
+
+    // signals and slots connections
+  connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
+//   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
+  connect( fileCloseWindowAction, SIGNAL( Action() ), this, SLOT( fileCloseWindow() ) );
+//    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
+//   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
+  connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
+  connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
+  connect( toolsClassBrowseAction, SIGNAL( activated() ), 
+    this, SLOT( toolsClassBrowser() ) );
+//    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
+    connect( helpAboutAction, SIGNAL( Action() ), this, SLOT( helpAbout() ) );
+
+//TODO: split stuff needs to be enabled/disabled and dynamically dispatched to right guy
+  viewSplitVerticalAction = AddAction(new taiAction(this, "Split &Vertical", QKeySequence("Ctrl+Shift+L"),
+     "viewSplitVerticalAction"));
+  viewSplitVerticalAction->AddTo(viewMenu);
+  connect( viewSplitVerticalAction, SIGNAL( activated() ), this, SLOT( viewSplitVertical() ) );
+
+  viewSplitHorizontalAction = AddAction(new taiAction(this, "Split &Horizontal", QKeySequence("Ctrl+Shift+T"),
+     "viewSplitHorizontalAction"));
+  viewSplitHorizontalAction->AddTo(viewMenu);
+  connect(viewSplitHorizontalAction, SIGNAL( activated() ), this, SLOT(viewSplitHorizontal() ) );
+
+  viewCloseCurrentViewAction = AddAction(new taiAction(this, "Close &Current View", QKeySequence("Ctrl+Shift+R"),
+     "viewCloseCurrentViewAction"));
+  viewCloseCurrentViewAction->setEnabled(false); // only enabled for multi tabs
+  viewCloseCurrentViewAction->AddTo(viewMenu);
+  connect(viewCloseCurrentViewAction, SIGNAL( activated() ), this, SLOT(viewCloseCurrentView() ) );
+
+}
+
+iToolBar* iMainWindowViewer::Constr_ToolBar(ToolBar* tb, String name) {
+  iToolBar* rval = new iToolBar(tb, name, this);
+  return rval;
+}
+
+void iMainWindowViewer::emit_EditAction(int param) {
+  emit EditAction(param);
+  taiMisc::RunPending();
+  UpdateUi();
+}
+
+/*obs void iMainWindowViewer::emit_selectionChanged()
+{
+  emit selectionChanged();
+} */
+
+void iMainWindowViewer::fileCloseWindow() {
+  if (is_root) {
+    if (tabMisc::root) tabMisc::root->Quit();
+  } else close();
+}
+
+void iMainWindowViewer::fileOptions() {
+  if (!taMisc::gui_active) return;
+  taiEdit* ie =  TA_taMisc.ie;
+  if (ie)
+    ie->Edit(TA_taMisc.GetInstance());
+}
+
+int iMainWindowViewer::GetEditActions() {
+  int rval = 0;
+  emit GetEditActionsEnabled(rval);
+  return rval;
+}
+
+void iMainWindowViewer::helpAbout() {
+  if (tabMisc::root) tabMisc::root->Info();
+}
+
+bool iMainWindowViewer::InitToolBar(const String& name, iToolBar* tb) {
+  bool rval = false;
+  if (name == "Application") {
+    fileNewAction->addTo(tb);
+    fileOpenAction->addTo(tb);
+    fileSaveAction->addTo(tb);
+    fileSaveAsAction->addTo(tb);
+    fileCloseAction->addTo(tb);
+    filePrintAction->addTo(tb);
+    tb->addSeparator();
+    editUndoAction->addTo(tb);
+    editRedoAction->addTo(tb);
+    tb->addSeparator();
+    editCutAction->addTo(tb);
+    editCopyAction->addTo(tb);
+    editPasteAction->addTo(tb);
+    tb->addSeparator();
+    helpHelpAction->addTo(tb);
+    return true;
+  }
+  return rval;
+}
+
+void iMainWindowViewer::mnuEditAction(taiAction* mel) {
+   // called from context; cast obj to an taiClipData::EditAction
+  emit_EditAction(mel->usr_data.toInt());
+}
+
+void iMainWindowViewer::SelectableHostNotifying_impl(ISelectableHost* src_host, int op) {
+  //TODO: should we do anything else with this ourself????
+  emit SelectableHostNotifySignal(src_host, op);
+  UpdateActionsMenu(src_host, true);
+  UpdateUi();
+}
+
+void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int op) {
+  switch (op) {
+  case ISelectableHost::OP_GOT_FOCUS: {
+    // spec says that this automatically also makes the guy the cliphandler
+    if (last_sel_server == src_host) break; // nothing to do
+    last_sel_server = src_host;
+    QObject* handler_obj = src_host->clipHandlerObj();
+    SetClipboardHandler(handler_obj, ISelectableHost::edit_enabled_slot,
+      ISelectableHost::edit_action_slot);
+    SelectableHostNotifying_impl(src_host, op); // break out for clarity
+    } break;
+  case ISelectableHost::OP_SELECTION_CHANGED: {
+    // if no handler, then this guy becomes handler implicitly, otherwise ignore
+    if (last_sel_server && (last_sel_server != src_host)) break;
+    SelectableHostNotifying_impl(src_host, op); // break out for clarity
+    } break;
+  case ISelectableHost::OP_DESTROYING: {
+    if (last_sel_server == src_host) {
+      if (last_clip_handler == src_host->clipHandlerObj()) {
+        SetClipboardHandler(NULL); // might as well do this now
+      }
+      last_sel_server = src_host;
+      UpdateActionsMenu(src_host, false);
+      UpdateUi();
+    }
+    } break;
+  default: break; // shouldn't happen
+  }
+}
+
+void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
+  const char* edit_enabled_slot,
+  const char* edit_action_slot,
+  const char* actions_enabled_slot,
+  const char* update_ui_signal)
+{
+  if (last_clip_handler == handler_obj) return; // nothing to do
+  // always disconnect first
+  if (last_clip_handler) {
+    disconnect(this, SIGNAL(GetEditActionsEnabled(int&)), last_clip_handler, NULL);
+    disconnect(this, SIGNAL(EditAction(int)), last_clip_handler, NULL);
+    disconnect(this, SIGNAL(SetActionsEnabled()), last_clip_handler, NULL);
+    disconnect(last_clip_handler, NULL, this, SLOT(UpdateUi()));
+    disconnect(last_clip_handler, SIGNAL(destroyed()), this, SLOT(ch_destroyed()));
+  }
+  // now connect, if supplied
+  if (handler_obj) {
+    connect(handler_obj, SIGNAL(destroyed()), this, SLOT(ch_destroyed()));
+    connect(this, SIGNAL(GetEditActionsEnabled(int&)), handler_obj, edit_enabled_slot);
+    connect(this, SIGNAL(EditAction(int)), handler_obj, edit_action_slot );
+    if (actions_enabled_slot)
+      connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
+    if (update_ui_signal)
+      connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
+  }
+  last_clip_handler = handler_obj; // whether NULL or not
+  UpdateUi();
+}
+
+void iMainWindowViewer::setFrameGeometry(const iRect& r) {
+  //NOTE: this may only work before calling show() on X
+    this->resize(r.size());   // set size
+    this->move(r.topLeft());  // set position
+}
+
+void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int height) {
+  setFrameGeometry(iRect(left, top, width, height));
+}
+
+void iMainWindowViewer::this_ToolBarSelect(int param) {
+  if (!m_viewer) return;
+  taiAction* me = toolBarMenu->items.SafeEl(param);
+  if (!me) return; // shouldn't happen
+  ToolBar* tb = m_viewer->toolbars.SafeEl(param);
+  if (!tb) return; // shouldn't happen
+  if (me->isChecked()) { //note: check has already been toggled
+    tb->Show();
+  } else { //need to show
+    tb->Hide();
+  }
+}
+
+void iMainWindowViewer::toolsClassBrowser() {
+  MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(&taMisc::types, &TA_TypeSpace);
+  if (brows == NULL) return;
+  brows->ViewWindow();
+}
+
+void iMainWindowViewer::UpdateActionsMenu(ISelectableHost* src_host, bool do_add) {
+  // clear out the previous dynamic items
+  int i;
+  for (i = actionsMenu->count() - 1; i > m_last_action_idx; --i) {
+    actionsMenu->DeleteItem(i);
+  }
+  // we don't add ex. if src guy is destroying
+  if (do_add) {
+    src_host->AddDynActions(actionsMenu);
+  }
+}
+
+void iMainWindowViewer::UpdateUi() {
+  int ea = GetEditActions();
+  editCutAction->setEnabled(ea & taiClipData::EA_CUT);
+  editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
+  editPasteAction->setEnabled(ea & taiClipData::EA_PASTE);
+  editLinkAction->setEnabled(ea & taiClipData::EA_LINK);
+  editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
+/*todo  editCutAction->setEnabled(ea & taiClipData::EA_LINK);
+  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBGROUP);
+  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBITEM); */
+  emit SetActionsEnabled();
+}
+
+//TODO: need to somehow enable/forward these guys dynamically
+void iMainWindowViewer::viewCloseCurrentView() {}
+void iMainWindowViewer::viewSplitVertical() {}
+void iMainWindowViewer::viewSplitHorizontal() {}
+
+void iMainWindowViewer::windowActivationChange(bool oldActive) {
+  if (isActiveWindow()) {
+    int idx = taiMisc::viewer_wins.Find(this);
+    if (idx < 0) {
+      taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
+    } else {
+      if (idx < (taiMisc::viewer_wins.size - 1)) {
+        // move us to the end
+        taiMisc::viewer_wins.Move(idx, taiMisc::viewer_wins.size - 1);
+      }
+    }
+  }
+  inherited::windowActivationChange(oldActive);
+}
 
 
 //////////////////////////
@@ -3090,7 +2691,7 @@ iTabView::iTabView(QWidget* parent)
   init();
 }
 
-iTabView::iTabView(iTabDataViewer* data_viewer_, QWidget* parent)
+iTabView::iTabView(iTabViewer* data_viewer_, QWidget* parent)
 :QWidget(parent)
 {
   m_viewer_win = data_viewer_;
@@ -3175,12 +2776,12 @@ void iTabView::CloseTab() {
   }
 }
 
-void iTabView::Closing(bool forced, bool& cancel) {
+void iTabView::Closing(CancelOp& cancel_op) {
   // close all panels
   for (int i = panels.size - 1; i >= 0; --i) {
     iDataPanel* panel = panels.FastEl(i);
-    panel->Closing(forced, cancel);
-    if (cancel && !forced) return; // can stop now
+    panel->Closing(cancel_op);
+    if (cancel_op == CO_CANCEL) return; // can stop now
 
     RemoveDataPanel(panel); // note: removes from tabs, and deletes tabs
   }
@@ -3315,7 +2916,7 @@ iDataPanel::~iDataPanel() {
 }
 
 void iDataPanel::ctrl_focusInEvent(QFocusEvent* ev) {
-  viewer_win()->SetClipboardHandler(this, 
+  window()->SetClipboardHandler(this, 
     SLOT(this_GetEditActionsEnabled(int&)),
     SLOT(this_EditAction(int)),
     NULL,
@@ -3372,8 +2973,8 @@ iDataPanelFrame::~iDataPanelFrame() {
 }
 
 void iDataPanelFrame::ClosePanel() {
-  bool cancel = false;
-  Closing(true, cancel); // forced, ignore cancel
+  CancelOp cancel_op = CO_NOT_CANCELLABLE;
+  Closing(cancel_op); // forced, ignore cancel
   if (m_tabView) // effectively unlink from system
     m_tabView->DataPanelDestroying(this);
   if (!m_dps) // if in a panelset, we let panelset destroy us
@@ -3404,7 +3005,7 @@ String iDataPanelFrame::TabText() const {
   else       return inherited::TabText();
 }
 
-iTabDataViewer* iDataPanelFrame::viewer_win() const {
+iTabViewer* iDataPanelFrame::viewer_win() const {
   if (m_dps) return m_dps->viewer_win();
   else       return (m_tabView) ? m_tabView->viewer_win() : NULL;
 }
@@ -3426,8 +3027,8 @@ iViewPanelFrame::~iViewPanelFrame() {
 }
 
 void iViewPanelFrame::ClosePanel() {
-  bool cancel = false;
-  Closing(true, cancel); // forced, ignore cancel
+  CancelOp cancel_op = CO_NOT_CANCELLABLE;
+  Closing(cancel_op); // forced, ignore cancel
   if (m_tabView) // effectively unlink from system
     m_tabView->DataPanelDestroying(this);
   deleteLater(); // per Qt specs, defer deletions to avoid issues
@@ -3457,7 +3058,7 @@ String iViewPanelFrame::TabText() const {
   else      return inherited::TabText();
 }
 
-iTabDataViewer* iViewPanelFrame::viewer_win() const {
+iTabViewer* iViewPanelFrame::viewer_win() const {
   return (m_tabView) ? m_tabView->viewer_win() : NULL;
 }
 
@@ -3516,11 +3117,11 @@ void iDataPanelSet::btn_pressed(int id) {
   set_cur_panel_id(id);
 }
 
-void iDataPanelSet::Closing(bool forced, bool& cancel) {
+void iDataPanelSet::Closing(CancelOp& cancel_op) {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
-    pn->Closing(forced, cancel);
-    if (cancel) return;
+    pn->Closing(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
   }
 }
 
@@ -3578,13 +3179,14 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 //    iTreeView 	//
 //////////////////////////
 
-iTreeView::iTreeView(ISelectableHost* host_, QWidget* parent, int tv_flags_)
+iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
   tv_flags = tv_flags_;
-  host = host_;
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+  connect(this, SIGNAL(itemSelectionChanged()),
+    this, SLOT(this_itemSelectionChanged()) );
   connect(this, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)),
     this, SLOT(this_contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)) );
 }
@@ -3662,7 +3264,7 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
-  emit focusIn(ev);
+  Emit_GotFocusSignal();
 }
 
 void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
@@ -3676,9 +3278,15 @@ void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
   }
 }
 
+bool iTreeView::hasMultiSelect() const {
+  QAbstractItemView::SelectionMode sm = selectionMode();
+  return ((sm == ContiguousSelection) ||
+    (sm == ExtendedSelection) ||
+    (sm == MultiSelection));
+}
+
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
-  if (host) host->ItemRemoving(item);
-  emit ItemDestroying(item);
+  RemoveSelectedItem((ISelectable*)item, false); // not forced, because it is gui
 }
 
 void iTreeView::mnuNewBrowser(taiAction* mel) {
@@ -3688,13 +3296,9 @@ void iTreeView::mnuNewBrowser(taiAction* mel) {
   //TODO: browse system should be fully typesafe and support all types, so this should work
   // for any type, not just taBase
   if (!td->InheritsFrom(&TA_taBase)) return;
-  DataBrowser* brows = DataBrowser::New((taBase*)dl->data(), node->md());
+  MainWindowViewer* brows = MainWindowViewer::NewBrowser((taBase*)dl->data(), node->md());
   if (!brows) return;
   brows->ViewWindow();
-  // move selection up to parent of cloned item, to reduce issues of changed data, confusion, etc.
-//TODO  setCurItem(node->parent(), true);
-
-  //TODO: (maybe!) delete the panel (to reduce excessive panel pollution)
 }
 
 void iTreeView::setColKey(int col, const KeyString& key) { 
@@ -3722,6 +3326,7 @@ void iTreeView::showEvent(QShowEvent* ev) {
 }
 
 void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
+//TODO: revise, based on us being ISelectableHost
   iTreeViewItem* nd = dynamic_cast<iTreeViewItem*>(item);
   //note: could be NULL if on tree area itself, or invalid node type
 
@@ -3758,10 +3363,49 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
   delete menu;
 }
 
-
+//NOTE: this is a widget-level guy that just forwards to our signal --
+// it presumably is ALSO emitted in addition to itemSelectionChanged
 void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   iTreeViewItem* it = dynamic_cast<iTreeViewItem*>(curr); //note: we want null if curr is not itvi
   emit ItemSelected(it);
+}
+
+void iTreeView::this_itemSelectionChanged() {
+  if (selectionChanging()) return; // ignore
+  SelectionChanging(true, false); // not forced, because gui-driven
+    sel_items.Reset();
+    GetSelectedItems(sel_items);
+  SelectionChanging(false, false);
+}
+
+
+void iTreeView::UpdateSelectedItems_impl() {
+  //note: we are already guarded against spurious gui updates
+  // our approach is to copy the list, then iterate all currently selected items, 
+  // removing those from selection not in the list or removing from list if in
+  // selection already; then we select any that remain in the list
+  ISelectable_PtrList sel_items = selItems(); // copies
+  QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
+  QTreeWidgetItem* item;
+  ISelectable* si; 
+  int lst_idx;
+  while ( (item = *it) ) {
+  ISelectable* si = dynamic_cast<ISelectable*>(item);
+    if (si) {
+      if ((lst_idx = sel_items.Find(si)) >= 0) 
+        sel_items.Remove(lst_idx);
+      else setItemSelected(item, false); // hope this is ok while iterating!!!!
+    }
+    ++it;
+  }
+  // now, select any remaining
+  for (int lst_idx = 0; lst_idx < sel_items.size; ++lst_idx) {
+    si = sel_items.FastEl(lst_idx);
+    if (si->GetTypeDef()->InheritsFrom(TA_iTreeViewItem)) { // should
+      item = (iTreeViewItem*)(si->This());
+      if (item) setItemSelected(item, true);
+    }
+  }
 }
 
 //////////////////////////
@@ -3980,7 +3624,7 @@ void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
 
 ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
-  return (tv) ? tv->host : NULL;
+  return (tv) ? (ISelectableHost*)tv : NULL;
 }
 
 void iTreeViewItem::itemExpanded(bool value) {
@@ -4145,11 +3789,6 @@ QString taiListDataNode::text(int col) const {
     return QString::number(num);
 }
 
-ISelectableHost* taiListDataNode::host() const {
-  return (panel) ? panel->viewer_win() : NULL;
-}
-
-
 
 //////////////////////////
 //    iListDataPanel 	//
@@ -4158,7 +3797,7 @@ ISelectableHost* taiListDataNode::host() const {
 iListDataPanel::iListDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  list = new iTreeView(viewer_win(), this);
+  list = new iTreeView(this);
   list->setName("list"); // nn???
   setCentralWidget(list);
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
@@ -4202,15 +3841,16 @@ void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 }
 
 int iListDataPanel::EditAction(int ea) {
-  int rval = 0;
-
-  ISelectable_PtrList sel_list;
+  int rval = 0; //note: usually ignored, should be eliminated
+  list->EditAction(ea);
+  return rval;
+/*  ISelectable_PtrList sel_list;
   GetSelectedItems(sel_list);
   ISelectable* ci = sel_list.SafeEl(0);
   if (ci)  {
     rval = ci->EditAction_(sel_list, ea);
   }
-  return rval;
+  return rval; */
 }
 
 void iListDataPanel::FillList() {
@@ -4226,6 +3866,9 @@ void iListDataPanel::FillList() {
 
 int iListDataPanel::GetEditActions() {
   int rval = 0;
+  list->EditActionsEnabled(rval);
+  return rval;
+/*obs
 
   ISelectable_PtrList sel_list;
   GetSelectedItems(sel_list);
@@ -4237,15 +3880,11 @@ int iListDataPanel::GetEditActions() {
       rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
     }
   }
-  return rval;
-}
-
-void iListDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  list->GetSelectedItems(lst);
+  return rval; */
 }
 
 void iListDataPanel::list_itemSelectionChanged() {
-  viewer_win()->UpdateUi();
+//nn  viewer_win()->UpdateUi();
 }
 
 String iListDataPanel::panel_type() const {
@@ -4308,7 +3947,7 @@ void iTextDataPanel::setText(const String& value) {
 
   
 void iTextDataPanel::textText_copyAvailable (bool) {
-  viewer_win()->UpdateUi();
+  window()->UpdateUi();
 }
 
 String iTextDataPanel::panel_type() const {
