@@ -79,7 +79,7 @@ class Environment; //
 //TODO class TimeEnvironment;
 
 // from pdpshell.h
-class Project; //
+class V3ProjectBase;
 
 #ifdef TA_GUI
 class PDP_API CtrlPanelData : public taOBase {
@@ -91,10 +91,8 @@ public:
   float		top;		// panel window top coord
 
   void 	Initialize();
-  void 	Destroy()		{ };
-  void 	Copy_(const CtrlPanelData& cp);
-  COPY_FUNS(CtrlPanelData, taOBase);
-  TA_BASEFUNS(CtrlPanelData);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CtrlPanelData);
 };
 #endif
 
@@ -107,52 +105,46 @@ public:
     SCRIPT 			// Script (user-defined)
   };
 
+  TypeDef* 	min_network;	// #HIDDEN #NO_SAVE #TYPE_Network Minimum acceptable Network type
+  TypeDef* 	min_layer;	// #HIDDEN #NO_SAVE #TYPE_Layer Minimum acceptable Layer type
+  TypeDef* 	min_unit;	// #HIDDEN #NO_SAVE #TYPE_Unit Minimum acceptable Unit type
+  TypeDef* 	min_con_group; 	// #HIDDEN #NO_SAVE #TYPE_Con_Group Min acceptable Con_Group type
+  TypeDef* 	min_con; 	// #HIDDEN #NO_SAVE #TYPE_Connection Min acceptable Con type
+
   RndSeed	rndm_seed;	// #HIDDEN random seed, for NewRun(), ReRun()
   TimeUsed	time_used;	// #HIDDEN accumulated time used during the Run() of this process
 
   Type    	type;			// process can be builtin c-code or a script
   Modulo	mod;			// flag=run this process or not, m=modulus, run process every m times, off=start runing at this offset
-  Project*	project;  		// #READ_ONLY #NO_SAVE project to act on
   Network*	network;  		// #CONTROL_PANEL network to act on
   Environment*  environment;		// #CONTROL_PANEL environmnent to act in
 #ifdef TA_GUI
   CtrlPanelData	ctrl_panel;		// #HIDDEN data for the control panel display
 #endif
 
-  virtual void	Init() {}
-  virtual void	CopyPNEPtrs(Network* net, Environment* env);
-  // #IGNORE copy the project, network, env ptrs from
-  virtual void	SetDefaultPNEPtrs();
-  // #IGNORE get default project, network, env ptrs
-  
   // stuff for script_base
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
-  void		LoadScript(const char* file_nm = NULL);
-  bool		RunScript();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
-  void 	Destroy();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const Process& cp);
-  COPY_FUNS(Process, taNBase);
-  TA_BASEFUNS(Process);
+  void 	Destroy() { CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Process);
 };
 
 class PDP_API Process_Group : public taGroup<Process> {
   // ##NO_TOKENS a menu group for processes
+INHERITED(taGroup<Process>)
 public:
 
   void	Initialize() {SetBaseType(&TA_Process);}
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Process_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Process_Group);
 };
 
 
 class PDP_API DataItem : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP source of a piece of data
+INHERITED(taOBase)
 public:
 
   String	name;		// #HIDDEN_INLINE name of data item
@@ -160,36 +152,24 @@ public:
   bool		is_string;	// #HIDDEN_INLINE is a string-valued item
   int		vec_n;		// #HIDDEN_INLINE length of vector (0 if not)
 
-  virtual void	SetStringName(const char* nm);
-  virtual void	SetNarrowName(const char* nm);
-  virtual void	SetFloatVecNm(const char* nm, int n);
-  virtual void	SetStringVecNm(const char* nm, int n);
-  
-  virtual void 	AddDispOption(const char* opt);
-  bool		HasDispOption(const char* opt) const
-  { return disp_opts.contains(opt); } // check if a given display option is set
-  
-  bool 		SetName(const String& nm) 	{ name = nm; return true; }
-  String	GetName() const			{ return name; }
-
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Copy_(const DataItem& cp);
-  COPY_FUNS(DataItem, taOBase);
-  TA_BASEFUNS(DataItem);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(DataItem);
 };
 
 class PDP_API DataItem_List : public taList<DataItem> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of DataItem objects
+INHERITED(taList<DataItem>)
 public:
   void	Initialize() 		{SetBaseType(&TA_DataItem); };
-  void 	Destroy()		{ };
-  TA_BASEFUNS(DataItem_List);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(DataItem_List);
 };
 
 
 class PDP_API StatVal : public DataItem {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP Statistic value
+INHERITED(DataItem)
 public:
   float		val;		// value of statistic
   String	str_val;	// #HIDDEN_INLINE value of statistic if its a string
@@ -197,34 +177,33 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks();};
-  void	InitLinks();
-  void	CutLinks() {stopcrit.CutLinks(); DataItem::CutLinks();}
-  void	Copy_(const StatVal& cp);
-  COPY_FUNS(StatVal, DataItem);
-  TA_BASEFUNS(StatVal);
+  TA_SIMPLE_BASEFUNS(StatVal);
 };
 
 
 class PDP_API StatVal_List : public taBase_List {
   // ##NO_UPDATE_AFTER group of stat values
+INHERITED(taBase_List)
 public:
   void	Initialize() 		{ SetBaseType(&TA_StatVal); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(StatVal_List);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(StatVal_List);
 };
 
 
 class PDP_API StatValAgg : public Aggregate {
   // #INLINE #INLINE_DUMP Aggregation for StatVal-based values
+INHERITED(Aggregate)
 public:
 
   void 	Initialize() {}
-  void	Destroy() {}
-  TA_BASEFUNS(StatValAgg);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(StatValAgg);
 };
 
 class PDP_API AggStat : public StatValAgg {
   // #INLINE #INLINE_DUMP Aggregate statistics over time (processing levels)
+INHERITED(StatValAgg)
 public:
   Stat*		real_stat;	// #READ_ONLY #NO_SAVE the 'real' (non-agg) stat
   Stat* 	from;
@@ -234,14 +213,12 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	CutLinks();
-  void	Copy_(const AggStat& cp);
-  COPY_FUNS(AggStat, StatValAgg);
-  TA_BASEFUNS(AggStat);
+  TA_SIMPLE_BASEFUNS(AggStat);
 };
 
 class PDP_API Stat : public Process {
   // Generic Statistic Process
+INHERITED(Process)
 public:
   enum LoopInitType {
     INIT_IN_LOOP,		// initialize inside the loop (each time stat is run in loop)
@@ -263,40 +240,35 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void 	InitLinks();
-  void	CutLinks();
-  void	Copy_(const Stat& cp);
-  COPY_FUNS(Stat, Process);
-  TA_BASEFUNS(Stat);
+  TA_SIMPLE_BASEFUNS(Stat);
 };
 
 class PDP_API Stat_Group : public taBase_Group {
   // ##NO_TOKENS a group of statistics
+INHERITED(taBase_Group)
 public:
-  bool		Close_Child(TAPtr obj);
-
   void	Initialize() 		{ SetBaseType(&TA_Stat); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Stat_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Stat_Group);
 };
 
 // SE_Stat and MonitorStat are so basic that they are here, and not in extra
 
 class PDP_API SE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Squared Error Statistic
+INHERITED(Stat)
 public:
   StatVal	se;			// squared errors
   float		tolerance;		// if error is less than this, its 0
 
-  void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(SE_Stat);
-  COPY_FUNS(SE_Stat, Stat);
-  TA_BASEFUNS(SE_Stat);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SE_Stat);
 };
 
 class PDP_API MonitorStat: public Stat {
   // ##COMPUTE_IN_TrialProcess Network Monitor Statistic
+INHERITED(Stat)
 public:
   StatVal_List	mon_vals;	// the values of the stat as computed directly
   MemberSpace   members;	// #IGNORE memberdefs
@@ -309,48 +281,37 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy_(const MonitorStat& cp);
-  COPY_FUNS(MonitorStat, Stat);
-  TA_BASEFUNS(MonitorStat);
+  TA_SIMPLE_BASEFUNS(MonitorStat);
 };
 
 
 class PDP_API Counter : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds the value of a loop counter
+INHERITED(taBase)
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
   int 		val;			// #IV_READ_ONLY #SHOW value of the counter
   int 		max;			// maximum value of the counter
 
-  void  SetMax(int m) {max = m;}
+  virtual void 	SetMax(int i)	  	{ max = i; }
+
   void 	Initialize()		{ val = 0; max = 1; }
-  void 	Destroy()		{ };
-  void	Copy_(const Counter& cp)	{ name = cp.name; val = cp.val; max = cp.max; }
-  COPY_FUNS(Counter, taBase);
-  TA_BASEFUNS(Counter);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Counter);
 };
 
 
 class PDP_API StepParams : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds steping process parameters
+INHERITED(taBase)
 public:
   SchedProcess* owner;		// #READ_ONLY #NO_SAVE use this to find the subtypes
   SchedProcess*	proc;		// #SUBTYPE_SchedProcess process to step
   int		n;		// number of steps to take
 
-  TAPtr 	GetOwner() const;
-  TAPtr		GetOwner(TypeDef* tp) const;
-  TAPtr 	SetOwner(TAPtr ta);
-
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const StepParams& cp);
-  COPY_FUNS(StepParams, taBase);
-  TA_BASEFUNS(StepParams);
+  TA_SIMPLE_BASEFUNS(StepParams);
 };
 
 
@@ -392,20 +353,9 @@ public:
   bool		log_loop;		// Log the loop state (instead of final state)
   bool		log_counter;		// Log the counter values for this process
 
-  // simple process manipulation subroutines to make life a little easier
-  virtual SchedProcess* FindSubProc(TypeDef* td); // find of a given type
-  virtual SchedProcess* FindSuperProc(TypeDef* td); // find of a given type
-  virtual SchedProcess* FindProcOfType(TypeDef* td);
-  // find of a given type, including this proc, super and sub procs
-  virtual SchedProcess* GetTopProc(); // #IGNORE get the highest-level process
-  
   void 	Initialize();
   void 	Destroy() {CutLinks();}
-  void 	InitLinks();
-  void	CutLinks();
-  void	Copy_(const SchedProcess& cp);
-  COPY_FUNS(SchedProcess, Process);
-  TA_BASEFUNS(SchedProcess);
+  TA_SIMPLE_BASEFUNS(SchedProcess);
 };
 
 
@@ -415,10 +365,11 @@ public:
 
 class PDP_API CycleProcess : public SchedProcess {
   // ##AGGOP_SUM Runs one cycle of activation update
+INHERITED(SchedProcess)
 public:
   void 	Initialize();
-  void	Destroy()		{ };
-  TA_BASEFUNS(CycleProcess);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CycleProcess);
 };
 
 
@@ -428,15 +379,13 @@ public:
 
 class PDP_API SettleProcess : public SchedProcess {
   // ##AGGOP_SUM Settles over cycles of activation propagation
+INHERITED(SchedProcess)
 public:
   Counter	cycle;			// Current cycle number
 
   void 	Initialize();
-  void 	Destroy()		{ };
-  void	InitLinks();
-  void	Copy_(const SettleProcess& cp)	{ cycle = cp.cycle; }
-  COPY_FUNS(SettleProcess, SchedProcess);
-  TA_BASEFUNS(SettleProcess);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SettleProcess);
 };
 
 
@@ -446,6 +395,7 @@ public:
 
 class PDP_API TrialProcess : public SchedProcess {
   // ##AGGOP_SUM Runs a single trial (one event)
+INHERITED(SchedProcess)
 public:
   Event* 	cur_event;
   // #FROM_GROUP_enviro_group the current event (copied from the EpochProc)
@@ -455,10 +405,7 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	CutLinks();
-  void	Copy_(const TrialProcess& cp);
-  COPY_FUNS(TrialProcess, SchedProcess);
-  TA_BASEFUNS(TrialProcess);
+  TA_SIMPLE_BASEFUNS(TrialProcess);
 };
 
 
@@ -468,6 +415,7 @@ public:
 
 class PDP_API EpochProcess : public SchedProcess {
   // ##AGGOP_SUM Loops over entire set of trials (events) in the environment.\nIf multiple dmem processors are available (after network dmem_nprocs) events are distributed across\nprocessors, and weights synchronized: every batch_n for SMALL_BATCH (=ONLINE), or at end for BATCH.
+INHERITED(SchedProcess)
 public:
   enum Order {
     SEQUENTIAL,			// present events in sequential order
@@ -496,15 +444,12 @@ public:
   
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const EpochProcess& cp);
-  COPY_FUNS(EpochProcess, SchedProcess);
-  TA_BASEFUNS(EpochProcess);
+  TA_SIMPLE_BASEFUNS(EpochProcess);
 };
 
 class PDP_API SequenceProcess : public SchedProcess {
   // ##AGGOP_SUM Processes a sequence of trials in one event group (must be under a SequenceEpoch, which loops over event groups)
+INHERITED(SchedProcess)
 public:
   enum Order {
     SEQUENTIAL,			// present events in sequential order
@@ -530,16 +475,13 @@ public:
   Event_Group*	enviro_group;	// #READ_ONLY #NO_SAVE main event group on environment
 
   void 	Initialize();
-  void 	Destroy();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const SequenceProcess& cp);
-  COPY_FUNS(SequenceProcess, SchedProcess);
-  TA_BASEFUNS(SequenceProcess);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SequenceProcess);
 };
 
 class PDP_API SequenceEpoch : public EpochProcess {
   // Loops over sequences (groups of events) instead of individual events (enviro must have event groups!).
+INHERITED(EpochProcess)
 public:
   enum SmallBatchType {
     SEQUENCE,			// at the sequence level (batch_n sequences)
@@ -550,22 +492,20 @@ public:
 
   Event_Group*	cur_event_gp;	// #FROM_GROUP_enviro_group current event group
 
-  void	Initialize();
-  void	Destroy();
-  void	CutLinks();
-  void	Copy_(const SequenceEpoch& cp);
-  COPY_FUNS(SequenceEpoch, EpochProcess);
-  TA_BASEFUNS(SequenceEpoch);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SequenceEpoch);
 };
 
 class PDP_API InteractiveEpoch : public EpochProcess {
   // Loops over events in an environment using the interactive interface of GetNextEvent(), which can generate new events based on current state
+INHERITED(EpochProcess)
 public:
   int		last_trial_val;	// #READ_ONLY #NO_SAVE last trial.val when GetCurEvent was called -- decide wether its time to get a new event or not
 
-  void	Initialize();
-  void	Destroy()	{ };
-  TA_BASEFUNS(InteractiveEpoch);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(InteractiveEpoch);
 };
 
 //////////////////////////
@@ -583,15 +523,12 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const NEpochProcess& cp)		{ epoch = cp.epoch; }
-  COPY_FUNS(NEpochProcess, SchedProcess);
-  TA_BASEFUNS(NEpochProcess);
+  TA_SIMPLE_BASEFUNS(NEpochProcess);
 };
 
 class PDP_API TrainProcess : public SchedProcess {
   // ##AGGOP_LAST Runs epochs to train network
+INHERITED(SchedProcess)
 public:
   Counter	epoch; 			// Epoch Counter
   EpochProcess* epoch_proc;
@@ -599,11 +536,7 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const TrainProcess& cp)		{ epoch = cp.epoch; }
-  COPY_FUNS(TrainProcess, SchedProcess);
-  TA_BASEFUNS(TrainProcess);
+  TA_SIMPLE_BASEFUNS(TrainProcess);
 };
 
 
@@ -613,15 +546,13 @@ public:
 
 class PDP_API BatchProcess : public SchedProcess {
   // ##AGGOP_LAST Runs multiple trainings
+INHERITED(SchedProcess)
 public:
   Counter	batch;		// number of batches run
 
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	InitLinks();
-  void	Copy_(const BatchProcess& cp)		{ batch = cp.batch; }
-  COPY_FUNS(BatchProcess, SchedProcess);
-  TA_BASEFUNS(BatchProcess);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(BatchProcess);
 };
 
 
@@ -711,18 +642,9 @@ public:
   String_Array  value_names;	// display names of the individual pattern values
   int_Array 	global_flags;	// #CONDEDIT_ON_use_flags:USE_GLOBAL_FLAGS,USE_PAT_THEN_GLOBAL_FLAGS these are global flags for all events (cf use_flags)
 
-  virtual float Value(Pattern* pat, int index);
-  // return value at given index from pattern (order can be changed, eg GroupPatternSpec)
-  virtual int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
-  // return flag at given index from pattern (order can be changed, eg GroupPatternSpec)
-
-  void	Initialize();
-  void 	Destroy();
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const PatternSpec& cp);
-  COPY_FUNS(PatternSpec, BaseSubSpec);
-  TA_BASEFUNS(PatternSpec); //
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(PatternSpec); //
 };
 
 class PDP_API PatternSpec_Group : public taBase_Group {
@@ -731,16 +653,14 @@ INHERITED(taBase_Group)
 public:
   TypeDef*	pat_gp_type;	// #TYPE_Pattern_Group type of pattern group to use
 
-  void	Initialize();
-  void 	Destroy();
-  void	CutLinks();
-  void 	Copy_(const PatternSpec_Group& cp);
-  COPY_FUNS(PatternSpec_Group, taBase_Group);
-  TA_BASEFUNS(PatternSpec_Group);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(PatternSpec_Group);
 };
 
 class PDP_API EventSpec : public BaseSpec {
   // ##SCOPE_Environment ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+INHERITED(BaseSpec)
 public:
   enum PatternLayout {
     DEFAULT,
@@ -757,18 +677,15 @@ public:
 
   void	Initialize();
   void 	Destroy() 	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy(const EventSpec& cp);
-  TA_BASEFUNS(EventSpec);
+  TA_SIMPLE_BASEFUNS(EventSpec);
 };
 
 class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec> {
+INHERITED(SpecPtr<EventSpec>)
 public:
-  BaseSpec_Group*	GetSpecGroup();	// event specs go in environment
   void 	Initialize() 		{ };
-  void	Destroy()		{ };
-  TA_BASEFUNS(EventSpec_SPtr);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(EventSpec_SPtr);
 };
 
 
@@ -778,17 +695,14 @@ public:
 
 class PDP_API Pattern : public taOBase {
   // ##SCOPE_Environment ##EXT_pat ##NO_TOKENS ##NO_UPDATE_AFTER Contains activation values to be applied to a network layer
+INHERITED(taOBase)
 public:
   float_RArray 	value;  	// Values of Pattern
   int_Array   	flag;  		// Flags of Pattern
   
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy_(const Pattern& cp);
-  COPY_FUNS(Pattern, taOBase);
-  TA_BASEFUNS(Pattern);
+  TA_SIMPLE_BASEFUNS(Pattern);
 };
 
 BaseGroup_of(Pattern);
@@ -796,17 +710,15 @@ BaseGroup_of(Pattern);
 
 class PDP_API Event : public taNBase {
   // ##SCOPE_Environment ##EXT_evt ##NO_TOKENS ##NO_UPDATE_AFTER Contains patterns of activation for different layers in the network specifying one event
+INHERITED(taNBase)
 public:
   int			index;		// #NO_SAVE #READ_ONLY Index of this event within group
   Pattern_Group 	patterns;  	// #NO_SAVE_PATH_R group of patterns
   EventSpec_SPtr	spec;		// determines the configuration of patterns and how they are presented to the network
 
-  void	Initialize();
-  void 	Destroy();
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy(const Event& cp);
-  TA_BASEFUNS(Event);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Event);
 };
 
 // environment presents the following model: either a flat list of events
@@ -819,13 +731,14 @@ public:
 
 class PDP_API Event_Group : public taGroup<Event> {
   // ##SCOPE_Environment Group of events
+INHERITED(taGroup<Event>)
 protected:
   void	El_SetIndex_(void* base, int idx) { ((Event*)base)->index = idx; }
 public:
 
   void	Initialize() {SetBaseType(&TA_Event);}
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Event_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Event_Group);
 }; //
 
 ////////////////////////
@@ -852,62 +765,55 @@ public:
   Event_Group 		events;		// the events, contain patterns that map onto layers of the network
   int			event_ctr; 	// #READ_ONLY #SHOW counter for interactive interface with environment: number of events processed since last InitEvents()
 
-  // the flat event list model of the environment
-  virtual int	EventCount()		{ return events.leaves; }
-  // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE number of events in environment
-  virtual Event* GetEvent(int ev_index)	{ return (Event*)events.Leaf_(ev_index); }
-  // get the event at given index in a flat list of all events in the environment
-
-  // the leaf-group model of the environment
-  virtual int	GroupCount();
-  // #MENU #USE_RVAL number of event groups in environment, including root
-  virtual Event_Group* GetGroup(int gp_index);
-  // get the event group (collection of events) at the specified index of all groups in the environment
-
-  void	Initialize();
-  void 	Destroy();
-  void	InitLinks();
-  void	CutLinks();
-  void 	Copy(const Environment& cp);
-  TA_BASEFUNS(Environment); //
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Environment); //
 
 };
 
 // note: Environment_Group name is for compatiblity with v3.2 files
 class PDP_API Environment_Group : public taGroup<Environment> {
   // group of environments
+INHERITED(taGroup<Environment>)
 public:
   void  Initialize()            { SetBaseType(&TA_Environment); }
-  void  Destroy()               { };
-  TA_BASEFUNS(Environment_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Environment_Group);
+};
+
+// note: Environment_Group name is for compatiblity with v3.2 files
+class PDP_API Environment_List : public taList<Environment> {
+  // group of environments
+INHERITED(taList<Environment>)
+public:
+  void  Initialize()            { SetBaseType(&TA_Environment); }
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(Environment_List);
 };
 
 
 class PDP_API ScriptEnv : public Environment, public ScriptBase {
   // For algorithmically generated events: Initialization of events is done by a script at the start of each epoch through the InitEvents() function
+INHERITED(Environment)
 public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
-
+  // note: this must stay in here to make a non-abstract base class!
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
-  void	UpdateAfterEdit();
 
-  void 	Initialize()	{ };
-  void 	Destroy()	{ };
-  void	InitLinks();
-  void	Copy_(const ScriptEnv& cp);
-  COPY_FUNS(ScriptEnv, Environment);
-  TA_BASEFUNS(ScriptEnv);
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ScriptEnv);
 };
 
 class PDP_API InteractiveScriptEnv : public ScriptEnv {
   // For interactively-generated environments: Script is called for each event in GetNextEvent function (use with InteractiveEpoch)
+INHERITED(ScriptEnv)
 public:
   void 	Initialize() {}
-  void 	Destroy()	{ };
-  TA_BASEFUNS(InteractiveScriptEnv); //
-  
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(InteractiveScriptEnv);
 };
 
 
@@ -917,20 +823,20 @@ public:
 
 class PDP_API FreqEvent : public Event {
   // an event that has a frequency associated with it
+INHERITED(Event)
 public:
   float 	frequency;	// #ENVIROVIEW_freq frequency of occurance for this event
 
   void	Initialize();
-  void 	Destroy()		{ };
-  void	Copy_(const FreqEvent& cp);
-  COPY_FUNS(FreqEvent, Event);
-  TA_BASEFUNS(FreqEvent);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(FreqEvent);
 };
 
 class FreqEnv;
 
 class PDP_API FreqEvent_Group : public Event_Group {
   // an event group that has a frequency associated with it
+INHERITED(Event_Group)
 public:
   FreqEnv*	fenv;		// #READ_ONLY #NO_SAVE parent frequency environment
   int_Array	list;		// #HIDDEN list of event indicies to present for GROUP_EVENT
@@ -938,16 +844,13 @@ public:
 
   void	Initialize();
   void 	Destroy()		{CutLinks(); };
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const FreqEvent_Group& cp);
-  COPY_FUNS(FreqEvent_Group, Event_Group);
-  TA_BASEFUNS(FreqEvent_Group);
+  TA_SIMPLE_BASEFUNS(FreqEvent_Group);
 };
 
 
 class PDP_API FreqEnv : public Environment {
   // environment which has a frequency for each event
+INHERITED(Environment)
 public:
   enum FreqLevel {
     NO_FREQ,			// don't use frequency
@@ -966,21 +869,9 @@ public:
   int		n_sample;	// #CONDEDIT_OFF_freq_level:NO_FREQ number samples of the events to make per epoch
   SampleType	sample_type;	// #CONDEDIT_OFF_freq_level:NO_FREQ type of sampling (random with freq or permuted n_samples * freq)
 
-  // the event model of the environment
-  int	 	EventCount();
-  Event* 	GetEvent(int i);
-
-  // the group model of the environment
-  int	 	GroupCount();		// number of groups in the environment
-  Event_Group* GetGroup(int i); 	// return the ith event group
-
   void	Initialize();
   void 	Destroy()		{ CutLinks();};
-  void	InitLinks();
-  void 	CutLinks();
-  void	Copy_(const FreqEnv& cp);
-  COPY_FUNS(FreqEnv, Environment);
-  TA_BASEFUNS(FreqEnv);
+  TA_SIMPLE_BASEFUNS(FreqEnv);
 };
 
 
@@ -990,18 +881,18 @@ public:
 
 class PDP_API TimeEvent : public Event {
   // an event which occurs at a specific time
+INHERITED(Event)
 public:
   float		time;		// #ENVIROVIEW time at which it should appear
 
   void 	Initialize() {time = 0.0f;}
-  void	Destroy()		{ };
-  void	Copy_(const TimeEvent& cp) {time = cp.time;}
-  COPY_FUNS(TimeEvent, Event);
-  TA_BASEFUNS(TimeEvent);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(TimeEvent);
 };
 
 class PDP_API TimeEvent_Group : public Event_Group {
   // a group of time-based events
+INHERITED(Event_Group)
 public:
   enum Interpolate {
     PUNCTATE,			// events appear for a single instant only
@@ -1013,16 +904,14 @@ public:
   Interpolate	interpolate;	// if and how to interpolate between given event times
   float		end_time;	// time this sequence ends at
 
-  void	UpdateAfterEdit();
   void 	Initialize();
-  void	Destroy()		{ };
-  void	Copy_(const TimeEvent_Group& cp);
-  COPY_FUNS(TimeEvent_Group, Event_Group);
-  TA_BASEFUNS(TimeEvent_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(TimeEvent_Group);
 };
 
 class PDP_API TimeEnvironment : public Environment {
   // an environment that manages time-based events
+INHERITED(Environment)
 public:
   enum Interpolate {
     PUNCTATE,			// events appear for a single instant only
@@ -1033,11 +922,8 @@ public:
   Interpolate	interpolate;    // if and how to interpolate between given event times
 
   void 	Initialize();
-  void	Destroy()		{ };
-  void 	InitLinks();
-  void	Copy_(const TimeEnvironment& cp);
-  COPY_FUNS(TimeEnvironment, Environment);
-  TA_BASEFUNS(TimeEnvironment);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(TimeEnvironment);
 };
 
 //////////////////////////
@@ -1046,31 +932,30 @@ public:
 
 class PDP_API FreqTimeEvent : public TimeEvent {
   // a time event that has a frequency associated with it
+INHERITED(TimeEvent)
 public:
   float 	frequency;	// #ENVIROVIEW_freq frequency of occurance for this event
 
   void	Initialize() {frequency = 0.0f;}
-  void 	Destroy()		{ };
-  void	Copy_(const FreqTimeEvent& cp){frequency = cp.frequency;}
-  COPY_FUNS(FreqTimeEvent, TimeEvent);
-  TA_BASEFUNS(FreqTimeEvent);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(FreqTimeEvent);
 };
 
 class PDP_API FreqTimeEvent_Group : public TimeEvent_Group {
   // a time event group that has a frequency associated with it
+INHERITED(TimeEvent_Group)
 public:
   float		frequency;	// frequency of occurance for this group of events
 
   void	Initialize(){frequency = 0.0f;}
-  void 	Destroy()		{ };
-  void	Copy_(const FreqTimeEvent_Group& cp){frequency = cp.frequency;}
-  COPY_FUNS(FreqTimeEvent_Group, TimeEvent_Group);
-  TA_BASEFUNS(FreqTimeEvent_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(FreqTimeEvent_Group);
 };
 
 
 class PDP_API FreqTimeEnv : public TimeEnvironment {
   // a time environment which has a frequency for each event
+INHERITED(TimeEnvironment)
 public:
   enum FreqLevel {
     NO_FREQ,			// don't use frequency
@@ -1088,22 +973,10 @@ public:
   int		n_sample;	// #CONDEDIT_OFF_freq_level:NO_FREQ number samples of the events to make per epoch
   SampleType	sample_type;	// #CONDEDIT_OFF_freq_level:NO_FREQ type of sampling (random with freq or permuted n_samples * freq)
 
-  // the event model of the environment
-  int	 	EventCount();
-  Event* 	GetEvent(int i);
-
-  // the group model of the environment
-  int	 	GroupCount();		// number of groups in the environment
-  Event_Group* GetGroup(int i); 	// return the ith event group
-
   void	Initialize();
-  void 	Destroy()		{ };
-  void	InitLinks();
-  void	Copy_(const FreqTimeEnv& cp);
-  COPY_FUNS(FreqTimeEnv, TimeEnvironment);
-  TA_BASEFUNS(FreqTimeEnv);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(FreqTimeEnv);
 };
-
 
 //////////////////////////
 //     Probability 	//
@@ -1111,39 +984,37 @@ public:
 
 class PDP_API ProbPattern : public Pattern {
   // pattern is chosen from group of patterns with given probability
+INHERITED(Pattern)
 public:
   float    	prob;		// #ENVIROVIEW probability of showing this pattern
   bool		applied;	// #READ_ONLY #NO_SAVE whether it was applied
 
   void 	Initialize();
-  void	Destroy()	{ };
-  void	InitLinks();
-  void 	Copy_(const ProbPattern& cp);
-  COPY_FUNS(ProbPattern, Pattern);
-  TA_BASEFUNS(ProbPattern);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ProbPattern);
 };
 
 class PDP_API ProbPatternSpec_Group : public PatternSpec_Group {
   // defines a group of patterns that are chosen according to their probabilities
+INHERITED(PatternSpec_Group)
 public:
 
   int 	last_pat; 	 // #HIDDEN #NO_SAVE last pattern chosen
 
-  void UpdateAfterEdit();
-  void CutLinks();
   void Initialize();
-  void Destroy()	{ };
-  TA_BASEFUNS(ProbPatternSpec_Group);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ProbPatternSpec_Group);
 };
 
 class PDP_API ProbEventSpec : public EventSpec {
   // events have probabalistically-chosen patterns contained in ProbPatternSpec_Groups
+INHERITED(EventSpec)
 public:
   float		default_prob;	// default probability
 
   void	Initialize();
-  void	Destroy()	{ };
-  TA_BASEFUNS(ProbEventSpec);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ProbEventSpec);
 };
 
 //////////////////////////
@@ -1152,6 +1023,7 @@ public:
 
 class PDP_API XYPatternSpec : public PatternSpec {
   // for patterns that are positioned at a particular x,y offset location
+INHERITED(PatternSpec)
 public:
   bool		wrap;
   // whether to wrap around target layer if pattern extends beyond coords
@@ -1161,22 +1033,19 @@ public:
   // value to apply to all other units in the layer (if applied)
 
   void	Initialize();
-  void	Destroy()	{ };
-  SIMPLE_COPY(XYPatternSpec);
-  COPY_FUNS(XYPatternSpec, PatternSpec);
-  TA_BASEFUNS(XYPatternSpec);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(XYPatternSpec);
 };
 
 class PDP_API XYPattern : public Pattern {
   // specifies the x,y offset location of the pattern in the layer
+INHERITED(Pattern)
 public:
   TwoDCoord	offset;		// #ENVIROVIEW offset within network layer for pattern
 
   void	Initialize()	{ };
-  void	Destroy()	{ };
-  SIMPLE_COPY(XYPattern);
-  COPY_FUNS(XYPattern, Pattern);
-  TA_BASEFUNS(XYPattern);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(XYPattern);
 };
 
 
@@ -1186,27 +1055,25 @@ public:
 
 class PDP_API XYSubPatternSpec : public PatternSpec {
   // presents rectagular subsets (size of layer) of large patterns at x,y offset
+INHERITED(PatternSpec)
 public:
   bool		wrap;
   // whether to wrap around pattern if layer extends beyond coords
 
   void	Initialize();
-  void	Destroy()	{ };
-  SIMPLE_COPY(XYSubPatternSpec);
-  COPY_FUNS(XYSubPatternSpec, PatternSpec);
-  TA_BASEFUNS(XYSubPatternSpec);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(XYSubPatternSpec);
 };
 
 class PDP_API XYSubPattern : public Pattern {
   // specifies the x,y offset location of the layer within the pattern
+INHERITED(Pattern)
 public:
   TwoDCoord	offset;		// #ENVIROVIEW offset within pattern for network layer
 
   void	Initialize()	{ };
-  void	Destroy()	{ };
-  SIMPLE_COPY(XYSubPattern);
-  COPY_FUNS(XYSubPattern, Pattern);
-  TA_BASEFUNS(XYSubPattern);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(XYSubPattern);
 };
 
 
@@ -1216,6 +1083,7 @@ public:
 
 class PDP_API GroupPatternSpec : public PatternSpec {
   // organizes pattern values into sub-groups for viewing and/or sending to network
+INHERITED(PatternSpec)
 public:
   PosTDCoord	sub_geom;
   // geometry of the individual sub-groups: must evenly divide into overall geom in both x & y
@@ -1224,24 +1092,9 @@ public:
   bool		trans_apply;
   // translate apply of values to network (only if units are flat, not grouped!)
 
-  int	FlatToValueIdx(int index);
-  // translate given index from a flat view into the value index taking into account groups
-  int	CoordToValueIdx(const TwoDCoord& gp_coord, const TwoDCoord& sub_coord);
-  // get index into actual values from given coordinates of group and sub-group
-  int	ValueToFlatIdx(int index);
-  // translate given index of a value into a flat view taking into account groups
-  int	CoordToFlatIdx(const TwoDCoord& gp_coord, const TwoDCoord& sub_coord);
-  // get index into flat structure from given coordinates of group and sub-group
-
-  float Value(Pattern* pat, int index);
-  int	Flag(PatUseFlags flag_type, Pattern* pat, int index);
-
-  void	UpdateAfterEdit();
   void	Initialize();
-  void	Destroy()	{ };
-  SIMPLE_COPY(GroupPatternSpec);
-  COPY_FUNS(GroupPatternSpec, PatternSpec);
-  TA_BASEFUNS(GroupPatternSpec);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(GroupPatternSpec);
 };
 
 //////////////////////////////////////////
@@ -1250,14 +1103,13 @@ public:
 
 class PDP_API DurEvent : public Event {
   // an event which lasts for a particular amount of time
+INHERITED(Event)
 public:
   float		duration;	// #ENVIROVIEW length of time (cycles) event should be presented
 
   void 	Initialize(){ duration = 50.0f;}
-  void	Destroy()		{ };
-  void	Copy_(const DurEvent& cp) {duration = cp.duration;}
-  COPY_FUNS(DurEvent, Event);
-  TA_BASEFUNS(DurEvent);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(DurEvent);
 };
 
 //////////////////////////////////////////
@@ -1266,8 +1118,9 @@ public:
 
 class PDP_API FromFileEnv : public Environment {
   // Environment that reads events incrementally from a file into events. NOT SUPPORTED IN CONVERSION
+INHERITED(Environment)
 public:
-/*  enum 	ReadMode {
+  enum 	ReadMode {
     ONE_EPOCH,			// read one epoch at a time, using InitEvents interface
     ONE_EVENT			// read one event at a time, using GetNextEvent interface (requires InteractiveEpoch process)
   };
@@ -1279,22 +1132,512 @@ public:
   int		events_per_epc;	// how many events to present per epoch
   int		file_pos;	// #READ_ONLY #SHOW #NO_SAVE position (in terms of events) within the file
 
-  virtual void	ReadEvent(Event* ev);
-  // read from file into one event (assumes file is open, etc)
-
-  void		InitEvents();
-  Event* 	GetEvent(int ev_index);
-  Event* 	GetNextEvent();
-*/
   void 	Initialize() {}
-  void	Destroy() {}
-//  void 	InitLinks();
-//  void	Copy_(const FromFileEnv& cp);
-//  COPY_FUNS(FromFileEnv, Environment);
-  TA_BASEFUNS(FromFileEnv);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(FromFileEnv);
 };
 
-class PDP_API Project : public ProjectBase {
+//////////////////////////////////
+//	procs_extra.h		//
+//////////////////////////////////
+
+class ScriptProcess : public Process {
+  // a process for use with scripts (has s_args)
+INHERITED(Process)
+public:
+  SArg_Array		s_args;		// string-valued arguments to pass to script
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ScriptProcess);
+};
+
+class SaveNetsProc : public Process {
+  // saves networks with network.name + counters (batch, epoch)
+INHERITED(Process)
+public:
+  
+  void	Initialize()	{ };
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(SaveNetsProc);
+};
+
+class SaveWtsProc : public Process {
+  // saves weights with network.name + counters (batch, epoch)
+INHERITED(Process)
+public:
+  
+  void	Initialize()	{ };
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(SaveWtsProc);
+};
+
+class LoadWtsProc : public Process {
+  // reads in a set of weights from specified file, as a way to initialize weights
+INHERITED(Process)
+public:
+  String		weights_file; // the file name for the weights file to read in
+
+  void	Initialize()	{ };
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(LoadWtsProc);
+};
+
+class InitWtsProc : public Process {
+  // initialize the network's weights (InitWtState)
+INHERITED(Process)
+public:
+  
+  void	Initialize()	{ };
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(InitWtsProc);
+};
+
+
+//////////////////////////////////
+//	Schedule Processes	//
+//////////////////////////////////
+
+class SyncEpochProc : public EpochProcess {
+  // Epoch that runs two different sub-processes
+INHERITED(EpochProcess)
+public:
+  Network*		second_network;	  // #CONTROL_PANEL the network for the second trial process
+  TypeDef*		second_proc_type; // #TYPE_SchedProcess type of second process
+  SchedProcess*		second_proc; 	  // #CONTROL_PANEL second process to call
+
+  void 	Initialize();	
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SyncEpochProc);
+};
+
+class GridSearchBatch : public BatchProcess {
+  // Increments param_path parameter over batches to search parameter space in equal increments
+INHERITED(BatchProcess)
+public:
+  float		start_val;	// #CONTROL_PANEL start value of parameter being searched
+  float		inc_val;	// #CONTROL_PANEL increment of parameter being searched
+  float		cur_val;	// #CONTROL_PANEL #IV_READ_ONLY current value of parameter based on batch value
+  String	param_path;	// path to the parameter (starting at the project)
+  
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(GridSearchBatch);
+};
+
+class SameSeedBatch : public BatchProcess {
+  // Stores a list of random seeds that are used at start of each batch run -- ensures each batch run starts with the same seed
+INHERITED(BatchProcess)
+public:
+  taBase_List	rnd_seeds;	// the random seeds
+  int		in_goto_val;	// #READ_ONLY #NO_SAVE currently inside a GoTo call (with this val): affects seed usage
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(SameSeedBatch);
+};
+
+//////////////////////////////////
+//	Fork and Bridge		//
+//////////////////////////////////
+
+class ForkProcess : public SchedProcess {
+  // Runs two different sub-processes
+INHERITED(SchedProcess)
+public:
+  Network*		second_network;	  // the network for the second process
+  Environment*		second_environment; // the environment for the second process
+  TypeDef*		second_proc_type; // #TYPE_SchedProcess #NULL_OK type of second process
+  SchedProcess*		second_proc; 	  // second process to call
+
+  void 	Initialize();	
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ForkProcess);
+};
+
+class BridgeProcess : public Process {
+  // a bridge that connects two different networks together by copying values
+INHERITED(Process)
+public:
+  enum BridgeDirection {
+    ONE_TO_TWO,			// first network (network) copies to second_network
+    TWO_TO_ONE 			// second_network copies to first one (network)
+  };
+
+  Network*	second_network;	  // the other network to bridge to
+  Layer*	src_layer;	  // #HIDDEN #NO_SAVE the actual source layer
+  Layer*	trg_layer;	  // #HIDDEN #NO_SAVE the actual target layer
+  BridgeDirection direction;	  // direction to copy in
+  String	src_layer_nm;	  // name of the source layer
+  String	trg_layer_nm;	  // name of the target layer
+  String	src_variable;	  // the source variable (member) to copy
+  String	trg_variable;	  // the target variable (member) to copy
+  Unit::ExtType	trg_ext_flag;	  // flag to apply to the target units
+
+  void 	Initialize();	
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(BridgeProcess);
+};
+
+class MultiEnvProcess : public SchedProcess {
+  // run subprocess over multiple environments, indexed by counter
+INHERITED(SchedProcess)
+public:
+  Environment_List	environments;   // #LINK_GROUP list of environments to process
+  bool			use_subctr_max;	// determines whether subctr_max values are actually used
+  int_Array		subctr_max; 	// sets the counter max value for the subprocess under this one for each environment (e.g., if subproc is nepochproc, sets numb of epochs per enviro)
+  Counter		env;            // current environment number
+  
+  void Initialize();   
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(MultiEnvProcess);
+};
+
+class PatternFlagProcess : public SchedProcess {
+  // iteratively sets/resets pattern flag at index = counter for all patterns, e.g. to determine sensitivity to given input
+INHERITED(SchedProcess)
+public:
+  int          		pattern_no;     // index of pattern to update
+  PatternSpec::PatFlags flag;   	// flag to be set (or unset if invert)
+  bool			invert;		// unset the flag instead of setting it
+  Counter		val_idx;	// index of current pattern value to be flagged
+  
+  void Initialize();   
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(PatternFlagProcess);
+};
+
+  
+//////////////////////////////////
+//	Stats Processes		//
+//////////////////////////////////
+
+class ClosestEventStat : public Stat {
+  // ##COMPUTE_IN_TrialProcess gets the closest event to the current output activity pattern
+INHERITED(Stat)
+public:
+  TrialProcess* trial_proc;	// #READ_ONLY #NO_SAVE current trial process
+  float_RArray::DistMetric cmp_type;	// comparison type to perform to compute distance
+  float		dist_tol;	// #CONDEDIT_ON_cmp_type:SUM_SQUARES,EUCLIDIAN,HAMMING tolerance value for distance functions
+  bool		norm;		// #CONDEDIT_OFF_cmp_type:COVAR,CORREL,CROSS_ENTROPY whether to normalize (distance, inner prod)
+  int		subgp_no;	// if not -1, then indicates which subgroup of units within layer
+  StatVal	dist;		// distance from closest event
+  StatVal	ev_nm;		// name of event which was closest
+  StatVal	sm_nm;		// 1 or 0 depending on whether the name matched cur event
+  float_RArray	lay_act;	// #HIDDEN #NO_SAVE buffer for layer activity
+
+  void	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ClosestEventStat);
+};
+
+class CyclesToSettle : public Stat {
+  // ##COMPUTE_IN_TrialProcess ##LOOP_STAT Records number of cycles it took to settle
+INHERITED(Stat)
+public:
+  SettleProcess* settle;	// #READ_ONLY #NO_SAVE settle process to record
+  StatVal	cycles;		// number of cycles to settle
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CyclesToSettle);
+};
+
+class ActThreshRTStat : public Stat {
+  // ##COMPUTE_IN_SettleProcess ##LOOP_STAT records reaction-time in terms of number of cycles it took for max act in layer to exceed a threshold (doesn't necc stop settling though, unless stopcrit is set!)
+INHERITED(Stat)
+public:
+  SettleProcess* settle;	// #READ_ONLY #NO_SAVE settle process to record
+  float		act_thresh;	// threshold activation level -- rt_cycles are updated until layer max_act >= thresh (also auto sets max_act.stopcrit.val)
+  StatVal	max_act;	// maximum activation of units in layer -- computed continuously, if stopcrit set here then process will actually stop at rt threshold
+  StatVal	rt_cycles;	// number of cycles of settling prior to max_act.val >= act_tresh
+  bool		crossed_thresh;	// #READ_ONLY #NO_SAVE true if already crossed threshold
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ActThreshRTStat);
+};
+
+class ScriptStat : public Stat {
+  // Use this stat for custom script-based stats
+INHERITED(Stat)
+public:
+  StatVal_List	vals;		// put stat results in this group
+  SArg_Array	s_args;		// string-valued arguments to pass to script
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ScriptStat);
+};
+
+class CompareStat : public Stat {
+  // An aggregator-like stat that compares the output of two other stats
+INHERITED(Stat)
+public:
+  Stat*		stat_1;		// first comparison stat
+  Stat*		stat_2;		// second comparison stat
+  float_RArray::DistMetric cmp_type;	// comparison type to perform
+  StatVal	cmp;		// comparison value
+  float		dist_tol;	// #CONDEDIT_ON_cmp_type:SUM_SQUARES,EUCLIDIAN,HAMMING tolerance value for distance functions
+  bool		norm;		// #CONDEDIT_OFF_cmp_type:COVAR,CORREL,CROSS_ENTROPY whether to normalize (distance, inner prod)
+  SimpleMathSpec pre_proc_1;	// step 1 of pre-processing to apply before comparision
+  SimpleMathSpec pre_proc_2;	// step 2 of pre-processing to apply before comparision
+  SimpleMathSpec pre_proc_3;	// step 3 of pre-processing to apply before comparision
+  float_RArray	svals_1;	// #HIDDEN #NO_SAVE stat_1 values 
+  float_RArray	svals_2;	// #HIDDEN #NO_SAVE stat_2 values 
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CompareStat);
+};
+
+class ProjectionStat : public Stat {
+  // #BUTROWS_1 projects values from another stat along a given vector according to given distance metric
+INHERITED(Stat)
+public:
+  Stat*		stat;		// stat to get values to project
+  float_RArray	prjn_vector;	// vector of values to project along
+  float_RArray::DistMetric dist_metric;	// distance metric for projection (INNER_PROD = standard metric for projections)
+  float		dist_tol;	// #CONDEDIT_ON_dist_metric:SUM_SQUARES,EUCLIDIAN,HAMMING tolerance value for distance metric
+  bool		dist_norm;	// #CONDEDIT_OFF_dist_metric:COVAR,CORREL,CROSS_ENTROPY whether to normalize distances (distance, inner prod)
+  StatVal	prjn;		// projection value
+  float_RArray	svals;		// #HIDDEN #NO_SAVE stat values 
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ProjectionStat);
+};
+
+class ComputeStat : public Stat {
+  // performs simple math computations on one or two stats, aggs the results according to net_agg
+INHERITED(Stat)
+public:
+  Stat*		stat_1;		// first comparison stat
+  Stat*		stat_2;		// second comparison stat (optional)
+  StatVal	cpt;		// aggregated computed value (if not COPY)
+  SimpleMathSpec pre_proc_1;	// step 1 of pre-processing to apply to each stat before computing
+  SimpleMathSpec pre_proc_2;	// step 2 of pre-processing to apply to each stat before computing
+  SimpleMathSpec pre_proc_3;	// step 3 of pre-processing to apply to each stat before computing
+  SimpleMathSpec compute_1;	// step 1 of computation: stat1 is val stat2 is arg
+  SimpleMathSpec compute_2;	// step 2 of computation: stat1 is val stat2 is arg 
+  SimpleMathSpec compute_3;	// step 3 of computation: stat1 is val stat2 is arg 
+  float_RArray	svals_1;	// #HIDDEN #NO_SAVE stat_1 values 
+  float_RArray	svals_2;	// #HIDDEN #NO_SAVE stat_2 values 
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ComputeStat);
+};
+
+class CopyToEnvStat : public Stat {
+  // an aggregator-like stat that copies stat values from source stat to data environment
+INHERITED(Stat)
+public:
+  enum	AccumScope {		// over what scope of processing to accumulate data
+    SUPER,			// accumulate over the sched process just above the one in hierarchy (super proc) that owns this stat 
+    OWNER,			// accumulate over the sched process that owns this stat
+    TRAIN,			// accumulate over the training process (train must be ABOVE this stat in hierarchy)
+    EPOCH,			// accumulate over the epoch process in this hierarchy (epoch must be ABOVE this stat in hierarchy)
+    SEQUENCE,			// accumulate over the sequence process in this hierarcy (sequence must be ABOVE this stat in hierarchy)
+    SETTLE			// accumulate over the settle process in this hierarchy (settle must be ABOVE this stat in hierarchy)
+  };
+
+  Stat*		stat;		// stat to get copy vals from
+  Environment* 	data_env;	// environment to store data in
+  AccumScope	accum_scope;	// over what scope of processing to accumulate data?
+  SimpleMathSpec pre_proc_1;	// step 1 of pre-processing to apply before storage
+  SimpleMathSpec pre_proc_2;	// step 2 of pre-processing to apply before storage
+  SimpleMathSpec pre_proc_3;	// step 3 of pre-processing to apply before storage
+  float_RArray	svals;		// #HIDDEN #NO_SAVE stat values 
+  int		evt_idx;	// #READ_ONLY #NO_SAVE current event index
+  int_Array	last_ctr_vals;	// #READ_ONLY #NO_SAVE last accumulation counter values for all procs up to accum proc
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CopyToEnvStat);
+};
+
+class EpochCounterStat : public Stat {
+  // ##FINAL_STAT gets the epoch counter from the network
+INHERITED(Stat)
+public:
+  StatVal	epoch;	
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(EpochCounterStat);
+};
+
+class ProcCounterStat : public Stat {
+  // ##FINAL_STAT gets the process counters from a different process hierarchy
+INHERITED(Stat)
+public:
+  SchedProcess*	proc;		// process to get counters from
+  StatVal_List	counters;	// group of counters of data
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ProcCounterStat);
+};
+
+class MaxActTrgStat : public Stat {
+  // ##COMPUTE_IN_TrialProcess 0-1 error statistic, 1 if unit with max act has trg = 1
+INHERITED(Stat)
+public:
+  StatVal	mxat;			// max activation = target 0-1 err value
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(MaxActTrgStat);
+};
+
+class UnitActRFStat : public Stat {
+  // ##COMPUTE_IN_TrialProcess unit activity receptive-field stat: gets RF of units in layer from rf_layers by weighting rf_layer acts by unit acts of layer units
+INHERITED(Stat)
+public:
+  enum NormMode {
+    NORM_UNIT,			// normalize each unit separately
+    NORM_LAYER,			// normalize over entire layer (divide by layer max of avg_norms)
+    NORM_GROUP			// normalize by unit groups (divide by group max of avg_norms)
+  };
+
+  Layer_Group	rf_layers;	// #LINK_GROUP layers to compute receptive field over: (sending-layers -- receiving layer is in layer member)
+  Environment*	data_env;	// environment to store data into
+  NormMode	norm_mode;	// how to normalize the values
+  float_RArray	avg_norms;	// average normalizers (sum of unit activity vals)
+
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(UnitActRFStat);
+};
+
+class UnitActRFStatResetProc : public Process {
+  // resets the accumulated activation-based receptive field information on a UnitActRFStat -- put this at the point in a process heirarchy where RF's should be reset (e.g., Epoch INIT)
+INHERITED(Process)
+public:
+  UnitActRFStat*	unit_act_rf_stat; // pointer to the stat to reset time for
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(UnitActRFStatResetProc);
+};
+
+class UnitEventRFStat : public Stat {
+  // stores one event per unit, with each pattern element representing firing for each trial
+INHERITED(Stat)
+public:
+  EpochProcess* epoch_proc;	// #READ_ONLY #NO_SAVE epoch process for event count
+  Environment*	data_env;	// environment to store data into
+
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(UnitEventRFStat);
+};
+
+class UniquePatStat : public Stat {
+  // An aggregator-like stat that counts the number of unique patterns in given stat
+INHERITED(Stat)
+public:
+  Stat*		pat_stat;	// stat that is the source of patterns
+  Environment*	data_env;	// environment to store patterns into during computation
+  float_RArray::DistMetric cmp_type;	// comparison type to perform to determine uniqueness
+  StatVal	unq;		// number of unique patterns
+  float		dist_tol;	// #CONDEDIT_ON_cmp_type:SUM_SQUARES,EUCLIDIAN,HAMMING tolerance value for distance functions
+  bool		norm;		// #CONDEDIT_OFF_cmp_type:COVAR,CORREL,CROSS_ENTROPY whether to normalize (distance, inner prod)
+  float		uniq_tol;	// overall distance tolerance to determine if unique or not
+  SimpleMathSpec pre_proc_1;	// step 1 of pre-processing to apply before comparision
+  SimpleMathSpec pre_proc_2;	// step 2 of pre-processing to apply before comparision
+  SimpleMathSpec pre_proc_3;	// step 3 of pre-processing to apply before comparision
+  float_RArray	svals;		// #HIDDEN #NO_SAVE stat values 
+
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(UniquePatStat);
+};
+
+class TimeCounterStat : public Stat {
+  // ##COMPUTE_IN_TrialProcess ##LOOP_STAT continuously incrementing time counter -- useful for an X axis for graphing events across normal counter boundaries
+INHERITED(Stat)
+public:
+  StatVal	time;	
+
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(TimeCounterStat);
+};
+
+class TimeCounterStatResetProc : public Process {
+  // resets the time on a TimeCounterStat -- put this at the point in a process heirarchy where time should be reset
+INHERITED(Process)
+public:
+  TimeCounterStat*	time_ctr_stat; // pointer to the stat to reset time for
+  
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(TimeCounterStatResetProc);
+};
+
+class DispDataEnvProc : public Process {
+  // displays information contained in a data environment that is being updated by another statistic
+INHERITED(Process)
+public:
+  enum DispType {
+    RAW_DATA_GRID,		// directly plot the data to a grid log
+    DIST_MATRIX,		// distance matrix in grid log
+    CLUSTER_PLOT,		// cluster plot of distance matrix in graph log
+    CORREL_MATRIX,		// correlation matrix for values across patterns displayed in grid log
+    PCA_EIGEN_GRID,		// principal components analysis plot of eigen vectors in grid log
+    PCA_PRJN_PLOT,		// principal components analysis projection plot in graph log
+    MDS_PRJN_PLOT		// multidimensional scaling on distance matrix in graph log
+  };
+
+  Environment*	data_env;	// environment containing data to be plotted (data is assumed to be in pattern 0)
+  int		pat_no;		// pattern number in the environment to display
+  DispType	disp_type;	// what type of data display to make
+  PDPLog*	disp_log;	// log view to contain the display
+  float_RArray::DistMetric dist_metric;	// distance metric (where appropriate)
+  bool		dist_norm;	// #CONDEDIT_OFF_dist_metric:COVAR,CORREL,CROSS_ENTROPY normalize distances?
+  float		dist_tol;	// #CONDEDIT_ON_dist_metric:SUM_SQUARES,EUCLIDIAN,HAMMING tolerance for computing distances (below tol = 0 error)
+  int		x_axis_component; // for PCA & MDS Prjn Plots -- use this component for x axis
+  int		y_axis_component; // for PCA & MDS Prjn Plots -- use this component for y axis
+
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(DispDataEnvProc);
+};
+
+class DispNetWeightsProc : public Process {
+  // displays network weight values in a GridLog using GridViewWeights function
+INHERITED(Process)
+public:
+  String	recv_layer_nm;	  // name of the receiving layer (plot weights into these units)
+  String	send_layer_nm;	  // name of the sending layer (plot weights from these units into recv)
+  GridLog*	grid_log;	  // grid log to display weights in
+  Layer*	recv_layer;	  // #HIDDEN #NO_SAVE the actual recv layer
+  Layer*	send_layer;	  // #HIDDEN #NO_SAVE the actual send layer
+
+  void 	Initialize();	
+  void 	Destroy()	{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(DispNetWeightsProc);
+};
+
+class ClearLogProc : public Process {
+  // clear a log display
+INHERITED(Process)
+public:
+  PDPLog*	log_to_clear;	// log to clear
+
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(ClearLogProc);
+};
+
+/// end: procs_extra.h
+
+////////////////////////////////////////////////////////////////////////////////
+// V3ProjectBase -- base class for loading and converting
+
+class PDP_API V3ProjectBase : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
@@ -1304,23 +1647,22 @@ public:
   PDPLog_Group		logs;		// V3 compatibility only: Logs to display statistics in processes
   Script_Group		scripts;	// V3 compatibility only: Scripts to control arbitrary actions
 
-  void	ConvertToV4(); 
+  virtual void	ConvertToV4(); 
   // #BUTTON convert the project to v4.x format
-  bool	ConvertToV4_impl(); 
-  // #HIDDEN implementation; returns 'true' if successful
-  bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
+  virtual bool	ConvertToV4_impl();
+  // #HIDDEN implementation: must be defined by specific type of algorithm
+  virtual bool	ConvertToV4_Nets(ProjectBase* nwproj); 
+  // #HIDDEN Convert networks
+  virtual bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
   // #HIDDEN Convert environments
-  bool	ConvertToV4_Leabra(); 
-  // #HIDDEN Leabra implementation; returns 'true' if successful
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const Project& cp);
-  COPY_FUNS(Project, ProjectBase);
-  TA_BASEFUNS(Project);
+  void	Copy_(const V3ProjectBase& cp);
+  COPY_FUNS(V3ProjectBase, ProjectBase);
+  TA_BASEFUNS(V3ProjectBase);
 };
 
 #endif

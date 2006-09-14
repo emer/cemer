@@ -1,18 +1,19 @@
 leabra todo list:
 
-* prog_lib!
-* do view script export thing myself!
-* aggregates of sse, incl count correct in basic network
+* seeds in programs: just add as a builtin class to program (also timing) -- general 
+  enough to be needed everywhere..
 
-
-* bugs: network display updates at start of trial with weird state info, despite wrap
-  by DataUpdate guys, etc
+* taBase::CutLinks_taAuto() -> DelPointer any taBase* members..
 
 * add CheckNetwork (from process code in 3.2)
-* do UserScript::ImportFromFile (how to just read in raw?  get something?)
+* check UserScript::ImportFromFile (how to just read in raw?  get something?)
 
 * deal with sequences
 * deal with small-batch weight updates
 * deal with dmem: network counters aggregate across epoch.. others..
 
 * add #CAT to everything in netstru and leabra.h, and fixup comments
+
+* bugs: network display updates at start of trial with weird state info, despite wrap
+  by DataUpdate guys, etc
+

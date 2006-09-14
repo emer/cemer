@@ -203,7 +203,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
 
   // tabMisc stuff
   tabMisc::root = root;
-  taMisc::default_scope = &TA_Project;
+  taMisc::default_scope = &TA_ProjectBase;
 
   // cssMisc stuff
   cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(root, 1, &TA_PDPRoot,"root"));

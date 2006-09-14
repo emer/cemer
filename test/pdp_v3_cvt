@@ -7,13 +7,13 @@ if ($#argv < 2) then
 endif
 
 set projtyp=$1
-set projnm=$projtyp"Project"
+set projnm="V3"$projtyp"Project"
+set projgp=$projnm"_Group"
+set projection=$projnm"ion"
 set netnm=$projtyp"Network"
 set wiznm=$projtyp"Wizard"
-set projgp=$projnm"_Group"
 set netgp=$netnm"_Group"
 set wizgp=$wiznm"_Group"
-set projection=$projtyp"Projection"
 
 set cvttmp = "pdp_v3_cvt_tmp.xxx"
 
@@ -27,11 +27,8 @@ foreach i (${argv[2-]})
   endif
   set newfl=$fl:r"_v4.proj"
 
-# note: not converting the project name -- old project name allows us to 
-# load it in a pre-converted state..
-#   -e "s/Project/$projnm/g" -e "s/$projgp/Project_Group/g" -e "s/$projection/Projection/g" \
-
   sed -e "s/_MGroup/_Group/g" \
+    -e "s/Project/$projnm/g" -e "s/$projgp/Project_Group/g" -e "s/$projection/Projection/g" \
     -e "s/Network/$netnm/g" -e "s/$netgp/Network_Group/g" \
     -e "s/LeabraWiz/Wizard/g" -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \
     -e "s/WinView_Group/taBase_Group/g" -e "s/ProjViewState_List/taBase_List/g" \

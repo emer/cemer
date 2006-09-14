@@ -4441,7 +4441,7 @@ void Network::RemoveMonitors() {
   TokenSpace& ts = TA_NetMonitor.tokens;
   for (int i = 0; i < ts.size; ++i) {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if (nm->GetOwner(&TA_Project) != proj) continue;
+    if (nm->GetOwner(&TA_ProjectBase) != proj) continue;
     nm->RemoveMonitors();
   }
 }
@@ -4450,7 +4450,7 @@ void Network::UpdateMonitors() {
   TokenSpace& ts = TA_NetMonitor.tokens;
   for (int i = 0; i < ts.size; ++i) {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if (nm->GetOwner(&TA_Project) != proj) continue;
+    if (nm->GetOwner(&TA_ProjectBase) != proj) continue;
     nm->UpdateMonitors();
   }
 }

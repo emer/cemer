@@ -790,8 +790,8 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
 BaseSpec_Group* SpecPtr_impl::GetSpecGroup() {
 #ifdef V3_COMPAT
   ProjectBase* prj = GET_OWNER(owner,ProjectBase);
-  if(prj && prj->InheritsFrom(&TA_Project)) { // a v3 project
-    return &(((Project*)prj)->specs);
+  if(prj && prj->InheritsFrom(&TA_V3ProjectBase)) { // a v3 project
+    return &(((V3ProjectBase*)prj)->specs);
   }
 #endif
   Network* net = GET_OWNER(owner,Network);

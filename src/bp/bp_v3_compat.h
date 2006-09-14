@@ -25,19 +25,15 @@
 #include "bp_def.h"
 #include "bp_TA_type.h"
 
-// forwards this file
-class BpTrial;
-
 class BpTrial : public TrialProcess {
   // standard Bp feed-forward trial
+INHERITED(TrialProcess)
 public:
   bool		bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
   void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(BpTrial);
-  COPY_FUNS(BpTrial, TrialProcess);
-  TA_BASEFUNS(BpTrial);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(BpTrial);
 };
 
 //////////////////////////////////////////
@@ -46,31 +42,30 @@ public:
 
 class CE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Cross-entropy error statistic (asymmetric divergence)
+INHERITED(Stat)
 public:
   StatVal	ce;			// cross-entropy error
   float		tolerance;		// if error is less than this, its 0
 
   void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(CE_Stat);
-  COPY_FUNS(CE_Stat, Stat);
-  TA_BASEFUNS(CE_Stat);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(CE_Stat);
 };
 
 class NormDotProd_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Dot Product of act and target values
+INHERITED(Stat)
 public:
   StatVal	ndp;		 // normalized dot product
 
   void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(NormDotProd_Stat);
-  COPY_FUNS(NormDotProd_Stat, Stat);
-  TA_BASEFUNS(NormDotProd_Stat);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(NormDotProd_Stat);
 };
 
 class VecCor_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Vector Correlation of act and target values
+INHERITED(Stat)
 public:
   StatVal	vcor;		 // vector correlation
   float		dp;		 // #HIDDEN
@@ -78,22 +73,19 @@ public:
   float		l2;		 // #HIDDEN
 
   void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(VecCor_Stat);
-  COPY_FUNS(VecCor_Stat, Stat);
-  TA_BASEFUNS(VecCor_Stat);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(VecCor_Stat);
 };
 
 class NormVecLen_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Vector Length of act and target values
+INHERITED(Stat)
 public:
   StatVal	nvl;		 // normalized vector length
 
   void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(NormVecLen_Stat);
-  COPY_FUNS(NormVecLen_Stat, Stat);
-  TA_BASEFUNS(NormVecLen_Stat);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(NormVecLen_Stat);
 };
 
 
@@ -112,6 +104,7 @@ public:
 
 class RBpTrial : public BpTrial {
   // one presentation of an event to RBp
+INHERITED(BpTrial)
 public:
   float		time;
   // #READ_ONLY #SHOW current time (relative to start of sequence)
@@ -127,28 +120,27 @@ public:
   int		bp_gap_ticks;	// #READ_ONLY bp window in ticks
 
   void 	Initialize();
-  void	InitLinks();
-  void	Destroy()		{ };
-  SIMPLE_COPY(RBpTrial);
-  COPY_FUNS(RBpTrial, BpTrial);
-  TA_BASEFUNS(RBpTrial);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(RBpTrial);
 };
 
 class RBpSequence : public SequenceProcess {
   // one sequence of events, handles TimeEvents properly
+INHERITED(SequenceProcess)
 public:
   void 	Initialize() {}
-  void	Destroy()		{ };
-  TA_BASEFUNS(RBpSequence);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(RBpSequence);
 };
 
 
 class RBpSE_Stat : public SE_Stat {
   // Squared error for recurrent backprop, mulitplies by dt
+INHERITED(SE_Stat)
 public:
   void	Initialize();
-  void	Destroy()		{ };
-  TA_BASEFUNS(RBpSE_Stat);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(RBpSE_Stat);
 };
 
 
@@ -158,6 +150,7 @@ public:
 
 class APBpCycle : public CycleProcess {
   // one cycle of processing in almeida-pineda (either act or bp depending on 'phase')
+INHERITED(CycleProcess)
 public:
   APBpSettle*	apbp_settle;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent settle proc
@@ -166,28 +159,25 @@ public:
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	CutLinks();
-  TA_BASEFUNS(APBpCycle);
+  TA_SIMPLE_BASEFUNS(APBpCycle);
 };
 
 class APBpSettle : public SettleProcess {
   // one settling phase in Almeide-Pineda (either act or bp depending on phase)
+INHERITED(SettleProcess)
 public:
   APBpTrial* 	apbp_trial;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(APBpSettle);
-  COPY_FUNS(APBpSettle, SettleProcess);
-  TA_BASEFUNS(APBpSettle);
+  TA_SIMPLE_BASEFUNS(APBpSettle);
 };
 
 
 class APBpTrial : public TrialProcess {
   // one Almeida-Pineda BP Trial
+INHERITED(TrialProcess)
 public:
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
@@ -207,24 +197,20 @@ public:
 
 
   void	Initialize();
-  void	Destroy()		{ };
-  void	InitLinks();
-  void	Copy_(const APBpTrial& cp);
-  COPY_FUNS(APBpTrial, TrialProcess);
-  TA_BASEFUNS(APBpTrial);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(APBpTrial);
 };
 
 class APBpMaxDa_De : public Stat {
   /* ##COMPUTE_IN_SettleProcess ##LOOP_STAT computes max of da and ddE to determine
      when to stop settling in almeida-pineda algorithm */
+INHERITED(Stat)
 public:
   StatVal	da_de;		// max of delta-activation or delta-error
 
   void 	Initialize();		// set minimums
-  void	Destroy()		{ };
-  SIMPLE_COPY(APBpMaxDa_De);
-  COPY_FUNS(APBpMaxDa_De, Stat);
-  TA_BASEFUNS(APBpMaxDa_De);
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(APBpMaxDa_De);
 };
 
 

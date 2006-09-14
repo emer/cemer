@@ -1,5 +1,5 @@
 // ta_Dump File v1.0
-Project .projects[0] {
+V3LeabraProject .projects[0] {
 TypeDefault_Group .projects[0].defaults { 
 TypeDefault_Group .projects[0].defaults = [5] {
 TypeDefault @[0] { 
@@ -1188,8 +1188,8 @@ ProjViewState @[2] { };
 ProjViewState @[3] { };
 };
 };
-Project .projects[0] {
-name="Project_0";
+V3LeabraProject .projects[0] {
+name="V3LeabraProject_0";
 file_name="ra.proj.gz";
 win_pos {lft=9.6: bot=391.68: wd=677.76: ht=383.04: };
 iconified=false;

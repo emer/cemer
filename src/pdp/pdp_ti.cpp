@@ -68,7 +68,7 @@ template class PDP_API taList<ProgEl>;
 template class PDP_API taGroup<PDPLog>; 
 
 // pdpshell.h
-template class PDP_API taGroup<Project>; 
+template class PDP_API taGroup<ProjectBase>; 
 template class PDP_API taGroup<Wizard>; // pdpshell.h
 
 // v3_compat.h

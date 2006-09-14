@@ -21,44 +21,25 @@
 //////////////////////////
 
 void BpTrial::Initialize() {
-//nn  min_unit = &TA_BpUnit;
-//  min_con_group = &TA_BpCon_Group;
-//  min_con = &TA_BpCon;
+  min_unit = &TA_BpUnit;
+  min_con_group = &TA_BpCon_Group;
+  min_con = &TA_BpCon;
   bp_to_inputs = false;
 }
-
-
-//////////////////////////
-// 	CE_Stat		//
-//////////////////////////
 
 void CE_Stat::Initialize() {
   tolerance = 0.0f;
 }
-
-/////////////////////////////////
-//        NormDotProd_Stat     //
-/////////////////////////////////
 
 void NormDotProd_Stat::Initialize(){
 //  ndp = 0.0f;
   net_agg.op = Aggregate::AVG;
 }
 
-
-////////////////////////////
-//        VecCor_Stat     //
-////////////////////////////
-
 void VecCor_Stat::Initialize(){
 //nn  vcor = 0.0f;
   dp = l1 = l2 =  0.0f;
 }
-
-
-////////////////////////////////
-//        NormVecLen_Stat     //
-////////////////////////////////
 
 void NormVecLen_Stat::Initialize(){
 //nn  nvl = 0.0f;
@@ -81,21 +62,13 @@ void RBpTrial::Initialize() {
   bp_performed = false;
   log_counter = true;
 
-/*nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
   min_con_group = &TA_BpCon_Group;
-  min_con = &TA_BpCon; */
+  min_con = &TA_BpCon;
 }
-
-void RBpTrial::InitLinks() {
-  TrialProcess::InitLinks();
-}
-
-//////////////////////////
-// 	RBpSE_Stat	//
-//////////////////////////
 
 void RBpSE_Stat::Initialize() {
-//nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
 }
 
 
@@ -104,52 +77,25 @@ void RBpSE_Stat::Initialize() {
 //////////////////////////////////////////
 
 
-//////////////////////////
-// 	CycleProcess	//
-//////////////////////////
-
 void APBpCycle::Initialize() {
   sub_proc_type = NULL;
   apbp_settle = NULL;
   apbp_trial = NULL;
 
-/*nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
   min_con_group = &TA_BpCon_Group;
-  min_con = &TA_BpCon; */
+  min_con = &TA_BpCon;
 }
-
-void APBpCycle::CutLinks() {
-  CycleProcess::CutLinks();
-  apbp_settle = NULL;
-  apbp_trial = NULL;
-}
-
-//////////////////////////
-// 	SettleProcess	//
-//////////////////////////
 
 void APBpSettle::Initialize() {
   sub_proc_type = &TA_APBpCycle;
   apbp_trial = NULL;
   cycle.max = 50;
 
-/*nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
   min_con_group = &TA_BpCon_Group;
-  min_con = &TA_BpCon; */
+  min_con = &TA_BpCon;
 }
-
-void APBpSettle::InitLinks() {
-  SettleProcess::InitLinks();
-}
-
-void APBpSettle::CutLinks() {
-  SettleProcess::CutLinks();
-  apbp_trial = NULL;
-}
-
-//////////////////////////
-// 	TrialProcess	//
-//////////////////////////
 
 void APBpTrial::Initialize() {
   sub_proc_type = &TA_APBpSettle;
@@ -159,27 +105,10 @@ void APBpTrial::Initialize() {
   no_bp_test = true;
   trial_init = INIT_STATE;
 
-/*nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
   min_con_group = &TA_BpCon_Group;
-  min_con = &TA_BpCon; */
+  min_con = &TA_BpCon;
 }
-
-void APBpTrial::InitLinks() {
-  TrialProcess::InitLinks();
-  taBase::Own(phase_no, this);
-}
-
-void APBpTrial::Copy_(const APBpTrial& cp) {
-  phase_no = cp.phase_no;
-  phase = cp.phase;
-  trial_init = cp.trial_init;
-  no_bp_stats = cp.no_bp_stats;
-  no_bp_test = cp.no_bp_test;
-}
-
-//////////////////////////
-// 	Stats		//
-//////////////////////////
 
 void APBpMaxDa_De::Initialize() {
   net_agg.op = Aggregate::MAX;
@@ -191,6 +120,6 @@ void APBpMaxDa_De::Initialize() {
   net_agg.op = Aggregate::MAX;
   loop_init = INIT_START_ONLY;
 
-//nn  min_unit = &TA_RBpUnit;
+  min_unit = &TA_RBpUnit;
 }
 
