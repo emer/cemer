@@ -16,10 +16,7 @@
 
 #include "leabra_v3_compat.h"
 
-#ifdef TA_GUI
-#include "ta_qtviewer.h"
-#include "ta_qtbrowse.h"
-#endif
+#include "ta_viewer.h"
 
 //////////////////////////
 // 	Max Da Stat	//
@@ -133,7 +130,7 @@ bool V3LeabraProject::ConvertToV4_impl() {
   // todo: make a standard leabra process for each process group
 
   // browse the new project:
-  DataBrowser* brows = DataBrowser::New(nwproj, NULL);
+  MainWindowViewer* brows = MainWindowViewer::NewBrowser(nwproj, NULL);
   if (!brows) return false;
   brows->ViewWindow();
   return true;
