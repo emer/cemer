@@ -82,7 +82,6 @@ void DataViewer::Constr(QWidget* gui_parent) {
 
 void DataViewer::Constr_impl(QWidget* gui_parent) {
   m_widget = ConstrWidget_impl(gui_parent);
-  m_widget->show();
 }
 
 /* TBD
@@ -311,11 +310,9 @@ void ClassBrowseViewer::StrToRoot() {
 void TabViewer::Initialize() {
 }
 
-/*void TabViewer::Copy_(const TabViewer& cp) {
-}*/
-
 QWidget* TabViewer::ConstrWidget_impl(QWidget* gui_parent) {
   iTabViewer* rval = new iTabViewer(this, gui_parent);
+  return rval;
 }
 
 /*void TabViewer::Clear_impl() {
@@ -336,8 +333,13 @@ float WindowState::Offs(float cur, float by) {
 }
 
 void WindowState::Initialize() {
-  lft = (taiM->scrn_s.w > 0) ? (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f;
-  top =  (taiM->scrn_s.h > 0) ? (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f;
+  if (taiM) { // guard for instance creation before sys init
+    lft = (taiM->scrn_s.w > 0) ? (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f;
+    top =  (taiM->scrn_s.h > 0) ? (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f;
+  } else {
+    lft = 0.0f;
+    top = 0.0f;
+  }
   wd = 0.75f;
   ht = 0.8f; // default window size
   iconified = false;
@@ -353,11 +355,14 @@ void WindowState::Copy_(const WindowState& cp) {
 
 void WindowState::UpdateAfterEdit() {
   // make sure to limit on mac, due to wacky menubar and dock
+  //TODO: maybe this should be used for all? ex. windows or kde taskbar etc.
 #ifdef QT_OS_MACX
-  lft = MAX(lft, (taiM->scrn_s.w > 0) ? 
-    (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
-  top = MAX(top, (taiM->scrn_s.h > 0) ? 
-    (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
+  if (taiM) { // guard for instance creation before sys init
+    lft = MAX(lft, (taiM->scrn_s.w > 0) ? 
+      (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
+    top = MAX(top, (taiM->scrn_s.h > 0) ? 
+      (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
+  }
 //TODO: prob should limit wd and ht too, because of dock, and inability to size if grip is offscreen
 #endif
   inherited::UpdateAfterEdit();
@@ -497,7 +502,8 @@ void TopLevelViewer::ViewWindow() {
     DeIconify();
     Raise();
   } else {
-    Render(); // constrs
+    Constr(); // no parent;
+    
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
 //      SetWinState(left, top, width, height);
   }
@@ -826,6 +832,10 @@ void MainWindowViewer::CutLinks() {
   frames.CutLinks();
   toolbars.CutLinks();
   inherited::CutLinks();
+}
+
+void MainWindowViewer::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
 }
 
 FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index) {

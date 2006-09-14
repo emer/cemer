@@ -127,8 +127,6 @@ class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
 INHERITED(QWidget)
   Q_OBJECT
 public:
-  ISelectableHost* 	host; // must be set in constructor
-  
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layEdit;
   iEditGrid*	    	  body; // container for the actual taiData items
@@ -142,7 +140,7 @@ public:
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
 
-  iProgramEditor(ISelectableHost* host, QWidget* parent = NULL); //
+  iProgramEditor(QWidget* parent = NULL); //
   ~iProgramEditor();
 
 public slots:
@@ -195,12 +193,11 @@ protected slots:
   void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
   
 private:
-  void			init();
+  void			Init();
 };
 
 
-class TA_API iProgramPanel: public iDataPanelFrame,
-  public virtual ISelectableHost 
+class TA_API iProgramPanel: public iDataPanelFrame
 {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
@@ -211,22 +208,12 @@ public:
   Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
-  override int 		EditAction(int ea);
   void			FillList();
-  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 
   void			AddedToPanelSet(); // override -- called when fully added to DataPanelSet
   
   iProgramPanel(taiDataLink* dl_);
   ~iProgramPanel();
-
-
-public: // ISelectableHost i/f
-  override QWidget*	widget() {return this;} 
-  override bool 	ItemRemoving(ISelectable* item);
-public slots:
-  void			mnuEditAction(taiAction* mel); // required for ISelectableHost
   
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
@@ -234,8 +221,6 @@ public: // IDataLinkClient interface
   
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-/*protected slots: */
 };
 
 

@@ -411,18 +411,17 @@ void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 //    iProgramEditor 	//
 //////////////////////////
 
-iProgramEditor::iProgramEditor(ISelectableHost* host_, QWidget* parent)
+iProgramEditor::iProgramEditor(QWidget* parent)
 :inherited(parent)
 {
-  host = host_;
-  init();
+  Init();
 }
 
 iProgramEditor::~iProgramEditor() {
   setEditNode(NULL); // autosave here too
 }
 
-void iProgramEditor::init() {
+void iProgramEditor::Init() {
   m_changing = 0;
   read_only = false;
   m_modified = false;
@@ -459,7 +458,7 @@ void iProgramEditor::init() {
   layButtons->addStretch();
   layEdit->addLayout(layButtons);
   
-  items = new iTreeView(host, this, iTreeView::TV_AUTO_EXPAND);
+  items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
   items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
@@ -740,7 +739,7 @@ void iProgramEditor::UpdateButtons() {
 iProgramPanel::iProgramPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  pe = new iProgramEditor((ISelectableHost*)this);
+  pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
   Program* prog_ = prog();
   if (prog_) {
@@ -768,49 +767,8 @@ void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   //NOTE: don't need to do anything because DataModel will handle it
 }
 
-int iProgramPanel::EditAction(int ea) {
-  int rval = 0;
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->EditAction_(sel_list, ea);
-  }
-  return rval;
-}
-
-int iProgramPanel::GetEditActions() {
-  int rval = 0;
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->GetEditActions_(sel_list);
-    // certain things disallowed if more than one item selected
-    if (sel_list.size > 1) {
-      rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
-    }
-  }
-  return rval;
-}
-
-void iProgramPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  pe->items->GetSelectedItems(lst);
-}
-
-void iProgramPanel::mnuEditAction(taiAction* mel) {
-  EditAction(mel->usr_data.toInt());
-}
-
 bool iProgramPanel::HasChanged() {
   return pe->HasChanged();
-}
-
-bool iProgramPanel::ItemRemoving(ISelectable* /*item*/) {
-// note: don't need to do anything -- itemChanged is enough
-  return false;
 }
 
 String iProgramPanel::panel_type() const {

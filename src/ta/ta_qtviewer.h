@@ -487,7 +487,6 @@ protected:
   ISelectableHost* 	host;
   
   override void 	customEvent(QEvent* ev); // dispatch
-  virtual void 		selectionChangedEvent(QEvent* ev);
   void			Emit_NotifySignal(ISelectableHost::NotifyOp op);
   
   SelectableHostHelper(ISelectableHost* host_) {host = host_;}
@@ -512,7 +511,7 @@ public:
   inline FrameViewer*	viewer() {return m_viewer;} // usually lex overridden in subclass
   inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
-  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
+//nn??  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
   
   iFrameViewer(FrameViewer* viewer_, QWidget* parent = NULL);
   ~iFrameViewer();
@@ -536,7 +535,6 @@ protected:
 
   virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
   override void 	closeEvent(QCloseEvent* ev);
-  virtual void 		SetActionsEnabled_impl(); // invoked when selection changes
   virtual void		SelectionChanged_impl(ISelectableHost* src_host) {}
     // we call this when we receive a valid incoming change, or maybe new focus
   
@@ -710,7 +708,7 @@ public slots:
   virtual void 	helpAbout();
 
   virtual void	mnuEditAction(taiAction* mel);
-  void		actionsMenu_aboutToShow(); // populates dynamic items
+//nn  void		actionsMenu_aboutToShow(); // populates dynamic items
   
   void		SetClipboardHandler(QObject* handler_obj,
     const char* edit_enabled_slot = NULL,

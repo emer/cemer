@@ -226,27 +226,6 @@ int pdpMisc::Main(int argc, char *argv[]) {
     //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
     // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
 /*obs    PdpMainWindowViewer* db = PdpMainWindowViewer::New(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);*/
-    MainWindowViewer::def_browser_type = &TA_PdpMainWindowViewer;
-    MainWindowViewer* db = MainWindowViewer::NewBrowser(root, NULL, true);
-    db->InitLinks(); // no one else to do it!
-    db->ViewWindow();
-    iMainWindowViewer* bw = db->window();
-    // the main app window only needs to be small...
-    if (bw) {
-      bw->resize(taiM->dialogSize(taiMisc::hdlg_s));
-    }
-    taiMisc::SetMainWindow(bw);
-
-#ifndef QANDD_CONSOLE
-//TODO: this should be a dockable guy made with DockViewer
-    QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
-    mw->setMinimumSize(640, 720);
-    QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
-    mw->setFocusProxy((QWidget*)console);
-    mw->setCentralWidget((QWidget*)console);
-    mw->show();
-#endif
-
     // set the update action (taken after Ok or Apply in the Edit dialog)
 //temp    taiMisc::Update_Hook = taMisc::DelayedMenuUpdate;
 //obs    winbMisc::group_leader = root->window;
@@ -320,6 +299,29 @@ int pdpMisc::Main(int argc, char *argv[]) {
   if((proj_to_load.size > 0) && !cssMisc::gui)
     pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
 #ifdef TA_GUI
+//TODO: need to better orchestrate the "OpenWindows" call below with
+//  creating the default application window
+    MainWindowViewer::def_browser_type = &TA_PdpMainWindowViewer;
+    MainWindowViewer* db = MainWindowViewer::NewBrowser(root, NULL, true);
+    db->InitLinks(); // no one else to do it!
+    db->ViewWindow();
+    iMainWindowViewer* bw = db->window();
+    // the main app window only needs to be small...
+    if (bw) {
+      bw->resize(taiM->dialogSize(taiMisc::hdlg_s));
+      taiMisc::SetMainWindow(bw);
+    }
+
+#ifndef QANDD_CONSOLE
+//TODO: this should be a dockable guy made with DockViewer
+    QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
+    mw->setMinimumSize(640, 720);
+    QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
+    mw->setFocusProxy((QWidget*)console);
+    mw->setCentralWidget((QWidget*)console);
+    mw->show();
+#endif
+
   if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif
 

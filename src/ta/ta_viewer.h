@@ -127,7 +127,6 @@ public:
   
   void	UpdateAfterEdit();
   void	InitLinks();
-  virtual void	WinInit(); // called inside InitLinks, after our core InitLinks, but before window opened
   void	CutLinks();
   void	Copy_(const DataViewer& cp);
   COPY_FUNS(DataViewer, taDataView)
@@ -203,8 +202,6 @@ public:
   inline iBrowseViewer*	widget() {return (iBrowseViewer*)m_widget;}
   inline iBrowseViewer*	browser_win() {return (iBrowseViewer*)m_widget;} //todo: legacy/remove
 
-  void	InitLinks();
-  void	CutLinks();
   void 	Copy_(const BrowseViewer& cp);
   COPY_FUNS(BrowseViewer, FrameViewer) //
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
@@ -278,10 +275,6 @@ public:
 
   inline iTabViewer*	viewer_win() {return (iTabViewer*)m_widget;}
 
-  void	InitLinks();
-  void	CutLinks(); //
-//  void 	Copy_(const TabViewer& cp);
-//  COPY_FUNS(TabViewer, FrameViewer) //
   TA_DATAVIEWFUNS(TabViewer, FrameViewer) //
 protected:
   override QWidget*	ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
@@ -365,7 +358,7 @@ protected:
   override void 	Dump_Save_pre(); // TEMP: update winpos etc.
   
   override void		Constr_impl(QWidget* gui_parent); 
-  virtual void		MakeWinName_impl(); // set win_name
+  virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
 private:
   void 	Initialize();
@@ -381,6 +374,7 @@ public:
   
 protected:
   override QWidget*	ConstrWidget_impl(QWidget* gui_parent); 
+  //override void		MakeWinName_impl(); each subguy will need this
   
 private:
   void 	Initialize() {}

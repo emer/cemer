@@ -1489,6 +1489,15 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
     SelectionChanged(forced);
 }
 
+void ISelectableHost::AddDynActions(taiActions* menu) {
+  if (dyn_actions.count() == 0) return;
+  menu->AddSep();
+  for (int i = 0; i < (int)dyn_actions.count(); ++i) {
+    taiAction* act = dyn_actions.FastEl(i);
+    act->AddTo(menu);
+  }
+}
+
 void ISelectableHost::ClearSelectedItems(bool forced) {
   SelectionChanging(true, forced);
   sel_items.Reset(); //note: use raw list, because we are building it
@@ -1502,7 +1511,7 @@ QObject* ISelectableHost::clipHandlerObj() {
 void ISelectableHost::Connect_SelectableHostNotifySignal(QObject* sink_obj,
     const char* sink_slot, bool discnct)
 {
-  static const char* sig_nm = SIGNAL(ItemRemoving(ISelectableItem*));
+  static const char* sig_nm = SIGNAL(NotifySignal(ISelectableHost*, int));
   if (discnct)
     QObject::disconnect(helper, sig_nm, sink_obj, sink_slot);
   else
@@ -1512,7 +1521,7 @@ void ISelectableHost::Connect_SelectableHostNotifySignal(QObject* sink_obj,
 void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
     const char* src_signal, bool discnct)
 {
-  static const char* slot_nm = SLOT(NotifySignal(ISelectableHost*, int));
+  static const char* slot_nm = SLOT(ItemRemoving(ISelectableItem*));
   if (discnct)
     QObject::disconnect(src_obj, src_signal, helper, slot_nm);
   else
@@ -1528,7 +1537,12 @@ void ISelectableHost::EditAction(int ea) {
 void ISelectableHost::EditActionsEnabled(int& ea) {
   ISelectable* ci = curItem();
   if (!ci) return;
-  ea = ci->GetEditActions_(selItems());
+  int rval = ci->GetEditActions_(selItems());
+  // certain things disallowed if more than one item selected
+  if (sel_items.size > 1) {
+    rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
+  }
+  ea = rval;
 }
 
 void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
@@ -1542,12 +1556,7 @@ void ISelectableHost::FillContextMenu(taiActions* menu) {
   ci->FillContextMenu(selItems(), menu);
   // then add the dynamic actions
   if (dyn_actions.count() == 0) return; // prevents spurious separator
-  menu->AddSep();
-  // add actions corresponding to dynamic list
-  for (int i = 0; i < (int)dyn_actions.count(); ++i) {
-    taiAction* act = dyn_actions.FastEl(i);
-    act->AddTo(menu);
-  }
+  AddDynActions(menu);
 }
 
 void ISelectableHost::DoDynAction(int idx) {
@@ -2174,6 +2183,7 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
     this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
     
   //TODO: forward the viewSplit guys, if the guy has compatible slots
+  fv->show(); // always needed when adding guys to visible
 }
 
 // this guy exists because we must always be able to add a panel,
@@ -2228,6 +2238,7 @@ void iMainWindowViewer::Constr() {
 
   body = new QSplitter(); // def is hor
   setCentralWidget(body);
+  body->show();
 
   actionsMenu->insertSeparator();
   m_last_action_idx = actionsMenu->count() - 1;
@@ -2360,7 +2371,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
-  connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
+//nn  connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
 //    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );

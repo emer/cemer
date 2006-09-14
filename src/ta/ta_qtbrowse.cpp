@@ -439,8 +439,6 @@ iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
 :inherited(browser_, parent)
 {
   Init();
-  lvwDataTree = NULL;
-  mnuBrowseNodeDrop_param = -1;
 }
 
 iBrowseViewer::~iBrowseViewer()
@@ -448,6 +446,7 @@ iBrowseViewer::~iBrowseViewer()
 }
 
 void iBrowseViewer::Init() {
+  mnuBrowseNodeDrop_param = -1;
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setMargin(0);  lay->setSpacing(0);
   lvwDataTree = new iTreeView(this);

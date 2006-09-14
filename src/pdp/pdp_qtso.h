@@ -32,7 +32,6 @@
 
 
 // forwards this file
-class pdpDataViewer;
 class iPdpMainWindowViewer;
 class PdpMainWindowViewer;
 
@@ -80,7 +79,7 @@ protected:
 };
 
 
-class TA_API PdpMainWindowViewer : public MainWindowViewer {
+class PDP_API PdpMainWindowViewer : public MainWindowViewer {
   // #NO_TOKENS the base type for browsers in pdp (used by MainWindowViewer::NewBrowser)
 INHERITED(MainWindowViewer)
 friend class iPdpMainWindowViewer;

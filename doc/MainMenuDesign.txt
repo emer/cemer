@@ -221,6 +221,7 @@ To Do's:
 * the iListDataPanel needs to have its cliphandling stuff basically excised,
   because the TreeView should now do it automatically
   * but we may need to hook up selection handler notifiers
+* program_qtso: need to wire the treeview/IEditDataHost up to the frame
   
 Questions:
 

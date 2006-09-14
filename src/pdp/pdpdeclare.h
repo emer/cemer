@@ -63,7 +63,7 @@ class TextLog;
 class GraphLog;
 class GridLog; //
 
-class PdpMainDataViewer;
+class PdpMainWindowViewer;
 
 #ifdef TA_GUI
 
@@ -73,7 +73,7 @@ class T3DataViewer;
 class Xform; // #IGNORE
 class Xform_List; // #IGNORE
 
-class iPdpMainDataViewer;
+class iPdpMainWindowViewer;
 class PDPView;
 class LogView; //
 class TextLogView; //

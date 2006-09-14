@@ -2606,6 +2606,8 @@ int cssMisc::Initialize() {
     taMisc::Error("main", "cannot specify '-gui' switch when compiled without gui support");
     return 1;
   }
+  //NOTE: not sure if we are allowed to set this yet... (BA 9/14/06)
+  taMisc::gui_active = gui;
 #endif // TA_GUI
 
   return 0;
