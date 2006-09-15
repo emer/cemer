@@ -171,7 +171,8 @@ Cosmetic/Usability/etc. (lower priority):
 * fix the damned desc control so it sizes out to the end of the panel
 * add the buttons to the bottom (same as on the edit properties)
 * add a script panel to Programs so user just needs to click button to view script
-
+* taiField controls should have a min size, ex. see the List properties for colorspecs,
+  the color values are barely 1 numeral wide
 
 TODO
 ----

@@ -223,6 +223,16 @@ To Do's:
   * but we may need to hook up selection handler notifiers
 * program_qtso: need to wire the treeview/IEditDataHost up to the frame
   
+
+SEEMS TO WORK
+
+* notify chain from TreeView to Frame up to Window, and back to Frames
+
+BUGS
+
+* in browseviewer, root item not selected by default (should be??? maybe not?)
+* iTabViewer doesn't have a m_curTabView, so sel changes get ignored
+
 Questions:
 
 * is it necessary for all the viewer guys to maintain all the gui state

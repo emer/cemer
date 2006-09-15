@@ -1842,8 +1842,12 @@ iTabViewer::~iTabViewer()
 
 void iTabViewer::Init() {
   m_tabViews = new  iTabView_PtrList();
-  m_curTabView = NULL;
   cur_item = NULL;
+  QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->setMargin(0);  lay->setSpacing(0);
+  spl_main = new QSplitter(this);
+  lay->addWidget(spl_main);
+  m_curTabView = AddTabView(spl_main);
 }
 
 void iTabViewer::AddPanel(iDataPanel* panel) {

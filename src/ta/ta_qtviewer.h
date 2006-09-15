@@ -548,6 +548,8 @@ class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed
 INHERITED(iFrameViewer)
 friend class iTabView;
 public:
+  QSplitter*		spl_main; // toplevel guy
+  
   virtual taiDataLink*	sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*	sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
   iTabView*		tabView() {return m_curTabView;} // currently active
