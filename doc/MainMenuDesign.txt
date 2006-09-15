@@ -207,20 +207,13 @@ Issues
 
 To Do's:
 
-* enable tab viewers to not show the first tab (could be easily done just
-   by making the tab bar hidden)
 * need to wire the cliphandlers to the main window when frame gets focus
 * make sure browser rooted in member shows the parent type.member as name in root
   -- actually, for taBase, should be ObjName.member, for class, ParentType.member
 * need to dynamically enable Splitting, and forward to right sub frame
-* provide a "don't show single tab" option on tabview (primarily for 3D ones)
-* add a simple "SelectionChanged()" slot capability on the FrameViewer windows --
-  the MainWin guy will check for this slot when adding the widget to the win
 * put open TopLevelWindow guys on taiMisc::viewer_wins -- one slight issue is 
   that dock windows will need to be removed from this list when they dock
-* the iListDataPanel needs to have its cliphandling stuff basically excised,
-  because the TreeView should now do it automatically
-  * but we may need to hook up selection handler notifiers
+* the iListDataPanel needs to hook up selection handler notifiers
 * program_qtso: need to wire the treeview/IEditDataHost up to the frame
   
 
