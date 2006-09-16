@@ -241,8 +241,8 @@ protected:
   void			RedrawLines(); // called when we should redraw the lines -- axes must be current
   bool			InitUpdateYAxes(bool init); // update y axes, returns true if any was updated
 
-  override void 	ChildAdding(T3DataView* child);
-  override void 	ChildRemoving(T3DataView* child);
+  override void 	ChildAdding(taDataView* child);
+  override void 	ChildRemoving(taDataView* child);
   override void 	ReInit_impl();
   override void		Reset_impl(); //
   override void 	Render_pre(taDataView* par); //
@@ -282,8 +282,8 @@ protected:
 
   bool			InitUpdateXZAxes(bool init); // update x/z axes, returns true if x or z was updated
 
-  override void 	ChildAdding(T3DataView* child);
-  override void 	ChildRemoving(T3DataView* child);
+  override void 	ChildAdding(taDataView* child);
+  override void 	ChildRemoving(taDataView* child);
   override void		Clear_impl(taDataView* par); //
   override void 	ReInit_impl(); // note: we deal with the x and z axes below us
   override void		Reset_impl(); //

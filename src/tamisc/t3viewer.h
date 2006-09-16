@@ -64,24 +64,14 @@ SoPtr_Of(T3Node);
 //   T3DataView_List	//
 //////////////////////////
 
-class TAMISC_API T3DataView_List: public taList<T3DataView> { // ##NO_TOKENS
-#ifndef __MAKETA__
-  typedef taList<T3DataView> inherited;
-#endif
+class TAMISC_API T3DataView_List: public DataView_List { // ##NO_TOKENS
+INHERITED(DataView_List)
 friend class T3DataView;
 public:
-  override TAPtr 	SetOwner(TAPtr); // #IGNORE
-  override void		CutLinks();
-  TA_BASEFUNS(T3DataView_List);
-protected:
-  override void 	El_Done_(void* it_);
-  override void*	El_Own_(void* it);
-  override void		El_disOwn_(void* it);
-  override void		El_SetIndex_(void* it_, int idx);
-  T3DataView*		data_view; // #IGNORE our owner, when owned by a T3DataView (normal case)
+  TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView);
 private:
-  void			Initialize();
-  void			Destroy();
+  void			Initialize() {SetBaseType(&TA_T3DataView);}
+  void			Destroy() {}
 };
 
 //////////////////////////
@@ -116,7 +106,6 @@ public:
   };
 
   int			flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
-  int			idx; // #READ_ONLY #NO_SAVE index of ourselves in parent list
   FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
 
   virtual bool		hasChildren() const {return false;}
@@ -184,8 +173,8 @@ protected:
   virtual void		Assert_Adapter(); // makes sure the QObject adapter is created
 
   virtual void		AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
-  virtual void 		ChildAdding(T3DataView* child) {} // #IGNORE called from list;
-  virtual void 		ChildRemoving(T3DataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
+//override void 	ChildAdding(taDataView* child) {} // #IGNORE called from list;
+  override void		ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
   virtual void		Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 //nn  virtual void		DestroyPanels();
 
@@ -473,7 +462,7 @@ friend class T3DataView;
 public:
   T3DataViewRoot	root_view; // #BROWSE placeholder item -- contains the actual root(s) DataView items as children
 
-  inline iT3DataViewer*	widget() {return (iT3DataViewer*)m_widget;} // lex override
+  inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
 //  iT3DataViewer*	viewer_win() {return (iT3DataViewer*)m_widget;}
 
   virtual void		AddView(T3DataView* view); // add a view
@@ -483,13 +472,16 @@ public:
   void	Copy_(const T3DataViewer& cp);
   COPY_FUNS(T3DataViewer, FrameViewer)
   TA_DATAVIEWFUNS(T3DataViewer, FrameViewer)
+  
+public: // IDataViewWidget
+  override void		Constr();
+
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void		SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 
 
-  override void		Constr_impl(QWidget* gui_parent = NULL); // #IGNORE
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent = NULL); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent = NULL); // #IGNORE
   override void 	WindowClosing(CancelOp& cancel_op); // #IGNORE
   override void		Clear_impl(taDataView* par = NULL); // #IGNORE
   override void		Render_pre(taDataView* par = NULL); // #IGNORE

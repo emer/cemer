@@ -85,12 +85,13 @@ INHERITED(MainWindowViewer)
 friend class iPdpMainWindowViewer;
 public:
 
-  override iPdpMainWindowViewer* window() {return (iPdpMainWindowViewer*)m_widget;}
+  inline iPdpMainWindowViewer* widget() {return (iPdpMainWindowViewer*)inherited::widget();}
+  override iPdpMainWindowViewer* window() {return (iPdpMainWindowViewer*)inherited::widget();}
     // note: polymorphic return-value override
   
   TA_DATAVIEWFUNS(PdpMainWindowViewer, MainWindowViewer)
 protected:
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
   void			Initialize() {}
   void			Destroy() {}

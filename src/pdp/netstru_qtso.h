@@ -233,7 +233,7 @@ public:
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
-  override void 	ChildRemoving(T3DataView* child); // #IGNORE also remove from aux list
+  override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
   override void		Render_pre(taDataView* par = NULL); // #IGNORE
   override void		Render_impl(); // #IGNORE
@@ -373,8 +373,8 @@ public:
 protected:
   Unit*			m_unit_src; // #IGNORE unit last picked (if any) for display
   NetViewPanel*		nvp; // created during first Render
-  override void 	ChildAdding(T3DataView* child); // #IGNORE also add to aux list
-  override void 	ChildRemoving(T3DataView* child); // #IGNORE also remove from aux list
+  override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
+  override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); //
   override void		OnWindowBind_impl(iT3DataViewer* vw);
   override void		Render_pre(taDataView* par = NULL); // #IGNORE

@@ -387,6 +387,9 @@ public:
   void 			operator=(const taBase& cp)	{ Copy(cp); }
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
 
+  virtual int		GetIndex() const {return -1;} // typically its index in an own List
+  virtual void		SetIndex(int value) {} //note: typically don't do a notify, because list itself will take care of notifying gui clients
+  
   virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const; // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names) -- will/must never be empty
@@ -820,97 +823,6 @@ protected:
 };
 
 
-/* taDataView -- exemplar base class of a view of an object, of class taOBase or later
-
-   A view is a high-level depiction of an object, ex. "Network", "Graph", etc.
-
-  The IDataViews list object does not own the view object -- some outer controller is
-  responsible for lifetime management of dataview objects.
-
-  However, if a dataobject is destroying, it will destroy all its views
-
-*/
-class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
-  // #NO_TOKENS  base class for views of an object
-#ifndef __MAKETA__
-typedef taOBase inherited_taBase;
-typedef IDataLinkClient inherited_IDataLinkClient;
-#endif
-friend class taBase;
-public:
-  taBase*		m_data;		// #READ_ONLY data -- referent of the item -- the data
-  TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
-
-  taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
-  void 			SetData(taBase* ta); // set the data to which this points -- must be subclass of data_base
-  int			dbu_cnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
-  virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy
-  virtual MemberDef*	md() const {return NULL;} // ISelectable property member stub
-  virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
-  taDataView*		parent() const;
-
-  virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
-  virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
-  virtual void		DataDestroying() {}
-  virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
-  virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
-  virtual void		Clear(taDataView* par = NULL) {if (isMapped()) Clear_impl(par);} // clears the view (but doesn't delete any components) (usually override _impl)
-  virtual void		CloseChild(taDataView* child) {}
-  virtual void		Render() {if (isMapped()) Clear_impl(); 
-    Render_pre(); Render_impl(); Render_post();} 
-    // renders the visible contents (usually override the _impls)
-  virtual void		Reset() {if (isMapped()) Clear_impl(); Reset_impl();} 
-    // clears, and deletes any components (usually override _impls)
-
-  virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
-  
-  void	UpdateAfterEdit();
-  void			InitLinks();
-  void			CutLinks();
-  TA_BASEFUNS(taDataView)
-
-public: // ITypedObject interface
-  override void*	This() {return (void*)this;} //
-//already in taBase: override TypeDef*	GetTypeDef() const;
-
-public: // IDataLinkClient interface
-  override TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
-  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
-   // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
-  override void		DataLinkDestroying(taDataLink* dl);
-   // called by DataLink when it is destroying
-  override bool		IsDataView() {return true;}
-
-protected:
-  int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
-  // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
-  mutable taDataView* 	m_parent; // cached/autoset
-  virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
-   // called when the data item has changed, esp. ex lists and groups, *except* UAE
-  virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
-  virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
-  virtual void		DataStructUpdateEnd_impl() {Reset(); Render();} // called ONLY at end of a struct update
-  virtual void 		SetData_impl(taBase* ta); // called to actually set or clear m_data -- can be trapped
-  virtual void		Clear_impl(taDataView* par = NULL) {} // override  to implement clear; NULL means not known yet
-  virtual void		Render_pre(taDataView* par = NULL) {} // #IGNORE replace with pre-rendering code, if needed
-  virtual void		Render_impl() {} // #IGNORE replace with code that renders the window contents
-  virtual void		Render_post() {} // #IGNORE replace with post-rendering code, if needed
-  virtual void		Reset_impl() {} // override  to implement reset
-private:
-  void			Initialize();
-  void			Destroy() {CutLinks();}
-};
-
-// for explicit lifetime management
-#define TA_DATAVIEWFUNS(b,i) \
-  TA_BASEFUNS(b); \
-  void* This() {return (void*)this;}
-
-// for ref-counting lifetime management
-#define TA_REF_DATAVIEWFUNS(b,i) \
-  TA_REF_BASEFUNS(b); \
-  void* This() {return (void*)this;}
-
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 #ifndef __MAKETA__
 typedef taOBase inherited;
@@ -1080,6 +992,7 @@ public:
 
 protected:
   String	GetListName_() const	{ return name; }
+  void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
   TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
@@ -1191,6 +1104,139 @@ public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
   TA_BASEFUNS(taBase_List);
+};
+
+
+/* taDataView -- exemplar base class of a view of an object, of class taOBase or later
+
+   A view is a high-level depiction of an object, ex. "Network", "Graph", etc.
+
+  The IDataViews list object does not own the view object -- some outer controller is
+  responsible for lifetime management of dataview objects.
+
+  However, if a dataobject is destroying, it will destroy all its views
+
+*/
+class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
+  // #NO_TOKENS  base class for views of an object
+#ifndef __MAKETA__
+typedef taOBase inherited_taBase;
+typedef IDataLinkClient inherited_IDataLinkClient;
+#endif
+friend class taBase;
+friend class DataView_List;
+public:
+  taBase*		m_data;		// #READ_ONLY data -- referent of the item -- the data
+  TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
+
+  taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
+  void 			SetData(taBase* ta); // set the data to which this points -- must be subclass of data_base
+  int			dbu_cnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
+  inline int		index() const {return m_index;} // convenience accessor
+  virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy
+  virtual MemberDef*	md() const {return NULL;} // ISelectable property member stub
+  virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
+  taDataView*		parent() const;
+
+  virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
+  virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
+  virtual void		DataDestroying() {}
+  virtual void 		ChildAdding(taDataView* child) {} // #IGNORE called from list;
+  virtual void 		ChildRemoving(taDataView* child); // #IGNORE called from list; 
+  virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
+  virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
+  virtual void		Clear(taDataView* par = NULL) {if (isMapped()) Clear_impl(par);} // clears the view (but doesn't delete any components) (usually override _impl)
+  virtual void		CloseChild(taDataView* child) {}
+  virtual void		Render() {if (!isMapped()) return;
+    Render_pre(); Render_impl(); Render_post();} 
+    // renders the visible contents (usually override the _impls)
+  virtual void		Reset() {if (isMapped()) Clear_impl(); Reset_impl();} 
+    // clears, and deletes any components (usually override _impls)
+
+  virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
+  
+  int	GetIndex() const {return m_index;}
+  void	SetIndex(int value) {m_index = value;}
+  void	UpdateAfterEdit();
+  void			InitLinks();
+  void			CutLinks();
+  TA_BASEFUNS(taDataView)
+
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;} //
+//already in taBase: override TypeDef*	GetTypeDef() const;
+
+public: // IDataLinkClient interface
+  override TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
+  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
+   // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
+  override void		DataLinkDestroying(taDataLink* dl);
+   // called by DataLink when it is destroying
+  override bool		IsDataView() {return true;}
+
+protected:
+  int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
+  int			m_index; // for when in a list
+  // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
+  mutable taDataView* 	m_parent; // cached/autoset
+  virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
+   // called when the data item has changed, esp. ex lists and groups, *except* UAE
+  virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
+  virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
+  virtual void		DataStructUpdateEnd_impl() {Reset(); Render();} // called ONLY at end of a struct update
+  virtual void 		SetData_impl(taBase* ta); // called to actually set or clear m_data -- can be trapped
+  virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
+   // typically from an owned list
+  virtual void		Clear_impl(taDataView* par = NULL) {} // override  to implement clear; NULL means not known yet
+  virtual void		Render_pre(taDataView* par = NULL) {} // #IGNORE replace with pre-rendering code, if needed -- call Clear_impl if preclearing is needed in your context
+  virtual void		Render_impl() {} // #IGNORE replace with code that renders the window contents
+  virtual void		Render_post() {} // #IGNORE replace with post-rendering code, if needed
+  virtual void		Reset_impl() {} // override  to implement reset
+private:
+  void			Initialize();
+  void			Destroy() {CutLinks();}
+};
+
+// for explicit lifetime management
+#define TA_DATAVIEWFUNS(b,i) \
+  TA_BASEFUNS(b); \
+  void* This() {return (void*)this;}
+
+// for ref-counting lifetime management
+#define TA_REF_DATAVIEWFUNS(b,i) \
+  TA_REF_BASEFUNS(b); \
+  void* This() {return (void*)this;}
+
+#define TA_DATAVIEWLISTFUNS(B,I,T) \
+  T* SafeEl(int i) const {return (T*)SafeEl_(i);} \
+  T* FastEl(int i) const {return (T*)FastEl_(i);} \
+  TA_BASEFUNS(B);
+
+class TA_API DataView_List: public taList<taDataView> { // #NO_TOKENS
+INHERITED(taList<taDataView>)
+public:
+  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+    // we send to an owner DataView DataChanged_Child
+  
+  override TAPtr SetOwner(TAPtr); // #IGNORE
+  TA_DATAVIEWLISTFUNS(DataView_List, taList<taDataView>, taDataView) //
+  
+public: // all these guys just iterate calling the item func 
+  virtual void		Clear_impl(taDataView* par = NULL); //note: iterates backwards
+  virtual void		Render_pre(taDataView* par = NULL);
+  virtual void		Render_impl();
+  virtual void		Render_post();
+  virtual void		Reset_impl() {Reset();} //note: iterates backwards
+
+protected:
+  taDataView*		data_view; // #IGNORE our owner, when owned by a taDataView, for efficiency
+
+  override void*	El_Own_(void* it);
+  override void		El_disOwn_(void* it);
+
+private:
+  void 	Initialize() { SetBaseType(&TA_taDataView); data_view = NULL;}
+  void	Destroy() {}
 };
 
 

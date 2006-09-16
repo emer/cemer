@@ -261,7 +261,7 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
     // check if already viewing this log there, warn user
     T3DataView* dv;
     for (int i = 0; i < vwr->root_view.children.size; ++i) {
-      dv = vwr->root_view.children[i];
+      if (!(dv = dynamic_cast<T3DataView*>(vwr->root_view.children[i]))) continue;
       if (dv->GetTypeDef()->InheritsFrom(TA_LogView)) {
         LogView* lv = (LogView*)dv;
         if (lv->log() == this) {

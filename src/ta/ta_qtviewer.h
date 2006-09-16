@@ -233,10 +233,26 @@ protected:
 };
 
 
+class TA_API IDataViewWidget { // interface that all DataViewer::widget() class must implement
+friend class DataViewer;
+public:
 
-//////////////////////////
-//   iToolBar		//
-//////////////////////////
+  virtual QWidget*	widget() = 0; // return the widget
+  DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
+  
+  virtual void		Constr() {} // called virtually, after new
+  void			Close(); // deletes or closes us, and disconects us from viewer
+  
+//  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
+  
+  IDataViewWidget(DataViewer* viewer);
+  virtual ~IDataViewWidget(); // informs mummy of our destruction
+  
+protected:
+  DataViewer*		m_viewer; // our mummy
+  virtual void		Close_impl(); //default calls widget->close (good for top-level windows w/ Destroy option, but maybe use delete for widgets)
+};
+
 
 class TA_API iToolBar: public QToolBar {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
@@ -499,7 +515,7 @@ private:
 };
 
 
-class TA_API iFrameViewer: public QWidget {
+class TA_API iFrameViewer: public QWidget, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for things in the center splitter of main
   Q_OBJECT
 INHERITED(QWidget)
@@ -508,7 +524,7 @@ friend class MainWindowViewer;
 friend class iMainWindowViewer;
 public:
   
-  inline FrameViewer*	viewer() {return m_viewer;} // usually lex overridden in subclass
+  inline FrameViewer*	viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
   inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
 //nn??  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
@@ -528,8 +544,11 @@ signals:
     // forwarder, from all internal guys
 #endif
 
+public: // IDataViewerWidget i/f
+  override QWidget*	widget() {return this;}
+//  override void		Constr(); // called virtually, after new
+
 protected:
-  FrameViewer* 		m_viewer;
   iMainWindowViewer*    m_window;
   short int		shn_changing; // for marking forwarding, so we don't reflect back
 
@@ -586,17 +605,21 @@ private:
   void			Init();
 };
 
-class TA_API iDockViewer: public QDockWidget {
+class TA_API iDockViewer: public QDockWidget, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DockViewer
   Q_OBJECT
 INHERITED(QDockWidget)
 public:
-  inline DockViewer*	viewer() {return m_viewer;}
+  inline DockViewer*	viewer() {return (DockViewer*)m_viewer;}
   
   iDockViewer(DockViewer* viewer_, QWidget* parent = NULL);
   ~iDockViewer();
+  
+public: // IDataViewerWidget i/f
+  override QWidget*	widget() {return this;}
+//  override void		Constr() {} // called virtually, after new
+  
 protected:
-  DockViewer*		m_viewer;
 };
 
 
@@ -604,7 +627,7 @@ protected:
 //   iMainWindowViewer	//
 //////////////////////////
 
-class TA_API iMainWindowViewer: public QMainWindow {
+class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
 INHERITED(QMainWindow)
@@ -662,7 +685,7 @@ public:
   virtual bool		showFileObjectOps() {return false;} // usually only show the file ops for the root project window
 
   //TODO: provide a list of multi-selects
-  inline MainWindowViewer* viewer() {return m_viewer;} 
+  inline MainWindowViewer* viewer() {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
   void			AddPanelNewTab(iDataPanel* panel); 
@@ -670,7 +693,6 @@ public:
   virtual iToolBar*	AddToolBar(iToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
   virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
   virtual void		AddToolBarMenu(const String& name, int index);
-  virtual void		Constr(); // #IGNORE constructs menu and body -- usually not overrriden (override _impl) called by caller after making, so ok to be virtual
   iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
     // can be overriden to supply custom iToolBar
   virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
@@ -737,6 +759,10 @@ signals:
     // see "Selection Handling" in .cpp
 #endif
 
+public: // IDataViewerWidget i/f
+  override QWidget*	widget() {return this;}
+  override void		Constr();
+
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
 
@@ -745,7 +771,6 @@ protected slots:
 
 
 protected:
-  MainWindowViewer*	m_viewer;
   bool			is_root; // true if this is a root window (has Quit menu)
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);

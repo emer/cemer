@@ -44,12 +44,16 @@ void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
 }
 
 void DataViewer::Initialize() {
-  m_widget = NULL;
+  m_dvwidget = NULL;
   display_toggle = true;
 }
 
 void DataViewer::Destroy() {
   CutLinks();
+  if (m_dvwidget) {
+    m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
+    m_dvwidget = NULL; // 
+  }
 }
 
 void DataViewer::InitLinks() {
@@ -70,18 +74,25 @@ void DataViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+void DataViewer::CloseWindow() {
+  if (isMapped()) {
+    CloseWindow_impl(); 
+    m_dvwidget = NULL;
+  }
+}	
+
 void DataViewer::CloseWindow_impl() { // only called if mapped
-  m_widget->close(); // typically is destructive close, and calls us back + resets instance
+  m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
 }
 
 void DataViewer::Constr(QWidget* gui_parent) {
-  if (!taMisc::gui_active || m_widget) return;
+  if (!taMisc::gui_active || dvwidget()) return;
   Constr_impl(gui_parent);
-  Render(); // often does nothing; impl for T3 stuff
 }
 
 void DataViewer::Constr_impl(QWidget* gui_parent) {
-  m_widget = ConstrWidget_impl(gui_parent);
+  m_dvwidget = ConstrWidget_impl(gui_parent);
+  m_dvwidget->Constr(); // virtual guy
 }
 
 /* TBD
@@ -115,23 +126,23 @@ String DataViewer::GetPrintFileExt(PrintFmt fmt) {
 } */
 
 bool DataViewer::isMapped() const {
-  return (taMisc::gui_active && m_widget);
+  return (taMisc::gui_active && m_dvwidget);
 }
 
 void DataViewer::Lower() {
-  if (!taMisc::gui_active || (!m_widget)) return;
+  if (!isMapped()) return;
   // note: only makes sense in some contexts
-  m_widget->lower();
+  widget()->lower();
 }
 
 void DataViewer::Raise() {
   if (!isMapped()) return;
   // note: only makes sense in some contexts
-  m_widget->raise();
+  widget()->raise();
 }
 
 /*obs void DataViewer::ReSize(float width, float height) {
-  if (!taMisc::gui_active || (m_widget == NULL)) return;
+  if (!taMisc::gui_active || (dvwidget() == NULL)) return;
   if ((width > 0.0f) && (height > 0.0f)) {
     win_state.wd = width;
     win_state.ht = height;
@@ -142,7 +153,11 @@ void DataViewer::Raise() {
 } */
 
 void DataViewer::WidgetDeleting() {
-  m_widget = NULL;
+  m_dvwidget = NULL;
+}
+
+QWidget* DataViewer::widget() {
+  return (m_dvwidget) ? m_dvwidget->widget() : NULL; 
 }
 
 
@@ -182,12 +197,12 @@ void BrowseViewer::Copy_(const BrowseViewer& cp) {
 
 void BrowseViewer::Clear_impl() {
   if (!isMapped()) return;
-  browser_win()->Reset();
+  widget()->Reset();
 }
 
 void BrowseViewer::Render_impl() {
   if (!isMapped()) return;
-  browser_win()->ApplyRoot();
+  widget()->ApplyRoot();
 }
 
 /* nn void BrowseViewer::TreeNodeDestroying(taiTreeDataNode* item) {
@@ -223,16 +238,15 @@ void tabBrowseViewer::Copy_(const tabBrowseViewer& cp) {
   m_root = cp.m_root;
 }
 
-QWidget* tabBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iBrowseViewer* rval = new iBrowseViewer(this, gui_parent);
-  return rval;
+IDataViewWidget* tabBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iBrowseViewer(this, gui_parent);
 }
 
 void tabBrowseViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   // if root has vanished, window must die
   //TODO: should prob propagate this up to the enclosing iMainWindowViewer???
-  if (!m_root && m_widget) {
+  if (!m_root && dvwidget()) {
     CloseWindow();
   }
 }
@@ -256,9 +270,8 @@ void ClassBrowseViewer::Copy_(const ClassBrowseViewer& cp) {
   RootToStr();
 }
 
-QWidget* ClassBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iClassBrowseViewer* rval = new iClassBrowseViewer(this, gui_parent);
-  return rval;
+IDataViewWidget* ClassBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iClassBrowseViewer(this, gui_parent);
 }
 
 void ClassBrowseViewer::UpdateAfterEdit() {
@@ -310,9 +323,8 @@ void ClassBrowseViewer::StrToRoot() {
 void TabViewer::Initialize() {
 }
 
-QWidget* TabViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iTabViewer* rval = new iTabViewer(this, gui_parent);
-  return rval;
+IDataViewWidget* TabViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iTabViewer(this, gui_parent);
 }
 
 /*void TabViewer::Clear_impl() {
@@ -464,21 +476,21 @@ void TopLevelViewer::Copy_(const TopLevelViewer& cp) {
 
 void TopLevelViewer::DeIconify() {
   if (!isMapped() || !isTopLevel()) return;
-  if (m_widget->isMinimized())
-    m_widget->showNormal();
+  if (widget()->isMinimized())
+    widget()->showNormal();
   winState().iconified = false; //TEMP
 }
 
 void TopLevelViewer::Iconify() {
   if (!isMapped() || !isTopLevel()) return;
-  if (!m_widget->isMinimized())
-    m_widget->showMinimized();
+  if (!widget()->isMinimized())
+    widget()->showMinimized();
   winState().iconified = true; // TEMP
 }
 
 void TopLevelViewer::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
-  if (!m_widget) return; // shouldn't happen
+  if (!dvwidget()) return; // shouldn't happen
 
   winState().SetWinState();
   SetWinName();
@@ -493,16 +505,17 @@ void TopLevelViewer::Dump_Save_pre() {
 void TopLevelViewer::SetWinName() {
   if (!isMapped()) return;
   MakeWinName_impl();
-  m_widget->setCaption(win_name);
+  widget()->setCaption(win_name);
 }
 
 void TopLevelViewer::ViewWindow() {
   if (!taMisc::gui_active) return;
-  if (m_widget) {
+  if (dvwidget()) {
     DeIconify();
     Raise();
   } else {
     Constr(); // no parent;
+    Render();
     
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
 //      SetWinState(left, top, width, height);
@@ -624,9 +637,10 @@ WindowState& TopLevelViewer::winState() {
 //   DockViewer		//
 //////////////////////////
 
-QWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iDockViewer* rval = new iDockViewer(this, gui_parent);
-  return rval;
+IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+//TODO: maybe we don't even need a generic one, but it does enable us to
+// make a purely taBase guy that doesn't need its own special gui guy
+  return new iDockViewer(this, gui_parent);
 }
 
 
@@ -762,7 +776,6 @@ void MainWindowViewer::	HelpContentsAction(){} // #ACT
 // /TEMP
 
 TypeDef* MainWindowViewer::def_browser_type = &TA_MainWindowViewer; 
-int MainWindowViewer::no_idx; 
 
 MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
   MemberDef* root_md, bool is_root)
@@ -810,7 +823,7 @@ void MainWindowViewer::InitLinks() {
   inherited::InitLinks();
   taBase::Own(toolbars, this);
   taBase::Own(frames, this);
-  taBase::Own(dockees, this);
+  taBase::Own(docks, this);
 
   // add default toolbars to new instance
   if (!taMisc::is_loading) {
@@ -824,11 +837,11 @@ void MainWindowViewer::InitLinks() {
 void MainWindowViewer::Copy_(const MainWindowViewer& cp) {
   toolbars = cp.toolbars;
   frames = cp.frames;
-  dockees = cp.dockees;
+  docks = cp.docks;
 }
 
 void MainWindowViewer::CutLinks() {
-  dockees.CutLinks();
+  docks.CutLinks();
   frames.CutLinks();
   toolbars.CutLinks();
   inherited::CutLinks();
@@ -838,39 +851,52 @@ void MainWindowViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index) {
+void MainWindowViewer::AddFrame(FrameViewer* fv, int at_index) 
+{
+  if (!fv) return;
+  //note: if we are mapped, then the chg detector for .frames will map the guy
+  if (at_index < 0)
+    frames.Add(fv);
+  else 
+    frames.Insert(fv, at_index);
+}
+
+FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index) 
+{
   if (!typ || !typ->InheritsFrom(&TA_FrameViewer)) return NULL;
   FrameViewer* rval = (FrameViewer*)taBase::MakeToken(typ);
-  if (at_index < 0)
-    frames.Add(rval);
-  else frames.Insert(rval, at_index);
+  AddFrame(rval, at_index);
   return rval;
 }
 
+void MainWindowViewer::Clear_impl(taDataView* par) {
+  docks.Clear_impl(this);
+  frames.Clear_impl(this);
+  inherited::Clear_impl(par);
+}
 
 void MainWindowViewer::CloseWindow_impl() {
-  inherited::Clear_impl();
+  inherited::CloseWindow_impl();
   ta_menus->Reset();
   cur_menu = NULL;
   menu = NULL; // window deletes
 }
 
-
 void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent); // prob just creates the widget
-  if (!m_widget) return; // shouldn't happen
+  if (!dvwidget()) return; // shouldn't happen
 
   ConstrMainMenu_impl();
   ConstrToolBars_impl();
   ConstrFrames_impl();
-  ConstrDockees_impl();
+  ConstrDocks_impl();
 
   iMainWindowViewer* win = window(); //cache
   win->is_root = m_is_root;
 //TODO, replace:  win->SelectionChanged(true); // initializes selection system
 }
 
-void MainWindowViewer::ConstrDockees_impl() {
+void MainWindowViewer::ConstrDocks_impl() {
   //TODO: add the dock guys 
   // note: this is only ever for docked guys -- floating guys are standalone
 }
@@ -940,10 +966,15 @@ void MainWindowViewer::ConstrToolBars_impl() {
   }
 }
 
-QWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iMainWindowViewer* mdv = new iMainWindowViewer(this, gui_parent);
-  mdv->Constr(); // virtual guy
-  return mdv;
+IDataViewWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iMainWindowViewer(this, gui_parent);
+}
+
+void MainWindowViewer::DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {
+  if (child == &frames) {
+    // if reorder, then do a gui reorder
+    //TODO:
+  }
 }
 
 FrameViewer* MainWindowViewer::FindFrameByType(TypeDef* typ, int& at_index, int from_index) {
@@ -965,6 +996,31 @@ void MainWindowViewer::MakeWinName_impl() {
   if (data()) name = data()->GetName();
   String nw_name = prog_nm + ": " + GetPath() + "(" + name + ")";
   win_name = nw_name;
+}
+
+void MainWindowViewer::Render_pre(taDataView* par) {
+  inherited::Render_pre(par);
+  frames.Render_pre(this);
+  docks.Render_pre(this);
+}
+
+void MainWindowViewer::Render_impl() {
+  inherited::Render_impl();
+  frames.Render_impl();
+  docks.Render_impl();
+}
+
+void MainWindowViewer::Render_post() {
+  inherited::Render_post();
+  frames.Render_post();
+  docks.Render_post();
+}
+
+void MainWindowViewer::Reset_impl() {
+  docks.Reset_impl();
+  frames.Reset_impl();
+  //TODO: prob should reset toolbars too
+  inherited::Reset_impl();
 }
 
 

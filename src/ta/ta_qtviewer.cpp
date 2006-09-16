@@ -1110,6 +1110,37 @@ String tabListItemsDataLink::GetText(DataLinkText dlt) const {
 } */
 
 
+//////////////////////////////////
+//  IDataViewWidget		//
+//////////////////////////////////
+
+IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
+{
+  m_viewer = viewer_;
+  // note: caller will still do a virtual Constr() on us after new
+}
+
+IDataViewWidget::~IDataViewWidget() {
+  //note: the viewer may already have deleted, so it will have nulled its ref here
+  if (m_viewer) {
+    m_viewer->WidgetDeleting();
+    m_viewer = NULL;
+  }
+}
+
+void IDataViewWidget::Close() {
+  Close_impl();
+}
+
+void IDataViewWidget::Close_impl() {
+   // this version is find if you added WDestructiveClose to the widget flags,
+   // otherwise, you might want to do "deleteLater()"
+   // just doing "delete this" is not really a very safe operation,
+   // and there may be issues with "deleteLater()" 
+   widget()->close();
+}
+
+
 //////////////////////////
 //   iToolBar 	//
 //////////////////////////
@@ -1758,18 +1789,13 @@ void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
 //////////////////////////////////
 
 iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
-: inherited(parent, (Qt::WDestructiveClose))
+:inherited(parent, (Qt::WDestructiveClose)), IDataViewWidget(viewer_)
 {
-  m_viewer = viewer_;
   Init();
   // note: caller will still do a virtual Constr() on us after new
 }
 
 iFrameViewer::~iFrameViewer() {
-  if (m_viewer) {
-    m_viewer->WidgetDeleting();
-    m_viewer = NULL;
-  }
 }
 
 void iFrameViewer::Init() {
@@ -1814,8 +1840,6 @@ void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int o
   }
   
 }
-
-
 
 
 //////////////////////////
@@ -2098,16 +2122,11 @@ void iTabViewer::viewSplitHorizontal() {
 //////////////////////////
 
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
-:inherited(parent, Qt::WDestructiveClose)
+:inherited(parent, Qt::WDestructiveClose), IDataViewWidget(viewer_)
 {
-  m_viewer = viewer_;
 }
 
 iDockViewer::~iDockViewer() {
-  if (m_viewer) {
-    m_viewer->WidgetDeleting();
-    m_viewer = NULL;
-  }
 }
 
 
@@ -2116,9 +2135,9 @@ iDockViewer::~iDockViewer() {
 //////////////////////////
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
-: QMainWindow(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax | Qt::WDestructiveClose))
+: inherited(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax |
+  Qt::WDestructiveClose)), IDataViewWidget(viewer_)
 {
-  m_viewer = viewer_;
   Init();
   // note: caller will still do a virtual Constr() on us after new
 }
@@ -2132,10 +2151,6 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 
 iMainWindowViewer::~iMainWindowViewer() {
   taiMisc::viewer_wins.Remove(this);
-  if (m_viewer) {
-    m_viewer->WidgetDeleting();
-    m_viewer = NULL;
-  }
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
 //  if (menu) delete menu;
@@ -2200,7 +2215,7 @@ void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
     tv->Constr(); // parented when added
     AddFrameViewer(tv->widget(), 1); // usually in middle
   }
-  itv = tv->viewer_win();
+  itv = tv->widget();
   itv->AddPanelNewTab(panel);
 } 
 
@@ -2547,7 +2562,7 @@ void iMainWindowViewer::this_ToolBarSelect(int param) {
   if (!m_viewer) return;
   taiAction* me = toolBarMenu->items.SafeEl(param);
   if (!me) return; // shouldn't happen
-  ToolBar* tb = m_viewer->toolbars.SafeEl(param);
+  ToolBar* tb = viewer()->toolbars.SafeEl(param);
   if (!tb) return; // shouldn't happen
   if (me->isChecked()) { //note: check has already been toggled
     tb->Show();

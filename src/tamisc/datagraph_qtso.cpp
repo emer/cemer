@@ -1141,8 +1141,10 @@ void GraphView::BuildAll() {
 //  viewer->cur_tool(Tool::move);
 }
 
-void GraphView::ChildAdding(T3DataView* child) {
-  inherited::ChildAdding(child);
+void GraphView::ChildAdding(taDataView* child_) {
+  inherited::ChildAdding(child_);
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) return;
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_GraphLine)) {
     lines.AddUnique(child);
@@ -1155,16 +1157,18 @@ void GraphView::ChildAdding(T3DataView* child) {
   }
 }
 
-void GraphView::ChildRemoving(T3DataView* child) {
+void GraphView::ChildRemoving(taDataView* child_) {
   //note: because we can call ourself recursively, we always make sure
   // we have fully completed ourself and our inherited, before reinvoking
   bool nuke_lines = false;
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) goto done;
   if (child == x_axis) {x_axis = NULL; nuke_lines = true; goto done;}
   if (child == z_axis) {z_axis = NULL; nuke_lines = true; goto done;}
   if (lines.Remove(child)) goto done;
   // must be a y axis -- make sure not still connected to an existing line
   if (y_axes.Remove(child)) {
-    inherited::ChildRemoving(child);
+    inherited::ChildRemoving(child_);
     for (int i = lines.size - 1; i >=0; --i) {
       GraphLine* gl = (GraphLine*)lines.FastEl(i);
       if (gl->y_axis == child) {
@@ -1176,7 +1180,7 @@ void GraphView::ChildRemoving(T3DataView* child) {
   }
 
 done:
-  inherited::ChildRemoving(child);
+  inherited::ChildRemoving(child_);
   // make sure that if x or z removed, must recursively nuke all lines
   if (nuke_lines) while (lines.size > 0) {
     GraphLine* gl = (GraphLine*)lines.Pop();
@@ -1435,18 +1439,22 @@ void GraphViews::BuildAll() {
     cbar_deck->flip_to(1); */
 }
 
-void GraphViews::ChildAdding(T3DataView* child) {
-  inherited::ChildAdding(child);
+void GraphViews::ChildAdding(taDataView* child_) {
+  inherited::ChildAdding(child_);
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) return;
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_GraphView)) {
     graphs.AddUnique(child);
   }
 }
 
-void GraphViews::ChildRemoving(T3DataView* child) {
+void GraphViews::ChildRemoving(taDataView* child_) {
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) goto done;
   if (graphs.Remove(child)) goto done;
 done:
-  inherited::ChildRemoving(child);
+  inherited::ChildRemoving(child_);
 }
 
 void GraphViews::Clear_impl(taDataView* par) {

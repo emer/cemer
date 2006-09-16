@@ -298,8 +298,6 @@ void iPdpMainWindowViewer::NewBrowser(ProjectBase* proj) {
 //   PdpMainWindowViewer//
 //////////////////////////
 
-QWidget* PdpMainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iPdpMainWindowViewer* rval = new iPdpMainWindowViewer(this, gui_parent);
-  rval->Constr(); // virtual guy
-  return rval;
+IDataViewWidget* PdpMainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iPdpMainWindowViewer(this, gui_parent);
 }

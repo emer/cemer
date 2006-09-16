@@ -61,57 +61,6 @@
 
 
 //////////////////////////
-//   T3DataView_List	//
-//////////////////////////
-
-void T3DataView_List::Initialize() {
-  SetBaseType(&TA_T3DataView);
-  data_view = NULL;
-}
-
-void T3DataView_List::Destroy() {
-  CutLinks();
-}
-
-void T3DataView_List::CutLinks() {
-  Reset(); // note: was probably already done by parent
-  inherited::CutLinks();
-}
-
-void T3DataView_List::El_Done_(void* it_) {
-  delete (T3DataView*)it_;
-}
-
-void* T3DataView_List::El_Own_(void* it) {
-  inherited::El_Own_(it);
-  if (data_view)
-    data_view->ChildAdding((T3DataView*)it);
-  return it;
-}
-
-
-void T3DataView_List::El_disOwn_(void* it) {
-  if (data_view) {
-    data_view->ChildRemoving((T3DataView*)it);
-  }
-  inherited::El_disOwn_(it);
-}
-
-
-
-void T3DataView_List::El_SetIndex_(void* it_, int idx) {
-  T3DataView* it = (T3DataView*)it_;
-  it->idx = idx;
-}
-
-TAPtr T3DataView_List::SetOwner(TAPtr own) {
-  if (own && own->GetTypeDef()->InheritsFrom(&TA_T3DataView))
-    data_view = (T3DataView*)own;
-  else data_view = NULL;
-  return inherited::SetOwner(own);
-}
-
-//////////////////////////
 //	T3DataView	//
 //////////////////////////
 #ifdef TA_PROFILE
@@ -179,13 +128,16 @@ void T3DataView::ChildClearing(taDataView* child_) { // child is always a T3Data
 
 void T3DataView::ChildRendered(taDataView* child_) { // child is always a T3DataView
   if (!node_so()) return; // shouldn't happen
-  T3DataView* child = (T3DataView*)child_;
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) return;
   SoNode* ch_so;
   if (!(ch_so = child->node_so())) return; // shouldn't happen
   AddRemoveChildNode_impl(ch_so, true); // add node
 }
 
-void T3DataView::ChildRemoving(T3DataView* child) {
+void T3DataView::ChildRemoving(taDataView* child_) {
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) return;
   // remove the visual rendering of child, if any
   SoNode* ch_so;
   if (!(ch_so = child->node_so())) return;
@@ -391,10 +343,7 @@ void T3DataViewPar::CutLinks() {
 }
 
 void T3DataViewPar::Clear_impl_children() {
-  for (int i = children.size - 1; i >= 0; --i) {
-    T3DataView* item = children.FastEl(i);
-    item->Clear_impl(this);
-  }
+  children.Clear_impl(this);
 }
 
 void T3DataViewPar::CloseChild(taDataView* child) {
@@ -428,10 +377,7 @@ void T3DataViewPar::ReInit() {
 }
 
 void T3DataViewPar::Render_pre_children(taDataView* par) {
-  for (int i = 0; i < children.size; ++i) {
-    T3DataView* item = children.FastEl(i);
-    item->Render_pre(this);
-  }
+  children.Render_pre(this);
 }
 
 void T3DataViewPar::Render_impl() {
@@ -440,10 +386,7 @@ void T3DataViewPar::Render_impl() {
 }
 
 void T3DataViewPar::Render_impl_children() {
-  for (int i = 0; i < children.size; ++i) {
-    T3DataView* item = children.FastEl(i);
-    item->Render_impl();
-  }
+  children.Render_impl();
 }
 
 void T3DataViewPar::Render_post() {
@@ -452,23 +395,16 @@ void T3DataViewPar::Render_post() {
 }
 
 void T3DataViewPar::Render_post_children() {
-  for (int i = 0; i < children.size; ++i) {
-    T3DataView* item = children.FastEl(i);
-    item->Render_post();
-  }
+  children.Render_post();
 }
 
 void T3DataViewPar::Reset_impl() {
   Reset_impl_children();
-  children.Reset();
   inherited::Reset_impl();
 }
 
 void T3DataViewPar::Reset_impl_children() {
-  for (int i = children.size - 1; i >= 0; --i) {
-    T3DataView* item = children.FastEl(i);
-    item->Reset_impl();
-  }
+  children.Reset_impl();
 }
 
 
@@ -934,7 +870,7 @@ void T3DataViewer::Copy_(const T3DataViewer& cp) {
 
 void T3DataViewer::AddView(T3DataView* view) {
   root_view.children.Add(view);
-  if (m_widget)
+  if (dvwidget())
     view->OnWindowBind(widget());
 }
 
@@ -945,17 +881,16 @@ void T3DataViewer::Clear_impl(taDataView* par) {
   inherited::Clear_impl(par);
 }
 
-void T3DataViewer::Constr_impl(QWidget* gui_parent) {
-  inherited::Constr_impl(gui_parent);
+void T3DataViewer::Constr() {
+  inherited::Constr();
   root_view.host = widget()->t3vs; // TODO: prob should encapsulate this better
   root_view.OnWindowBind(widget());
   // on first opening, do a viewall to center all geometry in viewer
   widget()->ra()->viewAll();
 }
 
-QWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  iT3DataViewer* rval = new iT3DataViewer(this, gui_parent);
-  return rval;
+IDataViewWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iT3DataViewer(this, gui_parent);
 }
 
 void T3DataViewer::Render_pre(taDataView* par) {
@@ -978,8 +913,8 @@ void T3DataViewer::Render_post() {
 }
 
 void T3DataViewer::Reset_impl() {
-  inherited::Reset_impl();
   root_view.Reset();
+  inherited::Reset_impl();
 }
 
 void T3DataViewer::WindowClosing(CancelOp& cancel_op) {

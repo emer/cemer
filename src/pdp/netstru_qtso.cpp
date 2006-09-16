@@ -657,10 +657,12 @@ void LayerView::BuildAll() {
   }
 }
 
-void LayerView::ChildRemoving(T3DataView* child) {
+void LayerView::ChildRemoving(taDataView* child_) {
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) goto done;
   if (ugrps.Remove(child)) goto done;
 done:
-  inherited::ChildRemoving(child);
+  inherited::ChildRemoving(child_);
 }
 
 
@@ -886,8 +888,10 @@ void NetView::BuildAll() { // populates everything
   }
 }
 
-void NetView::ChildAdding(T3DataView* child) {
-  inherited::ChildAdding(child);
+void NetView::ChildAdding(taDataView* child_) {
+  inherited::ChildAdding(child_);
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) return;
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_LayerView)) {
     layers.AddUnique(child);
@@ -896,11 +900,13 @@ void NetView::ChildAdding(T3DataView* child) {
   }
 }
 
-void NetView::ChildRemoving(T3DataView* child) {
+void NetView::ChildRemoving(taDataView* child_) {
+  T3DataView* child = dynamic_cast<T3DataView*>(child_);
+  if (!child) goto done;
   if (layers.Remove(child)) goto done;
   if (prjns.Remove(child)) goto done;
 done:
-  inherited::ChildRemoving(child);
+  inherited::ChildRemoving(child_);
 }
 
 void NetView::DataUpdateAfterEdit_impl() {

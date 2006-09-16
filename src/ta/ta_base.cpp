@@ -1231,125 +1231,6 @@ void taOBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
 
 
 //////////////////////////
-// 	taDataView	//
-//////////////////////////
-
-void taDataView::Initialize() {
-  m_data = NULL;
-  data_base = &TA_taBase;
-  m_dbu_cnt = 0;
-  m_parent = NULL;
-}
-
-void taDataView::InitLinks() {
-  inherited_taBase::InitLinks();
-  //BA 2006-06-28 -- this may have been here for loading, but mdata not set yet at this point
-  // so if no other purpose, it can be removed
-  if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
-}
-
-void taDataView::CutLinks() {
-  if (m_data) {
-    m_data->RemoveDataView(this); // nulls m_data
-  }
-  m_parent = NULL;
-  inherited_taBase::CutLinks();
-}
-
-void taDataView::UpdateAfterEdit() {
-  if (taMisc::is_loading) {
-    if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
-  }
-  inherited_taBase::UpdateAfterEdit();
-}
-
-void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
-  if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
-    if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
-    ++m_dbu_cnt;
-    return;
-  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
-    if (m_dbu_cnt > 0) ++m_dbu_cnt;
-    else               --m_dbu_cnt;
-    return;
-  } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
-    bool stru = false;
-    if (m_dbu_cnt < 0) ++m_dbu_cnt;
-    else {stru = true; --m_dbu_cnt;}
-    if (m_dbu_cnt == 0) {
-      int pdbu = par_dbu_cnt();
-      // we will only signal if no parent update, or if parent is data and we are structural
-      if ((pdbu == 0)) {
-        if (stru)
-          DataStructUpdateEnd_impl();
-        else
-          DataUpdateView_impl();
-      } else if ((pdbu < 0) && stru)
-          DataStructUpdateEnd_impl();
-    }
-    return;
-  }
-  if ((m_dbu_cnt > 0) || (par_dbu_cnt() > 0))
-    return;
-  //TODO: need to confirm that supressing UAE's is not harmful...
-  if (dcr == DCR_ITEM_UPDATED)
-    DataUpdateAfterEdit_impl();
-  else if (dcr == DCR_UPDATE_VIEWS)
-    DataUpdateView_impl();
-  else {
-    DataDataChanged_impl(dcr, op1_, op2_);
-  }
-}
-
-void taDataView::DataLinkDestroying(taDataLink* dl) {
-  CutLinks();
-  DataDestroying();
-  //NOTE: we may be destroyed at this point -- do not put any more code
-}
-
-String taDataView::GetLabel() const {
-  return GetTypeDef()->GetLabel();
-}
-
-int taDataView::par_dbu_cnt() {
-  taDataView* par = GET_MY_OWNER(taDataView);
-  if (par) {
-    int pdbu = par->dbu_cnt();
-    if (pdbu > 0) return pdbu; //optimization -- don't need to go up the chain if parent is struct
-    int ppdbu = par->par_dbu_cnt();
-    int rval = abs(pdbu) + abs(ppdbu); // gives number of nestings... now is it structural or data?
-    // both parent and grandparent have to not be structural, for result to be data
-    if ((pdbu <= 0) && (ppdbu <= 0)) rval *= -1;
-    return rval;
-  } else
-    return 0;
-}
-
-taDataView* taDataView::parent() const { // note: changing caches is still "const"
-  if (!m_parent)
-    m_parent = GET_MY_OWNER(taDataView);
-  return m_parent;
-}
-
-void taDataView::SetData(taBase* ta) {
-  if (m_data == ta) return;
-  if (m_data) {
-    m_data->RemoveDataView(this); // nulls m_data
-  }
-  if (!ta) return;
-  if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
-    taMisc::Error("*** taDataView::m_data must inherit from ", data_base->name);
-  } else {
-    ta->DataViewAdding(this); // sets m_data
-  }
-}
-
-void taDataView::SetData_impl(taBase* ta) {
-  taBase::SetPointer((taBase**)&m_data, ta);
-}
-
-
-//////////////////////////
 //	taNBase		//
 //////////////////////////
 
@@ -2247,6 +2128,192 @@ int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, ta
 }
 
 #endif
+
+
+//////////////////////////
+// 	taDataView	//
+//////////////////////////
+
+void  taDataView::ChildRemoving(taDataView* child) {} //TEMP, just put in header
+
+void taDataView::Initialize() {
+  m_data = NULL;
+  data_base = &TA_taBase;
+  m_dbu_cnt = 0;
+  m_parent = NULL;
+  m_index = -1;
+}
+
+void taDataView::InitLinks() {
+  inherited_taBase::InitLinks();
+  //BA 2006-06-28 -- this may have been here for loading, but mdata not set yet at this point
+  // so if no other purpose, it can be removed
+  if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
+}
+
+void taDataView::CutLinks() {
+  if (m_data) {
+    m_data->RemoveDataView(this); // nulls m_data
+  }
+  m_parent = NULL;
+  inherited_taBase::CutLinks();
+}
+
+void taDataView::UpdateAfterEdit() {
+  if (taMisc::is_loading) {
+    if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
+  }
+  inherited_taBase::UpdateAfterEdit();
+}
+
+void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
+  if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
+    if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
+    ++m_dbu_cnt;
+    return;
+  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
+    if (m_dbu_cnt > 0) ++m_dbu_cnt;
+    else               --m_dbu_cnt;
+    return;
+  } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
+    bool stru = false;
+    if (m_dbu_cnt < 0) ++m_dbu_cnt;
+    else {stru = true; --m_dbu_cnt;}
+    if (m_dbu_cnt == 0) {
+      int pdbu = par_dbu_cnt();
+      // we will only signal if no parent update, or if parent is data and we are structural
+      if ((pdbu == 0)) {
+        if (stru)
+          DataStructUpdateEnd_impl();
+        else
+          DataUpdateView_impl();
+      } else if ((pdbu < 0) && stru)
+          DataStructUpdateEnd_impl();
+    }
+    return;
+  }
+  if ((m_dbu_cnt > 0) || (par_dbu_cnt() > 0))
+    return;
+  //TODO: need to confirm that supressing UAE's is not harmful...
+  if (dcr == DCR_ITEM_UPDATED)
+    DataUpdateAfterEdit_impl();
+  else if (dcr == DCR_UPDATE_VIEWS)
+    DataUpdateView_impl();
+  else {
+    DataDataChanged_impl(dcr, op1_, op2_);
+  }
+}
+
+void taDataView::DataLinkDestroying(taDataLink* dl) {
+  CutLinks();
+  DataDestroying();
+  //NOTE: we may be destroyed at this point -- do not put any more code
+}
+
+String taDataView::GetLabel() const {
+  return GetTypeDef()->GetLabel();
+}
+
+int taDataView::par_dbu_cnt() {
+  taDataView* par = GET_MY_OWNER(taDataView);
+  if (par) {
+    int pdbu = par->dbu_cnt();
+    if (pdbu > 0) return pdbu; //optimization -- don't need to go up the chain if parent is struct
+    int ppdbu = par->par_dbu_cnt();
+    int rval = abs(pdbu) + abs(ppdbu); // gives number of nestings... now is it structural or data?
+    // both parent and grandparent have to not be structural, for result to be data
+    if ((pdbu <= 0) && (ppdbu <= 0)) rval *= -1;
+    return rval;
+  } else
+    return 0;
+}
+
+taDataView* taDataView::parent() const { // note: changing caches is still "const"
+  if (!m_parent)
+    m_parent = GET_MY_OWNER(taDataView);
+  return m_parent;
+}
+
+void taDataView::SetData(taBase* ta) {
+  if (m_data == ta) return;
+  if (m_data) {
+    m_data->RemoveDataView(this); // nulls m_data
+  }
+  if (!ta) return;
+  if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
+    taMisc::Error("*** taDataView::m_data must inherit from ", data_base->name);
+  } else {
+    ta->DataViewAdding(this); // sets m_data
+  }
+}
+
+void taDataView::SetData_impl(taBase* ta) {
+  taBase::SetPointer((taBase**)&m_data, ta);
+}
+
+
+//////////////////////////////////
+//   DataView_List	 	//
+//////////////////////////////////
+
+
+void DataView_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  taDataView* own = GET_MY_OWNER(taDataView);
+  if (own)
+    own->DataChanged_Child(this, dcr, op1, op2);
+}
+
+void DataView_List::Clear_impl(taDataView* par) {
+  for (int i = size - 1; i >= 0; --i) {
+    taDataView* item = FastEl(i);
+    item->Clear_impl(par);
+  }
+}
+
+void DataView_List::El_disOwn_(void* it) {
+  if (data_view) {
+    data_view->ChildRemoving((taDataView*)it);
+  }
+  inherited::El_disOwn_(it);
+}
+
+void* DataView_List::El_Own_(void* it) {
+  inherited::El_Own_(it);
+  if (data_view)
+    data_view->ChildAdding((taDataView*)it);
+  return it;
+}
+
+TAPtr DataView_List::SetOwner(TAPtr own) {
+  if (own && own->GetTypeDef()->InheritsFrom(&TA_taDataView))
+    data_view = (taDataView*)own;
+  else data_view = NULL;
+  return inherited::SetOwner(own);
+}
+
+
+void DataView_List::Render_pre(taDataView* par) {
+  for (int i = 0; i < size; ++i) {
+    taDataView* item = FastEl(i);
+    item->Render_pre(par);
+  }
+}
+
+void DataView_List::Render_impl() {
+  for (int i = 0; i < size; ++i) {
+    taDataView* item = FastEl(i);
+    item->Render_impl();
+  }
+}
+
+void DataView_List::Render_post() {
+  for (int i = 0; i < size; ++i) {
+    taDataView* item = FastEl(i);
+    item->Render_post();
+  }
+}
+
 
 
 //////////////////////////

@@ -145,6 +145,8 @@ T3DataViewer[] viewers -- note: these are taDataView, not DataViewer
   
 Gui Classes:
 
+IViewerWidget -- interface that all viewer widgets must implement
+
 QMainWindow
   iMainWindowViewer -- the widget for a MainWindowViewer
     can handle toolbars, the compound central widget (thingies in splitter), 
@@ -195,6 +197,12 @@ iMainWindowViewer
 iDataPanelSet
   iDataPanelFrame[]
   
+  
+IViewerWidget -- contents
+  DataViewer* m_viewer -- the viewer, passed in constructor
+  QWidget* conversion -- supplies the underlying QWidget
+  virtual Constr -- virtual constr routine that can be called after new
+  
 
 Issues
 
@@ -215,8 +223,21 @@ To Do's:
   that dock windows will need to be removed from this list when they dock
 * the iListDataPanel needs to hook up selection handler notifiers
 * program_qtso: need to wire the treeview/IEditDataHost up to the frame
-  
+* add main menu item to:
+  * dynamically list current frames
+  * turn visibility of frames on and off
+  * add a new frame of a given type
+  * remove a frame
+  * (possibly) change order or placement of frames
+* every widget class should have a basic "new" and then a virtual Contr
+  -- every CreateWidget_impl must call the ->Constr
 
+* TabFrameViewer -- basically allows nested FrameView guys, in a tab
+
+* make toolbars descend from the DataViewer/IDataViewerWidget edifice
+
+* probably put in the legacy Render() behavior into T3DataView because all
+  its descendants were built on the premise that Render included a pre Clear_impl
 SEEMS TO WORK
 
 * notify chain from TreeView to Frame up to Window, and back to Frames
@@ -224,7 +245,10 @@ SEEMS TO WORK
 BUGS
 
 * in browseviewer, root item not selected by default (should be??? maybe not?)
-* iTabViewer doesn't have a m_curTabView, so sel changes get ignored
+* treeview seems not be be able to shrink down past a certain point, at least
+  in viewerwin with a panelview
+* when you go "openviewer" on a network, the resulting new 3-pane viewer
+  has the T3 panel not visible -- you have to move the slider to make it visible
 
 Questions:
 

@@ -31,6 +31,7 @@
   class taiActions;
   class taiDataLink;
   class ISelectable;
+  class IDataViewWidget;
   class iFrameViewer;
   class iBrowseViewer;
   class iTabViewer;
@@ -52,6 +53,7 @@
 # typedef taiActions QObject;
 # typedef taiDataLink taDataLink;
 # typedef ISelectable VoidClass;
+# typedef IDataViewWidget VoidClass;
 # typedef iFrameViewer QWidget;
 # typedef iBrowseViewer QWidget;
 # typedef iTabViewer QWidget;
@@ -93,6 +95,7 @@ class TA_API DataViewer : public taDataView {
   // #NO_TOKENS #VIRT_BASE the base type for objects with a gui window rep of some kind
 INHERITED(taDataView)
 friend class taDataLink;
+friend class DataViewer_List;
 //friend class MainWindowViewer;
 //friend class WindowState;
 public:
@@ -108,14 +111,15 @@ public:
   
   bool			display_toggle;  // #DEF_true 'true' if display should be updated
 
+  inline const IDataViewWidget* dvwidget() const {return m_dvwidget;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
-  inline QWidget*	widget() {return m_widget;}
+  QWidget*		widget();
   virtual iMainWindowViewer* window() {return NULL;}
     // #IGNORE valid if is, or is within, a main window
 
   virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class
-  void 			CloseWindow() {if (isMapped()) CloseWindow_impl();}	
-   // #IGNORE closes the window or panel
+  void 			CloseWindow();	
+   // #IGNORE closes the window or panel, removing our reference
  
   virtual void		Raise();	// raise window to front, if this is applicable
   virtual void		Lower();	// lower window to back, if this is applicable
@@ -134,21 +138,26 @@ public:
 
 
 protected:
-  QWidget*		m_widget; // subclass will determine what type, this is generic
+  int			m_index;  // index in list of frames
   
-  virtual void		CloseWindow_impl(); // closes the widget
+  virtual void		CloseWindow_impl(); // closes the widget, only called if mapped, default calls the Close on the IDVW
   virtual void		Constr_impl(QWidget* gui_parent); 
     // master Constr, only called if !m_widget 
-  virtual QWidget* 	ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
+  virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
+
 private:
+  IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
+  
   void 	Initialize();
   void	Destroy();
 };
 
-class TA_API DataViewer_List: public taList<DataViewer> { // #NO_TOKENS
+class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS
+INHERITED(DataView_List)
 public:
-  TA_BASEFUNS(DataViewer_List)
+  TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
+
 private:
   void 	Initialize() { SetBaseType(&TA_DataViewer);}
   void	Destroy() {}
@@ -159,7 +168,8 @@ class TA_API FrameViewer : public DataViewer {
   // #NO_TOKENS #VIRT_BASE for views that can be in the splitter of a MainWindowViewer
 INHERITED(DataViewer)
 public:
-  inline iFrameViewer* widget() {return (iFrameViewer*)m_widget;} // lex override
+  
+  inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();} // lex override
   
   MainWindowViewer*	mainWindowViewer();
   override iMainWindowViewer* window();
@@ -177,9 +187,10 @@ private:
   void	Destroy() {CutLinks();}
 };
 
-class TA_API FrameViewer_List: public taList<FrameViewer> { // #NO_TOKENS
+class TA_API FrameViewer_List: public DataViewer_List { // #NO_TOKENS
+INHERITED(DataViewer_List)
 public:
-  TA_BASEFUNS(FrameViewer_List)
+  TA_DATAVIEWLISTFUNS(FrameViewer_List, DataViewer_List, FrameViewer)
 private:
   void 	Initialize() { SetBaseType(&TA_FrameViewer);}
   void	Destroy() {}
@@ -199,8 +210,7 @@ public:
   inline TypeDef*	rootType() {return root_typ;}
   inline MemberDef*	rootMemb() {return root_md;}
 
-  inline iBrowseViewer*	widget() {return (iBrowseViewer*)m_widget;}
-  inline iBrowseViewer*	browser_win() {return (iBrowseViewer*)m_widget;} //todo: legacy/remove
+  inline iBrowseViewer*	widget() {return (iBrowseViewer*)inherited::widget();}
 
   void 	Copy_(const BrowseViewer& cp);
   COPY_FUNS(BrowseViewer, FrameViewer) //
@@ -233,7 +243,7 @@ public:
   TA_DATAVIEWFUNS(tabBrowseViewer, BrowseViewer) //
   
 protected:
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
   void			Initialize() {}
   void			Destroy() {CutLinks();}
@@ -258,7 +268,7 @@ public:
 protected:
   void* 		m_root; // #IGNORE
   
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
   void			StrToRoot();
   void			RootToStr();
 private:
@@ -273,11 +283,11 @@ INHERITED(FrameViewer)
 friend class iDataPanel;
 public:
 
-  inline iTabViewer*	viewer_win() {return (iTabViewer*)m_widget;}
+  inline iTabViewer*	widget() {return (iTabViewer*)inherited::widget();}
 
   TA_DATAVIEWFUNS(TabViewer, FrameViewer) //
 protected:
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
   void			Initialize();
   void			Destroy() {CutLinks();}
@@ -373,7 +383,7 @@ public:
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
   
 protected:
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); 
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
   //override void		MakeWinName_impl(); each subguy will need this
   
 private:
@@ -381,13 +391,16 @@ private:
   void	Destroy() {}
 };
 
-class TA_API DockViewer_List: public taList<DockViewer> { // #NO_TOKENS
+
+class TA_API DockViewer_List: public DataViewer_List { // #NO_TOKENS
+INHERITED(DataViewer_List)
 public:
-  TA_BASEFUNS(DockViewer_List)
+  TA_DATAVIEWLISTFUNS(DockViewer_List, DataViewer_List, DockViewer)
 private:
   void 	Initialize() { SetBaseType(&TA_DockViewer);}
   void	Destroy() {}
 };
+
 
 
 class TA_API ToolBar: public taNBase {// ##NO_TOKENS proxy for Toolbars
@@ -413,6 +426,8 @@ public:
 
   virtual void 	CloseWindow();		// #IGNORE close the toolbar
 
+  void	SetIndex(int value) {index = value;}
+  int	GetIndex() const {return index;}
 //  void	UpdateAfterEdit();
 //  void	InitLinks();
   void	CutLinks();
@@ -440,11 +455,8 @@ INHERITED(taList<ToolBar>)
 public:
   iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
   TA_BASEFUNS(ToolBar_List);
-protected:
-  void	El_SetIndex_(void* it, int index) 	{((ToolBar*)it)->index = index; }
-  // sets the element's self-index
 private:
-  void			Initialize() {}
+  void			Initialize() {SetBaseType(&TA_ToolBar);}
   void			Destroy() {}
 };
 
@@ -453,6 +465,9 @@ class TA_API MainWindowViewer : public TopLevelViewer {
   // #NO_TOKENS #VIRT_BASE the uber controller for main windows
 INHERITED(TopLevelViewer)
 friend class taDataLink;
+friend class Toolbar_List;
+friend class FrameView_List;
+friend class DockView_List;
 //friend class WindowState;
 public:
   static TypeDef*	def_browser_type; // type of the default browser, us unless replaced
@@ -469,15 +484,18 @@ public:
 #endif
   ToolBar_List		toolbars;	// #HIDDEN
   FrameViewer_List 	frames;	// #HIDDEN the frames shown in the center splitter area
-  DockViewer_List	dockees; // currently docked windows -- removed if they undock
+  DockViewer_List	docks; // currently docked windows -- removed if they undock
 
   override bool		isRoot() {return m_is_root;}
-  override iMainWindowViewer* window() {return (iMainWindowViewer*)m_widget;} 
+  inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
+  override iMainWindowViewer* window() {return (iMainWindowViewer*)inherited::widget();} 
 
   override void		WidgetDeleting();
 
   FrameViewer*		FindFrameByType(TypeDef* typ, int& at_index = no_idx, int from_index = 0); 
     // find the first frame and index of given type from the given starting index; 
+  void 			AddFrame(FrameViewer* fv, int at_index);
+    // add the supplied frame 
   FrameViewer*		AddFrameByType(TypeDef* typ, int at_index = -1);
     // add a new frame of given type at index (-1 at end); no window made yet
     
@@ -512,12 +530,18 @@ public: // Action methods
 protected:
   bool			m_is_root; // #IGNORE
   // from taDataView 
-
+  override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
+  override void		Clear_impl(taDataView* par = NULL); //prob not used
+  override void		Render_pre(taDataView* par = NULL);
+  override void		Render_impl();
+  override void		Render_post();
+  override void		Reset_impl();
+  
   //from DataView
   override void		CloseWindow_impl();
   override void		Constr_impl(QWidget* gui_parent); 
-  override QWidget*	ConstrWidget_impl(QWidget* gui_parent); 
-  
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
+
   // from TopLevelView
   override void		MakeWinName_impl();
   
@@ -525,11 +549,10 @@ protected:
   virtual void		ConstrMainMenu_impl();
   virtual void		ConstrToolBars_impl();
   virtual void		ConstrFrames_impl();
-  virtual void		ConstrDockees_impl();
+  virtual void		ConstrDocks_impl();
+  
   
 private:
-  static int		no_idx;
-
   void 	Initialize();
   void	Destroy();
 };
