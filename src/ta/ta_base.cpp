@@ -21,6 +21,7 @@
 #include "ta_dump.h"
 #include "ta_filer.h"
 #include "ta_group.h"
+#include "ta_project.h" // for taRootBase
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
@@ -119,8 +120,9 @@ const QPixmap* folder_open_pixmap() {
 
 taRootBase* tabMisc::root = NULL;
 
-taBase_PtrList tabMisc::delayed_remove;
-taBase_PtrList tabMisc::delayed_updateafteredit;
+taBase_PtrList 	tabMisc::delayed_remove;
+taBase_PtrList 	tabMisc::delayed_updateafteredit;
+taBase_PtrList	tabMisc::post_load_opr;
 
 void tabMisc::Close_Obj(TAPtr obj) {
   delayed_remove.Link(obj);

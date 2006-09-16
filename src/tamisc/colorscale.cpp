@@ -20,6 +20,7 @@
 #include "colorscale.h"
 
 #include "icolor.h"
+#include "ta_project.h"
 
 #ifdef TA_GUI
 #include "ta_qt.h"

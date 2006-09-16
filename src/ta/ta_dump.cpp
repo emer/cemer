@@ -18,6 +18,7 @@
 
 #include "ta_dump.h"
 #include "ta_variant.h"
+#include "ta_project.h"
 #include "ta_TA_type.h"
 
 // for process pending events

@@ -1441,8 +1441,11 @@ protected:
 #endif
 };
 
-//note: Network_Group name is for compatability with v3.2 files
+SmartRef_Of(Network)
+
+
 class PDP_API Network_Group : public taGroup<Network> {
+INHERITED(taGroup<Network>)
 public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }

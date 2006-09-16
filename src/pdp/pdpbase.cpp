@@ -123,7 +123,6 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 bool 		pdpMisc::nw_itm_def_arg = false;
 PDPRoot* 	pdpMisc::root = NULL;
 String_Array	pdpMisc::proj_to_load;
-taBase_List	pdpMisc::post_load_opr;
 String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
 float		pdpMisc::pts_per_so_unit = 36.0f;
@@ -518,8 +517,8 @@ void pdpMisc::WaitProc_LoadProj() {
 
 void pdpMisc::WaitProc_PostLoadOpr() {
   int i;
-  for(i=0;i<post_load_opr.size;i++) {
-    TAPtr obj = post_load_opr[i];
+  for (i=0; i< tabMisc::post_load_opr.size; i++) {
+    TAPtr obj = tabMisc::post_load_opr[i];
     if(obj->InheritsFrom(TA_Script_Group)) {
       ((Script_Group*)obj)->AutoRun();
     }
@@ -532,14 +531,14 @@ void pdpMisc::WaitProc_PostLoadOpr() {
       ((Wizard_Group*)obj)->AutoEdit();
     }
   }
-  post_load_opr.Reset();
+  tabMisc::post_load_opr.Reset();
 }
 
 void pdpMisc::WaitProc() {
   if(proj_to_load.size > 0) {
     WaitProc_LoadProj();
   }
-  else if(post_load_opr.size > 0) {
+  else if(tabMisc::post_load_opr.size > 0) {
     WaitProc_PostLoadOpr();
   }
 

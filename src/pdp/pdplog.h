@@ -89,11 +89,9 @@ public:
 //obs  SchedProcess*	cur_proc;	// #READ_ONLY #NO_SAVE current process sending to log
 
   String_Array	display_labels;	// ordered list of labels to use for views and log files
-#ifdef TA_GUI
   TDCoord	pos;  // position of view
   TDCoord	geom;  // size of view
   LogView_PtrList	views; // #IGNORE various views (graphs, grids, etc.) defined on this log
-#endif
   int		virt_lines(); // number of actual or log lines available
 //nn  MinMaxInt&	virt_range(); // min::max range of actual or log lines available; DO NOT CACHE (only correct at time of access)
 

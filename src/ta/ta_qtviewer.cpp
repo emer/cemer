@@ -24,6 +24,8 @@
 #include "ta_qttype.h"
 #include "ta_qtclipdata.h"
 #include "ta_script.h"
+#include "ta_project.h"
+
 #include "css_qt.h"
 #include "css_machine.h"
 

@@ -19,6 +19,7 @@
 #include "ta_platform.h"
 
 #include "ta_type.h"
+#include "ta_project.h"
 
 #include <qapplication.h>
 #include <qclipboard.h>

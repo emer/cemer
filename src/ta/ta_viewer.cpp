@@ -15,6 +15,8 @@
 
 #include "ta_viewer.h"
 
+#include "ta_project.h"
+
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtviewer.h"

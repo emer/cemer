@@ -500,8 +500,8 @@ void V3ProjectBase::Initialize() {
   scripts.SetBaseType(&TA_Script);
 }
 
-void V3ProjectBase::InitLinks() {
-  inherited::InitLinks();
+void V3ProjectBase::InitLinks_impl() {
+  inherited::InitLinks_impl();
   taBase::Own(specs, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
@@ -510,7 +510,6 @@ void V3ProjectBase::InitLinks() {
 }
 
 void V3ProjectBase::CutLinks() {
-  deleting = true;
   scripts.CutLinks();
   logs.CutLinks();
   processes.CutLinks();

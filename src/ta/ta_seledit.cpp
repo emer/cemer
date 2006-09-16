@@ -17,8 +17,8 @@
 #include "ta_seledit.h"
 
 #include "ta_type.h"
+#include "ta_project.h"
 #include "ta_qt.h"
-#include "ta_TA_type.h"
 
 //////////////////////////////////
 //	SelectEditConfig	//

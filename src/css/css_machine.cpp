@@ -28,7 +28,7 @@
 #include "ta_css.h"
 #include "ta_base.h"		// for debugging alloc_list
 #include "ta_matrix.h"
-
+#include "ta_project.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"

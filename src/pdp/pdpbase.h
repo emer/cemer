@@ -45,8 +45,8 @@ private:
 
 // all of these functions are cached out in pdpshell.cc
 
-class PDP_API pdpMisc {
-  // #NO_TOKENS miscellaneous things for pdp
+class PDP_API pdpMisc { 
+  // #NO_TOKENS miscellaneous things for pdp, extension of basic tabMisc app stuff
 friend class InitProcRegistrar;
 public:
   //note: this enum must be duplicated in ProjectBase
@@ -78,7 +78,6 @@ public:
 
   static PDPRoot*	root;		// root of pdp class hierarchy
   static String_Array	proj_to_load;	// list of projects to load
-  static taBase_List	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
   static String		user_spec_def;	// provided by user using -d option
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
   static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit

@@ -13,9 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
-// PDPShell based on C^c C super script language
+// 
 
 #include "pdpshell.h"
 
@@ -23,6 +21,7 @@
 #include "ta_base.h"
 #include "ta_dump.h"
 #include "ta_css.h"
+
 #ifdef TA_GUI
 # include "css_qt.h"
 # include "ta_qt.h"
@@ -35,36 +34,10 @@
 # include <QWidgetList>
 #endif
 
-#include <time.h>
-
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
 
-
-//////////////////////////////////
-//	TypeDefault_Group	//
-//////////////////////////////////
-
-int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
-  Reset();			// get rid of any existing defaults before loading
-  return inherited::Dump_Load_Value(strm, par);
-}
-
-#ifdef TA_GUI
-//////////////////////////////////
-//	SelectEdit_Group	//
-//////////////////////////////////
-
-void SelectEdit_Group::AutoEdit() {
-  taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, this->, i) {
-    if(se->config.auto_edit)
-      se->Edit();
-  }
-}
-#endif
 
 //////////////////////////
 //    LayerWizEl	//
@@ -80,7 +53,6 @@ void LayerWizEl::Initialize() {
 //////////////////////////
 
 void Wizard::Initialize() {
-  auto_open = false;
   n_layers = 3;
   layer_cfg.SetBaseType(&TA_LayerWizEl);
   connectivity = FEEDFORWARD;
@@ -88,19 +60,19 @@ void Wizard::Initialize() {
 }
 
 void Wizard::InitLinks() {
-  taNBase::InitLinks();
+  inherited::InitLinks();
   taBase::Own(layer_cfg, this);
   layer_cfg.EnforceSize(n_layers);
 }
 
 void Wizard::CutLinks() {
   layer_cfg.RemoveAll();
-  taNBase::CutLinks();
+  inherited::CutLinks();
 }
 
 void Wizard::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
   layer_cfg.EnforceSize(n_layers);
+  inherited::UpdateAfterEdit();
 }
 
 void Wizard::ThreeLayerNet() {
@@ -244,87 +216,6 @@ void Wizard::StdConduit(NetConduit* cond, Network* net) {
   cond->InitFromNetwork(net);
 }
 
-void Wizard::StdEnv(Environment* env, int n_events) {
-  if(env == NULL) {
-    env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase));
-  }
-  if(env == NULL) return;
-  layer_cfg.EnforceSize(n_layers);
-  EventSpec* es = env->GetAnEventSpec();
-  int n_io_layers = 0;
-  int i;
-  for(i=0;i<layer_cfg.size;i++) {
-    if(((LayerWizEl*)layer_cfg[i])->io_type != LayerWizEl::HIDDEN) n_io_layers++;
-  }
-  es->patterns.EnforceSize(n_io_layers);
-  int pctr = 0;
-  for(i=0;i<layer_cfg.size;i++) {
-    LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-    if(el->io_type == LayerWizEl::HIDDEN) continue;
-    PatternSpec* ps = (PatternSpec*)es->patterns[pctr];
-    ps->name = el->name;
-    ps->layer_name = el->name;
-    ps->to_layer = PatternSpec::LAY_NAME;
-    if(el->io_type == LayerWizEl::INPUT)
-      ps->type = PatternSpec::INPUT;
-    else
-      ps->type = PatternSpec::TARGET;
-    ps->SetToLayer();
-    pctr++;
-  }
-  if(event_type->InheritsFrom(env->events.el_base))
-    env->events.el_typ = event_type;
-  if(n_events > 0) {
-    env->events.EnforceSize(n_events);
-  }
-  taMisc::DelayedMenuUpdate(env);
-}
-
-void Wizard::UpdateEnvFmNet(Environment* env) {
-  if(env == NULL) return;
-  env->UpdateAllEventSpecs();
-}
-
-void Wizard::SequenceEvents(Environment* env, int n_seqs, int events_per_seq) {
-  if(env == NULL) {
-    taMisc::Error("SequenceEvents: must have basic constructed environment first");
-    return;
-  }
-  if(env->events.size > 0) {
-    env->events.EnforceSize(0);	// no top-level dudes
-  }
-  if(event_type->InheritsFrom(env->events.el_base))
-    env->events.el_typ = event_type;
-  env->events.gp.EnforceSize(n_seqs);
-  int i;
-  for(i=0;i<n_seqs;i++) {
-    Event_Group* egp = (Event_Group*)env->events.gp[i];
-    egp->el_typ = event_type;
-    egp->EnforceSize(events_per_seq);
-  }
-  taMisc::DelayedMenuUpdate(env);
-}
-
-void Wizard::TimeSeqEvents(TimeEnvironment* env, int n_seqs, int events_per_seq, float start_time, float time_inc) {
-  if(env == NULL) {
-    taMisc::Error("TimeSeqEvents: must have basic constructed environment first");
-    return;
-  }
-  if(env->events.size > 0) {
-    env->events.EnforceSize(0);
-  }
-  if(event_type->InheritsFrom(env->events.el_base))
-    env->events.el_typ = event_type;
-  env->events.gp.EnforceSize(n_seqs);
-  int i;
-  for(i=0;i<n_seqs;i++) {
-    TimeEvent_Group* egp = (TimeEvent_Group*)env->events.gp[i];
-    egp->EnforceSize(events_per_seq);
-    if(!egp->InheritsFrom(TA_TimeEvent_Group)) continue;
-    egp->RegularlySpacedTimes(start_time, time_inc);
-  }
-  taMisc::DelayedMenuUpdate(env);
-}
 
 //////////////////////////////////
 // 	Proc Wizard		//
@@ -378,30 +269,6 @@ EpochProcess* Wizard::CrossValidation(SchedProcess* tproc, Environment* tenv) {
     }
   }
   return cve;
-}
-
-void Wizard::ToSequenceEvents(SchedProcess* proc) {
-  if(proc == NULL) return;
-  SchedProcess* epc = proc->GetMyEpochProc();
-  if(epc == NULL) {
-    taMisc::Error("Error: no epoch process found in hierarchy!");
-    return;
-  }
-  if(epc->InheritsFrom(&TA_SequenceEpoch)) return; // already done!
-  epc->AddSubProc(&TA_SequenceProcess);
-  epc->ChangeMyType(&TA_SequenceEpoch);
-}
-
-void Wizard::NoSequenceEvents(SchedProcess* proc) {
-  if(proc == NULL) return;
-  SchedProcess* epc = proc->GetMyEpochProc();
-  if(epc == NULL) {
-    taMisc::Error("Error: no epoch process found in hierarchy!");
-    return;
-  }
-  if(!epc->InheritsFrom(&TA_SequenceEpoch)) return; // already done!
-  epc->RemoveSubProc();
-  epc->ChangeMyType(&TA_EpochProcess);
 }
 
 //////////////////////////////////
@@ -603,133 +470,45 @@ void Wizard::StdLogs(SchedProcess* proc) {
   }
 }
 */
-//////////////////////////////////
-// 	Wizard_Group		//
-//////////////////////////////////
-
-void Wizard_Group::AutoEdit() {
-  Wizard* wz;
-  taLeafItr i;
-  FOR_ITR_EL(Wizard, wz, this->, i) {
-    if (wz->auto_open)
-      wz->Edit();
-  }
-}
-
 
 //////////////////////////
 //  ProjectBase		//
 //////////////////////////
 
-#ifdef TA_GUI
-class SimLogEditDialog : public taiEditDataHost {
-public:
-  bool	ShowMember(MemberDef* md) {
-    bool rval = (md->ShowMember(show) && (md->im != NULL));
-    if(!rval) return rval;
-    if(!(md->name.contains("desc") || (md->name == "use_sim_log") || (md->name == "save_rmv_units")
-	 || (md->name == "prev_file_nm"))) return false;
-    return true;
-  }
-
-  override void	Constr_Methods_impl() { }	// suppress methods
-
-  SimLogEditDialog(void* base, TypeDef* tp, bool read_only_,
-  	bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
-};
-#endif
-
 void ProjectBase::Initialize() {
-  defaults.SetBaseType(&TA_TypeDefault);
+  // up-class a few of the bases
   wizards.SetBaseType(&TA_Wizard);
-  networks.SetBaseType(&TA_Network);
-#ifdef TA_GUI
-  edits.SetBaseType(&TA_SelectEdit);
-  //TODO: viewer
-#endif
-
-  save_rmv_units = false;
-  use_sim_log = true;
-
-  view_colors.SetBaseType(&TA_RGBA);
-  the_colors.SetBaseType(&TA_TAColor);
-  mnu_updating = false;
-  deleting = false;
+  // now the rest
+  save_rmv_units = true; // default is not to save units
 }
 
-void ProjectBase::InitLinks() {
-  taBase::Own(defaults, this);
-  taBase::Own(wizards, this);
+void ProjectBase::InitLinks_impl() {
+  inherited::InitLinks_impl();
   taBase::Own(networks, this);
   taBase::Own(data, this);
-  taBase::Own(programs, this);
-  //#ifdef TA_GUI
-  taBase::Own(edits, this);
-  taBase::Own(viewers, this);
-#ifdef DEBUG
-  taBase::Own(test_objs, this);	// just for testing, for any kind of objs
-#endif
-  //#endif
-
   taBase::Own(the_colors, this);
   taBase::Own(view_colors, this);
 
-  if(taMisc::is_loading)
+  if (taMisc::is_loading)
     view_colors.Reset();		// kill existing colors
   else
     GetDefaultColors();
-
-  LoadDefaults();
-
-  if(!taMisc::is_loading) {
-    MakeDefaultWiz(true);	// make default and edit it
-  }
-  else {
-    MakeDefaultWiz(false);	// make default and don't edit it
-  }
-
-  inherited::InitLinks();
 }
 
 void ProjectBase::CutLinks() {
-  deleting = true;
-/*TODO: equiv for Programs
-  SchedProcess* sp;
-  taLeafItr li;
-  FOR_ITR_EL(SchedProcess, sp, processes., li) {
-    if(sp->running)
-      sp->Stop();
-  } */
-//TODO  if(editor != NULL) { delete editor; editor = NULL; }
-  inherited::CutLinks();	// close windows, etc
-  //#ifdef TA_GUI
-#ifdef DEBUG
-  test_objs.CutLinks();	// just for testing, for any kind of objs
-#endif
-  viewers.CutLinks();
-  edits.CutLinks();
-  //#endif
-  programs.CutLinks();
-  data.CutLinks();
-  networks.CutLinks();
-  defaults.CutLinks();
-
   view_colors.CutLinks();
   the_colors.CutLinks();
+  data.CutLinks();
+  networks.CutLinks();
+  inherited::CutLinks();
 }
 
 void ProjectBase::Copy_(const ProjectBase& cp) {
-  // delete things first, to avoid dangling refs etc.
-//   scripts.Reset();
+  // delete first, to avoid ref issues
+  data.Reset();
   
-  defaults = cp.defaults;
   networks = cp.networks;
   data = cp.data;
-  programs = cp.programs;
-  //#ifdef TA_GUI
-  edits = cp.edits;
-  viewers = cp.viewers;
-  //#endif
 
   view_colors = cp.view_colors;
   the_colors = cp.the_colors;
@@ -826,39 +605,19 @@ const iColor* ProjectBase::GetObjColor(TypeDef* td) {
   return NULL;
 }
 
-const iColor* ProjectBase::GetObjColor(ViewColors vc) {
+const iColor* ProjectBase::GetObjColor(int/*ViewColors*/ vc) {
 #ifdef TA_GUI
-  if(view_colors.size != COLOR_COUNT) {
+  if (view_colors.size != COLOR_COUNT) {
     view_colors.Reset();
     GetDefaultColors();
   }
-  if(the_colors.size != COLOR_COUNT)
+  if (the_colors.size != COLOR_COUNT)
     UpdateColors();
   TAColor* tac = the_colors.SafeEl(vc);
-  if (tac != NULL)
+  if (tac)
     return tac->color();
 #endif
   return NULL;
-}
-
-int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
-  int rval = inherited::Load(strm, par, el); // load-em-up
-  if (rval) {	 // don't do this as a dump_load_value cuz we need an updateafteredit..
-    if (taMisc::gui_active) {
-      pdpMisc::post_load_opr.Link(&wizards);
-//       pdpMisc::post_load_opr.Link(&scripts);
-#ifdef TA_GUI
-      pdpMisc::post_load_opr.Link(&edits);
-#endif
-    } else {
-      wizards.AutoEdit();
-//       scripts.AutoRun();
-#ifdef TA_GUI
-      edits.AutoEdit();
-#endif
-    }
-  }
-  return rval;
 }
 
 void ProjectBase::LoadDefaults() {
@@ -897,21 +656,6 @@ void ProjectBase::MakeDefaultWiz(bool auto_opn) {
 }
 
 #ifdef TA_GUI
-MainWindowViewer* ProjectBase::NewViewer(bool t3_frame) {
-  MainWindowViewer* vwr = NULL;
-  vwr = PdpMainWindowViewer::NewBrowser(this); // no md
-  if (t3_frame) {
-    int idx;
-    vwr->FindFrameByType(&TA_T3DataViewer, idx);
-    if (idx < 0) {
-      vwr->frames.Add(new T3DataViewer);
-    }
-  }
-  viewers.Add(vwr); // does InitLink
-  return vwr;
-}
-#endif
-#ifdef TA_GUI
 void ProjectBase::OpenNetworkViewer(Network* net) {
   if (!net) return;
 
@@ -925,52 +669,6 @@ void ProjectBase::OpenNetworkViewer(Network* net) {
   vwr->ViewWindow();
 }
 #endif
-int ProjectBase::SaveAs(ostream& strm, TAPtr par, int indent) {
-#ifdef TA_GUI
-  if (use_sim_log) {
-    UpdateSimLog();
-  }
-#endif
-  return inherited::SaveAs(strm, par, indent);
-}
-
-int ProjectBase::Save(ostream& strm, TAPtr par, int indent) {
-  taMisc::Busy();
-  ++taMisc::is_saving;
-  dumpMisc::path_tokens.Reset();
-  strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
-  int rval = Dump_Save_Path(strm, par, indent);
-  if (rval == false) 
-     goto exit;
-  strm << " {\n";
-
-  // save defaults within project save as first item
-  defaults.Dump_Save_Path(strm, par, indent+1);
-  strm << " { ";
-  if (defaults.Dump_Save_PathR(strm, par, indent+2))
-    taMisc::indent(strm, indent+1, 1);
-  strm << "  };\n";
-  defaults.Dump_Save_impl(strm, par, indent+1);
-//nn,already in _impl  defaults.Dump_SaveR(strm, par, indent+1);
-
-  if (Dump_Save_PathR(strm, par, indent+1))
-    taMisc::indent(strm, indent, 1);
-  strm << "};\n";
-  Dump_Save_impl(strm, par, indent);
-//nn,already in _impl  Dump_SaveR(strm, par, indent);
-  rval = true;
-  
-exit:
-  --taMisc::is_saving;
-  dumpMisc::path_tokens.Reset();
-  taMisc::DoneBusy();
-  return rval;
-}
-
-bool ProjectBase::SetFileName(const String& val) {
-  prev_file_nm = GetFileName();
-  return inherited::SetFileName(val);
-}
 
 void ProjectBase::UpdateColors() {
   if(view_colors.size != COLOR_COUNT) {
@@ -986,122 +684,30 @@ void ProjectBase::UpdateColors() {
     }
   }
 }
-#ifdef TA_GUI
-void ProjectBase::UpdateSimLog() {
-  SimLogEditDialog* dlg = new SimLogEditDialog(this, GetTypeDef(), false, true);
-  dlg->Constr("Update simulation log (SimLog) for this project,\n\
- storing the name of the project and the description as entered here.\n\
- Click off use_sim_log if you are not using this feature");
-  if(dlg->Edit(true) && use_sim_log) {
-    time_t tmp = time(NULL);
-    String tstamp = ctime(&tmp);
-    tstamp = tstamp.before('\n');
 
-    String user;
-    char* user_c = getenv("USER");
-    if(user_c != NULL) user = user_c;
-    char* host_c = getenv("HOSTNAME");
-    if(host_c != NULL) user += String("@") + String(host_c);
-
-    fstream fh;
-    fh.open("SimLog", ios::out | ios::app);
-    fh << endl << endl;
-    fh << file_name << " <- " << prev_file_nm << "\t" << tstamp << "\t" << user << endl;
-    if(!desc1.empty()) fh << "\t" << desc1 << endl;
-    if(!desc2.empty()) fh << "\t" << desc2 << endl;
-    if(!desc3.empty()) fh << "\t" << desc3 << endl;
-    if(!desc4.empty()) fh << "\t" << desc4 << endl;
-    fh.close(); fh.clear();
-  }
-}
-#endif
 //////////////////////////
-//   Project_Group	//
+//  PDPRoot		//
 //////////////////////////
-
-int Project_Group::Load(istream& strm, TAPtr par) {
-/*obs  if ((ta_file != NULL) && !ta_file->dir.empty() && (ta_file->dir != ".")) {
-    // change directories to where the project was loaded!
-    ta_file->GetDir();
-    chdir(ta_file->dir);
-    String fnm = ta_file->fname.after('/',-1);
-    ta_file->dir = "";
-    ta_file->fname = fnm;
-  } */
-  int rval = taGroup<ProjectBase>::Load(strm, par);
-  if (rval) {
-    ProjectBase* p;
-    taLeafItr i;
-    FOR_ITR_EL(ProjectBase, p, this->, i) {
-      if (taMisc::gui_active) {
-	pdpMisc::post_load_opr.Link(&(p->wizards));
-// 	pdpMisc::post_load_opr.Link(&(p->scripts));
-#ifdef TA_GUI
-	pdpMisc::post_load_opr.Link(&(p->edits));
-#endif
-      } else {
-	p->wizards.AutoEdit();
-// 	p->scripts.AutoRun();
-#ifdef TA_GUI
-	p->edits.AutoEdit();
-#endif
-      }
-    }
-  }
-  return rval;
-}
-
-
-//////////////////////////////////////////
-//	PDPRoot: structural root	//
-//////////////////////////////////////////
 
 void PDPRoot::Initialize() {
-  version_no = taMisc::version_no;
-  SetName("root");
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
-  projects.SetName("projects");
   colorspecs.SetBaseType(&TA_ColorScaleSpec);
 }
 
 void PDPRoot::Destroy() {
-  bool we_are_root = (tabMisc::root == this); // 'true' if we are the one and only root app object
-  if (we_are_root) {
-    tabMisc::root = NULL; //TODO: maybe for cleanness we should do a SetPointer thingy, since we set it that way...
-#ifdef DMEM_COMPILE
-    if(taMisc::dmem_nprocs > 1) {
-      taMisc::RecordScript(".Quit();\n");
-    } else
-#endif
-    {
-      projects.RemoveAll();
-    }
-  } else {
-    projects.RemoveAll();
-  }
-  colorspecs.RemoveAll();
   CutLinks();
-  if (we_are_root) {
-    taiMiscCore::RunPending();
-    taiMiscCore::Quit();
-  }
 }
 
 void PDPRoot::InitLinks() {
-  taNBase::InitLinks();
-  taBase::Own(projects, this);
+  inherited::InitLinks();
   taBase::Own(colorspecs, this);
 }
 
 void PDPRoot::CutLinks() {
-  projects.CutLinks();
   colorspecs.CutLinks();
-  taNBase::CutLinks();
+  inherited::CutLinks();
 }
 
-void PDPRoot::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
-}
 #ifdef TA_GUI
 TAPtr PDPRoot::Browse(const char* init_path) {
   if(!taMisc::gui_active) return NULL;
@@ -1316,397 +922,3 @@ void PDPRoot::GetWinPos() {
   wn_pos->GetWinPos();
 } */
 
-#ifdef DEBUG
-//#include <string.h>
-void TestObj::Initialize() {
-  // just zero all the pod data
-  size_t _size = ((intptr_t)(&intptr) + sizeof(intptr) - (intptr_t)(&b));
-  memset(&b, 0, _size);
-  
-  v_b = false;
-  v_c = '\0';
-  v_i.setInt(0);
-  v_i_ro.setInt(0x7fffffff);
-  v_ui.setUInt(0U);
-  v_i64.setInt64(0LL);
-  v_u64.setUInt64(0ULL);
-  v_d.setDouble(0.0);
-  v_str.setString(_nilString);
-  s_ptr = NULL;
-  v_ptr.setPtr(NULL);
-  s_tab = NULL;
-  v_tab.setBase(NULL);
-  s_mat = NULL;
-  v_mat.setMatrix(NULL);
-  s_own_tab = NULL;
-  v_own_tab.setBase(NULL);
-}
-
-void TestObj::InitLinks() {
-  inherited::InitLinks();
-  UpdateTypeDefVars();
-}
-
-void TestObj::CutLinks() {
-  taBase* own_tab = v_own_tab.toBase();
-  if (own_tab) {
-    own_tab->CutLinks();
-    v_own_tab.setBase(NULL); // should delete
-  }
-  if (s_own_tab) {
-    s_own_tab->CutLinks();
-    taBase::DelPointer(&s_own_tab);
-  }
-  v_tab.setBase(NULL);
-  v_mat.setMatrix(NULL);
-  inherited::CutLinks();
-}
-
-void TestObj::UpdateAfterEdit() {
-  UpdateTypeDefVars();
-  inherited::UpdateAfterEdit();
-}
-
-void TestObj::UpdateTypeDefVars() {
-  MemberDef* md;
-  TypeDef* mt = GetTypeDef();
-  md = mt->members.SafeEl(mt->members.Find("s_ptr"));
-  if (md != NULL) {
-    typ_s_ptr = md->type->name;
-  }
-  md = mt->members.SafeEl(mt->members.Find("s_tab"));
-  if (md != NULL) {
-    typ_s_tab = md->type->name;
-  }
-  md = mt->members.SafeEl(mt->members.Find("s_mat"));
-  if (md != NULL) {
-    typ_s_mat = md->type->name;
-  }
-  void* dummy;
-  TypeDef* typ;
-  v_ptr.GetRepInfo(typ, dummy);
-  typ_v_ptr = typ->name; 
-  v_tab.GetRepInfo(typ, dummy);
-  typ_v_tab = typ->name; 
-  v_mat.GetRepInfo(typ, dummy);
-  typ_v_mat = typ->name; 
-}
-
-void TestObj::InitObj() {
-  b = true;
-  c = 'a';
-  sc = -128;
-  uc = 255;
-  byt = 254; //note: s/b same as an unsigned char
-  sh = -32768;
-  ssh = 32766;
-  ush = 65535;
-  i = 2147483647;
-  si = -2147483647;
-  s = 2147483645;
-  ui = 4294967295U;
-  u = 4294967294U;
-  l = 2147483647L;
-  sl = 2147483646L;
-  ul = 4294967295UL;
-  i64 = 9223372036854775807LL;
-  ll = 9223372036854775806LL;
-  sll = 9223372036854775805LL;
-  u64 = 18446744073709551615ULL;
-  ull = 18446744073709551614ULL;
-  intptr = (sizeof(int) == sizeof(intptr_t)) ? i : (intptr_t)i64;
-
-  v_b = true;
-  v_c = 'a';
-  v_i = 0x7fffffff;
-  v_ui = 0xffffffffU;
-  v_i64 = 0x7fffffffffffffffLL;
-  v_u64 = 0xffffffffffffffffULL;
-  v_d = 1.23e45;
-  v_str = "the rain in spain";
-  v_ptr = (void*)this;
-  v_ptr = s_ptr;
-  taBase::SetPointer(&s_tab, this->GetOwner());
-  v_tab = s_tab;
-  // find a matrix in the owner
-  taList_impl* own_lst = GET_MY_OWNER(taList_impl);
-  if (own_lst != NULL) {
-    taBase* it;
-    taListItr itr;
-    FOR_ITR_EL(taBase, it, own_lst->, itr) {
-      if (it->InheritsFrom(&TA_taMatrix)) {
-        taMatrix* mat = (taMatrix*)it;
-        // initialize it if not initialized
-        if (mat->size == 0) {
-          mat->SetGeom(2, 2, 3);
-          mat->SetFmStr_Flat("0", 0);
-          mat->SetFmStr_Flat("1", 1);
-          mat->SetFmStr_Flat("2", 2);
-          mat->SetFmStr_Flat("3", 3);
-          mat->SetFmStr_Flat("4", 4);
-          mat->SetFmStr_Flat("5", 5);
-        }
-        taBase::SetPointer((taBase**)&s_mat, mat);
-        v_mat.setMatrix(s_mat);
-        break;
-      }
-    }
-  }
-  if (!taMisc::is_loading) {
-    if (s_own_tab == NULL) {
-      taBase::SetPointer(&s_own_tab, new taNBase());
-      s_own_tab->SetName("s_owned_taBase");
-      taBase::Own(s_own_tab, this);
-    }
-    if (v_own_tab.isNull()) {
-      v_own_tab = new taNBase();
-      v_own_tab.toBase()->SetName("v_owned_taBase");
-      taBase::Own(v_own_tab.toBase(), this);
-    }
-  }
-  UpdateAfterEdit();
-}
-
-
-bool TestObj::TestMethod1(
-    const Variant&	v, 
-    int64_t		i64,
-    long long		ll,
-    signed long long	sll,
-    uint64_t		u64,
-    unsigned long long	ull,
-    bool		b,
-    char		c,
-    signed char		sc,
-    unsigned char	uc,
-    byte		byt,
-    short		sh,
-    signed short	ssh,
-    unsigned short	ush,
-    int			i,
-    signed int		si,
-    signed		s,
-    unsigned int	ui,
-    unsigned		u,
-    long		l,
-    signed long		sl,
-    unsigned long	ul,
-    taBase*		s_tab
-) 
-{
-  this->v =v; 
-  this->i64 = i64;
-  this->ll = ll;
-  this->sll = sll;
-  this->u64 = u64;
-  this->ull = ull;
-  this->b = b; // #DEF_false
-  this->c = c;
-  this->sc = sc;
-  this->uc = uc;
-  this->byt = byt; //note: s/b same as an unsigned char
-  this->sh = sh;
-  this->ssh = ssh;
-  this->ush = ush;
-  this->i = i; // #DEF_0
-  this->si = si;
-  this->s = s;
-  this->ui = ui;
-  this->u = u;
-  this->l = l;
-  this->sl = sl;
-  this->ul = ul;
-  taBase::SetPointer(&(this->s_tab), s_tab);
-  UpdateAfterEdit();
-  return b;
-}
-
-bool TestObj::TestMethod_ProblemDefs(
-    char		c,
-    unsigned int	ui,
-    unsigned		u,
-    long		l,
-    signed long		sl,
-    unsigned long	ul,
-    int64_t		i64,
-    long long		ll,
-    signed long long	sll,
-    uint64_t		u64,
-    unsigned long long	ull,
-    const Variant&	v, 
-    taBase*		s_tab
-) 
-{
-  this->c = c;
-  this->ui = ui;
-  this->u = u;
-  this->l = l;
-  this->sl = sl;
-  this->ul = ul;
-  this->i64 = i64;
-  this->ll = ll;
-  this->sll = sll;
-  this->u64 = u64;
-  this->ull = ull;
-  this->v =v; 
-  taBase::SetPointer(&(this->s_tab), s_tab);
-  UpdateAfterEdit();
-  return true;
-}
-
-void TestObj2::Initialize() {
-  int_val = 0;
-}
-
-void TestObj2::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(test_obj, this);
-  if (!taMisc::is_loading) {
-      if (test_obj.s_own_tab == NULL) {
-      taBase::SetPointer(&test_obj.s_own_tab, new taNBase());
-      test_obj.s_own_tab->SetName("par_created_s_owned_taBase");
-      taBase::Own(test_obj.s_own_tab, &test_obj);
-    }
-  }
-
-}
-
-void TestObj2::CutLinks() {
-  test_obj.CutLinks();
-  inherited::CutLinks();
-}
-
-void TestObj2::Copy_(const TestObj2& cp) {
-  int_val = cp.int_val;
-  test_obj = cp.test_obj;
-}
-
-void TestObj2::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
-
-void TestObj3::Initialize() {
-  i = 1;
-  s_own_tab = NULL;
-  f = 2.3f;
-}
-
-void TestObj3::InitLinks() {
-  inherited::InitLinks();
-  if (!taMisc::is_loading) {
-    if (s_own_tab == NULL) {
-      taBase::SetPointer(&s_own_tab, new taNBase());
-      s_own_tab->SetName("s_owned_taBase");
-      taBase::Own(s_own_tab, this);
-    }
-  }
-
-}
-
-void TestObj3::CutLinks() {
-  if (s_own_tab) {
-    s_own_tab->CutLinks();
-    taBase::DelPointer(&s_own_tab);
-  }
-  inherited::CutLinks();
-}
-
-void TestObj3::Copy_(const TestObj3& cp) {
-  i = cp.i;
-  if (s_own_tab && cp.s_own_tab) 
-    s_own_tab->Copy(*(cp.s_own_tab));
-  f = cp.f;
-}
-
-void TestObj3::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
-#include "tdgeometry.h"
-
-void TestOwnObj::Initialize() {
-  ft_own = NULL;
-}
-
-void TestOwnObj::InitLinks() {
-  inherited::InitLinks();
-  if (!taMisc::is_loading) {
-    if (ft_own == NULL) {
-      taBase::SetPointer((taBase**)&ft_own, (taBase*)new FloatTransform());
-      taBase::Own(ft_own, this);
-    }
-  } else {
-    if (ft_own) {
-      taBase::Own(ft_own, this);
-    }
-  }
-}
-
-void TestOwnObj::CutLinks() {
-  if (ft_own) {
-    ft_own->CutLinks();
-    taBase::DelPointer((taBase**)&ft_own);
-  }
-  inherited::CutLinks();
-}
-
-void TestOwnObj::Copy_(const TestOwnObj& cp) {
-  ft_inst = cp.ft_inst;
-  if (ft_own && cp.ft_own) 
-    ft_own->Copy(*(cp.ft_own));
-}
-
-void TestOwnObj::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
-
- 
-void TestOwnedObj::InitLinks() {
-  inherited::InitLinks();
-  taBase::OwnPointer((TAPtr*)&o1, new TestOwnedObj_taBase, this);
-  taBase::OwnPointer((TAPtr*)&o2, new TestOwnedObj_taOBase, this); 
-  taBase::OwnPointer((TAPtr*)&o3, new TestOwnedObj_taBase_inline, this); 
-  taBase::OwnPointer((TAPtr*)&o4, new TestOwnedObj_taOBase_inline, this); 
-  
-  taBase::OwnPointer((TAPtr*)&o5, new TestOwnedObj_taBase, this);
-  o5->i = 5; o5->s = "s5";
-  taBase::OwnPointer((TAPtr*)&o6, new TestOwnedObj_taOBase, this); 
-  o6->i = 6; o6->s = "s6";
-  taBase::OwnPointer((TAPtr*)&o7, new TestOwnedObj_taBase_inline, this); 
-  o7->i = 7; o7->s = "s7";
-  taBase::OwnPointer((TAPtr*)&o8, new TestOwnedObj_taOBase_inline, this); 
-  o8->i = 8; o8->s = "s8";
-  
-  // following are not owned
-  taBase::SetPointer((TAPtr*)&o9, new TestOwnedObj_taOBase); 
-  o9->i = 9; o9->s = "s9";
-  taBase::SetPointer((TAPtr*)&oA, new TestOwnedObj_taOBase_inline); 
-  oA->i = 10; oA->s = "sA";
-  
-  taBase::SetPointer((TAPtr*)&oB, new TestOwnedObj_taOBase); 
-  oB->i = 11; oB->s = "sB";
-  taBase::SetPointer((TAPtr*)&oC, new TestOwnedObj_taOBase_inline); 
-  oC->i = 12; oC->s = "sC";
-  
-}
-
-void TestOwnedObj::CutLinks() {
-  taBase::DelPointer((TAPtr*)&oC);
-  taBase::DelPointer((TAPtr*)&oB);
-  taBase::DelPointer((TAPtr*)&oA);
-  taBase::DelPointer((TAPtr*)&o9);
-  
-  if (o8) {o8->CutLinks(); taBase::DelPointer((TAPtr*)&o8);}
-  if (o7) {o7->CutLinks(); taBase::DelPointer((TAPtr*)&o7);}
-  if (o6) {o6->CutLinks(); taBase::DelPointer((TAPtr*)&o6);}
-  if (o5) {o5->CutLinks(); taBase::DelPointer((TAPtr*)&o5);}
-  if (o4) {o4->CutLinks(); taBase::DelPointer((TAPtr*)&o4);}
-  if (o3) {o3->CutLinks(); taBase::DelPointer((TAPtr*)&o3);}
-  if (o2) {o2->CutLinks(); taBase::DelPointer((TAPtr*)&o2);}
-  if (o1) {o1->CutLinks(); taBase::DelPointer((TAPtr*)&o1);}
-  inherited::CutLinks();
-}
-
-#endif

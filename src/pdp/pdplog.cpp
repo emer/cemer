@@ -64,11 +64,9 @@ void PDPLog::Initialize() {
   data_range.min = 0;
   data_range.max = -1;
 //obs  cur_proc = NULL;
-#ifdef TA_GUI
   geom.SetXYZ(4, 1, 3);
   //TODO: new ones should offset pos in viewers so they don't overlap
   pos.SetXYZ(0-geom.x, 0, 0);
-#endif
 }
 
 void PDPLog::InitLinks() {
@@ -76,10 +74,8 @@ void PDPLog::InitLinks() {
   taBase::Own(data, this);
   taBase::Own(data_range, this);
   taBase::Own(display_labels, this);
-#ifdef TA_GUI
   taBase::Own(pos, this);
   taBase::Own(geom, this);
-#endif
 
   inherited::InitLinks();
 //nn  log_file->Close();
@@ -96,17 +92,8 @@ void PDPLog::CutLinks() {
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
 //obs  cur_proc = NULL;
   RemoveAllUpdaters();
-  // set any misc log pointers to NULL!
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if((proj != NULL) && !proj->deleting) {
-    in_repl = true;
-    taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
-    in_repl = false;
-  }
-#ifdef TA_GUI
   geom.CutLinks();
   pos.CutLinks();
-#endif
   display_labels.CutLinks();
   data_range.CutLinks();
   data.CutLinks();
@@ -249,7 +236,7 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
   if (!vwr) { // show in a new viewer
     ProjectBase* prj = GET_MY_OWNER(ProjectBase);
     if (!prj) return;
-    MainWindowViewer* mwv = prj->NewViewer(true); // add T3 guy
+    MainWindowViewer* mwv = prj->NewViewer(); // note: should have a T3 guy
     vwr = (T3DataViewer*)mwv->FindFrameByType(&TA_T3DataViewer);
     LogView* lv = NewLogView();
     if (!lv) return;

@@ -23,6 +23,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_classbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
+	@abs_srcdir@/program_qt.h \
 	@abs_srcdir@/../taiqtso/igeometry.h
 
 HEADS_GUI =\
@@ -41,7 +42,8 @@ HEADS_GUI =\
 	ta_classbrowse.h \
 	ta_qtcursors.h \
 	ta_qtclipdata.h \
-	ta_seledit.h
+	ta_seledit.h \
+	program_qt.h  
 
 SRCS_GUI =\
 	ta_plugin.cpp \
@@ -67,7 +69,9 @@ SRCS_GUI =\
 	ta_qttype.cpp \
 	ta_qtclipdata.cpp \
 	ta_qtclipdata.moc.cpp \
-	ta_seledit.cpp
+	ta_seledit.cpp \
+	program_qt.cpp  \
+	program_qt.moc.cpp 
 
 endif
 
@@ -95,6 +99,8 @@ TAHEADS =\
 	@abs_srcdir@/ta_script.h \
 	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/dynenum.h \
+	@abs_srcdir@/program.h \
+	@abs_srcdir@/ta_project.h \
 	$(TAHEADS_GUI)
 
 HEADS =\
@@ -118,6 +124,8 @@ HEADS =\
 	ta_script.h \
 	ta_viewer.h \
 	dynenum.h \
+	program.h \
+	ta_project.h \
 	$(HEADS_GUI)
 
 SRCS =\
@@ -141,6 +149,8 @@ SRCS =\
 	ta_script.cpp \
 	ta_viewer.cpp \
 	dynenum.cpp \
+	program.cpp \
+	ta_project.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \
 	ta_ti.cpp

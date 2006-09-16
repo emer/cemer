@@ -70,7 +70,7 @@ private:
 class TAMISC_API RGBA_List : public taList<RGBA> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of RGBA objects
 public:
-  void	Initialize() 		{ };
+  void	Initialize() 		{SetBaseType(&TA_RGBA); };
   void 	Destroy()		{ };
   TA_BASEFUNS(RGBA_List);
 };
@@ -98,7 +98,7 @@ protected:
 class TAMISC_API TAColor_List : public taList<TAColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of TAColor objects
 public:
-  void	Initialize() 		{ };
+  void	Initialize() 		{SetBaseType(&TA_TAColor); };
   void 	Destroy()		{ };
   TA_BASEFUNS(TAColor_List);
 };
@@ -173,7 +173,7 @@ class TAMISC_API ScaleRange_List : public taList<ScaleRange> {
 typedef taList<ScaleRange> inherited;
 #endif
 public:
-  void			Initialize() {}
+  void			Initialize() {SetBaseType(&TA_ScaleRange);}
   void 			Destroy() {};
   TA_BASEFUNS(ScaleRange_List);
 };

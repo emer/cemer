@@ -7306,10 +7306,7 @@ el_def=0;
 save_rmv_units=0;
 use_sim_log=0;
 prev_file_nm=;
-desc1=;
-desc2=;
-desc3=;
-desc4=;
+desc=;
 view_colors {
 name=;
 el_typ=RGBA;

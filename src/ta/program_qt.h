@@ -15,8 +15,8 @@
 
 // program_qtso.h -- executables, gui files
 
-#ifndef PROGRAM_QTSO_H
-#define PROGRAM_QTSO_H
+#ifndef PROGRAM_QT_H
+#define PROGRAM_QT_H
 
 #include "ta_group.h"
 #include "ta_script.h"
@@ -27,9 +27,9 @@
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
-class TAMISC_API taiProgVar: public taiCompData { 
+class TA_API taiProgVar: public taiCompData { 
   //note: this set of classes uses a static New instead of new because of funky virtual Constr
 INHERITED(taiCompData)
   Q_OBJECT
@@ -96,7 +96,7 @@ private:
 };
 
 
-class TAMISC_API taiProgVarType : public taiClassType { 
+class TA_API taiProgVarType : public taiClassType { 
 INHERITED(taiClassType)
 public:
   bool		requiresInline() const {return true;}
@@ -157,7 +157,7 @@ public: // IDataLinkClient i/f
   void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
-  const iColor* 	colorOfCurRow() const;
+  const iColor* 	colorOfCurRow() const; // #IGNORE 
   bool  		HasChanged() {return m_modified;}	
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us

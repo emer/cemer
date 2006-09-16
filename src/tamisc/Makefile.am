@@ -18,8 +18,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/colorbar_so.h \
 	@abs_srcdir@/datatable_qtso.h \
 	@abs_srcdir@/datagraph_so.h \
-	@abs_srcdir@/datagraph_qtso.h \
-	@abs_srcdir@/program_qtso.h 
+	@abs_srcdir@/datagraph_qtso.h 
 
 HEADS_GUI =\
 	fontspec.h \
@@ -29,8 +28,7 @@ HEADS_GUI =\
 	colorbar_so.h \
 	datatable_qtso.h \
 	datagraph_so.h \
-	datagraph_qtso.h \
-	program_qtso.h 
+	datagraph_qtso.h
 
 SRCS_GUI =\
 	fontspec.cpp \
@@ -44,9 +42,7 @@ SRCS_GUI =\
 	datatable_qtso.moc.cpp \
 	datagraph_so.cpp \
 	datagraph_qtso.cpp \
-	datagraph_qtso.moc.cpp \
-	program_qtso.cpp  \
-	program_qtso.moc.cpp 
+	datagraph_qtso.moc.cpp
 
 endif
 
@@ -61,7 +57,6 @@ TAHEADS =\
 	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/datatable.h \
 	@abs_srcdir@/datagraph.h \
-	@abs_srcdir@/program.h \
 	@abs_srcdir@/fun_lookup.h \
 	@abs_srcdir@/ta_data_extras.h \
 	$(TAHEADS_GUI) \
@@ -78,13 +73,11 @@ HEADS =\
 	ta_data.h \
 	datatable.h \
 	datagraph.h \
-	program.h \
 	fun_lookup.h \
 	ta_data_extras.h \
 	$(HEADS_GUI)
 
 SRCS =\
-	program.cpp \
 	tarandom.cpp \
 	tdgeometry.cpp \
 	aggregate.cpp \

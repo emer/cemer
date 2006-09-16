@@ -68,7 +68,7 @@ class TAMISC_API T3DataView_List: public DataView_List { // ##NO_TOKENS
 INHERITED(DataView_List)
 friend class T3DataView;
 public:
-  TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView);
+  TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView)
 private:
   void			Initialize() {SetBaseType(&TA_T3DataView);}
   void			Destroy() {}

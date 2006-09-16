@@ -53,6 +53,7 @@
 // externals
 class SelectEdit;
 class taFiler;
+class taRootBase;
 
 #ifdef TA_GUI
 class taiMimeSource; //
@@ -64,7 +65,6 @@ class taSmartRef;
 class taOBase;
 class taDataView;
 class taNBase;
-class taRootBase;
 class taBase_List;
 class taBase_PtrList;
 class String_Array;
@@ -78,6 +78,7 @@ public:
   // list of objs to be removed in the wait process (e.g. when objs delete themselves)
   static taBase_PtrList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
+  static taBase_PtrList	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
 
   static void		Close_Obj(TAPtr obj);
   // call this to implement closing object function
@@ -1068,7 +1069,7 @@ public:
 
 // when a taList is declared in advance of defining the type within it, this breaks
 //  void 	Initialize() 			{ SetBaseType(T::StatTypeDef(1)); }
-  void	Initialize()			{ SetBaseType(taBase::StatTypeDef(0)); }
+  void	Initialize()			{ SetBaseType(StatTypeDef(0)); }
   void	Destroy()			{ };
 
   taList() 				{ Register(); Initialize(); }
@@ -1488,25 +1489,5 @@ class TA_API SelectEdit {
   bool	do_nothing;
 };
 #endif // def TA_NO_GUI
-
-class TA_API taRootBase: public taNBase {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS basic methods that the root/app object must support
-INHERITED(taNBase)
-public:
-  virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
-  virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!
-  virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
-  virtual void	Info() = 0;			// #MENU get information/copyright notice
-  // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
-  virtual void	Quit() = 0;
-  // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
-  virtual void	SaveAll() = 0; // saves all the contents of the app object
-  
-  TA_ABSTRACT_BASEFUNS(taRootBase)
-private:
-  void	Initialize() {}
-  void	Destroy() {if (tabMisc::root == this) tabMisc::root = NULL;}
-};
-
 
 #endif // ta_base_h

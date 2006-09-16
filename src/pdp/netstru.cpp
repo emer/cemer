@@ -3250,15 +3250,6 @@ void Layer::CutLinks() {
   projections.CutLinks();
   units.CutLinks();
   unit_spec.CutLinks();
-  //TODO: this global ptr replace mechanism seems fragile!
-  // maybe replace with WeakRefs or something similar
-  // un-set any other pointers to this object!
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if((proj) && !proj->deleting) {
-    in_repl = true;
-    taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
-    in_repl = false;
-  }
   inherited::CutLinks();
 }
 
@@ -4426,12 +4417,6 @@ void Network::CutLinks() {
 //TODO  views.Reset();
   layers.CutLinks();
   specs.CutLinks();
-  if((proj) && !proj->deleting) {
-    // un-set any other pointers to this object!
-    in_repl = true;
-    taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)this, NULL);
-    in_repl = false;
-  }
   proj = NULL;
   inherited::CutLinks();
 }

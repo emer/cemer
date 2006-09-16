@@ -63,7 +63,7 @@ void pdpMisc::SaveRecoverFile(int err) {
   ProjectBase* p;
   int cnt = 0;
   for (int i = 0; i < pdpMisc::root->projects.size; ++i) {
-    p = root->projects.FastEl(i);
+    if (!(p = dynamic_cast<ProjectBase*>(root->projects.FastEl(i)))) continue;
     if(err == SIGUSR1) {	// usr1 is to save network at that point
       Network* net;
       taLeafItr ni;

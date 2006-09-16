@@ -19,17 +19,12 @@
 #ifndef TA_QTCLIPDATA_H
 #define TA_QTCLIPDATA_H
 
-#include "qtdefs.h"
-#include "ta_stdef.h"
 #include "ta_base.h" // for list template
 
 #ifndef __MAKETA__
 # include <QMimeData>
 # include <QStringList>
 #endif
-
-// external declarations
-class taBase; //
 
 /*
   The clipboard/Drag-Drop model of PDP involves single or lists of data items that can be

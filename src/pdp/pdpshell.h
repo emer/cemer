@@ -20,7 +20,7 @@
 #ifndef pdpshell_h
 #define pdpshell_h 1
 
-#include "ta_defaults.h"
+#include "ta_project.h"
 #include "colorscale.h"
 #ifdef TA_GUI
   #include "ta_seledit.h"
@@ -33,29 +33,6 @@
 #include "pdplog.h"
 #include "program.h"
 
-class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
-  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
-INHERITED(taGroup<TypeDefault>)
-public:
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  // reset members before loading..
-
-  void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_Group);
-};
-#ifdef TA_GUI
-// note: _Group name is for compatiblity with v3.2 files
-class PDP_API SelectEdit_Group : public taGroup<SelectEdit> {
-  // group of select edit dialog objects
-public:
-  virtual void	AutoEdit();
-
-  void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(SelectEdit_Group);
-};
-#endif
 //////////////////////////////////////////////////
 //			Wizard			//
 //////////////////////////////////////////////////
@@ -79,15 +56,15 @@ public:
   TA_BASEFUNS(LayerWizEl);
 };
 
-class PDP_API Wizard : public taNBase {
+class PDP_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
+INHERITED(taWizard)
 public:
   enum Connectivity {
     FEEDFORWARD,		// each layer projects to the next one in sequence
     BIDIRECTIONAL		// layers are bidirectionally connected in sequence (each sends and receives from its neighbors)
   };
 
-  bool		auto_open;	// open this wizard dialog upon startup
   int		n_layers;	// number of layers
   taBase_List	layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
@@ -170,25 +147,13 @@ public:
   void 	InitLinks();
   void	CutLinks();
   SIMPLE_COPY(Wizard);
-  COPY_FUNS(Wizard, taNBase);
+  COPY_FUNS(Wizard, taWizard);
   TA_BASEFUNS(Wizard);
 };
 
-// note: _Group name is for compatiblity with v3.2 files
-class PDP_API Wizard_Group : public taGroup<Wizard> {
-  // group of wizard objects
-public:
-  virtual void	AutoEdit();
-
-  void	Initialize() 		{ SetBaseType(&TA_Wizard); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Wizard_Group);
-};
-
-
-class PDP_API ProjectBase : public taFBase {
+class PDP_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
-INHERITED(taFBase)
+INHERITED(taProject)
 public:
   //note: this enum must be duplicated in pdpMisc
   enum ViewColors {		// indicies for view_colors
@@ -215,82 +180,34 @@ public:
     COLOR_COUNT
   };
 
-
-  TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
-  Wizard_Group    	wizards;	// Wizards for automatically configuring simulation objects
   Network_Group		networks;	// Networks of interconnected units
   DataTable_Group	data;		// Misc data, such as patterns for network input
-  Program_Group		programs;	// Gui-based programs to run simulations and other processing
-  // #ifdef TA_GUI 
-  // todo: note: ifdefing this for TA_GUI is not a good idea -- will cause loading to fail
-  // instead, need to include dummy equivalent classes with no functionality..
-  SelectEdit_Group	edits;		// special edit dialogs for selected elements
-  DataViewer_List	viewers;	// any open viewers TODO: make HIDDEN in release version
-#ifdef DEBUG
-  taBase_List		test_objs;	// todo: can we remove now!? just for testing, for any kind of objs
-#endif
-  //#endif
 
-  bool			save_rmv_units; // don't include units in network when saving (makes project file much smaller!)
-  bool			use_sim_log; 	// record project changes in the SimLog file
-  String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
-  String		desc1;		// description of the project
-  String		desc2;
-  String		desc3;
-  String		desc4;
-
+  bool			save_rmv_units; // #DEF_true don't include units in network when saving (makes project file much smaller!)
   TAColor_List		the_colors; 	// #IGNORE actual colors
   RGBA_List		view_colors; 	// colors to use in the project view
-  bool			mnu_updating; 	// #READ_ONLY #NO_SAVE if menu is already being updated (don't init display)
-  bool			deleting; 	// #READ_ONLY #NO_SAVE if object is currently being deleted
-  String		defaults_str;
-  // #READ_ONLY #NO_SAVE string representation of basic defaults for the subclass; set in constructor
-  String		defaults_file; 	// #READ_ONLY #NO_SAVE default name of defaults file, typically like "bp.def"
-
-  virtual void	LoadDefaults();
-  // load defaults according to root::default_file or precompiled defaults
-
-  virtual const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
-  virtual const iColor* GetObjColor(ViewColors vc); // #IGNORE get default color for object (for edit, project view)
+  
   virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
   virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)
-  override bool SetFileName(const String& val);
-
-  // wizard construction functions:
-  virtual void MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
-
-  override int	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  int	Save(ostream& strm, TAPtr par=NULL, int indent=0);
-  int 	SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
+  
+  override void		LoadDefaults();
+  override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
+  override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
+  override void 	MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
 
 #ifdef TA_GUI
-  virtual MainWindowViewer* NewViewer(bool t3_frame = false); 
-    // create a new, empty viewer -- note: window not opened yet
   virtual void	OpenNetworkViewer(Network* net = NULL);
   // #MENU open a viewer on this indicated network
-  virtual void	UpdateSimLog();
-  // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
-
 #endif
   void	UpdateAfterEdit();
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
-  void 	InitLinks();
+  void 	InitLinks_impl(); // special, for this class only
   void	CutLinks();
   void	Copy_(const ProjectBase& cp);
-  COPY_FUNS(ProjectBase, taFBase);
+  COPY_FUNS(ProjectBase, taProject);
   TA_BASEFUNS(ProjectBase);
-};
-
-
-// note: _Group name is for compatiblity with v3.2 files
-class PDP_API Project_Group : public taGroup<ProjectBase> {
-public:
-  int		Load(istream& strm, TAPtr par=NULL); // call reconnect on nets afterwards
-
-  void	Initialize() 		{SetBaseType(&TA_ProjectBase);}
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Project_Group);
+private:
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 
@@ -298,8 +215,6 @@ class PDP_API PDPRoot : public taRootBase {
   // structural root of object hierarchy
 INHERITED(taRootBase)
 public:
-  String		version_no; 	// #READ_ONLY #SHOW current version number
-  Project_Group		projects; 	// #NO_SAVE The projects
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
 
   override void  Settings();		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
@@ -314,272 +229,13 @@ public:
   // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
   override void	SaveAll(); // saves all the projects
 
-  void	UpdateAfterEdit(); // keep projects alias fields in sync
-  void 	Initialize();
   void	InitLinks();
   void	CutLinks();
-  void 	Destroy();
   TA_BASEFUNS(PDPRoot);
-};
-
-#ifdef DEBUG
-#include "ta_variant.h"
-// just a temp test object
-class PDP_API TestObj: public taNBase {
-INHERITED(taNBase)
-public:
-  bool			b; // #DEF_false
-  char			c;
-  signed char		sc;
-  unsigned char		uc;
-  byte			byt; //note: s/b same as an unsigned char
-  short			sh;
-  signed short		ssh;
-  unsigned short	ush;
-  int			i; // #DEF_0
-  signed int		si;
-  signed		s;
-  unsigned int		ui;
-  unsigned		u;
-  long			l;
-  signed long		sl;
-  unsigned long		ul;
-  int64_t		i64;
-  long long		ll;
-  signed long long	sll;
-  uint64_t		u64;
-  unsigned long long	ull;
-  intptr_t		intptr;
-  
-  Variant		v; // used for dynamic testing in the object
-  Variant		v_invalid; 
-  Variant		v_b;
-  Variant		v_c;
-  Variant		v_i;
-  Variant		v_i_ro; // #READ_ONLY #SHOW #NO_SAVE
-  Variant		v_ui;
-  Variant		v_i64;
-  Variant		v_u64;
-  Variant		v_d;
-  Variant		v_str;
-  void*			s_ptr;
-  String		typ_s_ptr; // #READ_ONLY #NO_SAVE #SHOW
-  Variant		v_ptr; 
-  String		typ_v_ptr; // #READ_ONLY #NO_SAVE #SHOW
-  Variant		v_tab; 
-  taBase*		s_tab;
-  String		typ_s_tab; // #READ_ONLY #NO_SAVE #SHOW
-  String		typ_v_tab; // #READ_ONLY #NO_SAVE #SHOW
-  taMatrix*		s_mat;
-  String		typ_s_mat; // #READ_ONLY #NO_SAVE #SHOW
-  Variant		v_mat; 
-  String		typ_v_mat; // #READ_ONLY #NO_SAVE #SHOW
-  taBase*		s_own_tab; // #OWN_POINTER an object we create and own ourself
-  Variant		v_own_tab; // #OWN_POINTER an object we create and own ourself, in a variant
-  
-  void			InitObj(); // #MENU #MENU_CONTEXT set the values to non-clear values
-  
-  virtual bool		TestMethod1(
-    const Variant&	v, 
-    int64_t		i64 = -5,
-    long long		ll = -6,
-    signed long long	sll = -7,
-    uint64_t		u64 = 8,
-    unsigned long long	ull = 9,
-    bool		b = false, 
-    char		c = 65, 
-    signed char		sc = -127,
-    unsigned char	uc = 255,
-    byte		byt = 254, 
-    short		sh = -32767,
-    signed short	ssh = -32766,
-    unsigned short	ush = 65535,
-    int			i = 2147483647, 
-    signed int		si = 2147483646,
-    signed		s = 2147483645,
-    unsigned int	ui = 2,
-    unsigned		u = 3,
-    long		l = 2,
-    signed long		sl = 3,
-    unsigned long	ul = 4,
-    taBase*		s_tab = NULL
-  ); // #MENU #MENU_CONTEXT a method used to test the various argument types; returns b
-  
-  virtual bool		TestMethod_ProblemDefs(
-    char		c = 'a',
-    unsigned int	ui = 4294967295U,
-    unsigned		u = 4294967294U,
-    long		l = 2147483647L,
-    signed long		sl = 2147483646L,
-    unsigned long	ul = 4294967295UL,
-    int64_t		i64 = 9223372036854775807LL,
-    long long		ll = 9223372036854775806LL,
-    signed long long	sll = 9223372036854775805LL,
-    uint64_t		u64 = 18446744073709551615ULL,
-    unsigned long long	ull = 18446744073709551614ULL,
-    const Variant&	v = _nilVariant, 
-    taBase*		s_tab = NULL
-  ); // #MENU #MENU_CONTEXT a method used to test the various problematic default argument types; returns b
-  
-  void	InitLinks();
-  void	CutLinks();
-  void	UpdateAfterEdit();
-  SIMPLE_COPY(TestObj)
-  COPY_FUNS(TestObj, taNBase)
-  TA_BASEFUNS(TestObj);
-protected:
-  void			UpdateTypeDefVars();
 private:
-  void 			Initialize();
-  void			Destroy() {CutLinks();}
+  void 	Initialize();
+  void 	Destroy();
 };
-
-class PDP_API TestObj2: public taNBase {
-INHERITED(taNBase)
-public:
-  int			int_val;
-  TestObj
-  		test_obj;
-  void	InitLinks();
-  void	CutLinks();
-  void	UpdateAfterEdit();
-  void	Copy_(const TestObj2& cp);
-  COPY_FUNS(TestObj2, taNBase)
-  TA_BASEFUNS(TestObj2);
-private:
-  void 			Initialize();
-  void			Destroy() {CutLinks();}
-};
-
-class PDP_API TestObj3: public taNBase {
-INHERITED(taNBase)
-public:
-  int			i;
-  taBase*		s_own_tab; // #OWN_POINTER #IGNORE
-  float			f;
-  
-  void	InitLinks();
-  void	CutLinks();
-  void	UpdateAfterEdit();
-  void	Copy_(const TestObj3& cp);
-  COPY_FUNS(TestObj3, taNBase)
-  TA_BASEFUNS(TestObj3);
-private:
-  void 			Initialize();
-  void			Destroy() {CutLinks();}
-};
-
-class FloatTransform;
-class PDP_API TestOwnObj: public taNBase {
-INHERITED(taNBase)
-public:
-  FloatTransform	ft_inst;
-  FloatTransform*	ft_own;
-  
-  void	InitLinks();
-  void	CutLinks();
-  void	UpdateAfterEdit();
-  void	Copy_(const TestOwnObj& cp);
-  COPY_FUNS(TestOwnObj, taNBase)
-  TA_BASEFUNS(TestOwnObj);
-private:
-  void 			Initialize();
-  void			Destroy() {CutLinks();}
-};
-
-class PDP_API TestOwnedObj_taBase: public taBase {
-public:
-  int			i;
-  String		s;
-  TA_BASEFUNS(TestOwnedObj_taBase);
-private:
-  void 			Initialize() {i = 1; s = "s1";}
-  void			Destroy() {}
-};
-
-class PDP_API TestOwnedObj_taOBase: public taOBase {
-public:
-  int			i;
-  String		s;
-  TA_BASEFUNS(TestOwnedObj_taOBase);
-private:
-  void 			Initialize() {i = 2; s = "s2";}
-  void			Destroy() {}
-};
-
-class PDP_API TestOwnedObj_taBase_inline: public taBase { // #INLINE_DUMP
-public:
-  int			i;
-  String		s;
-  TA_BASEFUNS(TestOwnedObj_taBase_inline);
-private:
-  void 			Initialize() {i = 3; s = "s3";}
-  void			Destroy() {}
-};
-
-class PDP_API TestOwnedObj_taOBase_inline: public taOBase {// #INLINE_DUMP
-public:
-  int			i;
-  String		s;
-  TA_BASEFUNS(TestOwnedObj_taOBase_inline);
-private:
-  void 			Initialize() {i = 4; s = "s4";}
-  void			Destroy() {}
-};
-
-class PDP_API TestOwnedObj: public taNBase {
-INHERITED(taNBase)
-public:
-  TestOwnedObj_taBase* o1; 
-  TestOwnedObj_taOBase* o2; 
-  TestOwnedObj_taBase_inline* o3; 
-  TestOwnedObj_taOBase_inline* o4; 
-  
-  TestOwnedObj_taBase* o5; // #OWN_POINTER
-  TestOwnedObj_taOBase* o6;  // #OWN_POINTER
-  TestOwnedObj_taBase_inline* o7;  // #OWN_POINTER
-  TestOwnedObj_taOBase_inline* o8;  // #OWN_POINTER
-  
-  TestOwnedObj_taOBase* o9;  // not owned
-  TestOwnedObj_taOBase_inline* oA;  // not owned
-  
-  TestOwnedObj_taOBase* oB;  // #OWN_POINTER except not owned
-  TestOwnedObj_taOBase_inline* oC;  // #OWN_POINTER except not owned
-  
-  void	InitLinks();
-  void	CutLinks();
-  TA_BASEFUNS(TestOwnedObj);
-private:
-  void 			Initialize() 
-    {o1=NULL; o2=NULL; o3=NULL; o4=NULL; o5=NULL; o6=NULL; o7=NULL; o8=NULL;
-     o9=NULL; oA=NULL; oB=NULL; oC=NULL;}
-  void			Destroy() {}
-};
-
-class PDP_API TestFloat: public taNBase {
-INHERITED(taNBase)
-public:
-  float			f1;
-  float			f2;
-  float			f3;
-  double		d1;
-  double		d2;
-  double		d3;
-  
-  TA_BASEFUNS(TestFloat);
-private:
-  void 			Initialize() 
-    {f1=0.0f;
-     f2=3.141592653f; 
-     f3=-0.123456789E-15f; 
-     d1=0.0; 
-     d2=3.14159265358979323; 
-     d3=-0.1234567890123456789E-45;
-     }
-  void			Destroy() {}
-};
-
-#endif
 
 
 #endif // pdpshell_h

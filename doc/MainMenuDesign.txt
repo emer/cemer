@@ -238,6 +238,12 @@ To Do's:
 
 * probably put in the legacy Render() behavior into T3DataView because all
   its descendants were built on the premise that Render included a pre Clear_impl
+
+* in taProject, prob move the ProjectBase autoload stuff down, and
+  also process the viewers for auto_open
+* need to move/rationalize pdpMisc::WaitProc_PostLoadOpr() to ta somewhere
+  (tabMisc maybe)
+
 SEEMS TO WORK
 
 * notify chain from TreeView to Frame up to Window, and back to Frames

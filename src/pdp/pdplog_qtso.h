@@ -27,6 +27,7 @@
 #include "pdp_qtso.h"
 #include "datagraph.h"
 #include "netstru_so.h"
+#include "netstru.h"
 #include "pdp_TA_type.h"
 
 // externals
@@ -276,11 +277,9 @@ protected:
 
 class PDP_API NetLogView : public LogView {
   // #INSTANCE displays log information in the network view window
-#ifndef __MAKETA__
-typedef LogView inherited;
-#endif
+INHERITED(LogView)
 public:
-  Network*      network;		// Network to whose views  data is logged
+  NetworkRef      network;		// Network to whose views  data is logged
 
   iNetLogView_Panel*	lvp(){return (iNetLogView_Panel*)m_lvp;}
 

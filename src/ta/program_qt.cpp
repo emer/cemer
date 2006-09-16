@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "program_qtso.h"
+#include "program_qt.h"
 
 #include "ta_qt.h"
 #include "ta_qtdialog.h" // for Hilight button
-#include "tamisc_TA_inst.h"
+#include "ta_TA_inst.h"
 
 #include <QApplication>
 #include <QHBoxLayout>

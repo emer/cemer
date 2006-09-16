@@ -21,6 +21,7 @@
 #include "ta_filer.h"
 #include "ta_matrix.h"
 #include "ta_script.h"
+#include "ta_project.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
 #include "ta_qttype_def.h"

@@ -22,8 +22,8 @@
 #include "ta_script.h"
 #include "dynenum.h"
 
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_def.h"
+#include "ta_TA_type.h"
 
 // forwards
 
@@ -32,7 +32,7 @@ class ProgramRef;
 class Program_Group;
 class Program_List;
 
-class TAMISC_API ProgVar: public taNBase {
+class TA_API ProgVar: public taNBase {
   // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
@@ -88,7 +88,7 @@ private:
   void	Destroy();
 };
 
-class TAMISC_API ProgVar_List : public taList<ProgVar> {
+class TA_API ProgVar_List : public taList<ProgVar> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
 INHERITED(taList<ProgVar>)
 public:
@@ -118,7 +118,7 @@ private:
 
 SmartRef_Of(ProgVar); // ProgVarRef
 
-class TAMISC_API ProgArg: public taOBase {
+class TA_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE a program or method argument
 INHERITED(taOBase)
 public:
@@ -140,7 +140,7 @@ private:
 };
 
 
-class TAMISC_API ProgArg_List : public taList<ProgArg> {
+class TA_API ProgArg_List : public taList<ProgArg> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of arguments
 INHERITED(taList<ProgArg>)
 public:
@@ -155,7 +155,7 @@ private:
 };
 
 
-class TAMISC_API ProgEl: public taOBase {
+class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE definition of a program element
 INHERITED(taOBase)
 public:
@@ -191,7 +191,7 @@ private:
 };
 
 
-class TAMISC_API ProgEl_List: public taList<ProgEl> {
+class TA_API ProgEl_List: public taList<ProgEl> {
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
@@ -211,7 +211,7 @@ private:
 };
 
 
-class TAMISC_API ProgList: public ProgEl { 
+class TA_API ProgList: public ProgEl { 
   // list of ProgEl's, each executed in sequence
 INHERITED(ProgEl)
 public:
@@ -236,7 +236,7 @@ private:
 };
 
 
-class TAMISC_API ProgVars: public ProgEl {
+class TA_API ProgVars: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
@@ -256,7 +256,7 @@ private:
 };
 
 
-class TAMISC_API UserScript: public ProgEl { 
+class TA_API UserScript: public ProgEl { 
   // ProgEl for a user scriptlet
 INHERITED(ProgEl)
 public:
@@ -277,7 +277,7 @@ private:
   void	Destroy()	{}
 };
 
-class TAMISC_API Loop: public ProgEl { 
+class TA_API Loop: public ProgEl { 
   // #VIRT_BASE ##EDIT_INLINE base class for loops
 INHERITED(ProgEl)
 public:
@@ -299,7 +299,7 @@ private:
   void	Destroy()	{CutLinks();}
 };
 
-class TAMISC_API WhileLoop: public Loop { 
+class TA_API WhileLoop: public Loop { 
   // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
 INHERITED(Loop)
 public:
@@ -317,7 +317,7 @@ private:
   void	Destroy()	{}
 };
 
-class TAMISC_API DoLoop: public Loop { 
+class TA_API DoLoop: public Loop { 
   // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
 INHERITED(Loop)
 public:
@@ -334,7 +334,7 @@ private:
   void	Destroy()	{}
 };
 
-class TAMISC_API ForLoop: public Loop { 
+class TA_API ForLoop: public Loop { 
   // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
 INHERITED(Loop)
 public:
@@ -354,7 +354,7 @@ private:
   void	Destroy()	{}
 };
 
-class TAMISC_API IfContinue: public ProgEl { 
+class TA_API IfContinue: public ProgEl { 
   // if condition is true, continue looping (skip any following code and loop back to top of loop)
 INHERITED(ProgEl)
 public:
@@ -372,7 +372,7 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TAMISC_API IfBreak: public ProgEl { 
+class TA_API IfBreak: public ProgEl { 
   // if condition is true, break out of current loop
 INHERITED(ProgEl)
 public:
@@ -390,7 +390,7 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TAMISC_API BasicDataLoop: public Loop { 
+class TA_API BasicDataLoop: public Loop { 
   // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
 INHERITED(Loop)
 public:
@@ -420,7 +420,7 @@ private:
 };
 
 
-class TAMISC_API IfElse: public ProgEl { 
+class TA_API IfElse: public ProgEl { 
   // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
@@ -448,7 +448,7 @@ private:
 };
 
 
-class TAMISC_API MethodSpec: public taOBase { 
+class TA_API MethodSpec: public taOBase { 
   // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCall; has custom taiData
 INHERITED(taOBase)
 public:
@@ -469,7 +469,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class TAMISC_API MethodCall: public ProgEl { 
+class TA_API MethodCall: public ProgEl { 
   // call a method (member function) on an object
 INHERITED(ProgEl)
 friend class MethodSpec;
@@ -499,7 +499,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class TAMISC_API Program_List : public taList<Program> {
+class TA_API Program_List : public taList<Program> {
 INHERITED(taList<Program>)
 public:
   
@@ -512,7 +512,7 @@ private:
 }; //
 
 
-class TAMISC_API Program: public taNBase, public AbstractScriptBase {
+class TA_API Program: public taNBase, public AbstractScriptBase {
   // ##TOKENS ##INSTANCE ##EXT_prog a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
@@ -641,7 +641,7 @@ SmartRef_Of(Program); // ProgramRef
 // 	Program Library 	//
 //////////////////////////////////
 
-class TAMISC_API ProgLibEl: public taNBase {
+class TA_API ProgLibEl: public taNBase {
   // #INSTANCE #INLINE an element in the program library
 INHERITED(taNBase)
 public:
@@ -664,7 +664,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class TAMISC_API ProgLibEl_List : public taList<ProgLibEl> {
+class TA_API ProgLibEl_List : public taList<ProgLibEl> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of program library elements
 INHERITED(taList<ProgLibEl>)
 public:
@@ -676,7 +676,7 @@ private:
   void	Destroy() { Reset(); CutLinks(); }
 };
 
-class TAMISC_API ProgLib: public ProgLibEl_List {
+class TA_API ProgLib: public ProgLibEl_List {
   // #INSTANCE #INLINE the program library
 INHERITED(ProgLibEl_List)
 public:
@@ -697,7 +697,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class TAMISC_API Program_Group : public taGroup<Program> {
+class TA_API Program_Group : public taGroup<Program> {
   // ##EXT_progp a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
@@ -724,7 +724,7 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-class TAMISC_API ProgramCall: public ProgEl { 
+class TA_API ProgramCall: public ProgEl { 
   // call (run) another program, setting any arguments before hand
   INHERITED(ProgEl)
 public:

@@ -1018,11 +1018,11 @@ void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
 void NetLogView::Initialize(){
   view_bufsz = 1;
 //obs  view_shift = 1;
-  network = NULL;
 }
 
 void NetLogView::InitLinks() {
-  LogView::InitLinks();
+  inherited::InitLinks();
+  taBase::Own(network, this); // smartptr ref
 /*TODO:fixup  if(updaters.size == 0) return;
   SchedProcess* proc = (SchedProcess*)updaters.FastEl(0);
   if(proc->network != NULL)
@@ -1030,11 +1030,9 @@ void NetLogView::InitLinks() {
 }
 
 void NetLogView::CutLinks() {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if((proj != NULL) && !proj->deleting)
-    RemoveLabels();
+  RemoveLabels();
+  network = NULL;
   inherited::CutLinks();
-  taBase::DelPointer((TAPtr*)&network);
 }
 
 
@@ -1048,7 +1046,7 @@ void NetLogView::UpdateAfterEdit(){
 }
 
 void NetLogView::SetNetwork(Network* net) {
-  taBase::SetPointer((TAPtr*)&network, net);
+  network = net;
   ArrangeLabels();
 }
 
@@ -1137,7 +1135,7 @@ void NetLogView::ArrangeLabels(int cols, int rows, int width, float left, float 
 }
 
 void NetLogView::UpdateDisplay(TAPtr) {
-  if(!taMisc::gui_active || (network == NULL)) return;
+  if(!taMisc::gui_active || (!network)) return;
 /*TODO  NetView* netview;
   taLeafItr j;
   FOR_ITR_EL(NetView, netview, network->views., j) {
@@ -1216,7 +1214,7 @@ void NetLogView::OnWindowBind_impl(iT3DataViewer* vw) {
 }
 
 void NetLogView::RemoveLabels() {
-  if(!taMisc::gui_active || (network == NULL)) return;
+  if(!taMisc::gui_active || (!network)) return;
 /*TODO  NetView* netview;
   taLeafItr j;
   FOR_ITR_EL(NetView, netview, network->views., j) {

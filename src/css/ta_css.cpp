@@ -22,7 +22,7 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "ta_group.h"
-#include "ta_TA_type.h"
+#include "ta_project.h"
 
 #ifdef TA_GUI
 #include "ta_qttype_def.h"

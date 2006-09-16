@@ -1656,13 +1656,14 @@ public:
   virtual bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
   // #HIDDEN Convert environments
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
-  void 	InitLinks();
+  void 	InitLinks_impl(); //for this class
   void	CutLinks();
   void	Copy_(const V3ProjectBase& cp);
   COPY_FUNS(V3ProjectBase, ProjectBase);
   TA_BASEFUNS(V3ProjectBase);
+private:
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 #endif

@@ -22,6 +22,7 @@
 #include "ta_qttype.h"
 #include "ta_qtgroup.h"
 #include "ta_defaults.h"
+#include "ta_project.h"
 #include "css_qt.h"
 #include "css_basic_types.h"
 #include "ta_css.h"

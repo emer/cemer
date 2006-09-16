@@ -64,7 +64,7 @@ public:
 
 class TA_API IDataHost: public ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:
-  virtual const iColor* colorOfCurRow() const = 0; // background color of cur row
+  virtual const iColor* colorOfCurRow() const = 0; // #IGNORE background color of cur row
   virtual bool		isConstructed() = 0;
   virtual bool		isModal() = 0;
   virtual bool		isReadOnly() = 0;
