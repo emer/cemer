@@ -1646,7 +1646,11 @@ public:
   Process_Group		processes;	// Processes to coordinate training/testing, etc
   PDPLog_Group		logs;		// V3 compatibility only: Logs to display statistics in processes
   Script_Group		scripts;	// V3 compatibility only: Scripts to control arbitrary actions
-
+  String		desc1;
+  String		desc2;
+  String		desc3;
+  String		desc4;
+  
   virtual void	ConvertToV4(); 
   // #BUTTON convert the project to v4.x format
   virtual bool	ConvertToV4_impl();
