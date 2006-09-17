@@ -7298,11 +7298,6 @@ name=;
 el_typ=DataViewer;
 el_def=0;
 };
-test_objs {
-name=;
-el_typ=taBase;
-el_def=0;
-};
 save_rmv_units=0;
 use_sim_log=0;
 prev_file_nm=;

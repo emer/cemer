@@ -90,6 +90,7 @@ void DataViewer::CloseWindow_impl() { // only called if mapped
 void DataViewer::Constr(QWidget* gui_parent) {
   if (!taMisc::gui_active || dvwidget()) return;
   Constr_impl(gui_parent);
+  Constr_post();
 }
 
 void DataViewer::Constr_impl(QWidget* gui_parent) {
@@ -386,7 +387,7 @@ void WindowState::UpdateAfterEdit() {
 
 void WindowState::GetWinState() {
   TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv && tlv->isMapped()) return;
+  if (!tlv || !tlv->isMapped()) return;
   QWidget* widget = tlv->widget(); // cache
 
   iRect r = widget->frameGeometry();
@@ -400,7 +401,7 @@ void WindowState::GetWinState() {
 
 void WindowState::SetWinState() {
   TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv && tlv->isMapped()) return;
+  if (!tlv || !tlv->isMapped()) return;
   QWidget* widget = tlv->widget(); // cache
 
   // convert to pixels
@@ -428,7 +429,7 @@ TopLevelViewer* WindowState::topLevelViewer() {
 
 void WindowState::ScriptWinState(ostream& strm) {
   TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv && tlv->isMapped()) return;
+  if (!tlv || !tlv->isMapped()) return;
 
   GetWinState();
   String temp = tlv->GetPath();
@@ -493,7 +494,10 @@ void TopLevelViewer::Iconify() {
 void TopLevelViewer::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
   if (!dvwidget()) return; // shouldn't happen
+}
 
+void TopLevelViewer::Constr_post() {
+  inherited::Constr_post();
   winState().SetWinState();
   SetWinName();
 }
@@ -516,6 +520,11 @@ void TopLevelViewer::ViewWindow() {
     DeIconify();
     Raise();
   } else {
+// TENT
+    // if not owned yet, put us in the global guy
+    if (!GetOwner() && tabMisc::root)
+      tabMisc::root->viewers.Add(this); // does InitLinks
+// /TENT
     Constr(); // no parent;
     Render();
     

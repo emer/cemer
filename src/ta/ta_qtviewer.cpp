@@ -1201,6 +1201,11 @@ iToolBar* iToolBar_List::FindToolBar(const String& name_) const {
 //   ISelectable	//
 //////////////////////////
 
+QObject* ISelectable::clipHandlerObj() const {
+  ISelectableHost* host_ = host();
+  return (host_) ? host_->clipHandlerObj() : NULL;
+}
+
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   taiMimeSource* ms = NULL;
@@ -1282,27 +1287,27 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) 
 //  cut copy paste link delete
   if (allowed & taiClipData::EA_CUT) {
     taiAction* mel = menu->AddItem("Cu&t", taiMenu::use_default,
-        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_CUT;
   }
   if (allowed & taiClipData::EA_COPY) {
     taiAction* mel = menu->AddItem("&Copy", taiMenu::use_default,
-        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_COPY;
   }
   if (allowed & taiClipData::EA_PASTE) {
     taiAction* mel = menu->AddItem("&Paste", taiMenu::use_default,
-        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE;
   }
   if (allowed & taiClipData::EA_LINK) {
     taiAction* mel = menu->AddItem("&Link", taiMenu::use_default,
-        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
   }
   if (allowed & taiClipData::EA_DELETE) {
     taiAction* mel = menu->AddItem("&Delete", taiMenu::use_default,
-        taiAction::men_act, widget(), SLOT(mnuEditAction(taiAction*)), this);
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_DELETE;
   }
   link()->FillContextMenu_EditItems(menu, allowed);
@@ -1537,7 +1542,7 @@ void ISelectableHost::ClearSelectedItems(bool forced) {
   SelectionChanging(false, forced);
 }
 
-QObject* ISelectableHost::clipHandlerObj() {
+QObject* ISelectableHost::clipHandlerObj() const {
   return helper;
 } 
 
@@ -2141,6 +2146,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
   Qt::WDestructiveClose)), IDataViewWidget(viewer_)
 {
   Init();
+  is_root = viewer_->isRoot(); // need to do before Constr
   // note: caller will still do a virtual Constr() on us after new
 }
 
@@ -2192,11 +2198,13 @@ taiAction* iMainWindowViewer::AddAction(taiAction* act) {
 }
 
 void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
-  if (at_index < 0)
+  if (at_index < 0) {
     body->addWidget(fv);
-  else
+    at_index = body->count() - 1;
+  } else
     body->insertWidget(at_index, fv);
   fv->m_window = this;
+  body->setStretchFactor(at_index, fv->stretchFactor());
   
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
     fv, SLOT(SelectableHostNotifySlot_External(ISelectableHost*, int)) );
@@ -2711,6 +2719,24 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
 }
 
 
+//////////////////////////
+//   iDataPanel_PtrList	//
+//////////////////////////
+
+void* iDataPanel_PtrList::El_Own_(void* it) {
+  if (m_tabView) 
+    ((iDataPanel*)it)->m_tabView = m_tabView; 
+  return it;
+}
+
+void iDataPanel_PtrList::El_disOwn_(void* it_) {
+  if (m_tabView) {
+    iDataPanel* it = (iDataPanel*)it_;
+    if (it->m_tabView == m_tabView)
+      it->m_tabView = NULL; 
+  }
+}
+
 
 //////////////////////////
 //   iTabView		//
@@ -2720,25 +2746,27 @@ iTabView::iTabView(QWidget* parent)
 :QWidget(parent)
 {
   m_viewer_win = NULL;
-  init();
+  Init();
 }
 
 iTabView::iTabView(iTabViewer* data_viewer_, QWidget* parent)
 :QWidget(parent)
 {
   m_viewer_win = data_viewer_;
-  init();
+  Init();
 }
 
 
 iTabView::~iTabView()
 {
+  panels.Reset(); // removes the refs, so we don't get callbacks
   if (m_viewer_win)
     m_viewer_win->TabView_Destroying(this);
 }
 
 
-void iTabView::init() {
+void iTabView::Init() {
+  panels.m_tabView = this;
   layDetail = new QVBoxLayout(this);
   tbPanels = new iTabBar(this);
   layDetail->addWidget(tbPanels);
@@ -2777,8 +2805,7 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
 
 void iTabView::AddPanel(iDataPanel* panel) {
   wsPanels->addWidget(panel);
-  panel->m_tabView = this;
-  panels.Add(panel);
+  panels.Add(panel); // refs us
 }
 
 void iTabView::AddPanelNewTab(iDataPanel* panel) {
@@ -2851,7 +2878,7 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   iDataPanel* rval;
   for (int i = 0; i < panels.size; ++i) {
     rval = panels.FastEl(i);
-    if (rval->m_link == link) return rval;
+    if (rval->link() == link) return rval;
   }
 
   rval = viewer_win()->MakeNewDataPanel_(link);
@@ -2872,18 +2899,19 @@ void iTabView::panelSelected(int idx) {
 }
 
 void iTabView::RemoveDataPanel(iDataPanel* panel) {
-  panel->m_tabView = NULL;
-  panels.Remove(panel);
-  wsPanels->removeWidget(panel); // superfluous, but safe, if panel is destroying
-  // remove any associated tabs, except leave last tab (will get deleted anyway if we are
-  // destructing)
-  for (int i = tbPanels->count() - 1; i >= 0; --i) {
-    iDataPanel* dp = tbPanels->panel(i);
-    if (dp == panel) {
-      if ((i > 0) || (tbPanels->count() > 1)) {
-        tbPanels->removeTab(i);
-      } else {
-        tbPanels->SetPanel(0, NULL); // no panel
+  // we guard for destructing case by clearing panels, so don't detect it
+  if (panels.Remove(panel)) { // Remove unrefs us in panel
+    wsPanels->removeWidget(panel); // superfluous, but safe, if panel is destroying
+    // remove any associated tabs, except leave last tab (will get deleted anyway if we are
+    // destructing)
+    for (int i = tbPanels->count() - 1; i >= 0; --i) {
+      iDataPanel* dp = tbPanels->panel(i);
+      if (dp == panel) {
+        if ((i > 0) || (tbPanels->count() > 1)) {
+          tbPanels->removeTab(i);
+        } else {
+          tbPanels->SetPanel(0, NULL); // no panel
+        }
       }
     }
   }
@@ -2930,7 +2958,7 @@ void iTabView_PtrList::DataPanelDestroying(iDataPanel* panel) {
 iDataPanel::iDataPanel(taiDataLink* dl_)
 :QFrame(NULL)
 {
-  m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
+//nn  m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
@@ -2943,6 +2971,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
 }
 
 iDataPanel::~iDataPanel() {
+  //note: m_tabView should be NULL during general destruction
   if (m_tabView)
     m_tabView->DataPanelDestroying(this);
 }
@@ -2959,7 +2988,7 @@ void iDataPanel::ctrl_focusInEvent(QFocusEvent* ev) {
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr == DCR_ITEM_UPDATED) {
     if (tabView())
-      tabView()->UpdateTabNames(); //in case any changed
+      tabView()->UpdateTabNames(); //in case any changed */
   }
 }
 
@@ -3007,8 +3036,10 @@ iDataPanelFrame::~iDataPanelFrame() {
 void iDataPanelFrame::ClosePanel() {
   CancelOp cancel_op = CO_NOT_CANCELLABLE;
   Closing(cancel_op); // forced, ignore cancel
-  if (m_tabView) // effectively unlink from system
-    m_tabView->DataPanelDestroying(this);
+//TENT -- this could have bad side effects, but receiver should treat us as deleted...
+  emit destroyed(this); // signals tab view we are gone
+/*  if (m_tabView) // effectively unlink from system
+    m_tabView->DataPanelDestroying(this); */
   if (!m_dps) // if in a panelset, we let panelset destroy us
     deleteLater(); // per Qt specs, defer deletions to avoid issues
 }
@@ -3123,6 +3154,10 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 }
 
 iDataPanelSet::~iDataPanelSet() {
+  for (int i = panels.size - 1; i >= 0 ; --i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->m_tabView = NULL;
+  }
 }
 
 void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {

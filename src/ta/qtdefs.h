@@ -27,6 +27,7 @@ class	QDir;			// #IGNORE
 class	QEvent;			// #IGNORE 
 template<class T> class	QList;	// #IGNORE 
 class	QObject;		// #IGNORE 
+template<class T> class	QPointer; // #IGNORE 
 class	QString;		// #IGNORE 
 class	QStringList;		// #IGNORE 
 class	QTimer;			// #IGNORE 

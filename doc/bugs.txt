@@ -29,6 +29,7 @@ To Be Prioritized:
 * GNU Scientific library integration
 * add "pin/unpin" capability to panels, and extend panel tab context menu 
 * Printing Analysis, Design, and Implementation -- MAJOR
+* clean up PDP Base etc.
 
 BUGS
 ----

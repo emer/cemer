@@ -222,7 +222,7 @@ MainWindowViewer* taProject::MakeViewer_impl() {
   // add a T3 viewer frame, if that is defined
   int idx;
   //note: T3 stuff is in tamisc, so we get the type guy symbolically
-  TypeDef* typ = taMisc::types.FindName("T3Viewer");
+  TypeDef* typ = taMisc::types.FindName("T3DataViewer");
   if (typ) {
     vwr->FindFrameByType(typ, idx);
     if (idx < 0) {
@@ -380,9 +380,11 @@ void taRootBase::Destroy() {
 void taRootBase::InitLinks() {
   inherited::InitLinks();
   taBase::Own(projects, this);
+  taBase::Own(viewers, this);
 }
 
 void taRootBase::CutLinks() {
+  viewers.CutLinks();
   projects.CutLinks();
   inherited::CutLinks();
 }

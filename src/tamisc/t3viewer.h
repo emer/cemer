@@ -421,6 +421,7 @@ public:
   SoQtViewer* 		ra() {return m_ra;} //TODO: maybe should not cache; should get from body()
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
+  override int		stretchFactor() const {return 3;} // 3x default
   inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
 
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list

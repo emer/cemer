@@ -160,6 +160,7 @@ INHERITED(taNBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
   Project_Group		projects; 	// #NO_SAVE The projects
+  DataViewer_List	viewers;	// global viewers (not saved)
   
   virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
   virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!

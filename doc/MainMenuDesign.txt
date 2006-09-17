@@ -251,10 +251,9 @@ SEEMS TO WORK
 BUGS
 
 * in browseviewer, root item not selected by default (should be??? maybe not?)
-* treeview seems not be be able to shrink down past a certain point, at least
-  in viewerwin with a panelview
 * when you go "openviewer" on a network, the resulting new 3-pane viewer
   has the T3 panel not visible -- you have to move the slider to make it visible
+* "Browse from here" on a project in .projects gives segfault
 
 Questions:
 

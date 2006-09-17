@@ -145,6 +145,7 @@ protected:
     // master Constr, only called if !m_widget 
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
+  virtual void		Constr_post() {} // called after everything built, typ used for resizing/moving
 
 private:
   IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
@@ -368,6 +369,7 @@ protected:
   override void 	Dump_Save_pre(); // TEMP: update winpos etc.
   
   override void		Constr_impl(QWidget* gui_parent); 
+  override void		Constr_post();
   virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
 private:

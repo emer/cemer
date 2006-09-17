@@ -317,6 +317,7 @@ public: // Interface Properties and Methods
   taBase*		taData() const; // if the data is taBase, this returns it
   virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
   QWidget*		widget() const; // gets from host
+  QObject*		clipHandlerObj() const; // shortcut for host()->clipHanderObj(); 
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
@@ -418,8 +419,8 @@ public:
     OP_DESTROYING
   };
   
-  static const char* edit_enabled_slot; // for the SetClipboardHandler call
-  static const char* edit_action_slot; // for the SetClipboardHandler call
+  static const char* edit_enabled_slot; // for the SetClipboardHandler call, takes int& param
+  static const char* edit_action_slot; // for the SetClipboardHandler call, takes int param
   static const char* actions_enabled_slot; // currently NULL
   static const char* update_ui_signal; // currently NULL
   
@@ -429,7 +430,7 @@ public:
     // Action list, of current dynamic actions available
   virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
    // -- list of current dynamic methods available
-  QObject*		clipHandlerObj(); 
+  QObject*		clipHandlerObj() const; 
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
   virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
   virtual bool		selectionChanging() {return (m_sel_chg_cnt != 0);}
@@ -524,6 +525,7 @@ friend class MainWindowViewer;
 friend class iMainWindowViewer;
 public:
   
+  virtual int		stretchFactor() const {return 1;} // helps set sensible alloc of space in split
   inline FrameViewer*	viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
   inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
@@ -571,6 +573,7 @@ public:
   
   virtual taiDataLink*	sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*	sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
+  override int		stretchFactor() const {return 2;} // 2x default
   iTabView*		tabView() {return m_curTabView;} // currently active
   iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
 
@@ -834,8 +837,12 @@ protected:
 
 class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
-  iDataPanel_PtrList() {}
+  iTabView*	m_tabView; // optional, we manage the refs in panels if set
+  iDataPanel_PtrList() {m_tabView = NULL;}
   ~iDataPanel_PtrList() {}
+protected:
+  override void*	El_Own_(void* it); // set ref to our tabview (on Add, not Link)	
+  override void		El_disOwn_(void* it_); // remove ref if it is our tabview	
 };
 
 
@@ -868,7 +875,6 @@ public:
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
   void 			SetPanel(iDataPanel* panel);
-  void 			UpdateTabNames(); // called by a datalink when a tab name might have changed
 
   iTabView(QWidget* parent = NULL);
   iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
@@ -878,13 +884,14 @@ public slots:
   void 			AddTab();
   void 			CloseTab();
   virtual void		panelSelected(int idx);
+  void 			UpdateTabNames(); // called by a datalink when a tab name might have changed; panels also hook to this
 
 protected:
   iTabViewer* 	m_viewer_win;
 
 private:
   iDataPanel_PtrList	panels; // no external hanky-panky with this puppie
-  void			init();
+  void			Init();
 };
 
 //////////////////////////
@@ -908,7 +915,7 @@ class TA_API iDataPanel: public QFrame, public IDataLinkClient {
   Q_OBJECT
 friend class taDataLink;
 friend class iPanelTab;
-friend class iTabView;
+friend class iDataPanel_PtrList;
 friend class iDataPanelSet;
 public:
   virtual void		setCentralWidget(QWidget* widg); // sets the contents

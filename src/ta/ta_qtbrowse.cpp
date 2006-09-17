@@ -458,10 +458,10 @@ void iBrowseViewer::Init() {
 //TEMP  lvwDataTree->setDragEnabled(true);
 //TEMP  lvwDataTree->setAcceptDrops(true);
 //TEMP  lvwDataTree->setDropIndicatorShown(true);
-  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
+/*no! prevents from collapsing in splitters  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree
-
+*/
   connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)),
       this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)) );
   lvwDataTree->Connect_SelectableHostNotifySignal(this, 
