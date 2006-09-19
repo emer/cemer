@@ -240,7 +240,7 @@ public:
   virtual QWidget*	widget() = 0; // return the widget
   DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
   
-  virtual void		Constr() {} // called virtually, after new
+  void			Constr() {Constr_impl();} // called virtually, after new, override impl
   void			Close(); // deletes or closes us, and disconects us from viewer
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
@@ -251,6 +251,7 @@ public:
 protected:
   DataViewer*		m_viewer; // our mummy
   virtual void		Close_impl(); //default calls widget->close (good for top-level windows w/ Destroy option, but maybe use delete for widgets)
+  virtual void		Constr_impl() {} // override for virtual construction (called after new)
 };
 
 
@@ -548,7 +549,8 @@ signals:
 
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
-//  override void		Constr(); // called virtually, after new
+protected:
+//  override void		Constr_impl(); // called virtually, after new
 
 protected:
   iMainWindowViewer*    m_window;
@@ -620,7 +622,8 @@ public:
   
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
-//  override void		Constr() {} // called virtually, after new
+protected:
+//  override void		Constr_impl() {}
   
 protected:
 };
@@ -764,7 +767,8 @@ signals:
 
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
-  override void		Constr();
+protected:
+  override void		Constr_impl();
 
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)

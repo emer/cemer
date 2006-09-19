@@ -708,6 +708,11 @@ iT3DataViewer::~iT3DataViewer() {
   Reset_impl();
 }
 
+void iT3DataViewer::Constr_impl() {
+  inherited::Constr_impl();
+  m_ra->show();
+}  
+
 void iT3DataViewer::Init() {
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setSpacing(0);  lay->setMargin(0);
@@ -782,7 +787,7 @@ void iT3DataViewer::Render_impl() {
 }
 
 void iT3DataViewer::Render_post() {
-  m_ra->show();
+//  m_ra->show();
 }
 
 void iT3DataViewer::Reset_impl() {
@@ -881,9 +886,13 @@ void T3DataViewer::Clear_impl(taDataView* par) {
   inherited::Clear_impl(par);
 }
 
-void T3DataViewer::Constr() {
-  inherited::Constr();
+void T3DataViewer::Constr_impl(QWidget* gui_parent) {
+  inherited::Constr_impl(gui_parent);
   root_view.host = widget()->t3vs; // TODO: prob should encapsulate this better
+}
+
+void T3DataViewer::Constr_post() {
+  inherited::Constr_post();
   root_view.OnWindowBind(widget());
   // on first opening, do a viewall to center all geometry in viewer
   widget()->ra()->viewAll();

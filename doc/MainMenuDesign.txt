@@ -121,7 +121,9 @@ DataViewer:taDataView (A) -- anything common to all viewer types
       tabBrowseViewer -- for taBase root
       ClassViewer -- for class item root
     TabViewer -- for the edit panels (can also be split)
-    T3DataViewer -- for T3 guys
+    PersistibleViews -- for guys that can live in .views
+      T3DataViewer -- for T3 guys
+      ?? -- ex., DataDesign view, etc.
 
 
 taList<FrameViewer>
@@ -145,7 +147,11 @@ T3DataViewer[] viewers -- note: these are taDataView, not DataViewer
   
 Gui Classes:
 
-IViewerWidget -- interface that all viewer widgets must implement
+IViewerWidget -- interface that all viewer widgets must implement (since
+    view widgets don't all inherit from a single class, we need this)
+  DataViewer* m_viewer -- the viewer, passed in constructor
+  QWidget* conversion -- supplies the underlying QWidget
+  virtual Constr -- virtual constr routine that is called after new
 
 QMainWindow
   iMainWindowViewer -- the widget for a MainWindowViewer
@@ -197,12 +203,69 @@ iMainWindowViewer
 iDataPanelSet
   iDataPanelFrame[]
   
-  
-IViewerWidget -- contents
-  DataViewer* m_viewer -- the viewer, passed in constructor
-  QWidget* conversion -- supplies the underlying QWidget
-  virtual Constr -- virtual constr routine that can be called after new
-  
+Nomenclature and Browse/View gui semantics
+
+A "Browser Window" and "Browse..." implies a viewer with:
+  * a treeview
+  * a panel frame
+but *not* a T3 viewer frame
+
+* if a browser is of a project or below, the viewer obj
+  gets put in the project viewers, otherwise in the
+  global viewers
+
+"View in..." implies adding the item to the indicated view
+Maybe *all* T3 viewing involves:
+  1) an independent design of the view
+  2) an invisible container for adding to viewers:
+     particularly controls: position, orientation, and
+      scaling of the content
+  3) a viewer, that contains concrete view containers,
+     which contain **links** to concrete views
+
+Persistence Semantics
+
+A main viewer can either be default persistent or not.
+If it is not default persistent, closing the window will
+silently delete the underlying view.
+If it *is* default persistent, then there are two cases:
+  1) it is the explicit "Default" for the project
+  2) it has been created anew
+In case (1) it automatically gets saved as "Default".
+In case (2), an attempt to close will prompt for a 
+name to save the view under. There will also be a 
+View/Save menu item
+
+What can be viewed??
+Now:
+  * Network
+  * Graph/Text logs (regardless of underlying impl)
+Planned:
+  * Net Output viewers (ex. text labels, etc.)
+  * Net Input viewers (ex. the jpg being applied, etc.)
+
+
+Proposal:
+
+ViewFrame
+  PersistableViewFrame
+    T3ViewFrame
+    (others)
+
+these get saved in a Project::.views collection
+they get *linked* into viewers
+Issues:
+* one guy can only have one window (unless we create
+  some kind of complicated proxy thing for handling
+  multiple windows)
+
+Questions
+
+How will we manage persistence, naming, and reference to viewers?
+Could get confusing to user. Note that things like Netview,
+ Graphviews, etc. generally have distinct life apart from being
+ viewed in any viewer -- does it make sense to only **link** to
+ these, and have them stored somehow with the entity? 
 
 Issues
 
@@ -231,18 +294,31 @@ To Do's:
   * (possibly) change order or placement of frames
 * every widget class should have a basic "new" and then a virtual Contr
   -- every CreateWidget_impl must call the ->Constr
-
 * TabFrameViewer -- basically allows nested FrameView guys, in a tab
-
 * make toolbars descend from the DataViewer/IDataViewerWidget edifice
-
 * probably put in the legacy Render() behavior into T3DataView because all
   its descendants were built on the premise that Render included a pre Clear_impl
-
 * in taProject, prob move the ProjectBase autoload stuff down, and
   also process the viewers for auto_open
 * need to move/rationalize pdpMisc::WaitProc_PostLoadOpr() to ta somewhere
   (tabMisc maybe)
+* dynamic mapping (ex. adding a new frame or subframe to a mapped view)
+
+From Randy's emails:
+
+Here's what I was imagining.  Every browser window comes with a 3d panel there 
+by default.  To populate it, you select "Create 3D View in.." and choose an 
+existing view (Default or whatever), or the "New View" option (which will 
+create a new tab in current browser).  
+
+Also, we need to clearly distinguish between the notion of a "browser window" 
+and a "3d view" which lives within the browser window in the 3rd panel.  The 
+current thing seems to conflate these (you do "open viewer" and you get both 
+a new browser and a new 3d view).  So, in addition to the "Create 3D View 
+In.." option, we would have the current "Browse From Here.." option that 
+creates a new browser window..
+
+
 
 SEEMS TO WORK
 
@@ -254,6 +330,9 @@ BUGS
 * when you go "openviewer" on a network, the resulting new 3-pane viewer
   has the T3 panel not visible -- you have to move the slider to make it visible
 * "Browse from here" on a project in .projects gives segfault
+* T3 network no longer showing up when you do "Show in Viewer"
+* NetView Panel not being created for net views
+* no context menu in T3 view
 
 Questions:
 
@@ -292,6 +371,35 @@ Things That Are Nuked:
 
 * DataViews no longer have a "Changed" semantics (this wasn't really used anyway)
 * DataViews no longer have built in file/save support (again, wasn't used)
+
+
+Summary of Action Stages
+
+
+there are probably too many concepts now, but here they are:
+
+Model Constr -- making the view model -- ex. this would be 
+  what got streamed back in from a file -- these are entirely
+   taBase-based structures -- they create gui things as needed
+  they follow all the normal rules for taBase structures
+Win Constr -- gui construction
+  CreateWidget_impl -- main container QWidget objs get created
+  Constr -- a virtual step called on Widgets after creation
+  Constr_post -- gui constr to do after entire thing in place
+Render
+  Render_pre -- setup stuff -- recursive
+  Render_impl -- meat and bones -- recursive
+  Render_impl -- post stuff after everything else
+Clear
+  Clear_impl -- recursive visual clearing -- 
+    really only used by T3 currently (nukes inventor
+    objs -- Render then recreates them)
+Reset
+  Reset_impl -- recursive model clear
+
+As an example, ViewWindow decomposes as follows:
+  WinConstr
+  Render
 
 ------------------
 Main Menu Redesign

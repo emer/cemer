@@ -2258,7 +2258,7 @@ void iMainWindowViewer::closeEvent (QCloseEvent* e) {
   else        e->accept();
 }
 
-void iMainWindowViewer::Constr() {
+void iMainWindowViewer::Constr_impl() {
   Constr_MainMenu_impl();
   Constr_Menu_impl();
   // we always put the fileclose action at bottom of menu

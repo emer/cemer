@@ -165,6 +165,24 @@ QWidget* DataViewer::widget() {
 
 
 //////////////////////////////////
+//   DataViewer_List	 	//
+//////////////////////////////////
+
+void DataViewer_List::Constr_impl(QWidget* gui_parent) {
+  for (int i = 0; i < size; ++i) {
+    DataViewer* dv = FastEl(i);
+    dv->Constr_impl(gui_parent);
+  }
+}
+
+void DataViewer_List::Constr_post() {
+  for (int i = 0; i < size; ++i) {
+    DataViewer* dv = FastEl(i);
+    dv->Constr_post();
+  }
+}
+
+//////////////////////////////////
 //   FrameViewer	 	//
 //////////////////////////////////
 
@@ -907,6 +925,12 @@ void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
 //TODO, replace:  win->SelectionChanged(true); // initializes selection system
 }
 
+void MainWindowViewer::Constr_post() {
+  inherited::Constr_post();
+  frames.Constr_post();
+  docks.Constr_post();
+}
+
 void MainWindowViewer::ConstrDocks_impl() {
   //TODO: add the dock guys 
   // note: this is only ever for docked guys -- floating guys are standalone
@@ -918,7 +942,7 @@ void MainWindowViewer::ConstrFrames_impl() {
     FrameViewer* fv = frames.FastEl(i);
     if (!fv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
-    fv->Constr();
+    fv->Constr_impl(NULL);
     win->AddFrameViewer(fv->widget());
   }
 }

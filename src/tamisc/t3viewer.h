@@ -435,6 +435,9 @@ public: // menu and menu overrides
 public slots:
   virtual void 		fileExportInventor();
 
+protected: // IViewerWidget i/f
+  override void		Constr_impl();
+  
 protected slots:
   void 			vs_contextMenuRequested(const QPoint& pos);
   void			vs_SoSelectionEvent(iSoSelectionEvent* ev);
@@ -474,15 +477,15 @@ public:
   COPY_FUNS(T3DataViewer, FrameViewer)
   TA_DATAVIEWFUNS(T3DataViewer, FrameViewer)
   
-public: // IDataViewWidget
-  override void		Constr();
 
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void		SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 
 
+  override void		Constr_impl(QWidget* gui_parent = NULL);
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent = NULL); // #IGNORE
+  override void		Constr_post();
   override void 	WindowClosing(CancelOp& cancel_op); // #IGNORE
   override void		Clear_impl(taDataView* par = NULL); // #IGNORE
   override void		Render_pre(taDataView* par = NULL); // #IGNORE

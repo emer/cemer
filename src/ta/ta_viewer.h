@@ -96,7 +96,7 @@ class TA_API DataViewer : public taDataView {
 INHERITED(taDataView)
 friend class taDataLink;
 friend class DataViewer_List;
-//friend class MainWindowViewer;
+friend class MainWindowViewer;
 //friend class WindowState;
 public:
   enum PrintFmt {
@@ -117,7 +117,7 @@ public:
   virtual iMainWindowViewer* window() {return NULL;}
     // #IGNORE valid if is, or is within, a main window
 
-  virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class
+  virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops, all others recursively call _impl, then _post
   void 			CloseWindow();	
    // #IGNORE closes the window or panel, removing our reference
  
@@ -157,6 +157,9 @@ private:
 class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS
 INHERITED(DataView_List)
 public:
+  virtual void 		Constr_impl(QWidget* gui_parent); // called by a parent, recurses
+  virtual void 		Constr_post(); // called by a parent, recurses
+  
   TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
 
 private:
@@ -484,8 +487,8 @@ public:
   taiMenuBar*		menu; // #IGNORE menu bar -- note: partially managed by the window
   taiActions*		cur_menu; // #IGNORE for building menu
 #endif
-  ToolBar_List		toolbars;	// #HIDDEN
-  FrameViewer_List 	frames;	// #HIDDEN the frames shown in the center splitter area
+  ToolBar_List		toolbars;	// 
+  FrameViewer_List 	frames;	// the frames shown in the center splitter area
   DockViewer_List	docks; // currently docked windows -- removed if they undock
 
   override bool		isRoot() {return m_is_root;}
@@ -542,6 +545,7 @@ protected:
   //from DataView
   override void		CloseWindow_impl();
   override void		Constr_impl(QWidget* gui_parent); 
+  override void 	Constr_post();
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
 
   // from TopLevelView
