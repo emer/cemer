@@ -222,14 +222,18 @@ void taPtrList_impl::AddEl_(void* it) {
 }
 
 void taPtrList_impl::Add_(void* it, bool no_notify) {
+  int idx = size; // the new item index, once added
   AddEl_(it);
-  if(it != NULL) {
-    El_SetIndex_(El_Own_(it), size-1);
+  if (it != NULL) {
+    El_SetIndex_(El_Own_(it), idx);
+    if (El_GetName_(it).empty()) {
+      El_SetDefaultName_(it, idx);
+    }
     if(hash_table != NULL)
-      hash_table->Add(El_GetHashVal_(it), size-1);
+      hash_table->Add(El_GetHashVal_(it), idx);
   }
   if (no_notify) return;
-  DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
+  DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(idx - 1)); 
 }
 
 bool taPtrList_impl::AddUnique_(void* it) {

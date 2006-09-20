@@ -4719,8 +4719,30 @@ void Network::CopyNetwork(Network* net) {
   UpdtAfterNetMod();
 }
 #ifdef TA_GUI
-void Network::OpenViewer() {
-  proj->OpenNetworkViewer(this);
+void Network::ShowInViewer(T3DataViewer* vwr) {
+  if (vwr) {
+//TODO: need to verify it was from this project -- we should be able to specify this by directive...
+        // check if already viewing this log there, warn user
+    T3DataView* dv = vwr->FindRootViewOfData(this);
+    if (dv) {
+      if (taMisc::Choice("This network is already shown in that viewer -- are you sure you"
+          " want to show it there again?", "&Ok", "&Cancel") != 0) return;
+    }
+
+  } else {
+    // find the default viewer
+//TODO: should use topmost viewer/selected t3 tab
+    MainWindowViewer* mv = proj->GetDefaultProjectBrowser();
+    if (mv) { // should exist if we can invoke this!
+      vwr = (T3DataViewer*)mv->FindFrameByType(&TA_T3DataViewer);
+    }
+  }
+  if (!vwr) return; // prob should give error msg
+  
+  // add the netview
+  NetView* nv = NetView::New(vwr, this);
+  nv->BuildAll();
+  vwr->Render();
 }
 #endif
 void Network::RemoveUnits() {

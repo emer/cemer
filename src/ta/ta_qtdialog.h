@@ -235,7 +235,9 @@ public:
     ACTIVE		= 0x03,
     ACCEPTED		= 0x04,
     CANCELED		= 0x05,
-    SHOW_CHANGED	= 0x80	// flag to indicate what to show was changed, reconstruct!
+    ZOMBIE		= 0x06, // for when gui stuff deleted before we did
+    STATE_MASK		= 0x0F, // #NO_SHOW
+    SHOW_CHANGED	= 0x80	// #NO_SHOW flag to indicate what to show was changed, reconstruct!
   };
   
   enum HostType {
@@ -311,6 +313,7 @@ public:
   virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
+  virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
@@ -323,7 +326,8 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 public: // IDataHost i/f
   const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
   bool  	HasChanged() {return modified;}	
-  bool		isConstructed() {return state > EXISTS;}
+  bool		isConstructed() {int s = state & STATE_MASK;
+    return ((s > EXISTS) && (s < ZOMBIE));}
   bool		isModal() {return modal;}
   bool		isReadOnly() {return read_only;}
   void*		Base() {return cur_base;} // base of the object
@@ -382,7 +386,8 @@ protected:
   void 			DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
   void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
-
+  
+  virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 protected slots:
   virtual void	label_contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e);
 };
@@ -401,6 +406,7 @@ public:
 class TA_API taiEditDataHost : public taiDataHost {
   // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
   Q_OBJECT
+INHERITED(taiDataHost)
 friend class EditDataPanel;
 public:
   taMisc::ShowMembs	show;		// current setting for what to show
@@ -449,6 +455,7 @@ public slots:
 protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()
 
+  override void		InitGuiFields(bool virt = true);
   void			setShowValues(taMisc::ShowMembs value);
   override void		ClearBody_impl();
   override void		Constr_Strings(const char* prompt, const char* win_title);

@@ -193,12 +193,8 @@ public:
   override void		LoadDefaults();
   override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
   override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
-  override void 	MakeDefaultWiz(bool auto_opn); // make the default wizard(s)
+  override void 	AssertDefaultWiz(bool auto_opn); // make the default wizard(s)
 
-#ifdef TA_GUI
-  virtual void	OpenNetworkViewer(Network* net = NULL);
-  // #MENU open a viewer on this indicated network
-#endif
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
   void	CutLinks();

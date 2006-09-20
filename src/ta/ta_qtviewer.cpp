@@ -1131,15 +1131,22 @@ IDataViewWidget::~IDataViewWidget() {
 }
 
 void IDataViewWidget::Close() {
+  if (m_viewer) {
+    m_viewer->WidgetDeleting();
+    m_viewer = NULL;
+  }
   Close_impl();
+  //NO CODE AFTER THIS POINT -- WE MAY BE DELETED
 }
 
 void IDataViewWidget::Close_impl() {
-   // this version is find if you added WDestructiveClose to the widget flags,
+   // this version is fine if you added WDestructiveClose to the widget flags,
    // otherwise, you might want to do "deleteLater()"
    // just doing "delete this" is not really a very safe operation,
    // and there may be issues with "deleteLater()" 
-   widget()->close();
+//   widget()->close();
+//TEMP
+delete this;
 }
 
 
@@ -1853,7 +1860,7 @@ void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int o
 //   iTabViewer 	//
 //////////////////////////
 
-iTabViewer::iTabViewer(TabViewer* viewer_, QWidget* parent)
+iTabViewer::iTabViewer(PanelViewer* viewer_, QWidget* parent)
 : inherited(viewer_, parent)
 {
   Init();
@@ -2131,9 +2138,23 @@ void iTabViewer::viewSplitHorizontal() {
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
 :inherited(parent, Qt::WDestructiveClose), IDataViewWidget(viewer_)
 {
+  Init();
 }
 
 iDockViewer::~iDockViewer() {
+}
+
+void iDockViewer::Init() {
+  // set the features
+  DockViewer::DockViewerFlags dock_flags = viewer()->dock_flags; // cache
+  DockWidgetFeatures dwf = 0;
+  if (dock_flags & DockViewer::DV_CLOSABLE)
+    dwf |= QDockWidget::DockWidgetClosable;
+  if (dock_flags & DockViewer::DV_MOVABLE)
+    dwf |= QDockWidget::DockWidgetMovable;
+  if (dock_flags & DockViewer::DV_FLOATABLE)
+    dwf |= QDockWidget::DockWidgetFloatable;
+  setFeatures(dwf);
 }
 
 
@@ -2146,7 +2167,8 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
   Qt::WDestructiveClose)), IDataViewWidget(viewer_)
 {
   Init();
-  is_root = viewer_->isRoot(); // need to do before Constr
+  m_is_root = viewer_->isRoot(); // need to do before Constr
+  m_is_proj_viewer = viewer_->isProjViewer(); // need to do before Constr
   // note: caller will still do a virtual Constr() on us after new
 }
 
@@ -2171,7 +2193,8 @@ void iMainWindowViewer::Init() {
   body = NULL;
   last_clip_handler = NULL;
   last_sel_server = NULL;
-  is_root = false;
+  m_is_root = false;
+  m_is_proj_viewer = false;
   m_last_action_idx = -1;
   // set maximum size
   iSize ss = taiM->scrn_s;
@@ -2197,6 +2220,12 @@ taiAction* iMainWindowViewer::AddAction(taiAction* act) {
   return act;
 }
 
+void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_area) {
+  if (!dv) return;
+  addDockWidget(in_area, dv);
+  //TODO: maybe need to hook up signals for undocking
+}
+ 
 void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   if (at_index < 0) {
     body->addWidget(fv);
@@ -2219,9 +2248,9 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
 // so if there isn't already a panel viewer, we have to add one
 void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
   iTabViewer* itv = NULL;
-  TabViewer* tv = (TabViewer*)viewer()->FindFrameByType(&TA_TabViewer);
+  PanelViewer* tv = (PanelViewer*)viewer()->FindFrameByType(&TA_PanelViewer);
   if (!tv) {
-    tv = (TabViewer*)viewer()->AddFrameByType(&TA_TabViewer);
+    tv = (PanelViewer*)viewer()->AddFrameByType(&TA_PanelViewer);
     tv->Constr(); // parented when added
     AddFrameViewer(tv->widget(), 1); // usually in middle
   }
@@ -2309,38 +2338,44 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
 
 void iMainWindowViewer::Constr_Menu_impl() {
 
-  // default actions
-  if (showFileObjectOps()) {
-    fileNewAction = AddAction(new taiAction("&New...", QKeySequence("Ctrl+N"), _fileNewAction ));
-    fileNewAction->setIconSet( QIconSet( image0 ) );
-    fileOpenAction = AddAction(new taiAction("&Open...", QKeySequence("Ctrl+O"), _fileOpenAction ));
-    fileOpenAction->setIconSet( QIconSet( image1 ) );
-    fileSaveAction = AddAction(new taiAction("&Save", QKeySequence("Ctrl+S"), _fileSaveAction ));
-    fileSaveAction->setIconSet( QIconSet( image2 ) );
-    fileSaveAsAction = AddAction(new taiAction("Save &As...", QKeySequence(), _fileSaveAsAction ));
-    fileSaveAllAction = AddAction(new taiAction("Save A&ll", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
-    fileCloseAction = AddAction(new taiAction("Close", QKeySequence(), "fileCloseAction" ));
-    
-    fileNewAction->AddTo(fileMenu);
-    fileOpenAction->AddTo(fileMenu );
-    fileSaveAction->AddTo(fileMenu );
-    fileSaveAsAction->AddTo(fileMenu);
-    fileSaveAllAction->AddTo(fileMenu);
-    fileCloseAction->AddTo(fileMenu);
-    fileMenu->insertSeparator();
-    
-    connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
-    connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
+  // project actions -- we always create them (for menu consistency) but selectively enable
+  fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence("Ctrl+N"), _fileNewAction ));
+  fileNewAction->setIconSet( QIconSet( image0 ) );
+  fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence("Ctrl+O"), _fileOpenAction ));
+  fileOpenAction->setIconSet( QIconSet( image1 ) );
+  
+  fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence("Ctrl+S"), _fileSaveAction ));
+  fileSaveAction->setIconSet( QIconSet( image2 ) );
+  fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
+  fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
+  fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
+  
+  fileNewAction->AddTo(fileMenu);
+  fileOpenAction->AddTo(fileMenu );
+  fileSaveAction->AddTo(fileMenu );
+  fileSaveAsAction->AddTo(fileMenu);
+  fileSaveAllAction->AddTo(fileMenu);
+  fileCloseAction->AddTo(fileMenu);
+  fileMenu->insertSeparator();
+  
+  connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
+  connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
+  connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
+  if (isProjViewer()) {
     connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
     connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
-    connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
     connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
+  } else {
+    fileSaveAction->setEnabled(false);
+    fileSaveAsAction->setEnabled(false);
+    fileCloseAction->setEnabled(false);
   }
+  // other actions
   fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
   
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
   filePrintAction->setIconSet( QIconSet( image3 ) );
-  if (is_root)
+  if (isRoot())
     fileCloseWindowAction = AddAction(new taiAction("&Quit", QKeySequence("Ctrl+Q"), _fileCloseWindowAction ));
   else
     fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence("Ctrl+W"), _fileCloseWindowAction ));
@@ -2430,6 +2465,21 @@ iToolBar* iMainWindowViewer::Constr_ToolBar(ToolBar* tb, String name) {
   return rval;
 }
 
+taProject* iMainWindowViewer::curProject() {
+  taProject* rval = NULL;
+  if (isProjViewer()) {
+    MainWindowViewer* db = viewer();
+    if (!db) return NULL; // shouldn't happen
+    BrowseViewer* bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+    if (!bv) return NULL; // generally shouldn't happen (we usually have a browse tree)
+    if (!bv->root()) return NULL; //shouldn't happen
+    if (!bv->rootType()->InheritsFrom(&TA_taProject)) return NULL; // we aren't a project
+    rval = (taProject*)bv->root();
+  }
+  return rval;
+}
+
+
 void iMainWindowViewer::emit_EditAction(int param) {
   emit EditAction(param);
   taiMisc::RunPending();
@@ -2442,9 +2492,52 @@ void iMainWindowViewer::emit_EditAction(int param) {
 } */
 
 void iMainWindowViewer::fileCloseWindow() {
-  if (is_root) {
+  if (isRoot()) {
     if (tabMisc::root) tabMisc::root->Quit();
   } else close();
+}
+
+// note: all the fileXxx for projects are safe -- they don't get enabled
+//  unless they are applicable (ex Save only if it is a viewer)
+void iMainWindowViewer::fileNew() {
+  if (!tabMisc::root) return;
+  taProject* proj = (taProject*)tabMisc::root->projects.New(); // let user choose type
+  //should automatically open
+}
+
+void iMainWindowViewer::fileOpen() {
+  if (!tabMisc::root) return;
+//TODO: we really should check if it is already open!!!!!
+  void* el = NULL;
+  tabMisc::root->projects.Load_File(&TA_taProject, &el);
+  taProject* proj = (taProject*)el;
+  // loaded projects don't automatically open
+  if (proj) // this is the easiest way...
+    proj->AssertDefaultProjectBrowser(true);
+}
+
+void iMainWindowViewer::fileSave() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->Save_File();
+}
+
+void iMainWindowViewer::fileSaveAs() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SaveAs_File();
+}
+
+void iMainWindowViewer::fileSaveAll() {
+  if (!tabMisc::root) return;
+  tabMisc::root->SaveAll();
+}
+
+void iMainWindowViewer::fileClose() {
+  taProject* proj = curProject();
+  if (!proj) return;
+//TODO: check to make sure it asks to save before closing!!!
+  proj->Close();
 }
 
 void iMainWindowViewer::fileOptions() {
@@ -2958,7 +3051,7 @@ void iTabView_PtrList::DataPanelDestroying(iDataPanel* panel) {
 iDataPanel::iDataPanel(taiDataLink* dl_)
 :QFrame(NULL)
 {
-//nn  m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
+  m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);

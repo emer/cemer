@@ -84,6 +84,15 @@ Serious/Fatal:
   so somehow, between the arg dialog, and the css_stub call, the chosen items are
   not being passed
   
+* when doing Close Project with network in viewer, segfaults in taiDataHost::DeleteLater(obj)
+  -- the body (obj) seems to be invalid at this point
+  -- note: there are numerous nested Struct/DataUpdate calls, including ones caused by
+    deeply nested guys (ex. Layer.projections) on Network
+  * it is likely that the taiEditDataHost already destroyed the gui stuff, but the body etc.
+    are still hanging around able to do mischief BAD
+
+* this business of taBase's broadcasting every nesting of struct/data update is poor --
+  we should move the logic of taDataView into the datalink
 
 Medium Important:
 

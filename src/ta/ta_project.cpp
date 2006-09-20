@@ -137,11 +137,11 @@ void taProject::InitLinks_post() {
   LoadDefaults();
 
   if (!taMisc::is_loading) {
-    MakeDefaultViewer(true);
-    MakeDefaultWiz(true);	// make default and edit it
+    AssertDefaultProjectBrowser(true);
+    AssertDefaultWiz(true);	// make default and edit it
   } else {
-    MakeDefaultViewer(false);
-    MakeDefaultWiz(false);	// make default and don't edit it
+    AssertDefaultProjectBrowser(false);
+    AssertDefaultWiz(false);	// make default and don't edit it
   }
 }
 
@@ -171,14 +171,14 @@ void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-MainWindowViewer* taProject::GetDefaultViewer() {
+MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   // try official default first
   MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl()); 
   if (vwr) return vwr;
   // otherwise iterate
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-    if (vwr && (vwr->GetName() == "DefaultViewer")) return vwr;
+    if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
   }
   return NULL;
 }
@@ -203,44 +203,40 @@ int taProject::Load(istream& strm, TAPtr par, void** el) {
   return rval;
 }
 
-void taProject::MakeDefaultViewer(bool auto_open) {
+void taProject::AssertDefaultProjectBrowser(bool auto_open) {
   MainWindowViewer* vwr = NULL;
   // get the default one, if there is one unopened
-  vwr = GetDefaultViewer();
+  vwr = GetDefaultProjectBrowser();
   if (!vwr) {
-    vwr = MakeViewer_impl();
-    vwr->SetName("DefaultViewer");
-    viewers.Add(vwr);
+    vwr = MakeProjectBrowser_impl();
+    vwr->SetName("DefaultProjectBrowser");
   }
   if (auto_open) {
     vwr->ViewWindow();
   }
 }
 
-MainWindowViewer* taProject::MakeViewer_impl() {
-  MainWindowViewer* vwr =  MainWindowViewer::NewBrowser(this); // no md
-  // add a T3 viewer frame, if that is defined
-  int idx;
-  //note: T3 stuff is in tamisc, so we get the type guy symbolically
-  TypeDef* typ = taMisc::types.FindName("T3DataViewer");
-  if (typ) {
-    vwr->FindFrameByType(typ, idx);
-    if (idx < 0) {
-      vwr->AddFrameByType(typ);
-    }
+MainWindowViewer* taProject::MakeProjectBrowser_impl() {
+  MainWindowViewer* vwr =  MainWindowViewer::NewProjectBrowser(this); // added to viewers
+  return vwr;
+}
+
+MainWindowViewer* taProject::NewProjectBrowser() {
+  MainWindowViewer* vwr = NULL;
+  // get the default one, if there is one unopened
+  vwr = GetDefaultProjectBrowser();
+  if (!vwr || vwr->isMapped()) {
+    vwr = MakeProjectBrowser_impl();
   }
   return vwr;
 }
 
-MainWindowViewer* taProject::NewViewer() {
-  MainWindowViewer* vwr = NULL;
-  // get the default one, if there is one unopened
-  vwr = GetDefaultViewer();
-  if (!vwr || vwr->isMapped()) {
-    vwr = MakeViewer_impl();
-    vwr->InitLinks(); // no one else to do it
-  }
-  return vwr;
+void taProject::OpenNewProjectBrowser(String viewer_name) {
+  MainWindowViewer* vwr =  MakeProjectBrowser_impl();
+  if (viewer_name.nonempty())
+    vwr->SetName(viewer_name);
+  vwr->ViewWindow();
+  
 }
 
 int taProject::Save(ostream& strm, TAPtr par, int indent) {

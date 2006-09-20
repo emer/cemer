@@ -31,9 +31,6 @@
 #include "pdp_TA_type.h"
 
 
-// forwards this file
-class iPdpMainWindowViewer;
-class PdpMainWindowViewer;
 
 class PDP_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
@@ -53,47 +50,17 @@ protected:
 };
 
 
-class PDP_API iPdpMainWindowViewer: public iMainWindowViewer { // viewer window for the pdp application
-friend class PdpMainWindowViewer;
-    Q_OBJECT
-INHERITED(iMainWindowViewer)
-public:
-  ProjectBase*		curProject(); // the Project at root of what user has selected; Null if n/a
-  bool		showFileObjectOps() {return true;} // override
-  
-  ~iPdpMainWindowViewer(); //
-
-public: // slot overrrides
-  void 		fileNew(); //override
-  void 		fileOpen(); //override
-  void 		fileSave(); //override
-  void 		fileSaveAs(); //override
-  void 		fileSaveAll(); //override
-  void 		fileClose(); //override
-  
-protected:
-  ProjectBase*		cur_project; // cached
-  iPdpMainWindowViewer(PdpMainWindowViewer* browser_, QWidget* parent = 0);
-  void 			Constr_Menu_impl(); // override
-  void		NewBrowser(ProjectBase* proj); // temp, until rework finished, makes browser
-};
-
-
-class PDP_API PdpMainWindowViewer : public MainWindowViewer {
-  // #NO_TOKENS the base type for browsers in pdp (used by MainWindowViewer::NewBrowser)
-INHERITED(MainWindowViewer)
-friend class iPdpMainWindowViewer;
+class PDP_API ConsoleDockViewer: public DockViewer {
+  // #NO_TOKENS encapsulates the console into a dock viewer window
+INHERITED(DockViewer)
 public:
 
-  inline iPdpMainWindowViewer* widget() {return (iPdpMainWindowViewer*)inherited::widget();}
-  override iPdpMainWindowViewer* window() {return (iPdpMainWindowViewer*)inherited::widget();}
-    // note: polymorphic return-value override
-  
-  TA_DATAVIEWFUNS(PdpMainWindowViewer, MainWindowViewer)
+  TA_DATAVIEWFUNS(ConsoleDockViewer, DockViewer)
 protected:
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE note: we just use base window, and put the console into it
+  override void		MakeWinName_impl(); // set win_name, impl in subs
 private:
-  void			Initialize() {}
+  void			Initialize();
   void			Destroy() {}
 };
 

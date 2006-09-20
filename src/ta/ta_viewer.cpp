@@ -22,6 +22,8 @@
 # include "ta_qtviewer.h"
 # include "ta_qtbrowse.h"
 # include "ta_classbrowse.h"
+
+# include <QApplication>
 #endif
 
 //TODO: this file will need to have many routines modalized for TA_GUI
@@ -156,6 +158,16 @@ void DataViewer::Raise() {
 } */
 
 void DataViewer::WidgetDeleting() {
+  WidgetDeleting_impl();
+  if (deleteOnWinClose()) {
+    // do a deferred delete
+    // NOTE: these are kind of dangerous and can cause issues...
+    taBase::Ref(this); // to prevent us deleting when removed from list
+    CloseLater();
+  }
+}
+
+void DataViewer::WidgetDeleting_impl() {
   m_dvwidget = NULL;
 }
 
@@ -338,17 +350,17 @@ void ClassBrowseViewer::StrToRoot() {
 
 
 //////////////////////////////////
-// 	TabViewer	 	//
+// 	PanelViewer	 	//
 //////////////////////////////////
 
-void TabViewer::Initialize() {
+void PanelViewer::Initialize() {
 }
 
-IDataViewWidget* TabViewer::ConstrWidget_impl(QWidget* gui_parent) {
+IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iTabViewer(this, gui_parent);
 }
 
-/*void TabViewer::Clear_impl() {
+/*void PanelViewer::Clear_impl() {
   if (!m_window) return;
   browser_win()->Reset();
 }*/
@@ -502,6 +514,13 @@ void TopLevelViewer::DeIconify() {
   winState().iconified = false; //TEMP
 }
 
+bool TopLevelViewer::deleteOnWinClose() const {
+//NOTE: this behavior can be changed, but is the current default:
+  // if we are in a project, then persist, else transient
+  taProject* proj = GET_MY_OWNER(taProject);
+  return (!proj);
+}
+
 void TopLevelViewer::Iconify() {
   if (!isMapped() || !isTopLevel()) return;
   if (!widget()->isMinimized())
@@ -526,6 +545,28 @@ void TopLevelViewer::Dump_Save_pre() {
   winState().GetWinState(); // get window position *before* saving!
 }
 
+void TopLevelViewer::Lower() {
+//TODO: do we even really need this?
+//TODO: if implmented, find the most previously active win and
+// qApp->setActiveWindow(prev_win);
+  inherited::Lower();
+}
+
+void TopLevelViewer::Raise() {
+  if (!isMapped()) return;
+#ifdef TA_GUI
+  // if we are a top, then focus us, otherwise focus the parent window
+  QWidget* wid = NULL;
+  if (isTopLevel())
+    wid = widget();
+  else 
+    wid = window();
+  if (wid)
+    qApp->setActiveWindow(wid);
+#endif
+}
+
+
 void TopLevelViewer::SetWinName() {
   if (!isMapped()) return;
   MakeWinName_impl();
@@ -536,19 +577,17 @@ void TopLevelViewer::ViewWindow() {
   if (!taMisc::gui_active) return;
   if (dvwidget()) {
     DeIconify();
-    Raise();
   } else {
-// TENT
     // if not owned yet, put us in the global guy
     if (!GetOwner() && tabMisc::root)
       tabMisc::root->viewers.Add(this); // does InitLinks
-// /TENT
     Constr(); // no parent;
     Render();
     
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
 //      SetWinState(left, top, width, height);
   }
+  Raise();
 }
 
 void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
@@ -665,6 +704,10 @@ WindowState& TopLevelViewer::winState() {
 //////////////////////////
 //   DockViewer		//
 //////////////////////////
+
+void DockViewer::Initialize() {
+  dock_flags = DV_NONE;
+}
 
 IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 //TODO: maybe we don't even need a generic one, but it does enable us to
@@ -805,6 +848,7 @@ void MainWindowViewer::	HelpContentsAction(){} // #ACT
 // /TEMP
 
 TypeDef* MainWindowViewer::def_browser_type = &TA_MainWindowViewer; 
+TypeDef* MainWindowViewer::def_viewer_type = &TA_MainWindowViewer; 
 
 MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
   MemberDef* root_md, bool is_root)
@@ -816,25 +860,53 @@ MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
   rval->m_is_root = is_root;
   tabBrowseViewer* cb = tabBrowseViewer::New(root, root_md);
   rval->frames.Add(cb);
-  TabViewer* pv = new TabViewer;
+  PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
+  // browsers are added to the global viewers, and not persistent
+  if (tabMisc::root)
+    tabMisc::root->viewers.Add(rval); // does InitLinks
   return rval;
 }
-
 
 MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_typ,
   MemberDef* root_md)
 {
   MainWindowViewer* rval = new MainWindowViewer;
   ClassBrowseViewer* cb = ClassBrowseViewer::New(root, root_typ, root_md);
+  cb->SetName("DefaultBrowseViewer");
   rval->frames.Add(cb);
-  TabViewer* pv = new TabViewer;
+  PanelViewer* pv = new PanelViewer;
+  pv->SetName("DefaultPanelViewer");
   rval->frames.Add(pv);
+  // browsers are added to the global viewers, and not persistent
+  if (tabMisc::root)
+    tabMisc::root->viewers.Add(rval); // does InitLinks
   return rval;
 }
 
+MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
+  if (!proj) return NULL;
+  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 
+    def_viewer_type = &TA_MainWindowViewer; // just in case
+  
+  MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
+  rval->m_is_proj_viewer = true;
+  tabBrowseViewer* cb = tabBrowseViewer::New(proj);
+  cb->SetName("DefaultBrowseViewer");
+  rval->frames.Add(cb);
+  FrameViewer* fv = rval->AddFrameByType(&TA_PanelViewer);
+  fv->SetName("DefaultPanelViewer");
+  fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+  // always added to the viewer collection
+  fv->SetName("DefaultT3DataViewer");
+  proj->viewers.Add(rval);
+  return rval;
+}
+
+
 void MainWindowViewer::Initialize() {
   m_is_root = false;
+  m_is_proj_viewer = false;
   menu = NULL;
   cur_menu = NULL;
   ta_menus = new taiMenu_List;
@@ -921,7 +993,7 @@ void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
   ConstrDocks_impl();
 
   iMainWindowViewer* win = window(); //cache
-  win->is_root = m_is_root;
+  //note: it pulls isRoot and isProjViewer from us
 //TODO, replace:  win->SelectionChanged(true); // initializes selection system
 }
 
@@ -932,8 +1004,14 @@ void MainWindowViewer::Constr_post() {
 }
 
 void MainWindowViewer::ConstrDocks_impl() {
-  //TODO: add the dock guys 
-  // note: this is only ever for docked guys -- floating guys are standalone
+  iMainWindowViewer* win = window(); //cache
+  for (int i = 0; i < docks.size; ++i) {
+    DockViewer* dv = docks.FastEl(i);
+    if (!dv) continue; // shouldn't happen
+    // note: don't parent the frame, since we use the api to add it
+    ((DataViewer*)dv)->Constr_impl(NULL);
+    win->AddDockViewer(dv->widget()); //TODO: should add it in proper dock area
+  }
 }
 
 void MainWindowViewer::ConstrFrames_impl() {
@@ -942,7 +1020,7 @@ void MainWindowViewer::ConstrFrames_impl() {
     FrameViewer* fv = frames.FastEl(i);
     if (!fv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
-    fv->Constr_impl(NULL);
+    ((DataViewer*)fv)->Constr_impl(NULL);
     win->AddFrameViewer(fv->widget());
   }
 }
@@ -1067,7 +1145,7 @@ void MainWindowViewer::Reset_impl() {
   return true;
 } */
 
-void MainWindowViewer::WidgetDeleting() {
+void MainWindowViewer::WidgetDeleting_impl() {
   menu = NULL;
-  inherited::WidgetDeleting();
+  inherited::WidgetDeleting_impl();
 }

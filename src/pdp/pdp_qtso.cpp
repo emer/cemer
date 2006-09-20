@@ -20,6 +20,7 @@
 #include "pdpshell.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
+#include "css_console.h"
 #include "netstru_qtso.h"
 #include "program.h"
 
@@ -30,6 +31,7 @@
 #include <QAction>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QScrollArea>
 #include <QStackedWidget>
 
 #include <Inventor/SoPath.h>
@@ -197,107 +199,29 @@ void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff)
 }
 
 
-
-//////////////////////////
-//   iPdpMainWindowViewer	//
-//////////////////////////
-
-
-iPdpMainWindowViewer::iPdpMainWindowViewer(PdpMainWindowViewer* browser_,  QWidget* parent)
-:inherited(browser_,  parent)
-{  
-  cur_project = NULL;
-}
-
-iPdpMainWindowViewer::~iPdpMainWindowViewer() {
-}
-
-void iPdpMainWindowViewer::Constr_Menu_impl() {
-  inherited::Constr_Menu_impl();
-  // customize the menu text
-//TODO: add custom hints to the file items
-}
-
-ProjectBase* iPdpMainWindowViewer::curProject() {
-  if (!cur_project) {
-    MainWindowViewer* db = viewer();
-    if (!db) return NULL; // shouldn't happen
-    BrowseViewer* bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
-    if (!bv) return NULL; // generally shouldn't happen (we usually have a browse tree)
-    if (!bv->root()) return NULL; //shouldn't happen
-    if (!bv->rootType()->InheritsFrom(&TA_ProjectBase)) return NULL; // we aren't a project
-    cur_project = (ProjectBase*)bv->root();
-  }
-  return cur_project;
-/* obs
-  ProjectBase* rval = NULL;
-  ISelectable* ci = curItem();
-  if (ci) {
-    taBase* ta = ci->taData(); // null if not tabase, but probably must be
-    if (ta) {
-      if (ta->InheritsFrom(&TA_ProjectBase))
-        rval = (ProjectBase*)ta;
-      else
-        rval = (ProjectBase*)ta->GetOwner(&TA_ProjectBase);
-    }
-    // last resort is first project, if any
-    if (!rval && pdpMisc::root)
-      rval = pdpMisc::root->projects.SafeEl(0);
-  }
-  return rval; */
-}
-
-
-void iPdpMainWindowViewer::fileNew() {
-  if (!pdpMisc::root) return;
-  ProjectBase* proj = (ProjectBase*)pdpMisc::root->projects.New(); // let user choose type
-  NewBrowser(proj);
-}
-
-void iPdpMainWindowViewer::fileOpen() {
-  if (!pdpMisc::root) return;
-  void* el = NULL;
-  pdpMisc::root->projects.Load_File(&TA_ProjectBase, &el);
-  ProjectBase* proj = (ProjectBase*)el;
-  NewBrowser(proj);
-}
-
-void iPdpMainWindowViewer::fileSave() {
-  ProjectBase* proj = curProject();
-  if (!proj) return;
-  proj->Save_File();
-}
-
-void iPdpMainWindowViewer::fileSaveAs() {
-  ProjectBase* proj = curProject();
-  if (!proj) return;
-  proj->SaveAs_File();
-}
-
-void iPdpMainWindowViewer::fileSaveAll() {
-  if (!pdpMisc::root) return;
-  pdpMisc::root->SaveAll();
-}
-
-void iPdpMainWindowViewer::fileClose() {
-  ProjectBase* proj = curProject();
-  if (!proj) return;
-//TODO: shouldn't we save, or confirm???
-  proj->Close();
-}
-
-void iPdpMainWindowViewer::NewBrowser(ProjectBase* proj) {
-  if (!proj) return;
-  MainWindowViewer* db = MainWindowViewer::NewBrowser(proj, NULL);
-  db->InitLinks(); // no one else to do it!
-  db->ViewWindow();
-}
-
-
 //////////////////////////
 //   PdpMainWindowViewer//
 //////////////////////////
 
-IDataViewWidget* PdpMainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  return new iPdpMainWindowViewer(this, gui_parent);
+void ConsoleDockViewer::Initialize() {
+  dock_flags = (DockViewerFlags)(DV_MOVABLE | DV_FLOATABLE);
+}
+
+
+IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  iDockViewer* dv = new iDockViewer(this, gui_parent); // par usually NULL
+
+  QScrollArea* sa = new QScrollArea(dv);
+  sa->setWidgetResizable(true);
+  dv->setWidget(sa);
+  
+  QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+  con->setMinimumSize(640, 720); //TODO: this is too big for a dock!
+//  sa->setFocusProxy((QWidget*)con);
+  sa->setWidget((QWidget*)con);
+  return dv;
+}
+
+void ConsoleDockViewer::MakeWinName_impl() {
+  win_name = "css Console";
 }

@@ -2250,6 +2250,9 @@ void taDataView::SetData(taBase* ta) {
 }
 
 void taDataView::SetData_impl(taBase* ta) {
+//TODO: prob don't ref count, since we are added to dude's data link
+// maybe we should use a SmartRef instead, and use that instead of dl
+//BA 9/18/06  
   taBase::SetPointer((taBase**)&m_data, ta);
 }
 

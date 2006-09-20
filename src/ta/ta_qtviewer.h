@@ -241,7 +241,7 @@ public:
   DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
   
   void			Constr() {Constr_impl();} // called virtually, after new, override impl
-  void			Close(); // deletes or closes us, and disconects us from viewer
+  void			Close(); // deletes or closes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
   
@@ -586,7 +586,7 @@ public:
   virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
   virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
   override void		UpdateTabNames(); // called by a datalink when a tab name might have changed
-  iTabViewer(TabViewer* viewer_, QWidget* parent = NULL); //
+  iTabViewer(PanelViewer* viewer_, QWidget* parent = NULL); //
   ~iTabViewer();
 
 public slots:
@@ -623,9 +623,10 @@ public:
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
-//  override void		Constr_impl() {}
+//  override void		Constr_impl();
   
-protected:
+private:
+  void			Init();
 };
 
 
@@ -688,7 +689,9 @@ public:
 //mv  ISelectable_PtrList&	sel_items() {return m_sel_items;}
   
   QObject* 		clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
-  virtual bool		showFileObjectOps() {return false;} // usually only show the file ops for the root project window
+  taProject*		curProject(); // only if we are a projviewer
+  inline bool		isRoot() const {return m_is_root;} // if this is app root, closing quits
+  inline bool		isProjViewer() const {return m_is_proj_viewer;} // if a project viewer, persistent
 
   //TODO: provide a list of multi-selects
   inline MainWindowViewer* viewer() {return (MainWindowViewer*)m_viewer;} 
@@ -698,6 +701,10 @@ public:
     // insures we have a iTabViewer; adds a new tab, sets panel active in it
   virtual iToolBar*	AddToolBar(iToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
   virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
+#ifndef __MAKETA__
+  virtual void		AddDockViewer(iDockViewer* dv,
+    Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
+#endif
   virtual void		AddToolBarMenu(const String& name, int index);
   iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
     // can be overriden to supply custom iToolBar
@@ -712,12 +719,12 @@ public:
   ~iMainWindowViewer();
 
 public slots:
-  virtual void 	fileNew(){}
-  virtual void 	fileOpen(){}
-  virtual void 	fileSave(){}
-  virtual void 	fileSaveAs(){}
-  virtual void 	fileSaveAll(){}
-  virtual void 	fileClose(){}
+  virtual void 	fileNew(); // New Project (in new viewer)
+  virtual void 	fileOpen(); // Open Project (in new viewer)
+  virtual void 	fileSave();  // Save Project (only enabled if viewer)
+  virtual void 	fileSaveAs();  // SaveAs Project (only enabled if viewer)
+  virtual void 	fileSaveAll();  // Save All Projects (always enabled)
+  virtual void 	fileClose(); // Close Project (only enabled if viewer)
   virtual void 	fileOptions(); // edits taMisc
   virtual void 	filePrint(){}
   virtual void 	fileCloseWindow(); // Quit (root) or Close Window (non-root)
@@ -778,7 +785,8 @@ protected slots:
 
 
 protected:
-  bool			is_root; // true if this is a root window (has Quit menu)
+  bool			m_is_root; // true if this is a root window (has Quit menu)
+  bool			m_is_proj_viewer; // true if this is a project viewer (false for simple browsers)
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired

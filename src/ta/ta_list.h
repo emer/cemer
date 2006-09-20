@@ -193,6 +193,8 @@ protected:
   // name of the list
   virtual String El_GetName_(void*) const 	{ return _nilString; }
   // gets name from an element (for list)
+  virtual void	El_SetDefaultName_(void*, int) {}
+    // if added item has empty name, this will get called, enabling a name to be set; index has been set
   virtual taHashVal El_GetHashVal_(void* it) const;
   // gets hash code based on key type in hash table; default is for string-key'ed lists (v3.2 default)
   virtual TALPtr El_GetOwner_(void*) const	{ return (TALPtr)this; }

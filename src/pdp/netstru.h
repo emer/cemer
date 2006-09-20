@@ -31,6 +31,7 @@
 
 #ifdef TA_GUI
 #include "ta_qtbrowse_def.h"
+#include "t3viewer.h"
 //#include "fontspec.h"
 #endif
 
@@ -1277,8 +1278,8 @@ public:
   virtual int	GetDefaultY();
   virtual int	GetDefaultZ();
 #ifdef TA_GUI
-  virtual void	OpenViewer();
-  // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network
+  virtual void	ShowInViewer(T3DataViewer* dv = NULL);
+  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network (NULL=default viewer)
 #endif
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)

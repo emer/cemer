@@ -299,18 +299,24 @@ int pdpMisc::Main(int argc, char *argv[]) {
     pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
 #ifdef TA_GUI
 //TODO: need to better orchestrate the "OpenWindows" call below with
+
+//TEST:
 //  creating the default application window
-    MainWindowViewer::def_browser_type = &TA_PdpMainWindowViewer;
     MainWindowViewer* db = MainWindowViewer::NewBrowser(root, NULL, true);
-    db->InitLinks(); // no one else to do it!
+#ifndef QANDD_CONSOLE
+    ConsoleDockViewer* cdv = new ConsoleDockViewer;
+    db->docks.Add(cdv);
+#endif    
+// create the console docked in the main project window
+    
     db->ViewWindow();
     iMainWindowViewer* bw = db->window();
-    // the main app window only needs to be small...
+    // the main app window only needs to be small, unless console is docked in it...
     if (bw) {
-      bw->resize(taiM->dialogSize(taiMisc::hdlg_s));
+      bw->resize(taiM->dialogSize(taiMisc::hdlg_m));
       taiMisc::SetMainWindow(bw);
     }
-
+/*
 #ifndef QANDD_CONSOLE
 //TODO: this should be a dockable guy made with DockViewer
     QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
@@ -319,8 +325,9 @@ int pdpMisc::Main(int argc, char *argv[]) {
     mw->setFocusProxy((QWidget*)console);
     mw->setCentralWidget((QWidget*)console);
     mw->show();
-#endif
+#endif */
 
+//TODO: following prob not necessary
   if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif
 

@@ -646,29 +646,18 @@ void ProjectBase::LoadDefaults() {
   }
 }
 
-void ProjectBase::MakeDefaultWiz(bool auto_opn) {
-  Wizard* wiz = (Wizard*)wizards.New(1, wizards.el_typ);
+void ProjectBase::AssertDefaultWiz(bool auto_opn) {
+  taWizard* wiz = wizards.SafeEl(0);
+//TODO: need a better wizard making api -- factor out the make routine
+  if (!wiz) {
+    wiz = (Wizard*)wizards.New(1, wizards.el_typ);
+  }
   if(auto_opn) {
     wiz->auto_open = true;
 //TEMP    wiz->ThreeLayerNet();
     wiz->Edit();
   }
 }
-
-#ifdef TA_GUI
-void ProjectBase::OpenNetworkViewer(Network* net) {
-  if (!net) return;
-
-  // network objects
-  MainWindowViewer* vwr = NewViewer();
-  T3DataViewer* t3v = new T3DataViewer;
-  vwr->frames.Add(t3v);
-  NetView* nv = NetView::New(t3v, net);
-  nv->BuildAll();
-
-  vwr->ViewWindow();
-}
-#endif
 
 void ProjectBase::UpdateColors() {
   if(view_colors.size != COLOR_COUNT) {

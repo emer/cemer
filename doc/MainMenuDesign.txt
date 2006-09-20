@@ -120,10 +120,8 @@ DataViewer:taDataView (A) -- anything common to all viewer types
     BrowseViewer -- for the tree browser -- contains most of the logic
       tabBrowseViewer -- for taBase root
       ClassViewer -- for class item root
-    TabViewer -- for the edit panels (can also be split)
-    PersistibleViews -- for guys that can live in .views
-      T3DataViewer -- for T3 guys
-      ?? -- ex., DataDesign view, etc.
+    PanelViewer -- for the edit panels (can also be split)
+    T3DataViewer -- for T3 guys
 
 
 taList<FrameViewer>
@@ -225,16 +223,13 @@ Maybe *all* T3 viewing involves:
 
 Persistence Semantics
 
-A main viewer can either be default persistent or not.
-If it is not default persistent, closing the window will
-silently delete the underlying view.
-If it *is* default persistent, then there are two cases:
-  1) it is the explicit "Default" for the project
-  2) it has been created anew
-In case (1) it automatically gets saved as "Default".
-In case (2), an attempt to close will prompt for a 
-name to save the view under. There will also be a 
-View/Save menu item
+A main viewer that is in a project.viewers is persistent --
+closing the view will not delete the viewer.
+A main viewer that is in the root.viewers is by default
+transient -- closing it will delete it.
+TODO: define how to make persistent root viewers.
+
+
 
 What can be viewed??
 Now:
@@ -333,6 +328,9 @@ BUGS
 * T3 network no longer showing up when you do "Show in Viewer"
 * NetView Panel not being created for net views
 * no context menu in T3 view
+* after loading proj with net, the NetView panel is open; if you then click on
+  a dude in the tree, it doesn't make a new panel, you have to click on the 
+  empty panel, then click away/back to your desired guy
 
 Questions:
 

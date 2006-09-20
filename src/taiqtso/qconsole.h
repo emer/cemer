@@ -18,6 +18,8 @@
 #ifndef QCONSOLE_H
 #define QCONSOLE_H
 
+#include "taiqtso_def.h"
+
 #include "interceptor.h"
 #include <qstringlist.h>
 #include <qtextedit.h>
@@ -30,6 +32,7 @@
 
 class QConsole : protected  QTextEdit {
 Q_OBJECT
+INHERITED(QTextEdit)
 public:
   //constructor
   QConsole(QWidget *parent = NULL, const char *name = NULL, bool initInterceptor = true);
@@ -54,6 +57,8 @@ public:
   virtual void setCompletionColor(QColor c) {completionColor = c;};
   virtual void setFont(QFont f) {setCurrentFont(f);};
 
+using inherited::setMinimumSize;
+using inherited::minimumSize;
 protected:
   // code that new specific implementation should override:
 

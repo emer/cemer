@@ -236,7 +236,8 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
   if (!vwr) { // show in a new viewer
     ProjectBase* prj = GET_MY_OWNER(ProjectBase);
     if (!prj) return;
-    MainWindowViewer* mwv = prj->NewViewer(); // note: should have a T3 guy
+    MainWindowViewer* mwv = prj->GetDefaultProjectBrowser(); // note: should have a T3 guy
+    if (!mwv) return; // shouldn't happen!
     vwr = (T3DataViewer*)mwv->FindFrameByType(&TA_T3DataViewer);
     LogView* lv = NewLogView();
     if (!lv) return;
@@ -246,17 +247,10 @@ void PDPLog::ShowInViewer(T3DataViewer* vwr)
     mwv->ViewWindow();
   } else { // show in an existing viewer
     // check if already viewing this log there, warn user
-    T3DataView* dv;
-    for (int i = 0; i < vwr->root_view.children.size; ++i) {
-      if (!(dv = dynamic_cast<T3DataView*>(vwr->root_view.children[i]))) continue;
-      if (dv->GetTypeDef()->InheritsFrom(TA_LogView)) {
-        LogView* lv = (LogView*)dv;
-        if (lv->log() == this) {
-          if (taMisc::Choice("This log is already shown in that viewer -- are you sure you"
-              " want to show it there again?", "&Ok", "&Cancel") != 0) return;
-          break;
-        }
-      }
+    T3DataView* dv = vwr->FindRootViewOfData(this);
+    if (dv) {
+      if (taMisc::Choice("This log is already shown in that viewer -- are you sure you"
+          " want to show it there again?", "&Ok", "&Cancel") != 0) return;
     }
     LogView* lv = NewLogView();
     if (!lv) return;

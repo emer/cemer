@@ -109,10 +109,15 @@ public:
   virtual const iColor* GetObjColor(TypeDef* td) {return NULL;} // #IGNORE get default color for object (for edit, project view)
   virtual const iColor* GetObjColor(int view_color) {return NULL;} // #IGNORE get default color for object (for edit, project view)
 
-  virtual void 		MakeDefaultViewer(bool auto_opn); // make the default viewer(s)
-  virtual void 		MakeDefaultWiz(bool auto_opn) {} // make the default wizard(s)
+  MainWindowViewer*	GetDefaultProjectBrowser(); // gets one if there is, else NULL
+  virtual void 		AssertDefaultProjectBrowser(bool auto_opn); 
+    // make the default project browser is made, and optionally open it
+  virtual void 		AssertDefaultWiz(bool auto_opn) {} 
+    // make sure the default wizard(s) are made, and optionally open them
+  virtual void		OpenNewProjectBrowser(String proj_browser_name = "NewProjectBrowserName");
+    // #MENU #MENU_ON_View #MENU_CONTEXT
 
-  virtual MainWindowViewer* NewViewer(); 
+  virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet
   virtual void	UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
@@ -132,8 +137,7 @@ public:
   
 protected:
   virtual void 		InitLinks_post(); // #IGNORE called after all _impls: does LoadDefaults and launches wiz
-  MainWindowViewer*	GetDefaultViewer(); // gets one if there is, else NULL
-  virtual MainWindowViewer* MakeViewer_impl(); // make a standard viewer for this project type
+  virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
   
 private:
   void 	InitLinks(); // don't try to use this -- use _impl instead

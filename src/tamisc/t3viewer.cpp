@@ -193,6 +193,7 @@ void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) 
 
 void T3DataView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
+  if (taMisc::is_loading || !isMapped()) return; // no gui stuff if loading or not mapped!!!
   Render_impl();
   if (m_node_so.ptr())
     m_node_so->touch();
@@ -900,6 +901,16 @@ void T3DataViewer::Constr_post() {
 
 IDataViewWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iT3DataViewer(this, gui_parent);
+}
+
+T3DataView* T3DataViewer::FindRootViewOfData(TAPtr data) {
+  if (!data) return NULL;
+  for (int i = 0; i < root_view.children.size; ++i) {
+    T3DataView* dv;
+    if (!(dv = dynamic_cast<T3DataView*>(root_view.children[i]))) continue;
+    if (dv->data() == data) return dv;
+  }
+  return NULL;
 }
 
 void T3DataViewer::Render_pre(taDataView* par) {

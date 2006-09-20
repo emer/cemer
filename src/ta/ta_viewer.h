@@ -25,6 +25,8 @@
 
 // externals (most in in ta_qtviewer.h, some in ta_qtdata.h)
 
+class taProject;
+
 #ifdef TA_GUI
   class taiMenuBar;
   class taiMenu_List;
@@ -83,7 +85,7 @@ class   FrameViewer;
 class     BrowseViewer;
 class       tabBrowseViewer;
 class       ClassBrowseViewer;
-class     TabViewer;
+class     PanelViewer;
 class ISelectable;
 class ISelectable_PtrList;
 class DynMethodDesc; // #IGNORE
@@ -109,8 +111,10 @@ public:
   static void		GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
   // #IGNORE get file properties for given type
   
+  String		name;		// name of the object
   bool			display_toggle;  // #DEF_true 'true' if display should be updated
 
+  virtual bool		deleteOnWinClose() const {return false;}
   inline const IDataViewWidget* dvwidget() const {return m_dvwidget;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   QWidget*		widget();
@@ -127,8 +131,10 @@ public:
 
   virtual void 		WindowClosing(CancelOp& cancel_op) {} 
    // cb from m_widget, subordinate wins may not be cancellable
-  virtual void		WidgetDeleting(); // lets us do any cleanup
+  virtual void		WidgetDeleting(); // lets us do any cleanup -- override the impl
   
+  bool 	SetName(const String& nm) {name = nm; return true;}
+  String GetName() const {return name; }
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
@@ -138,14 +144,13 @@ public:
 
 
 protected:
-  int			m_index;  // index in list of frames
-  
   virtual void		CloseWindow_impl(); // closes the widget, only called if mapped, default calls the Close on the IDVW
   virtual void		Constr_impl(QWidget* gui_parent); 
     // master Constr, only called if !m_widget 
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
   virtual void		Constr_post() {} // called after everything built, typ used for resizing/moving
+  virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
 
 private:
   IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
@@ -281,7 +286,7 @@ private:
 };
 
 
-class TA_API TabViewer : public FrameViewer {
+class TA_API PanelViewer : public FrameViewer {
   // #NO_TOKENS the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iDataPanel;
@@ -289,7 +294,7 @@ public:
 
   inline iTabViewer*	widget() {return (iTabViewer*)inherited::widget();}
 
-  TA_DATAVIEWFUNS(TabViewer, FrameViewer) //
+  TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
@@ -332,10 +337,9 @@ class TA_API TopLevelViewer : public DataViewer {
   // #NO_TOKENS #VIRT_BASE stuff that is common to anything that can be a top-level window
 INHERITED(DataViewer)
 public:
-  String		name;		// name of the object
-  
   virtual bool		hasChanges() const {return false;}
     // can be provided to put msg up on closing
+  override bool		deleteOnWinClose() const;
   bool			isIconified() const {return win_state.iconified;} 
     // 'true' if the window is iconified, n/a if not topLevel
     //TODO: make UserData
@@ -356,10 +360,10 @@ public:
     // #NO_SCRIPT generate script code to position the window
   virtual void		SetWinName();		// #IGNORE set the window name 
   
+  override void		Raise();	// raise window to front, if this is applicable
+  override void		Lower();	// lower window to back, if this is applicable
   override void 	WindowClosing(CancelOp& cancel_op);
   
-  bool 	SetName(const String& nm) {name = nm; return true;}
-  String GetName() const {return name; }
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const TopLevelViewer& cp);
@@ -385,6 +389,16 @@ class TA_API DockViewer : public TopLevelViewer {
   // #NO_TOKENS #VIRT_BASE the controller for dock windows, which can float, or be in a MainWindow
 INHERITED(TopLevelViewer)
 public:
+  enum DockViewerFlags { // #BITS controls behavior
+    DV_NONE		= 0, // #NO_BIT
+    DV_CLOSABLE		= 0x01,	// true if we are allowed to close it
+    DV_MOVABLE		= 0x02,	// true if we are allowed to move it around
+    DV_FLOATABLE	= 0x04	// true if we are allowed to undock it
+  };
+  
+  DockViewerFlags	dock_flags; // #READ_ONLY #SHOW how this dock window is allowed to behave
+  inline iDockViewer*	widget() {return (iDockViewer*)inherited::widget();}
+  
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
   
 protected:
@@ -392,7 +406,7 @@ protected:
   //override void		MakeWinName_impl(); each subguy will need this
   
 private:
-  void 	Initialize() {}
+  void 	Initialize();
   void	Destroy() {}
 };
 
@@ -476,12 +490,18 @@ friend class DockView_List;
 //friend class WindowState;
 public:
   static TypeDef*	def_browser_type; // type of the default browser, us unless replaced
+  static TypeDef*	def_viewer_type; // type of the default viewer, us unless replaced
   
   static MainWindowViewer* NewBrowser(TAPtr root, MemberDef* root_md = NULL, bool is_root = false); 
     // makes a standard 2-pane taBase browser
   static MainWindowViewer* NewClassBrowser(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); 
     // convenience class: makes a 2-pane class browser (browse+panels)
+  static MainWindowViewer* NewProjectBrowser(taProject* proj); 
+    // makes a standard 3-pane project viewer
 
+  bool			m_is_root; // #READ_ONLY #SAVE #NO_SHOW
+  bool			m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
+  
 #ifdef TA_GUI
   taiMenu_List*		ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
   taiMenuBar*		menu; // #IGNORE menu bar -- note: partially managed by the window
@@ -492,10 +512,10 @@ public:
   DockViewer_List	docks; // currently docked windows -- removed if they undock
 
   override bool		isRoot() {return m_is_root;}
+  inline bool		isProjViewer() const {return m_is_proj_viewer;}
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
   override iMainWindowViewer* window() {return (iMainWindowViewer*)inherited::widget();} 
 
-  override void		WidgetDeleting();
 
   FrameViewer*		FindFrameByType(TypeDef* typ, int& at_index = no_idx, int from_index = 0); 
     // find the first frame and index of given type from the given starting index; 
@@ -533,7 +553,6 @@ public: // Action methods
   virtual void	HelpAboutAction() {} // #ACT 
 
 protected:
-  bool			m_is_root; // #IGNORE
   // from taDataView 
   override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
   override void		Clear_impl(taDataView* par = NULL); //prob not used
@@ -547,6 +566,7 @@ protected:
   override void		Constr_impl(QWidget* gui_parent); 
   override void 	Constr_post();
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
+  override void		WidgetDeleting_impl();
 
   // from TopLevelView
   override void		MakeWinName_impl();

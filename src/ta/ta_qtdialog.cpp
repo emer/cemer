@@ -375,7 +375,7 @@ iDialog::iDialog(taiDataHost* owner_, QWidget* parent)
 
 iDialog::~iDialog() {
   if (owner != NULL) {
-    owner->dialog = NULL;
+    owner->WidgetDeleting(); // removes our ref
     owner = NULL;
   }
 }
@@ -451,7 +451,7 @@ EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 
 EditDataPanel::~EditDataPanel() {
   if (owner != NULL) {
-    owner->panel = NULL;
+    owner->WidgetDeleting(); // removes our ref
     owner = NULL;
   }
 }
@@ -539,21 +539,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   typ = typ_;
   cur_base = NULL;
 
-  prompt = NULL;
-  mwidget = NULL;
-  vblDialog = NULL;
-  frmMethButtons = NULL;
-  layMethButtons = NULL;
-  showMethButtons = false;
-  hblButtons = NULL;
-  okbut = NULL;
-  canbut = NULL;
-  apply_but = NULL;
-  revert_but = NULL;
-  body = NULL;
-  splBody = NULL;
-  scrBody = NULL;
-  layBody = NULL;
+  InitGuiFields();
 
   bg_color = new iColor(); //value set later
   bg_color_dark = new iColor(); //value set later
@@ -583,6 +569,25 @@ taiDataHost::~taiDataHost() {
     delete bg_color_dark;
     bg_color_dark = NULL;
   }
+}
+
+// note: called non-virtually in our ctor, and virtually in WidgetDeleting
+void taiDataHost::InitGuiFields(bool) { 
+  mwidget = NULL;
+  vblDialog = NULL;
+  prompt = NULL;
+  splBody = NULL;
+  scrBody = NULL;
+  layBody = NULL;
+  body = NULL;
+  frmMethButtons = NULL;
+  layMethButtons = NULL;
+  showMethButtons = false;
+  hblButtons = NULL;
+  okbut = NULL;
+  canbut = NULL;
+  apply_but = NULL;
+  revert_but = NULL;
 }
 
 void taiDataHost::setBgColor(const iColor* new_bg) {
@@ -714,6 +719,7 @@ void taiDataHost::BodyCleared() { // called when last widget cleared from body
 }
 
 void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling panels
+  if (!isConstructed()) return;
   state = CANCELED;
   if (dialog) {
     dialog->dismiss(false);
@@ -933,12 +939,13 @@ void taiDataHost::Constr_Final() {
 void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
   cur_base = NULL;
+  if (!isConstructed()) return;
   Cancel();
 }
  
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
-  if (state == CANCELED) return;
+  if (!isConstructed()) return;
   dch.UpdateFromDataChanged(dcr);
   // we only care about the rebuilding ones, for others, we just call notify
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
@@ -1043,6 +1050,7 @@ void taiDataHost::NotifyChanged() {
 }
 
 void taiDataHost::ReConstr_Body() {
+  if (!isConstructed()) return;
   Constr_Body();
   GetImage();
 }
@@ -1091,6 +1099,10 @@ void taiDataHost::Unchanged() {
   warn_clobber = false;
 }
 
+void taiDataHost::WidgetDeleting() {
+  InitGuiFields(); // called virtually
+  state = ZOMBIE;
+}
 
 //////////////////////////////////
 // 	taiDialog		//
@@ -1205,11 +1217,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   cur_base = base;
   use_show = true; // some descendant classes override, as well as construction methods
   show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
-  cur_menu = NULL;
-  cur_menu_but = NULL;
-  show_menu = NULL;
-  menu = NULL;
-  panel = NULL;
+  InitGuiFields(false);
   //note: don't register for notification until constr is done
 }
 
@@ -1225,6 +1233,17 @@ taiEditDataHost::~taiEditDataHost() {
   }
 
 }
+
+// note: called non-virtually in our ctor, and virtually in WidgetDeleting
+void taiEditDataHost::InitGuiFields(bool virt) { 
+  if (virt) inherited::InitGuiFields();
+  cur_menu = NULL;
+  cur_menu_but = NULL;
+  show_menu = NULL;
+  menu = NULL;
+  panel = NULL;
+}
+
 
 void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
   QPushButton* but = mth_rep->GetButtonRep();
@@ -1242,14 +1261,14 @@ void taiEditDataHost::Cancel() {
   if (isPanel()) {
     if (panel != NULL)
       panel->ClosePanel();
-  } else taiDataHost::Cancel();
+  } else inherited::Cancel();
 }
 
 void taiEditDataHost::ClearBody_impl() {
   // delete the data items -- Qt will automatically disconnect the signals/slots
   memb_el.Reset();
   data_el.Reset();
-  taiDataHost::ClearBody_impl(); // deletes the body widgets, except structural ones
+  inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
 /* IV version:
@@ -1309,7 +1328,7 @@ void taiEditDataHost::GetMembDescRep(MemberDef* md, ivMenu* dscm, String indent)
 } */
 
 void taiEditDataHost::Constr_Body() {
-  taiDataHost::Constr_Body();
+  inherited::Constr_Body();
   if (typ && typ->it->requiresInline()) {
     Constr_Inline();
   } else {
@@ -1409,7 +1428,7 @@ void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title)
 }
 
 void taiEditDataHost::Constr_Methods() {
-  taiDataHost::Constr_Methods();
+  inherited::Constr_Methods();
   Constr_Methods_impl();
 }
 
@@ -1444,7 +1463,7 @@ void taiEditDataHost::Constr_Methods_impl() {
 // moved to be by the setShow etc. calls, for clarity
 
 void taiEditDataHost::Constr_Final() {
-  taiDataHost::Constr_Final();
+  inherited::Constr_Final();
   Constr_ShowMenu();
   GetImage();
   //now we finally register as a dlc!
@@ -1483,7 +1502,7 @@ void taiEditDataHost::DoSelectForEdit(int param){
 int taiEditDataHost::Edit(bool modal_) {
   if (!modal_)
     taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
-  return taiDataHost::Edit(modal_);
+  return inherited::Edit(modal_);
 }
 
 EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
@@ -1505,7 +1524,7 @@ void taiEditDataHost::ConstrEditControl(QWidget* gui_parent, const iColor* bgcol
 }
 
 void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {
-  taiDataHost::FillLabelContextMenu(sender, menu, last_id);
+  inherited::FillLabelContextMenu(sender, menu, last_id);
   FillLabelContextMenu_SelEdit(sender, menu, last_id);
 }
 

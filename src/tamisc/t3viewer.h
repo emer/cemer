@@ -470,6 +470,7 @@ public:
 //  iT3DataViewer*	viewer_win() {return (iT3DataViewer*)m_widget;}
 
   virtual void		AddView(T3DataView* view); // add a view
+  virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   void	InitLinks();
   void	CutLinks();
