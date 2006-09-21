@@ -932,6 +932,7 @@ int taMisc::read_till_rbracket(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
       cerr << (char)c;
+      if(c == '\n') 	taMisc::FlushConsole();
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
@@ -960,6 +961,7 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
       cerr << (char)c;
+      if(c == '\n') 	taMisc::FlushConsole();
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
@@ -1147,7 +1149,8 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     cerr << "<<err_skp ->>";
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
-      cerr << (char)c;
+      cerr << (char)c; 
+      if(c == '\n') 	taMisc::FlushConsole();
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
@@ -1176,6 +1179,7 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
     cerr << "<<err_skp ->>";
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
       cerr << (char)c;
+      if(c == '\n') 	taMisc::FlushConsole();
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();

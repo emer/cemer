@@ -527,7 +527,7 @@ void V3ProjectBase::Copy_(const V3ProjectBase& cp) {
 }
 
 void V3ProjectBase::ConvertToV4() {
-  int ch = taMisc::Choice("This will convert the legacy v3.x project to v4.x format. The new project will have the old name with a _v4 suffix. Do you want to continue?", "Yes", "No");
+  int ch = taMisc::Choice("This will convert the legacy v3.x project to v4.x format -- you may see some error messages but pay more attention to final success or failure message.  Do you want to continue?", "Yes", "No");
   if (ch != 0) return;
   if (ConvertToV4_impl())
     taMisc::Choice("The conversion was successful!", "Ok");
@@ -545,13 +545,13 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     Environment* env = environments[ei];
     DataTable* dt = nwproj->data.NewEl(1,&TA_DataTable);
     dt->name = env->name;
-    String_Data* nmcol = dt->NewColString("name");
-    int st_pat_col = 1;		// starting pattern column
     String_Data* gpcol = NULL;
+    int st_col = 0;		// starting column for standard fields
     if(env->events.gp.size > 0) {
       gpcol = dt->NewColString("group");
-      st_pat_col++;
+      st_col++;
     }
+    String_Data* nmcol = dt->NewColString("name");
     if(env->event_specs.size == 0) continue;
     EventSpec* es = (EventSpec*)env->event_specs[0];
     for(int pi=0; pi < es->patterns.size; pi++) {
@@ -562,15 +562,15 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     Event* ev;
     FOR_ITR_EL(Event, ev, env->events., evi) {
       dt->AddBlankRow();
-      dt->SetValAsString(ev->name, 0, -1); // last row
       if(gpcol) {
 	Event_Group* eg = (Event_Group*)ev->GetOwner();
 	if(!eg->name.empty())
-	  dt->SetValAsString(eg->name, 1, -1); // last row
+	  dt->SetValAsString(eg->name, 0, -1); // -1 = last row
       }
+      dt->SetValAsString(ev->name, st_col, -1); // -1 = last row
       for(int pi=0; pi < ev->patterns.size; pi++) {
 	Pattern* pat = (Pattern*)ev->patterns[pi];
-	taMatrix* mat = dt->GetValAsMatrix(st_pat_col + pi, -1);
+	taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);
 	for(int vi=0; vi<pat->value.size; vi++) {
 	  mat->SetFmVar_Flat(pat->value[vi], vi);
 	}
@@ -605,8 +605,50 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
   nwproj->networks = networks;	// this should the do spec updating automatically!
 
   FOR_ITR_EL(Network, net, nwproj->networks., ni) {
+    net->ShowInViewer();
     net->Build();
     net->Connect();
   }
+  return true;
 }
 
+bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
+  Program* apply_ins = ((Program_Group*)nwproj->programs.gp[0])->FindName("ApplyInputs");
+  if(!apply_ins) return false;
+  
+  LayerWriter_List* lw_list = (LayerWriter_List*)apply_ins->objs.FindName("lw_list");
+  if(!lw_list) return false;
+
+  if(environments.leaves <= 0) return false;
+  Environment* env = (Environment*)environments.Leaf(0);
+  if(env->event_specs.size <= 0) return false;
+  EventSpec* es = (EventSpec*)env->event_specs[0];
+
+  DataTable* dt = (DataTable*)nwproj->data.FindName(env->name);
+  if(!dt) return false;
+  
+  if(networks.leaves <= 0) return false;
+  Network* net = (Network*)nwproj->networks.Leaf(0);
+
+  return ConvertToV4_ApplyInputs(lw_list, es, net, dt);
+}
+
+bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec* es,
+					    Network* net, DataTable* dt) {
+  lw_list->Reset();
+  for(int i=0; i<es->patterns.size; i++) {
+    PatternSpec* ps = (PatternSpec*)es->patterns[i];
+    if(ps->type == PatternSpec::INACTIVE) continue;
+    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
+    lw->data = dt;
+    lw->chan_name = ps->name;
+    Layer* lay = (Layer*)net->layers.FindName(ps->layer_name);
+    lw->layer = lay;
+    if(lay) {
+      if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;
+      else if(ps->type == PatternSpec::TARGET) lay->layer_type = Layer::TARGET;
+      else if(ps->type == PatternSpec::COMPARE) lay->layer_type = Layer::OUTPUT;
+    }
+  }
+  return true;
+}

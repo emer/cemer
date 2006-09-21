@@ -1652,13 +1652,18 @@ public:
   String		desc4;
   
   virtual void	ConvertToV4(); 
-  // #BUTTON convert the project to v4.x format
+  // #BUTTON #CAT_Convert convert the project to v4.x format
   virtual bool	ConvertToV4_impl();
-  // #HIDDEN implementation: must be defined by specific type of algorithm
+  // #CAT_Convert implementation: must be defined by specific type of algorithm
   virtual bool	ConvertToV4_Nets(ProjectBase* nwproj); 
-  // #HIDDEN Convert networks
+  // #CAT_Convert Convert networks
   virtual bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
-  // #HIDDEN Convert environments
+  // #CAT_Convert Convert environments
+  virtual bool 	ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj);
+  // #CAT_Convert fix ApplyInputs script for first program group in nwproj, based on first enviro and network in old proj
+  virtual bool 	ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec* es,
+					Network* net, DataTable* dt);
+  // #CAT_Convert make layerwriter list reflect patterns in given event spec as applied to given network
 
   void 	InitLinks_impl(); //for this class
   void	CutLinks();

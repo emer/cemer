@@ -5371,6 +5371,14 @@ void Network::ReadWeights(istream& strm) {
   taMisc::DoneBusy();
 }
 
+void Network::StretchLayerPos(int add_to_z) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    l->pos.z += l->pos.z * add_to_z;
+  }
+}
+
 void Network::TransformWeights(const SimpleMathSpec& trans) {
   taMisc::Busy();
   Layer* l;

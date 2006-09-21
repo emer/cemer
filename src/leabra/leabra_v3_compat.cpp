@@ -126,13 +126,11 @@ bool V3LeabraProject::ConvertToV4_impl() {
 
   nwproj->programs.prog_lib.NewProgramFmName("LeabraStdTrain", &(nwproj->programs));
 
+  ConvertToV4_DefaultApplyInputs(nwproj);
+
   // todo: copy network params from processes
   // todo: make a standard leabra process for each process group
 
-  // browse the new project:
-  MainWindowViewer* brows = MainWindowViewer::NewBrowser(nwproj, NULL);
-  if (!brows) return false;
-  brows->ViewWindow();
   return true;
 }
 

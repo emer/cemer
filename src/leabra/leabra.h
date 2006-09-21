@@ -868,7 +868,7 @@ public:
 // misc data-holding structures
 
 class LEABRA_API KWTASpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
 public:
   enum K_From {
     USE_K,			// use the k specified directly
@@ -893,7 +893,7 @@ public:
 };
 
 class LEABRA_API KwtaTieBreak : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
 public:
   bool		on;		// whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
@@ -907,7 +907,7 @@ public:
 };
 
 class LEABRA_API AdaptISpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
 public:
   enum AdaptType {
     NONE,			// don't adapt anything
@@ -931,7 +931,7 @@ public:
 };
 
 class LEABRA_API ClampSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs to this layer or not
   float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
@@ -945,7 +945,7 @@ public:
 };
 
 class LEABRA_API DecaySpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
 public:
   float		event;		// #DEF_1 proportion decay of state vars between events
   float		phase;		// #DEF_1 proportion decay of state vars between minus and plus phases 
@@ -960,7 +960,7 @@ public:
 };
 
 class LEABRA_API LayNetRescaleSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER global rescale of layer netinputs to prevent blowup
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER global rescale of layer netinputs to prevent blowup
 public:
   bool		on;		// whether to apply layer netinput rescaling
   float		max_net; 	// #CONDEDIT_ON_on:true #DEF_0.6 target maximum netinput value
@@ -1160,7 +1160,7 @@ public:
 SpecPtr_of(LeabraLayerSpec);
 
 class LEABRA_API AvgMaxVals : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
 public:
   float		avg;		// average value
   float		max;		// maximum value
@@ -1174,7 +1174,7 @@ public:
 };
 
 class LEABRA_API KWTAVals : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
 public:
   int		k;       	// target number of active units for this collection
   float		pct;		// actual percent activity in group
@@ -1197,7 +1197,7 @@ public:
 };
 
 class LEABRA_API AdaptIVals : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
 public:
   float		avg_avg;	// average of the average activation in a layer
   float		i_kwta_pt;	// adapting point to place inhibition between k and k+1 for kwta
@@ -1212,7 +1212,7 @@ public:
 };
 
 class LEABRA_API InhibVals : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
 public:
   float		kwta;		// inhibition due to kwta function
   float		g_i;		// overall value of the inhibition
@@ -1745,7 +1745,7 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
 //////////////////////////////////////////
 
 class LEABRA_API CtxtUpdateSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -1844,7 +1844,7 @@ public:
 };
 
 class LEABRA_API SynDepSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
@@ -1976,7 +1976,7 @@ public:
 };
 
 class LEABRA_API FastWtSpec : public taBase {
-  // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -2149,7 +2149,7 @@ public:
 // spikes, because of syndep..
 
 class LEABRA_API ScalarValSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -2185,7 +2185,7 @@ public:
 };
 
 class LEABRA_API ScalarValBias : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -2306,7 +2306,7 @@ public:
 //////////////////////////////////
 
 class LEABRA_API TwoDValSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -2346,7 +2346,7 @@ public:
 };
 
 class LEABRA_API TwoDValBias : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -2474,7 +2474,7 @@ public:
 };
 
 class LEABRA_API DaModSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
 public:
   enum ModType {
     PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
@@ -2528,7 +2528,7 @@ public:
 //////////////////////////////////////////
 
 class LEABRA_API AvgExtRewSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
@@ -2541,7 +2541,7 @@ public:
 };
 
 class LEABRA_API OutErrSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
@@ -2556,7 +2556,7 @@ public:
 };
 
 class LEABRA_API ExtRewSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
@@ -2727,7 +2727,7 @@ public:
 //////////////////////////////////////////
 
 class LEABRA_API TDRewIntegSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
 
@@ -2859,7 +2859,7 @@ public:
 };
 
 class LEABRA_API PVDetectSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for detecting if a primary value is present or expected
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for detecting if a primary value is present or expected
 public:
   float		thr_min;	// #DEF_0.2 minimum threshold on PVe (ExtRew) or PVi, below which PV is considered present (i.e., punishment) (set to 0 if PVe.rew.norew_val = 0)
   float		thr_max;	// #DEF_0.8 maximum threshold on PVe (ExtRew) or PVi, above which PV is considered present (i.e., reward) (set to .4 if PVe.rew.norew_val = 0)
@@ -2946,7 +2946,7 @@ public:
 };
 
 class LEABRA_API LVSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for learned value layers
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for learned value layers
 public:
   float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
@@ -2999,7 +2999,7 @@ public:
 //////////////////////////
 
 class LEABRA_API PVLVDaSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for PVLV da parameters
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for PVLV da parameters
 public:
   enum	DaMode {
     LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
@@ -3067,7 +3067,7 @@ public:
 };
 
 class LEABRA_API SNcMiscSpec : public taBase {
-  // ##INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc parameters for SNc layer
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc parameters for SNc layer
 public:
   enum PatchMode {
     NO_PATCH,			// no patch at all
@@ -3377,7 +3377,7 @@ public:
 //////////////////////////////////////////////////////////////////
 
 class SNrThalMiscSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the snrthal layer
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for the snrthal layer
 public:
   float		avg_net_dt;	// #DEF_0.005 time-averaged netinput computation integration rate
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event

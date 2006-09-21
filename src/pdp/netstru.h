@@ -938,13 +938,7 @@ public:
   TA_BASEFUNS(LayerSpec); //
 };
 
-/* 
-
-  Layer SourceData
-  act -- NxM float array, of the activation values
-  
-*/
-class PDP_API Layer: public taNBase {
+class PDP_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS layer containing units
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -1354,6 +1348,9 @@ public:
 
   virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
   virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics
+
+  virtual void	StretchLayerPos(int add_to_z);
+  // #MENU #MENU_SEP_BEFORE Add add_to_z to layer vertical positions in proportion to current positions: new layer.pos.z += layer.pos.z * add_to_z -- makes display look better -- negative values will subtract or compact the layers
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights
