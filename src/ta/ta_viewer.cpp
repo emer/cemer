@@ -78,19 +78,13 @@ void DataViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void DataViewer::CloseWindow() {
-  if (isMapped()) {
-    CloseWindow_impl(); 
-    m_dvwidget = NULL;
-  }
-}	
-
 void DataViewer::CloseWindow_impl() { // only called if mapped
   m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
+  m_dvwidget = NULL; // for safety
+  inherited::CloseWindow_impl(); // dispatches to children, but everyone probably nuked!
 }
 
 void DataViewer::Constr(QWidget* gui_parent) {
-  if (!taMisc::gui_active || dvwidget()) return;
   Constr_impl(gui_parent);
   Constr_post();
 }
@@ -180,19 +174,6 @@ QWidget* DataViewer::widget() {
 //   DataViewer_List	 	//
 //////////////////////////////////
 
-void DataViewer_List::Constr_impl(QWidget* gui_parent) {
-  for (int i = 0; i < size; ++i) {
-    DataViewer* dv = FastEl(i);
-    dv->Constr_impl(gui_parent);
-  }
-}
-
-void DataViewer_List::Constr_post() {
-  for (int i = 0; i < size; ++i) {
-    DataViewer* dv = FastEl(i);
-    dv->Constr_post();
-  }
-}
 
 //////////////////////////////////
 //   FrameViewer	 	//
@@ -200,12 +181,6 @@ void DataViewer_List::Constr_post() {
 
 void FrameViewer::Initialize() {
   m_main_window_viewer = NULL;
-}
-
-MainWindowViewer* FrameViewer::mainWindowViewer() {
-  if (!m_main_window_viewer)
-    m_main_window_viewer = GET_MY_OWNER(MainWindowViewer); 
-  return m_main_window_viewer;
 }
 
 iMainWindowViewer* FrameViewer::window() {
@@ -228,13 +203,7 @@ void BrowseViewer::Copy_(const BrowseViewer& cp) {
   root_md = cp.root_md;
 }
 
-void BrowseViewer::Clear_impl() {
-  if (!isMapped()) return;
-  widget()->Reset();
-}
-
-void BrowseViewer::Render_impl() {
-  if (!isMapped()) return;
+void BrowseViewer::Render_pre() {
   widget()->ApplyRoot();
 }
 
@@ -528,11 +497,6 @@ void TopLevelViewer::Iconify() {
   winState().iconified = true; // TEMP
 }
 
-void TopLevelViewer::Constr_impl(QWidget* gui_parent) {
-  inherited::Constr_impl(gui_parent);
-  if (!dvwidget()) return; // shouldn't happen
-}
-
 void TopLevelViewer::Constr_post() {
   inherited::Constr_post();
   winState().SetWinState();
@@ -581,7 +545,7 @@ void TopLevelViewer::ViewWindow() {
     // if not owned yet, put us in the global guy
     if (!GetOwner() && tabMisc::root)
       tabMisc::root->viewers.Add(this); // does InitLinks
-    Constr(); // no parent;
+    Constr(); // no root
     Render();
     
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
@@ -955,7 +919,7 @@ void MainWindowViewer::UpdateAfterEdit() {
 void MainWindowViewer::AddFrame(FrameViewer* fv, int at_index) 
 {
   if (!fv) return;
-  //note: if we are mapped, then the chg detector for .frames will map the guy
+  //TODO: note: if we are mapped, then the chg detector for .frames will map the guy
   if (at_index < 0)
     frames.Add(fv);
   else 
@@ -970,17 +934,26 @@ FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index)
   return rval;
 }
 
-void MainWindowViewer::Clear_impl(taDataView* par) {
-  docks.Clear_impl(this);
-  frames.Clear_impl(this);
-  inherited::Clear_impl(par);
+void MainWindowViewer::DoActionChildren_impl(DataViewAction act) {
+// note: only ever called with one action
+  if (act & CONSTR_MASK) {
+    inherited::DoActionChildren_impl(act);
+//TODO    toolbars.DoAction(act);
+    frames.DoAction(act);
+    docks.DoAction(act);
+  } else { // DESTR_MASK
+    docks.DoAction(act);
+    frames.DoAction(act);
+//TODO    toolbars.DoAction(act);
+    inherited::DoActionChildren_impl(act);
+  }
 }
 
 void MainWindowViewer::CloseWindow_impl() {
-  inherited::CloseWindow_impl();
   ta_menus->Reset();
   cur_menu = NULL;
   menu = NULL; // window deletes
+  inherited::CloseWindow_impl();
 }
 
 void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
@@ -992,15 +965,9 @@ void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
   ConstrFrames_impl();
   ConstrDocks_impl();
 
-  iMainWindowViewer* win = window(); //cache
+//  iMainWindowViewer* win = window(); //cache
   //note: it pulls isRoot and isProjViewer from us
 //TODO, replace:  win->SelectionChanged(true); // initializes selection system
-}
-
-void MainWindowViewer::Constr_post() {
-  inherited::Constr_post();
-  frames.Constr_post();
-  docks.Constr_post();
 }
 
 void MainWindowViewer::ConstrDocks_impl() {
@@ -1110,32 +1077,6 @@ void MainWindowViewer::MakeWinName_impl() {
   String nw_name = prog_nm + ": " + GetPath() + "(" + name + ")";
   win_name = nw_name;
 }
-
-void MainWindowViewer::Render_pre(taDataView* par) {
-  inherited::Render_pre(par);
-  frames.Render_pre(this);
-  docks.Render_pre(this);
-}
-
-void MainWindowViewer::Render_impl() {
-  inherited::Render_impl();
-  frames.Render_impl();
-  docks.Render_impl();
-}
-
-void MainWindowViewer::Render_post() {
-  inherited::Render_post();
-  frames.Render_post();
-  docks.Render_post();
-}
-
-void MainWindowViewer::Reset_impl() {
-  docks.Reset_impl();
-  frames.Reset_impl();
-  //TODO: prob should reset toolbars too
-  inherited::Reset_impl();
-}
-
 
 
 /*obs bool MainWindowViewer::ThisMenuFilter(MethodDef* md) {

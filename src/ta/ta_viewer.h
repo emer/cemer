@@ -117,12 +117,14 @@ public:
   virtual bool		deleteOnWinClose() const {return false;}
   inline const IDataViewWidget* dvwidget() const {return m_dvwidget;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
+  MainWindowViewer*	parent() const {return (MainWindowViewer*)m_parent;} 
+  override TypeDef*	parentType() const {return &TA_MainWindowViewer;} 
   QWidget*		widget();
   virtual iMainWindowViewer* window() {return NULL;}
     // #IGNORE valid if is, or is within, a main window
 
   virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops, all others recursively call _impl, then _post
-  void 			CloseWindow();	
+  void 			CloseWindow() {DoActions(CLOSE_WIN_IMPL);}	
    // #IGNORE closes the window or panel, removing our reference
  
   virtual void		Raise();	// raise window to front, if this is applicable
@@ -144,12 +146,12 @@ public:
 
 
 protected:
-  virtual void		CloseWindow_impl(); // closes the widget, only called if mapped, default calls the Close on the IDVW
-  virtual void		Constr_impl(QWidget* gui_parent); 
-    // master Constr, only called if !m_widget 
+  // from taDataView
+  override void		CloseWindow_impl(); // closes the widget, only called if mapped, default calls the Close on the IDVW
+  
+  virtual void		Constr_impl(QWidget* gui_parent);
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
-  virtual void		Constr_post() {} // called after everything built, typ used for resizing/moving
   virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
 
 private:
@@ -162,8 +164,6 @@ private:
 class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS
 INHERITED(DataView_List)
 public:
-  virtual void 		Constr_impl(QWidget* gui_parent); // called by a parent, recurses
-  virtual void 		Constr_post(); // called by a parent, recurses
   
   TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
 
@@ -180,7 +180,7 @@ public:
   
   inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();} // lex override
   
-  MainWindowViewer*	mainWindowViewer();
+  inline MainWindowViewer* mainWindowViewer() {return parent();}
   override iMainWindowViewer* window();
   
 //  void	InitLinks();
@@ -225,8 +225,7 @@ public:
   COPY_FUNS(BrowseViewer, FrameViewer) //
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
 protected:
-  override void		Render_impl(); // #IGNORE
-  override void		Clear_impl(); // #IGNORE
+  override void		Render_pre(); // 
 private:
   void			Initialize();
   void			Destroy() {CutLinks();}
@@ -375,7 +374,6 @@ protected:
   
   override void 	Dump_Save_pre(); // TEMP: update winpos etc.
   
-  override void		Constr_impl(QWidget* gui_parent); 
   override void		Constr_post();
   virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
@@ -513,6 +511,7 @@ public:
 
   override bool		isRoot() {return m_is_root;}
   inline bool		isProjViewer() const {return m_is_proj_viewer;}
+//parent note: we inherit MainWindowViewer type, but actually never have a taDataView parent
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
   override iMainWindowViewer* window() {return (iMainWindowViewer*)inherited::widget();} 
 
@@ -555,16 +554,11 @@ public: // Action methods
 protected:
   // from taDataView 
   override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
-  override void		Clear_impl(taDataView* par = NULL); //prob not used
-  override void		Render_pre(taDataView* par = NULL);
-  override void		Render_impl();
-  override void		Render_post();
-  override void		Reset_impl();
+  override void		DoActionChildren_impl(DataViewAction act); // just one act
+  override void		CloseWindow_impl(); 
   
   //from DataView
-  override void		CloseWindow_impl();
   override void		Constr_impl(QWidget* gui_parent); 
-  override void 	Constr_post();
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
   override void		WidgetDeleting_impl();
 

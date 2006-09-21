@@ -37,6 +37,7 @@ class SoTransform;		// #IGNORE
 
 class TAIQTSO_API SoPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for SoBase objects -- automatically does ref counts
 public:
+  inline operator 	bool() const {return (m_ptr);} // for ptr-like NULL checks
   SoPtr_impl() {m_ptr = 0;}
   ~SoPtr_impl();
 protected:

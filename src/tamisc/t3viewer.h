@@ -105,6 +105,8 @@ public:
     DNF_IS_LIST_NODE 	= 0x080 // true for nodes in a list view (in panel, not on tree)
   };
 
+  static T3DataView*	GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
+
   int			flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
   FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
 
@@ -112,9 +114,11 @@ public:
 
   virtual bool		expandable() const {return false;}
   virtual void		setExpandable(bool) {}
+  DATAVIEW_PARENT(T3DataView) // always a T3DataView (except root guy)
   FloatTransform*	transform(bool auto_create = false);  // transform, in Inventor coords
 
   taiDataLink*		link() const {return (taiDataLink*)IDataLinkClient::m_link;}
+  override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   T3Node*		node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
 //obs  T3DataViewer*		viewer() const;
@@ -138,7 +142,7 @@ public:
 //obs  virtual String 	GetName() const = 0; // base name of item (could be blank)
   virtual void		ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
-
+  
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
@@ -179,16 +183,16 @@ protected:
 //nn  virtual void		DestroyPanels();
 
   virtual void		OnWindowBind_impl(iT3DataViewer* vw) {} // override for something this class
-  override void		Clear_impl(taDataView* par = NULL);
+  override void		Clear_impl();
   virtual void		ReInit_impl(); // default just calls clear() on the so, if it exists
-  override void		Render_pre(taDataView* par = NULL); //
+  override void		Render_pre(); //
   override void		Render_impl();
 //  override void		Render_post();
 //  override void		Reset_impl();
 
   // these are provided primarily for where the parent does the action on all children
   virtual void		Clear_impl_children() {}
-  virtual void		Render_pre_children(taDataView* par = NULL) {} //
+  virtual void		Render_pre_children() {} //
 //nn  virtual void		Render_impl_children() {}
 //nn  virtual void		Render_post_children() {}
 //nn  virtual void		Reset_impl_children() {}
@@ -257,7 +261,7 @@ protected:
   // these are provided primarily for where the parent does the action on all children
   // default action is to iterate all children and delegate action to the child
   override void		Clear_impl_children();
-  override void		Render_pre_children(taDataView* par = NULL);
+  override void		Render_pre_children();
   virtual void		Render_impl_children();
   virtual void		Render_post_children();
   virtual void		Reset_impl_children();
@@ -276,9 +280,8 @@ friend class T3DataViewer;
 public:
   ISelectableHost*	host; // ss/b set by owner
 
+//note: typically never has a non-null parent, because it is rooted in non-T3DataView  
   override T3DataViewRoot* root() {return this;}
-
-  virtual T3DataView*	GetViewFromPath(const SoPath* path) const; // #IGNORE search path backwards to find the innermost T3DataView
 
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
 
@@ -364,15 +367,13 @@ public:
   void 			setSceneGraph(SoNode* sg);
 
   void			deleteScene(); // deletes the scene -- usually only called internally, not by clients of this component
-  void 			emit_contextMenuRequested(const QPoint& pos); // #IGNORE
+  void 			ContextMenuRequested(const QPoint& pos); // #IGNORE called from render area
 
   iT3ViewspaceWidget(QWidget* parent = NULL);
   ~iT3ViewspaceWidget();
 
 #ifndef __MAKETA__
 signals:
-  void 			contextMenuRequested(const QPoint& pos);
-  void			SoSelectionEvent(iSoSelectionEvent* ev);
   void			initScrollBar(QScrollBar* sb); // orientation will be in sb
 #endif
 
@@ -394,7 +395,7 @@ protected:
   SoNode*		m_scene; // actual top item set by user
   SelectionMode		m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
 
-  void			emit_SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
+  void			SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
   void			LayoutComponents(); // called on resize or when comps change (ex scrollers)
   QScrollBar*		MakeScrollBar(bool ver);
   void 			resizeEvent(QResizeEvent* ev); // override
@@ -421,7 +422,7 @@ public:
   SoQtViewer* 		ra() {return m_ra;} //TODO: maybe should not cache; should get from body()
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
-  override int		stretchFactor() const {return 3;} // 3x default
+  override int		stretchFactor() const {return 4;} // 4/2 default
   inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
 
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
@@ -438,11 +439,6 @@ public slots:
 protected: // IViewerWidget i/f
   override void		Constr_impl();
   
-protected slots:
-  void 			vs_contextMenuRequested(const QPoint& pos);
-  void			vs_SoSelectionEvent(iSoSelectionEvent* ev);
-
-
 protected:
   SoQtViewer* 		m_ra;
   virtual void		Render_pre(); // #IGNORE
@@ -485,11 +481,11 @@ protected:
 
 
   override void		Constr_impl(QWidget* gui_parent = NULL);
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent = NULL); // #IGNORE
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
   override void		Constr_post();
   override void 	WindowClosing(CancelOp& cancel_op); // #IGNORE
-  override void		Clear_impl(taDataView* par = NULL); // #IGNORE
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Clear_impl(); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl();  // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl(); //  #IGNORE

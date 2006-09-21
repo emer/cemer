@@ -324,28 +324,19 @@ BUGS
 * in browseviewer, root item not selected by default (should be??? maybe not?)
 * when you go "openviewer" on a network, the resulting new 3-pane viewer
   has the T3 panel not visible -- you have to move the slider to make it visible
-* "Browse from here" on a project in .projects gives segfault
-* T3 network no longer showing up when you do "Show in Viewer"
-* NetView Panel not being created for net views
 * no context menu in T3 view
 * after loading proj with net, the NetView panel is open; if you then click on
   a dude in the tree, it doesn't make a new panel, you have to click on the 
   empty panel, then click away/back to your desired guy
+* app/Quit with a projbrowser open (showing network) causes an abort deep in
+  the Coin library, related to Clear_impl during a Reset (because of a DataChanged)
+
+ISSUES
+* following msg related to netviewing: 
+  "Coin warning in SoQtComponent::setSize(): Invalid size setting: <0, 886>"
 
 Questions:
 
-* is it necessary for all the viewer guys to maintain all the gui state
-  dynamically, or is it enough to update it prior to streaming?
-  * if update once, then don't need to have a bunch of wiring/signals etc.
-  * we can still offer programmatic control, simply by forcing the commands
-    through to the gui
-  * one disadvantage is that it is harder to have programmatic state
-    HOWEVER we can define it all in terms of properties, and just have
-    the members for streaming
-  * gui stuff should probably be mediated by UserData anyway, so it makes
-    sense to have properties, which go through the gui item (or none)
-    and then have a "big bang" refresh of UserData view state prior to
-    streaming
 
 New Design
 
@@ -398,6 +389,10 @@ Reset
 As an example, ViewWindow decomposes as follows:
   WinConstr
   Render
+
+View State
+
+* view state is set or fetched on demand (ie, it is not WYSIWYG)
 
 ------------------
 Main Menu Redesign

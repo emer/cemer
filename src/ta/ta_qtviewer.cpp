@@ -1712,6 +1712,7 @@ void ISelectableHost::SelectionChanged(bool forced) {
     UpdateSelectedItems_impl();
     m_sel_chg_cnt = 0;
   }
+  UpdateMethodsActions();
   Emit_NotifySignal(OP_SELECTION_CHANGED); // note: sent through event loop first
 }
 

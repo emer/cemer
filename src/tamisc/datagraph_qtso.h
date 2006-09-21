@@ -96,7 +96,7 @@ protected:
   void 			UpdateAxis_Y(T3Axis* t3ax, AxisSpec* as); //#IGNORE
   void 			UpdateAxis_Z(T3Axis* t3ax, AxisSpec* as); //#IGNORE
 //  void 			ReInit_impl(); NOTE: owner-graphview/s deals with this
-  override void 	Render_pre(taDataView* par); //
+  override void 	Render_pre(); //
   override void 	Render_impl(); //
 private:
   void			Initialize();
@@ -170,7 +170,7 @@ protected:
 
   override void		ReInit_impl();	// clear existing points/markers etc.
 
-  override void 	Render_pre(taDataView* par); //
+  override void 	Render_pre(); //
   override void 	Render_impl(); //
 
   // note: routines below are internal, so we pass many of the cached/decoded objects
@@ -245,7 +245,7 @@ protected:
   override void 	ChildRemoving(taDataView* child);
   override void 	ReInit_impl();
   override void		Reset_impl(); //
-  override void 	Render_pre(taDataView* par); //
+  override void 	Render_pre(); //
   override void		Render_impl();
 private:
   void			Initialize();
@@ -284,10 +284,10 @@ protected:
 
   override void 	ChildAdding(taDataView* child);
   override void 	ChildRemoving(taDataView* child);
-  override void		Clear_impl(taDataView* par); //
+  override void		Clear_impl(); //
   override void 	ReInit_impl(); // note: we deal with the x and z axes below us
   override void		Reset_impl(); //
-  override void 	Render_pre(taDataView* par); //
+  override void 	Render_pre(); //
   override void 	Render_impl(); //
 private:
   void			Initialize();

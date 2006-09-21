@@ -140,7 +140,7 @@ public:
   T3_DATAVIEWFUNS(UnitView, T3DataView)
 protected:
   NetView*		m_nv; // cache
-  override void 	Render_pre(taDataView* par); //
+  override void 	Render_pre(); //
   //note: _impl is done by the UnitGroupView
 private:
   void			Initialize();
@@ -206,7 +206,7 @@ protected:
   void 			UpdateUnitViewBase_Unit_impl(MemberDef* disp_md); // for unit members
   void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
   void 			UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u); // for cons
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void 	Render_impl_children(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -235,7 +235,7 @@ public:
 protected:
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
@@ -259,7 +259,7 @@ public:
 
   T3_DATAVIEWFUNS(PrjnView, nvDataView)
 protected:
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
@@ -280,7 +280,7 @@ public:
   NetView*		nv() {return (NetView*)owner;}
   NetViewAdapter(NetView* owner_): taBaseAdapter((taOBase*)owner_) {}
 public slots:
-  void			viewWin_selectionChanged(ISelectable_PtrList& sels);
+  void			viewWin_NotifySignal(ISelectableHost* src, int op);
 };
 
 /*
@@ -377,11 +377,11 @@ protected:
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); //
   override void		OnWindowBind_impl(iT3DataViewer* vw);
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
-  void			viewWin_selectionChanged(ISelectable_PtrList& sels);
+  void			viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
   void			Initialize();
   void			Destroy();

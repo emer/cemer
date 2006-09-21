@@ -126,7 +126,7 @@ T3UnitNode* UnitSpec::MakeSo(Unit* unit, T3LayerNode* par) {
 //	  T3PrjnNode		//
 //////////////////////////////////
 /*
-void T3PrjnNode::Render_pre(taDataView* par) {
+void T3PrjnNode::Render_pre() {
   rot_prjn = new SoTransform();
   addChild(rot_prjn);
   trln_prjn = new SoTransform();
@@ -283,7 +283,7 @@ NetView* UnitView::nv() {
   return m_nv;
 }
 
-void UnitView::Render_pre(taDataView* par) {
+void UnitView::Render_pre() {
   NetView* nv = this->nv();
   switch (nv->unit_disp_mode) {
   case NetView::UDM_CIRCLE: 	m_node_so = new T3UnitNode_Circle(this); break;
@@ -296,7 +296,7 @@ void UnitView::Render_pre(taDataView* par) {
   // note: pos s/b invariant
   node_so()->transform()->translation.setValue(
     (float)(unit->pos.x) + 0.5f, 0.0f, -((float)(unit->pos.y) + 0.5f));
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 
@@ -467,7 +467,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
   }
 }
 
-void UnitGroupView::Render_pre(taDataView* par) {
+void UnitGroupView::Render_pre() {
   Unit_Group* ugrp = this->ugrp(); //cache
   AllocUnitViewData();
   m_node_so = new T3UnitGroupNode(this);
@@ -481,7 +481,7 @@ void UnitGroupView::Render_pre(taDataView* par) {
   // TODO: if not built, then use geom from layer
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y);
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void UnitGroupView::Render_impl() {
@@ -679,13 +679,13 @@ bool LayerView::Dump_QuerySaveMember(MemberDef* md) {
   else return inherited::Dump_QuerySaveMember(md);
 }
 
-void LayerView::Render_pre(taDataView* par) {
+void LayerView::Render_pre() {
   m_node_so = new T3LayerNode(this);
 
 //  SoMaterial* mat = node_so()->material(); //cache
 //  mat->diffuseColor.setValue(0.4f, 0.4f, 0.4f); // gray
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void LayerView::Render_impl() {
@@ -721,9 +721,9 @@ void PrjnView::Destroy() {
 }
 
 
-void PrjnView::Render_pre(taDataView* par) {
+void PrjnView::Render_pre() {
   m_node_so = new T3PrjnNode(this);
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void PrjnView::Render_impl() {
@@ -794,8 +794,8 @@ void PrjnView::Reset_impl() {
   (ex. "act", "r.wt", etc.), the scale system is keyed to this value.
 
 */
-void NetViewAdapter::viewWin_selectionChanged(ISelectable_PtrList& sels) {
-  nv()->viewWin_selectionChanged(sels);
+void NetViewAdapter::viewWin_NotifySignal(ISelectableHost* src, int op) {
+  nv()->viewWin_NotifySignal(src, op);
 }
 
 NetView* NetView::New(T3DataViewer* viewer, Network* net) {
@@ -1152,18 +1152,18 @@ void NetView::OnWindowBind_impl(iT3DataViewer* vw) {
     nvp = new NetViewPanel(this);
     vw->window()->AddPanelNewTab(nvp);
   }
-  QObject::connect(vw, SIGNAL(selectionChanged(ISelectable_PtrList&)),
-    adapter, SLOT(viewWin_selectionChanged(ISelectable_PtrList&)) );
+  vw->t3vs->Connect_SelectableHostNotifySignal(adapter,
+    SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
 }
 
-void NetView::Render_pre(taDataView* par) {
+void NetView::Render_pre() {
   InitDisplay();
   m_node_so = new T3NetNode(this);
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
 //  mat->transparency.setValue(0.5f);
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void NetView::Render_impl() {
@@ -1313,8 +1313,9 @@ void NetView::UpdatePanel() {
   nvp->GetImage();
 }
 
-void NetView::viewWin_selectionChanged(ISelectable_PtrList& sels) {
-  ISelectable* ci = sels.SafeEl(0); // first selected item, if any
+void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
+  if (op != ISelectableHost::OP_SELECTION_CHANGED) return;
+  ISelectable* ci = src->curItem(); // first selected item, if any
   if (!ci) return;
   TypeDef* typ = ci->GetTypeDef();
   if (!typ->InheritsFrom(&TA_UnitView)) return;

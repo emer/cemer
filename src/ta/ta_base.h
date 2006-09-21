@@ -1127,6 +1127,26 @@ typedef IDataLinkClient inherited_IDataLinkClient;
 friend class taBase;
 friend class DataView_List;
 public:
+  enum DataViewAction { // #BITS enum used to (safely) manually invoke one or more _impl actions
+    CONSTR_POST		= 0x01, // #BIT (only used by DataViewer)
+    CLEAR_IMPL		= 0x02, // #BIT (only used by T3DataView)
+    RENDER_PRE		= 0x04, // #BIT
+    RENDER_IMPL		= 0x08, // #BIT
+    RENDER_POST		= 0x10, // #BIT
+    CLOSE_WIN_IMPL	= 0x20,  // #BIT (only used by DataViewer)
+    RESET_IMPL		= 0x40 // #BIT
+#ifndef __MAKETA__
+    ,CLEAR_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL // for Clear
+    ,RENDER_ACTS	= CLEAR_IMPL | RENDER_PRE | RENDER_IMPL | RENDER_POST // for Render
+    ,RESET_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL // for Reset
+    
+    ,CONSTR_MASK	= CONSTR_POST | RENDER_PRE | RENDER_IMPL | RENDER_POST 
+      // mask for doing child delegations in forward order
+    ,DESTR_MASK		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL 
+      // mask for doing child delegations in reverse order
+#endif
+  };
+  
   taBase*		m_data;		// #READ_ONLY data -- referent of the item -- the data
   TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
 
@@ -1137,7 +1157,9 @@ public:
   virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy
   virtual MemberDef*	md() const {return NULL;} // ISelectable property member stub
   virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
-  taDataView*		parent() const;
+  inline bool		hasParent() const {return (m_parent);} // encapsulated way to check for a par
+  taDataView*		parent() const {return m_parent;} // typically lex override with strong type
+  virtual TypeDef*	parentType() const {return &TA_taDataView;} // the controlling parent -- note that when in a list, this is the list owner, not the list; overrride for strong check in SetOwner
 
   virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
@@ -1146,18 +1168,19 @@ public:
   virtual void 		ChildRemoving(taDataView* child); // #IGNORE called from list; 
   virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
   virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
-  virtual void		Clear(taDataView* par = NULL) {if (isMapped()) Clear_impl(par);} // clears the view (but doesn't delete any components) (usually override _impl)
   virtual void		CloseChild(taDataView* child) {}
-  virtual void		Render() {if (!isMapped()) return;
-    Render_pre(); Render_impl(); Render_post();} 
-    // renders the visible contents (usually override the _impls)
-  virtual void		Reset() {if (isMapped()) Clear_impl(); Reset_impl();} 
+  virtual void		Render() {DoActions(RENDER_ACTS);} 
+    // renders the visible contents (usually override the _impls) -- MUST BE DEFINED IN SUB
+  virtual void		Clear(taDataView* par = NULL) {DoActions(CLEAR_ACTS);} // clears the view (but doesn't delete any components) (usually override _impl)
+  virtual void		Reset() {DoActions(RESET_ACTS);} 
     // clears, and deletes any components (usually override _impls)
-
+  virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.); par only needed when a _impl needs it
+  
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
   
   int	GetIndex() const {return m_index;}
   void	SetIndex(int value) {m_index = value;}
+  TAPtr	SetOwner(TAPtr own); // update the parent; nulls it if not of parentType
   void	UpdateAfterEdit();
   void			InitLinks();
   void			CutLinks();
@@ -1179,7 +1202,7 @@ protected:
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
   int			m_index; // for when in a list
   // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
-  mutable taDataView* 	m_parent; // cached/autoset
+  mutable taDataView* 	m_parent; // autoset on SetOwner, type checked as well
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
@@ -1188,11 +1211,21 @@ protected:
   virtual void 		SetData_impl(taBase* ta); // called to actually set or clear m_data -- can be trapped
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list
-  virtual void		Clear_impl(taDataView* par = NULL) {} // override  to implement clear; NULL means not known yet
-  virtual void		Render_pre(taDataView* par = NULL) {} // #IGNORE replace with pre-rendering code, if needed -- call Clear_impl if preclearing is needed in your context
-  virtual void		Render_impl() {} // #IGNORE replace with code that renders the window contents
-  virtual void		Render_post() {} // #IGNORE replace with post-rendering code, if needed
-  virtual void		Reset_impl() {} // override  to implement reset
+  virtual void		DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
+  virtual void		Constr_post() {DoActionChildren_impl(CONSTR_POST);} 
+    // extend to implement post-constr
+  virtual void		Clear_impl() {DoActionChildren_impl(CLEAR_IMPL);} 
+    // extend to implement clear
+  virtual void		CloseWindow_impl() {DoActionChildren_impl(CLOSE_WIN_IMPL);} 
+    // extend to implement clear
+  virtual void		Render_pre() {DoActionChildren_impl(RENDER_PRE);} 
+    // extend with pre-rendering code, if needed
+  virtual void		Render_impl() {DoActionChildren_impl(RENDER_IMPL);}
+    // extend with code that renders the window contents
+  virtual void		Render_post() {DoActionChildren_impl(RENDER_POST);}
+    // extend with post-rendering code, if needed
+  virtual void		Reset_impl() {DoActionChildren_impl(RESET_IMPL);}
+    // extend to implement reset
 private:
   void			Initialize();
   void			Destroy() {CutLinks();}
@@ -1208,6 +1241,12 @@ private:
   TA_REF_BASEFUNS(b); \
   void* This() {return (void*)this;}
 
+// convenience, for declaring the safe strong-typed parent
+#define DATAVIEW_PARENT(T) \
+  T* parent() const {return (T*)m_parent;} \
+  TypeDef* parentType() const {return &TA_ ## T;}
+  
+// for strongly-typed lists
 #define TA_DATAVIEWLISTFUNS(B,I,T) \
   T* SafeEl(int i) const {return (T*)SafeEl_(i);} \
   T* FastEl(int i) const {return (T*)FastEl_(i);} \
@@ -1219,16 +1258,12 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
     // we send to an owner DataView DataChanged_Child
   
+  virtual void		DoAction(taDataView::DataViewAction act); 
+   // do a single action on all items; we also do self->Reset on Reset_impl
+  
   override TAPtr SetOwner(TAPtr); // #IGNORE
   TA_DATAVIEWLISTFUNS(DataView_List, taList<taDataView>, taDataView) //
   
-public: // all these guys just iterate calling the item func 
-  virtual void		Clear_impl(taDataView* par = NULL); //note: iterates backwards
-  virtual void		Render_pre(taDataView* par = NULL);
-  virtual void		Render_impl();
-  virtual void		Render_post();
-  virtual void		Reset_impl() {Reset();} //note: iterates backwards
-
 protected:
   taDataView*		data_view; // #IGNORE our owner, when owned by a taDataView, for efficiency
 

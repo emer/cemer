@@ -209,7 +209,7 @@ void LogView::RemoveNotify(TAPtr ud) {
   } */
 }
 
-void LogView::Render_pre(taDataView* par) {
+void LogView::Render_pre() {
   if (!m_node_so.ptr()) return; // shouldn't happen
 
   // release any previous incarnation of graph in panel
@@ -225,7 +225,7 @@ void LogView::Render_pre(taDataView* par) {
     col->copyTo(node_so->material()->diffuseColor);
   }
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
   InitDisplayParams();
 }
 
@@ -717,10 +717,10 @@ void GridLogViewBase::NewHead() {
   RenderHead();
 }
 
-void GridLogViewBase::Render_pre(taDataView* par) {
+void GridLogViewBase::Render_pre() {
   m_node_so = new T3GridLogViewBaseNode(this);
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void GridLogViewBase::Render_post() {
@@ -1684,8 +1684,8 @@ done:
   inherited::ChildRemoving(child);
 }
 
-void GraphLogView::Clear_impl(taDataView* par) {
-  inherited::Clear_impl(par);
+void GraphLogView::Clear_impl() {
+  inherited::Clear_impl();
 /*obs  view_range.max = -1;
   view_range.min = 0; // collapse the view range..
   InitDisplay(); */
@@ -1812,10 +1812,10 @@ void GraphLogView::Render_impl() {
   inherited::Render_impl();
 }
 
-void GraphLogView::Render_pre(taDataView* par) {
+void GraphLogView::Render_pre() {
   m_node_so = new T3GraphLogViewNode(this);
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 int GraphLogView::SetXAxis(char* nm) {

@@ -177,12 +177,12 @@ void AxisView::Render_impl() {
   inherited::Render_impl();
 }
 
-void AxisView::Render_pre(taDataView* par) {
+void AxisView::Render_pre() {
   T3Axis* t3ax = new T3Axis((T3Axis::Axis)axis(), this);
   SoFont* font = t3ax->labelFont();
   font->size.setValue(AXIS_LABEL_SIZE);
   m_node_so = t3ax;
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void AxisView::UpdateAxis() {
@@ -731,11 +731,11 @@ void GraphLine::Render_impl() {
   inherited::Render_impl();
 }
 
-void GraphLine::Render_pre(taDataView* par) {
+void GraphLine::Render_pre() {
   m_node_so = new T3GraphLine(this);
   SoFont* font = node_so()->labelFont();
   font->size.setValue(LINE_LABEL_SIZE);
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 bool GraphLine::RenderPoint(int row) {
@@ -1259,7 +1259,7 @@ void GraphView::Render_impl() {
   inherited::Render_impl();
 }
 
-void GraphView::Render_pre(taDataView* par) {
+void GraphView::Render_pre() {
   m_node_so = new T3Graph(this);
 
   // origin is invariant (otherwise graphlets get rebuilt)
@@ -1273,7 +1273,7 @@ void GraphView::Render_pre(taDataView* par) {
     FloatTransform* ft = gl->transform(true); //note: Inventor coords
     ft->translate.SetXYZ(origin.x, origin.y, -origin.z);
   }
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 void GraphView::Reset_impl() {
@@ -1457,12 +1457,12 @@ done:
   inherited::ChildRemoving(child_);
 }
 
-void GraphViews::Clear_impl(taDataView* par) {
-  if (par && par->InheritsFrom(&TA_T3DataView) && m_bar_so.ptr()) {
-    ((T3DataView*)par)->AddRemoveChildNode(m_bar_so.ptr(), false);
+void GraphViews::Clear_impl() {
+  if (hasParent() && m_bar_so.ptr()) {
+    parent()->AddRemoveChildNode(m_bar_so.ptr(), false);
   }
   m_bar_so = NULL;
-  inherited::Clear_impl(par);
+  inherited::Clear_impl();
 }
 
 bool GraphViews::InitUpdateXZAxes(bool init) {
@@ -1504,19 +1504,19 @@ void GraphViews::ReInit_impl() {
   inherited::ReInit_impl(); //reinits graphs
 }
 
-void GraphViews::Render_pre(taDataView* par) {
+void GraphViews::Render_pre() {
   GraphSpec* gvs = graph_spec(); // cache
   m_node_so = new T3NodeParent(this);
 
   // if using a color bar, then create its rep now
   //note: following if test is truly gross!
-  if (gvs && gvs->use_cbar && par && par->InheritsFrom(&TA_T3DataView)) {
+  if (gvs && gvs->use_cbar && hasParent()) {
     T3CBar* t3cb = new T3CBar(gvs->scale, this);
     m_bar_so = t3cb;
-    ((T3DataView*)par)->AddRemoveChildNode(t3cb, true);
+    parent()->AddRemoveChildNode(t3cb, true);
   }
 
-  inherited::Render_pre(par);
+  inherited::Render_pre();
 }
 
 

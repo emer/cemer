@@ -194,7 +194,7 @@ public:
   void*			root() {return (browser()) ? browser()->root() : NULL;}
   TypeDef*		root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
   MemberDef*		root_md() {return (browser()) ? browser()->root_md : NULL;} //
-//  override int	stretchFactor() const {return 1;} //  default
+  override int		stretchFactor() const {return 1;} //  1/2 default
 
 //nn  void			DataPanelDestroying(iDataPanel* panel); // override - called by DataPanel when it is destroying -- remove from all tabs
 //nn  void		RemovePanel(iDataPanel* panel); // removes and deletes the indicated panel

@@ -430,7 +430,7 @@ public:
   virtual taiAction_List& dynActions() {return dyn_actions;} 
     // Action list, of current dynamic actions available
   virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
-   // -- list of current dynamic methods available
+   // -- list of current dynamic methods availableselectionChanged
   QObject*		clipHandlerObj() const; 
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
   virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
@@ -526,7 +526,7 @@ friend class MainWindowViewer;
 friend class iMainWindowViewer;
 public:
   
-  virtual int		stretchFactor() const {return 1;} // helps set sensible alloc of space in split
+  virtual int		stretchFactor() const {return 2;} // helps set sensible alloc of space in split
   inline FrameViewer*	viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
   inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
@@ -575,7 +575,7 @@ public:
   
   virtual taiDataLink*	sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*	sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
-  override int		stretchFactor() const {return 2;} // 2x default
+  override int		stretchFactor() const {return 4;} // 3/2 default
   iTabView*		tabView() {return m_curTabView;} // currently active
   iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
 

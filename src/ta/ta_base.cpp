@@ -2212,6 +2212,44 @@ void taDataView::DataLinkDestroying(taDataLink* dl) {
   //NOTE: we may be destroyed at this point -- do not put any more code
 }
 
+void taDataView::DoActions(DataViewAction acts) {
+  // never do any rendering or resetting (incl. children) during load or copying, 
+  if (taMisc::is_loading || taMisc::is_duplicating) return; 
+  // only the structural reset done if in nogui mode
+  if (!taMisc::gui_active) goto reset_check;
+  
+  if (acts & CONSTR_POST) {
+    // note: only ever called manually
+    Constr_post();
+  }
+  if (acts & CLEAR_IMPL) {
+    // must be mapped to do clear
+//BA 9/19/06 prob should always call -- s/b safe, and may be needed for descendants
+//    if (isMapped())
+      Clear_impl();
+  }
+  if (acts & RENDER_PRE) {
+    // must not already be constructed
+//TEMP    if (!isMapped())
+      Render_pre();
+  }
+  // must be mapped for other render steps
+  if (acts & RENDER_IMPL) {
+    Render_impl();
+  }
+  if (acts & RENDER_POST) {
+    Render_post();
+  }
+  if (acts & CLOSE_WIN_IMPL) {
+    CloseWindow_impl();
+  }
+reset_check:
+  if (acts & RESET_IMPL) {
+    Reset_impl();
+  }
+}
+
+
 String taDataView::GetLabel() const {
   return GetTypeDef()->GetLabel();
 }
@@ -2228,12 +2266,6 @@ int taDataView::par_dbu_cnt() {
     return rval;
   } else
     return 0;
-}
-
-taDataView* taDataView::parent() const { // note: changing caches is still "const"
-  if (!m_parent)
-    m_parent = GET_MY_OWNER(taDataView);
-  return m_parent;
 }
 
 void taDataView::SetData(taBase* ta) {
@@ -2256,6 +2288,11 @@ void taDataView::SetData_impl(taBase* ta) {
   taBase::SetPointer((taBase**)&m_data, ta);
 }
 
+TAPtr taDataView::SetOwner(TAPtr own) {
+  TAPtr rval = inherited_taBase::SetOwner(own);
+  m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
+  return rval;
+}
 
 //////////////////////////////////
 //   DataView_List	 	//
@@ -2267,13 +2304,6 @@ void DataView_List::DataChanged(int dcr, void* op1, void* op2) {
   taDataView* own = GET_MY_OWNER(taDataView);
   if (own)
     own->DataChanged_Child(this, dcr, op1, op2);
-}
-
-void DataView_List::Clear_impl(taDataView* par) {
-  for (int i = size - 1; i >= 0; --i) {
-    taDataView* item = FastEl(i);
-    item->Clear_impl(par);
-  }
 }
 
 void DataView_List::El_disOwn_(void* it) {
@@ -2297,28 +2327,21 @@ TAPtr DataView_List::SetOwner(TAPtr own) {
   return inherited::SetOwner(own);
 }
 
-
-void DataView_List::Render_pre(taDataView* par) {
-  for (int i = 0; i < size; ++i) {
-    taDataView* item = FastEl(i);
-    item->Render_pre(par);
+void DataView_List::DoAction(taDataView::DataViewAction acts) {
+  if (acts && taDataView::CONSTR_MASK) {
+    for (int i = 0; i < size; ++i) {
+      taDataView* dv = FastEl(i);
+      dv->DoActions(acts);
+    }
+  } else { // DESTR_MASK
+    for (int i = size - 1; i >= 0 ; --i) {
+      taDataView* dv = FastEl(i);
+      dv->DoActions(acts);
+    }
+    if (acts & taDataView::RESET_IMPL)
+      Reset();
   }
 }
-
-void DataView_List::Render_impl() {
-  for (int i = 0; i < size; ++i) {
-    taDataView* item = FastEl(i);
-    item->Render_impl();
-  }
-}
-
-void DataView_List::Render_post() {
-  for (int i = 0; i < size; ++i) {
-    taDataView* item = FastEl(i);
-    item->Render_post();
-  }
-}
-
 
 
 //////////////////////////

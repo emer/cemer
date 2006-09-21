@@ -188,7 +188,7 @@ void iContextLabel::contextMenuEvent (QContextMenuEvent* e) {
 int taiChoiceDialog::ChoiceDialog(QWidget* win, const char* prompt,
 	const char* win_title, bool no_cancel)
 {
-  if (win == NULL) win = taiMisc::main_window;
+  if (win == NULL) win = QApplication::activeWindow();
   taiChoiceDialog* dlg = new taiChoiceDialog(win, prompt, win_title, no_cancel);
   // show the dialog
   int rval = dlg->exec();
@@ -971,7 +971,7 @@ void taiDataHost::label_contextMenuInvoked(iContextLabel* sender, QContextMenuEv
 void taiDataHost::DoConstr_Dialog(iDialog*& dlg) {
   // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
   if (dlg != NULL) return; // already constructed
-  dlg = new iDialog(this, taiMisc::main_window);
+  dlg = new iDialog(this, QApplication::activeWindow());
   // another top-level window, otherwise X can't seem to handle more than 12-14 windows
   dlg->setCaption(win_str);
   //TODO: max_w seems to span both monitors of a dual head system!!!

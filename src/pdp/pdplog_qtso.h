@@ -165,7 +165,7 @@ protected:
   iLogView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   virtual void		InitDisplayParams() {} // called in _pre
   override void		OnWindowBind_impl(iT3DataViewer* vw);
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE -- we only set color of frame
+  override void		Render_pre(); // #IGNORE -- we only set color of frame
   override void		Render_impl(); // #IGNORE
   override void 	Render_post();
   override void		Reset_impl();
@@ -227,7 +227,7 @@ protected:
   virtual void		InitHead() {}
   virtual void		RenderHead() {}
   override void		Clear_impl();
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl();
 };
@@ -502,10 +502,10 @@ public:
 protected:
   override void 	ChildAdding(T3DataView* child);
   override void 	ChildRemoving(T3DataView* child);
-  override void		Clear_impl(taDataView* par = NULL);
+  override void		Clear_impl();
   override void		OnWindowBind_impl(iT3DataViewer* vw);
   override void		Render_impl(); // #IGNORE
-  override void		Render_pre(taDataView* par = NULL); // #IGNORE
+  override void		Render_pre(); // #IGNORE
   override void		UpdateFromBuffer_impl();
 };
 

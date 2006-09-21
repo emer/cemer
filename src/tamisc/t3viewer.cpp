@@ -67,6 +67,25 @@
 int T3DataView_inst_cnt = 0;
 #endif
 
+T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
+  SoPath* path = path_->copy();
+  path->ref();
+  T3DataView* rval = NULL;
+  // keep looking backwards from current tail, until we find a T3Node
+  while (!rval && (path->getLength() > 0)) {
+    SoNode* node = path->getTail();
+    // T3Nodes
+    if (node->getTypeId().isDerivedFrom(T3Node::getClassTypeId())) {
+      T3Node* t3node = (T3Node*)node;
+      rval = (T3DataView*)t3node->dataView;
+      break;
+    }
+    path->truncate(path->getLength() - 1);
+  }
+  path->unref();
+  return rval;
+}
+
 
 void T3DataView::Initialize() {
   flags = 0; //TODO: provide way to init
@@ -144,18 +163,15 @@ void T3DataView::ChildRemoving(taDataView* child_) {
   AddRemoveChildNode_impl(ch_so, false); // remove node
 }
 
-void T3DataView::Clear_impl(taDataView* par) { // note: no absolute guarantee par will be T3DataView
+void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3DataView
   // can't have any visual children, if we don't exist ourselves...
   // also, don't need to report to parent if we don't have any impl ourselves
   if (!m_node_so.ptr()) return;
   node_so()->dataView = NULL;
 
-  if (!par) { // only not supplied for top-most item in Clear chain hierarchy
-    par = parent();
-  }
   // we remove top-most item first, which results in only one update to the scene graph
-  if (par) {
-    par->ChildClearing(this);
+  if (hasParent()) {
+    parent()->ChildClearing(this);
   }
   Clear_impl_children();
   m_node_so = NULL;
@@ -193,9 +209,8 @@ void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) 
 
 void T3DataView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
-  if (taMisc::is_loading || !isMapped()) return; // no gui stuff if loading or not mapped!!!
-  Render_impl();
-  if (m_node_so.ptr())
+  DoActions(RENDER_IMPL);
+  if (m_node_so)
     m_node_so->touch();
 }
 
@@ -219,15 +234,18 @@ ISelectableHost* T3DataView::host() const {
   return (root) ? root->host : NULL;
 }
 
+bool T3DataView::isMapped() const {
+  return (m_node_so);
+}
+
+
 taiDataLink* T3DataView::par_link() const {
-  taDataView* par = parent();
-  if (par) return par->link();
+  if (hasParent()) return parent()->link();
   else     return NULL;
 }
 
 MemberDef* T3DataView::par_md() const {
-  taDataView* par = parent();
-  if (par) return par->md();
+  if (hasParent()) return parent()->md();
   else     return NULL;
 }
 
@@ -254,15 +272,12 @@ void T3DataView::Render_impl() {
   inherited::Render_impl();
 }
 
-void T3DataView::Render_pre(taDataView* par) {
+void T3DataView::Render_pre() {
   Constr_Node_impl();
-  Render_pre_children(par);
-  if (!par) { // only not supplied for top-most item in Render_pre chain hierarchy
-    par = parent();
-  }
+  Render_pre_children();
   // we remove top-most item first, which results in only one update to the scene graph
-  if (par) {
-    par->ChildRendered(this);
+  if (hasParent()) {
+    parent()->ChildRendered(this);
   }
 }
 
@@ -344,7 +359,7 @@ void T3DataViewPar::CutLinks() {
 }
 
 void T3DataViewPar::Clear_impl_children() {
-  children.Clear_impl(this);
+  children.DoAction(taDataView::CLEAR_IMPL);
 }
 
 void T3DataViewPar::CloseChild(taDataView* child) {
@@ -377,8 +392,9 @@ void T3DataViewPar::ReInit() {
   ReInit_impl();
 }
 
-void T3DataViewPar::Render_pre_children(taDataView* par) {
-  children.Render_pre(this);
+//TODO: just do a DoActionChild_impl routine and eliminate all these child things
+void T3DataViewPar::Render_pre_children() {
+  children.DoAction(taDataView::RENDER_PRE);
 }
 
 void T3DataViewPar::Render_impl() {
@@ -387,7 +403,7 @@ void T3DataViewPar::Render_impl() {
 }
 
 void T3DataViewPar::Render_impl_children() {
-  children.Render_impl();
+  children.DoAction(taDataView::RENDER_IMPL);
 }
 
 void T3DataViewPar::Render_post() {
@@ -396,7 +412,7 @@ void T3DataViewPar::Render_post() {
 }
 
 void T3DataViewPar::Render_post_children() {
-  children.Render_post();
+  children.DoAction(taDataView::RENDER_POST);
 }
 
 void T3DataViewPar::Reset_impl() {
@@ -405,7 +421,7 @@ void T3DataViewPar::Reset_impl() {
 }
 
 void T3DataViewPar::Reset_impl_children() {
-  children.Reset_impl();
+  children.DoAction(taDataView::RESET_IMPL);
 }
 
 
@@ -417,25 +433,6 @@ void T3DataViewRoot::Constr_Node_impl() {
   m_node_so = new T3NodeParent;
 }
 
-
-T3DataView* T3DataViewRoot::GetViewFromPath(const SoPath* path_) const {
-  SoPath* path = path_->copy();
-  path->ref();
-  T3DataView* rval = NULL;
-  // keep looking backwards from current tail, until we find a T3Node
-  while (!rval && (path->getLength() > 0)) {
-    SoNode* node = path->getTail();
-    // T3Nodes
-    if (node->getTypeId().isDerivedFrom(T3Node::getClassTypeId())) {
-      T3Node* t3node = (T3Node*)node;
-      rval = (T3DataView*)t3node->dataView;
-      break;
-    }
-    path->truncate(path->getLength() - 1);
-  }
-  path->unref();
-  return rval;
-}
 
 
 
@@ -481,7 +478,7 @@ cerr << "iRenderArea::processEvent: right mouse press handled\n";
       //TODO: maybe should check for item under mouse???
       //TODO: pos will need to be adjusted for parent offset of renderarea ???
       ev->accept();
-      t3vw->emit_contextMenuRequested(ev->globalPos());
+      t3vw->ContextMenuRequested(ev->globalPos());
       return;
     }
   }
@@ -527,7 +524,7 @@ iSoSelectionEvent::iSoSelectionEvent(bool is_selected_, const SoPath* path_)
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(true, path);
   iT3ViewspaceWidget* t3vw = (iT3ViewspaceWidget*)inst;
-  t3vw->emit_SoSelectionEvent(&ev);
+  t3vw->SoSelectionEvent(&ev);
   t3vw->sel_so->touch(); // to redraw
 
 }
@@ -535,7 +532,7 @@ void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
 void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(false, path);
   iT3ViewspaceWidget* t3dv = (iT3ViewspaceWidget*)inst;
-  t3dv->emit_SoSelectionEvent(&ev);
+  t3dv->SoSelectionEvent(&ev);
   t3dv->sel_so->touch(); // to redraw
 }
 
@@ -563,6 +560,8 @@ void iT3ViewspaceWidget::init() {
 //nn  m_raw = NULL;
   m_selMode = SM_NONE;
   m_scene = NULL;
+//TEST
+  setMinimumSize(320, 320);
 }
 
 void iT3ViewspaceWidget::deleteScene() {
@@ -570,14 +569,6 @@ void iT3ViewspaceWidget::deleteScene() {
     // remove the nodes
     m_renderArea->setSceneGraph(NULL);
   }
-}
-
-void iT3ViewspaceWidget::emit_contextMenuRequested(const QPoint& pos) {
-  emit contextMenuRequested(pos);
-}
-
-void iT3ViewspaceWidget::emit_SoSelectionEvent(iSoSelectionEvent* ev) {
-  emit SoSelectionEvent(ev);
 }
 
 QScrollBar* iT3ViewspaceWidget::horScrollBar(bool auto_create) {
@@ -691,6 +682,41 @@ QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
   return m_verScrollBar;
 }
 
+void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
+  ISelectable* ci = curItem();
+  //TODO: what to do if nothing selected, but user right clicks???
+  //TODO: how to handle multi-select
+  if (ci == NULL) return;
+  T3DataView* dv = (T3DataView*)ci->This();
+
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  //TODO: any for us first (ex. delete)
+
+  dv->FillContextMenu(selItems(), menu); // also calls link menu filler
+
+  FillContextMenu(menu);
+
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
+}
+
+void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
+  // notify to our frame that we have grabbed focus
+  Emit_GotFocusSignal();
+  
+  T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
+  if (!t3node) return;
+
+  if (ev->is_selected) {
+    AddSelectedItem(t3node);
+  } else {
+    RemoveSelectedItem(t3node);
+  }
+}
+
+
 void iT3ViewspaceWidget::UpdateSelectedItems_impl() {
   //TODO
 }
@@ -729,14 +755,10 @@ void iT3DataViewer::Init() {
   m_ra = new iRenderArea(t3vs);
   m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
   t3vs->setRenderArea(m_ra);
+  
+  t3vs->Connect_SelectableHostNotifySignal(this, 
+    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 
-  connect(t3vs, SIGNAL(contextMenuRequested(const QPoint&)),
-      this, SLOT(vs_contextMenuRequested(const QPoint&)) );
-  connect(t3vs, SIGNAL(SoSelectionEvent(iSoSelectionEvent*)),
-      this, SLOT(vs_SoSelectionEvent(iSoSelectionEvent*)) );
-  /* TODO: connect appropriate edit/menu handlers
-  connect(lvwDataTree, SIGNAL(selectionChanged(QListViewItem*)),
-      this, SLOT(lvwDataTree_selectionChanged(QListViewItem*)) ); */
 }
 
 /*void iT3DataViewer::Constr_Menu_impl() {
@@ -813,38 +835,6 @@ void iT3DataViewer::viewRefresh() {
     viewer()->Render();
 }
 
-void iT3DataViewer::vs_contextMenuRequested(const QPoint& pos) {
-/*TODO  ISelectable* ci = curItem();
-  //TODO: what to do if nothing selected, but user right clicks???
-  //TODO: how to handle multi-select
-  if (ci == NULL) return;
-  T3DataView* dv = (T3DataView*)ci->This();
-
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  dv->FillContextMenu(sel_items(), menu); // also calls link menu filler
-
-  FillContextMenu(menu);
-
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu; */
-}
-
-void iT3DataViewer::vs_SoSelectionEvent(iSoSelectionEvent* ev) {
-/*TODO  SetThisAsHandler(); // for sure we are clipboard/focus handler
-  T3DataView* t3node = root()->GetViewFromPath(ev->path);
-  if (!t3node) return;
-
-  if (ev->is_selected) {
-    AddSelectedItem(t3node);
-  } else {
-    RemoveSelectedItem(t3node);
-  } */
-}
-
 
 //////////////////////////
 //	T3DataViewer	//
@@ -881,10 +871,10 @@ void T3DataViewer::AddView(T3DataView* view) {
 }
 
 // note: dispatchers for these _impl always check for the widget
-void T3DataViewer::Clear_impl(taDataView* par) {
-  root_view.Clear_impl(this);
+void T3DataViewer::Clear_impl() {
+  root_view.Clear_impl();
   widget()->Reset_impl();
-  inherited::Clear_impl(par);
+  inherited::Clear_impl();
 }
 
 void T3DataViewer::Constr_impl(QWidget* gui_parent) {
@@ -895,8 +885,6 @@ void T3DataViewer::Constr_impl(QWidget* gui_parent) {
 void T3DataViewer::Constr_post() {
   inherited::Constr_post();
   root_view.OnWindowBind(widget());
-  // on first opening, do a viewall to center all geometry in viewer
-  widget()->ra()->viewAll();
 }
 
 IDataViewWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
@@ -913,10 +901,10 @@ T3DataView* T3DataViewer::FindRootViewOfData(TAPtr data) {
   return NULL;
 }
 
-void T3DataViewer::Render_pre(taDataView* par) {
-  inherited::Render_pre(par);
+void T3DataViewer::Render_pre() {
+  inherited::Render_pre();
   widget()->Render_pre();
-  root_view.Render_pre(this);
+  root_view.Render_pre();
 }
 
 void T3DataViewer::Render_impl() {
@@ -930,6 +918,8 @@ void T3DataViewer::Render_post() {
   root_view.Render_post();
   widget()->setSceneTop(root_view.node_so());
   widget()->Render_post();
+  // on first opening, do a viewall to center all geometry in viewer
+  widget()->ra()->viewAll();
 }
 
 void T3DataViewer::Reset_impl() {
