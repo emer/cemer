@@ -1,5 +1,10 @@
 leabra todo list:
 
+* datatable should not be in LayerWriter -- in a var in the program:
+  program does setting of this!
+
+* console ticket: outer scroll bar; function to align with bottom of project view window..
+
 * seeds in programs: just add as a builtin class to program (also timing) -- general 
   enough to be needed everywhere..
 

@@ -984,15 +984,17 @@ int Con_Group::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   return 1;
 }
 
-bool Con_Group::CheckTypes() {
+bool Con_Group::CheckTypes(bool quiet) {
   if(!spec.CheckSpec())
     return false;
   if((prjn == NULL) && (size > 0)) {
-    taMisc::Error("ConGroup:",GetPath(),"has null projection!, do Connect All");
+    if(!quiet)
+      taMisc::Error("ConGroup:",GetPath(),"has null projection!, do Connect All");
     return false;
   }
   if((size > 0) && (other_idx < 0)) {
-    taMisc::Error("ConGroup:", GetPath(), "has unset other_idx, do FixPrjnIndexes or Connect All");
+    if(!quiet)
+      taMisc::Error("ConGroup:", GetPath(), "has unset other_idx, do FixPrjnIndexes or Connect All");
     return false;
   }
   return true;
@@ -1646,20 +1648,31 @@ bool Unit::Build() {
   return rval;
 }
 
-bool Unit::CheckBuild() {
-  if(spec.spec == NULL)	return false;
+bool Unit::CheckBuild(bool quiet) {
+  if(!spec.spec) {
+    if(!quiet)
+      taMisc::Error("Unit CheckBuild: no unit spec set for unit:", GetPath());
+    return false;
+  }
   if(spec->bias_con_type == NULL) {
-    if(bias)
-      return true;
+    if(bias) {
+      if(!quiet)
+	taMisc::Error("Unit CheckBuild: bias weight exists but no type for unit:", GetPath());
+      return false;		// todo: error messages
+    }
   }
   else {
-    if((bias == NULL) || (bias->GetTypeDef() != spec->bias_con_type))
-      return true;
+    if((bias == NULL) || (bias->GetTypeDef() != spec->bias_con_type)) {
+      if(!quiet)
+	taMisc::Error("Unit CheckBuild: bias weight null or not same type for unit:",
+		      GetPath()," type should be:", spec->bias_con_type->name);
+      return false;
+    }
   }
-  return false;
+  return true;
 }
 
-bool Unit::CheckTypes() {
+bool Unit::CheckTypes(bool quiet) {
   if(!spec.CheckSpec())
     return false;
   if(spec->bias_con_type) {
@@ -1669,10 +1682,10 @@ bool Unit::CheckTypes() {
   Con_Group* cg;
   int i;
   FOR_ITR_GP(Con_Group, cg, recv., i) {
-    if(!cg->CheckTypes()) return false;
+    if(!cg->CheckTypes(quiet)) return false;
   }
   FOR_ITR_GP(Con_Group, cg, send., i) {
-    if(!cg->CheckTypes()) return false;
+    if(!cg->CheckTypes(quiet)) return false;
   }
   return true;
 }
@@ -2320,6 +2333,24 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
   }
 }
 
+bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
+  if(!prjn->projected) {
+    if(!quiet)
+      taMisc::Error("Projection CheckConnect: ", prjn->name, "is not connected!");
+    return false;
+  }
+  if(prjn->con_spec.spec == NULL) {
+    if(!quiet)
+      taMisc::Error("Projection CheckConnect: ", prjn->name, "has null con_spec");
+    return false;
+  }
+  if(!prjn->con_spec->CheckObjectType(prjn)) {
+    if(!quiet)
+      taMisc::Error("Projection CheckConnect: ", prjn->name, "does not have correct spec/object type");
+    return false;
+  }
+  return true;
+}
 
 ////////////////////////
 //	Projection    //
@@ -2415,7 +2446,7 @@ void Projection::UpdateAfterEdit() {
     name = "Fm_" + from->name;
   if(taMisc::is_loading) return;
   ApplyConSpec();
-  CheckTypes_impl();
+  CheckTypes_impl(false);	// not quiet
   if(!taMisc::gui_active) return;
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;
@@ -2729,20 +2760,25 @@ void Projection::ReConnect_Load() {
   spec->ReConnect_Load(this);
 }
 
-bool Projection::CheckTypes() {
+bool Projection::CheckTypes(bool quiet) {
   if(!spec.CheckSpec())
     return false;
-  if(CheckTypes_impl())
-    return true;
-  taMisc::Error("Connection, Con_Group, or spec types for projection:",GetPath(),
-		"are not correct, perform 'Connect' to rectify");
-  return false;
+  if(!CheckTypes_impl(quiet)) {
+    if(!quiet)
+      taMisc::Error("Projection CheckTypes: Connection, Con_Group, or spec types for projection:",GetPath(),
+		    "are not correct, perform 'Connect' to rectify");
+    return false;
+  }
+  return true;
 }
 
-bool Projection::CheckTypes_impl() {
-  if((layer == NULL) || (from == NULL)) return true;
-  if(spec.spec == NULL)
+bool Projection::CheckTypes_impl(bool quiet) {
+  if(!layer || !from) return true; // silent bail for unconnected?
+  if(!spec.spec) {
+    if(!quiet)
+      taMisc::Error("Projection CheckTypes: spec is null for projection:",GetPath());
     return false;
+  }
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
@@ -2755,10 +2791,14 @@ bool Projection::CheckTypes_impl() {
 	  return false;
 	}
 	if(recv_gp->GetTypeDef() != con_gp_type) {
+	  if(!quiet)
+	    taMisc::Error("Projection CheckTypes: recv_gp type does not match con_gp_type for projection:",GetPath(), "type should be:", con_gp_type->name);
 	  projected = false;
 	  return false;
 	}
 	if(recv_gp->el_typ != con_type) {
+	  if(!quiet)
+	    taMisc::Error("Projection CheckTypes: recv connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
 	  projected = false;
 	  return false;
 	}
@@ -2776,10 +2816,14 @@ bool Projection::CheckTypes_impl() {
 	  return false;
 	}
 	if(send_gp->GetTypeDef() != con_gp_type) {
+	  if(!quiet)
+	    taMisc::Error("Projection CheckTypes: send_gp type does not match con_gp_type for projection:",GetPath(), "type should be:", con_gp_type->name);
 	  projected = false;
 	  return false;
 	}
 	if(send_gp->el_typ != con_type) {
+	  if(!quiet)
+	    taMisc::Error("Projection CheckTypes: send connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
 	  projected = false;
 	  return false;
 	}
@@ -2966,15 +3010,23 @@ bool Unit_Group::Build() {
   return units_changed;
 }
 
-bool Unit_Group::CheckBuild() {
+bool Unit_Group::CheckBuild(bool quiet) {
   if(n_units == 0) {
-    if(own_lay == NULL) return false;
-    if(!units_lesioned && (size != own_lay->n_units))
-      return true;
+    if(own_lay == NULL) return false;		      // was true
+    if(!units_lesioned && (size != own_lay->n_units)) {
+      if(!quiet)
+	taMisc::Error("Unit_Group CheckBuild: no units and this is not what is specified in group",
+		      GetPath(),"in layer:", own_lay->name);
+      return false;
+    }
   }
-  else if(!units_lesioned && (size != n_units))
-    return true;
-  return false;
+  else if(!units_lesioned && (size != n_units)) {
+    if(!quiet)
+      taMisc::Error("Unit_Group CheckBuild: number of units != target in group",
+		    GetPath(),"in layer:", own_lay->name);
+    return false;
+  }
+  return true;
 }
 
 bool Unit_Group::SetUnitSpec(UnitSpec* sp) {
@@ -3739,56 +3791,60 @@ void Layer::LayoutUnitGroups() {
   StructUpdate(false);
 }
 
-bool Layer::CheckBuild() {
+bool Layer::CheckBuild(bool quiet) {
   if(units.gp.size > 0) {
     int g;
     for(g=0; g<units.gp.size; g++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-      if(ug->CheckBuild())
-	return true;
+      if(!ug->CheckBuild(quiet))
+	return false;
     }
   }
   else {
-    if(!units.units_lesioned && (units.size != n_units))
-      return true;
+    if(!units.units_lesioned && (units.size != n_units)) {
+      if(!quiet)
+	taMisc::Error("Layer CheckBuild: number of units != target in layer", name);
+      return false;
+    }
   }
 
   Unit* u;
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
-    if(u->GetTypeDef() != units.el_typ)
-      return true;
-    if(u->CheckBuild())
-      return true;
+    if(u->GetTypeDef() != units.el_typ) {
+      if(!quiet)
+	taMisc::Error("Layer CheckBuild: unit type not correct in layer", name,
+		      "syould be:", units.el_typ->name);
+      return false;
+    }
+    if(!u->CheckBuild(quiet))
+      return false;
   }
-  return false;
+  return true;
 }
 
-bool Layer::CheckConnect() {
+bool Layer::CheckConnect(bool quiet) {
   Projection* prjn;
   taLeafItr j;
   FOR_ITR_EL(Projection, prjn, projections.,j) {
-    if(!prjn->projected)
-      return true;
-    if(prjn->con_spec.spec == NULL)
-      return false;
-    if(!prjn->con_spec->CheckObjectType(prjn))
-      return false;
+    if(!prjn->CheckConnect(quiet)) return false;
   }
-  return false;
+  return true;
 }
 
-bool Layer::CheckTypes() {
+bool Layer::CheckTypes(bool quiet) {
   // don't check layerspec by default, but layers that have them should!
   Unit* u;
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
-    if(!u->CheckTypes()) return false;
+    if(!u->CheckTypes(quiet))
+      return false;
   }
   Projection* prjn;
   taLeafItr j;
   FOR_ITR_EL(Projection, prjn, projections.,j) {
-    if(!prjn->CheckTypes()) return false;
+    if(!prjn->CheckTypes(quiet)) 
+      return false;
   }
   return true;
 }
@@ -3798,7 +3854,8 @@ bool Layer::CheckConfig(Network* net, bool quiet) {
   Unit* u;
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
-    if(!u->CheckConfig(this, net, quiet)) return false;
+    if(!u->CheckConfig(this, net, quiet))
+      return false;
   }
   return true;
 }
@@ -4598,40 +4655,52 @@ void Network::CountRecvCons() {
   }
 }
 
-bool Network::CheckBuild() {
+bool Network::CheckBuild(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->CheckBuild())
-      return true;
+    if(!l->CheckBuild(quiet)) {
+      if(!quiet)
+	taMisc::Error("Network:",GetName(),"Needs the 'Build' command to be run");
+      return false;
+    }
   }
-  return false;
+  return true;
 }
 
-bool Network::CheckConnect() {
+bool Network::CheckConnect(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->CheckConnect())
-      return true;
+    if(!l->CheckConnect(quiet)) {
+      if(!quiet)
+	taMisc::Error("Network:",GetName(), "Needs the 'Connect' command to be run");
+      return false;
+    }
   }
-  return false;
+  return true;
 }
 
-bool Network::CheckTypes() {
+bool Network::CheckTypes(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->CheckTypes()) return false;
+    if(!l->CheckTypes(quiet))
+      return false;
   }
   return true;
 }
 
 bool Network::CheckConfig(bool quiet) {
+  if(!CheckTypes(quiet)) return false;
+  if(!CheckBuild(quiet)) return false;
+  if(!CheckConnect(quiet)) return false;
+
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->CheckConfig(this, quiet)) return false;
+    if(!l->CheckConfig(this, quiet))
+      return false;
   }
   return true;
 }
@@ -5161,15 +5230,7 @@ void Network::InitWtDelta(){
 
 void Network::InitWtState() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
-  if(!CheckTypes()) return;
-  if(CheckBuild()) {
-    taMisc::Error("Network:",GetName(),"Needs the 'Build' command to be run");
-    return;
-  }
-  if(CheckConnect()) {
-    taMisc::Error("Network:",GetName(), "Needs the 'Connect' command to be run");
-    return;
-  }
+  if(!CheckConfig()) return;
 
   taMisc::Busy();
   Layer* l;
@@ -5913,6 +5974,13 @@ LayerRWBase* LayerRWBase_List::FindByDataBlockLayer(DataBlock* db, Layer* lay) {
       return it;
   }
   return NULL;
+}
+
+void LayerRWBase_List::SetAllData(DataBlock* db) {
+  for(int i = 0; i < size; ++i) {
+    LayerRWBase* it = FastEl(i);
+    it->data = db;
+  }
 }
 
 //////////////////////

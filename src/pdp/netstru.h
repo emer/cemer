@@ -356,7 +356,7 @@ public:
   virtual int	LesionCons(Unit* un, float p_lesion, bool permute=true);
   // #MENU #USE_RVAL remove weights with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual bool	CheckTypes();
+  virtual bool	CheckTypes(bool quiet=false);
   // #MENU #USE_RVAL check that the object and spec types are all ok
   virtual bool CheckOtherIdx_Recv(); // check validity of other_idx for recv con groups
   virtual bool CheckOtherIdx_Send();// check validity of other_idx for send con groups
@@ -544,8 +544,8 @@ public: //
   // apply external input or target value to unit
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
-  virtual bool	CheckBuild();
-  // check if build needs to be performed (true if yes, false if no)
+  virtual bool	CheckBuild(bool quiet=false);
+  // check if network is built 
   TAPtr		New(int n_objs=0, TypeDef* type=NULL);
   // create a bias weight of the specified type (for loading existing nets)
   virtual void	RemoveCons();
@@ -586,7 +586,7 @@ public: //
 
   virtual bool	SetConSpec(ConSpec* con_spec);
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE set all recv conspecs to con_spec
-  virtual bool	CheckTypes();
+  virtual bool	CheckTypes(bool quiet=false);
   // #MENU #USE_RVAL check that the object and spec types are all ok
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
@@ -633,6 +633,9 @@ public:
   virtual void 	InitWtState(Projection* prjn);	// initializes the wt`s state
   virtual void 	InitWtState_post(Projection* prjn);
   // #IGNORE after wt init (ie. for wt. scaling)
+
+  virtual bool	CheckConnect(Projection* prjn, bool quiet=false);
+  // check if projection is connected
 
   virtual void	C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
   // custom initialize weights in this con group for given receiving unit ru
@@ -732,11 +735,13 @@ public:
   // set the con spec for all connections in this prjn
   virtual bool 	ApplyConSpec();
   // #BUTTON apply the default conspec to all connections in this prjn
-  virtual bool	CheckTypes();
+  virtual bool	CheckConnect(bool quiet=false) { spec->CheckConnect(this, quiet); }
+  // check if projection is connected
+  virtual bool	CheckTypes(bool quiet=false);
   // #BUTTON #USE_RVAL check that the existing con and con gp types are of the specified types
   virtual void	FixIndexes();
   // #MENU fix the indicies of the connection groups (other_idx)
-  virtual bool	CheckTypes_impl(); // #IGNORE
+  virtual bool	CheckTypes_impl(bool quiet=false); // #IGNORE
 
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // switch any connections/projections using old_sp to using new_sp
@@ -869,8 +874,8 @@ public:
 
   virtual bool	Build();
   // #MENU #MENU_ON_Actions for subgroups: build units to specs (true if changed)
-  virtual bool	CheckBuild();
-  // check if build needs to be performed (true if yes, false if no)
+  virtual bool	CheckBuild(bool quiet=false);
+  // check if network is built 
   virtual void	LayoutUnits(Unit* u = NULL);
   // for subgroups: redistribute units within the given geometry of the group
   virtual void	RecomputeGeometry();
@@ -1014,10 +1019,10 @@ public:
   // #DYN12N connect one or more other layers to this layer
   virtual void  Connect();
   // #MENU #CONFIRM connect the layer
-  virtual bool	CheckBuild();
-  // check if build needs to be performed (true if yes, false if no)
-  virtual bool	CheckConnect();
-  // check if connect needs to be performed (true if yes, false if no)
+  virtual bool	CheckBuild(bool quiet=false);
+  // check if network is built 
+  virtual bool	CheckConnect(bool quiet=false);
+  // check if network is connected
   virtual void	RemoveCons();
   // #MENU #CONFIRM #MENU_SEP_BEFORE remove all connections in this layer
   virtual void	RemoveUnits();
@@ -1075,7 +1080,7 @@ public:
   // #MENU #TYPE_Unit set unit type for all units in layer (created by Build)
   virtual bool	SetConSpec(ConSpec* conspec);
   // #MENU set for all unit's connections in layer
-  virtual bool	CheckTypes();
+  virtual bool	CheckTypes(bool quiet=false);
   // #MENU #USE_RVAL check that the object and spec types are all ok
   virtual bool 	CheckConfig(Network* net, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
@@ -1286,10 +1291,15 @@ public:
   // #MENU #MENU_ON_Actions Build the network according to geometry
   virtual void	Connect();
   // #MENU #MENU_ON_Actions Connect this network according to projections on Layers
-  virtual bool	CheckBuild();
-  // check if build needs to be performed (true if yes, false if no)
-  virtual bool	CheckConnect();
-  // check if connect needs to be performed (true if yes, false if no)
+  virtual bool	CheckBuild(bool quiet=false);
+  // check if network is built 
+  virtual bool	CheckConnect(bool quiet=false);
+  // check if network is connected
+  virtual bool	CheckTypes(bool quiet=false);
+  // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
+  virtual bool	CheckConfig(bool quiet=false);
+  // check for for misc configuration settings required by different algorithms
+
   virtual void	UpdtAfterNetMod();
   // update network after any network modification (calls appropriate functions)
   virtual void	SyncSendPrjns();
@@ -1313,12 +1323,8 @@ public:
   virtual void	ReConnect_Load(); // #IGNORE ReConnect network after loading
   virtual void	CopyNetwork(Network* net);  // #IGNORE copy entire network
 
-  virtual bool	CheckTypes();
-  // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
-  virtual bool	CheckConfig(bool quiet=false);
-  // check for for misc configuration settings required by different algorithms
   virtual void	FixPrjnIndexes();
-  // #MENU fix the projection indicies of the connection groups (other_idx)
+  // fix the projection indicies of the connection groups (other_idx)
 
   virtual void	RemoveMonitors();
   // Remove monitoring of all objects in all processes associated with parent project
@@ -1349,8 +1355,8 @@ public:
   virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
   virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics
 
-  virtual void	StretchLayerPos(int add_to_z);
-  // #MENU #MENU_SEP_BEFORE Add add_to_z to layer vertical positions in proportion to current positions: new layer.pos.z += layer.pos.z * add_to_z -- makes display look better -- negative values will subtract or compact the layers
+  virtual void	StretchLayerPos(int add_to_z = 1);
+  // #MENU #MENU_SEP_BEFORE Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights
@@ -1487,25 +1493,25 @@ class PDP_API LayerRWBase_List: public taList<LayerRWBase> {
   // #VIRT_BASE #NO_INSTANCE list of individual LayerRWBase objects
 INHERITED(taList<LayerRWBase>)
 public:
-  LayerRWBase*		FindByDataBlockLayer(DataBlock* db, Layer* lay);
-    // find the item by source and target -- note: finds first if multiple the same
-  void			FillFromDataBlock(DataBlock* db, Network* net, bool freshen_only);
-    // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
-  void			FillFromTable(DataTable* dt, Network* net, bool freshen_only);
-    // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+  virtual LayerRWBase*	FindByDataBlockLayer(DataBlock* db, Layer* lay);
+// find the item by source and target -- note: finds first if multiple the same
 
+  virtual void	FillFromDataBlock(DataBlock* db, Network* net, bool freshen_only);
+  // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
+  virtual void	FillFromTable(DataTable* dt, Network* net, bool freshen_only);
+  // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+  virtual void	SetAllData(DataBlock* db);
+  // #MENU #MENU_CONTEXT #BUTTON set all the data pointers for list elements to given datablock/data table
 
   virtual bool CheckConfig(bool quiet = false);
     
-  
-  TA_ABSTRACT_BASEFUNS(LayerRWBase_List); //
-
+  TA_ABSTRACT_BASEFUNS(LayerRWBase_List);
 protected:
   virtual void		FillFromDataBlock_impl(DataBlock* db, Network* net,
     bool freshen, Layer::LayerType lt){}
     
 private:
-  void	Initialize() {SetBaseType(&TA_LayerRWBase);}
+  void	Initialize() { SetBaseType(&TA_LayerRWBase); }
   void 	Destroy() {}
 };
 
@@ -1541,11 +1547,10 @@ INHERITED(LayerRWBase_List)
 public:
   
   inline LayerWriter*	FastEl(int i) {return (LayerWriter*)FastEl_(i);}
-  void			ApplyExternal(int context);
+  virtual void		ApplyExternal(int context);
   // convenience method that iterates the writers and applies data
-    
-  TA_BASEFUNS(LayerWriter_List); //
 
+  TA_BASEFUNS(LayerWriter_List);
 protected:
   override void		FillFromDataBlock_impl(DataBlock* db, Network* net,
     bool freshen, Layer::LayerType lt);

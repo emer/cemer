@@ -644,6 +644,7 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
     lw->chan_name = ps->name;
     Layer* lay = (Layer*)net->layers.FindName(ps->layer_name);
     lw->layer = lay;
+    lw->value_names = ps->value_names;
     if(lay) {
       if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;
       else if(ps->type == PatternSpec::TARGET) lay->layer_type = Layer::TARGET;
