@@ -1716,20 +1716,6 @@ bool taiEditDataHost::ReShow(bool force) {
   return true;
 }
 
-void taiEditDataHost::SetItemAsHandler(taiData* item, bool set_it) {
-  iMainWindowViewer* dv; // cached
-  if (!panel || !(dv = panel->window())) return; // only used by panels
-  if (set_it) {
-    dv->SetClipboardHandler(item,
-      SLOT(this_GetEditActionsEnabled(int&)),
-      SLOT(this_EditAction(int)),
-      SLOT(this_SetActionsEnabled()),
-      SIGNAL(UpdateUi()) );
-  } else {
-    dv->SetClipboardHandler(NULL);
-  }
-}
-
 void taiEditDataHost::Constr_ShowMenu() {
   if (!use_show) return;
   if (menu == NULL) return;	// if don't even have a menu, bail
@@ -1883,6 +1869,13 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
   DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
 }
+
+iMainWindowViewer* taiEditDataHost::window() const {
+  iMainWindowViewer* dv = NULL; 
+  if (panel) dv = panel->window();
+  return dv;
+}
+
 
 /*
 

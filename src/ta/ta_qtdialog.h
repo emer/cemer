@@ -329,10 +329,10 @@ public: // IDataHost i/f
   bool		isConstructed() {int s = state & STATE_MASK;
     return ((s > EXISTS) && (s < ZOMBIE));}
   bool		isModal() {return modal;}
-  bool		isReadOnly() {return read_only;}
+  bool		isReadOnly() {return read_only;} //
+// iMainWindowViewer* window() const; n/a here -- defined in taiEDH
   void*		Base() {return cur_base;} // base of the object
   TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
-  void		SetItemAsHandler(taiData* item, bool set_it = true) {} //
 //  void		GetImage()	{ }
 //  void		GetValue()	{ }
 public slots:
@@ -443,7 +443,6 @@ public:
   virtual void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   virtual void		SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void		SetCurMenuButton(MethodDef* md);
-  override void		SetItemAsHandler(taiData* item, bool set_it = true);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
 public: // ITypedObject i/f (common to IDLC and IDH)
@@ -451,6 +450,9 @@ public: // ITypedObject i/f (common to IDLC and IDH)
 public slots:
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   void Cancel(); // override
+
+// IDataHost i/f
+  override iMainWindowViewer* window() const;
 
 protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()

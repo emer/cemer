@@ -137,8 +137,93 @@ taPtrList_impl* pdpMisc::initHookList() {
   return p_initHookList;
 }
 
+// startup code common to several scenarios -- all might have local gui
+void Startup_MakeMainWin() {
+#ifdef TA_GUI
+//TODO: need to better orchestrate the "OpenWindows" call below with
+  // create the default application window
+  MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+#ifndef QANDD_CONSOLE
+  ConsoleDockViewer* cdv = new ConsoleDockViewer;
+  db->docks.Add(cdv);
+#endif    
+// create the console docked in the main project window
+    
+  db->ViewWindow();
+  iMainWindowViewer* bw = db->window();
+  // the main app window only needs to be small, unless console is docked in it...
+  if (bw) {
+    bw->resize(taiM->dialogSize(taiMisc::hdlg_m));
+    taiMisc::SetMainWindow(bw);
+  }
+//TODO: following prob not necessary
+  if (taMisc::gui_active) taiMisc::OpenWindows();
+#endif // TA_GUI
+}
+
+// startup code common to several scenarios -- all might have local gui
+void Startup_InvokeShells() {
+  if (cssMisc::gui) {
+//TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
+#ifndef QANDD_CONSOLE
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+    cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
+#else
+    // todo: only for debugging: remove later!
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
+    cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
+#endif
+  } else {
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+    cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
+  }
+  qApp->exec();
+}
+
+// code only used for dmem
+#ifdef DMEM_COMPILE
+static void Startup_dmem() {
+  if (taMisc::dmem_nprocs > 1) {
+    if (cssMisc::gui) {
+      if (taMisc::dmem_proc == 0) { // master dmem
+	DMemShare::InitCmdStream();
+	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
+	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
+	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
+	Startup_MakeMainWin();
+	Startup_InvokeShells();
+	DMemShare::CloseCmdStream();
+	cerr << "proc: 0 quitting!" << endl;
+      } else { // slave dmems
+	cssMisc::gui = false;	// not for subguys
+	cssMisc::init_interactive = false; // don't stay in startup shell
+//TODO: dmem subs still need to use Qt event loop!!!
+// 	if(taMisc::dmem_debug)
+// 	  cerr << "proc " << taMisc::dmem_proc << " starting shell." << endl;
+	// get rid of wait proc for rl -- we call it ourselves
+	extern int (*rl_event_hook)(void);
+ 	rl_event_hook = NULL;
+ 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+	//	cssMisc::Top->debug = 2;
+	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
+	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
+      }
+    } else {			// nogui
+      Startup_InvokeShells();  
+    }
+  } else { // dmem, but only one guy, so pretty much like normal
+    Startup_MakeMainWin();
+    Startup_InvokeShells();
+  }
+}
+#endif // DMEM_COMPILE
 // this is the main that should be called..
 
+/* NOTES
+  Project autoloads were removed, because ALL versions of pdp must now
+  have an event loop, so all can load in the event loop. BA 9/21/06
+
+*/
 int pdpMisc::Main(int argc, char *argv[]) {
 /* following creates QApplication and event loop -- these
    must get created first, and are needed even if we don't open a gui
@@ -219,30 +304,16 @@ int pdpMisc::Main(int argc, char *argv[]) {
     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
     	pdp_bitmap_height, pdp_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
-/*    root->WinInit();
-    root->OpenNewWindow();
-    taiMisc::SetMainWindow(root->window); */
-    //NOTE: we root the browser at the projects, to minimize unnecessary browsing levels
-    // root.colorspecs is aliased in root->colorspecs, as a HIDDEN linked variable
-/*obs    PdpMainWindowViewer* db = PdpMainWindowViewer::New(&root->projects, root->GetTypeDef()->members.FindName("projects"), true);*/
-    // set the update action (taken after Ok or Apply in the Edit dialog)
-//temp    taiMisc::Update_Hook = taMisc::DelayedMenuUpdate;
-//obs    winbMisc::group_leader = root->window;
-//temp    taMisc::DelayedMenuUpdate(root); 	// get menus after startup..
+  } else
+#endif // TA_GUI
+  { 
+    taiMC_ = taiMiscCore::New();
   }
-#else // NO TA_GUI
-  taiMC_ = taiMiscCore::New();
-#endif //TA_GUI
   // create colorspecs even if nogui, since they are referred to in projects
   root->colorspecs.SetDefaultColor();	// set color after starting up..
 
-//3.2a:  if(cssiSession::WaitProc == NULL)
    //always use our wait proc, since there is a predefined chain backwards anyways...
   taMisc::WaitProc = pdpMisc::WaitProc;
-
-
-   // initialize plugins
-   taPlugins::InitPlugins();
 
 #if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
@@ -290,133 +361,26 @@ int pdpMisc::Main(int argc, char *argv[]) {
   // Initialize plugin system
   taPlugins::InitPlugins();
 
-
   root->LoadConfig();
 
   cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
 
-  if((proj_to_load.size > 0) && !cssMisc::gui)
-    pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
-#ifdef TA_GUI
-//TODO: need to better orchestrate the "OpenWindows" call below with
-
-//TEST:
-//  creating the default application window
-    MainWindowViewer* db = MainWindowViewer::NewBrowser(root, NULL, true);
-#ifndef QANDD_CONSOLE
-    ConsoleDockViewer* cdv = new ConsoleDockViewer;
-    db->docks.Add(cdv);
-#endif    
-// create the console docked in the main project window
-    
-    db->ViewWindow();
-    iMainWindowViewer* bw = db->window();
-    // the main app window only needs to be small, unless console is docked in it...
-    if (bw) {
-      bw->resize(taiM->dialogSize(taiMisc::hdlg_m));
-      taiMisc::SetMainWindow(bw);
-    }
-/*
-#ifndef QANDD_CONSOLE
-//TODO: this should be a dockable guy made with DockViewer
-    QMainWindow* mw = new QMainWindow(taiMisc::main_window, "css Console");
-    mw->setMinimumSize(640, 720);
-    QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
-    mw->setFocusProxy((QWidget*)console);
-    mw->setCentralWidget((QWidget*)console);
-    mw->show();
-#endif */
-
-//TODO: following prob not necessary
-  if (taMisc::gui_active) taiMisc::OpenWindows();
-#endif
-
 #ifdef DMEM_COMPILE
-  if(taMisc::dmem_nprocs > 1) {
-    if (cssMisc::gui) {
-      if (taMisc::dmem_proc == 0) { // master dmem
-	DMemShare::InitCmdStream();
-	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
-	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
-	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-	cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-	qApp->exec();
-	DMemShare::CloseCmdStream();
-	cerr << "proc: 0 quitting!" << endl;
-      }
-      else { // slave dmems
-	cssMisc::gui = false;	// not for subguys
-	if(proj_to_load.size > 0) {
-	  if(taMisc::dmem_debug)
-	    cerr << "proc " << taMisc::dmem_proc << " loading projects." << endl;
-	  pdpMisc::WaitProc_LoadProj();	// load file manually, since it won't go thru waitproc
-	}
-
-	cssMisc::init_interactive = false; // don't stay in startup shell
-// 	if(taMisc::dmem_debug)
-// 	  cerr << "proc " << taMisc::dmem_proc << " starting shell." << endl;
-	// get rid of wait proc for rl -- we call it ourselves
-	extern int (*rl_event_hook)(void);
- 	rl_event_hook = NULL;
- 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-	//	cssMisc::Top->debug = 2;
-	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
-	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
-      }
-    }
-    else {			// nogui 
-      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-      cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
-//       qApp->exec(); // todo: ??
-    }
-  }
-  else {
-    if(cssMisc::gui) {
-      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-      cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-      qApp->exec();
-    }
-    else {
-      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-      cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
-    }
-#ifdef TA_USE_INVENTOR
-    SoQt::done();
-#endif
-  }
-  MPI_Finalize();
-
+  Startup_dmem();
 #else // NOT DMEM_COMPILE
-  if(cssMisc::gui) {
-#ifndef QANDD_CONSOLE
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-#else
-    // todo: only for debugging: remove later!
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-    cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
-#endif
-    qApp->exec();
-  }
-  else {
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-    cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
-  }
+  Startup_MakeMainWin();
+  Startup_InvokeShells();
+#endif // DMEM_COMPILE
+
+  taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
+
 #ifdef TA_USE_INVENTOR
   SoQt::done();
 #endif
+#ifdef DMEM_COMPILE
+  MPI_Finalize();
 #endif // DMEM_COMPILE
-
-  //note: new 4.0 behavior is for root deletion to be the app end, so following is probably redundant
-  if (tabMisc::root) {
-    delete tabMisc::root;
-    tabMisc::root = NULL;
-  }
-#ifdef TA_GUI
-  taiMisc::RunPending(); // do Qt defered deletes, if any
-#endif
-  taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
+  
   return 0;
 }
 

@@ -495,12 +495,13 @@ void ProjectBase::InitLinks_impl() {
     GetDefaultColors();
 }
 
-void ProjectBase::CutLinks() {
+void ProjectBase::CutLinks_impl() {
+  // do base first, esp. to nuke viewers before the networks
+  inherited::CutLinks_impl();
   view_colors.CutLinks();
   the_colors.CutLinks();
   data.CutLinks();
   networks.CutLinks();
-  inherited::CutLinks();
 }
 
 void ProjectBase::Copy_(const ProjectBase& cp) {

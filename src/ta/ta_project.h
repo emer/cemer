@@ -88,13 +88,13 @@ class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A taProject has everything
 INHERITED(taFBase)
 public:
-  String		desc;		// #EDIT_DIALOG description of the project
+  String		desc;	// #EDIT_DIALOG description of the project
   
-  TypeDefault_Group	defaults;	// #NO_FIND #NO_SAVE default initial settings for objects
-  Wizard_Group    	wizards;	// Wizards for automatically configuring simulation objects
-  SelectEdit_Group	edits;		// special edit dialogs for selected elements
-  DataViewer_List	viewers;	// any top-level viewers that have been saved
-  Program_Group		programs;	// Gui-based programs to run simulations and other processing
+  TypeDefault_Group	defaults; // #NO_FIND #NO_SAVE default initial settings for objects
+  Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
+  SelectEdit_Group	edits;	// special edit dialogs for selected elements
+  Program_Group		programs; // Gui-based programs to run simulations and other processing
+  DataViewer_List	viewers; // any top-level viewers that have been saved
 
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
@@ -130,13 +130,14 @@ public:
   bool	SetFileName(const String& val);
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
-  void	CutLinks();
+  virtual void		CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
   void	Copy_(const taProject& cp);
   COPY_FUNS(taProject, taFBase);
   TA_BASEFUNS(taProject);
   
 protected:
   virtual void 		InitLinks_post(); // #IGNORE called after all _impls: does LoadDefaults and launches wiz
+  void 	CutLinks(); // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
   
 private:

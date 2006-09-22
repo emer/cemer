@@ -2216,7 +2216,6 @@ void taDataView::DoActions(DataViewAction acts) {
   // never do any rendering or resetting (incl. children) during load or copying, 
   if (taMisc::is_loading || taMisc::is_duplicating) return; 
   // only the structural reset done if in nogui mode
-  if (!taMisc::gui_active) goto reset_check;
   
   if (acts & CONSTR_POST) {
     // note: only ever called manually
@@ -2224,26 +2223,31 @@ void taDataView::DoActions(DataViewAction acts) {
   }
   if (acts & CLEAR_IMPL) {
     // must be mapped to do clear
-//BA 9/19/06 prob should always call -- s/b safe, and may be needed for descendants
-//    if (isMapped())
+    if (isMapped())
       Clear_impl();
   }
-  if (acts & RENDER_PRE) {
-    // must not already be constructed
-//TEMP    if (!isMapped())
-      Render_pre();
-  }
-  // must be mapped for other render steps
-  if (acts & RENDER_IMPL) {
-    Render_impl();
-  }
-  if (acts & RENDER_POST) {
-    Render_post();
+  
+  // no rendering should ever get done if not in gui mode, incl during late shutdown
+  if (taMisc::gui_active) {
+    if (acts & RENDER_PRE) {
+      // must not already be constructed
+  //TEMP    if (!isMapped())
+        Render_pre();
+    }
+    // must be mapped for other render steps
+    if (isMapped()) {
+      if (acts & RENDER_IMPL) {
+        Render_impl();
+      }
+      if (acts & RENDER_POST) {
+        Render_post();
+      }
+    }
   }
   if (acts & CLOSE_WIN_IMPL) {
-    CloseWindow_impl();
+    if (isMapped())
+      CloseWindow_impl();
   }
-reset_check:
   if (acts & RESET_IMPL) {
     Reset_impl();
   }

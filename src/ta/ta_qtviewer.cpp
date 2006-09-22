@@ -599,6 +599,28 @@ TODO:
     
 */
 
+//////////////////////////
+//   IDataHost	 	//
+//////////////////////////
+
+//from ta_qtdata_def.h -- dependencies are here, so makes sense to impl here
+void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
+  iMainWindowViewer* dv = window();
+  if (!dv) return;
+  //TODO: we really should check to make sure our class expresses these,
+  // and not include the last two if not expressed
+  if (set_it) {
+    dv->SetClipboardHandler(item,
+      SLOT(this_GetEditActionsEnabled(int&)),
+      SLOT(this_EditAction(int)),
+      SLOT(this_SetActionsEnabled()),
+      SIGNAL(UpdateUi()) );
+  } else {
+    dv->SetClipboardHandler(NULL);
+  }
+}
+
+
 
 /*
 //TODO:
@@ -1125,12 +1147,20 @@ IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
 IDataViewWidget::~IDataViewWidget() {
   //note: the viewer may already have deleted, so it will have nulled its ref here
   if (m_viewer) {
+    CancelOp cancel_op = CO_NOT_CANCELLABLE;
+    OnClosing_impl(cancel_op);
+  } // note: test again, in case a callback null'ed the ref
+  if (m_viewer) {
     m_viewer->WidgetDeleting();
     m_viewer = NULL;
   }
 }
 
 void IDataViewWidget::Close() {
+  if (m_viewer) {
+    CancelOp cancel_op = CO_NOT_CANCELLABLE; // the Close call is unconditional
+    OnClosing_impl(cancel_op);
+  }
   if (m_viewer) {
     m_viewer->WidgetDeleting();
     m_viewer = NULL;
@@ -1149,6 +1179,21 @@ void IDataViewWidget::Close_impl() {
 delete this;
 }
 
+void IDataViewWidget::closeEvent_Handler(QCloseEvent* e,
+    CancelOp def_cancel_op)
+{
+  OnClosing_impl(def_cancel_op); // param is op&
+  if (def_cancel_op == CO_CANCEL)
+    e->ignore();
+  else // proceed or not cancellable
+    e->accept();
+}
+ 
+void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
+  if (m_viewer) {
+    m_viewer->WindowClosing(cancel_op);
+  }
+}
 
 //////////////////////////
 //   iToolBar 	//
@@ -1804,7 +1849,7 @@ void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
 //////////////////////////////////
 
 iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
-:inherited(parent, (Qt::WDestructiveClose)), IDataViewWidget(viewer_)
+:inherited(parent), IDataViewWidget(viewer_)
 {
   Init();
   // note: caller will still do a virtual Constr() on us after new
@@ -1819,12 +1864,10 @@ void iFrameViewer::Init() {
 }
 
 void iFrameViewer::closeEvent(QCloseEvent* e) {
-  //note: we can't cancel these inner frames when closing -- just notify viewer
-  if (m_viewer) {
-    CancelOp cancel_op = CO_NOT_CANCELLABLE;
-    m_viewer->WindowClosing(cancel_op);
-  }
-  e->accept();
+  //note: we normally can't cancel these inner frames when closing,
+  // but default lets viewer decide
+  CancelOp cancel_op = CO_PROCEED;
+  closeEvent_Handler(e, cancel_op);
 }
 
 iDataPanel* iFrameViewer::MakeNewDataPanel_(taiDataLink* link) {
@@ -2158,6 +2201,13 @@ void iDockViewer::Init() {
   setFeatures(dwf);
 }
 
+void iDockViewer::closeEvent(QCloseEvent* e) {
+   // always closing if quitting, docked or we no longer have our mummy
+  CancelOp cancel_op = (taMisc::quitting || !isFloating() || (!m_viewer)) ? 
+    CO_NOT_CANCELLABLE : CO_PROCEED; 
+  closeEvent_Handler(e, cancel_op);
+}
+
 
 //////////////////////////
 //  iMainWindowViewer	//
@@ -2275,17 +2325,10 @@ void iMainWindowViewer::ch_destroyed() {
   UpdateUi();
 }
 
-void iMainWindowViewer::closeEvent (QCloseEvent* e) {
+void iMainWindowViewer::closeEvent(QCloseEvent* e) {
    // always closing if quitting or we no longer have our mummy
   CancelOp cancel_op = (taMisc::quitting || (!m_viewer)) ? CO_NOT_CANCELLABLE : CO_PROCEED; 
-
-//  if (m_viewer && (forced || (cancel_op != CO_CANCEL))) {
-  if (m_viewer) {
-    m_viewer->WindowClosing(cancel_op);
-  }
-  if (cancel_op != CO_CANCEL) Closing(cancel_op);
-  if (cancel_op == CO_CANCEL) e->ignore();
-  else        e->accept();
+  closeEvent_Handler(e, cancel_op);
 }
 
 void iMainWindowViewer::Constr_impl() {
@@ -2975,7 +3018,7 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
     if (rval->link() == link) return rval;
   }
 
-  rval = viewer_win()->MakeNewDataPanel_(link);
+  rval = tabViewerWin()->MakeNewDataPanel_(link);
   if (rval != NULL) {
     AddPanel(rval);
     rval->show(); // may be required in some contexts
@@ -3070,15 +3113,6 @@ iDataPanel::~iDataPanel() {
     m_tabView->DataPanelDestroying(this);
 }
 
-void iDataPanel::ctrl_focusInEvent(QFocusEvent* ev) {
-  window()->SetClipboardHandler(this, 
-    SLOT(this_GetEditActionsEnabled(int&)),
-    SLOT(this_EditAction(int)),
-    NULL,
-    SIGNAL(view_UpdateUI())
-  );
-}
-
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr == DCR_ITEM_UPDATED) {
     if (tabView())
@@ -3092,19 +3126,11 @@ void iDataPanel::setCentralWidget(QWidget* widg) {
 }
 
 String iDataPanel::TabText() const {
-/*Qt3  ISelectable* ci = viewer_win()->curItem();
+/*Qt3  ISelectable* ci = tabViewerWin()->curItem();
   if (ci) {
     return ci->view_name();
   } else return _nilString; */
   return link()->GetDisplayName();
-}
-
-void iDataPanel::this_EditAction(int param) {
-  EditAction(param);
-}
-
-void iDataPanel::this_GetEditActionsEnabled(int& ea) {
-  ea = GetEditActions();
 }
 
 
@@ -3162,9 +3188,9 @@ String iDataPanelFrame::TabText() const {
   else       return inherited::TabText();
 }
 
-iTabViewer* iDataPanelFrame::viewer_win() const {
-  if (m_dps) return m_dps->viewer_win();
-  else       return (m_tabView) ? m_tabView->viewer_win() : NULL;
+iTabViewer* iDataPanelFrame::tabViewerWin() const {
+  if (m_dps) return m_dps->tabViewerWin();
+  else       return (m_tabView) ? m_tabView->tabViewerWin() : NULL;
 }
 
 
@@ -3215,8 +3241,8 @@ String iViewPanelFrame::TabText() const {
   else      return inherited::TabText();
 }
 
-iTabViewer* iViewPanelFrame::viewer_win() const {
-  return (m_tabView) ? m_tabView->viewer_win() : NULL;
+iTabViewer* iViewPanelFrame::tabViewerWin() const {
+  return (m_tabView) ? m_tabView->tabViewerWin() : NULL;
 }
 
 
@@ -3964,12 +3990,20 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
   list->setSortingEnabled(true);
   ConfigHeader();
-  connect(list, SIGNAL(itemSelectionChanged()),
-      this, SLOT(list_itemSelectionChanged()) );
   FillList();
 }
 
 iListDataPanel::~iListDataPanel() {
+}
+
+void iListDataPanel::AddedToPanelSet() {
+  inherited::AddedToPanelSet();
+  // connect the list up to the panel
+  iTabViewer* itv = tabViewerWin();
+  if (itv) { // should exist!
+    list->Connect_SelectableHostNotifySignal(itv,
+      SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  }
 }
 
 void iListDataPanel::ClearList() {
@@ -4001,19 +4035,6 @@ void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   FillList();
 }
 
-int iListDataPanel::EditAction(int ea) {
-  int rval = 0; //note: usually ignored, should be eliminated
-  list->EditAction(ea);
-  return rval;
-/*  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->EditAction_(sel_list, ea);
-  }
-  return rval; */
-}
-
 void iListDataPanel::FillList() {
   taiListDataNode* last_child = NULL;
   int i = 0;
@@ -4023,29 +4044,6 @@ void iListDataPanel::FillList() {
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
   }
-}
-
-int iListDataPanel::GetEditActions() {
-  int rval = 0;
-  list->EditActionsEnabled(rval);
-  return rval;
-/*obs
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->GetEditActions_(sel_list);
-    // certain things disallowed if more than one item selected
-    if (sel_list.size > 1) {
-      rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
-    }
-  }
-  return rval; */
-}
-
-void iListDataPanel::list_itemSelectionChanged() {
-//nn  viewer_win()->UpdateUi();
 }
 
 String iListDataPanel::panel_type() const {

@@ -732,6 +732,11 @@ void iProgramEditor::UpdateButtons() {
   }
 }
 
+iMainWindowViewer* iProgramEditor::window() const {
+  return m_window;
+}
+
+
 //////////////////////////
 //    iProgramPanel 	//
 //////////////////////////
@@ -760,6 +765,7 @@ iProgramPanel::~iProgramPanel() {
 
 void iProgramPanel::AddedToPanelSet() {
   inherited::AddedToPanelSet();
+  pe->m_window = window();
 }
 
 void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {

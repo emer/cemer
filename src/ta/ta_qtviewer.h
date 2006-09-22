@@ -251,7 +251,11 @@ public:
 protected:
   DataViewer*		m_viewer; // our mummy
   virtual void		Close_impl(); //default calls widget->close (good for top-level windows w/ Destroy option, but maybe use delete for widgets)
+  virtual void		closeEvent_Handler(QCloseEvent* e,
+    CancelOp def_cancel_op = CO_PROCEED);
+    // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional
   virtual void		Constr_impl() {} // override for virtual construction (called after new)
+  virtual void		OnClosing_impl(CancelOp& cancel_op); // invoked in dtor (uncancellable); you should also invoke in the closeEvent (maybe cancellable)
 };
 
 
@@ -623,6 +627,7 @@ public:
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
+  override void 	closeEvent(QCloseEvent* ev);
 //  override void		Constr_impl();
   
 private:
@@ -792,7 +797,6 @@ protected:
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 
-  virtual void		Closing(CancelOp& cancel_op) {} // called to notify window in closeEvent, when certain to close
   virtual void		Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images
   virtual void		Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
   virtual void		SelectableHostNotifying_impl(ISelectableHost* src_host, int op);
@@ -874,7 +878,7 @@ public:
   int			panel_count();
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*		par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
-  iTabViewer* 		viewer_win() {return m_viewer_win;}
+  iTabViewer* 		tabViewerWin() {return m_viewer_win;}
   iMainWindowViewer* 	window() {return (m_viewer_win) ? m_viewer_win->window() : NULL;}
 
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
@@ -943,14 +947,12 @@ public:
   virtual MemberDef*	par_md() const = 0; // as for par_link
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
-  virtual iTabViewer* 	viewer_win() const = 0;
+  virtual iTabViewer* 	tabViewerWin() const = 0;
   iMainWindowViewer* 	window() {return (m_tabView) ? m_tabView->window() : NULL;}
 
 
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
-  virtual int		EditAction(int ea) {return 0;} //
-  virtual int		GetEditActions() {return 0;} // after a change in selection, update the available edit actions (cut, copy, etc.)
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
   virtual const iColor* GetTabColor(bool selected) const {return NULL;} // special color for tab; NULL means use default
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
@@ -959,24 +961,12 @@ public:
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
 
-public slots:
-  void 			ctrl_focusInEvent(QFocusEvent* ev); // can be called by a subcontrol when it gets focus; sets us as the clipboard handler
-
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void		DataLinkDestroying(taDataLink* dl) {} // called by DataLink when it is destroying --
   override TypeDef*	GetTypeDef() const {return &TA_iDataPanel;}
-
-protected slots:
-  virtual void 		this_GetEditActionsEnabled(int& ea); // for when panel is clipboard handler
-  virtual void 		this_EditAction(int param); // for when panel is clipboard handler
-
-#ifndef __MAKETA__
-signals:
-  void			view_UpdateUI(); // for when clipboard handler; forward a change slot to this to update main menu
-#endif
 
 protected:
   iTabView*		m_tabView; // tab view in which we are shown
@@ -997,7 +987,7 @@ friend class iDataPanelSet;
 public:
   override taiDataLink*	par_link() const; // taken from dps if any, else from tabview
   override MemberDef*	par_md() const;
-  override iTabViewer* viewer_win() const;
+  override iTabViewer*	tabViewerWin() const;
 
 
   override void		ClosePanel();
@@ -1033,7 +1023,7 @@ public:
     // true if panel should not be replaced, ex. if dirty, or viewpanel
   override taiDataLink*	par_link() const {return NULL;} // n/a
   override MemberDef*	par_md() const {return NULL;}
-  override iTabViewer* viewer_win() const;
+  override iTabViewer* tabViewerWin() const;
 
 
   virtual void		InitPanel(); // called on structural changes
@@ -1074,7 +1064,7 @@ public:
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
-  override iTabViewer* viewer_win() const {return (m_tabView) ? m_tabView->viewer_win() : NULL;}
+  override iTabViewer* tabViewerWin() const {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
   iDataPanel*		cur_panel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
@@ -1336,10 +1326,9 @@ public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
   void			ClearList(); // for when data changes -- we just rebuild the list
-  override int 		EditAction(int ea);
   void			FillList();
-  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-//nn  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+  
+  override void 	AddedToPanelSet();
 
   iListDataPanel(taiDataLink* dl_);
   ~iListDataPanel();
@@ -1351,10 +1340,6 @@ protected:
   iTreeViewItem* 	mparentItem;
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-
-protected slots:
-  void			list_itemSelectionChanged(); //note: must use this parameterless version in Multi mode
 };
 
 class TA_API iTextDataPanel: public iDataPanelFrame {

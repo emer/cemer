@@ -197,7 +197,7 @@ public:
 
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
-  void	CutLinks();
+  void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)
   void	Copy_(const ProjectBase& cp);
   COPY_FUNS(ProjectBase, taProject);
   TA_BASEFUNS(ProjectBase);

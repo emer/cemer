@@ -509,13 +509,13 @@ void V3ProjectBase::InitLinks_impl() {
   taBase::Own(scripts, this);
 }
 
-void V3ProjectBase::CutLinks() {
+void V3ProjectBase::CutLinks_impl() {
   scripts.CutLinks();
   logs.CutLinks();
   processes.CutLinks();
   environments.CutLinks();
   specs.CutLinks();
-  inherited::CutLinks();
+  inherited::CutLinks_impl();
 }
 
 void V3ProjectBase::Copy_(const V3ProjectBase& cp) {

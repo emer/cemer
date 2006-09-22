@@ -27,6 +27,10 @@
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
+#ifndef __MAKETA__
+# include <QPointer>
+#endif
+
 #include "ta_TA_type.h"
 
 class TA_API taiProgVar: public taiCompData { 
@@ -136,7 +140,9 @@ public:
   iTreeView*		  items;
   
   bool			read_only; // set true if we are
-  
+#ifndef __MAKETA__  // evil evil evile maketa!!!!!!!
+  QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
+#endif  
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
 
@@ -162,12 +168,12 @@ public: // IDataHost i/f -- some delegate up to mommy
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us
   bool			isReadOnly() {return read_only;}
+  iMainWindowViewer* 	window() const;
   void*			Base() {return (void*)base;} // base of the object
   TypeDef*		GetBaseTypeDef(); // TypeDef on the base, for casting
   void			GetValue();
   void			GetImage();
   void			Changed(); // called by embedded item to indicate contents have changed
-  void			SetItemAsHandler(taiData* item, bool set_it = true) {}
 
 
 protected:

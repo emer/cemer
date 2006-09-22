@@ -30,6 +30,8 @@
 
 //??nn in win32  #include <unistd.h>
 
+// externals
+class iMainWindowViewer; //
 
 // Forward declarations
 
@@ -68,14 +70,15 @@ public:
   virtual bool		isConstructed() = 0;
   virtual bool		isModal() = 0;
   virtual bool		isReadOnly() = 0;
+  virtual iMainWindowViewer* window() const {return NULL;} // used to set cliphandler
   virtual bool		HasChanged() = 0; // 'true' if has changed
   virtual void*		Base() = 0; // base of the object
   virtual TypeDef*	GetBaseTypeDef() = 0; // TypeDef on the base, for casting
   virtual void		GetValue() = 0; // copy gui to value
   virtual void		GetImage() = 0; // copy value to gui
   virtual void		Changed() {} // called by embedded item to indicate contents have changed
-  virtual void		SetItemAsHandler(taiData* item, bool set_it = true) = 0; // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
-  
+  virtual void		SetItemAsHandler(taiData* item, bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset); in ta_qtviewer.cpp
+
   IDataHost() {}
   virtual ~IDataHost() {} //
 };

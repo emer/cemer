@@ -129,8 +129,8 @@ void taProject::InitLinks_impl() {
   taBase::Own(defaults, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
-  taBase::Own(viewers, this);
   taBase::Own(programs, this);
+  taBase::Own(viewers, this);
 }
 
 void taProject::InitLinks_post() {
@@ -146,12 +146,16 @@ void taProject::InitLinks_post() {
 }
 
 void taProject::CutLinks() {
+  CutLinks_impl();
+  inherited::CutLinks();
+}
+
+void taProject::CutLinks_impl() {
+  viewers.CutLinks(); 
   programs.CutLinks();
-  viewers.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
   defaults.CutLinks();
-  inherited::CutLinks();
 }
 
 void taProject::Copy_(const taProject& cp) {

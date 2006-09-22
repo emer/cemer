@@ -930,6 +930,7 @@ void T3DataViewer::Reset_impl() {
 void T3DataViewer::WindowClosing(CancelOp& cancel_op) {
   inherited::WindowClosing(cancel_op);
   if (cancel_op != CO_CANCEL) {
+    root_view.DoActions(CLEAR_IMPL);
     root_view.host = NULL;
   }
 }

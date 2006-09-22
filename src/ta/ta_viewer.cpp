@@ -125,7 +125,8 @@ String DataViewer::GetPrintFileExt(PrintFmt fmt) {
 } */
 
 bool DataViewer::isMapped() const {
-  return (taMisc::gui_active && m_dvwidget);
+//NOTE: do NOT put gui_active into this!!!
+  return (m_dvwidget);
 }
 
 void DataViewer::Lower() {

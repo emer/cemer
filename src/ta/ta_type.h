@@ -254,22 +254,26 @@ public:
   static taiMiscCore*	New(QObject* parent = NULL);
     // either call this or call taiMisc::New 
   
+  static void		DeleteRoot(); // get rid of root, if not nuked already
   static void		WaitProc(); // the core idle loop process
   
   static int		RunPending();	// run any pending qt events that might need processed
-  static void		Quit(); // call to quit, invokes Quit_impl on instance first
+  static void		Quit(CancelOp cancel_op = CO_NOT_CANCELLABLE); 
+   // call to quit, invokes Quit_impl on instance first
   
   const String		classname(); // 3.x compatability, basically the app name
   
   taiMiscCore(QObject* parent = NULL);
   ~taiMiscCore();
 protected slots:
-  virtual void	timer_timeout(); // called when timer times out, for waitproc processing
+  void			app_aboutToQuit(); // delete root for sure
+  virtual void		timer_timeout(); // called when timer times out, for waitproc processing
   
 protected:
   QTimer*		timer; // for idle processing
-  virtual void			Init(bool gui = false); // NOTE: called from static New
-  virtual void		Quit_impl();
+  virtual void		Init(bool gui = false); // NOTE: called from static New
+  virtual void		OnQuitting_impl(CancelOp& cancel_op); // allow to cancel
+  virtual void		Quit_impl(); // we're quitting now dudes!
 };
 
 extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead

@@ -1666,7 +1666,7 @@ public:
   // #CAT_Convert make layerwriter list reflect patterns in given event spec as applied to given network
 
   void 	InitLinks_impl(); //for this class
-  void	CutLinks();
+  void	CutLinks_impl();
   void	Copy_(const V3ProjectBase& cp);
   COPY_FUNS(V3ProjectBase, ProjectBase);
   TA_BASEFUNS(V3ProjectBase);

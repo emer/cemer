@@ -104,10 +104,28 @@ taiMiscCore* taiMiscCore::New(QObject* parent) {
   return rval;
 }
 
-void taiMiscCore::Quit() {
+//TODO: need to better design the app shutdown logic, and coord with taiM
+
+void taiMiscCore::DeleteRoot() {
+  if (tabMisc::root) {
+    delete tabMisc::root;
+    tabMisc::root = NULL;
+  }
+}
+
+void taiMiscCore::Quit(CancelOp cancel_op) {
   taMisc::quitting = true;
-  if (taiMC_)
-    taiMC_->Quit_impl();
+  if (taiMC_) {
+    taiMC_->OnQuitting_impl(cancel_op);
+    if (cancel_op != CO_CANCEL) {
+      taiMC_->Quit_impl();
+    }
+  }
+  if (taMisc::quitting && (cancel_op != CO_CANCEL)) {
+    QCoreApplication::instance()->quit();
+  } else {
+    taMisc::quitting = false;
+  }
 }
 
 int taiMiscCore::RunPending() {
@@ -135,19 +153,29 @@ const String taiMiscCore::classname() {
   return String(QCoreApplication::instance()->applicationName());
 }
 
+void taiMiscCore::app_aboutToQuit() {
+//NOTE: Qt will not process any more events at this point!
+  DeleteRoot();
+}
+
 void taiMiscCore::Init(bool gui) {
   taMisc::gui_active = gui;
   
+  connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
+    this, SLOT(app_aboutToQuit()) );
   // special timeout=0 does idle processing in Qt
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
   timer->start(50);
 }
 
+void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
+}
+
 void taiMiscCore::Quit_impl() {
   if (timer)
     timer->stop();
-  QCoreApplication::instance()->quit();
+  DeleteRoot();
 }
 
 void taiMiscCore::timer_timeout() {
