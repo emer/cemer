@@ -94,6 +94,13 @@ void DataViewer::Constr_impl(QWidget* gui_parent) {
   m_dvwidget->Constr(); // virtual guy
 }
 
+void DataViewer::Constr_post() {
+  m_dvwidget->Constr_post();
+  // call inherited last, for a top-down type of call sequence
+  inherited::Constr_post(); // does children
+}
+
+
 /* TBD
 void DataViewer::GetPrintFileDlg(PrintFmt fmt) {
   static PrintFmt last_fmt = POSTSCRIPT;
@@ -189,7 +196,6 @@ iMainWindowViewer* FrameViewer::window() {
   else return NULL;
 }
 
-
 //////////////////////////////////
 // 	BrowseViewer	 	//
 //////////////////////////////////
@@ -244,6 +250,9 @@ void tabBrowseViewer::Copy_(const tabBrowseViewer& cp) {
 IDataViewWidget* tabBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iBrowseViewer(this, gui_parent);
 }
+
+//TODO: NUKE THIS
+//void tabBrowseViewer::OnWindowBind_impl(iFrameViewer* fv) {}
 
 void tabBrowseViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();

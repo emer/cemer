@@ -1888,6 +1888,7 @@ void iFrameViewer::SelectableHostNotifySlot_Internal(ISelectableHost* src, int o
 void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int op) {
 //TODO: maybe this should be forwarded to a virtual that can be overridden???
 //or maybe it should be virtual???
+  if (shn_changing > 0) return; // reflection back down, ignore it
   switch (op) {
   case ISelectableHost::OP_GOT_FOCUS:
   case ISelectableHost::OP_SELECTION_CHANGED:
@@ -1964,6 +1965,13 @@ void iTabViewer::CloseTab() {
 
 void iTabViewer::Closing(CancelOp& cancel_op) {
   tabView()->Closing(cancel_op);
+}
+
+void iTabViewer::Constr_post() {
+  for (int i = 0; i < m_tabViews->size; ++i) {
+    iTabView* itv = m_tabViews->FastEl(i);
+    itv->OnWindowBind(this);
+  }
 }
 
 void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
@@ -2943,6 +2951,8 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
 void iTabView::AddPanel(iDataPanel* panel) {
   wsPanels->addWidget(panel);
   panels.Add(panel); // refs us
+  iTabViewer* itv = tabViewerWin();
+  if (itv) panel->OnWindowBind(itv);
 }
 
 void iTabView::AddPanelNewTab(iDataPanel* panel) {
@@ -3033,6 +3043,14 @@ void iTabView::panelSelected(int idx) {
   else            wsPanels->raiseWidget(panel);
   if (m_viewer_win)
     m_viewer_win->TabView_Selected(this);
+}
+
+void iTabView::OnWindowBind(iTabViewer* itv) {
+  for (int i = 0; i < tbPanels->count(); ++i ) {
+    iDataPanel* pan = tbPanels->panel(i);
+    if (!pan) continue; // can happen!!!
+    pan->OnWindowBind(itv);
+  }
 }
 
 void iTabView::RemoveDataPanel(iDataPanel* panel) {
@@ -3295,6 +3313,8 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   layButtons->addWidget(but);
   but->show();
   pn->AddedToPanelSet();
+  iTabViewer* itv = tabViewerWin();
+  if (itv) pn->OnWindowBind(itv);
 }
 void iDataPanelSet::AllSubPanelsAdded() {
   layButtons->addStretch();
@@ -3341,6 +3361,14 @@ bool iDataPanelSet::HasChanged() {
     if (pn->HasChanged()) return true;
   }
   return false;
+}
+
+void iDataPanelSet::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->OnWindowBind(itv);
+  }
 }
 
 void iDataPanelSet::removeChild(QObject* obj) {
@@ -3996,16 +4024,6 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
 iListDataPanel::~iListDataPanel() {
 }
 
-void iListDataPanel::AddedToPanelSet() {
-  inherited::AddedToPanelSet();
-  // connect the list up to the panel
-  iTabViewer* itv = tabViewerWin();
-  if (itv) { // should exist!
-    list->Connect_SelectableHostNotifySignal(itv,
-      SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
-  }
-}
-
 void iListDataPanel::ClearList() {
   list->clear();
 }
@@ -4044,6 +4062,13 @@ void iListDataPanel::FillList() {
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
   }
+}
+
+void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  // connect the list up to the panel
+  list->Connect_SelectableHostNotifySignal(itv,
+    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
 String iListDataPanel::panel_type() const {

@@ -153,7 +153,7 @@ void Startup_MakeMainWin() {
   iMainWindowViewer* bw = db->window();
   // the main app window only needs to be small, unless console is docked in it...
   if (bw) {
-    bw->resize(taiM->dialogSize(taiMisc::hdlg_m));
+    bw->resize(taiM->dialogSize(taiMisc::hdlg_b));
     taiMisc::SetMainWindow(bw);
   }
 //TODO: following prob not necessary

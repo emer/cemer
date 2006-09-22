@@ -255,6 +255,7 @@ protected:
     CancelOp def_cancel_op = CO_PROCEED);
     // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional
   virtual void		Constr_impl() {} // override for virtual construction (called after new)
+  virtual void		Constr_post() {} // called virtually, in DV::Constr_post -- entire win struct is now available
   virtual void		OnClosing_impl(CancelOp& cancel_op); // invoked in dtor (uncancellable); you should also invoke in the closeEvent (maybe cancellable)
 };
 
@@ -587,6 +588,7 @@ public:
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
   void			SetPanel(iDataPanel* panel); // sets the panel active in current tab
+  
   virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
   virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
   override void		UpdateTabNames(); // called by a datalink when a tab name might have changed
@@ -607,6 +609,7 @@ protected:
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   void			Constr_Menu_impl(); // override
+  override void		Constr_post(); // called virtually, in DV::Constr_post 
   override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
   void 			viewSplit(int o);
 
@@ -890,6 +893,7 @@ public:
   virtual void		FillTabBarContextMenu(QMenu* contextMenu);
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
+  void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void 			SetPanel(iDataPanel* panel);
 
   iTabView(QWidget* parent = NULL);
@@ -956,6 +960,8 @@ public:
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
   virtual const iColor* GetTabColor(bool selected) const {return NULL;} // special color for tab; NULL means use default
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
+  virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
+    // called in post, when all windows are built
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
@@ -972,6 +978,7 @@ protected:
   iTabView*		m_tabView; // tab view in which we are shown
   QScrollArea*		scr; // central scrollview
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
+  virtual void		OnWindowBind_impl(iTabViewer* itv) {}
 };
 
 
@@ -1092,6 +1099,7 @@ public slots:
 
 protected:
   void			removeChild(QObject* obj);
+  override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
 class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
@@ -1328,8 +1336,6 @@ public:
   void			ClearList(); // for when data changes -- we just rebuild the list
   void			FillList();
   
-  override void 	AddedToPanelSet();
-
   iListDataPanel(taiDataLink* dl_);
   ~iListDataPanel();
 
@@ -1340,6 +1346,7 @@ protected:
   iTreeViewItem* 	mparentItem;
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
 class TA_API iTextDataPanel: public iDataPanelFrame {

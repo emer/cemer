@@ -152,6 +152,7 @@ protected:
   virtual void		Constr_impl(QWidget* gui_parent);
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
+  override void		Constr_post();
   virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
 
 private:
@@ -190,7 +191,7 @@ public:
   TA_DATAVIEWFUNS(FrameViewer, DataViewer) //
 protected:
   mutable MainWindowViewer* m_main_window_viewer; //looked up/cached
-  
+
 private:
   void 	Initialize();
   void	Destroy() {CutLinks();}
@@ -252,6 +253,8 @@ public:
   
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+
+  
 private:
   void			Initialize() {}
   void			Destroy() {CutLinks();}
