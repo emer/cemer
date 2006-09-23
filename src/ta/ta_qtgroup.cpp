@@ -230,7 +230,7 @@ int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_ls
   for (int i = 0; i < top_lst->size; ++i) {
     TAPtr tab = (TAPtr)top_lst->FastEl_(i);
     if (!tab)  continue;
-    QTreeWidgetItem* item = ic->AddItem(tab->GetColText(taBase::key_disp_name), top_item, (void*)tab); 
+    QTreeWidgetItem* item = ic->AddItem(tab->GetColText(taBase::key_disp_name), top_item, tab); 
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
     ++rval;
@@ -344,7 +344,7 @@ int taiGroupElsButton::BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp,
   for (int i = 0; i < top_grp->gp.size; ++i) {
     taGroup_impl* tag = (taGroup_impl*)top_grp->gp.FastEl_(i);
     if (!tag)  continue;
-    QTreeWidgetItem* item = ic->AddItem(tag->GetDisplayName(), top_item, (void*)tag); 
+    QTreeWidgetItem* item = ic->AddItem(tag->GetDisplayName(), top_item, tag); 
     item->setFlags(Qt::ItemIsEnabled); // not selectable
     //note: don't put text in the other columns, to keep items clean
     //TODO: put folder icon
@@ -394,7 +394,7 @@ void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
     ths = base_lst;
   }
   UpdateMenu();
-  ta_actions->GetImageByData(Variant((void*)it));
+  ta_actions->GetImageByData(Variant(it)); // get rid of (void*)!
   setCur_obj(it, false);
 }
 
@@ -461,7 +461,7 @@ void gpiListEls::GetMenu(taiActions* menu, taiMenuAction* actn) {
       nm = "All";
     else
       nm = ths->GetName();
-    menu->AddItem(nm, taiMenu::use_default, actn, (void*)ths);
+    menu->AddItem(nm, taiMenu::use_default, actn, ths);
   }
   menu->AddSep(); //note: doesn't double add or add at beginning
   GetMenu_impl(ths, menu, actn);
@@ -491,7 +491,7 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* 
     String nm = tmp->GetName();
     if (nm == "")
       nm = String("[") + String(i) + "]: (" + tmp->GetTypeDef()->name + ")";
-    menu->AddItem((char*)nm, taiMenu::radio_update, actn, (void*)tmp);
+    menu->AddItem((char*)nm, taiMenu::radio_update, actn, tmp);
   }
 }
 
@@ -569,9 +569,9 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
 //TODO Qt4            taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
             taiMenu* sub_menu = menu->AddSubMenu(nm);
 
-            sub_menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp);
+            sub_menu->AddItem(nm, taiMenu::use_default, actn, tmp);
 	    String subnm = String("::") + md->name;
-	    sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
+	    sub_menu->AddItem(subnm, taiMenu::use_default, actn, tmp_grp);
 	    sub_menu->AddSep();
 	    GetMenu_impl(tmp_grp, sub_menu, actn);
 	    added_sub = true;
@@ -579,7 +579,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
 	}
       }
       if (!added_sub) {
-	menu->AddItem((char*)nm, taiMenu::use_default, actn, (void*)tmp);
+	menu->AddItem((char*)nm, taiMenu::use_default, actn, tmp);
       }
     }
   }
@@ -601,7 +601,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
       taiMenu* sub_menu = menu->AddSubMenu(nm);
       if (!HasFlag(flgNoList)) {
 	String subnm = nm + ": All";
-	sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
+	sub_menu->AddItem(subnm, taiMenu::use_default, actn, tmp_grp);
 	sub_menu->AddSep();
       }
       GetMenu_impl(tmp_grp, sub_menu, actn);
@@ -748,10 +748,10 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
 	  if (!added_sub) {
 //TODO: tmp_grp???	    sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
             sub_menu = menu->AddSubMenu(nm);
-	    sub_menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp);
+	    sub_menu->AddItem(nm, taiMenu::use_default, actn, tmp);
 	  }
 	  String subnm = String("::") + md->name;
-	  sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
+	  sub_menu->AddItem(subnm, taiMenu::use_default, actn, tmp_grp);
           sub_menu->AddSep();
 	  GetMenu_impl(tmp_grp, sub_menu, actn);
 	  added_sub = true;
@@ -793,11 +793,11 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
 //TODO qt4      taiMenu* sub_menu = menu->AddSubMenu(nm, (void*)tmp_grp);
       taiMenu* sub_menu = menu->AddSubMenu(nm);
       String subnm = nm + ": Group";
-      sub_menu->AddItem(subnm, taiMenu::use_default, actn, (void*)tmp_grp);
+      sub_menu->AddItem(subnm, taiMenu::use_default, actn, tmp_grp);
       sub_menu->AddSep();
       GetMenu_impl(tmp_grp, sub_menu, actn);
     } else
-      menu->AddItem(nm, taiMenu::use_default, actn, (void*)tmp_grp);
+      menu->AddItem(nm, taiMenu::use_default, actn, tmp_grp);
   }
 }
 

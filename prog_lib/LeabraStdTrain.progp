@@ -136,18 +136,18 @@ Program_Group .projects[0].programs.gp[0] {
 	};
       };
 
-      ProgVar_List @.vars = [1] {
+      ProgVar_List @.vars = [2] {
 	ProgVar @[0] { };
+	ProgVar @[1] { };
       };
 
       ProgEl_List @.init_code = [2] {
-	UserScript @[0] { };
-	UserScript @[1] { };
+	MethodCall @[0] { };
+	MethodCall @[1] { };
       };
 
-      ProgEl_List @.prog_code = [2] {
-	UserScript @[0] { };
-	MethodCall @[1] { };
+      ProgEl_List @.prog_code = [1] {
+	MethodCall @[0] { };
       };
     };
     Program @[6] { 
@@ -164,21 +164,20 @@ Program_Group .projects[0].programs.gp[0] {
 	};
       };
 
-      ProgVar_List @.vars = [1] {
+      ProgVar_List @.vars = [2] {
 	ProgVar @[0] { };
+	ProgVar @[1] { };
       };
 
-      ProgEl_List @.init_code = [3] {
+      ProgEl_List @.init_code = [2] {
 	MethodCall @[0] { };
 	MethodCall @[1] { };
-	UserScript @[2] { };
       };
 
-      ProgEl_List @.prog_code = [4] {
+      ProgEl_List @.prog_code = [3] {
 	MethodCall @[0] { };
 	MethodCall @[1] { };
-	UserScript @[2] { };
-	MethodCall @[3] { };
+	MethodCall @[2] { };
       };
     };
   };
@@ -197,12 +196,16 @@ Program_Group .projects[0].programs.gp[0] {
    var_type=T_Object;
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   desc=;
   };
   ProgVar @[1] {
    name="context";
    var_type=T_HardEnum;
    int_val=1;
    hard_enum_type=Network::NetContext;
+   objs_ptr=0;
+   desc=;
   };
  };
  Program @[0] {
@@ -227,16 +230,22 @@ Program_Group .projects[0].programs.gp[0] {
     name="max_epoch";
     var_type=T_Int;
     int_val=500;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[1] {
     name="epoch";
     var_type=T_Int;
     int_val=2;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[2] {
     name="err_stopcrit";
     var_type=T_Real;
     real_val=0;
+    objs_ptr=0;
+    desc=;
    };
   };
   init_code {
@@ -338,12 +347,16 @@ Program_Group .projects[0].programs.gp[0] {
     name="trial";
     var_type=T_Int;
     int_val=1;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[1] {
     name="train_data";
     var_type=T_Object;
     object_type=DataTable;
     object_val=.projects[0].data[0]$4$;
+    objs_ptr=0;
+    desc=;
    };
   };
   init_code {
@@ -434,11 +447,15 @@ Program_Group .projects[0].programs.gp[0] {
     name="phase_no";
     var_type=T_Int;
     int_val=0;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[1] {
     name="update_net_view";
     var_type=T_Bool;
     bool_val=1;
+    objs_ptr=0;
+    desc=;
    };
   };
   init_code {
@@ -617,16 +634,22 @@ Program_Group .projects[0].programs.gp[0] {
     name="cycle";
     var_type=T_Int;
     int_val=28;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[1] {
     name="min_cycles";
     var_type=T_Int;
-    int_val=0;
+    int_val=15;
+    objs_ptr=0;
+    desc=;
    };
    ProgVar @[2] {
     name="update_net_view";
     var_type=T_Bool;
     bool_val=1;
+    objs_ptr=0;
+    desc=;
    };
   };
   init_code {
@@ -797,6 +820,8 @@ else min_cycles = network->min_cycles_phase2;
     name="update_net_view";
     var_type=T_Bool;
     bool_val=0;
+    objs_ptr=0;
+    desc=;
    };
   };
   init_code {
@@ -875,41 +900,56 @@ else min_cycles = network->min_cycles_phase2;
     var_type=T_Object;
     object_type=DataTable;
     object_val=$4$;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[1] {
+    name="lw_list";
+    var_type=T_Object;
+    object_type=LayerWriter_List;
+    object_val=.projects[0].programs.gp[0][5].objs[0]$19$;
+    objs_ptr=1;
+    desc=;
    };
   };
   init_code {
    name=;
-   el_typ=UserScript;
+   el_typ=MethodCall;
    el_def=0;
-   UserScript @[0] {
-    desc="hack..";
+   MethodCall @[0] {
+    desc=;
     off=0;
-    user_script="objs.lw_list.SetAllData(data);
-
-";
+    result_var=;
+    method_spec {
+     script_obj=.projects[0].programs.gp[0][5].vars[1]$20$;
+     method=LayerRWBase_List::SetAllData;
+    };
+    args{ data;};
+{ DataBlock* db;    };
    };
-   UserScript @[1] {
-    desc="again, hack until can pick objs..";
+   MethodCall @[1] {
+    desc=;
     off=0;
-    user_script="objs.lw_list.CheckConfig();";
+    result_var=;
+    method_spec {
+     script_obj=$20$;
+     method=LayerRWBase_List::CheckConfig;
+    };
+    args{ false;};
+{ bool quiet;    };
    };
   };
   prog_code {
    name=;
-   el_typ=UserScript;
+   el_typ=MethodCall;
    el_def=0;
-   UserScript @[0] {
-    desc="this is hack until we can pick objects (objs) for the MethodCall function!";
-    off=0;
-    user_script="objs.lw_list.ApplyExternal(context);";
-   };
-   MethodCall @[1] {
+   MethodCall @[0] {
     desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
-    off=1;
+    off=0;
     result_var=;
     method_spec {
-     script_obj=NULL;
-     method=NULL;
+     script_obj=$20$;
+     method=LayerWriter_List::ApplyExternal;
     };
     args{ context;};
 { int context;    };
@@ -979,7 +1019,7 @@ else min_cycles = network->min_cycles_phase2;
       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
      };
     };
-    data=.projects[0].data[1]$19$;
+    data=.projects[0].data[1]$21$;
     rmv_orphan_cols=1;
    };
   };
@@ -996,7 +1036,17 @@ else min_cycles = network->min_cycles_phase2;
     name="mon_data";
     var_type=T_Object;
     object_type=DataTable;
-    object_val=$19$;
+    object_val=$21$;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[1] {
+    name="Monitor1";
+    var_type=T_Object;
+    object_type=NetMonitor;
+    object_val=.projects[0].programs.gp[0][6].objs[0]$22$;
+    objs_ptr=1;
+    desc=;
    };
   };
   init_code {
@@ -1008,27 +1058,22 @@ else min_cycles = network->min_cycles_phase2;
     off=0;
     result_var=;
     method_spec {
-     script_obj=.projects[0].programs.gp[0][6].vars[0]$20$;
+     script_obj=.projects[0].programs.gp[0][6].vars[0]$23$;
      method=DataTable::ResetData;
     };
     args{ };
 {     };
    };
    MethodCall @[1] {
-    desc="update the monitor items and data schema: again, not doing until MethodCall can work on objs.";
-    off=1;
+    desc="update the monitor items and data schema";
+    off=0;
     result_var=;
     method_spec {
-     script_obj=$20$;
+     script_obj=.projects[0].programs.gp[0][6].vars[1]$24$;
      method=NetMonitor::UpdateMonitors;
     };
     args{ };
 {     };
-   };
-   UserScript @[2] {
-    desc="temporary until MethodCall works on objs..";
-    off=0;
-    user_script="objs.Monitor1.UpdateMonitors();";
    };
   };
   prog_code {
@@ -1040,7 +1085,7 @@ else min_cycles = network->min_cycles_phase2;
     off=0;
     result_var=;
     method_spec {
-     script_obj=$20$;
+     script_obj=$23$;
      method=DataTable::AddBlankRow;
     };
     args{ };
@@ -1051,23 +1096,18 @@ else min_cycles = network->min_cycles_phase2;
     off=1;
     result_var=;
     method_spec {
-     script_obj=NULL;
+     script_obj=$24$;
      method=NetMonitor::UpdateMonVals;
     };
     args{ };
 {     };
    };
-   UserScript @[2] {
-    desc="This is a hack until MethodCall can operate directly on objs.";
-    off=0;
-    user_script="objs.Monitor1.UpdateMonVals();";
-   };
-   MethodCall @[3] {
-    desc="todo: what is this again??";
+   MethodCall @[2] {
+    desc="update after writing new data to monitor data table";
     off=1;
     result_var=;
     method_spec {
-     script_obj=$20$;
+     script_obj=$23$;
      method=DataBlock::WriteDone;
     };
     args{ };

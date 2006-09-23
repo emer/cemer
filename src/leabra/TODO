@@ -1,16 +1,14 @@
 leabra todo list:
 
-* datatable should not be in LayerWriter -- in a var in the program:
-  program does setting of this!
+// todo: progvar object_val should be a ref, not a pointer: not refcount
 
-* console ticket: outer scroll bar; function to align with bottom of project view window..
+* fix tabase* css menu fun arg stuff (New From Prog Lib)..
 
 * seeds in programs: just add as a builtin class to program (also timing) -- general 
   enough to be needed everywhere..
 
 * taBase::CutLinks_taAuto() -> DelPointer any taBase* members..
 
-* add CheckNetwork (from process code in 3.2)
 * check UserScript::ImportFromFile (how to just read in raw?  get something?)
 
 * deal with sequences

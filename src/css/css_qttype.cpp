@@ -65,7 +65,7 @@ cssiType::cssiType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type) : taiT
   qobj = NULL;
 }
 cssiType::~cssiType() {
-  if (use_it != NULL)
+  if (use_it)
     delete use_it;
   if (qobj) {
     delete qobj;
@@ -80,21 +80,21 @@ void  cssiType::Assert_QObj() {
 }
 
 taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent) {
-  if (use_it != NULL)
+  if (use_it)
     return use_it->GetDataRep(host_, par, gui_parent);
   else
     return typ->it->GetDataRep(host_, par, gui_parent);
 }
 
 void cssiType::GetImage(taiData* dat, const void* base) {
-  if (use_it != NULL)
+  if (use_it)
     use_it->GetImage(dat, base);
   else
     typ->it->GetImage(dat, base);
 }
 
 void cssiType::GetValue(taiData* dat, void* base) {
-  if (use_it != NULL)
+  if (use_it)
     use_it->GetValue(dat, base);
   else
     typ->it->GetValue(dat, base);

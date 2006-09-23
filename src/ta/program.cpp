@@ -41,6 +41,7 @@ void ProgVar::Initialize() {
   object_type = &TA_taOBase;
   object_val = NULL;
   hard_enum_type = NULL;
+  objs_ptr = false;
 }
 
 void ProgVar::Destroy() {
@@ -123,6 +124,31 @@ void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
     return; // don't send and further
   }
   inherited::DataChanged(dcr, op1, op2);
+}
+
+String ProgVar::GetDisplayName() const {
+  if(var_type == T_Int)
+    return "int " + name + " = " + String(int_val);
+  else if(var_type == T_Real)
+    return "real " + name + " = " + String(real_val);
+  else if(var_type == T_String)
+    return "String " + name + " = " + string_val;
+  else if(var_type == T_Bool)
+    return "bool " + name + " = " + ((bool_val ? "true" : "false"));
+  else if(var_type == T_Object) {
+    if(!object_type) return "NULL object type";
+    return object_type->name + " " + name + " = " + ((object_val ? object_val->GetDisplayName() : "NULL"));
+  }
+  else if(var_type == T_HardEnum) {
+    if(!hard_enum_type) return "NULL hard enum type";
+    return hard_enum_type->name + " " + name + " = " + 
+      hard_enum_type->Get_C_EnumString(int_val);
+  }
+  else if(var_type == T_DynEnum) {
+    return "dyn enum " + name + " = " + 
+      dyn_enum_val.NameVal();
+  }
+  return "invalid type!";
 }
 
 bool ProgVar::Dump_QuerySaveMember(MemberDef* md) {
@@ -1227,6 +1253,7 @@ void Program::UpdateAfterEdit() {
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
+  GetVarsForObjs();
   inherited::UpdateAfterEdit();
 }
 
@@ -1282,6 +1309,7 @@ bool Program::PreCompileScript_impl() {
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
+  GetVarsForObjs();
   UpdateProgVars();
   if(!CheckConfig(false)) return false; // not quiet
   return true;
@@ -1541,6 +1569,55 @@ void  Program::UpdateProgVars() {
   }
 }
 
+void Program::GetVarsForObjs() {
+  for(int i = 0; i < objs.size; ++i) {
+    taBase* obj = objs[i];
+    String nm = obj->GetName();
+    if(nm.empty()) continue;
+    ProgVar* var = vars.FindName(nm);
+    if(var) {
+      if((var->var_type != ProgVar::T_Object) || (var->object_val != obj)) {
+	taMisc::Error("Program error: variable named:", nm,
+		      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
+      }
+      else {
+	var->objs_ptr = true;	// make sure
+	var->object_type = obj->GetTypeDef();
+      }
+    }
+    else {
+      bool found_it = false;
+      for(int j=0;j<vars.size; j++) {
+	ProgVar* tv = vars[j];
+	if((tv->var_type == ProgVar::T_Object) && (tv->object_val == obj)) {
+	  found_it = true;
+	  tv->name = nm;	// update the name
+	  tv->objs_ptr = true;	// make sure
+	  tv->object_type = obj->GetTypeDef();
+	  break;
+	}
+      }
+      if(!found_it) {
+	var = (ProgVar*)vars.New(1, &TA_ProgVar);
+	var->name = nm;
+	var->var_type = ProgVar::T_Object;
+	taBase::SetPointer((taBase**)&var->object_val, obj);
+	var->objs_ptr = true;
+	var->object_type = obj->GetTypeDef();
+      }
+    }
+  }
+  // now cleanup any orphaned 
+  for(int i = vars.size-1; i >= 0; --i) {
+    ProgVar* var = vars[i];
+    if(!var->objs_ptr) continue;
+    taBase* obj = objs.FindName(var->name);
+    if(obj == NULL)
+      vars.Remove(i);		// get rid of it
+  }
+}
+
+
 void Program::SaveScript(ostream& strm) {
   strm << scriptString();
 }
@@ -1582,6 +1659,7 @@ void Program_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(global_vars, this);
   if(prog_lib.not_init) {
+    taBase::Ref(prog_lib);
     prog_lib.paths.Add("../../prog_lib"); // todo: hack for testing from pdp_lib location!
     prog_lib.FindPrograms();
   }
