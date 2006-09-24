@@ -31,10 +31,6 @@
 #include "ta_variant.h"
 #include "css_extern_support.h"
 
-// support for ta_type is neccessary to get file and string member funcs
-// TYPEA is an internal type access library
-
-#define CSS_SUPPORT_TYPEA 1
 #include "ta_type.h"
 #include "ta_base.h"
 
@@ -546,14 +542,12 @@ public:
   virtual operator stringstream**() const { CvtErr("(stringstream**)"); return NULL; }
 
   // support for external types
-#ifdef CSS_SUPPORT_TYPEA
   virtual operator TAPtr() const;
   virtual operator TAPtr*() const 		{ CvtErr("(TAPtr*)"); return NULL; }
   virtual operator TypeDef*() const;
   virtual operator MemberDef*() const;
   virtual operator MethodDef*() const;
   virtual void operator=(TAPtr*) 		{ CvtErr("(TAPtr)"); }
-#endif
 
   // assign from types
   virtual void operator=(Real)	 		{ CvtErr("(Real)"); }
@@ -591,6 +585,10 @@ public:
   virtual cssEl* operator-()       { NopErr("-"); return &cssMisc::Void; } // unary minus
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator[](int) const { NopErr("[]"); return &cssMisc::Void; }
+
+  static cssEl* GetElFromTA(TypeDef* td, void* itm, const char* nm, 
+			    MemberDef* md = NULL, cssEl* class_parent = NULL);
+  // Call this function to get an appropriate cssEl object based on typedef information
 
   virtual bool	MembersDynamic()	{ return false; }
   // are members always dynamically looked up?  if so, don't issue warnings about this
@@ -632,6 +630,7 @@ public:
   virtual void operator&=(cssEl&) { NopErr("&="); }
   virtual void operator^=(cssEl&) { NopErr("^="); }
   virtual void operator|=(cssEl&) { NopErr("|="); }
+
 protected:
   int	 GetMemberNo_impl(TypeDef* typ, const char*) const;
   cssEl* GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const;
@@ -646,8 +645,6 @@ protected:
   cssEl* GetScoped_impl(TypeDef* typ, void* base, const char* nm) const;
 
   cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
-  virtual cssEl* GetFromTA_impl(TypeDef* td, void* itm, const char* nm, 
-    MemberDef* md = NULL) const; // helper for getting members and array elements
 };
 
 #ifndef DEBUG

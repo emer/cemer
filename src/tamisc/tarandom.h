@@ -13,18 +13,17 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-
-#ifndef random_h
-#define random_h
+#ifndef tarandom_h
+#define tarandom_h
 
 #include "ta_base.h"
 #include "css_special_math.h"
 #include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 
-class TAMISC_API RndSeed : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER random seed support
+class TAMISC_API RndSeed : public taNBase {
+  // random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
+INHERITED(taNBase)
 public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
   int			mti;	// #READ_ONLY the index into the seed, also needs to be saved
@@ -39,14 +38,13 @@ public:
   // initialize the seed based on given initializer
 
   void	Initialize();
-  void	Destroy()		 { };
-  void	Copy_(const RndSeed& cp);
-  COPY_FUNS(RndSeed, taBase);
-  TA_BASEFUNS(RndSeed);
+  void	Destroy()		 { CutLinks(); }
+  TA_SIMPLE_BASEFUNS(RndSeed);
 };
 
 class TAMISC_API Random : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Random Number Generation
+INHERITED(taBase)
 public:
   enum Type {
     UNIFORM,			// uniform with var = half-range
@@ -104,35 +102,4 @@ public:
   TA_BASEFUNS(Random); //
 };
 
-class TAMISC_API TimeUsed : public taBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER stores and computes time used for processing information
-public:
-  bool		rec;		// flag that determines whether to record timing information: OFF by default
-  long 		usr;		// user clock ticks used
-  long		sys;		// system clock ticks used
-  long		tot;		// total time ticks used (all clock ticks on the CPU)
-  long		n;		// number of times time used collected using GetUsed
-
-  void 		operator += (const TimeUsed& td)	{ usr += td.usr; sys += td.sys; tot += td.tot; }
-  void 		operator -= (const TimeUsed& td)	{ usr -= td.usr; sys -= td.sys; tot -= td.tot; }
-  void 		operator *= (const TimeUsed& td)	{ usr *= td.usr; sys *= td.sys; tot *= td.tot; }
-  void 		operator /= (const TimeUsed& td)	{ usr /= td.usr; sys /= td.sys; tot /= td.tot; }
-  TimeUsed 	operator + (const TimeUsed& td) const;
-  TimeUsed 	operator - (const TimeUsed& td) const;
-  TimeUsed 	operator * (const TimeUsed& td) const;
-  TimeUsed 	operator / (const TimeUsed& td) const;
-
-  void		InitTimes();	// initialize the times
-  void		GetTimes();	// get the clock ticks used to this point
-  void		GetUsed(const TimeUsed& start);
-  // get amount of time used by subtracting start from current time and adding to me, and incrementing n
-  String	GetString();	// get string output as seconds and fractions of seconds
-
-  void 	Initialize();
-  void	Destroy()		{ }
-  SIMPLE_COPY(TimeUsed);
-  COPY_FUNS(TimeUsed, taBase);
-  TA_BASEFUNS(TimeUsed);
-};
-
-#endif // random_h
+#endif // tarandom_h

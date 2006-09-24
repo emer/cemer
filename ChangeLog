@@ -1,3 +1,10 @@
+2006-09-24  Randall O'Reilly  <oreilly@shadoww.colorado.edu>
+
+	* src/css/ta_css.cpp: finally cleaned up cssTA and derivatives: instead of 
+	having a bunch of if/else code in cssTA, there are now relevant subclasses
+	that have the specialized code.  any place that returned a new cssTA(.. should
+	be checked for proper function (this was done in ta, css, tamisc, pdp)
+
 2006-09-04  Randall C. O'Reilly  <oreilly@shadow.colorado.edu>
 
 	* src/ta/ta_base.h (TA_SIMPLE_BASEFUNS): added this macro +

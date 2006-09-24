@@ -220,7 +220,7 @@ int yylex()
 	String nm = cssLex::Buf.after("TA_");
 	TypeDef* td = taMisc::types.FindName(nm);
 	if(td != NULL) {
-	  cssTA* tatd = new cssTA((void*)td, 1, &TA_TypeDef);
+	  cssTA* tatd = new cssTypeDef((void*)td, 1, &TA_TypeDef);
 	  yylval.el = cssMisc::cur_top->AddLiteral(tatd);
 	  return CSS_VAR;
 	}

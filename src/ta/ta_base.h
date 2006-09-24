@@ -252,8 +252,8 @@ public:
     VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
   };
   
-  static const String 	ValTypeToStr(ValType vt);
-  static ValType	ValTypeForType(TypeDef* td); // return the appropriate ValType
+  static const String 	ValTypeToStr(ValType vt);    // #IGNORE
+  static ValType	ValTypeForType(TypeDef* td); // #IGNORE return the appropriate ValType
   static  TypeDef*	StatTypeDef(int);	// #IGNORE
   static TAPtr 		MakeToken(TypeDef* td);
   // #IGNORE make a token of the given type
@@ -263,7 +263,7 @@ public:
   static String		GetStringRep(const taBase& it) {return it.GetStringRep_impl();}
    // #IGNORE string representation
   static String		GetStringRep(TAPtr it); 
-  // string representation; ok if null, calls ->GetStringRep_impl
+  // #IGNORE string representation; ok if null, calls ->GetStringRep_impl
   
   // Reference counting mechanisms, all static just for consistency..
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
@@ -319,13 +319,13 @@ public:
 //friend class tabDataLink;
   virtual void		ChildQueryEditActions(const MemberDef* md, const taBase* child, taiMimeSource* ms,
     int& allowed, int& forbidden);
-    // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+    // #IGNORE gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
   virtual int		ChildEditAction(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
-  // note: multi source ops will have child=NULL
+  // #IGNORE note: multi source ops will have child=NULL
   virtual void		QueryEditActions(const taiMimeSource* ms, int& allowed, int& forbidden)
-    {QueryEditActions_impl(ms, allowed, forbidden);} // ms is null for Src-op query
+    {QueryEditActions_impl(ms, allowed, forbidden);} // #IGNORE ms is null for Src-op query
   virtual int		EditAction(taiMimeSource* ms, int ea)
-    {return EditAction_impl(ms, ea);}
+    {return EditAction_impl(ms, ea);} // #IGNORE 
 protected:
     // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
   virtual int		ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
@@ -346,14 +346,10 @@ protected:
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   
-  virtual taDataLink* 	GetDataLink(); // forces creation; can still be NULL if the type doesn't support datalinks
-  void			AddDataClient(IDataLinkClient* dlc); //note: only applicable for classes that implement datalinks
-  bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this 
+  virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
+  void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
+  bool			RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this 
   
-//temp  int			Ref() {return ++refn;}
-//temp  virtual void		UnRef() {--refn;} //note: overridden by ref-semantic classes to delete
-//temp  void			UnRefNoDelete() {--refn;}
-
   virtual void		InitLinks()		{ };
   // #IGNORE initialize links to other objs, called after construction & SetOwner, call parent
   virtual void		CutLinks();
@@ -381,24 +377,24 @@ public:
   virtual ~taBase() 				{ Destroy(); }
 
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
-  virtual void		UnSafeCopy(TAPtr)	{ };
-  virtual void		CastCopyTo(TAPtr)	{ };
+  virtual void		UnSafeCopy(TAPtr)	{ }; // #IGNORE assumes source is same type
+  virtual void		CastCopyTo(TAPtr)	{ }; // #IGNORE ??
   virtual TAPtr 	MakeToken()		{ return new taBase; }	// #IGNORE
   virtual TAPtr 	MakeTokenAry(int no)	{ return new taBase[no]; } // #IGNORE
   void 			operator=(const taBase& cp)	{ Copy(cp); }
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
 
   virtual int		GetIndex() const {return -1;} // typically its index in an own List
-  virtual void		SetIndex(int value) {} //note: typically don't do a notify, because list itself will take care of notifying gui clients
+  virtual void		SetIndex(int value) {} // #IGNORE note: typically don't do a notify, because list itself will take care of notifying gui clients
   
   virtual bool		SetName(const String& nm) {return false;}
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const; // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names) -- will/must never be empty
   virtual String	GetDesc() const {return _nilString;} // a type-specific "description" of the instance
-  virtual bool		SetFileName(const String& val)  {return false;} // #IGNORE
-  virtual String	GetFileName() const 	{ return _nilString; } // #IGNORE
+  virtual bool		SetFileName(const String& val)  {return false;} // set file name for object
+  virtual String	GetFileName() const 	{ return _nilString; } // get file name object was last saved with
   taFiler*		GetFiler(TypeItem* td = NULL);
-    // #IGNORE gets filer for the TypeItem if specified, or this object-- clients must ref/unrefdone
+  // #IGNORE gets filer for the TypeItem if specified, or this object-- clients must ref/unrefdone
   virtual void 		SetDefaultName();			    // #IGNORE
   virtual void		SetTypeDefaults();			    // #IGNORE
   virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
@@ -434,7 +430,7 @@ public:
   virtual void		UpdateAllViews();
   // called after data changes, to update views
   virtual void 		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-    // sends the indicated notification to all datalink clients, if any;\nvirtual so we can override to trap/monitor
+  // #IGNORE sends the indicated notification to all datalink clients, if any;\nvirtual so we can override to trap/monitor
   void			StructUpdate(bool begin) {BatchUpdate(begin, true);}
   // bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
@@ -449,10 +445,10 @@ protected:
   virtual void		BatchUpdate(bool begin, bool struc);
   // bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
   virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {}
-    // the obj (to which we have a ref) is about to destroy (the ref will null its ptr on return)
+  // #IGNORE the obj (to which we have a ref) is about to destroy (the ref will null its ptr on return)
   virtual void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_) {}
-    // the obj (to which we have a ref) has signalled the indicated data change
+  // #IGNORE the obj (to which we have a ref) has signalled the indicated data change
 
 public:
   // the following are selected functions from TypeDef
@@ -508,7 +504,7 @@ public:
     { return GetTypeDef()->OutputType(strm); }
   virtual ostream&  	OutputInherit(ostream& strm) const 	// #IGNORE
     { return GetTypeDef()->OutputInherit(strm); }
-  virtual ostream&  	OutputTokens(ostream& strm) const	//#IGNORE
+  virtual ostream&  	OutputTokens(ostream& strm) const	// #IGNORE
     { GetTypeDef()->tokens.List(strm); return strm; }
 
   virtual ostream& 	Output(ostream& strm, int indent = 0) const // #IGNORE
@@ -535,11 +531,10 @@ public:
   virtual int		SaveAs_File(const String& fname = ""); 
     // #MENU #ARGC_0 #LABEL_Save_As Saves object data to a new file
   virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
-  // load object data from a file -- gets the filename
+  // #IGNORE load object data from a file -- gets the filename
   virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL
     , void** el = NULL);
-  //  Load object data from a file
-
+  //  #IGNORE Load object data from a file
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { Dump_Save_pre(); 
@@ -557,9 +552,9 @@ public:
   virtual int 		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0)
     { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
   virtual bool		Dump_QuerySaveMember(MemberDef* md); 
-     // default checks NO_SAVE directive; override to make save decision at runtime
+     // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
   virtual bool		Dump_QuerySaveChildren() 
-    {return true;} // override to make save decision at runtime
+    {return true;} // #IGNORE override to make save decision at runtime
 
   virtual int		Edit();
   // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
@@ -805,8 +800,8 @@ public:
   void			SetAdapter(taBaseAdapter* adapter_);
 #endif
 
-  taDataLink**		addr_data_link() {return &m_data_link;}
-  override taDataLink*	data_link() {return m_data_link;}
+  taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
+  override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
   TAPtr 	GetOwner() const	{ return owner; }

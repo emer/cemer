@@ -484,9 +484,15 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
 void taBase::CutLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
-    if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;
-    taBase* mb = (taBase*)md->GetOff(this);
-    mb->CutLinks();
+    if((md->owner != &(td->members)) || !md->type->DerivesFrom(TA_taBase)) continue;
+    if(md->type->ptr == 0) {
+      taBase* mb = (taBase*)md->GetOff(this);
+      mb->CutLinks();
+    }
+    else if(md->type->ptr == 1) {
+      taBase** mb = (taBase**)md->GetOff(this);
+      taBase::DelPointer(mb);
+    }
   }
 }
 

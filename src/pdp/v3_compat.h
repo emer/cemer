@@ -26,6 +26,7 @@
 
 #include "ta_script.h"
 #include "tarandom.h"
+#include "tatime.h"
 #include "minmax.h"
 #include "datatable.h"
 #include "pdpdeclare.h"

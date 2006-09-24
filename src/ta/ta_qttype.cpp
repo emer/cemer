@@ -1766,7 +1766,7 @@ int taiStreamArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, Type
 
 cssEl* taiStreamArgType::GetElFromArg(const char* nm, void*) {
   // arg_val is for the function
-  arg_val = new cssTA(NULL, 1, arg_typ, nm);
+  arg_val = new cssIOS(NULL, 1, arg_typ, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
 }
@@ -1922,7 +1922,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
     MemberDef* md = typ->members.FindName(mb_nm);
     if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
       TypeDef* tpdf = *(TypeDef**)(md->GetOff(base));
-      arg_val = new cssTA(tpdf, 1, &TA_TypeDef, nm);
+      arg_val = new cssTypeDef(tpdf, 1, &TA_TypeDef, nm);
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;
     }
@@ -1939,12 +1939,12 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       }
       if (tpdf == NULL)
 	tpdf = &TA_taBase;
-      arg_val = new cssTA(tpdf, 1, &TA_TypeDef, nm);
+      arg_val = new cssTypeDef(tpdf, 1, &TA_TypeDef, nm);
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;
     }
   }
-  arg_val = new cssTA(&TA_taBase, 1, &TA_TypeDef, nm);
+  arg_val = new cssTypeDef(&TA_taBase, 1, &TA_TypeDef, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
 }
@@ -1987,7 +1987,7 @@ int taiMemberPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, T
 
 
 cssEl* taiMemberPtrArgType::GetElFromArg(const char* nm, void*) {
-  arg_val = new cssTA(NULL, 1, &TA_MemberDef, nm);
+  arg_val = new cssMemberDef(NULL, 1, &TA_MemberDef, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
 }
@@ -2027,7 +2027,7 @@ int taiMethodPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, T
 
 
 cssEl* taiMethodPtrArgType::GetElFromArg(const char* nm, void*) {
-  arg_val = new cssTA(NULL, 1, &TA_MethodDef, nm);
+  arg_val = new cssMethodDef(NULL, 1, &TA_MethodDef, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
 }

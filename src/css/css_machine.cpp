@@ -765,46 +765,56 @@ cssEl::operator TAPtr() const {
   CvtErr("(TAPtr)"); return (TAPtr)NULL;
 }
 
-cssEl* cssEl::GetFromTA_impl(TypeDef* td, void* itm, const char* nm, MemberDef* md) const {
-  TypeDef* nptd;
+cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
+			  cssEl* class_parent) {
+  TypeDef* nptd = td->GetNonPtrType(); // always create one of these
 
-  nptd = td->GetNonPtrType(); // always create one of these
-
-  if(nptd == NULL)
+  if(!nptd)
     return &cssMisc::Void;
 
   bool ro = false;
-  if(md != NULL) {
+  if(md) {
     if(md->HasOption("READ_ONLY"))
       ro = true;
   }
   if(nptd->DerivesFrom(TA_bool))
-    return new cssCPtr_bool(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_bool(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFormal(TA_enum))
-    return new cssCPtr_enum(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_enum(itm, td->ptr+1, nm, class_parent, ro);
   else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
-    return new cssCPtr_int(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_int(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
-    return new cssCPtr_short(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_short(itm, td->ptr+1, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_long) || nptd->DerivesFrom(TA_unsigned_long))
-    return new cssCPtr_long(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_long(itm, td->ptr+1, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
     || nptd->DerivesFrom(TA_signed_char))
-    return new cssCPtr_char(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_char(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
-    return new cssCPtr_long_long(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_long_long(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_float))
-    return new cssCPtr_float(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_float(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_double))
-    return new cssCPtr_double(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_double(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taString))
-    return new cssCPtr_String(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_String(itm, td->ptr+1, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_Variant))
-    return new cssCPtr_Variant(itm, td->ptr+1, nm, (cssEl*)this, ro);
+    return new cssCPtr_Variant(itm, td->ptr+1, nm, class_parent, ro);
+  else if(nptd->DerivesFrom(TA_taSmartRef))
+    return new cssSmartRef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+  else if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
+	  || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
+    return new cssIOS(itm, td->ptr+1, nptd, nm, class_parent, ro);
+  else if(nptd->DerivesFrom(&TA_TypeDef))
+    return new cssTypeDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+  else if(nptd->DerivesFrom(&TA_MemberDef))
+    return new cssMemberDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+  else if(nptd->DerivesFrom(&TA_MethodDef))
+    return new cssMethodDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taBase))
-    return new cssTA_Base(itm, td->ptr+1, nptd, nm, (cssEl*)this, ro);
+    return new cssTA_Base(itm, td->ptr+1, nptd, nm, class_parent, ro);
 
-  return new cssTA(itm, td->ptr+1, nptd, nm, (cssEl*)this, ro);
+  return new cssTA(itm, td->ptr+1, nptd, nm, class_parent, ro);
 }
 
 cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
@@ -864,7 +874,7 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) c
     return &cssMisc::Void;
   }
   return GetMemberEl_impl(typ, base, md); // for just 1st order search
-//   return GetFromTA_impl(md->type, mbr, md->name, md);
+//   return GetElFromTA(md->type, mbr, md->name, md, (cssEl*)this);
 }
 
 cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
@@ -873,7 +883,7 @@ cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
     return &cssMisc::Void;
   }
   void* mbr = md->GetOff(base);
-  return GetFromTA_impl(md->type, mbr, md->name, md);
+  return GetElFromTA(md->type, mbr, md->name, md, (cssEl*)this);
 }
 
 ////////////////
@@ -939,7 +949,7 @@ cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
   TypeDef* td = typ->sub_types.FindName(memb);
   if(td != NULL) {
     if(td->DerivesFormal(TA_enum))
-      return new cssTAEnum(td);
+      return new cssCPtr_enum(NULL, 1, td->name, td);
     return new cssTA(NULL, 1, td);
   }
 
@@ -956,9 +966,6 @@ cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
   return &cssMisc::Void;
 }
 
-
-
-#ifdef CSS_SUPPORT_TYPEA
 cssEl::operator TypeDef*() const {
   String nm = this->GetStr();
   TypeDef* td = taMisc::types.FindName(nm);
@@ -990,8 +997,6 @@ cssEl::operator MethodDef*() const {
   }
   return md;
 }
-
-#endif
 
 //////////////////////////////////
 //  Basic Function Functions 	//

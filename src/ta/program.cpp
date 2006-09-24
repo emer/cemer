@@ -252,7 +252,7 @@ cssEl* ProgVar::NewCssEl() {
   case T_Bool:
     return new cssCPtr_bool(&bool_val, 1, name);
   case T_Object: 
-    return new cssTA(&object_val, 1, &TA_taBaseRef, name);
+    return new cssSmartRef(&object_val, 1, &TA_taBaseRef, name);
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 1, name, hard_enum_type);
   case T_DynEnum:

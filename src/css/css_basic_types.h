@@ -934,13 +934,11 @@ public:
   operator stringstream**() const	{ return (stringstream**)*(ptr.El()); }
 
   // support for external types
-#ifdef CSS_SUPPORT_TYPEA
   operator TAPtr() const	{ return (TAPtr)*(ptr.El()); }
   operator TAPtr*() const	{ return (TAPtr*)*(ptr.El()); }
   operator TypeDef*() const	{ return (TypeDef*)*(ptr.El()); }
   operator MemberDef*() const	{ return (MemberDef*)*(ptr.El()); }
   operator MethodDef*() const	{ return (MethodDef*)*(ptr.El()); }
-#endif
 
   // assign from types
   void operator=(Real cp) 		{ ptr.El()->operator=(cp); }

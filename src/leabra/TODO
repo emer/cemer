@@ -1,15 +1,7 @@
 leabra todo list:
 
-* default fonts: smaller on mac; entry in prefs
-
-* progvar object_val should be a ref, not a pointer: not refcount
-
-* seeds in programs: user just adds as needed; no assumptions; auto obj->var..
-
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..
-
-* taBase::CutLinks_taAuto() -> DelPointer any taBase* members..
 
 * check UserScript::ImportFromFile (how to just read in raw?  get something?)
 

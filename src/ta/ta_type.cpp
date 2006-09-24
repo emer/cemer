@@ -4392,6 +4392,7 @@ static void OutputType_OptsLists(ostream& strm, const String_PArray& opts,
     int i;
     for(i=0; i<opts.size; i++)
       strm << " #" << opts.FastEl(i);
+    taMisc::FlushConsole();
   }
   if((lists.size > 0) && (taMisc::type_info == taMisc::ALL_INFO) ||
      (taMisc::type_info == taMisc::NO_OPTIONS)) {
@@ -4479,6 +4480,7 @@ ostream& TypeDef::OutputType(ostream& strm, int indent) const {
     enum_vals.OutputType(strm, indent+1);
     taMisc::indent(strm, indent) << "}\n";
   }
+  taMisc::FlushConsole();
   return strm;
 }
 
@@ -4493,6 +4495,7 @@ ostream& EnumSpace::OutputType(ostream& strm, int indent) const {
       strm << "\t//" << enm->desc;
     OutputType_OptsLists(strm, enm->opts, enm->lists);
     strm << "\n";
+    taMisc::FlushConsole();
   }
   return strm;
 }
@@ -4503,6 +4506,7 @@ ostream& MemberSpace::OutputType(ostream& strm, int indent) const {
   int i;
   for(i=0; i<size; i++) {
     FastEl(i)->OutputType(strm, indent) << "\n";
+    taMisc::FlushConsole();
   }
   return strm;
 }
@@ -4513,6 +4517,7 @@ ostream& MethodSpace::OutputType(ostream& strm, int indent) const {
   int i;
   for(i=0; i<size; i++) {
     FastEl(i)->OutputType(strm, indent) << "\n";
+    taMisc::FlushConsole();
   }
   return strm;
 }

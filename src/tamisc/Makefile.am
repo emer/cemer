@@ -50,6 +50,7 @@ TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	$(TAHEADS_GUI_PRE) \
 	@abs_srcdir@/tarandom.h \
+	@abs_srcdir@/tatime.h \
 	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/aggregate.h \
 	@abs_srcdir@/minmax.h \
@@ -66,6 +67,7 @@ TAHEADS =\
 HEADS =\
 	tamisc_stdef.h \
 	tarandom.h \
+	tatime.h \
 	tdgeometry.h \
 	aggregate.h \
 	minmax.h \
@@ -79,6 +81,7 @@ HEADS =\
 
 SRCS =\
 	tarandom.cpp \
+	tatime.cpp \
 	tdgeometry.cpp \
 	aggregate.cpp \
 	minmax.cpp \

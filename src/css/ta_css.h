@@ -24,6 +24,8 @@
 #include "ta_type.h"
 
 class CSS_API cssTA : public cssCPtr {
+  // a pointer that has a TA TypeDef associated with it: uses type info to perform ops 
+  // NOTE: specialized versions exist for specific types: those must be used (e.g., taBase, etc)
 public:
   TypeDef*	type_def;	// TypeDef Info
 
@@ -70,31 +72,11 @@ public:
   void* 	GetVoidPtrOfType(const char* td) const;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
-  String GetStr() const; 		// check for istream, get result if so
-  Variant GetVar() const {return Variant(GetStr());} // can't see much use for anything else...
-  operator Real() const;
-  operator Int() const;
-  operator TAPtr() const;
-  operator TAPtr*() const;
+  String GetStr() const;
+  Variant GetVar() const;
   operator void*() const;
 
-#ifdef CSS_SUPPORT_TYPEA
   operator TypeDef*() const;
-  operator MemberDef*() const;
-  operator MethodDef*() const;
-#endif
-
-  operator iostream*() const;
-  operator istream*() const;
-  operator ostream*() const;
-  operator fstream*() const;
-  operator stringstream*() const;
-
-  operator iostream**() const;
-  operator istream**() const;
-  operator ostream**() const;
-  operator fstream**() const;
-  operator stringstream**() const;
 
   void operator=(Real) 		{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
@@ -108,14 +90,8 @@ public:
   void InitAssign(const cssEl& s);	// init assign sets the type
   void CastFm(const cssEl& s);	// cast does not set type, but allows any cast..
 
-  void UpdateAfterEdit();
-
-  cssEl* operator<<(cssEl& s);	// for iostreams..
-  cssEl* operator>>(cssEl& s);
-
   virtual cssEl*	GetElement_impl(TAPtr ths, int i) const;
 
-  cssEl* operator[](int) const;
   int	 GetMemberNo(const char* memb) const;
   cssEl* GetMemberFmName(const char* memb) const;
   cssEl* GetMemberFmNo(int memb) const;
@@ -130,15 +106,9 @@ public:
 #define cssTA_inst_ptr(l,n,c,t,x)	l .Push(x = new cssTA(n, c, t, #x))
 #define cssTA_inst_ptr_nm(l,n,c,t,x,s)	l .Push(x = new cssTA(n, c, t, s))
 
-
-// this one is specially for taBase types
-// calls the overloaded (taBase) versions of TypeDef functions
-
 class CSS_API cssTA_Base : public cssTA {
+  // specifically for taBase types -- calls the overloaded versions of TypeDef functions
 public:
-  String	PrintStr() const;
-  String	PrintFStr() const;
-
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;		// recursive
 
@@ -163,22 +133,18 @@ public:
   { return new cssTA_Base((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
 
   // converters
-  TAPtr   	GetTAPtr() const { return (TAPtr)GetVoidPtr(); }
+  TAPtr  GetTAPtr() const 	{ return (TAPtr)GetVoidPtr(); }
 
-  operator TAPtr() const	{ return (TAPtr)GetVoidPtr(); }
+  operator TAPtr() const	{ return GetTAPtr(); }
   operator TAPtr*() const	{ return (TAPtr*)GetVoidPtr(2); }
-
-  Variant GetVar() const { return Variant(GetTAPtr());}
-  void operator=(Real) 		{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String& cp)	{ cssTA::operator=(cp); }
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  Variant GetVar() const 	{ return Variant(GetTAPtr());}
 
   // operators
-  void Assign_impl(const cssEl& s);	// does taBase special things
+  void operator=(const String& s);
   void operator=(const cssEl& s);
   void InitAssign(const cssEl& s);	// init assign sets the type
+
+  void PtrAssignPtr(cssCPtr *s); // call SetPointer when setting TA pointers..
 
   void UpdateAfterEdit();
 
@@ -196,18 +162,106 @@ public:
 #define cssTA_Base_inst_ptr(l,n,c,t,x)	l .Push(x = new cssTA_Base(n, c, t, #x))
 #define cssTA_Base_inst_ptr_nm(l,n,c,t,x,s) l .Push(x = new cssTA_Base(n, c, t, s))
 
+class CSS_API cssSmartRef : public cssTA {
+  // a pointer to a taSmartRef (ptr_cnt = 1)
+public:
+  void 		Print(ostream& fh = cout) const;
+  void 		PrintR(ostream& fh = cout) const;	// recursive
 
-class CSS_API cssFStream : public cssTA {
+  const char*	GetTypeName() const;
+  void 		TypeInfo(ostream& fh = cout) const;
+  void		InheritInfo(ostream& fh = cout) const;
+  void		TokenInfo(ostream& fh = cout) const;
+  cssEl*	GetToken(int idx) const;
+
+  // constructors
+  cssSmartRef() : cssTA() { };
+  cssSmartRef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
+  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
+  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
+    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssSmartRef(const cssSmartRef& cp) : cssTA(cp) { };
+  cssSmartRef(const cssSmartRef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssCloneOnly(cssSmartRef);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssSmartRef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+
+  // converters
+  void* 	GetVoidPtrOfType(TypeDef* td) const;
+  void* 	GetVoidPtrOfType(const char* td) const;
+  // these are type-safe ways to convert a cssEl into a ptr to object of given type
+
+  String GetStr() const;
+  operator void*() const;
+
+  void operator=(const String& s);
+
+  // operators
+  void PtrAssignPtr(cssCPtr *s);
+  void UpdateAfterEdit();
+
+  cssEl* operator[](int) const;
+  bool	MembersDynamic()	{ return true; }
+  int	 GetMemberNo(const char* memb) const { return -1; } // never static lookup
+  cssEl* GetMemberFmName(const char* memb) const;
+  cssEl* GetMemberFmNo(int memb) const;
+  int	 GetMethodNo(const char* memb) const { return -1; }
+  cssEl* GetMethodFmName(const char* memb) const;
+  cssEl* GetMethodFmNo(int memb) const;
+  cssEl* GetScoped(const char*) const;
+};
+
+class CSS_API cssIOS : public cssTA {
+  // a pointer to an iostream object of any sort: supports various streaming ops
+public:
+  String	PrintFStr() const;
+  String	GetStr() const;
+
+  // constructors
+  cssIOS() : cssTA() { };
+  cssIOS(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
+  cssIOS(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
+  cssIOS(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
+    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssIOS(const cssIOS& cp) : cssTA(cp) { };
+  cssIOS(const cssIOS& cp, const char* nm) : cssTA(cp, nm) { };
+  cssCloneOnly(cssIOS);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssIOS((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+
+  void PtrAssignPtr(cssCPtr *s); // call SetPointer when setting TA pointers..
+
+  operator Real() const;
+  operator Int() const;
+
+  operator iostream*() const;
+  operator istream*() const;
+  operator ostream*() const;
+  operator fstream*() const;
+  operator stringstream*() const;
+
+  operator iostream**() const;
+  operator istream**() const;
+  operator ostream**() const;
+  operator fstream**() const;
+  operator stringstream**() const;
+
+  cssEl* operator<<(cssEl& s);	// for iostreams..
+  cssEl* operator>>(cssEl& s);
+};
+
+class CSS_API cssFStream : public cssIOS {
+  // owns its own fstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
   static TypeDef*	TA_TypeDef(); // returns TA_fstream
   uint		GetSize() const	{ return sizeof(*this); }
 
   // constructors
   void		Constr()	{ ptr = new fstream; }
-  cssFStream() 				: cssTA(NULL, 1, TA_TypeDef())	   { Constr(); }
-  cssFStream(const char* nm)			: cssTA(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
-  cssFStream(const cssFStream& cp)		: cssTA(cp) 	{ Constr(); }
-  cssFStream(const cssFStream& cp, const char*)	: cssTA(cp)	{ Constr(); }
+  cssFStream() 				: cssIOS(NULL, 1, TA_TypeDef())	   { Constr(); }
+  cssFStream(const char* nm)			: cssIOS(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
+  cssFStream(const cssFStream& cp)		: cssIOS(cp) 	{ Constr(); }
+  cssFStream(const cssFStream& cp, const char*)	: cssIOS(cp)	{ Constr(); }
   ~cssFStream()			{ fstream* str = (fstream*)ptr; delete str; }
 
   cssCloneOnly(cssFStream);
@@ -224,7 +278,7 @@ public:
   void operator=(const cssEl&)		{ NopErr("="); }
 
   cssEl* operator-(cssEl&)		{ NopErr("-"); return this; }
-  cssEl* operator*()			{ return cssTA::operator*(); }
+  cssEl* operator*()			{ return cssIOS::operator*(); }
   cssEl* operator*(cssEl&)		{ NopErr("*"); return this; }
   cssEl* operator/(cssEl&)		{ NopErr("/"); return this; }
   cssEl* operator%(cssEl&)		{ NopErr("%"); return this; }
@@ -236,7 +290,8 @@ public:
   void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
-class CSS_API cssSStream : public cssTA {
+class CSS_API cssSStream : public cssIOS {
+  // owns its own sstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
   uint		GetSize() const	{ return sizeof(*this); }
 
@@ -262,7 +317,7 @@ public:
   void operator=(const cssEl&)		{ NopErr("="); }
 
   cssEl* operator-(cssEl&)		{ NopErr("-"); return this; }
-  cssEl* operator*()			{ return cssTA::operator*(); }
+  cssEl* operator*()			{ return cssIOS::operator*(); }
   cssEl* operator*(cssEl&)		{ NopErr("*"); return this; }
   cssEl* operator/(cssEl&)		{ NopErr("/"); return this; }
   cssEl* operator%(cssEl&)		{ NopErr("%"); return this; }
@@ -275,6 +330,7 @@ public:
 };
 
 class CSS_API cssLeafItr : public cssTA {
+  // owns its own leafitr with ptr_cnt = 0: manages the construction and destruction of obj
 public:
   static TypeDef*	TA_TypeDef(); // returns TA_taLeafItr
   uint		GetSize() const	{ return sizeof(*this); }
@@ -313,83 +369,75 @@ public:
   void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
-class CSS_API cssTAEnum : public cssTA {
+class CSS_API cssTypeDef : public cssTA {
+  // a pointer to a TypeDef (any number of ptr_cnt)
 public:
-  Int 		val;
-  uint		GetSize() const	{ return sizeof(*this); }
+  void 		Print(ostream& fh = cout) const;
+  void 		PrintR(ostream& fh = cout) const;	// recursive
+
+  const char*	GetTypeName() const;
+  void 		TypeInfo(ostream& fh = cout) const;
+  void		InheritInfo(ostream& fh = cout) const;
 
   // constructors
-  void		Constr()  	{ ptr = (void*)&val; }
-  cssTAEnum(TypeDef* td) 			: cssTA(NULL, 1, td)   { Constr(); }
-  cssTAEnum(TypeDef* td, const char* nm)	: cssTA(NULL, 1, td, nm)  { Constr(); }
-  cssTAEnum(TypeDef* td, int vl)		: cssTA(NULL, 1, td)  { Constr(); val = vl; }
-  cssTAEnum(const cssTAEnum& cp): cssTA(cp) 	{ Constr(); val = cp.val;}
-  cssTAEnum(const cssTAEnum& cp, const char*)	: cssTA(cp)	{ Constr(); val = cp.val; }
-  ~cssTAEnum()  		{ };
-
-  cssCloneOnly(cssTAEnum);
+  cssTypeDef() : cssTA() { };
+  cssTypeDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
+  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
+  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
+    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssTypeDef(const cssTypeDef& cp) : cssTA(cp) { };
+  cssTypeDef(const cssTypeDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssCloneOnly(cssTypeDef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssTAEnum(type_def, (const char*)*(arg[1])); }
+  { return new cssTypeDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
 
-  // converters
-  Variant GetVar() const { return Variant(val);}
-  operator Real() const	 	{ return (Real)val; }
-  operator Int() const	 	{ return val; }
-
-  void operator=(Real cp) 		{ val = (int)cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(const String& cp);
-  void operator=(void* cp)	{ cssTA::operator=(cp); }
-  void operator=(void** cp)	{ cssTA::operator=(cp); }
-
-  // operators
+  operator TypeDef*() const;
+  String GetStr() const;
+  void operator=(const String& s);
   void operator=(const cssEl& s);
-
-  cssEl* operator+(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val -= (Int)t; return r; }
-  cssEl* operator*()		{ return cssEl::operator*(); }
-  cssEl* operator*(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val /= (Int)t; return r; }
-  cssEl* operator%(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val %= (Int)t; return r; }
-  cssEl* operator<<(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val <<= (Int)t; return r; }
-  cssEl* operator>>(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val >>= (Int)t; return r; }
-  cssEl* operator&(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val &= (Int)t; return r; }
-  cssEl* operator^(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val ^= (Int)t; return r; }
-  cssEl* operator|(cssEl& t)
-  { cssInt* r = new cssInt(val); r->val |= (Int)t; return r; }
-
-  cssEl* operator-()
-  { cssInt* r = new cssInt(val); r->val = -val; return r; }
-
-  void operator+=(cssEl& t) 	{ val += (Int)t; }
-  void operator-=(cssEl& t) 	{ val -= (Int)t; }
-  void operator*=(cssEl& t) 	{ val *= (Int)t; }
-  void operator/=(cssEl& t) 	{ val /= (Int)t; }
-  void operator%=(cssEl& t) 	{ val %= (Int)t; }
-  void operator<<=(cssEl& t) 	{ val <<= (Int)t; }
-  void operator>>=(cssEl& t) 	{ val >>= (Int)t; }
-  void operator&=(cssEl& t) 	{ val &= (Int)t; }
-  void operator^=(cssEl& t) 	{ val ^= (Int)t; }
-  void operator|=(cssEl& t) 	{ val |= (Int)t; }
-
-  bool operator< (cssEl& s) 	{ return (val < (Int)s); }
-  bool operator> (cssEl& s) 	{ return (val > (Int)s); }
-  bool operator! () 	    	{ return ( ! val); }
-  bool operator<=(cssEl& s) 	{ return (val <= (Int)s); }
-  bool operator>=(cssEl& s) 	{ return (val >= (Int)s); }
-  bool operator==(cssEl& s);
-  bool operator!=(cssEl& s);
-  bool operator&&(cssEl& s) 	{ return (val && (Int)s); }
-  bool operator||(cssEl& s) 	{ return (val || (Int)s); }
 };
+
+class CSS_API cssMemberDef : public cssTA {
+  // a pointer to a MemberDef (any number of ptr_cnt)
+public:
+  // constructors
+  cssMemberDef() : cssTA() { };
+  cssMemberDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
+  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
+  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
+    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssMemberDef(const cssMemberDef& cp) : cssTA(cp) { };
+  cssMemberDef(const cssMemberDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssCloneOnly(cssMemberDef);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssMemberDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+
+  operator MemberDef*() const;
+  String GetStr() const;
+  void operator=(const String& s);
+  void operator=(const cssEl& s);
+};
+
+class CSS_API cssMethodDef : public cssTA {
+  // a pointer to a MethodDef (any number of ptr_cnt)
+public:
+  // constructors
+  cssMethodDef() : cssTA() { };
+  cssMethodDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
+  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
+  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
+    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssMethodDef(const cssMethodDef& cp) : cssTA(cp) { };
+  cssMethodDef(const cssMethodDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssCloneOnly(cssMethodDef);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssMethodDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+
+  operator MethodDef*() const;
+  String GetStr() const;
+  void operator=(const String& s);
+  void operator=(const cssEl& s);
+};
+
 
 #endif // ta_css.h

@@ -17,14 +17,6 @@
 
 #include "tarandom.h"
 
-#if (defined(TA_OS_WIN))
-# include <time.h>
-#else
-# include <sys/time.h>
-# include <sys/times.h>
-# include <unistd.h>
-#endif
-
 //////////////////////////
 //  	RndSeed     	//
 //////////////////////////
@@ -40,11 +32,6 @@ void RndSeed::GetCurrent() {
     seed.FastEl(i) = (long)MTRnd::mt[i];
   }
   mti = MTRnd::mti;
-}
-
-void RndSeed::Copy_(const RndSeed& cp) {
-  seed = cp.seed;
-  mti = cp.mti;
 }
 
 void RndSeed::NewSeed() {
@@ -134,93 +121,3 @@ void Random::Copy_(const Random& cp){
   par = cp.par;
 }
 
-//////////////////////////
-// 	TimeUsed	//
-//////////////////////////
-
-void TimeUsed::Initialize() {
-  rec = false;
-  InitTimes();
-}
-
-void TimeUsed::InitTimes() {
-  usr = 0; sys = 0; tot = 0; n = 0;
-}
-
-void TimeUsed::GetUsed(const TimeUsed& start) {
-  if(!rec || !start.rec) return;
-  TimeUsed end;  end.rec = true;
-  end.GetTimes();
-  *this += (end - start);
-  n++;
-}
-
-TimeUsed TimeUsed::operator+(const TimeUsed& td) const {
-  TimeUsed rv;
-  rv.usr = usr + td.usr; rv.sys = sys + td.sys; rv.tot = tot + td.tot;
-  return rv;
-}
-TimeUsed TimeUsed::operator-(const TimeUsed& td) const {
-  TimeUsed rv;
-  rv.usr = usr - td.usr; rv.sys = sys - td.sys; rv.tot = tot - td.tot;
-  return rv;
-}
-TimeUsed TimeUsed::operator*(const TimeUsed& td) const {
-  TimeUsed rv;
-  rv.usr = usr * td.usr; rv.sys = sys * td.sys; rv.tot = tot * td.tot;
-  return rv;
-}
-TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
-  TimeUsed rv;
-  rv.usr = usr / td.usr; rv.sys = sys / td.sys; rv.tot = tot / td.tot;
-  return rv;
-}
-
-#if defined(TA_OS_WIN)
-
-String TimeUsed::GetString() {
-  if(!rec) return "time not recorded";
-  double ticks_per = (double)CLOCKS_PER_SEC;
-  float ustr = (float)((double)usr / ticks_per);
-  float sstr = (float)((double)sys / ticks_per);
-  float tstr = (float)((double)tot / ticks_per);
-  String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
-    + " sys: " + taMisc::FormatValue(sstr, 15, 7)
-    + " tot: " + taMisc::FormatValue(tstr, 15, 7)
-    + " n: " + (String)n;
-  return rval;
-}
-
-void TimeUsed::GetTimes() {
-  if(!rec) return;
-  clock_t tottime = clock();
-  tot = (long)tottime;
-  //NOTE: just allocate all to usr
-  usr = tot;
-  sys = 0;
-}
-
-#else
-String TimeUsed::GetString() {
-  if(!rec) return "time not recorded";
-  double ticks_per = (double)sysconf(_SC_CLK_TCK);
-  float ustr = (float)((double)usr / ticks_per);
-  float sstr = (float)((double)sys / ticks_per);
-  float tstr = (float)((double)tot / ticks_per);
-  String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
-    + " sys: " + taMisc::FormatValue(sstr, 15, 7)
-    + " tot: " + taMisc::FormatValue(tstr, 15, 7)
-    + " n: " + (String)n;
-  return rval;
-}
-
-void TimeUsed::GetTimes() {
-  if(!rec) return;
-  struct tms t;
-  clock_t tottime = times(&t);
-  tot = (long)tottime;
-  usr = (long)t.tms_utime;
-  sys = (long)t.tms_stime;
-}
-
-#endif
