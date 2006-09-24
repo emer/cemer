@@ -39,6 +39,7 @@
 # include "pdp_qtso.h"
 # include <qbitmap.h>
 # include <QApplication>
+# include <QFont>
 #endif
 
 #ifdef TA_USE_INVENTOR
@@ -278,6 +279,14 @@ int pdpMisc::Main(int argc, char *argv[]) {
     ip();
   }
 
+  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.
+
+#ifdef TA_GUI
+  QFont font(taMisc::font_name, taMisc::font_size);
+  qApp->setFont(font);
+#endif
+
 /*obs  if (cssMisc::gui && (taMisc::dmem_proc == 0))
     new ivSession("PDP++", argc, argv, PDP_options, PDP_defs); */
 
@@ -293,9 +302,6 @@ int pdpMisc::Main(int argc, char *argv[]) {
   cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(root, 1, &TA_PDPRoot,"root"));
   cssMisc::Initialize();
   cssMisc::Top->name = app_root;	// changes prompt
-
-  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-  // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.
 
 #ifdef TA_GUI
   if(cssMisc::gui && (taMisc::dmem_proc == 0)) {

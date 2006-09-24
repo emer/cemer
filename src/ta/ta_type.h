@@ -394,7 +394,12 @@ public:
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
   static int		dmem_nprocs; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory number of processes (comm_size in MPI, 1 for no dmem)
 
-  static int		display_width;	// #SAVE width of shell display (in chars)
+  static String		font_name;	// #SAVE default font name to use
+  static int		font_size;	// #SAVE default font size to use
+  static String		console_font_name;	// #SAVE font name for the css console
+  static int		console_font_size;	// #SAVE font size for the css console
+
+  static int		display_width;	// #SAVE #HIDDEN width of shell display (in chars) -- no longer used
   static int		sep_tabs;	// #SAVE number of tabs to separate items by
   static int		max_menu;	// #SAVE maximum number of items in a menu
   static int		search_depth;   // #SAVE depth recursive find will search for a path object

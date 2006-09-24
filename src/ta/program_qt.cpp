@@ -268,7 +268,7 @@ void taiProgVar::GetImage(const ProgVar* var) {
     break;
   case ProgVar::T_Object:
     thValType->GetImage(var->object_type, &TA_taBase);
-    tkObjectValue->GetImage(var->object_val, var->object_type, NULL);// no scope
+    tkObjectValue->GetImage(var->object_val.ptr(), var->object_type, NULL);// no scope
     break;
   case ProgVar::T_HardEnum:
     thEnumType->GetImage(var->hard_enum_type, &TA_taBase);
@@ -307,7 +307,7 @@ void taiProgVar::GetValue(ProgVar* var) const {
     break;
   case ProgVar::T_Object:
     var->object_type = thValType->GetValue();
-    taBase::SetPointer(&var->object_val, tkObjectValue->GetValue());
+    var->object_val = tkObjectValue->GetValue();
     break;
   case ProgVar::T_HardEnum:
     var->hard_enum_type = thEnumType->GetValue();

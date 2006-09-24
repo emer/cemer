@@ -29,6 +29,7 @@
 #include "ifont.h"
 
 #include <string.h>
+#include <ta_type.h>
 
 #ifdef TA_GUI
 #include <qfont.h>
@@ -45,7 +46,7 @@ iFont::iFont() {
 }
 
 void iFont::init() {
-  fontName = defName;
+  fontName = taMisc::font_name; // defName;
   attribs = (Attributes)0;
   stretch = 100; //note: default for Qt
   pointSize = 10; // TODO: verify default point size

@@ -1,11 +1,13 @@
 leabra todo list:
 
-// todo: progvar object_val should be a ref, not a pointer: not refcount
+* default fonts: smaller on mac; entry in prefs
 
-* fix tabase* css menu fun arg stuff (New From Prog Lib)..
+* progvar object_val should be a ref, not a pointer: not refcount
 
-* seeds in programs: just add as a builtin class to program (also timing) -- general 
-  enough to be needed everywhere..
+* seeds in programs: user just adds as needed; no assumptions; auto obj->var..
+
+* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
+docs..
 
 * taBase::CutLinks_taAuto() -> DelPointer any taBase* members..
 
@@ -19,4 +21,5 @@ leabra todo list:
 
 * bugs: network display updates at start of trial with weird state info, despite wrap
   by DataUpdate guys, etc
+* profile: slow!!!
 

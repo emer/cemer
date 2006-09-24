@@ -2536,27 +2536,40 @@ taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
     new_flags |= taiData::flgNoGroup; //aka flagNoList
 
   if (from_md->type->DerivesFrom(TA_taGroup_impl))
-    return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
-		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+//     return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+// 		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+     return new taiGroupElsButton(typ, host_, par, gui_parent_,
+				  (new_flags | taiData::flgNoInGroup));
   else
-    return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
-		typ, host_, par, gui_parent_, new_flags);
+    return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
+//     return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+// 		typ, host_, par, gui_parent_, new_flags);
 }
 
 void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
   if (arg_base == NULL)  return;
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)	return;
-  gpiListEls* els = (gpiListEls*)dat;
   TABLPtr lst = GetList(from_md, base);
-  els->GetImage(lst, *((TAPtr*)arg_base));
+  if (typ->InheritsFrom(TA_taGroup_impl)) {
+    taiGroupElsButton* els = (taiGroupElsButton*)dat;
+    els->GetImage((taGroup_impl*)lst, *((TAPtr*)arg_base));
+  } else {
+    taiListElsButton* els = (taiListElsButton*)dat;
+    els->GetImage((TABLPtr)lst, *((TAPtr*)arg_base));
+  }
+
+//   gpiListEls* els = (gpiListEls*)dat;
+//   els->GetImage(lst, *((TAPtr*)arg_base));
 }
 
 void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
-  gpiListEls* els = (gpiListEls*)dat;
+  taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
   *((TAPtr*)arg_base) = els->GetValue();
+//   gpiListEls* els = (gpiListEls*)dat;
+//   *((TAPtr*)arg_base) = els->GetValue();
 }
 
 MemberDef* gpiFromGpArgType::GetFromMd() {

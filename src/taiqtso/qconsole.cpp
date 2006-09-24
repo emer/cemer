@@ -31,17 +31,18 @@
 using namespace std;
 #include <iostream>
 
-//Clear the console
-void QConsole::clear() {
-  QTextEdit::clear();
-  curPromptPos = 0;
-#ifdef __APPLE__
-  QFont font("Andale Mono", 10);
-#else
-  QFont font("LucidaTypewriter", 8);
-#endif
+void QConsole::setFontNameSize(QString fnm, int sz) {
+  QFont font(fnm, sz);
+  setFont(font);
+}
+
+void QConsole::setFont(QFont font) {
   setCurrentFont(font);
-  QFontMetrics fm(font);
+  getDisplayGeom();
+}
+
+void QConsole::getDisplayGeom() {
+  QFontMetrics fm(currentFont());
   fontHeight = fm.height();
   fontWidth = fm.charWidth("m",0);
   if(fontHeight < 5) fontHeight = 5;
@@ -50,6 +51,13 @@ void QConsole::clear() {
   maxCols = (width() / fontWidth) - 1;
   if(maxLines < 10) maxLines = 10;
   if(maxCols < 10) maxCols = 10;
+}
+
+//Clear the console
+void QConsole::clear() {
+  QTextEdit::clear();
+  getDisplayGeom();
+  curPromptPos = 0;
   setAcceptRichText(false);	// just plain
   noPager = false;
   quitPager = false;

@@ -1527,7 +1527,7 @@ public:
   // todo: not sure if above belongs here..
 
   virtual void 		ApplyExternal(int context);
-  // convenience method for applying data in indicated context
+  // apply data to the layers, using the supplied context (TEST, TRAIN, etc)
 
   void	UpdateAfterEdit();
   void  InitLinks();

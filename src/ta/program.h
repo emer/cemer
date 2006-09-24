@@ -52,8 +52,7 @@ public:
   String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
   bool		bool_val;	// #CONDEDIT_ON_var_type:T_Bool boolean value
   TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
-  taBase*	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
-  // todo: object_val should be a ref, not a pointer: not ownership..
+  taBaseRef	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
   DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum type information for dynamic enum (value goes in int_val)
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
@@ -549,8 +548,7 @@ public:
   };
   
   static RunState	run_state; // #READ_ONLY the one and only global run mode for current running prog
-  static ProgramRef	top_prog; // #READ_ONLY the top level program that was run
-  static ProgramRef	step_prog; // #SHOW the program that will be stepped when the Step button is pressed
+  Program_Group*	prog_gp;   // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
   
   String		desc; // #EDIT_DIALOG description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;  // control flags, for display and execution control
@@ -660,6 +658,8 @@ public:
   virtual bool ParseProgFile(const String& fnm, const String& path);
   // get program information from program or program group file. is_group is set based on extension of file name (.prog or .progp)
 
+  override String GetDesc() const { return desc; }
+
   TA_SIMPLE_BASEFUNS(ProgLibEl);
 protected:
 
@@ -705,6 +705,7 @@ class TA_API Program_Group : public taGroup<Program> {
   // ##EXT_progp a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
+  ProgramRef		step_prog; // the program that will be stepped when the Step button is pressed
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 

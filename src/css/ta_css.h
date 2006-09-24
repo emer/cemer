@@ -76,6 +76,7 @@ public:
   operator Int() const;
   operator TAPtr() const;
   operator TAPtr*() const;
+  operator void*() const;
 
 #ifdef CSS_SUPPORT_TYPEA
   operator TypeDef*() const;

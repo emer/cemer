@@ -88,7 +88,7 @@ String cssTA::PrintFStr() const {
 
 void cssTA::TypeInfo(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if(type_def->InheritsFrom(&TA_TypeDef) && (pt != NULL))
+  if(type_def->InheritsFrom(&TA_TypeDef) && (pt))
     ((TypeDef*)pt)->OutputType(fh);
   else
     type_def->OutputType(fh);
@@ -96,7 +96,7 @@ void cssTA::TypeInfo(ostream& fh) const {
 
 void cssTA::Print(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if((pt != NULL) && !type_def->InheritsFrom(TA_TypeDef))
+  if((pt) && !type_def->InheritsFrom(TA_TypeDef))
     type_def->Output(fh, pt);
   else {
     fh << PrintStr();
@@ -105,7 +105,7 @@ void cssTA::Print(ostream& fh) const {
 
 void cssTA::PrintR(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if((pt != NULL) && !type_def->InheritsFrom(TA_TypeDef))
+  if((pt) && !type_def->InheritsFrom(TA_TypeDef))
     type_def->OutputR(fh, pt);
   else {
     fh << PrintStr();
@@ -114,7 +114,7 @@ void cssTA::PrintR(ostream& fh) const {
 
 void cssTA::InheritInfo(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if(type_def->InheritsFrom(&TA_TypeDef) && (pt != NULL))
+  if(type_def->InheritsFrom(&TA_TypeDef) && (pt))
     ((TypeDef*)pt)->OutputInherit(fh) << "\n";
   else
     type_def->OutputInherit(fh);
@@ -127,7 +127,7 @@ int cssTA::Edit(bool wait) {
   if (pt == NULL)
     return false;
   taiEdit* gc = type_def->ie;
-  if (gc != NULL) {
+  if (gc) {
     const iColor* bgclr = NULL;
     if (type_def->InheritsFrom(TA_taBase))
       bgclr = ((TAPtr)pt)->GetEditColor();
@@ -140,13 +140,13 @@ int cssTA::Edit(bool wait) {
 
 void cssTA::Save(ostream& fh) {
   void* pt = GetVoidPtr();
-  if(pt != NULL) {
+  if(pt) {
     type_def->Dump_Save(fh, pt);
   }
 }
 void cssTA::Load(istream& fh) {
   void* pt = GetVoidPtr();
-  if(pt != NULL) {
+  if(pt) {
     type_def->Dump_Load(fh, pt);
   }
 }
@@ -171,7 +171,7 @@ cssTA::operator TypeDef*() const {
       return type_def;
     else if(ptr_cnt == 1)
       return (TypeDef*)ptr;
-    else if((ptr_cnt == 2) && *((TypeDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((TypeDef**)ptr))
       return *((TypeDef**)ptr);
   }
   return type_def;
@@ -183,7 +183,7 @@ cssTA::operator MemberDef*() const {
       return NULL;
     else if(ptr_cnt == 1)
       return (MemberDef*)ptr;
-    else if((ptr_cnt == 2) && *((MemberDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((MemberDef**)ptr))
       return *((MemberDef**)ptr);
   }
   return NULL;
@@ -195,7 +195,7 @@ cssTA::operator MethodDef*() const {
       return NULL;
     else if(ptr_cnt == 1)
       return (MethodDef*)ptr;
-    else if((ptr_cnt == 2) && *((MethodDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((MethodDef**)ptr))
       return *((MethodDef**)ptr);
   }
   return NULL;
@@ -203,7 +203,21 @@ cssTA::operator MethodDef*() const {
 
 #endif
 
+cssTA::operator void*() const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    return sr->ptr();
+  }
+  return GetVoidPtr(1);
+}
+
 void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr()) {
+      return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
+    }
+  }
   void* bptr = GetVoidPtr();
   if(bptr == NULL) {
     cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",type_def->name);
@@ -217,6 +231,12 @@ void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
 }
 
 void* cssTA::GetVoidPtrOfType(const char* td) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr()) {
+      return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
+    }
+  }
   void* bptr = GetVoidPtr();
   if(bptr == NULL) {
     cssMisc::Error(prog, "Null pointer for conversion to:",td,"from:",type_def->name);
@@ -253,7 +273,7 @@ String cssTA::GetStr() const {
       return rval;
     else if(ptr_cnt == 1)
       return ((TypeDef*)ptr)->name;
-    else if((ptr_cnt == 2) && *((TypeDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((TypeDef**)ptr))
       return (*((TypeDef**)ptr))->name;
     return type_def->name;
   }
@@ -262,7 +282,7 @@ String cssTA::GetStr() const {
       return rval;
     else if(ptr_cnt == 1)
       rval = TA_MemberDef_ptr.GetValStr((void*)&ptr);
-    else if((ptr_cnt == 2) && *((MemberDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((MemberDef**)ptr))
       rval = TA_MemberDef_ptr.GetValStr(((MemberDef**)ptr));
     return rval;
   }
@@ -271,18 +291,18 @@ String cssTA::GetStr() const {
       return rval;
     else if(ptr_cnt == 1)
       rval = TA_MethodDef_ptr.GetValStr((void*)&ptr);
-    else if((ptr_cnt == 2) && *((MethodDef**)ptr) != NULL)
+    else if((ptr_cnt == 2) && *((MethodDef**)ptr))
       rval = TA_MethodDef_ptr.GetValStr(((MethodDef**)ptr));
     return rval;
   }
-  if(ptr != NULL) {
+  if(ptr) {
     if(ptr_cnt == 1)
       rval = type_def->GetValStr(ptr);
     else if(ptr_cnt == 2) {
       // need the correct typedef here, either find it or make it..
       String ptrnm = type_def->name + "_ptr";
       TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
-      if(ptr_typ != NULL)
+      if(ptr_typ)
 	rval = ptr_typ->GetValStr(ptr);
       else {
 	TypeDef nw_tp(*type_def);
@@ -414,7 +434,7 @@ cssTA::operator stringstream**() const {
 cssEl* cssTA::operator<<(cssEl& s) {
   if(type_def->InheritsFrom(&TA_ostream) || type_def->InheritsFrom(&TA_iostream)) {
     ostream* strm = (ostream*)*this;
-    if(strm != NULL) {
+    if(strm) {
       if(s.GetType() == T_Int)
 	*strm << (Int) s;
       else if(s.GetType() == T_Real)
@@ -432,7 +452,7 @@ cssEl* cssTA::operator<<(cssEl& s) {
 cssEl* cssTA::operator>>(cssEl& s) {
   if(type_def->InheritsFrom(&TA_istream) || type_def->InheritsFrom(&TA_iostream)) {
     istream* strm = (istream*)*this;
-    if(strm != NULL) {
+    if(strm) {
       if(s.GetType() == T_Int) {
 	cssInt* tmp = (cssInt*)&s;
 	String tpnm = tmp->GetTypeName();
@@ -513,7 +533,7 @@ void cssTA::PtrAssignPtr(cssCPtr* s) {
   String s_tpnm = s->GetTypeName();
   if(ptr_cnt == s->ptr_cnt) {
     // we are a member pointer to obj (not just a script variable)
-    if((ptr_cnt == 1) && (class_parent != NULL) && (ptr != NULL) && (s->ptr != NULL) &&
+    if((ptr_cnt == 1) && (class_parent) && (ptr) && (s->ptr) &&
        (s->GetType() == T_TA))
     {
       if(type_def->InheritsFrom(TA_taBase)) {
@@ -555,11 +575,11 @@ void cssTA::PtrAssignPtr(cssCPtr* s) {
       }
     }
     ptr = s->ptr;
-    if((prog != NULL) && (prog->top->debug) && (tpnm != s_tpnm))
+    if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
       cssMisc::Warning(prog, "Warning: assigning different ptr types");
   }
   else if(ptr_cnt == s->ptr_cnt + 1) {
-    if((ptr != NULL)) {
+    if((ptr)) {
       if(!ROCheck()) return;
       // note that this means that the css ptr points to a ptr, which is whats
       // gettting set here, not the css ptr
@@ -567,9 +587,9 @@ void cssTA::PtrAssignPtr(cssCPtr* s) {
 	taBase::SetPointer((TAPtr*)ptr, (TAPtr)s->ptr);
       else
 	*((void**)ptr) = s->ptr;
-      if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+      if(class_parent)	class_parent->UpdateAfterEdit();
 
-      if((prog != NULL) && (prog->top->debug) && (tpnm != s_tpnm))
+      if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
 	cssMisc::Warning(prog, "Warning: assigning different ptr types");
     }
   }
@@ -584,7 +604,7 @@ void cssTA::operator=(const String& s) {
        || type_def->InheritsFrom(TA_taArray_base)
        || type_def->InheritsFrom(TA_taArray_impl) || type_def->InheritsFrom(TA_void))
     {
-      if(ptr != NULL)
+      if(ptr)
 	type_def->SetValStr((const char*)s, ptr);
       return;
     }
@@ -602,7 +622,7 @@ void cssTA::operator=(const String& s) {
     }
     else if(type_def->InheritsFrom(TA_TypeDef)) {
       TypeDef* td = taMisc::types.FindName((const char*)s);
-      if(td != NULL)
+      if(td)
 	ptr = (void*)td;
     }
     else if(type_def->InheritsFrom(TA_MemberDef)) {
@@ -612,11 +632,11 @@ void cssTA::operator=(const String& s) {
       TA_MethodDef_ptr.SetValStr(s, (void*)&ptr);
     }
   }
-  else if((ptr != NULL) && (ptr_cnt == 2)) {	// otherwise treat as a pointer
+  else if((ptr) && (ptr_cnt == 2)) {	// otherwise treat as a pointer
     // need the correct typedef here, either find it or make it..
     String ptrnm = type_def->name + "_ptr";
     TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
-    if(ptr_typ != NULL)
+    if(ptr_typ)
       ptr_typ->SetValStr((const char*)s, ptr);
     else {
       TypeDef nw_tp(*type_def);
@@ -634,14 +654,14 @@ void cssTA::operator=(const cssEl& s) {
 	PtrAssignPtr(tmp);
       else {
 	*((TypeDef**)ptr) = tmp->type_def;	// get its typedef
-	if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
       PtrAssignPtr((cssCPtr*)&s);
     else {
       *((TypeDef**)ptr) = (TypeDef*)s;		// get the name
-      if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+      if(class_parent)	class_parent->UpdateAfterEdit();
     }
   }
   else if(type_def->InheritsFrom(&TA_MemberDef) && (ptr_cnt==2)) { // if im a memberdef-ptr-ptr
@@ -651,14 +671,14 @@ void cssTA::operator=(const cssEl& s) {
 	PtrAssignPtr(tmp);
       else {
 	*((MemberDef**)ptr) = (MemberDef*)s;
-	if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
       PtrAssignPtr((cssCPtr*)&s);
     else {
       *((MemberDef**)ptr) = (MemberDef*)s;		// get the name
-      if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+      if(class_parent)	class_parent->UpdateAfterEdit();
     }
   }
   else if(type_def->InheritsFrom(&TA_MethodDef) && (ptr_cnt==2)) { // if im a memberdef-ptr-ptr
@@ -668,14 +688,14 @@ void cssTA::operator=(const cssEl& s) {
 	PtrAssignPtr(tmp);
       else {
 	*((MethodDef**)ptr) = (MethodDef*)s;
-	if(class_parent != NULL) class_parent->UpdateAfterEdit();
+	if(class_parent) class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
       PtrAssignPtr((cssCPtr*)&s);
     else {
       *((MethodDef**)ptr) = (MethodDef*)s;		// get the name
-      if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+      if(class_parent)	class_parent->UpdateAfterEdit();
     }
   }
   else {
@@ -684,15 +704,15 @@ void cssTA::operator=(const cssEl& s) {
     }
     else if(s.GetType() == T_C_Ptr)
       cssMisc::Error(prog, "Assigning typed pointer to non-typed ptr value");
-    else if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr != NULL)) {
+    else if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
       *this = s.GetStr();	// use string converter
-      if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+      if(class_parent)	class_parent->UpdateAfterEdit();
     }
     else if(s.GetType() == T_MbrCFun) {
       if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
 	cssMbrCFun& mbf = (cssMbrCFun&)s;
 	MethodDef* fun = TA_taRegFun.methods.FindName(mbf.name);
-	if(fun != NULL)
+	if(fun)
 	  *((ta_void_fun*)ptr) = fun->addr;
 	else {
 	  cssMisc::Error(prog, "Assignment to unregistered member function:", mbf.name);
@@ -704,7 +724,7 @@ void cssTA::operator=(const cssEl& s) {
       if(sval == 0) {
 	if(ptr_cnt > 1) {
 	  *((void**)ptr) = NULL;
-	  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+	  if(class_parent)	class_parent->UpdateAfterEdit();
 	}
 	else
 	  ptr = NULL;
@@ -743,17 +763,23 @@ void cssTA::CastFm(const cssEl& s) {
 void cssTA::UpdateAfterEdit() {
   if(type_def->InheritsFrom(&TA_taBase)) {
     TAPtr ths = (TAPtr)GetVoidPtr();
-    if(ths != NULL) ths->UpdateAfterEdit();
+    if(ths)
+      ths->UpdateAfterEdit();
   }
 }
 
 cssEl* cssTA::operator[](int i) const {
   if(type_def->InheritsFrom(&TA_taBase)) {
     TAPtr ths = (TAPtr)GetVoidPtr();
-    if(ths != NULL)
+    if(ths)
       return GetElement_impl(ths, i);
     cssMisc::Error(prog, "operator[]: NULL pointer");
     return &cssMisc::Void;
+  }
+  else if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetElement_impl(sr->ptr(), i);
   }
   NopErr("[]");
   return &cssMisc::Void;
@@ -777,30 +803,65 @@ cssEl* cssTA::GetElement_impl(TAPtr ths, int i) const {
 }
 
 int cssTA::GetMemberNo(const char* memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMemberNo_impl(sr->ptr()->GetTypeDef(), memb);
+  }
   return GetMemberNo_impl(type_def, memb);
 }
 
 cssEl* cssTA::GetMemberFmName(const char* memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMemberFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
+  }
   return GetMemberFmName_impl(type_def, GetVoidPtr(), memb);
 }
 
 cssEl* cssTA::GetMemberFmNo(int memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMemberFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
+  }
   return GetMemberFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
 int cssTA::GetMethodNo(const char* memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMethodNo_impl(sr->ptr()->GetTypeDef(), memb);
+  }
   return GetMethodNo_impl(type_def, memb);
 }
 
 cssEl* cssTA::GetMethodFmName(const char* memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMethodFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
+  }
   return GetMethodFmName_impl(type_def, GetVoidPtr(), memb);
 }
 
 cssEl* cssTA::GetMethodFmNo(int memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetMethodFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
+  }
   return GetMethodFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
 cssEl* cssTA::GetScoped(const char* memb) const {
+  if(type_def->InheritsFrom(&TA_taSmartRef) && (ptr_cnt == 1)) {
+    taSmartRef* sr = (taSmartRef*)ptr;
+    if(sr->ptr())
+      return GetScoped_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
+  }
   return GetScoped_impl(type_def, GetVoidPtr(), memb);
 }
 
@@ -908,7 +969,7 @@ void cssTA_Base::UpdateAfterEdit() {
 
 cssEl* cssTA_Base::operator[](int i) const {
   TAPtr ths = GetTAPtr();
-  if(ths != NULL)
+  if(ths)
     return GetElement_impl(ths, i);
   cssMisc::Error(prog, "operator[]: NULL pointer");
   return &cssMisc::Void;

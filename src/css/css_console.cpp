@@ -161,6 +161,7 @@ QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
   inherited((QWidget*)parent, "css> ", true)
 {
   cmd_shell = cs;
+  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
 }
 
 QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {

@@ -763,6 +763,8 @@ private:\
 
 #ifdef TA_USE_QT
 
+SmartRef_Of(taBase);		// basic ref if you don't know the type
+
 /*
  * taBaseAdapter enables a taOBase object to handle Qt events, via a
  * proxy(taBaseAdapter)/stub(taBase) approach. Note that dual-parenting a taBase object

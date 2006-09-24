@@ -55,7 +55,8 @@ public:
   virtual void setErrColor(QColor c) {errColor = c;};
   virtual void setOutColor(QColor c) {outColor = c;};
   virtual void setCompletionColor(QColor c) {completionColor = c;};
-  virtual void setFont(QFont f) {setCurrentFont(f);};
+  virtual void setFont(QFont f);
+  virtual void setFontNameSize(QString fnm, int sz);
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;
@@ -84,6 +85,8 @@ protected:
   void keyPressEvent(QKeyEvent* e);
   void resizeEvent(QResizeEvent* e);
   void paste();
+
+  virtual void getDisplayGeom();
 
   virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
   virtual void	gotoPrompt(QTextCursor& cursor);		// set position to just after prompt (moves anchor)

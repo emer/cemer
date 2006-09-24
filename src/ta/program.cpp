@@ -39,7 +39,6 @@ void ProgVar::Initialize() {
   real_val = 0.0;
   bool_val = false;
   object_type = &TA_taOBase;
-  object_val = NULL;
   hard_enum_type = NULL;
   objs_ptr = false;
 }
@@ -49,12 +48,13 @@ void ProgVar::Destroy() {
 }
 
 void ProgVar::InitLinks() {
-  taBase::Own(&dyn_enum_val, this);
+  taBase::Own(object_val, this);
+  taBase::Own(dyn_enum_val, this);
   inherited::InitLinks();
 }
 
 void ProgVar::CutLinks() {
-  taBase::DelPointer((taBase**)&object_val);
+  object_val.CutLinks();
   dyn_enum_val.Reset();
   dyn_enum_val.CutLinks();
   inherited::CutLinks();
@@ -67,7 +67,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   string_val = cp.string_val;
   bool_val = cp.bool_val;
   object_type = cp.object_type;
-  taBase::SetPointer((taBase**)&object_val, cp.object_val);
+  object_val = cp.object_val;
   hard_enum_type = cp.hard_enum_type;
   dyn_enum_val = cp.dyn_enum_val;
 }
@@ -84,7 +84,7 @@ bool ProgVar::CheckConfig(bool quiet) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg != NULL) prognm = prg->name;
-  if((var_type == T_Object) && (object_val == NULL)) {
+  if((var_type == T_Object) && (!object_val)) {
     if(!quiet) taMisc::Error("Error in ProgVar in program:", prognm, "var name:",name,
 			     "object pointer is NULL");
     return false;
@@ -108,7 +108,7 @@ void ProgVar::Cleanup() {
   if (var_type != T_Bool)  bool_val = false;
   if (var_type != T_Object) {
     //note: its ok to leave whatever type is there
-    taBase::DelPointer((taBase**)&object_val);
+    object_val.CutLinks();
   }
   if (var_type != T_HardEnum) {
     hard_enum_type = NULL;
@@ -252,10 +252,7 @@ cssEl* ProgVar::NewCssEl() {
   case T_Bool:
     return new cssCPtr_bool(&bool_val, 1, name);
   case T_Object: 
-    if(object_val)
-      return new cssTA_Base(&object_val, 2, object_val->GetTypeDef(), name);
-    else
-      return new cssTA_Base(&object_val, 2, object_type, name);
+    return new cssTA(&object_val, 1, &TA_taBaseRef, name);
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 1, name, hard_enum_type);
   case T_DynEnum:
@@ -1192,14 +1189,13 @@ void ProgramCall::UpdateGlobalArgs() {
 //////////////////////////
 
 Program::RunState 	Program::run_state = Program::NOT_INIT; 
-ProgramRef 		Program::top_prog;
-ProgramRef 		Program::step_prog;
 
 void Program::Initialize() {
   flags = PF_NONE;
   objs.SetBaseType(&TA_taOBase);
   ret_val = 0;
   m_dirty = true; 
+  prog_gp = NULL;
 }
 
 void Program::Destroy()	{ 
@@ -1214,6 +1210,7 @@ void Program::InitLinks() {
   taBase::Own(init_code, this);
   taBase::Own(prog_code, this);
   taBase::Own(sub_progs, this);
+  prog_gp = GET_MY_OWNER(Program_Group);
 }
 
 void Program::CutLinks() {
@@ -1223,9 +1220,9 @@ void Program::CutLinks() {
   vars.CutLinks();
   args.CutLinks();
   objs.CutLinks();
+  prog_gp = NULL;
   inherited::CutLinks();
 }
-
 
 void Program::Copy_(const Program& cp) {
   if(script) {			// clear first, before trashing anything!
@@ -1286,7 +1283,6 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
-  top_prog = this;
   taMisc::Busy();
   setRunState(INIT);
   Run_impl();
@@ -1346,7 +1342,6 @@ int Program::Cont_impl() {
 }
 
 void Program::Run() {
-  top_prog = this;
   taMisc::Busy();
   setRunState(RUN);
   Cont_impl();
@@ -1364,13 +1359,10 @@ void Program::Run() {
 } 
 
 void Program::Step() {
-  if(!step_prog) {
-    if(sub_progs.size > 0) {	// set to last guy as a default!
-      ProgramCall* prg = (ProgramCall*)sub_progs.Peek();
-      step_prog = prg->target.ptr();
-    }
+  if(!prog_gp) return;
+  if(!prog_gp->step_prog) {
+    prog_gp->step_prog = prog_gp->Peek();
   }
-  top_prog = this;
   taMisc::Busy();
   setRunState(STEP);
   Cont_impl();
@@ -1408,7 +1400,7 @@ bool Program::StopCheck() {
     Stop_impl();
     return true;
   }
-  if((run_state == STEP) && (step_prog.ptr() == this)) {
+  if((run_state == STEP) && prog_gp && (prog_gp->step_prog.ptr() == this)) {
     Stop_impl();			// time for us to stop
     return true;
   }
@@ -1553,7 +1545,7 @@ void  Program::UpdateProgVars() {
   } 
   
   // add new (with unique names) from our groups, starting at most inner
-  Program_Group* grp = GET_MY_OWNER(Program_Group);
+  Program_Group* grp = prog_gp;
   while (grp) {
     for (int i = 0; i < grp->global_vars.size; ++i) {
       ProgVar* sv = grp->global_vars.FastEl(i);
@@ -1601,7 +1593,7 @@ void Program::GetVarsForObjs() {
 	var = (ProgVar*)vars.New(1, &TA_ProgVar);
 	var->name = nm;
 	var->var_type = ProgVar::T_Object;
-	taBase::SetPointer((taBase**)&var->object_val, obj);
+	var->object_val = obj;
 	var->objs_ptr = true;
 	var->object_type = obj->GetTypeDef();
       }
@@ -1657,6 +1649,7 @@ void Program_Group::Initialize() {
 
 void Program_Group::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(step_prog, this);
   taBase::Own(global_vars, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
@@ -1666,6 +1659,7 @@ void Program_Group::InitLinks() {
 }
 
 void Program_Group::CutLinks() {
+  step_prog.CutLinks();
   global_vars.CutLinks();
   inherited::CutLinks();
 }
@@ -1673,6 +1667,8 @@ void Program_Group::CutLinks() {
 void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
   global_vars = cp.global_vars;
+  if(cp.step_prog)
+    step_prog = FindName(cp.step_prog->name);
 }
 
 void Program_Group::SetProgsDirty() {

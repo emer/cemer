@@ -186,6 +186,7 @@ Program_Group .projects[0].programs.gp[0] {
  name="LeabraStdTrain";
  el_typ=Program;
  el_def=0;
+ step_prog=NULL;
  desc=;
  global_vars {
   name=;
@@ -236,7 +237,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[1] {
     name="epoch";
     var_type=T_Int;
-    int_val=2;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -346,7 +347,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="trial";
     var_type=T_Int;
-    int_val=1;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -410,7 +411,7 @@ Program_Group .projects[0].programs.gp[0] {
     loop_test="This is not used here";
     data_var=.projects[0].programs.gp[0][1].vars[1]$7$;
     order=PERMUTED;
-    item_idx_list{ 2;3;1;0;4;    };
+    item_idx_list{ 2;1;0;4;3;    };
    };
    MethodCall @[2] {
     desc=;
@@ -633,7 +634,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="cycle";
     var_type=T_Int;
-    int_val=28;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -1093,7 +1094,7 @@ else min_cycles = network->min_cycles_phase2;
    };
    MethodCall @[1] {
     desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
-    off=1;
+    off=0;
     result_var=;
     method_spec {
      script_obj=$24$;

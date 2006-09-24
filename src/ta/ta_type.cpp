@@ -208,6 +208,17 @@ int	taMisc::strm_ver = 2;
 int	taMisc::dmem_proc = 0;
 int	taMisc::dmem_nprocs = 1;
 
+#ifdef __APPLE__
+String  taMisc::font_name = "Lucida Grande";
+int  	taMisc::font_size = 10;
+String  taMisc::console_font_name = "Andale Mono";
+int  	taMisc::console_font_size = 10;
+#else
+String  taMisc::font_name = "Nimbus Sans";
+int  	taMisc::font_size = 10;
+String  taMisc::console_font_name = "LucidaTypewriter";
+int  	taMisc::console_font_size = 8;
+#endif
 int	taMisc::display_width = 80;
 int	taMisc::sep_tabs = 2;
 int	taMisc::max_menu = 25;
