@@ -145,12 +145,10 @@ QRadioButton		20		21		24
 Actual Widget sizes for SizeSpec sizes --
  indented names means ctrl assumes size of outdented control above it
 
-//NOTE: old, as of 9/24/06 we are sizing labels at the max size
-
 			sizSmall	sizMed		sizBig
 QPushButton		24		25		27
   QComboBox
-QLabel			24		25		27
+QLabel			20		21		24
   QCheckBox
 QLineEdit		22		23		26
   QSpinBox
@@ -160,9 +158,9 @@ QLineEdit		22		23		26
 */
 int taiMisc::button_height(int sizeSpec) {
   switch (sizeSpec & siz_mask) {
-  case sizSmall: return 24; break;
-  case sizBig: return 27; break;
-  default: return 25; break;
+  case sizSmall: return mbutton_ht[0]; break;
+  case sizBig: return mbutton_ht[2]; break;
+  default: return mbutton_ht[1]; break;
   }
 }
 
@@ -176,17 +174,17 @@ int taiMisc::max_control_height(int sizeSpec) {
 
 int taiMisc::label_height(int sizeSpec) {
   switch (sizeSpec & siz_mask) {
-  case sizSmall: return 24; break;
-  case sizBig: return 27; break;
-  default: return 25; break;
+  case sizSmall: return mlabel_ht[0]; break;
+  case sizBig: return mlabel_ht[2]; break;
+  default: return mlabel_ht[1]; break;
   }
 }
 
 int taiMisc::text_height(int sizeSpec) {
   switch (sizeSpec & siz_mask) {
-  case sizSmall: return 22; break;
-  case sizBig: return 26; break;
-  default: return 23; break;
+  case sizSmall: return mtext_ht[0]; break;
+  case sizBig: return mtext_ht[2]; break;
+  default: return mtext_ht[1]; break;
   }
 }
 
@@ -314,6 +312,7 @@ void taiMisc::InitMetrics() {
   
   // set up the initial font from (already loaded) Settings
   QFont font(taMisc::font_name, taMisc::font_size);
+//TODO: we should probably put practical lower/upper limits on font sizes
   qApp->setFont(font);
   
   edit_darkbg_brightness = -0.15f;
@@ -336,6 +335,7 @@ void taiMisc::InitMetrics() {
     base_height = 25;
   else
     base_height = 29;
+    
   // fonts -- note, no way to get Qt's metrics without instances!
   QWidget* w = NULL;
   w = new QPushButton("the rain in spain", (QWidget*)NULL);
@@ -351,6 +351,28 @@ void taiMisc::InitMetrics() {
   w = new QLabel("the rain in spain", (QWidget*)NULL);
     mbig_name_font = QApplication::font(w);
   delete w;
+  
+  // control sizes -- depend on size of default font
+  if (taMisc::font_size <= 10) {
+    // Small
+//TODO:  not extensively tested as of 9/24/06
+    mbutton_ht[0] = 21; mbutton_ht[1] = 23; mbutton_ht[2] = 24;
+    mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
+    mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
+  } else if (taMisc::font_size > 12) {
+    // Big
+//TODO:  not extensively tested as of 9/24/06
+    mbutton_ht[0] = 27; mbutton_ht[1] = 30; mbutton_ht[2] = 33;
+    mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
+    mtext_ht[0] = 26; mtext_ht[1] = 28; mtext_ht[2] = 31;
+  }  else {
+    // Med
+    mbutton_ht[0] = 24;  mbutton_ht[1] = 25;  mbutton_ht[2] = 27;
+    mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
+    mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
+  } 
+
+
 
 }
 void taiMisc::AdjustFont(int fontSpec, iFont& font) {

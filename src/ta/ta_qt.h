@@ -205,6 +205,9 @@ protected:
   iFont 	mbig_menu_font; // largest menu font -- others are derived from this
   iFont		mbig_name_font; // for labels
   const char*	mclassname;
+  signed char	mbutton_ht[3]; // for s/m/b
+  signed char	mlabel_ht[3];  // for s/m/b
+  signed char	mtext_ht[3];  // for s/m/b
 
 public:
   int		ctrl_size;	//  size for controls etc. -- default is sizMedium
