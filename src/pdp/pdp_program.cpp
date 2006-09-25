@@ -16,9 +16,168 @@
 #include "pdp_program.h"
 
 #include "css_machine.h"
+#include "datatable.h"
+
 // #include "css_basic_types.h"
 // #include "css_c_ptr_types.h"
 // #include "ta_css.h"
+
+//////////////////////////
+//  BasicDataLoop	//
+//////////////////////////
+
+void BasicDataLoop::Initialize() {
+  order = SEQUENTIAL;
+  loop_test = "This is not used here!";
+}
+
+bool BasicDataLoop::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(!data_var) {
+    if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
+    return false;
+  }
+  if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
+    if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var does not point to a data table");
+    return false;
+  }
+  return true;
+}
+
+const String BasicDataLoop::GenCssPre_impl(int indent_level) {
+  String id1 = cssMisc::Indent(indent_level+1);
+  String id2 = cssMisc::Indent(indent_level+2);
+  String data_nm = data_var->name;
+
+  String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
+  rval += id1 + "BasicDataLoop* data_loop = *(this" + GetPath(NULL,program()) + ");\n";
+  rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->ItemCount());\n";
+  rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
+  rval += id1 + "if(data_loop->order == BasicDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
+  rval += id1 + data_nm + "->ReadOpen();\n";
+  rval += id1 + "for(int list_idx = 0; list_idx < data_loop->item_idx_list.size; list_idx++) {\n";
+  rval += id2 + "int data_idx;\n";
+  rval += id2 + "if(data_loop->order == BasicDataLoop::RANDOM) data_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
+  rval += id2 + "else data_idx = data_loop->item_idx_list[list_idx];\n";
+  rval += id2 + "if(!" + data_nm + "->ReadItem(data_idx)) break;\n";
+  return rval;
+}
+
+const String BasicDataLoop::GenCssBody_impl(int indent_level) {
+  return loop_code.GenCss(indent_level + 2);
+}
+
+const String BasicDataLoop::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
+  rval += cssMisc::Indent(indent_level) + "} // BasicDataLoop " + data_var->name + "\n";
+  return rval;
+}
+
+String BasicDataLoop::GetDisplayName() const {
+  String ord_str = GetTypeDef()->GetEnumString("Order", order);
+  String data_nm;
+  if(data_var) data_nm = data_var->name;
+  return "data table loop (" + ord_str + " over: " + data_nm + ")";
+}
+
+
+//////////////////////////
+//  GroupedDataLoop	//
+//////////////////////////
+
+void GroupedDataLoop::Initialize() {
+  group_order = PERMUTED;
+  item_order = SEQUENTIAL;
+  group_col = 0;
+  loop_test = "This is not used here!";
+}
+
+bool GroupedDataLoop::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
+  if(!data_var) {
+    if(!quiet) taMisc::Error("Error in GroupedDataLoop in program:", program()->name, "data_var = NULL");
+    return false;
+  }
+  if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
+    if(!quiet) taMisc::Error("Error in GroupedDataLoop in program:", program()->name, "data_var does not point to a data table");
+    return false;
+  }
+  return true;
+}
+
+void GroupedDataLoop::GetGroupList() {
+  DataTable* dt = (DataTable*)data_var->object_val.ptr();
+  group_idx_list.Reset();
+  String prv_gp_nm;
+  for(int i=0;i<dt->ItemCount();i++) {
+    String gp_nm = dt->GetValAsString(group_col, i);
+    if(gp_nm != prv_gp_nm) {
+      group_idx_list.Add(i);
+      prv_gp_nm = gp_nm;
+    }
+  }
+}
+
+void GroupedDataLoop::GetItemList(int group_idx) {
+  DataTable* dt = (DataTable*)data_var->object_val.ptr();
+  item_idx_list.Reset();
+  String prv_gp_nm = dt->GetValAsString(group_col, group_idx);
+  for(int i=group_idx;i<dt->ItemCount();i++) {
+    String gp_nm = dt->GetValAsString(group_col, i);
+    if(gp_nm != prv_gp_nm)
+      break;
+    item_idx_list.Add(i);
+  }
+}
+
+const String GroupedDataLoop::GenCssPre_impl(int indent_level) {
+  String id1 = cssMisc::Indent(indent_level+1);
+  String id2 = cssMisc::Indent(indent_level+2);
+  String id3 = cssMisc::Indent(indent_level+3);
+  String data_nm = data_var->name;
+
+  String rval = cssMisc::Indent(indent_level) + "{ // GroupedDataLoop " + data_nm + "\n";
+  rval += id1 + "GroupedDataLoop* data_loop = *(this" + GetPath(NULL,program()) + ");\n";
+  rval += id1 + "data_loop->GetGroupList();\n";
+  rval += id1 + "if(data_loop->group_order == GroupedDataLoop::PERMUTED) data_loop->group_idx_list.Permute();\n";
+  rval += id1 + data_nm + "->ReadOpen();\n";
+  rval += id1 + "for(int group_list_idx = 0; group_list_idx < data_loop->group_idx_list.size; group_list_idx++) {\n";
+  rval += id2 + "int group_data_idx;\n";
+  rval += id2 + "if(data_loop->group_order == GroupedDataLoop::RANDOM) \n";
+  rval += id2 + "   group_data_idx = data_loop->group_idx_list[Random::IntZeroN(data_loop->group_idx_list.size)];\n";
+  rval += id2 + "else group_data_idx = data_loop->group_idx_list[group_list_idx];\n";
+  rval += id2 + "data_loop->GetItemList(group_data_idx);\n";
+  rval += id2 + "if(data_loop->item_order == GroupedDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
+  rval += id2 + "for(int item_list_idx = 0; item_list_idx < data_loop->item_idx_list.size; item_list_idx++) {\n";
+  rval += id3 + "int item_data_idx;\n";
+  rval += id3 + "if(data_loop->item_order == GroupedDataLoop::RANDOM) \n";
+  rval += id3 + "   item_data_idx = data_loop->item_idx_list[Random::IntZeroN(data_loop->item_idx_list.size)];\n";
+  rval += id3 + "else item_data_idx = data_loop->item_idx_list[item_list_idx];\n";
+  rval += id3 + "if(!" + data_nm + "->ReadItem(item_data_idx)) break;\n";
+  return rval;
+}
+
+const String GroupedDataLoop::GenCssBody_impl(int indent_level) {
+  return loop_code.GenCss(indent_level + 3);
+}
+
+const String GroupedDataLoop::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level+2) + "} // item for loop\n";
+  rval += cssMisc::Indent(indent_level+1) + "} // group for loop\n";
+  rval += cssMisc::Indent(indent_level) + "} // GroupedDataLoop " + data_var->name + "\n";
+  return rval;
+}
+
+String GroupedDataLoop::GetDisplayName() const {
+  String group_ord_str = GetTypeDef()->GetEnumString("Order", group_order);
+  String item_ord_str = GetTypeDef()->GetEnumString("Order", item_order);
+  String data_nm;
+  if(data_var) data_nm = data_var->name;
+  return "grouped table loop (gp: " + group_ord_str + " itm: " + item_ord_str
+    + " over: " + data_nm + ")";
+}
 
 //////////////////////////
 //  Network Counters	//

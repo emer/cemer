@@ -1,0 +1,190 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][6] { 
+  taBase_List @.objs = [1] {
+    NetMonitor @[0] { 
+      NetMonItem_List @.items = [6] {
+	NetMonItem @[0] { };
+	NetMonItem @[1] { };
+	NetMonItem @[2] { };
+	NetMonItem @[3] { };
+	NetMonItem @[4] { };
+	NetMonItem @[5] { };
+      };
+    };
+  };
+
+  ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgEl_List @.init_code = [2] {
+    MethodCall @[0] { };
+    MethodCall @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [3] {
+    MethodCall @[0] { };
+    MethodCall @[1] { };
+    MethodCall @[2] { };
+  };
+};
+Program .projects[0].programs.gp[0][6] {
+ name="MonitorNet";
+ desc=;
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=NetMonitor;
+  el_def=0;
+  NetMonitor @[0] {
+   name="Monitor1";
+   items {
+    name=;
+    el_typ=NetMonItem;
+    el_def=0;
+    NetMonItem @[0] {
+     name="epoch";
+     object=.projects[0].networks[0]$0$;
+     variable="epoch";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[1] {
+     name="trial";
+     object=$0$;
+     variable="trial";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[2] {
+     name="phase_no";
+     object=$0$;
+     variable="phase_no";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[3] {
+     name="cycle";
+     object=$0$;
+     variable="cycle";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[4] {
+     name="sse";
+     object=$0$;
+     variable="sse";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[5] {
+     name="act";
+     object=$0$;
+     variable="act";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+   };
+   data=.projects[0].data[1]$1$;
+   rmv_orphan_cols=1;
+  };
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="mon_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$1$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="Monitor1";
+   var_type=T_Object;
+   object_type=NetMonitor;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
+   objs_ptr=1;
+   desc=;
+  };
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="Initialize monitoring data (get rid of any existing)";
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=.projects[0].programs.gp[0][6].vars[0]$3$;
+    method=DataTable::ResetData;
+   };
+   args{ };
+{    };
+  };
+  MethodCall @[1] {
+   desc="update the monitor items and data schema";
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=.projects[0].programs.gp[0][6].vars[1]$4$;
+    method=NetMonitor::UpdateMonitors;
+   };
+   args{ };
+{    };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="add a new blank row to the data";
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=$3$;
+    method=DataTable::AddBlankRow;
+   };
+   args{ };
+{    };
+  };
+  MethodCall @[1] {
+   desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=$4$;
+    method=NetMonitor::UpdateMonVals;
+   };
+   args{ };
+{    };
+  };
+  MethodCall @[2] {
+   desc="update after writing new data to monitor data table";
+   off=1;
+   result_var=;
+   method_spec {
+    script_obj=$3$;
+    method=DataBlock::WriteDone;
+   };
+   args{ };
+{    };
+  };
+ };
+};

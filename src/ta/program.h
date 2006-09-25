@@ -395,36 +395,6 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API BasicDataLoop: public Loop { 
-  // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
-INHERITED(Loop)
-public:
-  enum Order {
-    SEQUENTIAL,			// present events in sequential order
-    PERMUTED,			// permute the order of event presentation
-    RANDOM 			// pick an event at random (with replacement)
-  };
-
-  ProgVarRef	data_var;	// program variable pointing to the data table to use
-  Order		order;		// order to process data items in
-  int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
-
-  override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
-
-  TA_SIMPLE_BASEFUNS(BasicDataLoop);
-
-protected:
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize();
-  void	Destroy() { CutLinks(); }
-};
-
-
 class TA_API IfElse: public ProgEl { 
   // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)

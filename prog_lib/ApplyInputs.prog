@@ -1,0 +1,127 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][5] { 
+  taBase_List @.objs = [1] {
+    LayerWriter_List @[0] = [2] { 
+      LayerWriter @[0] { };
+      LayerWriter @[1] { };
+    };
+  };
+
+  ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgEl_List @.init_code = [2] {
+    MethodCall @[0] { };
+    MethodCall @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [1] {
+    MethodCall @[0] { };
+  };
+};
+Program .projects[0].programs.gp[0][5] {
+ name="ApplyInputs";
+ desc=;
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=LayerWriter_List;
+  el_def=0;
+  LayerWriter_List @[0] {
+   name="lw_list";
+   el_typ=LayerWriter;
+   el_def=0;
+   LayerWriter @[0] {
+    data=.projects[0].data[0]$0$;
+    chan_name="Input";
+    layer=.projects[0].networks[0].layers[0]$1$;
+    offset {x=0: y=0: };
+    use_layer_type=1;
+    ext_flags=EXT;
+    noise {type=NONE: mean=0: var=0.5: par=1: };
+    value_names{     };
+   };
+   LayerWriter @[1] {
+    data=$0$;
+    chan_name="Output";
+    layer=.projects[0].networks[0].layers[2]$2$;
+    offset {x=0: y=0: };
+    use_layer_type=1;
+    ext_flags=TARG;
+    noise {type=NONE: mean=0: var=0.5: par=1: };
+    value_names{     };
+   };
+  };
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$0$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="lw_list";
+   var_type=T_Object;
+   object_type=LayerWriter_List;
+   object_val=.projects[0].programs.gp[0][5].objs[0]$3$;
+   objs_ptr=1;
+   desc=;
+  };
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=.projects[0].programs.gp[0][5].vars[1]$4$;
+    method=LayerRWBase_List::SetAllData;
+   };
+   args{ data;};
+{ DataBlock* db;   };
+  };
+  MethodCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=$4$;
+    method=LayerRWBase_List::CheckConfig;
+   };
+   args{ false;};
+{ bool quiet;   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=$4$;
+    method=LayerWriter_List::ApplyExternal;
+   };
+   args{ context;};
+{ int context;   };
+  };
+ };
+};

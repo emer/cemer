@@ -3198,6 +3198,12 @@ Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
   return NULL;
 }
 
+bool Unit_Group::Dump_QuerySaveChildren() {
+  ProjectBase* prj = GET_MY_OWNER(ProjectBase);
+  if(prj && prj->save_rmv_units)
+    return false;
+  return true;
+}
 
 ////////////////////////
 //	Layer	      //
@@ -3436,15 +3442,6 @@ void Layer::ConnectFrom(Layer* from_lay) {
   if (!net) return;
   //Projection* prjn =
   net->FindMakePrjn(this, from_lay);
-}
-
-bool Layer::Dump_QuerySaveMember(MemberDef* md) {
-  if (md->name == "units") {
-    ProjectBase* prj = project();
-    if (prj && prj->save_rmv_units)
-      return false;
-  }
-  return inherited::Dump_QuerySaveMember(md);
 }
 
 void Layer::ReplacePointersHook(TAPtr old) {

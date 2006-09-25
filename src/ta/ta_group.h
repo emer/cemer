@@ -104,6 +104,7 @@ public:
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
   ////////////////////////////////////////////////

@@ -1,13 +1,21 @@
 leabra todo list:
 
+* add event_name and event_group_name to network & default monitor
+* indicate in proglib name if it is a group or just one guy
+* fix names: Grouped -> GpData
+
+* deal with sequences: test
+* check UserScript::ImportFromFile (how to just read in raw?  get something?)
+  (also search on paths -- not finding it -- load should update paths...)
+
+-----
+
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..
 
-* check UserScript::ImportFromFile (how to just read in raw?  get something?)
 
-* deal with sequences
 * deal with small-batch weight updates
-* deal with dmem: network counters aggregate across epoch.. others..
+* deal with dmem: network counters aggregate across epoch.. rndseed aggregate, etc
 
 * add #CAT to everything in netstru and leabra.h, and fixup comments
 

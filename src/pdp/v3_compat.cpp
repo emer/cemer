@@ -576,6 +576,21 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
 	}
       }
     }
+    if(env->InheritsFrom(&TA_ScriptEnv)) {
+      ScriptEnv* se = (ScriptEnv*)env;
+      if(!se->script_file.fname.empty()) {
+	fstream fh;
+	fh.open(se->script_file.fname, ios::in);
+	if(fh.good()) {
+	  Program* prog = (Program*)nwproj->programs.NewEl(1, &TA_Program);
+	  prog->name = env->name + "_ScriptEnv";
+	  UserScript* us = (UserScript*)prog->prog_code.New(1, &TA_UserScript);
+	  us->ImportFromFile(fh);
+	  us->desc = "script imported from: " + se->script_file.fname;
+	}
+	fh.close();
+      }
+    }
   }
   return true;
 }

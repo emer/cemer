@@ -907,6 +907,9 @@ public:
   Unit* 	FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x,coord.y);}
   // returns unit at given coordinates within layer
 
+  // implement save_rmv_units:
+  override bool	Dump_QuerySaveChildren();
+
   void		RemoveAll();
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
@@ -1130,7 +1133,6 @@ public:
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
-  bool	Dump_QuerySaveMember(MemberDef* md);
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

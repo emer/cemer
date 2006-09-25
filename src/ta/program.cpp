@@ -787,63 +787,6 @@ String IfBreak::GetDisplayName() const {
   return "if(" + condition + ") break;";
 }
 
-
-//////////////////////////
-//  BasicDataLoop	//
-//////////////////////////
-
-void BasicDataLoop::Initialize() {
-  order = SEQUENTIAL;
-  loop_test = "This is not used here!";
-}
-
-bool BasicDataLoop::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
-  if(!data_var) {
-    if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
-    return false;
-  }
-  return true;
-}
-
-const String BasicDataLoop::GenCssPre_impl(int indent_level) {
-  String id1 = cssMisc::Indent(indent_level+1);
-  String id2 = cssMisc::Indent(indent_level+2);
-  String data_nm = data_var->name;
-
-  String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
-  rval += id1 + "BasicDataLoop* data_loop = *(this" + GetPath(NULL,program()) + ");\n";
-  rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->ItemCount());\n";
-  rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
-  rval += id1 + "if(data_loop->order == BasicDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
-  rval += id1 + data_nm + "->ReadOpen();\n";
-  rval += id1 + "for(int list_idx = 0; list_idx < data_loop->item_idx_list.size; list_idx++) {\n";
-  rval += id2 + "int data_idx;\n";
-  rval += id2 + "if(data_loop->order == BasicDataLoop::RANDOM) data_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
-  rval += id2 + "else data_idx = data_loop->item_idx_list[list_idx];\n";
-  rval += id2 + "if(!" + data_nm + "->ReadItem(data_idx)) break;\n";
-  return rval;
-}
-
-const String BasicDataLoop::GenCssBody_impl(int indent_level) {
-  return loop_code.GenCss(indent_level + 2);
-}
-
-const String BasicDataLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
-  rval += cssMisc::Indent(indent_level) + "} // BasicDataLoop " + data_var->name + "\n";
-  return rval;
-}
-
-String BasicDataLoop::GetDisplayName() const {
-  String ord_str = GetTypeDef()->GetEnumString("Order", order);
-  String data_nm;
-  if(data_var) data_nm = data_var->name;
-  return "data table loop (" + ord_str + " over: " + data_nm + ")";
-}
-
-
 //////////////////////////
 //  IfElse		//
 //////////////////////////

@@ -97,7 +97,18 @@ public:
 };
 #endif
 
-class PDP_API Process : public taNBase, public ScriptBase {
+class PDP_API V3ScriptFile : public taOBase {
+  // ##NO_TOKENS #INLINE #INLINE_DUMP V3 compat format for reading script files
+INHERITED(taOBase)
+public:
+  String	fname;
+
+  void 	Initialize() { };
+  void 	Destroy()		{ CutLinks(); }
+  TA_SIMPLE_BASEFUNS(V3ScriptFile);
+};
+
+class PDP_API Process : public taNBase {
   // ##EXT_proc simple processes for controlling and coordinating execution
 INHERITED(taNBase)
 public:
@@ -105,6 +116,9 @@ public:
     C_CODE,			// C code (builtin)
     SCRIPT 			// Script (user-defined)
   };
+
+  V3ScriptFile	script_file;
+  String	script_string;
 
   TypeDef* 	min_network;	// #HIDDEN #NO_SAVE #TYPE_Network Minimum acceptable Network type
   TypeDef* 	min_layer;	// #HIDDEN #NO_SAVE #TYPE_Layer Minimum acceptable Layer type
@@ -793,10 +807,13 @@ public:
 };
 
 
-class PDP_API ScriptEnv : public Environment, public ScriptBase {
+class PDP_API ScriptEnv : public Environment {
   // For algorithmically generated events: Initialization of events is done by a script at the start of each epoch through the InitEvents() function
 INHERITED(Environment)
 public:
+  V3ScriptFile	script_file;
+  String	script_string;
+
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
   // note: this must stay in here to make a non-abstract base class!

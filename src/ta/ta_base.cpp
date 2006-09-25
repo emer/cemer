@@ -1406,8 +1406,7 @@ bool taList_impl::Close_Child(TAPtr obj) {
   return Remove(obj);
 }
 
-int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) 
-{
+int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
    bool dump_my_path = !(this == par);
   // dump_my_path is a bit of a hack, to enable us to use this same
   // routine either for Dump_Save_PathR or when dumping list items
@@ -1438,6 +1437,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent)
 }
 
 int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
+  if(!Dump_QuerySaveChildren()) return true;
   int cnt = 0;
   int i;
   for (i=0; i<size; i++) {
@@ -1466,26 +1466,13 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
     if (itm->Dump_Save_PathR(strm, itm, indent+1))
       taMisc::indent(strm, indent);
     strm << "};\n";
-/*was
-    itm->Dump_Save_Path(strm, this, indent);
-    // can't put this in dump_save_path cuz don't want it during non PathR times..
-    if (itm->InheritsFrom(TA_taList_impl)) {
-      taList_impl* litm = (taList_impl*)itm;
-      if(!litm->IsEmpty()) {
-        strm << " = [" << litm->size << "]";
-      }
-    }
-    strm << " { ";
-    if (itm->Dump_Save_PathR(strm, this, indent+1))
-      taMisc::indent(strm, indent);
-    strm << "};\n";
-*/
   }
   return cnt;
 }
 
 // actually save all the elements in the group
 int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
+  if(!Dump_QuerySaveChildren()) return true;
   String mypath = GetPath(NULL, par);
   int i;
   for(i=0; i<size; i++) {
