@@ -282,14 +282,6 @@ int pdpMisc::Main(int argc, char *argv[]) {
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
   // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.
 
-#ifdef TA_GUI
-  QFont font(taMisc::font_name, taMisc::font_size);
-  qApp->setFont(font);
-#endif
-
-/*obs  if (cssMisc::gui && (taMisc::dmem_proc == 0))
-    new ivSession("PDP++", argc, argv, PDP_options, PDP_defs); */
-
   root = new PDPRoot();
   taBase::Ref(root); // ref=1
   root->InitLinks();	// normally the owner would do this, but..
@@ -483,9 +475,6 @@ void pdpMisc::WaitProc_LoadProj() {
 //obs      taiM->RemoveLoadDialog();
     }
     gf->Close();
-    if(taMisc::gui_active) {
-      taMisc::DelayedMenuUpdate(&(root->projects));
-    }
   }
   taRefN::unRefDone(gf);
   proj_to_load.Reset();
@@ -552,7 +541,6 @@ Network* pdpMisc::GetNewNetwork(ProjectBase* prj, TypeDef* typ) {
   Network* rval = (Network*)prj->networks.New(1, typ);
 #ifdef TA_GUI
   taiMisc::RunPending();
-  taMisc::DelayedMenuUpdate(prj);
 #endif
   return rval;
 }

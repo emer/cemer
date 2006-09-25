@@ -250,7 +250,7 @@ void ConSpec::ReplacePointersHook(TAPtr old) {
   ConSpec* spold = (ConSpec*)old;
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;
-  taMisc::DelayedMenuUpdate(this);
+//obs  taMisc::DelayedMenuUpdate(this);
   net->ReplaceConSpec(spold, this);
 
   // now go through specs!
@@ -1312,7 +1312,7 @@ void UnitSpec::ReplacePointersHook(TAPtr old) {
   UnitSpec* spold = (UnitSpec*)old;
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;
-  taMisc::DelayedMenuUpdate(this); // this will reset flag
+//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
   net->ReplaceUnitSpec(spold, this);
   int i;
   for(i=0;i<spold->children.size && i<children.size;i++) {
@@ -2139,7 +2139,7 @@ void ProjectionSpec::ReplacePointersHook(TAPtr old) {
   ProjectionSpec* spold = (ProjectionSpec*)old;
   Network* net = (Network *) GET_MY_OWNER(Network);
   if(!net) return;
-  taMisc::DelayedMenuUpdate(this); // this will reset flag
+//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
   net->ReplacePrjnSpec(spold, this);
 
   int i;
@@ -3242,7 +3242,7 @@ void LayerSpec::ReplacePointersHook(TAPtr old) {
   LayerSpec* spold = (LayerSpec*)old;
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;
-  taMisc::DelayedMenuUpdate(this); // this will reset flag
+//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
   net->ReplaceLayerSpec(spold, this);
   for(int i=0;i<spold->children.size && i<children.size;i++) {
     children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));

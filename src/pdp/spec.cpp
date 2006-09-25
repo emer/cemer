@@ -781,9 +781,8 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
   }
 
   sp = (BaseSpec*)spgp->NewEl(1, type);
-  if(sp != NULL) {
+  if (sp) {
     SetSpec(sp);
-    taMisc::DelayedMenuUpdate(sp);
   }
 }
 
@@ -811,9 +810,8 @@ void SpecPtr_impl::GetSpecOfType() {
   }
 
   sp = (BaseSpec*)spgp->NewEl(1, type);
-  if(sp != NULL) {
+  if (sp) {
     SetSpec(sp);
-    taMisc::DelayedMenuUpdate(sp);
   }
 }
 

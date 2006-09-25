@@ -168,7 +168,10 @@ void iEditGrid::createContent() {
     bodyNames = new iStripeWidget(this);
     vbl = new QVBoxLayout(bodyNames);
     vbl->setMargin(0); // shift for scrollarea frame size
-    vbl->addSpacing(GROUP_FRAME_SIZE); // also added to stripe widget's top height
+    if (mhead > 0) 
+      vbl->addSpacing(mrow_height + GROUP_FRAME_SIZE); // also added to stripe widget's top height
+    else
+      vbl->addSpacing(GROUP_FRAME_SIZE); // also added to stripe widget's top height
     layNames = new QGridLayout(); 
     layNames->setSpacing(0);
     layNames->setMargin(0);
@@ -237,11 +240,12 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
 }
 
 void iEditGrid::resizeRows_impl() {
+  int ht = mrow_height + (2 * mvmargin);
   for (int i = 0; i < (mrows + mhead); ++i) {
-    if (mnames) {
-      layNames->setRowMinimumHeight(i, mrow_height + (2 * mvmargin));
+    if (mnames && (i < mrows)) {
+      layNames->setRowMinimumHeight(i, ht);
     }
-    layBody->setRowMinimumHeight(i,  mrow_height + (2 * mvmargin));
+    layBody->setRowMinimumHeight(i,  ht);
   }
 }
 
@@ -323,13 +327,15 @@ void iEditGrid::setPaletteBackgroundColor3 (const QColor& c) {
 
 void iEditGrid::setRowNameWidget(int row, QWidget* name) {
   if (!mnames) return; // shouldn't be calling this!!!
+  //NOTE: there is no heading row in the body widget, so row=row (no mhead adjust)
   checkSetParent(name, (QWidget*)bodyNames);
-  layNames->setRowMinimumHeight(row + mhead,  mrow_height + (2 * mvmargin));
-  layNames->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
-    QSizePolicy::Minimum), row + mhead, 0);
-  layNames->addWidget(name, row + mhead, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  layNames->addItem(new QSpacerItem(mhmargin, 0, QSizePolicy::Fixed,
-    QSizePolicy::Minimum), row + mhead, 0);
+  layNames->setRowMinimumHeight(row,  mrow_height + (2 * mvmargin));
+  layNames->addItem(new QSpacerItem(mhmargin, mrow_height + (2 * mvmargin), 
+    QSizePolicy::Fixed, QSizePolicy::Fixed), row, 0); 
+
+  layNames->addWidget(name, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  layNames->addItem(new QSpacerItem(mhmargin, mrow_height + (2 * mvmargin),
+    QSizePolicy::Fixed, QSizePolicy::Fixed), row, 0);
   updateDimensions(row, -1);
 }
 

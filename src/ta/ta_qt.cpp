@@ -39,25 +39,12 @@
 #include <qrect.h>
 
 #include <qlabel.h>// metrics
-//#include <qlayout.h>
-//#include <qlineedit.h>
 #include <qmenubar.h>// metrics
 #include <qprogressdialog.h>
 #include <qpushbutton.h> // metrics
-//#include <qspinbox.h>
-//#include <qstring.h>
 
 #ifdef TA_USE_INVENTOR
 #include <Inventor/Qt/SoQt.h>
-/*nn  #ifndef SOQT_INTERNAL
-    #define HACK_SOQT_INTERNAL
-    #define SOQT_INTERNAL
-  #endif
-  #include <Inventor/Qt/SoQtP.h> //WARNING: not installed by default -- must be copied from source directory
-  #ifdef HACK_SOQT_INTERNAL
-    #undef HACK_SOQT_INTERNAL
-    #undef SOQT_INTERNAL
-  #endif */
 #endif
 
 
@@ -110,6 +97,9 @@ iDockViewer* iTopLevelWindow_List::Peek_DockWindow() {
 
 TA_API taiMisc* taiM_ = NULL;
 
+const int taiMisc::FONT_MED = 1;
+const int taiMisc::FONT_SM = 2;
+
 taiDialog_List 		taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
@@ -131,16 +121,8 @@ taiMisc* taiMisc::New(bool gui, QObject* parent) {
 void taiMisc::SetMainWindow(QWidget* win) {
   main_window = win;
   QObject::connect(win, SIGNAL(destroyed()), taiM_, SLOT(MainWindowDestroyed()) );
-//Qt3  qApp->setMainWidget(win);
-#ifdef TA_USE_INVENTOR
-//NOTE: we called this already, which created the special SoQApplication object
-// This second call just sets the main widget
-//  SoQtP::mainwidget = win;
-//  SoQt::init(win);
-#endif
 
   win->show(); //note: doesn't actually show until event loop called, from rl callback
-  // indicate taMisc::gui_active -- cleared when main window destroyed
 }
 
 /* Qt Metrics note
@@ -163,10 +145,12 @@ QRadioButton		20		21		24
 Actual Widget sizes for SizeSpec sizes --
  indented names means ctrl assumes size of outdented control above it
 
+//NOTE: old, as of 9/24/06 we are sizing labels at the max size
+
 			sizSmall	sizMed		sizBig
 QPushButton		24		25		27
   QComboBox
-QLabel			20		21		24
+QLabel			24		25		27
   QCheckBox
 QLineEdit		22		23		26
   QSpinBox
@@ -192,9 +176,9 @@ int taiMisc::max_control_height(int sizeSpec) {
 
 int taiMisc::label_height(int sizeSpec) {
   switch (sizeSpec & siz_mask) {
-  case sizSmall: return 20; break;
-  case sizBig: return 24; break;
-  default: return 21; break;
+  case sizSmall: return 24; break;
+  case sizBig: return 27; break;
+  default: return 25; break;
   }
 }
 
@@ -222,39 +206,11 @@ void taiMisc::Init(bool gui) {
 
   taMisc::Busy_Hook = &Busy_;
   taMisc::ScriptRecordingGui_Hook = &ScriptRecordingGui_; // note: ok to do more than once
-  taMisc::DelayedMenuUpdate_Hook = &DelayedMenuUpdate_;
   load_dlg = NULL;
   InitMetrics();
 
-  edit_darkbg_brightness = -0.15f;
-  edit_lightbg_brightness = 0.50f;
-
-  if(taMisc::not_constr || taMisc::in_init) {
-/*    vsep = NULL;
-    hsep = NULL;
-    vfsep = NULL;
-    hfsep = NULL;
-    vspc = NULL;
-    hspc = NULL;
-    vfspc = NULL;
-    hfspc = NULL;
-    name_font = NULL;
-    small_menu_font = NULL;
-    small_submenu_font = NULL;
-    big_menu_font = NULL;
-    big_submenu_font = NULL;
-    big_menubar_font = NULL;
-    big_italic_menubar_font = NULL;
-    small_button_width=46.0;
-    medium_button_width=72.0;
-    big_button_width=115.0;
-    title_style = NULL;
-    apply_button_style = NULL;
-    name_style = NULL;
-    wait_cursor = NULL;
-    record_cursor = NULL;*/
+  if (taMisc::not_constr || taMisc::in_init) 
     return;
-  }
 
 //OBS  font_foreground = new iColor(QApplication::palette().color(QPalette::Active, QColorGroup::Text));
 
@@ -354,6 +310,15 @@ taiMisc::~taiMisc() {
 }
 
 void taiMisc::InitMetrics() {
+  // everything that requires Qt to be initialized and could depend on Settings being loaded
+  
+  // set up the initial font from (already loaded) Settings
+  QFont font(taMisc::font_name, taMisc::font_size);
+  qApp->setFont(font);
+  
+  edit_darkbg_brightness = -0.15f;
+  edit_lightbg_brightness = 0.50f;
+
   ctrl_size = sizMedium;
   vsep_c = 3;
   hsep_c = 3;
@@ -394,6 +359,18 @@ void taiMisc::AdjustFont(int fontSpec, iFont& font) {
   if (fontSpec & fonUnderline) font.setUnderline(true);
   if ((fontSpec & fonStretch_mask) == fonSkinny) font.setStretch(QFont::Condensed);
   if ((fontSpec & fonStretch_mask) == fonWide) font.setStretch(QFont::Expanded);
+  int fsz = (fontSpec & fonSize_mask);
+  switch (fsz) {
+  case fonSmall:
+    font.setPointSize(font.pointSize - FONT_SM);
+    break;
+     //NOTE: assumes not using pixel-size, otherwise       
+  case fonMedium:
+     font.setPointSize(font.pointSize - FONT_MED); 
+  case fonBig: // BIG is the default, no adjust needed
+  default: //defFontSize
+    break;
+  }
 }
 
 iSize taiMisc::dialogSize(int dialogSpec) {
@@ -416,44 +393,26 @@ iSize taiMisc::dialogSize(int dialogSpec) {
   return rval;
 }
 
-#define FONT_MED  1
-#define FONT_SM   2
 iFont taiMisc::buttonFont(int fontSpec) {
   iFont rval = mbig_button_font;
-  if ((fontSpec & fonSize_mask) == fonMedium)
-    rval.setPointSize(rval.pointSize - FONT_MED); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
-  else if  ((fontSpec & fonSize_mask) == fonSmall)
-    rval.setPointSize(rval.pointSize - FONT_SM); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
   AdjustFont(fontSpec, rval);
   return rval;
 }
 
 iFont taiMisc::dialogFont(int fontSpec) {
   iFont rval = mbig_dialog_font;
-  if ((fontSpec & fonSize_mask) == fonMedium)
-    rval.setPointSize(rval.pointSize - FONT_MED); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
-  else if  ((fontSpec & fonSize_mask) == fonSmall)
-    rval.setPointSize(rval.pointSize - FONT_SM); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
   AdjustFont(fontSpec, rval);
   return rval;
 }
 
 iFont taiMisc::menuFont(int fontSpec) {
   iFont rval = mbig_menu_font;
-  if ((fontSpec & fonSize_mask) == fonMedium)
-    rval.setPointSize(rval.pointSize - FONT_MED); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
-  else if  ((fontSpec & fonSize_mask) == fonSmall)
-    rval.setPointSize(rval.pointSize - FONT_SM); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
   AdjustFont(fontSpec, rval);
   return rval;
 }
 
 iFont taiMisc::nameFont(int fontSpec) {
   iFont rval = mbig_name_font;
-  if ((fontSpec & fonSize_mask) == fonMedium)
-    rval.setPointSize(rval.pointSize - FONT_MED); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
-  else if  ((fontSpec & fonSize_mask) == fonSmall)
-    rval.setPointSize(rval.pointSize - FONT_SM); //NOTE: assumes not using pixel-size, otherwise pointsize=-1
   AdjustFont(fontSpec, rval);
   return rval;
 }
@@ -708,137 +667,8 @@ void taiMisc::OpenWindows(){
 void taiMisc::WaitProc() {
   taiMiscCore::WaitProc();
   if (!taMisc::gui_active) return;
-
-/*obs  if(update_winpos.size > 0) {
-    Wait_UpdateWinPos();
-    return true;
-  }*/
-/*  if(update_menus.size > 0) {
-    Wait_UpdateMenus();
-    return true;
-  } */
   Script::Wait_RecompileScripts();
 }
-
-/*obs void winbMisc::Wait_UpdateMenus() {
-  if(!taMisc::taMisc::gui_active)    return;
-  taMisc::Busy();
-  int i;
-  for(i=0; i<update_menus.size; i++) {
-    TAPtr it = update_menus.FastEl(i);
-    if(taBase::GetRefn(it) == 0) {
-      taMisc::Error("*** Object is not owned:", it->GetName(), "of type:",
-		     it->GetTypeDef()->name);
-      taBase::Ref(it);
-    }
-    MenuUpdate(it);
-  }
-  update_menus.RemoveAll();
-  taMisc::DoneBusy();
-}*/
-
-/*obs void winbMisc::Wait_UpdateWinPos() {
-  if(!taMisc::taMisc::gui_active)    return;
-  taMisc::Busy();
-  int i;
-  for(i=0; i<update_winpos.size; i++) {
-    TAPtr it = update_winpos.FastEl(i);
-    if(taBase::GetRefn(it) == 0) {
-      taMisc::Error("*** Object is not owned:", it->GetName(), "of type:",
-		     it->GetTypeDef()->name);
-      taBase::Ref(it);
-    }
-    if(it->InheritsFrom(&TA_DataViewer)) {
-      ((DataViewer*)it)->SetWinPos();	// extra safe..
-    }
-  }
-  update_winpos.RemoveAll();
-  taMisc::DoneBusy();
-} */
-
-void taiMisc::DelayedMenuUpdate_(TAPtr obj) {
-  if(!taMisc::taMisc::gui_active)    return;
-/*obs   if(taBase::GetRefn(obj) == 0) {
-    taMisc::Error("*** Object is not owned:", obj->GetName(), "of type:",
-		  obj->GetTypeDef()->name);
-    taBase::Ref(obj);
-  }
-  update_menus.LinkUnique(obj); */
-}
-
-/*obs void winbMisc::MenuUpdate(TAPtr obj) {
-  if(!taMisc::taMisc::gui_active)	return;
-
-  taMisc::Busy();
-
-  // try to update the menu group (less impact)
-  MenuGroup_impl* mg;
-  if(obj->InheritsFrom(TA_MenuGroup_impl))
-    mg = (MenuGroup_impl*)obj;
-  else
-    mg = GET_OWNER(obj,MenuGroup_impl);
-
-  TAPtr ownr = mg;
-  // get the highest menugroup
-  if((mg != NULL) && (mg->owner != NULL) &&
-     mg->owner->InheritsFrom(TA_taList_impl))
-  {
-    ownr = mg->owner;
-    while((ownr != NULL) && (ownr->GetOwner() != NULL) &&
-	  ownr->GetOwner()->InheritsFrom(TA_taList_impl)) {
-      if(ownr->InheritsFrom(TA_MenuGroup_impl))
-	mg = (MenuGroup_impl*)ownr;
-      ownr = ownr->GetOwner();
-      if(ownr->InheritsFrom(TA_MenuGroup_impl))	// always try to get a mgroup
-	mg = (MenuGroup_impl*)ownr;
-    }
-  }
-
-  if((mg != NULL) && (mg->HasMenu())) {
-    mg->UpdateMenu();
-  }
-  else {
-    if(ownr != NULL)		// get the owner of the highest group
-      ownr = ownr->GetOwner();
-
-    // update it if it is a winbase..
-    if((ownr != NULL) && ownr->InheritsFrom(&TA_DataViewer)) {
-      ((DataViewer*)ownr)->UpdateMenus();
-      taMisc::DoneBusy();
-      return;
-    }
-    else if((ownr != NULL) && ownr->HasOption("MEMB_IN_GPMENU")) {
-      // if it has a IN_GPMENU, it might be that we are in a subgroup of it
-      // so go ahead and update that object instead of us
-      taMisc::DoneBusy();
-      MenuUpdate(ownr);
-      return;
-    }
-
-    // if all else fails, then update based on the first winbase
-    DataViewer* we = GET_OWNER(obj,DataViewer);
-    if (we != NULL)
-      we->UpdateMenus();
-    else if(obj->InheritsFrom(TA_DataViewer)) // if nothing else, do object itself
-      ((DataViewer*)obj)->UpdateMenus();
-  }
-
-  taMisc::DoneBusy();
-} */
-
-/*obs, nuke int taiMisc::SetIconify(void* obj, int onoff){
-  TopLevelViewer* wb = dynamic_cast<TopLevelViewer*>(obj);
-  if (!wb) return;
-  if (onoff != -1) {
-    if(!onoff && !wb->isMapped())
-      return wb->isIconified();	// attempt to update iconified (non-mapped) window!
-    if (!onoff && wb->isIconified())	// switching from iconfied to not, update menus
-      DelayedMenuUpdate_(wb);	// update menus when de-iconifying
-    if (onoff) wb->Iconify();
-    else       wb->DeIconify();
-  }
-  return (int) wb->isIconified();
-} */
 
 void taiMisc::ScriptIconify(void*, int) {
 // do nothing, use script win pos to record final iconify status
@@ -907,36 +737,6 @@ void taiMisc::Cleanup(int) {
 }
 
 
-//////////////////////////////////////////////////////////
-// 	taiMisc: helper functions for iv              //
-//////////////////////////////////////////////////////////
-
-/* TODO:
-QWidget* taiMisc::small_button(QWidget* b){
-  return(layout->hfixed(b, small_button_width));
-}
-
-QWidget* taiMisc::medium_button(QWidget* b){
-  return(layout->hfixed(b, medium_button_width));
-}
-
-QWidget* taiMisc::big_button(QWidget* b){
-  return(layout->hfixed(b, big_button_width));
-}
-
-
-QWidget* taiMisc::small_flex_button(QWidget* b){
-  return(layout->hflexible(layout->hnatural(b,small_button_width)));
-}
-
-QWidget* taiMisc::medium_flex_button(QWidget* b){
-  return(layout->hflexible(layout->hnatural(b,medium_button_width)));
-}
-
-QWidget* taiMisc::big_flex_button(QWidget* b){
-  return(layout->hflexible(layout->hnatural(b,big_button_width)));
-}
-*/
 String taiMisc::color_to_string(const iColor& color) {
   String result = "#" + String(color.red(), "%02x")
       + String(color.green(), "%02x") + String(color.blue(), "%02x");

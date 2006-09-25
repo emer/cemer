@@ -114,17 +114,21 @@ void taiMiscCore::DeleteRoot() {
 }
 
 void taiMiscCore::Quit(CancelOp cancel_op) {
-  taMisc::quitting = true;
+//TODO: to be revised
+  if (cancel_op == CO_NOT_CANCELLABLE)
+    taMisc::quitting = taMisc::QF_FORCE_QUIT;
+  else 
+    taMisc::quitting = taMisc::QF_USER_QUIT; // cancellable, but this will go to FORCE after main win etc. closes
   if (taiMC_) {
     taiMC_->OnQuitting_impl(cancel_op);
-    if (cancel_op != CO_CANCEL) {
+  }
+  if ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (cancel_op != CO_CANCEL)) {
+    if (taiMC_) {
       taiMC_->Quit_impl();
     }
-  }
-  if (taMisc::quitting && (cancel_op != CO_CANCEL)) {
     QCoreApplication::instance()->quit();
   } else {
-    taMisc::quitting = false;
+    taMisc::quitting = taMisc::QF_RUNNING;
   }
 }
 
@@ -197,7 +201,7 @@ String	taMisc::version_no = "3.5";
 
 String 	taMisc::LexBuf;
 bool	taMisc::in_init = false;
-bool	taMisc::quitting = false;
+signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
 bool 	taMisc::gui_active = false;
 ContextFlag	taMisc::is_loading;
@@ -262,7 +266,6 @@ bool taMisc::beep_on_error = false;
 void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbusy; var is 'busy'
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
-void (*taMisc::DelayedMenuUpdate_Hook)(taBase*) = NULL; // gui callback -- avoids zillions of gui ifdefs everywhere
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
@@ -415,11 +418,6 @@ void taMisc::DMem_Initialize() {
     cerr << "DMEM Running on " << dmem_nprocs << " processors." << endl;
   }
 #endif
-}
-
-void taMisc::DelayedMenuUpdate(TAPtr obj) {
-  if (DelayedMenuUpdate_Hook)
-    DelayedMenuUpdate_Hook(obj);
 }
 
 void taMisc::ListAllTokens(ostream& strm) {

@@ -1946,7 +1946,7 @@ void taiButtonMenu::init()
     button->setMenu(menu());
   }
   button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
-  button->setFixedHeight(taiM->button_height(font_spec));
+  button->setFixedHeight(taiM->button_height(defSize()));
   SetRep(button);
 }
 
@@ -1988,7 +1988,8 @@ void taiMenuBar::init(QMenuBar* exist_menu)
   //TODO: would be safer if we used Qt's type system to absolutely confirm that correct type was passed...
   QMenuBar* mrep_bar = (exist_menu) ? exist_menu : new QMenuBar(gui_parent);
   mrep_bar->setFont(taiM->menuFont(font_spec));
-  mrep_bar->setFixedHeight(taiM->button_height(font_spec)); // button height is ok to control bar height
+  //NOTE: do *not* try to change the height of menubars -- if too small, some platforms
+  // turn the menubars into pop-aside menubuttons
   SetRep(mrep_bar);
 //  cur_sel = NULL;
 }
@@ -2796,6 +2797,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   QPushButton* rep_ = new QPushButton(gui_parent_);
+  rep_->setFixedHeight(taiM->button_height(defSize()));
   SetRep(rep_);
   connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
 }

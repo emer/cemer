@@ -377,12 +377,18 @@ public:
     TIK_TYPESPACE,
     TIK_UNKNOWN
   };
+  
+  enum QuitFlag { // helps during shutdown to know whether we can cancel
+    QF_RUNNING		= 0, // 
+    QF_USER_QUIT,	// we can still cancel while in this state of quitting
+    QF_FORCE_QUIT	// too late to turn back now...
+  };
 
   static String		version_no; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
 
   static bool		in_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
-  static bool		quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true once we are quitting
+  static signed char	quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
   static bool		not_constr;	// #READ_ONLY #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
@@ -441,7 +447,6 @@ public:
   // #IGNORE set this to a work process for idle time processing
   static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
-  static void (*DelayedMenuUpdate_Hook)(taBase*); // #IGNORE gui callback -- avoids zillions of gui ifdefs everywhere
 
   void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
   void	LoadConfig();		// #BUTTON #CONFIRM load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
@@ -464,9 +469,6 @@ public:
 		       const char* f="", const char* g="", const char* h="",
 		       const char* i="");
   // allows user to choose among different options in window if iv_active or stdin/out
-
-  static void	DelayedMenuUpdate(TAPtr obj);
-  // add object to list to be updated later (by Wait_UpdateMenus)
 
   static void 	Busy();		// puts system in a 'busy' state
   static void	DoneBusy();	// when no longer busy, call this function

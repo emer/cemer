@@ -195,7 +195,7 @@ void Wizard::StdNetwork(Network* net) {
   }
   net->Build();
   net->Connect();
-  taMisc::DelayedMenuUpdate(net);
+//obs  taMisc::DelayedMenuUpdate(net);
 }
 
 /* TEMP

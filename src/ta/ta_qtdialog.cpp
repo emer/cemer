@@ -610,6 +610,7 @@ const iColor* taiDataHost::colorOfRow(int row) const {
 
 int taiDataHost::AddName(int row, const String& name, const String& desc, taiData* buddy) {
   iContextLabel* label = new iContextLabel(row, name, body);
+//TODO  label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
   connect(label, SIGNAL(contextMenuInvoked(iContextLabel*, QContextMenuEvent*)),
@@ -684,7 +685,8 @@ void taiDataHost::AddMultiColName(iEditGrid* multi_body, int col, const String& 
 }
 
 void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data) {
-  SetMultiSize(row - 1, col - 1);
+//  SetMultiSize(row - 1, col - 1);
+  SetMultiSize(row + 1, col + 1);
   QHBoxLayout* hbl = new QHBoxLayout();
   hbl->setMargin(0);
   hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));

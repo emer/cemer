@@ -125,6 +125,10 @@ public:
     dlgOrient_mask	= 0x010
 
   };
+  
+  static const int	FONT_MED; // #DEF_1 pts to subtract from BIG
+  static const int	FONT_SM;  // #DEF_2 pts to subtract frm BIG
+
 
   static taiDialog_List		active_dialogs;	// #IGNORE list of active (NoBlock) dialogs
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
@@ -156,24 +160,13 @@ public:
 
   static void	DoneBusy_impl();// #IGNORE implements the done busy function
 
-//  static void	SetWinCursor(iWindow* win);
-  // #IGNORE sets cursor for given window based on busy and record status
-
   static void	PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)
 
   static bool	RevertEdits(void* obj, TypeDef* td);
   // revert any open edit dialogs for given object
-
-//obs  static bool	CloseEdits(void* obj, TypeDef* td);
-  // close any open edit dialogs for object or sub-objs
-
-//obs  static bool	NotifyEdits(void* obj, TypeDef* td);
-  // notifies any open edit dialogs for given object that a change in its data has occured
-
   static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
-
   static taiEditDataHost* FindEdit(void* obj, TypeDef* td, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
 
@@ -189,8 +182,6 @@ protected:
   // #IGNORE restores cursors to previous state -- Set/Restore always called in pairs
   static void 	Busy_(bool busy);		// callback from taMisc, puts system in a 'busy' state (pointer, no input)
   static void	ScriptRecordingGui_(bool start); // callback from taMisc
-  static void	DelayedMenuUpdate_(TAPtr obj);
-  // add object to list to be updated later (by Wait_UpdateMenus)
 public:
   QProgressDialog*	load_dlg;       // #IGNORE load dialog
 
@@ -226,6 +217,12 @@ public:
   int		dlgm_c;		// dialog margin (in pixels) -- empty space around dialog contents
   iSize		scrn_s;		// screen size, excluding task bars, etc. (use for maximum dialog size)
   QRect		scrn_geom;	// #IGNORE available space on main screen (esp useful for evil Mac...)
+  QCursor*	wait_cursor;	// cursor used for waiting
+  QCursor*	record_cursor;	// cursor used for recording
+  QBitmap*	icon_bitmap;	// icon bitmap
+  float 	edit_darkbg_brightness;
+  float 	edit_lightbg_brightness;
+  
   iSize		dialogSize(int dialogSpec); // return starting dialog size for given spec
 
   iFont		buttonFont(int fontSpec); // get a button font
@@ -240,53 +237,9 @@ public:
   int		text_height(int sizeSpec); // can pass any XxxSpec that uses size -- for: QLineEdit, QSpinBox,
   int		max_control_height(int sizeSpec); // maximum height needed
 
-/* TODO:
-  ivCoord  	vsep_c;		// separators are for "small spaces" between items
-  ivCoord 	hsep_c;
-  QWidget*	vsep;
-  QWidget*	hsep;
-  QWidget*	vfsep;		// fixed versions
-  QWidget*	hfsep;
-
-  ivCoord	vspc_c;		// spaces are for "large spaces" between items
-  ivCoord	hspc_c;
-  QWidget*	vspc;
-  QWidget*	hspc;
-  QWidget*	vfspc;		// fixed (non stretchable) versions
-  QWidget*	hfspc;
-
-  // make a fixed size button
-
-  QWidget*	small_button(QWidget* b);
-  QWidget*	medium_button(QWidget* b);
-  QWidget*	big_button(QWidget* b);
-
-  // make a natural size flexible button
-
-  QWidget*	small_flex_button(QWidget* b);
-  QWidget*	medium_flex_button(QWidget* b);
-  QWidget*	big_flex_button(QWidget* b);
-
-
-*/
-  float 	edit_darkbg_brightness;
-  float 	edit_lightbg_brightness;
 static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
-//OBS  const iColor* edit_darkbg;	// edit dialog darker background color
-//OBS  const iColor* edit_lightbg;	// edit dialog lighter background color (for highlighting)
   String 	color_to_string(const iColor& color); // returns a string value (appropriate for setting in a style) for the color
-//OBS:  String 	color_to_string(const ivColor* clr); // returns a string value (appropriate for setting in a style) for the color
 
-
-//  int		small_button_width;
-//  int		medium_button_width;
-//  int		big_button_width;
-
-  QCursor*	wait_cursor;	// cursor used for waiting
-  QCursor*	record_cursor;	// cursor used for recording
-  QBitmap*	icon_bitmap;	// icon bitmap
-
-//OBS  int GetButton(const ivEvent& e); // applies keyboard mods
   void		MainWindowClosing(CancelOp& cancel_op); // called by main_window in close event -- we can cancel it if cancellable
 
 /*TODO: rewrite for Qt #if (!(defined(WINDOWS) || defined(CYGWIN)))
