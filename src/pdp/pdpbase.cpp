@@ -226,6 +226,9 @@ static void Startup_dmem() {
 
 */
 int pdpMisc::Main(int argc, char *argv[]) {
+// misc todos:
+//TODO: should accept - or -- for switches
+
 /* following creates QApplication and event loop -- these
    must get created first, and are needed even if we don't open a gui
    Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
@@ -351,7 +354,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   } */
 
   String prognm = argv[0];
-
+//TODO: this should just print the version and quit (so should be moved way earlier, before any init
   if (cssMisc::HasCmdLineSwitch("-version")) {
     root->Info();
   }

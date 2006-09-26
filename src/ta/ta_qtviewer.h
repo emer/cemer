@@ -1124,7 +1124,7 @@ public:
   };
   
 #ifndef __MAKETA__  
-  static void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
+  static void 		FillTypedList(const QList<QTreeWidgetItem*>& items,
     ISelectable_PtrList& list); // helper, for filling our own typed list
 #endif
   
