@@ -631,10 +631,31 @@ String UserScript::GetDisplayName() const {
 void UserScript::ImportFromFile(istream& strm) {
   user_script = "";
   while(!strm.eof()) {
-    readline(strm, user_script, false);
+    char c = strm.get();
+    if(c == EOF) break;
+    user_script += c;
   }
 }
 
+void UserScript::ImportFromFileName(const String& fnm) {
+  String full_fnm = taMisc::FindFileInclude(fnm);
+  fstream strm;
+  strm.open(full_fnm, ios::in);
+  ImportFromFile(strm);
+  strm.close();
+}
+
+void UserScript::ExportToFile(ostream& strm) {
+  strm << user_script;
+}
+
+void UserScript::ExportToFileName(const String& fnm) {
+  String full_fnm = taMisc::FindFileInclude(fnm);
+  fstream strm;
+  strm.open(full_fnm, ios::out);
+  ExportToFile(strm);
+  strm.close();
+}
 
 //////////////////////////
 //  Loop		//
@@ -976,7 +997,13 @@ String MethodCall::GetDisplayName() const {
   rval += "->";
   rval += method_spec.method->name;
   //TODO: nicer if this descriptor had the param names and/or types
-  rval += "()";
+  rval += "(";
+  for(int i=0;i<args.size;i++) {
+    rval += args.labels[i] + " " + args[i];
+    if(i < args.size-1)
+      rval += ", ";
+  }
+  rval += ")";
   return rval;
 }
 

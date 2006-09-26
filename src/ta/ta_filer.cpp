@@ -568,53 +568,10 @@ ostream* taFiler::Append() {
 //   taFiler		//
 //////////////////////////
 
+// this is not called in the NO_GUI version..
+
 bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
-  bool result = false;
- /*  TODO: implement, except maybe it isn't even called in TA_NO_GUI version!!!
-  chooser->style()->attribute("filter", "on");
-  chooser->style()->attribute("defaultSelection", fname);
-  chooser->style()->attribute("filterPattern", filer->filter);
-  ivCoord x=0; ivCoord y=0;
-  String win_title;
-  switch (filerOperation) {
-  case foOpen:
-    chooser->style()->attribute("open", "Open");
-    chooser->style()->attribute("caption", "Select File to Open for Reading");
-    win_title = String("Open: ") + filer->filter;
-    break;
-  case foSave:
-    // TODO: will this ever be called???
-    return false;
-    break;
-  case foSaveAs:
-    chooser->style()->attribute("open", "Save");
-    chooser->style()->attribute("caption", "Select File to Save for Writing");
-    win_title = String("Save: ") + filer->filter;
-    break;
-  case foAppend:
-    chooser->style()->attribute("open", "Append");
-    chooser->style()->attribute("caption", "Select File to Append for Writing");
-    win_title = String("Append: ") + filer->filter;
-    break;
-  }
-
-  chooser->style()->attribute("name", win_title);
-  chooser->style()->attribute("title", win_title);
-  chooser->style()->attribute("iconName", win_title);
-  taiDialog::GetPointerPos(x,y);
-  result = (chooser->post_at_aligned(x, y, POINTER_ALIGN_X, POINTER_ALIGN_Y) != 0);
-
-  if (result) {
-    fname = chooser->selected()->string();
-  }
-
-  if(chooser != NULL) {
-    ivResource::unref(chooser);
-    ivResource::flush();
-    chooser = NULL;
-  }
- */
-  return result;
+  return false;
 }
 
 

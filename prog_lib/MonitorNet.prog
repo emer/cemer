@@ -2,13 +2,14 @@
 Program .projects[0].programs.gp[0][6] { 
   taBase_List @.objs = [1] {
     NetMonitor @[0] { 
-      NetMonItem_List @.items = [6] {
+      NetMonItem_List @.items = [7] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
 	NetMonItem @[3] { };
 	NetMonItem @[4] { };
 	NetMonItem @[5] { };
+	NetMonItem @[6] { };
       };
     };
   };
@@ -18,9 +19,10 @@ Program .projects[0].programs.gp[0][6] {
     ProgVar @[1] { };
   };
 
-  ProgEl_List @.init_code = [2] {
+  ProgEl_List @.init_code = [3] {
     MethodCall @[0] { };
     MethodCall @[1] { };
+    MethodCall @[2] { };
   };
 
   ProgEl_List @.prog_code = [3] {
@@ -84,15 +86,23 @@ Program .projects[0].programs.gp[0][6] {
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[5] {
-     name="act";
+     name="trial_name";
      object=$0$;
+     variable="trial_name";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[6] {
+     name="input";
+     object=.projects[0].networks[0].layers[0]$1$;
      variable="act";
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   data=.projects[0].data[1]$1$;
+   data=.projects[0].data[1]$2$;
    rmv_orphan_cols=1;
   };
  };
@@ -109,7 +119,7 @@ Program .projects[0].programs.gp[0][6] {
    name="mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$1$;
+   object_val=$2$;
    objs_ptr=0;
    desc=;
   };
@@ -117,7 +127,7 @@ Program .projects[0].programs.gp[0][6] {
    name="Monitor1";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$3$;
    objs_ptr=1;
    desc=;
   };
@@ -127,26 +137,37 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
+   desc=;
+   off=0;
+   result_var=;
+   method_spec {
+    script_obj=.projects[0].programs.gp[0][6].vars[1]$4$;
+    method=NetMonitor::CheckConfig;
+   };
+   args{ false;};
+{ bool quiet;   };
+  };
+  MethodCall @[1] {
    desc="Initialize monitoring data (get rid of any existing)";
    off=0;
    result_var=;
    method_spec {
-    script_obj=.projects[0].programs.gp[0][6].vars[0]$3$;
+    script_obj=.projects[0].programs.gp[0][6].vars[0]$5$;
     method=DataTable::ResetData;
    };
    args{ };
 {    };
   };
-  MethodCall @[1] {
+  MethodCall @[2] {
    desc="update the monitor items and data schema";
    off=0;
    result_var=;
    method_spec {
-    script_obj=.projects[0].programs.gp[0][6].vars[1]$4$;
+    script_obj=$4$;
     method=NetMonitor::UpdateMonitors;
    };
-   args{ };
-{    };
+   args{ true;};
+{ bool reset_first;   };
   };
  };
  prog_code {
@@ -158,7 +179,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=$3$;
+    script_obj=$5$;
     method=DataTable::AddBlankRow;
    };
    args{ };
@@ -170,7 +191,7 @@ Program .projects[0].programs.gp[0][6] {
    result_var=;
    method_spec {
     script_obj=$4$;
-    method=NetMonitor::UpdateMonVals;
+    method=NetMonitor::GetMonVals;
    };
    args{ };
 {    };
@@ -180,7 +201,7 @@ Program .projects[0].programs.gp[0][6] {
    off=1;
    result_var=;
    method_spec {
-    script_obj=$3$;
+    script_obj=$5$;
     method=DataBlock::WriteDone;
    };
    args{ };

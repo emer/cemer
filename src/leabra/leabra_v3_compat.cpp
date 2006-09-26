@@ -124,7 +124,7 @@ bool V3LeabraProject::ConvertToV4_impl() {
   DataTable* mon_data = (DataTable*)nwproj->data.NewEl(1,&TA_DataTable);
   mon_data->name = "mon_data";
 
-  nwproj->programs.prog_lib.NewProgramFmName("LeabraStdTrain", &(nwproj->programs));
+  nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
 
   ConvertToV4_DefaultApplyInputs(nwproj);
 

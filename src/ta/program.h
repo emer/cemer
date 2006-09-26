@@ -267,7 +267,10 @@ INHERITED(ProgEl)
 public:
   String	    user_script; // #EDIT_DIALOG content of the user scriptlet
 
-  virtual void	    ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON import script from file
+  virtual void	    ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
+  virtual void	    ImportFromFileName(const String& fnm); // import script from file
+  virtual void	    ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
+  virtual void	    ExportToFileName(const String& fnm); // export script to file
   
   override String	GetDisplayName() const;
   void	Copy_(const UserScript& cp);
@@ -679,7 +682,7 @@ public:
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
-  static ProgLib	prog_lib; // library of available programs
+  static ProgLib	prog_lib; // #NO_BROWSE library of available programs
 
   virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
 

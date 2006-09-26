@@ -4418,6 +4418,8 @@ void Network::Copy_(const Network& cp) {
   trial = cp.trial;
   cycle = cp.cycle;
   time = cp.time;
+  group_name = cp.group_name;
+  trial_name = cp.trial_name;
 
   sse = cp.sse;
   sum_sse = cp.sum_sse;
@@ -5874,6 +5876,7 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 //////////////////////
 
 void LayerRWBase::Initialize() {
+  net_target = LAYER;
 }
 
 void LayerRWBase::Destroy() {
@@ -5883,6 +5886,8 @@ void LayerRWBase::Destroy() {
 void LayerRWBase::Copy_(const LayerRWBase& cp) {
   data = cp.data;
   chan_name = cp.chan_name;
+  net_target = cp.net_target;
+  network = cp.network;
   layer = cp.layer;
   offset = cp.offset;
 }
@@ -5890,6 +5895,7 @@ void LayerRWBase::Copy_(const LayerRWBase& cp) {
 void LayerRWBase::InitLinks(){
   inherited::InitLinks();
   taBase::Own(data, this);
+  taBase::Own(network, this);
   taBase::Own(layer, this);
   taBase::Own(offset, this);
 }
@@ -5897,15 +5903,27 @@ void LayerRWBase::InitLinks(){
 void LayerRWBase::CutLinks() {
   offset.CutLinks();
   layer.CutLinks();
+  network.CutLinks();
   data.CutLinks();
   inherited::CutLinks();
 }
 
 void LayerRWBase::UpdateAfterEdit() {
-  // redo channel cache
-  //GetChanIdx: should prob warn if invalid
   GetChanIdx(true);
   inherited::UpdateAfterEdit();
+}
+
+String LayerRWBase::GetDisplayName() const {
+  String rval = "to: " + chan_name;
+  if(data)
+    rval += " on: " + data->name;
+  if(network)
+    rval += " fm: " + network->name;
+  rval += " " + GetTypeDef()->GetEnumString("NetTarget", net_target);
+  if((net_target == LAYER) && layer) {
+    rval += " " + layer->name;
+  }
+  return rval;
 }
 
 bool LayerRWBase::CheckConfig(bool quiet) {
@@ -5922,6 +5940,24 @@ bool LayerRWBase::CheckConfig(bool quiet) {
 			     chan_name, "not found in data:", data->name);
     return false;
   }
+  if(!network) {
+    if(!quiet) taMisc::Error("LayerRWBase Error: network is NULL for channel named:",
+			     chan_name, "for data:", data->name);
+    return false;
+  }
+  if(net_target == LAYER) {
+    if(!layer) {
+      if(!quiet) taMisc::Error("LayerRWBase Error: layer is NULL for channel named:",
+			       chan_name, "for data:", data->name);
+      return false;
+    }
+    if(layer->own_net != network) {
+      if(!quiet) taMisc::Error("LayerRWBase Error: layer named:",layer->name,
+			       "is not on network:", network->name, "for channel named:",
+			       chan_name, "for data:", data->name);
+      return false;
+    }
+  }    
   return true;
 }
 
@@ -5980,6 +6016,18 @@ void LayerRWBase_List::SetAllData(DataBlock* db) {
   }
 }
 
+void LayerRWBase_List::SetAllNetwork(Network* net) {
+  for(int i = 0; i < size; ++i) {
+    LayerRWBase* it = FastEl(i);
+    it->network = net;
+  }
+}
+
+void LayerRWBase_List::SetAllDataNetwork(DataBlock* db, Network* net) {
+  SetAllData(db);
+  SetAllNetwork(net);
+}
+
 //////////////////////
 //   LayerWriter    //
 //////////////////////
@@ -6036,20 +6084,34 @@ void LayerWriter::UpdateAfterEdit() {
   }
 }
 
+String LayerWriter::GetDisplayName() const {
+  String rval = inherited::GetDisplayName();
+  // todo: could add some expert stuff..
+  return rval;
+}
+
 void LayerWriter::ApplyExternal(int context) {
-  if (!data || !layer) return;
+  if(!data || !network) return;
+  if(net_target == TRIAL_NAME) {
+    network->trial_name = data->GetData(GetChanIdx());
+    return;
+  }
+  else if(net_target == GROUP_NAME) {
+    network->group_name = data->GetData(GetChanIdx());
+    return;
+  }
+  // LAYER
+  if(!layer) return;
+  taMatrixPtr mat(data->GetMatrixData(GetChanIdx())); //note: refs mat
+  if(!mat) return;
   // we only apply target data in TRAIN mode
   if ((context != Network::TRAIN) && (ext_flags & Unit::TARG))
     return;
   // get the data as a slice -- therefore, frame is always 0
-  taMatrixPtr mat(data->GetMatrixData(GetChanIdx())); //note: refs mat
-  if (!mat) {
-    return; //TODO: maybe we should warn?
-  }
   layer->ApplyExternal(mat, ext_flags, &noise, &offset);
   // mat unrefs at this point, or on exit from routine
-  
 }
+
 
 //////////////////////////
 //  LayerWriter_List	//
@@ -6460,6 +6522,24 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   pre_proc_3 = cp.pre_proc_3;
 }
 
+bool NetMonItem::CheckConfig(bool quiet) {
+  if(!owner) {
+    if(!quiet) taMisc::Error("NetMonItem named:", name, "has no owner");
+    return false;
+  }
+  if(!object) {
+    if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
+			     "object is NULL");
+    return false;
+  }
+  if(variable.empty()) {
+    if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
+			     "variable is empty");
+    return false;
+  }
+  return true;
+}
+
 void NetMonItem::UpdateAfterEdit() {
   if (!owner) return;
   if ((!object) || variable.empty()) return;
@@ -6554,7 +6634,8 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   rval = md->GetValVar(obj);
   // pre-process.. 
   // note: NONE op leaves Variant in same format, otherwise converted to float
-  pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
+  // todo: is this evil or not?
+//   pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
   return true;
 }
 
@@ -6921,7 +7002,7 @@ void NetMonItem::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
  // ScanObject();
 }
 
-void NetMonItem::UpdateMonVals(DataBlock* db) {
+void NetMonItem::GetMonVals(DataBlock* db) {
   if ((!db) || variable.empty())  return;
 
   int mon = 0; 
@@ -6973,6 +7054,14 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
   }
 }
 
+bool NetMonItem_List::CheckConfig(bool quiet) {
+  for(int i=0;i<size;i++) {
+    NetMonItem* it = FastEl(i);
+    if(!it->CheckConfig(quiet)) return false;
+  }
+  return true;
+}
+
 //////////////////////////
 //  NetMonitor		//
 //////////////////////////
@@ -6997,6 +7086,16 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
   items = cp.items;
   rmv_orphan_cols = cp.rmv_orphan_cols;
   data = cp.data; //warning: generates a UAE, but we ignore it
+}
+
+bool NetMonitor::CheckConfig(bool quiet) {
+  if(!data) {
+    if(!quiet) taMisc::Error("NetMonitor named:", name, "path:", GetPath(),
+			     "data is NULL");
+    return false;
+  }
+  if(!items.CheckConfig(quiet)) return false;
+  return true;
 }
 
 void NetMonitor::UpdateAfterEdit() {
@@ -7030,8 +7129,10 @@ void NetMonitor::SetDataTable(DataTable* dt) {
   data = dt; // note: auto does UAE
 }
 
-void NetMonitor::UpdateMonitors() {
+void NetMonitor::UpdateMonitors(bool reset_first) {
   if (!data) return;
+  if(reset_first)
+    data->Reset();
   if (rmv_orphan_cols) 
     data->MarkCols();
   // this will probably be big, so wrap the whole thing
@@ -7047,10 +7148,10 @@ void NetMonitor::UpdateMonitors() {
   data->StructUpdate(false);
 }
 
-void NetMonitor::UpdateMonVals() {
+void NetMonitor::GetMonVals() {
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    nmi->UpdateMonVals(data);
+    nmi->GetMonVals(data);
   }
 }
 

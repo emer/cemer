@@ -204,7 +204,7 @@ TypeDefault_Group .projects[0].defaults {
 	T3DataViewer @[2] { 
 	  T3DataView_List @.children = [1] {
 	    NetView @[0] { 
-	      T3DataView_List @.children = [42] {
+	      T3DataView_List @.children = [66] {
 		LayerView @[0] { };
 		LayerView @[1] { };
 		LayerView @[2] { };
@@ -247,6 +247,30 @@ TypeDefault_Group .projects[0].defaults {
 		PrjnView @[39] { };
 		PrjnView @[40] { };
 		PrjnView @[41] { };
+		LayerView @[42] { };
+		LayerView @[43] { };
+		LayerView @[44] { };
+		PrjnView @[45] { };
+		PrjnView @[46] { };
+		PrjnView @[47] { };
+		LayerView @[48] { };
+		LayerView @[49] { };
+		LayerView @[50] { };
+		PrjnView @[51] { };
+		PrjnView @[52] { };
+		PrjnView @[53] { };
+		LayerView @[54] { };
+		LayerView @[55] { };
+		LayerView @[56] { };
+		PrjnView @[57] { };
+		PrjnView @[58] { };
+		PrjnView @[59] { };
+		LayerView @[60] { };
+		LayerView @[61] { };
+		LayerView @[62] { };
+		PrjnView @[63] { };
+		PrjnView @[64] { };
+		PrjnView @[65] { };
 	      };
 
 	      ScaleRange_List @.scale_ranges = [1] {
@@ -911,15 +935,14 @@ TypeDefault_Group .projects[0].defaults {
       };
     };
     DataTable @[1] { 
-      DataTableCols @.data = [8] {
+      DataTableCols @.data = [7] {
 	int_Data @[0] { };
 	int_Data @[1] { };
 	int_Data @[2] { };
 	int_Data @[3] { };
 	float_Data @[4] { };
-	float_Data @[5] { };
+	String_Data @[5] { };
 	float_Data @[6] { };
-	float_Data @[7] { };
       };
     };
   };
@@ -999,11 +1022,11 @@ LeabraProject .projects[0] {
    el_def=0;
   };
   Program_Group @.gp[0] {
-   name="LeabraStdTrain";
+   name="LeabraAll_Std";
    el_typ=Program;
    el_def=0;
    step_prog=NULL;
-   desc=;
+   desc="The full set of programs for training a standard Leabra network";
    global_vars {
     name=;
     el_typ=ProgVar;
@@ -1038,7 +1061,7 @@ LeabraProject .projects[0] {
       seed{ 897248114;-1259630319;-1954705695;-2086433643;-1705562578;-246166775;142172280;-1066196830;649876912;-363601797;-1551220787;-201998924;984813377;-1929982005;1866720504;1737535582;-2064818913;-596409631;-537210356;-394821123;-1176302275;-1088439095;390472553;1002483428;-644065336;-93234492;-249392311;1955837623;486322880;268723693;-1316990013;-1148081097;1053267338;-194887551;722894185;-1796145741;-419870710;-744395548;-2126350183;-1623934615;-1975558537;-1109580724;1457379925;952758326;-932820647;-793678521;622734178;-1116891631;992844023;348717466;1162608598;-2078137647;-402129645;-523610230;-892508948;-545793120;1897913877;280270467;-1694155315;294983543;-1251003482;-1650029695;-1335161250;-843867016;1576969605;-260969840;-224140684;1265137246;954732510;2064975050;-1145863940;-1435022393;-1859029257;1513712809;985631399;417291160;-2038587757;-1933156114;888379733;1446724555;-464909414;-1706911051;-1159096460;-1791674743;-147343083;960690226;682596297;1099430942;359127508;311504974;93962501;-1671326033;632618192;-885562045;1179982281;-1505675969;1344906533;-1418551925;1622092278;1701084792;242471559;-1984251903;-1568971862;-1063520265;1591722069;-1959097976;-1601150455;-874166212;-889564662;717605003;-1582378599;-1301052667;1211123575;485189748;-182999148;374766658;1150697026;-738165078;-390496439;960351772;-332421139;71115877;-1747551486;-288197538;2067393244;-402841323;168191432;698976579;-691346957;454158309;419567441;-1655444926;1843518827;-1387150657;-1775972895;1209349907;1737084105;-273997764;2063222132;-629133755;1321145195;-340980602;-64855207;836106865;-384606302;857100345;-616134379;-1192753754;-1534913223;1646103447;-337508797;-104008340;1371554336;1910014402;1731164243;157488784;-1230766726;1651230814;-1801393009;1853249886;-1909629469;-2064890998;-586605120;1029458265;-1567764431;-569878997;-1071722633;1842759325;1870815306;1275367738;-2047480342;699437794;-2078020834;2120915280;1609487567;715455530;-1961002406;-1366381474;1214551640;1682680277;1866914062;-1438763676;1522254727;410589237;1882867230;-2066414372;335577213;-1969515802;-2079897542;1101145964;-914546306;-578950040;-399253994;-1096753521;-660660212;-1198578643;1339175923;-781551297;-1839371394;1105332893;-1928816742;-400816250;1655921312;-452260989;2002840327;447789431;319958765;-658015714;-2019202134;-1586612048;-137582258;706769011;1101838665;827045450;599553857;-2145445088;244597783;1487421271;1630555190;-344172316;-1830139429;-1553867370;-156727033;-755056810;-2131860048;-494346652;1852068823;91308896;725609566;-1111505690;-982815291;1292267944;1836226774;-810066908;-496780978;202956912;603675823;637918661;-10943404;552199869;1297990249;-1519144401;-1727998742;1493519921;-1227758025;-860568373;2118867559;1126222143;-1549971275;-1469719981;-370967157;-1094842937;2081077388;-1045858167;-179155018;-384518151;905350287;-1851803717;571620219;760498291;-480881197;-973785647;838212682;340510526;510321855;-801267485;-852016520;1774211485;39420368;537777206;2107097314;1618664461;210916571;-423959548;631482818;-1040919263;-279241335;-892903760;497369428;1334556795;-290177741;-620998078;1723791759;253979182;2098469877;2033083432;2025527244;-556275368;-1153759308;1554310973;-2109179006;1594713042;-1652347925;-1896234258;1399293819;-1212915145;264979477;2035769098;-26264659;816116738;-1472777223;-1886895409;579752040;1987550252;850378084;-592526232;228677599;-1282752773;-3264037;1636907752;554996081;10747923;1856021975;150743074;1441285143;-284865308;64061770;547700487;2007963302;-518601320;717968026;-1887063740;-1161755710;654757340;624448862;1095845326;1219653475;1112960789;540367258;1430941426;-1573264900;842324047;-1866598839;672477326;-834606497;456739053;2014938441;1820294365;-1127769538;237909957;778195458;-320898672;-493131725;374332760;1492882317;244532839;1469335464;813662131;1904048850;1828753335;1969748325;1462812563;773013089;1263710334;6222118;1806899780;-1306665146;695150693;1034369820;-410885147;-2065109159;-21981403;1688153775;-1834763828;-2034905187;-868895926;-2040902706;760295113;705437415;-801989522;-327259983;340256932;1639347777;676478214;-868392127;-2126595595;1085040460;-101711712;1181203896;-1177629723;1052562025;-385800214;-2127578499;-247860261;-210619237;-1285411717;-1501642238;-1370695642;-901640534;-1139102088;-1435816006;2062624444;733280257;-325264040;815916517;1806401640;106587238;222094010;-1348528385;297616670;-861761020;117428779;2046490308;1520601476;1774880419;2117307057;709856479;658783300;-1019651996;1857641166;-1623434894;-1466106812;1764750271;337867896;1769011978;1878580541;-337505063;55931846;657238908;1968152816;-169076117;-975001150;-619957198;463669432;-1908341507;-643594058;-2026430605;1348524010;-730896925;454931916;416148985;-1578791134;-739712940;-1725329931;204101311;-1062609662;-1691773722;860783264;946450304;1161241387;207536058;3478215;923381087;-305329130;-1353819564;48467194;-497866365;-1191262819;1442954968;-408984143;934531440;1843513070;-1086308879;585900848;-1977125474;-643228730;1005419111;430194483;1169789286;892875109;-1732318651;-897476207;416658129;2090816327;-186559977;-187909452;1699611428;132945605;1386154990;-1021089733;1553010825;1685237703;1771892687;-1665309430;-1471203233;408978895;-1985168698;-1461014828;-475885929;-149644797;184461852;-1631733780;-113049057;1929365839;-1841043271;755994780;1384891379;-572376242;-1822728640;527993133;536302677;-728200547;-1916517795;401821920;777687226;634513383;938837982;-1741204308;-712292839;-888158003;-989731250;1070351745;-997999887;-1220926516;-477621207;-668502217;432615022;341097247;-1817216444;-1580909839;1073812924;-1037427637;-421491456;-2071807233;419582815;835099779;-300811050;1008848942;-622226245;1119083448;2015783992;374250496;417956216;70961961;-1285132279;1021911943;1585993281;1118486430;-946608452;-1704284523;1344252873;908115709;2135579935;636192621;-776174384;533471998;586778067;-154978136;1359740759;1629951629;-1733015859;2121954041;2104107711;-295897115;1345244080;-1738577645;-559564224;1033955967;-1763695458;250221436;-693902564;1091788545;927707887;-712040796;1439001997;1595609215;1364606826;661845780;-755815374;-2034931863;1346096804;-2074100882;-1065691144;654888208;1007146357;778226326;1410374083;1808044267;239070962;-300943249;1387420801;914251343;580430497;1404608152;117575915;1513662704;256310634;-569005681;-1678005121;-1445134348;2053633677;2025466731;-1577911340;-1278866808;-623511374;-1672074119;45321757;1247003680;1061170196;1198754894;-104913407;2054118989;-1781862918;1530368638;-226966082;-707276305;1591871350;331461390;608113940;235882513;-2046843672;-1075932011;-1894925926;1648301914;1170547429;1665497643;-1251944432;-1796010764;-73953480;788544378;1090859788;-1128050928;-145143834;594707390;-728801566;-252193318;1890915838;-834826210;602694736;1275821290;-2078563303;-1397408457;-343458496;1558647263;      };
       mti=156;
      };
-     TimeUsed @[1] {name="time_used": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+     TimeUsed @[1] {name="time_used": start={usr=5098: sys=772: tot=4260658844: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
     };
     args {
      name=;
@@ -1144,7 +1167,7 @@ LeabraProject .projects[0] {
        script_obj=.projects[0].programs.gp[0][0].vars[4]$6$;
        method=TimeUsed::StartTimer;
       };
-      args{  true;};
+      args{ true;};
 { bool reset_used;      };
      };
      UserScript @[1] {
@@ -1218,7 +1241,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       desc=;
      };
@@ -1282,7 +1305,7 @@ LeabraProject .projects[0] {
       loop_test="This is not used here";
       data_var=.projects[0].programs.gp[0][1].vars[1]$11$;
       order=PERMUTED;
-      item_idx_list{ 2;1;0;4;3;      };
+      item_idx_list{ 2;0;1;3;4;      };
      };
      MethodCall @[2] {
       desc=;
@@ -1318,7 +1341,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] {
       name="phase_no";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       objs_ptr=0;
       desc=;
      };
@@ -1739,6 +1762,8 @@ else min_cycles = network->min_cycles_phase2;
       LayerWriter @[0] {
        data=$8$;
        chan_name="Input";
+       net_target=LAYER;
+       network=$0$;
        layer=.projects[0].networks[0].layers[0]$21$;
        offset {x=0: y=0: };
        use_layer_type=1;
@@ -1749,7 +1774,21 @@ else min_cycles = network->min_cycles_phase2;
       LayerWriter @[1] {
        data=$8$;
        chan_name="Output";
+       net_target=LAYER;
+       network=$0$;
        layer=.projects[0].networks[0].layers[2]$22$;
+       offset {x=0: y=0: };
+       use_layer_type=1;
+       ext_flags=TARG;
+       noise {type=NONE: mean=0: var=0.5: par=1: };
+       value_names{        };
+      };
+      LayerWriter @[2] {
+       data=$8$;
+       chan_name="Name";
+       net_target=TRIAL_NAME;
+       network=$0$;
+       layer=$22$;
        offset {x=0: y=0: };
        use_layer_type=1;
        ext_flags=TARG;
@@ -1794,10 +1833,10 @@ else min_cycles = network->min_cycles_phase2;
       result_var=;
       method_spec {
        script_obj=.projects[0].programs.gp[0][5].vars[1]$24$;
-       method=LayerRWBase_List::SetAllData;
+       method=LayerRWBase_List::SetAllDataNetwork;
       };
-      args{ data;};
-{ DataBlock* db;      };
+      args{ data;network;};
+{ DataBlock* db;Network* net;      };
      };
      MethodCall @[1] {
       desc=;
@@ -1883,8 +1922,16 @@ else min_cycles = network->min_cycles_phase2;
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[5] {
-	name="act";
+	name="trial_name";
 	object=$0$;
+	variable="trial_name";
+	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[6] {
+	name="input";
+	object=$21$;
 	variable="act";
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1926,26 +1973,37 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=MethodCall;
      el_def=0;
      MethodCall @[0] {
+      desc=;
+      off=0;
+      result_var=;
+      method_spec {
+       script_obj=.projects[0].programs.gp[0][6].vars[1]$27$;
+       method=NetMonitor::CheckConfig;
+      };
+      args{ false;};
+{ bool quiet;      };
+     };
+     MethodCall @[1] {
       desc="Initialize monitoring data (get rid of any existing)";
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][6].vars[0]$27$;
+       script_obj=.projects[0].programs.gp[0][6].vars[0]$28$;
        method=DataTable::ResetData;
       };
       args{ };
 {       };
      };
-     MethodCall @[1] {
+     MethodCall @[2] {
       desc="update the monitor items and data schema";
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][6].vars[1]$28$;
+       script_obj=$27$;
        method=NetMonitor::UpdateMonitors;
       };
-      args{ };
-{       };
+      args{ true;};
+{ bool reset_first;      };
      };
     };
     prog_code {
@@ -1957,7 +2015,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=$27$;
+       script_obj=$28$;
        method=DataTable::AddBlankRow;
       };
       args{ };
@@ -1968,8 +2026,8 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=$28$;
-       method=NetMonitor::UpdateMonVals;
+       script_obj=$27$;
+       method=NetMonitor::GetMonVals;
       };
       args{ };
 {       };
@@ -1979,7 +2037,7 @@ else min_cycles = network->min_cycles_phase2;
       off=1;
       result_var=;
       method_spec {
-       script_obj=$27$;
+       script_obj=$28$;
        method=DataBlock::WriteDone;
       };
       args{ };
@@ -2312,6 +2370,162 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_def=0;
 	  };
 	 };
+	 LayerView @[42] {
+	  m_data=$21$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	 };
+	 LayerView @[43] {
+	  m_data=$30$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
+	 };
+	 LayerView @[44] {
+	  m_data=$22$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=4.5: z=0: }: };
+	 };
+	 PrjnView @[45] {
+	  m_data=$31$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[46] {
+	  m_data=$32$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=4.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[47] {
+	  m_data=$33$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 LayerView @[48] {
+	  m_data=$21$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	 };
+	 LayerView @[49] {
+	  m_data=$30$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
+	 };
+	 LayerView @[50] {
+	  m_data=$22$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=4.5: z=0: }: };
+	 };
+	 PrjnView @[51] {
+	  m_data=$31$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[52] {
+	  m_data=$32$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=4.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[53] {
+	  m_data=$33$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 LayerView @[54] {
+	  m_data=$21$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	 };
+	 LayerView @[55] {
+	  m_data=$30$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
+	 };
+	 LayerView @[56] {
+	  m_data=$22$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=4.5: z=0: }: };
+	 };
+	 PrjnView @[57] {
+	  m_data=$31$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[58] {
+	  m_data=$32$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=4.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[59] {
+	  m_data=$33$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 LayerView @[60] {
+	  m_data=$21$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	 };
+	 LayerView @[61] {
+	  m_data=$30$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
+	 };
+	 LayerView @[62] {
+	  m_data=$22$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=4.5: z=0: }: };
+	 };
+	 PrjnView @[63] {
+	  m_data=$31$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[64] {
+	  m_data=$32$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=4.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
+	 PrjnView @[65] {
+	  m_data=$33$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
+	  children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	 };
 	};
 	scale {
 	 name=;
@@ -2352,7 +2566,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
   };
  };
  use_sim_log=0;
- prev_file_nm=;
+ prev_file_nm="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.proj";
  networks {
   name=;
   el_typ=LeabraNetwork;
@@ -2477,7 +2691,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=0;
+	cur_val=1;
        };
        lmix {hebb=0.001: err=0.99900001: err_sb=1: };
        savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -2499,7 +2713,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=0;
+      cur_val=1;
      };
      lmix {hebb=0.001: err=0.99900001: err_sb=1: };
      savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -2553,7 +2767,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraUnit @[0] {
        name=;
        spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2586,13 +2800,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.57105726;
+	wt=0.33486274;
        };
        n_recv_cons=0;
        pos {x=0: y=0: z=0: };
-       act_avg=0.175;
+       act_avg=0.17800437;
        act_m=0;
-       act_p=0;
+       act_p=0.94999999;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
@@ -2601,7 +2815,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[1] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2634,11 +2848,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.42252475;
+	wt=0.50364757;
        };
        n_recv_cons=0;
        pos {x=1: y=0: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -2649,10 +2863,10 @@ LeabraCon @*(.bias) {
       LeabraUnit @[2] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
-       ext=0;
-       act=0;
+       ext=1;
+       act=0.94999999;
        net=0;
        recv {
 	name=;
@@ -2682,12 +2896,12 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.35067037;
+	wt=0.68008935;
        };
        n_recv_cons=0;
        pos {x=2: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.94999999;
        act_p=0;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
@@ -2697,7 +2911,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[3] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2730,11 +2944,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.72162873;
+	wt=0.34789184;
        };
        n_recv_cons=0;
        pos {x=3: y=0: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -2745,7 +2959,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[4] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2778,13 +2992,13 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.36451817;
+	wt=0.39866513;
        };
        n_recv_cons=0;
        pos {x=4: y=0: z=0: };
-       act_avg=0.175;
+       act_avg=0.17800437;
        act_m=0;
-       act_p=0;
+       act_p=0.94999999;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
@@ -2793,7 +3007,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[5] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2826,11 +3040,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.5327934;
+	wt=0.52420598;
        };
        n_recv_cons=0;
        pos {x=0: y=1: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -2841,7 +3055,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[6] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2874,11 +3088,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.63890237;
+	wt=0.3193787;
        };
        n_recv_cons=0;
        pos {x=1: y=1: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -2889,10 +3103,10 @@ LeabraCon @*(.bias) {
       LeabraUnit @[7] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
-       ext=0;
-       act=0;
+       ext=1;
+       act=0.94999999;
        net=0;
        recv {
 	name=;
@@ -2922,12 +3136,12 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.58583122;
+	wt=0.61925888;
        };
        n_recv_cons=0;
        pos {x=2: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.94999999;
        act_p=0;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
@@ -2937,7 +3151,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[8] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -2970,11 +3184,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.54410952;
+	wt=0.3493;
        };
        n_recv_cons=0;
        pos {x=3: y=1: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -2985,7 +3199,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[9] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3018,11 +3232,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.407065;
+	wt=0.39479998;
        };
        n_recv_cons=0;
        pos {x=4: y=1: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3033,7 +3247,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[10] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3066,11 +3280,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.74073362;
+	wt=0.33302504;
        };
        n_recv_cons=0;
        pos {x=0: y=2: z=0: };
-       act_avg=0.175;
+       act_avg=0.17798063;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3081,7 +3295,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[11] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3114,11 +3328,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.42561781;
+	wt=0.59989887;
        };
        n_recv_cons=0;
        pos {x=1: y=2: z=0: };
-       act_avg=0.175;
+       act_avg=0.17798063;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3129,10 +3343,10 @@ LeabraCon @*(.bias) {
       LeabraUnit @[12] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
-       ext=0;
-       act=0;
+       ext=1;
+       act=0.94999999;
        net=0;
        recv {
 	name=;
@@ -3162,13 +3376,13 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.74294931;
+	wt=0.38233483;
        };
        n_recv_cons=0;
        pos {x=2: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
+       act_avg=0.18273063;
+       act_m=0.94999999;
+       act_p=0.94999999;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
@@ -3177,7 +3391,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[13] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3210,11 +3424,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.65541655;
+	wt=0.31981498;
        };
        n_recv_cons=0;
        pos {x=3: y=2: z=0: };
-       act_avg=0.175;
+       act_avg=0.17798063;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3225,7 +3439,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[14] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3258,11 +3472,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.55143881;
+	wt=0.39372495;
        };
        n_recv_cons=0;
        pos {x=4: y=2: z=0: };
-       act_avg=0.175;
+       act_avg=0.17798063;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3273,7 +3487,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[15] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3306,11 +3520,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.7246151;
+	wt=0.30911309;
        };
        n_recv_cons=0;
        pos {x=0: y=3: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3321,7 +3535,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[16] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3354,11 +3568,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.57475555;
+	wt=0.39297181;
        };
        n_recv_cons=0;
        pos {x=1: y=3: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3369,10 +3583,10 @@ LeabraCon @*(.bias) {
       LeabraUnit @[17] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
-       ext=0;
-       act=0;
+       ext=1;
+       act=0.94999999;
        net=0;
        recv {
 	name=;
@@ -3402,12 +3616,12 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.58290827;
+	wt=0.49246472;
        };
        n_recv_cons=0;
        pos {x=2: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.94999999;
        act_p=0;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
@@ -3417,7 +3631,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[18] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3450,11 +3664,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.28006893;
+	wt=0.55130696;
        };
        n_recv_cons=0;
        pos {x=3: y=3: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3465,7 +3679,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[19] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3498,11 +3712,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.55163437;
+	wt=0.74078631;
        };
        n_recv_cons=0;
        pos {x=4: y=3: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3513,7 +3727,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[20] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3546,13 +3760,13 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.60422981;
+	wt=0.28025511;
        };
        n_recv_cons=0;
        pos {x=0: y=4: z=0: };
-       act_avg=0.175;
+       act_avg=0.17800437;
        act_m=0;
-       act_p=0;
+       act_p=0.94999999;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
@@ -3561,7 +3775,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[21] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3594,11 +3808,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.28328466;
+	wt=0.35802788;
        };
        n_recv_cons=0;
        pos {x=1: y=4: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3609,10 +3823,10 @@ LeabraCon @*(.bias) {
       LeabraUnit @[22] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
-       ext=0;
-       act=0;
+       ext=1;
+       act=0.94999999;
        net=0;
        recv {
 	name=;
@@ -3642,12 +3856,12 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.639135;
+	wt=0.57877612;
        };
        n_recv_cons=0;
        pos {x=2: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.94999999;
        act_p=0;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
@@ -3657,7 +3871,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[23] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3690,11 +3904,11 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.43916613;
+	wt=0.6791954;
        };
        n_recv_cons=0;
        pos {x=3: y=4: z=0: };
-       act_avg=0.175;
+       act_avg=0.17325437;
        act_m=0;
        act_p=0;
        act_dif=0;
@@ -3705,7 +3919,7 @@ LeabraCon @*(.bias) {
       LeabraUnit @[24] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=EXT;
        targ=0;
        ext=0;
        act=0;
@@ -3738,13 +3952,13 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.25226951;
+	wt=0.69514644;
        };
        n_recv_cons=0;
        pos {x=4: y=4: z=0: };
-       act_avg=0.175;
+       act_avg=0.17800437;
        act_m=0;
-       act_p=0;
+       act_p=0.94999999;
        act_dif=0;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
@@ -3753,21 +3967,21 @@ LeabraCon @*(.bias) {
      };
      unit_spec {type=LeabraUnitSpec: spec=$36$: };
      lesion=0;
-     ext_flag=NO_EXTERNAL;
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
-     acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.19: max=0.94999999: max_i=2: };
+     acts {avg=0.19: max=0.94999999: max_i=2: };
+     acts_p {avg=0.19: max=0.94999999: max_i=0: };
      acts_m {avg=0.19: max=0.94999999: max_i=2: };
      phase_dif_ratio=1;
-     kwta {k=12: pct=0.47999999: pct_c=0.51999998: adth_k=1: k_ithr=-0.1: k1_ithr=-0.1: ithr_r=0: ithr_diff=-0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=5: pct=0.2: pct_c=0.80000001: adth_k=1: k_ithr=-0.1: k1_ithr=-0.1: ithr_r=0: ithr_diff=-0: tie_brk=0: };
+     i_val {kwta=0: g_i=0.60000002: gp_g_i=0: g_i_orig=0.60000002: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.47999999: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.2: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$39$: };
      stm_gain=0.5;
-     hard_clamped=0;
+     hard_clamped=1;
      prv_phase=0;
      dav=0;
      net_rescale=1;
@@ -3836,8 +4050,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.23800656;
+       net=0.62741327;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -3859,10 +4073,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.64842248; 0.4767527; 0.46931118; 0.67625195; 0.47304058; 0.35464668; 0.46212184; 0.54657996; 
-0.27830943; 0.51509464; 0.48014486; 0.29760307; 0.63197184; 0.66550648; 0.30263531; 0.50282633; 
-0.71975255; 0.28226131; 0.62636769; 0.51102138; 0.31951565; 0.73834431; 0.41597104; 0.33993083; 
-0.6549691; };
+	 wt = {0.54211676; 0.65912306; 0.47847611; 0.6032998; 0.55247921; 0.71601182; 0.66280538; 0.57163423; 
+0.62613857; 0.61487579; 0.59636033; 0.66940695; 0.52903736; 0.41682932; 0.30344763; 0.30904272; 
+0.28294823; 0.62876111; 0.66107559; 0.36630511; 0.3499783; 0.57284409; 0.49433008; 0.66121048; 
+0.35799417; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -3877,10 +4091,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.41088811; 0.32005379; 0.30136091; 0.37325653; 0.65741301; 0.34159368; 0.43020785; 0.26049656; 
-0.46367696; 0.25164735; 0.64246619; 0.27191466; 0.41787022; 0.31701005; 0.53008306; 0.29844177; 
-0.52323556; 0.54269898; 0.54259324; 0.27482605; 0.30005687; 0.7364375; 0.50020182; 0.56433499; 
-0.46946958; };
+	 wt = {0.56515712; 0.52599514; 0.61306721; 0.72764659; 0.64389652; 0.33075491; 0.5385645; 0.69909316; 
+0.63634413; 0.41873404; 0.72148091; 0.37680441; 0.45599788; 0.42544836; 0.66540217; 0.2833795; 
+0.62204313; 0.74509621; 0.53487581; 0.36491963; 0.25949243; 0.25461304; 0.66278994; 0.60286856; 
+0.62439609; };
 	};
        };
        send {
@@ -3902,14 +4116,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.30504531;
+	wt=0.66166115;
        };
        n_recv_cons=50;
        pos {x=0: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17688569;
+       act_m=0.23800656;
+       act_p=0.24365442;
+       act_dif=-0.11305921;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -3920,8 +4134,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.032190543;
+       net=0.57940441;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -3943,10 +4157,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.73362154; 0.7262727; 0.51656055; 0.66579092; 0.54761422; 0.48025161; 0.30225739; 0.4509809; 
-0.57429945; 0.63347435; 0.3531698; 0.64640969; 0.6710825; 0.53868163; 0.52937865; 0.70425355; 
-0.53858638; 0.51721931; 0.40563089; 0.51751286; 0.67812574; 0.54252028; 0.61338091; 0.48655531; 
-0.55883217; };
+	 wt = {0.53954929; 0.64178044; 0.7226854; 0.58404118; 0.46894398; 0.26369312; 0.25397816; 0.60590142; 
+0.65836668; 0.72277892; 0.56336081; 0.41801655; 0.40668091; 0.38268089; 0.36112791; 0.54459369; 
+0.72349858; 0.46298069; 0.33973408; 0.54703534; 0.40073407; 0.45608231; 0.39104953; 0.39493895; 
+0.41717973; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -3961,10 +4175,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.58757854; 0.35963595; 0.46071976; 0.49931628; 0.55035299; 0.35948864; 0.43488371; 0.62697947; 
-0.45048544; 0.37729946; 0.60547906; 0.439987; 0.64643908; 0.48489609; 0.58272302; 0.71800327; 
-0.73888588; 0.73774153; 0.25258917; 0.68688774; 0.51024669; 0.39421585; 0.49961084; 0.6491093; 
-0.51939631; };
+	 wt = {0.63476658; 0.73272628; 0.31867421; 0.58228481; 0.41060928; 0.33004683; 0.25192913; 0.57432503; 
+0.53067172; 0.5641101; 0.46232864; 0.52203214; 0.62043238; 0.45871794; 0.64236438; 0.38892728; 
+0.3679662; 0.474751; 0.60927677; 0.34203228; 0.66101223; 0.60371917; 0.44373217; 0.66542971; 
+0.40418899; };
 	};
        };
        send {
@@ -3986,14 +4200,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.35938147;
+	wt=0.69007915;
        };
        n_recv_cons=50;
        pos {x=1: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17485221;
+       act_m=0.032190543;
+       act_p=0.27391887;
+       act_dif=0.27389249;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4004,8 +4218,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.048239715;
+       net=0.57006282;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4027,10 +4241,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.51770198; 0.31271094; 0.38458961; 0.54509944; 0.58739346; 0.45559907; 0.25140709; 0.3493759; 
-0.45108396; 0.34188548; 0.41572702; 0.72918606; 0.61800408; 0.68231481; 0.50348425; 0.66655356; 
-0.72621799; 0.45633778; 0.52131981; 0.35007483; 0.41826379; 0.69652176; 0.32101613; 0.27004033; 
-0.38530517; };
+	 wt = {0.71968746; 0.53764451; 0.30972254; 0.72041947; 0.6242522; 0.2601589; 0.66009974; 0.63169867; 
+0.67729956; 0.33413604; 0.48711807; 0.2667748; 0.68171775; 0.41074431; 0.39040017; 0.50009292; 
+0.30892542; 0.64222008; 0.4680818; 0.67013925; 0.34345004; 0.72993118; 0.53852159; 0.52961391; 
+0.44034088; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4045,10 +4259,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.6819123; 0.72047663; 0.62034518; 0.61169267; 0.514691; 0.37825069; 0.43284178; 0.56521142; 
-0.30819201; 0.47177219; 0.44039103; 0.72297716; 0.50945812; 0.63593996; 0.35184091; 0.26735377; 
-0.25651991; 0.32373658; 0.66498339; 0.36591551; 0.7120809; 0.49262601; 0.55151391; 0.3691074; 
-0.43242723; };
+	 wt = {0.67493945; 0.63216913; 0.62886971; 0.66947144; 0.72276235; 0.62269264; 0.32555106; 0.25739044; 
+0.29883546; 0.2724736; 0.626468; 0.53207743; 0.66629469; 0.61646366; 0.32059142; 0.51552057; 
+0.5484845; 0.26492146; 0.64052993; 0.55675149; 0.45654443; 0.67552269; 0.44486126; 0.46858403; 
+0.55687189; };
 	};
        };
        send {
@@ -4070,14 +4284,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.64863664;
+	wt=0.71764511;
        };
        n_recv_cons=50;
        pos {x=2: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17869925;
+       act_m=0.048239715;
+       act_p=0.89779335;
+       act_dif=0.13199359;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4088,8 +4302,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.92060298;
+       net=0.68748379;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4111,10 +4325,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.33740574; 0.34992364; 0.42987069; 0.49513543; 0.50471139; 0.60194981; 0.41073713; 0.49301261; 
-0.5073489; 0.46913347; 0.45281011; 0.25239891; 0.74309337; 0.2697503; 0.5062533; 0.68052506; 
-0.35883021; 0.65433621; 0.71842718; 0.65918893; 0.70323181; 0.60880727; 0.36060053; 0.47088104; 
-0.29222777; };
+	 wt = {0.65049863; 0.34748277; 0.65431112; 0.51037651; 0.68006641; 0.37866357; 0.2587629; 0.55912036; 
+0.70459801; 0.54508215; 0.35215354; 0.26792011; 0.73309207; 0.35186407; 0.31405085; 0.25174025; 
+0.3383992; 0.65153176; 0.62811291; 0.39293516; 0.35993478; 0.34843117; 0.74377656; 0.46582669; 
+0.52013373; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4129,10 +4343,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.44552776; 0.58189905; 0.59697014; 0.28345037; 0.70995116; 0.54817331; 0.44671994; 0.49164525; 
-0.44886512; 0.60249686; 0.54549515; 0.72809577; 0.56955314; 0.72678554; 0.60784936; 0.4068602; 
-0.55014426; 0.57878733; 0.56944424; 0.57716024; 0.74074972; 0.49954993; 0.3493529; 0.35692039; 
-0.43526423; };
+	 wt = {0.30553231; 0.54659796; 0.68876767; 0.38445216; 0.51930547; 0.6416325; 0.64469522; 0.68539011; 
+0.30140769; 0.56906635; 0.28670585; 0.34651226; 0.48960546; 0.56502432; 0.29842705; 0.67916101; 
+0.46408647; 0.49630773; 0.52323335; 0.42089793; 0.39440483; 0.26741144; 0.66602671; 0.64162171; 
+0.50067896; };
 	};
        };
        send {
@@ -4154,14 +4368,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.38564667;
+	wt=0.53396034;
        };
        n_recv_cons=50;
        pos {x=3: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17619106;
+       act_m=0.92060298;
+       act_p=0.58733606;
+       act_dif=-0.31932896;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4172,8 +4386,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.16985402;
+       net=0.580957;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4195,10 +4409,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.60642999; 0.6742568; 0.63485944; 0.6425516; 0.48068133; 0.28815532; 0.49671754; 0.5111388; 
-0.29755259; 0.51047546; 0.32750013; 0.49287489; 0.71578312; 0.69671452; 0.64526951; 0.40678209; 
-0.53929561; 0.50378293; 0.72838414; 0.30169547; 0.62075448; 0.2925151; 0.67855084; 0.37964845; 
-0.30675554; };
+	 wt = {0.36868364; 0.7172178; 0.54708523; 0.26910576; 0.46224746; 0.5238589; 0.67517644; 0.45336497; 
+0.497888; 0.53126317; 0.6525687; 0.30629164; 0.67788935; 0.45086637; 0.47244206; 0.26617315; 
+0.28808406; 0.30270335; 0.38143405; 0.49294651; 0.51682073; 0.25131765; 0.53386337; 0.39771259; 
+0.69741249; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4213,10 +4427,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.69776034; 0.61105824; 0.65484464; 0.70253819; 0.43877509; 0.47315627; 0.36666694; 0.72540665; 
-0.67437148; 0.62640512; 0.59472048; 0.70627505; 0.32730609; 0.47972056; 0.31297344; 0.3222926; 
-0.35528713; 0.49399829; 0.35662186; 0.74959022; 0.3656961; 0.28592932; 0.47214156; 0.7001164; 
-0.74975133; };
+	 wt = {0.70894337; 0.33211216; 0.71795368; 0.41941929; 0.55476373; 0.33968696; 0.69275683; 0.52190512; 
+0.56640965; 0.38253272; 0.60002488; 0.70877457; 0.59475267; 0.54020953; 0.62369168; 0.69143796; 
+0.49624196; 0.43042955; 0.30612689; 0.72691113; 0.31427112; 0.45867899; 0.37397832; 0.48633969; 
+0.49171832; };
 	};
        };
        send {
@@ -4238,14 +4452,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.2549184;
+	wt=0.71732569;
        };
        n_recv_cons=50;
        pos {x=4: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.18100105;
+       act_m=0.16985402;
+       act_p=0.74787104;
+       act_dif=0.25995508;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4256,8 +4470,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.27413189;
+       net=0.57797837;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4279,10 +4493,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.56439275; 0.44196236; 0.70559859; 0.52051485; 0.6322403; 0.33635414; 0.50502354; 0.63856018; 
-0.5491333; 0.65076363; 0.37279072; 0.7434715; 0.27041301; 0.5051496; 0.66754603; 0.51773614; 
-0.6691215; 0.71788907; 0.72918522; 0.45218652; 0.4490878; 0.36007378; 0.62116069; 0.47130832; 
-0.31102023; };
+	 wt = {0.68319792; 0.64566034; 0.67862546; 0.3225621; 0.56216282; 0.48713219; 0.31187326; 0.54049355; 
+0.66806537; 0.37567273; 0.59751344; 0.25624922; 0.32730481; 0.33861208; 0.72557503; 0.60730839; 
+0.33624622; 0.72110873; 0.73351532; 0.27620068; 0.59545964; 0.54019403; 0.27747819; 0.70549619; 
+0.58224112; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4297,10 +4511,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.41674531; 0.5113185; 0.50151491; 0.72863793; 0.6724866; 0.42693442; 0.53606635; 0.28492028; 
-0.60003173; 0.4134773; 0.56247121; 0.30525315; 0.66868818; 0.31367099; 0.54314303; 0.5404954; 
-0.536533; 0.56325448; 0.50957525; 0.38165045; 0.58095407; 0.54118347; 0.33592224; 0.32564628; 
-0.74128091; };
+	 wt = {0.69624513; 0.40763238; 0.72395563; 0.3581886; 0.48435602; 0.5622865; 0.68659067; 0.42111295; 
+0.49060231; 0.52044755; 0.58430165; 0.32791543; 0.62373173; 0.35364801; 0.5263651; 0.25297552; 
+0.37245989; 0.4366461; 0.5106588; 0.57557219; 0.40732703; 0.6791116; 0.25970241; 0.23981163; 
+0.35932294; };
 	};
        };
        send {
@@ -4322,14 +4536,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.50988519;
+	wt=0.55533624;
        };
        n_recv_cons=50;
        pos {x=0: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17681442;
+       act_m=0.27413189;
+       act_p=0.70058179;
+       act_dif=-0.0038105845;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4340,8 +4554,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.25167918;
+       net=0.56835002;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4363,10 +4577,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.71243596; 0.6069535; 0.60388231; 0.39098024; 0.39561969; 0.41921294; 0.52368808; 0.4131985; 
-0.40473711; 0.34120178; 0.41047078; 0.26447091; 0.26453722; 0.26210073; 0.41075885; 0.47115368; 
-0.58477986; 0.5606482; 0.67995131; 0.46481887; 0.64349985; 0.41588634; 0.50069356; 0.30436045; 
-0.53148782; };
+	 wt = {0.63278544; 0.405191; 0.72225547; 0.3908931; 0.3871094; 0.31452173; 0.63809949; 0.5873881; 
+0.27426514; 0.25911865; 0.30176413; 0.70582134; 0.61573541; 0.42643011; 0.66844898; 0.32330966; 
+0.42575142; 0.41887969; 0.31343389; 0.4137623; 0.64845514; 0.71852827; 0.34069687; 0.60087937; 
+0.26554; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4381,10 +4595,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.65071529; 0.58739954; 0.3303746; 0.62263489; 0.47650275; 0.56613338; 0.32749712; 0.43135396; 
-0.68993831; 0.27309963; 0.40959167; 0.6171627; 0.62627298; 0.25688285; 0.33694464; 0.74650741; 
-0.68819588; 0.72163659; 0.46128044; 0.48824877; 0.34057236; 0.73107874; 0.261904; 0.39203671; 
-0.34101027; };
+	 wt = {0.2888844; 0.65871811; 0.72660077; 0.38853994; 0.67601633; 0.31370714; 0.48149848; 0.45889452; 
+0.5909763; 0.39241037; 0.36899951; 0.3742474; 0.24635364; 0.42167649; 0.55437911; 0.53776336; 
+0.4407295; 0.33390784; 0.51248854; 0.41704604; 0.4886041; 0.41780853; 0.37323192; 0.52051014; 
+0.28399932; };
 	};
        };
        send {
@@ -4406,14 +4620,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.52057147;
+	wt=0.2443274;
        };
        n_recv_cons=50;
        pos {x=1: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17335534;
+       act_m=0.25167918;
+       act_p=0.0073377895;
+       act_dif=-0.2661837;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4424,8 +4638,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=3.6659279e-05;
+       net=0.49285963;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4447,10 +4661,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.38905865; 0.25244728; 0.25663197; 0.55848378; 0.58483249; 0.44003284; 0.28313196; 0.73948854; 
-0.55392224; 0.3000066; 0.36267844; 0.58287776; 0.35045633; 0.30023718; 0.57317728; 0.58616233; 
-0.63072181; 0.3186658; 0.67087615; 0.3996467; 0.4419699; 0.51856518; 0.3053236; 0.66549516; 
-0.33951253; };
+	 wt = {0.36243358; 0.49130526; 0.31544819; 0.69468999; 0.30250245; 0.37120935; 0.44295701; 0.40101111; 
+0.4038727; 0.53321445; 0.50454414; 0.47645694; 0.25811693; 0.63593197; 0.37990099; 0.26564938; 
+0.52539372; 0.38901004; 0.54598033; 0.65145135; 0.51594871; 0.5075413; 0.3663094; 0.63496196; 
+0.45677209; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4465,10 +4679,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.7263996; 0.52338743; 0.45465493; 0.45480078; 0.44397351; 0.33411425; 0.27811795; 0.37101907; 
-0.45609999; 0.73777902; 0.58996224; 0.38362393; 0.35468334; 0.53321183; 0.61872756; 0.5496856; 
-0.59851742; 0.47246242; 0.5948146; 0.42252427; 0.36773673; 0.65285695; 0.65045542; 0.32752788; 
-0.66700983; };
+	 wt = {0.352009; 0.27820373; 0.35659805; 0.38690388; 0.68631983; 0.42850354; 0.58834618; 0.63447833; 
+0.49308029; 0.61613864; 0.33321905; 0.55674684; 0.47046828; 0.26309061; 0.67891252; 0.4981457; 
+0.48875928; 0.43675163; 0.4572466; 0.73980492; 0.36867398; 0.43535498; 0.32315409; 0.38576311; 
+0.26940459; };
 	};
        };
        send {
@@ -4490,14 +4704,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.62657356;
+	wt=0.46718118;
        };
        n_recv_cons=50;
        pos {x=2: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17326003;
+       act_m=3.6659279e-05;
+       act_p=6.1033376e-07;
+       act_dif=-0.00012136868;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4508,8 +4722,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.023581762;
+       net=0.56055665;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4531,10 +4745,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.6622448; 0.34214258; 0.27144063; 0.28781691; 0.66932082; 0.7086153; 0.48576689; 0.35982168; 
-0.67270297; 0.25126314; 0.73220634; 0.30506709; 0.560179; 0.59923524; 0.54222679; 0.56923646; 
-0.67624843; 0.70210481; 0.4264316; 0.26675713; 0.54583126; 0.37574852; 0.30902916; 0.59724319; 
-0.31404006; };
+	 wt = {0.48007432; 0.50867039; 0.3428044; 0.54195201; 0.63640988; 0.57188767; 0.31406042; 0.32350615; 
+0.34031668; 0.47262755; 0.65583259; 0.69069934; 0.31705645; 0.67863351; 0.32384473; 0.51754862; 
+0.4424915; 0.39310205; 0.64945179; 0.58188134; 0.67176211; 0.59812093; 0.69719189; 0.35392657; 
+0.30230701; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4549,10 +4763,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.71291792; 0.35612282; 0.74467701; 0.67851073; 0.5935061; 0.58622038; 0.49634314; 0.44672686; 
-0.60881793; 0.6892848; 0.68697685; 0.61197627; 0.69078565; 0.53075993; 0.37272704; 0.66938156; 
-0.3577002; 0.64377081; 0.30941811; 0.50725681; 0.48203367; 0.47237074; 0.40942022; 0.51539201; 
-0.73136985; };
+	 wt = {0.60162729; 0.61924249; 0.37898093; 0.43600512; 0.40848246; 0.35542318; 0.47859144; 0.74089015; 
+0.37289196; 0.54418278; 0.64649063; 0.36549824; 0.72094303; 0.73537642; 0.73633546; 0.56680489; 
+0.62041247; 0.59685653; 0.37268806; 0.66517597; 0.51419634; 0.70040429; 0.34910482; 0.7009142; 
+0.359905; };
 	};
        };
        send {
@@ -4574,14 +4788,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.37276968;
+	wt=0.46960357;
        };
        n_recv_cons=50;
        pos {x=3: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17880604;
+       act_m=0.023581762;
+       act_p=0.28409493;
+       act_dif=0.25214428;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4592,8 +4806,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.00064579357;
+       net=0.58171999;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4615,10 +4829,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.50485039; 0.48602456; 0.48897928; 0.71509624; 0.31533143; 0.61865598; 0.3203941; 0.40547583; 
-0.39365745; 0.58431423; 0.68584025; 0.49121833; 0.60464942; 0.32195288; 0.26819009; 0.27010787; 
-0.45033789; 0.65472585; 0.7268095; 0.30297047; 0.70610595; 0.39798361; 0.42086005; 0.37497529; 
-0.47841418; };
+	 wt = {0.34664631; 0.45439601; 0.44213736; 0.25380936; 0.40978974; 0.55002201; 0.36304194; 0.74833536; 
+0.38837212; 0.53696442; 0.43441212; 0.30819082; 0.39822268; 0.33212596; 0.40742844; 0.45057154; 
+0.42242002; 0.4769921; 0.25728685; 0.58209109; 0.41917059; 0.45892644; 0.73893881; 0.67179036; 
+0.54665792; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4633,10 +4847,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.74368268; 0.55678332; 0.57494342; 0.49790299; 0.52092564; 0.42132875; 0.31149602; 0.26032352; 
-0.33866304; 0.41565824; 0.69144934; 0.29498959; 0.69666207; 0.28820667; 0.73024917; 0.4400599; 
-0.58350229; 0.32960555; 0.67299539; 0.70973945; 0.70539844; 0.56745726; 0.64141166; 0.44490552; 
-0.47707254; };
+	 wt = {0.32292813; 0.412891; 0.35380867; 0.38072342; 0.2621105; 0.27366316; 0.33423299; 0.34808403; 
+0.26030362; 0.72995496; 0.5979557; 0.56411779; 0.37926251; 0.25554073; 0.70906663; 0.60622758; 
+0.60648459; 0.65216088; 0.30765018; 0.64836431; 0.52644348; 0.68542176; 0.33459073; 0.42359796; 
+0.63408399; };
 	};
        };
        send {
@@ -4658,14 +4872,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.30759436;
+	wt=0.39537197;
        };
        n_recv_cons=50;
        pos {x=4: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17325485;
+       act_m=0.00064579357;
+       act_p=5.236068e-05;
+       act_dif=5.2360607e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4676,8 +4890,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.79931647;
+       net=0.60495263;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4699,10 +4913,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.42262933; 0.26542285; 0.68941677; 0.49014664; 0.72033471; 0.51889265; 0.33635297; 0.60390931; 
-0.37878364; 0.73722601; 0.67832112; 0.31496811; 0.49880159; 0.6491363; 0.35819638; 0.4377749; 
-0.54923391; 0.53673506; 0.41961986; 0.50863361; 0.60483325; 0.52533311; 0.40230453; 0.74234068; 
-0.66911685; };
+	 wt = {0.56042308; 0.52050799; 0.51730663; 0.30087635; 0.54537374; 0.61817241; 0.66234761; 0.70431983; 
+0.41794592; 0.30978113; 0.37858269; 0.67879009; 0.44348797; 0.6996125; 0.32114053; 0.36616856; 
+0.33922213; 0.60077602; 0.4389728; 0.67287517; 0.45027825; 0.58307588; 0.48166552; 0.45656404; 
+0.45463604; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4717,10 +4931,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.5717386; 0.43477917; 0.63473094; 0.57470596; 0.54967046; 0.54179686; 0.28583032; 0.58701378; 
-0.64292216; 0.44155121; 0.66183424; 0.70158565; 0.45347047; 0.65088904; 0.70206583; 0.67409122; 
-0.48554435; 0.42695373; 0.40303552; 0.63305146; 0.67682427; 0.74553907; 0.33296388; 0.51964736; 
-0.5248031; };
+	 wt = {0.42018914; 0.36071113; 0.71668035; 0.42793176; 0.28286749; 0.65903336; 0.5403685; 0.69332939; 
+0.73150462; 0.39224654; 0.23482701; 0.41126826; 0.30047885; 0.5580712; 0.26349118; 0.27731243; 
+0.49728698; 0.32099584; 0.53082067; 0.4419772; 0.65112621; 0.40548289; 0.31467348; 0.40790978; 
+0.30433276; };
 	};
        };
        send {
@@ -4742,14 +4956,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.64182353;
+	wt=0.61941844;
        };
        n_recv_cons=50;
        pos {x=0: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17333861;
+       act_m=0.79931647;
+       act_p=0.015436266;
+       act_dif=-0.79489464;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4760,8 +4974,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.023806997;
+       net=0.56077397;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4783,10 +4997,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.71908045; 0.62148309; 0.3100903; 0.49518281; 0.64223373; 0.72735083; 0.59352183; 0.61581612; 
-0.65494591; 0.33753747; 0.4233759; 0.55561268; 0.7023173; 0.30373341; 0.39781377; 0.73402977; 
-0.46478656; 0.30411023; 0.70207405; 0.46786249; 0.6706475; 0.27134624; 0.39301533; 0.64412129; 
-0.36998743; };
+	 wt = {0.37317008; 0.31887415; 0.60189974; 0.31762031; 0.73141158; 0.57784623; 0.60116321; 0.647533; 
+0.68641549; 0.73877829; 0.52835941; 0.51951593; 0.31992215; 0.41041803; 0.27916199; 0.49738398; 
+0.59197581; 0.56256098; 0.70807964; 0.65079641; 0.46253625; 0.63935369; 0.50473714; 0.36824906; 
+0.25407225; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4801,10 +5015,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.31303456; 0.48370516; 0.34613115; 0.69155508; 0.26628715; 0.50304568; 0.44884169; 0.708884; 
-0.27364576; 0.6899662; 0.63362765; 0.59277248; 0.44471931; 0.57947218; 0.62670386; 0.2842285; 
-0.40548658; 0.45544764; 0.61175704; 0.55241954; 0.51350904; 0.37791139; 0.67558801; 0.39275208; 
-0.51663983; };
+	 wt = {0.42701548; 0.38187364; 0.48597696; 0.601412; 0.41828364; 0.30007893; 0.30311909; 0.72277445; 
+0.57260239; 0.35989672; 0.60568511; 0.36123991; 0.5512839; 0.55468947; 0.295477; 0.49833757; 
+0.55122459; 0.33135414; 0.45258567; 0.37615883; 0.63610739; 0.48840645; 0.60312992; 0.41414872; 
+0.56943387; };
 	};
        };
        send {
@@ -4826,14 +5040,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.70531869;
+	wt=0.52196598;
        };
        n_recv_cons=50;
        pos {x=1: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17360489;
+       act_m=0.023806997;
+       act_p=0.069942452;
+       act_dif=0.069223315;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4844,8 +5058,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.25708827;
+       net=0.5887832;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4867,10 +5081,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.63238358; 0.52250969; 0.60499024; 0.27549896; 0.5983026; 0.39227405; 0.66336596; 0.52525932; 
-0.26574239; 0.60314107; 0.68624055; 0.25502443; 0.41532344; 0.54008031; 0.28673601; 0.37811661; 
-0.39516914; 0.4349955; 0.6826241; 0.48196116; 0.58730143; 0.40747029; 0.74233758; 0.51817942; 
-0.35124981; };
+	 wt = {0.29169217; 0.57302558; 0.58405536; 0.68426383; 0.69661236; 0.30130509; 0.5878014; 0.5625757; 
+0.63630962; 0.4670611; 0.35161546; 0.31979188; 0.48614341; 0.61053371; 0.31997615; 0.52347553; 
+0.50465119; 0.2788161; 0.44913381; 0.45821586; 0.31233296; 0.31331399; 0.72887176; 0.53611958; 
+0.31638893; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4885,10 +5099,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.64336568; 0.71913218; 0.25536513; 0.70921552; 0.35415769; 0.30118567; 0.5090307; 0.38391596; 
-0.6529597; 0.53032756; 0.35618454; 0.49958026; 0.27552497; 0.35717645; 0.25549352; 0.52443504; 
-0.53247851; 0.46551028; 0.53367728; 0.54156017; 0.26332796; 0.47860163; 0.7395581; 0.34916157; 
-0.73799372; };
+	 wt = {0.56242871; 0.42096221; 0.32790196; 0.35790095; 0.69811869; 0.65164268; 0.57733637; 0.71902722; 
+0.29432094; 0.52072245; 0.67489791; 0.57047081; 0.60437161; 0.56625861; 0.50561678; 0.4430514; 
+0.61572987; 0.56928211; 0.33157578; 0.59332043; 0.38276789; 0.30463499; 0.53556687; 0.39148501; 
+0.39148465; };
 	};
        };
        send {
@@ -4910,14 +5124,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.71248931;
+	wt=0.35619304;
        };
        n_recv_cons=50;
        pos {x=2: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17408083;
+       act_m=0.25708827;
+       act_p=0.056057543;
+       act_dif=-0.0080044046;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -4928,8 +5142,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.025518782;
+       net=0.56609493;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -4951,10 +5165,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.66801322; 0.44552773; 0.61679661; 0.68386811; 0.61205685; 0.47205883; 0.64296424; 0.3776021; 
-0.72933435; 0.5893634; 0.41325647; 0.41794303; 0.5511961; 0.4749772; 0.59696984; 0.49234527; 
-0.60364932; 0.64428407; 0.54261762; 0.44737923; 0.53207809; 0.55284297; 0.25400078; 0.6475476; 
-0.61711216; };
+	 wt = {0.71997237; 0.27681258; 0.42172116; 0.36885974; 0.54273081; 0.57188767; 0.34642407; 0.53362834; 
+0.54305422; 0.7125743; 0.38491893; 0.58134598; 0.55034518; 0.52587366; 0.62334961; 0.36597994; 
+0.62115216; 0.30646583; 0.31047714; 0.37912235; 0.67160296; 0.36142594; 0.70762777; 0.61765313; 
+0.3518247; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -4969,10 +5183,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.50187731; 0.60146391; 0.41878366; 0.3899143; 0.62191761; 0.40659559; 0.62494814; 0.48508215; 
-0.35790241; 0.2889626; 0.6427961; 0.64236665; 0.46179986; 0.30011028; 0.66757822; 0.41469792; 
-0.37148342; 0.7302959; 0.65597606; 0.68948257; 0.67332661; 0.47570336; 0.32214913; 0.57512844; 
-0.28669128; };
+	 wt = {0.31260142; 0.2709384; 0.47762653; 0.3124364; 0.69364345; 0.52928156; 0.30372185; 0.39464018; 
+0.67058599; 0.58702314; 0.57457858; 0.4893842; 0.57281297; 0.64161766; 0.5692746; 0.36125487; 
+0.52822751; 0.5529176; 0.50328213; 0.29161274; 0.31296206; 0.4027591; 0.43261755; 0.65238184; 
+0.26057687; };
 	};
        };
        send {
@@ -4994,14 +5208,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.73757184;
+	wt=0.71015149;
        };
        n_recv_cons=50;
        pos {x=3: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17898579;
+       act_m=0.025518782;
+       act_p=0.42465016;
+       act_dif=-0.24998453;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5012,8 +5226,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0076062805;
+       net=0.53636354;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5035,10 +5249,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.51523554; 0.5543741; 0.67896956; 0.53878725; 0.49485323; 0.47185701; 0.65633494; 0.64768481; 
-0.3285265; 0.55287683; 0.30759317; 0.66042984; 0.35398149; 0.68425053; 0.36226547; 0.61645043; 
-0.55065119; 0.51351249; 0.42521459; 0.66646087; 0.51144099; 0.40508699; 0.2623418; 0.36810565; 
-0.73122525; };
+	 wt = {0.31745532; 0.45894149; 0.46259433; 0.51517969; 0.28229403; 0.74571145; 0.64475328; 0.42652258; 
+0.34201589; 0.54657954; 0.697142; 0.4819313; 0.42220053; 0.2801224; 0.38169131; 0.56644762; 
+0.50834632; 0.40235519; 0.70100325; 0.62848318; 0.66924304; 0.74280488; 0.3145881; 0.65394974; 
+0.28239939; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5053,10 +5267,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.2882306; 0.50256938; 0.43656328; 0.63255847; 0.46188381; 0.31769812; 0.46980435; 0.45041674; 
-0.375579; 0.30299169; 0.72753769; 0.42974764; 0.33765945; 0.60477412; 0.54386669; 0.38588756; 
-0.54950774; 0.68568957; 0.45725441; 0.40111685; 0.45963013; 0.3153671; 0.51264238; 0.52797621; 
-0.67441058; };
+	 wt = {0.38911241; 0.60582131; 0.28227398; 0.71443814; 0.26095507; 0.37000132; 0.71620464; 0.57581758; 
+0.70869112; 0.52968508; 0.47566795; 0.60841388; 0.53353012; 0.65713137; 0.6173777; 0.6314581; 
+0.58215183; 0.3346765; 0.74019235; 0.72445923; 0.37867814; 0.41927573; 0.41526219; 0.50796264; 
+0.30437282; };
 	};
        };
        send {
@@ -5078,14 +5292,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.70757997;
+	wt=0.43056178;
        };
        n_recv_cons=50;
        pos {x=4: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17446034;
+       act_m=0.0076062805;
+       act_p=1.9848718e-09;
+       act_dif=-0.0011125413;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5096,8 +5310,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.86717117;
+       net=0.63939404;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5119,10 +5333,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.47365221; 0.56088769; 0.66396713; 0.2995443; 0.70009744; 0.43541628; 0.71259391; 0.32576013; 
-0.39744878; 0.40798181; 0.52021217; 0.73961157; 0.39799738; 0.55533159; 0.37502944; 0.61803901; 
-0.62271178; 0.32398883; 0.63879275; 0.51414889; 0.30466607; 0.48144588; 0.51270199; 0.34881234; 
-0.7231729; };
+	 wt = {0.7120415; 0.66591406; 0.48811275; 0.34912539; 0.40366873; 0.38836715; 0.61382174; 0.48879004; 
+0.38095802; 0.58150214; 0.4336831; 0.51320839; 0.625067; 0.60413879; 0.65658659; 0.37907746; 
+0.53480196; 0.69217724; 0.64267689; 0.48005778; 0.4202621; 0.5271036; 0.45151868; 0.45916045; 
+0.67798567; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5137,10 +5351,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.67785192; 0.60348237; 0.4555698; 0.28013772; 0.63792872; 0.39094424; 0.38954508; 0.49525446; 
-0.73929226; 0.50451553; 0.4397698; 0.25931102; 0.44545141; 0.42569262; 0.47910732; 0.57951158; 
-0.68534803; 0.72726053; 0.47268289; 0.43746474; 0.67208993; 0.45313311; 0.3656171; 0.63251472; 
-0.50334346; };
+	 wt = {0.45824319; 0.42067885; 0.5070774; 0.38452026; 0.30578792; 0.47003716; 0.46619511; 0.69104183; 
+0.45486844; 0.71075106; 0.35814482; 0.44366866; 0.66578102; 0.69660735; 0.70323944; 0.40851307; 
+0.72678685; 0.27085274; 0.6639173; 0.50918746; 0.55629504; 0.34246042; 0.57730955; 0.55681342; 
+0.36013931; };
 	};
        };
        send {
@@ -5162,14 +5376,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.34342116;
+	wt=0.48477995;
        };
        n_recv_cons=50;
        pos {x=0: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.18042532;
+       act_m=0.86717117;
+       act_p=0.59832454;
+       act_dif=-0.25459772;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5180,8 +5394,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.00011802143;
+       net=0.4959138;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5203,10 +5417,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.47665611; 0.37406537; 0.6024009; 0.71261644; 0.46458679; 0.51249623; 0.73011518; 0.48851559; 
-0.5585618; 0.27516419; 0.41675431; 0.729357; 0.26020154; 0.74731112; 0.73552316; 0.28246576; 
-0.52927709; 0.65671539; 0.69504207; 0.51384568; 0.70301986; 0.55493176; 0.44335109; 0.64099002; 
-0.67891502; };
+	 wt = {0.5926255; 0.5098809; 0.43270466; 0.71426725; 0.37750921; 0.47793981; 0.27131048; 0.40579578; 
+0.6742819; 0.30078003; 0.58545709; 0.59102637; 0.29715261; 0.66985512; 0.3579506; 0.48062637; 
+0.61128557; 0.41188762; 0.54923761; 0.52947772; 0.28903255; 0.27528325; 0.38969284; 0.3611922; 
+0.72464156; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5221,10 +5435,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.25002205; 0.6552825; 0.72700387; 0.31711304; 0.46377128; 0.55734134; 0.51618588; 0.59006226; 
-0.39367089; 0.61684513; 0.45128977; 0.66807812; 0.33069178; 0.59669691; 0.26369679; 0.54633391; 
-0.29609263; 0.70191115; 0.32954219; 0.44779688; 0.39310533; 0.67637736; 0.28589147; 0.69681716; 
-0.37751383; };
+	 wt = {0.53126568; 0.71665382; 0.60053414; 0.49346095; 0.58132505; 0.70203519; 0.31601065; 0.68611735; 
+0.42097411; 0.43797964; 0.40142316; 0.54116195; 0.2963084; 0.55762643; 0.30101153; 0.3081848; 
+0.62780547; 0.35979873; 0.57880026; 0.59393501; 0.27726313; 0.42424399; 0.68232238; 0.23786716; 
+0.59174097; };
 	};
        };
        send {
@@ -5246,14 +5460,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.30377406;
+	wt=0.28415111;
        };
        n_recv_cons=50;
        pos {x=1: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17352088;
+       act_m=0.00011802143;
+       act_p=0.024952985;
+       act_dif=-0.68810278;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5264,8 +5478,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.31826648;
+       net=0.62136984;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5287,10 +5501,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.73756206; 0.36117217; 0.67018867; 0.645051; 0.70656139; 0.53631234; 0.29451293; 0.50604856; 
-0.30923271; 0.63057023; 0.68416268; 0.64480114; 0.53494179; 0.66370666; 0.73484004; 0.45502278; 
-0.50781763; 0.4285624; 0.32825112; 0.35891655; 0.72519147; 0.46935266; 0.29040012; 0.35895568; 
-0.63150406; };
+	 wt = {0.36418822; 0.40631089; 0.45251521; 0.44009635; 0.26436576; 0.65850896; 0.35368025; 0.42094851; 
+0.29623881; 0.36018366; 0.70253956; 0.74839085; 0.73560768; 0.27463815; 0.64567143; 0.60310578; 
+0.43315437; 0.67382812; 0.51694554; 0.35826594; 0.49670285; 0.26984531; 0.7051025; 0.29037803; 
+0.31970388; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5305,10 +5519,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.61805534; 0.34840915; 0.25689071; 0.50491095; 0.39665151; 0.59930587; 0.5147655; 0.64548779; 
-0.56007135; 0.58706653; 0.72562253; 0.27587661; 0.25359195; 0.51389754; 0.36988145; 0.69791579; 
-0.55998981; 0.33791411; 0.41493043; 0.53564024; 0.42711335; 0.27525729; 0.25950086; 0.48228869; 
-0.69725955; };
+	 wt = {0.32644036; 0.38879153; 0.48501423; 0.54544878; 0.34685966; 0.3092823; 0.6399495; 0.26871377; 
+0.56260717; 0.70352179; 0.41222626; 0.66492063; 0.36139575; 0.49194914; 0.64197057; 0.6607157; 
+0.32019776; 0.30867884; 0.29684281; 0.38401785; 0.5706147; 0.65021992; 0.56576991; 0.51232272; 
+0.65920264; };
 	};
        };
        send {
@@ -5330,14 +5544,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.72579098;
+	wt=0.54969203;
        };
        n_recv_cons=50;
        pos {x=2: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17722857;
+       act_m=0.31826648;
+       act_p=0.0029185463;
+       act_dif=0.0029181507;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5348,8 +5562,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=7.4940881e-06;
+       net=0.48503163;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5371,10 +5585,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.39287281; 0.66742843; 0.70577455; 0.5956381; 0.32040396; 0.72024119; 0.26441377; 0.58210182; 
-0.37406236; 0.68990809; 0.25857311; 0.25741702; 0.57111585; 0.53749311; 0.70761806; 0.40366274; 
-0.73008323; 0.60599303; 0.34992427; 0.44670197; 0.5727967; 0.69751322; 0.45611438; 0.60533309; 
-0.58562815; };
+	 wt = {0.29906079; 0.53310895; 0.46140218; 0.5886535; 0.49157959; 0.37881538; 0.73763758; 0.38131028; 
+0.66337937; 0.31844398; 0.65351027; 0.46436459; 0.39855424; 0.71776313; 0.72906494; 0.60501021; 
+0.25531477; 0.48627371; 0.66478217; 0.58632964; 0.37329209; 0.67755342; 0.29902336; 0.74361366; 
+0.25327888; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5389,10 +5603,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.55795646; 0.67849028; 0.4094882; 0.61655331; 0.6545217; 0.58649623; 0.51343638; 0.30031613; 
-0.48341593; 0.47754923; 0.36847192; 0.26255119; 0.32834554; 0.4128986; 0.2743547; 0.60397357; 
-0.42850941; 0.26982921; 0.38099253; 0.35136542; 0.6747697; 0.44140685; 0.35386309; 0.32137614; 
-0.29603976; };
+	 wt = {0.49432138; 0.43539226; 0.55084544; 0.3345857; 0.27884877; 0.31909853; 0.30022347; 0.63386393; 
+0.55843246; 0.34514281; 0.26233032; 0.62551236; 0.45284042; 0.37344563; 0.36203727; 0.72893053; 
+0.68778867; 0.48703989; 0.63827235; 0.55464149; 0.54733962; 0.57356554; 0.62471068; 0.23757268; 
+0.50622404; };
 	};
        };
        send {
@@ -5414,14 +5628,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.66979456;
+	wt=0.56492794;
        };
        n_recv_cons=50;
        pos {x=3: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17490105;
+       act_m=7.4940881e-06;
+       act_p=4.3989512e-06;
+       act_dif=-1.692867e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5432,8 +5646,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0013807415;
+       net=0.53222787;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5455,10 +5669,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.34677333; 0.39808503; 0.67976511; 0.73064142; 0.30880374; 0.37150019; 0.40574837; 0.54367566; 
-0.35783169; 0.58110785; 0.33972216; 0.34172916; 0.2669726; 0.69469315; 0.33577722; 0.61758173; 
-0.66219598; 0.61805618; 0.40715668; 0.52719057; 0.25515664; 0.48691106; 0.63999629; 0.45320517; 
-0.50531209; };
+	 wt = {0.53928161; 0.49223608; 0.33040926; 0.65711957; 0.32072735; 0.2945641; 0.72386539; 0.33817261; 
+0.745197; 0.74128336; 0.49840739; 0.25408521; 0.58660209; 0.35369077; 0.69703513; 0.67390847; 
+0.56066567; 0.49608102; 0.44006321; 0.62594789; 0.58886248; 0.70421821; 0.57243574; 0.50901312; 
+0.46223423; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5473,10 +5687,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.71960181; 0.56235087; 0.42757577; 0.70126045; 0.53663421; 0.39822417; 0.36846232; 0.36614949; 
-0.40687233; 0.41592038; 0.26588365; 0.37979752; 0.37417373; 0.69066644; 0.39050996; 0.3482222; 
-0.7209034; 0.58706778; 0.4100616; 0.30812398; 0.62498617; 0.56446517; 0.25238091; 0.33587211; 
-0.25561443; };
+	 wt = {0.66882455; 0.45240152; 0.48970234; 0.4194448; 0.3565869; 0.52217019; 0.24785168; 0.54808682; 
+0.6195941; 0.32820418; 0.36024398; 0.7074973; 0.44208321; 0.27128246; 0.50048727; 0.26012725; 
+0.71053302; 0.42663315; 0.26906386; 0.32956171; 0.75520319; 0.61750567; 0.71140116; 0.49787819; 
+0.59029859; };
 	};
        };
        send {
@@ -5498,14 +5712,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.48482174;
+	wt=0.61578786;
        };
        n_recv_cons=50;
        pos {x=4: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17654037;
+       act_m=0.0013807415;
+       act_p=0.61930823;
+       act_dif=0.61653501;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5516,8 +5730,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.04476811;
+       net=0.60681921;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5539,10 +5753,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.73201764; 0.70777798; 0.59053344; 0.36613172; 0.47452819; 0.55592096; 0.42828596; 0.37628841; 
-0.2620258; 0.47594404; 0.27223212; 0.41492102; 0.43122488; 0.55960274; 0.50260472; 0.3791759; 
-0.56486005; 0.63653958; 0.26661116; 0.51843786; 0.55796492; 0.41196877; 0.62722754; 0.70963675; 
-0.35704663; };
+	 wt = {0.34831288; 0.41692352; 0.33672348; 0.28886002; 0.2732375; 0.53039324; 0.47825345; 0.58178502; 
+0.52388489; 0.55992448; 0.41008073; 0.33287162; 0.41800079; 0.28340814; 0.36422953; 0.31242439; 
+0.32147577; 0.69826156; 0.47648329; 0.62672865; 0.31102225; 0.4286952; 0.66153425; 0.56396466; 
+0.30033126; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5557,10 +5771,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.51700723; 0.65098393; 0.25050229; 0.62956691; 0.53514946; 0.43189648; 0.39377522; 0.47115153; 
-0.5527153; 0.6751231; 0.68208855; 0.34319144; 0.258641; 0.64706719; 0.65246761; 0.38037369; 
-0.36335668; 0.4550243; 0.70620978; 0.31644285; 0.69731557; 0.51752651; 0.59549296; 0.55433971; 
-0.43876749; };
+	 wt = {0.43450817; 0.53356147; 0.33693185; 0.65334654; 0.38352403; 0.6410076; 0.42192569; 0.37943766; 
+0.72030872; 0.58636069; 0.58862567; 0.70794767; 0.65102279; 0.40300012; 0.43204808; 0.33905157; 
+0.26820397; 0.7261681; 0.58901435; 0.28351113; 0.72524285; 0.6420272; 0.25274444; 0.60520273; 
+0.6707468; };
 	};
        };
        send {
@@ -5582,14 +5796,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.3511982;
+	wt=0.73740852;
        };
        n_recv_cons=50;
        pos {x=0: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17333579;
+       act_m=0.04476811;
+       act_p=0.012313852;
+       act_dif=0.012313849;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5600,8 +5814,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0016996486;
+       net=0.5867995;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5623,10 +5837,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.64733988; 0.50123751; 0.67004907; 0.5931989; 0.29428741; 0.53228861; 0.60594767; 0.55431068; 
-0.45246568; 0.50371075; 0.5760451; 0.35518181; 0.6943087; 0.70286179; 0.37960014; 0.59249878; 
-0.62684435; 0.61508048; 0.38746527; 0.4220404; 0.30767742; 0.53578687; 0.28692558; 0.66607344; 
-0.32162109; };
+	 wt = {0.2772589; 0.48162436; 0.66781002; 0.6147505; 0.5581516; 0.35048905; 0.29911709; 0.40654761; 
+0.26333174; 0.35853988; 0.31798759; 0.28435841; 0.48756966; 0.27311641; 0.56190443; 0.61497957; 
+0.6214292; 0.55466223; 0.58990419; 0.57885396; 0.73858535; 0.4893719; 0.58409917; 0.33047456; 
+0.36875141; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5641,10 +5855,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.48575071; 0.68236971; 0.73873669; 0.32335883; 0.36586213; 0.33986148; 0.67538381; 0.61256266; 
-0.73655701; 0.57147253; 0.433799; 0.55928105; 0.49724895; 0.29601616; 0.3897022; 0.51435518; 
-0.74171269; 0.34953028; 0.71486557; 0.33272719; 0.58580291; 0.74751687; 0.72669542; 0.58192384; 
-0.54442996; };
+	 wt = {0.61771798; 0.38523257; 0.32983539; 0.51949966; 0.67704964; 0.46698013; 0.30799037; 0.56766456; 
+0.65291655; 0.73722738; 0.54215431; 0.25872064; 0.42250812; 0.65945077; 0.68218839; 0.43821266; 
+0.36752465; 0.60660231; 0.31773311; 0.56901419; 0.28593004; 0.29883575; 0.26862398; 0.41582268; 
+0.7474575; };
 	};
        };
        send {
@@ -5666,14 +5880,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.36612803;
+	wt=0.32665184;
        };
        n_recv_cons=50;
        pos {x=1: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17541543;
+       act_m=0.0016996486;
+       act_p=0.43205914;
+       act_dif=0.42732891;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5684,8 +5898,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0034046543;
+       net=0.55437183;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5707,10 +5921,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.50460625; 0.598571; 0.58681703; 0.60858214; 0.6803602; 0.35587621; 0.36113429; 0.65591526; 
-0.29981059; 0.55326366; 0.55690205; 0.49392676; 0.44361258; 0.51598692; 0.74352288; 0.55767477; 
-0.5975619; 0.71433127; 0.26268017; 0.63843709; 0.3045437; 0.360991; 0.56651652; 0.46717143; 
-0.45903766; };
+	 wt = {0.68332225; 0.47526091; 0.56950146; 0.57208306; 0.52828723; 0.54786289; 0.49171144; 0.41565374; 
+0.4003076; 0.45782605; 0.38143507; 0.35131112; 0.51062435; 0.33549884; 0.45687899; 0.3915264; 
+0.49246466; 0.4504995; 0.54334956; 0.56020606; 0.43282381; 0.4251132; 0.60314816; 0.29509091; 
+0.58782637; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5725,10 +5939,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.6536684; 0.26863053; 0.36031568; 0.69148523; 0.50245059; 0.68202078; 0.57992554; 0.32693899; 
-0.56820095; 0.67172265; 0.28439286; 0.55286449; 0.50965393; 0.47341073; 0.65268791; 0.68415082; 
-0.61120522; 0.4833203; 0.34842715; 0.35695627; 0.32102245; 0.62838298; 0.42113543; 0.50271225; 
-0.46352845; };
+	 wt = {0.49185121; 0.48199198; 0.40488252; 0.60716516; 0.40308017; 0.35497501; 0.37096745; 0.38745594; 
+0.43733546; 0.60010135; 0.74880928; 0.52524626; 0.43549153; 0.40502855; 0.37006021; 0.39998737; 
+0.68711805; 0.45618954; 0.46501341; 0.53479981; 0.63977695; 0.61317146; 0.45231757; 0.42516986; 
+0.27235994; };
 	};
        };
        send {
@@ -5750,14 +5964,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.47179753;
+	wt=0.38307813;
        };
        n_recv_cons=50;
        pos {x=2: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17444606;
+       act_m=0.0034046543;
+       act_p=0.23792839;
+       act_dif=0.19930328;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5768,8 +5982,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.8831889;
+       net=0.68277013;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5791,10 +6005,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.33665353; 0.63479578; 0.66488338; 0.39903119; 0.61545861; 0.33173558; 0.50040758; 0.29493678; 
-0.56931782; 0.70435321; 0.53743291; 0.42280331; 0.3928276; 0.5330987; 0.30578491; 0.69621587; 
-0.26071721; 0.27185053; 0.57725823; 0.64808142; 0.42650488; 0.67739886; 0.68751585; 0.44084939; 
-0.45094839; };
+	 wt = {0.519099; 0.74233848; 0.61190915; 0.46860063; 0.36294436; 0.47727636; 0.3239913; 0.67900234; 
+0.26287183; 0.58703583; 0.52262473; 0.56114107; 0.6955663; 0.45689359; 0.49342534; 0.42850447; 
+0.62751716; 0.58673418; 0.61868137; 0.4783448; 0.28767186; 0.74264008; 0.57565844; 0.68627918; 
+0.68248111; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5809,10 +6023,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.69336414; 0.66334891; 0.27224547; 0.38103026; 0.44442421; 0.66924095; 0.61814982; 0.67253357; 
-0.41313621; 0.31756276; 0.72952211; 0.34874588; 0.42666268; 0.56509113; 0.27484041; 0.29679766; 
-0.37930605; 0.46095452; 0.72143817; 0.43668479; 0.60900319; 0.68080187; 0.63498628; 0.74987042; 
-0.67885816; };
+	 wt = {0.36912236; 0.25501522; 0.57765579; 0.57973516; 0.61723185; 0.58118117; 0.62973911; 0.54666132; 
+0.27728465; 0.67886168; 0.648067; 0.37818849; 0.28027603; 0.27530035; 0.46887276; 0.35309163; 
+0.45301792; 0.55629069; 0.55629969; 0.29429147; 0.64803177; 0.41258216; 0.42324322; 0.51402539; 
+0.42545673; };
 	};
        };
        send {
@@ -5834,14 +6048,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.64716822;
+	wt=0.66622788;
        };
        n_recv_cons=50;
        pos {x=3: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17513299;
+       act_m=0.8831889;
+       act_p=0.31172898;
+       act_dif=-0.41441271;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5852,8 +6066,8 @@ LeabraCon @*(.bias) {
        ext_flag=NO_EXTERNAL;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.025848296;
+       net=0.57694948;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -5875,10 +6089,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.47738042; 0.44752842; 0.44199127; 0.42041057; 0.59000063; 0.35686541; 0.43186283; 0.36615875; 
-0.59332192; 0.31521159; 0.6937719; 0.73630917; 0.67968291; 0.30064785; 0.56936795; 0.43171129; 
-0.57759893; 0.30832967; 0.49956241; 0.64061582; 0.29660839; 0.61163723; 0.51750636; 0.38579127; 
-0.6223228; };
+	 wt = {0.26037133; 0.52784753; 0.70696861; 0.28586859; 0.35453099; 0.48409945; 0.32795504; 0.34152511; 
+0.56634951; 0.50720668; 0.42339969; 0.58968717; 0.35961366; 0.37405759; 0.67770267; 0.50135881; 
+0.74639463; 0.56132126; 0.69571859; 0.60017389; 0.39757112; 0.42781532; 0.55982023; 0.38368008; 
+0.58845317; };
 	};
 	LeabraCon_Group @.gp[1] {
 	 name=;
@@ -5893,10 +6107,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.39028966; 0.74384344; 0.63295865; 0.59035754; 0.30045694; 0.32391956; 0.56334364; 0.59501499; 
-0.70343316; 0.74350011; 0.48537356; 0.58068717; 0.45526028; 0.67192942; 0.68190157; 0.37816513; 
-0.38466477; 0.27029586; 0.47070009; 0.66783798; 0.45600051; 0.35160047; 0.6279664; 0.34857389; 
-0.72633612; };
+	 wt = {0.52337843; 0.64472407; 0.26358446; 0.37953934; 0.61923969; 0.46291414; 0.54121739; 0.45102105; 
+0.74800408; 0.58096999; 0.63266259; 0.51776814; 0.51350468; 0.63519746; 0.31412616; 0.3960506; 
+0.51228398; 0.43434331; 0.2971316; 0.71897852; 0.68254745; 0.41907439; 0.55947882; 0.68572032; 
+0.73428595; };
 	};
        };
        send {
@@ -5918,14 +6132,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.53499556;
+	wt=0.57672149;
        };
        n_recv_cons=50;
        pos {x=4: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17566527;
+       act_m=0.025848296;
+       act_p=0.32545027;
+       act_dif=0.32544854;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -5935,16 +6149,16 @@ LeabraCon @*(.bias) {
      lesion=0;
      ext_flag=NO_EXTERNAL;
      dmem_dist=DMEM_DIST_DEFAULT;
-     netin {avg=0: max=0: max_i=-1: };
-     i_thrs {avg=0: max=0: max_i=-1: };
-     acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.23490809: max=0.92624813: max_i=4: };
-     acts_m {avg=0.22191234: max=0.89422017: max_i=11: };
-     phase_dif_ratio=0.94467729;
-     kwta {k=6: pct=0.23999999: pct_c=0.75999999: adth_k=1: k_ithr=3.9748433: k1_ithr=3.2101536: ithr_r=0.21366657: ithr_diff=0.19238235: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.23999999: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
+     netin {avg=0.57861602: max=0.68748379: max_i=3: };
+     i_thrs {avg=4.1599393: max=4.9760351: max_i=3: };
+     acts {avg=0.20872639: max=0.92060298: max_i=3: };
+     acts_p {avg=0.27494869: max=0.89779335: max_i=2: };
+     acts_m {avg=0.20872639: max=0.92060298: max_i=3: };
+     phase_dif_ratio=0.75914669;
+     kwta {k=6: pct=0.23999999: pct_c=0.75999999: adth_k=1: k_ithr=4.6413364: k1_ithr=4.0079193: ithr_r=0.1467301: ithr_diff=0.136473: tie_brk=0: };
+     i_val {kwta=4.3879695: g_i=4.3879695: gp_g_i=0: g_i_orig=4.3879695: };
+     un_g_i {avg=4.3879695: max=4.3879695: max_i=0: };
+     adapt_i {avg_avg=0.24047188: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$40$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -5999,11 +6213,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[0] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=2.3913086e-05;
+       net=0.44649446;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6025,10 +6239,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.41088811; 0.58757854; 0.6819123; 0.44552776; 0.69776034; 0.41674531; 0.65071529; 0.7263996; 
-0.71291792; 0.74368268; 0.5717386; 0.31303456; 0.64336568; 0.50187731; 0.2882306; 0.67785192; 
-0.25002205; 0.61805534; 0.55795646; 0.71960181; 0.51700723; 0.48575071; 0.6536684; 0.69336414; 
-0.39028966; };
+	 wt = {0.56514889; 0.63474476; 0.67494142; 0.30552143; 0.70895946; 0.69623613; 0.28886062; 0.35198119; 
+0.60163182; 0.3229031; 0.42015889; 0.42698658; 0.56240189; 0.31260544; 0.38909024; 0.4582572; 
+0.5312354; 0.32650563; 0.49430057; 0.66881353; 0.43447763; 0.61769927; 0.4918268; 0.36910424; 
+0.52336216; };
 	};
        };
        send {
@@ -6050,14 +6264,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.61951184;
+	wt=0.34975886;
        };
        n_recv_cons=25;
        pos {x=0: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17800437;
+       act_m=2.3913086e-05;
+       act_p=0.94999999;
+       act_dif=0.9368369;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6065,11 +6279,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[1] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0001832172;
+       net=0.4550671;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6091,10 +6305,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.32005379; 0.35963595; 0.72047663; 0.58189905; 0.61105824; 0.5113185; 0.58739954; 0.52338743; 
-0.35612282; 0.55678332; 0.43477917; 0.48370516; 0.71913218; 0.60146391; 0.50256938; 0.60348237; 
-0.6552825; 0.34840915; 0.67849028; 0.56235087; 0.65098393; 0.68236971; 0.26863053; 0.66334891; 
-0.74384344; };
+	 wt = {0.52602112; 0.73273551; 0.63220656; 0.54661918; 0.33215642; 0.40765601; 0.65871918; 0.27820373; 
+0.6192795; 0.412891; 0.36071277; 0.38187566; 0.42096752; 0.27096748; 0.6058293; 0.42072603; 
+0.71665615; 0.38881627; 0.43540296; 0.45242321; 0.53356183; 0.38524592; 0.48199981; 0.25502527; 
+0.64473981; };
 	};
        };
        send {
@@ -6116,14 +6330,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.66440684;
+	wt=0.51197159;
        };
        n_recv_cons=25;
        pos {x=1: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.0001832172;
        act_p=0;
-       act_dif=0;
+       act_dif=-5.6056713e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6131,11 +6345,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[2] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
-       targ=0;
+       ext_flag=TARG;
+       targ=1;
        ext=0;
-       act=0;
-       net=0;
+       act=0.00044754549;
+       net=0.48187214;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6157,10 +6371,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.30136091; 0.46071976; 0.62034518; 0.59697014; 0.65484464; 0.50151491; 0.3303746; 0.45465493; 
-0.74467701; 0.57494342; 0.63473094; 0.34613115; 0.25536513; 0.41878366; 0.43656328; 0.4555698; 
-0.72700387; 0.25689071; 0.4094882; 0.42757577; 0.25050229; 0.73873669; 0.36031568; 0.27224547; 
-0.63295865; };
+	 wt = {0.61326587; 0.31868318; 0.62890595; 0.68878585; 0.71812302; 0.72397661; 0.72666085; 0.3565968; 
+0.37902731; 0.35380825; 0.71682602; 0.4859871; 0.32790694; 0.47771206; 0.2822766; 0.50730348; 
+0.6007086; 0.48515606; 0.55105489; 0.48990488; 0.33693218; 0.32984743; 0.40488979; 0.57769102; 
+0.263607; };
 	};
        };
        send {
@@ -6182,14 +6396,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.7054444;
+	wt=0.52467078;
        };
        n_recv_cons=25;
        pos {x=2: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.00044754549;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.27725342;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6197,11 +6411,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[3] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.66106164;
+       net=0.5414663;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6223,10 +6437,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.37325653; 0.49931628; 0.61169267; 0.28345037; 0.70253819; 0.72863793; 0.62263489; 0.45480078; 
-0.67851073; 0.49790299; 0.57470596; 0.69155508; 0.70921552; 0.3899143; 0.63255847; 0.28013772; 
-0.31711304; 0.50491095; 0.61655331; 0.70126045; 0.62956691; 0.32335883; 0.69148523; 0.38103026; 
-0.59035754; };
+	 wt = {0.72766805; 0.58229572; 0.66950691; 0.38446784; 0.41946891; 0.35821009; 0.38854027; 0.38690317; 
+0.43604124; 0.38072336; 0.42793247; 0.60141408; 0.35790586; 0.31246811; 0.71444541; 0.38456452; 
+0.49346349; 0.54547578; 0.33459499; 0.41946575; 0.6533469; 0.5195145; 0.60717314; 0.57974833; 
+0.37955382; };
 	};
        };
        send {
@@ -6248,14 +6462,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.36549258;
+	wt=0.64225906;
        };
        n_recv_cons=25;
        pos {x=3: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.66106164;
        act_p=0;
-       act_dif=0;
+       act_dif=-2.1393602e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6263,11 +6477,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[4] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.035543039;
+       net=0.49755016;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6289,10 +6503,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.65741301; 0.55035299; 0.514691; 0.70995116; 0.43877509; 0.6724866; 0.47650275; 0.44397351; 
-0.5935061; 0.52092564; 0.54967046; 0.26628715; 0.35415769; 0.62191761; 0.46188381; 0.63792872; 
-0.46377128; 0.39665151; 0.6545217; 0.53663421; 0.53514946; 0.36586213; 0.50245059; 0.44442421; 
-0.30045694; };
+	 wt = {0.64388841; 0.41058871; 0.72276413; 0.51928467; 0.55478233; 0.48434585; 0.67598665; 0.68628871; 
+0.40848631; 0.26208904; 0.28284392; 0.41825524; 0.69809437; 0.69364846; 0.26093736; 0.30579919; 
+0.58129483; 0.34692666; 0.27883318; 0.35657701; 0.38349542; 0.67703241; 0.40305728; 0.61721182; 
+0.61922348; };
 	};
        };
        send {
@@ -6314,14 +6528,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.69960201;
+	wt=0.5777272;
        };
        n_recv_cons=25;
        pos {x=4: y=0: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17800437;
+       act_m=0.035543039;
+       act_p=0.94999999;
+       act_dif=0.91107124;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6329,11 +6543,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[5] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=1.7109362e-06;
+       net=0.45969561;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6355,10 +6569,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.34159368; 0.35948864; 0.37825069; 0.54817331; 0.47315627; 0.42693442; 0.56613338; 0.33411425; 
-0.58622038; 0.42132875; 0.54179686; 0.50304568; 0.30118567; 0.40659559; 0.31769812; 0.39094424; 
-0.55734134; 0.59930587; 0.58649623; 0.39822417; 0.43189648; 0.33986148; 0.68202078; 0.66924095; 
-0.32391956; };
+	 wt = {0.3307755; 0.33005571; 0.62272882; 0.64165187; 0.33973095; 0.56231052; 0.31370792; 0.42850354; 
+0.35545555; 0.27366316; 0.65903431; 0.30008051; 0.65164828; 0.5293206; 0.37000856; 0.4700855; 
+0.7020371; 0.30930364; 0.31910747; 0.52219242; 0.64100802; 0.46699464; 0.35498202; 0.5811938; 
+0.46293032; };
 	};
        };
        send {
@@ -6380,14 +6594,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.60680598;
+	wt=0.37486592;
        };
        n_recv_cons=25;
        pos {x=0: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=1.7109362e-06;
        act_p=0;
-       act_dif=0;
+       act_dif=-7.6454062e-06;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6395,11 +6609,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[6] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.004230618;
+       net=0.50798446;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6421,10 +6635,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.43020785; 0.43488371; 0.43284178; 0.44671994; 0.36666694; 0.53606635; 0.32749712; 0.27811795; 
-0.49634314; 0.31149602; 0.28583032; 0.44884169; 0.5090307; 0.62494814; 0.46980435; 0.38954508; 
-0.51618588; 0.5147655; 0.51343638; 0.36846232; 0.39377522; 0.67538381; 0.57992554; 0.61814982; 
-0.56334364; };
+	 wt = {0.53860056; 0.25193644; 0.32560071; 0.64457518; 0.69281912; 0.68663329; 0.48150748; 0.58831233; 
+0.47863027; 0.33423287; 0.54039437; 0.30312091; 0.57734483; 0.30376869; 0.71621186; 0.46626881; 
+0.31602928; 0.63997585; 0.30023223; 0.24786654; 0.42192605; 0.30800194; 0.37097383; 0.62977368; 
+0.54123402; };
 	};
        };
        send {
@@ -6446,14 +6660,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.71655655;
+	wt=0.68568289;
        };
        n_recv_cons=25;
        pos {x=1: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.004230618;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.00091522408;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6461,11 +6675,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[7] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
-       targ=0;
+       ext_flag=TARG;
+       targ=1;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0026356778;
+       net=0.50551826;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6487,10 +6701,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.26049656; 0.62697947; 0.56521142; 0.49164525; 0.72540665; 0.28492028; 0.43135396; 0.37101907; 
-0.44672686; 0.26032352; 0.58701378; 0.708884; 0.38391596; 0.48508215; 0.45041674; 0.49525446; 
-0.59006226; 0.64548779; 0.30031613; 0.36614949; 0.47115153; 0.61256266; 0.32693899; 0.67253357; 
-0.59501499; };
+	 wt = {0.69911557; 0.57433605; 0.25741619; 0.68537962; 0.52195835; 0.42113584; 0.45889488; 0.63447142; 
+0.74092215; 0.34808451; 0.69332975; 0.72277653; 0.71903229; 0.39467612; 0.57581937; 0.69108617; 
+0.6861189; 0.26873314; 0.63387519; 0.54810917; 0.37943766; 0.56767929; 0.38746312; 0.54667431; 
+0.45103675; };
 	};
        };
        send {
@@ -6512,14 +6726,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.53625262;
+	wt=0.28463432;
        };
        n_recv_cons=25;
        pos {x=2: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.0026356778;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.16610868;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6527,11 +6741,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[8] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.14305164;
+       net=0.50651819;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6553,10 +6767,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.46367696; 0.45048544; 0.30819201; 0.44886512; 0.67437148; 0.60003173; 0.68993831; 0.45609999; 
-0.60881793; 0.33866304; 0.64292216; 0.27364576; 0.6529597; 0.35790241; 0.375579; 0.73929226; 
-0.39367089; 0.56007135; 0.48341593; 0.40687233; 0.5527153; 0.73655701; 0.56820095; 0.41313621; 
-0.70343316; };
+	 wt = {0.63636869; 0.53068256; 0.29886407; 0.3014212; 0.56646258; 0.49062613; 0.59097666; 0.49307987; 
+0.37292513; 0.26030356; 0.73150522; 0.57260489; 0.29432535; 0.67062259; 0.70869881; 0.45491564; 
+0.42097622; 0.56263417; 0.55844361; 0.61961615; 0.72030902; 0.6529305; 0.4373433; 0.27729383; 
+0.74801791; };
 	};
        };
        send {
@@ -6578,14 +6792,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.41096321;
+	wt=0.26815653;
        };
        n_recv_cons=25;
        pos {x=3: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.14305164;
        act_p=0;
-       act_dif=0;
+       act_dif=-4.531028e-06;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6593,11 +6807,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[9] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.90883356;
+       net=0.62497914;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6619,10 +6833,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.25164735; 0.37729946; 0.47177219; 0.60249686; 0.62640512; 0.4134773; 0.27309963; 0.73777902; 
-0.6892848; 0.41565824; 0.44155121; 0.6899662; 0.53032756; 0.2889626; 0.30299169; 0.50451553; 
-0.61684513; 0.58706653; 0.47754923; 0.41592038; 0.6751231; 0.57147253; 0.67172265; 0.31756276; 
-0.74350011; };
+	 wt = {0.41875762; 0.56412119; 0.27250031; 0.56886673; 0.38258022; 0.52047217; 0.39241105; 0.61609638; 
+0.54422086; 0.7299549; 0.39224726; 0.35989869; 0.52072823; 0.58706224; 0.52969193; 0.71079463; 
+0.43798107; 0.70354575; 0.3451522; 0.32822284; 0.58636105; 0.73724008; 0.60010689; 0.67887354; 
+0.58098626; };
 	};
        };
        send {
@@ -6644,14 +6858,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.38918197;
+	wt=0.62347668;
        };
        n_recv_cons=25;
        pos {x=4: y=1: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.90883356;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.040378191;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6659,11 +6873,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[10] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.80350864;
+       net=0.5532856;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6685,10 +6899,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.64246619; 0.60547906; 0.44039103; 0.54549515; 0.59472048; 0.56247121; 0.40959167; 0.58996224; 
-0.68697685; 0.69144934; 0.66183424; 0.63362765; 0.35618454; 0.6427961; 0.72753769; 0.4397698; 
-0.45128977; 0.72562253; 0.36847192; 0.26588365; 0.68208855; 0.433799; 0.28439286; 0.72952211; 
-0.48537356; };
+	 wt = {0.72147286; 0.46230742; 0.62647283; 0.28655425; 0.60004312; 0.58429277; 0.36897179; 0.33319002; 
+0.64649367; 0.59792519; 0.23480637; 0.60565567; 0.67487282; 0.57458323; 0.47561985; 0.35815698; 
+0.40139514; 0.41221896; 0.26231423; 0.36023536; 0.5886907; 0.5421406; 0.74879551; 0.64804822; 
+0.63264698; };
 	};
        };
        send {
@@ -6710,14 +6924,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.44952059;
+	wt=0.67857951;
        };
        n_recv_cons=25;
        pos {x=0: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17798063;
+       act_m=0.80350864;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.63648379;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6725,11 +6939,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[11] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.02107206;
+       net=0.48509437;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6751,10 +6965,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.27191466; 0.439987; 0.72297716; 0.72809577; 0.70627505; 0.30525315; 0.6171627; 0.38362393; 
-0.61197627; 0.29498959; 0.70158565; 0.59277248; 0.49958026; 0.64236665; 0.42974764; 0.25931102; 
-0.66807812; 0.27587661; 0.26255119; 0.37979752; 0.34319144; 0.55928105; 0.55286449; 0.34874588; 
-0.58068717; };
+	 wt = {0.37679935; 0.52201056; 0.53208792; 0.34650835; 0.70879447; 0.32791385; 0.3742215; 0.55674285; 
+0.36550155; 0.5640865; 0.41124535; 0.36121377; 0.57044441; 0.48939434; 0.60838944; 0.4436892; 
+0.54113752; 0.66491342; 0.62549084; 0.70748836; 0.70799881; 0.25871161; 0.52523261; 0.37817627; 
+0.51775193; };
 	};
        };
        send {
@@ -6776,14 +6990,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.36174685;
+	wt=0.59618366;
        };
        n_recv_cons=25;
        pos {x=1: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17798063;
+       act_m=0.02107206;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.00024607539;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6791,11 +7005,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[12] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
-       targ=0;
+       ext_flag=TARG;
+       targ=1;
        ext=0;
-       act=0;
-       net=0;
+       act=5.0103976e-05;
+       net=0.45645595;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6817,10 +7031,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.41787022; 0.64643908; 0.50945812; 0.56955314; 0.32730609; 0.66868818; 0.62627298; 0.35468334; 
-0.69078565; 0.69666207; 0.45347047; 0.44471931; 0.27552497; 0.46179986; 0.33765945; 0.44545141; 
-0.33069178; 0.25359195; 0.32834554; 0.37417373; 0.258641; 0.49724895; 0.50965393; 0.42666268; 
-0.45526028; };
+	 wt = {0.45595708; 0.62037909; 0.66626608; 0.48954323; 0.59473628; 0.62369066; 0.24631125; 0.47042775; 
+0.72091758; 0.37920776; 0.30042869; 0.55122179; 0.60431349; 0.57278448; 0.53343993; 0.66576231; 
+0.29626006; 0.36143324; 0.45278749; 0.44204122; 0.65105015; 0.4224638; 0.4354476; 0.28023627; 
+0.51345575; };
 	};
        };
        send {
@@ -6842,14 +7056,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.68605328;
+	wt=0.58326995;
        };
        n_recv_cons=25;
        pos {x=2: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.18273063;
+       act_m=5.0103976e-05;
+       act_p=0.94999999;
+       act_dif=0.080618262;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6857,11 +7071,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[13] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=1.5412074e-06;
+       net=0.45238581;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6883,10 +7097,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.31701005; 0.48489609; 0.63593996; 0.72678554; 0.47972056; 0.31367099; 0.25688285; 0.53321183; 
-0.53075993; 0.28820667; 0.65088904; 0.57947218; 0.35717645; 0.30011028; 0.60477412; 0.42569262; 
-0.59669691; 0.51389754; 0.4128986; 0.69066644; 0.64706719; 0.29601616; 0.47341073; 0.56509113; 
-0.67192942; };
+	 wt = {0.42543924; 0.45869684; 0.61646807; 0.56488293; 0.54022789; 0.35364118; 0.42164671; 0.26307338; 
+0.73537898; 0.2555193; 0.55803919; 0.55465978; 0.56623179; 0.64162236; 0.65707672; 0.69662017; 
+0.55759537; 0.49194154; 0.37342516; 0.27127481; 0.40307218; 0.65943724; 0.40501571; 0.27528667; 
+0.63518149; };
 	};
        };
        send {
@@ -6908,14 +7122,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.51670671;
+	wt=0.32956883;
        };
        n_recv_cons=25;
        pos {x=3: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17798063;
+       act_m=1.5412074e-06;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.86070144;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6923,11 +7137,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[14] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.80034399;
+       net=0.56208253;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -6949,10 +7163,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.53008306; 0.58272302; 0.35184091; 0.60784936; 0.31297344; 0.54314303; 0.33694464; 0.61872756; 
-0.37272704; 0.73024917; 0.70206583; 0.62670386; 0.25549352; 0.66757822; 0.54386669; 0.47910732; 
-0.26369679; 0.36988145; 0.2743547; 0.39050996; 0.65246761; 0.3897022; 0.65268791; 0.27484041; 
-0.68190157; };
+	 wt = {0.66539365; 0.64234382; 0.32059547; 0.29824337; 0.62370914; 0.52635717; 0.55434752; 0.67887259; 
+0.73633838; 0.70903856; 0.26346871; 0.29545438; 0.50559002; 0.56927961; 0.6173259; 0.70325208; 
+0.30098778; 0.64196312; 0.36201778; 0.50047749; 0.43212029; 0.68217528; 0.37004721; 0.46885332; 
+0.31411359; };
 	};
        };
        send {
@@ -6974,14 +7188,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.61883461;
+	wt=0.5771417;
        };
        n_recv_cons=25;
        pos {x=4: y=2: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17798063;
+       act_m=0.80034399;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.73890358;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -6989,11 +7203,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[15] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=8.2540442e-05;
+       net=0.45955345;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7015,10 +7229,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.29844177; 0.71800327; 0.26735377; 0.4068602; 0.3222926; 0.5404954; 0.74650741; 0.5496856; 
-0.66938156; 0.4400599; 0.67409122; 0.2842285; 0.52443504; 0.41469792; 0.38588756; 0.57951158; 
-0.54633391; 0.69791579; 0.60397357; 0.3482222; 0.38037369; 0.51435518; 0.68415082; 0.29679766; 
-0.37816513; };
+	 wt = {0.2834529; 0.38893721; 0.51555783; 0.67917955; 0.6915397; 0.25299194; 0.53779334; 0.49814561; 
+0.56684822; 0.60622764; 0.27736357; 0.49834335; 0.44305673; 0.36130577; 0.63146836; 0.4086279; 
+0.30824375; 0.66078812; 0.72901177; 0.26019549; 0.3390519; 0.43822691; 0.39999494; 0.35311091; 
+0.39607126; };
 	};
        };
        send {
@@ -7040,14 +7254,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.48365009;
+	wt=0.58796185;
        };
        n_recv_cons=25;
        pos {x=0: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=8.2540442e-05;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.012442055;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7055,11 +7269,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[16] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=4.5208681e-06;
+       net=0.45844236;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7081,10 +7295,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.52323556; 0.73888588; 0.25651991; 0.55014426; 0.35528713; 0.536533; 0.68819588; 0.59851742; 
-0.3577002; 0.58350229; 0.48554435; 0.40548658; 0.53247851; 0.37148342; 0.54950774; 0.68534803; 
-0.29609263; 0.55998981; 0.42850941; 0.7209034; 0.36335668; 0.74171269; 0.61120522; 0.37930605; 
-0.38466477; };
+	 wt = {0.62206697; 0.36797553; 0.54852188; 0.46407673; 0.49629435; 0.37248132; 0.44073021; 0.48875087; 
+0.62044954; 0.60648471; 0.49728805; 0.55122674; 0.61573541; 0.52826703; 0.58213294; 0.72682935; 
+0.62780684; 0.32021952; 0.6877985; 0.71055305; 0.26820424; 0.36753762; 0.68712497; 0.45303044; 
+0.51230067; };
 	};
        };
        send {
@@ -7106,14 +7320,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.58481586;
+	wt=0.39844516;
        };
        n_recv_cons=25;
        pos {x=1: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=4.5208681e-06;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.71415973;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7121,11 +7335,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[17] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
-       targ=0;
+       ext_flag=TARG;
+       targ=1;
        ext=0;
-       act=0;
-       net=0;
+       act=0.83601385;
+       net=0.55746275;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7147,10 +7361,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.54269898; 0.73774153; 0.32373658; 0.57878733; 0.49399829; 0.56325448; 0.72163659; 0.47246242; 
-0.64377081; 0.32960555; 0.42695373; 0.45544764; 0.46551028; 0.7302959; 0.68568957; 0.72726053; 
-0.70191115; 0.33791411; 0.26982921; 0.58706778; 0.4550243; 0.34953028; 0.4833203; 0.46095452; 
-0.27029586; };
+	 wt = {0.74518102; 0.47476202; 0.26494852; 0.49632812; 0.43053761; 0.43667006; 0.33393323; 0.43675163; 
+0.59690005; 0.65216088; 0.32105514; 0.331359; 0.56928802; 0.55297774; 0.33468521; 0.27094382; 
+0.35986644; 0.30874008; 0.48713559; 0.42672855; 0.72616827; 0.60661685; 0.45619738; 0.55631375; 
+0.43436518; };
 	};
        };
        send {
@@ -7172,14 +7386,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.37589747;
+	wt=0.55214381;
        };
        n_recv_cons=25;
        pos {x=2: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.83601385;
        act_p=0;
-       act_dif=0;
+       act_dif=-2.9804902e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7187,11 +7401,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[18] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=1.3267008e-06;
+       net=0.45476735;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7213,10 +7427,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.54259324; 0.25258917; 0.66498339; 0.56944424; 0.35662186; 0.50957525; 0.46128044; 0.5948146; 
-0.30941811; 0.67299539; 0.40303552; 0.61175704; 0.53367728; 0.65597606; 0.45725441; 0.47268289; 
-0.32954219; 0.41493043; 0.38099253; 0.4100616; 0.70620978; 0.71486557; 0.34842715; 0.72143817; 
-0.47070009; };
+	 wt = {0.53490889; 0.60928696; 0.64058208; 0.52327311; 0.3061769; 0.51069754; 0.51249492; 0.4572466; 
+0.37272215; 0.30765018; 0.5308401; 0.45258772; 0.3315818; 0.50333607; 0.74019897; 0.66398126; 
+0.57881773; 0.29686376; 0.63828373; 0.26908043; 0.58901477; 0.31774506; 0.46502209; 0.55632836; 
+0.29714417; };
 	};
        };
        send {
@@ -7238,14 +7452,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.71133387;
+	wt=0.26802969;
        };
        n_recv_cons=25;
        pos {x=3: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=1.3267008e-06;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.00064302189;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7253,11 +7467,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[19] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=1.1834507e-05;
+       net=0.44965464;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7279,10 +7493,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.27482605; 0.68688774; 0.36591551; 0.57716024; 0.74959022; 0.38165045; 0.48824877; 0.42252427; 
-0.50725681; 0.70973945; 0.63305146; 0.55241954; 0.54156017; 0.68948257; 0.40111685; 0.43746474; 
-0.44779688; 0.53564024; 0.35136542; 0.30812398; 0.31644285; 0.33272719; 0.35695627; 0.43668479; 
-0.66783798; };
+	 wt = {0.36500797; 0.34204161; 0.55678833; 0.42091647; 0.72700924; 0.57559615; 0.41707516; 0.73980457; 
+0.66521764; 0.64836437; 0.44204655; 0.37616426; 0.59332633; 0.29165846; 0.72446477; 0.5093134; 
+0.59401149; 0.38408762; 0.55473894; 0.32964525; 0.28351143; 0.56902879; 0.53480768; 0.29430935; 
+0.71899855; };
 	};
        };
        send {
@@ -7304,14 +7518,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.50964069;
+	wt=0.6388095;
        };
        n_recv_cons=25;
        pos {x=4: y=3: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=1.1834507e-05;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.11532802;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7319,11 +7533,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[20] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.11458164;
+       net=0.51769328;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7345,10 +7559,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.30005687; 0.51024669; 0.7120809; 0.74074972; 0.3656961; 0.58095407; 0.34057236; 0.36773673; 
-0.48203367; 0.70539844; 0.67682427; 0.51350904; 0.26332796; 0.67332661; 0.45963013; 0.67208993; 
-0.39310533; 0.42711335; 0.6747697; 0.62498617; 0.69731557; 0.58580291; 0.32102245; 0.60900319; 
-0.45600051; };
+	 wt = {0.25948691; 0.66099095; 0.45654657; 0.39439183; 0.31428561; 0.40731764; 0.4885737; 0.3686457; 
+0.51420105; 0.52641255; 0.65109688; 0.63607788; 0.3827441; 0.31296667; 0.3786568; 0.55631047; 
+0.27724114; 0.57068181; 0.54731977; 0.75519466; 0.72521532; 0.28591597; 0.63975298; 0.64801216; 
+0.68253207; };
 	};
        };
        send {
@@ -7370,14 +7584,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.32419047;
+	wt=0.42530605;
        };
        n_recv_cons=25;
        pos {x=0: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17800437;
+       act_m=0.11458164;
+       act_p=0.94999999;
+       act_dif=0.94999999;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7385,11 +7599,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[21] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.0036695881;
+       net=0.46504495;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7411,10 +7625,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.7364375; 0.39421585; 0.49262601; 0.49954993; 0.28592932; 0.54118347; 0.73107874; 0.65285695; 
-0.47237074; 0.56745726; 0.74553907; 0.37791139; 0.47860163; 0.47570336; 0.3153671; 0.45313311; 
-0.67637736; 0.27525729; 0.44140685; 0.56446517; 0.51752651; 0.74751687; 0.62838298; 0.68080187; 
-0.35160047; };
+	 wt = {0.254632; 0.60372961; 0.67555952; 0.26742834; 0.45873278; 0.67913669; 0.41781005; 0.43535498; 
+0.7004391; 0.68542176; 0.40548643; 0.48840976; 0.30463997; 0.40279782; 0.4192833; 0.34250459; 
+0.42424905; 0.65024608; 0.5735774; 0.61752808; 0.64202774; 0.29884729; 0.61317921; 0.41259703; 
+0.41908979; };
 	};
        };
        send {
@@ -7436,14 +7650,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.68348408;
+	wt=0.35662511;
        };
        n_recv_cons=25;
        pos {x=1: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.0036695881;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.00011930063;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7451,11 +7665,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[22] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
-       targ=0;
+       ext_flag=TARG;
+       targ=1;
        ext=0;
-       act=0;
-       net=0;
+       act=8.8095385e-07;
+       net=0.44802907;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7477,10 +7691,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.50020182; 0.49961084; 0.55151391; 0.3493529; 0.47214156; 0.33592224; 0.261904; 0.65045542; 
-0.40942022; 0.64141166; 0.33296388; 0.67558801; 0.7395581; 0.32214913; 0.51264238; 0.3656171; 
-0.28589147; 0.25950086; 0.35386309; 0.25238091; 0.59549296; 0.72669542; 0.42113543; 0.63498628; 
-0.6279664; };
+	 wt = {0.66281521; 0.44374251; 0.44489753; 0.66604638; 0.37402624; 0.25971982; 0.37323284; 0.32315409; 
+0.34913713; 0.33459073; 0.31467569; 0.60313165; 0.53557289; 0.4326551; 0.41527; 0.57736075; 
+0.68232584; 0.56579769; 0.62472349; 0.71142256; 0.25274462; 0.26863432; 0.4523254; 0.42325589; 
+0.55949485; };
 	};
        };
        send {
@@ -7502,14 +7716,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.38561308;
+	wt=0.32142344;
        };
        n_recv_cons=25;
        pos {x=2: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=8.8095385e-07;
        act_p=0;
-       act_dif=0;
+       act_dif=-2.3541033e-05;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7517,11 +7731,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[23] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.35958079;
+       net=0.53278708;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7543,10 +7757,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.56433499; 0.6491093; 0.3691074; 0.35692039; 0.7001164; 0.32564628; 0.39203671; 0.32752788; 
-0.51539201; 0.44490552; 0.51964736; 0.39275208; 0.34916157; 0.57512844; 0.52797621; 0.63251472; 
-0.69681716; 0.48228869; 0.32137614; 0.33587211; 0.55433971; 0.58192384; 0.50271225; 0.74987042; 
-0.34857389; };
+	 wt = {0.60289305; 0.6654402; 0.46862045; 0.6414296; 0.48639211; 0.23982759; 0.52051127; 0.38572168; 
+0.70094872; 0.42359728; 0.40791047; 0.4141508; 0.39149013; 0.65241897; 0.50794303; 0.55686289; 
+0.23786873; 0.5123499; 0.23757996; 0.49790034; 0.60520345; 0.41583633; 0.42517546; 0.51403809; 
+0.68573552; };
 	};
        };
        send {
@@ -7568,14 +7782,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.28156599;
+	wt=0.40583158;
        };
        n_recv_cons=25;
        pos {x=3: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
+       act_avg=0.17325437;
+       act_m=0.35958079;
        act_p=0;
-       act_dif=0;
+       act_dif=-0.74487525;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7583,11 +7797,11 @@ LeabraCon @*(.bias) {
       LeabraUnit @[24] {
        name=;
        spec {type=LeabraUnitSpec: spec=$36$: };
-       ext_flag=NO_EXTERNAL;
+       ext_flag=TARG;
        targ=0;
        ext=0;
-       act=0;
-       net=0;
+       act=0.89313507;
+       net=0.57871568;
        recv {
 	name=;
 	el_typ=LeabraCon;
@@ -7609,10 +7823,10 @@ LeabraCon @*(.bias) {
 [8]; [9]; [10]; [11]; [12]; [13]; [14]; [15]; 
 [16]; [17]; [18]; [19]; [20]; [21]; [22]; [23]; 
 [24]; };
-	 wt = {0.46946958; 0.51939631; 0.43242723; 0.43526423; 0.74975133; 0.74128091; 0.34101027; 0.66700983; 
-0.73136985; 0.47707254; 0.5248031; 0.51663983; 0.73799372; 0.28669128; 0.67441058; 0.50334346; 
-0.37751383; 0.69725955; 0.29603976; 0.25561443; 0.43876749; 0.54442996; 0.46352845; 0.67885816; 
-0.72633612; };
+	 wt = {0.62438822; 0.40416858; 0.55687368; 0.50066489; 0.49173638; 0.35931399; 0.28397566; 0.26938161; 
+0.35990897; 0.63405395; 0.30430818; 0.56940383; 0.3914603; 0.26058045; 0.30435401; 0.36015221; 
+0.59171039; 0.659262; 0.50620341; 0.59028733; 0.67071688; 0.74744183; 0.27234206; 0.42543712; 
+0.734272; };
 	};
        };
        send {
@@ -7634,14 +7848,14 @@ LeabraCon @*(.bias) {
 	};
        };
 LeabraCon @*(.bias) {
-	wt=0.28889322;
+	wt=0.4447231;
        };
        n_recv_cons=25;
        pos {x=4: y=4: z=0: };
-       act_avg=0.175;
-       act_m=0;
-       act_p=0;
-       act_dif=0;
+       act_avg=0.17800437;
+       act_m=0.89313507;
+       act_p=0.94999999;
+       act_dif=0.94999999;
        vcb {hyst=0: acc=0: hyst_on=0: acc_on=0: g_h=0: g_a=0: };
        spk_amp=0;
        misc_1=0;
@@ -7649,18 +7863,18 @@ LeabraCon @*(.bias) {
      };
      unit_spec {type=LeabraUnitSpec: spec=$36$: };
      lesion=0;
-     ext_flag=NO_EXTERNAL;
+     ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
-     netin {avg=0: max=0: max_i=-1: };
-     i_thrs {avg=0: max=0: max_i=-1: };
-     acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.19: max=0.94999999: max_i=2: };
-     acts_m {avg=0.22654594: max=0.85601109: max_i=11: };
-     phase_dif_ratio=1.192347;
-     kwta {k=12: pct=0.47999999: pct_c=0.51999998: adth_k=1: k_ithr=3.8375928: k1_ithr=3.74244: ithr_r=0.025107468: ithr_diff=0.024794932: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.47999999: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
+     netin {avg=0.49834403: max=0.62497914: max_i=9: };
+     i_thrs {avg=3.4934936: max=4.400301: max_i=9: };
+     acts {avg=0.22352286: max=0.90883356: max_i=9: };
+     acts_p {avg=0.19: max=0.94999999: max_i=0: };
+     acts_m {avg=0.22352286: max=0.90883356: max_i=9: };
+     phase_dif_ratio=1.1764361;
+     kwta {k=5: pct=0.2: pct_c=0.80000001: adth_k=1: k_ithr=3.8460686: k1_ithr=3.7741537: ithr_r=0.018875267: ithr_diff=0.018698292: tie_brk=0: };
+     i_val {kwta=3.8173027: g_i=3.8173027: gp_g_i=0: g_i_orig=3.8173027: };
+     un_g_i {avg=3.8173041: max=3.8173027: max_i=0: };
+     adapt_i {avg_avg=0.20004743: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=$39$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -7676,17 +7890,19 @@ LeabraCon @*(.bias) {
    batch_n=10;
    batch=0;
    epoch=0;
-   trial=0;
+   trial=2;
    cycle=0;
    time=0;
-   sse=0;
+   group_name=;
+   trial_name="1";
+   sse=7.3405867;
    sum_sse=0;
    avg_sse=0;
    cnt_err_tol=0;
    cnt_err=0;
-   cur_sum_sse=0;
-   avg_sse_n=0;
-   cur_cnt_err=0;
+   cur_sum_sse=17.883183;
+   avg_sse_n=3;
+   cur_cnt_err=3;
    dmem_sync_level=DMEM_SYNC_NETWORK;
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
@@ -7700,8 +7916,8 @@ LeabraCon @*(.bias) {
    trial_init=DECAY_STATE;
    sequence_init=DO_NOTHING;
    first_plus_dwt=ONLY_FIRST_DWT;
-   phase=MINUS_PHASE;
-   phase_no=0;
+   phase=PLUS_PHASE;
+   phase_no=1;
    phase_max=2;
    cycle_max=60;
    min_cycles=15;
@@ -7709,9 +7925,9 @@ LeabraCon @*(.bias) {
    netin_mod=1;
    send_delta=0;
    maxda_stopcrit=0.0049999999;
-   maxda=0;
+   maxda=0.88846534;
    trg_max_act_stopcrit=1;
-   trg_max_act=0;
+   trg_max_act=0.90883356;
    ext_rew=0;
    avg_ext_rew=0;
    avg_ext_rew_sum=0;
@@ -7798,36 +8014,28 @@ LeabraCon @*(.bias) {
      cell_geom{ 1;     };
     };
     float_Data @[4] {
-     name="Input.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 5;5;     };
-    };
-    float_Data @[5] {
-     name="Hidden.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 5;5;     };
-    };
-    float_Data @[6] {
-     name="Output.act";
-     disp_opts=;
-     pin=0;
-     save_to_file=1;
-     is_matrix=1;
-     cell_geom{ 5;5;     };
-    };
-    float_Data @[7] {
      name="LeabraNetwork_0.sse";
      disp_opts=;
      pin=0;
      save_to_file=1;
      is_matrix=0;
      cell_geom{ 1;     };
+    };
+    String_Data @[5] {
+     name="LeabraNetwork_0.trial_name";
+     disp_opts=;
+     pin=0;
+     save_to_file=1;
+     is_matrix=0;
+     cell_geom{ 1;     };
+    };
+    float_Data @[6] {
+     name="Input.act";
+     disp_opts=;
+     pin=0;
+     save_to_file=1;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
     };
    };
   };

@@ -1,9 +1,10 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][5] { 
   taBase_List @.objs = [1] {
-    LayerWriter_List @[0] = [2] { 
+    LayerWriter_List @[0] = [3] { 
       LayerWriter @[0] { };
       LayerWriter @[1] { };
+      LayerWriter @[2] { };
     };
   };
 
@@ -36,7 +37,9 @@ Program .projects[0].programs.gp[0][5] {
    LayerWriter @[0] {
     data=.projects[0].data[0]$0$;
     chan_name="Input";
-    layer=.projects[0].networks[0].layers[0]$1$;
+    net_target=LAYER;
+    network=.projects[0].networks[0]$1$;
+    layer=.projects[0].networks[0].layers[0]$2$;
     offset {x=0: y=0: };
     use_layer_type=1;
     ext_flags=EXT;
@@ -46,7 +49,21 @@ Program .projects[0].programs.gp[0][5] {
    LayerWriter @[1] {
     data=$0$;
     chan_name="Output";
-    layer=.projects[0].networks[0].layers[2]$2$;
+    net_target=LAYER;
+    network=$1$;
+    layer=.projects[0].networks[0].layers[2]$3$;
+    offset {x=0: y=0: };
+    use_layer_type=1;
+    ext_flags=TARG;
+    noise {type=NONE: mean=0: var=0.5: par=1: };
+    value_names{     };
+   };
+   LayerWriter @[2] {
+    data=$0$;
+    chan_name="Name";
+    net_target=TRIAL_NAME;
+    network=$1$;
+    layer=$3$;
     offset {x=0: y=0: };
     use_layer_type=1;
     ext_flags=TARG;
@@ -76,7 +93,7 @@ Program .projects[0].programs.gp[0][5] {
    name="lw_list";
    var_type=T_Object;
    object_type=LayerWriter_List;
-   object_val=.projects[0].programs.gp[0][5].objs[0]$3$;
+   object_val=.projects[0].programs.gp[0][5].objs[0]$4$;
    objs_ptr=1;
    desc=;
   };
@@ -90,18 +107,18 @@ Program .projects[0].programs.gp[0][5] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=.projects[0].programs.gp[0][5].vars[1]$4$;
-    method=LayerRWBase_List::SetAllData;
+    script_obj=.projects[0].programs.gp[0][5].vars[1]$5$;
+    method=LayerRWBase_List::SetAllDataNetwork;
    };
-   args{ data;};
-{ DataBlock* db;   };
+   args{ data;network;};
+{ DataBlock* db;Network* net;   };
   };
   MethodCall @[1] {
    desc=;
    off=0;
    result_var=;
    method_spec {
-    script_obj=$4$;
+    script_obj=$5$;
     method=LayerRWBase_List::CheckConfig;
    };
    args{ false;};
@@ -117,7 +134,7 @@ Program .projects[0].programs.gp[0][5] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=$4$;
+    script_obj=$5$;
     method=LayerWriter_List::ApplyExternal;
    };
    args{ context;};

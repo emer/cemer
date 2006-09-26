@@ -468,6 +468,10 @@ void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   }
 }
 
+bool taBase::CheckConfig(bool quiet) {
+  return true;
+}
+
 void taBase::CutLinks() {
 }
 

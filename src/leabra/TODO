@@ -1,12 +1,14 @@
 leabra todo list:
 
-* add event_name and event_group_name to network & default monitor
-* indicate in proglib name if it is a group or just one guy
-* fix names: Grouped -> GpData
+* net monitor not reliable -- sometimes works, sometimes doesn't.  add CheckConfig
+ -- names in val_specs should come from parent object..  don't mod based on var name either
+-- #NO_BROWSE on val_specs either
 
-* deal with sequences: test
-* check UserScript::ImportFromFile (how to just read in raw?  get something?)
-  (also search on paths -- not finding it -- load should update paths...)
+* layerwriter trial_name and group_name not reliable either..
+* not reading ktwa specs properly from v3
+
+* indicate in proglib name if it is a group or just one guy: LeabraAll_Std, etc..
+* fix names: Grouped -> GpData
 
 -----
 

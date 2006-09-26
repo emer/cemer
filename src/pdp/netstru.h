@@ -1233,6 +1233,8 @@ public:
   int		trial;		// #READ_ONLY #SHOW #CAT_Counter trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
   int		cycle;		// #READ_ONLY #SHOW #CAT_Counter cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
   float		time;		// #READ_ONLY #SHOW #CAT_Counter the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  String	group_name;	// #READ_ONLY #SHOW #CAT_Counter name associated with the current group of trials, if such a grouping is applicable
+  String	trial_name;	// #READ_ONLY #SHOW #CAT_Counter name associated with the current trial (e.g., name of input pattern)
 
   float		sse;		// #READ_ONLY #SHOW #CAT_Statistic sum squared error over the network, for the current external input pattern
   float		sum_sse;	// #READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
@@ -1461,18 +1463,31 @@ public:
   TA_BASEFUNS(Network_Group); //
 };
 
+//////////////////////////////////////////
+//	Layer Reader / Writer		//
+//////////////////////////////////////////
+
 class PDP_API LayerRWBase: public taOBase  {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS helper object to read/write data to/from layers
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS controls the reading/writing of information to/from layers and data blocks/tables
 friend class LayerRWBase_List;
 friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
+  enum NetTarget {
+    LAYER,			// read/write the layer information
+    TRIAL_NAME,			// read/write the network trial_name field
+    GROUP_NAME,			// read/write the network group_name field
+  };
+
   DataBlockRef		data; // #AKA_data_block source or sink of the data to apply to layer, or store layer output (as appropriate)
   String		chan_name; // name of the channel/column in the data table use 
-  LayerRef 		layer;	// the Layer that will get read or written
+  NetTarget		net_target;  // what to read/write from on the network
+  NetworkRef 		network;  // the network to operate on
+  LayerRef 		layer;	// #CONDEDIT_ON_net_target:LAYER the Layer that will get read or written
   PosTwoDCoord		offset;	// #EXPERT offset in layer or unit group at which to start reading/writing
   
-  virtual bool CheckConfig(bool quiet = false);
+  override String	GetDisplayName() const;
+  override bool 	CheckConfig(bool quiet = false);
 
   void  UpdateAfterEdit();
   void  InitLinks();
@@ -1502,8 +1517,13 @@ public:
   // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
   virtual void	FillFromTable(DataTable* dt, Network* net, bool freshen_only);
   // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+
   virtual void	SetAllData(DataBlock* db);
   // #MENU #MENU_CONTEXT #BUTTON set all the data pointers for list elements to given datablock/data table
+  virtual void	SetAllNetwork(Network* net);
+  // #MENU #MENU_CONTEXT #BUTTON set all the network pointers for list elements
+  virtual void	SetAllDataNetwork(DataBlock* db, Network* net);
+  // set all the data and network pointers for list elements
 
   virtual bool CheckConfig(bool quiet = false);
     
@@ -1531,6 +1551,8 @@ public:
   virtual void 		ApplyExternal(int context);
   // apply data to the layers, using the supplied context (TEST, TRAIN, etc)
 
+  override String	GetDisplayName() const;
+
   void	UpdateAfterEdit();
   void  InitLinks();
   void	CutLinks();
@@ -1550,7 +1572,7 @@ public:
   
   inline LayerWriter*	FastEl(int i) {return (LayerWriter*)FastEl_(i);}
   virtual void		ApplyExternal(int context);
-  // convenience method that iterates the writers and applies data
+  // apply data to the layers, using the supplied context (TEST, TRAIN, etc)
 
   TA_BASEFUNS(LayerWriter_List);
 protected:
@@ -1598,7 +1620,7 @@ private:
 */
 
 class PDP_API NetMonItem: public taNBase {
-  //  #NO_TOKENS #NO_UPDATE_AFTER used for monitoring the value of a net object:\nLayer, Projection, UnitGroup, Unit
+  // #NO_TOKENS used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
 INHERITED(taNBase)
 public:
   static const String 	GetObjName(TAPtr obj, TAPtr own = NULL); 
@@ -1606,7 +1628,7 @@ public:
   static const String	DotCat(const String& lhs, const String& rhs); 
     // cat with . except if either empty, just return the other
   
-  taSmartRef 		object;		// #NO_SCOPE the network object being monitored
+  taSmartRef 		object;		// the network object being monitored
   String        	variable;	// Variable (member) to monitor
   ChannelSpec_List	val_specs;	// #SHOW #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
@@ -1621,10 +1643,12 @@ public:
 //TODO: add funcs for specific object types, and put in gui directives
 
 
-  void			ScanObject();	// #IGNORE update the schema
-//obs  void		NameStatVals();
-  virtual void 		UpdateMonVals(DataBlock* db); // get all the values!
-  void			ResetMonVals(); // deletes the cached vars
+  void		ScanObject();	// #IGNORE update the schema
+  virtual void 	GetMonVals(DataBlock* db);
+  // get the monitor data and stick it in the current row of the datablock/datatable
+  void		ResetMonVals(); // deletes the cached vars
+
+  override bool	CheckConfig(bool quiet = false);
   
   static const KeyString key_obj_name;
   static const KeyString key_obj_type;
@@ -1688,6 +1712,8 @@ public:
   String GetColHeading(const KeyString&) const; // header text for the indicated column
   TA_BASEFUNS(NetMonItem_List);
   
+  override bool	CheckConfig(bool quiet = false);
+
 private:
   void		Initialize() {SetBaseType(&TA_NetMonItem);}
   void		Destroy() {}
@@ -1719,10 +1745,15 @@ public:
   
   void		AddObject(TAPtr obj, const String& variable);
     // monitor a value in the object or its subobjects
-  void 		UpdateMonitors(); // #MENU #MENU_SEP_BEFORE create or update the channels
-  void 		UpdateMonVals(); // get all the values!
+  void 		UpdateMonitors(bool reset_first = false);
+  // #MENU #MENU_SEP_BEFORE create or update the channels -- call this during Init.\n  if reset_first, then existing data columns are removed first
+  void 		GetMonVals();
+  // get all the values and store in current row of data table -- call in program to get new data
   
-  void		RemoveMonitors(); //called by net to remove the objs from lists
+  void		RemoveMonitors();
+  // #IGNORE called by the network to remove the objs from lists
+
+  override bool	CheckConfig(bool quiet = false);
   
   void	InitLinks();
   void	CutLinks();

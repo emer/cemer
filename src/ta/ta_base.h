@@ -435,6 +435,8 @@ public:
   // bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
   // bracket data value changes with (nestable) true/false calls;
+  virtual bool		CheckConfig(bool quiet = false);
+  // check the configuration of this object (false if not configed properly).  typically called before running any major processing, enabling processing to assume things are configured correctly.  quiet flag suppresses error messages
 
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // add a dataview (not usually overridden)
