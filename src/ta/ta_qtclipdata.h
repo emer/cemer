@@ -158,14 +158,6 @@ COMMAND FORMATS
 #define IDX_MD_MAX			4
 #define IDX_MD_VISIBLE_MAX		1
 
-// mime-type strings
-extern QString text_plain;
-extern QString tacss_objectdesc;
-extern QString tacss_objectdata;
-//extern const char* tacss_remdatataken; // "hidden" mime type used by remote Paste-after-Cut and similar, to force deletion of source
-//extern const char* tacss_locdatataken; // "hidden" mime type used by local Paste-after-Cut and similar, to force clipboard cleanup
-
-extern QString mime_types[IDX_MD_MAX + 1];
 
 // forwards
 class taiMimeItem;
@@ -175,6 +167,7 @@ class taiMimeItem_List;
 class TA_API taiClipData: public QMimeData {
 INHERITED(QMimeData)
   Q_OBJECT
+friend class taiMimeSource;
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
@@ -216,8 +209,13 @@ public:
     ER_FORBIDDEN	= -1, // indicates action is not allowed (may not have been resolvable at EditActionsAllowed stage)
     ER_IGNORED 		=  0, // indicates no action was taken, may indicate need to call another handler
     ER_OK		=  1  // indicates successful action taken
-  };
+  }; //
 
+  // mime-type strings
+  static const QString	text_plain;
+  static const QString	tacss_objectdesc;
+  static const QString	tacss_objectdata;
+  
   virtual int		count() const = 0; // number of items
   virtual bool		is_multi() const = 0;
   virtual taiMimeItem*	items(int i) const = 0;
@@ -231,6 +229,13 @@ public:
 
   QStringList 		formats() const; // overrride
 protected:
+  static const QString 	text_plain_iso8859_1;
+  static const QString 	text_plain_utf8; // fetch synonym for text_plain
+  static const QString 	tacss_remdatataken; // "tacss/remdatatakenXXX" where XXX is the index number
+  static const QString 	tacss_locdatataken; // "tacss/locdatatakenXXX" where XXX is the   
+  static const QString 	mime_types[IDX_MD_MAX + 1];
+
+
   bool			DecodeFormat(const QString& mimeType, int& fmt_num, int& index) const; // returns true if valid,
   virtual QByteArray 	encodedData_impl(int fmt_num, int index = 0) = 0; // gets the data of the type -- can be replaced or extended -- note we cheat a bit by being non-const, but Qt requires retrieveData to be const
   virtual void 		formats_impl(QStringList& list) const; // overrride
@@ -286,6 +291,7 @@ class TA_API taiMimeItem: public QObject { // we inherit from QObject so the ins
 INHERITED(QObject)
   Q_OBJECT
 friend class taiMimeSource;
+friend class taiClipData;
 friend class taiSingleClipData;
 friend class taiMultiClipData;
 public:

@@ -46,34 +46,16 @@ signals:
 protected:
   QPoint		drop_pos; // we capture this from the drop event
   
-//  void			customEvent(QEvent* e); // override
-  
   void			dropEvent(QDropEvent* e); // override
   bool 			dropMimeData(QTreeWidgetItem* parent, int index, 
     const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)
   void 			contextMenuEvent(QContextMenuEvent* e); // override
-  QMimeData* 		mimeData(const QList<QTreeWidgetItem *> items) const; // override -- we supply mimeData in our own internal formats, not those of tree items
   void			doItemExpanded(QTreeWidgetItem* item, bool expanded);
-  
-protected: // new overridables
-  virtual QMimeData* 	mimeDataSingle(iTreeWidgetItem* item) const; // default delegates to item
-  virtual QMimeData* 	mimeDataMulti(const QList<iTreeWidgetItem*> items) const
-    {return NULL;} // note: there will normally be 2 or more items in the list
   
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);
   void			this_itemCollapsed(QTreeWidgetItem* item);
 };
-
-/*class TAIQTSO_API iTWDropEvent: public QEvent {
-INHERITED(QTreeWidget)
-public:
-  QEvent::Type		type() {return (QEvent::Type)iTreeWidget::iTWDrop;}
-  QPoint		pos;
-  iTreeWidgetItem*	item;
-  
-  iTWDropEvent(const QPoint& pos_, iTreeWidgetItem* item_): pos(pos_), item(item_) {}
-};*/
 
 
 class TAIQTSO_API iTreeWidgetItem: public QTreeWidgetItem { 
@@ -104,7 +86,6 @@ protected:
   virtual void		dropped(const QMimeData* mime, const QPoint& pos) {}
     // what to do when data dropped, usually we put up a drop context menu
   virtual void		itemExpanded(bool expanded); // called when exanded or closed
-  virtual QMimeData*	mimeData() const {return NULL;} // called for single item src request
   virtual void		CreateChildren_impl() {} // override this to create the true children
 private:
   void			init();

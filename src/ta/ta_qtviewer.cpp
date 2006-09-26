@@ -3394,6 +3394,17 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 //    iTreeView 	//
 //////////////////////////
 
+void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
+  ISelectable_PtrList& list)
+{
+  for (int i = 0; i < items.count(); ++i) {
+    ISelectable* tvi = dynamic_cast<iTreeViewItem*>(items.at(i));
+    if (tvi)
+      list.Add(tvi);
+  }
+}
+
+
 iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
@@ -3502,6 +3513,29 @@ bool iTreeView::hasMultiSelect() const {
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
   RemoveSelectedItem((ISelectable*)item, false); // not forced, because it is gui
+}
+
+QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
+//NOTE: in Qt4, we no longer know if we are starting a drag operation
+  if (items.count() == 0) return NULL; // according to Qt spec
+  else if (items.count() == 1) {
+    iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(items.at(0));
+    if (!tvi) return NULL; // prob shouldn't happen
+    return tvi->GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
+  } else { // multi case
+    ISelectable_PtrList list;
+    FillTypedList(items, list);
+    if (list.size == 0) return NULL; // not likely
+    return list.FastEl(0)->GetClipData(list, taiClipData::EA_SRC_OPS, false);
+  }
+}
+
+QStringList iTreeView::mimeTypes () const {
+ //NOTE: for dnd to work, we just permit almost anything via "text/plain"
+//TEMP: see what happens if we look for our own special mime type!!!
+  QStringList rval;
+  rval.append(taiClipData::tacss_objectdesc);
+  return rval;
 }
 
 void iTreeView::mnuNewBrowser(taiAction* mel) {
@@ -3847,12 +3881,6 @@ void iTreeViewItem::itemExpanded(bool value) {
   DecorateDataNode();
 }
 
-QMimeData* iTreeViewItem::mimeData() const {
-//NOTE: for qt4 we no longer know whether it is for drag or not
-  return GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
-}
-
-
 void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx == to_idx) return; // DOH!
   // if the fm is prior to to, we need to adjust index (for removal)
@@ -4017,6 +4045,11 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
   setCentralWidget(list);
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
   list->setSortingEnabled(true);
+  //enable dnd support, at least as source
+  list->setDragEnabled(true);
+//  list->setAcceptDrops(true);
+//  list->setDropIndicatorShown(true);
+  
   ConfigHeader();
   FillList();
 }

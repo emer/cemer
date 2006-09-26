@@ -29,29 +29,30 @@
 
 using namespace std;
 
+
+
+//////////////////////////////////
+// 	taiClipData		//
+//////////////////////////////////
+
 // mime-type strings -- for all, XXX is optional if it is 0 (ex for single data case)
 //NOTE: strings that are prefix subsets of longer strings MUST come later in search order, so we
 // don't incorrectly decode them as XXX index suffix strings
-QString text_plain_iso8859_1 = "text/plain;charset=ISO-8859-1"; // fetch synonym for text_plain
-QString text_plain_utf8 = "text/plain;charset=UTF-8"; // fetch synonym for text_plain
-QString text_plain = "text/plain";
-QString tacss_objectdesc = "tacss/objectdesc";
-QString tacss_objectdata = "tacss/objectdata"; // "tacss/objectdataXXX" where XXX is the index number
-QString tacss_remdatataken = "tacss/remdatataken"; // "tacss/remdatatakenXXX" where XXX is the index number
-QString tacss_locdatataken = "tacss/locdatataken"; // "tacss/locdatatakenXXX" where XXX is the index number
+const QString taiClipData::text_plain_iso8859_1("text/plain;charset=ISO-8859-1"); 
+const QString taiClipData::text_plain_utf8("text/plain;charset=UTF-8");
+const QString taiClipData::text_plain("text/plain");
+const QString taiClipData::tacss_objectdesc("tacss/objectdesc");
+const QString taiClipData::tacss_objectdata("tacss/objectdata"); 
+const QString taiClipData::tacss_remdatataken("tacss/remdatataken");
+const QString taiClipData::tacss_locdatataken("tacss/locdatataken"); 
 
-QString mime_types[] = {
+const QString taiClipData::mime_types[IDX_MD_MAX + 1] = {
    text_plain,
    tacss_objectdesc,
    tacss_objectdata,
    tacss_remdatataken,
    tacss_locdatataken
 };
-
-
-//////////////////////////////////
-// 	taiClipData		//
-//////////////////////////////////
 
 taiClipData::EditAction taiClipData::ClipOpToSrcCode(int ea) {
   switch (ea & EA_OP_MASK) {
@@ -356,7 +357,7 @@ taiMimeSource* taiMimeSource::New(const QMimeData* ms_) {
   //TODO: for multi, check for multi source, and create a taiMultiMimeSource obj instead
   taiExtMimeSource* rval =  new taiExtMimeSource(ms_);
   String str;
-  if (rval->data(tacss_objectdesc, str) > 0) {
+  if (rval->data(taiClipData::tacss_objectdesc, str) > 0) {
     rval->DecodeDesc(str);
   }
   return rval;
@@ -405,7 +406,7 @@ int taiMimeSource::index() const {
 }
 
 void taiMimeSource::loc_data_taken() const {
-  QString fmt = tacss_locdatataken + QString::number(index());
+  QString fmt = taiClipData::tacss_locdatataken + QString::number(index());
   data(fmt);
 }
 
@@ -418,7 +419,7 @@ void* taiMimeSource::object() const {  // gets the object, if possible. if local
 
 int taiMimeSource::object_data(istringstream& result) const {
   if (in_range()) {
-    QString fmt = tacss_objectdata + QString::number(index());
+    QString fmt = taiClipData::tacss_objectdata + QString::number(index());
     return data(fmt, result);
   } else {
     return 0;
@@ -435,7 +436,7 @@ taBase* taiMimeSource::tab_object() const {
 
 void taiMimeSource::rem_data_taken() const {
 //TODO: this really doesn't work, because qt4 no longer sends things to the other process
-  QString fmt = tacss_remdatataken + QString::number(index());
+  QString fmt = taiClipData::tacss_remdatataken + QString::number(index());
   data(fmt);
 }
 

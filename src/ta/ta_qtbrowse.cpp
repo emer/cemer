@@ -455,9 +455,10 @@ void iBrowseViewer::Init() {
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setColumnCount(1);
   lvwDataTree->header()->hide();
-//TEMP  lvwDataTree->setDragEnabled(true);
-//TEMP  lvwDataTree->setAcceptDrops(true);
-//TEMP  lvwDataTree->setDropIndicatorShown(true);
+  //enable dnd support
+  lvwDataTree->setDragEnabled(true);
+  lvwDataTree->setAcceptDrops(true);
+  lvwDataTree->setDropIndicatorShown(true);
 /*no! prevents from collapsing in splitters  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree

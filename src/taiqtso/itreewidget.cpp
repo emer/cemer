@@ -52,24 +52,13 @@ void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
       emit contextMenuRequested(item, viewport()->mapToGlobal( p ), -1 );
     }
   } else {
-//    QPoint vp = contentsToViewport( e->pos() );
-    QPoint vp = e->pos() ; //TODO: prob needs transform
+    QPoint vp = e->pos() ; 
     QTreeWidgetItem* i = itemAt( vp );
 //    int c = i ? d->h->mapToLogical( d->h->cellAt( vp.x() ) ) : -1;
     int c = 0; // TODO
     emit contextMenuRequested( i, viewport()->mapToGlobal( vp ), c );
   }
 }
-
-/*void iTreeWidget::customEvent(QEvent* e_) {
-  switch (e_->type()) {
-  case iTWDropEvent: {
-    iTWDropEvent e = ((iTWDropEvent*)e_;
-    if (e->item)
-  } break;
-  default: inherited::customEvent(e_);
-  }
-}*/
 
 void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
   // safe cast, null if not of type
@@ -87,40 +76,11 @@ bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
   const QMimeData* data, Qt::DropAction action) 
 {
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(parent);
-if (index > 0) {
-  cerr << "iTreeWidget::dropMimeData: warning: index=0 expected, was " <<
-    index << "\n";
-}
-/*wrong  if (parent) 
-    item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
-  else // presumably then it is root item on us...
-    item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index)); */
+//NOTE: index doesn't seem to be needed -- parent always seems to indicate
+// the target of the drop action
   if (!item) return false;
   item->dropped(data, drop_pos);
-  return false;
-}
-
-QMimeData* iTreeWidget::mimeData(const QList<QTreeWidgetItem *> items) const {
-return inherited::mimeData(items);
-  if (items.count() == 0) return NULL; // presumably shouldn't happen
-  else if (items.count() == 1) {
-      iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(items.at(0));
-      if (item) 
-        return mimeDataSingle(item);
-  } else {
-    QList<iTreeWidgetItem*> items2;
-    for (int i = 0; i < items.count(); ++i) {
-      iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(items.at(i));
-      if (item) items2.append(item);
-    }
-    if (items2.count() > 0)
-      return mimeDataMulti(items2);
-  }
-  return NULL;
-}
-
-QMimeData* iTreeWidget::mimeDataSingle(iTreeWidgetItem* item) const {
-  return item->mimeData();
+  return false; // never let Qt manipulate the items
 }
 
 void iTreeWidget::resizeColumnsToContents() {

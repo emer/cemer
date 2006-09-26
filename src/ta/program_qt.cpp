@@ -467,7 +467,10 @@ void iProgramEditor::Init() {
   items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   items->setColKey(2, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-  
+  //enable dnd support
+  items->setDragEnabled(true);
+  items->setAcceptDrops(true);
+  items->setDropIndicatorShown(true);
   
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
@@ -753,11 +756,12 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-  connect(pe->items, SIGNAL(focusIn(QFocusEvent*)),
+//TODO: must connect tree so it can update app clip handling
+/*obs  connect(pe->items, SIGNAL(focusIn(QFocusEvent*)),
     this, SLOT(ctrl_focusInEvent(QFocusEvent*)) );
   // forward the signal used to update main menu when we have focus
   connect(pe->items, SIGNAL(itemSelectionChanged()),
-    this, SIGNAL(view_UpdateUI()) );
+    this, SIGNAL(view_UpdateUI()) ); */
 }
 
 iProgramPanel::~iProgramPanel() {

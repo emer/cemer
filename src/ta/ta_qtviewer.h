@@ -1123,6 +1123,11 @@ public:
     CM_END		// called after filling menu -- use to add items to end
   };
   
+#ifndef __MAKETA__  
+  static void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
+    ISelectable_PtrList& list); // helper, for filling our own typed list
+#endif
+  
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
@@ -1164,6 +1169,11 @@ protected:
   void			showEvent(QShowEvent* ev); // override, for expand all
   void 			ExpandAllUnder_impl(iTreeViewItem* item, int max_levels); // inner code
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+#ifndef __MAKETA__
+  override QMimeData* 	mimeData(const QList<QTreeWidgetItem*> items) const; 
+    // we replace this and provide the ta custom mime data (not the treewidget data)
+  override QStringList 	mimeTypes () const; // for dnd to work, we just permit almost anything via "text/plain", then decide on the drop whether to accept  
+#endif
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
   
 protected slots:
@@ -1207,7 +1217,6 @@ public:
 
   override bool 	acceptDrop(const QMimeData* mime) const;
   override void 	CreateChildren(); 
-  override QMimeData*	mimeData() const;
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 
   iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
@@ -1252,8 +1261,6 @@ protected:
 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
-//nn  void 			dragEntered(); // override
-//nn  void 			dragLeft(); // override
   override void		dropped(const QMimeData* mime, const QPoint& pos);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
