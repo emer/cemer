@@ -21,6 +21,7 @@
 #include <QPainter>
 #include <qpushbutton.h>
 #include <qstring.h>
+#include <QToolButton>
 
 #include "icolor.h"
 #include "ilineedit.h"
@@ -403,7 +404,7 @@ ScaleBar::ScaleBar(bool hor_, SpanMode sm_, bool adj, bool ed, QWidget* parent)
 :inherited(parent)
 {
   sm = sm_;
-  init(hor_, adj, ed);
+  Init(hor_, adj, ed);
 };
 
 ScaleBar::~ScaleBar(){
@@ -416,7 +417,7 @@ void ScaleBar::UpdatePads(){
   }
 }
 
-void ScaleBar::init(bool hor_, bool adj, bool ed){
+void ScaleBar::Init(bool hor_, bool adj, bool ed){
   hor = hor_;
   adjustflag = adj;
   editflag = ed;
@@ -446,38 +447,49 @@ void ScaleBar::init(bool hor_, bool adj, bool ed){
   }
 
   if (adjustflag) {
-
-    //TODO: need pixmaps/icons for buttons
-    // exact icon to use may be hor/vert dependent
     if (sm == RANGE) {
-      enlarger = new QPushButton("U", this);
+      enlarger = new QToolButton(this);
+      ((QToolButton*)enlarger)->setArrowType(Qt::UpArrow);
       connect(enlarger, SIGNAL(pressed()), this, SLOT(Incr_Range()));
-      shrinker = new QPushButton("D", this);
+      shrinker = new QToolButton(this);
+      ((QToolButton*)shrinker)->setArrowType(Qt::DownArrow);
       connect(shrinker, SIGNAL(pressed()), this, SLOT(Decr_Range()));
     } else {
-      min_incr = new QPushButton("U", this);
+      min_incr = new QToolButton(this);
+      ((QToolButton*)min_incr)->setArrowType(Qt::UpArrow);
       connect(min_incr, SIGNAL(pressed()), this, SLOT(Incr_Min()));
-      min_decr = new QPushButton("D", this);
+      min_decr = new QToolButton(this);
+      ((QToolButton*)min_decr)->setArrowType(Qt::DownArrow);
       connect(min_decr, SIGNAL(pressed()), this, SLOT(Decr_Min()));
-      max_incr = new QPushButton("U", this);
+      max_incr = new QToolButton(this);
+      ((QToolButton*)max_incr)->setArrowType(Qt::UpArrow);
       connect(max_incr, SIGNAL(pressed()), this, SLOT(Incr_Max()));
-      max_decr = new QPushButton("D", this);
+      max_decr = new QToolButton(this);
+      ((QToolButton*)max_decr)->setArrowType(Qt::DownArrow);
       connect(max_decr, SIGNAL(pressed()), this, SLOT(Decr_Max()));
     }
   }
 }
 
-void ScaleBar::initLayout() {
+void ScaleBar::InitLayout() {
 //TODO : add remainder of controls, ex. min/max types
   if (hor) {
     layOuter->addWidget(min_frep);
     if (bar) layOuter->addWidget(bar);
     layOuter->addWidget(max_frep);
-    if (shrinker) layOuter->addWidget(shrinker);
-    if (enlarger) layOuter->addWidget(enlarger);
+    if (shrinker) { //note: both or none
+      QBoxLayout* layBut = new QVBoxLayout(layOuter);
+      layBut->setMargin(0); //spacing=2
+      layBut->addWidget(enlarger);
+      layBut->addWidget(shrinker);
+     }
   } else { // vert
-    if (enlarger) layOuter->addWidget(enlarger);
-    if (shrinker) layOuter->addWidget(shrinker);
+    if (enlarger) { //note: both or none
+      QBoxLayout* layBut = new QHBoxLayout(layOuter);
+      layBut->setMargin(0); //spacing=2
+      layBut->addWidget(enlarger);
+      layBut->addWidget(shrinker);
+     }
     layOuter->addWidget(max_frep);
     if (bar) layOuter->addWidget(bar);
     layOuter->addWidget(min_frep);
@@ -689,12 +701,12 @@ void ScaleBar::UpdateScaleValues(){
 HCScaleBar::HCScaleBar(ColorScale* c, SpanMode sm, bool adj, bool ed, QWidget* parent)
 :ScaleBar(true, sm, adj, ed, parent)
 {
-  init(c);
+  Init(c);
 }
 
-void HCScaleBar::init(ColorScale* c) {
+void HCScaleBar::Init(ColorScale* c) {
   bar = new HCBar(c, this);
-  initLayout();
+  InitLayout();
   UpdateScaleValues();
 }
 
@@ -706,12 +718,12 @@ void HCScaleBar::init(ColorScale* c) {
 VCScaleBar::VCScaleBar(ColorScale* c, SpanMode sm, bool adj, bool ed, QWidget* parent)
 :ScaleBar(false, sm, adj, ed, parent)
 {
-  init(c);
+  Init(c);
 }
 
-void VCScaleBar::init(ColorScale* c) {
+void VCScaleBar::Init(ColorScale* c) {
   bar = new VCBar(c, this);
-  initLayout();
+  InitLayout();
   UpdateScaleValues();
 }
 
@@ -723,10 +735,10 @@ void VCScaleBar::init(ColorScale* c) {
 ColorMatrixGrid::ColorMatrixGrid(QWidget* parent)
 :inherited(parent)
 {
-  init();
+  Init();
 }
 
-void ColorMatrixGrid::init() {
+void ColorMatrixGrid::Init() {
   m_cellSize = 3;
 }
 

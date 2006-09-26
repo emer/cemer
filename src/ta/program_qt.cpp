@@ -756,20 +756,9 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-//TODO: must connect tree so it can update app clip handling
-/*obs  connect(pe->items, SIGNAL(focusIn(QFocusEvent*)),
-    this, SLOT(ctrl_focusInEvent(QFocusEvent*)) );
-  // forward the signal used to update main menu when we have focus
-  connect(pe->items, SIGNAL(itemSelectionChanged()),
-    this, SIGNAL(view_UpdateUI()) ); */
 }
 
 iProgramPanel::~iProgramPanel() {
-}
-
-void iProgramPanel::AddedToPanelSet() {
-  inherited::AddedToPanelSet();
-  pe->m_window = window();
 }
 
 void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -779,6 +768,14 @@ void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 
 bool iProgramPanel::HasChanged() {
   return pe->HasChanged();
+}
+
+void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  // connect the tree up to the panel
+  pe->items->Connect_SelectableHostNotifySignal(itv,
+    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  pe->m_window = itv->window();
 }
 
 String iProgramPanel::panel_type() const {

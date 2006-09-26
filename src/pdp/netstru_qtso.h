@@ -394,9 +394,7 @@ private:
 
 class PDP_API NetViewPanel: public iViewPanelFrame {
   // frame for gui interface to a NetView -- usually posted by the netview
-#ifndef __MAKETA__
-typedef iViewPanelFrame inherited;
-#endif
+INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
 
@@ -406,7 +404,7 @@ public:
   QCheckBox*		      chkDisplay;
   QScrollArea*		    scrCmdButtons;
   QWidget*		    widCmdButtons;
-  QGridLayout*		      layCmdButtons;
+  QBoxLayout*		      layCmdButtons;
   QLabel*		    lblDisplayValues;
   Q3ListView*		    lvDisplayValues;
   QVBoxLayout*		  layColorScale;

@@ -1339,15 +1339,15 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
 NetViewPanel::NetViewPanel(NetView* dv_)
 :inherited(dv_)
 {
+  int font_spec = taiMisc::fonMedium;
   updating = 0;
-  cmd_x = cmd_y = 0;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QHBoxLayout(widg);
 
   layCtrls = new QVBoxLayout(layOuter, 1); // takes up all variable space
   layDispCheck = new QHBoxLayout(layCtrls);
-  chkDisplay = new QCheckBox("Display", widg, "chkDisplay");
+  chkDisplay = new QCheckBox("Display", widg);
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addStretch();
 
@@ -1358,7 +1358,11 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   widCmdButtons = new QWidget();
   scrCmdButtons->setWidget(widCmdButtons);
 
-  layCmdButtons = new QGridLayout(widCmdButtons, 1, CMD_GEOM_X, 0, 2);
+  layCmdButtons = new QVBoxLayout(widCmdButtons);
+  layCmdButtons->setMargin(0);
+  layCmdButtons->setSpacing(0); // just all together
+  layCmdButtons->addStretch(); // btns always inserted before this
+  // def margins/spacing ok
 
   layCtrls->addWidget(scrCmdButtons);
 
@@ -1377,9 +1381,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
 
   layCtrls->addSpacing(5);
-  lblDisplayValues = new QLabel("Display Values", widg, "lblDisplayValues");
+  lblDisplayValues = taiM->NewLabel(font_spec, "Display Values", widg);
   layCtrls->addWidget(lblDisplayValues);
-  lvDisplayValues = new Q3ListView(widg, "lvDisplayValues");
+  lvDisplayValues = new Q3ListView(widg);
   lvDisplayValues->addColumn("Value", 80);
   lvDisplayValues->addColumn("Description");
   lvDisplayValues->setShowSortIndicator(false);
@@ -1391,22 +1395,22 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layOuter->addSpacing(5);
   layColorScale = new QVBoxLayout(layOuter);
 
-  lblUnitText = new QLabel("Unit Text", widg, "lblUnitText");
+  lblUnitText = taiM->NewLabel(font_spec, "Unit Text", widg);
   layColorScale->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
   layColorScale->addWidget(cmbUnitText->GetRep());
 
-  lblDispMode = new QLabel("Disp Mode", widg, "lblDispMode");
+  lblDispMode = taiM->NewLabel(font_spec, "Disp Mode", widg);
   layColorScale->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     NULL, NULL, widg);
   layColorScale->addWidget(cmbDispMode->GetRep());
 
-  chkAutoScale = new QCheckBox("auto scale", widg, "chkAutoScale");
+  chkAutoScale = new QCheckBox("auto scale", widg);
   layColorScale->addWidget(chkAutoScale);
 
-  butScaleDefault = new QPushButton("set default", widg, "butScaleDefault");
+  butScaleDefault = new QPushButton("set default", widg);
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
@@ -1442,12 +1446,8 @@ NetViewPanel::~NetViewPanel() {
 
 
 void NetViewPanel::AddCmdButton(QWidget* but) {
-  layCmdButtons->addWidget(but, cmd_x, cmd_y);
-  ++cmd_y;
-  if (cmd_y >= CMD_GEOM_X) {
-    cmd_y = 0;
-    ++cmd_x;
-  }
+  int idx = layCmdButtons->count() - 1; // before last stretch
+  layCmdButtons->insertWidget(idx, but, 0, (Qt::AlignTop | Qt::AlignHCenter));
 }
 
 void NetViewPanel::butNewLayer_pressed() {

@@ -125,70 +125,6 @@ void taiMisc::SetMainWindow(QWidget* win) {
   win->show(); //note: doesn't actually show until event loop called, from rl callback
 }
 
-/* Qt Metrics note
-
-On Linux/X11, using Sans font (default)
-
-Default Widget sizes for various default font sizes --
-() indicates a usable size
-
-			Sans-9		Sans-10		Sans-11
-QPushButton		31 (24)		32 (25)		35 (27)
-QLabel			20		20		20
-QLineEdit		22		23		26
-  QSpinBox		22		23
-QComboBox		27 (24)		27 (25)		27
-QRadioButton		20		21		24
-  QCheckBox		20
-
-
-Actual Widget sizes for SizeSpec sizes --
- indented names means ctrl assumes size of outdented control above it
-
-			sizSmall	sizMed		sizBig
-QPushButton		24		25		27
-  QComboBox
-QLabel			20		21		24
-  QCheckBox
-QLineEdit		22		23		26
-  QSpinBox
-
-
-
-*/
-int taiMisc::button_height(int sizeSpec) {
-  switch (sizeSpec & siz_mask) {
-  case sizSmall: return mbutton_ht[0]; break;
-  case sizBig: return mbutton_ht[2]; break;
-  default: return mbutton_ht[1]; break;
-  }
-}
-
-int taiMisc::combo_height(int sizeSpec) {
-  return button_height(sizeSpec);
-}
-
-int taiMisc::max_control_height(int sizeSpec) {
-  return button_height(sizeSpec);
-}
-
-int taiMisc::label_height(int sizeSpec) {
-  switch (sizeSpec & siz_mask) {
-  case sizSmall: return mlabel_ht[0]; break;
-  case sizBig: return mlabel_ht[2]; break;
-  default: return mlabel_ht[1]; break;
-  }
-}
-
-int taiMisc::text_height(int sizeSpec) {
-  switch (sizeSpec & siz_mask) {
-  case sizSmall: return mtext_ht[0]; break;
-  case sizBig: return mtext_ht[2]; break;
-  default: return mtext_ht[1]; break;
-  }
-}
-
-
 taiMisc::taiMisc(QObject* parent)
 :inherited(parent) 
 {
@@ -210,76 +146,6 @@ void taiMisc::Init(bool gui) {
   if (taMisc::not_constr || taMisc::in_init) 
     return;
 
-//OBS  font_foreground = new iColor(QApplication::palette().color(QPalette::Active, QColorGroup::Text));
-
-//OBS  edit_darkbg = wkit->background()->brightness(edit_darkbg_brightness);
-
-//OBS  edit_lightbg = new QColor(1.0f, 1.0f, 0.0f, 1.0f); // wkit->background()->brightness(edit_lightbg_brightness);
-/* OBS:
-  // instead of pushing and popping styles, just get the damn fonts!
-  ivStyle* sty;
-
-  // name_style is special because it also specifies a color for the buttons
-  name_style = new ivStyle(style);  name_style->alias("name");
-  ivResource::ref(name_style);
-  wkit->push_style(name_style);
-  name_font = (QFont*)wkit->font();  ivResource::ref(name_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("small_menu");
-  wkit->push_style(sty);
-  small_menu_font = (QFont*)wkit->font();  ivResource::ref(small_menu_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("small_submenu");
-  wkit->push_style(sty);
-  small_submenu_font = (QFont*)wkit->font();  ivResource::ref(small_submenu_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("big_menu");
-  wkit->push_style(sty);
-  big_menu_font = (QFont*)wkit->font();  ivResource::ref(big_menu_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("big_submenu");
-  wkit->push_style(sty);
-  big_submenu_font = (QFont*)wkit->font();  ivResource::ref(big_submenu_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("big_menubar");
-  wkit->push_style(sty);
-  big_menubar_font = (QFont*)wkit->font();  ivResource::ref(big_menubar_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("big_italic_menubar");
-  wkit->push_style(sty);
-  big_italic_menubar_font = (QFont*)wkit->font();  ivResource::ref(big_italic_menubar_font);
-  wkit->pop_style();
-
-  sty = new ivStyle(style);  sty->alias("TaIVButton");
-  wkit->push_style(sty);
-*/ // OBS
-//  small_button_width = 46;
-//OBS:  wkit->style()->find_attribute("SmallWidth", small_button_width);
-//  medium_button_width=72;
-//  wkit->style()->find_attribute("MediumWidth", medium_button_width);
-//  big_button_width= 100;
-//OBS:   wkit->style()->find_attribute("BigWidth", big_button_width);
-//OBS:   wkit->pop_style();
-
-/* OBS:
-  title_style = new ivStyle(style);
-  ivResource::ref(title_style);
-  title_style->alias("title");
-
-  apply_button_style = new ivStyle(style);
-  ivResource::ref(apply_button_style);
-  apply_button_style->alias("apply_button");
-*/
-  
-  // Wait cursor -- TODO: shouldn't we just use standard system wait cursor???
-/*qt3  QBitmap waiter = QBitmap(wait_cursor_width, wait_cursor_height, wait_cursor_bits, TRUE);
-  QBitmap waiter_m = QBitmap(wait_cursor_width, wait_cursor_height, wait_mask_bits, TRUE); */
   QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
     wait_cursor_bits, QImage::Format_MonoLSB);
   QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
@@ -287,8 +153,6 @@ void taiMisc::Init(bool gui) {
   wait_cursor = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
 
   // Record cursor
-/*qt3  QBitmap recorder = QBitmap(record_cursor_width, record_cursor_height, record_cursor_bits, TRUE);
-  QBitmap recorder_m = QBitmap(record_cursor_width, record_cursor_height, record_mask_bits, TRUE); */
   QBitmap recorder = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height),
     record_cursor_bits, QImage::Format_MonoLSB);
   QBitmap recorder_m = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height), 
@@ -371,10 +235,71 @@ void taiMisc::InitMetrics() {
     mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
     mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
   } 
-
-
-
 }
+
+/* Qt Metrics note
+
+On Linux/X11, using Sans font (default)
+
+Default Widget sizes for various default font sizes --
+() indicates a usable size
+
+			Sans-9		Sans-10		Sans-11
+QPushButton		31 (24)		32 (25)		35 (27)
+QLabel			20		20		20
+QLineEdit		22		23		26
+  QSpinBox		22		23
+QComboBox		27 (24)		27 (25)		27
+QRadioButton		20		21		24
+  QCheckBox		20
+
+
+Actual Widget sizes for SizeSpec sizes --
+ indented names means ctrl assumes size of outdented control above it
+
+			sizSmall	sizMed		sizBig
+QPushButton		24		25		27
+  QComboBox
+QLabel			20		21		24
+  QCheckBox
+QLineEdit		22		23		26
+  QSpinBox
+
+
+
+*/
+int taiMisc::button_height(int sizeSpec) {
+  switch (sizeSpec & siz_mask) {
+  case sizSmall: return mbutton_ht[0]; break;
+  case sizBig: return mbutton_ht[2]; break;
+  default: return mbutton_ht[1]; break;
+  }
+}
+
+int taiMisc::combo_height(int sizeSpec) {
+  return button_height(sizeSpec);
+}
+
+int taiMisc::max_control_height(int sizeSpec) {
+  return button_height(sizeSpec);
+}
+
+int taiMisc::label_height(int sizeSpec) {
+  switch (sizeSpec & siz_mask) {
+  case sizSmall: return mlabel_ht[0]; break;
+  case sizBig: return mlabel_ht[2]; break;
+  default: return mlabel_ht[1]; break;
+  }
+}
+
+int taiMisc::text_height(int sizeSpec) {
+  switch (sizeSpec & siz_mask) {
+  case sizSmall: return mtext_ht[0]; break;
+  case sizBig: return mtext_ht[2]; break;
+  default: return mtext_ht[1]; break;
+  }
+}
+
 void taiMisc::AdjustFont(int fontSpec, iFont& font) {
   if (fontSpec & fonItalic) font.setItalic(true);
   if (fontSpec & fonBold) font.setBold(true);
@@ -452,6 +377,13 @@ void taiMisc::MainWindowClosing(CancelOp& cancel_op) {
    // called by main_window in close event -- we can cancel it
   //TODO: go through active wins, and close -- prompt user if any active ones found
   //TODO: we will need to figure out how to do this, because we need to pump the event loop!
+}
+
+QLabel* taiMisc::NewLabel(int fontSpec, const String& text, QWidget* parent) {
+  QLabel* rval = new QLabel(text, parent);
+  rval->setFixedHeight(label_height(fontSpec));
+  rval->setFont(nameFont(fontSpec));
+  return rval;
 }
 
 void taiMisc::Quit_impl() {

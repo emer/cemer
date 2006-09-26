@@ -610,7 +610,7 @@ const iColor* taiDataHost::colorOfRow(int row) const {
 
 int taiDataHost::AddName(int row, const String& name, const String& desc, taiData* buddy) {
   iContextLabel* label = new iContextLabel(row, name, body);
-//TODO  label->setFont(taiM->nameFont(ctrl_size));
+  label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
   connect(label, SIGNAL(contextMenuInvoked(iContextLabel*, QContextMenuEvent*)),
@@ -665,6 +665,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
 void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
   SetMultiSize(row + 1, 0); //0 gets set to multi_col
   QLabel* label = new QLabel(name, (QWidget*)NULL);
+  label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
   if (!desc.empty()) {
@@ -677,6 +678,8 @@ void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& 
 void taiDataHost::AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc) {
   SetMultiSize(0, col + 1); // 0 gets set to multi_rows
   QLabel* label = new QLabel(name, (QWidget*)NULL);
+  label->setFont(taiM->nameFont(ctrl_size));
+  label->setFixedHeight(taiM->label_height(ctrl_size));
   if (!desc.empty()) {
     QToolTip::add(label, desc);
   }
@@ -780,16 +783,15 @@ void taiDataHost::Constr_impl() {
   Constr_Methods();
   // create container for ok/cancel/apply etc. buttons
   hblButtons = new QHBoxLayout();
+  hblButtons->setMargin(0); // containing lay already has spacing
 //  vblDialog->addStretch(100); // provides a degree of freedom for small body heights -- all other strechfactors=0
   vblDialog->addStretch();
-  vblDialog->addSpacing(taiM->vsep_c);
   vblDialog->addLayout(hblButtons);
-  vblDialog->addSpacing(taiM->vsep_c);
   Constr_Buttons();
   Constr_Final();
   widget()->setUpdatesEnabled(true);
 //NOTE: do NOT do a processevents -- it causes improperly nested event calls
-// in some cases, such as constructing the browser  qApp->processEvents();
+// in some cases, such as constructing the browser
 }
 
 void taiDataHost::Constr_Widget() {
@@ -799,7 +801,7 @@ void taiDataHost::Constr_Widget() {
     widget()->setPaletteBackgroundColor(*bg_color);
   }
   widget()->setFont(taiM->dialogFont(ctrl_size));
-  vblDialog = new QVBoxLayout(widget());
+  vblDialog = new QVBoxLayout(widget()); //marg/space=2
 }
 
 void taiDataHost::Constr_WinName() {
@@ -811,14 +813,14 @@ void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
   QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
-  prompt = new QLabel(s, widget());
-  QFont f = prompt->font(); f.setBold(true); prompt->setFont(f);
+  prompt = taiM->NewLabel(ctrl_size, s, widget());
   prompt->setTextFormat(Qt::RichText);
-//  prompt->setFixedHeight(taiM->label_height(ctrl_size));
+  prompt->setWordWrap(true); // so it doesn't dominate hor sizing
+  QFont f = prompt->font(); f.setBold(true); prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
   vblDialog->addWidget(prompt);
-  QFrame* line = new QFrame(widget());
   // add a separator line
+  QFrame* line = new QFrame(widget());
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   vblDialog->add(line);
@@ -859,18 +861,17 @@ void taiDataHost::Constr_Body() {
 
 void taiDataHost::Constr_Methods() { //note: conditional constructions used by SelectEditHost to rebuild methods
   QFrame* tmp = frmMethButtons;
-  if (frmMethButtons == NULL) {
+  if (!frmMethButtons) {
     showMethButtons = false; // set true if any created
     tmp = new QFrame(widget());
     tmp->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }
-  if (layMethButtons == NULL) {
-    layMethButtons = new iFlowLayout(tmp, 5, taiM->hspc_c, (Qt::AlignCenter | Qt::AlignTop)); // margin, space, align
+  if (!layMethButtons) {
+    layMethButtons = new iFlowLayout(tmp, 3, taiM->hspc_c, (Qt::AlignCenter)); // margin, space, align
   }
-  if (frmMethButtons == NULL) {
+  if (!frmMethButtons) {
     frmMethButtons = tmp;
-    vblDialog->addSpacing(taiM->vspc_c);
     vblDialog->addWidget(frmMethButtons);
   }
 }
@@ -926,12 +927,6 @@ void taiDataHost::Constr_Buttons() {
 
 void taiDataHost::Constr_Final() {
   // we put all the stretch factor setting here, so it is easy to make code changes if necessary
-/*stretch not needed
-  vblDialog->setStretchFactor(prompt, 1);
-  vblDialog->setStretchFactor(scrBody, 0); //note: won't be in layout for list/group edits, so this call will just be noop
-  vblDialog->setStretchFactor(frmMethButtons, 1);
-  vblDialog->setStretchFactor(hblButtons, 1); //note: layout, not widget
-*/
   if (splBody) vblDialog->setStretchFactor(splBody, 1);
   else         vblDialog->setStretchFactor(scrBody, 1);
 
@@ -1248,7 +1243,7 @@ void taiEditDataHost::InitGuiFields(bool virt) {
 
 
 void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
-  QPushButton* but = mth_rep->GetButtonRep();
+  QAbstractButton* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
   if (label != NULL) {
     but->setText(label);
@@ -1474,9 +1469,11 @@ void taiEditDataHost::Constr_Final() {
   }
 }
 
-void taiEditDataHost::DoAddMethButton(QPushButton* but) {
+void taiEditDataHost::DoAddMethButton(QAbstractButton* but) {
   showMethButtons = true;
-  but->setFixedHeight(taiM->button_height(ctrl_size));
+  // we use "medium" size for buttons
+  but->setFont(taiM->buttonFont(taiMisc::fonMedium));
+  but->setFixedHeight(taiM->button_height(taiMisc::sizMedium));
   if (but->parent() != frmMethButtons) {
     but->reparent(frmMethButtons, QPoint(0, 0));
   }
@@ -1581,7 +1578,7 @@ void taiEditDataHost::GetButtonImage() {
     bool val_is_eq = false;
     if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, cur_base, ghost_on, val_is_eq))
       continue;
-    QPushButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
+    QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
     if (ghost_on) {
       but->setEnabled(!val_is_eq);
     } else {

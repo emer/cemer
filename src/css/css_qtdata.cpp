@@ -111,7 +111,7 @@ cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* 
   arg_obj = NULL;
   if (css_fun->HasOption("BUTTON")) {
     is_menu_item = false;
-    QPushButton* but = makeButton(); //note: connects to CallFun
+    QAbstractButton* but = MakeButton(); //note: connects to CallFun
     but->setText(css_fun->name);
   }
   else {

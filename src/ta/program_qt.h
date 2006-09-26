@@ -140,7 +140,7 @@ public:
   iTreeView*		  items;
   
   bool			read_only; // set true if we are
-#ifndef __MAKETA__  // evil evil evile maketa!!!!!!!
+#ifndef __MAKETA__ 
   QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
 #endif  
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
@@ -216,8 +216,6 @@ public:
 
   void			FillList();
 
-  void			AddedToPanelSet(); // override -- called when fully added to DataPanelSet
-  
   iProgramPanel(taiDataLink* dl_);
   ~iProgramPanel();
   
@@ -227,6 +225,7 @@ public: // IDataLinkClient interface
   
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
 

@@ -240,6 +240,9 @@ public:
   int		text_height(int sizeSpec); // can pass any XxxSpec that uses size -- for: QLineEdit, QSpinBox,
   int		max_control_height(int sizeSpec); // maximum height needed
 
+  QLabel*	NewLabel(int fontSpec, const String& text, QWidget* parent);
+    // convenience, for making a label with indicated fontspec
+    
 static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
   String 	color_to_string(const iColor& color); // returns a string value (appropriate for setting in a style) for the color
 

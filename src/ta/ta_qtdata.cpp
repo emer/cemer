@@ -4173,16 +4173,6 @@ void taiMethodData::AddToMenu(taiActions* mnu) {
 }
 
 
-QPushButton* taiMethodData::makeButton() {
-  if (buttonRep == NULL) {
-    buttonRep = new QPushButton(meth->GetLabel(), gui_parent);
-    connect(buttonRep, SIGNAL(clicked()),
-      this, SLOT(CallFun()) );
-    buttonRep->show();
-  }
-  return buttonRep;
-}
-
 void taiMethodData::CallFun() {
   if ((meth->stubp == NULL) || (base == NULL))
     return;
@@ -4232,6 +4222,18 @@ void taiMethodData::CallFun() {
 #endif
   }
   delete arg_dlg;
+}
+
+QAbstractButton* taiMethodData::MakeButton() {
+  if (buttonRep == NULL) {
+    //buttonRep = new QPushButton(meth->GetLabel(), gui_parent);
+    buttonRep = new QToolButton(gui_parent);
+    buttonRep->setText(meth->GetLabel());
+    connect(buttonRep, SIGNAL(clicked()),
+      this, SLOT(CallFun()) );
+    buttonRep->show();
+  }
+  return buttonRep;
 }
 
 void taiMethodData::ShowReturnVal(cssEl* rval) {
@@ -4401,7 +4403,7 @@ taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
   is_menu_item = false;
-  if (gui_parent) SetRep(makeButton()); //note: later code in win_base.cc etc. has convoluted menu
+  if (gui_parent) SetRep(MakeButton()); //note: later code in win_base.cc etc. has convoluted menu
   // code that will end up spuriously invoking this, unless we prevent it.
 }
 

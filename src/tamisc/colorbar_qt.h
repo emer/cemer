@@ -186,12 +186,12 @@ public:
   iLineEdit*  		min_frep;
   iLineEdit*  		max_frep;
 
-  QPushButton* 		enlarger;	// increase range button
-  QPushButton* 		shrinker;	// decrease range button
-  QPushButton* 		min_incr;	// increment minimum button
-  QPushButton* 		min_decr;	// decrement minimum button
-  QPushButton* 		max_incr;	// increment maximum button
-  QPushButton* 		max_decr;	// decrement maximum button
+  QAbstractButton* 	enlarger;	// increase range button
+  QAbstractButton* 	shrinker;	// decrease range button
+  QAbstractButton* 	min_incr;	// increment minimum button
+  QAbstractButton* 	min_decr;	// decrement minimum button
+  QAbstractButton* 	max_incr;	// increment maximum button
+  QAbstractButton* 	max_decr;	// decrement maximum button
 
   Widget_List	  	padlist; 	// #IGNORE list of color pads for palletes
 
@@ -243,9 +243,10 @@ signals:
 
 protected:
   bool		hor; // true for horizontal, false for vertical
-  void 		initLayout(); // call this in final inherited class constructor
+  
+  void 		InitLayout(); // call this in final inherited class constructor
 private:
-  void 		init(bool hor, bool adj, bool ed);
+  void 		Init(bool hor, bool adj, bool ed);
 };
 
 
@@ -259,7 +260,7 @@ public:
   HCScaleBar(ColorScale* c, SpanMode sm, bool adj = false, bool ed = true,
     QWidget* parent = NULL);
 private:
-  void		init(ColorScale* c);
+  void		Init(ColorScale* c);
 };
 
 
@@ -273,7 +274,7 @@ public:
   VCScaleBar(ColorScale* c, SpanMode sm, bool adj = false, bool ed = true,
     QWidget* parent = NULL);
 private:
-  void		init(ColorScale* c);
+  void		Init(ColorScale* c);
 };
 
 class TAMISC_API ColorMatrixGrid: QWidget {
@@ -292,7 +293,7 @@ protected:
   void 		paintEvent(QPaintEvent* event); // override
   
 private:
-  void		init();
+  void		Init();
 };
 
 /*TODO

@@ -481,7 +481,7 @@ protected:
   virtual void		GetButtonImage();
   void			AddMethButton(taiMethodData* mth_rep, const char* label = NULL);
     // uses mth's label, if no label passed
-  void			DoAddMethButton(QPushButton* but);
+  void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
 
 protected slots:

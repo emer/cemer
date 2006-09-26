@@ -1305,7 +1305,7 @@ public:
   taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
-  virtual QPushButton*	GetButtonRep() {return buttonRep;}
+  virtual QAbstractButton*	GetButtonRep() {return buttonRep;}
     // button connected to method -- only created on demand by subclasses
 
   virtual bool	hasButtonRep() { return (buttonRep != NULL); }
@@ -1317,9 +1317,9 @@ public:
 
   virtual void 	AddToMenu(taiActions* mnu);
 protected:
-  QPushButton*	buttonRep;
+  QAbstractButton*	buttonRep;
   QWidget*	gui_parent;
-  QPushButton*	makeButton(); // makes the button if necessary, and returns a reference
+  QAbstractButton*	MakeButton(); // makes the button if necessary, and returns a reference
 public slots:
   virtual void 	CallFun();		// call the function (button callback)
 
@@ -1332,7 +1332,7 @@ public:
   taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
-  override QPushButton*	GetButtonRep() {return makeButton();}
+  override QAbstractButton* GetButtonRep() {return MakeButton();}
   QWidget*	GetRep()		{ return (QWidget*)buttonRep; }
 };
 
