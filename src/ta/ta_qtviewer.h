@@ -260,41 +260,6 @@ protected:
 };
 
 
-class TA_API iToolBar: public QToolBar {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-friend class ToolBar;
-friend class iMainWindowViewer;
-public:
-  ToolBar*		toolBar() {return m_toolBar;}
-  iToolBar(ToolBar* toolBar_, const QString& label, iMainWindowViewer* par_win);
-   // constructor just does bare-bones create; Constr() does the actual work
-  ~iToolBar();
-protected:
-  ToolBar*		m_toolBar;
-  void 			showEvent(QShowEvent* e); // override
-  void 			hideEvent(QHideEvent* e); // override
-  virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
-private:
-  typedef QToolBar	inherited;
-};
-
-
-//obs # ifdef __MAKETA__
-typedef iToolBar* iToolBar_Ptr; // needed for maketa
-class TA_API iToolBar_List: public QList<iToolBar_Ptr> {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
-//obs # else
-//obs class TA_API iToolBar_List: public QList<iToolBar*> {
-//obs#endif
-friend class ToolBar;
-public:
-  ~iToolBar_List();
-  iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
-protected:
-  ToolBar*		m_toolBar;
-};
-
-
 //////////////////////////
 //   ISelectable	//
 //////////////////////////
@@ -638,6 +603,69 @@ private:
 };
 
 
+typedef void 		(InitToolBarProc*)(iMainWindow* win, iToolBar* tb);
+
+class TA_API InitToolBarProcRegistrar {
+  // use a dummy static instance to register your toolbar init routine
+public:  
+  String		toolbar_name;
+  InitToolBarProc 	init_proc;
+  
+  InitToolBarProcRegistrar(const char* toolbar_name, InitToolBarProc init_proc);
+};
+
+class TA_API ToolBarInitProc_PtrList: public taPtrList<InitToolBarProcRegistrar> {
+public:
+  static ToolBarInitProc_PtrList*	instance(); // get the instance from here
+protected:
+  static ToolBarInitProc_PtrList*	m_instance;
+  ToolBarInitProc_PtrList() {}
+};
+
+class TA_API iToolBar: public QToolBar, public IDataViewWidget {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(QToolBar)
+friend class ToolBar;
+friend class iMainWindowViewer;
+  Q_OBJECT
+public:
+  ToolBar*		toolBar() {return (ToolBar*)m_viewer;}
+  
+  iToolBar(ToolBar* viewer, QWidget* parent = NULL);
+  ~iToolBar();
+  
+public: // IDataViewerWidget i/f
+  override QWidget*	widget() {return this;}
+protected:
+//  override void		Constr_impl();
+
+  
+protected:
+  void 			showEvent(QShowEvent* e); // override
+  void 			hideEvent(QHideEvent* e); // override
+  virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
+private:
+  void			Init();
+};
+
+
+//obs # ifdef __MAKETA__
+typedef iToolBar* iToolBar_Ptr; // needed for maketa
+class TA_API iToolBar_List: public QList<iToolBar_Ptr> {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
+//obs # else
+//obs class TA_API iToolBar_List: public QList<iToolBar*> {
+//obs#endif
+friend class ToolBar;
+public:
+  ~iToolBar_List();
+  iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
+protected:
+  ToolBar*		m_toolBar;
+};
+
+
+
 //////////////////////////
 //   iMainWindowViewer	//
 //////////////////////////
@@ -649,6 +677,9 @@ INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
 public:
+  static void 		InitApplicationToolBar(iMainWindow* win, iToolBar* tb); 
+    // registered for "Application" tb
+
   iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
@@ -707,7 +738,8 @@ public:
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
   void			AddPanelNewTab(iDataPanel* panel); 
     // insures we have a iTabViewer; adds a new tab, sets panel active in it
-  virtual iToolBar*	AddToolBar(iToolBar* tb); // add the toolbar to the list, returning the instance (for convenience)
+  virtual void		AddToolBar(ToolBar* tb); // add the toolbar, showing it if it is mapped
+  virtual void		RemoveToolBar(ToolBar* tb); // called if it deletes
   virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
 #ifndef __MAKETA__
   virtual void		AddDockViewer(iDockViewer* dv,

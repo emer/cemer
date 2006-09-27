@@ -98,6 +98,23 @@ void DataViewer::Constr_post() {
   m_dvwidget->Constr_post();
   // call inherited last, for a top-down type of call sequence
   inherited::Constr_post(); // does children
+  // now, finally restore the state
+  SetWinState();
+}
+
+void DataViewer::Dump_Save_pre() {
+  inherited::Dump_Save_pre();
+  GetWinState(); // prior to saving
+}
+
+void DataViewer::GetWinState() {
+  if (!isMapped()) return;
+  GetWinState_impl();
+}
+
+void DataViewer::SetWinState() {
+  if (!isMapped()) return;
+  SetWinState_impl();
 }
 
 
@@ -188,11 +205,11 @@ QWidget* DataViewer::widget() {
 //////////////////////////////////
 
 void FrameViewer::Initialize() {
-  m_main_window_viewer = NULL;
 }
 
 iMainWindowViewer* FrameViewer::window() {
-  if (mainWindowViewer()) return m_main_window_viewer->window(); 
+  MainWindowViewer* mwv;
+  if ((mwv = mainWindowViewer())) return mwv->window(); 
   else return NULL;
 }
 
@@ -507,16 +524,8 @@ void TopLevelViewer::Iconify() {
   winState().iconified = true; // TEMP
 }
 
-void TopLevelViewer::Constr_post() {
-  inherited::Constr_post();
-  winState().SetWinState();
-  SetWinName();
-}
-
-void TopLevelViewer::Dump_Save_pre() {
-  inherited::Dump_Save_pre();
-//TODO: we can eliminate this with UserData system
-  winState().GetWinState(); // get window position *before* saving!
+void TopLevelViewer::GetWinState_impl() {
+  winState().GetWinState();
 }
 
 void TopLevelViewer::Lower() {
@@ -670,6 +679,11 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
   cancel = false; */
 }
 
+void TopLevelViewer::SetWinState_impl() {
+  winState().SetWinState();
+  SetWinName();
+}
+
 WindowState& TopLevelViewer::winState() {
   return win_state; // TEMP: until is UserData, then we'll get from there and return addr
 }
@@ -695,57 +709,25 @@ IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 //////////////////////////
 
 void ToolBar::Initialize() {
-  index = -1; // assigned when added to list
   lft = 0.0f;
   top = 0.0f;
   o = Horizontal;
-  mapped = false;
-  m_window = NULL;
-  m_viewer = NULL;
-}
-
-void ToolBar::Destroy() {
-  CutLinks();
+  visible = false;
 }
 
 void ToolBar::Copy_(const ToolBar& cp) {
   lft = cp.lft;
   top = cp.top;
   o = cp.o;
-  mapped = cp.mapped;
+  visible = cp.visible; //note: not the same as mapped
 }
 
-void ToolBar::CutLinks() {
-//obs  taiMisc::CloseEdits((void*)this, GetTypeDef());
-  CloseWindow();
-//obs  win_owner = NULL;
-  inherited::CutLinks();
+IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {
+  return new iToolBar(this, gui_parent); // usually parented later
 }
 
-void ToolBar::CloseWindow() {
-  if (!m_window) return;
-  m_window->m_toolBar = NULL;
-  m_window->deleteLater();
-  m_window = NULL;
-}
-
-void ToolBar::Constr_Window_impl() {
-  if (m_window) return; // shouldn't happen
-  iMainWindowViewer* vw = viewer_win();
-  if (!vw) return;
-
-  m_window = vw->Constr_ToolBar(this, this->GetName());
-  viewer_win()->AddToolBar(m_window);
-}
-
-void ToolBar::Dump_Save_pre() {
-  inherited::Dump_Save_pre();
-  GetWinState();
-}
-
-void ToolBar::GetWinState() {
-  if (!m_window) return;
-  iRect r = m_window->frameGeometry();
+void ToolBar::GetWinState_impl() {
+  iRect r = widget()->frameGeometry();
   // convert from screen coords to relative (note, allowed to be >1.0)
   lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
   top = (float)r.top() / (float)(taiM->scrn_s.h);
@@ -757,15 +739,16 @@ void ToolBar::OpenNewWindow_impl() {
   if (!vw) return;
   Constr_Window_impl();
   if (!m_window) return; // shouldn't happen
+  
   vw->InitToolBar(GetName(), m_window);
   SetWinState();
+  
+  
   m_window->show();
-  mapped = true;
+  visible = true;
 }
 
-void ToolBar::SetWinState() {
-  if (!m_window) return;
-
+void ToolBar::SetWinState_impl() {
   //TODO: docked
   m_window->setOrientation((Qt::Orientation)o);
   iRect r = m_window->frameGeometry();
@@ -776,31 +759,35 @@ void ToolBar::SetWinState() {
 }
 
 void ToolBar::Show() {
-  if (m_window) m_window->show();
-  else OpenNewWindow_impl();
+  visible = true; // preset, for others
+  if (isMapped()) {
+    widget()->show();
+  } else { // we were never mapped
+    Constr(); // does impl and post
+  }
 }
 
 void ToolBar::Hide() {
-  if (!m_window) return;
-  m_window->hide();
+  if (!isMapped()) return;
+  widget()->hide();
+  visible = false;
 }
 
-MainWindowViewer* ToolBar::viewer() {
-  if (!m_viewer) {
-    m_viewer = GET_MY_OWNER(MainWindowViewer);
-  }
-  return m_viewer;
+void ToolBar::WidgetDeleting_impl() {
+  inherited::WidgetDeleting_impl();
+  visible = false;
 }
 
-iMainWindowViewer* ToolBar::viewer_win() {
-  return (viewer()) ? m_viewer->window() : NULL;
+void ToolBar::SetWinState_impl() {
+  winState().SetWinState();
+  SetWinName();
 }
 
-void ToolBar::WindowClosing() {
-  GetWinState(); //huh? TODO: why now???
-  m_window = NULL;
+iMainWindowViewer* ToolBar::window() {
+  MainWindowViewer* mwv;
+  if ((mwv = mainWindowViewer())) return mwv->window(); 
+  else return NULL;
 }
-
 
 //////////////////////////
 //   MainWindowViewer	//
@@ -1038,21 +1025,28 @@ cont:
   }
 } */
 
-void MainWindowViewer::ConstrToolBars_impl() {
-//TODO: Toolbar handling is tentative
-
-  // show any visible toolbars
-  for (int i = 0; i < toolbars.size; ++i) {
-    ToolBar* tb = toolbars.FastEl(i);
-    if (!tb->mapped) continue;
-    tb->Show();
-  }
-  // populate the toolbar view menu 
+void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
   iMainWindowViewer* win = window(); //cache
-  // populate the toolbar list
+  if (tb->visible) {
+    ((DataViewer*)tb)->Constr_impl(NULL);
+  }
+  // add to the toolbar view menu 
+  win->AddToolBar(tb);
+  if (post_constr && tb->isMapped()) {
+    ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
+  }
+}
+
+void MainWindowViewer::AddToolBar(ToolBar* tb) {
+  if (!tb) return;
+  if (!toolbars.AddUnique(tb)) return; // already added!
+  OnToolBarAdded(tb, true);
+}
+
+void MainWindowViewer::ConstrToolBars_impl() {
   for (int i = 0; i < toolbars.size; ++i) {
     ToolBar* tb = toolbars.FastEl(i);
-    win->AddToolBarMenu(tb->GetName(), i);
+    OnToolBarAdded(tb, false);
   }
 }
 

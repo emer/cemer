@@ -1196,60 +1196,6 @@ void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
 }
 
 //////////////////////////
-//   iToolBar 	//
-//////////////////////////
-
-iToolBar::iToolBar(ToolBar* toolBar_, const QString& label, iMainWindowViewer* par_win)
-:QToolBar(par_win)
-{
-  m_toolBar = toolBar_;
-  setLabel(label);
-}
-
-iToolBar::~iToolBar() {
-  if (toolBar()) {
-    m_toolBar->WindowClosing();
-  }
-}
-
-void iToolBar::showEvent(QShowEvent* e) {
-  inherited::showEvent(e);
-  Showing(true);
-}
-
-void iToolBar::hideEvent(QHideEvent* e) {
-  inherited::hideEvent(e);
-  Showing(false);
-}
-
-void iToolBar::Showing(bool showing) {
-  if (!m_toolBar) return;
-  iMainWindowViewer* dv = m_toolBar->viewer_win();
-  if (!dv) return;
-  taiAction* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
-  if (!me) return;
-  me->setChecked(showing);
-}
-
-
-//////////////////////////////////
-//  iToolBar_List 		//
-//////////////////////////////////
-
-iToolBar_List::~iToolBar_List() {}
-
-iToolBar* iToolBar_List::FindToolBar(const String& name_) const {
-  QString name = name_; // more efficient, and would be done implicitly anyway 
-  for (int i = 0; i < count(); ++i) {
-    const iToolBar* tb = at(i);
-    if (tb->name() == name) 
-      return (iToolBar*)tb; // ok to cast away const
-  }
-  return NULL;
-}
-
-
-//////////////////////////
 //   ISelectable	//
 //////////////////////////
 
@@ -2216,10 +2162,115 @@ void iDockViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
 }
 
+///////////////////////////////
+//   InitToolBarProcRegistrar //
+///////////////////////////////
+
+
+class TA_API InitToolBarProcRegistrar {
+  // use a dummy static instance to register your toolbar init routine
+public:  
+  String		toolbar_name;
+  InitToolBarProc 	init_proc;
+  
+InitToolBarProcRegistrar::InitToolBarProcRegistrar(const char* toolbar_name_,
+  InitToolBarProc init_proc_) 
+{
+  toolbar_name = toolbar_name_;
+  init_proc = init_proc_;
+  ToolBarInitProc_PtrList::instance()->Add(this);
+}
+
+
+///////////////////////////////
+//   ToolBarInitProc_PtrList //
+///////////////////////////////
+
+ToolBarInitProc_PtrList* ToolBarInitProc_PtrList::m_instance;
+
+ToolBarInitProc_PtrList* ToolBarInitProc_PtrList::instance() {
+  if (!m_instance)
+    m_instance = new ToolBarInitProc_PtrList;
+  return m_instance;
+}
+
+//////////////////////////
+//   iToolBar 	//
+//////////////////////////
+
+iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
+:inherited(viewer_, parent)
+{
+  Init();
+}
+
+iToolBar::~iToolBar() {
+}
+
+void iToolBar::Init() {
+  setLabel(viewer()->GetName());
+}
+
+void iToolBar::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iToolBar::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iToolBar::Showing(bool showing) {
+  if (!m_viewer) return;
+  iMainWindowViewer* dv = m_toolBar->viewer_win();
+  if (!dv) return;
+  taiAction* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
+  if (!me) return;
+  me->setChecked(showing);
+}
+
+
+//////////////////////////////////
+//  iToolBar_List 		//
+//////////////////////////////////
+
+iToolBar_List::~iToolBar_List() {}
+
+iToolBar* iToolBar_List::FindToolBar(const String& name_) const {
+  QString name = name_; // more efficient, and would be done implicitly anyway 
+  for (int i = 0; i < count(); ++i) {
+    const iToolBar* tb = at(i);
+    if (tb->name() == name) 
+      return (iToolBar*)tb; // ok to cast away const
+  }
+  return NULL;
+}
+
+
 
 //////////////////////////
 //  iMainWindowViewer	//
 //////////////////////////
+
+void iMainWindowViewer::InitApplicationToolBar(iMainWindow* win, iToolBar* tb) {
+  win->fileNewAction->addTo(tb);
+  win->fileOpenAction->addTo(tb);
+  win->fileSaveAction->addTo(tb);
+  win->fileSaveAsAction->addTo(tb);
+  win->fileCloseAction->addTo(tb);
+  win->filePrintAction->addTo(tb);
+  tb->addSeparator();
+  win->editUndoAction->addTo(tb);
+  win->editRedoAction->addTo(tb);
+  tb->addSeparator();
+  win->editCutAction->addTo(tb);
+  win->editCopyAction->addTo(tb);
+  win->editPasteAction->addTo(tb);
+  tb->addSeparator();
+  win->helpHelpAction->addTo(tb);
+}
+
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax |
@@ -2317,15 +2368,12 @@ void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
   itv->AddPanelNewTab(panel);
 } 
 
-iToolBar* iMainWindowViewer::AddToolBar(iToolBar* tb) {
-  toolbars.append(tb);
+void iMainWindowViewer::AddToolBar(ToolBar* tb) {
+  // create a menu entry to show/hide it, regardless if visible now
+  toolBarMenu->AddItem(tb->GetName(), taiMenu::toggle,
+    taiAction::ptr_act, this, SLOT(this_ToolBarSelect(void*)), (void*)tb);
+//nn  toolbars.append(tb);
   return tb;
-}
-
-void iMainWindowViewer::AddToolBarMenu(const String& name, int index) {
-//taiAction* menu =
-  toolBarMenu->AddItem(name, taiMenu::toggle,
-    taiAction::int_act, this, SLOT(this_ToolBarSelect(int)), index);
 }
 
 void iMainWindowViewer::ch_destroyed() {
@@ -2607,29 +2655,6 @@ int iMainWindowViewer::GetEditActions() {
 
 void iMainWindowViewer::helpAbout() {
   if (tabMisc::root) tabMisc::root->Info();
-}
-
-bool iMainWindowViewer::InitToolBar(const String& name, iToolBar* tb) {
-  bool rval = false;
-  if (name == "Application") {
-    fileNewAction->addTo(tb);
-    fileOpenAction->addTo(tb);
-    fileSaveAction->addTo(tb);
-    fileSaveAsAction->addTo(tb);
-    fileCloseAction->addTo(tb);
-    filePrintAction->addTo(tb);
-    tb->addSeparator();
-    editUndoAction->addTo(tb);
-    editRedoAction->addTo(tb);
-    tb->addSeparator();
-    editCutAction->addTo(tb);
-    editCopyAction->addTo(tb);
-    editPasteAction->addTo(tb);
-    tb->addSeparator();
-    helpHelpAction->addTo(tb);
-    return true;
-  }
-  return rval;
 }
 
 void iMainWindowViewer::mnuEditAction(taiAction* mel) {

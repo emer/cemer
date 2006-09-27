@@ -75,9 +75,9 @@ class taProject;
 // forwards this file
 
 class WindowState;
-class ToolBar;
 class ToolBar_List;
 class DataViewer;
+class   ToolBar;
 class   TopLevelViewer;
 class     DockViewer;
 class     MainWindowViewer;
@@ -123,13 +123,15 @@ public:
   virtual iMainWindowViewer* window() {return NULL;}
     // #IGNORE valid if is, or is within, a main window
 
-  virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops, all others recursively call _impl, then _post
+  virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops or for items added after mapping; all others recursively call _impl, then _post
   void 			CloseWindow() {DoActions(CLOSE_WIN_IMPL);}	
    // #IGNORE closes the window or panel, removing our reference
  
   virtual void		Raise();	// raise window to front, if this is applicable
   virtual void		Lower();	// lower window to back, if this is applicable
 
+  virtual void 		GetWinState(); // copy gui state to us (override impl)
+  virtual void		SetWinState(); // set gui state from us (override impl)
 
   virtual void 		WindowClosing(CancelOp& cancel_op) {} 
    // cb from m_widget, subordinate wins may not be cancellable
@@ -154,6 +156,8 @@ protected:
     // implement this to create and set the m_widget instance -- only called if !m_widget
   override void		Constr_post();
   virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
+  virtual void 		GetWinState_impl() {} // set gui state; only called if mapped
+  virtual void 		SetWinState_impl() {} // fetch gui state; only called if mapped
 
 private:
   IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
@@ -190,7 +194,6 @@ public:
 //  COPY_FUNS(FrameViewer, DataViewer) //
   TA_DATAVIEWFUNS(FrameViewer, DataViewer) //
 protected:
-  mutable MainWindowViewer* m_main_window_viewer; //looked up/cached
 
 private:
   void 	Initialize();
@@ -375,9 +378,8 @@ protected:
   WindowState		win_state; // TEMP: until is UserData
   String		win_name;
   
-  override void 	Dump_Save_pre(); // TEMP: update winpos etc.
-  
-  override void		Constr_post();
+  override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
+  override void 	SetWinState_impl();
   virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
 private:
@@ -423,58 +425,47 @@ private:
 
 
 
-class TA_API ToolBar: public taNBase {// ##NO_TOKENS proxy for Toolbars
+class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
 //nn? friend class MainWindowViewer;
-friend class DataViewer;
-INHERITED(taNBase)
+INHERITED(DataViewer)
 public:
-  int			index; // #SHOW #NO_SAVE #READ_ONLY
   float			lft;  	// #HIDDEN when undocked, fractional position on screen
   float			top;	// #HIDDEN when undocked, fractional position on screen
   Orientation		o; // whether hor or vert
-  bool			mapped; // #HIDDEN whether toolbar window has been created
+  bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
-  iToolBar*		toolBar() {return m_window;} // #IGNORE
-  MainWindowViewer*	viewer();
-  iMainWindowViewer*	viewer_win();
+  inline iToolBar*	widget() {return (iToolBar*)m_widget;} // #IGNORE lex override
+  override iMainWindowViewer*	window();
 
-  virtual void 	GetWinState(); // copy state of toolbar to us
-  virtual void	SetWinState();
   virtual void  Show();		// called when user selects from menu
   virtual void	Hide();		// called when user unselects from menu
 
   virtual void 	CloseWindow();		// #IGNORE close the toolbar
 
-  void	SetIndex(int value) {index = value;}
-  int	GetIndex() const {return index;}
-//  void	UpdateAfterEdit();
-//  void	InitLinks();
-  void	CutLinks();
   void	Copy_(const ToolBar& cp);
-  COPY_FUNS(ToolBar, taNBase)
-  TA_BASEFUNS(ToolBar)
+  COPY_FUNS(ToolBar, DataViewer)
+  TA_DATAVIEWFUNS(ToolBar, DataViewer)
 
 protected:
-  MainWindowViewer*	m_viewer;  // #IGNORE cached
-  iToolBar*		m_window;
-  override void 	Dump_Save_pre(); // TEMP: update winpos etc.
-  virtual void		Constr_Window_impl(); // #IGNORE sets the m_window instance
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent);
   virtual void		OpenNewWindow_impl(); // #IGNORE
-  virtual void 		WindowClosing(); // #IGNORE
+  override void		WidgetDeleting_impl();
+  override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
+  override void 	SetWinState_impl();
 
 private:
   void 	Initialize();
-  void	Destroy();
+  void	Destroy() {}
 };
 
 
-class TA_API ToolBar_List: public taList<ToolBar> {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
-INHERITED(taList<ToolBar>)
+class TA_API ToolBar_List: public DataViewer_List {
+  // each BrowseWin maintains its extant toolbars (mapped or not) in this list
+INHERITED(DataView_List)
 public:
   iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
-  TA_BASEFUNS(ToolBar_List);
+  TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
 private:
   void			Initialize() {SetBaseType(&TA_ToolBar);}
   void			Destroy() {}
@@ -525,6 +516,8 @@ public:
     // add the supplied frame 
   FrameViewer*		AddFrameByType(TypeDef* typ, int at_index = -1);
     // add a new frame of given type at index (-1 at end); no window made yet
+    
+  void 			AddToolBar(ToolBar* tb); // add a new toolbar
     
   void	UpdateAfterEdit();
   void	InitLinks();
