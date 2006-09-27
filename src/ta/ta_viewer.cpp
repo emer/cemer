@@ -882,14 +882,8 @@ void MainWindowViewer::InitLinks() {
 
   // add default toolbars to new instance or if missing from loaded
   //TODO: cleaner if we put this in AssertDefaultToolBars
-  String tb_nm("Application");
-  if (!toolbars.FindName(tb_nm)) {
-    ToolBar* tb = new ToolBar();
-    tb->SetName(tb_nm);
-    toolbars.Add(tb);
-  }
+  AddToolBarByType(&TA_ToolBar, "Application");
 }
-
 
 void MainWindowViewer::Copy_(const MainWindowViewer& cp) {
   toolbars = cp.toolbars;
@@ -925,6 +919,18 @@ FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index)
   AddFrame(rval, at_index);
   return rval;
 }
+
+ToolBar* MainWindowViewer::AddToolBarByType(TypeDef* typ, 
+  const String& tb_name) 
+ {
+   if (toolbars.FindName(tb_name)) return NULL;
+   ToolBar* tb = taBase::MakeToken(typ);
+   if (tb) {
+    tb->SetName(tb_name);
+    toolbars.Add(tb);
+   }
+   return tb;
+ }
 
 void MainWindowViewer::DoActionChildren_impl(DataViewAction act) {
 // note: only ever called with one action
@@ -1057,6 +1063,18 @@ FrameViewer* MainWindowViewer::FindFrameByType(TypeDef* typ, int& at_index, int 
   at_index = -1;
   return NULL;
 }
+
+ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ, 
+  const String& tb_name) 
+{
+  for (int i = 0; i < toolbars.size; ++i) {
+    ToolBar* tb = toolbars.FastEl(i);
+    if ((tb->name == tb_name) && 
+      (tb->GetTypeDef()->InheritsFrom(typ))
+      return tb;
+  }
+  return NULL;
+ }
 
 void MainWindowViewer::MakeWinName_impl() {
   String prog_nm = taiM->classname();
