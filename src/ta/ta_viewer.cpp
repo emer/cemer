@@ -722,8 +722,16 @@ void ToolBar::Copy_(const ToolBar& cp) {
   visible = cp.visible; //note: not the same as mapped
 }
 
-IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {
-  return new iToolBar(this, gui_parent); // usually parented later
+void ToolBar::Constr_impl(QWidget* gui_parent) {
+  inherited::Constr_impl(gui_parent);
+  widget()->setName(name);
+}
+
+IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+  if (name == "Application")
+    return new iApplicationToolBar(this, gui_parent); // usually parented later
+  else
+    return new iToolBar(this, gui_parent); // usually parented later
 }
 
 void ToolBar::GetWinState_impl() {
@@ -734,43 +742,33 @@ void ToolBar::GetWinState_impl() {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
-void ToolBar::OpenNewWindow_impl() {
-  iMainWindowViewer* vw = viewer_win();
-  if (!vw) return;
-  Constr_Window_impl();
-  if (!m_window) return; // shouldn't happen
-  
-  vw->InitToolBar(GetName(), m_window);
-  SetWinState();
-  
-  
-  m_window->show();
-  visible = true;
-}
-
-void ToolBar::SetWinState_impl() {
-  //TODO: docked
-  m_window->setOrientation((Qt::Orientation)o);
-  iRect r = m_window->frameGeometry();
-  r.x = (int)(lft * taiM->scrn_s.w);
-  r.y = (int)(top * taiM->scrn_s.h);
-  m_window->move(r.topLeft());
-  m_window->resize(r.size());
-}
-
-void ToolBar::Show() {
-  visible = true; // preset, for others
-  if (isMapped()) {
-    widget()->show();
-  } else { // we were never mapped
-    Constr(); // does impl and post
-  }
-}
-
 void ToolBar::Hide() {
   if (!isMapped()) return;
   widget()->hide();
   visible = false;
+}
+
+void ToolBar::OpenNewWindow_impl(){}// TODO: delete this and definition 
+
+void ToolBar::SetWinState_impl() {
+  //TODO: docked, etc.
+  iToolBar* itb = widget(); //cache
+  itb->setOrientation((Qt::Orientation)o);
+  iRect r = itb->frameGeometry();
+  r.x = (int)(lft * taiM->scrn_s.w);
+  r.y = (int)(top * taiM->scrn_s.h);
+  itb->move(r.topLeft());
+  itb->resize(r.size());
+}
+
+void ToolBar::Show() {
+  visible = true; // preset, for others
+   widget()->show();
+/*obs  if (isMapped()) {
+    widget()->show();
+  } else { // we were never mapped
+    Constr(); // does impl and post
+  }*/
 }
 
 void ToolBar::WidgetDeleting_impl() {
@@ -778,14 +776,9 @@ void ToolBar::WidgetDeleting_impl() {
   visible = false;
 }
 
-void ToolBar::SetWinState_impl() {
-  winState().SetWinState();
-  SetWinName();
-}
-
 iMainWindowViewer* ToolBar::window() {
   MainWindowViewer* mwv;
-  if ((mwv = mainWindowViewer())) return mwv->window(); 
+  if ((mwv = parent())) return mwv->window(); 
   else return NULL;
 }
 
@@ -887,10 +880,12 @@ void MainWindowViewer::InitLinks() {
   taBase::Own(frames, this);
   taBase::Own(docks, this);
 
-  // add default toolbars to new instance
-  if (!taMisc::is_loading) {
+  // add default toolbars to new instance or if missing from loaded
+  //TODO: cleaner if we put this in AssertDefaultToolBars
+  String tb_nm("Application");
+  if (!toolbars.FindName(tb_nm)) {
     ToolBar* tb = new ToolBar();
-    tb->SetName("Application");
+    tb->SetName(tb_nm);
     toolbars.Add(tb);
   }
 }
@@ -935,13 +930,13 @@ void MainWindowViewer::DoActionChildren_impl(DataViewAction act) {
 // note: only ever called with one action
   if (act & CONSTR_MASK) {
     inherited::DoActionChildren_impl(act);
-//TODO    toolbars.DoAction(act);
+    toolbars.DoAction(act);
     frames.DoAction(act);
     docks.DoAction(act);
   } else { // DESTR_MASK
     docks.DoAction(act);
     frames.DoAction(act);
-//TODO    toolbars.DoAction(act);
+    toolbars.DoAction(act);
     inherited::DoActionChildren_impl(act);
   }
 }
@@ -1025,22 +1020,11 @@ cont:
   }
 } */
 
-void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
-  iMainWindowViewer* win = window(); //cache
-  if (tb->visible) {
-    ((DataViewer*)tb)->Constr_impl(NULL);
-  }
-  // add to the toolbar view menu 
-  win->AddToolBar(tb);
-  if (post_constr && tb->isMapped()) {
-    ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
-  }
-}
-
-void MainWindowViewer::AddToolBar(ToolBar* tb) {
-  if (!tb) return;
-  if (!toolbars.AddUnique(tb)) return; // already added!
+bool MainWindowViewer::AddToolBar(ToolBar* tb) {
+  if (!tb) return false;
+  if (!toolbars.AddUnique(tb)) return false; // already added!
   OnToolBarAdded(tb, true);
+  return true;
 }
 
 void MainWindowViewer::ConstrToolBars_impl() {
@@ -1082,6 +1066,17 @@ void MainWindowViewer::MakeWinName_impl() {
   win_name = nw_name;
 }
 
+void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
+  iMainWindowViewer* win = window(); //cache
+  //note: always costructed, even if not visible
+  ((DataViewer*)tb)->Constr_impl(NULL);
+  
+  // add to the toolbar view menu 
+  win->AddToolBar(tb->widget());
+  if (post_constr) {
+    ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
+  }
+}
 
 /*obs bool MainWindowViewer::ThisMenuFilter(MethodDef* md) {
   if((md->name == "GetAllWinPos") || (md->name == "ScriptAllWinPos") ||

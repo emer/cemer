@@ -2162,44 +2162,13 @@ void iDockViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
 }
 
-///////////////////////////////
-//   InitToolBarProcRegistrar //
-///////////////////////////////
-
-
-class TA_API InitToolBarProcRegistrar {
-  // use a dummy static instance to register your toolbar init routine
-public:  
-  String		toolbar_name;
-  InitToolBarProc 	init_proc;
-  
-InitToolBarProcRegistrar::InitToolBarProcRegistrar(const char* toolbar_name_,
-  InitToolBarProc init_proc_) 
-{
-  toolbar_name = toolbar_name_;
-  init_proc = init_proc_;
-  ToolBarInitProc_PtrList::instance()->Add(this);
-}
-
-
-///////////////////////////////
-//   ToolBarInitProc_PtrList //
-///////////////////////////////
-
-ToolBarInitProc_PtrList* ToolBarInitProc_PtrList::m_instance;
-
-ToolBarInitProc_PtrList* ToolBarInitProc_PtrList::instance() {
-  if (!m_instance)
-    m_instance = new ToolBarInitProc_PtrList;
-  return m_instance;
-}
 
 //////////////////////////
-//   iToolBar 	//
+//   iToolBar 		//
 //////////////////////////
 
 iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
-:inherited(viewer_, parent)
+:inherited(parent), IDataViewWidget(viewer_)
 {
   Init();
 }
@@ -2208,6 +2177,7 @@ iToolBar::~iToolBar() {
 }
 
 void iToolBar::Init() {
+  m_window = NULL; //set when added
   setLabel(viewer()->GetName());
 }
 
@@ -2222,12 +2192,12 @@ void iToolBar::hideEvent(QHideEvent* e) {
 }
 
 void iToolBar::Showing(bool showing) {
-  if (!m_viewer) return;
-  iMainWindowViewer* dv = m_toolBar->viewer_win();
+  iMainWindowViewer* dv = window();
   if (!dv) return;
-  taiAction* me = dv->toolBarMenu->items.SafeEl(m_toolBar->index);
+  taiAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
-  me->setChecked(showing);
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
 }
 
 
@@ -2235,25 +2205,18 @@ void iToolBar::Showing(bool showing) {
 //  iToolBar_List 		//
 //////////////////////////////////
 
-iToolBar_List::~iToolBar_List() {}
-
-iToolBar* iToolBar_List::FindToolBar(const String& name_) const {
-  QString name = name_; // more efficient, and would be done implicitly anyway 
-  for (int i = 0; i < count(); ++i) {
-    const iToolBar* tb = at(i);
-    if (tb->name() == name) 
-      return (iToolBar*)tb; // ok to cast away const
-  }
-  return NULL;
+String iToolBar_List::El_GetName_(void* it) const {
+  return ((QWidget*)it)->name(); 
 }
 
 
-
 //////////////////////////
-//  iMainWindowViewer	//
+//   iApplicationToolBar//
 //////////////////////////
 
-void iMainWindowViewer::InitApplicationToolBar(iMainWindow* win, iToolBar* tb) {
+void iApplicationToolBar::Constr_post() {
+  iMainWindowViewer* win = window(); //cache
+  iToolBar* tb = this;
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
   win->fileSaveAction->addTo(tb);
@@ -2270,6 +2233,12 @@ void iMainWindowViewer::InitApplicationToolBar(iMainWindow* win, iToolBar* tb) {
   tb->addSeparator();
   win->helpHelpAction->addTo(tb);
 }
+
+
+//////////////////////////
+//  iMainWindowViewer	//
+//////////////////////////
+
 
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
@@ -2368,12 +2337,13 @@ void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
   itv->AddPanelNewTab(panel);
 } 
 
-void iMainWindowViewer::AddToolBar(ToolBar* tb) {
+void iMainWindowViewer::AddToolBar(iToolBar* itb) {
+  itb->m_window = this;
+  addToolBar(itb); //TODO: should specify area
   // create a menu entry to show/hide it, regardless if visible now
-  toolBarMenu->AddItem(tb->GetName(), taiMenu::toggle,
-    taiAction::ptr_act, this, SLOT(this_ToolBarSelect(void*)), (void*)tb);
+  toolBarMenu->AddItem(itb->name(), taiMenu::toggle,
+    taiAction::men_act, this, SLOT(this_ToolBarSelect(taiAction*)), (void*)itb);
 //nn  toolbars.append(tb);
-  return tb;
 }
 
 void iMainWindowViewer::ch_destroyed() {
@@ -2560,11 +2530,6 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
 }
 
-iToolBar* iMainWindowViewer::Constr_ToolBar(ToolBar* tb, String name) {
-  iToolBar* rval = new iToolBar(tb, name, this);
-  return rval;
-}
-
 taProject* iMainWindowViewer::curProject() {
   taProject* rval = NULL;
   if (isProjViewer()) {
@@ -2738,11 +2703,9 @@ void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int heig
   setFrameGeometry(iRect(left, top, width, height));
 }
 
-void iMainWindowViewer::this_ToolBarSelect(int param) {
-  if (!m_viewer) return;
-  taiAction* me = toolBarMenu->items.SafeEl(param);
-  if (!me) return; // shouldn't happen
-  ToolBar* tb = viewer()->toolbars.SafeEl(param);
+void iMainWindowViewer::this_ToolBarSelect(taiAction* me) {
+  iToolBar* itb = (iToolBar*)(me->usr_data.toPtr());
+  ToolBar* tb = itb->viewer();
   if (!tb) return; // shouldn't happen
   if (me->isChecked()) { //note: check has already been toggled
     tb->Show();

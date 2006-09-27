@@ -1647,6 +1647,14 @@ void taiActions::emitLabelChanged(const String& val) {
   emit labelChanged(val.chars());
 }
 
+taiAction* taiActions::FindActionByData(const Variant& usr) {
+  for (int i = 0; i < items.size; ++i) {
+    taiAction* itm = items.FastEl(i);
+    if (itm->usr_data == usr) return itm;
+  }
+  return NULL;
+}
+
 taiMenu* taiActions::FindSubMenu(const char* nm) {
   for (int i = 0; i < items.size; ++i) {
     taiAction* itm = items.FastEl(i);

@@ -155,6 +155,7 @@ protected:
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
   override void		Constr_post();
+  override void 	Dump_Save_pre();
   virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
   virtual void 		GetWinState_impl() {} // set gui state; only called if mapped
   virtual void 		SetWinState_impl() {} // fetch gui state; only called if mapped
@@ -435,19 +436,18 @@ public:
   Orientation		o; // whether hor or vert
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
-  inline iToolBar*	widget() {return (iToolBar*)m_widget;} // #IGNORE lex override
+  inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
   override iMainWindowViewer*	window();
 
   virtual void  Show();		// called when user selects from menu
   virtual void	Hide();		// called when user unselects from menu
-
-  virtual void 	CloseWindow();		// #IGNORE close the toolbar
 
   void	Copy_(const ToolBar& cp);
   COPY_FUNS(ToolBar, DataViewer)
   TA_DATAVIEWFUNS(ToolBar, DataViewer)
 
 protected:
+  override void		 Constr_impl(QWidget* gui_parent);
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent);
   virtual void		OpenNewWindow_impl(); // #IGNORE
   override void		WidgetDeleting_impl();
@@ -461,8 +461,7 @@ private:
 
 
 class TA_API ToolBar_List: public DataViewer_List {
-  // each BrowseWin maintains its extant toolbars (mapped or not) in this list
-INHERITED(DataView_List)
+INHERITED(DataViewer_List)
 public:
   iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
   TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
@@ -476,7 +475,7 @@ class TA_API MainWindowViewer : public TopLevelViewer {
   // #NO_TOKENS #VIRT_BASE the uber controller for main windows
 INHERITED(TopLevelViewer)
 friend class taDataLink;
-friend class Toolbar_List;
+friend class ToolBar_List;
 friend class FrameView_List;
 friend class DockView_List;
 //friend class WindowState;
@@ -517,7 +516,7 @@ public:
   FrameViewer*		AddFrameByType(TypeDef* typ, int at_index = -1);
     // add a new frame of given type at index (-1 at end); no window made yet
     
-  void 			AddToolBar(ToolBar* tb); // add a new toolbar
+  bool 			AddToolBar(ToolBar* tb); // add a new toolbar; true if added (won't add a duplicate)
     
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -566,6 +565,7 @@ protected:
   virtual void		ConstrToolBars_impl();
   virtual void		ConstrFrames_impl();
   virtual void		ConstrDocks_impl();
+  void 			OnToolBarAdded(ToolBar* tb, bool post_constr);
   
   
 private:

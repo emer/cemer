@@ -603,25 +603,6 @@ private:
 };
 
 
-typedef void 		(InitToolBarProc*)(iMainWindow* win, iToolBar* tb);
-
-class TA_API InitToolBarProcRegistrar {
-  // use a dummy static instance to register your toolbar init routine
-public:  
-  String		toolbar_name;
-  InitToolBarProc 	init_proc;
-  
-  InitToolBarProcRegistrar(const char* toolbar_name, InitToolBarProc init_proc);
-};
-
-class TA_API ToolBarInitProc_PtrList: public taPtrList<InitToolBarProcRegistrar> {
-public:
-  static ToolBarInitProc_PtrList*	instance(); // get the instance from here
-protected:
-  static ToolBarInitProc_PtrList*	m_instance;
-  ToolBarInitProc_PtrList() {}
-};
-
 class TA_API iToolBar: public QToolBar, public IDataViewWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(QToolBar)
@@ -629,7 +610,8 @@ friend class ToolBar;
 friend class iMainWindowViewer;
   Q_OBJECT
 public:
-  ToolBar*		toolBar() {return (ToolBar*)m_viewer;}
+  ToolBar*		viewer() {return (ToolBar*)m_viewer;}
+  iMainWindowViewer*	window() {return m_window;}
   
   iToolBar(ToolBar* viewer, QWidget* parent = NULL);
   ~iToolBar();
@@ -637,9 +619,9 @@ public:
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
+  iMainWindowViewer*    m_window; // set when added
 //  override void		Constr_impl();
 
-  
 protected:
   void 			showEvent(QShowEvent* e); // override
   void 			hideEvent(QHideEvent* e); // override
@@ -648,20 +630,21 @@ private:
   void			Init();
 };
 
-
-//obs # ifdef __MAKETA__
-typedef iToolBar* iToolBar_Ptr; // needed for maketa
-class TA_API iToolBar_List: public QList<iToolBar_Ptr> {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS each BrowseWin maintains its existent toolbars in this list
-//obs # else
-//obs class TA_API iToolBar_List: public QList<iToolBar*> {
-//obs#endif
-friend class ToolBar;
+class TA_API iToolBar_List: public taPtrList<iToolBar> {
+ // each mainwin maintains its existent toolbars in this list
 public:
-  ~iToolBar_List();
-  iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
 protected:
-  ToolBar*		m_toolBar;
+  override String El_GetName_(void* it) const;
+};
+
+
+class TA_API iApplicationToolBar: public iToolBar {
+INHERITED(iToolBar)
+public:
+  iApplicationToolBar(ToolBar* viewer, QWidget* parent = NULL)
+  :iToolBar(viewer, parent){}
+ protected:
+  override void		Constr_post(); 
 };
 
 
@@ -676,11 +659,8 @@ class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
-public:
-  static void 		InitApplicationToolBar(iMainWindow* win, iToolBar* tb); 
-    // registered for "Application" tb
-
-  iToolBar_List		toolbars; // list of all created toolbars
+public: //
+//nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
   taiMenuBar*		menu;		// menu bar -- note: we use the window's built-in QMenu
@@ -721,34 +701,22 @@ public:
   taiAction* 		helpHelpAction;
   taiAction* 		helpAboutAction;
 
-//nn  iToolBar* 		applicationToolBar;
-
-//mv  ISelectable*		curItem() const {return m_sel_items.SafeEl(0);}
-//mv  virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
-//mv  ISelectable_PtrList&	sel_items() {return m_sel_items;}
-  
   QObject* 		clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
   taProject*		curProject(); // only if we are a projviewer
   inline bool		isRoot() const {return m_is_root;} // if this is app root, closing quits
   inline bool		isProjViewer() const {return m_is_proj_viewer;} // if a project viewer, persistent
 
-  //TODO: provide a list of multi-selects
   inline MainWindowViewer* viewer() {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
   void			AddPanelNewTab(iDataPanel* panel); 
     // insures we have a iTabViewer; adds a new tab, sets panel active in it
-  virtual void		AddToolBar(ToolBar* tb); // add the toolbar, showing it if it is mapped
-  virtual void		RemoveToolBar(ToolBar* tb); // called if it deletes
+  virtual void		AddToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
   virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
 #ifndef __MAKETA__
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
 #endif
-  virtual void		AddToolBarMenu(const String& name, int index);
-  iToolBar* 		Constr_ToolBar(ToolBar* tb, String name);
-    // can be overriden to supply custom iToolBar
-  virtual bool 		InitToolBar(const String& name, iToolBar* tb); // init the toolbar with specified name, returning true if handled
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void 			setFrameGeometry(const iRect& r);
   void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
@@ -820,9 +788,7 @@ protected:
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
 
-  virtual void 		this_ToolBarSelect(int param); // user has selected or unselected one of the toolbars
-
-
+  virtual void 		this_ToolBarSelect(taiAction* me); // user has selected or unselected one of the toolbars
 
 protected:
   bool			m_is_root; // true if this is a root window (has Quit menu)
