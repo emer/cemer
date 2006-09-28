@@ -20,6 +20,9 @@
 #include "rbp.h"
 #include "netstru_extra.h"
 
+// todo: complete new RBP netstru hierarchy required
+// move rbp functions over to Network from corresponding 3.2 processes
+
 //////////////////////////
 //  	CircBuffer	//
 //////////////////////////

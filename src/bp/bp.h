@@ -591,9 +591,17 @@ public:
   TA_BASEFUNS(SoftMaxBpUnitSpec);
 };
 
+class BP_API BpLayer : public Layer {
+  // A feedforward backpropagation layer
+public:
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  TA_BASEFUNS(BpLayer);
+};
 
 class PDP_API BpNetwork : public Network {
-  // project for BP networks
+  // project for feedforward backpropagation networks (recurrent backprop is in RBPNetwork)
 INHERITED(Network)
 public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
@@ -605,13 +613,15 @@ public:
   
   virtual void		Trial_Run(); // run one trial of Bp: calls SetCurLrate, Compute_Act and Compute_dEdA_dEdNet.  If you want to save some speed just for testing, you can just call Compute_Act and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
   void	Initialize();
   void 	Destroy()		{}
   TA_BASEFUNS(BpNetwork);
 };
 
 class PDP_API BpProject : public ProjectBase {
-  // project for BP networks
+  // project for backpropagation networks
 INHERITED(ProjectBase)
 public:
 

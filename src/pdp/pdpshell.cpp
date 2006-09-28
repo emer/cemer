@@ -655,7 +655,7 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
   }
   if(auto_opn) {
     wiz->auto_open = true;
-//TEMP    wiz->ThreeLayerNet();
+    ((Wizard*)wiz)->ThreeLayerNet();
     wiz->Edit();
   }
 }
@@ -722,11 +722,9 @@ void PDPRoot::Info() {
   info += "This is the PDP++ software package, version: ";
   info += version_no;
   info += "\n\n";
-  info += "Mailing List:       http://www.cnbc.cmu.edu/PDP++/pdp-discuss.html\n";
-  info += "Bug Reports:        pdp++bugreport@cnbc.cmu.edu\n";
-  info += "WWW Page:           http://www.cnbc.cmu.edu/PDP++/PDP++.html\n";
+  info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
+  info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";
   info += "Anonymous FTP Site: ftp://grey.colorado.edu/pub/oreilly/pdp++/\n";
-  info += "                    or ftp://cnbc.cmu.edu/pub/pdp++/\n";
   info += "\n\n";
 
   info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\

@@ -1682,6 +1682,8 @@ public:
   virtual void	Compute_AvgExtRew(); // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
   override void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics, INCLUDING AvgExtRew
 
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
   void	Initialize();
   void 	Destroy()		{}
   SIMPLE_COPY(LeabraNetwork);

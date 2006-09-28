@@ -2390,10 +2390,14 @@ void Projection::CutLinks() {
 
 void Projection::InitLinks() {
   inherited::InitLinks();
+  Network* mynet = GET_MY_OWNER(Network);
+  if(mynet) {
+    mynet->SetProjectionDefaultTypes(this);
+  }
+
   spec.SetDefaultSpec(this);
   con_spec.SetDefaultSpec(this);
   layer = GET_MY_OWNER(Layer);
-  Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
     int myindex = mynet->layers.FindLeaf(layer);
     if(!(myindex == 0) && (from_type == PREV)) // is it not the first?
@@ -4390,7 +4394,24 @@ void Network::InitLinks() {
   inherited::InitLinks();
 }
 
-// cutlinks is in pdpshell.cc
+void Network::CutLinks() {
+  static bool in_repl = false;
+  if(in_repl || (owner == NULL)) return; // already replacing or already dead
+  deleting = true;
+#ifdef DMEM_COMPILE
+  if(dmem_share_units.comm != MPI_COMM_SELF) {
+    DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),
+		       "Network::CutLinks", "net Comm_free");
+    DMEM_MPICALL(MPI_Group_free((MPI_Group*)&dmem_gp),
+		       "Network::CutLinks", "net Group_free");
+  }
+#endif
+//TODO  views.Reset();
+  layers.CutLinks();
+  specs.CutLinks();
+  proj = NULL;
+  inherited::CutLinks();
+}
 
 void Network::Copy_(const Network& cp) {
   copying = true;
@@ -4447,23 +4468,9 @@ void Network::UpdateAfterEdit(){
   UpdtAfterNetMod();
 }
 
-void Network::CutLinks() {
-  static bool in_repl = false;
-  if(in_repl || (owner == NULL)) return; // already replacing or already dead
-  deleting = true;
-#ifdef DMEM_COMPILE
-  if(dmem_share_units.comm != MPI_COMM_SELF) {
-    DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),
-		       "Network::CutLinks", "net Comm_free");
-    DMEM_MPICALL(MPI_Group_free((MPI_Group*)&dmem_gp),
-		       "Network::CutLinks", "net Group_free");
-  }
-#endif
-//TODO  views.Reset();
-  layers.CutLinks();
-  specs.CutLinks();
-  proj = NULL;
-  inherited::CutLinks();
+void Network::SetProjectionDefaultTypes(Projection* prjn) {
+  // noop for base case: algorithms must override!
+  prjn->spec.type = &TA_FullPrjnSpec; 
 }
 
 void Network::RemoveMonitors() {

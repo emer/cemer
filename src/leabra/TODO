@@ -1,5 +1,8 @@
 leabra todo list:
 
+* programs: add epoch-level monitor, rename data as TrialMonitor and EpochMonitor
+* wizards: reactivate env making stuff -- makes life easier -- and simple procs??
+
 * not reading ktwa specs properly from v3
 
 * add selectedit copy update for project copy..

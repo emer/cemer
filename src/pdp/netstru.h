@@ -1429,9 +1429,12 @@ public:
 
   virtual void	UpdateMax();	// #IGNORE
 
+  virtual void	SetProjectionDefaultTypes(Projection* prjn);
+  // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types
+
 //TODO???  TypeDef*	GetDefaultView() { return &TA_NetView; } // #IGNORE default view
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  // call reconnect afterwards
+
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif

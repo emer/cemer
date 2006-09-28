@@ -213,6 +213,6 @@ public:
   TA_SIMPLE_BASEFUNS(APBpMaxDa_De);
 };
 
-
+// todo add bp v3 project & conversion routines
 
 #endif // BP_V3_COMPAT_H
