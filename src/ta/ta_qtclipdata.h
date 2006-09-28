@@ -193,6 +193,7 @@ public:
     EA_DRAG_OP_MASK	= 0xF0000, // masks the drag/drop op codes
 #ifndef __MAKETA__
     EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
+    EA_RO_SRC_OPS	= (EA_COPY | EA_DRAG), // readonly src ops 
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
     EA_DST_OPS		= (EA_PASTE | EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM | EA_DROP_OPS), //
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut

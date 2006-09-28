@@ -34,8 +34,10 @@
 # include <qtabbar.h>
 # include <QTreeWidget>
 # include <QTreeWidgetItem>
-# include "itreewidget.h"
 # include <qtoolbar.h>
+
+# include "icliptoolwidget.h"
+# include "itreewidget.h"
 #endif
 
 
@@ -639,6 +641,7 @@ protected:
 
 
 class TA_API iApplicationToolBar: public iToolBar {
+  // widget for the Application toolbar -- created by ToolBar if name=Application
 INHERITED(iToolBar)
 public:
   iApplicationToolBar(ToolBar* viewer, QWidget* parent = NULL)
@@ -647,6 +650,34 @@ public:
   override void		Constr_post(); 
 };
 
+class TA_API iBaseClipToolWidget: public iClipToolWidget {
+  // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
+INHERITED(iClipToolWidget)
+  Q_OBJECT
+public:
+  taBase*		base() const {return m_inst;}
+  void			setBase(taBase* value); //
+  
+  
+  // tooltip defaults to key_desc of the instance		
+  iBaseClipToolWidget(taBase* inst = NULL, QWidget* parent = NULL);
+  iBaseClipToolWidget(const QIcon & icon, taBase* inst = NULL, QWidget* parent = NULL);
+  iBaseClipToolWidget(const String& tooltip, const QIcon & icon,
+    taBase* inst = NULL, QWidget* parent = NULL);
+  iBaseClipToolWidget(const String& text,
+    taBase* inst = NULL, QWidget* parent = NULL);
+  iBaseClipToolWidget(const String& tooltip, const String& text,
+    taBase* inst = NULL, QWidget* parent = NULL);
+   
+  
+protected:
+  taSmartRef		m_inst;
+  
+  override QMimeData* 	mimeData() const; // delegates to the inst
+  override QStringList  mimeTypes() const; // the ta custom type
+private:
+  void			Init(taBase* inst, String tooltip = _nilString);
+};
 
 
 //////////////////////////

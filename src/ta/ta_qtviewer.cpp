@@ -2167,6 +2167,13 @@ void iDockViewer::closeEvent(QCloseEvent* e) {
 //   iToolBar 		//
 //////////////////////////
 
+IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+  if (name == "Application")
+    return new iApplicationToolBar(this, gui_parent); // usually parented later
+  else
+    return new iToolBar(this, gui_parent); // usually parented later
+}
+
 iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
 :inherited(parent), IDataViewWidget(viewer_)
 {
@@ -2233,6 +2240,86 @@ void iApplicationToolBar::Constr_post() {
   tb->addSeparator();
   win->helpHelpAction->addTo(tb);
 }
+
+//////////////////////////
+//  iBaseClipToolWidget	//
+//////////////////////////
+
+iBaseClipToolWidget::iBaseClipToolWidget(taBase* inst_, QWidget* parent)
+:inherited(parent)
+{
+  Init(inst_);
+}
+
+iBaseClipToolWidget::iBaseClipToolWidget(const QIcon & icon_, taBase* inst_,
+ QWidget* parent)
+:inherited(parent)
+{
+  Init(inst_);
+  setIcon(icon_);
+}
+
+iBaseClipToolWidget::iBaseClipToolWidget(const String& tooltip_, const QIcon & icon_,
+    taBase* inst_, QWidget* parent)
+:inherited(parent)
+{
+  Init(inst_, tooltip_);
+  setIcon(icon_);
+}
+
+iBaseClipToolWidget::iBaseClipToolWidget(const String& text_,
+    taBase* inst_, QWidget* parent)
+:inherited(parent)
+{
+  Init(inst_);
+  setText(text_);
+}
+
+iBaseClipToolWidget::iBaseClipToolWidget(const String& tooltip_, const String& text_,
+    taBase* inst_, QWidget* parent)
+:inherited(parent)
+{
+  Init(inst_, tooltip_);
+  setText(text_);
+}
+
+  
+void iBaseClipToolWidget::Init(taBase* inst_, String tooltip_) {
+  setAutoCopy(true);
+  setDragEnabled(true);
+  m_inst = inst_;
+  if (tooltip_.empty() && inst_) {
+    tooltip_ = inst_->GetColText(taBase::key_desc);
+  }
+  if (tooltip_.nonempty()) {
+    setToolTip(tooltip_);
+  }
+}
+
+QMimeData* iBaseClipToolWidget::mimeData() const {
+  if (m_inst) {
+    taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
+    if (link) {
+      // get readonly clip data
+      taiClipData* rval = new taiSingleClipData(link->GetMimeItem(), 
+        taiClipData::EA_RO_SRC_OPS);
+      return rval;
+    }
+  }
+  return NULL;
+}
+
+QStringList iBaseClipToolWidget::mimeTypes() const {
+ //NOTE: for dnd to work, we just permit our own special mime type!!!
+  QStringList rval;
+  rval.append(taiClipData::tacss_objectdesc);
+  return rval;
+}
+
+void iBaseClipToolWidget::setBase(taBase* value) {
+  m_inst = value;
+}
+  		
 
 
 //////////////////////////
@@ -3519,8 +3606,7 @@ QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
 }
 
 QStringList iTreeView::mimeTypes () const {
- //NOTE: for dnd to work, we just permit almost anything via "text/plain"
-//TEMP: see what happens if we look for our own special mime type!!!
+ //NOTE: for dnd to work, we just permit our own special mime type!!!
   QStringList rval;
   rval.append(taiClipData::tacss_objectdesc);
   return rval;

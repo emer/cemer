@@ -776,10 +776,59 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
   pe->items->Connect_SelectableHostNotifySignal(itv,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   pe->m_window = itv->window();
+  // make sure the Program toolbar is created
+  MainWindowViewer* mvw = itv->window()->viewer();
+  ProgramToolBar* ptb = (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
+    "Program");
+  if (!ptb)
+    ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
+    "Program");
 }
 
 String iProgramPanel::panel_type() const {
   static String str("Edit Program");
   return str;
 }
+
+
+//////////////////////////
+//    iProgramToolBar 	//
+//////////////////////////
+
+IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iProgramToolBar(this, gui_parent); // usually parented later
+}
+
+
+void iProgramToolBar::Constr_post() {
+  iMainWindowViewer* win = window(); //cache
+//TODO: icons for these guys, instead of text labels  
+  // add all the tools
+  iBaseClipToolWidget* tw;
+  
+  // for vars
+  addWidget(new iBaseClipToolWidget("var", TAI_ProgVar));
+  addWidget(new iBaseClipToolWidget("arg", TAI_ProgArg));
+  addWidget(new iBaseClipToolWidget("vars", TAI_ProgVars));
+
+  // for els
+  addSeparator();
+  addWidget(new iBaseClipToolWidget("list", TAI_ProgList));
+
+  addWidget(new iBaseClipToolWidget("script", TAI_UserScript));
+  
+  addSeparator();
+  addWidget(new iBaseClipToolWidget("for", TAI_ForLoop));
+  addWidget(new iBaseClipToolWidget("do", TAI_DoLoop));
+  addWidget(new iBaseClipToolWidget("while", TAI_WhileLoop));
+  
+  addWidget(new iBaseClipToolWidget("if", TAI_IfElse));
+  addWidget(new iBaseClipToolWidget("if.con", TAI_IfContinue));
+  addWidget(new iBaseClipToolWidget("if.brk", TAI_IfBreak));
+  
+  addSeparator();
+  addWidget(new iBaseClipToolWidget("meth", TAI_MethodCall));
+  addWidget(new iBaseClipToolWidget("prog", TAI_ProgramCall));
+}
+
 

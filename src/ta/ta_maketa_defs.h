@@ -159,7 +159,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QToolBar: public QWidget  {
+class QLabel: public QWidget  {
 //  
 public:
 	int dummy; // #IGNORE
@@ -186,10 +186,23 @@ public:
   int dummy; // #IGNORE
 };
 
+class QToolBar: public QWidget  {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
 class Q3Table: public Q3Scrollview {
 public:
   int dummy; // #IGNORE
 };
+
+class iClipToolWidget: public QLabel  {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
 
 template<class T>
 class QList {

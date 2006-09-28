@@ -727,13 +727,6 @@ void ToolBar::Constr_impl(QWidget* gui_parent) {
   widget()->setName(name);
 }
 
-IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
-  if (name == "Application")
-    return new iApplicationToolBar(this, gui_parent); // usually parented later
-  else
-    return new iToolBar(this, gui_parent); // usually parented later
-}
-
 void ToolBar::GetWinState_impl() {
   iRect r = widget()->frameGeometry();
   // convert from screen coords to relative (note, allowed to be >1.0)
@@ -747,8 +740,6 @@ void ToolBar::Hide() {
   widget()->hide();
   visible = false;
 }
-
-void ToolBar::OpenNewWindow_impl(){}// TODO: delete this and definition 
 
 void ToolBar::SetWinState_impl() {
   //TODO: docked, etc.
@@ -920,32 +911,24 @@ FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index)
   return rval;
 }
 
+bool MainWindowViewer::AddToolBar(ToolBar* tb) {
+  if (!tb) return false;
+  if (!toolbars.AddUnique(tb)) return false; // already added!
+  if (isMapped()) OnToolBarAdded(tb, true);
+  return true;
+}
+
 ToolBar* MainWindowViewer::AddToolBarByType(TypeDef* typ, 
   const String& tb_name) 
  {
    if (toolbars.FindName(tb_name)) return NULL;
-   ToolBar* tb = taBase::MakeToken(typ);
+   ToolBar* tb = (ToolBar*)taBase::MakeToken(typ);
    if (tb) {
     tb->SetName(tb_name);
-    toolbars.Add(tb);
+    AddToolBar(tb);
    }
    return tb;
  }
-
-void MainWindowViewer::DoActionChildren_impl(DataViewAction act) {
-// note: only ever called with one action
-  if (act & CONSTR_MASK) {
-    inherited::DoActionChildren_impl(act);
-    toolbars.DoAction(act);
-    frames.DoAction(act);
-    docks.DoAction(act);
-  } else { // DESTR_MASK
-    docks.DoAction(act);
-    frames.DoAction(act);
-    toolbars.DoAction(act);
-    inherited::DoActionChildren_impl(act);
-  }
-}
 
 void MainWindowViewer::CloseWindow_impl() {
   ta_menus->Reset();
@@ -1026,13 +1009,6 @@ cont:
   }
 } */
 
-bool MainWindowViewer::AddToolBar(ToolBar* tb) {
-  if (!tb) return false;
-  if (!toolbars.AddUnique(tb)) return false; // already added!
-  OnToolBarAdded(tb, true);
-  return true;
-}
-
 void MainWindowViewer::ConstrToolBars_impl() {
   for (int i = 0; i < toolbars.size; ++i) {
     ToolBar* tb = toolbars.FastEl(i);
@@ -1048,6 +1024,21 @@ void MainWindowViewer::DataChanged_Child(TAPtr child, int dcr, void* op1, void* 
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:
+  }
+}
+
+void MainWindowViewer::DoActionChildren_impl(DataViewAction act) {
+// note: only ever called with one action
+  if (act & CONSTR_MASK) {
+    inherited::DoActionChildren_impl(act);
+    toolbars.DoAction(act);
+    frames.DoAction(act);
+    docks.DoAction(act);
+  } else { // DESTR_MASK
+    docks.DoAction(act);
+    frames.DoAction(act);
+    toolbars.DoAction(act);
+    inherited::DoActionChildren_impl(act);
   }
 }
 
@@ -1070,7 +1061,7 @@ ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ,
   for (int i = 0; i < toolbars.size; ++i) {
     ToolBar* tb = toolbars.FastEl(i);
     if ((tb->name == tb_name) && 
-      (tb->GetTypeDef()->InheritsFrom(typ))
+      tb->GetTypeDef()->InheritsFrom(typ))
       return tb;
   }
   return NULL;
@@ -1085,6 +1076,7 @@ void MainWindowViewer::MakeWinName_impl() {
 }
 
 void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
+//TODO: just nuke the post_constr variable -- 
   iMainWindowViewer* win = window(); //cache
   //note: always costructed, even if not visible
   ((DataViewer*)tb)->Constr_impl(NULL);

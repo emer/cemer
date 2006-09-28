@@ -16,6 +16,8 @@
 
 #include "ta_matrix_qt.h"
 
+#include "ta_qtclipdata.h"
+
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>

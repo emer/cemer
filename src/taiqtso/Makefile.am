@@ -10,6 +10,7 @@ HEADS =\
 	taiqtso_def.h \
 	iflowlayout.h \
 	ilabel.h \
+	icliptoolwidget.h \
 	ispinbox.h \
 	iwidgetlist.h \
 	itreewidget.h \
@@ -34,6 +35,8 @@ SRCS =\
 	iflowlayout.cpp \
 	ilabel.cpp \
 	ilabel.moc.cpp \
+	icliptoolwidget.cpp \
+	icliptoolwidget.moc.cpp \
 	ispinbox.cpp \
 	ispinbox.moc.cpp \
 	iwidgetlist.cpp \

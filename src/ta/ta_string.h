@@ -145,7 +145,7 @@ public:
   String(uint64_t u64); //NOTE: no fmts because they are not cross-platform standard
   String(float f, const char* format = "%g");
   String(double d, const char* format = "%lg");
-  String(void* p); //converts to hex
+  explicit String(void* p); //converts to hex
 #ifdef TA_USE_QT
   String(const QString& val);
   String&           operator = (const QString& y);

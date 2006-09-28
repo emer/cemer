@@ -21,6 +21,7 @@
 #include "ta_group.h"
 #include "ta_script.h"
 #include "dynenum.h"
+#include "ta_viewer.h"
 
 #include "ta_def.h"
 #include "ta_TA_type.h"
@@ -733,6 +734,21 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{}
+};
+
+
+class TA_API ProgramToolBar: public ToolBar {
+// thin subclass to define custom tb for Programs
+INHERITED(ToolBar)
+public:
+  TA_DATAVIEWFUNS(ProgramToolBar, ToolBar) //
+protected:
+#ifdef TA_GUI
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in _qt file
+#endif
+private:
+  void Initialize() {}
+  void Destroy() {}
 };
 
 #endif

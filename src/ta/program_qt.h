@@ -229,5 +229,14 @@ protected:
 };
 
 
+class TA_API iProgramToolBar: public iToolBar {
+INHERITED(iToolBar)
+public:
+  iProgramToolBar(ToolBar* viewer, QWidget* parent = NULL)
+  :iToolBar(viewer, parent){}
+protected:
+  override void		Constr_post(); 
+};
+
 
 #endif

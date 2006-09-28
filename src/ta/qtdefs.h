@@ -156,6 +156,7 @@ class	iBrush;			// #IGNORE  -- TODO
 class	iColor;			// #IGNORE 
 class	iCheckBox;		// #IGNORE  -- support for Hilight and ReadOnly
 class	iComboBox;		// #IGNORE  -- support for Hilight
+class	iClipToolWidget;	// #IGNORE
 class	iDimEdit;		// #IGNORE  for editing dimensions of a Matrix
 class	iEditGrid;		// #IGNORE 
 class	iFlowLayout;		// #IGNORE 
@@ -173,6 +174,10 @@ class	iSpinBox;		// #IGNORE
 class	iStripeWidget;		// #IGNORE  -- in ieditgrid.h/.cc
 class	iTransformer;		// #IGNORE 
 class	iTreeWidget;		// #IGNORE 
+
+// clipboard types
+class	taiClipData;		// #IGNORE
+class	taiMimeItem;		// #IGNORE
 
 #define COLOR_BLACK Qt::black
 

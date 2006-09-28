@@ -18,24 +18,39 @@
 
 #include "icliptoolwidget.h"
 
+#include <QApplication>
 #include <QClipboard>
 #include <QDrag>
 
 
-iClipToolWidget::iClipToolWidget(QWidget* parent = NULL);
-
-void iClipboardToolWidget::Init() {
-  dragEnabled = false;
+iClipToolWidget::iClipToolWidget(QWidget* parent) 
+:inherited(parent)
+{
+  Init();
 }
 
-void iClipToolWidget::mousePressEvent(QMouseEvent* event)
-{
-  if (!dragEnabled()) return;
+void iClipToolWidget::Init() {
+  m_autoCopy = false;
+  m_dragEnabled = false;
+  setAutoRaise(true);
+}
 
+void iClipToolWidget::copyToClipboard() {
+  QMimeData* md = mimeData();
+  if (md)
+    QApplication::clipboard()->setMimeData(md);
+}
+
+void iClipToolWidget::mousePressEvent(QMouseEvent* event) {
   if (event->button() == Qt::LeftButton) {
-    dragStartPosition = event->pos();
-    emit clicked();
+    if (dragEnabled()) {
+      dragStartPosition = event->pos();
+    }
+    if (autoCopy()) {
+      copyToClipboard();
+    }
   }
+  inherited::mousePressEvent(event);
 }
 
 void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
@@ -47,11 +62,12 @@ void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
     < QApplication::startDragDistance())
     return;
 
-  QDrag* drag = new QDrag(this);
-  QMimeData* mimeData = mimeData();
-  drag->setMimeData(mimeData);
-
-  Qt::DropAction dropAction = drag->start(supportedDropActions());
+  QMimeData* md = mimeData();
+  if (md) {
+    QDrag* drag = new QDrag(this);
+    drag->setMimeData(md);
+    Qt::DropAction dropAction = drag->start(supportedDropActions());
+  }
 }
 
 void iClipToolWidget::setAutoCopy(bool value) {

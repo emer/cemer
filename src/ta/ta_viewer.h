@@ -19,8 +19,7 @@
 #define TA_VIEWER_H
 
 #include "ta_base.h"
-#include "ta_qtdata.h"
-#include "ta_qtclipdata.h"
+
 #include "ta_TA_type.h"
 
 // externals (most in in ta_qtviewer.h, some in ta_qtdata.h)
@@ -448,8 +447,9 @@ public:
 
 protected:
   override void		 Constr_impl(QWidget* gui_parent);
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent);
-  virtual void		OpenNewWindow_impl(); // #IGNORE
+#ifdef TA_GUI
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in qt file
+#endif
   override void		WidgetDeleting_impl();
   override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
   override void 	SetWinState_impl();
@@ -463,7 +463,6 @@ private:
 class TA_API ToolBar_List: public DataViewer_List {
 INHERITED(DataViewer_List)
 public:
-  iToolBar* 		FindToolBar(const String& name) const; // looks for toolbar by widget name, returns NULL if not found
   TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
 private:
   void			Initialize() {SetBaseType(&TA_ToolBar);}
