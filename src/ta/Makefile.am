@@ -93,6 +93,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_type.h \
 	@abs_srcdir@/ta_base.h \
 	@abs_srcdir@/ta_group.h \
+	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/ta_matrix.h \
 	@abs_srcdir@/ta_dump.h \
@@ -118,6 +119,7 @@ HEADS =\
 	ta_type_constr.h \
 	ta_base.h \
 	ta_group.h \
+	ta_dmem.h \
 	ta_viewer.h \
 	ta_matrix.h \
 	ta_dump.h \
@@ -143,6 +145,7 @@ SRCS =\
 	ta_type_constr.cpp \
 	ta_base.cpp \
 	ta_group.cpp \
+	ta_dmem.cpp \
 	ta_viewer.cpp \
 	ta_matrix.cpp \
 	ta_dump.cpp \

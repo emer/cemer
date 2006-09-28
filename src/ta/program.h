@@ -55,11 +55,9 @@ public:
   TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
-  DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum type information for dynamic enum (value goes in int_val)
+  DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
-  
-  TypeDef*		act_object_type() const; // the actual object type; never NULL (taBase min)
   
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
   virtual const String	GenCssType(); // type name
@@ -72,11 +70,22 @@ public:
   virtual cssEl*	NewCssType();
   // if object defines new type information (dyn_enum), generate a type object
 
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  virtual void	SetInt(int val);
+  virtual void	SetReal(double val);
+  virtual void	SetString(const String& val);
+  virtual void	SetBool(bool val);
+  virtual void	SetObject(taBase* val);
+  virtual void	SetHardEnum(TypeDef* enum_type, int val);
+  virtual void	SetDynEnum(int val);
+  virtual void	SetDynEnumName(const String& val);
+
+  override bool		CheckConfig(bool quiet=false);
   
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
 
+  TypeDef*		act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
+  
   override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void 	SetDefaultName() {} // make it local to list, set by list
@@ -683,7 +692,7 @@ public:
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
-  static ProgLib	prog_lib; // #NO_BROWSE library of available programs
+  static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 
   virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
 

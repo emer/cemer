@@ -65,6 +65,24 @@ void RndSeed::Init(ulong i) {
   GetCurrent();
 }
 
+#ifdef DMEM_COMPILE
+void RndSeed::DMem_Sync(MPI_Comm comm) {
+  if(taMisc::dmem_nprocs <= 1)
+    return;
+
+  // just blast the first guy to all members of the same communicator
+  DMEM_MPICALL(MPI_Bcast(rndm_seed.seed.el, MTRnd::N, MPI_LONG, 0, comm),
+	       "Process::SyncAllSeeds", "Bcast");
+  rndm_seed.OldSeed();		// then get my seed!
+}
+
+#else
+
+void RndSeed::DMem_Sync(MPI_Comm) {
+}
+
+#endif
+
 //////////////////////////
 //  	Random     	//
 //////////////////////////

@@ -120,13 +120,27 @@ bool V3LeabraProject::ConvertToV4_impl() {
 
   ConvertToV4_Nets(nwproj);
   ConvertToV4_Enviros(nwproj);
+  ConvertToV4_ProcScripts(nwproj);
+  ConvertToV4_Scripts(nwproj);
 
   DataTable* mon_data = (DataTable*)nwproj->data.NewEl(1,&TA_DataTable);
   mon_data->name = "mon_data";
 
-  nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
+  bool grouped_data = false;
+  if(nwproj->data.size > 1) {
+    DataTable* first_env = (DataTable*)nwproj->data[0];
+    if(first_env->data.FindName("Group"))
+      grouped_data = true;
+  }
+
+  if(grouped_data)
+    nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_GpData", &(nwproj->programs));
+  else
+    nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
 
   ConvertToV4_DefaultApplyInputs(nwproj);
+
+  ConvertToV4_Edits(nwproj);
 
   // todo: copy network params from processes
   // todo: make a standard leabra process for each process group

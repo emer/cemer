@@ -86,7 +86,7 @@ template class TA_API taList<taGroup_impl>;
 template class TA_API taGroup<taBase>;
 
 template class TA_API taPtrList<ScriptBase>; // in script_base.h
-template class TA_API taGroup<Script>; // in script_base.h
+// template class TA_API taGroup<Script>; // in script_base.h
 
 #ifdef TA_OS_MAC // for some reason, these need to be here for MacOS
   template class TA_API QList<QObject*>;

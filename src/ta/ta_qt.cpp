@@ -621,7 +621,7 @@ void taiMisc::OpenWindows(){
 void taiMisc::WaitProc() {
   taiMiscCore::WaitProc();
   if (!taMisc::gui_active) return;
-  Script::Wait_RecompileScripts();
+  AbstractScriptBase::Wait_RecompileScripts();
 }
 
 void taiMisc::ScriptIconify(void*, int) {

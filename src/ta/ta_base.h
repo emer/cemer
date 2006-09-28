@@ -584,7 +584,7 @@ public:
   virtual bool		ChangeMyType(TypeDef* new_type);
   // #MENU #TYPE_this #UPDATE_MENUS Change me into a different type of object, copying current info (done through owner)
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
-  // select a given member for editing --<br>if already on dialog, removes it & returns false (else true)
+  // #MENU select a given member for editing --\n if already on dialog, removes it & returns false (else true)
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
   // #IGNORE hard code interface for updating editors
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
@@ -1101,7 +1101,7 @@ public:
 class TA_API taBase_List : public taList<taBase> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER list of objects
 public:
-  void	Initialize() 		{ };
+  void	Initialize() 		{ SetBaseType(&TA_taBase); }
   void 	Destroy()		{ };
   TA_BASEFUNS(taBase_List);
 };

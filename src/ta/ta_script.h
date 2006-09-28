@@ -117,69 +117,6 @@ public:
   ~ScriptBase();
 };
 
-class TA_API Script : public taNBase, public ScriptBase {
-  // ##EXT_scr an object for maintaining and running arbitrary scripts
-public:
-
-  // script code to be run, instead of loading from file
-  bool		recording;	// #READ_ONLY #NO_SAVE currently recording?
-  bool		auto_run;	// run automatically at startup?
-  SArg_Array	s_args;		// string-valued arguments to pass to script
-
-  virtual bool  Run();
-  // #BUTTON #GHOST_OFF_recording run the script (returns false for no scr)
-  virtual void	Record(const char* file_nm = NULL);
-  // #BUTTON #GHOST_OFF_recording #ARGC_0 #NO_SCRIPT record script code for interface actions
-  virtual void	StopRecording();
-  // #BUTTON #LABEL_StopRec #GHOST_ON_recording stop recording script code
-  virtual void	Clear();
-  // #BUTTON #CONFIRM clear script file
-  virtual void	Compile();
-  // #BUTTON #GHOST_OFF_recording compile script from script file into internal runnable format
-  virtual void	CmdShell();
-  // #BUTTON #GHOST_OFF_recording set css command shell to operate on this script, so you can run, debug, etc this script from the command line
-  virtual void	ExitShell();
-  // #BUTTON #GHOST_OFF_recording exit the command shell for this script (shell returns to previous script)
-
-  virtual void	ScriptAllWinPos();
-  // #MENU #MENU_ON_Actions #NO_SCRIPT record script code to set window positions, iconified
-
-  virtual void	AutoRun();
-  // run this script if auto_run is set
-
-  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
-  void*		GetThisPtr()		{ return (void*)this; }
-
-  void	UpdateAfterEdit();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const Script& cp);
-  COPY_FUNS(Script, taNBase);
-  TA_BASEFUNS(Script);
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-
-// note: Script_Group name is for compatiblity with v3.2 files
-class TA_API Script_Group : public taGroup<Script> {
-public:
-  virtual void	StopRecording();
-  virtual void	AutoRun();
-
-  void	Initialize();
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Script_Group);
-
-public:
-  // more callbacks
-#ifdef TA_GUI
-  virtual void		Run_mc(taiAction* sel);
-#endif
-};
-
-
 #endif // script_base_h
 
 

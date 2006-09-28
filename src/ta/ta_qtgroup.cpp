@@ -22,6 +22,7 @@
 #include "ta_qt.h"
 #include "ta_qttype.h"
 #include "ta_seledit.h"
+#include "ta_dmem.h"
 
 #include "ta_css.h"
 

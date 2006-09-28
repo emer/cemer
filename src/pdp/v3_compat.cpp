@@ -38,6 +38,166 @@ void CtrlPanelData::Initialize() {
 #endif
 
 
+///////////////////////////
+// 	Script		//
+//////////////////////////
+
+void Script::Initialize() {
+  recording = false;
+  auto_run = false;
+}
+
+// void Script::Destroy() {
+//   CutLinks();
+// }
+
+// void Script::InitLinks() {
+//   taNBase::InitLinks();
+// //filer not a taBase  taBase::Own(script_file, this);
+//   taBase::Own(s_args, this);
+//   if(script_file->fname.empty())	// initialize only on startup up, not transfer
+//     SetScript("");
+// }
+
+// void Script::CutLinks() {
+//   StopRecording();
+//   taNBase::CutLinks();
+// }
+
+// void Script::Copy_(const Script& cp) {
+//   ScriptBase::Copy_(cp);
+//   auto_run = cp.auto_run;
+//   s_args = cp.s_args;
+//   script_compiled = false; // redo compile
+// }
+
+// void Script::UpdateAfterEdit() {
+//   // have to assume user changed something
+//   script_compiled = false;
+//   // if user supplied a string, then nuke the filename
+//   if (!script_string.empty()) {
+//     script_file->file_selected = false;
+//     script_file->fname = _nilString;
+//   }
+//   // if based on a script, we automatically update our name
+//   else if (!script_file->fname.empty()) {
+//     name = script_file->fname;
+//     if(name.contains(".css"))
+//       name = name.before(".css");
+//     name = taPlatform::getFileName(name); // strip path
+//   }
+//   taNBase::UpdateAfterEdit();
+//   if (HasScript())
+//     CompileScript();
+// }
+
+// bool Script::Run() {
+//   return ScriptBase::RunScript();
+// }
+
+// void Script::Record(const char* file_nm) {
+// #ifdef DMEM_COMPILE
+//   if ((taMisc::dmem_nprocs > 1) && (taMisc::record_script != NULL)) {
+//     taMisc::Error("Record: Cannot record a script under DMEM with the gui -- record script is used to communicate between processes");
+//     return;
+//   }
+// #endif
+//   Script_Group* mg = GET_MY_OWNER(Script_Group);
+//   if(mg != NULL)
+//     mg->StopRecording();
+//   if (file_nm != NULL)
+//     SetScript(file_nm);
+//   if (script_file->fname.empty()) {
+//     taMisc::Error("Record: No script file selected.\n Open a Script file and press Apply");
+//     return;
+//   }
+
+//   ostream* strm = script_file->open_append();
+//   if((strm == NULL) || strm->bad()) {
+//     taMisc::Error("Record: Script file could not be opened:", script_file->fname);
+//     script_file->Close();
+//     return;
+//   }
+
+// #ifdef TA_GUI
+//   taMisc::StartRecording(strm);
+// #endif
+//   recording = true;
+// }
+
+// void Script::StopRecording() {
+//   if(!recording)
+//     return;
+// #ifdef TA_GUI
+//   taMisc::StopRecording();
+// #endif
+//   script_file->Close();
+//   recording = false;
+// }
+
+// void Script::Clear() {
+//   if(recording) {
+//     script_file->Close();
+//     taMisc::record_script = script_file->open_write();
+//     return;
+//   }
+//   if(script_file->fname.empty()) {
+//     taMisc::Error("Clear: No Script File Selected\n Open a Script file and press Apply");
+//     return;
+//   }
+
+//   ostream* strm = script_file->open_write();
+//   if((strm == NULL) || strm->bad()) {
+//     taMisc::Error("Clear: Script file could not be opened:", script_file->fname);
+//   }
+//   script_file->Close();
+// }
+
+// void Script::Compile() {
+//   CompileScript();
+// }
+
+// void Script::CmdShell() {
+//   CmdShellScript();
+// }
+
+// void Script::ExitShell() {
+//   ExitShellScript();
+// }
+
+// void Script::AutoRun() {
+//   if(!auto_run)
+//     return;
+//   Run();
+// }
+
+
+
+
+//////////////////////////
+// 	Script_Group	//
+//////////////////////////
+
+void Script_Group::Initialize() {
+  SetBaseType(&TA_Script);
+//  SetAdapter(new Script_GroupAdapter(this));
+}
+
+// void Script_Group::StopRecording() {
+//   taLeafItr i;
+//   Script* sb;
+//   FOR_ITR_EL(Script, sb, this->, i)
+//     sb->StopRecording();
+// }
+
+// void Script_Group::AutoRun() {
+//   taLeafItr i;
+//   Script* sb;
+//   FOR_ITR_EL(Script, sb, this->, i)
+//     sb->AutoRun();
+// }
+
+
 //////////////////////////
 // 	Process		//
 //////////////////////////
@@ -540,6 +700,21 @@ bool V3ProjectBase::ConvertToV4_impl() {
   return false;
 }
 
+bool V3ProjectBase::ConvertToV4_Script_impl(Program_Group* pg, const String& objnm, 
+					    const String& fname, SArg_Array& s_args) {
+  Program* prog = (Program*)pg->NewEl(1, &TA_Program);
+  prog->name = objnm;
+  UserScript* us = (UserScript*)prog->prog_code.New(1, &TA_UserScript);
+  us->ImportFromFileName(fname); // looks on paths etc too..
+  us->desc = "script imported from: " + fname;
+  for(int i=0;i<s_args.size; i++) {
+    ProgVar* pv = (ProgVar*)prog->args.New(1, &TA_ProgVar);
+    pv->name = s_args.labels[i];
+    pv->SetString(s_args[i]);
+  }
+  return true;
+}
+
 bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
   for(int ei=0; ei < environments.size; ei++) {
     Environment* env = environments[ei];
@@ -548,10 +723,10 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     String_Data* gpcol = NULL;
     int st_col = 0;		// starting column for standard fields
     if(env->events.gp.size > 0) {
-      gpcol = dt->NewColString("group");
+      gpcol = dt->NewColString("Group");
       st_col++;
     }
-    String_Data* nmcol = dt->NewColString("name");
+    String_Data* nmcol = dt->NewColString("Name");
     if(env->event_specs.size == 0) continue;
     EventSpec* es = (EventSpec*)env->event_specs[0];
     for(int pi=0; pi < es->patterns.size; pi++) {
@@ -579,11 +754,8 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     if(env->InheritsFrom(&TA_ScriptEnv)) {
       ScriptEnv* se = (ScriptEnv*)env;
       if(!se->script_file.fname.empty()) {
-	Program* prog = (Program*)nwproj->programs.NewEl(1, &TA_Program);
-	prog->name = env->name + "_ScriptEnv";
-	UserScript* us = (UserScript*)prog->prog_code.New(1, &TA_UserScript);
-	us->ImportFromFileName(se->script_file.fname); // looks on paths etc too..
-	us->desc = "script imported from: " + se->script_file.fname;
+	ConvertToV4_Script_impl(&nwproj->programs, env->name + "_ScriptEnv",
+				se->script_file.fname, se->s_args);
       }
     }
   }
@@ -622,6 +794,76 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
   return true;
 }
 
+bool V3ProjectBase::ConvertToV4_Scripts(ProjectBase* nwproj) {
+  for(int i=0; i < scripts.size; i++) {
+    Script* scr = scripts[i];
+    if(!scr->script_file.fname.empty()) {
+      ConvertToV4_Script_impl(&nwproj->programs, scr->name,
+				scr->script_file.fname, scr->s_args);
+    }
+  }
+  return true;
+}
+
+bool V3ProjectBase::ConvertToV4_ProcScripts_impl(ProjectBase* nwproj, taBase_Group* gp,
+						 const String& nm_extra) {
+  SArg_Array null_args;
+  for(int i=0; i < gp->size; i++) {
+    Process* proc = (Process*)gp->FastEl(i);
+    if(proc->type == Process::C_CODE) continue;
+    if(proc->script_file.fname.empty()) continue;
+    if(proc->InheritsFrom(&TA_ScriptProcess)) {
+      ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
+			      proc->script_file.fname, ((ScriptProcess*)proc)->s_args);
+    }
+    else if(proc->InheritsFrom(&TA_ScriptStat)) {
+      ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
+			      proc->script_file.fname, ((ScriptStat*)proc)->s_args);
+    }
+    else {
+      ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
+			      proc->script_file.fname, null_args);
+    }
+  }
+}
+
+bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
+  // todo: in principle we could actually walk the procs and create name-for-name
+  // replacement programs that would get loaded from prog_lib in the same places, etc
+  // not sure this is worth it..
+
+  taLeafItr pi;
+  SchedProcess* proc;
+  FOR_ITR_EL(SchedProcess, proc, processes., pi) {
+    ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->loop_stats, "_" + proc->name + "_loop_stats");
+    ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->final_stats, "_" + proc->name + "_final_stats");
+    ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->init_procs, "_" + proc->name + "_init_procs");
+    ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->loop_procs, "_" + proc->name + "_loop_procs");
+    ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->final_procs, "_" + proc->name + "_final_procs");
+  }
+  return true;
+}
+
+bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
+  for(int i=0; i < edits.size; i++) {
+    SelectEdit* oed = edits[i];
+    SelectEdit* ned = (SelectEdit*)nwproj->edits.New(1, &TA_SelectEdit);
+    ned->CopyFrom(oed);
+    for(int j=0; j<ned->mbr_bases.size; j++) {
+      taBase* oob = ned->mbr_bases[j];
+      String opath = oob->GetPath(NULL, this);
+      taBase* nwob = nwproj->FindFromPath(opath);
+      if(nwob != NULL) {
+	ned->mbr_bases.Replace(j, nwob);
+      }
+      else {
+	cerr << i << " Edit convert: cannot find object: " << opath << endl;
+      }
+    }
+  }
+  return true;
+}
+
 bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   if(nwproj->programs.gp.size == 0) {
     taMisc::Error("Default Program group was not found in DefaultApplyInputs");
@@ -656,6 +898,8 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
     if(ps->type == PatternSpec::INACTIVE) continue;
     LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
     lw->data = dt;
+    lw->network = net;
+    lw->net_target = LayerRWBase::LAYER;
     lw->chan_name = ps->name;
     Layer* lay = (Layer*)net->layers.FindName(ps->layer_name);
     lw->layer = lay;
@@ -665,6 +909,21 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
       else if(ps->type == PatternSpec::TARGET) lay->layer_type = Layer::TARGET;
       else if(ps->type == PatternSpec::COMPARE) lay->layer_type = Layer::OUTPUT;
     }
+  }
+  { // trial_name
+    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
+    lw->net_target = LayerRWBase::TRIAL_NAME;
+    lw->data = dt;
+    lw->network = net;
+    lw->chan_name = "Name";
+  }
+  if(dt->data.FindName("Group"))
+  { // groupl_name
+    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
+    lw->net_target = LayerRWBase::GROUP_NAME;
+    lw->data = dt;
+    lw->network = net;
+    lw->chan_name = "Group";
   }
   return true;
 }

@@ -461,6 +461,8 @@ void LeabraUnitSpec::UpdateAfterEdit() {
 }
 
 bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
+  act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
+
   Con_Group* recv_gp;
   int g;
   FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
@@ -2883,10 +2885,6 @@ void LeabraNetwork::Initialize() {
   avg_ext_rew_n = 0;
 }
 
-// todo: implement new stats!  also clear values in initwtstate.
-// compute_ExtRew incs the sum & n, so epoch just needs to do Compute_AvgExtRew --
-// moves over computed value and clears counters..
-
 void LeabraNetwork::InitCounters() {
   inherited::InitCounters();
   phase = MINUS_PHASE;
@@ -3351,22 +3349,6 @@ void LeabraNetwork::Trial_Final() {
     }
   }
   EncodeState();
-}
-
-// todo: this should be in here!
-bool LeabraNetwork::CheckNetwork() {
-//   return TrialProcess::CheckNetwork();
-  return false;
-}
-
-// todo: do this!
-bool LeabraNetwork::CheckUnit(Unit* ck) {
-//   bool rval = Network::CheckUnit(ck);
-  bool rval = true;
-  if(!rval) return rval;
-  LeabraUnitSpec* us = (LeabraUnitSpec*)ck->spec.spec;
-  us->act.send_delta = send_delta;
-  return rval;
 }
 
 void LeabraNetwork::Compute_ExtRew() {
@@ -8456,8 +8438,7 @@ void LeabraWizard::StdNetwork(Network* net) {
   if(net == NULL)
     net = pdpMisc::GetNewNetwork(GET_MY_OWNER(LeabraProject));
   if(net == NULL) return;
-  // todo: !!!
-//   Wizard::StdNetwork(net);
+  Wizard::StdNetwork(net);
   StdLayerSpecs((LeabraNetwork*)net);
 }
 

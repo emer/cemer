@@ -139,7 +139,7 @@ void Wizard::StdNetwork(Network* net) {
 	}
       }
       else {			// OUTPUT
-        lay->layer_type = (Layer::LayerType)(Layer::OUTPUT | Layer::TARGET);
+        lay->layer_type = Layer::TARGET;
 	lay->pos.z = n_hid_layers + 1;
 	if(i > 0) {
 	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];

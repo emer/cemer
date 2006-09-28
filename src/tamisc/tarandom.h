@@ -17,6 +17,7 @@
 #define tarandom_h
 
 #include "ta_base.h"
+#include "ta_dmem.h"
 #include "css_special_math.h"
 #include "tamisc_def.h"
 #include "tamisc_TA_type.h"
@@ -36,6 +37,9 @@ public:
   // get the current seed in use by the generator
   void   Init(ulong i);
   // initialize the seed based on given initializer
+
+  void	DMem_Sync(MPI_Comm comm);
+   // synchronize seeds across all procs -- uses the first proc's seed
 
   void	Initialize();
   void	Destroy()		 { CutLinks(); }

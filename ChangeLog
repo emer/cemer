@@ -1,3 +1,9 @@
+2006-09-27  Randall O'Reilly  <oreilly@shadoww.local>
+
+	* src/tamisc/datatable.h: fixed a couple of typo bugs:
+	GetSinkMatrix(int chan) -> GetSinkMatrix_impl(int chan) and
+	GetData_impl(chan) row & col were mixed up..
+
 2006-09-24  Randall O'Reilly  <oreilly@shadoww.colorado.edu>
 
 	* src/css/ta_css.cpp: finally cleaned up cssTA and derivatives: instead of 

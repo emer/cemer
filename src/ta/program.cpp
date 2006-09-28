@@ -100,6 +100,49 @@ TypeDef* ProgVar::act_object_type() const {
   return rval;
 }
 
+void ProgVar::SetInt(int val) {
+  var_type = T_Int;
+  int_val = val;
+}
+
+void ProgVar::SetReal(double val) {
+  var_type = T_Real;
+  real_val = val;
+}
+
+void ProgVar::SetString(const String& val) {
+  var_type = T_String;
+  string_val = val;
+}
+
+void ProgVar::SetBool(bool val) {
+  var_type = T_Bool;
+  bool_val = val;
+}
+
+void ProgVar::SetObject(taBase* val) {
+  var_type = T_Object;
+  object_val = val;
+  if(object_val) object_type = object_val->GetTypeDef();
+}
+
+void ProgVar::SetHardEnum(TypeDef* enum_type, int val) {
+  var_type = T_HardEnum;
+  int_val = val;
+  hard_enum_type = enum_type;
+}
+
+void ProgVar::SetDynEnum(int val) {
+  var_type = T_DynEnum;
+  dyn_enum_val.SetNumVal(val);
+}
+
+void ProgVar::SetDynEnumName(const String& val) {
+  var_type = T_DynEnum;
+  dyn_enum_val.SetNameVal(val);
+}
+
+
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
     int_val = 0;
@@ -996,10 +1039,9 @@ String MethodCall::GetDisplayName() const {
   rval += method_spec.script_obj->name;
   rval += "->";
   rval += method_spec.method->name;
-  //TODO: nicer if this descriptor had the param names and/or types
   rval += "(";
   for(int i=0;i<args.size;i++) {
-    rval += args.labels[i] + " " + args[i];
+    rval += args.labels[i] + "=" + args[i];
     if(i < args.size-1)
       rval += ", ";
   }

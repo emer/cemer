@@ -50,6 +50,7 @@ void SelectEditConfig::Copy_(const SelectEditConfig& cp) {
 
 void SelectEdit::Initialize() {
 //nn  edit_on_reopen = false;
+//  mbr_bases.SetBaseType(&TA_taBase);
 }
 
 void SelectEdit::InitLinks() {

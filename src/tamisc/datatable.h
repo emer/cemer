@@ -605,7 +605,7 @@ public: // DataSource i/f
     // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
 protected: // DataSource i/f
   override const Variant GetData_impl(int chan)
-    {return GetValAsVar(rd_itr, chan);}
+  {return GetValAsVar(chan, rd_itr);}
   override taMatrix*	GetMatrixData_impl(int chan);//
 //  virtual bool		ReadItem_impl() {return true;} 
 
@@ -617,7 +617,7 @@ public: // DataSink i/f
 protected: // DataSink i/f
   override bool		AddItem_impl(int n) {return AddRow(n);} // adds n items
   override void		DeleteSinkChannel_impl(int chan) {RemoveCol(chan);}
-  override taMatrix*	GetSinkMatrix(int chan) 
+  override taMatrix*	GetSinkMatrix_impl(int chan) 
     {return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
   override bool		SetData_impl(const Variant& data, int chan) 
     {return SetValAsVar(data, chan, wr_itr);}

@@ -488,14 +488,12 @@ void pdpMisc::WaitProc_PostLoadOpr() {
   int i;
   for (i=0; i< tabMisc::post_load_opr.size; i++) {
     TAPtr obj = tabMisc::post_load_opr[i];
-    if(obj->InheritsFrom(TA_Script_Group)) {
-      ((Script_Group*)obj)->AutoRun();
-    }
-#ifdef TA_GUI
-    else if(obj->InheritsFrom(TA_SelectEdit_Group)) {
+//     if(obj->InheritsFrom(TA_Script_Group)) {
+//       ((Script_Group*)obj)->AutoRun();
+//     }
+    if(obj->InheritsFrom(TA_SelectEdit_Group)) {
       ((SelectEdit_Group*)obj)->AutoEdit();
     }
-#endif
     else if(obj->InheritsFrom(TA_Wizard_Group)) {
       ((Wizard_Group*)obj)->AutoEdit();
     }

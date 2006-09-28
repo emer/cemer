@@ -108,6 +108,59 @@ public:
   TA_SIMPLE_BASEFUNS(V3ScriptFile);
 };
 
+class TA_API Script : public taNBase {
+  // ##EXT_scr an object for maintaining and running arbitrary scripts
+INHERITED(taNBase)
+public:
+  V3ScriptFile	script_file;
+  String	script_string;
+
+  // script code to be run, instead of loading from file
+  bool		recording;	// #READ_ONLY #NO_SAVE currently recording?
+  bool		auto_run;	// run automatically at startup?
+  SArg_Array	s_args;		// string-valued arguments to pass to script
+
+//   virtual bool  Run();
+//   // #BUTTON #GHOST_OFF_recording run the script (returns false for no scr)
+//   virtual void	Record(const char* file_nm = NULL);
+//   // #BUTTON #GHOST_OFF_recording #ARGC_0 #NO_SCRIPT record script code for interface actions
+//   virtual void	StopRecording();
+//   // #BUTTON #LABEL_StopRec #GHOST_ON_recording stop recording script code
+//   virtual void	Clear();
+//   // #BUTTON #CONFIRM clear script file
+//   virtual void	Compile();
+//   // #BUTTON #GHOST_OFF_recording compile script from script file into internal runnable format
+//   virtual void	CmdShell();
+//   // #BUTTON #GHOST_OFF_recording set css command shell to operate on this script, so you can run, debug, etc this script from the command line
+//   virtual void	ExitShell();
+//   // #BUTTON #GHOST_OFF_recording exit the command shell for this script (shell returns to previous script)
+
+//   virtual void	ScriptAllWinPos();
+//   // #MENU #MENU_ON_Actions #NO_SCRIPT record script code to set window positions, iconified
+
+//   virtual void	AutoRun();
+//   // run this script if auto_run is set
+
+  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
+  void*		GetThisPtr()		{ return (void*)this; }
+
+  //  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(Script);
+private:
+  void	Initialize();
+  void	Destroy() { CutLinks(); }
+};
+
+class TA_API Script_Group : public taGroup<Script> {
+public:
+//   virtual void	StopRecording();
+//   virtual void	AutoRun();
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  TA_BASEFUNS(Script_Group);
+};
+
 class PDP_API Process : public taNBase {
   // ##EXT_proc simple processes for controlling and coordinating execution
 INHERITED(taNBase)
@@ -1673,15 +1726,28 @@ public:
   // #BUTTON #CAT_Convert convert the project to v4.x format
   virtual bool	ConvertToV4_impl();
   // #CAT_Convert implementation: must be defined by specific type of algorithm
+
   virtual bool	ConvertToV4_Nets(ProjectBase* nwproj); 
   // #CAT_Convert Convert networks
   virtual bool	ConvertToV4_Enviros(ProjectBase* nwproj); 
-  // #CAT_Convert Convert environments
+  // #CAT_Convert Convert environments to datatables
+  virtual bool	ConvertToV4_Scripts(ProjectBase* nwproj); 
+  // #CAT_Convert Convert scripts to programs
+  virtual bool	ConvertToV4_ProcScripts(ProjectBase* nwproj); 
+  // #CAT_Convert Convert process scripts to programs
+  virtual bool	ConvertToV4_Edits(ProjectBase* nwproj); 
+  // #CAT_Convert Copy selectedits over
+
   virtual bool 	ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj);
   // #CAT_Convert fix ApplyInputs script for first program group in nwproj, based on first enviro and network in old proj
   virtual bool 	ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec* es,
 					Network* net, DataTable* dt);
   // #CAT_Convert make layerwriter list reflect patterns in given event spec as applied to given network
+
+  virtual bool ConvertToV4_ProcScripts_impl(ProjectBase* nwproj, taBase_Group* gp,
+					    const String& nm_extra);
+  virtual bool ConvertToV4_Script_impl(Program_Group* pg, const String& objnm, 
+			       const String& fname, SArg_Array& s_args);
 
   void 	InitLinks_impl(); //for this class
   void	CutLinks_impl();
