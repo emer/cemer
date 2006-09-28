@@ -27,8 +27,7 @@
   #include "ta_seledit.h"
 #endif
 
-
-
+class taProject;
 
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
@@ -58,25 +57,14 @@ public:
   TA_BASEFUNS(Wizard_Group);
 };
 
-
-class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
-  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
-INHERITED(taGroup<TypeDefault>)
-public:
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  // reset members before loading..
-
-  void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_Group);
-};
-
-
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
   // group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
+
+  virtual void	ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj);
+  // #IGNORE update select edit mbr_base pointers when copying a project from old to new
 
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
@@ -85,12 +73,12 @@ public:
 
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A taProject has everything
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   String		desc;	// #EDIT_DIALOG description of the project
   
-  TypeDefault_Group	defaults; // #NO_FIND #NO_SAVE default initial settings for objects
+  taBase_Group		templates; // templates for new objects -- copy new objects from here
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   Program_Group		programs; // Gui-based programs to run simulations and other processing
@@ -98,13 +86,6 @@ public:
 
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
-
-  String		defaults_str;
-  // #READ_ONLY #NO_SAVE string representation of basic defaults for the subclass; set in constructor
-  String		defaults_file; 	// #READ_ONLY #NO_SAVE default name of defaults file, typically like "bp.def"
-
-  virtual void		LoadDefaults() {}
-  // load defaults according to root::default_file or precompiled defaults
 
   virtual const iColor* GetObjColor(TypeDef* td) {return NULL;} // #IGNORE get default color for object (for edit, project view)
   virtual const iColor* GetObjColor(int view_color) {return NULL;} // #IGNORE get default color for object (for edit, project view)
@@ -123,7 +104,6 @@ public:
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
   override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  override int		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 
   String GetDesc() const {return desc;}

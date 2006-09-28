@@ -190,7 +190,6 @@ public:
   virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
   virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)
   
-  override void		LoadDefaults();
   override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
   override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
   override void 	AssertDefaultWiz(bool auto_opn); // make the default wizard(s)

@@ -649,6 +649,16 @@ void ClearLogProc::Initialize() {
 }
 
 //////////////////////////////////
+//	TypeDefault_Group	//
+//////////////////////////////////
+
+int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
+  Reset(); // get rid of any existing defaults before loading
+  return inherited::Dump_Load_Value(strm, par);
+}
+
+
+//////////////////////////////////
 // 	 V3ProjectBase		//
 //////////////////////////////////
 
@@ -662,6 +672,7 @@ void V3ProjectBase::Initialize() {
 
 void V3ProjectBase::InitLinks_impl() {
   inherited::InitLinks_impl();
+  taBase::Own(defaults, this);
   taBase::Own(specs, this);
   taBase::Own(environments, this);
   taBase::Own(processes, this);
@@ -675,10 +686,12 @@ void V3ProjectBase::CutLinks_impl() {
   processes.CutLinks();
   environments.CutLinks();
   specs.CutLinks();
+  defaults.CutLinks();
   inherited::CutLinks_impl();
 }
 
 void V3ProjectBase::Copy_(const V3ProjectBase& cp) {
+  defaults = cp.defaults;
   specs = cp.specs;
   environments = cp.environments;
   processes = cp.processes;
@@ -687,10 +700,10 @@ void V3ProjectBase::Copy_(const V3ProjectBase& cp) {
 }
 
 void V3ProjectBase::ConvertToV4() {
-  int ch = taMisc::Choice("This will convert the legacy v3.x project to v4.x format -- you may see some error messages but pay more attention to final success or failure message.  Do you want to continue?", "Yes", "No");
+  int ch = taMisc::Choice("This will convert the legacy v3.x project to v4.x format.\nYou may see some error messages but pay more attention\n to final success or failure message.  Do you want to continue?", "Yes", "No");
   if (ch != 0) return;
   if (ConvertToV4_impl())
-    taMisc::Choice("The conversion was successful!", "Ok");
+    taMisc::Choice("The conversion was successful", "Ok");
   else
     taMisc::Choice("The conversion failed -- see console for mesesages", "Ok");
 }
@@ -845,22 +858,13 @@ bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
 }
 
 bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
-  for(int i=0; i < edits.size; i++) {
-    SelectEdit* oed = edits[i];
+  taLeafItr i;
+  SelectEdit* se;
+  FOR_ITR_EL(SelectEdit, se, edits., i) {
     SelectEdit* ned = (SelectEdit*)nwproj->edits.New(1, &TA_SelectEdit);
-    ned->CopyFrom(oed);
-    for(int j=0; j<ned->mbr_bases.size; j++) {
-      taBase* oob = ned->mbr_bases[j];
-      String opath = oob->GetPath(NULL, this);
-      taBase* nwob = nwproj->FindFromPath(opath);
-      if(nwob != NULL) {
-	ned->mbr_bases.ReplaceLink(j, nwob);
-      }
-      else {
-	cerr << i << " Edit convert: cannot find object: " << opath << endl;
-      }
-    }
+    ned->CopyFrom(se);
   }
+  nwproj->edits.ProjectCopyUpdatePtrs(this, nwproj); // update select edit pointers!
   return true;
 }
 

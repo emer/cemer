@@ -513,6 +513,7 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 
   view_colors = cp.view_colors;
   the_colors = cp.the_colors;
+  edits.ProjectCopyUpdatePtrs((taProject*)&cp, this); // update select edit pointers!
 }
 
 void ProjectBase::UpdateAfterEdit() {
@@ -619,32 +620,6 @@ const iColor* ProjectBase::GetObjColor(int/*ViewColors*/ vc) {
     return tac->color();
 #endif
   return NULL;
-}
-
-void ProjectBase::LoadDefaults() {
-  fstream def;
-  // use a user-provided default 
-  //TODO: this may not be a great idea in the v4 integrated runtime
-  //TODO: the entire handling of defaults in v4 needs to be redone
-  String def_file;
-  if (!pdpMisc::user_spec_def.empty())
-    def_file = pdpMisc::user_spec_def;
-  else
-    def_file = defaults_file;
-  if (!def_file.empty() && cssProgSpace::GetFile(def, def_file)) {
-    defaults.Load(def);
-    def.close(); def.clear();
-    //    cerr << "Successfully loaded default file: " << pdpMisc::root->default_file << "\n";
-  } else if (!defaults_str.empty()) {
-    std::string def_str = defaults_str.chars();
-    std::istringstream sdef(def_str);
-    sdef.seekg(0, ios::beg);
-    defaults.Load(sdef);
-    if(taMisc::dmem_proc == 0)
-      cerr << "Using standard pre-compiled defaults file\n";
-  } else {
-    taMisc::Warning("no default file or defaults were available - created objects will not automatically be of correct type");
-  }
 }
 
 void ProjectBase::AssertDefaultWiz(bool auto_opn) {

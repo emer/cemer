@@ -39,16 +39,6 @@
 #endif
 
 //////////////////////////////////
-//	TypeDefault_Group	//
-//////////////////////////////////
-
-int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
-  Reset(); // get rid of any existing defaults before loading
-  return inherited::Dump_Load_Value(strm, par);
-}
-
-
-//////////////////////////////////
 //	SelectEdit_Group	//
 //////////////////////////////////
 
@@ -60,6 +50,15 @@ void SelectEdit_Group::AutoEdit() {
       se->Edit();
   }
 }
+
+void SelectEdit_Group::ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj) {
+  taLeafItr i;
+  SelectEdit* se;
+  FOR_ITR_EL(SelectEdit, se, this->, i) {
+    se->ReplacePtrs(oldproj, newproj);
+  }
+}
+
 
 //////////////////////////
 //   taWizard		//
@@ -126,7 +125,7 @@ void taProject::InitLinks() {
 }
 
 void taProject::InitLinks_impl() {
-  taBase::Own(defaults, this);
+  taBase::Own(templates, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
   taBase::Own(programs, this);
@@ -134,8 +133,6 @@ void taProject::InitLinks_impl() {
 }
 
 void taProject::InitLinks_post() {
-  LoadDefaults();
-
   if (!taMisc::is_loading) {
     AssertDefaultProjectBrowser(true);
     AssertDefaultWiz(true);	// make default and edit it
@@ -155,7 +152,7 @@ void taProject::CutLinks_impl() {
   programs.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
-  defaults.CutLinks();
+  templates.CutLinks();
 }
 
 void taProject::Copy_(const taProject& cp) {
@@ -164,11 +161,13 @@ void taProject::Copy_(const taProject& cp) {
   edits.Reset();
   programs.Reset();
   
-  defaults = cp.defaults;
+  templates = cp.templates;
   wizards = cp.wizards;
   edits = cp.edits;
   viewers = cp.viewers;
   programs = cp.programs;
+  // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
+  // edits.ProjectCopyUpdatePtrs(&cp, this);
 }
 
 void taProject::UpdateAfterEdit() {
@@ -241,39 +240,6 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
     vwr->SetName(viewer_name);
   vwr->ViewWindow();
   
-}
-
-int taProject::Save(ostream& strm, TAPtr par, int indent) {
-  taMisc::Busy();
-  ++taMisc::is_saving;
-  dumpMisc::path_tokens.Reset();
-  strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
-  int rval = Dump_Save_Path(strm, par, indent);
-  if (rval == false) 
-     goto exit;
-  strm << " {\n";
-
-  // save defaults within project save as first item
-  defaults.Dump_Save_Path(strm, par, indent+1);
-  strm << " { ";
-  if (defaults.Dump_Save_PathR(strm, par, indent+2))
-    taMisc::indent(strm, indent+1, 1);
-  strm << "  };\n";
-  defaults.Dump_Save_impl(strm, par, indent+1);
-//nn,already in _impl  defaults.Dump_SaveR(strm, par, indent+1);
-
-  if (Dump_Save_PathR(strm, par, indent+1))
-    taMisc::indent(strm, indent, 1);
-  strm << "};\n";
-  Dump_Save_impl(strm, par, indent);
-//nn,already in _impl  Dump_SaveR(strm, par, indent);
-  rval = true;
-  
-exit:
-  --taMisc::is_saving;
-  dumpMisc::path_tokens.Reset();
-  taMisc::DoneBusy();
-  return rval;
 }
 
 int taProject::SaveAs(ostream& strm, TAPtr par, int indent) {

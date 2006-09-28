@@ -1708,10 +1708,24 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // V3ProjectBase -- base class for loading and converting
 
+class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
+  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
+INHERITED(taGroup<TypeDefault>)
+public:
+  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  // reset members before loading..
+
+  void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(TypeDefault_Group);
+};
+
+
 class PDP_API V3ProjectBase : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
+  TypeDefault_Group	defaults;	// type defaults
   BaseSpec_Group	specs;		// network specifications and parameters
   Environment_Group	environments;	// Environments of patterns to present to networks
   Process_Group		processes;	// Processes to coordinate training/testing, etc

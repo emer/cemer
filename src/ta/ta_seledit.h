@@ -71,31 +71,38 @@ public:
   virtual void	UpdateAllBases();	// perform update-after-edit on all base objects
 
   virtual void	RemoveField(int idx);
-  //  remove edit data item at given index
+  //  remove edit data item at given index and update dialog
   virtual void	MoveField(int from, int to);
   // #MENU #MENU_ON_SelectEdit move member to edit from index to index
+  virtual void	RemoveField_impl(int idx);
+  // #IGNORE just remove the fields
 
   virtual void	RemoveFun(int idx);
   //  remove function at given index
   virtual void	MoveFun(int from, int to);
   // #MENU move function to edit from index to index
+  virtual void	RemoveFun_impl(int idx);
+  // #IGNORE just remove the fields
 
   virtual void	NewEdit();
   // #MENU #MENU_SEP_BEFORE closes current edit dialog and makes a new one (with any changes)
 
-  virtual void	GetMembsFmStrs(); // get members from strings (upon loading)
-  virtual void	GetMethsFmStrs(); // get methods from strings (upon loading)
-  virtual void	GetAllPaths();	// get paths for all current objects
+  virtual void	GetMembsFmStrs(); // #IGNORE get members from strings (upon loading)
+  virtual void	GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
+  virtual void	GetAllPaths();	// #IGNORE get paths for all current objects
+
+  virtual void	ReplacePtrs(taBase* old_own, taBase* new_own);
+  // #IGNORE replace all the mbr_base pointers from old owner (e.g., project) to new one
 
   virtual bool	BaseClosing(TAPtr base);
-  // this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
+  // #IGNORE this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
   static bool	BaseClosingAll(TAPtr base);
-  // calls base closing on all SelectEdit tokens..
-  virtual void	BaseChangeSave(); // close edit dialog and save paths to current bases
-  virtual void	BaseChangeReShow(); // re-show the edit dialog loading bases from saved paths
+  // #IGNORE calls base closing on all SelectEdit tokens..
+  virtual void	BaseChangeSave(); // #IGNORE close edit dialog and save paths to current bases
+  virtual void	BaseChangeReShow(); // #IGNORE re-show the edit dialog loading bases from saved paths
 
-  virtual String GetMbrLabel(int idx); // get full label for member
-  virtual String GetMethLabel(int idx);	// get full label for method
+  virtual String GetMbrLabel(int idx); // #IGNORE get full label for member
+  virtual String GetMethLabel(int idx);	// #IGNORE get full label for method
 
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
   // reset everything before loading

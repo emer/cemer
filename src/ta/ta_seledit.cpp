@@ -253,8 +253,12 @@ void SelectEdit::UpdateAllBases() {
   }
 }
 
-void SelectEdit::RemoveField(int idx) {
+void SelectEdit::RemoveField_impl(int idx) {
   mbr_bases.Remove(idx);  members.Remove(idx);  mbr_strs.Remove(idx);  config.mbr_labels.Remove(idx);
+}
+
+void SelectEdit::RemoveField(int idx) {
+  RemoveField_impl(idx);
   ReShowEdit(true); //forced
 }
 
@@ -263,8 +267,12 @@ void SelectEdit::MoveField(int from, int to) {
   ReShowEdit(true); //forced
 }
 
-void SelectEdit::RemoveFun(int idx) {
+void SelectEdit::RemoveFun_impl(int idx) {
   meth_bases.Remove(idx);  methods.Remove(idx);  meth_strs.Remove(idx);  config.meth_labels.Remove(idx);
+}
+
+void SelectEdit::RemoveFun(int idx) {
+  RemoveFun_impl(idx);
   ReShowEdit(true); //forced
 }
 
@@ -279,6 +287,33 @@ void SelectEdit::NewEdit() {
   Edit(); */
 }
 
+void SelectEdit::ReplacePtrs(taBase* old_own, taBase* new_own) {
+  for(int j=mbr_bases.size-1; j>=0; j--) {
+    taBase* oob = mbr_bases[j];
+    String opath = oob->GetPath(NULL, old_own);
+    taBase* nwob = new_own->FindFromPath(opath);
+    if(nwob != NULL) {
+      mbr_bases.ReplaceLink(j, nwob);
+    }
+    else {
+      taMisc::Warning("SelectEdit:", name, "Members item:", String(j), "ReplacePtrs cannot find object: ", opath, "removing");
+      RemoveField_impl(j);
+    }
+  }
+  for(int j=meth_bases.size-1; j>=0; j--) {
+    taBase* oob = meth_bases[j];
+    String opath = oob->GetPath(NULL, old_own);
+    taBase* nwob = new_own->FindFromPath(opath);
+    if(nwob != NULL) {
+      meth_bases.ReplaceLink(j, nwob);
+    }
+    else {
+      taMisc::Warning("SelectEdit:", name, "Methods item:", String(j), "ReplacePtrs cannot find object: ", opath, "removing");
+      RemoveField_impl(j);
+    }
+  }
+}
+
 bool SelectEdit::BaseClosing(TAPtr base) {
   bool gotone = false;
   int i;
@@ -288,7 +323,7 @@ bool SelectEdit::BaseClosing(TAPtr base) {
     char* endaddr=staddr+bs->GetSize();
     char* vbase = (char*)base;
     if((vbase >= staddr) && (vbase <= endaddr)) {
-      mbr_bases.Remove(i);  members.Remove(i);  mbr_strs.Remove(i);  config.mbr_labels.Remove(i);
+      RemoveField_impl(i);
       gotone = true;
     }
   }
@@ -296,7 +331,7 @@ bool SelectEdit::BaseClosing(TAPtr base) {
   for(i=meth_bases.size-1;i>=0;i--) {
     TAPtr bs = meth_bases.FastEl(i);
     if(bs == base) {
-      meth_bases.Remove(i);  methods.Remove(i);  meth_strs.Remove(i);  config.meth_labels.Remove(i);
+      RemoveFun_impl(i);
       gotone = true;
     }
   }
