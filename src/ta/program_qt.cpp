@@ -418,7 +418,8 @@ iProgramEditor::iProgramEditor(QWidget* parent)
 }
 
 iProgramEditor::~iProgramEditor() {
-  setEditNode(NULL); // autosave here too
+// just delete controls -- a Higher Power had to have saved before
+//  setEditNode(NULL); // autosave here too
 }
 
 void iProgramEditor::Init() {
