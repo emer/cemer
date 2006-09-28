@@ -208,7 +208,10 @@ public:
     // cat with . except if either empty, just return the other
   
   taSmartRef 		object;		// the network object being monitored
-  String        	variable;	// Variable (member) to monitor
+  TypeDef*		object_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
+  MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
+  String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
   taBase_List		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
@@ -220,7 +223,6 @@ public:
   void		SetMonVals(TAPtr obj, const String& var); 
     // set object and variable, and update appropriately
 //TODO: add funcs for specific object types, and put in gui directives
-
 
   void		ScanObject();	// #IGNORE update the schema
   virtual void 	GetMonVals(DataBlock* db);

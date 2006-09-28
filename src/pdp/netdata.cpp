@@ -637,6 +637,8 @@ exit:
 }
 
 void NetMonItem::Initialize() {
+  object_type = NULL;
+  member_var = NULL;
   variable = "act";
   cell_num  = 0;
 }
@@ -659,12 +661,16 @@ void NetMonItem::CutLinks() {
   ResetMonVals();
   val_specs.CutLinks();
   object.CutLinks();
+  object_type = NULL;
+  member_var = NULL;
   inherited::CutLinks();
 }
 
 void NetMonItem::Copy_(const NetMonItem& cp) {
   ResetMonVals(); // won't be valid anymore
   object = cp.object; // ptr only
+  object_type = cp.object_type;
+  member_var = cp.member_var;
   variable = cp.variable;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
@@ -690,8 +696,12 @@ bool NetMonItem::CheckConfig(bool quiet) {
 }
 
 void NetMonItem::UpdateAfterEdit() {
-  if (!owner) return;
-  if ((!object) || variable.empty()) return;
+  if(!owner) return;
+  if(!object) return;
+  object_type = object->GetTypeDef();
+  if(member_var)
+    variable = member_var->name;
+  if(variable.empty()) return;
   
   if (!taMisc::is_loading) {
     // update name

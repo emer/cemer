@@ -32,15 +32,15 @@ Program .projects[0].programs.gp[0][6] {
   };
 };
 Program .projects[0].programs.gp[0][6] {
- name="MonitorNet";
- desc=;
+ name="TrialMonitor";
+ desc="monitor trial-level data from the network";
  flags=PF_NONE;
  objs {
   name=;
   el_typ=NetMonitor;
   el_def=0;
   NetMonitor @[0] {
-   name="Monitor1";
+   name="trial_netmon";
    items {
     name=;
     el_typ=NetMonItem;
@@ -48,6 +48,7 @@ Program .projects[0].programs.gp[0][6] {
     NetMonItem @[0] {
      name="epoch";
      object=.projects[0].networks[0]$0$;
+     member_var=NULL;
      variable="epoch";
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -56,53 +57,59 @@ Program .projects[0].programs.gp[0][6] {
     NetMonItem @[1] {
      name="trial";
      object=$0$;
+     member_var=NULL;
      variable="trial";
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[2] {
-     name="phase_no";
-     object=$0$;
-     variable="phase_no";
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[3] {
-     name="cycle";
-     object=$0$;
-     variable="cycle";
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[4] {
-     name="sse";
-     object=$0$;
-     variable="sse";
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[5] {
      name="trial_name";
      object=$0$;
+     member_var=NULL;
      variable="trial_name";
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
+    NetMonItem @[3] {
+     name="phase_no";
+     object=$0$;
+     member_var=NULL;
+     variable="phase_no";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[4] {
+     name="cycle";
+     object=$0$;
+     member_var=NULL;
+     variable="cycle";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[5] {
+     name="sse";
+     object=$0$;
+     member_var=NULL;
+     variable="sse";
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
     NetMonItem @[6] {
-     name="input";
-     object=.projects[0].networks[0].layers[0]$1$;
-     variable="act";
+     name="ext_rew";
+     object=$0$;
+     member_var=LeabraNetwork::ext_rew;
+     variable="ext_rew";
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   data=.projects[0].data[1]$2$;
+   data=.projects[0].data[1]$1$;
    rmv_orphan_cols=1;
   };
  };
@@ -116,18 +123,18 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="mon_data";
+   name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$2$;
+   object_val=$1$;
    objs_ptr=0;
    desc=;
   };
   ProgVar @[1] {
-   name="Monitor1";
+   name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][6].objs[0]$3$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
    desc=;
   };
@@ -141,7 +148,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=.projects[0].programs.gp[0][6].vars[1]$4$;
+    script_obj=.projects[0].programs.gp[0][6].vars[1]$3$;
     method=NetMonitor::CheckConfig;
    };
    args{ false;};
@@ -152,7 +159,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=.projects[0].programs.gp[0][6].vars[0]$5$;
+    script_obj=.projects[0].programs.gp[0][6].vars[0]$4$;
     method=DataTable::ResetData;
    };
    args{ };
@@ -163,7 +170,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=$4$;
+    script_obj=$3$;
     method=NetMonitor::UpdateMonitors;
    };
    args{ true;};
@@ -179,7 +186,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=$5$;
+    script_obj=$4$;
     method=DataTable::AddBlankRow;
    };
    args{ };
@@ -190,7 +197,7 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    method_spec {
-    script_obj=$4$;
+    script_obj=$3$;
     method=NetMonitor::GetMonVals;
    };
    args{ };
@@ -201,7 +208,7 @@ Program .projects[0].programs.gp[0][6] {
    off=1;
    result_var=;
    method_spec {
-    script_obj=$5$;
+    script_obj=$4$;
     method=DataBlock::WriteDone;
    };
    args{ };

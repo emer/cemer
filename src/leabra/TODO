@@ -1,11 +1,14 @@
 leabra todo list:
 
 * programs: add epoch-level monitor, rename data as TrialMonitor and EpochMonitor
+
+* change scope to #PROGRAM for vars in callmethod; add a link to global_vars in program
+so it finds it
+
+* need pointer converter for Program copy: anything that refers to a var etc within
+ a program needs to be updated..
+
 * wizards: reactivate env making stuff -- makes life easier -- and simple procs??
-
-* not reading ktwa specs properly from v3
-
-* add selectedit copy update for project copy..
 
 * something funky about converted networks.. save & rebuild works but initial one does not..
 
