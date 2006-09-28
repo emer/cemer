@@ -854,7 +854,7 @@ bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
       String opath = oob->GetPath(NULL, this);
       taBase* nwob = nwproj->FindFromPath(opath);
       if(nwob != NULL) {
-	ned->mbr_bases.Replace(j, nwob);
+	ned->mbr_bases.ReplaceLink(j, nwob);
       }
       else {
 	cerr << i << " Edit convert: cannot find object: " << opath << endl;
