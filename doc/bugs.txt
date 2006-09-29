@@ -1,34 +1,83 @@
 WORK PRIORITY
 -------------
 
-* Program ControlPanel
-* dnd icon bar for: progedit
-* graph log (get working again)
-* import/export data tables and matrixes
-* matrix view of datatable (in 3d/inventor)
+---------------
+Alpha:
 
-* logging in general
-* clean up gui interface to logging -- should be easier for user to choose stuff to log
-* clean up Data iterator specification 
-  -- need another sample impl (apart from ImageReader)
-* revamp the 3D display of net objects
-* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys.
+Brad:
+* dnd icon bar for: progedit
+* shutdown cleanup + add window menu
+
+* lots of misc ui improvements:
+* move edit dialog menus & buttons outside of the different panel sets in an edit
+* #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
+* remove extra scrollbar on console & disown from root or remove as dock and just make a fun
+  to move it to bottom of project window
+* highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
+* read-only, condedit off guys in edits are just labels, not controls
+* yellow surround for non-default values
+* add ... to edit a token pointer (replaces #93)
+* text controls have minimum width
+* minimal netview cleanup: transparent layer etc
+* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
+* dnd extended to applying things: drag a layerspec and drop it on a layer
+  and this sets the layerspec.  need to just parse member funs that take
+  layerspec args + comment dir to disambiguate (or just pop up menu).
+
+* Program ControlPanel: extend list view for programs + their vars/args + add buttons for selected guy + step_prog + global_vars
+* tabs for 3d views - required for these next guys (simple version):
+* matrix view of datatable (in 3d/inventor)
+* graph log (get working again)  
+  * support for matrices
+
+* startup pathing cleanup + platform params: redo pdproot/main code + randy
+
+Randy:
+
+* reactivating basic wizard stuff for env + procs
+* add item / change name of objs guy update var: modify DataChanged on *list* object to 
+  trap and call fun.  name change is less clear: brad to add datachanged in taBase to check
+  owner for comment directive of "update me when child edited"
+* add #CAT + better desc for lots of core stuff
+* Datatable aggregation
+* GNU Scientific library integration + image processing (highvis) (imagereader + qt image readers)
+* Function libraries + "IncludeCodeEl"
+* export data tables and matrixes (including incremental output) 
+* profiler!
+* -nogui
+* dmem
+
+
+---------------
+Beta (feature complete, bugfix to release):
+
+* hover notes to add methoddef desc info in MethodCall, etc..
+* multiple selection across views/trees, etc & actions (toolbars) that become
+  activated in response to multiple selections: build out list of possible
+  actions by walking typedefs & looking at comment directives; traverse
+  list each time selection is updated and activate actions that match.  
+  order matters.
+* add "pin/unpin" capability to panels, and extend panel tab context menu 
 * dnd icon bar for:
   netview/designer
+* network layer shortcut view: "sheet view" & iconify.
+* key shortcuts, particularly to invoke a string editor for string fields (all of them)
+* multi-cpu
+
+
+---------------
+Omega:
+
+* import data tables and matrixes
+* record scripts for gui operations: requied for dmem operation in gui mode.
+* revamp the 3D display of net objects: smart projection pointers,
+  etc....
 * 4-panel view of network, to enable rational moving/sizing of objects
   - the moving/sizing
-
-To Be Prioritized:
-
-* Function libraries + "IncludeCodeEl"
-* key shortcuts, particularly to invoke a string editor for string fields (all of them)
-* GNU Scientific library integration
-* add "pin/unpin" capability to panels, and extend panel tab context menu 
 * Printing Analysis, Design, and Implementation -- MAJOR
-* clean up PDP Base etc.
+
 
 Deferred:
-* dynamic main menus
 
 Done:
 * integrated viewers
