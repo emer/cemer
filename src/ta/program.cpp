@@ -1206,7 +1206,8 @@ Program* Program::MakeTemplate() {
 //TODO: this will probably get nuked and replaced with a generic maker on .root
   Program* prog = new Program;
   {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
-  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->args.Add(o);}
+  //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
+  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
   //note: put in .init since that will get searched first
   {ProgVars* o = new ProgVars; o->SetName("NewProgVars"); prog->init_code.Add(o);}
   {ProgList* o = new ProgList; o->SetName("NewProgList"); prog->init_code.Add(o);}

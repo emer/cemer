@@ -803,33 +803,47 @@ IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 
 void iProgramToolBar::Constr_post() {
   iMainWindowViewer* win = window(); //cache
+//TEMP: using the toolbar this way just for testing -- will be done in a ToolWindow thingy
 //TODO: icons for these guys, instead of text labels  
   // add all the tools
   iBaseClipToolWidget* tw;
   
   // for vars
-  addWidget(new iBaseClipToolWidget("var", TAI_ProgVar));
-  addWidget(new iBaseClipToolWidget("arg", TAI_ProgArg));
-  addWidget(new iBaseClipToolWidget("vars", TAI_ProgVars));
+  addWidget(new iBaseClipToolWidget("var",
+    tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
+  addWidget(new iBaseClipToolWidget("arg",
+    tabMisc::root->GetTemplateInstance(&TA_ProgArg)));
+  addWidget(new iBaseClipToolWidget("vars",
+    tabMisc::root->GetTemplateInstance(&TA_ProgVars)));
 
   // for els
   addSeparator();
-  addWidget(new iBaseClipToolWidget("list", TAI_ProgList));
+  addWidget(new iBaseClipToolWidget("list",
+    tabMisc::root->GetTemplateInstance(&TA_ProgList)));
 
-  addWidget(new iBaseClipToolWidget("script", TAI_UserScript));
+  addWidget(new iBaseClipToolWidget("script",
+    tabMisc::root->GetTemplateInstance(&TA_UserScript)));
   
   addSeparator();
-  addWidget(new iBaseClipToolWidget("for", TAI_ForLoop));
-  addWidget(new iBaseClipToolWidget("do", TAI_DoLoop));
-  addWidget(new iBaseClipToolWidget("while", TAI_WhileLoop));
+  addWidget(new iBaseClipToolWidget("for",
+    tabMisc::root->GetTemplateInstance(&TA_ForLoop)));
+  addWidget(new iBaseClipToolWidget("do",
+    tabMisc::root->GetTemplateInstance(&TA_DoLoop)));
+  addWidget(new iBaseClipToolWidget("while",
+    tabMisc::root->GetTemplateInstance(&TA_WhileLoop)));
   
-  addWidget(new iBaseClipToolWidget("if", TAI_IfElse));
-  addWidget(new iBaseClipToolWidget("if.con", TAI_IfContinue));
-  addWidget(new iBaseClipToolWidget("if.brk", TAI_IfBreak));
+  addWidget(new iBaseClipToolWidget("if",
+    tabMisc::root->GetTemplateInstance(&TA_IfElse)));
+  addWidget(new iBaseClipToolWidget("if.con",
+    tabMisc::root->GetTemplateInstance(&TA_IfContinue)));
+  addWidget(new iBaseClipToolWidget("if.brk",
+    tabMisc::root->GetTemplateInstance(&TA_IfBreak)));
   
   addSeparator();
-  addWidget(new iBaseClipToolWidget("meth", TAI_MethodCall));
-  addWidget(new iBaseClipToolWidget("prog", TAI_ProgramCall));
+  addWidget(new iBaseClipToolWidget("meth",
+    tabMisc::root->GetTemplateInstance(&TA_MethodCall)));
+  addWidget(new iBaseClipToolWidget("prog",
+    tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
 }
 
 

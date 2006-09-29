@@ -216,7 +216,7 @@ IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   dv->setWidget(sa);
   
   QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-  con->setMinimumSize(640, 720); //TODO: this is too big for a dock!
+  //note: don't set size, let it resize in the scroll area
 //  sa->setFocusProxy((QWidget*)con);
   sa->setWidget((QWidget*)con);
   return dv;
