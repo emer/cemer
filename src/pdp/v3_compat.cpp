@@ -864,7 +864,6 @@ bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
     SelectEdit* ned = (SelectEdit*)nwproj->edits.New(1, &TA_SelectEdit);
     ned->CopyFrom(se);
   }
-  nwproj->edits.ProjectCopyUpdatePtrs(this, nwproj); // update select edit pointers!
   return true;
 }
 

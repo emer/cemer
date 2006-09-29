@@ -48,6 +48,7 @@
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTimer>
+#include <QToolBox>
 #include <qtooltip.h>
 #include <qvariant.h>
 #include <QVBoxLayout>
@@ -2194,7 +2195,11 @@ void iDockViewer::showEvent(QShowEvent* e) {
 }
 
 void iDockViewer::Showing(bool showing) {
-  iMainWindowViewer* dv = window();
+  DockViewer* vw = viewer();
+  if (!vw) return; // shouldn't happen
+  MainWindowViewer* wvw = (MainWindowViewer*)vw->GetOwner(&TA_MainWindowViewer);
+  if (!wvw) return; // normally shouldn't happen for owned docks
+  iMainWindowViewer* dv = wvw->window();
   if (!dv) return;
   taiAction* me = dv->dockMenu->FindActionByData((void*)this);
   if (!me) return;
@@ -2460,7 +2465,7 @@ void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_are
   taiAction* act = dockMenu->AddItem(dv->viewer()->GetName(), taiMenu::toggle,
     taiAction::men_act, this, SLOT(this_DockSelect(taiAction*)), (void*)dv);
   if (dv->isVisible() != act->isChecked())
-    act->setChecked(dv->isVisible())); // note: triggers action
+    act->setChecked(dv->isVisible()); // note: triggers action
   //TODO: maybe need to hook up signals for undocking
 }
  
@@ -2471,6 +2476,7 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   } else
     body->insertWidget(at_index, fv);
   fv->m_window = this;
+//TODO: this stretch thing isn't working -- replace with sizing
   body->setStretchFactor(at_index, fv->stretchFactor());
   
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
@@ -2478,14 +2484,15 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)), 
     this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
     
-  taiAction* act = frameMenu->AddItem(fv->viewer()->name(), taiMenu::toggle,
+  taiAction* act = frameMenu->AddItem(fv->viewer()->GetName(), taiMenu::toggle,
     taiAction::men_act, this, SLOT(this_FrameSelect(taiAction*)), (void*)fv);
   
   //TODO: the show decision should probably be elsewhere
-  fv->show(); // always needed when adding guys to visible
+  if (fv->viewer()->isVisible())
+    fv->viewer()->Show(); // always needed when adding guys to visible
   
-  if (fv->isVisible() != act->isChecked())
-    act->setChecked(fv->isVisible())); // note: triggers action
+  if (fv->viewer()->isVisible() != act->isChecked())
+    act->setChecked(fv->isVisible()); // note: triggers action
     
   //TODO: forward the viewSplit guys, if the guy has compatible slots
 }

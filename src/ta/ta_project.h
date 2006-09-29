@@ -59,19 +59,6 @@ public:
 };
 
 
-class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
-  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
-INHERITED(taGroup<TypeDefault>)
-public:
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  // reset members before loading..
-
-  void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
-  void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_Group);
-};
-
-
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
   // group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
@@ -90,7 +77,6 @@ INHERITED(taFBase)
 public:
   String		desc;	// #EDIT_DIALOG description of the project
   
-  TypeDefault_Group	defaults; // #NO_FIND #NO_SAVE default initial settings for objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   Program_Group		programs; // Gui-based programs to run simulations and other processing
@@ -123,7 +109,6 @@ public:
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
   override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  override int		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 
   String GetDesc() const {return desc;}
@@ -183,6 +168,7 @@ public:
   TA_ABSTRACT_BASEFUNS(taRootBase)
 protected:
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
+  virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
 private:
   void	Initialize();
   void	Destroy();

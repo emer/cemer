@@ -50,6 +50,7 @@ void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
 void DataViewer::Initialize() {
   m_dvwidget = NULL;
   display_toggle = true;
+  visible = true; // default for most types
 }
 
 void DataViewer::Destroy() {
@@ -71,6 +72,7 @@ void DataViewer::CutLinks() {
 
 void DataViewer::Copy_(const DataViewer& cp) {
   display_toggle = cp.display_toggle;
+  visible = cp.visible; //note: not the same as mapped
 //TODO: should probably call Clear() too
 }
 
@@ -122,6 +124,10 @@ void DataViewer::Hide_impl() {
   widget()->hide();
 }
 
+bool DataViewer::isVisible() const {
+  return visible;
+}
+
 void DataViewer::Show() {
   if (!isMapped()) return;
   Show_impl();
@@ -130,6 +136,13 @@ void DataViewer::Show() {
 
 void DataViewer::Show_impl() {
   widget()->show();
+}
+
+void DataViewer::setVisible(bool value, bool update_view) {
+  if (visible == value) return;
+  visible = value;
+  if (update_view)
+    if (visible) Show(); else Hide();
 }
 
 void DataViewer::SetWinState() {
@@ -556,7 +569,7 @@ void TopLevelViewer::ViewWindow() {
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
 //      SetWinState(left, top, width, height);
   }
-  Raise();
+  Show();
 }
 
 void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
@@ -707,14 +720,13 @@ void ToolBar::Initialize() {
   lft = 0.0f;
   top = 0.0f;
   o = Horizontal;
-  visible = false;
+  visible = false; // overrides base
 }
 
 void ToolBar::Copy_(const ToolBar& cp) {
   lft = cp.lft;
   top = cp.top;
   o = cp.o;
-  visible = cp.visible; //note: not the same as mapped
 }
 
 void ToolBar::Constr_impl(QWidget* gui_parent) {

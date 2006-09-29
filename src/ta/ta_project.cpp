@@ -51,14 +51,6 @@ void SelectEdit_Group::AutoEdit() {
   }
 }
 
-void SelectEdit_Group::ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj) {
-  taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, this->, i) {
-    se->ReplacePtrs(oldproj, newproj);
-  }
-}
-
 
 //////////////////////////
 //   taWizard		//
@@ -125,7 +117,6 @@ void taProject::InitLinks() {
 }
 
 void taProject::InitLinks_impl() {
-  taBase::Own(templates, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
   taBase::Own(programs, this);
@@ -152,7 +143,6 @@ void taProject::CutLinks_impl() {
   programs.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
-  templates.CutLinks();
 }
 
 void taProject::Copy_(const taProject& cp) {
@@ -161,7 +151,6 @@ void taProject::Copy_(const taProject& cp) {
   edits.Reset();
   programs.Reset();
   
-  templates = cp.templates;
   wizards = cp.wizards;
   edits = cp.edits;
   viewers = cp.viewers;
@@ -363,18 +352,40 @@ void taRootBase::AddTemplates() {
 }
 
 taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
-  
+  return GetTemplateInstance_impl(typ, &templates);
 } 
 
 taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
+  taBase* rval = NULL;
   TypeDef* btyp = base->GetTypeDef();
-  if (btyp->name == typ->name) return root;
+  if (btyp->name == typ->name) return base;
+  
+  // if it is a list, check its children first (vastly more likely than member pointers)
+  if (btyp->InheritsFrom(&TA_taList_impl)) {
+    taList_impl* lst = (taList_impl*)base;
+    // check all the children
+    for (int j = 0; j < lst->size; ++j) {
+      taBase* chld = (taBase*)lst->FastEl_(j);
+      if (!chld) continue;
+      rval = GetTemplateInstance_impl(typ, chld);
+      if (rval) return rval;
+    }
+  }
   
   // check all taBase* members (but NOT embedded objects) and list children
-  
-  // if base is a list, then check all its children
-  
   for (int i = 0; i < btyp->members.size; ++i) {
+    MemberDef* md = btyp->members.FastEl(i);
+    // if base is an embedded list, then check all its children
+    if (md->type->InheritsFrom(&TA_taList_impl) && 
+      (md->type->ptr == 0))
+    { 
+      taList_impl* lst = (taList_impl*)md->GetOff(base);
+      rval = GetTemplateInstance_impl(typ, lst);
+      if (rval) return rval;
+    }
     
+    //TODO: if we find it is needed, then also check taBase* ptrs, or ptrs to lists
   }
+  return NULL;
+    
 } 

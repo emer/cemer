@@ -39,6 +39,7 @@ class taProject;
   class iTabViewer;
   class iMainWindowViewer;
   class iDockViewer;
+  class iToolBoxDockViewer;
   class iTabBar;
   class iTabView;
   class iDataPanel;
@@ -61,6 +62,7 @@ class taProject;
 # typedef iTabViewer QWidget;
 # typedef iMainWindowViewer QWidget;
 # typedef iDockViewer QWidget;
+# typedef iToolBoxDockViewer QWidget;
 # typedef iTabBar QWidget;
 # typedef iTabView QWidget;
 # typedef iDataPanel QWidget;
@@ -112,6 +114,7 @@ public:
   
   String		name;		// name of the object
   bool			display_toggle;  // #DEF_true 'true' if display should be updated
+  bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
   virtual bool		deleteOnWinClose() const {return false;}
   inline const IDataViewWidget* dvwidget() const {return m_dvwidget;}
@@ -121,14 +124,15 @@ public:
   QWidget*		widget();
   virtual iMainWindowViewer* window() {return NULL;}
     // #IGNORE valid if is, or is within, a main window
+  
+  // view state properties (don't require to be mapped)
+  virtual bool		isVisible() const; // whether we are supposed to be showing or not (view state)
+  virtual void		setVisible(bool value, bool update_view = true); // whether we are supposed to be showing or not (view state)
 
   virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops or for items added after mapping; all others recursively call _impl, then _post
   void 			CloseWindow() {DoActions(CLOSE_WIN_IMPL);}	
    // #IGNORE closes the window or panel, removing our reference
  
-  virtual void		Raise();	// raise window to front, if this is applicable
-  virtual void		Lower();	// lower window to back, if this is applicable
-
   virtual void  	Show();		// make the item visible, if this is applicable
   virtual void		Hide();		// hide (but don't delete) the item, if applicable
 
@@ -457,7 +461,6 @@ public:
   float			lft;  	// #HIDDEN when undocked, fractional position on screen
   float			top;	// #HIDDEN when undocked, fractional position on screen
   Orientation		o; // whether hor or vert
-  bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
   inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
   override iMainWindowViewer*	window();
@@ -474,10 +477,6 @@ protected:
   override void		WidgetDeleting_impl();
   override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
   override void 	SetWinState_impl();
-  override void		Show_impl();	// called when user selects from menu
-  override void		Hide_impl();	// called when user unselects from menu
-
-
 private:
   void 	Initialize();
   void	Destroy() {}
