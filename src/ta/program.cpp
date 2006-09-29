@@ -1219,6 +1219,7 @@ Program* Program::MakeTemplate() {
   {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
   {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
   {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
+  return prog;
 }
   
 void Program::Initialize() {
