@@ -51,6 +51,14 @@ void SelectEdit_Group::AutoEdit() {
   }
 }
 
+void SelectEdit_Group::ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj) {
+  taLeafItr i;
+  SelectEdit* se;
+  FOR_ITR_EL(SelectEdit, se, this->, i) {
+    se->ReplacePtrs(oldproj, newproj);
+  }
+}
+
 
 //////////////////////////
 //   taWizard		//
@@ -117,6 +125,7 @@ void taProject::InitLinks() {
 }
 
 void taProject::InitLinks_impl() {
+  taBase::Own(templates, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
   taBase::Own(programs, this);
@@ -143,6 +152,7 @@ void taProject::CutLinks_impl() {
   programs.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
+  templates.CutLinks();
 }
 
 void taProject::Copy_(const taProject& cp) {
@@ -151,6 +161,7 @@ void taProject::Copy_(const taProject& cp) {
   edits.Reset();
   programs.Reset();
   
+  templates = cp.templates;
   wizards = cp.wizards;
   edits = cp.edits;
   viewers = cp.viewers;
