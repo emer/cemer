@@ -27,7 +27,8 @@
   #include "ta_seledit.h"
 #endif
 
-class taProject;
+
+
 
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
@@ -57,14 +58,25 @@ public:
   TA_BASEFUNS(Wizard_Group);
 };
 
+
+class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
+  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
+INHERITED(taGroup<TypeDefault>)
+public:
+  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  // reset members before loading..
+
+  void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(TypeDefault_Group);
+};
+
+
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
   // group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
-
-  virtual void	ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj);
-  // #IGNORE update select edit mbr_base pointers when copying a project from old to new
 
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
@@ -73,12 +85,12 @@ public:
 
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A taProject has everything
 INHERITED(taFBase)
 public:
   String		desc;	// #EDIT_DIALOG description of the project
   
-  taBase_Group		templates; // templates for new objects -- copy new objects from here
+  TypeDefault_Group	defaults; // #NO_FIND #NO_SAVE default initial settings for objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   Program_Group		programs; // Gui-based programs to run simulations and other processing
@@ -86,6 +98,13 @@ public:
 
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
+
+  String		defaults_str;
+  // #READ_ONLY #NO_SAVE string representation of basic defaults for the subclass; set in constructor
+  String		defaults_file; 	// #READ_ONLY #NO_SAVE default name of defaults file, typically like "bp.def"
+
+  virtual void		LoadDefaults() {}
+  // load defaults according to root::default_file or precompiled defaults
 
   virtual const iColor* GetObjColor(TypeDef* td) {return NULL;} // #IGNORE get default color for object (for edit, project view)
   virtual const iColor* GetObjColor(int view_color) {return NULL;} // #IGNORE get default color for object (for edit, project view)
@@ -104,6 +123,7 @@ public:
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
   override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
+  override int		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 
   String GetDesc() const {return desc;}
@@ -144,6 +164,7 @@ class TA_API taRootBase: public taNBase {
 INHERITED(taNBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
+  taBase_List		templates;	// #NO_SAVE #SHOW objects used as templates -- do not use or mess with these!
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// global viewers (not saved)
   
@@ -156,9 +177,12 @@ public:
   // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
   virtual void	SaveAll() = 0; // saves all the contents of the app object
   
+  taBase*		GetTemplateInstance(TypeDef* typ); // get an instance of the indicated tab type, or NULL if not found
   void	InitLinks();
   void	CutLinks();
   TA_ABSTRACT_BASEFUNS(taRootBase)
+protected:
+  virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
 private:
   void	Initialize();
   void	Destroy();

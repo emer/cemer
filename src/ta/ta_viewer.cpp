@@ -112,6 +112,26 @@ void DataViewer::GetWinState() {
   GetWinState_impl();
 }
 
+void DataViewer::Hide() {
+  if (!isMapped()) return;
+  Hide_impl();
+  //TODO: set the "visible" property false
+}
+
+void DataViewer::Hide_impl() {
+  widget()->hide();
+}
+
+void DataViewer::Show() {
+  if (!isMapped()) return;
+  Show_impl();
+  //TODO: set the "visible" property true
+}
+
+void DataViewer::Show_impl() {
+  widget()->show();
+}
+
 void DataViewer::SetWinState() {
   if (!isMapped()) return;
   SetWinState_impl();
@@ -151,18 +171,6 @@ String DataViewer::GetPrintFileExt(PrintFmt fmt) {
 bool DataViewer::isMapped() const {
 //NOTE: do NOT put gui_active into this!!!
   return (m_dvwidget);
-}
-
-void DataViewer::Lower() {
-  if (!isMapped()) return;
-  // note: only makes sense in some contexts
-  widget()->lower();
-}
-
-void DataViewer::Raise() {
-  if (!isMapped()) return;
-  // note: only makes sense in some contexts
-  widget()->raise();
 }
 
 /*obs void DataViewer::ReSize(float width, float height) {
@@ -528,28 +536,6 @@ void TopLevelViewer::GetWinState_impl() {
   winState().GetWinState();
 }
 
-void TopLevelViewer::Lower() {
-//TODO: do we even really need this?
-//TODO: if implmented, find the most previously active win and
-// qApp->setActiveWindow(prev_win);
-  inherited::Lower();
-}
-
-void TopLevelViewer::Raise() {
-  if (!isMapped()) return;
-#ifdef TA_GUI
-  // if we are a top, then focus us, otherwise focus the parent window
-  QWidget* wid = NULL;
-  if (isTopLevel())
-    wid = widget();
-  else 
-    wid = window();
-  if (wid)
-    qApp->setActiveWindow(wid);
-#endif
-}
-
-
 void TopLevelViewer::SetWinName() {
   if (!isMapped()) return;
   MakeWinName_impl();
@@ -705,6 +691,15 @@ IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 
 
 //////////////////////////
+//   ToolBoxDockViewer	//
+//////////////////////////
+
+void ToolBoxDockViewer::Initialize() {
+  dock_flags = DV_ALL;
+}
+
+
+//////////////////////////
 //   ToolBar		//
 //////////////////////////
 
@@ -735,12 +730,6 @@ void ToolBar::GetWinState_impl() {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
-void ToolBar::Hide() {
-  if (!isMapped()) return;
-  widget()->hide();
-  visible = false;
-}
-
 void ToolBar::SetWinState_impl() {
   //TODO: docked, etc.
   iToolBar* itb = widget(); //cache
@@ -750,16 +739,6 @@ void ToolBar::SetWinState_impl() {
   r.y = (int)(top * taiM->scrn_s.h);
   itb->move(r.topLeft());
   itb->resize(r.size());
-}
-
-void ToolBar::Show() {
-  visible = true; // preset, for others
-   widget()->show();
-/*obs  if (isMapped()) {
-    widget()->show();
-  } else { // we were never mapped
-    Constr(); // does impl and post
-  }*/
 }
 
 void ToolBar::WidgetDeleting_impl() {
@@ -1065,7 +1044,11 @@ ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ,
       return tb;
   }
   return NULL;
- }
+}
+
+void MainWindowViewer::Hide_impl() {
+  widget()->lower();
+}
 
 void MainWindowViewer::MakeWinName_impl() {
   String prog_nm = taiM->classname();
@@ -1086,6 +1069,12 @@ void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
   if (post_constr) {
     ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
   }
+}
+
+void MainWindowViewer::Show_impl() {
+  QWidget* wid = widget();
+  wid->raise();
+  qApp->setActiveWindow(wid);
 }
 
 /*obs bool MainWindowViewer::ThisMenuFilter(MethodDef* md) {

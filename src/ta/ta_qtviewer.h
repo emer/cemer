@@ -530,6 +530,9 @@ protected:
 
   virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
   override void 	closeEvent(QCloseEvent* ev);
+  void 			hideEvent(QHideEvent* e); // override
+  void 			showEvent(QShowEvent* e); // override
+  virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
   virtual void		SelectionChanged_impl(ISelectableHost* src_host) {}
     // we call this when we receive a valid incoming change, or maybe new focus
   
@@ -597,7 +600,34 @@ public:
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
+//  override void		Constr_impl();
+  
+protected:
   override void 	closeEvent(QCloseEvent* ev);
+  void 			hideEvent(QHideEvent* e); // override
+  void 			showEvent(QShowEvent* e); // override
+  virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
+
+private:
+  void			Init();
+};
+
+
+class TA_API iToolBoxDockViewer: public iDockViewer {
+  Q_OBJECT
+INHERITED(iDockViewer)
+public:
+  QBoxLayout*		layOuter;
+  QToolBox*		  tbx;
+  
+  inline ToolBoxDockViewer*	viewer() {return (ToolBoxDockViewer*)m_viewer;}
+  
+  iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent = NULL);
+  ~iToolBoxDockViewer(); //
+  
+public: // IDataViewerWidget i/f
+//  override QWidget*	widget() {return this;}
+protected:
 //  override void		Constr_impl();
   
 private:
@@ -625,8 +655,8 @@ protected:
 //  override void		Constr_impl();
 
 protected:
-  void 			showEvent(QShowEvent* e); // override
   void 			hideEvent(QHideEvent* e); // override
+  void 			showEvent(QShowEvent* e); // override
   virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
 private:
   void			Init();
@@ -701,7 +731,9 @@ public: //
   taiMenu* 		fileExportMenu; // submenu -- empty and disabled in base
   taiMenu* 		editMenu;
   taiMenu* 		viewMenu;
-  taiMenu* 		toolBarMenu;
+  taiMenu* 		frameMenu; // enumeration of all Frame guys
+  taiMenu* 		toolBarMenu; // enumeration of all ToolBar guys
+  taiMenu* 		dockMenu; // enumeration of all Dock guys
   taiMenu* 		toolsMenu;
   taiMenu* 		actionsMenu; // statically added items first; bottom section is for dynamic
   taiMenu* 		helpMenu;
@@ -819,7 +851,9 @@ protected:
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
 
+  virtual void 		this_FrameSelect(taiAction* me); // user has selected or unselected one of the frames
   virtual void 		this_ToolBarSelect(taiAction* me); // user has selected or unselected one of the toolbars
+  virtual void 		this_DockSelect(taiAction* me); // user has selected or unselected one of the docks
 
 protected:
   bool			m_is_root; // true if this is a root window (has Quit menu)

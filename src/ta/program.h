@@ -531,6 +531,9 @@ public:
   };
   
   static RunState	run_state; // #READ_ONLY the one and only global run mode for current running prog
+  
+  static Program*	MakeTemplate(); // make a template instance (with children) suitable for root.templates
+  
   Program_Group*	prog_gp;   // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
   
   String		desc; // #EDIT_DIALOG description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)

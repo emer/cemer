@@ -104,6 +104,7 @@ class	QTcpSocket;		// #IGNORE
 class	QTextBrowser;		// #IGNORE 
 class	QTextEdit;		// #IGNORE 
 class	QToolBar;		// #IGNORE 
+class	QToolBox;		// #IGNORE
 class	QToolButton;		// #IGNORE 
 class	QToolTip;		// #IGNORE 
 class	QTreeWidget;		// #IGNORE

@@ -129,6 +129,9 @@ public:
   virtual void		Raise();	// raise window to front, if this is applicable
   virtual void		Lower();	// lower window to back, if this is applicable
 
+  virtual void  	Show();		// make the item visible, if this is applicable
+  virtual void		Hide();		// hide (but don't delete) the item, if applicable
+
   virtual void 		GetWinState(); // copy gui state to us (override impl)
   virtual void		SetWinState(); // set gui state from us (override impl)
 
@@ -158,6 +161,8 @@ protected:
   virtual void		WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
   virtual void 		GetWinState_impl() {} // set gui state; only called if mapped
   virtual void 		SetWinState_impl() {} // fetch gui state; only called if mapped
+  virtual void		Show_impl(); // only called if mapped (note: replaced in toplevelviewer)
+  virtual void		Hide_impl(); // only called if mapped (note: replaced in toplevelviewer)
 
 private:
   IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
@@ -365,8 +370,6 @@ public:
     // #NO_SCRIPT generate script code to position the window
   virtual void		SetWinName();		// #IGNORE set the window name 
   
-  override void		Raise();	// raise window to front, if this is applicable
-  override void		Lower();	// lower window to back, if this is applicable
   override void 	WindowClosing(CancelOp& cancel_op);
   
   void	InitLinks();
@@ -389,14 +392,17 @@ private:
 
 
 class TA_API DockViewer : public TopLevelViewer {
-  // #NO_TOKENS #VIRT_BASE the controller for dock windows, which can float, or be in a MainWindow
+  // #VIRT_BASE the controller for dock windows, which can float, or be in a MainWindow
 INHERITED(TopLevelViewer)
 public:
   enum DockViewerFlags { // #BITS controls behavior
     DV_NONE		= 0, // #NO_BIT
-    DV_CLOSABLE		= 0x01,	// true if we are allowed to close it
-    DV_MOVABLE		= 0x02,	// true if we are allowed to move it around
-    DV_FLOATABLE	= 0x04	// true if we are allowed to undock it
+    DV_CLOSABLE		= 0x01,	// #BIT true if we are allowed to close it
+    DV_MOVABLE		= 0x02,	// #BIT true if we are allowed to move it around
+    DV_FLOATABLE	= 0x04	// #BIT true if we are allowed to undock it
+#ifndef __MAKETA__
+    ,DV_ALL		= DV_CLOSABLE | DV_MOVABLE | DV_FLOATABLE
+#endif
   };
   
   DockViewerFlags	dock_flags; // #READ_ONLY #SHOW how this dock window is allowed to behave
@@ -424,6 +430,24 @@ private:
 };
 
 
+class TA_API ToolBoxDockViewer : public DockViewer {
+  // floatable dockable toolbox window
+INHERITED(DockViewer)
+public:
+  inline iToolBoxDockViewer*	widget() {return (iToolBoxDockViewer*)inherited::widget();}
+  
+  TA_DATAVIEWFUNS(ToolBoxDockViewer, DockViewer) //
+  
+protected:
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); //note: in _qt.h file
+  //override void		MakeWinName_impl(); each subguy will need this
+  
+private:
+  void 	Initialize();
+  void	Destroy() {}
+};
+
+
 
 class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
@@ -438,9 +462,6 @@ public:
   inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
   override iMainWindowViewer*	window();
 
-  virtual void  Show();		// called when user selects from menu
-  virtual void	Hide();		// called when user unselects from menu
-
   void	Copy_(const ToolBar& cp);
   COPY_FUNS(ToolBar, DataViewer)
   TA_DATAVIEWFUNS(ToolBar, DataViewer)
@@ -453,6 +474,9 @@ protected:
   override void		WidgetDeleting_impl();
   override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
   override void 	SetWinState_impl();
+  override void		Show_impl();	// called when user selects from menu
+  override void		Hide_impl();	// called when user unselects from menu
+
 
 private:
   void 	Initialize();
@@ -557,6 +581,8 @@ protected:
   override void		Constr_impl(QWidget* gui_parent); 
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
   override void		WidgetDeleting_impl();
+  override void		Show_impl(); // only called if mapped; de-iconifies
+  override void		Hide_impl(); // only called if mapped; iconifies
 
   // from TopLevelView
   override void		MakeWinName_impl();

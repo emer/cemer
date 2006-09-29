@@ -1816,6 +1816,27 @@ void iFrameViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
 }
 
+void iFrameViewer::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iFrameViewer::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iFrameViewer::Showing(bool showing) {
+  iMainWindowViewer* dv = window();
+  if (!dv) return;
+  taiAction* me = dv->frameMenu->FindActionByData((void*)this);
+  if (!me) return;
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
+}
+
+
+
 iDataPanel* iFrameViewer::MakeNewDataPanel_(taiDataLink* link) {
   iDataPanel* rval = NULL;
   TypeDef* typ = link->GetDataTypeDef();
@@ -2162,6 +2183,52 @@ void iDockViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
 }
 
+void iDockViewer::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iDockViewer::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iDockViewer::Showing(bool showing) {
+  iMainWindowViewer* dv = window();
+  if (!dv) return;
+  taiAction* me = dv->dockMenu->FindActionByData((void*)this);
+  if (!me) return;
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
+}
+
+
+
+//////////////////////////
+//   iToolBoxDockViewer	//
+//////////////////////////
+
+IDataViewWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+    return new iToolBoxDockViewer(this, gui_parent); // usually parented later
+}
+
+
+iToolBoxDockViewer::iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent)
+:inherited(viewer_, parent)
+{
+  Init();
+}
+
+iToolBoxDockViewer::~iToolBoxDockViewer() {
+}
+
+void iToolBoxDockViewer::Init() {
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0); layOuter->setSpacing(0);
+  tbx = new QToolBox(this);
+  layOuter->addWidget(tbx);
+}
+
 
 //////////////////////////
 //   iToolBar 		//
@@ -2188,14 +2255,14 @@ void iToolBar::Init() {
   setLabel(viewer()->GetName());
 }
 
-void iToolBar::showEvent(QShowEvent* e) {
-  inherited::showEvent(e);
-  Showing(true);
-}
-
 void iToolBar::hideEvent(QHideEvent* e) {
   inherited::hideEvent(e);
   Showing(false);
+}
+
+void iToolBar::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
 }
 
 void iToolBar::Showing(bool showing) {
@@ -2389,6 +2456,11 @@ taiAction* iMainWindowViewer::AddAction(taiAction* act) {
 void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_area) {
   if (!dv) return;
   addDockWidget(in_area, dv);
+  // create a menu entry to show/hide it, regardless if visible now
+  taiAction* act = dockMenu->AddItem(dv->viewer()->GetName(), taiMenu::toggle,
+    taiAction::men_act, this, SLOT(this_DockSelect(taiAction*)), (void*)dv);
+  if (dv->isVisible() != act->isChecked())
+    act->setChecked(dv->isVisible())); // note: triggers action
   //TODO: maybe need to hook up signals for undocking
 }
  
@@ -2406,8 +2478,16 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)), 
     this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
     
-  //TODO: forward the viewSplit guys, if the guy has compatible slots
+  taiAction* act = frameMenu->AddItem(fv->viewer()->name(), taiMenu::toggle,
+    taiAction::men_act, this, SLOT(this_FrameSelect(taiAction*)), (void*)fv);
+  
+  //TODO: the show decision should probably be elsewhere
   fv->show(); // always needed when adding guys to visible
+  
+  if (fv->isVisible() != act->isChecked())
+    act->setChecked(fv->isVisible())); // note: triggers action
+    
+  //TODO: forward the viewSplit guys, if the guy has compatible slots
 }
 
 // this guy exists because we must always be able to add a panel,
@@ -2572,7 +2652,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
   viewRefreshAction->AddTo(viewMenu);
   viewMenu->insertSeparator();
+  frameMenu = viewMenu->AddSubMenu("Frames");
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
+  dockMenu = viewMenu->AddSubMenu("Dock Windows");
   viewMenu->insertSeparator();
 
   toolsClassBrowseAction->AddTo(toolsMenu );
@@ -2788,6 +2870,28 @@ void iMainWindowViewer::setFrameGeometry(const iRect& r) {
 
 void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int height) {
   setFrameGeometry(iRect(left, top, width, height));
+}
+
+void iMainWindowViewer::this_DockSelect(taiAction* me) {
+  iDockViewer* itb = (iDockViewer*)(me->usr_data.toPtr());
+  DockViewer* tb = itb->viewer();
+  if (!tb) return; // shouldn't happen
+  if (me->isChecked()) { //note: check has already been toggled
+    tb->Show();
+  } else { //need to show
+    tb->Hide();
+  }
+}
+
+void iMainWindowViewer::this_FrameSelect(taiAction* me) {
+  iFrameViewer* itb = (iFrameViewer*)(me->usr_data.toPtr());
+  FrameViewer* tb = itb->viewer();
+  if (!tb) return; // shouldn't happen
+  if (me->isChecked()) { //note: check has already been toggled
+    tb->Show();
+  } else { //need to show
+    tb->Hide();
+  }
 }
 
 void iMainWindowViewer::this_ToolBarSelect(taiAction* me) {

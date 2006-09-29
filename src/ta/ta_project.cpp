@@ -345,13 +345,36 @@ void taRootBase::Destroy() {
 
 void taRootBase::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(templates, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
+  AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
   viewers.CutLinks();
   projects.CutLinks();
+  templates.CutLinks();
   inherited::CutLinks();
 }
 
+void taRootBase::AddTemplates() {
+  templates.Add(Program::MakeTemplate());
+}
+
+taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
+  
+} 
+
+taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
+  TypeDef* btyp = base->GetTypeDef();
+  if (btyp->name == typ->name) return root;
+  
+  // check all taBase* members (but NOT embedded objects) and list children
+  
+  // if base is a list, then check all its children
+  
+  for (int i = 0; i < btyp->members.size; ++i) {
+    
+  }
+} 

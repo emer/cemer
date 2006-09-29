@@ -1202,6 +1202,25 @@ void ProgramCall::UpdateGlobalArgs() {
 
 Program::RunState 	Program::run_state = Program::NOT_INIT; 
 
+Program* Program::MakeTemplate() {
+//TODO: this will probably get nuked and replaced with a generic maker on .root
+  Program* prog = new Program;
+  {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
+  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->args.Add(o);}
+  //note: put in .init since that will get searched first
+  {ProgVars* o = new ProgVars; o->SetName("NewProgVars"); prog->init_code.Add(o);}
+  {ProgList* o = new ProgList; o->SetName("NewProgList"); prog->init_code.Add(o);}
+  {UserScript* o = new UserScript; o->SetName("NewUserScript"); prog->init_code.Add(o);}
+  {ForLoop* o = new ForLoop; o->SetName("NewForLoop"); prog->init_code.Add(o);}
+  {DoLoop* o = new DoLoop; o->SetName("NewDoLoop"); prog->init_code.Add(o);}
+  {WhileLoop* o = new WhileLoop; o->SetName("NewWhileLoop"); prog->init_code.Add(o);}
+  {IfElse* o = new IfElse; o->SetName("NewIfElse"); prog->init_code.Add(o);}
+  {IfContinue* o = new IfContinue; o->SetName("NewIfContinue"); prog->init_code.Add(o);}
+  {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
+  {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
+  {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
+}
+  
 void Program::Initialize() {
   flags = PF_NONE;
   objs.SetBaseType(&TA_taOBase);
