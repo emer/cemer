@@ -513,6 +513,7 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 
   view_colors = cp.view_colors;
   the_colors = cp.the_colors;
+  edits.ProjectCopyUpdatePtrs((taProject*)&cp, this); // update select edit pointers!
 }
 
 void ProjectBase::UpdateAfterEdit() {
