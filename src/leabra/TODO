@@ -1,10 +1,17 @@
 leabra todo list:
 
-* copy net update pointers is not getting projections right..
+* LayerSpec CheckConfig needs to test for existence of units before doing Leaf();
+
+* need state flag for changing type: don't try to replace spec pointers on cutlinks.
 
 * wizards: reactivate env making stuff -- makes life easier -- and simple procs??
 
 * something funky about converted networks.. save & rebuild works but initial one does not..
+  * still true!
+
+* why are cvt error msgs still happening!?
+
+* implement css watchpoint to trap bug??
 
 ---
 

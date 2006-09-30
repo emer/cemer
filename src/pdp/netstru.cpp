@@ -2357,21 +2357,12 @@ void Projection::InitLinks() {
 
 void Projection::Copy_(const Projection& cp) {
   from_type = cp.from_type;
+  taBase::SetPointer((TAPtr*)&from, cp.from);
   spec = cp.spec;
   con_type = cp.con_type;
   con_gp_type = cp.con_gp_type;
   con_spec = cp.con_spec;
-/*obs #ifdef TA_GUI
-  if(cp.proj_points) {
-    if(proj_points == NULL) {
-      proj_points = new Xform();
-      taBase::Own(proj_points, this);
-    }
-    proj_points->Copy(*(cp.proj_points));
-  }
-#endif */
   // not to copy!
-  // taBase::SetPointer((TAPtr*)&from, cp.from);
   // recv_idx = cp.recv_idx;
   // send_idx = cp.send_idx;
   // recv_n = cp.recv_n;
