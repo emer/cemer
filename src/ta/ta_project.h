@@ -63,9 +63,6 @@ INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
 
-  virtual void	ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj);
-  // #IGNORE update select edit mbr_base pointers when copying a project from old to new
-
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
   TA_BASEFUNS(SelectEdit_Group);

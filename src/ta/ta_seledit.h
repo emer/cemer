@@ -91,9 +91,6 @@ public:
   virtual void	GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
   virtual void	GetAllPaths();	// #IGNORE get paths for all current objects
 
-  virtual void	ReplacePtrs(taBase* old_own, taBase* new_own);
-  // #IGNORE replace all the mbr_base pointers from old owner (e.g., project) to new one
-
   virtual bool	BaseClosing(TAPtr base);
   // #IGNORE this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
   static bool	BaseClosingAll(TAPtr base);
@@ -104,9 +101,10 @@ public:
   virtual String GetMbrLabel(int idx); // #IGNORE get full label for member
   virtual String GetMethLabel(int idx);	// #IGNORE get full label for method
 
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
   // reset everything before loading
-  int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   // get paths before saving
 
   void	UpdateAfterEdit();

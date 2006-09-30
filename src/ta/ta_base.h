@@ -62,6 +62,7 @@ class taiMimeSource; //
 // forwards
 class taBase;
 class taSmartRef;
+class taSmartPtr;
 class taOBase;
 class taDataView;
 class taNBase;
@@ -594,12 +595,40 @@ public:
   virtual void		Help();
   // #MENU get help on using this object
 
-  virtual void		ReplacePointersHook(TAPtr old_ptr);
-  // #IGNORE hook to replace all pointers that might have pointed to old version of this object to this: default is to call taMisc::ReplaceAllPtrs
-  virtual int		ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
-  // #IGNORE replace all pointers to old_ptr with new_ptr (calls TypeDef::ReplaceAllPtrsThis by default)
+  static bool	UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
+					  bool null_not_found = true);
+  // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated
+  static bool	UpdatePointers_NewPar_SmPtr(taSmartPtr& ptr, taBase* old_par, taBase* new_par,
+					    bool null_not_found = true);
+  // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated
+  static bool	UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par,
+					  taBase* new_par, bool null_not_found = true);
+  // #IGNORE update reference if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated
 
-  virtual void		CallFun(const String& fun_name);
+  virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  // #IGNORE update pointers for a new parent (e.g., after a copy operation): and anything that lives under old_par and points to something else that lives under old_par is updated to point to new_par: this default impl uses TA info to walk the members and find the guys to change; returns number changed
+
+  static bool	UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
+					  taBase* old_ptr, taBase* new_ptr);
+  // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
+  static bool	UpdatePointers_NewObj_SmPtr(taSmartPtr& ptr, taBase* ptr_owner, 
+					    taBase* old_ptr, taBase* new_ptr);
+  // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
+  static bool	UpdatePointers_NewObj_Ref(taSmartRef& ref, taBase* ptr_owner, 
+					  taBase* old_ptr, taBase* new_ptr);
+  // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
+
+  virtual int	UpdatePointersToMe(taBase* new_ptr);
+  // #IGNORE replace all pointers that might have pointed to old version of this object (and all of its kids!) to new_ptr -- called during ChangeType: default is to call UpdatePointers_NewObj on taMisc::default_scope; returns number changed
+  virtual int	UpdatePointersToMe_impl(taBase* scope_obj, taBase* new_ptr);
+  // #IGNORE actually does the work: above just passes in the scoper
+  virtual int	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
+  // #IGNORE override this for list/group guys that contain sub-objs -- update all the sub objs that we own!
+
+  virtual int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  // #IGNORE replace all pointers to old_ptr with new_ptr: walks the entire structure (members, lists, etc) and iteratively calls; returns number changed
+
+  virtual void	CallFun(const String& fun_name);
   // call function of given name on this object, prompting for args using gui interface
 
 #ifdef DMEM_COMPILE
@@ -930,6 +959,10 @@ public:
   virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); 
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
+  override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  override int	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
+
   TAPtr		DefaultEl_() const	{ return (TAPtr)SafeEl_(el_def); } // #IGNORE
 
   virtual int	SetDefaultEl(TypeDef* it);
@@ -968,7 +1001,6 @@ public:
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
   // #MENU #MENU_ON_Object #USE_RVAL #UPDATE_MENUS #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
-  int	ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
   virtual TAPtr	FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
 
   void	SetBaseType(TypeDef* it); // set base (and default) type to given td

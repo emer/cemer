@@ -116,7 +116,7 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
@@ -590,7 +590,7 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   virtual void		EditScript();
     // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
-    
+
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();

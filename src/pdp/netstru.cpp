@@ -233,32 +233,6 @@ void ConSpec::Copy_(const ConSpec& cp) {
   wt_limits = cp.wt_limits;
 }
 
-void ConSpec::ReplacePointersHook(TAPtr old) {
-  ConSpec* spold = (ConSpec*)old;
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if (!net) return;
-//obs  taMisc::DelayedMenuUpdate(this);
-  net->ReplaceConSpec(spold, this);
-
-  // now go through specs!
-  BaseSpec* sp;
-  taLeafItr si;
-  FOR_ITR_EL(BaseSpec, sp, net->specs., si) {
-    if(!sp->InheritsFrom(TA_UnitSpec)) continue;
-    UnitSpec* us = (UnitSpec*)sp;
-    if(us->bias_spec.spec == old) {
-      us->bias_spec.SetSpec(this); // update to new
-    }
-    if(us->children.leaves > 0)
-      conspec_repl_bias_ptr(us, spold, this);
-  }
-  int i;
-  for(i=0;i<spold->children.size && i<children.size;i++) {
-    children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
-  }
-  BaseSpec::ReplacePointersHook(old);
-}
-
 int ConSpec::UseCount() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if(!net) return -1;
@@ -1296,19 +1270,6 @@ void UnitSpec::CutLinks() {
   bias_spec.CutLinks();
 }
 
-void UnitSpec::ReplacePointersHook(TAPtr old) {
-  UnitSpec* spold = (UnitSpec*)old;
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if (!net) return;
-//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
-  net->ReplaceUnitSpec(spold, this);
-  int i;
-  for(i=0;i<spold->children.size && i<children.size;i++) {
-    children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
-  }
-  BaseSpec::ReplacePointersHook(old);
-}
-
 void UnitSpec::InitState(Unit* u) {
   u->InitExterns();
   u->InitDelta();
@@ -1529,43 +1490,46 @@ void Unit::UpdateAfterEdit() {
 int Unit::dmem_this_proc = 0;
 #endif
 
-void Unit::ReplacePointersHook(TAPtr old) {
-  Unit* ou = (Unit*)old;
-  CopyPtrs(ou);
-  // now go through and replace all pointers to unit
-  Network* own_net = GET_MY_OWNER(Network);
-  if(own_net) {
-    Layer* l;
-    taLeafItr li;
-    FOR_ITR_EL(Layer, l, own_net->layers., li) {
-      Unit* u;
-      taLeafItr ui;
-      FOR_ITR_EL(Unit, u, l->units., ui) {
-	if(u == ou) continue;
-	int g;
-	for(g=0; g < u->recv.gp.size; g++) {
-	  Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
-	  int i;
-	  for(i=0;i<cg->units.size;i++) {
-	    if(cg->Un(i) == ou)
-	      cg->units.ReplaceLink(i, this);
-	  }
-	}
-	for(g=0; g < u->send.gp.size; g++) {
-	  Con_Group* cg = (Con_Group*)u->send.gp.FastEl(g);
-	  int i;
-	  for(i=0;i<cg->units.size;i++) {
-	    if(cg->Un(i) == ou)
-	      cg->units.ReplaceLink(i, this);
-	  }
-	}
-      }
-    }
-  }
-  ou->recv.Reset();		// get rid of old connectivity
-  ou->send.Reset();
-  taNBase::ReplacePointersHook(old);
-}
+// todo: change con_group's replacepointers fun to only op on cons or units
+// and to properly get the units..
+
+// void Unit::ReplacePointersHook(TAPtr old) {
+//   Unit* ou = (Unit*)old;
+//   CopyPtrs(ou);
+//   // now go through and replace all pointers to unit
+//   Network* own_net = GET_MY_OWNER(Network);
+//   if(own_net) {
+//     Layer* l;
+//     taLeafItr li;
+//     FOR_ITR_EL(Layer, l, own_net->layers., li) {
+//       Unit* u;
+//       taLeafItr ui;
+//       FOR_ITR_EL(Unit, u, l->units., ui) {
+// 	if(u == ou) continue;
+// 	int g;
+// 	for(g=0; g < u->recv.gp.size; g++) {
+// 	  Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
+// 	  int i;
+// 	  for(i=0;i<cg->units.size;i++) {
+// 	    if(cg->Un(i) == ou)
+// 	      cg->units.ReplaceLink(i, this);
+// 	  }
+// 	}
+// 	for(g=0; g < u->send.gp.size; g++) {
+// 	  Con_Group* cg = (Con_Group*)u->send.gp.FastEl(g);
+// 	  int i;
+// 	  for(i=0;i<cg->units.size;i++) {
+// 	    if(cg->Un(i) == ou)
+// 	      cg->units.ReplaceLink(i, this);
+// 	  }
+// 	}
+//       }
+//     }
+//   }
+//   ou->recv.Reset();		// get rid of old connectivity
+//   ou->send.Reset();
+//   taNBase::ReplacePointersHook(old);
+// }
 
 void Unit::ApplyExternal(float val, ExtType act_ext_flags, Random* ran) {
   // note: not all flag values are valid, so following is a fuzzy cascade
@@ -2121,20 +2085,6 @@ void ProjectionSpec::CutLinks() {
     }
   }
   BaseSpec::CutLinks();
-}
-
-void ProjectionSpec::ReplacePointersHook(TAPtr old) {
-  ProjectionSpec* spold = (ProjectionSpec*)old;
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if(!net) return;
-//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
-  net->ReplacePrjnSpec(spold, this);
-
-  int i;
-  for(i=0;i<spold->children.size && i<children.size;i++) {
-    children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
-  }
-  BaseSpec::ReplacePointersHook(old);
 }
 
 int ProjectionSpec::UseCount() {
@@ -3231,18 +3181,6 @@ void LayerSpec::CutLinks() {
   BaseSpec::CutLinks();
 }
 
-void LayerSpec::ReplacePointersHook(TAPtr old) {
-  LayerSpec* spold = (LayerSpec*)old;
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if (!net) return;
-//obs  taMisc::DelayedMenuUpdate(this); // this will reset flag
-  net->ReplaceLayerSpec(spold, this);
-  for(int i=0;i<spold->children.size && i<children.size;i++) {
-    children.FastEl(i)->ReplacePointersHook(spold->children.FastEl(i));
-  }
-  BaseSpec::ReplacePointersHook(old);
-}
-
 int LayerSpec::UseCount() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if(!net) return -1; // no networks!
@@ -3435,96 +3373,6 @@ void Layer::ConnectFrom(Layer* from_lay) {
   if (!net) return;
   //Projection* prjn =
   net->FindMakePrjn(this, from_lay);
-}
-
-void Layer::ReplacePointersHook(TAPtr old) {
-  Layer* ol = (Layer*)old;
-  CopyPtrs(ol);
-  // now go through and replace all pointers to layer
-  if(own_net) {
-    Layer* l;
-    taLeafItr li;
-    FOR_ITR_EL(Layer, l, own_net->layers., li) {
-      if(l == ol) continue;
-      Projection* p;
-      taLeafItr pi;
-      FOR_ITR_EL(Projection, p, l->projections., pi) {
-	if(p->from == ol)
-	  taBase::SetPointer((TAPtr*)&(p->from), this);
-      }
-      int pip;
-      for(pip=l->send_prjns.size-1; pip>=0; pip--) {
-	p = (Projection*)l->send_prjns.FastEl(pip);
-	if(p == NULL) continue;
-	if(p->layer == ol) {
-	  int lfidx = ol->projections.FindEl(p);
-	  if((lfidx >= 0) && (lfidx < projections.size)) {
-	    l->send_prjns.ReplaceLink(pip, projections.FastEl(lfidx));
-	  }
-	  else
-	    l->send_prjns.Remove(pip);	// get rid of it, add in new one
-	}
-      }
-      // now go and see if any send prjns point to units in replaced layer! ak!
-      String path;
-      MemberDef* md;
-      Unit* u;
-      taLeafItr i;
-      FOR_ITR_EL(Unit, u, l->units., i) {
-	int g;
-	for(g=0; g < u->recv.gp.size; g++) {
-	  Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
-	  // prjn could have either layer depending on where it is..
-	  if(cg->prjn->layer == ol) {	// replace the projection!
-	    int lfidx = ol->projections.FindEl(cg->prjn);
-	    if((lfidx >= 0) && (lfidx < projections.size)) {
-	      taBase::SetPointer((TAPtr*)&(cg->prjn), projections.FastEl(lfidx));
-	    }
-	  }
-	  if((cg->prjn->from != this) && (cg->prjn->from != ol)) continue;
-	  int i;
-	  for(i=0;i<cg->units.size;i++) {
-	    Unit* au = cg->Un(i);
-	    path = au->GetPath(NULL, ol); // path of old unit under old lay
-	    Unit* nw_un = (Unit*)FindFromPath(path, md);	// find under nw layer
-	    if(nw_un)
-	      cg->units.ReplaceLink(i, nw_un);
-	  }
-	}
-	for(g=0; g < u->send.gp.size; g++) {
-	  Con_Group* cg = (Con_Group*)u->send.gp.FastEl(g);
-	  // prjn could have either layer depending on where it is..
-	  if((cg->prjn->layer != this) && (cg->prjn->layer != ol)) continue;
-	  if(cg->prjn->layer == ol) {	// replace the projection!
-	    int lfidx = ol->projections.FindEl(cg->prjn);
-	    if((lfidx >= 0) && (lfidx < projections.size)) {
-	      taBase::SetPointer((TAPtr*)&(cg->prjn), projections.FastEl(lfidx));
-	    }
-	  }
-	  int i;
-	  for(i=0;i<cg->units.size;i++) {
-	    Unit* au = cg->Un(i);
-	    path = au->GetPath(NULL, ol); // path of old unit under old lay
-	    Unit* nw_un = (Unit*)FindFromPath(path, md);	// find under nw layer
-	    if(nw_un)
-	      cg->units.ReplaceLink(i, nw_un);
-	  }
-	}
-      }
-    }
-  }
-  Projection* p;
-  taLeafItr pi;
-  FOR_ITR_EL(Projection, p, ol->projections., pi) {
-    p->layer = NULL;
-    taBase::DelPointer((TAPtr*)&(p->from));
-  }
-  // get rid of any apparent connectivity
-  ol->projections.Reset();
-  ol->send_prjns.Reset();
-  tabMisc::DelayedUpdateAfterEdit(this);
-  tabMisc::DelayedUpdateAfterEdit(own_net);
-  inherited::ReplacePointersHook(old);
 }
 
 void Layer::CopyNetwork(Network* net, Network* cn, Layer* lay) {
@@ -4452,8 +4300,11 @@ void Network::Copy_(const Network& cp) {
 
   max_size = cp.max_size;
 
-  ReplaceSpecs_Gp(cp.specs, specs);
-  CopyNetwork((Network*)&cp);
+//    ReplaceSpecs_Gp(cp.specs, specs);
+  //  CopyNetwork((Network*)&cp);
+  
+  UpdatePointers_NewPar((taBase*)&cp, this); // should do the work of the two above funs!
+
   ReConnect_Load();		// set the send cons
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();

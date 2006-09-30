@@ -238,7 +238,6 @@ public:
   // check for for misc configuration settings required by different algorithms
 
   virtual int		UseCount(); // return number of times this spec is used
-  void	ReplacePointersHook(TAPtr old);
 
   virtual  void  InitWeights();
   // #BUTTON initializes weights for all projections with this conspec
@@ -443,7 +442,6 @@ public:
   // check for for misc configuration settings required by different algorithms
 
   virtual int	UseCount(); // return number of times this spec is used
-  void	ReplacePointersHook(TAPtr old);
 
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_UnitSpec); }
@@ -596,7 +594,6 @@ public: //
 
   virtual void	CopyNetwork(Network* anet, Network* cn, Unit* cp); // #IGNORE copy network
   virtual void	CopyPtrs(Unit* cp); // #IGNORE copy the pointers directly
-  void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif
@@ -642,7 +639,6 @@ public:
 
   virtual void 	CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp);
   virtual int	UseCount(); // return number of times this spec is used
-  void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_ProjectionSpec); }
 #endif
@@ -932,7 +928,6 @@ class PDP_API LayerSpec : public BaseSpec {
   // generic layer specification
 public:
   virtual int	UseCount(); // return number of times this spec is used
-  void	ReplacePointersHook(TAPtr old);
 
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_LayerSpec); }
@@ -1129,7 +1124,6 @@ public:
 
   virtual void	CopyNetwork(Network* net, Network* cn, Layer* cp); // #IGNORE copy entire network
   virtual void	CopyPtrs(Layer* cp); // #IGNORE the pointers
-  void	ReplacePointersHook(TAPtr old);
 #ifdef TA_GUI
   const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
 #endif

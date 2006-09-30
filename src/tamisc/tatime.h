@@ -50,7 +50,7 @@ public:
 
 class TAMISC_API TimeUsed : public taNBase {
   // #INLINE #INLINE_DUMP computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
-INHERITED(taBase)
+INHERITED(taNBase)
 public:
   taTime	start;		// starting time
   taTime	end;		// ending time

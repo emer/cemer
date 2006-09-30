@@ -1272,6 +1272,7 @@ void Program::Copy_(const Program& cp) {
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
   sub_progs.RemoveAll();
+  UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
 }
 
 void Program::UpdateAfterEdit() {

@@ -51,15 +51,6 @@ void SelectEdit_Group::AutoEdit() {
   }
 }
 
-void SelectEdit_Group::ProjectCopyUpdatePtrs(taProject* oldproj, taProject* newproj) {
-  taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, this->, i) {
-    se->ReplacePtrs(oldproj, newproj);
-  }
-}
-
-
 //////////////////////////
 //   taWizard		//
 //////////////////////////
@@ -167,7 +158,7 @@ void taProject::Copy_(const taProject& cp) {
   viewers = cp.viewers;
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
-  // edits.ProjectCopyUpdatePtrs(&cp, this);
+  // UpdatePointers_NewPar(&cp, this); // update pointers within entire project..
 }
 
 void taProject::UpdateAfterEdit() {

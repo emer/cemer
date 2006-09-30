@@ -730,6 +730,15 @@ void SpecPtr_impl::Copy_(const SpecPtr_impl& cp) {
   base_type = cp.base_type;
 }
 
+int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  BaseSpec* sp = GetSpec();
+  if(sp != old_ptr) return 0;
+  if(GetOwner(old_ptr->GetTypeDef()) == old_ptr) return 0;
+  // don't replace on children of the old object
+  SetSpec((BaseSpec*)new_ptr);		// call set spec so type is updated!
+  return 1;
+}
+
 void SpecPtr_impl::UpdateAfterEdit() {
   taBase::UpdateAfterEdit();
 
@@ -737,7 +746,7 @@ void SpecPtr_impl::UpdateAfterEdit() {
     return;
 
   BaseSpec* sp = GetSpec();
-  if(sp != NULL) {
+  if(sp) {
     if(sp->GetTypeDef() == type)
       return;
     else

@@ -185,6 +185,31 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
   gp.Copy_Borrow(cp.gp);
 }
 
+int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
+  nchg += gp.UpdatePointers_NewPar(old_par, new_par);
+  return nchg;
+}
+
+int taGroup_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
+  nchg += gp.UpdatePointers_NewObj(old_ptr, new_ptr);
+  return nchg;
+}
+
+int taGroup_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
+  int nchg = inherited::UpdatePointersToMyKids_impl(scope_obj, new_ptr);
+  taGroup_impl* new_gp = (taGroup_impl*)new_ptr;
+  for(int i=0; i<gp.size; i++) {
+    taGroup_impl* osg = FastGp_(i);
+    taGroup_impl* nsg = NULL;
+    if(new_gp && (new_gp->gp.size > i))
+      nsg= new_gp->FastGp_(i);
+    nchg += osg->UpdatePointersToMe_impl(scope_obj, nsg);
+  }
+  return nchg;
+}
+
 int taGroup_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
   return inherited::Dump_Save_PathR(strm, par, indent);
 }
@@ -564,15 +589,6 @@ int taGroup_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
     nchanged += FastGp_(i)->ReplaceType(old_type, new_type);
   }
   return nchanged;
-}
-
-int taGroup_impl::ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  int nchg = taList_impl::ReplaceAllPtrsThis(obj_typ, old_ptr, new_ptr);
-  int i;
-  for(i=0; i<gp.size; i++) {
-    nchg += FastGp_(i)->ReplaceAllPtrsThis(obj_typ, old_ptr, new_ptr);
-  }
-  return nchg;
 }
 
 TAGPtr taGroup_impl::SafeLeafGp_(int gp_idx) const {

@@ -1115,12 +1115,174 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
   // owner will used delayed remove to make this safe!
 }
 
-void taBase::ReplacePointersHook(TAPtr old_ptr) {
-  taMisc::ReplaceAllPtrs(GetTypeDef(), (void*)old_ptr, (void*)this);
+bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
+				 bool null_not_found) {
+  if(!*ptr || !old_par || !new_par) return false;
+  taBase* old_own = (*ptr)->GetOwner(old_par->GetTypeDef());
+  if(old_own != old_par) return false;
+  String old_path = (*ptr)->GetPath(NULL, old_par);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    taBase::SetPointer(ptr, new_guy);
+  else {
+    if(null_not_found)
+      taBase::SetPointer(ptr, NULL);
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
 }
 
-int taBase::ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  return GetTypeDef()->ReplaceAllPtrsThis((void*)this, obj_typ, old_ptr, new_ptr);
+bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBase* new_par,
+					 bool null_not_found) {
+  if(!ref.ptr() || !old_par || !new_par) return false;
+  taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
+  if(old_own != old_par) return false;
+  String old_path = ref.ptr()->GetPath(NULL, old_par);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    ref.set(new_guy);
+  else {
+    if(null_not_found)
+      ref.set(NULL);		// reset to null if not found!
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase* new_par,
+				 bool null_not_found) {
+  if(!ref.ptr() || !old_par || !new_par) return false;
+  taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
+  if(old_own != old_par) return false;
+  String old_path = ref.ptr()->GetPath(NULL, old_par);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    ref.set(new_guy);
+  else {
+    if(null_not_found)
+      ref.set(NULL);		// reset to null if not found!
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  TypeDef* td = GetTypeDef();
+  int nchg = 0;
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
+      taBase** ptr = (taBase**)md->GetOff(this);
+      nchg += taBase::UpdatePointers_NewPar_Ptr(ptr, old_par, new_par);
+    }
+    else if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taSmartRef)) {
+	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewPar_Ref(*ref, old_par, new_par);
+      }
+      if(md->type->InheritsFrom(TA_taSmartPtr)) {
+	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewPar_SmPtr(*ref, old_par, new_par);
+      }
+      else if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	nchg += obj->UpdatePointers_NewPar(old_par, new_par);
+      }
+    }
+  }
+  return nchg;
+}
+
+bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
+				       taBase* old_ptr, taBase* new_ptr) {
+  if(!*ptr || (*ptr != old_ptr)) return false;
+  if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
+  // don't replace on children of the old object
+  taBase::SetPointer(ptr, new_ptr);
+  ptr_owner->UpdateAfterEdit();	// update this guy who owns the pointer
+  return true;
+}
+
+bool taBase::UpdatePointers_NewObj_SmPtr(taSmartPtr& ref, taBase* ptr_owner, 
+					 taBase* old_ptr, taBase* new_ptr) {
+  if(!ref.ptr() || (ref.ptr() != old_ptr)) return false;
+  if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
+  // don't replace on children of the old object
+  ref.set(new_ptr);
+  ptr_owner->UpdateAfterEdit();	// update this guy who owns the pointer
+  return true;
+}
+
+bool taBase::UpdatePointers_NewObj_Ref(taSmartRef& ref, taBase* ptr_owner, 
+				       taBase* old_ptr, taBase* new_ptr) {
+  if(!ref.ptr() || (ref.ptr() != old_ptr)) return false;
+  if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
+  // don't replace on children of the old object
+  ref.set(new_ptr);
+  ptr_owner->UpdateAfterEdit();	// update this guy who owns the pointer
+  return true;
+}
+
+int taBase::UpdatePointersToMe(taBase* new_ptr) {
+  taBase* def_scope = GetScopeObj(taMisc::default_scope);
+  if(def_scope)
+    return UpdatePointersToMe_impl(def_scope, new_ptr);
+  return 0;
+}
+
+int taBase::UpdatePointersToMe_impl(taBase* scope_obj, taBase* new_ptr) {
+  int nchg = scope_obj->UpdatePointers_NewObj(this, new_ptr); // gets all my guys
+  nchg += UpdatePointersToMyKids_impl(scope_obj, new_ptr);
+  return nchg;
+}
+
+int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
+  int nchg = 0;
+  TypeDef* otd = GetTypeDef();
+  TypeDef* ntd = new_ptr->GetTypeDef();
+  for(int m=0;m<otd->members.size;m++) {
+    MemberDef* omd = otd->members[m];
+    MemberDef* nmd = NULL;
+    if(ntd->members.size > m)
+      nmd = ntd->members[m];
+    if((omd->type->ptr == 0) && omd->type->InheritsFrom(TA_taBase)) {
+      taBase* old_kid = (taBase*)omd->GetOff(this);
+      taBase* new_kid = NULL;
+      if(nmd && (nmd->type == omd->type)) new_kid = (taBase*)nmd->GetOff(this);
+      nchg += old_kid->UpdatePointersToMyKids_impl(scope_obj, new_kid);
+    }
+  }
+  return nchg;
+}
+
+int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  TypeDef* td = GetTypeDef();
+  int nchg = 0;
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) {
+      taBase** ptr = (taBase**)md->GetOff(this);
+      nchg += taBase::UpdatePointers_NewObj_Ptr(ptr, this, old_ptr, new_ptr);
+    }
+    else if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taSmartRef)) {
+	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewObj_Ref(*ref, this, old_ptr, new_ptr);
+      }
+      else if(md->type->InheritsFrom(TA_taSmartPtr)) {
+	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewObj_SmPtr(*ref, this, old_ptr, new_ptr);
+      }
+      else if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	nchg += obj->UpdatePointers_NewObj(old_ptr, new_ptr);
+      }
+    }
+  }
+  return nchg;
 }
 
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
@@ -1386,7 +1548,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   if(nwnm.contains(itm->GetTypeDef()->name))
     rval->SetName(orgnm);
   Swap(idx, size-1);		// switch positions, so old guy is now at end!
-  rval->ReplacePointersHook(itm); // allow us to update all things that might point to us
+  itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
   tabMisc::Close_Obj(itm);
   // then do a delayed remove of this object (in case called by itself!)
   return true;
@@ -1828,30 +1990,6 @@ int taList_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
   return nchanged;
 }
 
-int taList_impl::ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  if(!(el_base->InheritsFrom(obj_typ) || obj_typ->InheritsFrom(el_base))) return 0;
-  // could not fit in this list!
-  TAPtr taold = (TAPtr)old_ptr;
-  TAPtr tanew = (TAPtr)new_ptr;
-  // don't replace if no owner or if this is the owner -- could be replacing
-  // something that is already in process of being replaced by a list -- dangerous!
-  if((taold->GetOwner() == NULL) || (taold->GetOwner() == this)) return 0;
-  if(tanew == NULL) {
-    if(Remove(taold)) {
-      taMisc::Error("*** Note: removed object:", taold->GetName(),"in List:", GetPath());
-      return 1;
-    }
-  }
-  else {
-    if(ReplaceLink(taold, tanew)) {
-      taMisc::Error("*** Note: replaced object:", taold->GetName(),"with:",tanew->GetName(),
-		    "in List:", GetPath());
-      return 1;
-    }
-  }
-  return 0;
-}
-
 MemberDef* taList_impl::ReturnFindMd() const {
   if(find_md != NULL) return find_md;
   find_md = new MemberDef(&TA_taBase, "find_md", "return value", "", "", NULL);
@@ -1879,6 +2017,68 @@ int taList_impl::SetDefaultEl(TypeDef* it) {
   int idx = Find(it);
   if(idx >= 0)    el_def = idx;
   return idx;
+}
+
+int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = taOBase::UpdatePointers_NewPar(old_par, new_par);
+  for(int i=size-1; i>=0; i--) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
+      nchg += itm->UpdatePointers_NewPar(old_par, new_par);
+    }
+    else {			// linked item: could be to something outside of scope!
+      taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+      if(old_own != old_par) continue;
+      String old_path = itm->GetPath(NULL, old_par);
+      taBase* nitm = new_par->FindFromPath(old_path);
+      if(nitm) {
+	ReplaceLink_(i, nitm);
+	nchg++;
+      }
+      else {
+	Remove(i);
+      }
+    }
+  }
+  return nchg;
+}
+
+int taList_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = taOBase::UpdatePointers_NewObj(old_ptr, new_ptr);
+  if(old_ptr && (old_ptr->GetOwner() == this)) return 0;
+  // do not walk down the guy itself -- its a gonner
+  for(int i=size-1; i>=0; i--) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    bool we_own = (itm->GetOwner() == this);
+    if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
+      if(!new_ptr)		   // if replacement is null, just remove it
+	Remove(i);
+      else
+	ReplaceLink_(i, new_ptr);    // it is a link to old guy; replace it!
+      nchg++;
+    }
+    else if(we_own) {		// only for guys we own (not links; prevents loops)
+      nchg += itm->UpdatePointers_NewObj(old_ptr, new_ptr);
+    }
+  }
+  return nchg;
+}
+
+int taList_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
+  int nchg = taOBase::UpdatePointersToMyKids_impl(scope_obj, new_ptr);
+  taList_impl* new_list = (taList_impl*)new_ptr;
+  for(int i=size-1; i>=0; i--) {
+    taBase* oitm = (taBase*)el[i];
+    if(!oitm) continue;
+    taBase* nitm = NULL;
+    if(new_list && (new_list->size > i))
+      nitm = (taBase*)new_list->el[i];
+    if(nitm && (nitm->GetTypeDef() != oitm->GetTypeDef())) nitm = NULL; // not the same
+    nchg += oitm->UpdatePointersToMe_impl(scope_obj, nitm);	// do it all over on this guy
+  }
+  return nchg;
 }
 
 #ifdef TA_GUI
@@ -2045,7 +2245,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
   ) {
     // TODO: instead of cloning, we might be better off just streaming a new copy
     // since this will better guarantee that in-proc and outof-proc behavior is same
-    taBase* new_obj = obj->Clone();
+    taBase* new_obj = obj->MakeToken();
     //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
     new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     int new_idx;
@@ -2055,6 +2255,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
       new_idx = -1; // if clicked on last, then insert at end
     else new_idx = itm_idx + 1;
     Insert(new_obj, new_idx);
+    new_obj->UnSafeCopy(obj);	// always copy after inserting so there is a full path & initlinks
     return taiClipData::ER_OK;
   }
   

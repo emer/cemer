@@ -79,7 +79,7 @@ public:
 
 
 class PDP_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network base specification class
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -184,6 +184,8 @@ public:
   virtual void	SetBaseType(TypeDef* td);		 // for overloaded classes
   virtual BaseSpec_Group* GetSpecGroup();		 // get the group where specs go
   virtual void	GetSpecOfType();			 // get a spec of type type
+
+  override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
   void	UpdateAfterEdit();	// check, update the spec type
   void	Initialize();

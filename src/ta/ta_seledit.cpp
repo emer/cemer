@@ -287,31 +287,35 @@ void SelectEdit::NewEdit() {
   Edit(); */
 }
 
-void SelectEdit::ReplacePtrs(taBase* old_own, taBase* new_own) {
+int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = 0;
   for(int j=mbr_bases.size-1; j>=0; j--) {
-    taBase* oob = mbr_bases[j];
-    String opath = oob->GetPath(NULL, old_own);
-    taBase* nwob = new_own->FindFromPath(opath);
-    if(nwob != NULL) {
-      mbr_bases.ReplaceLink(j, nwob);
+    taBase* itm = mbr_bases[j];
+    taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+    if(old_own != old_par) continue;
+    String old_path = itm->GetPath(NULL, old_par);
+    taBase* nitm = new_par->FindFromPath(old_path);
+    if(nitm != NULL) {
+      mbr_bases.ReplaceLink(j, nitm);
+      nchg++;
     }
     else {
-      taMisc::Warning("SelectEdit:", name, "Members item:", String(j), "ReplacePtrs cannot find object: ", opath, "removing");
-      RemoveField_impl(j);
+      RemoveField_impl(j);	// this is why this is diff from std case!
     }
   }
   for(int j=meth_bases.size-1; j>=0; j--) {
-    taBase* oob = meth_bases[j];
-    String opath = oob->GetPath(NULL, old_own);
-    taBase* nwob = new_own->FindFromPath(opath);
-    if(nwob != NULL) {
-      meth_bases.ReplaceLink(j, nwob);
+    taBase* itm = meth_bases[j];
+    String old_path = itm->GetPath(NULL, old_par);
+    taBase* nitm = new_par->FindFromPath(old_path);
+    if(nitm != NULL) {
+      meth_bases.ReplaceLink(j, nitm);
+      nchg++;
     }
     else {
-      taMisc::Warning("SelectEdit:", name, "Methods item:", String(j), "ReplacePtrs cannot find object: ", opath, "removing");
-      RemoveField_impl(j);
+      RemoveFun_impl(j);	// this is why this is diff from std case!
     }
   }
+  return nchg;
 }
 
 bool SelectEdit::BaseClosing(TAPtr base) {

@@ -424,38 +424,34 @@ void taMisc::ListAllTokens(ostream& strm) {
   types.ListAllTokens(strm);
 }
 
-int taMisc::ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  return types.ReplaceAllPtrs(obj_typ, old_ptr, new_ptr);
-}
-
-int taMisc::ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr) {
-  if(!obj_typ->tokens.keep || (obj_typ->tokens.size == 0)) {
-    return 0;
-  }
-  void* tok = NULL;
-  for(int i=0;i<obj_typ->tokens.size;i++) {
-    void* tk = obj_typ->tokens[i];
-    if(tk == old_ptr) continue;
-#ifndef NO_TA_BASE
-    if(obj_typ->InheritsFrom(TA_taBase)) {
-      TAPtr old_scope = ((TAPtr)old_ptr)->GetScopeObj(taMisc::default_scope);
-      TAPtr new_scope = ((TAPtr)tok)->GetScopeObj(taMisc::default_scope);
-      if((old_scope == new_scope) || (old_scope == NULL) || (new_scope = NULL)) {
-	tok = tk;
-	break;
-      }
-    }
-  else
-#endif
-    {
-      tok = tk;
-      break;
-    }
-  }
-  if(tok == NULL)
-    return 0;
-  return types.ReplaceAllPtrs(obj_typ, old_ptr, tok);
-}
+// int taMisc::ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr) {
+//   if(!obj_typ->tokens.keep || (obj_typ->tokens.size == 0)) {
+//     return 0;
+//   }
+//   void* tok = NULL;
+//   for(int i=0;i<obj_typ->tokens.size;i++) {
+//     void* tk = obj_typ->tokens[i];
+//     if(tk == old_ptr) continue;
+// #ifndef NO_TA_BASE
+//     if(obj_typ->InheritsFrom(TA_taBase)) {
+//       TAPtr old_scope = ((TAPtr)old_ptr)->GetScopeObj(taMisc::default_scope);
+//       TAPtr new_scope = ((TAPtr)tok)->GetScopeObj(taMisc::default_scope);
+//       if((old_scope == new_scope) || (old_scope == NULL) || (new_scope = NULL)) {
+// 	tok = tk;
+// 	break;
+//       }
+//     }
+//   else
+// #endif
+//     {
+//       tok = tk;
+//       break;
+//     }
+//   }
+//   if(tok == NULL)
+//     return 0;
+//   return types.ReplaceAllPtrs(obj_typ, old_ptr, tok);
+// }
 
 #if 1
 // don't other with mallinfo for
@@ -1532,16 +1528,6 @@ bool TypeSpace::ReplaceParents(const TypeSpace& ol, const TypeSpace& nw) {
     }
   }
   return rval;
-}
-
-int TypeSpace::ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  int nchg = 0;
-  for(int t=0;t<size;t++) {
-    TypeDef* td = FastEl(t);
-    if(!td->tokens.keep || (td->tokens.size == 0) || !td->InheritsFormal(TA_class)) continue;
-    nchg += td->ReplaceAllPtrs(obj_typ, old_ptr, new_ptr);
-  }
-  return nchg;
 }
 
 void TypeSpace::ListAllTokens(ostream& strm) {
@@ -4251,132 +4237,6 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
   if(memb_no < members.size)
     members[memb_no]->CopyFromSameType(trg_base, src_base);
 }
-
-int TypeDef::ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  if(!tokens.keep) {
-    taMisc::Error("*** ReplaceAllPtrs: Attempting to replace pointers in a type that doesn't keep tokens:",name,
-		  "Won't work!");
-    return 0;
-  }
-  if(tokens.size == 0) return 0;
-  int nchg = 0;
-  for(int m=0;m<members.size;m++) {
-    MemberDef* md = members[m];
-    if(md->type->ptr == 1) {
-      for(int i=0;i<tokens.size;i++) {
-	void* tok = tokens[i];
-	if(tok == NULL) continue;
-	void** ptr = (void**)md->GetOff(tok);
-	if(*ptr == old_ptr) {
-	  if(md->HasOption("READ_ONLY")) continue; // if cannot be set by user, don't mess with it!
-#ifndef NO_TA_BASE
-	  if(md->type->DerivesFrom(TA_taBase) && obj_typ->InheritsFrom(TA_taBase)) {
-	    TAPtr tabase = (TAPtr)tok;
-	    TAPtr taold = (TAPtr)old_ptr;
-	    TAPtr tanew = (TAPtr)new_ptr;
-	    if(tabase->GetOwner(obj_typ) == taold) continue; // don't replace on children of this object!
-	    taBase::SetPointer((TAPtr*)ptr, (TAPtr)new_ptr);
-	    if(InheritsFrom(TA_taBase)) {
-	      tabase->UpdateAfterEdit();
-	      if(new_ptr == NULL)
-		taMisc::Error("*** Note: set pointer:", md->name, "in object:",
-			      tabase->GetPath(), "to NULL!");
-	      else
-		taMisc::Error("*** Note: replaced pointer:", md->name, "to object:", taold->GetName(),
-			      "in object:",tabase->GetPath(), "with pointer to:",tanew->GetName());
-	    }
-	  }
-	  else
-#endif
-	    {
-	      *ptr = new_ptr;
-	    }
-	  nchg++;
-	}
-      }
-    }
-    else if((md->type->ptr == 0) && md->type->InheritsFormal(TA_class)) {
-#ifndef NO_TA_BASE
-      if(md->type->InheritsFrom(TA_taBase)) {
-	for(int i=0;i<tokens.size;i++) {
-	  void* tok = tokens[i];
-	  if(tok == NULL) continue;
-	  nchg += ((taBase*)md->GetOff(tok))->ReplaceAllPtrsThis(obj_typ, old_ptr, new_ptr);
-	}
-      }
-      else
-      if(md->type->InheritsFrom(TA_taPtrList_impl)) {
-	for(int i=0;i<tokens.size;i++) {
-	  void* tok = tokens[i];
-	  if(tok == NULL) continue;
-	  if(((taPtrList_impl*)md->GetOff(tok))->Replace_(old_ptr, new_ptr)) nchg++;
-	}
-      }
-    else
-#endif
-      {
-	for(int i=0;i<tokens.size;i++) {
-	  void* tok = tokens[i];
-	  if(tok == NULL) continue;
-	  nchg += md->type->ReplaceAllPtrsThis(md->GetOff(tok), obj_typ, old_ptr, new_ptr);
-	}
-      }
-    }
-  }
-  return nchg;
-}
-
-int TypeDef::ReplaceAllPtrsThis(void* base, TypeDef* obj_typ, void* old_ptr, void* new_ptr) {
-  int nchg = 0;
-  for(int m=0;m<members.size;m++) {
-    MemberDef* md = members[m];
-    if(md->type->ptr == 1) {
-      void** ptr = (void**)md->GetOff(base);
-      if(*ptr == old_ptr) {
-	if(md->HasOption("READ_ONLY")) continue; // if cannot be set by user, don't mess with it!
-#ifndef NO_TA_BASE
-	if(md->type->DerivesFrom(TA_taBase) && obj_typ->InheritsFrom(TA_taBase)) {
-	  TAPtr tabase = (TAPtr)base;
-	  TAPtr taold = (TAPtr)old_ptr;
-	  TAPtr tanew = (TAPtr)new_ptr;
-	  if(tabase->GetOwner(obj_typ) == taold) continue; // don't replace on children of this object!
-	  taBase::SetPointer((TAPtr*)ptr, (TAPtr)new_ptr);
-	  if(InheritsFrom(TA_taBase)) {
-	    ((TAPtr)base)->UpdateAfterEdit();
-	    if(new_ptr == NULL)
-	      taMisc::Error("*** Note: set pointer:", md->name, "in object:",
-			    tabase->GetPath(), "to NULL!");
-	    else
-	      taMisc::Error("*** Note: replaced pointer:", md->name, "to object:", taold->GetName(),
-			    "in object:",tabase->GetPath(), "with pointer to:",tanew->GetName());
-	  }
-	}
-	else
-#endif
-	  {
-	    *ptr = new_ptr;
-	  }
-	nchg++;
-      }
-    }
-    else if((md->type->ptr == 0) && md->type->InheritsFormal(TA_class)) {
-#ifndef NO_TA_BASE
-      if(md->type->InheritsFrom(TA_taBase)) {
-	nchg += ((taBase*)md->GetOff(base))->ReplaceAllPtrsThis(obj_typ, old_ptr, new_ptr);
-      }
-      else if(md->type->InheritsFrom(TA_taPtrList_impl)) {
-	if(((taPtrList_impl*)md->GetOff(base))->Replace_(old_ptr, new_ptr)) nchg++;
-      }
-    else
-#endif
-      {
-	nchg += md->type->ReplaceAllPtrsThis(md->GetOff(base), obj_typ, old_ptr, new_ptr);
-      }
-    }
-  }
-  return nchg;
-}
-
 
 //////////////////////////////////////////////////////////
 // 			OutputType			//

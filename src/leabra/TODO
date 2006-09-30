@@ -1,12 +1,6 @@
 leabra todo list:
 
-* programs: add epoch-level monitor, rename data as TrialMonitor and EpochMonitor
-
-* change scope to #PROGRAM for vars in callmethod; add a link to global_vars in program
-so it finds it
-
-* need pointer converter for Program copy: anything that refers to a var etc within
- a program needs to be updated..
+* copy net update pointers is not getting projections right..
 
 * wizards: reactivate env making stuff -- makes life easier -- and simple procs??
 
@@ -27,4 +21,8 @@ docs..
 * bugs: network display updates at start of trial with weird state info, despite wrap
   by DataUpdate guys, etc
 * profile: slow!!!
+
+* change scope to #PROGRAM for vars in callmethod -- needs a special override to locate
+the global_vars..
+
 

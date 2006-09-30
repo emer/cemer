@@ -481,9 +481,7 @@ public:
   // generate malloc memory statistic information to given stream
   static void	ListAllTokens(ostream& strm);
   // generate a list and count of all types that keep tokens, with a count of tokens
-  static int 	ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
-  // search through all tokens in all types and replace any pointer to object of type obj_typ address old_ptr with new_ptr
-  static int 	ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr);
+//   static int 	ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr);
   // search through all tokens in all types and replace any pointer to old_ptr with first other token in same scope of same type
   static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
   
@@ -995,8 +993,6 @@ public:
   virtual bool	ReplaceLinkAll(TypeDef* ol, TypeDef* nw);
   virtual bool 	ReplaceParents(const TypeSpace& ol, const TypeSpace& nw);
   // replace any parents on the old list with those on the new for all types
-  virtual int 	ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
-  // search through all tokens in all types and replace any pointer to old_ptr of object type obj_typ with new_ptr
 
   virtual void	ListAllTokens(ostream& strm);
   // list count for all types that are keeping tokens
@@ -1429,10 +1425,6 @@ public:
   // copy only those members from same type (no inherited)
   void		MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
-  int		ReplaceAllPtrs(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
-  // replace any member pointers that point to old_ptr with new_ptr (returns no. changed)
-  int		ReplaceAllPtrsThis(void* base, TypeDef* obj_typ, void* old_ptr, void* new_ptr);
-  // replace any member pointers that point to old_ptr with new_ptr (returns no. changed)
 
   // IO
   ostream& 	Output(ostream& strm, void* base, int indent=0) const;

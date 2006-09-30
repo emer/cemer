@@ -107,6 +107,10 @@ public:
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
+  override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  override int 	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
+
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
@@ -186,7 +190,6 @@ public:
   void	EnforceSameStru(const taGroup_impl& cp);
 
   int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
-  int	ReplaceAllPtrsThis(TypeDef* obj_typ, void* old_ptr, void* new_ptr);
 
   virtual int	FindLeaf(TAPtr item) const;  // find given leaf element (-1 = not here)
   virtual int	FindLeaf(TypeDef* item) const;
