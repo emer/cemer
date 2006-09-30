@@ -775,7 +775,7 @@ void taiEdit::AddEdit(TypeDef* td) {
 int taiEdit::Edit(void* base, bool readonly, const iColor* bgclr) {
   taiEditDataHost* host_ = NULL;
   // get currently active win -- we will only look in any other window
-  iMainWindowViewer* cur_win = taiMisc::viewer_wins.Peek_MainWindow();
+  iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
   host_ = taiMisc::FindEdit(base, typ, cur_win);
   if (host_ == NULL) {
     host_ = CreateDataHost(base, readonly);

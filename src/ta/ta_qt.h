@@ -133,7 +133,7 @@ public:
   static taiDialog_List		active_dialogs;	// #IGNORE list of active (NoBlock) dialogs
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
   static taiEditDataHost_List	css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
-  static iTopLevelWindow_List	viewer_wins; // #IGNORE currently open viewer windows
+  static iTopLevelWindow_List	active_wins; // #IGNORE currently open windows
 
   static int			busy_count; // levels of busy
 

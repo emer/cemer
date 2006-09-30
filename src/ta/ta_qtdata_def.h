@@ -19,7 +19,6 @@
 #ifndef TA_QTDATA_DEF_H
 #define TA_QTDATA_DEF_H
 
-#include "qtdefs.h"
 #include "ta_base.h"
 #include "ta_variant.h"
 
@@ -138,7 +137,7 @@ public:
   taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
   virtual ~taiData();
 
-  int			defSize();		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
+  int			defSize() const;		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
   void			emit_UpdateUi();
   virtual bool		isConstructed();	// true if our parents (ex dialog) are fully constructed
   bool			highlight() const { return mhighlight; }	// #GET_highlight  changed highlight
@@ -160,6 +159,10 @@ public:
   
   void			GetImageVar_(const Variant& val) {GetImageVar_impl(val);} // get as Var, mostly used by css
   void			GetValueVar_(Variant& val) const {GetValueVar_impl(val);} // set as Var, mostly used by css
+  
+  QLabel*		MakeLabel(QWidget* gui_parent = NULL, int font_spec = 0) const; // convenience func, sets fonts etc.
+  QLabel*		MakeLabel(const String& text, QWidget* gui_parent = NULL,
+    int font_spec = 0) const; // convenience func, sets fonts etc.
   
 #ifndef __MAKETA__
 signals:

@@ -103,7 +103,7 @@ const int taiMisc::FONT_SM = 2;
 taiDialog_List 		taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
-iTopLevelWindow_List	taiMisc::viewer_wins;
+iTopLevelWindow_List	taiMisc::active_wins;
 TypeSpace		taiMisc::arg_types;
 QWidget*		taiMisc::main_window = NULL;
 taBase_PtrList		taiMisc::unopened_windows;

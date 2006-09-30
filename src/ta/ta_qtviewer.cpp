@@ -2418,7 +2418,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 } */
 
 iMainWindowViewer::~iMainWindowViewer() {
-  taiMisc::viewer_wins.Remove(this);
+  taiMisc::active_wins.Remove(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
 //  if (menu) delete menu;
@@ -2545,7 +2545,7 @@ void iMainWindowViewer::Constr_impl() {
   actionsMenu->insertSeparator();
   m_last_action_idx = actionsMenu->count() - 1;
 
-  taiMisc::viewer_wins.AddUnique(this);
+  taiMisc::active_wins.AddUnique(this);
 }
 
 void iMainWindowViewer::Constr_MainMenu_impl() {
@@ -2950,13 +2950,13 @@ void iMainWindowViewer::viewSplitHorizontal() {}
 
 void iMainWindowViewer::windowActivationChange(bool oldActive) {
   if (isActiveWindow()) {
-    int idx = taiMisc::viewer_wins.Find(this);
+    int idx = taiMisc::active_wins.Find(this);
     if (idx < 0) {
       taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
     } else {
-      if (idx < (taiMisc::viewer_wins.size - 1)) {
+      if (idx < (taiMisc::active_wins.size - 1)) {
         // move us to the end
-        taiMisc::viewer_wins.Move(idx, taiMisc::viewer_wins.size - 1);
+        taiMisc::active_wins.Move(idx, taiMisc::active_wins.size - 1);
       }
     }
   }

@@ -252,7 +252,7 @@ public:
   
 protected:
   DataViewer*		m_viewer; // our mummy
-  virtual void		Close_impl(); //default calls widget->close (good for top-level windows w/ Destroy option, but maybe use delete for widgets)
+  virtual void		Close_impl(); //default just does 'delete this'
   virtual void		closeEvent_Handler(QCloseEvent* e,
     CancelOp def_cancel_op = CO_PROCEED);
     // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional

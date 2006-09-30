@@ -135,7 +135,7 @@ void taiData::DataChanged(taiData* chld) {
   DataChanged_impl(chld);
 }
 
-int taiData::defSize() {
+int taiData::defSize() const {
   if (mparent != NULL)
     return mparent->defSize();
 /*  else if (host != NULL)
@@ -181,6 +181,21 @@ bool taiData::isConstructed() {
   // create a variable to track this, and set it after the constructor ran (which would
   // require changes to ALL the types!)
   else return true;
+}
+
+QLabel* taiData::MakeLabel(const String& text, QWidget* gui_parent, int font_spec) const {
+  QLabel* rval = MakeLabel(gui_parent, font_spec);
+  rval->setText(text);
+  return rval;
+}
+
+QLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
+  // fs may have size+attribs, but normal case is just def attribs+ defsize
+  if (font_spec == 0) font_spec = defSize();
+  QLabel* rval = new QLabel(gui_parent);
+  rval->setMaximumHeight(taiM->max_control_height(defSize()));
+  rval->setFont(taiM->nameFont(font_spec));
+  return rval;
 }
 
 bool taiData::readOnly() {
@@ -274,7 +289,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
   // add caption
   String nm = md->GetLabel();
-  QLabel* lbl = new QLabel(nm, GetRep());
+  QLabel* lbl = MakeLabel(nm, GetRep());
 
   AddChildWidget(lbl, taiM->hsep_c);
 
@@ -569,22 +584,6 @@ void taiToggle::GetImage(bool val) {
 bool taiToggle::GetValue() const {
   return rep()->isChecked();
 }
-
-/* OBS
-//////////////////////////////////
-//	taiLabel		//
-//////////////////////////////////
-
-taiLabel::taiLabel(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_) :
-	taiData(typ_, host_, par, gui_parent_)
-{
-  SetRep( new QLabel(gui_parent_) );
-}
-
-void taiLabel::GetImage(const char* val) {
-  rep()->setText(val);
-}
-*/
 
 
 //////////////////////////////////
@@ -997,7 +996,7 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
 void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   // type stuff
   QWidget* rep_ =  GetRep();
-  QLabel* lbl = new QLabel("var type",rep_);
+  QLabel* lbl = MakeLabel("var type", rep_);
   AddChildWidget(lbl, taiM->hsep_c);
   
   TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
@@ -1027,14 +1026,14 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
   }
   
-  lbl = new QLabel("var value", rep_);
+  lbl = MakeLabel("var value", rep_);
   AddChildWidget(lbl, taiM->hsep_c);
   stack = new QStackedWidget(rep_);
   AddChildWidget(stack); // fill rest of space
   lbl->setBuddy(stack);
   
   // created in order of StackControls
-  lbl = new QLabel("(no value for type Invalid)");
+  lbl = MakeLabel("(no value for type Invalid)");
   stack->addWidget(lbl);
   togVal = new taiToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
@@ -1044,7 +1043,7 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(incVal->rep());
   fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
   stack->addWidget(fldVal->rep());
-  lbl = new QLabel("(Ptr cannot be set)");
+  lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
   
   tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL);
