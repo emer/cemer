@@ -539,32 +539,32 @@ static cssEl* cssElCFun_continue_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_gt_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) > *(arg[2])));
+  return new cssBool((*(arg[1]) > *(arg[2])));
 }
 static cssEl* cssElCFun_lt_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) < *(arg[2])));
+  return new cssBool((*(arg[1]) < *(arg[2])));
 }
 static cssEl* cssElCFun_eq_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) == *(arg[2])));
+  return new cssBool((*(arg[1]) == *(arg[2])));
 }
 static cssEl* cssElCFun_ge_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) >= *(arg[2])));
+  return new cssBool((*(arg[1]) >= *(arg[2])));
 }
 static cssEl* cssElCFun_le_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) <= *(arg[2])));
+  return new cssBool((*(arg[1]) <= *(arg[2])));
 }
 static cssEl* cssElCFun_ne_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) != *(arg[2])));
+  return new cssBool((*(arg[1]) != *(arg[2])));
 }
 static cssEl* cssElCFun_land_stub(int, cssEl* arg[]) {
-  return new cssInt((int)(*(arg[1]) && *(arg[2])));
+  return new cssBool((*(arg[1]) && *(arg[2])));
 }
 static cssEl* cssElCFun_lor_stub(int, cssEl* arg[]) {
 
-  return new cssInt((int)(*(arg[1]) || *(arg[2])));
+  return new cssBool((*(arg[1]) || *(arg[2])));
 }
 static cssEl* cssElCFun_lnot_stub(int, cssEl* arg[]) {
-  return new cssInt((int)!(*(arg[1])));
+  return new cssBool(!(*(arg[1])));
 }
 
 static cssEl* cssElCFun_push_root_stub(int, cssEl**) {
@@ -2141,7 +2141,7 @@ static void GeneratePtrRefTypes() {
     cssMisc::TypesSpace_ptrs.Push(ptr1);
     cssMisc::TypesSpace_refs.Push(ptr1->MakeRefType());
 
-    if(tp->GetType() == cssEl::T_C_Ptr) { // only for c ptrs -- not exactly sure why..
+    if((tp->GetType() == cssEl::T_C_Ptr) || (tp->GetType() == cssEl::T_TA)) {
       cssEl* ptr2 = tp->MakePtrType(2);
       cssMisc::TypesSpace_ptrs.Push(ptr2);
       cssMisc::TypesSpace_refs.Push(ptr2->MakeRefType());

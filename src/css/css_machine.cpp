@@ -655,7 +655,7 @@ void cssEl::Copy(const cssEl& cp) {
 }
 
 cssEl* cssEl::MakePtrType(int ptrs) {
-  if(GetType() == cssEl::T_C_Ptr) {
+  if((GetType() == cssEl::T_C_Ptr) || (GetType() == cssEl::T_TA)) {
     if(ptrs == 1) {
       cssCPtr* ptr = (cssCPtr*)Clone();
       ptr->ptr_cnt += 1;
@@ -806,43 +806,43 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
   }
 
   if(nptd->DerivesFrom(TA_bool))
-    return new cssCPtr_bool(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_bool(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFormal(TA_enum))
-    return new cssCPtr_enum(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_enum(itm, new_ptr, nm, class_parent, ro);
   else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
-    return new cssCPtr_int(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_int(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
-    return new cssCPtr_short(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_short(itm, new_ptr, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_long) || nptd->DerivesFrom(TA_unsigned_long))
-    return new cssCPtr_long(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_long(itm, new_ptr, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
     || nptd->DerivesFrom(TA_signed_char))
-    return new cssCPtr_char(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_char(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
-    return new cssCPtr_long_long(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_long_long(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_float))
-    return new cssCPtr_float(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_float(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_double))
-    return new cssCPtr_double(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_double(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taString))
-    return new cssCPtr_String(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_String(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_Variant))
-    return new cssCPtr_Variant(itm, td->ptr, nm, class_parent, ro);
+    return new cssCPtr_Variant(itm, new_ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taSmartRef))
-    return new cssSmartRef(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
 	  || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
-    return new cssIOS(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_TypeDef))
-    return new cssTypeDef(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_MemberDef))
-    return new cssMemberDef(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_MethodDef))
-    return new cssMethodDef(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taBase))
-    return new cssTA_Base(itm, td->ptr, nptd, nm, class_parent, ro);
+    return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
 
-  return new cssTA(itm, td->ptr, nptd, nm, class_parent, ro);
+  return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
 }
 
 cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
@@ -1988,7 +1988,8 @@ void cssCPtr::SetClassParent(cssEl* cp) {
   if(class_parent)
     cssEl::unRefDone(class_parent);
   class_parent = cp;
-  cssEl::Ref(class_parent);
+  if(cp)
+    cssEl::Ref(class_parent);
 }
 
 

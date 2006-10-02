@@ -1182,8 +1182,6 @@ void cssTypeDef::operator=(const cssEl& s) {
 	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
-    else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr(s);
     else {
       *((TypeDef**)ptr) = (TypeDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();
@@ -1237,8 +1235,6 @@ void cssMemberDef::operator=(const cssEl& s) {
 	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
-    else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr(s);
     else {
       *((MemberDef**)ptr) = (MemberDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();
@@ -1292,8 +1288,6 @@ void cssMethodDef::operator=(const cssEl& s) {
 	if(class_parent) class_parent->UpdateAfterEdit();
       }
     }
-    else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr(s);
     else {
       *((MethodDef**)ptr) = (MethodDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();
