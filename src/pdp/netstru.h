@@ -1245,17 +1245,17 @@ public:
   int		dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
   int		dmem_gp;	// #IGNORE the group for the network communicator
 
-  Usr1SaveFmt	usr1_save_fmt;	// #CAT_Saving save network for -USR1 signal: full net or weights
-  WtSaveFormat	wt_save_fmt;	// #CAT_Saving format to save weights in if saving weights
+  Usr1SaveFmt	usr1_save_fmt;	// #CAT_File save network for -USR1 signal: full net or weights
+  WtSaveFormat	wt_save_fmt;	// #CAT_File format to save weights in if saving weights
   LayerLayout	lay_layout;	// Visual mode of layer position/view
 
   int		n_units;	// #READ_ONLY #DETAIL total number of units in the network
   int		n_cons;		// #READ_ONLY #DETAIL total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #DETAIL maximum size in each dimension of the net
 
-  bool		deleting; 	// #READ_ONLY #NO_SAVE if object is currently being deleted
-  bool		copying; 	// #READ_ONLY #NO_SAVE if object is currently being copied
-  ProjectBase*	proj;		// #READ_ONLY #NO_SAVE ProjectBase this network is in
+  bool		deleting; 	// #IGNORE if object is currently being deleted
+  bool		copying; 	// #IGNORE if object is currently being copied
+  ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units

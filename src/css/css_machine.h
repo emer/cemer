@@ -132,6 +132,8 @@ public:
   static cssSpace	Parse;		// just for parsing stuff
   static cssSpace 	PreProcessor;	// functions of the cpp
   static cssSpace 	TypesSpace;	// Types, searched
+  static cssSpace 	TypesSpace_ptrs; // a mirror of types that are ptrs to types
+  static cssSpace 	TypesSpace_refs; // a mirror of types that are refs to types
   static cssSpace 	Externs;	// external variables (externs)
   static cssSpace 	HardFuns;	// hard-coded functions, searched
   static cssSpace 	HardVars;	// hard-coded variables, searched
@@ -464,6 +466,8 @@ public:
   virtual cssEl* 	Clone() 			{ return new cssEl(*this); }
   virtual cssEl* 	AnonClone() 			{ return new cssEl(*this, ""); }
   virtual cssEl*	MakeToken_stub(int, cssEl**) 	{ return &cssMisc::Void; }
+  virtual cssEl*	MakePtrType(int ptrs);
+  virtual cssEl*	MakeRefType();
 
   virtual cssEl::RunStat 	MakeToken(cssProg* prg);
   virtual cssEl::RunStat 	MakeTempToken(cssProg* prg); //
@@ -475,12 +479,26 @@ public:
   void CvtErr(const char* opr="") const
   { cssMisc::Error(prog, "Conversion:", opr, "not defined for type:", GetTypeName()); }
 
-  // convert from types
+  // these are the core converters that classes should define.
+  // the base cssEl converts like a void.
   virtual String GetStr() const 		{ return _nilString; }
   virtual Variant GetVar() const 		{ return _nilVariant; }
   virtual operator Real() const	 		{ return 0; }
-  virtual operator float() const 		{ return (float)(Real)*this; }
   virtual operator Int() const	 		{ return 0; }
+  virtual operator int64_t() const	 	{ return 0LL; }
+  virtual operator uint64_t() const	 	{ return 0ULL; }
+  virtual operator bool() const			{ return (Int)*this; }
+
+  // these are never redefined: every class defines a GetStr and GetVar instead --
+  // strings and variants are the lowest common denominator and thus always avail
+          operator String() const		{ return GetStr(); }
+	  operator const char*() const 		{ return (const char*)GetStr(); }
+          operator Variant() const		{ return GetVar(); }
+
+  // these misc "nuisance" equivalent type converters and are typically not overwritten
+  // except for exact c_ptr types
+  virtual operator char*() const		{ return (char*)(const char*)GetStr(); }
+  virtual operator float() const 		{ return (float)(Real)*this; }
   virtual operator unsigned int() const 	{ return (unsigned int)(Int)*this; }
   virtual operator char() const	 		{ return (char)(Int)*this; }
   virtual operator signed char() const 		{ return (signed char)(Int)*this; }
@@ -489,13 +507,6 @@ public:
   virtual operator unsigned short() const	{ return (unsigned short)(Int)*this; }
   virtual operator long() const	 		{ return (long)(Int)*this; }
   virtual operator unsigned long() const	{ return (unsigned long)(Int)*this; }
-  virtual operator int64_t() const	 	{ return 0LL; }
-  virtual operator uint64_t() const	 	{ return 0ULL; }
-  virtual operator bool() const			{ return (Int)*this; }
-  virtual operator const char*() const 		{ return (const char*)GetStr(); }
-  virtual operator String() const		{ return GetStr(); }
-  virtual operator char*() const		{ return (char*)(const char*)GetStr(); }
-          operator Variant() const		{ return GetVar(); }
   virtual operator unsigned char*() const	{ return (unsigned char*)(const char*)*this; }
 #ifndef NO_SIGNED
   virtual operator signed char*() const		{ return (signed char*)(const char*)*this; }
@@ -504,12 +515,13 @@ public:
   virtual operator streamoff() const 		{ return (streamoff)(Int)*this; }
 #endif
 
-  virtual operator void*() const		{ CvtErr("(void*)"); return NULL; }
-  virtual operator void**() const		{ CvtErr("(void**)"); return NULL; }
-
+  // pointer types
   virtual void* GetVoidPtrOfType(TypeDef* td) const 	{ CvtErr(td->name); return NULL; }
   virtual void* GetVoidPtrOfType(const char* td) const 	{ CvtErr(td); return NULL; }
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
+
+  virtual operator void*() const		{ CvtErr("(void*)"); return NULL; }
+  virtual operator void**() const		{ CvtErr("(void**)"); return NULL; }
 
   virtual operator int*() const		{ CvtErr("(int*)"); return NULL; }
   virtual operator short*() const	{ CvtErr("(short*)"); return NULL; }
@@ -542,33 +554,34 @@ public:
   virtual operator stringstream**() const { CvtErr("(stringstream**)"); return NULL; }
 
   // support for external types
-  virtual operator TAPtr() const;
-  virtual operator TAPtr*() const 		{ CvtErr("(TAPtr*)"); return NULL; }
-  virtual operator TypeDef*() const;
-  virtual operator MemberDef*() const;
-  virtual operator MethodDef*() const;
-  virtual void operator=(TAPtr*) 		{ CvtErr("(TAPtr)"); }
+  virtual operator taBase*() const	{ CvtErr("(taBase*)"); return NULL; }
+  virtual operator taBase**() const 	{ CvtErr("(taBase**)"); return NULL; }
+  virtual operator TypeDef*() const	{ CvtErr("(TypeDef*)"); return NULL; }
+  virtual operator MemberDef*() const	{ CvtErr("(MemberDef*)"); return NULL; }
+  virtual operator MethodDef*() const	{ CvtErr("(MethodDef*)"); return NULL; }
 
   // assign from types
-  virtual void operator=(Real)	 		{ CvtErr("(Real)"); }
-  virtual void operator=(Int)			{ CvtErr("(Int)"); }
+  virtual void operator=(Real)	 		{ NopErr("=(Real)"); }
+  virtual void operator=(Int)			{ NopErr("=(Int)"); }
   virtual void operator=(int64_t cp)		{ operator=((Int)cp); }
   virtual void operator=(uint64_t cp)		{ operator=((Int)cp); }
-  virtual void operator=(const String&)	 	{ CvtErr("(String)"); }
+  virtual void operator=(const String&)	 	{ NopErr("=(String)"); }
   virtual void operator=(const Variant& val); 
-    // usually not overridden, just dispatches according to type
+  // usually not overridden, just dispatches according to type
 
-  virtual void operator=(void*)	 		{ CvtErr("(void*)"); }
-  virtual void operator=(void**)		{ CvtErr("(void**)"); }
+  virtual void operator=(void*)	 		{ NopErr("=(void*)"); }
+  virtual void operator=(void**)		{ NopErr("=(void**)"); }
+  virtual void operator=(taBase*) 		{ NopErr("=(taBase*)"); }
+  virtual void operator=(taBase**) 		{ NopErr("=taBase**)"); }
 
+  virtual void operator=(const cssEl&) 		{ NopErr("="); }
+
+  // operators
+  virtual void CastFm(const cssEl& cp)	{ operator=(cp); } // default cast is a copy
+  virtual void InitAssign(const cssEl& cp) { operator=(cp); } // default initial assign is cpy
   virtual void AssignFromType(TypeDef* td, void*)	{ CvtErr(td->name); }
   virtual void AssignFromType(const char* td, void*)	{ CvtErr(td); }
   // type-safe way to assign a void ptr of given type to a cssEl
-
-  // operators
-  virtual void operator=(const cssEl&) 	{ NopErr("="); }
-  virtual void CastFm(const cssEl& cp)	{ operator=(cp); } // default cast is a copy
-  virtual void InitAssign(const cssEl& cp) { operator=(cp); } // default initial assign is cpy
 
   virtual void UpdateAfterEdit() { };
 
@@ -610,15 +623,17 @@ public:
   virtual cssEl* NewOpr();
   virtual void 	 DelOpr()	{ NopErr("delete"); } // delete operator
 
+  // these generally should not be overwritten:
+  bool operator! () 	    { return !(bool)*this; }
+  bool operator&&(cssEl& s) { return (bool)*this && (bool)s; }
+  bool operator||(cssEl& s) { return (bool)*this || (bool)s; }
+
   virtual bool operator< (cssEl&) { NopErr("<"); return 0; }
   virtual bool operator> (cssEl&) { NopErr(">"); return 0; }
-  virtual bool operator! () 	  { NopErr("!"); return 0; }
   virtual bool operator<=(cssEl&) { NopErr("<="); return 0; }
   virtual bool operator>=(cssEl&) { NopErr(">="); return 0; }
   virtual bool operator==(cssEl&) { NopErr("=="); return 0; }
   virtual bool operator!=(cssEl&) { NopErr("!="); return 0; }
-  virtual bool operator&&(cssEl&) { NopErr("&&"); return 0; }
-  virtual bool operator||(cssEl&) { NopErr("||"); return 0; }
 
   virtual void operator+=(cssEl&) { NopErr("+="); }
   virtual void operator-=(cssEl&) { NopErr("-="); }
@@ -649,8 +664,8 @@ protected:
 
 #ifndef DEBUG
 inline void cssEl::Ref(cssEl* it) { ++(it->refn); }
-inline void cssEl::unRef(cssEl* it) { --(it->refn); }
-inline void cssEl::unRefDone(cssEl* it) { if (--(it->refn) <= 0) delete it;}
+inline void cssEl::unRef(cssEl* it) { if(it) --(it->refn); }
+inline void cssEl::unRefDone(cssEl* it) { if (it && --(it->refn) <= 0) delete it;}
 inline void cssEl::Done(cssEl* it) { if (it->refn <= 0) delete it;}
 #endif
 
@@ -998,12 +1013,17 @@ public:
 
 class CSS_API cssCPtr : public cssEl {
   // base class for ptrs to C objects
-protected:
-  cssEl*	class_parent;	// if this pointer was derived from a class structure
 public:
-  void* 	ptr;
-  int		ptr_cnt;	// number of ptrs (1= *, 2= **, etc.)
-  bool		read_only;	// true if this object comes from read-only member
+  enum PtrFlags {
+    NO_PTR_FLAGS = 0x00,	// no flags set
+    READ_ONLY = 0x01,		// object comes from read-only member: contents should not change (see cssMisc::obey_read_only -- css ignores this by default)
+    OWN_OBJ = 0x02,		// I own the object pointed to (e.g., if ptr_cnt == 0)
+  };
+    
+  void* 	ptr;		// pointer to the C++ object
+  int		ptr_cnt;	// number of ptrs (0 = obj itself (ptr is still a *), 1= obj*, 2= obj**) values higher than 2 are NOT supported
+  PtrFlags	flags;		// flags controlling ptr
+  cssEl*	class_parent;	// if this pointer was derived from a class structure
 
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return 0; } // use for ptrs
@@ -1016,9 +1036,7 @@ public:
   // constructors
   void		Constr();
   cssCPtr();
-  cssCPtr(void* it, int pc);
-  cssCPtr(void* it, int pc, const char* nm);
-  cssCPtr(void* it, int pc, const char* nm, cssEl* cp, bool ro);
+  cssCPtr(void* it, int pc, const char* nm = NULL, cssEl* cls_par = NULL, bool ro = false);
   cssCPtr(const cssCPtr& cp);
   cssCPtr(const cssCPtr& cp, const char* nm);
   ~cssCPtr();
@@ -1029,27 +1047,28 @@ public:
 
   // converters
   virtual void*	GetVoidPtr(int cnt = 1) const;	// goes down till ptr_cnt == cnt
-  virtual void* GetNonNullVoidPtr(int cnt = 1) const; // generates error if null
+  virtual void* GetNonNullVoidPtr(const char* opr="", int cnt = 1) const;
+  // generates error if null
 
-  String	GetStr() const	{ return String((long)ptr);}
-  Variant	GetVar() const { return Variant(ptr); }
-  operator 	bool() const	{ return (bool)ptr; }
-  operator	Real() const	{ CvtErr("(Real)"); return 0.0; }
-  operator 	Int() const	{ return (Int)(long)(ptr); }
-  operator 	void*()	const	{ return GetVoidPtr(1); }
-  operator 	void**() const	{ return (void**)GetVoidPtr(2); }
+  // GetStr and GetVar are both nil as in base
+  operator bool() const		{ return (bool)ptr; } // test for ptr null..
+ 
+  operator Real() const		{ CvtErr("(Real)"); return 0.0; }
+  operator Int() const		{ CvtErr("(Int)"); return 0; }
+  operator int64_t() const	{ CvtErr("(int64_t)"); return 0LL; }
+  operator uint64_t() const	{ CvtErr("(uint64_t)"); return 0ULL; }
 
-  void operator=(Real)	 	{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(int64_t cp)	{ CvtErr("(Int64)"); }
-  void operator=(uint64_t cp)	{ CvtErr("(Int64)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
+  operator void*() const	{ return GetVoidPtr(1); }
+  operator void**() const	{ return (void**)GetVoidPtr(2); }
+
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
   // operators
   virtual bool	ROCheck();	// do read_only check, true if ok to modify, else err
-  virtual void 	PtrAssignPtr(cssCPtr* s); 	// use when assigning ptrs to ptrs
+  virtual void 	PtrAssignPtr(const cssEl& s); // call this in operator= when ptr_cnt > 0
+  virtual void 	PtrAssignNull();	// assign a null
+
   void operator=(const cssEl& s);
 
   void	UpdateAfterEdit();
@@ -1059,15 +1078,8 @@ public:
 
   virtual bool 	SamePtrLevel(cssCPtr* s); // if this and s have diff cnt, emit warning
 
-  bool operator< (cssEl& s) { return ((Int)(long)(ptr) < (Int)s); }
-  bool operator> (cssEl& s) { return ((Int)(long)(ptr) > (Int)s); }
-  bool operator! () 	    { return (ptr == 0); }
-  bool operator<=(cssEl& s) { return ((Int)(long)(ptr) <= (Int)s); }
-  bool operator>=(cssEl& s) { return ((Int)(long)(ptr) >= (Int)s); }
   bool operator==(cssEl& s);	// these two check for sameptrlevel
   bool operator!=(cssEl& s);
-  bool operator&&(cssEl& s) { return ((Int)(long)(ptr) && (Int)s); }
-  bool operator||(cssEl& s) { return ((Int)(long)(ptr) || (Int)s); }
 };
 
 #define cssCPtr_inst(l,n)		l .Push(new cssCPtr(& n,1,#n))
@@ -1200,6 +1212,30 @@ public:
   void	AllocArgs();		// allocate args
 
   virtual ~cssFrame();
+};
+
+class CSS_API cssWatchPoint {
+  // a watch point: stop when expression changes
+public:
+  cssEl*	watch;		// what guy to watch
+  String	prv_val;	// previous value of guy
+  String	cur_val;
+
+  void		SetWatch(cssEl* wp);
+  String	GetStr();
+  inline void	GetAsPrvVal() { if(watch) prv_val = watch->GetStr(); }
+  inline void	GetAsCurVal() { if(watch) cur_val = watch->GetStr(); }
+
+  cssWatchPoint();
+  virtual ~cssWatchPoint();
+};
+
+class CSS_API cssWatchList : public taPtrList<cssWatchPoint> {
+  // list of watch points
+protected:
+  void	El_Done_(void* item)	{ delete (cssWatchPoint*)item; }
+public:  
+  virtual ~cssWatchList() { Reset(); }
 };
 
 class CSS_API cssProg {
@@ -1372,9 +1408,18 @@ public:
   // breakpoints
   bool 		SetBreak(int srcln);
   bool		DelBreak(int srcln);
+  bool		DelBreakIdx(int idx);
   bool		IsBreak(css_progdx pcval);
   bool		IsBreak()		{ return IsBreak(PC()); }
   void		ShowBreaks(ostream& fh = cout);
+
+  // breakpoints
+  bool 		SetWatch(cssEl* watch);
+  bool 		DelWatch(cssEl* watch);
+  bool 		DelWatchIdx(int idx);
+  bool 		CheckWatch();
+  void		ShowWatchpoints(ostream& fh = cout);
+
 protected:
   int 		ReadLn(istream& fh);	// read the line in from filein
 };
@@ -1426,6 +1471,7 @@ public:
   int 		debug;			// debug level: 1 = src trace, 2 = machine code trace, 3 = + stack trace
   cssProg*	last_bp_prog;		// last breakpoint prog
   css_progdx	last_bp_pc;		// last breakpoint pc
+  cssWatchList	watchpoints;		// watch points
 
   istream*	src_fin;		// source input stream
   int 		src_ln;			// present source line no (parsing)
@@ -1474,8 +1520,6 @@ public:
   cssElPtr&	AddLiteral(String& str);
   cssElPtr&	AddLiteral(int itm);
   cssElPtr&	AddLiteral(Real itm);
-  cssElPtr&	AddPtrType(cssEl* base_type); // add new pointer type of base_type
-  cssElPtr&	AddRefType(cssEl* base_type); // add new reference type of base_type
   cssElPtr&	AddVar(cssEl* it); 	// for variables, not literals, etc.
   cssElPtr&	AddStaticVar(cssEl* it);// for variables declared static
   cssElPtr&	AddStatic(cssEl* it);	// for other static objects (not variables)
@@ -1485,7 +1529,10 @@ public:
   cssElPtr&	FindName(const char* nm); // lookup object by name (in autos, static, hards)
   cssSpace*	GetParseSpace(int idx);		// get parse spaces in order by index, NULL if over
   cssElPtr&	ParseName(const char* nm);	// parse name in all spaces (in order)
+
   cssElPtr&	FindTypeName(const char* nm); // find name based on type
+  cssElPtr&	GetPtrType(cssEl* base_type, int ptrs); // get pointer type of base_type
+  cssElPtr&	GetRefType(cssEl* base_type); // get reference type of base_type
 
   // compiling
   static  int	GetFile(fstream& fh, const char* fname); // get the file
@@ -1549,6 +1596,11 @@ public:
   bool 		SetBreak(int srcln);
   bool		DelBreak(int srcln);
   void		ShowBreaks();
+
+  bool 		SetWatch(cssEl* watch);
+  bool		DelWatch(cssEl* watch);
+  bool		DelWatchIdx(int idx);
+  void		ShowWatchpoints();
 
 protected:
   int 		alloc_size;		// allocated number of prog_stacks

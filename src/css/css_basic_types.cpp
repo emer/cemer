@@ -20,6 +20,7 @@
 
 #include "ta_filer.h"
 #include "ta_type.h" // explicitly needed when no TA_GUI
+#include "ta_project.h"
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
@@ -108,6 +109,42 @@ cssEl* cssString::GetMethodFmName(const char* memb) const {
 
 cssEl* cssString::GetScoped(const char* memb) const {
   return GetScoped_impl(&TA_taString, (void*)&val, memb);
+}
+
+cssString::operator taBase*() const {
+  void* rval = NULL;
+  if((tabMisc::root != NULL) && (tabMisc::root->FindMembeR(val, rval) != 0))
+    return (taBase*)rval;
+  return (taBase*)NULL;
+}
+
+cssString::operator TypeDef*() const {
+  TypeDef* td = taMisc::types.FindName(val);
+  if(td == NULL) {
+    cssMisc::Error(prog, "Could not find type:", val);
+    return NULL;
+  }
+  return td;
+}
+
+cssString::operator MemberDef*() const {
+  MemberDef* md;
+  TA_MemberDef_ptr.SetValStr(val, (void*)&md);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Could not find member def:", val);
+    return NULL;
+  }
+  return md;
+}
+
+cssString::operator MethodDef*() const {
+  MethodDef* md;
+  TA_MethodDef_ptr.SetValStr(val, (void*)&md);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Could not find method def:", val);
+    return NULL;
+  }
+  return md;
 }
 
 cssString::operator ostream*() const {
@@ -237,10 +274,10 @@ cssEl::cssTypes cssVariant::GetPtrType() const {
   return T_Variant;
 }
 
-cssVariant::operator TAPtr() const {
+cssVariant::operator taBase*() const {
   if (val.isBaseType()) 
     return val.toBase();
-  else return inherited::operator TAPtr();
+  else return inherited::operator taBase*();
 }
 
 String cssVariant::PrintStr() const {
@@ -335,13 +372,10 @@ void cssVariant::operator/=(cssEl& s) 	{ val /= s.GetVar(); }
 
 bool cssVariant::operator< (cssEl& s) { return (val < s.GetVar()); }
 bool cssVariant::operator> (cssEl& s) { return (val > s.GetVar()); }
-bool cssVariant::operator! () 	    { return (!val.toBool()); }
 bool cssVariant::operator<=(cssEl& s) { return (val <= s.GetVar()); }
 bool cssVariant::operator>=(cssEl& s) { return (val >= s.GetVar()); }
 bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
 bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
-bool cssVariant::operator&&(cssEl& s) { return (val.toBool() && (s.GetVar()).toBool()); }
-bool cssVariant::operator||(cssEl& s) { return (val.toBool() || (s.GetVar()).toBool()); }
 
 cssEl* cssVariant::GetMemberFmNo(int memb) const {
   TypeDef* typ = NULL;  void* base = NULL;

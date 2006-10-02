@@ -854,19 +854,12 @@ type:	  type_el		{ $1.El()->tmp_str = ""; }
 
 type_el:  typeorscp				{ $$ = $1; cssMisc::cur_type = $$; }
         | typeorscp ptrs			{
-	  if(($1.El()->GetParse() != CSS_PTR) || ($2 >= 2)) {
-	    $$ = cssMisc::cur_top->AddPtrType($1.El()); cssMisc::cur_type = $$;
-	  }
-	  else {
-	    $$ = $1; cssMisc::cur_type = $$; } }
+	    $$ = cssMisc::cur_top->GetPtrType($1.El(), $2); cssMisc::cur_type = $$; }
         | typeorscp '&' %prec CSS_UNARY 	{
-	  $$ = cssMisc::cur_top->AddRefType($1.El()); cssMisc::cur_type = $$; }
+	    $$ = cssMisc::cur_top->GetRefType($1.El()); cssMisc::cur_type = $$; }
         | typeorscp ptrs '&' %prec CSS_UNARY	{
-	  if(($1.El()->GetParse() != CSS_PTR) || ($2 >= 2)) {
-            cssElPtr npt = cssMisc::cur_top->AddPtrType($1.El());
-            $$ = cssMisc::cur_top->AddRefType(npt.El()); cssMisc::cur_type = $$; }
-	  else {
-	    $$ = cssMisc::cur_top->AddRefType($1.El()); cssMisc::cur_type = $$; } }
+	    cssElPtr pt = cssMisc::cur_top->GetPtrType($1.El(), $2);
+            $$ = cssMisc::cur_top->GetRefType(pt.El()); cssMisc::cur_type = $$; }
         ;
 
 typeorscp: CSS_TYPE

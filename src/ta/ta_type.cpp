@@ -424,35 +424,6 @@ void taMisc::ListAllTokens(ostream& strm) {
   types.ListAllTokens(strm);
 }
 
-// int taMisc::ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr) {
-//   if(!obj_typ->tokens.keep || (obj_typ->tokens.size == 0)) {
-//     return 0;
-//   }
-//   void* tok = NULL;
-//   for(int i=0;i<obj_typ->tokens.size;i++) {
-//     void* tk = obj_typ->tokens[i];
-//     if(tk == old_ptr) continue;
-// #ifndef NO_TA_BASE
-//     if(obj_typ->InheritsFrom(TA_taBase)) {
-//       TAPtr old_scope = ((TAPtr)old_ptr)->GetScopeObj(taMisc::default_scope);
-//       TAPtr new_scope = ((TAPtr)tok)->GetScopeObj(taMisc::default_scope);
-//       if((old_scope == new_scope) || (old_scope == NULL) || (new_scope = NULL)) {
-// 	tok = tk;
-// 	break;
-//       }
-//     }
-//   else
-// #endif
-//     {
-//       tok = tk;
-//       break;
-//     }
-//   }
-//   if(tok == NULL)
-//     return 0;
-//   return types.ReplaceAllPtrs(obj_typ, old_ptr, tok);
-// }
-
 #if 1
 // don't other with mallinfo for
 void taMisc::MallocInfo(ostream& strm) {

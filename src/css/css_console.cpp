@@ -201,8 +201,8 @@ int QcssConsole::autocompletePath(String cmd_b4, String cmd, QStringList& lst) {
   String mb_name = cmd;
   mb_name = mb_name.after('.', -1);
   int len = mb_name.length();
-  TAPtr parent = NULL;
-  TAPtr root = (TAPtr)cssBI::root->ptr;
+  taBase* parent = NULL;
+  taBase* root = (taBase*)cssBI::root->ptr;
   if(par_path == "") {
     parent = root;
   }
@@ -236,7 +236,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
   String mb_name = cmd;
   mb_name = mb_name.after("::", -1);
   int len = mb_name.length();
-  TAPtr parent = NULL;
+  taBase* parent = NULL;
   TypeDef* par_td = taMisc::types.FindName(par_path);
   if(par_td == NULL) {
     cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg();

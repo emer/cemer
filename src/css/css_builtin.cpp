@@ -267,10 +267,10 @@ static cssEl* cssElCFun_push_next_stub(int, cssEl* arg[]) {
 
 // pointer operators
 static cssEl* cssElCFun_addr_of_stub(int, cssEl* arg[]) {
-  return new cssPtr(arg[1]->GetAddr());
+  return new cssPtr(arg[1]->GetAddr()); // pointers inside css are always handled by cssPtr
 }
 static cssEl* cssElCFun_de_ptr_stub(int, cssEl* arg[]) {
-  return *(*arg[1]);
+  return *(*arg[1]);		// calls operator* on object
 }
 static cssEl* cssElCFun_de_array_stub(int, cssEl* arg[]) {
   return (*arg[1])[*arg[2]];
@@ -806,6 +806,14 @@ static cssEl* cssElCFun_delbp_stub(int, cssEl* arg[]) {
   csh->src_prog->DelBreak((int)*(arg[1]));
   return &cssMisc::Void;
 }
+static cssEl* cssElCFun_delwp_stub(int, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->DelWatchIdx((int)*(arg[1]));
+  return &cssMisc::Void;
+}
 static cssEl* cssElCFun_edit_stub(int na, cssEl* arg[]) {
   cssInt* rval = new cssInt();
   if(na > 1)
@@ -964,6 +972,14 @@ static cssEl* cssElCFun_setbp_stub(int, cssEl* arg[]) {
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   csh->src_prog->SetBreak((int)*(arg[1]));
+  return &cssMisc::Void;
+}
+static cssEl* cssElCFun_setwp_stub(int, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
+  cssCmdShell* csh = cp->top->cmd_shell;
+  if(csh->src_prog == NULL) return &cssMisc::Void;
+  csh->src_prog->SetWatch(arg[1]);
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_setout_stub(int, cssEl* arg[]) {
@@ -1135,6 +1151,9 @@ static void Install_Commands() {
 "<src_ln> Sets a breakpoint at the given source-code line.  Execution of the\
  program will break when it gets to that line, and you will be able to\
  examine variables, etc.");
+  cssElCFun_inst(cssMisc::Commands, setwp, 		1, CSS_COMMAND,
+"<expr> Sets a watchpoint for the given expression.  Execution of the\
+ program will break when the value of the expression changes");
   cssElCFun_inst(cssMisc::Commands, setout, 		1, CSS_COMMAND,
 "<ostream> Sets the default output of CSS commands to the given stream.  This can\
  be used to redirect listings or program tracing output to a file.");
@@ -1158,6 +1177,8 @@ static void Install_Commands() {
 "This undoes the previous statement, when in define mode.");
   cssElCFun_inst(cssMisc::Commands, delbp, 		1, CSS_COMMAND,
 "<src_ln> Deletes a breakpoint associated with the given source-code line number.");
+  cssElCFun_inst(cssMisc::Commands, delwp, 		1, CSS_COMMAND,
+"<watch_no> Deletes given watchpoint (see info watch for list of watchpoints)");
 }
 
 
@@ -2111,6 +2132,23 @@ static void Install_MiscFun() {
 //	Install_Types		//
 //////////////////////////////////
 
+static void GeneratePtrRefTypes() {
+  for(int i=0; i<cssMisc::TypesSpace.size; i++) {
+    cssEl* tp = cssMisc::TypesSpace.FastEl(i);
+    cssMisc::TypesSpace_refs.Push(tp->MakeRefType());
+
+    cssEl* ptr1 = tp->MakePtrType(1);
+    cssMisc::TypesSpace_ptrs.Push(ptr1);
+    cssMisc::TypesSpace_refs.Push(ptr1->MakeRefType());
+
+    if(tp->GetType() == cssEl::T_C_Ptr) { // only for c ptrs -- not exactly sure why..
+      cssEl* ptr2 = tp->MakePtrType(2);
+      cssMisc::TypesSpace_ptrs.Push(ptr2);
+      cssMisc::TypesSpace_refs.Push(ptr2->MakeRefType());
+    }
+  }
+}
+
 static void Install_Types() {
   // basic CSS types
   cssMisc::TypesSpace.Push(&cssMisc::Void);
@@ -2134,31 +2172,30 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssSubShell("SubShell"));
 
   // CPtr types
-  cssMisc::TypesSpace.Push(new cssCPtr_int(NULL, 1, "c_int"));
-  cssMisc::TypesSpace.Push(new cssCPtr_bool(NULL, 1, "c_bool"));
-  cssMisc::TypesSpace.Push(new cssCPtr_short(NULL, 1, "c_short"));
-  cssMisc::TypesSpace.Push(new cssCPtr_long(NULL, 1, "c_long"));
-  cssMisc::TypesSpace.Push(new cssCPtr_long_long(NULL, 1, "c_long_long"));
-  cssMisc::TypesSpace.Push(new cssCPtr_char(NULL, 1, "c_char"));
-  cssMisc::TypesSpace.Push(new cssCPtr_enum(NULL, 1, "c_enum"));
-  cssMisc::TypesSpace.Push(new cssCPtr_double(NULL, 1, "c_double"));
-  cssMisc::TypesSpace.Push(new cssCPtr_float(NULL, 1, "c_float"));
-  cssMisc::TypesSpace.Push(new cssCPtr_String(NULL, 1, "c_String"));
-  cssMisc::TypesSpace.Push(new cssCPtr_Variant(NULL, 1, "c_Variant"));
-  cssMisc::TypesSpace.Push(new cssCPtr_DynEnum(NULL, 1, "c_DynEnum"));
+  cssMisc::TypesSpace.Push(new cssCPtr_int(NULL, 0, "c_int"));
+  cssMisc::TypesSpace.Push(new cssCPtr_bool(NULL, 0, "c_bool"));
+  cssMisc::TypesSpace.Push(new cssCPtr_short(NULL, 0, "c_short"));
+  cssMisc::TypesSpace.Push(new cssCPtr_long(NULL, 0, "c_long"));
+  cssMisc::TypesSpace.Push(new cssCPtr_long_long(NULL, 0, "c_long_long"));
+  cssMisc::TypesSpace.Push(new cssCPtr_char(NULL, 0, "c_char"));
+  cssMisc::TypesSpace.Push(new cssCPtr_enum(NULL, 0, "c_enum"));
+  cssMisc::TypesSpace.Push(new cssCPtr_double(NULL, 0, "c_double"));
+  cssMisc::TypesSpace.Push(new cssCPtr_float(NULL, 0, "c_float"));
+  cssMisc::TypesSpace.Push(new cssCPtr_String(NULL, 0, "c_String"));
+  cssMisc::TypesSpace.Push(new cssCPtr_Variant(NULL, 0, "c_Variant"));
+  cssMisc::TypesSpace.Push(new cssCPtr_DynEnum(NULL, 0, "c_DynEnum"));
 
   // ta types
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_void, "TA");
-  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "TAPtr");
-  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "taBase");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_void, "TA");
+  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_taBase, "taBase");
   cssMisc::TypesSpace.Push(new cssFStream("fstream"));
   cssMisc::TypesSpace.Push(new cssSStream("sstream"));
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_fstream, "FILE");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_fstream, "FILE");
   cssMisc::TypesSpace.Push(new cssLeafItr("taLeafItr"));
 
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_TypeDef, "TypeDef");
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_MemberDef, "MemberDef");
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_MethodDef, "MethodDef");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_TypeDef, "TypeDef");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_MemberDef, "MemberDef");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_MethodDef, "MethodDef");
 
   // add all user-defined types..
   int i, j;
@@ -2170,9 +2207,9 @@ static void Install_Types() {
       if(tmp->InheritsFormal(TA_templ_inst)) {
 	if((tmp->children.size != 1) || (tmp->children.FastEl(0)->parents.size > 1)) {
 	  if(tmp->InheritsFrom(TA_taBase))
-	    cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	    cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
 	  else
-	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
 	}
       }
       else if(!((tmp->members.size==0) && (tmp->methods.size==0)) &&
@@ -2181,9 +2218,9 @@ static void Install_Types() {
 	      (tmp->name != "sstream"))
       {
 	if(tmp->InheritsFrom(TA_taBase))
-	  cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	  cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
 	else
-	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
       }
     }
     else if(tmp->InheritsFormal(TA_enum)) {
@@ -2201,6 +2238,8 @@ static void Install_Types() {
       }
     }
   }
+  cssMisc::TypesSpace.Sort();		// must sort before anything happens
+  GeneratePtrRefTypes();
 }
 
 //////////////////////////////////
@@ -2322,7 +2361,7 @@ char* css_path_generator(char* text, int state) {
   static int item_idx;		// index for searching within list
   static String mb_name;
   static String par_path;
-  static TAPtr parent;
+  static taBase* parent;
   static TypeDef* par_td;
 
   if(cssBI::root == NULL)
@@ -2332,13 +2371,13 @@ char* css_path_generator(char* text, int state) {
     par_path = text;
     par_path = par_path.before('.',-1);
     if(par_path == "") {
-      parent = (TAPtr)cssBI::root->ptr;
+      parent = (taBase*)cssBI::root->ptr;
       if(parent != NULL)
 	par_td = parent->GetTypeDef();
     }
     else {
       MemberDef* md = NULL;
-      TAPtr root = (TAPtr)cssBI::root->ptr;
+      taBase* root = (taBase*)cssBI::root->ptr;
       if(root == NULL)
 	parent = NULL;
       else {
@@ -2502,7 +2541,6 @@ int cssMisc::Initialize() {
   cssMisc::Settings.Push(new cssTA(TA_taMisc.GetInstance(), 1, &TA_taMisc,
 				    "cssSettings"));
 
-  cssMisc::TypesSpace.Sort();		// must sort before anything happens
   cssMisc::Commands.Sort();
   cssMisc::Functions.Sort();		// must sort before anything happens
   cssMisc::Constants.Sort();		// must sort before anything happens

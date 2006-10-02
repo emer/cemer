@@ -20,6 +20,7 @@
 #include "ta_css.h"
 
 #include "ta_matrix.h"
+#include "ta_project.h"
 #include "ta_TA_type.h"
 
 ///////////////////
@@ -28,64 +29,74 @@
 
 int cssCPtr_int::null_int = 0;
 
-void cssCPtr_int::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Int))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetIntRef() = (Int)t;
-    if(class_parent != NULL)     class_parent->UpdateAfterEdit();
+int& cssCPtr_int::GetIntRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((int*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_int;
+}
+
+void cssCPtr_int::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetIntRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() += (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("+=") += (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() -= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("-=") -= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() *= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("*=") *= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() /= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("/=") /= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator%=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() %= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("%=") %= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator<<=(cssEl& t) {
   if(!ROCheck()) return;
-  GetIntRef() <<= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("<<=") <<= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator>>=(cssEl& t) {
   if(!ROCheck()) return;
-  GetIntRef() >>= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef(">>=") >>= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() &= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("&=") &= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() ^= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("^=") ^= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_int::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetIntRef() |= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetIntRef("|=") |= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -94,18 +105,28 @@ void cssCPtr_int::operator|=(cssEl& t)	{
 
 bool cssCPtr_bool::null_bool = 0;
 
-String cssCPtr_bool::GetStr() const {
-  bool myb = GetBoolRef();
-  if(myb == true)
-    return String("true");
-  else if(myb == false)
-    return String("false");
+bool& cssCPtr_bool::GetBoolRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((bool*)nnp);
+  }
   else
-    return String((int)myb);
+    NopErr(opr);
+  return null_bool;
+}
+
+String cssCPtr_bool::GetStr() const {
+  bool myb = GetBoolRef("(String)");
+  if(myb)
+    return String("true");
+  else 
+    return String("false");
 }
 
 void cssCPtr_bool::operator=(const String& cp) {
-  bool myb = GetBoolRef();
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) { NopErr("=(String)"); return; }
+  bool myb = GetBoolRef("=");
   if(cp == "false")
     myb = false;
   else if(cp == "true")
@@ -115,67 +136,32 @@ void cssCPtr_bool::operator=(const String& cp) {
 }
 
 void cssCPtr_bool::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Bool))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
-      *this = t.GetStr();	// use string converter
-    else
-      GetBoolRef() = (Int)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
   }
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+    *this = t.GetStr();	// use string converter
+  else
+    GetBoolRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 
-void cssCPtr_bool::operator+=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() += (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator-=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() -= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator*=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() *= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator/=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() /= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator%=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() %= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator<<=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() <<= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
-void cssCPtr_bool::operator>>=(cssEl& t)	{
-  if(!ROCheck()) return;
-  GetBoolRef() >>= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-}
 void cssCPtr_bool::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetBoolRef() &= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetBoolRef("&=") &= (bool)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_bool::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetBoolRef() ^= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetBoolRef("^=") ^= (bool)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_bool::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetBoolRef() |= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetBoolRef("|=") |= (bool)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -184,64 +170,74 @@ void cssCPtr_bool::operator|=(cssEl& t)	{
 
 short cssCPtr_short::null_short = 0;
 
-void cssCPtr_short::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Short))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetShortRef() = (Int)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+short& cssCPtr_short::GetShortRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((short*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_short;
+}
+
+void cssCPtr_short::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetShortRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() += (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("+=") += (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() -= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("-=") -= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() *= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("*=") *= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() /= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("/=") /= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator%=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() %= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("%=") %= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator<<=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() <<= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("<<=") <<= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator>>=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() >>= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef(">>=") >>= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() &= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("&=") &= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() ^= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("^=") ^= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_short::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetShortRef() |= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetShortRef("|=") |= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -250,64 +246,74 @@ void cssCPtr_short::operator|=(cssEl& t)	{
 
 long cssCPtr_long::null_long = 0;
 
-void cssCPtr_long::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Long))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetLongRef() = (Int)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+long& cssCPtr_long::GetLongRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((long*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_long;
+}
+
+void cssCPtr_long::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetLongRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() += (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("+=") += (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() -= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("-=") -= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() *= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("*=") *= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() /= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("/=") /= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator%=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() %= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("%=") %= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator<<=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() <<= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("<<=") <<= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator>>=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() >>= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef(">>=") >>= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() &= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("&=") &= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() ^= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("^=") ^= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongRef() |= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongRef("|=") |= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -316,64 +322,74 @@ void cssCPtr_long::operator|=(cssEl& t)	{
 
 int64_t cssCPtr_long_long::null_long_long = 0;
 
-void cssCPtr_long_long::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_LongLong)) 
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetLongLongRef() = (int64_t)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+int64_t& cssCPtr_long_long::GetLongLongRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((int64_t*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_long_long;
+}
+
+void cssCPtr_long_long::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetLongLongRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() += (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("+=") += (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() -= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("-=") -= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() *= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("*=") *= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() /= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("/=") /= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator%=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() %= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("%=") %= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator<<=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() <<= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("<<=") <<= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator>>=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() >>= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef(">>=") >>= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() &= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("&=") &= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() ^= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("^=") ^= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_long_long::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetLongLongRef() |= (int64_t)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetLongLongRef("|=") |= (int64_t)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -382,67 +398,77 @@ void cssCPtr_long_long::operator|=(cssEl& t)	{
 
 char cssCPtr_char::null_char = 0;
 
-void cssCPtr_char::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Char))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
-      *this = t.GetStr();	// use string converter
-    else
-      GetCharRef() = (Int)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+char& cssCPtr_char::GetCharRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((char*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_char;
+}
+
+void cssCPtr_char::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+    *this = t.GetStr();	// use string converter
+  else
+    GetCharRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() += (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("+=") += (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() -= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("-=") -= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() *= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("*=") *= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() /= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("/=") /= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator%=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() %= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("%=") %= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator<<=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() <<= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("<<=") <<= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator>>=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() >>= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef(">>=") >>= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator&=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() &= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("&=") &= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator^=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() ^= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("^=") ^= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_char::operator|=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetCharRef() |= (Int)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetCharRef("|=") |= (Int)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -450,12 +476,12 @@ void cssCPtr_char::operator|=(cssEl& t)	{
 ///////////////////
 
 TypeDef* cssCPtr_enum::GetEnumType() const {
-  if(enum_type != NULL) return enum_type;
-  if((class_parent != NULL) && (class_parent->GetType() == T_TA)) {
+  if(enum_type) return enum_type;
+  if((class_parent) && (class_parent->GetType() == T_TA)) {
     cssTA* clp = (cssTA*)class_parent;
-    if(clp->type_def != NULL) {
+    if(clp->type_def) {
       MemberDef* md = clp->type_def->members.FindName(name); // find me..
-      if(md != NULL)
+      if(md)
 	return md->type;
     }
   }
@@ -463,53 +489,55 @@ TypeDef* cssCPtr_enum::GetEnumType() const {
 }
 
 String cssCPtr_enum::GetStr() const {
+  if(ptr_cnt > 0) { NopErr("(String)"); return ""; }
   TypeDef* et = GetEnumType();
-  if(et != NULL) {
-    return et->GetValStr(GetNonNullVoidPtr(), NULL);
+  if(et) {
+    return et->GetValStr(GetNonNullVoidPtr("(String)"), NULL);
   }
   return String((Int)*this);
 }
 
 void cssCPtr_enum::operator=(const String& cp) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) { NopErr("=(String)"); return; }
   TypeDef* et = GetEnumType();
-  if(et != NULL) {
+  if(et) {
     cssTA* clp = (cssTA*)class_parent;
-    if(clp != NULL) {
-      et->SetValStr(cp, GetNonNullVoidPtr(), clp->GetNonNullVoidPtr());
+    if(clp) {
+      et->SetValStr(cp, GetNonNullVoidPtr("="), clp->GetNonNullVoidPtr("="));
       class_parent->UpdateAfterEdit();
     }
     else
-      et->SetValStr(cp, GetNonNullVoidPtr());
-    return;
+      et->SetValStr(cp, GetNonNullVoidPtr("="));
   }
-  GetIntRef() = (int)cp;
 }
 void cssCPtr_enum::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Enum))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
-      *this = t.GetStr();	// use string converter
-    else
-      GetIntRef() = (Int)t;
-    if(class_parent != NULL)     class_parent->UpdateAfterEdit();
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
   }
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+    *this = t.GetStr();	// use string converter
+  else
+    GetIntRef("=") = (Int)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
+
 bool cssCPtr_enum::operator==(cssEl& t) {
+  if(ptr_cnt > 0) return cssCPtr::operator==(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
     return GetStr() == t.GetStr();
   }
-  return GetIntRef() == (Int)t;
+  return GetIntRef("==") == (Int)t;
 }
 bool cssCPtr_enum::operator!=(cssEl& t) {
+  if(ptr_cnt > 0) return cssCPtr::operator!=(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
     return GetStr() != t.GetStr();
   }
-  return GetIntRef() != (Int)t;
+  return GetIntRef("!=") != (Int)t;
 }
-
-  
 
 
 ///////////////////
@@ -518,34 +546,44 @@ bool cssCPtr_enum::operator!=(cssEl& t) {
 
 double cssCPtr_double::null_double = 0.0;
 
-void cssCPtr_double::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Real))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetDoubleRef() = (Real)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+double& cssCPtr_double::GetDoubleRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((double*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_double;
+}
+
+void cssCPtr_double::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetDoubleRef("=") = (Real)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_double::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetDoubleRef() += (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetDoubleRef("+=") += (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_double::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetDoubleRef() -= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetDoubleRef("-=") -= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_double::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetDoubleRef() *= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetDoubleRef("*=") *= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_double::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetDoubleRef() /= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetDoubleRef("/=") /= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 ///////////////////
@@ -554,34 +592,43 @@ void cssCPtr_double::operator/=(cssEl& t)	{
 
 float cssCPtr_float::null_float = 0.0;
 
-void cssCPtr_float::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Float))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetFloatRef() = (Real)t;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+float& cssCPtr_float::GetFloatRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((float*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_float;
+}
+void cssCPtr_float::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetFloatRef("=") = (Real)t;
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_float::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetFloatRef() += (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetFloatRef("+=") += (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_float::operator-=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetFloatRef() -= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetFloatRef("-=") -= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_float::operator*=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetFloatRef() *= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetFloatRef("*=") *= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 void cssCPtr_float::operator/=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetFloatRef() /= (Real)t;
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetFloatRef("/=") /= (Real)t;
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 
@@ -591,55 +638,116 @@ void cssCPtr_float::operator/=(cssEl& t)	{
 
 String cssCPtr_String::null_string;
 
-void cssCPtr_String::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_String))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetStringRef() = t.GetStr();
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+String& cssCPtr_String::GetStringRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((String*)nnp);
   }
+  else
+    NopErr(opr);
+  return null_string;
+}
+void cssCPtr_String::operator=(const cssEl& t) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
+  }
+  GetStringRef("=") = t.GetStr();
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_String::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetStringRef() += t.GetStr();
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetStringRef("+=") += t.GetStr();
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 cssEl* cssCPtr_String::operator[](int idx) const {
-  void* pt = GetVoidPtr();	if(pt == NULL) return &cssMisc::Void;
-  String* val = (String*)pt;
-  String nw_val = val->elem(idx);
+  if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
+  String& val = GetStringRef("[]");
+  String nw_val = val.elem(idx);
   return new cssString(nw_val);
 }
 
 cssCPtr_String::operator bool() const {
-  String& val = GetStringRef();
+  if(ptr_cnt > 0) return (bool)ptr;
+  String& val = GetStringRef("(bool)");
   if(val == "true")
     return true;
   else if(val == "false")
     return false;
-  else
-    return (Int)val;
+  else 
+    return !val.empty();
+}
+
+cssCPtr_String::operator taBase*() const {
+  if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
+  void* rval = NULL;
+  if((tabMisc::root) && (tabMisc::root->FindMembeR(GetStringRef(), rval) != 0))
+    return (taBase*)rval;
+  return (taBase*)NULL;
+}
+
+cssCPtr_String::operator TypeDef*() const {
+  if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
+  String& nm = GetStringRef();
+  TypeDef* td = taMisc::types.FindName(nm);
+  if(td == NULL) {
+    cssMisc::Error(prog, "Could not find type:", nm);
+    return NULL;
+  }
+  return td;
+}
+
+cssCPtr_String::operator MemberDef*() const {
+  if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
+  String& nm = GetStringRef();
+  MemberDef* md;
+  TA_MemberDef_ptr.SetValStr(nm, (void*)&md);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Could not find member def:", nm);
+    return NULL;
+  }
+  return md;
+}
+
+cssCPtr_String::operator MethodDef*() const {
+  if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
+  String& nm = GetStringRef();
+  MethodDef* md;
+  TA_MethodDef_ptr.SetValStr(nm, (void*)&md);
+  if(md == NULL) {
+    cssMisc::Error(prog, "Could not find method def:", nm);
+    return NULL;
+  }
+  return md;
 }
 
 int cssCPtr_String::GetMethodNo(const char* memb) const {
-  String& val = GetStringRef();
+  void* sp = GetVoidPtr();
+  if(!sp) return -1;
+  String& val = *((String*)sp);
   return GetMethodNo_impl(&TA_taString, memb);
 }
 
 cssEl* cssCPtr_String::GetMethodFmName(const char* memb) const {
-  String& val = GetStringRef();
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  String& val = *((String*)sp);
   return GetMethodFmName_impl(&TA_taString, (void*)&val, memb);
 }
 
 cssEl* cssCPtr_String::GetMethodFmNo(int memb) const {
-  String& val = GetStringRef();
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  String& val = *((String*)sp);
   return GetMethodFmNo_impl(&TA_taString, (void*)&val, memb);
 }
 
 cssEl* cssCPtr_String::GetScoped(const char* memb) const {
-  String& val = GetStringRef();
+  void* sp = GetNonNullVoidPtr("::");
+  if(!sp) return &cssMisc::Void;
+  String& val = *((String*)sp);
   return GetScoped_impl(&TA_taString, (void*)&val, memb);
 }
 
@@ -649,6 +757,16 @@ cssEl* cssCPtr_String::GetScoped(const char* memb) const {
 ///////////////////
 
 Variant cssCPtr_Variant::null_var;
+
+Variant& cssCPtr_Variant::GetVarRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr(opr);
+    if(nnp) return *((Variant*)nnp);
+  }
+  else
+    NopErr(opr);
+  return null_var;
+}
 
 cssEl::cssTypes cssCPtr_Variant::GetPtrType() const {
   Variant& val = GetVarRef();
@@ -682,7 +800,7 @@ cssEl::cssTypes cssCPtr_Variant::GetPtrType() const {
 
 String cssCPtr_Variant::PrintStr() const {
   String rval = String(GetTypeName())+" "+name+" --> ";
-  if(GetVoidPtr() != NULL) {
+  if(GetVoidPtr()) {
     Variant& vl = *((Variant*)GetVoidPtr());
     rval += "(" + vl.getTypeAsString() + ") " + vl.toString();
   }
@@ -693,29 +811,40 @@ String cssCPtr_Variant::PrintStr() const {
 
 void cssCPtr_Variant::TypeInfo(ostream& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
-  Variant& val_r = GetVarRef();
-  val_r.GetRepInfo(typ, base);
-  fh << GetTypeName() << " (" << val_r.getTypeAsString() << ") " << name << ": ";
-  if(val_r.type() == Variant::T_String) {
-    typ->OutputType(fh);
-  }
-  else if(val_r.isBaseType()) {
-    typ->GetNonPtrType()->OutputType(fh);
+  if(GetVoidPtr()) {
+    Variant& val_r = *((Variant*)GetVoidPtr());
+    val_r.GetRepInfo(typ, base);
+    fh << GetTypeName() << " (" << val_r.getTypeAsString() << ") " << name << ": ";
+    if(val_r.type() == Variant::T_String) {
+      typ->OutputType(fh);
+    }
+    else if(val_r.isBaseType()) {
+      typ->GetNonPtrType()->OutputType(fh);
+    }
+    else {
+      TA_Variant.OutputType(fh);
+    }
   }
   else {
+    fh << GetTypeName() << " " << name << ": ";
     TA_Variant.OutputType(fh);
   }
 }
 
 void cssCPtr_Variant::InheritInfo(ostream& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
-  Variant& val_r = GetVarRef();
-  val_r.GetRepInfo(typ, base);
-  if(val_r.type() == Variant::T_String) {
-    typ->OutputInherit(fh);
-  }
-  else if(val_r.isBaseType()) {
-    typ->GetNonPtrType()->OutputInherit(fh);
+  if(GetVoidPtr()) {
+    Variant& val_r = *((Variant*)GetVoidPtr());
+    val_r.GetRepInfo(typ, base);
+    if(val_r.type() == Variant::T_String) {
+      typ->OutputInherit(fh);
+    }
+    else if(val_r.isBaseType()) {
+      typ->GetNonPtrType()->OutputInherit(fh);
+    }
+    else {
+      TA_Variant.OutputInherit(fh);
+    }
   }
   else {
     TA_Variant.OutputInherit(fh);
@@ -723,13 +852,13 @@ void cssCPtr_Variant::InheritInfo(ostream& fh) const {
 }
 
 void cssCPtr_Variant::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_Variant))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    GetVarRef() = t.GetVar();
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
   }
+  GetVarRef("=") = t.GetVar();
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 void cssCPtr_Variant::operator=(const Variant& val) {
   GetVarRef() = val;
@@ -737,19 +866,38 @@ void cssCPtr_Variant::operator=(const Variant& val) {
 
 void cssCPtr_Variant::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
-  GetVarRef() += t.GetVar();
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  GetVarRef("+=") += t.GetVar();
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+
+void cssCPtr_Variant::operator-=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetVarRef("-=") -= t.GetVar();
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+
+void cssCPtr_Variant::operator*=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetVarRef("*=") *= t.GetVar();
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+
+void cssCPtr_Variant::operator/=(cssEl& t)	{
+  if(!ROCheck()) return;
+  GetVarRef("/=") /= t.GetVar();
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 cssEl* cssCPtr_Variant::operator[](int idx) const {
-  void* pt = GetVoidPtr();	
-  if (pt == NULL) return &cssMisc::Void;
-  Variant& val = *(Variant*)pt;
+  if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
+  Variant& val = GetVarRef("[]");
   return GetVariantEl_impl(val, idx);
 }
 
 cssEl* cssCPtr_Variant::GetMemberFmNo(int memb) const {
-  Variant& val = GetVarRef();
+  void* sp = GetNonNullVoidPtr("->");
+  if(!sp) return &cssMisc::Void;
+  Variant& val = *((Variant*)sp);
   TypeDef* typ = NULL;  void* base = NULL;
   val.GetRepInfo(typ, base);
   if(val.type() == Variant::T_String) {
@@ -762,7 +910,9 @@ cssEl* cssCPtr_Variant::GetMemberFmNo(int memb) const {
 }
 
 cssEl* cssCPtr_Variant::GetMemberFmName(const char* memb) const {
-  Variant& val = GetVarRef();
+  void* sp = GetNonNullVoidPtr("->");
+  if(!sp) return &cssMisc::Void;
+  Variant& val = *((Variant*)sp);
   TypeDef* typ = NULL;  void* base = NULL;
   val.GetRepInfo(typ, base);
   if(val.type() == Variant::T_String) {
@@ -775,7 +925,9 @@ cssEl* cssCPtr_Variant::GetMemberFmName(const char* memb) const {
 }
 
 cssEl* cssCPtr_Variant::GetMethodFmNo(int memb) const {
-  Variant& val = GetVarRef();
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  Variant& val = *((Variant*)sp);
   TypeDef* typ = NULL;  void* base = NULL;
   val.GetRepInfo(typ, base);
   if(val.type() == Variant::T_String) {
@@ -788,7 +940,9 @@ cssEl* cssCPtr_Variant::GetMethodFmNo(int memb) const {
 }
 
 cssEl* cssCPtr_Variant::GetMethodFmName(const char* memb) const {
-  Variant& val = GetVarRef();
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  Variant& val = *((Variant*)sp);
   TypeDef* typ = NULL;  void* base = NULL;
   val.GetRepInfo(typ, base);
   if(val.type() == Variant::T_String) {
@@ -801,7 +955,9 @@ cssEl* cssCPtr_Variant::GetMethodFmName(const char* memb) const {
 }
 
 cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
-  Variant& val = GetVarRef();
+  void* sp = GetNonNullVoidPtr("::");
+  if(!sp) return &cssMisc::Void;
+  Variant& val = *((Variant*)sp);
   TypeDef* typ = NULL;  void* base = NULL;
   val.GetRepInfo(typ, base);
   if(val.type() == Variant::T_String) {
@@ -819,6 +975,16 @@ cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
 
 DynEnum cssCPtr_DynEnum::null_enum;
 
+DynEnum& cssCPtr_DynEnum::GetEnumRef(const char* opr) const {
+  if(ptr_cnt == 0) {
+    void* nnp = GetNonNullVoidPtr();
+    if(nnp) return *((DynEnum*)nnp);
+  }
+  else
+    NopErr(opr);
+  return null_enum;
+}
+
 void cssCPtr_DynEnum::TypeInfo(ostream& fh) const {
   fh << GetTypeName() << name << ": ";
   if(GetVoidPtr() == NULL) {
@@ -834,24 +1000,26 @@ void cssCPtr_DynEnum::operator=(const String& cp) {
   GetEnumRef().SetNameVal(cp);
 }
 void cssCPtr_DynEnum::operator=(const cssEl& t) {
-  if((t.GetType() == T_C_Ptr) && (t.GetPtrType() == T_DynEnum))
-    PtrAssignPtr((cssCPtr*)&t);
-  else {
-    if(!ROCheck()) return;
-    if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
-      *this = t.GetStr();	// use string converter
-    else
-      GetEnumRef().SetNumVal((Int)t);
-    if(class_parent != NULL)     class_parent->UpdateAfterEdit();
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(t);
+    return;
   }
+  if((t.GetType() == T_String) || (t.GetPtrType() == T_String))
+    *this = t.GetStr();	// use string converter
+  else
+    GetEnumRef("=").SetNumVal((Int)t);
+  if(class_parent)     class_parent->UpdateAfterEdit();
 }
 bool cssCPtr_DynEnum::operator==(cssEl& t) {
+  if(ptr_cnt > 0) return cssCPtr::operator==(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
     return GetEnumRef().NameVal() == t.GetStr();
   }
   return GetEnumRef().NumVal() == (Int)t;
 }
 bool cssCPtr_DynEnum::operator!=(cssEl& t) {
+  if(ptr_cnt > 0) return cssCPtr::operator!=(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
     return GetEnumRef().NameVal() != t.GetStr();
   }

@@ -481,8 +481,6 @@ public:
   // generate malloc memory statistic information to given stream
   static void	ListAllTokens(ostream& strm);
   // generate a list and count of all types that keep tokens, with a count of tokens
-//   static int 	ReplaceAllPtrsWithToken(TypeDef* obj_typ, void* old_ptr);
-  // search through all tokens in all types and replace any pointer to old_ptr with first other token in same scope of same type
   static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
   
 #if ((defined(TA_OS_UNIX)))

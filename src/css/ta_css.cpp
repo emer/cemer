@@ -39,16 +39,8 @@ void cssTA::Constr() {
 cssTA::cssTA() : cssCPtr() {
   Constr();
 }
-cssTA::cssTA(void* it, int pc, TypeDef* td) : cssCPtr(it,pc) {
-  Constr();
-  type_def = td;
-}
-cssTA::cssTA(void* it, int pc, TypeDef* td, const char* nm) : cssCPtr(it,pc,nm) {
-  Constr();
-  type_def = td;
-}
-cssTA::cssTA(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-: cssCPtr(it,pc,nm,cp,ro) {
+cssTA::cssTA(void* it, int pc, TypeDef* td, const char* nm, cssEl* cls_par, bool ro)
+: cssCPtr(it,pc,nm,cls_par,ro) {
   Constr();
   type_def = td;
 }
@@ -60,7 +52,7 @@ cssTA::cssTA(const cssTA& cp, const char* nm) : cssCPtr(cp,nm) {
 }
 
 cssEl* cssTA::GetTypeObject() const {
-  if(type_def == NULL)	return &cssMisc::Void;
+  if(!type_def)	return &cssMisc::Void;
   cssElPtr s;
   if((s = cssMisc::TypesSpace.FindName((char*)type_def->name)) != 0)
     return s.El();
@@ -76,7 +68,7 @@ String cssTA::PrintStr() const {
 String cssTA::PrintFStr() const {
   String rval;
   void* pt = GetVoidPtr();
-  if(pt == NULL)
+  if(!pt)
     rval = "NULL";
   else
     rval = GetStr();
@@ -111,13 +103,13 @@ void cssTA::InheritInfo(ostream& fh) const {
 int cssTA::Edit(bool wait) {
   //WARNING: does not respect wait
   void* pt = GetVoidPtr();
-  if (pt == NULL)
+  if(!pt)
     return false;
   taiEdit* gc = type_def->ie;
   if (gc) {
     const iColor* bgclr = NULL;
     if (type_def->InheritsFrom(TA_taBase))
-      bgclr = ((TAPtr)pt)->GetEditColor();
+      bgclr = ((taBase*)pt)->GetEditColor();
 //3.2    return gc->Edit(pt, NULL, wait, false, bgclr);
     return gc->Edit(pt, false, bgclr);
   }
@@ -161,12 +153,12 @@ cssTA::operator void*() const {
 
 void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
   void* bptr = GetVoidPtr();
-  if(bptr == NULL) {
+  if(!bptr) {
     cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",type_def->name);
     return NULL;
   }
   void* rval = type_def->GetParAddr(td, bptr);
-  if(rval == NULL) {
+  if(!rval) {
     cssMisc::Error(prog, "Conversion to:",td->name,"is not a base type for:",type_def->name);
   }
   return rval;
@@ -174,12 +166,12 @@ void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
 
 void* cssTA::GetVoidPtrOfType(const char* td) const {
   void* bptr = GetVoidPtr();
-  if(bptr == NULL) {
+  if(!bptr) {
     cssMisc::Error(prog, "Null pointer for conversion to:",td,"from:",type_def->name);
     return NULL;
   }
   void* rval = type_def->GetParAddr(td, bptr);
-  if(rval == NULL) {
+  if(!rval) {
     cssMisc::Error(prog, "Conversion to:",td,"is not a base type for:",type_def->name);
   }
   return rval;
@@ -193,7 +185,7 @@ Variant cssTA::GetVar() const {
 String cssTA::GetStr() const {
   String rval;
   if(ptr) {
-    if(ptr_cnt == 1) {
+    if(ptr_cnt <= 1) {
       rval = type_def->GetValStr(ptr);
     }
     else if(ptr_cnt == 2) {
@@ -213,39 +205,64 @@ String cssTA::GetStr() const {
   return type_def->name;
 }
 
-void cssTA::PtrAssignPtr(cssCPtr* s) {
-  String tpnm = GetTypeName();
-  String s_tpnm = s->GetTypeName();
-  if(ptr_cnt == s->ptr_cnt) {
-    // we are a member pointer to obj (not just a script variable)
-    if((ptr_cnt == 1) && (class_parent) && (ptr) && (s->ptr) &&
-       (s->GetType() == T_TA))
-    {
-      cssMisc::Error(prog, "Cannot copy non-TA_Base objects");
-      return;
+void cssTA::PtrAssignPtr(const cssEl& s) {
+  if(s.GetType() == T_MbrCFun) {
+    if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
+      cssMbrCFun& mbf = (cssMbrCFun&)s;
+      MethodDef* fun = TA_taRegFun.methods.FindName(mbf.name);
+      if(fun)
+	*((ta_void_fun*)ptr) = fun->addr;
+      else {
+	cssMisc::Error(prog, "Assignment to unregistered member function:", mbf.name);
+      }
     }
-    ptr = s->ptr;
-    if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
-      cssMisc::Warning(prog, "Warning: assigning different ptr types");
+    return;
   }
-  else if(ptr_cnt == s->ptr_cnt + 1) {
-    if(ptr) {
-      if(!ROCheck()) return;
-      // note that this means that the css ptr points to a ptr, which is whats
-      // gettting set here, not the css ptr
-      *((void**)ptr) = s->ptr;
+  if(s.GetType() != T_TA) {
+    int sval = (Int)s;
+    if(sval == 0) {
+      PtrAssignNull();		// set to null
+    }
+    else {
+      cssMisc::Error(prog, "Attempt to assign TA C pointer to inappropriate value");
+    }
+    return;
+  }
+  cssTA& sp = (cssTA&)s;
+  if(!sp.type_def) {
+    cssMisc::Error(prog, "Attempt to assign TA C pointer with null type info");
+    return;
+  }
+  if(type_def && !sp.type_def->InheritsFrom(type_def)) {
+    cssMisc::Error(prog, "Ptr Assign between incompatible types -- our type:",
+		   type_def->name, "source type:", sp.type_def->name);
+    return;
+  }
+  if(ptr_cnt == sp.ptr_cnt) {
+    ptr = sp.ptr;
+    type_def = sp.type_def;
+    SetClassParent(sp.class_parent);
+  }
+  else if((ptr_cnt == 1) && (sp.ptr_cnt == 0)) {
+    ptr = sp.ptr;		// I now point to that guy
+    type_def = sp.type_def;
+    SetClassParent(sp.class_parent);
+  }
+  else if((ptr_cnt == 2) && (sp.ptr_cnt == 1)) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(!ptr) {
+      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
+    }
+    else {
+      *((void**)ptr) = sp.ptr;
+      type_def = sp.type_def;
       if(class_parent)	class_parent->UpdateAfterEdit();
-      if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
-	cssMisc::Warning(prog, "Warning: assigning different ptr types");
     }
-  }
-  else {
-    cssMisc::Error(prog, "Pointer assignment between incompatible pointers");
   }
 }
 
 void cssTA::operator=(const String& s) {
-  if(ptr_cnt == 1) {
+  if(ptr_cnt == 0) {
     if(type_def->HasOption("INLINE") || type_def->InheritsFrom(TA_taList_impl)
        || type_def->InheritsFrom(TA_taArray_base)
        || type_def->InheritsFrom(TA_taArray_impl) || type_def->InheritsFrom(TA_void))
@@ -255,7 +272,8 @@ void cssTA::operator=(const String& s) {
       return;
     }
   }
-  else if((ptr) && (ptr_cnt == 2)) {	// otherwise treat as a pointer
+  // todo: need to debug this!
+  else if((ptr) && (ptr_cnt == 1)) {	// otherwise treat as a pointer
     // need the correct typedef here, either find it or make it..
     String ptrnm = type_def->name + "_ptr";
     TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
@@ -267,78 +285,68 @@ void cssTA::operator=(const String& s) {
       nw_tp.SetValStr(s, ptr);
     }
   }
+  else if((ptr) && (ptr_cnt == 2)) {	// otherwise treat as a pointer
+    // need the correct typedef here, either find it or make it..
+    String ptrnm = type_def->name + "_ptr_ptr";
+    TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
+    if(ptr_typ)
+      ptr_typ->SetValStr(s, ptr);
+    else {
+      TypeDef nw_tp(*type_def);
+      nw_tp.ptr+=2;
+      nw_tp.SetValStr(s, ptr);
+    }
+  }
 }
 
 void cssTA::operator=(const cssEl& s) {
-  if(s.GetType() == T_TA) {
-    PtrAssignPtr((cssCPtr*)&s);
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    return;
   }
-  else if(s.GetType() == T_C_Ptr)
-    cssMisc::Error(prog, "Assigning typed pointer to non-typed ptr value");
-  else if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
     *this = s.GetStr();	// use string converter
     if(class_parent)	class_parent->UpdateAfterEdit();
   }
-  else if(s.GetType() == T_MbrCFun) {
-    if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
-      cssMbrCFun& mbf = (cssMbrCFun&)s;
-      MethodDef* fun = TA_taRegFun.methods.FindName(mbf.name);
-      if(fun)
-	*((ta_void_fun*)ptr) = fun->addr;
-      else {
-	cssMisc::Error(prog, "Assignment to unregistered member function:", mbf.name);
-      }
-    }
-  }
   else {
-    int sval = (Int)s;
-    if(sval == 0) {
-      if(ptr_cnt > 1) {
-	*((void**)ptr) = NULL;
-	if(class_parent)	class_parent->UpdateAfterEdit();
-      }
-      else
-	ptr = NULL;
-    }
-    else
-      cssMisc::Error(prog, "Assigning internal pointer to non-internal ptr value");
+    cssMisc::Error(prog, "Attempt to copy TA C object with no copy semantics");
   }
 }
 
 void cssTA::InitAssign(const cssEl& s) {
-  if(s.GetType() == T_TA) {
-    PtrAssignPtr((cssCPtr*)&s);
-    cssTA *tmp = (cssTA*)&s;
-    type_def = tmp->type_def;
+  if(ptr_cnt == 0) {
+    cssMisc::Error(prog, "Attempt to initialize TA C object with no copy semantics");
+    return;
   }
-  else if(s.GetType() == T_C_Ptr) {
-    PtrAssignPtr((cssCPtr*)&s);
+  if(s.GetType() == T_TA) {
+    PtrAssignPtr(s);
   }
   else {
     int sval = (Int)s;
     if(sval == 0)
       ptr = NULL;
     else
-      cssMisc::Error(prog, "Assigning internal pointer to non-internal ptr value");
+      cssMisc::Error(prog, "Initial assignment of internal pointer to non-internal ptr value");
   }
 }
 
 void cssTA::CastFm(const cssEl& s) {
-  if((s.GetType() == T_TA) || (s.GetType() == T_C_Ptr)) {
-    PtrAssignPtr((cssCPtr*)&s);
+  if((ptr_cnt > 0) && (s.GetType() == T_TA)) {
+    PtrAssignPtr(s);
   }
   else cssMisc::Error(prog, "Casting internal pointer to non-internal ptr value");
 }
 
-cssEl* cssTA::GetElement_impl(TAPtr ths, int i) const {
+cssEl* cssTA::GetElement_impl(taBase* ths, int i) const {
   TypeDef* eltd;
   void* el = ths->GetTA_Element(i, eltd);
-  if(eltd == NULL) {
+  if(!eltd) {
     cssMisc::Error(prog, "This is not an array:", ths->GetName(),
 		    "type:", ths->GetTypeDef()->name);
     return &cssMisc::Void;
   }
-  if(el == NULL) {
+  if(!el) {
     cssMisc::Error(prog, "Index out of range:", String((int)i), "for", ths->GetName(),
 		    "type:", ths->GetTypeDef()->name);
     return &cssMisc::Void;
@@ -380,14 +388,14 @@ cssEl* cssTA::GetScoped(const char* memb) const {
 ////////////////////////////////////////////////////////////////////////
 
 void cssTA_Base::Constr() {
-  TAPtr ths = GetTAPtr();
-  if(ths == NULL)
+  taBase* ths = GetTAPtr();
+  if(!ths)
     return;
   type_def = ths->GetTypeDef();	// just to be sure
 }
 
 void cssTA_Base::TypeInfo(ostream& fh) const {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->OutputType(fh);
   else
@@ -395,7 +403,7 @@ void cssTA_Base::TypeInfo(ostream& fh) const {
 }
 
 void cssTA_Base::Print(ostream& fh) const {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->Output(fh) << "\n";
   else {
@@ -404,7 +412,7 @@ void cssTA_Base::Print(ostream& fh) const {
 }
 
 void cssTA_Base::PrintR(ostream& fh) const {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->OutputR(fh) << "\n";
   else {
@@ -413,7 +421,7 @@ void cssTA_Base::PrintR(ostream& fh) const {
 }
 
 void cssTA_Base::InheritInfo(ostream& fh) const {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->OutputInherit(fh) << "\n";
   else
@@ -421,93 +429,148 @@ void cssTA_Base::InheritInfo(ostream& fh) const {
 }
 
 void cssTA_Base::Save(ostream& fh) {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->Save(fh);
 }
 void cssTA_Base::Load(istream& fh) {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     ths->Load(fh);
 }
 
 void cssTA_Base::operator=(const String& s) {
-  if(ptr_cnt == 1) {
-    if(type_def->HasOption("INLINE") || type_def->InheritsFrom(TA_taList_impl)
-       || type_def->InheritsFrom(TA_taArray_base)
-       || type_def->InheritsFrom(TA_taArray_impl) || type_def->InheritsFrom(TA_void))
-    {
-      if(ptr)
-	type_def->SetValStr(s, ptr);
-      return;
-    }
-    MemberDef* md = NULL;
-    String pth = s;
-    TAPtr bs = tabMisc::root->FindFromPath(pth, md);	// it can eat the string
-    if((bs == NULL) || (md == NULL))
-      return;
-    if(md->type->ptr == 1)
-      bs = *((TAPtr*)bs);
-    ptr = (void*)bs;
-    return;
-  }
   cssTA::operator=(s);
 }
 
 void cssTA_Base::operator=(const cssEl& s) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    taBase* ths = GetTAPtr();
+    if(ths)
+      type_def = ths->GetTypeDef();	// just to be sure
+    return;
+  }
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    if(class_parent)	class_parent->UpdateAfterEdit();
+  }
+  else {
+    if((ptr) && (s.GetType() == T_TA)) {
+      cssTA& sp = (cssTA&)s;
+      if(!sp.type_def) {
+	cssMisc::Error(prog, "Attempt to assign TA_Base C pointer with null type info");
+	return;
+      }
+      if(type_def && !sp.type_def->InheritsFrom(type_def)) {
+	cssMisc::Error(prog, "Ptr Assign between incompatible types -- our type:",
+		       type_def->name, "source type:", sp.type_def->name);
+	return;
+      }
+      if(sp.ptr_cnt > 0) {
+	cssMisc::Error(prog, "Invalid assign -- we are object and source is a pointer");
+	return;
+      }
+      if(!sp.ptr) {
+	cssMisc::Error(prog, "Invalid assign -- source is NULL");
+	return;
+      }
+      taBase* obj = (taBase*)ptr;
+      obj->UnSafeCopy((taBase*)sp.ptr);
+      class_parent->UpdateAfterEdit();
+      return;
+    }
+  }
   cssTA::operator=(s);
-  TAPtr ths = GetTAPtr();
-  if(ths)
-    type_def = ths->GetTypeDef();	// just to be sure
 }
 
 void cssTA_Base::InitAssign(const cssEl& s) {
   cssTA::InitAssign(s);
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     type_def = ths->GetTypeDef();	// just to be sure
 }
 
 void cssTA_Base::UpdateAfterEdit() {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths) ths->UpdateAfterEdit();
 }
 
-void cssTA_Base::PtrAssignPtr(cssCPtr* s) {
-  String tpnm = GetTypeName();
-  String s_tpnm = s->GetTypeName();
-  if(ptr_cnt == s->ptr_cnt) {
-    // we are a member pointer to obj (not just a script variable)
-    if((ptr_cnt == 1) && (class_parent) && (ptr) && (s->ptr) &&
-       (s->GetType() == T_TA))
-    {
-      TAPtr obj = (TAPtr)ptr;
-      obj->UnSafeCopy((TAPtr)s->ptr);
-      class_parent->UpdateAfterEdit();
-      return;
-    }
-    ptr = s->ptr;
-    if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
-      cssMisc::Warning(prog, "Warning: assigning different ptr types");
+void cssTA_Base::PtrAssignNull() {
+  if(ptr_cnt == 1) {
+    ptr = NULL;		// I now point to that guy
   }
-  else if(ptr_cnt == s->ptr_cnt + 1) {
-    if((ptr)) {
-      if(!ROCheck()) return;
-      // note that this means that the css ptr points to a ptr, which is whats
-      // gettting set here, not the css ptr
-      taBase::SetPointer((TAPtr*)ptr, (TAPtr)s->ptr);
+  else if(ptr_cnt == 2) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(!ptr) {
+      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
+    }
+    else {
+      taBase::SetPointer((taBase**)ptr, NULL);
       if(class_parent)	class_parent->UpdateAfterEdit();
-      if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
-	cssMisc::Warning(prog, "Warning: assigning different ptr types");
     }
   }
-  else {
-    cssMisc::Error(prog, "Pointer assignment between incompatible pointers");
+}
+
+void cssTA_Base::PtrAssignPtr(const cssEl& s) {
+  if(s.GetType() == T_MbrCFun) {
+    if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
+      cssMbrCFun& mbf = (cssMbrCFun&)s;
+      MethodDef* fun = TA_taRegFun.methods.FindName(mbf.name);
+      if(fun)
+	*((ta_void_fun*)ptr) = fun->addr;
+      else {
+	cssMisc::Error(prog, "Assignment to unregistered member function:", mbf.name);
+      }
+    }
+    return;
+  }
+  if(s.GetType() != T_TA) {
+    int sval = (Int)s;
+    if(sval == 0) {
+      PtrAssignNull();		// set to null
+    }
+    else {
+      cssMisc::Error(prog, "Attempt to assign TA C pointer to inappropriate value");
+    }
+    return;
+  }
+  cssTA& sp = (cssTA&)s;
+  if(!sp.type_def) {
+    cssMisc::Error(prog, "Attempt to assign TA C pointer with null type info");
+    return;
+  }
+  if(type_def && !sp.type_def->InheritsFrom(type_def)) {
+    cssMisc::Error(prog, "Ptr Assign between incompatible types -- our type:",
+		   type_def->name, "source type:", sp.type_def->name);
+    return;
+  }
+  if(ptr_cnt == sp.ptr_cnt) {
+    ptr = sp.ptr;
+    type_def = sp.type_def;
+    SetClassParent(sp.class_parent);
+  }
+  else if((ptr_cnt == 1) && (sp.ptr_cnt == 0)) {
+    ptr = sp.ptr;		// I now point to that guy
+    type_def = sp.type_def;
+    SetClassParent(sp.class_parent);
+  }
+  else if((ptr_cnt == 2) && (sp.ptr_cnt == 1)) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(!ptr) {
+      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
+    }
+    else {
+      taBase::SetPointer((taBase**)ptr, (taBase*)sp.ptr);
+      type_def = sp.type_def;
+      if(class_parent)	class_parent->UpdateAfterEdit();
+    }
   }
 }
 
 cssEl* cssTA_Base::operator[](int i) const {
-  TAPtr ths = GetTAPtr();
+  taBase* ths = GetTAPtr();
   if(ths)
     return GetElement_impl(ths, i);
   cssMisc::Error(prog, "operator[]: NULL pointer");
@@ -515,8 +578,8 @@ cssEl* cssTA_Base::operator[](int i) const {
 }
 
 cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
-  TAPtr ths = GetTAPtr();
-  if(ths == NULL) {
+  taBase* ths = GetTAPtr();
+  if(!ths) {
     cssMisc::Error(prog, "GetMember: NULL pointer");
     return &cssMisc::Void;
   }
@@ -533,7 +596,7 @@ cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
 }
 
 cssEl* cssTA_Base::NewOpr() {
-  TAPtr nw = taBase::MakeToken(type_def);
+  taBase* nw = taBase::MakeToken(type_def);
   if(!nw) {
     cssMisc::Error(prog, "New token of type:", type_def->name, "could not be made");
     return &cssMisc::Void;
@@ -543,8 +606,8 @@ cssEl* cssTA_Base::NewOpr() {
 }
 
 void cssTA_Base::DelOpr() {
-  TAPtr ths = GetTAPtr();
-  if(ths == NULL) {
+  taBase* ths = GetTAPtr();
+  if(!ths) {
     cssMisc::Error(prog, "delete: NULL pointer");
     return;
   }
@@ -553,8 +616,8 @@ void cssTA_Base::DelOpr() {
 }
 
 void cssTA_Base::InstallThis(cssProgSpace* ps) {
-  TAPtr ths = GetTAPtr();
-  if(ths == NULL)
+  taBase* ths = GetTAPtr();
+  if(!ths)
     return;
 
   ps->hard_vars.PushUniqNameNew(this);
@@ -665,9 +728,9 @@ void cssSmartRef::operator=(const String& s) {
   type_def->SetValStr(s, ptr);	// treats string as a path to object..
 }
 
-void cssSmartRef::PtrAssignPtr(cssCPtr* s) {
+void cssSmartRef::PtrAssignPtr(const cssEl& s) {
   taSmartRef* sr = (taSmartRef*)ptr;
-  sr->set((TAPtr)*s);	// set as a taptr
+  sr->set((taBase*)s);	// set as a taptr
 }
 
 void cssSmartRef::UpdateAfterEdit() {
@@ -728,7 +791,7 @@ cssEl* cssSmartRef::GetScoped(const char* memb) const {
 String cssIOS::PrintFStr() const {
   String rval;
   void* pt = GetVoidPtr();
-  if(pt == NULL)
+  if(!pt)
     rval = "NULL";
   else 
     rval = String("<stream>") + String((long)ptr);
@@ -738,7 +801,7 @@ String cssIOS::PrintFStr() const {
 String cssIOS::GetStr() const {
   String rval;
   if(type_def->InheritsFrom(&TA_istream) || type_def->InheritsFrom(&TA_fstream)) {
-    if (ptr == NULL)
+    if(!ptr)
       return rval;
     *((istream*)*this) >> rval;
     return rval;
@@ -748,7 +811,7 @@ String cssIOS::GetStr() const {
 
 cssIOS::operator Real() const {
   if(type_def->InheritsFrom(&TA_istream) || type_def->InheritsFrom(&TA_fstream)) {
-    if(ptr == NULL)
+    if(!ptr)
       return 0;
     double rval;
     *((istream*)*this) >> rval;
@@ -758,7 +821,7 @@ cssIOS::operator Real() const {
 }
 cssIOS::operator Int() const {
   if(type_def->InheritsFrom(&TA_istream) || type_def->InheritsFrom(&TA_fstream)) {
-    if(ptr == NULL)
+    if(!ptr)
       return 0;
     int rval;
     *((istream*)*this) >> rval;
@@ -902,7 +965,7 @@ cssEl* cssIOS::operator>>(cssEl& s) {
       }
       else if(s.GetType() == T_Array) {
 	cssArray* ary = (cssArray*)&s;
-	if((ary->el_type == NULL) || (ary->items == NULL)) {
+	if(!ary->el_type || !ary->items) {
 	  cssMisc::Error(prog, "Error: Array has no item type");
 	  return this;
 	}
@@ -960,14 +1023,16 @@ cssEl* cssIOS::operator>>(cssEl& s) {
   return this;
 }
 
-void cssIOS::PtrAssignPtr(cssCPtr* s) {
+void cssIOS::PtrAssignPtr(const cssEl& s) {
   String tpnm = GetTypeName();
-  String s_tpnm = s->GetTypeName();
-  if(ptr_cnt == s->ptr_cnt) {
-    if((ptr_cnt == 1) && !class_parent && (s->GetType() == T_TA) &&
-       ((cssTA*)s)->type_def->InheritsFrom(TA_ios))
-    {
-      cssTA* st = (cssTA*)s;
+  String s_tpnm = s.GetTypeName();
+  if(s.GetType() != T_TA) {
+    cssTA::PtrAssignPtr(s);
+    return;
+  }
+  cssTA* st = (cssTA*)&s;
+  if(ptr_cnt == st->ptr_cnt) {
+    if((ptr_cnt == 1) && !class_parent && st->type_def->InheritsFrom(TA_ios)) {
       if(!st->type_def->InheritsFrom(type_def)) {
 	// source must be my type or greater
 	cssMisc::Error(prog, "Attempt to assign incompatible ios pointers:",
@@ -976,7 +1041,7 @@ void cssIOS::PtrAssignPtr(cssCPtr* s) {
       }
       // assignment amongst iostream types..
       if(type_def->InheritsFrom(TA_fstream) || type_def->InheritsFrom(TA_stringstream)) {
-	ptr = s->ptr;
+	ptr = st->ptr;
 	return;
       }
       if(type_def->InheritsFrom(TA_iostream)) {
@@ -991,7 +1056,7 @@ void cssIOS::PtrAssignPtr(cssCPtr* s) {
 	ptr = (void*)(ostream*)*st;
 	return;
       }
-      ptr = s->ptr;
+      ptr = st->ptr;
       if((prog) && (prog->top->debug) && (tpnm != s_tpnm))
 	cssMisc::Warning(prog, "Warning: assigning different ptr types");
     }
@@ -1111,14 +1176,14 @@ void cssTypeDef::operator=(const cssEl& s) {
     if(s.GetType() == T_TA) {
       cssTA* tmp = (cssTA*)&s;
       if(tmp->type_def->InheritsFrom(&TA_TypeDef))
-	PtrAssignPtr(tmp);
+	PtrAssignPtr(s);
       else {
 	*((TypeDef**)ptr) = tmp->type_def;	// get its typedef
 	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr((cssCPtr*)&s);
+      PtrAssignPtr(s);
     else {
       *((TypeDef**)ptr) = (TypeDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();
@@ -1133,7 +1198,7 @@ void cssTypeDef::operator=(const cssEl& s) {
 ////////////////////////////////////////////////////////////////////////
 
 cssMemberDef::operator MemberDef*() const {
-  if(ptr == NULL)
+  if(!ptr)
     return NULL;
   else if(ptr_cnt == 1)
     return (MemberDef*)ptr;
@@ -1144,7 +1209,7 @@ cssMemberDef::operator MemberDef*() const {
 
 String cssMemberDef::GetStr() const {
   String rval;
-  if(ptr == NULL)
+  if(!ptr)
     return rval;
   else if(ptr_cnt == 1)
     rval = TA_MemberDef_ptr.GetValStr((void*)&ptr);
@@ -1166,14 +1231,14 @@ void cssMemberDef::operator=(const cssEl& s) {
     if(s.GetType() == T_TA) {
       cssTA* tmp = (cssTA*)&s;
       if(tmp->type_def->InheritsFrom(&TA_MemberDef))
-	PtrAssignPtr(tmp);
+	PtrAssignPtr(s);
       else {
 	*((MemberDef**)ptr) = (MemberDef*)s;
 	if(class_parent)	class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr((cssCPtr*)&s);
+      PtrAssignPtr(s);
     else {
       *((MemberDef**)ptr) = (MemberDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();
@@ -1188,7 +1253,7 @@ void cssMemberDef::operator=(const cssEl& s) {
 ////////////////////////////////////////////////////////////////////////
 
 cssMethodDef::operator MethodDef*() const {
-  if(ptr == NULL)
+  if(!ptr)
     return NULL;
   else if(ptr_cnt == 1)
     return (MethodDef*)ptr;
@@ -1199,7 +1264,7 @@ cssMethodDef::operator MethodDef*() const {
 
 String cssMethodDef::GetStr() const {
   String rval;
-  if(ptr == NULL)
+  if(!ptr)
     return rval;
   else if(ptr_cnt == 1)
     rval = TA_MethodDef_ptr.GetValStr((void*)&ptr);
@@ -1221,14 +1286,14 @@ void cssMethodDef::operator=(const cssEl& s) {
     if(s.GetType() == T_TA) {
       cssTA *tmp = (cssTA*)&s;
       if(tmp->type_def->InheritsFrom(&TA_MethodDef))
-	PtrAssignPtr(tmp);
+	PtrAssignPtr(s);
       else {
 	*((MethodDef**)ptr) = (MethodDef*)s;
 	if(class_parent) class_parent->UpdateAfterEdit();
       }
     }
     else if(s.GetType() == T_C_Ptr)
-      PtrAssignPtr((cssCPtr*)&s);
+      PtrAssignPtr(s);
     else {
       *((MethodDef**)ptr) = (MethodDef*)s;		// get the name
       if(class_parent)	class_parent->UpdateAfterEdit();

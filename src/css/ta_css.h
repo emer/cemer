@@ -57,9 +57,7 @@ public:
   // constructors
   void		Constr();
   cssTA();
-  cssTA(void* it, int pc, TypeDef* td);
-  cssTA(void* it, int pc, TypeDef* td, const char* nm);
-  cssTA(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro);
+  cssTA(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL, bool ro = false);
   cssTA(const cssTA& cp);
   cssTA(const cssTA& cp, const char* nm);
 
@@ -86,11 +84,11 @@ public:
 
   // operators
   void operator=(const cssEl& s); // assign and cast don't set the type
-  void PtrAssignPtr(cssCPtr *s); // call SetPointer when setting TA pointers..
+  void PtrAssignPtr(const cssEl& s); // call SetPointer when setting TA pointers..
   void InitAssign(const cssEl& s);	// init assign sets the type
   void CastFm(const cssEl& s);	// cast does not set type, but allows any cast..
 
-  virtual cssEl*	GetElement_impl(TAPtr ths, int i) const;
+  virtual cssEl*	GetElement_impl(taBase* ths, int i) const;
 
   int	 GetMemberNo(const char* memb) const;
   cssEl* GetMemberFmName(const char* memb) const;
@@ -121,10 +119,8 @@ public:
   // constructors
   void 		Constr();
   cssTA_Base() 						: cssTA()	    { Constr();}
-  cssTA_Base(void* it, int pc, TypeDef* td) 		: cssTA(it,pc,td)   { Constr();}
-  cssTA_Base(void* it, int pc, TypeDef* td, const char* nm)  	: cssTA(it,pc,td,nm){ Constr();}
-  cssTA_Base(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-  	: cssTA(it,pc,td,nm,cp,ro)	{ Constr(); }
+  cssTA_Base(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	     bool ro=false) : cssTA(it,pc,td,nm,cls_par,ro)	{ Constr(); }
   cssTA_Base(const cssTA_Base& cp)			: cssTA(cp) 	    { Constr();}
   cssTA_Base(const cssTA_Base& cp, const char* nm)	: cssTA(cp,nm) 	    { Constr();}
 
@@ -133,10 +129,10 @@ public:
   { return new cssTA_Base((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
 
   // converters
-  TAPtr  GetTAPtr() const 	{ return (TAPtr)GetVoidPtr(); }
+  taBase*  GetTAPtr() const 	{ return (taBase*)GetVoidPtr(); }
 
-  operator TAPtr() const	{ return GetTAPtr(); }
-  operator TAPtr*() const	{ return (TAPtr*)GetVoidPtr(2); }
+  operator taBase*() const	{ return GetTAPtr(); }
+  operator taBase**() const	{ return (taBase**)GetVoidPtr(2); }
   Variant GetVar() const 	{ return Variant(GetTAPtr());}
 
   // operators
@@ -144,7 +140,8 @@ public:
   void operator=(const cssEl& s);
   void InitAssign(const cssEl& s);	// init assign sets the type
 
-  void PtrAssignPtr(cssCPtr *s); // call SetPointer when setting TA pointers..
+  void PtrAssignPtr(const cssEl& s); 	// call SetPointer when setting TA pointers..
+  void PtrAssignNull();	// assign a null
 
   void UpdateAfterEdit();
 
@@ -163,7 +160,7 @@ public:
 #define cssTA_Base_inst_ptr_nm(l,n,c,t,x,s) l .Push(x = new cssTA_Base(n, c, t, s))
 
 class CSS_API cssSmartRef : public cssTA {
-  // a pointer to a taSmartRef (ptr_cnt = 1)
+  // a taSmartRef object (ptr_cnt = 0)
 public:
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;	// recursive
@@ -176,10 +173,8 @@ public:
 
   // constructors
   cssSmartRef() : cssTA() { };
-  cssSmartRef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
-  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
-  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	      bool ro = false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssSmartRef(const cssSmartRef& cp) : cssTA(cp) { };
   cssSmartRef(const cssSmartRef& cp, const char* nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssSmartRef);
@@ -197,7 +192,7 @@ public:
   void operator=(const String& s);
 
   // operators
-  void PtrAssignPtr(cssCPtr *s);
+  void PtrAssignPtr(const cssEl& s);
   void UpdateAfterEdit();
 
   cssEl* operator[](int) const;
@@ -219,17 +214,15 @@ public:
 
   // constructors
   cssIOS() : cssTA() { };
-  cssIOS(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
-  cssIOS(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
-  cssIOS(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssIOS(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	 bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssIOS(const cssIOS& cp) : cssTA(cp) { };
   cssIOS(const cssIOS& cp, const char* nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssIOS);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssIOS((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
 
-  void PtrAssignPtr(cssCPtr *s); // call SetPointer when setting TA pointers..
+  void PtrAssignPtr(const cssEl& s);
 
   operator Real() const;
   operator Int() const;
@@ -276,18 +269,6 @@ public:
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
-
-  cssEl* operator-(cssEl&)		{ NopErr("-"); return this; }
-  cssEl* operator*()			{ return cssIOS::operator*(); }
-  cssEl* operator*(cssEl&)		{ NopErr("*"); return this; }
-  cssEl* operator/(cssEl&)		{ NopErr("/"); return this; }
-  cssEl* operator%(cssEl&)		{ NopErr("%"); return this; }
-  cssEl* operator-()    		{ NopErr("-"); return this; }
-
-  void operator+=(cssEl&) 	{ NopErr("+="); }
-  void operator-=(cssEl&) 	{ NopErr("-="); }
-  void operator*=(cssEl&) 	{ NopErr("*="); }
-  void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
 class CSS_API cssSStream : public cssIOS {
@@ -315,18 +296,6 @@ public:
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
-
-  cssEl* operator-(cssEl&)		{ NopErr("-"); return this; }
-  cssEl* operator*()			{ return cssIOS::operator*(); }
-  cssEl* operator*(cssEl&)		{ NopErr("*"); return this; }
-  cssEl* operator/(cssEl&)		{ NopErr("/"); return this; }
-  cssEl* operator%(cssEl&)		{ NopErr("%"); return this; }
-  cssEl* operator-()    		{ NopErr("-"); return this; }
-
-  void operator+=(cssEl&) 	{ NopErr("+="); }
-  void operator-=(cssEl&) 	{ NopErr("-="); }
-  void operator*=(cssEl&) 	{ NopErr("*="); }
-  void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
 class CSS_API cssLeafItr : public cssTA {
@@ -355,18 +324,6 @@ public:
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
-
-  cssEl* operator-(cssEl&)		{ NopErr("-"); return this; }
-  cssEl* operator*()			{ return cssTA::operator*(); }
-  cssEl* operator*(cssEl&)		{ NopErr("*"); return this; }
-  cssEl* operator/(cssEl&)		{ NopErr("/"); return this; }
-  cssEl* operator%(cssEl&)		{ NopErr("%"); return this; }
-  cssEl* operator-()    		{ NopErr("-"); return this; }
-
-  void operator+=(cssEl&) 	{ NopErr("+="); }
-  void operator-=(cssEl&) 	{ NopErr("-="); }
-  void operator*=(cssEl&) 	{ NopErr("*="); }
-  void operator/=(cssEl&) 	{ NopErr("/="); }
 };
 
 class CSS_API cssTypeDef : public cssTA {
@@ -381,10 +338,8 @@ public:
 
   // constructors
   cssTypeDef() : cssTA() { };
-  cssTypeDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
-  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
-  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	     bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssTypeDef(const cssTypeDef& cp) : cssTA(cp) { };
   cssTypeDef(const cssTypeDef& cp, const char* nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssTypeDef);
@@ -402,10 +357,8 @@ class CSS_API cssMemberDef : public cssTA {
 public:
   // constructors
   cssMemberDef() : cssTA() { };
-  cssMemberDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
-  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
-  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	       bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssMemberDef(const cssMemberDef& cp) : cssTA(cp) { };
   cssMemberDef(const cssMemberDef& cp, const char* nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMemberDef);
@@ -423,10 +376,8 @@ class CSS_API cssMethodDef : public cssTA {
 public:
   // constructors
   cssMethodDef() : cssTA() { };
-  cssMethodDef(void* it, int pc, TypeDef* td) : cssTA (it, pc, td) { };
-  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm) : cssTA(it, pc, td, nm) { };
-  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm, cssEl* cp, bool ro)
-    : cssTA(it, pc, td, nm, cp, ro) { };
+  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+	       bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssMethodDef(const cssMethodDef& cp) : cssTA(cp) { };
   cssMethodDef(const cssMethodDef& cp, const char* nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMethodDef);

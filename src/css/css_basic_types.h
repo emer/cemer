@@ -105,13 +105,10 @@ public:
 
   bool operator< (cssEl& s) 	{ return (val < (Int)s); }
   bool operator> (cssEl& s) 	{ return (val > (Int)s); }
-  bool operator! () 	    	{ return ( ! val); }
   bool operator<=(cssEl& s) 	{ return (val <= (Int)s); }
   bool operator>=(cssEl& s) 	{ return (val >= (Int)s); }
   bool operator==(cssEl& s) 	{ return (val == (Int)s); }
   bool operator!=(cssEl& s) 	{ return (val != (Int)s); }
-  bool operator&&(cssEl& s) 	{ return (val && (Int)s); }
-  bool operator||(cssEl& s) 	{ return (val || (Int)s); }
 };
 
 class CSS_API cssChar : public cssInt {
@@ -244,13 +241,10 @@ public:
 
   bool operator< (cssEl& s) 	{ return (val < (int64_t)s); }
   bool operator> (cssEl& s) 	{ return (val > (int64_t)s); }
-  bool operator! () 	    	{ return ( ! val); }
   bool operator<=(cssEl& s) 	{ return (val <= (int64_t)s); }
   bool operator>=(cssEl& s) 	{ return (val >= (int64_t)s); }
   bool operator==(cssEl& s) 	{ return (val == (int64_t)s); }
   bool operator!=(cssEl& s) 	{ return (val != (int64_t)s); }
-  bool operator&&(cssEl& s) 	{ return (val && (int64_t)s); }
-  bool operator||(cssEl& s) 	{ return (val || (int64_t)s); }
 };
 
 #define cssInt64_inst(l,n,x)          l .Push(new cssInt64((int64_t) n,(const char *) #x))
@@ -328,13 +322,10 @@ public:
 
   bool operator< (cssEl& s) { return (val < (Real)s); }
   bool operator> (cssEl& s) { return (val > (Real)s); }
-  bool operator! () 	    { return ( ! val); }
   bool operator<=(cssEl& s) { return (val <= (Real)s); }
   bool operator>=(cssEl& s) { return (val >= (Real)s); }
   bool operator==(cssEl& s) { return (val == (Real)s); }
   bool operator!=(cssEl& s) { return (val != (Real)s); }
-  bool operator&&(cssEl& s) { return (val && (Real)s); }
-  bool operator||(cssEl& s) { return (val || (Real)s); }
 };
 
 #define cssReal_inst(l,n,x)		l .Push(new cssReal(n, #x))
@@ -398,15 +389,17 @@ public:
   cssCloneFuns(cssString, "");
 
   // converters
-  String GetStr() const	  { return val; }
-  Variant GetVar() const { return Variant(val); }
+  String GetStr() const	  	{ return val; }
+  Variant GetVar() const 	{ return Variant(val); }
   operator Real() const	 	{ Real r = atof((const char*)val); return r; }
   operator Int() const		{ Int r = (int)strtol((const char*)val, NULL, 0); return r; }
-  operator String() const	{ return val; }
   operator bool() const;
-  operator void*() const	{ return (void*)&val; }
-  // convert to stream as file-name of a file
-  operator ostream*() const;
+
+  operator taBase*() const;	// lookup as a path..
+  operator TypeDef*() const;	// lookup as name
+  operator MemberDef*() const;
+  operator MethodDef*() const;  
+  operator ostream*() const; // convert to stream as file-name of a file
   operator istream*() const;
 
   void operator=(Real cp) 		{ val = String(cp); }
@@ -432,13 +425,10 @@ public:
 
   bool operator< (cssEl& s) { return (val < s.GetStr()); }
   bool operator> (cssEl& s) { return (val > s.GetStr()); }
-  bool operator! () 	    { return val.length(); }
   bool operator<=(cssEl& s) { return (val <= s.GetStr()); }
   bool operator>=(cssEl& s) { return (val >= s.GetStr()); }
   bool operator==(cssEl& s) { return (val == s.GetStr()); }
   bool operator!=(cssEl& s) { return (val != s.GetStr()); }
-  bool operator&&(cssEl& s) { return (val.length() && (Int)s); }
-  bool operator||(cssEl& s) { return (val.length() || (Int)s); }
 
   // these use the TA info to perform actions
   cssEl* operator[](int idx) const;
@@ -495,11 +485,20 @@ public:
   // operators
   void operator=(const cssEl& s);
 
-  bool operator! () 	    	{ return ( ! val); }
-  bool operator==(cssEl& s) 	{ return (val?1:0 == ((Int)s)?1:0); }
-  bool operator!=(cssEl& s) 	{ return (val?1:0 != (Int)s)?1:0; }
-  bool operator&&(cssEl& s) 	{ return (val && (Int)s); }
-  bool operator||(cssEl& s) 	{ return (val || (Int)s); }
+  cssEl* operator&(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val &= (bool)t; return r; }
+  cssEl* operator^(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val ^= (bool)t; return r; }
+  cssEl* operator|(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val |= (bool)t; return r; }
+
+  // operators
+  void operator&=(cssEl& t) { val &= (bool)t; }
+  void operator^=(cssEl& t) { val ^= (bool)t; }
+  void operator|=(cssEl& t) { val |= (bool)t; }
+
+  bool operator==(cssEl& s) 	{ return (val == (bool)s); }
+  bool operator!=(cssEl& s) 	{ return (val != (bool)s); }
 };
 
 
@@ -541,7 +540,7 @@ public:
   operator Int() const	 { return val.toInt();}
   operator int64_t() const { return val.toInt64(); }
   operator uint64_t() const { return val.toUInt64(); }
-  operator TAPtr() const;
+  operator taBase*() const;
   operator bool() const	{ return val.toBool(); }
   
   void operator=(Real cp) 		{ val = cp; }
@@ -575,13 +574,10 @@ public:
 
   bool operator< (cssEl& s);
   bool operator> (cssEl& s);
-  bool operator! ();
   bool operator<=(cssEl& s);
   bool operator>=(cssEl& s);
   bool operator==(cssEl& s);
   bool operator!=(cssEl& s);
-  bool operator&&(cssEl& s);
-  bool operator||(cssEl& s);
   
   // these delegate to the string, base or variant
   cssEl* operator[](int idx) const; // only valid for Matrixes, gets flat el
@@ -704,13 +700,10 @@ public:
 
   bool operator< (cssEl& s) { return (GetIntVal() < (Int)s); }
   bool operator> (cssEl& s) { return (GetIntVal() > (Int)s); }
-  bool operator! () 	    { return (GetIntVal() == 0); }
   bool operator<=(cssEl& s) { return (GetIntVal() <= (Int)s); }
   bool operator>=(cssEl& s) { return (GetIntVal() >= (Int)s); }
   bool operator==(cssEl& s) { return (GetIntVal() == (Int)s); }
   bool operator!=(cssEl& s) { return (GetIntVal() != (Int)s); }
-  bool operator&&(cssEl& s) { return (GetIntVal() && (Int)s); }
-  bool operator||(cssEl& s) { return (GetIntVal() || (Int)s); }
 };
 
 class CSS_API cssArray : public cssPtr {
@@ -825,13 +818,10 @@ public:
   void operator-=(cssEl&)       { NopErr("-="); }
   bool operator< (cssEl&)       { NopErr("<"); return false; }
   bool operator> (cssEl&)       { NopErr(">"); return false; }
-  bool operator! ()             { NopErr("!"); return false; }
   bool operator<=(cssEl&)       { NopErr("<="); return false; }
   bool operator>=(cssEl&)       { NopErr(">="); return false; }
   bool operator==(cssEl&)       { NopErr("=="); return false; }
   bool operator!=(cssEl&)       { NopErr("!="); return false; }
-  bool operator&&(cssEl&)       { NopErr("&&"); return false; }
-  bool operator||(cssEl&)       { NopErr("||"); return false; }
 
   void operator=(const cssElPtr&)       { NopErr("="); }
   void operator=(cssEl*)                { NopErr("="); }
@@ -934,8 +924,8 @@ public:
   operator stringstream**() const	{ return (stringstream**)*(ptr.El()); }
 
   // support for external types
-  operator TAPtr() const	{ return (TAPtr)*(ptr.El()); }
-  operator TAPtr*() const	{ return (TAPtr*)*(ptr.El()); }
+  operator taBase*() const	{ return (taBase*)*(ptr.El()); }
+  operator taBase**() const	{ return (taBase**)*(ptr.El()); }
   operator TypeDef*() const	{ return (TypeDef*)*(ptr.El()); }
   operator MemberDef*() const	{ return (MemberDef*)*(ptr.El()); }
   operator MethodDef*() const	{ return (MethodDef*)*(ptr.El()); }
@@ -984,13 +974,10 @@ public:
 
   bool operator< (cssEl& s) 	{ return ptr.El()->operator<(s); }
   bool operator> (cssEl& s) 	{ return ptr.El()->operator>(s); }
-  bool operator! () 	  	{ return ptr.El()->operator!(); }
   bool operator<=(cssEl& s) 	{ return ptr.El()->operator<=(s); }
   bool operator>=(cssEl& s) 	{ return ptr.El()->operator>=(s); }
   bool operator==(cssEl& s) 	{ return ptr.El()->operator==(s); }
   bool operator!=(cssEl& s) 	{ return ptr.El()->operator!=(s); }
-  bool operator&&(cssEl& s) 	{ return ptr.El()->operator&&(s); }
-  bool operator||(cssEl& s) 	{ return ptr.El()->operator||(s); }
 
   void operator+=(cssEl& s) 	{ ptr.El()->operator+=(s); }
   void operator-=(cssEl& s) 	{ ptr.El()->operator-=(s); }

@@ -29,6 +29,7 @@
 #include "ta_base.h"		// for debugging alloc_list
 #include "ta_matrix.h"
 #include "ta_project.h"
+#include "program.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"
@@ -133,6 +134,8 @@ cssSpace	cssMisc::Internal("Internal");	// for use in internal (not searched)
 cssSpace	cssMisc::Parse("Parse");		// just for parsing (searched)
 cssSpace	cssMisc::PreProcessor("PreProcessor");// pre-processor functions (cpp)
 cssSpace	cssMisc::TypesSpace("Types");
+cssSpace	cssMisc::TypesSpace_ptrs("Types_ptrs");
+cssSpace	cssMisc::TypesSpace_refs("Types_refs");
 cssSpace 	cssMisc::Externs("External Variables");
 cssSpace	cssMisc::HardFuns("Hard-Coded Functions");
 cssSpace	cssMisc::HardVars("Hard-Coded Variables");
@@ -239,13 +242,13 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
 		  const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
 {
   cssProgSpace* top;
-  if(prog != NULL)
+  if(prog)
     top = prog->top;
   else
     top = cssMisc::cur_top;
 
   ostream* fh = &cerr;
-  if(top->cmd_shell != NULL)
+  if(top->cmd_shell)
     fh = top->cmd_shell->ferr;
 
   if(taMisc::dmem_proc == 0) {
@@ -313,7 +316,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
 		    const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
 {
   cssProgSpace* top;
-  if(prog != NULL)
+  if(prog)
     top = prog->top;
   else
     top = cssMisc::cur_top;
@@ -321,7 +324,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   if(taMisc::dmem_proc > 0) return;
 
   ostream* fh = &cerr;
-  if(top->cmd_shell != NULL)
+  if(top->cmd_shell)
     fh = top->cmd_shell->ferr;
 
   *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
@@ -392,14 +395,14 @@ void cssMisc::intrcatch(int) {
 //////////////////////////
 
 cssEl* cssElPtr::El() const {
-  if(ptr == NULL) return &cssMisc::Void;
+  if(!ptr) return &cssMisc::Void;
   switch(ptr_type) {
   case DIRECT:
     return (cssEl*)ptr;
   case CLASS_MEMBER: {
     if(dx < 0)	return &cssMisc::Void;
     cssClassInst* cur_th = cssMisc::cur_top->Prog()->CurThis();
-    if(cur_th == NULL)
+    if(!cur_th)
       return ((cssClassType*)ptr)->GetMemberFmNo((int)dx);
     else
       return cur_th->GetMemberFmNo((int)dx);
@@ -411,7 +414,7 @@ cssEl* cssElPtr::El() const {
   case VIRT_METHOD: {
     if(dx < 0)	return &cssMisc::Void; // try for virtual first
     cssClassInst* cur_th = cssMisc::cur_top->Prog()->CurThis();
-    if(cur_th == NULL)
+    if(!cur_th)
       return ((cssClassType*)ptr)->GetMethodFmNo((int)dx);
     else
       return cur_th->GetMethodFmNo((int)dx);
@@ -518,6 +521,7 @@ void cssEl::Ref(cssEl* it) {
 }
 
 void cssEl::Done(cssEl* it) {
+  if(!it) return;
   if (it->refn < 0) {
     cerr << "**WARNING** ";
     print_cssEl(it, true);
@@ -533,6 +537,7 @@ void cssEl::Done(cssEl* it) {
 }
 
 void cssEl::unRef(cssEl* it) {
+  if(!it) return;
   --(it->refn);
   if (it->refn < 0) {
     cerr << "**WARNING** ";
@@ -546,6 +551,7 @@ void cssEl::unRef(cssEl* it) {
 }
 
 void cssEl::unRefDone(cssEl* it) {
+  if(!it) return;
   --(it->refn);
   if (it->refn < 0) {
     cerr << "**WARNING** ";
@@ -565,7 +571,7 @@ void cssEl::unRefDone(cssEl* it) {
 #endif //DEBUG
 
 cssEl::~cssEl() {
-  if(addr != NULL)
+  if(addr)
     delete addr;
   addr = NULL;
 }
@@ -602,13 +608,13 @@ cssEl* cssEl::GetTypeObject() const {
   tp_nm = tp_nm.after('(');
   tp_nm = tp_nm.before(')');
   cssElPtr s;
-  if((prog != NULL) && (prog->top != NULL)) {
+  if((prog) && (prog->top)) {
     if((s = prog->top->types.FindName((char*)tp_nm)) != 0)
       return s.El();
     if((s = prog->top->prog_types.FindName((char*)tp_nm)) != 0)
       return s.El();
   }
-  if(cssMisc::cur_top != NULL) {
+  if(cssMisc::cur_top) {
     if((s = cssMisc::cur_top->types.FindName((char*)tp_nm)) != 0)
       return s.El();
     if((s = cssMisc::cur_top->prog_types.FindName((char*)tp_nm)) != 0)
@@ -620,7 +626,7 @@ cssEl* cssEl::GetTypeObject() const {
 }
 
 cssElPtr cssEl::GetAddr() const {
-  if(addr != NULL)
+  if(addr)
     return *addr;
   cssElPtr rval;
   rval.SetDirect((cssEl*)this);
@@ -628,7 +634,7 @@ cssElPtr cssEl::GetAddr() const {
 }
 
 void cssEl::SetAddr(const cssElPtr& cp) {
-  if(addr == NULL)
+  if(!addr)
     addr = new cssElPtr();
   *addr = cp;
 }
@@ -646,6 +652,31 @@ cssEl::RunStat cssEl::FunDone(cssProg*) {
 
 void cssEl::Copy(const cssEl& cp) {
   name = cp.name;  prog = cp.prog;
+}
+
+cssEl* cssEl::MakePtrType(int ptrs) {
+  if(GetType() == cssEl::T_C_Ptr) {
+    if(ptrs == 1) {
+      cssCPtr* ptr = (cssCPtr*)Clone();
+      ptr->ptr_cnt += 1;
+      ptr->name += "_ptr";
+      return ptr;
+    }
+    else {			// 2 is max
+      cssCPtr* ptr = (cssCPtr*)Clone();
+      ptr->ptr_cnt += 2;
+      ptr->name += "_ptr_ptr";
+      return ptr;
+    }
+  }
+  else {			// 1 is max for reg css guys
+    cssPtr* ptr = new cssPtr(this, name + "_ptr");
+    return ptr;
+  }
+}
+
+cssEl* cssEl::MakeRefType() {
+  return new cssRef(this, name + "_ref");
 }
 
 cssEl::RunStat cssEl::MakeToken(cssProg* prg) {
@@ -754,17 +785,6 @@ void cssEl::operator=(const Variant& val) {
   }
 }
 
-cssEl::operator TAPtr() const {
-  if(GetType() == T_String) {
-    void* rval;
-    String nm = this->GetStr();
-    if((tabMisc::root != NULL) && (tabMisc::root->FindMembeR(nm, rval) != 0))
-      return (TAPtr)rval;
-    return (TAPtr)NULL;
-  }
-  CvtErr("(TAPtr)"); return (TAPtr)NULL;
-}
-
 cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
 			  cssEl* class_parent) {
   TypeDef* nptd = td->GetNonPtrType(); // always create one of these
@@ -777,44 +797,52 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
     if(md->HasOption("READ_ONLY"))
       ro = true;
   }
+  
+  int new_ptr = td->ptr;
+  if(new_ptr == 1) new_ptr++;	// bump up to a **
+  else if(new_ptr > 1) {
+    cssMisc::Error(NULL, "GetElFromTA -- cannot process ** (pointer-pointer) C members!");
+    return &cssMisc::Void;
+  }
+
   if(nptd->DerivesFrom(TA_bool))
-    return new cssCPtr_bool(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_bool(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFormal(TA_enum))
-    return new cssCPtr_enum(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_enum(itm, td->ptr, nm, class_parent, ro);
   else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
-    return new cssCPtr_int(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_int(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
-    return new cssCPtr_short(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_short(itm, td->ptr, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_long) || nptd->DerivesFrom(TA_unsigned_long))
-    return new cssCPtr_long(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_long(itm, td->ptr, nm, class_parent, ro);
   else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
     || nptd->DerivesFrom(TA_signed_char))
-    return new cssCPtr_char(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_char(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
-    return new cssCPtr_long_long(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_long_long(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_float))
-    return new cssCPtr_float(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_float(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_double))
-    return new cssCPtr_double(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_double(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taString))
-    return new cssCPtr_String(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_String(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_Variant))
-    return new cssCPtr_Variant(itm, td->ptr+1, nm, class_parent, ro);
+    return new cssCPtr_Variant(itm, td->ptr, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taSmartRef))
-    return new cssSmartRef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssSmartRef(itm, td->ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
 	  || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
-    return new cssIOS(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssIOS(itm, td->ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_TypeDef))
-    return new cssTypeDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssTypeDef(itm, td->ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_MemberDef))
-    return new cssMemberDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssMemberDef(itm, td->ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(&TA_MethodDef))
-    return new cssMethodDef(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssMethodDef(itm, td->ptr, nptd, nm, class_parent, ro);
   else if(nptd->DerivesFrom(TA_taBase))
-    return new cssTA_Base(itm, td->ptr+1, nptd, nm, class_parent, ro);
+    return new cssTA_Base(itm, td->ptr, nptd, nm, class_parent, ro);
 
-  return new cssTA(itm, td->ptr+1, nptd, nm, class_parent, ro);
+  return new cssTA(itm, td->ptr, nptd, nm, class_parent, ro);
 }
 
 cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
@@ -841,14 +869,14 @@ cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
 }
 
 int cssEl::GetMemberNo_impl(TypeDef* typ, const char* memb) const {
-  if(typ == NULL) return -1;
+  if(!typ) return -1;
   int mdx;
   typ->members.FindName(memb, mdx);	// just 1st order search
   return mdx;
 }
 
 cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
-  if(typ == NULL) {
+  if(!typ) {
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
   }
@@ -861,7 +889,7 @@ cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
 }
 
 cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) const {
-  if(typ == NULL) {
+  if(!typ) {
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
   }
@@ -878,7 +906,7 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) c
 }
 
 cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
-  if(base == NULL) {
+  if(!base) {
     cssMisc::Error(prog, "GetMember: NULL pointer in: ", name);
     return &cssMisc::Void;
   }
@@ -889,19 +917,19 @@ cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
 ////////////////
 
 Int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
-  if(typ == NULL) return -1;
+  if(!typ) return -1;
   int mdx;
   typ->methods.FindName(meth, mdx);
   return mdx;
 }
 
 cssEl* cssEl::GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const {
-  if(typ == NULL) {
+  if(!typ) {
     cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
     return &cssMisc::Void;
   }
   MethodDef* md = typ->methods.SafeEl(meth);
-  if(md == NULL) {
+  if(!md) {
     cssMisc::Error(prog, "Member function not found:", String(meth), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
@@ -909,13 +937,13 @@ cssEl* cssEl::GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const {
 }
 
 cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) const {
-  if(typ == NULL) {
+  if(!typ) {
     cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
     return &cssMisc::Void;
   }
   int mdx;
   MethodDef* md = typ->methods.FindName(meth, mdx);
-  if(md == NULL) {
+  if(!md) {
     cssMisc::Error(prog, "Member function not found:", String(meth), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
@@ -923,7 +951,7 @@ cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) c
 }
 
 cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
-  if(md->stubp != NULL) {
+  if(md->stubp) {
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);
     else
@@ -937,65 +965,33 @@ cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
 }
 
 cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
-  if(typ == NULL) {
+  if(!typ) {
     cssMisc::Error(prog, "GetScoped: Type information is NULL in:", name);
     return &cssMisc::Void;
   }
   EnumDef* ed = typ->FindEnum(memb);
-  if(ed != NULL) {
+  if(ed) {
     return new cssInt(ed->enum_no, memb); // this is not an Enum because it is just a value
     // and there is no object to point to that contains the enum value
   }
   TypeDef* td = typ->sub_types.FindName(memb);
-  if(td != NULL) {
+  if(td) {
     if(td->DerivesFormal(TA_enum))
       return new cssCPtr_enum(NULL, 1, td->name, td);
     return new cssTA(NULL, 1, td);
   }
 
   MethodDef* meth = typ->methods.FindName(memb);
-  if(meth != NULL) {
+  if(meth) {
     return GetMethodEl_impl(typ, base, meth);
   }
 
   MemberDef* md = typ->members.FindName(memb);
-  if(md != NULL) {
+  if(md) {
     return GetMemberEl_impl(typ, base, md);
   }
   cssMisc::Error(prog, "Scoped element not found:", memb, "in class of type:", typ->name);
   return &cssMisc::Void;
-}
-
-cssEl::operator TypeDef*() const {
-  String nm = this->GetStr();
-  TypeDef* td = taMisc::types.FindName(nm);
-  if(td == NULL) {
-    cssMisc::Error(prog, "Could not find type:", nm);
-    return NULL;
-  }
-  return td;
-}
-
-cssEl::operator MemberDef*() const {
-  String nm = this->GetStr();
-  MemberDef* md;
-  TA_MemberDef_ptr.SetValStr(nm, (void*)&md);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Could not find member def:", nm);
-    return NULL;
-  }
-  return md;
-}
-
-cssEl::operator MethodDef*() const {
-  String nm = this->GetStr();
-  MethodDef* md;
-  TA_MethodDef_ptr.SetValStr(nm, (void*)&md);
-  if(md == NULL) {
-    cssMisc::Error(prog, "Could not find method def:", nm);
-    return NULL;
-  }
-  return md;
 }
 
 //////////////////////////////////
@@ -1134,13 +1130,13 @@ cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm) {
 }
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, int pt, const char* hstr) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = pt;
-  if(hstr != NULL) help_str = hstr;
+  if(hstr) help_str = hstr;
 }
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]),
 			 const char* nm, cssEl* rtype, const char* hstr) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = CSS_FUN;
   SetRetvType(rtype);
-  if(hstr != NULL) help_str = hstr;
+  if(hstr) help_str = hstr;
 }
 cssElCFun::cssElCFun(const cssElCFun& cp) {
   Constr(); Copy(cp);
@@ -1163,7 +1159,7 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
   BindArgs(args, act_argc);
   cssEl* tmp = (*funp)(act_argc, args);
   prog = prg;                   // restore if recursive
-  if((tmp != NULL) && (tmp != &cssMisc::Void)) {
+  if((tmp) && (tmp != &cssMisc::Void)) {
     tmp->prog = prog;
     prog->Stack()->Push(tmp);
   }
@@ -1296,7 +1292,7 @@ void cssCodeBlock::Constr() {
 
 void cssCodeBlock::Copy(const cssCodeBlock& cp) {
   cssElFun::Copy(cp);
-  if(code != NULL)
+  if(code)
     cssProg::unRefDone(code);
   // note that this means that you could lose derived classes..
   code = cp.code;
@@ -1330,7 +1326,7 @@ cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp, const char* nm) {
   code->name = name;
 }
 cssCodeBlock::~cssCodeBlock() {
-  if(code != NULL)
+  if(code)
     cssProg::unRefDone(code);
 }
 
@@ -1382,7 +1378,7 @@ cssEl::RunStat cssCodeBlock::FunDone(cssProg* prg) {
   prg->top->EndRunPop();
   prg->top->Pull();		// pop up to next level on stack
 
-  if(rval != NULL)
+  if(rval)
     prg->top->Prog()->Stack()->Push(rval);
 
   if(loop_back > 0) {
@@ -1423,7 +1419,7 @@ void cssScriptFun::Constr() {
 
 void cssScriptFun::Copy(const cssScriptFun& cp) {
   cssElFun::Copy(cp);
-  if(fun != NULL)
+  if(fun)
     cssProg::unRefDone(fun);
   // note that this means that you could lose derived classes..
   fun = cp.fun;
@@ -1461,12 +1457,12 @@ cssScriptFun::cssScriptFun(const cssScriptFun& cp, const char* nm) {
 }
 cssScriptFun::~cssScriptFun() {
   delete [] argv;
-  if(fun != NULL)
+  if(fun)
     cssProg::unRefDone(fun);
 }
 
 void cssScriptFun::Define(cssProg* prg, bool, const char* nm) {
-  if(nm != NULL)
+  if(nm)
     name = nm;
   cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top
   fun->name = name;
@@ -1558,7 +1554,7 @@ void cssMbrScriptFun::Constr() {
 void cssMbrScriptFun::Copy(const cssMbrScriptFun& cp) {
   cssScriptFun::Copy(cp);
   type_def = cp.type_def;
-  if(type_def != NULL)
+  if(type_def)
     cssEl::Ref(type_def);
   desc = cp.desc;
   opts = cp.opts;
@@ -1570,7 +1566,7 @@ cssMbrScriptFun::cssMbrScriptFun(const char* nm, cssClassType* cls)
 : cssScriptFun(nm) {
   Constr();
   type_def = cls;
-  if(type_def != NULL)
+  if(type_def)
     cssEl::Ref(type_def);
   is_tor = false;
   is_virtual = false;
@@ -1586,7 +1582,7 @@ cssMbrScriptFun::cssMbrScriptFun(const cssMbrScriptFun& cp, const char* nm) {
 }
 
 cssMbrScriptFun::~cssMbrScriptFun() {
-  if(type_def != NULL)
+  if(type_def)
     cssEl::unRefDone(type_def);
   type_def = NULL;
 }
@@ -1598,7 +1594,7 @@ cssMbrScriptFun::~cssMbrScriptFun() {
 //		into the same fun auto's
 
 void cssMbrScriptFun::Define(cssProg* prg, bool decl, const char* nm) {
-  if(nm != NULL)
+  if(nm)
     name = nm;
   // code was previously defined, and needs to be overwritten
   if((fun->size > 0) || (decl && (fun->Autos()->size > 0))) {
@@ -1810,35 +1806,34 @@ String cssMbrScriptFun::OptionAfter(const char* opt) {
 void cssCPtr::Constr() {
   class_parent = NULL; ptr = NULL;
   ptr_cnt = 1;
-  read_only = false;
+  flags = NO_PTR_FLAGS;
   Register();
 }
 
 cssCPtr::cssCPtr() {
   Constr();
 }
-cssCPtr::cssCPtr(void* it, int pc) {
-  Constr(); ptr = it; ptr_cnt = pc;
-}
-cssCPtr::cssCPtr(void* it, int pc, const char* nm)	{
-  Constr(); name = nm; ptr = it; ptr_cnt = pc;
-}
 cssCPtr::cssCPtr(void* it, int pc, const char* nm, cssEl* cp, bool ro) {
-  Constr(); name = nm; ptr = it; ptr_cnt = pc;
-  SetClassParent(cp);
-  read_only = ro;
+  Constr();
+  if(nm) name = nm;
+  ptr = it;
+  ptr_cnt = pc;
+  if(cp) SetClassParent(cp);
+  if(ro) flags = (PtrFlags)(flags | READ_ONLY);
 }
 cssCPtr::cssCPtr(const cssCPtr& cp) {
   Constr(); Copy(cp);
   ptr = cp.ptr;
   ptr_cnt = cp.ptr_cnt;
-  read_only = cp.read_only;
+  if(cp.class_parent) SetClassParent(cp.class_parent);
+  flags = cp.flags;
 }
 cssCPtr::cssCPtr(const cssCPtr& cp, const char* nm) 	{
   Constr(); Copy(cp);
   ptr = cp.ptr;
   ptr_cnt = cp.ptr_cnt;
-  read_only = cp.read_only;
+  flags = cp.flags;
+  if(cp.class_parent) SetClassParent(cp.class_parent);
   name = nm;
 }
 cssCPtr::~cssCPtr()		   	   	{
@@ -1846,25 +1841,21 @@ cssCPtr::~cssCPtr()		   	   	{
 }
 
 void* cssCPtr::GetVoidPtr(int cnt) const {
-  void* rval = ptr;
-  int r_cnt = ptr_cnt;
-  while((rval != NULL) && (r_cnt > cnt)) {
-    rval = *((void**)rval);
-    r_cnt--;
-  }
-  if(r_cnt < cnt) {
-    String rcs = String(r_cnt);
-    String cns = String(cnt);
-    cssMisc::Error(prog, "Pointer of count:", rcs, "is less indirect than the target:", cns);
+  if(cnt == ptr_cnt) return ptr;
+  if((cnt <= 1) && (ptr_cnt <= 1)) return ptr;
+  if((ptr_cnt == 2) && (cnt == 1)) {
+    if(ptr) return *((void**)ptr);
     return NULL;
   }
-  return rval;
+  cssMisc::Error(prog, "GetVoidPtr: Cannot get pointer of count:", String(cnt),
+		 "from pointer of count:", String(ptr_cnt));
+  return NULL;
 }
 
-void* cssCPtr::GetNonNullVoidPtr(int cnt) const {
+void* cssCPtr::GetNonNullVoidPtr(const char* opr, int cnt) const {
   void* rval = GetVoidPtr(cnt);
-  if(rval == NULL) {
-    cssMisc::Error(prog, "Null c-pointer");
+  if(!rval) {
+    cssMisc::Error(prog, "Null c-pointer in operation:", opr);
     return NULL;
   }
   return rval;
@@ -1872,7 +1863,7 @@ void* cssCPtr::GetNonNullVoidPtr(int cnt) const {
 
 String cssCPtr::PrintStr() const {
   String rval = String(GetTypeName())+" "+ name+" --> ";
-  if(GetVoidPtr() != NULL)
+  if(GetVoidPtr())
     rval += GetStr();
   else
     rval += "NULL";
@@ -1880,19 +1871,17 @@ String cssCPtr::PrintStr() const {
 }
 
 void cssCPtr::operator=(const cssEl& s) {
-  if(s.GetType() == T_C_Ptr) 		PtrAssignPtr((cssCPtr*)&s);
-  else {
-    int sval = (Int)s;
-    if(sval == 0)
-      ptr = NULL;
-    else
-      cssMisc::Error(prog, "Assigning internal pointer to non-internal ptr value","");
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    return;
   }
+  cssMisc::Error(prog, "Attempt to copy C object with no copy semantics");
 }
 
 bool cssCPtr::ROCheck() {
   if(!cssMisc::obey_read_only) return true;
-  if(read_only) {
+  if(flags & READ_ONLY) {
     cssMisc::Error(prog, "Pointer:", name, "of type:",GetTypeName(),
 		   "points to a read-only object");
     return false;
@@ -1900,37 +1889,51 @@ bool cssCPtr::ROCheck() {
   return true;
 }
 
-void cssCPtr::PtrAssignPtr(cssCPtr* s) {
-  cssTypes tp = GetPtrType();
-  cssTypes s_tp = s->GetPtrType();
-  if(ptr_cnt == s->ptr_cnt) {
-    if((ptr_cnt == 1) && (class_parent != NULL) && (ptr != NULL) && (s->ptr != NULL)) {
-      if(tp == T_LongLong)
-	*this = (int64_t)*s;
-      else if((tp == T_Real) || (tp == T_Float))
-	*this = (Real)*s;
-      else if(tp == T_String)
-	*this = s->GetStr();
-      else
-	*this = (Int)*s;
-      class_parent->UpdateAfterEdit();
-      return;
+void cssCPtr::PtrAssignPtr(const cssEl& s) {
+  if((s.GetType() != T_C_Ptr) || (s.GetPtrType() != GetPtrType())) {
+    int sval = (Int)s;
+    if(sval == 0) {
+      PtrAssignNull();		// set to null
     }
-    ptr = s->ptr;
-    SetClassParent(s->class_parent);
-    if((prog != NULL) && (prog->top->debug) && (tp != s_tp))
-      cssMisc::Warning(prog, "Warning: assigning different ptr types");
+    else {
+      cssMisc::Error(prog, "Attempt to assign C pointer to inappropriate value");
+    }
+    return;
   }
-  else if(ptr_cnt == s->ptr_cnt + 1) {
-    if(!ROCheck()) return;
-    if(ptr != NULL)
-      *((void**)ptr) = s->ptr;
-    if(class_parent != NULL)	class_parent->UpdateAfterEdit();
-    if((prog != NULL) && (prog->top->debug) && (tp != s_tp))
-      cssMisc::Warning(prog, "Warning: assigning different ptr types");
+  cssCPtr& sp = (cssCPtr&)s;
+  if(ptr_cnt == sp.ptr_cnt) {
+    ptr = sp.ptr;
+    SetClassParent(sp.class_parent);
   }
-  else {
-    cssMisc::Error(prog, "Pointer assignment between incompatible pointers");
+  else if((ptr_cnt == 1) && (sp.ptr_cnt == 0)) {
+    ptr = sp.ptr;		// I now point to that guy
+    SetClassParent(sp.class_parent);
+  }
+  else if((ptr_cnt == 2) && (sp.ptr_cnt == 1)) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(!ptr) {
+      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
+    }
+    else {
+      *((void**)ptr) = sp.ptr;
+      if(class_parent)	class_parent->UpdateAfterEdit();
+    }
+  }
+}
+
+void cssCPtr::PtrAssignNull() {
+  if(ptr_cnt == 1) {
+    ptr = NULL;		// I now point to that guy
+  }
+  else if(ptr_cnt == 2) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(!ptr) {
+      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
+    }
+    else {
+      *((void**)ptr) = NULL;
+      if(class_parent)	class_parent->UpdateAfterEdit();
+    }
   }
 }
 
@@ -1941,7 +1944,7 @@ bool cssCPtr::SamePtrLevel(cssCPtr* s) {
 }
 
 void cssCPtr::UpdateAfterEdit() {
-  if(class_parent != NULL)	class_parent->UpdateAfterEdit();
+  if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
 bool cssCPtr::operator==(cssEl& s) {
@@ -1968,17 +1971,21 @@ bool cssCPtr::operator!=(cssEl& s) {
 
 
 cssEl* cssCPtr::operator*() {
-  if(ptr_cnt <= 1)
+  if(ptr_cnt == 0) {
+    cssMisc::Error(prog, "Attempt to de-pointer a non-pointer object (ptr_cnt = 0)",
+		   name);
     return this;		// magic ptr derefs to itself
+  }
 
   cssCPtr* rval = (cssCPtr*)AnonClone();
-  rval->ptr = *((void**)ptr);	// go one down
+  if(rval->ptr_cnt > 1)
+    rval->ptr = *((void**)ptr);	// go one down, only if it is a real pointer (1 & 0 are both same)
   rval->ptr_cnt--;
   return rval;
 }
 
 void cssCPtr::SetClassParent(cssEl* cp) {
-  if(class_parent != NULL)
+  if(class_parent)
     cssEl::unRefDone(class_parent);
   class_parent = cp;
   cssEl::Ref(class_parent);
@@ -2517,7 +2524,7 @@ void cssInst::SetInst(const cssElPtr& it) {
       (it.ptr == (void*)&(prog->top->hard_funs))))
   {
     cssScriptFun* cur_fun = prog->top->GetCurrentFun();
-    if((cur_fun != NULL) && ((cur_fun->GetType() == cssEl::T_MbrScriptFun) ||
+    if((cur_fun) && ((cur_fun->GetType() == cssEl::T_MbrScriptFun) ||
 			     (cssMisc::Externs.GetIndex(cur_fun) >= 0)))
     {
       bool do_msg = true;
@@ -2639,7 +2646,7 @@ void cssFrame::AllocArgs() {
 }
 
 cssFrame::~cssFrame() {
-  if(args != NULL)
+  if(args)
     delete [] args;
   args = NULL;
   stack.Reset();
@@ -2806,9 +2813,9 @@ void cssProg::ResetCode() {
 
 cssScriptFun* cssProg::GetCurrentFun() {
   cssProg* cp = this;
-  while(cp != NULL) {
-    if(cp->owner_fun != NULL) return cp->owner_fun;
-    if(cp->owner_blk == NULL) return NULL;
+  while(cp) {
+    if(cp->owner_fun) return cp->owner_fun;
+    if(!cp->owner_blk) return NULL;
     cp = cp->owner_blk->owner_prog;
   }
   return NULL;
@@ -2883,7 +2890,7 @@ int cssProg::CurSrcCharsLeft() {
 }
 
 void cssProg::ListSrc(pager_ostream& fh, int indent, int stln) {
-  if(owner_fun != NULL)
+  if(owner_fun)
     top->list_ln = -1;		// reset for functions
   int st = 0;
   if(stln >= 0) {
@@ -2927,7 +2934,7 @@ void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
 
   String nm = name;
   cssScriptFun* cur_fun = GetCurrentFun();
-  if(cur_fun != NULL) {
+  if(cur_fun) {
     nm = cur_fun->PrintStr();
     if(top->debug >= 1)
       nm += " (" + name + ")";
@@ -2937,7 +2944,7 @@ void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
      << nm << " (frame = " << frdx  << ")\n";
   int curpc = PC(frdx);
   cssInst* inst = Inst(curpc);
-  if(inst != NULL) {
+  if(inst) {
     fh << cssMisc::Indent(indent + 1) << inst->PrintStr() << "\n";
   }
   Autos(frdx)->List(fh, indent+1, 1);
@@ -3021,7 +3028,7 @@ int cssProg::ReadLn(istream& fh) {
 }
 
 int cssProg::Code(cssEl* it) {
-  if((cssMisc::code_cur_top != NULL) && (cssMisc::code_cur_top->Prog() != this))
+  if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssElPtr elp;
@@ -3031,7 +3038,7 @@ int cssProg::Code(cssEl* it) {
   return tmp->idx;
 }
 int cssProg::Code(cssElPtr& it) {
-  if((cssMisc::code_cur_top != NULL) && (cssMisc::code_cur_top->Prog() != this))
+  if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssInst* tmp = new cssInst(this, it, line, col);
@@ -3039,7 +3046,7 @@ int cssProg::Code(cssElPtr& it) {
   return tmp->idx;
 }
 int cssProg::Code(const char* nm) {
-  if((cssMisc::code_cur_top != NULL) && (cssMisc::code_cur_top->Prog() != this))
+  if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(nm);
   cssElPtr tmp;
   if((tmp = top->FindName(nm)) == 0)
@@ -3047,7 +3054,7 @@ int cssProg::Code(const char* nm) {
   return Code(tmp);
 }
 int cssProg::Code(css_progdx it) {
-  if((cssMisc::code_cur_top != NULL) && (cssMisc::code_cur_top->Prog() != this))
+  if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
   while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssIJump* tmp;
@@ -3156,7 +3163,7 @@ cssProg* cssProg::SetSrcPC(int srcln) {
     for(int i=0; i < size; i++) {
       cssEl* tmp = insts[i]->inst.El();
       if(tmp->GetType() == cssEl::T_CodeBlock) {
-	if((rval = tmp->GetSubProg()->SetSrcPC(srcln)) != NULL)
+	if((rval = tmp->GetSubProg()->SetSrcPC(srcln)))
 	  return rval;
       }
     }
@@ -3168,7 +3175,7 @@ cssProg* cssProg::SetSrcPC(int srcln) {
 
 void cssProg::RunDebugInfo(cssInst* nxt) {
   static int last_src_ln = -1;
-  if((top->debug == 0) || (top->cmd_shell == NULL)) return;
+  if((top->debug == 0) || (!top->cmd_shell)) return;
 
   pager_ostream& fh = top->cmd_shell->pgout;
   if(top->debug <= 1) {
@@ -3187,13 +3194,40 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
 }
 
 bool cssProg::IsBreak(css_progdx pcval) {
-  if(breaks.Find(pcval) >= 0) {
+  int idx = breaks.Find(pcval);
+  if(idx >= 0) {
     if((top->last_bp_prog == this) && (top->last_bp_pc == pcval)) {
       top->last_bp_prog = NULL;
       top->last_bp_pc = -1;
       return false;		// don't break again!
     }
+    if(top->cmd_shell) {
+      pager_ostream& fh = top->cmd_shell->pgout;
+      fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
+	 << name << " of: " << top->name << "\n";
+      cssInst* nxt = insts[Frame()->pc];
+      nxt->ListSrc(fh);
+    }
     return true;
+  }
+  return false;
+}
+
+bool cssProg::CheckWatch() {
+  for(int i=0; i<top->watchpoints.size; i++) {
+    cssWatchPoint* wp = top->watchpoints[i];
+    wp->GetAsCurVal();
+    if(wp->prv_val != wp->cur_val) {
+      if(top->cmd_shell) {
+	pager_ostream& fh = top->cmd_shell->pgout;
+	fh << "\nStopped on watchpoint: " << i << " " << wp->GetStr() << " in prog: "
+	   << name << " of: " << top->name << "\n";
+	cssInst* nxt = insts[Frame()->pc-1];
+	nxt->ListSrc(fh);
+      }
+      wp->GetAsPrvVal();
+      return true;
+    }
   }
   return false;
 }
@@ -3202,26 +3236,31 @@ bool cssProg::IsBreak(css_progdx pcval) {
 cssEl* cssProg::Cont() {
   top->run_stat = cssEl::Running;
 
-  if(top->step_mode == 0){
+  if(top->step_mode == 0) {
     while((PC() < size) && (top->run_stat == cssEl::Running)) {
-      if(IsBreak(PC())) {
+      if((breaks.size > 0) && IsBreak(PC())) {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
+	Program::run_state = Program::STOP; // stop programs when this guy was stopped
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
-// 	cerr << top->name << " ext stop: " << name << " at pc: " << PC()
-// 	     << " inst: " << insts[PC()]->inst.El()->name << endl;
 	top->run_stat = cssEl::BreakPoint;
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
-	RunDebugInfo(nxt);
+	if(top->debug > 0) RunDebugInfo(nxt);
 	cssEl::RunStat rval = nxt->Do();
-	if(top->run_stat != cssEl::ExecError) // do could have triggered an exec error
+	if((top->watchpoints.size > 0) && CheckWatch()) {
+	  top->run_stat = cssEl::BreakPoint;
+	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	}
+	else if(top->run_stat == cssEl::ExecError) // do could have triggered an exec error
+	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	else
 	  top->run_stat = rval;
       }
-      if(top->cmd_shell != NULL)
+      if(top->cmd_shell)
 	top->cmd_shell->ProcessEvents();
     }
   }
@@ -3239,25 +3278,34 @@ cssEl* cssProg::Cont() {
       lim = stc + top->step_mode;
     }
     while((stc < lim) && (PC() < size) && (top->run_stat == cssEl::Running)) {
-      if(IsBreak(PC())) {
+      if((breaks.size > 0) && IsBreak(PC())) {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
+	Program::run_state = Program::STOP; // stop programs when this guy was stopped
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
 	top->run_stat = cssEl::BreakPoint;
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
-	RunDebugInfo(nxt);
+	if(top->debug > 0) RunDebugInfo(nxt);
 	cssEl::RunStat rval = nxt->Do();
-	if(top->run_stat != cssEl::ExecError) // do could have triggered an exec error
+	if((top->watchpoints.size > 0) && CheckWatch()) {
+	  top->run_stat = cssEl::BreakPoint;
+	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	}
+	else if(top->run_stat == cssEl::ExecError) 
+	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	else
 	  top->run_stat = rval;
 	if(top->debug < 2)
 	  stc = source[nxt->line]->ln;
 	else
 	  stc++;
       }
+      if(top->cmd_shell)
+	top->cmd_shell->ProcessEvents();
     }
     top->step_mode = 0;		// always temporary
   }
@@ -3268,7 +3316,7 @@ cssEl* cssProg::Cont() {
 
 cssEl* cssProg::ContSrc(int srcln) {
   cssProg* cp = SetSrcPC(srcln);
-  if(cp == NULL)
+  if(!cp)
     return &cssMisc::Void;
 
   return cp->Cont();
@@ -3324,13 +3372,13 @@ bool cssProg::SetBreak(int srcln) {
 }
 
 void cssProg::ShowBreaks(ostream& fh) {
-  int i;
-  cssScriptFun* tmp;
-
-  for(i=0; i<breaks.size; i++) {
-    fh << name << "\t" << insts[breaks[i]]->PrintStr() << endl;
+  if(breaks.size > 0) {
+    fh << "prog: " << name << endl;
+    for(int i=0; i<breaks.size; i++) {
+      fh << "breakpoint: " << i << "\t" << insts[breaks[i]]->PrintStr() << endl;
+    }
   }
-  for(i=0; i < size; i++) {
+  for(int i=0; i < size; i++) {
     cssEl* tmp = insts[i]->inst.El();
     if(tmp->GetType() == cssEl::T_CodeBlock) {
       tmp->GetSubProg()->ShowBreaks(fh);
@@ -3356,6 +3404,47 @@ bool cssProg::DelBreak(int srcln) {
 }
 
 
+//////////////////////////////////////////
+//	cssProg: Watchpoints	 	//
+//////////////////////////////////////////
+
+cssWatchPoint::cssWatchPoint() {
+  watch = NULL;
+}
+
+cssWatchPoint::~cssWatchPoint() {
+  if(watch)
+    cssEl::unRefDone(watch);
+  watch = NULL;
+}
+
+void cssWatchPoint::SetWatch(cssEl* wp) {
+  cssEl::SetRefPointer(&watch, wp); 
+  GetAsPrvVal();
+}
+
+String cssWatchPoint::GetStr() {	
+  if(!watch) return "NULL";
+  return watch->PrintStr() + " prv_val: " + prv_val + " cur_val: " + cur_val;
+}
+
+// scans through subroutines embedded within
+bool cssProg::SetWatch(cssEl* watch) {
+  return top->SetWatch(watch);
+}
+
+bool cssProg::DelWatch(cssEl* watch) {
+  return top->DelWatch(watch);
+}
+
+bool cssProg::DelWatchIdx(int idx) {
+  return top->DelWatchIdx(idx);
+}
+
+void cssProg::ShowWatchpoints(ostream& fh) {
+  top->ShowWatchpoints();
+}
+
 //////////////////////////////////////////////////
 // 	cssProgSpace: Space of Programs		//
 //////////////////////////////////////////////////
@@ -3371,7 +3460,7 @@ void cssProgSpace::Constr() {
   parse_depth = 0;
   step_mode = 0;
   run_stat = cssEl::Waiting;
-  if(cssMisc::Top != NULL)
+  if(cssMisc::Top)
     debug = cssMisc::Top->debug;
   else
     debug = 0;
@@ -3409,13 +3498,13 @@ cssProgSpace::~cssProgSpace() {
 }
 
 bool cssProgSpace::AmCmdProg() {
-  if(cmd_shell == NULL) return false;
+  if(!cmd_shell) return false;
   if(cmd_shell->cmd_prog == this) return true;
   return false;
 }
 
 bool cssProgSpace::HaveCmdShell() {
-  if(cmd_shell != NULL) return true;
+  if(cmd_shell) return true;
   cerr << "css program: " << name << " Warning: trying to access shell-level functionality but no shell is present!" << endl;
   return false;
 }
@@ -3561,7 +3650,7 @@ cssScriptFun* cssProgSpace::GetCurrentFun() {
   int i;
   for(i = size-1; i>=0; i--) {
     cssProg* pg = Prog(i);
-    if(pg->owner_fun == NULL)
+    if(!pg->owner_fun)
       continue;
     return pg->owner_fun;
   }
@@ -3599,67 +3688,6 @@ cssElPtr& cssProgSpace::AddLiteral(Real itm) {
   }
   return el_retv;
 }
-cssElPtr& cssProgSpace::AddPtrType(cssEl* base_type) {
-  // first try to find pre-existing on appropriate type space
-  cssSpace* tp_spc = &cssMisc::TypesSpace;
-  if((cssMisc::cur_class != NULL) &&
-     (cssMisc::cur_class->types->GetIndex(base_type) >= 0))
-    tp_spc = cssMisc::cur_class->types;
-
-  String nm = base_type->name + "_ptr";
-  int i;
-  for(i=0; i<tp_spc->size; i++) {
-    cssEl* tp = tp_spc->FastEl(i);
-    if(tp->GetType() != cssEl::T_Ptr) continue;
-    cssPtr* ptr = (cssPtr*)tp;
-    if((ptr->el_type == base_type) && (ptr->name == nm)) {
-      if(debug == 0)
-	el_retv.SetDirect(tp);	// go direct
-      else
-	el_retv.SetSpace(tp_spc, i);
-      return el_retv;
-    }
-  }
-  // didn't find it..
-
-  cssPtr* nwtp = new cssPtr(base_type, (const char*)nm);
-  el_retv = tp_spc->Push(nwtp);
-  if(debug == 0)
-    el_retv.SetDirect(nwtp);
-  return el_retv;
-}
-
-cssElPtr& cssProgSpace::AddRefType(cssEl* base_type) {
-  // first try to find pre-existing on appropriate type space
-  cssSpace* tp_spc = &cssMisc::TypesSpace;
-  if((cssMisc::cur_class != NULL) &&
-     (cssMisc::cur_class->types->GetIndex(base_type) >= 0))
-    tp_spc = cssMisc::cur_class->types;
-
-  String nm = base_type->name + "_ref";
-  int i;
-  for(i=0; i<tp_spc->size; i++) {
-    cssEl* tp = tp_spc->FastEl(i);
-    if(!tp->IsRef()) continue;
-    cssRef* ptr = (cssRef*)tp;
-    if((ptr->ptr.El() == base_type) && (ptr->name == nm)) {
-      if(debug == 0)
-	el_retv.SetDirect(tp);	// go direct
-      else
-	el_retv.SetSpace(tp_spc, i);
-      return el_retv;
-    }
-  }
-  // didn't find it..
-
-  cssRef* nwtp = new cssRef(base_type, (const char*)nm);
-  el_retv = tp_spc->Push(nwtp);
-  if(debug == 0)
-    el_retv.SetDirect(nwtp);
-  return el_retv;
-}
-
-
 cssElPtr& cssProgSpace::AddVar(cssEl* it) {
   if(size > 1) return Prog()->AddAuto(it);
   cssElPtr& anel_retv = statics.FindName(it->name);
@@ -3732,7 +3760,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
 
   int after_class = 2;
   int dynamics = after_class + (2 * n_above) + 2; // number of "dynamic" spaces (changes based on size)
-  if(cssMisc::cur_class != NULL) { // two more spaces to check..
+  if(cssMisc::cur_class) { // two more spaces to check..
     dynamics += 2;
     after_class += 2;
   }
@@ -3743,18 +3771,18 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     return &cssMisc::Defines; 	// #define is uber alles
   else if(idx == 1)
     return &cssMisc::Parse;	// first parsed stuff
-  else if((cssMisc::cur_class != NULL) && (idx == 2))
+  else if((cssMisc::cur_class) && (idx == 2))
     return cssMisc::cur_class->members;
-  else if((cssMisc::cur_class != NULL) && (idx == 3))
+  else if((cssMisc::cur_class) && (idx == 3))
     return cssMisc::cur_class->methods;
   else if(idx == after_class) {		// first auto block, also set max_prog
     n_above = 0;
     cssProg* cp = Prog();
-    while((cp->owner_blk != NULL) && (cp->owner_blk->owner_prog != NULL)) {
+    while((cp->owner_blk) && (cp->owner_blk->owner_prog)) {
       n_above++;
       cp = cp->owner_blk->owner_prog;
     }
-    if((n_above > 0) && (cp->owner_fun != NULL))
+    if((n_above > 0) && (cp->owner_fun))
       n_above++;
     return Prog()->Autos();
   }
@@ -3765,7 +3793,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     int prog_idx = ((idx - (after_class+2)) / 2) + 1;	// index of prog (from end)
     int cur_idx = 0;
     cssProg* cp = Prog();
-    while((cp->owner_blk != NULL) && (cp->owner_blk->owner_prog != NULL)) {
+    while((cp->owner_blk) && (cp->owner_blk->owner_prog)) {
       cur_idx++;
       cp = cp->owner_blk->owner_prog;
       if(cur_idx == prog_idx) break;
@@ -3807,13 +3835,13 @@ cssElPtr& cssProgSpace::ParseName(const char* nm) {
 //   cerr << "searching for: " << nm << endl;
   int i = 0;
   cssSpace* spc=NULL;
-  while((spc = GetParseSpace(i++)) != NULL) {
+  while((spc = GetParseSpace(i++))) {
     if((spc == &(cssMisc::Commands) && !AmCmdProg())) // don't process commands unless I'm a command prog!
       continue;
     if((el_retv = spc->FindName(nm)) != 0) {
       if(spc == &(cssMisc::Commands))
 	parsing_command = true;
-      else if((cssMisc::cur_class != NULL) && (spc == cssMisc::cur_class->methods)
+      else if((cssMisc::cur_class) && (spc == cssMisc::cur_class->methods)
 	      && (spc->FastEl(el_retv.dx)->GetType() == cssEl::T_MbrScriptFun)) {
 	if(((cssMbrScriptFun*)spc->FastEl(el_retv.dx))->is_virtual)
 	  el_retv.SetVirtMethod(cssMisc::cur_class); // make relative if virtual..
@@ -3839,6 +3867,48 @@ cssElPtr& cssProgSpace::FindTypeName(const char* nm) {
   if(tp_ptr != 0)
     return tp_ptr;
   return cssMisc::TypesSpace.FindName(nm);
+}
+
+cssElPtr& cssProgSpace::GetPtrType(cssEl* base_type, int ptrs) {
+  // first try to find pre-existing on appropriate type space
+  cssSpace* tp_spc = tp_spc = &cssMisc::TypesSpace_ptrs;
+  String sufx = "_ptr";
+  if(ptrs >= 2) sufx += "_ptr";
+
+  if((cssMisc::cur_class) &&
+     (cssMisc::cur_class->types->GetIndex(base_type) >= 0))
+    tp_spc = cssMisc::cur_class->types;
+
+  String nm = base_type->name + sufx;
+  cssElPtr& tp_ptr = tp_spc->FindName(nm);
+  if(tp_ptr) 
+    return tp_ptr;
+  cssEl* ptr = base_type->MakePtrType(ptrs);
+  el_retv = tp_spc->Push(ptr);
+  if(debug == 0)
+    el_retv.SetDirect(ptr);
+  return el_retv;
+}
+
+cssElPtr& cssProgSpace::GetRefType(cssEl* base_type) {
+  // first try to find pre-existing on appropriate type space
+  cssSpace* tp_spc = tp_spc = &cssMisc::TypesSpace_refs;
+  String sufx = "_ref";
+
+  if((cssMisc::cur_class) &&
+     (cssMisc::cur_class->types->GetIndex(base_type) >= 0))
+    tp_spc = cssMisc::cur_class->types;
+
+  String nm = base_type->name + sufx;
+  cssElPtr& tp_ptr = tp_spc->FindName(nm);
+  if(tp_ptr) 
+    return tp_ptr;
+
+  cssEl* ref = base_type->MakeRefType();
+  el_retv = tp_spc->Push(ref);
+  if(debug == 0)
+    el_retv.SetDirect(ref);
+  return el_retv;
 }
 
 //////////////////////////////////////////////////
@@ -4016,9 +4086,9 @@ void cssProgSpace::Restart() {
 bool cssProgSpace::ContinueLoop() {
   while(size > 1) {
     cssProg* prg = Prog();
-    if(prg->owner_fun != NULL)
+    if(prg->owner_fun)
       return false;
-    if(prg->owner_blk == NULL) {
+    if(!prg->owner_blk) {
       Pull();
       continue;
     }
@@ -4046,9 +4116,9 @@ bool cssProgSpace::ContinueLoop() {
 bool cssProgSpace::BreakLoop() {
   while(size > 1) {
     cssProg* prg = Prog();
-    if(prg->owner_fun != NULL)
+    if(prg->owner_fun)
       return false;
-    if(prg->owner_blk == NULL) {
+    if(!prg->owner_blk) {
       Pull();
       continue;
     }
@@ -4105,7 +4175,7 @@ cssEl* cssProgSpace::Cont() {
 	run_stat = cssEl::BreakPoint; // todo: should have error code instead?
       }
       else {
-	if((debug >= 2) && (cmd_shell != NULL)) {
+	if((debug >= 2) && (cmd_shell)) {
 	  cmd_shell->pgout << cssMisc::Indent(size-1) << "FunDone  at "
 			   << taMisc::LeadingZeros(prv_prg->PC()-1,4)
 			   << " el: " << fun_el->PrintStr() << "\n";
@@ -4151,7 +4221,7 @@ cssEl* cssProgSpace::Cont(css_progdx st) {
 
 cssEl* cssProgSpace::ContSrc(int srcln) {
   cssProg* cp = Prog()->SetSrcPC(srcln);
-  if(cp == NULL)
+  if(!cp)
     return &cssMisc::Void;
   if(cp != Prog())
     Shove(cp);
@@ -4213,7 +4283,7 @@ void cssProgSpace::ListSrc(int stln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) fun->ListSrc(fh, 0, stln);
+	if(fun) fun->ListSrc(fh, 0, stln);
       }
     }
   }
@@ -4255,7 +4325,7 @@ void cssProgSpace::ListImpl(int stln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) fun->ListImpl(fh, 1, stln);
+	if(fun) fun->ListImpl(fh, 1, stln);
       }
     }
   }
@@ -4416,7 +4486,7 @@ void cssProgSpace::BackTrace(int levels_back) {
     cssProg* cp = Prog(i);
     String nm = cp->name;
     cssScriptFun* cur_fun = cp->GetCurrentFun();
-    if(cur_fun != NULL) {
+    if(cur_fun) {
       nm = cur_fun->PrintStr();
       if(debug >= 1)
 	nm += " (" + cp->name + ")";
@@ -4424,7 +4494,7 @@ void cssProgSpace::BackTrace(int levels_back) {
     fh << "#" << cnt << "  " << nm << "\n";
     int curpc = cp->PC(Prog_Fr(i));
     cssInst* inst = cp->Inst(curpc);
-    if(inst != NULL) {
+    if(inst) {
       fh << cssMisc::Indent(1) << inst->PrintStr() << "\n";
     }
     if(debug >= 2) {
@@ -4526,12 +4596,12 @@ void cssProgSpace::Info(const String& inf_type, cssEl* arg) {
     ListGlobals();
   }
   else if(it.startsWith("i")) {
-    if(arg != NULL) {
+    if(arg) {
       arg->InheritInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
     }
   }
   else if(it.startsWith("l")) {
-    if(arg != NULL)
+    if(arg)
       ListLocals((int)*arg);
     else
       ListLocals();
@@ -4549,18 +4619,18 @@ void cssProgSpace::Info(const String& inf_type, cssEl* arg) {
     Status();
   }
   else if(it == "stack") {
-    if(arg != NULL)
+    if(arg)
       BackTrace((int)*arg);
     else
       BackTrace();
   }
   else if(it.startsWith("to")) {
-    if(arg != NULL) {
+    if(arg) {
       arg->TokenInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
     }
   }
   else if(it.startsWith("ty")) {
-    if(arg != NULL) {
+    if(arg) {
       arg->TypeInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
     }
     else {
@@ -4570,6 +4640,9 @@ void cssProgSpace::Info(const String& inf_type, cssEl* arg) {
   else if(it.startsWith("v")) {
     ListGlobals();
     ListLocals(0);
+  }
+  if(it.startsWith("w")) {
+    ShowWatchpoints();
   }
 }
 
@@ -4596,7 +4669,8 @@ void cssProgSpace::Info_Generic() {
   status         General status & current state of the program\n\
   tokens, <typ>  List of tokens (instances) for given type of object\n\
   types, [<typ>] List of all types (or type information for given type of object)\n\
-  variables      List all variables\n";
+  variables      List all variables\n\
+  watchpoints    List all watchpoints\n";
 }
 
 
@@ -4616,7 +4690,7 @@ bool cssProgSpace::SetBreak(int srcln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) {
+	if(fun) {
 	  if(fun->SetBreak(srcln)) return true;
 	}
       }
@@ -4643,7 +4717,7 @@ void cssProgSpace::ShowBreaks() {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) fun->ShowBreaks();
+	if(fun) fun->ShowBreaks();
       }
     }
   }
@@ -4667,7 +4741,7 @@ bool cssProgSpace::DelBreak(int srcln) {
       cssClassType* cl = (cssClassType*)el;
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun != NULL) {
+	if(fun) {
 	  if(fun->DelBreak(srcln)) return true;
 	}
       }
@@ -4684,6 +4758,48 @@ bool cssProgSpace::DelBreak(int srcln) {
   cssMisc::Warning(Prog(), "Breakpoint not found");
   return false;
 }
+
+//////////////////////////////////////////////////
+// 	cssProgSpace:    Watchpoints 		//
+//////////////////////////////////////////////////
+
+bool cssProgSpace::SetWatch(cssEl* watch) {
+  if(!watch || watch == &cssMisc::Void) return false;
+  cssWatchPoint* wp = new cssWatchPoint;
+  wp->SetWatch(watch);
+  watchpoints.Add(wp);
+  return true;
+}
+
+void cssProgSpace::ShowWatchpoints() {
+  if(!HaveCmdShell()) return;
+  if(watchpoints.size == 0) return;
+  ostream& fh = *cmd_shell->fout;
+  fh << "Watchpoints for prog: " << name << endl;
+  for(int i=0; i<watchpoints.size; i++) {
+    cssWatchPoint* wp = watchpoints[i];
+    fh << "watch point: " << i  << "\t" << wp->GetStr() << endl;
+  }
+}
+
+bool cssProgSpace::DelWatch(cssEl* watch) {
+  bool got = false;
+  for(int i=watchpoints.size-1; i >= 0; i--) {
+    cssWatchPoint* wp = watchpoints[i];
+    if(wp->watch == watch) {
+      watchpoints.Remove(i);
+      got = true;
+    }
+  }
+  return got;
+}
+
+bool cssProgSpace::DelWatchIdx(int idx) {
+  bool got = watchpoints.Remove(idx);
+  return got;
+}
+
+
 
 ///////////////////////////////////
 //   CmdShell
@@ -4750,7 +4866,7 @@ void cssCmdShell::PushSrcProg(cssProgSpace* ps) {
 cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
   if(stack_size <= 1)		// always keep the top guy
     return NULL;
-  if((ps != NULL) && (src_prog != ps)) return NULL;
+  if((ps) && (src_prog != ps)) return NULL;
   cssProgSpace* tmp = src_prog;
   tmp->cmd_shell = NULL;	// unlink from this shell
   stack_size--;
@@ -4760,7 +4876,7 @@ cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
 }
 
 void cssCmdShell::PopAllSrcProg() {
-  while(PopSrcProg() != NULL);
+  while(PopSrcProg());
 }
 
 void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
@@ -4845,7 +4961,7 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
 }
 
 void cssCmdShell::SetPrompt(const char* prmpt, bool disp_prompt) {
-  if(prmpt != NULL)
+  if(prmpt)
     prompt = prmpt;
   else
     prompt = cssMisc::prompt;
@@ -4869,7 +4985,7 @@ extern "C" {
 }
 
 void cssCmdShell::UpdatePrompt(bool disp_prompt) {
-  if(src_prog == NULL) {
+  if(!src_prog) {
     act_prompt = "no src_prog> ";
     return;
   }
@@ -4909,7 +5025,7 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
 void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   qcss_console = QcssConsole::getInstance();
 
-  if(qcss_console == NULL) {
+  if(!qcss_console) {
     taMisc::Error("cssCmdShell::Shell_Qt -- no console found!");
     return;
   }
