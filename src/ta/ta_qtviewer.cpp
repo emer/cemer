@@ -38,6 +38,7 @@
 #include <qdialog.h>
 #include <qevent.h>
 #include <QButtonGroup>
+#include <QFileInfo>
 #include <qimage.h>
 #include <QLayout>
 #include <qmenubar.h>
@@ -1162,18 +1163,8 @@ void IDataViewWidget::Close() {
     m_viewer->WidgetDeleting();
     m_viewer = NULL;
   }
-  Close_impl();
-  //NO CODE AFTER THIS POINT -- WE MAY BE DELETED
-}
-
-void IDataViewWidget::Close_impl() {
-   // this version is fine if you added WDestructiveClose to the widget flags,
-   // otherwise, you might want to do "deleteLater()"
-   // just doing "delete this" is not really a very safe operation,
-   // and there may be issues with "deleteLater()" 
-//   widget()->close();
-//TEMP
-delete this;
+  delete this;
+  //NO CODE AFTER THIS POINT -- WE ARE DELETED
 }
 
 void IDataViewWidget::closeEvent_Handler(QCloseEvent* e,
@@ -2746,11 +2737,42 @@ void iMainWindowViewer::fileNew() {
 
 void iMainWindowViewer::fileOpen() {
   if (!tabMisc::root) return;
-//TODO: we really should check if it is already open!!!!!
-  void* el = NULL;
-  tabMisc::root->projects.Load_File(&TA_taProject, &el);
-  taProject* proj = (taProject*)el;
+  TypeDef* td = &TA_taProject;
+// get filename ourself, so we can check if it is already open!
+  String fname;
+  taFiler* flr = tabMisc::root->projects.GetFiler(td); 
+  taRefN::Ref(flr);
+  if (!flr->GetFileName(fname, taFiler::foOpen)) 
+    return; // user cancelled
+  taRefN::unRefDone(flr); // not needed anymore
+  
+  // check if already open
+  taProject* proj = NULL;
+  // canonicalize name, for comparison to open projects
+  QFileInfo fi(fname);
+  fname = fi.canonicalFilePath();
+  for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+    proj = tabMisc::root->projects.FastEl(i);
+    if (proj->file_name == fname) {
+      int chs = taiChoiceDialog::ChoiceDialog
+        (NULL, "That project is already open -- it will be viewed instead !&Ok!&Cancel!");
+      switch (chs) {
+      case 0: break; // break out of switch -- we'll also break out of the loop
+      case 1: return;
+      }
+      break; // break out of loop
+    }
+    proj = NULL; // in case we fall out of loop
+  }
+  // if proj has a value, then we should view the existing, else open it
+  if (!proj) {
+    void* el = NULL;
+    tabMisc::root->projects.LoadAs_File(fname, td, &el);
+    proj = (taProject*)el;
+  }
+  
   // loaded projects don't automatically open
+  // this will automatically view it if already open
   if (proj) // this is the easiest way...
     proj->AssertDefaultProjectBrowser(true);
 }

@@ -37,6 +37,7 @@
   #include <qpixmap.h>
 #endif
 
+#include <QFileInfo>
 
 #ifdef TA_GUI
 static const char* folder_closed_xpm[]={
@@ -754,6 +755,7 @@ int taBase::Load(istream& strm, TAPtr par, void** el_) {
     taBase* el = *((taBase**)el_); // better be!!!
     if (el) el->setDirty(false);
   }
+  return rval;
 }
 
 int taBase::Load_File(TypeDef* td, void** el_) {
@@ -776,22 +778,26 @@ int taBase::Load_File(TypeDef* td, void** el_) {
 }
 
 int taBase::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
+  if (fname.empty())
+    return Load_File(td, el_);
+    
   int rval = false;
   taFiler* flr = GetFiler(td); 
   taRefN::Ref(flr);
   flr->fname = fname;
-  istream* strm = flr->Open();
-  taBase* el = NULL;
-  if (strm)
+  istream* strm = flr->open_read();
+  if (strm) {
+    taBase* el = NULL;
     rval = Load(*strm, NULL, (void**)&el);
   
-  if (rval && el) {
-    
-    el->SetFileName(flr->fname);
+    if (rval && el) {
+      
+      el->SetFileName(flr->fname);
+    }
+    if (el_)
+      *el_ = (void*)el;
   }
   taRefN::unRefDone(flr);
-  if (el_)
-    *el_ = (void*)el;
   return rval;
 }
 
@@ -1455,6 +1461,18 @@ void taNBase::CutLinks() {
     taiMisc::CloseEdits((void*)this, GetTypeDef());
 #endif */
   taOBase::CutLinks();
+}
+
+
+//////////////////////////
+//  taFBase		//
+//////////////////////////
+
+bool taFBase::SetFileName(const String& val) {
+  // we get the canonical path, so we insure we can do exact filename compares later
+  QFileInfo fi(val);
+  file_name = fi.canonicalFilePath(); 
+  return true;
 }
 
 

@@ -429,10 +429,14 @@ istream* taFiler::open_read() {
   if (fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
     istrm = new igzstream(fname, ios::in);
-    return istrm;
+  } else {
+    fstrm = new fstream(fname, ios::in);
+    istrm = (istream*)fstrm;
   }
-  fstrm = new fstream(fname, ios::in);
-  istrm = (istream*)fstrm;
+  if (istrm->bad()) {
+      taMisc::Error("File:",fname,"could not be opened for reading");
+      Close();
+  }
   return istrm;
 }
 
@@ -461,10 +465,14 @@ ostream* taFiler::open_write() {
   if (hasfx) {
     compressed = true;
     ostrm = new ogzstream(fname, ios::out);
-    return ostrm;
+  } else {
+    fstrm = new fstream(fname, ios::out);
+    ostrm = (ostream*)fstrm;
   }
-  fstrm = new fstream(fname, ios::out);
-  ostrm = (ostream*)fstrm;
+  if (ostrm->bad()) {
+    taMisc::Error("File",fname,"could not be opened for writing");
+    Close();
+  }
   return ostrm;
 }
 
@@ -484,31 +492,31 @@ ostream* taFiler::open_append() {
   if (hasfx) {
     compressed = true;
     ostrm = new ogzstream(fname, ios::out | ios::app);
-    return ostrm;
+  } else {
+    fstrm = new fstream(fname, ios::out | ios::app);
+    ostrm = (ostream*)fstrm;
   }
-  fstrm = new fstream(fname, ios::out | ios::app);
-  ostrm = (ostream*)fstrm;
+  if (ostrm->bad()) {
+    taMisc::Error("File",fname,"could not be opened for appending");
+    Close();
+  }
   return ostrm;
 }
 
 
 istream* taFiler::Open() {
   file_selected = false;
-  bool wasFileChosen = GetFileName(fname, foOpen);
+  if (!GetFileName(fname, foOpen)) return NULL;
 
   istream* rstrm = NULL;
-  if (wasFileChosen) {
-    file_selected = true;
-    if (open_read() != NULL) {
+  file_selected = true;
+  if (open_read()) {
 //      if (!select_only && (istrm->bad() || (istrm->peek() == EOF)))
 //NOTE: not up to us to forbid opening an empty file!
-      if (istrm->bad())
-	taMisc::Error("File:",fname,"could not be opened for reading");
-      else if (select_only)
-	Close();
-      else
-	rstrm = istrm;
-    }
+    if (select_only)
+      Close();
+    else
+      rstrm = istrm;
   }
   return rstrm;
 }
@@ -517,7 +525,7 @@ ostream* taFiler::Save() {
   if (fname.empty())
     return SaveAs();
 
-  if (open_write() == NULL) {
+  if (!open_write()) {
     return SaveAs();
   }
   return ostrm;
@@ -530,10 +538,8 @@ ostream* taFiler::SaveAs() {
   if (wasFileChosen) {
     file_selected = true;
     FixFileName();
-    if (open_write() != NULL) {
-      if (ostrm->bad())
-	taMisc::Error("File:",fname,"could not be opened for writing");
-      else if (select_only)
+    if (open_write()) {
+      if (select_only)
 	Close();
       else {
 	rstrm = ostrm;
@@ -549,10 +555,8 @@ ostream* taFiler::Append() {
   ostream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
-    if(open_append() != NULL) {
-      if (ostrm->bad())
-	taMisc::Error("File",fname,"could not be opened for append");
-      else if (select_only)
+    if (open_append()) {
+      if (select_only)
 	Close();
       else
 	rstrm = ostrm;

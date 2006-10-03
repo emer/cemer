@@ -92,9 +92,9 @@ public:
     // just show a small subset of the members
     bool rval = (md->ShowMember(show) && (md->im != NULL));
     if (!rval) return rval;
-// note: we also include a couple of members we know are in pdp
+// note: we also include a couple of members we know are in taProject
     if (!(md->name.contains("desc") || (md->name == "use_sim_log") || (md->name == "save_rmv_units")
-	 || (md->name == "prev_file_nm"))) return false;
+	 || (md->name == "file_name"))) return false;
     return true;
   }
   override void	Constr_Methods_impl() { }	// suppress methods
@@ -252,11 +252,6 @@ void taProject::setDirty(bool value) {
 }
 
 
-bool taProject::SetFileName(const String& val) {
-  prev_file_nm = GetFileName();
-  return inherited::SetFileName(val);
-}
-
 void taProject::UpdateSimLog() {
 #ifdef TA_GUI
   SimLogEditDialog* dlg = new SimLogEditDialog(this, GetTypeDef(), false, true);
@@ -277,7 +272,7 @@ void taProject::UpdateSimLog() {
     fstream fh;
     fh.open("SimLog", ios::out | ios::app);
     fh << endl << endl;
-    fh << file_name << " <- " << prev_file_nm << "\t" << tstamp << "\t" << user << endl;
+    fh << file_name << " <- " << GetFileName() << "\t" << tstamp << "\t" << user << endl;
     if(!desc.empty()) fh << "\t" << desc << endl;
     fh.close(); fh.clear();
   }

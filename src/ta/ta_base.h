@@ -881,9 +881,9 @@ class TA_API taFBase: public taNBase {
 typedef taNBase inherited;
 #endif
 public:
-  String		file_name; // #READ_ONLY #NO_SAVE
+  String		file_name; // #READ_ONLY #NO_SAVE #SHOW the current filename for this object
 
-  override bool		SetFileName(const String& val)  {file_name = val; return true;} // #IGNORE
+  override bool		SetFileName(const String& val); // #IGNORE note: we canonicalize name first
   override String	GetFileName() const { return file_name; } // #IGNORE
   void 			Initialize() {}
   void			Destroy() {}

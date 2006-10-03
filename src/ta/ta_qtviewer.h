@@ -243,7 +243,7 @@ public:
   DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
   
   void			Constr() {Constr_impl();} // called virtually, after new, override impl
-  void			Close(); // deletes or closes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
+  void			Close(); // deletes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
   void			ResolveChanges(CancelOp& cancel_op); // resolves changes (delegates to viewer)
@@ -253,7 +253,6 @@ public:
   
 protected:
   DataViewer*		m_viewer; // our mummy
-  virtual void		Close_impl(); //default just does 'delete this'
   virtual void		closeEvent_Handler(QCloseEvent* e,
     CancelOp def_cancel_op = CO_PROCEED);
     // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional

@@ -81,9 +81,8 @@ public:
   Program_Group		programs; // Gui-based programs to run simulations and other processing
   DataViewer_List	viewers; // any top-level viewers that have been saved
 
-  bool			m_dirty; // #HIDDEN #NO_SAVE
+  bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			use_sim_log; 	// record project changes in the SimLog file
-  String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
 
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value); 
@@ -108,7 +107,6 @@ public:
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
 
   String GetDesc() const {return desc;}
-  bool	SetFileName(const String& val);
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void		CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
