@@ -656,16 +656,30 @@ void cssEl::Copy(const cssEl& cp) {
 
 cssEl* cssEl::MakePtrType(int ptrs) {
   if((GetType() == cssEl::T_C_Ptr) || (GetType() == cssEl::T_TA)) {
+    bool zero_ptr = false;
+    cssCPtr* ths = (cssCPtr*)this;
+    if(ths->ptr_cnt == 0) {
+      zero_ptr = true;
+      ths->ptr_cnt++;		// prevent clone from complaining about making tokens
+    }
     if(ptrs == 1) {
       cssCPtr* ptr = (cssCPtr*)Clone();
-      ptr->ptr_cnt += 1;
       ptr->name += "_ptr";
+      if(zero_ptr)
+	ths->ptr_cnt = 0;
+      else
+	ptr->ptr_cnt += 1;
       return ptr;
     }
     else {			// 2 is max
       cssCPtr* ptr = (cssCPtr*)Clone();
-      ptr->ptr_cnt += 2;
       ptr->name += "_ptr_ptr";
+      if(zero_ptr) {
+	ptr->ptr_cnt++;
+	ths->ptr_cnt = 0;
+      }
+      else
+	ptr->ptr_cnt += 2;
       return ptr;
     }
   }
@@ -1870,36 +1884,60 @@ String cssCPtr::PrintStr() const {
   return rval;
 }
 
-void cssCPtr::operator=(const cssEl& s) {
-  if(!ROCheck()) return;
-  if(ptr_cnt > 0) {
-    PtrAssignPtr(s);
-    return;
-  }
-  cssMisc::Error(prog, "Attempt to copy C object with no copy semantics");
-}
-
 bool cssCPtr::ROCheck() {
   if(!cssMisc::obey_read_only) return true;
   if(flags & READ_ONLY) {
-    cssMisc::Error(prog, "Pointer:", name, "of type:",GetTypeName(),
-		   "points to a read-only object");
+    cssMisc::Error(prog, "Cannot modify pointer:", name, "of type:",GetTypeName(),
+		   " -- it points to a read-only object");
+    return false;
+  }
+  return true;
+}
+
+bool cssCPtr::PtrAssignPtrPtr(void* new_ptr_val) {
+  if(!ptr) {
+    cssMisc::Error(prog,  "Failed to assign C pointer-pointer of type:", GetTypeName(),
+		   "our ptr is NULL");
+    return false;
+  }
+  *((void**)ptr) = new_ptr_val;
+  if(class_parent)	class_parent->UpdateAfterEdit();
+  return true;
+}
+
+void cssCPtr::PtrAssignNull() {
+  if(ptr_cnt == 1) {
+    ptr = NULL;		// I now point to that guy
+  }
+  else if(ptr_cnt == 2) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    PtrAssignPtrPtr(NULL);
+    if(class_parent)	class_parent->UpdateAfterEdit();
+  }
+}
+
+bool cssCPtr::PtrAssignNullInt(const cssEl& s) {
+  if(s.GetType() != T_Int) return false;
+  int sval = (Int)s;
+  if(sval == 0) {
+    PtrAssignNull();
+    return true;
+  }
+  return false;
+}
+
+bool cssCPtr::AssignCheckSource(const cssEl& s) {
+  if((s.GetType() != T_C_Ptr) || (s.GetPtrType() != GetPtrType())) {
+    cssMisc::Error(prog,  "Failed to assign C pointer of type:", GetTypeName(),
+		   "source object is not an appropriate type:", s.GetTypeName());
     return false;
   }
   return true;
 }
 
 void cssCPtr::PtrAssignPtr(const cssEl& s) {
-  if((s.GetType() != T_C_Ptr) || (s.GetPtrType() != GetPtrType())) {
-    int sval = (Int)s;
-    if(sval == 0) {
-      PtrAssignNull();		// set to null
-    }
-    else {
-      cssMisc::Error(prog, "Attempt to assign C pointer to inappropriate value");
-    }
-    return;
-  }
+  if(PtrAssignNullInt(s)) return;
+  if(!AssignCheckSource(s)) return;
   cssCPtr& sp = (cssCPtr&)s;
   if(ptr_cnt == sp.ptr_cnt) {
     ptr = sp.ptr;
@@ -1911,30 +1949,18 @@ void cssCPtr::PtrAssignPtr(const cssEl& s) {
   }
   else if((ptr_cnt == 2) && (sp.ptr_cnt == 1)) {
     // I'm a ptr-ptr and this sets me to point to another guy
-    if(!ptr) {
-      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
-    }
-    else {
-      *((void**)ptr) = sp.ptr;
-      if(class_parent)	class_parent->UpdateAfterEdit();
-    }
+    PtrAssignPtrPtr(sp.ptr);
   }
 }
 
-void cssCPtr::PtrAssignNull() {
-  if(ptr_cnt == 1) {
-    ptr = NULL;		// I now point to that guy
+void cssCPtr::operator=(const cssEl& s) {
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    return;
   }
-  else if(ptr_cnt == 2) {
-    // I'm a ptr-ptr and this sets me to point to another guy
-    if(!ptr) {
-      cssMisc::Error(prog, "Attempt to set a NULL pointer-pointer value", name);
-    }
-    else {
-      *((void**)ptr) = NULL;
-      if(class_parent)	class_parent->UpdateAfterEdit();
-    }
-  }
+  cssMisc::Error(prog, "Failed to copy C object of type:", GetTypeName(),
+		 "no copy semantics available");
 }
 
 bool cssCPtr::SamePtrLevel(cssCPtr* s) {

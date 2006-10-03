@@ -2135,6 +2135,10 @@ static void Install_MiscFun() {
 static void GeneratePtrRefTypes() {
   for(int i=0; i<cssMisc::TypesSpace.size; i++) {
     cssEl* tp = cssMisc::TypesSpace.FastEl(i);
+    if(tp->GetType() == cssEl::T_TA) {
+      cssTA* tap = (cssTA*)tp;
+      tap->ptr_cnt--;		// decrement ptr cnt from install to prevent obj creation
+    }
     cssMisc::TypesSpace_refs.Push(tp->MakeRefType());
 
     cssEl* ptr1 = tp->MakePtrType(1);
@@ -2185,17 +2189,20 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssCPtr_Variant(NULL, 0, "c_Variant"));
   cssMisc::TypesSpace.Push(new cssCPtr_DynEnum(NULL, 0, "c_DynEnum"));
 
+  // NOTE: all TA types are installed with ptr_cnt +1 -- these are then -1
+  // in GeneratePtrRefTypes() -- this is to prevent automatic creation of actual tokens!
+
   // ta types
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_void, "TA");
-  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_taBase, "taBase");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_void, "TA");
+  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "taBase");
   cssMisc::TypesSpace.Push(new cssFStream("fstream"));
   cssMisc::TypesSpace.Push(new cssSStream("sstream"));
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_fstream, "FILE");
+  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 2, &TA_fstream, "FILE");
   cssMisc::TypesSpace.Push(new cssLeafItr("taLeafItr"));
 
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_TypeDef, "TypeDef");
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_MemberDef, "MemberDef");
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 0, &TA_MethodDef, "MethodDef");
+  cssMisc::TypesSpace.Push(new cssTypeDef(NULL, 1, &TA_TypeDef, "TypeDef"));
+  cssMisc::TypesSpace.Push(new cssMemberDef(NULL, 1, &TA_MemberDef, "MemberDef"));
+  cssMisc::TypesSpace.Push(new cssMethodDef(NULL, 1, &TA_MethodDef, "MethodDef"));
 
   // add all user-defined types..
   int i, j;
@@ -2207,9 +2214,9 @@ static void Install_Types() {
       if(tmp->InheritsFormal(TA_templ_inst)) {
 	if((tmp->children.size != 1) || (tmp->children.FastEl(0)->parents.size > 1)) {
 	  if(tmp->InheritsFrom(TA_taBase))
-	    cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
+	    cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
 	  else
-	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
+	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
 	}
       }
       else if(!((tmp->members.size==0) && (tmp->methods.size==0)) &&
@@ -2218,9 +2225,9 @@ static void Install_Types() {
 	      (tmp->name != "sstream"))
       {
 	if(tmp->InheritsFrom(TA_taBase))
-	  cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
+	  cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
 	else
-	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 0, tmp, tmp->name);
+	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
       }
     }
     else if(tmp->InheritsFormal(TA_enum)) {

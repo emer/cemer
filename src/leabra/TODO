@@ -1,5 +1,17 @@
 leabra todo list:
 
+* projection from* not being set
+* operator= for SmartRef: should set ptr
+* test string assgn in taptr
+* test FILE string_stream.css
+
+
+* need GUI_READ_ONLY vs READ_ONLY -- interface vs. css -- some stuff should
+  really be read only in css like owner..
+
+-------
+
+
 * LayerSpec CheckConfig needs to test for existence of units before doing Leaf();
 
 * need state flag for changing type: don't try to replace spec pointers on cutlinks.

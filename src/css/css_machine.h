@@ -1067,7 +1067,14 @@ public:
   // operators
   virtual bool	ROCheck();	// do read_only check, true if ok to modify, else err
   virtual void 	PtrAssignPtr(const cssEl& s); // call this in operator= when ptr_cnt > 0
-  virtual void 	PtrAssignNull();	// assign a null
+  virtual bool 	PtrAssignNullInt(const cssEl& s);
+  // check to see if source is an int with value 0, if so, set pointer to null and return true
+  virtual void 	PtrAssignNull();
+  // assign a null to pointer depends on ptr_cnt, calls PtrAssignPtrPtr if needed
+  virtual bool 	AssignCheckSource(const cssEl& s);
+  // do basic type checks on source for assign -- return false if not matching ptr type
+  virtual bool 	PtrAssignPtrPtr(void* new_ptr_val);
+  // we are a pointer-pointer -- set our pointer to new ptr value (special smart pointer refcounting etc might be needed) -- returns false if failed
 
   void operator=(const cssEl& s);
 

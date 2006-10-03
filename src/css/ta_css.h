@@ -82,11 +82,12 @@ public:
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
 
-  // operators
-  void operator=(const cssEl& s); // assign and cast don't set the type
-  void PtrAssignPtr(const cssEl& s); // call SetPointer when setting TA pointers..
-  void InitAssign(const cssEl& s);	// init assign sets the type
-  void CastFm(const cssEl& s);	// cast does not set type, but allows any cast..
+  // copying: uses typedef auto copy function for ptr_cnt = 0
+  void operator=(const cssEl& s);
+  void PtrAssignPtr(const cssEl& s);
+  override bool AssignCheckSource(const cssEl& s);
+  virtual bool AssignObjCheck(const cssEl& s);
+  // do basic checks on us and source for object assign (ptr_cnt = 0)
 
   virtual cssEl*	GetElement_impl(taBase* ths, int i) const;
 
@@ -123,6 +124,7 @@ public:
 	     bool ro=false) : cssTA(it,pc,td,nm,cls_par,ro)	{ Constr(); }
   cssTA_Base(const cssTA_Base& cp)			: cssTA(cp) 	    { Constr();}
   cssTA_Base(const cssTA_Base& cp, const char* nm)	: cssTA(cp,nm) 	    { Constr();}
+  ~cssTA_Base();
 
   cssCloneOnly(cssTA_Base);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
@@ -137,11 +139,10 @@ public:
 
   // operators
   void operator=(const String& s);
-  void operator=(const cssEl& s);
-  void InitAssign(const cssEl& s);	// init assign sets the type
+  void operator=(const cssEl& s); // use obj->UnSafeCopy for ptr_cnt == 0
 
-  void PtrAssignPtr(const cssEl& s); 	// call SetPointer when setting TA pointers..
-  void PtrAssignNull();	// assign a null
+  override bool PtrAssignPtrPtr(void* new_ptr_val);
+  // use SetPointer..
 
   void UpdateAfterEdit();
 
@@ -190,6 +191,7 @@ public:
   operator void*() const;
 
   void operator=(const String& s);
+  void operator=(const cssEl& s);
 
   // operators
   void PtrAssignPtr(const cssEl& s);
@@ -222,7 +224,7 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssIOS((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
 
-  void PtrAssignPtr(const cssEl& s);
+  void PtrAssignPtr(const cssEl& s); // use type casts to make it work right for diff offsets
 
   operator Real() const;
   operator Int() const;
