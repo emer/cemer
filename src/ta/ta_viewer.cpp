@@ -128,6 +128,12 @@ bool DataViewer::isVisible() const {
   return visible;
 }
 
+void DataViewer::ResolveChanges(CancelOp& cancel_op) {
+  if (!isMapped()) return;
+  ResolveChanges_impl(cancel_op);
+}
+
+
 void DataViewer::Show() {
   if (!isMapped()) return;
   Show_impl();
@@ -289,9 +295,6 @@ IDataViewWidget* tabBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iBrowseViewer(this, gui_parent);
 }
 
-//TODO: NUKE THIS
-//void tabBrowseViewer::OnWindowBind_impl(iFrameViewer* fv) {}
-
 void tabBrowseViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   // if root has vanished, window must die
@@ -300,6 +303,19 @@ void tabBrowseViewer::UpdateAfterEdit() {
     CloseWindow();
   }
 }
+
+bool tabBrowseViewer::hasChanges() const {
+   // only impl for projects, because they are only thing we know how to save
+  if (m_root && m_root->GetTypeDef()->InheritsFrom(&TA_taProject)) return m_root->isDirty();
+  else return false;
+}
+
+void tabBrowseViewer::SaveData() {
+   // only impl for projects, because they are only thing we know how to save
+  if (m_root && m_root->GetTypeDef()->InheritsFrom(&TA_taProject)) 
+    m_root->Save_File();
+}
+
 
 //////////////////////////////////
 //   ClassBrowseViewer	 	//
@@ -573,109 +589,30 @@ void TopLevelViewer::ViewWindow() {
 }
 
 void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
-  if (taMisc::quitting)
-    cancel_op = CO_NOT_CANCELLABLE; // set it, for all others
-  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
-
-  if (hasChanges()) {
-    int chs;
-    if (forced)
-      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes");
-    else 
-      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes", "&Cancel");
-
-    switch (chs) {
-    case 0:
-      SaveData(); 
-      break;
-    case 1:
-      break;
-    case 2: //only possible if not forced
-      cancel_op = CO_CANCEL;
-      return;
-    }
-  }
-
-  //following done only for a root win
-  if (!forced && isRoot()) {
+  ResolveChanges(cancel_op); // note, may have been done earlier
+  if (cancel_op == CO_CANCEL) return;
+  
+  //root win is special, since closing it forces shutdown
+  // if only implicitly closing it, ask user, and then maybe force shutdown
+  if (isRoot() && (taMisc::quitting == taMisc::QF_RUNNING)) {
     int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
     switch (chs) {
     case 1:
+      taMisc::quitting = taMisc::QF_USER_QUIT; // tentative
+      taiMiscCore::OnQuitting(cancel_op); // saves all edits etc.; restores running state if cancelled
+      if (cancel_op == CO_CANCEL) return;
       if (tabMisc::root) tabMisc::root->SaveAll();
       //fall through
     case 0:
-      taiM->MainWindowClosing(cancel_op);
-      if (cancel_op != CO_CANCEL) {
-       taMisc::quitting = true;
-       return;
-      }
-      forced = taMisc::quitting;
-      break;
+      taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
+      return;
+      //WARNING: undefined after this point -- do not add any more code after calling Quit
     case 2:
       cancel_op = CO_CANCEL;
+      taMisc::quitting = taMisc::QF_RUNNING; // in case anyone set
       return;
     }
   }
-
-  //note: should have exited if cancel, but we check just in case
-//no, this deletes the viewer, which is not what we want, just because gui win is closing
-//  if (!cancel)  tabMisc::Close_Obj(this);
-
-/*was TODO  cancel = true; // falling through to end of routine is "proceed"
-  if (InheritsFrom(TA_WinView) && (((WinView*)this)->mgr != NULL)) {
-    WinMgr* mgr = ((WinView*)this)->mgr;
-    int chs = taMisc::Choice("Close (PERMANENTLY Destroy) this VIEW of the object, or destroy the ENTIRE object including all views, losing all unsaved changes?", "Close View", "Close Obj", "Save Then Close Obj", "Cancel");
-    if (chs == 3)
-      return; //cancel
-    else if(chs == 2) {
-      taFiler* taf = mgr->GetFileDlg();
-      taRefN::Ref(taf);
-      ostream* strm = taf->Save();
-      if((strm != NULL) && strm->good()) {
-	taiMisc::RecordScript(mgr->GetPath() + ".Save(" + taf->fname + ");\n");
-	mgr->SetFileName(taf->fname);
-	DMEM_GUI_RUN_IF {
-	  mgr->Save(*strm);
-	}
-      }
-      taRefN::unRef(taf); //no Done, in case supplier isn't using ref counting
-    } else if(chs == 0) {
-      taiMisc::RecordScript(GetPath() + ".Close();\n");
-      DMEM_GUI_RUN_IF {
-	tabMisc::Close_Obj(this);
-      }
-      cancel = false;
-      return;
-    }
-    taiMisc::RecordScript(mgr->GetPath() + ".Close();\n");
-    DMEM_GUI_RUN_IF {
-      tabMisc::Close_Obj(mgr);
-    }
-  } else {
-    int chs = taMisc::Choice("Ok to Close (PERMANENTLY Destroy) this object, losing all unsaved changes?", "Close", "Save Then Close", "Cancel");
-    if(chs == 2)
-      return; //cancel
-    else if (chs == 1) {
-      taFiler* taf = GetFileDlg();
-      taRefN::Ref(taf);
-      ostream* strm = taf->Save();
-      if((strm != NULL) && strm->good()) {
-	taiMisc::RecordScript(GetPath() + ".Save(" + taf->fname + ");\n");
-	SetFileName(taf->fname);
-	DMEM_GUI_RUN_IF {
-	  Save(*strm);
-	}
-      }
-      taRefN::unRefDone(taf);
-    }
-    taiMisc::RecordScript(GetPath() + ".Close();\n");
-    DMEM_GUI_RUN_IF {
-      tabMisc::Close_Obj(this);
-    }
-  }
-  cancel = false; */
 }
 
 void TopLevelViewer::SetWinState_impl() {
@@ -1080,6 +1017,46 @@ void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
   win->AddToolBar(tb->widget());
   if (post_constr) {
     ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
+  }
+}
+
+void MainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
+  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
+
+  if (hasChanges()) {
+    int chs;
+    if (forced)
+      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
+        "&Save", "&Discard Changes");
+    else 
+      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
+        "&Save", "&Discard Changes", "&Cancel");
+
+    switch (chs) {
+    case 0:
+      SaveData(); 
+      break;
+    case 1:
+      break;
+    case 2: //only possible if not forced
+      cancel_op = CO_CANCEL;
+      return;
+    }
+  }
+}
+
+bool MainWindowViewer::hasChanges() const {
+  for (int i = 0; i < frames.size; ++i) {
+    FrameViewer* fv = frames.FastEl(i);
+    if (fv->hasChanges()) return true;
+  }
+  return false;
+}
+
+void MainWindowViewer::SaveData() {
+  for (int i = 0; i < frames.size; ++i) {
+    FrameViewer* fv = frames.FastEl(i);
+    fv->SaveData();
   }
 }
 

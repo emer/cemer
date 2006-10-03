@@ -69,8 +69,6 @@ class	QLayout;		// #IGNORE
 class	QLineEdit;		// #IGNORE 
 class	Q3ListBox;		// #IGNORE 
 class	Q3ListBoxItem;		// #IGNORE 
-//class	Q3ListView;		// #IGNORE 
-//class	Q3ListViewItem;		// #IGNORE 
 class	QMainWindow;		// #IGNORE 
 class	QMenu;			// #IGNORE  Qt4
 class	QMenuBar;		// #IGNORE 
@@ -88,6 +86,7 @@ class	QRadioButton;		// #IGNORE
 class	QRect;			// #IGNORE 
 class	QScrollArea;		// #IGNORE  Qt4
 class	QScrollBar;		// #IGNORE 
+class	QSessionManager;	// #IGNORE
 class	QSize;			// #IGNORE 
 class	QSizePolicy;		// #IGNORE 
 class	QSpacerItem;		// #IGNORE 
@@ -96,7 +95,7 @@ class	QSplitter;		// #IGNORE
 class	QStackedWidget;		// #IGNORE 
 class	Q3Table;		// #IGNORE 
 class	QTableView;		// #IGNORE 
-class	Q3TableItem;			// #IGNORE 
+class	Q3TableItem;		// #IGNORE 
 class	QTabBar;		// #IGNORE 
 class	QTabWidget;		// #IGNORE 
 class	QTcpServer;		// #IGNORE 

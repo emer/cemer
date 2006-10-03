@@ -220,8 +220,6 @@ public:
   TAPtr	Browse(const char* init_path=NULL);
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
-  override void	Quit();
-  // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
   override void	SaveAll(); // saves all the projects
 
   void	InitLinks();

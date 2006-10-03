@@ -51,6 +51,7 @@ void SelectEdit_Group::AutoEdit() {
   }
 }
 
+
 //////////////////////////
 //   taWizard		//
 //////////////////////////
@@ -104,6 +105,7 @@ public:
 #endif
 
 void taProject::Initialize() {
+  m_dirty = false;
   use_sim_log = true;
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
@@ -159,6 +161,7 @@ void taProject::Copy_(const taProject& cp) {
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
   // UpdatePointers_NewPar(&cp, this); // update pointers within entire project..
+  setDirty(true);
 }
 
 void taProject::UpdateAfterEdit() {
@@ -241,6 +244,13 @@ int taProject::SaveAs(ostream& strm, TAPtr par, int indent) {
 #endif
   return inherited::SaveAs(strm, par, indent);
 }
+
+void taProject::setDirty(bool value) {
+  // note: inherited only forwards 'dirty' up the chain, not '!dirty'
+  inherited::setDirty(value);
+  m_dirty = value;
+}
+
 
 bool taProject::SetFileName(const String& val) {
   prev_file_nm = GetFileName();
@@ -327,10 +337,6 @@ void taRootBase::Destroy() {
       taMisc::RecordScript(".Quit();\n");
     } else
 #endif
-  }
-  if (we_are_root) {
-    taiMiscCore::RunPending();
-    taiMiscCore::Quit();
   }
 }
 

@@ -33,7 +33,7 @@
 
 #ifdef TA_GUI
 # include "css_qt.h"
-# include <QApplication>
+# include "ta_qt.h" // for iApplication
 # ifdef TA_USE_INVENTOR
 #   include <Inventor/Qt/SoQt.h>
 # endif
@@ -365,7 +365,7 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 # ifdef TA_USE_INVENTOR
   SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
 # else
-  new QApplication(argc, (char**)argv); // accessed as qApp
+  new iApplication(argc, (char**)argv); // accessed as qApp
 # endif
 #else
   new QCoreApplication(argc, (char**)argv); // accessed as qApp

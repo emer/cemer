@@ -42,6 +42,7 @@
 #include <qmenubar.h>// metrics
 #include <qprogressdialog.h>
 #include <qpushbutton.h> // metrics
+#include <QSessionManager>
 
 #ifdef TA_USE_INVENTOR
 #include <Inventor/Qt/SoQt.h>
@@ -71,11 +72,11 @@ int tai_rl_hook_proc() {
 //////////////////////////////////////////////////////////
 
 iMainWindowViewer* iTopLevelWindow_List::FastElAsMainWindow(int i) {
-  return dynamic_cast<iMainWindowViewer*>(FastEl(i));
+  return dynamic_cast<iMainWindowViewer*>(FastEl(i)->widget());
 }
 
 iDockViewer* iTopLevelWindow_List::FastElAsDockWindow(int i) {
-  return dynamic_cast<iDockViewer*>(FastEl(i));
+  return dynamic_cast<iDockViewer*>(FastEl(i)->widget());
 }
 
 iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
@@ -116,13 +117,6 @@ taiMisc* taiMisc::New(bool gui, QObject* parent) {
   taiMisc* rval = new taiMisc(parent);
   rval->Init(gui);
   return rval;
-}
-
-void taiMisc::SetMainWindow(QWidget* win) {
-  main_window = win;
-  QObject::connect(win, SIGNAL(destroyed()), taiM_, SLOT(MainWindowDestroyed()) );
-
-  win->show(); //note: doesn't actually show until event loop called, from rl callback
 }
 
 taiMisc::taiMisc(QObject* parent)
@@ -364,19 +358,8 @@ iFont taiMisc::nameFont(int fontSpec) {
   return rval;
 }
 
-void taiMisc::MainWindowDestroyed() {
-  main_window = NULL;
-  taMisc::gui_active = false;
-}
-
 void taiMisc::LoadDialogDestroyed() {
   load_dlg = NULL;
-}
-
-void taiMisc::MainWindowClosing(CancelOp& cancel_op) {
-   // called by main_window in close event -- we can cancel it
-  //TODO: go through active wins, and close -- prompt user if any active ones found
-  //TODO: we will need to figure out how to do this, because we need to pump the event loop!
 }
 
 QLabel* taiMisc::NewLabel(int fontSpec, const String& text, QWidget* parent) {
@@ -386,11 +369,32 @@ QLabel* taiMisc::NewLabel(int fontSpec, const String& text, QWidget* parent) {
   return rval;
 }
 
-void taiMisc::Quit_impl() {
-// called when quitting -- 
-// TODO: close all windows etc.
-  inherited::Quit_impl();
+void taiMisc::OnQuitting_impl(CancelOp& cancel_op) {
+// called when quitting -- does all saves
+  ResolveEditChanges(cancel_op);
+  if (cancel_op == CO_CANCEL) return;
+  ResolveViewerChanges(cancel_op);
+}
 
+void taiMisc::Quit_impl(CancelOp cancel_op) {
+  qApp->closeAllWindows();
+}
+
+void taiMisc::ResolveEditChanges(CancelOp& cancel_op) {
+  for (int i = 0; i < taiMisc::active_edits.size; ++i) {
+    taiEditDataHost* edh = taiMisc::active_edits.FastEl(i);
+    if (!edh || (edh->state != taiEditDataHost::ACTIVE)) continue;
+    edh->ResolveChanges(cancel_op); // don't need 'discard'
+    if (cancel_op == CO_CANCEL) return;
+  }
+}
+
+void taiMisc::ResolveViewerChanges(CancelOp& cancel_op) {
+  for (int i = 0; i < taiMisc::active_wins.size; ++i) {
+    IDataViewWidget* dvw = taiMisc::active_wins.FastEl(i);
+    dvw->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
+  }
 }
 
 void taiMisc::Update(TAPtr obj) {
@@ -423,6 +427,21 @@ void taiMisc::DoneBusy_impl() {
 //3.2a  RestoreWinCursors();
 }
 
+void taiMisc::PurgeDialogs() {
+  bool did_purge = false;
+  for (int i = active_dialogs.size - 1; i >= 0; --i) {
+    taiDataHost* dlg = active_dialogs.FastEl(i);
+    if ((dlg->state == taiDataHost::ACCEPTED) || (dlg->state == taiDataHost::CANCELED)) {
+      active_dialogs.Remove(i);
+      did_purge = true;
+    }
+  }
+}
+
+void taiMisc::RestoreWinCursors() {
+  QApplication::restoreOverrideCursor();
+}
+
 void taiMisc::ScriptRecordingGui_(bool start){
   if (!taMisc::gui_active)    return;
   if (start) SetWinCursors();
@@ -448,22 +467,6 @@ void taiMisc::SetWinCursors() {
   }
 
   taMisc::Error("*** Unexpected call to SetWinCursors -- not busy or recording.");
-}
-
-void taiMisc::RestoreWinCursors() {
-  QApplication::restoreOverrideCursor();
-}
-
-
-void taiMisc::PurgeDialogs() {
-  bool did_purge = false;
-  for (int i = active_dialogs.size - 1; i >= 0; --i) {
-    taiDataHost* dlg = active_dialogs.FastEl(i);
-    if ((dlg->state == taiDataHost::ACCEPTED) || (dlg->state == taiDataHost::CANCELED)) {
-      active_dialogs.Remove(i);
-      did_purge = true;
-    }
-  }
 }
 
 
@@ -925,3 +928,17 @@ void taiMisc::DumpTiffIv(iWindow* win, const char* fnm, int xstart, int ystart, 
 #endif // CYGWIN
 */  //TODO
 
+
+//////////////////////////
+//  iApplication 	//
+//////////////////////////
+
+/* from Qt docs:
+The default implementation requests interaction and sends a close event to all visible top-level widgets. If any event was rejected, the shutdown is canceled.
+*/
+void iApplication::commitData(QSessionManager& manager) {
+  taMisc::quitting = taMisc::QF_FORCE_QUIT;
+  CancelOp cancel_op = CO_NOT_CANCELLABLE;
+  taiMiscCore::OnQuitting(cancel_op); // save changes, etc.
+  inherited::commitData(manager);
+}

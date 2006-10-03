@@ -25,6 +25,7 @@
 #include "ifont.h"
 #include "igeometry.h"
 #ifndef __MAKETA__
+# include <QApplication>
 # include <QRect>
 #endif
 
@@ -33,6 +34,7 @@
 // external classes:
 class taiData;
 class taiEditDataHost;
+class IDataViewWidget;
 class iMainWindowViewer;
 class iDockViewer;
 
@@ -46,7 +48,7 @@ typedef taPtrList<taiEditDataHost> taiEditDataHost_List; // #IGNORE
 //       taiMisc          //
 //////////////////////////////
 
-class TA_API iTopLevelWindow_List: public Widget_List {
+class TA_API iTopLevelWindow_List: public taPtrList<IDataViewWidget> {
 public:
   iMainWindowViewer*	FastElAsMainWindow(int i); 
     // returns item cast as requested, or NULL if not of that type
@@ -170,11 +172,12 @@ public:
   static taiEditDataHost* FindEdit(void* obj, TypeDef* td, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
 
-  static void SetMainWindow(QWidget* win); // #IGNORE called by whomever creates the main window
-
   static void	Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
+  
   void		InitMetrics();	// initializes all the sizes/fonts/etc. -- QApplication object must be created
   void 		AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
+  void		ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
+  void		ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
 protected:
   static void	SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status
@@ -182,6 +185,7 @@ protected:
   // #IGNORE restores cursors to previous state -- Set/Restore always called in pairs
   static void 	Busy_(bool busy);		// callback from taMisc, puts system in a 'busy' state (pointer, no input)
   static void	ScriptRecordingGui_(bool start); // callback from taMisc
+  
 public:
   QProgressDialog*	load_dlg;       // #IGNORE load dialog
 
@@ -192,23 +196,11 @@ public:
   void		RemoveLoadDialog(); */
 
 protected slots:
-  void		MainWindowDestroyed();
   void		LoadDialogDestroyed();
 
 #ifdef __MAKETA__
 };
 #else
-protected:
-  int		base_height;	// implementation defined base control height used to derive other heights
-  iFont 	mbig_button_font; // largest button font -- others are derived from this
-  iFont		mbig_dialog_font;
-  iFont 	mbig_menu_font; // largest menu font -- others are derived from this
-  iFont		mbig_name_font; // for labels
-  const char*	mclassname;
-  signed char	mbutton_ht[3]; // for s/m/b
-  signed char	mlabel_ht[3];  // for s/m/b
-  signed char	mtext_ht[3];  // for s/m/b
-
 public:
   int		ctrl_size;	//  size for controls etc. -- default is sizMedium
   // metric properties -- initialized in InitMetrics()
@@ -246,8 +238,6 @@ public:
 static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
   String 	color_to_string(const iColor& color); // returns a string value (appropriate for setting in a style) for the color
 
-  void		MainWindowClosing(CancelOp& cancel_op); // called by main_window in close event -- we can cancel it if cancellable
-
 /*TODO: rewrite for Qt #if (!(defined(WINDOWS) || defined(CYGWIN)))
   static void DumpJpeg(_XDisplay* dpy, XWindow win, const char* fnm, int quality=85, int xstart=0, int ystart=0, int width=-1, int height=-1);
   // dump window to jpeg file
@@ -262,11 +252,35 @@ static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrigh
   taiMisc(QObject* parent = NULL);
   ~taiMisc();
 protected:
-  override void			Init(bool gui); // NOTE: called from static New
-  override void		Quit_impl();
+  int		base_height;	// implementation defined base control height used to derive other heights
+  iFont 	mbig_button_font; // largest button font -- others are derived from this
+  iFont		mbig_dialog_font;
+  iFont 	mbig_menu_font; // largest menu font -- others are derived from this
+  iFont		mbig_name_font; // for labels
+  const char*	mclassname;
+  signed char	mbutton_ht[3]; // for s/m/b
+  signed char	mlabel_ht[3];  // for s/m/b
+  signed char	mtext_ht[3];  // for s/m/b
+
+  override void		Init(bool gui); // NOTE: called from static New
+  override void 	OnQuitting_impl(CancelOp& cancel_op); // pre-quit resolves changes
+  override void		Quit_impl(CancelOp cancel_op);
 };
+
+//note: maketa doesn't need to see this
+class TA_API iApplication: public QApplication {
+// class needed to trap the shutdown call
+INHERITED(QApplication)
+  Q_OBJECT
+public:
+  void 			commitData(QSessionManager& manager); // override
+  
+  iApplication(int& argc, char** argv): QApplication(argc, argv) {}
+};
+
 #endif
 
 extern TA_API taiMisc* taiM_; // use taiM macro instead
+
 
 #endif // TA_QT_H

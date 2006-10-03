@@ -313,6 +313,7 @@ public:
   virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
+  virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
   virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
   
 public: // ITypedObject i/f (common to IDLC and IDH)
@@ -445,6 +446,8 @@ public:
   virtual void		SetCurMenuButton(MethodDef* md);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
+    // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
 public: // ITypedObject i/f (common to IDLC and IDH)
   override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:

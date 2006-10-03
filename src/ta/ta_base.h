@@ -83,6 +83,7 @@ public:
 
   static void		Close_Obj(TAPtr obj);
   // call this to implement closing object function
+  static void		DeleteRoot(); // get rid of root, if not nuked already
   static void		WaitProc();
   // wait process function: remove objects from groups, update others
 //obs  static bool	NotifyEdits(TAPtr obj);
@@ -347,6 +348,9 @@ protected:
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   
+  virtual bool		isDirty() const {return false;} // implemented by very few, esp. Project
+  virtual void 		setDirty(bool value); // 'true' gets forwarded up; 'false' does nothing
+  
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
   bool			RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this 
@@ -515,17 +519,15 @@ public:
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
-  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL)
+  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
   // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
-    { return GetTypeDef()->Dump_Load(strm, (void*)this, par, el); }
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
-  virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // Save object data to a file
-    { return GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); }
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
   // #ARGC_1 Save object data to a new file
     { return Save(strm,par,indent); }

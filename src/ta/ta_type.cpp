@@ -104,30 +104,24 @@ taiMiscCore* taiMiscCore::New(QObject* parent) {
   return rval;
 }
 
-//TODO: need to better design the app shutdown logic, and coord with taiM
-
-void taiMiscCore::DeleteRoot() {
-  if (tabMisc::root) {
-    delete tabMisc::root;
-    tabMisc::root = NULL;
+void taiMiscCore::Quit(CancelOp cancel_op) {
+  taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
+    taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;
+  OnQuitting(cancel_op); // saves changes
+  if (cancel_op != CO_CANCEL) {
+    if (taiMC_) {
+      taiMC_->Quit_impl(cancel_op);
+    }
   }
+  if (cancel_op == CO_CANCEL)
+    taMisc::quitting = taMisc::QF_RUNNING;
 }
 
-void taiMiscCore::Quit(CancelOp cancel_op) {
-//TODO: to be revised
-  if (cancel_op == CO_NOT_CANCELLABLE)
-    taMisc::quitting = taMisc::QF_FORCE_QUIT;
-  else 
-    taMisc::quitting = taMisc::QF_USER_QUIT; // cancellable, but this will go to FORCE after main win etc. closes
+void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
   if (taiMC_) {
     taiMC_->OnQuitting_impl(cancel_op);
   }
-  if ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (cancel_op != CO_CANCEL)) {
-    if (taiMC_) {
-      taiMC_->Quit_impl();
-    }
-    QCoreApplication::instance()->quit();
-  } else {
+  if (cancel_op == CO_CANCEL) {
     taMisc::quitting = taMisc::QF_RUNNING;
   }
 }
@@ -159,7 +153,8 @@ const String taiMiscCore::classname() {
 
 void taiMiscCore::app_aboutToQuit() {
 //NOTE: Qt will not process any more events at this point!
-  DeleteRoot();
+  if (timer)
+    timer->stop();
 }
 
 void taiMiscCore::Init(bool gui) {
@@ -174,12 +169,11 @@ void taiMiscCore::Init(bool gui) {
 }
 
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
+  // nothing in nongui
 }
 
-void taiMiscCore::Quit_impl() {
-  if (timer)
-    timer->stop();
-  DeleteRoot();
+void taiMiscCore::Quit_impl(CancelOp cancel_op) {
+  // nothing in nongui
 }
 
 void taiMiscCore::timer_timeout() {

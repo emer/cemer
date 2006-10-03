@@ -136,6 +136,13 @@ void tabMisc::Close_Obj(TAPtr obj) {
   //  WaitProc();		// kill me now ?
 }
 
+void tabMisc::DeleteRoot() {
+  if (tabMisc::root) {
+    delete tabMisc::root;
+    tabMisc::root = NULL;
+  }
+}
+
 void tabMisc::WaitProc() {
 #ifdef TA_GUI
   taiMisc::PurgeDialogs();
@@ -587,6 +594,7 @@ bool taBase::CopyTo(TAPtr cpy_to) {
 }
 
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
+  setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
@@ -740,6 +748,14 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
+int taBase::Load(istream& strm, TAPtr par, void** el_) { 
+  int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, el_); 
+  if (el_) {
+    taBase* el = *((taBase**)el_); // better be!!!
+    if (el) el->setDirty(false);
+  }
+}
+
 int taBase::Load_File(TypeDef* td, void** el_) {
   int rval = false;
   taFiler* flr = GetFiler(td); 
@@ -776,6 +792,12 @@ int taBase::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
   taRefN::unRefDone(flr);
   if (el_)
     *el_ = (void*)el;
+  return rval;
+}
+
+int taBase::Save(ostream& strm, TAPtr par, int indent) { 
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
+  setDirty(false);
   return rval;
 }
 
@@ -1025,6 +1047,15 @@ void taBase::SetDefaultName() {
   if(td->tokens.keep && ((tok = td->tokens.Find((void *)this)) >= 0)) {
     String nm = td->name + "_" + String(tok);
     SetName(nm);
+  }
+}
+
+void taBase::setDirty(bool value) {
+  //note: base has no storage, and only forwards dirty (not !dirty)
+  if (!value) return;
+  taBase* owner;
+  if ((owner = GetOwner())) {
+    owner->setDirty(value);
   }
 }
 

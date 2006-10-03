@@ -1196,6 +1196,13 @@ void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
   }
 }
 
+void IDataViewWidget::ResolveChanges(CancelOp& cancel_op) {
+  if (m_viewer) {
+    m_viewer->ResolveChanges(cancel_op);
+  }
+}
+
+
 //////////////////////////
 //   ISelectable	//
 //////////////////////////
@@ -2178,8 +2185,9 @@ void iDockViewer::Init() {
 }
 
 void iDockViewer::closeEvent(QCloseEvent* e) {
-   // always closing if quitting, docked or we no longer have our mummy
-  CancelOp cancel_op = (taMisc::quitting || !isFloating() || (!m_viewer)) ? 
+   // always closing if force-quitting, docked or we no longer have our mummy
+  CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) ||
+    !isFloating() || (!m_viewer)) ? 
     CO_NOT_CANCELLABLE : CO_PROCEED; 
   closeEvent_Handler(e, cancel_op);
 }
@@ -2526,8 +2534,9 @@ void iMainWindowViewer::ch_destroyed() {
 }
 
 void iMainWindowViewer::closeEvent(QCloseEvent* e) {
-   // always closing if quitting or we no longer have our mummy
-  CancelOp cancel_op = (taMisc::quitting || (!m_viewer)) ? CO_NOT_CANCELLABLE : CO_PROCEED; 
+   // always closing if force-quitting or we no longer have our mummy
+  CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (!m_viewer)) ?
+     CO_NOT_CANCELLABLE : CO_PROCEED; 
   closeEvent_Handler(e, cancel_op);
 }
 
@@ -2734,7 +2743,7 @@ void iMainWindowViewer::emit_EditAction(int param) {
 
 void iMainWindowViewer::fileCloseWindow() {
   if (isRoot()) {
-    if (tabMisc::root) tabMisc::root->Quit();
+    taiMiscCore::Quit(CO_PROCEED); // not forced, until main closes
   } else close();
 }
 

@@ -381,28 +381,23 @@ iDialog::~iDialog() {
 }
 
 void iDialog::closeEvent(QCloseEvent* ev) {
+  //note: a higher level routine may already have resolved changes
+  // if so, the ResolveChanges call is superfluous
   ev->accept(); // default, unless we override;
   if (owner == NULL) return;
-  if (owner->HasChanged()) {
-    int chs = taMisc::Choice("Changes have not been applied", "&Apply", "A&bandon Changes", "&Cancel");
-    switch (chs) {
-    case 0:
-      owner->GetValue();
-      owner->state = taiDataHost::ACCEPTED;
-      break;
-    case 1:
-      owner->state = taiDataHost::CANCELED;
-      break;
-    case 2:
-      ev->ignore();
-      return;
-      break;
-    default: break; //compiler food
-    }
-  } else { //!owner->modified
-    owner->state = taiDataHost::CANCELED;
-    setResult(Rejected);
+  bool discarded = false;
+  CancelOp cancel_op = CO_PROCEED;
+  owner->ResolveChanges(cancel_op, &discarded);
+  if (cancel_op == CO_CANCEL) {
+    ev->ignore();
+    return;
+  } else if (!discarded) {
+    owner->state = taiDataHost::ACCEPTED;
+    return; // not rejected
   }
+  // discarded, or didn't have any changes
+  owner->state = taiDataHost::CANCELED;
+  setResult(Rejected);
 }
 
 bool iDialog::post(bool modal) {
@@ -450,37 +445,26 @@ EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 }
 
 EditDataPanel::~EditDataPanel() {
-  if (owner != NULL) {
+  if (owner) {
     owner->WidgetDeleting(); // removes our ref
     owner = NULL;
   }
 }
 
 void EditDataPanel::Closing(CancelOp& cancel_op) {
+  //note: a higher level routine may already have resolved changes
+  // if so, the ResolveChanges call is superfluous
   if (owner == NULL) return;
-  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
-  if (owner->HasChanged()) {
-    int chs;
-    if (forced)
-      chs = taMisc::Choice("This Edit Panel is closing but changes have not been applied", "&Apply", "A&bandon Changes");
-    else
-      chs = taMisc::Choice("Changes have not been applied", "&Apply", "A&bandon Changes", "&Cancel");
-    switch (chs) {
-    case 0: // Apply
-      owner->GetValue();
-      owner->state = taiDataHost::ACCEPTED;
-      break;
-    case 1: // Abandon
-      owner->state = taiDataHost::CANCELED;
-      break;
-    case  2: // Cancel (non-forced only)
-      cancel_op = CO_CANCEL;
-      return;
-      break;
-    }
-  } else { //!owner->modified
-    owner->state = taiDataHost::CANCELED;
+  bool discarded = false;
+  owner->ResolveChanges(cancel_op, &discarded);
+  if (cancel_op == CO_CANCEL) {
+    return;
+  } else if (!discarded) {
+    owner->state = taiDataHost::ACCEPTED;
+    return; 
   }
+  // discarded, or didn't have any changes
+  owner->state = taiDataHost::CANCELED;
 }
 
 void EditDataPanel::GetImage_impl() {
@@ -1744,6 +1728,33 @@ void taiEditDataHost::Constr_ShowMenu() {
   show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
       this, SLOT(ShowChange(taiAction*)), 6 );
   setShowValues(show); // sets toggles
+}
+
+void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
+  // called by root on closing, dialog on closing, etc. etc.
+  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
+  if (HasChanged()) {
+    int chs;
+    if (forced)
+      chs = taMisc::Choice("Changes have not been applied", "&Apply", "&Discard Changes");
+    else
+      chs = taMisc::Choice("Changes have not been applied", "&Apply", "&Discard Changes", "&Cancel");
+    switch (chs) {
+    case 0: // Apply
+      GetValue();
+      break;
+    case 1: // Discard
+      // only reshow if cancellable, otherwise we will be shutdown anyway,
+      // so don't add unnecessary gui operations
+      if (forced) Unchanged();
+      else        GetImage(); // has Unchanged baked in
+      if (discarded) *discarded = true;
+      break;
+    case  2: // Cancel (non-forced only)
+      cancel_op = CO_CANCEL;
+      break;
+    }
+  } 
 }
 
 void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {

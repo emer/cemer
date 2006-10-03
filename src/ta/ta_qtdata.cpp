@@ -2805,6 +2805,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   m_sel = NULL;
   QPushButton* rep_ = new QPushButton(gui_parent_);
   rep_->setFixedHeight(taiM->button_height(defSize()));
+  rep_->setFont(taiM->menuFont(defSize())); //note: we use menu font -- TODO: might need to use a button font
   SetRep(rep_);
   connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
 }
@@ -4235,6 +4236,7 @@ QAbstractButton* taiMethodData::MakeButton() {
   if (buttonRep == NULL) {
     //buttonRep = new QPushButton(meth->GetLabel(), gui_parent);
     buttonRep = new QToolButton(gui_parent);
+    buttonRep->setFont(taiM->menuFont(defSize()));
     buttonRep->setText(meth->GetLabel());
     connect(buttonRep, SIGNAL(clicked()),
       this, SLOT(CallFun()) );

@@ -30,6 +30,9 @@ Brad:
 * graph log (get working again)  
   * support for matrices
 
+* ChangeType/UpdatePointers etc. gui patches
+* virtual console dock window
+
 * startup pathing cleanup + platform params: redo pdproot/main code + randy
 
 Randy:

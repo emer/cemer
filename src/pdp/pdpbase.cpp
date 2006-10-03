@@ -155,7 +155,7 @@ void Startup_MakeMainWin() {
   if (bw) {
     // resize to a custom size: 3/4 width, 3/4 height;
     bw->resize((taiM->scrn_s.w * 3)/4, (taiM->scrn_s.h * 3)/4);
-    taiMisc::SetMainWindow(bw);
+    bw->show(); // when we start event loop
   }
 //TODO: following prob not necessary
   if (taMisc::gui_active) taiMisc::OpenWindows();
@@ -373,6 +373,7 @@ int pdpMisc::Main(int argc, char *argv[]) {
   Startup_InvokeShells();
 #endif // DMEM_COMPILE
 
+  tabMisc::DeleteRoot();
   taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
 
 #ifdef TA_USE_INVENTOR

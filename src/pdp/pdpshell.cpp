@@ -755,17 +755,6 @@ void PDPRoot::Settings() {
 #endif
 }
 
-void PDPRoot::Quit() {
-#ifdef TA_GUI
-  //cssiSession::quitting = true;
-  taiMiscCore::Quit();
-  if (taiMisc::main_window) taiMisc::main_window->close();
-//obs  window->close(); //TODO: causing an exception, after the confirm dialog and window closing, but closing directly causes no prob
-//  QApplication::postEvent(window, new QCloseEvent());
-//TODO: do we need to do something for no-gui compile????
-#endif
-}
-
 /*obs void PDPRoot::SetWinName() {
   if(!taMisc::gui_active) return;
   if(window == NULL)    return;

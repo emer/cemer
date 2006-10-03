@@ -81,8 +81,12 @@ public:
   Program_Group		programs; // Gui-based programs to run simulations and other processing
   DataViewer_List	viewers; // any top-level viewers that have been saved
 
+  bool			m_dirty; // #HIDDEN #NO_SAVE
   bool			use_sim_log; 	// record project changes in the SimLog file
   String		prev_file_nm; 	// #READ_ONLY #SHOW previous file name for this project
+
+  override bool		isDirty() const {return m_dirty;}
+  override void 	setDirty(bool value); 
 
   virtual const iColor* GetObjColor(TypeDef* td) {return NULL;} // #IGNORE get default color for object (for edit, project view)
   virtual const iColor* GetObjColor(int view_color) {return NULL;} // #IGNORE get default color for object (for edit, project view)
@@ -150,8 +154,6 @@ public:
   virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
   virtual void	Info() = 0;			// #MENU get information/copyright notice
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
-  virtual void	Quit() = 0;
-  // #MENU #CONFIRM #MENU_SEP_BEFORE #NO_REVERT_AFTER quit from software..
   virtual void	SaveAll() = 0; // saves all the contents of the app object
   
   taBase*		GetTemplateInstance(TypeDef* typ); // get an instance of the indicated tab type, or NULL if not found

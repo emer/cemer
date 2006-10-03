@@ -246,7 +246,8 @@ public:
   void			Close(); // deletes or closes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
-  
+  void			ResolveChanges(CancelOp& cancel_op); // resolves changes (delegates to viewer)
+    
   IDataViewWidget(DataViewer* viewer);
   virtual ~IDataViewWidget(); // informs mummy of our destruction
   
