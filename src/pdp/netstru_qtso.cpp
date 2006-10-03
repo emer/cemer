@@ -821,7 +821,7 @@ void NetView::Initialize() {
 }
 
 void NetView::Destroy() {
-  Reset();
+//nn  Reset();
   CutLinks();
 }
 
@@ -833,6 +833,11 @@ void NetView::InitLinks() {
 }
 
 void NetView::CutLinks() {
+  // the nvp refs some of our stuff, so we have to nuke it
+  if (nvp) {
+    delete nvp; // should delete our ref
+    nvp = NULL;
+  }
   ordered_uvg_list.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();

@@ -55,10 +55,6 @@ void DataViewer::Initialize() {
 
 void DataViewer::Destroy() {
   CutLinks();
-  if (m_dvwidget) {
-    m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
-    m_dvwidget = NULL; // 
-  }
 }
 
 void DataViewer::InitLinks() {
@@ -66,7 +62,10 @@ void DataViewer::InitLinks() {
 }
 
 void DataViewer::CutLinks() {
-  CloseWindow();
+  if (m_dvwidget) {
+    m_dvwidget->Close(); // destructive close
+    m_dvwidget = NULL; // 
+  }
   inherited::CutLinks();
 }
 
@@ -83,7 +82,8 @@ void DataViewer::UpdateAfterEdit() {
 void DataViewer::CloseWindow_impl() { // only called if mapped
   m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
   m_dvwidget = NULL; // for safety
-  inherited::CloseWindow_impl(); // dispatches to children, but everyone probably nuked!
+  //note: don't call inherited, because we don't want to call children
+  // gui destroy at this level should always destroy all nested gui items
 }
 
 void DataViewer::Constr(QWidget* gui_parent) {

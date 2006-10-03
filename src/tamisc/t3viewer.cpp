@@ -732,7 +732,7 @@ iT3DataViewer::iT3DataViewer(T3DataViewer* viewer_, QWidget* parent)
 }
 
 iT3DataViewer::~iT3DataViewer() {
-  Reset_impl();
+//nn  Reset_impl();
 }
 
 void iT3DataViewer::Constr_impl() {
