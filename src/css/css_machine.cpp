@@ -41,6 +41,7 @@
 
 #include <QEvent>
 #include <QCoreApplication>
+#include <QFileInfo>
 
 #include <sstream>
 
@@ -361,6 +362,7 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
   if (!sw_val.empty()) {
     refcnt_trace = sw_val.toInt();
   }
+  QFileInfo fi(argv[0]);
 #ifdef TA_GUI
 # ifdef TA_USE_INVENTOR
   SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
@@ -370,6 +372,7 @@ void cssMisc::PreInitialize(int argc_, char** argv_) {
 #else
   new QCoreApplication(argc, (char**)argv); // accessed as qApp
 #endif
+  QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
 }
 
 #if (!defined(TA_OS_WIN))

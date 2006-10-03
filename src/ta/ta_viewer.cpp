@@ -1003,7 +1003,7 @@ void MainWindowViewer::MakeWinName_impl() {
   String prog_nm = taiM->classname();
   String name;
   if (data()) name = data()->GetName();
-  String nw_name = prog_nm + ": " + GetPath() + "(" + name + ")";
+  String nw_name = GetPath() + "(" + name + ") - " + prog_nm ;
   win_name = nw_name;
 }
 

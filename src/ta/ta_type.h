@@ -440,9 +440,8 @@ public:
   static String		help_file_tmplt; // #SAVE template for converting type name into a help file (%t = type name)
   static String		help_cmd;	// #SAVE how to run html browser to get help, %s is entire path to help file
   static String		edit_cmd;	// #SAVE how to run editor
-  static ostream*	record_script;// #IGNORE 
+  static ostream*	record_script;// #IGNORE // stream to use for recording a script of interface activity (NULL if no record)
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
-  // stream to use for recording a script of interface activity (NULL if no record)
   static void	(*WaitProc)();
   // #IGNORE set this to a work process for idle time processing
   static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'

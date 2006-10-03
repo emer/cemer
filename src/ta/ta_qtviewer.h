@@ -530,7 +530,6 @@ protected:
   short int		shn_changing; // for marking forwarding, so we don't reflect back
 
   virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
-  override void 	closeEvent(QCloseEvent* ev);
   void 			hideEvent(QHideEvent* e); // override
   void 			showEvent(QShowEvent* e); // override
   virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers

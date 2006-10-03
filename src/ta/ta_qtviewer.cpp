@@ -1148,10 +1148,6 @@ IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
 IDataViewWidget::~IDataViewWidget() {
   //note: the viewer may already have deleted, so it will have nulled its ref here
   if (m_viewer) {
-    CancelOp cancel_op = CO_NOT_CANCELLABLE;
-    OnClosing_impl(cancel_op);
-  } // note: test again, in case a callback null'ed the ref
-  if (m_viewer) {
     m_viewer->WidgetDeleting();
     m_viewer = NULL;
   }
@@ -1815,13 +1811,6 @@ iFrameViewer::~iFrameViewer() {
 void iFrameViewer::Init() {
   m_window = NULL; // set by main win when it adds us
   shn_changing = 0;
-}
-
-void iFrameViewer::closeEvent(QCloseEvent* e) {
-  //note: we normally can't cancel these inner frames when closing,
-  // but default lets viewer decide
-  CancelOp cancel_op = CO_PROCEED;
-  closeEvent_Handler(e, cancel_op);
 }
 
 void iFrameViewer::hideEvent(QHideEvent* e) {
