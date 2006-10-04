@@ -791,6 +791,12 @@ String iProgramPanel::panel_type() const {
   return str;
 }
 
+void iProgramPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (pe->HasChanged()) {
+    pe->Apply();
+  }
+}
 
 //////////////////////////
 //    iProgramToolBar 	//

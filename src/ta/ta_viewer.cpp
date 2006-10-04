@@ -133,6 +133,9 @@ void DataViewer::ResolveChanges(CancelOp& cancel_op) {
   ResolveChanges_impl(cancel_op);
 }
 
+void DataViewer::ResolveChanges_impl(CancelOp& cancel_op) {
+  dvwidget()->ResolveChanges(cancel_op);
+}
 
 void DataViewer::Show() {
   if (!isMapped()) return;
@@ -304,18 +307,6 @@ void tabBrowseViewer::UpdateAfterEdit() {
   }
 }
 
-bool tabBrowseViewer::hasChanges() const {
-   // only impl for projects, because they are only thing we know how to save
-  if (m_root && m_root->GetTypeDef()->InheritsFrom(&TA_taProject)) return m_root->isDirty();
-  else return false;
-}
-
-void tabBrowseViewer::SaveData() {
-   // only impl for projects, because they are only thing we know how to save
-  if (m_root && m_root->GetTypeDef()->InheritsFrom(&TA_taProject)) 
-    m_root->Save_File();
-}
-
 
 //////////////////////////////////
 //   ClassBrowseViewer	 	//
@@ -397,7 +388,6 @@ IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
   if (!m_window) return;
   browser_win()->Reset();
 }*/
-
 
 //////////////////////////
 //	WindowState	//
@@ -1020,6 +1010,17 @@ void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
   }
 }
 
+void MainWindowViewer::ResolveChanges(CancelOp& cancel_op) {
+  // need to do depth first; note: toolbars can't have changes
+  for (int i = 0; i < frames.size; ++i) {
+    FrameViewer* fv = frames.FastEl(i);
+    fv->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
+  }
+  inherited::ResolveChanges(cancel_op);
+}
+
+/*obs
 void MainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   bool forced = (cancel_op == CO_NOT_CANCELLABLE);
 
@@ -1043,22 +1044,7 @@ void MainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
       return;
     }
   }
-}
-
-bool MainWindowViewer::hasChanges() const {
-  for (int i = 0; i < frames.size; ++i) {
-    FrameViewer* fv = frames.FastEl(i);
-    if (fv->hasChanges()) return true;
-  }
-  return false;
-}
-
-void MainWindowViewer::SaveData() {
-  for (int i = 0; i < frames.size; ++i) {
-    FrameViewer* fv = frames.FastEl(i);
-    fv->SaveData();
-  }
-}
+} */
 
 void MainWindowViewer::Show_impl() {
   QWidget* wid = widget();

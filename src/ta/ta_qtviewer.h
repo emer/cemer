@@ -238,7 +238,7 @@ protected:
 class TA_API IDataViewWidget { // interface that all DataViewer::widget() class must implement
 friend class DataViewer;
 public:
-
+  virtual bool		isDirty() const {return false;}
   virtual QWidget*	widget() = 0; // return the widget
   DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
   
@@ -246,8 +246,10 @@ public:
   void			Close(); // deletes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
-  void			ResolveChanges(CancelOp& cancel_op); // resolves changes (delegates to viewer)
-    
+  virtual void		ResolveChanges(CancelOp& cancel_op) {ResolveChanges_impl(cancel_op);} 
+  // called from viewer prior to close; should normally autosave unsaved changes
+  virtual void		SaveData() {}
+      
   IDataViewWidget(DataViewer* viewer);
   virtual ~IDataViewWidget(); // informs mummy of our destruction
   
@@ -259,6 +261,7 @@ protected:
   virtual void		Constr_impl() {} // override for virtual construction (called after new)
   virtual void		Constr_post() {} // called virtually, in DV::Constr_post -- entire win struct is now available
   virtual void		OnClosing_impl(CancelOp& cancel_op); // invoked in dtor (uncancellable); you should also invoke in the closeEvent (maybe cancellable)
+  virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 };
 
 
@@ -503,7 +506,6 @@ public:
   inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
 //nn??  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
-  
   iFrameViewer(FrameViewer* viewer_, QWidget* parent = NULL);
   ~iFrameViewer();
   
@@ -579,6 +581,7 @@ protected:
   ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   void			Constr_Menu_impl(); // override
   override void		Constr_post(); // called virtually, in DV::Constr_post 
+  override void		ResolveChanges_impl(CancelOp& cancel_op);
   override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
   void 			viewSplit(int o);
 
@@ -764,11 +767,12 @@ public: //
   taiAction* 		helpAboutAction;
 
   QObject* 		clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
-  taProject*		curProject(); // only if we are a projviewer
+  
+  taProject*		curProject() const; // only if we are a projviewer
   inline bool		isRoot() const {return m_is_root;} // if this is app root, closing quits
   inline bool		isProjViewer() const {return m_is_proj_viewer;} // if a project viewer, persistent
 
-  inline MainWindowViewer* viewer() {return (MainWindowViewer*)m_viewer;} 
+  inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
   void			AddPanelNewTab(iDataPanel* panel); 
@@ -842,10 +846,13 @@ signals:
     // see "Selection Handling" in .cpp
 #endif
 
-public: // IDataViewerWidget i/f
+public: // IDataViewWidget i/f
+  override bool		isDirty() const;
   override QWidget*	widget() {return this;}
+  override void		SaveData();
 protected:
   override void		Constr_impl();
+  override void 	ResolveChanges_impl(CancelOp& cancel_op); // only for project browsers
 
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
@@ -955,6 +962,7 @@ public:
   virtual void		FillTabBarContextMenu(QMenu* contextMenu);
   virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
+  void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void 			SetPanel(iDataPanel* panel);
 
@@ -1024,6 +1032,7 @@ public:
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
     // called in post, when all windows are built
+  virtual void		ResolveChanges(CancelOp& cancel_op);
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
@@ -1041,6 +1050,7 @@ protected:
   QScrollArea*		scr; // central scrollview
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
+  virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 };
 
 
@@ -1146,6 +1156,7 @@ public:
   override void		GetImage();
   override const iColor* GetTabColor(bool selected) const;
   override bool		HasChanged();
+  override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
 
 
   iDataPanelSet(taiDataLink* dl_);

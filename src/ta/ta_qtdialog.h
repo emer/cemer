@@ -220,6 +220,7 @@ public: // IDataLinkClient interface
 protected:
   taiEditDataHost* 	owner;
   override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
+  override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 

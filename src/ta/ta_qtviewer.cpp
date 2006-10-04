@@ -1183,12 +1183,6 @@ void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
   }
 }
 
-void IDataViewWidget::ResolveChanges(CancelOp& cancel_op) {
-  if (m_viewer) {
-    m_viewer->ResolveChanges(cancel_op);
-  }
-}
-
 
 //////////////////////////
 //   ISelectable	//
@@ -1926,6 +1920,14 @@ void iTabViewer::Constr_post() {
   for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->OnWindowBind(this);
+  }
+}
+
+void iTabViewer::ResolveChanges_impl(CancelOp& cancel_op) {
+  for (int i = 0; i < m_tabViews->size; ++i) {
+    iTabView* itv = m_tabViews->FastEl(i);
+    if (itv) itv->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) break;
   }
 }
 
@@ -2695,7 +2697,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
 }
 
-taProject* iMainWindowViewer::curProject() {
+taProject* iMainWindowViewer::curProject() const {
   taProject* rval = NULL;
   if (isProjViewer()) {
     MainWindowViewer* db = viewer();
@@ -2828,6 +2830,45 @@ void iMainWindowViewer::SelectableHostNotifying_impl(ISelectableHost* src_host, 
   emit SelectableHostNotifySignal(src_host, op);
   UpdateActionsMenu(src_host, true);
   UpdateUi();
+}
+
+void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
+  if (!isProjViewer()) return; // changes only applied for proj viewers
+
+  if (isDirty()) {
+    bool forced = (cancel_op == CO_NOT_CANCELLABLE);
+    int chs;
+    if (forced)
+      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing?",
+        "&Save", "&Discard Changes");
+    else 
+      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing?",
+        "&Save", "&Discard Changes", "&Cancel");
+
+    switch (chs) {
+    case 0:
+      SaveData(); 
+      break;
+    case 1:
+      break;
+    case 2: //only possible if not forced
+      cancel_op = CO_CANCEL;
+      return;
+    }
+  }
+}
+
+bool iMainWindowViewer::isDirty() const {
+  taProject* proj = curProject(); // only if projviwer
+  if (proj) return proj->isDirty();
+  else return false;
+}
+
+void iMainWindowViewer::SaveData() {
+  taProject* proj = curProject(); // only if projviwer
+   // only impl for projects, because they are only thing we know how to save
+  if (proj) 
+    proj->Save_File();
 }
 
 void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int op) {
@@ -3279,6 +3320,14 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
 
 }
 
+void iTabView::ResolveChanges(CancelOp& cancel_op) {
+  for (int i = panels.size - 1; i >= 0; --i) {
+    iDataPanel* panel = panels.FastEl(i);
+    panel->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) return; // can stop now
+  }
+}
+
 void iTabView::SetPanel(iDataPanel* panel) {
   wsPanels->raiseWidget(panel);
   tbPanels->SetPanel(tbPanels->currentIndex(), panel);
@@ -3342,6 +3391,10 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
     if (tabView())
       tabView()->UpdateTabNames(); //in case any changed */
   }
+}
+
+void iDataPanel::ResolveChanges(CancelOp& cancel_op) {
+  ResolveChanges_impl(cancel_op);
 }
 
 void iDataPanel::setCentralWidget(QWidget* widg) {
@@ -3581,6 +3634,16 @@ void iDataPanelSet::removeChild(QObject* obj) {
   panels.Remove_(obj); // harmless if not a panel
   inherited::removeChild(obj);
 }
+
+void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
+  }
+  inherited::ResolveChanges(cancel_op); // calls our own impl
+}
+
 
 void iDataPanelSet::set_cur_panel_id(int cpi) {
   if (cur_panel_id == cpi) return;

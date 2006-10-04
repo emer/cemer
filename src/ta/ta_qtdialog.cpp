@@ -454,7 +454,7 @@ EditDataPanel::~EditDataPanel() {
 void EditDataPanel::Closing(CancelOp& cancel_op) {
   //note: a higher level routine may already have resolved changes
   // if so, the ResolveChanges call is superfluous
-  if (owner == NULL) return;
+  if (!owner) return;
   bool discarded = false;
   owner->ResolveChanges(cancel_op, &discarded);
   if (cancel_op == CO_CANCEL) {
@@ -484,6 +484,11 @@ bool EditDataPanel::HasChanged() {
 String EditDataPanel::panel_type() const {
   static String str("Properties");
   return str;
+}
+
+void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+  if (!owner) return;
+  owner->ResolveChanges(cancel_op);
 }
 
 
@@ -1732,6 +1737,11 @@ void taiEditDataHost::Constr_ShowMenu() {
 
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, etc. etc.
+  if (HasChanged()) {
+    GetValue();
+  }
+  
+/* NOTE: we have changed this to always silently save
   bool forced = (cancel_op == CO_NOT_CANCELLABLE);
   if (HasChanged()) {
     int chs;
@@ -1754,7 +1764,7 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
       cancel_op = CO_CANCEL;
       break;
     }
-  } 
+  } */
 }
 
 void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {

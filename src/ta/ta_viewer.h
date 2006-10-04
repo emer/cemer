@@ -116,9 +116,8 @@ public:
   bool			display_toggle;  // #DEF_true 'true' if display should be updated
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
-  virtual bool		hasChanges() const {return false;}
   virtual bool		deleteOnWinClose() const {return false;}
-  inline const IDataViewWidget* dvwidget() const {return m_dvwidget;}
+  inline IDataViewWidget* dvwidget() const {return m_dvwidget;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   MainWindowViewer*	parent() const {return (MainWindowViewer*)m_parent;} 
   override TypeDef*	parentType() const {return &TA_MainWindowViewer;} 
@@ -141,7 +140,6 @@ public:
   virtual void		SetWinState(); // set gui state from us (override impl)
 
   virtual void		ResolveChanges(CancelOp& cancel_op); // resolve all changes (if mapped)
-  virtual void		SaveData() {} // what gets called if user says "yes" to save changes on close
   virtual void 		WindowClosing(CancelOp& cancel_op) {} 
    // cb from m_widget, subordinate wins may not be cancellable
   virtual void		WidgetDeleting(); // lets us do any cleanup -- override the impl
@@ -170,7 +168,7 @@ protected:
   virtual void 		SetWinState_impl() {} // fetch gui state; only called if mapped
   virtual void		Show_impl(); // only called if mapped (note: replaced in toplevelviewer)
   virtual void		Hide_impl(); // only called if mapped (note: replaced in toplevelviewer)
-  virtual void		ResolveChanges_impl(CancelOp& cancel_op) {} // if mapped
+  virtual void		ResolveChanges_impl(CancelOp& cancel_op); // if mapped
 
 private:
   IDataViewWidget*	m_dvwidget; // this guy can be dangerous, so we bury it
@@ -258,10 +256,7 @@ public:
 
   taSmartRef		m_root; 
   
-  override bool		hasChanges() const; // ask the base --  only impl for projects
   override void*	root() {return (void*)m_root.ptr();} 
-  
-  override void		SaveData(); // delegate to base -- only impl for projects
   
   void	UpdateAfterEdit(); // if root deletes, our window must die
   void	InitLinks();
@@ -528,7 +523,6 @@ public:
   FrameViewer_List 	frames;	// the frames shown in the center splitter area
   DockViewer_List	docks; // currently docked windows -- removed if they undock
 
-  override bool		hasChanges() const;
   override bool		isRoot() const {return m_is_root;}
   inline bool		isProjViewer() const {return m_is_proj_viewer;}
 //parent note: we inherit MainWindowViewer type, but actually never have a taDataView parent
@@ -547,7 +541,7 @@ public:
   bool 			AddToolBar(ToolBar* tb); // add a new toolbar; true if added (won't add a duplicate)
   ToolBar*		AddToolBarByType(TypeDef* typ, const String& tb_name); // add a new toolbar by type; return inst if added (won't add a duplicate)
   
-  override void		SaveData(); // what gets called if user says "yes" to save changes on close
+  override void 	ResolveChanges(CancelOp& cancel_op);
     
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -589,7 +583,7 @@ protected:
   override void		WidgetDeleting_impl();
   override void		Show_impl(); // only called if mapped; de-iconifies
   override void		Hide_impl(); // only called if mapped; iconifies
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
+//nn  override void		ResolveChanges_impl(CancelOp& cancel_op);
 
   // from TopLevelView
   override void		MakeWinName_impl();
