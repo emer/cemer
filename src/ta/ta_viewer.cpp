@@ -584,23 +584,31 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
   
   //root win is special, since closing it forces shutdown
   // if only implicitly closing it, ask user, and then maybe force shutdown
-  if (isRoot() && (taMisc::quitting == taMisc::QF_RUNNING)) {
-    int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
-    switch (chs) {
-    case 1:
-      taMisc::quitting = taMisc::QF_USER_QUIT; // tentative
-      taiMiscCore::OnQuitting(cancel_op); // saves all edits etc.; restores running state if cancelled
-      if (cancel_op == CO_CANCEL) return;
-      if (tabMisc::root) tabMisc::root->SaveAll();
-      //fall through
-    case 0:
-      taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
-      return;
-      //WARNING: undefined after this point -- do not add any more code after calling Quit
-    case 2:
-      cancel_op = CO_CANCEL;
-      taMisc::quitting = taMisc::QF_RUNNING; // in case anyone set
-      return;
+  if (isRoot()) {
+    switch (taMisc::quitting) {
+    case taMisc::QF_RUNNING: {
+      int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
+      switch (chs) {
+      case 1:
+        taMisc::quitting = taMisc::QF_USER_QUIT; // tentative
+        taiMiscCore::OnQuitting(cancel_op); // saves all edits etc.; restores running state if cancelled
+        if (cancel_op == CO_CANCEL) return;
+        if (tabMisc::root) tabMisc::root->SaveAll();
+        //fall through
+      case 0:
+        taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
+        return;
+        //WARNING: undefined after this point -- do not add any more code after calling Quit
+      case 2:
+        cancel_op = CO_CANCEL;
+        taMisc::quitting = taMisc::QF_RUNNING; // in case anyone set
+        return;
+      } 
+      } break;
+    case taMisc::QF_USER_QUIT: 
+      // ok, upgrade to non-cancellable
+      taMisc::quitting = taMisc::QF_FORCE_QUIT;
+    default: break; // force-quit
     }
   }
 }
@@ -621,6 +629,7 @@ WindowState& TopLevelViewer::winState() {
 
 void DockViewer::Initialize() {
   dock_flags = DV_NONE;
+  dock_area = Qt::BottomDockWidgetArea;
 }
 
 IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
@@ -634,8 +643,39 @@ IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 //   ToolBoxDockViewer	//
 //////////////////////////
 
+ToolBoxDockViewer* ToolBoxDockViewer::New() {
+  ToolBoxDockViewer* tb = new ToolBoxDockViewer;
+  tb->SetName("Tools");
+  tb->dock_flags = DockViewer::DockViewerFlags(DV_MOVABLE | DV_FLOATABLE);
+  tb->dock_area = Qt::LeftDockWidgetArea;
+  return tb;
+}
+
 void ToolBoxDockViewer::Initialize() {
-  dock_flags = DV_ALL;
+}
+
+void ToolBoxDockViewer::MakeWinName_impl() {
+  //NOTE: descriptions for win and tabs need to be very short (not much space)
+  win_name = "Tools";
+}
+
+
+//////////////////////////
+//   ToolBoxRegistrar	//
+//////////////////////////
+
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::m_instances;
+
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::instances() {
+  if (!m_instances)
+    m_instances = new ToolBoxRegistrar_PtrList;
+  return m_instances;
+}
+
+ToolBoxRegistrar::ToolBoxRegistrar(ToolBoxProc proc_)
+: proc(proc_)
+{
+  instances()->Add(this);
 }
 
 
@@ -763,9 +803,11 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   // always added to the viewer collection
   fv->SetName("DefaultT3DataViewer");
   proj->viewers.Add(rval);
+  // global toolbar
+  ToolBoxDockViewer* tb = ToolBoxDockViewer::New(); // initializes
+  rval->AddDock(tb);
   return rval;
 }
-
 
 void MainWindowViewer::Initialize() {
   m_is_root = false;
@@ -809,6 +851,10 @@ void MainWindowViewer::CutLinks() {
 
 void MainWindowViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+}
+
+void MainWindowViewer::AddDock(DockViewer* dv) {
+  docks.Add(dv);
 }
 
 void MainWindowViewer::AddFrame(FrameViewer* fv, int at_index) 
@@ -876,7 +922,7 @@ void MainWindowViewer::ConstrDocks_impl() {
     if (!dv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
     ((DataViewer*)dv)->Constr_impl(NULL);
-    win->AddDockViewer(dv->widget()); //TODO: should add it in proper dock area
+    win->AddDockViewer(dv->widget(), (Qt::DockWidgetArea)dv->dock_area);
   }
 }
 

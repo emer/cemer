@@ -49,7 +49,10 @@ class DataLink_QObj;
 class taiDataLink;
 class tabDataLink;
 class tabListDataLink;
-class tabGroupDataLink; //
+class tabGroupDataLink; 
+class ISelectable;
+class ISelectable_PtrList;
+class ISelectableHost; //
 
 
 class iTreeView;
@@ -619,10 +622,13 @@ class TA_API iToolBoxDockViewer: public iDockViewer {
   Q_OBJECT
 INHERITED(iDockViewer)
 public:
-  QBoxLayout*		layOuter;
-  QToolBox*		  tbx;
+  QToolBox*		tbx;
   
   inline ToolBoxDockViewer*	viewer() {return (ToolBoxDockViewer*)m_viewer;}
+  
+  int			AssertSection(const String& sec_name); // insures the tab exists; returns idx
+  void			AddClipToolWidget(int sec, iClipToolWidget* ctw);
+  void			AddSeparator(int sec); // adds a separator (if one is not at the end already)
   
   iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent = NULL);
   ~iToolBoxDockViewer(); //
@@ -631,6 +637,10 @@ public: // IDataViewerWidget i/f
 //  override QWidget*	widget() {return this;}
 protected:
 //  override void		Constr_impl();
+  override void		Constr_post();
+  
+protected:
+  QToolBar*		sectionWidget(int sec);
   
 private:
   void			Init();

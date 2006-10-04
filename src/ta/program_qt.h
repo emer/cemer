@@ -230,6 +230,9 @@ protected:
 };
 
 
+TA_API void ProgramToolBoxProc(iToolBoxDockViewer* tb); // fills toolbox
+
+
 class TA_API iProgramToolBar: public iToolBar {
 INHERITED(iToolBar)
 public:

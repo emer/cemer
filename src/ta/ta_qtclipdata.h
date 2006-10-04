@@ -173,6 +173,7 @@ public:
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
     EA_SRC_COPY		= 0x00002, // flag indicating the source was a Clip/Copy operation
     EA_SRC_DRAG		= 0x00004, // flag indicating the source was a Drag operation
+    EA_SRC_READONLY	= 0x00008, // flag to tell dest that Cut/Move/Link are not allowed, only Copy
 
     EA_SRC_MASK		= 0x0000F,  // note: SRC_ flags could be clear if src op unknown (ex. external mime format)
 
@@ -193,10 +194,12 @@ public:
     EA_DRAG_OP_MASK	= 0xF0000, // masks the drag/drop op codes
 #ifndef __MAKETA__
     EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
-    EA_RO_SRC_OPS	= (EA_COPY | EA_DRAG), // readonly src ops 
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
     EA_DST_OPS		= (EA_PASTE | EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM | EA_DROP_OPS), //
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut
+    EA_FORB_ON_SRC_READONLY = (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM |
+      EA_DROP_LINK | EA_DROP_MOVE), 
+      // dst ops forbidden when the source operation forbade Cut/Move
     EA_FORB_ON_MUL_SEL	= (EA_PASTE | EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM | EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
         // dst ops forbidden when multi source operands selected
     EA_IN_PROC_OPS	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM | EA_DROP_LINK), // ops that require an in-process src

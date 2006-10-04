@@ -1330,6 +1330,9 @@ taiClipData* ISelectable::GetClipDataSingle(int src_edit_action, bool for_drag) 
 int ISelectable::GetEditActions_(taiMimeSource* ms) const {
   int allowed = 0;
   int forbidden = 0;
+  // if src is readonly, then forbid certain dst ops
+  if (ms->src_action() & taiClipData::EA_SRC_READONLY)
+    forbidden |= taiClipData::EA_FORB_ON_SRC_READONLY;
   GetEditActionsD_impl_(ms, allowed, forbidden);
   return (allowed & (~forbidden));
 }
@@ -2198,7 +2201,6 @@ void iDockViewer::Showing(bool showing) {
 }
 
 
-
 //////////////////////////
 //   iToolBoxDockViewer	//
 //////////////////////////
@@ -2218,12 +2220,52 @@ iToolBoxDockViewer::~iToolBoxDockViewer() {
 }
 
 void iToolBoxDockViewer::Init() {
-  layOuter = new QVBoxLayout(this);
-  layOuter->setMargin(0); layOuter->setSpacing(0);
-  tbx = new QToolBox(this);
-  layOuter->addWidget(tbx);
+  tbx = new QToolBox();
+  //note: if we don't set font, tabs seem to have too big a font
+  tbx->setFont(taiM->buttonFont(taiMisc::defFontSize));
+  setWidget(tbx);
 }
 
+int iToolBoxDockViewer::AssertSection(const String& sec_name) {
+  int sec = -1;
+  for (int i = 0; i < tbx->count(); ++i) {
+    if (tbx->itemText(i) == sec_name) {
+      sec = i;
+      break;
+    }
+  }
+  if (sec < 0) {
+    QToolBar* tb = new QToolBar;
+    tb->setOrientation(Qt::Vertical);
+    sec = tbx->addItem(tb, sec_name);
+  }
+  return sec;
+}
+
+void iToolBoxDockViewer::AddClipToolWidget(int sec, iClipToolWidget* ctw) {
+  QToolBar* w = sectionWidget(sec);
+  if (!w) return; // user didn't assert
+  w->addWidget(ctw);
+}
+
+void iToolBoxDockViewer::AddSeparator(int sec) {
+  QToolBar* w = sectionWidget(sec);
+  if (!w) return; // user didn't assert
+  w->addSeparator();
+}
+
+void iToolBoxDockViewer::Constr_post() {
+  ToolBoxRegistrar_PtrList* list = ToolBoxRegistrar::instances();
+  for (int i = 0; i < list->size; ++i) {
+    ToolBoxProc proc = list->FastEl(i)->proc;
+    proc(this);
+  }
+}
+
+QToolBar* iToolBoxDockViewer::sectionWidget(int sec) {
+  QToolBar* rval = qobject_cast<QToolBar*>(tbx->widget(sec));
+  return rval;
+}
 
 //////////////////////////
 //   iToolBar 		//
@@ -2362,9 +2404,9 @@ QMimeData* iBaseClipToolWidget::mimeData() const {
   if (m_inst) {
     taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
     if (link) {
-      // get readonly clip data
+      // get readonly clip data -- we don't know if dragging or not, so we always say we are
       taiClipData* rval = new taiSingleClipData(link->GetMimeItem(), 
-        taiClipData::EA_RO_SRC_OPS);
+        (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
       return rval;
     }
   }

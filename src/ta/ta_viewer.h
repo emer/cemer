@@ -87,11 +87,7 @@ class     BrowseViewer;
 class       tabBrowseViewer;
 class       ClassBrowseViewer;
 class     PanelViewer;
-class ISelectable;
-class ISelectable_PtrList;
-class DynMethodDesc; // #IGNORE
-class DynMethod_PtrList; // #IGNORE
-class ISelectableHost;
+class ToolBoxRegistrar;
 
 
 class TA_API DataViewer : public taDataView {
@@ -409,6 +405,7 @@ public:
   };
   
   DockViewerFlags	dock_flags; // #READ_ONLY #SHOW how this dock window is allowed to behave
+  int			dock_area; // one of the Qt::DockWidgetArea flags, def is bottom
   inline iDockViewer*	widget() {return (iDockViewer*)inherited::widget();}
   
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
@@ -437,13 +434,15 @@ class TA_API ToolBoxDockViewer : public DockViewer {
   // floatable dockable toolbox window
 INHERITED(DockViewer)
 public:
+  static ToolBoxDockViewer*	New(); // create an initialized instance
+  
   inline iToolBoxDockViewer*	widget() {return (iToolBoxDockViewer*)inherited::widget();}
   
   TA_DATAVIEWFUNS(ToolBoxDockViewer, DockViewer) //
   
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); //note: in _qt.h file
-  //override void		MakeWinName_impl(); each subguy will need this
+  override void		MakeWinName_impl(); 
   
 private:
   void 	Initialize();
@@ -451,6 +450,27 @@ private:
 };
 
 
+typedef void (*ToolBoxProc)(iToolBoxDockViewer* tb);
+
+class TA_API ToolBoxRegistrar_PtrList: public taPtrList<ToolBoxRegistrar> {
+INHERITED(taPtrList<ToolBoxRegistrar>)
+public:
+  ToolBoxRegistrar_PtrList() {}
+};
+
+class TA_API ToolBoxRegistrar {
+  // static class used to manage toolbar procs; instances used as static globals to register
+public:
+  static ToolBoxRegistrar_PtrList* instances();
+#ifndef __MAKETA__  
+  ToolBoxProc	 	proc;
+#endif  
+  ToolBoxRegistrar(ToolBoxProc proc_);
+  
+protected:
+  static ToolBoxRegistrar_PtrList* m_instances;
+  
+};
 
 class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
@@ -530,6 +550,9 @@ public:
   override iMainWindowViewer* window() {return (iMainWindowViewer*)inherited::widget();} 
 
 
+  void 			AddDock(DockViewer* dv);
+    // add the supplied dock 
+  
   FrameViewer*		FindFrameByType(TypeDef* typ, int& at_index = no_idx, int from_index = 0); 
     // find the first frame and index of given type from the given starting index; 
   void 			AddFrame(FrameViewer* fv, int at_index);
