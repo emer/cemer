@@ -2367,6 +2367,7 @@ void MethodDef::Initialize() {
 
   arg_types.name = "arg_types";
   arg_types.owner = (TypeDef*)this; // this isn't quite right, is it..
+  show_any = 0;
 }
 
 MethodDef::MethodDef()
@@ -2423,6 +2424,7 @@ void MethodDef::Copy(const MethodDef& cp) {
   arg_defs = cp.arg_defs;
   arg_vals = cp.arg_vals;
   stubp = cp.stubp;
+  show_any = 0; //rebuild
 }
 
 bool MethodDef::CheckList(const String_PArray& lst) const {
@@ -2510,6 +2512,77 @@ const String MethodDef::prototype() const {
   }
   rval.cat(')');
   return rval;
+}
+
+bool MethodDef::ShowMethod(taMisc::ShowMembs show) const 
+{
+  if (show & taMisc::USE_SHOW_GUI_DEF)
+    show = taMisc::show_gui;
+  else if (show == taMisc::USE_SHOW_DEF)
+    show = taMisc::show;
+  
+  // check if cache has been done yet
+  if (show_any == 0) ShowMethod_CalcCache();
+  byte show_eff = show_any;
+  
+  // our show_eff is the positives (what it is) so if there is nothing there, then
+  // we clearly can't show
+  // if there is something (a positive) then bit-AND with the
+  // show, which is negatives (what not to show), and if anything remains, don't show!
+  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
+  return (show_eff) && !(show_eff & (byte)show);
+}
+  
+void MethodDef::ShowMethod_CalcCache() const {
+  // note that "normal" is a special case, which depends both on context and
+  // on whether other bits are set, so we calc those individually
+  show_any = taMisc::IS_NORMAL; // the default for any
+  ShowMethod_CalcCache_impl(show_any);
+  
+}
+
+void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
+  show |= 0x80; // set the "done" flag
+  
+  //note: keep in mind that these show bits are the opposite of the show flags,
+  // i.e show flags are all negative, whereas these are all positive (bit = is that type)
+  
+  //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
+  //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
+  bool typ_show = type->HasOption("METH_SHOW");
+  bool typ_no_show = type->HasOption("METH_NO_SHOW") || type->HasOption("METH_NO_SHOW");
+  bool mbr_show = HasOption("SHOW");
+  bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
+  
+  // if SHOW, set the special non-overridable SHOW_ALWAYS bit, and just exit
+  if (mbr_show || (typ_show && !mbr_no_show)) {
+    show |= (byte)taMisc::IS_SHOW_ALWAYS;
+    return;
+  }
+  
+  // if NO_SHOW, all bits zero, never shows
+  if (mbr_no_show || (typ_no_show && !mbr_show)) {
+    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
+    return; 
+  }
+  
+  // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
+  // you can't "undo" type-level specials, but you can always mark SHOW on the mbr
+
+  // the following are all cumulative, not mutually exclusive
+  if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
+    show |= (byte)taMisc::IS_HIDDEN;
+  if (HasOption("READ_ONLY")) //note: no type-level, makes no sense
+    show |= (byte)taMisc::IS_READ_ONLY;
+  if (HasOption("DETAIL") || type->HasOption("METH_DETAIL"))
+    show |= (byte)taMisc::IS_DETAIL;
+  if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
+    show |= (byte)taMisc::IS_EXPERT;
+
+  // finally, if any of the special guys are set, we unset NORMAL (which may
+  //   or may not have been already set by default)
+  if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
+    show &= ~(byte)taMisc::IS_NORMAL;
 }
 
 

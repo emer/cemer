@@ -2516,6 +2516,7 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 //   taiItemChooser		//
 //////////////////////////////////
 
+const String taiItemChooser::cat_none("(none)");
 int taiItemChooser::filt_delay = 500; 
 
 taiItemChooser* taiItemChooser::New(const String& caption_, taiItemPtrBase* client_, 
@@ -2542,6 +2543,7 @@ void taiItemChooser::init(const String& caption_) {
   m_selItem = NULL;
   m_client = NULL;
   m_view = -1; // until set to valid value
+  m_cat_filter = 0; // default is all
   setModal(true);
   setCaption(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
@@ -2555,6 +2557,15 @@ void taiItemChooser::accept() {
   }
   m_client = NULL;
   inherited::accept();
+}
+
+QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_cat, const QString& itm_txt,
+  QTreeWidgetItem* parent, const void* data_)
+{
+  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_);
+  if (!itm_cat.isEmpty())
+    rval->setData(0, ObjCatRole, itm_cat);
+  return rval;
 }
 
 QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem* parent,
@@ -2572,6 +2583,21 @@ QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem
   if (data_)
     rval->setData(0, ObjDataRole, QVariant((ta_intptr_t)data_));
   return rval;
+}
+
+void taiItemChooser::ApplyFiltering() {
+  taMisc::Busy();
+  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item;
+  QString s;
+  while ((item = *it)) { 
+    // TODO (maybe): don't hide NULL item
+    bool show = ShowItem(item);
+    items->setItemHidden(item, !show);
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
 }
 
 bool taiItemChooser::Choose(taiItemPtrBase* client_) {
@@ -2614,21 +2640,53 @@ void taiItemChooser::cmbView_currentIndexChanged(int index) {
   setView(index);
 }
 
+void taiItemChooser::cmbCat_currentIndexChanged(int index) {
+  if (m_changing > 0) return;
+  setCatFilter(index);
+}
+
 void taiItemChooser::Constr(taiItemPtrBase* client_) {
   m_client = client_; // revoked at end
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c); 
+  QHBoxLayout* layFilter = NULL; // only if needed
+  QLabel* lbl = NULL;
   // we only put up a view selector if more than 1 view supported
-  if (client_ && client_->viewCount() > 1) {
+  if (client_->viewCount() > 1) {
+    layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
+    lbl = new QLabel("view", this);
+    layFilter->addWidget(lbl);
     cmbView = new QComboBox(this);
     for (int i = 0; i < client_->viewCount(); ++i) {
       cmbView->addItem(client_->viewText(i));
     }
-    layOuter->addWidget(cmbView);
+    layFilter->addWidget(cmbView, 1);
     connect(cmbView, SIGNAL(currentIndexChanged(int)),
       this, SLOT(cmbView_currentIndexChanged(int)) );
   } else cmbView = NULL;
+  
+  // we only put a cats selector if there are cats
+  if (client_->catCount() > 0) {
+    if (!layFilter) {
+      layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
+    }
+    lbl = new QLabel("category", this);
+    layFilter->addWidget(lbl);
+    cmbCat = new QComboBox(this);
+    cmbCat->addItem("(all)");
+    String s;
+    for (int i = 0; i < client_->catCount(); ++i) {
+      s = client_->catText(i);
+      if (s.empty()) s = cat_none;
+      cmbCat->addItem(s);
+    }
+    layFilter->addWidget(cmbCat, 1);
+    connect(cmbCat, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(cmbCat_currentIndexChanged(int)) );
+  } else cmbCat = NULL;
+  if (layFilter) layOuter->addLayout(layFilter);
+  
   items = new QTreeWidget(this);
   items->setSortingEnabled(true);
   layOuter->addWidget(items, 1); // list is item to expand in host
@@ -2645,7 +2703,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
 
   lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c); 
-  QLabel* lbl = new QLabel("search", this);
+  lbl = new QLabel("search", this);
   lbl->setToolTip("Enter text that must appear in an item to keep it visible");
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
@@ -2709,6 +2767,12 @@ void taiItemChooser::reject() {
   inherited::reject();
 }
 
+void taiItemChooser::setCatFilter(int value, bool force) {
+  if ((m_cat_filter == value) && !force) return;
+  m_cat_filter = value; //so its valid for any subcalls, etc.
+  ApplyFiltering();
+}
+
 bool taiItemChooser::SetCurrentItemByData(void* value) {
   // note: assumes at most 1 selectable item for NULL
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
@@ -2729,29 +2793,37 @@ bool taiItemChooser::SetCurrentItemByData(void* value) {
   return false;
 }
 
-void taiItemChooser::SetFilter(const QString& filt) {
-  ++m_changing;
-  last_filter = filt;
-  taMisc::Busy();
-  QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
-  QTreeWidgetItem* item;
-  QString s;
-  int cols = items->columnCount(); // cache
-  while ((item = *it)) { 
-    // TODO (maybe): don't hide NULL item
+bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
+  // we show the item unless it either doesn't meet filter criteria, or not in cat
+  
+  // category filter
+  if (m_cat_filter != 0) {
+    QString act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
+    if (act_cat != client()->catText(m_cat_filter - 1)) // subtract 1 for 'all' item
+      return false;
+  }
+  
+  // filter text filter
+  if (!last_filter.isEmpty()) {
     bool hide = true;
+    QString s;
+    int cols = items->columnCount();
     for (int i = 0; i < cols; ++i) {
       s = item->text(i);
-      if (s.contains(filt, Qt::CaseInsensitive)) {
+      if (s.contains(last_filter, Qt::CaseInsensitive)) {
         hide = false;
         break;
       }  
     }
-    items->setItemHidden(item, hide);
-    ++it;
+    if (hide) return false;
   }
-  taMisc::DoneBusy();
-  --m_changing;
+  return true;
+}
+
+void taiItemChooser::SetFilter(const QString& filt) {
+  ++m_changing;
+  last_filter = filt;
+  ApplyFiltering();
 }
 
 void taiItemChooser::setSelObj(void* value) {
@@ -2803,6 +2875,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
 {
   targ_typ = NULL; // gets set later
   m_sel = NULL;
+  cats = NULL;
   QPushButton* rep_ = new QPushButton(gui_parent_);
   rep_->setFixedHeight(taiM->button_height(defSize()));
   rep_->setFont(taiM->menuFont(defSize())); //note: we use menu font -- TODO: might need to use a button font
@@ -2811,7 +2884,28 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
 }
 
 taiItemPtrBase::~taiItemPtrBase() {
+  if (cats) {
+    delete cats;
+    cats = NULL;
+  }
 }
+
+void taiItemPtrBase::BuildCategories() {
+  if (!isValid()) return;
+  BuildCategories_impl();
+}
+
+int taiItemPtrBase::catCount() const {
+  // if only item is blank, then return 0
+  if (cats) {
+    if ((cats->size == 1) && (cats->FastEl(0).empty())) return 0;
+    else return cats->size;
+  } else return 0;
+} 
+
+const String taiItemPtrBase::catText(int index) const {
+  return (cats) ? cats->SafeEl(index) : _nilString;
+} 
 
 void taiItemPtrBase::GetImage(void* cur_sel, TypeDef* targ_typ_) {
   targ_typ = targ_typ_;
@@ -2826,7 +2920,7 @@ const String taiItemPtrBase::labelText() {
 }
 
 void taiItemPtrBase::OpenChooser() {
-//TODO: cache etc., but for now, just create/build
+  BuildCategories(); // for subtypes that use categories
   taiItemChooser* ic = taiItemChooser::New("Choose " + itemTag(), this);
   if (ic->Choose(this)) {
     if (m_sel != ic->selObj()) {
@@ -2854,6 +2948,21 @@ taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
 {
 }
 
+void taiMemberDefButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+  
+  MemberSpace* mbs = &targ_typ->members;
+  String cat;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+  cats->Sort(); // empty, if any, should sort to top
+}
+
 void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
@@ -2872,9 +2981,11 @@ void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
 
 void taiMemberDefButton::BuildChooser_0(taiItemChooser* ic) {
   MemberSpace* mbs = &targ_typ->members;
+  String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
-    QTreeWidgetItem* item = ic->AddItem(mbr->name, NULL, (void*)mbr);
+    cat = mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
     item->setData(1, Qt::DisplayRole, mbr->desc);
   }
 }
@@ -2902,6 +3013,11 @@ const String taiMemberDefButton::labelNameNonNull() const {
   return md()->name;
 }
 
+bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
+  return mbr->ShowMember();
+}
+
+
 const String taiMemberDefButton::viewText(int index) const {
   switch (index) {
   case 0: return "Flat List"; 
@@ -2918,6 +3034,21 @@ taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_)
 :inherited(typ_, host, par, gui_parent_, flags_)
 {
+}
+
+void taiMethodDefButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+  
+  MethodSpace* mbs = &targ_typ->methods;
+  String cat;
+  for (int i = 0; i < mbs->size; ++i) {
+    MethodDef* mth = mbs->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+  cats->Sort(); // empty, if any, should sort to top
 }
 
 void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
@@ -2943,9 +3074,11 @@ void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
 
 void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   MethodSpace* mbs = &targ_typ->methods;
+  String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    QTreeWidgetItem* item = ic->AddItem(mth->name, NULL, (void*)mth);
+    cat = mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
@@ -2955,6 +3088,7 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   QTreeWidgetItem* top_item) 
 {
   int rval = 0;
+  String cat;
   MethodSpace* mbs = &top_typ->methods;
   QString typ_nm = top_typ->name; // let Qt share the rep
   // do methods at this level -- basically, anything living here, or not a virt override
@@ -2962,6 +3096,7 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
     MethodDef* mth = mbs->FastEl(i);
     if ((mth->owner != mbs) || mth->is_override) continue;
     ++rval;
+    cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
     QVariant proto = mth->prototype(); // share
     item->setData(0, Qt::ToolTipRole, proto);
@@ -3010,6 +3145,10 @@ const String taiMethodDefButton::headerText(int index, int view) const {
 
 const String taiMethodDefButton::labelNameNonNull() const {
   return md()->name;
+}
+
+bool taiMethodDefButton::ShowMethod(MethodDef* mth) {
+  return mth->ShowMethod();
 }
 
 const String taiMethodDefButton::viewText(int index) const {

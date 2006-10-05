@@ -705,6 +705,12 @@ inline bool operator==(const QString& x, const String& y) {
 inline bool operator==(const String& x, const QString& y) {
   return compare(x, String(y)) == 0;
 }
+inline bool operator!=(const QString& x, const String& y) {
+  return compare(String(x), y) != 0;
+}
+inline bool operator!=(const String& x, const QString& y) {
+  return compare(x, String(y)) != 0;
+}
 #endif
 
 inline bool operator==(const String& x, const String& y)

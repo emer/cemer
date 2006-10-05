@@ -1044,7 +1044,7 @@ public:
   // return portion of option after given option header
   virtual String	GetLabel() const;
   // checks for option of LABEL_xxx and returns it or name
-
+  
   TypeItem();
   TypeItem(const TypeItem& cp); // copy constructor
   ~TypeItem();
@@ -1198,6 +1198,11 @@ public:
   void			CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String		ParamsAsString() const; // returns what would be in () for a definition
+  bool			ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_DEF) const;
+protected:
+  mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  void		ShowMethod_CalcCache() const; // called when show_any=0, ie, not configured yet
+  void		ShowMethod_CalcCache_impl(byte& show) const;
 };
 
 class taBase_List;

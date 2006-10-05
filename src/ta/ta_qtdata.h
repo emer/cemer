@@ -826,9 +826,11 @@ INHERITED(QDialog)
 public:
 #ifndef __MAKETA__
   enum Roles { // extra roles, for additional data, etc.
-    ObjDataRole = Qt::UserRole + 1
+    ObjDataRole = Qt::UserRole + 1,
+    ObjCatRole  // for object category string, whether shown or not
   };
 #endif
+  static const String	cat_none; // "none" category
   static int		filt_delay; // delay, in msec, to invoke filter after typing
 
   static taiItemChooser* New(const String& caption, taiItemPtrBase* client = NULL, 
@@ -836,15 +838,18 @@ public:
 
   String		caption; 	// current caption at top of chooser
 
-  inline taiItemPtrBase* client() {return m_client;} // only valid in Constr and between Choose...accept/reject
+  inline taiItemPtrBase* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
   void*			selObj() const {return m_selObj;} // current selected object
   void			setSelObj(void* value);	// 
 
+  int			catFilter() const {return m_cat_filter;}
+  void			setCatFilter(int value, bool force = false);
   int			view() const {return m_view;}
   void			setView(int value, bool force = false);
   
   QVBoxLayout*		layOuter;
   QComboBox*		  cmbView;
+  QComboBox*		  cmbCat; //note: item 0 is "all" (i.e., no filtering)
   QTreeWidget* 		  items; 	// list of items
 //QHBoxLayout*		  layButtons;
   QPushButton*		    btnOk;
@@ -861,20 +866,26 @@ public:
   
   virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent, 
     const void* data_ = NULL); // add one item to dialog, optionally with data
+  virtual QTreeWidgetItem* AddItem(const QString& itm_cat, const QString& itm_txt,
+    QTreeWidgetItem* parent, const void* data_ = NULL); 
+    // add one categorized item to dialog, optionally with data
 
 protected:
   int			m_changing;
   void*			m_selObj;	// current selected object
   QTreeWidgetItem*	m_selItem; // cached for showEvent
   int			m_view;
+  int			m_cat_filter;
   taiItemPtrBase* 	m_client; // NOTE: only valid in Constr and between Choose...accept/reject
   QString		last_filter; // for checking if anything changed
   QTimer*		timFilter; // timer for filter changes
   
   void 			showEvent(QShowEvent* event); //override
   
+  void 			ApplyFiltering();
   virtual void 		Refresh();	// rebuild current view
   bool 			SetCurrentItemByData(void* value); 
+  bool 			ShowItem(const QTreeWidgetItem* item) const;
   virtual void		Constr(taiItemPtrBase* client_); 
    // does constr, called in static, so can extend
 
@@ -884,6 +895,7 @@ protected slots:
   void 			reject(); // override
   void 			items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
   void 			cmbView_currentIndexChanged(int index);
+  void 			cmbCat_currentIndexChanged(int index);
   void 			filter_textChanged(const QString& text);
   void 			timFilter_timeout();
   void			show_timeout(); // for scrolling to item
@@ -898,13 +910,17 @@ class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT
 public:
-  
   const String		labelText(); // "tag: name" for button
-  inline QPushButton*	rep() {return (QPushButton*)m_rep;}
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;
+  inline QPushButton*	rep() {return (QPushButton*)m_rep;}
   inline void*		sel() const {return m_sel;}
+  virtual bool		isValid() const {return (targ_typ);} // if all required params have been set
+  virtual int		catCount() const; 
+    // number of categories, where supported; 0=nocat, 1+=cats
+  virtual const String	catText(int index) const; 
+    // number of different kinds of views, ex flat vs. 
   virtual int		viewCount() const {return 1;} 
     // number of different kinds of views, ex flat vs. tree
   virtual const String	viewText(int index) const = 0; 
@@ -912,6 +928,7 @@ public:
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
+  virtual void		BuildCategories(); // for types that support categories
   virtual void		BuildChooser(taiItemChooser* ic, int view = 0) {}
     // builds the tree
 
@@ -923,10 +940,12 @@ public slots:
 protected:
   void*			m_sel; // current value
   TypeDef*		targ_typ; 
+  String_Array*		cats; // categories -- only created if needed
   
   virtual const String	itemTag() const {return _nilString;} // for "N: label" on button, is "N: "
   virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
   
+  virtual void		BuildCategories_impl() {} // for types that support categories
   virtual void 		UpdateImage(void* cur_sel);
   
   taiItemPtrBase(TypeDef* typ_, IDataHost* host,
@@ -948,7 +967,9 @@ public:
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   MemberDef*		GetValue() {return md();}
 
-  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+  override void		BuildChooser(taiItemChooser* ic, int view = 0); // 
+  
+  virtual bool		ShowMember(MemberDef* mbr);
 
   taiMemberDefButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
@@ -956,6 +977,7 @@ protected:
   const String		itemTag() const {return "Member: ";}
   const String		labelNameNonNull() const;
 
+  override void		BuildCategories_impl();
   void 			BuildChooser_0(taiItemChooser* ic);
 };
 
@@ -982,9 +1004,12 @@ protected:
   const String		itemTag() const {return "Method: ";}
   const String		labelNameNonNull() const;
 
+  override void		BuildCategories_impl();
   void 			BuildChooser_0(taiItemChooser* ic);
   int 			BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
+    
+  virtual bool		ShowMethod(MethodDef* mth);
 };
 
 

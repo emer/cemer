@@ -6,9 +6,7 @@ Alpha:
 
 Brad:
 
-* lots of misc ui improvements:
-* move edit dialog menus & buttons outside of the different panel sets in an edit
-* #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
+misc ui improvements:
 * remove extra scrollbar on console & disown from root or remove as dock and just make a fun
   to move it to bottom of project window
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
@@ -36,6 +34,8 @@ Brad:
 Brad done:
 * dnd icon bar for: progedit
 * shutdown cleanup + add window menu
+* move edit dialog menus & buttons outside of the different panel sets in an edit
+* #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
