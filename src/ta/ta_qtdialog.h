@@ -206,6 +206,7 @@ typedef iDataPanelFrame inherited;
 #endif
 friend class taiEditDataHost;
 public:
+  taiEditDataHost*	editDataHost() {return owner;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
   override void		Closing(CancelOp& cancel_op);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
@@ -275,7 +276,7 @@ public:
       QScrollArea*	scrBody;		// scrollbars for the body items
       QGridLayout* 	layBody;	// layout for the body -- deleted/reconstructed when show changes
         QWidget*	body;		// parent for the body items (actually an iStripeWidget)
-    QFrame*	frmMethButtons;	// method buttons
+    QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
       iFlowLayout*	layMethButtons;	// method buttons
     QHBoxLayout*	hblButtons;	// box of buttons on the bottom of the dialog
       HiLightButton* 	okbut; // is HilightButton for the special mouse button handling

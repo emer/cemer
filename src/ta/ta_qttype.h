@@ -798,6 +798,7 @@ INHERITED(taiViewType)
 public:
   override int		BidForView(TypeDef*);
   override const iColor* GetEditColorInherit(taiDataLink* dl) const;// #IGNORE background color for edit
+  override iDataPanel*	CreateDataPanel(taiDataLink* dl_); 
   override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ);
   void			Initialize() {}
   void			Destroy() {}
@@ -805,6 +806,8 @@ public:
 protected:
   virtual taiDataLink*	CreateDataLink_impl(taBase* data_);
   override void		CreateDataPanel_impl(taiDataLink* dl_);
+private:
+  EditDataPanel*	edit_panel; // cached during construction
 };
 
 class TA_API tabOViewType: public tabViewType { // for taOBase and descendants

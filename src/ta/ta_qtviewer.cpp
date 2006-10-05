@@ -3428,6 +3428,10 @@ iDataPanel::~iDataPanel() {
     m_tabView->DataPanelDestroying(this);
 }
 
+QWidget* iDataPanel::centralWidget() const {
+  return scr->widget();
+}
+
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr == DCR_ITEM_UPDATED) {
     if (tabView())
@@ -3686,6 +3690,14 @@ void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
   inherited::ResolveChanges(cancel_op); // calls our own impl
 }
 
+void iDataPanelSet::SetMenu(QWidget* menu) {
+//TODO:
+}
+
+void iDataPanelSet::SetMethodBox(QWidget* meths) {
+  meths->setParent(centralWidget());
+  layDetail->addWidget(meths);
+}
 
 void iDataPanelSet::set_cur_panel_id(int cpi) {
   if (cur_panel_id == cpi) return;

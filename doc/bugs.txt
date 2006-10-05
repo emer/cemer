@@ -5,8 +5,6 @@ WORK PRIORITY
 Alpha:
 
 Brad:
-* dnd icon bar for: progedit
-* shutdown cleanup + add window menu
 
 * lots of misc ui improvements:
 * move edit dialog menus & buttons outside of the different panel sets in an edit
@@ -34,6 +32,13 @@ Brad:
 * virtual console dock window
 
 * startup pathing cleanup + platform params: redo pdproot/main code + randy
+
+Brad done:
+* dnd icon bar for: progedit
+* shutdown cleanup + add window menu
+
+Brad deferred:
+* add window menu (not hi pri, since likely only 2 or 3 wins anyway)
 
 Randy:
 

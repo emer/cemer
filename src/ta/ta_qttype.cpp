@@ -2760,6 +2760,17 @@ taiDataLink* tabViewType::CreateDataLink_impl(taBase* data_) {
   return NULL; //no taBase implementation for now
 }
 
+iDataPanel* tabViewType::CreateDataPanel(taiDataLink* dl_) {
+  iDataPanel* rval = inherited::CreateDataPanel(dl_);
+  // if more than one panel, then move the edit menu and methods to outside panelset
+  if (m_dps) {
+    //TODO: menu
+    taiEditDataHost* edh = edit_panel->editDataHost();
+    m_dps->SetMethodBox(edh->frmMethButtons);
+  }
+  return rval;
+}
+
 void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
 {
   //NOTE: tabListViewType calls this directly to get the property panel --
@@ -2768,8 +2779,9 @@ void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
   TypeDef* td = dl->GetDataTypeDef();
   taiEdit* taie = td->ie;
   //TODO: need to determine read_only
-  iDataPanelFrame* dp = taie->EditPanel(dl, dl->data(), false, GetEditColorInherit(dl));
-  DataPanelCreated(dp);
+  //note: we cache this panel for the menu/method box fixup step
+  edit_panel = taie->EditPanel(dl, dl->data(), false, GetEditColorInherit(dl));
+  DataPanelCreated(edit_panel);
 }
 
 taiDataLink* tabViewType::GetDataLink(void* data_, TypeDef* el_typ) {

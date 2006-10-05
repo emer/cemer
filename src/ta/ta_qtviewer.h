@@ -1018,6 +1018,7 @@ friend class iPanelTab;
 friend class iDataPanel_PtrList;
 friend class iDataPanelSet;
 public:
+  virtual QWidget*	centralWidget() const; // contents
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
@@ -1158,8 +1159,10 @@ public:
   iDataPanel*		cur_panel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
 
+  void			SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)
   void			AddSubPanel(iDataPanelFrame* pn);
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
+  void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
 
   override void		Closing(CancelOp& cancel_op);
   override void		ClosePanel();

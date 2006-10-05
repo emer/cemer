@@ -160,11 +160,12 @@ public:
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(taiViewType, taiTypeBase)
 protected:
+  iDataPanelSet*	m_dps; // #IGNORE created automatically if more than one datapanel is created
+  
   void 			DataPanelCreated(iDataPanelFrame* dp); // call in CreateDataPanel_impl for each dp frame created
   virtual void		CreateDataPanel_impl(taiDataLink* dl_) {} // create one or more dp's
 private:
   iDataPanelFrame*	m_dp; // #IGNORE single instance created for a call
-  iDataPanelSet*	m_dps; // #IGNORE created automatically if more than one datapanel is created
 };
 
 
