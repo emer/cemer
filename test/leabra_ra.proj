@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-LeabraProject .projects[0] { 
+LeabraProject .projects[1] { 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
       taBase_List @.layer_cfg = [3] {
@@ -134,6 +134,10 @@ LeabraProject .projects[0] {
 	    };
 	  };
 	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
       };
     };
   };
@@ -833,7 +837,7 @@ LeabraProject .projects[0] {
     RGBA @[19] { };
   };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="LeabraProject_0";
  desc=;
  templates {
@@ -903,7 +907,7 @@ LeabraProject .projects[0] {
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$0$;
+     object_val=.projects[1].networks[0]$0$;
      objs_ptr=0;
      desc=;
     };
@@ -965,7 +969,7 @@ LeabraProject .projects[0] {
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[0][0].objs[0]$1$;
+      object_val=.projects[1].programs.gp[0][0].objs[0]$1$;
       objs_ptr=1;
       desc=;
      };
@@ -973,7 +977,7 @@ LeabraProject .projects[0] {
       name="time_used";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].programs.gp[0][0].objs[1]$2$;
+      object_val=.projects[1].programs.gp[0][0].objs[1]$2$;
       objs_ptr=1;
       desc=;
      };
@@ -987,7 +991,7 @@ LeabraProject .projects[0] {
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0].global_vars[0]$3$;
+       script_obj=.projects[1].programs.gp[0].global_vars[0]$3$;
        method=Network::CheckConfig;
       };
       args{ false;};
@@ -997,7 +1001,7 @@ LeabraProject .projects[0] {
       desc="initialize epoch counter ";
       off=0;
       network_var=$3$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[1]$4$;
+      local_ctr_var=.projects[1].programs.gp[0][0].vars[1]$4$;
       counter=Network::epoch;
      };
      MethodCall @[2] {
@@ -1005,7 +1009,7 @@ LeabraProject .projects[0] {
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][0].vars[3]$5$;
+       script_obj=.projects[1].programs.gp[0][0].vars[3]$5$;
        method=RndSeed::OldSeed;
       };
       args{ };
@@ -1032,7 +1036,7 @@ LeabraProject .projects[0] {
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][0].vars[4]$6$;
+       script_obj=.projects[1].programs.gp[0][0].vars[4]$6$;
        method=TimeUsed::StartTimer;
       };
       args{ true;};
@@ -1053,7 +1057,7 @@ LeabraProject .projects[0] {
        ProgramCall @[0] {
 	desc=;
 	off=0;
-	target=.projects[0].programs.gp[0][1]$7$;
+	target=.projects[1].programs.gp[0][1]$7$;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1117,7 +1121,7 @@ LeabraProject .projects[0] {
       name="train_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data[0]$8$;
+      object_val=.projects[1].data[0]$8$;
       objs_ptr=0;
       desc=;
      };
@@ -1130,7 +1134,7 @@ LeabraProject .projects[0] {
       desc="initialize trial counter: note also needs to do this in regular running program";
       off=0;
       network_var=$3$;
-      local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$9$;
+      local_ctr_var=.projects[1].programs.gp[0][1].vars[0]$9$;
       counter=Network::trial;
      };
     };
@@ -1155,7 +1159,7 @@ LeabraProject .projects[0] {
        ProgramCall @[0] {
 	desc=;
 	off=0;
-	target=.projects[0].programs.gp[0][2]$10$;
+	target=.projects[1].programs.gp[0][2]$10$;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1171,7 +1175,7 @@ LeabraProject .projects[0] {
        };
       };
       loop_test="This is not used here";
-      data_var=.projects[0].programs.gp[0][1].vars[1]$11$;
+      data_var=.projects[1].programs.gp[0][1].vars[1]$11$;
       order=PERMUTED;
       item_idx_list{ 4;0;3;1;2;      };
      };
@@ -1189,7 +1193,7 @@ LeabraProject .projects[0] {
      ProgramCall @[3] {
       desc=;
       off=0;
-      target=.projects[0].programs.gp[0][7]$12$;
+      target=.projects[1].programs.gp[0][7]$12$;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1239,7 +1243,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       network_var=$3$;
-      local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$13$;
+      local_ctr_var=.projects[1].programs.gp[0][2].vars[0]$13$;
       counter=LeabraNetwork::phase_no;
      };
     };
@@ -1291,7 +1295,7 @@ LeabraProject .projects[0] {
        ProgramCall @[0] {
 	desc=;
 	off=0;
-	target=.projects[0].programs.gp[0][3]$14$;
+	target=.projects[1].programs.gp[0][3]$14$;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1359,7 +1363,7 @@ LeabraProject .projects[0] {
      ProgramCall @[7] {
       desc=;
       off=0;
-      target=.projects[0].programs.gp[0][6]$15$;
+      target=.projects[1].programs.gp[0][6]$15$;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1370,7 +1374,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       network_var=$3$;
-      update_var=.projects[0].programs.gp[0][2].vars[1]$16$;
+      update_var=.projects[1].programs.gp[0][2].vars[1]$16$;
      };
      MethodCall @[9] {
       desc="allow automatic updating";
@@ -1433,7 +1437,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       network_var=$3$;
-      local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$17$;
+      local_ctr_var=.projects[1].programs.gp[0][3].vars[0]$17$;
       counter=Network::cycle;
      };
     };
@@ -1462,7 +1466,7 @@ LeabraProject .projects[0] {
      ProgramCall @[2] {
       desc=;
       off=0;
-      target=.projects[0].programs.gp[0][5]$18$;
+      target=.projects[1].programs.gp[0][5]$18$;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1498,7 +1502,7 @@ else min_cycles = network->min_cycles_phase2;
        ProgramCall @[0] {
 	desc=;
 	off=0;
-	target=.projects[0].programs.gp[0][4]$19$;
+	target=.projects[1].programs.gp[0][4]$19$;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1567,7 +1571,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       network_var=$3$;
-      update_var=.projects[0].programs.gp[0][3].vars[2]$20$;
+      update_var=.projects[1].programs.gp[0][3].vars[2]$20$;
      };
     };
    };
@@ -1621,7 +1625,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       network_var=$3$;
-      update_var=.projects[0].programs.gp[0][4].vars[0]$21$;
+      update_var=.projects[1].programs.gp[0][4].vars[0]$21$;
      };
     };
    };
@@ -1642,7 +1646,7 @@ else min_cycles = network->min_cycles_phase2;
        chan_name="Input";
        net_target=LAYER;
        network=$0$;
-       layer=.projects[0].networks[0].layers[0]$22$;
+       layer=.projects[1].networks[0].layers[0]$22$;
        offset {x=0: y=0: };
        use_layer_type=1;
        ext_flags=EXT;
@@ -1654,7 +1658,7 @@ else min_cycles = network->min_cycles_phase2;
        chan_name="Output";
        net_target=LAYER;
        network=$0$;
-       layer=.projects[0].networks[0].layers[2]$23$;
+       layer=.projects[1].networks[0].layers[2]$23$;
        offset {x=0: y=0: };
        use_layer_type=1;
        ext_flags=TARG;
@@ -1696,7 +1700,7 @@ else min_cycles = network->min_cycles_phase2;
       name="lw_list";
       var_type=T_Object;
       object_type=LayerWriter_List;
-      object_val=.projects[0].programs.gp[0][5].objs[0]$24$;
+      object_val=.projects[1].programs.gp[0][5].objs[0]$24$;
       objs_ptr=1;
       desc=;
      };
@@ -1710,7 +1714,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][5].vars[1]$25$;
+       script_obj=.projects[1].programs.gp[0][5].vars[1]$25$;
        method=LayerRWBase_List::SetAllDataNetwork;
       };
       args{ data;network;};
@@ -1823,7 +1827,7 @@ else min_cycles = network->min_cycles_phase2;
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      data=.projects[0].data[1]$26$;
+      data=.projects[1].data[1]$26$;
       rmv_orphan_cols=1;
      };
     };
@@ -1848,7 +1852,7 @@ else min_cycles = network->min_cycles_phase2;
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][6].objs[0]$27$;
+      object_val=.projects[1].programs.gp[0][6].objs[0]$27$;
       objs_ptr=1;
       desc=;
      };
@@ -1862,7 +1866,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][6].vars[1]$28$;
+       script_obj=.projects[1].programs.gp[0][6].vars[1]$28$;
        method=NetMonitor::CheckConfig;
       };
       args{ false;};
@@ -1873,7 +1877,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][6].vars[0]$29$;
+       script_obj=.projects[1].programs.gp[0][6].vars[0]$29$;
        method=DataTable::ResetData;
       };
       args{ };
@@ -1981,7 +1985,7 @@ else min_cycles = network->min_cycles_phase2;
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      data=.projects[0].data[2]$30$;
+      data=.projects[1].data[2]$30$;
       rmv_orphan_cols=1;
      };
     };
@@ -2006,7 +2010,7 @@ else min_cycles = network->min_cycles_phase2;
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][7].objs[0]$31$;
+      object_val=.projects[1].programs.gp[0][7].objs[0]$31$;
       objs_ptr=1;
       desc=;
      };
@@ -2020,7 +2024,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][7].vars[1]$32$;
+       script_obj=.projects[1].programs.gp[0][7].vars[1]$32$;
        method=NetMonitor::CheckConfig;
       };
       args{ false;};
@@ -2031,7 +2035,7 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=;
       method_spec {
-       script_obj=.projects[0].programs.gp[0][7].vars[0]$33$;
+       script_obj=.projects[1].programs.gp[0][7].vars[0]$33$;
        method=DataTable::ResetData;
       };
       args{ };
@@ -2098,6 +2102,7 @@ else min_cycles = network->min_cycles_phase2;
    m_data=NULL;
    name="DefaultProjectBrowser";
    display_toggle=1;
+   visible=1;
    m_is_root=0;
    m_is_proj_viewer=1;
    toolbars {
@@ -2108,19 +2113,19 @@ else min_cycles = network->min_cycles_phase2;
      m_data=NULL;
      name="Application";
      display_toggle=1;
+     visible=0;
      lft=0;
      top=0;
      o=Horizontal;
-     visible=0;
     };
     ProgramToolBar @[1] {
      m_data=NULL;
      name="Program";
      display_toggle=1;
+     visible=0;
      lft=0.42298287;
      top=0;
      o=Horizontal;
-     visible=0;
     };
    };
    frames {
@@ -2131,19 +2136,22 @@ else min_cycles = network->min_cycles_phase2;
      m_data=NULL;
      name="DefaultBrowseViewer";
      display_toggle=1;
+     visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=.projects[0]$34$;
+     m_root=.projects[1]$34$;
     };
     PanelViewer @[1] {
      m_data=NULL;
      name="DefaultPanelViewer";
      display_toggle=1;
+     visible=1;
     };
     T3DataViewer @[2] {
      m_data=NULL;
      name="DefaultT3DataViewer";
      display_toggle=1;
+     visible=1;
      root_view {
       m_data=NULL;
       m_transform=NULL;
@@ -2163,7 +2171,7 @@ else min_cycles = network->min_cycles_phase2;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	 };
 	 LayerView @[1] {
-	  m_data=.projects[0].networks[0].layers[1]$35$;
+	  m_data=.projects[1].networks[0].layers[1]$35$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=2.5: z=0: }: };
 	 };
 	 LayerView @[2] {
@@ -2171,7 +2179,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=4.5: z=0: }: };
 	 };
 	 PrjnView @[3] {
-	  m_data=.projects[0].networks[0].layers[1].projections[0]$36$;
+	  m_data=.projects[1].networks[0].layers[1].projections[0]$36$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	  children {
 	   name=;
@@ -2180,7 +2188,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	 };
 	 PrjnView @[4] {
-	  m_data=.projects[0].networks[0].layers[1].projections[1]$37$;
+	  m_data=.projects[1].networks[0].layers[1].projections[1]$37$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=4.5: z=-0: }: };
 	  children {
 	   name=;
@@ -2189,7 +2197,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	 };
 	 PrjnView @[5] {
-	  m_data=.projects[0].networks[0].layers[2].projections[0]$38$;
+	  m_data=.projects[1].networks[0].layers[2].projections[0]$38$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=2.5: z=-0: }: };
 	  children {
 	   name=;
@@ -2857,11 +2865,18 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     name=;
     el_typ=DockViewer;
     el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     display_toggle=1;
+     visible=1;
+     dock_flags=6;
+     dock_area=1;
+    };
    };
   };
  };
  use_sim_log=0;
- prev_file_nm="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.proj";
  networks {
   name=;
   el_typ=LeabraNetwork;
@@ -2873,9 +2888,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=LeabraUnitSpec;
     el_def=0;
     LeabraUnitSpec @[0] {
-     unique 	      = {};
      name="LeabraUnitSpec_0";
-     unique=unsigned_long_ary;
+     unique{      };
      children {
       name=;
       el_typ=LeabraUnitSpec;
@@ -2883,7 +2897,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[2].children[0]$40$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[1].networks[0].specs[2].children[0]$40$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.0049999999: avg_dt=0.0049999999: send_delta=0: i_thr=STD: };
@@ -2913,17 +2927,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
     };
     LeabraLayerSpec @[1] {
-     unique 	      = {};
      name="HiddenLayer";
-     unique=unsigned_long_ary;
+     unique{      };
      children {
       name=;
       el_typ=LeabraLayerSpec;
       el_def=0;
       LeabraLayerSpec @[0] {
-       unique 	        = {};
        name="Input/Output";
-       unique=unsigned_long_ary;
+       unique{        };
        children {
 	name=;
 	el_typ=LeabraLayerSpec;
@@ -2955,17 +2967,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      net_rescale {on=0: max_net=0.60000002: net_extra=0.2: };
     };
     LeabraConSpec @[2] {
-     unique 	      = {};
      name="LeabraConSpec_0";
-     unique=unsigned_long_ary;
+     unique{      };
      children {
       name=;
       el_typ=LeabraConSpec;
       el_def=0;
       LeabraBiasSpec @[0] {
-       unique 	        = {};
        name="LeabraBiasSpec_0";
-       unique=unsigned_long_ary;
+       unique{ rnd;wt_limits;wt_scale;       };
        children {
 	name=;
 	el_typ=LeabraBiasSpec;
@@ -2986,7 +2996,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.99900001: err_sb=1: };
        savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -3008,15 +3018,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.99900001: err_sb=1: };
      savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
     };
     FullPrjnSpec @[3] {
-     unique 	      = {};
      name="FullPrjnSpec_0";
-     unique=unsigned_long_ary;
+     unique{      };
      children {
       name=;
       el_typ=FullPrjnSpec;
@@ -3049,7 +3058,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=Projection;
       el_def=0;
-	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
+	    Projection_Group @. = [0] = Projection .projects[1].networks[0].layers[1].projections[0];
      };
      units {
       name=;
@@ -3061,7 +3070,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       LeabraUnit @[0] {
        name=;
-       spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$41$: };
+       spec {type=LeabraUnitSpec: spec=.projects[1].networks[0].specs[0]$41$: };
        ext_flag=EXT;
        targ=0;
        ext=1;
@@ -3071,7 +3080,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name=;
 	el_typ=Connection;
 	el_def=0;
-	spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$42$: };
+	spec {type=LeabraConSpec: spec=.projects[1].networks[0].specs[3]$42$: };
 	prjn=NULL;
 	other_idx=-1;
 	own_cons=0;
@@ -3080,7 +3089,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name=;
 	el_typ=LeabraCon;
 	el_def=0;
-	spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[2]$43$: };
+	spec {type=LeabraConSpec: spec=.projects[1].networks[0].specs[2]$43$: };
 	prjn=NULL;
 	other_idx=-1;
 	own_cons=0;
@@ -4274,7 +4283,7 @@ LeabraCon @*(.bias) {
      i_val {kwta=0: g_i=0.60000002: gp_g_i=0: g_i_orig=0.60000002: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.2: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$44$: };
+     spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[1].children[0]$44$: };
      stm_gain=0.5;
      hard_clamped=1;
      prv_phase=0;
@@ -4329,7 +4338,7 @@ LeabraCon @*(.bias) {
       name=;
       el_typ=Projection;
       el_def=0;
-	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+	    Projection_Group @. = [0] = Projection .projects[1].networks[0].layers[2].projections[0];
      };
      units {
       name=;
@@ -6454,7 +6463,7 @@ LeabraCon @*(.bias) {
      i_val {kwta=3.6458027: g_i=3.6458027: gp_g_i=0: g_i_orig=3.6458027: };
      un_g_i {avg=3.6458032: max=3.6458027: max_i=0: };
      adapt_i {avg_avg=0.23740792: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$45$: };
+     spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[1]$45$: };
      stm_gain=0.5;
      hard_clamped=0;
      prv_phase=0;
@@ -6495,7 +6504,7 @@ LeabraCon @*(.bias) {
       name=;
       el_typ=Projection;
       el_def=0;
-	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[1];
+	    Projection_Group @. = [0] = Projection .projects[1].networks[0].layers[1].projections[1];
      };
      units {
       name=;

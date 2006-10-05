@@ -1,8 +1,5 @@
 leabra todo list:
 
-* still some weirdness where some unique flags are being lost in conversion, but 
-  others are not.. it happens after conversion during save or something.  maybe during run?
-
 * test FILE string_stream.css: ptr = 0?
 
 * need GUI_READ_ONLY vs READ_ONLY -- interface vs. css -- some stuff should
