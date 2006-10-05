@@ -2764,8 +2764,9 @@ iDataPanel* tabViewType::CreateDataPanel(taiDataLink* dl_) {
   iDataPanel* rval = inherited::CreateDataPanel(dl_);
   // if more than one panel, then move the edit menu and methods to outside panelset
   if (m_dps) {
-    //TODO: menu
     taiEditDataHost* edh = edit_panel->editDataHost();
+    // move the menu -- note: QMenu on linux/win, QToolBar on mac
+    m_dps->SetMenu(edh->menu->GetRep());
     m_dps->SetMethodBox(edh->frmMethButtons);
   }
   return rval;

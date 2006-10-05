@@ -3691,7 +3691,8 @@ void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
 }
 
 void iDataPanelSet::SetMenu(QWidget* menu) {
-//TODO:
+  menu->setParent(centralWidget());
+  layDetail->insertWidget(0, menu);
 }
 
 void iDataPanelSet::SetMethodBox(QWidget* meths) {
